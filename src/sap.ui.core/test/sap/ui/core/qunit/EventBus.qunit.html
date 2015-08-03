@@ -95,6 +95,58 @@
 			ok(!oBus._mChannels[sChannelId], "Unused Channel is cleaned up.");
 		});
 		
+		module("SubscribeOnce");
+		
+		test("Default channel", 12, function(){
+			var sEventId = "Test3";
+			checkNumberOfListeners(oBus._defaultChannel, sEventId, 0);
+			
+			// two listener subscribeOnce to the same event:
+			var fHandler1 = function(sChannel, sEvent, oData){
+				checkHandler(false, sChannel, sEvent, oData, this, null, sEventId, null);
+			};
+			oBus.subscribeOnce(sEventId, fHandler1);
+			checkNumberOfListeners(oBus._defaultChannel, sEventId, 1);
+			
+			var oObj2 = {};
+			var fHandler2 = function(sChannel, sEvent, oData){
+				checkHandler(true, sChannel, sEvent, oData, this, null, sEventId, null, oObj2);
+			};
+			oBus.subscribeOnce(sEventId, fHandler2, oObj2);
+			checkNumberOfListeners(oBus._defaultChannel, sEventId, 2);
+			
+			oBus.publish(sEventId);
+
+			// after publish they should not be registered anymore
+			checkNumberOfListeners(oBus._defaultChannel, sEventId, 0);
+		});
+		
+		test("Custom channel", 12, function(){
+			var sEventId = "Test4";
+			var sChannelId = "TestChannel4";
+			
+			checkNumberOfListeners(oBus._mChannels[sChannelId], sEventId, 0);
+			
+			// two listener subscribeOnce to the same event:
+			var fHandler1 = function(sChannel, sEvent, oData){
+				checkHandler(false, sChannel, sEvent, oData, this, sChannelId, sEventId, null);
+			};
+			oBus.subscribeOnce(sChannelId, sEventId, fHandler1);
+			checkNumberOfListeners(oBus._mChannels[sChannelId], sEventId, 1);
+			
+			var oObj2 = {};
+			var fHandler2 = function(sChannel, sEvent, oData){
+				checkHandler(true, sChannel, sEvent, oData, this, sChannelId, sEventId, null, oObj2);
+			};
+			oBus.subscribeOnce(sChannelId, sEventId, fHandler2, oObj2);
+			checkNumberOfListeners(oBus._mChannels[sChannelId], sEventId, 2);
+			
+			oBus.publish(sChannelId, sEventId);
+
+			// after publish they should not be registered anymore
+			checkNumberOfListeners(oBus._mChannels[sChannelId], sEventId, 0);
+		});
+		
 		
 		var oObj11, oObj13, oObj21, oObj23, fHandler11, fHandler12, fHandler13, fHandler14, fHandler21, fHandler22, fHandler23, fHandler24;
 		

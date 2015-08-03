@@ -69,7 +69,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 		oChannel.attachEvent(sEventId, fnFunction, oListener);
 		return this;
 	};
-	
+
+	/**
+	 * Attaches an event handler, called one time only, to the event with the given identifier on the given event channel.
+	 * 
+	 * When the event occurs, the handler function is called and the handler registration is automatically removed afterwards.
+	 *
+	 * @param {string}
+	 *            [sChannelId] The channel of the event to subscribe to. If not given, the default channel is used.
+	 *                         The channel <code>"sap.ui"</code> is reserved by the UI5 framework. An application might listen to
+	 *                         events on this channel but is not allowed to publish its own events there.
+	 * @param {string}
+	 *            sEventId The identifier of the event to listen for
+	 * @param {function}
+	 *            fnFunction The handler function to call when the event occurs. This function will be called in the context of the
+	 *                       <code>oListener</code> instance (if present) or on the event bus instance. The channel is provided as first argument of the handler, and
+	 *                       the event identifier is provided as the second argument. The parameter map carried by the event is provided as the third argument (if present).
+	 *                       Handlers must not change the content of this map.
+	 * @param {object}
+	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
+	 *                        handler function). If it is not specified, the handler function is called in the context of the event bus.
+	 * @since 1.32.0
+	 * @return {sap.ui.core.EventBus} Returns <code>this</code> to allow method chaining
+	 * @public
+	 */
+	EventBus.prototype.subscribeOnce = function(sChannelId, sEventId, fnFunction, oListener){
+		if (typeof (sEventId) === "function") {
+			oListener = fnFunction;
+			fnFunction = sEventId;
+			sEventId = sChannelId;
+			sChannelId = null;
+		}
+		
+		function fnOnce() {
+			this.unsubscribe(sChannelId, sEventId, fnOnce, undefined); // 'this' is always the control, due to the context 'undefined' in the attach call below
+			fnFunction.apply(oListener || this, arguments);
+		}
+		return this.subscribe(sChannelId, sEventId, fnOnce, undefined); // a listener of 'undefined' enforce a context of 'this' in fnOnce
+	};
+
 	/**
 	 * Removes a previously subscribed event handler from the event with the given identifier on the given event channel.
 	 *
