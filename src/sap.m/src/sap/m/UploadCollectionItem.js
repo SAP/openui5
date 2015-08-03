@@ -162,7 +162,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 					defaultValue : null
 				}
 			},
-
+			defaultAggregation : "attributes",
 			aggregations : {
 				/**
 				 * Attributes of an uploaded item, for example, 'Uploaded By', 'Uploaded On', 'File Size'
