@@ -146,7 +146,11 @@ sap.ui.define(['jquery.sap.global'],
 		var rm = oRenderManager;
 	
 		rm.write("<div class='sapUiUx3TVIconBar'>");
-		rm.writeIcon(oControl.getIcon(),["sapUiUx3TVIcon"],{role:'presentation', id: oControl.getId() + '-swatch'});
+		rm.writeIcon(oControl.getIcon(),["sapUiUx3TVIcon"],{
+			role: 'presentation',
+			id: oControl.getId() + '-swatch',
+			title: null // prevent default icon tooltip
+		});
 		rm.write("<div class='sapUiUx3TVTitle'>");
 		rm.write("<span role='heading' aria-level='2' class='sapUiUx3TVTitleFirst'");
 		rm.writeAttributeEscaped("title", oControl.getTitle());
