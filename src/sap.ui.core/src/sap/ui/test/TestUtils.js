@@ -130,6 +130,11 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		 *
 		 * @param {object} oSandbox
 		 *   a Sinon sandbox as created using <code>sinon.sandbox.create()</code>
+		 * @param {string} sBase
+		 *   The base path for <code>source</code> values in the fixture. The path must be relative
+		 *   to the <code>test</code> folder of the <code>sap.ui.core</code> project, typically it
+		 *   should start with "sap". It must not end with '/'.
+		 *   Example: <code>"sap/ui/core/qunit/model"</code>
 		 * @param {map} mFixture
 		 *   The fixture. Each key represents a URL to respond to. The value is an object that may
 		 *   have the following properties:
@@ -142,15 +147,14 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		 *     case the header <code>Content-Type</code> is determined from the source name's
 		 *     extension.
 		 *   </ul>
-		 * @param {string} [sBase]
-		 *   The base path for <code>source</code> values in the fixture
 		 */
-		useFakeServer : function (oSandbox, mFixture, sBase) {
+		useFakeServer : function (oSandbox, sBase, mFixture) {
 			var oHeaders,
 				sMessage,
 				sPath,
 				oResponse,
 				fnRestore,
+				oResult,
 				oServer,
 				sUrl,
 				mUrls = {};
@@ -165,16 +169,24 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 				return "application/x-octet-stream";
 			}
 
+			sBase = "/" + window.location.pathname.split("/")[1] + "/test-resources/" + sBase + "/";
 			for (sUrl in mFixture) {
 				oResponse = mFixture[sUrl];
 				oHeaders = oResponse.headers || {};
 				if (oResponse.source) {
-					sPath = sBase ? sBase + '/' + oResponse.source : oResponse.source;
+					sPath = sBase + oResponse.source;
 					if (!mMessageForPath[sPath]) {
-						mMessageForPath[sPath] = jQuery.sap.syncGetText(sPath, "", null);
+						oResult = jQuery.sap.sjax({
+							url: sPath,
+							dataType: "text"
+						});
+						if (!oResult.success) {
+							throw new Error(sPath + ": resource not found");
+						}
+						mMessageForPath[sPath] = oResult.data;
 					}
 					sMessage = mMessageForPath[sPath];
-					oHeaders["Content-Type"] = contentType(sPath);
+					oHeaders["Content-Type"] = oHeaders["Content-Type"] || contentType(sPath);
 				} else {
 					sMessage = oResponse.message || "";
 				}

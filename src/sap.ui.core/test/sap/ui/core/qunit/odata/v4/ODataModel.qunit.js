@@ -63,7 +63,8 @@ sap.ui.require([
 		beforeEach : function () {
 			this.oSandbox = sinon.sandbox.create();
 			if (!bRealOData) {
-				TestUtils.useFakeServer(this.oSandbox, mFixture, "data");
+				TestUtils.useFakeServer(this.oSandbox, "sap/ui/core/qunit/odata/v4/data",
+					mFixture);
 			}
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();

@@ -11,7 +11,7 @@ sap.ui.require([
 	/*... max-nested-callbacks: 0 */
 	"use strict";
 
-	var TestControl = ManagedObject.extend("sap.ui.core.test.TestControl", {
+	var TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataPropertyBinding", {
 			metadata: {
 				properties: {
 					text: "string"

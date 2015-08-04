@@ -14,10 +14,10 @@ sap.ui.require([
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
-	var TestControl = ManagedObject.extend("sap.ui.core.test.TestControl", {
+	var TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataListBinding", {
 		metadata : {
 			aggregations : {
-				items : {multiple : true, type : "sap.ui.core.test.TestControl"}
+				items : {multiple : true, type : "test.sap.ui.model.odata.v4.ODataListBinding"}
 			}
 		}
 	});
