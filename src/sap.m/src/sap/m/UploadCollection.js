@@ -1371,7 +1371,16 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype._handleEdit = function(oEvent, oItem) {
+		var i,
+			sItemId = oItem.getId(),
+			cItems = this.aItems.length;
 		if (this.sErrorState !== "Error") {
+			for (i = 0; i < cItems ; i++) {
+				if (this.aItems[i].getId() === sItemId) {
+					this.aItems[i]._status = "Edit";
+					break;
+				}
+			}
 			oItem._status = "Edit";
 			this.editModeItem = oEvent.getSource().getId().split("-editButton")[0];
 			this.invalidate();
