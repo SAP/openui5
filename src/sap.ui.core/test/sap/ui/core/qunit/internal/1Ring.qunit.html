@@ -7,6 +7,17 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<base href="../">
+	<!--[if lte IE 9]><script type="text/javascript">
+		(function() {
+			// The IE9 implementation of the <base> tag is not compliant with the HTML5 spec.
+			// It still requires an absolute URL (as in HMTL 4) and ignores relative URLs.
+			// By re-assigning the href attribute, it becomes an absolute URL and IE9 no longer
+			// ignores it.
+			var baseTag = document.getElementsByTagName('base')[0];
+			baseTag.href = baseTag.href;
+		})();
+	</script><![endif]-->
 	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
