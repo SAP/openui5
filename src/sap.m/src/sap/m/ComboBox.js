@@ -141,7 +141,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 			var that = this;
 
 			oPopover.open = function() {
-				return this.openBy(that.getFocusDomRef());
+				return this.openBy(that);
 			};
 		};
 
