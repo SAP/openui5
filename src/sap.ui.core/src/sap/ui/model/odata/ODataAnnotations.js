@@ -1014,10 +1014,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 	 */
 	ODataAnnotations.prototype.enrichFromPropertyValueAttributes = function(mAttributes, oNode, mAlias) {
 		var mIgnoredAttributes = { "Property" : true, "Term": true, "Qualifier": true };
+		
+		var fnReplaceAlias = function(sValue) {
+			return this.replaceWithAlias(sValue, mAlias);
+		}.bind(this);
 
 		for (var i = 0; i < oNode.attributes.length; i += 1) {
 			if (!mIgnoredAttributes[oNode.attributes[i].name]) {
-				mAttributes[oNode.attributes[i].name] = this.replaceWithAlias(oNode.attributes[i].value, mAlias);
+				var sName = oNode.attributes[i].name;
+				var sValue = oNode.attributes[i].value;
+				
+				// Special case: EnumMember can contain a space separated list of properties that must all have their
+				// aliases replaced
+				if (sName === "EnumMember" && sValue.indexOf(" ") > -1) {
+					var aValues = sValue.split(" ");
+					mAttributes[sName] = aValues.map(fnReplaceAlias).join(" ");
+				} else {
+					mAttributes[sName] = this.replaceWithAlias(sValue, mAlias);
+				}
 			}
 		}
 
