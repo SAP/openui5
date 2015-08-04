@@ -1193,7 +1193,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 			bFinal: false /* to allow mobile to overwrite  */
 		};
 	}
-	
+
 	//implement FileUploader helper factory with commons controls
 	jQuery.sap.setObject("sap.ui.unified.FileUploaderHelper", {
 		createTextField: function(sId){
@@ -1207,9 +1207,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 			var oButton = new sap.ui.commons.Button();
 			return oButton;
 		},
+		addFormClass: function(){ return null; },
 		bFinal: false /* to allow mobile to overwrite  */
 	});
-	
+
 	//implement table helper factory with m controls
 	//possible is set before layout lib is loaded.
 	jQuery.sap.setObject("sap.ui.table.TableHelper", {

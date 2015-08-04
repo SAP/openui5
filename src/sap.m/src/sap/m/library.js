@@ -2711,6 +2711,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var oButton = new sap.m.Button();
 			return oButton;
 		},
+		addFormClass: function(){ return "sapUiFUM"; },
 		bFinal: true
 	});
 
