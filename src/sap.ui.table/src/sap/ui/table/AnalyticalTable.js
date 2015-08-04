@@ -244,21 +244,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		}
 	};
 	
-	/**
-	 * Removes complete selection.
-	 *
-	 * @type sap.ui.table.Table
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	AnalyticalTable.prototype.clearSelection = function() {
-		var oBinding = this.getBinding("rows");
-		if (oBinding && oBinding.clearSelection) {
-			oBinding.clearSelection();
-		}
-		return this;
-	};
-	
 	AnalyticalTable.prototype._sanitizeBindingInfo = function (oBindingInfo) {
 		var sPath,
 			oTemplate,
