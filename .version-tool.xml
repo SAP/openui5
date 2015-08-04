@@ -19,8 +19,5 @@
       "src/sap.ui.commons/pom.xml": "1"
     }
   },
-  "lastPerVersion": {
-    "rel-1.30": "4013ccfdf1d6f13b138fa9074cdba8aa2f2f4b61"
-  },
-  "lastCommitId": ""
+  "lastCommitId": "4013ccfdf1d6f13b138fa9074cdba8aa2f2f4b61"
 }
