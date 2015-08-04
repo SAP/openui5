@@ -243,6 +243,12 @@ function runODataAnnotationTests() {
 			annotations      : "fakeService://testdata/odata/empty-collection.xml",
 			serviceValid     : true,
 			annotationsValid : "all"
+		},
+		"Multiple Enums": {
+			service          : "fakeService://testdata/odata/northwind/",
+			annotations      : "fakeService://testdata/odata/multiple-enums.xml",
+			serviceValid     : true,
+			annotationsValid : "all"
 		}
 	};
 
@@ -2180,5 +2186,61 @@ function runODataAnnotationTests() {
 	
 	asyncTest("V1: Empty collection", fnTestEmptyCollection.bind(this, 1));
 	asyncTest("V2: Empty collection", fnTestEmptyCollection.bind(this, 2));
+
+
+
+	var fnTestEmptyCollection = function(iModelVersion) {
+		expect(16);
+
+		var clock = sinon.useFakeTimers();
+		var mTest = mAdditionalTestsServices["Multiple Enums"];
+		
+		var oModel;
+		if (iModelVersion == 1) {
+			oModel = new sap.ui.model.odata.ODataModel(mTest.service, {
+				annotationURI : mTest.annotations,
+				bAsync: true
+			});
+		} else if (iModelVersion == 2) {
+			oModel = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+				annotationURI : mTest.annotations,
+			});
+		} else {
+			ok(false, "Unknown ODataModel version requested for test");
+			return;
+		}
+
+		oModel.attachAnnotationsLoaded(function() {
+			var oMetadata = oModel.getServiceMetadata();
+			var oAnnotations = oModel.getServiceAnnotations();
+			
+			ok(!!oMetadata, "Metadata is available.");
+			ok(!!oAnnotations, "Annotations are available.");
+			
+			deepContains(
+				oAnnotations["ui5.test.Annotation"],
+				{
+					"ui5.test.SimpleEnum": {
+						"Test": {
+							"EnumMember" : "ui5.test.Value"
+						}
+					},
+					"ui5.test.MultipleEnums": {
+						"Test": {
+							"EnumMember" : "ui5.test.Value1 ui5.test.Value2"
+						}
+					}
+				},
+				"Multiple Enums have their aliases correctly replaced"
+			);
+			
+			start();
+		});
+		
+		clock.tick(500);
+	};
 	
+	asyncTest("V1: Multiple Enums", fnTestEmptyCollection.bind(this, 1));
+	asyncTest("V2: Multiple Enums", fnTestEmptyCollection.bind(this, 2));
+
 }
