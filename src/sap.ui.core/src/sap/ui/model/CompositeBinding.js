@@ -235,7 +235,10 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 			if (oBinding.getBindingMode() == BindingMode.OneTime) {
 				oBinding.detachChange(that.fChangeHandler);
 			}
-			that.checkUpdate();
+			/*bForceUpdate true gets lost (e.g. checkupdate(true) on model); But if a embedded binding fires a change we could
+			 * call checkupdate(true) so we handle both cases: a value change of the binding and a checkupdate(true)
+			 */
+			that.checkUpdate(true);
 		};
 		this.attachEvent("change", fnFunction, oListener);
 		if (this.aBindings) {
