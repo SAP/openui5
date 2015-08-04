@@ -625,11 +625,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				// text-editing mode disturbs the usability experience (it blocks the UI in some devices)
 				// note: This occurs only in some specific mobile devices
 				if (sap.ui.Device.system.desktop) {
-					jQuery.sap.delayedCall(0, this, function() {
+					setTimeout(function() {
 						if (document.activeElement === this.getFocusDomRef()) {
 							this.selectText(0, this.getValue().length);
 						}
-					});
+					}.bind(this), 0);
 				}
 
 				// open the message pop-up
