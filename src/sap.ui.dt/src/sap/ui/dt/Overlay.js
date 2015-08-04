@@ -223,6 +223,17 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		this.fireDestroyed();
 	};
 
+	/*
+	 * Called before Overlay rendering phase
+	 * @protected
+	 */
+	Overlay.prototype.onBeforeRendering = function() {
+		// UI5 restore focus won't restore focus on overlay, because DOM ref isn't changed
+		if (this.hasFocus()) {
+			this._bRestoreFocus = true;
+		}
+	};
+
 	/** 
 	 * Called after Overlay rendering phase
 	 * @protected
@@ -232,6 +243,12 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 
 		if (this._oDomRef) {
 			this._updateDom();
+		}
+
+		if (this._bRestoreFocus) {
+			delete this._bRestoreFocus;
+
+			this.focus();
 		}
 
 	};
