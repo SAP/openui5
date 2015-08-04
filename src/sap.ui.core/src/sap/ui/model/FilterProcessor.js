@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
+	function(jQuery, Device) {
 	"use strict";
 
 	/**
@@ -30,6 +30,11 @@ sap.ui.define(['jquery.sap.global'],
 	FilterProcessor.apply = function(aData, aFilters, fnGetValue){
 		if (!aFilters || aFilters.length == 0) {
 			return aData;
+		}
+		// apply normalize polyfill to non mobile browsers when it is a string filter
+		if (!String.prototype.normalize && !Device.browser.mobile
+				&& aData.length && typeof aData[0] == "string") {
+			jQuery.sap.require("jquery.sap.unicode");
 		}
 		var that = this,
 			oFilterGroups = {},
