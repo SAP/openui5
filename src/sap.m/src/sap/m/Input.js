@@ -1348,9 +1348,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			var oItem,
 				aItems = oInput.getSuggestionItems(),
 				aTabularRows = oInput.getSuggestionRows(),
-				sTypedChars = oInput._$input.val(),
+				sTypedChars = oInput._$input.val() || "",
 				oList = oInput._oList,
-				bFilter = sTypedChars && sTypedChars.length > 0,
+				bFilter = oInput.getFilterSuggests(),
 				aHitItems = [],
 				iItemsLength = 0,
 				oPopup = oInput._oSuggestionPopup,
@@ -1367,11 +1367,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				if (oInput._oList instanceof Table) {
 					oList.removeSelections(true);
 				} else {
+					//TODO: avoid flickering when !bFilter
 					oList.destroyItems();
 				}
 			}
 
-			if (!bFilter && oInput.getFilterSuggests()) {
+			// hide suggestions list/table if the number of characters is smaller than limit
+			if (sTypedChars.length < oInput.getStartSuggestion()) {
 				// when the input has no value, close the Popup when not runs on the phone because the opened dialog on phone shouldn't be closed.
 				if (!oInput._bUseDialog) {
 					oInput._iPopupListSelectedIndex = -1;
@@ -1386,8 +1388,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				oInput.$("inner").removeAttr("aria-haspopup");
 				oInput.$("inner").removeAttr("aria-activedescendant");
 				return false;
-			} else {
-				bFilter = oInput.getFilterSuggests();
 			}
 
 			if (oInput._hasTabularSuggestions()) {
@@ -1437,7 +1437,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				} else {
 					sAriaText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUT_SUGGESTIONS_MORE_HITS", iItemsLength);
 				}
-				this.$("inner").attr("aria-haspopup", "true");
+				oInput.$("inner").attr("aria-haspopup", "true");
 
 				if (!oInput._hasTabularSuggestions()) {
 					for (i = 0; i < iItemsLength; i++) {
