@@ -1375,6 +1375,193 @@
 
 			oRouter.destroy();
 		});
+
+		QUnit.module("nested components", {
+			beforeEach: function() {
+				jQuery.sap.require("sap.ui.core.UIComponent");
+				hasher.setHash("");
+				var that = this;
+				this.fnInitRouter = function() {
+					sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
+					this._router = this.getRouter();
+					this._router.initialize();
+				}
+
+				var ParentComponent = sap.ui.core.UIComponent.extend("parent.component", {
+					metadata : {
+						routing:  {
+							routes: [
+								{
+									pattern: "category/{id}",
+									name: "category"
+								}
+							]
+						}
+					},
+					createContent: function() {
+						that.oChildComponent = new ChildComponent("child");
+						return sap.ui.jsview("view", {
+							content: that.oChildComponent
+						});
+					},
+					init : that.fnInitRouter
+				});
+
+				var ChildComponent = sap.ui.core.UIComponent.extend("child.component", {
+					metadata : {
+						routing:  {
+							routes: [
+								{
+									pattern: "product/{id}",
+									name: "product",
+									parent: "parent.component:category"
+								}
+							]
+						}
+					},
+					init : that.fnInitRouter
+				});
+				this.oParentComponent = new ParentComponent("parent");
+			},
+			afterEach: function () {
+				this.oParentComponent.destroy();
+				this.oChildComponent.destroy();
+			}
+		});
+
+		QUnit.test("fire events", function(assert) {
+			// Arrange
+			var oParentRouteMatchedEvent,
+				oParentRouteMatchedEventSpy = sinon.spy(function(oEvent) {
+					// save the oEvent because EventProvider will overwrite it otherwise
+					oParentRouteMatchedEvent = jQuery.extend(true, {}, oEvent);
+				}),
+				oParentRoutePatternMatchedEventSpy = sinon.spy(),
+				oChildRouteMatchedEvent,
+				oChildRouteMatchedEventSpy = sinon.spy(function(oEvent) {
+					oChildRouteMatchedEvent = jQuery.extend(true, {}, oEvent);
+				}),
+				oChildRoutePatternMatchedEventSpy = sinon.spy(),
+				oParentRoute = this.oParentComponent.getRouter().getRoute("category"),
+				oChildRoute = this.oChildComponent.getRouter().getRoute("product"),
+				oParentRouteMatchedSpy = sinon.spy(oParentRoute, "_routeMatched"),
+				oChildRouteMatchedSpy = sinon.spy(oChildRoute, "_routeMatched");
+
+			oParentRoute.attachMatched(oParentRouteMatchedEventSpy);
+			oParentRoute.attachPatternMatched(oParentRoutePatternMatchedEventSpy);
+			oChildRoute.attachMatched(oChildRouteMatchedEventSpy);
+			oChildRoute.attachPatternMatched(oChildRoutePatternMatchedEventSpy);
+
+			// Act
+			hasher.setHash("category/0/product/0");
+
+			// Assert
+			assert.strictEqual(oParentRouteMatchedSpy.callCount, 1, "Parent should be matched");
+			assert.strictEqual(oChildRouteMatchedSpy.callCount, 1, "Child is matched");
+
+			this.clock.tick(0);
+
+			assert.strictEqual(oParentRouteMatchedEventSpy.callCount, 1, "routeMatched fired for parent route");
+			assert.strictEqual(oParentRoutePatternMatchedEventSpy.callCount, 0, "routePatternMatched not fired for parent route");
+			assert.strictEqual(oParentRouteMatchedEvent.getParameter("nestedRoute"), oChildRoute, "childRoute is passed to event listeners");
+			assert.strictEqual(oChildRouteMatchedEventSpy.callCount, 1, "routeMatched fired for child route");
+			assert.strictEqual(oChildRoutePatternMatchedEventSpy.callCount, 1, "routePatternMatched fired for child route");
+			assert.strictEqual(oChildRouteMatchedEvent.getParameter("nestedRoute"), undefined, "no route is passed to event listeners");
+		});
+
+		QUnit.test("nesting for multiple components", function(assert) {
+			// This is a pretty extensive test to cover any number of components beeing nested.
+			// It covers also the scope of the previous test, but on a more generic level.
+
+			// Arrange
+			var that = this,
+				iNumberOfComponents = 3,
+				aComponents = [],
+				aComponentInstances = [],
+				aRoutes = [],
+				aRouteMatchedSpies = [],
+				aRouteMatchedEvents = [],
+				aRouteMatchedEventSpies = [],
+				aRoutePatternMatchedSpies = [],
+				// We declare components in a function to be able to cover any number
+				fnDeclareComponents = function(iDepth) {
+					for (var i = 0; i < iDepth; i++) {
+						(function(i) {
+							var Component = sap.ui.core.UIComponent.extend("component" + i, {
+								metadata : {
+									routing:  {
+										routes: [
+											{
+												pattern: "route" + i + "/{id}",
+												name: "route" + i,
+												// set no parent for the (root-) route
+												parent: (i != 0) ? "component" + (( i - 1 ) + ":route" + ( i - 1 )) : undefined
+											}
+										]
+									}
+								},
+								createContent: function() {
+									// instantiate "child-"routes for all routes except the directly matched one
+									if (i < (iDepth - 1)) {
+										// store pointers to the instances for later usage
+										aComponentInstances[i + 1] = new aComponents[i + 1]("component" + (i + 1));
+										return sap.ui.jsview("view", {
+											content: aComponentInstances[i + 1]
+										});
+									}
+								},
+								init : that.fnInitRouter
+							});
+							aComponents.push(Component);
+						}(i));
+					}
+					return aComponents[0];
+				};
+
+			// start instantion
+			var Component = fnDeclareComponents(iNumberOfComponents);
+			aComponentInstances[0] = new Component("component0");
+
+			// Create spies and attach events for all component instances
+			aComponentInstances.forEach(function(oComponent, i) {
+				aRoutes[i] = oComponent.getRouter().getRoute("route" + i);
+				aRouteMatchedEventSpies[i] = sinon.spy(function(oEvent) {
+					// save the oEvent because EventProvider will overwrite it otherwise
+					aRouteMatchedEvents[i] = jQuery.extend(true, {}, oEvent);
+				});
+				aRouteMatchedSpies[i] = sinon.spy(aRoutes[i], "_routeMatched");
+				aRoutePatternMatchedSpies[i] = sinon.spy();
+				aRoutes[i].attachMatched(aRouteMatchedEventSpies[i])
+				aRoutes[i].attachPatternMatched(aRoutePatternMatchedSpies[i])
+			})
+
+			var sHash = "";
+			for(var i = 0; i < iNumberOfComponents; i++) {
+				sHash += "/route" + i + "/0"
+			}
+
+			// Act
+			// remove the first slash as it will be implicitly added
+			hasher.setHash(sHash.substring(1));
+
+			this.clock.tick(0);
+
+			// Assert
+			aRouteMatchedEvents.forEach(function(oEvent, i, a) {
+				if(i === a.length - 1) {
+					assert.strictEqual(oEvent.getParameter("nestedRoute"), undefined, "no nested route is passed to the directly matched " + oEvent.getParameter("name"));
+					assert.strictEqual(aRoutePatternMatchedSpies[i].callCount, 1, "pattern matched has been fired for the directly matched " + oEvent.getParameter("name"));
+				} else {
+					assert.strictEqual(oEvent.getParameter("nestedRoute"), aRoutes[i+1], aRoutes[i+1] + " nested route is passed to " + oEvent.getParameter("name"));
+					assert.strictEqual(aRoutePatternMatchedSpies[i].callCount, 0, "pattern matched has not been fired for " + oEvent.getParameter("name"));
+				}
+			});
+
+			// CleanUp
+			aComponentInstances.forEach(function(oComponent) {
+				oComponent.destroy();
+			});
+		});
 	})();
 </script>
 </head>
