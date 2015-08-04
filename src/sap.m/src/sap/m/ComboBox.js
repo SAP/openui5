@@ -648,6 +648,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 		 * @private
 		 */
 		ComboBox.prototype.onsapfocusleave = function(oEvent) {
+			ComboBoxBase.prototype.onsapfocusleave.apply(this, arguments);
 			var oPicker = this.getAggregation("picker");
 
 			if (!oEvent.relatedControlId || !oPicker) {

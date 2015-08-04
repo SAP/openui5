@@ -7476,6 +7476,7 @@
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
 				oComboBox.getFocusDomRef().blur();
+				this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
 				// assert
 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
@@ -7545,6 +7546,7 @@
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
 				oComboBox.getFocusDomRef().blur();
+				this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
 				// assert
 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
@@ -7619,6 +7621,7 @@
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.HOME);
 				oComboBox.getFocusDomRef().blur();
+				this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
 				// assert
 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
@@ -7693,6 +7696,7 @@
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.END);
 				oComboBox.getFocusDomRef().blur();
+				this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
 				// assert
 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
@@ -7771,6 +7775,7 @@
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
 				oComboBox.getFocusDomRef().blur();
+				this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
 				// assert
 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
@@ -7853,6 +7858,7 @@
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
 				oComboBox.getFocusDomRef().blur();
+				this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
 				// assert
 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
@@ -7921,6 +7927,7 @@
 				// act
 				oComboBox.focus();
 				oComboBox.getFocusDomRef().blur();	// the DOM value has not changed => the change event should not be fired again
+				this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
 				// assert
 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is not fired');

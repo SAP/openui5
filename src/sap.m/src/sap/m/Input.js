@@ -782,9 +782,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				&& oFocusedControl
 				&& jQuery.sap.containsOrEquals(oPopup.getDomRef(), oFocusedControl.getFocusDomRef())
 			)) {
-			// This keeps the inheritance chain to the InputBase
-			// sap.m.Input connects onsapfocusleave to InputBase's onfocusout because only in onsapfocusleave the document.activeElement is updated and the needed check can be done
-			InputBase.prototype.onfocusout.apply(this, [oEvent]);
+			InputBase.prototype.onsapfocusleave.apply(this, arguments);
 		}
 	};
 
@@ -1512,6 +1510,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	};
 
 	Input.prototype.onfocusout = function(oEvent) {
+		InputBase.prototype.onfocusout.apply(this, arguments);
 		this.$().removeClass("sapMInputFocused");
 		this.closeValueStateMessage(this);
 	};
