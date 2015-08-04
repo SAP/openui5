@@ -1,0 +1,113 @@
+<mvc:View xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:table="sap.ui.table"
+	controllerName="sap.ui.table.testApps.SimpleOData"
+	>
+	
+	<Panel 
+		expandable="true"
+		expanded="true"
+		width="auto" 
+		class="sapUiResponsiveMargin sapUiNoContentPadding">
+		<headerToolbar>
+			<Toolbar>
+				<Title text="Table/Binding settings" level="H2"/>
+				<ToolbarSpacer />
+				<Button icon="sap-icon://restart" press="onCreateTableClick"/>
+			</Toolbar>
+		</headerToolbar>
+		<content>
+			<f:Form id="testForm"
+				editable="true">
+				<f:layout>
+					<f:ResponsiveGridLayout
+						labelSpanL="3"
+						labelSpanM="3"
+						emptySpanL="4"
+						emptySpanM="4"
+						columnsL="1"
+						columnsM="1" />
+				</f:layout>
+				<f:formContainers>
+					<f:FormContainer>
+						<f:formElements>
+							<f:FormElement label="Service URL">
+								<f:fields>
+									<Input value="{/serviceURL}" id="serviceURL"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Collection">
+								<f:fields>
+									<Input value="{/collection}" id="collection"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="$select properties">
+								<f:fields>
+									<Input value="{/selectProperties}" id="selectProperties"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="CountMode">
+								<f:fields>
+									<Select width="100%" id="countMode" selectedKey="{/countMode}">
+										<items>
+											<core:Item text="Request" key="Request"/>
+											<core:Item text="Inline" key="Inline"/>
+											<core:Item text="Both" key="Both"/>
+											<core:Item text="None" key="None"/>
+										</items>
+									</Select>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="OperationMode">
+								<f:fields>
+									<Select width="100%" id="operationMode" selectedKey="{/operationMode}">
+										<items>
+											<core:Item text="Server" key="Server"/>
+											<core:Item text="Client" key="Client"/>
+											<core:Item text="Auto" key="Auto"/>
+										</items>
+									</Select>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Table Threshold">
+								<f:fields>
+									<Input value="{/tableThreshold}" id="tableThreshold"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="ListBinding Threshold">
+								<f:fields>
+									<Input value="{/bindingThreshold}" id="bindingThreshold"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Application Filter">
+								<f:fields>
+									<Input value="{/filterProperty}" id="filterProperty"/>
+									<Input value="{/filterOperator}" id="filterOperator"/>
+									<Input value="{/filterValue}" id="filterValue"/>
+								</f:fields>
+							</f:FormElement>
+						</f:formElements>
+					</f:FormContainer>
+				</f:formContainers>
+			</f:Form>
+		</content>
+	</Panel>
+	<Panel 
+		expandable="true"
+		expanded="true"
+		width="auto" 
+		class="sapUiResponsiveMargin sapUiNoContentPadding"
+		id="tableContainerPanel">
+		<headerToolbar>
+			<Toolbar>
+				<Title text="Table Container" level="H2" id="tableContainerTitle"/>
+			</Toolbar>
+		</headerToolbar>
+		<content>
+			<table:Table id="tableOData"></table:Table>
+		</content>
+	</Panel>
+</mvc:View>
