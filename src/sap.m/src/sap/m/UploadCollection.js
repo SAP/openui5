@@ -330,26 +330,63 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			 * The event is triggered as soon as the upload request was terminated by the user.
 			 * @since 1.26.2
 			 */
-			uploadTerminated : {}
+			uploadTerminated : {},
+
+			/**
+			 * The event is triggered before the actual upload starts. An event is fired per file. All the necessary header parameters should be set here.
+			 * @since 1.30.2
+			 */
+			beforeUploadStarts : {
+				parameters: {
+					/**
+					 * Specifies the name of the file to be uploaded.
+					 */
+					fileName: {type : "string"},
+					/**
+					 * Adds a header parameter to the file that will be uploaded.
+					 */
+					addHeaderParameter: {type : "function",
+						parameters: {
+							/**
+							 * Specifies a header parameter that will be added
+							 */
+							headerParameter: {type : "sap.m.UploadCollectionParameter"}
+						}
+					},
+					/**
+					 * Returns the corresponding header parameter (type sap.m.UploadCollectionParameter) if available.
+					 */
+					getHeaderParameter: {type : "function",
+						parameters: {
+							/**
+							 * The (optional) name of the header parameter. If no parameter is provided all header parameters are returned.
+							 */
+							headerParameterName: {type : "string"}
+						}
+					}
+				}
+			}
 		}
 	}});
 
 	UploadCollection._uploadingStatus = "uploading";
 	UploadCollection._displayStatus = "display";
 	UploadCollection._toBeDeletedStatus = "toBeDeleted";
-	UploadCollection.prototype._requestIdName = "requestId";
-	UploadCollection.prototype._requestIdValue = 0;
-	UploadCollection._placeholderCamera = 'sap-icon://camera';
 	UploadCollection._pendingUploadStatus = "pendingUploadStatus"; // UploadCollectionItem has this status only if UploadCollection is used with the property 'instantUpload' = false
-	UploadCollection.prototype._iFUCounter = 0; // it is necessary to count FileUploader instances in case of 'instantUpload' = false
-
+	UploadCollection._placeholderCamera = 'sap-icon://camera';
 	/**
 	 * @description This file defines behavior for the control
 	 * @private
 	 */
 	UploadCollection.prototype.init = function() {
 		UploadCollection.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		this._oList = new sap.m.List(this.getId() + "-list", {});
+		this._headerParamConst = {
+			requestIdName : "requestId" + jQuery.now(),
+			fileNameRequestIdName : "fileNameRequestId" + jQuery.now()
+		};
+		this._requestIdValue = 0;
+		this._iFUCounter = 0; // it is necessary to count FileUploader instances in case of 'instantUpload' = false
+		this._oList = new sap.m.List(this.getId() + "-list");
 		this._oList.addStyleClass("sapMUCList");
 		this._cAddItems = 0;
 		this.aItems = [];
@@ -696,7 +733,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		}
 
 		sContainerId = sItemId + "-container";
-		// we have to destroy the container ourselves as sap.ui.core.HTML is preserved by default which leads to problems at rerendering
+		// UploadCollection has to destroy the container as sap.ui.core.HTML is preserved by default which leads to problems at rerendering
 		$container = jQuery.sap.byId(sContainerId);
 		if (!!$container) {
 			$container.remove();
@@ -809,7 +846,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @description Gets a file name which is a sap.m.Link in display mode and a sap.m.Input with a description (file extension) in edit mode
 	 * @param {sap.ui.core.Item} oItem Base information to generate the list items
 	 * @param {object} that Context
-	 * @return {sap.m.Link || sap.m.Input} oFileName is a file name of sap.m.Link type in display mode and sap.m.Input type in edit mode
+	 * @return {sap.m.Link | sap.m.Input} oFileName is a file name of sap.m.Link type in display mode and sap.m.Input type in edit mode
 	 * @private
 	 */
 	UploadCollection.prototype._getFileNameControl = function(oItem, that) {
@@ -916,7 +953,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @param {string} sItemId ID of the item being processed
 	 * @param {string} sFileNameLong file name
 	 * @param {object} that Context
-	 * @return {sap.m.Image || sap.ui.core.Icon} oItemIcon
+	 * @return {sap.m.Image | sap.ui.core.Icon} oItemIcon
 	 * @private
 	 */
 	UploadCollection.prototype._createIcon = function(oItem, sItemId, sFileNameLong, that) {
@@ -1625,7 +1662,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					});
 				}
 				that._oFileUploader.addHeaderParameter(new sap.ui.unified.FileUploaderParameter({
-					name : this._requestIdName,
+					name : this._headerParamConst.requestIdName,
 					value: sRequestValue
 				}));
 			}
@@ -1808,7 +1845,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				mParameters : oEvent.getParameters(),
 				// new Stuff
 				files : [{
-					fileName : oEvent.getParameter("fileName"),
+					fileName : oEvent.getParameter("fileName") || sUploadedFile,
 					responseRaw : oEvent.getParameter("responseRaw"),
 					reponse : oEvent.getParameter("response"),
 					status : oEvent.getParameter("status"),
@@ -1874,7 +1911,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			return null;
 		}
 		for (var j = 0; j < oHeaderParams.length; j++) {
-			if (oHeaderParams[j].name === this._requestIdName) {
+			if (oHeaderParams[j].name === this._headerParamConst.requestIdName) {
 				return oHeaderParams[j].value;
 			}
 		}
@@ -1931,6 +1968,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					if (that.getInstantUpload()) {
 						that._onUploadProgress(oEvent);
 					}
+				},
+				uploadStart : function(oEvent) {
+					that._onUploadStart(oEvent);
 				}
 			});
 			var sTooltip = this._oFileUploader.getTooltip();
@@ -1939,6 +1979,51 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			}
 		}
 		return this._oFileUploader;
+	};
+
+	/**
+	 * @description Creates the unique key for a file by concatenating the fileName with its requestId and puts it into the requestHeaders parameter of the FileUploader.
+	 * It triggers the beforeUploadStarts event for applications to add the header parameters for each file.
+	 * @param {jQuery.Event} oEvent
+	 * @private
+	 */
+	UploadCollection.prototype._onUploadStart = function(oEvent) {
+		var oRequestHeaders = {}, i, sRequestIdValue, iParamCounter, sFileName;
+		iParamCounter = oEvent.getParameter("requestHeaders").length;
+		for ( i = 0; i < iParamCounter; i++ ) {
+			if (oEvent.getParameter("requestHeaders")[i].name === this._headerParamConst.requestIdName) {
+				sRequestIdValue = oEvent.getParameter("requestHeaders")[i].value;
+				break;
+			}
+		}
+		sFileName = oEvent.getParameter("fileName");
+		oRequestHeaders = {name: this._headerParamConst.fileNameRequestIdName,
+							value: sFileName + sRequestIdValue};
+		oEvent.getParameter("requestHeaders").push(oRequestHeaders);
+		this.fireBeforeUploadStarts({
+			fileName: sFileName,
+			addHeaderParameter: addHeaderParameter,
+			getHeaderParameter: getHeaderParameter
+		});
+		function addHeaderParameter(oUploadCollectionParameter) {
+			var oRequestHeaders = {name: oUploadCollectionParameter.getName(),
+									value: oUploadCollectionParameter.getValue()};
+			oEvent.getParameter("requestHeaders").push(oRequestHeaders);
+		}
+		function getHeaderParameter(sHeaderParameterName) {
+			var iParamCounter;
+			if (sHeaderParameterName) {
+				iParamCounter = oEvent.getParameter("requestHeaders").length;
+				for ( i = 0; i < iParamCounter; i++ ) {
+					if (oEvent.getParameter("requestHeaders")[i].name === sHeaderParameterName) {
+						return new sap.m.UploadCollectionParameter({
+							name: sHeaderParameterName, value: oEvent.getParameter("requestHeaders")[i].value});
+					}
+				}
+			} else {
+				return oEvent.getParameter("requestHeaders");
+			}
+		}
 	};
 
 	/**
