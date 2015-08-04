@@ -156,7 +156,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._iIconCounter = 0;
 		this._fHoverValue = 0;
 
-		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 
 		if (RatingIndicator._pxCalculations === undefined) {
 			RatingIndicator._pxCalculations = [];

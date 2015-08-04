@@ -43,9 +43,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : ''},
 
 			/**
-			 * If set to true, it sends one or more requests, 
+			 * If set to true, it sends one or more requests,
 			 * trying to get the density perfect version of the image if this version of
-			 * the image doesn't exist on the server. Default value is set to true.
+			 * the image doesn't exist on the server. Default value is set to true.
 			 *
 			 * If bandwidth is key for the application, set this value to false.
 			 */

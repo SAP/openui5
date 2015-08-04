@@ -12,6 +12,7 @@
 		"global-strict": 2,
 		"no-div-regex": 2,
 		"no-floating-decimal": 2,
+		"no-irregular-whitespace": 2,
 		"no-self-compare": 2,
 		"no-mixed-spaces-and-tabs": [2, true],
 		"no-nested-ternary": 2,
@@ -51,7 +52,6 @@
 		"comma-spacing": 0,
 		"no-multi-spaces": 0,
 		"no-shadow": 0,
-		"no-irregular-whitespace": 0,
 		"semi-spacing": 0
 	}
 }

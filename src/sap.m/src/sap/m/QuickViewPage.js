@@ -129,7 +129,7 @@ sap.ui.define([
 
 
 			QuickViewPage.prototype.init =  function() {
-				this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+				this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 
 				try {
 					jQuery.sap.require("sap.ushell.services.CrossApplicationNavigation");

@@ -54,6 +54,7 @@ Ruleset
 |[no-func-assign](http://eslint.org/docs/rules/no-func-assign.html) |error |error | |
 |[no-inner-declarations](http://eslint.org/docs/rules/no-inner-declarations.html)|error |error | |
 |[no-invalid-regexp](http://eslint.org/docs/rules/no-invalid-regexp.html) |error |error | |
+|[no-irregular-whitespace](http://eslint.org/docs/rules/no-irregular-whitespace) |error |error | |
 |[no-negated-in-lhs](http://eslint.org/docs/rules/no-negated-in-lhs.html) |error |error | |
 |[no-obj-calls](http://eslint.org/docs/rules/no-obj-calls.html) |error |error | |
 |[no-regex-spaces](http://eslint.org/docs/rules/no-regex-spaces.html) |error |error | |

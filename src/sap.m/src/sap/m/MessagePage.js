@@ -238,7 +238,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @private
 		 * @returns {sap.m.IBar}
 		 */
-		MessagePage.prototype._getAnyHeader = function() {
+		MessagePage.prototype._getAnyHeader = function() {
 			return this._getInternalHeader();
 		};
 
@@ -248,8 +248,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @private
 		 */
 
-		MessagePage.prototype._getInternalHeader = function() {
-			return this.getAggregation("_page").getAggregation("_internalHeader");
+		MessagePage.prototype._getInternalHeader = function() {
+			return this.getAggregation("_page").getAggregation("_internalHeader");
 		};
 
 

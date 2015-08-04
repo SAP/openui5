@@ -31,7 +31,7 @@ sap.ui.define([
 		 * @alias sap.m.Wizard
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var Wizard = Control.extend("sap.m.Wizard", /** @lends sap.m.Wizard.prototype */ {
+		var Wizard = Control.extend("sap.m.Wizard", /** @lends sap.m.Wizard.prototype */ {
 			metadata: {
 				library: "sap.m",
 				properties: {

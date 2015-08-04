@@ -50,7 +50,7 @@ sap.ui.define(['sap/ui/dt/DOMUtil'],
 	 * @private
 	 */
 	AggregationOverlayRenderer._renderChildOverlays = function(oRm, oAggregationOverlay) {
-		var aChildren = oAggregationOverlay.getChildren() || [];
+		var aChildren = oAggregationOverlay.getChildren() || [];
 		aChildren.forEach(function(oOverlay) {
 			oRm.renderControl(oOverlay);
 		});
