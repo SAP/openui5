@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Opa test for the explored app</title>
+
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-resourceroots='{"test": "./"}'
+			></script>
+
+	<script>
+		(function () {
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+			QUnit.config.autostart = false;
+
+			sap.ui.require(['sap/ui/test/Opa5',
+						'test/page/Common',
+						'sap/ui/test/opaQunit',
+						'test/page/entity',
+						'test/page/master',
+						'test/page/masterHeader',
+						'test/page/sample'
+					],
+					function (Opa5, Common) {
+						"use strict";
+
+						Opa5.extendConfig({
+							viewNamespace: "sap.ui.demokit.explored.view.",
+							arrangements: new Common()
+						});
+
+						// require all journeys
+						sap.ui.require(['test/journey/list'], function () {
+							QUnit.start();
+						});
+
+					});
+		}());
+	</script>
+
+</head>
+<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

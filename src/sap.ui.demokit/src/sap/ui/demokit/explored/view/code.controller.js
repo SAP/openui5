@@ -60,7 +60,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.code", {
 			for (var i = 0 ; i < oConfig.sample.files.length ; i++) {
 				var sFile = oConfig.sample.files[i];
 				var sContent = this.fetchSourceFile(sRef, sFile);
-				
+
 				oData.files.push({
 					name : sFile,
 					raw : sContent,
@@ -76,11 +76,11 @@ sap.ui.controller("sap.ui.demokit.explored.view.code", {
 		var page = this.getView().byId("page");
 		page.scrollTo(0);
 	},
-	
+
 	fetchSourceFile : function (sRef, sFile) {
 		var that = this;
 		var sUrl = sRef + "/" + sFile;
-		
+
 		var fnSuccess = function (result) {
 			that._viewData.component.codeCache[sUrl] = result;
 		};
@@ -114,7 +114,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.code", {
 
 			// mock files
 			for (var j = 0; j < this._aMockFiles.length; j++) {
-				var sMockFile = this._aMockFiles[j]; 
+				var sMockFile = this._aMockFiles[j];
 				if (oFile.raw.indexOf(sMockFile) > -1){
 					ozipFile.file("mockdata/" + sMockFile, this.downloadMockFile(sMockFile));
 				}
@@ -122,11 +122,14 @@ sap.ui.controller("sap.ui.demokit.explored.view.code", {
 		}
 
 		var sRef = jQuery.sap.getModulePath(this._sId);
-		ozipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));	
-		ozipFile.file("index.html", this.createIndexFile(data));	
-		
-		var oContent = ozipFile.generate();
+		ozipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));
+		ozipFile.file("index.html", this.createIndexFile(data));
 
+		var oContent = ozipFile.generate();
+		this._openGeneratedFile(oContent);
+	},
+
+	_openGeneratedFile : function (oContent) {
 		location.href = "data:application/zip;base64," + oContent;
 	},
 
@@ -145,8 +148,8 @@ sap.ui.controller("sap.ui.demokit.explored.view.code", {
 		sIndexFile = sIndexFile.replace(/{{HEIGHT}}/g, sHeight);
 
 		bScrolling = !oData.stretch;
-		sIndexFile = sIndexFile.replace(/{{SCROLLING}}/g, bScrolling);		
-		
+		sIndexFile = sIndexFile.replace(/{{SCROLLING}}/g, bScrolling);
+
 		return sIndexFile;
 	},
 

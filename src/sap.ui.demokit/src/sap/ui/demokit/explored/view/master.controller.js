@@ -18,6 +18,15 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 
 	_sStorageKey : "UI5_EXPLORED_VIEW_SETTINGS",
 
+	_oDefaultSettings: {
+		filter : {},
+		groupProperty : "category",
+		groupDescending : false,
+		compactOn : false,
+		themeActive : "sap_bluecrystal",
+		rtl: false
+	},
+
 	_mGroupFunctions : {
 		"name" : function (oContext) {
 			var sKey = oContext.getProperty("name").charAt(0);
@@ -36,7 +45,6 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 	// ====== init ====================================================================
 
 	onInit : function () {
-
 		// subscribe to routing
 		this.router = sap.ui.core.UIComponent.getRouterFor(this);
 		this.router.attachRoutePatternMatched(this.onRouteMatched, this);
@@ -44,6 +52,9 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		// subscribe to app events
 		this._component = sap.ui.core.Component.getOwnerComponentFor(this.getView());
 		this._component.getEventBus().subscribe("app", "selectEntity", this.onSelectEntity, this);
+
+		// set the group to the default used in the view
+		this._sCurrentGroup = this._oDefaultSettings.groupProperty;
 
 		// subscribe to nav container events
 		this.getView().addEventDelegate({
@@ -68,7 +79,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 				var oToggleFullScreenBtn = oView.byId("toggleFullScreenBtn");
 				if (oToggleFullScreenBtn) {
 					sap.ui.demokit.explored.util.ToggleFullScreenHandler.updateControl(oToggleFullScreenBtn, oView);
-				} 
+				}
 			}
 			return;
 		}
@@ -83,47 +94,47 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 			this._oSettingsDialog = new sap.ui.xmlfragment("sap.ui.demokit.explored.view.appSettingsDialog", this);
 			this.getView().addDependent(this._oSettingsDialog);
 		}
-		
+
 //		var oCaller = oEvent.getSource();
 		jQuery.sap.delayedCall(0, this, function(){
-			
-			// variable for convenience 
+
+			// variable for convenience
 			var oAppSettings = sap.ui.getCore().getConfiguration();
 			var sCompactMode = (this._oViewSettings.compactOn) ? "compactOn" : "compactOff";
 			var sRTL = (this._oViewSettings.rtl) ? "RTLOn" : "RTLOff";
-			
+
 			// handling of URI parameters
 			var sUriParamTheme = jQuery.sap.getUriParameters().get("sap-theme");
 			var sUriParamRTL = jQuery.sap.getUriParameters().get("sap-ui-rtl");
-			
+
 			// setting the button for Theme
 			if (sUriParamTheme){
 				sap.ui.getCore().byId("ThemeButtons").setSelectedButton(sUriParamTheme);
 			} else {
 				sap.ui.getCore().byId("ThemeButtons").setSelectedButton(oAppSettings.getTheme());
 			}
-			
+
 			// setting the button for Compact Mode
 			sap.ui.getCore().byId("CompactModeButtons").setSelectedButton(sCompactMode);
-			
+
 			// setting the RTL Button
 			if (sUriParamRTL){
 				sap.ui.getCore().byId("RTLButtons").setSelectedButton(sUriParamRTL ? "RTLOn" : "RTLOff");
 			} else {
 				sap.ui.getCore().byId("RTLButtons").setSelectedButton(sRTL);
 			}
-			
-			
-			
+
+
+
 			this._oSettingsDialog.open();
 		});
-		
+
 	},
 
 	onSaveAppSettings : function(oEvent){
 
 		this._oSettingsDialog.close();
-		
+
 		if (!this._oBusyDialog){
 			jQuery.sap.require("sap.m.BusyDialog");
 			this._oBusyDialog = new sap.m.BusyDialog();
@@ -132,11 +143,11 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		var bCompact =  (sap.ui.getCore().byId('CompactModeButtons').getSelectedButton() === "compactOn") ? true : false;
 		var sTheme = sap.ui.getCore().byId('ThemeButtons').getSelectedButton();
 		var bRTL = (sap.ui.getCore().byId('RTLButtons').getSelectedButton() === "RTLOn") ? true : false;
-		
+
 		var bRTLChanged = (bRTL !== this._oViewSettings.rtl);
-		
+
 		// busy dialog
-		this._oBusyDialog.open();	
+		this._oBusyDialog.open();
 		jQuery.sap.delayedCall(1000, this, function(){
 			this._oBusyDialog.close();
 		});
@@ -146,19 +157,19 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		this._oViewSettings.themeActive = sTheme;
 		this._oViewSettings.rtl = bRTL;
 		var s = JSON.stringify(this._oViewSettings);
-		this._oStorage.put(this._sStorageKey, s);		
-		
+		this._oStorage.put(this._sStorageKey, s);
+
 		// handle settings change
 		this._component.getEventBus().publish("app", "applyAppConfiguration", {
 			themeActive : sTheme,
 			compactOn : bCompact
 		});
-		
+
 		if (bRTLChanged){
 			this._handleRTL(bRTL);
 		}
 	},
-	
+
 	onDialogCloseButton : function(){
 
 		this._oSettingsDialog.close();
@@ -191,7 +202,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		} else {
 			oList.removeSelections();
 		}
-		
+
 		// TODO scroll to list item
 	},
 
@@ -199,7 +210,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 
 		// create dialog on demand
 		if (!this._oVSDialog) {
-			this._oVSDialog = sap.ui.xmlfragment("sap.ui.demokit.explored.view.viewSettingsDialog", this);
+			this._oVSDialog = sap.ui.xmlfragment(this.getView().getId() ,"sap.ui.demokit.explored.view.viewSettingsDialog", this);
 			this.getView().addDependent(this._oVSDialog);
 		}
 
@@ -251,7 +262,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		// update view
 		this._updateView();
 	},
-	
+
 	onSearch : function () {
 		this._updateView(); // yes this function does a bit too much for search but it makes my life easier and I see no delay
 	},
@@ -276,7 +287,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 	_updateView : function () {
 
 		if (!this._oViewSettings) {
-	
+
 			// init the view settings
 			this._initViewSettings();
 
@@ -285,9 +296,9 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 				themeActive : this._oViewSettings.themeActive,
 				compactOn : this._oViewSettings.compactOn
 			});
-		
+
 		}
-		
+
 
 		// update the filter bar
 		this._updateFilterBarDisplay();
@@ -318,14 +329,22 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		oView.byId("vsFilterBar").setVisible(sFilterText.length > 0);
 		oView.byId("vsFilterLabel").setText(sFilterText);
 	},
-	
+
 	/**
 	 * Updates the binding of the master list and applies filters and groups
+	 *
+	 * Dear maintainer having more time than i currently have -
+	 * this function does way too much an gets called everywhere the list gets rerendered a lot of times.
+	 * So i build in some very small detection to at least reduce the rerenderings when starting the app.
+	 * For future refactorings this has to be split up into functions responsible for filtering sorting and only
+	 * trigger those filters if a user really changed them. currently everytime the list items will be destroyed.
 	 */
 	_updateListBinding : function () {
 
 		var aFilters = [],
 			aSorters = [],
+			bFilterChanged = false,
+			bGroupChanged = false,
 			oSearchField = this.getView().byId("searchField"),
 			oList = this.getView().byId("list"),
 			oBinding = oList.getBinding("items");
@@ -333,6 +352,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		// add filter for search
 		var sQuery = oSearchField.getValue();
 		if (sQuery) {
+			bFilterChanged = true;
 			aFilters.push(new sap.ui.model.Filter("searchTags", "Contains", sQuery));
 		}
 
@@ -344,27 +364,37 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 				aPropertyFilters.push(new sap.ui.model.Filter(sProperty, sOperator, aValue));
 			});
 			var oFilter = new sap.ui.model.Filter(aPropertyFilters, false); // second parameter stands for "or"
+			bFilterChanged = true;
 			aFilters.push(oFilter);
 		});
 
 		// filter
-		if (aFilters.length === 0) {
+		if (bFilterChanged && aFilters.length === 0) {
 			oBinding.filter(aFilters, "Application");
-		} else {
+		} else if (bFilterChanged && aFilters.length > 0) {
 			var oFilter = new sap.ui.model.Filter(aFilters, true); // second parameter stands for "and"
 			oBinding.filter(oFilter, "Application");
 		}
 
+		if (this._oViewSettings.groupProperty && this._oViewSettings.groupProperty !== this._sCurrentGroup) {
+			bGroupChanged = true;
+		} else if (this._oViewSettings.groupProperty && this._oViewSettings.groupDescending !== this._bCurrentlyGroupedDescending) {
+			bGroupChanged = true;
+		}
+
 		// group
-		if (this._oViewSettings.groupProperty) {
+		if (bGroupChanged) {
 			var oSorter = new sap.ui.model.Sorter(
 				this._oViewSettings.groupProperty,
 				this._oViewSettings.groupDescending,
 				this._mGroupFunctions[this._oViewSettings.groupProperty]);
 			aSorters.push(oSorter);
+			aSorters.push(new sap.ui.model.Sorter("name", false));
+			oBinding.sort(aSorters);
 		}
-		aSorters.push(new sap.ui.model.Sorter("name", false));
-		oBinding.sort(aSorters);
+
+		this._sCurrentGroup = this._oViewSettings.groupProperty;
+		this._bCurrentlyGroupedDescending = this._oViewSettings.groupDescending;
 
 		// memorize that this function was executed at least once
 		this._bIsViewUpdatedAtLeastOnce = true;
@@ -379,17 +409,10 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		if (!sJson) {
 
 			// local storage is empty, apply defaults
-			this._oViewSettings = {
-				filter : {},
-				groupProperty : "category",
-				groupDescending : false,
-				compactOn : false,
-				themeActive : "sap_bluecrystal",
-				rtl: false
-			};
+			this._oViewSettings = this._oDefaultSettings;
 
 		} else {
-			
+
 
 
 			// parse
@@ -423,25 +446,25 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 			if (!this._oViewSettings.hasOwnProperty("compactOn")) { // compactOn was introduced later
 				this._oViewSettings.compactOn = false;
 			}
-			
+
 			if (!this._oViewSettings.hasOwnProperty("themeActive")) { // themeActive was introduced later
 				this._oViewSettings.themeActive = "sap_bluecrystal";
 			}
-			
+
 			if (!this._oViewSettings.hasOwnProperty("rtl")) { // rtl was introduced later
 				this._oViewSettings.rtl = false;
 			}
-			
+
 			// handle RTL-on in settings as this need a reload
 			if (this._oViewSettings.rtl && !jQuery.sap.getUriParameters().get('sap-ui-rtl')){
 				this._handleRTL(true);
 			}
 		}
 	},
-	
+
 	// trigger reload w/o URL-Parameter;
 	_handleRTL : function(bSwitch){
-		
+
 		jQuery.sap.require("sap.ui.core.routing.HashChanger");
 		var oHashChanger = new sap.ui.core.routing.HashChanger();
 		var sHash = oHashChanger.getHash();
@@ -455,7 +478,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		}
 
 	},
-	
+
 	getGroupHeader: function (oGroup){
 		return new sap.m.GroupHeaderListItem( {
 			title: oGroup.key,

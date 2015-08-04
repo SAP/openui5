@@ -96,6 +96,7 @@
 							visible="{/show/samples}" >
 							<Table
 								class="myTable"
+								id="table"
 								items="{entity>samples}"
 								fixedLayout="false"
 								showSeparators="Inner" >
