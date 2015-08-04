@@ -10,16 +10,43 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 	/**
 	 * Constructor for a new DateRangeSelection.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * This is a date range selection control. It internal uses the sap.ui.unified.Calendar. So the sap.ui.unified library should be loaded from applications using this control.
+	 * This is a date range input control with a calendar as date picker.
+	 *
+	 * A date range can be entered using a calendar that opens in a popup. Alternatively a value can be entered directly in the input field by typing it in.
+	 * (This is only possible on desktop devices, on mobile devices keyboard input is not possible.)
+	 * If a date range is entered by typing it into the input field, it must fit to the used date format and locale. (See <code>sap.ui.core.format.DateFormat</code>)
+	 *
+	 * There are two options to provide a date for the <code>DateRangeSelection</code>.
+	 * You can put a date range as a string to the property <code>value</code> or you can put JavaScript Date objects to the properties <code>dateValue</code> and <code>secondDateValue</code>.
+	 * Only one of the properties should be used at one time, but they are synchronized internally.
+	 * What property to use depends on the use case of the application.
+	 * <ul>
+	 * <li>Use the <code>value</code> property if the date range is already provided as a formatted string.</li>
+	 * <li>Use the <code>dateValue</code> and <code>secondDateValue</code> properties if the date range is already provided as JavaScript Date objects or you want to work with JavaScript Date objects.</li>
+	 * </ul>
+	 *
+	 * All formatting and parsing of dates from and to strings is done using the {@link sap.ui.core.format.DateFormat}, so read the corresponding documentation if you need some information about this.
+	 *
+	 * Supported format options are pattern-based on Unicode LDML Date Format notation. {@link http://unicode.org/reports/tr35/#Date_Field_Symbol_Table}
+	 *
+	 * For example, if the <code>displayFormat</code> is "MMM d, y", <code>delimiter</code> is "-" and the used locale is English,
+	 * a valid <code>value</code> string is "Jul 29, 2015 - Jul 31, 2015" and it will be displayed in the same way in the input field.
+	 *
+	 * Internally the <code>sap.ui.unified.Calendar</code> is used, but it is only needed if the <code>DateRangeSelection</code> is opened. This means that it is not needed for the initial rendering.
+	 * If the <code>sap.ui.unified</code> library is not loaded before the <code>DateRangeSelection</code> is opened, it will be loaded upon opening.
+	 * This could lead to a waiting time before a <code>DateRangeSelection</code> is opened the first time. To prevent this, applications using the <code>DateRangeSelection</code> should also load
+	 * the <code>sap.ui.unified</code> library.
+	 *
 	 * @extends sap.m.DatePicker
 	 * @version ${version}
 	 *
 	 * @constructor
 	 * @public
+	 * @since 1.22.0
 	 * @alias sap.m.DateRangeSelection
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -29,49 +56,31 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 		properties : {
 
 			/**
-			 * Delimiter of starting and ending date. Default value is "-".
-			 * If no delimiter is given the one defined for the used locale is used.
+			 * Delimiter between start and end date. Default value is "-".
+			 * If no delimiter is given, the one defined for the used locale is used.
 			 */
 			delimiter : {type : "string", group : "Misc", defaultValue : '-'},
 
 			/**
-			 * Ending date of the range.
+			 * The end date of the range as JavaScript Date object. This is independent from any formatter.
+			 *
+			 * <b>Note:</b> If this property is used, the <code>value</code> property should not be changed from the caller.
 			 */
 			secondDateValue : {type : "object", group : "Data", defaultValue : null},
 
 			/**
-			 * Starting date of the range.
-			 * @deprecated Since version 1.22. 
-			 * Former property for starting date - since next release will be not supported. Use dateValue instead.
+			 * Start date of the range.
+			 * @deprecated Since version 1.22.0
+			 * Use <code>dateValue</code> instead.
 			 */
 			from : {type : "object", group : "Misc", defaultValue : null, deprecated: true},
 
 			/**
-			 * Ending date of the range.
-			 * @deprecated Since version 1.22. 
-			 * Former property for ending date - since next release will be not supported. Use secondDateValue instead.
+			 * End date of the range.
+			 * @deprecated Since version 1.22.0
+			 * Use <code>secondDateValue</code> instead.
 			 */
 			to : {type : "object", group : "Misc", defaultValue : null, deprecated: true}
-		},
-		events : {
-
-			/**
-			 * Event thrown in case of change of date range.
-			 */
-			change : {
-				parameters : {
-
-					/**
-					 * Current starting date after change.
-					 */
-					from : {type : "object"}, 
-
-					/**
-					 * Current ending date after change.
-					 */
-					to : {type : "object"}
-				}
-			}
 		}
 	}});
 
@@ -137,6 +146,36 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 		};
 
 		// Overwrite DatePicker's setValue to support two date range processing
+		/**
+		 * Getter for property <code>value</code>.
+		 *
+		 * Returns a date as a string in the format defined in property <code>displayFormat</code>.
+		 *
+		 * <b>Note:</b> As the value string always used the <code>displayFormat</code>, it is both locale-dependent and calendar-type-dependent.
+		 *
+		 * If this property is used, the <code>dateValue</code> property should not be changed from the caller.
+		 *
+		 * @returns {string} the value of property <code>value</code>
+		 * @public
+		 * @name sap.m.DateRangeSelection#getValue
+		 * @function
+		 */
+
+		/**
+		 * Setter for property <code>value</code>.
+		 *
+		 * Expects a date as a string in the format defined in property <code>displayFormat</code>.
+		 *
+		 * <b>Note:</b> As the value string always used the <code>displayFormat</code>, it is both locale-dependent and calendar-type-dependent.
+		 *
+		 * If this property is used, the <code>dateValue</code> property should not be changed from the caller.
+		 *
+		 * @param {string} sValue The new value of the input.
+		 * @return {sap.m.DatePicker} <code>this</code> to allow method chaining.
+		 * @public
+		 * @name sap.m.DateRangeSelection#setValue
+		 * @function
+		 */
 		DateRangeSelection.prototype.setValue = function(sValue) {
 
 			if (sValue !== this.getValue()) {
@@ -180,6 +219,59 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 
 		};
 
+		/**
+		 * Getter for property <code>valueFormat</code>.
+		 *
+		 * <b>Note:</b> Property <code>valueFormat</code> is not supported in the <code>sap.m.DateRangeSelection</code> control.
+		 *
+		 * @return {string} the value of property valueFormat
+		 * @public
+		 * @name sap.m.DateRangeSelection#getValueFormat
+		 * @function
+		 */
+
+		/**
+		 * Setter for property <code>valueFormat</code>.
+		 *
+		 * <b>Note:</b> Property <code>valueFormat</code> is not supported in the <code>sap.m.DateRangeSelection</code> control.
+		 *
+		 * @param {string} sValueFormat New value for property valueFormat
+		 * @return {sap.m.DateRangeSelection} <code>this</code> to allow method chaining
+		 * @public
+		 * @name sap.m.DateRangeSelection#setValueFormat
+		 * @function
+		 */
+		DateRangeSelection.prototype.setValueFormat = function(sValueFormat) {
+
+			// if valueFormat changes the value must be parsed again
+
+			this.setProperty("valueFormat", sValueFormat, true); // no rerendering
+
+			jQuery.sap.log.warning("Property valueFormat is not supported in sap.m.DateRangeSelection control.", this);
+
+			return this;
+
+		};
+
+		DateRangeSelection.prototype.setDisplayFormat = function(sDisplayFormat) {
+
+			// if displayFormat changes the value must be formatted again
+
+			this.setProperty("displayFormat", sDisplayFormat, true); // no rerendering
+			var sOutputValue = this._formatValue(this.getDateValue(), this.getSecondDateValue());
+
+			// as value also used displayFormat update value too
+			this.setProperty("value", sOutputValue, true); // no rerendering
+
+			if (this.getDomRef() && (this._$input.val() !== sOutputValue)) {
+				this._$input.val(sOutputValue);
+				this._curpos = this._$input.cursorPos();
+			}
+
+			return this;
+
+		};
+
 		//Following setters/getters are due to backward compatibility with original primary version of composite sap.m.DateRangeSelection,
 		//that consisted of original primary sap.m.DateRangeSelection
 		DateRangeSelection.prototype.setFrom = function(oFrom) {
@@ -201,14 +293,30 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 		// Overwrite DatePicker's setDateValue to support two date range processing
 
 		/**
+		 * Getter for property <code>dateValue</code>.
+		 *
+		 * The start date of the range as JavaScript Date object. This is independent from any formatter.
+		 *
+		 * <b>Note:</b> If this property is used, the <code>value</code> property should not be changed from the caller.
+		 *
+		 * @returns {object} the value of property <code>dateValue</code>
+		 * @public
+		 * @name sap.m.DateRangeSelection#getDateValue
+		 * @function
+		 */
+
+		/**
 		 * Setter for property <code>dateValue</code>.
 		 *
-		 * Starting date of the range.
-		 * Default value is empty/undefined
+		 * The start date of the range as JavaScript Date object. This is independent from any formatter.
 		 *
-		 * @param {object} oDateValue new value for property dateValue
-		 * @returns {sap.m.DateRangeSelection} <code>this</code> to allow method chaining.
-		 * @protected
+		 * <b>Note:</b> If this property is used, the <code>value</code> property should not be changed from the caller.
+		 *
+		 * @param {object} oDateValue New value for property <code>dateValue</code>
+		 * @return {sap.m.DatePicker} <code>this</code> to allow method chaining.
+		 * @public
+		 * @name sap.m.DateRangeSelection#setDateValue
+		 * @function
 		 */
 		DateRangeSelection.prototype.setDateValue = function(oDateValue) {
 
@@ -622,17 +730,19 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 
 			var sPattern = ( oThis.getDisplayFormat() || "medium" );
 			var oFormat;
+			var sCalendarType = oThis.getDisplayFormatType();
 
-			if (sPattern == oThis._sUsedDisplayPattern) {
-				oFormat = oThis._sDisplayFormat;
+			if (sPattern == oThis._sUsedDisplayPattern && sCalendarType == oThis._sUsedDisplayCalendarType) {
+				oFormat = oThis._oDisplayFormat;
 			} else {
 				if (sPattern === "short" || sPattern === "medium" || sPattern === "long") {
-					oFormat = sap.ui.core.format.DateFormat.getInstance({style: sPattern, strictParsing: true});
+					oFormat = sap.ui.core.format.DateFormat.getInstance({style: sPattern, strictParsing: true, calendarType: sCalendarType});
 				} else {
-					oFormat = sap.ui.core.format.DateFormat.getInstance({pattern: sPattern, strictParsing: true});
+					oFormat = sap.ui.core.format.DateFormat.getInstance({pattern: sPattern, strictParsing: true, calendarType: sCalendarType});
 				}
 				oThis._sUsedDisplayPattern = sPattern;
-				oThis._sDisplayFormat = oFormat;
+				oThis._sUsedDisplayCalendarType = sCalendarType;
+				oThis._oDisplayFormat = oFormat;
 			}
 
 			return oFormat;
@@ -642,38 +752,6 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 		//	to overwrite JS doc
 
 		/**
-		 * Getter for property <code>dateValue</code>.
-		 *
-		 * Starting date of the range.
-		 * Default value is empty/undefined
-		 *
-		 * @returns {object} the value of property secondDateValue
-		 * @protected
-		 * @name sap.m.DateRangeSelection#getDateValue
-		 * @function
-		 */
-
-		/**
-		 * Setter for property <code>valueFormat</code>.
-		 *
-		 * Property <code>valueFormat</code> is not supported in <code>sap.m.DateRangeSelection</code> control.
-		 *
-		 * @protected
-		 * @name sap.m.DateRangeSelection#setValueFormat
-		 * @function
-		 */
-
-		/**
-		 * Getter for property <code>valueFormat</code>.
-		 *
-		 * Property <code>valueFormat</code> is not supported in <code>sap.m.DateRangeSelection</code> control.
-		 *
-		 * @protected
-		 * @name sap.m.DateRangeSelection#getValueFormat
-		 * @function
-		 */
-
-		/**
 		 * On change of date range event.
 		 *
 		 * @name sap.m.DateRangeSelection#change
@@ -681,10 +759,10 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 		 * @param {sap.ui.base.Event} oControlEvent
 		 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 		 * @param {object} oControlEvent.getParameters
-		 * @param {string} oControlEvent.getParameters.value The new value of the input.
+		 * @param {string} oControlEvent.getParameters.value The new value of the <code>sap.m.DateRangeSelection</code>.
 		 * @param {boolean} oControlEvent.getParameters.valid Indicator for a valid date.
-		 * @param {object} oControlEvent.getParameters.from Current starting date after change.
-		 * @param {object} oControlEvent.getParameters.to Current ending date after change.
+		 * @param {object} oControlEvent.getParameters.from Current start date after change.
+		 * @param {object} oControlEvent.getParameters.to Current end date after change.
 		 * @public
 		 */
 
@@ -693,13 +771,13 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 		 *
 		 * Expects following event parameters:
 		 * <ul>
-		 * <li>'value' of type <code>string</code> The new value of the input.</li>
+		 * <li>'value' of type <code>string</code> The new value of the <code>sap.m.DateRangeSelection</code>.</li>
 		 * <li>'valid' of type <code>boolean</code> Indicator for a valid date.</li>
-		 * <li>'from' of type <code>object</code> Current starting date after change-</li>
-		 * <li>'to' of type <code>object</code> Current ending date after change.</li>
+		 * <li>'from' of type <code>object</code> Current start date after change.</li>
+		 * <li>'to' of type <code>object</code> Current end date after change.</li>
 		 * </ul>
 		 *
-		 * @param {Map} [mArguments] the arguments to pass along with the event.
+		 * @param {Map} [mArguments] The arguments to pass along with the event.
 		 * @return {sap.m.DateRangeSelection} <code>this</code> to allow method chaining
 		 * @protected
 		 * @name sap.m.DateRangeSelection#fireChange
