@@ -61,7 +61,7 @@ function(jQuery, ElementUtil) {
 		var zIndex;
 		var $ElementDomRef = jQuery(oDomRef);
 		if ($ElementDomRef.length) {
-			zIndex = $ElementDomRef.zIndex() || $ElementDomRef.css("z-index");
+			zIndex = $ElementDomRef.zIndex() || $ElementDomRef.css("z-index");
 		}
 		return zIndex;
 	};

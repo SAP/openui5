@@ -680,7 +680,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 });
                 
                 oSearch.addEventDelegate({
-                    onAfterRendering: function () {
+                    onAfterRendering: function () {
                         oSearch._ctrl.$("searchico").addClass('sapUiIcon sapUiSearchFieldFilterIcon');
                         oSearch._ctrl.$("searchico").attr('style', 'font-family: SAP-icons; cursor: default;');
                         oSearch._ctrl.$("searchico").attr('data-sap-ui-icon-content', '');
@@ -706,7 +706,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 oButton.setTooltip(sTooltip);
                                                 
                 oButton.addEventDelegate({
-                    onAfterRendering: function () {
+                    onAfterRendering: function () {
                         oButton.$("icon").attr("title", sTooltip);
                         oButton.$("icon").attr("aria-label", sTooltip);
                     }

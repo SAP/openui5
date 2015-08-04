@@ -42,12 +42,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 
 		// ARIA
 		oRm.writeAccessibilityState(oRadioButton, {
-			role: "radio",
+			role: "radio",
 			selected: null, // Avoid output aria-selected
 			checked: oRadioButton.getSelected() === true ? true : undefined, // aria-checked=false is default value and must not be set explicitly
 			disabled: !oRadioButton.getEditable() ? true : undefined, // Avoid output aria-disabled=false when the button is editable
-			labelledby: sId + "-label",
-			describedby: sTooltipWithStateMessage ? sId + "-Descr" : undefined
+			labelledby: sId + "-label",
+			describedby: sTooltipWithStateMessage ? sId + "-Descr" : undefined
 		});
 
 		// Add classes and properties depending on the state
