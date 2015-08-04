@@ -108,7 +108,9 @@ oColumn = new sap.ui.table.Column({label: new sap.m.Label({text: "Golf"}), templ
 oTable.addColumn(oColumn);
 
 // sap.m.Select
-oControl = new sap.m.Select({items: [
+oControl = new sap.m.Select({
+	width: "100%",
+	items: [
 		new sap.ui.core.Item({key: "v1", text: "Value 1"}),
 		new sap.ui.core.Item({key: "v2", text: "Value 2"}),
 		new sap.ui.core.Item({key: "v3", text: "Value 3"}),
