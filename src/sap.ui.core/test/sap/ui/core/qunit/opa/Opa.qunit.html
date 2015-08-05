@@ -226,6 +226,65 @@
 		strictEqual(oDoneSpy.callCount, 1, "Did clear all waitFors");
 	});
 
+	module("Exception Handling");
+
+	test("Should throw an Exception and reject the emptyQueue promise if there is an error in the check or success", function(assert) {
+
+		var sError = "OpaError",
+			fnFaultyFunction = function() {
+					throw sError;
+			},
+			fnClockTick = function() {
+				this.clock.tick(100);
+			},
+			oOpa = new Opa(),
+			oOpa1 = new Opa(),
+			fnSpy = this.spy();
+
+		oOpa.waitFor({check : fnFaultyFunction}).emptyQueue().fail(fnSpy);
+		assert.throws(fnClockTick, sError, "Exception thrown for check");
+
+		this.clock.tick(100);
+
+		oOpa1.waitFor({success : fnFaultyFunction}).emptyQueue().fail(fnSpy);
+		assert.throws(fnClockTick, sError, "Exception thrown for success");
+		assert.strictEqual(fnSpy.callCount, 2, "Promise rejected in both cases")
+	});
+
+
+	test("Should empty the queue if the promise is rejected", function(assert) {
+
+		var sError = "OpaError",
+			fnFaultyFunction = function() {
+				throw sError;
+			},
+			fnClockTick = function() {
+				this.clock.tick(100);
+			},
+			oOpa = new Opa(),
+			fnCheck = this.spy( function() {
+				return false;
+			}),
+			fnSuccess = this.spy();
+
+		oOpa.waitFor({
+			check : fnFaultyFunction
+		});
+		oOpa.waitFor({
+			check : fnCheck
+		});
+
+		oOpa.emptyQueue();
+
+		assert.throws(fnClockTick, sError, "Exception thrown for check");
+		oOpa.emptyQueue().done(fnSuccess);
+
+		this.clock.tick(100);
+		assert.strictEqual(fnSuccess.callCount, 1, "Called success");
+		assert.strictEqual(fnCheck.callCount, 0, "Never called check since the previous wait for threw an exception");
+
+	});
+
 	module("Timeouts", {
 		setup : function () {
 			sinon.config.useFakeTimers = false;

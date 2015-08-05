@@ -21,7 +21,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 		fnCheck();
 
 		function fnCheck () {
-			var oResult = fnCallback();
+
+			try {
+				var oResult = fnCallback();
+			} catch (err) {
+				oDeferred.reject(oOptions);
+				throw err;
+			}
 
 			if (oResult.result) {
 				internalEmpty(oDeferred);
@@ -226,6 +232,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 		internalEmpty(oDeferred);
 
 		return oDeferred.promise().fail(function(oOptions){
+			queue = [];
 			oOptions.errorMessage = oOptions.errorMessage || "Failed to wait for check";
 			oOptions.errorMessage += addStacks(oOptions);
 			jQuery.sap.log.error(oOptions.errorMessage);
@@ -283,12 +290,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 			deferred.promise(this);
 
 			queue.push({
-				callback : jQuery.proxy(function () {
+				callback : function () {
 					var bResult = true;
 
 					//no check - all ok
 					if (options.check) {
-						bResult = options.check.apply(this, arguments);
+						try {
+							bResult = options.check.apply(this, arguments);
+						} catch (err) {
+							deferred.reject(options);
+							throw err;
+						}
 					}
 
 					if (bResult) {
@@ -296,22 +308,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 							try {
 								var iCurrentQueueLength = queue.length;
 								options.success.apply(this, arguments);
+							} catch (err) {
+								deferred.reject(options);
+								throw err;
 							} finally {
 								ensureNewlyAddedWaitForStatementsPrepended(iCurrentQueueLength, options);
-								deferred.resolve();
 							}
-						} else {
-							deferred.resolve();
 						}
-
+						deferred.resolve();
 						return { result : true, arguments : arguments };
 					}
-
 					return {result : false, arguments : arguments };
-				}, this),
+				}.bind(this),
 				options : options
 			});
-
 			return this;
 		},
 
