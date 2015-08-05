@@ -914,6 +914,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 	ODataAnnotations.prototype.enrichFromPropertyValueAttributes = function(propertyValueAttributes, documentNode, oAlias) {
 		var sKey = "", sValue = "", i;
+		
+		var fnReplaceAlias = function(sValue) {
+			return this.replaceWithAlias(sValue, oAlias);
+		}.bind(this);
+
+
 		for (i = 0; i < documentNode.attributes.length; i += 1) {
 			var sAttrName = documentNode.attributes[i].name;
 			if (sAttrName !== "Property" && sAttrName !== "Term" && sAttrName !== "Qualifier") {
@@ -921,7 +927,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				sValue = documentNode.attributes[i].value;
 			}
 			if (sKey) {
-				propertyValueAttributes[sKey] = this.replaceWithAlias(sValue, oAlias);
+				
+				// Special case: EnumMember can contain a space separated list of properties that must all have their
+				// aliases replaced
+				if (sKey === "EnumMember" && sValue.indexOf(" ") > -1) {
+					var aValues = sValue.split(" ");
+					propertyValueAttributes[sKey] = aValues.map(fnReplaceAlias).join(" ");
+				} else {
+					propertyValueAttributes[sKey] = this.replaceWithAlias(sValue, oAlias);
+				}
 			}
 		}
 		return propertyValueAttributes;
