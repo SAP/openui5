@@ -383,7 +383,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.dom', 'jquery.s
 					//<link rel="apple-touch-startup-image" href="/startup.png">
 				}
 	
-				if (options.preventScroll) {
+				if (options.preventScroll && !sap.ui.Device.os.blackberry) {
 					$(window).bind("touchmove", function sapInitMobileTouchMoveHandle(oEvent) {
 						if (!oEvent.isMarked()) {
 							oEvent.preventDefault(); // prevent the rubber-band effect
