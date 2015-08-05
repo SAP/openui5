@@ -1122,7 +1122,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 				if (oCollectionNodes.length > 0) {
 					vPropertyValue = this._getTextValues(oXmlDocument, oCollectionNodes, mAlias);
 				} else {
-					this.enrichFromPropertyValueAttributes(vPropertyValue, oDocumentNode, mAlias);
 
 					var oChildNodes = this.xPath.selectNodes(oXmlDocument, "./d:*[not(local-name() = \"Annotation\")]", oDocumentNode);
 					if (oChildNodes.length > 0) {
@@ -1150,6 +1149,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 								var mValue = {};
 								mValue[sNodeName] = vValue;
 								vPropertyValue.push(mValue);
+							} else if (sNodeName === "Collection") {
+								// Collections are lists by definition and thus should be parsed as arrays
+								vPropertyValue = vValue;
 							} else {
 								if (vPropertyValue[sNodeName]) {
 									jQuery.sap.log.warning(
@@ -1163,6 +1165,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 					} else if (oDocumentNode.nodeName in mTextNodeWhitelist) {
 						vPropertyValue = this._getTextValue(oDocumentNode, mAlias);
 					}
+					
+					this.enrichFromPropertyValueAttributes(vPropertyValue, oDocumentNode, mAlias);
 				}
 			}
 		} else if (oDocumentNode.nodeName in mTextNodeWhitelist) {
