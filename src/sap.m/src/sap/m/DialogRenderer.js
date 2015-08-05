@@ -58,7 +58,9 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 		oRm.addClass(sap.m.Dialog._mStateClasses[sState]);
 
 		// No Footer
-		if (!oControl._oToolbar && !oLeftButton && !oRightButton || (oControl._oToolbar && oControl._oToolbar.getContent().length < 1 && !oLeftButton && !oRightButton)) {
+		var noToolbarAndNobuttons = !oControl._oToolbar && !oLeftButton && !oRightButton;
+		var emptyToolbarAndNoButtons = oControl._oToolbar && oControl._isToolbarEmpty() && !oLeftButton && !oRightButton;
+		if (noToolbarAndNobuttons || emptyToolbarAndNoButtons) {
 			oRm.addClass("sapMDialog-NoFooter");
 		}
 

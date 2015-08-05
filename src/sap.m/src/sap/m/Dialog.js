@@ -1052,6 +1052,20 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 
 	/**
 	 *
+	 * @returns {boolean}
+	 * @private
+	 */
+	Dialog.prototype._isToolbarEmpty = function() {
+		// no ToolbarSpacer
+		var filteredContent = this._oToolbar.getContent().filter(function(content) {
+			return content.getMetadata().getName() !== 'sap.m.ToolbarSpacer';
+		});
+
+		return filteredContent.length === 0;
+	};
+
+	/**
+	 *
 	 * @param {Object} oButton
 	 * @param {string} sPos
 	 * @param {boolean} bSkipFlag
@@ -1084,6 +1098,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			this.setAggregation(sAggregationName, oButton, false, /*avoid infinite loop*/true);
 		} else {
 			var oToolbar = this._getToolbar();
+			var isToolbarEmptyBeforeAction = this._isToolbarEmpty();
+
 			if (oOldButton && !this._aButtons.length) {
 				oToolbar.removeContent(oOldButton);
 			}
@@ -1098,6 +1114,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 			// if buttons aggregation isn't set, add the button to toolbar
 			if (!this._aButtons.length) {
 				oToolbar.insertContent(oButton, sPos === "begin" ? 1 : 2);
+			}
+
+			// invalidate and render if the toolbar is not empty
+			if (!this._isToolbarEmpty() && isToolbarEmptyBeforeAction) {
+				this.invalidate();
 			}
 		}
 
@@ -1481,6 +1502,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 				if (this[sButtonName]) {
 					this[sButtonName].destroy();
 					this[sButtonName] = null;
+
+					// invalidate and render if the toolbar is empty and should be not visible
+					if (this._isToolbarEmpty()) {
+						this.invalidate();
+					}
 				}
 			} else {
 				Control.prototype.destroyAggregation.apply(this, arguments);

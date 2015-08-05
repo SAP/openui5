@@ -883,6 +883,25 @@
 			})
 		});
 
+
+		var dialogWithHidingFooter = new sap.m.Dialog('dialogWithHidingFooter', {
+			title: 'Toggle toobar',
+			content: [
+				new sap.m.Button({
+					text: 'Add EndButton',
+					press: function() {
+						dialogWithHidingFooter.setEndButton(new sap.m.Button({ text: 'Generated button.' }));
+					}
+				}),
+				new sap.m.Button({
+					text: 'Remove EndButton',
+					press: function() {
+						dialogWithHidingFooter.destroyEndButton();
+					}
+				})
+			]
+		});
+
 		//=================================================================
 
 		var page1 = new sap.m.Page("page1", {
@@ -1142,6 +1161,14 @@
 					width: _buttonWidth,
 					press: function() {
 						dialogWithChangingContentSize.open();
+					}
+				}),
+
+				new sap.m.Button({
+					text: "Toggling footer if there are/are not buttons",
+					width: _buttonWidth,
+					press: function() {
+						dialogWithHidingFooter.open();
 					}
 				}),
 
