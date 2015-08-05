@@ -12,12 +12,18 @@
 function deepContains(oValue, oExpected, sMessage) {
 	for (var sKey in oExpected) {
 		equals(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
-		
+
+		if (Array.isArray(oExpected[sKey]) === Array.isArray(oValue[sKey])) {
+			equals(typeof oValue[sKey], typeof oExpected[sKey], sMessage + "/" + sKey + " have same type");
+		} else {
+			ok(false, sMessage + "/" + sKey + " - one is an array, the other is not");
+		}
+
 		if (Array.isArray(oExpected[sKey]) && Array.isArray(oValue[sKey])) {
 			equal(oValue[sKey].length, oExpected[sKey].length, sMessage + "/" + sKey + " length matches");
 		}
-		
-		if (typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
+
+		if (oExpected[sKey] !== null && typeof oExpected[sKey] === "object" && typeof oValue[sKey] === "object") {
 			// Go deeper
 			deepContains(oValue[sKey], oExpected[sKey], sMessage + "/" + sKey);
 		} else {
@@ -26,6 +32,8 @@ function deepContains(oValue, oExpected, sMessage) {
 		}
 	}
 }
+
+QUnit.config.testTimeout = 6000;
 
 /* eslint-disable no-unused-vars */
 function runODataAnnotationTests() {
@@ -227,6 +235,12 @@ function runODataAnnotationTests() {
 		"Apply Parameters": {
 			service          : "fakeService://testdata/odata/sapdata01/",
 			annotations      : "fakeService://testdata/odata/apply-parameters.xml",
+			serviceValid     : true,
+			annotationsValid : "all"
+		},
+		"Empty collection": {
+			service          : "fakeService://testdata/odata/northwind/",
+			annotations      : "fakeService://testdata/odata/empty-collection.xml",
 			serviceValid     : true,
 			annotationsValid : "all"
 		}
@@ -1626,7 +1640,7 @@ function runODataAnnotationTests() {
 	});
 
 	test("DynamicExpressions", function() {
-		expect(15);
+		expect(22);
 
 		var mTest = mAdditionalTestsServices["DynamicExpressions"];
 		var sServiceURI = mTest.service;
@@ -1659,7 +1673,7 @@ function runODataAnnotationTests() {
 	});
 
 	test("DynamicExpressions 2", function() {
-		expect(56);
+		expect(90);
 
 		var mTest = mAdditionalTestsServices["DynamicExpressions2"];
 		var sServiceURI = mTest.service;
@@ -1727,7 +1741,7 @@ function runODataAnnotationTests() {
 	});
 
 	test("CollectionsWithSimpleValues", function() {
-		expect(14);
+		expect(20);
 
 		var mTest = mAdditionalTestsServices["CollectionsWithSimpleValues"];
 		var sServiceURI = mTest.service;
@@ -1759,7 +1773,7 @@ function runODataAnnotationTests() {
 	});
 	
 	test("Multiple Simple Values", function() {
-		expect(9);
+		expect(13);
 		
 		var mTest = mAdditionalTestsServices["Simple Values 2"];
 		var sServiceURI = mTest.service;
@@ -1792,7 +1806,7 @@ function runODataAnnotationTests() {
 	
 	
 	asyncTest("If in Apply", function() {
-		expect(57);
+		expect(93);
 		var mTest = mAdditionalTestsServices["If in Apply"];
 		var sServiceURI = mTest.service;
 		var mModelOptions = {
@@ -1861,7 +1875,7 @@ function runODataAnnotationTests() {
 	
 	
 	asyncTest("Other Elements in LabeledElement", function() {
-		expect(97);
+		expect(157);
 		var mTest = mAdditionalTestsServices["Other Elements in LabeledElement"];
 		var sServiceURI = mTest.service;
 		var mModelOptions = {
@@ -1965,7 +1979,7 @@ function runODataAnnotationTests() {
 	
 	
 	asyncTest("Apply Parameters", function() {
-		expect(32);
+		expect(51);
 		var mTest = mAdditionalTestsServices["Apply Parameters"];
 		var sServiceURI = mTest.service;
 		var mModelOptions = {
@@ -2019,7 +2033,7 @@ function runODataAnnotationTests() {
 
 	
 	var fnTestAnnotationInRecord = function(iModelVersion) {
-		expect(53);
+		expect(85);
 
 		var mTest = mAdditionalTestsServices["Default Annotated Service"];
 		
@@ -2098,7 +2112,7 @@ function runODataAnnotationTests() {
 			var mTestCase3 = oAnnotations["Test.AnnotationInRecord"]["Test.AnnotationInRecord.Case3"];
 
 			deepContains(mTestCase3, {
-				"Null": null,
+				"Null": {},
 				"RecordType": "Test.AnnotationInRecord.Case3.Record"
 			}, "Case 3 has correct values");
 
@@ -2110,4 +2124,61 @@ function runODataAnnotationTests() {
 	asyncTest("V1: Annotation in Record", fnTestAnnotationInRecord.bind(this, 1));
 	asyncTest("V1: Annotation in Record", fnTestAnnotationInRecord.bind(this, 2));
 
+
+
+	var fnTestEmptyCollection = function(iModelVersion) {
+		expect(27);
+
+		var clock = sinon.useFakeTimers();
+		
+		var mTest = mAdditionalTestsServices["Empty collection"];
+		
+		var oModel;
+		if (iModelVersion == 1) {
+			oModel = new sap.ui.model.odata.ODataModel(mTest.service, {
+				annotationURI : mTest.annotations,
+				bAsync: true
+			});
+		} else if (iModelVersion == 2) {
+			oModel = new sap.ui.model.odata.v2.ODataModel(mTest.service, {
+				annotationURI : mTest.annotations,
+			});
+		} else {
+			ok(false, "Unknown ODataModel version requested for test");
+			return;
+		}
+
+		oModel.attachAnnotationsLoaded(function() {
+			var oMetadata = oModel.getServiceMetadata();
+			var oAnnotations = oModel.getServiceAnnotations();
+			
+			ok(!!oMetadata, "Metadata is available.");
+			ok(!!oAnnotations, "Annotations are available.");
+			
+			deepContains(
+				oAnnotations["ui5.test.Annotation"],
+				{
+					"ui5.test.FilledCollection": {
+						"Collection": [
+							{"String":"THIS"},
+							{"String":"IS"},
+							{"String":"ODATA!"}
+						]
+					},
+					"ui5.test.EmptyCollection": {
+						"Collection": []
+					}
+				},
+				"Collections are correctly parsed as arrays"
+			);
+			
+			start();
+		});
+		
+		clock.tick(500);
+	};
+	
+	asyncTest("V1: Empty collection", fnTestEmptyCollection.bind(this, 1));
+	asyncTest("V2: Empty collection", fnTestEmptyCollection.bind(this, 2));
+	
 }

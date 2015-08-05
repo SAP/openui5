@@ -409,7 +409,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 					}
 
 					if (propertyAnnotationNode.hasChildNodes() === false) {
-						mappingList.propertyAnnotations[annotation][propertyAnnotation][sTermValue] = this.getPropertyValueAttributes(propertyAnnotationNode, oAlias);
+						mappingList.propertyAnnotations[annotation][propertyAnnotation][sTermValue] = this.enrichFromPropertyValueAttributes({}, propertyAnnotationNode, oAlias);
 					} else {
 						mappingList.propertyAnnotations[annotation][propertyAnnotation][sTermValue] = this.getPropertyValue(oXMLDoc, propertyAnnotationNode, oAlias);
 					}
@@ -912,8 +912,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			}
 		}
 	};
-	ODataAnnotations.prototype.getPropertyValueAttributes = function(documentNode, oAlias) {
-		var sKey = "", sValue = "", i, propertyValueAttributes = {};
+	ODataAnnotations.prototype.enrichFromPropertyValueAttributes = function(propertyValueAttributes, documentNode, oAlias) {
+		var sKey = "", sValue = "", i;
 		for (i = 0; i < documentNode.attributes.length; i += 1) {
 			var sAttrName = documentNode.attributes[i].name;
 			if (sAttrName !== "Property" && sAttrName !== "Term" && sAttrName !== "Qualifier") {
@@ -974,7 +974,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	
 	ODataAnnotations.prototype.getPropertyValue = function(xmlDoc, documentNode, oAlias) {
-		var propertyValue = {}, recordNodes, recordNodeCnt, nodeIndex, recordNode, propertyValues, urlValueNodes, urlValueNode, pathNode, oPath = {}, annotationNodes, annotationNode, nodeIndexValue, termValue, collectionNodes;
+		var recordNodes, recordNodeCnt, nodeIndex, recordNode, propertyValues, urlValueNodes, urlValueNode, pathNode, oPath = {}, annotationNodes, annotationNode, nodeIndexValue, termValue, collectionNodes;
+		var propertyValue = documentNode.nodeName === "Collection" ? [] : {};
 		var xPath = this.getXPath();
 
 		if (documentNode.hasChildNodes()) {
@@ -1027,14 +1028,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 								propertyValue.push(oPath);
 							}
 						} else {
-							propertyValue = this.getPropertyValueAttributes(documentNode, oAlias);
+							this.enrichFromPropertyValueAttributes(propertyValue, documentNode, oAlias);
 							annotationNodes = this.xPath.selectNodes(xmlDoc, "./d:Annotation", documentNode);
 							annotationNode = {};
 							for (nodeIndexValue = 0; nodeIndexValue < annotationNodes.length; nodeIndexValue += 1) {
 								annotationNode = this.xPath.nextNode(annotationNodes, nodeIndexValue);
 								if (annotationNode.hasChildNodes() === false) {
 									termValue = this.replaceWithAlias(annotationNode.getAttribute("Term"), oAlias);
-									propertyValue[termValue] = this.getPropertyValueAttributes(annotationNode, oAlias);
+									propertyValue[termValue] = this.enrichFromPropertyValueAttributes({}, annotationNode, oAlias);
 								}
 							}
 
@@ -1084,7 +1085,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		} else if (documentNode.nodeName in mTextNodeWhitelist) {
 			propertyValue = this._getTextValue(documentNode, oAlias);
 		} else {
-			propertyValue = this.getPropertyValueAttributes(documentNode, oAlias);
+			this.enrichFromPropertyValueAttributes(propertyValue, documentNode, oAlias);
 		}
 		return propertyValue;
 	};
