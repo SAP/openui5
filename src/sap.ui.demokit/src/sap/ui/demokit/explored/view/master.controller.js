@@ -18,6 +18,15 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 
 	_sStorageKey : "UI5_EXPLORED_VIEW_SETTINGS",
 
+	_oDefaultSettings: {
+		filter : {},
+		groupProperty : "category",
+		groupDescending : false,
+		compactOn : false,
+		themeActive : "sap_bluecrystal",
+		rtl: false
+	},
+
 	_mGroupFunctions : {
 		"name" : function (oContext) {
 			var sKey = oContext.getProperty("name").charAt(0);
@@ -43,6 +52,9 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		// subscribe to app events
 		this._component = sap.ui.core.Component.getOwnerComponentFor(this.getView());
 		this._component.getEventBus().subscribe("app", "selectEntity", this.onSelectEntity, this);
+
+		// set the group to the default used in the view
+		this._sCurrentGroup = this._oDefaultSettings.groupProperty;
 
 		// subscribe to nav container events
 		this.getView().addEventDelegate({
@@ -319,6 +331,12 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 
 	/**
 	 * Updates the binding of the master list and applies filters and groups
+	 *
+	 * Dear maintainer having more time than i currently have -
+	 * this function does way too much an gets called everywhere the list gets rerendered a lot of times.
+	 * So i build in some very small detection to at least reduce the rerenderings when starting the app.
+	 * For future refactorings this has to be split up into functions responsible for filtering sorting and only
+	 * trigger those filters if a user really changed them. currently everytime the list items will be destroyed.
 	 */
 	_updateListBinding : function () {
 
@@ -346,21 +364,25 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		});
 
 		// filter
-		if (aFilters.length === 0) {
+		if (this._bIsFiltered && aFilters.length === 0) {
 			oBinding.filter(aFilters, "Application");
-		} else {
+		} else if (aFilters.length > 0) {
 			var oFilter = new sap.ui.model.Filter(aFilters, true); // second parameter stands for "and"
 			oBinding.filter(oFilter, "Application");
 		}
 
+		// Just an itermediate solution but it helps a lot
+		this._bIsFiltered = aFilters.length > 0;
+
 		// group
-		if (this._oViewSettings.groupProperty) {
+		if (this._oViewSettings.groupProperty && this._oViewSettings.groupProperty !== this._sCurrentGroup) {
 			var oSorter = new sap.ui.model.Sorter(
 				this._oViewSettings.groupProperty,
 				this._oViewSettings.groupDescending,
 				this._mGroupFunctions[this._oViewSettings.groupProperty]);
 			aSorters.push(oSorter);
 		}
+		this._sCurrentGroup = this._oViewSettings.groupProperty;
 		aSorters.push(new sap.ui.model.Sorter("name", false));
 		oBinding.sort(aSorters);
 
@@ -377,14 +399,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		if (!sJson) {
 
 			// local storage is empty, apply defaults
-			this._oViewSettings = {
-				filter : {},
-				groupProperty : "category",
-				groupDescending : false,
-				compactOn : false,
-				themeActive : "sap_bluecrystal",
-				rtl: false
-			};
+			this._oViewSettings = this._oDefaultSettings;
 
 		} else {
 			// parse
