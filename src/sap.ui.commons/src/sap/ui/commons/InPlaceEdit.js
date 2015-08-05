@@ -297,7 +297,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 
 			var oContent = this.getContent();
 
-			if ((oContent.getEditable && !oContent.getEditable()) || (oContent.getEnabled && !oContent.getEnabled())) {
+			if (!oContent || (oContent.getEditable && !oContent.getEditable()) || (oContent.getEnabled && !oContent.getEnabled())) {
 				// readOnly or disabled -> only display mode
 				return false;
 			} else {
