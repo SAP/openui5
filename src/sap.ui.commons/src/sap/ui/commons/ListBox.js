@@ -1157,7 +1157,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ListBox.prototype.setItems = function(aItems, bDestroyItems, bNoItemsChanged) {
-		this.bNoItemsChangeEvent = true;
+		this._bNoItemsChangeEvent = true;
 		if (bDestroyItems) {
 			this.destroyItems();
 		} else {
@@ -1166,7 +1166,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		for (var i = 0, l = aItems.length; i < l; i++) {
 			this.addItem(aItems[i]);
 		}
-		this.bNoItemsChangeEvent = undefined;
+		this._bNoItemsChangeEvent = undefined;
 		if (!bNoItemsChanged) {
 			this.fireEvent("itemsChanged", {event: "setItems", items: aItems}); //private event used in DropdownBox
 		}
@@ -1174,15 +1174,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	ListBox.prototype.addItem = function(oItem) {
-		this.bNoItemInvalidateEvent = true;
+		this._bNoItemInvalidateEvent = true;
 		this.addAggregation("items", oItem);
-		this.bNoItemInvalidateEvent = false;
+		this._bNoItemInvalidateEvent = false;
 		if ( !this._aSelectionMap ) {
 			this._aSelectionMap = [];
 		}
 		this._aSelectionMap.push(false);
 
-		if (!this.bNoItemsChangeEvent) {
+		if (!this._bNoItemsChangeEvent) {
 			this.fireEvent("itemsChanged", {event: "addItem", item: oItem}); //private event used in DropdownBox
 		}
 
@@ -1197,14 +1197,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		} // Ignore invalid index TODO:: check behavior for iIndex=length
 		// TODO: Negative indices might be used to count from end of array
 
-		this.bNoItemInvalidateEvent = true;
+		this._bNoItemInvalidateEvent = true;
 		this.insertAggregation("items", oItem, iIndex);
-		this.bNoItemInvalidateEvent = false;
+		this._bNoItemInvalidateEvent = false;
 		this._aSelectionMap.splice(iIndex, 0, false);
 
 		this.invalidate();
 
-		if (!this.bNoItemsChangeEvent) {
+		if (!this._bNoItemsChangeEvent) {
 			this.fireEvent("itemsChanged", {event: "insertItems", item: oItem, index: iIndex}); //private event used in DropdownBox
 		}
 
@@ -1223,20 +1223,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		if ((iIndex < 0) || (iIndex > this._aSelectionMap.length - 1)) {
-			if (!this.bNoItemsChangeEvent) {
+			if (!this._bNoItemsChangeEvent) {
 				this.fireEvent("itemsChanged", {event: "removeItem", item: vElement}); //private event used in DropdownBox
 			}
 			return undefined;
 		} // Ignore invalid index
 
-		this.bNoItemInvalidateEvent = true;
+		this._bNoItemInvalidateEvent = true;
 		var oRemoved = this.removeAggregation("items", iIndex);
-		this.bNoItemInvalidateEvent = false;
+		this._bNoItemInvalidateEvent = false;
 		this._aSelectionMap.splice(iIndex, 1);
 
 		this.invalidate();
 
-		if (!this.bNoItemsChangeEvent) {
+		if (!this._bNoItemsChangeEvent) {
 			this.fireEvent("itemsChanged", {event: "removeItem", item: oRemoved}); //private event used in DropdownBox
 		}
 
@@ -1246,15 +1246,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	ListBox.prototype.removeAllItems = function() {
-		this.bNoItemInvalidateEvent = true;
+		this._bNoItemInvalidateEvent = true;
 		var oRemoved = this.removeAllAggregation("items");
-		this.bNoItemInvalidateEvent = false;
+		this._bNoItemInvalidateEvent = false;
 
 		this._aSelectionMap = [];
 
 		this.invalidate();
 
-		if (!this.bNoItemsChangeEvent) {
+		if (!this._bNoItemsChangeEvent) {
 			this.fireEvent("itemsChanged", {event: "removeAllItems"}); //private event used in DropdownBox
 		}
 
@@ -1272,15 +1272,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			aItems[i].detachEvent("_change", this._handleItemChanged, this);
 		}
 
-		this.bNoItemInvalidateEvent = true;
+		this._bNoItemInvalidateEvent = true;
 		var destroyed = this.destroyAggregation("items");
-		this.bNoItemInvalidateEvent = false;
+		this._bNoItemInvalidateEvent = false;
 
 		this._aSelectionMap = [];
 
 		this.invalidate();
 
-		if (!this.bNoItemsChangeEvent) {
+		if (!this._bNoItemsChangeEvent) {
 			this.fireEvent("itemsChanged", {event: "destroyItems"}); //private event used in DropdownBox
 		}
 
@@ -1289,11 +1289,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	ListBox.prototype.updateItems = function(){
 
-		this.bNoItemsChangeEvent = true;
+		this._bNoItemsChangeEvent = true;  // is cleared in _itemsChangedAfterUpdateafter all changes are done
 
+		// only new and removed items will be updated here.
+		// If items are "reused" they only change their properies
 		this.updateAggregation("items");
 
-		this.bNoItemsChangeEvent = undefined;
+		this._bNoItemInvalidateEvent = true;
+		// fire change event asynchrounusly to be sure all binding update is done
+		if (!this._bItemsChangedAfterUpdate) {
+			this._bItemsChangedAfterUpdate = jQuery.sap.delayedCall(0, this, "_itemsChangedAfterUpdate");
+		}
+
+	};
+
+	ListBox.prototype._itemsChangedAfterUpdate = function(){
+
+		this._bNoItemsChangeEvent = undefined;
+		this._bItemsChangedAfterUpdate = undefined;
+		this._bNoItemInvalidateEvent = undefined;
 
 		this.fireEvent("itemsChanged", {event: "updateItems"}); //private event used in DropdownBox
 
@@ -1311,6 +1325,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			delete this.oItemNavigation;
 		}
 
+		if (this._bItemsChangedAfterUpdate) {
+			jQuery.sap.clearDelayedCall(this._bItemsChangedAfterUpdate);
+			this._bItemsChangedAfterUpdate = undefined;
+			this._bNoItemsChangeEvent = undefined;
+			this._bNoItemInvalidateEvent = undefined;
+		}
 		// No super.exit() to call
 	};
 
@@ -1336,7 +1356,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	*/
 	ListBox.prototype._handleItemChanged = function(oEvent) {
 
-		if (!this.bNoItemInvalidateEvent) {
+		if (!this._bNoItemInvalidateEvent) {
 			this.fireEvent("itemInvalidated", {item: oEvent.oSource}); //private event used in ComboBox
 		}
 

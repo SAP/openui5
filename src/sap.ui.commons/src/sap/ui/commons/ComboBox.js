@@ -132,6 +132,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		if (this._sHandleItemsChanged) {
 			jQuery.sap.clearDelayedCall(this._sHandleItemsChanged);
 			this._sHandleItemsChanged = null;
+			this._bNoItemCheck = undefined;
 		}
 	};
 
@@ -1109,11 +1110,11 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 
 	ComboBox.prototype.updateItems = function(){
 
-		this.bNoItemCheck = true;
+		this._bNoItemCheck = true; // is cleared in _handleItemsChanged after all changes are done
 
+		// only new and removed items will be updated here.
+		// If items are "reused" they only change their properies
 		this.updateAggregation("items");
-
-		this.bNoItemCheck = undefined;
 
 		//handleItemsChange must be called asyncronous to insure that all bindingInfos are updated (item + selectedKey)
 		if (!this._sHandleItemsChanged) {
@@ -1170,13 +1171,16 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 
 	ComboBox.prototype._handleItemsChanged = function(oEvent, bDelayed){
 
-		if (this.bNoItemCheck) {
-			return;
-		}
-
 		if (bDelayed) {
+			// Items are updated by binding. As items can be "reused" and have same IDSs,
+			// only one check at the end of all changes is needed
 			// only clear if really from an delayed call
 			this._sHandleItemsChanged = null;
+			this._bNoItemCheck = undefined;
+		}
+
+		if (this._bNoItemCheck) {
+			return;
 		}
 
 		// check if selected item is still valid
@@ -1228,7 +1232,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 
 				if (sNewValue == sValue && sNewId == sSelectedItemId
 				    && !this._sWantedSelectedKey  && !this._sWantedSelectedItemId) {
-					// value, id and key still the same and no not items searched for existence
+					// value, id and key still the same and no items searched for existence
 					break;
 				}
 				if (bBoundSelectedKey && !this._sWantedSelectedKey  && !this._sWantedSelectedItemId) {
@@ -1250,7 +1254,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 				sNewValue = sValue;
 				iIndex = i;
 				if (bBoundValue && !this._sWantedSelectedKey  && !this._sWantedSelectedItemId) {
-					// bound on value and no not items searched for existence
+					// bound on value and no items searched for existence
 					break;
 				}
 			}
@@ -1294,6 +1298,12 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 	};
 
 	ComboBox.prototype._handleItemInvalidated = function(oEvent){
+
+		if (this._bNoItemCheck) {
+			// Items are updated by binding but might have same IDs like before
+			// only check once after udate is complete
+			return;
+		}
 
 		// an Item had changed -> check if text or key must be changed
 		var oItem = oEvent.getParameter("item");
