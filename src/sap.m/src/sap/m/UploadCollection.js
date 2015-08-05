@@ -328,13 +328,31 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 			/**
 			 * The event is triggered as soon as the upload request was terminated by the user.
-			 * @since 1.26.2
+			 * @experimental since 1.26.2
 			 */
-			uploadTerminated : {},
+			uploadTerminated : {
+				parameters: {
+					/**
+					 * Specifies the name of the file of which the upload is to be terminated.
+					 */
+					fileName: {type : "string"},
+					/**
+					 * This callback function returns the corresponding header parameter (type sap.m.UploadCollectionParameter) if available.
+					 */
+					getHeaderParameter: {type : "function",
+						parameters: {
+							/**
+							 * The (optional) name of the header parameter. If no parameter is provided all header parameters are returned.
+							 */
+							headerParameterName: {type : "string"}
+						}
+					}
+				}
+			},
 
 			/**
 			 * The event is triggered before the actual upload starts. An event is fired per file. All the necessary header parameters should be set here.
-			 * @since 1.30.2
+			 * @experimental since 1.30.2
 			 */
 			beforeUploadStarts : {
 				parameters: {
@@ -1787,19 +1805,36 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype._onUploadTerminated = function(oEvent) {
-		if ( oEvent) {
-			var i;
-			var sRequestId = this._getRequestId(oEvent);
-			var sFileName = oEvent.getParameter("fileName");
-			var cItems = this.aItems.length;
-			for (i = 0; i < cItems ; i++) {
-				if (this.aItems[i] === sFileName && this.aItems[i]._requestIdName === sRequestId && this.aItems[i]._status === UploadCollection._uploadingStatus) {
-					this.aItems.splice(i, 1);
-					this.removeItem(i);
-					break;
-				}
+		var i;
+		var sRequestId = this._getRequestId(oEvent);
+		var sFileName = oEvent.getParameter("fileName");
+		var cItems = this.aItems.length;
+		for (i = 0; i < cItems ; i++) {
+			if (this.aItems[i] === sFileName && this.aItems[i]._requestIdName === sRequestId && this.aItems[i]._status === UploadCollection._uploadingStatus) {
+				this.aItems.splice(i, 1);
+				this.removeItem(i);
+				break;
 			}
-			this.fireUploadTerminated();
+		}
+		this.fireUploadTerminated({
+			fileName: sFileName,
+			getHeaderParameter: getHeaderParameter
+		});
+
+		function getHeaderParameter(sHeaderParameterName) {
+			var iParamCounter; 
+			var aRequestHeaders = oEvent.getParameter("requestHeaders");
+			if (aRequestHeaders && sHeaderParameterName) {
+				iParamCounter = aRequestHeaders.length;
+				for ( i = 0; i < iParamCounter; i++ ) {
+					if (oEvent.getParameter("requestHeaders")[i].name === sHeaderParameterName) {
+						return new sap.m.UploadCollectionParameter({
+							name: sHeaderParameterName, value: oEvent.getParameter("requestHeaders")[i].value});
+					}
+				}
+			} else {
+				return oEvent.getParameter("requestHeaders");
+			}
 		}
 	};
 

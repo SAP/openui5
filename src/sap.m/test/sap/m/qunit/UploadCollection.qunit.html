@@ -440,14 +440,22 @@
 	});
 
 	QUnit.test("Event terminate", function(assert) {
-		assert.expect(1); // verifies the event handler was executed
+		assert.expect(4);
 		var sFileName = "file1";
+		var aRequestHeaders = [{
+			name: "someRequestHeaderName",
+			value: "someRequestHeaderValue"
+		}];
 		function onUploadTerminated(oEvent) {
-			assert.ok(true, "Event uploadTerminated fired");
+			assert.equal(oEvent.getParameter("fileName"), sFileName, "FileName parameter is provided correctly by the uploadTerminated event");
+			assert.ok(oEvent.getParameter("getHeaderParameter"), "Proper method 'getHeaderParameter' in parameters of uploadTerminated event");
+			assert.equal(oEvent.getParameters().getHeaderParameter("someRequestHeaderName").getValue(), "someRequestHeaderValue", "Value of the request header parameter retrieved correctly, header parameter name specified");
+			assert.equal(oEvent.getParameters().getHeaderParameter(), aRequestHeaders, "Value of the request header parameter retrieved correctly, , header parameter name not specified");
 		}
 		this.oUploadCollection.attachUploadTerminated(onUploadTerminated);
 		this.oUploadCollection._getFileUploader().fireUploadAborted({
-			fileName : sFileName
+			fileName: sFileName,
+			requestHeaders: aRequestHeaders
 		})
 	});
 
