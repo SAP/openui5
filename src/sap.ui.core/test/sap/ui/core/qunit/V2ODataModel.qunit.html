@@ -1435,6 +1435,54 @@
 		});
 	});
 	
+	asyncTest("test oDataModel setProperty to undefined/null/''/0/false", function() {
+		oModel.read("/ProductSet('AD-1000')", {
+			success: function() {
+				var sName = oModel.getProperty("/ProductSet('AD-1000')/Name");
+				oModel.setProperty("/ProductSet('AD-1000')/Name", undefined);
+				ok(oModel.hasPendingChanges(), "model has pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") === undefined, "property ok");
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "test");
+				ok(oModel.hasPendingChanges(), "model should have pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") == "test", "property ok");
+				
+				oModel.setProperty("/ProductSet('AD-1000')/Name", null);
+				ok(oModel.hasPendingChanges(), "model has pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") === null, "property ok");
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "test");
+				ok(oModel.hasPendingChanges(), "model should have pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") == "test", "property ok");
+	
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "");
+				ok(oModel.hasPendingChanges(), "model has pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") === "", "property ok");
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "test");
+				ok(oModel.hasPendingChanges(), "model should have pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") == "test", "property ok");
+	
+				oModel.setProperty("/ProductSet('AD-1000')/Name", 0);
+				ok(oModel.hasPendingChanges(), "model has pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") === 0, "property ok");
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "test");
+				ok(oModel.hasPendingChanges(), "model should have pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") == "test", "property ok");
+				
+				oModel.setProperty("/ProductSet('AD-1000')/Name", false);
+				ok(oModel.hasPendingChanges(), "model has pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") === false, "property ok");
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "test");
+				ok(oModel.hasPendingChanges(), "model should have pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") == "test", "property ok");
+	
+				start();
+			},
+			error: function() {
+				ok(false, "reqauest failed");
+				start();
+			}
+		});
+	});
+	
 	asyncTest("test oDataModel setProperty: reset change if property is set back to original value 2", function() {
 		oModel.read("/ProductSet('AD-1000')", {
 			success: function() {
