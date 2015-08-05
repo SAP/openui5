@@ -83,6 +83,16 @@
 				]
 			},
 			{
+				"id": "sap.ui.test.matchers",
+				"name": "Matcher",
+				"category": "Testing",
+				"since": "1.32",
+				"samples": [
+					"sap.ui.core.sample.matcher.BindingPath",
+					"sap.ui.core.sample.OpaMatchers"
+				]
+			},
+			{
 				"id" : "sap.ui.core.theming",
 				"name" : "Theming",
 				"category" : "Theming",
@@ -120,14 +130,14 @@
 				]
 			},
 			{
-			  "id" : "sap.ui.model.type.Date",
-			  "name" : "Date Type",
-			  "category" : "Data Binding",
-			  "since" : "1.10",
-			  "samples" : [
-				"sap.ui.core.sample.TypeDateAsDate",
-				"sap.ui.core.sample.TypeDateAsString"
-			  ]
+				"id" : "sap.ui.model.type.Date",
+				"name" : "Date Type",
+				"category" : "Data Binding",
+				"since" : "1.10",
+				"samples" : [
+					"sap.ui.core.sample.TypeDateAsDate",
+					"sap.ui.core.sample.TypeDateAsString"
+				]
 			},
 			{
 				"id" : "sap.ui.core.type.DateTime",
@@ -342,6 +352,11 @@
 				"id" : "sap.ui.core.sample.RoutingFullscreen",
 				"name" : "Routing between Fullscreen pages a simple sample",
 				"description" : "A mini app with 2 pages. Both are bookmarkable."
+			},
+			{
+				"id": "sap.ui.core.sample.matcher.BindingPath",
+				"name": "Binding Path",
+				"description": "Checks if a control has a binding context with the exact same binding path"
 			}
 		]
 	}
