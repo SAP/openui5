@@ -165,7 +165,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 				// if no history ListBox is not changed -> update ListBox too
 				this._getListBox().insertItem(oItem, iIndex);
 			}
-			if (!this.bNoItemCheck) {
+			if (!this._bNoItemCheck) {
 				// history might be not up do date -> rebuild; suppose the text before cursor is just typed in to use filter
 				var $Ref = jQuery(this.getInputDomRef());
 				var iCursorPos = $Ref.cursorPos();
@@ -184,7 +184,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 				// if no history ListBox is not changed -> update ListBox too
 				this._getListBox().addItem(oItem);
 			}
-			if (!this.bNoItemCheck) {
+			if (!this._bNoItemCheck) {
 				// history might be not up do date -> rebuild; suppose the text before cursor is just typed in to use filter
 				var $Ref = jQuery(this.getInputDomRef());
 				var iCursorPos = $Ref.cursorPos();
@@ -227,7 +227,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 				// if no history ListBox is not changed -> update ListBox too
 				this._getListBox().removeItem(vOriginalElement);
 			}
-			if (!this.bNoItemCheck) {
+			if (!this._bNoItemCheck) {
 				// history might be not up do date -> rebuild; suppose the text before cursor is just typed in to use filter
 				var $Ref = jQuery(this.getInputDomRef());
 				var iCursorPos = $Ref.cursorPos();
@@ -315,7 +315,15 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 
 	DropdownBox.prototype._handleItemsChanged = function(oEvent, bDelayed){
 
-		if (this.bNoItemCheck) {
+		if (bDelayed) {
+			// Items are updated by binding. As items can be "reused" and have same IDSs,
+			// only one check at the end of all changes is needed
+			// only clear if really from an delayed call
+			this._sHandleItemsChanged = null;
+			this._bNoItemCheck = undefined;
+		}
+
+		if (this._bNoItemCheck) {
 			return;
 		}
 
