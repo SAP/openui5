@@ -600,5 +600,69 @@
         "references": []
       }
     ]
+  },
+  "1.28.10": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "d6e97d5b81a61061014b7668ee693cacef906481",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.CalendarLegend: allow to specify tye of an item",
+        "references": []
+      },
+      {
+        "id": "0ce45fb1c366c903b7c94497046fce8db04d6127",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectAttribute: Text displayed on 100% if no title is set",
+        "references": []
+      },
+      {
+        "id": "1d7ab177be4849ded361f76cc70675ac8f6e34d1",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: Colors for pressed warning/error radio button corrected",
+        "references": []
+      },
+      {
+        "id": "c70fac38a7164e3dde009a562d2ec7493bcbdfd4",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Button: Emphasized button with hover and focus color fixed",
+        "references": []
+      },
+      {
+        "id": "8051f1b28d7c473ebeaa68a064f16617466d4aac",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: icon get different color only when it\u0027s direct under sap.m.Toolbar",
+        "references": []
+      }
+    ]
+  },
+  "1.28.11": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "6c503a76d5bb4fc9f7918e3e863528cdc3be4a20",
+        "author": "Teodor Todorov \u003cteodor.todorov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectNumber: Number unit position corrected",
+        "references": []
+      }
+    ]
+  },
+  "1.28.12": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "ce6b0dd8b897fcd95f0827ca012f2ca4172488d1",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Fix left paddings",
+        "references": []
+      }
+    ]
   }
 }
