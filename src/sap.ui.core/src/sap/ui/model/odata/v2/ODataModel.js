@@ -2459,7 +2459,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._processSuccess = function(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes) {
 		var oResultData = oResponse.data, bContent, sUri, sPath, aParts,
-		oEntityMetadata, mLocalGetEntities = {}, that = this;
+		oEntityMetadata, mLocalGetEntities = {}, mLocalChangeEntities = {}, that = this;
 
 		bContent = !(oResponse.statusCode === 204 || oResponse.statusCode === '204');
 
@@ -2497,7 +2497,7 @@ sap.ui.define([
 		if (!bContent) {
 			aParts = sPath.split("/");
 			if (aParts[1]) {
-				mChangeEntities[aParts[1]] = true;
+				mLocalChangeEntities[aParts[1]] = true;
 				//cleanup of this.mChangedEntities; use only the actual response key
 				var oMap = {};
 				oMap[aParts[1]] = true;
@@ -2525,10 +2525,11 @@ sap.ui.define([
 		}
 
 		// Parse messages from the back-end
-		this._parseResponse(oResponse, oRequest, mLocalGetEntities, mChangeEntities);
+		this._parseResponse(oResponse, oRequest, mLocalGetEntities, mLocalChangeEntities);
 
-		// Add the Get-Entities from this request to the main ones (which differ in case of batch requests)
+		// Add the Get and Change entities from this request to the main ones (which differ in case of batch requests)
 		jQuery.extend(mGetEntities, mLocalGetEntities);
+		jQuery.extend(mChangeEntities, mLocalChangeEntities);
 
 		this._updateETag(oRequest, oResponse);
 
