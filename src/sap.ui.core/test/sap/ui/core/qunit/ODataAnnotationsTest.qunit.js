@@ -1741,7 +1741,7 @@ function runODataAnnotationTests() {
 	});
 
 	test("CollectionsWithSimpleValues", function() {
-		expect(20);
+		expect(19);
 
 		var mTest = mAdditionalTestsServices["CollectionsWithSimpleValues"];
 		var sServiceURI = mTest.service;
@@ -1761,9 +1761,8 @@ function runODataAnnotationTests() {
 		
 		ok(!!oAnnotations["CollectionsWithSimpleValues"], "Annotation target is available");
 		ok(!!oAnnotations["CollectionsWithSimpleValues"]["com.sap.vocabularies.Test.v1.Data"], "Annotation term is available");
-		ok(!!oAnnotations["CollectionsWithSimpleValues"]["com.sap.vocabularies.Test.v1.Data"]["Collection"], "Annotation collection is available");
 
-		var mValue = oAnnotations["CollectionsWithSimpleValues"]["com.sap.vocabularies.Test.v1.Data"]["Collection"];
+		var mValue = oAnnotations["CollectionsWithSimpleValues"]["com.sap.vocabularies.Test.v1.Data"];
 		var mExpected = [
 			{ "String": "String01" },
 			{ "String": "String02" },
@@ -2127,7 +2126,7 @@ function runODataAnnotationTests() {
 
 
 	var fnTestEmptyCollection = function(iModelVersion) {
-		expect(27);
+		expect(23);
 
 		var clock = sinon.useFakeTimers();
 		
@@ -2158,16 +2157,12 @@ function runODataAnnotationTests() {
 			deepContains(
 				oAnnotations["ui5.test.Annotation"],
 				{
-					"ui5.test.FilledCollection": {
-						"Collection": [
+					"ui5.test.FilledCollection": [
 							{"String":"THIS"},
 							{"String":"IS"},
 							{"String":"ODATA!"}
-						]
-					},
-					"ui5.test.EmptyCollection": {
-						"Collection": []
-					}
+					],
+					"ui5.test.EmptyCollection": []
 				},
 				"Collections are correctly parsed as arrays"
 			);
