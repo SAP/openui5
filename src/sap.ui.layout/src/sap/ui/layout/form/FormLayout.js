@@ -8,14 +8,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './Form', 'sap/ui/lay
 	"use strict";
 
 	/**
-	 * Constructor for a new form/FormLayout.
+	 * Constructor for a new sap.ui.layout.form.FormLayout.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * Base layout for Forms.
-	 * Other Layouts must inherit from this one.
+	 * Base layout to render a <code>Form</code>.
+	 * Other layouts to render a <code>Form</code> must inherit from this one.
+	 * <b>Note:</b> This control must not be used to render a <code>Form</code> in productive applications as it does not fulfill any
+	 * design guidelines and usability standards.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
