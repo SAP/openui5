@@ -63,20 +63,29 @@
 	-webkit-transition: opacity 0.1s;
 	transition: opacity 0.1s;
 
+	&:hover {
+		opacity: 1;
+	}
+
+	&:focus {
+		outline: 0;
+	}
+
+	&::-moz-focus-inner {
+		border: 0;
+	}
+
 	&::before {
 		content: "";
 		position: absolute;
-		width: 2rem;
-		height: 2rem;
 		top: -25%;
+		bottom: -25%;
 		left: -25%;
+		right: -25%;
 	}
 
 	&::after {
 		content: '\e03e';
-	}
-
-	&:hover {
-		opacity: 1;
+		position: absolute;
 	}
 }
