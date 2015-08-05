@@ -25,7 +25,7 @@ var mServiceData = {
 				"Discontinued": { type: "bool" },
 			},
 			itemMessages: [{ // Messages per Item
-				"target": "/ProductName",
+				"target": "ProductName",
 				"code": "Item",
 				"message": "This Item is very doof",
 				"severity": "error",
@@ -244,7 +244,7 @@ var mHeaderTypes = {
 		"Content-Type" : "application/json;charset=utf-8",
 		"DataServiceVersion" : "2.0;"
 	},
-	text: {
+	text: {	
 		"Content-Type" : "text/plain;charset=utf-8",
 		"DataServiceVersion" : "2.0;"
 	}
@@ -256,60 +256,245 @@ ODataRandomService.prototype.serveUrl = function(mOptions) {
 	this._url     = mOptions.url;
 	this._request = mOptions.request;
 	this._useJson = !!mOptions.json;
+	this._urlInfo = this._parseUrl(mOptions.url);
 
-	aMatches = this._url.match(/^(.*)\?(.*)$/)
+	var mResponse = this._createResponse(this._urlInfo, mOptions);
+
+	this._answer(mResponse);
+}
+
+
+ODataRandomService.prototype._createResponse = function(mUrlInfo, mOptions) {
+	var mResponse;
+	if (mUrlInfo.path == "") {
+		// Main service document
+		mResponse = this._answerService(mServiceData);
+	} else if (mUrlInfo.path == "$metadata") {
+		mResponse = this._answerMetadata();
+	} else if (mUrlInfo.path == "$batch") {
+		// TODO: Implement batch mode;
+		mResponse = this.handleBatchRequest(mOptions);
+	} else if (mUrlInfo.postfix == "$count" && mServiceData.collections[mUrlInfo.collection]) {
+		mResponse = this._answerCollectionCount(mServiceData.collections[mUrlInfo.collection]);
+	} else if (!mUrlInfo.item && mServiceData.collections[mUrlInfo.collection]) {
+		// Return the whole collection
+		mResponse = this._answerCollection(mUrlInfo.collection, mServiceData.collections[mUrlInfo.collection]);
+	} else if (mUrlInfo.item && mServiceData.collections[mUrlInfo.collection]) {
+		// return Data for one Item
+		mResponse = this._answerCollectionItem(mUrlInfo.item, mUrlInfo.collection, mServiceData.collections[mUrlInfo.collection]);
+	} else {
+		mResponse = this._answerError();
+	}
+	
+	return mResponse;
+};
+
+
+ODataRandomService.prototype.handleBatchRequest = function(mOptions) {
+	var mBatchResponse = {}
+	var aSubRequests = this.parseBatchRequest(mOptions.request.requestBody);
+	
+
+	// TODO: boundary is from odata example http://www.odata.org/documentation/odata-version-2-0/batch-processing/
+	var sBatchSeparator = "batch_36522ad7-fc75-4b56-8c71-56071383e77b";
+	
+	mBatchResponse.status = 202;
+	mBatchResponse.headers = {
+		"DataServiceVersion": "2.0",
+		"Content-Type": "multipart/mixed; boundary=" + sBatchSeparator 
+	};
+	mBatchResponse.body = "";
+
+	for (var i = 0; i < aSubRequests.length; ++i) {
+		var mRequest = aSubRequests[i];
+		if (mRequest.method !== "GET") {
+			jQuery.sap.log.error("ODataRandomService only supports reading");
+		}
+		
+		var mResponse = this._createResponse(this._parseUrl(mRequest.url), mOptions);
+		
+		// Start new sub request
+		mBatchResponse.body += "\r\n--" + sBatchSeparator + "\r\n";
+		// Add batch headers
+		mBatchResponse.body += "Content-Type: application/http\r\n";
+		mBatchResponse.body += "Content-Transfer-Encoding:binary\r\n";
+		mBatchResponse.body += "\r\n";
+		
+		mBatchResponse.body += "HTTP/1.1 " + mResponse.status + " Ok\r\n";
+		
+		mBatchResponse.body += Object.keys(mResponse.headers).map(function(sKey) {
+			return sKey + ": " + mResponse.headers[sKey];
+		}).join("\r\n") + "\r\n\r\n";
+		mBatchResponse.body += mResponse.body + "\r\n\r\n";
+	}
+	
+	
+	mBatchResponse.body += "\r\n--" + sBatchSeparator + "--";
+	
+	return mBatchResponse;
+};
+
+
+ODataRandomService.prototype.parseBatchRequest = function(sBatchContent) {
+	function parseHeaders(vHeaders) {
+		var mHeaders = {};
+		
+		var aHeaders = Array.isArray(vHeaders) ? vHeaders : vHeaders.split("\n");
+		for (var i = 0; i < aHeaders.length; ++i) {
+			var aSingleHeader = aHeaders[i].toLowerCase().split(":");
+			mHeaders[aSingleHeader[0].trim()] = aSingleHeader[1].trim();
+		}
+		
+		
+		return mHeaders;
+	}
+	
+	// TODO: The following replaces all instances of \r\n - even in the payload... not sure this is ok even for our tests...
+	// The separator is the first line of the body (or second if only return in first one)
+	var aMatches = sBatchContent.match(/^[\r\n]*([^\n]*)/m);
+	
+	if (!aMatches || !aMatches[1]) {
+		throw new Error("Batch request did not contain separator");
+	}
+	
+	var sSeparator = aMatches[1].trim();
+	
+	
+	
+	var aRequests = sBatchContent.replace(sSeparator + "--", "").trim().split(sSeparator).slice(1).map(function(sSingleRequest) {
+		var mRequest = {};
+		
+		// Replace \r\n and \r with just \n so we can split easier
+		sSingleRequest = sSingleRequest.replace(/\r\n|\r/g, "\n").trim();
+		if (sSingleRequest.length === 0) {
+			return;
+		}
+		
+		var aSplitted = sSingleRequest.trim().split("\n\n");
+		
+		mRequest.batchHeaders = parseHeaders(aSplitted[0]);
+		
+		var aLines = aSplitted[1].trim().split("\n");
+
+		var sRequestLine = aLines.shift();
+		var aMatches = /([^ ]*) (.*) (HTTP.*)/.exec(sRequestLine);
+		
+		mRequest.method = aMatches[1];
+		mRequest.url = aMatches[2];
+		mRequest.headers = parseHeaders(aLines);
+		mRequest.body = aSplitted[2] ? aSplitted[2] : "";
+		
+		return mRequest;
+	});
+	
+	return aRequests;
+};
+
+ODataRandomService.prototype._answer = function(mResponse) {
+	function fnRespond(oRequest, mResponse) {
+		oRequest.respond(mResponse.status, mResponse.headers, mResponse.body);
+	} 
+	
+	if (this._request.async === true) {
+		_setTimeout(fnRespond.bind(this, this._request, mResponse), responseDelay);
+	} else {
+		fnRespond(this._request, mResponse);
+	}
+}
+
+ODataRandomService.prototype._parseUrl = function(sUrl) {
+	var sPath, sCollection, sItem, sPostfix;
+	
+	var aMatches = sUrl.match(/^(.*)\?(.*)$/)
 	if (aMatches) {
 		sPath   = aMatches[1];
 		sParams = aMatches[2];
 	} else {
-		sPath   = this._url;
+		sPath   = sUrl;
 		sParams = "";
 	}
 
 	var sCollection = "";
 	var sItem = "";
 	var sPostfix = "";
-	aMatches = sPath.match(/^([A-Za-z0-9]+)([\(\)(0-9)])*\/(.*)$/);
+	aMatches = sPath.match(/^([A-Za-z0-9]+)([\(\)(0-9)]*)\/{0,1}(.*)$/);
 	if (aMatches && aMatches.length === 3) {
 		sCollection = aMatches[1];
 		sPostfix = aMatches[2];
 	} else if (aMatches && aMatches.length === 4) {
 		sCollection = aMatches[1];
-		sItem = aMatches[2];
+		sItem = aMatches[2].replace(/^\(|\)$/g, "");
 		sPostfix = aMatches[3];
 	} else {
 		sCollection = sPath;
 	}
+	
+	return {
+		path: sPath,
+		collection: sCollection,
+		item: sItem,
+		postfix: sPostfix
+	};
+};
 
-	if (sPath == "") {
-		// Main service URL
-		this._answerService(mServiceData);
-	} else if (sPath == "$metadata") {
-		this._answerMetadata();
-	} else if (sPostfix == "$count" && mServiceData.collections[sCollection]) {
-		this._answerCollectionCount(mServiceData.collections[sCollection]);
-	} else if (!sItem && mServiceData.collections[sCollection]) {
-		// Return the whole collection
-		this._answerCollection(sCollection, mServiceData.collections[sCollection]);
-	} else if (sItem && mServiceData.collections[sCollection]) {
-		// return Data for one Item
-		this._answerCollectionItem(sItem, sCollection, mServiceData.collections[sCollection]);
-	} else {
-		this._answerError();
+
+ODataRandomService.prototype._answerCollectionItem = function(sItem, sCollection, mCollection) {
+	var aMessages = [];
+	
+	var sItemUrl = this._serviceUrl + sCollection + "(" + sItem + ")";
+		
+	var mItem = {
+		"__metadata": {
+			"id": sItemUrl,
+			"uri": sItemUrl,
+			"type": mCollection.type
+		},
+	};
+	
+	for (var sName in mCollection.properties) {
+		mItem[sName] = this._createData(mCollection.properties[sName], sItem);
 	}
-}
-
-
-ODataRandomService.prototype._answer = function(iStatus, mHeaders, sAnswer) {
-	if (this._request.async === true) {
-		var oRequest = this._request;
-		_setTimeout(function() {
-			oRequest.respond(iStatus, mHeaders, sAnswer);
-		}.bind(this), responseDelay);
-	} else {
-		this._request.respond(iStatus, mHeaders, sAnswer);
+	
+		
+	if (mCollection.itemMessages) {
+		for (var n = 0; n < mCollection.itemMessages.length; ++n) {
+			var mMessage = jQuery.extend({}, mCollection.itemMessages[n]);
+			mMessage.target = mCollection.itemMessages[n].target;
+			aMessages.push(mMessage);
+		}
 	}
-}
+	
+	
+	var mAnswer = {
+		d: {
+			results: [ mItem ]
+		}
+	}
+	
+	if (mCollection.message) {
+		aMessages.push(mCollection.message);
+	}
+
+	if (mCollection.collectionMessages) {
+		for (var i = 0; i < mCollection.collectionMessages.length; ++i) {
+			var mMessage = jQuery.extend({}, mCollection.collectionMessages[i]);
+			mMessage.target = "/" + sCollection;
+			aMessages.push(mMessage);
+		}
+	}
+	
+	var sType = this._useJson ? "json" : "atom";
+	var sAnswer = this._useJson ? JSON.stringify(mAnswer) : this._createXmlAnswer(mAnswer, "collection");
+
+	var mHead = jQuery.extend({}, mHeaderTypes[sType]);
+	mHead["sap-message"] = this._createMessageHeader(aMessages);
+	
+	return {
+		status: 200,
+		headers: mHead,
+		body: sAnswer
+	};
+};
 
 ODataRandomService.prototype._answerError = function(iStatus, mHeaders, sAnswer) {
 	var mAnswer = {
@@ -325,7 +510,11 @@ ODataRandomService.prototype._answerError = function(iStatus, mHeaders, sAnswer)
 	var sType = this._useJson ? "json" : "atom";
 	var sAnswer = this._useJson ? JSON.stringify(mAnswer) : this._createXmlAnswer(mAnswer, "error");
 
-	this._answer(200, mHeaderTypes[sType], sAnswer);
+	return {
+		status: 200,
+		headers: mHeaderTypes[sType],
+		body: sAnswer
+	};
 };
 
 ODataRandomService.prototype._createXmlAnswer = function(mAnswer, sType) {
@@ -393,7 +582,11 @@ ODataRandomService.prototype._createXmlAnswer = function(mAnswer, sType) {
 };
 
 ODataRandomService.prototype._answerMetadata = function() {
-	this._answer(200, mHeaderTypes["xml"], sNorthwindMetadata);
+	return {
+		status: 200,
+		headers: mHeaderTypes["xml"],
+		body: sNorthwindMetadata
+	};
 }
 
 ODataRandomService.prototype._answerService = function(oServiceData) {
@@ -406,11 +599,19 @@ ODataRandomService.prototype._answerService = function(oServiceData) {
 	var sType = this._useJson ? "json" : "atom";
 	var sAnswer = this._useJson ? JSON.stringify(mAnswer) : this._createXmlAnswer(mAnswer, "service");
 
-	this._answer(200, mHeaderTypes[sType], sAnswer);
+	return {
+		status: 200,
+		headers: mHeaderTypes[sType],
+		body: sAnswer
+	};
 }
 
 ODataRandomService.prototype._answerCollectionCount = function(oColData) {
-	this._answer(200, mHeaderTypes["text"], "" + oColData.count);
+	return {
+		status: 200,
+		headers: mHeaderTypes[mHeaderTypes["text"]],
+		body: "" + oColData.count
+	};
 }
 
 ODataRandomService.prototype._answerCollection = function(sColName, oColData) {
@@ -437,7 +638,7 @@ ODataRandomService.prototype._answerCollection = function(sColName, oColData) {
 		if (oColData.itemMessages) {
 			for (var n = 0; n < oColData.itemMessages.length; ++n) {
 				var mMessage = jQuery.extend({}, oColData.itemMessages[n]);
-				mMessage.target = "(" + (i + 1) + ")" + oColData.itemMessages[n].target;
+				mMessage.target = "(" + (i + 1) + ")/" + oColData.itemMessages[n].target;
 				aMessages.push(mMessage);
 			}
 		}
@@ -468,7 +669,11 @@ ODataRandomService.prototype._answerCollection = function(sColName, oColData) {
 	var mHead = jQuery.extend({}, mHeaderTypes[sType]);
 	mHead["sap-message"] = this._createMessageHeader(aMessages);
 	
-	this._answer(200, mHead, sAnswer);
+	return {
+		status: 200,
+		headers: mHead,
+		body: sAnswer
+	};
 }
 
 ODataRandomService.prototype._createMessageHeader = function(aMessages) {
