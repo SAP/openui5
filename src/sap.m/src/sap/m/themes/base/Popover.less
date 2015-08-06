@@ -2,7 +2,7 @@
 /* CSS for controlsap.m/Popover.control */
 /* ============================================= */
 
-.sapMPopover{
+.sapMPopover {
 	position: absolute;
 	color: @sapUiText;
 	min-width: 100px;
@@ -13,14 +13,14 @@
 	overflow: hidden;
 	-webkit-transition: opacity 0.2s linear;
 	-moz-transition: opacity 0.2s linear;
- 	transition: opacity 0.2s linear;
+	transition: opacity 0.2s linear;
 }
 
 .sapMPopoverHeader .sapMTitle {
 	font-size: .865rem;
 }
 
-.sapMPopover .sapMPopoverCont{
+.sapMPopover .sapMPopoverCont {
 	overflow: hidden;
 	position: relative;
 	/* set margin to every side */
@@ -28,8 +28,8 @@
 	background-color: @sapUiLightBG;
 }
 
-.sapMPopover .sapMPopoverScroll{
-/* 	width: 100%;  when set width to 100%, the horizontal scrolling will be disabled and this is done in the end of setArrowPosition method*/
+.sapMPopover .sapMPopoverScroll {
+	/* 	width: 100%;  when set width to 100%, the horizontal scrolling will be disabled and this is done in the end of setArrowPosition method*/
 	display: inline-block;
 	overflow: hidden;
 	vertical-align: middle;
@@ -37,7 +37,7 @@
 	box-sizing: border-box;
 }
 
-.sapMPopover.sapUiPopupWithPadding .sapMPopoverScroll{
+.sapMPopover.sapUiPopupWithPadding .sapMPopoverScroll {
 	padding: 1rem;
 }
 
@@ -54,7 +54,7 @@
 	width: 100%;
 }
 
-.sapMPopoverCont:focus{
+.sapMPopoverCont:focus {
 	outline: none;
 }
 
@@ -67,21 +67,22 @@
 }
 
 /* marker for Popover with a bar */
-.sapMPopoverWithBar{
+.sapMPopoverWithBar {
 
 }
 
 /* marker for Popover without a bar */
-.sapMPopoverWithoutBar{
+.sapMPopoverWithoutBar {
 
 }
 
 /* marker for Popover with NavContainer which includes pages inside */
-.sapMPopoverNav{
+.sapMPopoverNav {
 
 }
+
 /* marker for Popover with footer*/
-.sapMPopoverWithFooter{
+.sapMPopoverWithFooter {
 
 }
 
@@ -90,10 +91,12 @@
 	margin-bottom: 0;
 	margin-top: 0;
 }
+
 /* disable margin according to the header and footer availability */
 .sapMPopoverWithoutBar.sapMPopoverWithFooter > .sapMPopoverCont {
 	margin-bottom: 0;
 }
+
 /* disable margin according to the header and footer availability */
 .sapMPopoverWithBar.sapMPopoverWithoutFooter > .sapMPopoverCont {
 	margin-top: 0;
@@ -101,17 +104,17 @@
 
 .sapMPopoverWithoutBar.sapMPopoverNav > .sapMPopoverCont,
 .sapMPopoverWithoutBar.sapMPopoverPage > .sapMPopoverCont,
-.sapMActionSheetPopover > .sapMPopoverCont{
+.sapMActionSheetPopover > .sapMPopoverCont {
 	margin: 0;
 	background-color: transparent;
 }
 
-.sapMPopover > .sapMBar{
+.sapMPopover > .sapMBar {
 	position: relative;
 	width: auto;
 }
 
-.sapMPopoverWithoutBar.sapMPopoverNav .sapMPopoverCont .sapMPage{
+.sapMPopoverWithoutBar.sapMPopoverNav .sapMPopoverCont .sapMPage {
 	background-color: transparent;
 }
 
@@ -126,7 +129,7 @@
 }
 */
 
-.sapMPopoverWithoutBar .sapMPage footer.sapMIBar{
+.sapMPopoverWithoutBar .sapMPage footer.sapMIBar {
 	position: absolute;
 }
 
