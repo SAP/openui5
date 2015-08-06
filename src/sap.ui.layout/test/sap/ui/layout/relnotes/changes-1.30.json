@@ -111,5 +111,24 @@
         "references": []
       }
     ]
+  },
+  "1.30.5": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "81aeb1fa0b798a7d8f02f184792dd0b959c0bf3d",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.DynamicSideContent - Fixed layout issue",
+        "references": []
+      },
+      {
+        "id": "509dcb91dba81f2c4c6b2c64dfae3cd64ef0033c",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form: adapt documentation for form controls",
+        "references": []
+      }
+    ]
   }
 }

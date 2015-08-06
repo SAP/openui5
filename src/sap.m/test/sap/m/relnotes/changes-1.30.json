@@ -2222,6 +2222,132 @@
         "type": "FIX",
         "text": "sap.m.MessageBox: Deprecation of usage of sap.ui.Control as content",
         "references": []
+      },
+      {
+        "id": "45e9787e902d016abcb13301e5b03645a0664834",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.UploadCollection: Parameters of uploadTerminated event is propagated on API",
+        "references": []
+      },
+      {
+        "id": "d57e89cda2e886d92562bfc1543aa6e713d96cb8",
+        "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.UploadCollection: The beforeUploadStarts event has been created to add header parameters for each file to be uploaded.",
+        "references": []
+      },
+      {
+        "id": "e080198ce89d76fc64842a1f6c697baeca611421",
+        "author": "Michael Graf \u003cmi.graf@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "update of Hello World Demo App",
+        "references": []
+      },
+      {
+        "id": "93cdec7d23ddb7a9e30a608e1e5d0d1be9916df5",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Scrolling performance on BlackBerry 10",
+        "references": []
+      },
+      {
+        "id": "99df945549ccec91dad82ed09f9f5d6905a92c31",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Combobox: Correctly opens the Popover with control instance",
+        "references": []
+      },
+      {
+        "id": "2e1572a2b5897d1f24310be78e393d90af7ee157",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker, sap.m.DateRangeSelection: adapt API doku",
+        "references": []
+      },
+      {
+        "id": "5d7cecfa67d2c4f12573a78f1373b9b5356fcd46",
+        "author": "Eugen Resch \u003ceugen.resch@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.P13nXXXPanel - \u0027Restore\u0027 functionality for update of Sorting, Filtering and Grouping is fixed.",
+        "references": []
+      },
+      {
+        "id": "675981ffd131ac977e0c7387cb62a2f0fc7ff94a",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Now registers itself as a child popup correctly",
+        "references": []
+      },
+      {
+        "id": "f37726a1d09fc7e7a28950102dca4f4d6d4e161b",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: select type \"IconOnly\" is announced as button",
+        "references": []
+      },
+      {
+        "id": "b3edab0c22501bece75fa98c3b84b4b31a1b12e4",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: master area should be hidden after switched to HideMode",
+        "references": []
+      },
+      {
+        "id": "5d6c7b55964f482a6b17791313fb5c7bf22297bb",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Switch: fix border issue at zoom in \u003c 100%",
+        "references": []
+      },
+      {
+        "id": "823fa6d2576e92923c49de98c7b1b53f867010e9",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Title: Fixed alignments begin/end in IE and Edge browser in RTL case",
+        "references": []
+      },
+      {
+        "id": "2cc381738a0fbef03ef911e8299d5811195a9f89",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Editing option of the attachment title has been corrected.",
+        "references": []
+      },
+      {
+        "id": "85362eef93d2b40dec32da769b5d6301646a5b32",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Request status after upload has been corrected.",
+        "references": []
+      },
+      {
+        "id": "932f30b10ad3b304b9af753cd25647d9162fca10",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollectionItem: Default aggregation for WebIDE stability defined.",
+        "references": []
+      },
+      {
+        "id": "8c28f281ca4357a4e72b9f41dbb6ea720277db36",
+        "author": "Vladislav Tasev \u003cvladislav.tasev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.semantic.SemanticPage - added missing tooltip",
+        "references": []
+      },
+      {
+        "id": "47e9f39803a85c9fa66dd6037097b000c4c1020c",
+        "author": "Vladislav Tasev \u003cvladislav.tasev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.sementic.SemanticPage - share menu button accessibility improved",
+        "references": []
+      },
+      {
+        "id": "1688e37f38d1556e0e9fe4ac6cc8eaeb777732bc",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
+        "references": []
       }
     ]
   }

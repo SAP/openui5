@@ -518,6 +518,20 @@
         "type": "FIX",
         "text": "sap.ui.table.TreeTable: node label alignment issue",
         "references": []
+      },
+      {
+        "id": "f2f32e4da1fb2e8ad83be372af6e016e92ce7343",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: fix touch button overlay",
+        "references": []
+      },
+      {
+        "id": "f5cdd064402dd9de575f2b0b9b2c3dde6c02c6a4",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table ACC test page to correctly read sap.m.Select control",
+        "references": []
       }
     ]
   }

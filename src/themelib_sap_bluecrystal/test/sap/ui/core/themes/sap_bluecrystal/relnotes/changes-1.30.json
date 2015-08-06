@@ -532,6 +532,13 @@
         "type": "FIX",
         "text": "sap.m.SplitContainer: no separator between master and detail areas",
         "references": []
+      },
+      {
+        "id": "5d6c7b55964f482a6b17791313fb5c7bf22297bb",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Switch: fix border issue at zoom in \u003c 100%",
+        "references": []
       }
     ]
   }

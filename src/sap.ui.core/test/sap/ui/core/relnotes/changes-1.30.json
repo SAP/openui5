@@ -1774,6 +1774,55 @@
         "type": "FIX",
         "text": "sap.ui.core.format.DateFormat: check negative date and month in strict mode",
         "references": []
+      },
+      {
+        "id": "37a3e50aa5e2073d6f3f07d8e0b462881b4a79b6",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "CompositeBinding: Forcing of checkUpdate does not work",
+        "references": []
+      },
+      {
+        "id": "d1ccbb898e45c4e1ee7d461c2ac9267d867f07a9",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Parse Empty Collection as Array",
+        "references": []
+      },
+      {
+        "id": "6d93b8039f73fcd8167530d8fedddea43762bb02",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Replace multiple EnumMember Aliases",
+        "references": []
+      },
+      {
+        "id": "664bf5ff133c862489ee97d3f567f6369a81ae6e",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataMessageParser/ODataModel: Batch mode changed entities",
+        "references": []
+      },
+      {
+        "id": "f6fa46754bcd221642e679b2f92b51cff93e3853",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataMessageParser: Correct Affected Targets in Batch Mode",
+        "references": []
+      },
+      {
+        "id": "93cdec7d23ddb7a9e30a608e1e5d0d1be9916df5",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Scrolling performance on BlackBerry 10",
+        "references": []
+      },
+      {
+        "id": "86cad0d3350858880b6503def5c265a5f73c67d9",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Device: Webview in Android 5 tablet is wrongly detected as a phone",
+        "references": []
       }
     ]
   }
