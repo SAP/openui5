@@ -1,0 +1,223 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8">
+
+	<title>qUnit Page for sap.ui.table.AnalyticalColumn</title>
+
+	<script src="../../../../../resources/sap-ui-core.js">
+	</script>
+
+	<script>
+		(function () {
+			"use strict";
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+			sinon.config.useFakeTimers = true;
+
+			jQuery.sap.require("sap.ui.table.AnalyticalTable");
+
+			var Table = sap.ui.table.AnalyticalTable;
+			var Column = sap.ui.table.AnalyticalColumn;
+
+			QUnit.module("Column Menu Items", {
+				setup: function() {
+					this._oTable = new Table();
+
+					this._oTable.removeColumn = function(oColumn) {
+						return this.removeAggregation('columns', oColumn);
+					};
+
+					// no real binding is required here. Instead mock a binding object
+					this._oTable.getBinding = function() {
+						var oBinding = {};
+						var aProperties = [
+							{name: "m1", type: "measure", filterable: false},
+							{name: "m2_filterable", type: "measure", filterable: true},
+							{name: "d1", type: "dimension", filterable: false},
+							{name: "d2_filterable", type: "dimension", filterable: true}
+						];
+
+						oBinding.isMeasure = function(sPropertyName) {
+							for (var i = 0; i < aProperties.length; i++) {
+								if (aProperties[i].name === sPropertyName && aProperties[i].type === "measure") {
+									return true;
+								}
+							}
+							return false;
+						};
+
+						oBinding.getProperty = function(sPropertyName) {
+							for (var i = 0; i < aProperties.length; i++) {
+								if (aProperties[i].name === sPropertyName) {
+									return aProperties[i];
+								}
+							}
+						};
+
+						oBinding.getFilterablePropertyNames = function() {
+							var aPropertyNames = [];
+							for (var i = 0; i < aProperties.length; i++) {
+								if (aProperties[i].filterable === true) {
+									aPropertyNames.push(aProperties[i].name);
+								}
+							}
+							return aPropertyNames;
+						}
+
+						return oBinding;
+					};
+					this._oColumn = new Column();
+				},
+				teardown: function() {
+					this._oColumn.destroy();
+					this._oTable.destroy();
+				}
+			});
+
+			QUnit.test("Pre-Check Menu Item Creation without Parent", function(assert) {
+
+				//######################################################################################################
+				// Filter menu item
+				//######################################################################################################
+				this._oColumn.setFilterProperty("");
+				this._oColumn.setShowFilterMenuEntry(true);
+
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setShowFilterMenuEntry(false);
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setFilterProperty("m1");
+				this._oColumn.setShowFilterMenuEntry(true);
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setShowFilterMenuEntry(false);
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setFilterProperty("m2_filterable");
+				this._oColumn.setShowFilterMenuEntry(true);
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setShowFilterMenuEntry(false);
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setFilterProperty("d1");
+				this._oColumn.setShowFilterMenuEntry(true);
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setShowFilterMenuEntry(false);
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setFilterProperty("d2_filterable");
+				this._oColumn.setShowFilterMenuEntry(true);
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setShowFilterMenuEntry(false);
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+			});
+
+
+			QUnit.test("Pre-Check Menu Item Creation with Parent", function(assert) {
+
+				//######################################################################################################
+				// Filter menu item
+				//######################################################################################################
+				// add the column to analytical table
+				this._oTable.addAggregation("columns", this._oColumn);
+
+				this._oColumn.setFilterProperty("");
+				this._oColumn.setShowFilterMenuEntry(true);
+
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setShowFilterMenuEntry(false);
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setFilterProperty("m1");
+				this._oColumn.setShowFilterMenuEntry(true);
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setShowFilterMenuEntry(false);
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setFilterProperty("m2_filterable");
+				this._oColumn.setShowFilterMenuEntry(true);
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setShowFilterMenuEntry(false);
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setFilterProperty("d1");
+				this._oColumn.setShowFilterMenuEntry(true);
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setShowFilterMenuEntry(false);
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setFilterProperty("d2_filterable");
+				this._oColumn.setShowFilterMenuEntry(true);
+				assert.ok(this._oColumn.isFilterableByMenu(), "Filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setShowFilterMenuEntry(false);
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+			});
+
+		})();
+	</script>
+</head>
+<body>
+	<h1 id="qunit-header">qUnit Page for sap.ui.table.AnalyticalColumn</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture"></div>
+</body>
+</html>
