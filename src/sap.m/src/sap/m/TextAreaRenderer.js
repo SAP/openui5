@@ -52,7 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		sValue = jQuery.sap.encodeHTML(sValue);
 		
 		// convert the new line HTML entity rather than displaying it as a text
-		sValue = sValue.replace(/&#xa;/g, "&#13;");
+		sValue = sValue.replace(/&#xd;&#xa;|&#xd;|&#xa;/g, "&#13;");
 		oRm.write(sValue);
 	};
 	
