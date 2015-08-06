@@ -1,4 +1,4 @@
-sap.ui.require([
+sap.ui.define([
 		"sap/ui/test/Opa5",
 		'test/page/Common',
 		'sap/ui/test/matchers/PropertyStrictEquals'

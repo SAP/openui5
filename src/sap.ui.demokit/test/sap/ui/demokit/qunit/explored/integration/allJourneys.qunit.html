@@ -18,11 +18,14 @@
 			jQuery.sap.require("sap.ui.qunit.qunit-junit");
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
+			QUnit.config.autostart = false;
+
 			sap.ui.require(['sap/ui/test/Opa5',
 						'test/page/Common',
 						'sap/ui/test/opaQunit',
 						'test/page/entity',
 						'test/page/master',
+						'test/page/masterHeader',
 						'test/page/code',
 						'test/page/sample'
 					],
@@ -35,7 +38,9 @@
 						});
 
 						// require all journeys
-						sap.ui.require(['test/journey/download']);
+						sap.ui.require(['test/journey/download', 'test/journey/list'], function () {
+							QUnit.start();
+						});
 
 					});
 		}());
