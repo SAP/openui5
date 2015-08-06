@@ -1095,7 +1095,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oThis._renderHeader();
 
 			// fire internal event for DatePicker for with number of rendered days. If Calendar becomes larger maybe popup must change position
-			oThis.fireEvent("_renderMonth", {days: $Container.children(".sapUiCalDay").length});
+			oThis.fireEvent("_renderMonth", {days: $Container.find(".sapUiCalDay").length});
 
 			_initItemNavigation(oThis);
 			if (!bNoFocus) {
