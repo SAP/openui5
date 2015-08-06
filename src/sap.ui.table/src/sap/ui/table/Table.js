@@ -150,7 +150,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			visibleRowCountMode : {type : "sap.ui.table.VisibleRowCountMode", group : "Appearance", defaultValue : sap.ui.table.VisibleRowCountMode.Fixed},
 
 			/**
-			 * This property is used to set the minimum count of visible rows when the property visibleRowCountMode is set to Auto. For any other visibleRowCountMode, it is ignored.
+			 * This property is used to set the minimum count of visible rows when the property visibleRowCountMode is set to Auto or Interactive.
+			 * For any other visibleRowCountMode, it is ignored.
 			 */
 			minAutoRowCount : {type : "int", group : "Appearance", defaultValue : 5},
 
@@ -326,9 +327,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					column : {type : "sap.ui.table.Column"},
 
 					/**
-					 * new width of the table in pixel.
+					 * new width of the table column as CSS Size definition.
 					 */
-					width : {type : "int"}
+					width : {type : "sap.ui.core.CSSSize"}
 				}
 			},
 
