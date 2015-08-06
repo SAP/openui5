@@ -127,6 +127,7 @@
 			});
 
 			QUnit.test("when the overlay is focused", function(assert) {
+				this.oOverlay.$().attr("tabindex", 0);
 				this.oOverlay.focus();
 				var that = this;
 				var done = assert.async();
