@@ -209,6 +209,8 @@
 	 * log output is stubbed in order to keep console clean. Makes sure there are no unexpected
 	 * warnings or even errors.
 	 *
+	 * TODO replace "this" by additional first argument!
+	 *
 	 * @param {string[]} aViewContent
 	 *   the original view content
 	 * @param {object} [mSettings={}]
@@ -1317,8 +1319,8 @@
 
 			checkTracing.call(this, bDebug, [
 				{m: "[ 0] Start processing qux"},
-				{m: "[ 0] Error in formatter: Error: deliberate failure", d: 1},
-				{m: "[ 0] Error in formatter: Error: deliberate failure", d: 2},
+				{m: sinon.match(/\[ 0\] Error in formatter: Error: deliberate failure/), d: 1},
+				{m: sinon.match(/\[ 0\] Error in formatter: Error: deliberate failure/), d: 2},
 				{m: "[ 0] Finished processing qux"}
 			], [
 				mvcView(),
@@ -2157,5 +2159,35 @@
 		});
 	});
 
-	//TODO we have completely missed support for unique IDs in fragments via the "id" property!
+	QUnit.test("template:require - single module", function (assert) {
+		var sModuleName = "sap.ui.core.sample.ViewTemplate.scenario.Helper",
+			oRootElement = xml([
+				mvcView().replace(">", ' template:require="' + sModuleName + '">'),
+				'</mvc:View>'
+			]);
+
+		this.mock(jQuery.sap).expects("require").withExactArgs(sModuleName);
+
+		process(oRootElement);
+	});
+
+	QUnit.test("template:require - multiple modules", function (assert) {
+		var oExpectation = this.mock(jQuery.sap).expects("require"),
+			aModuleNames = [
+				"foo.Helper",
+				"sap.ui.core.sample.ViewTemplate.scenario.Helper",
+				"sap.ui.model.odata.AnnotationHelper"
+			],
+			oRootElement = xml([
+				mvcView().replace(">", ' template:require="' + aModuleNames.join(" ") + '">'),
+				'</mvc:View>'
+			]);
+
+		// Note: jQuery.sap.require() supports "varargs" style
+		oExpectation.withExactArgs.apply(oExpectation, aModuleNames);
+
+		process(oRootElement);
+	});
 }());
+//TODO we have completely missed support for unique IDs in fragments via the "id" property!
+//TODO somehow trace ex.stack, but do not duplicate ex.message and take care of PhantomJS

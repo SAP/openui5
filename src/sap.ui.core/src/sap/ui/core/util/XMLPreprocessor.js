@@ -6,7 +6,7 @@
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/ManagedObject',
 	'sap/ui/core/XMLTemplateProcessor', 'sap/ui/model/BindingMode',
 	'sap/ui/model/CompositeBinding', 'sap/ui/model/Context'],
-	function(jQuery, BindingParser, ManagedObject, XMLTemplateProcessor, BindingMode,
+	function (jQuery, BindingParser, ManagedObject, XMLTemplateProcessor, BindingMode,
 		CompositeBinding, Context) {
 		'use strict';
 
@@ -430,11 +430,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			 *
 			 * @private
 			 */
-			process : function(oRootElement, oViewInfo, mSettings) {
+			process : function (oRootElement, oViewInfo, mSettings) {
 				var sCaller = oViewInfo.caller,
 					bDebug = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG),
 					bCallerLoggedForWarnings = bDebug, // debug output already contains caller
 					aFragmentNames = [oViewInfo.name], // stack of view and fragment names
+					sModuleNames = oRootElement.getAttribute("template:require"),
 					iNestingLevel = 0,
 					sName,
 					bWarning = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING);
@@ -1105,6 +1106,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						}
 					}
 				}
+
+				// load required modules synchronously
+				if (sModuleNames) {
+					jQuery.sap.require.apply(jQuery.sap, sModuleNames.split(" "));
+				}
+
 				visitNode(oRootElement, new With({
 					models : mSettings.models,
 					bindingContexts : mSettings.bindingContexts
