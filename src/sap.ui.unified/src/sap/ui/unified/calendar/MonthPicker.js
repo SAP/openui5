@@ -233,7 +233,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		function _initItemNavigation(oThis){
 
 			var oRootDomRef = oThis.getDomRef();
-			var aDomRefs = oThis.$().find(".sapUiCalMonth");
+			var aDomRefs = oThis.$().find(".sapUiCalItem");
 			var iColumns = oThis.getColumns();
 			var iMonths = oThis.getMonths();
 			var bCycling = true;
@@ -369,9 +369,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			for ( var i = 0; i < aDomRefs.length; i++) {
 				$DomRef = jQuery(aDomRefs[i]);
 				if ($DomRef.attr("id") == sId) {
-					$DomRef.addClass("sapUiCalMonthSel");
+					$DomRef.addClass("sapUiCalItemSel");
 				}else {
-					$DomRef.removeClass("sapUiCalMonthSel");
+					$DomRef.removeClass("sapUiCalItemSel");
 				}
 			}
 
@@ -484,9 +484,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					$DomRef.attr("aria-label", aMonthNamesWide[i + iStartMonth]);
 				}
 				if (i + iStartMonth == iSelectedMonth) {
-					$DomRef.addClass("sapUiCalMonthSel");
+					$DomRef.addClass("sapUiCalItemSel");
 				}else {
-					$DomRef.removeClass("sapUiCalMonthSel");
+					$DomRef.removeClass("sapUiCalItemSel");
 				}
 			}
 

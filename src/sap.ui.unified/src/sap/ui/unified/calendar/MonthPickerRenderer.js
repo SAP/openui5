@@ -92,9 +92,9 @@ sap.ui.define(['jquery.sap.global'],
 
 			oRm.write("<div");
 			oRm.writeAttribute("id", sId + "-m" + (i + iStartMonth));
-			oRm.addClass("sapUiCalMonth");
+			oRm.addClass("sapUiCalItem");
 			if (i + iStartMonth == iMonth) {
-				oRm.addClass("sapUiCalMonthSel");
+				oRm.addClass("sapUiCalItemSel");
 			}
 			oRm.writeAttribute("tabindex", "-1");
 			oRm.addStyle("width", sWidth);

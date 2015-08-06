@@ -834,7 +834,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 		function _handleOpened(oEvent) {
 
-			this._renderedDays = this._oCalendar.$("days").children(".sapUiCalDay").length;
+			this._renderedDays = this._oCalendar.$("-Month0-days").find(".sapUiCalItem").length;
 
 		}
 

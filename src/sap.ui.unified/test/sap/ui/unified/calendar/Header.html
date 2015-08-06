@@ -17,6 +17,7 @@
 		<script type="text/javascript">
 
 			var oHeader = new sap.ui.unified.calendar.Header("H1",{
+				textButton0: "Day",
 				textButton1: "Month",
 				textButton2: "Year",
 				pressPrevious: function(oEvent){
@@ -72,6 +73,36 @@
 					var oHeader = sap.ui.getCore().byId("H1");
 					var bPressed = oEvent.getParameter("pressed");
 					oHeader.setEnabledNext(bPressed);
+				}
+			}).placeAt("event1");
+
+			oButton = new sap.ui.commons.ToggleButton({
+				text: "Button 0",
+				pressed: false,
+				press: function(oEvent){
+					var oHeader = sap.ui.getCore().byId("H1");
+					var bPressed = oEvent.getParameter("pressed");
+					oHeader.setVisibleButton0(bPressed);
+				}
+			}).placeAt("event1");
+
+			oButton = new sap.ui.commons.ToggleButton({
+				text: "Button 1",
+				pressed: true,
+				press: function(oEvent){
+					var oHeader = sap.ui.getCore().byId("H1");
+					var bPressed = oEvent.getParameter("pressed");
+					oHeader.setVisibleButton1(bPressed);
+				}
+			}).placeAt("event1");
+
+			oButton = new sap.ui.commons.ToggleButton({
+				text: "Button 2",
+				pressed: true,
+				press: function(oEvent){
+					var oHeader = sap.ui.getCore().byId("H1");
+					var bPressed = oEvent.getParameter("pressed");
+					oHeader.setVisibleButton2(bPressed);
 				}
 			}).placeAt("event1");
 

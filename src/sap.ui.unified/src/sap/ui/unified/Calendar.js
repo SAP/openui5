@@ -966,7 +966,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			// can only happen if only one month is displayed -> otherwise at least one month has more than 28 days.
 			if (_getMonths(oThis) > 1) {
 				var oMonth = oThis.getAggregation("month")[0];
-				var aDomRefs = oMonth.$("days").children(".sapUiCalDay");
+				var aDomRefs = oMonth.$("days").children(".sapUiCalItem");
 				if (aDomRefs.length == 28) {
 					oYearPicker.$().addClass("sapUiCalYearNoTop");
 				}else {
