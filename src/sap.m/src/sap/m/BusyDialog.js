@@ -158,16 +158,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/*$BlockRef.toggleClass('sapMDialogBLyShown', false);*/
 
 		};
-		//keyboard support for desktop environments
-		if (sap.ui.Device.system.desktop) {
-			var fnOnEscape = jQuery.proxy(function(oEvent) {
-					this.close(true);
-					//event should not trigger any further actions
-					oEvent.stopPropagation();
-			}, this);
-			//use pseudo event 'onsapescape' to implement keyboard-trigger for closing this dialog
-			this._oPopup.onsapescape = fnOnEscape;
-		}
+
+		//keyboard support
+		var fnOnEscape = jQuery.proxy(function(oEvent) {
+				this.close(true);
+				//event should not trigger any further actions
+				oEvent.stopPropagation();
+		}, this);
+		//use pseudo event 'onsapescape' to implement keyboard-trigger for closing this dialog
+		this._oPopup.onsapescape = fnOnEscape;
 	};
 
 	/**

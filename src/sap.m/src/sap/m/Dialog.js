@@ -289,22 +289,20 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		if (!(sap.ui.Device.os.android && sap.ui.Device.os.version < 4.1 && window.navigator.userAgent.toLowerCase().indexOf("chrome") === -1)) {
 			this.oPopup.setAnimations(jQuery.proxy(this._openAnimation, this), jQuery.proxy(this._closeAnimation, this));
 		}
+
 		//keyboard support for desktop environments
-		if (sap.ui.Device.system.desktop) {
-			var fnOnEscape = jQuery.proxy(function(oEvent) {
-					// when the escape is already handled by inner control, nothing should happen inside dialog
-					if (oEvent.originalEvent && oEvent.originalEvent._sapui_handledByControl) {
-						return;
-					}
-					this.close();
-					//event should not trigger any further actions
-					oEvent.stopPropagation();
-			}, this);
-			//use pseudo event 'onsapescape' to implement keyboard-trigger for closing this dialog
-			//had to implement this onthe popup instance because it did not work
-			//on the dialog prototype
-			this.oPopup.onsapescape = fnOnEscape;
-		}
+		var fnOnEscape = jQuery.proxy(function(oEvent) {
+				// when the escape is already handled by inner control, nothing should happen inside dialog
+				if (oEvent.originalEvent && oEvent.originalEvent._sapui_handledByControl) {
+					return;
+				}
+				this.close();
+				//event should not trigger any further actions
+				oEvent.stopPropagation();
+		}, this);
+		//use pseudo event 'onsapescape' to implement keyboard-trigger for closing this dialog
+		//had to implement this on the popup instance because it did not work on the dialog prototype
+		this.oPopup.onsapescape = fnOnEscape;
 
 		//the orientationchange event listener
 		this._fnOrientationChange = jQuery.proxy(this._reposition, this);
