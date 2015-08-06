@@ -74,12 +74,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 			oBinding = oControl.getBinding(aParts[1]);
 			
 			aMessages = that.mMessages[sTarget] ? that.mMessages[sTarget] : [];
-			
 			if (oBinding) {
-				oBinding._fireMessageChange({messageSource: 'control', messages:aMessages});
+				var oDataState = oBinding.getDataState();
+				oDataState.setControlMessages(aMessages);
+				oBinding.checkDataState();
 			} else {
 				oControl.propagateMessages(aParts[1], aMessages);
 			}
+			
 		});
 	};
 	

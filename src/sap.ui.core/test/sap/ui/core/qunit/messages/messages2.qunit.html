@@ -79,26 +79,29 @@
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
 		var oCompZip = sap.ui.getCore().byId("zip_enabled");
-		
 		var oChangeHandler = function(oEvent) {
-			ok(oEvent.getParameters('messages').messages.length == 1, 'Format Message created');
-			ok(oCompZip.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
-			ok(oCompZip.getValueStateText() === 'Enter a value with no more than 5 characters.', 'Input: ValueStateText set correctly')
-			oCompZip.getBinding("value").detachMessageChange(oChangeHandler);
+			if (oEvent.getParameter('dataState').getChanges().messages) {
+				ok(oEvent.getParameter('dataState').getMessages().length == 1, 'Format Message created');
+				ok(oCompZip.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
+				ok(oCompZip.getValueStateText() === 'Enter a value with no more than 5 characters.', 'Input: ValueStateText set correctly')
+				oCompZip.getBinding("value").detachDataStateChange(oChangeHandler);
+			}
 		};
 		var oChangeHandler2 = function(oEvent) {
-			ok(oEvent.getParameters('messages').messages.length == 0, 'Validation Message deleted');
-			ok(oCompZip.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
-			ok(oCompZip.getValueStateText() === '', 'Input: ValueStateText set correctly')
-			oCompZip.getBinding("value").detachMessageChange(oChangeHandler);
+			if (oEvent.getParameter('dataState').getChanges().messages) {
+				ok(oEvent.getParameter('dataState').getMessages().length == 0, 'Validation Message deleted');
+				ok(oCompZip.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
+				ok(oCompZip.getValueStateText() === '', 'Input: ValueStateText set correctly')
+				oCompZip.getBinding("value").detachDataStateChange(oChangeHandler);
+			}
 		};
-		oCompZip.getBinding("value").attachMessageChange(oChangeHandler);
+		oCompZip.getBinding("value").attachDataStateChange(oChangeHandler);
 		var oCoreValHandler = function(oEvent) {
 			ok(false,"should never be called");
 		};
 		sap.ui.getCore().attachValidationError(oCoreValHandler);
 		oCompZip.setValue('123456');
-		oCompZip.getBinding("value").attachMessageChange(oChangeHandler2);
+		oCompZip.getBinding("value").attachDataStateChange(oChangeHandler2);
 		oCompZip.setValue('12345');
 		sap.ui.getCore().detachValidationError(oCoreValHandler);
 	});
@@ -109,9 +112,11 @@
 		var oCompZip = sap.ui.getCore().byId("zip_disabled");
 		
 		var oValHandler = function(oEvent) {
-			ok(false,"should never be called");
+			if (oEvent.getParameter("dataState").getMessages().length > 0) {
+				ok(false,"should never be called");
+			}
 		};
-		oCompZip.getBinding("value").attachMessageChange(oValHandler);
+		oCompZip.getBinding("value").attachDataStateChange(oValHandler);
 		sap.ui.getCore().attachValidationError(oValHandler);
 		oCompZip.setValue('123456');
 		ok(jQuery.isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
@@ -123,13 +128,15 @@
 		var oMessageModel = oMessageManager.getMessageModel();
 		var oCompZip = sap.ui.getCore().byId("zip");
 		var oChangeHandler = function(oEvent) {
-			ok(false,"should never be called");
+			if (oEvent.getParameter("dataState").getMessages().length > 0) {
+				ok(false,"should never be called");
+			}
 		};
 		var oValHandler = function(oEvent) {
 			ok(true,oEvent.sId);
 			sap.ui.getCore().detachValidationError(oValHandler);
 		};
-		oCompZip.getBinding("value").attachMessageChange(oChangeHandler);
+		oCompZip.getBinding("value").attachDataStateChange(oChangeHandler);
 		sap.ui.getCore().attachValidationError(oValHandler);
 		oCompZip.setValue('123456');
 		ok(jQuery.isPlainObject(oMessageModel.getObject('/')) || oMessageModel.getObject('/').length == 0, 'No Messages in Model');
