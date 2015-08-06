@@ -1775,9 +1775,10 @@ sap.ui.define([
 				oNode = !sKey ? this.oData : oOrigNode;
 			}
 			while (oNode && aParts[iIndex]) {
+				var bHasChange = oChangedNode && oChangedNode.hasOwnProperty(aParts[iIndex]);
 				oChangedNode = oChangedNode && oChangedNode[aParts[iIndex]];
 				oOrigNode = oOrigNode && oOrigNode[aParts[iIndex]];
-				oNode = bOriginalValue ? oOrigNode : oChangedNode || oOrigNode;
+				oNode = bOriginalValue || !bHasChange ? oOrigNode : oChangedNode;
 				if (oNode) {
 					if (oNode.__ref) {
 						oChangedNode = this.mChangedEntities[oNode.__ref];
