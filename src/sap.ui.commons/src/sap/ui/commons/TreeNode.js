@@ -128,6 +128,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/CustomStyleClassSu
 			if (oDomChildrenNodes) {
 				oDomChildrenNodes.stop(true, true);
 				oDomChildrenNodes.show(TreeNode.ANIMATION_DURATION,this.getCallbackFunction(this,oDomNode,false));
+				//In Chrome jQuery .show() method sporadically fails to set display property to child nodes and they remain hidden.
+				oDomChildrenNodes.css({display:'block'});
 			}
 			oDomNode.attr("aria-expanded", "true");
 			this.fireToggleOpenState({opened:true});
