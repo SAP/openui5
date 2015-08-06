@@ -5745,7 +5745,12 @@
 						ok(oSelect.$("icon").hasClass(CSS_CLASS + "Icon"), 'The select html span element must have the CSS class "' + CSS_CLASS + 'Icon"');
 					}
 
-					strictEqual(oSelect.getDomRef().getAttribute("role"), "combobox");
+					if (oSelect.getType() === sap.m.SelectType.Default) {
+						strictEqual(oSelect.getDomRef().getAttribute("role"), "combobox");
+					} else if (oSelect.getType() === sap.m.SelectType.IconOnly) {
+						strictEqual(oSelect.getDomRef().getAttribute("role"), "button");
+					}
+
 					strictEqual(oSelect.getDomRef().getAttribute("aria-expanded"), "false");
 					strictEqual(oSelect.getDomRef().getAttribute("aria-live"), "polite");
 
