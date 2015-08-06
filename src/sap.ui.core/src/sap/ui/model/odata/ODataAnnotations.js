@@ -1042,7 +1042,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 								propertyValue.push(oPath);
 							}
 						} else {
-							this.enrichFromPropertyValueAttributes(propertyValue, documentNode, oAlias);
 							annotationNodes = this.xPath.selectNodes(xmlDoc, "./d:Annotation", documentNode);
 							annotationNode = {};
 							for (nodeIndexValue = 0; nodeIndexValue < annotationNodes.length; nodeIndexValue += 1) {
@@ -1078,6 +1077,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 											var mValue = {};
 											mValue[sNodeName] = vValue;
 											propertyValue.push(mValue);
+										} else if (sNodeName === "Collection") {
+											// Collections are lists by definition and thus should be parsed as arrays
+											propertyValue = vValue;
 										} else {
 											if (propertyValue[sNodeName]) {
 												jQuery.sap.log.warning(
@@ -1092,6 +1094,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 							} else if (documentNode.nodeName in mTextNodeWhitelist) {
 								propertyValue = this._getTextValue(documentNode, oAlias);
 							}
+							
+							this.enrichFromPropertyValueAttributes(propertyValue, documentNode, oAlias);
 						}
 					}
 				}
