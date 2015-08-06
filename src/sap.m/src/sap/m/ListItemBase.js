@@ -620,9 +620,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.informList("Press", oEvent.srcControl);
 	};
 	
-	ListItemBase.prototype._ontouchstart = function(oEvent) {
+	ListItemBase.prototype.ontouchstart = function(oEvent) {
 		this._eventHandledByControl = oEvent.isMarked();
-		
+	};
+
+	ListItemBase.prototype._ontouchstart = function(oEvent) {
 		var oTargetTouch = oEvent.targetTouches[0];
 		this._touchedY = oTargetTouch.clientY;
 		this._touchedX = oTargetTouch.clientX;
