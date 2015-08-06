@@ -203,11 +203,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	
 		// mark the event for components that needs to know if the event was handled
 		// by this control
-		oEvent.setMarked();
+		if (oEvent) {
+			oEvent.setMarked();
+		}
 	
 		var aVisibleItems;
 		if (this.isOpen()) {
-			aVisibleItems = this.getSelectableItems();
+			aVisibleItems = this._getUnselectedItems();
 		} else {
 			aVisibleItems = this._getItemsStartingText(this.getValue());
 		}
@@ -237,7 +239,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 			}
 		}
 	
-		this.close();
+		if (oEvent) {
+			this.close();
+		}
 	};
 	
 	/* =========================================================== */
@@ -1356,21 +1360,30 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 */
 	MultiComboBox.prototype.onfocusout = function(oEvent) {
 		var sInputValue = this.getValue();
-		setTimeout(function() {
-			var $picker = jQuery(this.getPicker().getDomRef());
-			var $this = jQuery(this.getDomRef());
-			var $parents = $this.add($picker);
-			var bFocusOutsideOfControl = $parents.has(jQuery(document.activeElement)).length === 0;
-			if (bFocusOutsideOfControl && sInputValue && sInputValue.length > 0) {
-				this._showWrongValueVisualEffect();
-				this.setValue(null);
+		if (sInputValue) {
+			var aSelectableItems = this._getUnselectedItemsStartingText(sInputValue);
+			if (aSelectableItems.length === 1) {
+				this.onsapenter();
+			} else {
+				setTimeout(function() {
+					var $RelatedDomRefs = jQuery(this.getDomRef());
+					var oPicker = this.getPicker();
+					if (oPicker && oPicker.getDomRef()) {
+						var $picker = jQuery(oPicker.getDomRef());
+						$RelatedDomRefs = $RelatedDomRefs.add($picker);
+					}
+					
+					var bFocusOutsideOfControl = $RelatedDomRefs.has(jQuery(document.activeElement)).length === 0;
+					if (bFocusOutsideOfControl) {
+						this._showWrongValueVisualEffect();
+						this.setValue(null);
+					}
+				}.bind(this), 0);
 			}
-		}.bind(this), 0);
+		}
 		
 		this.removeStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Focused");
 		ComboBoxBase.prototype.onfocusout.apply(this, arguments);
-		
-		
 	};
 	
 	/**
@@ -1505,6 +1518,23 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	MultiComboBox.prototype._getItemsStartingText = function(sText) {
 		var aItems = [];
 		this.getSelectableItems().forEach(function(oItem) {
+			if (jQuery.sap.startsWithIgnoreCase(oItem.getText(), sText)) {
+				aItems.push(oItem);
+			}
+		}, this);
+		return aItems;
+	};
+	
+	/**
+	 * Get unselected items which match value of input field.
+	 * 
+	 * @param {string}
+	 * @returns {sap.ui.core.Item[]}
+	 * @private
+	 */
+	MultiComboBox.prototype._getUnselectedItemsStartingText = function(sText) {
+		var aItems = [];
+		this._getUnselectedItems().forEach(function(oItem) {
 			if (jQuery.sap.startsWithIgnoreCase(oItem.getText(), sText)) {
 				aItems.push(oItem);
 			}
