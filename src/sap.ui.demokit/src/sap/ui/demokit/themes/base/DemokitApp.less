@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'FeedbackRatingFaces';
+  src: url('fonts/BusinessSuiteInAppSymbolsSmall.ttf');
+}
+
 .sapDkShell .sapUiUx3ShellCanvas {
 	background-color: white;
 	border: 1px solid #EFEFEF;
@@ -50,6 +55,99 @@ html[data-sap-ui-browser^="ie"] .sapDkShell .sapUiUx3ShellCanvas {
 	float: left;
 }
 
+#feedBackPopup {
+    padding: 0;
+    
+    & .sapUiLbl, & #includePageCB{
+    	margin: 0.625rem 0;
+	}
+
+	& .sapUiFormResGrid>div{
+		padding: 0 0.75rem;
+	}
+
+	& .sapUiFormResGridCont>div {
+    	padding: 0;
+	}
+}
+
+a[id$="feedBackPopup"] > span {
+    cursor: pointer;
+}
+
+#sendBtn, #closeBtn {
+	margin-right: 0.75rem;
+}
+#successMsg, #errorMsg {
+	padding: 3.125rem;
+}
+
+#feedbackButtons, #closeBtn {
+	float: right;
+	margin-bottom: 0.625rem;
+}
+#feedBackPopup-content {
+	margin:0;
+}
+
+.feedbackLicenseText {
+	color: dimgray;
+	margin-bottom: 1.5rem;
+	margin-top: 0.5rem;
+}
+
+.feedbackContextData {
+	color: dimgray;
+	font-style: italic;
+	border: solid lightgray 0.0625rem;
+	box-sizing: border-box;
+	padding: 0.125rem 0.3125rem 1rem 0.3125rem;
+}
+
+#feedbackContextDataLink {
+	width: initial !important;
+	line-height: 14px;
+}
+
+#feedbackContextButtons {
+	width: 100%;
+}
+			
+#feedbackContextButtons > div {
+	vertical-align: middle;
+}
+			
+#feedbackContextButtons div:last-of-type {
+	float: right;
+	margin-top: 0.875rem;
+}
+
+#feedbackRatingButton {
+	display: block;
+	margin-bottom: 15px;
+}
+
+#feedbackRatingHeader {
+	width: 100%;
+}
+
+#feedbackRatingHeader > div {
+	width: 50%;
+}
+
+#feedbackRatingLabel {
+	float: right;
+}
+
+#feedbackRateYourExperienceLabel {
+	margin: 0.625rem 0;
+	color: dimgray;
+}
+
+.feedbackAsterisk {
+	color: red;
+}
+
 .sapUiTreeWithHeader {
 	font-family: "Verdana",Arial,Helvetica,sans-serif;
 	color: #007CC0;
@@ -99,18 +197,22 @@ html[data-sap-ui-browser^="ie"] .sapDkShell .sapUiUx3ShellCanvas {
 	font-size: 0.9rem;
 }
 
+#demokitFeedbackInput::-webkit-input-placeholder,
 .sapUiDemokitSearchField .sapUiSearchFieldTf .sapUiTf::-webkit-input-placeholder {
    font-style: italic;
 }
 
+#demokitFeedbackInput:-moz-placeholder,
 .sapUiDemokitSearchField .sapUiSearchFieldTf .sapUiTf:-moz-placeholder {
    font-style: italic;
 }
 
+#demokitFeedbackInput::-moz-placeholder,
 .sapUiDemokitSearchField .sapUiSearchFieldTf .sapUiTf::-moz-placeholder {
    font-style: italic;
 }
 
+#demokitFeedbackInput:-ms-input-placeholder,
 .sapUiDemokitSearchField .sapUiSearchFieldTf .sapUiTf:-ms-input-placeholder {
    font-style: italic;
 }
