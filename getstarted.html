@@ -95,20 +95,22 @@
 		<!-- MAIN CONTENT -->
 		<div id="main_content_wrap" class="outer">
 			<div id="main_content" class="inner">
-				<h3 id="what-is-it-about">The Basics!</h3>
+				<h3><a name="#walkthrough">A quick guide to OpenUI5</a></h3>
 				<p>
-					You can use OpenUI5 in any HTML file by including the following bootstrap script tag (make sure that you have put the UI5 runtime download in your application folder, if you reference it like in this example):
+					This tutorial will enable you to get started with your very first OpenUI5 application.
+					It is an excerpt of our larger How-To-Guide, the <a href="https://openui5beta.hana.ondemand.com/#docs/guide/3da5f4be63264db99f2e5b04c5e853db.html" target="_blank">Walkthrough</a>. This comprehensive guide can be found here:
+					<br><a href="https://openui5beta.hana.ondemand.com/#docs/guide/3da5f4be63264db99f2e5b04c5e853db.html" target="_blank">Walkthrough Tutorial (Documentation in Developer Guide - 1.30 beta)</a>, the corresponding sample code is included here: 
+					<br><a href="https://openui5beta.hana.ondemand.com/explored.html#/entity/sap.m.tutorial.walkthrough/samples" target="_blank">Walkthrough Tutorial (Code in Explored app - 1.30 beta)</a></p>
+					<p>The following steps will guide you through integrating OpenUI5 into your web application,
+					and use the MVC functionality implemented in UI5:
+					<ul><li><a href="#step1">Step 1 - Bootstrapping UI5</a></li></ul>
+					<li><a href="#step2">Step 2 - Using OpenUI5 Controls</a></li>
+					<li><a href="#step3">Step 3 - XML Views</a></li>
+					<li><a href="#step4">Step 4 - Controllers</a></li>
+					<li><a href="#step5">Step 5 - Databinding</a></li>
 				</p>
-				<pre class="codeblock">
-<span class="shTag">&lt;script</span><span class="shAttr"> id</span>=<span class="shString">"sap-ui-bootstrap"</span>
-   <span class="shAttr">src</span>=<span class="shString">"resources/sap-ui-core.js"</span>
-   <span class="shAttr">data-sap-ui-theme</span>=<span class="shString">"sap_bluecrystal"</span>
-   <span class="shAttr">data-sap-ui-libs</span>=<span class="shString">"sap.m"</span><span class="shTag">&gt;
-&lt;/script&gt;</span>
-</pre>
-				<p>The parameters used above determine which resources are loaded apart from the UI5 core. For instance, the <code><span class="shAttr">data-sap-ui-theme</span></code> parameter determines which of the available themes the application will be using, 
-				and the <code><span class="shAttr">data-sap-ui-libs</span></code> parameter defines which control libraries you want to use.
-				</p>
+
+				<h3 id="what-is-it-about"><a name="#step1">Step 1 - Bootstrapping UI5</a></h3>
 				<p>
 					A very simple application would look like this:<br>
 				</p>
@@ -160,8 +162,8 @@
 						Your browser doesn't support Cross-Origin Resource Sharing (CORS). Thus, you cannot see the result of the above sample here.
 					</p>
 				</div>
-
-				<h3>Using OpenUI5 Controls</h3>
+				<p><a href="#walkthrough">Back to top</a></p>
+				<h3><a name="#step2">Step 2 - Using OpenUI5 Controls</a></h3>
 				<p>Now it is time to build our first little UI by replacing the “Hello World” text in the HTML body by the OpenUI5 control sap.m.Text. For the beginning we use the JavaScript control interface to setup the UI. The control instance is then &quot;placed&quot; into the HTML body. Don’t forget to remove the line starting with &quot;jQuery(&quot;#content&quot;)... &quot;.</p>
 				<p>Here’s the code for this step:</p>
 				<pre class="codeblock">
@@ -213,7 +215,8 @@ All Controls of OpenUI have a fixed set of properties and methods to interact wi
 					<li><a href="https://openui5.hana.ondemand.com/explored.html#/entity/sap.m.Text/samples" target="_blank">sap.m.Text - API Overview &nbsp; Samples</a></li>
 					<li><a href="https://openui5.hana.ondemand.com/#docs/api/symbols/sap.m.Text.html" target="_blank">sap.m.Text - API Reference</a></li>
 				</ul>
-			<h3>XML Views</h3>
+			<p><a href="#walkthrough">Back to top</a></p>				
+			<h3><a name="#step3">XML Views</a></h3>
 			<p>Putting all our UI into the index.html file will very soon result in a messy setup and there is quite a bit of work ahead of us. 
 			So let’s do a first for modularization by putting the sap.m.Text control into a dedicated “view”. 
 			OpenUI5 supports multiple view types (XML, HTML, JavaScript). 
@@ -289,7 +292,8 @@ All Controls of OpenUI have a fixed set of properties and methods to interact wi
 					<li><a href="https://openui5.hana.ondemand.com/#docs/guide/91f292806f4d1014b6dd926db0e91070.html">XML Views</a></li>
 				</ul>
 			</p>
-			<h3>Controllers</h3>
+			<p><a href="#walkthrough">Back to top</a></p>
+			<h3><a name="#step4">Step 4 - Controllers</a></h3>
 			<p>In this step we replace the text with a button and show the &quot;Hello World&quot; message once the button gets pressed. The handling of this event will be implemented on the controller of the view.</p>
 			
 			<p>Here is the new code for our view:</p>
@@ -341,7 +345,8 @@ All Controls of OpenUI have a fixed set of properties and methods to interact wi
 				Your browser doesn't support Cross-Origin Resource Sharing (CORS). Thus, you cannot see the result of the above sample here.
 			</p>
 		</div>
-		<h3>JSON Model</h3>
+		<p><a href="#walkthrough">Back to top</a></p>
+		<h3><a name="#step5">Step 5 - Databinding</a></h3>
 		<p>
 			Now that we have set up the view and controller it’s about time to think about the M in MVC. 
 			We will add an input field to our app, bind its value to the model, and show the user input when pressing the &quot;Say Hello&quot; button.
