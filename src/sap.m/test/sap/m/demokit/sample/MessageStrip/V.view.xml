@@ -1,5 +1,4 @@
 <mvc:View
-	controllerName="sap.m.sample.MessageStrip.C"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:html="http://www.w3.org/1999/xhtml"
@@ -8,68 +7,58 @@
 		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
-			<html:style>
-				.sapMMsgStrip {
-					margin-bottom: 2rem;
-				}
-			</html:style>
 
-			<Label text="Default(Information) with default icon and close button:" />
 			<MessageStrip
-				text="Default: Lorem ipsum dolor sit amet, consectetur adipisicing elit."
+				text="Default (Information) with default icon and close button:"
 				showIcon="true"
 				showCloseButton="true"
-				close="onMsgStripClose">
+				class="sapUiMediumMarginBottom">
 			</MessageStrip>
 
-			<Label text="Error with default icon and close button:" />
 			<MessageStrip
-				text="Error: Lorem ipsum dolor sit amet, consectetur adipisicing elit."
+				text="Error with default icon and close button:"
 				type="Error"
 				showIcon="true"
 				showCloseButton="true"
-				close="onMsgStripClose">
+				class="sapUiMediumMarginBottom">
 			</MessageStrip>
 
-			<Label text="Warning with default icon and close button:" />
 			<MessageStrip
-				text="Warning: Lorem ipsum dolor sit amet, consectetur adipisicing elit."
+				text="Warning with default icon and close button:"
 				type="Warning"
 				showIcon="true"
 				showCloseButton="true"
-				close="onMsgStripClose">
+				class="sapUiMediumMarginBottom">
 			</MessageStrip>
 
-			<Label text="Success with default icon and close button:" />
 			<MessageStrip
-				text="Success: Lorem ipsum dolor sit amet, consectetur adipisicing elit."
+				text="Success with default icon and close button:"
 				type="Success"
 				showIcon="true"
 				showCloseButton="true"
-				close="onMsgStripClose">
+				class="sapUiMediumMarginBottom">
 			</MessageStrip>
 
-			<Label text="Information with default icon" />
 			<MessageStrip
-				text="Information: Lorem ipsum dolor sit amet, consectetur adipisicing elit."
-				type="Information"
-				showIcon="true">
-			</MessageStrip>
-
-			<Label text="Information with custom icon" />
-			<MessageStrip
-				text="Information: Lorem ipsum dolor sit amet, consectetur adipisicing elit."
+				text="Information with default icon."
 				type="Information"
 				showIcon="true"
-				customIcon="sap-icon://locked">
+				class="sapUiMediumMarginBottom">
 			</MessageStrip>
 
-			<Label text="Error with link" />
 			<MessageStrip
-				text="Error: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam pretium blandit sapien at pellentesque. Pellentesque tincidunt pretium justo at pharetra."
+				text="Information with custom icon"
+				type="Information"
+				showIcon="true"
+				customIcon="sap-icon://locked"
+				class="sapUiMediumMarginBottom">
+			</MessageStrip>
+
+			<MessageStrip
+				text="Error with link"
 				type="Error"
 				showCloseButton="true"
-				close="onMsgStripClose">
+				class="sapUiMediumMarginBottom">
 				<link>
 					<Link text="Open SAP Homepage"
 						target="_blank"
