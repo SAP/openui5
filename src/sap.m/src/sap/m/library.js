@@ -2743,7 +2743,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	if (sap.ui.Device.os.blackberry || sap.ui.Device.os.android && sap.ui.Device.os.version >= 4) {
 		jQuery(window).on("resize", function(){
 			var oActive = document.activeElement;
-			var sTagName = oActive.tagName;
+			var sTagName = oActive ? oActive.tagName : "";
 			if (sTagName == "INPUT" || sTagName == "TEXTAREA") {
 				window.setTimeout(function(){
 					oActive.scrollIntoViewIfNeeded();
