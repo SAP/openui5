@@ -136,15 +136,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			if (this.getDomRef()) {
 				if (iDays > this._iDaysLarge) {
-					this.$().addClass("sapUiCalDateIntLarge");
+					this.$().addClass("sapUiCalIntLarge");
 				}else {
-					this.$().removeClass("sapUiCalDateIntLarge");
+					this.$().removeClass("sapUiCalIntLarge");
 				}
 
 				if (iDays > this._iDaysMonthHead) {
-					this.$().addClass("sapUiCalDateIntMonthHead");
+					this.$().addClass("sapUiCalIntHead");
 				}else {
-					this.$().removeClass("sapUiCalDateIntMonthHead");
+					this.$().removeClass("sapUiCalIntHead");
 				}
 			}
 

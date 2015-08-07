@@ -27,10 +27,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 	/**
 	 * Creates a Date in local timezone from UTC timezone
 	 * @param {Date} oDate in UTC timezone
+	 * @param {boolean} bTime if set the time part of the date will be used too, otherwise it will be initial
 	 * @return {Date} in local timezone
 	 * @private
 	 */
-	CalendarUtils._createLocalDate = function(oDate) {
+	CalendarUtils._createLocalDate = function(oDate, bTime) {
 
 		var oLocaleDate;
 
@@ -47,6 +48,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 			if (oMyDate.getFullYear() < 1000) {
 				oLocaleDate.setFullYear(oMyDate.getFullYear());
 			}
+
+			if (bTime) {
+				oLocaleDate.setHours(oMyDate.getUTCHours());
+				oLocaleDate.setMinutes(oMyDate.getUTCMinutes());
+				oLocaleDate.setSeconds(oMyDate.getUTCSeconds());
+				oLocaleDate.setMilliseconds(oMyDate.getUTCMilliseconds());
+			}
 		}
 
 		return oLocaleDate;
@@ -56,10 +64,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 	/**
 	 * Creates a Date in UTC timezone from local timezone
 	 * @param {Date} oDate in local timezone
+	 * @param {boolean} bTime if set the time part of the date will be used too, otherwise it will be initial
 	 * @return {Date} in UTC timezone
 	 * @private
 	 */
-	CalendarUtils._createUTCDate = function(oDate) {
+	CalendarUtils._createUTCDate = function(oDate, bTime) {
 
 		var oUTCDate;
 
@@ -72,9 +81,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 				oMyDate = oDate;
 			}
 
-			oUTCDate = new Date(Date.UTC(oMyDate.getFullYear(),oMyDate.getMonth(),oMyDate.getDate()));
+			oUTCDate = new Date(Date.UTC(oMyDate.getFullYear(), oMyDate.getMonth(), oMyDate.getDate()));
 			if (oMyDate.getFullYear() < 1000) {
 				oUTCDate.setUTCFullYear(oMyDate.getFullYear());
+			}
+
+			if (bTime) {
+				oUTCDate.setUTCHours(oMyDate.getHours());
+				oUTCDate.setUTCMinutes(oMyDate.getMinutes());
+				oUTCDate.setUTCSeconds(oMyDate.getSeconds());
+				oUTCDate.setUTCMilliseconds(oMyDate.getMilliseconds());
 			}
 		}
 
@@ -85,12 +101,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 	/**
 	 * Creates a Date in UTC timezone from local timezone
 	 * @param {Date} oDate in local timezone
+	 * @param {boolean} bTime if set the time part of the date will be used too, otherwise it will be initial
 	 * @return {UniversalDate} in UTC timezone
 	 * @private
 	 */
-	CalendarUtils._createUniversalUTCDate = function(oDate) {
+	CalendarUtils._createUniversalUTCDate = function(oDate, bTime) {
 
-		var oUTCDate = new UniversalDate(this._createUTCDate(oDate).getTime());
+		var oUTCDate = new UniversalDate(this._createUTCDate(oDate, bTime).getTime());
 		return oUTCDate;
 
 	};

@@ -110,20 +110,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			pressNext : {},
 
 			/**
-			 * first button pressed (normally month)
+			 * first button pressed (normally day)
+			 * @since 1.32.0
+			 */
+			pressButton0 : {},
+
+			/**
+			 * second button pressed (normally month)
 			 */
 			pressButton1 : {},
 
 			/**
-			 * second button pressed (normally year)
+			 * third button pressed (normally year)
 			 */
-			pressButton2 : {},
-
-			/**
-			 * third button pressed
-			 * @since 1.32.0
-			 */
-			pressButton3 : {}
+			pressButton2 : {}
 
 		}
 	}});
@@ -133,6 +133,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		Header.prototype.onAfterRendering = function(){
 
 //			var that = this;
+
+		};
+
+		Header.prototype.setTextButton0 = function(sText){
+
+			this.setProperty("textButton0", sText, true);
+
+			if (this.getDomRef() && this.getVisibleButton0()) {
+				this.$("B0").text(sText);
+			}
+
+		};
+
+		Header.prototype.setAriaLabelButton0 = function(sText){
+
+			this.setProperty("ariaLabelButton0", sText, true);
+
+			if (this.getDomRef() && this.getVisibleButton0()) {
+				if (sText) {
+					this.$("B0").attr("aria-label", sText);
+				} else {
+					this.$("B0").removeAttr("aria-label");
+				}
+			}
 
 		};
 
@@ -184,30 +208,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		Header.prototype.setTextButton3 = function(sText){
-
-			this.setProperty("textButton3", sText, true);
-
-			if (this.getDomRef() && this.getVisibleButton3()) {
-				this.$("B3").text(sText);
-			}
-
-		};
-
-		Header.prototype.setAriaLabelButton3 = function(sText){
-
-			this.setProperty("ariaLabelButton3", sText, true);
-
-			if (this.getDomRef() && this.getVisibleButton3()) {
-				if (sText) {
-					this.$("B3").attr("aria-label", sText);
-				} else {
-					this.$("B3").removeAttr("aria-label");
-				}
-			}
-
-		};
-
 		Header.prototype.setEnabledPrevious = function(bEnabled){
 
 			this.setProperty("enabledPrevious", bEnabled, true);
@@ -246,6 +246,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				this.firePressPrevious();
 			}	else if (jQuery.sap.containsOrEquals(this.getDomRef("next"), oEvent.target) && this.getEnabledNext()){
 				this.firePressNext();
+			} else if (oEvent.target.id == this.getId() + "-B0"){
+				this.firePressButton0();
 			} else if (oEvent.target.id == this.getId() + "-B1"){
 				this.firePressButton1();
 			} else if (oEvent.target.id == this.getId() + "-B2"){

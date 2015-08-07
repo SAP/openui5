@@ -170,7 +170,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			if (!this._bDateRangeChanged && (!oOrigin || !(oOrigin instanceof sap.ui.unified.DateRange))) {
 				Control.prototype.invalidate.apply(this, arguments);
-			} else if (this.getDomRef() && !this._sInvalidateMonth) {
+			} else if (this.getDomRef() && !this._sInvalidateMonths) {
 				// DateRange changed -> only rerender months
 				// do this only once if more DateRanges / Special days are changed
 				var that = this;
@@ -426,8 +426,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var oParent = this.getParent();
 
-			if (oParent && oParent._getShowMonthsHeader) {
-				return oParent._getShowMonthsHeader();
+			if (oParent && oParent._getShowItemHeader) {
+				return oParent._getShowItemHeader();
 			} else {
 				return this.getProperty("showHeader");
 			}
@@ -463,7 +463,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var iSelected = 0;
 			var aSelectedDates = this.getSelectedDates();
-			var oMyDate = CalendarUtils._createUniversalUTCDate(oDate);
+			var oMyDate = new UniversalDate(oDate.getTime());
 			oMyDate.setUTCDate(1); //always use begin of month for test
 			var oTimeStamp = oMyDate.getTime();
 
@@ -527,7 +527,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var oType;
 			var aSpecialDates = this.getSpecialDates();
-			var oMyDate = CalendarUtils._createUniversalUTCDate(oDate);
+			var oMyDate = new UniversalDate(oDate.getTime());
 			oMyDate.setUTCDate(1); //always use begin of month for test
 			var oTimeStamp = oMyDate.getTime();
 
@@ -877,7 +877,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					break;
 				}
 
-				this.fireFocus({date: oFocusedDate, notVisible: true});
+				this.fireFocus({date: CalendarUtils._createLocalDate(oFocusedDate), notVisible: true});
 
 			}
 
@@ -913,7 +913,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var bFocusable = oThis.checkDateFocusable(oDate);
 
 			if (!oThis._bNoRangeCheck && !bFocusable) {
-				throw new Error("Date must be in visible date range; " + this);
+				throw new Error("Date must be in visible date range; " + oThis);
 			}
 
 			oThis.setProperty("date", oDate, true);
@@ -1062,7 +1062,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 							if (oStartDate) {
 								oStartDate = CalendarUtils._createUniversalUTCDate(oStartDate);
 								oStartDate.setUTCDate(1); // begin of month
-								if (oDate.getTime() == CalendarUtils._createUniversalUTCDate(oStartDate)) {
+								if (oDate.getTime() == oStartDate.getTime()) {
 									oAggOwner.removeAggregation("selectedDates", i, true); // no re-rendering
 									break;
 								}
@@ -1174,6 +1174,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		}
 
 		function _updateARIADesrcibedby(oThis, $DomRef, bStart, bEnd){
+
+			if (!oThis.getIntervalSelection()) {
+				return;
+			}
 
 			var sDescribedBy = "";
 			var aDescribedBy = [];

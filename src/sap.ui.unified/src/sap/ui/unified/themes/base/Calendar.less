@@ -123,6 +123,7 @@
 .sapUiCalItems{
 	display: inline-block;
 	width: 100%;
+	white-space: nowrap;
 }
 
 .sapUiCalWH,
@@ -223,13 +224,18 @@
 }
 
 .sapUiCalContent > .sapUiCalMonthPicker,
-.sapUiCalContent > .sapUiCalYearPicker{
+.sapUiCalContent > .sapUiCalYearPicker,
+.sapUiCalTimeInt > .sapUiCalContent > .sapUiCalDatesRow{
 	position: absolute;
 	top: @sapUiLineHeight;
 	bottom: 0;
 	left: 0;
 	right: 0;
 	background-color: @sapUiFieldBackground;
+}
+
+.sapUiCalTimeInt > .sapUiCalContent > .sapUiCalDatesRow .sapUiCalWH{
+	display: none;
 }
 
 .sapUiCalCancel{
