@@ -426,7 +426,7 @@ sap.ui.define([
 			/**
 			 * Helper function for a <code>template:with</code> instruction that depending on how
 			 * it is called goes to the entity set with the given name or to the one determined
-			 * by the last navigation property of one of the following dynamic expressions:
+			 * by the last navigation property. Supports the following dynamic expressions:
 			 * <ul>
 			 * <li>"14.5.2 Expression edm:AnnotationPath"</li>
 			 * <li>"14.5.11 Expression edm:NavigationPropertyPath"</li>
