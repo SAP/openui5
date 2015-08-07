@@ -221,8 +221,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 				}).addStyleClass("sapMActionSheetPopover");
 
 				if (sap.ui.Device.browser.internet_explorer) {
-					this._parent._fnSetArrowPosition = jQuery.proxy(function(){
-						Popover.prototype._setArrowPosition.apply(this);
+					this._parent._fnAdjustPositionAndArrow = jQuery.proxy(function(){
+						Popover.prototype._adjustPositionAndArrow.apply(this);
 
 						var $this = this.$(),
 							fContentWidth = $this.children(".sapMPopoverCont")[0].getBoundingClientRect().width;
