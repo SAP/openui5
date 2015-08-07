@@ -3542,5 +3542,80 @@
         "references": []
       }
     ]
+  },
+  "1.28.14": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "2ee2504f331b7112bb74577fb7573cf3e6621ea2",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "Javascript error at activeElement.tagName",
+        "references": []
+      },
+      {
+        "id": "95763e3436595ceb3a0635560d0344a06ba6eb92",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Scrolling performance on BlackBerry 10",
+        "references": []
+      },
+      {
+        "id": "227405d9673a0c87756b4b46b036965a405cf31a",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: run time assigned icon is not visible",
+        "references": []
+      },
+      {
+        "id": "5e70be5a61147044fbd746e029e4cf31fcc18302",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Combobox: Correctly opens the Popover with control instance",
+        "references": []
+      },
+      {
+        "id": "5a202b5ea766e2b09337c7cf815f88ede9d83397",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker, sap.m.DateRangeSelection: adapt API doku",
+        "references": []
+      },
+      {
+        "id": "3f4a4c26fb75b692cd071862a6ab55479b1c2d17",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.List: multi selection is not possible",
+        "references": []
+      },
+      {
+        "id": "bbdf9de7ff691a3cdc52188f0f480a28efc46767",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: select type \"IconOnly\" is announced as button",
+        "references": []
+      },
+      {
+        "id": "010ad211a82ae2c51e7eeacf0211b510c719a409",
+        "author": "Hena Teinzer \u003chena.teinzer@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TextArea: removed double line breaks",
+        "references": []
+      },
+      {
+        "id": "f5424043f00d0cf4960d43d68fae4c3ce4cc1b08",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
+        "references": []
+      },
+      {
+        "id": "a8895867911372546e78a23d99b9f2588583b371",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker, sap.ui.unified.Calendar: position issues",
+        "references": []
+      }
+    ]
   }
 }

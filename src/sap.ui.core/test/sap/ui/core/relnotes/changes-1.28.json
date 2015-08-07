@@ -2209,5 +2209,38 @@
         "references": []
       }
     ]
+  },
+  "1.28.14": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "3a4e5adb87ad0d9021781b5706652d984fcd24ae",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Parse Empty Collection as Array",
+        "references": []
+      },
+      {
+        "id": "7c687d453ea56489b9b2e9599fab9e42547840b3",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Parse Empty Collection as Array",
+        "references": []
+      },
+      {
+        "id": "74554784cfff37542938abe5e04c9490135a96f3",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Replace multiple EnumMember Aliases",
+        "references": []
+      },
+      {
+        "id": "95763e3436595ceb3a0635560d0344a06ba6eb92",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Scrolling performance on BlackBerry 10",
+        "references": []
+      }
+    ]
   }
 }

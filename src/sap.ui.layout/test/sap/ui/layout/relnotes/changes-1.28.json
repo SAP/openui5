@@ -211,5 +211,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.14": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "c5c84ba2eca6a9f71c42d0f4ae2fe0468ae8f11b",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form: adapt documentation for form controls",
+        "references": []
+      }
+    ]
   }
 }
