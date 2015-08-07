@@ -101,6 +101,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			XL = "XL",
 			HIDDEN_CLASS = "sapUiHidden",
 			SPAN_SIZE_12_CLASS = "sapUiDSCSpan12",
+			MC_FIXED_CLASS = "sapUiDSCMCFixed",
+			SC_FIXED_CLASS = "sapUiDSCSCFixed",
 			SPAN_SIZE_3 = 3,
 			SPAN_SIZE_4 = 4,
 			SPAN_SIZE_6 = 6,
@@ -247,6 +249,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		DynamicSideContent.prototype.onAfterRendering = function () {
 			if (this.getContainerQuery()) {
 				this._attachContainerResizeListener();
+				this._handleMediaChange();
 			} else {
 				var that = this;
 				jQuery(window).resize(function() {
@@ -381,7 +384,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				this._oldBreakPoint = this._currentBreakpoint;
 				this._currentBreakpoint = this._getBreakPointFromWidth(this._iWindowWidth);
 
-				if ((this._oldBreakPoint !== this._currentBreakpoint) || this._currentBreakpoint === M) {
+				if ((this._oldBreakPoint !== this._currentBreakpoint)
+					|| (this._currentBreakpoint === M
+					&& this.getSideContentFallDown() === sap.ui.layout.SideContentFallDown.OnMinimumWidth)) {
 					this._setResizeData(this._currentBreakpoint, this.getEqualSplit());
 					this._changeGridState();
 				}
@@ -411,6 +416,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 						} else {
 							this.setShowSideContent(false, true);
 						}
+						this._bFixedSideContent = false;
 						break;
 					case M:
 						var iSideContentWidth = Math.ceil((33.333 / 100) * this._iWindowWidth);
@@ -418,8 +424,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 							sideContentFallDown === sap.ui.layout.SideContentFallDown.BelowXL ||
 							(iSideContentWidth <= 320 && sideContentFallDown === sap.ui.layout.SideContentFallDown.OnMinimumWidth)) {
 							this._setSpanSize(SPAN_SIZE_12, SPAN_SIZE_12);
+							this._bFixedSideContent = false;
 						} else {
 							this._setSpanSize(SPAN_SIZE_4, SPAN_SIZE_8);
+							this._bFixedSideContent = true;
 						}
 						if (sideContentVisibility === sap.ui.layout.SideContentVisibility.ShowAboveS ||
 							sideContentVisibility === sap.ui.layout.SideContentVisibility.AlwaysShow) {
@@ -443,6 +451,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 							this.setShowSideContent(false, true);
 						}
 						this.setShowMainContent(true, true);
+						this._bFixedSideContent = false;
 						break;
 					case XL:
 						this._setSpanSize(SPAN_SIZE_3, SPAN_SIZE_9);
@@ -452,6 +461,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 							this.setShowSideContent(false, true);
 						}
 						this.setShowMainContent(true, true);
+						this._bFixedSideContent = false;
 						break;
 					default:
 						throw new Error(INVALID_BREAKPOINT_ERROR_MSG);
@@ -468,6 +478,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 						this.setShowSideContent(true, true);
 						this.setShowMainContent(true, true);
 				}
+				this._bFixedSideContent = false;
 			}
 
 			return this;
@@ -479,7 +490,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @return {boolean}
 		 */
 		DynamicSideContent.prototype._shouldSetHeight = function () {
-			if ((this._iScSpan + this._iMcSpan) === SPAN_SIZE_12 && this.getShowMainContent() && this.getShowSideContent()) {
+			if (((this._iScSpan + this._iMcSpan) === SPAN_SIZE_12 &&
+				 this.getShowMainContent() && this.getShowSideContent())
+				|| this._fixedSideContent) {
 				return true;
 			}
 			return false;
@@ -494,10 +507,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			var $sideContent = this.$(SC_GRID_CELL_SELECTOR),
 				$mainContent = this.$(MC_GRID_CELL_SELECTOR);
 
+			if (this._bFixedSideContent) {
+				$sideContent.removeClass().addClass(SC_FIXED_CLASS);
+				$mainContent.removeClass().addClass(MC_FIXED_CLASS);
+			} else {
+				$sideContent.removeClass(SC_FIXED_CLASS);
+				$mainContent.removeClass(MC_FIXED_CLASS);
+			}
+
 			if (this.getShowSideContent() && this.getShowMainContent()) {
 
-				$mainContent.removeClass().addClass("sapUiDSCSpan" + this._iMcSpan);
-				$sideContent.removeClass().addClass("sapUiDSCSpan" + this._iScSpan);
+				if (!this._bFixedSideContent) {
+					$mainContent.removeClass().addClass("sapUiDSCSpan" + this._iMcSpan);
+					$sideContent.removeClass().addClass("sapUiDSCSpan" + this._iScSpan);
+				}
 
 				if (this._shouldSetHeight()) {
 					$sideContent.css("height", "100%").css("float", "left");

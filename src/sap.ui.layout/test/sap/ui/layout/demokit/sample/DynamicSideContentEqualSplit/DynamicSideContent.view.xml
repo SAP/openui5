@@ -12,7 +12,12 @@
 				id="sideContentContainer"
 				showHeader="false"
 				showNavButton="false">
-				<l:DynamicSideContent id="DynamicSideContent" class="sapUiDSCExplored sapUiContentPadding" containerQuery="true" equalSplit="true" breakpointChanged="updateToggleButtonState">
+				<l:DynamicSideContent
+					id="DynamicSideContent"
+					class="sapUiDSCExplored sapUiContentPadding"
+					containerQuery="true"
+					equalSplit="true"
+					breakpointChanged="updateToggleButtonState">
 					<l:mainContent>
 						<VBox>
 							<Title level="H1" text="Main content" />
