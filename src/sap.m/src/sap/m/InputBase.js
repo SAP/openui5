@@ -652,7 +652,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @returns {string} The selected text.
 	 * @protected
-	 * @since 1.28
+	 * @since 1.32
 	 */
 	InputBase.prototype.getSelectedText = function() {
 		return jQuery(this.getFocusDomRef()).getSelectedText();
