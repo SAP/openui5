@@ -5,8 +5,44 @@
 	<link rel="self" href="http://openui5.org/atom.xml"/>
 	<link href="http://openui5.org/"/>
 	<id>http://openui5.org/atom.xml</id>
-	<updated>2015-08-07T12:00:17+00:00</updated>
+	<updated>2015-08-07T16:00:08+00:00</updated>
 	<generator uri="http://www.planetplanet.org/">Planet/2.0 +http://www.planetplanet.org</generator>
+
+	<entry>
+		<title type="html">Hybrid apps for Windows Phone</title>
+		<link href="http://openui5picks.tumblr.com/post/126093935815"/>
+		<id>http://openui5picks.tumblr.com/post/126093935815</id>
+		<updated>2015-07-28T21:20:26+00:00</updated>
+		<content type="html">&lt;img src=&quot;https://36.media.tumblr.com/ee418a251b5ba1231676aa417cbe8a0b/tumblr_inline_nsps6hJVSG1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;As we had several inquiries about how to build up a OpenUI5 application in a Windows Phone hybrid app recently, we have investigated a bit in that area. You may have heard that there is a problem...</content>
+		<author>
+			<name>Demos</name>
+			<uri>http://openui5picks.tumblr.com/</uri>
+		</author>
+		<source>
+			<title type="html">openui5picks</title>
+			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
+			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
+			<updated>2015-08-07T16:00:08+00:00</updated>
+		</source>
+	</entry>
+
+	<entry>
+		<title type="html">Lessons Learned From Working With Fakes and Mocks in UI5</title>
+		<link href="http://openui5picks.tumblr.com/post/126093309405"/>
+		<id>http://openui5picks.tumblr.com/post/126093309405</id>
+		<updated>2015-07-05T08:27:26+00:00</updated>
+		<content type="html">&lt;img src=&quot;https://36.media.tumblr.com/fd1baf0e04b27c18bd02ba43f9b59911/tumblr_inline_nsprugXuUb1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;I have recently worked on a UI5 project where we built an event-driven service-based architecture. We followed the TDD principles for most parts, so naturally, we ended up having lots of fake and mock...</content>
+		<author>
+			<name>Demos</name>
+			<uri>http://openui5picks.tumblr.com/</uri>
+		</author>
+		<source>
+			<title type="html">openui5picks</title>
+			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
+			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
+			<updated>2015-08-07T16:00:08+00:00</updated>
+		</source>
+	</entry>
 
 	<entry>
 		<title type="html">Why initializing properties on prototypes can have nasty side effects in SAPUI5</title>
@@ -22,7 +58,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-07T12:00:17+00:00</updated>
+			<updated>2015-08-07T16:00:08+00:00</updated>
 		</source>
 	</entry>
 
@@ -40,7 +76,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-07T12:00:17+00:00</updated>
+			<updated>2015-08-07T16:00:08+00:00</updated>
 		</source>
 	</entry>
 
@@ -58,7 +94,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-07T12:00:17+00:00</updated>
+			<updated>2015-08-07T16:00:08+00:00</updated>
 		</source>
 	</entry>
 
@@ -76,7 +112,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-07T12:00:17+00:00</updated>
+			<updated>2015-08-07T16:00:08+00:00</updated>
 		</source>
 	</entry>
 
@@ -94,7 +130,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-07T12:00:17+00:00</updated>
+			<updated>2015-08-07T16:00:08+00:00</updated>
 		</source>
 	</entry>
 
@@ -112,7 +148,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-07T12:00:17+00:00</updated>
+			<updated>2015-08-07T16:00:08+00:00</updated>
 		</source>
 	</entry>
 
@@ -130,46 +166,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-07T12:00:17+00:00</updated>
-		</source>
-	</entry>
-
-	<entry>
-		<title type="html">Using Badges on Buttons</title>
-		<link href="http://openui5picks.tumblr.com/post/98138885150"/>
-		<id>http://openui5picks.tumblr.com/post/98138885150</id>
-		<updated>2014-08-26T11:36:00+00:00</updated>
-		<content type="html">&lt;img src=&quot;https://31.media.tumblr.com/f1c45e5ff103de71fe5219c3344d2328/tumblr_inline_ncawzfnAiv1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;I needed to add some button notifications (known as badges) to some buttons. The following example uses css styled badges attached to buttons using the custom-data property.
-
-
-</content>
-		<author>
-			<name>Demos</name>
-			<uri>http://openui5picks.tumblr.com/</uri>
-		</author>
-		<source>
-			<title type="html">openui5picks</title>
-			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
-			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-07T12:00:17+00:00</updated>
-		</source>
-	</entry>
-
-	<entry>
-		<title type="html">Simple openUI5 application II: How to create frontend in UI5 that will consume oData service</title>
-		<link href="http://openui5picks.tumblr.com/post/98138078515"/>
-		<id>http://openui5picks.tumblr.com/post/98138078515</id>
-		<updated>2014-07-22T11:30:00+00:00</updated>
-		<content type="html">&lt;img src=&quot;https://31.media.tumblr.com/e3f5044854c1337926274cf2bc9bdf55/tumblr_inline_ncawc3i6eG1sb8vfp.jpg&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;After the first part of tutorial, we have created and run oData service that can write/read data to SAP database table. In this part, I will explain how frontend openUI5 application works. Whole...</content>
-		<author>
-			<name>Demos</name>
-			<uri>http://openui5picks.tumblr.com/</uri>
-		</author>
-		<source>
-			<title type="html">openui5picks</title>
-			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
-			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-07T12:00:17+00:00</updated>
+			<updated>2015-08-07T16:00:08+00:00</updated>
 		</source>
 	</entry>
 
@@ -189,7 +186,7 @@ This blog demonstrates how to load, transform and analyse UK road traffic accide
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-07T12:00:17+00:00</updated>
+			<updated>2015-08-07T16:00:08+00:00</updated>
 		</source>
 	</entry>
 

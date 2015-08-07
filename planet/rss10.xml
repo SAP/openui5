@@ -13,6 +13,8 @@
 
 	<items>
 		<rdf:Seq>
+			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/126093935815" />
+			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/126093309405" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/121254537550" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/116631893405" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/112684181095" />
@@ -20,13 +22,23 @@
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/105856162090" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/98297520315" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/98219217490" />
-			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/98138885150" />
-			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/98138078515" />
 			<rdf:li rdf:resource="http://openui5picks.tumblr.com/post/100831992435" />
 		</rdf:Seq>
 	</items>
 </channel>
 
+<item rdf:about="http://openui5picks.tumblr.com/post/126093935815">
+	<title>Demos: Hybrid apps for Windows Phone</title>
+	<link>http://openui5picks.tumblr.com/post/126093935815</link>
+	<content:encoded>&lt;img src=&quot;https://36.media.tumblr.com/ee418a251b5ba1231676aa417cbe8a0b/tumblr_inline_nsps6hJVSG1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;As we had several inquiries about how to build up a OpenUI5 application in a Windows Phone hybrid app recently, we have investigated a bit in that area. You may have heard that there is a problem...</content:encoded>
+	<dc:date>2015-07-28T21:20:26+00:00</dc:date>
+</item>
+<item rdf:about="http://openui5picks.tumblr.com/post/126093309405">
+	<title>Demos: Lessons Learned From Working With Fakes and Mocks in UI5</title>
+	<link>http://openui5picks.tumblr.com/post/126093309405</link>
+	<content:encoded>&lt;img src=&quot;https://36.media.tumblr.com/fd1baf0e04b27c18bd02ba43f9b59911/tumblr_inline_nsprugXuUb1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;I have recently worked on a UI5 project where we built an event-driven service-based architecture. We followed the TDD principles for most parts, so naturally, we ended up having lots of fake and mock...</content:encoded>
+	<dc:date>2015-07-05T08:27:26+00:00</dc:date>
+</item>
 <item rdf:about="http://openui5picks.tumblr.com/post/121254537550">
 	<title>Demos: Why initializing properties on prototypes can have nasty side effects in SAPUI5</title>
 	<link>http://openui5picks.tumblr.com/post/121254537550</link>
@@ -68,21 +80,6 @@
 	<link>http://openui5picks.tumblr.com/post/98219217490</link>
 	<content:encoded>&lt;img src=&quot;https://31.media.tumblr.com/0549702b84bde764562d121235df5a33/tumblr_inline_nccp90D1jy1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;There are a huge number of icons as standard in the UI5 library, both in the SAPUI5 and OpenUI5 flavours. Here’s the Icon Explorer from the SDK. One of the problems I have is that when I’m...</content:encoded>
 	<dc:date>2014-09-14T11:36:00+00:00</dc:date>
-</item>
-<item rdf:about="http://openui5picks.tumblr.com/post/98138885150">
-	<title>Demos: Using Badges on Buttons</title>
-	<link>http://openui5picks.tumblr.com/post/98138885150</link>
-	<content:encoded>&lt;img src=&quot;https://31.media.tumblr.com/f1c45e5ff103de71fe5219c3344d2328/tumblr_inline_ncawzfnAiv1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;I needed to add some button notifications (known as badges) to some buttons. The following example uses css styled badges attached to buttons using the custom-data property.
-
-
-</content:encoded>
-	<dc:date>2014-08-26T11:36:00+00:00</dc:date>
-</item>
-<item rdf:about="http://openui5picks.tumblr.com/post/98138078515">
-	<title>Demos: Simple openUI5 application II: How to create frontend in UI5 that will consume oData service</title>
-	<link>http://openui5picks.tumblr.com/post/98138078515</link>
-	<content:encoded>&lt;img src=&quot;https://31.media.tumblr.com/e3f5044854c1337926274cf2bc9bdf55/tumblr_inline_ncawc3i6eG1sb8vfp.jpg&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;After the first part of tutorial, we have created and run oData service that can write/read data to SAP database table. In this part, I will explain how frontend openUI5 application works. Whole...</content:encoded>
-	<dc:date>2014-07-22T11:30:00+00:00</dc:date>
 </item>
 <item rdf:about="http://openui5picks.tumblr.com/post/100831992435">
 	<title>Demos: Analysing UK Road Traffic Accident data with HANA and SAPUI5</title>
