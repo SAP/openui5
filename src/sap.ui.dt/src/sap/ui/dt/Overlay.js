@@ -135,6 +135,14 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 					}
 				},
 				/**
+				 * Event fired when the property "Selectable" is changed
+				 */
+				selectableChange : {
+					parameters : {
+						selectable : { type : "boolean" }
+					}
+				},
+				/**
 				 * Event fired when the property "Editable" is changed
 				 */
 				editableChange : {
@@ -263,7 +271,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 
 	/** 
 	 * @return {boolean} if the Overlay has focus	
-	 * @override
+	 * @private
 	 */
 	Overlay.prototype.hasFocus = function() {
 		return document.activeElement === this.getFocusDomRef();
@@ -337,12 +345,16 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	 * @public
 	 */
 	Overlay.prototype.setSelectable = function(bSelectable) {
-		if (!bSelectable) {
-			this.setSelected(false);
-		}
+		if (bSelectable !== this.isSelectable()) {
 
-		this.toggleStyleClass("sapUiDtOverlaySelectable", bSelectable);		
-		this.setProperty("selectable", bSelectable);
+			if (!bSelectable) {
+				this.setSelected(false);
+			}
+
+			this.toggleStyleClass("sapUiDtOverlaySelectable", bSelectable);		
+			this.setProperty("selectable", bSelectable);
+			this.fireSelectableChange({selectable : bSelectable});
+		}
 
 		return this;
 	};
@@ -703,7 +715,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	 * @return {boolean} if the Overlay is selectable
 	 */
 	Overlay.prototype.isSelectable = function() {
-		return this.getSelectable();
+		return this.getSelectable() || false;
 	};
 
 	/** 

@@ -34,7 +34,6 @@ sap.ui.define(['sap/ui/dt/AggregationOverlay', 'sap/ui/dt/DOMUtil'],
 		oRm.write("<div");
 		oRm.writeControlData(oOverlay);
 		oRm.write("data-sap-ui-dt-for='" + oOverlay.getElementInstance().getId() + "'");
-		oRm.write("tabindex='0'");
 		oRm.writeClasses();
 
 		oRm.writeStyles();
