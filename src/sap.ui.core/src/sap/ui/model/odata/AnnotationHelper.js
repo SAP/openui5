@@ -34,10 +34,6 @@ sap.ui.define([
 			function formatter() {
 				return fnAfter.call(this, fnBefore.apply(this, arguments));
 			}
-			if (fnBefore.textFragments) {
-				// @see sap.ui.core.ManagedObject#_bindProperty
-				formatter.textFragments = fnBefore.textFragments;
-			}
 			return formatter;
 		}
 
@@ -165,78 +161,138 @@ sap.ui.define([
 		 */
 		AnnotationHelper = /** @lends sap.ui.model.odata.AnnotationHelper */ {
 			/**
-			 * Creates a binding info from the given parts and optional root formatter function.
+			 * Creates a property setting (which is either a constant value or a binding info
+			 * object) from the given parts and from the optional root formatter function.
 			 * Each part can have one of the following types:
 			 * <ul>
-			 *   <li><code>string</code>: The part is assumed to be a data binding expression with
-			 *   complex binding syntax and is parsed accordingly to create a binding info object.
-			 *   <li><code>object</code>: The part is assumed to be a binding info object. If it
-			 *   is not the only part and has a "parts" property itself, then it must have no other
-			 *   properties except "formatter".
-			 * </ul>
+			 *   <li><code>boolean</code>, <code>number</code>, <code>undefined</code>: The part is
+			 *   a constant value.
 			 *
-			 * @param {string|any[]} vParts
-			 *   a single data binding expression or a non-empty array of parts
+			 *   <li><code>string</code>: The part is a data binding expression with complex
+			 *   binding syntax (for example, as created by {@link #.format format}) and is parsed
+			 *   accordingly to create either a constant value or a binding info object. Proper
+			 *   backslash escaping must be used for constant values with curly braces.
+			 *
+			 *   <li><code>object</code>: The part is a binding info object if it has a "path" or
+			 *   "parts" property, otherwise it is a constant value.
+			 * </ul>
+			 * If a binding info object is not the only part and has a "parts" property itself,
+			 * then it must have no other properties except "formatter"; this is the case for
+			 * expression bindings and data binding expressions created by {@link #.format format}.
+			 *
+			 * If all parts are constant values, the resulting property setting is also a constant
+			 * value computed by applying the root formatter function to the constant parts once.
+			 * If at least one part is a binding info object, the resulting property setting is
+			 * also a binding info object and the root formatter function will be applied again and
+			 * again to the current values of all parts, no matter whether constant or variable.
+			 *
+			 * Note: The root formatter function should not rely on its <code>this</code> value
+			 * because it depends on how the function is called.
+			 *
+			 * Note: A single data binding expression can be given directly to
+			 * {@link sap.ui.base.ManagedObject#applySettings applySettings}, no need to call this
+			 * function first.
+			 *
+			 * Example:
+			 * <pre>
+			 * function myRootFormatter(oValue1, oValue2, sFullName, sGreeting, iAnswer) {
+			 *     return ...; //TODO compute something useful from the given values
+			 * }
+			 *
+			 * oSupplierContext = oMetaModel.getMetaContext("/ProductSet('HT-1021')/ToSupplier");
+			 * oValueContext = oMetaModel.createBindingContext("com.sap.vocabularies.UI.v1.DataPoint/Value", oSupplierContext);
+			 *
+			 * vPropertySetting =  sap.ui.model.odata.AnnotationHelper.createPropertySetting([
+			 *     sap.ui.model.odata.AnnotationHelper.format(oValueContext),
+			 *     "{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.simplePath'}",
+			 *     "{:= 'Mr. ' + ${/FirstName} + ' ' + ${/LastName}}",
+			 *     "hello, world!",
+			 *     42
+			 * ], myRootFormatter);
+			 *
+			 * oControl.applySettings({"someProperty" : vPropertySetting});
+			 * </pre>
+			 *
+			 * @param {any[]} vParts
+			 *   array of parts
 			 * @param {function} [fnRootFormatter]
-			 *   root level formatter function; default: <code>Array.prototype.join(., " ")</code>
-			 * @returns {object}
-			 *   a binding info as expected by e.g.
-			 *   {@link sap.ui.base.ManagedObject#bindProperty bindProperty}
+			 *   root formatter function; default: <code>Array.prototype.join(., " ")</code>
+			 *   in case of multiple parts, just like
+			 *   {@link sap.ui.model.CompositeBinding#getExternalValue getExternalValue}
+			 * @returns {any|object}
+			 *   constant value or binding info object for a property as expected by
+			 *   {@link sap.ui.base.ManagedObject#applySettings applySettings}
 			 * @throws {Error}
-			 *   if an empty array of parts is given, or if some part has an unsupported type or
-			 *   content
+			 *   if some part has an unsupported type or refers to a function name which is not
+			 *   found
 			 * @public
 			 * @since 1.31.0
 			 */
-			createBindingInfo : function (vParts, fnRootFormatter) {
+			createPropertySetting : function (vParts, fnRootFormatter) {
 				var bMergeNeeded = false,
-					oBindingInfo;
+					vPropertySetting;
 
-				if (typeof vParts === "string") {
-					vParts = [vParts];
-				} else if (!vParts.length) {
-					throw new Error("Missing parts");
-				}
-
+				vParts = vParts.slice(); // shallow copy to avoid changes visible to caller
 				vParts.forEach(function (vPart, i) {
 					switch (typeof vPart) {
-					case "string":
-						oBindingInfo = BindingParser.complexParser(vPart);
-						if (!oBindingInfo) {
-							throw new Error("Not a data binding expression: " + vPart);
-						}
-						vParts[i] = vPart = oBindingInfo;
+					case "boolean":
+					case "number":
+					case "undefined":
+						bMergeNeeded = true;
 						break;
 
-					case "object":
-						if (vPart !== null && !Array.isArray(vPart)) {
-							break;
+					case "string":
+						vPropertySetting = BindingParser.complexParser(vPart, null, true, true);
+						if (vPropertySetting !== undefined) {
+							if (vPropertySetting.functionsNotFound) {
+								throw new Error("Function name(s) "
+									+ vPropertySetting.functionsNotFound.join(", ")
+									+  " not found");
+							}
+							vParts[i] = vPart = vPropertySetting;
 						}
 						// falls through
+					case "object":
+						// merge is needed if some parts are constants or again have parts
+						// Note: a binding info object has either "path" or "parts"
+						if (!vPart || typeof vPart !== "object" || !("path" in vPart)) {
+							bMergeNeeded = true;
+						}
+						break;
+
 					default:
 						throw new Error("Unsupported part: " + vPart);
 					}
-					// merge is needed if some parts again have parts
-					bMergeNeeded = bMergeNeeded || "parts" in vPart;
 				});
 
-				if (vParts.length === 1) {
-					// special case: a single binding only
-					oBindingInfo = vParts[0];
-					if (fnRootFormatter) {
-						oBindingInfo.formatter = chain(fnRootFormatter, oBindingInfo.formatter);
+				vPropertySetting = {
+					formatter : fnRootFormatter,
+					parts : vParts
+				};
+				if (bMergeNeeded) {
+					BindingParser.mergeParts(vPropertySetting);
+				}
+
+				if (vPropertySetting.parts.length === 0) {
+					// special case: all parts are constant values, call formatter once
+					vPropertySetting = vPropertySetting.formatter && vPropertySetting.formatter();
+					if (typeof vPropertySetting === "string") {
+						vPropertySetting = BindingParser.complexParser.escape(vPropertySetting);
 					}
-				} else {
-					oBindingInfo = {
-						formatter : fnRootFormatter,
-						parts : vParts
-					};
-					if (bMergeNeeded) {
-						BindingParser.mergeParts(oBindingInfo);
+				} else if (vPropertySetting.parts.length === 1) {
+					// special case: a single property setting only
+					// Note: sap.ui.base.ManagedObject#_bindProperty cannot handle the single-part
+					//       case with two formatters, unless the root formatter is marked with
+					//       "textFragments". We unpack here and chain the formatters ourselves.
+					fnRootFormatter = vPropertySetting.formatter;
+					vPropertySetting = vPropertySetting.parts[0];
+					if (fnRootFormatter) {
+						vPropertySetting.formatter
+							= chain(fnRootFormatter, vPropertySetting.formatter);
 					}
 				}
 
-				return oBindingInfo;
+				return vPropertySetting;
 			},
 
 			/**
