@@ -460,10 +460,13 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		var $Parent;			
 		if (this.$().parents(".sapUiRFLContainer")) {
 			$Parent = this.$().parents(".sapUiRFLContainer");
-			if ($Parent.css("overflow") === "hidden") {
-				$Parent.css("overflow", "visible");
-			}
-		}	
+		} else if (this.$().parent('[class*="sapUiRespGridSpan"]')) {
+			$Parent = this.$().parent('[class*="sapUiRespGridSpan"]');
+		}
+		
+		if ($Parent && $Parent.length > 0 && $Parent.css("overflow") === "hidden") {
+			$Parent.css("overflow", "visible");
+		}
 
 	};
 	
