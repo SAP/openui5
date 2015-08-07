@@ -660,6 +660,21 @@
 		strictEqual(oIcon.getColor(), "*red*", "one time binding -> value unchanged");
 	});
 
+	test("jQuery.proxy(..., oEnv.oContext)", function () {
+		var sBinding = "{path : '/', formatter : '.foo'}",
+			oBindingInfo,
+			oScope = {
+				foo : function () {
+					strictEqual(this, oBindingInfo, "no jQuery.proxy() used");
+				}
+			};
+
+		oBindingInfo = parse(sBinding, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/true);
+
+		oBindingInfo.formatter();
+	});
+
 	</script>
 
 	<title>QUnit tests: Data binding Calculated Fields</title>

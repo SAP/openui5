@@ -306,7 +306,8 @@
 		} catch (ex) {
 			strictEqual(
 				normalizeXml(ex.message),
-				normalizeXml("qux: " + sExpectedMessage)
+				normalizeXml("qux: " + sExpectedMessage),
+				ex.stack
 			);
 		}
 	}
@@ -670,6 +671,13 @@
 	}, {
 		aViewContent : [
 			mvcView(),
+			"<template:repeat list=\"{path: '/', factory: '.someMethod'}\"/>",
+			'</mvc:View>'
+		],
+		sMessage : '[ 0] Function name(s) .someMethod not found'
+	}, {
+		aViewContent : [
+			mvcView(),
 			'<Fragment fragmentName="{foo>/some/path}" type="XML"/>',
 			'</mvc:View>'
 		],
@@ -704,7 +712,9 @@
 						aViewContent[1])
 					.exactly(bWarn ? 1 : 0); // do not construct arguments in vain!
 
-				check.call(oLogMock, aViewContent, {}, vExpected);
+				check.call(oLogMock, aViewContent, {
+					models: new sap.ui.model.json.JSONModel()
+				}, vExpected);
 			});
 		});
 	});
@@ -1518,6 +1528,17 @@
 	});
 
 	//*********************************************************************************************
+	QUnit.test('<template:with helper=".">', function () {
+		checkError.call(this, [
+			mvcView(),
+			'<template:with path="/unused" var="target" helper="."/>',
+			'</mvc:View>'
+		], "Cannot resolve helper for {0}", {
+			models: new sap.ui.model.json.JSONModel()
+		});
+	});
+
+	//*********************************************************************************************
 	[true, ""].forEach(function (vResult) {
 		QUnit.test("template:with and helper returning " + vResult, function () {
 			window.foo = function () {
@@ -2187,6 +2208,119 @@
 		oExpectation.withExactArgs.apply(oExpectation, aModuleNames);
 
 		process(oRootElement);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("template:alias", function () {
+		var fnComplexParser = sap.ui.base.BindingParser.complexParser,
+			fnGetObject = jQuery.sap.getObject;
+
+		window.foo = {
+			Helper: {
+				bar: function () {
+					ok(!this || !("bar" in this), "no jQuery.proxy(..., oScope) used");
+					// return absolute path so this function serves as helper & formatter!
+					return "/bar";
+				},
+				foo: function () {
+					ok(!this || !("foo" in this), "no jQuery.proxy(..., oScope) used");
+					return "/foo";
+				}
+			}
+		};
+
+		this.stub(jQuery.sap, "getObject", function (sName, iNoCreates, oContext) {
+			strictEqual(iNoCreates, undefined, sName); // make sure we do not create namespaces!
+			return fnGetObject.apply(this, arguments);
+		})
+		this.stub(sap.ui.base.BindingParser, "complexParser",
+			function (s, o, b1, bTolerateFunctionsNotFound, bStaticContext) {
+				strictEqual(bTolerateFunctionsNotFound, true, JSON.stringify(arguments));
+				strictEqual(bStaticContext, true, JSON.stringify(arguments));
+				return fnComplexParser.apply(this, arguments);
+			}
+		);
+
+		// Note: <Label text="..."> remains unresolved, <Text text="..."> MUST be resolved
+		check.call(this, [
+			mvcView(),
+			"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
+			"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
+			'<template:alias name=".bar" value="foo.Helper.bar">',
+				"<Text text=\"{formatter: '.bar', path: '/'}\"/>",
+				"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
+				'<template:alias name=".foo" value="foo.Helper.foo">',
+					"<Text text=\"{formatter: '.foo', path: '/'}\"/>",
+					// redefine existing alias
+					'<template:alias name=".foo" value="foo.Helper.bar">',
+						"<Text id=\"foo\" text=\"{formatter: '.foo', path: '/'}\"/>",
+					'</template:alias>',
+					// old value must be used again
+					"<Text text=\"{formatter: '.foo', path: '/'}\"/>",
+				'</template:alias>',
+				// <template:repeat> uses scope
+				"<template:repeat list=\"{path: '/', factory: '.bar'}\"/>",
+				// <template:with> uses scope
+				'<template:with path="/" helper=".bar"/>',
+			'</template:alias>',
+			// aliases go out of scope
+			"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
+			"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
+			// relative aliases
+			'<template:alias name=".H" value="foo.Helper">',
+				"<Text text=\"{formatter: '.H.foo', path: '/'}\"/>",
+				'<template:alias name=".bar" value=".H.bar">',
+					"<Text text=\"{formatter: '.bar', path: '/'}\"/>",
+				'</template:alias>',
+			'</template:alias>',
+			'</mvc:View>'
+		], {
+			models: new sap.ui.model.json.JSONModel({/*don't care*/})
+		}, [ // Note: XML serializer outputs &gt; encoding...
+			"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
+			"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
+				'<Text text="/bar"/>',
+				"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
+					'<Text text="/foo"/>',
+						'<Text id="foo" text="/bar"/>',
+					'<Text text="/foo"/>',
+			"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
+			"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
+				'<Text text="/foo"/>',
+					'<Text text="/bar"/>'
+		]);
+	});
+
+	//*********************************************************************************************
+	[
+		'<template:alias/>',
+		'<template:alias name="foo"/>',
+		'<template:alias name="."/>',
+		'<template:alias name=".foo.bar"/>'
+	].forEach(function (sViewContent) {
+		QUnit.test(sViewContent, function () {
+			checkError.call(this, [
+				mvcView(),
+				sViewContent,
+				'</mvc:View>'
+			], "Missing proper relative name in {0}");
+		});
+	});
+
+	//*********************************************************************************************
+	[
+		'',
+		'value=""',
+		'value="."',
+		'value=".notFound"'
+	].forEach(function (sValue) {
+		QUnit.test('<template:alias name=".foo" ' + sValue + '>', function () {
+			checkError.call(this, [
+				mvcView(),
+				'<template:alias name=".foo" ' + sValue + '/>',
+				'</mvc:View>'
+			], "Invalid value in {0}");
+		});
 	});
 }());
 //TODO we have completely missed support for unique IDs in fragments via the "id" property!

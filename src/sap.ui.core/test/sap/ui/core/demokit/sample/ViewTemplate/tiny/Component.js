@@ -12,9 +12,8 @@ sap.ui.define([
 		'sap/m/VBox',
 		'sap/ui/core/UIComponent',
 		'sap/ui/core/mvc/View',
-		'sap/ui/model/odata/AnnotationHelper',
 		'sap/ui/model/odata/v2/ODataModel'
-	], function(jQuery, VBox, UIComponent, View, AnnotationHelper, ODataModel) {
+	], function(jQuery, VBox, UIComponent, View, ODataModel) {
 	"use strict";
 
 	var Component = UIComponent.extend("sap.ui.core.sample.ViewTemplate.tiny.Component", {
