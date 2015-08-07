@@ -75,6 +75,9 @@
 
 				sinon.stub(sap.ui.base.ObjectPool.prototype, "returnObject", function () {
 				});
+
+				this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 			},
 			teardown: function () {
 				this.oWizard.destroy();
@@ -93,7 +96,8 @@
 			this.oWizard.nextStep();
 			this.oWizard.nextStep();
 			var text = this.oWizard._getNextButton().getText();
-			assert.strictEqual(text, "Finish", "Default text of finish button should be equal to 'Finish'");
+			var sText = this.oResourceBundle.getText("WIZARD_FINISH");
+			assert.strictEqual(text, sText, "Default text of finish button should be equal to '" + sText + "'");
 		});
 
 		QUnit.test("setFinishLabel() should change the finish button text", function (assert) {
@@ -180,7 +184,8 @@
 		QUnit.test("Click on next button should change text going to last step", function (assert) {
 			this.oWizard._getNextButton().firePress();	//step2
 			this.oWizard._getNextButton().firePress();	//step3
-			assert.strictEqual(this.oWizard._getNextButton().getText(), "Finish", "Text should be changed to finish");
+			var sText = this.oResourceBundle.getText("WIZARD_FINISH");
+			assert.strictEqual(this.oWizard._getNextButton().getText(), sText, "Text should be changed to " + sText);
 		});
 
 		QUnit.test("Click on next button should change WizardStep visibility", function (assert) {
