@@ -187,7 +187,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 * @private
 	 */
 	ColumnMenu.prototype._addMenuItems = function() {
-		// when you add or remove menu items here, remember to update the hasItems function
+		// when you add or remove menu items here, remember to update the Column.prototype._menuHasItems function
 		if (this._oColumn) {
 			this._addSortMenuItem(false);
 			this._addSortMenuItem(true);
@@ -205,18 +205,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 */
 	ColumnMenu.prototype._addSortMenuItem = function(bDesc) {
 		var oColumn = this._oColumn;
-	
-		var sDir = bDesc ? "desc" : "asc";
-		var sIcon = bDesc ? "sort-descending" : "sort-ascending";
-		if (oColumn.getSortProperty() && oColumn.getShowSortMenuEntry()) {
-			this.addItem(this._createMenuItem(
-				sDir,
-				"TBL_SORT_" + sDir.toUpperCase(),
-				sIcon,
-				function(oEvent) {
-					oColumn.sort(bDesc, oEvent.getParameter("ctrlKey") === true);
-				}
-			));
+
+		if (oColumn.isSortableByMenu()) {
+			var sDir = bDesc ? "desc" : "asc";
+			var sIcon = bDesc ? "sort-descending" : "sort-ascending";
+			if (oColumn.getSortProperty() && oColumn.getShowSortMenuEntry()) {
+				this.addItem(this._createMenuItem(
+					sDir,
+						"TBL_SORT_" + sDir.toUpperCase(),
+					sIcon,
+					function (oEvent) {
+						oColumn.sort(bDesc, oEvent.getParameter("ctrlKey") === true);
+					}
+				));
+			}
 		}
 	};
 	
@@ -234,8 +236,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 			bEnableCustomFilter = oTable.getEnableCustomFilter();
 		}
 	
-		if (oColumn.getFilterProperty() && oColumn.getShowFilterMenuEntry()) {
-	
+		if (oColumn.isFilterableByMenu()) {
 			if (bEnableCustomFilter) {
 				this.addItem(this._createMenuItem(
 					"filter",
@@ -269,15 +270,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	ColumnMenu.prototype._addGroupMenuItem = function() {
 		var oColumn = this._oColumn;
 		var oTable = this._oTable;
-		if (oTable && oTable.getEnableGrouping() && oColumn.getSortProperty()) {
-			this.addItem(this._createMenuItem(
-				"group",
-				"TBL_GROUP",
-				null,
-				jQuery.proxy(function(oEvent) {
-					oTable.setGroupBy(oColumn);
-				},this)
-			));
+		if (oColumn.isGroupableByMenu()) {
+			if (oTable && oTable.getEnableGrouping() && oColumn.getSortProperty()) {
+				this.addItem(this._createMenuItem(
+					"group",
+					"TBL_GROUP",
+					null,
+					jQuery.proxy(function(oEvent) {
+						oTable.setGroupBy(oColumn);
+					},this)
+				));
+			}
 		}
 	};
 	

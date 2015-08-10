@@ -1,0 +1,151 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8">
+
+	<title>qUnit Page for sap.ui.table.Column</title>
+
+	<script src="../../../../../resources/sap-ui-core.js">
+	</script>
+
+	<script>
+		(function () {
+			"use strict";
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+			sinon.config.useFakeTimers = true;
+
+			jQuery.sap.require("sap.ui.table.Table");
+
+			var Table = sap.ui.table.Table;
+			var Column = sap.ui.table.Column;
+
+			QUnit.module("Column Menu Items", {
+				setup: function() {
+					this._oTable = new Table();
+					this._oColumn = new Column();
+				},
+				teardown: function() {
+					this._oColumn.destroy();
+					this._oTable.destroy();
+				}
+			});
+
+			QUnit.test("Pre-Check Menu Item Creation", function(assert) {
+
+				//######################################################################################################
+				// Filter menu item
+				//######################################################################################################
+				this._oColumn.setFilterProperty("");
+				this._oColumn.setShowFilterMenuEntry(true);
+
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setShowFilterMenuEntry(false);
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setFilterProperty("myFilterPropertyName");
+				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				this._oColumn.setShowFilterMenuEntry(true);
+				assert.ok(this._oColumn.isFilterableByMenu(), "Filterable by menu: " +
+						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
+						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
+
+				//######################################################################################################
+				// Sort menu item
+				//######################################################################################################
+				this._oColumn.setSortProperty("");
+				this._oColumn.setShowSortMenuEntry(true);
+
+				assert.ok(!this._oColumn.isSortableByMenu(), "Not sortable by menu: " +
+						"sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "', " +
+						"showSortMenuEntry: " + this._oColumn.getShowSortMenuEntry());
+
+				this._oColumn.setShowSortMenuEntry(false);
+				assert.ok(!this._oColumn.isSortableByMenu(), "Not sortable by menu: " +
+						"sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "', " +
+						"showSortMenuEntry: " + this._oColumn.getShowSortMenuEntry());
+
+				this._oColumn.setSortProperty("mySortPropertyName");
+				assert.ok(!this._oColumn.isSortableByMenu(), "Not sortable by menu: " +
+						"sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "', " +
+						"showSortMenuEntry: " + this._oColumn.getShowSortMenuEntry());
+
+				this._oColumn.setShowSortMenuEntry(true);
+				assert.ok(this._oColumn.isSortableByMenu(), "Sortable by menu: " +
+						"sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "', " +
+						"showSortMenuEntry: " + this._oColumn.getShowSortMenuEntry());
+
+				//######################################################################################################
+				// Group menu item
+				//######################################################################################################
+
+				// reset Column Properties
+				this._oColumn.setFilterProperty("");
+				this._oColumn.setShowFilterMenuEntry(true);
+				this._oColumn.setSortProperty("");
+				this._oColumn.setShowSortMenuEntry(true);
+
+
+				// check column without parent
+				this._oTable.setEnableGrouping(true);
+				this._oColumn.setSortProperty("mySortPropertyName");
+				assert.ok(!this._oColumn.isGroupableByMenu(), "Not groupable by menu: " +
+						"parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "', " +
+						"sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "', " +
+						"enableGrouping: " + this._oTable.getEnableGrouping());
+
+				// check column with parent
+				this._oTable.addColumn(this._oColumn);
+
+				this._oTable.setEnableGrouping(true);
+				this._oColumn.setSortProperty("");
+				assert.ok(!this._oColumn.isGroupableByMenu(), "Not groupable by menu: " +
+						"parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "', " +
+						"sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "', " +
+						"enableGrouping: " + this._oTable.getEnableGrouping());
+
+				this._oTable.setEnableGrouping(false);
+				assert.ok(!this._oColumn.isGroupableByMenu(), "Not groupable by menu: " +
+						"parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "', " +
+						"sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "', " +
+						"enableGrouping: " + this._oTable.getEnableGrouping());
+
+				this._oColumn.setSortProperty("mySortPropertyName");
+				assert.ok(!this._oColumn.isGroupableByMenu(), "Not groupable by menu: " +
+						"parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "', " +
+						"sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "', " +
+						"enableGrouping: " + this._oTable.getEnableGrouping());
+
+				this._oTable.setEnableGrouping(true);
+				assert.ok(this._oColumn.isGroupableByMenu(), "Groupable by menu: " +
+						"parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "', " +
+						"sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "', " +
+						"enableGrouping: " + this._oTable.getEnableGrouping());
+			});
+
+		})();
+	</script>
+</head>
+<body>
+	<h1 id="qunit-header">qUnit Page for sap.ui.table.Column</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture"></div>
+</body>
+</html>
