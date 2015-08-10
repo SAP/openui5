@@ -10,11 +10,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		/**
 		 * Constructor for a new Select.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given
-		 * @param {object} [mSettings] initial settings for the new control
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
+		 * @param {object} [mSettings] Initial settings for the new control.
 		 *
 		 * @class
-		 * The select control provides a menu of predefined items that allows users to select an item.
+		 * The <code>sap.m.Select</code> control provides a list of predefined items that allows users to select an item.
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @constructor
 		 * @public
 		 * @alias sap.m.Select
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+		 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) design time meta model
 		 */
 		var Select = Control.extend("sap.m.Select", /** @lends sap.m.Select.prototype */ { metadata: {
 
@@ -31,52 +31,58 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			properties: {
 
 				/**
-				 * The name to be used in the HTML code (e.g. for HTML forms that send data to the server via submit).
+				 * The name to be used in the HTML code (for example, for HTML forms that send data to the server via submit).
 				 */
-				name: { type : "string", group : "Misc", defaultValue : "" },
+				name: { type : "string", group : "Misc", defaultValue: "" },
 
 				/**
-				 * Determines whether the user can change the selected value.
+				 * Indicates whether the user can change the selected value.
 				 */
 				enabled: { type: "boolean", group: "Behavior", defaultValue: true },
 
 				/**
-				 * Defines the width of the select input. The default width of a select control depends on the width of the widest option/item in the list. This value can be provided in %, em, px… and all CSS units.
-				 * Note: The width will be ignored if the "autoAdjustWidth" property is set to true.
+				 * Sets the width of the control. The default width is derived from the widest item.
+				 * If the width defined is smaller than the widest item in the selection list, only the width of the selection field will be changed:
+				 * the list will keep the width of its widest item.
+				 * If the list is wider than the viewport, it is truncated and an ellipsis is displayed for each item.
+				 * For phones, the width of the list is always the same as the viewport.
+				 * <b>Note:</b> This property is ignored if the <code>autoAdjustWidth</code> property is set to true.
 				 */
 				width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "auto" },
 
 				/**
-				 * Defines the maximum width. This value can be provided in %, em, px… and all CSS units
+				 * Sets the maximum width of the control.
+				 * <b>Note:</b> This property is ignored if the <code>autoAdjustWidth</code> property is set to true.
 				 */
 				maxWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%" },
 
 				/**
-				 * Key of the selected item. If the key has no corresponding aggregated item, no changes will apply. If duplicate keys exist, the first item matching the key is used.
+				 * Key of the selected item. If the key has no corresponding aggregated item, no changes will be made.
+				 * If duplicate keys exist, the first item matching the key is selected.
 				 * @since 1.11
 				 */
 				selectedKey: { type: "string", group: "Data", defaultValue: "" },
 
 				/**
-				 * Id of the selected item. If the id has no corresponding aggregated item, no changes will apply.
+				 * ID of the selected item. If the ID has no corresponding aggregated item, no changes will be made.
 				 * @since 1.12
 				 */
 				selectedItemId: { type: "string", group: "Misc", defaultValue: "" },
 
 				/**
-				 * The URI to the icon that will be displayed only when using the “IconOnly” type.
+				 * The URI to the icon that will be displayed only when using the <code>IconOnly</code> type.
 				 * @since 1.16
 				 */
 				icon: { type: "sap.ui.core.URI", group: "Appearance", defaultValue: "" },
 
 				/**
-				 * Type of a select. Possibles values "Default", "IconOnly".
+				 * Type of a select. Possible values <code>Default</code>, <code>IconOnly</code>.
 				 * @since 1.16
 				 */
 				type: { type: "sap.m.SelectType", group: "Appearance", defaultValue: sap.m.SelectType.Default },
 
 				/**
-				 * If set to true, the width of the select input is determined by the selected item’s content.
+				 * Indicates whether the width of the input field is determined by the selected item's content.
 				 * @since 1.16
 				 */
 				autoAdjustWidth: { type: "boolean", group: "Appearance", defaultValue: false },
@@ -97,12 +103,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			aggregations: {
 
 				/**
-				 * Items of the Item control.
+				 * Defines the items contained within this control.
 				 */
 				items: { type: "sap.ui.core.Item", multiple: true, singularName: "item", bindable: "bindable" },
 
 				/**
-				 * Internal aggregation to hold the inner picker pop-up.
+				 * Internal aggregation to hold the inner picker popup.
 				 */
 				picker: { type : "sap.ui.core.Control", multiple: false, visibility: "hidden" }
 			},
@@ -114,7 +120,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				selectedItem: { type: "sap.ui.core.Item", multiple: false },
 
 				/**
-				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 * Association to controls / IDs which label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
 				 * @since 1.27.0
 				 */
 				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
@@ -122,7 +128,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			events: {
 
 				/**
-				 * Occurs when the user changes the selected item.
+				 * This event is fired when the value in the selection field is changed in combination with one of the following actions:
+				 * <ul>
+				 * 	<li>The focus leaves the selection field</li>
+				 * 	<li>The <i>Enter</i> key is pressed</li>
+				 * 	<li>The item is pressed</li>
+				 * </ul>
 				 */
 				change: {
 					parameters: {
@@ -284,7 +295,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Sets the text value of the Select field.
+		 * Sets the text value of the <code>Select</code> field.
 		 *
 		 * @param {string} sValue
 		 * @private
@@ -308,7 +319,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Handle the virtual focus of items.
+		 * Handles the virtual focus of items.
 		 *
 		 * @param {sap.ui.core.Item | null} vItem
 		 * @private
@@ -332,7 +343,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Getter for the Select's List.
+		 * Gets the Select's <code>List</code>.
 		 *
 		 * @returns {sap.m.List}
 		 * @private
@@ -362,11 +373,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Called, when an aggregation needs to be refreshed.
-		 * This method does not make any change on the items aggregation, but just calls the
-		 * getContexts method to trigger fetching of new data.
+		 * Called when an aggregation needs to be refreshed.
+		 * This method does not make any changes to the items' aggregation, but just calls the
+		 * <code>.getContexts()</code> method to trigger fetching of new data.
 		 *
-		 * note: This method has been overwritten to prevent .updateItems()
+		 * <b>Note:</b> This method has been overwritten to prevent <code>.updateItems()</code>
 		 * from being called when the bindings are refreshed.
 		 * @see sap.ui.base.ManagedObject#bindAggregation
 		 *
@@ -1071,8 +1082,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		/* ----------------------------------------------------------- */
 
 		/*
-		 * Update and synchronize "selectedItem" association, "selectedItemId", "selectedKey" properties and
-		 * the "selectedItem" in the List.
+		 * Updates and synchronizes <code>selectedItem</code> association, <code>selectedItemId</code> and <code>selectedKey</code> properties.
 		 *
 		 * @param {sap.ui.core.Item | null} vItem
 		 * @protected
@@ -1129,7 +1139,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		Select.prototype.addContent = function(oPicker) {};
 
 		/**
-		 * Creates a picker.
+		 * Creates a picker pop-up container where the selection should take place.
 		 *
 		 * @param {string} sPickerType
 		 * @returns {sap.m.Popover | sap.m.Dialog}
@@ -1387,7 +1397,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Handle properties changes of items in the aggregation named <code>items</code>.
+		 * Handles properties' changes of items in the aggregation named <code>items</code>.
 		 *
 		 * @private
 		 * @param {sap.ui.base.Event} oControlEvent
@@ -1517,9 +1527,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		/* ----------------------------------------------------------- */
 
 		/**
-		 * Adds a item to the aggregation named <code>items</code>.
+		 * Adds an item to the aggregation named <code>items</code>.
 		 *
-		 * @param {sap.ui.core.Item} oItem The item to add; if empty, nothing is inserted.
+		 * @param {sap.ui.core.Item} oItem The item to be added; if empty, nothing is inserted.
 		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
 		 * @public
 		 */
@@ -1534,13 +1544,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Inserts a item into the aggregation named <code>items</code>.
+		 * Inserts an item into the aggregation named <code>items</code>.
 		 *
-		 * @param {sap.ui.core.Item} oItem The item to insert; if empty, nothing is inserted.
+		 * @param {sap.ui.core.Item} oItem The item to be inserted; if empty, nothing is inserted.
 		 * @param {int} iIndex The <code>0</code>-based index the item should be inserted at; for
 		 *             a negative value of <code>iIndex</code>, the item is inserted at position 0; for a value
-		 *             greater than the current size of the aggregation, the item is inserted at
-		 *             the last position.
+		 *             greater than the current size of the aggregation, the item is inserted at the last position.
 		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
 		 * @public
 		 */
@@ -1567,10 +1576,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Getter for aggregation <code>items</code>.
-		 * Items of the Item control.
+		 * Gets aggregation <code>items</code>.
 		 *
-		 * <strong>Note</strong>: this is the default aggregation for Select.
+		 * <b>Note</b>: This is the default aggregation.
 		 * @return {sap.ui.core.Item[]}
 		 * @public
 		 */
@@ -1580,12 +1588,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Setter for association <code>selectedItem</code>.
+		 * Sets association <code>selectedItem</code>.
 		 *
-		 * @param {string | sap.ui.core.Item | null} vItem New value for association <code>selectedItem</code>
-		 *    Id of an sap.ui.core.Item which becomes the new target of this <code>selectedItem</code> association.
-		 *    Alternatively, an sap.ui.core.Item instance may be given or null.
-		 *    If the value of null is provided the first enabled item will be selected (if any).
+		 * @param {string | sap.ui.core.Item | null} vItem New value for association <code>selectedItem</code>.
+		 *    If an ID of a <code>sap.ui.core.Item</code> is given, the item with this ID becomes the <code>selectedItem</code> association.
+		 *    Alternatively, a <code>sap.ui.core.Item</code> instance may be given or <code>null</code>.
+		 *    If the value of <code>null</code> is provided, the first enabled item will be selected (if any).
 		 *
 		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
 		 * @public
@@ -1611,7 +1619,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Setter for property <code>selectedItemId</code>.
+		 * Sets property <code>selectedItemId</code>.
 		 *
 		 * Default value is an empty string <code>""</code> or <code>undefined</code>.
 		 * If the provided <code>vItem</code> has a default value,
@@ -1635,7 +1643,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Setter for property <code>selectedKey</code>.
+		 * Sets property <code>selectedKey</code>.
 		 *
 		 * Default value is an empty string <code>""</code> or <code>undefined</code>.
 		 *
@@ -1669,9 +1677,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Setter for property <code>textAlign</code>.
+		 * Sets property <code>textAlign</code>.
 		 *
-		 * Default value is an sap.ui.core.TextAlign.Initial <code>"Initial"</code>.
+		 * Default value is a sap.ui.core.TextAlign.Initial <code>"Initial"</code>.
 		 * If the provided <code>sValue</code> has a default value,
 		 * the browser default is used.
 		 *
@@ -1682,9 +1690,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 */
 
 		/**
-		 * Setter for property <code>textDirection</code>.
+		 * Sets property <code>textDirection</code>.
 		 *
-		 * Default value is an sap.ui.core.TextDirection.Inherit <code>"Inherit"</code>.
+		 * Default value is a sap.ui.core.TextDirection.Inherit <code>"Inherit"</code>.
 		 * If the provided <code>sValue</code> has a default value,
 		 * the inherited direction from the DOM is used.
 		 *
@@ -1695,7 +1703,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 */
 
 		/**
-		 * Retrieves the item from the aggregation named <code>items</code> at the given 0-based index.
+		 * Gets the item from the aggregation named <code>items</code> at the given 0-based index.
 		 *
 		 * @param {int} iIndex Index of the item to return.
 		 * @returns {sap.ui.core.Item | null} Item at the given index, or null if none.
@@ -1707,7 +1715,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Retrieves the selected item object from the aggregation named <code>items</code>.
+		 * Gets the selected item object from the aggregation named <code>items</code>.
 		 *
 		 * @returns {sap.ui.core.Item | null} The current target of the <code>selectedItem</code> association, or null.
 		 * @public
@@ -1718,7 +1726,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Retrieves the first item from the aggregation named <code>items</code>.
+		 * Gets the first item from the aggregation named <code>items</code>.
 		 *
 		 * @returns {sap.ui.core.Item | null} The first item, or null if there are no items.
 		 * @public
@@ -1729,7 +1737,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Retrieves the last item from the aggregation named <code>items</code>.
+		 * Gets the last item from the aggregation named <code>items</code>.
 		 *
 		 * @returns {sap.ui.core.Item | null} The last item, or null if there are no items.
 		 * @public
@@ -1741,7 +1749,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Retrieves the enabled items from the aggregation named <code>items</code>.
+		 * Gets the enabled items from the aggregation named <code>items</code>.
 		 *
 		 * @param {sap.ui.core.Item[]} [aItems=getItems()] Items to filter.
 		 * @return {sap.ui.core.Item[]} An array containing the enabled items.
@@ -1754,10 +1762,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Retrieves the item with the given key from the aggregation named <code>items</code>.
+		 * Gets the item with the given key from the aggregation named <code>items</code>.
 		 * If duplicate keys exist, the first item matching the key is returned.
 		 *
-		 * @param {string} sKey An item key that specifies the item to retrieve.
+		 * @param {string} sKey An item key that specifies the item to be retrieved.
 		 * @returns {sap.ui.core.Item | null}
 		 * @public
 		 * @since 1.16
@@ -1770,7 +1778,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		/**
 		 * Removes an item from the aggregation named <code>items</code>.
 		 *
-		 * @param {int | string | sap.ui.core.Item} vItem The item to remove or its index or id.
+		 * @param {int | string | sap.ui.core.Item} vItem The item to be removed or its index or ID.
 		 * @returns {sap.ui.core.Item} The removed item or null.
 		 * @public
 		 */
@@ -1845,10 +1853,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Whether the control's picker pop-up is open. It returns true when the control's picker pop-up is currently open,
+		 * Indicates whether the control's picker popup is opened. It returns true when the control's picker popup is currently open,
 		 * this includes opening and closing animations.
 		 *
-		 * @returns {boolean} Determines whether the Select is currently open (this includes opening and closing animations).
+		 * @returns {boolean} Indicates whether the picker popup is currently open (this includes opening and closing animations).
 		 * @public
 		 * @since 1.16
 		 */
@@ -1858,7 +1866,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Closes the control's picker pop-up.
+		 * Closes the control's picker popup.
 		 *
 		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
 		 * @public
