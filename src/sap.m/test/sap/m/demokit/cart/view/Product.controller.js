@@ -21,9 +21,10 @@ sap.ui.controller("view.Product", {
 
 		/**
 		 * This is how you would implement deepLinking in your app.
-		 * Because the oDataService which we use is not fully implemented, we cannot deep link.
-		 * Instead we redirect to the start screen.
-
+		 *
+		 * Because the oDataService which we use is not fully implemented, we cannot deep link. This code only workds
+		 * with the mockserver, which can be enabled via URL-parameter "responerOn=true"
+		 */
 		var that = this;
 		var oModel = oView.getModel();
 		var oData = oModel.getData(sPath);
@@ -33,22 +34,6 @@ sap.ui.controller("view.Product", {
 			oView.getElementBinding().attachEventOnce("dataReceived", function() {
 				that._checkIfProductAvailable(sPath, sId);
 			});
-		}
-
-		 * End.
-		 */
-
-		/**
-		 * Workaround because the oDataService is not fully implemented
-		 */
-		var oModel = oView.getModel();
-		var oData = oModel.getData(sPath);
-		oView.bindElement(sPath);
-		if (!oData) {
-			this._router.navTo("home", {}, true);
-			if (!sap.ui.Device.system.phone) {
-				this._router.getTargets().display("welcome");
-			}
 		}
 	},
 
