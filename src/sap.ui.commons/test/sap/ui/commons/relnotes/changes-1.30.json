@@ -409,6 +409,13 @@
         "type": "FIX",
         "text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
         "references": []
+      },
+      {
+        "id": "55e65f43c025e6083edecf094717d045073eb604",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Tree node not expanding properly on Chrome",
+        "references": []
       }
     ]
   }

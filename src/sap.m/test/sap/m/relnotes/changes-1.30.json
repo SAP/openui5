@@ -2348,6 +2348,69 @@
         "type": "FIX",
         "text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
         "references": []
+      },
+      {
+        "id": "5ea5f85115f22237574eaa8ebe46a0a14a5bb203",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.UploadCollection: Support for termination of single upload request.",
+        "references": []
+      },
+      {
+        "id": "27f15c1df0c6385240074ebf6752ec661fe03028",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "Javascript error at activeElement.tagName",
+        "references": []
+      },
+      {
+        "id": "eed3cfcfd9d5f60c5e770ec84a6d8d90f56635d4",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: run time assigned icon is not visible",
+        "references": []
+      },
+      {
+        "id": "7412edc9113071a32ccc26876cf1a4632849fe33",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: suggestion list is not empty initially",
+        "references": []
+      },
+      {
+        "id": "cbc327319c67b75e259f2181d5131543cc5c7145",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.List: multi selection is not possible",
+        "references": []
+      },
+      {
+        "id": "b7a9507a543617df3fc9a9b36c238d491dafdc88",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ListItemBase: change flex style to support list with Panel in CustomListItem",
+        "references": []
+      },
+      {
+        "id": "949948fe35df10465d672221c83e4f73726c5dc5",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: enhance multiinput inside Grid",
+        "references": []
+      },
+      {
+        "id": "96b5108df52e53de99e98d0e13289cdbc1ebbc16",
+        "author": "Hena Teinzer \u003chena.teinzer@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TextArea: removed double line breaks",
+        "references": []
+      },
+      {
+        "id": "2857b71530b954059ee4b2bb2cd3f5350915214e",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker, sap.ui.unified.Calendar: position issues",
+        "references": []
       }
     ]
   }

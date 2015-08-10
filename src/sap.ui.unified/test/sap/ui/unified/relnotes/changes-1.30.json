@@ -296,6 +296,13 @@
         "type": "FIX",
         "text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
         "references": []
+      },
+      {
+        "id": "2857b71530b954059ee4b2bb2cd3f5350915214e",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker, sap.ui.unified.Calendar: position issues",
+        "references": []
       }
     ]
   }

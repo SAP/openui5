@@ -59,5 +59,17 @@
         "references": []
       }
     ]
+  },
+  "1.30.5": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "8b4a6698787f351aa491984c873fc7d7bf4fd631",
+        "author": "Butz, Tino \u003ctino.butz@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.dt: Added safari support",
+        "references": []
+      }
+    ]
   }
 }
