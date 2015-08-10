@@ -10,20 +10,24 @@
 				data-sap-ui-libs="sap.m"
 				src="../../../../resources/sap-ui-core.js">
 		</script>
+		<script>
+			jQuery.sap.require("sap.ui.core.util.MockServer");
+		</script>
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script>
 			window._setTimeout = this.setTimeout;
 			sinon.config.useFakeTimers = true;
+
 			// make jQuery.now work with Sinon fake timers (since jQuery 2.x, jQuery.now caches the native Date.now)
 			jQuery.now = function() {
 				return Date.now();
 			};
+
 			QUnit.config.autostart = false;
 			sap.ui.test.qunit.delayTestStart();
 
@@ -46,6 +50,27 @@
 				test("get" + sProperty + "()", function() {
 					strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
 				});
+			};
+
+			var fnStartMockServer = function(sUri, iAutoRespondAfter) {
+				var sMetadataUrl = "data/metadata.xml";
+				sUri = sUri || "/service/";
+
+				// configure respond to requests delay
+				sap.ui.core.util.MockServer.config({
+					autoRespond: true,
+					autoRespondAfter: iAutoRespondAfter || 10
+				});
+
+				// create mock server
+				var oMockServer = new sap.ui.core.util.MockServer({
+					rootUri: sUri
+				});
+
+				// start and return
+				oMockServer.simulate(sMetadataUrl, "data");
+				oMockServer.start();
+				return oMockServer;
 			};
 
 			/* =========================================================== */
@@ -902,7 +927,7 @@
 
 				// system under test
 				var oItem;
-				var oSelect = new sap.m.ComboBox({
+				var oComboBox = new sap.m.ComboBox({
 					items: [
 						oItem = new sap.ui.core.Item({
 							key: "CU",
@@ -917,12 +942,12 @@
 				oItem.setText("Germany");
 
 				// assert
-				strictEqual(oSelect.getSelectedKey(), "GER");
-				strictEqual(oSelect.getSelectedItem().getText(), "Germany");
-				strictEqual(oSelect.getValue(), "Germany");
+				strictEqual(oComboBox.getSelectedKey(), "GER");
+				strictEqual(oComboBox.getSelectedItem().getText(), "Germany");
+				strictEqual(oComboBox.getValue(), "Germany");
 
 				// cleanup
-				oSelect.destroy();
+				oComboBox.destroy();
 			});
 
 			/* ------------------------------ */
@@ -3392,6 +3417,59 @@
 				strictEqual(oComboBox.getSelectedKey(), "CU");
 
 				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("it should correctly set the selection if the items aggregation is bounded to an OData model", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: {
+						path: "/Products",
+						template: new sap.ui.core.Item({
+							key: "{ProductId}",
+							text: "{Name}"
+						})
+					}
+				});
+
+				// arrange
+				var sUri = "/service/";
+				var iAutoRespondAfter = 10;
+				var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
+				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+				oComboBox.setModel(oModel);
+
+				// IDs and names of the products in the model:
+				//
+				// id_1  Gladiator MX
+				// id_2  Psimax
+				// id_3  Hurricane GX
+				// id_4  Webcam
+				// id_5  Monitor Locking Cable
+				// id_6  Laptop Case
+				// id_7  Removable CD/DVD
+				// id_8  USB Stick 16 GByte
+				// id_9  Deskjet Super Highspeed
+				// id_10 Laser Allround Pro
+				// id_11 Flat S
+				// id_12 Flat Medium
+				// id_13 Flat X-large II
+				// id_14 High End Laptop 2b
+				// id_15 Very Natural Keyboard
+				// id_16 Hardcore Hacker
+
+				oComboBox.setSelectedKey("id_5");
+				oComboBox.placeAt("content");
+				this.clock.tick(iAutoRespondAfter + 1);	// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting to make sure that the data from the OData model is available)
+				sap.ui.getCore().applyChanges();	// enforces an immediate update of the visible UI (aka "rendering")
+
+				// assert
+				strictEqual(oComboBox.getSelectedKey(), "id_5");
+				strictEqual(oComboBox.getSelectedItem().getText(), "Monitor Locking Cable");
+
+				// cleanup
+				oMockServer.stop();
 				oComboBox.destroy();
 			});
 
