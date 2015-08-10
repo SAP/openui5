@@ -1433,8 +1433,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			oFilterExpression.addUI5FilterConditions(this.aControlFilter);
 		}
 
-		// (2) fetch almost no data
-		oAnalyticalQueryRequest.setResultPageBoundaries(1, 1);
+		// (2) fetch no data
+		oAnalyticalQueryRequest.setRequestOptions(null, null, true);
 
 		// (3) request result entity count
 		oAnalyticalQueryRequest.setRequestOptions(null, true);
@@ -1939,22 +1939,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 		// construct OData request option parameters
 		var aParam = [];
-		if (sSelect) {
+		if (sSelect !== null) {
 			aParam.push("$select=" + sSelect);
 		}
-		if (sFilter) {
+		if (sFilter !== null) {
 			aParam.push("$filter=" + sFilter);
 		}
-		if (sOrderBy) {
+		if (sOrderBy !== null) {
 			aParam.push("$orderby=" + sOrderBy);
 		}
-		if (sSkip) {
+		if (sSkip !== null) {
 			aParam.push("$skip=" + sSkip);
 		}
-		if (sTop) {
+		if (sTop !== null) {
 			aParam.push("$top=" + sTop);
 		}
-		if (sInlineCount) {
+		if (sInlineCount !== null) {
 			aParam.push("$inlinecount=" + sInlineCount);
 		}
 

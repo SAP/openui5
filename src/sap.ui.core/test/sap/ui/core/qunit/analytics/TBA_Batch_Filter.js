@@ -6,7 +6,7 @@ o4aFakeService.addResponse({
 	uri: [
 			"ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=ActualCosts,Currency&$top=100&$inlinecount=allpages",
 			"ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=CostCenter,ActualCosts,Currency&$orderby=CostCenter%20asc&$top=120&$inlinecount=allpages",
-			"ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=CostCenter,CostElement,Currency&$top=1&$inlinecount=allpages"
+			"ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=CostCenter,CostElement,Currency&$top=0&$inlinecount=allpages"
 		],
 	header: o4aFakeService.headers.BATCH,
 	content: "--AAD136757C5CF75E21C04F59B8682CEA0\r\n" +
@@ -51,7 +51,7 @@ o4aFakeService.addResponse({
 	uri: [
 			"ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=ActualCosts,Currency&$filter=(substringof(%27100-%27,CostCenter))&$top=100&$inlinecount=allpages",
 			"ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=CostCenter,ActualCosts,Currency&$filter=(substringof(%27100-%27,CostCenter))&$orderby=CostCenter%20asc&$top=120&$inlinecount=allpages",
-			"ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=CostCenter,CostElement,Currency&$filter=(substringof(%27100-%27,CostCenter))&$top=1&$inlinecount=allpages"
+			"ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=CostCenter,CostElement,Currency&$filter=(substringof(%27100-%27,CostCenter))&$top=0&$inlinecount=allpages"
 		],
 	header: o4aFakeService.headers.BATCH,
 	content: "--AAD136757C5CF75E21C04F59B8682CEA0\r\n" +

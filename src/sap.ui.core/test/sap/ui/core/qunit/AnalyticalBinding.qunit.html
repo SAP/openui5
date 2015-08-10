@@ -240,8 +240,8 @@
 				var vReturn = sap.ui.model.odata.v2.ODataModel.prototype.read.apply(this, arguments);
 				var sURL = arguments[0];
 				
-				// check if $top is contained in the URL, only $top=1 is allowed here!
-				equal(sURL.indexOf("$top") == -1 || sURL.indexOf("$top=1") > 0, true, "URL was created without $top value");
+				// check if $top is contained in the URL, only $top=0 is allowed here!
+				equal(sURL.indexOf("$top") == -1 || sURL.indexOf("$top=0") > 0, true, "URL was created without $top value");
 				// check if $skip is contained in the URL
 				equal(sURL.indexOf("$skip") == -1, true, "URL was created without $skip value");
 				
