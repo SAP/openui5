@@ -38,7 +38,7 @@ sap.ui.define([
 						 */
 						showVerticalScrollBar : {
 							type : "boolean",
-							group : "Behaviour",
+							group : "Behavior",
 							defaultValue : true
 						}
 					}
