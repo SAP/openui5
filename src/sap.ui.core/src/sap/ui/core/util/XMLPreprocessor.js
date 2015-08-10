@@ -150,7 +150,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			 * </code>. In this case <code>oInterface.getPath(0)</code> refers to ".../Label" and
 			 * <code>oInterface.getPath(1)</code> refers to ".../Value". This means, the root
 			 * formatter can access the ith part of the composite binding at will (since 1.31.0);
-			 * see also {@link #getInterface getInterface}.
+			 * see also {@link #.getInterface getInterface}.
 			 * The function <code>foo</code> is called with arguments such that <code>
 			 * oInterface.getModel(i).getObject(oInterface.getPath(i)) === arguments[i + 1]</code>
 			 * holds.
