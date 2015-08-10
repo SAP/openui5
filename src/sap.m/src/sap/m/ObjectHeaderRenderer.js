@@ -910,7 +910,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.writeAttribute("id", oControl.getId() + "-states");
 		oRM.addClass("sapMOHRStates");
 		oRM.writeClasses();
-		oRM.write("\">");
+		oRM.write(">");
 		this._renderResponsiveRow(oRM, oControl);
 		oRM.write("</div>");
 	};
