@@ -434,7 +434,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				var sCaller = oViewInfo.caller,
 					bDebug = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG),
 					bCallerLoggedForWarnings = bDebug, // debug output already contains caller
-					aFragmentNames = [oViewInfo.name], // stack of view and fragment names
+					sCurrentName = oViewInfo.name, // current view or fragment name
 					sModuleNames = oRootElement.getAttribute("template:require"),
 					iNestingLevel = 0,
 					sName,
@@ -606,7 +606,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				 *   the parent's "with" control
 				 */
 				function insertFragment(sFragmentName, oElement, oWithControl) {
-					var oFragmentElement;
+					var oFragmentElement,
+						sPreviousName = sCurrentName;
 
 					// Note: It is perfectly valid to include the very same fragment again, as
 					// long as the context is changed. So we check for cycles at the current
@@ -619,7 +620,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					iNestingLevel++;
 					debug(oElement, "fragmentName =", sFragmentName);
 					oWithControl.$mFragmentContexts[sFragmentName] = true;
-					aFragmentNames.push(sFragmentName);
+					sCurrentName = sFragmentName;
 
 					oFragmentElement
 						= XMLTemplateProcessor.loadTemplate(sFragmentName, "fragment");
@@ -632,7 +633,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					}
 					oElement.parentNode.removeChild(oElement);
 
-					aFragmentNames.pop();
+					sCurrentName = sPreviousName;
 					oWithControl.$mFragmentContexts[sFragmentName] = false;
 					debugFinished(oElement);
 					iNestingLevel--;
@@ -765,8 +766,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 
 					if (vName !== oUNBOUND && sap.ui.core.CustomizingConfiguration) {
 						oViewExtension = sap.ui.core.CustomizingConfiguration.getViewExtension(
-							aFragmentNames[aFragmentNames.length - 1], vName,
-							oViewInfo.componentId);
+							sCurrentName, vName, oViewInfo.componentId);
 						if (oViewExtension && oViewExtension.className === "sap.ui.core.Fragment"
 								&& oViewExtension.type === "XML") {
 							insertFragment(oViewExtension.fragmentName, oElement, oWithControl);
