@@ -54,13 +54,15 @@
 					custom: this.spy(sap.ui.test.v2models.parent, "CustomModel")
 				};
 			},
-			mockGetUriParameters: function() {
+			mockGetUriParameters: function(mMockParams) {
+				if (jQuery.sap.getUriParameters.restore) {
+					jQuery.sap.getUriParameters.restore();
+				}
 				var oGetParameterStub = this.stub();
 
-				// returns sap-client=foo, sap-server=bar
-				[ 'sap-client', 'sap-server' ].forEach(function(sName, i) {
-					oGetParameterStub.withArgs(sName).returns(i ? 'bar': 'foo');
-				});
+				oGetParameterStub.withArgs('sap-client').returns('foo');
+				oGetParameterStub.withArgs('sap-server').returns('bar');
+				oGetParameterStub.withArgs('sap-system').returns(mMockParams && mMockParams.system);
 
 				this.stub(jQuery.sap, 'getUriParameters').returns({
 					get: oGetParameterStub
@@ -109,7 +111,7 @@
 
 
 			// sap.ui.model.odata.v2.ODataModel
-			sinon.assert.callCount(this.modelSpy.odataV2, 5);
+			sinon.assert.callCount(this.modelSpy.odataV2, 6);
 
 			// model: "default-with-annotations"
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
@@ -258,6 +260,61 @@
 
 		});
 
+		QUnit.test("metadata v2 with sap-system URL parameter", function(assert) {
+			this.mockGetUriParameters({system: "BLA_123"});
+			this.mockModels();
+
+			var oLogSpy = this.spy(jQuery.sap.log, "error");
+
+			this.oComponent = sap.ui.component({
+				name: "sap.ui.test.v2models.parent"
+			});
+
+			// model: "ODataModel"
+			sinon.assert.calledWithExactly(this.modelSpy.odata, {
+				serviceUrl: '/path/to/odata/service;o=BLA_123?sap-client=foo&sap-server=bar',
+				annotationURI: [ '/path/to/odata/annotations/1', 'v2models/parent/path/to/local/odata/annotations/2'],
+				useBatch: false,
+				refreshAfterChange: false,
+				json: true
+			});
+
+			// model: "v2-ODataModel"
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/odata/service;o=BLA_123',
+				useBatch: true,
+				refreshAfterChange: true,
+			});
+
+			// model: "v2-ODataModel" with a trailing slash and URL Parameters
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/odata/service/with/trailing/slash;o=BLA_123/?sap-client=foo&sap-server=bar',
+				annotationURI: ['/path/to/odata/service/with/trailing/slash;o=BLA_123/annotations.xml', 'v2models/parent/path/to/local/odata/annotations/2'],
+				useBatch: true,
+				refreshAfterChange: true,
+			});
+			
+			//JSON Model, should not have an origin
+			// model: json
+			sinon.assert.calledWithExactly(this.modelSpy.json, '/path/to/data.json?sap-client=foo&sap-server=bar');
+			
+			//ResourceModel should also not have an origin attached
+			// model: "resourceBundle-name"
+			sinon.assert.calledWithExactly(this.modelSpy.resource, {
+				bundleName: "sap.ui.test.v2models.parent.i18n"
+			});
+			
+			// destroy the component
+			this.oComponent.destroy();
+
+			// check if all models got destroyed (uses the models from #assertModelInstances)
+			this.assertModelsDestroyed();
+
+			// check if internal models references were removed
+			assert.ok(!this.oComponent._mManifestModels, "Component should not have internal model references anymore");
+
+		});
+		
 		QUnit.test("metadata v2 with dataSources (empty inheritance)", function(assert) {
 			this.mockGetUriParameters();
 			this.mockModels();
@@ -282,7 +339,7 @@
 
 
 			// sap.ui.model.odata.v2.ODataModel
-			sinon.assert.callCount(this.modelSpy.odataV2, 5);
+			sinon.assert.callCount(this.modelSpy.odataV2, 6);
 
 			// model: "default-with-annotations"
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
@@ -456,7 +513,7 @@
 
 
 			// sap.ui.model.odata.v2.ODataModel
-			sinon.assert.callCount(this.modelSpy.odataV2, 5);
+			sinon.assert.callCount(this.modelSpy.odataV2, 6);
 
 			// model: "default-with-annotations"
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {

@@ -46,13 +46,26 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 							}
 						},
 
+						"AnotherOData": {
+							"uri": "/path/to/odata/service/with/trailing/slash/",
+							"type": "OData",
+							"settings": {
+								"annotations": ["originAnnotations", "annotations2"]
+							}
+						},
+						
+						"originAnnotations" : {
+							"uri": "/path/to/odata/service/with/trailing/slash/annotations.xml",
+							"type": "ODataAnnotation"
+						},
+
 						"annotations1": {
-							"uri": "/path/to/odata/annotations/1",
+							"uri": "/path/to/odata/annotations/1", // absolute uri
 							"type": "ODataAnnotation"
 						},
 
 						"annotations2": {
-							"uri": "path/to/local/odata/annotations/2",
+							"uri": "path/to/local/odata/annotations/2", // relative uri
 							"type": "ODataAnnotation"
 						},
 
@@ -150,6 +163,15 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 							"type": "sap.ui.model.odata.v2.ODataModel",
 							"settings": {
 								"serviceUrl": "/path/to/odata/service",
+								"useBatch": true,
+								"refreshAfterChange": true
+							}
+						},
+
+						"v2-ODataModel-ServiceOrigin": {
+							"type": "sap.ui.model.odata.v2.ODataModel",
+							"dataSource": "AnotherOData",
+							"settings": {
 								"useBatch": true,
 								"refreshAfterChange": true
 							}
