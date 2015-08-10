@@ -1562,8 +1562,33 @@
 				// cleanup
 				oInput.destroy();
 			});
-			
-			
+
+			// BCP 1570778270
+			test("it should correctly restore the value in case of invalidation", function() {
+
+				// system under test
+				var oInput = new sap.m.InputBase();
+
+				// arrange
+				var sValue = "Lorem Ipsum";
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oInput.focus();
+
+				// act
+				oInput.updateDomValue(sValue);
+				oInput.setVisible(false);
+				sap.ui.getCore().applyChanges();
+				oInput.setVisible(true);
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oInput.getFocusDomRef().value, sValue);
+
+				// cleanup
+				oInput.destroy();
+			});
+
 			module("TwowayBindingAndFormatters");
 			test("formatters should be applied for two-way binding formatters", function() {
 				// custom formatter
