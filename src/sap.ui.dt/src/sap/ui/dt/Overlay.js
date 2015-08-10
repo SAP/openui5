@@ -69,7 +69,7 @@ function(jQuery, Control, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 				 */
 				selectable : {
 					type : "boolean",
-					defaultValue : true
+					defaultValue : false
 				},
 				/** 
 				 * Whether the Overlay is draggable
