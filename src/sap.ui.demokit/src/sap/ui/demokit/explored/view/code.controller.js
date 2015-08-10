@@ -15,6 +15,13 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 			this.router.attachRoutePatternMatched(this.onRouteMatched, this);
 			this._viewData = sap.ui.getCore().byId("app").getViewData();
 			this._viewData.component.codeCache = {};
+			this._STR_CONSTANTS = {
+				components_file : "Component.js",
+				index_file: "index.html",
+				fldr_prefix: "../",
+				include_fldr: "includes/"
+
+			};
 		},
 
 		onRouteMatched : function (oEvt) {
@@ -127,7 +134,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 					sRawFileContent = this._changeIframeBootstrapToCloud(sRawFileContent);
 				}
 
-				oZipFile.file(oFile.name, sRawFileContent);
+				oZipFile.file(this._formatFileName(oFile.name), sRawFileContent);
 
 				// mock files
 				for (var j = 0; j < this._aMockFiles.length; j++) {
@@ -141,15 +148,15 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 			var sRef = jQuery.sap.getModulePath(this._sId),
 				aExtraFiles = oData.includeInDownload || [],
 				that = this;
-			oZipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));
+			oZipFile.file(this._STR_CONSTANTS.components_file, this._fixFilePaths(this.fetchSourceFile(sRef, this._STR_CONSTANTS.components_file)));
 
 			if (!oData.iframe) {
-				oZipFile.file("index.html", this.createIndexFile(oData));
+				oZipFile.file(this._STR_CONSTANTS.index_file, this.createIndexFile(oData));
 			}
 
 			// add extra download files
 			aExtraFiles.forEach(function(sFileName, index) {
-				oZipFile.file(sFileName, that.fetchSourceFile(sRef, sFileName));
+				oZipFile.file(this._formatFileName(sFileName), that.fetchSourceFile(sRef, sFileName));
 			});
 
 			var oContent = oZipFile.generate();
@@ -159,6 +166,34 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 
 		_openGeneratedFile : function (oContent) {
 			location.href = "data:application/zip;base64," + oContent;
+		},
+
+		_formatFileName: function(sFileName) {
+			var iPos = sFileName.lastIndexOf(this._STR_CONSTANTS.fldr_prefix);
+
+			if (iPos > -1) {
+				return this._STR_CONSTANTS.include_fldr + sFileName.substring(iPos + this._STR_CONSTANTS.fldr_prefix.length);
+			}
+			return sFileName;
+		},
+
+		_fixFilePaths: function(sFileContent) {
+			var aContentParts = sFileContent.split('"'),
+				sToFileName = "",
+				i,
+				iPos;
+			for (i = 0; i < aContentParts.length; i++) {
+				iPos = aContentParts[i].lastIndexOf(this._STR_CONSTANTS.fldr_prefix);
+				if (iPos > -1) {
+					//replace the file name with the correct one
+					sToFileName = this._STR_CONSTANTS.include_fldr + aContentParts[i].substring(iPos + this._STR_CONSTANTS.fldr_prefix.length);
+					iPos = sFileContent.indexOf(aContentParts[i]);
+					if (iPos > -1) {
+						sFileContent = sFileContent.substring(0, iPos ) + sToFileName +  sFileContent.substring(iPos + aContentParts[i].length);
+					}
+				}
+			}
+			return sFileContent;
 		},
 
 		createIndexFile : function(oData) {
