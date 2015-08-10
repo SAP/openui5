@@ -42,6 +42,7 @@
 		jQuery.sap.require("sap.m.semantic.SortSelect");
 		jQuery.sap.require("sap.m.semantic.FilterSelect");
 		jQuery.sap.require("sap.m.semantic.GroupSelect");
+		jQuery.sap.require("sap.m.semantic.DraftIndicator");
 
 		var aActionClasses = [sap.m.semantic.MultiSelectAction,
 							sap.m.semantic.MainAction,
@@ -63,7 +64,8 @@
 							sap.m.semantic.SendEmailAction,
 							sap.m.semantic.SendMessageAction,
 							sap.m.semantic.PrintAction,
-							sap.m.semantic.MessagesIndicator
+							sap.m.semantic.MessagesIndicator,
+							sap.m.semantic.DraftIndicator
 		];
 
 		var aSelectClasses = [sap.m.semantic.SortSelect,
@@ -155,7 +157,28 @@
 				sap.ui.getCore().getMessageManager().removeAllMessages();
 			}
 		});
+		
+		var oSavingDraftButton = new sap.m.Button({
+			text: "show Saving Draft",
+			press: function () {
+				draftInd.showDraftSaving();
+			}
+		});
 
+		var oSavedDraftButton = new sap.m.Button({
+			text: "show Draft Saved",
+			press: function () {
+				draftInd.showDraftSaved();
+			}
+		});
+
+		var oClearDraftButton = new sap.m.Button({
+			text: "clear Draft state",
+			press: function () {
+				draftInd.clearDraftState();
+			}
+		});
+		
 		function createPageSelect() {
 			return new sap.m.Select({
 				selectedKey: "{status>/selectedPageId}",
@@ -1074,6 +1097,18 @@
 				oClearWarningsButton
 			]
 		});
+		
+		var oModifyDraftBox = new sap.m.HBox({
+			items: [
+				oSavingDraftButton,
+				oSavedDraftButton
+			]
+		});
+		var oModifyDraftBox2 = new sap.m.HBox({
+			items: [
+				oClearDraftButton
+			]
+		});
 
 		var oStatusBox = new sap.ui.layout.form.SimpleForm ({
 			maxContainerCols : 2,
@@ -1093,6 +1128,8 @@
 					items: [
 						/*oModifySemanticContentBox,*/
 						oModifyMessagesBox,
+						oModifyDraftBox,
+						oModifyDraftBox2,
 						oModifyCustomFooterContentBox,
 						oModifyCustomShareMenuContentBox,
 						oStatusBox
@@ -1118,7 +1155,7 @@
 			filter: new sap.m.semantic.FilterAction({press: onSemanticBtnPress}),
 			customHeaderContent: [new sap.m.Button({text: "Custom in header"})]
 		});
-
+	var draftInd = new sap.m.semantic.DraftIndicator();
 		var page2 = new sap.m.semantic.DetailPage("detail", {
 			title: "{status>/detail/title}",
 			showNavButton: "{status>/detail/showNavButton}",
@@ -1133,6 +1170,7 @@
 				new sap.m.Button({icon : "sap-icon://video", text: "test", press: onCustomBtnPress})
 			],
 			messagesIndicator: new sap.m.semantic.MessagesIndicator(),
+			draftIndicator: draftInd,
 			positiveAction: new sap.m.semantic.PositiveAction({text: "Positive", press: onSemanticBtnPress}),
 			mainAction: new sap.m.semantic.MainAction({text: "Main", press: onSemanticBtnPress}),
 			negativeAction: new sap.m.semantic.NegativeAction({text: "Negative", press: onSemanticBtnPress}),
