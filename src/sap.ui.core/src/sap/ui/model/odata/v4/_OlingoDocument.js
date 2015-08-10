@@ -18,6 +18,34 @@ sap.ui.define([
 
 	OlingoDocument = {
 		/**
+		 * Finds the complex type in the Olingo metadata.
+		 *
+		 * @param {object} oDocument
+		 *   the Olingo metadata document
+		 * @param {string} sQualifiedName
+		 *   the qualified name of the complex type
+		 * @return {object}
+		 *   the complex type
+		 * @throws Error if no complex type with this name could be found
+		 * @private
+		 */
+		findComplexType: function (oDocument, sQualifiedName) {
+			var i = sQualifiedName.lastIndexOf("."),
+			oResult,
+			sSchemaName = sQualifiedName.substring(0, i),
+			oSchema = Helper.findInArray(oDocument.dataServices.schema, "namespace", sSchemaName),
+			sTypeName = sQualifiedName.substring(i + 1);
+
+			if (oSchema) {
+				oResult = Helper.findInArray(oSchema.complexType, "name", sTypeName);
+				if (oResult) {
+					return oResult;
+				}
+			}
+			throw new Error("Unknown complex type: " + sQualifiedName);
+		},
+
+		/**
 		 * Finds the entity set in the Olingo metadata document.
 		 *
 		 * @param {object} oDocument
@@ -95,6 +123,32 @@ sap.ui.define([
 		},
 
 		/**
+		 * Determines the schema name from the qualified name.
+		 *
+		 * @param {string} sQualifiedName
+		 *   a qualified name
+		 * @returns {string}
+		 *   the schema name
+		 */
+		getSchemaName : function (sQualifiedName) {
+			var i = sQualifiedName.lastIndexOf('.');
+			return i >= 0 ? sQualifiedName.slice(0, i) : "";
+		},
+
+		/**
+		 * Strips off the simple name which is separated from the qualifying part via a dot.
+		 *
+		 * @param {string} sQualifiedName
+		 *   a qualified name
+		 * @returns {string}
+		 *   the unqualified name
+		 */
+		getUnqualifiedName : function (sQualifiedName) {
+			var i = sQualifiedName.lastIndexOf('.');
+			return i >= 0 ? sQualifiedName.slice(i + 1) : sQualifiedName;
+		},
+
+		/**
 		 * Returns a Promise for the metadata document. Reads it from
 		 * <code>oModel.sDocumentUrl</code> via the Olingo metadata handler with the first request.
 		 *
@@ -162,8 +216,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Finds the entity type in the Olingo metadata document and transforms it to the Edmx
-		 * format.
+		 * Finds the entity type in the Olingo metadata and transforms it to the Edmx format.
 		 *
 		 * @param {object} oDocument
 		 *   the Olingo metadata document
@@ -173,46 +226,18 @@ sap.ui.define([
 		 *   the entity type or <code>undefined</code> if not found
 		 * @private
 		 */
-		transformEntityType : function (oDocument, sQualifiedName) {
+		transformEntityType: function (oDocument, sQualifiedName) {
 			var oEntityType = OlingoDocument.findEntityType(oDocument, sQualifiedName),
-				sFacet,
 				i,
-				oResult = {
-					"Name" : oEntityType.name,
-					"QualifiedName" :  sQualifiedName,
-					"Abstract" : false,
-					"OpenType" : false,
-					"Key" : [],
-					"Properties" : [],
-					"NavigationProperties" : []
-				},
+				oResult = OlingoDocument.transformStructuredType(oDocument, sQualifiedName,
+					oEntityType),
 				oSourceProperty,
 				oTargetProperty;
 
+			oResult.Key = [];
+			oResult.NavigationProperties = [];
 			for (i = 0; i < oEntityType.key[0].propertyRef.length; i++) {
 				oResult.Key.push({"PropertyPath" : oEntityType.key[0].propertyRef[i].name});
-			}
-			for (i = 0; i < oEntityType.property.length; i++) {
-				oSourceProperty = oEntityType.property[i];
-				oTargetProperty = {
-					"Name" : oSourceProperty.name,
-					"Fullname" : sQualifiedName + "/" + oSourceProperty.name,
-					"Nullable" : oSourceProperty.nullable === "true",
-					"Facets" : [],
-					"Type" : {
-						"Name" : OlingoDocument.unqualifiedName(oSourceProperty.type),
-						"QualifiedName" : oSourceProperty.type
-					}
-				};
-				for (sFacet in mFacets) {
-					if (sFacet in oSourceProperty) {
-						oTargetProperty.Facets.push({
-							"Name" : mFacets[sFacet],
-							"Value" : oSourceProperty[sFacet]
-						});
-					}
-				}
-				oResult.Properties.push(oTargetProperty);
 			}
 			for (i = 0; i < oEntityType.navigationProperty.length; i++) {
 				oSourceProperty = oEntityType.navigationProperty[i];
@@ -230,16 +255,73 @@ sap.ui.define([
 		},
 
 		/**
-		 * Strips off the simple name which is separated from the qualifying part via a dot.
+		 * Transforms the structured type in Olingo meta data format to the Edmx format.
 		 *
+		 * @param {object} oDocument
+		 *   the Olingo metadata document
 		 * @param {string} sQualifiedName
-		 *   a qualified name
-		 * @returns {string}
-		 *   the unqualified name
+		 *   the qualified name of the structured type
+		 * @param {object} oType
+		 *   the type as found in the Olingo document
+		 * @return {object}
+		 *   the structured type
+		 * @private
 		 */
-		unqualifiedName : function (sQualifiedName) {
-			var i = sQualifiedName.lastIndexOf('.');
-			return i >= 0 ? sQualifiedName.substring(i + 1) : sQualifiedName;
+		transformStructuredType: function (oDocument, sQualifiedName, oType) {
+			var sFacet,
+				i,
+				oResult = {
+					"Name" : oType.name,
+					"QualifiedName" : sQualifiedName,
+					"Abstract" : false,
+					"OpenType" : false,
+					"Properties" : []
+				},
+				oSourceProperty,
+				oTargetProperty;
+
+			for (i = 0; i < oType.property.length; i++) {
+				oSourceProperty = oType.property[i];
+				oTargetProperty = {
+					"Name" : oSourceProperty.name,
+					"Fullname" : sQualifiedName + "/" + oSourceProperty.name,
+					"Nullable" : oSourceProperty.nullable === "true",
+					"Facets" : [],
+					"Type" : OlingoDocument.transformType(oDocument, oSourceProperty.type)
+				};
+				for (sFacet in mFacets) {
+					if (sFacet in oSourceProperty) {
+						oTargetProperty.Facets.push({
+							"Name" : mFacets[sFacet],
+							"Value" : oSourceProperty[sFacet]
+						});
+					}
+				}
+				oResult.Properties.push(oTargetProperty);
+			}
+			return oResult;
+		},
+
+		/**
+		 * Finds the property type in the Olingo metadata and transforms it to the Edmx format.
+		 *
+		 * @param {object} oDocument
+		 *   the Olingo metadata document
+		 * @param {string} sQualifiedName
+		 *   the qualified name of the property type
+		 * @return {object}
+		 *   the property type or <code>undefined</code> if not found
+		 * @private
+		 */
+		transformType: function (oDocument, sQualifiedName) {
+			if (OlingoDocument.getSchemaName(sQualifiedName) === "Edm") {
+				return {
+					"Name" : OlingoDocument.getUnqualifiedName(sQualifiedName),
+					"QualifiedName" : sQualifiedName
+				};
+			}
+			return OlingoDocument.transformStructuredType(oDocument, sQualifiedName,
+				OlingoDocument.findComplexType(oDocument, sQualifiedName));
 		}
 	};
 

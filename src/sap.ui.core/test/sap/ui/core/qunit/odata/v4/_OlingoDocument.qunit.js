@@ -18,7 +18,8 @@ sap.ui.require([
 	 */
 
 	var mFixture = {
-			"/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata": {source: "metadata.xml"}
+			"/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata": {source: "metadata.xml"},
+			"/foo/$metadata": {code: 404}
 		},
 		bRealOData = jQuery.sap.getUriParameters().get("realOData") === "true",
 		sDocumentUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata";
@@ -78,10 +79,17 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("unqualfiedName", function (assert) {
-		assert.strictEqual(OlingoDocument.unqualifiedName("Baz"), "Baz");
-		assert.strictEqual(OlingoDocument.unqualifiedName("bar.Baz"), "Baz");
-		assert.strictEqual(OlingoDocument.unqualifiedName("foo.bar.Baz"), "Baz");
+	QUnit.test("getSchemaName", function (assert) {
+		assert.strictEqual(OlingoDocument.getSchemaName("Baz"), "");
+		assert.strictEqual(OlingoDocument.getSchemaName("bar.Baz"), "bar");
+		assert.strictEqual(OlingoDocument.getSchemaName("foo.bar.Baz"), "foo.bar");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getUnqualifiedName", function (assert) {
+		assert.strictEqual(OlingoDocument.getUnqualifiedName("Baz"), "Baz");
+		assert.strictEqual(OlingoDocument.getUnqualifiedName("bar.Baz"), "Baz");
+		assert.strictEqual(OlingoDocument.getUnqualifiedName("foo.bar.Baz"), "Baz");
 	});
 
 	//*********************************************************************************************
@@ -211,6 +219,31 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("findComplexType: success", function (assert) {
+		return this.withMetamodel(function (oDocument) {
+			var oResult = OlingoDocument.findComplexType(oDocument,
+					"com.sap.gateway.iwbep.tea_busi.v0001.ComplexType_City");
+
+			assert.strictEqual(oResult.name, "ComplexType_City");
+			assert.strictEqual(oResult, oDocument.dataServices.schema[0].complexType[0]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("findComplexType: failures", function (assert) {
+		return this.withMetamodel(function (oDocument) {
+			[
+				"unknown.ComplexType_City",
+				"com.sap.gateway.iwbep.tea_busi.v0001.Unknown"
+			].forEach(function (sName) {
+				assert.throws(function () {
+					OlingoDocument.findComplexType(oDocument, sName);
+				}, new Error("Unknown complex type: " + sName));
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("transformEntityContainer", function (assert) {
 		var oEntityContainer = {
 				"Name" : "Container",
@@ -218,6 +251,169 @@ sap.ui.require([
 			};
 		return this.withMetamodel(function (oDocument) {
 			assert.deepEqual(OlingoDocument.transformEntityContainer(oDocument), oEntityContainer);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("transformType: primitive type", function (assert) {
+		var oEDMType = {
+				"Name" : "String",
+				"QualifiedName" : "Edm.String"
+			};
+
+		return this.withMetamodel(function (oDocument) {
+			assert.deepEqual(OlingoDocument.transformType(oDocument, "Edm.String"), oEDMType);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("transformStructuredType", function (assert) {
+		var sQualifiedName = "com.sap.gateway.iwbep.tea_busi.v0001.ComplexType_Location",
+			oType = {
+				"Name" : "ComplexType_Location",
+				"QualifiedName" : sQualifiedName,
+				"Abstract" : false,
+				"OpenType" : false,
+				"Properties" : [{
+					"Name" : "COUNTRY",
+					"Fullname" : sQualifiedName + "/COUNTRY",
+					"Nullable" : false,
+					"Facets" : [{
+						"Name" : "MaxLength",
+						"Value" : "255"
+					}],
+					"Type" : {
+						"Name" : "String",
+						"QualifiedName" : "Edm.String"
+					}
+				}, {
+					"Name" : "City",
+					"Fullname" : sQualifiedName + "/City",
+					"Nullable" : false,
+					"Facets" : [],
+					"Type" : {
+						"Name" : "ComplexType_City",
+						"QualifiedName" :
+							"com.sap.gateway.iwbep.tea_busi.v0001.ComplexType_City",
+						"Abstract" : false,
+						"OpenType" : false,
+						"Properties" : [{
+							"Name" : "POSTALCODE",
+							"Fullname" :
+								"com.sap.gateway.iwbep.tea_busi.v0001.ComplexType_City/POSTALCODE",
+							"Nullable" : false,
+							"Facets" : [{
+								"Name" : "MaxLength",
+								"Value" : "16"
+							}],
+							"Type" : {
+								"Name" : "String",
+								"QualifiedName" : "Edm.String"
+							}
+						},{
+							"Name" : "CITYNAME",
+							"Fullname" :
+								"com.sap.gateway.iwbep.tea_busi.v0001.ComplexType_City/CITYNAME",
+							"Nullable" : false,
+							"Facets" : [{
+								"Name" : "MaxLength",
+								"Value" : "255"
+							}],
+							"Type" : {
+								"Name" : "String",
+								"QualifiedName" : "Edm.String"
+							}
+						}]
+					}
+				}]
+			};
+
+		return this.withMetamodel(function (oDocument) {
+			var oComplexType = oDocument.dataServices.schema[0].complexType[1];
+
+			assert.deepEqual(OlingoDocument.transformStructuredType(oDocument, sQualifiedName,
+				oComplexType), oType);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("transformType: structured type", function (assert) {
+		var	oOlingoDocumentMock = this.oSandbox.mock(OlingoDocument),
+			sQualifiedName = "com.sap.gateway.iwbep.tea_busi.v0001.ComplexType_City";
+
+		return this.withMetamodel(function (oDocument) {
+			oOlingoDocumentMock.expects("transformStructuredType")
+				.withExactArgs(oDocument, sQualifiedName,
+						oDocument.dataServices.schema[0].complexType[0])
+				.returns({QualifiedName: sQualifiedName});
+
+			assert.deepEqual(OlingoDocument.transformType(oDocument, sQualifiedName), {
+				"QualifiedName" : sQualifiedName
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("transformType: Edm.Metadata.EntityType", function (assert) {
+		var oComplexType = {
+				name: "EntityType",
+			},
+			oDocument = {dataServices: {}},
+			sTypeName = "Edm.Metadata.EntityType",
+			oType = {QualifiedName: sTypeName},
+			oMock = this.mock(OlingoDocument);
+
+		oMock.expects("findComplexType").withExactArgs(oDocument, sTypeName)
+			.returns(oComplexType);
+		oMock.expects("transformStructuredType")
+			.withExactArgs(oDocument, sTypeName, oComplexType)
+			.returns(oType);
+
+		assert.deepEqual(OlingoDocument.transformType(oDocument, sTypeName), oType);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("transformEntityType", function (assert) {
+		var sQualifiedName = "com.sap.gateway.iwbep.tea_busi.v0001.TEAM",
+			oEntityType = {
+				"QualifiedName" : sQualifiedName,
+				"Key" : [{
+					"PropertyPath" : "Team_Id"
+				}],
+				"NavigationProperties" : [{
+					"Name" : "TEAM_2_EMPLOYEES",
+					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM/TEAM_2_EMPLOYEES",
+					"Nullable" : true,
+					"ContainsTarget" : false,
+					"IsCollection" : true
+				}, {
+					"Name" : "TEAM_2_MANAGER",
+					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM/TEAM_2_MANAGER",
+					"Nullable" : false,
+					"ContainsTarget" : false,
+					"IsCollection" : false
+				}]
+			},
+			that = this;
+
+		return this.withMetamodel(function (oDocument) {
+			that.oSandbox.mock(OlingoDocument).expects("transformStructuredType")
+				.withExactArgs(oDocument,
+						sQualifiedName, oDocument.dataServices.schema[0].entityType[3])
+				.returns({"QualifiedName": sQualifiedName})
+
+			assert.deepEqual(OlingoDocument.transformEntityType(oDocument,
+				sQualifiedName), oEntityType);
+		});
+
+		return oDocumentModel.requestDocument().then(function (oDocument) {
+			that.oSandbox.mock(oDocumentModel).expects("transformStructuredType")
+				.withExactArgs(oDocument,
+					sQualifiedName, oDocument.dataServices.schema[0].entityType[3])
+				.returns({"QualifiedName": sQualifiedName})
+
+			assert.deepEqual(oDocumentModel.transformEntityType(oDocument,
+				sQualifiedName), oEntityType);
 		});
 	});
 
@@ -239,109 +435,6 @@ sap.ui.require([
 		return this.withMetamodel(function (oDocument) {
 			assert.deepEqual(OlingoDocument.transformEntitySet(oDocument,
 				"com.sap.gateway.iwbep.tea_busi.v0001.Container/MANAGERS"), oEntitySet);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("transformEntityType", function (assert) {
-		var oEntityType = {
-				"Name" : "TEAM",
-				"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM",
-				"Abstract" : false,
-				"OpenType" : false,
-				"Key" : [{
-					"PropertyPath" : "Team_Id"
-				}],
-				"Properties" : [{
-					"Name" : "Team_Id",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM/Team_Id",
-					"Nullable" : false,
-					"Facets" : [{
-						"Name" : "MaxLength",
-						"Value" : "10"
-					}],
-					"Type" : {
-						"Name" : "String",
-						"QualifiedName" : "Edm.String"
-					}
-				}, {
-					"Name" : "Name",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM/Name",
-					"Nullable" : false,
-					"Facets" : [{
-						"Name" : "MaxLength",
-						"Value" : "40"
-					}],
-					"Type" : {
-						"Name" : "String",
-						"QualifiedName" : "Edm.String"
-					}
-				}, {
-					"Name" : "MEMBER_COUNT",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM/MEMBER_COUNT",
-					"Nullable" : false,
-					"Facets" : [],
-					"Type" : {
-						"Name" : "Int32",
-						"QualifiedName" : "Edm.Int32"
-					}
-				}, {
-					"Name" : "MANAGER_ID",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM/MANAGER_ID",
-					"Nullable" : false,
-					"Facets" : [{
-						"Name" : "MaxLength",
-						"Value" : "4"
-					}],
-					"Type" : {
-						"Name" : "String",
-						"QualifiedName" : "Edm.String"
-					}
-				}, {
-					"Name" : "BudgetCurrency",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM/BudgetCurrency",
-					"Nullable" : false,
-					"Facets" : [{
-						"Name" : "MaxLength",
-						"Value" : "5"
-					}],
-					"Type" : {
-						"Name" : "String",
-						"QualifiedName" : "Edm.String"
-					}
-				}, {
-					"Name" : "Budget",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM/Budget",
-					"Nullable" : false,
-					"Facets" : [{
-						"Name" : "Precision",
-						"Value" : "16"
-					}, {
-						"Name" : "Scale",
-						"Value" : "variable"
-					}],
-					"Type" : {
-						"Name" : "Decimal",
-						"QualifiedName" : "Edm.Decimal"
-					}
-				}],
-				"NavigationProperties" : [{
-					"Name" : "TEAM_2_EMPLOYEES",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM/TEAM_2_EMPLOYEES",
-					"Nullable" : true,
-					"ContainsTarget" : false,
-					"IsCollection" : true
-				}, {
-					"Name" : "TEAM_2_MANAGER",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM/TEAM_2_MANAGER",
-					"Nullable" : false,
-					"ContainsTarget" : false,
-					"IsCollection" : false
-				}]
-			};
-		return this.withMetamodel(function (oDocument) {
-			assert.deepEqual(OlingoDocument.transformEntityType(oDocument,
-				"com.sap.gateway.iwbep.tea_busi.v0001.TEAM"), oEntityType);
 		});
 	});
 	// TODO unknown entity type

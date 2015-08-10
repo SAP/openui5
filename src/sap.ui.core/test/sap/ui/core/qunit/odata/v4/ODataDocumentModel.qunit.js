@@ -18,8 +18,7 @@ sap.ui.require([
 	 */
 
 	var mFixture = {
-			"/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata": {source: "metadata.xml"},
-			"/foo/$metadata": {code: 404}
+			"/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata": {source: "metadata.xml"}
 		},
 		bRealOData = jQuery.sap.getUriParameters().get("realOData") === "true",
 		sDocumentUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata";

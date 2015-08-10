@@ -81,19 +81,32 @@ sap.ui.define([
 			throw new Error("Unsupported: /" + aParts[0]);
 		}
 		return Helper.requestEntitySet(this.oModel, aMatches[1]).then(function (oEntitySet) {
-			var sMetaPath = "/EntityContainer/EntitySets(Fullname='"
+			var i = 1,
+				sMetaPath = "/EntityContainer/EntitySets(Fullname='"
 					+ encodeURIComponent(oEntitySet.Fullname) + "')/EntityType",
-				oProperty;
+				oProperty,
+				oType;
+
 			if (!aParts[1]) {
 				return sMetaPath;
 			}
-			oProperty = Helper.findInArray(oEntitySet.EntityType.Properties, "Name", aParts[1]);
-			if (!oProperty) {
-				throw new Error("Unknown property: " + oEntitySet.EntityType.QualifiedName + "/"
-					+ aParts[1]);
+
+			oType = oEntitySet.EntityType;
+			for (;;) {
+				oProperty = Helper.findInArray(oType.Properties, "Name", aParts[i]);
+				if (!oProperty) {
+					throw new Error("Unknown property: " + oType.QualifiedName + "/"
+						+ aParts[i] + ": " + sPath);
+				}
+				sMetaPath = sMetaPath + "/Properties(Fullname='"
+					+ encodeURIComponent(oProperty.Fullname) + "')";
+				i += 1;
+				if (!aParts[i]) {
+					return sMetaPath;
+				}
+				sMetaPath = sMetaPath + "/Type";
+				oType = oProperty.Type;
 			}
-			return sMetaPath + "/Properties(Fullname='" + encodeURIComponent(oProperty.Fullname)
-				+ "')";
 		}).then(function (sMetaPath) {
 			return that.getContext(sMetaPath);
 		});
