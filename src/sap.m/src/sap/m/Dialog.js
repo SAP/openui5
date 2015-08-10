@@ -311,8 +311,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 
 			//TODO: if sap_mvi has to be restored, here has to be changed.
 			oPosition.at = {
-				left: ($Window.width() - $that.outerWidth()) / 2,
-				top: ($Window.height() - $that.outerHeight()) / 2
+				left: parseInt(($Window.width() - $that.outerWidth()) / 2, 10),
+				top: parseInt(($Window.height() - $that.outerHeight()) / 2, 10)
 			};
 
 			Popup.prototype._applyPosition.call(this, oPosition);
