@@ -130,14 +130,14 @@
 						oIconDom = jQuery.sap.domById(oDialog.getId() + "-icon"),
 						oLeftButtonDom = jQuery.sap.domById("leftButton"),
 						oRightButtonDom = jQuery.sap.domById("rightButton"),
-						oLeftButtonFocusDom = sap.ui.getCore().byId("leftButton").getFocusDomRef();
+						oSearchField = sap.ui.getCore().byId("__field0").getFocusDomRef();
 				ok(jQuery.sap.domById("dialog"), "dialog is rendered after it's opened.");
 				ok($Dialog.closest("#sap-ui-static")[0], "dialog should be rendered inside the static uiArea.");
 				ok(oSubHeaderDom, "Sub header should be rendered inside the dialog");
 				equal($ScrollDiv.css("display"), "inline-block", "Scroll div should always have display: inline-block");
 
 				if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
-					equal(oLeftButtonFocusDom, document.activeElement, "left button should have the focus");
+					equal(oSearchField, document.activeElement, "searchfield should have the focus");
 				}
 
 				if (jQuery.support.touch || jQuery.sap.simulateMobileOnDesktop) {
