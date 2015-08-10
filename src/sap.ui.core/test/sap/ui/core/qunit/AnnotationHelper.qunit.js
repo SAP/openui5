@@ -3,11 +3,10 @@
  */
 sap.ui.require([
 	"sap/ui/base/BindingParser", "sap/ui/base/ManagedObject", "sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/AnnotationHelper", "sap/ui/model/odata/_AnnotationHelperBasics",
-	"sap/ui/model/odata/_AnnotationHelperExpression", "sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/model/PropertyBinding"
-], function(BindingParser, ManagedObject, JSONModel, AnnotationHelper, Basics, Expression,
-		ODataModel, PropertyBinding) {
+	"sap/ui/model/odata/_AnnotationHelperBasics", "sap/ui/model/odata/_AnnotationHelperExpression",
+	"sap/ui/model/odata/v2/ODataModel", "sap/ui/model/PropertyBinding"
+], function(BindingParser, ManagedObject, JSONModel, Basics, Expression, ODataModel,
+		PropertyBinding) {
 	/*global deepEqual, ok, QUnit, sinon, strictEqual, throws */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
 	"use strict";
@@ -16,7 +15,8 @@ sap.ui.require([
 	// https://github.com/cjohansen/Sinon.JS/commit/e8de34b5ec92b622ef76267a6dce12674fee6a73
 	sinon.xhr.supportsCORS = true;
 
-	var oCIRCULAR = {},
+	var AnnotationHelper = sap.ui.model.odata.AnnotationHelper, // Note: lazy require in place!
+		oCIRCULAR = {},
 		oBoolean = {
 			name : "sap.ui.model.odata.type.Boolean",
 			constraints : {"nullable" : false}

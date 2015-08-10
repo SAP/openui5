@@ -1520,6 +1520,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	lazy("sap.ui.core.tmpl.Template", "registerType unregisterType");
 	lazy("sap.ui.core.Fragment", "registerType");
 
+	lazy("sap.ui.model.odata.AnnotationHelper", "createPropertySetting format getNavigationPath"
+		+ " gotoEntitySet gotoEntityType gotoFunctionImport isMultiple resolvePath simplePath");
+	sap.ui.model.odata.AnnotationHelper.format.requiresIContext = true;
+	sap.ui.model.odata.AnnotationHelper.getNavigationPath.requiresIContext = true;
+	sap.ui.model.odata.AnnotationHelper.isMultiple.requiresIContext = true;
+	sap.ui.model.odata.AnnotationHelper.simplePath.requiresIContext = true;
+
 	lazy("sap.ui", "xmlfragment", "sap.ui.core.Fragment"); // cannot use "each" as it assumes a module to exist for each function name
 	lazy("sap.ui", "jsfragment", "sap.ui.core.Fragment");
 	lazy("sap.ui", "htmlfragment", "sap.ui.core.Fragment");
