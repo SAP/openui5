@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./library", "sap/ui/core/Control", "./Button", "./MessageBox"],
-	function (library, Control, Button, MessageBox) {
+sap.ui.define(["./library", "sap/ui/core/Control"],
+	function (library, Control) {
 
 	"use strict";
 
@@ -63,11 +63,7 @@ sap.ui.define(["./library", "sap/ui/core/Control", "./Button", "./MessageBox"],
 				/**
 				 * The content of the Wizard Step.
 				 */
-				content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"},
-				/**
-				 * The edit button of the WizardStep when autoLocking is set to true.
-				 */
-				_editButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"}
+				content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"}
 			},
 			associations: {
 				/**
@@ -84,15 +80,6 @@ sap.ui.define(["./library", "sap/ui/core/Control", "./Button", "./MessageBox"],
 			}
 		}
 	});
-
-	WizardStep.prototype.init = function () {
-		this._enabled = true;
-		this._initEditButton();
-	};
-
-	WizardStep.prototype.getEnabled = function () {
-		return this._enabled;
-	};
 
 	WizardStep.prototype.setValidated = function (validated) {
 		this.setProperty("validated", validated, true);
@@ -124,7 +111,7 @@ sap.ui.define(["./library", "sap/ui/core/Control", "./Button", "./MessageBox"],
 
 
 	WizardStep.prototype._getNextStepReference = function () {
-		if (this.getNextStep() != null) {
+		if (this.getNextStep() !== null) {
 			return sap.ui.getCore().byId(this.getNextStep());
 		}
 
@@ -152,33 +139,6 @@ sap.ui.define(["./library", "sap/ui/core/Control", "./Button", "./MessageBox"],
 		return parent;
 	};
 
-	//Could be used in the future
-	WizardStep.prototype._initEditButton = function () {
-		var that = this;
-		var editButton = new Button({
-			visible : false,
-			icon : "sap-icon://edit",
-			press : function () {
-				MessageBox.confirm("Are you sure you want to edit this step and discard the progress?", {
-					actions: [MessageBox.Action.YES, MessageBox.Action.NO],
-					onClose: function (oAction) {
-						if (oAction === MessageBox.Action.YES) {
-							var wizParent = that._getWizardParent();
-							wizParent.discardProgress(that);
-						}
-					}
-				});
-
-			}
-		});
-
-		editButton.getEnabled = function() {
-			return true;
-		};
-
-		this.setAggregation("_editButton", editButton);
-	};
-
 	WizardStep.prototype._markAsLast = function () {
 		this.addStyleClass("sapMWizardLastActivatedStep");
 	};
@@ -197,37 +157,13 @@ sap.ui.define(["./library", "sap/ui/core/Control", "./Button", "./MessageBox"],
 		this.fireActivate();
 	};
 
-	WizardStep.prototype._deactivate = function (unlock) {
+	WizardStep.prototype._deactivate = function () {
 		this.removeStyleClass("sapMWizardStepActivated");
-		if (unlock) {
-			this._unlockContent();
-		}
 	};
 
-	WizardStep.prototype._complete = function (lock) {
+	WizardStep.prototype._complete = function () {
 		this._unMarkAsLast();
 		this.fireComplete();
-		if (lock) {
-			this._lockContent();
-		}
-	};
-
-	//Could be used in the future
-	WizardStep.prototype._lockContent = function () {
-		this._enabled = false;
-		this._getEditButton().setVisible(true);
-		this.invalidate();
-	};
-
-	//Could be used in the future
-	WizardStep.prototype._unlockContent = function () {
-		this._enabled = true;
-		this._getEditButton().setVisible(false);
-		this.invalidate();
-	};
-
-	WizardStep.prototype._getEditButton = function ()  {
-		return this.getAggregation("_editButton");
 	};
 
 	return WizardStep;
