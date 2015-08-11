@@ -148,7 +148,8 @@
 					</ul>
 				</p>
 				<p>The src attribute of the first &lt;script&gt; tag tells the browser where to find the OpenUI5 core library – it initializes the OpenUI5 runtime and loads additional resources such as the libraries specified in the “data-sap-ui-libs” attribute. When all resources and libraries are loaded OpenUI5 is ready. Then the “init” event of the core is fired and all registered handlers are executed. This process of loading and initializing OpenUI5 is called bootstrapping. There are two versions of the OpenUI5 core: one with jQuery and one without jQuery. In our case we load the core bundled with jQuery.
-				In our example the resources are loaded asynchronously. This means that the resources can be loaded simultaneously in the background for performance reasons. Once the OpenUI5 core and the corresponding resources have been loaded we can start using it. Therefore, the library fires the init event to signal that the library is ready. It is a good practice to listen for this event in order to trigger your application logic only after the event has been fired. In the example above we get a reference to the OpenUI5 core by calling sap.ui.getCore()and register an anonymous callback function by calling attachInit(…)on the core. In OpenUI5 callback functions are often referred to as handlers, listener functions, or simply listeners. The core is a Singleton and can be accessed from anywhere in the code. 
+				In our example the resources are loaded asynchronously. This means that the resources can be loaded simultaneously in the background for performance reasons.<br/><br/>
+				Once the OpenUI5 core and the corresponding resources have been loaded we can start using it. Therefore, the library fires the init event to signal that the library is ready. It is a good practice to listen for this event in order to trigger your application logic only after the event has been fired. In the example above we get a reference to the OpenUI5 core by calling sap.ui.getCore()and register an anonymous callback function by calling attachInit(…)on the core. In OpenUI5 callback functions are often referred to as handlers, listener functions, or simply listeners. The core is a Singleton and can be accessed from anywhere in the code. 
 				Our anonymous callback function is executed when the bootstrap of OpenUI5 is finished and displays a native JavaScript alert.</p>
 				<p>
 					Try it out yourself - feel free to modify and extend this example!
@@ -331,11 +332,7 @@ All Controls of OpenUI have a fixed set of properties and methods to interact wi
 				<li>Event handlers are prefixed with “on”</li>
 				<li>Controllers always end with *.controller.js</li>
 			</ul>
-		<h4>Read more:</h4>
-		<ul>
-			<li><a href="https://openui5.hana.ondemand.com/#docs/guide/121b8e6337d147af9819129e428f1f75.html" target="_blank">Model View Controller (MVC) > Controllers</a></li>
-		</ul>
-		<p>Try and modify this example below:</p>
+		<p>Try it out yourself - feel free to modify and extend this example!</p>
 		<div class="corset"> <!-- for Ipad -->
 			<iframe style="width: 100%; height: 400px" src="http://embed.plnkr.co/VPlrRT/" frameborder="0" allowfullscren="allowfullscren" class="plunkerEmbedded"></iframe>
 		</div>
@@ -344,6 +341,12 @@ All Controls of OpenUI have a fixed set of properties and methods to interact wi
 				Your browser doesn't support Cross-Origin Resource Sharing (CORS). Thus, you cannot see the result of the above sample here.
 			</p>
 		</div>
+		
+		<h4>Read more:</h4>
+		<ul>
+			<li><a href="https://openui5.hana.ondemand.com/#docs/guide/121b8e6337d147af9819129e428f1f75.html" target="_blank">Model View Controller (MVC) > Controllers</a></li>
+		</ul>
+		
 		<p><a href="#walkthrough">Back to top</a></p>
 		<h3><a name="step5">Step 5 - Databinding</a></h3>
 		<p>
@@ -437,17 +440,8 @@ All Controls of OpenUI have a fixed set of properties and methods to interact wi
 		<p>The binding of the value attribute is a simple binding example that contains only a binding pattern. We can also combine texts and binding pattern to a more complex binding result as seen in the description attribute. 
 		To be able to use the so-called complex binding syntax we have to globally enable it by setting the bootstrap parameter “data-sap-ui-bindingSyntax” to “complex”. 
 		If this setting is omitted, then only standard binding syntax is allowed, i.e. using "Hello {/recipient/name}" would not work anymore while "{/recipient/name}" would work just fine.</p>
-		<h4>Conventions</h4>
-		<ul><li>Hungarian notation for variable names</li></ul>
-		</h4>Related Documentation</h4>
-		<ul>
-			<li><a>Model View Controller (MVC) > Models</a></li>
-			<li><a>Declarative Support</a></li>
-			<li><a>Model And Data Binding</a></li>
-			<li><a>sap.ui.define API Documentation (+ #.define)</a></li>
-			<li><a>Wikipedia page „Hungarian Notation”</a></li>
-		</li></ul>
-		<p>Try and modify this example below:</p>
+
+		<p>Try it out yourself - feel free to modify and extend this example!</p>
 		<div class="corset"> <!-- for Ipad -->
 			<iframe style="width: 100%; height: 400px" src="http://embed.plnkr.co/mRBTHh/" frameborder="0" allowfullscren="allowfullscren" class="plunkerEmbedded"></iframe>
 		</div>
@@ -456,6 +450,14 @@ All Controls of OpenUI have a fixed set of properties and methods to interact wi
 				Your browser doesn't support Cross-Origin Resource Sharing (CORS). Thus, you cannot see the result of the above sample here.
 			</p>
 		</div>
+
+		</h4>Read more</h4>
+		<ul>
+			<li><a>Model View Controller (MVC) > Models</a></li>
+			<li><a>Model And Data Binding</a></li>
+			<li><a>sap.ui.define API Documentation (+ #.define)</a></li>
+		</li></ul>
+		
 		<p><a href="#walkthrough">Back to top</a></p>
 				<h3>Now, Dig Deeper!</h3>
 				<p>Read the
