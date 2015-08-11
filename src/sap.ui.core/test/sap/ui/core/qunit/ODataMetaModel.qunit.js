@@ -1004,6 +1004,7 @@ sap.ui.require([
 							.withExactArgs(oFixture.m, "path: " + oFixture.i
 								+ ", context: undefined", "sap.ui.model.odata.ODataMetaModel");
 					}
+					oMetaModel.mQueryCache = {};
 					if (oMetaModel.oResolver) {
 						fnBindObject = oMetaModel.oResolver.bindObject;
 						oMetaModel.oResolver.bindObject = function () {
@@ -1026,6 +1027,43 @@ sap.ui.require([
 					assert.strictEqual(oMetaModel.oResolver.getObjectBinding(), undefined,
 						"no object binding in the end");
 				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("integration-like test for queries instead of indexes", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+			[
+				"[${namespace} === \\'GWSAMPLE_BASIC\\']",
+				"[${namespace}.indexOf(\\'GWSAMPLE_BASIC\\') === 0]",
+				"[(${namespace} || \\'\\').indexOf(\\'GWSAMPLE_BASIC\\') === 0]",
+				"[${namespace} && ${namespace}.indexOf(\\'GWSAMPLE_BASIC\\') === 0]"
+			].forEach(function (sQuery) {
+				var sPath = "/dataServices/schema/" + sQuery + "/namespace";
+
+				function check(sBinding) {
+					var oIcon;
+
+					oMetaModel.mQueryCache = {};
+
+					try {
+						oIcon = new sap.ui.core.Icon({
+							color : sBinding,
+							models : oMetaModel
+						});
+
+						assert.strictEqual(oIcon.getColor(), 'GWSAMPLE_BASIC', sBinding);
+					} catch (ex) {
+						assert.ok(false, sBinding + ": " + ex.stack);
+					}
+				}
+
+				// Note: simple binding not possible due to following error
+// no closing braces found in '[${namespace' after pos:2 -  sap.ui.base.ExpressionParser
+//				check("{" + sPath + "}"); // simple binding
+				check("{path : '" + sPath + "'}"); // complex binding
+				check("{:= ${path : '" + sPath + "'} }"); // emdedded into expression binding
 			});
 		});
 	});
