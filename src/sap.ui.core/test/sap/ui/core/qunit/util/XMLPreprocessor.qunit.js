@@ -1808,10 +1808,16 @@
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fragment support", function () {
+	QUnit.test("fragment support incl. template:require", function () {
+		var sModuleName = "sap.ui.core.sample.ViewTemplate.scenario.Helper",
+			sInElement = '<In xmlns="sap.ui.core"'
+			+ ' xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
+			+ ' template:require="' + sModuleName + '"/>';
+
+		this.mock(jQuery.sap).expects("require").on(jQuery.sap).withExactArgs(sModuleName);
 		this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate")
 			.withExactArgs("myFragment", "fragment")
-			.returns(xml(['<In xmlns="sap.ui.core"/>']));
+			.returns(xml([sInElement]));
 		check.call(this, [
 				mvcView(),
 				'<Fragment fragmentName="myFragment" type="XML">',
@@ -1819,7 +1825,7 @@
 				'</Fragment>',
 				'</mvc:View>'
 			], {}, [
-				'<In />'
+				sInElement
 			]);
 	});
 
@@ -1838,10 +1844,22 @@
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fragment with FragmentDefinition", function () {
+	QUnit.test("fragment with FragmentDefinition incl. template:require", function () {
+		var oExpectation = this.mock(jQuery.sap).expects("require"),
+			aModuleNames = [
+				"foo.Helper",
+				"sap.ui.core.sample.ViewTemplate.scenario.Helper",
+				"sap.ui.model.odata.AnnotationHelper"
+			];
+
+		// Note: jQuery.sap.require() supports "varargs" style
+		oExpectation.on(jQuery.sap).withExactArgs.apply(oExpectation, aModuleNames);
+
 		this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate")
 			.withExactArgs("myFragment", "fragment")
-			.returns(xml(['<FragmentDefinition xmlns="sap.ui.core">',
+			.returns(xml(['<FragmentDefinition xmlns="sap.ui.core" xmlns:template='
+							+ '"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
+							+ ' template:require="' + aModuleNames.join(" ") + '">',
 						'<In id="first"/>',
 						'<In id="last"/>',
 						'</FragmentDefinition>']));
@@ -2107,7 +2125,8 @@
 				oLogMock = this.mock(jQuery.sap.log),
 				aOuterReplacement = [
 					'<template:if test="true" xmlns="sap.ui.core" xmlns:template='
-						+ '"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">',
+						+ '"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
+						+ ' template:require="foo.Helper bar.Helper">',
 					'<ExtensionPoint name="outerReplacement"/>',
 					'</template:if>'
 				],
@@ -2126,6 +2145,8 @@
 				.returns(xml(aOuterReplacement));
 			// Note: mock result of loadTemplate() is not analyzed by check() method, of course
 			warn(oLogMock, '[ 2] Constant test condition', aOuterReplacement[0]);
+			this.mock(jQuery.sap).expects("require").on(jQuery.sap)
+				.withExactArgs("foo.Helper", "bar.Helper");
 
 			// <ExtensionPoint name="outerReplacement">
 			// --> nothing configured, just check that it is processed
@@ -2187,7 +2208,7 @@
 				'</mvc:View>'
 			]);
 
-		this.mock(jQuery.sap).expects("require").withExactArgs(sModuleName);
+		this.mock(jQuery.sap).expects("require").on(jQuery.sap).withExactArgs(sModuleName);
 
 		process(oRootElement);
 	});
@@ -2205,7 +2226,7 @@
 			]);
 
 		// Note: jQuery.sap.require() supports "varargs" style
-		oExpectation.withExactArgs.apply(oExpectation, aModuleNames);
+		oExpectation.on(jQuery.sap).withExactArgs.apply(oExpectation, aModuleNames);
 
 		process(oRootElement);
 	});
