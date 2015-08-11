@@ -283,6 +283,34 @@
 				},
 				touch: true
 			},
+			{
+				name: "Chrome on Windows 10",
+				ua: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.130 Safari/537.36",
+				expected: {
+					msie: undefined,
+					webkit: true,
+					mozilla: undefined,
+					chrome: true,
+					safari: undefined,
+					firefox: undefined,
+					edge: undefined,
+					name: "cr",
+					version: 44,
+					versionStr: "44"
+				},
+				system: {
+					desktop: true,
+					tablet: true,
+					phone: false,
+					combi: true,
+				},
+				os: {
+					name: "win",
+					version: 10,
+					versionStr: "10"
+				},
+				touch: true
+			},
 		];
 
 		var fnUATest =  function(i, oUserAgentAndResult) {
@@ -305,7 +333,7 @@
 					strictEqual(actualResult[prop] , currentTest.expected[prop], currentTest.name + ": browser detection property '" + prop + "' should match for " + currentTest.ua);
 				}
 
-				if (currentTest.system) {
+				if (currentTest.system || currentTest.os) {
 					var bOldSupportTouch = sap.ui.Device.support.touch,
 						oOldBrowserInfo = sap.ui.Device.browser;
 
@@ -313,10 +341,18 @@
 					sap.ui.Device.support.touch = currentTest.touch;
 					sap.ui.Device.browser = actualResult;
 
-					var oSystem = sap.ui.Device._getSystem(false, currentTest.ua);
+					if (currentTest.system) {
+						var oSystem = sap.ui.Device._getSystem(false, currentTest.ua);
 
-					for (prop in currentTest.system) {
-						strictEqual(!!oSystem[prop], currentTest.system[prop], currentTest.name + ": browser detection property '" + prop + "' should match for " + currentTest.ua);
+						for (prop in currentTest.system) {
+							strictEqual(!!oSystem[prop], currentTest.system[prop], currentTest.name + ": browser detection property '" + prop + "' should match for " + currentTest.ua);
+						}
+					}
+
+					if (currentTest.os) {
+						for (prop in currentTest.os) {
+							strictEqual(sap.ui.Device.os[prop], currentTest.os[prop], currentTest.name + ": browser detection property '" + prop + "' should match for " + currentTest.ua);
+						}
 					}
 
 					sap.ui.Device.support.touch = bOldSupportTouch;
