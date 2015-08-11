@@ -242,7 +242,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		oHelper.iWeekendEnd = oHelper.oLocaleData.getWeekendEnd();
 		oHelper.aNonWorkingDays = oMonth._getNonWorkingDays();
 		oHelper.sToday = oHelper.oLocaleData.getRelativeDay(0);
-		oHelper.oToday = new UniversalDate();
+		oHelper.oToday = CalendarUtils._createUniversalUTCDate(new Date());
 		oHelper.sId = oMonth.getId();
 		oHelper.oFormatLong = oMonth._getFormatLong();
 
