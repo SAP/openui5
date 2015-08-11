@@ -731,10 +731,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 			var oDate;
 			var sValue = "";
 
-			this._oPopup.close();
-			this._bFocusNoPopup = true;
-			this.focus();
-
 			if (aSelectedDates.length > 0) {
 				oDate = aSelectedDates[0].getStartDate();
 			}
@@ -760,6 +756,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 					this.fireChangeEvent(sValue, {valid: true});
 				}
 			}
+
+			// close popup and focus input after change event to allow application to reset value state or similar things
+			this._oPopup.close();
+			this._bFocusNoPopup = true;
+			this.focus();
 
 		};
 
