@@ -8,7 +8,15 @@ sap.ui.define([], function () {
 	var WizardRenderer = {};
 
 	WizardRenderer.render = function (oRm, oWizard) {
-		oRm.write("<div");
+		this.startWizard(oRm, oWizard);
+		this.renderProgressNavigator(oRm, oWizard);
+		this.renderWizardSteps(oRm, oWizard);
+		this.renderNextButton(oRm, oWizard);
+		this.endWizard(oRm);
+	};
+
+	WizardRenderer.startWizard = function (oRm, oWizard) {
+		oRm.write("<article");
 		oRm.writeControlData(oWizard);
 		oRm.addClass("sapMWizard");
 		oRm.writeClasses();
@@ -16,11 +24,30 @@ sap.ui.define([], function () {
 		oRm.addStyle("height", oWizard.getHeight());
 		oRm.writeStyles();
 		oRm.write(">");
+	};
 
-		oRm.renderControl(oWizard.getAggregation("_page"));
+	WizardRenderer.renderProgressNavigator = function (oRm, oWizard) {
+		oRm.write("<header class='sapMWizardHeader'>");
+		oRm.renderControl(oWizard.getAggregation("_progressNavigator"));
+		oRm.write("</header>");
+	};
+
+	WizardRenderer.renderWizardSteps = function (oRm, oWizard) {
+		oRm.write("<section class='sapMWizardStepContainer'");
+		oRm.writeAttribute("id", oWizard.getId() + "-step-container");
+		oRm.write(">");
+
+		oWizard.getSteps().forEach(oRm.renderControl);
+
+		oRm.write("</section>");
+	};
+
+	WizardRenderer.renderNextButton = function (oRm, oWizard) {
 		oRm.renderControl(oWizard.getAggregation("_nextButton"));
+	};
 
-		oRm.write("</div>");
+	WizardRenderer.endWizard = function (oRm) {
+		oRm.write("</article>");
 	};
 
 	return WizardRenderer;
