@@ -438,6 +438,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					sModuleNames = oRootElement.getAttribute("template:require"),
 					iNestingLevel = 0,
 					sName,
+					oScope = {}, // for BindingParser.complexParser()
 					bWarning = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING);
 
 				/*
@@ -547,6 +548,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				}
 
 				/**
+				 * Returns a JavaScript object which is identified by a dot-separated sequence of
+				 * names. If the given compound name starts with a dot, it is interpreted relative
+				 * to <code>oScope</code>.
+				 *
+				 * @param {string} sName
+				 *   a dot-separated sequence of names that identify the required object
+				 * @returns {object}
+				 *   a JavaScript object which is identified by a sequence of names
+				 */
+				function getObject(sName) {
+					// Note: jQuery.sap.getObject("", ...) === undefined
+					return sName && sName.charAt(0) === "."
+						? jQuery.sap.getObject(sName.slice(1), undefined, oScope)
+						: jQuery.sap.getObject(sName);
+				}
+
+				/**
 				 * Interprets the given value as a binding and returns the resulting value; takes
 				 * care of unescaping and thus also of constant expressions.
 				 *
@@ -572,7 +590,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				function getResolvedBinding(sValue, oElement, oWithControl, bMandatory,
 					fnCallIfConstant) {
 					var vBindingInfo
-						= BindingParser.complexParser(sValue, null, bMandatory, true)
+						= BindingParser.complexParser(sValue, oScope, bMandatory, true, true)
 						|| sValue; // in case there is no binding and nothing to unescape
 
 					if (vBindingInfo.functionsNotFound) {
@@ -736,6 +754,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				}
 
 				/**
+				 * Processes a <template:alias> instruction.
+				 *
+				 * @param {Element} oElement
+				 *   the <template:alias> element
+				 * @param {sap.ui.core.util._with} oWithControl
+				 *   the "with" control
+				 */
+				function templateAlias(oElement, oWithControl) {
+					var sName = oElement.getAttribute("name"),
+						oNewValue,
+						oOldValue,
+						sValue = oElement.getAttribute("value");
+
+					if (!sName || sName.length <= 1 || sName.lastIndexOf(".") !== 0) {
+						error("Missing proper relative name in ", oElement);
+					}
+					sName = sName.slice(1);
+
+					oNewValue = getObject(sValue);
+					if (!oNewValue) {
+						error("Invalid value in ", oElement);
+					}
+
+					oOldValue = oScope[sName];
+					oScope[sName] = oNewValue;
+
+					liftChildNodes(oElement, oWithControl);
+					oElement.parentNode.removeChild(oElement);
+
+					oScope[sName] = oOldValue; // no try/finally needed
+				}
+
+				/**
 				 * Replaces a <sap.ui.core:ExtensionPoint> element with the content of an XML
 				 * fragment configured as a replacement (via component meta data, "customizing" and
 				 * "sap.ui.viewExtensions"), or leaves it untouched in case no such replacement is
@@ -850,7 +901,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				 */
 				function templateRepeat(oElement, oWithControl) {
 					var sList = oElement.getAttribute("list") || "",
-						oBindingInfo = BindingParser.complexParser(sList),
+						oBindingInfo
+							= BindingParser.complexParser(sList, oScope, false, true, true),
 						aContexts,
 						oListBinding,
 						sModelName,
@@ -862,6 +914,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					}
 					if (!oBindingInfo) {
 						error("Missing binding for ", oElement);
+					}
+					if (oBindingInfo.functionsNotFound) {
+						warn(oElement, 'Function name(s)',
+							oBindingInfo.functionsNotFound.join(", "), 'not found');
 					}
 
 					// set up a scope for the loop variable, so to say
@@ -942,7 +998,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 							error("Cannot resolve path for ", oElement);
 						}
 						if (sHelper) {
-							fnHelper = jQuery.sap.getObject(sHelper);
+							fnHelper = getObject(sHelper);
 							if (typeof fnHelper !== "function") {
 								error("Cannot resolve helper for ", oElement);
 							}
@@ -1032,6 +1088,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				function visitNode(oNode, oWithControl) {
 					if (oNode.namespaceURI === sNAMESPACE) {
 						switch (localName(oNode)) {
+						case "alias":
+							templateAlias(oNode, oWithControl);
+							return;
+
 						case "if":
 							templateIf(oNode, oWithControl);
 							return;

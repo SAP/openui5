@@ -171,10 +171,10 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 
 		function resolveRef(o,sProp) {
 			if ( typeof o[sProp] === "string" ) {
-				var sName = o[sProp];
+				var fn, sName = o[sProp];
 				if ( jQuery.sap.startsWith(o[sProp], ".") ) {
-					o[sProp] = jQuery.proxy(jQuery.sap.getObject(o[sProp].slice(1), undefined,
-						oEnv.oContext), oEnv.oContext);
+					fn = jQuery.sap.getObject(o[sProp].slice(1), undefined, oEnv.oContext);
+					o[sProp] = oEnv.bStaticContext ? fn : jQuery.proxy(fn, oEnv.oContext);
 				} else {
 					o[sProp] = jQuery.sap.getObject(o[sProp]);
 				}
@@ -280,13 +280,18 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 	 *   if true, function names which cannot be resolved to a reference are reported via the
 	 *   string array <code>functionsNotFound</code> of the result object; else they are logged
 	 *   as errors
+	 * @param {boolean} [bStaticContext=false]
+	 *   if true, relative function names found via <code>oContext</code> will not be treated as
+	 *   instance methods of the context, but as static methods
 	 */
-	BindingParser.complexParser = function(sString, oContext, bUnescape, bTolerateFunctionsNotFound) {
+	BindingParser.complexParser = function(sString, oContext, bUnescape,
+			bTolerateFunctionsNotFound, bStaticContext) {
 		var oBindingInfo = {parts:[]},
 			bMergeNeeded = false, // whether some top-level parts again have parts
 			oEnv = {
 				oContext: oContext,
 				aFunctionsNotFound: undefined, // lazy creation
+				bStaticContext: bStaticContext,
 				bTolerateFunctionsNotFound: bTolerateFunctionsNotFound
 			},
 			aFragments = [],
