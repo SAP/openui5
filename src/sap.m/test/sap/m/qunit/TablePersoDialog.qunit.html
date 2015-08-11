@@ -242,9 +242,9 @@
 			var oButtonDown = sap.ui.getCore().byId("__button1");
 			var length = oDataList.getItems().length;
 
-//			nothing is selected => both buttons have to be disabled!
-			ok(oButtonUp.$().hasClass('sapMBtnDisabled'), "Nothing is selected: Button Arrow Up is disabled => OK!");
-			ok(oButtonDown.$().hasClass('sapMBtnDisabled'), "Nothing is selected: Button Arrow Down is disabled => OK!");
+//			first item is selected => the Down button must be enabled
+			ok(oButtonUp.$().hasClass('sapMBtnDisabled'), "first item is selected: Button Arrow Up is disabled => OK!");
+			ok(!oButtonDown.$().hasClass('sapMBtnDisabled'), "first item is selected: Button Arrow Down is enabled => OK!");
 
 			if (length > 0) {
 				oDataList.setSelectedItem(oDataList.getItems()[0], true, true);
