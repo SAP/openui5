@@ -223,15 +223,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// mark the rendering phase
 		this._bRendering = true;
 
-		// is DOM already available
-		if (this._bCheckDomValue && this.isActive()) {
+		if (this._bCheckDomValue) {
 
 			// remember dom value in case of invalidation during keystrokes
 			// so the following should only be used onAfterRendering
 			this._sDomValue = this._getInputValue();
-		} else {
-			// no active dom so we should not try to retain the value
-			this._bCheckDomValue = false;
 		}
 	};
 
