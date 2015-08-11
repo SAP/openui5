@@ -536,6 +536,13 @@
 		}, 2000);
 	};
 
+	var fnUploadTerminated = function(oEvent) {
+		// get parameter file name
+		var sFileName = oEvent.getParameter("fileName");
+		// get a header parameter (in case no parameter specified, the callback function getHeaderParameter returns all request headers)
+		var oRequestHeaders = oEvent.getParameters().getHeaderParameter();
+	};
+
 	var oAttributeTemplate = new sap.m.ObjectAttribute({
 		title : "{title}",
 		text : "{text}",
@@ -593,7 +600,8 @@
 		fileSizeExceed : fnFileSizeExceed,
 		typeMissmatch : fnTypeMissmatch,
 		uploadComplete : fnUploadComplete,
-		beforeUploadStarts : fnBeforeUploadStarts
+		beforeUploadStarts : fnBeforeUploadStarts,
+		uploadTerminated : fnUploadTerminated
 	});
 
 	oUploadCollection.setShowSeparators(oComboBox.getSelectedKey());
