@@ -20,6 +20,8 @@ sap.ui.define([
 	 *
 	 * @class
 	 * Implementation of a "pseudo" v4 OData model which accesses the metadata document instead.
+	 * The class supports exactly those requests that {@link sap.ui.model.odata.v4.ODataMetaModel
+	 * ODataMetaModel} requires.
 	 */
 	var ODataDocumentModel = Model.extend("sap.ui.model.odata.v4.ODataDocumentModel", {
 		constructor : function (sDocumentUrl) {
@@ -35,28 +37,32 @@ sap.ui.define([
 	 *
 	 * Supports the following requests:
 	 * <ul>
-	 * <li><code>/EntityContainer</code>: reads the entity container with Singletons and EntitySets
-	 * expanded
-	 * <li><code>/EntityContainer/EntitySets(Fullname='<i>FullEntitySetName</i>')/EntityType</code>:
-	 * reads the entity type fo the entity set with its properties, the property type and its
-	 * navigation properties expanded.
-	 * <li><code>/EntityContainer/Singletons(Fullname='<i>FullEntitySetName</i>')/EntityType</code>:
-	 * reads the entity type fo the singleton with its properties, the property type and its
-	 * navigation properties expanded.
+	 * <li><code>/EntityContainer</code>: reads the entity container (assuming the query options
+	 *   <code>$expand=EntitySets,Singletons</code>)
+	 * <li><code>/Types(QualifiedName='<i>EntityTypeName</i>')</code>: reads the given entity type
+	 *   (assuming the query options
+	 *   <code>$expand=Properties/Type($level=max),NavigationProperties</code>); can only read
+	 *   entity types (all other types should be read automatically due to the full expand of the
+	 *   property types)
 	 * </ul>
 	 *
-	 * Get parameters are ignored.
+	 * The actual query options are ignored.
+	 *
+	 * Properties leading to entity types (<code>EntitySets.EntityType</code>),
+	 * <code>Singletons.Type</code> and <code>NavigationProperties.Type</code>) are never read,
+	 * but supplied with an <code>@odata.navigationLink</code>, so that the
+	 * <code>ODataMetaModel</code> can request them easily when needed.
 	 *
 	 * @param {string} sPath
 	 *   An OData request path as described above
 	 * @returns {Promise}
-	 *   A promise to be resolved when the OData request is finished
+	 *   A promise that will be resolved with the requested data
 	 *
 	 * @protected
 	 */
 	ODataDocumentModel.prototype.read = function (sPath) {
 		var i = sPath.indexOf('?'),
-			aParts;
+			aSegments;
 
 		function unsupported() {
 			throw new Error("Unsupported: " + sPath);
@@ -65,43 +71,27 @@ sap.ui.define([
 		if (i >= 0) {
 			sPath = sPath.substring(0, i);
 		}
-		aParts = Helper.splitPath(sPath);
+		aSegments = Helper.splitPath(sPath);
 		return OlingoDocument.requestDocument(this).then(function (oDocument) {
-			var oPart,
-				sProperty,
-				oType,
-				sType;
+			var oPart = Helper.parsePathSegment(aSegments[0]);
 
-			if (aParts.shift() !== "EntityContainer") {
-				unsupported();
-			}
-			if (!aParts.length) {
-				return OlingoDocument.transformEntityContainer(oDocument);
-			}
-			oPart = Helper.parsePathPart(aParts.shift());
-			if (!oPart.key || !oPart.key.Fullname) {
+			if (aSegments.length !== 1) {
 				unsupported();
 			}
 			switch (oPart.name) {
-				case "EntitySets":
-					sType = OlingoDocument.findEntitySet(oDocument, oPart.key.Fullname).entityType;
-					sProperty = "EntityType";
-					break;
-				case "Singletons":
-					sType = OlingoDocument.findSingleton(oDocument, oPart.key.Fullname).type;
-					sProperty = "Type";
-					break;
+				case "EntityContainer":
+					if (oPart.key) {
+						unsupported();
+					}
+					return OlingoDocument.transformEntityContainer(oDocument);
+				case "Types":
+					if (!Helper.hasProperties(oPart.key, ["QualifiedName"])) {
+						unsupported();
+					}
+					return OlingoDocument.transformEntityType(oDocument, oPart.key.QualifiedName);
 				default:
 					unsupported();
 			}
-			if (aParts.shift() !== sProperty) {
-				unsupported();
-			}
-			oType = OlingoDocument.transformEntityType(oDocument, sType);
-			if (aParts.length) {
-				unsupported();
-			}
-			return oType;
 		});
 	};
 

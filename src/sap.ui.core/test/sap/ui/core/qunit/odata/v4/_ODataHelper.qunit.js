@@ -40,6 +40,7 @@ sap.ui.require([
 		assert.throws(function () {
 			Helper.splitPath("foo");
 		}, new Error("Not an absolute path: foo"));
+		assert.deepEqual(Helper.splitPath("/"), []);
 		assert.deepEqual(Helper.splitPath("/EntityContainer"), ["EntityContainer"]);
 		assert.deepEqual(Helper.splitPath("/EntityContainer/EntitySet/Link"),
 			["EntityContainer", "EntitySet", "Link"]);
@@ -49,28 +50,28 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("parsePathPart", function (assert) {
-		assert.deepEqual(Helper.parsePathPart(undefined), undefined);
-		assert.deepEqual(Helper.parsePathPart("Employees"), {
+	QUnit.test("parsePathSegment", function (assert) {
+		assert.deepEqual(Helper.parsePathSegment(undefined), undefined);
+		assert.deepEqual(Helper.parsePathSegment("Employees"), {
 			all: "Employees",
 			name: "Employees"
 		});
-		assert.deepEqual(Helper.parsePathPart("Employees(ID='1')"), {
+		assert.deepEqual(Helper.parsePathSegment("Employees(ID='1')"), {
 			all: "Employees(ID='1')",
 			name: "Employees",
 			key: {ID: '1'}
 		});
-		assert.deepEqual(Helper.parsePathPart("SalesOrderItems(OrderID='1''2',Index=5)"), {
+		assert.deepEqual(Helper.parsePathSegment("SalesOrderItems(OrderID='1''2',Index=5)"), {
 			all: "SalesOrderItems(OrderID='1''2',Index=5)",
 			name: "SalesOrderItems",
 			key: {OrderID: "1'2", Index: 5}
 		});
-		assert.deepEqual(Helper.parsePathPart("SalesOrderItems(Index=05,OrderID='1')"), {
+		assert.deepEqual(Helper.parsePathSegment("SalesOrderItems(Index=05,OrderID='1')"), {
 			all: "SalesOrderItems(Index=05,OrderID='1')",
 			name: "SalesOrderItems",
 			key: {OrderID: '1', Index: 5}
 		});
-		assert.deepEqual(Helper.parsePathPart("Foo(Key='bar''')"), {
+		assert.deepEqual(Helper.parsePathSegment("Foo(Key='bar''')"), {
 			all: "Foo(Key='bar''')",
 			name: "Foo",
 			key: {Key: "bar'"}
@@ -105,6 +106,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("hasProperties", function (assert) {
+		assert.strictEqual(Helper.hasProperties({"foo": "bar"}, ["foo"]), true);
+		assert.strictEqual(Helper.hasProperties({"foo": "bar"}, ["baz"]), false);
+		assert.strictEqual(Helper.hasProperties({"foo": "bar"}, []), false);
+		assert.strictEqual(Helper.hasProperties({"foo": "bar", "baz": "qux"}, ["foo", "baz"]),
+			true);
+		assert.strictEqual(Helper.hasProperties({"foo": "bar", "baz": "qux"}, ["foo"]), false);
+		assert.strictEqual(Helper.hasProperties({"foo": "bar", "baz": "qux"}, ["foo", "qux"]),
+			false);
+		assert.strictEqual(Helper.hasProperties({"foo": "bar"}, ["foo", "baz"]), false);
+		assert.strictEqual(Helper.hasProperties(undefined, ["foo"]), false);
+		assert.strictEqual(Helper.hasProperties(undefined, []), true);
+	});
+
+	//*********************************************************************************************
 	[{
 		body: JSON.stringify({error: {message: "foo"}}),
 		message: "foo"
@@ -134,8 +150,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("requestEntityContainer", function (assert) {
-		var oEntityContainer,
-			oEntityContainerFromModel = {
+		var oEntityContainer = {
 				"Name" : "Container",
 				"QualifiedName" : "foo.bar.Container",
 				"EntitySets" : [{
@@ -156,16 +171,9 @@ sap.ui.require([
 				}
 			};
 
-		oEntityContainer = JSON.parse(JSON.stringify(oEntityContainerFromModel));
-		oEntityContainer.EntitySets[0]["EntityType@odata.navigationLink"] =
-			"EntityContainer/EntitySets(Fullname='foo.bar.Container%2FDepartments')/EntityType";
-		oEntityContainer.EntitySets[1]["EntityType@odata.navigationLink"] =
-			"EntityContainer/EntitySets(Fullname='foo.bar.Container%2FEMPLOYEES')/EntityType";
-		oEntityContainer.Singletons[0]["Type@odata.navigationLink"] =
-			"EntityContainer/Singletons(Fullname='foo.bar.Container%2FMe')/Type";
 		this.oSandbox.mock(oMetaModel.oModel).expects("read")
 			.withExactArgs("/EntityContainer")
-			.returns(Promise.resolve(oEntityContainerFromModel));
+			.returns(Promise.resolve(JSON.parse(JSON.stringify(oEntityContainer))));
 
 		return Helper.requestEntityContainer(oMetaModel).then(function (oResult) {
 			assert.deepEqual(oResult, oEntityContainer);

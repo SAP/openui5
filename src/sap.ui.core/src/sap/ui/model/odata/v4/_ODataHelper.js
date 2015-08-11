@@ -96,20 +96,49 @@ sap.ui.define([
 		},
 
 		/**
-		 * Decodes a part of an OData v4 path. Recognizes the key predicate.
+		 * Checks whether the given object has exactly the requested properties.
 		 *
-		 * @param {string} sPathPart
-		 *   the path part
+		 * @param {object} oObject
+		 *   the object to check, may be <code>undefined</code>
+		 * @param {string[]} aProperties
+		 *   a list of expected properties
+		 * @returns {boolean}
+		 *   <code>true</code>, if the object has exactly the properties from the list
+		 */
+		hasProperties : function (oObject, aProperties) {
+			/*eslint no-unused-vars: 0 */ // don't complain about sUnused
+			var i  = 0,
+				sUnused;
+
+			for (sUnused in oObject) {
+				i++;
+			}
+			if (i !== aProperties.length) {
+				return false;
+			}
+			for (i = 0; i < aProperties.length; i++) {
+				if (!(aProperties[i] in oObject)) {
+					return false;
+				}
+			}
+			return true;
+		},
+
+		/**
+		 * Decodes a segment of an OData v4 path. Recognizes the key predicate.
+		 *
+		 * @param {string} sPathSegment
+		 *   the path segment
 		 * @returns {object}
 		 *   the result with the name in <code>name</code> and the key predicate in
-		 *   <code>key</code> or <code>undefined</code> if <code>sPathPart</code> is
+		 *   <code>key</code> or <code>undefined</code> if <code>sPathSegment</code> is
 		 *   <code>undefined</code>.
 		 */
-		parsePathPart : function (sPathPart) {
+		parsePathSegment : function (sPathSegment) {
 			var aMatches,
 				iNext = 0,
 				sPredicate,
-				oResult = {all: sPathPart};
+				oResult = {all: sPathSegment};
 
 			/**
 			 * Parses and removes a key from <code>sPredicate</code>.
@@ -158,10 +187,10 @@ sap.ui.define([
 				return vValue;
 			}
 
-			if (!sPathPart) {
+			if (!sPathSegment) {
 				return undefined;
 			}
-			aMatches = rNameWithPredicate.exec(sPathPart);
+			aMatches = rNameWithPredicate.exec(sPathSegment);
 			if (aMatches) {
 				oResult.name = aMatches[1];
 				oResult.key = {};
@@ -174,21 +203,19 @@ sap.ui.define([
 					sPredicate = sPredicate.substring(1);
 				}
 			} else {
-				oResult.name = sPathPart;
+				oResult.name = sPathSegment;
 			}
 			return oResult;
 		},
 
 		/**
 		 * Requests the entity container from the meta data model including the entity sets and the
-		 * singletons. Adds navigation links for the type properties of EntitySets and Singletons
-		 * so that the meta model can easily load this type later.
+		 * singletons. Keeps it in a cache and responds subsequent requests from the cache.
 		 *
 		 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel
 		 *   the meta model
 		 * @returns {Promise}
 		 *   A promise which is resolved with the entity container as soon as it is available
-		 * @see #.requestProperty
 		 * @private
 		 */
 		requestEntityContainer : function (oMetaModel) {
@@ -197,16 +224,8 @@ sap.ui.define([
 			}
 
 			return oMetaModel.oModel.read("/EntityContainer").then(function (oResult) {
-				oResult.EntitySets.forEach(function (oEntitySet) {
-					oEntitySet["EntityType@odata.navigationLink"] = "EntityContainer/EntitySets("
-						+ "Fullname='" + encodeURIComponent(oEntitySet.Fullname) + "')/EntityType";
-				});
-				oResult.Singletons.forEach(function (oSingleton) {
-					oSingleton["Type@odata.navigationLink"] = "EntityContainer/Singletons("
-						+ "Fullname='" + encodeURIComponent(oSingleton.Fullname) + "')/Type";
-				});
 				oMetaModel._oEntityContainer = oResult;
-				return oMetaModel._oEntityContainer;
+				return oResult;
 			});
 		},
 
@@ -227,7 +246,7 @@ sap.ui.define([
 		 * @param {string} sRequestPath
 		 *   the request path (only used for the error message)
 		 * @returns {Promise}
-		 *   a promise to be resolved with the requested property value
+		 *   a promise that will be resolved with the requested property value
 		 * @throws Error if both the property and its navigation link are unsupported
 		 * @private
 		 */
@@ -250,7 +269,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Splits an absolute path at '/' into an array of path parts. URI-decodes the path parts.
+		 * Splits an absolute path at '/' into an array of path segments. URI-decodes the path
+		 * segments. The empty path "/" results in an empty array.
 		 *
 		 * @param {string} sPath
 		 *   the path
@@ -259,16 +279,19 @@ sap.ui.define([
 		 * @throws Error if the path is not absolute
 		 */
 		splitPath : function (sPath) {
-			var i, aParts;
+			var i, aSegments;
 
+			if (sPath === '/') {
+				return [];
+			}
 			if (sPath.charAt(0) !== '/') {
 				throw new Error("Not an absolute path: " + sPath);
 			}
-			aParts = sPath.substring(1).split('/');
-			for (i = 0; i < aParts.length; i++) {
-				aParts[i] = decodeURIComponent(aParts[i]);
+			aSegments = sPath.substring(1).split('/');
+			for (i = 0; i < aSegments.length; i++) {
+				aSegments[i] = decodeURIComponent(aSegments[i]);
 			}
-			return aParts;
+			return aSegments;
 		}
 	};
 

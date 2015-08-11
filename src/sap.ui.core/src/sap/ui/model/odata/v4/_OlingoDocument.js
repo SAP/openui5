@@ -9,7 +9,8 @@ sap.ui.define([
 	"use strict";
 	/*global odatajs */
 
-	var mFacets = {
+	var rCollection = /^Collection\((.*)\)$/,
+		mFacets = {
 			"maxLength" : "MaxLength",
 			"precision" : "Precision",
 			"scale" : "Scale"
@@ -18,7 +19,7 @@ sap.ui.define([
 
 	OlingoDocument = {
 		/**
-		 * Finds the complex type in the Olingo metadata.
+		 * Finds the complex type in the Olingo metadata document.
 		 *
 		 * @param {object} oDocument
 		 *   the Olingo metadata document
@@ -43,22 +44,6 @@ sap.ui.define([
 				}
 			}
 			throw new Error("Unknown complex type: " + sQualifiedName);
-		},
-
-		/**
-		 * Finds the entity set in the Olingo metadata document.
-		 *
-		 * @param {object} oDocument
-		 *   the Olingo metadata document
-		 * @param {string} sFullName
-		 *   the full name of the entity set
-		 * @return {object}
-		 *   the entity set
-		 * @throws Error if no entity set can be found
-		 * @private
-		 */
-		findEntitySet : function (oDocument, sFullName) {
-			return OlingoDocument.findInContainer(oDocument, "entitySet", sFullName, "entity set");
 		},
 
 		/**
@@ -92,37 +77,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Finds an object in the given array of the EntityContainer.
-		 *
-		 * @param {object} oDocument
-		 *   the Olingo metadata document
-		 * @param {string} sArrayName
-		 *   the name of the array in the EntityContainer
-		 * @param {string} sFullName
-		 *   the full name of the object
-		 * @param {string} sDescription
-		 *   the description of the object to be used in an error message
-		 * @return {object}
-		 *   the object
-		 * @throws Error if no such object can be found
-		 * @private
-		 */
-		findInContainer : function (oDocument, sArrayName, sFullName, sDescription) {
-			var oSchema = OlingoDocument.findSchemaWithEntityContainer(oDocument),
-				oEntityContainer = oSchema.entityContainer,
-				aParts = sFullName.split("/"),
-				oResult;
-
-			if (aParts[0] === oSchema.namespace + "." + oEntityContainer.name) {
-				oResult = Helper.findInArray(oEntityContainer[sArrayName], "name", aParts[1]);
-				if (oResult) {
-					return oResult;
-				}
-			}
-			throw new Error("Unknown " + sDescription + ": " + sFullName);
-		},
-
-		/**
 		 * Finds the schema containing the entity container in the Olingo metadata document.
 		 *
 		 * @param {object} oDocument
@@ -142,21 +96,6 @@ sap.ui.define([
 				}
 			}
 			throw new Error("EntityContainer not found");
-		},
-
-		/**
-		 * Finds the singleton in the Olingo metadata document.
-		 *
-		 * @param {object} oDocument
-		 *   the Olingo metadata document
-		 * @param {string} sFullName
-		 *   the full name of the singleton
-		 * @return {object}
-		 *   the singleton
-		 * @throws Error if not found
-		 */
-		findSingleton : function (oDocument, sFullName) {
-			return OlingoDocument.findInContainer(oDocument, "singleton", sFullName, "singleton");
 		},
 
 		/**
@@ -186,8 +125,25 @@ sap.ui.define([
 		},
 
 		/**
+		 * Parses a type reference in a (navigation) property.
+		 * @param {string} sTypeRef
+		 *   the type reference (either "Edm.String" or "Collection(Edm.String)")
+		 * @returns {object}
+		 *  an object with the properties {boolean} collection, {string} qualifiedName
+		 */
+		parseTypeRef : function (sTypeRef) {
+			var aMatches = rCollection.exec(sTypeRef);
+
+			return {
+				collection: !!aMatches,
+				qualifiedName: aMatches ? aMatches[1] : sTypeRef
+			};
+		},
+
+		/**
 		 * Returns a Promise for the metadata document. Reads it from
 		 * <code>oModel.sDocumentUrl</code> via the Olingo metadata handler with the first request.
+		 * Caches it and responds subsequent queries from the cache.
 		 *
 		 * @param {sap.ui.model.odata.v4.oDataDocumentModel} oModel
 		 *   the model
@@ -213,7 +169,7 @@ sap.ui.define([
 
 		/**
 		 * Finds the entity container in the Olingo metadata document and transforms it to the Edmx
-		 * format.
+		 * format. EntitySets and Singletons are inserted.
 		 *
 		 * @param {object} oDocument
 		 *   the Olingo metadata document
@@ -235,7 +191,9 @@ sap.ui.define([
 				oEntityContainer.entitySet.forEach(function(oEntitySet) {
 					oResult.EntitySets.push({
 						"Name" : oEntitySet.name,
-						"Fullname" : oResult.QualifiedName + "/" + oEntitySet.name
+						"Fullname" : oResult.QualifiedName + "/" + oEntitySet.name,
+						"EntityType@navigationLink" :
+							"Types(QualifiedName='" + oEntitySet.entityType + "')"
 					});
 				});
 			}
@@ -243,7 +201,8 @@ sap.ui.define([
 				oEntityContainer.singleton.forEach(function(oSingleton) {
 					oResult.Singletons.push({
 						"Name" : oSingleton.name,
-						"Fullname" : oResult.QualifiedName + "/" + oSingleton.name
+						"Fullname" : oResult.QualifiedName + "/" + oSingleton.name,
+						"Type@navigationLink" : "Types(QualifiedName='" + oSingleton.type + "')"
 					});
 				});
 			}
@@ -268,7 +227,8 @@ sap.ui.define([
 				oResult = OlingoDocument.transformStructuredType(oDocument, sQualifiedName,
 					oEntityType),
 				oSourceProperty,
-				oTargetProperty;
+				oTargetProperty,
+				oTypeRef;
 
 			oResult.Key = [];
 			oResult.NavigationProperties = [];
@@ -277,12 +237,14 @@ sap.ui.define([
 			}
 			for (i = 0; i < oEntityType.navigationProperty.length; i++) {
 				oSourceProperty = oEntityType.navigationProperty[i];
+				oTypeRef = OlingoDocument.parseTypeRef(oSourceProperty.type);
 				oTargetProperty = {
 					"Name" : oSourceProperty.name,
 					"Fullname" : sQualifiedName + "/" + oSourceProperty.name,
 					"Nullable" : oSourceProperty.nullable === "true",
 					"ContainsTarget" : false,
-					"IsCollection" : oSourceProperty.type.indexOf("Collection(") === 0
+					"IsCollection" : oTypeRef.collection,
+					"Type@navigationLink" : "Types(QualifiedName='" + oTypeRef.qualifiedName + "')"
 				};
 				oResult.NavigationProperties.push(oTargetProperty);
 			}

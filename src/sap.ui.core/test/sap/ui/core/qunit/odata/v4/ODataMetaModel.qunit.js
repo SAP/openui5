@@ -18,17 +18,15 @@ sap.ui.require([
 			"EntitySets" : [{
 				"Name" : "Employees",
 				"Fullname" : "foo.bar.Container/Employees",
-				"EntityType@odata.navigationLink" : "EntityContainer/EntitySets(Fullname="
-					+ "'foo.bar.Container%2FEmployees')/EntityType"
+				"EntityType@odata.navigationLink" : "Types(QualifiedName='foo.bar.Worker')"
 			}],
 			"Singletons" : [{
 				"Name" : "Me",
 				"Fullname" : "foo.bar.Container/Me",
-				"Type@odata.navigationLink" : "EntityContainer/Singletons(Fullname="
-					+ "'foo.bar.Container%2FMe')/Type"
+				"Type@odata.navigationLink" : "Types(QualifiedName='foo.bar.Worker')"
 			}]
 		},
-		oEntityType = {
+		oEntityTypeWorker = {
 			"Name" : "Worker",
 			"QualifiedName" : "foo.bar.Worker",
 			"Abstract" : false,
@@ -63,14 +61,45 @@ sap.ui.require([
 					}]
 				}
 			}],
-			"NavigationProperties" : []
+			"NavigationProperties" : [{
+				"Name" : "EMPLOYEE_2_TEAM",
+				"Fullname" : "foo.bar.Worker/EMPLOYEE_2_TEAM",
+				"Type@odata.navigationLink" : "Types(QualifiedName='foo.bar.Team')"
+			}]
+		},
+		oEntityTypeTeam = {
+			"Name" : "TEAM",
+			"QualifiedName" : "foo.bar.TEAM",
+			"Properties" : [{
+				"Name" : "Team_Id",
+				"Fullname" : "foo.bar.TEAM/Team_Id"
+			}],
+			"NavigationProperties" : [{
+				"Name" : "TEAM_2_EMPLOYEES",
+				"Fullname" : "foo.bar.TEAM/TEAM_2_EMPLOYEES",
+				"Type@odata.navigationLink" : "Types(QualifiedName='foo.bar.Worker')"
+			}]
 		},
 		sMetaEmployees = "/EntityContainer/EntitySets(Fullname='foo.bar.Container%2FEmployees')",
 		sMetaMe = "/EntityContainer/Singletons(Fullname='foo.bar.Container%2FMe')",
 		sMetaCityname = sMetaEmployees + "/EntityType/Properties(Fullname="
 			+ "'foo.bar.Worker%2FLOCATION')/Type/Properties(Fullname="
 			+ "'foo.bar.ComplexType_Location%2FCity')/Type/Properties(Fullname="
-			+ "'foo.bar.ComplexType_City%2FCITYNAME')";
+			+ "'foo.bar.ComplexType_City%2FCITYNAME')",
+		sMetaTeam = sMetaEmployees + "/EntityType/NavigationProperties(Fullname='"
+			+ "foo.bar.Worker%2FEMPLOYEE_2_TEAM')";
+
+	/**
+	 * Returns a resolved promised for the given object. Clones the object.
+	 *
+	 * @param {object} o
+	 *   the object
+	 * @return {Promise}
+	 *   the promised to be resolved with a clone of the object
+	 */
+	function promiseFor(o) {
+		return Promise.resolve(JSON.parse(JSON.stringify(o)));
+	}
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataMetaModel", {
@@ -101,49 +130,86 @@ sap.ui.require([
 	//*********************************************************************************************
 	[{
 		path: "/Employees",
-		type: "EntitySet",
-		expected: sMetaEmployees + "/EntityType"
+		expected: sMetaEmployees
 	}, {
 		path: "/Employees(ID='1')",
-		type: "EntitySet",
-		expected: sMetaEmployees + "/EntityType"
+		expected: sMetaEmployees
 	}, {
 		path: "/Employees[5];list=1",
-		type: "EntitySet",
-		expected: sMetaEmployees + "/EntityType"
+		expected: sMetaEmployees
 	}, {
 		path: "/Employees(ID='1')/ENTRYDATE",
-		type: "EntitySet",
+		nav: [{
+			object: oEntityContainer.EntitySets[0],
+			property: "EntityType"
+		}],
 		expected: sMetaEmployees + "/EntityType/Properties(Fullname='foo.bar.Worker%2FENTRYDATE')"
 	}, {
 		path: "/Employees(ID='1')/LOCATION/City/CITYNAME",
-		type: "EntitySet",
+		nav: [{
+			object: oEntityContainer.EntitySets[0],
+			property: "EntityType"
+		}],
 		expected: sMetaCityname
 	}, {
 		path: "/Me",
-		type: "Singleton",
-		expected: sMetaMe + "/Type"
+		expected: sMetaMe
 	}, {
 		path: "/Me/ENTRYDATE",
-		type: "Singleton",
+		nav: [{
+			object: oEntityContainer.Singletons[0],
+			property: "Type"
+		}],
 		expected: sMetaMe + "/Type/Properties(Fullname='foo.bar.Worker%2FENTRYDATE')"
+	}, {
+		path: "/Employees(ID='1')/EMPLOYEE_2_TEAM",
+		nav: [{
+			object: oEntityContainer.EntitySets[0],
+			property: "EntityType"
+		}],
+		expected: sMetaEmployees + "/EntityType/NavigationProperties(Fullname='"
+			+ "foo.bar.Worker%2FEMPLOYEE_2_TEAM')"
+	}, {
+		path: "/Employees(ID='1')/EMPLOYEE_2_TEAM/Team_Id",
+		nav: [{
+			object: oEntityContainer.EntitySets[0],
+			property: "EntityType"
+		}, {
+			object: oEntityTypeWorker.NavigationProperties[0],
+			property: "Type",
+			result: oEntityTypeTeam
+		}],
+		expected: sMetaTeam + "/Type/Properties(Fullname='foo.bar.TEAM%2FTeam_Id')"
+	}, {
+		path: "/Employees(ID='1')/EMPLOYEE_2_TEAM/TEAM_2_EMPLOYEES/ID",
+		nav: [{
+			object: oEntityContainer.EntitySets[0],
+			property: "EntityType"
+		}, {
+			object: oEntityTypeWorker.NavigationProperties[0],
+			property: "Type",
+			result: oEntityTypeTeam
+		}, {
+			object: oEntityTypeTeam.NavigationProperties[0],
+			property: "Type"
+		}],
+		expected: sMetaTeam + "/Type/NavigationProperties(Fullname='"
+			+ "foo.bar.TEAM%2FTEAM_2_EMPLOYEES')/Type/Properties(Fullname='"
+			+ "foo.bar.Worker%2FID')"
 	}].forEach(function (oFixture) {
 		QUnit.test("requestMetaContext: " + oFixture.path, function (assert) {
 			var oMetaModel = this.oMetaModel,
 				oHelperMock = this.oSandbox.mock(Helper);
 
 			oHelperMock.expects("requestEntityContainer").withExactArgs(oMetaModel)
-				.returns(Promise.resolve(oEntityContainer));
-			if (oFixture.type === "EntitySet") {
-				oHelperMock.expects("requestProperty")
-					.withExactArgs(oMetaModel.oModel, oEntityContainer.EntitySets[0], "EntityType",
-						sinon.match.string)
-					.returns(Promise.resolve(oEntityType));
-			} else {
-				oHelperMock.expects("requestProperty")
-					.withExactArgs(oMetaModel.oModel, oEntityContainer.Singletons[0], "Type",
-						sinon.match.string)
-					.returns(Promise.resolve(oEntityType));
+				.returns(promiseFor(oEntityContainer));
+			if (oFixture.nav) {
+				oFixture.nav.forEach(function (oNav) {
+					oHelperMock.expects("requestProperty")
+						.withExactArgs(oMetaModel.oModel, oNav.object, oNav.property,
+							sinon.match.string)
+						.returns(promiseFor(oNav.result || oEntityTypeWorker));
+				});
 			}
 
 			return oMetaModel.requestMetaContext(oFixture.path).then(function (oMetaContext) {
@@ -156,7 +222,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("requestMetaContext: /Unknown", function (assert) {
 		this.oSandbox.mock(Helper).expects("requestEntityContainer").withExactArgs(this.oMetaModel)
-			.returns(Promise.resolve({"EntitySets" : [], "Singletons" : []}));
+			.returns(promiseFor({"EntitySets" : [], "Singletons" : []}));
 
 		return this.oMetaModel.requestMetaContext("/Unknown").then(function () {
 			assert.ok(false, "Unexpected success");
@@ -185,17 +251,17 @@ sap.ui.require([
 			var oHelperMock = this.oSandbox.mock(Helper);
 
 			oHelperMock.expects("requestEntityContainer").withExactArgs(this.oMetaModel)
-				.returns(Promise.resolve(oEntityContainer));
+				.returns(promiseFor(oEntityContainer));
 			if (oFixture.type === "EntitySet") {
 				oHelperMock.expects("requestProperty")
 					.withExactArgs(this.oMetaModel.oModel, oEntityContainer.EntitySets[0],
 						"EntityType", sinon.match.string)
-					.returns(Promise.resolve(oEntityType));
+					.returns(promiseFor(oEntityTypeWorker));
 			} else {
 				oHelperMock.expects("requestProperty")
 					.withExactArgs(this.oMetaModel.oModel, oEntityContainer.Singletons[0], "Type",
 						sinon.match.string)
-					.returns(Promise.resolve(oEntityType));
+					.returns(promiseFor(oEntityTypeWorker));
 			}
 
 			return this.oMetaModel.requestMetaContext(oFixture.path).then(function () {
@@ -221,7 +287,6 @@ sap.ui.require([
 		});
 	});
 
-	// TODO requestMetaContext: simple navigation property
 	// TODO requestMetaContext: (navigation) property with key predicate
 	// TODO requestMetaContext: use @odata.context to get the name of the initial set/singleton
 
@@ -262,36 +327,52 @@ sap.ui.require([
 		result: oEntityContainer.EntitySets[0].Name
 	}, {
 		path: sMetaMe + "/Type",
-		nav: {
+		nav: [{
 			object: oEntityContainer.Singletons[0],
 			property: "Type"
-		},
-		result: oEntityType
+		}],
+		result: oEntityTypeWorker
 	}, {
 		path: sMetaMe + "/Type/Name",
-		nav: {
+		nav: [{
 			object: oEntityContainer.Singletons[0],
 			property: "Type"
-		},
-		result: oEntityType.Name
+		}],
+		result: oEntityTypeWorker.Name
 	}, {
 		path: sMetaMe + "/Type/Abstract",
-		nav: {
+		nav: [{
 			object: oEntityContainer.Singletons[0],
 			property: "Type"
-		},
-		result: oEntityType.Abstract
+		}],
+		result: oEntityTypeWorker.Abstract
 	}, {
 		path: sMetaCityname,
-		nav: {
+		nav: [{
 			object: oEntityContainer.EntitySets[0],
 			property: "EntityType"
-		},
-		result: oEntityType.Properties[2].Type.Properties[0].Type.Properties[0]
+		}],
+		result: oEntityTypeWorker.Properties[2].Type.Properties[0].Type.Properties[0]
+	}, {
+		path: sMetaTeam + "/Type/NavigationProperties(Fullname='"
+			+ "foo.bar.TEAM%2FTEAM_2_EMPLOYEES')/Type",
+		nav: [{
+			object: oEntityContainer.EntitySets[0],
+			property: "EntityType"
+		}, {
+			object: oEntityTypeWorker.NavigationProperties[0],
+			property: "Type",
+			result: oEntityTypeTeam
+		}, {
+			object: oEntityTypeTeam.NavigationProperties[0],
+			property: "Type"
+		}],
+		result: oEntityTypeWorker
 	}].forEach(function (oFixture) {
 		var sPath = oFixture.context ? oFixture.context + '/' + oFixture.path : oFixture.path;
 		QUnit.test("requestObject: " + sPath, function (assert) {
 			var oContext = oFixture.context && this.oMetaModel.getContext(oFixture.context),
+				oMetaModel = this.oMetaModel,
 				oHelperMock = this.oSandbox.mock(Helper);
 
 			if (oFixture.error) {
@@ -302,12 +383,14 @@ sap.ui.require([
 			}
 			oHelperMock.expects("requestEntityContainer")
 				.withExactArgs(this.oMetaModel)
-				.returns(Promise.resolve(oEntityContainer));
+				.returns(promiseFor(oEntityContainer));
 			if (oFixture.nav) {
-				oHelperMock.expects("requestProperty")
-					.withExactArgs(this.oMetaModel.oModel, oFixture.nav.object,
-						oFixture.nav.property, sinon.match.string)
-					.returns(Promise.resolve(oEntityType));
+				oFixture.nav.forEach(function (oNav) {
+					oHelperMock.expects("requestProperty")
+						.withExactArgs(oMetaModel.oModel, oNav.object, oNav.property,
+							sinon.match.string)
+						.returns(promiseFor(oNav.result || oEntityTypeWorker));
+				});
 			}
 
 			return this.oMetaModel.requestObject(oFixture.path, oContext).then(function (oResult) {

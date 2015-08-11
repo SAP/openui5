@@ -38,6 +38,18 @@ sap.ui.require([
 		return sUrl;
 	}
 
+	/**
+	 * Returns a resolved promised for the given object. Clones the object.
+	 *
+	 * @param {object} o
+	 *   the object
+	 * @return {Promise}
+	 *   the promised to be resolved with a clone of the object
+	 */
+	function promiseFor(o) {
+		return Promise.resolve(JSON.parse(JSON.stringify(o)));
+	}
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataDocumentModel", {
 		beforeEach : function () {
@@ -69,7 +81,7 @@ sap.ui.require([
 			};
 
 		this.oSandbox.mock(OlingoDocument).expects("transformEntityContainer")
-			.withExactArgs(sinon.match.object).returns(Promise.resolve(oEntityContainer));
+			.withExactArgs(sinon.match.object).returns(promiseFor(oEntityContainer));
 
 		return this.oDocumentModel.read(sPath).then(function (oResult) {
 			assert.deepEqual(oResult, oEntityContainer);
@@ -77,44 +89,31 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[
-		"/EntityContainer/EntitySets(Fullname='"
-			+ "com.sap.gateway.iwbep.tea_busi.v0001.Container%2FEMPLOYEES')/EntityType",
-		"/EntityContainer/Singletons(Fullname='"
-			+ "com.sap.gateway.iwbep.tea_busi.v0001.Container%2FMe')/Type"
-	].forEach(function (sPath) {
-		QUnit.test("read: " + sPath, function (assert) {
-			var sEntityTypeName = "com.sap.gateway.iwbep.tea_busi.v0001.Worker",
-				oEntityType = {
-					"QualifiedName" : sEntityTypeName
-				};
+	QUnit.test("read entity type via /Types", function (assert) {
+		var sEntityTypeName = "com.sap.gateway.iwbep.tea_busi.v0001.Worker",
+			sPath = "/Types(QualifiedName='" + sEntityTypeName
+				+ "')?$expand=Properties/Type($level=max),NavigationProperties",
+			oEntityType = {
+				"QualifiedName" : sEntityTypeName
+			};
 
-			this.oSandbox.mock(OlingoDocument).expects("transformEntityType")
-				.withExactArgs(sinon.match.object, sEntityTypeName)
-				.returns(Promise.resolve(oEntityType));
+		this.oSandbox.mock(OlingoDocument).expects("transformEntityType")
+			.withExactArgs(sinon.match.object, sEntityTypeName)
+			.returns(promiseFor(oEntityType));
 
-			return this.oDocumentModel.read(sPath).then(function (oResult) {
-				assert.deepEqual(oResult, oEntityType);
-			});
+		return this.oDocumentModel.read(sPath).then(function (oResult) {
+			assert.deepEqual(oResult, oEntityType);
 		});
 	});
 
 	//*********************************************************************************************
 	[
-		"/EntityTypes",
-		"/EntityContainer/Unknown",
+		"/",
+		"/Types",
+		"/Types(Name='Worker')",
+		"/EntityContainer(Foo='Bar')",
 		"/EntityContainer/EntitySets",
-		"/EntityContainer/EntitySets(Name='EMPLOYEES')",
-		"/EntityContainer/EntitySets(Fullname='"
-			+ "com.sap.gateway.iwbep.tea_busi.v0001.Container%2FEMPLOYEES')",
-		"/EntityContainer/EntitySets(Fullname='"
-			+ "com.sap.gateway.iwbep.tea_busi.v0001.Container%2FEMPLOYEES')/EntityType/Name",
-		"/EntityContainer/Singletons(Name='Me')",
-		"/EntityContainer/Singletons(Fullname='"
-			+ "com.sap.gateway.iwbep.tea_busi.v0001.Container%2FMe')",
-		"/EntityContainer/Singletons(Fullname='"
-			+ "com.sap.gateway.iwbep.tea_busi.v0001.Container%2FMe')/Type/Name",
-		"/EntityContainer/Foo(Fullname='com.sap.gateway.iwbep.tea_busi.v0001.Container%2FMe')"
+		"/EntitySets(Name='EMPLOYEES')"
 	].forEach(function (sPath) {
 		QUnit.test("read:" + sPath, function (assert) {
 			return this.oDocumentModel.read(sPath).then(function () {

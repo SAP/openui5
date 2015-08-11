@@ -52,17 +52,17 @@ sap.ui.define([
 	 */
 	ODataMetaModel.prototype.requestObject = function (sPath, oContext) {
 		var oPart,
-			aParts,
+			aSegments,
 			sResolvedPath = this.resolve(sPath, oContext),
 			that = this;
 
 		/**
-		 * Fetches and parses the next part of the path. Modifies aParts
+		 * Fetches and parses the next part of the path. Modifies aSegments
 		 * @returns {object}
 		 *   an object describing the part with name and key
 		 */
 		function nextPart() {
-			return Helper.parsePathPart(aParts.shift());
+			return Helper.parsePathSegment(aSegments.shift());
 		}
 
 		function unsupported(sError) {
@@ -76,7 +76,7 @@ sap.ui.define([
 		function followPath(oObject) {
 			var oNextObject;
 
-			while (aParts.length) {
+			while (aSegments.length) {
 				oPart = nextPart();
 				if (!(oPart.name in oObject)) {
 					return Helper.requestProperty(that.oModel, oObject, oPart.name, sResolvedPath)
@@ -101,7 +101,7 @@ sap.ui.define([
 		if (!sResolvedPath) {
 			unsupported("Not an absolute path");
 		}
-		aParts = Helper.splitPath(sResolvedPath);
+		aSegments = Helper.splitPath(sResolvedPath);
 		oPart = nextPart();
 		if (oPart.all !== 'EntityContainer') {
 			unknown(oPart.all);
@@ -127,61 +127,92 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataMetaModel.prototype.requestMetaContext = function (sPath) {
-		var aParts = Helper.splitPath(sPath),
-			aMatches = rEntitySetName.exec(aParts[0]),
+		var i = 1,
+			sMetaPath = "/EntityContainer",
+			aSegments = Helper.splitPath(sPath),
+			aMatches,
 			that = this;
 
+		function findChild(oObject, aProperties, sName) {
+			var oChild,
+				i,
+				sProperty;
+
+			for (i = 0; i < aProperties.length; i += 1) {
+				sProperty = aProperties[i];
+				if (sProperty in oObject) {
+					oChild = Helper.findInArray(oObject[sProperty], "Name", sName);
+					if (oChild) {
+						sMetaPath += "/" + sProperty + "(Fullname='"
+							+ encodeURIComponent(oChild.Fullname) + "')";
+						return {object: oChild, property: sProperty};
+					}
+				}
+			}
+			return undefined;
+		}
+
+		/**
+		 * Follows the path from the given type corresponding to position <code>i - 1</code> in
+		 * <code>aSegments</code> until the path is exhausted.
+		 * @param {object} oType
+		 *   the type
+		 * @returns {string}
+		 *   the meta path
+		 */
+		function followPath(oType) {
+			var oProperty,
+				oResult;
+
+			if (!aSegments[i]) {
+				return sMetaPath;
+			}
+
+			for (;;) {
+				oResult = findChild(oType, ["Properties", "NavigationProperties"], aSegments[i]);
+				if (!oResult) {
+					throw new Error("Unknown property: " + oType.QualifiedName + "/"
+						+ aSegments[i] + ": " + sPath);
+				}
+				oProperty = oResult.object;
+				i += 1;
+				if (!aSegments[i]) {
+					return sMetaPath;
+				}
+				sMetaPath = sMetaPath + "/Type";
+				if (!("Type" in oProperty)) {
+					return Helper.requestProperty(that.oModel, oProperty, "Type", sMetaPath)
+						.then(followPath);
+				}
+				oType = oProperty.Type;
+			}
+		}
+
+		if (aSegments.length === 0) {
+			throw new Error("Unsupported: " + sPath);
+		}
+		aMatches = rEntitySetName.exec(aSegments[0]);
 		if (!aMatches) {
 			throw new Error("Unsupported: " + sPath);
 		}
 		return Helper.requestEntityContainer(this).then(function (oEntityContainer) {
-			var sMetaPath = "/EntityContainer/",
-				sName,
-				oObject,
-				oProperty,
-				sProperty;
+			var sProperty,
+				oResult;
 
-			oObject = Helper.findInArray(oEntityContainer.EntitySets, "Name", aMatches[1]);
-			if (oObject) {
-				sName = "EntitySets";
-				sProperty = "EntityType";
-			} else {
-				oObject = Helper.findInArray(oEntityContainer.Singletons, "Name", aMatches[1]);
-				if (!oObject) {
-					throw new Error("Type " + aMatches[1] + " not found");
-				}
-				sName = "Singletons";
-				sProperty = "Type";
+			oResult = findChild(oEntityContainer, ["EntitySets", "Singletons"], aMatches[1]);
+			if (!oResult) {
+				throw new Error("Type " + aMatches[1] + " not found");
 			}
-			sMetaPath += sName + "(Fullname='" + encodeURIComponent(oObject.Fullname) + "')" + "/"
-				+ sProperty;
-			return Helper.requestProperty(that.oModel, oObject, sProperty, sMetaPath)
-				.then(function (oType) {
-					var i = 1;
-
-					if (!aParts[i]) {
-						return sMetaPath;
-					}
-
-					for (;;) {
-						oProperty = Helper.findInArray(oType.Properties, "Name", aParts[i]);
-						if (!oProperty) {
-							throw new Error("Unknown property: " + oType.QualifiedName + "/"
-								+ aParts[i] + ": " + sPath);
-						}
-						sMetaPath = sMetaPath + "/Properties(Fullname='"
-							+ encodeURIComponent(oProperty.Fullname) + "')";
-						i += 1;
-						if (!aParts[i]) {
-							return sMetaPath;
-						}
-						sMetaPath = sMetaPath + "/Type";
-						oType = oProperty.Type;
-					}
-				}).then(function (sMetaPath) {
-					return that.getContext(sMetaPath);
-				});
-			});
+			if (!aSegments[i]) {
+				return sMetaPath;
+			}
+			sProperty = oResult.property === "EntitySets" ? "EntityType" : "Type";
+			sMetaPath += "/" + sProperty;
+			return Helper.requestProperty(that.oModel, oResult.object, sProperty, sMetaPath)
+				.then(followPath);
+		}).then(function (sMetaPath) {
+			return that.getContext(sMetaPath);
+		});
 	};
 
 	return ODataMetaModel;

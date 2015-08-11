@@ -93,6 +93,18 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("parseTypeRef", function (assert) {
+		assert.deepEqual(OlingoDocument.parseTypeRef("Edm.String"), {
+			collection: false,
+			qualifiedName: "Edm.String"
+		});
+		assert.deepEqual(OlingoDocument.parseTypeRef("Collection(Edm.String)"), {
+			collection: true,
+			qualifiedName: "Edm.String"
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("requestDocument: success", function (assert) {
 		var oModel = createModel();
 
@@ -167,32 +179,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("findEntitySet: success", function (assert) {
-		return this.withMetamodel(function (oDocument) {
-			var oResult = OlingoDocument.findEntitySet(oDocument,
-					"com.sap.gateway.iwbep.tea_busi.v0001.Container/EMPLOYEES");
-
-			assert.strictEqual(oResult.name, "EMPLOYEES");
-			assert.strictEqual(oResult,
-				oDocument.dataServices.schema[0].entityContainer.entitySet[1]);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("findEntitySet: failure", function (assert) {
-		return this.withMetamodel(function (oDocument) {
-			[
-				"foo.Container/EMPLOYEES",
-				"com.sap.gateway.iwbep.tea_busi.v0001.Container/Unknown"
-			].forEach(function (sName) {
-				assert.throws(function () {
-					OlingoDocument.findEntitySet(oDocument, sName);
-				}, new Error("Unknown entity set: " + sName));
-			});
-		});
-	});
-
-	//*********************************************************************************************
 	QUnit.test("findEntityType: success", function (assert) {
 		return this.withMetamodel(function (oDocument) {
 			var oResult = OlingoDocument.findEntityType(oDocument,
@@ -244,55 +230,41 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("findSingleton: success", function (assert) {
-		return this.withMetamodel(function (oDocument) {
-			var oResult = OlingoDocument.findSingleton(oDocument,
-					"com.sap.gateway.iwbep.tea_busi.v0001.Container/Me");
-
-			assert.strictEqual(oResult.name, "Me");
-			assert.strictEqual(oResult,
-				oDocument.dataServices.schema[0].entityContainer.singleton[0]);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("findSingleton: failure", function (assert) {
-		return this.withMetamodel(function (oDocument) {
-			[
-				"foo.Container/Me",
-				"com.sap.gateway.iwbep.tea_busi.v0001.Container/Unknown"
-			].forEach(function (sName) {
-				assert.throws(function () {
-					OlingoDocument.findSingleton(oDocument, sName);
-				}, new Error("Unknown singleton: " + sName));
-			});
-		});
-	});
-
-	//*********************************************************************************************
 	QUnit.test("transformEntityContainer", function (assert) {
 		var oEntityContainer = {
 				"Name" : "Container",
 				"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.Container",
 				"EntitySets" : [{
 					"Name" : "Departments",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Departments"
+					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Departments",
+					"EntityType@navigationLink" :
+						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.Department')"
 				}, {
 					"Name" : "EMPLOYEES",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/EMPLOYEES"
+					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/EMPLOYEES",
+					"EntityType@navigationLink" :
+						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.Worker')"
 				},{
 					"Name" : "Equipments",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Equipments"
+					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Equipments",
+					"EntityType@navigationLink" :
+						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.EQUIPMENT')"
 				}, {
 					"Name" : "MANAGERS",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/MANAGERS"
+					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/MANAGERS",
+					"EntityType@navigationLink" :
+						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.MANAGER')"
 				}, {
 					"Name" : "TEAMS",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/TEAMS"
+					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/TEAMS",
+					"EntityType@navigationLink" :
+						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.TEAM')"
 				}],
 				"Singletons" : [{
 					"Name" : "Me",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Me"
+					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Me",
+					"Type@navigationLink" :
+						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.Worker')"
 				}]
 			};
 		return this.withMetamodel(function (oDocument) {
@@ -453,13 +425,17 @@ sap.ui.require([
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM/TEAM_2_EMPLOYEES",
 					"Nullable" : true,
 					"ContainsTarget" : false,
-					"IsCollection" : true
+					"IsCollection" : true,
+					"Type@navigationLink" :
+						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.Worker')"
 				}, {
 					"Name" : "TEAM_2_MANAGER",
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM/TEAM_2_MANAGER",
 					"Nullable" : false,
 					"ContainsTarget" : false,
-					"IsCollection" : false
+					"IsCollection" : false,
+					"Type@navigationLink" :
+						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.MANAGER')"
 				}]
 			},
 			that = this;
