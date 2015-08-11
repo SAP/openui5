@@ -9,8 +9,7 @@ sap.ui.define([
 ], function (MetaModel, Helper) {
 	"use strict";
 
-	var ODataMetaModel,
-		rEntitySetName = /^(\w+)(\[|\(|$)/; // identifier followed by [,( or at end of string
+	var rEntitySetName = /^(\w+)(\[|\(|$)/; // identifier followed by [,( or at end of string
 
 	/**
 	 * Do <strong>NOT</strong> call this private constructor for a new <code>ODataMetaModel</code>,
@@ -27,7 +26,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.31.0
 	 */
-	ODataMetaModel = MetaModel.extend("sap.ui.model.odata.v4.ODataMetaModel", {
+	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.v4.ODataMetaModel", {
 			constructor : function (oModel) {
 				MetaModel.call(this);
 				if (!oModel) {

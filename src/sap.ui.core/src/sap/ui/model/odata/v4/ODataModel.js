@@ -28,8 +28,7 @@ sap.ui.define([
 
 	/*global odatajs */
 
-	var ODataModel,
-		rListBindingPath = /^\/.+\[(\d+)\];list=(\d+)\/(.+)/,
+	var rListBindingPath = /^\/.+\[(\d+)\];list=(\d+)\/(.+)/,
 		rTrailingSlash = /\/?$/;
 
 	/**
@@ -59,13 +58,13 @@ sap.ui.define([
 	 * @class Model implementation for OData v4.
 	 *
 	 * @author SAP SE
-	 * @extends sap.ui.model.Model
 	 * @alias sap.ui.model.odata.v4.ODataModel
+	 * @extends sap.ui.model.Model
 	 * @public
 	 * @since 1.31.0
 	 * @version ${version}
 	 */
-	ODataModel = Model.extend("sap.ui.model.odata.v4.ODataModel",
+	var ODataModel = Model.extend("sap.ui.model.odata.v4.ODataModel",
 			/** @lends sap.ui.model.odata.v4.ODataModel.prototype */
 			{
 				constructor : function (sServiceUrl) {
@@ -233,6 +232,7 @@ sap.ui.define([
 	 *   The context in the data model to be used as a starting point in case of a relative path
 	 * @returns {Promise}
 	 *   A promise which is resolved with the requested object as soon as it is available
+	 * @public
 	 */
 	ODataModel.prototype.requestObject = function (sPath, oContext) {
 		var iMeta = sPath.indexOf('/#'),
