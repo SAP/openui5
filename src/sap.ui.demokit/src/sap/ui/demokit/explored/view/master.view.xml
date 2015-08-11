@@ -8,7 +8,7 @@
 			<Toolbar>
 				<Button icon="sap-icon://drop-down-list" press="onOpenViewSettings" />
 				<ToolbarSpacer/>
-				<Label text="Entities ({entity>/entityCount})" />
+				<Title text="Entities ({entity>/entityCount})" />
 				<ToolbarSpacer/>
 				<Button icon="sap-icon://action-settings" tooltip="{i18n>settings}" press="onOpenAppSettings" />
 			</Toolbar>
