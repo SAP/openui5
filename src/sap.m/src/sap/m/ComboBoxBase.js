@@ -64,6 +64,32 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		/* ----------------------------------------------------------- */
 
 		/**
+		 * Called, whenever the binding of the aggregation items is changed.
+		 *
+		 * @private
+		 */
+		ComboBoxBase.prototype.updateItems = function(sReason) {
+			this.updateAggregation("items");
+			this.bDataUpdated = true;
+		};
+
+		/**
+		 * Called, when the items' aggregation needs to be refreshed.
+		 * This method does not make any changes to the items' aggregation, but just calls the
+		 * <code>getContexts()</code> method to trigger fetching of new data.
+		 *
+		 * <b>Note:</b> This method has been overwritten to prevent <code>updateItems()</code>
+		 * from being called when the bindings are refreshed.
+		 * @see sap.ui.base.ManagedObject#bindAggregation
+		 *
+		 * @private
+		 */
+		ComboBoxBase.prototype.refreshItems = function() {
+			this.bDataUpdated = false;
+			this.refreshAggregation("items");
+		};
+
+		/**
 		 * Given an item, retrieve the corresponding list item.
 		 *
 		 * @param {sap.ui.core.Item} vItem
@@ -185,6 +211,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 
 			// initialize list
 			this.createList();
+
+			/**
+			 * To detect whether the data is updated.
+			 *
+			 * @protected
+			 */
+			this.bDataUpdated = true;
 		};
 
 		/**
