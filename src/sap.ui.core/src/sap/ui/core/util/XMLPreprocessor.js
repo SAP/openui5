@@ -715,7 +715,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						}
 					} catch (ex) {
 						warn(oElement, 'Error in formatter:', ex);
-						vTest = false;
+						vTest = undefined; // "test == undefined --> false" in debug log
 					}
 					bResult = !!vTest && vTest !== "false";
 					if (bDebug) {

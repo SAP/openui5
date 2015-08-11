@@ -588,6 +588,12 @@
 			'<Out/>',
 			'</template:if>',
 			'</mvc:View>'
+		],
+		aDebugMessages : [
+			{m: "[ 0] Start processing qux"},
+			{m: "[ 1] test == undefined --> false", d: 1},
+			{m: "[ 1] Finished", d: 3},
+			{m: "[ 0] Finished processing qux"}
 		]
 	}, {
 		aViewContent : [
@@ -632,9 +638,15 @@
 					}
 				};
 
-				check.call(oLogMock, aViewContent, {
-					models: new sap.ui.model.json.JSONModel({flag: true})
-				}, vExpected);
+				if (bWarn && oFixture.aDebugMessages) {
+					checkTracing.call(oLogMock, true, oFixture.aDebugMessages, aViewContent, {
+						models: new sap.ui.model.json.JSONModel({flag: true})
+					}, vExpected);
+				} else {
+					check.call(oLogMock, aViewContent, {
+						models: new sap.ui.model.json.JSONModel({flag: true})
+					}, vExpected);
+				}
 			});
 		});
 	});
