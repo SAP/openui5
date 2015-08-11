@@ -1229,6 +1229,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		ComboBox.prototype.removeItem = function(vItem) {
 			vItem = ComboBoxBase.prototype.removeItem.call(this, vItem);
 
+			if (this.isBound("items") && !this.bDataUpdated) {
+				return vItem;
+			}
+
 			var sValue = this.getValue(),
 				oItem;
 
