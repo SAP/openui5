@@ -4,7 +4,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for sap.m.Shell</title>
 
-		<script id="sap-ui-bootstrap" 
+		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_bluecrystal"
@@ -15,7 +15,12 @@
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 
 		<script language="javascript">
@@ -29,11 +34,11 @@
 				ok(true, "Logging out");
 			}
 		});
-		
+
 		function byIdSuffix(suffix) {
 			return jQuery.sap.byId(oShell.getId() + suffix)
 		}
-		
+
 		var oApp = new sap.m.SplitApp("myApp", {
 			masterPages: new sap.m.Page("page1", {
 				title: "Some Master"
@@ -42,11 +47,11 @@
 				title: "Some Detail"
 			})
 		});
-		
+
 		oShell.setApp(oApp);
 		oShell.placeAt("content");
 
-		
+
 		QUnit.config.autostart = false;
 		jQuery(document).ready(function() {
 			QUnit.start();
@@ -62,10 +67,10 @@
 		test("Shell should hide the branding bar when another Shell-like control is parent and has one", function() {
 			strictEqual(oShell.$().find(".sapMShellBrandingBar").length, 1, "branding bar should be rendered");
 			strictEqual(oShell.$().find(".sapMShellBrandingBar").css("display"), "block", "branding bar should normally be visible");
-			
+
 			jQuery(document.body).addClass("sapMBrandingBar-CTX");
 			strictEqual(oShell.$().find(".sapMShellBrandingBar").css("display"), "none", "branding bar should not be visible when a Shell is ancestor");
-			
+
 			jQuery(document.body).removeClass("sapMBrandingBar-CTX");
 			strictEqual(oShell.$().find(".sapMShellBrandingBar").css("display"), "block", "branding bar should normally be visible");
 		});
@@ -87,59 +92,59 @@
 			qutils.triggerTouchEvent("tap", oShell.getId() + "-logout");
 			equal(window.loggedOut, true, "Logout handler should be called");
 		});
-		
-		
+
+
 		if (window.getComputedStyle) { // this excludes IE8 - which is intended!
-			
+
 			jQuery.sap.require("sap.ui.core.theming.Parameters");
 			var sBgVariant = sap.ui.core.theming.Parameters.get("sapUiGlobalBackgroundVariant");
-			
+
 			// bg image std
 			test("Shell background standard (tests the sap.m.BackgroundHelper as well)", function() {
 				var bgDiv = byIdSuffix("-BG"),
 					style = window.getComputedStyle(bgDiv[0]);
-				
+
 				equal(bgDiv.length, 1, "Background image div should be rendered");
 				if(sBgVariant == "Variant1"){
 					ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") > -1, "Background image from theme should be applied");
 				}else{
 					ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") < 0, "No Background image from theme should be applied");
 				}
-				
+
 				equal(style.backgroundRepeat, "repeat", "Background should be repeated");
 			});
-			
+
 			// bg image - and make it custom
 			test("Shell background custom (tests the sap.m.BackgroundHelper as well)", function() {
 				oShell.setBackgroundImage("test/x.png");
 				oShell.setBackgroundRepeat(false);
 				oShell.setBackgroundColor("#0f0");
 				oShell.setBackgroundOpacity(0.5);
-				
+
 				sap.ui.getCore().applyChanges();
-				
+
 				var bgDiv = byIdSuffix("-BG"),
 					style = window.getComputedStyle(bgDiv[0]);
-				
+
 				equal(bgDiv.length, 1, "Background image div should be rendered");
 				ok(style.backgroundImage.indexOf("test/x.png") > -1, "Custom background image should be applied");
 				equal(style.backgroundRepeat, "no-repeat", "Background should not be repeated");
 				equal(window.getComputedStyle(bgDiv[0].parentNode).backgroundColor, "rgb(0, 255, 0)", "Background should be green");
 				equal(style.opacity, "0.5", "Background opacity should be set");
 			});
-			
+
 			// bg image - revert to standard again
 			test("Shell background reset (tests the sap.m.BackgroundHelper as well)", function() {
 				oShell.setBackgroundImage(null);
 				oShell.setBackgroundRepeat(true);
 				oShell.setBackgroundColor(null);
 				oShell.setBackgroundOpacity(1);
-				
+
 				sap.ui.getCore().applyChanges();
-				
+
 				var bgDiv = byIdSuffix("-BG"),
 					style = window.getComputedStyle(bgDiv[0]);
-				
+
 				equal(bgDiv.length, 1, "Background image div should be rendered");
 				if(sBgVariant == "Variant1"){
 					ok(style.backgroundImage.indexOf("img/bg_white_transparent.png") > -1, "Background image from theme should be applied");
@@ -149,8 +154,157 @@
 				equal(style.backgroundRepeat, "repeat", "Background should be repeated");
 				equal(style.opacity, "1", "Background opacity should be set");
 			});
+
+			module("custom setters");
+
+			test("setTitle modifies the dom, sets the property and doesn't re-render", function() {
+				var $Dom,
+					sExampleTitle = "example title",
+					oSetPropertySpy;
+
+				//arrange
+				sap.ui.getCore().applyChanges();
+				oSetPropertySpy = this.spy(oShell, "setProperty");
+
+				//act
+				oShell.setTitle(sExampleTitle);
+				$Dom = oShell.$("hdrTxt");
+
+				//assert
+				equal($Dom.html(), sExampleTitle, "dom is modified");
+				equal(oShell.getTitle(), sExampleTitle, "property is changed");
+
+				equal(oSetPropertySpy.callCount, 1, "setProperty called once");
+				equal(oSetPropertySpy.args[0][0], "title", "setProperty called for 'title' property");
+				equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
+
+				oShell.setProperty.restore();
+			});
+
+			test("setHeaderRightText modifies the dom, sets the property and doesn't re-render", function() {
+				var $Dom,
+					sExampleHeaderText = "username",
+					oSetPropertySpy;
+
+				//arrange
+				sap.ui.getCore().applyChanges();
+				oSetPropertySpy = this.spy(oShell, "setProperty");
+
+				//act
+				oShell.setHeaderRightText(sExampleHeaderText);
+				$Dom = oShell.$("hdrRightTxt");
+
+				//assert
+				equal($Dom.text(), sExampleHeaderText, "dom is modified");
+				equal(oShell.getHeaderRightText(), sExampleHeaderText, "property is changed");
+
+				equal(oSetPropertySpy.callCount, 1, "setProperty called once");
+				equal(oSetPropertySpy.args[0][0], "headerRightText", "setProperty called for 'headerRightText' property");
+				equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
+
+				oShell.setProperty.restore();
+			});
+
+			test("setAppWidthLimited modifies the dom, sets the property and doesn't re-render", function() {
+				var $Dom,
+					oSetPropertySpy;
+
+				//arrange
+				sap.ui.getCore().applyChanges();
+				oSetPropertySpy = this.spy(oShell, "setProperty");
+
+				//act
+				oShell.setAppWidthLimited(false);
+				$Dom = oShell.$();
+
+				//assert
+				equal($Dom.hasClass("sapMShellAppWidthLimited"), false, "dom is modified");
+				equal(oShell.getAppWidthLimited(), false, "property is changed");
+
+				equal(oSetPropertySpy.callCount, 1, "setProperty called once");
+				equal(oSetPropertySpy.args[0][0], "appWidthLimited", "setProperty called for 'appWidthLimited' property");
+				equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
+
+				oShell.setAppWidthLimited(true);
+				equal($Dom.hasClass("sapMShellAppWidthLimited"), true, "dom is modified");
+				equal(oShell.getAppWidthLimited(), true, "property is changed");
+
+				equal(oSetPropertySpy.callCount, 2, "setProperty called second time");
+				equal(oSetPropertySpy.args[1][2], true, "setProperty 2nd time called with suppressRendering === true");
+
+				oShell.setProperty.restore();
+			});
+
+			test("setBackgroundOpacity modifies the dom only when value is valid, sets the property and doesn't re-render", function() {
+				var $Dom,
+						sExampleValidOpacity = 0.5,
+						sExampleInvalidOpacity = 2.5,
+						oSetPropertySpy;
+
+				//arrange
+				sap.ui.getCore().applyChanges();
+				oSetPropertySpy = this.spy(oShell, "setProperty");
+
+				//act
+				oShell.setBackgroundOpacity(sExampleInvalidOpacity);
+				$Dom = oShell.$("BG");
+
+				//assert
+				notEqual($Dom.css("opacity"), sExampleInvalidOpacity, "dom is not modified");
+				notEqual(oShell.getBackgroundOpacity(), sExampleInvalidOpacity, "property is not changed");
+
+				equal(oSetPropertySpy.callCount, 0, "setProperty is not called");
+
+
+				//act
+				oShell.setBackgroundOpacity(sExampleValidOpacity);
+
+				//assert
+				equal($Dom.css("opacity"), sExampleValidOpacity.toString(), "dom is modified");
+				equal(oShell.getBackgroundOpacity(), sExampleValidOpacity, "property is changed");
+
+				equal(oSetPropertySpy.callCount, 1, "setProperty called once");
+				equal(oSetPropertySpy.args[0][0], "backgroundOpacity", "setProperty called for 'backgroundOpacity' property");
+				equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
+
+				oShell.setProperty.restore();
+			});
+
+			test("setHomeIcon calls setIcons, sets the property and doesn't re-render", function() {
+				var oSetPropertySpy,
+					oJQuerySapSetIconSpy,
+					oExampleIcons = {
+						'phone': 'phone-icon_57x57.png',
+						'phone@2': 'phone-retina_114x114.png',
+						'tablet': 'tablet-icon_72x72.png',
+						'tablet@2': 'tablet-retina_144x144.png',
+						'precomposed': true,
+						'favicon': 'favicon.ico'
+					};
+
+				//arrange
+				sap.ui.getCore().applyChanges();
+				oSetPropertySpy = this.spy(oShell, "setProperty");
+				oJQuerySapSetIconSpy = this.spy(jQuery.sap, "setIcons");
+
+				//act
+				oShell.setHomeIcon(oExampleIcons);
+
+				//assert
+				equal(oShell.getHomeIcon(), oExampleIcons, "property is changed");
+
+				equal(oJQuerySapSetIconSpy.callCount, 1, "jQuery.sap.setIcons called once");
+				equal(oJQuerySapSetIconSpy.args[0][0], oExampleIcons, "jQuery.sap.setIcons called with the icons object");
+
+				equal(oSetPropertySpy.callCount, 1, "setProperty called once");
+				equal(oSetPropertySpy.args[0][0], "homeIcon", "setProperty called for 'homeIcon' property");
+				equal(oSetPropertySpy.args[0][2], true, "setProperty called with suppressRendering === true");
+
+				oShell.setProperty.restore();
+				jQuery.sap.setIcons.restore();
+			});
 		}
-		
+
 	</script>
 
 	</head>
