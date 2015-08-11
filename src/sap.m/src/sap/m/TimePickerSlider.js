@@ -9,11 +9,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		/**
 		 * Constructor for a new TimePickerSlider.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given
-		 * @param {object} [mSettings] initial settings for the new control
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * TimePickerSlider is a picker list control used inside the TimePicker to pick only one value
+		 * TimePickerSlider is a picker list control used inside a {@link sap.m.TimePicker} to choose a value.
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
@@ -29,19 +29,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 				library: "sap.m",
 				properties: {
 					/**
-					 * This property corresponds to the currently selected value of the slider.
+					 * The key of the currently selected value of the slider.
 					 */
 					selectedValue: {type: "string", defaultValue: null},
 					/**
-					 * This property corresponds to the ability of the slider to implement its values cycling.
+					 * Indicates whether the slider supports cyclic scrolling.
 					 */
 					isCyclic: {type: "boolean", defaultValue: true},
 					/**
-					 * This property defines the descriptive text for the slider.
+					 * Defines the descriptive text for the slider, placed as a label above it.
 					 */
 					label: {type: "string", defaultValue: null},
 					/**
-					 * This property defines whether the slider is expanded.
+					 * Indicates whether the slider is currently expanded.
 					 */
 					isExpanded: {type: "boolean", defaultValue: false}
 				},
@@ -75,7 +75,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		TimePickerSlider.MIN_ITEMS = 50;
 
 		/**
-		 * Initialize
+		 * Initializes the control.
+		 *
 		 * @public
 		 */
 		TimePickerSlider.prototype.init = function() {
@@ -99,7 +100,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Handles after rendering event
+		 * Called after the control is rendered.
 		 */
 		TimePickerSlider.prototype.onAfterRendering = function () {
 			if (sap.ui.Device.system.phone) { //the layout still 'moves' at this point - dialog and its content, so wait a little
@@ -111,16 +112,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Handles ThemeChanged event - provokes rerendering of the control
-		 * @param oEvent {jQuery.Event} Event object
+		 * Handles the themeChanged event.
+		 *
+		 * Does a re-rendering of the control.
+		 * @param {jQuery.Event} oEvent Event object
 		 */
 		TimePickerSlider.prototype.onThemeChanged = function(oEvent) {
 			this.rerender();
 		};
 
 		/**
-		 * Handles tap event - expands or selects the taped element
-		 * @param oEvent {jQuery.Event} Event object
+		 * Handles the tap event.
+		 *
+		 * Expands or selects the taped element.
+		 * @param {jQuery.Event} oEvent Event object
 		 */
 		TimePickerSlider.prototype.fireTap = function(oEvent) {
 			//expand column with a click
@@ -147,15 +152,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			}
 		};
 
-		/***********************************************************************
-		 **************************** Public methods ***************************
-		 ***********************************************************************/
-
 		/**
-		 * Overrides setter
+		 * Sets the currently selected value with an item key.
+		 *
 		 * @override
-		 * @param sValue {string} New selected value
+		 * @param {string} sValue The key of the new selected value
 		 * @returns {*|boolean|void|sap.ui.base.ManagedObject}
+		 * @public
 		 */
 		TimePickerSlider.prototype.setSelectedValue = function(sValue) {
 			var iIndexOfValue = findIndexInArray(this.getItems(), function(oElement) {
@@ -197,12 +200,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Sets the isExpanded property of the slider.
+		 * Sets the <code>isExpanded</code> property of the slider.
+		 *
 		 * @override
+		 * @param {boolean} bValue True or false
+		 * @param {boolean} suppressEvent Whether to suppress event firing
+		 * @returns {sap.m.TimePickerSlider} this instance, used for chaining
 		 * @public
-		 * @param bValue {boolean} New isExpanded value
-		 * @param suppressEvent {boolean} Whether to suppress event firing
-		 * @returns {sap.m.TimePickerSlider} Same instance for chaining
 		 */
 		TimePickerSlider.prototype.setIsExpanded = function(bValue, suppressEvent) {
 			this.setProperty("isExpanded", bValue, true);
@@ -252,8 +256,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Handles focusin event - expands the focused slider
-		 * @param oEvent {jQuery.Event} Event object
+		 * Handles the focusin event.
+		 *
+		 * Expands the focused slider.
+		 * @param {jQuery.Event} oEvent Event object
 		 */
 		TimePickerSlider.prototype.onfocusin = function(oEvent) {
 			if (sap.ui.Device.system.desktop && !this.getIsExpanded()) {
@@ -262,8 +268,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Handles focusout event - make sure blurred slider is collapsed on desktop
-		 * @param oEvent {jQuery.Event} Event object
+		 * Handles the focusout event.
+		 *
+		 * Make sure the blurred slider is collapsed on desktop.
+		 * @param {jQuery.Event} oEvent Event object
 		 */
 		TimePickerSlider.prototype.onfocusout = function(oEvent) {
 
@@ -281,13 +289,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			}
 		};
 
-		/***********************************************************************
-		 **************************** Keyboard handling ************************
-		 ***********************************************************************/
-
 		/**
-		 * Handles pageup event - selects the first item value
-		 * @param oEvent {jQuery.Event} Event object
+		 * Handles the pageup event.
+		 *
+		 * Selects the first item value.
+		 * @param {jQuery.Event} oEvent Event object
 		 */
 		TimePickerSlider.prototype.onsappageup = function(oEvent) {
 			if (this.getIsExpanded()) {
@@ -297,8 +303,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Handles pagedown event - selects the last item value
-		 * @param oEvent {jQuery.Event} Event object
+		 * Handles the pagedown event.
+		 *
+		 * Selects the last item value.
+		 * @param {jQuery.Event} oEvent Event object
 		 */
 		TimePickerSlider.prototype.onsappagedown = function(oEvent) {
 			if (this.getIsExpanded()) {
@@ -308,8 +316,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Handles arrowup event - selects the previous item value
-		 * @param oEvent {jQuery.Event} Event object
+		 * Handles the arrowup event.
+		 *
+		 * Selects the previous item value.
+		 * @param {jQuery.Event} oEvent Event object
 		 */
 		TimePickerSlider.prototype.onsapup = function(oEvent) {
 			if (this.getIsExpanded()) {
@@ -318,8 +328,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Handles arrowdown event - selects the next item value
-		 * @param oEvent {jQuery.Event} Event object
+		 * Handles the arrowdown event.
+		 *
+		 * Selects the next item value.
+		 * @param {jQuery.Event} oEvent Event object
 		 */
 		TimePickerSlider.prototype.onsapdown = function(oEvent) {
 			if (this.getIsExpanded()) {
@@ -327,12 +339,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			}
 		};
 
-		/************************************************************************
-		 **************************** Private methods ***************************
-		 ************************************************************************/
-
 		/**
-		 * Finds slider container in the DOM.
+		 * Finds the slider's container in the DOM.
+		 *
 		 * @returns {object} Slider container's jQuery object
 		 * @private
 		 */
@@ -342,9 +351,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 		/**
 		 * Calculates how many times the slider content should be repeated so that it fills the space.
+		 *
 		 * The method is called only when isCyclic property is set to true.
-		 * @private
 		 * @returns {number} Content repetitions needed
+		 * @private
 		 */
 		TimePickerSlider.prototype._getContentRepeat = function() {
 			//how many times the content is repeated?
@@ -365,8 +375,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 		/**
 		 * Calculates the index of the border frame based on its slider items.
-		 * @private
+		 *
 		 * @returns {number} The index of the frameBorder
+		 * @private
 		 */
 		TimePickerSlider.prototype._getSelectionFrameIndex = function() {
 			//zero based
@@ -405,9 +416,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Gets CSS height of a list item
-		 * @private
+		 * Gets the CSS height of a list item.
+		 *
 		 * @returns {number} CSS height in pixels
+		 * @private
 		 */
 		TimePickerSlider.prototype._getItemHeightInPx = function() {
 			return this.$("content").find("li").outerHeight();
@@ -454,7 +466,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Animates slider scrolling
+		 * Animates slider scrolling.
+		 *
 		 * @private
 		 * @param iSpeed {number} Animating speed
 		 */
@@ -516,7 +529,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Stops scrolling animation
+		 * Stops the scrolling animation.
+		 *
 		 * @private
 		 */
 		TimePickerSlider.prototype._stopAnimation = function() {
@@ -527,9 +541,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Starts scroll session
+		 * Starts scroll session.
+		 *
+		 * @param {number} iPageY The starting y-coordinate of the target
 		 * @private
-		 * @param iPageY {number} The starting y-coordinate of the target
 		 */
 		TimePickerSlider.prototype._startDrag = function(iPageY) {
 			//start collecting touch coordinates
@@ -543,10 +558,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Performs vertical scroll
+		 * Performs vertical scroll.
+		 *
+		 * @param {number} iPageY The current y-coordinate of the target to scroll to
+		 * @param {date} dTimeStamp Timestamp of the event
 		 * @private
-		 * @param iPageY {number} The current y-coordinate of the target to scroll to
-		 * @param dTimeStamp {date} Timestamp of the event
 		 */
 		TimePickerSlider.prototype._doDrag = function(iPageY, dTimeStamp) {
 			if (this._dragSession) {
@@ -566,9 +582,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 		/**
 		 * Finishes scroll session.
+		 *
+		 * @param {number} iPageY The last y-coordinate of the target to scroll to
+		 * @param {date} dTimeStamp Timestamp of the event
 		 * @private
-		 * @param iPageY {number} The last y-coordinate of the target to scroll to
-		 * @param dTimeStamp {date} Timestamp of the event
 		 */
 		TimePickerSlider.prototype._endDrag = function(iPageY, dTimeStamp) {
 			if (this._dragSession) {
@@ -597,6 +614,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 		/**
 		 * Calculates the slider's selection y-offset and margins and selects the corresponding list value.
+		 *
 		 * @private
 		 */
 		TimePickerSlider.prototype._afterExpandCollapse = function () {
@@ -644,13 +662,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 		/**
 		 * Handles the cycle effect of the slider's list items.
-		 * @private
+		 *
 		 * @param iContainerHeight {number} Height of the slider container
 		 * @param iContentHeight {number} Height of the slider content
 		 * @param iTop {number} Current top position
 		 * @param fDragMargin {number} Remaining scroll limit
 		 * @param iContentRepeatNumber {number} Content repetition counter
 		 * @returns {number} Newly calculated top position
+		 * @private
 		 */
 		TimePickerSlider.prototype._getUpdatedCycleScrollTop = function(iContainerHeight, iContentHeight, iTop, fDragMargin, iContentRepeatNumber) {
 			if (this._bIsDrag) {
@@ -671,8 +690,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 		/**
 		 * Calculates the index of the snapped element and selects it.
-		 * @private
+		 *
 		 * @param iCurrentItem {number} Index of the selected item
+		 * @private
 		 */
 		TimePickerSlider.prototype._scrollerSnapped = function(iCurrentItem) {
 			var iSelectedItemIndex = iCurrentItem + this._getSelectionFrameIndex(),
@@ -693,6 +713,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 		/**
 		 * Updates the scrolltop value to be on the center of the slider.
+		 *
 		 * @private
 		 */
 		TimePickerSlider.prototype._updateScroll = function() {
@@ -705,6 +726,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 		/**
 		 * Adds CSS class to the selected slider item.
+		 *
 		 * @private
 		 */
 		TimePickerSlider.prototype._addSelectionStyle = function() {
@@ -719,6 +741,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 		/**
 		 * Removes CSS class to the selected slider item.
+		 *
 		 * @private
 		 */
 		TimePickerSlider.prototype._removeSelectionStyle = function() {
@@ -728,6 +751,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 		/**
 		 * Attaches all needed events to the slider.
+		 *
 		 * @private
 		 */
 		TimePickerSlider.prototype._attachEvents = function () {
@@ -748,8 +772,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 *
 		 * Detaches all attached events to the slider.
+		 *
 		 * @private
 		 */
 		TimePickerSlider.prototype._detachEvents = function () {
@@ -770,8 +794,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Helper function which enables selecting a slider item with an index offset
+		 * Helper function which enables selecting a slider item with an index offset.
+		 *
 		 * @param iIndexOffset {number} The index offset to be scrolled to
+		 * @private
 		 */
 		TimePickerSlider.prototype._offsetValue = function(iIndexOffset) {
 			var iScrollTop = this._getSliderContainerDomRef().scrollTop(),
@@ -844,15 +870,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			this.setAggregation("_arrowDown", oArrowDown);
 		};
 
-		/*****************************************************************************************
-		 ************************************** Helpers ******************************************
-		 *****************************************************************************************/
-
 		/**
-		 * Finds the index of an element, satisfying provided predicate
-		 * @param aArray {array} The array to be predicted
-		 * @param fnPredicate {function} Testing function
+		 * Finds the index of an element, satisfying provided predicate.
+		 *
+		 * @param {array} aArray The array to be predicted
+		 * @param {function} fnPredicate Testing function
 		 * @returns {number} The index in the array, if an element in the array satisfies the provided testing function
+		 * @private
 		 */
 		function findIndexInArray(aArray, fnPredicate) {
 			if (aArray == null) {
@@ -876,7 +900,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		}
 
 		/**
-		 * Default onTouchStart handler
+		 * Default onTouchStart handler.
 		 * @param oEvent {jQuery.Event} Event object
 		 */
 		var onTouchStart = function(oEvent) {
@@ -895,7 +919,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Default onTouchMove handler
+		 * Default onTouchMove handler.
 		 * @param oEvent {jQuery.Event} Event object
 		 */
 		var onTouchMove = function(oEvent) {
@@ -921,7 +945,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Default onTouchEnd handler
+		 * Default onTouchEnd handler.
 		 * @param oEvent {jQuery.Event} Event object
 		 */
 		var onTouchEnd = function(oEvent) {
@@ -943,7 +967,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Default onMouseDown handler
+		 * Default onMouseDown handler.
 		 * @param oEvent {jQuery.Event} Event object
 		 */
 		var onMouseDown = function(oEvent) {
@@ -962,7 +986,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Default onMouseMove handler
+		 * Default onMouseMove handler.
 		 * @param oEvent {jQuery.Event} Event object
 		 */
 		var onMouseMove = function(oEvent) {
@@ -986,7 +1010,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Default onMouseUp handler
+		 * Default onMouseUp handler.
 		 * @param oEvent {jQuery.Event} Event object
 		 */
 		var onMouseUp = function(oEvent) {

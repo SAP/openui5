@@ -12,10 +12,10 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 	var TimePickerSlidersRenderer = {};
 
 	/**
-	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
+	 * Renders the HTML for the given {@link sap.m.TimePickerSliders} control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	TimePickerSlidersRenderer.render = function(oRenderManager, oControl) {
 		var aSliders = oControl.getAggregation("_columns"),
