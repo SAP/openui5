@@ -2362,7 +2362,7 @@ sap.ui.define([
 							mEntityTypes = {};
 						that._collectChangedEntities(oRequestGroup, mChangedEntities, mEntityTypes);
 						that.bIncludeInCurrentBatch = true;
-						that._refresh(false, sGroupId, mChangedEntities, mEntityTypes);
+						that._refresh(false, sRequestGroupId, mChangedEntities, mEntityTypes);
 						that.bIncludeInCurrentBatch = false;
 					}
 				});
