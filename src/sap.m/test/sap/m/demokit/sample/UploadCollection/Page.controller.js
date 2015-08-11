@@ -156,6 +156,12 @@ sap.ui.define([
 			});
 			oEvent.getParameters().addHeaderParameter(oCustomerHeaderSlug);
 			MessageToast.show("BeforeUploadStarts event triggered.");
+		},
+		onUploadTerminated: function(oEvent) {
+			// get parameter file name
+			var sFileName = oEvent.getParameter("fileName");
+			// get a header parameter (in case no parameter specified, the callback function getHeaderParameter returns all request headers)
+			var oRequestHeaders = oEvent.getParameters().getHeaderParameter();
 		}
 	});
 
