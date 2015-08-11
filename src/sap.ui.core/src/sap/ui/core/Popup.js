@@ -765,7 +765,7 @@ sap.ui.define([
 
 				var oCurrentOfRef = that._getOfDom(that._oLastPosition.of);
 				var oCurrentOfRect = jQuery(oCurrentOfRef).rect();
-				if (!fnRectEqual(that._oLastOfRect, oCurrentOfRect)) {
+				if (that._oLastOfRect && oCurrentOfRect && !fnRectEqual(that._oLastOfRect, oCurrentOfRect)) {
 					that._applyPosition(that._oLastPosition);
 				}
 			}
