@@ -26,6 +26,17 @@
 		transform: translateZ(0);
 	}
 
+	.sapMWizardStep  {
+		position: relative;
+		box-sizing: border-box;
+		padding-bottom: 2rem;
+		display: none;
+	}
+
+	.sapMWizardStepActivated {
+		display: block;
+	}
+
 	.sapMWizardLastActivatedStep {
 		min-height: 100%;
 	}
@@ -35,34 +46,17 @@
 		content: counter(steps-counter) ". ";
 	}
 
-	.sapMWizardStep  {
-		position: relative;
-		box-sizing: border-box;
-		padding-bottom: 2rem;
-		display: none;
-
-		.sapMWizardStepTitle {
-			border-width: 0.0625rem;
-			font-family: Arial, Helvetica, sans-serif;
-			font-weight: normal;
-			border: none;
-			margin-top: 0;
-			margin-bottom: 1rem;
-
-			.sapMBtn  {
-				position: absolute;
-				right : 0;
-				top : -0.5rem;
-			}
-		}
+	.sapMWizardStepTitle {
+		border-width: 0.0625rem;
+		font-family: Arial, Helvetica, sans-serif;
+		font-weight: normal;
+		border: none;
+		margin-top: 0;
+		margin-bottom: 1rem;
 	}
 
 	.sapUiFormResLayout > div {
 		background-color: inherit;
-	}
-
-	.sapMWizardStepActivated {
-		display: block;
 	}
 }
 

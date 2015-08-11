@@ -118,7 +118,6 @@ sap.ui.define([
 			this._stepCount = 0;
 			this._stepPath = [];
 			this._scrollLocked = false;
-			this._autoStepLock = false;
 			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			this._initPage();
 		};
@@ -283,7 +282,7 @@ sap.ui.define([
 			this._stepPath[index - 1]._markAsLast();
 
 			for (var i = index; i < steps.length; i++) {
-				steps[i]._deactivate(this._getAutoStepLock());
+				steps[i]._deactivate();
 				if (steps[i].getSubsequentSteps().length > 1) {
 					steps[i].setNextStep(null);
 				}
@@ -295,10 +294,6 @@ sap.ui.define([
 
 			steps.splice(index);
 			this._updateProgressNavigator();
-
-			if (this._getAutoStepLock()) {
-				step._unlockContent();
-			}
 
 			return this;
 		};
@@ -434,26 +429,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Auto step locking is an experimental feature of the Wizard control
-		 * it is supposed to lock the step after its completion (press of next button)
-		 * It still hasn't been approved by the designers
-		 * @param {boolean} enabled - enables the locking mechanism
-		 * @private
-		 */
-		Wizard.prototype._setAutoStepLock = function (enabled)  {
-			this._autoStepLock = enabled;
-		};
-
-		/**
-		 * Returns the status of the step locking mechanism
-		 * @returns {boolean}
-		 * @private
-		 */
-		Wizard.prototype._getAutoStepLock = function () {
-			return this._autoStepLock;
-		};
-
-		/**
 		 * Creates the page subheader, and places a WizardProgressNavigator inside it
 		 * @returns {Toolbar}
 		 * @private
@@ -542,7 +517,7 @@ sap.ui.define([
 				previousStepIndex = index - 2,
 				previousStep = this._stepPath[previousStepIndex];
 
-			previousStep._complete(this._getAutoStepLock());
+			previousStep._complete();
 
 			var nextStep = this._getNextStep(previousStep, previousStepIndex);
 
@@ -858,7 +833,7 @@ sap.ui.define([
 				/**
 				 * Find branched, or leaf step
 				 */
-				while (!currentStep._isLeaf() && currentStep._getNextStepReference() != null) {
+				while (!currentStep._isLeaf() && currentStep._getNextStepReference() !== null) {
 					stepCount++;
 					currentStep = currentStep._getNextStepReference();
 				}
