@@ -4,10 +4,10 @@
 
 // Provides control sap.m.QuickView.
 sap.ui.define([
-	'jquery.sap.global', './library', 'sap/ui/core/Control',
+	'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool',
 		'./QuickViewBase', './ResponsivePopover', './NavContainer',
 		'./PlacementType', './Page', './Bar', './Button'],
-	function(jQuery, library, Control,
+	function(jQuery, library, Control, IconPool,
 			QuickViewBase, ResponsivePopover, NavContainer,
 			PlacementType, Page, Bar, Button) {
 	"use strict";
@@ -280,7 +280,7 @@ sap.ui.define([
 		var oCustomHeader = oPage.getCustomHeader();
 		oCustomHeader.addContentRight(
 			new Button({
-				icon : "sap-icon://decline",
+				icon : IconPool.getIconURI("decline"),
 				press : function() {
 					that._oPopover.close();
 				}

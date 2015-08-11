@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/CalloutBaseRenderer', 'sap/ui/core/Renderer'],
-	function(jQuery, CalloutBaseRenderer, Renderer) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/commons/CalloutBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool'],
+	function(jQuery, CalloutBaseRenderer, Renderer, IconPool) {
 	"use strict";
 
 
@@ -77,7 +77,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/CalloutBaseRenderer', 'sap/u
 	
 			//icon
 			if (sIcon) {
-				if (sIcon.indexOf("sap-icon://") !== 0) {
+				if (IconPool.isIconURI(sIcon)) {
 					//setting title & tabindex here
 					//alt, src and role=presentation are set by writeIcon
 					oIconAttr = {
