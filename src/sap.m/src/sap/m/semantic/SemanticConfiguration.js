@@ -468,7 +468,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.footerLeft,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://alert",
+					icon: "sap-icon://message-popup",
 					text: {
 						path: "message>/",
 						formatter: function (aMessages) {
