@@ -149,20 +149,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	};
 	ActionSheet.prototype.onAfterRendering = function() {
 		this._setItemNavigation();
-		this.$().on("keyup.ActionSheet", jQuery.proxy(this.onKeyUp, this));
 	};
-	ActionSheet.prototype.onBeforeRendering = function() {
-		if (this.getDomRef()) {
-			this.$().off("keyup.ActionSheet");
-		}
-	};
-	ActionSheet.prototype.onKeyUp = function(event) {
-		if ( event.which == jQuery.sap.KeyCodes.ESCAPE) {
-			this.close();
-			event.stopPropagation();
-			event.preventDefault();
-		}
-	};
+
 	ActionSheet.prototype.sapfocusleave = function() {
 		this.close();
 	};
