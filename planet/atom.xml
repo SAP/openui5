@@ -5,7 +5,7 @@
 	<link rel="self" href="http://openui5.org/atom.xml"/>
 	<link href="http://openui5.org/"/>
 	<id>http://openui5.org/atom.xml</id>
-	<updated>2015-08-11T16:00:08+00:00</updated>
+	<updated>2015-08-11T20:00:08+00:00</updated>
 	<generator uri="http://www.planetplanet.org/">Planet/2.0 +http://www.planetplanet.org</generator>
 
 	<entry>
@@ -13,7 +13,7 @@
 		<link href="http://openui5picks.tumblr.com/post/126093935815"/>
 		<id>http://openui5picks.tumblr.com/post/126093935815</id>
 		<updated>2015-07-28T21:20:26+00:00</updated>
-		<content type="html">&lt;img src=&quot;https://36.media.tumblr.com/ee418a251b5ba1231676aa417cbe8a0b/tumblr_inline_nsps6hJVSG1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;As we had several inquiries about how to build up a OpenUI5 application in a Windows Phone hybrid app recently, we have investigated a bit in that area. You may have heard that there is a problem...</content>
+		<content type="html">&lt;img src=&quot;http://36.media.tumblr.com/ee418a251b5ba1231676aa417cbe8a0b/tumblr_inline_nsps6hJVSG1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;As we had several inquiries about how to build up a OpenUI5 application in a Windows Phone hybrid app recently, we have investigated a bit in that area. You may have heard that there is a problem...</content>
 		<author>
 			<name>Demos</name>
 			<uri>http://openui5picks.tumblr.com/</uri>
@@ -22,7 +22,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-11T16:00:08+00:00</updated>
+			<updated>2015-08-11T20:00:08+00:00</updated>
 		</source>
 	</entry>
 
@@ -31,7 +31,7 @@
 		<link href="http://openui5picks.tumblr.com/post/126093309405"/>
 		<id>http://openui5picks.tumblr.com/post/126093309405</id>
 		<updated>2015-07-05T08:27:26+00:00</updated>
-		<content type="html">&lt;img src=&quot;https://36.media.tumblr.com/fd1baf0e04b27c18bd02ba43f9b59911/tumblr_inline_nsprugXuUb1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;I have recently worked on a UI5 project where we built an event-driven service-based architecture. We followed the TDD principles for most parts, so naturally, we ended up having lots of fake and mock...</content>
+		<content type="html">&lt;img src=&quot;http://36.media.tumblr.com/fd1baf0e04b27c18bd02ba43f9b59911/tumblr_inline_nsprugXuUb1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;I have recently worked on a UI5 project where we built an event-driven service-based architecture. We followed the TDD principles for most parts, so naturally, we ended up having lots of fake and mock...</content>
 		<author>
 			<name>Demos</name>
 			<uri>http://openui5picks.tumblr.com/</uri>
@@ -40,7 +40,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-11T16:00:08+00:00</updated>
+			<updated>2015-08-11T20:00:08+00:00</updated>
 		</source>
 	</entry>
 
@@ -49,7 +49,7 @@
 		<link href="http://openui5picks.tumblr.com/post/121254537550"/>
 		<id>http://openui5picks.tumblr.com/post/121254537550</id>
 		<updated>2015-05-31T11:36:00+00:00</updated>
-		<content type="html">&lt;img src=&quot;https://41.media.tumblr.com/6b1db0873385eb413a1fa522a212aecb/tumblr_inline_nprphnCYtc1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Recently a colleague reviewed some of my SAPUI5 tutorials. He pointed out that declaring and initializing private properties directly on the prototype object can lead to issues. This could especially...</content>
+		<content type="html">&lt;img src=&quot;http://41.media.tumblr.com/6b1db0873385eb413a1fa522a212aecb/tumblr_inline_nprphnCYtc1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Recently a colleague reviewed some of my SAPUI5 tutorials. He pointed out that declaring and initializing private properties directly on the prototype object can lead to issues. This could especially...</content>
 		<author>
 			<name>Demos</name>
 			<uri>http://openui5picks.tumblr.com/</uri>
@@ -58,7 +58,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-11T16:00:08+00:00</updated>
+			<updated>2015-08-11T20:00:08+00:00</updated>
 		</source>
 	</entry>
 
@@ -67,7 +67,7 @@
 		<link href="http://openui5picks.tumblr.com/post/116631893405"/>
 		<id>http://openui5picks.tumblr.com/post/116631893405</id>
 		<updated>2015-03-27T11:36:00+00:00</updated>
-		<content type="html">&lt;img src=&quot;https://40.media.tumblr.com/36551487bd811e98d767e6643d797d67/tumblr_inline_nmy30caJXf1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Ive been working with OpenUI5 for a few months now and I grew tired of the sharp tiles provided by the standard library. Good thing OpenUI5 allows the inheritance between components so that we can...</content>
+		<content type="html">&lt;img src=&quot;http://40.media.tumblr.com/36551487bd811e98d767e6643d797d67/tumblr_inline_nmy30caJXf1sb8vfp_540.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Ive been working with OpenUI5 for a few months now and I grew tired of the sharp tiles provided by the standard library. Good thing OpenUI5 allows the inheritance between components so that we can...</content>
 		<author>
 			<name>Demos</name>
 			<uri>http://openui5picks.tumblr.com/</uri>
@@ -76,7 +76,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-11T16:00:08+00:00</updated>
+			<updated>2015-08-11T20:00:08+00:00</updated>
 		</source>
 	</entry>
 
@@ -94,7 +94,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-11T16:00:08+00:00</updated>
+			<updated>2015-08-11T20:00:08+00:00</updated>
 		</source>
 	</entry>
 
@@ -103,7 +103,7 @@
 		<link href="http://openui5picks.tumblr.com/post/105856062395"/>
 		<id>http://openui5picks.tumblr.com/post/105856062395</id>
 		<updated>2014-12-20T12:36:00+00:00</updated>
-		<content type="html">&lt;img src=&quot;https://31.media.tumblr.com/66d6fea024405d6647f8a70734e710c4/tumblr_inline_ngz7emwlky1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;After posting my blog about how easy it is to get started with web development using OpenUI5  JSBin, I thought Id check out existing alternatives! My result: There are quite a few really good ones....</content>
+		<content type="html">&lt;img src=&quot;http://38.media.tumblr.com/66d6fea024405d6647f8a70734e710c4/tumblr_inline_ngz7emwlky1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;After posting my blog about how easy it is to get started with web development using OpenUI5  JSBin, I thought Id check out existing alternatives! My result: There are quite a few really good ones....</content>
 		<author>
 			<name>Demos</name>
 			<uri>http://openui5picks.tumblr.com/</uri>
@@ -112,7 +112,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-11T16:00:08+00:00</updated>
+			<updated>2015-08-11T20:00:08+00:00</updated>
 		</source>
 	</entry>
 
@@ -121,7 +121,7 @@
 		<link href="http://openui5picks.tumblr.com/post/105856162090"/>
 		<id>http://openui5picks.tumblr.com/post/105856162090</id>
 		<updated>2014-12-17T11:23:00+00:00</updated>
-		<content type="html">&lt;img src=&quot;https://31.media.tumblr.com/b000e44e51cca2b907b7df8f7c37c33d/tumblr_inline_ngz7kp8eJ21sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Before Ill answer the question, let me step back and set the stage for my arguments! I was invited by Leigh Jin, an associate professor at the San Francisco State University, to give a guest lecture...</content>
+		<content type="html">&lt;img src=&quot;http://38.media.tumblr.com/b000e44e51cca2b907b7df8f7c37c33d/tumblr_inline_ngz7kp8eJ21sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Before Ill answer the question, let me step back and set the stage for my arguments! I was invited by Leigh Jin, an associate professor at the San Francisco State University, to give a guest lecture...</content>
 		<author>
 			<name>Demos</name>
 			<uri>http://openui5picks.tumblr.com/</uri>
@@ -130,7 +130,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-11T16:00:08+00:00</updated>
+			<updated>2015-08-11T20:00:08+00:00</updated>
 		</source>
 	</entry>
 
@@ -139,7 +139,7 @@
 		<link href="http://openui5picks.tumblr.com/post/98297520315"/>
 		<id>http://openui5picks.tumblr.com/post/98297520315</id>
 		<updated>2014-09-22T11:46:00+00:00</updated>
-		<content type="html">&lt;img src=&quot;https://31.media.tumblr.com/4b0cef96fb5cf4833e07c8df681f9ccf/tumblr_inline_ncg30dJjt91sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Today, Eclipse has grown to quite a robust and widely used Java IDE, however it lacks severely in the Web / Javascript department. For web development  not only SAPUI5 / OpenUI5, but in my...</content>
+		<content type="html">&lt;img src=&quot;http://38.media.tumblr.com/4b0cef96fb5cf4833e07c8df681f9ccf/tumblr_inline_ncg30dJjt91sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;Today, Eclipse has grown to quite a robust and widely used Java IDE, however it lacks severely in the Web / Javascript department. For web development  not only SAPUI5 / OpenUI5, but in my...</content>
 		<author>
 			<name>Demos</name>
 			<uri>http://openui5picks.tumblr.com/</uri>
@@ -148,7 +148,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-11T16:00:08+00:00</updated>
+			<updated>2015-08-11T20:00:08+00:00</updated>
 		</source>
 	</entry>
 
@@ -157,7 +157,7 @@
 		<link href="http://openui5picks.tumblr.com/post/98219217490"/>
 		<id>http://openui5picks.tumblr.com/post/98219217490</id>
 		<updated>2014-09-14T11:36:00+00:00</updated>
-		<content type="html">&lt;img src=&quot;https://31.media.tumblr.com/0549702b84bde764562d121235df5a33/tumblr_inline_nccp90D1jy1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;There are a huge number of icons as standard in the UI5 library, both in the SAPUI5 and OpenUI5 flavours. Here’s the Icon Explorer from the SDK. One of the problems I have is that when I’m...</content>
+		<content type="html">&lt;img src=&quot;http://31.media.tumblr.com/0549702b84bde764562d121235df5a33/tumblr_inline_nccp90D1jy1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;There are a huge number of icons as standard in the UI5 library, both in the SAPUI5 and OpenUI5 flavours. Here’s the Icon Explorer from the SDK. One of the problems I have is that when I’m...</content>
 		<author>
 			<name>Demos</name>
 			<uri>http://openui5picks.tumblr.com/</uri>
@@ -166,7 +166,7 @@
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-11T16:00:08+00:00</updated>
+			<updated>2015-08-11T20:00:08+00:00</updated>
 		</source>
 	</entry>
 
@@ -175,7 +175,7 @@
 		<link href="http://openui5picks.tumblr.com/post/100831992435"/>
 		<id>http://openui5picks.tumblr.com/post/100831992435</id>
 		<updated>2013-12-08T16:37:00+00:00</updated>
-		<content type="html">&lt;img src=&quot;https://31.media.tumblr.com/603348149b5887622ec8085ab44c052f/tumblr_inline_ndyeu9jW2S1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
+		<content type="html">&lt;img src=&quot;http://38.media.tumblr.com/603348149b5887622ec8085ab44c052f/tumblr_inline_ndyeu9jW2S1sb8vfp.png&quot; class=&quot;feedImage&quot; /&gt;&lt;br/&gt;&lt;br/&gt;
 
 This blog demonstrates how to load, transform and analyse UK road traffic accident data on mobile devices with HANA, SAPUI5 and Google Maps.  The end results look like this on an iPhone, analysing...</content>
 		<author>
@@ -186,7 +186,7 @@ This blog demonstrates how to load, transform and analyse UK road traffic accide
 			<title type="html">openui5picks</title>
 			<link rel="self" href="http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss"/>
 			<id>http://openui5picks.tumblr.com/tagged/ui5picksdemos/rss</id>
-			<updated>2015-08-11T16:00:08+00:00</updated>
+			<updated>2015-08-11T20:00:08+00:00</updated>
 		</source>
 	</entry>
 
