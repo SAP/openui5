@@ -762,7 +762,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this._bLongWeekDays = undefined;
 			var aWeekHeaders = this.$().find(".sapUiCalWH");
 			var oLocaleData = this._getLocaleData();
-			var iStartDay = this._getFirstWeekDay();
+			var iStartDay = this._getFirstDayOfWeek();
 			var aDayNames = oLocaleData.getDaysStandAlone("abbreviated");
 			for (var i = 0; i < aWeekHeaders.length; i++) {
 				var oWeekDay = aWeekHeaders[i];
@@ -878,16 +878,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				var aMonthNames = oLocaleData.getMonthsStandAlone("wide");
 				this.$("Head").text(aMonthNames[oDate.getUTCMonth()]);
 			}
-
-		};
-
-		/*
-		 * returns the first displayed week day. Needed to change week days if too long
-		 */
-		Month.prototype._getFirstWeekDay = function(){
-
-			var oLocaleData = this._getLocaleData();
-			return oLocaleData.getFirstDayOfWeek();
 
 		};
 
@@ -1172,7 +1162,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						// already selected - deselect
 						for ( i = 0; i < aSelectedDates.length; i++) {
 							oStartDate = aSelectedDates[i].getStartDate();
-							if (oStartDate && oDate.getTime() == CalendarUtils._createUniversalUTCDate(oStartDate)) {
+							if (oStartDate && oDate.getTime() == CalendarUtils._createUniversalUTCDate(oStartDate).getTime()) {
 								oAggOwner.removeAggregation("selectedDates", i, true); // no re-rendering
 								break;
 							}
@@ -1284,6 +1274,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		function _updateARIADesrcibedby(oThis, $DomRef, bStart, bEnd){
 
+			if (!oThis.getIntervalSelection()) {
+				return;
+			}
+
 			var sDescribedBy = "";
 			var aDescribedBy = [];
 			var sId = oThis.getId();
@@ -1367,7 +1361,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				if (bTooLong) {
 					oThis._bLongWeekDays = false;
 					var oLocaleData = oThis._getLocaleData();
-					var iStartDay = oThis._getFirstWeekDay();
+					var iStartDay = oThis._getFirstDayOfWeek();
 					var aDayNames = oLocaleData.getDaysStandAlone("narrow");
 					for ( i = 0; i < aWeekHeaders.length; i++) {
 						oWeekDay = aWeekHeaders[i];
