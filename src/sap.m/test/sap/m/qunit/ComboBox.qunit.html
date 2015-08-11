@@ -3952,7 +3952,7 @@
 					equal($Input.attr("tabindex"), undefined, "No tabindex for Input field");
 					equal($Arrow.attr("tabindex"), -1, "Tabindex set for Arrow");
 
-					oComboBox.setBusy(true)
+					oComboBox.setBusy(true);
 
 					window._setTimeout(function() {
 						// check whether all element do have a tabindex now
@@ -3969,6 +3969,9 @@
 							equal($Arrow.attr("tabindex"), -1, "Still Tabindex set for Arrow");
 
 							start();
+
+							// cleanup
+							oComboBox.destroy();
 						}, 10)
 					}, 10);
 
