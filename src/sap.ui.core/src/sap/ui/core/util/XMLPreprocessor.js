@@ -376,6 +376,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 		}
 
 		/**
+		 * Load required modules for the given element synchronously, according to its
+		 * "template:require" attribute which may contain a space separated list.
+		 *
+		 * @param {Element} oElement
+		 *   a DOM element
+		 */
+		function requireFor(oElement) {
+			var sModuleNames = oElement.getAttribute("template:require");
+			if (sModuleNames) {
+				jQuery.sap.require.apply(jQuery.sap, sModuleNames.split(" "));
+			}
+		}
+
+		/**
 		 * Serializes the element with its attributes.
 		 * <p>
 		 * BEWARE: makes no attempt at encoding, DO NOT use in a security critical manner!
@@ -435,7 +449,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					bDebug = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG),
 					bCallerLoggedForWarnings = bDebug, // debug output already contains caller
 					sCurrentName = oViewInfo.name, // current view or fragment name
-					sModuleNames = oRootElement.getAttribute("template:require"),
 					iNestingLevel = 0,
 					sName,
 					oScope = {}, // for BindingParser.complexParser()
@@ -642,6 +655,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 
 					oFragmentElement
 						= XMLTemplateProcessor.loadTemplate(sFragmentName, "fragment");
+					requireFor(oFragmentElement);
 					if (oFragmentElement.namespaceURI === "sap.ui.core"
 							&& localName(oFragmentElement) === "FragmentDefinition") {
 						liftChildNodes(oFragmentElement, oWithControl, oElement);
@@ -1166,12 +1180,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 						}
 					}
 				}
-
-				// load required modules synchronously
-				if (sModuleNames) {
-					jQuery.sap.require.apply(jQuery.sap, sModuleNames.split(" "));
-				}
-
+				requireFor(oRootElement);
 				visitNode(oRootElement, new With({
 					models : mSettings.models,
 					bindingContexts : mSettings.bindingContexts
