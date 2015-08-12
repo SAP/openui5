@@ -780,18 +780,18 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 					} else {
 					//that._handlePopoverAfterClose(oList);
 //fix remove icon press issue. click remove icon and can't remove facet, so delay the popover close
-						jQuery.sap.delayedCall(200, that, that._handlePopoverAfterClose, [oList]);
+						jQuery.sap.delayedCall(120, that, that._handlePopoverAfterClose, [oList]);
 						oPopover.destroySubHeader();
 					}
 				},
 				horizontalScrolling: false
-			});
+			}); 
 
 			// Suppress invalidate so that FacetFilter is not rerendered when the popover is opened (causing it to immediately close)
 			this.setAggregation("popover", oPopover, true);
-			oPopover.setContentWidth("30%");
+			oPopover.setContentWidth("30%");   
 
-		//IE9
+		//IE9 
 			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
 
 				oPopover.setContentWidth("30%");
