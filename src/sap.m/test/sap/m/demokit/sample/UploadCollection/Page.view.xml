@@ -35,6 +35,7 @@
 				typeMissmatch="onTypeMissmatch"
 				uploadComplete="onUploadComplete"
 				beforeUploadStarts="onBeforeUploadStarts"
+				uploadTerminated="onUploadTerminated"
 				items="{/items}"
 				numberOfAttachmentsText="Uploaded (8)">
 				<items>
