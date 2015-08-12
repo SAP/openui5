@@ -9,23 +9,32 @@ sap.ui.define(function () {
 	var WizardStepRenderer = {};
 
 	WizardStepRenderer.render = function (oRm, oStep) {
-		oRm.write("<div");
+		this.startWizardStep(oRm, oStep);
+		this.renderWizardStepTitle(oRm, oStep.getTitle());
+		this.renderContent(oRm, oStep.getContent());
+		this.endWizardStep(oRm);
+	};
+
+	WizardStepRenderer.startWizardStep = function (oRm, oStep) {
+		oRm.write("<article");
 		oRm.writeControlData(oStep);
 		oRm.addClass("sapMWizardStep");
 		oRm.writeClasses();
 		oRm.write(">");
+	};
+
+	WizardStepRenderer.renderWizardStepTitle = function (oRm, sTitle) {
 		oRm.write("<h3 class='sapMWizardStepTitle'>");
-		oRm.writeEscaped(oStep.getTitle());
-		oRm.renderControl(oStep.getAggregation("_editButton"));
+		oRm.writeEscaped(sTitle);
 		oRm.write("</h3>");
-
-		this.renderContent(oRm, oStep.getContent());
-
-		oRm.write("</div>");
 	};
 
 	WizardStepRenderer.renderContent = function (oRm, aChildren) {
 		aChildren.forEach(oRm.renderControl);
+	};
+
+	WizardStepRenderer.endWizardStep = function (oRm) {
+		oRm.write("</article>");
 	};
 
 	return WizardStepRenderer;
