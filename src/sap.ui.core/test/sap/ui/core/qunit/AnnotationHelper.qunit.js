@@ -1547,6 +1547,22 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		metaPath : sPath2BusinessPartner + "/com.sap.vocabularies.Communication.v1.Address/street",
 		navigationPath : "",
 		resolvedPath : "/dataServices/schema/0/complexType/0/property/2"
+	}, {
+		// annotation at entity set: "an empty path resolves to the entity set"
+		// Note: no singletons in v2!
+		Path : "",
+		metaPath : "/dataServices/schema/0/entityContainer/0/entitySet/1"
+			+ "/com.sap.vocabularies.UI.v1.DataPoint/Value",
+		navigationPath : "",
+		resolvedPath : "/dataServices/schema/0/entityContainer/0/entitySet/1"
+	}, {
+		// annotation at entity set: "non-empty paths MUST follow the rules for annotations
+		//   targeting the declared entity type of the entity set"
+		Path : "ProductID",
+		metaPath : "/dataServices/schema/0/entityContainer/0/entitySet/1"
+			+ "/com.sap.vocabularies.UI.v1.DataPoint/Value",
+		navigationPath : "",
+		resolvedPath : "/dataServices/schema/0/entityType/1/property/0"
 	}].forEach(function (oFixture) {
 		var sPath, sTitle;
 

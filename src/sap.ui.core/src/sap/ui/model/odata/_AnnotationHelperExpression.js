@@ -26,8 +26,6 @@ sap.ui.define([
 			Int : /^[-+]?\d{1,19}$/,
 			TimeOfDay : new RegExp("^" + sTimeOfDayValue + "$")
 		},
-		// path to entity type ("/dataServices/schema/<i>/entityType/<j>")
-		rEntityTypePath = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/,
 		Expression,
 		// a simple binding (see sap.ui.base.BindingParser.simpleParser) to "@i18n" model
 		// w/o bad chars (see _AnnotationHelperBasics: rBadChars) inside path!
@@ -670,49 +668,44 @@ sap.ui.define([
 		path: function (oInterface, oPathValue) {
 			var sBindingPath = oPathValue.value,
 				oConstraints = {},
-				oEntityType,
 				oModel = oInterface.getModel(),
-				aMatches = rEntityTypePath.exec(oPathValue.path),
-				aParts,
+				oPathValueInterface = {
+					getModel : function () { return oModel; },
+					getPath : function () { return oPathValue.path; }
+				},
 				oProperty,
-				oResult = {result: "binding", value: sBindingPath};
+				oResult = {result: "binding", value: sBindingPath},
+				oTarget;
 
 			Basics.expectType(oPathValue, "string");
 
-			if (aMatches) {
-				// go up to "/dataServices/schema/<i>/entityType/<j>/"
-				oEntityType = oModel.getProperty(aMatches[1]);
+			// Note: "PropertyPath" is treated the same...
+			oTarget = Basics.followPath(oPathValueInterface, {"Path" : sBindingPath});
 
-				// determine the property given by sBindingPath
-				aParts = sBindingPath.split('/');
-				oProperty = oModel.getODataProperty(oEntityType, aParts);
-
-				if (oProperty && !aParts.length) {
-					oResult.type = oProperty.type;
-					switch (oProperty.type) {
-					case "Edm.DateTime":
-						oConstraints.displayFormat = oProperty["sap:display-format"];
-						break;
-					case "Edm.Decimal":
-						oConstraints.precision = oProperty.precision;
-						oConstraints.scale = oProperty.scale;
-						break;
-					case "Edm.String":
-						oConstraints.maxLength = oProperty.maxLength;
-						break;
-					// no default
-					}
-					if (oProperty.nullable === "false") {
-						oConstraints.nullable = oProperty.nullable;
-					}
-					oResult.constraints = oConstraints;
+			if (oTarget && oTarget.resolvedPath) {
+				oProperty = oModel.getProperty(oTarget.resolvedPath);
+				oResult.type = oProperty.type;
+				switch (oProperty.type) {
+				case "Edm.DateTime":
+					oConstraints.displayFormat = oProperty["sap:display-format"];
+					break;
+				case "Edm.Decimal":
+					oConstraints.precision = oProperty.precision;
+					oConstraints.scale = oProperty.scale;
+					break;
+				case "Edm.String":
+					oConstraints.maxLength = oProperty.maxLength;
+					break;
+				// no default
 				}
-
-				if (!oResult.type) {
-					jQuery.sap.log.warning("Could not determine type for property '" + sBindingPath
-						+ "' of entity type '" + oEntityType.name + "'", null,
-						"sap.ui.model.odata.AnnotationHelper");
+				if (oProperty.nullable === "false") {
+					oConstraints.nullable = oProperty.nullable;
 				}
+				oResult.constraints = oConstraints;
+			} else {
+				jQuery.sap.log.warning("Could not find property '" + sBindingPath
+					+ "' starting from '" + oPathValue.path + "'", null,
+					"sap.ui.model.odata.AnnotationHelper");
 			}
 
 			return oResult;

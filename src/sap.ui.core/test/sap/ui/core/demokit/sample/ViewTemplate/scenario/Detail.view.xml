@@ -66,6 +66,18 @@
 						</template:with>
 					</form:SimpleForm>
 				</template:with>
+
+				<template:with path="meta>com.sap.vocabularies.UI.v1.DataPoint" var="dataPoint">
+					<template:if test="{dataPoint>}">
+						<form:SimpleForm>
+							<form:title>
+								<core:Title text="DataPoint@EntitySet - {path: 'dataPoint>Title', formatter: '.AH.format'}"/>
+							</form:title>
+							<Label text="{path: 'dataPoint>Description', formatter: '.AH.format'}"/>
+							<Text text="{path: 'dataPoint>Value', formatter: '.AH.format'}"/>
+						</form:SimpleForm>
+					</template:if>
+				</template:with>
 			</template:alias>
 		</template:alias>
 	</layout:VerticalLayout>
