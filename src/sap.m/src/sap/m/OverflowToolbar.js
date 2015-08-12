@@ -182,8 +182,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 		 * @private
 		 */
 		OverflowToolbar.prototype._cacheControlsInfo = function() {
-			var bStayInOverflow,
-				bMoveToOverflow;
+			var sPriority,
+				bCanMoveToOverflow,
+				bAlwaysStaysInOverflow;
 
 			this._aMovableControls = []; // Controls that can be in the toolbar or action sheet
 			this._aToolbarOnlyControls = []; // Controls that can't go to the action sheet (inputs, labels, buttons with special layout, etc...)
@@ -193,26 +194,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 
 			this.getContent().forEach(function (oControl) {
 
-				var oLayoutData = oControl.getLayoutData();
+				sPriority = OverflowToolbar._getControlPriority(oControl);
 
-				if (oLayoutData instanceof OverflowToolbarLayoutData) {
-					bStayInOverflow = oLayoutData.getStayInOverflow();
-					bMoveToOverflow = oLayoutData.getMoveToOverflow();
-				} else {
-					bStayInOverflow = false;
-					bMoveToOverflow = true;
-				}
+				bCanMoveToOverflow = sPriority !== sap.m.OverflowToolbarPriority.NeverOverflow;
+				bAlwaysStaysInOverflow = sPriority === sap.m.OverflowToolbarPriority.AlwaysOverflow;
 
 				var iControlSize = OverflowToolbar._getOptimalControlWidth(oControl);
 				this._aControlSizes[oControl.getId()] = iControlSize;
 
-				if (OverflowToolbarAssociativePopoverControls.supportsControl(oControl) && bStayInOverflow) {
+				if (OverflowToolbarAssociativePopoverControls.supportsControl(oControl) && bAlwaysStaysInOverflow) {
 					this._aActionSheetOnlyControls.push(oControl);
 				} else {
 					// Only add up the size of controls that can be shown in the toolbar, hence this addition is here
 					this._iContentSize += iControlSize;
 
-					if (OverflowToolbarAssociativePopoverControls.supportsControl(oControl) && bMoveToOverflow) {
+					if (OverflowToolbarAssociativePopoverControls.supportsControl(oControl) && bCanMoveToOverflow) {
 						this._aMovableControls.push(oControl);
 					} else {
 						this._aToolbarOnlyControls.push(oControl);
@@ -259,8 +255,35 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 						this._setOverflowButtonNeeded(true);
 					}
 					return iContentSize;
-				};
+				},
+				fnSortByPriorityAndIndex = function(oControlA, oControlB) {
+					var oPriorityOrder = {};
+					oPriorityOrder[sap.m.OverflowToolbarPriority.Disappear] = 1;
+					oPriorityOrder[sap.m.OverflowToolbarPriority.Low] = 2;
+					oPriorityOrder[sap.m.OverflowToolbarPriority.High] = 3;
 
+					var sControlAPriority = OverflowToolbar._getControlPriority(oControlA),
+						sControlBPriority = OverflowToolbar._getControlPriority(oControlB);
+
+					if (oPriorityOrder[sControlAPriority] > oPriorityOrder[sControlBPriority]) {
+						return 1;
+					}
+
+					if (oPriorityOrder[sControlAPriority] < oPriorityOrder[sControlBPriority]) {
+						return -1;
+					}
+
+					var iControlAIndex = oControlA.getParent().indexOfContent(oControlA),
+						iControlBIndex = oControlB.getParent().indexOfContent(oControlB);
+
+					if (iControlAIndex > iControlBIndex) {
+						return -1;
+					}
+
+					if (iControlAIndex < iControlBIndex) {
+						return 1;
+					}
+				};
 
 
 			// If _bSkipOptimization is set to true, this means that no controls moved from/to the overflow, but they rather changed internally
@@ -298,8 +321,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 				// There is at least one button that will go to the action sheet - add the overflow button, but only if it wasn't added already
 				iContentSize = fnAddOverflowButton.call(this, iContentSize);
 
+				// define the overflow order, depending on items` priority
+				this._aMovableControls.sort(fnSortByPriorityAndIndex);
+
 				// Iterate buttons in reverse, the last one goes in first
-				for (i = this._aMovableControls.length - 1; i >= 0; i--) {
+				//for (i = this._aMovableControls.length - 1; i >= 0; i--) {
+				for (i = 0; i < this._aMovableControls.length; i++) {
 					aButtonsToMoveToActionSheet.unshift(this._aMovableControls[i]);
 					iContentSize -= this._aControlSizes[this._aMovableControls[i].getId()];
 
@@ -709,6 +736,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 			}
 
 			return iOptimalWidth;
+		};
+
+		/**
+		 * Returns the control priority based on the layout data (old values are converted)
+		 * @static
+		 * @param oControl
+		 * @private
+		 */
+		OverflowToolbar._getControlPriority = function(oControl) {
+			var oLayoutData = oControl.getLayoutData();
+
+			if (oLayoutData instanceof OverflowToolbarLayoutData) {
+
+				if (oLayoutData.getMoveToOverflow() === false) {
+					return sap.m.OverflowToolbarPriority.NeverOverflow;
+				}
+
+				if (oLayoutData.getStayInOverflow() === true) {
+					return sap.m.OverflowToolbarPriority.AlwaysOverflow;
+				}
+
+				return oLayoutData.getPriority();
+			}
+
+			return sap.m.OverflowToolbarPriority.High;
 		};
 
 		return OverflowToolbar;

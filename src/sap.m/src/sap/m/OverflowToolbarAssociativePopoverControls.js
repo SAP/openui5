@@ -122,7 +122,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'],
 			}
 		};
 
-
 		/******************************   STATIC properties and methods   ****************************/
 
 		/**

@@ -28,15 +28,28 @@ sap.ui.define(['sap/m/ToolbarLayoutData'],
 	var OverflowToolbarLayoutData = ToolbarLayoutData.extend("sap.m.OverflowToolbarLayoutData", /** @lends sap.m.OverflowToolbarLayoutData.prototype */ { metadata : {
 
 		properties : {
-			/**
-			 * The toolbar item can/cannot move to the action sheet
-			 */
-			moveToOverflow : {type: "boolean", defaultValue: true},
 
 			/**
-			 * The toolbar item can/cannot stay in the action sheet
+			 * The OverflowToolbar item can or cannot move to the overflow area
+			 *
+			 * @deprecated Since version 1.32
 			 */
-			stayInOverflow : {type: "boolean", defaultValue: false}
+			moveToOverflow : {type: "boolean", defaultValue: true, deprecated: true},
+
+			/**
+			 * The OverflowToolbar item can or cannot stay in the overflow area
+			 *
+			 * @deprecated Since version 1.32
+			 */
+			stayInOverflow : {type: "boolean", defaultValue: false, deprecated: true},
+
+			/**
+			 * Defines OverflowToolbar items priority, Available priorities ate NeverOverflow, High, Low, Disappear and AlwaysOverflow
+			 *
+			 * @public
+			 * @since 1.32
+			 */
+			priority: {type: "sap.m.OverflowToolbarPriority", defaultValue: sap.m.OverflowToolbarPriority.High}
 		}
 	}});
 

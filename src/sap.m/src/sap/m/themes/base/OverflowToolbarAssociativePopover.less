@@ -19,8 +19,13 @@
   &.sapMPopover .sapMPopoverCont .sapMPopoverScroll {
 	padding: 1rem;
 
+	/* Disappear */
+	&> .sapMOTAPHidden {
+	  display: none;
+	}
+
 	/* All elements inside must have display block */
-	&> * {
+	&> :not(.sapMOTAPHidden) {
 	  display: block;
 	}
 
@@ -72,6 +77,7 @@
 	  width: 100% !important;
 	  max-width: 100% !important;
 	}
+
   }
 }
 
