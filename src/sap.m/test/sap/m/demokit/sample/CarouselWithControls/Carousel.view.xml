@@ -1,0 +1,32 @@
+<mvc:View height="100%" controllerName="sap.m.sample.CarouselWithControls.Carousel"
+	xmlns:l="sap.ui.layout" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+	<Carousel class="sapUiContentPadding">
+		<pages>
+
+			<l:VerticalLayout>
+				<Image src="{img>/products/pic1}" alt="Example picture of speakers"/>
+			</l:VerticalLayout>
+
+			<Image src="{img>/products/pic2}" alt="Example picture of USB flash drive"/>
+
+			<Text class="sapUiSmallMargin" text="Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" />
+
+			<ScrollContainer height="100%" width="100%"
+				horizontal="false" vertical="true">
+				<List
+					headerText="Some List Content 1"
+					items="{
+						path: '/ProductCollection'
+					}">
+					<StandardListItem
+						title="{Name}" description="{ProductId}"
+						icon="{ProductPicUrl}" iconDensityAware="false"
+						iconInset="false" />
+				</List>
+			</ScrollContainer>
+
+			<Image src="{img>/products/pic3}" alt="Example picture of spotlight"/>
+
+		</pages>
+	</Carousel>
+</mvc:View>

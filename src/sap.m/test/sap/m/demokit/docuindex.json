@@ -104,7 +104,11 @@
 		  "name": "Carousel",
 		  "category": "Container",
 		  "since": "1.10",
-		  "samples": ["sap.m.sample.Carousel"]
+		  "samples": [
+			  "sap.m.sample.Carousel",
+			  "sap.m.sample.CarouselWithControls"
+
+		  ]
 		},
 		{
 		  "id": "sap.m.CheckBox",
@@ -1085,6 +1089,11 @@
 		{
 		  "id": "sap.m.sample.Carousel",
 		  "name": "Carousel",
+		  "description": "A sample of a Carousel that contains images."
+		},
+		{
+		  "id": "sap.m.sample.CarouselWithControls",
+		  "name": "Carousel With Controls",
 		  "description": "With the Carousel a user can browse through multi-page content by swiping left or right."
 		},
 		{
