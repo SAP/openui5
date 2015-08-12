@@ -2020,9 +2020,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			//ensure absolute path if no context is set
 			if (!this.oContext && sPath[0] !== "/") {
 				sPath = "/" + sPath;
-			} else if (this.oContext && sPath[0] === "/") {
-				sPath = sPath.substring(1);
 			}
+			/*
+			 * This might be needed, as soon as the AnalyticalBinding can handle relative binding
+			 * @see odata4analytics -> getRequestURi... and _getResourcePath -> enforces always an absolute path
+			 * else if (this.oContext && sPath[0] === "/") {
+				sPath = sPath.substring(1);
+			}*/
 			if (!this._isRequestPending(oRequestDetails.sRequestId)) {
 				/* side note: the check for a pending request is repeated at this point (first check occurs in _getContextsForParentGroupId),
 				   because the logic executed for a call to the binding API may yield to identical OData requests in a single batch.
