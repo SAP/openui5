@@ -900,6 +900,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		// Left or Right button can be visible false and therefore not rendered.
 		// In such a case, focus should be set somewhere else.
 		return this.getInitialFocus()
+				|| this._getFirstFocusableContentSubHeader()
 				|| this._getFirstFocusableContentElementId()
 				|| this._getFirstVisibleButtonId()
 				|| this.getId();
@@ -926,6 +927,23 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		}
 
 		return sButtonId;
+	};
+
+	/**
+	 *
+	 * @returns {string}
+	 * @private
+	 */
+	Dialog.prototype._getFirstFocusableContentSubHeader = function () {
+		var $subHeader = this.$().find('.sapMDialogSubHeader');
+		var sResult;
+
+		var oFirstFocusableDomRef = $subHeader.firstFocusableDomRef();
+
+		if (oFirstFocusableDomRef) {
+			sResult = oFirstFocusableDomRef.id;
+		}
+		return sResult;
 	};
 
 	Dialog.prototype._getFirstFocusableContentElementId = function() {
