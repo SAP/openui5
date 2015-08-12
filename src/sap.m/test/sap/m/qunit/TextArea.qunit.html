@@ -402,7 +402,7 @@
 	
 	module("Encoding");
 	test("carriage return should be converted correctly during rendering", function() {
-		var sValue = "\ntest\ntest\n\n";
+		var sValue = " \ntest\ntest\n\n";
 		var oTA = new sap.m.TextArea({
 			value : sValue
 		}).placeAt("content");
