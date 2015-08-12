@@ -25,25 +25,22 @@ sap.ui.define(['sap/ui/core/routing/Target'],
 				Target.prototype.constructor.apply(this, arguments);
 			},
 
-			_place : function (vData) {
-				var oPromise = Target.prototype._place.apply(this, arguments),
-					that = this;
+			_place : function (oParentInfo, vData) {
+				var oReturnValue = Target.prototype._place.apply(this, arguments);
 
-				// chain to navigation promise to keep the order of navigations!
-				return this._oTargetHandler._chainNavigation(function() {
-					return oPromise.then(function(oViewInfo) {
-						that._oTargetHandler.addNavigation({
-							navigationIdentifier : that._oOptions.name,
-							transition: that._oOptions.transition,
-							transitionParameters: that._oOptions.transitionParameters,
-							eventData: vData,
-							targetControl: oViewInfo.control,
-							view: oViewInfo.view,
-							preservePageInSplitContainer: that._oOptions.preservePageInSplitContainer
-						});
-						return oViewInfo;
-					});
+				this._oTargetHandler.addNavigation({
+
+					navigationIdentifier : this._oOptions.name,
+					transition: this._oOptions.transition,
+					transitionParameters: this._oOptions.transitionParameters,
+					eventData: vData,
+					targetControl: oReturnValue.oTargetControl,
+					view: oReturnValue.oTargetParent,
+					preservePageInSplitContainer: this._oOptions.preservePageInSplitContainer
 				});
+
+				return oReturnValue;
+
 			}
 		});
 

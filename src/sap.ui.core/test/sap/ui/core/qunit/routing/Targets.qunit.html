@@ -3,13 +3,13 @@
 
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>qUnit Page for Targets</title>
+<title>qUnit Page for sap.ui.core.routing.Targets</title>
 
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.ux3,sap.m"
-	data-sap-ui-resourceroots='{"qunit.routing":".", "qunit.view":"../testdata/routing"}'>
+	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
 
 </script>
 
@@ -22,465 +22,423 @@
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-		sinon.config.useFakeTimers = false;
+		sinon.config.useFakeTimers = true;
 
-		sap.ui.require(["sap/ui/core/routing/Targets", "sap/ui/core/routing/Views", "qunit/routing/AsyncViewModuleHook"],
-			function(Targets, Views, ModuleHook){
+		jQuery.sap.require("sap.ui.core.routing.Targets");
+		jQuery.sap.require("sap.ui.core.routing.Views");
 
-				module("getTarget and target names", {
-					setup: function () {
-						// System under test + Arrange
-						this.oViews = new Views();
-						this.oTargets = new Targets({
-							targets: {
-								myTarget: {
-									viewName: "myView"
-								},
-								myParent : {
-									viewName: "myParentView"
-								},
-								myChild : {
-									parent: "myParent",
-									viewName: "myChildView"
-								}
-							},
-							views: this.oViews
-						});
-					},
-					teardown: function () {
-						this.oTargets.destroy();
-					}
-				});
-
-				test("Should be able to get an existing target by key", function () {
-					// Act
-					var oTarget = this.oTargets.getTarget("myTarget");
-
-					// Assert
-					strictEqual(oTarget._oOptions.viewName, "myView", "Did retrieve the correct Target");
-					strictEqual(oTarget._oViews, this.oViews, "Did pass the views instance");
-				});
-
-				test("Should return undefined if a target does not exist", function () {
-					// Act
-					var oTarget = this.oTargets.getTarget("foo");
-
-					// Assert
-					strictEqual(oTarget, undefined, "Did not find such a target");
-				});
-
-				test("Should be able to get a child target", function () {
-					// Act
-					var oChild = this.oTargets.getTarget("myChild");
-
-					// Assert
-					strictEqual(oChild._oOptions.viewName, "myChildView", "Did retrieve the correct Target");
-					strictEqual(oChild._oParent, this.oTargets.getTarget("myParent"), "The parent was correctly passed to the target");
-				});
-
-				test("Should be able to get multiple targets", function () {
-					// Arrange
-					var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
-
-					// Act
-					var aTargets = this.oTargets.getTarget(["myTarget",  "foo", "myParent"]);
-
-					// Assert
-					strictEqual(aTargets.length, 2, "Should return two targets");
-					strictEqual(aTargets[0], this.oTargets.getTarget("myTarget"), "The first target should be myTarget");
-					strictEqual(aTargets[1], this.oTargets.getTarget("myParent"), "The second target should be myParent");
-					// check if error for non-existing target "foo" is thrown
-					sinon.assert.calledWith(oStub, sinon.match(/foo/), sinon.match(this.oTargets));
-				});
-
-
-				module("config - defaults and additional values", {
-					setup: function () {
-						var oTargetConfig = {
-							controlAggregation: "foo",
-							someThingCustom: "bar",
-							someThingToBeReplaced: "baz"
-						};
-						// System under test + Arrange
-						this.oTargets = new Targets({
-							targets: {
-								myView: {
-									someThingToBeReplaced: "replaced",
-									viewLevel: 5
-								}
-							},
-							config: oTargetConfig
-						});
-					},
-					teardown: function () {
-						this.oTargets.destroy();
-					}
-				});
-
-				QUnit.test("Should be able to get an existing target if no key was specified - view should be the key", function (assert) {
-					// Act
-					var oOptions = this.oTargets.getTarget("myView")._oOptions;
-
-					// Assert
-					assert.strictEqual(oOptions.viewLevel, 5, "Did use the view level");
-					assert.strictEqual(oOptions.controlAggregation, "foo", "Did pass one of the routing api values from the config");
-					assert.strictEqual(oOptions.someThingToBeReplaced, "replaced", "Did overwrite ");
-				});
-
-				QUnit.test("Should propergate changes in the rootView to the targets", function (assert) {
-					// Arrange
-					this.oTargets._setRootViewId("changed");
-
-					// Act
-					var oOptions = this.oTargets.getTarget("myView")._oOptions;
-
-					assert.strictEqual(oOptions.rootView, "changed", "Did pass one of the routing api values from the config");
-				});
-
-				module("config - invalid parent", {
-					teardown: function () {
-						this.oTargets.destroy();
-					}
-				});
-
-				test("Should complain about an non existing parent", function () {
-					// Arrange
-					var oIncorrectConfig = {
-								targets: {
-								myChildWithoutParent: {
-									parent:"foo"
-								}
-							}
+		module("getTarget and target names", {
+			setup: function () {
+				// System under test + Arrange
+				this.oViews = new sap.ui.core.routing.Views();
+				this.oTargets = new sap.ui.core.routing.Targets({
+					targets: {
+						myTarget: {
+							viewName: "myView"
 						},
-						oErrorStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
-
-					// System under test + Act
-					this.oTargets = new Targets(oIncorrectConfig);
-
-					// Assert
-					sinon.assert.calledWith(oErrorStub, sinon.match(/was not found/), sinon.match(this.oTargets));
-				});
-
-				module("display", {
-					setup: function () {
-						// System under test + Arrange
-						this.oTargets = new Targets({
-							targets: {
-								firstTarget: {
-								},
-								secondTarget: {
-								}
-							}
-						});
-					},
-					teardown: function () {
-						this.oTargets.destroy();
-					}
-				});
-
-				test("Should display one target", function () {
-					// Arrange
-					var sName = "firstTarget";
-					// Replace display with an empty fn
-					var fnFirstDisplayStub = this.stub(this.oTargets.getTarget(sName), "_display", function() {
-						return Promise.resolve({name:sName});
-					});
-					var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "_display", jQuery.noop);
-
-					// Act
-					return this.oTargets.display("firstTarget").then(function(oViewInfo) {
-						// Assert
-						strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
-						strictEqual(fnSecondDisplayStub.callCount, 0, "Did not invoke display on the second target");
-						strictEqual(oViewInfo[0].name, sName, "Did resolve with the correct view info");
-					});
-
-				});
-
-				test("Should display multiple targets", function () {
-					// Arrange
-					// Set the parentInfo to a non-undefined value because it will be set to undefined later and checked with undefined in an assertion
-					var oParentInfo = {};
-					// Replace display with an empty fn
-					var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "_display", function(vData, oSequencePromise) {
-						return oSequencePromise.then(function() {
-							return {
-								name: "firstTarget",
-								view: "firstView",
-								control: "firstControl"
-							};
-						});
-					});
-					var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "_display", function(vData, oSequencePromise) {
-						return oSequencePromise.then(function(oInfo) {
-							oParentInfo = oInfo;
-							return {
-								name: "secondTarget",
-								view: "secondView",
-								control: "secondControl"
-							};
-						});
-					});
-
-					// Act
-					return this.oTargets.display(["firstTarget", "secondTarget"]).then(function(aViewInfos) {
-						// Assert
-						strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
-						strictEqual(fnSecondDisplayStub.callCount, 1, "Did invoke display on the second target");
-						ok(jQuery.isArray(aViewInfos), "Did resolve with an array of the view infos");
-						strictEqual(aViewInfos.length, 2, "Did resolve with two viewinfos");
-						strictEqual(aViewInfos[0].name, "firstTarget", "Did resolve with first target as first");
-						strictEqual(aViewInfos[1].name, "secondTarget", "Did resolve with second target as second");
-						strictEqual(oParentInfo, undefined, "No info should be passed among sibling targets being displayed");
-					});
-
-				});
-
-				test("Should log an error if user tries to display a non existing Target", function () {
-					// Assert
-					var oErrorStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
-
-					// Act
-					return this.oTargets.display("foo").then(function(aViewInfos) {
-						strictEqual(aViewInfos[0].name, "foo", "Matching target info is returned");
-						strictEqual(aViewInfos[0].error, "The target with the name \"foo\" does not exist!", "Matching error message is returned");
-						// Assert
-						sinon.assert.calledWith(oErrorStub, sinon.match(/does not exist/), sinon.match(this.oTargets));
-					}.bind(this));
-				});
-
-				test("Should log an error if user tries to display a non existing Target, but should display existing ones", function () {
-					// Assert
-					var oErrorStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
-					// Replace display with an empty fn
-					var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "_display", function() {
-						return Promise.resolve({name:"firstTarget"});
-					});
-
-					// Act
-					return this.oTargets.display(["foo", "firstTarget"]).then(function(aViewInfos) {
-						// Assert
-						strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
-						sinon.assert.calledWith(oErrorStub, sinon.match(/does not exist/), sinon.match(this.oTargets));
-						ok(jQuery.isArray(aViewInfos), "Did resolve with an array of the view infos");
-						strictEqual(aViewInfos.length, 2, "Did resolve with two viewinfos");
-						strictEqual(aViewInfos[1].name, "firstTarget", "Did resolve with first target");
-						strictEqual(aViewInfos[0].error, "The target with the name \"foo\" does not exist!", "Did resolve with the error message of the erroneous target");
-					}.bind(this));
-				});
-
-				function createView (aContent, sId) {
-					var sXmlViewContent = aContent.join(''),
-							oViewOptions = {
-								id : sId,
-								viewContent: sXmlViewContent,
-								type: "XML"
-							};
-
-					return sap.ui.view(oViewOptions);
-				}
-
-				QUnit.module("display event", {
-					beforeEach: function () {
-						this.oShell = new sap.ui.ux3.Shell();
-						this.oView = createView(
-								['<View xmlns="sap.ui.core">',
-									'</View>']);
-
-						this.oDefaultConfig = {
-							viewName: "foo",
-							viewPath: "bar",
-							controlAggregation: "content",
-							viewType: "XML",
-							controlId: this.oShell.getId()
-						};
-
-						this.oTargetsCofig = {
-							myTarget: {
-							},
-							mySecondTarget: {
-							},
-							myChild: {
-								parent : "myTarget"
-							}
-						};
-
-						this.oViews = new Views();
-						// System under test + Arrange
-						this.oTargets = new Targets({
-							targets: this.oTargetsCofig,
-							views: this.oViews,
-							config: this.oDefaultConfig
-						});
-					},
-					afterEach: function () {
-						this.oShell.destroy();
-						this.oTargets.destroy();
-						this.oViews.destroy();
-						this.oView.destroy();
-					}
-				});
-
-
-				test("should be able to fire/attach/detach the display event", function() {
-					// Arrange
-					var oParameters = { foo : "bar" },
-						fnEventSpy = this.spy(function(oEvent, oActualData) {
-							strictEqual(oActualData, oData, "the data is correct");
-							strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
-							strictEqual(this, oListener, "the this pointer is correct");
-						}),
-						oListener = {},
-						oData = { some : "data" },
-						oFireReturnValue,
-						oDetachReturnValue,
-						oAttachReturnValue = this.oTargets.attachDisplay(oData, fnEventSpy, oListener);
-
-					// Act
-					oFireReturnValue = this.oTargets.fireDisplay(oParameters);
-					oDetachReturnValue = this.oTargets.detachDisplay(fnEventSpy, oListener);
-					this.oTargets.fireDisplay();
-
-					// Assert
-					strictEqual(fnEventSpy.callCount, 1, "did call the attach spy only once");
-					strictEqual(oAttachReturnValue, this.oTargets, "did return this for chaining for attach");
-					strictEqual(oDetachReturnValue, this.oTargets, "did return this for chaining for detach");
-					strictEqual(oFireReturnValue, this.oTargets, "did return this for chaining for fire");
-				});
-
-				// our qunit is so old
-				function allPropertiesStrictEqual (object1, object2) {
-					var sPropertyName;
-
-					for(sPropertyName in object1) {
-						// only check own properties
-						if(object1.hasOwnProperty(sPropertyName)) {
-							if(object2.hasOwnProperty(sPropertyName)) {
-								if(typeof object1[sPropertyName] === "object") {
-									allPropertiesStrictEqual(object1[sPropertyName],  object2[sPropertyName]);
-								} else {
-									strictEqual(object1[sPropertyName], object2[sPropertyName], "the property " + sPropertyName + " is equal");
-								}
-							} else {
-								ok(false, JSON.stringify(object1) + " has a property " + sPropertyName + " the second object does not have " + JSON.stringify(object2));
-							}
-
-
+						myParent : {
+							viewName: "myParentView"
+						},
+						myChild : {
+							parent: "myParent",
+							viewName: "myChildView"
 						}
-					}
-				}
-
-				QUnit.test("Should fire the display event", function (assert) {
-					// Arrange
-					var that = this,
-						oParameters = null,
-						fnEventSpy = this.spy(function (oEvent) {
-							oParameters = oEvent.getParameters();
-						}),
-						oData = {some : "data"},
-						aViewInfo;
-
-					var oStub = this.stub(this.oViews, "_getView", function () {
-						return that.oView;
-					});
-
-					this.oTargets.attachDisplay(fnEventSpy);
-
-					// Act
-					var oDisplayed = this.oTargets.display("myTarget", oData);
-					return oDisplayed.then(function(aViews) {
-						// Assert
-						assert.strictEqual(fnEventSpy.callCount, 1, "the event got fired");
-						assert.strictEqual(oParameters.view, this.oView, "view got passed to the event");
-						assert.strictEqual(oParameters.control, this.oShell, "control was the shell");
-						assert.strictEqual(oParameters.data, oData, "data was passed");
-						assert.strictEqual(oParameters.name, "myTarget", "name was passed");
-						allPropertiesStrictEqual(oParameters.config, jQuery.extend(true, { name: "myTarget" }, this.oTargetsCofig.myTarget, this.oDefaultConfig));
-					}.bind(this));
+					},
+					views: this.oViews
 				});
+			},
+			teardown: function () {
+				this.oTargets.destroy();
+			}
+		});
 
-				test("Should fire the display event for multiple targets and children", function () {
-					// Arrange
-					var aTargetNames = [],
-						that = this,
-						oParameters = null,
-						oData = {some : "data"},
-						fnEventSpy = this.spy(function (oEvent) {
-							oParameters = oEvent.getParameters();
-							aTargetNames.push(oParameters.name);
-							allPropertiesStrictEqual(oParameters.config, jQuery.extend(true, {}, that.oTargets.getTarget(oParameters.name)._oOptions, that.oDefaultConfig));
-							strictEqual(oParameters.view, that.oView, "view got passed to the event");
-							strictEqual(oParameters.control, that.oShell, "control got passed to the event");
-							assert.strictEqual(oParameters.data, oData, "data was passed");
-						});
+		test("Should be able to get an existing target by key", function () {
+			// Act
+			var oTarget = this.oTargets.getTarget("myTarget");
 
-					var oStub = this.stub(this.oViews, "_getView", function () {
-						return that.oView;
-					});
+			// Assert
+			strictEqual(oTarget._oOptions.viewName, "myView", "Did retrieve the correct Target");
+			strictEqual(oTarget._oViews, this.oViews, "Did pass the views instance");
+		});
 
-					this.oTargets.attachDisplay(fnEventSpy);
+		test("Should return undefined if a target does not exist", function () {
+			// Act
+			var oTarget = this.oTargets.getTarget("foo");
 
-					// Act
-					var oDisplayed = this.oTargets.display(["myChild", "mySecondTarget"], oData);
+			// Assert
+			strictEqual(oTarget, undefined, "Did not find such a target");
+		});
 
-					return oDisplayed.then(function(aViews) {
-						// Assert
-						strictEqual(fnEventSpy.callCount, 3, "the event got fired");
-						strictEqual(aTargetNames.shift(), "myTarget", "the parent got fired first");
-						strictEqual(aTargetNames.shift(), "myChild", "the child got fired after the parent");
-						strictEqual(aTargetNames.shift(), "mySecondTarget", "the second target got fired last");
-					}.bind(this));
-				});
+		test("Should be able to get a child target", function () {
+			// Act
+			var oChild = this.oTargets.getTarget("myChild");
 
+			// Assert
+			strictEqual(oChild._oOptions.viewName, "myChildView", "Did retrieve the correct Target");
+			strictEqual(oChild._oParent, this.oTargets.getTarget("myParent"), "The parent was correctly passed to the target");
+		});
 
-				module("destruction");
+		test("Should be able to get multiple targets", function () {
+			// Arrange
+			var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
 
-				test("Should destroy all dependencies", function () {
-					// Arrange
-					var oViews = new Views(),
-						oFirstTarget,
-						oSecondTarget;
+			// Act
+			var aTargets = this.oTargets.getTarget(["myTarget",  "foo", "myParent"]);
 
-					// System under test
-					var oTargets = new Targets(
-							{
-								targets: {
-									foo: {
-									},
-									bar: {
-									}
-								},
-								views : oViews
-							}
-					);
-
-					oFirstTarget = oTargets.getTarget("foo");
-					oSecondTarget = oTargets.getTarget("bar");
-
-					// Act
-					oTargets.destroy();
-
-					// Assert
-					ok(oTargets.bIsDestroyed, "Did flag the targets as destroyed");
-					ok(oFirstTarget.bIsDestroyed, "Did destroy the first target");
-					ok(oSecondTarget.bIsDestroyed, "Did destroy the second target");
-					strictEqual(oTargets._oViews, null, "Did free the views reference");
-					strictEqual(oTargets._mTargets, null, "Did free the targets map reference");
-					strictEqual(oTargets._oConfig, null, "Did free the config reference");
-					ok(!oViews.bIsDestroyed, "Did not destroy the views instance");
-
-					// Cleanup
-					oViews.destroy();
-				});
+			// Assert
+			strictEqual(aTargets.length, 2, "Should return two targets");
+			strictEqual(aTargets[0], this.oTargets.getTarget("myTarget"), "The first target should be myTarget");
+			strictEqual(aTargets[1], this.oTargets.getTarget("myParent"), "The second target should be myParent");
+			// check if error for non-existing target "foo" is thrown
+			sinon.assert.calledWith(oStub, sinon.match(/foo/), sinon.match(this.oTargets));
 		});
 
 
+		module("config - defaults and additional values", {
+			setup: function () {
+				var oTargetConfig = {
+					controlAggregation: "foo",
+					someThingCustom: "bar",
+					someThingToBeReplaced: "baz"
+				};
+				// System under test + Arrange
+				this.oTargets = new sap.ui.core.routing.Targets({
+					targets: {
+						myView: {
+							someThingToBeReplaced: "replaced",
+							viewLevel: 5
+						}
+					},
+					config: oTargetConfig
+				});
+			},
+			teardown: function () {
+				this.oTargets.destroy();
+			}
+		});
+
+		QUnit.test("Should be able to get an existing target if no key was specified - view should be the key", function (assert) {
+			// Act
+			var oOptions = this.oTargets.getTarget("myView")._oOptions;
+
+			// Assert
+			assert.strictEqual(oOptions.viewLevel, 5, "Did use the view level");
+			assert.strictEqual(oOptions.controlAggregation, "foo", "Did pass one of the routing api values from the config");
+			assert.strictEqual(oOptions.someThingToBeReplaced, "replaced", "Did overwrite ");
+		});
+
+		QUnit.test("Should propergate changes in the rootView to the targets", function (assert) {
+			// Arrange
+			this.oTargets._setRootViewId("changed");
+
+			// Act
+			var oOptions = this.oTargets.getTarget("myView")._oOptions;
+
+			assert.strictEqual(oOptions.rootView, "changed", "Did pass one of the routing api values from the config");
+		});
+
+		module("config - invalid parent", {
+			teardown: function () {
+				this.oTargets.destroy();
+			}
+		});
+
+		test("Should complain about an non existing parent", function () {
+			// Arrange
+			var oIncorrectConfig = {
+						targets: {
+						myChildWithoutParent: {
+							parent:"foo"
+						}
+					}
+				},
+				oErrorStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
+
+			// System under test + Act
+			this.oTargets = new sap.ui.core.routing.Targets(oIncorrectConfig);
+
+			// Assert
+			sinon.assert.calledWith(oErrorStub, sinon.match(/was not found/), sinon.match(this.oTargets));
+		});
+
+		module("display", {
+			setup: function () {
+				// System under test + Arrange
+				this.oTargets = new sap.ui.core.routing.Targets({
+					targets: {
+						firstTarget: {
+						},
+						secondTarget: {
+						}
+					}
+				});
+			},
+			teardown: function () {
+				this.oTargets.destroy();
+			}
+		});
+
+		test("Should display one target", function () {
+			// Arrange
+			// Replace display with an empty fn
+			var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display", jQuery.noop);
+			var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "display", jQuery.noop);
+
+			// Act
+			this.oTargets.display("firstTarget");
+
+			// Assert
+			strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
+			strictEqual(fnSecondDisplayStub.callCount, 0, "Did not invoke display on the second target");
+		});
+
+		test("Should display multiple targets", function () {
+			// Arrange
+			// Replace display with an empty fn
+			var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display", jQuery.noop);
+			var fnSecondDisplayStub = this.stub(this.oTargets.getTarget("secondTarget"), "display", jQuery.noop);
+
+			// Act
+			this.oTargets.display(["firstTarget", "secondTarget"]);
+
+			// Assert
+			strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
+			strictEqual(fnSecondDisplayStub.callCount, 1, "Did invoke display on the second target");
+		});
+
+		test("Should log an error if user tries to display a non existing Target", function () {
+			// Assert
+			var oErrorStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
+
+			// Act
+			this.oTargets.display("foo");
+
+			// Assert
+			sinon.assert.calledWith(oErrorStub, sinon.match(/does not exist/), sinon.match(this.oTargets));
+		});
+
+		test("Should log an error if user tries to display a non existing Target, but should display existing ones", function () {
+			// Assert
+			var oErrorStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
+			var fnFirstDisplayStub = this.stub(this.oTargets.getTarget("firstTarget"), "display", jQuery.noop);
+
+			// Act
+			this.oTargets.display(["foo", "firstTarget"]);
+
+			// Assert
+			strictEqual(fnFirstDisplayStub.callCount, 1, "Did invoke display on the first target");
+			sinon.assert.calledWith(oErrorStub, sinon.match(/does not exist/), sinon.match(this.oTargets));
+		});
+
+		function createView (aContent, sId) {
+			var sXmlViewContent = aContent.join(''),
+					oViewOptions = {
+						id : sId,
+						viewContent: sXmlViewContent,
+						type: "XML"
+					};
+
+			return sap.ui.view(oViewOptions);
+		}
+
+		module("display event", {
+			setup: function () {
+				this.oShell = new sap.ui.ux3.Shell();
+				this.oView = createView(
+						['<View xmlns="sap.ui.core">',
+							'</View>']);
+
+				this.oDefaultConfig = {
+					viewPath: "bar",
+					viewName: "foo",
+					controlAggregation: "content",
+					viewType: "XML",
+					controlId: this.oShell.getId()
+				};
+
+				this.oTargetsCofig = {
+					myTarget: {
+					},
+					mySecondTarget: {
+					},
+					myChild: {
+						parent : "myTarget"
+					}
+				};
+
+				this.oViews = new sap.ui.core.routing.Views();
+				// System under test + Arrange
+				this.oTargets = new sap.ui.core.routing.Targets({
+							targets: this.oTargetsCofig,
+							views: this.oViews,
+							config: this.oDefaultConfig
+						}
+				);
+			},
+			teardown: function () {
+				this.oShell.destroy();
+				this.oTargets.destroy();
+				this.oViews.destroy();
+				this.oView.destroy();
+			}
+		});
+
+
+		test("should be able to fire/attach/detach the display event", function() {
+			// Arrange
+			var oParameters = { foo : "bar" },
+					fnEventSpy = this.spy(function(oEvent, oActualData) {
+						strictEqual(oActualData, oData, "the data is correct");
+						strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
+						strictEqual(this, oListener, "the this pointer is correct");
+					}),
+					oListener = {},
+					oData = { some : "data" },
+					oFireReturnValue,
+					oDetachReturnValue,
+					oAttachReturnValue = this.oTargets.attachDisplay(oData, fnEventSpy, oListener);
+
+			// Act
+			oFireReturnValue = this.oTargets.fireDisplay(oParameters);
+			oDetachReturnValue = this.oTargets.detachDisplay(fnEventSpy, oListener);
+			this.oTargets.fireDisplay();
+			this.clock.tick(0);
+
+			// Assert
+			strictEqual(fnEventSpy.callCount, 1, "did call the attach spy only once");
+			strictEqual(oAttachReturnValue, this.oTargets, "did return this for chaining for attach");
+			strictEqual(oDetachReturnValue, this.oTargets, "did return this for chaining for detach");
+			strictEqual(oFireReturnValue, this.oTargets, "did return this for chaining for fire");
+		});
+
+		// our qunit is so old
+		function allPropertiesStrictEqual (object1, object2) {
+			var sPropertyName;
+
+			for(sPropertyName in object1) {
+				// only check own properties
+				if(object1.hasOwnProperty(sPropertyName)) {
+					if(object2.hasOwnProperty(sPropertyName)) {
+						if(typeof object1[sPropertyName] === "object") {
+							allPropertiesStrictEqual(object1[sPropertyName],  object2[sPropertyName]);
+						} else {
+							strictEqual(object1[sPropertyName], object2[sPropertyName], "the property " + sPropertyName + " is equal");
+						}
+					} else {
+						ok(false, JSON.stringify(object1) + " has a property " + sPropertyName + " the second object does not have " + JSON.stringify(object2));
+					}
+
+
+				}
+			}
+		}
+
+	QUnit.test("Should fire the display event", function (assert) {
+			// Arrange
+			var that = this,
+				oParameters = null,
+				fnEventSpy = this.spy(function (oEvent) {
+					oParameters = oEvent.getParameters();
+				}),
+				oData = {some : "data"};
+
+			var oStub = this.stub(this.oViews, "_getView", function () {
+				return that.oView;
+			});
+
+			this.oTargets.attachDisplay(fnEventSpy);
+
+			// Act
+			this.oTargets.display("myTarget", oData);
+			this.clock.tick(0);
+
+			// Assert
+			assert.strictEqual(fnEventSpy.callCount, 1, "the event got fired");
+			assert.strictEqual(oParameters.view, this.oView, "view got passed to the event");
+			assert.strictEqual(oParameters.control, this.oShell, "control was the shell");
+			assert.strictEqual(oParameters.data, oData, "data was passed");
+			assert.strictEqual(oParameters.name, "myTarget", "name was passed");
+			allPropertiesStrictEqual(oParameters.config, jQuery.extend(true, { name: "myTarget" }, this.oTargetsCofig.myTarget, this.oDefaultConfig));
+		});
+
+		test("Should fire the display event for multiple targets and children", function () {
+			// Arrange
+			var aTargetNames = [],
+				that = this,
+				oParameters = null,
+				oData = {some : "data"},
+				fnEventSpy = this.spy(function (oEvent) {
+					oParameters = oEvent.getParameters();
+					aTargetNames.push(oParameters.name);
+					allPropertiesStrictEqual(oParameters.config, jQuery.extend(true, {}, that.oTargets.getTarget(oParameters.name)._oOptions, that.oDefaultConfig));
+					strictEqual(oParameters.view, that.oView, "view got passed to the event");
+					strictEqual(oParameters.control, that.oShell, "control got passed to the event");
+					assert.strictEqual(oParameters.data, oData, "data was passed");
+				});
+
+			var oStub = this.stub(this.oViews, "_getView", function () {
+				return that.oView;
+			});
+
+			this.oTargets.attachDisplay(fnEventSpy);
+
+			// Act
+			this.oTargets.display(["myChild", "mySecondTarget"], oData);
+			this.clock.tick(0);
+
+			// Assert
+			strictEqual(fnEventSpy.callCount, 3, "the event got fired");
+			strictEqual(aTargetNames.shift(), "myTarget", "the parent got fired first");
+			strictEqual(aTargetNames.shift(), "myChild", "the child got fired after the parent");
+			strictEqual(aTargetNames.shift(), "mySecondTarget", "the second target got fired last");
+		});
+
+
+		module("destruction");
+
+		test("Should destroy all dependencies", function () {
+			// Arrange
+			var oViews = new sap.ui.core.routing.Views(),
+				oFirstTarget,
+				oSecondTarget;
+
+			// System under test
+			var oTargets = new sap.ui.core.routing.Targets(
+					{
+						targets: {
+							foo: {
+							},
+							bar: {
+							}
+						},
+						views : oViews
+					}
+			);
+
+			oFirstTarget = oTargets.getTarget("foo");
+			oSecondTarget = oTargets.getTarget("bar");
+
+			// Act
+			oTargets.destroy();
+
+			// Assert
+			ok(oTargets.bIsDestroyed, "Did flag the targets as destroyed");
+			ok(oFirstTarget.bIsDestroyed, "Did destroy the first target");
+			ok(oSecondTarget.bIsDestroyed, "Did destroy the second target");
+			strictEqual(oTargets._oViews, null, "Did free the views reference");
+			strictEqual(oTargets._mTargets, null, "Did free the targets map reference");
+			strictEqual(oTargets._oConfig, null, "Did free the config reference");
+			ok(!oViews.bIsDestroyed, "Did not destroy the views instance");
+
+			// Cleanup
+			oViews.destroy();
+		});
 
 	})();
 </script>
 </head>
 <body>
-	<h1 id="qunit-header">qUnit Page for Targets</h1>
+	<h1 id="qunit-header">qUnit Page for sap.ui.core.routing.Targets</h1>
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
