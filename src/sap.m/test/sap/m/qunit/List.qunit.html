@@ -1562,7 +1562,7 @@
 				clientY: 0
 			}]
 		});
-		oStdLI._ontouchstart(oTouchStart);
+		oStdLI.ontouchstart(oTouchStart);
 
 		strictEqual(oIcon.getSrc(), sIcon, "Icon has correct path before active handling.");
 		
@@ -1577,7 +1577,7 @@
 				clientY: 0
 			}]
 		});
-		oStdLI._ontouchend(oTouchEnd);
+		oStdLI.ontouchend(oTouchEnd);
 
 		strictEqual(oIcon.getSrc(), sActiveIcon, "Active icon is changed with the previous state after active handling");
 	});
