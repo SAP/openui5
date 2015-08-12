@@ -1548,13 +1548,20 @@
 		
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
+		
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/",
+			type : 'HEAD',
+			dataType : "json"
+		});
+		ok(oResponse.success);
 
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/",
 			dataType : "json"
 		});
-		ok(oResponse.success, "");
-		equal(oResponse.data.d.EntitySets.length, 9, "");
+		ok(oResponse.success);
+		equal(oResponse.data.d.EntitySets.length, 9);
 
 		oMockServer.destroy();
 
