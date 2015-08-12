@@ -2445,7 +2445,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					var oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(sGroupId, oData.results[iFirstMatchingEntryIndex], aSelectedUnitPropertyName, aDeviatingUnitPropertyName, oRequestDetails.bIsFlatListRequest);
 					if (oMultiUnitRepresentative.aReloadMeasurePropertyName.length > 0) {
 						oReloadMeasuresRequestDetails = this._prepareReloadMeasurePropertiesQueryRequest(AnalyticalBinding._requestType.reloadMeasuresQuery, oRequestDetails, oMultiUnitRepresentative);
-						aReloadMeasuresRequestDetails.push(oReloadMeasuresRequestDetails);
+						// only schedule reloadMeasure requests if there is something to select -> it might be that some measure could be reloaded, but the column
+						// might not be totaled (yet might be visible/inResult)
+						// BCP: 1570786546
+						if (oReloadMeasuresRequestDetails.oAnalyticalQueryRequest && oReloadMeasuresRequestDetails.oAnalyticalQueryRequest.getURIQueryOptionValue("$select") != null) {
+							aReloadMeasuresRequestDetails.push(oReloadMeasuresRequestDetails);
+						}
 					}
 					var iNewServiceKeyCount = this._setAdjacentMultiUnitKeys(oKeyIndexMapping, oMultiUnitRepresentative, aMultiUnitEntry);
 
