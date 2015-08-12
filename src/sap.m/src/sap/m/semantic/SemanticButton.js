@@ -64,6 +64,9 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Button', 'sap/m/Overflow
 			var oNewInstance = this._createInstance(oClass);
 
 			oNewInstance.applySettings(this._getConfiguration().getSettings());
+			if (typeof this._getConfiguration().getEventDelegates === "function") {
+				oNewInstance.addEventDelegate(this._getConfiguration().getEventDelegates(oNewInstance));
+			}
 
 			this.setAggregation('_control', oNewInstance, true); //TODO: check bSuppressInvalidate needed?
 
