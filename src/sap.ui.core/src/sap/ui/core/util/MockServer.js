@@ -1900,7 +1900,7 @@ sap.ui
 									case 404:
 										return "404 Not Found";
 									default:
-										break;
+										return iStatusCode;
 								}
 							};
 							var fnBuildResponseString = function(oResponse, sContentType) {
