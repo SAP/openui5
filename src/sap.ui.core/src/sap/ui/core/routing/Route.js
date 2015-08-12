@@ -56,11 +56,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 				if (!oConfig.name) {
 					$.sap.log.error("A name has to be specified for every route", this);
 				}
-				
+
 				var that = this,
 					vRoute = oConfig.pattern,
 					aSubRoutes;
-				
+
 				if (!$.isArray(vRoute)) {
 					vRoute = [vRoute];
 				}
@@ -94,16 +94,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 						oRouter.addRoute(oSubRouteConfig, that);
 					});
 				}
-				
+
 				if (oConfig.pattern === undefined) {
 					//this route has no pattern - it will not get a matched handler. Or a crossroads route
 					return;
 				}
-				
+
 				$.each(vRoute, function(iIndex, sRoute) {
-	
+
 					that._aPattern[iIndex] = sRoute;
-	
+
 					that._aRoutes[iIndex] = oRouter._oRouter.addRoute(sRoute);
 					that._aRoutes[iIndex].greedy = oConfig.greedy;
 
@@ -112,7 +112,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 						$.each(arguments, function(iArgumentIndex, sArgument) {
 							oArguments[that._aRoutes[iIndex]._paramsIds[iArgumentIndex]] = sArgument;
 						});
-						that._routeMatched(oArguments, true);
+						that._routeMatched(oArguments);
 					});
 				});
 			},
@@ -228,19 +228,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 * @private
 			 * @function
 			 */
-			_routeMatched : function(oArguments, bInital) {
+			_routeMatched : function(oArguments, oSequencePromise) {
+
 				var oRouter = this._oRouter,
-					oParentPlaceInfo,
-					oPlaceInfo,
 					oTarget,
 					oConfig,
 					oEventData,
 					oView = null,
-					oTargetControl = null;
+					oTargetControl = null,
+					bInitial;
+
+				if (!oSequencePromise) {
+					bInitial = true;
+					oSequencePromise = Promise.resolve();
+				}
 
 				// Recursively fire matched event and display views of this routes parents
 				if (this._oParent) {
-					oParentPlaceInfo = this._oParent._routeMatched(oArguments);
+					oSequencePromise = this._oParent._routeMatched(oArguments, oSequencePromise);
 				}
 
 				oConfig =  $.extend({}, oRouter._oConfig, this._oConfig);
@@ -257,44 +262,46 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 					// update the targets config so defaults are taken into account - since targets cannot be added in runtime they don't merge configs like routes do
 					oTarget._oOptions = this._convertToTargetOptions(oConfig);
 
-					// validate if it makes sense to display the target (Route does not have all params required) - no error logging will be done during validation
-					if (oTarget._isValid(oParentPlaceInfo, false)) {
-						oPlaceInfo = oTarget._place(oParentPlaceInfo);
+					oSequencePromise = oTarget._place(oSequencePromise);
+
+					// this is for sap.m.routing.Router to chain the promise to the navigation promise in TargetHandler
+					if (this._oRouter._oTargetHandler && this._oRouter._oTargetHandler._chainNavigation) {
+						var oCurrentPromise = oSequencePromise;
+						oSequencePromise = this._oRouter._oTargetHandler._chainNavigation(function() {
+							return oCurrentPromise;
+						});
 					}
+				} else {
+					// let targets do the placement + the events
+					oSequencePromise = oRouter._oTargets._display(this._oConfig.target, oArguments, oSequencePromise);
+				}
 
-					oPlaceInfo = oPlaceInfo || {};
+				return oSequencePromise.then(function(oResult) {
+					oResult = oResult || {};
 
-					oView = oPlaceInfo.oTargetParent;
-					oTargetControl = oPlaceInfo.oTargetControl;
+					oView = oResult.view;
+					oTargetControl = oResult.control;
 
 					// Extend the event data with view and targetControl
 					oEventData.view = oView;
 					oEventData.targetControl = oTargetControl;
-				} else {
-					// let targets do the placement + the events
-					oRouter._oTargets._display(this._oConfig.target, oArguments);
-				}
 
-				if (oConfig.callback) {
-					//Targets don't pass TargetControl and view since there might be multiple
-					oConfig.callback(this, oArguments, oConfig, oTargetControl, oView);
-				}
+					if (oConfig.callback) {
+						//Targets don't pass TargetControl and view since there might be multiple
+						oConfig.callback(this, oArguments, oConfig, oTargetControl, oView);
+					}
 
-				setTimeout(function(){
 					this.fireEvent("matched", oEventData);
 					oRouter.fireRouteMatched(oEventData);
-				}.bind(this), 0);
-
-				// skip this event in the recursion
-				if (bInital) {
-					setTimeout(function(){
+					// skip this event in the recursion
+					if (bInitial) {
 						$.sap.log.info("The route named '" + oConfig.name + "' did match with its pattern", this);
 						this.fireEvent("patternMatched", oEventData);
 						oRouter.fireRoutePatternMatched(oEventData);
-					}.bind(this), 0);
-				}
+					}
 
-				return oPlaceInfo;
+					return oResult;
+				}.bind(this));
 			},
 
 			_convertToTargetOptions: function (oOptions) {
