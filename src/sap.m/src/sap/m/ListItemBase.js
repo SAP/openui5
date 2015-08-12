@@ -113,16 +113,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	ListItemBase.prototype.onAfterRendering = function() {
 		this.informList("DOMUpdate", true);
-		if (this.hasActiveType()) {
-			this.$()
-				.on("touchstart", this._ontouchstart.bind(this))
-				.on("touchmove", this._ontouchmove.bind(this))
-				.on("touchend", this._ontouchend.bind(this));
-		}
-	};
-
-	ListItemBase.prototype.onBeforeRendering = function() {
-		this.$().off();
 	};
 	
 	/*
@@ -627,9 +617,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	ListItemBase.prototype.ontouchstart = function(oEvent) {
 		this._eventHandledByControl = oEvent.isMarked();
-	};
-
-	ListItemBase.prototype._ontouchstart = function(oEvent) {
+		
 		var oTargetTouch = oEvent.targetTouches[0];
 		this._touchedY = oTargetTouch.clientY;
 		this._touchedX = oTargetTouch.clientX;
@@ -641,23 +629,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			!this.hasActiveType()) {
 			return;
 		}
-		var scrollTop = this.$().offset().top;
 	
 		// timeout regarding active state when scrolling
-		this._timeoutIdStart = jQuery.sap.delayedCall(200, this, function() {
-			var scrollTop2 = this.$().offset().top;
-			if (Math.abs(scrollTop2 - scrollTop) < 3) {
-				this.setActive(true);
-				this._timeoutIdStart = null;
-			}
+		this._timeoutIdStart = jQuery.sap.delayedCall(100, this, function() {
+			this.setActive(true);
+			oEvent.setMarked();
 		});
 	};
 	
-	// touch move to prevent active state when scrolling
-	ListItemBase.prototype._ontouchmove = function(oEvent) {
-		var bTouchMovement = Math.abs(this._touchedY - oEvent.targetTouches[0].clientY) > 10 || Math.abs(this._touchedX - oEvent.targetTouches[0].clientX) > 10;
-	
-		if ((this._active || this._timeoutIdStart) && bTouchMovement) {
+	// handle touchmove to prevent active state when scrolling
+	ListItemBase.prototype.ontouchmove = function(oEvent) {
+		
+		if ((this._active || this._timeoutIdStart) && 
+			(Math.abs(this._touchedY - oEvent.targetTouches[0].clientY) > 10 || Math.abs(this._touchedX - oEvent.targetTouches[0].clientX) > 10)) {
 	
 			// there is movement and therefore no tap...remove active styles
 			clearTimeout(this._timeoutIdStart);
@@ -667,7 +651,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 	
-	ListItemBase.prototype._ontouchend = function(oEvent) {
+	ListItemBase.prototype.ontouchend = function(oEvent) {
 	
 		// several fingers could be used
 		if (oEvent.targetTouches.length == 0 && this.hasActiveType()) {
