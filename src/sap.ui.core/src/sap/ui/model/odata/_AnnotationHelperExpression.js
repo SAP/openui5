@@ -6,13 +6,15 @@
 // helper module for sap.ui.model.odata.AnnotationHelper.
 sap.ui.define([
 	'jquery.sap.global', './_AnnotationHelperBasics', 'sap/ui/base/BindingParser',
-	'sap/ui/base/ManagedObject', 'sap/ui/core/format/DateFormat'
-], function(jQuery, Basics, BindingParser, ManagedObject, DateFormat) {
+	'sap/ui/base/ManagedObject', 'sap/ui/core/format/DateFormat', 'sap/ui/model/odata/ODataUtils'
+], function(jQuery, Basics, BindingParser, ManagedObject, DateFormat, ODataUtils) {
 	'use strict';
 
 	// see http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
 	var sDateValue = "\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])",
 		sDecimalValue = "[-+]?\\d+(?:\\.\\d+)?",
+		sMaxSafeInteger = "9007199254740991",
+		sMinSafeInteger = "-" + sMaxSafeInteger,
 		sTimeOfDayValue = "(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(\\.\\d{1,12})?)?",
 		mEdmType2RegExp = {
 			Bool : /^true$|^false$/i,
@@ -105,8 +107,7 @@ sap.ui.define([
 	 */
 	Expression = {
 		/**
-		 * Adjusts the second operand so that both have the same category, if possible. The type is
-		 * not changed because it doesn't interest any more.
+		 * Adjusts the second operand so that both have the same category, if possible.
 		 *
 		 * @param {object} oOperand1
 		 *   the operand 1 (as a result object with category)
@@ -116,13 +117,19 @@ sap.ui.define([
 		adjustOperands: function (oOperand1, oOperand2) {
 			if (oOperand1.result !== "constant" && oOperand1.category === "number"
 					&& oOperand2.result === "constant" && oOperand2.type === "Edm.Int64") {
-				// adjust a integer constant (which is always "Edm.Int64") to the number
-				oOperand2.category = oOperand1.category;
+				// adjust an integer constant of type "Edm.Int64" to the number
+				oOperand2.category = "number";
+			}
+			if (oOperand1.result !== "constant" && oOperand1.category === "decimal"
+				&& oOperand2.result === "constant" && oOperand2.type === "Edm.Int32") {
+				// adjust an integer constant of type "Edm.Int32" to the decimal
+				oOperand2.category = "decimal";
+				oOperand2.type = oOperand1.type;
 			}
 			if (oOperand1.result === "constant" && oOperand1.category === "date"
 					&& oOperand2.result !== "constant" && oOperand2.category === "datetime") {
 				// adjust a datetime parameter to the date constant
-				oOperand2.category = oOperand1.category;
+				oOperand2.category = "date";
 			}
 		},
 
@@ -280,14 +287,22 @@ sap.ui.define([
 							oPathValue.path)
 					};
 				}
+				sEdmType = "Edm.String";
 			} else if (!mEdmType2RegExp[sEdmType].test(sValue)) {
 				Basics.error(oPathValue,
 					"Expected " + sEdmType + " value but instead saw '" + sValue + "'");
+			} else {
+				sEdmType = mType2Type[sEdmType];
+				if (sEdmType === "Edm.Int64"
+						&& ODataUtils.compare(sValue, sMinSafeInteger, true) >= 0
+						&& ODataUtils.compare(sValue, sMaxSafeInteger, true) <= 0) {
+					sEdmType = "Edm.Int32";
+				}
 			}
 
 			return {
 				result : "constant",
-				type : mType2Type[sEdmType],
+				type : sEdmType,
 				value : sValue
 			};
 		},

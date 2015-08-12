@@ -134,10 +134,10 @@ sap.ui.define([
 		 * @param {object} oResult
 		 *   an object with the following properties:
 		 *   result: "constant", "binding", "composite" or "expression"
-		 *   value: the value to write into the resulting string depending on result:
-		 *     when "constant": {any} the constant value w/o escaping
-		 *     when "binding": {string} the binding path
-		 *     when "expression": {string} a binding expression not wrapped (no "{=" and "}")
+		 *   value: {string} the value to write into the resulting string depending on result:
+		 *     when "constant": the constant value as a string (from the annotation)
+		 *     when "binding": the binding path
+		 *     when "expression": a binding expression not wrapped (no "{=" and "}")
 		 *     when "composite": a composite binding string
 		 *   type: an EDM data type (like "Edm.String")
 		 *   constraints: {object} optional type constraints when result is "binding"
@@ -152,14 +152,14 @@ sap.ui.define([
 		 *   the resulting string to embed into an composite binding or a binding expression
 		 */
 		resultToString: function (oResult, bExpression, bWithType) {
-			var vValue = oResult.value;
+			var sValue = oResult.value;
 
 			function binding(bAddType) {
 				var sConstraints, sResult;
 
 				bAddType = bAddType && !oResult.ignoreTypeInPath && oResult.type;
-				if (bAddType || rBadChars.test(vValue)) {
-					sResult = "{path:" + Basics.toJSON(vValue);
+				if (bAddType || rBadChars.test(sValue)) {
+					sResult = "{path:" + Basics.toJSON(sValue);
 					if (bAddType) {
 						sResult += ",type:'" + mUi5TypeForEdmType[oResult.type] + "'";
 						sConstraints = Basics.toJSON(oResult.constraints);
@@ -169,7 +169,18 @@ sap.ui.define([
 					}
 					return sResult + "}";
 				}
-				return "{" + vValue + "}";
+				return "{" + sValue + "}";
+			}
+
+			function constant(oResult) {
+				switch (oResult.type) {
+					case "Edm.Boolean":
+					case "Edm.Double":
+					case "Edm.Int32":
+						return oResult.value;
+					default:
+						return Basics.toJSON(oResult.value);
+				}
 			}
 
 			switch (oResult.result) {
@@ -181,18 +192,18 @@ sap.ui.define([
 					throw new Error(
 						"Trying to embed a composite binding into an expression binding");
 				}
-				return vValue;
+				return sValue;
 
 			case "constant":
 				if (oResult.type === "edm:Null") {
 					return bExpression ? "null" : null;
 				}
 				return bExpression
-					? Basics.toJSON(vValue)
-					: BindingParser.complexParser.escape(vValue);
+					? constant(oResult)
+					: BindingParser.complexParser.escape(sValue);
 
 			case "expression":
-				return bExpression ? vValue : "{=" + vValue + "}";
+				return bExpression ? sValue : "{=" + sValue + "}";
 
 			// no default
 			}
