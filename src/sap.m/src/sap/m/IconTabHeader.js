@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.IconTabHeader.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/delegate/ItemNavigation'],
-	function(jQuery, library, Control, EnabledPropagator, ItemNavigation) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/IconPool'],
+	function(jQuery, library, Control, EnabledPropagator, ItemNavigation, IconPool) {
 	"use strict";
 
 	/**
@@ -638,10 +638,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (sap.ui.Device.system.desktop) {
 			// use navigation arrows on desktop and win8 combi devices
-			src = "sap-icon://navigation-" + sName + "-arrow";
+			src = IconPool.getIconURI("navigation") + "-" + sName + "-arrow";
 		} else {
 			// use slim arrows on mobile devices
-			src = "sap-icon://slim-arrow-" + sName;
+			src = IconPool.getIconURI("slim-arrow") + "-" + sName;
 		}
 
 		var mProperties = {

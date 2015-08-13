@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.m.TimePicker
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/ValueStateSupport' ],
-	function(jQuery, Renderer, InputBaseRenderer, ValueStateSupport) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/IconPool'],
+	function(jQuery, Renderer, InputBaseRenderer, ValueStateSupport, IconPool) {
 		"use strict";
 
 		/**
@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 				mAttributes.title = null;
 
 				oRm.write('<div class="' + VALUE_HELP_ICON_CLASS + '">');
-				oRm.writeIcon("sap-icon://time-entry-request", aClasses, mAttributes);
+				oRm.writeIcon(IconPool.getIconURI("time-entry-request"), aClasses, mAttributes);
 				oRm.write("</div>");
 			}
 

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.OverflowToolbar.
-sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/core/InvisibleText', 'sap/m/Toolbar', 'sap/m/ToolbarSpacer', 'sap/m/OverflowToolbarLayoutData', 'sap/m/OverflowToolbarAssociativePopover', 'sap/m/OverflowToolbarAssociativePopoverControls'],
-	function(jQuery, library, ToggleButton, InvisibleText, Toolbar, ToolbarSpacer, OverflowToolbarLayoutData, OverflowToolbarAssociativePopover, OverflowToolbarAssociativePopoverControls) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/core/InvisibleText', 'sap/m/Toolbar', 'sap/m/ToolbarSpacer', 'sap/m/OverflowToolbarLayoutData', 'sap/m/OverflowToolbarAssociativePopover', 'sap/m/OverflowToolbarAssociativePopoverControls', 'sap/ui/core/IconPool'],
+	function(jQuery, library, ToggleButton, InvisibleText, Toolbar, ToolbarSpacer, OverflowToolbarLayoutData, OverflowToolbarAssociativePopover, OverflowToolbarAssociativePopoverControls, IconPool) {
 		"use strict";
 
 
@@ -443,7 +443,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 				// A tooltip will be used automatically by the button
 				// using to the icon-name provided
 				oOverflowButton = new ToggleButton({
-					icon: "sap-icon://overflow",
+					icon: IconPool.getIconURI("overflow"),
 					press: this._overflowButtonPressed.bind(this),
 					ariaLabelledBy: this._sAriaOverflowButtonLabelId,
 					type: sap.m.ButtonType.Transparent

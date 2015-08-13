@@ -238,7 +238,7 @@ sap.ui.define([
 				if (mNavContext.popover && sap.ui.Device.system.phone) {
 					oCustomHeader.addContentRight(
 						new Button({
-							icon : "sap-icon://decline",
+							icon : IconPool.getIconURI("decline"),
 							press : function() {
 								mNavContext.popover.close();
 							}
