@@ -779,7 +779,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 						jQuery.sap.delayedCall(100, that, that._handlePopoverAfterClose, [oList]);
 					} else {
 						//that._handlePopoverAfterClose(oList);
-						jQuery.sap.delayedCall(200, that, that._handlePopoverAfterClose, [oList]);
+						jQuery.sap.delayedCall(120, that, that._handlePopoverAfterClose, [oList]);
 						oPopover.destroySubHeader();
 					}
 				},
