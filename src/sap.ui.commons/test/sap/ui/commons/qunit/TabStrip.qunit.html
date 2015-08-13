@@ -395,6 +395,24 @@
 			equal(jQuery(jQuery("#T2-tab1-panel").children()[0]).text(), "Test 2", "Text 2 is rendered");
 		});
 
+		test("change properties", function() {
+
+			var $tabs = jQuery('#tabstrip1 .sapUiTabBarCnt').children();
+			ok ($tabs.length == 2, 'TabStrip has 2 tabs visible');
+
+			oTabStrip1.getTabs()[2].setVisible(false);
+			sap.ui.getCore().applyChanges(); // rerendering must be finished
+
+			$tabs = jQuery('#tabstrip1 .sapUiTabBarCnt').children();
+			ok ($tabs.length == 1, 'TabStrip has 1 tabs visible');
+
+			oTabStrip1.getTabs()[2].setVisible(true);
+			sap.ui.getCore().applyChanges(); // rerendering must be finished
+
+			$tabs = jQuery('#tabstrip1 .sapUiTabBarCnt').children();
+			ok ($tabs.length == 2, 'TabStrip has 2 tabs visible');
+		});
+
 
 		test("tab reordering", function() {
 
