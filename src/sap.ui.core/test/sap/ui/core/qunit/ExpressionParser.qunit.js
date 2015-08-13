@@ -2,6 +2,8 @@
  * ${copyright}
  */
 (function () {
+	/*global deepEqual, ok, QUnit, sinon, strictEqual, throws */
+	/*eslint max-nested-callbacks: 4, no-warning-comments: 0*/
 	"use strict";
 
 	jQuery.sap.require("sap.ui.base.ExpressionParser");
@@ -37,20 +39,26 @@
 	 */
 	function checkFixtures(sTitle, aFixtures, fnInit) {
 		aFixtures.forEach(function (oFixture) {
-			test(sTitle + " : " + oFixture.expression + " --> " + oFixture.result, function () {
-				if (fnInit) {
-					fnInit(this); //call initializer with sandbox
+			QUnit.test(sTitle + " : " + oFixture.expression + " --> " + oFixture.result,
+				function () {
+					if (fnInit) {
+						fnInit(this); //call initializer with sandbox
+					}
+					check(oFixture.expression, oFixture.result);
 				}
-				check(oFixture.expression, oFixture.result);
-			});
+			);
 		});
 	}
 
 	/**
 	 * @param {function} fnCodeUnderTest
+	 *   the code under test
 	 * @param {string} sMessage
+	 *   the expected error message
 	 * @param {string} sDetails
+	 *   the expected error details
 	 * @param {number} iAt
+	 *   the expected error position
 	 */
 	function checkError(fnCodeUnderTest, sMessage, sDetails, iAt) {
 		sinon.test(function () {
@@ -65,8 +73,7 @@
 			try {
 				fnCodeUnderTest();
 				ok(false, "code under test throws");
-			}
-			catch (e) {
+			} catch (e) {
 				ok(e instanceof SyntaxError, "Error type: " + e);
 				strictEqual(e.message, sMessage, "Error.message");
 				strictEqual(e.at, iAt, "Error.at");
@@ -78,7 +85,7 @@
 	}
 
 	//*********************************************************************************************
-	module("sap.ui.base.ExpressionParser");
+	QUnit.module("sap.ui.base.ExpressionParser");
 
 	//*********************************************************************************************
 	[
@@ -86,7 +93,7 @@
 		{ binding: '{="foo"}', literal: 'foo' },
 		{ binding: "{= 'foo bar' }", literal: 'foo bar' }
 	].forEach(function(oFixture) {
-		test("Valid String literal " + oFixture.binding, function () {
+		QUnit.test("Valid String literal " + oFixture.binding, function () {
 			var oExpression;
 
 			oExpression = sap.ui.base.ExpressionParser.parse(
@@ -105,7 +112,7 @@
 		{ binding: "{=${ b}   }" },
 		{ binding: "{=     ${ b} }" }
 	].forEach(function(oFixture) {
-		test("Valid embedded binding " + oFixture.binding, function () {
+		QUnit.test("Valid embedded binding " + oFixture.binding, function () {
 			var oBinding = {
 					result: {/*bindingInfo*/},
 					at: oFixture.binding.indexOf("}") + 1
@@ -116,7 +123,7 @@
 				strictEqual(sInput, oFixture.binding);
 				strictEqual(iStart, oFixture.binding.indexOf("{", 1));
 				return oBinding;
-			};
+			}
 
 			oExpression = sap.ui.base.ExpressionParser.parse(
 				resolveBinding,
@@ -160,9 +167,9 @@
 	//*********************************************************************************************
 	[
 		//parser error
-		{binding: "{=$invalid}}", message: "Expected '{' instead of 'i'", at: 4},
+		{binding: "{=$invalid}}", message: "Expected '{' instead of 'i'", at: 4}
 	].forEach(function(oFixture) {
-		test("Invalid binding: " + oFixture.binding, function () {
+		QUnit.test("Invalid binding: " + oFixture.binding, function () {
 			checkError(function () {
 				// call ExpressionParser through BindingParser to gain resolution of bindings
 				sap.ui.base.BindingParser.complexParser(oFixture.binding);
@@ -217,7 +224,7 @@
 				result: "http://foo/tel,mail" },
 			{ expression:
 				"odata.fillUriTemplate('http://foo/{t},{m}', {t: ${/mail}, 'm': ${/tel}})",
-				result: "http://foo/mail,tel" },
+				result: "http://foo/mail,tel" }
 		],
 		function (oSandbox) {
 			var mGlobals = {
@@ -279,7 +286,7 @@
 		{ binding: "{=[1+]}", message: "Unexpected ]", token: "]"},
 		{ binding: "{=[1,]}", message: "Unexpected ]", token: "]"}
 	].forEach(function(oFixture) {
-		test("Error handling " + oFixture.binding + " --> " + oFixture.message, function () {
+		QUnit.test("Error handling " + oFixture.binding + " --> " + oFixture.message, function () {
 			checkError(function () {
 					sap.ui.base.BindingParser.complexParser(oFixture.binding);
 				},
@@ -296,9 +303,9 @@
 		{binding: "{='foo' ${bar}}", at: 8},
 		{binding: "{=odata foo}", at: 8},
 		{binding: "{=odata.fillUriTemplate )}", at: 24},
-		{binding: "{='foo' , 'bar'}", at: 8},
+		{binding: "{='foo' , 'bar'}", at: 8}
 	].forEach(function(oFixture) {
-		test("Error handling: excess tokens: " + oFixture.binding, function () {
+		QUnit.test("Error handling: excess tokens: " + oFixture.binding, function () {
 			throws(function () {
 				sap.ui.base.BindingParser.complexParser(oFixture.binding);
 			}, new SyntaxError("Expected '}' and instead saw '"
@@ -315,7 +322,7 @@
 		{ binding: "{={foo: 'bar'}}", result: {foo: "bar"} },
 		{ binding: "{={a: 'a', \"b\": \"b\"}}", result: {a: "a", b: "b"} }
 	].forEach(function(oFixture) {
-		test("Object literal " + oFixture.binding, function () {
+		QUnit.test("Object literal " + oFixture.binding, function () {
 			var oBindingInfo = sap.ui.base.ExpressionParser.parse(undefined /*fnResolver*/,
 					oFixture.binding, 2);
 			deepEqual(oBindingInfo.constant, oFixture.result);
@@ -323,7 +330,7 @@
 	});
 
 	//*********************************************************************************************
-	test("Object literal: Repeated evaluation", function () {
+	QUnit.test("Object literal: Repeated evaluation", function () {
 		var oBindingInfo = sap.ui.base.BindingParser.complexParser("{={t: ${/t}, 'f': ${/f}}}");
 
 		deepEqual(oBindingInfo.formatter(true, false), {t: true, f: false});
@@ -340,7 +347,7 @@
 	checkFixtures("Multiplicative operators", [
 		{ expression: "${/3} * ${/five}", result: "15" },
 		{ expression: "42 / 7", result: "6" },
-		{ expression: "-8 % '3'", result: "-2" },
+		{ expression: "-8 % '3'", result: "-2" }
 	]);
 
 	//*********************************************************************************************
@@ -377,7 +384,7 @@
 	checkFixtures("Unary +, -, typeof", [
 		{ expression: "{=+true}", result: "1" },
 		{ expression: "{=--42}", result: "42" },
-		{ expression: "{=typeof 42}", result: "number" } 
+		{ expression: "{=typeof 42}", result: "number" }
 	]);
 
 	//*********************************************************************************************
@@ -386,7 +393,7 @@
 	]);
 
 	//*********************************************************************************************
-	test("Embedded bindings with formatter", function () {
+	QUnit.test("Embedded bindings with formatter", function () {
 		var oScope = {
 			myFormatter: function (vValue) {
 				return "~" + String(vValue) + "~";
@@ -423,7 +430,7 @@
 	]);
 
 	//*********************************************************************************************
-	test("Warning for undefined global identifier", function () {
+	QUnit.test("Warning for undefined global identifier", function () {
 		var oLogMock = this.mock(jQuery.sap.log);
 
 		oLogMock.expects("warning").withExactArgs(
@@ -458,13 +465,13 @@
 		{expression: "{=String.fromCharCode(32)}", result: " "},
 		{expression: "{=Array.isArray([])}", result: "true"},
 		{expression: "{=Array.isArray({})}", result: "false"},
-		{expression: "{=JSON.stringify({a:1})}", result: '{"a":1}'},
+		{expression: "{=JSON.stringify({a:1})}", result: '{"a":1}'}
 	], function (oSandbox) {
 		oSandbox.mock(jQuery.sap.log).expects("warning").never();
 	});
 
 	//*********************************************************************************************
-	test("odata.compare", function () {
+	QUnit.test("odata.compare", function () {
 		this.mock(jQuery.sap).expects("require").withExactArgs("sap.ui.model.odata.ODataUtils");
 		this.mock(sap.ui.model.odata.ODataUtils).expects("compare")
 			.withExactArgs(2, 3).returns("-1");
@@ -473,11 +480,11 @@
 	});
 
 	//*********************************************************************************************
-	test("odata.uriEncode", function () {
+	QUnit.test("odata.uriEncode", function () {
 		this.mock(jQuery.sap).expects("require").withExactArgs("sap.ui.model.odata.ODataUtils");
 		this.mock(sap.ui.model.odata.ODataUtils).expects("formatValue")
 			.withExactArgs("foo", "Edm.String").returns("'foo'");
 
 		check("{=odata.uriEncode('foo', 'Edm.String')}", "'foo'");
 	});
-} ());
+}());
