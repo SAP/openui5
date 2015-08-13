@@ -1850,6 +1850,22 @@ sap.ui
 						return true;
 					}
 				});
+				
+				// add the service request (HEAD request for CSRF Token)
+				aRequests.push({
+					method: "HEAD",
+					path: new RegExp("$"),
+					response: function(oXhr) {
+						jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
+						var mHeaders = {
+							"Content-Type": "application/json;charset=utf-8"
+						};
+						fnHandleXsrfTokenHeader(oXhr, mHeaders);
+						oXhr.respond(200, mHeaders);
+						jQuery.sap.log.debug("MockServer: response sent with: 200");
+						return true;
+					}
+				});
 
 				// add the service request
 				aRequests.push({
