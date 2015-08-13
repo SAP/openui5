@@ -2801,7 +2801,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		}
 
 		var oReloadedEntry = oData.results[0];
-		var oReloadedEntryKey = this.oModel.getKey(oReloadedEntry);
 		var oMultiUnitEntry = this.oModel.getObject("/" + sMultiUnitEntryKey);
 		if (!oMultiUnitEntry) {
 			jQuery.sap.log.fatal("assertion failed: no entity found with key " + sMultiUnitEntryKey);
@@ -2812,7 +2811,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 // 			this._trace_debug_if(oReloadedEntry[aMeasureName[i]] === undefined || oReloadedEntry[aMeasureName[i]] == "", "no value for reloaded measure property");
 			oMultiUnitEntry[aMeasureName[i]] = oReloadedEntry[aMeasureName[i]];
 		}
-		this.oModel.deleteCreatedEntry(this.oModel.getContext("/" + oReloadedEntryKey));
+		// Deleting an entry in the model is not possible and will lead to an exception
+		// BCP: 1570789694
 // 		this._trace_leave("ReqExec", "_processReloadMeasurePropertiesQueryResponse", "measures=" + oMultiUnitRepresentative.aReloadMeasurePropertyName.join()); // DISABLED FOR PRODUCTION
 	};
 
