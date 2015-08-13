@@ -46,7 +46,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Index of the currently selected tab.
 			 */
-			selectedIndex : {type : "int", group : "Misc", defaultValue : 0}
+			selectedIndex : {type : "int", group : "Misc", defaultValue : 0},
+
+			/**
+			 * Specifies whether tab reordering is enabled.
+			 */
+			enableTabReordering : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
 		defaultAggregation : "tabs",
 		aggregations : {
@@ -86,41 +91,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	}});
 
-
-
-
-
-
-
+	TabStrip.ANIMATION_DURATION = 200;
 
 	TabStrip.prototype.init = function() {
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 
 	TabStrip.prototype.onAfterRendering = function() {
-		// find a collection of all tabs
-		var oFocusRef = this.getFocusDomRef(),
-			aTabs = oFocusRef.lastChild.childNodes,
-			aTabDomRefs = [],
-			iSelectedDomIndex = -1;
-		for (var i = 0;i < aTabs.length;i++) {
-			aTabDomRefs.push(aTabs[i]);
-			if (jQuery(aTabs[i]).hasClass("sapUiTabSel")) {
-				// get selected index out of visible tabs for ItemNavigation
-				iSelectedDomIndex = i;
-			}
-		}
-		//Initialize the ItemNavigation
-		if (!this.oItemNavigation) {
-			this.oItemNavigation = new ItemNavigation();
-			this.addDelegate(this.oItemNavigation);
-		}
-		//Reinitialize the ItemNavigation after rendering
-		this.oItemNavigation.setRootDomRef(oFocusRef);
-		this.oItemNavigation.setItemDomRefs(aTabDomRefs);
-		this.oItemNavigation.setSelectedIndex(iSelectedDomIndex);
 
-		//Notify the tabs
+		this._initItemNavigation();
+
+		// Notify the tabs
 		var aTabs = this.getTabs();
 		for (var i = 0;i < aTabs.length;i++) {
 			aTabs[i].onAfterRendering();
@@ -197,23 +178,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.fireClose({index:iIdx});
 		}
 
-	};
-
-	/*
-	 * Handles the click event.
-	 * @private
-	 */
-	TabStrip.prototype.onclick = function(oEvent) {
-		var oSource = oEvent.target;
-		if (oSource.className == "sapUiTabClose") {
-			//find the items index
-			var iIdx = this.getItemIndex(jQuery(oSource).parentByAttribute("id"));
-			if (iIdx > -1) {
-				this.fireClose({index:iIdx});
-			}
-			return;
-		}
-		this.selectTabByDomRef(oSource);
 	};
 
 	/*
@@ -445,9 +409,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 			iVisibleIndex++;
 			oTab.$().attr("aria-posinset", iVisibleIndex).attr("aria-setsize", this.iVisibleTabs);
-			if (iVisibleIndex == this.iVisibleTabs) {
-				oTab.$().addClass("sapUiTabLast"); // needed for IE8
-			}
 			aTabDomRefs.push(oTab.getDomRef());
 		}
 
@@ -467,7 +428,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (bTabFocused) {
 			this.oItemNavigation.focusItem(iFocusedIndex);
 		}
-
 	};
 
 	/*
@@ -538,7 +498,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (iAfterIndex < this.getTabs().length) {
 			this.getTabs()[iAfterIndex].$().addClass("sapUiTabAfterSel");
 		}
-
 	};
 
 	/*
@@ -565,6 +524,316 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 		jQuery.sap.log.warning("SelectedIndex " + iSelectedIndex + " can not be set", sDetails, "sap.ui.commons.TabStrip");
 
+	};
+
+	TabStrip.prototype.onkeydown = function(oEvent) {
+		if (oEvent.which === jQuery.sap.KeyCodes.ESCAPE) {
+			this._stopMoving();
+		}
+	};
+
+	/**
+	 * Listens to the mousedown events for starting tab drag & drop.
+	 * @private
+	 */
+	TabStrip.prototype.onmousedown = function(oEvent) {
+
+		var bLeftButton = !oEvent.button;
+		var bIsTouchMode = this._isTouchMode(oEvent);
+
+		if (!bIsTouchMode && !bLeftButton) {
+			return;
+		}
+
+		var oSource = oEvent.target;
+		var $target = jQuery(oSource);
+
+		if (oSource.className == "sapUiTabClose") {
+			// find the items index
+			var iIdx = this.getItemIndex($target.parentByAttribute("id"));
+			if (iIdx > -1) {
+				this.fireClose({index:iIdx});
+			}
+			return;
+		}
+
+		this.selectTabByDomRef(oSource);
+
+		if (!this.getEnableTabReordering()) {
+			return;
+		}
+
+		var $tab = $target.closest(".sapUiTab, .sapUiTabSel, .sapUiTabDsbl");
+		if ($tab.length === 1) {
+			this._onTabMoveStart($tab, oEvent, bIsTouchMode);
+		}
+	};
+
+	TabStrip.prototype._onTabMoveStart = function($tab, oEvent, bIsTouchMode) {
+		this._disableTextSelection();
+
+		oEvent.preventDefault();
+
+		$tab.zIndex(this.$().zIndex() + 10);
+
+		var iIdx = this.getItemIndex(oEvent.target);
+		var oTab = this.getTabs()[iIdx];
+
+		var $children = this.$().find('.sapUiTabBarCnt').children();
+		var iChildIndex = jQuery.inArray($tab[0], $children);
+		var iWidth = $tab.outerWidth();
+
+		this._dragContext = {
+			index: iChildIndex,
+			tabIndex : iIdx,
+			isTouchMode : bIsTouchMode,
+			startX: bIsTouchMode ? oEvent.originalEvent.targetTouches[0].pageX : oEvent.pageX,
+			tab: oTab,
+			tabWidth: iWidth,
+			tabCenter: $tab.position().left + iWidth / 2
+		};
+
+		this._aMovedTabIndexes = [];
+
+		var $document = jQuery(document);
+		if (bIsTouchMode) {
+			$document.bind("touchmove", jQuery.proxy(this._onTabMove, this));
+			$document.bind("touchend", jQuery.proxy(this._onTabMoved, this));
+		} else {
+			$document.mousemove(jQuery.proxy(this._onTabMove, this));
+			$document.mouseup(jQuery.proxy(this._onTabMoved, this));
+		}
+	};
+
+	TabStrip.prototype._onTabMove = function(oEvent) {
+
+		var oDragContext = this._dragContext;
+		if (!oDragContext) {
+			return;
+		}
+
+		var bIsTouchMode = this._isTouchMode(oEvent);
+
+		if (bIsTouchMode) {
+			oEvent.preventDefault();
+		}
+
+		var iPageX = bIsTouchMode ? oEvent.targetTouches[0].pageX : oEvent.pageX;
+		var iDx = iPageX - oDragContext.startX;
+
+		oDragContext.tab.$().css({left: iDx});
+
+		var $child,
+			iX,
+			iOffset,
+			bReorder,
+			$children = this.$().find('.sapUiTabBarCnt').children(),
+			aMovedTabIndexes = this._aMovedTabIndexes,
+			bRTL = sap.ui.getCore().getConfiguration().getRTL();
+
+		for (var i = 0; i < $children.length; i++) {
+
+			if (i == oDragContext.index) {
+				continue;
+			}
+
+			$child = jQuery($children[i]);
+			iX = $child.position().left;
+			iOffset = parseFloat($child.css('left'));
+
+			if (!isNaN(iOffset)) {
+				iX -= iOffset;
+			}
+
+			if (i < oDragContext.index != bRTL) {
+				bReorder = iX + $child.outerWidth() > oDragContext.tabCenter + iDx;
+				this._onAnimateTab($child, oDragContext.tabWidth, bReorder, aMovedTabIndexes, i);
+			} else {
+				bReorder = iX < oDragContext.tabCenter + iDx;
+				this._onAnimateTab($child, -oDragContext.tabWidth, bReorder, aMovedTabIndexes, i);
+			}
+		}
+	};
+
+	TabStrip.prototype._onAnimateTab = function($child, iDragOffset, bReorder, aMovedTabIndexes, iIndex) {
+
+		var iIndexInArray = jQuery.inArray(iIndex, aMovedTabIndexes);
+		var bInArray = iIndexInArray != -1;
+
+		if (bReorder && !bInArray) {
+
+			$child.stop(true, true);
+			$child.animate({left : iDragOffset}, TabStrip.ANIMATION_DURATION);
+			aMovedTabIndexes.push(iIndex);
+
+		} else if (!bReorder && bInArray) {
+
+			$child.stop(true, true);
+			$child.animate({left : 0}, TabStrip.ANIMATION_DURATION);
+			aMovedTabIndexes.splice(iIndexInArray, 1);
+		}
+	};
+
+	TabStrip.prototype._onTabMoved = function(oEvent) {
+
+		var oDragContext = this._dragContext;
+		if (!oDragContext) {
+			return;
+		}
+
+		this._stopMoving();
+
+		var aMovedTabIndexes = this._aMovedTabIndexes;
+		if (aMovedTabIndexes.length == 0) {
+			return;
+		}
+
+		var $tab = oDragContext.tab.$(),
+			$child,
+			$children = this.$().find('.sapUiTabBarCnt').children();
+
+		var iNewIndex = aMovedTabIndexes[aMovedTabIndexes.length - 1],
+			iSelectedIndex = iNewIndex,
+		    iNewTabIndex = this.getItemIndex($children[iNewIndex]);
+
+		this.removeAggregation('tabs', oDragContext.tab, true);
+		this.insertAggregation('tabs', oDragContext.tab, iNewTabIndex, true);
+
+		if (iNewIndex > oDragContext.index) {
+			$tab.insertAfter(jQuery($children[iNewIndex]));
+		}  else {
+			$tab.insertBefore(jQuery($children[iNewIndex]));
+		}
+
+		$children = this.$().find('.sapUiTabBarCnt').children();
+
+		if (!oDragContext.tab.getEnabled()) {
+
+			for (var i = 0; i < $children.length; i++) {
+				$child = jQuery($children[i]);
+
+				if ($child.hasClass('sapUiTabSel')) {
+					iSelectedIndex = i;
+					iNewTabIndex = this.getItemIndex($child[0]);
+
+					break;
+				}
+			}
+		}
+
+		this.setProperty('selectedIndex', iNewTabIndex, true);
+
+		$children.removeClass('sapUiTabAfterSel');
+		$children.removeClass('sapUiTabBeforeSel');
+
+		for (var i = 0; i < $children.length; i++) {
+			$child = jQuery($children[i]);
+			$child.attr("aria-posinset", i + 1);
+
+			if (i == iSelectedIndex - 1) {
+				$child.addClass('sapUiTabBeforeSel');
+			} else if (i == iSelectedIndex + 1) {
+				$child.addClass('sapUiTabAfterSel');
+			}
+		}
+
+		$tab.focus();
+
+		this._initItemNavigation();
+
+	};
+
+	TabStrip.prototype._stopMoving = function() {
+		var oDragContext = this._dragContext;
+		if (!oDragContext) {
+			return;
+		}
+
+		var $tab = oDragContext.tab.$();
+		$tab.css('z-index', '');
+
+		var $children = this.$().find('.sapUiTabBarCnt').children();
+
+		$children.stop(true, true);
+		$children.css('left', '');
+
+		this._dragContext = null;
+
+		var $document = jQuery(document);
+		if (oDragContext.isTouchMode) {
+			$document.unbind("touchmove", this._onTabMove);
+			$document.unbind("touchend", this._onTabMoved);
+		} else {
+			$document.unbind("mousemove", this._onTabMove);
+			$document.unbind("mouseup", this._onTabMoved);
+		}
+
+		this._enableTextSelection();
+	};
+
+
+	/**
+	 * Checks whether the passed oEvent is a touch event.
+	 * @private
+	 * @param {event} oEvent The event to check
+	 * @return {boolean} false
+	 */
+	TabStrip.prototype._isTouchMode = function(oEvent) {
+		return !!oEvent.originalEvent["touches"];
+	};
+
+	TabStrip.prototype._initItemNavigation = function() {
+
+		// find a collection of all tabs
+		var oFocusRef = this.getFocusDomRef(),
+			aTabs = oFocusRef.lastChild.childNodes,
+			aTabDomRefs = [],
+			iSelectedDomIndex = -1;
+
+		for (var i = 0;i < aTabs.length;i++) {
+			aTabDomRefs.push(aTabs[i]);
+			if (jQuery(aTabs[i]).hasClass("sapUiTabSel")) {
+				// get selected index out of visible tabs for ItemNavigation
+				iSelectedDomIndex = i;
+			}
+		}
+
+		//Initialize the ItemNavigation
+		if (!this.oItemNavigation) {
+			this.oItemNavigation = new ItemNavigation();
+			this.addDelegate(this.oItemNavigation);
+		}
+
+		//Reinitialize the ItemNavigation after rendering
+		this.oItemNavigation.setRootDomRef(oFocusRef);
+		this.oItemNavigation.setItemDomRefs(aTabDomRefs);
+		this.oItemNavigation.setSelectedIndex(iSelectedDomIndex);
+	};
+
+	/**
+	 * Disables text selection on the document (disabled for Dnd)
+	 * @private
+	 */
+	TabStrip.prototype._disableTextSelection = function (oElement) {
+		// prevent text selection
+		jQuery(oElement || document.body).
+			attr("unselectable", "on").
+			addClass('sapUiTabStripNoSelection').
+			bind("selectstart", function(oEvent) {
+				oEvent.preventDefault();
+				return false;
+			});
+	};
+
+	/**
+	 * Enables text selection on the document (disabled for Dnd)
+	 * @private
+	 */
+	TabStrip.prototype._enableTextSelection = function (oElement) {
+		jQuery(oElement || document.body).
+			attr("unselectable", "off").
+			removeClass('sapUiTabStripNoSelection').
+			unbind("selectstart");
 	};
 
 
