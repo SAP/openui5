@@ -247,7 +247,14 @@ QUnit.module("Animation", {
 });
 
 QUnit.test("Open Popup Without Animation", function(assert) {
-	expect(4);
+	assert.expect(4);
+
+	var done;
+	if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9) {
+		// In IE9 the opened event is fired with timeout therefore async test has to be used for IE9
+		done = assert.async();
+	}
+
 	var fnOpened = function() {
 		this.oPopup.detachOpened(fnOpened, this);
 
@@ -255,6 +262,10 @@ QUnit.test("Open Popup Without Animation", function(assert) {
 		assert.equal(this.$Ref.css("display"), "block", "Popup should be immediately 'display:block' after opening without animation");
 		assert.equal(this.$Ref.css("visibility"), "visible", "Popup should be immediately 'visibility:visible' after opening without animation");
 		assert.equal(this.$Ref.css("opacity"), "1", "Popup should be immediately 'opacity:1' after opening without animation");
+
+		if (done) {
+			done();
+		}
 	};
 
 	this.oPopup.attachOpened(fnOpened, this);
@@ -262,7 +273,14 @@ QUnit.test("Open Popup Without Animation", function(assert) {
 });
 
 QUnit.test("Close Popup Without Animation", function(assert) {
-	expect(3);
+	assert.expect(3);
+
+	var done;
+	if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9) {
+		// In IE9 the opened event is fired with timeout therefore async test has to be used for IE9
+		done = assert.async();
+	}
+
 	var fnOpened = function() {
 		this.oPopup.detachOpened(fnOpened, this);
 
@@ -274,6 +292,10 @@ QUnit.test("Close Popup Without Animation", function(assert) {
 		assert.equal(this.oPopup.isOpen(), false, "Popup should be closed immediately after closing without animation");
 		assert.equal(this.$Ref.css("display"), "none", "Popup should be 'display:none' immediately after closing without animation");
 		assert.equal(this.$Ref.css("visibility"), "hidden", "Popup should be 'visibility:hidden' immediately after closing without animation");
+
+		if (done) {
+			done();
+		}
 	};
 
 	this.oPopup.attachOpened(fnOpened, this);
@@ -512,7 +534,7 @@ QUnit.asyncTest("Autoclose popup opened from another autoclose popup", function(
 		oPopup1.destroy();
 		oPopup2.destroy();
 		start();
-	}, 100);
+	}, 200);
 });
 
 QUnit.asyncTest("Child registered at parent", function(assert) {
