@@ -182,6 +182,7 @@
 
 				// cleanup
 				oComboBox.destroy();
+				oModel.destroy();
 			});
 
 			/* ------------------------------ */
@@ -2354,6 +2355,7 @@
 
 				// cleanup
 				oComboBox.destroy();
+				oModel.destroy();
 			});
 
 			test("removeItem() it should remove the selected item and change the selection (test case 2)", function() {
@@ -2428,6 +2430,7 @@
 
 				// cleanup
 				oComboBox.destroy();
+				oModel.destroy();
 			});
 
 			test("removeItem() it should remove the selected item and change the selection (test case 3)", function() {
@@ -3411,13 +3414,14 @@
 
 				// act
 				oComboBox.updateAggregation("items");
-				sap.ui.getCore().applyChanges();
 
 				// assert
 				strictEqual(oComboBox.getSelectedKey(), "CU");
 
 				// cleanup
 				oComboBox.destroy();
+				oModel.destroy();
+				sap.ui.getCore().applyChanges();
 			});
 
 			test("it should correctly set the selection if the items aggregation is bounded to an OData model", function() {
@@ -3462,7 +3466,6 @@
 				oComboBox.setSelectedKey("id_5");
 				oComboBox.placeAt("content");
 				this.clock.tick(iAutoRespondAfter + 1);	// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting to make sure that the data from the OData model is available)
-				sap.ui.getCore().applyChanges();	// enforces an immediate update of the visible UI (aka "rendering")
 
 				// assert
 				strictEqual(oComboBox.getSelectedKey(), "id_5");
@@ -3470,7 +3473,9 @@
 
 				// cleanup
 				oMockServer.stop();
+				oMockServer.destroy();
 				oComboBox.destroy();
+				oModel.destroy();
 			});
 
 			/* ------------------------------------ */
