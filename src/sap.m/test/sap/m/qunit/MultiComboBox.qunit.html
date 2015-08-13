@@ -1845,6 +1845,22 @@
 		oMultiComboBox.destroy();
 	});
 
+	// BCP 0020079747 0000613914 2015
+	test("it should not throw an exception, when the undefined value is passed in as an argument to the addSelectedKeys() method", function() {
+
+		// system under test
+		var oMultiComboBox = new sap.m.MultiComboBox();
+
+		// act
+		var aKeys = oMultiComboBox.addSelectedKeys(undefined);
+
+		// assert
+		ok(Array.isArray(oMultiComboBox.getSelectedKeys()));
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
 	test("constructor - binding", function() {
 
 		// system under test

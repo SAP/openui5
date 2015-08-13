@@ -36,7 +36,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 			/**
 			 * Keys of the selected items. If the key has no corresponding item, no changes will apply. If duplicate keys exists the first item matching the key is used.
 			 */
-			selectedKeys : {type : "string[]", group : "Data", defaultValue : null}
+			selectedKeys : {type : "string[]", group : "Data", defaultValue : []}
 		},
 		associations : {
 	
