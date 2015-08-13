@@ -397,7 +397,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			 */
 			group : {allowPreventDefault : true,
 				parameters : {
-
 					/**
 					 * grouped column.
 					 */
@@ -429,11 +428,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			 */
 			cellClick : {allowPreventDefault : true,
 				parameters : {
-
 					/**
 					 * The control of the cell.
 					 */
 					cellControl : {type : "sap.ui.core.Control"},
+
+					/**
+					 * DOM reference of the clicked cell. Can be used to position the context menu.
+					 */
+					cellDomRef : {type : "Object"},
 
 					/**
 					 * Row index of the selected cell.
@@ -441,23 +444,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					rowIndex : {type : "int"},
 
 					/**
-					 * Column index of the selected cell.
+					 * Column index of the selected cell. This is the index of visible columns and might differ from
+					 * the index maintained in the column aggregation.
 					 */
-					columnIndex : {type : "int"}
+					columnIndex : {type : "int"},
+
+					/**
+					 * Column ID of the selected cell.
+					 */
+					columnId : {type : "string"},
+
+					/**
+					 * Row binding context of the selected cell.
+					 */
+					rowBindingContext : {type : "sap.ui.model.Context"}
 				}
 			},
 
 			/**
-			 * fired when the user clicks a cell of the table (experimental!).
+			 * fired when the user clicks a cell of the table.
 			 * @since 1.21.0
 			 */
 			cellContextmenu : {allowPreventDefault : true,
 				parameters : {
-
 					/**
 					 * The control of the cell.
 					 */
 					cellControl : {type : "sap.ui.core.Control"},
+
+					/**
+					 * DOM reference of the clicked cell. Can be used to position the context menu.
+					 */
+					cellDomRef : {type : "Object"},
 
 					/**
 					 * Row index of the selected cell.
@@ -465,9 +483,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					rowIndex : {type : "int"},
 
 					/**
-					 * Column index of the selected cell.
+					 * Column index of the selected cell. This is the index of visible columns and might differ from
+					 * the index maintained in the column aggregation.
 					 */
-					columnIndex : {type : "int"}
+					columnIndex : {type : "int"},
+
+					/**
+					 * Column ID of the selected cell.
+					 */
+					columnId : {type : "string"},
+
+					/**
+					 * Row binding context of the selected cell.
+					 */
+					rowBindingContext : {type : "sap.ui.model.Context"}
 				}
 			},
 
@@ -1503,6 +1532,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 						oClone.setEditable(false);
 					}
 					oClone.data("sap-ui-colindex", i);
+					oClone.data("sap-ui-colid", aCols[i].getId());
 					oTemplate.addCell(oClone);
 					this._aIdxCols2Cells[i] = iCellIndex++;
 				}
@@ -2736,23 +2766,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 */
 	Table.prototype._oncellcontextmenu = function(mParams) {
 		if (this.getEnableCellFilter()) {
-
 			// create the contextmenu instance the first time it is needed
 			if (!this._oContextMenu) {
-
 				jQuery.sap.require("sap.ui.unified.Menu");
 				jQuery.sap.require("sap.ui.unified.MenuItem");
 
 				this._oContextMenu = new sap.ui.unified.Menu(this.getId() + "-contextmenu");
 				this.addDependent(this._oContextMenu);
-
 			}
 
 			// does the column support filtering?
-			var oColumn = this._getVisibleColumns()[mParams.columnIndex];
+			var oColumn = sap.ui.getCore().byId(mParams.columnId);
 			var sProperty = oColumn.getFilterProperty();
-			if (sProperty && oColumn.getShowFilterMenuEntry()) {
-
+			// currently only filter is possible by default cell context menu, if filtering is not allowed by
+			// menu, don't open the context menu at all.
+			if (oColumn && oColumn.isFilterableByMenu() && mParams.rowBindingContext) {
 				// destroy all items of the menu and recreate
 				this._oContextMenu.destroyItems();
 				this._oContextMenu.addItem(new sap.ui.unified.MenuItem({
@@ -2826,10 +2854,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			var oRow = this.getRows()[iRow];
 			var oCell = oRow && oRow.getCells()[iCol];
 			var iRealRowIndex = oRow && oRow.getIndex();
+			var sColId = oCell.data("sap-ui-colid");
+
+			var oRowBindingContext;
+			if (this.getBindingInfo("rows")) {
+				oRowBindingContext = oRow.getBindingContext(this.getBindingInfo("rows").model);
+			}
+
 			var mParams = {
 				rowIndex: iRealRowIndex,
 				columnIndex: iCol,
-				cellControl: oCell
+				columnId: sColId,
+				cellControl: oCell,
+				rowBindingContext: oRowBindingContext,
+				cellDomRef: $cell.get(0)
 			};
 			bCancel = !fnFire.call(this, mParams);
 			if (!bCancel && typeof fnContextMenu === "function") {
