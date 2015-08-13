@@ -17,13 +17,8 @@
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-		<!-- use the sinon faketimers for this test -->
-		<script type="text/javascript">
-			sinon.config.useFakeTimers = true;
-		</script>
-
 		<script>
+			sinon.config.useFakeTimers = true;
 			QUnit.config.autostart = false;
 			sap.ui.test.qunit.delayTestStart();
 
@@ -2084,6 +2079,7 @@
 
 				// cleanup
 				oSelectList.destroy();
+				oModel.destroy();
 			});
 
 			test("removeItem() remove the selected item", function() {
@@ -2151,6 +2147,7 @@
 
 				// cleanup
 				oSelectList.destroy();
+				oModel.destroy();
 			});
 
 			test("removeItem()", function() {
@@ -2890,6 +2887,7 @@
 
 				// cleanup
 				oSelectList.destroy();
+				oModel.destroy();
 			});
 
 			/* ------------------------------ */
