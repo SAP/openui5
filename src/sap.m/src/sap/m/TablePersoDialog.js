@@ -242,7 +242,13 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 				that._oList.getItems().some(fnItemMatches);
 				// Clear last selected item so it does not get used again
 				that._sLastSelectedItemId = null;
+				
+				// Make sure that arrow buttons are updated 
+				if (that._fnUpdateArrowButtons) {
+					that._fnUpdateArrowButtons.call(this);
+				}
 			}
+			
 		};
 
 		this._fnAfterDialogOpen = function () {
