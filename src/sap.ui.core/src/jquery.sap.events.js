@@ -1071,7 +1071,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes'],
 					} else if (oEvent.type === "touchend") {
 
 						oNewEndEvent = createNewEvent();
-						bSimulateClick = !oEvent.isMarked("handledByUIArea") && !oEvent.isMarked("firstUIArea")	&& !bFingerIsMoved;
+						bSimulateClick = !oEvent.isMarked("handledByUIArea") && !bFingerIsMoved;
 
 						jQuery.sap.delayedCall(0, this, function(){
 							oConfig.eventHandle.handler.call(oConfig.domRef, oNewEndEvent);
