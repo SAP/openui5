@@ -178,21 +178,35 @@ sap.ui.define([
 			this.setHeaders(mHeaders);
 
 			// Get/create service specific data container
-			this.oServiceData = ODataModel.mServiceData[this.sServiceUrl];
+			aMetadataUrlParams = ODataUtils._createUrlParamsArray(mMetadataUrlParams);
+			var sMetadataUrl = this._createRequestUrl("/$metadata", undefined, aMetadataUrlParams);
+			this.oServiceData = ODataModel.mServiceData[sMetadataUrl];
 			if (!this.oServiceData) {
-				ODataModel.mServiceData[this.sServiceUrl] = {};
-				this.oServiceData = ODataModel.mServiceData[this.sServiceUrl];
+				ODataModel.mServiceData[sMetadataUrl] = {};
+				this.oServiceData = ODataModel.mServiceData[sMetadataUrl];
 			}
 
 			if (!this.oServiceData.oMetadata) {
-				aMetadataUrlParams = ODataUtils._createUrlParamsArray(mMetadataUrlParams);
 				//create Metadata object
-				this.oMetadata = new ODataMetadata(this._createRequestUrl("/$metadata", undefined, aMetadataUrlParams),
-						{ async: this.bLoadMetadataAsync, user: this.sUser, password: this.sPassword, headers: this.mCustomHeaders, namespaces: mMetadataNamespaces, withCredentials: this.bWithCredentials});
+				this.oMetadata = new ODataMetadata(sMetadataUrl,{
+					async: this.bLoadMetadataAsync,
+					user: this.sUser,
+					password: this.sPassword,
+					headers: this.mCustomHeaders,
+					namespaces: mMetadataNamespaces,
+					withCredentials: this.bWithCredentials
+				});
 				this.oServiceData.oMetadata = this.oMetadata;
 			} else {
 				this.oMetadata = this.oServiceData.oMetadata;
 			}
+			
+			// USe cached annotations if available
+			if (this.oServiceData.oAnnotationsData) {
+				this._getAnnotationParser(this.oServiceData.oAnnotationsData);
+			}
+
+
 			this.pAnnotationsLoaded = this.oMetadata.loaded();
 
 			if (this.sAnnotationURI || !this.bSkipMetadataAnnotationParsing) {
@@ -202,6 +216,9 @@ sap.ui.define([
 				if (!this.bSkipMetadataAnnotationParsing) {
 					this.pAnnotationsLoaded = this.oMetadata.loaded().then(function(bSuppressEvents, mParams) {
 						// Only fire annotationsLoaded event if no further annotation URLs will be loaded
+						if (this.bDestroyed) {
+							return Promise.reject();
+						}
 						return this.addAnnotationXML(mParams["metadataString"], bSuppressEvents);
 					}.bind(this, !!this.sAnnotationURI));
 				}
@@ -212,6 +229,9 @@ sap.ui.define([
 						oAnnotations.addUrl(this.sAnnotationURI)
 					]);
 				}
+			}
+			if (this.oAnnotations) {
+				this.oServiceData.oAnnotationsData = this.oAnnotations.getAnnotationsData();
 			}
 
 
@@ -663,6 +683,7 @@ sap.ui.define([
 			}
 		};
 
+
 		if (this.bLoadMetadataAsync && this.sAnnotationURI && this.bLoadAnnotationsJoined) {
 			// In case of joined loading, wait for the annotations before firing the event
 			// This is also tested in the fireMetadataLoaded-method and no event is fired in case
@@ -670,10 +691,9 @@ sap.ui.define([
 			if (this.oAnnotations && this.oAnnotations.bInitialized) {
 				doFire(true);
 			} else {
-				this.oAnnotations.attachLoaded(function() {
-					// Now metadata was loaded and the annotations have been parsed
+				this.oAnnotations.attachEventOnce("loaded", function() {
 					doFire(true);
-				}, this);
+				});
 			}
 		} else {
 			// In case of synchronous or asynchronous non-joined loading, or if no annotations are
@@ -681,6 +701,8 @@ sap.ui.define([
 			doFire(this.bLoadMetadataAsync, bDelayEvent);
 		}
 	};
+
+
 
 	/**
 	 * Refreshes the metadata for model, e.g. in case the request for metadata has failed. 
@@ -3433,19 +3455,29 @@ sap.ui.define([
 	 *
 	 * @return {sap.ui.model.odata.Annotations} The annotation parser instance
 	 */
-	ODataModel.prototype._getAnnotationParser = function() {
+	ODataModel.prototype._getAnnotationParser = function(mAnnotationData) {
 		if (!this.oAnnotations) {
 			jQuery.sap.require("sap.ui.model.odata.ODataAnnotations");
-			this.oAnnotations = new ODataAnnotations(null, this.oMetadata, { async: this.bLoadMetadataAsync });
-			this.oAnnotations.attachFailed(function(oEvent) {
-				this.fireAnnotationsFailed(oEvent.getParameters());
-			}.bind(this));
-			this.oAnnotations.attachLoaded(function(oEvent) {
-				this.fireAnnotationsLoaded(oEvent.getParameters());
-			}.bind(this));
+			this.oAnnotations = new ODataAnnotations({
+				annotationData: mAnnotationData,
+				url: null,
+				metadata: this.oMetadata,
+				async: this.bLoadMetadataAsync
+			});
+			
+			this.oAnnotations.attachFailed(this.onAnnotationsFailed, this);
+			this.oAnnotations.attachLoaded(this.onAnnotationsLoaded, this);
 		}
 
 		return this.oAnnotations;
+	};
+
+	ODataModel.prototype.onAnnotationsFailed = function(oEvent) {
+		this.fireAnnotationsFailed(oEvent.getParameters());
+	};
+	
+	ODataModel.prototype.onAnnotationsLoaded = function(oEvent) {
+		this.fireAnnotationsLoaded(oEvent.getParameters());
 	};
 
 	/**
@@ -3486,7 +3518,7 @@ sap.ui.define([
 		return this.oMetadata._addUrl(aMetadataUrls).then(function(aParams) {
 			return Promise.all(jQuery.map(aParams, function(oParam) {
 				aEntitySets = aEntitySets.concat(oParam.entitySets);
-				return that.addAnnotationXML(oParam.metadataString);
+				return that.addAnnotationXML(oParam["metadataString"]);
 			}));
 		}).then(function() {
 			return that._getAnnotationParser().addUrl(aAnnotationUrls);
@@ -3503,7 +3535,7 @@ sap.ui.define([
 	 * can be retrieved by calling the getServiceAnnotations()-method.
 	 *
 	 * @param {string} sXMLContent - The string that should be parsed as annotation XML
-	 * @param {boolean} [bSuppressEvents=false] - Wheter not to fire annotationsLoaded event on the annotationParser
+	 * @param {boolean} [bSuppressEvents=false] - Whether not to fire annotationsLoaded event on the annotationParser
 	 * @return {Promise} The Promise to parse the given XML-String, resolved if parsed without errors, rejected if errors occur
 	 * @protected
 	 */
@@ -3516,7 +3548,6 @@ sap.ui.define([
 			});
 		}.bind(this));
 	};
-
 	/**
 	 * Submits the collected changes which were collected by the setProperty method. The update method is defined by the global <code>defaultUpdateMethod</code>
 	 * parameter which is sap.ui.model.odata.UpdateMethod.Merge by default. In case of a sap.ui.model.odata.UpdateMethod.Merge request only the changed properties will be updated.
@@ -4237,6 +4268,8 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.destroy = function() {
+		this.bDestroyed = true;
+		
 		Model.prototype.destroy.apply(this, arguments);
 
 		// Abort pending requests
@@ -4271,6 +4304,9 @@ sap.ui.define([
 
 
 		if (this.oAnnotations) {
+			this.oAnnotations.detachLoaded(this.onAnnotationsLoaded);
+			this.oAnnotations.detachFailed(this.onAnnotationsFailed);
+
 			this.oAnnotations.destroy();
 			delete this.oAnnotations;
 		}
