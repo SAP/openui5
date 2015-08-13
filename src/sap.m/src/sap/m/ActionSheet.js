@@ -103,10 +103,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 
 	ActionSheet.prototype.init = function() {
-		// Delegate keyboard processing to ItemNavigation, see commons.SegmentedButton
-		this._oItemNavigation = new ItemNavigation();
-		this._oItemNavigation.setCycling(false);
-		this.addDelegate(this._oItemNavigation);
+		// this method is kept here empty in case some control inherits from it but forgets to check the existence of this function when chaining the call
 	};
 
 	ActionSheet.prototype.exit = function(){
@@ -119,6 +116,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			this._oCancelButton = null;
 		}
 
+		this._clearItemNavigation();
+	};
+
+	ActionSheet.prototype._clearItemNavigation = function() {
 		if (this._oItemNavigation) {
 			this.removeDelegate(this._oItemNavigation);
 			this._oItemNavigation.destroy();
@@ -147,7 +148,19 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			this._oItemNavigation.setPageSize(5);
 		}
 	};
+
+	ActionSheet.prototype.onBeforeRendering = function() {
+		// The item navigation instance has to be destroyed and created again once the control is rerendered
+		// because the intital tabindex setting is only done once inside the item navigation but we need it here
+		// every time after the control is rerendered
+		this._clearItemNavigation();
+	};
+
 	ActionSheet.prototype.onAfterRendering = function() {
+		// delegate the keyboard handling to ItemNavigation
+		this._oItemNavigation = new ItemNavigation();
+		this._oItemNavigation.setCycling(false);
+		this.addDelegate(this._oItemNavigation);
 		this._setItemNavigation();
 		this.$().on("keyup.ActionSheet", jQuery.proxy(this.onKeyUp, this));
 	};
