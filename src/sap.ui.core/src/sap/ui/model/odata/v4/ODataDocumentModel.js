@@ -35,9 +35,14 @@ sap.ui.define([
 	 *
 	 * Supports the following requests:
 	 * <ul>
-	 * <li><code>/EntityContainer</code>: reads the entity container without any expands
-	 * <li><code>/EntityContainer/EntitySets(Fullname='<i>FullEntitySetName</i>')</code>: reads the
-	 * entity set with the type, its properties and its navigation properties expanded.
+	 * <li><code>/EntityContainer</code>: reads the entity container with Singletons and EntitySets
+	 * expanded
+	 * <li><code>/EntityContainer/EntitySets(Fullname='<i>FullEntitySetName</i>')/EntityType</code>:
+	 * reads the entity type fo the entity set with its properties, the property type and its
+	 * navigation properties expanded.
+	 * <li><code>/EntityContainer/Singletons(Fullname='<i>FullEntitySetName</i>')/EntityType</code>:
+	 * reads the entity type fo the singleton with its properties, the property type and its
+	 * navigation properties expanded.
 	 * </ul>
 	 *
 	 * Get parameters are ignored.
@@ -50,82 +55,53 @@ sap.ui.define([
 	 * @protected
 	 */
 	ODataDocumentModel.prototype.read = function (sPath) {
-		var i = sPath.indexOf('?');
+		var i = sPath.indexOf('?'),
+			aParts;
+
+		function unsupported() {
+			throw new Error("Unsupported: " + sPath);
+		}
 
 		if (i >= 0) {
-			sPath = sPath.slice(0, i);
+			sPath = sPath.substring(0, i);
 		}
-		return this.requestObject(sPath);
-	};
-
-	/**
-	 * Requests the object for the given path relative to the given context. Returns a
-	 * <code>Promise</code>, which is resolved with the requested object or rejected with an error.
-	 *
-	 * @param {string} sPath
-	 *   A relative or absolute path within the model
-	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context in the data model to be used as a starting point in case of a relative path
-	 * @returns {Promise}
-	 *   A promise which is resolved with the requested object as soon as it is available
-	 */
-	ODataDocumentModel.prototype.requestObject = function (sPath, oContext) {
-		var sPart,
-			aParts,
-			sResolvedPath = this.resolve(sPath, oContext);
-
-		function unsupported(sError) {
-			throw new Error(sError + ": " + sPath);
-		}
-
-		function unknown(sError) {
-			unsupported('"' + sError + '" unknown');
-		}
-
-		if (!sResolvedPath) {
-			unsupported("Not an absolute path");
-		}
-		aParts = Helper.splitPath(sResolvedPath);
-		sPart = aParts.shift();
-		if (sPart !== 'EntityContainer') {
-			unknown(sPart);
-		}
+		aParts = Helper.splitPath(sPath);
 		return OlingoDocument.requestDocument(this).then(function (oDocument) {
-			var oObject,
-				oPart;
+			var oPart,
+				sProperty,
+				oType,
+				sType;
 
-			oPart = Helper.parsePathPart(aParts.shift());
-			if (!oPart) {
+			if (aParts.shift() !== "EntityContainer") {
+				unsupported();
+			}
+			if (!aParts.length) {
 				return OlingoDocument.transformEntityContainer(oDocument);
 			}
-			if (oPart.name !== "EntitySets") {
-				unknown(oPart.name);
+			oPart = Helper.parsePathPart(aParts.shift());
+			if (!oPart.key || !oPart.key.Fullname) {
+				unsupported();
 			}
-			if (!oPart.key) {
-				unsupported("Missing key");
+			switch (oPart.name) {
+				case "EntitySets":
+					sType = OlingoDocument.findEntitySet(oDocument, oPart.key.Fullname).entityType;
+					sProperty = "EntityType";
+					break;
+				case "Singletons":
+					sType = OlingoDocument.findSingleton(oDocument, oPart.key.Fullname).type;
+					sProperty = "Type";
+					break;
+				default:
+					unsupported();
 			}
-			if (!oPart.key.Fullname) {
-				unknown(oPart.all);
+			if (aParts.shift() !== sProperty) {
+				unsupported();
 			}
-			oObject = OlingoDocument.transformEntitySet(oDocument, oPart.key.Fullname);
-			for (;;) {
-				oPart = Helper.parsePathPart(aParts.shift());
-				if (!oPart) {
-					return oObject;
-				}
-				if (oPart.name in oObject) {
-					oObject = oObject[oPart.name];
-					if (oPart.key) {
-						if (Array.isArray(oObject)) {
-							oObject = Helper.findKeyInArray(oObject, oPart.key);
-						} else {
-							unsupported('"' + oPart.name + '" is not an array');
-						}
-					}
-				} else {
-					unknown(oPart.all);
-				}
+			oType = OlingoDocument.transformEntityType(oDocument, sType);
+			if (aParts.length) {
+				unsupported();
 			}
+			return oType;
 		});
 	};
 

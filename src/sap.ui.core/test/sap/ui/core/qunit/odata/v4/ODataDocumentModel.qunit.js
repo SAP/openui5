@@ -18,7 +18,8 @@ sap.ui.require([
 	 */
 
 	var mFixture = {
-			"/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata": {source: "metadata.xml"}
+			"/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata": {source: "metadata.xml"},
+			"/foo/$metadata": {code: 404}
 		},
 		bRealOData = jQuery.sap.getUriParameters().get("realOData") === "true",
 		sDocumentUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata";
@@ -61,139 +62,70 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[{
-		path: "Foo",
-		error: "Not an absolute path"
-	}, {
-		path: "/EntitySets",
-		error: '"EntitySets" unknown'
-	}, {
-		path: "/EntityContainer/EntityTypes(Fullname='com.sap.gateway.iwbep.tea_busi.v001.Worker')",
-		reject: '"EntityTypes" unknown'
-	}, {
-		path: "/EntityContainer/EntitySets",
-		reject: "Missing key"
-	}, {
-		path: "/EntityContainer/EntitySets(Name='EMPLOYEES')",
-		reject: "\"EntitySets(Name='EMPLOYEES')\" unknown"
-	}, {
-		path: "/EntityContainer/EntitySets(Fullname='com.sap.gateway.iwbep.tea_busi.v0001.Container"
-			+ "%2FEMPLOYEES')/Name(foo='bar')",
-		reject: '"Name" is not an array'
-	}, {
-		path: "/EntityContainer/EntitySets(Fullname='com.sap.gateway.iwbep.tea_busi.v0001.Container"
-			+ "%2FEMPLOYEES')/Foo",
-		reject: '"Foo" unknown'
-	}, {
-		path: "/EntityContainer/EntitySets(Fullname='com.sap.gateway.iwbep.tea_busi.v0001.Container"
-			+ "/EMPLOYEES')",
-		reject: "\"EntitySets(Fullname='com.sap.gateway.iwbep.tea_busi.v0001.Container\" unknown"
-	}].forEach(function (oFixture) {
-		QUnit.test("requestObject: " + oFixture.path, function (assert) {
-			if (oFixture.error) {
-				assert.throws(function () {
-					this.oDocumentModel.requestObject(oFixture.path);
-				}, new Error(oFixture.error + ": " + oFixture.path));
-			} else {
-				return this.oDocumentModel.requestObject(oFixture.path).then(function () {
-					assert.ok(false, "unexpected success");
-				})["catch"](function (oError) {
-					assert.ok(oError instanceof Error);
-					assert.strictEqual(oError.message, oFixture.reject + ": " + oFixture.path);
-				});
-			}
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("requestObject: /EntityContainer", function (assert) {
-		var oEntityContainer = {
+	QUnit.test("read: /EntityContainer", function (assert) {
+		var sPath = "/EntityContainer?$expand=EntitySets,Singletons",
+			oEntityContainer = {
 				"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.Container"
 			};
 
 		this.oSandbox.mock(OlingoDocument).expects("transformEntityContainer")
-			.returns(oEntityContainer);
+			.withExactArgs(sinon.match.object).returns(Promise.resolve(oEntityContainer));
 
-		return this.oDocumentModel.requestObject("/EntityContainer").then(function (oResult) {
+		return this.oDocumentModel.read(sPath).then(function (oResult) {
 			assert.deepEqual(oResult, oEntityContainer);
 		});
 	});
-	// TODO requestObject("/EntityContainer/QualifiedName")
 
 	//*********************************************************************************************
-	QUnit.test("requestObject: /EntityContainer/EntitySets(...)", function (assert) {
-		var sEmployees = "com.sap.gateway.iwbep.tea_busi.v0001.Container/EMPLOYEES",
-			oEntitySet = {
-				"Fullname" : sEmployees
-			};
+	[
+		"/EntityContainer/EntitySets(Fullname='"
+			+ "com.sap.gateway.iwbep.tea_busi.v0001.Container%2FEMPLOYEES')/EntityType",
+		"/EntityContainer/Singletons(Fullname='"
+			+ "com.sap.gateway.iwbep.tea_busi.v0001.Container%2FMe')/Type"
+	].forEach(function (sPath) {
+		QUnit.test("read: " + sPath, function (assert) {
+			var sEntityTypeName = "com.sap.gateway.iwbep.tea_busi.v0001.Worker",
+				oEntityType = {
+					"QualifiedName" : sEntityTypeName
+				};
 
-		this.oSandbox.mock(OlingoDocument).expects("transformEntitySet")
-			.withExactArgs(sinon.match.object, sEmployees)
-			.returns(oEntitySet);
+			this.oSandbox.mock(OlingoDocument).expects("transformEntityType")
+				.withExactArgs(sinon.match.object, sEntityTypeName)
+				.returns(Promise.resolve(oEntityType));
 
-		return this.oDocumentModel.requestObject("/EntityContainer/EntitySets(Fullname='"
-				+ encodeURIComponent(sEmployees) + "')"
-		).then(function (oResult) {
-			assert.deepEqual(oResult, oEntitySet);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("requestObject: /EntityContainer/EntitySets(...)/Fullname", function (assert) {
-		var sEmployees = "com.sap.gateway.iwbep.tea_busi.v0001.Container/EMPLOYEES",
-			oEntitySet = {
-				"Fullname" : sEmployees
-			};
-
-		this.oSandbox.mock(OlingoDocument).expects("transformEntitySet")
-			.withExactArgs(sinon.match.object, sEmployees)
-			.returns(oEntitySet);
-
-		return this.oDocumentModel.requestObject("/EntityContainer/EntitySets(Fullname='"
-				+ encodeURIComponent(sEmployees) + "')/Fullname"
-		).then(function (oResult) {
-			assert.strictEqual(oResult, oEntitySet.Fullname);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("requestObject: /EntityContainer/EntitySets(...)/EntityType/Name",
-		function (assert) {
-			var oContext = this.oDocumentModel.getContext("/EntityContainer"),
-				sEmployees = "com.sap.gateway.iwbep.tea_busi.v0001.Container/EMPLOYEES";
-
-			return this.oDocumentModel.requestObject("EntitySets(Fullname='"
-				+ encodeURIComponent(sEmployees) + "')/EntityType/Name",
-				oContext
-			).then(function (oResult) {
-				assert.deepEqual(oResult, "Worker");
+			return this.oDocumentModel.read(sPath).then(function (oResult) {
+				assert.deepEqual(oResult, oEntityType);
 			});
 		});
-
-	//*********************************************************************************************
-	QUnit.test("requestObject: navigate from EntityType to EntityType", function (assert) {
-		return this.oDocumentModel.requestObject("/EntityContainer/EntitySets(Fullname='"
-			+ "com.sap.gateway.iwbep.tea_busi.v0001.Container%2FEMPLOYEES')/EntityType/"
-			+ "NavigationProperties(Fullname='com.sap.gateway.iwbep.tea_busi.v0001.Worker%2F"
-			+ "EMPLOYEE_2_TEAM')/Name"// TODO /EntityType/Name"
-		).then(function (oResult) {
-			assert.strictEqual(oResult, "EMPLOYEE_2_TEAM");
-		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read", function (assert) {
-		var sPath = "/any/path/you/like",
-			oData = {
-				"foo" : "bar"
-			};
-
-		this.oSandbox.mock(this.oDocumentModel).expects("requestObject")
-			.withExactArgs(sPath).returns(Promise.resolve(oData));
-
-		return this.oDocumentModel.read(sPath + "?$expand=foo/bar").then(function (oResult) {
-			assert.deepEqual(oResult, oData);
+	[
+		"/EntityTypes",
+		"/EntityContainer/Unknown",
+		"/EntityContainer/EntitySets",
+		"/EntityContainer/EntitySets(Name='EMPLOYEES')",
+		"/EntityContainer/EntitySets(Fullname='"
+			+ "com.sap.gateway.iwbep.tea_busi.v0001.Container%2FEMPLOYEES')",
+		"/EntityContainer/EntitySets(Fullname='"
+			+ "com.sap.gateway.iwbep.tea_busi.v0001.Container%2FEMPLOYEES')/EntityType/Name",
+		"/EntityContainer/Singletons(Name='Me')",
+		"/EntityContainer/Singletons(Fullname='"
+			+ "com.sap.gateway.iwbep.tea_busi.v0001.Container%2FMe')",
+		"/EntityContainer/Singletons(Fullname='"
+			+ "com.sap.gateway.iwbep.tea_busi.v0001.Container%2FMe')/Type/Name",
+		"/EntityContainer/Foo(Fullname='com.sap.gateway.iwbep.tea_busi.v0001.Container%2FMe')"
+	].forEach(function (sPath) {
+		QUnit.test("read:" + sPath, function (assert) {
+			return this.oDocumentModel.read(sPath).then(function () {
+				assert.ok(false, "unexpected success");
+			})["catch"](function (oError) {
+				assert.strictEqual(oError.message, "Unsupported: " + sPath);
+			});
 		});
 	});
-	// TODO requestObject: handle more cases
+	// TODO Singleton:
+	// 	<NavigationProperty Name="NavigationPropertyBindings" Type="Collection(Edm.Metadata.NavigationPropertyBinding)" Partner="Source" />
+	// 	<NavigationProperty Name="EntityContainer" Type="Edm.Metadata.EntityContainer" Nullable="false" Partner="Singletons" />
+	// 	<NavigationProperty Name="Annotations" Type="Collection(Edm.Metadata.Annotation)" Partner="Target" />
 });

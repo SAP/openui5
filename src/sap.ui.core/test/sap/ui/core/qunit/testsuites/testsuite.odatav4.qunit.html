@@ -12,8 +12,6 @@
 		function suite() {
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/odata/v4/_ODataHelper.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/odata/v4/_OlingoDocument.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/odata/v4/ODataContextBinding.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/odata/v4/ODataDocumentModel.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/odata/v4/ODataListBinding.qunit.html");

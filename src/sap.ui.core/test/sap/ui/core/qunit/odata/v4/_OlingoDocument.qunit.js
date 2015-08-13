@@ -7,7 +7,7 @@ sap.ui.require([
 	"sap/ui/test/TestUtils"
 ], function (Helper, OlingoDocument, TestUtils) {
 	/*global odatajs, QUnit, sinon */
-	/*eslint no-warning-comments: 0 */
+	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
 	/*
@@ -244,13 +244,81 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("findSingleton: success", function (assert) {
+		return this.withMetamodel(function (oDocument) {
+			var oResult = OlingoDocument.findSingleton(oDocument,
+					"com.sap.gateway.iwbep.tea_busi.v0001.Container/Me");
+
+			assert.strictEqual(oResult.name, "Me");
+			assert.strictEqual(oResult,
+				oDocument.dataServices.schema[0].entityContainer.singleton[0]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("findSingleton: failure", function (assert) {
+		return this.withMetamodel(function (oDocument) {
+			[
+				"foo.Container/Me",
+				"com.sap.gateway.iwbep.tea_busi.v0001.Container/Unknown"
+			].forEach(function (sName) {
+				assert.throws(function () {
+					OlingoDocument.findSingleton(oDocument, sName);
+				}, new Error("Unknown singleton: " + sName));
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("transformEntityContainer", function (assert) {
 		var oEntityContainer = {
 				"Name" : "Container",
-				"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.Container"
+				"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.Container",
+				"EntitySets" : [{
+					"Name" : "Departments",
+					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Departments"
+				}, {
+					"Name" : "EMPLOYEES",
+					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/EMPLOYEES"
+				},{
+					"Name" : "Equipments",
+					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Equipments"
+				}, {
+					"Name" : "MANAGERS",
+					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/MANAGERS"
+				}, {
+					"Name" : "TEAMS",
+					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/TEAMS"
+				}],
+				"Singletons" : [{
+					"Name" : "Me",
+					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Me"
+				}]
 			};
 		return this.withMetamodel(function (oDocument) {
-			assert.deepEqual(OlingoDocument.transformEntityContainer(oDocument), oEntityContainer);
+			assert.deepEqual(OlingoDocument.transformEntityContainer(oDocument),
+				oEntityContainer);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("transformEntityContainer, no data", function (assert) {
+		var oDocument = {
+				"dataServices" : {
+					"schema" : [{
+						"namespace" : "com.sap.gateway.iwbep.tea_busi.v0001",
+						"entityContainer" : {
+							"name" : "Container"
+						}
+					}]
+				}
+			};
+
+		assert.deepEqual(OlingoDocument.transformEntityContainer(oDocument), {
+			"Name" : "Container",
+			"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.Container",
+			"EntitySets" : [],
+			"Singletons" : []
 		});
 	});
 
@@ -417,26 +485,6 @@ sap.ui.require([
 		});
 	});
 
-	//*********************************************************************************************
-	QUnit.test("transformEntitySet", function (assert) {
-		var oEntityType = {
-				"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.MANAGER"
-			},
-			oEntitySet = {
-				"Name" : "MANAGERS",
-				"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/MANAGERS",
-				"EntityType" : oEntityType
-			};
-
-		this.oSandbox.mock(OlingoDocument).expects("transformEntityType")
-			.withExactArgs(sinon.match.object, "com.sap.gateway.iwbep.tea_busi.v0001.MANAGER")
-			.returns(oEntityType);
-
-		return this.withMetamodel(function (oDocument) {
-			assert.deepEqual(OlingoDocument.transformEntitySet(oDocument,
-				"com.sap.gateway.iwbep.tea_busi.v0001.Container/MANAGERS"), oEntitySet);
-		});
-	});
 	// TODO unknown entity type
 	// TODO in the Olingo document the key of an entityType is array of array?
 	// TODO set "@odata.type" at the property's type?

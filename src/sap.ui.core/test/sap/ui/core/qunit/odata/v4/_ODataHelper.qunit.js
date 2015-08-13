@@ -105,31 +105,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestEntitySet", function (assert) {
-		var oEntityContainer = {
-				QualifiedName : "foo.bar.Container"
-			},
-			oEntitySet = {
-				Fullname : "foo.bar.Container/Employees"
-			},
-			oModel = {
-				read: function () {}
-			},
-			oModelMock = this.oSandbox.mock(oModel);
-
-		oModelMock.expects("read").withExactArgs("/EntityContainer")
-			.returns(Promise.resolve(oEntityContainer));
-		oModelMock.expects("read")
-			.withExactArgs("/EntityContainer/EntitySets(Fullname='foo.bar.Container%2FEmployees')")
-			.returns(Promise.resolve(oEntitySet));
-		return Helper.requestEntitySet(oModel, "Employees").then(function (oResult) {
-			assert.deepEqual(oResult, oEntitySet);
-		});
-	});
-	// requestEntitySet: TODO caching
-
-
-	//*********************************************************************************************
 	[{
 		body: JSON.stringify({error: {message: "foo"}}),
 		message: "foo"
@@ -155,5 +130,87 @@ sap.ui.require([
 				}
 			}, "default", sComponent), oFixture.message);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestEntityContainer", function (assert) {
+		var oEntityContainer,
+			oEntityContainerFromModel = {
+				"Name" : "Container",
+				"QualifiedName" : "foo.bar.Container",
+				"EntitySets" : [{
+					"Name" : "Departments",
+					"Fullname" : "foo.bar.Container/Departments"
+				}, {
+					"Name" : "EMPLOYEES",
+					"Fullname" : "foo.bar.Container/EMPLOYEES"
+				}],
+				"Singletons" : [{
+					"Name" : "Me",
+					"Fullname" : "foo.bar.Container/Me"
+				}]
+			},
+			oMetaModel = {
+				oModel: {
+					read: function () {}
+				}
+			};
+
+		oEntityContainer = JSON.parse(JSON.stringify(oEntityContainerFromModel));
+		oEntityContainer.EntitySets[0]["EntityType@odata.navigationLink"] =
+			"EntityContainer/EntitySets(Fullname='foo.bar.Container%2FDepartments')/EntityType";
+		oEntityContainer.EntitySets[1]["EntityType@odata.navigationLink"] =
+			"EntityContainer/EntitySets(Fullname='foo.bar.Container%2FEMPLOYEES')/EntityType";
+		oEntityContainer.Singletons[0]["Type@odata.navigationLink"] =
+			"EntityContainer/Singletons(Fullname='foo.bar.Container%2FMe')/Type";
+		this.oSandbox.mock(oMetaModel.oModel).expects("read")
+			.withExactArgs("/EntityContainer")
+			.returns(Promise.resolve(oEntityContainerFromModel));
+
+		return Helper.requestEntityContainer(oMetaModel).then(function (oResult) {
+			assert.deepEqual(oResult, oEntityContainer);
+			return Helper.requestEntityContainer(oMetaModel);
+		}).then(function (oResult) {
+			assert.deepEqual(oResult, oEntityContainer);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestProperty: success", function (assert) {
+		var sPath = "EntityContainer/Anything(Fullname='foo.bar.Container/Me')/Foo",
+			oAnything = {
+				"Foo@odata.navigationLink" : sPath
+			},
+			oEntityType = {
+				"QualifiedName" : "foo.bar.Worker"
+			},
+			oModel = {
+				read: function () {}
+			};
+
+		this.oSandbox.mock(oModel).expects("read").withExactArgs("/" + sPath)
+			.returns(Promise.resolve(oEntityType));
+
+		return Helper.requestProperty(oModel, oAnything, "Foo").then(function (oResult) {
+			assert.deepEqual(oResult, oEntityType);
+			assert.strictEqual(oAnything.Foo, oResult);
+			return Helper.requestProperty(oModel, oAnything, "Foo");
+		}).then(function (oResult) {
+			assert.deepEqual(oResult, oEntityType);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestProperty: failure", function (assert) {
+		var sPath = "/EntityContainer/Anything(Fullname='foo.bar.Container/Me')/Foo",
+			oModel = {
+				read: function () {}
+			};
+
+		this.oSandbox.mock(oModel).expects("read").never();
+
+		assert.throws(function () {
+			Helper.requestProperty(oModel, {}, "Foo", sPath);
+		}, new Error("Unknown: Foo: " + sPath));
 	});
 });

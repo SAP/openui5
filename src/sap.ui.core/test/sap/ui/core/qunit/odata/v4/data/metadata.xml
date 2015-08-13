@@ -93,6 +93,8 @@
 					<NavigationPropertyBinding Path="TEAM_2_EMPLOYEES" Target="com.sap.gateway.iwbep.tea_busi.v0001.Container/EMPLOYEES"/>
 					<NavigationPropertyBinding Path="TEAM_2_MANAGER" Target="com.sap.gateway.iwbep.tea_busi.v0001.Container/MANAGERS"/>
 				</EntitySet>
+				<Singleton Name="Me" Type="com.sap.gateway.iwbep.tea_busi.v0001.Worker">
+				</Singleton>
 			</EntityContainer>
 		</Schema>
 	</edmx:DataServices>

@@ -180,22 +180,72 @@ sap.ui.define([
 		},
 
 		/**
-		 * Requests the entity set from the meta data model together with its type, the type's
-		 * properties and navigation properties.
+		 * Requests the entity container from the meta data model including the entity sets and the
+		 * singletons. Adds navigation links for the type properties of EntitySets and Singletons
+		 * so that the meta model can easily load this type later.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel
+		 *   the meta model
+		 * @returns {Promise}
+		 *   A promise which is resolved with the entity container as soon as it is available
+		 * @see #.requestProperty
+		 * @private
+		 */
+		requestEntityContainer : function (oMetaModel) {
+			if (oMetaModel._oEntityContainer) {
+				return Promise.resolve(oMetaModel._oEntityContainer);
+			}
+
+			return oMetaModel.oModel.read("/EntityContainer").then(function (oResult) {
+				oResult.EntitySets.forEach(function (oEntitySet) {
+					oEntitySet["EntityType@odata.navigationLink"] = "EntityContainer/EntitySets("
+						+ "Fullname='" + encodeURIComponent(oEntitySet.Fullname) + "')/EntityType";
+				});
+				oResult.Singletons.forEach(function (oSingleton) {
+					oSingleton["Type@odata.navigationLink"] = "EntityContainer/Singletons("
+						+ "Fullname='" + encodeURIComponent(oSingleton.Fullname) + "')/Type";
+				});
+				oMetaModel._oEntityContainer = oResult;
+				return oMetaModel._oEntityContainer;
+			});
+		},
+
+		/**
+		 * Requests a the value of the given property at the given object if it is not available
+		 * yet. This requires that the object has a property with the name of the requested
+		 * property plus "@odata.navigationLink" appended. If the given property is undefined yet,
+		 * the value is read from the model via the given navigation link, stored at the property
+		 * and then given to the promise. If the property already has a value, it is returned
+		 * asynchronously without any read.
 		 *
 		 * @param {sap.ui.model.odata.v4.ODataDocumentModel} oModel
 		 *   the model for the meta data
-		 * @param {string} sName
-		 *   the simple name of the entity set as used in the OData queries
-		 * @returns {object}
-		 *   the expanded entity set
+		 * @param {object} oObject
+		 *   the object having a navigation link
+		 * @param {string} sProperty
+		 *   the name of the property
+		 * @param {string} sRequestPath
+		 *   the request path (only used for the error message)
+		 * @returns {Promise}
+		 *   a promise to be resolved with the requested property value
+		 * @throws Error if both the property and its navigation link are unsupported
 		 * @private
 		 */
-		requestEntitySet : function (oModel, sName) {
-			return oModel.read("/EntityContainer").then(function (oResult) {
-				return oModel.read("/EntityContainer/EntitySets(Fullname='"
-					+ encodeURIComponent(oResult.QualifiedName + '/' + sName) + "')"
-				);
+		requestProperty : function (oModel, oObject, sProperty, sRequestPath) {
+			var sNavigationLink,
+				sPath;
+
+			if (sProperty in oObject) {
+				return Promise.resolve(oObject[sProperty]);
+			}
+			sNavigationLink = sProperty + "@odata.navigationLink";
+			if (!(sNavigationLink in oObject)) {
+				throw new Error("Unknown: " + sProperty + ": " + sRequestPath);
+			}
+			sPath = "/" + oObject[sNavigationLink];
+			return oModel.read(sPath).then(function (oResult) {
+				oObject[sProperty] = oResult;
+				return oObject[sProperty];
 			});
 		},
 

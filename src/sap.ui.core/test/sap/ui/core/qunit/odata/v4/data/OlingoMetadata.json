@@ -307,6 +307,10 @@
 						"path" : "TEAM_2_MANAGER",
 						"target" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/MANAGERS"
 					}]
+				}],
+				"singleton" : [{
+					"name" : "Me",
+					"type" : "com.sap.gateway.iwbep.tea_busi.v0001.Worker"
 				}]
 			}
 		}]
