@@ -547,6 +547,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 	}
 
 	/**
+	 * Returns a function which wraps the given formatter function into a try/catch block.
+	 * In case of an error it is caught, a warning containing the given original input is issued,
+	 * and <code>undefined</code> is returned instead.
+	 *
+	 * @param {function} fnFormatter - any (formatter) function
+	 * @param {string} sInput - the expression string (used when logging errors)
+	 * @returns {function} - the wrapped function
+	 */
+	function tryCatch(fnFormatter, sInput) {
+		return function () {
+			try {
+				return fnFormatter.apply(this, arguments);
+			} catch (ex) {
+				jQuery.sap.log.warning(String(ex), sInput, "sap.ui.base.ExpressionParser");
+			}
+		};
+	}
+
+	/**
 	 * Parses expression tokens to a result object as specified to be returned by
 	 * {@link sap.ui.base.ExpressionParser#parse}.
 	 * @param {object[]} aTokens - the array with the tokens
@@ -632,10 +651,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 			return fnLeft;
 		}
 
-		fnFormatter = expression(0);
+		fnFormatter = expression(0); // do this before calling current() below!
 		return {
 			at: current() ? current().start : undefined,
-			formatter: fnFormatter
+			// call separate function to reduce the closure size of the formatter
+			formatter: tryCatch(fnFormatter, sInput)
 		};
 	}
 
