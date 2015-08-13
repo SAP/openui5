@@ -201,13 +201,14 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	/**
 	 * Adds an origin to the given service URL.
 	 * If an origin is already present, it will only be replaced if the parameters object contains the flag "force: true".
+	 * In case the URL already contains URL parameters, these will be kept.
 	 * 
 	 * Examples:
 	 * setOrigin("/backend/service/url/", "DEMO_123");
-	 * - result: /backend/service/url;o=DEMO_123
+	 * - result: /backend/service/url;o=DEMO_123/
 	 * 
-	 * setOrigin("/backend/service/url;o=OTHERSYS8", {alias: "DEMO_123", force: true});
-	 * - result /backend/service/url:o=DEMO_123
+	 * setOrigin("/backend/service/url;o=OTHERSYS8?myUrlParam=true&x=4", {alias: "DEMO_123", force: true});
+	 * - result /backend/service/url:o=DEMO_123?myUrlParam=true&x=4
 	 * 
 	 * setOrigin("/backend/service/url/", {system: "DEMO", client: 134});
 	 * - result /backend/service/url;o=sid(DEMO.134)
@@ -224,7 +225,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 */
 	ODataUtils.setOrigin = function (sServiceURL, vParameters) {
 		var sOrigin, sSystem, sClient;
-		
+			
 		// if multi origin is set, do nothing
 		if (!sServiceURL || !vParameters || sServiceURL.indexOf(";mo") > 0) {
 			return sServiceURL;
@@ -249,22 +250,36 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 			}
 		}
 		
-		//trim trailing "/" from service url
-		if (jQuery.sap.endsWith(sServiceURL, "/")) {
-			sServiceURL = sServiceURL.substring(0, sServiceURL.length - 1);
+		// determine the service base url and the url parameters
+		var aUrlParts = sServiceURL.split("?");
+		var sBaseURL = aUrlParts[0];
+		var sURLParams = aUrlParts[1] ? "?" + aUrlParts[1] : "";
+		
+		//trim trailing "/" from url if present
+		var sTrailingSlash = "";
+		if (jQuery.sap.endsWith(sBaseURL, "/")) {
+			sBaseURL = sBaseURL.substring(0, sBaseURL.length - 1);
+			sTrailingSlash = "/"; // append the trailing slash later if necessary
 		}
 		
 		// origin already included
-		if (sServiceURL.indexOf(";o=") > 0) {
-			// replace origin
+		// regex will only match ";o=" occurrences which do not end in a slash "/" at the end of the string.
+		// The last ";o=" occurrence at the end of the baseURL is the only origin that can match.
+		var rOriginCheck = /(;o=[^/]+)$/;
+		if (sBaseURL.match(rOriginCheck) != null) {
+			// enforce new origin
 			if (vParameters.force) {
-				return sServiceURL.replace(/(;o=.*)/, ";o=" + sOrigin);
+				// same regex as above
+				sBaseURL = sBaseURL.replace(rOriginCheck, ";o=" + sOrigin);
+				return sBaseURL + sTrailingSlash + sURLParams;
 			}
+			//return the URL as it was
 			return sServiceURL;
 		}
-
+		
 		// new service url with origin
-		return sServiceURL + ";o=" + sOrigin;
+		sBaseURL = sBaseURL + ";o=" + sOrigin + sTrailingSlash;
+		return sBaseURL + sURLParams;
 	};
 	
 	/**
