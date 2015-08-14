@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 */
 
 	/**
-	 * Constructor for a new CalendarMonthInterval.
+	 * Constructor for a new <code>CalendarMonthInterval</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
@@ -112,7 +112,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * Month selection was cancelled
 			 */
-			cancel : {}
+			cancel : {},
+
+			/**
+			 * <code>startDate</code> was changed while navigation in <code>CalendarMonthInterval</code>
+			 * @since 1.34.0
+			 */
+			startDateChange : {}
 		}
 	}});
 
@@ -646,6 +652,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					oMonthsRow.setDate(oDate);
 				}
 			}
+
+			this.fireStartDateChange();
 
 		}
 

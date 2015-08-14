@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>CalendarRow - sap.ui.unified</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.unified.CalendarRow.gif">
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-trace="false"
+				type="text/javascript"
+				data-sap-ui-libs="sap.ui.commons, sap.ui.unified"
+				src="../../../../resources/sap-ui-core.js"
+		>
+		</script>
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.ui.model.type.Date");
+
+			var oFormatYyyyMMddHHmm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMddHHmm", calendarType: sap.ui.core.CalendarType.Gregorian});
+
+			var handleSelect = function(oEvent){
+				var oTV = sap.ui.getCore().byId("EventTV");
+				var oAppointment = oEvent.getParameter("appointment");
+				if (oAppointment) {
+					oTV.setText("Appointment selected: " + oAppointment.getId());
+				}else {
+					var aAppointments = oEvent.getParameter("appointments");
+					oTV.setText(aAppointments.length + " Appointments selected");
+				}
+			};
+
+			var oRow1 = new sap.ui.unified.CalendarRow("Row1",  {
+					select: handleSelect
+				}).placeAt("sample1");
+
+			var oStartDate = new Date();
+			oStartDate.setMinutes(oStartDate.getMinutes() + 60);
+			var oEndDate = new Date();
+			oEndDate.setMinutes(oEndDate.getMinutes() + 180);
+			var oApp = new sap.ui.unified.CalendarAppointment("App1", {
+				startDate: oStartDate,
+				endDate: oEndDate,
+				type: sap.ui.unified.CalendarDayType.None,
+				title: "Ñagçyfox 1",
+				tooltip: "Tooltip 1"/*,
+				text: "Appointment of 2 hours, 1 hour in future"*/
+			});
+			oRow1.addAppointment(oApp);
+
+			oStartDate = new Date();
+			oStartDate.setMinutes(oStartDate.getMinutes() - 60);
+			oEndDate = new Date();
+			oEndDate.setMinutes(oEndDate.getMinutes() + 90);
+			oApp = new sap.ui.unified.CalendarAppointment("App2", {
+				startDate: oStartDate,
+				endDate: oEndDate,
+				type: sap.ui.unified.CalendarDayType.Type01,
+				title: "Ñagçyfox 2",
+				icon: "sap-icon://call",
+				tooltip: "Tooltip 2",
+				text: "Ñagçyfox 2.5 hours, 1 hour in past"
+			});
+			oRow1.addAppointment(oApp);
+
+			oStartDate = new Date();
+			oStartDate.setMinutes(oStartDate.getMinutes() - 180);
+			oEndDate = new Date();
+			oEndDate.setMinutes(oEndDate.getMinutes() - 120);
+			oApp = new sap.ui.unified.CalendarAppointment("App3", {
+				startDate: oStartDate,
+				endDate: oEndDate,
+				type: sap.ui.unified.CalendarDayType.Type02,
+				title: "Appointment 3",
+				tooltip: "Tooltip 3",
+				text: "Appointment of 1 hour, 3 hour in past"
+			});
+			oRow1.addAppointment(oApp);
+
+			oStartDate = new Date();
+			oStartDate.setDate(oStartDate.getDate() - 1);
+			oEndDate = new Date();
+			oEndDate.setDate(oEndDate.getDate() + 1);
+			oApp = new sap.ui.unified.CalendarAppointment("App4", {
+				startDate: oStartDate,
+				endDate: oEndDate,
+				type: sap.ui.unified.CalendarDayType.Type03,
+				title: "Appointment 4",
+				tooltip: "Tooltip 4",
+				text: "Appointment of 3 days, 1 day in past"
+			});
+			oRow1.addAppointment(oApp);
+
+			oStartDate = new Date();
+			oStartDate.setDate(oStartDate.getDate() + 2);
+			oStartDate.setHours(0);
+			oStartDate.setMinutes(0);
+			oStartDate.setSeconds(0);
+			oStartDate.setMilliseconds(0);
+			oEndDate = new Date(oStartDate.getTime());
+			oEndDate.setDate(oEndDate.getDate() + 1);
+			oEndDate.setMilliseconds(-1);
+			oApp = new sap.ui.unified.CalendarAppointment("App5", {
+				startDate: oStartDate,
+				endDate: oEndDate,
+				type: sap.ui.unified.CalendarDayType.Type04,
+				title: "Ñagçyfox 5",
+				icon: "images/m_01.png",
+				tooltip: "Tooltip 5"/*,
+				text: "Appointment of 1 complete day, 2 days in future"*/
+			});
+			oRow1.addAppointment(oApp);
+
+			oStartDate = new Date();
+			oStartDate.setMonth(oStartDate.getMonth() + 2)
+			oStartDate.setDate(1);
+			oStartDate.setHours(0);
+			oStartDate.setMinutes(0);
+			oStartDate.setSeconds(0);
+			oStartDate.setMilliseconds(0);
+			oEndDate = new Date(oStartDate.getTime());
+			oEndDate.setMonth(oEndDate.getMonth() + 3);
+			oEndDate.setMilliseconds(-1);
+			oApp = new sap.ui.unified.CalendarAppointment("App6", {
+				startDate: oStartDate,
+				endDate: oEndDate,
+				type: sap.ui.unified.CalendarDayType.Type05,
+				title: "Appointment 6",
+				tooltip: "Tooltip 6",
+				text: "Appointment of 3 complete months, 2 months in future"
+			});
+			oRow1.addAppointment(oApp);
+
+			oStartDate = new Date();
+			oStartDate.setHours(oStartDate.getHours() + 6);
+			oStartDate.setMinutes(0);
+			oStartDate.setSeconds(0);
+			oStartDate.setMilliseconds(0);
+			oEndDate = new Date(oStartDate.getTime());
+			oEndDate.setMinutes(30);
+			oApp = new sap.ui.unified.CalendarAppointment("App7", {
+				startDate: oStartDate,
+				endDate: oEndDate,
+				type: sap.ui.unified.CalendarDayType.Type06,
+				tentative: true,
+				title: "Appointment 7",
+				tooltip: "Tooltip 7",
+				text: "Appointment of 30 minutes, 6 hour in future"
+			});
+			oRow1.addAppointment(oApp);
+
+			oStartDate = new Date(oEndDate.getTime());
+			oEndDate = new Date(oStartDate.getTime());
+			oEndDate.setHours(oStartDate.getHours() + 1);
+			oEndDate.setMinutes(0);
+			oApp = new sap.ui.unified.CalendarAppointment("App8", {
+				startDate: oStartDate,
+				endDate: oEndDate,
+				type: sap.ui.unified.CalendarDayType.Type07,
+				tentative: true,
+				title: "Appointment 8",
+				tooltip: "Tooltip 8",
+				text: "Appointment of 30 minutes, 6.5 hour in future"
+			});
+			oRow1.addAppointment(oApp);
+
+			// Interval Headers
+			oStartDate = new Date();
+			oStartDate.setHours(oStartDate.getHours() + 1);
+			oStartDate.setMinutes(0);
+			oStartDate.setSeconds(0);
+			oStartDate.setMilliseconds(0);
+			oEndDate = new Date(oStartDate.getTime());
+			oEndDate.setHours(oStartDate.getHours() + 2);
+			oApp = new sap.ui.unified.CalendarAppointment("IntervalHead0", {
+				startDate: oStartDate,
+				endDate: oEndDate,
+				type: sap.ui.unified.CalendarDayType.None,
+				title: "Interval Header 0",
+				tooltip: "Test",
+				text: "IntervalHeader of 2 hours, 1 hour in future"
+			});
+			oRow1.addIntervalHeader(oApp);
+
+			oStartDate = new Date();
+			oStartDate.setDate(oStartDate.getDate() + 2);
+			oStartDate.setHours(0);
+			oStartDate.setMinutes(0);
+			oStartDate.setSeconds(0);
+			oStartDate.setMilliseconds(0);
+			oEndDate = new Date(oStartDate.getTime());
+			oEndDate.setDate(oStartDate.getDate() + 1);
+			oApp = new sap.ui.unified.CalendarAppointment("IntervalHead1", {
+				startDate: oStartDate,
+				endDate: oEndDate,
+				type: sap.ui.unified.CalendarDayType.Type01,
+				title: "Ñagçyfox 1",
+				tooltip: "Test",
+				text: "IntervalHeader of 1 day, 2 days in future"
+			});
+			oRow1.addIntervalHeader(oApp);
+
+			oStartDate = new Date();
+			oStartDate.setDate(oStartDate.getDate() + 3);
+			oStartDate.setHours(0);
+			oStartDate.setMinutes(0);
+			oStartDate.setSeconds(0);
+			oStartDate.setMilliseconds(0);
+			oEndDate = new Date(oStartDate.getTime());
+			oEndDate.setDate(oStartDate.getDate() + 1);
+			oApp = new sap.ui.unified.CalendarAppointment("IntervalHead2", {
+				startDate: oStartDate,
+				endDate: oEndDate,
+				type: sap.ui.unified.CalendarDayType.Type02,
+				title: "Ñagçyfox 2",
+				tooltip: "Test",
+				text: "IntervalHeader of 1 day, 3 days in future",
+				icon: "sap-icon://sap-ui5"
+			});
+			oRow1.addIntervalHeader(oApp);
+
+			var oLabel = new sap.ui.commons.Label({text: "start date", labelFor: "TF1"}).placeAt("event1");
+			var oInput = new sap.ui.commons.TextField("TF1",{
+				value: oFormatYyyyMMddHHmm.format(oRow1.getStartDate()),
+				editable: true,
+				placeholder: "yyyyMMddHHmm",
+				change: function(oEvent){
+					var oTF = oEvent.oSource;
+					var sValue = oEvent.getParameter('newValue');
+					var oRow = sap.ui.getCore().byId("Row1");
+					var oDate = oFormatYyyyMMddHHmm.parse(sValue);
+					if(oDate) {
+						oRow.setStartDate(oDate);
+						oTF.setValueState(sap.ui.core.ValueState.None);
+					}else {
+						oTF.setValueState(sap.ui.core.ValueState.Error);
+					}
+				}
+			}).placeAt("event1");
+
+			var oLabel = new sap.ui.commons.Label({text: "Interval type", labelFor: "RG1"}).placeAt("event1");
+			new sap.ui.commons.RadioButtonGroup("RG1", {
+				columns: 3,
+				items: [new sap.ui.core.Item("I1",{text: sap.ui.unified.CalendarIntervalType.Hour}),
+				        new sap.ui.core.Item("I2",{text: sap.ui.unified.CalendarIntervalType.Day}),
+				        new sap.ui.core.Item("I3",{text: sap.ui.unified.CalendarIntervalType.Month})],
+				select: function(oEvent){
+					var oRow = sap.ui.getCore().byId("Row1");
+					if(oEvent.getParameter("selectedIndex") == 0){
+						oRow.setIntervalType(sap.ui.unified.CalendarIntervalType.Hour);
+					}else if(oEvent.getParameter("selectedIndex") == 1){
+						oRow.setIntervalType(sap.ui.unified.CalendarIntervalType.Day);
+					}else{
+						oRow.setIntervalType(sap.ui.unified.CalendarIntervalType.Month);
+					}
+				}
+			}).placeAt("event1");
+
+			var oLabel = new sap.ui.commons.Label({text: "intervals", labelFor: "TF2"}).placeAt("event1");
+			var oInput = new sap.ui.commons.TextField("TF2",{
+				value: oRow1.getIntervals(),
+				editable: true,
+				placeholder: "Number",
+				change: function(oEvent){
+					var oTF = oEvent.oSource;
+					var sValue = oEvent.getParameter('newValue');
+					var oRow = sap.ui.getCore().byId("Row1");
+					if(isNaN(sValue)) {
+						oTF.setValueState(sap.ui.core.ValueState.Error);
+					}else {
+						oTF.setValueState(sap.ui.core.ValueState.None);
+						oRow.setIntervals(parseInt(sValue));
+					}
+				}
+			}).placeAt("event1");
+
+			oButton = new sap.ui.commons.ToggleButton({
+				text: "NonWorkingDays",
+				pressed: true,
+				press: function(oEvent){
+					var bPressed = oEvent.getParameter("pressed");
+					if (bPressed) {
+						oRow1.setNonWorkingDays([1,3]);
+					} else {
+						oRow1.setNonWorkingDays([]);
+					}
+				}
+			}).placeAt("event1");
+
+			oButton = new sap.ui.commons.ToggleButton({
+				text: "NonWorkingHours",
+				pressed: false,
+				press: function(oEvent){
+					var bPressed = oEvent.getParameter("pressed");
+					if (bPressed) {
+						oRow1.setNonWorkingHours([0,1,2,3,4,5,6,18,19,20,21,22,23]);
+					} else {
+						oRow1.setNonWorkingHours();
+					}
+				}
+			}).placeAt("event1");
+
+			oStartDate = new Date();
+			oStartDate.setMinutes(oStartDate.getMinutes() + 180);
+			oEndDate = new Date(oStartDate.getTime());
+			oEndDate.setMinutes(oEndDate.getMinutes() + 120);
+			var oExtraApp = new sap.ui.unified.CalendarAppointment("ExtraApp", {
+				startDate: oStartDate,
+				endDate: oEndDate,
+				type: sap.ui.unified.CalendarDayType.Type10,
+				title: "Extra Appointment",
+				icon: "sap-icon://sap-ui5",
+				tooltip: "Extra",
+				text: "This is a extra appointment!"
+			});
+
+			oButton = new sap.ui.commons.ToggleButton({
+				text: "extra appointment",
+				pressed: false,
+				press: function(oEvent){
+					var bPressed = oEvent.getParameter("pressed");
+					if (bPressed) {
+						oRow1.addAppointment(oExtraApp);
+					} else {
+						oRow1.removeAppointment(oExtraApp);
+					}
+				}
+			}).placeAt("event1");
+
+			// sample with fix start date and fixed sizes
+			var oRow2 = new sap.ui.unified.CalendarRow("Row2",  {
+					select: handleSelect,
+					width: "600px",
+					height: "6rem",
+					intervals: 6,
+					startDate: new Date("2015", "0", "1", "08", "00"),
+					intervalHeaders: [ new sap.ui.unified.CalendarAppointment("R2H1",{
+					                      	startDate: new Date("2015", "0", "1", "09", "00"),
+					                      	endDate: new Date("2015", "0", "1", "11", "00"),
+					                      	type: sap.ui.unified.CalendarDayType.Type01,
+					                      	title: "Ñagçyfox",
+					                      	tooltip: "Test",
+					                      	icon: "sap-icon://sap-ui5"
+					                      })
+					                  ],
+					appointments: [ new sap.ui.unified.CalendarAppointment("R2A1", {
+					                    	startDate: new Date("2015", "0", "1", "08", "00"),
+					                    	endDate: new Date("2015", "0", "1", "09", "00"),
+					                    	type: sap.ui.unified.CalendarDayType.Type01,
+					                    	title: "Ñagçyfox 1",
+					                    	icon: "images/m_01.png",
+					                    	tooltip: "Tooltip 1",
+					                    	text: "Ñagçyfox 1"
+					                    }),
+					                new sap.ui.unified.CalendarAppointment("R2A2", {
+					                    	startDate: new Date("2015", "0", "1", "08", "15"),
+					                    	endDate: new Date("2015", "0", "1", "09", "00"),
+					                    	type: sap.ui.unified.CalendarDayType.Type02,
+					                    	title: "Ñagçyfox 2",
+					                    	icon: "sap-icon://home",
+					                    	tooltip: "Tooltip 2",
+					                    	text: "Ñagçyfox 2"
+					                    }),
+					                new sap.ui.unified.CalendarAppointment("R2A3", {
+					                    	startDate: new Date("2015", "0", "1", "08", "30"),
+					                    	endDate: new Date("2015", "0", "1", "09", "30"),
+					                    	type: sap.ui.unified.CalendarDayType.Type03,
+					                    	title: "Ñagçyfox 3",
+					                    	icon: "sap-icon://home",
+					                    	tooltip: "Tooltip 3"
+					                    }),
+					                new sap.ui.unified.CalendarAppointment("R2A4", {
+					                    	startDate: new Date("2015", "0", "1", "08", "45"),
+					                    	endDate: new Date("2015", "0", "1", "09", "45"),
+					                    	type: sap.ui.unified.CalendarDayType.Type04,
+					                    	title: "Ñagçyfox 4",
+					                    	tooltip: "Tooltip 4"
+					                    }),
+					                new sap.ui.unified.CalendarAppointment("R2A5", {
+					                    	startDate: new Date("2015", "0", "1", "09", "00"),
+					                    	endDate: new Date("2015", "0", "1", "10", "00"),
+					                    	type: sap.ui.unified.CalendarDayType.Type05,
+					                    	title: "Ñagçyfox 5",
+					                    	tooltip: "Tooltip 5"
+					                    })
+					               ]
+				}).placeAt("sample2");
+
+			// exent text output
+			oEventText = new sap.ui.commons.TextView("EventTV", {
+				text: "event text"
+			}).placeAt("eventText");
+
+			</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+
+		<h1>Test Page for <code>sap.ui.unified.CalendarRow</code></h1>
+		<br>
+		<div>
+			<H2>CalendarRow with default settings</H2>
+			<div id="sample1"></div>
+			<br>
+			<div id="event1"></div>
+			<br>
+			<H2>CalendarRow with fixed height</H2>
+			<div id="sample2"></div>
+			<br>
+			<div id="eventText"></div>
+		</div>
+
+	</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>TeamCalendar - sap.m</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.m.TeamCalendar.gif">
+
+		<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.unified"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+		<script type="text/javascript">
+
+		var app = new sap.m.App("myApp");
+
+		function createFooter(){
+			return new sap.m.Bar({
+				contentMiddle: [new sap.m.Button({
+					text: "TeamCalendar",
+					press: function(){
+						app.to("page1");
+					}
+				})]
+			});
+		};
+
+		var handleAppointmentSelect = function(oEvent){
+			var oInput = sap.ui.getCore().byId("I1");
+			var oAppointment = oEvent.getParameter("appointment");
+			if (oAppointment) {
+				oInput.setValue("Appointment selected: " + oAppointment.getId());
+			}else {
+				var aAppointments = oEvent.getParameter("appointments");
+				oInput.setValue(aAppointments.length + " Appointments selected");
+			}
+		};
+
+		var handleAddRow = function(oEvent){
+			var oTC = oEvent.oSource;
+			var oRow = new sap.m.TeamCalendarRow({
+				icon: "sap-icon://employee",
+				title: "new Row"
+			});
+			oTC.addRow(oRow);
+		};
+
+		var handleAddAppointment = function(oEvent){
+			var oTC = oEvent.oSource;
+			var oStartDate = oTC.getStartDate();
+			var sIntervalType = oTC.getIntervalType();
+			var oStartDate = oTC.getStartDate();
+			var aSelectedRows = oTC.getSelectedRows();
+
+			if(aSelectedRows.length > 0) {
+				var oAppointmentStartDate = new Date(oStartDate.getTime());
+				var oAppointmentEndDate = new Date(oStartDate.getTime());
+
+				switch (sIntervalType) {
+				case sap.ui.unified.CalendarIntervalType.Hour:
+					oAppointmentStartDate.setHours(oAppointmentStartDate.getHours() + 3);
+					oAppointmentEndDate.setHours(oAppointmentStartDate.getHours() + 3);
+					break;
+
+				case sap.ui.unified.CalendarIntervalType.Day:
+					oAppointmentStartDate.setDate(oAppointmentStartDate.getDate() + 3);
+					oAppointmentEndDate.setDate(oAppointmentStartDate.getDate() + 3);
+					break;
+
+				case sap.ui.unified.CalendarIntervalType.Month:
+					oAppointmentStartDate.setMonth(oAppointmentStartDate.getMonth() + 3);
+					oAppointmentEndDate.setMonth(oAppointmentStartDate.getMonth() + 3);
+					break;
+				}
+				var oAppointment = new sap.ui.unified.CalendarAppointment({
+					startDate: oAppointmentStartDate,
+					endDate: oAppointmentEndDate,
+					type: sap.ui.unified.CalendarDayType.Type01,
+					title: "New Appointment",
+					text: sIntervalType,
+					icon: "sap-icon://sap-ui5"
+				});
+				aSelectedRows[0].addAppointment(oAppointment);
+			}else {
+				alert("No row selected");
+			}
+
+		};
+
+		var oSearchField = new sap.m.SearchField("SF1", {
+			search: function(oEvent) {
+									alert("Search!");
+							}
+		});
+
+		var oButton1 = new sap.m.Button("B1", {
+			icon: "sap-icon://sap-ui5",
+			type: sap.m.ButtonType.Transparent,
+			press: function(oEvent) {
+								alert("UI5 Button pressed");
+							}
+		});
+
+		var oButton2 = new sap.m.ToggleButton("B2", {
+			icon: "sap-icon://multi-select",
+			type: sap.m.ButtonType.Transparent,
+			press: function(oEvent) {
+								var oTC = sap.ui.getCore().byId("TC1");
+								if(oEvent.getParameter("pressed")) {
+									oTC.setSingleSelection(false);
+								}else {
+									oTC.setSingleSelection(true);
+								}
+							}
+		});
+
+		var oTC1 = sap.m.TeamCalendar("TC1", {
+			startDate: new Date("2015", "0", "1", "08", "00"),
+			title: "Title",
+			searchField: oSearchField,
+			rows: [ new sap.m.TeamCalendarRow("Row1", {
+			        	icon: "sap-icon://employee",
+			        	title: "Max Mustermann",
+			        	text: "Musterteam",
+			        	tooltip: "Header tooltip",
+			        	intervalHeaders: [ new sap.ui.unified.CalendarAppointment("R1H1",{
+			        	                   	startDate: new Date("2015", "0", "1", "09", "00"),
+			        	                   	endDate: new Date("2015", "0", "1", "11", "00"),
+			        	                   	type: sap.ui.unified.CalendarDayType.Type02,
+			        	                   	title: "SAPUI5",
+			        	                   	tooltip: "Test",
+			        	                   	icon: "sap-icon://sap-ui5"
+			        	                   })
+			        	                 ],
+			        	appointments: [ new sap.ui.unified.CalendarAppointment("R1A1", {
+			        	                	startDate: new Date("2015", "0", "1", "08", "00"),
+			        	                	endDate: new Date("2015", "0", "1", "09", "00"),
+			        	                	type: sap.ui.unified.CalendarDayType.Type01,
+			        	                	title: "Meeting 1",
+			        	                	icon: "../ui/unified/images/m_01.png",
+			        	                	tooltip: "Tooltip 1",
+			        	                	text: "Room 1"
+			        	                }),
+			        	                new sap.ui.unified.CalendarAppointment("R1A2", {
+			        	                	startDate: new Date("2015", "0", "1", "08", "15"),
+			        	                	endDate: new Date("2015", "0", "1", "09", "00"),
+			        	                	type: sap.ui.unified.CalendarDayType.Type02,
+			        	                	title: "Appointment 2",
+			        	                	icon: "sap-icon://home",
+			        	                	tooltip: "Tooltip 2",
+			        	                	text: "Home",
+			        	                	tentative: true
+			        	                }),
+			        	                new sap.ui.unified.CalendarAppointment("R1A3", {
+			        	                	startDate: new Date("2015", "0", "1", "08", "30"),
+			        	                	endDate: new Date("2015", "0", "1", "09", "30"),
+			        	                	type: sap.ui.unified.CalendarDayType.Type03,
+			        	                	title: "Blocker 3",
+			        	                	icon: "sap-icon://home",
+			        	                	tooltip: "Tooltip 3"
+			        	                }),
+			        	                new sap.ui.unified.CalendarAppointment("R1A4", {
+			        	                	startDate: new Date("2015", "0", "1", "09", "45"),
+			        	                	endDate: new Date("2015", "0", "1", "10", "45"),
+			        	                	type: sap.ui.unified.CalendarDayType.Type04,
+			        	                	title: "Meeting 4",
+			        	                	tooltip: "Tooltip 4",
+			        	                	selected: true
+			        	                })
+			        	              ]
+			        	}),
+			        new sap.m.TeamCalendarRow("Row2", {
+			        	icon: "../ui/unified/images/m_01.png",
+			        	title: "Edward",
+			        	text: "the great",
+			        	tooltip: "Header tooltip",
+			        	intervalHeaders: [ new sap.ui.unified.CalendarAppointment("R2H1",{
+			        	                   	startDate: new Date("2015", "0", "2", "00", "00"),
+			        	                   	endDate: new Date("2015", "0", "2", "23", "59"),
+			        	                   	type: sap.ui.unified.CalendarDayType.Type01,
+			        	                   	title: "SAPUI5",
+			        	                   	tooltip: "Test",
+			        	                   	icon: "sap-icon://sap-ui5"
+			        	                   })
+			        	                 ],
+			        	appointments: [ new sap.ui.unified.CalendarAppointment("R2A1", {
+			        	                	startDate: new Date("2015", "0", "1", "00", "00"),
+			        	                	endDate: new Date("2015", "0", "2", "23", "59"),
+			        	                	type: sap.ui.unified.CalendarDayType.Type01,
+			        	                	title: "Event 1",
+			        	                	icon: "../ui/unified/images/m_01.png",
+			        	                	tooltip: "Tooltip 1",
+			        	                	text: "Room 1"
+			        	                }),
+			        	                new sap.ui.unified.CalendarAppointment("R2A2", {
+			        	                	startDate: new Date("2015", "0", "2", "00", "00"),
+			        	                	endDate: new Date("2015", "0", "2", "23", "59"),
+			        	                	type: sap.ui.unified.CalendarDayType.Type02,
+			        	                	title: "Event 2",
+			        	                	icon: "sap-icon://home",
+			        	                	tooltip: "Tooltip 2",
+			        	                	text: "Home"
+			        	                }),
+			        	                new sap.ui.unified.CalendarAppointment("R2A3", {
+			        	                	startDate: new Date("2015", "0", "3", "00", "00"),
+			        	                	endDate: new Date("2015", "0", "4", "23", "59"),
+			        	                	type: sap.ui.unified.CalendarDayType.Type03,
+			        	                	title: "Event 3",
+			        	                	icon: "sap-icon://home",
+			        	                	tooltip: "Tooltip 3"
+			        	                }),
+			        	                new sap.ui.unified.CalendarAppointment("R2A4", {
+			        	                	startDate: new Date("2015", "1", "1", "00", "00"),
+			        	                	endDate: new Date("2015", "1", "28", "23", "59"),
+			        	                	type: sap.ui.unified.CalendarDayType.Type04,
+			        	                	title: "Event 4",
+			        	                	icon: "sap-icon://home",
+			        	                	tooltip: "Tooltip 4"
+			        	                })
+			        	]
+			        	})
+			       ],
+			toolbarContent: [oButton1, oButton2],
+			appointmentSelect: handleAppointmentSelect,
+			addRow: handleAddRow,
+			addAppointment: handleAddAppointment
+		});
+
+		var oInput = new sap.m.Input("I1", {
+			editable: false,
+			width: "100%"
+		});
+
+		var page1 = new sap.m.Page("page1", {
+			title:"Mobile TeamCalendar",
+			content : [
+				oTC1,
+				oInput
+			],
+			footer: createFooter()
+		});
+
+		app.addPage(page1);
+
+		app.placeAt("body");
+
+	</script>
+	<style>
+		body {
+			margin: 0;
+		}
+		.sapMPageScroll {
+			padding: 1rem;
+		}
+	</style>
+
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

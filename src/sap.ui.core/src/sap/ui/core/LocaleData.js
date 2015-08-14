@@ -604,7 +604,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			}
 
 			return sap.ui.core.CalendarType.Gregorian;
+		},
+
+		/**
+		 * Returns the display name for a time unit (second, minute, hour, day, week, month, year)
+		 *
+		 * @param {string} sType Type (second, minute, hour, day, week, month, year)
+		 * returns {string} display name
+		 * @public
+		 * @since 1.34.0
+		 */
+		getDisplayName: function(sType) {
+
+			jQuery.sap.assert(sType == "second" || sType == "minute" || sType == "hour" || sType == "day" || sType == "week" || sType == "month" || sType == "year", "sType must be second, minute, hour, day, week, month, year");
+			return this._get("dateField-" + sType + "-displayName");
+
 		}
+
 	});
 
 	/**

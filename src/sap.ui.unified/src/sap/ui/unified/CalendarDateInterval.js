@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	"use strict";
 
 	/**
-	 * Constructor for a new Calendar.
+	 * Constructor for a new <code>CalendarDateInterval</code>.
 	 *
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
@@ -46,6 +46,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
 
+		},
+		events : {
+
+			/**
+			 * <code>startDate</code> was changed while navigation in <code>CalendarDateInterval</code>
+			 * @since 1.34.0
+			 */
+			startDateChange : {}
 		}
 	}});
 
@@ -183,7 +191,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				if (!oStartDate) {
 					// use focused date as start date
 					var that = this;
-					_setStartDate(that, this._oFocusedDate, false);
+					_setStartDate(that, this._oFocusedDate, false, true);
 				}else if (!oDatesRow.checkDateFocusable(CalendarUtils._createLocalDate(this._oFocusedDate))) {
 					this._oFocusedDate = CalendarUtils._createUniversalUTCDate(oStartDate);
 				}
@@ -359,7 +367,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		function _setStartDate(oThis, oStartDate, bSetFocusDate){
+		function _setStartDate(oThis, oStartDate, bSetFocusDate, bNoEvent){
 
 			var oMaxDate = new UniversalDate(oThis._oMaxDate.getTime());
 			oMaxDate.setUTCDate(oMaxDate.getUTCDate() - oThis._getDays());
@@ -387,6 +395,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				}else {
 					oDatesRow.setDate(oDate);
 				}
+			}
+
+			if (!bNoEvent) {
+				oThis.fireStartDateChange();
 			}
 
 		}
