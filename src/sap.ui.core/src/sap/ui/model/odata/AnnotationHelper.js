@@ -11,9 +11,7 @@ sap.ui.define([
 ], function(jQuery, BindingParser, Basics, Expression) {
 		'use strict';
 
-		var AnnotationHelper,
-			// path to entity type ("/dataServices/schema/<i>/entityType/<j>")
-			rEntityTypePath = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/;
+		var AnnotationHelper;
 
 		/**
 		 * Returns a function representing the composition <code>fnAfter</code> after
@@ -35,107 +33,6 @@ sap.ui.define([
 				return fnAfter.call(this, fnBefore.apply(this, arguments));
 			}
 			return formatter;
-		}
-
-		/**
-		 * Follows the dynamic "14.5.12 Expression edm:Path" (or variant thereof) contained within
-		 * the given raw value, starting the absolute path identified by the given interface, and
-		 * returns the resulting absolute path as well as some other aspects about the path.
-		 *
-		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
-		 *   the callback interface related to the current formatter call; the path must be within
-		 *   an entity type!
-		 * @param {any} vRawValue
-		 *   the raw value from the meta model, e.g. <code>{AnnotationPath :
-		 *   "ToSupplier/@com.sap.vocabularies.Communication.v1.Address"}</code> or <code>
-		 *   {AnnotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"}</code>
-		 * @returns {object}
-		 *   - {object} [associationSetEnd=undefined]
-		 *   association set end corresponding to the last navigation property
-		 *   - {boolean} [navigationAfterMultiple=false]
-		 *   if the navigation path has an association end with multiplicity "*" which is not
-		 *   the last one
-		 *   - {boolean} [isMultiple=false]
-		 *   whether the navigation path ends with an association end with multiplicity "*"
-		 *   - {string[]} [navigationProperties=[]]
-		 *   all navigation property names
-		 *   - {string} [resolvedPath=undefined]
-		 *   the resulting absolute path
-		 * @see sap.ui.model.odata.AnnotationHelper.isMultiple
-		 */
-		function followPath(oInterface, vRawValue) {
-			var oAssociationEnd,
-				sContextPath,
-				oEntity,
-				iIndexOfAt,
-				aMatches,
-				oModel = oInterface.getModel(),
-				aParts,
-				sPath,
-				oResult = {
-					associationSetEnd : undefined,
-					navigationAfterMultiple : false,
-					isMultiple : false,
-					navigationProperties : [],
-					resolvedPath : undefined
-				},
-				sSegment;
-
-			if (vRawValue && vRawValue.hasOwnProperty("AnnotationPath")) {
-				sPath = vRawValue.AnnotationPath;
-			} else if (vRawValue && vRawValue.hasOwnProperty("Path")) {
-				sPath = vRawValue.Path;
-			} else if (vRawValue && vRawValue.hasOwnProperty("PropertyPath")) {
-				sPath = vRawValue.PropertyPath;
-			} else if (vRawValue && vRawValue.hasOwnProperty("NavigationPropertyPath")) {
-				sPath = vRawValue.NavigationPropertyPath;
-			} else {
-				return undefined; // some unsupported case
-			}
-
-			aMatches = rEntityTypePath.exec(oInterface.getPath());
-			if (!aMatches) {
-				return undefined;
-			}
-
-			// start at entity type ("/dataServices/schema/<i>/entityType/<j>")
-			sContextPath = aMatches[1];
-			aParts = sPath.split("/");
-
-			while (sPath && aParts.length && sContextPath) {
-				sSegment = aParts[0];
-				iIndexOfAt = sSegment.indexOf("@");
-				if (iIndexOfAt === 0) {
-					// term cast
-					sContextPath += "/" + sSegment.slice(1);
-					aParts.shift();
-					continue;
-//				} else if (iIndexOfAt > 0) { // annotation of a navigation property
-//					sSegment = sSegment.slice(0, iIndexOfAt);
-				}
-
-				oEntity = oModel.getObject(sContextPath);
-				oAssociationEnd = oModel.getODataAssociationEnd(oEntity, sSegment);
-				if (oAssociationEnd) {
-					// navigation property
-					oResult.associationSetEnd
-						= oModel.getODataAssociationSetEnd(oEntity, sSegment);
-					oResult.navigationProperties.push(sSegment);
-					if (oResult.isMultiple) {
-						oResult.navigationAfterMultiple = true;
-					}
-					oResult.isMultiple = oAssociationEnd.multiplicity === "*";
-					sContextPath = oModel.getODataEntityType(oAssociationEnd.type, true);
-					aParts.shift();
-					continue;
-				}
-
-				// structural properties or some unsupported case
-				sContextPath = oModel.getODataProperty(oEntity, aParts, true);
-			}
-
-			oResult.resolvedPath = sContextPath;
-			return oResult;
 		}
 
 		/**
@@ -416,7 +313,7 @@ sap.ui.define([
 				if (arguments.length === 1) {
 					vRawValue = oInterface.getObject("");
 				}
-				var oResult = followPath(oInterface, vRawValue);
+				var oResult = Basics.followPath(oInterface, vRawValue);
 
 				return oResult
 					? "{" + oResult.navigationProperties.join("/") + "}"
@@ -458,7 +355,7 @@ sap.ui.define([
 				if (typeof vRawValue === "string") {
 					sEntitySet = vRawValue;
 				} else {
-					oResult = followPath(oContext, vRawValue);
+					oResult = Basics.followPath(oContext, vRawValue);
 					sEntitySet = oResult
 						&& oResult.associationSetEnd
 						&& oResult.associationSetEnd.entitySet;
@@ -572,7 +469,7 @@ sap.ui.define([
 				if (arguments.length === 1) {
 					vRawValue = oInterface.getObject("");
 				}
-				var oResult = followPath(oInterface, vRawValue);
+				var oResult = Basics.followPath(oInterface, vRawValue);
 
 				if (oResult) {
 					if (oResult.navigationAfterMultiple) {
@@ -609,7 +506,7 @@ sap.ui.define([
 			 * @public
 			 */
 			resolvePath : function (oContext) {
-				var oResult = followPath(oContext, oContext.getObject());
+				var oResult = Basics.followPath(oContext, oContext.getObject());
 
 				return oResult
 					? oResult.resolvedPath

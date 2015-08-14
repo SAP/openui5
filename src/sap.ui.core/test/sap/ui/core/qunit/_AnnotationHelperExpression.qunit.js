@@ -160,133 +160,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("path: no entity annotation", function () {
-		var oMetaModel = {},
-			oInterface = {
-				getModel: function () { return oMetaModel; }
-			},
-			oPathValue = {
-				path: "/dataServices/schema/0/complexType/0/annotation",
-				value: "foo/bar"
-			},
-			oResult;
-
-		this.mock(Basics).expects("expectType").withExactArgs(oPathValue, "string");
-		this.mock(jQuery.sap.log).expects("warning").never();
-
-		oResult = Expression.path(oInterface, oPathValue);
-		deepEqual(oResult, {
-			result: "binding",
-			value: "foo/bar"
-		}, "result");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("path: property not found", function () {
-		var oEntityType = {name: "BusinessPartner"},
-			oMetaModel = {
-				getODataProperty: function (oType, aParts) {
-					strictEqual(oType, oEntityType);
-					deepEqual(aParts, ["foo", "bar"]);
-					return undefined;
-				},
-				getProperty: function (sPath) {
-					strictEqual(sPath, "/dataServices/schema/0/entityType/0");
-					return oEntityType;
-				}
-			},
-			oInterface = {
-				getModel: function () { return oMetaModel; }
-			},
-			oPathValue = {
-				path: "/dataServices/schema/0/entityType/0/annotation",
-				value: "foo/bar"
-			},
-			oResult;
-
-		this.mock(jQuery.sap.log).expects("warning").withExactArgs(
-			"Could not determine type for property 'foo/bar' of entity type 'BusinessPartner'",
-			null, "sap.ui.model.odata.AnnotationHelper");
-
-		oResult = Expression.path(oInterface, oPathValue);
-		deepEqual(oResult, {
-			result: "binding",
-			value: "foo/bar"
-		}, "result");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("path: sub-property not found", function () {
-		var oEntityType = {name: "BusinessPartner"},
-			oMetaModel = {
-				getODataProperty: function (oType, aParts) {
-					strictEqual(oType, oEntityType);
-					deepEqual(aParts, ["foo", "bar"]);
-					aParts.shift();
-					return {type: "Edm.String" };
-				},
-				getProperty: function (sPath) {
-					strictEqual(sPath, "/dataServices/schema/0/entityType/0");
-					return oEntityType;
-				}
-			},
-			oInterface = {
-				getModel: function () { return oMetaModel; }
-			},
-			oPathValue = {
-				path: "/dataServices/schema/0/entityType/0/annotation",
-				value: "foo/bar"
-			},
-			oResult;
-
-		this.mock(jQuery.sap.log).expects("warning").withExactArgs(
-			"Could not determine type for property 'foo/bar' of entity type 'BusinessPartner'",
-			null, "sap.ui.model.odata.AnnotationHelper");
-
-		oResult = Expression.path(oInterface, oPathValue);
-		deepEqual(oResult, {
-			result: "binding",
-			value: "foo/bar"
-		}, "result");
-	});
-
-	//*********************************************************************************************
-	QUnit.test("path: unknown type", function () {
-		var oEntityType = {},
-			oMetaModel = {
-				getODataProperty: function (oType, aParts) {
-					strictEqual(oType, oEntityType);
-					deepEqual(aParts, ["foo", "bar"]);
-					aParts.splice(0, 2);
-					return {type: "unknown" };
-				},
-				getProperty: function (sPath) {
-					strictEqual(sPath, "/dataServices/schema/0/entityType/0");
-					return oEntityType;
-				}
-			},
-			oInterface = {
-				getModel: function () { return oMetaModel; }
-			},
-			oPathValue = {
-				path: "/dataServices/schema/0/entityType/0/annotation",
-				value: "foo/bar"
-			},
-			oResult;
-
-		this.mock(jQuery.sap.log).expects("warning").never();
-
-		oResult = Expression.path(oInterface, oPathValue);
-
-		deepEqual(oResult, {
-			result: "binding",
-			value: "foo/bar",
-			type: "unknown",
-			constraints: {}
-		}, "result");
-	});
-
-	//*********************************************************************************************
 	[{
 		property: {type: "Edm.Boolean"},
 		constraints: {}
@@ -304,41 +177,68 @@ sap.ui.require([
 		constraints: {maxLength: "30", nullable: "false"}
 	}].forEach(function (oFixture) {
 		QUnit.test("path: type " + oFixture.property.type, function () {
-			var oEntityType = {},
+			var oExpectedResult = {
+					result: "binding",
+					value: "bar",
+					type: oFixture.property.type
+				},
+				sResolvedPath = "/dataServices/schema/0/entityType/i/property/j",
 				oMetaModel = {
-					getODataProperty: function (oType, aParts) {
-						strictEqual(oType, oEntityType);
-						deepEqual(aParts, ["foo", "bar"]);
-						aParts.splice(0, 2);
-						return oFixture.property;
-					},
 					getProperty: function (sPath) {
-						strictEqual(sPath, "/dataServices/schema/0/entityType/0");
-						return oEntityType;
+						strictEqual(sPath, sResolvedPath);
+						return oFixture.property;
 					}
 				},
 				oInterface = {
 					getModel: function () { return oMetaModel; }
 				},
 				oPathValue = {
-					path: "/dataServices/schema/0/entityType/0/annotation",
-					value: "foo/bar"
+					path: "/dataServices/schema/0/entityType/0/foo/Path",
+					value: "bar"
 				},
-				oResult,
-				oExpectedResult;
+				oResult;
 
+			if (oFixture.constraints) {
+				oExpectedResult.constraints = oFixture.constraints;
+			}
+			this.stub(Basics, "followPath", function (oInterface, vRawValue) {
+				strictEqual(oInterface.getModel(), oMetaModel);
+				strictEqual(oInterface.getPath(), oPathValue.path);
+				deepEqual(vRawValue, {"Path": oPathValue.value});
+
+				return {resolvedPath : sResolvedPath};
+			});
 			this.mock(jQuery.sap.log).expects("warning").never();
 
 			oResult = Expression.path(oInterface, oPathValue);
 
-			oExpectedResult = {
-				result: "binding",
-				value: "foo/bar",
-				type: oFixture.property.type
-			};
-			if (oFixture.constraints) {
-				oExpectedResult.constraints = oFixture.constraints;
-			}
+			deepEqual(oResult, oExpectedResult, "result");
+		});
+	});
+
+	//*********************************************************************************************
+	[undefined, {resolvedPath : undefined}].forEach(function (oTarget) {
+		QUnit.test("path: followPath returns " + Basics.toJSON(oTarget), function () {
+			var oExpectedResult = {
+					result: "binding",
+					value: "unsupported"
+				},
+				oInterface = {
+					getModel: function () {}
+				},
+				oPathValue = {
+					path: "/dataServices/schema/0/entityType/0/foo/Path",
+					value: "unsupported"
+				},
+				oResult;
+
+			this.stub(Basics, "followPath").returns(oTarget);
+			this.mock(jQuery.sap.log).expects("warning").withExactArgs(
+				"Could not find property 'unsupported' starting from '" + oPathValue.path + "'",
+				null, "sap.ui.model.odata.AnnotationHelper");
+
+			oResult = Expression.path(oInterface, oPathValue);
+
 			deepEqual(oResult, oExpectedResult, "result");
 		});
 	});
