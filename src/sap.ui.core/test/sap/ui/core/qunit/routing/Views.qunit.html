@@ -334,9 +334,7 @@
 					var oPromise = this.oViews.getView(oViewOption);
 
 					assert.strictEqual(fnEventSpy.callCount, 0, "The created event isn't fired yet");
-					new Promise(function(resolve){
-						resolve();
-					}).then(function() {
+					Promise.resolve().then(function() {
 						assert.strictEqual(fnEventSpy.callCount, 0, "The created event isn't fired yet");
 					});
 
@@ -362,9 +360,7 @@
 
 					var oPromise = this.oViews.getView(oViewOption);
 
-					new Promise(function(resolve) {
-						resolve();
-					}).then(function() {
+					Promise.resolve().then(function() {
 						assert.strictEqual(fnEventSpy.callCount, 1, "The created event is fired");
 					});
 
