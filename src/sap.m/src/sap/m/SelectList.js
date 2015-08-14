@@ -130,6 +130,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @private
 		 */
 		SelectList.prototype.updateItems = function(sReason) {
+			this.destroyItems();
 			this.updateAggregation("items");
 			this._bDataAvailable = true;
 		};
