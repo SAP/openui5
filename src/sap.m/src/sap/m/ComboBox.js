@@ -1005,22 +1005,20 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 				sNewValue = oControlEvent.getParameter("newValue"),
 				sProperty = oControlEvent.getParameter("name");
 
-			// if the selected item has not changed, no synchronization is needed
-			if (sSelectedItemId !== oControlEvent.getParameter("id")) {
-				return;
-			}
+			// if the selected item has changed, synchronization is needed
+			if (sSelectedItemId === oControlEvent.getParameter("id")) {
 
-			// synchronize properties
-			switch (sProperty) {
-				case "text":
-					this.setValue(sNewValue);
-					break;
+				switch (sProperty) {
+					case "text":
+						this.setValue(sNewValue);
+						break;
 
-				case "key":
-					this.setSelectedKey(sNewValue);
-					break;
+					case "key":
+						this.setSelectedKey(sNewValue);
+						break;
 
-				// no default
+					// no default
+				}
 			}
 		};
 
