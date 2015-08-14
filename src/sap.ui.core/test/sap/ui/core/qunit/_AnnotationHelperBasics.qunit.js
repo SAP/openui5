@@ -141,7 +141,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resultToString", function () {
+	QUnit.test("resultToString: bindings", function () {
 		[{
 			value: {result: "binding", value: "path"},
 			binding: "{path}",
@@ -158,10 +158,6 @@ sap.ui.require([
 			value: {result: "expression", value: "foo(${path})"},
 			binding: "{=foo(${path})}",
 			expression: "foo(${path})"
-		}, {
-			value: {result: "constant", type: "edm:Null", value: "null"},
-			binding: null,
-			expression: "null"
 		}].forEach(function (oFixture) {
 			strictEqual(Basics.resultToString(oFixture.value, false), oFixture.binding,
 				oFixture.binding);
@@ -176,6 +172,35 @@ sap.ui.require([
 			Basics.resultToString({result: "composite", value: "{FirstName} {LastName}"}, true);
 		}, /Trying to embed a composite binding into an expression binding/,
 			"composite to expression");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("resultToString: constants", function () {
+		[
+			{type: "edm:Null", value: "null", binding: null, expression: "null"},
+			{type: "Edm.Boolean", value: "false", expression: "false"},
+// TODO		{type: "Edm.Date", value: "2000-01-01", expression: ""},
+// TODO		{type: "Edm.DateTimeOffset", value: "2000-01-01T16:00Z", expression: ""},
+			{type: "Edm.Decimal", value: "3.1415", expression: "'3.1415'"},
+			{type: "Edm.Guid", value: "12345678-ABCD-EFab-cdef-123456789012",
+				expression: "'12345678-ABCD-EFab-cdef-123456789012'"},
+			{type: "Edm.Int32", value: "42", expression: "42"},
+			{type: "Edm.Int64", value: "9007199254740992", expression: "'9007199254740992'"},
+			{type: "Edm.String", value: "foo", expression: "'foo'"}
+// TODO		{type: "Edm.TimeOfDay", value: "23:59:59", expression: ""}
+		].forEach(function (oFixture) {
+			var oResult = {
+					result: "constant",
+					type: oFixture.type,
+					value: oFixture.value
+				};
+
+			strictEqual(Basics.resultToString(oResult, false),
+					"binding" in oFixture ? oFixture.binding : oFixture.value,
+					oFixture.type + " -> binding");
+			strictEqual(Basics.resultToString(oResult, true), oFixture.expression,
+					oFixture.type + " -> expression");
+		});
 	});
 
 	//*********************************************************************************************

@@ -373,6 +373,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				<Property Name="_Int16" Type="Edm.Int16" Nullable="false"/>\
 				<Property Name="_Int32" Type="Edm.Int32" Nullable="false"/>\
 				<Property Name="_Int64" Type="Edm.Int64" Nullable="false"/>\
+				<Property Name="_Int64Small" Type="Edm.Int64" Nullable="false"/>\
 				<Property Name="_SByte" Type="Edm.SByte" Nullable="false"/>\
 				<Property Name="_Single" Type="Edm.Single" Nullable="false"/>\
 				<Property Name="_String10" Type="Edm.String" Nullable="false" MaxLength="10"/>\
@@ -445,7 +446,12 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 						</Record>\
 						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
 							<PropertyValue Property="Value">\
-								<Eq><Path>_Int64</Path><Int>64</Int></Eq>\
+								<Eq><Path>_Int64</Path><Int>9007199254740992</Int></Eq>\
+							</PropertyValue>\
+						</Record>\
+						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
+							<PropertyValue Property="Value">\
+								<Eq><Path>_Int64Small</Path><Int>64</Int></Eq>\
 							</PropertyValue>\
 						</Record>\
 						<Record Type="com.sap.vocabularies.UI.v1.DataField">\
@@ -900,6 +906,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		oInt16,
 		oInt32,
 		oInt64,
+		oInt64,
 		oSByte,
 		oSingle,
 		oString10,
@@ -1151,7 +1158,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		//TODO split seconds, e.g. ".123456789012"
 		{type: "DateTimeOffset", result: "datetimeoffset'2099-01-06T07:25:21Z'"},
 		{type: "Decimal", result: "-12345678901234567.12345678901234M"},
-		{type: "Float", result: "1.69E+308d"},
+		{type: "Float", result: "1.69e+308d"},
 		{type: "Guid", result: "guid'0050568D-393C-1EE4-A5AE-9AAE85248FF1'"},
 		{type: "Int", result: "-9223372036854775800L"},
 		{type: "String", result: "'String Filtered Maxlength 40'"},
@@ -1195,7 +1202,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				+ "+and+Decimal+eq+"
 				+ encode("-12345678901234567.12345678901234M")
 				+ "+and+Double+eq+"
-				+ encode("1.69E+308d")
+				+ encode("1.69e+308d")
 				+ "+and+GlobalUID+eq+"
 				+ encode("guid'0050568D-393C-1EE4-A5AE-9AAE85248FF1'")
 				+ "+and+Int64+eq+"
@@ -1329,7 +1336,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	    {path: "_Guid", value: "0050568D-393C-1ED4-9D97-E65F0F3FCC23"},
 	    {path: "_Int16", value: 16},
 	    {path: "_Int32", value: 32},
-	    {path: "_Int64", value: "64"},
+	    {path: "_Int64", value: "9007199254740992"},
+	    {path: "_Int64Small", value: "64"},
 	    {path: "_SByte", value: -126},
 	    {path: "_Single", value: 2.7182818},
 	    {path: "_String10", value: "foo"},

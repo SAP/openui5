@@ -65,7 +65,10 @@ sap.ui.require([
 				"12345-1234-1234-1234-123456789abc",
 				"12_45678-1234-1234-1234-123456789abc"]},
 
-		{constant: "Int", type: "Edm.Int64", values: ["-1234567890"]},
+		{constant: "Int", type: "Edm.Int64",
+			values: ["-9007199254740992", "9007199254740992", "10000000000000000"]},
+		{constant: "Int", type: "Edm.Int32",
+			values: ["-9007199254740991", "0", "9007199254740991"]},
 		{constant: "Int", error: true,
 			values: ["INF", "-INF", "NaN", "12345678901234567890", "1.0", "1a", "1e3"]},
 
@@ -1002,34 +1005,53 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("adjustOperands", function () {
-		var oP11 = {result: "binding", category: "number", type: "Edm.Int32"},
-			oP12 = {result: "constant", category: "decimal", type: "Edm.Int64"},
-			oP21 = {result: "constant", category: "date", type: "Edm.Date"},
-			oP22 = {result: "binding", category: "datetime", type: "Edm.DateTime"},
-			aTypes = ["Edm.Date", "Edm.DateTime", "Edm.Decimal", "Edm.Int32", "Edm.Int64",
-				"Edm.String"],
-			aCategories = ["date", "datetime", "decimal", "number", "decimal", "string"],
+		var oP11 = {result: "binding", type: "Edm.Int32", category: "number"},
+			oP12 = {result: "constant", type: "Edm.Int64", category: "decimal"},
+			oP21 = {result: "constant", type: "Edm.Date", category: "date"},
+			oP22 = {result: "binding", type: "Edm.DateTime", category: "datetime"},
+			oP31 = {result: "binding", type: "Edm.Int64", category: "decimal"},
+			oP32 = {result: "constant", type: "Edm.Int32", category: "number"},
+			oP41 = {result: "binding", type: "Edm.Decimal", category: "decimal"},
+			oP42 = {result: "constant", type: "Edm.Int32", category: "number"},
+			mTypes = {
+				"Edm.Boolean": "boolean",
+				"Edm.Date": "date",
+				"Edm.DateTime": "datetime",
+				"Edm.Decimal": "decimal",
+				"Edm.Int32": "number",
+				"Edm.Int64": "decimal",
+				"Edm.String": "string",
+				"Edm.Time": "time"
+			},
 			aResults = ["binding", "constant"];
 
 		function isActiveCase(o1, o2) {
 			return (jQuery.sap.equal(o1, oP11) && jQuery.sap.equal(o2, oP12))
-				|| (jQuery.sap.equal(o1, oP21) && jQuery.sap.equal(o2, oP22));
+				|| (jQuery.sap.equal(o1, oP21) && jQuery.sap.equal(o2, oP22))
+				|| (jQuery.sap.equal(o1, oP31) && jQuery.sap.equal(o2, oP32))
+				|| (jQuery.sap.equal(o1, oP41) && jQuery.sap.equal(o2, oP42));
 		}
 
 		aResults.forEach(function (sResult1) {
 			aResults.forEach(function (sResult2) {
-				aTypes.forEach(function (sType1, i1) {
-					aTypes.forEach(function (sType2, i2) {
+				Object.keys(mTypes).forEach(function (sType1) {
+					Object.keys(mTypes).forEach(function (sType2) {
 						var oParameter1 =
-								{result: sResult1, type: sType1, category: aCategories[i1]},
+								{result: sResult1, type: sType1, category: mTypes[sType1]},
 							oParameter2 =
-								{result: sResult2, type: sType2, category: aCategories[i2]},
-							oExpected =
-								{result: sResult2, type: sType2, category: aCategories[i2]};
+								{result: sResult2, type: sType2, category: mTypes[sType2]},
+							sText = JSON.stringify(oParameter1) + " op "
+								+ JSON.stringify(oParameter2);
 
 						if (!isActiveCase(oParameter1, oParameter2)) {
 							Expression.adjustOperands(oParameter1, oParameter2);
-							deepEqual(oParameter2, oExpected, JSON.stringify(oParameter1));
+							deepEqual({
+								p1: oParameter1,
+								p2: oParameter2
+							}, {
+								p1: {result: sResult1, type: sType1, category: mTypes[sType1]},
+								p2: {result: sResult2, type: sType2, category: mTypes[sType2]}
+							}, sText);
 						}
 					});
 				});
@@ -1037,10 +1059,40 @@ sap.ui.require([
 		});
 
 		Expression.adjustOperands(oP11, oP12);
-		deepEqual(oP12, {result: "constant", type: "Edm.Int64", category: "number"});
+		deepEqual({
+			p1: oP11,
+			p2: oP12
+		}, {
+			p1: {result: "binding", type: "Edm.Int32", category: "number"},
+			p2: {result: "constant", type: "Edm.Int64", category: "number"}
+		}, "special case 1");
 
 		Expression.adjustOperands(oP21, oP22);
-		deepEqual(oP22, {result: "binding", type: "Edm.DateTime", category: "date"});
+		deepEqual({
+			p1: oP21,
+			p2: oP22
+		}, {
+			p1: {result: "constant", type: "Edm.Date", category: "date"},
+			p2: {result: "binding", type: "Edm.DateTime", category: "date"}
+		}, "special case 2");
+
+		Expression.adjustOperands(oP31, oP32);
+		deepEqual({
+			p1: oP31,
+			p2: oP32
+		}, {
+			p1: {result: "binding", type: "Edm.Int64", category: "decimal"},
+			p2: {result: "constant", type: "Edm.Int64", category: "decimal"}
+		}, "special case 3");
+
+		Expression.adjustOperands(oP41, oP42);
+		deepEqual({
+			p1: oP41,
+			p2: oP42
+		}, {
+			p1: {result: "binding", type: "Edm.Decimal", category: "decimal"},
+			p2: {result: "constant", type: "Edm.Decimal", category: "decimal"}
+		}, "special case 3");
 	});
 
 	//*********************************************************************************************
