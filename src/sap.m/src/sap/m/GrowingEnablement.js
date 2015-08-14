@@ -674,6 +674,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				return;
 			}
 
+			// switch between more button and loading 
+			var bHasScrollbars = this._getHasScrollbars();
+			var bHasScrollToLoad = this._oControl.getGrowingScrollToLoad();
+			this._checkTriggerType(bHasScrollToLoad, bHasScrollbars);
+
 			// hide trigger if no items or maximum of items reached
 			var iMaxItems = this._oControl.getMaxItemsCount();
 			var iItemsLength = this._oControl.getItems(true).length;
