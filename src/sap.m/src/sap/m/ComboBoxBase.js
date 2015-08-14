@@ -69,6 +69,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @private
 		 */
 		ComboBoxBase.prototype.updateItems = function(sReason) {
+			this.bDataUpdated = false;
+			this.destroyItems();
 			this.updateAggregation("items");
 			this.bDataUpdated = true;
 		};
@@ -216,7 +218,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 			 * To detect whether the data is updated.
 			 *
 			 */
-			this.bDataUpdated = true;
+			this.bDataUpdated = false;
 		};
 
 		/**
