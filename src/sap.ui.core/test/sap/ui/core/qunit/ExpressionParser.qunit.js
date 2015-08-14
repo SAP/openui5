@@ -522,4 +522,30 @@ sap.ui.require([
 		//TODO drop String() once BindingParser can properly handle constant result values
 		check(assert, sExpression, String(undefined));
 	});
+
+	//*********************************************************************************************
+	QUnit.test("Internal incident 1570800230", function (assert) {
+		var oIcon,
+			oModel = new JSONModel({/*IsActiveEntity : undefined*/});
+
+		oIcon = new Icon({
+			decorative : "{= !${/IsActiveEntity} }",
+			models : oModel
+		});
+		assert.strictEqual(oIcon.getDecorative(), true);
+
+		oIcon = new Icon({
+			decorative : "{= !!${/IsActiveEntity} }",
+			models : oModel
+		});
+		assert.strictEqual(oIcon.getDecorative(), false);
+
+		oIcon = new Icon({
+			decorative : "{= ${/IsActiveEntity} }",
+			models : oModel
+		});
+		assert.strictEqual(oIcon.getDecorative(), true, "default value used!");
+		assert.strictEqual(oIcon.validateProperty("decorative", undefined), true,
+			"default value used!");
+	});
 });
