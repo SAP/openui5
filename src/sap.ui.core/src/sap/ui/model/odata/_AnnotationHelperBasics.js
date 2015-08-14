@@ -121,7 +121,8 @@ sap.ui.define([
 		 * @param {object} oRawValue
 		 *   the raw value from the meta model, e.g. <code>{AnnotationPath :
 		 *   "ToSupplier/@com.sap.vocabularies.Communication.v1.Address"}</code> or <code>
-		 *   {AnnotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"}</code>
+		 *   {AnnotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"}</code>;
+		 *   embedded within an entity set or entity type
 		 * @returns {object}
 		 *   - {object} [associationSetEnd=undefined]
 		 *   association set end corresponding to the last navigation property

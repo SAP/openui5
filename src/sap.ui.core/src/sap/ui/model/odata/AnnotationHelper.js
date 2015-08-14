@@ -245,7 +245,8 @@ sap.ui.define([
 			 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 			 *   the callback interface related to the current formatter call
 			 * @param {any} [vRawValue]
-			 *   the raw value from the meta model:
+			 *   the raw value from the meta model, which is embedded within an entity set or
+			 *   entity type:
 			 *   <ul>
 			 *   <li>if this function is used as formatter the value
 			 *   is provided by the framework</li>
@@ -293,7 +294,7 @@ sap.ui.define([
 			 *   the raw value from the meta model, e.g. <code>{AnnotationPath :
 			 *   "ToSupplier/@com.sap.vocabularies.Communication.v1.Address"}</code> or <code>
 			 *   {AnnotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"}</code>;
-			 *   embedded within an entity type;
+			 *   embedded within an entity set or entity type;
 			 *   <ul>
 			 *   <li>if this function is used as formatter the value
 			 *   is provided by the framework</li>
@@ -341,7 +342,7 @@ sap.ui.define([
 			 *   a context which must point to a simple string or to an annotation (or annotation
 			 *   property) of type <code>Edm.AnnotationPath</code>,
 			 *   <code>Edm.NaviagtionPropertyPath</code>, <code>Edm.Path</code>, or
-			 *   <code>Edm.PropertyPath</code> embedded within an entity type;
+			 *   <code>Edm.PropertyPath</code> embedded within an entity set or entity type;
 			 *   the context's model must be an {@link sap.ui.model.odata.ODataMetaModel}
 			 * @returns {string}
 			 *   the path to the entity set, or <code>undefined</code> if no such set is found
@@ -446,7 +447,7 @@ sap.ui.define([
 			 *   the raw value from the meta model, e.g. <code>{AnnotationPath :
 			 *   "ToSupplier/@com.sap.vocabularies.Communication.v1.Address"}</code> or <code>
 			 *   {AnnotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"}</code>;
-			 *   embedded within an entity type;
+			 *   embedded within an entity set or entity type;
 			 *   <ul>
 			 *   <li>if this function is used as formatter the value
 			 *   is provided by the framework</li>
@@ -498,7 +499,7 @@ sap.ui.define([
 			 *   a context which must point to an annotation or annotation property of type
 			 *   <code>Edm.AnnotationPath</code>, <code>Edm.NavigationPropertyPath</code>,
 			 *   <code>Edm.Path</code> or <code>Edm.PropertyPath</code>, embedded within an entity
-			 *   type;
+			 *   set or entity type;
 			 *   the context's model must be an {@link sap.ui.model.odata.ODataMetaModel}
 			 * @returns {string}
 			 *   the path to the target, or <code>undefined</code> in case the path cannot be
@@ -532,7 +533,8 @@ sap.ui.define([
 			 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 			 *   the callback interface related to the current formatter call
 			 * @param {any} [vRawValue]
-			 *   the raw value from the meta model:
+			 *   the raw value from the meta model, which is embedded within an entity set or
+			 *   entity type:
 			 *   <ul>
 			 *   <li>if this function is used as formatter the value
 			 *   is provided by the framework</li>
