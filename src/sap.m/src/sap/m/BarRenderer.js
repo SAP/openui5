@@ -142,7 +142,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 	};
 
 	/**
-	 * Determines wich tag or context class the Bar should have.
+	 * Determines which tag or context class the Bar should have.
 	 * @protected
 	 * @param {sap.m.BarBase} oControl The Bar control
 	 * @returns {string} The context class
