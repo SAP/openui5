@@ -56,6 +56,7 @@ input.sapMComboBoxBaseInputInner:not(.sapMComboBoxBaseInputInnerReadonly) {
 }
 
 /* pressed */
+
 /* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
 .sapMComboBoxBasePressed .sapMComboBoxBaseArrow,
 .sap-desktop .sapMComboBoxBasePressed .sapMComboBoxBaseArrow:hover {
@@ -68,54 +69,12 @@ input.sapMComboBoxBaseInputInner:not(.sapMComboBoxBaseInputInnerReadonly) {
 }
 
 /* ------------------------------ */
-/* ComboBox's List                */
-/* ------------------------------ */
-
-.sapMComboBoxBaseList {
-	border: 0.0625rem solid @sapUiFieldBorderColor;
-}
-
-.sapMComboBoxBaseItemDisabled {
-	opacity: 0.5;
-	pointer-events: none;
-}
-
-.sapMComboBoxBasePicker .sapMSLITitleOnly {
-	font-size: 0.875rem;
-}
-
-/* ------------------------------ */
-/* ComboBox's Item                */
-/* ------------------------------ */
-
-li.sapMComboBoxBaseItem {
-	height: 2.5rem;
-	border: none;
-}
-
-li.sapMComboBoxBaseItemVisible {
-	display: block;
-}
-
-li.sapMComboBoxBaseItemNotVisible {
-	display: none;
-}
-
-/* focus */
-
-.sap-desktop li.sapMComboBoxBaseItem:focus {
-	outline: none;
-}
-
-/* ------------------------------ */
 /* ComboBox's Picker              */
 /* ------------------------------ */
 
 div.sapMComboBoxBasePicker {
-	-webkit-box-shadow: 0 0.0625rem 0.1875rem fade(@sapUiDarkShadowTint, 50);
 	box-shadow: 0 0.0625rem 0.1875rem fade(@sapUiDarkShadowTint, 50);
 	border: none;
-	min-width: 0;	/* override the default min-width of the popover */
 }
 
 /* ------------------------------ */
@@ -123,7 +82,6 @@ div.sapMComboBoxBasePicker {
 /* ------------------------------ */
 
 .sapMComboBoxBaseBar {
-	-webkit-box-shadow: none;
 	box-shadow: none;
 }
 
@@ -181,12 +139,4 @@ div.sapMComboBoxBasePicker .sapMDialogScrollCont {
 
 .sapUiSizeCondensed .sapMComboBoxBaseArrow {
 	right: 0;
-}
-
-/* ------------------------------ */
-/* ComboBox Item                  */
-/* ------------------------------ */
-
-.sapUiSizeCompact li.sapMComboBoxBaseItem {
-	height: 2rem;
 }

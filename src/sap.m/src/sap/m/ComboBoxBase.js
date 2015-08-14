@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ComboBoxBase.
-sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog', './InputBase', './List', './Popover', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool'],
-	function(jQuery, Bar, ComboBoxBaseRenderer, Dialog, InputBase, List, Popover, library, EnabledPropagator, IconPool) {
+sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog', './InputBase', './SelectList', './Popover', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool'],
+	function(jQuery, Bar, ComboBoxBaseRenderer, Dialog, InputBase, SelectList, Popover, library, EnabledPropagator, IconPool) {
 		"use strict";
 
 		/**
@@ -90,107 +90,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		};
 
 		/**
-		 * Given an item, retrieve the corresponding list item.
+		 * Gets the Select's <code>List</code>.
 		 *
-		 * @param {sap.ui.core.Item} vItem
-		 * @returns {sap.m.StandardListItem | null}
-		 */
-		ComboBoxBase.prototype.getListItem = function(oItem) {
-			return (oItem && oItem._oListItem) || null;
-		};
-
-		/**
-		 * Map an item type of sap.ui.core.Item to an item type of sap.m.StandardListItem.
-		 *
-		 * @param {sap.ui.core.Item} oItem
-		 * @returns {sap.m.StandardListItem | null}
-		 * @private
-		 */
-		ComboBoxBase.prototype._mapItemToListItem = function(oItem) {
-
-			if (!oItem) {
-				return null;
-			}
-
-			var CSS_CLASS = ComboBoxBaseRenderer.CSS_CLASS,
-				sListItem = CSS_CLASS + "Item",
-				sListItemEnabled = oItem.getEnabled() ? "Enabled" : "Disabled",
-				sListItemSelected = (oItem === this.getSelectedItem()) ? sListItem + "Selected" : "",
-				oListItem = this.getListItem(oItem),
-				bItemVisible = oListItem ? oListItem.getVisible() : true;
-
-			oListItem = new sap.m.StandardListItem().addStyleClass(sListItem + " " + sListItem + sListItemEnabled + " " + sListItemSelected);
-			oListItem.setVisible(bItemVisible);
-			oListItem.setTitle(oItem.getText());
-			oListItem.setType(oItem.getEnabled() ? sap.m.ListType.Active : sap.m.ListType.Inactive);
-			oListItem.setTooltip(oItem.getTooltip());
-			oItem._oListItem = oListItem;
-			return oListItem;
-		};
-
-		/**
-		 * Given an item type of sap.m.StandardListItem, find the corresponding item type of sap.ui.core.Item.
-		 *
-		 * @param {sap.m.StandardListItem} oListItem
-		 * @param {array} [aItems]
-		 * @returns {sap.ui.core.Item | null}
-		 * @private
-		 */
-		ComboBoxBase.prototype._findMappedItem = function(oListItem, aItems) {
-			for (var i = 0, aItems = aItems || this.getItems(), aItemsLength = aItems.length; i < aItemsLength; i++) {
-				if (this.getListItem(aItems[i]) === oListItem) {
-					return aItems[i];
-				}
-			}
-
-			return null;
-		};
-
-		/**
-		 * Fill the List.
-		 *
-		 * @param {sap.ui.core.Item[]} aItems
-		 * @private
-		 */
-		ComboBoxBase.prototype._fillList = function(aItems) {
-			var oSelectedItem = this.getSelectedItem();
-
-			for (var i = 0, oListItem, oItem; i < aItems.length; i++) {
-				oItem = aItems[i];
-
-				// add a private property to the added item containing a reference
-				// to the corresponding mapped item
-				oListItem = this._mapItemToListItem(oItem);
-
-				// add the mapped item type of sap.m.StandardListItem to the List
-				this.getList().addAggregation("items", oListItem, true);	// note: suppress re-rendering
-
-				// add active state to the selected item
-				if (oItem === oSelectedItem) {
-					this.getList().setSelectedItem(oListItem, true);
-				}
-			}
-		};
-
-		/**
-		 * Destroy the items in the List.
-		 *
-		 * @private
-		 */
-		ComboBoxBase.prototype._clearList = function() {
-
-			if (this.getList()) {
-				this.getList().destroyAggregation("items", true);	// note: suppress re-rendering
-			}
-		};
-
-		/**
-		 * Getter for the control's List.
-		 *
-		 * @returns {sap.m.List}
+		 * @returns {sap.m.SelectList}
 		 * @private
 		 */
 		ComboBoxBase.prototype.getList = function() {
+			if (this.bIsDestroyed) {
+				return null;
+			}
+
 			return this._oList;
 		};
 
@@ -209,8 +118,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 			// sets the picker popup type
 			this.setPickerType("Popover");
 
-			// initialize list
-			this.createList();
+			// initialize composites
+			this.createPicker(this.getPickerType());
 
 			/**
 			 * To detect whether the data is updated.
@@ -429,9 +338,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 
 		/**
 		 * Overwrites use labels as placeholder configuration of the InputBase.
+		 *
 		 * IE9 does not have a native placeholder support.
 		 * IE10+ fires the input event when an input field with a native placeholder is focused.
-		 *
 		 */
 		ComboBoxBase.prototype.bShowLabelAsPlaceholder = sap.ui.Device.browser.msie;
 
@@ -505,15 +414,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @returns {sap.ui.core.Item | null}
 		 */
 		ComboBoxBase.prototype.findFirstEnabledItem = function(aItems) {
-			aItems = aItems || this.getItems();
-
-			for (var i = 0; i < aItems.length; i++) {
-				if (aItems[i].getEnabled()) {
-					return aItems[i];
-				}
-			}
-
-			return null;
+			var oList = this.getList();
+			return oList ? oList.findFirstEnabledItem(aItems) : null;
 		};
 
 		/**
@@ -523,8 +425,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @returns {sap.ui.core.Item | null}
 		 */
 		ComboBoxBase.prototype.findLastEnabledItem = function(aItems) {
-			aItems = aItems || this.getItems();
-			return this.findFirstEnabledItem(aItems.reverse());
+			var oList = this.getList();
+			return oList ? oList.findLastEnabledItem(aItems) : null;
 		};
 
 		/**
@@ -550,15 +452,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @protected
 		 */
 		ComboBoxBase.prototype.getVisibleItems = function() {
-			for (var i = 0, oListItem, aItems = this.getItems(), aVisibleItems = []; i < aItems.length; i++) {
-				oListItem = this.getListItem(aItems[i]);
-
-				if (oListItem && oListItem.getVisible()) {
-					aVisibleItems.push(aItems[i]);
-				}
-			}
-
-			return aVisibleItems;
+			var oList = this.getList();
+			return oList ? oList.getVisibleItems() : [];
 		};
 
 		/*
@@ -581,7 +476,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @since 1.24.0
 		 */
 		ComboBoxBase.prototype.getKeys = function(aItems) {
-			for (var i = 0, aKeys = [], aItems = aItems || this.getItems(); i < aItems.length; i++) {
+			aItems = aItems || this.getItems();
+
+			for (var i = 0, aKeys = []; i < aItems.length; i++) {
 				aKeys[i] = aItems[i].getKey();
 			}
 
@@ -594,7 +491,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @returns {sap.ui.core.Item[]} An array containing the selectables items.
 		 */
 		ComboBoxBase.prototype.getSelectableItems = function() {
-			return this.getEnabledItems(this.getVisibleItems());
+			var oList = this.getList();
+			return oList ? oList.getSelectableItems() : [];
 		};
 
 		/**
@@ -626,15 +524,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @returns {sap.ui.core.Item | null} The matched item or null.
 		 */
 		ComboBoxBase.prototype.findItem = function(sProperty, sValue) {
-			var sMethod = "get" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1);
-
-			for (var i = 0, aItems = this.getItems(); i < aItems.length; i++) {
-				if (aItems[i][sMethod]() === sValue) {
-					return aItems[i];
-				}
-			}
-
-			return null;
+			var oList = this.getList();
+			return oList ? oList.findItem(sProperty, sValue) : null;
 		};
 
 		/*
@@ -685,18 +576,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 *
 		 */
 		ComboBoxBase.prototype.clearFilter = function() {
-
-			for (var i = 0, oListItem, aItems = this.getItems(); i < aItems.length; i++) {
-				oListItem = this.getListItem(aItems[i]);
-				oListItem.setVisible(true);
+			for (var i = 0, aItems = this.getItems(); i < aItems.length; i++) {
+				aItems[i].bVisible = true;
 			}
 		};
 
-		/*
+		/**
 		 * Handles properties' changes of items in the aggregation named <code>items</code>.
 		 * To be overwritten by subclasses.
 		 *
-		 * @protected
 		 * @experimental
 		 * @param {sap.ui.base.Event} oControlEvent
 		 * @since 1.30
@@ -768,10 +656,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 				oItem.attachEvent("_change", this.onItemChange, this);
 			}
 
-			if (this.getList()) {
-				this.getList().addItem(this._mapItemToListItem(oItem));
-			}
-
 			return this;
 		};
 
@@ -790,10 +674,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 
 			if (oItem) {
 				oItem.attachEvent("_change", this.onItemChange, this);
-			}
-
-			if (this.getList()) {
-				this.getList().insertItem(this._mapItemToListItem(oItem), iIndex);
 			}
 
 			return this;
@@ -839,11 +719,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @public
 		 */
 		ComboBoxBase.prototype.getEnabledItems = function(aItems) {
-			aItems = aItems || this.getItems();
-
-			return aItems.filter(function(oItem) {
-				return oItem.getEnabled();
-			});
+			var oList = this.getList();
+			return oList ? oList.getEnabledItems(aItems) : [];
 		};
 
 		/**
@@ -855,7 +732,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @public
 		 */
 		ComboBoxBase.prototype.getItemByKey = function(sKey) {
-			return this.findItem("key", sKey);
+			var oList = this.getList();
+			return oList ? oList.getItemByKey(sKey) : null;
 		};
 
 		/**
@@ -893,20 +771,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @public
 		 */
 		ComboBoxBase.prototype.removeItem = function(vItem) {
+			var oList = this.getList();
 
-			// remove the item from the aggregation items
-			vItem = this.removeAggregation("items", vItem, true);
+			vItem = oList ? oList.removeItem(vItem) : null;
 
 			if (vItem) {
 				vItem.detachEvent("_change", this.onItemChange, this);
 			}
-
-			// remove the corresponding mapped item from the List
-			if (this.getList()) {
-				this.getList().removeItem(this.getListItem(vItem));
-			}
-
-			// return the removed item or null
+	
 			return vItem;
 		};
 
@@ -918,17 +790,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @public
 		 */
 		ComboBoxBase.prototype.removeAllItems = function() {
-			var aItems = this.removeAllAggregation("items", true);
+			var oList = this.getList(),
+				aItems = oList ? oList.removeAllItems() : [];
 
 			// clear the selection
 			this.clearSelection();
 
 			for (var i = 0; i < aItems.length; i++) {
 				aItems[i].detachEvent("_change", this.onItemChange, this);
-			}
-
-			if (this.getList()) {
-				this.getList().removeAllItems();
 			}
 
 			return aItems;
@@ -941,10 +810,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * @public
 		 */
 		ComboBoxBase.prototype.destroyItems = function() {
-			this.destroyAggregation("items", true);
+			var oList = this.getList();
 
-			if (this.getList()) {
-				this.getList().destroyItems();
+			if (oList) {
+				oList.destroyItems();
 			}
 
 			return this;
