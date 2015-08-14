@@ -3473,6 +3473,84 @@
 				oComboBox.destroy();
 			});
 
+			// BCP 1570460580
+			test("it should not override the selection when binding context is changed", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					selectedKey: "{selected}",
+					items: {
+						path: "entries",
+						template: new sap.ui.core.Item({
+							key: "{key}",
+							text: "{country}"
+						})
+					}
+				});
+
+				// arrange
+				var oModel = new sap.ui.model.json.JSONModel([
+					{
+						selected: "DZ",
+						entries: [
+							{
+								"key": "DZ",
+								"country": "Algeria"
+							},
+							{
+								"key": "AR",
+								"country": "Argentina"
+							},
+							{
+								"key": "AU",
+								"country": "Australia"
+							}
+						]
+					},
+					{
+						selected: "BA",
+						entries: [
+							{
+								"key": "AT",
+								"country": "Austria"
+							},
+
+							{
+								"key": "BH",
+								"country": "Bahrain"
+							},
+
+							{
+								"key": "BE",
+								"country": "Belgium"
+							},
+
+							{
+								"key": "BA",
+								"country": "Bosnia and Herzegovina"
+							}
+						]
+					}
+				]);
+
+				oModel.setDefaultBindingMode("OneWay");
+				sap.ui.getCore().setModel(oModel);
+				oComboBox.setBindingContext(oModel.getContext("/1"));
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oComboBox.setBindingContext(oModel.getContext("/0"));
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oComboBox.getSelectedKey(), "DZ");
+
+				// cleanup
+				oComboBox.destroy();
+				oModel.destroy();
+			});
+
 			/* ------------------------------------ */
 			/* setEditable()                        */
 			/* ------------------------------------ */
