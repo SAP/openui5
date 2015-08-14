@@ -526,17 +526,21 @@
 	});
 
 	QUnit.test("Event terminate", function(assert) {
-		assert.expect(4);
 		var sFileName = "file1";
 		var aRequestHeaders = [{
 			name: "someRequestHeaderName",
 			value: "someRequestHeaderValue"
 		}];
+		var oUploadCollectionParamter = new sap.m.UploadCollectionParameter({
+			name: "someRequestHeaderName",
+			value: "someRequestHeaderValue"
+		});
 		function onUploadTerminated(oEvent) {
 			assert.equal(oEvent.getParameter("fileName"), sFileName, "FileName parameter is provided correctly by the uploadTerminated event");
 			assert.ok(oEvent.getParameter("getHeaderParameter"), "Proper method 'getHeaderParameter' in parameters of uploadTerminated event");
 			assert.equal(oEvent.getParameters().getHeaderParameter("someRequestHeaderName").getValue(), "someRequestHeaderValue", "Value of the request header parameter retrieved correctly, header parameter name specified");
-			assert.equal(oEvent.getParameters().getHeaderParameter(), aRequestHeaders, "Value of the request header parameter retrieved correctly, , header parameter name not specified");
+			assert.equal(oEvent.getParameters().getHeaderParameter()[0].getName(), oUploadCollectionParamter.getName(), "Name of the request header parameter retrieved correctly, , header parameter name not specified");
+			assert.equal(oEvent.getParameters().getHeaderParameter()[0].getValue(), oUploadCollectionParamter.getValue(), "Name of the request header parameter retrieved correctly, , header parameter name not specified");
 		}
 		this.oUploadCollection.attachUploadTerminated(onUploadTerminated);
 		this.oUploadCollection._getFileUploader().fireUploadAborted({
@@ -561,11 +565,16 @@
 			assert.ok(oEvent.getParameter("getHeaderParameter"), "Correct method 'getHeaderParameter' in parameters of beforeUploadStarts event");
 			assert.equal(oEvent.getParameters().getHeaderParameter(sSlugName).getValue(), sSlugValueBefore, "Value of the header parameter1 retrieved correctly");
 			assert.equal(oEvent.getParameters().getHeaderParameter(sSecurityTokenName).getValue(), sSecurityTokenValueBefore, "Value of the header parameter2 retrieved correctly");
+			assert.equal(oEvent.getParameters().getHeaderParameter()[2].getName(), sSlugName, "Name of the first header parameter should be slug.");
+
+			var oSlugParameter = oEvent.getParameters().getHeaderParameter()[2];
+			oSlugParameter.setValue("ChangedSlugValue");
 		}
 		this.oUploadCollection.attachBeforeUploadStarts(onBeforeUploadStarts);
 		this.oUploadCollection._getFileUploader().fireUploadStart({
 			fileName : sFileName,
-			requestHeaders: aRequestHeaders});
+			requestHeaders: aRequestHeaders
+		});
 		var iParamCounter = aRequestHeaders.length;
 		for (var i = 0; i < iParamCounter; i++ ) {
 			if (aRequestHeaders[i].name === sSlugName) {
@@ -575,7 +584,8 @@
 				sSecurityTokenValueAfter = aRequestHeaders[i].value;
 			}
 		}
-		assert.equal(sSlugValueBefore, sSlugValueAfter, "Slug value is set correctly by the method 'addHeaderParameter' of the beforeUploadStarts event");
+		assert.equal(sSlugValueAfter, "ChangedSlugValue");
+		assert.notEqual(sSlugValueBefore, sSlugValueAfter, "Slug value is set correctly by the method 'addHeaderParameter' of the beforeUploadStarts event");
 		assert.equal(sSecurityTokenValueBefore, sSecurityTokenValueAfter, "SecurityToken value is set correctly by the method 'addHeaderParameter' of the beforeUploadStarts event");
 	});
 
