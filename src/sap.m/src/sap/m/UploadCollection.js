@@ -1802,24 +1802,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		}
 		this.fireUploadTerminated({
 			fileName: sFileName,
-			getHeaderParameter: getHeaderParameter
+			getHeaderParameter: this._getHeaderParameterWithinEvent.bind(oEvent)
 		});
-
-		function getHeaderParameter(sHeaderParameterName) {
-			var iParamCounter; 
-			var aRequestHeaders = oEvent.getParameter("requestHeaders");
-			if (aRequestHeaders && sHeaderParameterName) {
-				iParamCounter = aRequestHeaders.length;
-				for ( i = 0; i < iParamCounter; i++ ) {
-					if (oEvent.getParameter("requestHeaders")[i].name === sHeaderParameterName) {
-						return new sap.m.UploadCollectionParameter({
-							name: sHeaderParameterName, value: oEvent.getParameter("requestHeaders")[i].value});
-					}
-				}
-			} else {
-				return oEvent.getParameter("requestHeaders");
-			}
-		}
 	};
 
 	/**
@@ -2016,7 +2000,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype._onUploadStart = function(oEvent) {
-		var oRequestHeaders = {}, i, sRequestIdValue, iParamCounter, sFileName;
+		var oRequestHeaders = {}, i, sRequestIdValue, iParamCounter, sFileName, oGetHeaderParameterResult;
 		iParamCounter = oEvent.getParameter("requestHeaders").length;
 		for ( i = 0; i < iParamCounter; i++ ) {
 			if (oEvent.getParameter("requestHeaders")[i].name === this._headerParamConst.requestIdName) {
@@ -2034,8 +2018,24 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		this.fireBeforeUploadStarts({
 			fileName: sFileName,
 			addHeaderParameter: addHeaderParameter,
-			getHeaderParameter: getHeaderParameter
+			getHeaderParameter: getHeaderParameter.bind(this)
 		});
+
+		// ensure that the HeaderParameterValues are updated
+		if (jQuery.isArray(oGetHeaderParameterResult)) {
+			for (var i = 0; i < oGetHeaderParameterResult.length; i++) {
+				if (oEvent.getParameter("requestHeaders")[i].name === oGetHeaderParameterResult[i].getName()) {
+					oEvent.getParameter("requestHeaders")[i].value = oGetHeaderParameterResult[i].getValue();
+				}
+			}
+		} else if (oGetHeaderParameterResult instanceof sap.m.UploadCollectionParameter) {
+			for (var i = 0; i < oEvent.getParameter("requestHeaders").length; i++) {
+				if (oEvent.getParameter("requestHeaders")[i].name === oGetHeaderParameterResult.getName()) {
+					oEvent.getParameter("requestHeaders")[i].value = oGetHeaderParameterResult.getValue();
+					break;
+				}
+			}
+		}
 
 		function addHeaderParameter(oUploadCollectionParameter) {
 			var oRequestHeaders = {
@@ -2046,20 +2046,8 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		}
 
 		function getHeaderParameter(sHeaderParameterName) {
-			var iParamCounter;
-			if (sHeaderParameterName) {
-				iParamCounter = oEvent.getParameter("requestHeaders").length;
-				for ( i = 0; i < iParamCounter; i++ ) {
-					if (oEvent.getParameter("requestHeaders")[i].name === sHeaderParameterName) {
-						return new sap.m.UploadCollectionParameter({
-							name: sHeaderParameterName, 
-							value: oEvent.getParameter("requestHeaders")[i].value
-						});
-					}
-				}
-			} else {
-				return oEvent.getParameter("requestHeaders");
-			}
+			oGetHeaderParameterResult = this._getHeaderParameterWithinEvent.bind(oEvent)(sHeaderParameterName);
+			return oGetHeaderParameterResult;
 		}
 	};
 
@@ -2399,6 +2387,38 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		// prerequisite: the items have field names or the app provides explicite texts for pictures
 		sText = (oItem.getAriaLabelForPicture() || oItem.getFileName());
 		return sText;
+	};
+
+	/**
+	 * @description Helper function for better Event API. This reference points to the oEvent comming from the FileUploader
+	 * @param {string} Header parameter name (optional)
+	 * @returns {UploadCollectionParameter} || {UploadCollectionParameter[]}
+	 * @private
+	 */
+	UploadCollection.prototype._getHeaderParameterWithinEvent = function (sHeaderParameterName) {
+		var aUcpRequestHeaders = [];
+		var aRequestHeaders = this.getParameter("requestHeaders");
+		var iParamCounter = aRequestHeaders.length;
+		if (aRequestHeaders && sHeaderParameterName) {
+			for ( i = 0; i < iParamCounter; i++ ) {
+				if (aRequestHeaders[i].name === sHeaderParameterName) {
+					return new sap.m.UploadCollectionParameter({
+						name: aRequestHeaders[i].name,
+						value: aRequestHeaders[i].value
+					});
+				}
+			}
+		} else {
+			if (aRequestHeaders) {
+				for (var i = 0; i < iParamCounter; i++) {
+					aUcpRequestHeaders.push(new sap.m.UploadCollectionParameter({
+						name: aRequestHeaders[i].name,
+						value: aRequestHeaders[i].value
+					}));
+				}
+			}
+			return aUcpRequestHeaders;
+		}
 	};
 
 	return UploadCollection;
