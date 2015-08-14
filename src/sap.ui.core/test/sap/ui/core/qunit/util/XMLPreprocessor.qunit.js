@@ -3,7 +3,7 @@
  */
 (function () {
 	/*global ok, QUnit, sinon, strictEqual, throws, window */
-	/*eslint no-loop-func: 0, no-warning-comments: 0*/
+	/*eslint consistent-this: 0, no-loop-func: 0, no-warning-comments: 0*/
 	"use strict";
 
 	jQuery.sap.require("jquery.sap.xml");
@@ -2265,7 +2265,7 @@
 		this.stub(jQuery.sap, "getObject", function (sName, iNoCreates, oContext) {
 			strictEqual(iNoCreates, undefined, sName); // make sure we do not create namespaces!
 			return fnGetObject.apply(this, arguments);
-		})
+		});
 		this.stub(sap.ui.base.BindingParser, "complexParser",
 			function (s, o, b1, bTolerateFunctionsNotFound, bStaticContext) {
 				strictEqual(bTolerateFunctionsNotFound, true, JSON.stringify(arguments));
