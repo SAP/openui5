@@ -8,11 +8,10 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.demo.wt.Component", {
 
 		metadata : {
-			manifest: "json"
+			rootView: "sap.ui.demo.wt.view.app"
 		},
 
 		init : function () {
-
 			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
 
