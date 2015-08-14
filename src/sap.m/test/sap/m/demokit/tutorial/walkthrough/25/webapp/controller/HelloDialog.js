@@ -15,7 +15,6 @@ sap.ui.define([
 		},
 
 		open : function (oView) {
-
 			var oDialog = this._getDialog();
 
 			// connect dialog to view (models, lifecycle)
