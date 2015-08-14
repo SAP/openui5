@@ -27,7 +27,7 @@
 		<script type="text/javascript">
 
 			jQuery.sap.require("sap.ui.dt.Preloader");
-			jQuery.sap.require("sap.ui.dt.Overlay");
+			jQuery.sap.require("sap.ui.dt.ElementOverlay");
 			jQuery.sap.require("sap.ui.dt.OverlayUtil");
 			jQuery.sap.require("sap.m.Button");
 			jQuery.sap.require("sap.ui.dt.DesignTimeMetadata");
@@ -55,24 +55,24 @@
 
 					this.oLayout2.placeAt("content");
 					sap.ui.dt.Preloader.load(["sap.ui.layout.VerticalLayout", "sap.m.Button"]).then(function() {
-						that.oButtonOverlay01 = new sap.ui.dt.Overlay({
+						that.oButtonOverlay01 = new sap.ui.dt.ElementOverlay({
 							element : that.oButton01
 						});
-						that.oButtonOverlay02 = new sap.ui.dt.Overlay({
+						that.oButtonOverlay02 = new sap.ui.dt.ElementOverlay({
 							element : that.oButton02
 						});
-						that.oLayoutOverlay0 = new sap.ui.dt.Overlay({
+						that.oLayoutOverlay0 = new sap.ui.dt.ElementOverlay({
 							element : that.oLayout0
 						});
 
-						that.oLayoutOverlay1 = new sap.ui.dt.Overlay({
+						that.oLayoutOverlay1 = new sap.ui.dt.ElementOverlay({
 							element : that.oLayout1
 						});
 
-						that.oButtonOverlay21 = new sap.ui.dt.Overlay({
+						that.oButtonOverlay21 = new sap.ui.dt.ElementOverlay({
 							element : that.oButton21
 						});
-						that.oLayoutOverlay2 = new sap.ui.dt.Overlay({
+						that.oLayoutOverlay2 = new sap.ui.dt.ElementOverlay({
 							element : that.oLayout2
 						});
 

@@ -5,14 +5,14 @@
 // Provides class sap.ui.dt.DesignTime.
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
-	'sap/ui/dt/Overlay',
+	'sap/ui/dt/ElementOverlay',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/Selection',
 	'sap/ui/dt/DesignTimeMetadata',
 	'sap/ui/dt/ElementUtil',
 	'./library'
 ],
-function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata, ElementUtil) {
+function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMetadata, ElementUtil) {
 	"use strict";
 
 	/**
@@ -78,19 +78,19 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata,
 			},
 			events : {
 				/** 
-				 * Event fired when an overlay is created
+				 * Event fired when an ElementOverlay is created
 				 */
 				overlayCreated : {
 					parameters : {
-						overlay : { type : "sap.ui.dt.Overlay" }
+						ElementOverlay : { type : "sap.ui.dt.ElementOverlay" }
 					}
 				},
 				/** 
-				 * Event fired when an overlay is destroyed
+				 * Event fired when an ElementOverlay is destroyed
 				 */
 				overlayDestroyed : {
 					parameters : {
-						overlay : { type : "sap.ui.dt.Overlay" }
+						ElementOverlay : { type : "sap.ui.dt.ElementOverlay" }
 					}
 				},
 				/** 
@@ -98,7 +98,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata,
 				 */
 				selectionChange : {
 					parameters : {
-						selection : { type : "sap.ui.dt.Overlay[]" }
+						selection : { type : "sap.ui.dt.ElementOverlay[]" }
 					}
 				}
 			}
@@ -136,7 +136,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata,
 
 	/**
 	 * Returns array with current selected overlays
-	 * @return {sap.ui.dt.Overlay[]} selected overlays
+	 * @return {sap.ui.dt.ElementOverlay[]} selected overlays
 	 * @public
 	 */
 	DesignTime.prototype.getSelection = function() {
@@ -230,7 +230,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata,
 
 	/**
 	 * Returns all root elements from the DesignTime
-	 * @return {sap.ui.dt.Overlay[]} selected overlays
+	 * @return {sap.ui.dt.ElementOverlay[]} selected overlays
 	 * @protected
 	 */
 	DesignTime.prototype.getRootElements = function() {
@@ -305,14 +305,14 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata,
 
 
 	/**
-	 * Creates and returns the created instance of Overlay for an element
-	 * @param {string|sap.ui.core.Element} oElement to create overlay for
-	 * @param {object} oDTMetadata to create overlay with
-	 * @return {sap.ui.dt.Overlay} created overlay
+	 * Creates and returns the created instance of ElementOverlay for an element
+	 * @param {string|sap.ui.core.Element} oElement to create ElementOverlay for
+	 * @param {object} oDTMetadata to create ElementOverlay with
+	 * @return {sap.ui.dt.ElementOverlay} created ElementOverlay
 	 * @protected
 	 */
 	DesignTime.prototype.createOverlay = function(oElement, oDTMetadata) {
-		return new Overlay({
+		return new ElementOverlay({
 			element : oElement,
 			designTimeMetadata : oDTMetadata ? new DesignTimeMetadata({data : oDTMetadata}) : null
 		});
@@ -320,7 +320,7 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata,
 
 	/**
 	 * Returns an array with all overlays created, registered and handled by the DeignTime
-	 * @return {sap.ui.dt.Overlay[]} all overlays created and handled by the DesignTime
+	 * @return {sap.ui.dt.ElementOverlay[]} all overlays created and handled by the DesignTime
 	 * @public
 	 */
 	DesignTime.prototype.getOverlays = function() {
@@ -340,11 +340,11 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata,
 
 	/**
 	 * @param {sap.ui.core.Element} oElement element
-	 * @return {sap.ui.dt.Overlay} created overlay
+	 * @return {sap.ui.dt.ElementOverlay} created ElementOverlay
 	 * @private
 	 */
 	DesignTime.prototype._createOverlay = function(oElement) {
-		// check if overlay for the element already exists before creating the new one
+		// check if ElementOverlay for the element already exists before creating the new one
 		// (can happen when two aggregations returning the same elements)
 		if (!OverlayRegistry.getOverlay(oElement)) {
 			// merge the DTMetadata from the DesignTime and from UI5
@@ -365,9 +365,9 @@ function(ManagedObject, Overlay, OverlayRegistry, Selection, DesignTimeMetadata,
 	};
 
 	/**
-	 * Creates overlay for an element and all public children of the element
+	 * Creates ElementOverlay for an element and all public children of the element
 	 * @param {sap.ui.core.Element} oElement element
-	 * @return {sap.ui.dt.Overlay} created overlay
+	 * @return {sap.ui.dt.ElementOverlay} created ElementOverlay
 	 * @private
 	 */
 	DesignTime.prototype.createOverlayFor = function(oRootElement) {
