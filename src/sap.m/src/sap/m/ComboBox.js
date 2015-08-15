@@ -807,12 +807,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 
 			oPicker = this["_create" + sPickerType]();
 
-			// define a parent-child relationship between the control's and the picker pop-up
+			// define a parent-child relationship between the control's and the picker popup
 			this.setAggregation("picker", oPicker, true);
 
 			// configuration
 			oPicker.setHorizontalScrolling(false)
 					.addStyleClass(CSS_CLASS + "Picker")
+					.addStyleClass(CSS_CLASS + "Picker-CTX")
 					.attachBeforeOpen(this.onBeforeOpen, this)
 					.attachAfterOpen(this.onAfterOpen, this)
 					.attachBeforeClose(this.onBeforeClose, this)
