@@ -2084,7 +2084,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 			return null;
 		}
 
-		var sListItem = sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Item";
+		var sListItem = MultiComboBoxRenderer.CSS_CLASS + "Item";
 		var sListItemSelected = (this.isItemSelected(oItem)) ? sListItem + "Selected" : "";
 		var oListItem = new sap.m.StandardListItem({
 			title : oItem.getText(),
