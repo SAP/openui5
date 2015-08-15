@@ -883,7 +883,6 @@
 				})
 			});
 
-
 			var dialogWithHidingFooter = new sap.m.Dialog('dialogWithHidingFooter', {
 				title: 'Toggle toobar',
 				content: [
@@ -900,6 +899,98 @@
 						}
 					})
 				]
+			});
+
+			var allButtons = [
+				new sap.m.Button({
+					text: 'Button in buttons',
+					press: function () {
+						dialogWithManyButtons.close();
+					}
+				})
+			];
+
+			var statusLabel = new sap.m.Label({
+				text: 'status'
+			});
+
+			var dialogWithManyButtons = new sap.m.Dialog('dialogWithManyButtons', {
+				title: 'DialogWithManyButtons',
+				content: [
+					new sap.m.Button({
+						text: 'Add Button',
+						press: function () {
+							var newButton = new sap.m.Button({
+								text: 'Added new button',
+								press: function () {
+									dialogWithManyButtons.close();
+								}
+							});
+
+							dialogWithManyButtons.addButton(newButton);
+						}
+					}),
+					new sap.m.Button({
+						text: 'Clear Buttons',
+						press: function () {
+							dialogWithManyButtons.removeAllButtons();
+						}
+					}),
+					new sap.ui.core.HTML({content: "<br/>"}),
+					new sap.m.Button({
+						text: 'Add Begin Button',
+						press: function () {
+							dialogWithManyButtons.setBeginButton(new sap.m.Button({
+								text: "Begin Button",
+								press: function () {
+									dialogWithManyButtons.destroyBeginButton();
+								}
+							}));
+						}
+					}),
+					new sap.m.Button({
+						text: 'Add End Button',
+						press: function () {
+							dialogWithManyButtons.setEndButton(new sap.m.Button({
+								text: "End Button",
+								press: function () {
+									dialogWithManyButtons.destroyEndButton();
+								}
+							}))
+						}
+					}),
+					new sap.ui.core.HTML({content: "<br/>"}),
+					new sap.m.Button({
+						text: 'Get Status',
+						press: function () {
+							statusLabel.setText('buttons: ' + dialogWithManyButtons.getAggregation('buttons').length);
+						}
+					}),
+					new sap.ui.core.HTML({content: "<br/>"}),
+					statusLabel
+				],
+				buttons: allButtons
+			});
+
+			var dialogWithButtonsWithLongText = new sap.m.Dialog('dialogWithButtonsWithLongText', {
+				title: 'dialogWithButtonsWithLongText',
+				content: [
+					new sap.m.Label({
+						text: 'Dialog\' content'
+					})
+				],
+				beginButton: new sap.m.Button({
+					text: 'Begin button with very long, long text',
+					press: function () {
+						dialogWithButtonsWithLongText.close();
+					}
+				}),
+				endButton: new sap.m.Button({
+					text: 'End button with long, long text for some reason',
+					press: function () {
+						dialogWithButtonsWithLongText.close();
+					}
+				})
 			});
 
 			//=================================================================
@@ -1172,6 +1263,21 @@
 						}
 					}),
 
+					new sap.m.Button({
+						text: "Too many buttons",
+						width: _buttonWidth,
+						press: function () {
+							dialogWithManyButtons.open();
+						}
+					}),
+
+					new sap.m.Button({
+						text: "Begin and End buttons with long text",
+						width: _buttonWidth,
+						press: function () {
+							dialogWithButtonsWithLongText.open();
+						}
+					})
 				]
 			});
 			app.addPage(page1).placeAt("content");
