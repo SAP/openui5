@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ComboBox.
-sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './library'],
-	function(jQuery, ComboBoxBase, ComboBoxRenderer, library) {
+sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', './ComboBoxRenderer', './library'],
+	function(jQuery, ComboBoxBase, ComboBoxBaseRenderer, ComboBoxRenderer, library) {
 		"use strict";
 
 		/**
@@ -798,7 +798,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 		 * @protected
 		 */
 		ComboBox.prototype.createPicker = function(sPickerType) {
-			var oPicker = this.getAggregation("picker");
+			var oPicker = this.getAggregation("picker"),
+				CSS_CLASS = ComboBoxBaseRenderer.CSS_CLASS;
 
 			if (oPicker) {
 				return oPicker;
@@ -811,7 +812,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './l
 
 			// configuration
 			oPicker.setHorizontalScrolling(false)
-					.addStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Picker")
+					.addStyleClass(CSS_CLASS + "Picker")
 					.attachBeforeOpen(this.onBeforeOpen, this)
 					.attachAfterOpen(this.onAfterOpen, this)
 					.attachBeforeClose(this.onBeforeClose, this)
