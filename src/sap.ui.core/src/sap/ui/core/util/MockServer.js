@@ -618,8 +618,14 @@ sap.ui
 					if (iComplexType !== -1) {
 						var sPropName = sPath.substring(iComplexType + 1);
 						var sComplexType = sPath.substring(0, iComplexType);
-						if (!aDataSet[0][sComplexType].hasOwnProperty(sPropName)) {
-							that._logAndThrowMockServerCustomError(400, that._oErrorMessages.PROPERTY_NOT_FOUND, sPropName);
+						if (aDataSet[0][sComplexType]) {
+							if (!aDataSet[0][sComplexType].hasOwnProperty(sPropName)) {
+								var sErrorMessage = that._oErrorMessages.PROPERTY_NOT_FOUND.replace("##", "'" + sPropName + "'");
+								jQuery.sap.log.error("MockServer: navigation property '" + sComplexType + "' was not expanded, so " + sErrorMessage);
+								return aDataSet;
+							}
+						} else {
+							that._logAndThrowMockServerCustomError(400, that._oErrorMessages.PROPERTY_NOT_FOUND, sPath);
 						}
 						return fnSelectFilteredData(sPath, sValue, sComplexType, sPropName);
 					} else {
@@ -2890,15 +2896,14 @@ sap.ui
 							}
 					}
 				});
-
+				if (iExpandIndex >= 0) {
+					aOrderedUrlParams.push(aUrlParams[iExpandIndex]);
+				}
 				if (iFilterIndex >= 0) {
 					aOrderedUrlParams.push(aUrlParams[iFilterIndex]);
 				}
 				if (iInlinecountIndex >= 0) {
 					aOrderedUrlParams.push(aUrlParams[iInlinecountIndex]);
-				}
-				if (iExpandIndex >= 0) {
-					aOrderedUrlParams.push(aUrlParams[iExpandIndex]);
 				}
 				if (iOrderbyIndex >= 0) {
 					aOrderedUrlParams.push(aUrlParams[iOrderbyIndex]);
