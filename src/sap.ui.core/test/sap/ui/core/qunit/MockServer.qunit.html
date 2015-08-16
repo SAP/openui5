@@ -2395,8 +2395,22 @@
 				});
 				ok(oResponse);
 				
-
+				oResponse = jQuery.sap.sjax({
+					url : "/myservice/Products?$top=20&$filter=Category/CategoryName eq 'Beverages'",
+					dataType : "json"
+				});
+				ok(oResponse.success, "$filter=Category/CategoryName eq 'Beverages'");
+				ok(!oResponse.data.d.results[0].Category.CategoryName);
+				
+				oResponse = jQuery.sap.sjax({
+					url : "/myservice/Products?$top=20&$filter=Category/CategoryName eq 'Beverages'&$expand=Category",
+					dataType : "json"
+				});
+				ok(oResponse.success, "/myservice/Products?$top=20&$filter=Category/CategoryName eq 'Beverages'&$expand=Category");
+				equal(oResponse.data.d.results[0].Category.CategoryName, "Beverages");
+				
 				oMockServer.destroy();
+
 			});
 
 	test("test OData $select", function() {
