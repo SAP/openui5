@@ -198,6 +198,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 			if (this.getMinFlexSize() !== 0) {
 				this.sResizeListenerFixFlexScroll = ResizeHandler.register(this.getDomRef(), jQuery.proxy(this._changeScrolling, this));
 				this.sResizeListenerFixFlexScrollFlexPart = ResizeHandler.register(this.getDomRef('Fixed'), jQuery.proxy(this._changeScrolling, this));
+
+				if (sap.ui.Device.browser.edge === true) {
+					// In some cases the resize handlers are not triggered in "Edge" browser on initial render and
+					// a manual trigger is needed
+					// BCP: 1570807842
+					this._changeScrolling();
+				}
 			}
 		};
 
