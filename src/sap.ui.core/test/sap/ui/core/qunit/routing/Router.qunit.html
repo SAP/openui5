@@ -728,8 +728,6 @@
 
 				router.initialize();
 
-				oShell.placeAt("qunit-fixture");
-
 				//Act
 				sap.ui.core.routing.HashChanger.getInstance().setHash("view1");
 
@@ -1016,8 +1014,12 @@
 
 				return Promise.all([oDetailRouteMatchedSpy.returnValues[0], oFullScreenRouteMatchedSpy.returnValues[0]]).then(function() {
 					//Assert
-					strictEqual(oApp.getPages()[0].getContent()[0].getId(), oSplitContainer.getId(), "splitContainer is first page element in app");
-					strictEqual(oApp.getPages()[1].getContent()[0].getId(), oNavContainer.getId(), "navContainer is the second page element in app");
+					var aContent = oApp.getPages().map(function(oPage) {
+						return oPage.getContent()[0];
+					});
+
+					ok(aContent.indexOf(oSplitContainer) !== -1, "splitContainer is added to the App control");
+					ok(aContent.indexOf(oNavContainer) !== -1, "navContainer is added to the App control");
 					strictEqual(oNavContainer.getPages()[0].getContent()[0].getId(), oFullScreenContent.getId(), "FullScreenContent is first page element in oNavContainer");
 					strictEqual(oSplitContainer.getMasterPages()[0].getContent()[0].getId(), oMasterContent.getId(), "Master is first master-page element in oSplitContainer");
 					strictEqual(oSplitContainer.getDetailPages()[0].getContent()[0].getId(), oDetailContent.getId(), "Detail is first detail-page element in oSplitContainer");
