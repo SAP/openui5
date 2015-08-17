@@ -2286,7 +2286,7 @@
 					"<Text text=\"{formatter: '.foo', path: '/'}\"/>",
 					// redefine existing alias
 					'<template:alias name=".foo" value="foo.Helper.bar">',
-						"<Text id=\"foo\" text=\"{formatter: '.foo', path: '/'}\"/>",
+						"<Text text=\"{formatter: '.foo', path: '/'}\"/>",
 					'</template:alias>',
 					// old value must be used again
 					"<Text text=\"{formatter: '.foo', path: '/'}\"/>",
@@ -2315,7 +2315,7 @@
 				'<Text text="/bar"/>',
 				"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
 					'<Text text="/foo"/>',
-						'<Text id="foo" text="/bar"/>',
+						'<Text text="/bar"/>',
 					'<Text text="/foo"/>',
 			"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
 			"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
