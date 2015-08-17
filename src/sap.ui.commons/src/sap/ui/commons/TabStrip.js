@@ -12,12 +12,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Constructor for a new TabStrip.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 *
-	 * A container for tab controls which contain the content and generally other controls. The user switches between the tabs then to display the content.
+	 * TabStrip represents a container for tab controls, which contain the content and generally other controls.
+	 * The user switches between the tabs to display the content.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -34,17 +35,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		properties : {
 
 			/**
-			 * Height includes tab bar and content area.
+			 * Specifies the height of the tab bar and content area.
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * Width includes tab bar and content area.
+			 * Specifies the width of the bar and content area.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * Index of the currently selected tab.
+			 * Specifies the index of the currently selected tab.
 			 */
 			selectedIndex : {type : "int", group : "Misc", defaultValue : 0},
 
@@ -57,33 +58,33 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		aggregations : {
 
 			/**
-			 * Aggregating tabs contained in the tab strip.
+			 * The tabs contained in the TabStrip.
 			 */
 			tabs : {type : "sap.ui.commons.Tab", multiple : true, singularName : "tab"}
 		},
 		events : {
 
 			/**
-			 * Event is fired when the user selects a tab.
+			 * Fires when the user selects a tab.
 			 */
 			select : {
 				parameters : {
 
 					/**
-					 * Index of the selected tab.
+					 * The index of the selected tab.
 					 */
 					index : {type : "int"}
 				}
 			},
 
 			/**
-			 * Event is fired when the user closes a tab.
+			 * Fires when the user closes a tab.
 			 */
 			close : {
 				parameters : {
 
 					/**
-					 * Index of the closed tab.
+					 * The index of the closed tab.
 					 */
 					index : {type : "int"}
 				}
@@ -109,12 +110,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Convenient method to add a tab with a text as title and a root control as content.
+	 * Creates a Tab and adds it to the TabStrip.
 	 *
 	 * @param {string} sText
-	 *         Defines the title text of the newly created tab.
+	 *         Defines the title text of the newly created tab
 	 * @param {sap.ui.core.Control} oContent
-	 *         Defines the root control of the content area.
+	 *         Defines the root control of the content area
 	 * @type void
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -225,11 +226,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	// Override aggregation methods if something needs to be taken care of
 
 	/*
-	 * Overwrite of default method
-	 * Removes an tab from the aggregation named <code>tabs</code>.
+	 * Removes a tab from the aggregation named <code>tabs</code>.
 	 *
-	 * @param {int | string | sap.ui.commons.Tab} vTab the tab to remove or its index or id
-	 * @return {sap.ui.commons.Tab} the removed tab or null
+	 * @param {int | string | sap.ui.commons.Tab} vTab The tab to remove or its index or ID
+	 * @return {sap.ui.commons.Tab} The removed tab or null
 	 * @public
 	 */
 	TabStrip.prototype.removeTab = function(vElement) {
@@ -256,11 +256,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * Overwite of defaultSetter for property <code>selectedIndex</code>.
+	 * Overwites the defaultSetter for property <code>selectedIndex</code>.
 	 *
 	 * Default value is <code>0</code>
 	 *
-	 * @param {int} iSelectedIndex new value for property <code>selectedIndex</code>
+	 * @param {int} iSelectedIndex New value for property <code>selectedIndex</code>
 	 * @return {sap.ui.commons.TabStrip} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -311,12 +311,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Close a tab. If the tab is selected, the next one will be selected. (If it's the last the previous one will be selected).
+	 * Closes a tab (if the tab is selected, the next one will be selected;
+	 * if it's the last tab, the previous one will be selected).
 	 *
-	 * This method should be called if the close event is fired. It can not be called automatically because the consumer might need to run some logic before the tab is closed.
+	 * This method should be called if the close event is fired.
+	 * It can not be called automatically because the consumer might need to run some logic before the tab is closed.
 	 *
 	 * @param {int} iIndex
-	 *         Index of the tab that should be closed.
+	 *         The index of the tab that should be closed
 	 * @type void
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -336,9 +338,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * removes a tab from output
+	 * Removes a tab from the output.
 	 *
-	 * @param {int} iIndex tab to be closed
+	 * @param {int} iIndex The tab to be closed
 	 * @private
 	 */
 	TabStrip.prototype.hideTab = function(iIndex) {
@@ -431,8 +433,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * if the selected index is changed, only the panel must be rerendered
-	 * for the tabs only some classes must be exchanged
+	 * If the selected index is changed, only the panel must be re-rendered.
+	 * For the tabs only some classes must be exchanged.
 	 *
 	 * @private
 	 */
@@ -458,7 +460,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * Sets the classes of the tabs to display the new selection
+	 * Sets the classes of the tabs to display the new selection.
 	 *
 	 * @private
 	 */
@@ -501,7 +503,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * Overwrite Invalidate function to set invalidate flag
+	 * Overwrites the Invalidate function to set the invalidate flag.
 	 */
 	TabStrip.prototype._originalInvalidate = TabStrip.prototype.invalidate;
 
@@ -533,7 +535,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Listens to the mousedown events for starting tab drag & drop.
+	 * Listens to the mousedown events.
 	 * @private
 	 */
 	TabStrip.prototype.onmousedown = function(oEvent) {
@@ -566,6 +568,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 
+		// start drag and drop
 		var $tab = $target.closest(".sapUiTab, .sapUiTabSel, .sapUiTabDsbl");
 		if ($tab.length === 1) {
 			this._onTabMoveStart($tab, oEvent, bIsTouchMode);
@@ -814,7 +817,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Disables text selection on the document (disabled for Dnd)
+	 * Disables text selection on the document (disabled for Dnd).
 	 * @private
 	 */
 	TabStrip.prototype._disableTextSelection = function (oElement) {
@@ -829,7 +832,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Enables text selection on the document (disabled for Dnd)
+	 * Enables text selection on the document (disabled for Dnd).
 	 * @private
 	 */
 	TabStrip.prototype._enableTextSelection = function (oElement) {

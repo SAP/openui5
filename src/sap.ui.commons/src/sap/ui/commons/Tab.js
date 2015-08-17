@@ -12,11 +12,11 @@ sap.ui.define(['jquery.sap.global', './Panel', './library'],
 	/**
 	 * Constructor for a new Tab.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A single page in a TabStrip control.
+	 * Represents a single tab in a TabStrip control.
 	 * @extends sap.ui.commons.Panel
 	 *
 	 * @author SAP SE
@@ -33,31 +33,31 @@ sap.ui.define(['jquery.sap.global', './Panel', './library'],
 		properties : {
 
 			/**
-			 * Set the height property.
+			 * Specifies the vertical scrolling.
 			 */
 			verticalScrolling : {type : "sap.ui.core.Scrolling", group : "Behavior", defaultValue : sap.ui.core.Scrolling.None},
 
 			/**
-			 * Set the width property.
+			 * Specifies the horizontal scrolling.
 			 */
 			horizontalScrolling : {type : "sap.ui.core.Scrolling", group : "Behavior", defaultValue : sap.ui.core.Scrolling.None},
 
 			/**
-			 * Defines whether the tab contains a close button.
+			 * Specifies whether the tab contains a close button.
 			 */
 			closable : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
 			 * Defines whether the tab is the active one.
-			 * @deprecated Since version 0.17.0.
-			 * This property is not used. To indentify the selected tab in a TabStrip selectedIndex is used.
+			 * @deprecated AS of 0.17.0.
+			 * This property is not used. To identify the selected tab in a TabStrip selectedIndex is used.
 			 */
 			selected : {type : "boolean", group : "Behavior", defaultValue : false, deprecated: true}
 		}
 	}});
 
 	/*
-	 * Initialize the Tab
+	 * Initializes the Tab.
 	 * @private
 	 */
 	Tab.prototype.init = function() {
@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', './Panel', './library'],
 	};
 
 	/*
-	 * Called after rendering from the TabStrip control
+	 * Called after rendering from the TabStrip control.
 	 */
 	Tab.prototype.onAfterRendering = function () {
 		this.oScrollDomRef = this.getDomRef("panel");
@@ -108,8 +108,8 @@ sap.ui.define(['jquery.sap.global', './Panel', './library'],
 	};
 
 	/*
-	 * Returns the scroll position of the tab in pixel from the left. Returns "0" if not rendered yet.
-	 * Also updates the control property internally.
+	 * Returns the scroll position of the Tab in pixel from the left, returns "0" if not
+	 * rendered yet, and updates the control property internally.
 	 *
 	 * @return The scroll position
 	 * @public
@@ -125,7 +125,7 @@ sap.ui.define(['jquery.sap.global', './Panel', './library'],
 	};
 
 	/*
-	 * Sets the scroll position of the tab in pixel from the left.
+	 * Sets the scroll position of the Tab in pixel from the left.
 	 * @param {int} iPosition The position to scroll to
 	 * @return {sap.ui.commons.Tab} <code>this</code> to allow method chaining
 	 * @public
@@ -140,8 +140,8 @@ sap.ui.define(['jquery.sap.global', './Panel', './library'],
 	};
 
 	/*
-	 * Returns the scroll position of the tab in pixel from the top. Returns "0" if not rendered yet.
-	 * Also updates the control property internally.
+	 * Returns the scroll position of the Tab in pixel from the top,
+	 * returns "0" if not rendered yet, and updates the control property internally.
 	 *
 	 * @return The scroll position
 	 * @public
@@ -157,7 +157,7 @@ sap.ui.define(['jquery.sap.global', './Panel', './library'],
 	};
 
 	/*
-	 * Sets the scroll position of the tab in pixel from the top.
+	 * Sets the scroll position of the Tab in pixel from the top.
 	 * @param {int} iPosition The position to scroll to
 	 * @return {sap.ui.commons.Tab} <code>this</code> to allow method chaining
 	 * @public
@@ -172,14 +172,12 @@ sap.ui.define(['jquery.sap.global', './Panel', './library'],
 	};
 
 	/*
-	 * Property setter for the "enabled" state (overwrite method from panel)
-	 * Normally only classes are exchanged and no rerendering is needed.
-	 * But if selected tab should be disabled this needs a rerendering because
-	 * the selected tab can not be disabled
-	 * If no tab is selected (because all tabs are disabled before) also a
-	 * rerendering is needed.
+	 * Sets whether the Tab is enabled.
+	 * Normally, only classes are exchanged and no re-rendering is needed.
+	 * If the selected Tab should be disabled, re-rendering is needed as selected tabs can not be disabled.
+	 * If no Tab is selected (because all tabs have been disabled before) also re-rendering is needed.
 	 *
-	 * @param bEnabled whether the tab should be enabled or not
+	 * @param bEnabled Whether the Tab should be enabled or not
 	 * @return {sap.ui.commons.Tab} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -205,10 +203,9 @@ sap.ui.define(['jquery.sap.global', './Panel', './library'],
 	};
 
 	/*
-	 * Setter of the width property. As it has no effect on a tab and is
-	 * only inherited from panel, noting to do. Just overwrite panel implementation
+	 * Sets the Tab width.
 	 *
-	 * @param {string} sWidth the width of the panel as CSS size
+	 * @param {string} sWidth The width of the panel as CSS size
 	 * @return {sap.ui.commons.Tab} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -219,8 +216,7 @@ sap.ui.define(['jquery.sap.global', './Panel', './library'],
 	};
 
 	/*
-	 * Property setter for the padding.As it has no effect on a tab and is
-	 * only inherited from panel, noting to do. Just overwrite panel implementation
+	 * Sets content padding.
 	 *
 	 * @param bPadding whether the Panel should have padding
 	 * @returns {sap.ui.commons.Tab} <code>this</code> to allow method chaining
