@@ -202,16 +202,18 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 * Adds an origin to the given service URL.
 	 * If an origin is already present, it will only be replaced if the parameters object contains the flag "force: true".
 	 * In case the URL already contains URL parameters, these will be kept.
+	 * As a parameter, a sole alias is sufficient. The parameters vParameters.system and vParameters.client however have to be given in pairs.
+	 * In case all three origin specifying parameters are given (system/client/alias), the alias has precedence.
 	 * 
 	 * Examples:
 	 * setOrigin("/backend/service/url/", "DEMO_123");
 	 * - result: /backend/service/url;o=DEMO_123/
 	 * 
 	 * setOrigin("/backend/service/url;o=OTHERSYS8?myUrlParam=true&x=4", {alias: "DEMO_123", force: true});
-	 * - result /backend/service/url:o=DEMO_123?myUrlParam=true&x=4
+	 * - result /backend/service/url;o=DEMO_123?myUrlParam=true&x=4
 	 * 
 	 * setOrigin("/backend/service/url/", {system: "DEMO", client: 134});
-	 * - result /backend/service/url;o=sid(DEMO.134)
+	 * - result /backend/service/url;o=sid(DEMO.134)/
 	 * 
 	 * @param {string} sServiceURL the URL which will be enriched with an origin
 	 * @param {object|string} vParameters if string then it is asumed its the system alias, else if the argument is an object then additional Parameters can be given
@@ -221,6 +223,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 * @param {string} vParameters.force setting this flag to 'true' overrides the already existing origin
 	 * 
 	 * @public
+	 * @since 1.30.7
 	 * @returns {string} the service URL with the added origin.
 	 */
 	ODataUtils.setOrigin = function (sServiceURL, vParameters) {
