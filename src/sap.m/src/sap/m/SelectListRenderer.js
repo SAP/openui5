@@ -89,6 +89,10 @@ sap.ui.define(['jquery.sap.global'],
 				} else {
 					oRm.addClass(CSS_CLASS + "Item");
 
+					if (oItem.bVisible === false) {
+						oRm.addClass(CSS_CLASS + "ItemInvisible");
+					}
+
 					if (!bEnabled) {
 						oRm.addClass(CSS_CLASS + "ItemDisabled");
 					}
