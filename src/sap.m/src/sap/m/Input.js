@@ -765,6 +765,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		if (oPopup instanceof Popover) {
 			if (oEvent.relatedControlId && jQuery.sap.containsOrEquals(oPopup.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
 				// Force the focus to stay in input
+				this._bPopupHasFocus = true;
 				this.focus();
 			} else {
 				// When the input still has the value of the last jQuery.val call, a change event has to be
@@ -1483,9 +1484,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		this.$().addClass("sapMInputFocused");
 
 		// fires suggest event when startSuggestion is set to 0 and input has no text
-		if (!this.getStartSuggestion() && !this.getValue()) {
+		if (!this._bPopupHasFocus && !this.getStartSuggestion() && !this.getValue()) {
 			this._triggerSuggest(this.getValue());
 		}
+		this._bPopupHasFocus = undefined;
 	};
 
 	/**
