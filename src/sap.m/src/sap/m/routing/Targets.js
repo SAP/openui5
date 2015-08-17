@@ -166,7 +166,7 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
 		 * @param {boolean} [oOptions.targets.anyName.clearAggregation] Defines a boolean that can be passed to specify if the aggregation should be cleared
 		 * - all items will be removed - before adding the View to it.
 		 * When using a {@link sap.ui.ux3.Shell} this should be true. For a {@link sap.m.NavContainer} it should be false. When you use the {@link sap.m.routing.Router} the default will be false.
-		 * @param {string} [oOptions.targets.anyName.parent] A reference to another target, using the name of the target.
+		 * @param {string} [oOptions.targets.parent] A reference to another target, using the name of the target.
 		 * If you display a target that has a parent, the parent will also be displayed.
 		 * Also the control you specify with the controlId parameter, will be searched inside of the view of the parent not in the rootView, provided in the config.
 		 * The control will be searched using the byId function of a view. When it is not found, the global id is checked.
@@ -333,22 +333,20 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
 				// don't remember previous displays
 				this._oLastDisplayedTarget = null;
 
-				var oPromise = Targets.prototype.display.apply(this, arguments);
+				var oReturnValue = Targets.prototype.display.apply(this, arguments);
 
-				return oPromise.then(function(oViewInfo) {
-					// maybe a wrong name was provided then there is no last displayed target
-					if (this._oLastDisplayedTarget) {
-						iViewLevel = this._oLastDisplayedTarget._oOptions.viewLevel;
-						sName = this._oLastDisplayedTarget._oOptions.name;
-					}
+				// maybe a wrong name was provided then there is no last displayed target
+				if (this._oLastDisplayedTarget) {
+					iViewLevel = this._oLastDisplayedTarget._oOptions.viewLevel;
+					sName = this._oLastDisplayedTarget._oOptions.name;
+				}
 
-					this._oTargetHandler.navigate({
-						viewLevel: iViewLevel,
-						navigationIdentifier: sName
-					});
+				this._oTargetHandler.navigate({
+					viewLevel: iViewLevel,
+					navigationIdentifier: sName
+				});
 
-					return oViewInfo;
-				}.bind(this));
+				return oReturnValue;
 			},
 
 			_constructTarget : function (oOptions, oParent) {
@@ -357,13 +355,11 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
 
 			_displaySingleTarget : function (sName) {
 				var oTarget = this.getTarget(sName);
+				if (oTarget) {
+					this._oLastDisplayedTarget = oTarget;
+				}
 
-				return Targets.prototype._displaySingleTarget.apply(this, arguments).then(function(oViewInfo){
-					if (oTarget) {
-						this._oLastDisplayedTarget = oTarget;
-					}
-					return oViewInfo;
-				}.bind(this));
+				return Targets.prototype._displaySingleTarget.apply(this, arguments);
 			}
 		});
 
