@@ -964,6 +964,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				removedTokens : [token],
 				type : Tokenizer.TokenChangeType.TokensChanged
 			});
+			
+			if (this.getParent() &&  this.getParent() instanceof sap.m.MultiInput) {
+				var $oParent = this.getParent().$();
+				$oParent.find("input").focus();
+			}
+
 		}
 	
 	};
