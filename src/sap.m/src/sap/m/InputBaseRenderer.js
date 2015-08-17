@@ -70,13 +70,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 
 		// enable self-made placeholder
 		if (oControl._bShowLabelAsPlaceholder) {
-			oRm.write('<label class="sapMInputBasePlaceholder"');
+			oRm.write("<label");
 			oRm.writeAttribute("id", oControl.getId() + "-placeholder");
 			oRm.writeAttribute("for", oControl.getId() + "-inner");
 			if (sTextAlign) {
 				oRm.addStyle("text-align", sTextAlign);
 			}
+			this.addPlaceholderClasses(oRm, oControl);
 			this.addPlaceholderStyles(oRm, oControl);
+			oRm.writeClasses();
 			oRm.writeStyles();
 			oRm.write(">");
 			oRm.writeEscaped(oControl._getPlaceholder());
@@ -306,6 +308,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
 	InputBaseRenderer.addPlaceholderStyles = function(oRm, oControl) {};
+
+	/**
+	 * Adds custom placeholder classes, if native placeholder is not used.
+	 * To be overwritten by subclasses.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+	 */
+	InputBaseRenderer.addPlaceholderClasses = function(oRm, oControl) {
+		oRm.addClass("sapMInputBasePlaceholder");
+	};
 
 	/**
 	 * Add the CSS value state classes to the control's root element using the provided {@link sap.ui.core.RenderManager}.
