@@ -638,10 +638,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (sap.ui.Device.system.desktop) {
 			// use navigation arrows on desktop and win8 combi devices
-			src = IconPool.getIconURI("navigation") + "-" + sName + "-arrow";
+			src = IconPool.getIconURI("navigation-" + sName + "-arrow");
 		} else {
 			// use slim arrows on mobile devices
-			src = IconPool.getIconURI("slim-arrow") + "-" + sName;
+			src = IconPool.getIconURI("slim-arrow-" + sName);
 		}
 
 		var mProperties = {
