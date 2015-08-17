@@ -534,7 +534,15 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @protected
 		 */
 		SelectList.prototype.getVisibleItems = function() {
-			return this.getItems();
+			for (var i = 0, oItem, aItems = this.getItems(), aVisiblesItems = []; i < aItems.length; i++) {
+				oItem = aItems[i];
+
+				if (oItem.bVisible || (oItem.bVisible === undefined)) {
+					aVisiblesItems.push(oItem);
+				}
+			}
+
+			return aVisiblesItems;
 		};
 
 		/*

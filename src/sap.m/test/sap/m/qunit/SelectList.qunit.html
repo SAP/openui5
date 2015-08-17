@@ -3090,6 +3090,85 @@
 				oSelectList.destroy();
 			});
 
+			test("it should display the item", function() {
+
+				// system under test
+				var oItem;
+				var oSelectList = new sap.m.SelectList({
+					items: [
+						oItem = new sap.ui.core.Item({
+							text: "lorem ipsum"
+						})
+					]
+				});
+
+				// arrange
+				oSelectList.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "list-item");
+				strictEqual(oSelectList.getVisibleItems().length, 1);
+
+				// cleanup
+				oSelectList.destroy();
+			});
+
+			test("it should display the item", function() {
+
+				// system under test
+				var oItem;
+				var oSelectList = new sap.m.SelectList({
+					items: [
+						oItem = new sap.ui.core.Item({
+							text: "lorem ipsum"
+						})
+					]
+				});
+
+				// act
+				oItem.bVisible = true;
+
+				// arrange
+				oSelectList.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "list-item");
+				strictEqual(oSelectList.getVisibleItems().length, 1);
+
+				// cleanup
+				oSelectList.destroy();
+			});
+
+			test("it should not display the item", function() {
+
+				// system under test
+				var oItem;
+				var oSelectList = new sap.m.SelectList({
+					items: [
+						oItem = new sap.ui.core.Item({
+							text: "lorem ipsum"
+						})
+					]
+				});
+
+				// act
+				oItem.bVisible = false;
+
+				// arrange
+				oSelectList.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "none");
+				ok(oItem.$().hasClass(oSelectList.getRenderer().CSS_CLASS + "ItemInvisible"));
+				strictEqual(oSelectList.getVisibleItems().length, 0);
+
+				// cleanup
+				oSelectList.destroy();
+			});
+
 			/* =========================================================== */
 			/* Events module                                               */
 			/* =========================================================== */
