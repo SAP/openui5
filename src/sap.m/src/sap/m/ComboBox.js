@@ -735,11 +735,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 			}
 		};
 
-		/*
+		/**
 		 * Determines whether the "selectedItem" association and "selectedKey" property are synchronized.
 		 *
 		 * @returns {boolean}
-		 * @protected
 		 * @since 1.24.0
 		 */
 		ComboBox.prototype.isSelectionSynchronized = function() {
@@ -778,11 +777,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 			}
 		};
 
-		/*
+		/**
 		 * Determines whether the list is filtered out from the input field.
 		 *
 		 * @returns {boolean} Whether the list is filtered out.
-		 * @protected
 		 * @since 1.26.0
 		 */
 		ComboBox.prototype.isFiltered = function() {
@@ -826,11 +824,10 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 			return oPicker;
 		};
 
-		/*
+		/**
 		 * Create an instance type of <code>sap.m.List</code>.
 		 *
 		 * @returns {sap.m.List}
-		 * @protected
 		 */
 		ComboBox.prototype.createList = function() {
 
@@ -961,12 +958,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 			this.clearFilter();
 		};
 
-		/*
+		/**
 		 * Check whether an item is selected or not.
 		 *
 		 * @param {sap.ui.core.Item} vItem
 		 * @returns {boolean} Whether the item is selected.
-		 * @protected
 		 * @since 1.24.0
 		 */
 		ComboBox.prototype.isItemSelected = function(vItem) {
