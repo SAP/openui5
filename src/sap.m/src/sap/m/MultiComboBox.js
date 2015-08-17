@@ -558,6 +558,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 
 		// configuration
 		oPicker.setHorizontalScrolling(false).addStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Picker")
+											.addStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Picker")
+											.addStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Picker-CTX")
 				.attachBeforeOpen(this.onBeforeOpen, this).attachAfterOpen(this.onAfterOpen, this).attachBeforeClose(
 						this.onBeforeClose, this).attachAfterClose(this.onAfterClose, this).addEventDelegate({
 					onBeforeRendering : this.onBeforeRenderingPicker,
