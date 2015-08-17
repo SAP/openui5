@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Dialog.
-sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', './ToolbarSpacer', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/theming/Parameters'],
-	function (jQuery, Bar, InstanceManager, Toolbar, ToolbarSpacer, library, Control, IconPool, Popup, ScrollEnablement, Parameters) {
+sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToolbar', './ToolbarSpacer', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/theming/Parameters'],
+	function (jQuery, Bar, InstanceManager, OverflowToolbar, ToolbarSpacer, library, Control, IconPool, Popup, ScrollEnablement, Parameters) {
 		"use strict";
 
 
@@ -172,7 +172,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 					/**
 					 * The hidden aggregation for internal maintained toolbar instance
 					 */
-					_toolbar: {type: "sap.m.Toolbar", multiple: false, visibility: "hidden"}
+					_toolbar: {type: "sap.m.OverflowToolbar", multiple: false, visibility: "hidden"}
 				},
 				associations: {
 
@@ -1233,7 +1233,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Toolbar', '
 		Dialog.prototype._getToolbar = function () {
 			if (!this._oToolbar) {
 				var that = this;
-				this._oToolbar = new Toolbar(this.getId() + "-footer", {
+				this._oToolbar = new OverflowToolbar(this.getId() + "-footer", {
 					content: [
 						new ToolbarSpacer()
 					]
