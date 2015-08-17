@@ -1070,13 +1070,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 
 			// set the input value
 			if (vItem) {
-				this.setValue(vItem.getText(), true);
+				this.setValue(vItem.getText());
 				/*eslint-disable no-cond-assign */
 			} else if (vItem = this.getDefaultSelectedItem()) {
 				/*eslint-enable no-cond-assign */
-				this.setValue(vItem.getText(), true);
+				this.setValue(vItem.getText());
 			} else {
-				this.setValue("", true);
+				this.setValue("");
 			}
 
 			return this;
@@ -1103,13 +1103,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 
 			// set the input value
 			if (vItem) {
-				this.setValue(vItem.getText(), true);
+				this.setValue(vItem.getText());
 				/*eslint-disable no-cond-assign */
 			} else if (vItem = this.getDefaultSelectedItem()) {
 				/*eslint-enable no-cond-assign */
-				this.setValue(vItem.getText(), true);
+				this.setValue(vItem.getText());
 			} else {
-				this.setValue("", true);
+				this.setValue("");
 			}
 
 			return this;
@@ -1138,13 +1138,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 
 				// set the input value
 				if (oItem) {
-					this.setValue(oItem.getText(), true);
+					this.setValue(oItem.getText());
 					/*eslint-disable no-cond-assign */
 				} else if (oItem = this.getDefaultSelectedItem()) {
 					/*eslint-enable no-cond-assign */
-					this.setValue(oItem.getText(), true);
+					this.setValue(oItem.getText());
 				} else {
-					this.setValue("", true);
+					this.setValue("");
 				}
 
 				return this;
