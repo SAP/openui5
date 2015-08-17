@@ -1923,7 +1923,7 @@ sap.ui.define([
 
 	/**
 	 * When the Popup is being destroyed all corresponding references should be
-	 * deleted as well to prevent any memory leeks.
+	 * deleted as well to prevent any memory leaks.
 	 *
 	 * @public
 	 */
