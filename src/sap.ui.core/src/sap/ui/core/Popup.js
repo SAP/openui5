@@ -1871,7 +1871,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 
 	/**
 	 * When the Popup is being destroyed all corresponding references should be
-	 * deleted as well to prevent any memory leeks.
+	 * deleted as well to prevent any memory leaks.
 	 *
 	 * @public
 	 */
