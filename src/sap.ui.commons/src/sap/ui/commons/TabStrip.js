@@ -549,6 +549,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var $target = jQuery(oSource);
 
 		if (oSource.className == "sapUiTabClose") {
+
+			oEvent.preventDefault();
+
 			// find the items index
 			var iIdx = this.getItemIndex($target.parentByAttribute("id"));
 			if (iIdx > -1) {
