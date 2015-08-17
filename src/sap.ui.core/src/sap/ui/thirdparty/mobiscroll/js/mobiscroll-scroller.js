@@ -174,9 +174,9 @@
             
             onKeyDown = function (e) {
                 if (e.which == 38 && !e.altKey) {
-                    step(e, $(this), plus); // up
+                    step(e, $(this), minus); // up
                 } else if (e.which == 40 && !e.altKey) {
-                    step(e, $(this), minus); // down
+                    step(e, $(this), plus); // down
                 } else if (e.which == 33) {
                 	step(e, $(this), pageUp); // page up
                 } else if (e.which == 34) {
