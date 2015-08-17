@@ -56,6 +56,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBaseRenderer', 'sap/ui/core/Rende
 			oRm.addClass(ComboBoxRenderer.CSS_CLASS + "Arrow");
 		};
 
+		ComboBoxRenderer.addPlaceholderClasses = function(oRm, oControl) {
+			ComboBoxBaseRenderer.addPlaceholderClasses.apply(this, arguments);
+			oRm.addClass(ComboBoxRenderer.CSS_CLASS + "Placeholder");
+		};
+
 		return ComboBoxRenderer;
 
 	}, /* bExport= */ true);
