@@ -2242,5 +2242,45 @@
         "references": []
       }
     ]
+  },
+  "1.28.16": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "69fe9183e805df508cddc48c8a27869a262b21f3",
+        "author": "Alexander Schmalzhaf \u003calexander.schmalzhaf@sap.com\u003e",
+        "type": "FIX",
+        "text": "Click event not fired on touch devices",
+        "references": []
+      },
+      {
+        "id": "83b8eb823a57753328c4e0a710d6894a6855e1e5",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "Destroy templates automatically in more cases",
+        "references": []
+      },
+      {
+        "id": "95209b92d32791af5f8bbbc2ede130d6327ad9bb",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: fix typo in documentation of exit()",
+        "references": []
+      },
+      {
+        "id": "a035df52a484dfbde2ce750f3d9de2147f2ad57c",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "ThemeCheck: additional null-checks to avoid console warnings",
+        "references": []
+      },
+      {
+        "id": "245e4bd81a56aeb9117d8fa231a150b425f690be",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: exception occurs when \u0027of\u0027 is set to a jQuery.Event object",
+        "references": []
+      }
+    ]
   }
 }

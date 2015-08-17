@@ -60,5 +60,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.16": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "d7c706da41457d6e99cc2be94fd07b1e6e24450a",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Dialog: The close button has proper name when read by JAWS",
+        "references": []
+      }
+    ]
   }
 }
