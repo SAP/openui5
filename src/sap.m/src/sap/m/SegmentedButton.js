@@ -382,7 +382,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		iMaxWidth = Math.floor(iMaxWidth);
 
 		for (var i = 0; i < iItm; i++) {
-			var $button = $this.children('#' + oButtons[i].getId()),
+			var $button = oButtons[i].$(),
 				sBtnWidth = oButtons[i].getWidth();
 			if (!isNaN(iMaxWidth) && iMaxWidth > 0) {
 				// Bug: +2px for IE9(10)
