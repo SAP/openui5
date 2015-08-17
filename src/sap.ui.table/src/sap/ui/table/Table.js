@@ -3983,7 +3983,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		}
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
-			this._oSelection.setSelectionInterval(0, (oBinding.getLength() || 0) - 1);
+			// first give the higher number. The toIndex will be used as leadIndex. It more likely that
+			// in oData case the index 0 is already loaded than that the last index is loaded. The leadIndex will
+			// be used to determine the leadContext in the selectionChange event. If not yet loaded it would need to
+			// be request. To avoid unnecessary roundtrips the lead index is set to 0.
+			this._oSelection.setSelectionInterval((oBinding.getLength() || 0) - 1, 0);
 			this.$("selall").attr('title',this._oResBundle.getText("TBL_DESELECT_ALL")).removeClass("sapUiTableSelAll");
 		}
 		return this;
