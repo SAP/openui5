@@ -163,7 +163,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
 		 * @param {boolean} [oOptions.targets.anyName.clearAggregation] Defines a boolean that can be passed to specify if the aggregation should be cleared
 		 * - all items will be removed - before adding the View to it.
 		 * When using a {@link sap.ui.ux3.Shell} this should be true. For a {@link sap.m.NavContainer} it should be false. When you use the {@link sap.m.routing.Router} the default will be false.
-		 * @param {string} [oOptions.targets.anyName.parent] A reference to another target, using the name of the target.
+		 * @param {string} [oOptions.targets.parent] A reference to another target, using the name of the target.
 		 * If you display a target that has a parent, the parent will also be displayed.
 		 * Also the control you specify with the controlId parameter, will be searched inside of the view of the parent not in the rootView, provided in the config.
 		 * The control will be searched using the byId function of a view. When it is not found, the global id is checked.
@@ -238,7 +238,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
 		 * Now if we call <code> oTargets.display("secondTabContent") </code>, 2 views will be created: Detail and SecondTabContent.
 		 * The 'Detail' view will be put into the pages aggregation of the App. And afterwards the 'SecondTabContent' view will be put into the content Aggregation of the second IconTabFilter.
 		 * So a parent will always be created before the target referencing it.
-		 * @param {boolean} [oOptions.targets.anyName.async=true] @since 1.31.0 Whether the view is loaded asynchronously. This option is by default set to true.
 		 *
 		 * @since 1.28.1
 		 * @public
@@ -298,11 +297,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
 			 * @param {string|string[]} vTargets the key of the target as specified in the {@link #constructor}. To display multiple targets you may also pass an array of keys.
 			 * @param {any} [vData] an object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
 			 * @public
-			 * @returns {Promise} resolving with {{name: *, view: *, control: *}|undefined} for every vTargets, object for single, array for multiple
+			 * @returns {sap.ui.core.routing.Targets} this pointer for chaining
 			 */
 			display : function (vTargets, vData) {
-				var oSequencePromise = Promise.resolve();
-				return this._display(vTargets, vData, oSequencePromise);
+				this._display(vTargets, vData);
 			},
 
 			/**
@@ -456,30 +454,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
 
 			/**
 			 * hook to distinguish between the router and an application calling this
-			 * @param {array|object} vTargets targets or single target to be displayed
-			 * @param {object} vData  an object that will be passed to the display event in the data property. If the
-					target has parents, the data will also be passed to them.
-			 * @param {*} [vData] an object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
-			 * @return {Promise} resolving with {{name: *, view: *, control: *}|undefined} for every vTargets, object for single, array for multiple
-			 *
 			 * @private
 			 */
-			_display : function (vTargets, vData, oSequencePromise) {
-				var that = this,
-					aViewInfos = [];
+			_display : function (vTargets, vData) {
+				var that = this;
 
-				if (!$.isArray(vTargets)) {
-					vTargets = [vTargets];
+				if ($.isArray(vTargets)) {
+					$.each(vTargets, function (i, sTarget) {
+						that._displaySingleTarget(sTarget, vData);
+					});
+				} else {
+					this._displaySingleTarget(vTargets, vData);
 				}
 
-				return vTargets.reduce(function(oPromise, sTarget) {
-					// gather view infos while processing Promise chain
-					return that._displaySingleTarget(sTarget, vData, oPromise).then(function(oViewInfo) {
-						aViewInfos.push(oViewInfo);
-					});
-				}, oSequencePromise).then(function() {
-					return aViewInfos;
-				});
+				return this;
 			},
 
 			/**
@@ -488,18 +476,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
 			 * @param vData event data
 			 * @private
 			 */
-			_displaySingleTarget : function (sName, vData, oSequencePromise) {
+			_displaySingleTarget : function (sName, vData) {
 				var oTarget = this.getTarget(sName);
 
 				if (oTarget !== undefined) {
-					return oTarget._display(vData, oSequencePromise);
+					oTarget.display(vData);
 				} else {
-					var sErrorMessage = "The target with the name \"" + sName + "\" does not exist!";
-					$.sap.log.error(sErrorMessage, this);
-					return Promise.resolve({
-						name: sName,
-						error: sErrorMessage
-					});
+					$.sap.log.error("The target with the name \"" + sName + "\" does not exist!", this);
 				}
 			},
 

@@ -45,8 +45,6 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 		constructor : function (oRouter, bCloseDialogs) {
 			this._oTargetHandler = new TargetHandler(bCloseDialogs);
 
-			oRouter._oTargetHandler = this._oTargetHandler;
-
 			// Route matched is thrown for each container in the route hierarchy
 			oRouter.attachRouteMatched(this._onHandleRouteMatched, this);
 			// Route Pattern Matched is thrown only once for the end point of the current navigation

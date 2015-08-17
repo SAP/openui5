@@ -31,10 +31,9 @@
 				"sap/m/routing/TargetHandler",
 				"sap/m/InstanceManager",
 				"qunit/routing/commonIntegrationTests",
-				"sap/m/Page",
-				"qunit/routing/helpers"
+				"sap/m/Page"
 			],
-			function (RouteMatchedHandler, NavContainer, SplitContainer, HashChanger, Router, History, TargetHandler, InstanceManager, integrationTests, Page, helpers) {
+			function (RouteMatchedHandler, NavContainer, SplitContainer, HashChanger, Router, History, TargetHandler, InstanceManager, integrationTests, Page) {
 				"use strict";
 
 				HashChanger.getInstance().init();
@@ -329,30 +328,29 @@
 				test("Should also work for routes with targets", function () {
 					//Arrange
 					var oMasterView = createViewAndController("Master"),
-						oDetailView = createViewAndController("Detail"),
-						sPattern = "anything",
-						oRouter =  new Router({
-									detail: {
-										pattern: sPattern,
-										target: ["master", "detail"]
-									}
-								},
-								{
-									controlId: this.oSplitContainer.getId(),
-									viewType: "JS"
-								},
-								null,
-								{
-									master: {
-										viewName: "Master",
-										controlAggregation: "masterPages"
+							oDetailView = createViewAndController("Detail"),
+							sPattern = "anything",
+							oRouter =  new Router({
+										detail: {
+											pattern: sPattern,
+											target: ["master", "detail"]
+										}
 									},
-									detail: {
-										viewName: "Detail",
-										controlAggregation: "detailPages"
-									}
-								}),
-						oRouteMatchedSpy = sinon.spy(oRouter.getRoute("detail"), "_routeMatched");
+									{
+										controlId: this.oSplitContainer.getId(),
+										viewType: "JS"
+									},
+									null,
+									{
+										master: {
+											viewName: "Master",
+											controlAggregation: "masterPages"
+										},
+										detail: {
+											viewName: "Detail",
+											controlAggregation: "detailPages"
+										}
+									});
 
 					this.stub(sap.ui.Device.system, "phone", false);
 
@@ -361,71 +359,67 @@
 
 					//Act
 					oRouter.parse(sPattern);
-					return oRouteMatchedSpy.returnValues[0].then(function() {
-						//Assert
-						strictEqual(this.oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
-						strictEqual(this.oSplitContainer.getCurrentMasterPage().getViewName(), "Master", "did navigate to the master view");
+					this.clock.tick(0);
 
-						oMasterView.destroy();
-						oDetailView.destroy();
-						oRouter.destroy();
-						oRouteMatchedHandler.destroy();
+					//Assert
+					strictEqual(this.oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
+					strictEqual(this.oSplitContainer.getCurrentMasterPage().getViewName(), "Master", "did navigate to the master view");
 
-						oRouteMatchedSpy.restore();
-					}.bind(this));
+					oMasterView.destroy();
+					oDetailView.destroy();
+					oRouter.destroy();
+					oRouteMatchedHandler.destroy();
 				});
 
 				test("Should work with routes without targets mixed with routes with targets", function (assert) {
 					//Arrange
 					var oMasterView = createViewAndController("Master"),
-						oDetailView = createViewAndController("Detail"),
-						sPattern = "anything",
-						oRouter =  new Router({
-									master: {
-										view: "Master",
-										targetControl: this.oSplitContainer.getId(),
-										targetAggregation: "masterPages",
-										subroutes: {
-											detail: {
-												pattern: sPattern,
-												target: ["detail"]
+							oDetailView = createViewAndController("Detail"),
+							sPattern = "anything",
+							oRouter =  new Router({
+										master: {
+											view: "Master",
+											targetControl: this.oSplitContainer.getId(),
+											targetAggregation: "masterPages",
+											subroutes: {
+												detail: {
+													pattern: sPattern,
+													target: ["detail"]
+												}
 											}
 										}
-									}
-								},
-								{
-									viewType: "JS"
-								},
-								null,
-								{
-									detail: {
-										viewName: "Detail",
-										controlAggregation: "detailPages",
-										controlId: this.oSplitContainer.getId()
-									}
-								});
+									},
+									{
+										viewType: "JS"
+									},
+									null,
+									{
+										detail: {
+											viewName: "Detail",
+											controlAggregation: "detailPages",
+											controlId: this.oSplitContainer.getId()
+										}
+									});
 
 					this.stub(sap.ui.Device.system, "phone", false);
 
 					// System under test
 					var oRouteMatchedHandler = new RouteMatchedHandler(oRouter);
-					var fnAddNavigationSpy = sinon.spy(oRouteMatchedHandler._oTargetHandler, "addNavigation");
-					var oRouteMatchedSpy = sinon.spy(oRouter.getRoute("detail"), "_routeMatched");
+					var fnAddNavigationSpy = this.spy(oRouteMatchedHandler._oTargetHandler, "addNavigation");
+
 					// Act
 					oRouter.parse(sPattern);
-					return oRouteMatchedSpy.returnValues[0].then(function() {
-						//Assert
-						assert.strictEqual(this.oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
-						assert.strictEqual(this.oSplitContainer.getCurrentMasterPage().getViewName(), "Master", "did navigate to the master view");
-						assert.strictEqual(fnAddNavigationSpy.callCount, 2, "did add exactly 2 navigations");
+					this.clock.tick(0);
 
-						oMasterView.destroy();
-						oDetailView.destroy();
-						oRouter.destroy();
-						oRouteMatchedHandler.destroy();
-						oRouteMatchedSpy.restore();
-						fnAddNavigationSpy.restore();
-					}.bind(this));
+					//Assert
+					assert.strictEqual(this.oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
+					assert.strictEqual(this.oSplitContainer.getCurrentMasterPage().getViewName(), "Master", "did navigate to the master view");
+					assert.strictEqual(fnAddNavigationSpy.callCount, 2, "did add exactly 2 navigations");
+
+					oMasterView.destroy();
+					oDetailView.destroy();
+					oRouter.destroy();
+					oRouteMatchedHandler.destroy();
 				});
 
 				///////////////////////////////////////////////////////
@@ -450,11 +444,9 @@
 							data = null;
 
 					this.stub(sap.ui.Device.system, "phone", false);
-					var oRouteMatchedSpy = sinon.spy(oRouter.getRoute("Master"), "_routeMatched");
 
 					// System under test
 					var oRouteMatchedHandler = new RouteMatchedHandler(oRouter);
-
 
 					// views
 					createViewAndController("Master");
@@ -467,34 +459,26 @@
 
 					// Act
 					oRouter.parse("5");
-					return oRouteMatchedSpy.returnValues[0].then(function() {
-						// Assert
-						assert.strictEqual(data, "5", "should pass 5 to the page");
+					this.clock.tick(0);
 
-						// Cleanup
-						oRouter.destroy();
-						oRouteMatchedSpy.restore();
-					});
+					// Assert
+					assert.strictEqual(data, "5", "should pass 5 to the page");
+
+					// Cleanup
+					oRouter.destroy();
 				});
 
 				integrationTests.start({
 					setup: function (oConfig) {
 						var oRouter = new Router(oConfig);
-						this.oGetViewStub = sinon.stub(oRouter._oViews, "_getViewWithGlobalId", helpers.createViewMock);
 
 						this.oRouter = oRouter;
 						this.oRouteMatchedHandler = new RouteMatchedHandler(oRouter);
 						return oRouter;
 					},
-					act: function (sPatternOrName, assert) {
-						var oRouteMatchedSpy = sinon.spy(this.oRouter.getRoute(sPatternOrName), "_routeMatched");
+					act: function (sPatternOrName) {
 						this.oRouter.parse(sPatternOrName);
-						if (assert) {
-							assert.strictEqual(oRouteMatchedSpy.callCount, 1, "_routeMatched method is called once");
-						}
-						var oPromise = oRouteMatchedSpy.returnValues[0];
-						oRouteMatchedSpy.restore();
-						return oPromise;
+						this.clock.tick(0);
 					},
 					teardown: function () {
 						this.oRouter.destroy();

@@ -26,12 +26,9 @@
 							"sap/m/SplitContainer",
 							"sap/m/Page",
 							"sap/ui/core/routing/Views",
-							"qunit/routing/commonIntegrationTests",
-							"sap/m/routing/Target",
-							"sap/ui/core/routing/Target",
-							"qunit/routing/helpers"
+							"qunit/routing/commonIntegrationTests"
 						],
-						function (Router, TargetHandler, NavContainer, SplitContainer, Page, Views, integrationTests, MobileTarget, Target, helpers) {
+						function (Router, TargetHandler, NavContainer, SplitContainer, Page, Views, integrationTests) {
 							"use strict";
 
 							QUnit.module("Construction and destruction");
@@ -46,43 +43,8 @@
 								oRouter.destroy();
 							});
 
-							QUnit.test("Should work for routes which don't have view info", function () {
-								// Arrange + System under test
-								var sPattern = "product",
-										oRouter = new Router([
-											{
-												name: "first",
-												pattern: sPattern
-											}
-										]);
-
-								var oRoute = oRouter.getRoute("first"),
-									oListenerSpy = sinon.spy(),
-									oRouteMatchedSpy = sinon.spy(oRoute, "_routeMatched");
-
-								oRoute.attachPatternMatched(oListenerSpy);
-
-								// Act
-								oRouter.parse(sPattern);
-
-								// If no view info is provided for a route, the internal target instance should not be sap.m.routing.Target
-								ok(oRoute._oTarget instanceof Target && !(oRoute._oTarget instanceof MobileTarget), "The internal target instance for old syntax should be only a core target");
-
-								strictEqual(oRouteMatchedSpy.callCount, 1, "first route is matched");
-
-								return oRouteMatchedSpy.returnValues[0].then(function() {
-									strictEqual(oListenerSpy.callCount, 1, "first route gets pattern matched");
-
-									// Cleanup
-									oRouteMatchedSpy.restore();
-
-									oRouter.destroy();
-								});
-							});
-
 							QUnit.module("add and execute navigations", {
 								setup: function () {
-									var that = this;
 									this.oStartPage = new Page();
 									this.oNavContainer = new NavContainer({
 										pages: this.oStartPage
@@ -98,24 +60,18 @@
 									};
 									// System under test
 									this.oRouter = new sap.m.routing.Router({
-										myRoute: {
-											pattern: this.sPattern,
-											target: "myTarget"
-										}
-									},
-									{
-										controlAggregation: "pages"
-									},
-									null,
-									{
-										myTarget: this.oTargetConfiguration
-									});
-
-									this.oViewMock = {
-										loaded: function() {
-											return Promise.resolve(that.oToPage);
-										}
-									}
+												myRoute: {
+													pattern: this.sPattern,
+													target: "myTarget"
+												}
+											},
+											{
+												controlAggregation: "pages"
+											},
+											null,
+											{
+												myTarget: this.oTargetConfiguration
+											});
 								},
 								teardown: function () {
 									this.oNavContainer.destroy();
@@ -128,33 +84,27 @@
 							QUnit.test("Should do a forward navigation", function (assert) {
 								//Arrange
 								var that = this,
-									oToSpy = sinon.spy(this.oNavContainer, "to"),
-									oNavigateSpy = sinon.spy(this.oRouter._oTargetHandler, "navigate"),
-									oRouteMatchedSpy = sinon.spy(this.oRouter.getRoute("myRoute"), "_routeMatched");
+										oToSpy = this.spy(this.oNavContainer, "to"),
+										oNavigateSpy = this.spy(this.oRouter._oTargetHandler, "navigate");
 
 								this.stub(Views.prototype, "_getView", function () {
-									return that.oViewMock;
+									return that.oToPage;
 								});
 
 								//Act
 								this.oRouter.parse("some/myData");
-								assert.strictEqual(oRouteMatchedSpy.callCount, 1, "_routeMatched method is called once");
+								this.clock.tick(0);
 
-								return oRouteMatchedSpy.returnValues[0].then(function() {
-									//Assert
-									assert.strictEqual(oToSpy.callCount, 1, "did call the 'to' function on the oNavContainer instance");
-									sinon.assert.calledWithExactly(oToSpy, this.oToPage.getId(), this.oTargetConfiguration.transition, { eventData: "myData"}, this.oTargetConfiguration.transitionParameters);
+								//Assert
+								assert.strictEqual(oToSpy.callCount, 1, "did call the 'to' function on the oNavContainer instance");
+								sinon.assert.calledWithExactly(oToSpy, this.oToPage.getId(), this.oTargetConfiguration.transition, { eventData: "myData"}, this.oTargetConfiguration.transitionParameters);
 
-									assert.strictEqual(oNavigateSpy.callCount, 1, "did call the 'navigate' function on the TargetHandler instance");
-									sinon.assert.calledWithExactly(oNavigateSpy, {
-										askHistory: true,
-										navigationIdentifier: "myRoute",
-										viewLevel: 5
-									});
-									oToSpy.restore();
-									oNavigateSpy.restore();
-									oRouteMatchedSpy.restore();
-								}.bind(this));
+								assert.strictEqual(oNavigateSpy.callCount, 1, "did call the 'navigate' function on the TargetHandler instance");
+								sinon.assert.calledWithExactly(oNavigateSpy, {
+									askHistory: true,
+									navigationIdentifier: "myRoute",
+									viewLevel: 5
+								});
 							});
 
 							///////////////////////////////////////////////////////
@@ -178,56 +128,51 @@
 							QUnit.test("Should respect the viewlevel for multiple targets", function (assert) {
 								//Arrange
 								var oNavContainer = new NavContainer(),
-									oRouter = new Router(
-										{
-											"route": {
-												pattern: "anyPattern",
-												target: ["first", "second"]
-											}
-										},
-										{
-											viewType: "JS",
-											controlAggregation:"pages",
-											controlId: oNavContainer.getId()
-										},
-										null,
-										{
-											first: {
-												viewName: "first"
+										oRouter = new Router(
+											{
+												"route": {
+													pattern: "anyPattern",
+													target: ["first", "second"]
+												}
 											},
-											second: {
-												viewName: "second",
-												viewLevel: 0
+											{
+												viewType: "JS",
+												controlAggregation:"pages",
+												controlId: oNavContainer.getId()
 											},
-											initial: {
-												viewName: "initial",
-												viewLevel: 1
-											}
-										}),
-									fnBackSpy = sinon.spy(oNavContainer, "backToPage"),
-									oRouteMatchedSpy = sinon.spy(oRouter.getRoute("route"), "_routeMatched");
+											null,
+											{
+												first: {
+													viewName: "first"
+												},
+												second: {
+													viewName: "second",
+													viewLevel: 0
+												},
+												initial: {
+													viewName: "initial",
+													viewLevel: 1
+												}
+											}),
+										fnBackSpy = this.spy(oNavContainer, "backToPage");
 
 								// views
 								createViewAndController("first");
 								createViewAndController("second");
 								createViewAndController("initial");
 
-								return oRouter.getTargets().display("initial").then(function() {
-									// Act
-									oRouter.parse("anyPattern");
-									assert.strictEqual(oRouteMatchedSpy.callCount, 1, "_routeMatched method is called once");
+								oRouter.getTargets().display("initial");
 
-									return oRouteMatchedSpy.returnValues[0];
-								}).then(function() {
-									// Assert
-									assert.strictEqual(fnBackSpy.callCount, 1, "Did execute a back navigation");
-									assert.strictEqual(fnBackSpy.firstCall.args[0], oRouter.getView("second").getId(), "The second page was target of the back navigation");
+								// Act
+								oRouter.parse("anyPattern");
+								this.clock.tick(0);
 
-									// Cleanup
-									oRouter.destroy();
-									fnBackSpy.restore();
-									oRouteMatchedSpy.restore();
-								});
+								// Assert
+								assert.strictEqual(fnBackSpy.callCount, 1, "Did execute a back navigation");
+								assert.strictEqual(fnBackSpy.firstCall.args[0], oRouter.getView("second").getId(), "The second page was target of the back navigation");
+
+								// Cleanup
+								oRouter.destroy();
 							});
 
 
@@ -245,8 +190,7 @@
 												targetAggregation: "masterPages"
 											}
 										}),
-										data = null,
-										oRouteMatchedSpy = sinon.spy(oRouter.getRoute("Master"), "_routeMatched");
+										data = null;
 
 								this.stub(sap.ui.Device.system, "phone", false);
 
@@ -261,17 +205,13 @@
 
 								// Act
 								oRouter.parse("5");
-								assert.strictEqual(oRouteMatchedSpy.callCount, 1, "_routeMatched method is called once");
+								this.clock.tick(0);
 
-								return oRouteMatchedSpy.returnValues[0].then(function() {
-									// Assert
-									assert.strictEqual(data, "5", "should pass 5 to the page");
+								// Assert
+								assert.strictEqual(data, "5", "should pass 5 to the page");
 
-									// Cleanup
-									oRouter.destroy();
-									oRouteMatchedSpy.restore();
-								});
-
+								// Cleanup
+								oRouter.destroy();
 							});
 
 							QUnit.module("Routes using targets mixed with old routes", {
@@ -325,39 +265,26 @@
 							});
 
 							QUnit.test("Should be able to handle the mixed case", function (assert) {
-								var oRouteMatchedSpy = sinon.spy(this.oRouter.getRoute("detailRoute"), "_routeMatched");
 								this.oRouter.parse(this.sPattern);
+								this.clock.tick(0);
 
-								assert.strictEqual(oRouteMatchedSpy.callCount, 1, "_routeMatched method is called once");
-								return oRouteMatchedSpy.returnValues[0].then(function() {
-									assert.strictEqual(this.oSplitContainer.getCurrentDetailPage().getId(), this.oDetailView.getId(), "Did navigate to detail");
-									assert.strictEqual(this.oSplitContainer.getCurrentMasterPage().getId(), this.oMasterView.getId(), "Did navigate to master");
-									oRouteMatchedSpy.restore();
-								}.bind(this));
-
+								assert.strictEqual(this.oSplitContainer.getCurrentDetailPage(), this.oDetailView, "Did navigate to detail");
+								assert.strictEqual(this.oSplitContainer.getCurrentMasterPage(), this.oMasterView, "Did navigate to master");
 							});
 
 
 							integrationTests.start({
 								setup: function (oConfig) {
 									var oRouter = new Router(oConfig);
-									this.oGetViewStub = sinon.stub(oRouter._oViews, "_getViewWithGlobalId", helpers.createViewMock);
 
 									this.oRouter = oRouter;
 									return oRouter;
 								},
-								act: function (sPatternOrName, assert) {
-									var oRouteMatchedSpy = sinon.spy(this.oRouter.getRoute(sPatternOrName), "_routeMatched");
+								act: function (sPatternOrName) {
 									this.oRouter.parse(sPatternOrName);
-									if (assert) {
-										assert.strictEqual(oRouteMatchedSpy.callCount, 1, "_routeMatched method is called once");
-									}
-									var oPromise = oRouteMatchedSpy.returnValues[0];
-									oRouteMatchedSpy.restore();
-									return oPromise;
+									this.clock.tick(0);
 								},
 								teardown: function () {
-									this.oGetViewStub.restore();
 									this.oRouter.destroy();
 								}
 							});
