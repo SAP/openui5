@@ -12,11 +12,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Constructor for a new ObjectStatus.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Status information that may be either text with a value state, or an icon.
+	 * Status information that can be either text with a value state, or an icon.
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
@@ -31,17 +31,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		properties : {
 
 			/**
-			 * The object status title.
+			 * Defines the ObjectStatus title.
 			 */
 			title : {type : "string", group : "Misc", defaultValue : null},
 
 			/**
-			 * The object status text.
+			 * Defines the ObjectStatus text.
 			 */
 			text : {type : "string", group : "Misc", defaultValue : null},
 
 			/**
-			 * Text value state.
+			 * Defines the text value state.
 			 */
 			state : {type : "sap.ui.core.ValueState", group : "Misc", defaultValue : sap.ui.core.ValueState.None},
 
@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
 			 *
-			 * If bandwidth is the key for the application, set this value to false.
+			 * If bandwidth is key for the application, set this value to false.
 			 */
 			iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true},
 
@@ -66,16 +66,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		associations : {
 
 			/**
-			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 * Association to controls / IDs, which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
 			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}
 		}
 	}});
-
-	///**
-	// * This file defines behavior for the control
-	// */
-
 
 	/**
 	 * Called when the control is destroyed.
@@ -90,7 +85,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Lazy load feed icon image.
+	 * Lazy loads feed icon image.
 	 *
 	 * @private
 	 */
@@ -108,10 +103,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Setter for property title.
-	 * Default value is empty/undefined
+	 * Sets the title.
+	 * The default value is empty/undefined.
 	 * @public
-	 * @param {string} sTitle new value for property title
+	 * @param {string} sTitle New value for property title
 	 * @returns {sap.m.ObjectStatus} this to allow method chaining
 	 */
 	ObjectStatus.prototype.setTitle = function (sTitle) {
@@ -128,10 +123,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Setter for property text.
-	 * Default value is empty/undefined
+	 * Sets the text.
+	 * The default value is empty/undefined.
 	 * @public
-	 * @param {string} sText new value for property text
+	 * @param {string} sText New value for property text
 	 * @returns {sap.m.ObjectStatus} this to allow method chaining
 	 */
 	ObjectStatus.prototype.setText = function (sText) {
@@ -148,6 +143,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
+	 * Checks if the ObjectStatus is empty.
 	 * @private
 	 * @returns {boolean}
 	 */
