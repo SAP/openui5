@@ -1479,13 +1479,13 @@ if (typeof window.sap.ui !== "object") {
 
 	function getSystem(_simMobileOnDesktop, customUA) {
 		var t = isTablet(customUA);
-		var isWin8 = device.os.windows && device.os.version === 8;
+		var isWin8Upwards = device.os.windows && device.os.version >= 8;
 		var isWin7 = device.os.windows && device.os.version === 7;
 
 		var s = {};
-		s.tablet = ((device.support.touch && !isWin7) || isWin8 || !!_simMobileOnDesktop) && t;
+		s.tablet = ((device.support.touch && !isWin7) || isWin8Upwards || !!_simMobileOnDesktop) && t;
 		s.phone = device.os.windows_phone || ((device.support.touch && !isWin7) || !!_simMobileOnDesktop) && !t;
-		s.desktop = (!s.tablet && !s.phone) || isWin8 || isWin7;
+		s.desktop = (!s.tablet && !s.phone) || isWin8Upwards || isWin7;
 		s.combi = (s.desktop && s.tablet);
 		s.SYSTEMTYPE = SYSTEMTYPE;
 
@@ -1497,13 +1497,13 @@ if (typeof window.sap.ui !== "object") {
 
 	function isTablet(customUA) {
 		var ua = customUA || navigator.userAgent;
-		var isWin8 = device.os.windows && device.os.version === 8;
+		var isWin8Upwards = device.os.windows && device.os.version >= 8;
 		if (device.os.name === device.os.OS.IOS) {
 			return /ipad/i.test(ua);
 		} else {
 			//in real mobile device
 			if (device.support.touch) {
-				if (isWin8) {
+				if (isWin8Upwards) {
 					return true;
 				}
 
