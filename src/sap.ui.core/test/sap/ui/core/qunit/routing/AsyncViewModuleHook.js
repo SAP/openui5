@@ -1,7 +1,11 @@
 sap.ui.define([], function() {
 	var aViews = [{
-		path: "../testdata/routing/Async.view.xml",
+		path: "../testdata/routing/Async1.view.xml",
 		content: undefined // content will be set later
+	}, {
+		path: "../testdata/routing/Async2.view.xml"
+	}, {
+		path: "../testdata/routing/Async3.view.xml"
 	}];
 
 	aViews.forEach(function(oViewSetting, iIndex) {
@@ -25,17 +29,15 @@ sap.ui.define([], function() {
 						return url.indexOf("testdata/routing") === -1;
 					});
 
-					xhr.onCreate = function(request) {
-						request.onSend = function() {
-							if (!request.async) {
-								request.respond(200,  {"Content-Type": "application/xml"}, aViews[0].content);
-							} else {
-								setTimeout(function() {
-									request.respond(200,  {"Content-Type": "application/xml"}, aViews[0].content);
-								}, 50);
-							}
-						};
-					};
+					var server = this.server = sinon.fakeServer.create();
+					this.server.autoRespond = true;
+					aViews.forEach(function(oViewSetting, iIndex) {
+						server.respondWith("GET", oViewSetting.path, [
+							200, {
+								"Content-Type": "application/xml",
+							}, oViewSetting.content
+						]);
+					});
 
 					if (oSetting && oSetting.beforeEach) {
 						oSetting.beforeEach.apply(this);
@@ -43,6 +45,7 @@ sap.ui.define([], function() {
 				},
 
 				afterEach: function() {
+					this.server.restore();
 					if (oSetting && oSetting.afterEach) {
 						oSetting.afterEach.apply(this);
 					}
