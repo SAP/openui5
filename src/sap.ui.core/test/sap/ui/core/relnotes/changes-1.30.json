@@ -1549,6 +1549,13 @@
         "type": "FIX",
         "text": "ExtensionPoint: fixed non-working ExtensionPoints in Fragments",
         "references": []
+      },
+      {
+        "id": "0472dbfef5f4e20b35a5a4d2882bb2ee5587e712",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Parse Empty Collection as Array",
+        "references": []
       }
     ]
   }

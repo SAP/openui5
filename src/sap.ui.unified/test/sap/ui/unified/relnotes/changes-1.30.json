@@ -253,5 +253,57 @@
         "references": []
       }
     ]
+  },
+  "1.30.4": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "dc13daa6767d232b14fee9d357d72a7cab8972a4",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker/sap.ui.unified.calendar.Header: prevent default icon tooltip",
+        "references": []
+      }
+    ]
+  },
+  "1.30.5": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "7f9c8ea076324bf8a686d905c4975a6f85a7cd59",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: wrong date selected if daylight saving",
+        "references": []
+      },
+      {
+        "id": "cc7bab8b71a5500bd0321a8f55681020cb077472",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: file is lost when pressing key fixed",
+        "references": []
+      },
+      {
+        "id": "219b0c20c5bc0745ca2b938adf13a2b921bf8b52",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: keyboard navigation in toolbar fixed",
+        "references": []
+      },
+      {
+        "id": "1688e37f38d1556e0e9fe4ac6cc8eaeb777732bc",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
+        "references": []
+      },
+      {
+        "id": "2857b71530b954059ee4b2bb2cd3f5350915214e",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker, sap.ui.unified.Calendar: position issues",
+        "references": []
+      }
+    ]
   }
 }
