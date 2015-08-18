@@ -179,10 +179,6 @@ html[data-sap-ui-browser="ie8"] .sapUiCalItemNow > .sapUiCalItemText{
 	margin-left: -97px; /* to position in the middle (for multi-month) */
 }
 
-.sapUiCalMonthInt > .sapUiCalContent > .sapUiCalYearPicker{
-	padding-top: 0;
-}
-
 .sapUiCalInt > .sapUiCalContent > .sapUiCalMonthPicker,
 .sapUiCalInt > .sapUiCalContent > .sapUiCalYearPicker{
 	margin-left: 0;
@@ -190,12 +186,25 @@ html[data-sap-ui-browser="ie8"] .sapUiCalItemNow > .sapUiCalItemText{
 	padding-bottom: 0;
 }
 
-.sapUiCalInt.sapUiCalIntMonthHead > .sapUiCalContent > .sapUiCalMonthPicker,
-.sapUiCalInt.sapUiCalIntMonthHead > .sapUiCalContent > .sapUiCalYearPicker{
+.sapUiCalTimeInt > .sapUiCalContent > .sapUiCalDatesRow{
+	top: 0;
+}
+
+.sapUiCalTimeInt > .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCalTimeInt > .sapUiCalContent > .sapUiCalYearPicker,
+.sapUiCalMonthInt > .sapUiCalContent > .sapUiCalYearPicker{
+	padding-top: 0;
+}
+
+.sapUiCalInt.sapUiCalIntHead > .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCalInt.sapUiCalIntHead > .sapUiCalContent > .sapUiCalYearPicker{
 	padding-top: 48px;
 }
 
-.sapUiCalMonthInt.sapUiCalIntMonthHead > .sapUiCalContent > .sapUiCalYearPicker{
+.sapUiCalTimeInt.sapUiCalIntHead > .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCalTimeInt.sapUiCalIntHead > .sapUiCalContent > .sapUiCalYearPicker,
+.sapUiCalTimeInt.sapUiCalIntHead > .sapUiCalContent > .sapUiCalDatesRow,
+.sapUiCalMonthInt.sapUiCalIntHead > .sapUiCalContent > .sapUiCalYearPicker{
 	padding-top: 24px;
 }
 

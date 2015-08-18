@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './CalendarRenderer'
 		}
 
 		if (iDays > oCal._iDaysMonthHead) {
-			oRm.addClass("sapUiCalIntMonthHead");
+			oRm.addClass("sapUiCalIntHead");
 		}
 
 		var sWidth = oCal.getWidth();

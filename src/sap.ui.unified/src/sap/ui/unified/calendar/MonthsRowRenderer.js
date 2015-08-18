@@ -79,11 +79,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 	MonthsRowRenderer.renderHeader = function(oRm, oMonthsRow, oDate){
 
-		var oLocaleData = oMonthsRow._getLocaleData();
-		var sId = oMonthsRow.getId();
-
 		// header
 		if (oMonthsRow._getShowHeader()) {
+			var oLocaleData = oMonthsRow._getLocaleData();
+			var sId = oMonthsRow.getId();
+
 			oRm.write("<div id=\"" + sId + "-Head\">");
 			this.renderHeaderLine(oRm, oMonthsRow, oLocaleData, oDate);
 			oRm.write("</div>");
@@ -95,20 +95,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 		var sId = oMonthsRow.getId();
 		var iMonths = oMonthsRow.getMonths();
-		var oDay = new UniversalDate(oDate.getTime());
+		var oMonthDate = new UniversalDate(oDate.getTime());
 		var sWidth = "";
 		var iYear = 0;
 		var aYearMonths = [];
 		var i = 0;
 
 		for (i = 0; i < iMonths; i++) {
-			iYear = oDay.getUTCFullYear();
+			iYear = oMonthDate.getUTCFullYear();
 			if (aYearMonths.length > 0 && aYearMonths[aYearMonths.length - 1].iYear == iYear) {
 				aYearMonths[aYearMonths.length - 1].iMonths++;
 			}else {
 				aYearMonths.push({iYear: iYear, iMonths: 1});
 			}
-			oDay.setUTCMonth(oDay.getUTCMonth() + 1);
+			oMonthDate.setUTCMonth(oMonthDate.getUTCMonth() + 1);
 		}
 
 		for (i = 0; i < aYearMonths.length; i++) {
@@ -126,12 +126,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		var oHelper = this.getHelper(oMonthsRow, oDate);
 		var iMonths = oMonthsRow.getMonths();
 		var sWidth = ( 100 / iMonths ) + "%";
-		var oDay = new UniversalDate(oDate.getTime());
-		oDay.setUTCDate(1);
+		var oMonthDate = new UniversalDate(oDate.getTime());
+		oMonthDate.setUTCDate(1);
 
 		for (var i = 0; i < iMonths; i++) {
-			this.renderMonth(oRm, oMonthsRow, oDay, oHelper, sWidth);
-			oDay.setUTCMonth(oDay.getUTCMonth() + 1);
+			this.renderMonth(oRm, oMonthsRow, oMonthDate, oHelper, sWidth);
+			oMonthDate.setUTCMonth(oMonthDate.getUTCMonth() + 1);
 		}
 
 	};
@@ -142,7 +142,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 		oHelper.sLocale = oMonthsRow._getLocale();
 		oHelper.oLocaleData = oMonthsRow._getLocaleData();
-		oHelper.oToday = new UniversalDate();
+		oHelper.oToday = CalendarUtils._createUniversalUTCDate(new Date());
 		oHelper.sCurrentMonth = oMonthsRow._rb.getText("CALENDAR_CURRENT_MONTH");
 		oHelper.sId = oMonthsRow.getId();
 		oHelper.oFormatLong = oMonthsRow._getFormatLong();
@@ -157,7 +157,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 	};
 
-	MonthsRowRenderer.renderMonth = function(oRm, oMonthsRow, oDay, oHelper, sWidth){
+	MonthsRowRenderer.renderMonth = function(oRm, oMonthsRow, oDate, oHelper, sWidth){
 
 		var mAccProps = {
 				role: "gridcell",
@@ -167,12 +167,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			};
 
 		if (!oMonthsRow._bLongMonth && oMonthsRow._bNamesLengthChecked) {
-			mAccProps["label"] = oHelper.aMonthNamesWide[oDay.getUTCMonth()];
+			mAccProps["label"] = oHelper.aMonthNamesWide[oDate.getUTCMonth()];
 		}
 
-		var sYyyymm = oMonthsRow._oFormatYyyymm.format(oDay, true);
-		var iSelected = oMonthsRow._checkDateSelected(oDay);
-		var oType = oMonthsRow._getDateType(oDay);
+		var sYyyymm = oMonthsRow._oFormatYyyymm.format(oDate, true);
+		var iSelected = oMonthsRow._checkDateSelected(oDate);
+		var oType = oMonthsRow._getDateType(oDate);
 
 		oRm.write("<div");
 		oRm.writeAttribute("id", oHelper.sId + "-" + sYyyymm);
@@ -181,7 +181,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			oRm.addStyle("width", sWidth);
 		}
 
-		if (oDay.getUTCMonth() == oHelper.oToday.getMonth() && oDay.getUTCFullYear() == oHelper.oToday.getFullYear()) {
+		if (oDate.getUTCMonth() == oHelper.oToday.getMonth() && oDate.getUTCFullYear() == oHelper.oToday.getFullYear()) {
 			oRm.addClass("sapUiCalItemNow");
 			mAccProps["label"] = oHelper.sCurrentMonth + " ";
 		}
@@ -214,7 +214,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 		oRm.writeAttribute("tabindex", "-1");
 		oRm.writeAttribute("data-sap-month", sYyyymm);
-		mAccProps["label"] = mAccProps["label"] + oHelper.oFormatLong.format(oDay, true);
+		mAccProps["label"] = mAccProps["label"] + oHelper.oFormatLong.format(oDate, true);
 		oRm.writeAccessibilityState(null, mAccProps);
 		oRm.writeClasses();
 		oRm.writeStyles();
@@ -224,7 +224,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		oRm.addClass("sapUiCalItemText");
 		oRm.writeClasses();
 		oRm.write(">"); // span
-		oRm.write(oHelper.aMonthNames[oDay.getUTCMonth()]);
+		oRm.write(oHelper.aMonthNames[oDate.getUTCMonth()]);
 		oRm.write("</span>");
 
 		oRm.write("</div>");

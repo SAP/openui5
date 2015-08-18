@@ -78,7 +78,7 @@
 
 			test("Header", function() {
 				ok(!jQuery("#Cal1--Head-B1").get(0), "Calendar1: Header button 1 not shown");
-				equal(jQuery("#Cal1--Head-B2").text(), "2015 – 2016", "Calendar1: year 2015 - 2016 shown");
+				ok(jQuery("#Cal1--Head-B2").get(0), "Calendar1: year button shown");
 				equal(jQuery("#Cal2--Head-B2").text(), "2015 – 2017", "Calendar2: year 2015 - 2017 shown");
 			});
 
@@ -202,7 +202,7 @@
 			module("Interaction");
 			test("year switch", function() {
 				qutils.triggerEvent("click", "Cal1--Head-B2");
-				var $NewYear = jQuery("#Cal1--YP-y2013"); // use keybord to select month to prevent event processing from ItemNavigation
+				var $NewYear = jQuery("#Cal1--YP-y2013"); // use keybord to select year to prevent event processing from ItemNavigation
 				$NewYear.focus();
 				qutils.triggerKeyboardEvent($NewYear.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 				ok(!jQuery(jQuery("#Cal1--YP").get(0)).is(":visible"), "Calendar1: Year picker not visible after selecting year");

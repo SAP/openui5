@@ -11,28 +11,28 @@ sap.ui.define(['jquery.sap.global'],
 	 * Calendar renderer.
 	 * @namespace
 	 */
-	var CalendarMonthIntervalRenderer = {
+	var CalendarTimeIntervalRenderer = {
 	};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.unified.CalendarMonthInterval} oCal an object representation of the control that should be rendered
+	 * @param {sap.ui.unified.CalendarTimeInterval} oCal an object representation of the control that should be rendered
 	 */
-	CalendarMonthIntervalRenderer.render = function(oRm, oCal){
+	CalendarTimeIntervalRenderer.render = function(oRm, oCal){
 
-		oCal._iMode = 0; // it's rendered always as MonthsRow
+		oCal._iMode = 0; // it's rendered always as TimesRow
 
 		var sId = oCal.getId();
 		var sTooltip = oCal.getTooltip_AsString();
-		var oMonthsRow = oCal.getAggregation("monthsRow");
+		var oTimesRow = oCal.getAggregation("timesRow");
 
 		oRm.write("<div");
 		oRm.writeControlData(oCal);
 		oRm.addClass("sapUiCal");
 		oRm.addClass("sapUiCalInt");
-		oRm.addClass("sapUiCalMonthInt");
+		oRm.addClass("sapUiCalTimeInt");
 
 		if (oCal._getShowItemHeader()) {
 			oRm.addClass("sapUiCalIntHead");
@@ -67,7 +67,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.renderControl(oHeader);
 
 		oRm.write("<div id=\"" + sId + "-content\" class=\"sapUiCalContent\">");
-		oRm.renderControl(oMonthsRow);
+		oRm.renderControl(oTimesRow);
 
 		oRm.write("<div id=\"" + sId + "-contentOver\" class=\"sapUiCalContentOver\" style=\"display:none;\"></div>");
 		oRm.write("</div>");
@@ -83,6 +83,6 @@ sap.ui.define(['jquery.sap.global'],
 
 	};
 
-	return CalendarMonthIntervalRenderer;
+	return CalendarTimeIntervalRenderer;
 
 }, /* bExport= */ true);

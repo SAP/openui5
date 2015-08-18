@@ -164,7 +164,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		CalendarMonthInterval.prototype.exit = function(){
 
 			if (this._sInvalidateContent) {
-			jQuery.sap.clearDelayedCall(this._sInvalidateContent);
+				jQuery.sap.clearDelayedCall(this._sInvalidateContent);
 			}
 
 		};
@@ -210,7 +210,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oDate = CalendarUtils._createLocalDate(this._getFocusedDate());
 			if (!oMonthsRow.checkDateFocusable(oDate)) {
 				//focused date not longer visible -> focus start date
-				this._setFocusedDate(oUTCDate);
+				this._setFocusedDate(this._oUTCStartDate);
 				oMonthsRow.setDate(oStartDate);
 			}
 
@@ -370,6 +370,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oMonthsRow = this.getAggregation("monthsRow");
 			oMonthsRow.setMonths(iMonths);
 
+			// check if focused date still is valid
+			var that = this;
+			var oDate = CalendarUtils._createLocalDate(this._getFocusedDate());
+			if (!oMonthsRow.checkDateFocusable(oDate)) {
+				//focused date not longer visible -> focus start date
+				var oStartDate = _getStartDate(that);
+				this._setFocusedDate(this._oUTCStartDate);
+				oMonthsRow.setDate(CalendarUtils._createLocalDate(oStartDate));
+			}
+
 			var oYearPicker = this.getAggregation("yearPicker");
 			var iYears = Math.floor(iMonths / 2);
 			if (iYears > 20) {
@@ -381,10 +391,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			_updateHeader(that);
 
 			if (this.getDomRef()) {
-				if (this._getShowMonthsHeader()) {
-					this.$().addClass("sapUiCalDateIntMonthHead");
+				if (this._getShowItemHeader()) {
+					this.$().addClass("sapUiCalIntHead");
 				}else {
-					this.$().removeClass("sapUiCalDateIntMonthHead");
+					this.$().removeClass("sapUiCalIntHead");
 				}
 			}
 
@@ -493,16 +503,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				// focus day or year
 				var oMonthsRow = this.getAggregation("monthsRow");
 				var oYearPicker = this.getAggregation("yearPicker");
-				var oFocusedDate;
 				switch (this._iMode) {
 				case 0: // day picker
-					oFocusedDate = this._getFocusedDate();
-					var oMonthDate = CalendarUtils._createUniversalUTCDate(oMonthsRow.getDate());
-					if (oFocusedDate.getTime() == oMonthDate.getTime()) {
-						oMonthsRow._oItemNavigation.focusItem(oMonthsRow._oItemNavigation.getFocusedIndex());
-					} else {
-						jQuery(oMonthsRow._oItemNavigation.getItemDomRefs()[oMonthsRow._oItemNavigation.getFocusedIndex()]).attr("tabindex", "0");
-					}
+					oMonthsRow._oItemNavigation.focusItem(oMonthsRow._oItemNavigation.getFocusedIndex());
 					break;
 
 				case 1: // year picker
@@ -573,7 +576,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oStartDate = new UniversalDate(_getStartDate(that).getTime());
 
 			switch (this._iMode) {
-			case 0: // day picker
+			case 0: // month picker
 				oStartDate.setUTCMonth(oStartDate.getUTCMonth() - iMonths);
 				oFocusedDate.setUTCMonth(oFocusedDate.getUTCMonth() - iMonths);
 				this._setFocusedDate(oFocusedDate);
@@ -598,7 +601,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oStartDate = new UniversalDate(_getStartDate(that).getTime());
 
 			switch (this._iMode) {
-			case 0: // day picker
+			case 0: // month picker
 				oStartDate.setUTCMonth(oStartDate.getUTCMonth() + iMonths);
 				oFocusedDate.setUTCMonth(oFocusedDate.getUTCMonth() + iMonths);
 				this._setFocusedDate(oFocusedDate);
@@ -614,7 +617,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		CalendarMonthInterval.prototype._getShowMonthsHeader = function(){
+		CalendarMonthInterval.prototype._getShowItemHeader = function(){
 
 			var iMonths = this.getMonths();
 			if (iMonths > this._iDaysMonthsHead) {
@@ -780,7 +783,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		function _updateHeader(oThis){
 
 			_setHeaderText(oThis);
-			_togglePrevNext(oThis, true);
+			_togglePrevNext(oThis);
 
 		}
 
@@ -835,7 +838,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		}
 
-		function _focusDate (oThis, oDate, bnotVisible){
+		function _focusDate (oThis, oDate, bNotVisible){
 
 			// if a date should be focused thats out of the borders -> focus the border
 			var oFocusedDate;
@@ -852,7 +855,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			oThis._setFocusedDate(oFocusedDate);
 
-			if (bChanged || bnotVisible) {
+			if (bChanged || bNotVisible) {
 				_setStartDateForFocus(oThis, oFocusedDate);
 				_renderMonthsRow(oThis, false);
 			}
@@ -903,10 +906,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		function _handleFocus (oEvent){
 
 			var oDate = CalendarUtils._createUniversalUTCDate(oEvent.getParameter("date"));
-			var bnotVisible = oEvent.getParameter("notVisible");
+			var bNotVisible = oEvent.getParameter("notVisible");
 			var that = this;
 
-			_focusDate(that, oDate, bnotVisible);
+			_focusDate(that, oDate, bNotVisible);
 
 		}
 
