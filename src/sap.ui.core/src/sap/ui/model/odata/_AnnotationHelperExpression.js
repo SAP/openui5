@@ -671,7 +671,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Handling of "14.5.12 Expression edm:Path" and "14.5.13 Expression edm:PropertyPath".
+		 * Handling of "14.5.12 Expression edm:Path" and "14.5.13 Expression edm:PropertyPath";
+		 * embedded within an entity set or entity type (see {@link Basics.followPath}).
 		 *
 		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 		 *   the callback interface related to the current formatter call
