@@ -9,6 +9,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 			this.getView().byId("otb2").setWidth(iValue + "%");
 			this.getView().byId("otb3").setWidth(iValue + "%");
 			this.getView().byId("otb4").setWidth(iValue + "%");
+			this.getView().byId("otb5").setWidth(iValue + "%");
 		}
 	});
 
