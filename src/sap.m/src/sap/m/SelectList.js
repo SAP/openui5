@@ -10,11 +10,11 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		/**
 		 * Constructor for a new SelectList.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given
-		 * @param {object} [mSettings] initial settings for the new control
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
+		 * @param {object} [mSettings] Initial settings for the new control.
 		 *
 		 * @class
-		 * This control displays a list of items to allow the user to select an item.
+		 * The <code>sap.m.SelectList</code> displays a list of items that allows the user to select an item.
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @public
 		 * @since 1.26.0
 		 * @alias sap.m.SelectList
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+		 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 		 */
 		var SelectList = Control.extend("sap.m.SelectList", /** @lends sap.m.SelectList.prototype */ { metadata: {
 
@@ -32,27 +32,28 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 			properties: {
 
 				/**
-				 * Determines whether the user can change the selection.
+				 * Indicates whether the user can change the selection.
 				 */
 				enabled : { type: "boolean", group: "Behavior", defaultValue: true },
 
 				/**
-				 * Defines the width of the control. This value can be provided in all CSS units.
+				 * Sets the width of the control.
 				 */
 				width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "auto" },
 
 				/**
-				 * Defines the maximum width of the control. This value can be provided in all CSS units.
+				 * Sets the maximum width of the control.
 				 */
 				maxWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%" },
 
 				/**
-				 * Key of the selected item. If the key has no corresponding aggregated item, no changes will apply. If duplicate keys exist, the first item matching the key is used.
+				 * Key of the selected item.<br>
+				 * <b>Note: </b> If duplicate keys exist, the first item matching the key is used.
 				 */
 				selectedKey: { type: "string", group: "Data", defaultValue: "" },
 
 				/**
-				 * Id of the selected item. If the id has no corresponding aggregated item, no changes will apply.
+				 * ID of the selected item.
 				 */
 				selectedItemId: { type: "string", group: "Misc", defaultValue: "" }
 			},
@@ -60,7 +61,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 			aggregations: {
 
 				/**
-				 * Aggregation of items to be displayed.
+				 * Defines the items contained within this control.
 				 */
 				items: { type: "sap.ui.core.Item", multiple: true, singularName: "item", bindable: "bindable" }
 			},
@@ -72,7 +73,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 				selectedItem: { type: "sap.ui.core.Item", multiple: false },
 
 				/**
-				 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+				 * Association to controls / IDs which label this control (see WAI-ARIA attribute <code>aria-labelledby</code>).
 				 * @since 1.27.0
 				 */
 				ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
@@ -80,7 +81,10 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 			events: {
 
 				/**
-				 * Occurs when the user changes the selected item.
+				 * Fired when the selection has changed.<br>
+				 *
+				 * <b>Note: </b> The selection can be changed by pressing an non-selected item or
+				 * via keyboard and after the enter or space key is pressed.
 				 */
 				selectionChange: {
 					parameters: {
@@ -124,8 +128,6 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 
 		/**
 		 * Called, whenever the binding of the aggregation items is changed.
-		 * This method deletes all items in this aggregation and recreates them
-		 * according to the data model.
 		 *
 		 * @private
 		 */
@@ -136,11 +138,9 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		};
 
 		/**
-		 * Called, when the items aggregation needs to be refreshed.
-		 * This method does not make any change on the aggregation, but just calls the
-		 * getContexts() method to trigger fetching of new data.
+		 * Called when the items aggregation needs to be refreshed.<br>
 		 *
-		 * note: This method has been overwritten to prevent .updateItems()
+		 * <b>Note:</b> This method has been overwritten to prevent <code>updateItems()</code>
 		 * from being called when the bindings are refreshed.
 		 * @see sap.ui.base.ManagedObject#bindAggregation
 		 *
@@ -152,7 +152,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		};
 
 		/**
-		 * Activates an item on the SelectList.
+		 * Activates an item on the list.
 		 *
 		 * @param {sap.ui.core.Item} oItem The item to be activated.
 		 * @private
@@ -252,7 +252,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		/* =========================================================== */
 
 		/**
-		 * Handle the touch start event on the select list.
+		 * Handles the <code>touchstart</code> event on the select list.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
@@ -293,7 +293,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		};
 
 		/**
-		 * Handle the touch move event on the select list.
+		 * Handles the <code>touchmove</code> event on the select list.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
@@ -323,7 +323,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		};
 
 		/**
-		 * Handle the touch end event on the select list.
+		 * Handles the <code>touchend</code> event on the select list.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
@@ -358,7 +358,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		};
 
 		/**
-		 * Handle the touchcancel event on the select list.
+		 * Handles the <code>touchcancel</code> event on the select list.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
@@ -366,7 +366,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		SelectList.prototype.ontouchcancel = SelectList.prototype.ontouchend;
 
 		/**
-		 * Handle the tap event on the select list.
+		 * Handles the <code>tap</code> event on the select list.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
@@ -381,7 +381,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		};
 
 		/**
-		 *  Handle when the space or enter key are pressed.
+		 * Handles when the space or enter key is pressed.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
@@ -438,8 +438,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		};
 
 		/**
-		 * Update and synchronize "selectedItem" association, "selectedItemId", "selectedKey" properties and
-		 * the "selectedItem".
+		 * Updates and synchronizes <code>selectedItem</code> association, <code>selectedItemId</code> and <code>selectedKey</code> properties.
 		 *
 		 * @param {string | sap.ui.core.Item | null} vItem
 		 * @protected
@@ -505,7 +504,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		};
 
 		/*
-		 * Determines whether the "selectedItem" association and "selectedKey" property are synchronized.
+		 * Determines whether the <code>selectedItem</code> association and <code>selectedKey</code> property are synchronized.
 		 *
 		 * @returns {boolean}
 		 * @protected
@@ -528,7 +527,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		};
 
 		/*
-		 * Getter for visible <code>items</code>.
+		 * Gets the visible <code>items</code>.
 		 *
 		 * @return {sap.ui.core.Item[]}
 		 * @protected
@@ -556,8 +555,8 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		};
 
 		/*
-		 * Retrieves a item by searching for the given property/value from the aggregation named <code>items</code>.
-		 * If duplicate values exist, the first item matching the value is returned.
+		 * Retrieves an item by searching for the given property/value from the aggregation named <code>items</code>.<br>
+		 * <code>Note: </code> If duplicate values exist, the first item matching the value is returned.
 		 *
 		 * @param {string} sProperty An item property.
 		 * @param {string} sValue An item value that specifies the item to retrieve.
@@ -577,8 +576,8 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		};
 
 		/*
-		 * Retrieves the item with the given value from the aggregation named <code>items</code>.
-		 * If duplicate values exist, the first item matching the value is returned.
+		 * Retrieves the item with the given value from the aggregation named <code>items</code>.<br>
+		 * <code>Note: </code> If duplicate values exist, the first item matching the value is returned.
 		 *
 		 * @param {string} sText An item value that specifies the item to retrieve.
 		 * @returns {sap.ui.core.Item | null} The matched item or null.
@@ -656,12 +655,13 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		/* ----------------------------------------------------------- */
 
 		/**
-		 * Setter for association <code>selectedItem</code>.
+		 * Sets association <code>selectedItem</code>.
 		 *
-		 * @param {string | sap.ui.core.Item | null} vItem new value for association <code>selectedItem</code>
-		 *    Id of an sap.ui.core.Item which becomes the new target of this <code>selectedItem</code> association.
-		 *    Alternatively, an sap.ui.core.Item instance may be given or null.
-		 *    If the value of null is provided the first enabled item will be selected (if any).
+		 * @param {string | sap.ui.core.Item | null} vItem new value for association <code>selectedItem</code>.<br>
+		 *    ID of an <code>sap.ui.core.Item</code> which becomes the new target of this <code>selectedItem</code> association.<br>
+		 *    Alternatively, an <code>sap.ui.core.Item</code> instance or null may be given.<br>
+		 *
+		 * <b>Note: <b> If the value of null is provided, the first enabled item will be selected (if any).
 		 *
 		 * @returns {sap.m.SelectList} <code>this</code> to allow method chaining.
 		 * @public
@@ -681,15 +681,13 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 				vItem = this.getDefaultSelectedItem();
 			}
 
-			// update and synchronize "selectedItem" association,
-			// "selectedKey" and "selectedItemId" properties
 			this.setSelection(vItem);
 
 			return this;
 		};
 
 		/**
-		 * Setter for property <code>selectedItemId</code>.
+		 * Sets property <code>selectedItemId</code>.
 		 *
 		 * Default value is an empty string <code>""</code> or <code>undefined</code>.
 		 *
@@ -704,7 +702,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		};
 
 		/**
-		 * Setter for property <code>selectedKey</code>.
+		 * Sets property <code>selectedKey</code>.
 		 *
 		 * Default value is an empty string <code>""</code> or <code>undefined</code>.
 		 *
@@ -722,21 +720,15 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 					oItem = this.getDefaultSelectedItem();
 				}
 
-				// update and synchronize "selectedItem" association,
-				// "selectedKey" and "selectedItemId" properties
 				this.setSelection(oItem);
-
 				return this;
 			}
 
-			// note: setSelectedKey() method sometimes is called
-			// before the items are added, in this case the "selectedItem" association
-			// and "selectedItemId" property need to be updated in onBeforeRendering()
-			return this.setProperty("selectedKey", sKey);	// update "selectedKey" property, re-rendering is needed
+			return this.setProperty("selectedKey", sKey);
 		};
 
 		/**
-		 * Retrieves the selected item object from the aggregation named <code>items</code>.
+		 * Gets the selected item object from the aggregation named <code>items</code>.
 		 *
 		 * @returns {sap.ui.core.Item | null} The current target of the <code>selectedItem</code> association, or null.
 		 * @public
@@ -747,7 +739,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		};
 
 		/**
-		 * Retrieves the item from the aggregation named items at the given 0-based index.
+		 * Gets the item from the aggregation named <code>items</code> at the given 0-based index.
 		 *
 		 * @param {int} iIndex Index of the item to return.
 		 * @returns {sap.ui.core.Item | null} Item at the given index, or null if none.
@@ -758,7 +750,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		};
 
 		/**
-		 * Retrieves the first item from the aggregation named <code>items</code>.
+		 * Gets the first item from the aggregation named <code>items</code>.
 		 *
 		 * @returns {sap.ui.core.Item | null} The first item, or null if there are no items.
 		 * @public
@@ -768,7 +760,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		};
 
 		/**
-		 * Retrieves the last item from the aggregation named <code>items</code>.
+		 * Gets the enabled items from the aggregation named <code>items</code>.
 		 *
 		 * @returns {sap.ui.core.Item | null} The last item, or null if there are no items.
 		 * @public
@@ -779,8 +771,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		};
 
 		/**
-		 * Retrieves the enabled items from the given array of items or from
-		 * this control's aggregation named <code>items</code>.
+		 * Gets the enabled items from the aggregation named <code>items</code>.
 		 *
 		 * @param {sap.ui.core.Item[]} [aItems=getItems()] items to filter
 		 * @return {sap.ui.core.Item[]} An array containing the enabled items.
@@ -794,8 +785,8 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		};
 
 		/**
-		 * Retrieves the item with the given key from the aggregation named <code>items</code>.
-		 * If duplicate keys exists, the first item matching the key is returned.
+		 * Gets the item with the given key from the aggregation named <code>items</code>.<br>
+		 * <b>Note: </b> If duplicate keys exists, the first item matching the key is returned.
 		 *
 		 * @param {string} sKey An item key that specifies the item to retrieve.
 		 * @returns {sap.ui.core.Item | null}
@@ -831,7 +822,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		};
 
 		/**
-		 * Removes all the controls in the aggregation named <code>items</code>.
+		 * Removes all the items in the aggregation named <code>items</code>.
 		 * Additionally unregisters them from the hosting UIArea and clears the selection.
 		 *
 		 * @returns {sap.ui.core.Item[]} An array of the removed items (might be empty).
