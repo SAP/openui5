@@ -8,17 +8,20 @@
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_goldreflection"
-	data-sap-ui-libs="sap.ui.commons,sap.ui.table">
+	data-sap-ui-libs="sap.ui.commons,sap.ui.table,sap.m">
 	
 </script>
 
-<script>
-	try {
-		sap.ui.getCore().loadLibrary("sap.ui.commons");
-	} catch (e) {
-		alert("This test page requires the library 'sap.ui.commons' which is not available.");
-		throw (e);
+<style>
+	body {
+		margin: 10px !important;
 	}
+	.sapUiIcon {
+		text-shadow: 1px 1px rgba(0, 0, 0, 0.3);
+	}
+</style>
+
+<script>
 
 	var oMyListBox = new sap.ui.commons.ListBox({
 		tooltip : "Country",
@@ -79,6 +82,31 @@
 			oMyTable.setBusy(bBusy);
 		}
 	}).placeAt("button2");
+	
+	/**
+	 * Small Busy Indicator test
+	 */
+	var oIcon = new sap.ui.core.Icon({src: "sap-icon://nutrition-activity", size: "3rem", color:"#DD0000"});
+	oIcon.placeAt("icon");
+	oIcon.setBusyIndicatorDelay(0);
+	
+	var oMButton = new sap.m.Button({text: "Hello World"});
+	oMButton.placeAt("mButton");
+	oMButton.setBusyIndicatorDelay(0);
+	
+	/*
+	 * Toggle All button
+	 */
+	var oToggleAllButton = new sap.m.Button({
+		text: "Toggle Busy All",
+		press: function () {
+			oMyListBox.setBusy(!oMyListBox.getBusy());
+			oMyTable.setBusy(!oMyTable.getBusy());
+			oIcon.setBusy(!oIcon.getBusy());
+			oMButton.setBusy(!oMButton.getBusy());
+		}
+	});
+	oToggleAllButton.placeAt("toggleAll");
 </script>
 </head>
 <body class="sapUiBody" role="application">
@@ -87,11 +115,17 @@
 		<code>sap.ui.core.LocalBusyIndicator</code>
 	</h1>
 
+	<div id="toggleAll"></div>
+	<hr/>
 	<div>Call with a delay of 1000ms (default)</div>
 	<div id="button1"></div>
 	<div id="uiArea1"></div>
+	<hr/>
 	<div id="button2"></div>
 	<div id="uiArea2"></div>
-
+	<hr/>
+	<div id="icon"></div>
+	<hr/>
+	<div id="mButton"></div>
 </body>
 </html>
