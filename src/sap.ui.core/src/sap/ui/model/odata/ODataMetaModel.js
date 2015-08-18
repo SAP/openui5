@@ -306,12 +306,17 @@ sap.ui.define([
 					// Set the resolver on the internal JSON model, so that resolving does not use
 					// this._getObject itself.
 					this.oResolver = this.oResolver || new Resolver({models: this.oModel});
-					this.oResolver.bindProperty("any", oBinding);
 					for (i = 0; i < oNode.length; i++) {
 						this.oResolver.bindObject(sProcessedPath + i);
-						if (this.oResolver.getAny()) {
-							this.mQueryCache[sCacheKey] = vPart = i;
-							break;
+						this.oResolver.bindProperty("any", oBinding);
+						try {
+							if (this.oResolver.getAny()) {
+								this.mQueryCache[sCacheKey] = vPart = i;
+								break;
+							}
+						} finally {
+							this.oResolver.unbindProperty("any");
+							this.oResolver.unbindObject();
 						}
 					}
 				}
