@@ -44,7 +44,9 @@
 				assert.equal(jQuery(this.id + '-Dialog-header').length, 0, 'should not have rendered header.');
 
 				//check if there is a padding leaking from the dialog styles
-				assert.equal(jQuery(this.id + '-Dialog-scrollCont').css('padding'), '0px', 'should not have extra padding.');
+				//FF and IE returns '' for padding, chrome returns '0px'
+				var padding = jQuery(this.id + '-Dialog-scrollCont').css('padding') || '0px';
+				assert.equal(padding, '0px', 'should not have extra padding.');
 
 				//check the text label
 				assert.equal(jQuery(this.id + '-TextLabel').length, 0, 'should not have rendered text.');
