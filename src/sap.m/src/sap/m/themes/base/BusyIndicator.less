@@ -15,8 +15,8 @@
 
 .sapMBsyIndAnimation(@name) {
 	-moz-animation:    @name 2s linear 0s infinite normal none;
-	-webkit-animation: @name 2s linear 0 infinite normal none;
-	animation:         @name 2s linear 0 infinite normal none;
+	-webkit-animation: @name 2s linear 0s infinite normal none;
+	animation:         @name 2s linear 0s infinite normal none;
 }
 
 html[dir='rtl'] .sapMBsyIndIcon {
@@ -32,13 +32,13 @@ html[dir='rtl'] .sapMBsyIndIcon {
 	-ms-transition-duration:0ms;
 	transform:rotate(0deg) translateZ(0);
 	transition-duration:0ms;
-	
+
 	.sapMBsyIndAnimation(sapMBsyIndRotate);
 }
 
 @-moz-keyframes sapMBsyIndRotate {
-    from { -moz-transform: rotate(0deg); }
-    to { -moz-transform: rotate(360deg); }
+	from { -moz-transform: rotate(0deg); }
+	to { -moz-transform: rotate(360deg); }
 }
 
 @-webkit-keyframes sapMBsyIndRotate {
@@ -52,8 +52,8 @@ html[dir='rtl'] .sapMBsyIndIcon {
 }
 
 @-moz-keyframes sapMBsyIndRotateRTL {
-    from { -moz-transform: rotate(0deg); }
-    to { -moz-transform: rotate(-360deg); }
+	from { -moz-transform: rotate(0deg); }
+	to { -moz-transform: rotate(-360deg); }
 }
 
 @-webkit-keyframes sapMBsyIndRotateRTL {
