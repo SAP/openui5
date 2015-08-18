@@ -280,12 +280,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/date/
 	 *
 	 * @param {Date} oDate the value to format
 	 * @param {boolean} bUTC whether to use UTC
-	 * @return {string} the formatted output value
+	 * @return {string} the formatted output value. If an invalid date is given, an empty string is returned.
 	 * @public
 	 */
 	DateFormat.prototype.format = function(oDate, bUTC) {
 		if (bUTC === undefined) {
 			bUTC = this.oFormatOptions.UTC;
+		}
+
+		if (isNaN(oDate.getTime())) {
+			return "";
 		}
 
 		var sCalendarType = this.oFormatOptions.calendarType;
