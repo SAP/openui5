@@ -5763,8 +5763,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				this.setBusy(true);
 			}
 
-			if (bSetBusy || (oBinding.isInitial() || oBinding._bInitial) || (mParameters.receivedLength === 0 && this._iDataRequestedCounter !== 0) ||
-				(mParameters.receivedLength < mParameters.requestedLength && mParameters.receivedLength !== oBinding.getLength())) {
+			var iLength = oBinding.getLength();
+			if (bSetBusy || (oBinding.isInitial()) || (mParameters.receivedLength === 0 && this._iDataRequestedCounter !== 0) ||
+				(mParameters.receivedLength < mParameters.requestedLength && mParameters.receivedLength !== iLength &&
+				 mParameters.receivedLength !== iLength - this.getFirstVisibleRow())) {
 				this.setBusy(true);
 			}
 		}
