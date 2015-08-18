@@ -14,18 +14,18 @@
 	 * string.
 	 *
 	 * @param {string} sExpression - the expression or the expression binding in {=... syntax
-	 * @param {string} sResult - the expected result as string
+	 * @param {any} vResult - the expected result before automatic conversion
 	 * @param {object} [oScope] - the object to resolve formatter functions in the control
 	 */
-	function check(sExpression, sResult, oScope) {
+	function check(sExpression, vResult, oScope) {
 		var oIcon = new sap.ui.core.Icon({
-				color: sExpression.indexOf("{=") === 0 ? sExpression : "{=" + sExpression + "}"
+				color: sExpression.charAt(0) === "{" ? sExpression : "{=" + sExpression + "}"
 			}, oScope);
 
 		oIcon.setModel(new sap.ui.model.json.JSONModel(
 			{mail: "mail", tel: "tel", tel2: "tel", 3: 3, five: 5, thirteen: 13}
 		));
-		strictEqual(oIcon.getColor(), sResult);
+		strictEqual(oIcon.getColor(), oIcon.validateProperty("color", vResult));
 	}
 
 	/**
@@ -486,5 +486,33 @@
 			.withExactArgs("foo", "Edm.String").returns("'foo'");
 
 		check("{=odata.uriEncode('foo', 'Edm.String')}", "'foo'");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("errors during evaluation", function () {
+		var sExpression = "{:= null.toString() }";
+
+		// w/o try/catch, a formatter's exception is thrown out of the control's c'tor...
+		// --> expression binding provides the comfort of an "automatic try/catch"
+		throws(function () {
+			var unused = new sap.ui.core.Icon({
+					color : {
+						path : '/',
+						formatter : function () { return null.toString(); }
+					},
+					models : new sap.ui.model.json.JSONModel()
+				});
+			unused = !unused;
+		});
+
+		// Note: no need to log the stacktrace, it does not really matter to most people here
+		// Note: the exact error message is browser-dependent
+		this.mock(jQuery.sap.log).expects("warning").withExactArgs(
+			sinon.match(/TypeError:.*null/),
+			sExpression,
+			"sap.ui.base.ExpressionParser");
+
+		//TODO drop String() once BindingParser can properly handle constant result values
+		check(sExpression, String(undefined));
 	});
 }());
