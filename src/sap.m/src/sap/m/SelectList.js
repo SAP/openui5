@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.SelectList.
-sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation'],
-	function(jQuery, SelectListRenderer, library, Control, ItemNavigation) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation'],
+	function(jQuery, library, Control, ItemNavigation) {
 		"use strict";
 
 		/**
@@ -176,7 +176,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 * @private
 		 */
 		SelectList.prototype._queryEnabledItemsDomRefs = function(oDomRef) {
-			var CSS_CLASS = "." + SelectListRenderer.CSS_CLASS + "Item";
+			var CSS_CLASS = "." + this.getRenderer().CSS_CLASS + "Item";
 			oDomRef = oDomRef || this.getDomRef();
 
 			return oDomRef ? Array.prototype.slice.call(oDomRef.querySelectorAll(CSS_CLASS + ":not(" + CSS_CLASS + "Disabled)")) : [];
@@ -286,7 +286,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 				if (oItemDomRef) {
 
 					// add the active state to the pressed item
-					oItemDomRef.addClass(SelectListRenderer.CSS_CLASS + "ItemPressed");
+					oItemDomRef.addClass(this.getRenderer().CSS_CLASS + "ItemPressed");
 					this._$ItemPressed = oItemDomRef;
 				}
 			}.bind(this), 100);
@@ -316,7 +316,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 
 				// remove the active state
 				if (this._$ItemPressed) {
-					this._$ItemPressed.removeClass(SelectListRenderer.CSS_CLASS + "ItemPressed");
+					this._$ItemPressed.removeClass(this.getRenderer().CSS_CLASS + "ItemPressed");
 					this._$ItemPressed = null;
 				}
 			}
@@ -348,7 +348,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 
 					// remove the active state
 					if (this._$ItemPressed) {
-						this._$ItemPressed.removeClass(SelectListRenderer.CSS_CLASS + "ItemPressed");
+						this._$ItemPressed.removeClass(this.getRenderer().CSS_CLASS + "ItemPressed");
 						this._$ItemPressed = null;
 					}
 
@@ -445,7 +445,7 @@ sap.ui.define(['jquery.sap.global', './SelectListRenderer', './library', 'sap/ui
 		 */
 		SelectList.prototype.setSelection = function(vItem) {
 			var oSelectedItem = this.getSelectedItem(),
-				CSS_CLASS = SelectListRenderer.CSS_CLASS;
+				CSS_CLASS = this.getRenderer().CSS_CLASS;
 
 			this.setAssociation("selectedItem", vItem, true);
 			this.setProperty("selectedItemId", (vItem instanceof sap.ui.core.Item) ? vItem.getId() : vItem, true);
