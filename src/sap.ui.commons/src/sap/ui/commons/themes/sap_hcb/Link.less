@@ -11,26 +11,3 @@
 .sapUiLnk:hover {
 	text-decoration: none;
 }
-.sapUiLnk:focus:not(.sapUiLnkDsbl) {
-	text-decoration: none;
-	outline: 0.125rem dotted @sapHCStandardFG;
-	outline-offset: -0.125rem;
-}
-/* IE ignores outline-offset. Use an overlay: */
-html[data-sap-ui-browser^="ie"] {
-	.sapUiLnk:focus {
-		outline: none;
-		position: relative;
-	}
-	.sapUiLnk:focus:not(.sapUiLnkDsbl):before {
-		content: " ";
-		box-sizing: border-box;
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		left: 0;
-		top: 0;
-		border: 0.125rem dotted @sapHCStandardFG;
-		pointer-events: none;
-	}
-}
