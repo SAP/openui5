@@ -49,7 +49,7 @@ sap.ui.define(['sap/m/ToolbarLayoutData'],
 			 * @public
 			 * @since 1.32
 			 */
-			priority: {type: "sap.m.OverflowToolbarPriority", defaultValue: sap.m.OverflowToolbarPriority.High}
+			priority: {type: "sap.m.OverflowToolbarPriority", group: "Behavior", defaultValue: sap.m.OverflowToolbarPriority.High}
 		}
 	}});
 
