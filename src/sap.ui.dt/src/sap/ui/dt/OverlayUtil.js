@@ -33,6 +33,9 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 	 * 
 	 */
 	OverlayUtil.getClosestOverlayFor = function(oElement) {
+		if (!oElement || !oElement.getParent) {
+			return null;
+		}
 		var oParent = oElement.getParent();
 		var oParentOverlay = OverlayRegistry.getOverlay(oParent);
 		while (oParent && !oParentOverlay) {
@@ -87,7 +90,7 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 	 */
 	OverlayUtil.getClosestOverlayForType = function(sType, oOverlay) {
 		while (oOverlay && !ElementUtil.isInstanceOf(oOverlay.getElementInstance(), sType)) {
-			oOverlay = oOverlay.getParentOverlay();
+			oOverlay = oOverlay.getParentElementOverlay();
 		}
 
 		return oOverlay;
@@ -97,12 +100,184 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 	 * 
 	 */
 	OverlayUtil.getClosestScrollable = function(oOverlay) {
+		if (!oOverlay) {
+			return;
+		}
+		
 		oOverlay = oOverlay.getParent();
 		while (oOverlay && oOverlay.isScrollable && !oOverlay.isScrollable()) {
 			oOverlay = oOverlay.getParent();
 		}
 
 		return oOverlay && oOverlay.isScrollable ? oOverlay : null;
+	};
+
+	/**
+	 * 
+	 */
+	OverlayUtil.getFirstChildOverlay = function(oOverlay) {
+		if (!oOverlay) {
+			return;
+		}
+		
+		var aAggregationOverlays = oOverlay.getAggregationOverlays();
+		if (aAggregationOverlays.length > 0) {
+			for (var i = 0; i < aAggregationOverlays.length; i++) {
+				var oAggregationOverlay = aAggregationOverlays[i];
+				var aChildren = oAggregationOverlay.getChildren();
+				if (aChildren.length) {
+					return aChildren[0];
+				}
+			}
+		}
+	};
+
+	/**
+	 * 
+	 */
+	OverlayUtil.getLastChildOverlay = function(oOverlay) {
+		if (!oOverlay) {
+			return;
+		}
+		
+		var aAggregationOverlays = oOverlay.getAggregationOverlays();
+		if (aAggregationOverlays.length > 0) {
+			for (var i = aAggregationOverlays.length - 1; i >= 0 ; i--) {
+				var oAggregationOverlay = aAggregationOverlays[i];
+				var aChildren = oAggregationOverlay.getChildren();
+				if (aChildren.length) {
+					return aChildren[aChildren.length - 1];
+				}
+			}
+		}
+	};
+
+	/**
+	 * 
+	 */
+	OverlayUtil.getNextSiblingOverlay = function(oOverlay) {
+		if (!oOverlay) {
+			return;
+		}
+
+		var oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
+		if (oParentAggregationOverlay) {
+			var aAggregationOverlays = oParentAggregationOverlay.getChildren();
+			var iIndex = aAggregationOverlays.indexOf(oOverlay);
+			// get next sibling in the same aggregation
+			if (iIndex !== aAggregationOverlays.length - 1) {
+				return aAggregationOverlays[iIndex + 1];
+			} else {
+				//get next sibling from next aggregation in the same parent
+				if (iIndex === aAggregationOverlays.length - 1) {
+					var oParent = oOverlay.getParentElementOverlay();
+					aAggregationOverlays = oParent.getAggregationOverlays();
+					for (iIndex = aAggregationOverlays.indexOf(oParentAggregationOverlay) + 1; iIndex < aAggregationOverlays.length; iIndex++) {
+						var aOverlays = aAggregationOverlays[iIndex].getChildren();
+						if (aOverlays.length) {
+							return aOverlays[0];
+						}
+					}
+				}
+			}
+		}
+	};
+
+	/**
+	 * 
+	 */
+	OverlayUtil.getPreviousSiblingOverlay = function(oOverlay) {
+		if (!oOverlay) {
+			return;
+		}
+		
+		var oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
+		if (oParentAggregationOverlay) {
+			var aAggregationOverlays = oParentAggregationOverlay.getChildren();
+			var iIndex = aAggregationOverlays.indexOf(oOverlay);
+			//get previous sibling from the same aggregation
+			if (iIndex > 0) {
+				return aAggregationOverlays[iIndex - 1];
+			} else {
+				//get previous sibling from previous aggregation in the same parent
+				if (iIndex === 0) {
+					var oParent = oOverlay.getParentElementOverlay();
+					aAggregationOverlays = oParent.getAggregationOverlays();
+					for (iIndex = aAggregationOverlays.indexOf(oParentAggregationOverlay) - 1; iIndex >= 0; iIndex--) {
+						var aOverlays = aAggregationOverlays[iIndex].getChildren();
+						if (aOverlays.length) {
+							return aOverlays[aOverlays.length - 1];
+						}
+					}
+				}
+			}
+		}
+	};
+
+	/**
+	 * 
+	 */
+	OverlayUtil.getNextOverlay = function(oOverlay) {
+		if (!oOverlay) {
+			return;
+		}
+
+		var oFirstChildOverlay = this.getFirstChildOverlay(oOverlay);
+		if (oFirstChildOverlay) {
+			return oFirstChildOverlay;
+		}
+
+		var oNextSiblingOverlay = this.getNextSiblingOverlay(oOverlay);
+		if (oNextSiblingOverlay) {
+			return oNextSiblingOverlay;
+		}
+
+		do {
+			oOverlay = oOverlay.getParentElementOverlay();
+			oNextSiblingOverlay = this.getNextSiblingOverlay(oOverlay);
+		} while (oOverlay && !oNextSiblingOverlay);
+
+		return oNextSiblingOverlay;
+	};
+
+	/**
+	 * 
+	 */
+	OverlayUtil.getPreviousOverlay = function(oOverlay) {
+		if (!oOverlay) {
+			return;
+		}
+
+		var oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
+		if (!oParentAggregationOverlay) {
+			return;
+		}
+
+		var oPreviousSiblingOverlay = this.getPreviousSiblingOverlay(oOverlay);
+		if (oPreviousSiblingOverlay) {
+			var oLastChildOverlay = oPreviousSiblingOverlay;
+			do {
+				oPreviousSiblingOverlay = oLastChildOverlay;
+				oLastChildOverlay = this.getLastChildOverlay(oPreviousSiblingOverlay);
+			} while (oLastChildOverlay);
+
+			return oPreviousSiblingOverlay;
+		}
+
+		return oOverlay.getParentElementOverlay();
+	};
+
+	/**
+	 * 
+	 */
+	OverlayUtil.getRootOverlay = function(oOverlay) {
+		var oParentOverlay = oOverlay;
+		do {
+			oOverlay = oParentOverlay;
+			oParentOverlay = oOverlay.getParentElementOverlay();
+		} while (oParentOverlay);
+
+		return oOverlay;
 	};
 
 	return OverlayUtil;

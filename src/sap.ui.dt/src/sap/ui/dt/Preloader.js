@@ -27,7 +27,9 @@ function(Element) {
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 
-	var Preloader = {};
+	var Preloader = {
+		aLoadedClasses : []
+	};
 
 	/**
 	 * Loads the design time metadata for a given list of elements.
@@ -37,6 +39,7 @@ function(Element) {
 	 * @public
 	 */
 	Preloader.load = function(aElements) {
+		var that = this;
 		var aQueue = [];
 		aElements.forEach(function(vElement) {
 			var oElement = vElement;
@@ -45,7 +48,10 @@ function(Element) {
 			}
 			if (oElement && oElement.getMetadata) {
 				var oMetadata = oElement.getMetadata();
-				if (oMetadata.loadDesignTime) {
+				var sClassName = oMetadata.getName ? oMetadata.getName() : null;
+				var bIsLoaded = sClassName && that.aLoadedClasses.indexOf(sClassName) !== -1;
+				if (!bIsLoaded && oMetadata.loadDesignTime) {
+					that.aLoadedClasses.push(sClassName);
 					aQueue.push(oMetadata.loadDesignTime());
 				}
 			}

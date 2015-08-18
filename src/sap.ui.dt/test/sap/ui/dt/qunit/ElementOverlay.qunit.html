@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<title>Test Page for sap.ui.dt.Overlay</title>
+		<title>Test Page for sap.ui.dt.ElementOverlay</title>
 
 		<style>
 			#content {
@@ -27,7 +27,7 @@
 		<script type="text/javascript">
 
 			jQuery.sap.require("sap.ui.dt.Preloader");
-			jQuery.sap.require("sap.ui.dt.Overlay");
+			jQuery.sap.require("sap.ui.dt.ElementOverlay");
 			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
 			jQuery.sap.require("sap.ui.dt.DOMUtil");
 			jQuery.sap.require("sap.m.Button");
@@ -57,7 +57,7 @@
 					});
 					this.oButton.placeAt("content");
 					sap.ui.dt.Preloader.load(["sap.m.Button"]).then(function() {
-						that.oOverlay = new sap.ui.dt.Overlay({
+						that.oOverlay = new sap.ui.dt.ElementOverlay({
 							element : that.oButton
 						});
 						done();
@@ -80,7 +80,8 @@
 				var oStaticAreaRef = sap.ui.getCore().getStaticAreaRef();
 				assert.equal(oDomRef.parentNode, oDomRef.parentNode, 'then the overlay is added to the static UI area');
 
-				assert.equal(oDomRef.className, "sapUiDtOverlay", 'and the right CSS class is set to the element');
+				assert.notEqual(oDomRef.className.indexOf("sapUiDtOverlay"), -1, 'and the right CSS class overlay is set to the element');
+				assert.notEqual(oDomRef.className.indexOf("sapUiDtElementOverlay"), -1, 'and the right CSS element overlay class is set to the element');
 
 				var mSize = sap.ui.dt.DOMUtil.getSize(oElementDomRef);
 				assert.equal(oDomRef.offsetWidth, mSize.width, 'and the right width is applied to the overlay');
@@ -95,7 +96,7 @@
 				assert.equal(oDesignTimeMetadata.getName(), "{name}", "and the design time metadata for the control is set");
 			});
 
-			QUnit.test("when the overlay is selected", function(assert) {
+			QUnit.test("when the overlay is selectable and selected", function(assert) {
 				this.oOverlay.attachSelectionChange(function(oEvent) {
 					assert.ok(oEvent.getParameter("selected"), 'and a "selectionChange" event is fired which provides the right selected state');
 				}, this);
@@ -127,7 +128,7 @@
 				assert.ok(!bFired, 'and no "selection change" event is fired');
 			});
 
-			QUnit.test("when the overlay is focused", function(assert) {
+			QUnit.test("when the overlay is focusable and is focused", function(assert) {
 				this.oOverlay.$().attr("tabindex", 0);
 				this.oOverlay.focus();
 				var that = this;
@@ -143,14 +144,14 @@
 					this.oButton1 = new sap.m.Button({
 						text : "Button 1"
 					});
-					this.oOverlayButton1 = new sap.ui.dt.Overlay({
+					this.oOverlayButton1 = new sap.ui.dt.ElementOverlay({
 						element : this.oButton1
 					});
 
 					this.oButton2 = new sap.m.Button({
 						text : "Button 2"
 					});
-					this.oOverlayButton2 = new sap.ui.dt.Overlay({
+					this.oOverlayButton2 = new sap.ui.dt.ElementOverlay({
 						element : this.oButton2
 					});
 
@@ -158,13 +159,13 @@
 					this.oVerticalLayout1 = new sap.ui.layout.VerticalLayout({
 							content : [this.oButton1, this.oButton2]
 					});
-					this.oOverlayLayout1 = new sap.ui.dt.Overlay({
+					this.oOverlayLayout1 = new sap.ui.dt.ElementOverlay({
 						element : this.oVerticalLayout1
 					});
 
 					this.oVerticalLayout2 = new sap.ui.layout.VerticalLayout();
 
-					this.oOverlayLayout2 = new sap.ui.dt.Overlay({
+					this.oOverlayLayout2 = new sap.ui.dt.ElementOverlay({
 						element : this.oVerticalLayout2
 					});
 
@@ -198,7 +199,7 @@
 					this.oButton = new sap.m.Button({
 						text : "Button"
 					});
-					this.oOverlay = new sap.ui.dt.Overlay({
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
 						element : this.oButton,
 						designTimeMetadata : new sap.ui.dt.DesignTimeMetadata({
 							data : {
@@ -226,7 +227,7 @@
 					this.oButton = new sap.m.Button({
 						text : "Button"
 					});
-					this.oOverlay = new sap.ui.dt.Overlay({
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
 						element : this.oButton,
 						designTimeMetadata : new sap.ui.dt.DesignTimeMetadata({
 							data : {
@@ -252,7 +253,7 @@
 			QUnit.module("Given that an Overlay for a control with an aggregation marked as invisible in designtime", {
 				beforeEach : function() {
 					this.oPage = new sap.m.Page();
-					this.oOverlay = new sap.ui.dt.Overlay({
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
 						designTimeMetadata : new sap.ui.dt.DesignTimeMetadata({
 							data : {
 								aggregations: {
@@ -286,7 +287,7 @@
 					this.oButton = new sap.m.Button({
 						text : "Button"
 					});
-					this.oOverlay = new sap.ui.dt.Overlay({
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
 						element : this.oButton
 					});
 					this.oButton.placeAt("content");
@@ -310,7 +311,7 @@
 					this.oButton = new sap.m.Button({
 						text : "Button"
 					});
-					this.oOverlay = new sap.ui.dt.Overlay({
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
 						element : this.oButton
 					});
 					this.oButton.placeAt("content");
@@ -329,7 +330,7 @@
 		</script>
 	</head>
 	<body>
-		<h1 id="qunit-header">QUnit page for sap.ui.dt.Overlay</h1>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.ElementOverlay</h1>
 		<h2 id="qunit-banner"></h2>
 	 	<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>

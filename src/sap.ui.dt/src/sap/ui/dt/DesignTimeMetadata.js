@@ -27,7 +27,7 @@ function(jQuery, ManagedObject) {
 	 * @constructor
 	 * @private
 	 * @since 1.30
-	 * @alias sap.ui.dt.Overlay
+	 * @alias sap.ui.dt.DesignTimeMetadata
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var DesignTimeMetadata = ManagedObject.extend("sap.ui.dt.DesignTimeMetadata", /** @lends sap.ui.dt.DesignTimeMetadata.prototype */ {
