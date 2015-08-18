@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Select.
-sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popover', './SelectList', './SelectRenderer', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool'],
-	function(jQuery, Bar, Dialog, InputBase, Popover, SelectList, SelectRenderer, library, Control, EnabledPropagator, IconPool) {
+sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popover', './SelectList', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool'],
+	function(jQuery, Bar, Dialog, InputBase, Popover, SelectList, library, Control, EnabledPropagator, IconPool) {
 		"use strict";
 
 		/**
@@ -398,7 +398,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			var fnPickerTypeBeforeOpen = this["_onBeforeOpen" + this.getPickerType()];
 
 			// add the active state to the Select's field
-			this.addStyleClass(SelectRenderer.CSS_CLASS + "Pressed");
+			this.addStyleClass(this.getRenderer().CSS_CLASS + "Pressed");
 
 			// call the hook to add additional content to the List
 			this.addContent();
@@ -452,7 +452,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			}
 
 			// remove the active state of the Select's field
-			this.removeStyleClass(SelectRenderer.CSS_CLASS + "Pressed");
+			this.removeStyleClass(this.getRenderer().CSS_CLASS + "Pressed");
 		};
 
 		/**
@@ -588,7 +588,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @private
 		 */
 		Select.prototype._createDialog = function() {
-			var CSS_CLASS = SelectRenderer.CSS_CLASS;
+			var CSS_CLASS = this.getRenderer().CSS_CLASS;
 
 			// initialize Dialog
 			var oDialog = new Dialog({
@@ -707,7 +707,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			if (this.getEnabled() && this.isOpenArea(oEvent.target)) {
 
 				// add the active state to the Select's field
-				this.addStyleClass(SelectRenderer.CSS_CLASS + "Pressed");
+				this.addStyleClass(this.getRenderer().CSS_CLASS + "Pressed");
 			}
 		};
 
@@ -725,7 +725,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			if (this.getEnabled() && (!this.isOpen() || !this.hasContent()) && this.isOpenArea(oEvent.target)) {
 
 				// remove the active state of the Select HTMLDIVElement container
-				this.removeStyleClass(SelectRenderer.CSS_CLASS + "Pressed");
+				this.removeStyleClass(this.getRenderer().CSS_CLASS + "Pressed");
 			}
 		};
 
@@ -736,7 +736,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @private
 		 */
 		Select.prototype.ontap = function(oEvent) {
-			var CSS_CLASS = SelectRenderer.CSS_CLASS;
+			var CSS_CLASS = this.getRenderer().CSS_CLASS;
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
@@ -1145,7 +1145,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 */
 		Select.prototype.createPicker = function(sPickerType) {
 			var oPicker = this.getAggregation("picker"),
-				CSS_CLASS = SelectRenderer.CSS_CLASS;
+				CSS_CLASS = this.getRenderer().CSS_CLASS;
 
 			if (oPicker) {
 				return oPicker;
