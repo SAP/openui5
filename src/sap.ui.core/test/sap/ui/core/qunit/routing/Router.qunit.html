@@ -1368,6 +1368,8 @@
 			oRouter.initialize();
 			oRouter.parse("product(1)");
 
+			this.clock.tick(0);
+
 			// Assert
 			assert.strictEqual(callCount, 1, "The route pattern matched handler should be called once");
 
