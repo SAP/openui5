@@ -3,10 +3,29 @@
  */
 /*global opaTest:true, QUnit */
 /**
- * Qunit test adapter for opa.js has the same signature as an asyncTest of qunit
+ * QUnit test adapter for opa.js has the same signature as a test of QUnit.
+ * Suggested usage:
+ * <code>
+ * sap.ui.require(["sap.ui.test.opaQunit"], function (opaTest) {
+ *
+ *    opaTest("Should test something", function (Given, When, Then) {
+ *       // Implementation of the test
+ *    });
+ *
+ * });
+ * </code>
+ *
+ * When you require this file, it will also introduce a global variable: opaTest
  * @public
- * @returns {asncTest} the async qunit test wrapped by opa
- * @experimental
+ * @function
+ * @param {string} testName the name of the created QUnit test.
+ * @param {integer|function} expected Integer - How many qunit assertions are expected by the test. If a function is passed it is interpreted as callback and the expected is skipped.
+ * @param {function} callback - The test function. It will get 3 arguments passed to it.
+ * The first argument will be {@link sap.ui.test.Opa#.config}.arrangements.
+ * The second argument will be {@link sap.ui.test.Opa#.config}.actions.
+ * The third argument will be {@link sap.ui.test.Opa#.config}.assertions.
+ * @alias sap.ui.test.opaQunit
+ * @returns {QUnit.test} a function to register opaTests
  */
 /////////////////////
 //// OPA - One Page Acceptance testing the qUnit adapter

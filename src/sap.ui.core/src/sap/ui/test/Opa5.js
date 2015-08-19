@@ -91,9 +91,9 @@ sap.ui.define(['jquery.sap.global',
 		}
 
 		/**
-		 * Starts an app in an iframe. Only works reliably if running on the same server.
-		 * @param {string} sSource the source of the iframe
-		 * @param {number} [iTimeout=90] the timeout for loading the iframe in seconds - default is 90
+		 * Starts an app in an IFrame. Only works reliably if running on the same server.
+		 * @param {string} sSource the source of the IFrame
+		 * @param {number} [iTimeout=80] the timeout for loading the IFrame in seconds - default is 80
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
 		 * @function
@@ -101,9 +101,9 @@ sap.ui.define(['jquery.sap.global',
 		Opa5.iStartMyAppInAFrame = iStartMyAppInAFrame;
 
 		/**
-		 * Starts an app in an iframe. Only works reliably if running on the same server.
-		 * @param {string} sSource the source of the iframe
-		 * @param {integer} [iTimeout] the timeout for loading the iframe in seconds - default is 90
+		 * Starts an app in an IFrame. Only works reliably if running on the same server.
+		 * @param {string} sSource the source of the IFrame
+		 * @param {integer} [iTimeout=80] the timeout for loading the IFrame in seconds - default is 80
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
 		 * @function
@@ -125,7 +125,7 @@ sap.ui.define(['jquery.sap.global',
 		}
 
 		/**
-		 * Removes the iframe from the dom and removes all the references on its objects
+		 * Removes the IFrame from the dom and removes all the references on its objects
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
 		 * @function
@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global',
 		Opa5.iTeardownMyAppFrame = iTeardownMyAppFrame;
 
 		/**
-		 * Removes the iframe from the dom and removes all the references on its objects
+		 * Removes the IFrame from the dom and removes all the references on its objects
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
 		 * @function
@@ -423,7 +423,6 @@ sap.ui.define(['jquery.sap.global',
 		 */
 		Opa5.getContext = Opa.getContext;
 
-
 		//Dont document these as public they are just for backwards compatibility
 		Opa5.matchers = {};
 		Opa5.matchers.Matcher = Matcher;
@@ -438,15 +437,20 @@ sap.ui.define(['jquery.sap.global',
 		 * @param {function} [mPageObjects.&lt;your-page-object-name&gt;.baseClass] Base class for the page object's actions and assertions, default: Opa5
 		 * @param {function} [mPageObjects.&lt;your-page-object-name&gt;.namespace] Namespace prefix for the page object's actions and assertions, default: sap.ui.test.opa.pageObject. Use it if you use page objects from multiple projects in the same test build.
 		 * @param {map} [mPageObjects.&lt;your-page-object-name&gt;.actions] can be used as arrangement and action in Opa tests. Only the test knows if an action is used as arrangement or action
-		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.actions.&lt;your-action-1&gt;
-		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.actions.&lt;your-action-2&gt;
-		 * @param {map} [mPageObjects.&lt;your-page-object-name&gt;.assertions]
-		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions-1&gt;
-		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions-2&gt;
-		 * @returns {map} mPageObject
-		 * @returns {map} mPageObject.&lt;your-page-object-name&gt;
-		 * @returns {object} mPageObject.&lt;your-page-object-name&gt;.actions an instance of baseClass or Opa5 with all the actions defined above
-		 * @returns {object} mPageObject.&lt;your-page-object-name&gt;.assertions an instance of baseClass or Opa5 with all the assertions defined above
+		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.actions.&lt;your-action-1&gt; This is your custom implementation containing one or multiple waitFor statements
+		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.actions.&lt;your-action-2&gt; This is your custom implementation containing one or multiple waitFor statements
+		 * @param {map} [mPageObjects.&lt;your-page-object-name&gt;.assertions] can be used as assertions in Opa tests.
+		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions-1&gt; This is your custom implementation containing one or multiple waitFor statements
+		 * @param {function} mPageObjects.&lt;your-page-object-name&gt;.assertions.&lt;your-assertions-2&gt; This is your custom implementation containing one or multiple waitFor statements
+		 * @returns {map} mPageObject The created page object. It will look like this:
+		 * <code>
+		 *  {
+		 *   &lt;your-page-object-name&gt; : {
+		 *       actions: // an instance of baseClass or Opa5 with all the actions defined above
+		 *       assertions: // an instance of baseClass or Opa5 with all the assertions defined above
+		 *   }
+		 *  }
+		 * </code>
 		 * @public
 		 * @since 1.25
 		 */
