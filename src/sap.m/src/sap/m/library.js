@@ -654,6 +654,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		/**
 		 * Box items are evenly distributed in the line, with half-size spaces on either end.
+		 * <b>Note:</b> This value behaves like SpaceBetween in Internet Explorer 10.
 		 * @public
 		 */
 		SpaceAround : "SpaceAround",

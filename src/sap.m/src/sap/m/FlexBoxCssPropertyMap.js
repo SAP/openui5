@@ -168,7 +168,9 @@ sap.ui.define(['jquery.sap.global'],
 				'space-between': {
 					'flex-pack': 'justify'
 				},
-				'space-around': null
+				'space-around': {
+					'flex-pack': 'justify'
+				}
 			},
 			'align-items': {
 				'flex-start': {
