@@ -3,14 +3,30 @@
 /* CSS for controlsap.m/BusyIndicator.control    */
 /* ============================================= */
 
-.sapMBusyIndicator, .sapMBusyIndicatorLight, .sapMBusyIndicatorDark{
+.sapMBusyIndicator {
 	display: inline-block;
-	vertical-align: middle;
+	text-align: center;
+
+	.sapMBusyIndicatorBusyArea {
+		min-width: 3em;
+		min-height: 1em;
+		margin: 0 auto;
+	}
+
+	.sapMLabel {
+		display: block;
+	}
+
+	.sapUiLocalBusyIndicator {
+		background: none;
+		font-size: inherit;
+	}
 }
 
-.sapMBsyIndLabel{
-	vertical-align: middle;
-	padding-left: .5em;
+.sapMBar-CTX .sapMBusyIndicator {
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
 }
 
 .sapMBsyIndAnimation(@name) {
@@ -23,15 +39,14 @@ html[dir='rtl'] .sapMBsyIndIcon {
 	.sapMBsyIndAnimation(sapMBsyIndRotateRTL);
 }
 
-.sapMBsyIndIcon{
+.sapMBsyIndIcon {
 	vertical-align: middle;
-
-	-webkit-transform:rotate(0deg) translateZ(0);
-	-webkit-transition-duration:0ms;
-	-ms-transform:rotate(0deg) translateZ(0);
-	-ms-transition-duration:0ms;
-	transform:rotate(0deg) translateZ(0);
-	transition-duration:0ms;
+	-webkit-transform: rotate(0deg) translateZ(0);
+	-ms-transform: rotate(0deg) translateZ(0);
+	transform: rotate(0deg) translateZ(0);
+	-webkit-transition-duration: 0ms;
+	-ms-transition-duration: 0ms;
+	transition-duration: 0ms;
 
 	.sapMBsyIndAnimation(sapMBsyIndRotate);
 }

@@ -2,85 +2,88 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
-		<title>BusyIndicator - sap.m</title>
-			
+
+		<title>sap.m.BusyIndicator - Playground</title>
+
 		<!-- Mobile viewport -->
 		<meta name="viewport"	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	
+
 		<!-- Enable fullscreen when possible -->
 		<meta name="apple-mobile-web-app-capable" content="yes">
-		
+
 		<!-- Set the status bar style on Apple devices -->
 		<meta name="apple-mobile-web-app-status-bar-style" content="default">
-		
+
 		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+			type="text/javascript"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-theme="sap_bluecrystal">
 		</script>
 		<style>
-			.BusyButton {
-				margin: 10px;
-				display: block;
+			.sapMBusyIndicator {
+				width: 100%;
+				margin: 1.5rem;
 			}
-			.sapMBar-CTX .sapMBusyIndicator{
-				margin: 10px;
-			}
-			.sap-ios .sapMBar-CTX .sapMBusyIndicator{
-				margin: 5px;
+
+			.sapMPageHeader .sapMBusyIndicator {
+				margin: 0;
 			}
 		</style>
 		<script>
-		var app = new sap.m.App("myApp", {initialPage:"page1"});
+			var app = new sap.m.App("myApp", {initialPage:"page1"});
+
 			var busyImage = new sap.m.BusyIndicator({
 				text:'this is an image busy indicator ...',
 				customIcon:'images/synchronise_48.png',
 				customIconRotationSpeed: 5000
 			});
-			
+
 			var busyCSSText = new sap.m.BusyIndicator({
-				text:'this is a css busy indicator ...',
+				text:'default sized busy indicator ...',
 			});
+
 			var busyCSSSize1 = new sap.m.BusyIndicator({
 				size:'30px',
+				text:'30px sized busy indicator ...'
 			});
+
 			var busyCSSSize2 = new sap.m.BusyIndicator({
 				size:'40px',
+				text:'40px sized busy indicator ...'
 			});
+
 			var busyCSSSize3 = new sap.m.BusyIndicator({
 				size:'50px',
+				text:'50px sized busy indicator ...'
 			});
+
 			var busyCSSSize4 = new sap.m.BusyIndicator({
 				size:'60px',
+				text:'60px sized busy indicator ...'
 			});
+
 			var busyCSSSize5 = new sap.m.BusyIndicator({
 				size:'90px',
+				text:'90px sized busy indicator ...'
 			});
+
 			var busyCSS = new sap.m.BusyIndicator({
 				size: '30px'
-			}).addStyleClass('BusyBar');
-			setInterval(function(){
-				busyCSSSize2.$().css('visibility', 'hidden')
-				busyCSSSize3.$().css('visibility', 'hidden')
-				busyCSSSize4.$().css('visibility', 'visible')
-				busyCSSSize5.$().css('visibility', 'visible')
-				setTimeout(function(){
-					busyCSSSize4.$().css('visibility', 'hidden')
-					busyCSSSize5.$().css('visibility', 'hidden')
-					busyCSSSize2.$().css('visibility', 'visible')
-					busyCSSSize3.$().css('visibility', 'visible')
-				},1000)
-			}, 2000)
-			var busyDialog1 = (busyDialog3) ? busyDialog3 : new sap.m.BusyDialog('busy1',{customIcon: 'images/synchronise_48.png'})
-			var busyDialog2 = (busyDialog2) ? busyDialog2 : new sap.m.BusyDialog('busy2',{text:'i am soo busy doing stuff', title: 'Busy'})
-			var busyDialog3 = busyDialog3 ? busyDialog3 : new sap.m.BusyDialog('busy3',{text:'i am a busy screen with a loooooooong long long long text and a cancel button', 
+			});
+
+			var busyDialog1 = (busyDialog3) ? busyDialog3 : new sap.m.BusyDialog('busy1',{customIcon: 'images/synchronise_48.png'});
+
+			var busyDialog2 = (busyDialog2) ? busyDialog2 : new sap.m.BusyDialog('busy2',{text:'i am soo busy doing stuff', title: 'Busy'});
+
+			var busyDialog3 = busyDialog3 ? busyDialog3 : new sap.m.BusyDialog('busy3',{text:'i am a busy screen with a loooooooong long long long text and a cancel button',
 				title: 'LOADING',
 				showCancelButton: true, // IMPORTANT: the "Cancel" button text of this dialog may not be set, it should be the default text (tested in translation tests)
 				close: function(oEvent){console.log(oEvent, 'closed')}
-			})
-			var busyDialog4 = (busyDialog4) ? busyDialog4 : new sap.m.BusyDialog('busy4',{text:'Fetching JSON Data', title: 'Loading'})
+			});
+
+			var busyDialog4 = (busyDialog4) ? busyDialog4 : new sap.m.BusyDialog('busy4',{text:'Fetching JSON Data', title: 'Loading'});
+
 			var syncLoad = function() {
 				busyDialog4.open()
 				jQuery.ajax({
@@ -97,8 +100,8 @@
 						busyDialog4.close()
 					}
 				})
-			} 
-			
+			}
+
 			var openBusyScreenBtn1 = new sap.m.Button({
 				text: 'open BusyDialog',
 				press: function() {
@@ -128,9 +131,10 @@
 				press: function() {
 					syncLoad();
 				}
-			}).addStyleClass('BusyButton');			
+			}).addStyleClass('BusyButton');
+
 			var page1 = new sap.m.Page("page1", {
-				title:"Mobile Busy Indicator Controls", 
+				title:"Mobile Busy Indicator Controls",
 				headerContent: [busyCSS],
 				content:[
 					openBusyScreenBtn1,
