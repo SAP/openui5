@@ -240,7 +240,23 @@
 	***************************************************************************-->
 
 	<profiles>
-	
+
+		<profile>
+			<id>mobile-custom</id>
+			<activation>
+				<property>
+					<name>artifact</name>
+					<value>mobile-custom</value>
+				</property>
+			</activation>
+			<properties>
+				<deployable.groupId>com.sap.test</deployable.groupId>
+				<deployable.artifactId>sapui5-mobile-custom</deployable.artifactId>
+				<deployable.classifier></deployable.classifier>
+				<deployable.type>zip</deployable.type>
+			</properties>
+		</profile>
+
 		<profile>
 			<id>deployment</id>
 			<activation>
