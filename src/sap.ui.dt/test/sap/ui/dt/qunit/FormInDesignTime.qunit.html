@@ -181,7 +181,10 @@
 				if ($child.parent().get(0) === $parent.get(0)) {
 					var oChildOffset =  $child.offset();
 					var oParentOffset = $parent.offset();
-					return (oParentOffset.left <= oChildOffset.left && oParentOffset.top <= oChildOffset.top && oParentOffset.left + $parent.width() >= oChildOffset.left + $child.width() && oParentOffset.top + $parent.height() >= oChildOffset.top + $child.height());
+					return (oParentOffset.left <= oChildOffset.left && 
+							oParentOffset.top <= oChildOffset.top && 
+							Math.floor(oParentOffset.left + $parent.width()) >= Math.floor(oChildOffset.left + $child.width()) && 
+							Math.floor(oParentOffset.top + $parent.height()) >= Math.floor(oChildOffset.top + $child.height()) );
 				} else {
 					return false;
 				}

@@ -17,7 +17,7 @@ function(ManagedObject) {
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
 	 * @class
-	 * The ManagedObjectObserver observs changes of a ManagedObject and propagates them via events.
+	 * The ManagedObjectObserver observes changes of a ManagedObject and propagates them via events.
 	 * @extends sap.ui.base.ManagedObject
 	 *
 	 * @author SAP SE
@@ -26,7 +26,7 @@ function(ManagedObject) {
 	 * @constructor
 	 * @private
 	 * @since 1.30
-	 * @alias sap.ui.dt.Overlay
+	 * @alias sap.ui.dt.ManagedObjectObserver
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be modified in future.
 	 */
 	var ManagedObjectObserver = ManagedObject.extend("sap.ui.dt.ManagedObjectObserver", /** @lends sap.ui.dt.ManagedObjectObserver.prototype */ {
