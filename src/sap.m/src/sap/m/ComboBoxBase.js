@@ -427,24 +427,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		/* API methods                                                 */
 		/* =========================================================== */
 
-		/* ----------------------------------------------------------- */
-		/* protected methods                                           */
-		/* ----------------------------------------------------------- */
-
-		/*
+		/**
 		 * Overwrites use labels as placeholder configuration of the InputBase.
 		 * IE9 does not have a native placeholder support.
 		 * IE10+ fires the input event when an input field with a native placeholder is focused.
 		 *
-		 * @protected
 		 */
 		ComboBoxBase.prototype.bShowLabelAsPlaceholder = sap.ui.Device.browser.msie;
 
-		/*
+		/**
 		 * Hook method, can be used to add additional content to the control's picker popup.
 		 *
 		 * @param {sap.m.Dialog | sap.m.Popover} [oPicker]
-		 * @protected
 		 */
 		ComboBoxBase.prototype.addContent = function(oPicker) {};
 
@@ -504,12 +498,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 			return !!this.getItems().length;
 		};
 
-		/*
+		/**
 		 * Retrieves the first enabled item from the aggregation named <code>items</code>.
 		 *
 		 * @param {array} [aItems]
 		 * @returns {sap.ui.core.Item | null}
-		 * @protected
 		 */
 		ComboBoxBase.prototype.findFirstEnabledItem = function(aItems) {
 			aItems = aItems || this.getItems();
@@ -523,19 +516,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 			return null;
 		};
 
-		/*
+		/**
 		 * Retrieves the last enabled item from the aggregation named <code>items</code>.
 		 *
 		 * @param {array} [aItems]
 		 * @returns {sap.ui.core.Item | null}
-		 * @protected
 		 */
 		ComboBoxBase.prototype.findLastEnabledItem = function(aItems) {
 			aItems = aItems || this.getItems();
 			return this.findFirstEnabledItem(aItems.reverse());
 		};
 
-		/*
+		/**
 		 * Opens the control's picker popup.
 		 *
 		 * @returns {sap.m.ComboBoxBase} <code>this</code> to allow method chaining.
@@ -596,46 +588,42 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 			return aKeys;
 		};
 
-		/*
+		/**
 		 * Gets the selectable items from the aggregation named <code>items</code>.
 		 *
 		 * @returns {sap.ui.core.Item[]} An array containing the selectables items.
-		 * @protected
 		 */
 		ComboBoxBase.prototype.getSelectableItems = function() {
 			return this.getEnabledItems(this.getVisibleItems());
 		};
 
-		/*
+		/**
 		 * Gets the control's picker popup's trigger element.
 		 *
 		 * @returns {Element | null} Returns the element that is used as trigger to open the control's picker popup.
-		 * @protected
 		 */
 		ComboBoxBase.prototype.getOpenArea = function() {
 			return this.getDomRef("arrow");
 		};
 
-		/*
+		/**
 		 * Checks whether the provided element is the open area.
 		 *
 		 * @param {Element} oDomRef
 		 * @returns {boolean}
-		 * @protected
 		 */
 		ComboBoxBase.prototype.isOpenArea = function(oDomRef) {
 			var oOpenAreaDomRef = this.getOpenArea();
 			return oOpenAreaDomRef && oOpenAreaDomRef.contains(oDomRef);
 		};
 
-		/*
+		/**
 		 * Retrieves an item by searching for the given property/value from the aggregation named <code>items</code>.<br>
 		 * <b>Note:</b> If duplicate values exist, the first item matching the value is returned.
 		 *
 		 * @param {string} sProperty An item property.
 		 * @param {string} sValue An item value that specifies the item to retrieve.
 		 * @returns {sap.ui.core.Item | null} The matched item or null.
-		 * @protected
 		 */
 		ComboBoxBase.prototype.findItem = function(sProperty, sValue) {
 			var sMethod = "get" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1);
@@ -661,10 +649,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 			return this.findItem("text", sText);
 		};
 
-		/*
+		/**
 		 * Scrolls an item into the visual viewport.
 		 *
-		 * @protected
 		 */
 		ComboBoxBase.prototype.scrollToItem = function(oItem) {
 			var oPicker = this.getPicker(),
@@ -693,10 +680,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 			}
 		};
 
-		/*
+		/**
 		 * Clear the filter
 		 *
-		 * @protected
 		 */
 		ComboBoxBase.prototype.clearFilter = function() {
 
@@ -717,7 +703,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 */
 		ComboBoxBase.prototype.onItemChange = function() {};
 
-		/*
+		/**
 		 * Clear the selection.
 		 * To be overwritten by subclasses.
 		 *
