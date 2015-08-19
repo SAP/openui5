@@ -1,0 +1,137 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.ui.core.IconPool</title>
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.core,sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script>
+
+			sap.ui.require([
+				"sap/ui/core/IconPool",
+				"sap/ui/core/Icon",
+				"sap/m/Image"
+			], function(IconPool, Icon, Image) {
+
+				QUnit.module("Basic");
+
+				QUnit.test("Constructor should throw an error", function(assert) {
+
+					assert.throws(function() {
+						new IconPool();
+					}, "called with new");
+
+					assert.throws(function() {
+						IconPool();
+					}, "called without new");
+
+				});
+
+
+				QUnit.module("Methods");
+
+				QUnit.test("createControlByURI", function(assert) {
+
+					var oFontIcon = IconPool.createControlByURI({
+						src: "sap-icon://add",
+						tap: function() {}
+					});
+					assert.equal(oFontIcon.getSrc(), "sap-icon://add", "icon: 'src' should be correct.");
+					assert.equal(oFontIcon.mEventRegistry.press.length, 1, "icon: deprecated 'tap' event will be registered as 'press'.");
+
+					var oImgIcon = IconPool.createControlByURI("../images/help.gif", Image);
+					assert.equal(oImgIcon.getSrc(), "../images/help.gif", "img: 'src' should be correct.");
+
+				});
+				QUnit.test("addIcon / getIconURI / getIconInfo", function(assert) {
+
+					// legacy syntax
+					IconPool.addIcon("legacy-syntax", "collection-1", "Arial", "beef", false, false);
+					assert.equal(IconPool.getIconURI("legacy-syntax", "collection-1"), "sap-icon://collection-1/legacy-syntax", "'legacy-syntax' icon uri correct.");
+					assert.deepEqual(IconPool.getIconInfo("sap-icon://collection-1/legacy-syntax"), {
+						collection: "collection-1",
+						content: String.fromCharCode("0xbeef"),
+						fontFamily: "Arial",
+						name: "legacy-syntax",
+						skipMirroring: false,
+						suppressMirroring: false,
+						uri: "sap-icon://collection-1/legacy-syntax"
+					}, "'legacy-syntax' icon info correct.");
+
+					// add icon twice
+					assert.equal(IconPool.addIcon("legacy-syntax", "collection-1", "Arial", "beef", false, false), undefined,
+					"Adding an icon twice without override should return 'undefined' instead of the icon info object.");
+
+					// single char
+					var oIcon1 = sap.ui.core.IconPool.addIcon("test01", "test", {
+						content: "0000"
+					});
+					var oIcon2 = sap.ui.core.IconPool.addIcon("test02", "test", {
+						content: ["0000"]
+					});
+
+					var oIcon3 = sap.ui.core.IconPool.addIcon("test03", "test", {
+						content: "0f0f"
+					});
+					var oIcon4 = sap.ui.core.IconPool.addIcon("test04", "test", {
+						content: ["0f0f"]
+					});
+
+					assert.equal(oIcon1.content, String.fromCharCode(0x0000), "0000-Icons have correct content");
+					assert.equal(oIcon2.content, String.fromCharCode(0x0000), "0000-Icons have correct content");
+					assert.equal(oIcon1.content, oIcon2.content, "0000-Icons match");
+
+					assert.equal(oIcon3.content, String.fromCharCode(0x0f0f), "0000-Icons have correct content");
+					assert.equal(oIcon4.content, String.fromCharCode(0x0f0f), "0000-Icons have correct content");
+					assert.equal(oIcon3.content, oIcon4.content, "0f0f-Icons match");
+
+				});
+				QUnit.test("isIconURI", function(assert) {
+					assert.equal(IconPool.isIconURI(), false, "Should return 'false' when no URI is provided.");
+					assert.equal(IconPool.isIconURI("sap-icon://"), false, "Should return 'false' when no hostname is provided.");
+					assert.equal(IconPool.isIconURI("sap-icon://foo"), true, "Should return 'true' for valid icon URIs.");
+				});
+				QUnit.test("getIconCollectionNames", function(assert) {
+					assert.deepEqual(IconPool.getIconCollectionNames(), [ "undefined", "collection-1", "test" ], "Correct set of collections should be returned.");
+				});
+				QUnit.test("getIconNames", function(assert) {
+
+					// default collection
+					assert.ok(Object.keys(IconPool.getIconNames()).length > 10, "Default collection should have more than 10 icons.");
+
+					// custom collection
+					assert.deepEqual(IconPool.getIconNames("collection-1"), [ "legacy-syntax" ], "Correct set of icons for 'collection-1' should be returned.");
+
+				});
+				QUnit.test("insertFontFaceStyle", function(assert) {
+					IconPool.insertFontFaceStyle();
+					assert.ok(jQuery("head > style[type='text/css']").text().indexOf("font-family: 'SAP-icons'") !== -1, "Style should have been inserted.");
+				});
+				QUnit.test("_calcAbsPath", function(assert) {
+					assert.equal(IconPool._calcAbsPath("themes/base/fonts/", "http://foo.bar/baz/?foo=bar#blub"), "http://foo.bar/baz/themes/base/fonts/", "Correct absolute URI should get calculated.");
+				});
+				QUnit.test("getIconForMimeType", function(assert) {
+					assert.equal(IconPool.getIconForMimeType("image/png"), "sap-icon://attachment-photo", "Should return correct icon URI.");
+					assert.equal(IconPool.getIconForMimeType("text/x-foo-bar"), "sap-icon://document", "Should return 'document' icon URI as fallback.");
+				});
+
+			});
+
+		</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+	</body>
+</html>
