@@ -16,14 +16,15 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * Table which handles analytical OData backends
+	 * Table which handles analytical OData backends. The AnalyticalTable only works with an AnalyticalBinding and
+	 * correctly annotated OData services. Please check on the SAP Annotations for OData Version 2.0 documentation for further details.
+	 * @see http://scn.sap.com/docs/DOC-44986
+	 *
 	 * @extends sap.ui.table.Table
 	 * @version ${version}
 	 *
 	 * @constructor
 	 * @public
-	 * @experimental Since version 1.21.
-	 * The AnalyticalTable will be productized soon.
 	 * @alias sap.ui.table.AnalyticalTable
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
