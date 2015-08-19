@@ -396,6 +396,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	SearchField.prototype.onFocus = function(event) {
 
+		// IE does not really focuses inputs and does not blur them if the document itself is not focused
+		if (sap.ui.Device.browser.internet_explorer && !document.hasFocus()) {
+			return;
+		}
+
 		this.$().toggleClass("sapMFocus", true);
 
 		// clear tooltip of the refresh button
