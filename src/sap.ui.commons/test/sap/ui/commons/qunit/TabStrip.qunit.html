@@ -196,7 +196,7 @@
 
 			// click on close icon -> get DOM of it
 			var oCloseDom = jQuery("#tab1").children(".sapUiTabClose").get(0);
-			qutils.triggerMouseEvent(oCloseDom, "mousedown");
+			qutils.triggerMouseEvent(oCloseDom, "click");
 			equal(iEvent, 2, "Event number after click on Close icon of 2.Tab :");
 			equal(iIndex, 1, "Event index after click on Close icon of 2.Tab :");
 			iEvent = 0;
