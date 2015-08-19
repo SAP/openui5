@@ -662,10 +662,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 	View.prototype.loaded = function() {
 		if (!this._oAsyncState) {
 			// resolve immediately with this view instance
-			var that = this;
-			return new Promise(function(fnResolve) {
-				fnResolve(that);
-			});
+			return Promise.resolve(this);
 		} else {
 			return this._oAsyncState.promise;
 		}
