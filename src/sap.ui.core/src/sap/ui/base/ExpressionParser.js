@@ -462,9 +462,56 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 	 *   optional source text
 	 */
 	function tokenize(fnResolveBinding, sInput, iStart) {
-		var aParts = [],
+		var aBindingsWithStrings = [], // the bindings where every property is still a string
+			aParts = [], // the resulting parts (corresponds to aBindingsWithStrings)
 			aTokens = [],
 			oTokenizer = jQuery.sap._createJSTokenizer();
+
+		/**
+		 * Saves the binding as a part. Reuses an existing part if the binding is identical.
+		 * @param {object} oBinding
+		 *   the binding to save
+		 * @param {number} iStart
+		 *   the binding's start index in the input string
+		 * @returns {number}
+		 *   the index at which it has been saved/found in aParts
+		 */
+		function saveBindingAsPart(oBinding, iStart) {
+			var oBindingWithString,
+				i;
+
+			/**
+			 * Checks whether the binding has other properties but "path" and "model".
+			 * @returns {boolean} <code>true</code> if there are other properties
+			 */
+			function hasMoreThanPathAndModel() {
+				var sKey;
+
+				for (sKey in oBinding) {
+					if (sKey !== "path" && sKey !== "model") {
+						return true;
+					}
+				}
+				return false;
+			}
+
+			if (hasMoreThanPathAndModel()) {
+				// the binding must be a complex binding; property "type" (and poss. others) are
+				// newly created objects and thus incomparable -> parse again to have the names
+				oBindingWithString = jQuery.sap.parseJS(sInput, iStart).result;
+			} else {
+				// only path and model; both are strings and easily comparable
+				oBindingWithString = oBinding;
+			}
+			for (i = 0; i < aParts.length; i += 1) {
+				if (jQuery.sap.equal(aBindingsWithStrings[i], oBindingWithString)) {
+					return i;
+				}
+			}
+			aBindingsWithStrings[i] = oBindingWithString;
+			aParts[i] = oBinding;
+			return i;
+		}
 
 		/**
 		 * Consumes the next token in the input string and pushes it to the array of tokens.
@@ -505,9 +552,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 				oBinding = fnResolveBinding(sInput, oTokenizer.getIndex() - 1);
 				oToken = {
 					id: "BINDING",
-					value: aParts.length
+					value: saveBindingAsPart(oBinding.result, iIndex + 1)
 				};
-				aParts.push(oBinding.result);
 				oTokenizer.setIndex(oBinding.at); //go to first character after binding string
 			} else {
 				rTokens.lastIndex = iIndex;
