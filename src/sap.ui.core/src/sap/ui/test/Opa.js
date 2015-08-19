@@ -1,13 +1,9 @@
 /*!
  * ${copyright}
  */
-
-/////////////////////
-//// OPA - One Page Acceptance testing
-//// Currently this is distributed with UI5 but it does not have dependencies to it.
-//// The only dependency is jQuery. As i plan to get this into a separate repository, i did not use the UI5 naming conventions
-/////////////////////
 sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
+	"use strict";
+
 	///////////////////////////////
 	/// Privates
 	///////////////////////////////
@@ -67,7 +63,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 
 		var queueElement = queue.shift();
 
-		// This has to be here for iframe with IE - if there is no timeout, there is a window with all properties undefined.
+		// This has to be here for IFrame with IE - if there is no timeout, there is a window with all properties undefined.
 		// Therefore the core code throws exceptions, when functions like setTimeout are called.
 		// I don't have a proper explanation for this.
 		setTimeout(function () {
@@ -121,16 +117,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 
 
 	/**
-	 * @class One Page Acceptance testing.
 	 * This class will help you write acceptance tests in one page or single page applications.
 	 * You can wait for certain conditions to be met.
 	 *
+	 * @class One Page Acceptance testing.
 	 * @public
 	 * @alias sap.ui.test.Opa
 	 * @author SAP SE
 	 * @since 1.22
 	 *
-	 * @param extensionObject An object containing properties and functions. The newly created Opa will be extended by these properties and functions - see jQuery.extend.
+	 * @param {object} [extensionObject] An object containing properties and functions. The newly created Opa will be extended by these properties and functions using jQuery.extend.
 	 */
 	var Opa = function(extensionObject) {
 		this.and = this;
@@ -143,9 +139,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 	 * All of the global values can be overwritten in an individual waitFor call.
 	 * defaults are :
 	 * <ul>
+	 * 		<li>arrangements: a new Opa instance</li>
+	 * 		<li>actions: a new Opa instance</li>
+	 * 		<li>assertions: a new Opa instance</li>
 	 * 		<li>timeout : 15 seconds, is increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true</li>
-	 * 		<li>pollingIntervall: 400 milliseconds</li>
+	 * 		<li>pollingInterval: 400 milliseconds</li>
 	 * </ul>
+	 * You can either directly manipulate the config, or extend it, using {@link sap.ui.test.Opa#.extendConfig}
 	 * @public
 	 */
 	Opa.config = {};
@@ -162,6 +162,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 
 	/**
 	 * Reset Opa.config to its default values
+	 * All of the global values can be overwritten in an individual waitFor call.
+	 *
+	 * defaults are :
+	 * <ul>
+	 * 		<li>arrangements: a new Opa instance</li>
+	 * 		<li>actions: a new Opa instance</li>
+	 * 		<li>assertions: a new Opa instance</li>
+	 * 		<li>timeout : 15 seconds, is increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true</li>
+	 * 		<li>pollingInterval: 400 milliseconds</li>
+	 * </ul>
 	 *
 	 * @public
 	 * @since 1.25
@@ -190,7 +200,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 	};
 
 	/**
-	 * Waits until all waitFor calls are done
+	 * Waits until all waitFor calls are done.
 	 *
 	 * @returns {jQuery.promise} If the waiting was successful, the promise will be resolved. If not it will be rejected
 	 * @public
@@ -211,11 +221,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 			return sResult;
 		}
 
-		var deferred = $.Deferred();
+		var oDeferred = $.Deferred();
 
-		internalEmpty(deferred);
+		internalEmpty(oDeferred);
 
-		return deferred.promise().fail(function(oOptions){
+		return oDeferred.promise().fail(function(oOptions){
 			oOptions.errorMessage = oOptions.errorMessage || "Failed to wait for check";
 			oOptions.errorMessage += addStacks(oOptions);
 			jQuery.sap.log.error(oOptions.errorMessage);
@@ -229,6 +239,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 
 		/**
 		 * Gives access to a singleton object you can save values in.
+		 * This object will only be created once and never destroyed.
+		 * So you may use it across different tests.
 		 *
 		 * @returns {object} the context object
 		 * @public
@@ -237,19 +249,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 		getContext : Opa.getContext,
 
 		/**
+		 * Queues up a waitFor command for Opa.
+		 * The Queue will not be emptied until {@link sap.ui.test.Opa#.emptyQueue} is called.
+		 * If you are using {@link sap.ui.test.opaQunit}, emptyQueue will be called by the wrapped tests.
+		 *
+		 * If you are using Opa5, waitFor takes additional parameters.
+		 * They can be found here: {@link sap.ui.test.Opa5#waitFor}.
 		 * Waits for a check condition to return true. Then a success function will be called.
 		 * If check does not return true until timeout is reached, an error function will be called.
 		 *
+		 *
 		 * @public
-		 * @param {object} options containing check, success and error function;
-		 * properties:
-		 * <ul>
-		 * 	<li>timeout: default 15 (seconds) specifies how long the waitFor function polls before it fails</li>
-		 * 	<li>pollingInterval: default 400 (milliseconds) specifies how often the waitFor function polls</li>
-		 * 	<li>check: function will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop</li>
-		 * 	<li>success: function will get invoked after the check function returns true. If there is no check function defined, it will be directly invoked. waitFor statements added in the success handler will be executed before previously added waitFor statements</li>
-		 * 	<li>error: function will get invoked, when the timeout is reached and check did never return a true.</li>
-		 * </ul>
+		 * @param {object} options containing check, success and error functions
+		 * @param {integer} [oOptions.timeout] default: 15 - (seconds) specifies how long the waitFor function polls before it fails.
+		 * @param {integer} [oOptions.pollingInterval] default: 400 - (milliseconds) specifies how often the waitFor function polls.
+		 * @param {function} [oOptions.check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
+		 * The first parameter passed into the function is the same value that gets passed to the success function.
+		 * Returning something different than boolean in check will not change the first parameter of success.
+		 * @param {function} [oOptions.success] will get invoked after the check function returns true. If there is no check function defined,
+		 * it will be directly invoked. waitFor statements added in the success handler will be executed before previously added waitFor statements
+		 * @param {string} [oOptions.errorMessage] Will be displayed as errorMessage depending on your unit test framework. Currently the only adapter for OPA is QUnit. There the message appears when OPA5 is reaching its timeout but QUnit has not reached it yet.
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 */
 		waitFor : function (options) {
@@ -297,14 +316,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 		},
 
 		/**
-		 * Calls the static extendConfig function in the Opa namespace
+		 * Calls the static extendConfig function in the Opa namespace {@link sap.ui.test.Opa#.extendConfig}
 		 * @public
 		 * @function
 		 */
 		extendConfig : Opa.extendConfig,
 
 		/**
-		 * Calls the static emptyQueue function in the Opa namespace
+		 * Calls the static emptyQueue function in the Opa namespace {@link sap.ui.test.Opa#.emptyQueue}
 		 * @public
 		 * @function
 		 */
