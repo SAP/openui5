@@ -200,6 +200,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
+	 * Handles the mouse down event.
+	 * @private
+	 */
+	TabStrip.prototype.onmousedown = function(oEvent) {
+		var oSource = oEvent.target;
+		if (oSource.className == "sapUiTabClose") {
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
+
+			// clear the target so the the
+			// ItemNavigation won't set the focus on this tab.
+			oEvent.target = null;
+
+			return;
+		}
+		this.selectTabByDomRef(oSource);
+	};
+
+	/*
 	 * Handles the click event.
 	 * @private
 	 */
@@ -211,9 +230,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (iIdx > -1) {
 				this.fireClose({index:iIdx});
 			}
-			return;
 		}
-		this.selectTabByDomRef(oSource);
 	};
 
 	/*
