@@ -223,10 +223,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'jque
 			aRules = [];
 		if (jQuery.sap.domById("sap-ui-theme-" + lib)) {
 			var cssFile = jQuery.sap.domById("sap-ui-theme-" + lib);
-			if (cssFile.sheet) {
+			if (cssFile.sheet && cssFile.sheet.cssRules) {
 				aRules = cssFile.sheet.cssRules;
-			} else if (cssFile.styleSheet) {
-				//we're in an old IE version
+			} else if (cssFile.styleSheet && cssFile.styleSheet.rules) {
+				// we're in an old IE version
 				aRules = cssFile.styleSheet.rules;
 			}
 		}
