@@ -753,7 +753,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 		 */
 		ComboBox.prototype.synchronizeSelection = function() {
 
-			// the "selectedKey" property is synchronized with the "selectedItem" association
 			if (this.isSelectionSynchronized()) {
 				return;
 			}
@@ -767,8 +766,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 
 				// update and synchronize "selectedItem" association and
 				// "selectedKey" property
-				this.setAssociation("selectedItem", vItem, true);	// suppress re-rendering
-				this.setProperty("selectedItemId", vItem.getId(), true);	// suppress re-rendering
+				this.setAssociation("selectedItem", vItem, true);
+				this.setProperty("selectedItemId", vItem.getId(), true);
 
 				// update the value if it has not changed
 				if (this._sValue === this.getValue()) {
@@ -788,7 +787,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 		};
 
 		/**
-		 * Creates a picker.
+		 * Creates a picker popup container where the selection should take place.
 		 * To be overwritten by subclasses.
 		 *
 		 * @param {string} sPickerType
@@ -888,19 +887,17 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 			fnPickerTypeBeforeOpen && fnPickerTypeBeforeOpen.call(this);
 		};
 
-		/*
+		/**
 		 * This event handler will be called before the control's picker popover is opened.
 		 *
-		 * @protected
 		 */
 		ComboBox.prototype.onBeforeOpenPopover = function() {
 			this._synchronizePickerWidth();
 		};
 
-		/*
+		/**
 		 * This event handler will be called after the control's picker pop-up is opened.
 		 *
-		 * @protected
 		 */
 		ComboBox.prototype.onAfterOpen = function() {
 			var oDomRef = this.getFocusDomRef(),
@@ -914,10 +911,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 			}
 		};
 
-		/*
+		/**
 		 * This event handler will be called before the picker pop-up is closed.
 		 *
-		 * @protected
 		 */
 		ComboBox.prototype.onBeforeClose = function() {
 			var oDomRef = this.getFocusDomRef();
@@ -936,10 +932,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 			sap.ui.Device.resize.detachHandler(this._synchronizePickerWidth, this);
 		};
 
-		/*
+		/**
 		 * This event handler will be called after the picker pop-up is closed.
 		 *
-		 * @protected
 		 */
 		ComboBox.prototype.onAfterClose = function() {
 			var oDomRef = this.getFocusDomRef();
@@ -1065,8 +1060,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 				vItem = this.getDefaultSelectedItem();
 			}
 
-			// update and synchronize "selectedItem" association,
-			// "selectedKey" and "selectedItemId" properties
 			this.setSelection(vItem, { suppressInvalidate: true });
 
 			// set the input value
@@ -1097,8 +1090,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 				vItem = this.getDefaultSelectedItem();
 			}
 
-			// update and synchronize "selectedItem" association,
-			// "selectedKey" and "selectedItemId" properties
 			this.setSelection(vItem, { suppressInvalidate: true	});
 			vItem = this.getSelectedItem();
 
@@ -1133,8 +1124,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 					oItem = this.getDefaultSelectedItem();
 				}
 
-				// update and synchronize "selectedItem" association,
-				// "selectedKey" and "selectedItemId" properties
 				this.setSelection(oItem, { suppressInvalidate: true	});
 
 				// set the input value
@@ -1151,11 +1140,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 				return this;
 			}
 
-			// note: setSelectedKey() method sometimes is called
-			// before the items are added, in this case the "selectedItem" association,
-			// "selectedItemId" and the "value" properties need to be updated in onBeforeRendering()
 			this._sValue = this.getValue();
-			return this.setProperty("selectedKey", sKey);	// update "selectedKey" property, re-rendering is needed
+			return this.setProperty("selectedKey", sKey);
 		};
 
 		/**
@@ -1177,7 +1163,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer', 
 		 * @public
 		 */
 		ComboBox.prototype.removeItem = function(vItem) {
-			vItem = ComboBoxBase.prototype.removeItem.call(this, vItem);
+			vItem = ComboBoxBase.prototype.removeItem.apply(this, arguments);
 
 			if (this.isBound("items") && !this.bDataUpdated) {
 				return vItem;
