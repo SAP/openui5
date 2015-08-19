@@ -166,7 +166,7 @@
 
 		test("mouse interaction", function() {
 			//click on title ID -> otherwise DOM element would be needed
-			qutils.triggerMouseEvent("tab1", "click");
+			qutils.triggerMouseEvent("tab1", "mousedown");
 			sap.ui.getCore().applyChanges(); // rerendering must be finished
 			equal(oTabStrip1.getSelectedIndex(), 1, "Selection index after click on 2. Tab :");
 			equal(iEvent, 1, "Event number after click on 2. Tab :");
@@ -180,7 +180,7 @@
 			ok(!jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is Selected - has no Class sapUiTab");
 			equal(jQuery("#tab1").attr("aria-selected"), "true", "ARIA-SELECTED of 2. tab");
 
-			qutils.triggerMouseEvent("tab2", "click"); // disabled tab
+			qutils.triggerMouseEvent("tab2", "mousedown"); // disabled tab
 			sap.ui.getCore().applyChanges(); // rerendering must be finished
 			equal(oTabStrip1.getSelectedIndex(), 1, "Selection index after click on 3. Tab :");
 			equal(iEvent, 0, "Event number after click on 3. Tab :");
