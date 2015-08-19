@@ -30,6 +30,7 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 				bVerticalScrolling = oControl.getVerticalScrolling(),
 				sState = oControl.getState(),
 				bStretch = oControl.getStretch(),
+				bStretchOnPhone = oControl.getStretchOnPhone(),
 				bResizable = oControl.getResizable(),
 				bDraggable = oControl.getDraggable();
 
@@ -54,6 +55,11 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			oRm.addClass("sapMDialog");
 			oRm.addClass("sapMDialog-CTX");
 			oRm.addClass("sapMPopup-CTX");
+
+			if (bStretch || bStretchOnPhone) {
+				oRm.addClass("sapMDialogStretched");
+			}
+
 			oRm.addClass(sap.m.Dialog._mStateClasses[sState]);
 
 			// No Footer
