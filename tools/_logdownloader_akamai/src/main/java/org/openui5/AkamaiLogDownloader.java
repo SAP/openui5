@@ -19,9 +19,11 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -699,6 +701,7 @@ public class AkamaiLogDownloader {
 		final String CORE_STRING_EU = "GET	/" + applicationName + ".eu1.hana.ondemand.com/resources/sap-ui-core.js	";
 		final String CORE_STRING_US = "GET	/" + applicationName + ".us1.hana.ondemand.com/resources/sap-ui-core.js	";
 		final String CORE_STRING_AP = "GET	/" + applicationName + ".ap1.hana.ondemand.com/resources/sap-ui-core.js	";
+		final Pattern VERSIONED_CORE_PATTERN = Pattern.compile(".*GET\\t/" + applicationName + "\\....\\.hana\\.ondemand\\.com/\\d+\\.\\d+\\.\\d+/resources/sap-ui-core\\.js.*");
 
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(logFile));
@@ -719,7 +722,8 @@ public class AkamaiLogDownloader {
 						|| line.contains(DEMOKIT_ROBOTS_STRING_AP)
 						|| line.contains(CORE_STRING_EU)
 						|| line.contains(CORE_STRING_US)
-						|| line.contains(CORE_STRING_AP)) { // only handle interesting lines
+						|| line.contains(CORE_STRING_AP)
+						|| VERSIONED_CORE_PATTERN.matcher(line).matches()) { // only handle interesting lines
 
 					String[] parts = line.split("\\t");
 					String ip = parts[2];
@@ -1023,7 +1027,7 @@ public class AkamaiLogDownloader {
 				
 				
 				// save interesting referrers
-				Map<String, Integer> referrerMapToUse = (logLine.getType().equals(Resource.CORE)) ? coreReferrers : referrers;
+				Map<String, Integer> referrerMapToUse = (logLine.getType().equals(Resource.CORE) || logLine.getType().equals(Resource.VERSIONED_CORE)) ? coreReferrers : referrers;
 				String ref = logLine.getReferrerIfInteresting();
 				if (ref != null) {
 					Integer refCount = referrerMapToUse.get(ref);
@@ -1046,6 +1050,8 @@ public class AkamaiLogDownloader {
 				Calendar c1 = Calendar.getInstance();
 				c1.setTime(date);
 				
+				// This code looks like it sums up while looping, but actually  it is only executed once... so only one of these variables will be "1", then they will be discarded again.
+				
 				int runtimeDownloads = 0;
 				int mobileDownloads = 0;
 				int sdkDownloads = 0;
@@ -1056,6 +1062,7 @@ public class AkamaiLogDownloader {
 				int getstartedHits = 0;
 				int demokitHits = 0;
 				int coreHits = 0;
+				Map<String,Integer> coreVersions = new TreeMap<String,Integer>(new VersionStringComparator());
 				
 				switch (logLine.getType()) {
 				case GITHUB_PAGE:
@@ -1088,6 +1095,15 @@ public class AkamaiLogDownloader {
 				case SDK_DOWNLOAD:
 					sdkDownloads++;
 					break;
+				case VERSIONED_CORE:
+					String coreVersion = logLine.getVersionedCoreVersion();
+					if (coreVersion != null && coreVersion.length() > 0) {
+						if (coreVersions.get(coreVersion) != null) {
+							throw new RuntimeException("There is already something in the core versions map!");
+						}
+						coreVersions.put(coreVersion, 1);
+					}
+					break;
 				default:
 					System.out.println("ERROR: unknown case");
 				}
@@ -1095,7 +1111,7 @@ public class AkamaiLogDownloader {
 				// merge to previous data for same day or create new data in case of new day
 				String thisDay = ""+c1.get(Calendar.YEAR) + (c1.get(Calendar.MONTH)+1) + c1.get(Calendar.DAY_OF_MONTH);
 				LogFileData existingLogLine = fileDataMap.get(thisDay);
-				LogFileData newData = new LogFileData(date, runtimeDownloads, mobileDownloads, sdkDownloads, githubHits, blogHits, referencesHits, featuresHits, getstartedHits, demokitHits, coreHits, -1); // FIXME: IP counting is much more difficult: need to check per day which IPs have been seen and also decide which IPs we are interested in: only the root pages or ALL?
+				LogFileData newData = new LogFileData(date, runtimeDownloads, mobileDownloads, sdkDownloads, githubHits, blogHits, referencesHits, featuresHits, getstartedHits, demokitHits, coreHits, -1, coreVersions); // FIXME: IP counting is much more difficult: need to check per day which IPs have been seen and also decide which IPs we are interested in: only the root pages or ALL?
 				if (existingLogLine != null) {
 					existingLogLine.addData(newData);
 				} else {
@@ -1255,6 +1271,12 @@ public class AkamaiLogDownloader {
 			o.put("demokitHits", data.demokitHits);
 			o.put("coreHits", data.coreHits);
 			o.put("ipCounter", data.ipCounter);
+			
+			JSONObject versionsObject = new JSONObject();
+			for (String version : data.getCoreVersions().keySet()) {
+				versionsObject.put(version, data.getCoreVersions().get(version));
+			}
+			o.put("coreVersions", versionsObject);
 
 			dataArray.put(o);
 		}
@@ -1306,7 +1328,7 @@ public class AkamaiLogDownloader {
 			FileOutputStream fos = new FileOutputStream(file);
 			bw = new BufferedWriter(new OutputStreamWriter(fos));
 			
-			String outFileText = "Date;Runtime Downloads;Hybrid Downloads;SDK Downloads;GitHub Hits;SDK Hits;Blog Hits;IP Counter;References Hits;Features Hits;GetStarted Hits;Core Hits\n";
+			String outFileText = "Date;Runtime Downloads;Hybrid Downloads;SDK Downloads;GitHub Hits;SDK Hits;Blog Hits;IP Counter;References Hits;Features Hits;GetStarted Hits;Core Hits;Core Versions\n";
 			bw.write(outFileText);
 
 			for (int i = 0; i < dataArray.length(); i++) {
@@ -1319,6 +1341,8 @@ public class AkamaiLogDownloader {
 				int githubHits = dataSet.getInt("githubHits");
 				int demokitHits = dataSet.getInt("demokitHits");
 				int blogHits = dataSet.getInt("blogHits");
+				String coreVersions = "{}";
+				
 				int referencesHits;
 				try {
 					referencesHits = dataSet.getInt("referencesHits");
@@ -1343,10 +1367,16 @@ public class AkamaiLogDownloader {
 				} catch (JSONException e) {
 					coreHits = 0;
 				}
+				try {
+					JSONObject coreVersionsObject = dataSet.getJSONObject("coreVersions");
+					coreVersions = stringifyJSON(coreVersionsObject);
+				} catch (JSONException e) {
+					coreVersions = "{}";
+				}
 				int ipCounter = dataSet.getInt("ipCounter");
 
 				// the result string for a line in the CSV file
-				outFileText = dateText + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + ";" + referencesHits + ";" + featuresHits + ";" + getstartedHits + ";" + coreHits + "\n";
+				outFileText = dateText + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + ";" + referencesHits + ";" + featuresHits + ";" + getstartedHits + ";" + coreHits + ";" + coreVersions + "\n";
 				bw.write(outFileText);
 			}
 
@@ -1362,7 +1392,18 @@ public class AkamaiLogDownloader {
 		}
 	}
 	
+	private String stringifyJSON(JSONObject o) {
+		Iterator<String> versions = o.keys();
+		TreeMap<String,Integer> sorted_map = new TreeMap<String,Integer>(new VersionStringComparator());
+
+		while(versions.hasNext()) {
+			String version = versions.next();
+			sorted_map.put(version, o.getInt(version));
+		}
 	
+		return LogFileData.stringifyMap(sorted_map);
+	}
+
 	/**
 	 * Copies the given file to the file named by the EXPORT commandline parameter (if that one is set)
 	 * This is meant to export a JSON file to a server location to be used inside a web app.

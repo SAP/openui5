@@ -1,6 +1,9 @@
 package org.openui5;
 
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.json.JSONObject;
 
@@ -24,10 +27,11 @@ class LogFileData {
 	int demokitHits;
 	int coreHits;
 	int ipCounter;
+	Map<String,Integer> coreVersions;
 
 	public LogFileData(Date date, int runtimeDownloads,
 			int mobileDownloads, int sdkDownloads, int githubHits,
-			int blogHits, int referencesHits, int featuresHits, int getstartedHits, int demokitHits, int coreHits, int ipCounter) {
+			int blogHits, int referencesHits, int featuresHits, int getstartedHits, int demokitHits, int coreHits, int ipCounter, Map<String,Integer> coreVersions) {
 		super();
 
 		int day = date.getDate();
@@ -49,6 +53,7 @@ class LogFileData {
 		this.demokitHits = demokitHits;
 		this.coreHits = coreHits;
 		this.ipCounter = ipCounter;
+		this.coreVersions = coreVersions;
 	}
 
 	public String getYYYYMMDD_WithDashes() {
@@ -72,6 +77,17 @@ class LogFileData {
 		int month = Integer.parseInt(dateParts[1]);
 		int day = Integer.parseInt(dateParts[2]);
 		
+		Map<String,Integer> coreVersions = new TreeMap<String,Integer>(new VersionStringComparator());
+		if (obj.has("coreVersions")) {
+			JSONObject coreVersionsObj = obj.getJSONObject("coreVersions");
+			
+			Iterator<String> versions = coreVersionsObj.keys();
+			while(versions.hasNext()) {
+				String version = versions.next();
+				coreVersions.put(version, coreVersionsObj.getInt(version));
+			}
+		}
+		
 		LogFileData data = new LogFileData(
 				new Date(year-1900, month-1, day),
 				obj.getInt("runtime"), 
@@ -84,7 +100,8 @@ class LogFileData {
 				obj.getInt("getstartedHits"),
 				obj.getInt("demokitHits"),
 				obj.getInt("coreHits"),
-				obj.getInt("ipCounter"));
+				obj.getInt("ipCounter"),
+				coreVersions);
 		return data;
 	}
 
@@ -125,12 +142,30 @@ class LogFileData {
 	public int getIpCounter() {
 		return ipCounter;
 	}
+	
+	public Map<String, Integer> getCoreVersions() {
+		return coreVersions;
+	}
 
 	@Override
 	public String toString() {
 		// the result string for a line in the CSV file
-		String csvText = getDDMMYYYY_WithDots() + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + ";" + referencesHits + ";" + featuresHits + ";" + getstartedHits + ";" + coreHits;
+		String coreVersionsString = stringifyMap(coreVersions);
+		String csvText = getDDMMYYYY_WithDots() + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + ";" + referencesHits + ";" + featuresHits + ";" + getstartedHits + ";" + coreHits + ";" + coreVersionsString;
 		return csvText;
+	}
+	
+	static String stringifyMap(Map<String, Integer> map) {
+		String result = "{";
+		
+		boolean comma = false;
+		for (String version : map.keySet()) {
+			if (comma) result += ",";
+			result += "\"" + version + "\":" + map.get(version);
+			comma = true;
+		}
+		
+		return result + "}";
 	}
 
 	public void addData(LogFileData other) {
@@ -149,5 +184,15 @@ class LogFileData {
 		this.demokitHits += other.demokitHits;
 		this.coreHits += other.coreHits;
 		this.ipCounter = Math.max(this.ipCounter, other.ipCounter);
+		
+		Map<String,Integer> otherCoreVersions = other.getCoreVersions(); // merge and sum up version maps
+		for (String version : otherCoreVersions.keySet()) {
+			int otherCount = otherCoreVersions.get(version);
+			if (coreVersions.containsKey(version)) {
+				coreVersions.put(version, coreVersions.get(version) + otherCount);
+			} else {
+				coreVersions.put(version, otherCount);
+			}
+		}
 	}
 }
