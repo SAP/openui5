@@ -615,6 +615,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 			}
 		}
 	};
+	
+	/**
+	 * Creates the ID to be used for the invisible Placeholder DOM element.
+	 * This method can be used to get direct access to the placeholder DOM element.
+	 * Also statically available as RenderManager.createInvisiblePlaceholderId()
+	 *
+	 * @param {sap.ui.core.Element} oElement - The Element instance for which to create the placeholder ID
+	 * @returns {string} The ID used for the invisible Placeholder of this element
+	 * @static
+	 * @protected
+	 */
+	RenderManager.createInvisiblePlaceholderId = function(oElement) {
+		return sap.ui.core.RenderPrefixes.Invisible + oElement.getId();
+	};
 
 	//#################################################################################################
 	// Methods for preserving HTML content
@@ -1256,7 +1270,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Interface', 'sap/ui/base/Object
 		 * @param {sap.ui.core.Control} [oControl] The instance of the invisible control
 		 */
 		render: function(oRm, oControl) {
-			var sPlaceholderId = sap.ui.core.RenderPrefixes.Invisible + oControl.getId();
+			var sPlaceholderId = RenderManager.createInvisiblePlaceholderId(oControl);
 
 			var sPlaceholderHtml =
 				'<span ' +
