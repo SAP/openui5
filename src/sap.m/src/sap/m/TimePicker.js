@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.TimePicker.
-sap.ui.define(['jquery.sap.global', './InputBase', './ResponsivePopover', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/model/type/Date', './TimePickerSliders'],
-	function(jQuery, InputBase, ResponsivePopover, EnabledPropagator, IconPool, DateModel, TimePickerSliders) {
+sap.ui.define(['jquery.sap.global', './InputBase', './ResponsivePopover', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/model/type/Time', './TimePickerSliders'],
+	function(jQuery, InputBase, ResponsivePopover, EnabledPropagator, IconPool, TimeModel, TimePickerSliders) {
 		"use strict";
 
 		/**
@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './ResponsivePopover', 'sap/u
 					 * Determines the format, displayed in the input field and the picker sliders.
 					 * The default value is the browser's medium time format locale setting
 					 * (https://openui5.hana.ondemand.com/docs/api/symbols/sap.ui.core.LocaleData.html#getTimePattern).
-					 * If data binding with type sap.ui.model.type.Date is used for the value property,
+					 * If data binding with type sap.ui.model.type.Time is used for the value property,
 					 * the displayFormat property is ignored as the information is provided from the binding itself.
 					 */
 					displayFormat : {type : "string", group : "Appearance", defaultValue : null},
@@ -46,7 +46,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './ResponsivePopover', 'sap/u
 					/**
 					 * Determines the format of the value property.
 					 * The default value is the browser's medium time format locale setting.
-					 * If data binding with type sap.ui.model.type.Date is used for the value property,
+					 * If data binding with type sap.ui.model.type.Time is used for the value property,
 					 * the valueFormat property is ignored as the information is provided from the binding itself.
 					 */
 					valueFormat : {type : "string", group : "Data", defaultValue : null},
@@ -548,7 +548,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './ResponsivePopover', 'sap/u
 			if (!sPlaceholder) {
 				oBinding = this.getBinding("value");
 
-				if (oBinding && oBinding.oType && (oBinding.oType instanceof DateModel)) {
+				if (oBinding && oBinding.oType && (oBinding.oType instanceof TimeModel)) {
 					sPlaceholder = oBinding.oType.getOutputPattern();
 				} else {
 					sPlaceholder = this.getDisplayFormat();
@@ -987,7 +987,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './ResponsivePopover', 'sap/u
 				oFormat,
 				oBinding = this.getBinding("value");
 
-			if (oBinding && oBinding.oType && (oBinding.oType instanceof DateModel)) {
+			if (oBinding && oBinding.oType && (oBinding.oType instanceof TimeModel)) {
 				sPattern = oBinding.oType.getOutputPattern();
 				bRelative = !!oBinding.oType.oOutputFormat.oFormatOptions.relative;
 			}
