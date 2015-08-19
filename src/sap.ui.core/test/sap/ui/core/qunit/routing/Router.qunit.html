@@ -1346,6 +1346,33 @@
 			sinon.assert.calledWith(fnDisplayFooStub, sinon.match({ hash: "test"}));
 			sinon.assert.calledWith(fnDisplayBarStub, sinon.match({ hash: "test"}));
 		});
+
+		QUnit.module("Bug fix in Crossroads");
+
+		QUnit.test("slash should be optional when it's between ')' and ':'", function (assert) {
+			var callCount = 0,
+				fnMatched = function (oEvent) {
+					if (oEvent.getParameter("name") === "test") {
+						callCount++;
+					}
+				};
+
+			var oRouter = new sap.ui.core.routing.Router([{
+				name: "test",
+				pattern: "product({id1})/:id2:"
+			}]);
+
+			oRouter.attachRoutePatternMatched(fnMatched);
+
+			// Act
+			oRouter.initialize();
+			oRouter.parse("product(1)");
+
+			// Assert
+			assert.strictEqual(callCount, 1, "The route pattern matched handler should be called once");
+
+			oRouter.destroy();
+		});
 	})();
 </script>
 </head>
