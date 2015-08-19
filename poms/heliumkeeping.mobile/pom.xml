@@ -245,8 +245,8 @@
 			<id>mobile-custom</id>
 			<activation>
 				<property>
-					<name>artifact</name>
-					<value>mobile-custom</value>
+					<name>deployable</name>
+					<value>sapui5-mobile-custom</value>
 				</property>
 			</activation>
 			<properties>
