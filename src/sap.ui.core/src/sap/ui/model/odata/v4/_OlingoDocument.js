@@ -192,6 +192,9 @@ sap.ui.define([
 					oResult.EntitySets.push({
 						"Name" : oEntitySet.name,
 						"Fullname" : oResult.QualifiedName + "/" + oEntitySet.name,
+						"NavigationPropertyBindings" :
+							OlingoDocument.transformNavigationPropertyBindings(
+								oEntitySet.navigationPropertyBinding),
 						"EntityType@odata.navigationLink" :
 							"Types(QualifiedName='" + oEntitySet.entityType + "')"
 					});
@@ -202,12 +205,39 @@ sap.ui.define([
 					oResult.Singletons.push({
 						"Name" : oSingleton.name,
 						"Fullname" : oResult.QualifiedName + "/" + oSingleton.name,
+						"NavigationPropertyBindings" :
+							OlingoDocument.transformNavigationPropertyBindings(
+								oSingleton.navigationPropertyBinding),
 						"Type@odata.navigationLink" :
 							"Types(QualifiedName='" + oSingleton.type + "')"
 					});
 				});
 			}
 			return oResult;
+		},
+
+		/**
+		 * Transforms the given NavigationPropertyBindings to the Edmx format.
+		 *
+		 * @param {object[]} aNavigationPropertyBindings
+		 *   the array of NavigationPropertyBindings
+		 * @return {object[]}
+		 *   the transformed array of NavigationPropertyBindings
+		 * @private
+		 */
+		transformNavigationPropertyBindings : function (aNavigationPropertyBindings) {
+			var aResult = [];
+
+			if (aNavigationPropertyBindings) {
+				aNavigationPropertyBindings.forEach(function(oNavigationPropertyBinding) {
+					aResult.push({
+						"Path" : oNavigationPropertyBinding.path,
+						"Target@odata.navigationLink" : "EntitySets(Fullname='"
+							+ encodeURIComponent(oNavigationPropertyBinding.target) + "')"
+					});
+				});
+			}
+			return aResult;
 		},
 
 		/**

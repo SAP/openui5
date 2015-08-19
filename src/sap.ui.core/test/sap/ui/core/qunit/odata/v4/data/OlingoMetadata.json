@@ -310,7 +310,14 @@
 				}],
 				"singleton" : [{
 					"name" : "Me",
-					"type" : "com.sap.gateway.iwbep.tea_busi.v0001.Worker"
+					"type" : "com.sap.gateway.iwbep.tea_busi.v0001.Worker",
+					"navigationPropertyBinding" : [{
+						"path" : "EMPLOYEE_2_TEAM",
+						"target" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/TEAMS"
+					}, {
+						"path" : "EMPLOYEE_2_EQUIPMENTS",
+						"target" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Equipments"
+					}]
 				}]
 			}
 		}]

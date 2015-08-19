@@ -237,8 +237,8 @@ sap.ui.define([
 		 * and then given to the promise. If the property already has a value, it is returned
 		 * asynchronously without any read.
 		 *
-		 * @param {sap.ui.model.odata.v4.ODataDocumentModel} oModel
-		 *   the model for the meta data
+		 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel
+		 *   the meta model
 		 * @param {object} oObject
 		 *   the object having a navigation link
 		 * @param {string} sProperty
@@ -250,9 +250,13 @@ sap.ui.define([
 		 * @throws Error if both the property and its navigation link are unsupported
 		 * @private
 		 */
-		requestProperty : function (oModel, oObject, sProperty, sRequestPath) {
-			var sNavigationLink,
-				sPath;
+		requestProperty : function (oMetaModel, oObject, sProperty, sRequestPath) {
+			var oArray,
+				oEntityContainer = oMetaModel._oEntityContainer,
+				sNavigationLink,
+				sPath,
+				oResult,
+				oSelector;
 
 			if (sProperty in oObject) {
 				return Promise.resolve(oObject[sProperty]);
@@ -261,10 +265,27 @@ sap.ui.define([
 			if (!(sNavigationLink in oObject)) {
 				throw new Error("Unknown: " + sProperty + ": " + sRequestPath);
 			}
-			sPath = "/" + oObject[sNavigationLink];
-			return oModel.read(sPath).then(function (oResult) {
+			sPath = oObject[sNavigationLink];
+			if (sPath === "" || sPath.indexOf("/") >= 0) {
+				throw new Error("Invalid path: " + sPath);
+			}
+			oSelector = Helper.parsePathSegment(sPath);
+			if (!oSelector.key) {
+				throw new Error("Invalid path: " + sPath);
+			}
+			oArray = oEntityContainer[oSelector.name];
+			if (oArray) {
+				oResult = Helper.findKeyInArray(oArray, oSelector.key);
+				if (oResult) {
+					return Promise.resolve(oResult);
+				}
+			} else {
+				oEntityContainer[oSelector.name] = [];
+			}
+			return oMetaModel.oModel.read("/" + sPath).then(function (oResult) {
+				oEntityContainer[oSelector.name].push(oResult);
 				oObject[sProperty] = oResult;
-				return oObject[sProperty];
+				return oResult;
 			});
 		},
 

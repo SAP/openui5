@@ -201,7 +201,7 @@ sap.ui.require([
 			if (oFixture.nav) {
 				oFixture.nav.forEach(function (oNav) {
 					oHelperMock.expects("requestProperty")
-						.withExactArgs(oMetaModel.oModel, oNav.object, oNav.property,
+						.withExactArgs(oMetaModel, oNav.object, oNav.property,
 							sinon.match.string)
 						.returns(promiseFor(oNav.result || oEntityTypeWorker));
 				});
@@ -213,6 +213,7 @@ sap.ui.require([
 			});
 		});
 	});
+	// TODO what about type casts?
 
 	//*********************************************************************************************
 	QUnit.test("requestMetaContext: /Unknown", function (assert) {
@@ -249,12 +250,12 @@ sap.ui.require([
 				.returns(promiseFor(oEntityContainer));
 			if (oFixture.type === "EntitySet") {
 				oHelperMock.expects("requestProperty")
-					.withExactArgs(this.oMetaModel.oModel, oEntityContainer.EntitySets[0],
+					.withExactArgs(this.oMetaModel, oEntityContainer.EntitySets[0],
 						"EntityType", sinon.match.string)
 					.returns(promiseFor(oEntityTypeWorker));
 			} else {
 				oHelperMock.expects("requestProperty")
-					.withExactArgs(this.oMetaModel.oModel, oEntityContainer.Singletons[0], "Type",
+					.withExactArgs(this.oMetaModel, oEntityContainer.Singletons[0], "Type",
 						sinon.match.string)
 					.returns(promiseFor(oEntityTypeWorker));
 			}
@@ -372,7 +373,7 @@ sap.ui.require([
 			if (oFixture.nav) {
 				oFixture.nav.forEach(function (oNav) {
 					oHelperMock.expects("requestProperty")
-						.withExactArgs(oMetaModel.oModel, oNav.object, oNav.property,
+						.withExactArgs(oMetaModel, oNav.object, oNav.property,
 							sinon.match.string)
 						.returns(promiseFor(oNav.result || oEntityTypeWorker));
 				});

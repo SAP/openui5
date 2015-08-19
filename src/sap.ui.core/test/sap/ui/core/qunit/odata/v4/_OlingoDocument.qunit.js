@@ -237,37 +237,60 @@ sap.ui.require([
 				"EntitySets" : [{
 					"Name" : "Departments",
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Departments",
+					"NavigationPropertyBindings" : 1,
 					"EntityType@odata.navigationLink" :
 						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.Department')"
 				}, {
 					"Name" : "EMPLOYEES",
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/EMPLOYEES",
+					"NavigationPropertyBindings" : 2,
 					"EntityType@odata.navigationLink" :
 						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.Worker')"
 				},{
 					"Name" : "Equipments",
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Equipments",
+					"NavigationPropertyBindings" : 3,
 					"EntityType@odata.navigationLink" :
 						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.EQUIPMENT')"
 				}, {
 					"Name" : "MANAGERS",
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/MANAGERS",
+					"NavigationPropertyBindings" : 4,
 					"EntityType@odata.navigationLink" :
 						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.MANAGER')"
 				}, {
 					"Name" : "TEAMS",
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/TEAMS",
+					"NavigationPropertyBindings" : 5,
 					"EntityType@odata.navigationLink" :
 						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.TEAM')"
 				}],
 				"Singletons" : [{
 					"Name" : "Me",
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Me",
+					"NavigationPropertyBindings" : 6,
 					"Type@odata.navigationLink" :
 						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.Worker')"
 				}]
-			};
+			},
+			oMock = this.oSandbox.mock(OlingoDocument);
+
 		return this.withMetamodel(function (oDocument) {
+			var oContainer = oDocument.dataServices.schema[0].entityContainer;
+
+			oMock.expects("transformNavigationPropertyBindings")
+				.withExactArgs(oContainer.entitySet[0].navigationPropertyBinding).returns(1);
+			oMock.expects("transformNavigationPropertyBindings")
+				.withExactArgs(oContainer.entitySet[1].navigationPropertyBinding).returns(2);
+			oMock.expects("transformNavigationPropertyBindings")
+				.withExactArgs(oContainer.entitySet[2].navigationPropertyBinding).returns(3);
+			oMock.expects("transformNavigationPropertyBindings")
+				.withExactArgs(oContainer.entitySet[3].navigationPropertyBinding).returns(4);
+			oMock.expects("transformNavigationPropertyBindings")
+				.withExactArgs(oContainer.entitySet[4].navigationPropertyBinding).returns(5);
+			oMock.expects("transformNavigationPropertyBindings")
+				.withExactArgs(oContainer.singleton[0].navigationPropertyBinding).returns(6);
+
 			assert.deepEqual(OlingoDocument.transformEntityContainer(oDocument),
 				oEntityContainer);
 		});
@@ -295,15 +318,35 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("transformNavigationPropertyBindings", function (assert) {
+		assert.deepEqual(OlingoDocument.transformNavigationPropertyBindings(undefined), []);
+
+		return this.withMetamodel(function (oDocument) {
+			var aBindings = oDocument.dataServices.schema[0].entityContainer.entitySet[1]
+					.navigationPropertyBinding,
+				aResult = [{
+					"Path" : "EMPLOYEE_2_TEAM",
+					"Target@odata.navigationLink" : "EntitySets(Fullname='com.sap.gateway"
+							+ ".iwbep.tea_busi.v0001.Container%2FTEAMS')"
+				}, {
+					"Path" : "EMPLOYEE_2_EQUIPMENTS",
+					"Target@odata.navigationLink" : "EntitySets(Fullname='com.sap.gateway"
+							+ ".iwbep.tea_busi.v0001.Container%2FEquipments')"
+				}];
+			assert.deepEqual(OlingoDocument.transformNavigationPropertyBindings(aBindings),
+				aResult);
+		});
+	});
+	// TODO set Fullname. But what is the Fullname of NavigationPropertyBindings?
+
+	//*********************************************************************************************
 	QUnit.test("transformType: primitive type", function (assert) {
 		var oEDMType = {
 				"Name" : "String",
 				"QualifiedName" : "Edm.String"
 			};
 
-		return this.withMetamodel(function (oDocument) {
-			assert.deepEqual(OlingoDocument.transformType(oDocument, "Edm.String"), oEDMType);
-		});
+		assert.deepEqual(OlingoDocument.transformType({}, "Edm.String"), oEDMType);
 	});
 
 	//*********************************************************************************************
@@ -396,7 +439,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("transformType: Edm.Metadata.EntityType", function (assert) {
 		var oComplexType = {
-				name: "EntityType",
+				name: "EntityType"
 			},
 			oDocument = {dataServices: {}},
 			sTypeName = "Edm.Metadata.EntityType",
@@ -444,19 +487,9 @@ sap.ui.require([
 			that.oSandbox.mock(OlingoDocument).expects("transformStructuredType")
 				.withExactArgs(oDocument,
 						sQualifiedName, oDocument.dataServices.schema[0].entityType[3])
-				.returns({"QualifiedName": sQualifiedName})
+				.returns({"QualifiedName": sQualifiedName});
 
 			assert.deepEqual(OlingoDocument.transformEntityType(oDocument,
-				sQualifiedName), oEntityType);
-		});
-
-		return oDocumentModel.requestDocument().then(function (oDocument) {
-			that.oSandbox.mock(oDocumentModel).expects("transformStructuredType")
-				.withExactArgs(oDocument,
-					sQualifiedName, oDocument.dataServices.schema[0].entityType[3])
-				.returns({"QualifiedName": sQualifiedName})
-
-			assert.deepEqual(oDocumentModel.transformEntityType(oDocument,
 				sQualifiedName), oEntityType);
 		});
 	});

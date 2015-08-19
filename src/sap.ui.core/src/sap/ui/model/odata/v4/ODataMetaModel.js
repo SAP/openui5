@@ -79,7 +79,7 @@ sap.ui.define([
 			while (aSegments.length) {
 				oPart = nextPart();
 				if (!(oPart.name in oObject)) {
-					return Helper.requestProperty(that.oModel, oObject, oPart.name, sResolvedPath)
+					return Helper.requestProperty(that, oObject, oPart.name, sResolvedPath)
 						.then(followPath);
 				}
 				oNextObject = oObject[oPart.name];
@@ -176,7 +176,7 @@ sap.ui.define([
 				}
 				sMetaPath = sMetaPath + "/Type";
 				if (!("Type" in oProperty)) {
-					return Helper.requestProperty(that.oModel, oProperty, "Type", sMetaPath)
+					return Helper.requestProperty(that, oProperty, "Type", sMetaPath)
 						.then(followPath);
 				}
 				oType = oProperty.Type;
@@ -203,7 +203,7 @@ sap.ui.define([
 			}
 			sProperty = oResult.property === "EntitySets" ? "EntityType" : "Type";
 			sMetaPath += "/" + sProperty;
-			return Helper.requestProperty(that.oModel, oResult.object, sProperty, sMetaPath)
+			return Helper.requestProperty(that, oResult.object, sProperty, sMetaPath)
 				.then(followPath);
 		}).then(function (sMetaPath) {
 			return that.getContext(sMetaPath);

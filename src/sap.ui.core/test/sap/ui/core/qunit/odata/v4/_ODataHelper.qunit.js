@@ -184,33 +184,110 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestProperty: success", function (assert) {
-		var sPath = "EntityContainer/Anything(Fullname='foo.bar.Container/Me')/Foo",
-			oAnything = {
+	QUnit.test("requestProperty: successful read, empty cache", function (assert) {
+		var sPath = "Anything(Fullname='foo.bar.Container%2FBar')",
+			oSource = {
 				"Foo@odata.navigationLink" : sPath
 			},
-			oEntityType = {
-				"QualifiedName" : "foo.bar.Worker"
+			oAnything = {
+				"Fullname" : "foo.bar.Container%2FBar"
 			},
-			oModel = {
-				read: function () {}
+			oMetaModel = {
+				_oEntityContainer : {},
+				oModel : {
+					read: function () {}
+				}
 			};
 
-		this.oSandbox.mock(oModel).expects("read").withExactArgs("/" + sPath)
-			.returns(Promise.resolve(oEntityType));
+		this.oSandbox.mock(oMetaModel.oModel).expects("read").withExactArgs("/" + sPath)
+			.returns(Promise.resolve(oAnything));
 
-		return Helper.requestProperty(oModel, oAnything, "Foo").then(function (oResult) {
-			assert.deepEqual(oResult, oEntityType);
-			assert.strictEqual(oAnything.Foo, oResult);
-			return Helper.requestProperty(oModel, oAnything, "Foo");
-		}).then(function (oResult) {
-			assert.deepEqual(oResult, oEntityType);
+		return Helper.requestProperty(oMetaModel, oSource, "Foo").then(function (oResult) {
+			assert.deepEqual(oResult, oAnything);
+			assert.strictEqual(oSource.Foo, oAnything);
+			assert.strictEqual(oMetaModel._oEntityContainer.Anything[0], oAnything);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestProperty: failure", function (assert) {
-		var sPath = "/EntityContainer/Anything(Fullname='foo.bar.Container/Me')/Foo",
+	QUnit.test("requestProperty: successful read, non-empty cache", function (assert) {
+		var sPath = "Anything(Fullname='foo.bar.Container%2FBar')",
+			oSource = {
+				"Foo@odata.navigationLink" : sPath
+			},
+			oAnything = {
+				"Fullname" : "foo.bar.Container%2FBar"
+			},
+			oMetaModel = {
+				"_oEntityContainer" : {
+					"Anything" : [{}]
+				},
+				oModel : {
+					read: function () {}
+				}
+			};
+
+		this.oSandbox.mock(oMetaModel.oModel).expects("read").withExactArgs("/" + sPath)
+			.returns(Promise.resolve(oAnything));
+
+		return Helper.requestProperty(oMetaModel, oSource, "Foo").then(function (oResult) {
+			assert.deepEqual(oResult, oAnything);
+			assert.strictEqual(oSource.Foo, oAnything);
+			assert.strictEqual(oMetaModel._oEntityContainer.Anything[1], oAnything);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestProperty: from source", function (assert) {
+		var sPath = "Anything(Fullname='foo.bar.Container%2FBar')",
+			oAnything = {
+				"Fullname" : "foo.bar.Container%2FBar"
+			},
+			oSource = {
+				"Foo" : oAnything,
+				"Foo@odata.navigationLink" : sPath
+			},
+			oMetaModel = {
+				oModel : {
+					read: function () {}
+				}
+			};
+
+		this.oSandbox.mock(oMetaModel.oModel).expects("read").never();
+
+		return Helper.requestProperty(oMetaModel, oSource, "Foo").then(function (oResult) {
+			assert.deepEqual(oResult, oAnything);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestProperty: from cache", function (assert) {
+		var sPath = "Anything(Fullname='foo.bar.Container%2FBar')",
+			oSource = {
+				"Foo@odata.navigationLink" : sPath
+			},
+			oAnything = {
+				"Fullname" : "foo.bar.Container%2FBar"
+			},
+			oMetaModel = {
+				_oEntityContainer : {
+					"Anything" : [oAnything]
+				},
+				oModel : {
+					read: function () {}
+				}
+			};
+
+		this.oSandbox.mock(oMetaModel.oModel).expects("read").never();
+
+		return Helper.requestProperty(oMetaModel, oSource, "Foo").then(function (oResult) {
+			assert.deepEqual(oResult, oAnything);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestProperty: no @odata.navigationLink", function (assert) {
+		var sPath = "Anything(Fullname='foo.bar.Container%2FBar')",
 			oModel = {
 				read: function () {}
 			};
@@ -220,5 +297,23 @@ sap.ui.require([
 		assert.throws(function () {
 			Helper.requestProperty(oModel, {}, "Foo", sPath);
 		}, new Error("Unknown: Foo: " + sPath));
+	});
+
+	//*********************************************************************************************
+	["", "Anything", "Foo(Bar='Baz')/Qux"].forEach(function (sPath) {
+		QUnit.test("requestProperty: invalid path: " + sPath, function (assert) {
+			var oModel = {
+					read: function () {}
+				},
+				oSource = {
+					"Foo@odata.navigationLink" : sPath
+				};
+
+			this.oSandbox.mock(oModel).expects("read").never();
+
+			assert.throws(function () {
+				Helper.requestProperty(oModel, oSource, "Foo", sPath);
+			}, new Error("Invalid path: " + sPath));
+		});
 	});
 });
