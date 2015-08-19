@@ -102,11 +102,6 @@ sap.ui.define([
 			unsupported("Not an absolute path");
 		}
 		aSegments = Helper.splitPath(sResolvedPath);
-		oPart = nextPart();
-		if (oPart.all !== 'EntityContainer') {
-			unknown(oPart.all);
-		}
-
 		return Helper.requestEntityContainer(this).then(followPath);
 	};
 
@@ -128,7 +123,7 @@ sap.ui.define([
 	 */
 	ODataMetaModel.prototype.requestMetaContext = function (sPath) {
 		var i = 1,
-			sMetaPath = "/EntityContainer",
+			sMetaPath = "",
 			aSegments = Helper.splitPath(sPath),
 			aMatches,
 			that = this;
@@ -143,8 +138,8 @@ sap.ui.define([
 				if (sProperty in oObject) {
 					oChild = Helper.findInArray(oObject[sProperty], "Name", sName);
 					if (oChild) {
-						sMetaPath += "/" + sProperty + "(Fullname='"
-							+ encodeURIComponent(oChild.Fullname) + "')";
+						sMetaPath += "/" + sProperty + "(Name='"
+							+ encodeURIComponent(oChild.Name) + "')";
 						return {object: oChild, property: sProperty};
 					}
 				}

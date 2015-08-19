@@ -80,14 +80,11 @@ sap.ui.require([
 				"Type@odata.navigationLink" : "Types(QualifiedName='foo.bar.Worker')"
 			}]
 		},
-		sMetaEmployees = "/EntityContainer/EntitySets(Fullname='foo.bar.Container%2FEmployees')",
-		sMetaMe = "/EntityContainer/Singletons(Fullname='foo.bar.Container%2FMe')",
-		sMetaCityname = sMetaEmployees + "/EntityType/Properties(Fullname="
-			+ "'foo.bar.Worker%2FLOCATION')/Type/Properties(Fullname="
-			+ "'foo.bar.ComplexType_Location%2FCity')/Type/Properties(Fullname="
-			+ "'foo.bar.ComplexType_City%2FCITYNAME')",
-		sMetaTeam = sMetaEmployees + "/EntityType/NavigationProperties(Fullname='"
-			+ "foo.bar.Worker%2FEMPLOYEE_2_TEAM')";
+		sMetaEmployees = "/EntitySets(Name='Employees')",
+		sMetaMe = "/Singletons(Name='Me')",
+		sMetaCityname = sMetaEmployees + "/EntityType/Properties(Name='LOCATION')/Type/"
+			+ "Properties(Name='City')/Type/Properties(Name='CITYNAME')",
+		sMetaTeam = sMetaEmployees + "/EntityType/NavigationProperties(Name='EMPLOYEE_2_TEAM')";
 
 	/**
 	 * Returns a resolved promised for the given object. Clones the object.
@@ -143,7 +140,7 @@ sap.ui.require([
 			object: oEntityContainer.EntitySets[0],
 			property: "EntityType"
 		}],
-		expected: sMetaEmployees + "/EntityType/Properties(Fullname='foo.bar.Worker%2FENTRYDATE')"
+		expected: sMetaEmployees + "/EntityType/Properties(Name='ENTRYDATE')"
 	}, {
 		path: "/Employees(ID='1')/LOCATION/City/CITYNAME",
 		nav: [{
@@ -160,15 +157,14 @@ sap.ui.require([
 			object: oEntityContainer.Singletons[0],
 			property: "Type"
 		}],
-		expected: sMetaMe + "/Type/Properties(Fullname='foo.bar.Worker%2FENTRYDATE')"
+		expected: sMetaMe + "/Type/Properties(Name='ENTRYDATE')"
 	}, {
 		path: "/Employees(ID='1')/EMPLOYEE_2_TEAM",
 		nav: [{
 			object: oEntityContainer.EntitySets[0],
 			property: "EntityType"
 		}],
-		expected: sMetaEmployees + "/EntityType/NavigationProperties(Fullname='"
-			+ "foo.bar.Worker%2FEMPLOYEE_2_TEAM')"
+		expected: sMetaEmployees + "/EntityType/NavigationProperties(Name='EMPLOYEE_2_TEAM')"
 	}, {
 		path: "/Employees(ID='1')/EMPLOYEE_2_TEAM/Team_Id",
 		nav: [{
@@ -179,7 +175,7 @@ sap.ui.require([
 			property: "Type",
 			result: oEntityTypeTeam
 		}],
-		expected: sMetaTeam + "/Type/Properties(Fullname='foo.bar.TEAM%2FTeam_Id')"
+		expected: sMetaTeam + "/Type/Properties(Name='Team_Id')"
 	}, {
 		path: "/Employees(ID='1')/EMPLOYEE_2_TEAM/TEAM_2_EMPLOYEES/ID",
 		nav: [{
@@ -193,9 +189,8 @@ sap.ui.require([
 			object: oEntityTypeTeam.NavigationProperties[0],
 			property: "Type"
 		}],
-		expected: sMetaTeam + "/Type/NavigationProperties(Fullname='"
-			+ "foo.bar.TEAM%2FTEAM_2_EMPLOYEES')/Type/Properties(Fullname='"
-			+ "foo.bar.Worker%2FID')"
+		expected: sMetaTeam + "/Type/NavigationProperties(Name='TEAM_2_EMPLOYEES')/Type/"
+			+ "Properties(Name='ID')"
 	}].forEach(function (oFixture) {
 		QUnit.test("requestMetaContext: " + oFixture.path, function (assert) {
 			var oMetaModel = this.oMetaModel,
@@ -292,33 +287,23 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		path: "/EntityContainer",
+		path: "/",
 		result: oEntityContainer
 	}, {
-		path: "EntityContainer",
+		path: "EntitySets",
 		error: "Not an absolute path"
 	}, {
-		path: "/EntitySets",
-		error: "Unknown: EntitySets"
-	}, {
-		path: "/EntitySets",
-		error: "Unknown: EntitySets"
-	}, {
-		context: "/EntityContainer",
-		path: "EntitySets",
-		result: oEntityContainer.EntitySets
-	}, {
-		path: "/EntityContainer/UnknownPart",
+		path: "/UnknownPart",
 		reject: "Unknown: UnknownPart"
 	}, {
-		path: "/EntityContainer/Name(Foo='Bar')",
+		path: "/Name(Foo='Bar')",
 		reject: '"Name" is not an array'
 	}, {
 		path: sMetaEmployees,
 		result: oEntityContainer.EntitySets[0]
 	}, {
-		path: "/EntityContainer/EntitySets(Fullname='foo.bar.Container%2FTeams')",
-		reject: "Unknown: EntitySets(Fullname='foo.bar.Container/Teams')"
+		path: "/EntitySets(Name='Teams')",
+		reject: "Unknown: EntitySets(Name='Teams')"
 	}, {
 		path: sMetaMe,
 		result: oEntityContainer.Singletons[0]
@@ -340,7 +325,8 @@ sap.ui.require([
 		}],
 		result: oEntityTypeWorker.Name
 	}, {
-		path: sMetaMe + "/Type/Abstract",
+		context: sMetaMe,
+		path: "Type/Abstract",
 		nav: [{
 			object: oEntityContainer.Singletons[0],
 			property: "Type"
@@ -354,8 +340,7 @@ sap.ui.require([
 		}],
 		result: oEntityTypeWorker.Properties[2].Type.Properties[0].Type.Properties[0]
 	}, {
-		path: sMetaTeam + "/Type/NavigationProperties(Fullname='"
-			+ "foo.bar.TEAM%2FTEAM_2_EMPLOYEES')/Type",
+		path: sMetaTeam + "/Type/NavigationProperties(Name='TEAM_2_EMPLOYEES')/Type",
 		nav: [{
 			object: oEntityContainer.EntitySets[0],
 			property: "EntityType"
