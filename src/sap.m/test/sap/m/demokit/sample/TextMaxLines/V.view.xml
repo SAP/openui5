@@ -18,9 +18,10 @@
 		text="2 Maxlines ... Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" />
 	<Text
 		wrapping="false"
-		class="sapMSampleTextMaxLinesText"
+		class="sapMSampleTextMaxLinesText sapUiSmallMarginTop"
 		text="No wrapping ... Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat" />
-	<Text
-		class="sapUiExploredWarning sapUiSmallMarginBeginEnd sapUiSmallMarginTop"
+	<MessageStrip
+		class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"
+		type="Warning"
 		text="Note: The multi line overflow indicator depends on the browser line clamping support. For such browsers this will be shown as ellipsis, for the other browsers the overflow will just be hidden." />
 </mvc:View>
