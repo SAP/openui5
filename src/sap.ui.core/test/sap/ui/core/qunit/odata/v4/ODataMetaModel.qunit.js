@@ -106,7 +106,7 @@ sap.ui.require([
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
-			this.oMetaModel = new ODataModel("/Foo").getMetaModel();
+			this.oMetaModel = new ODataModel("/Foo/").getMetaModel();
 		},
 
 		afterEach : function () {

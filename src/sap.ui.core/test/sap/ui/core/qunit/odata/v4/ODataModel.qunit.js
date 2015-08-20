@@ -56,7 +56,7 @@ sap.ui.require([
 	 * @returns {sap.ui.model.odata.v4.oDataModel} the model
 	 */
 	function createModel() {
-		return new ODataModel(getServiceUrl("/sap/opu/local_v4/IWBEP/TEA_BUSI"));
+		return new ODataModel(getServiceUrl("/sap/opu/local_v4/IWBEP/TEA_BUSI/"));
 	}
 
 	//*********************************************************************************************
@@ -83,11 +83,17 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
-		assert.ok(new ODataModel("/foo") instanceof Model);
 		assert.throws(function () {
 			return new ODataModel();
-		}, /Missing service URL/);
+		}, new Error("Missing service URL"));
+		assert.throws(function () {
+			return new ODataModel("/foo");
+		}, new Error("Service URL must end with '/'"));
+
+		assert.ok(new ODataModel("/foo/") instanceof Model);
 		assert.strictEqual(new ODataModel("/foo/").sServiceUrl, "/foo", "remove trailing /");
+		assert.strictEqual(new ODataModel({"serviceUrl" : "/foo/"}).sServiceUrl, "/foo",
+			"serviceUrl in mParameters");
 	});
 
 	//*********************************************************************************************
@@ -146,7 +152,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("bindList", function (assert) {
-		var oModel = new ODataModel("foo"),
+		var oModel = new ODataModel("/foo/"),
 			oContext = {},
 			oBinding = oModel.bindList("/path", oContext);
 
