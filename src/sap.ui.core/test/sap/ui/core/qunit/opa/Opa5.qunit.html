@@ -372,9 +372,10 @@
 		});
 		oOpa5.emptyQueue();
 
-		strictEqual(oMatchSpy.callCount, 0, "did not call the matcher yet");
+		this.clock.tick(0);
+		strictEqual(oMatchSpy.callCount, 1, "called the matcher for the first time");
 		this.clock.tick(200);
-		strictEqual(oMatchSpy.callCount, 1, "did call the matcher once");
+		strictEqual(oMatchSpy.callCount, 2, "called the matcher for the second time");
 
 		// Assert
 		strictEqual(oCheckSpy.callCount, 0, "did not call the check");
@@ -416,10 +417,10 @@
 		});
 		Opa5.emptyQueue();
 
+		this.clock.tick(0);
 		// Assert
-		this.clock.tick(200);
 		strictEqual(oTextMatcherSpy.callCount, 0, "did not call the oTextMatcher yet");
-		strictEqual(oEnabledMatcherSpy.callCount, 1, "did call the oEnabledMatcher yet");
+		strictEqual(oEnabledMatcherSpy.callCount, 1, "called the oEnabledMatcher");
 
 		oButton.setEnabled(false);
 		this.clock.tick(200);
@@ -546,15 +547,14 @@
 			timeout : 1 //second
 		});
 		oOpa5.emptyQueue();
+		this.clock.tick(0);
 
-		strictEqual(fnMatcher.callCount, 0, "did not call the matcher yet");
-		this.clock.tick(400);
-		strictEqual(fnMatcher.callCount, 2, "did call the matcher twice");
+		strictEqual(fnMatcher.callCount, 2, "called the matcher twice");
 
 		// Assert
 		ok(fnCheckSpy1.calledBefore(fnCheckSpy2), "Checks executed in correct order");
-		strictEqual(fnCheckSpy1.callCount, 1, "did call first check");
-		strictEqual(fnCheckSpy2.callCount, 1, "did call last check");
+		strictEqual(fnCheckSpy1.callCount, 1, "called first check");
+		strictEqual(fnCheckSpy2.callCount, 1, "called last check");
 
 		// Cleanup
 		this.clock.tick(1000);
