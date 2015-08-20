@@ -3213,7 +3213,7 @@
 		sap.ui.test.qunit
 				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
-		var oDomListItem = jQuery.find(".sapMComboBoxBaseItem")[0];
+		var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
 		sap.ui.test.qunit.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
@@ -3270,7 +3270,7 @@
 		sap.ui.test.qunit
 				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
-		var oDomListItem = jQuery.find(".sapMComboBoxBaseItem")[0];
+		var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
 		sap.ui.test.qunit.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
@@ -3632,7 +3632,7 @@
 				ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
 
 				// act
-				var oDomListItem = jQuery.find(".sapMComboBoxBaseItem")[0];
+				var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 				sap.ui.test.qunit.triggerKeyup(oDomListItem, jQuery.sap.KeyCodes.SPACE);
 				this.clock.tick(500);
 
@@ -3733,7 +3733,7 @@
 		this.clock.tick(500);
 
 		// act
-		var oDomListItem = jQuery.find(".sapMComboBoxBaseItem")[0];
+		var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
 		sap.ui.test.qunit.triggerEvent("tap", oDomListItem, {
 			srcControl : oListItem
@@ -3881,7 +3881,7 @@
 		this.clock.tick(500);
 
 		// act
-		var oDomListItem = jQuery.find(".sapMComboBoxBaseItem")[0];
+		var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
 		sap.ui.test.qunit.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
@@ -3978,7 +3978,7 @@
 		sap.ui.test.qunit
 				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
-		var oDomListItem = jQuery.find("." + sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Item")[0];
+		var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
 		sap.ui.test.qunit.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
@@ -4105,5 +4105,3 @@
 	<div id="MultiComboBox-content" class="select-content"></div>
 </body>
 </html>
-
-
