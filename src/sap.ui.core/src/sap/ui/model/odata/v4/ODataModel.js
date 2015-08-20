@@ -28,8 +28,7 @@ sap.ui.define([
 
 	/*global odatajs */
 
-	var rListBindingPath = /^\/.+\[(\d+)\];list=(\d+)\/(.+)/,
-		rTrailingSlash = /\/?$/;
+	var rListBindingPath = /^\/.+\[(\d+)\];list=(\d+)\/(.+)/;
 
 	/**
 	 * Throws an error for a not yet implemented method with the given name called by the SAPUI5
@@ -52,8 +51,14 @@ sap.ui.define([
 	/**
 	 * Constructor for a new ODataModel.
 	 *
-	 * @param {string} sServiceUrl
-	 *   base URL of the service to request data from
+	 * @param {string} [sServiceUrl]
+	 *   base URL of the service to request data from; it is required, but may also be given via
+	 *   <code>mParameters.serviceUrl</code>
+	 * @param {object} [mParameters]
+	 *   the parameters
+	 * @param {string} [mParameters.serviceUrl]
+	 *   base URL of the service to request data from; only used if the parameter
+	 *   <code>sServiceUrl</code> has not been given
 	 *
 	 * @class Model implementation for OData v4.
 	 *
@@ -67,13 +72,20 @@ sap.ui.define([
 	var ODataModel = Model.extend("sap.ui.model.odata.v4.ODataModel",
 			/** @lends sap.ui.model.odata.v4.ODataModel.prototype */
 			{
-				constructor : function (sServiceUrl) {
+				constructor : function (sServiceUrl, mParameters) {
 					// do not pass any parameters to Model
 					Model.apply(this);
+					if (typeof sServiceUrl === "object") {
+						mParameters = sServiceUrl;
+						sServiceUrl = mParameters.serviceUrl;
+					}
 					if (!sServiceUrl) {
 						throw new Error("Missing service URL");
 					}
-					this.sServiceUrl = sServiceUrl.replace(rTrailingSlash, "");
+					if (sServiceUrl.charAt(sServiceUrl.length - 1) !== "/") {
+						throw new Error("Service URL must end with '/'");
+					}
+					this.sServiceUrl = sServiceUrl.slice(0, -1);
 					this.oMetaModel = new ODataMetaModel(
 						new ODataDocumentModel(this.sServiceUrl + "/$metadata"));
 				}

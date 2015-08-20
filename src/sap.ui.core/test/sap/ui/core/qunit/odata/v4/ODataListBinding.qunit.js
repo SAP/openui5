@@ -74,7 +74,7 @@ sap.ui.require([
 			this.oLogMock.expects("warning").never();
 
 			// create ODataModel and mock Olingo DataCache for source /service/EMPLOYEES
-			this.oModel = new ODataModel("/service");
+			this.oModel = new ODataModel("/service/");
 			this.oModel.setSizeLimit(3);
 			this.oDataCacheMock = this.oSandbox.mock(oDataCache);
 			this.oSandbox.stub(odatajs.cache, "createDataCache").returns(oDataCache);

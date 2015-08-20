@@ -47,7 +47,7 @@ sap.ui.require([
 		 *   resolve function passes the text binding as parameter.
 		 */
 		createTextBinding : function (assert) {
-			var oModel = new ODataModel("/service"),
+			var oModel = new ODataModel("/service/"),
 				oControl = new TestControl({models: oModel});
 
 			this.oModelMock = this.oSandbox.mock(oModel);
@@ -120,7 +120,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("ManagedObject.bindProperty w/ relative path, then bindObject", function (assert) {
 		var done = assert.async(),
-			oModel = new ODataModel("/service"),
+			oModel = new ODataModel("/service/"),
 			oModelMock = this.oSandbox.mock(oModel),
 			oControl = new TestControl({models: oModel});
 
@@ -143,7 +143,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setContext on resolved binding", function (assert) {
-		var oModel = new ODataModel("/service"),
+		var oModel = new ODataModel("/service/"),
 			oModelMock = this.oSandbox.mock(oModel),
 			oBinding = oModel.bindProperty("/EntitySet('foo')/property");
 

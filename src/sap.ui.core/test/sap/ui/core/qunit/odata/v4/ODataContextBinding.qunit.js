@@ -49,7 +49,7 @@ sap.ui.require([
 		 *   The resolve function passes the context binding as parameter.
 		 */
 		createContextBinding : function (assert) {
-			var oModel = new ODataModel("/service"),
+			var oModel = new ODataModel("/service/"),
 				oControl = new TestControl({models: oModel});
 
 			this.oModelMock = this.oSandbox.mock(oModel);
@@ -94,7 +94,7 @@ sap.ui.require([
 		var oBinding,
 			oChild = new TestControl(),
 			done = assert.async(),
-			oModel = new ODataModel("/service"),
+			oModel = new ODataModel("/service/"),
 			oParent = new TestControl({models: oModel, child: oChild});
 
 		// This should not trigger anything yet
@@ -116,7 +116,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setContext on resolved binding", function (assert) {
-		var oModel = new ODataModel("/service"),
+		var oModel = new ODataModel("/service/"),
 			oModelMock = this.oSandbox.mock(oModel),
 			oBinding = oModel.bindContext("/EntitySet('foo')/child");
 
