@@ -68,7 +68,7 @@ function mockBrowserAPI(oTest, mOptions) {
 							data: 'SAPFrameProtection*parent-unlocked',
 							origin: 'http://some.other.origin.local'
 						});
-					}, 1);
+					}, 0);
 					break;
 				case "UNSAFE":
 					setTimeout(function() {
@@ -77,7 +77,7 @@ function mockBrowserAPI(oTest, mOptions) {
 							data: 'SAPFrameProtection*parent-origin',
 							origin: 'http://some.other.origin.local'
 						});
-					}, 1);
+					}, 0);
 					break;
 				case "SAFE_DELAYED":
 					setTimeout(function() {
@@ -86,7 +86,7 @@ function mockBrowserAPI(oTest, mOptions) {
 							data: 'SAPFrameProtection*parent-origin',
 							origin: 'http://some.other.origin.local'
 						});
-					}, 1);
+					}, 0);
 					setTimeout(function() {
 						oSpies.window.eventListener.call(null, {
 							source: jQuery.sap.FrameOptions.__parent,
@@ -199,7 +199,7 @@ function testPostMessageLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrig
 		sinon.assert.calledOnce(oMock.window.addEventListener);
 		sinon.assert.calledWith(oMock.window.addEventListener, jQuery.sap.FrameOptions.__window.addEventListener ? 'message' : 'onmessage', oMock.window.eventListenerFn);
 
-		this.clock.tick(1);
+		this.clock.tick(10);
 		
 		sinon.assert.calledOnce(oMock.window.eventListener);
 		sinon.assert.calledWith(oMock.window.eventListener, {
@@ -240,7 +240,7 @@ function testWhitelistUnlock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrig
 		sinon.assert.calledOnce(oMock.window.addEventListener);
 		sinon.assert.calledWith(oMock.window.addEventListener, jQuery.sap.FrameOptions.__window.addEventListener ? 'message' : 'onmessage', oMock.window.eventListenerFn);
 
-		this.clock.tick(1);
+		this.clock.tick(10);
 
 		sinon.assert.calledOnce(oMock.window.eventListener);
 		sinon.assert.calledWith(oMock.window.eventListener, {
@@ -295,7 +295,7 @@ function testWhitelistService(sName, sEnvMode, sParentMode, sMode, bAllowSameOri
 		sinon.assert.calledOnce(oMock.window.addEventListener);
 		sinon.assert.calledWith(oMock.window.addEventListener, jQuery.sap.FrameOptions.__window.addEventListener ? 'message' : 'onmessage', oMock.window.eventListenerFn);
 
-		this.clock.tick(1);
+		this.clock.tick(10);
 
 		oServer.respond();
 
