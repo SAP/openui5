@@ -2085,6 +2085,59 @@
 				oIconTabBar.destroy();
 			});
 
+			module("tabs");
+
+			test("remove selected tab", function() {
+
+				// create
+				var oIconTabBar = new sap.m.IconTabBar({
+					items: [
+						new sap.m.IconTabFilter({
+							text: "Lorem",
+							count: "3",
+							content: [
+								new sap.m.Button({ text: "Text 1" })
+							]
+						}),
+						new sap.m.IconTabFilter({
+							text: "Ipsum",
+							count: "1",
+							content: [
+								new sap.m.Button({ text: "Text 2" })
+							]
+						}),
+						new sap.m.IconTabFilter({
+							text: "Lorem",
+							count: "Count",
+							content: [
+								new sap.m.Button({ text: "Text 3" })
+							]
+						})
+					]
+				});
+
+				// System under Test
+				oIconTabBar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				var oButton = oIconTabBar.$().find('.sapMITBContent .sapMBtn')[0];
+
+				// Assert
+				ok(jQuery(oButton).text().indexOf("Text 1") > -1, "First button is displayed");
+
+				// remove first tab
+				var aItems = oIconTabBar.getItems();
+				oIconTabBar.removeItem(aItems[0]);
+
+				oButton = oIconTabBar.$().find('.sapMITBContent .sapMBtn')[0];
+
+				// Assert
+				ok(jQuery(oButton).text().indexOf("Text 2") > -1, "Second button is displayed");
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
 			module("padding");
 
 			test("Container Padding Classes", function () {
