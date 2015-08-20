@@ -1109,27 +1109,27 @@
 		{
 		  "id": "sap.m.sample.IconTabBar",
 		  "name": "Icon Tab Bar - Filter",
-		  "description": "In this example the Icon Tab Bar is used to apply filters on the same content and show a quick preview of how many items can be expected for each view."
+		  "description": "In this example, the Icon Tab Bar is used to apply filters on a table and display the count of the items for each view."
 		},
 		{
 		  "id": "sap.m.sample.IconTabBarMulti",
-		  "name": "Icon Tab Bar - Fiori Wave 1-4",
-		  "description": "In this example the Icon Tab Bar is used to organize different content objects with only one being visible at a time."
+		  "name": "Icon Tab Bar - Icons Only",
+		  "description": "In this example, the Icon Tab Bar tabs display icons only."
 		},
 		{
 		  "id": "sap.m.sample.IconTabBarFiori2",
-		  "name": "Icon Tab Bar - Fiori Wave 5",
-		  "description": "This is an example of the standard Icon Tab Bar for Wave 5 Fiori applications."
+		  "name": "Icon Tab Bar - Text and Count",
+		  "description": "In this example, the Icon Tab Bar tabs display text and corresponding count."
 		},
 		{
 		  "id": "sap.m.sample.IconTabBarProcess",
 		  "name": "Icon Tab Bar - Process",
-		  "description": "In this example the Icon Tab Bar is used to apply filters on the same content along a business process."
+		  "description": "In this example, the Icon Tab Bar is used to apply filters on the same content along a business process."
 		},
 		{
 		  "id": "sap.m.sample.IconTabBarNoIcons",
-		  "name": "Icon Tab Bar - Text-only",
-		  "description": "This is similar to the 'Icon Tab Bar - Multi' example but has no icons. Instead, the text is highlighted on selection."
+		  "name": "Icon Tab Bar - Text Only",
+		  "description": "In this example, the Icon Tab Bar tabs display text only."
 		},
 		{
 		  "id": "sap.m.sample.IconTabBarStretchContent",
@@ -1139,7 +1139,7 @@
 		{
 		  "id": "sap.m.sample.IconTabSeparator",
 		  "name": "Icon Tab - Separator",
-		  "description": "This is an examle how to use separators in the Icon Tab Bar. It's possible to choose an icon as a separator or use the default vertical line."
+		  "description": "This is an example how to use separators in the Icon Tab Bar. You can choose an icon as a separator or use the default vertical line."
 		},
 		{
 		  "id": "sap.m.sample.BusyIndicator",

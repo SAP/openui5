@@ -12,16 +12,21 @@
 		class="sapUiResponsiveContentPadding">
 		<items>
 			<IconTabFilter
-				text="Info">
-				<Carousel>
-					<pages>
-						<l:VerticalLayout>
-							<Image src="{img>/products/pic1}" densityAware="false" />
-						</l:VerticalLayout>
-						<Image src="{img>/products/pic2}" densityAware="false" />
-						<Image src="{img>/products/pic3}" densityAware="false" />
-					</pages>
-				</Carousel>
+				text="Products">
+				<ScrollContainer
+						height="100%"
+						width="100%"
+						horizontal="false"
+						vertical="true">
+					<List
+						items="{
+							path: '/ProductCollection'
+						}" >
+						<StandardListItem
+								title="{Name}"
+								counter="{Quantity}"/>
+					</List>
+				</ScrollContainer>
 			</IconTabFilter>
 			<IconTabFilter
 				text="Attachments">
