@@ -30,6 +30,7 @@
 <![endif]-->
 <script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script>
+sinon.config.useFakeTimers = true;
 
 function mockBrowserAPI(oTest, mOptions) {
 
@@ -56,15 +57,49 @@ function mockBrowserAPI(oTest, mOptions) {
 
 	// parent
 	jQuery.sap.FrameOptions.__parent = {};
+	
 	jQuery.sap.FrameOptions.__parent.postMessage = oSpies.parent.postMessage = oTest.spy(function(sMessage, sTargetOrigin) {
 		if (sMessage === 'SAPFrameProtection*require-origin') {
-			oSpies.window.eventListener.call(null, {
-				source: jQuery.sap.FrameOptions.__parent,
-				data: 'SAPFrameProtection*parent-unlocked',
-				origin: 'http://some.other.origin.local'
-			});
+			switch (mOptions.parentMode) {
+				case "SAFE":
+					setTimeout(function() {
+						oSpies.window.eventListener.call(null, {
+							source: jQuery.sap.FrameOptions.__parent,
+							data: 'SAPFrameProtection*parent-unlocked',
+							origin: 'http://some.other.origin.local'
+						});
+					}, 1);
+					break;
+				case "UNSAFE":
+					setTimeout(function() {
+						oSpies.window.eventListener.call(null, {
+							source: jQuery.sap.FrameOptions.__parent,
+							data: 'SAPFrameProtection*parent-origin',
+							origin: 'http://some.other.origin.local'
+						});
+					}, 1);
+					break;
+				case "SAFE_DELAYED":
+					setTimeout(function() {
+						oSpies.window.eventListener.call(null, {
+							source: jQuery.sap.FrameOptions.__parent,
+							data: 'SAPFrameProtection*parent-origin',
+							origin: 'http://some.other.origin.local'
+						});
+					}, 1);
+					setTimeout(function() {
+						oSpies.window.eventListener.call(null, {
+							source: jQuery.sap.FrameOptions.__parent,
+							data: 'SAPFrameProtection*parent-unlocked',
+							origin: 'http://some.other.origin.local'
+						});
+					}, 100);
+					break;
+			}
 		}
 	});
+
+	
 	if (mOptions.mode !== 'DIFF_ORIGIN') {
 		jQuery.sap.FrameOptions.__parent.document = {
 			domain: 'localhost'
@@ -82,12 +117,13 @@ function mockBrowserAPI(oTest, mOptions) {
 	return oSpies;
 }
 
-function testDirectUnlock(sName, sEnvMode, sMode, bAllowSameOrigin) {
+function testDirectUnlock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin) {
 	test(sName, function() {
 
 		// arrangements
 		var oMock = mockBrowserAPI(this, {
-			mode: sEnvMode
+			mode: sEnvMode,
+			parentMode: sParentMode
 		});
 		var fnCallback = this.spy();
 
@@ -110,12 +146,13 @@ function testDirectUnlock(sName, sEnvMode, sMode, bAllowSameOrigin) {
 		sinon.assert.calledWith(fnCallback, true);
 	});
 }
-function testDirectLock(sName, sEnvMode, sMode, bAllowSameOrigin) {
+function testDirectLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin) {
 	test(sName, function() {
 
 		// arrangements
 		var oMock = mockBrowserAPI(this, {
-			mode: sEnvMode
+			mode: sEnvMode,
+			parentMode: sParentMode
 		});
 		var fnCallback = this.spy();
 
@@ -141,12 +178,13 @@ function testDirectLock(sName, sEnvMode, sMode, bAllowSameOrigin) {
 		equals(this.oFrameOptions._lockDiv.style.zIndex, '2147483647', 'Block layer should have a high z-index');
 	});
 }
-function testPostMessageLock(sName, sEnvMode, sMode, bAllowSameOrigin) {
+function testPostMessageLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin) {
 	test(sName, function() {
 
 		// arrangements
 		var oMock = mockBrowserAPI(this, {
-			mode: sEnvMode
+			mode: sEnvMode,
+			parentMode: sParentMode
 		});
 		var fnCallback = this.spy();
 
@@ -161,6 +199,8 @@ function testPostMessageLock(sName, sEnvMode, sMode, bAllowSameOrigin) {
 		sinon.assert.calledOnce(oMock.window.addEventListener);
 		sinon.assert.calledWith(oMock.window.addEventListener, jQuery.sap.FrameOptions.__window.addEventListener ? 'message' : 'onmessage', oMock.window.eventListenerFn);
 
+		this.clock.tick(1);
+		
 		sinon.assert.calledOnce(oMock.window.eventListener);
 		sinon.assert.calledWith(oMock.window.eventListener, {
 			source: jQuery.sap.FrameOptions.__parent,
@@ -178,12 +218,13 @@ function testPostMessageLock(sName, sEnvMode, sMode, bAllowSameOrigin) {
 		equals(this.oFrameOptions._lockDiv.style.zIndex, '2147483647', 'Block layer should have a high z-index');
 	});
 }
-function testPostMessageWhitelistUnlock(sName, sEnvMode, sMode, bAllowSameOrigin) {
+function testWhitelistUnlock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin) {
 	test(sName, function() {
 
 		// arrangements
 		var oMock = mockBrowserAPI(this, {
-			mode: sEnvMode
+			mode: sEnvMode,
+			parentMode: sParentMode
 		});
 		var fnCallback = this.spy();
 
@@ -199,6 +240,8 @@ function testPostMessageWhitelistUnlock(sName, sEnvMode, sMode, bAllowSameOrigin
 		sinon.assert.calledOnce(oMock.window.addEventListener);
 		sinon.assert.calledWith(oMock.window.addEventListener, jQuery.sap.FrameOptions.__window.addEventListener ? 'message' : 'onmessage', oMock.window.eventListenerFn);
 
+		this.clock.tick(1);
+
 		sinon.assert.calledOnce(oMock.window.eventListener);
 		sinon.assert.calledWith(oMock.window.eventListener, {
 			source: jQuery.sap.FrameOptions.__parent,
@@ -213,21 +256,28 @@ function testPostMessageWhitelistUnlock(sName, sEnvMode, sMode, bAllowSameOrigin
 		sinon.assert.calledWith(fnCallback, true);
 	});
 }
-function testPostMessageWhitelistServiceUnlock(sName, sEnvMode, sMode, bAllowSameOrigin) {
+function testWhitelistService(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin, bActive, bFraming, bAllow) {
 	test(sName, function() {
 
 		// arrangements
 		var oMock = mockBrowserAPI(this, {
-			mode: sEnvMode
+			mode: sEnvMode,
+			parentMode: sParentMode
 		});
 
-		var oServer = this.sandbox.useFakeServer();
-		oServer.respondWith("GET", /\/whitelist\.json\?parentOrigin=http%3A%2F%2Fsome.other.origin.local/, [
+		var oServer = this.sandbox.useFakeServer(),
+			oResponse = {
+				version: "1.0",
+				active: !!bActive,
+				origin: "http://some.other.origin.local",
+				framing: !!bFraming
+			};
+		oServer.respondWith("GET", /\/whitelist\.json\?parentOrigin=.*/, [
 			200,
 			{
 				"Content-Type": "application/json"
 			},
-			'{ "version": "1.0", "active": true, "origin": "http://some.other.origin.local", "framing": true }'
+			JSON.stringify(oResponse)
 		]);
 
 		var fnCallback = this.spy();
@@ -237,27 +287,60 @@ function testPostMessageWhitelistServiceUnlock(sName, sEnvMode, sMode, bAllowSam
 			mode: sMode,
 			allowSameOrigin: bAllowSameOrigin,
 			whitelistService: '/whitelist.json',
-			callback: fnCallback
+			callback: fnCallback,
+			timeout: 200
 		});
-
-		oServer.respond();
 
 		// assertions
 		sinon.assert.calledOnce(oMock.window.addEventListener);
 		sinon.assert.calledWith(oMock.window.addEventListener, jQuery.sap.FrameOptions.__window.addEventListener ? 'message' : 'onmessage', oMock.window.eventListenerFn);
 
-		sinon.assert.calledOnce(oMock.window.eventListener);
-		sinon.assert.calledWith(oMock.window.eventListener, {
-			source: jQuery.sap.FrameOptions.__parent,
-			origin: 'http://some.other.origin.local',
-			data: 'SAPFrameProtection*parent-unlocked'
-		});
+		this.clock.tick(1);
+
+		oServer.respond();
+
+		if (sParentMode == "SAFE") {
+			sinon.assert.calledOnce(oMock.window.eventListener);
+			sinon.assert.calledWith(oMock.window.eventListener, {
+				source: jQuery.sap.FrameOptions.__parent,
+				origin: 'http://some.other.origin.local',
+				data: 'SAPFrameProtection*parent-unlocked'
+			});
+		} else if (sParentMode == "UNSAFE")	{
+			sinon.assert.calledOnce(oMock.window.eventListener);
+			sinon.assert.calledWith(oMock.window.eventListener, {
+				source: jQuery.sap.FrameOptions.__parent,
+				origin: 'http://some.other.origin.local',
+				data: 'SAPFrameProtection*parent-origin'
+			});
+		} else if (sParentMode == "SAFE_DELAYED")	{
+			sinon.assert.calledOnce(oMock.window.eventListener);
+			sinon.assert.calledWith(oMock.window.eventListener, {
+				source: jQuery.sap.FrameOptions.__parent,
+				origin: 'http://some.other.origin.local',
+				data: 'SAPFrameProtection*parent-origin'
+			});
+			oMock.window.eventListener.reset();
+		} else {
+			sinon.assert.notCalled(oMock.window.eventListener);
+		}
 
 		sinon.assert.calledOnce(oMock.parent.postMessage);
 		sinon.assert.calledWith(oMock.parent.postMessage, 'SAPFrameProtection*require-origin', '*');
 
+		this.clock.tick(200);
+		
+		if (sParentMode == "SAFE_DELAYED")	{
+			sinon.assert.calledOnce(oMock.window.eventListener);
+			sinon.assert.calledWith(oMock.window.eventListener, {
+				source: jQuery.sap.FrameOptions.__parent,
+				origin: 'http://some.other.origin.local',
+				data: 'SAPFrameProtection*parent-unlocked'
+			});
+		}
+		
 		sinon.assert.calledOnce(fnCallback);
-		sinon.assert.calledWith(fnCallback, true);
+		sinon.assert.calledWith(fnCallback, bAllow);
 
 	});
 }
@@ -271,25 +354,69 @@ function teardown() {
 
 sap.ui.test.qunit.delayTestStart();
 
+// environment
+// NO_FRAME: not running inside of a frame
+// SAME_ORIGIN: framed, but with the same origin
+// DOMAIN_RELAX: framed, same origin but domain relaxed, so no direct access possibles
+// DIFF_ORIGIN: framed, within a different origin
+
+// parent mode
+// SAFE: has the postmessage script and reports to be safe
+// UNSAFE: has the postmessage script but only responds parent-origin
+// SAFE_DELAYED: has the postmessage script, but sends parent-unlocked with one second delay
+// NO_HANDLER: no postmessage handler is running in the parent
+
+//                    test name,                                  environment,     parent mode,    frame option 
+
 module("mode: deny", { teardown: teardown });
-testDirectUnlock("no frame",         'NO_FRAME',    'deny');
-testDirectLock(  "same origin",      'SAME_ORIGIN', 'deny');
-testDirectLock(  "different origin", 'DIFF_ORIGIN', 'deny');
+testDirectUnlock(    "no frame",                                  'NO_FRAME',      'SAFE',         'deny');
+testDirectLock(      "same origin",                               'SAME_ORIGIN',   'SAFE',         'deny');
+testDirectLock(      "different origin",                          'DIFF_ORIGIN',   'SAFE',         'deny');
 
 module("mode: allow", { teardown: teardown });
-testDirectUnlock("no frame",         'NO_FRAME',    'allow');
-testDirectUnlock("same origin",      'SAME_ORIGIN', 'allow');
-testDirectUnlock("different origin", 'DIFF_ORIGIN', 'allow');
+testDirectUnlock(    "no frame",                                  'NO_FRAME',      'SAFE',         'allow');
+testDirectUnlock(    "same origin",                               'SAME_ORIGIN',   'SAFE',         'allow');
+testDirectUnlock(    "different origin",                          'DIFF_ORIGIN',   'SAFE',         'allow');
+
+//                    test name,                                  environment,     parent mode,    frame option,  same origin, 
 
 module("mode: trusted", { teardown: teardown });
-testDirectUnlock(                     "no frame",                           		'NO_FRAME',    'trusted');
-testDirectUnlock(                     "same origin",                        		'SAME_ORIGIN', 'trusted');
-testPostMessageLock(                  "same origin not allowed",      	     		'SAME_ORIGIN', 'trusted', false);
-testPostMessageLock(                  "different origin",                   		'DIFF_ORIGIN', 'trusted');
-testPostMessageWhitelistUnlock(       "same origin not allowed, whitelist",       	'SAME_ORIGIN', 'trusted', false);
-testPostMessageWhitelistServiceUnlock("same origin not allowed, whitelistService", 	'SAME_ORIGIN', 'trusted', false);
-testPostMessageWhitelistUnlock(       "different origin, whitelist",        		'DIFF_ORIGIN', 'trusted');
-testPostMessageWhitelistServiceUnlock("different origin, whitelistService", 		'DIFF_ORIGIN', 'trusted');
+testDirectUnlock(    "no frame",                                  'NO_FRAME',      'SAFE',         'trusted');
+testDirectUnlock(    "same origin",                               'SAME_ORIGIN',   'SAFE',         'trusted');
+testDirectUnlock(    "same origin, unsafe",                       'SAME_ORIGIN',   'UNSAFE',       'trusted');
+testDirectUnlock(    "same origin, no response",                  'SAME_ORIGIN',   'NO_RESPONSE',  'trusted');
+
+testPostMessageLock( "same origin not allowed",                   'SAME_ORIGIN',   'SAFE',         'trusted',     false);
+testPostMessageLock( "different origin",                          'DIFF_ORIGIN',   'SAFE',         'trusted');
+
+module("mode: trusted, whitelist", { teardown: teardown });
+testWhitelistUnlock( "same origin not allowed, whitelist",        'SAME_ORIGIN',   'SAFE',         'trusted',     false);
+testWhitelistUnlock( "different origin, whitelist",               'DIFF_ORIGIN',   'SAFE',         'trusted');
+
+//                   test name,                                   environment,     parent mode,    frame option,  same origin,  active,   framing,  allow
+
+module("mode: trusted, witelist service, parent safe", { teardown: teardown });
+testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'SAFE',         'trusted',     false,        true,     true,     true);
+testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         true,     true,     true);
+testWhitelistService("diff origin, whitelistService, denied",     'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         true,     false,    false);
+testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'SAFE',         'trusted',     true,         false,    true,     true); 
+
+module("mode: trusted, witelist service, parent safe delayed", { teardown: teardown });
+testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'SAFE_DELAYED', 'trusted',     false,        true,     true,     true);
+testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'SAFE_DELAYED', 'trusted',     true,         true,     true,     true);
+testWhitelistService("diff origin, whitelistService, denied",     'DIFF_ORIGIN',   'SAFE_DELAYED', 'trusted',     true,         true,     false,    false);
+testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'SAFE_DELAYED', 'trusted',     true,         false,    true,     true);
+
+module("mode: trusted, witelist service, parent unsafe", { teardown: teardown });
+testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'UNSAFE',       'trusted',     false,        true,     true,     false);
+testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'UNSAFE',       'trusted',     true,         true,     true,     false);
+testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'UNSAFE',       'trusted',     true,         false,    true,     true);
+
+module("mode: trusted, witelist service, parent no response", { teardown: teardown });
+testWhitelistService("same origin not allowed, whitelistService", 'SAME_ORIGIN',   'NO_RESPONSE',  'trusted',     false,        true,     true,     false);
+testWhitelistService("diff origin, whitelistService",             'DIFF_ORIGIN',   'NO_RESPONSE',  'trusted',     true,         true,     true,     false);
+testWhitelistService("diff origin, whitelistService, inactive",   'DIFF_ORIGIN',   'NO_RESPONSE',  'trusted',     true,         false,    true,     true);
+
 
 </script>
 </head>
