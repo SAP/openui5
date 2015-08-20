@@ -37,14 +37,14 @@
 						viewName : "view.Main",
 						id : ["firstButtonOnSecondPage", "secondButtonOnSecondPage"],
 						success : function (aButtons) {
-							strictEqual(aButtons.length, 2, "Found both buttons");
+							Opa5.assert.strictEqual(aButtons.length, 2, "Found both buttons");
 						}
 					});
 
 					Then.waitFor({
 						id: new RegExp("firstButtonOnSecondPage"),
 						success : function (aButtons) {
-							ok(true, "Found the button: " + aButtons[0]);
+							Opa5.assert.ok(true, "Found the button: " + aButtons[0]);
 						},
 						errorMessage : "Did not find the button with corresponding ID"
 					});

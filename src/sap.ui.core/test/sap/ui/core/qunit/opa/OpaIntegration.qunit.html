@@ -63,7 +63,7 @@ sap.ui.require([
 						return jQuery("#" + sButtonId).length;
 					},
 					success : function () {
-						strictEqual(jQuery("#" + sButtonId).text(), sText, "Found the button with the id " + sButtonId);
+						Opa.assert.strictEqual(jQuery("#" + sButtonId).text(), sText, "Found the button with the id " + sButtonId);
 					}
 				});
 				return this;

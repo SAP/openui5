@@ -25,7 +25,7 @@ sap.ui.require([
 							controlType: "sap.m.Dialog",
 							success: function () {
 								// we set the view busy, so we need to query the parent of the app
-								QUnit.ok(true, "The dialog is open");
+								Opa5.assert.ok(true, "The dialog is open");
 							},
 							errorMessage: "Did not find the dialog control"
 						});

@@ -59,7 +59,7 @@ sap.ui.require([
 							id: sTableId,
 							viewName: sViewName,
 							success: function (oTable) {
-								ok(oTable, "Found the object Table");
+								Opa5.assert.ok(oTable, "Found the object Table");
 							},
 							errorMessage: "Can't see the master Table."
 						});
@@ -82,7 +82,7 @@ sap.ui.require([
 								var bGrowing = oTable.getGrowing(),
 									iExpectedItems = (bGrowing ? oTable.getGrowingThreshold() : oTable.getItems().length);
 
-								strictEqual(oTable.getItems().length, iExpectedItems, "The table has " + iExpectedItems + " items");
+								Opa5.assert.strictEqual(oTable.getItems().length, iExpectedItems, "The table has " + iExpectedItems + " items");
 							},
 							errorMessage: "Table does not have all entries."
 						});
@@ -106,7 +106,7 @@ sap.ui.require([
 										}).isMatching(oPage);
 									},
 									success: function () {
-										ok(true, "The Page has a title containing the number " + iObjectCount);
+										Opa5.assert.ok(true, "The Page has a title containing the number " + iObjectCount);
 									},
 									errorMessage: "The Page's header does not container the number of items " + iObjectCount
 								});
@@ -129,7 +129,7 @@ sap.ui.require([
 								}).isMatching(oTable);
 							},
 							success: function () {
-								ok(true, "The growing Table had the double amount: " + iExpectedNumberOfItems + " of entries");
+								Opa5.assert.ok(true, "The growing Table had the double amount: " + iExpectedNumberOfItems + " of entries");
 							},
 							errorMessage: "Table does not have the double amount of entries."
 						});

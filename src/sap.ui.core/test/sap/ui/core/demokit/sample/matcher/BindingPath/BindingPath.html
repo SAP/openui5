@@ -43,7 +43,7 @@
 						controlType: "sap.m.StandardListItem",
 						matchers: new BindingPath({path: "/ProductCollection/0"}),
 						success: function () {
-							QUnit.ok(true,
+							Opa5.assert.ok(true,
 								"The binding path for selected item was matched");
 						},
 						errorMessage: "The binding path for selected item was not matched"

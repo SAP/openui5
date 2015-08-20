@@ -111,7 +111,7 @@ sap.ui.define(['sap/ui/test/Opa5'],
 				return this.waitFor({
 					id : "FormChange354",
 					success : function () {
-						ok("Did navigate to the edit page");
+						Opa5.assert.ok("Did navigate to the edit page");
 					},
 					errorMessage : "did not navigate to the edit page"
 				});
@@ -124,8 +124,8 @@ sap.ui.define(['sap/ui/test/Opa5'],
 						var oName = aInputs[0],
 						oCountry = aInputs[1];
 
-						strictEqual(oName.getText(), "Foobar", "the name text was correct");
-						strictEqual(oCountry.getText(), this.getContext().sSecondCountry, "the country text was correct");
+						Opa5.assert.strictEqual(oName.getText(), "Foobar", "the name text was correct");
+						Opa5.assert.strictEqual(oCountry.getText(), this.getContext().sSecondCountry, "the country text was correct");
 					},
 					errorMessage : "did not find the texts for country and name"
 				});
@@ -138,8 +138,8 @@ sap.ui.define(['sap/ui/test/Opa5'],
 						var oName = aInputs[0],
 						oCountry = aInputs[1];
 
-						strictEqual(oName.getText(), this.getContext().sName, "the name text was restored");
-						strictEqual(oCountry.getText(), this.getContext().sFirstCountry, "the country text was restored");
+						Opa5.assert.strictEqual(oName.getText(), this.getContext().sName, "the name text was restored");
+						Opa5.assert.strictEqual(oCountry.getText(), this.getContext().sFirstCountry, "the country text was restored");
 					},
 					errorMessage : "did not find the texts for country and name"
 				});
