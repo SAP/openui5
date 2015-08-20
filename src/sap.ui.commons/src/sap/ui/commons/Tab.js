@@ -193,6 +193,11 @@ sap.ui.define(['jquery.sap.global', './Panel', './library'],
 		if (!oDomRef || (!bEnabled && jQuery(this.getDomRef()).hasClass("sapUiTabSel")) ||
 			(bEnabled && oParent && oParent.getSelectedIndex && oParent.getSelectedIndex() < 0)) {
 			this.setProperty("enabled", bEnabled, false); // rendering needed
+
+			if (oParent && oParent._getActualSelectedIndex) {
+				var iIndex = oParent._getActualSelectedIndex();
+				oParent.setProperty('selectedIndex', iIndex, true);
+			}
 		} else {
 			this.setProperty("enabled", bEnabled, true); // no re-rendering!
 			// if already rendered, adapt rendered control without complete re-rendering

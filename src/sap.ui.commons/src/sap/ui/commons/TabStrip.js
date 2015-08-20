@@ -842,6 +842,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			unbind("selectstart");
 	};
 
+	TabStrip.prototype._getActualSelectedIndex = function() {
+
+		// check if selected tab exists and is visible and enabled -> otherwise select first active one
+
+		var iSelectedIndex = Math.max(0, this.getSelectedIndex());
+
+		var aTabs = this.getTabs();
+		var oSelectedTab = aTabs[iSelectedIndex];
+		if (oSelectedTab && oSelectedTab.getVisible() && oSelectedTab.getEnabled()) {
+			return iSelectedIndex;
+		}
+
+		for (var i = 0; i < aTabs.length; i++) {
+			var oTab = aTabs[i];
+
+			if (oTab.getVisible() && oTab.getEnabled()) {
+				return i;
+			}
+		}
+
+		return 0;
+	};
+
 
 	return TabStrip;
 
