@@ -37,8 +37,8 @@
 					alignSelf: "Center",
 					order: 2,
 					growFactor: 3,
-					shrinkFactor: 2
-// 					baseSize: "200px"
+					shrinkFactor: 2,
+					baseSize: "200px"
 				})
 			});
 
@@ -48,8 +48,8 @@
 					alignSelf: "Baseline",
 					order: 3,
 					growFactor: 2,
-					shrinkFactor: 2
-// 					baseSize: "2500px"
+					shrinkFactor: 2,
+					baseSize: "2500px"
 				})
 			});
 
@@ -79,8 +79,8 @@
 					alignSelf: "Stretch",
 					order: 1,
 					growFactor: 1.47,
- 					shrinkFactor: 0
-// 					baseSize: "137px"
+					shrinkFactor: 0,
+					baseSize: "137px"
 				})
 			});
 
@@ -89,8 +89,8 @@
 				layoutData: new sap.m.FlexItemData({
 					order: 3,
 					growFactor: 1,
- 					shrinkFactor: 3
-// 					baseSize: "160pt"
+					shrinkFactor: 3,
+					baseSize: "160pt"
 				})
 			});
 
@@ -117,8 +117,8 @@
 					alignSelf: "Start",
 					order: 1,
 					growFactor: 1.4,
- 					shrinkFactor: 2
-// 					baseSize: "888px"
+					shrinkFactor: 2,
+					baseSize: "888px"
 				})
 				
 			});
@@ -129,8 +129,8 @@
 					alignSelf: "End",
 					order: 2,
 					growFactor: 4,
- 					shrinkFactor: 8
-// 					baseSize: "7em"
+					shrinkFactor: 8,
+					baseSize: "7em"
 				})
 			});
 
@@ -376,14 +376,14 @@
 						equal(jQuery("#item5").parent().css(sVendorPrefix + 'align-self'), "flex-start", "Item 5 " + sVendorPrefix + "align-self property should be set correctly");
 						equal(jQuery("#item6").parent().css(sVendorPrefix + 'align-self'), "flex-end", "Item 6 " + sVendorPrefix + "align-self property should be set correctly");
 					});
-// 					test("flex-basis", function() {
-// 						equal(jQuery("#item1").parent().css(sVendorPrefix + 'flex-basis'), "200px", "Item 1 " + sVendorPrefix + "flex-basis property should be set correctly");
-// 						equal(jQuery("#item2").parent().css(sVendorPrefix + 'flex-basis'), "2500px", "Item 2 " + sVendorPrefix + "flex-basis property should be set correctly");
-// 						equal(jQuery("#item3").parent().css(sVendorPrefix + 'flex-basis'), "137px", "Item 3 " + sVendorPrefix + "flex-basis property should be set correctly");
-// 						equal(Math.round(parseFloat(jQuery("#item4").parent().css(sVendorPrefix + 'flex-basis')*100)/100), 213.33, "Item 4 " + sVendorPrefix + "flex-basis property should be set correctly");
-// 						equal(jQuery("#item5").parent().css(sVendorPrefix + 'flex-basis'), "888px", "Item 5 " + sVendorPrefix + "flex-basis property should be set correctly");
-// 						equal(jQuery("#item6").parent().css(sVendorPrefix + 'flex-basis'), "112px", "Item 6 " + sVendorPrefix + "flex-basis property should be set correctly");
-// 					});
+					test("flex-basis", function() {
+						equal(jQuery("#item1").parent().css(sVendorPrefix + 'flex-basis'), "200px", "Item 1 " + sVendorPrefix + "flex-basis property should be set correctly");
+						equal(jQuery("#item2").parent().css(sVendorPrefix + 'flex-basis'), "2500px", "Item 2 " + sVendorPrefix + "flex-basis property should be set correctly");
+						equal(jQuery("#item3").parent().css(sVendorPrefix + 'flex-basis'), "137px", "Item 3 " + sVendorPrefix + "flex-basis property should be set correctly");
+						equal(Math.round(parseFloat(jQuery("#item4").parent().css(sVendorPrefix + 'flex-basis'))*100)/100, 213.33, "Item 4 " + sVendorPrefix + "flex-basis property should be set correctly");
+						equal(jQuery("#item5").parent().css(sVendorPrefix + 'flex-basis'), "888px", "Item 5 " + sVendorPrefix + "flex-basis property should be set correctly");
+						equal(jQuery("#item6").parent().css(sVendorPrefix + 'flex-basis'), "112px", "Item 6 " + sVendorPrefix + "flex-basis property should be set correctly");
+					});
 				}
 
 				if(!jQuery.support.newFlexBoxLayout && jQuery.support.flexBoxLayout) { // Browsers that should support the old spec but not the final one

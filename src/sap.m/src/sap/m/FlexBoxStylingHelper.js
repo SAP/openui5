@@ -116,10 +116,10 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 				FlexBoxStylingHelper.setStyle(oRm, null, "flex-shrink", shrinkFactor);
 			}
 	
-	//		var baseSize = oLayoutData.getBaseSize().toLowerCase();
-	//		if(baseSize !== undefined) {
-	//			sap.m.FlexBoxStylingHelper.setStyle(oRm, null, "flex-basis", baseSize);
-	//		}
+			var baseSize = oLayoutData.getBaseSize().toLowerCase();
+			if (baseSize !== undefined) {
+				sap.m.FlexBoxStylingHelper.setStyle(oRm, null, "flex-basis", baseSize);
+			}
 		}
 	};
 	

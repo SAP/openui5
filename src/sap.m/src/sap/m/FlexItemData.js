@@ -48,12 +48,21 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 			/**
 			 * The shrink factor determines how much the flex item will shrink relative to the rest of the flex items in the flex container when negative free space is distributed.
 			 * 
-			 * http://www.w3.org/TR/css3-flexbox/#flex-shrink-factor
+			 * @see http://www.w3.org/TR/css3-flexbox/#flex-shrink-factor
 			 * 
-			 * This property is not supported in Internet Explorer 9, Android Native Browser/Webview <4.4, and Safari <7.
+			 * <b>Note:</b> This property is not supported in Internet Explorer 9, Android Native Browser/Webview <4.4, and Safari <7.
 			 * @since 1.24
 			 */
 			shrinkFactor : {type : "float", group : "Misc", defaultValue : 1},
+	
+			/**
+			 * The base size is the initial main size of the item for the flex algorithm. If set to "auto", this will be the computed size of the item.
+			 * 
+			 * @see http://www.w3.org/TR/css3-flexbox/#flex-basis
+			 * 
+			 * @since 1.32
+			 */
+			baseSize : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : "auto"},
 	
 			/**
 			 * The style class will be applied to the flex item and can be used for CSS selectors
@@ -89,12 +98,11 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 		return this;
 	};
 	
-	//TODO Uncomment when property is supported by any browser
-	/*sap.m.FlexItemData.prototype.setBaseSize = function(sValue) {
+	FlexItemData.prototype.setBaseSize = function(sValue) {
 		this.setProperty("baseSize", sValue, true);
 		sap.m.FlexBoxStylingHelper.setStyle(null, this, "flex-basis", sValue);
 		return this;
-	};*/
+	};
 	
 
 	return FlexItemData;
