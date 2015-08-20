@@ -10,10 +10,8 @@ sap.ui.define([
 		onInit : function() {
 			// create any data and a model and set it to the view
 			var oData = {
-				details: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
-				message: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut.",
-				checkBox1Text: "CheckBox1",
-				checkBox2Text: "CheckBox2"
+				details: "The security token required to upload the file to the backend system cannot be retrieved. Try refreshing your browser.",
+				message: "Your file could not be uploaded because of a security problem."
 			};
 			var oModel = new JSONModel(oData);
 			var oView = this.getView();
