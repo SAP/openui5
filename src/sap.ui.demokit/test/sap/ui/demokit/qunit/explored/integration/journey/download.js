@@ -1,4 +1,7 @@
 sap.ui.require([], function () {
+
+	QUnit.module("Download");
+
 	opaTest("Should be able to download a sample", function (Given, When, Then) {
 		Given.iStartTheExploredApp();
 

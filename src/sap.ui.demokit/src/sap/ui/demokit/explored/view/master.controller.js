@@ -43,8 +43,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 
 	// ====== init ====================================================================
 
-	onInit: function () {
-
+	onInit : function () {
 		// subscribe to routing
 		this.router = sap.ui.core.UIComponent.getRouterFor(this);
 		this.router.attachRoutePatternMatched(this.onRouteMatched, this);
@@ -209,7 +208,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 
 		// create dialog on demand
 		if (!this._oVSDialog) {
-			this._oVSDialog = sap.ui.xmlfragment("sap.ui.demokit.explored.view.viewSettingsDialog", this);
+			this._oVSDialog = sap.ui.xmlfragment(this.getView().getId() ,"sap.ui.demokit.explored.view.viewSettingsDialog", this);
 			this.getView().addDependent(this._oVSDialog);
 		}
 
@@ -342,6 +341,8 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 
 		var aFilters = [],
 			aSorters = [],
+			bFilterChanged = false,
+			bGroupChanged = false,
 			oSearchField = this.getView().byId("searchField"),
 			oList = this.getView().byId("list"),
 			oBinding = oList.getBinding("items");
@@ -349,6 +350,7 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 		// add filter for search
 		var sQuery = oSearchField.getValue();
 		if (sQuery) {
+			bFilterChanged = true;
 			aFilters.push(new sap.ui.model.Filter("searchTags", "Contains", sQuery));
 		}
 
@@ -360,31 +362,37 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 				aPropertyFilters.push(new sap.ui.model.Filter(sProperty, sOperator, aValue));
 			});
 			var oFilter = new sap.ui.model.Filter(aPropertyFilters, false); // second parameter stands for "or"
+			bFilterChanged = true;
 			aFilters.push(oFilter);
 		});
 
 		// filter
-		if (this._bIsFiltered && aFilters.length === 0) {
+		if (bFilterChanged && aFilters.length === 0) {
 			oBinding.filter(aFilters, "Application");
-		} else if (aFilters.length > 0) {
+		} else if (bFilterChanged && aFilters.length > 0) {
 			var oFilter = new sap.ui.model.Filter(aFilters, true); // second parameter stands for "and"
 			oBinding.filter(oFilter, "Application");
 		}
 
-		// Just an itermediate solution but it helps a lot
-		this._bIsFiltered = aFilters.length > 0;
+		if (this._oViewSettings.groupProperty && this._oViewSettings.groupProperty !== this._sCurrentGroup) {
+			bGroupChanged = true;
+		} else if (this._oViewSettings.groupProperty && this._oViewSettings.groupDescending !== this._bCurrentlyGroupedDescending) {
+			bGroupChanged = true;
+		}
 
 		// group
-		if (this._oViewSettings.groupProperty && this._oViewSettings.groupProperty !== this._sCurrentGroup) {
+		if (bGroupChanged) {
 			var oSorter = new sap.ui.model.Sorter(
 				this._oViewSettings.groupProperty,
 				this._oViewSettings.groupDescending,
 				this._mGroupFunctions[this._oViewSettings.groupProperty]);
 			aSorters.push(oSorter);
+			aSorters.push(new sap.ui.model.Sorter("name", false));
+			oBinding.sort(aSorters);
 		}
+
 		this._sCurrentGroup = this._oViewSettings.groupProperty;
-		aSorters.push(new sap.ui.model.Sorter("name", false));
-		oBinding.sort(aSorters);
+		this._bCurrentlyGroupedDescending = this._oViewSettings.groupDescending;
 
 		// memorize that this function was executed at least once
 		this._bIsViewUpdatedAtLeastOnce = true;
