@@ -1020,6 +1020,8 @@ sap.ui.require([
 					i: "/dataServices/schema/0/entityType/0/property/[${maxLength}]",
 					o: "/dataServices/schema/0/entityType/0/property/1"
 				}].forEach(function (oFixture) {
+					var fnBindObject, fnUnbindObject;
+
 					if (oFixture.m) {
 						oLogMock.expects("warning")
 							// do not construct arguments in vain!
@@ -1027,9 +1029,27 @@ sap.ui.require([
 							.withExactArgs(oFixture.m, "path: " + oFixture.i
 								+ ", context: undefined", "sap.ui.model.odata.ODataMetaModel");
 					}
+					if (oMetaModel.oResolver) {
+						fnBindObject = oMetaModel.oResolver.bindObject;
+						oMetaModel.oResolver.bindObject = function () {
+							strictEqual(this.getBinding("any"), undefined,
+								"no property binding on bindObject");
+							fnBindObject.apply(this, arguments);
+						}
+						fnUnbindObject = oMetaModel.oResolver.unbindObject;
+						oMetaModel.oResolver.unbindObject = function () {
+							strictEqual(this.getBinding("any"), undefined,
+								"no property binding on unbindObject");
+							fnUnbindObject.apply(this, arguments);
+						}
+					}
 					strictEqual(oMetaModel._getObject(oFixture.i, oFixture.c), oFixture.o
 						? oMetaModel.oModel.getObject(oFixture.o)
 						: oFixture.o, oFixture.i);
+					strictEqual(oMetaModel.oResolver.getBinding("any"), undefined,
+						"no property binding in the end");
+					strictEqual(oMetaModel.oResolver.getObjectBinding(), undefined,
+						"no object binding in the end");
 				});
 			});
 		});
