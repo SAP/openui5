@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
-    <title>sap.m.Wizard</title>
+	<meta charset="UTF-8">
+	<title>sap.m.Wizard</title>
 	<script id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m, sap.ui.layout"
 			src="../../../resources/sap-ui-core.js"
@@ -12,8 +12,7 @@
 		jQuery.sap.require("sap.m.WizardProgressNavigator");
 		jQuery.sap.require("sap.m.WizardStep");
 
-		var app = new sap.m.App({initialPage: "paginaUno"});
-		var pageOne = new sap.m.Page("paginaUno", {showHeader: false});
+		var app = new sap.m.SplitApp();
 
 		(function () {
 			var checkStep4 = function() {
@@ -219,7 +218,6 @@
 
 		(function () {
 			bindableWizard = new sap.m.Wizard({
-				visible: false,
 				steps: {
 					path: "/steps",
 					template: new sap.m.WizardStep({
@@ -396,7 +394,6 @@
 			});
 
 			branchingWizard = new sap.m.Wizard({
-				visible: false,
 				enableBranching: true,
 				width:"100%",
 				showNextButton: true,
@@ -412,32 +409,26 @@
 			title: "Navigation",
 			content: [
 				new sap.m.List({
-					items:[
+					items: [
 						new sap.m.StandardListItem({
 							title: "Forward wizard",
 							type: "Active",
 							press: function () {
-								wizard.setVisible(true);
-								bindableWizard.setVisible(false);
-								branchingWizard.setVisible(false);
+								app.toDetail("fwd-wiz");
 							}
 						}),
 						new sap.m.StandardListItem({
 							title: "Branching wizard",
 							type: "Active",
 							press: function () {
-								wizard.setVisible(false);
-								bindableWizard.setVisible(false);
-								branchingWizard.setVisible(true);
+								app.toDetail("branch-wiz");
 							}
 						}),
 						new sap.m.StandardListItem({
 							title: "Wizard binding",
 							type: "Active",
 							press : function () {
-								wizard.setVisible(false);
-								bindableWizard.setVisible(true);
-								branchingWizard.setVisible(false);
+								app.toDetail("bnd-wiz");
 							}
 						})
 					]
@@ -445,16 +436,35 @@
 			]
 		});
 
-		var detailPage = new sap.m.Page({
-			content: [wizard, bindableWizard, branchingWizard]
-		});
+		app.addMasterPage(masterPage);
 
-		pageOne.addContent(new sap.m.SplitContainer({
-			masterPages: masterPage,
-			detailPages: detailPage
+		app.addDetailPage(new sap.m.Page("fwd-wiz", {
+			showNavButton: jQuery.device.is.phone,
+			navButtonText: "Back",
+			navButtonPress: function() {
+				app.backDetail();
+			},
+			content: [wizard]
 		}));
 
-		app.addPage(pageOne);
+		app.addDetailPage(new sap.m.Page("bnd-wiz", {
+			showNavButton: jQuery.device.is.phone,
+			navButtonText: "Back",
+			navButtonPress: function() {
+				app.backDetail();
+			},
+			content: [bindableWizard]
+		}));
+
+		app.addDetailPage(new sap.m.Page("branch-wiz", {
+			showNavButton: jQuery.device.is.phone,
+			navButtonText: "Back",
+			navButtonPress: function() {
+				app.backDetail();
+			},
+			content: [branchingWizard]
+		}));
+
 		app.placeAt("content");
 	</script>
 </head>
