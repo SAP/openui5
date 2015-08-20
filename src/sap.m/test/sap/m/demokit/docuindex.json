@@ -356,8 +356,8 @@
 		  "since": "1.10",
 		  "samples": [
 			"sap.m.sample.MessageBox",
-			"sap.m.sample.MessageBoxInfo",
-			"sap.m.sample.MessageBoxTypes"
+			"sap.m.sample.MessageBoxInitialFocus",
+			"sap.m.sample.MessageBoxInfo"
 		  ]
 		},
 		{
@@ -1737,9 +1737,9 @@
 		  "description": "MessageBox with the option to display detailed information."
 		},
 		{
-		  "id": "sap.m.sample.MessageBoxTypes",
-		  "name": "Message Box Header Icons",
-		  "description": "MessageBox icons can be used to show the different value states that a MessageBox can display: success, warning, error, information and question."
+		  "id": "sap.m.sample.MessageBoxInitialFocus",
+		  "name": "Message Box Initial Focus",
+		  "description": "Shows how to set initial focus to MessageBox button."
 		},
 		{
 		  "id": "sap.m.sample.MessagePopover",
