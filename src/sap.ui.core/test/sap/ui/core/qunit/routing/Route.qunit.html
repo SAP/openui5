@@ -21,6 +21,7 @@
 
 
 			jQuery.sap.require("sap.ui.core.routing.Route");
+			jQuery.sap.require("sap.ui.core.UIComponent");
 
 			var oRouterStub = {
 				fireRouteMatched : function () {},
@@ -110,8 +111,100 @@
 			fnDetachRouteEventTestCase("Should detach the patternMatched event", "PatternMatched");
 
 
+			QUnit.module("nested routes",{
+				beforeEach: function() {
+					var that = this;
+					this.oSpy = sinon.spy(function(sRoute) {
+						return {
+							matched: {
+								add: function() {
+
+								}
+							}
+						}
+					});
+					this.oRouterStub = {
+						_oRouter: {
+							addRoute: this.oSpy
+						},
+						getRoute: function() {
+							return that.oParentRoute;
+						}
+					};
+
+					this.oParentRoute = new sap.ui.core.routing.Route(this.oRouterStub, {
+						name: "parentRoute",
+						pattern: "parent"
+					});
+
+					this.oChildRoute = new sap.ui.core.routing.Route(this.oRouterStub, {
+						name: "childRoute",
+						pattern: "child",
+						parent: ":parentRoute"
+					});
+
+					var ParentComponent = sap.ui.core.UIComponent.extend("parent.component", {
+						metadata : {
+							routing:  {
+								routes: [
+									{
+										pattern: "category/{id}",
+										name: "category"
+									}
+								]
+							}
+						},
+						createContent: function() {
+							that.oChildComponent = new ChildComponent("child");
+							return sap.ui.jsview("view", {
+								content: that.oChildComponent
+							});
+						}
+					});
+
+					var ChildComponent = sap.ui.core.UIComponent.extend("child.component", {
+						metadata : {
+							routing:  {
+								routes: [
+									{
+										pattern: "product/{id}",
+										name: "product",
+										parent: "parent.component:category"
+									}
+								]
+							}
+						}
+					});
+
+					this.oGetParentRouteSpy = sinon.spy(sap.ui.core.routing.Route.prototype, "_getParentRoute");
+
+					this.oParentComponent = new ParentComponent("parent");
+
+				},
+				afterEach: function() {
+					this.oGetParentRouteSpy.restore();
+					this.oParentRoute.destroy();
+					this.oChildRoute.destroy();
+					this.oParentComponent.destroy();
+					this.oChildComponent.destroy();
+				}
+			});
+
+			test("Route with prefixed pattern is added to router", function(assert) {
+				assert.strictEqual(this.oSpy.callCount, 2, "Two patterns are added to the router");
+				assert.strictEqual(this.oSpy.args[0][0], "parent", "Pattern of parent route is added to router");
+				assert.strictEqual(this.oSpy.args[1][0], "parent/child", "Pattern of child route is prefixed with the parent route and added to router");
+			});
+
+			test("Route with prefixed pattern matches for nested components", function(assert) {
+				var oParentRouter = this.oParentComponent.getRouter();
+				assert.strictEqual(this.oGetParentRouteSpy.callCount, 1, "getParentRoute is called once on the child route");
+				assert.strictEqual(this.oGetParentRouteSpy.args[0][0], "parent.component:category", "parameter is correctly given");
+				assert.strictEqual(this.oGetParentRouteSpy.returnValues[0], oParentRouter.getRoute("category"), "The parent route instance is fetched from the component");
+			});
 
 		})();
+
 	</script>
 </head>
 <body>
