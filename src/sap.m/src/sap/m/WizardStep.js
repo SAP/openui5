@@ -38,6 +38,13 @@ sap.ui.define(["./library", "sap/ui/core/Control"],
 				 */
 				title: {type: "string", group: "appearance", defaultValue: ""},
 				/**
+				 * Determines the icon that is displayed for this step.
+				 * The icon is visualized in the progress navigation part of the Wizard control.
+				 * <b>Note:</b> In order for the icon to be displayed, each step in the Wizard should have
+				 * this property defined, otherwise the default numbering will be displayed.
+				 */
+				icon: {type: "sap.ui.core.URI", group: "Appearance", defaultValue: ""},
+				/**
 				 * Indicates whether or not the step is validated.
 				 * When a step is validated a Next button is visualized in the Wizard control.
 				 */

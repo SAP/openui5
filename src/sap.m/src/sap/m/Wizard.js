@@ -792,24 +792,31 @@ sap.ui.define([
 		 * @private
 		 */
 		Wizard.prototype._updateProgressNavigator = function () {
-			if (!this.getEnableBranching()) {
-				return;
-			}
-
 			var progressNavigator = this._getProgressNavigator(),
 				currentStep = this._getStartingStep(),
+				allSteps = this.getSteps(),
+				stepTitles = [currentStep.getTitle()],
+				stepIcons = [currentStep.getIcon()],
 				stepCount = 1;
 
-			/**
-			 * Find branched, or leaf step
-			 */
-			while (!currentStep._isLeaf() && currentStep._getNextStepReference() !== null) {
-				stepCount++;
-				currentStep = currentStep._getNextStepReference();
+			if (this.getEnableBranching()) {
+				// Find branched, or leaf step
+				while (!currentStep._isLeaf() && currentStep._getNextStepReference() !== null) {
+					stepCount++;
+					currentStep = currentStep._getNextStepReference();
+					stepTitles.push(currentStep.getTitle());
+					stepIcons.push(currentStep.getIcon());
+				}
+
+				progressNavigator.setVaryingStepCount(currentStep._isBranched());
+				progressNavigator.setStepCount(stepCount);
+			} else {
+				stepTitles = allSteps.map(function (step) { return step.getTitle(); });
+				stepIcons = allSteps.map(function (step) { return step.getIcon(); });
 			}
 
-			progressNavigator.setVaryingStepCount(currentStep._isBranched());
-			progressNavigator.setStepCount(stepCount);
+			progressNavigator.setStepTitles(stepTitles);
+			progressNavigator.setStepIcons(stepIcons);
 		};
 
 		/**

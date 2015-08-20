@@ -19,8 +19,12 @@
 		assert.strictEqual(this.wizardStep.getTitle(), "", "should be an empty string");
 	});
 
+	QUnit.test("Default value for icon", function (assert) {
+		assert.strictEqual(this.wizardStep.getIcon(), "", "should be an empty string");
+	});
+
 	QUnit.test("Default value for validated", function (assert) {
-		assert.strictEqual(this.wizardStep.getValidated(), true, "should be true");
+		assert.strictEqual(this.wizardStep.getValidated(), true, "should be TRUE");
 	});
 
 	QUnit.test("_isLeaf() should return TRUE WHEN NO SUBSEQUENT step are defined", function (assert) {

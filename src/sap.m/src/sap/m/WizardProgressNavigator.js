@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation'],
-function (library, Control, ItemNavigation) {
+sap.ui.define(["./library", "sap/ui/core/Control", "sap/ui/core/delegate/ItemNavigation", "jquery.sap.global"],
+function (library, Control, ItemNavigation, jQuery) {
 	"use strict";
 
 	/**
@@ -36,6 +36,20 @@ function (library, Control, ItemNavigation) {
 			 * Maximum number of steps is 8.
 			 */
 			stepCount: {type: "int", group: "Data", defaultValue: 3},
+
+			/**
+			 * Sets a title to be displayed for each step.
+			 * The title for each step is visible on hover.
+			 */
+			stepTitles: {type: "string[]", group: "Appearance", defaultValue: []},
+
+			/**
+			 * Sets an icon to be displayed for each step.
+			 * The icon for each step is directly visible in the WizardProgressNavigator.
+			 * <b>Note:</b> The number of icons should equal the number of steps,
+			 * otherwise no icons will be rendered.
+			 */
+			stepIcons: {type: "sap.ui.core.URI[]", group: "Appearance", defaultValue: []},
 
 			/**
 			* Indicates that number of steps can vary.
@@ -88,7 +102,8 @@ function (library, Control, ItemNavigation) {
 		LIST: "sapMWizardProgressNavList",
 		STEP: "sapMWizardProgressNavStep",
 		ANCHOR: "sapMWizardProgressNavAnchor",
-		SEPARATOR: "sapMWizardProgressNavSeparator"
+		SEPARATOR: "sapMWizardProgressNavSeparator",
+		ICON: "sapMWizardProgressNavIcon"
 	};
 
 	WizardProgressNavigator.ATTRIBUTES = {
@@ -114,6 +129,13 @@ function (library, Control, ItemNavigation) {
 		this._cachedSeparators = null;
 		this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._createAnchorNavigation();
+	};
+
+	WizardProgressNavigator.prototype.onBeforeRendering = function () {
+		// show no icons if an icon is not defined for each step
+		if (this.getStepCount() !== this.getStepIcons().filter(String).length) {
+			this.setStepIcons([]);
+		}
 	};
 
 	WizardProgressNavigator.prototype.onAfterRendering = function () {
@@ -209,7 +231,7 @@ function (library, Control, ItemNavigation) {
 	};
 
 	WizardProgressNavigator.prototype.ontap = function (event) {
-		if (!this._isAnchor(event.target) ||
+		if (!(this._isIcon(event.target) || this._isAnchor(event.target)) ||
 			!this._isActiveStep(this._getStepNumber(event.target))) {
 			return;
 		}
@@ -502,6 +524,16 @@ function (library, Control, ItemNavigation) {
 	};
 
 	/**
+	 * Checks whether the argument has sapMWizardProgressNavIcon class present.
+	 * @param {HTMLElement} domTarget The target of the click/tap event.
+	 * @returns {boolean} Returns true when sapMWizardProgressNavIcon class is present, false otherwise.
+	 * @private
+	 */
+	WizardProgressNavigator.prototype._isIcon = function (domTarget) {
+		return domTarget.className.indexOf(WizardProgressNavigator.CLASSES.ICON) !== -1;
+	};
+
+	/**
 	 * Checks whether the step is active.
 	 * @param {number} iStep The step number to be checked.
 	 * @returns {boolean} Returns true when the step number has been activated, false otherwise.
@@ -518,7 +550,11 @@ function (library, Control, ItemNavigation) {
 	 * @private
 	 */
 	WizardProgressNavigator.prototype._getStepNumber = function (domAnchor) {
-		return domAnchor.parentNode.getAttribute(WizardProgressNavigator.ATTRIBUTES.STEP) | 0;
+		var stepNumber = jQuery(domAnchor)
+						.closest("." + WizardProgressNavigator.CLASSES.STEP)
+						.attr(WizardProgressNavigator.ATTRIBUTES.STEP);
+
+		return parseInt(stepNumber, 10);
 	};
 
 	return WizardProgressNavigator;
