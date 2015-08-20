@@ -7,23 +7,16 @@ sap.ui.define([
 	return BaseController.extend("sap.ui.demo.bulletinboard.controller.App", {
 
 		onInit: function () {
-			var oViewModel,
-				fnSetAppNotBusy,
-				iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
+			var oViewModel = new JSONModel({
+					busy: true,
+					delay: 0
+				});
 
-			oViewModel = new JSONModel({
-				busy: true,
-				delay: 0
-			});
 			this.setModel(oViewModel, "appView");
 
-			fnSetAppNotBusy = function () {
+			this.getOwnerComponent().getModel().metadataLoaded().then(function () {
 				oViewModel.setProperty("/busy", false);
-				oViewModel.setProperty("/delay", iOriginalBusyDelay);
-			};
-
-			this.getOwnerComponent().oWhenMetadataIsLoaded
-				.then(fnSetAppNotBusy, fnSetAppNotBusy);
+			});
 		}
 	});
 

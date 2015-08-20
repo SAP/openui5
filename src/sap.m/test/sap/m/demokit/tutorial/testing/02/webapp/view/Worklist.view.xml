@@ -2,7 +2,6 @@
 	controllerName="sap.ui.demo.bulletinboard.controller.Worklist"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:core="sap.ui.core"
 	xmlns:semantic="sap.m.semantic">
 	<semantic:FullscreenPage
 		id="page"
@@ -47,9 +46,9 @@
 								text="{Category}"/>
 							<ObjectNumber
 								number="{
-                                    path: 'Price',
-                                    formatter: '.formatter.numberUnit'
-                                }"
+									path: 'Price',
+									formatter: '.formatter.numberUnit'
+								}"
 								unit="{Currency}"
 								/>
 						</cells>
@@ -57,20 +56,8 @@
 				</items>
 			</Table>
 		</semantic:content>
-		<semantic:customFooterContent>
-			<Toolbar id="footerToolbar">
-				<ToolbarSpacer/>
-				<Button id="shareButton" tooltip="{i18n>shareTooltip}" icon="sap-icon://action" press="onSharePress">
-					<dependents>
-						<ActionSheet id="shareSheet" showCancelButton="true" placement="Top">
-							<buttons>
-								<Button id="shareEmail" icon="sap-icon://email" text="{i18n>shareSendEmail}"
-										press="onShareEmailPress"/>
-							</buttons>
-						</ActionSheet>
-					</dependents>
-				</Button>
-			</Toolbar>
-		</semantic:customFooterContent>
+		<semantic:sendEmailAction>
+			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+		</semantic:sendEmailAction>
 	</semantic:FullscreenPage>
 </mvc:View>
