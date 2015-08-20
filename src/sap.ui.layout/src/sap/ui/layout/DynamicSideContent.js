@@ -117,6 +117,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			M_L_BREAKPOINT = 1024,
 			L_XL_BREAKPOINT = 1440;
 
+		DynamicSideContent.prototype.init = function () {
+			this._SCVisible = this.getProperty("showSideContent");
+			this._MCVisible = this.getProperty("showMainContent");
+			this._bSuppressInitialFireBreakPointChange = true;
+		};
+
 		/**
 		 * Sets the showSideContent property.
 		 * @param {boolean} bVisible Determines if the side content part is visible
@@ -127,7 +133,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 */
 		DynamicSideContent.prototype.setShowSideContent = function (bVisible, bSuppressVisualUpdate) {
 			this.setProperty("showSideContent", bVisible, true);
+			this._SCVisible = bVisible;
 			if (!bSuppressVisualUpdate) {
+				this._setResizeData(this.getCurrentBreakpoint(), this.getEqualSplit());
+				if (this._currentBreakpoint === S) {
+					this._MCVisible = true;
+				}
 				this._changeGridState();
 			}
 			return this;
@@ -143,10 +154,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 */
 		DynamicSideContent.prototype.setShowMainContent = function (bVisible, bSuppressVisualUpdate) {
 			this.setProperty("showMainContent", bVisible, true);
+			this._MCVisible = bVisible;
 			if (!bSuppressVisualUpdate) {
+				this._setResizeData(this.getCurrentBreakpoint(), this.getEqualSplit());
+				if (this._currentBreakpoint === S) {
+					this._SCVisible = true;
+				}
 				this._changeGridState();
 			}
 			return this;
+		};
+
+		/**
+		 * Gets the value of showSideContent property.
+		 * @returns {boolean} Side content visibility state
+		 * @override
+		 * @public
+		 */
+		DynamicSideContent.prototype.getShowSideContent = function () {
+			if (this._currentBreakpoint === S) {
+				return this._SCVisible && this.getProperty("showSideContent");
+			} else {
+				return this.getProperty("showSideContent");
+			}
+		};
+
+		/**
+		 * Gets the value of showMainContent property.
+		 * @returns {boolean} Side content visibility state
+		 * @override
+		 * @public
+		 */
+		DynamicSideContent.prototype.getShowMainContent = function () {
+			if (this._currentBreakpoint === S) {
+				return this._MCVisible && this.getProperty("showMainContent");
+			} else {
+				return this.getProperty("showMainContent");
+			}
 		};
 
 		/**
@@ -157,8 +201,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @public
 		 */
 		DynamicSideContent.prototype.setEqualSplit = function (bState) {
-			this.setShowMainContent(true, true);
-			this.setShowSideContent(true, true);
+			this._MCVisible = true;
+			this._SCVisible = true;
 			this.setProperty("equalSplit", bState, true);
 			if (this._currentBreakpoint) {
 				this._setResizeData(this._currentBreakpoint, bState);
@@ -208,13 +252,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 */
 		DynamicSideContent.prototype.toggle = function () {
 			if (this._currentBreakpoint === S) {
-				if (this.getShowMainContent() && !this.getShowSideContent()) {
-					this.setShowMainContent(false, true);
-					this.setShowSideContent(true, true);
-				} else if (!this.getShowMainContent() && this.getShowSideContent()) {
+
+				if (!this.getProperty("showMainContent")) {
 					this.setShowMainContent(true, true);
-					this.setShowSideContent(false, true);
+					this._MCVisible = false;
 				}
+				if (!this.getProperty("showSideContent")) {
+					this.setShowSideContent(true, true);
+					this._SCVisible = false;
+				}
+
+				if (this._MCVisible && !this._SCVisible) {
+					this._SCVisible = true;
+					this._MCVisible = false;
+				} else if (!this._MCVisible && this._SCVisible) {
+					this._MCVisible = true;
+					this._SCVisible = false;
+				}
+
 				this._changeGridState();
 			}
 			return this;
@@ -239,7 +294,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 
 			if (!this.getContainerQuery()) {
 				this._iWindowWidth = jQuery(window).width();
-				this._currentBreakpoint = this._getBreakPointFromWidth(this._iWindowWidth);
+				this._setBreakpointFromWidth(this._iWindowWidth);
 				this._setResizeData(this._currentBreakpoint, this.getEqualSplit());
 			}
 		};
@@ -353,21 +408,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			if (iWidth <= 0) {
 				throw new Error(INVALID_PARENT_WIDTH_ERROR_MSG);
 			}
-
 			if (iWidth <= S_M_BREAKPOINT && this._currentBreakpoint !== S) {
-				this.fireBreakpointChanged({currentBreakpoint : S});
 				return S;
 			} else if ((iWidth > S_M_BREAKPOINT) && (iWidth <= M_L_BREAKPOINT) && this._currentBreakpoint !== M) {
-				this.fireBreakpointChanged({currentBreakpoint : M});
 				return M;
 			} else if ((iWidth > M_L_BREAKPOINT) && (iWidth <= L_XL_BREAKPOINT) && this._currentBreakpoint !== L) {
-				this.fireBreakpointChanged({currentBreakpoint : L});
 				return L;
 			} else if (iWidth > L_XL_BREAKPOINT && this._currentBreakpoint !== XL) {
-				this.fireBreakpointChanged({currentBreakpoint : XL});
 				return XL;
 			}
 			return this._currentBreakpoint;
+		};
+
+
+		/**
+		 * Sets the current breakpoint, related to the width, which is passed to the method.
+		 * @private
+		 * @param {integer} iWidth is the parent container width
+		 */
+		DynamicSideContent.prototype._setBreakpointFromWidth = function (iWidth) {
+			if (iWidth <= 0) {
+				throw new Error(INVALID_PARENT_WIDTH_ERROR_MSG);
+			}
+			this._currentBreakpoint = this._getBreakPointFromWidth(iWidth);
+			if (this._bSuppressInitialFireBreakPointChange) {
+				this._bSuppressInitialFireBreakPointChange = false;
+			} else {
+				this.fireBreakpointChanged({currentBreakpoint : this._currentBreakpoint});
+			}
 		};
 
 		/**
@@ -385,7 +453,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				this._iOldWindowWidth = this._iWindowWidth;
 
 				this._oldBreakPoint = this._currentBreakpoint;
-				this._currentBreakpoint = this._getBreakPointFromWidth(this._iWindowWidth);
+				this._setBreakpointFromWidth(this._iWindowWidth);
 
 				if ((this._oldBreakPoint !== this._currentBreakpoint)
 					|| (this._currentBreakpoint === M
@@ -405,7 +473,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @private
 		 */
 		DynamicSideContent.prototype._setResizeData = function (sSizeName, bComparison) {
-
 			var sideContentVisibility = this.getSideContentVisibility(),
 				sideContentFallDown = this.getSideContentFallDown();
 
@@ -414,10 +481,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				switch (sSizeName) {
 					case S:
 						this._setSpanSize(SPAN_SIZE_12, SPAN_SIZE_12);
-						if (sideContentVisibility === sap.ui.layout.SideContentVisibility.AlwaysShow) {
-							this.setShowSideContent(true, true);
-						} else {
-							this.setShowSideContent(false, true);
+						if (this.getProperty("showSideContent") && this.getProperty("showMainContent")) {
+							this._SCVisible = sideContentVisibility === sap.ui.layout.SideContentVisibility.AlwaysShow;
 						}
 						this._bFixedSideContent = false;
 						break;
@@ -432,13 +497,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 							this._setSpanSize(SPAN_SIZE_4, SPAN_SIZE_8);
 							this._bFixedSideContent = true;
 						}
-						if (sideContentVisibility === sap.ui.layout.SideContentVisibility.ShowAboveS ||
-							sideContentVisibility === sap.ui.layout.SideContentVisibility.AlwaysShow) {
-							this.setShowSideContent(true, true);
-						} else {
-							this.setShowSideContent(false, true);
-						}
-						this.setShowMainContent(true, true);
+						this._SCVisible = sideContentVisibility === sap.ui.layout.SideContentVisibility.ShowAboveS ||
+							sideContentVisibility === sap.ui.layout.SideContentVisibility.AlwaysShow;
+
+						this._MCVisible = true;
 						break;
 					case L:
 						if (sideContentFallDown === sap.ui.layout.SideContentFallDown.BelowXL) {
@@ -446,24 +508,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 						} else {
 							this._setSpanSize(SPAN_SIZE_4, SPAN_SIZE_8);
 						}
-						if (sideContentVisibility === sap.ui.layout.SideContentVisibility.ShowAboveS ||
+						this._SCVisible = sideContentVisibility === sap.ui.layout.SideContentVisibility.ShowAboveS ||
 							sideContentVisibility === sap.ui.layout.SideContentVisibility.ShowAboveM ||
-							sideContentVisibility === sap.ui.layout.SideContentVisibility.AlwaysShow) {
-							this.setShowSideContent(true, true);
-						} else {
-							this.setShowSideContent(false, true);
-						}
-						this.setShowMainContent(true, true);
+							sideContentVisibility === sap.ui.layout.SideContentVisibility.AlwaysShow;
+						this._MCVisible = true;
 						this._bFixedSideContent = false;
 						break;
 					case XL:
 						this._setSpanSize(SPAN_SIZE_3, SPAN_SIZE_9);
-						if (sideContentVisibility !== sap.ui.layout.SideContentVisibility.NeverShow) {
-							this.setShowSideContent(true, true);
-						} else {
-							this.setShowSideContent(false, true);
-						}
-						this.setShowMainContent(true, true);
+						this._SCVisible = sideContentVisibility !== sap.ui.layout.SideContentVisibility.NeverShow;
+						this._MCVisible = true;
 						this._bFixedSideContent = false;
 						break;
 					default:
@@ -474,12 +528,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				switch (sSizeName) {
 					case S:
 						this._setSpanSize(SPAN_SIZE_12, SPAN_SIZE_12);
-						this.setShowSideContent(false, true);
+						this._SCVisible = false;
 						break;
 					default:
 						this._setSpanSize(SPAN_SIZE_6, SPAN_SIZE_6);
-						this.setShowSideContent(true, true);
-						this.setShowMainContent(true, true);
+						this._SCVisible = true;
+						this._MCVisible = true;
 				}
 				this._bFixedSideContent = false;
 			}
@@ -494,7 +548,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 */
 		DynamicSideContent.prototype._shouldSetHeight = function () {
 			if (((this._iScSpan + this._iMcSpan) === SPAN_SIZE_12 &&
-				 this.getShowMainContent() && this.getShowSideContent())
+				this._MCVisible && this._SCVisible)
 				|| this._fixedSideContent) {
 				return true;
 			}
@@ -508,7 +562,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 */
 		DynamicSideContent.prototype._changeGridState = function () {
 			var $sideContent = this.$(SC_GRID_CELL_SELECTOR),
-				$mainContent = this.$(MC_GRID_CELL_SELECTOR);
+				$mainContent = this.$(MC_GRID_CELL_SELECTOR),
+				bMainContentVisibleProperty = this.getProperty("showMainContent"),
+				bSideContentVisibleProperty = this.getProperty("showSideContent");
 
 			if (this._bFixedSideContent) {
 				$sideContent.removeClass().addClass(SC_FIXED_CLASS);
@@ -518,13 +574,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 				$mainContent.removeClass(MC_FIXED_CLASS);
 			}
 
-			if (this.getShowSideContent() && this.getShowMainContent()) {
-
+			if (this._SCVisible && this._MCVisible && bSideContentVisibleProperty && bMainContentVisibleProperty) {
 				if (!this._bFixedSideContent) {
 					$mainContent.removeClass().addClass("sapUiDSCSpan" + this._iMcSpan);
 					$sideContent.removeClass().addClass("sapUiDSCSpan" + this._iScSpan);
 				}
-
 				if (this._shouldSetHeight()) {
 					$sideContent.css("height", "100%").css("float", "left");
 					$mainContent.css("height", "100%").css("float", "left");
@@ -532,17 +586,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 					$sideContent.css("height", "auto").css("float", "none");
 					$mainContent.css("height", "auto").css("float", "none");
 				}
-			} else if (!this.getShowSideContent() && !this.getShowMainContent()) {
+			} else if (!this._SCVisible && !this._MCVisible) {
 				$mainContent.addClass(HIDDEN_CLASS);
 				$sideContent.addClass(HIDDEN_CLASS);
-
-			} else if (this.getShowMainContent()) {
+			} else if (this._MCVisible && bMainContentVisibleProperty) {
 				$mainContent.removeClass().addClass(SPAN_SIZE_12_CLASS);
 				$sideContent.addClass(HIDDEN_CLASS);
-
-			} else if (this.getShowSideContent()) {
+			} else if (this._SCVisible && bSideContentVisibleProperty) {
 				$sideContent.removeClass().addClass(SPAN_SIZE_12_CLASS);
 				$mainContent.addClass(HIDDEN_CLASS);
+			} else if (!bMainContentVisibleProperty && !bSideContentVisibleProperty) {
+				$mainContent.addClass(HIDDEN_CLASS);
+				$sideContent.addClass(HIDDEN_CLASS);
 			}
 		};
 
