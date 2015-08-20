@@ -534,8 +534,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
+	TabStrip.prototype.onclick = function(oEvent) {
+		var oSource = oEvent.target;
+		var $target = jQuery(oSource);
+
+		if (oSource.className == "sapUiTabClose") {
+			// find the items index
+			var iIdx = this.getItemIndex($target.parentByAttribute("id"));
+			if (iIdx > -1) {
+				this.fireClose({index:iIdx});
+			}
+		}
+	};
+
 	/**
-	 * Listens to the mousedown events.
+	 * Listens to the mousedown events for selecting tab
+	 * and starting tab drag & drop.
 	 * @private
 	 */
 	TabStrip.prototype.onmousedown = function(oEvent) {
@@ -551,14 +565,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var $target = jQuery(oSource);
 
 		if (oSource.className == "sapUiTabClose") {
-
 			oEvent.preventDefault();
+			oEvent.stopPropagation();
 
-			// find the items index
-			var iIdx = this.getItemIndex($target.parentByAttribute("id"));
-			if (iIdx > -1) {
-				this.fireClose({index:iIdx});
-			}
+			// clear the target so the the
+			// ItemNavigation won't set the focus on this tab.
+			oEvent.target = null;
 			return;
 		}
 
