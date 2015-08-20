@@ -443,8 +443,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 * @private
 	 */
 	ColumnMenu.prototype._setFilterValue = function(sValue) {
+		var oColumn = this.getParent();
+		var oTable = (oColumn ? oColumn.getParent() : undefined);
+
 		var oFilterField = sap.ui.getCore().byId(this.getId() + "-filter");
-		if (oFilterField) {
+		if (oFilterField && (oTable && !oTable.getEnableCustomFilter())) {
 			oFilterField.setValue(sValue);
 		}
 		return this;
@@ -455,8 +458,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 * @private
 	 */
 	ColumnMenu.prototype._setFilterState = function(sFilterState) {
+		var oColumn = this.getParent();
+		var oTable = (oColumn ? oColumn.getParent() : undefined);
+
 		var oFilterField = sap.ui.getCore().byId(this.getId() + "-filter");
-		if (oFilterField) {
+		if (oFilterField && (oTable && !oTable.getEnableCustomFilter())) {
 			oFilterField.setValueState(sFilterState);
 		}
 		return this;
