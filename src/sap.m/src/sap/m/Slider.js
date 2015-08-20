@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Slider.
-sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator'],
-	function(jQuery, SliderRenderer, library, Control, EnabledPropagator) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator'],
+	function(jQuery, library, Control, EnabledPropagator) {
 		"use strict";
 
 		/**
@@ -472,7 +472,8 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 				oTouch = oEvent.targetTouches[0],
 				oNearestHandleDomRef,
 				fNewValue,
-				sEventNamespace = "." + SliderRenderer.CSS_CLASS;
+				CSS_CLASS = this.getRenderer().CSS_CLASS,
+				sEventNamespace = "." + CSS_CLASS;
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
@@ -512,7 +513,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 			this._fInitialValue = this.getValue();
 
 			// add active state
-			this.$("inner").addClass(SliderRenderer.CSS_CLASS + "Pressed");
+			this.$("inner").addClass(CSS_CLASS + "Pressed");
 
 			if (oTouch.target === this.getDomRef("handle")) {
 
@@ -590,7 +591,8 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		 * @private
 		 */
 		Slider.prototype._ontouchend = function(oEvent) {
-			var sEventNamespace = "." + SliderRenderer.CSS_CLASS;
+			var CSS_CLASS = this.getRenderer().CSS_CLASS,
+				sEventNamespace = "." + CSS_CLASS;
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
@@ -613,7 +615,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 			var fValue = this.getValue();
 
 			// remove the active state
-			this.$("inner").removeClass(SliderRenderer.CSS_CLASS + "Pressed");
+			this.$("inner").removeClass(CSS_CLASS + "Pressed");
 
 			if (this._fInitialValue !== fValue) {
 				this.fireChange({ value: fValue });
