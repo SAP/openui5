@@ -15,6 +15,7 @@
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
+
 <script type="text/javascript">
  	jQuery.sap.require("sap.ui.core.IconPool");
 
@@ -45,11 +46,11 @@
 		visible : true,
 		enabled : true,
 		state : sap.ui.core.ValueState.NEUTRAL,
-		displayValue : '80%',
+		displayValue : "80%",
 		percentValue : 80,
 		showValue : true,
-		width : '100%',
-		height : '1.375rem',
+		width : "100%",
+		height : "1.375rem",
 	}) ];
 
 	var oItem0 = new sap.ui.core.Item({
@@ -283,8 +284,8 @@
 
 	test("Flag Rendering Position", function() {
 
-		equal(jQuery.sap.byId(ohAttributeAndFlagId2 + "-attr1")[0].offsetTop, jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag")[0].offsetTop,
-				"Attribute and flag should be rendered on the same row");
+		ok(Math.abs(jQuery.sap.byId(ohAttributeAndFlagId2 + "-attr1")[0].offsetTop - jQuery.sap.byId(ohAttributeAndFlagId2 + "-flag")[0].offsetTop)<=1,
+		"Attribute and flag should be rendered on the same row");
 	});
 
 	test("ProgressIndicatorRendered", function() {
@@ -309,11 +310,11 @@
 				visible : false
 			}), ]
 		});
-		oH.placeAt('objectHeaders');
+		oH.placeAt("objectHeaders");
 
 		setTimeout(function() {
 
-			ok(jQuery('#' + oH.getId() + ' > .sapMOHBottomRow > .sapMOHAttrRow').length === 0, "The attribute row should not be rendered");
+			ok(jQuery("#" + oH.getId() + " > .sapMOHBottomRow > .sapMOHAttrRow").length === 0, "The attribute row should not be rendered");
 			oH.destroy();
 			start();
 		});
@@ -329,11 +330,11 @@
 				visible : false
 			}) ]
 		});
-		oH.placeAt('objectHeaders');
+		oH.placeAt("objectHeaders");
 
 		setTimeout(function() {
 
-			ok(jQuery('#' + oH.getId() + ' > .sapMOHBottomRow > .sapMOHAttrRow > .sapMOHStatusFixedWidth').length === 0, "The status should not be rendered");
+			ok(jQuery("#" + oH.getId() + " > .sapMOHBottomRow > .sapMOHAttrRow > .sapMOHStatusFixedWidth").length === 0, "The status should not be rendered");
 			oH.destroy();
 			start();
 		});
@@ -358,11 +359,11 @@
 					visible : true
 				}),	]
 		});
-		oH.placeAt('objectHeaders');
+		oH.placeAt("objectHeaders");
 
 		setTimeout(function() {
 
-			ok(jQuery('#' + oH.getId() + ' > .sapMOHBottomRow > .sapMOHAttrRow').length === 1, "Invisible attribute should not cause new row.");
+			ok(jQuery("#" + oH.getId() + " > .sapMOHBottomRow > .sapMOHAttrRow").length === 1, "Invisible attribute should not cause new row.");
 			oH.destroy();
 			start();
 		});
@@ -374,13 +375,13 @@
 			title : "Reserved space for invisible status issue",
 			statuses : [
 				new sap.m.ProgressIndicator({
-				displayValue : '30%',
+				displayValue : "30%",
 				percentValue : 30,
 				state : sap.ui.core.ValueState.Error,
 				visible : false
 				}),
 				new sap.m.ProgressIndicator({
-					displayValue : '90%',
+					displayValue : "90%",
 					percentValue : 90,
 					state : sap.ui.core.ValueState.Error,
 					visible : true
@@ -391,11 +392,11 @@
 					visible : true
 				}),	]
 		});
-		oH.placeAt('objectHeaders');
+		oH.placeAt("objectHeaders");
 
 		setTimeout(function() {
 
-			ok(jQuery('#' + oH.getId() + ' > .sapMOHBottomRow > .sapMOHAttrRow').length === 1, "Invisible status should not cause new row.");
+			ok(jQuery("#" + oH.getId() + " > .sapMOHBottomRow > .sapMOHAttrRow").length === 1, "Invisible status should not cause new row.");
 			oH.destroy();
 			start();
 		});
@@ -622,7 +623,7 @@
 		setTimeout(function() {
 
 			start();
-			equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 2, "Only one marker should be rendered");
+			equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 2, "Only one marker should be rendered");
 			equal(jQuery.sap.byId(ohFlagAndFavoriteMarkerId + "-flag").attr("data-sap-ui-icon-content").charCodeAt(0), 57514, "Flag on icon should be rendered.");
 		}, 100);
 
@@ -636,7 +637,7 @@
 		setTimeout(function() {
 
 			start();
-			equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "No markers should be rendered");
+			equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "No markers should be rendered");
 		}, 100);
 
 	});
@@ -649,7 +650,7 @@
 		setTimeout(function() {
 
 			start();
-			equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 2, "Only one marker should be rendered");
+			equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 2, "Only one marker should be rendered");
 			equal(jQuery.sap.byId(ohFlagAndFavoriteMarkerId + "-favorite").attr("data-sap-ui-icon-content").charCodeAt(0), 57445, "Favorite on icon should be rendered.");
 		}, 100);
 
@@ -663,7 +664,7 @@
 		setTimeout(function() {
 
 			start();
-			equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "No markers should be rendered");
+			equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 1, "No markers should be rendered");
 
 		}, 100);
 
@@ -679,7 +680,7 @@
 		setTimeout(function() {
 
 			start();
-			equal($("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
+			equal(jQuery("#" + ohFlagAndFavoriteMarkerId + " .sapUiIcon").length, 0, "No markers should be rendered");
 			notEqual(jQuery.sap.domById("ohefafm1"), null, "Attribute should be rendered.");
 		}, 100);
 
