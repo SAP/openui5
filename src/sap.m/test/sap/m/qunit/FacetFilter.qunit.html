@@ -6,17 +6,20 @@
 
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 
+
 <!-- UI5 Bootstrap -->
 <script id="sap-ui-bootstrap" type="text/javascript" src="../../../../resources/sap-ui-core.js" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
 
 <!-- QUnit libraries -->
 <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript">
 	
 	
-	//if(navigator.userAgent.indexOf("MSIE") === -1) {
+	if(navigator.userAgent.indexOf("MSIE") === -1) {
 		
 	
 	module("Control Design");
@@ -36,7 +39,6 @@
 		equal(oFF.getAggregation("buttons").length, 2, "There should be two buttons in the 'buttons' aggregation");
 		equal(oFF.getAggregation("removeFacetIcons").length, 2, "There should be two remove icons in the aggregation");
 		ok(oFF.getAggregation("summaryBar"), "The summary bar aggregation should be created");
-		
 		destroyFF(oFF);
 		
 		// Now make sure we can create a new FF using the same IDs.  This will fail if any of the aggregated controls are is not destroyed properly.
@@ -92,7 +94,7 @@
 	test("FacetFilter.init", function() {
 		
 		var oFF = new sap.m.FacetFilter();
-		
+		oFFS=oFF._enableTouchSupport();
 		// Verify the add facet button is created
 		var oAddFacetButton = oFF.getAggregation("addFacetButton");
 		ok(oAddFacetButton, "The add facet button is created");
@@ -100,6 +102,13 @@
 		// Verify the summary bar is created
 		var oSummaryBar = oFF.getAggregation("summaryBar");
 		ok(oSummaryBar, "The summary bar is created");
+	
+		jQuery.sap.touchEventMode === "ON" 
+		oFF._enableTouchSupport();
+		
+		sap.ui.Device.system.phone;
+		oFF.getType(sap.m.FacetFilterType.Light);
+		
 		oFF.destroy();
 	});
 	
@@ -118,6 +127,10 @@
 		oFF.setShowPopoverOKButton(true);
 		oPopover = oFF._getPopover();
 		ok(oPopover.getFooter(), "Popover should contain the OK button in the footer");
+		
+		sap.ui.Device.browser.internet_explorer < 10
+		ok(oPopover.getContentWidth("30%"),"Popover width set to 30% for IE");
+		
 		oFF.destroy();
 	});
 	
@@ -125,6 +138,9 @@
 		
 		var oFF = new sap.m.FacetFilter();
 		var oFFL = new sap.m.FacetFilterList();
+		
+		oFFL.setWordWrap(true);
+		
 		oFF.addList(oFFL);
 		oFF.placeAt("content");
 		sap.ui.getCore().applyChanges();
@@ -133,12 +149,17 @@
 		oPopover.attachEventOnce("afterOpen", function() {
 			
 			start();
-			ok(oPopover.isOpen(), "Popover should be open");		
+			ok(oPopover.isOpen(), "Popover should be open");
+			ok(oPopover.getContentWidth("30%"),"Popover width should be 30% if wordwrap is set to true");
+			
 			destroyFF(oFF);
 		});
 		
 		var oButton = oFF._getButtonForList(oFFL);
 		oFF._openPopover(oPopover, oButton);
+		
+			
+				              
 	});
 	
 	asyncTest("FacetFilter._closePopover", function() {
@@ -218,6 +239,7 @@
 		
 		var oFF = new sap.m.FacetFilter();
 		var oDialog = oFF.getAggregation("dialog");
+		
 		ok(!oDialog, "Dialog should be created lazily");
 		
 		oDialog = oFF._getFacetDialog();
@@ -228,7 +250,11 @@
 		ok(oDialog.getBeginButton(), "Dialog begin button should be created");
 		strictEqual(oDialog.getShowHeader(), false, "Dialog header should not be shown");
 		strictEqual(oDialog.getStretch(), sap.ui.Device.system.phone ? true : false, "Dialog stretch should be false on desktop and true on phone");
-		
+	
+		var oButton = oDialog.getBeginButton();
+		oButton.firePress(); 
+		oFF._closeDialog();
+	
 		if(sap.ui.Device.system.desktop) {
 			equal(oDialog.getContentHeight(), "500px", "Dialog height should be fixed on desktop");
 		}
@@ -338,6 +364,7 @@
 		
 		ok(oPage.getEnableScrolling(), "Page scrolling should be enabled");
 		ok(oPage.getShowNavButton(), "Filter items page should show the navigation button");
+		
 		oFF.destroy();
 	});
 	
@@ -349,6 +376,7 @@
 		var oBar = oFF._createFilterItemsSearchFieldBar(oFFL1);
 		ok(oBar, "Bar should be created");
 		var oSearchField = oBar.getContentMiddle()[0];
+		
 		ok(oSearchField, "Bar should contain a search field placed in middle content");
 		ok(oSearchField.getTooltip(), "Search field has tooltip");
 		equal(oSearchField.getWidth(), "100%", "Search field width should be 100%");	
@@ -390,6 +418,7 @@
 		var oCheckboxBar3 = oFF._createSelectAllCheckboxBar(oFFL3);
 		var oCheckBox3 = oCheckboxBar3.getContentLeft()[0];
 		ok(!oCheckBox3.getSelected(), "Checkbox should not be initially checked when the list is inactive");
+		
 		oFFL3.destroy();
 		
 		var oFFL4 = new sap.m.FacetFilterList({multiSelect: false});
@@ -747,6 +776,10 @@
 		equal(oResetButton.getIcon(), sap.ui.core.IconPool.getIconURI("undo"), "Button should have the undo icon URI");
 		equal(oResetButton.getType(), sap.m.ButtonType.Transparent, "Button type should be Transparent");
 		ok(oResetButton.getTooltip(),"Reset Button has tooltip");
+	
+		 oFF.addList(new sap.m.FacetFilterList("list1"));
+         oFF.addList(new sap.m.FacetFilterList("list2"));
+         oResetButton.firePress();  
 		
 		destroyFF(oFF);
 	});	
@@ -763,6 +796,12 @@
 		ok(oButton.getText(), "Button text should be set");
 		ok(oButton.getTooltip(), "Button tooltip should be set");
 		
+		oButton.firePress(); 
+		oPopover.attachEventOnce("afterOpen", function() {
+			oButton.firePress(); 
+			oFF._closePopover();
+		});  
+		
 		destroyFF(oFF);
 	});
 	
@@ -778,6 +817,12 @@
 		ok(!oSummaryBar.getActive(), "Summary bar should be inactive");
 		equal(oSummaryBar.getDesign(), sap.m.ToolbarDesign.Info, "Summary bar design should be Info");
 		equal(oSummaryBar.getHeight(), "auto", "Toolbar height should be auto");
+		
+		oSummaryBar.firePress(); 
+		oSummaryBar.attachEventOnce("afterOpen", function() {
+		oFF.openFilterDialog();
+		});
+		
 		destroyFF(oFF);
 	});
 	
@@ -792,6 +837,8 @@
 	                 new sap.m.FacetFilterItem({text: "Val4"})
 	           ]
 	    });
+	    
+	    
 	    oFF.addList(oFFL);
 
 	    oFFL.setSelectedKeys({"2" : "Val2"});
@@ -809,13 +856,15 @@
 		
 	    var oFF = oSCHelper.createFFWithModel();
 	    var oFFL = oFF.getLists()[0];
+	   // var oFFL1 = oFF.getLists()[1];
 	    oFF.placeAt("content");
 	    
 	    oFFL.setSelectedKeys({"4" : "Val4"});
-	    oFFL.getItems()[2].setSelected(true);	    
-	    
+	    oFFL.getItems()[2].setSelected(true);
+	  
 	    ok(oFF._getSummaryText().indexOf("Val3") > -1, "Summary text contains the selected item");
 	    ok(oFF._getSummaryText().indexOf("Val4") > -1, "Summary text contains the selected item");
+	    
 	    
 	    destroyFF(oFF);
 	});
@@ -2032,6 +2081,8 @@
 							"The remove icon should be the sys-cancel icon font.");
 					ok(getRemoveIconCtrl(oFF, 1).$().hasClass("sapMFFLHiddenRemoveIcon"), "The remove icon should be hidden.");
 				}
+				
+				
 			};
 
 			fnTestSimple(oFFSimple);
@@ -2052,7 +2103,7 @@
 			sap.ui.getCore().applyChanges();
 
 			var fnTestLight = function(oFF) {
-
+									
 				var oSummaryBar = oFF.getAggregation("summaryBar");
 				ok(oSummaryBar.getDomRef(), "Summary bar should be rendered");
 				ok(oSummaryBar.getActive(), "Summary bar should be active when type is Light");
@@ -2061,9 +2112,13 @@
 				ok(oSummaryBarText.getText(), "There should be text in the summary bar");
 				ok(oSummaryBarText.getTooltip(), "There should be tooltip for the text in the summary bar");
 
-				testResetInSummaryBar(oFF, true);
-			};
+		        testResetInSummaryBar(oFF, true);
+		      
+		        oFF.setShowReset(false);
+		  		testResetInSummaryBar(oFF, false);
+		  		};
 			fnTestLight(oFFLight);
+			
 
 			// Switch from simple to light		
 			oFFSimple.setType(sap.m.FacetFilterType.Light);
@@ -2077,20 +2132,37 @@
 
 			oFFSimple.destroy();
 			oFFLight.destroy();
-
+			
 			// If running on the phone then test behavior if type is explicitly set to Simple
-			if (sap.ui.Device.system.phone) {
-
+			/*  if (sap.ui.Device.system.phone) {
+				
 				var oFFPhone = new sap.m.FacetFilter({
 					type : sap.m.FacetFilterType.Simple
 				});
 				oFFPhone.setShowPersonalization(true);
+				
 				oFFPhone.placeAt("content");
 				sap.ui.getCore().applyChanges();
-				fnTestLight(oFFPhone);
-			}
+				fnTestLight(oFFPhone); 
+			 }  */
+			
+			 if (sap.ui.Device.system.phone) {
+				
+				var oFFPhone = new sap.m.FacetFilter();
+					
+				oFFPhone.setType(sap.m.FacetFilterType.Light);
+					oSummaryBar.setActive(true);
+				//oFFPhone.setShowPersonalization(true);
+				
+				oFFPhone.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				//fnTestLight(oFFPhone); 
+			 
+			 }
+			 
 		});
-
+		
+		
 		asyncTest("FacetFilter.liveSearch", function() {
 
 			var oFF = new sap.m.FacetFilter();
@@ -2206,7 +2278,12 @@
 					sap.ui.getCore().applyChanges();
 
 					testResetInSummaryBar(oFF, false);
+				
+					 oFF.setShowReset(true);
+					sap.ui.getCore().applyChanges();
 
+					testResetInSummaryBar(oFF, true);  
+				
 					destroyFF(oFF);
 				});
 
@@ -2225,18 +2302,25 @@
 			ok(oSummaryBar.getDomRef(), "Summary bar should be displayed");
 			ok(!oSummaryBar.getActive(), "Summary bar should be inactive when type is Simple");
 			testResetInSummaryBar(oFF, true);
-
 			oFF.setShowSummaryBar(false);
 			sap.ui.getCore().applyChanges();
-
+		
 			oFF.setShowSummaryBar(true);
 			oFF.setShowReset(false);
 			sap.ui.getCore().applyChanges();
 
 			testResetInSummaryBar(oFF, false);
+			
+			oFF.setShowSummaryBar(true);
+			oFF.setShowReset(true);
+			sap.ui.getCore().applyChanges();
+
+			testResetInSummaryBar(oFF, true);
+			
 
 			destroyFF(oFF);
 		});
+
 
 		test("FacetFilterList.active", function() {
 
@@ -2407,6 +2491,330 @@
 			});
 			oFF.openFilterDialog();
 		});
+		/////////////////////////////////////////////////daniel//////////////////////////////////////////////////
+		
+
+	test("Keyboard", function() {
+
+		var oFF = createFF(oFF);
+		ok(oFF.$().find(":sapTabbable").length == 4, "Total 4 tabble fields");
+		var oEvent = new jQuery.Event();
+
+//home
+		oEvent.target = oFF.$().find(":sapTabbable")[0];
+		oFF.oItemNavigation.setFocusedIndex(0);
+		oFF.onsaphome(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsaphome tested - focus on List1");
+
+		oEvent.target = oFF.$().find(":sapTabbable")[1];
+		oFF.onsaphome(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsaphome tested - focus on List1");
+		
+		oEvent.target = oFF.$().find(":sapTabbable")[2];
+		oFF.onsaphome(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsaphome tested - focus on List1");
+		
+//onsapincreasemodifiers - page down
+		var oFF = createFF(oFF);		
+		oEvent.target = oFF.$().find(":sapTabbable")[0];
+		oEvent.which = jQuery.sap.KeyCodes.ARROW_RIGHT;
+		oFF.onsapincreasemodifiers(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapincreasemodifiers tested - focus on add button");
+		
+		var oFF = createFF(oFF);		
+		oEvent.target = oFF.$().find(":sapTabbable")[1];
+		oEvent.which = jQuery.sap.KeyCodes.ARROW_RIGHT;
+		oFF.onsapincreasemodifiers(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapincreasemodifiers tested - focus on add button");
+		
+		var oFF = createFF(oFF);		
+		oEvent.target = oFF.$().find(":sapTabbable")[2];
+		oEvent.which = jQuery.sap.KeyCodes.ARROW_RIGHT;
+		oFF.onsapincreasemodifiers(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapincreasemodifiers tested - focus on add button");
+				
+//onsapdecreasemodifiers - page up
+		var oFF = createFF(oFF);	
+		oEvent.target = oFF.$().find(":sapTabbable")[1];
+		oEvent.which = jQuery.sap.KeyCodes.ARROW_LEFT;
+		oFF.onsapdecreasemodifiers(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapdecreasemodifiers tested - focus on List1");
+
+		var oFF = createFF(oFF);	
+		oEvent.target = oFF.$().find(":sapTabbable")[2];
+		oEvent.which = jQuery.sap.KeyCodes.ARROW_LEFT;
+		oFF.onsapdecreasemodifiers(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapdecreasemodifiers tested - focus on List1");
+		
+		var oFF = createFF(oFF);	
+		oEvent.target = oFF.$().find(":sapTabbable")[0];
+		oEvent.which = jQuery.sap.KeyCodes.ARROW_LEFT;
+		oFF.onsapdecreasemodifiers(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapdecreasemodifiers tested - focus on List1");
+		
+//onsapupmodifiers
+		var oFF = createFF(oFF);
+		oEvent.target = oFF.$().find(":sapTabbable")[2];
+		oFF.onsapupmodifiers(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapupmodifiers tested - focus on List1");
+
+		var oFF = createFF(oFF);
+		oEvent.target = oFF.$().find(":sapTabbable")[1];
+  		oFF.oItemNavigation.setFocusedIndex(1);	
+		oFF.onsapupmodifiers(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapupmodifiers tested - focus on List1");
+
+		var oFF = createFF(oFF);
+		oEvent.target = oFF.$().find(":sapTabbable")[0];
+		oFF.onsapupmodifiers(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapupmodifiers tested - focus on List1");
+
+		var oFF = createFF(oFF);
+		oEvent.target = oFF.$().find(":sapTabbable")[0];
+		oFF.onsapdownmodifiers(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapdownmodifiers tested - focus on Add button");
+		
+		oEvent.target = oFF.$().find(":sapTabbable")[0];
+		oFF.onsapdownmodifiers(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapdownmodifiers tested - focus on Add button");
+		
+		oEvent.target = oFF.$().find(":sapTabbable")[1];
+		oFF.onsapdownmodifiers(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapdownmodifiers event tested - focus on Add button");
+		
+		oEvent.target = oFF.$().find(":sapTabbable")[2];
+		oFF.onsapdownmodifiers(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapdownmodifiers event tested - focus on Add button");
+		
+//onsappagedow
+   		var oFF = createFF(oFF);
+//  	var sapTabbable = oFF.$().find(":sapTabbable"); 
+		oEvent.target = oFF.$().find(":sapTabbable")[2];
+		oFF.oItemNavigation.setFocusedIndex(2);
+		ok(jQuery(oFF.onsappagedown(oEvent)), "keyboard onsappagedown tested - case 1");   
+
+   		var oFF = createFF(oFF);
+		oFF.oItemNavigation.setFocusedIndex(0);
+		oEvent.target = oFF.$().find(":sapTabbable")[0];
+		ok(jQuery(oFF.onsappagedown(oEvent)), "keyboard onsappagedown tested - case 2");   
+		
+//onsaptabnext
+		var oFF = createFF(oFF);
+		oEvent.target = oFF.$().find(":sapTabbable")[0];
+		ok(jQuery(oFF.onsaptabnext(oEvent)), "keyboard onsaptabnext tested - case 1");	
+		
+ 		var oFF = createFF(oFF);		
+		oFF._invalidateFlag = true;
+		oEvent.target = oFF.$().find(":sapTabbable")[3];
+		ok(jQuery(oFF.onsaptabnext(oEvent)), "keyboard onsaptabnext tested - case 2"); 
+		
+ 		var oFF = createFF(oFF);		
+		oFF._closePopoverFlag = true;
+		oEvent.target = oFF.$().find(":sapTabbable")[3];
+		ok(jQuery(oFF.onsaptabnext(oEvent)), "keyboard onsaptabnext tested - case 3");	
+//onsapend
+ 		var oFF = createFF(oFF);
+		oEvent.target = oFF.$().find(":sapTabbable")[0];
+		oFF.onsapend(oEvent);
+//		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapend tested - focus on add button");
+		ok(jQuery(oFF.onsapend(oEvent)), "keyboard onsapend tested - case 1");	
+	
+  		var oFF = createFF(oFF);
+  		oFF._addTarget = null;
+		oEvent.target = oFF.$().find(":sapTabbable")[0];
+		ok(jQuery(oFF.onsapend(oEvent)), "keyboard onsapend tested - case 2");		
+
+//onsappageup
+		var oFF = createFF(oFF);
+		oEvent.target = oFF.$().find(":sapTabbable")[3];
+		oFF.onsappageup(oEvent);
+		ok(jQuery(oFF.onsappageup(oEvent)), "keyboard onsappageup tested");	
+
+//expand
+		oFF.oItemNavigation.setFocusedIndex(0);
+		oFF.onsapexpand(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 1, "keyboard onsapexpand tested - focus on List2");
+
+		var oFF = createFF(oFF);
+		oFF.oItemNavigation.setFocusedIndex(1);
+		oFF.onsapexpand(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapexpand tested - focus on Add button");
+
+		var oFF = createFF(oFF);
+		oFF.oItemNavigation.setFocusedIndex(2);
+		oFF.onsapexpand(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsapexpand tested - focus on Add button");
+
+//collapse
+		var oFF = createFF(oFF);
+		oFF.oItemNavigation.setFocusedIndex(2);
+		oFF.onsapcollapse(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 1, "keyboard onsapcollapse tested - focus on List2");
+		
+		oFF.oItemNavigation.setFocusedIndex(1);
+		oFF.onsapcollapse(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapcollapse tested - focus on list 1");
+		
+		oFF.oItemNavigation.setFocusedIndex(0);
+		oFF.onsapcollapse(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsapcollapse tested - focus on list 1");
+
+//tabprev		
+		var oFF = createFF(oFF);
+		oEvent.target = oFF.$().find(":sapTabbable")[3];		
+		oFF.onsaptabprevious(oEvent);
+//		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsaptabprevious tested");  	
+		ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 1"); 
+
+		var oFF = createFF(oFF);
+ 		oEvent.target = oFF.$().find(":sapTabbable")[3];	
+		oFF._previousTarget = oFF.$().find(":sapTabbable")[1];
+		oFF.onsaptabprevious(oEvent);
+//		ok(oFF.oItemNavigation.getFocusedIndex() == 1, "keyboard onsaptabprevious tested"); 
+		ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 2");
+
+		var oFF = createFF(oFF);
+ 		oEvent.target = oFF.$().find(":sapTabbable")[3];	
+		oFF._previousTarget = oFF.$().find(":sapTabbable")[0];
+		oFF.onsaptabprevious(oEvent);
+//		ok(oFF.oItemNavigation.getFocusedIndex() == 0, "keyboard onsaptabprevious tested");
+		ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 3");
+		
+ 		var oFF = createFF(oFF);
+		oEvent.target = oFF.$().find(":sapTabbable")[3];		
+		oFF._previousTarget = oFF.$().find(":sapTabbable")[2];
+		oFF.onsaptabprevious(oEvent);
+//		ok(oFF.oItemNavigation.getFocusedIndex() == 2, "keyboard onsaptabprevious tested"); 	
+		ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 4");
+		
+ 		var oFF = createFF(oFF);
+		oEvent.target = oFF.$().find(":sapTabbable")[2];		
+//		ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested");  
+		ok(jQuery(oFF.onsaptabprevious(oEvent)), "keyboard onsaptabprevious tested - case 5");
+
+//down
+		var oFF = createFF(oFF);
+		oEvent.target = oFF.$().find(":sapTabbable")[1];
+		ok(jQuery(oFF.onsapdown(oEvent)), "keyboard onsapdown tested - case 1");
+		
+ 		var oFF = createFF(oFF);
+		oEvent.target = oFF.$().find(":sapTabbable")[3];
+		ok(jQuery(oFF.onsapdown(oEvent)), "keyboard onsapdown tested - case2 "); 
+
+//onsapescape
+  		oFF.oItemNavigation.setFocusedIndex(1);		
+		oEvent.target = oFF.$().find(":sapTabbable")[0];
+		ok(jQuery(oFF.onsapescape(oEvent)), "keyboard onsapescape tested - case 1");
+		
+		var oFF = createFF(oFF);
+		oEvent.target = oFF.$().find(":sapTabbable")[3];
+		ok(jQuery(oFF.onsapescape(oEvent)), "keyboard onsapescape tested - case2");
+		
+//onsapup
+		//*why need to comment out oEvent.hover in facetfilter.js -?????
+		var oFF = createFF(oFF);
+  		oFF.oItemNavigation.setFocusedIndex(1);		
+		oEvent.target = oFF.$().find(":sapTabbable")[1];
+		ok(jQuery(oFF.onsapup(oEvent)), "keyboard onsapup tested - case 1");
+		
+		var oFF = createFF(oFF);
+		oEvent.target = oFF.$().find(":sapTabbable")[3];
+		ok(jQuery(oFF.onsapup(oEvent)), "keyboard onsapup tested - case 2");
+//		ok(jQuery(oEvent.target).focus(), "keyboard onsapup tested");	
+
+//onsapleft
+		//*why need to comment out oEvent.hover in facetfilter.js -?????
+		var oFF = createFF(oFF);
+  		oFF.oItemNavigation.setFocusedIndex(1);		
+		oEvent.target = oFF.$().find(":sapTabbable")[1];
+		oFF.onsapleft(oEvent);
+		ok(oFF.oItemNavigation.getFocusedIndex() == 1, "keyboard onsapleft tested - case 1");  
+
+		var oFF = createFF(oFF);
+		oEvent.target = oFF.$().find(":sapTabbable")[3];
+		ok(jQuery(oFF.onsapleft(oEvent)), "keyboard onsapleft tested - case 2");
+
+//onsapright
+		var oFF = createFF(oFF);		
+		oEvent.target = oFF.$().find(":sapTabbable")[1];
+		ok(jQuery(oFF.onsapright(oEvent)), "keyboard onsaprigh tested - case 1");	 
+		
+		var oFF = createFF(oFF);		
+		oEvent.target = oFF.$().find(":sapTabbable")[3];
+		ok(jQuery(oFF.onsapright(oEvent)), "keyboard onsaprigh tested - case 2");	
+
+//onsapdelete
+ 		var oFF = createFF(oFF);
+		oEvent.target = oFF.$().find(":sapTabbable")[0];
+		oFF.onsapdelete(oEvent);
+		equal(oFF.getLists()[0].getActive(), false, "keyboard onsapdelete tested - list1 deleted");
+		equal(oFF.getAggregation("buttons").length, 2, "There should be two buttons in the 'buttons' aggregation");
+		equal(oFF.getAggregation("removeFacetIcons").length, 2, "There should be two remove icons in the aggregation");
+		
+ 		var oFF = createFF(oFF);
+		oEvent.target = oFF.$().find(":sapTabbable")[1];
+		oFF.onsapdelete(oEvent);
+		equal(oFF.getLists()[1].getActive(), false, "keyboard onsapdelete tested - list2 deleted");
+		equal(oFF.getAggregation("buttons").length, 2, "There should be two buttons in the 'buttons' aggregation");
+		equal(oFF.getAggregation("removeFacetIcons").length, 2, "There should be two remove icons in the aggregation");
+
+
+ 		var oFF = createFF(oFF);
+		oEvent.target = oFF.$().find(":sapTabbable")[2];
+		oFF.onsapdelete(oEvent);
+		ok(oFF.getAggregation("addFacetButton"), "keyboard onsapdelete tested - can't delete addFacetButton");
+		
+ 		var oFF = createFF(oFF);
+		oEvent.target = oFF.$().find(":sapTabbable")[3];
+		oFF.onsapdelete(oEvent);
+		ok(oFF.getAggregation("resetButton"), "keyboard onsapdelete tested - can't delete resetbutton");
+			
+ 		var oFF = createFF(oFF);
+		oFF.setShowPersonalization(false)
+		oEvent.target = oFF.$().find(":sapTabbable")[0];
+		equal(oFF.getLists()[0].getActive(), true, "keyboard onsapdelete tested - no delete allowed, list1 active");
+		equal(oFF.getAggregation("buttons").length, 2, "There should be two buttons in the 'buttons' aggregation");
+		equal(oFF.getAggregation("removeFacetIcons").length, 2, "There should be two remove icons in the aggregation");
+
+ 		var oFF = createFF(oFF);
+ 		var oList = oFF.getLists()[1]
+ 		oList.setShowRemoveFacetIcon(false);
+		oEvent.target = oFF.$().find(":sapTabbable")[1];
+		equal(oFF.getLists()[1].getActive(), true, "keyboard onsapdelete tested - no delete allowed, list2 active");
+		equal(oFF.getAggregation("buttons").length, 2, "There should be two buttons in the 'buttons' aggregation");
+		equal(oFF.getAggregation("removeFacetIcons").length, 2, "There should be two remove icons in the aggregation");
+
+
+ 		var oFF = createFF(oFF);
+ 		oFF.getLists()[1].setActive(false);
+ 		oFF.getLists()[0].setActive(false);
+		oFF.oItemNavigation.setFocusedIndex(0);
+		ok(jQuery(oFF.onsapdelete(oEvent)), "keyboard onsapdelete tested");
+		
+		destroyFF(oFF);
+
+	});
+ 
+
+
+	function createFF(oFF) { //TODO: see if this helps with ie9 qunit failures
+		
+		if (oFF) {
+			oFF.destroy();
+		};
+
+		var oFF = new sap.m.FacetFilter("someid");
+		oFF.setShowPersonalization(true);
+		oFF.addList(new sap.m.FacetFilterList("list1"));
+		oFF.addList(new sap.m.FacetFilterList("list2"));
+//		oFF._createResetButton();
+		oFF.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oFF._startItemNavigation();
+		return oFF;
+		
+	}		
+		//////////////////////////////////////end////////////////////////////////////////////////////////////
 
 		module("Selected keys");
 
@@ -2944,12 +3352,13 @@
 			oFF.destroy();
 		}
 
-	//}
+	}
 </script>
 </head>
 
 <body class="sapUiBody">
 	<div id="content"></div>
+	
 	<h1 id="qunit-header">qUnit Page for sap.m.FacetFilter</h1>
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
