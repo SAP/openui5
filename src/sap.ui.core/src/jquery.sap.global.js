@@ -4249,7 +4249,7 @@
 				if (!this.bParentResponded) {
 					this._check(true);
 				}
-			}.bind(this), 0);
+			}.bind(this), 10);
 		}
 	};
 
