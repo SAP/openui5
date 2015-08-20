@@ -237,33 +237,33 @@ sap.ui.require([
 				"EntitySets" : [{
 					"Name" : "Departments",
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Departments",
-					"EntityType@navigationLink" :
+					"EntityType@odata.navigationLink" :
 						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.Department')"
 				}, {
 					"Name" : "EMPLOYEES",
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/EMPLOYEES",
-					"EntityType@navigationLink" :
+					"EntityType@odata.navigationLink" :
 						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.Worker')"
 				},{
 					"Name" : "Equipments",
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Equipments",
-					"EntityType@navigationLink" :
+					"EntityType@odata.navigationLink" :
 						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.EQUIPMENT')"
 				}, {
 					"Name" : "MANAGERS",
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/MANAGERS",
-					"EntityType@navigationLink" :
+					"EntityType@odata.navigationLink" :
 						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.MANAGER')"
 				}, {
 					"Name" : "TEAMS",
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/TEAMS",
-					"EntityType@navigationLink" :
+					"EntityType@odata.navigationLink" :
 						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.TEAM')"
 				}],
 				"Singletons" : [{
 					"Name" : "Me",
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Me",
-					"Type@navigationLink" :
+					"Type@odata.navigationLink" :
 						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.Worker')"
 				}]
 			};
@@ -426,7 +426,7 @@ sap.ui.require([
 					"Nullable" : true,
 					"ContainsTarget" : false,
 					"IsCollection" : true,
-					"Type@navigationLink" :
+					"Type@odata.navigationLink" :
 						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.Worker')"
 				}, {
 					"Name" : "TEAM_2_MANAGER",
@@ -434,7 +434,7 @@ sap.ui.require([
 					"Nullable" : false,
 					"ContainsTarget" : false,
 					"IsCollection" : false,
-					"Type@navigationLink" :
+					"Type@odata.navigationLink" :
 						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.MANAGER')"
 				}]
 			},

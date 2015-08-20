@@ -192,7 +192,7 @@ sap.ui.define([
 					oResult.EntitySets.push({
 						"Name" : oEntitySet.name,
 						"Fullname" : oResult.QualifiedName + "/" + oEntitySet.name,
-						"EntityType@navigationLink" :
+						"EntityType@odata.navigationLink" :
 							"Types(QualifiedName='" + oEntitySet.entityType + "')"
 					});
 				});
@@ -202,7 +202,8 @@ sap.ui.define([
 					oResult.Singletons.push({
 						"Name" : oSingleton.name,
 						"Fullname" : oResult.QualifiedName + "/" + oSingleton.name,
-						"Type@navigationLink" : "Types(QualifiedName='" + oSingleton.type + "')"
+						"Type@odata.navigationLink" :
+							"Types(QualifiedName='" + oSingleton.type + "')"
 					});
 				});
 			}
@@ -244,7 +245,8 @@ sap.ui.define([
 					"Nullable" : oSourceProperty.nullable === "true",
 					"ContainsTarget" : false,
 					"IsCollection" : oTypeRef.collection,
-					"Type@navigationLink" : "Types(QualifiedName='" + oTypeRef.qualifiedName + "')"
+					"Type@odata.navigationLink" :
+						"Types(QualifiedName='" + oTypeRef.qualifiedName + "')"
 				};
 				oResult.NavigationProperties.push(oTargetProperty);
 			}
