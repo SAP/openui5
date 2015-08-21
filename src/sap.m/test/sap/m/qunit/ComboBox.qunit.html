@@ -2874,6 +2874,101 @@
 			});
 
 			/* ------------------------------ */
+			/* setSelectedIndex()             */
+			/* ------------------------------ */
+
+			var setSelectedIndexTestCase = function(sTestName, mOptions) {
+				test("setSelectedIndex()", function() {
+
+					// system under test
+					var oComboBox = mOptions.control;
+
+					// act
+					oComboBox.setSelectedIndex(mOptions.input);
+
+					// assert
+					ok(oComboBox.getSelectedItem() === mOptions.output, sTestName);
+
+					// cleanup
+					oComboBox.destroy();
+				});
+			};
+
+			(function() {
+				var oExpectedItem;
+				var aItems = [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0",
+						enabled: false
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						key: "3",
+						text: "item 3"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				];
+
+				setSelectedIndexTestCase("", {
+					control: new sap.m.Select({
+						items: aItems
+					}),
+					input: 2,
+					output: oExpectedItem
+				});
+			}());
+
+			setSelectedIndexTestCase("", {
+				control: new sap.m.Select(),
+				input: 2,
+				output: null
+			});
+
+			(function() {
+				var oExpectedItem;
+				var aItems = [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0",
+						enabled: false
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "3",
+						text: "item 3"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				];
+
+				setSelectedIndexTestCase("The provided index is bigger than the last item's index", {
+					control: new sap.m.Select({
+						items: aItems
+					}),
+					input: 10,
+					output: oExpectedItem
+				});
+			}());
+
+			/* ------------------------------ */
 			/* getItemAt()                    */
 			/* ------------------------------ */
 
@@ -3316,6 +3411,133 @@
 			});
 
 			/* ------------------------------------ */
+			/* addAggregation() + getAggregation()  */
+			/* ------------------------------------ */
+
+			test("addAggregation() + getAggregation()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox();
+				var oItem = new sap.ui.core.Item({
+					key: "GER",
+					text: "Germany"
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var fnAddAggregationSpy = this.spy(oComboBox, "addAggregation");
+				var fnInvalidateSpy = this.spy(oComboBox, "invalidate");
+
+				// act
+				oComboBox.addAggregation("items", oItem);
+
+				// assert
+				ok(fnAddAggregationSpy.returned(oComboBox), "sap.m.ComboBox.prototype.addAggregation() returns this to allow method chaining");
+				ok(fnInvalidateSpy.calledWithExactly(oItem));
+				ok(oComboBox.getAggregation("items")[0] === oItem);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("addAggregation()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox();
+				var oItem = new sap.ui.core.Item({
+					key: "GER",
+					text: "Germany"
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var fnAddAggregationSpy = this.spy(oComboBox, "addAggregation");
+				var fnInvalidateSpy = this.spy(oComboBox, "invalidate");
+
+				// act
+				oComboBox.addAggregation("items", oItem, true);
+
+				// assert
+				ok(fnAddAggregationSpy.returned(oComboBox), "sap.m.ComboBox.prototype.addAggregation() returns this to allow method chaining");
+				ok(!fnInvalidateSpy.calledWithExactly(oItem));
+				ok(oComboBox.getAggregation("items")[0] === oItem);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* setAssociation() + getAssociation()  */
+			/* ------------------------------------ */
+
+			test("setAssociation() + getAssociation()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "CU",
+							text: "Cuba"
+						}),
+						new sap.ui.core.Item({
+							id: "item-id",
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				var fnSetAssociationSpy = this.spy(oComboBox, "setAssociation");
+
+				// act
+				oComboBox.setAssociation("selectedItem", "item-id");
+
+				// assert
+				ok(fnSetAssociationSpy.returned(oComboBox), "sap.m.ComboBox.prototype.setAssociation() returns this to allow method chaining");
+				ok(oComboBox.getAssociation("selectedItem") === "item-id");
+				ok(oComboBox.getList().getAssociation("selectedItem") === "item-id");
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("setAssociation() + getAssociation()", function() {
+
+				// system under test
+				var oItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "CU",
+							text: "Cuba"
+						}),
+						oItem = new sap.ui.core.Item({
+							id: "item-id",
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				var fnSetAssociationSpy = this.spy(oComboBox, "setAssociation");
+
+				// act
+				oComboBox.setAssociation("selectedItem", oItem);
+
+				// assert
+				ok(fnSetAssociationSpy.returned(oComboBox), "sap.m.ComboBox.prototype.setAssociation() returns this to allow method chaining");
+				ok(oComboBox.getAssociation("selectedItem") === "item-id");
+				ok(oComboBox.getList().getAssociation("selectedItem") === "item-id");
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------------ */
 			/* updateAggregation()                  */
 			/* ------------------------------------ */
 
@@ -3500,6 +3722,467 @@
 				// assert
 				strictEqual(oComboBox.getSelectedKey(), "DZ");
 				strictEqual(oComboBox.getValue(), "Algeria");
+
+				// cleanup
+				oComboBox.destroy();
+				oModel.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* destroyAggregation()                 */
+			/* ------------------------------------ */
+
+			test("destroyAggregation()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				var fnDestroyAggregationSpy = this.spy(oComboBox, "destroyAggregation");
+				var fnInvalidateSpy = this.spy(oComboBox, "invalidate");
+
+				// act
+				oComboBox.destroyAggregation("items");
+
+				// assert
+				ok(fnDestroyAggregationSpy.returned(oComboBox), "sap.m.ComboBox.prototype.destroyAggregation() returns this to allow method chaining");
+				strictEqual(fnInvalidateSpy.callCount, 0, "destroying the items in the list should not invalidate the input field");
+				strictEqual(oComboBox.getItems().length, 0);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("destroyAggregation()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				var fnDestroyAggregationSpy = this.spy(oComboBox, "destroyAggregation");
+				var fnInvalidateSpy = this.spy(oComboBox, "invalidate");
+
+				// act
+				oComboBox.destroyAggregation("items", true);
+
+				// assert
+				ok(fnDestroyAggregationSpy.returned(oComboBox), "sap.m.ComboBox.prototype.destroyAggregation() returns this to allow method chaining");
+				ok(!fnInvalidateSpy.calledOnce);
+				strictEqual(oComboBox.getItems().length, 0);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* findAggregatedObjects()              */
+			/* ------------------------------------ */
+
+			test("findAggregatedObjects()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				var fnFindAggregatedObjectsSpy = this.spy(oComboBox, "findAggregatedObjects");
+
+				// act
+				oComboBox.findAggregatedObjects();
+
+				// assert
+				ok(fnFindAggregatedObjectsSpy.returned(oComboBox.getItems()));
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* -------------------------------------------------- */
+			/* getBinding() + getBindingInfo() + getBindingPath() */
+			/* -------------------------------------------------- */
+
+			test("getBinding() + getBindingInfo() + getBindingPath()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox();
+
+				// arrange
+				var oModel = new sap.ui.model.json.JSONModel();
+				var mData = {
+					"countries": [
+						{
+							"value": "GER",
+							"text": "Germany"
+						}
+					],
+					"selected": "GER"
+				};
+				var oItemTemplate = new sap.ui.core.Item({
+					key: "{select-model>value}",
+					text: "{select-model>text}"
+				});
+
+				oModel.setData(mData);
+				oComboBox.setModel(oModel, "select-model");
+
+				// act
+				oComboBox.bindItems({
+					path: "select-model>/countries",
+					template: oItemTemplate
+				});
+
+				oComboBox.bindProperty("selectedKey", {
+					path: "select-model>/selected"
+				});
+
+				// assert
+				ok(oComboBox.getBinding("selectedKey"));
+				ok(oComboBox.getBinding("items"));
+				ok(oComboBox.getBindingInfo("selectedKey"));
+				ok(oComboBox.getBindingInfo("items"));
+				strictEqual(oComboBox.getBindingPath("selectedKey"), "/selected");
+				strictEqual(oComboBox.getBindingPath("items"), "/countries");
+				ok(oComboBox.isBound("selectedKey"));
+				ok(oComboBox.isBound("items"));
+
+				// cleanup
+				oComboBox.destroy();
+				oModel.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* setProperty() + getProperty()        */
+			/* ------------------------------------ */
+
+			test('setProperty() + getProperty() test for "selectedKey" property', function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "CU",
+							text: "Cuba"
+						}),
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				var fnInvalidateSpy = this.spy(oComboBox, "invalidate");
+
+				// act
+				oComboBox.setProperty("selectedKey", "GER");
+
+				// assert
+				strictEqual(oComboBox.getSelectedKey(), "GER");
+				strictEqual(oComboBox.getProperty("selectedKey"), "GER");
+				strictEqual(oComboBox.getList().getSelectedKey(), "GER");
+				strictEqual(oComboBox.getList().getProperty("selectedKey"), "GER");
+				ok(fnInvalidateSpy.called);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test('setProperty() + getProperty() test for "selectedItemId" property', function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							id: "item-cu",
+							key: "CU",
+							text: "Cuba"
+						}),
+						new sap.ui.core.Item({
+							id: "item-ger",
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				var fnInvalidateSpy = this.spy(oComboBox, "invalidate");
+
+				// act
+				oComboBox.setProperty("selectedItemId", "item-ger", true);
+
+				// assert
+				strictEqual(oComboBox.getSelectedItemId(), "item-ger");
+				strictEqual(oComboBox.getProperty("selectedItemId"), "item-ger");
+				strictEqual(oComboBox.getList().getSelectedItemId(), "item-ger");
+				strictEqual(oComboBox.getList().getProperty("selectedItemId"), "item-ger");
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* indexOfAggregation()                 */
+			/* ------------------------------------ */
+
+			test("indexOfAggregation()", function() {
+
+				// system under test
+				var oExpectedItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							text: "Cuba"
+						}),
+						oExpectedItem = new sap.ui.core.Item({
+							text: "Germany"
+						})
+					]
+				});
+
+				// assert
+				strictEqual(oComboBox.indexOfAggregation("items", oExpectedItem), 1);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* insertAggregation()                  */
+			/* ------------------------------------ */
+
+			test("insertAggregation()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox();
+				var oItem = new sap.ui.core.Item({
+					text: "Germany"
+				});
+
+				// act
+				oComboBox.insertAggregation("items", oItem);
+
+				// assert
+				ok(oComboBox.getItems()[0] === oItem);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* removeAggregation()                  */
+			/* ------------------------------------ */
+
+			test("removeAggregation()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// act
+				oComboBox.removeAggregation("items", 0);
+
+				// assert
+				strictEqual(oComboBox.getItems().length, 0);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* removeAllAggregation()               */
+			/* ------------------------------------ */
+
+			test("removeAllAggregation()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						}),
+						new sap.ui.core.Item({
+							key: "CU",
+							text: "Cuba"
+						})
+					]
+				});
+
+				// act
+				oComboBox.removeAllAggregation("items");
+
+				// assert
+				strictEqual(oComboBox.getItems().length, 0);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* removeAllAssociation()               */
+			/* ------------------------------------ */
+
+			test("removeAllAssociation()", function() {
+
+				// system under test
+				var oExpectedItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							id: "ger-id",
+							key: "GER",
+							text: "Germany"
+						}),
+						oExpectedItem = new sap.ui.core.Item({
+							id: "cu-id",
+							key: "CU",
+							text: "Cuba"
+						})
+					],
+
+					selectedItem: oExpectedItem
+				});
+
+				// arrange
+				var fnRemoveAllAssociationSpy = this.spy(oComboBox, "removeAllAssociation");
+
+				// act
+				oComboBox.removeAllAssociation("selectedItem");
+
+				// assert
+				ok(oComboBox.getSelectedItem() === null);
+				ok(oComboBox.getList().getSelectedItem() === null);
+				ok(fnRemoveAllAssociationSpy.returned("cu-id"));
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* unbindProperty()                     */
+			/* ------------------------------------ */
+
+			test("unbindProperty()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox();
+
+				// arrange
+				var oModel = new sap.ui.model.json.JSONModel();
+				var mData = {
+					"countries": [
+						{
+							"code": "GER",
+							"name": "Germany"
+						},
+						{
+							"code": "CU",
+							"name": "Cuba"
+						}
+					],
+					"selected": "CU"
+				};
+
+				var oItemTemplate = new sap.ui.core.Item({
+					key: "{code}",
+					text: "{name}"
+				});
+
+				oComboBox.bindItems({
+					path: "/countries",
+					template: oItemTemplate
+				});
+
+				oComboBox.bindProperty("selectedKey", {
+					path: "/selected"
+				});
+
+				oModel.setData(mData);
+				oComboBox.setModel(oModel);
+
+				// act
+				oComboBox.unbindProperty("selectedKey");
+
+				// assert
+				strictEqual(oComboBox.isBound("selectedKey"), false, "The property is not bound");
+				strictEqual(oComboBox.getProperty("selectedKey"), "", 'Property "selectedKey" is reset to the default value');
+
+				// cleanup
+				oComboBox.destroy();
+				oModel.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* unbindAggregation()                  */
+			/* ------------------------------------ */
+
+			test("unbindAggregation()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox();
+
+				// arrange
+				var oModel = new sap.ui.model.json.JSONModel();
+				var mData = {
+					"countries": [
+						{
+							"code": "GER",
+							"name": "Germany"
+						},
+						{
+							"code": "CU",
+							"name": "Cuba"
+						}
+					],
+					"selected": "CU"
+				};
+
+				var oItemTemplate = new sap.ui.core.Item({
+					key: "{code}",
+					text: "{name}"
+				});
+
+				oComboBox.bindItems({
+					path: "/countries",
+					template: oItemTemplate
+				});
+
+				oModel.setData(mData);
+				oComboBox.setModel(oModel);
+
+				// act
+				oComboBox.unbindAggregation("items");
+
+				// assert
+				strictEqual(oComboBox.isBound("items"), false, 'The aggregation "items" is not bound');
+				strictEqual(oComboBox.getAggregation("items", []).length, 0, 'The aggregation "items" must be reset');
 
 				// cleanup
 				oComboBox.destroy();
