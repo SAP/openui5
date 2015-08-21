@@ -2291,7 +2291,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 				// if value contains ui5object property, this is not a binding info,
 				// remove it and not check for path or parts property
 				delete oValue.ui5object;
-			} else if (oValue.path || oValue.parts) {
+			} else if (oValue.path != undefined || oValue.parts) {
 				// allow JSON syntax for templates
 				if (oValue.template) {
 					oValue.template = ManagedObject.create(oValue.template);
