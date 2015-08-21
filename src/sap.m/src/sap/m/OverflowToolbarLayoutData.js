@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.OverflowToolbarLayoutData.
-sap.ui.define(['sap/m/ToolbarLayoutData'],
-	function(ToolbarLayoutData) {
+sap.ui.define(['sap/m/ToolbarLayoutData', 'sap/m/OverflowToolbarPriority'],
+	function(ToolbarLayoutData, OverflowToolbarPriority) {
 	"use strict";
 
 	/**
@@ -49,9 +49,36 @@ sap.ui.define(['sap/m/ToolbarLayoutData'],
 			 * @public
 			 * @since 1.32
 			 */
-			priority: {type: "sap.m.OverflowToolbarPriority", group: "Behavior", defaultValue: sap.m.OverflowToolbarPriority.High}
+			priority: {type: "sap.m.OverflowToolbarPriority", group: "Behavior", defaultValue: sap.m.OverflowToolbarPriority.High},
+
+			/**
+			 * Defines OverflowToolbar items group number.
+			 * Default value is 0, which means that the control does not belong to any group.
+			 * Elements that belong to a group overflow together. The overall priority of the group is defined by the element with highest priority.
+			 * Elements that belong to a group are not allowed to have AlwaysOverflow or NeverOverflow priority.
+			 * @public
+			 * @since 1.32
+			 */
+			group: {type: "int", group: "Behavior", defaultValue: 0}
 		}
 	}});
+
+	/**
+	 * Called when the OverflowToolbarLayoutData is invalidated.
+	 * @override
+	 */
+	OverflowToolbarLayoutData.prototype.invalidate = function () {
+		var sControlPriority = this.getPriority(),
+			bInvalidPriority = sControlPriority === OverflowToolbarPriority.AlwaysOverflow ||
+				sControlPriority === OverflowToolbarPriority.NeverOverflow;
+
+		// Validate layoutData priority and group properties
+		if (this.getGroup() && bInvalidPriority) {
+			jQuery.sap.log.error("It is not allowed to set AlwaysOverflow or NeverOverflow to a group items.");
+		}
+
+		return ToolbarLayoutData.prototype.invalidate.call(this);
+	};
 
 	return OverflowToolbarLayoutData;
 

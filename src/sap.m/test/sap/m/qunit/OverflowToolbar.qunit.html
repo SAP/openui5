@@ -75,12 +75,13 @@
 			return oOverflowTB;
 		}
 
-		function getButton(sText, sPriority) {
+		function getButton(sText, sPriority, iGroup) {
 			return new sap.m.Button({
 				text: sText,
 				width: "100px",
 				layoutData: new sap.m.OverflowToolbarLayoutData({
-					priority: sPriority
+					priority: sPriority,
+					group: iGroup
 				})
 			});
 		}
@@ -697,6 +698,298 @@
 			]
 
 			deepEqual(aPopoverButtonsIDs, aExpectedOrder, "The elements order matches");
+
+			oOverflowTB.destroy();
+		});
+
+		test("Changing the priority of a group item should move the group back in the toolbar", function () {
+			// Create a toolbar 500px and 5 buttons x 100px
+			// Two of the buttons belongs to group number 1
+			var oButtonUnderTest1 = getButton('1', sap.m.OverflowToolbarPriority.Low, 1),
+				oButtonUnderTest2 = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
+
+				aDefaultContent = [
+					oButtonUnderTest1,
+					oButtonUnderTest2,
+					getButton('3'),
+					getButton('4'),
+					getButton('5')
+				],
+
+				oOverflowTB = createOverflowToolbar({
+					width: "500px"
+				}, aDefaultContent);
+
+			// Shrink the toolbar with 100px
+			oOverflowTB.setWidth('400px');
+			sap.ui.getCore().applyChanges();
+
+			// Check if the buttons under test are visible in the toolbar
+			strictEqual(oButtonUnderTest1.$().is(":visible"), false,
+				"The button under test is not visible in the toolbar");
+
+			strictEqual(oButtonUnderTest2.$().is(":visible"), false,
+				"The button under test is not visible in the toolbar");
+
+			// Change the priority of the button from group 1
+			oButtonUnderTest2.setLayoutData(new sap.m.OverflowToolbarLayoutData({
+				priority: sap.m.OverflowToolbarPriority.High,
+				group: 1
+			}));
+			sap.ui.getCore().applyChanges();
+
+			// Check if the buttons under test are visible in the toolbar
+			strictEqual(oButtonUnderTest1.$().is(":visible"), true,
+				"The button under test is visible in the toolbar");
+
+			strictEqual(oButtonUnderTest2.$().is(":visible"), true,
+				"The button under test is visible in the toolbar");
+
+			oOverflowTB.destroy();
+		});
+
+		test("Changing the priority of a group item should move the group in the overflow area", function () {
+			// Create a toolbar 500px and 5 buttons x 100px
+			// Two of the buttons belongs to group number 1
+			var oButtonUnderTest1 = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
+				oButtonUnderTest2 = getButton('3', sap.m.OverflowToolbarPriority.High, 1),
+
+				aDefaultContent = [
+					getButton('1'),
+					oButtonUnderTest1,
+					oButtonUnderTest2,
+					getButton('4'),
+					getButton('5')
+				],
+
+				oOverflowTB = createOverflowToolbar({
+					width: "500px"
+				}, aDefaultContent);
+
+			// Shrink the toolbar with 100px
+			oOverflowTB.setWidth('400px');
+			sap.ui.getCore().applyChanges();
+
+			// Check if the buttons under test are visible in the toolbar
+			strictEqual(oButtonUnderTest1.$().is(":visible"), true,
+				"The button under test is visible in the toolbar");
+
+			strictEqual(oButtonUnderTest2.$().is(":visible"), true,
+				"The button under test is visible in the toolbar");
+
+			// Change the priority of the button from group 1
+			oButtonUnderTest2.setLayoutData(new sap.m.OverflowToolbarLayoutData({
+				priority: sap.m.OverflowToolbarPriority.Low,
+				group: 1
+			}));
+			sap.ui.getCore().applyChanges();
+
+			// Click the overflow button
+			oOverflowTB._getOverflowButton().firePress();
+			this.clock.tick(1000);
+
+			// Check if the members of group number 1 are visible in the overflow area
+			strictEqual(oButtonUnderTest1.$().is(":visible"), true,
+				"The button under test from group number 1 is visible whithin the overflow area");
+
+			strictEqual(oButtonUnderTest2.$().is(":visible"), true,
+				"The button under test from group number 1 is visible whithin the overflow area");
+
+			oOverflowTB.destroy();
+		});
+
+		module("Grouping");
+
+		test("Buttons in a group should overflow together", function () {
+			// Create a toolbar 500px and 5 buttons x 100px
+			// Two of the buttons belongs to group number 1
+			var oGroupedButton1 = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
+				oGroupedButton2 = getButton('3', sap.m.OverflowToolbarPriority.Low, 1),
+
+				aDefaultContent = [
+					getButton('1'),
+					oGroupedButton1,
+					oGroupedButton2,
+					getButton('4'),
+					getButton('5')
+				],
+
+				oOverflowTB = createOverflowToolbar({
+					width: "500px"
+				}, aDefaultContent);
+
+			// Shrink the toolbar with 100px
+			oOverflowTB.setWidth('400px');
+			sap.ui.getCore().applyChanges();
+
+			// Check if the members of group number 1 are visible
+			strictEqual(oGroupedButton1.$().is(":visible"), false,
+				"The button 1 from group number 1 is not visible in the toolbar");
+
+			strictEqual(oGroupedButton2.$().is(":visible"), false,
+				"The button 2 from group number 1 is not visible in the toolbar");
+
+			// Click the overflow button
+			oOverflowTB._getOverflowButton().firePress();
+			this.clock.tick(1000);
+
+			// Check if the members of group number 1 are visible
+			strictEqual(oGroupedButton1.$().is(":visible"), true,
+				"The button 1 from group number 1 is visible whithin the overflow");
+
+			strictEqual(oGroupedButton2.$().is(":visible"), true,
+				"The button 2 from group number 1 is visible whithin the overflow");
+
+			oOverflowTB.destroy();
+		});
+
+		test("Buttons in a group should overflow together even if they are unordered", function () {
+			// Create a toolbar 500px and 5 buttons x 100px
+			// Two of the buttons belongs to group number 1
+			var oGroupedButton1 = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
+				oGroupedButton2 = getButton('3', sap.m.OverflowToolbarPriority.Low, 1),
+
+				aDefaultContent = [
+					getButton('1'),
+					oGroupedButton1,
+					getButton('4'),
+					getButton('5'),
+					oGroupedButton2
+				],
+
+				oOverflowTB = createOverflowToolbar({
+					width: "500px"
+				}, aDefaultContent);
+
+			// Shrink the toolbar with 100px
+			oOverflowTB.setWidth('400px');
+			sap.ui.getCore().applyChanges();
+
+			// Check if the members of group number 1 are visible
+			strictEqual(oGroupedButton1.$().is(":visible"), false,
+				"The button 1 from group number 1 is not visible in the toolbar");
+
+			strictEqual(oGroupedButton2.$().is(":visible"), false,
+				"The button 2 from group number 1 is not visible in the toolbar");
+
+			// Click the overflow button
+			oOverflowTB._getOverflowButton().firePress();
+			this.clock.tick(1000);
+
+			// Check if the members of group number 1 are visible
+			strictEqual(oGroupedButton1.$().is(":visible"), true,
+				"The button 1 from group number 1 is visible whithin the overflow");
+
+			strictEqual(oGroupedButton1.$().is(":visible"), true,
+				"The button 2 from group number 1 is visible whithin the overflow");
+
+			oOverflowTB.destroy();
+		});
+
+		test("Changing the group of a button should move it in the overflow", function () {
+			// Create a toolbar 500px and 5 buttons x 100px
+			// Two of the buttons belongs to group number 1
+			var oButtonUnderTest = getButton('2', sap.m.OverflowToolbarPriority.Low),
+
+				aDefaultContent = [
+					getButton('1'),
+					oButtonUnderTest,
+					getButton('3'),
+					getButton('4', sap.m.OverflowToolbarPriority.Low, 1),
+					getButton('5', sap.m.OverflowToolbarPriority.Low, 1)
+				],
+
+				oOverflowTB = createOverflowToolbar({
+					width: "500px"
+				}, aDefaultContent);
+
+			// Shrink the toolbar with 100px
+			oOverflowTB.setWidth('400px');
+			sap.ui.getCore().applyChanges();
+
+			// Check if the button under test is visible in the toolbar
+			strictEqual(oButtonUnderTest.$().is(":visible"), true,
+				"The button under test is visible in the toolbar");
+
+			// Change the group of the button
+			oButtonUnderTest.setLayoutData(new sap.m.OverflowToolbarLayoutData({group: 1}));
+			sap.ui.getCore().applyChanges();
+
+			// Check if the button under test is visible in the toolbar
+			strictEqual(oButtonUnderTest.$().is(":visible"), false,
+				"The button under test from group number 1 is not visible in the toolbar");
+
+			// Click the overflow button
+			oOverflowTB._getOverflowButton().firePress();
+			this.clock.tick(1000);
+
+			// Check if the new member of group number 1 is visible in the overflow area
+			strictEqual(oButtonUnderTest.$().is(":visible"), true,
+				"The button under test from group number 1 is visible whithin the overflow");
+
+			oOverflowTB.destroy();
+		});
+
+		test("Changing the group of a button should move it back to the toolbar", function () {
+			// Create a toolbar 500px and 5 buttons x 100px
+			// Three of the buttons belongs to group number 1
+			var oButtonUnderTest = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
+
+				aDefaultContent = [
+					getButton('1'),
+					oButtonUnderTest,
+					getButton('3'),
+					getButton('4', sap.m.OverflowToolbarPriority.Low, 1),
+					getButton('5', sap.m.OverflowToolbarPriority.Low, 1)
+				],
+
+				oOverflowTB = createOverflowToolbar({
+					width: "500px"
+				}, aDefaultContent);
+
+			// Shrink the toolbar with 100px
+			oOverflowTB.setWidth('400px');
+			sap.ui.getCore().applyChanges();
+
+			// Check if the button under test is visible in the toolbar
+			strictEqual(oButtonUnderTest.$().is(":visible"), false,
+				"The button under test is not visible in the toolbar");
+
+			// Change the group of the button
+			oButtonUnderTest.setLayoutData(new sap.m.OverflowToolbarLayoutData({group: 2}));
+			sap.ui.getCore().applyChanges();
+
+			// Check if the button under test is visible in the toolbar
+			strictEqual(oButtonUnderTest.$().is(":visible"), true,
+				"The button under test is visible in the toolbar");
+
+			oOverflowTB.destroy();
+		});
+
+		test("Group overral priority should be the max priority of its members", function () {
+			// Create a toolbar 500px and 5 buttons x 100px
+			// Two of the buttons belongs to group number 1
+			var oGroupedButton1 = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
+
+				aDefaultContent = [
+					getButton('1'),
+					oGroupedButton1,
+					getButton('3', sap.m.OverflowToolbarPriority.High, 1),
+					getButton('4'),
+					getButton('5')
+				],
+
+				oOverflowTB = createOverflowToolbar({
+					width: "500px"
+				}, aDefaultContent);
+
+			// Shrink the toolbar with 100px
+			oOverflowTB.setWidth('400px');
+			sap.ui.getCore().applyChanges();
+
+			// Check if the members of group number 1 are visible
+			strictEqual(oGroupedButton1.$().is(":visible"), true,
+				"The button 1 from group number 1 is visible in the toolbar although its priority is Low");
 
 			oOverflowTB.destroy();
 		});

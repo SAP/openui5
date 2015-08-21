@@ -36,6 +36,85 @@
 	var sRequestIconURI = sap.ui.core.IconPool.getIconURI("request");
 	var sReceiptIconURI = sap.ui.core.IconPool.getIconURI("receipt");
 
+	var toolbarContent0 = [
+		new sap.m.Label({
+			text : "Group Toolbar"
+		}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.Button({
+			text : "Always 1",
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "Always 2",
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "G1 High",
+			type : sap.m.ButtonType.Emphasized,
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 1,
+				priority: sap.m.OverflowToolbarPriority.High
+			}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "G1 Low",
+			type : sap.m.ButtonType.Emphasized,
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 1,
+				priority: sap.m.OverflowToolbarPriority.Low
+			}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "Never 1",
+			type : sap.m.ButtonType.Reject,
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.NeverOverflow}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "Never 2",
+			type : sap.m.ButtonType.Reject,
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.NeverOverflow}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "Single Low",
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.Low}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "Single Disappear",
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.Disappear}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "Single Default",
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "G2 Low",
+			type : sap.m.ButtonType.Accept,
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 2,
+				priority: sap.m.OverflowToolbarPriority.Low
+			}),
+			width: "125px"
+		}),
+		new sap.m.Button({
+			text : "G2 Low",
+			type : sap.m.ButtonType.Accept,
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 2,
+				priority: sap.m.OverflowToolbarPriority.Low
+			}),
+			width: "125px"
+		})
+	];
+
 	var toolbarContent1 = [
 		new sap.m.Label({
 			text : "Priority Toolbar"
@@ -53,7 +132,6 @@
 		}),
 		new sap.m.Button({
 			text : "High 1",
-			icon: sRequestIconURI,
 			type : sap.m.ButtonType.Accept,
 			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.High}),
 			width: "125px"
@@ -66,14 +144,12 @@
 		}),
 		new sap.m.Button({
 			text : "Never 1",
-			icon: sNotesIconURI,
 			type : sap.m.ButtonType.Reject,
 			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.NeverOverflow}),
 			width: "125px"
 		}),
 		new sap.m.Button({
 			text : "Never 2",
-			icon: sNotesIconURI,
 			type : sap.m.ButtonType.Reject,
 			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.NeverOverflow}),
 			width: "125px"
@@ -91,7 +167,6 @@
 		}),
 		new sap.m.Button({
 			text : "High 2",
-			icon: sRequestIconURI,
 			type : sap.m.ButtonType.Accept,
 			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.High}),
 			width: "125px"
@@ -378,6 +453,11 @@
 	];
 
 	var aAllToolbars = [
+		new sap.m.OverflowToolbar("otb0", {
+			width: 'auto',
+			content : toolbarContent0
+		}),
+
 		new sap.m.OverflowToolbar("otb1", {
 			width: 'auto',
 			content : toolbarContent1

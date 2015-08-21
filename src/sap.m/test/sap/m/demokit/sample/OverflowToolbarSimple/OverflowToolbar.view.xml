@@ -30,7 +30,7 @@
 	<Label />
 
 	<MessageStrip class="sapUiTinyMargin"
-		text="The buttons &quot;Cut, Copy and Paste&quot; have a special layout to never move to the overflow area."
+		text="The Cut, Copy and Paste buttons have a special layout and never move to the overflow area."
 		type="Information" showIcon="true">
 	</MessageStrip>
 
@@ -93,6 +93,7 @@
 
 	<MessageStrip class="sapUiTinyMargin"
 		text="The available priorities for the toolbar items are: AlwaysOverflow, Disappear, Low, High and NeverOverflow.
+		By default the priority of each toolbar item is High.
 		Items with AlwaysOverflow priority remain visible in the overflow area.
 		Items with NeverOverflow priority remain visible in the toolbar.
 		Items with Disappear, Low and High priority overflow depending on their priority and position in the toolbar.
@@ -115,18 +116,13 @@
 					priority="AlwaysOverflow" />
 			</layoutData>
 		</Button>
-		<Button text="Never 1" type="Accept">
+		<Button text="Never" type="Emphasized">
 			<layoutData>
 				<OverflowToolbarLayoutData
 					priority="NeverOverflow" />
 			</layoutData>
 		</Button>
-		<Button text="Never 2" type="Reject">
-			<layoutData>
-				<OverflowToolbarLayoutData
-					priority="NeverOverflow" />
-			</layoutData>
-		</Button>
+		<Button text="Default" type="Transparent">	</Button>
 		<Button text="Low 1" type="Transparent">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="Low" />
@@ -153,13 +149,69 @@
 			</layoutData>
 		</Button>
 	</OverflowToolbar>
+	<MessageStrip class="sapUiTinyMargin"
+				  text="Toolbar items can overflow together even if they are on different positions.
+				  This is possible using the group property of the LayoutData control.
+				  By default the group value is 0. This value means that the element does not belong to any group.
+				  When two or more elements have the same property value, this means that they belong to the same group.
+				  Elements that belong to a group is not allowed to have AlwaysOverflow or NeverOverflow priority."
+				  type="Information" showIcon="true">
+	</MessageStrip>
+
+	<OverflowToolbar id="otb5">
+		<Label text="Buttons:" /><Label />
+		<ToolbarSpacer />
+		<Button text="Always 1" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData
+						priority="AlwaysOverflow" />
+			</layoutData>
+		</Button>
+		<Button text="Always 2" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData
+						priority="AlwaysOverflow" />
+			</layoutData>
+		</Button>
+		<Button text="Never" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData
+						priority="NeverOverflow" />
+			</layoutData>
+		</Button>
+		<Button text="Group 1" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="High" group="1"/>
+			</layoutData>
+		</Button>
+		<Button text="Group 1" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="High" group="1"/>
+			</layoutData>
+		</Button>
+		<Button text="Disappear" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="Disappear" />
+			</layoutData>
+		</Button>
+		<Button text="Group 2" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="Low" group="2" />
+			</layoutData>
+		</Button>
+		<Button text="Group 2" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="Low" group="2"/>
+			</layoutData>
+		</Button>
+	</OverflowToolbar>
 
 	<MessageStrip class="sapUiTinyMargin"
 		text="Segmented buttons are shown as Selects when in the overflow area."
 		type="Information" showIcon="true">
 	</MessageStrip>
 
-	<OverflowToolbar id="otb5">
+	<OverflowToolbar id="otb6">
 		<ToolbarSpacer />
 		<Select>
 			<items>
