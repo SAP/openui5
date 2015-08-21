@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.MultiComboBox.
-sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './List', './MultiComboBoxRenderer', './Popover', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'jquery.sap.xml'],
-	function(jQuery, Bar, ComboBoxBase, Dialog, List, MultiComboBoxRenderer, Popover, library, EnabledPropagator, IconPool/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', './Dialog', './List', './MultiComboBoxRenderer', './Popover', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'jquery.sap.xml'],
+	function(jQuery, Bar, InputBase, ComboBoxBase, Dialog, List, MultiComboBoxRenderer, Popover, library, EnabledPropagator, IconPool/* , jQuerySap */) {
 	"use strict";
 
 	/**
@@ -364,7 +364,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		var oNewSelectedItem = this._getItemByListItem(oListItem);
 
 		if (oListItem.getType() === "Inactive") {
-
 			// workaround: this is needed because the List fires the "selectionChange" event on inactive items
 			return;
 		}
@@ -1027,6 +1026,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @private
 	 */
 	MultiComboBox.prototype._getFocusedListItem = function() {
+
 		if (!document.activeElement) {
 			return null;
 		}
@@ -1061,6 +1061,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @private
 	 */
 	MultiComboBox.prototype._hasTokens = function() {
+
 		if (this._oTokenizer.getTokens().length) {
 			return true;
 		}
@@ -1072,6 +1073,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @private
 	 */
 	MultiComboBox.prototype._getCurrentItem = function() {
+
 		if (!this._oCurrentItem) {
 			return this._getFocusedItem();
 		}
@@ -1803,6 +1805,52 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		}
 	};
 
+	/**
+	 * Retrieves the first enabled item from the aggregation named <code>items</code>.
+	 *
+	 * @param {array} [aItems]
+	 * @returns {sap.ui.core.Item | null}
+	 */
+	MultiComboBox.prototype.findFirstEnabledItem = function(aItems) {
+		aItems = aItems || this.getItems();
+
+		for (var i = 0; i < aItems.length; i++) {
+			if (aItems[i].getEnabled()) {
+				return aItems[i];
+			}
+		}
+
+		return null;
+	};
+
+	/**
+	 * Gets the visible items from the aggregation named <code>items</code>.
+	 *
+	 * @return {sap.ui.core.Item[]}
+	 */
+	MultiComboBox.prototype.getVisibleItems = function() {
+		for (var i = 0, oListItem, aItems = this.getItems(), aVisibleItems = []; i < aItems.length; i++) {
+			oListItem = this.getListItem(aItems[i]);
+
+			if (oListItem && oListItem.getVisible()) {
+				aVisibleItems.push(aItems[i]);
+			}
+		}
+
+		return aVisibleItems;
+	};
+
+	/**
+	 * Retrieves the last enabled item from the aggregation named <code>items</code>.
+	 *
+	 * @param {array} [aItems]
+	 * @returns {sap.ui.core.Item | null}
+	 */
+	MultiComboBox.prototype.findLastEnabledItem = function(aItems) {
+		aItems = aItems || this.getItems();
+		return this.findFirstEnabledItem(aItems.reverse());
+	};
+
 	/* =========================================================== */
 	/* API methods */
 	/* =========================================================== */
@@ -2040,6 +2088,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		return aItems;
 	};
 
+	/**
+	 * Gets the selectable items from the aggregation named <code>items</code>.
+	 *
+	 * @returns {sap.ui.core.Item[]} An array containing the selectables items.
+	 */
+	MultiComboBox.prototype.getSelectableItems = function() {
+		return this.getEnabledItems(this.getVisibleItems());
+	};
+
 	MultiComboBox.prototype.getWidth = function() {
 		return this.getProperty("width") || "100%";
 	};
@@ -2107,6 +2164,24 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		this.setSelectable(oItem, oItem.getEnabled());
 		this._decorateListItem(oListItem);
 		return oListItem;
+	};
+
+	/**
+	 * Given an item type of sap.m.StandardListItem, find the corresponding item type of sap.ui.core.Item.
+	 *
+	 * @param {sap.m.StandardListItem} oListItem
+	 * @param {array} [aItems]
+	 * @returns {sap.ui.core.Item | null}
+	 * @private
+	 */
+	MultiComboBox.prototype._findMappedItem = function(oListItem, aItems) {
+		for (var i = 0, aItems = aItems || this.getItems(), aItemsLength = aItems.length; i < aItemsLength; i++) {
+			if (this.getListItem(aItems[i]) === oListItem) {
+				return aItems[i];
+			}
+		}
+
+		return null;
 	};
 
 	/**
@@ -2202,11 +2277,19 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 * @private
 	 */
 	MultiComboBox.prototype.init = function() {
-		ComboBoxBase.prototype.init.apply(this, arguments);
+		InputBase.prototype.init.apply(this, arguments);
 
 		// initialize list
 		this.createList();
 
+		// to prevent the change event from firing when the arrow button is pressed
+		this._bProcessChange = true;
+
+		/**
+		 * To detect whether the data is updated.
+		 *
+		 */
+		this.bDataUpdated = false;
 		this.setPickerType(sap.ui.Device.system.phone ? "Dialog" : "Popover");
 		this._oTokenizer = this._createTokenizer();
 		this._aCustomerKeys = [];
@@ -2222,16 +2305,75 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	};
 
 	MultiComboBox.prototype.addItem = function(oItem) {
-		ComboBoxBase.prototype.addItem.apply(this, arguments);
-		this.invalidate();
+		this.addAggregation("items", oItem);
+
+		if (oItem) {
+			oItem.attachEvent("_change", this.onItemChange, this);
+		}
+
+		if (this.getList()) {
+			this.getList().addItem(this._mapItemToListItem(oItem));
+		}
+
 		return this;
+	};
+
+	/**
+	 * Inserts an item into the aggregation named <code>items</code>.
+	 *
+	 * @param {sap.ui.core.Item} oItem The item to insert; if empty, nothing is inserted.
+	 * @param {int} iIndex The <code>0</code>-based index the item should be inserted at; for
+	 *             a negative value of <code>iIndex</code>, the item is inserted at position 0; for a value
+	 *             greater than the current size of the aggregation, the item is inserted at
+	 *             the last position.
+	 * @returns {sap.m.MultiComboBox} <code>this</code> to allow method chaining.
+	 * @public
+	 */
+	MultiComboBox.prototype.insertItem = function(oItem, iIndex) {
+		this.insertAggregation("items", oItem, iIndex, true);
+
+		if (oItem) {
+			oItem.attachEvent("_change", this.onItemChange, this);
+		}
+
+		if (this.getList()) {
+			this.getList().insertItem(this._mapItemToListItem(oItem), iIndex);
+		}
+
+		return this;
+	};
+
+	/**
+	 * Gets the enabled items from the aggregation named <code>items</code>.
+	 *
+	 * @param {sap.ui.core.Item[]} [aItems=getItems()] Items to filter.
+	 * @return {sap.ui.core.Item[]} An array containing the enabled items.
+	 * @public
+	 */
+	MultiComboBox.prototype.getEnabledItems = function(aItems) {
+		aItems = aItems || this.getItems();
+
+		return aItems.filter(function(oItem) {
+			return oItem.getEnabled();
+		});
+	};
+
+	/**
+	 * Gets the item with the given key from the aggregation named <code>items</code>.<br>
+	 * <b>Note:</b> If duplicate keys exist, the first item matching the key is returned.
+	 *
+	 * @param {string} sKey An item key that specifies the item to retrieve.
+	 * @returns {sap.ui.core.Item}
+	 * @public
+	 */
+	MultiComboBox.prototype.getItemByKey = function(sKey) {
+		return this.findItem("key", sKey);
 	};
 
 	/**
 	 * Removes an item from the aggregation named <code>items</code>.
 	 *
-	 * @param {int |
-	 *          string | sap.ui.core.Item} oItem The item to remove or its index or id.
+	 * @param {int | string | sap.ui.core.Item} oItem The item to remove or its index or id.
 	 * @returns {sap.ui.core.Item} The removed item or null.
 	 * @public
 	 */
@@ -2271,6 +2413,26 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 		if (this.getList()) {
 			this.getList().destroyAggregation("items", true);
 		}
+	};
+
+	/**
+	 * Retrieves an item by searching for the given property/value from the aggregation named <code>items</code>.<br>
+	 * <b>Note:</b> If duplicate values exist, the first item matching the value is returned.
+	 *
+	 * @param {string} sProperty An item property.
+	 * @param {string} sValue An item value that specifies the item to retrieve.
+	 * @returns {sap.ui.core.Item | null} The matched item or null.
+	 */
+	MultiComboBox.prototype.findItem = function(sProperty, sValue) {
+		var sMethod = "get" + sProperty.charAt(0).toUpperCase() + sProperty.slice(1);
+
+		for (var i = 0, aItems = this.getItems(); i < aItems.length; i++) {
+			if (aItems[i][sMethod]() === sValue) {
+				return aItems[i];
+			}
+		}
+
+		return null;
 	};
 
 	/**
