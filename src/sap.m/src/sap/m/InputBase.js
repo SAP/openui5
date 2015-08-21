@@ -213,11 +213,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._changeProxy = jQuery.proxy(this.onChange, this);
 
 		/**
-		 * To detect when the control is in the rendering phase.
+		 * Indicates whether the input field is in the rendering phase.
 		 *
 		 * @protected
 		 */
 		this.bRenderingPhase = false;
+
+		/**
+		 * Indicates whether the <code>focusout</code> event is triggered due a rendering.
+		 */
+		this.bFocusoutDueRendering = false;
 	};
 
 	/**
@@ -379,15 +384,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Handles the focusout event of the Input.
+	 * Handles the <code>focusout</code> event of the Input.
 	 *
 	 * @param {jQuery.Event} oEvent The event object.
 	 * @private
 	 */
 	InputBase.prototype.onfocusout = function(oEvent) {
+		this.bFocusoutDueRendering = this.bRenderingPhase;
 		this.$().toggleClass("sapMFocus", false);
+
 		// remove touch handler from document for mobile devices
-		jQuery(document).off('.sapMIBtouchstart');
+		jQuery(document).off(".sapMIBtouchstart");
 
 		// because dom is replaced during the rendering
 		// onfocusout event is triggered probably focus goes to the document
@@ -396,10 +403,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 
-		//close value state message popup when focus is out of the input
+		// close value state message popup when focus is out of the input
 		this.closeValueStateMessage();
+	};
 
-		// handle change event on focusout
+	/**
+	 * Handles the <code>sapfocusleave</code> event of the input.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @private
+	 */
+	InputBase.prototype.onsapfocusleave = function(oEvent) {
+
+		if (this.bFocusoutDueRendering) {
+			return;
+		}
+
 		this.onChange(oEvent);
 	};
 
