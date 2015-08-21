@@ -34,7 +34,7 @@ sap.ui.define(["sap/m/semantic/SemanticControl", "sap/m/Label", "sap/ui/base/Man
 				/**
 				 * Minimum time in milliseconds for showing the draft indicator
 				 */
-				draftTimeOut : {
+				minDisplayTime : {
 					type: "int",
 					group: "Behavior",
 					defaultValue: 1500
@@ -64,7 +64,7 @@ sap.ui.define(["sap/m/semantic/SemanticControl", "sap/m/Label", "sap/ui/base/Man
 	 * @Overwrites
 	 */
 	DraftIndicator.prototype.setProperty = function(key, value) {
-		if (key == "draftTimeOut") {
+		if (key == "minDisplayTime") {
 			ManagedObject.prototype.setProperty.call(this, key, value, true);
 			return;
 		}
@@ -143,7 +143,7 @@ sap.ui.define(["sap/m/semantic/SemanticControl", "sap/m/Label", "sap/ui/base/Man
 		}
 		
 		var iNextState = this.aQueue.shift();
-		var iTimeOut = this.getDraftTimeOut();
+		var iTimeOut = this.getMinDisplayTime();
 		
 		if (!iNextState) {
 			return;
