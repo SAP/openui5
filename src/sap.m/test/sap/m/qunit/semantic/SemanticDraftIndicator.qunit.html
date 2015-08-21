@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="UTF-8">
+	<title>Test Page for sap.m.semantic.SemanticDraftIndicator</title>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-noConflict="true"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen"/>
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+
+	<!-- use the sinon faketimers for this test -->
+	<script type="text/javascript">
+		sinon.config.useFakeTimers = true;
+	</script>
+	
+	<script>
+
+	jQuery.sap.require("sap.m.semantic.SemanticPage");
+	jQuery.sap.require("sap.m.semantic.DraftIndicator");
+	
+	var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oCore = sap.ui.getCore();
+	
+	module("id");
+	
+	test("semantic control can be retrieved by Id", function () {
+		// Arrange
+		var oDraftIndi = new sap.m.semantic.DraftIndicator("draftId");
+
+		strictEqual(oDraftIndi.getId(), "draftId", "control has the expected id");
+
+		// Act
+		var oRetrievedIndi = sap.ui.getCore().byId("draftId");
+
+		// Assert
+		notEqual(oRetrievedIndi, undefined, "the button is retrieved by id");
+		strictEqual(oRetrievedIndi.getId(), "draftId", "control has the expected id");
+
+		oDraftIndi.destroy();
+	});
+
+	
+	module("states");
+	
+	test("set 'Saving draft' and 'Clear Draft' state", function () {
+		// Arrange
+		var oDraftIndi = new sap.m.semantic.DraftIndicator();
+
+		// System under test
+		var oSemanticPage = new sap.m.semantic.DetailPage({
+			draftIndicator: oDraftIndi
+		});
+
+		oSemanticPage.placeAt("qunit-fixture-visible");
+		oCore.applyChanges();
+
+		// Act
+		oDraftIndi.showDraftSaving();
+		// Assert
+		strictEqual(oDraftIndi.$().html(), oBundle.getText("SEMANTIC_CONTROL_SAVING_DRAFT"), "Saving draft is shown");
+		
+		this.clock.tick(3000);
+		
+		// Act
+		oDraftIndi.clearDraftState();
+		// Assert
+		strictEqual(oDraftIndi.$().html(), "", "Draft saved is cleared");
+
+		// Clean up
+		oDraftIndi._resetDraftTimer();
+		oDraftIndi.destroy();
+		oSemanticPage.destroy();
+	});
+	
+	test("set Draft Saved state and check if it is cleared after default timeout", function () {
+		// Arrange
+		var oDraftIndi = new sap.m.semantic.DraftIndicator();
+
+		// System under test
+		var oSemanticPage = new sap.m.semantic.DetailPage({
+			draftIndicator: oDraftIndi
+		});
+
+		oSemanticPage.placeAt("qunit-fixture-visible");
+		oCore.applyChanges();
+
+		// Act
+		oDraftIndi.showDraftSaved();
+
+		// Assert
+		strictEqual(oDraftIndi.$().html(), oBundle.getText("SEMANTIC_CONTROL_DRAFT_SAVED"), "Draft saved is shown");
+		this.clock.tick(1500);
+		
+		// Assert
+		strictEqual(oDraftIndi.$().html(), "", "Draft saved is cleared after default timeout");
+
+		// Clean up
+		oDraftIndi._resetDraftTimer();
+		oDraftIndi.destroy();
+		oSemanticPage.destroy();
+	});
+	
+	test("set Draft Saving state and check that it is not cleared after default timeout", function () {
+		// Arrange
+		var oDraftIndi = new sap.m.semantic.DraftIndicator();
+
+		// System under test
+		var oSemanticPage = new sap.m.semantic.DetailPage({
+			draftIndicator: oDraftIndi
+		});
+
+		oSemanticPage.placeAt("qunit-fixture-visible");
+		oCore.applyChanges();
+
+		// Act
+		oDraftIndi.showDraftSaving();
+
+		// Assert
+		strictEqual(oDraftIndi.$().html(), oBundle.getText("SEMANTIC_CONTROL_SAVING_DRAFT"), "Draft saved is shown");
+		this.clock.tick(1500);
+		
+		// Assert
+		ok(oDraftIndi.$().html()!="", "Draft saving state is not cleared after default timeout");
+
+		// Clean up
+		oDraftIndi._resetDraftTimer();
+		oDraftIndi.destroy();
+		oSemanticPage.destroy();
+	});
+	
+	
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<h1 id="qunit-header">QUnit tests: sap.m.semantic.DraftIndicator</h1>
+
+<h2 id="qunit-banner"></h2>
+
+<h2 id="qunit-userAgent"></h2>
+<!--<div id="qunit-testrunner-toolbar"></div>-->
+<ol id="qunit-tests"></ol>
+<div id="qunit-fixture"></div>
+<div id="qunit-fixture-visible"></div>
+</body>
+</html>

@@ -506,6 +506,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 				};
 			}
 		};
+		
+		oTypeConfigs["sap.m.semantic.DraftIndicator"] = {
+			position: SemanticConfiguration.prototype._PositionInPage.footerLeft,
+			getSettings: function() {
+				return {
+					layoutData: new sap.m.OverflowToolbarLayoutData({shrinkable: false})
+				};
+			},
+			order: 1
+		};
 
 		return oTypeConfigs;
 	})();
