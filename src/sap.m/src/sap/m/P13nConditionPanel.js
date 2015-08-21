@@ -1771,7 +1771,6 @@ sap.ui.define([
 		this._enableCondition(oConditionGrid, true);
 
 		sValue = this._getFormatedConditionText(sOperation, sValue1, sValue2, bExclude, sKeyField, bShowIfGrouped);
-		window.console.log(sValue);
 		
 		var oConditionData = {
 			"value": sValue,
