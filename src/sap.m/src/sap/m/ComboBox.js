@@ -152,6 +152,26 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 			}
 		};
 
+		/**
+		 * Sets the selected item by its index.
+		 *
+		 * @param {int} iIndex
+		 * @private
+		 */
+		ComboBox.prototype.setSelectedIndex = function(iIndex, _aItems /* only for internal usage */) {
+			var oItem;
+			_aItems = _aItems || this.getItems();
+
+			// constrain the new index
+			iIndex = (iIndex > _aItems.length - 1) ? _aItems.length - 1 : Math.max(0, iIndex);
+			oItem = _aItems[iIndex];
+
+			if (oItem) {
+
+				this.setSelection(oItem);
+			}
+		};
+
 		/* ----------------------------------------------------------- */
 		/* Popover                                                     */
 		/* ----------------------------------------------------------- */
