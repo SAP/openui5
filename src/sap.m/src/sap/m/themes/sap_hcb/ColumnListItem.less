@@ -1,6 +1,10 @@
 .sap-desktop .sapMListTblRow:focus{
 	outline: 0.125rem dotted @sapHCStandardFG;
-	outline-offset: -0.125rem;
+	outline-offset: -0.1875rem;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMListTblRow:focus{
+	outline-width: 3px;
 }
 
 .sapMListTblSubRow {
