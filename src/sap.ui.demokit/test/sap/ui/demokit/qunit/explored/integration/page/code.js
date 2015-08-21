@@ -29,7 +29,7 @@ sap.ui.define([
 
 								aButtons[0].$().trigger("tap");
 
-								strictEqual(oOpenFileStub.callCount, 1, "did open the generated file");
+								Opa5.assert.strictEqual(oOpenFileStub.callCount, 1, "did open the generated file");
 								oOpenFileStub.restore();
 							},
 							errorMessage: "Did not find the download Button"

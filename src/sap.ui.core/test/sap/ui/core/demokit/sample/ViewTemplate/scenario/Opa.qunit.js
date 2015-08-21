@@ -44,7 +44,7 @@ sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function (Opa5) {
 					controlType: oFixture.controlType,
 					matchers : new sap.ui.test.matchers.Properties({ text: oFixture.text}),
 					success : function () {
-						ok(true, "found: " + oFixture.controlType + " with text: " +
+						Opa5.assert.ok(true, "found: " + oFixture.controlType + " with text: " +
 							oFixture.text);
 					},
 					errorMessage : "not found: " + oFixture.controlType + " with text: " +
@@ -65,7 +65,7 @@ sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function (Opa5) {
 								|| sComponent === "sap.ui.model.odata.ODataMetaModel"
 								|| sComponent.indexOf("sap.ui.model.odata.type.") === 0)
 								&& oLog.level <= jQuery.sap.log.Level.WARNING) {
-							ok(false, "Warning or Error found: " + sComponent
+							Opa5.assert.ok(false, "Warning or Error found: " + sComponent
 								+ " Level: " + oLog.level + " Message: " + oLog.message );
 						}
 					});

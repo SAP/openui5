@@ -23,7 +23,7 @@ sap.ui.require([
 										return oPage.getBindingContext() && oPage.getBindingContext().getPath() === sBindingPath;
 									},
 									success: function (oPage) {
-										QUnit.strictEqual(oPage.getBindingContext().getPath(), sBindingPath, "was on the remembered detail page");
+										Opa5.assert.strictEqual(oPage.getBindingContext().getPath(), sBindingPath, "was on the remembered detail page");
 									},
 									errorMessage: "Remembered object " + sBindingPath + " is not shown"
 								});

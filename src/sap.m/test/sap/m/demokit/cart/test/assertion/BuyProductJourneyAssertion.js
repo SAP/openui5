@@ -8,7 +8,7 @@ sap.ui.demo.cart.test.assertion.BuyProductJourneyAssertion = sap.ui.test.Opa5.ex
 			id : "categoryList",
 			viewName : "Home",
 			success : function (oList) {
-				QUnit.ok(oList, "Found the category List");
+				Opa5.assert.ok(oList, "Found the category List");
 			}
 		});
 	},
@@ -19,7 +19,7 @@ sap.ui.demo.cart.test.assertion.BuyProductJourneyAssertion = sap.ui.test.Opa5.ex
 			viewName : "Category",
 			success : function (oList) {
 				this.getContext().oProductList = oList;
-				ok(oList, "Found the product List");
+				Opa5.assert.ok(oList, "Found the product List");
 			}
 		});
 	},
@@ -40,7 +40,7 @@ sap.ui.demo.cart.test.assertion.BuyProductJourneyAssertion = sap.ui.test.Opa5.ex
 			viewName : "Home",
 			matchers: new sap.ui.test.matchers.AggregationFilled({ name : "items" }),
 			success : function () {
-				QUnit.ok(true, "CategoryList did contain entries");
+				Opa5.assert.ok(true, "CategoryList did contain entries");
 			},
 			errorMessage : "The category list did not contain entries"
 		});
@@ -52,7 +52,7 @@ sap.ui.demo.cart.test.assertion.BuyProductJourneyAssertion = sap.ui.test.Opa5.ex
 				return this.getContext().oProductList.getItems().length > 0;
 			},
 			success : function () {
-				ok(true, "ProductList did contain entries");
+				Opa5.assert.ok(true, "ProductList did contain entries");
 			},
 			errorMessage : "The product list did not contain entries"
 		});
@@ -63,7 +63,7 @@ sap.ui.demo.cart.test.assertion.BuyProductJourneyAssertion = sap.ui.test.Opa5.ex
 			viewName : "Cart",
 			id : "entryList",
 			success : function (oList) {
-				strictEqual(oList.getItems()[0].getTitle(), this.getContext().sProductName, "The added Product has the correct Title");
+				Opa5.assert.strictEqual(oList.getItems()[0].getTitle(), this.getContext().sProductName, "The added Product has the correct Title");
 			},
 			errorMessage : "Did not find the product in the cart"
 		});
@@ -77,7 +77,7 @@ sap.ui.demo.cart.test.assertion.BuyProductJourneyAssertion = sap.ui.test.Opa5.ex
 				return oList.getItems().length === 0;
 			},
 			success : function (oList) {
-				strictEqual(oList.getItems().length, 0, "The cart was empty after shopping");
+				Opa5.assert.strictEqual(oList.getItems().length, 0, "The cart was empty after shopping");
 			},
 			errorMessage : "The cart still has entries"
 		});
@@ -88,7 +88,7 @@ sap.ui.demo.cart.test.assertion.BuyProductJourneyAssertion = sap.ui.test.Opa5.ex
 			viewName : "Cart",
 			id : "proceedButton",
 			success : function (oButton) {
-				ok(oButton.getEnabled(), "The button is enabled");
+				Opa5.assert.ok(oButton.getEnabled(), "The button is enabled");
 			},
 			errorMessage : "The proceed button was not enabled"
 		});

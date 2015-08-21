@@ -54,7 +54,7 @@ sap.ui.define([
 							viewName: sViewName,
 							check: sortCheck.alphabeticallyInGroups(),
 							success: function () {
-								QUnit.ok(true, "The List was sorted ascending by name");
+								Opa5.assert.ok(true, "The List was sorted ascending by name");
 							},
 							errorMessage:  "The List was not sorted ascending by name"
 						});
@@ -66,7 +66,7 @@ sap.ui.define([
 							viewName: sViewName,
 							check: sortCheck.descendingGroups(),
 							success: function () {
-								QUnit.ok(true, "The List was sorted descending by name");
+								Opa5.assert.ok(true, "The List was sorted descending by name");
 							},
 							errorMessage:  "The List was not sorted descending by name"
 						});
@@ -78,7 +78,7 @@ sap.ui.define([
 							viewName: sViewName,
 							matchers: matchers.listWithItemsButNotThisOne(sEntityName),
 							success: function () {
-								QUnit.ok(true, "The entity " + sEntityName + " has disappeared");
+								Opa5.assert.ok(true, "The entity " + sEntityName + " has disappeared");
 							},
 							errorMessage:  "The entity " + sEntityName + " has not disappeared"
 						});
@@ -90,7 +90,7 @@ sap.ui.define([
 							viewName: sViewName,
 							matchers: matchers.listItemWithTitle(sEntityName),
 							success: function () {
-								QUnit.ok(true, "Found the entity " + sEntityName);
+								Opa5.assert.ok(true, "Found the entity " + sEntityName);
 							},
 							errorMessage: "Found no entity with the name " + sEntityName
 						});
@@ -105,7 +105,7 @@ sap.ui.define([
 								value: sGroupName
 							}),
 							success: function (aGroupHeaders) {
-								QUnit.ok(true, "Found the " + sGroupName + " group header");
+								Opa5.assert.ok(true, "Found the " + sGroupName + " group header");
 							},
 							errorMessage: "The list did not contain a group called " + sGroupName
 						});

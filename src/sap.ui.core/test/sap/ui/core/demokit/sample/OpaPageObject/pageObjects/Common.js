@@ -11,7 +11,7 @@ sap.ui.define(["sap/ui/test/Opa5"], function(Opa5){
 			return this.waitFor({
 				id : sId,
 				success : function (oText) {
-					strictEqual(oText.getText(), sText);
+					Opa5.assert.strictEqual(oText.getText(), sText);
 				}
 			});
 		}
