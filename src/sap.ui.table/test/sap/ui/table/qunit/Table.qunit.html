@@ -109,6 +109,29 @@
 		oTable.destroy();
 	}
 
+	function creatSortingTableData() {
+		var aData = [
+		      		{lastName: "Dente", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: personImg, gender: "male", rating: 4, money: 3.45},
+		      		{lastName: "Friese", name: "Andy", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: jobPosImg, gender: "male", rating: 2, money: 4.64},
+		      		{lastName: "Mann", name: "Anita", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", src: personImg, gender: "female", rating: 3, money: 7.34},
+		      		{lastName: "Case", name: "Justin", checked: false, linkText: "www.sap.com", href: "http://www.sap.com", src: personImg, gender: "male", rating: 3, money: 4563.3},
+		      		{lastName: "Time", name: "Justin", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "male", rating: 4, money: 665.4},
+		      		{lastName: "Schutt", name: "Doris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "female", rating: 4, money: 1.46},
+		      		{lastName: "Open", name: "Doris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: personImg, gender: "female", rating: 2, money: 32.76}
+		      	];
+
+		 var oModel = new sap.ui.model.json.JSONModel();
+		 oModel.setData({modelData: aData});
+		 oTable.setModel(oModel);
+	}
+	
+	function sortTable() {
+		var aColumns = oTable.getColumns(),
+			fSorting = sap.ui.table.SortOrder;
+		oTable.sort(aColumns[1],fSorting.Ascending, false);
+		oTable.sort(aColumns[0],fSorting.Ascending, true);
+	}
+	
 	//********** Tests start********************************************
 	qutils.delayTestStart();
 
@@ -958,6 +981,158 @@
 		strictEqual(sap.m.ToolbarDesign.Solid, oTB.getActiveDesign(), "Active design of the Toolbar is Solid as well");
 
 		oTable.destroy();
+	});
+	
+	module("Sorting", {
+		setup: function() {
+			createTable({
+				title: "TABLEHEADER",
+				footer: "Footer"
+			})
+		},
+		teardown: destroyTable
+	});
+	
+	asyncTest("Multi-columns sorting", function() {
+		creatSortingTableData();
+
+		var fnHandler = function() {
+			var aSortedColumns = oTable.getSortedColumns();
+			
+			if (aSortedColumns.length === 2) {
+
+				strictEqual(aSortedColumns[0].getSortProperty(), "name", "check column name.");
+				strictEqual(aSortedColumns[1].getSortProperty(), "lastName", "check column name.");
+
+				strictEqual(oTable.getRows()[3].getCells()[0].getText(), "Open", "second sorting column works.");
+				strictEqual(oTable.getRows()[3].getCells()[1].getValue(), "Doris", "first sorting column works.");
+				
+				oTable.detachEvent("_rowsUpdated", fnHandler);
+				start();
+			}
+		};
+		
+		oTable.attachEvent("_rowsUpdated", fnHandler);
+		sortTable();
+	});
+	
+	asyncTest("remove column", function() {
+		creatSortingTableData();
+		var oRemovedColumn;
+
+		var fnHandler = function() {
+			var aSortedColumns = oTable.getSortedColumns();
+			
+			if (aSortedColumns.length === 2) {
+				oTable.detachEvent("_rowsUpdated", fnHandler);
+				oRemovedColumn = oTable.removeColumn(oTable.getSortedColumns()[0]);
+				oTable.attachEvent("_rowsUpdated", fnHandler2);
+			}
+		};
+		
+		var fnHandler2 = function() {
+			var aSortedColumns = oTable.getSortedColumns();
+			strictEqual(aSortedColumns.length, 1, "sorted column deletion.");
+			strictEqual(oRemovedColumn.getSortProperty(), "name", "first name is removed");
+			strictEqual(aSortedColumns[0].getSortProperty(), "lastName", "second column becomes the first column.");
+			
+			start();
+		};
+		
+		oTable.attachEvent("_rowsUpdated", fnHandler);
+		sortTable();
+		sap.ui.getCore().applyChanges();
+	});
+	
+	
+	asyncTest("remove all columns", function() {
+		creatSortingTableData();
+		
+		var fnHandler = function() {
+			
+			var aSortedColumns = oTable.getSortedColumns();
+			
+			if (aSortedColumns.length === 2) {
+				oTable.detachEvent("_rowsUpdated", fnHandler);
+				oTable.removeAllColumns();
+				oTable.attachEvent("_rowsUpdated", fnHandler2);
+			}
+		};
+		
+		var fnHandler2 = function() {
+			var aSortedColumns = oTable.getSortedColumns();
+			strictEqual(aSortedColumns.length, 0, "sorted column deletion.");
+			start();
+		};
+		
+		oTable.attachEvent("_rowsUpdated", fnHandler);
+		sortTable();
+		sap.ui.getCore().applyChanges();
+	});
+	
+	
+	asyncTest("destroy columns", function() {
+		creatSortingTableData();
+		
+		var fnHandler = function() {
+			
+			var aSortedColumns = oTable.getSortedColumns();
+			
+			if (aSortedColumns.length === 2) {
+				oTable.detachEvent("_rowsUpdated", fnHandler);
+				oTable.destroyColumns();
+				oTable.attachEvent("_rowsUpdated", fnHandler2);
+			}
+		};
+		
+		var fnHandler2 = function() {
+			var aSortedColumns = oTable.getSortedColumns();
+			strictEqual(aSortedColumns.length, 0, "sorted column deletion.");
+			start();
+		};
+		
+		oTable.attachEvent("_rowsUpdated", fnHandler);
+		sortTable();
+		sap.ui.getCore().applyChanges();
+	});
+
+	asyncTest("change column order", function() {
+		creatSortingTableData();
+		var oRemovedColumn;
+		
+		var fnHandler = function() {
+			
+			var aSortedColumns = oTable.getSortedColumns();
+			
+			if (aSortedColumns.length === 2) {
+				oTable.detachEvent("_rowsUpdated", fnHandler);
+				oTable._iNewColPos = 0;
+				oRemovedColumn = oTable.removeColumn(aSortedColumns[1]);
+				
+				oTable.attachEvent("_rowsUpdated", fnHandler2);
+			}
+		};
+		
+		var fnHandler2 = function() {
+			oTable.detachEvent("_rowsUpdated", fnHandler2);
+			oTable.insertColumn(oRemovedColumn, oTable._iNewColPos);
+			delete oTable._iNewColPos;
+			oTable.attachEvent("_rowsUpdated", fnHandler3);
+		};
+		
+		var fnHandler3 = function() {
+			
+			var aSortedColumns = oTable.getSortedColumns();
+			strictEqual(aSortedColumns.length, 2, "2 sorted columns.");
+			strictEqual(aSortedColumns[0].getSortProperty(), "name", "first name stays in first sorted column");
+			strictEqual(aSortedColumns[1].getSortProperty(), "lastName", "last name stays in second sorted column");
+
+			start();
+		};
+		
+		oTable.attachEvent("_rowsUpdated", fnHandler);
+		sortTable();
+		sap.ui.getCore().applyChanges();
 	});
 
 	</script>

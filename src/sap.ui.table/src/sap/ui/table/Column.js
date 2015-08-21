@@ -561,7 +561,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 
 		var oTable = this.getParent();
 		if (oTable) {
-
+			oTable.pushSortedColumn(this, bAdd);
 			// get the sort order type
 			var oNewSortOrder = bDescending ? sap.ui.table.SortOrder.Descending : sap.ui.table.SortOrder.Ascending;
 
@@ -576,36 +576,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 
 				// reset the sorting status of all columns
 				var aSorters = [];
+				var aSortedCols = oTable._aSortedColumns;
+				
 				var aCols = oTable.getColumns();
-				if (bAdd) {
-					for (var i = 0, l = aCols.length; i < l; i++) {
-						if (aCols[i] == this) {
-							// set the sort property of the current column
-							this.setProperty("sorted", true, true);
-							this.setProperty("sortOrder", oNewSortOrder, true);
-							this._oSorter = new Sorter(this.getSortProperty(), this.getSortOrder() === sap.ui.table.SortOrder.Descending);
-							aSorters.push(this._oSorter);
-						} else {
-							var oSorter = aCols[i]._oSorter;
-							if (oSorter) {
-								aSorters.push(oSorter);
-							}
-						}
+				
+				for (var i = 0, l = aCols.length; i < l; i++) {
+					
+					aCols[i].setProperty("sorted", false, true);
+					aCols[i].setProperty("sortOrder", sap.ui.table.SortOrder.Ascending, true);
+					aCols[i]._renderSortIcon();
+					if (jQuery.inArray(aCols[i], aSortedCols) < 0) {
+						delete aCols[i]._oSorter;
 					}
-				} else {
-					for (var i = 0, l = aCols.length; i < l; i++) {
-						if (aCols[i] !== this) {
-							aCols[i].setProperty("sorted", false, true);
-							aCols[i].setProperty("sortOrder", sap.ui.table.SortOrder.Ascending, true);
-							aCols[i]._renderSortIcon();
-							delete aCols[i]._oSorter;
-						}
-					}
+						
+				}
+
+				for (var i = 0, l = aSortedCols.length; i < l; i++) {
 					// set the sort property of the current column
-					this.setProperty("sorted", true, true);
-					this.setProperty("sortOrder", oNewSortOrder, true);
-					this._oSorter = new Sorter(this.getSortProperty(), this.getSortOrder() === sap.ui.table.SortOrder.Descending);
-					aSorters.push(this._oSorter);
+					aSortedCols[i].setProperty("sorted", true, true);
+					aSortedCols[i].setProperty("sortOrder", oNewSortOrder, true);
+					aSortedCols[i]._renderSortIcon();
+					if (this === aSortedCols[i]) {
+						this._oSorter = new Sorter(aSortedCols[i].getSortProperty(), aSortedCols[i].getSortOrder() === sap.ui.table.SortOrder.Descending);
+					}
+					aSorters.push(aSortedCols[i]._oSorter);
 				}
 
 				// set the sorted flag and sort the model
