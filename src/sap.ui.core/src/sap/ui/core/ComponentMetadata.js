@@ -34,6 +34,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 			}
 		}
 	}
+	
+	function getVersionWithoutSuffix(sVersion) {
+		var oVersion = jQuery.sap.Version(sVersion);
+		return oVersion.getSuffix() ? jQuery.sap.Version(oVersion.getMajor() + "." + oVersion.getMinor() + "." + oVersion.getPatch()) : oVersion;
+	}
 
 	// Manifest Template RegExp: {{foo}}
 	var rManifestTemplate = /\{\{([^\}\}]+)\}\}/g;
@@ -201,6 +206,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 			if (oParent instanceof ComponentMetadata) {
 				oParent.init();
 			}
+
+			// version check => only if minVersion is available a warning will be logged
+			// TODO: enhance version check also for libraries and components
+			var oManifestUI5 = this.getManifestEntry("sap.ui5");
+			var sMinUI5Version = oManifestUI5["dependencies"] && oManifestUI5["dependencies"]["minUI5Version"];
+			if (sMinUI5Version && jQuery.sap.log.isLoggable(jQuery.sap.log.LogLevel.WARNING)) {
+				var oVersionInfo = sap.ui.getVersionInfo();
+				var oMinVersion = getVersionWithoutSuffix(sMinUI5Version);
+				var oVersion = getVersionWithoutSuffix(oVersionInfo && oVersionInfo.version);
+				if (oMinVersion.compareTo(oVersion) > 0) {
+					jQuery.sap.log.warning("Component \"" + this.getComponentName() + "\" requires at least version \"" + oMinVersion.toString() + "\" but running on \"" + oVersion.toString() + "\"!");
+				}
+			}
+
+			// define the resource roots
+			// => if not loaded via manifest first approach the resource roots 
+			//    will be registered too late for the AMD modules of the Component
+			//    controller. This is a constraint for the resource roots config
+			//    in the manifest!
+			this._defineResourceRoots();
 
 			// first the dependencies have to be loaded (other UI5 libraries)
 			this._loadDependencies();
@@ -926,6 +951,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 		var oPageBase = new URI().search("");
 		oBase = oBase.absoluteTo(oPageBase);
 		return oUri.absoluteTo(oBase).relativeTo(oPageBase);
+	};
+
+	/**
+	 * Define the resource roots in the manifest
+	 *
+	 * <p>
+	 * 
+	 * TODO: Once enabling manifest first for Components we need to consider
+	 *       to move the registration of the resource roots before loading
+	 *       the component controller in order to allow to use the resource
+	 *       roots configuration for the Component controller dependencies
+	 *       (sap.ui.define dependencies).
+	 *
+	 * @private
+	 */
+	ComponentMetadata.prototype._defineResourceRoots = function() {
+
+		var oUI5Manifest = this.getManifestEntry("sap.ui5");
+		var mResourceRoots = oUI5Manifest["resourceRoots"];
+
+		if (!mResourceRoots) {
+			return;
+		}
+
+		for (var sResourceRoot in mResourceRoots) {
+			jQuery.sap.registerModulePath(sResourceRoot, mResourceRoots[sResourceRoot]);
+		}
+
 	};
 
 	return ComponentMetadata;
