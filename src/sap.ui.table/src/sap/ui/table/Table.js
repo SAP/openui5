@@ -462,7 +462,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			 * This event is triggered when the custom filter item of the column menu is pressed. The column on which the event was triggered is passed as parameter.
 			 * @since 1.23.0
 			 */
-			customFilter : {}
+			customFilter : {
+				/**
+				 * The column instance on which the custom filter button was pressed.
+				 */
+				column : {type : "sap.ui.table.Column"},
+
+				/**
+				 * Filter value.
+				 */
+				value : {type : "string"}
+			}
 		}
 	}});
 
@@ -2699,7 +2709,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					select: [function() {
 						var oContext = this.getContextByIndex(mParams.rowIndex);
 						var sValue = oContext.getProperty(sProperty);
-						this.filter(oColumn, sValue);
+						if (this.getEnableCustomFilter()) {
+							// only fire custom filter event
+							this.fireCustomFilter({
+								column: oColumn,
+								value: sValue
+							});
+						} else {
+							this.filter(oColumn, sValue);
+						}
+
 					}, this]
 				}));
 
