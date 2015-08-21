@@ -53,10 +53,11 @@ sap.ui.require([
 	/**
 	 * Creates a v4 OData service for <code>TEA_BUSI</code>.
 	 *
+	 * @param {object} [mParameters] the model properties
 	 * @returns {sap.ui.model.odata.v4.oDataModel} the model
 	 */
-	function createModel() {
-		return new ODataModel(getServiceUrl("/sap/opu/local_v4/IWBEP/TEA_BUSI/"));
+	function createModel(mParameters) {
+		return new ODataModel(getServiceUrl("/sap/opu/local_v4/IWBEP/TEA_BUSI/"), mParameters);
 	}
 
 	//*********************************************************************************************
@@ -226,7 +227,6 @@ sap.ui.require([
 			assert.strictEqual(sResult, "Edm.Date");
 		});
 	});
-
 	// TODO constructor: sDefaultBindingMode, mSupportedBindingModes
 	// TODO constructor: test that the service URL is absolute?
 	// TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId

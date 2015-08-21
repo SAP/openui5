@@ -20,7 +20,10 @@ sap.ui.define([
 
 		createContent : function () {
 			var sServiceUri = this.proxy("/sap/opu/local_v4/IWBEP/TEA_BUSI/"),
-				oModel = new ODataModel(sServiceUri);
+				oModel = new ODataModel({
+					serviceUrl: sServiceUri,
+					automaticTypeDetermination : true
+				});
 
 			return sap.ui.view({
 				type : sap.ui.core.mvc.ViewType.XML,

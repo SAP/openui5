@@ -87,6 +87,18 @@ sap.ui.require([
 		sMetaTeam = sMetaEmployees + "/EntityType/NavigationProperties(Name='EMPLOYEE_2_TEAM')";
 
 	/**
+	 * Returns a clone of the object.
+	 *
+	 * @param {object} o
+	 *   the object
+	 * @return {object}
+	 *   the clone of the object
+	 */
+	function clone(o) {
+		return o && JSON.parse(JSON.stringify(o));
+	}
+
+	/**
 	 * Returns a resolved promised for the given object. Clones the object.
 	 *
 	 * @param {object} o
@@ -95,7 +107,7 @@ sap.ui.require([
 	 *   the promised to be resolved with a clone of the object
 	 */
 	function promiseFor(o) {
-		return Promise.resolve(JSON.parse(JSON.stringify(o)));
+		return Promise.resolve(clone(o));
 	}
 
 	//*********************************************************************************************
@@ -395,4 +407,122 @@ sap.ui.require([
 			});
 		});
 	});
+
+	//*********************************************************************************************
+	[{
+		type: "Boolean"
+	}, {
+		type: "Byte"
+	}, {
+		type: "Date"
+	}, {
+		type: "DateTimeOffset"
+	}, {
+		type: "Decimal"
+	}, {
+		type: "Decimal",
+		facets: [{Name: "Precision", Value: "20"}, {Name: "Scale", Value: "5"}],
+		constraints: {precision: 20, scale: 5}
+	}, {
+		type: "Double"
+	}, {
+		type: "Guid"
+	}, {
+		type: "Int16"
+	}, {
+		type: "Int32"
+	}, {
+		type: "Int64"
+	}, {
+		type: "SByte"
+	}, {
+		type: "Single"
+	}, {
+		type: "String"
+	}, {
+		type: "String",
+		facets: [{Name: "MaxLength", Value: "255"}],
+		constraints: {maxLength: 255}
+	}].forEach(function (oFixture) {
+		[false, true].forEach(function (bNullable) {
+			var aFacets = oFixture.facets || {},
+				sTitle = "requestUI5Type: " + oFixture.type + ",nullable=" + bNullable
+					+ ", facets=" + JSON.stringify(aFacets);
+
+			QUnit.test(sTitle, function (assert) {
+				var oConstraints = oFixture.constraints,
+					oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
+					sPath = "/Employees/ENTRYDATE",
+					oMetaContext = {metaContextFor: sPath},
+					oProperty = {
+						"Type" : {
+							"QualifiedName" : "Edm." + oFixture.type
+						},
+						"Facets" : aFacets,
+						"Nullable" : bNullable
+					};
+
+				if (!bNullable) {
+					oConstraints = clone(oConstraints) || {};
+					oConstraints.nullable = false;
+				}
+				oMetaModelMock.expects("requestMetaContext").withExactArgs(sPath)
+					.returns(promiseFor(oMetaContext));
+				oMetaModelMock.expects("requestObject").withExactArgs("", oMetaContext)
+					.returns(promiseFor(oProperty));
+
+				return this.oMetaModel.requestUI5Type(sPath).then(function (oType) {
+					assert.strictEqual(oType.getName(), "sap.ui.model.odata.type."
+						+ oFixture.type);
+					assert.deepEqual(oType.oConstraints, oConstraints);
+				});
+			});
+		});
+	});
+	//TODO facet DefaultValue
+
+	//*********************************************************************************************
+	QUnit.test("requestUI5Types: not a property", function (assert) {
+		var oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
+			sPath = "/Employees/foo",
+			oMetaContext = {metaContextFor: sPath},
+			oProperty = {};
+
+		oMetaModelMock.expects("requestMetaContext").withExactArgs(sPath)
+			.returns(promiseFor(oMetaContext));
+		oMetaModelMock.expects("requestObject").withExactArgs("", oMetaContext)
+			.returns(promiseFor(oProperty));
+
+		return this.oMetaModel.requestUI5Type(sPath).then(function(oType) {
+			assert.ok(false);
+		})["catch"](function (oError) {
+			assert.strictEqual(oError.message, "No property found at " + sPath);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestUI5Types: unsupported type", function (assert) {
+		var oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
+			sPath = "/Employees/foo",
+			oMetaContext = {metaContextFor: sPath},
+			oProperty =  {
+				"Type" : {
+					"QualifiedName" : "Edm.Duration"
+				},
+				"Facets" : [],
+				"Nullable" : true
+			};
+
+		oMetaModelMock.expects("requestMetaContext").withExactArgs(sPath)
+			.returns(promiseFor(oMetaContext));
+		oMetaModelMock.expects("requestObject").withExactArgs("", oMetaContext)
+			.returns(promiseFor(oProperty));
+
+		return this.oMetaModel.requestUI5Type(sPath).then(function(oType) {
+			assert.ok(false);
+		})["catch"](function (oError) {
+			assert.strictEqual(oError.message, "Unsupported EDM type: Edm.Duration: " + sPath);
+		});
+	});
+
 });

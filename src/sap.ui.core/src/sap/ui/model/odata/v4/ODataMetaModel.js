@@ -210,5 +210,76 @@ sap.ui.define([
 		});
 	};
 
+	var mUi5TypeForEdmType = {
+			"Edm.Boolean" : {type : "sap.ui.model.odata.type.Boolean"},
+			"Edm.Byte" : {type : "sap.ui.model.odata.type.Byte"},
+			"Edm.Date" : {type: "sap.ui.model.odata.type.Date"},
+			"Edm.DateTimeOffset" : {type : "sap.ui.model.odata.type.DateTimeOffset"},
+			"Edm.Decimal" : {
+				type : "sap.ui.model.odata.type.Decimal",
+				facets : {"Precision": "precision", "Scale" : "scale"}
+			},
+			"Edm.Double" : {type: "sap.ui.model.odata.type.Double"},
+			"Edm.Guid" : {type: "sap.ui.model.odata.type.Guid"},
+			"Edm.Int16" : {type: "sap.ui.model.odata.type.Int16"},
+			"Edm.Int32" : {type: "sap.ui.model.odata.type.Int32"},
+			"Edm.Int64" : {type: "sap.ui.model.odata.type.Int64"},
+			"Edm.SByte" : {type: "sap.ui.model.odata.type.SByte"},
+			"Edm.Single" : {type: "sap.ui.model.odata.type.Single"},
+			"Edm.String" : {
+				type : "sap.ui.model.odata.type.String",
+				facets : {"MaxLength" : "maxLength"}
+			}
+		};
+
+	/**
+	 * Requests the UI5 type for the given property path that formats and parses corresponding to
+	 * the property's EDM type and facets. The property's type must be a primitive type.
+	 *
+	 * @param {string} sPath
+	 *   An absolute path to an OData property within the OData data model
+	 * @returns {Promise}
+	 *   A promise that gets resolved with the corresponding UI5 type from
+	 *   <code>sap.ui.model.odata.type</code>; if no type can be determined, the promise is
+	 *   rejected with the corresponding error
+	 * @public
+	 */
+	ODataMetaModel.prototype.requestUI5Type = function (sPath) {
+		var that = this;
+
+		return this.requestMetaContext(sPath).then(function (oMetaContext) {
+			return that.requestObject("", oMetaContext);
+		}).then(function (oProperty) {
+			var oConstraints,
+				oFacet,
+				i,
+				oUi5Type;
+
+			function setConstraint(sKey, vValue) {
+				oConstraints = oConstraints || {};
+				oConstraints[sKey] = vValue;
+			}
+
+			if (!("Type" in oProperty) || !("Facets" in oProperty) || !("Nullable" in oProperty)) {
+				throw new Error("No property found at " + sPath);
+			}
+			oUi5Type = mUi5TypeForEdmType[oProperty.Type.QualifiedName];
+			if (!oUi5Type) {
+				throw new Error("Unsupported EDM type: " + oProperty.Type.QualifiedName + ": "
+					+ sPath);
+			}
+			for (i = 0; i < oProperty.Facets.length; i++) {
+				oFacet = oProperty.Facets[i];
+				if (oFacet.Name in oUi5Type.facets) {
+					setConstraint(oUi5Type.facets[oFacet.Name], oFacet.Value);
+				}
+			}
+			if (!oProperty.Nullable) {
+				setConstraint("nullable", false);
+			}
+			return new (jQuery.sap.getObject(oUi5Type.type, 0))({}, oConstraints);
+		});
+	};
+
 	return ODataMetaModel;
 }, /* bExport= */ true);

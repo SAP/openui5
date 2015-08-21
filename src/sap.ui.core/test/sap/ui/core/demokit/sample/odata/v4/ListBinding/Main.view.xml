@@ -17,6 +17,9 @@
 				<Column>
 					<Text text="Entry Date"/>
 				</Column>
+				<Column>
+					<Text text="Entry Date 2"/>
+				</Column>
 			</columns>
 			<items>
 				<ColumnListItem>
@@ -30,7 +33,12 @@
 						<Text text="{LOCATION/City/CITYNAME}"/>
 					</cells>
 					<cells>
+						<!-- type is automatically determined by binding -->
 						<Text text="{ENTRYDATE}"/>
+					</cells>
+					<cells>
+						<!-- app specified type wins over automatically determined type -->
+						<Text text="{path: 'ENTRYDATE', type: 'sap.ui.model.type.String'}"/>
 					</cells>
 				</ColumnListItem>
 			</items>
