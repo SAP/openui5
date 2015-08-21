@@ -96,7 +96,6 @@
 		oDate.getTimezoneOffset = function() { return -420 };
 		oDate.getTimezoneShort = function() { return "PDT" };
 		oDate.getTimezoneLong = function() { return "Pacific Daylight Time" };
-		oDate.getWeek = function() { return 27 };
 		oDate.setMilliseconds(235);
 
 		for (sCustomPattern in oCustomDatePatterns) {
@@ -115,7 +114,6 @@
 		oDate.getTimezoneOffset = function() { return 0 };
 		oDate.getTimezoneShort = function() { return "UTC" };
 		oDate.getTimezoneLong = function() { return "Coordinated Universal Time" };
-		oDate.getWeek = function() { return 27 };
 		oDate.setMilliseconds(235);
 
 		oCustomDate = sap.ui.core.format.DateFormat.getDateTimeInstance({pattern: "yyyy-MM-dd'T'HH:mm:ss.SSSX"});
@@ -336,6 +334,101 @@
 		equal(oQuarter3.format(oDate), "3rd quarter", "3rd quarter");
 		equal(oQuarterCombined.format(oDate), "Wed, Jul 4 2001, Q3", "Wed, Jul 4 2001, Q3");
 		equal(oQuarterCombined.parse("Wed, Jul 4 2001, Q3").valueOf(), oDate.valueOf(), "Wed, Jul 4 2001, Q3")
+	});
+
+	test("DateFormat.calculateWeekNumber", function() {
+		var DateFormat = sap.ui.core.format.DateFormat;
+
+		var oDate = new Date(Date.UTC(2015, 5, 8));
+		equal(DateFormat.calculateWeekNumber(oDate, {UTC: true}), 24, "week number with UTC Date");
+
+		oDate = new Date(Date.UTC(2000, 0, 1));
+		equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			baseYear: 2000
+		}), 1, "01.01.2000 baseYear 2000 is in week 1");
+
+		equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			baseYear: 1999
+		}), 53, "01.01.2000 baseYear 1999 is in week 53");
+
+		equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			locale: "de",
+			baseYear: 1999
+		}), 52, "01.01.2000 in 'de' locale is in week 52");
+
+		equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			locale: "de",
+			baseYear: 2000
+		}), 52, "baseYear doesn't have effect when locale isn't en-US");
+
+		oDate = new Date(Date.UTC(2001, 0, 1));
+
+		equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			baseYear: 2001
+		}), 1, "01.01.2001 baseYear 2001 is in week 1");
+
+		equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			baseYear: 2000
+		}), 54, "01.01.2001 baseYear 2000 is in week 54");
+
+		equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			locale: "de"
+		}), 1, "01.01.2001 in 'de' locale is in week 1");
+
+		oDate - new Date(Date.UTC(2000, 11, 31));
+		equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			baseYear: 2001
+		}), 1, "31.12.2000 baseYear 2001 is in week 1");
+
+		equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			baseYear: 2000
+		}), 54, "31.12.2000 baseYear 2000 is in week 54");
+
+		equal(DateFormat.calculateWeekNumber(oDate, {
+			UTC: true,
+			locale: "de"
+		}), 1, "31.12.2000 in 'de' locale is in week 1");
+	});
+
+	test("format and parse weekInYear pattern", function() {
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "'W'w"
+		}, /* need to use xx-XX locale because only the pattern in default bundle is known*/ new sap.ui.core.Locale("xx-XX"));
+		equal(oDateFormat.format(new Date(2015, 0, 1)), "W1", "week format with pattern 'w'");
+		ok(oDateFormat.parse("W1") instanceof Date, "Date can be correctly parsed");
+
+		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "'W'ww"
+		}, /* need to use xx-XX locale because only the pattern in default bundle is known*/ new sap.ui.core.Locale("xx-XX"));
+		equal(oDateFormat.format(new Date(2015, 0, 1)), "W01", "week format with pattern 'ww'");
+		ok(oDateFormat.parse("W01") instanceof Date, "Date can be correctly parsed");
+
+		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "www"
+		}, /* need to use xx-XX locale because only the pattern in default bundle is known*/ new sap.ui.core.Locale("xx-XX"));
+		equal(oDateFormat.format(new Date(2015, 0, 1)), "CW01", "week format with pattern 'www'");
+		ok(oDateFormat.parse("CW01") instanceof Date, "Date can be correctly parsed");
+
+		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "wwww"
+		}, /* need to use xx-XX locale because only the pattern in default bundle is known*/ new sap.ui.core.Locale("xx-XX"));
+		equal(oDateFormat.format(new Date(2015, 0, 1)), "Calendar Week 01", "week format with pattern 'wwww'");
+		ok(oDateFormat.parse("Calendar Week 01") instanceof Date, "Date can be correctly parsed");
+
+		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: "wwww",
+			calendarType: sap.ui.core.CalendarType.Islamic
+		});
+		equal(oDateFormat.format(new Date(2015, 0, 1)), "", "week number isn't supported for Islamic calendar");
 	});
 
 	test("origin info", function() {
