@@ -364,6 +364,8 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	CompositeBinding.prototype._updateDataState = function() {
 		var oDataState = PropertyBinding.prototype._updateDataState.call(this),
 			aOriginalValues = [],
+			aModelMessages = [],
+			aControlMessages = [],
 			that = this;
 		jQuery.each(this.aBindings, function(i, oBinding) {
 			var oInnerDataState = oBinding._updateDataState();
@@ -372,7 +374,11 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 			} else {
 				aOriginalValues.push(oInnerDataState.getOriginalInternalValue());
 			}
+			aModelMessages = aModelMessages.concat(oInnerDataState.getModelMessages());
+			aControlMessages = aControlMessages.concat(oInnerDataState.getControlMessages());
 		});
+		oDataState.setModelMessages(aModelMessages);
+		oDataState.setControlMessages(aControlMessages);
 		oDataState.setOriginalInternalValue(aOriginalValues);
 		oDataState.setValue(this._toExternalValue(oDataState.getInternalValue()));
 		oDataState.setOriginalValue(this._toExternalValue(aOriginalValues));

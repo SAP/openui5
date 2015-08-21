@@ -67,6 +67,7 @@
 			oModel = initModel({json: false});
 		},
 		teardown : function() {
+			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
 			stopServer();
@@ -94,6 +95,7 @@
 			oModel = initModel();
 		},
 		teardown : function() {
+			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
 			stopServer();
@@ -952,6 +954,7 @@
 			oModel.setRefreshAfterChange(false);
 		},
 		teardown : function() {
+			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
 			stopServer();
@@ -1263,6 +1266,7 @@
 			
 			if (iCount === 2 && bSetProp) {
 				equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
+				oTable.destroy();
 				start();
 			}
 		});
@@ -1304,6 +1308,7 @@
 					ok(bSetProp, "set Property succesful");
 					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
+					oTable.destroy();
 					start();
 				}});
 			}
@@ -1358,6 +1363,7 @@
 					equal(oParams.__batchResponses[1].__changeResponses[0].statusCode,"204", "statuscode OK");
 					
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
+					oTable.destroy();
 					start();
 				}});
 			}
@@ -1410,6 +1416,7 @@
 					equal(oParams.__batchResponses[0].__changeResponses[1].statusCode,"204", "statuscode OK");
 					
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
+					oTable.destroy();
 					start();
 				}});
 			}
@@ -1543,7 +1550,7 @@
 				oModel.setProperty("/ProductSet('AD-1000')/NameLanguage", "D");
 				ok(oModel.hasPendingChanges(), "model has pending changes");
 				oModel.resetChanges(["/ProductSet('AD-1000')/Name"]);
-				ok(oModel.hasPendingChanges(), "model should not have pending changes");
+				ok(oModel.hasPendingChanges(), "model has pending changes");
 				oModel.setProperty("/ProductSet('AD-1000')/Name", "NewName");
 				oModel.resetChanges(["/ProductSet('AD-1000')"]);
 				ok(!oModel.hasPendingChanges(), "model should not have pending changes");
@@ -1590,6 +1597,7 @@
 				equal(oBinding.getLength(), 115, "length check");
 				ok(oBinding.getContexts(), "context check");
 				ok(oBinding.sCountMode, "Request", "count mode check");
+				oTable.destroy();
 				start();
 			}
 
@@ -2805,6 +2813,7 @@
 			oModel = initModel();
 		},
 		teardown : function() {
+			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
 			stopServer();
@@ -3397,6 +3406,7 @@
 			oModel = initModel();
 		},
 		teardown : function() {
+			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
 			stopServer();
@@ -3533,6 +3543,8 @@
 			iCount++;
 			if (iCount === 1 ) {
 				ok(true, "batch request completed");
+				oInput1.destroy();
+				oInput2.destroy();
 				start();
 			}
 		});
@@ -3553,6 +3565,8 @@
 			iChange++;
 			if (iChange == 2) {
 				ok(true, "checkupdate done");
+				oInput1.destroy();
+				oInput2.destroy();
 				start();
 			}
 		}
@@ -3612,7 +3626,7 @@
 						dataReceived: function() {
 							ok(iCount == 0, "dataReceived called once");
 							iCount++;
-							oModel.setProperty("/ProductSet('HT-1000')/Name", "Test");
+							oInput1.destroy();
 							start();
 						}
 					}
@@ -3844,6 +3858,7 @@
 			oModel = initModel({json: true, useBatch: false, defaultCountMode: 'None'});
 		},
 		teardown : function() {
+			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
 			stopServer();
@@ -4116,6 +4131,7 @@
 				
 				if (iCount === 2 && bSetProp) {
 					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
+					oTable.destroy();
 					start();
 				}
 			});
@@ -4161,6 +4177,7 @@
 					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
 					oModel.detachRequestCompleted(fnHandler);
+					oTable.destroy();
 					start();
 				}
 			};
@@ -4213,6 +4230,7 @@
 					
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
 					oModel.detachRequestCompleted(this, fnHandler);
+					oTable.destroy();
 					start();
 				}
 			}
@@ -4263,6 +4281,7 @@
 					
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
 					oModel.detachRequestCompleted(this, fnHandler);
+					oTable.destroy();
 					start();
 				}
 			}
