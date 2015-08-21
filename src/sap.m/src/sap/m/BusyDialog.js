@@ -94,7 +94,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 		});
 
-
 		BusyDialog.prototype.init = function () {
 			this._busyIndicator = new sap.m.BusyIndicator(this.getId() + '-busyInd', {
 				visible: true
@@ -105,6 +104,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				content: this._busyIndicator,
 				showHeader: false
 			}).addStyleClass('sapMBusyDialog');
+
+			this._oDialog.addEventDelegate({
+				onBeforeRendering: function () {
+					var text = this.getText();
+					var title = this.getTitle();
+					var showCancelButton = this.getShowCancelButton() || this.getCancelButtonText();
+
+					if (!text && !title && !showCancelButton) {
+						this._oDialog.addStyleClass('sapMBusyDialog-Light');
+					} else {
+						this._oDialog.removeStyleClass('sapMBusyDialog-Light');
+					}
+				}
+			}, this);
 
 			//keyboard handling
 			this._oDialog.oPopup.onsapescape = function (e) {

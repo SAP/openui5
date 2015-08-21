@@ -63,10 +63,16 @@
 						width: _buttonWidth,
 						press: function () {
 							defaultLightBusyDialog.open();
-
 							jQuery.sap.delayedCall(2000, this, function () {
 								defaultLightBusyDialog.close();
 							});
+						}
+					}),
+					new sap.m.Button({
+						text: 'Default (light, no autoclose)',
+						width: _buttonWidth,
+						press: function () {
+							defaultLightBusyDialog.open();
 						}
 					}),
 					new sap.m.Button({
