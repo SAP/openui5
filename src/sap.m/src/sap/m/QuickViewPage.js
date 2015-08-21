@@ -494,6 +494,7 @@ sap.ui.define([
 			QuickViewPage.prototype.exit = function() {
 				this._oResourceBundle = null;
 				this._oPage = null;
+				this._mNavContext = null;
 			};
 
 			/**
