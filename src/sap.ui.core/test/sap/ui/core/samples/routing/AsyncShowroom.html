@@ -83,15 +83,11 @@
 			metadata: {
 				routing: {
 					config: {
+						async: true,
 						viewType: "XML",
 						controlId: "page",
 						controlAggregation: "content"
 					},
-					routes: [{
-						pattern: "display",
-						name: "sample",
-						target: ["view1", "view2", "view3", "view4"]
-					}],
 					targets: {
 						view1: {
 							viewName: "view1"
@@ -110,8 +106,6 @@
 			},
 			init: function() {
 				sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
-				this._router = this.getRouter();
-				this._router.initialize();
 				this.getTargets().attachDisplay(function(oEvent) {
 					this.getViews().setView(oEvent.getParameter("name"), null);
 				});

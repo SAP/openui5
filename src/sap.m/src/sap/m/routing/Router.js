@@ -161,6 +161,7 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 
 			constructor : function() {
 				this._oTargetHandler = new TargetHandler();
+
 				Router.prototype.constructor.apply(this, arguments);
 			},
 
@@ -197,7 +198,6 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 
 				// only if a route has a private target and does not use the targets instance of the router we need to inform the targethandler
 				if (oRoute._oTarget) {
-
 					oTargetConfig = oRoute._oTarget._oOptions;
 
 					this._oTargetHandler.addNavigation({
@@ -209,7 +209,6 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 						view: mArguments.view,
 						preservePageInSplitContainer: oTargetConfig.preservePageInSplitContainer
 					});
-
 				}
 
 				return Router.prototype.fireRouteMatched.apply(this, arguments);
@@ -228,7 +227,6 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 					viewLevel: iViewLevel,
 					askHistory: true
 				});
-
 
 				return Router.prototype.fireRoutePatternMatched.apply(this, arguments);
 			}

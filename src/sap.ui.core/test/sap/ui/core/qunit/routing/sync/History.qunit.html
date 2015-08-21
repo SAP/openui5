@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+
+<!--
+           Tested classes: sap.ui.core.navigation.History
+         -->
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>qUnit Page for sap.ui.core.navigation.History</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.ui.commons">
+
+</script>
+
+<script>
+	(function () {
+		"use strict";
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		jQuery.sap.require("sap.ui.thirdparty.sinon");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+		jQuery.sap.require("sap.ui.core.routing.History");
+
+		sap.ui.core.routing.HashChanger.getInstance().init();
+
+		module("history management", {
+			setup : function() {
+				sap.ui.core.routing.HashChanger.getInstance().replaceHash(""); //since the initial hash will be parsed, we want it to be empty on every test
+			}
+		});
+
+		// singleton test only runs standalone
+		test("Should use the hashChanger in the singleton", function() {
+			//System under Test
+			var oHashChanger = sap.ui.core.routing.HashChanger.getInstance();
+			var sut = sap.ui.core.routing.History.getInstance(),
+					oHashChanged = this.spy(sut, "_hashChangedByApp"),
+					lengthBefore = sut.aHistory.length;
+
+			//Act
+			oHashChanger.setHash("foo");
+			oHashChanger.replaceHash("bar");
+
+			//Assert
+			strictEqual(sut, sap.ui.core.routing.History.getInstance(), "Should be a singleton");
+
+			strictEqual(oHashChanged.callCount, 2, "Should be called twice");
+
+			ok(oHashChanged.firstCall.calledWithExactly("foo", false), "Should register to setHash");
+			ok(oHashChanged.secondCall.calledWithExactly("bar", true), "Should register to replaceHash");
+
+			strictEqual(sut.aHistory.length, lengthBefore + 1, "should have 1 entry in the history");
+			strictEqual(sut.aHistory[lengthBefore], "bar");
+
+		});
+
+		// The functionality of the sap.ui.core.routing.History heavily depends on the events of the HashChanger.
+		// The HashChanger allows to replace the default instance with a custom implementation to intercept the logic -
+		// this is currently done by the unified shell in order to handle cross-application navigation.
+		// Factoring out the unit tests into this module allows to execute the same test suite in the shell context
+		jQuery.sap.registerModulePath("sap.ui.core.qunit", "../../../../../../../test-resources/sap/ui/core/qunit/routing/sync");
+		jQuery.sap.require("sap.ui.core.qunit.HistoryQunit");
+	})();
+
+</script>
+</head>
+<body>
+	<h1 id="qunit-header">qUnit Page for
+		sap.ui.core.navigation.History</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+
+</body>
+</html>

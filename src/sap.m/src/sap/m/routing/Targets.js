@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
-	function(Targets, TargetHandler, Target) {
+sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './async/Targets', './sync/Targets'],
+	function(Targets, TargetHandler, Target, asyncTargets, syncTargets) {
 		"use strict";
 
 		/**
@@ -166,7 +166,7 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
 		 * @param {boolean} [oOptions.targets.anyName.clearAggregation] Defines a boolean that can be passed to specify if the aggregation should be cleared
 		 * - all items will be removed - before adding the View to it.
 		 * When using a {@link sap.ui.ux3.Shell} this should be true. For a {@link sap.m.NavContainer} it should be false. When you use the {@link sap.m.routing.Router} the default will be false.
-		 * @param {string} [oOptions.targets.parent] A reference to another target, using the name of the target.
+		 * @param {string} [oOptions.targets.anyName.parent] A reference to another target, using the name of the target.
 		 * If you display a target that has a parent, the parent will also be displayed.
 		 * Also the control you specify with the controlId parameter, will be searched inside of the view of the parent not in the rootView, provided in the config.
 		 * The control will be searched using the byId function of a view. When it is not found, the global id is checked.
@@ -296,6 +296,20 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
 		 */
 		var MobileTargets = Targets.extend("sap.m.routing.Targets", /** @lends sap.m.routing.Targets.prototype */ {
 			constructor: function(oOptions) {
+
+				// If no config is given, set the default value to sync
+				if (!oOptions.config) {
+					oOptions.config = {
+						_async: false
+					};
+				}
+
+				// Config object doesn't have _async set which means the Targets is instantiated standalone by given a non-empty config object
+				// Assign the oConfig.async to oConfig._async and set the default value to sync
+				if (oOptions.config._async === undefined) {
+					oOptions.config._async = (oOptions.config.async === undefined) ? false : oOptions.config.async;
+				}
+
 				if (oOptions.targetHandler) {
 					this._oTargetHandler = oOptions.targetHandler;
 				} else {
@@ -304,6 +318,14 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
 				}
 
 				Targets.prototype.constructor.apply(this, arguments);
+
+				var TargetsStub = oOptions.config._async ? asyncTargets : syncTargets;
+
+				this._super = {};
+				for (var fn in TargetsStub) {
+					this._super[fn] = this[fn];
+					this[fn] = TargetsStub[fn];
+				}
 			},
 
 			destroy: function () {
@@ -326,40 +348,8 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
 				return this._oTargetHandler;
 			},
 
-			display: function () {
-				var iViewLevel,
-					sName;
-
-				// don't remember previous displays
-				this._oLastDisplayedTarget = null;
-
-				var oReturnValue = Targets.prototype.display.apply(this, arguments);
-
-				// maybe a wrong name was provided then there is no last displayed target
-				if (this._oLastDisplayedTarget) {
-					iViewLevel = this._oLastDisplayedTarget._oOptions.viewLevel;
-					sName = this._oLastDisplayedTarget._oOptions.name;
-				}
-
-				this._oTargetHandler.navigate({
-					viewLevel: iViewLevel,
-					navigationIdentifier: sName
-				});
-
-				return oReturnValue;
-			},
-
 			_constructTarget : function (oOptions, oParent) {
 				return new Target(oOptions, this._oViews, oParent, this._oTargetHandler);
-			},
-
-			_displaySingleTarget : function (sName) {
-				var oTarget = this.getTarget(sName);
-				if (oTarget) {
-					this._oLastDisplayedTarget = oTarget;
-				}
-
-				return Targets.prototype._displaySingleTarget.apply(this, arguments);
 			}
 		});
 

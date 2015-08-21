@@ -2,7 +2,7 @@ sap.ui.define(
 	[
 		"sap/m/NavContainer",
 		"sap/m/SplitContainer",
-		"qunit/routing/helpers"
+		"qunit/routing/sync/helpers"
 	],
 	function (NavContainer, SplitContainer, helpers) {
 		"use strict";

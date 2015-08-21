@@ -4,7 +4,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<title>qUnit Page for sap.ui.core.routing.Route</title>
 
-	<script src="../../../../../../resources/sap-ui-core.js"
+	<script src="../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-libs="sap.m">
 	</script>
 
@@ -25,7 +25,10 @@
 
 			var oRouterStub = {
 				fireRouteMatched : function () {},
-				fireRoutePatternMatched : function () {}
+				fireRoutePatternMatched : function () {},
+				_isAsync: function() {
+					return false;
+				}
 			};
 
 			test("Should not call pattern matched only matched", function () {
@@ -84,7 +87,10 @@
 						fnRouteMatchedSpy = this.spy(),
 						oRoute = new sap.ui.core.routing.Route({
 							fireRouteMatched : fnRouteMatchedSpy,
-							fireRoutePatternMatched : fnRouteMatchedSpy
+							fireRoutePatternMatched : fnRouteMatchedSpy,
+							_isAsync : function() {
+								return false;
+							}
 						}, { name : sName }),
 						fnEventSpy = this.spy(),
 						oListener = {};
@@ -126,6 +132,9 @@
 					this.oRouterStub = {
 						_oRouter: {
 							addRoute: this.oSpy
+						},
+						_isAsync: function() {
+							return false;
 						},
 						getRoute: function() {
 							return that.oParentRoute;
