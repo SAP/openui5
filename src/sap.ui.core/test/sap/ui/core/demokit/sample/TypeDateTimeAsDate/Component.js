@@ -2,10 +2,10 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 	function (UIComponent) {
 	"use strict";
 
-	return UIComponent.extend("sap.ui.core.sample.TypeDateTime.Component", {
+	return UIComponent.extend("sap.ui.core.sample.TypeDateTimeAsDate.Component", {
 
 		metadata: {
-			rootView: "sap.ui.core.sample.TypeDateTime.V",
+			rootView: "sap.ui.core.sample.TypeDateTimeAsDate.V",
 			dependencies: {
 				libs: [
 					"sap.m",

@@ -145,7 +145,17 @@
 				"category" : "Data Binding",
 				"since" : "1.28",
 				"samples" : [
-					"sap.ui.core.sample.TypeDateTime"
+					"sap.ui.core.sample.TypeDateTimeAsDate",
+					"sap.ui.core.sample.TypeDateTimeAsString"
+				]
+			},
+			{
+				"id" : "sap.ui.model.type.Time",
+				"name" : "Time Type",
+				"category" : "Data Binding",
+				"since" : "1.28",
+				"samples" : [
+					"sap.ui.core.sample.TypeTimeAsTime"
 				]
 			},
 			{
@@ -233,9 +243,19 @@
 				"description": "This sample explains the formatting options of the date type with the date being available as string."
 			},
 			{
-				"id": "sap.ui.core.sample.TypeDateTime",
-				"name": "DateTime Type",
+				"id": "sap.ui.core.sample.TypeDateTimeAsDate",
+				"name": "DateTime Type - Source As Date",
 				"description": "This sample explains the formatting options of the datetime type."
+			},
+			{
+				"id": "sap.ui.core.sample.TypeDateTimeAsString",
+				"name": "DateTime Type - Source As String",
+				"description": "This sample explains the formatting options of the datetime type."
+			},
+			{
+				"id": "sap.ui.core.sample.TypeTimeAsTime",
+				"name": "Time Type - Source As Time",
+				"description": "This sample explains the formatting options of the time type."
 			},
 			{
 				"id": "sap.ui.core.sample.TypeFileSize",

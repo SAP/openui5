@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.ui.core.sample.TypeDateTime.C"
+	controllerName="sap.ui.core.sample.TypeDateTimeAsString.C"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:form="sap.ui.layout.form"
 	xmlns="sap.m">
@@ -18,7 +18,9 @@
 		title="Date Input" >
 		<form:content>
 			<Label text="DateTime" />
-			<Input value="{path:'/dtValue'}" />
+			<Input value="{
+				path: '/dtValue',
+				type: 'sap.ui.model.type.DateTime'}" />
 		</form:content>
 	</form:SimpleForm>
 
@@ -40,10 +42,7 @@
 				path: '/dtValue',
 				type: 'sap.ui.model.type.DateTime',
 				formatOptions: {
-					style: 'short',
-					source: {
-						pattern: 'HH:mm:ss'
-					}
+					style: 'short'
 					}
 			}" />
 			
@@ -52,10 +51,7 @@
 				path: '/dtValue',
 				type: 'sap.ui.model.type.DateTime',
 				formatOptions: {
-					style: 'medium',
-					source: {
-						pattern: 'HH:mm:ss'
-					}
+					style: 'medium'
 				}
 			}" />
 
@@ -64,62 +60,7 @@
 				path: '/dtValue',
 				type: 'sap.ui.model.type.DateTime',
 				formatOptions: {
-					style: 'long',
-					source: {
-						pattern: 'HH:mm:ss'
-					}
-				}
-				}" />
-
-		</form:content>
-	</form:SimpleForm>
-	
-	<form:SimpleForm
-		width="auto"
-		class="sapUiResponsiveMargin"
-		layout="ResponsiveGridLayout"
-		labelSpanL="3"
-		labelSpanM="3"
-		emptySpanL="4"
-		emptySpanM="4"
-		columnsL="1"
-		columnsM="1"
-		title="Pattern" >
-		<form:content>
-
-			<Label text="yyyy-MM-dd'T'HH:mm:ss" />
-			<Text text="{
-				path: '/dtValue',
-				type: 'sap.ui.model.type.DateTime',
-				formatOptions: {
-					pattern: 'yyyy-MM-dd\'T\'HH:mm:ss',
-					source: {
-						pattern: 'HH:mm:ss'
-					}
-				}
-			}" />
-			
-			<Label text="yyyyMMdd HHmmss" />
-			<Text text="{
-				path: '/dtValue',
-				type: 'sap.ui.model.type.DateTime',
-				formatOptions: {
-					pattern: 'yyyyMMdd HHmmss',
-					source: {
-						pattern: 'HH:mm:ss'
-					}
-				}
-			}" />
-
-			<Label text="HH:mm" />
-			<Text text="{
-				path: '/dtValue',
-				type: 'sap.ui.model.type.DateTime',
-				formatOptions: {
-					pattern: 'HH:mm',
-					source: {
-						pattern: 'HH:mm:ss'
-					}
+					style: 'long'
 				}
 			}" />
 
@@ -136,25 +77,18 @@
 		emptySpanM="4"
 		columnsL="1"
 		columnsM="1"
-		title="UTC formatted" >
+		title="Relative Time Format" >
 		<form:content>
 
-			<Label text="UTC" />
+			<Label text="Relative Time" />
 			<Text text="{
 				path: '/dtValue',
 				type: 'sap.ui.model.type.DateTime',
 				formatOptions: {
-					pattern: 'yyyy-MM-dd\'T\'HH:mm:ss',
-					UTC: true,
-					source: {
-						pattern: 'HH:mm:ss'
-					}
+					relative: true,
+					relativeScale: 'auto'
 				}
 			}" />
-			
-
-
 		</form:content>
-	</form:SimpleForm>	
-	
+	</form:SimpleForm>
 </mvc:View>

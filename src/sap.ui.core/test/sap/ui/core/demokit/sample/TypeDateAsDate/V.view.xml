@@ -73,4 +73,29 @@
 
 		</form:content>
 	</form:SimpleForm>
+
+	<form:SimpleForm
+		width="auto"
+		class="sapUiResponsiveMargin"
+		layout="ResponsiveGridLayout"
+		labelSpanL="3"
+		labelSpanM="3"
+		emptySpanL="4"
+		emptySpanM="4"
+		columnsL="1"
+		columnsM="1"
+		title="Relative Time Format" >
+		<form:content>
+
+			<Label text="Relative Time" />
+			<Text text="{
+				path: '/date',
+				type: 'sap.ui.model.type.Date',
+				formatOptions: {
+					relative: true,
+					relativeScale: 'auto'
+				}
+			}" />
+		</form:content>
+	</form:SimpleForm>
 </mvc:View>
