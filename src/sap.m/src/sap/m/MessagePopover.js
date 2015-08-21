@@ -481,7 +481,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		MessagePopover.prototype._clearLists = function () {
 			LIST_TYPES.forEach(function (sListName) {
 				if (this._oLists[sListName]) {
-					this._oLists[sListName].destroyAggregation("items", true); // no re-rendering
+					this._oLists[sListName].destroyAggregation("items", true);
 				}
 			}, this);
 
@@ -513,8 +513,8 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 					oCloneListItem = this._mapItemToListItem(oMessagePopoverItem);
 
 				// add the mapped item to the List
-				this._oLists["all"].addAggregation("items", oListItem, true); // no re-rendering
-				this._oLists[oMessagePopoverItem.getType().toLowerCase()].addAggregation("items", oCloneListItem, true); // no re-rendering
+				this._oLists["all"].addAggregation("items", oListItem, true);
+				this._oLists[oMessagePopoverItem.getType().toLowerCase()].addAggregation("items", oCloneListItem, true);
 			}, this);
 		};
 
@@ -565,7 +565,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 */
 		MessagePopover.prototype._clearSegmentedButton = function () {
 			if (this._oSegmentedButton) {
-				this._oSegmentedButton.destroyAggregation("buttons", true); // no re-rendering
+				this._oSegmentedButton.destroyAggregation("buttons", true);
 			}
 
 			return this;
@@ -597,7 +597,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 						press: pressClosure(sListName)
 					}).addStyleClass(CSS_CLASS + "Btn" + sListName.charAt(0).toUpperCase() + sListName.slice(1));
 
-					this._oSegmentedButton.addButton(oButton, true); // no re-rendering
+					this._oSegmentedButton.addButton(oButton, true);
 				}
 			}, this);
 
@@ -1102,7 +1102,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * @returns {sap.m.MessagePopover} Reference to the 'this' for chaining purposes
 		 */
 		MessagePopover.prototype.setPlacement = function (sPlacement) {
-			this.setProperty("placement", sPlacement, true); // no re-rendering
+			this.setProperty("placement", sPlacement, true);
 			this._oPopover.setPlacement(sPlacement);
 
 			return this;
@@ -1121,19 +1121,32 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				};
 			});
 
+		// The following inherited methods of this control are extended because this control uses ResponsivePopover for rendering
 		["setModel", "bindAggregation", "setAggregation", "insertAggregation", "addAggregation",
 			"removeAggregation", "removeAllAggregation", "destroyAggregation"].forEach(function (sFuncName) {
+				// First, they are saved for later reference
 				MessagePopover.prototype["_" + sFuncName + "Old"] = MessagePopover.prototype[sFuncName];
+
+				// Once they are called
 				MessagePopover.prototype[sFuncName] = function () {
+					// We immediately call the saved method first
 					var result = MessagePopover.prototype["_" + sFuncName + "Old"].apply(this, arguments);
 
-					// Marks items aggregation as changed and invalidate popover to trigger rendering
+					// Then there is additional logic
+
+					// Mark items aggregation as changed and invalidate popover to trigger rendering
+					// See 'MessagePopover.prototype.onBeforeRenderingPopover'
 					this._bItemsChanged = true;
+
+					// If Popover dependency has already been instantiated ...
 					if (this._oPopover) {
+						// ... invalidate it
 						this._oPopover.invalidate();
 					}
 
+					// If the called method is 'removeAggregation' or 'removeAllAggregation' ...
 					if (["removeAggregation", "removeAllAggregation"].indexOf(sFuncName) !== -1) {
+						// ... return the result of the operation
 						return result;
 					}
 
