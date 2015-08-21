@@ -332,7 +332,8 @@
 					version: 10,
 					versionStr: "10"
 				},
-				touch: true
+				touch: true,
+				windowsOnly: true
 			},
 		];
 
@@ -357,6 +358,11 @@
 				}
 
 				if (currentTest.system || currentTest.os) {
+					if (currentTest.windowsOnly && window.navigator.platform.indexOf("Win") === -1) {
+						// because window.navigator.platform can't be overwritten, windows specific test should only be executed on windows environment
+						return;
+					}
+
 					var bOldSupportTouch = sap.ui.Device.support.touch,
 						oOldBrowserInfo = sap.ui.Device.browser;
 
