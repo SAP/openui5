@@ -72,10 +72,10 @@ sap.ui.define(['jquery.sap.global', '../Device', './Core', 'sap/ui/thirdparty/UR
 						setting.press = setting.tap;
 						delete setting.tap;
 					}
-					// remove unsupported settings (e.g. some for Image)
-					setting = fnConstructor.getMetadata().removeUnknownSettings(setting);
 				}
 				if (typeof fnConstructor === "function") {
+					// remove unsupported settings (e.g. some for Image/Icon)
+					setting = fnConstructor.getMetadata().removeUnknownSettings(setting);
 					return new fnConstructor(setting);
 				}
 			}

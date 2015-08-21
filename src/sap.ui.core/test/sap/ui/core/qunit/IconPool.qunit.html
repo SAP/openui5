@@ -16,6 +16,9 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 		<script>
 
@@ -43,17 +46,31 @@
 				QUnit.module("Methods");
 
 				QUnit.test("createControlByURI", function(assert) {
+					var oAssertStub = this.stub(jQuery.sap, "assert", function(bCondition) {
+						if (!bCondition) {
+							ok(false, "Condition check shouldn't fail");
+						}
+					});
 
 					var oFontIcon = IconPool.createControlByURI({
 						src: "sap-icon://add",
-						tap: function() {}
+						tap: function() {},
+						densityAware: false,
+						size: "2.5rem"
 					});
 					assert.equal(oFontIcon.getSrc(), "sap-icon://add", "icon: 'src' should be correct.");
 					assert.equal(oFontIcon.mEventRegistry.press.length, 1, "icon: deprecated 'tap' event will be registered as 'press'.");
 
-					var oImgIcon = IconPool.createControlByURI("../images/help.gif", Image);
+					var oImgIcon = IconPool.createControlByURI({
+						src: "../images/help.gif",
+						tap: function() {},
+						densityAware: false,
+						size: "2.5rem"
+					}, Image);
 					assert.equal(oImgIcon.getSrc(), "../images/help.gif", "img: 'src' should be correct.");
 
+					oImgIcon = IconPool.createControlByURI("../images/help.gif", Image);
+					assert.equal(oImgIcon.getSrc(), "../images/help.gif", "img: 'src' should be correct.");
 				});
 				QUnit.test("addIcon / getIconURI / getIconInfo", function(assert) {
 
