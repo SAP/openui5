@@ -91,7 +91,10 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		 */
 		ActionSelect.prototype.onAfterRenderingPicker = function() {
 			Select.prototype.onAfterRenderingPicker.call(this);
-			this.getPicker().addStyleClass(sap.m.ActionSelectRenderer.CSS_CLASS + "Picker");
+			var oPicker = this.getPicker();
+			oPicker.addStyleClass(sap.m.SelectRenderer.CSS_CLASS + "Picker");
+			oPicker.addStyleClass(this.getRenderer().CSS_CLASS + "Picker");
+			oPicker.addStyleClass(this.getRenderer().CSS_CLASS + "Picker-CTX");
 		};
 
 		/* =========================================================== */
