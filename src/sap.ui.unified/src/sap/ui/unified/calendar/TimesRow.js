@@ -950,6 +950,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		function _handleMousedown(oThis, oEvent, oFocusedDate, iIndex){
 
+			if (oEvent.button) {
+				// only use left mouse button
+				return;
+			}
+
 			_selectTime(oThis, oFocusedDate, oEvent.shiftKey);
 			_fireSelect(oThis);
 			if (oThis.getIntervalSelection() && oThis.$().is(":visible")) {
