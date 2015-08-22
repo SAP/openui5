@@ -3,12 +3,13 @@
  */
 
 // Provides default renderer for control sap.m.TimePicker
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/IconPool'],
-	function(jQuery, Renderer, InputBaseRenderer, ValueStateSupport, IconPool) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/ValueStateSupport' ],
+	function(jQuery, Renderer, InputBaseRenderer, ValueStateSupport) {
 		"use strict";
 
 		/**
-		 * Time picker renderer
+		 * TimePicker renderer.
+		 *
 		 * @author SAP SE
 		 * @namespace
 		 */
@@ -22,10 +23,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 			VALUE_HELP_ICON_CLASS = "sapMInputValHelp";
 
 		/**
-		 * Adds control specific class
+		 * Adds <code>sap.m.TimePicker</code> control specific classes to the input.
 		 *
-		 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer.
-		 * @param oControl {sap.m.TimePicker} An object representation of the control that should be rendered.
+		 * See {@link sap.m.InputBaseRenderer#addOuterClasses}.
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+		 * @param {sap.m.TimePicker} oControl The control that should be rendered
 		 */
 		TimePickerRenderer.addOuterClasses = function(oRm, oControl) {
 			oRm.addClass(TimePickerRenderer.CSS_CLASS);
@@ -37,10 +39,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		};
 
 		/**
-		 * Adds extra content to Input.
+		 * Adds extra content to the input.
 		 *
-		 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
-		 * @param oControl {sap.m.TimePicker} An object representation of the control that should be rendered
+		 * See {@link sap.m.InputBaseRenderer#writeInnerContent}.
+		 * @override
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+		 * @param {sap.m.TimePicker} oControl The control that should be rendered
 		 */
 		TimePickerRenderer.writeInnerContent = function(oRm, oControl) {
 			var aClasses,
@@ -57,7 +61,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 				mAttributes.title = null;
 
 				oRm.write('<div class="' + VALUE_HELP_ICON_CLASS + '">');
-				oRm.writeIcon(IconPool.getIconURI("time-entry-request"), aClasses, mAttributes);
+				oRm.writeIcon("sap-icon://time-entry-request", aClasses, mAttributes);
 				oRm.write("</div>");
 			}
 
@@ -77,19 +81,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		};
 
 		/**
-		 * Writes the value of the input
-		 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer.
-		 * @param oControl {sap.m.TimePicker} An object representation of the control that should be rendered.
+		 * Writes the value of the input.
+		 *
+		 * See {@link sap.m.InputBaseRenderer#writeInnerValue}.
+		 * @override
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+		 * @param {sap.m.TimePicker} oControl An object representation of the control that should be rendered
 		 */
 		TimePickerRenderer.writeInnerValue = function(oRm, oControl) {
 			oRm.writeAttributeEscaped("value", oControl._formatValue(oControl.getDateValue()));
 		};
 
 		/**
-		 * This method is reserved for derived classes to add extra attributes for the input element.
+		 * Adds extra attributes for the input element.
 		 *
-		 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer.
-		 * @param oControl {sap.m.TimePicker} An object representation of the control that should be rendered.
+		 * See {@link sap.m.InputBaseRenderer#writeInnerAttributes}.
+		 * @override
+		 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
+		 * @param oControl {sap.m.TimePicker} An object representation of the control that should be rendered
 		 */
 		TimePickerRenderer.writeInnerAttributes = function(oRm, oControl) {
 			if (sap.ui.Device.browser.mobile) {
@@ -100,9 +109,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 
 		/**
 		 * Writes the accessibility properties for the control.
-		 * @override sap.m.InputBase.writeAccessibilityState
-		 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer.
-		 * @param oControl {sap.m.TimePicker} An object representation of the control that should be rendered.
+		 *
+		 * See {@link sap.m.InputBase#writeAccessibilityState}.
+		 * @override
+		 * @param oRm {sap.ui.core.RenderManager} The RenderManager that can be used for writing to the render output buffer
+		 * @param oControl {sap.m.TimePicker} An object representation of the control that should be rendered
 		 */
 		TimePickerRenderer.writeAccessibilityState = function(oRm, oControl) {
 			var mProps = {

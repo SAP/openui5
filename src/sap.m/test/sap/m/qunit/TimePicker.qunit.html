@@ -111,7 +111,10 @@
 			}
 
 			//assert
-			equals(jQuery("#" + tpId + "-inner").val(), oExpectedValues["expInputVal"], "$input.val() ok");
+			// trim because the framework formatter has no leading space,
+			// but the tp now has a leading space for for h:mm, H:mm format
+			equals(jQuery("#" + tpId + "-inner").val().trim(), oExpectedValues["expInputVal"], "$input.val() ok");
+
 			equals(tp.getValue(), oExpectedValues["expValue"], "getValue() ok");
 
 			var oDateValue = tp.getDateValue();
@@ -127,184 +130,184 @@
 		test(getID(), function() {
 			var that = this;
 			generateValuesTest([
-				{ key: "setValue", value: "13:34:00" },
-				{ key: "setValueFormat", value: "HH:mm:ss" }
-			],
-			{
-				expInputVal: that._defaultFormatter.format(getDate(13, 34, 0)),
-				expValue: "13:34:00",
-				expDateValue: getDate(13, 34, 0)
-			});
+						{ key: "setValue", value: "13:34:00" },
+						{ key: "setValueFormat", value: "HH:mm:ss" }
+					],
+					{
+						expInputVal: that._defaultFormatter.format(getDate(13, 34, 0)),
+						expValue: "13:34:00",
+						expDateValue: getDate(13, 34, 0)
+					});
 		});
 
 		test(getID(), function() {
 			var that = this;
 			generateValuesTest([
-				{ key: "setValueFormat", value: "HH:mm:ss" },
-				{ key: "setValue", value: "21:13:14" }
-			],
-			{
-				expInputVal: that._defaultFormatter.format(getDate(21, 13, 14)),
-				expValue: "21:13:14",
-				expDateValue: getDate(21, 13, 14)
-			});
+						{ key: "setValueFormat", value: "HH:mm:ss" },
+						{ key: "setValue", value: "21:13:14" }
+					],
+					{
+						expInputVal: that._defaultFormatter.format(getDate(21, 13, 14)),
+						expValue: "21:13:14",
+						expDateValue: getDate(21, 13, 14)
+					});
 		});
 
 		test(getID(), function() {
 			var that = this;
 			generateValuesTest([
-				{ key: "setValue", value: "4:15:55" }
-			],
-			{
-				expInputVal: that._defaultFormatter.format(getDate(4, 15, 55)),
-				expValue: "4:15:55",
-				expDateValue: getDate(4, 15, 55)
-			});
+						{ key: "setValue", value: "4:15:55" }
+					],
+					{
+						expInputVal: that._defaultFormatter.format(getDate(4, 15, 55)),
+						expValue: "4:15:55",
+						expDateValue: getDate(4, 15, 55)
+					});
 		});
 
 		test(getID(), function() {
 			var that = this;
 			generateValuesTest([
-				{ key: "setValue", value: that._defaultFormatter.format(getDate(17, 27, 43)) },
-				{ key: "setDisplayFormat", value: "HH:mm" }
-			],
-			{
-				expInputVal: "17:27",
-				expValue: that._defaultFormatter.format(getDate(17, 27, 43)),
-				expDateValue: getDate(17, 27, 43)
-			});
+						{ key: "setValue", value: that._defaultFormatter.format(getDate(17, 27, 43)) },
+						{ key: "setDisplayFormat", value: "HH:mm" }
+					],
+					{
+						expInputVal: "17:27",
+						expValue: that._defaultFormatter.format(getDate(17, 27, 43)),
+						expDateValue: getDate(17, 27, 43)
+					});
 		});
 
 		test(getID(), function() {
 			var that = this;
 			generateValuesTest([
-				{ key: "setDisplayFormat", value: "HH:mm" },
-				{ key: "setValue", value:  that._defaultFormatter.format(getDate(17, 5, 33)) }
-			],
-			{
-				expInputVal: "17:05",
-				expValue:  that._defaultFormatter.format(getDate(17, 5, 33)),
-				expDateValue: getDate(17, 5, 33)
-			});
+						{ key: "setDisplayFormat", value: "HH:mm" },
+						{ key: "setValue", value:  that._defaultFormatter.format(getDate(17, 5, 33)) }
+					],
+					{
+						expInputVal: "17:05",
+						expValue:  that._defaultFormatter.format(getDate(17, 5, 33)),
+						expDateValue: getDate(17, 5, 33)
+					});
 		});
 
 		test(getID(), function() {
 			var that = this;
 			generateValuesTest([
-				{ key: "setDisplayFormat", value: "HH:mm" },
-				{ key: "setDateValue", value: getDate(17, 27, 43) }
-			],
-			{
-				expInputVal: "17:27",
-				expValue: that._defaultFormatter.format(getDate(17, 27, 43)),
-				expDateValue: getDate(17, 27, 43)
-			});
+						{ key: "setDisplayFormat", value: "HH:mm" },
+						{ key: "setDateValue", value: getDate(17, 27, 43) }
+					],
+					{
+						expInputVal: "17:27",
+						expValue: that._defaultFormatter.format(getDate(17, 27, 43)),
+						expDateValue: getDate(17, 27, 43)
+					});
 		});
 
 		test(getID(), function() {
 			var that = this;
 			generateValuesTest([
-				{ key: "setDateValue", value: getDate(17, 27, 43) },
-				{ key: "setDisplayFormat", value: "HH:mm" }
-			],
-			{
-				expInputVal: "17:27",
-				expValue: that._defaultFormatter.format(getDate(17, 27, 43)),
-				expDateValue: getDate(17, 27, 43)
-			});
+						{ key: "setDateValue", value: getDate(17, 27, 43) },
+						{ key: "setDisplayFormat", value: "HH:mm" }
+					],
+					{
+						expInputVal: "17:27",
+						expValue: that._defaultFormatter.format(getDate(17, 27, 43)),
+						expDateValue: getDate(17, 27, 43)
+					});
 		});
 
 		test(getID(), function() {
 			var that = this;
 			generateValuesTest([
-				{ key: "setDateValue", value: getDate(17, 27, 43) },
-				{ key: "setValue", value: that._defaultFormatter.format(getDate(18, 37, 23)) }
-			],
-			{
-				expInputVal: that._defaultFormatter.format(getDate(18, 37, 23)),
-				expValue: that._defaultFormatter.format(getDate(18, 37, 23)),
-				expDateValue: getDate(18, 37, 23)
-			});
+						{ key: "setDateValue", value: getDate(17, 27, 43) },
+						{ key: "setValue", value: that._defaultFormatter.format(getDate(18, 37, 23)) }
+					],
+					{
+						expInputVal: that._defaultFormatter.format(getDate(18, 37, 23)),
+						expValue: that._defaultFormatter.format(getDate(18, 37, 23)),
+						expDateValue: getDate(18, 37, 23)
+					});
 		});
 
 		test(getID(), function() {
 			var that = this;
 			generateValuesTest([
-				{ key: "setValue", value: that._defaultFormatter.format(getDate(6, 37, 23)) },
-				{ key: "setDateValue", value: getDate(5, 28, 40) }
-			],
-			{
-				expInputVal: that._defaultFormatter.format(getDate(5, 28, 40)),
-				expValue: that._defaultFormatter.format(getDate(5, 28, 40)),
-				expDateValue: getDate(5, 28, 40)
-			});
+						{ key: "setValue", value: that._defaultFormatter.format(getDate(6, 37, 23)) },
+						{ key: "setDateValue", value: getDate(5, 28, 40) }
+					],
+					{
+						expInputVal: that._defaultFormatter.format(getDate(5, 28, 40)),
+						expValue: that._defaultFormatter.format(getDate(5, 28, 40)),
+						expDateValue: getDate(5, 28, 40)
+					});
 		});
 
 		test(getID(), function() {
 			var that = this;
 			generateValuesTest([
-				{ key: "setValue", value: that._defaultFormatter.format(getDate(6, 37, 23)) },
-				{ key: "setDisplayFormat", value: "hh:mm a" },
-				{ key: "setDateValue", value: getDate(5, 28, 40) }
-			],
-			{
-				expInputVal: sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh:mm a", strictParsing: true, relative: false}).format(getDate(5, 28, 40)),
-				expValue: that._defaultFormatter.format(getDate(5, 28, 40)),
-				expDateValue: getDate(5, 28, 40)
-			});
+						{ key: "setValue", value: that._defaultFormatter.format(getDate(6, 37, 23)) },
+						{ key: "setDisplayFormat", value: "hh:mm a" },
+						{ key: "setDateValue", value: getDate(5, 28, 40) }
+					],
+					{
+						expInputVal: sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh:mm a", strictParsing: true, relative: false}).format(getDate(5, 28, 40)),
+						expValue: that._defaultFormatter.format(getDate(5, 28, 40)),
+						expDateValue: getDate(5, 28, 40)
+					});
 		});
 
 		test(getID(), function() {
 			var that = this;
 			generateValuesTest([
-				{ key: "setValue", value: that._defaultFormatter.format(getDate(6, 37, 23)) },
-				{ key: "setDateValue", value: getDate(5, 28, 40) },
-				{ key: "setDisplayFormat", value: "hh:mm a" }
-			],
-			{
-				expInputVal: sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh:mm a", strictParsing: true, relative: false}).format(getDate(5, 28, 40)),
-				expValue: that._defaultFormatter.format(getDate(5, 28, 40)),
-				expDateValue: getDate(5, 28, 40)
-			});
+						{ key: "setValue", value: that._defaultFormatter.format(getDate(6, 37, 23)) },
+						{ key: "setDateValue", value: getDate(5, 28, 40) },
+						{ key: "setDisplayFormat", value: "hh:mm a" }
+					],
+					{
+						expInputVal: sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh:mm a", strictParsing: true, relative: false}).format(getDate(5, 28, 40)),
+						expValue: that._defaultFormatter.format(getDate(5, 28, 40)),
+						expDateValue: getDate(5, 28, 40)
+					});
 		});
 
 		test(getID(), function() {
 			generateValuesTest([
-				{ key: "setValueFormat", value: "HH:mm" },
-				{ key: "setValue", value: "18:37" },
-				{ key: "setDisplayFormat", value: "hh:mm:ss a" }
-			],
-			{
-				expInputVal: sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh:mm:ss a", strictParsing: true, relative: false}).format(getDate(18, 37, 0)),
-				expValue:  "18:37",
-				expDateValue: getDate(18, 37, 0)
-			});
+						{ key: "setValueFormat", value: "HH:mm" },
+						{ key: "setValue", value: "18:37" },
+						{ key: "setDisplayFormat", value: "hh:mm:ss a" }
+					],
+					{
+						expInputVal: sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh:mm:ss a", strictParsing: true, relative: false}).format(getDate(18, 37, 0)),
+						expValue:  "18:37",
+						expDateValue: getDate(18, 37, 0)
+					});
 		});
 
 		test(getID(), function() {
 			generateValuesTest([
-				{ key: "setValueFormat", value: "HH:mm" },
-				{ key: "setValue", value: "18:37" },
-				{ key: "setDisplayFormat", value: "hh a" }
-			],
-			{
-				expInputVal: sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh a", strictParsing: true, relative: false}).format(getDate(18, 37, 0)),
-				expValue: "18:37",
-				expDateValue: getDate(18, 37, 0)
-			});
+						{ key: "setValueFormat", value: "HH:mm" },
+						{ key: "setValue", value: "18:37" },
+						{ key: "setDisplayFormat", value: "hh a" }
+					],
+					{
+						expInputVal: sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh a", strictParsing: true, relative: false}).format(getDate(18, 37, 0)),
+						expValue: "18:37",
+						expDateValue: getDate(18, 37, 0)
+					});
 		});
 
 		test(getID(), function() {
 			generateValuesTest([
-				{ key: "setValueFormat", value: "HH:mm" },
-				{ key: "setDateValue", value: getDate(18, 37, 0) },
-				{ key: "setDisplayFormat", value: "hh a" }
-			],
-			{
-				expInputVal: sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh a", strictParsing: true, relative: false}).format(getDate(18, 37, 0)),
-				expValue: "18:37",
-				expDateValue: getDate(18, 37, 0)
-			});
+						{ key: "setValueFormat", value: "HH:mm" },
+						{ key: "setDateValue", value: getDate(18, 37, 0) },
+						{ key: "setDisplayFormat", value: "hh a" }
+					],
+					{
+						expInputVal: sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh a", strictParsing: true, relative: false}).format(getDate(18, 37, 0)),
+						expValue: "18:37",
+						expDateValue: getDate(18, 37, 0)
+					});
 		});
 
 		test("test locale", function() {
@@ -845,6 +848,61 @@
 			tp.destroy();
 		});
 
+		test("right moves the cursor but jumps over the immutable chars", function() {
+			//arrange
+			var oDate = new Date();
+			oDate.setHours(5);
+			oDate.setMinutes(38);
+
+			//sut
+			var tp = new sap.m.TimePicker({
+				dateValue: oDate,
+				displayFormat: "HH:mm"
+			});
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp.focus();
+
+			//act
+			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+
+			//assert
+			equal(jQuery(tp.getFocusDomRef()).cursorPos(), 3, "After right + right the cursor is at the first minute digit");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("left moves the cursor but jumps over the immutable chars", function() {
+			//arrange
+			var oDate = new Date();
+			oDate.setHours(5);
+			oDate.setMinutes(38);
+
+			//sut
+			var tp = new sap.m.TimePicker({
+				dateValue: oDate,
+				displayFormat: "HH:mm"
+			});
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp.focus();
+
+			jQuery(tp.getFocusDomRef()).cursorPos(3);
+			equal(jQuery(tp.getFocusDomRef()).cursorPos(), 3, "Initially the cursor is at the first minute digit");
+
+			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT, false, false, false);
+			equal(jQuery(tp.getFocusDomRef()).cursorPos(), 1, "After left the cursor is at the second hour digit");
+
+			//cleanup
+			tp.destroy();
+		});
+
 		module("picker interaction");
 
 		test("cancel button closes the picker", function() {
@@ -1084,17 +1142,17 @@
 		});
 
 		/* Temporary disabled until robust solution (across all timezones is implemented) test("decrease time when daylight saving begins", function() {
-			var tp = new sap.m.TimePicker();
-			tp.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+		 var tp = new sap.m.TimePicker();
+		 tp.placeAt("qunit-fixture");
+		 sap.ui.getCore().applyChanges();
 
-			tp.setDateValue(new Date(2015, 2, 29, 3, 12, 15));
-			tp._increaseTime(-1, "hour");
+		 tp.setDateValue(new Date(2015, 2, 29, 3, 12, 15));
+		 tp._increaseTime(-1, "hour");
 
-			equal(tp.getDateValue().toString(), new Date(2015, 2, 29, 1, 12, 15).toString(), "_increaseTime works as expected when decreasing in daylight saving");
+		 equal(tp.getDateValue().toString(), new Date(2015, 2, 29, 1, 12, 15).toString(), "_increaseTime works as expected when decreasing in daylight saving");
 
-			tp.destroy();
-		});*/
+		 tp.destroy();
+		 });*/
 
 		module("properties in constructor options", {
 			beforeEach: function() {
@@ -1131,6 +1189,412 @@
 			//cleanup
 			tp.destroy();
 		});
+
+		module("MaskInput integration", {
+			beforeEach : function() {
+				this._defaultFormatter = sap.ui.core.format.DateFormat.getTimeInstance({style: "medium", strictParsing: true, relative: false});
+				this._leadingZero24HFormatter = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "HH:mm:ss", strictParsing: true, relative: false});
+				this._leadingZero12HFormatter = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh:mm a", strictParsing: true, relative: false});
+				this._noLeadingZero24HFormatter = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "H:mm:ss", strictParsing: true, relative: false});
+				this._noLeadingZero12HFormatter = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "h:mm a", strictParsing: true, relative: false});
+			},
+			_triggerMultipleKeypress: function(timePicker, sFeed) {
+				var aFeed = sFeed.split(""),
+						$TimePicker = timePicker.getDomRef(),
+						sChar;
+
+				while (aFeed.length) {
+					sChar = aFeed.splice(0, 1)[0];
+					qutils.triggerKeydown($TimePicker, sChar);
+					qutils.triggerKeypress($TimePicker, sChar);
+				}
+			},
+			_clearInput: function(timePicker) {
+				jQuery("#" + timePicker.getId() + "-inner").val("");
+			},
+			typeAndCheckValueForDisplayFormat: function(sDisplayFormat, sInput, sExpectedValue, sPrefilledValue) {
+				//system under test
+				var tp = new sap.m.TimePicker({
+					displayFormat: sDisplayFormat
+				});
+
+//				sPrefilledValue || (sPrefilledValue = "");
+
+
+				//arrange
+				tp.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//act
+//				this._triggerMultipleKeypress(tp, sPrefilledValue + sInput);
+				this._triggerMultipleKeypress(tp, sInput);
+
+				//assert
+				equals(jQuery("#" + tp.getId() + "-inner").val(), sExpectedValue, "$input.val() ok");
+
+				//cleanup
+				tp.destroy();
+			}
+		});
+
+		//valid
+		test("allows input of valid time string - HH format, hours < 9", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "0615", "06:15");
+		});
+
+		test("allows input of valid time string - HH format, hours === 11", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "1115", "11:15");
+		});
+
+		test("allows input of valid time string - HH format, hours > 12", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "1715", "17:15");
+		});
+
+		test("allows input of valid time string - hh format, hours < 9", function() {
+			this.typeAndCheckValueForDisplayFormat("hh:mm", "0615", "06:15");
+		});
+
+		test("allows input of valid time string - hh format, hours === 12", function() {
+			this.typeAndCheckValueForDisplayFormat("hh:mm", "1215", "12:15");
+		});
+
+
+
+		//time semantics - shifts and replaces
+		//first number in hour
+		//no leading zero
+		test("1 for first hour digit is valid - h format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("h:mm", "115", "11:5-"); //not " 1:15"
+		});
+
+		test("2 for first hour digit are preceded by space - h format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("h:mm", "215", " 2:15");
+		});
+
+		test("numbers > 2 for first hour digit are preceded by space - h format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("h:mm", "315", " 3:15");
+		});
+
+
+
+		test("2 for first hour digit is valid - H format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("H:mm", "215", "21:5-"); //not " 2:15"
+		});
+
+		test("numbers > 2 for first hour digit are preceded by space - H format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("H:mm", "315", " 3:15");
+		});
+
+
+		test("space is valid for hours - H format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("H:mm", " 115", " 1:15"); //not "11:5-"
+		});
+
+		//...could have more of those
+
+		test("0 is replaced with space for hours - h format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("h:mm", "0115", " 1:15");
+		});
+
+		test("0 is preceeded with space for hours - H format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("H:mm", "0115", " 0:11");
+		});
+
+
+		//leading zero
+		test("1 for first hour digit is valid - hh format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("hh:mm", "115", "11:5-");
+		});
+
+		test("2 for first hour digit are preceded by 0 - hh format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("hh:mm", "215", "02:15");
+		});
+
+
+
+		test("2 for first hour digit is valid - HH format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "215", "21:5-"); //not " 2:15"
+		});
+
+		test("numbers > 2 for first hour digit are preceded by 0 - HH format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "415", "04:15");
+		});
+
+
+
+
+		test("space is replaced with 0 for hours - HH format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", " 115", "01:15");
+		});
+
+		test("0 is valid for hours - hh format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("hh:mm", "0115", "01:15"); //not "11:5-"
+		});
+
+
+
+		//invalid (partially valid)
+		test("do not allow letters, placeholders, immutables and asterisks - HH format", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "-:aQ*?spam1", "1-:--");
+		});
+
+		test("do not allow letters, placeholders, immutables and asterisks - hh format", function() {
+			this.typeAndCheckValueForDisplayFormat("hh:mm", "-1:spamaQ1*?", "11:--");
+		});
+
+		//second number in hour
+		test("do not allow numbers > 2 for 2nd number in hour if 1st === 1 - hh format", function() {
+			this.typeAndCheckValueForDisplayFormat("hh:mm", "13", "1-:--");
+		});
+
+		test("allow numbers <= 2 for 2nd number in hour if 1st === 1 - hh format", function() {
+			this.typeAndCheckValueForDisplayFormat("hh:mm", "12", "12:--");
+		});
+
+		test("do not allow numbers > 2 for 2nd number in hour if 1st === 1 - h format", function() {
+			this.typeAndCheckValueForDisplayFormat("h:mm", "13", "1-:--");
+		});
+
+		test("allow numbers <= 2 for 2nd number in hour if 1st === 1 - h format", function() {
+			this.typeAndCheckValueForDisplayFormat("h:mm", "12", "12:--");
+		});
+
+
+
+		test("do not allow numbers > 3 for 2nd number in hour if 1st === 2 - HH format", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "24", "2-:--");
+		});
+
+		test("allow numbers <= 3 for 2nd number in hour if 1st === 2 - HH format", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "23", "23:--");
+		});
+
+		test("do not allow numbers > 3 for 2nd number in hour if 1st === 2 - H format", function() {
+			this.typeAndCheckValueForDisplayFormat("H:mm", "24", "2-:--");
+		});
+
+		test("allow numbers <= 3 for 2nd number in hour if 1st === 2 - H format", function() {
+			this.typeAndCheckValueForDisplayFormat("H:mm", "23", "23:--");
+		});
+
+		//first number in minutes
+		test("numbers > 5 for 1st number in minutes are preceded by 0", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "226", "22:06");
+		});
+
+		test("allow numbers <= 5 for 1st number in minutes", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "225", "22:5-");
+		});
+
+		//we probably do not need this separately
+		test("allow 0 for 1st number in minutes", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "220", "22:0-");
+		});
+
+		//first number in seconds
+		test("numbers > 5 for 1st number in seconds are preceded by 0", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm:ss", "22556", "22:55:06");
+		});
+
+		test("allow numbers <= 5 for 1st number in seconds", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm:ss", "22595", "22:59:5-");
+		});
+
+		//am/pm values type assistence
+		test("am autocompletes the value on first different letter", function() {
+			this.typeAndCheckValueForDisplayFormat("hh a", "01A", "01 AM");
+		});
+
+		test("pm autocompletes the value on first different letter", function() {
+			this.typeAndCheckValueForDisplayFormat("hh a", "01P", "01 PM");
+		});
+
+		test("am match start - then autocomplete on any letter", function() {
+			//system under test
+			var tp = new sap.m.TimePicker({
+				valueFormat: "hh a",
+				value: "12 AM",
+				displayFormat: "hh a"
+			});
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.BACKSPACE);
+
+			equals(jQuery("#" + tp.getId() + "-inner").val(), "12 A-", "$input.val() correctly preset");
+
+			this._triggerMultipleKeypress(tp, "y");
+
+			//assert
+			equals(jQuery("#" + tp.getId() + "-inner").val(), "12 AM", "$input.val() ok");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("pm match start - then autocomplete on any letter", function() {
+			//system under test
+			var tp = new sap.m.TimePicker({
+				valueFormat: "hh a",
+				value: "12 PM",
+				displayFormat: "hh a"
+			});
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.BACKSPACE);
+
+			equals(jQuery("#" + tp.getId() + "-inner").val(), "12 P-", "$input.val() correctly preset");
+
+			this._triggerMultipleKeypress(tp, "b");
+
+			//assert
+			equals(jQuery("#" + tp.getId() + "-inner").val(), "12 PM", "$input.val() ok");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("TimeSemanticMaskHelper.replaceChar replaces any char when am or pm value match is the only possible", function() {
+			//system under test
+			var tp = new sap.m.TimePicker({
+				displayFormat: "hh a"
+			});
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("y", 4, "12 P-");
+
+			equals(sCharReplaced, "M", "replaceChar replaces correctly");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("TimeSemanticMaskHelper.replaceChar replaces with unique value and completes with spaces when am,pm length differs", function() {
+			//system under test
+			var tp = new sap.m.TimePicker({
+				localeId: "de_DE",
+				displayFormat: "hh a"
+			});
+
+			//am/pm translation is - vorm./nachm. - which are different length
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("v", 3, "12 ------");
+
+			equals(sCharReplaced, "vorm. ", "replaceChar completes with spaces");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("TimeSemanticMaskHelper.replaceChar any char completes am pm values to the first difference", function() {
+			sinon.stub(sap.ui.core.LocaleData.prototype, "getDayPeriods").returns([ "MA", "MP"]);
+
+			//system under test
+			var tp = new sap.m.TimePicker({
+				displayFormat: "hh a"
+			});
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+
+			var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("b", 3, "12 --");
+
+			equals(sCharReplaced, "M", "replaceChar completes to the first difference");
+
+			//cleanup
+			sap.ui.core.LocaleData.prototype.getDayPeriods.restore();
+			tp.destroy();
+		});
+
+		test("TimeSemanticMaskHelper.replaceChar correct char only completes am pm values on the position with difference", function() {
+			sinon.stub(sap.ui.core.LocaleData.prototype, "getDayPeriods").returns([ "MABC", "MPBC"]);
+
+			//system under test
+			var tp = new sap.m.TimePicker({
+				displayFormat: "hh a"
+			});
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+
+			var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("b", 4, "12 M---");
+
+			equals(sCharReplaced, "b", "replaceChar does not replace invalid char");
+
+			//cleanup
+			sap.ui.core.LocaleData.prototype.getDayPeriods.restore();
+			tp.destroy();
+		});
+
+		test("TimeSemanticMaskHelper.replaceChar completes am pm values on a middle position with difference, to the end", function() {
+			sinon.stub(sap.ui.core.LocaleData.prototype, "getDayPeriods").returns([ "MABC", "MPBC"]);
+
+			//system under test
+			var tp = new sap.m.TimePicker({
+				displayFormat: "hh a"
+			});
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+
+			var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("A", 4, "12 M---");
+
+			equals(sCharReplaced, "ABC", "replaceChar completes when difference is in the middle");
+
+			//cleanup
+			sap.ui.core.LocaleData.prototype.getDayPeriods.restore();
+			tp.destroy();
+		});
+
+		test("TimeSemanticMaskHelper.replaceChar autocomplete not case sensitive: a fills AM", function() {
+			sinon.stub(sap.ui.core.LocaleData.prototype, "getDayPeriods").returns([ "AM", "PM"]);
+
+			//system under test
+			var tp = new sap.m.TimePicker({
+				displayFormat: "hh a"
+			});
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+
+			var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("a", 3, "12 --");
+
+			equals(sCharReplaced, "AM", "replaceChar is not case sensitive");
+
+			//cleanup
+			sap.ui.core.LocaleData.prototype.getDayPeriods.restore();
+			tp.destroy();
+		});
+
+		//todo - test caret position
 
 	</script>
 

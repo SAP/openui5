@@ -1,5 +1,4 @@
 /*!
-/*!
  * ${copyright}
  */
 
@@ -10,11 +9,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		/**
 		 * Constructor for a new TimePickerSliders.
 		 *
-		 * @param {string} [sId] ID for the new control, generated automatically if no id is given
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * TimePickerSliders is a picker list container control used inside the TimePicker to hold all the sliders
+		 * A picker list container control used inside the {@link sap.m.TimePicker} to hold all the sliders
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
@@ -23,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		 * @constructor
 		 * @private
 		 * @since 1.32
-		 * @alias sap.m.TimePickerSlider
+		 * @alias sap.m.TimePickerSliders
 		 */
 		var TimePickerSliders = Control.extend("sap.m.TimePickerSliders", /** @lends sap.m.TimePicker.prototype */ {
 			metadata : {
@@ -31,29 +30,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 				properties : {
 
 					/**
-					 * This property corresponds to the displayFormat of the parent TimePicker control.
+					 * Defines the time format.
+					 *
+					 * Corresponds to the <code>displayFormat</code> of the parent <code>sap.m.TimePicker</code> control.
 					 */
 					format: { name: "format", type: "string"},
 
 					/**
-					 * This property displays the text of the general picker label and is read by screen readers.
-					 * It is visible only on phone.
+					 * Defines the text of the picker label.
+					 *
+					 * It is read by screen readers. It is visible only on phone.
 					 */
 					labelText: {name: "labelText", type: "string"}
 				},
 				aggregations: {
 
 					/**
-					 * Internal aggregation to hold the inner sliders.
+					 * Holds the inner sliders.
 					 */
 					_columns: { type: "sap.m.TimePickerSlider", multiple: true, visibility: "hidden" }
+				},
+				associations: {
+
+					/**
+					 * The time picker control that instanciated this sliders
+					 */
+					invokedBy: { type: "sap.m.TimePicker", multiple: false }
 				}
 			},
 			renderer: SlidersRenderer.render
 		});
 
 		/**
-		 * Initialize
+		 * Initializes the control.
+		 *
 		 * @public
 		 */
 		TimePickerSliders.prototype.init = function () {
@@ -68,16 +78,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		};
 
 		/**
-		 * Exit function
-		 * @public
+		 * Called from parent if the control is destroyed.
+		 *
+		 * @private
 		 */
 		TimePickerSliders.prototype.exit = function () {
 			sap.ui.Device.resize.detachHandler(this._fnOrientationChanged);
 		};
 
 		/**
-		 * Handles the after rendering event
-		 * @public
+		 * Called after the control is rendered.
 		 */
 		TimePickerSliders.prototype.onAfterRendering = function() {
 			if (sap.ui.Device.browser.name !== "ie") {
@@ -88,10 +98,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 			}
 		};
 
-		/***********************************************************************
-		 **************************** Public methods ***************************
-		 ***********************************************************************/
+		/**
+		 * Sets the <code>invokedBy</code> association, which is a link with the time picker that
+		 * gives the display format.
+		 *
+		 * @param {string} sId The ID of the TimePicker control that owns this sliders
+		 */
+		TimePickerSliders.prototype.setInvokedBy = function(sId) {
+			var oLocale,
+				aPeriods,
+				aColumns;
 
+			this.setAssociation("invokedBy", sId);
+
+			if (sap.ui.getCore().byId(sId)) {
+				oLocale = new sap.ui.core.Locale(sap.ui.getCore().byId(sId).getLocaleId());
+				aPeriods = sap.ui.core.LocaleData.getInstance(oLocale).getDayPeriods("abbreviated");
+
+				this._sAM = aPeriods[0];
+				this._sPM = aPeriods[1];
+
+				aColumns = this.getAggregation("_columns");
+
+				if (aColumns) {
+					this.destroyAggregation("_columns");
+				}
+
+				this._setupLists(this.getFormat());
+			}
+		};
+
+		/**
+		 * Sets the text for the picker label.
+		 *
+		 * @param {string} sLabelText A text for the label
+		 * @public
+		 */
 		TimePickerSliders.prototype.setLabelText = function(sLabelText) {
 			var $ContainerLabel;
 
@@ -106,8 +148,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		};
 
 		/**
-		 * Overrides the format setter
+		 * Sets the time format.
+		 *
 		 * @param sFormat {string} New display format
+		 * @public
 		 */
 		TimePickerSliders.prototype.setFormat = function (sFormat) {
 			//ToDo add validation of the format before setting it
@@ -122,8 +166,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		};
 
 		/**
-		 * Gets the time values from the TimePickerSlider controls
-		 * @returns {Object} a JS date object
+		 * Gets the time values from the sliders, as a date object.
+		 *
+		 * @returns {Object} A JavaScript date object
 		 * @public
 		 */
 		TimePickerSliders.prototype.getTimeValues = function () {
@@ -166,8 +211,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		};
 
 		/**
-		 * Sets the values of the TimePickerSlider controls given a JS date object.
-		 * @param oDate {Object} The date to use as a setting. If not provided the current date will be used.
+		 * Sets the values of the slider controls, given a JavaScript date object.
+		 *
+		 * @param oDate {Object} The date to use as a setting, if not provided the current date will be used
 		 * @public
 		 */
 		TimePickerSliders.prototype.setTimeValues = function (oDate) {
@@ -195,7 +241,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		};
 
 		/**
-		 * Collapses all TimePickerSlider controls
+		 * Collapses all the slider controls.
+		 *
 		 * @public
 		 */
 		TimePickerSliders.prototype.collapseAll = function () {
@@ -212,7 +259,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		};
 
 		/**
-		 * Updates values of all TimePickerSlider controls
+		 * Updates the values of all slider controls.
+		 *
 		 * @public
 		 */
 		TimePickerSliders.prototype.updateSlidersValues = function () {
@@ -226,13 +274,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 			}
 		};
 
-		/***********************************************************************
-		 **************************** Keyboard handling ************************
-		 ***********************************************************************/
-
 		/**
-		 * Handles home event - focuses the first TimePickerSlider control
-		 * @param oEvent {jQuery.Event} Event object
+		 * Handles the home key event.
+		 *
+		 * Focuses the first slider control.
+		 * @param {jQuery.Event} oEvent Event object
 		 */
 		TimePickerSliders.prototype.onsaphome = function(oEvent) {
 			var oCurrentSlider = this._getCurrentSlider();
@@ -243,8 +289,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		};
 
 		/**
-		 * Handles end event - focuses the last TimePickerSlider control
-		 * @param oEvent {jQuery.Event} Event object
+		 * Handles the end key event.
+		 *
+		 * Focuses the last slider control.
+		 * @param {jQuery.Event} oEvent Event object
 		 */
 		TimePickerSliders.prototype.onsapend = function(oEvent) {
 			var oCurrentSlider = this._getCurrentSlider();
@@ -256,8 +304,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		};
 
 		/**
-		 * Handles the left arrow event - focuses the previous TimePickerSlider control
-		 * @param oEvent {jQuery.Event} Event object
+		 * Handles the left arrow key event.
+		 *
+		 * Focuses the previous slider control.
+		 * @param {jQuery.Event} oEvent Event object
 		 */
 		TimePickerSliders.prototype.onsapleft = function(oEvent) {
 			var oCurrentSlider = this._getCurrentSlider(),
@@ -273,8 +323,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		};
 
 		/**
-		 * Handles the right arrow event - focuses the next TimePickerSlider control
-		 * @param oEvent {jQuery.Event} Event object
+		 * Handles the right arrow key event.
+		 *
+		 * Focuses the next slider control.
+		 * @param {jQuery.Event} oEvent Event object
 		 */
 		TimePickerSliders.prototype.onsapright = function(oEvent) {
 			var oCurrentSlider = this._getCurrentSlider(),
@@ -289,12 +341,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 			}
 		};
 
-		/************************************************************************
-		 **************************** Private methods ***************************
-		 ************************************************************************/
-
 		/**
-		 * Handles orientation change event
+		 * Handles the orientation change event.
+		 *
 		 * @private
 		 */
 		TimePickerSliders.prototype._onOrientationChanged = function() {
@@ -310,9 +359,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		};
 
 		/**
-		 * Initializes the focus to be on the first TimePickerSlider control
-		 * @bSkipDesktopFocus {boolean} Should the focus event be fired on the desktop platform
-		 *  @private
+		 * Focuses the first slider control.
+		 *
+		 * @param {boolean} bSkipDesktopFocus Indicates whether the focus event is fired on the desktop platform
+		 * @private
 		 */
 		TimePickerSliders.prototype._initFocus = function(bSkipDesktopFocus) {
 			// the focus is supposed to trigger setIsExpanded(true) for the desktop
@@ -324,19 +374,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		};
 
 		/**
-		 * Generates the TimePickerSlider control values in the provided number range.
+		 * Generates the sliders' control values in the provided number range.
+		 *
+		 * @param {number} iFrom Starting number
+		 * @param {number} iTo Ending number
+		 * @param {number} bLeadingZeroes Whether to add leading zeroes to number values
+		 * @returns {array} Array of key/value pairs
 		 * @private
-		 * @param iFrom {number} Starting number
-		 * @param iTo {number} Ending number
-		 * @param bTrailingZeroes {number} Whether to add trailing zeroes to number values
-		 * @returns {array} Item key/value pairs
 		 */
-		TimePickerSliders.prototype._generatePickerListValues = function (iFrom, iTo, bTrailingZeroes) {
+		TimePickerSliders.prototype._generatePickerListValues = function (iFrom, iTo, bLeadingZeroes) {
 			var aValues = [],
 				sText;
 
 			for (var iIndex = iFrom; iIndex <= iTo; iIndex++) {
-				if (iIndex < 10 && bTrailingZeroes) {
+				if (iIndex < 10 && bLeadingZeroes) {
 					sText = "0" + iIndex.toString();
 				} else {
 					sText = iIndex.toString();
@@ -349,9 +400,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		};
 
 		/**
-		 * Creates the UI of the picker based on its format.
+		 * Creates the sliders of the picker based on the <code>format</code>.
+		 *
+		 * @param {string} sFormat Display format
 		 * @private
-		 * @param sFormat {string} Display format
 		 */
 		TimePickerSliders.prototype._setupLists = function (sFormat) {
 			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
@@ -436,8 +488,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		};
 
 		/**
-		 * Gets the expanded TimePickerSlider control
-		 * @returns {sap.m.TimePickerSlider|null} Currently expanded TimePickerSlider control
+		 * Gets the currently expanded slider control.
+		 *
+		 * @returns {sap.m.TimePickerSlider|null} Currently expanded slider control or null if there is none
 		 */
 		TimePickerSliders.prototype._getCurrentSlider = function() {
 			var aSliders = this.getAggregation("_columns");
