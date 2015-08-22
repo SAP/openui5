@@ -1,0 +1,605 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<title>Test Page for sap.m.MaskInput</title>
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen"/>
+
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-language="en-US"
+			data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+	</script>
+
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<script>
+		sinon.config.useFakeTimers = true;
+
+		module("API", {
+			beforeEach: function () {
+				this.oMaskInput = new sap.m.MaskInput();
+				this.oMaskInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				this.sandbox = sinon.sandbox;
+			},
+			afterEach: function () {
+				this.oMaskInput.destroy();
+				this.sandbox.restore();
+			}
+		});
+
+		test("Mask setter", function () {
+			var oControl = this.oMaskInput.setPlaceholderSymbol('#'),
+					sMask1 = '1a9a-aa4', /* 1 and 4 are immutable characters*/
+					sMask2 = 'aa9a-aa4';
+			oControl.setMask(sMask1);
+			strictEqual(oControl.getMask(), sMask1, "The mask has the same value as the last set one");
+
+			oControl.setMask(sMask2);
+			strictEqual(oControl.getMask(), sMask2, "The mask has the same value as the last set one");
+		});
+
+		test("Setting empty mask should give a warning", function () {
+			var oControl = this.oMaskInput;
+			var oWarningSpy = this.sandbox.spy(jQuery.sap.log, 'warning'),
+					oSetterSpy = this.sandbox.spy(oControl, "setProperty");
+
+			this.oMaskInput.setMask('');
+			ok(oSetterSpy.notCalled, "Invalid placeholder symbol is not accepted");
+			equal(oWarningSpy.calledOnce, true, "Log warning method called");
+			equal(oWarningSpy.getCall(0).args[0],
+					"Setting empty mask does not make sense. Make sure you set it with a non empty value.",
+					"Verify the exact warning");
+		});
+
+
+		test("Setting (invalid) placeholder symbol that is part of mask's regex", function () {
+			var oControl = this.oMaskInput,
+					sPlaceholderSymbol = '+',
+					oDefinition = new sap.m.MaskInputRule({
+						maskFormatSymbol: '*',
+						regex: '[a-z+]'
+					});
+
+			var oErrorSpy = this.sandbox.spy(jQuery.sap.log, 'error');
+			oControl.addRule(oDefinition);
+			var sOriginalPlaceholderSymbol = oControl.getPlaceholderSymbol();
+			oControl.setPlaceholderSymbol(sPlaceholderSymbol);
+
+			equal(oErrorSpy.calledOnce, true, "Error log called");
+			equal(oErrorSpy.getCall(0).args[0],
+					"Rejecting placeholder symbol because it is included as a regex in an existing mask input rule.",
+					"Verify the exact error");
+			equal(oControl.getPlaceholderSymbol(), sOriginalPlaceholderSymbol, "The placeholder symbol must not be changed");
+		});
+
+		test("Setting (invalid) regex that contains the placeholder symbol", function () {
+			var oControl = this.oMaskInput,
+					sPlaceholderSymbol = '+',
+					oDefinition = new sap.m.MaskInputRule({
+						maskFormatSymbol: '*',
+						regex: '[a-z+]'
+					});
+
+			var oErrorSpy = this.sandbox.spy(jQuery.sap.log, 'error');
+			oControl.setPlaceholderSymbol(sPlaceholderSymbol);
+			oControl.addRule(oDefinition);
+
+			equal(oErrorSpy.calledOnce, true, "Error log called");
+			equal(oErrorSpy.getCall(0).args[0],
+					"Rejecting input mask rule because it includes the currently set placeholder symbol.",
+					"Verify the exact error");
+		});
+
+		test("setValue", function () {
+			var oControl = this.oMaskInput.setPlaceholderSymbol('_').setMask('aa-aa');
+
+			oControl.setValue("");
+			strictEqual(oControl.getValue(), "", "When setValue is called the string is not modified.");
+
+			oControl.setValue("bc-d9");
+			strictEqual(oControl.getValue(), "bc-d9", "When setValue is called with mask incompatible string, the value it is not modified.");
+
+			oControl.setValue("bc-de");
+			strictEqual(oControl.getValue(), "bc-de", "When setValue is called with mask compatible string, the value is not modified.");
+		});
+
+		test("Placeholder symbol default value", function () {
+			var oControl = this.oMaskInput;
+			equal(oControl.getPlaceholderSymbol(), "_", "the placeholder symbol default value should be '_'");
+		});
+
+		test("Placeholder symbol setter", function () {
+			var oControl = this.oMaskInput,
+					sPlaceHolderSymbol1 = '#',
+					sPlaceHolderSymbol2 = '+';
+
+			oControl.setPlaceholderSymbol(sPlaceHolderSymbol1);
+			strictEqual(oControl.getPlaceholderSymbol(), sPlaceHolderSymbol1, "The placeholder symbol has the same value as the last set one");
+
+			oControl.setPlaceholderSymbol(sPlaceHolderSymbol2);
+			strictEqual(oControl.getPlaceholderSymbol(), sPlaceHolderSymbol2, "The placeholder symbol has the same value as the last set one");
+		});
+
+		test("Setting an invalid placeholder symbol is not accepted", function () {
+			var oControl = this.oMaskInput,
+					oErrorSpy = this.sandbox.spy(jQuery.sap.log, 'error'),
+					oSetterSpy = this.sandbox.spy(oControl, 'setProperty');
+
+			setAndValidate.call(this, "more_than_one_character");
+			setAndValidate.call(this, "");
+
+			function setAndValidate(sSymbol) {
+				oErrorSpy.restore();
+				oErrorSpy = this.sandbox.spy(jQuery.sap.log, 'error');
+				oSetterSpy.restore();
+				oSetterSpy = this.sandbox.spy(oControl, 'setProperty');
+				oControl.setPlaceholderSymbol(sSymbol);
+				ok(oSetterSpy.notCalled, "Invalid placeholder symbol [" + sSymbol + "] is not accepted");
+				ok(oErrorSpy.calledOnce, "When called with invalid parameter [" + sSymbol + "] setPlaceholderSymbol logs error.");
+				equal(oErrorSpy.getCall(0).args[0], "Invalid placeholder symbol string given",
+						"Verify the exact error when setPlaceholderSymbol is called with invalid parameter [" + sSymbol + "]");
+			}
+		});
+
+
+		test("The mask default rules are: a:[A-Za-z] and 9:[0-9]", function () {
+			var oControl = this.oMaskInput,
+					aExpectedDefaultRules = [
+						new sap.m.MaskInputRule({
+							maskFormatSymbol: "a",
+							regex: "[A-Za-z]"
+						}), new sap.m.MaskInputRule({
+							maskFormatSymbol: "9",
+							regex: "[0-9]"
+						})],
+					i = 0;
+			equal(oControl.getRules().length, aExpectedDefaultRules.length, "2 default rules");
+			for (i = 0; i < 2; i++) {
+				equal(oControl.getRules()[i].getMaskFormatSymbol(), aExpectedDefaultRules[i].getMaskFormatSymbol(), "Mask symbol for rule [" + (i + 1) + "]");
+				equal(oControl.getRules()[i].getRegex(), aExpectedDefaultRules[i].getRegex(), "Mask regex for rule [" + (i + 1) + "]");
+			}
+		});
+
+		test("Replace existing mask rule", function () {
+			var oControl = this.oMaskInput.addRule(new sap.m.MaskInputRule({
+				maskFormatSymbol: "~",
+				regex: '[@?]'
+			}));
+			oControl.addRule(new sap.m.MaskInputRule({
+				maskFormatSymbol: "~",
+				regex: '[{}]'
+			}));
+			equal(oControl.getRules()[2].getMaskFormatSymbol(), "~", "There must be a rule with mask format symbol '~'");
+			equal(oControl.getRules()[2].getRegex(), "[{}]", "The rule with mask format symbol '~' regex must be the last one set");
+		});
+
+		module("Shifting", {
+			beforeEach: function () {
+				this.oMaskInput = new sap.m.MaskInput();
+				this.oMaskInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oMaskInput.destroy();
+			},
+			//sets certain properties, and deletes certain character
+			setAndDel: function (sMask, sValue, iCharPosition, oControl) {
+				if (!oControl) {
+					oControl = this.oMaskInput;
+				}
+				oControl.setMask(sMask);
+				oControl.setValue(sValue);
+				if (oControl._bFocused) {
+					oControl.onfocusin(); // an element can get focus only once, so this time only call the handler
+				} else {
+					jQuery(oControl).focus();
+					this.clock.tick(1000);
+					oControl._bFocused = true
+				}
+
+				setCursorPosition(iCharPosition, oControl);
+
+				qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.DELETE);
+				return getMaskInputDomValue(oControl);
+			}
+		});
+
+		test("Delete shifts to the left", function () {
+			var oControl = this.oMaskInput.setPlaceholderSymbol('_');
+
+			strictEqual(this.setAndDel('aaaaa', 'abcde', 0), "bcde_", "Shift for mask with single rule type only");
+			strictEqual(this.setAndDel('aa-a-aa', 'ab-c-de', 0), 'bc-d-e_', "Shift for mask with rule and immutable chars");
+			strictEqual(this.setAndDel('aa-9-aa', 'ab-2-de', 0), 'b_-2-de', "Shift for mask with multiple rule type and immutable chars");
+			strictEqual(this.setAndDel('9a-9-aa', '2b-2-de', 0), '_b-2-de', "Shift at the beginning when the first shift char does not match its newer position");
+			strictEqual(this.setAndDel('9a-9-aa', '2b-2-de', 1), '2_-2-de', "Shift non start character when the first shift char does not match its newer position");
+			strictEqual(this.setAndDel('9a-a-aa', '2b-c-de', 1), '2c-d-e_', "Shift non start character when the first shift char does match its newer position");
+		});
+
+		module("Paste", {
+			beforeEach: function () {
+				this.oMaskSerialNumber = new sap.m.MaskInput({
+					mask: "ZXYI-9999-9999-9999",
+					placeholderSymbol: "_",
+					placeholder: "Enter serial number"
+				});
+				this.oMaskPhoneNumber = new sap.m.MaskInput({
+					mask: "(02)-***-***",
+					placeholderSymbol: "#",
+					placeholder: "Enter telephone number",
+					rules: [
+						new sap.m.MaskInputRule({
+							maskFormatSymbol: "*",
+							regex: "[0-9]"
+						})
+					]
+				});
+
+				this.oMaskSerialNumber.placeAt("content");
+				this.oMaskPhoneNumber.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oMaskSerialNumber.destroy();
+				this.oMaskPhoneNumber.destroy();
+			}
+		});
+
+		test("All clipboard characters that match the mask are pasted into the input", function () {
+			//since there is no way to really do a paste, set the value and focus the mask input,
+			// so the corresponding mask is applied to the value
+			this.oMaskSerialNumber.setValue("31 / 12 / 1981");
+			jQuery(this.oMaskSerialNumber).focus();
+			this.clock.tick(1000);
+			equal(getMaskInputDomValue(this.oMaskSerialNumber), "ZXYI-3112-1981-____", "'31 / 12 / 1981' inside serial" +
+			" number 'ZXYI-9999-9999-9999'");
+
+			this.oMaskPhoneNumber.setValue("31 / 12 / 1981");
+			jQuery(this.oMaskPhoneNumber).focus();
+			this.clock.tick(1000);
+			equal(getMaskInputDomValue(this.oMaskPhoneNumber), "(02)-311-219", "'31 / 12 / 1981' inside phone number" +
+			" '(02)-***-***'");
+		});
+
+		module("Focusing", {
+			beforeEach: function () {
+				this.oMaskInput = new sap.m.MaskInput();
+				this.oMaskInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				this.sandbox = sinon.sandbox;
+			},
+			afterEach: function () {
+				this.oMaskInput.destroy();
+				this.sandbox.restore();
+			}
+		});
+		test("Initial focusing on mask input", function () {
+			var oControl = this.oMaskInput.setPlaceholderSymbol('#'),
+					sMask = '1a9a-aa4';
+
+			oControl.setMask(sMask);
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+
+			strictEqual(getMaskInputDomValue(oControl), '1###-##4', "On intial focus, the mask that the user needs to follow is shown");
+			checkForEmptyValue(oControl);
+		});
+
+		test("Focusout for input with deleted value restores an empty value", function () {
+			var oControl = this.oMaskInput.setPlaceholder("Enter number").setPlaceholderSymbol("#").setMask("999").setValue("123"),
+					oOtherControl = new sap.m.Input({value: "some other value"});
+			oOtherControl.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(1000);
+
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+			qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.DELETE);
+
+			jQuery(oOtherControl).focus();
+			this.clock.tick(1000);
+			checkForEmptyValue(oControl);
+			strictEqual(getMaskInputDomValue(oControl), "", "Once deleted the DOM should be empty");
+			oOtherControl.destroy();
+		});
+
+		module("Events", {
+			beforeEach: function () {
+				this.oMaskInput = new sap.m.MaskInput();
+				this.oMaskInput.setMask("999");
+				this.oMaskInput.placeAt("content");
+
+				this.oOtherControl = new sap.m.Button({text: "my button"});
+				this.oOtherControl.placeAt("content");
+
+				sap.ui.getCore().applyChanges();
+				this.oChangeListenerPassedEvent = null;
+				this.oMaskInput.attachEvent("change", this.changeListener.bind(this));
+
+				this.sandbox = sinon.sandbox;
+			},
+			afterEach: function () {
+				this.oMaskInput.destroy();
+				this.oOtherControl.destroy();
+				this.sandbox.restore();
+			},
+			changeListener: function () {
+				this.oChangeListenerPassedEvent = jQuery.extend({}, arguments[0]);
+			},
+			onChangeListener: function (oEvent) {
+				this.oOnChangeParameter = oEvent;
+			}
+		});
+
+		test("Change event is called", function () {
+			var oControl = this.oMaskInput;
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+			qutils.triggerKeypress(oControl.getDomRef(), "1");
+
+			jQuery(this.oOtherControl).focus();
+			this.clock.tick(1000);
+
+			ok(this.oChangeListenerPassedEvent, "Change event must be fired");
+			equal(this.oChangeListenerPassedEvent.mParameters.value, "1__", "Change event must have an exact value");
+		});
+
+		test("Change event must not be called unless ENTER or focusout", function () {
+			var oControl = this.oMaskInput;
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+
+			qutils.triggerKeypress(oControl.getDomRef(), "1");
+			ok(getMaskInputDomValue(oControl), "The '1' should go into the input");
+			ok(!this.oChangeListenerPassedEvent, "Change event must not be called");
+			qutils.triggerKeypress(oControl.getDomRef(), "8");
+			ok(getMaskInputDomValue(oControl), "The '18' should go into the input");
+			ok(!this.oChangeListenerPassedEvent, "Change event must not be called");
+		});
+
+		test("Change event must not be called if Escape", function () {
+			var oControl = this.oMaskInput;
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+
+			qutils.triggerKeypress(oControl.getDomRef(), "1");
+			ok(getMaskInputDomValue(oControl), "The '1' should go into the input");
+			qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+			ok(!this.oChangeListenerPassedEvent, "Change event must not be called");
+		});
+
+		test("Change event must be called if the existing input value is entirely deleted", function() {
+			var oControl = this.oMaskInput.setPlaceholder("Enter number").setPlaceholderSymbol("#").setMask("999").setValue("123");
+
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+			qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.DELETE);
+
+			jQuery(this.oOtherControl).focus();
+			this.clock.tick(1000);
+			ok(this.oChangeListenerPassedEvent, "Change event must be called");
+			equal(this.oChangeListenerPassedEvent.mParameters.value, "", "Change event must have an exact value");
+		});
+
+		test("Change event must not be called if existing value is not really changed", function() {
+			var oControl = this.oMaskInput.setPlaceholder("Enter number").setPlaceholderSymbol("#").setMask("999").setValue("123");
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+
+			jQuery(this.oOtherControl).focus();
+			this.clock.tick(1000);
+			ok(!this.oChangeListenerPassedEvent, "Change event must not be called");
+		});
+
+		module("Others", {
+			beforeEach: function () {
+				this.oMaskInput = new sap.m.MaskInput();
+				this.oMaskInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				this.sandbox = sinon.sandbox;
+			},
+			afterEach: function () {
+				this.oMaskInput.destroy();
+				this.sandbox.restore();
+			},
+			sendAndValidate: function (iPos, sChar, sExpectedValue, oControl) {
+				if (!oControl) {
+					oControl = this.oMaskInput;
+				}
+				if (iPos !== -1) {
+					setCursorPosition(iPos, oControl);
+				}
+				qutils.triggerKeypress(oControl.getDomRef(), sChar);
+				equal(oControl._getInputValue(), sExpectedValue, "Typing '" + sChar + "' at position [" +
+				(iPos === -1 ? "current" : iPos) + "] should resolve to a certain value");
+			},
+			getSelection: function (oControl) {
+				var $oControl = jQuery(oControl.getFocusDomRef())[0];
+				return {iFrom: $oControl.selectionStart, iTo: $oControl.selectionEnd};
+			},
+			checkCursorIsAtPosition: function (oControl, iPosition) {
+				var oSelection = this.getSelection(oControl);
+				ok(oSelection.iFrom === oSelection.iTo, "There must not be any selection");
+				equal(oSelection.iFrom, iPosition, "Cursor position.");
+			}
+		});
+
+		test("DOM and 'value' should be updated according to the user input ", function (assert) {
+			var oControl = this.oMaskInput.setPlaceholderSymbol('_').setMask('aaaa'),
+					oOtherControl = new sap.m.Input({value: "some other value"});
+			oOtherControl.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(1000);
+
+			strictEqual(getMaskInputDomValue(oControl), "", "Unless focused an empty dom value should remain empty");
+			checkForEmptyValue(oControl);
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+
+			strictEqual(getMaskInputDomValue(oControl), '____', "the maskInput has the expected mask string in the dom after focus is reached");
+			checkForEmptyValue(oControl);
+			jQuery(oOtherControl).focus();
+			this.clock.tick(1000);
+
+			strictEqual(getMaskInputDomValue(oControl), '', "the maskInput lost the focus without any user input characters, so the getValue should return an empty string");
+			checkForEmptyValue(oControl);
+			oOtherControl.destroy();
+
+		});
+		test("Entering a rule incompatible characters is forbidden at any position for mask", function () {
+			var oControl = this.oMaskInput.setMask("9a-9a").setPlaceholderSymbol("#");
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+			this.sendAndValidate(0, "b", "##-##");
+			this.sendAndValidate(1, "7", "##-##");
+			this.sendAndValidate(3, "c", "##-##");
+			this.sendAndValidate(4, "6", "##-##");
+		});
+
+		test("Entering a rule compatible character is possible at any position for mask", function () {
+			var oControl = this.oMaskInput.setMask("9a-9a").setPlaceholderSymbol("#");
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+			this.sendAndValidate(-1, "1", "1#-##");
+			this.sendAndValidate(-1, "b", "1b-##");
+			this.sendAndValidate(-1, "3", "1b-3#");
+			this.sendAndValidate(-1, "c", "1b-3c");
+		});
+
+		test("Entering an separator will move the caret after it", function () {
+			var oControl = this.oMaskInput.setMask("9-9").setPlaceholderSymbol("#");
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+			this.sendAndValidate(-1, "2", "2-#");
+			var oSelection = this.getSelection(oControl);
+
+			ok(oSelection.iFrom === oSelection.iTo, "There must not be any selection");
+			equal(oSelection.iFrom, 2, "Cursor position.");
+		});
+
+		test("Escape position the cursor at the first repalcable character", function () {
+			var oControl = this.oMaskInput.setMask("9-9").setPlaceholderSymbol("#");
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+			this.sendAndValidate(-1, "2", "2-#");
+			qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+			this.clock.tick(1000);
+
+			var oSelection = this.getSelection(oControl);
+			ok(oSelection.iFrom === oSelection.iTo, "There must not be any selection");
+			equal(oSelection.iFrom, 0, "Cursor position.");
+		});
+
+		test("Click on mask input with an existing value selects the whole value", function () {
+			var oControl = this.oMaskInput.setMask("a9a9a").setValue("b1c2d");
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+
+			var oSelection = this.getSelection(oControl);
+			equal(oSelection.iFrom, 0);
+			equal(oSelection.iTo, 5);
+		});
+
+		test("Click on mask input with empty value should position the cursor at the first editable position", function () {
+			var oControl = this.oMaskInput.setMask("(+35)a9a9a");
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+
+			this.checkCursorIsAtPosition(oControl, 5);
+		});
+
+		test("Click on mask input with partially completed value should position the cursor at the first editable position", function () {
+			var oControl = this.oMaskInput.setMask("(+35)a9a9a");
+			oControl.setValue("a1");
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+
+			this.checkCursorIsAtPosition(oControl, 7);
+		});
+
+		test("Esc key does reset the value back to the original", function () {
+			var oControl = this.oMaskInput.setMask("aa-aa").setValue("ab-__");
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+
+			this.sendAndValidate(-1, "c", "ab-c_");
+			qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+			equal(oControl.getValue(), "ab-__", "The value before focusing-in must be restored");
+		});
+
+		test("OnBeforeRendering captures any validation errors.", function () {
+			var oControl = this.oMaskInput,
+					oDefinition1 = new sap.m.MaskInputRule({maskFormatSymbol: "-", regex: "[']"}),
+					oDefinition2 = new sap.m.MaskInputRule({maskFormatSymbol: "+", regex: "[()]"}),
+					oWarningSpy = this.sandbox.spy(jQuery.sap.log, "warning");
+			oControl.addRule(oDefinition1);
+			oControl.addRule(oDefinition2);
+			oDefinition1.setMaskFormatSymbol("+");
+
+			this.clock.tick(1000);
+			ok(oWarningSpy.calledOnce, "Warning issued.")
+			equal(oWarningSpy.getCall(0).args[0],
+					"Invalid mask input: Empty mask. Duplicated rule's maskFormatSymbol [+]", "Message");
+		});
+
+		test("Once the user completed the input, the property 'value' is chaned", function () {
+			var oControl = this.oMaskInput.setPlaceholder("Enter number").setPlaceholderSymbol("#").setMask("999").setValue("123"),
+					oOtherControl = new sap.m.Input({value: "some other value"});
+			oOtherControl.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(1000);
+
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+			this.sendAndValidate(-1, "1", "1##");
+			this.sendAndValidate(-1, "2", "12#");
+
+			jQuery(oOtherControl).focus();
+			this.clock.tick(1000);
+			strictEqual(oControl.getValue(), "12#", "On complete the value should change");
+			//user goes back and enters input
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+			this.sendAndValidate(-1, "3", "123");
+
+			jQuery(oOtherControl).focus();
+			this.clock.tick(1000);
+			strictEqual(oControl.getValue(), "123", "On complete the value should change");
+
+			oOtherControl.destroy();
+		});
+
+		function setCursorPosition(iPosition, oControl) {
+			var _$oControl = jQuery(oControl.getFocusDomRef());
+			return _$oControl.cursorPos(iPosition);
+		}
+		function getMaskInputDomValue(oControl) {
+			return jQuery(oControl.getDomRef("inner")).val()
+		}
+
+		function checkForEmptyValue(oControl) {
+			ok(typeof oControl.getValue() === "undefined" || oControl.getValue() == null || oControl.getValue().length === 0,
+					"The value [" + oControl.getValue() + "] should be empty ");
+		}
+	</script>
+</head>
+<body>
+<h1 id="qunit-header">QUnit page for sap.m.MaskInput</h1>
+
+<h2 id="qunit-banner"></h2>
+
+<h2 id="qunit-userAgent"></h2>
+
+<div id="qunit-testrunner-toolbar"></div>
+<div id="qunit-fixture"></div>
+<ol id="qunit-tests"></ol>
+<div id="content"></div>
+</body>
+</html>
