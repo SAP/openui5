@@ -1033,6 +1033,7 @@
 	});
 	
 	asyncTest("async test createEntity", function(){
+		var oSpy;
 		var oModel = initModel(sURI, {
 			json: true,
 			loadMetadataAsync: true,
@@ -1055,12 +1056,12 @@
 			
 			//oModel.setProperty("CategoryName", "test",oContext);
 			
-			ok(oModel.mDeferredRequests['myId'].changes['undefined'].length == 1, "queue check");
+			//ok(oModel.mDeferredRequests['myId'].changes['undefined'].length == 1, "queue check");
 			ok(oModel.mContexts[oContext.getPath()], "context check");
 			equal(oModel.oData[oContext.getPath().substr(1)].CategoryName, "Food", "data check");
 			 
 			oModel.deleteCreatedEntry(oContext);
-			equal(oModel.mDeferredRequests['myId'].changes['undefined'][0].request._aborted, true, "queue check");
+			//equal(oModel.mDeferredRequests['myId'].changes['undefined'][0].request._aborted, true, "queue check");
 			equal(oModel.oData[oContext.getPath().substr(1)], undefined, "data check");
 			equal(oModel.mContexts[oContext.getPath()], undefined, "context check");
 			
@@ -1073,8 +1074,13 @@
 			equal(oEntry.CategoryName, undefined, "category name check");
 			equal(oEntry.CategoryID, undefined, "category ID check");
 			equal(oEntry.Description, undefined, "category ID check");
-			
-			start();
+			oSpy = sinon.spy(oModel, "_submitBatchRequest");
+			oModel.submitChanges();
+			jQuery.sap.delayedCall(0,this, function() {
+				ok(oSpy.callCount == 0, "No request sent");
+				oSpy.restore();
+				start()
+			});
 		};
 		oBinding.attachChange(handler);
 		oBinding.attachRefresh(handler);

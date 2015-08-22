@@ -2553,6 +2553,7 @@ sap.ui.define([
 		var oModel,
 			oContext,
 			oBinding,
+			oDataStateTimer,
 			sMode,
 			sCompositeMode = BindingMode.TwoWay,
 			oType,
@@ -2590,7 +2591,11 @@ sap.ui.define([
 				}
 				//inform generic refreshDataState method
 				if (that.refreshDataState) {
-					that.refreshDataState(sName, oDataState);
+					if (!oDataStateTimer) {
+						this.oDataStateTimer = jQuery.sap.delayedCall(0, this, function() {
+							that.refreshDataState(sName, oDataState);
+						});
+					}
 				}
 			};
 

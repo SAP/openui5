@@ -118,6 +118,7 @@ sap.ui.define([
 			this.mChangedEntities = {};
 			this.mChangeHandles = {};
 			this.mDeferredGroups = {};
+			this.mLaunderingState = {};
 			this.sDefaultUpdateMethod = sDefaultUpdateMethod || UpdateMethod.Merge;
 
 			this.bTokenHandling = bTokenHandling !== false;
@@ -1270,6 +1271,7 @@ sap.ui.define([
 		var aBindings = this.aBindings.slice(0);
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			oBinding.checkUpdate(bForceUpdate, mChangedEntities);
+			oBinding.checkDataState(bForceUpdate);
 		});
 		//handle calls after update
 		var aCallAfterUpdate = this.aCallAfterUpdate;
@@ -2044,7 +2046,6 @@ sap.ui.define([
 						that._refresh(false, undefined, mChangeEntities, mEntityTypes);
 					}
 				}
-				that._updateChangedEntities(mChangeEntities);
 			};
 			that._processSuccess(oRequest, oResponse, fnSingleSuccess, mGetEntities, mChangeEntities, mEntityTypes);
 		};
@@ -2254,6 +2255,7 @@ sap.ui.define([
 
 		if (!oRequestGroup) {
 			oRequestGroup = {};
+			oRequestGroup.map = {};
 			oRequestGroup.requests = [];
 			mRequests[sGroupId] = oRequestGroup;
 		}
@@ -2262,19 +2264,20 @@ sap.ui.define([
 				oRequestGroup.changes = {};
 			}
 			if (oRequest.key && oRequestGroup.map && oRequest.key in oRequestGroup.map) {
-				oRequestGroup.map[oRequest.key].method = oRequest.method;
+				var oChangeRequest = oRequestGroup.map[oRequest.key]; 
+				oChangeRequest.method = oRequest.method;
 				if (oRequest.method === "PUT") {
 					// if stored request was a MERGE before (created by setProperty) but is now sent via PUT
 					// (by submitChanges) the merge header must be removed
-					delete oRequestGroup.map[oRequest.key].headers["x-http-method"];
+					delete oChangeRequest.headers["x-http-method"];
 				}
 
 				// if change is aborted (resetChanges) and a change happens before submit we should delete
 				// the aborted flag
-				if (oRequestGroup.map[oRequest.key]._aborted) {
-					delete oRequestGroup.map[oRequest.key]._aborted;
+				if (oChangeRequest._aborted) {
+					delete oChangeRequest._aborted;
 				}
-				oRequestGroup.map[oRequest.key].data = oRequest.data;
+				oChangeRequest.data = oRequest.data;
 
 			} else {
 				oChangeGroup = oRequestGroup.changes[sChangeSetId];
@@ -2290,9 +2293,6 @@ sap.ui.define([
 					changeSetId: sChangeSetId
 				});
 				if (oRequest.key) {
-					if (!oRequestGroup.map) {
-						oRequestGroup.map = {};
-					}
 					oRequestGroup.map[oRequest.key] = oRequest;
 				}
 			}
@@ -2346,7 +2346,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processRequestQueue = function(mRequests, sGroupId, fnSuccess, fnError){
-		var that = this,
+		var that = this, sPath,
 			oRequestHandle = [];
 
 		if (this.oRequestTimer && mRequests !== this.mDeferredRequests) {
@@ -2376,6 +2376,9 @@ sap.ui.define([
 							oChangeSet = {__changeRequests:[]};
 							aChanges = [];
 							for (var i = 0; i < aChangeSet.length; i++) {
+								//increase laundering
+								sPath = '/' + that.getKey(aChangeSet[i].request.data);
+								that.increaseLaundering(sPath, aChangeSet[i].request.data);
 								//clear metadata.create
 								if (aChangeSet[i].request._aborted) {
 									that._processAborted(aChangeSet[i].request, null, aChangeSet[i].fnError);
@@ -2417,6 +2420,9 @@ sap.ui.define([
 					if (oRequestGroup.changes) {
 						jQuery.each(oRequestGroup.changes, function(sChangeSetId, aChangeSet){
 							for (var i = 0; i < aChangeSet.length; i++) {
+								//increase laundering
+								sPath = '/' + that.getKey(aChangeSet[i].request.data);
+								that.increaseLaundering(sPath, aChangeSet[i].request.data);
 								// store last request Handle. If no batch there will be only 1 and we cpould return it?
 								if (aChangeSet[i].request._aborted) {
 									that._processAborted(aChangeSet[i].request, null, aChangeSet[i].fnError);
@@ -2464,7 +2470,16 @@ sap.ui.define([
 
 		bContent = !(oResponse.statusCode === 204 || oResponse.statusCode === '204');
 
-
+		sUri = oRequest.requestUri;
+		sPath = sUri.replace(this.sServiceUrl,"");
+		//in batch requests all paths are relative
+		if (!jQuery.sap.startsWith(sPath,'/')) {
+			sPath = '/' + sPath;
+		}
+		sPath = this._normalizePath(sPath);
+		// decrease laundering
+		this.decreaseLaundering(sPath, oRequest.data);
+		
 		// no data available
 		if (bContent && !oResultData && oResponse) {
 			// Parse error messages from the back-end
@@ -2486,22 +2501,15 @@ sap.ui.define([
 			that._importData(oResultData, mLocalGetEntities);
 		}
 
-		sUri = oRequest.requestUri;
-		sPath = sUri.replace(this.sServiceUrl,"");
-		//in batch requests all paths are relative
-		if (!jQuery.sap.startsWith(sPath,'/')) {
-			sPath = '/' + sPath;
-		}
-		sPath = this._normalizePath(sPath);
 
 		//get change entities for update/remove
 		if (!bContent) {
 			aParts = sPath.split("/");
 			if (aParts[1]) {
-				mLocalChangeEntities[aParts[1]] = true;
+				mLocalChangeEntities[aParts[1]] = oRequest;
 				//cleanup of this.mChangedEntities; use only the actual response key
 				var oMap = {};
-				oMap[aParts[1]] = true;
+				oMap[aParts[1]] = oRequest;
 				this._updateChangedEntities(oMap);
 			}
 			//for delete requests delete data in model
@@ -2533,7 +2541,7 @@ sap.ui.define([
 		jQuery.extend(mChangeEntities, mLocalChangeEntities);
 
 		this._updateETag(oRequest, oResponse);
-
+		
 		if (fnSuccess) {
 			fnSuccess(oResponse.data, oResponse);
 		}
@@ -2553,11 +2561,15 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processError = function(oRequest, oResponse, fnError) {
-		var oError = this._handleError(oResponse, oRequest);
+		var sPath, oError = this._handleError(oResponse, oRequest);
+		// decrease laundering
+		sPath = '/' + this.getKey(oRequest.data);
+		this.decreaseLaundering(sPath, oRequest.data);
+
 		if (fnError) {
 			fnError(oError);
 		}
-
+		
 		var oEventInfo = this._createEventInfo(oRequest, oError);
 		this.fireRequestCompleted(oEventInfo);
 		this.fireRequestFailed(oEventInfo);
@@ -2573,6 +2585,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processAborted = function(oRequest, oResponse, fnError) {
+		var sPath;
 		var oError = {
 			message: "Request aborted",
 			statusCode: 0,
@@ -2580,9 +2593,13 @@ sap.ui.define([
 			headers: {},
 			responseText: ""
 		};
+		// decrease laundering
+		sPath = '/' + this.getKey(oRequest.data);
+		this.decreaseLaundering(sPath, oRequest.data);
 		if (fnError) {
 			fnError(oError);
 		}
+		
 		// If no response is contained, request was never sent and completes event can be omitted
 		if (oResponse) {
 			var oEventInfo = this._createEventInfo(oRequest, oError);
@@ -2601,7 +2618,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processChange = function(sKey, oData, sUpdateMethod) {
-		var oPayload, oEntityType, sETag, sMethod, sUrl, mHeaders, oRequest, sType, oUnModifiedEntry, that = this;
+		var oPayload, oEntityType, sETag, sMethod, sUrl, mHeaders, oRequest, oUnModifiedEntry, that = this;
 
 		// delete expand properties = navigation properties
 		oEntityType = this.oMetadata._getEntityTypeByPath(sKey);
@@ -2626,19 +2643,10 @@ sap.ui.define([
 		oPayload = jQuery.sap.extend(true, {}, oData);
 		// remove metadata, navigation properties to reduce payload
 		if (oPayload.__metadata) {
-			sType = oPayload.__metadata.type;
-			sETag = oPayload.__metadata.etag;
-			delete oPayload.__metadata;
-			if (sType || sETag) {
-				oPayload.__metadata = {};
-			}
-			// type information may be needed by an odata service!!!
-			if (sType) {
-				oPayload.__metadata.type = sType;
-			}
-			// etag information may be needed by an odata service, too!!!
-			if (sETag) {
-				oPayload.__metadata.etag = sETag;
+			for (var n in oPayload.__metadata) {
+				if (n !== 'type' && n !== 'uri' && n !== 'etag') {
+					delete oPayload.__metadata[n];
+				}
 			}
 		}
 
@@ -2654,7 +2662,7 @@ sap.ui.define([
 			jQuery.each(oPayload, function(sPropName, oPropValue) {
 				if (sPropName !== '__metadata') {
 					// remove unmodified properties and keep only modified properties for delta MERGE
-					if (jQuery.sap.equal(oUnModifiedEntry[sPropName], oPropValue)) {
+					if (jQuery.sap.equal(oUnModifiedEntry[sPropName], oPropValue) && !that.isLaundering('/' + sKey + '/' + sPropName)) {
 						delete oPayload[sPropName];
 					}
 				}
@@ -3534,7 +3542,7 @@ sap.ui.define([
 	ODataModel.prototype.submitChanges = function(mParameters) {
 		var oRequest, sGroupId, oGroupInfo, fnSuccess, fnError,
 			oRequestHandle, vRequestHandleInternal,
-			bAborted = false, sMethod,
+			bAborted = false, sMethod, 
 			that = this;
 
 		if (mParameters) {
@@ -3565,7 +3573,6 @@ sap.ui.define([
 			});
 
 			vRequestHandleInternal = that._processRequestQueue(that.mDeferredRequests, sGroupId, fnSuccess, fnError);
-
 			if (bAborted) {
 				oRequestHandle.abort();
 			}
@@ -3596,15 +3603,38 @@ sap.ui.define([
 	 * @param {map} mChangedEntities Map of changedEntities
 	 */
 	ODataModel.prototype._updateChangedEntities = function(mChangedEntities) {
-		var that = this;
-
-		jQuery.each(mChangedEntities, function(sKey, bChanged) {
+		var that = this, sRootPath;
+		function updateChangedEntities(oOriginalObject, oChangedObject) {
+			jQuery.each(oChangedObject,function(sKey) {
+				var sActPath = sRootPath + '/' + sKey;
+				if (jQuery.isPlainObject(oChangedObject[sKey]) && jQuery.isPlainObject(oOriginalObject[sKey])) {
+					updateChangedEntities(oOriginalObject[sKey], oChangedObject[sKey]);
+					if (jQuery.isEmptyObject(oChangedObject[sKey])) {
+						delete oChangedObject[sKey];
+					}
+				} else if (oChangedObject[sKey] === oOriginalObject[sKey] && !that.isLaundering(sActPath)) { 
+					delete oChangedObject[sKey];
+				} 
+			});
+		}
+		
+		jQuery.each(mChangedEntities, function(sKey, oRequest) {
 			if (sKey in that.mChangedEntities) {
+				var oEntry = that._getObject('/' + sKey, null, true);
 				var oChangedEntry = that._getObject('/' + sKey);
-				delete that.mChangedEntities[sKey];
-				var oEntry = that._getObject('/' + sKey);
-				jQuery.sap.extend(true, oEntry, oChangedEntry);
-
+				
+				jQuery.sap.extend(true, oEntry, oRequest.data);
+				
+				sRootPath = '/' + sKey;
+				updateChangedEntities(oEntry, oChangedEntry);
+				
+				if (jQuery.isEmptyObject(oChangedEntry)) {
+					delete that.mChangedEntities[sKey];
+				} else {
+					that.mChangedEntities[sKey] = oChangedEntry;
+					oChangedEntry.__metadata = {};
+					jQuery.extend(oChangedEntry.__metadata, oEntry.__metadata);
+				}
 			}
 		});
 	};
@@ -3644,7 +3674,9 @@ sap.ui.define([
 					oEntityMetadata = that.mChangedEntities[sKey].__metadata;
 					delete that.mChangedEntities[sKey].__metadata;
 					if (jQuery.isEmptyObject(that.mChangedEntities[sKey]) || !oEntityInfo.propertyPath) {
-						that.mChangeHandles[sKey].abort();
+						that.metadataLoaded().then(function() {
+							that.mChangeHandles[sKey].abort();
+						});
 						delete that.mChangedEntities[sKey];
 					} else {
 						that.mChangedEntities[sKey].__metadata = oEntityMetadata;
@@ -3655,8 +3687,10 @@ sap.ui.define([
 			});
 		} else {
 			jQuery.each(this.mChangedEntities, function(sKey, oObject) {
-				that.mChangeHandles[sKey].abort();
-				delete that.mChangeHandles[sKey];
+				that.metadataLoaded().then(function() {
+					that.mChangeHandles[sKey].abort();
+					delete that.mChangeHandles[sKey];
+				});
 				delete that.mChangedEntities[sKey];
 			});
 		}
@@ -3680,9 +3714,9 @@ sap.ui.define([
 
 		var oOriginalValue, sPropertyPath, mRequests, oRequest, oEntry = { },
 		sResolvedPath, aParts,	sKey, oGroupInfo, oRequestHandle, oEntityMetadata,
-		mChangedEntities = {}, oEntityInfo = {};
+		mChangedEntities = {}, oEntityInfo = {}, that = this;
 		
-		sResolvedPath = this.resolve(sPath, oContext);
+		sResolvedPath = this.resolve(sPath, oContext, true);
 		
 		var oEntry = this.getEntityByPath(sResolvedPath, null, oEntityInfo);
 		if (!oEntry) {
@@ -3713,13 +3747,15 @@ sap.ui.define([
 		}
 		
 		//reset clone if oValue equals the original value
-		if (oValue == oOriginalValue) {
+		if (oValue == oOriginalValue && !this.isLaundering('/' + sKey)) {
 			delete oChangeObject[sPropertyPath];
 			//delete metadata to check if object has changes
 			oEntityMetadata = this.mChangedEntities[sKey].__metadata;
 			delete this.mChangedEntities[sKey].__metadata;
 			if (jQuery.isEmptyObject(this.mChangedEntities[sKey])) {
-				this.mChangeHandles[sKey].abort();
+				that.metadataLoaded().then(function() {
+					that.mChangeHandles[sKey].abort();
+				});
 				delete this.mChangedEntities[sKey];
 				return true;
 			}
@@ -3740,21 +3776,22 @@ sap.ui.define([
 			oRequest = this._processChange(sKey, oEntry);
 		}
 
-		if (!this.mChangeHandles[sKey]) {
-			oRequestHandle = {
-					abort: function() {
-						oRequest._aborted = true;
-					}
-			};
+		this.metadataLoaded().then(function() {
+			if (!that.mChangeHandles[sKey]) {
+				oRequestHandle = {
+						abort: function() {
+							oRequest._aborted = true;
+						}
+				};
+	
+				that.mChangeHandles[sKey] = oRequestHandle;
+			}
 
-			this.mChangeHandles[sKey] = oRequestHandle;
-		}
-
-		this._pushToRequestQueue(mRequests, oGroupInfo.groupId, oGroupInfo.changeSetId, oRequest);
-
-		if (!this.oRequestTimer) {
-			this.oRequestTimer = jQuery.sap.delayedCall(0,this, this._processRequestQueue, [this.mRequests]);
-		}
+			that._pushToRequestQueue(mRequests, oGroupInfo.groupId, oGroupInfo.changeSetId, oRequest);
+			if (!that.oRequestTimer) {
+				that.oRequestTimer = jQuery.sap.delayedCall(0,that, that._processRequestQueue, [that.mRequests]);
+			}
+		});
 		
 		mChangedEntities[sKey] = true;
 		this.checkUpdate(false, bAsyncUpdate, mChangedEntities);
@@ -3904,6 +3941,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.deleteCreatedEntry = function(oContext) {
+		var that = this;
 		if (oContext) {
 			var sPath = oContext.getPath();
 			delete this.mContexts[sPath]; // contexts are stored starting with /
@@ -3911,8 +3949,10 @@ sap.ui.define([
 			if (jQuery.sap.startsWith(sPath, "/")) {
 				sPath = sPath.substr(1);
 			}
-			this.mChangeHandles[sPath].abort();
-			delete this.mChangeHandles[sPath];
+			that.metadataLoaded().then(function() {
+				that.mChangeHandles[sPath].abort();
+				delete that.mChangeHandles[sPath];
+			});
 			delete this.mChangedEntities[sPath];
 			delete this.oData[sPath];
 		}
@@ -4029,20 +4069,21 @@ sap.ui.define([
 				mRequests = that.mDeferredRequests;
 			}
 
-			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, mParameters);
-
-			oRequestHandle = {
-					abort: function() {
-						oRequest._aborted = true;
-					}
-			};
-
-			that.mChangeHandles[sKey] = oRequestHandle;
-
-			if (!that.oRequestTimer) {
-				that.oRequestTimer = jQuery.sap.delayedCall(0,that, that._processRequestQueue, [that.mRequests]);
-			}
-		
+			that.metadataLoaded().then(function() {
+				that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, mParameters);
+	
+				oRequestHandle = {
+						abort: function() {
+							oRequest._aborted = true;
+						}
+				};
+	
+				that.mChangeHandles[sKey] = oRequestHandle;
+	
+				if (!that.oRequestTimer) {
+					that.oRequestTimer = jQuery.sap.delayedCall(0,that, that._processRequestQueue, [that.mRequests]);
+				}
+			});
 			return oCreatedContext;
 		}
 
@@ -4505,6 +4546,84 @@ sap.ui.define([
 			}
 		}
 		return sResolvedPath;
+	};
+	
+	/**
+	 * Returns whether a given path relative to the given contexts is in laundering state.
+	 * If data is send to the server the data state becomes laundering until the 
+	 * data was accepted or rejected
+	 * 
+	 * @param {string} sPath path to resolve
+	 * @param {sap.ui.core.Context} [oContext] context to resolve a relative path against
+	 * @returns {boolean} true if the data in this path is laundering
+	 */
+	ODataModel.prototype.isLaundering = function(sPath, oContext) {
+		var sResolvedPath = this.resolve(sPath, oContext);
+		return (sResolvedPath in this.mLaunderingState) && this.mLaunderingState[sResolvedPath] > 0;
+	};
+	
+	/**
+	 * Increases laundering state for a canonical path
+	 * @param {string} sPath the canonical path
+	 * @param {object} oChangedEntity the changed entity
+	 * @private
+	 */
+	ODataModel.prototype.increaseLaundering = function(sPath, oChangedEntity) {
+		if (!oChangedEntity) {
+			return;
+		}
+		for (var n in oChangedEntity) {
+			if (n === "__metadata") {
+				continue;
+			}
+			var  oObject = oChangedEntity[n];
+			if (jQuery.isPlainObject(oObject)) {
+				this.increaseLaundering(sPath + "/" + n, oObject);
+			} else {
+				var sTargetPath = sPath + "/" + n;
+				if (!(sTargetPath in this.mLaunderingState)) {
+					this.mLaunderingState[sTargetPath] = 0;
+				}
+				this.mLaunderingState[sTargetPath]++;
+			}
+		}
+		if (!(sPath in this.mLaunderingState)) {
+			this.mLaunderingState[sPath] = 0;
+		}
+		this.mLaunderingState[sPath]++;
+	};
+
+	/**
+	 * Decrease one laundering state for the given canonical path
+	 * @param {string} sPath the canonical path
+	 * @param {object} oChangedEntity the changed entity
+	 * @private
+	 */
+	ODataModel.prototype.decreaseLaundering = function(sPath, oChangedEntity) {
+		if (!oChangedEntity) {
+			return;
+		}
+		for (var n in oChangedEntity) {
+			if (n === "__metadata") {
+				continue;
+			}
+			var oObject = oChangedEntity[n],
+				sTargetPath = sPath + "/" + n;
+			if (jQuery.isPlainObject(oObject)) {
+				this.decreaseLaundering(sTargetPath, oObject);
+			} else {
+				if (sTargetPath in this.mLaunderingState) {
+					this.mLaunderingState[sTargetPath]--;
+					if (this.mLaunderingState[sTargetPath] === 0) {
+						delete this.mLaunderingState[sTargetPath];
+					}
+				}
+			}
+		}
+		this.mLaunderingState[sPath]--;
+		if (this.mLaunderingState[sPath] === 0) {
+			delete this.mLaunderingState[sPath];
+		}
 	};
 	
 	return ODataModel;

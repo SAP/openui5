@@ -199,9 +199,9 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType','./DataState'],
 		var oDataState = Binding.prototype._updateDataState.call(this); //super first to apply general status data like messages and laundering
 		if (this.oModel && this.sPath) {
 			oDataState.setInvalidValue(this.vInvalidValue);
-			if (this.vInvalidValue) {
+			/*if (this.vInvalidValue) {
 				return oDataState; // no further processing needed
-			}
+			}*/
 			try  {
 				var oOriginalValue = this.oModel.getOriginalProperty(this.sPath, this.oContext);
 				oDataState.setOriginalValue(this._toExternalValue(oOriginalValue));

@@ -28,6 +28,16 @@
 	
 	var oModel;
 	
+	function spyDataState(oControl, fnTest) {
+		if (oControl.refreshDataState) {
+			var fnRefresh = oControl.refreshDataState;
+			oControl.refreshDataState = function(sName, oDataState) {
+				sap.m.Input.prototype.refreshDataState.apply(oControl, arguments);
+				fnTest(sName, oDataState);
+				oControl.refreshDataState = fnRefresh;
+			}
+		}
+	};
 	//create some components for testing 
 	sap.ui.localResources("components");
 	var oCompCont = new sap.ui.core.ComponentContainer("CompCont", {
@@ -75,35 +85,33 @@
 		}
 	});
 
-	test("componentEnabled", function() {
+	asyncTest("componentEnabled", function() {
 		var oMessageManager = sap.ui.getCore().getMessageManager();
 		var oMessageModel = oMessageManager.getMessageModel();
 		var oCompZip = sap.ui.getCore().byId("zip_enabled");
-		var oChangeHandler = function(oEvent) {
-			if (oEvent.getParameter('dataState').getChanges().messages) {
-				ok(oEvent.getParameter('dataState').getMessages().length == 1, 'Format Message created');
-				ok(oCompZip.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
-				ok(oCompZip.getValueStateText() === 'Enter a value with no more than 5 characters.', 'Input: ValueStateText set correctly')
-				oCompZip.getBinding("value").detachDataStateChange(oChangeHandler);
-			}
-		};
-		var oChangeHandler2 = function(oEvent) {
-			if (oEvent.getParameter('dataState').getChanges().messages) {
-				ok(oEvent.getParameter('dataState').getMessages().length == 0, 'Validation Message deleted');
-				ok(oCompZip.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
-				ok(oCompZip.getValueStateText() === '', 'Input: ValueStateText set correctly')
-				oCompZip.getBinding("value").detachDataStateChange(oChangeHandler);
-			}
-		};
-		oCompZip.getBinding("value").attachDataStateChange(oChangeHandler);
+		
+		spyDataState(oCompZip, function(sName, oDataState) {
+			ok(oDataState.getMessages().length == 1, 'Format Message created');
+			ok(oCompZip.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
+			ok(oCompZip.getValueStateText() === 'Enter a value with no more than 5 characters.', 'Input: ValueStateText set correctly')
+		});
 		var oCoreValHandler = function(oEvent) {
 			ok(false,"should never be called");
 		};
 		sap.ui.getCore().attachValidationError(oCoreValHandler);
 		oCompZip.setValue('123456');
-		oCompZip.getBinding("value").attachDataStateChange(oChangeHandler2);
-		oCompZip.setValue('12345');
-		sap.ui.getCore().detachValidationError(oCoreValHandler);
+		
+		jQuery.sap.delayedCall(0, this, function() {
+			spyDataState(oCompZip, function(sName, oDataState) {
+				ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
+				ok(oCompZip.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
+				ok(oCompZip.getValueStateText() === '', 'Input: ValueStateText set correctly')
+				start();
+			});
+			oCompZip.setValue('12345');
+			sap.ui.getCore().detachValidationError(oCoreValHandler);
+		});
+				
 	});
 	
 	test("componentDisabled", function() {
