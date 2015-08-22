@@ -414,7 +414,7 @@
 	oTable.attachCellContextmenu(function(oEvent) {
 		jQuery.sap.log.info("Cell contextmenu: " + oEvent.getParameter("rowIndex") + " - " + oEvent.getParameter("columnIndex") + " - " + oEvent.getParameter("cellControl").getId());
 	});
-
+	
 	oTable.addExtension(new sap.ui.commons.Button({text: "Hello World"}));
 	oTable.addExtension(new sap.ui.commons.TextView({text: "Hello World"}));
 
@@ -423,7 +423,14 @@
 					new sap.ui.commons.Button({text: "Hello World!"})]
 			});
 	oLayout.placeAt("content");
-
+	
+	var toogleBusyBtn = new sap.ui.commons.Button({
+		text: "Toggle Busy",
+		press: function () {
+			oTable.setBusy(!oTable.getBusy());
+		}
+	});
+	toogleBusyBtn.placeAt("content");
 </script>
 </head>
 <body class="sapUiBody" role="application">

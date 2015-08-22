@@ -18,6 +18,16 @@
 	<script language="javascript">
 		var iPopupDelay = 10; // delay in ms when opening or closing the popup (meant for opening without delay)
 
+		module("BusyIndicatorTests", {
+			setup: function () {
+				window.oUriParams = jQuery.sap.getUriParameters();
+				window.sClass = ".sapUiLocalBusyIndicator";
+				if (oUriParams.get("sap-ui-theme") == "sap_goldreflection") {
+					sClass = ".sapUiBusy";
+				}
+			}
+		});
+		
 		// make sure the BusyIndicator is not rendered initially
 		test("InitialCheck", function() {
 			equal(jQuery(".sapUiBusy").length, 0, "BusyIndicator should not exist initially");
@@ -37,13 +47,16 @@
 		asyncTest("CheckBusyIndicatorOpened", function() {
 			sap.ui.core.BusyIndicator.show(0);
 			setTimeout(function() {
-				equal(jQuery(".sapUiBusy").length, 1, "BusyIndicator should exist after opening");
+				//check if both busyindicators are present
+				equal(jQuery(".sapUiBusy").length, 1, "'Line Sliding' BusyIndicator should exist after opening");
+				equal(jQuery(".sapUiLocalBusyIndicator").length, 1, "'Pulsating Circles' BusyIndicator should exist after opening");
 
-				var $Busy = jQuery(".sapUiBusy");
-				var visible = $Busy.is(":visible") && ($Busy.css("visibility") == "visible");
-				ok(visible, "BusyIndicator should be visible after opening");
+				//check line sliding busy indicator in goldreflection
+				var $Busy = jQuery(sClass);
+				var bVisible = $Busy.is(":visible") && ($Busy.css("visibility") == "visible");
+				ok(bVisible, "BusyIndicator should be visible after opening");
 				ok($Busy.css("top") === "0px", "BusyIndicator is positioned at the top of the window");
-
+				
 				sap.ui.core.BusyIndicator.hide();
 				start();
 			}, iPopupDelay);
@@ -56,12 +69,12 @@
 			// should not be visible yet
 			setTimeout(function() {
 				expect(2);
-				var hidden = jQuery(".sapUiBusy").css("visibility") == "hidden";
+				var hidden = jQuery(sClass).css("visibility") == "hidden";
 				ok(hidden, "BusyIndicator should be still invisible directly after opening it with delay");
 
 				// ...but should be visible now
 				setTimeout(function() {
-					var visible = jQuery(".sapUiBusy").is(":visible") && (jQuery(".sapUiBusy").css("visibility") == "visible");
+					var visible = jQuery(sClass).is(":visible") && (jQuery(sClass).css("visibility") == "visible");
 					ok(visible, "BusyIndicator should be visible 600ms after opening with delay=400ms");
 					sap.ui.core.BusyIndicator.hide();
 					start();
@@ -77,12 +90,12 @@
 			// should not be visible yet
 			setTimeout(function() {
 				expect(2);
-				var hidden = jQuery(".sapUiBusy").css("visibility") == "hidden";
+				var hidden = jQuery(sClass).css("visibility") == "hidden";
 				ok(hidden, "BusyIndicator should be still invisible directly after opening it with delay");
 
 				// ...but should be visible now
 				setTimeout(function() {
-					var visible = jQuery(".sapUiBusy").is(":visible") && (jQuery(".sapUiBusy").css("visibility") == "visible");
+					var visible = jQuery(sClass).is(":visible") && (jQuery(sClass).css("visibility") == "visible");
 					ok(visible, "BusyIndicator should be visible 600ms after opening with delay=400ms");
 					sap.ui.core.BusyIndicator.hide();
 					start();
@@ -96,9 +109,9 @@
 			sap.ui.core.BusyIndicator.hide();
 
 			setTimeout(function() {
-				equal(jQuery(".sapUiBusy").length, 1, "BusyIndicator should exist after first usage");
+				equal(jQuery(sClass).length, 1, "BusyIndicator should exist after first usage");
 
-				var hidden = jQuery(".sapUiBusy").css("visibility") == "hidden";
+				var hidden = jQuery(sClass).css("visibility") == "hidden";
 				ok(hidden, "BusyIndicator should be invisible after closing");
 				start();
 			}, iPopupDelay);
@@ -113,8 +126,8 @@
 				setTimeout(function() {
 					sap.ui.core.BusyIndicator.show(0);
 					setTimeout(function() {
-						equal(jQuery(".sapUiBusy").length, 1, "BusyIndicator should exist once even after opening multiple times");
-						var visible = jQuery(".sapUiBusy").is(":visible") && (jQuery(".sapUiBusy").css("visibility") == "visible");
+						equal(jQuery(sClass).length, 1, "BusyIndicator should exist once even after opening multiple times");
+						var visible = jQuery(sClass).is(":visible") && (jQuery(sClass).css("visibility") == "visible");
 						ok(visible, "BusyIndicator should be visible after opening (multiple times)");
 						start();
 					}, iPopupDelay);
@@ -129,9 +142,9 @@
 			sap.ui.core.BusyIndicator.hide();
 
 			setTimeout(function() {
-				equal(jQuery(".sapUiBusy").length, 1, "BusyIndicator should exist once after opening multiple times and closing once");
+				equal(jQuery(sClass).length, 1, "BusyIndicator should exist once after opening multiple times and closing once");
 
-				var hidden = jQuery(".sapUiBusy").css("visibility") == "hidden";
+				var hidden = jQuery(sClass).css("visibility") == "hidden";
 				ok(hidden, "BusyIndicator should be invisible after opening multiple times and closing once");
 				start();
 			}, iPopupDelay);

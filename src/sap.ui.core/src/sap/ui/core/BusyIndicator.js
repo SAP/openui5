@@ -3,8 +3,8 @@
  */
 
 // A static class to show a busy indicator
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', './Popup', './Core'],
-	function(jQuery, Device, EventProvider, Popup, Core) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', './Popup', './Core', './BusyIndicatorUtils'],
+	function(jQuery, Device, EventProvider, Popup, Core, BusyIndicatorUtils) {
 	"use strict";
 
 	/**
@@ -41,8 +41,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 	 */
 	BusyIndicator._init = function() {
 		// Create the graphics element
-		var root = document.createElement("div");
-		root.id = this.sDOM_ID;
+		// inserts 2 divs:
+		// 1. an empty one which will contain the old indicator (used in goldreflection)
+		// 2. a div containing the new standard busy indicator (used in bluecrystal)
+		var $root = jQuery("<div style='bottom: 0; right: 0;'>" + "<div></div>" + BusyIndicatorUtils.getHTML("Big") + "</div>");
+		var oRootDomRef = $root[0];
+		oRootDomRef.id = this.sDOM_ID;
 
 		this._oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
 		var sTitle = this._oResBundle.getText("BUSY_TEXT");
@@ -50,11 +54,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 
 		// Render into invisible area, so the size settings from CSS are applied
 		var oInvisible = sap.ui.getCore().getStaticAreaRef();
-		oInvisible.appendChild(root);
-		jQuery(root).addClass("sapUiBusy").attr("tabindex", 0).attr("role", "progressbar").attr("alt", "").attr("title", sTitle);
-		this.oDomRef = root;
+		oInvisible.appendChild($root[0]);
+		
+		jQuery($root.children()[0]).addClass("sapUiBusy").attr("tabindex", 0).attr("role", "progressbar").attr("alt", "").attr("title", sTitle);
+		jQuery($root.children()[1]).addClass("sapUiLocalBusyIndicatorSizeBig").attr("title", sTitle);
+		
+		this.oDomRef = oRootDomRef;
 
-		this.oPopup = new Popup(root);
+		this.oPopup = new Popup(oRootDomRef);
 		this.oPopup.setModal(true, "sapUiBlyBusy");
 		this.oPopup.setShadow(false);
 
@@ -66,7 +73,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 			this._iBusyTimeStep = 50;
 			this._iBusyWidth = 500;
 
-			this.attachOpen(this._IEAnimation, this);
+			this.attachOpen(function () {
+				BusyIndicatorUtils.animateIE9.start(jQuery($root.children()[1]));
+				this._IEAnimation(jQuery($root.children()[0]));
+			}, this);
 		}
 	};
 
@@ -77,11 +87,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 	 * @name sap.ui.core.BusyIndicator._IEAnimation
 	 * @function
 	 */
-	BusyIndicator._IEAnimation = function(oEvent) {
-		if (!this._$BusyIndicator && oEvent) {
+	BusyIndicator._IEAnimation = function($BusyIndicator) {
+		if (!this._$BusyIndicator && $BusyIndicator) {
 			// save the DOM-Ref when function is called for the first time to save
 			// the expensive DOM-calls during animation
-			this._$BusyIndicator = oEvent.getParameter("$Busy");
+			this._$BusyIndicator = $BusyIndicator;
 		}
 		jQuery.sap.clearDelayedCall(this._iAnimationTimeout);
 
@@ -173,7 +183,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', '../base/EventProvider', '.
 
 		// Actually open the popup
 		this.oPopup.attachOpened(fnOpened);
-		this.oPopup.open(0, Popup.Dock.CenterCenter, Popup.Dock.CenterCenter, document);
+		this.oPopup.open(0, Popup.Dock.LeftTop, Popup.Dock.LeftTop, document);
 	};
 
 	/**
