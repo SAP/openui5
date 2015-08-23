@@ -85,6 +85,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 		metadata : {
 			stereotype : "component",
 			"abstract": true,
+			specialSettings: {
+				/*
+				 * Component data
+				 */
+				componentData: true
+			},
 			version : "0.0",
 			/*enable/disable type validation by MessageManager
 			handleValidation: 'boolean'*/
