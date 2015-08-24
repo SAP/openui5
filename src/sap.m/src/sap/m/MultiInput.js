@@ -576,10 +576,17 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			if (totalNeededWidth < availableWidth) {
 				inputWidth = inputWidthMinimalNeeded + availableWidth - totalNeededWidth;
 			} else {
-				inputWidth = inputWidthMinimalNeeded + additionalWidth;
-				tokenizerWidth = availableWidth - inputWidth - iconWidth;
-			}
+				if (tokenizerWidth === 0 && inputWidthMinimalNeeded > availableWidth) {
+				//if there is no token in multiinput, the innerinput width should not exceed multiinput width
+					inputWidth = availableWidth;
+				} else {
+					inputWidth = inputWidthMinimalNeeded + additionalWidth;
+					tokenizerWidth = availableWidth - inputWidth - iconWidth;
+				}
 				
+			}
+			
+			
 			jQuery($this.find(".sapMInputBaseInner")[0]).css("width", inputWidth + "px");
 				
 			this._tokenizer.setPixelWidth(tokenizerWidth);
