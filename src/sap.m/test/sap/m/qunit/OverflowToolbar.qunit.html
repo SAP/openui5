@@ -339,8 +339,8 @@
 
 		test("Buttons with priority NeverOverflow should never overflow", function () {
 
-			// Create a toolbar 75px and 5 buttons x 100px, so all buttons should overflow by default, 
-			// but one of the button has special priority whith force the button to stay
+			// Create a toolbar 75px and 5 buttons x 100px, so all buttons should overflow by default,
+			// but one of the buttons has special priority which forces the button to stay
 
 			var aDefaultContent = [
 						getButton('1'),
@@ -361,7 +361,7 @@
 
 		test("Buttons with priority AlwaysOverflow should always overflow", function () {
 
-			// Create a toolbar 600px and 5 buttons x 100px, so there is enough space for all buttons, 
+			// Create a toolbar 600px and 5 buttons x 100px, so there is enough space for all buttons,
 			// but two of the button has special priority whith force the buttons to overflow always
 			var aDefaultContent = [
 						getButton('1'),
@@ -387,7 +387,7 @@
 
 		test("Buttons with priority Disappear should be hidden in the overflow area", function () {
 
-			// Create a toolbar 600px and 5 buttons x 100px, so all buttons should be visible, 
+			// Create a toolbar 600px and 5 buttons x 100px, so all buttons should be visible,
 			// but one of the button has special priority Disappear, so when it overflows it should be hidden in the overflow popover
 			var oButtonWithDisappearPriority = getButton('5', sap.m.OverflowToolbarPriority.Disappear);
 
@@ -401,7 +401,7 @@
 					oOverflowTB = createOverflowToolbar({
 						width: "600px"
 					}, aDefaultContent);
-			
+
 			// Shrink the toolbar
 			oOverflowTB.setWidth('300px');
 			sap.ui.getCore().applyChanges();
@@ -420,7 +420,7 @@
 
 		test("Changing piority from Low to High should move the button from the overflow area back to the toolbar", function () {
 
-			// Create a toolbar 300px and 5 buttons x 100px, so there is no enogh space for all buttons. 
+			// Create a toolbar 300px and 5 buttons x 100px, so there is no enogh space for all buttons.
 			// Since all buttons are with equal priority 'Low' they should overflow from right to the left.
 			var oButtonUnderTest = getButton('5', sap.m.OverflowToolbarPriority.Low);
 
@@ -452,7 +452,7 @@
 
 		test("Changing priority from Low to NeverOverflow should move the button to the overflow", function () {
 
-			// Create a toolbar 300px and 5 buttons x 100px, so there is no enogh space for all buttons. 
+			// Create a toolbar 300px and 5 buttons x 100px, so there is no enogh space for all buttons.
 			// Since all buttons are with equal priority 'Low', they should overflow from right to the left.
 			var oButtonUnderTest = getButton('5', sap.m.OverflowToolbarPriority.Low);
 
@@ -467,7 +467,7 @@
 					oOverflowTB = createOverflowToolbar({
 						width: "300px"
 					}, aDefaultContent);
-			
+
 			//Check if the button is visible in the toolbar
 			strictEqual(oButtonUnderTest.$().is(":visible"), false,
 				"The button with Low Priority is not visible whithin the toolbar");
@@ -527,7 +527,7 @@
 
 		test("Changing priority from High to AlwaysOverflow should move the button to the overflow", function () {
 
-			// Create a toolbar 300px and 5 buttons x 100px, so there is no enogh space for all buttons. 
+			// Create a toolbar 300px and 5 buttons x 100px, so there is no enogh space for all buttons.
 			// Since all buttons are with equal priority 'High' they should overflow from right to the left.
 			var oButtonUnderTest = getButton('1', sap.m.OverflowToolbarPriority.High);
 
@@ -568,7 +568,7 @@
 
 		test("Buttons with Priority High should overflow last among the buttons with Priority Low", function () {
 
-			// Create a toolbar 600px and 5 buttons x 100px, so there is enough space for all buttons, 
+			// Create a toolbar 600px and 5 buttons x 100px, so there is enough space for all buttons,
 			// and position the button with Priority High in the rightmost in the toolbar
 			var oButtonWithHighPriority = getButton('5', sap.m.OverflowToolbarPriority.High);
 
@@ -597,7 +597,7 @@
 
 		test("Button with Priority Low should overflow first among buttons with Priority High", function () {
 
-			// Create a toolbar 600px and 5 buttons x 100px, so there is enough space for all buttons, 
+			// Create a toolbar 600px and 5 buttons x 100px, so there is enough space for all buttons,
 			// and position the button with Priority Low in the leftmost in the toolbar
 			var oButtonWithLowPriority = getButton('1', sap.m.OverflowToolbarPriority.Low);
 
@@ -633,7 +633,7 @@
 
 		test("Buttons with equal priority should follow the general overflow order", function () {
 
-			// Create a toolbar 600px and 5 buttons x 100px with priority Low 
+			// Create a toolbar 600px and 5 buttons x 100px with priority Low
 			var oLeftMostButton = getButton('1');
 			var oRightMostButton = getButton('5');
 
@@ -665,7 +665,7 @@
 
 		test("The order of the items in the overflow area should correspond to the overflow order", function () {
 
-			// Create a toolbar 75px and 5 buttons x 100px, so there is no enogh space and all buttons should overflow. 
+			// Create a toolbar 75px and 5 buttons x 100px, so there is no enogh space and all buttons should overflow.
 			// The buttons have different priorities which affects the order of overflow,
 			// and their position in the popover correspond the order they overflow.
 			var oButtonDefaultPriority = getButton('1'),
@@ -925,7 +925,7 @@
 
 			// Check if the new member of group number 1 is visible in the overflow area
 			strictEqual(oButtonUnderTest.$().is(":visible"), true,
-				"The button under test from group number 1 is visible whithin the overflow");
+				"The button under test from group number 1 is visible within the overflow");
 
 			oOverflowTB.destroy();
 		});
@@ -966,7 +966,7 @@
 			oOverflowTB.destroy();
 		});
 
-		test("Group overral priority should be the max priority of its members", function () {
+		test("Group overall priority should be the max priority of its members", function () {
 			// Create a toolbar 500px and 5 buttons x 100px
 			// Two of the buttons belongs to group number 1
 			var oGroupedButton1 = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
