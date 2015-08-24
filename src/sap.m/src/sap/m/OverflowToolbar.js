@@ -256,8 +256,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 					}
 					return iContentSize;
 				},
-				// Aggregate controls from this array of elements [el1, el2, el3] to array of arrays and elements [el1, [el2, el3]].
-				// This is needed because group of elements and single elements share same overflow logic
+				// Aggregate the controls from this array of elements [el1, el2, el3] to an array of arrays and elements [el1, [el2, el3]].
+				// This is needed because groups of elements and single elements share same overflow logic
 				// In order to sort elements and group arrays there are _index and _priority property to group array.
 				fnAggregateMovableControls = function(aMovableControls) {
 					var oGroups =  {},
@@ -276,11 +276,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 							aGroup = oGroups[iControlGroup];
 							aGroup.push(oControl);
 
-							// The overall group priority is the max priority of it's elements
+							// The overall group priority is the max priority of its elements
 							if (!aGroup._priority || oPriorityOrder[aGroup._priority] < oPriorityOrder[sControlPriority]) {
 								aGroup._priority = sControlPriority;
 							}
-							// The overall group index is the max index of it's elements
+							// The overall group index is the max index of its elements
 							if (!aGroup._index || aGroup._index < iControlIndex) {
 								aGroup._index = iControlIndex;
 							}

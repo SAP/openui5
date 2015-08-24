@@ -1152,47 +1152,47 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	};
 
+	/**
+	 * Defines the priorities of the controls within sap.m.OverflowToolbar
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.32
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.OverflowToolbarPriority = {
+
 		/**
-		 * Defines the priorities of the controls within sap.m.OverflowToolbar
-		 *
-		 * @enum {string}
+		 * NeverOverflow priority forces OverflowToolbar items to remain always in the toolbar
 		 * @public
-		 * @since 1.32
-		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		sap.m.OverflowToolbarPriority = {
+		NeverOverflow : "Never",
 
-			/**
-			 * NeverOverflow priority forces OverflowToolbar items to remain always in the toolbar
-			 * @public
-			 */
-			NeverOverflow : "Never",
+		/**
+		 * High priority OverflowToolbar items overflow after the items with lower priority
+		 * @public
+		 */
+		High : "High",
 
-			/**
-			 * High priority OverflowToolbar items overflow after the items with lower priority
-			 * @public
-			 */
-			High : "High",
+		/**
+		 * Low priority  OverflowToolbar items overflow before the items with higher priority such as High priority items
+		 * @public
+		 */
+		Low : "Low",
 
-			/**
-			 * Low priority  OverflowToolbar items overflow before the items with higher priority sich as High priority items
-			 * @public
-			 */
-			Low : "Low",
+		/**
+		 * Disappear priority  OverflowToolbar items overflow before the items with higher priority such as Low and High priority items and remain hidden in the overflow area
+		 * @public
+		 */
+		Disappear : "Disappear",
 
-			/**
-			 * Disappear priority  OverflowToolbar items overflow before the items with higher priority sich as Low and High priority items and remain hidden in the overflow area
-			 * @public
-			 */
-			Disappear : "Disappear",
+		/**
+		 * AlwaysOverflow priority forces OverflowToolbar items to remain always in the overflow area
+		 * @public
+		 */
+		AlwaysOverflow : "Always"
 
-			/**
-			 * AlwaysOverflow priority forces OverflowToolbar items to remain always in the overflow area
-			 * @public
-			 */
-			AlwaysOverflow : "Always"
-
-		};
+	};
 
 	/**
 	 * Marker interface for controls which are suitable as items for the ObjectHeader.
