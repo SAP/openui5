@@ -20,16 +20,6 @@
 								<Input type="Text"/>
 							</fb:control>
 						</fb:FilterItem>
-						<fb:FilterItem name="B" label="labelB" labelTooltip="Tooltip Example" mandatory="true">
-							<fb:control>
-								<Input type="Text"/>
-							</fb:control>
-						</fb:FilterItem>
-						<fb:FilterItem name="B" label="labelB" labelTooltip="Tooltip Example" mandatory="true">
-							<fb:control>
-								<Input type="Text"/>
-							</fb:control>
-						</fb:FilterItem>
 					</fb:filterItems>
 					<fb:filterGroupItems>
 						<fb:FilterGroupItem groupName="G1" groupTitle="Group1" name="A" label="labelA" labelTooltip="Tooltip GroupItem Example">
