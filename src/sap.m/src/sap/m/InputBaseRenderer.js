@@ -69,7 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		this.prependInnerContent(oRm, oControl);
 
 		// enable self-made placeholder
-		if (oControl._bShowLabelAsPlaceholder) {
+		if (oControl.bShowLabelAsPlaceholder) {
 			oRm.write("<label");
 			oRm.writeAttribute("id", oControl.getId() + "-placeholder");
 			oRm.writeAttribute("for", oControl.getId() + "-inner");
@@ -97,7 +97,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		}
 
 		// let the browser handle placeholder
-		if (!oControl._bShowLabelAsPlaceholder && oControl._getPlaceholder()) {
+		if (!oControl.bShowLabelAsPlaceholder && oControl._getPlaceholder()) {
 			oRm.writeAttributeEscaped("placeholder", oControl._getPlaceholder());
 		}
 

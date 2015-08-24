@@ -8,11 +8,13 @@
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-noConflict="true"
 				data-sap-ui-libs="sap.m"
+				data-sap-ui-language="en"
 				src="../../../../resources/sap-ui-core.js">
 		</script>
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
@@ -58,6 +60,7 @@
 				strictEqual(oInput.getName(), "", 'The default name is ""');
 				strictEqual(oInput.getPlaceholder(), "", 'The default placeholder value is ""');
 				strictEqual(oInput.getEditable(), true, 'By default the input field is editable');
+				strictEqual(oInput.getTooltip(), null);
 
 				// cleanup
 				oInput.destroy();
@@ -770,12 +773,12 @@
 					sap.ui.getCore().applyChanges();
 
 					// assertions
-					if (!oInput._bShowLabelAsPlaceholder) {
+					if (!oInput.bShowLabelAsPlaceholder) {
 						strictEqual(jQuery(oInput.getFocusDomRef()).attr("placeholder"), mSettings.output);
 					}
 					
 					// force to show synthetic placeholder
-					this.stub(sap.m.InputBase.prototype, "_bShowLabelAsPlaceholder", true);
+					this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", true);
 					
 					// rerender for synthetic placeholder 
 					oInput.rerender();
@@ -826,12 +829,12 @@
 					sap.ui.getCore().applyChanges();
 
 					// assertions
-					if (!oInput._bShowLabelAsPlaceholder) {
+					if (!oInput.bShowLabelAsPlaceholder) {
 						strictEqual(jQuery(oInput.getFocusDomRef()).attr("placeholder") || "", mSettings.output);
 					}
 					
 					// force to show synthetic placeholder
-					this.stub(sap.m.InputBase.prototype, "_bShowLabelAsPlaceholder", true);
+					this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", true);
 					
 					// rerender for synthetic placeholder 
 					oInput.rerender();
@@ -961,7 +964,7 @@
 			});
 
 			/* ------------------------------ */
-			/* setTextAlign()                     */
+			/* setTextAlign()                 */
 			/* ------------------------------ */
 
 			var fnSetTextAlignTestCase1 = function(mSettings) {
@@ -1307,7 +1310,37 @@
 				// cleanup
 				oInput.destroy();
 			});
-			
+
+			test("onChange it should fire the change event sync", function() {
+
+				// system under test
+				var sExpectedValue = "lorem ipsum";
+				var oInput = new sap.m.InputBase();
+				var oButton = new sap.m.Button({
+					text: "button"
+				});
+
+				// arrange
+				oInput.placeAt("content");
+				oButton.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oInput.focus();
+				oInput.getFocusDomRef().value = sExpectedValue;
+				var fnFireChangeSpy = this.spy(oInput, "fireChange");
+
+				// act
+				oButton.focus();
+
+				// assert
+				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired sync');
+				strictEqual(oInput.getValue(), sExpectedValue);
+				strictEqual(oInput.getProperty("value"), sExpectedValue);
+
+				// cleanup
+				oInput.destroy();
+				oButton.destroy();
+			});
+
 			test("escape should return the last known value and fire private liveChange event", function() {
 
 				// system under test

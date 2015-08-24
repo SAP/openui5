@@ -279,7 +279,7 @@
 
 		// temporarily overwrite function to get a placeholder on all browsers
 
-		this.stub(sap.m.InputBase.prototype, "_bShowLabelAsPlaceholder", true);
+		this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", true);
 		oInput._bShowLabelAsPlaceholder = function() {return true;}
 		oInput.rerender();
 		oInput.$().find("label").css("display","block");

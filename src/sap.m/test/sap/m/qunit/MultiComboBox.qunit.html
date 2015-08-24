@@ -2579,9 +2579,9 @@
 				"Dom value and value property are same after wrong character was typed");
 		ok(oMultiComboBox.$().hasClass("sapMInputBaseError"),
 				'The MultiComboBox must have the css class sapMInputBaseError');
-		this.clock.tick(500);
+		this.clock.tick(1100);
 		ok(!oMultiComboBox.$().hasClass("sapMInputBaseError"),
-				'The MultiComboBox must not have the css class sapMInputBaseError after 300 msec');
+				'The MultiComboBox must not have the css class sapMInputBaseError after 1000 msec');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -2622,9 +2622,9 @@
 				"Dom value and value property are same after wrong character was typed");
 		ok(oMultiComboBox.$().hasClass("sapMInputBaseError"),
 				'The MultiComboBox must have the css class sapMInputBaseError');
-		this.clock.tick(500);
+		this.clock.tick(1100);
 		ok(!oMultiComboBox.$().hasClass("sapMInputBaseError"),
-				'The MultiComboBox must not have the css class sapMInputBaseError after 300 msec');
+				'The MultiComboBox must not have the css class sapMInputBaseError after 1000 msec');
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -2866,14 +2866,16 @@
 		// arrange          
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
+		oMultiComboBox.focus();
 
 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
 		var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
+		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), oItem.getText());
 
 		// act
-		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), oItem.getText());
-		sap.ui.test.qunit.triggerEvent("focusout", oMultiComboBox.getDomRef());
+		oMultiComboBox.getFocusDomRef().blur();
+		this.clock.tick(0);
 
 		// assertions        
 		deepEqual(oMultiComboBox.getSelectedItems(), []);
@@ -3156,7 +3158,7 @@
 		sap.ui.test.qunit
 				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
-		var oDomListItem = jQuery.find(".sapMComboBoxBaseItem")[0];
+		var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
 		sap.ui.test.qunit.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
@@ -3213,7 +3215,7 @@
 		sap.ui.test.qunit
 				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
-		var oDomListItem = jQuery.find(".sapMComboBoxBaseItem")[0];
+		var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
 		sap.ui.test.qunit.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
@@ -3575,7 +3577,7 @@
 				ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
 
 				// act
-				var oDomListItem = jQuery.find(".sapMComboBoxBaseItem")[0];
+				var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 				sap.ui.test.qunit.triggerKeyup(oDomListItem, jQuery.sap.KeyCodes.SPACE);
 				this.clock.tick(500);
 
@@ -3676,7 +3678,7 @@
 		this.clock.tick(500);
 
 		// act
-		var oDomListItem = jQuery.find(".sapMComboBoxBaseItem")[0];
+		var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
 		sap.ui.test.qunit.triggerEvent("tap", oDomListItem, {
 			srcControl : oListItem
@@ -3824,7 +3826,7 @@
 		this.clock.tick(500);
 
 		// act
-		var oDomListItem = jQuery.find(".sapMComboBoxBaseItem")[0];
+		var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
 		sap.ui.test.qunit.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
@@ -3921,7 +3923,7 @@
 		sap.ui.test.qunit
 				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
-		var oDomListItem = jQuery.find("." + sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Item")[0];
+		var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
 		sap.ui.test.qunit.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
@@ -4006,5 +4008,3 @@
 	<div id="MultiComboBox-content" class="select-content"></div>
 </body>
 </html>
-
-
