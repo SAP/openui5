@@ -672,7 +672,14 @@
 	module("Component Metadata: Version Check", {
 		setup: function() {
 			this.fnGetVersionInfo = sap.ui.getVersionInfo;
-			this.oVersionInfo = this.fnGetVersionInfo();
+			try {
+				this.oVersionInfo = this.fnGetVersionInfo();
+			} catch (e) {
+				// if no version info is there we fake it
+				this.oVersionInfo = {
+					version: sap.ui.version
+				};
+			}
 			sap.ui.getVersionInfo = function() {
 				return this.oVersionInfo;
 			}.bind(this);
@@ -694,7 +701,13 @@
 				bFound = true;
 			}
 		}
-		ok(bFound, "Warning has been reported!");
+		// in case of debug mode is on the warning should be reported
+		// when it is turned off => no warning!
+		if (sap.ui.getCore().getConfiguration().getDebug()) {
+			ok(bFound, "Warning has been reported!");
+		} else {
+			ok(!bFound, "Warning has not been reported!");
+		}
 		moduleTeardown.call(this);
 		sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
 	});

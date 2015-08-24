@@ -207,16 +207,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 				oParent.init();
 			}
 
-			// version check => only if minVersion is available a warning will be logged
+			// version check => only if minVersion is available a warning 
+			// will be logged and the debug mode is turned on 
 			// TODO: enhance version check also for libraries and components
 			var oManifestUI5 = this.getManifestEntry("sap.ui5");
 			var sMinUI5Version = oManifestUI5["dependencies"] && oManifestUI5["dependencies"]["minUI5Version"];
-			if (sMinUI5Version && jQuery.sap.log.isLoggable(jQuery.sap.log.LogLevel.WARNING)) {
-				var oVersionInfo = sap.ui.getVersionInfo();
-				var oMinVersion = getVersionWithoutSuffix(sMinUI5Version);
-				var oVersion = getVersionWithoutSuffix(oVersionInfo && oVersionInfo.version);
-				if (oMinVersion.compareTo(oVersion) > 0) {
-					jQuery.sap.log.warning("Component \"" + this.getComponentName() + "\" requires at least version \"" + oMinVersion.toString() + "\" but running on \"" + oVersion.toString() + "\"!");
+			if (sMinUI5Version && 
+				jQuery.sap.log.isLoggable(jQuery.sap.log.LogLevel.WARNING) && 
+				sap.ui.getCore().getConfiguration().getDebug()) {
+				// try catch to avoid that getVersionInfo breaks the execution
+				try {
+					var oVersionInfo = sap.ui.getVersionInfo();
+					var oMinVersion = getVersionWithoutSuffix(sMinUI5Version);
+					var oVersion = getVersionWithoutSuffix(oVersionInfo && oVersionInfo.version);
+					if (oMinVersion.compareTo(oVersion) > 0) {
+						jQuery.sap.log.warning("Component \"" + this.getComponentName() + "\" requires at least version \"" + oMinVersion.toString() + "\" but running on \"" + oVersion.toString() + "\"!");
+					}
+				} catch (e) {
+					jQuery.sap.log.warning("The validation of the version for Component \"" + this.getComponentName() + "\" failed! Reasion: " + e);
 				}
 			}
 
