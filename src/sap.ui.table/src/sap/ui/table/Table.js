@@ -722,34 +722,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		var iFixedBottomRows = this.getFixedBottomRowCount();
 		var iVisibleRowCount = this.getVisibleRowCount();
 
-		if (oBinding) {
-			jQuery.each(this.getRows(), function(iIndex, oRow) {
-				var $rowDomRefs = oRow.getDomRefs(true);
-				
-				// update row header tooltip
-				if (oRow.getBindingContext()) {
-					$rowDomRefs.rowSelector.attr("title", this._oResBundle.getText("TBL_ROW_SELECT"));
-				} else {
-					$rowDomRefs.rowSelector.attr("title", "");
-				}
-				
-				if (iFixedTopRows > 0) {
-					$rowDomRefs.row.toggleClass("sapUiTableFixedTopRow", iIndex < iFixedTopRows);
-					$rowDomRefs.row.toggleClass("sapUiTableFixedLastTopRow", iIndex == iFixedTopRows - 1);
-				}
 
-				if (iFixedBottomRows > 0) {
-					var bIsPreBottomRow;
+		jQuery.each(this.getRows(), function(iIndex, oRow) {
+			var $rowDomRefs = oRow.getDomRefs(true);
+
+			// update row header tooltip
+			if (oRow.getBindingContext() && this._isRowSelectable(oRow.getIndex())) {
+				$rowDomRefs.rowSelector.attr("title", this._oResBundle.getText("TBL_ROW_SELECT"));
+			} else {
+				$rowDomRefs.rowSelector.attr("title", "");
+			}
+
+			if (iFixedTopRows > 0) {
+				$rowDomRefs.row.toggleClass("sapUiTableFixedTopRow", iIndex < iFixedTopRows);
+				$rowDomRefs.row.toggleClass("sapUiTableFixedLastTopRow", iIndex == iFixedTopRows - 1);
+			}
+
+			if (iFixedBottomRows > 0) {
+				var bIsPreBottomRow = false;
+				if (oBinding) {
 					if (oBinding.getLength() >= iVisibleRowCount) {
 						bIsPreBottomRow = (iIndex == iVisibleRowCount - iFixedBottomRows - 1);
 					} else {
 						bIsPreBottomRow = (this.getFirstVisibleRow() + iIndex) == (oBinding.getLength() - iFixedBottomRows - 1) && (this.getFirstVisibleRow() + iIndex) < oBinding.getLength();
 					}
-
-					$rowDomRefs.row.toggleClass("sapUiTableFixedPreBottomRow", bIsPreBottomRow);
 				}
-			}.bind(this));
-		}
+
+				$rowDomRefs.row.toggleClass("sapUiTableFixedPreBottomRow", bIsPreBottomRow);
+			}
+		}.bind(this));
+
 
 		// update the row header (sync row heights)
 		this._updateRowHeader();
