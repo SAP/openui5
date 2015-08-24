@@ -13,7 +13,7 @@
     var suite = new parent.jsUnitTestSuite();
     var contextPath = "/" + window.location.pathname.split("/")[1];
 
-    var isSupported = sap.ui.Device.browser.chrome || sap.ui.Device.browser.safari || sap.ui.Device.browser.firefox || (sap.ui.Device.browser.ie && sap.ui.Device.browser.version >= 11);
+    var isSupported = sap.ui.Device.browser.chrome || sap.ui.Device.browser.safari || sap.ui.Device.browser.firefox || (sap.ui.Device.browser.msie && sap.ui.Device.browser.version >= 11);
 
     if(isSupported){
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/DesignTime.qunit.html");
