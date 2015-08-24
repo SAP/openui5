@@ -36,7 +36,6 @@
 			var app = new sap.m.App("myApp", {initialPage: "page1"});
 			var _buttonWidth = "300px";
 
-			var sDateFormat = sap.m.getLocaleData().getDatePattern("medium");
 			var oDialog1 = new sap.m.Dialog("dialog1", {
 				title: "World Domination",
 				icon: "sap-icon://employee",
@@ -94,51 +93,33 @@
 						progress: true
 					}),
 					new sap.m.Label({text: "Starting on"}),
-					new sap.m.DateTimeInput("startDate", {
-						type: sap.m.DateTimeInputType.Date,
-						displayFormat: sDateFormat,
-						valueFormat: sDateFormat,
+					new sap.m.DatePicker("startDate", {
 						width: "150px"
 					}),
 					new sap.m.Label({text: "E-mail address for confirmation"}),
-					new sap.m.DateTimeInput({
-						type: sap.m.DateTimeInputType.Date,
-						displayFormat: sDateFormat,
-						valueFormat: sDateFormat,
+					new sap.m.DatePicker({
 						width: "150px"
 					}),
 					new sap.m.Label({text: "Starting on"}),
-					new sap.m.DateTimeInput({
-						type: sap.m.DateTimeInputType.Date,
-						displayFormat: sDateFormat,
-						valueFormat: sDateFormat,
+					new sap.m.DatePicker({
 						width: "150px"
 					}),
 					new sap.m.Label({text: "E-mail address for confirmation"}),
 					new sap.m.Input({type: sap.m.InputType.Email, placeholder: "E-mail"}),
 					new sap.m.Label({text: "Starting on"}),
-					new sap.m.DateTimeInput({
-						type: sap.m.DateTimeInputType.Date,
-						displayFormat: sDateFormat,
-						valueFormat: sDateFormat,
+					new sap.m.DatePicker({
 						width: "150px"
 					}),
 					new sap.m.Label({text: "E-mail address for confirmation"}),
 					new sap.m.Input({type: sap.m.InputType.Email, placeholder: "E-mail"}),
 					new sap.m.Label({text: "Starting on"}),
-					new sap.m.DateTimeInput({
-						type: sap.m.DateTimeInputType.Date,
-						displayFormat: sDateFormat,
-						valueFormat: sDateFormat,
+					new sap.m.DatePicker({
 						width: "150px"
 					}),
 					new sap.m.Label({text: "E-mail address for confirmation"}),
 					new sap.m.Input({type: sap.m.InputType.Email, placeholder: "E-mail"}),
 					new sap.m.Label({text: "Starting on"}),
-					new sap.m.DateTimeInput({
-						type: sap.m.DateTimeInputType.Date,
-						displayFormat: sDateFormat,
-						valueFormat: sDateFormat,
+					new sap.m.DatePicker({
 						width: "800px"
 					}),
 					new sap.m.Label({text: "E-mail address for confirmation"}),
@@ -1242,10 +1223,7 @@
 						}
 					}),
 					new sap.m.Label({text: "Starting on"}).addStyleClass("specialLabelDialogPage"),
-					new sap.m.DateTimeInput({
-						type: sap.m.DateTimeInputType.Date,
-						displayFormat: sDateFormat,
-						valueFormat: sDateFormat,
+					new sap.m.DatePicker({
 						width: "150px"
 					}),
 					new sap.m.Label({text: "E-mail address for confirmation"}).addStyleClass("specialLabelDialogPage"),
