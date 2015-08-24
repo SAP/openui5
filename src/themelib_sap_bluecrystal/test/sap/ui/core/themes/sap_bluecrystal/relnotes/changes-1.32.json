@@ -1,0 +1,196 @@
+{
+  "1.32.0": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "1fce1c8750ea61fa6f074211401efc2c01d762ba",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Bluecrystal Theme: Unify Background theming across different libraries",
+        "references": []
+      },
+      {
+        "id": "d77d44795b05b3d1b8675c95e91a170fe58021cb",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "BusyIndicator: New Animation",
+        "references": []
+      },
+      {
+        "id": "71beb115af2453b9301ea82fd6b0b235f3d02b76",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "new sap.ui.unified.MonthInterval: Initial version",
+        "references": []
+      },
+      {
+        "id": "cc1405cab14d381c7033a96f249b24f8124c0168",
+        "author": "Martin Hristov \u003cmartin.r.hristov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.RadioButton: Visual focus enhancements",
+        "references": []
+      },
+      {
+        "id": "45a89ebff3d8976ee7d559e8eb910590d19b93f3",
+        "author": "Diana Mihaylova \u003cdiana.mihaylova@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.TimePicker: New control implemented",
+        "references": []
+      },
+      {
+        "id": "7182f665bd99f4ccc3552b4068d1c70d204d6fbd",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unifield.CalendarTimeInterval: New control",
+        "references": []
+      },
+      {
+        "id": "f415d104e6738e74653af76d531eeee2ba7a6fe7",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Microsoft Edge Support: Fix CSS text-align statements in",
+        "references": []
+      },
+      {
+        "id": "3ed5d4ebfcb2c3f383387966eb5dfb28b187ce9a",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "Toolbar and selected hover fix",
+        "references": []
+      },
+      {
+        "id": "5b120898d8bfa5c46c0e09f8931e1a88999cd518",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Fix custom placeholder alignment issue in Internet Explorer 10",
+        "references": []
+      },
+      {
+        "id": "0ae68e33454e045ebc6c910344b5f7806f5c0abf",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Fix left paddings",
+        "references": []
+      },
+      {
+        "id": "613ff26327e606a9bcce42fd46a45419a423deee",
+        "author": "Teodor Taushanov \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: UI Consistency on \"showAll\" filter with horizontal design is fixed",
+        "references": []
+      },
+      {
+        "id": "29eb9276332d46517f6f258df21f5d11efdfd982",
+        "author": "Teodor Todorov \u003cteodor.todorov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectNumber: Number unit position corrected",
+        "references": []
+      },
+      {
+        "id": "d6a76ff0715ef50d38dff37ed9d683226988e335",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: No separator between master and detail areas",
+        "references": []
+      },
+      {
+        "id": "fed48c6297f412b77dd9fb46ec5eb93adf38737c",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Switch: Fix border issue at zoom in \u003c 100%",
+        "references": []
+      },
+      {
+        "id": "1b52d529f3e004c76446f9227f062b896c1504fc",
+        "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Display of buttons for width equal 30rem corrected",
+        "references": []
+      },
+      {
+        "id": "702a22cfe9e9ad5da1a42d2aec17e36926e5ebec",
+        "author": "Tatiana Medvedeva \u003ctatiana.medvedeva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Style of \u0027upload file\u0027 button corrected",
+        "references": []
+      },
+      {
+        "id": "671e631cd6f2add405da978eaa82e91a05ac70da",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.searchField: Incorrect button state in Firefox",
+        "references": []
+      },
+      {
+        "id": "8014bbfeb999bb4cdf50707e52d7536f3c2409ee",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout: Full size labels",
+        "references": []
+      },
+      {
+        "id": "c34e028843b0a2e978b89e9b245fc8397a15e84b",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Issue with grouping header of smart table",
+        "references": []
+      },
+      {
+        "id": "6198910664a72925eddd7776c3a6766b349caadd",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Enabled Fixed Column Indicator for Header",
+        "references": []
+      },
+      {
+        "id": "1054e860650b850f230d8f5582a331eabb1bbfa2",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fixes for HCB (High Contrast Black) theme",
+        "references": []
+      },
+      {
+        "id": "52f93abf3e47b9b2b4216b6cea0736cc31ced19d",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: General Fixes for Cozy and Touch mode",
+        "references": []
+      },
+      {
+        "id": "6fbed33b4d1891671ea3e023dc4d478a12f92886",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Header/Footer height issue",
+        "references": []
+      },
+      {
+        "id": "273d217fd8df54a38956544e6b9b5e293850ce2a",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Multiple Fixes for Table and Touch",
+        "references": []
+      },
+      {
+        "id": "f0920856fd76dce1561ff4898a881fcb69a76be0",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Sorting Indicator overlaps with column header text",
+        "references": []
+      },
+      {
+        "id": "c90b9201baf066ce4cef3208f36beae66c1fa5eb",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Missing line border for grouping header line",
+        "references": []
+      },
+      {
+        "id": "c0d6f83110cdc2bf6686698d85d7a31706b3b5ac",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Row header too small in cozy mode",
+        "references": []
+      }
+    ]
+  }
+}

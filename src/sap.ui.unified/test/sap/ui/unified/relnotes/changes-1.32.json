@@ -1,0 +1,119 @@
+{
+  "1.32.0": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "1fce1c8750ea61fa6f074211401efc2c01d762ba",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Bluecrystal Theme: Unify Background theming across different libraries",
+        "references": []
+      },
+      {
+        "id": "71beb115af2453b9301ea82fd6b0b235f3d02b76",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "new sap.ui.unified.MonthInterval: Initial version",
+        "references": []
+      },
+      {
+        "id": "7182f665bd99f4ccc3552b4068d1c70d204d6fbd",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unifield.CalendarTimeInterval: New control",
+        "references": []
+      },
+      {
+        "id": "f415d104e6738e74653af76d531eeee2ba7a6fe7",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Microsoft Edge Support: Fix CSS text-align statements in",
+        "references": []
+      },
+      {
+        "id": "8a1c85d2e0188becb3f5d7596fcbaba0bb28d110",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker/sap.ui.unified.calendar.Header: Prevent default icon tooltip",
+        "references": []
+      },
+      {
+        "id": "2fefc273e0321e66b781659892d5374266b92f7b",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: Error message shortly appears by closing",
+        "references": []
+      },
+      {
+        "id": "e1a308a675b80b4b13109d75e23a44cbe3ab4255",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Don\u0027t select date on right click",
+        "references": []
+      },
+      {
+        "id": "65a62737fda051ce07471e37d9cc01d86040cb9d",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Wrong date selected if daylight saving",
+        "references": []
+      },
+      {
+        "id": "14968f224c7788eb6b54f52c3473d83cdcfc3159",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUoloader: Fix for m styling",
+        "references": []
+      },
+      {
+        "id": "09742e71b465cd4620e2258e009610afc5376832",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUoloader: Invalid files handling fixed",
+        "references": []
+      },
+      {
+        "id": "dd04793662608f2c046531de13d1665f491657ac",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
+        "references": []
+      },
+      {
+        "id": "79f7023c1140f56c5cae691a1c7ddcde28a1c750",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: clear() function repaired",
+        "references": []
+      },
+      {
+        "id": "8cd9a95090b649284a8698c32b7d106d89c855ea",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: File is lost when pressing key fixed",
+        "references": []
+      },
+      {
+        "id": "8d167c623b96ec5cef24a07aa066f7632fd55c8c",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Keyboard navigation in toolbar fixed",
+        "references": []
+      },
+      {
+        "id": "82875f78d0cf6c2a6a392982cc51676a6a99945a",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Mobile style alignment",
+        "references": []
+      },
+      {
+        "id": "026293fe6ec0ab011081c279d3add3bac3fba798",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Consider also opener dom ref for cozy mode check",
+        "references": []
+      }
+    ]
+  }
+}
