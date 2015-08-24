@@ -14,20 +14,17 @@
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-		<!-- use the sinon faketimers for this test -->
-		<script type="text/javascript">
+		<script>
 			sinon.config.useFakeTimers = true;
 			// make jQuery.now work with Sinon fake timers (since jQuery 2.x, jQuery.now caches the native Date.now)
 			jQuery.now = function() {
 				return Date.now();
 			};
-		</script>
 
-		<script>
 			QUnit.config.autostart = false;
 			sap.ui.test.qunit.delayTestStart();
 
@@ -991,7 +988,7 @@
 			});
 
 			/* ------------------------------ */
-			/* setTextAlign()                     */
+			/* setTextAlign()                 */
 			/* ------------------------------ */
 
 			var fnSetTextAlignTestCase1 = function(mSettings) {
@@ -1339,7 +1336,37 @@
 				// cleanup
 				oInput.destroy();
 			});
-			
+
+			test("onChange it should fire the change event sync", function() {
+
+				// system under test
+				var sExpectedValue = "lorem ipsum";
+				var oInput = new sap.m.InputBase();
+				var oButton = new sap.m.Button({
+					text: "button"
+				});
+
+				// arrange
+				oInput.placeAt("content");
+				oButton.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oInput.focus();
+				oInput.getFocusDomRef().value = sExpectedValue;
+				var fnFireChangeSpy = this.spy(oInput, "fireChange");
+
+				// act
+				oButton.focus();
+
+				// assert
+				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired sync');
+				strictEqual(oInput.getValue(), sExpectedValue);
+				strictEqual(oInput.getProperty("value"), sExpectedValue);
+
+				// cleanup
+				oInput.destroy();
+				oButton.destroy();
+			});
+
 			test("escape should return the last known value and fire private liveChange event", function() {
 
 				// system under test
@@ -1482,7 +1509,7 @@
 				jQuery(oInput.getFocusDomRef()).cursorPos(sTestCurPos);
 
 				// invalidate the control after dom value changes
-				oInput.setWidth("100px");
+				oInput.setPlaceholder("placeholder");
 				sap.ui.getCore().applyChanges();
 				
 				// assertions
@@ -1519,7 +1546,7 @@
 				jQuery(oInput.getFocusDomRef()).cursorPos(sTestCurPos);
 			
 				// invalidate the control after dom and property value changes
-				oInput.setWidth("100px");
+				oInput.setPlaceholder("placeholder");
 				sap.ui.getCore().applyChanges();
 				
 				// assertion

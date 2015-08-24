@@ -12,15 +12,16 @@
 </script>
 
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-
 <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <script>
 (function ($, core, undefined) {
+	sinon.config.useFakeTimers = true;
 
 	test("Should render TextArea correctly", function() {
 		var sut = new sap.m.TextArea();
@@ -278,6 +279,7 @@
 	
 	
 	test("change event should be fired when last known and dom value are not same", function() {
+
 		// system under test
 		var sInitValue = "Test";
 		var oTA = new sap.m.TextArea({
@@ -311,6 +313,7 @@
 		
 		// retest after change event is fired
 		oTADomRef.blur();
+		this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 		
 		// assertion
 		strictEqual(fnFireChangeSpy.callCount, 1, "Change event is fired  because last known value and dom value are different");
@@ -369,6 +372,7 @@
 		equals(oTA.getValue(), "a", "getter still returns the current dom value");
 
 		oTA.getFocusDomRef().blur();
+		this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 		equals(oModel.getProperty("/value"), "a", "model value is updated on blur");
 		equals(oTA.getValue(), "a", "getter returns the current dom value");
 		equals(fnChangeSpy.callCount, 1 , "change event is fired on blur");
