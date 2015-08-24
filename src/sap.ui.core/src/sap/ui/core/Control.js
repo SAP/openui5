@@ -618,7 +618,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				}
 
 				//Append busy indicator to control DOM
-				this._$BusyIndicator = BusyIndicatorUtils.addHTML(this);
+				this._$BusyIndicator = BusyIndicatorUtils.addHTML($this, this.getId() + "-busyIndicator");
 
 				BusyIndicatorUtils.animateIE9.start(this._$BusyIndicator);
 				fnHandleInteraction.apply(this, [true]);

@@ -41,14 +41,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 	/**
 	 * Adds the BusyIndicator HTML to the given control.
-	 * @param {sap.ui.core.Control} oControl the control instance to which the busy indicator is added
-	 * @param {string} sSize either "Medium" or "Big", determines the size of the indicator
+	 * @param {jQuery} $ontrol a jQuery DOM instance to which the busy indicator is added
+	 * @param {string} the actual DOM ID which will be used for the busy indicator content
+	 * @param {string} sSize either "Medium" or "Big", determines the size of the indicator, default is "Medium"
 	 * @returns {object} a jQuery object for the busy indicator
 	 */
-	BusyIndicatorUtils.addHTML = function (oControl, sSize) {
-		var $control = oControl.$();
-		var sBusyIndicatorId = oControl.getId() + "-busyIndicator";
-		
+	BusyIndicatorUtils.addHTML = function ($control, sBusyIndicatorId, sSize) {
 		var $html = jQuery(BusyIndicatorUtils.getHTML(sSize));
 		$html.attr("id", sBusyIndicatorId);
 		
@@ -58,8 +56,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		var $animation = $html.children(".sapUiLocalBusyIndicatorAnimation");
 		var iWidth = $animation[0].offsetWidth;
 		
+		// We can only determine the actual animation after the browser has calculated the size of the indicator
+		// We need to know the pixel-size of 3rem, under which the indicator will animate differently
 		if ($control[0].offsetWidth < iWidth) {
-			//this class is initially used to determine the pixel-size of 3rem
 			$animation.removeClass("sapUiLocalBusyIndicatorAnimStandard");
 			$animation.addClass("sapUiLocalBusyIndicatorAnimSmall");
 		}

@@ -104,9 +104,36 @@
 			oMyTable.setBusy(!oMyTable.getBusy());
 			oIcon.setBusy(!oIcon.getBusy());
 			oMButton.setBusy(!oMButton.getBusy());
+			oPanel.setBusy(!oPanel.getBusy());
+			oPanel2.setBusy(!oPanel2.getBusy());
 		}
 	});
 	oToggleAllButton.placeAt("toggleAll");
+	
+	/**
+	 * Binding Test
+	 */
+	var oBusyModel = new sap.ui.model.json.JSONModel();
+	oBusyModel.setData({o:{isBusy: true}});
+	
+	var oPanel = new sap.m.Panel({
+		headerText: "'busy' property is bound",
+		busy: "{/o/isBusy}",
+		content: new sap.m.Input()
+	});
+	oPanel.placeAt("mPanel");
+	oPanel.setModel(oBusyModel);
+	
+	/**
+	 * Partial Test
+	 */
+	var oPanel2 = new sap.m.Panel({
+		headerText: "Only header is set busy",
+		content: new sap.m.Input()
+	});
+	oPanel2.placeAt("mPanel2");
+	oPanel2.setBusy(true, "header");
+	
 </script>
 </head>
 <body class="sapUiBody" role="application">
@@ -127,5 +154,9 @@
 	<div id="icon"></div>
 	<hr/>
 	<div id="mButton"></div>
+	<hr/>
+	<div id="mPanel"></div>
+	<hr/>
+	<div id="mPanel2"></div>
 </body>
 </html>
