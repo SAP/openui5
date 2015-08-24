@@ -81,6 +81,16 @@
   }
 }
 
+html[data-sap-ui-browser^="ie"] .sapMOTAPopover.sapMPopover .sapMPopoverCont .sapMPopoverScroll > button.sapMBtn > .sapMBtnInner,
+html[data-sap-ui-browser^="ed"] .sapMOTAPopover.sapMPopover .sapMPopoverCont .sapMPopoverScroll > button.sapMBtn > .sapMBtnInner {
+  text-align: left;
+}
+
+html[dir=rtl][data-sap-ui-browser^="ie"] .sapMOTAPopover.sapMPopover .sapMPopoverCont .sapMPopoverScroll > button.sapMBtn > .sapMBtnInner,
+html[dir=rtl][data-sap-ui-browser^="ed"] .sapMOTAPopover.sapMPopover .sapMPopoverCont .sapMPopoverScroll > button.sapMBtn > .sapMBtnInner {
+  text-align: right;
+}
+
 /* Compact mode overrides */
 .sapUiSizeCompact{
 
