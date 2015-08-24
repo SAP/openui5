@@ -289,7 +289,8 @@
 				strictEqual(resultingScrollPaneWidth, resultingContentWidth, "scroll pane width " + resultingScrollPaneWidth + " was as bis as the content: " + resultingContentWidth);
 				ok(90 <= resultingScrollPaneWidth, "The content fits in the scollpane");
 				sut.destroy();
-				jQuery("html").removeClass("sap-desktop");
+				// Removing the sap-desktop breaks the focus tests
+				// jQuery("html").removeClass("sap-desktop");
 			});
 
 			test("Dialog: set stretch to true", function () {
@@ -643,7 +644,7 @@
 				oDialog.destroy();
 			});
 
-			test("Aggregations \"beginButton\" and \"endButton\" - both visible", function () {
+			test('Aggregations "beginButton" and "endButton" - both visible', function () {
 				// Arrange
 				var oButton1 = new sap.m.Button();
 				var oButton2 = new sap.m.Button();
@@ -666,7 +667,7 @@
 				oDialogInitialFocus.destroy();
 			});
 
-			test("Aggregations \"beginButton\" and \"endButton\" - only endButton visible", function () {
+			test('Aggregations "beginButton" and "endButton" - only endButton visible', function () {
 				// Arrange
 				var oButton1 = new sap.m.Button({visible: false});
 				var oButton2 = new sap.m.Button();

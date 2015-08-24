@@ -914,6 +914,22 @@
 				text: 'status'
 			});
 
+			function _setStatusForDialogWithManyButtons() {
+				var buttons =  dialogWithManyButtons.getAggregation('buttons');
+				var text = 'buttons: ' + (buttons !== null ? buttons.length : 0);
+
+				var beginButton = dialogWithManyButtons.getBeginButton();
+				var endButton = dialogWithManyButtons.getEndButton();
+
+				text += ' / beginButton: ' + (beginButton ? 1 : 0);
+				text += ' / endButton: ' + (endButton ? 1 : 0);
+
+				var toolbar = dialogWithManyButtons._getToolbar();
+				text += ' # toolbar content: ' + toolbar.getContent().length;
+
+				statusLabel.setText(text);
+			}
+
 			var dialogWithManyButtons = new sap.m.Dialog('dialogWithManyButtons', {
 				title: 'DialogWithManyButtons',
 				content: [
@@ -928,12 +944,15 @@
 							});
 
 							dialogWithManyButtons.addButton(newButton);
+							_setStatusForDialogWithManyButtons();
 						}
 					}),
 					new sap.m.Button({
 						text: 'Clear Buttons',
 						press: function () {
 							dialogWithManyButtons.removeAllButtons();
+
+							_setStatusForDialogWithManyButtons();
 						}
 					}),
 					new sap.ui.core.HTML({content: "<br/>"}),
@@ -944,26 +963,23 @@
 								text: "Begin Button",
 								press: function () {
 									dialogWithManyButtons.destroyBeginButton();
+									_setStatusForDialogWithManyButtons();
 								}
 							}));
+							_setStatusForDialogWithManyButtons();
 						}
 					}),
 					new sap.m.Button({
 						text: 'Add End Button',
 						press: function () {
 							dialogWithManyButtons.setEndButton(new sap.m.Button({
-								text: "End Button",
+								text: "End Button with very long text inside",
 								press: function () {
 									dialogWithManyButtons.destroyEndButton();
+									_setStatusForDialogWithManyButtons();
 								}
-							}))
-						}
-					}),
-					new sap.ui.core.HTML({content: "<br/>"}),
-					new sap.m.Button({
-						text: 'Get Status',
-						press: function () {
-							statusLabel.setText('buttons: ' + dialogWithManyButtons.getAggregation('buttons').length);
+							}));
+							_setStatusForDialogWithManyButtons();
 						}
 					}),
 					new sap.ui.core.HTML({content: "<br/>"}),
