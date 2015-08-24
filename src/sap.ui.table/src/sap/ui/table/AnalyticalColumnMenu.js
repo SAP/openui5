@@ -56,13 +56,9 @@ sap.ui.define(['jquery.sap.global', './ColumnMenu', './library'],
 	 */
 	AnalyticalColumnMenu.prototype._addGroupMenuItem = function() {
 		var oColumn = this._oColumn,
-			oTable = this._oTable,
-			oBinding = oTable.getBinding("rows"),
-			oResultSet = oBinding && oBinding.getAnalyticalQueryResult();
+			oTable = this._oTable;
 
-		if (oTable && oResultSet && oResultSet.findDimensionByPropertyName(oColumn.getLeadingProperty())
-				&& jQuery.inArray(oColumn.getLeadingProperty(), oBinding.getSortablePropertyNames()) > -1
-				&& jQuery.inArray(oColumn.getLeadingProperty(), oBinding.getFilterablePropertyNames()) > -1) {
+		if (oColumn.isGroupableByMenu()) {
 			this._oGroupIcon = this._createMenuItem(
 				"group",
 				"TBL_GROUP",
@@ -114,7 +110,6 @@ sap.ui.define(['jquery.sap.global', './ColumnMenu', './library'],
 		var oColumn = this._oColumn;
 		this._oSumItem && this._oSumItem.setIcon(oColumn.getSummed() ? "sap-icon://accept" : null);
 		this._oGroupIcon && this._oGroupIcon.setIcon(oColumn.getGrouped() ? "sap-icon://accept" : null);
-		this._oGroupIcon && this._oGroupIcon.setVisible(!oColumn._isLastGroupableLeft);
 	};
 
 	return AnalyticalColumnMenu;
