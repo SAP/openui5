@@ -351,13 +351,28 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			iFixedBottomRowCount = this.getFixedBottomRowCount(),
 			iCount = this.getVisibleRowCount(),
 			aCols = this.getColumns();
-		
-		//check if the table has columns
+
+		var fnRemoveClasses = function (oRow) {
+			var $row = oRow.getDomRefs(true);
+
+			$row.row.removeAttr("data-sap-ui-level");
+			$row.row.removeData("sap-ui-level");
+			$row.row.removeAttr('aria-level');
+			$row.row.removeAttr('aria-expanded');
+			$row.row.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
+			$row.rowSelector.html("");
+		};
+
+		var aRows = this.getRows();
+		//check if the table has rows (data to display)
 		if (!oBinding) {
+			// restore initial table state, remove group headers and total row formatting
+			for (var i = 0; i < aRows.length; i++) {
+				fnRemoveClasses(aRows[i]);
+			}
 			return;
 		}
 
-		var aRows = this.getRows();
 		for (var iRow = 0, l = Math.min(iCount, aRows.length); iRow < l; iRow++) {
 			var bIsFixedRow = iRow > (iCount - iFixedBottomRowCount - 1) && oBinding.getLength() > iCount,
 				iRowIndex = bIsFixedRow ? (oBinding.getLength() - 1 - (iCount - 1 - iRow)) : iFirstRow + iRow,
@@ -376,22 +391,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			var iLevel = oContextInfo ? oContextInfo.level : 0;
 
 			if (!oContextInfo || !oContextInfo.context) {
-				$row.removeAttr("data-sap-ui-level");
-				$row.removeData("sap-ui-level");
-				$row.removeAttr('aria-level');
-				$row.removeAttr('aria-expanded');
-				$row.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
-				$fixedRow.removeAttr("data-sap-ui-level");
-				$fixedRow.removeData("sap-ui-level");
-				$fixedRow.removeAttr('aria-level');
-				$fixedRow.removeAttr('aria-expanded');
-				$fixedRow.removeClass("sapUiTableGroupHeader");
-				$rowHdr.html("");
-				$rowHdr.removeAttr("data-sap-ui-level");
-				$rowHdr.removeData("sap-ui-level");
-				$rowHdr.removeAttr('aria-level');
-				$rowHdr.removeAttr('aria-expanded');
-				$rowHdr.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
+				fnRemoveClasses(oRow);
 				if (oContextInfo && !oContextInfo.context) {
 					$row.addClass("sapUiAnalyticalTableDummy");
 					$rowHdr.addClass("sapUiAnalyticalTableDummy");
