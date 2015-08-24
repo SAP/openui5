@@ -53,6 +53,7 @@
 		<versionAlias></versionAlias>
 		
 		<!-- skip properties for commands -->
+		<skipCheck>true</skipCheck>
 		<skipCreate>true</skipCreate>
 		<skipPrepare>true</skipPrepare>
 		<skipCopy>true</skipCopy>
@@ -138,6 +139,18 @@
 				<artifactId>nwcloud-maven-plugin</artifactId>
 				<executions>
 		
+					<!-- check application for version being deployed already -->
+					<execution>
+						<id>sapui5-helium-check</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>helium-check</goal>
+						</goals>
+						<configuration>
+							<skip>${skipCheck}</skip>
+						</configuration>
+					</execution>
+			
 					<!-- create application in HCP if needed -->
 					<execution>
 						<id>sapui5-helium-create</id>
@@ -261,6 +274,7 @@
 				</property>
 			</activation>
 			<properties>
+				<skipCheck>false</skipCheck>
 				<skipPrepare>false</skipPrepare>
 				<skipCopy>false</skipCopy>
 				<skipUnpack>false</skipUnpack>
@@ -315,6 +329,7 @@
 				<branch>master</branch>
 				<versionAlias>snapshot</versionAlias>
 				<application.dir>${application}-master</application.dir>
+				<skipCheck>false</skipCheck>
 				<skipPrepare>false</skipPrepare>
 				<skipCopy>false</skipCopy>
 			</properties>
