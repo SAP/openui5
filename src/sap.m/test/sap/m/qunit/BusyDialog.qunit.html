@@ -38,7 +38,7 @@
 
 			QUnit.test('Default busyDialog', function (assert) {
 				assert.equal(jQuery(this.id + '-Dialog').length, 1, 'should  rendered after it\'s opened.');
-				assert.equal(jQuery(this.id + '-Dialog').width(), 300, 'should have width of 300px.');
+				assert.equal( Math.ceil(jQuery(this.id + '-Dialog').width()), 300, 'should have width of 300px.');
 
 				//check header existence and content
 				assert.equal(jQuery(this.id + '-Dialog-header').length, 0, 'should not have rendered header.');

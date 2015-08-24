@@ -3,7 +3,7 @@
 /* ============================================= */
 
 //this selectors need to be more specific from the Dialog's
-.sapMBusyDialog {
+.sapMBusyDialog.sapMDialog {
 	min-width: 18.75rem !important;
 	text-align: center;
 	width: 18.75rem !important;
@@ -14,6 +14,23 @@
 
 	&.sapUiPopupWithPadding .sapMDialogScrollCont {
 		padding: 0 !important;
+	}
+
+	.sapMDialogSection {
+		overflow: hidden !important;
+	}
+
+	&.sapMBusyDialog-Light {
+		//lightBusyDialog
+		-moz-box-shadow: none;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+		background: transparent;
+		border: none;
+
+		.sapMDialogSection {
+			background: transparent;
+		}
 	}
 }
 
