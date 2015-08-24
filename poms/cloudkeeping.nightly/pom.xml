@@ -45,6 +45,8 @@
 
 		<!-- deploytool infos -->
 		<command>status</command>
+		<application>sapui5nightly</application>
+		<applicationURL>${application}</applicationURL>
 		<user></user> <!-- SDN User -->
 		<password></password> <!-- SDN Password -->
 
@@ -105,9 +107,9 @@
 				<configuration>
 					<commands>${command}</commands>
 					<properties>
-						<application>sapui5nightly</application>
+						<application>${application}</application>
 						<account>sapui5</account>
-						<applicationURL>sapui5nightly</applicationURL>
+						<applicationURL>${applicationURL}</applicationURL>
 						<severity>info</severity>
 						<landscape>https://neo.ondemand.com/</landscape>
 						<user>${user}</user>
