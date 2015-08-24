@@ -123,5 +123,17 @@
         "references": []
       }
     ]
+  },
+  "1.30.7": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "51e1ac882171a71925124ca48bb21c090fd5c5a7",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.OverlayDialog: Close is now red when focus is changed",
+        "references": []
+      }
+    ]
   }
 }

@@ -1832,5 +1832,129 @@
         "references": []
       }
     ]
+  },
+  "1.30.7": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "92ed5d07ff460df31da88beaa4886b6ad48692b5",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "OPA: Provide \"assert\" object on Opa and Opa5 (qunit 2.0 prep)",
+        "references": []
+      },
+      {
+        "id": "e4b82e2dfa474639fad3ece2209ed7fac466e5d8",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding.js: Delete Model-Entry in Multi-Unit Situations was wrong",
+        "references": []
+      },
+      {
+        "id": "d43ebc8d11adf7c2b048c23d3781e8d3198db057",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding.js: Reloading Request of Measures on was of if Measure-Column was not totaled",
+        "references": []
+      },
+      {
+        "id": "c4e642cf8b697592d3fd2980c8116d22ba91b035",
+        "author": "Alexander Schmalzhaf \u003calexander.schmalzhaf@sap.com\u003e",
+        "type": "FIX",
+        "text": "Click event not fired on touch devices",
+        "references": []
+      },
+      {
+        "id": "3ae6d53f7ab0c3d49f86e82443435a012d1b1f0f",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "FrameOptions: Whitelist service and no postmessage handler",
+        "references": []
+      },
+      {
+        "id": "5d7e5e93ce8f1c16a8da90036c5bdcd0a660d0ac",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: Recreate children after ungrouping",
+        "references": []
+      },
+      {
+        "id": "71db401bb17f34721d06fc0307e6698107df28c2",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: Support binding expressions with an empty path",
+        "references": []
+      },
+      {
+        "id": "dcc1ea6c53f50e9914258ace713460516c3c7ecc",
+        "author": "Gal Roter \u003cgal.roter@sap.com\u003e",
+        "type": "FIX",
+        "text": "MockServer: $expand evaluated before $orderby and $select",
+        "references": []
+      },
+      {
+        "id": "f4c875df7f8b10ae7b4a3b970ad810ea09a7cb92",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "ThemeCheck: Add null-checks to prevent exceptions",
+        "references": []
+      },
+      {
+        "id": "c94a5cbbfb82b0cba73646f055e4a7ac98204ad8",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "ThemeCheck: Additional null-checks to avoid console warnings",
+        "references": []
+      },
+      {
+        "id": "b6b89081ae4efc43710245b0c3652d29e81b41ec",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DateTimeInput: Keyboard handling fix for arrow up/down.",
+        "references": []
+      },
+      {
+        "id": "3f7384f4ea748188ab175385bb163dade50257aa",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.Device: Adapt system detection for Windows 10",
+        "references": []
+      },
+      {
+        "id": "4188049de1549c2da2f7e2a291a7440bc3b1be94",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.IconPool: Avoid unnecessary assertions when unknown property is given",
+        "references": []
+      },
+      {
+        "id": "0111caddd094095c2826f3b75de1462efceaca3b",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Popup: Exception occurs when \u0027of\u0027 is set to a jQuery.Event object",
+        "references": []
+      },
+      {
+        "id": "8016b3ca54bf56005c28592628b0034ae0b74839",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.DateFormat: Properly handle invalid date formatting",
+        "references": []
+      },
+      {
+        "id": "db75567f50d30b7fa10c77775e1225b88cd4458f",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.ODataUtils.setOrigin",
+        "references": []
+      },
+      {
+        "id": "c08c143e862ace7f3849378c934472c6da0c8e7b",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.test.Opa5: IFrame navigation",
+        "references": []
+      }
+    ]
   }
 }

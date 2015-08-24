@@ -418,5 +418,45 @@
         "references": []
       }
     ]
+  },
+  "1.30.7": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "9a491f1c5f43ce12e2f59e62aec34528ee5c0dd1",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ApplicationHeader: Placement of the colon fixed in RTL (Right-to-Left) mode",
+        "references": []
+      },
+      {
+        "id": "1ee7ae9b2a6c3b0ec69d1262a9892e8ecaf0d18f",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Dialog: The close button has proper name when read by JAWS",
+        "references": []
+      },
+      {
+        "id": "52c57fcac9771d8883fc4f18476910e6131ba491",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Fix selectedIndex when disable selected tab",
+        "references": []
+      },
+      {
+        "id": "29bb0e34656a668ec4141cdf57a6e8f467217c2b",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Tabs set to non-visible now disappear",
+        "references": []
+      },
+      {
+        "id": "eb0d1ff42910269343b43cf3a07779c3cdcb899e",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ComboBox: Adapt new data binding logic",
+        "references": []
+      }
+    ]
   }
 }

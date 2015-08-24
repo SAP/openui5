@@ -2413,5 +2413,171 @@
         "references": []
       }
     ]
+  },
+  "1.30.7": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "5d7e5e93ce8f1c16a8da90036c5bdcd0a660d0ac",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: Recreate children after ungrouping",
+        "references": []
+      },
+      {
+        "id": "864a32250cf76e897111e45b6dfb2a471ec23068",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Microsoft Edge Support: Fix CSS text-align statements in libraries: sap.m, sap.ui.layout and sap.ui.unified",
+        "references": []
+      },
+      {
+        "id": "2403356de47536650608ee71270506c91020201d",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet: The tab key isn\u0027t disabled from the second time opening",
+        "references": []
+      },
+      {
+        "id": "e96aef63a8d259e54c9c9f54e8f0f74b7472c7fb",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.BusyIndicator: Custom icon rotate animation now works",
+        "references": []
+      },
+      {
+        "id": "b3e58ef0fb8c5df89a91d76fa774cfede0ff12cd",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Do not override the selection when the data is not available from the model (part 2)",
+        "references": []
+      },
+      {
+        "id": "50eaded239e0183e801334f20346916268dc9d2e",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Fix custom placeholder alignment issue in Internet Explorer 10",
+        "references": []
+      },
+      {
+        "id": "c5a38509cd3c69a560d031bc4514e46208eb2b3d",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: It should correctly set the selection if the items aggregation is bounded to an OData model",
+        "references": []
+      },
+      {
+        "id": "2a648be2167b1501767fae4d7ad1037b0512aee1",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: Error message shortly appears by closing",
+        "references": []
+      },
+      {
+        "id": "6499df3fa1b7d31348f052755dcb3e3b306c3e1b",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Fix combo box button positioning issue in Internet Explorer 11",
+        "references": []
+      },
+      {
+        "id": "d31cfe58e4d060c282037cabd84683e4c11c25d3",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Initial focus will now be able to focus elements in the subheader too",
+        "references": []
+      },
+      {
+        "id": "6476dc047da9e770063565c41f2dda0ecfa6fb1a",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Scroll container now have the right width behavior",
+        "references": []
+      },
+      {
+        "id": "a3eb39861e3a32d4672686786d40ace4f311ac7a",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Selection is changed when selected filter is removed",
+        "references": []
+      },
+      {
+        "id": "29c29e4c8e08fbb0b8628b05738028ceb4d8c194",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Input: Suggestions list does not close by selection",
+        "references": []
+      },
+      {
+        "id": "214277db567d39907a779c0e0d3b7c467883bfee",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Correctly restore the value in case of invalidation",
+        "references": []
+      },
+      {
+        "id": "db80b923526f72c3ef2212561fc256eaa239ab0e",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: Fix default value of the selectedKeys property",
+        "references": []
+      },
+      {
+        "id": "5bfc91f39f44699f5eea6fb3b537ec4f51f7ad12",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: Enhance tokenchange event",
+        "references": []
+      },
+      {
+        "id": "a4651cda4a7c73b9316623fac950c8cc01c4938e",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: Set the focus back to input after deleting token",
+        "references": []
+      },
+      {
+        "id": "05a6446405e468d27cc149e2d0f70338cde32c6c",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: DOM structure is now valid",
+        "references": []
+      },
+      {
+        "id": "072b467e041b7687ed7d6a3fb7d9608c3d98049e",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SearchField: Improper focusing in Internet Explorer",
+        "references": []
+      },
+      {
+        "id": "bb1505b00346b51770864d0d1c1d118bc8d71e3a",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: Size Calculation fix",
+        "references": []
+      },
+      {
+        "id": "ae2b6a7b95c353ae8044f76ee83379dfe8717f4c",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TextArea: New line is ignored in Internet Explorer 11 in TextArea.",
+        "references": []
+      },
+      {
+        "id": "a3fe80b846a07ad0b55cc583648778798da72ff6",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GrowingEnablement: Determine whether load more button is necessary or not after loading is finished.",
+        "references": []
+      },
+      {
+        "id": "f9b7b2691a6b456a56676d922fab06eabfb51208",
+        "author": "Shweta Sugnani \u003cshweta.sugnani@sap.com\u003e",
+        "type": "FIX",
+        "text": "Facetfilter list closing issue for branch 1.30",
+        "references": []
+      }
+    ]
   }
 }

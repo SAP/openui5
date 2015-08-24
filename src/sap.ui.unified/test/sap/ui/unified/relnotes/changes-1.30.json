@@ -305,5 +305,31 @@
         "references": []
       }
     ]
+  },
+  "1.30.7": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "864a32250cf76e897111e45b6dfb2a471ec23068",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Microsoft Edge Support: Fix CSS text-align statements in libraries: sap.m, sap.ui.layout and sap.ui.unified",
+        "references": []
+      },
+      {
+        "id": "2a648be2167b1501767fae4d7ad1037b0512aee1",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: Error message shortly appears by closing",
+        "references": []
+      },
+      {
+        "id": "dafbd62ecbb179db6c9c88b17b6690e3274137c7",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Don\u0027t select date on right click",
+        "references": []
+      }
+    ]
   }
 }

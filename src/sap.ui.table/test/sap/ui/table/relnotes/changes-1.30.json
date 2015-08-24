@@ -534,5 +534,59 @@
         "references": []
       }
     ]
+  },
+  "1.30.7": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "8e9dd62765180b106a37bd9e47a2bd0b938dff12",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Fixes \"Click to select\" Tooltip for special rows and unbound table",
+        "references": []
+      },
+      {
+        "id": "a28af4e58825162d226dab46ebd3a8b8c6fdf939",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Fixes determination of whether to create column menu entries for filter",
+        "references": []
+      },
+      {
+        "id": "031c6f4df9f22adabae8f2361fe249392a71f919",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Fixes that groupHeaders don\u0027t get removed by unbindRows",
+        "references": []
+      },
+      {
+        "id": "4c9a385afb02ed74cc8e075e6b6185b4335d2be6",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.ColumnMenu: Fixes issue with setValue on customFilterButton",
+        "references": []
+      },
+      {
+        "id": "f3b805cc744dd21a942a32d041f41322b1374f72",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Avoid backend request when selectAll is clicked",
+        "references": []
+      },
+      {
+        "id": "9f838f9d3ef2bd350138a1259efcc3918a8a983f",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Fixes filter event for custom filter on cell filter",
+        "references": []
+      },
+      {
+        "id": "ae622c02db341a42432012404940f31d31c8eaf1",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Repairs enableBusyIndicator with Navigation Mode Paginator",
+        "references": []
+      }
+    ]
   }
 }

@@ -130,5 +130,17 @@
         "references": []
       }
     ]
+  },
+  "1.30.7": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "864a32250cf76e897111e45b6dfb2a471ec23068",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Microsoft Edge Support: Fix CSS text-align statements in libraries: sap.m, sap.ui.layout and sap.ui.unified",
+        "references": []
+      }
+    ]
   }
 }
