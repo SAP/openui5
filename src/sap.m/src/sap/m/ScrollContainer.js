@@ -138,13 +138,15 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 			if (this._oScroller) {
 
 				var oDomRef = this.getDomRef();
-				if (oDomRef) { // only if rendered
+				if (oDomRef) {
+					// only if rendered
 					if (sap.ui.getCore().getConfiguration().getRTL()) {
 						x = jQuery.sap.denormalizeScrollBeginRTL(x, oDomRef);
 					}
 					this._oScroller.scrollTo(x, y, time);
 				} else {
-					this._oScroller._scrollX = x; // remember for later rendering
+					// remember for later rendering
+					this._oScroller._scrollX = x;
 					this._oScroller._scrollY = y;
 				}
 			}
@@ -172,12 +174,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 
 		ScrollContainer.prototype.setHorizontal = function (horizontal) {
 			this._oScroller.setHorizontal(horizontal);
-			this.setProperty("horizontal", horizontal, true); // no rerendering
+			this.setProperty("horizontal", horizontal, true);
 		};
 
 		ScrollContainer.prototype.setVertical = function (vertical) {
 			this._oScroller.setVertical(vertical);
-			this.setProperty("vertical", vertical, true); // no rerendering
+			this.setProperty("vertical", vertical, true);
 		};
 
 		return ScrollContainer;
