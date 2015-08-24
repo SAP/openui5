@@ -283,11 +283,7 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 			var oTable = this.getParent();
 			var oBinding = oTable.getBinding("rows");
 			var oResultSet = oBinding && oBinding.getAnalyticalQueryResult();
-			return  ((oTable && oResultSet && oResultSet.findDimensionByPropertyName(this.getLeadingProperty())
-					&& jQuery.inArray(this.getLeadingProperty(), oBinding.getSortablePropertyNames()) > -1
-					&& jQuery.inArray(this.getLeadingProperty(), oBinding.getFilterablePropertyNames()) > -1) || // group menu item
-				(oTable && oResultSet && oResultSet.findMeasureByPropertyName(this.getLeadingProperty()))
-			);
+			return  (oTable && oResultSet && oResultSet.findMeasureByPropertyName(this.getLeadingProperty())); // totals menu entry
 		}.bind(this);
 
 		return Column.prototype._menuHasItems.apply(this) || fnMenuHasItems();
@@ -326,6 +322,37 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 				if (jQuery.inArray(sFilterProperty, oBinding.getFilterablePropertyNames()) > -1 &&
 					!oBinding.isMeasure(sFilterProperty) &&
 					oBinding.getProperty(sFilterProperty)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	};
+
+	/**
+	 * This function checks whether a grouping column menu item will be created.
+	 *
+	 * Since a property of the table must be checked, this function will return false when the column is not a child of a table.
+	 *
+	 * For Columns the following applies:
+	 * - table must be bound
+	 * - column must be child of an AnalyticalTable
+	 * - metadata must be loaded
+	 * - leadingProperty must be sortable
+	 * - leadingProperty must be filterable
+	 *
+	 * @returns {boolean}
+	 */
+	AnalyticalColumn.prototype.isGroupableByMenu = function() {
+		var oParent = this.getParent();
+		if (oParent && oParent instanceof sap.ui.table.AnalyticalTable) {
+			var oBinding = oParent.getBinding("rows");
+			if (oBinding) {
+				var oResultSet = oBinding.getAnalyticalQueryResult();
+				if (oResultSet && oResultSet.findDimensionByPropertyName(this.getLeadingProperty())
+					&& jQuery.inArray(this.getLeadingProperty(), oBinding.getSortablePropertyNames()) > -1
+					&& jQuery.inArray(this.getLeadingProperty(), oBinding.getFilterablePropertyNames()) > -1) {
 					return true;
 				}
 			}
