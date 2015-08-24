@@ -29,6 +29,7 @@
 			var step1 = new sap.m.WizardStep({
 				validated : false,
 				title : "User credentials",
+				icon: "sap-icon://permission",
 				complete : function() {
 					alert("First step is complete");
 				},
@@ -69,6 +70,7 @@
 			var step2 = new sap.m.WizardStep({
 				validated : true,
 				title : "Personal information",
+				icon: "sap-icon://person-placeholder",
 				content: [
 					new sap.m.Text({
 						text: "Donec dictum odio nec vestibulum finibus. In sit amet nulla id dolor aliquam mollis id sed urna. Maecenas porta, lacus aliquam rhoncus euismod, tellus dui efficitur tellus, et ornare enim magna non lorem. Nam accumsan commodo ultricies. Vivamus pellentesque accumsan purus, in ullamcorper justo semper nec. Quisque libero quam, lobortis sed accumsan at, accumsan at odio. Maecenas quis arcu dignissim, faucibus augue sit amet, varius nisi. Donec est turpis, imperdiet lacinia cursus ac, luctus et libero. Etiam pretium, ex facilisis varius lobortis, ipsum mauris gravida purus, sit amet cursus dui dolor ac nisl. Vivamus tortor neque, eleifend a est a, convallis posuere orci. Maecenas lacinia vestibulum egestas. Integer tempor justo et justo venenatis, quis consectetur nisl imperdiet. Nulla auctor pretium odio sit amet pulvinar"
@@ -78,6 +80,7 @@
 			var step3 = new sap.m.WizardStep({
 				validated: true,
 				title: "Payment details",
+				icon: "sap-icon://simple-payment",
 				content: [
 					new sap.ui.layout.form.SimpleForm({
 						minWidth: 1024,
@@ -134,6 +137,7 @@
 			var step4 = new sap.m.WizardStep({
 				validated : false,
 				title : "Credit card information",
+				icon: "sap-icon://credit-card",
 				activate : function() {
 					alert("Credit card information step activated");
 				},
@@ -162,6 +166,7 @@
 			var step5 = new sap.m.WizardStep({
 				validated : true,
 				title: "Card contents",
+				icon: "sap-icon://bar-code",
 				content : [
 					new sap.m.Label({
 						text:"CC Number"
@@ -183,6 +188,7 @@
 			});
 			var step6 = new sap.m.WizardStep({
 				title : "Finishing touches",
+				icon: "sap-icon://detail-view",
 				validated : false,
 				content : [
 					new sap.m.Text({
