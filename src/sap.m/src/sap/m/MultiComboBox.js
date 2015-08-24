@@ -1852,7 +1852,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBase', './Dialog', './Li
 	 */
 	MultiComboBox.prototype.addSelectedKeys = function(aKeys) {	
 		aKeys = this.validateProperty("selectedKeys", aKeys);
-		
+		aKeys = aKeys || [];
 		aKeys.forEach(function(sKey) {
 			var oItem = this.getItemByKey(sKey);
 			if (oItem) {
