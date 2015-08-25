@@ -78,61 +78,12 @@ input.sapMComboBoxBaseInputInner:not(.sapMComboBoxBaseInputInnerReadonly) {
 }
 
 /* ------------------------------ */
-/* ComboBox's List                */
-/* ------------------------------ */
-
-.sapMComboBoxBaseItemDisabled {
-	opacity: 0.5;
-	pointer-events: none;
-}
-
-.sapMComboBoxBasePicker .sapMSLITitleOnly {
-	font-size: 0.875rem;
-}
-
-/* ------------------------------ */
-/* ComboBox's Item                */
-/* ------------------------------ */
-
-li.sapMComboBoxBaseItem {
-	height: 2.5rem;
-	border-bottom: .0625rem solid @sapHCReducedAltFG;
-}
-
-.sapMComboBoxBaseItem .sapMCb {
-	height: 2.5rem;
-	line-height: 2.5rem;
-}
-
-.sapMComboBoxBaseItem .sapMCbBg {
-	top: 0;
-	bottom: 0;
-	margin: auto;
-}
-
-li.sapMComboBoxBaseItemVisible {
-	display: block;
-}
-
-li.sapMComboBoxBaseItemNotVisible {
-	display: none;
-}
-
-/* focus */
-
-.sap-desktop li.sapMComboBoxBaseItem:focus {
-	outline: none;
-}
-
-/* ------------------------------ */
 /* ComboBox's Picker              */
 /* ------------------------------ */
 
 div.sapMComboBoxBasePicker {
-	-webkit-box-shadow: 0 .25rem 1.875rem .125rem fade(@sapHCStandardFG, 80%);
 	box-shadow: 0 .25rem 1.875rem .125rem fade(@sapHCStandardFG, 80%);
 	border: none;
-	min-width: 0; /* override the default min-width of the popover */
 }
 
 /* This is used to make border of the combobox's list not scrollable */
@@ -202,12 +153,4 @@ div.sapMComboBoxBasePicker .sapMDialogScrollCont {
 
 .sapUiSizeCondensed .sapMComboBoxBaseArrow {
 	right: 0;
-}
-
-/* ------------------------------ */
-/* ComboBox Item                  */
-/* ------------------------------ */
-
-.sapUiSizeCompact li.sapMComboBoxBaseItem {
-	height: 2rem;
 }
