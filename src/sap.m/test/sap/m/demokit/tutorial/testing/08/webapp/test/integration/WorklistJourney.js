@@ -13,10 +13,16 @@ sap.ui.require(
 			When.onTheWorklistPage.iLookAtTheScreen();
 
 			// Assertions
-			Then.onTheWorklistPage.theTableShouldHaveAllEntries().
-				and.theTitleShouldDisplayTheTotalAmountOfItems().
-				and.iTeardownMyAppFrame();
+			Then.onTheWorklistPage.theTitleShouldDisplayTheTotalAmountOfItems();
 		});
 
+		opaTest("Should be able to load more items", function (Given, When, Then) {
+			//Actions
+			When.onTheWorklistPage.iPressOnMoreData();
+
+			// Assertions
+			Then.onTheWorklistPage.theTableShouldHaveAllEntries().
+				and.iTeardownMyAppFrame();
+		});
 	}
 );

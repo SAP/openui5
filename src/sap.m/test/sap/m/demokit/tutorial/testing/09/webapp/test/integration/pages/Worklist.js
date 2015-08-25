@@ -13,7 +13,21 @@ sap.ui.require([
 		Opa5.createPageObjects({
 			onTheWorklistPage: {
 				baseClass: Common,
-				actions: {},
+				actions: {
+					iPressOnMoreData: function () {
+						return this.waitFor({
+							id: sTableId,
+							viewName: sViewName,
+							matchers: function (oTable) {
+								return !!oTable.$("trigger").length;
+							},
+							success: function (oTable) {
+								oTable.$("trigger").trigger("tap");
+							},
+							errorMessage: "The Table does not have a trigger"
+						});
+					}
+				},
 				assertions: {
 					theTableShouldHaveAllEntries: function () {
 						return this.waitFor({
