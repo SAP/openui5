@@ -105,7 +105,7 @@
 				ok(jQuery.sap.domById("qunit-header"), "Page content should be rendered");
 				ok(jQuery.sap.byId("myFirstPage-intHeader").is("header"), "header should be rendered as header tag");
 				ok(jQuery.sap.byId("myFooter").is("footer"), "footer should be rendered as footer tag");
-				equal (jQuery.sap.byId("mySubHeader").position().top, (jQuery.sap.byId("myFirstPage-intHeader").position().top + jQuery.sap.byId("myFirstPage-intHeader").outerHeight()), "subHeader should be directly below header");
+				equal (parseInt(jQuery.sap.byId("mySubHeader").position().top, 10), parseInt((jQuery.sap.byId("myFirstPage-intHeader").position().top + jQuery.sap.byId("myFirstPage-intHeader").outerHeight()), 10), "subHeader should be directly below header");
 				ok(jQuery.sap.byId("myFirstPage-intHeader").hasClass("sapMHeader-CTX"), "header should contain header context");
 				ok(!jQuery.sap.byId("mySubHeader").hasClass("sapMHeader-CTX"), "subHeader should not contain header context");
 				ok(jQuery.sap.byId("myFooter").hasClass("sapMFooter-CTX"), "footer should contain footer context");
