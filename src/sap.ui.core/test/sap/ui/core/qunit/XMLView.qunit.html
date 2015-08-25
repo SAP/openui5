@@ -36,6 +36,8 @@ sap.ui.core.mvc.Controller</title>
 
 // FIXME: the following tests will fail with PhantomJS => check how to renable them
 
+	jQuery.sap.require("sap.ui.core.mvc.View");
+
 	var oConfig = {
 		viewClassName : "sap.ui.core.mvc.XMLView",
 		idsToBeChecked : ["myPanel", "Button1", "localTableId"]
@@ -59,34 +61,115 @@ sap.ui.core.mvc.Controller</title>
 		return sap.ui.view({type:sap.ui.core.mvc.ViewType.XML,viewName:"example.mvc.test",viewData:{test:"testdata"}});
 	}, true);
 
-	module("Additional tests:");
+
+
+	QUnit.module("Preserve DOM");
+	
+	QUnit.test("sync loading", function(assert) {
+		
+		// load and place view, force rendering
+		var oView = sap.ui.xmlview('example.mvc.test').placeAt('content');
+		sap.ui.getCore().applyChanges();
+		
+		// check that DOM exists
+		var oElemPanel1 = oView.byId("myPanel").getDomRef();
+		var oElemTable1 = jQuery.sap.domById(oView.createId("localTableId"));
+		assert.ok(oElemPanel1, "DOM for myPanel should exist");
+		assert.ok(oElemTable1, "DOM for localTableId should exist");
+
+		// force a rerendering
+		oView.invalidate();
+		sap.ui.getCore().applyChanges();
+		
+		// check that DOM has been preserved
+		var oElemPanel2 = oView.byId("myPanel").getDomRef();
+		var oElemTable2 = jQuery.sap.domById(oView.createId("localTableId"));
+		assert.ok(oElemPanel2, "DOM for myPanel should exist after rerendering");
+		assert.ok(oElemTable2, "DOM for localTableId should exist after rerendering");
+		assert.ok(oElemPanel1 !== oElemPanel2, "DOM for panel should differ"); // Note: this will fail if DOM patching becomes the default 
+		assert.ok(oElemTable1 === oElemTable2, "DOM for table must not differ");
+
+	});
+	
+	QUnit.test("async loading", function(assert) {
+		var done = assert.async();
+
+		// load and place view, force rendering
+		var oView = sap.ui.xmlview({
+			viewName: 'example.mvc.test',
+			async: true
+		}).placeAt('content');
+		sap.ui.getCore().applyChanges();
+		
+		// check that placeholder DOM is not marked for preservation
+		var oElemView = oView.getDomRef();
+		assert.ok(oElemView, "DOM for view must exist");
+		assert.ok(oElemView.getAttribute("data-sap-ui-preserve") == null, "DOM must not be marked as 'to be preserved' after construction but before afterInit");
+		
+		// wait for the async load to complete
+		oView.attachAfterInit(function() {
+			
+			// ensure rendering
+			sap.ui.getCore().applyChanges();
+			
+			// check that DOm now exists and that it is correctly marked for preservation
+			var oElemView = oView.getDomRef();
+			assert.ok(oElemView, "DOM for view must exist");
+			assert.ok(oElemView.getAttribute("data-sap-ui-preserve"), "DOM must be marked as 'to be preserved' after init");
+			
+			// check DOM of controls
+			var oElemPanel1 = oView.byId("myPanel").getDomRef();
+			var oElemTable1 = jQuery.sap.domById(oView.createId("localTableId"));
+			assert.ok(oElemPanel1, "DOM for myPanel should exist");
+			assert.ok(oElemTable1, "DOM for localTableId should exist");
+
+			// force a rerendering
+			oView.invalidate();
+			sap.ui.getCore().applyChanges();
+			
+			// check that DOM has been preserved
+			var oElemPanel2 = oView.byId("myPanel").getDomRef();
+			var oElemTable2 = jQuery.sap.domById(oView.createId("localTableId"));
+			assert.ok(oElemPanel2, "DOM for myPanel should exist after rerendering");
+			assert.ok(oElemTable2, "DOM for localTableId should exist after rerendering");
+			assert.ok(oElemPanel1 !== oElemPanel2, "DOM for panel should differ"); // Note: this will fail if DOM patching becomes the default 
+			assert.ok(oElemTable1 === oElemTable2, "DOM for table must not differ");
+
+			// complete execution only in next tick as the controller code will execute further QUnit asserts in the current tick
+			setTimeout(done);
+		});
+	});
+
+
+
+	QUnit.module("Additional tests:");
 
 	// encoding
-	test("Encoding", function() {
+	QUnit.test("Encoding", function(assert) {
 
 		var xmlWithHTMLFragment = [
-		    '<core:View xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml">',
-   			'  <div title="&quot;&gt;&lt;span id=&quot;broken1&quot;&gt;broken1&lt;/span&gt;&lt;x y=&quot;">',
-   			'    <span id="valid1"></span>',
-   			'    <span id="valid2">',
-   			'      &lt;span id=&quot;broken2&quot;&gt;broken2&lt;/span&gt;',
- 			'    </span>',
-   			'  </div>',
-   			'</core:View>'
-   		].join('');
+			'<core:View xmlns:core="sap.ui.core" xmlns="http://www.w3.org/1999/xhtml">',
+			'  <div title="&quot;&gt;&lt;span id=&quot;broken1&quot;&gt;broken1&lt;/span&gt;&lt;x y=&quot;">',
+			'    <span id="valid1"></span>',
+			'    <span id="valid2">',
+			'      &lt;span id=&quot;broken2&quot;&gt;broken2&lt;/span&gt;',
+			'    </span>',
+			'  </div>',
+			'</core:View>'
+		].join('');
 
 		var view = sap.ui.xmlview("view", {viewContent:xmlWithHTMLFragment});
 		view.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		ok(jQuery("#view--valid1").length == 1, "DOM must contain view--valid1 element.");
-		ok(jQuery("#view--valid2").length == 1, "DOM must contain view--valid2 element.");
-		ok(jQuery("#broken1").length == 0, "DOM must not contain broken1 element.");
-		ok(jQuery("#broken2").length == 0, "DOM must not contain broken2 element.");
+		assert.ok(jQuery("#view--valid1").length == 1, "DOM must contain view--valid1 element.");
+		assert.ok(jQuery("#view--valid2").length == 1, "DOM must contain view--valid2 element.");
+		assert.ok(jQuery("#broken1").length == 0, "DOM must not contain broken1 element.");
+		assert.ok(jQuery("#broken2").length == 0, "DOM must not contain broken2 element.");
 
 	});
 
-	test("DataBinding", function() {
+	QUnit.test("DataBinding", function(assert) {
 
 		var oModel1 = new sap.ui.model.json.JSONModel({
 			booleanValue : true,
@@ -105,90 +188,90 @@ sap.ui.core.mvc.Controller</title>
 		});
 
 		var xmlWithBindings = [
-      		'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib">',
-      		'  <test:TestButton id="btn" enabled="{/booleanValue}" text="{/stringValue}" width="{/integerValue}" />',
-      		'</core:View>'
-      	].join('');
+			'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib">',
+			'  <test:TestButton id="btn" enabled="{/booleanValue}" text="{/stringValue}" width="{/integerValue}" />',
+			'</core:View>'
+		].join('');
 
 		var xmlWithNamedBindings = [
-   			'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib">',
-   			'  <test:TestButton id="btn" enabled="{model2>/booleanValue}" text="{model1>/stringValue}" width="{/integerValue}" />',
-   			'</core:View>'
-   		].join('');
+			'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib">',
+			'  <test:TestButton id="btn" enabled="{model2>/booleanValue}" text="{model1>/stringValue}" width="{/integerValue}" />',
+			'</core:View>'
+		].join('');
 
 		var xmlWithElementBinding = [
-  			'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib">',
-  			'  <test:TestButton id="btn" binding="{data}" enabled="{booleanValue}" text="{stringValue}" width="{integerValue}" />',
-  			'</core:View>'
-  		].join('');
+			'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib">',
+			'  <test:TestButton id="btn" binding="{data}" enabled="{booleanValue}" text="{stringValue}" width="{integerValue}" />',
+			'</core:View>'
+		].join('');
 
 		var xmlWithoutBindings = [
-   			'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib">',
-   			'  <test:TestButton id="btn1" enabled="true" text="The following set is empty: \\{\\}" width="67" />',
-   			'  <test:TestButton id="btn2" enabled="false" text="\\{\\} is an empty set" width="42" />',
-   			'  <test:TestButton id="btn3" enabled="true" text="The following array is empty: []" width="67" />',
-   			'  <test:TestButton id="btn4" enabled="false" text="[] is an empty array" width="42" />',
-   			'</core:View>'
-   		].join('');
+			'<core:View xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib">',
+			'  <test:TestButton id="btn1" enabled="true" text="The following set is empty: \\{\\}" width="67" />',
+			'  <test:TestButton id="btn2" enabled="false" text="\\{\\} is an empty set" width="42" />',
+			'  <test:TestButton id="btn3" enabled="true" text="The following array is empty: []" width="67" />',
+			'  <test:TestButton id="btn4" enabled="false" text="[] is an empty array" width="42" />',
+			'</core:View>'
+		].join('');
 
 		var oViewWithBindings1 = sap.ui.xmlview({viewContent:xmlWithBindings});
 		oViewWithBindings1.setModel(oModel1);
-		equal(oViewWithBindings1.byId("btn").getEnabled(), oModel1.getData().booleanValue, "Check 'enabled' property of button 'btn'");
-		equal(oViewWithBindings1.byId("btn").getText(), oModel1.getData().stringValue, "Check 'text' property of button 'btn'");
-		equal(oViewWithBindings1.byId("btn").getWidth(), oModel1.getData().integerValue, "Check 'width' property of button 'btn'");
+		assert.equal(oViewWithBindings1.byId("btn").getEnabled(), oModel1.getData().booleanValue, "Check 'enabled' property of button 'btn'");
+		assert.equal(oViewWithBindings1.byId("btn").getText(), oModel1.getData().stringValue, "Check 'text' property of button 'btn'");
+		assert.equal(oViewWithBindings1.byId("btn").getWidth(), oModel1.getData().integerValue, "Check 'width' property of button 'btn'");
 
 		var oViewWithBindings2 = sap.ui.xmlview({viewContent:xmlWithBindings});
 		oViewWithBindings2.setModel(oModel2);
-		equal(oViewWithBindings2.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
-		equal(oViewWithBindings2.byId("btn").getText(), oModel2.getData().stringValue, "Check 'text' property of button 'btn'");
-		equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
+		assert.equal(oViewWithBindings2.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
+		assert.equal(oViewWithBindings2.byId("btn").getText(), oModel2.getData().stringValue, "Check 'text' property of button 'btn'");
+		assert.equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
 
 		var oViewWithNamedBindings = sap.ui.xmlview({viewContent:xmlWithNamedBindings});
 		oViewWithNamedBindings.setModel(oModel1, "model1");
 		oViewWithNamedBindings.setModel(oModel2, "model2");
-		equal(oViewWithNamedBindings.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
-		equal(oViewWithNamedBindings.byId("btn").getText(), oModel1.getData().stringValue, "Check 'text' property of button 'btn'");
-		equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
+		assert.equal(oViewWithNamedBindings.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
+		assert.equal(oViewWithNamedBindings.byId("btn").getText(), oModel1.getData().stringValue, "Check 'text' property of button 'btn'");
+		assert.equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
 
 		var oViewWithElementBinding = sap.ui.xmlview({viewContent:xmlWithElementBinding});
 		oViewWithBindings1.setModel(oModel1);
-		equal(oViewWithBindings1.byId("btn").getEnabled(), oModel1.getData().data.booleanValue, "Check 'enabled' property of button 'btn'");
-		equal(oViewWithBindings1.byId("btn").getText(), oModel1.getData().data.stringValue, "Check 'text' property of button 'btn'");
-		equal(oViewWithBindings1.byId("btn").getWidth(), oModel1.getData().data.integerValue, "Check 'width' property of button 'btn'");
+		assert.equal(oViewWithBindings1.byId("btn").getEnabled(), oModel1.getData().data.booleanValue, "Check 'enabled' property of button 'btn'");
+		assert.equal(oViewWithBindings1.byId("btn").getText(), oModel1.getData().data.stringValue, "Check 'text' property of button 'btn'");
+		assert.equal(oViewWithBindings1.byId("btn").getWidth(), oModel1.getData().data.integerValue, "Check 'width' property of button 'btn'");
 
 		var oViewWithoutBindings = sap.ui.xmlview({viewContent:xmlWithoutBindings});
 		oViewWithoutBindings.setModel(oModel1);
 		oViewWithoutBindings.setModel(oModel1, "model1");
 		oViewWithoutBindings.setModel(oModel2, "model2");
-		equal(oViewWithoutBindings.byId("btn1").getText(), "The following set is empty: {}", "Check 'text' property of button 'btn1'");
-		equal(oViewWithoutBindings.byId("btn2").getText(), "{} is an empty set", "Check 'text' property of button 'btn2'");
-		equal(oViewWithoutBindings.byId("btn3").getText(), "The following array is empty: []", "Check 'text' property of button 'btn3'");
-		equal(oViewWithoutBindings.byId("btn4").getText(), "[] is an empty array", "Check 'text' property of button 'btn4'");
+		assert.equal(oViewWithoutBindings.byId("btn1").getText(), "The following set is empty: {}", "Check 'text' property of button 'btn1'");
+		assert.equal(oViewWithoutBindings.byId("btn2").getText(), "{} is an empty set", "Check 'text' property of button 'btn2'");
+		assert.equal(oViewWithoutBindings.byId("btn3").getText(), "The following array is empty: []", "Check 'text' property of button 'btn3'");
+		assert.equal(oViewWithoutBindings.byId("btn4").getText(), "[] is an empty array", "Check 'text' property of button 'btn4'");
 	});
 
-	test("Custom Data", function() {
+	QUnit.test("Custom Data", function(assert) {
 
 		var oModel = new sap.ui.model.json.JSONModel({
 			value : 'myValue'
 		});
 
 		var xmlWithBindings = [
-      		'<core:View controllerName="example.mvc.test" xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">',
-      		'  <test:TestButton id="btn" app:myKey1="myValue1" app:myKey2="{/value}" app:myKey3="{path: \'/value\', formatter:\'.valueFormatter\'}" />',
-      		'</core:View>'
-      	].join('');
+			'<core:View controllerName="example.mvc.test" xmlns:core="sap.ui.core" xmlns:test="sap.ui.testlib" xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">',
+			'  <test:TestButton id="btn" app:myKey1="myValue1" app:myKey2="{/value}" app:myKey3="{path: \'/value\', formatter:\'.valueFormatter\'}" />',
+			'</core:View>'
+		].join('');
 
 		var oView = sap.ui.xmlview({viewContent:xmlWithBindings});
 		oView.setModel(oModel);
-		equal(oView.byId("btn").data("myKey1"), "myValue1", "Check CustomData 'myKey1' of button 'btn'");
-		equal(oView.byId("btn").data("myKey2"), oModel.getData().value, "Check CustomData 'myKey2' of button 'btn'");
-		equal(oView.byId("btn").data("myKey3"), "formatted-" + oModel.getData().value, "Check CustomData 'myKey3' of button 'btn'");
+		assert.equal(oView.byId("btn").data("myKey1"), "myValue1", "Check CustomData 'myKey1' of button 'btn'");
+		assert.equal(oView.byId("btn").data("myKey2"), oModel.getData().value, "Check CustomData 'myKey2' of button 'btn'");
+		assert.equal(oView.byId("btn").data("myKey3"), "formatted-" + oModel.getData().value, "Check CustomData 'myKey3' of button 'btn'");
 
 	});
 
-	module("Preprocessor API");
+	QUnit.module("Preprocessor API");
 
-	test("registration", function() {
+	QUnit.test("registration", function(assert) {
 		var XMLView = sap.ui.core.mvc.XMLView,
 			View =  sap.ui.core.mvc.View,
 			oPreprocessor = function(vSource, sCaller, mSettings) {
@@ -198,27 +281,26 @@ sap.ui.core.mvc.Controller</title>
 		XMLView.registerPreprocessor("xml", oPreprocessor, false, {type: "xml"});
 		XMLView.registerPreprocessor("controls", oPreprocessor, false, {type: "controls"});
 
-		strictEqual(View._mPreprocessors["XML"]["xml"].settings.type, "xml", "Registration for xml successful");
-		strictEqual(View._mPreprocessors["XML"]["controls"].settings.type, "controls", "Registration for content successful");
+		assert.strictEqual(View._mPreprocessors["XML"]["xml"].settings.type, "xml", "Registration for xml successful");
+		assert.strictEqual(View._mPreprocessors["XML"]["controls"].settings.type, "controls", "Registration for content successful");
 
 		assert.throws(XMLView.registerPreprocessor("unknown", oPreprocessor, false, {type: "unknown"}), "Error thrown when registering invalid type");
 
-		strictEqual(View._mPreprocessors["XML"]["unknown"], undefined, "Registration for invalid type refused");
+		assert.strictEqual(View._mPreprocessors["XML"]["unknown"], undefined, "Registration for invalid type refused");
 	});
 
-	test("sync / no execution", 1, function() {
-		jQuery.sap.require("sap.ui.core.mvc.View");
+	QUnit.test("sync / no execution", 1, function(assert) {
 		var oResult,
 			bCalled,
 			oView,
 			sViewContent = [
-			    '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
 			].join(''),
 			oPreprocessor = function(vSource, sCaller, mSettings) {
 				// async test part
 				jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
 				bCalled = true;
-				ok(false, "Preprocessor executed");
+				assert.ok(false, "Preprocessor executed");
 				return vSource;
 			};
 
@@ -232,23 +314,22 @@ sap.ui.core.mvc.Controller</title>
 			}
 		});
 
-		ok(!bCalled, "Preprocessor not called as no syncSupport declared.");
+		assert.ok(!bCalled, "Preprocessor not called as no syncSupport declared.");
 	});
 
-	test("sync", 3, function() {
-		jQuery.sap.require("sap.ui.core.mvc.View");
+	QUnit.test("sync", 3, function(assert) {
 		var oResult,
 			bCalled,
 			oView,
 			sViewContent = [
-			    '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
 			].join(''),
 			spy = sinon.spy(sap.ui.core.mvc.View.prototype, "runPreprocessor"),
 			oPreprocessor = function(vSource, sCaller, mSettings) {
 				// async test part
 				jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
 				bCalled = true;
-				ok(true, "Preprocessor executed");
+				assert.ok(true, "Preprocessor executed");
 				return vSource;
 			};
 
@@ -264,23 +345,23 @@ sap.ui.core.mvc.Controller</title>
 		});
 
 		sinon.assert.calledTwice(spy);
-		ok(bCalled, "Preprocessor called in sync view as declared.");
+		assert.ok(bCalled, "Preprocessor called in sync view as declared.");
 		// reset the spy for coming tests
-		sap.ui.core.mvc.View.prototype.runPreprocessor.restore();
+		spy.restore();
 	});
 
-	asyncTest("async", 2, function() {
-		jQuery.sap.require("sap.ui.core.mvc.View");
-		var oResult,
+	QUnit.test("async", 2, function(assert) {
+		var done = assert.async(),
+			oResult,
 			oView,
 			sViewContent = [
-			    '<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
 			].join(''),
 			spy = sinon.spy(sap.ui.core.mvc.View.prototype, "runPreprocessor"),
 			oPreprocessor = function(vSource, sCaller, mSettings) {
 				// async test part
 				jQuery.sap.log.debug("[TEST] " + mSettings.message, sCaller);
-				ok(true, "Preprocessor executed");
+				assert.ok(true, "Preprocessor executed");
 				return new Promise(function(resolve) {
 					resolve(vSource);
 				});
@@ -299,7 +380,8 @@ sap.ui.core.mvc.Controller</title>
 
 		oView.attachAfterInit(function() {
 			sinon.assert.calledTwice(spy);
-			start();
+			spy.restore();
+			done();
 		});
 	});
 
