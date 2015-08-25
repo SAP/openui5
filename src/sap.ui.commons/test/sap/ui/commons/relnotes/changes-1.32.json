@@ -1,0 +1,161 @@
+{
+  "1.32.0": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "ac5ec9224369a2c9c73a52176787f702a9f17cfb",
+        "author": "Sebastian Schipplick \u003csebastian.schipplick@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.commons.SearchField: ValueState and placeholder",
+        "references": []
+      },
+      {
+        "id": "5a34ea5f081a9528d55c6ad78685bb66ba585a4c",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.commons.TabStrip: Drag and drop of tabs is implemented",
+        "references": []
+      },
+      {
+        "id": "9c9f02ba3aa4ab5219ba2555fa499569e9cf36e0",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Tree node not expanding properly on Chrome",
+        "references": []
+      },
+      {
+        "id": "bdac0f071e0538e103311a06bf9dfe0e931d6750",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: Remove DOM when hiding dialog",
+        "references": []
+      },
+      {
+        "id": "375bd10a2586222ad0bcef4b6825aa0173b50df4",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: In modal mode can be dragged properly in scrolled page",
+        "references": []
+      },
+      {
+        "id": "ebb8d41041ee4a867bf0edefea06ec602c3daeb7",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ApplicationHeader: Placement of the colon fixed in RTL (Right-to-Left) mode",
+        "references": []
+      },
+      {
+        "id": "a63be6bf2b17b1aacc54b8835faec70ed06cdfb2",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Button: Contrast for semantic color buttons in High Contrast Black mode is now correct",
+        "references": []
+      },
+      {
+        "id": "df453f2b06f83ad8991e8f80d4a3101897ddfa00",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Dialog: Fixes Dialog resizing beyond minimum size",
+        "references": []
+      },
+      {
+        "id": "422f9a2a7ca7def248a9e7398c756dce1f4b133d",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Dialog: The close button has proper name when read by JAWS",
+        "references": []
+      },
+      {
+        "id": "ee485929fe7408599c974a1ff50961f00bf86a67",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.InPlaceEdit: Syntax error if no content",
+        "references": []
+      },
+      {
+        "id": "c0db730af5ff294720670b6bf5a204ac0527d5a5",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Label: Prevent default icon tooltip",
+        "references": []
+      },
+      {
+        "id": "761bcb264e4745e82c5b990fa12d2a03e0cd8dfa",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Panel: Prevent default icon tooltip",
+        "references": []
+      },
+      {
+        "id": "5b1a50790d50c73a049ae0c17d35da511c53dad4",
+        "author": "Diana Shtilyanova \u003cdiana.shtilianova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.SearchField: Implement F2 keyboard handling",
+        "references": []
+      },
+      {
+        "id": "1a8076100c3e828e43ab7c039abbd42e1529c625",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Fix selectedIndex when disable selected tab",
+        "references": []
+      },
+      {
+        "id": "ca9b23f57d6cb674c1d0534d62a435e067ea401b",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Tabs set to non-visible now disappear",
+        "references": []
+      },
+      {
+        "id": "3b5a534d4d9ab7dac67300345cdd6f5d1a370246",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Prevent default icon tooltip",
+        "references": []
+      },
+      {
+        "id": "e5f575edb365888285115f34944e5c3c6fabc913",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField, ComboBox, DropdownBox: Wrong tooltip",
+        "references": []
+      },
+      {
+        "id": "002f0c0fe7ce5b4d1e153e24b79ddb137fbb98aa",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Tree: Prevent default icon tooltip",
+        "references": []
+      },
+      {
+        "id": "14968f224c7788eb6b54f52c3473d83cdcfc3159",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUoloader: Fix for m styling",
+        "references": []
+      },
+      {
+        "id": "dd04793662608f2c046531de13d1665f491657ac",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
+        "references": []
+      },
+      {
+        "id": "5aeb56bd6515a6af8e23b306bfb206567529144a",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": ": sap.ui.commons.InPlaceEdit: Alignment of button in HCB (High Contrast Black)",
+        "references": []
+      },
+      {
+        "id": "848590f84fb056766c612b05b0e7085191bbd187",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ComboBox: Adapt new data binding logic",
+        "references": []
+      }
+    ]
+  }
+}

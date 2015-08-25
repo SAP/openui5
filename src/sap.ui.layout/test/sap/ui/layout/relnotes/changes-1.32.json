@@ -1,0 +1,91 @@
+{
+  "1.32.0": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "0ab3c103e52fe2c413d183ee25cbb4beca73058f",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.DynamicSideContent: Improved aspect ratio on M breakpoint and sideContentFallDown belowM",
+        "references": []
+      },
+      {
+        "id": "4af46e66165ddf2faa6466e53b8f0ab4ca44dec4",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.layout.form.SimpleForm: Add AriaLabelledBy assoziation",
+        "references": []
+      },
+      {
+        "id": "f415d104e6738e74653af76d531eeee2ba7a6fe7",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Microsoft Edge Support: Fix CSS text-align statements in",
+        "references": []
+      },
+      {
+        "id": "16d6bc572700898b279afc4aaefc5d8c02aaf9d1",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
+        "type": "FIX",
+        "text": "layout.Grid: Line break false for XL size",
+        "references": []
+      },
+      {
+        "id": "769d42622e828e23072eb2deabe7313b76aeb32e",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "layout.Splitter: Added Splitter Bar Accessibility Information",
+        "references": []
+      },
+      {
+        "id": "ba25023fe841ce374d3a2ba5a681b81bc526f79c",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "layout.Splitter: Correctly resize Splitter bars",
+        "references": []
+      },
+      {
+        "id": "cf98df501574da29ca0047130cf4ae99853721ae",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.DynamicSideContent: Fixed layout issue",
+        "references": []
+      },
+      {
+        "id": "c63996c978fb2d45ffd144c8f423ae9d7b11eacd",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.Grid.js: JS Docu for Indent.",
+        "references": []
+      },
+      {
+        "id": "97c609d715e9e7fa0ec0c05f2c96ebf7ee3582f8",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.Splitter: Prevent default icon tooltip",
+        "references": []
+      },
+      {
+        "id": "d01b3658943c07a3e41e1fadcd4180c25e110a1b",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.FormLayout: Prevent default icon tooltip",
+        "references": []
+      },
+      {
+        "id": "8014bbfeb999bb4cdf50707e52d7536f3c2409ee",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.ResponsiveGridLayout: Full size labels",
+        "references": []
+      },
+      {
+        "id": "98a87c600843cecb0b0b3dda4b843fac2ce6fb0b",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form: Adapt documentation for form controls",
+        "references": []
+      }
+    ]
+  }
+}

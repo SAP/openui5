@@ -1,0 +1,42 @@
+{
+  "1.32.0": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "d77d44795b05b3d1b8675c95e91a170fe58021cb",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "BusyIndicator: New Animation",
+        "references": []
+      },
+      {
+        "id": "71beb115af2453b9301ea82fd6b0b235f3d02b76",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "new sap.ui.unified.MonthInterval: Initial version",
+        "references": []
+      },
+      {
+        "id": "7182f665bd99f4ccc3552b4068d1c70d204d6fbd",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unifield.CalendarTimeInterval: New control",
+        "references": []
+      },
+      {
+        "id": "422f9a2a7ca7def248a9e7398c756dce1f4b133d",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Dialog: The close button has proper name when read by JAWS",
+        "references": []
+      },
+      {
+        "id": "dd04793662608f2c046531de13d1665f491657ac",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
+        "references": []
+      }
+    ]
+  }
+}
