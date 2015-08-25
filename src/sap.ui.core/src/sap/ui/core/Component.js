@@ -152,14 +152,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 * @return {sap.ui.core.ComponentMetadata} Metadata for the Component class.
 	 * @static
 	 * @public
-	 * @name sap.ui.core.Component#.getMetadata
+	 * @name sap.ui.core.Component.getMetadata
 	 * @function
 	 */
 
 	/**
-	 * Returns the metadata for the class that this component belongs to.
+	 * Returns the metadata for the specific class of the current instance. 
 	 *
-	 * @return {sap.ui.core.ComponentMetadata} Metadata for the class of the component
+	 * @return {sap.ui.core.ComponentMetadata} Metadata for the specific class of the current instance.
 	 * @public
 	 * @name sap.ui.core.Component#getMetadata
 	 * @function
