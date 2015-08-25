@@ -610,13 +610,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 						// default 'undefined' is already set in this case
 				}
 			}
-
-			// Origin: if sap-system url paramter is given -> add this alias to the service url(s) of ODataModels
+			
+			// Origin: if sap-system paramter is given -> add this alias to the service url(s) of ODataModels
+			var oComponentData = this.getComponentData();
+			var sSystemParameter = oComponentData && oComponentData.startupParameters && oComponentData.startupParameters["sap-system"];
+			// Check the URL as "fallback", the system parameter of the componentData.startup has precedence over a URL parameter
+			if (!sSystemParameter) {
+				sSystemParameter = oUriParams.get("sap-system");
+			}
+			
+			// lazy load the ODataUtils if systemParameter is given
 			var bAddOrigin = false;
 			var ODataUtils;
-			if (oUriParams.get("sap-system") && jQuery.inArray(oModelConfig.type, ["sap.ui.model.odata.ODataModel", "sap.ui.model.odata.v2.ODataModel"]) != -1){
+			if (sSystemParameter && jQuery.inArray(oModelConfig.type, ["sap.ui.model.odata.ODataModel", "sap.ui.model.odata.v2.ODataModel"]) != -1) {
 				bAddOrigin = true;
-				// lazy load the ODataUtils
 				jQuery.sap.require("sap.ui.model.odata.ODataUtils");
 				ODataUtils = sap.ui.require("sap/ui/model/odata/ODataUtils");
 			}
@@ -628,7 +635,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 					// Origin segment: pre- and postOriginBaseUris do not include uri params, they will be used for annotation uri adaption
 					oModelConfig.preOriginBaseUri = oModelConfig.uri.split("?")[0];
 					oModelConfig.uri = ODataUtils.setOrigin(oModelConfig.uri, {
-						alias: oUriParams.get("sap-system")
+						alias: sSystemParameter
 					});
 					oModelConfig.postOriginBaseUri = oModelConfig.uri.split("?")[0];
 				}
@@ -653,7 +660,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 				if (bAddOrigin && oModelConfig.uriSettingName !== undefined && oModelConfig.settings && oModelConfig.settings[oModelConfig.uriSettingName]) {
 					oModelConfig.preOriginBaseUri = oModelConfig.settings[oModelConfig.uriSettingName].split("?")[0];
 					oModelConfig.settings[oModelConfig.uriSettingName] = ODataUtils.setOrigin(oModelConfig.settings[oModelConfig.uriSettingName], {
-						alias: oUriParams.get("sap-system")
+						alias: sSystemParameter
 					});
 					oModelConfig.postOriginUri = oModelConfig.settings[oModelConfig.uriSettingName].split("?")[0];
 				}
