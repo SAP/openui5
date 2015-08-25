@@ -75,7 +75,7 @@
 						<t:AnalyticalColumn />
 					</t:columns>
 					<t:layoutData>
-						<FlexItemData growFactor="1" styleClass="sapMSampleFioriListReportTable" />
+						<FlexItemData growFactor="1" baseSize="0%" styleClass="sapMSampleFioriListReportTable" />
 					</t:layoutData>
 				</t:AnalyticalTable>
 			</VBox>
