@@ -315,6 +315,66 @@
 
 		});
 		
+		QUnit.test("metadata v2 with sap-system startup parameter", function(assert) {
+			this.mockGetUriParameters();
+			this.mockModels();
+
+			var oLogSpy = this.spy(jQuery.sap.log, "error");
+
+			this.oComponent = sap.ui.component({
+				name: "sap.ui.test.v2models.parent",
+				componentData: {
+					startupParameters: {
+						"sap-system": "STARTUP456"
+					}
+				}
+			});
+
+			// model: "ODataModel"
+			sinon.assert.calledWithExactly(this.modelSpy.odata, {
+				serviceUrl: '/path/to/odata/service;o=STARTUP456?sap-client=foo&sap-server=bar',
+				annotationURI: [ '/path/to/odata/annotations/1', 'v2models/parent/path/to/local/odata/annotations/2'],
+				useBatch: false,
+				refreshAfterChange: false,
+				json: true
+			});
+
+			// model: "v2-ODataModel"
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/odata/service;o=STARTUP456',
+				useBatch: true,
+				refreshAfterChange: true,
+			});
+
+			// model: "v2-ODataModel" with a trailing slash and URL Parameters
+			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+				serviceUrl: '/path/to/odata/service/with/trailing/slash;o=STARTUP456/?sap-client=foo&sap-server=bar',
+				annotationURI: ['/path/to/odata/service/with/trailing/slash;o=STARTUP456/annotations.xml', 'v2models/parent/path/to/local/odata/annotations/2'],
+				useBatch: true,
+				refreshAfterChange: true,
+			});
+			
+			//JSON Model, should not have an origin
+			// model: json
+			sinon.assert.calledWithExactly(this.modelSpy.json, '/path/to/data.json?sap-client=foo&sap-server=bar');
+			
+			//ResourceModel should also not have an origin attached
+			// model: "resourceBundle-name"
+			sinon.assert.calledWithExactly(this.modelSpy.resource, {
+				bundleName: "sap.ui.test.v2models.parent.i18n"
+			});
+			
+			// destroy the component
+			this.oComponent.destroy();
+
+			// check if all models got destroyed (uses the models from #assertModelInstances)
+			this.assertModelsDestroyed();
+
+			// check if internal models references were removed
+			assert.ok(!this.oComponent._mManifestModels, "Component should not have internal model references anymore");
+
+		});
+		
 		QUnit.test("metadata v2 with dataSources (empty inheritance)", function(assert) {
 			this.mockGetUriParameters();
 			this.mockModels();
