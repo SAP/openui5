@@ -360,7 +360,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Called, whenever the binding of the aggregation items is changed.
+		 * Called whenever the binding of the aggregation items is changed.
 		 *
 		 * @private
 		 */
@@ -1079,11 +1079,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		/* protected methods                                           */
 		/* ----------------------------------------------------------- */
 
-		/*
+		/**
 		 * Updates and synchronizes <code>selectedItem</code> association, <code>selectedItemId</code> and <code>selectedKey</code> properties.
 		 *
 		 * @param {sap.ui.core.Item | null} vItem
-		 * @protected
 		 */
 		Select.prototype.setSelection = function(vItem) {
 			var oList = this.getList(),
@@ -1105,34 +1104,31 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			this._handleAriaActiveDescendant(vItem);
 		};
 
-		/*
+		/**
 		 * Determines whether the <code>selectedItem</code> association and <code>selectedKey</code> property are synchronized.
 		 *
 		 * @returns {boolean}
-		 * @protected
 		 */
 		Select.prototype.isSelectionSynchronized = function() {
 			var vItem = this.getSelectedItem();
 			return this.getSelectedKey() === (vItem && vItem.getKey());
 		};
 
-		/*
+		/**
 		 * Synchronize selected item and key.
 		 *
 		 * @param {sap.ui.core.Item} vItem
 		 * @param {string} sKey
 		 * @param {array} [aItems]
-		 * @protected
 		 */
 		Select.prototype.synchronizeSelection = function() {
 			SelectList.prototype.synchronizeSelection.call(this);
 		};
 
-		/*
+		/**
 		 * This hook method can be used to add additional content.
 		 *
 		 * @param {sap.m.Dialog | sap.m.Popover} [oPicker]
-		 * @protected
 		 */
 		Select.prototype.addContent = function(oPicker) {};
 
@@ -1173,13 +1169,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			return oPicker;
 		};
 
-		/*
+		/**
 		 * Retrieves the next item from the aggregation named <code>items</code>
 		 * whose first character match with the given <code>sChar</code>.
 		 *
 		 * @param {string} sChar
 		 * @returns {sap.ui.core.Item | null}
-		 * @protected
 		 * @since 1.26.0
 		 */
 		Select.prototype.findNextItemByFirstCharacter = function(sChar) {
@@ -1201,11 +1196,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			return null;
 		};
 
-		/*
+		/**
 		 * Create an instance type of <code>sap.m.SelectList</code>.
 		 *
 		 * @returns {sap.m.SelectList}
-		 * @protected
 		 */
 		Select.prototype.createList = function() {
 
@@ -1222,37 +1216,34 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			return this._oList;
 		};
 
-		/*
+		/**
 		 * Determines whether the Select has content or not.
 		 *
 		 * @returns {boolean}
-		 * @protected
 		 */
 		Select.prototype.hasContent = function() {
 			return !!this.getItems().length;
 		};
 
-		/*
+		/**
 		 * This hook method is called before the control's picker popup is rendered.
 		 *
-		 * @protected
 		 */
 		Select.prototype.onBeforeRenderingPicker = function() {
 			var fnOnBeforeRenderingPickerType = this["_onBeforeRendering" + this.getPickerType()];
 			fnOnBeforeRenderingPickerType && fnOnBeforeRenderingPickerType.call(this);
 		};
 
-		/*
+		/**
 		 * This hook method is called after the control's picker popup is rendered.
 		 *
-		 * @protected
 		 */
 		Select.prototype.onAfterRenderingPicker = function() {
 			var fnOnAfterRenderingPickerType = this["_onAfterRendering" + this.getPickerType()];
 			fnOnAfterRenderingPickerType && fnOnAfterRenderingPickerType.call(this);
 		};
 
-		/*
+		/**
 		 * Open the control's picker popup.
 		 *
 		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
@@ -1269,11 +1260,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			return this;
 		};
 
-		/*
+		/**
 		 * Toggle the open state of the control's picker popup.
 		 *
 		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
-		 * @protected
 		 * @since 1.26
 		 */
 		Select.prototype.toggleOpenState = function() {
@@ -1286,11 +1276,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			return this;
 		};
 
-		/*
+		/**
 		 * Gets the visible <code>items</code>.
 		 *
 		 * @return {sap.ui.core.Item[]}
-		 * protected
 		 * @since 1.22.0
 		 */
 		Select.prototype.getVisibleItems = function() {
@@ -1298,23 +1287,21 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			return oList ? oList.getVisibleItems() : [];
 		};
 
-		/*
+		/**
 		 * Determines whether the provided item is selected.
 		 *
 		 * @param {sap.ui.core.Item} oItem
 		 * @returns {boolean}
-		 * @protected
 		 * @since 1.24.0
 		 */
 		Select.prototype.isItemSelected = function(oItem) {
 			return oItem && (oItem.getId() === this.getAssociation("selectedItem"));
 		};
 
-		/*
+		/**
 		 * Retrieves the index of the selected item from the aggregation named <code>items</code>.
 		 *
 		 * @returns {int} An integer specifying the selected index, or -1 if no item is selected.
-		 * @protected
 		 * @since 1.26.0
 		 */
 		Select.prototype.getSelectedIndex = function() {
@@ -1322,22 +1309,20 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			return oSelectedItem ? this.indexOfItem(this.getSelectedItem()) : -1;
 		};
 
-		/*
+		/**
 		 * Retrieves the default selected item object from the aggregation named <code>items</code>.
 		 *
 		 * @returns {sap.ui.core.Item | null}
-		 * protected
 		 * @since 1.22.0
 		 */
 		Select.prototype.getDefaultSelectedItem = function(aItems) {
 			return this.findFirstEnabledItem();
 		};
 
-		/*
+		/**
 		 * Gets the selectable items from the aggregation named <code>items</code>.
 		 *
 		 * @return {sap.ui.core.Item[]} An array containing the selectables items.
-		 * @protected
 		 * @since 1.22.0
 		 */
 		Select.prototype.getSelectableItems = function() {
@@ -1345,23 +1330,21 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			return oList ? oList.getSelectableItems() : [];
 		};
 
-		/*
+		/**
 		 * Gets the control's picker popup's trigger element.
 		 *
 		 * @returns {Element | null} Returns the element that is used as trigger to open the control's picker popup.
-		 * @protected
 		 * @since 1.22.0
 		 */
 		Select.prototype.getOpenArea = function() {
 			return this.getDomRef();
 		};
 
-		/*
+		/**
 		 * Checks whether the provided element is the open area.
 		 *
 		 * @param {Element} oDomRef
 		 * @returns {boolean}
-		 * @protected
 		 * @since 1.22.0
 		 */
 		Select.prototype.isOpenArea = function(oDomRef) {
@@ -1369,14 +1352,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			return oOpenAreaDomRef && oOpenAreaDomRef.contains(oDomRef);
 		};
 
-		/*
+		/**
 		 * Retrieves an item by searching for the given property/value from the aggregation named <code>items</code>.<br>
 		 * <b>Note: </b> If duplicate values exists, the first item matching the value is returned.
 		 *
 		 * @param {string} sProperty An item property.
 		 * @param {string} sValue An item value that specifies the item to retrieve.
 		 * @returns {sap.ui.core.Item | null} The matched item or null.
-		 * @protected
 		 * @since 1.22.0
 		 */
 		Select.prototype.findItem = function(sProperty, sValue) {
@@ -1384,10 +1366,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			return oList ? oList.findItem(sProperty, sValue) : null;
 		};
 
-		/*
+		/**
 		 * Clear the selection.
 		 *
-		 * @protected
 		 * @since 1.22.0
 		 */
 		Select.prototype.clearSelection = function() {
