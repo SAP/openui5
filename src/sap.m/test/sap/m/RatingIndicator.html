@@ -323,17 +323,17 @@
 			}
 
 			var oIconSelectedLabel = new sap.m.Label({text: 'IconSelected'});
-			var oIconSelectedSelect = new sap.m.Select({
+			var oIconSelectedComboBox = new sap.m.ComboBox({
 				selectedItemId: "favorite_selected",
 				items: aIconsSelected
 			});
 			var oIconUnselectedLabel = new sap.m.Label({text: 'IconUnselected'});
-			var oIconUnselectedSelect = new sap.m.Select({
+			var oIconUnselectedComboBox = new sap.m.ComboBox({
 				selectedItemId: "favorite_unselected",
 				items: aIconsUnselected
 			});
 			var oIconHoveredLabel = new sap.m.Label({text: 'IconHovered'});
-			var oIconHoveredSelect = new sap.m.Select({
+			var oIconHoveredComboBox = new sap.m.ComboBox({
 				selectedItemId: "favorite_hovered",
 				items: aIconsHovered
 			});
@@ -363,9 +363,9 @@
 					oRatingAPI0.setMaxValue(parseInt(oMaxValueInput.getValue()));
 					oRatingAPI0.setIconSize(oIconSizeInput.getValue());
 					oRatingAPI0.setVisualMode(oVisualModeSelect.getSelectedItemId());
-					oRatingAPI0.setIconSelected(sap.ui.core.IconPool.getIconURI(oIconSelectedSelect.getSelectedItem().getText()));
-					oRatingAPI0.setIconUnselected(sap.ui.core.IconPool.getIconURI(oIconUnselectedSelect.getSelectedItem().getText()));
-					oRatingAPI0.setIconHovered(sap.ui.core.IconPool.getIconURI(oIconHoveredSelect.getSelectedItem().getText()));
+					oRatingAPI0.setIconSelected(sap.ui.core.IconPool.getIconURI(oIconSelectedComboBox.getSelectedItem().getText()));
+					oRatingAPI0.setIconUnselected(sap.ui.core.IconPool.getIconURI(oIconUnselectedComboBox.getSelectedItem().getText()));
+					oRatingAPI0.setIconHovered(sap.ui.core.IconPool.getIconURI(oIconHoveredComboBox.getSelectedItem().getText()));
 					oRatingAPI0.setEnabled(oEnabledCheckbox.getSelected());
 					oRatingAPI0.setVisible(oVisibleCheckbox.getSelected());
 				},
@@ -383,11 +383,11 @@
 					oVisualModeLabel,
 					oVisualModeSelect,
 					oIconSelectedLabel,
-					oIconSelectedSelect,
+					oIconSelectedComboBox,
 					oIconUnselectedLabel,
-					oIconUnselectedSelect,
+					oIconUnselectedComboBox,
 					oIconHoveredLabel,
-					oIconHoveredSelect,
+					oIconHoveredComboBox,
 					oEnabledLabel,
 					oEnabledCheckbox,
 					oVisibleLabel,
