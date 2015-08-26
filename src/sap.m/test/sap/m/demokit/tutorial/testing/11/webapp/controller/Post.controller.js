@@ -23,7 +23,8 @@ sap.ui.define([
 			// between the busy indication for loading the view's meta data
 			var oViewModel = new JSONModel({
 					shareSendEmailSubject: "",
-					shareSendEmailMessage: ""
+					shareSendEmailMessage: "",
+					busy: true
 				});
 
 			this.getRouter().getRoute("post").attachPatternMatched(this._onPostMatched, this);

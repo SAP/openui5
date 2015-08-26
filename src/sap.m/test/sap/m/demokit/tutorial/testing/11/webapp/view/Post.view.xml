@@ -5,6 +5,8 @@
 		xmlns:semantic="sap.m.semantic">
 	<semantic:FullscreenPage
 			id="page"
+			busy="{postView>/busy}"
+			busyIndicatorDelay="0"
 			navButtonPress="onNavBack"
 			showNavButton="true"
 			title="{i18n>objectTitle}">
