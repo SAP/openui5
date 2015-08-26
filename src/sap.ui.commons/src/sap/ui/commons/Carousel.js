@@ -560,97 +560,118 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	Carousel.prototype.calculateAndSetSize = function() {
-		var aContent = this.getContent();
 		var sCarouselId = this.getId();
+		var oDimensions = this._getDimensions();
+		var maxWidth = oDimensions.maxWidth;
+		var maxHeight = oDimensions.maxHeight;
+		var contentBarSize;
+		var visibleItems = this.getVisibleItems();
+		var $Me = jQuery.sap.byId(sCarouselId);
+		var $NextButton = jQuery.sap.byId(sCarouselId + '-nextbutton');
+		var $PrevButton = jQuery.sap.byId(sCarouselId + '-prevbutton');
+		var $ContentArea = jQuery.sap.byId(sCarouselId + '-contentarea');
 
 		this._showAllItems();
 
-		if (aContent.length > 0) {
-			var maxWidth = 0;
-			var maxHeight = 0;
+		if (this.getContent().length <= 0) {
+		    return;
+		}
 
-			for ( var i = 0; i < aContent.length; i++) {
-				var childWidth, childHeight;
-				try {
-					childWidth = aContent[i].getWidth();
-					if (childWidth.substr( -1) == "%") {
-						childWidth = this.getDefaultItemWidth();
-					}
-				} catch (e) {
+		if (this.getWidth() && this.getOrientation() == "vertical") {
+			maxWidth = $Me.width();
+		}
+		if (this.getHeight() && this.getOrientation() == "horizontal") {
+			maxHeight = $Me.height();
+		}
+
+		this.$().addClass('sapUiCrsl' + jQuery.sap.charToUpperCase(this.getOrientation(), 0));
+
+		if (this.getOrientation() == "horizontal") {
+			contentBarSize = $Me.width() - this.getHandleSize() * 2 - 1;
+			$ContentArea.css('left', this.getHandleSize() + "px").css('right', this.getHandleSize() + "px");
+
+			if (visibleItems == 0) {
+				visibleItems = Math.floor(contentBarSize / maxWidth);
+			}
+
+			maxWidth = contentBarSize / visibleItems;
+			this._iMaxWidth = maxWidth;
+
+			var cLineHeight = maxHeight + "px";
+			$ContentArea.find('.sapUiCrslItm').css("width", maxWidth + "px").css("height", maxHeight + "px").css("display", "inline-block");
+			$PrevButton.css("height", maxHeight).css("line-height", cLineHeight);
+			$NextButton.css("height", maxHeight).css("line-height", cLineHeight);
+			$ContentArea.height(maxHeight);
+			$Me.height(maxHeight);
+
+			var iVisibleItemsCount = this.getContent().length < visibleItems ? this.getContent().length : visibleItems;
+			$Me.width(maxWidth * iVisibleItemsCount + (this.getHandleSize() * 2 - 1));
+		} else {
+			contentBarSize = $Me.height() - this.getHandleSize() * 2 - 1;
+			$ContentArea.css('top', this.getHandleSize() + "px").css('bottom', this.getHandleSize() + "px");
+
+			if (visibleItems == 0) {
+				visibleItems = Math.floor(contentBarSize / maxHeight);
+			}
+
+			maxHeight = contentBarSize / visibleItems;
+			this._iMaxWidth = maxHeight;
+
+			$ContentArea.find('.sapUiCrslItm').css("width", maxWidth + "px").css("height", maxHeight + "px").css("display", "block");
+			$PrevButton.width(maxWidth).after($ContentArea);
+			$NextButton.width(maxWidth);
+			$ContentArea.width(maxWidth);
+			$Me.width(maxWidth);
+		}
+
+		this._visibleItems = visibleItems;
+		this._hideInvisibleItems();
+	};
+
+	/**
+	 * Calculates the max vlues for a carousel item which would be used in calculating the size of the Carousel itself
+	 * @returns {{maxWidth: number, maxHeight: number}}
+	 * @private
+	 */
+	Carousel.prototype._getDimensions = function() {
+		var aContent = this.getContent();
+
+		var maxWidth = 0;
+		var maxHeight = 0;
+
+		for ( var i = 0; i < aContent.length; i++) {
+			var childWidth, childHeight;
+			try {
+				childWidth = aContent[i].getWidth();
+				if (childWidth.substr( -1) == "%") {
 					childWidth = this.getDefaultItemWidth();
 				}
-				try {
-					childHeight = aContent[i].getHeight();
-					if (childHeight.substr( -1) == "%") {
-						childHeight = this.getDefaultItemHeight();
-					}
-				} catch (e) {
+			} catch (e) {
+				childWidth = this.getDefaultItemWidth();
+			}
+			try {
+				childHeight = aContent[i].getHeight();
+				if (childHeight.substr( -1) == "%") {
 					childHeight = this.getDefaultItemHeight();
 				}
-				maxWidth = Math.max(maxWidth, parseInt(childWidth, 10));
-				maxHeight = Math.max(maxHeight, parseInt(childHeight, 10));
+			} catch (e) {
+				childHeight = this.getDefaultItemHeight();
 			}
-
-			if (maxWidth == 0 || isNaN(maxWidth)) {
-				maxWidth = this.getDefaultItemWidth();
-			}
-			if (maxHeight == 0 || isNaN(maxHeight)) {
-				maxHeight = this.getDefaultItemHeight();
-			}
-
-			var contentBarSize;
-			var visibleItems = this.getVisibleItems();
-			var $Me = jQuery.sap.byId(sCarouselId);
-			var $NextButton = jQuery.sap.byId(sCarouselId + '-nextbutton');
-			var $PrevButton = jQuery.sap.byId(sCarouselId + '-prevbutton');
-			var $ContentArea = jQuery.sap.byId(sCarouselId + '-contentarea');
-
-			if (this.getWidth() && this.getOrientation() == "vertical") {
-				maxWidth = $Me.width();
-			}
-			if (this.getHeight() && this.getOrientation() == "horizontal") {
-				maxHeight = $Me.height();
-			}
-
-			this.$().addClass('sapUiCrsl' + jQuery.sap.charToUpperCase(this.getOrientation(), 0));
-
-			if (this.getOrientation() == "horizontal") {
-				contentBarSize = $Me.width() - this.getHandleSize() * 2 - 1;
-				$ContentArea.css('left', this.getHandleSize() + "px").css('right', this.getHandleSize() + "px");
-
-				if (visibleItems == 0) {
-					visibleItems = Math.floor(contentBarSize / maxWidth);
-				}
-
-				maxWidth = contentBarSize / visibleItems;
-				this._iMaxWidth = maxWidth;
-
-				var cLineHeight = maxHeight + "px";
-				$ContentArea.find('.sapUiCrslItm').css("width", maxWidth + "px").css("height", maxHeight + "px").css("display", "inline-block");
-				$PrevButton.css("height", maxHeight).css("line-height", cLineHeight);
-				$NextButton.css("height", maxHeight).css("line-height", cLineHeight);
-				$ContentArea.height(maxHeight);
-				$Me.height(maxHeight);
-			} else {
-				contentBarSize = $Me.height() - this.getHandleSize() * 2 - 1;
-				$ContentArea.css('top', this.getHandleSize() + "px").css('bottom', this.getHandleSize() + "px");
-
-				if (visibleItems == 0) {
-					visibleItems = Math.floor(contentBarSize / maxHeight);
-				}
-
-				maxHeight = contentBarSize / visibleItems;
-				this._iMaxWidth = maxHeight;
-
-				$ContentArea.find('.sapUiCrslItm').css("width", maxWidth + "px").css("height", maxHeight + "px").css("display", "block");
-				$PrevButton.width(maxWidth).after($ContentArea);
-				$NextButton.width(maxWidth);
-				$ContentArea.width(maxWidth);
-				$Me.width(maxWidth);
-			}
-			this._visibleItems = visibleItems;
-			this._hideInvisibleItems();
+			maxWidth = Math.max(maxWidth, parseInt(childWidth, 10));
+			maxHeight = Math.max(maxHeight, parseInt(childHeight, 10));
 		}
+
+		if (maxWidth == 0 || isNaN(maxWidth)) {
+			maxWidth = this.getDefaultItemWidth();
+		}
+		if (maxHeight == 0 || isNaN(maxHeight)) {
+			maxHeight = this.getDefaultItemHeight();
+		}
+
+		return {
+			maxWidth: maxWidth,
+			maxHeight: maxHeight
+		};
 	};
 
 	Carousel.prototype.getFocusDomRef = function() {
