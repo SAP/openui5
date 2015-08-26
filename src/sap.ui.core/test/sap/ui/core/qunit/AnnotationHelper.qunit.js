@@ -4,9 +4,10 @@
 sap.ui.require([
 	"sap/ui/base/BindingParser", "sap/ui/base/ManagedObject", "sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/_AnnotationHelperBasics", "sap/ui/model/odata/_AnnotationHelperExpression",
-	"sap/ui/model/odata/v2/ODataModel", "sap/ui/model/PropertyBinding"
+	"sap/ui/model/odata/v2/ODataModel", "sap/ui/model/PropertyBinding",
+	"sap/ui/test/TestUtils"
 ], function(BindingParser, ManagedObject, JSONModel, Basics, Expression, ODataModel,
-		PropertyBinding) {
+		PropertyBinding, TestUtils) {
 	/*global deepEqual, ok, QUnit, sinon, strictEqual, throws */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
 	"use strict";
@@ -503,15 +504,14 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				}
 			}
 		}),
-		sAnnotations = jQuery.sap.syncGetText("model/GWSAMPLE_BASIC.annotations.xml", "", null),
-		sMetadata = jQuery.sap.syncGetText("model/GWSAMPLE_BASIC.metadata.xml", "", null),
 		mHeaders = {"Content-Type" : "application/xml"},
 		mFixture = {
-			"/GWSAMPLE_BASIC/$metadata" : [200, mHeaders, sMetadata],
-			"/GWSAMPLE_BASIC/annotations" : [200, mHeaders, sAnnotations],
-			"/GWSAMPLE_BASIC/test_annotations" : [200, mHeaders, sGwsampleTestAnnotations],
-			"/test/$metadata" : [200, mHeaders, sTestMetadata],
-			"/test/annotations" : [200, mHeaders, sTestAnnotations]
+			"/GWSAMPLE_BASIC/$metadata" : {source : "GWSAMPLE_BASIC.metadata.xml"},
+			"/GWSAMPLE_BASIC/annotations" : {source : "GWSAMPLE_BASIC.annotations.xml"},
+			"/GWSAMPLE_BASIC/test_annotations" :
+				{headers : mHeaders, message : sGwsampleTestAnnotations},
+			"/test/$metadata" :  {headers : mHeaders, message : sTestMetadata},
+			"/test/annotations" : {headers : mHeaders, message : sTestAnnotations}
 		},
 		oGlobalSandbox; // global sandbox for async tests
 
@@ -539,7 +539,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 		oEnvironment.beforeEach = function () {
 			oGlobalSandbox = sinon.sandbox.create();
-			setupSandbox(oGlobalSandbox);
+			TestUtils.useFakeServer(oGlobalSandbox, "sap/ui/core/qunit/model", mFixture);
 			if (fnBeforeEach) {
 				fnBeforeEach.apply(this, arguments);
 			}
@@ -552,7 +552,6 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			// I would consider this an API,
 			// see https://github.com/cjohansen/Sinon.JS/issues/614
 			oGlobalSandbox.verifyAndRestore();
-			sinon.FakeXMLHttpRequest.filters = [];
 		};
 
 		QUnit.module(sTitle, oEnvironment);
@@ -638,27 +637,6 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 		oControl.bindProperty("text", oSingleBindingInfo);
 		strictEqual(oControl.getText(), vExpected, sBinding);
-	}
-
-	/**
-	 * Sets up the given sandbox in order to use the URLs and responses defined in mFixture;
-	 * leaves unknown URLs alone.
-	 *
-	 * @param {object} oSandbox
-	 *   <a href ="http://sinonjs.org/docs/#sandbox">a Sinon.JS sandbox</a>
-	 */
-	function setupSandbox(oSandbox) {
-		var oServer = oSandbox.useFakeServer(), sUrl;
-
-		sinon.FakeXMLHttpRequest.useFilters = true;
-		sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl, bAsync) {
-			return mFixture[sUrl] === undefined; // do not fake if URL is unknown
-		});
-
-		for (sUrl in mFixture) {
-			oServer.respondWith(sUrl, mFixture[sUrl]);
-		}
-		oServer.autoRespond = true;
 	}
 
 	/**

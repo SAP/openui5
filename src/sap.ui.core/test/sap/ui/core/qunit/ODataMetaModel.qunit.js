@@ -357,14 +357,6 @@ sap.ui.require([
 	</edmx:DataServices>\
 </edmx:Edmx>\
 		',
-		sFARMetadata = jQuery.sap.syncGetText(
-			"model/FAR_CUSTOMER_LINE_ITEMS.metadata.xml", "", null),
-		sFARMetadataCompanyCode = jQuery.sap.syncGetText(
-			"model/FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode.xml", "", null),
-		sFARMetadataCompanyCode_Customer = jQuery.sap.syncGetText(
-			"model/FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode_ItemCustomer.xml", "", null),
-		sFARMetadataCustomer = jQuery.sap.syncGetText(
-			"model/FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCustomer.xml", "", null),
 		sFARMetadataInvalid = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <!-- fictitious empty response for /sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=Item/Invalid -->\
@@ -384,10 +376,6 @@ sap.ui.require([
 	</edmx:DataServices>\
 </edmx:Edmx>\
 		',
-		sFARMetadataMyComplexType_Customer = jQuery.sap.syncGetText(
-			"model/FAR_CUSTOMER_LINE_ITEMS.metadata_MyComplexTypeCustomer.xml", "", null),
-		sGWAnnotations = jQuery.sap.syncGetText("model/GWSAMPLE_BASIC.annotations.xml", "", null),
-		sGWMetadata = jQuery.sap.syncGetText("model/GWSAMPLE_BASIC.metadata.xml", "", null),
 		sMultipleValueListAnnotations = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="4.0"\
@@ -434,58 +422,40 @@ sap.ui.require([
 </edmx:Edmx>\
 		', mHeaders = {"Content-Type" : "application/xml"},
 		mFixture = {
-			"/fake/emptyDataServices/$metadata" : [200, mHeaders, sEmptyDataServices],
-			"/fake/emptyEntityType/$metadata" : [200, mHeaders, sEmptyEntityType],
-			"/fake/emptySchema/$metadata" : [200, mHeaders, sEmptySchema],
-			"/fake/emptySchemaWithAnnotations/$metadata"
-				: [200, mHeaders, sEmptySchemaWithAnnotations],
-			"/fake/service/$metadata" : [200, mHeaders, sMetadata],
-			"/fake/annotations" : [200, mHeaders, sAnnotations],
-			"/fake/annotations2" : [200, mHeaders, sAnnotations2],
-			"/fake/emptyAnnotations" : [200, mHeaders, sEmptyAnnotations],
-			"/fake/multipleValueLists" : [200, mHeaders, sMultipleValueListAnnotations],
-			"/fake/valueListMetadata/$metadata" : [200, mHeaders, sValueListMetadata],
-			"/FAR_CUSTOMER_LINE_ITEMS/$metadata" : [200, mHeaders, sFARMetadata],
+			"/fake/emptyDataServices/$metadata" : {headers: mHeaders, message: sEmptyDataServices},
+			"/fake/emptyEntityType/$metadata" : {headers: mHeaders, message: sEmptyEntityType},
+			"/fake/emptySchema/$metadata" : {headers: mHeaders, message: sEmptySchema},
+			"/fake/emptySchemaWithAnnotations/$metadata" :
+				{headers: mHeaders, message: sEmptySchemaWithAnnotations},
+			"/fake/service/$metadata" : {headers: mHeaders, message: sMetadata},
+			"/fake/annotations" : {headers: mHeaders, message: sAnnotations},
+			"/fake/annotations2" : {headers: mHeaders, message: sAnnotations2},
+			"/fake/emptyAnnotations" : {headers: mHeaders, message: sEmptyAnnotations},
+			"/fake/multipleValueLists" :
+				{headers: mHeaders, message: sMultipleValueListAnnotations},
+			"/fake/valueListMetadata/$metadata" : {headers: mHeaders, message: sValueListMetadata},
+			"/FAR_CUSTOMER_LINE_ITEMS/$metadata" :
+				{source: "FAR_CUSTOMER_LINE_ITEMS.metadata.xml"},
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode" :
-				[200, mHeaders, sFARMetadataCompanyCode],
+				{source: "FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode.xml"},
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode,FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer" :
-				[200, mHeaders, sFARMetadataCompanyCode_Customer],
+				{source: "FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode_ItemCustomer.xml"},
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer" :
-				[200, mHeaders, sFARMetadataCustomer],
+				{source: "FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCustomer.xml"},
 			// Note: Gateway says
 			// "Value-List FAR_CUSTOMER_LINE_ITEMS.Item/Invalid not found in Metadata", but we want
 			// to make our code more robust against empty responses
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FInvalid" :
-				[200, mHeaders, sFARMetadataInvalid], // no annotations at all
+				{headers: mHeaders, message: sFARMetadataInvalid}, // no annotations at all
+			// annotations for a different type
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Foo%2FInvalid" :
-				[200, mHeaders, sFARMetadataCompanyCode], // annotations for a different type
+				{source: "FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode.xml"},
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.MyComplexType%2FCustomer" :
-				[200, mHeaders, sFARMetadataMyComplexType_Customer],
-			"/GWSAMPLE_BASIC/$metadata" : [200, mHeaders, sGWMetadata],
-			"/GWSAMPLE_BASIC/annotations" : [200, mHeaders, sGWAnnotations]
+				{source: "FAR_CUSTOMER_LINE_ITEMS.metadata_MyComplexTypeCustomer.xml"},
+			"/GWSAMPLE_BASIC/$metadata" : {source: "GWSAMPLE_BASIC.metadata.xml"},
+			"/GWSAMPLE_BASIC/annotations" : {source: "GWSAMPLE_BASIC.annotations.xml"}
 		},
 		oGlobalSandbox; // global sandbox for async tests
-
-	/**
-	 * Sets up the given sandbox in order to use the URLs and responses defined in mFixture;
-	 * leaves unknown URLs alone.
-	 *
-	 * @param {object} oSandbox
-	 *   <a href ="http://sinonjs.org/docs/#sandbox">a Sinon.JS sandbox</a>
-	 */
-	function setupSandbox(oSandbox) {
-		var oServer = oSandbox.useFakeServer(), sUrl;
-
-		sinon.FakeXMLHttpRequest.useFilters = true;
-		sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl, bAsync) {
-			return mFixture[sUrl] === undefined; // do not fake if URL is unknown
-		});
-
-		for (sUrl in mFixture) {
-			oServer.respondWith(sUrl, mFixture[sUrl]);
-		}
-		oServer.autoRespond = true;
-	}
 
 
 	/**
@@ -557,7 +527,7 @@ sap.ui.require([
 	QUnit.module("sap.ui.model.odata.ODataMetaModel", {
 		beforeEach : function () {
 			oGlobalSandbox = sinon.sandbox.create();
-			setupSandbox(oGlobalSandbox);
+			TestUtils.useFakeServer(oGlobalSandbox, "sap/ui/core/qunit/model", mFixture);
 			this.iOldLogLevel = jQuery.sap.log.getLevel();
 			// do not rely on ERROR vs. DEBUG due to minified sources
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
@@ -567,7 +537,6 @@ sap.ui.require([
 			ODataModel.mServiceData = {}; // clear cache
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
 			oGlobalSandbox.verifyAndRestore();
-			sinon.FakeXMLHttpRequest.filters = [];
 		}
 	});
 
