@@ -7,7 +7,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			metadata: {
 				config: {
 					sample: {
-						iframe: "webapp/test/testService.html",
+						iframe: "webapp/test/testsuite.qunit.html",
 						stretch: true,
 						files: [
 							"webapp/controller/App.controller.js",
@@ -36,6 +36,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 							"webapp/test/unit/unitTests.qunit.html",
 							"webapp/test/test.html",
 							"webapp/test/testService.html",
+							"webapp/test/testsuite.qunit.html",
 							"webapp/view/App.view.xml",
 							"webapp/view/Post.view.xml",
 							"webapp/view/Worklist.view.xml",
