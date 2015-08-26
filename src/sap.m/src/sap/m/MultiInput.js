@@ -554,15 +554,22 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		
 		// calculate minimal needed width for input field
 		var shadowDiv = $this.children(".sapMMultiInputShadowDiv")[0];
+		var $indicator = $this.find(".sapMMultiInputBorder").find(".sapMMultiInputIndicator");
+		
 		jQuery(shadowDiv).text(this.getValue());
 		
 		var inputWidthMinimalNeeded = jQuery(shadowDiv).width();
+		var iIndicatorWidth = jQuery($indicator).width();
 		
 		var tokenizerWidth = this._tokenizer.getScrollWidth();
 		
 			
 		// the icon
 		var iconWidth = $this.find(".sapMInputValHelp").outerWidth(true);
+		
+		if (iIndicatorWidth !== null && this._isMultiLineMode && this._bShowIndicator) {
+			inputWidthMinimalNeeded = iIndicatorWidth;
+		}
 		
 		var totalNeededWidth = tokenizerWidth + inputWidthMinimalNeeded + iconWidth;
 		var inputWidth;
