@@ -19,7 +19,6 @@
 						descending: false
 						}
 					}"
-					noDataText="{i18n>tableNoDataText}"
 					busyIndicatorDelay="{worklistView>/tableBusyDelay}"
 					updateFinished="onUpdateFinished">
 				<headerToolbar>
