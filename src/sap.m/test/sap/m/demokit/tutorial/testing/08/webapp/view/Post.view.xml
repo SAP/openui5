@@ -1,0 +1,23 @@
+<mvc:View
+		controllerName="sap.ui.demo.bulletinboard.controller.Post"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:semantic="sap.m.semantic">
+	<semantic:FullscreenPage
+			id="page"
+			navButtonPress="onNavBack"
+			showNavButton="true"
+			title="{i18n>objectTitle}">
+		<semantic:content>
+			<ObjectHeader
+					id="objectHeader"
+					title="{Title}"
+					number="{Price}"
+					numberUnit="{Currency}">
+			</ObjectHeader>
+		</semantic:content>
+		<semantic:sendEmailAction>
+			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+		</semantic:sendEmailAction>
+	</semantic:FullscreenPage>
+</mvc:View>
