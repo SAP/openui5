@@ -11,6 +11,7 @@
 					id="table"
 					width="auto"
 					class="sapUiResponsiveMargin"
+					growing="true"
 					items="{
 					path: '/Posts',
 					sorter: {
@@ -39,7 +40,9 @@
 					<Column width="80px" id="flaggedColumn" demandPopin="true"/>
 				</columns>
 				<items>
-					<ColumnListItem>
+					<ColumnListItem
+							type="Navigation"
+							press="onPress">
 						<cells>
 							<ObjectIdentifier
 									title="{Title}"/>
