@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>Bulletin Board</title>
+
+
+	<!-- Bootstrap the UI5 core library -->
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-preload="async"
+			data-sap-ui-resourceroots='{
+				"sap.ui.demo.bulletinboard": "../"
+			}'
+			data-sap-ui-frameOptions='allow'>    // NON-SECURE setting for testing environment
+	</script>
+
+	<script type="text/javascript">
+		sap.ui.getCore().attachInit(function () {
+
+			sap.ui.require([
+				"sap/ui/demo/bulletinboard/localService/mockserver",
+				"sap/m/Shell",
+				"sap/ui/core/ComponentContainer"
+			], function (mockserver, Shell, ComponentContainer) {
+				// set up test service for local testing
+				mockserver.init();
+
+				// initialize the shell
+				new Shell({
+					app: new ComponentContainer({
+						height: "100%",
+						name: "sap.ui.demo.bulletinboard"
+					})
+				}).placeAt("content");
+			});
+		});
+	</script>
+
+</head>
+
+<!-- UI Content -->
+<body class="sapUiBody" id="content">
+</body>
+</html>
