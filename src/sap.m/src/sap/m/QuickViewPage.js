@@ -126,12 +126,6 @@ sap.ui.define([
 			QuickViewPage.prototype.init =  function() {
 				this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 
-				try {
-					jQuery.sap.require("sap.ushell.services.CrossApplicationNavigation");
-				} catch(e) {
-					//move the require in onInit method to avoid the OpenAJAX check error
-				}
-
 				//see API docu for sap.ushell.services.CrossApplicationNavigation
 				var fGetService =  sap.ushell && sap.ushell.Container && sap.ushell.Container.getService;
 				if (fGetService) {
