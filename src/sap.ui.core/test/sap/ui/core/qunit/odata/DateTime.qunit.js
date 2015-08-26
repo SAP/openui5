@@ -1,10 +1,19 @@
 /*!
  *{copyright}
  */
-(function () {
-	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
-	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
-	*/
+sap.ui.require([
+	"sap/ui/core/Control",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/DateTime",
+	"sap/ui/model/odata/type/DateTimeBase",
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/test/TestUtils"
+], function (Control, DateFormat, FormatException, ParseException, ValidateException, DateTime,
+		DateTimeBase, ODataType, TestUtils) {
+	/*global QUnit */
 	"use strict";
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
@@ -17,10 +26,6 @@
 			"EnterDate": "EnterDate Nov 27, 2014"
 		};
 
-	jQuery.sap.require("sap.ui.core.Control");
-	jQuery.sap.require("sap.ui.core.format.DateFormat");
-	jQuery.sap.require("sap.ui.test.TestUtils");
-
 	function createInstance(sTypeName, oConstraints, oFormatOptions) {
 		return new (jQuery.sap.getObject(sTypeName))(oFormatOptions, oConstraints);
 	}
@@ -28,14 +33,14 @@
 	/*
 	 * Tests that the given value leads to a ParseException.
 	 */
-	function parseError(oType, oValue, sExpectedErrorKey, sReason) {
-		sap.ui.test.TestUtils.withNormalizedMessages(function () {
+	function parseError(assert, oType, oValue, sExpectedErrorKey, sReason) {
+		TestUtils.withNormalizedMessages(function () {
 			try {
 				oType.parseValue(oValue, "string");
-				ok(false);
+				assert.ok(false);
 			} catch (e) {
-				ok(e instanceof sap.ui.model.ParseException, sReason + ": exception");
-				strictEqual(e.message, oMessages[sExpectedErrorKey], sReason + ": message");
+				assert.ok(e instanceof ParseException, sReason + ": exception");
+				assert.strictEqual(e.message, oMessages[sExpectedErrorKey], sReason + ": message");
 			}
 		});
 	}
@@ -43,14 +48,14 @@
 	/*
 	 * Tests that the given value leads to a ValidateException.
 	 */
-	function validateError(oType, oValue, sExpectedErrorKey, sReason) {
-		sap.ui.test.TestUtils.withNormalizedMessages(function () {
+	function validateError(assert, oType, oValue, sExpectedErrorKey, sReason) {
+		TestUtils.withNormalizedMessages(function () {
 			try {
 				oType.validateValue(oValue);
-				ok(false);
+				assert.ok(false);
 			} catch (e) {
-				ok(e instanceof sap.ui.model.ValidateException, sReason + ": exception");
-				strictEqual(e.message, oMessages[sExpectedErrorKey], sReason + ": message");
+				assert.ok(e instanceof ValidateException, sReason + ": exception");
+				assert.strictEqual(e.message, oMessages[sExpectedErrorKey], sReason + ": message");
 			}
 		});
 	}
@@ -58,122 +63,123 @@
 	/*
 	 * Tests the validation for a DateTime with the given constraints.
 	 */
-	function validate(sTypeName, oConstraints, sExpectedErrorKey) {
+	function validate(assert, sTypeName, oConstraints, sExpectedErrorKey) {
 		var oType = createInstance(sTypeName, oConstraints);
 
 		oType.validateValue(null);
 
 		oConstraints.nullable = false;
 		oType = createInstance(sTypeName, oConstraints);
-		validateError(oType, null, sExpectedErrorKey, "nullable");
+		validateError(assert, oType, null, sExpectedErrorKey, "nullable");
 
 		try {
 			oType.validateValue("foo");
-			ok(false);
+			assert.ok(false);
 		} catch (e) {
-			ok(e instanceof sap.ui.model.ValidateException);
-			strictEqual(e.message, "Illegal " + sTypeName + " value: foo");
+			assert.ok(e instanceof ValidateException);
+			assert.strictEqual(e.message, "Illegal " + sTypeName + " value: foo");
 		}
 		oType.validateValue(new Date());
 	}
 
-	/**
+	/*
 	 * Tests that format and parse do not change the date and that validate accepts it.
 	 */
-	function formatParseValidate(sTypeName, oConstraints, oTestDate) {
+	function formatParseValidate(assert, sTypeName, oConstraints, oTestDate) {
 		var oType = createInstance(sTypeName, oConstraints),
 			sFormattedDate = oType.formatValue(oTestDate, "string"),
 			oResultingDate = oType.parseValue(sFormattedDate, "string");
 
 		oType.validateValue(oResultingDate);
-		deepEqual(oResultingDate, oTestDate, "format and parse did not change the date");
+		assert.deepEqual(oResultingDate, oTestDate, "format and parse did not change the date");
 	}
 
 	//*********************************************************************************************
 	function dateTime(sTypeName) {
 
 		//*****************************************************************************************
-		test("basics", function () {
+		QUnit.test("basics", function (assert) {
 			var oType = createInstance(sTypeName);
 
-			ok(oType instanceof sap.ui.model.odata.type.DateTimeBase, "is a DateTime");
-			ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
-			strictEqual(oType.getName(), sTypeName, "type name");
-			strictEqual(oType.oFormatOptions, undefined, "format options ignored");
-			strictEqual(oType.oConstraints, undefined, "default constraints");
-			strictEqual(oType.oFormat, null, "no formatter preload");
+			assert.ok(oType instanceof DateTimeBase, "is a DateTime");
+			assert.ok(oType instanceof ODataType, "is an ODataType");
+			assert.strictEqual(oType.getName(), sTypeName, "type name");
+			assert.strictEqual(oType.oFormatOptions, undefined, "format options ignored");
+			assert.strictEqual(oType.oConstraints, undefined, "default constraints");
+			assert.strictEqual(oType.oFormat, null, "no formatter preload");
 		});
 
 		//*****************************************************************************************
-		test("format (DateTime)", function () {
+		QUnit.test("format (DateTime)", function (assert) {
 			var oType = createInstance(sTypeName);
 
-			strictEqual(oType.formatValue(undefined, "foo"), null, "undefined");
-			strictEqual(oType.formatValue(null, "foo"), null, "null");
-			strictEqual(oType.formatValue(oDateTime, "any"), oDateTime, "target type any");
-			strictEqual(oType.formatValue(oDateTime, "string"), sFormattedDateTime,
+			assert.strictEqual(oType.formatValue(undefined, "foo"), null, "undefined");
+			assert.strictEqual(oType.formatValue(null, "foo"), null, "null");
+			assert.strictEqual(oType.formatValue(oDateTime, "any"), oDateTime, "target type any");
+			assert.strictEqual(oType.formatValue(oDateTime, "string"), sFormattedDateTime,
 				"target type string");
 			["int", "float", "boolean"].forEach(function (sType) {
 				try {
 					oType.formatValue(oDateTime, sType);
-					ok(false);
+					assert.ok(false);
 				} catch (e) {
-					ok(e instanceof sap.ui.model.FormatException);
-					strictEqual(e.message,
+					assert.ok(e instanceof FormatException);
+					assert.strictEqual(e.message,
 						"Don't know how to format " + sTypeName + " to " + sType);
 				}
 			});
 		});
 
 		//*****************************************************************************************
-		test("parse (DateTime)", function () {
+		QUnit.test("parse (DateTime)", function (assert) {
 			var oType = createInstance(sTypeName);
 
-			strictEqual(oType.parseValue(null, "foo"), null, "null is always accepted");
-			strictEqual(oType.parseValue("", "string"), null, "empty string becomes null");
-			deepEqual(oType.parseValue(sFormattedDateTime, "string"), oDateTime);
+			assert.strictEqual(oType.parseValue(null, "foo"), null, "null is always accepted");
+			assert.strictEqual(oType.parseValue("", "string"), null, "empty string becomes null");
+			assert.deepEqual(oType.parseValue(sFormattedDateTime, "string"), oDateTime);
 
 			["int", "float", "boolean"].forEach(function (sType) {
 				try {
 					oType.parseValue(sFormattedDateTime, sType);
-					ok(false);
+					assert.ok(false);
 				} catch (e) {
-					ok(e instanceof sap.ui.model.ParseException, sType + ": exception");
-					strictEqual(e.message,
+					assert.ok(e instanceof ParseException, sType + ": exception");
+					assert.strictEqual(e.message,
 						"Don't know how to parse " + sTypeName + " from " + sType,
 						sType + ": message");
 				}
 			});
 
-			parseError(oType, "foo", "EnterDateTime", "not a date");
-			parseError(oType, "Feb 28, 2014, 11:69:30 AM", "EnterDateTime", "invalid time");
+			parseError(assert, oType, "foo", "EnterDateTime", "not a date");
+			parseError(assert, oType, "Feb 28, 2014, 11:69:30 AM", "EnterDateTime",
+				"invalid time");
 		});
 
 		//*****************************************************************************************
-		test("validate (DateTime)", function () {
-			validate(sTypeName, {}, "EnterDateTime");
+		QUnit.test("validate (DateTime)", function (assert) {
+			validate(assert, sTypeName, {}, "EnterDateTime");
 		});
 
 		//*****************************************************************************************
-		test("format, parse, validate (DateTime)", function () {
-			formatParseValidate(sTypeName, {}, oDateTime);
+		QUnit.test("format, parse, validate (DateTime)", function (assert) {
+			formatParseValidate(assert, sTypeName, {}, oDateTime);
 		});
 
 		//*****************************************************************************************
-		test("localization change", function () {
-			var oControl = new sap.ui.core.Control(),
+		QUnit.test("localization change", function (assert) {
+			var oControl = new Control(),
 				oType = createInstance(sTypeName);
 
 			oControl.bindProperty("tooltip", {path: "/unused", type: oType});
 			sap.ui.getCore().getConfiguration().setLanguage("de-DE");
-			strictEqual(oType.formatValue(oDateTime, "string"),
-				sap.ui.core.format.DateFormat.getDateTimeInstance().format(oDateTime),
+			assert.strictEqual(oType.formatValue(oDateTime, "string"),
+				DateFormat.getDateTimeInstance().format(oDateTime),
 				"adjusted to changed language");
 		});
 	}
 
 	//*********************************************************************************************
-	module("sap.ui.model.odata.type.DateTime", {
+	QUnit.module("sap.ui.model.odata.type.DateTime", {
 		beforeEach: function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
@@ -193,10 +199,10 @@
 		{i: {nullable: "true", displayFormat: 1}, o: undefined,
 			warning: "Illegal displayFormat: 1"},
 		{i: {nullable: "false"}, o: {nullable: false}},
-		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"},
+		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"}
 	].forEach(function (oFixture) {
-		test("constraints: " + JSON.stringify(oFixture.i) + ")", function () {
-			var oType = new sap.ui.model.odata.type.DateTime();
+		QUnit.test("constraints: " + JSON.stringify(oFixture.i) + ")", function (assert) {
+			var oType = new DateTime();
 
 			if (oFixture.warning) {
 				this.mock(jQuery.sap.log).expects("warning")
@@ -205,8 +211,8 @@
 				this.mock(jQuery.sap.log).expects("warning").never();
 			}
 
-			oType = new sap.ui.model.odata.type.DateTime({}, oFixture.i);
-			deepEqual(oType.oConstraints, oFixture.o);
+			oType = new DateTime({}, oFixture.i);
+			assert.deepEqual(oType.oConstraints, oFixture.o);
 		});
 	});
 
@@ -229,49 +235,48 @@
 		{oFormatOptions: {UTC: false}, oConstraints: {displayFormat: "Date"},
 			oExpected: {UTC: true, strictParsing: true}},
 		{oFormatOptions: {style: "medium"}, oConstraints: {displayFormat: "Date"},
-			oExpected: {UTC: true, strictParsing: true, style: "medium"}},
+			oExpected: {UTC: true, strictParsing: true, style: "medium"}}
 	].forEach(function (oFixture) {
-		test("formatOptions=" + JSON.stringify(oFixture.oFormatOptions),
-			sinon.test(function () {
+		QUnit.test("formatOptions=" + JSON.stringify(oFixture.oFormatOptions),
+			function (assert) {
 					var oType = createInstance("sap.ui.model.odata.type.DateTime",
 						oFixture.oConstraints, oFixture.oFormatOptions),
 					oSpy = (oFixture.oConstraints) ?
 						this.spy(sap.ui.core.format.DateFormat, "getDateInstance") :
 						this.spy(sap.ui.core.format.DateFormat, "getDateTimeInstance");
 
-				deepEqual(oType.oFormatOptions, oFixture.oFormatOptions,
+				assert.deepEqual(oType.oFormatOptions, oFixture.oFormatOptions,
 					"format options: " + JSON.stringify(oFixture.oFormatOptions) + " set");
 				oType.formatValue(oDateTime, "string");
-				ok(oSpy.calledWithExactly(oFixture.oExpected));
-			})
-		);
+				assert.ok(oSpy.calledWithExactly(oFixture.oExpected));
+			});
 	});
 
 	//*********************************************************************************************
-	test("format and parse (Date)", function () {
-		var oType = new sap.ui.model.odata.type.DateTime({}, {displayFormat: "Date"});
+	QUnit.test("format and parse (Date)", function (assert) {
+		var oType = new DateTime({}, {displayFormat: "Date"});
 
-		strictEqual(oType.formatValue(oDateOnly, "string"), sFormattedDateOnly,
+		assert.strictEqual(oType.formatValue(oDateOnly, "string"), sFormattedDateOnly,
 			"target type string");
-		deepEqual(oType.parseValue(sFormattedDateOnly, "string"), oDateOnly);
+		assert.deepEqual(oType.parseValue(sFormattedDateOnly, "string"), oDateOnly);
 
-		parseError(oType, "Feb 30, 2014", "EnterDate", "invalid date");
+		parseError(assert, oType, "Feb 30, 2014", "EnterDate", "invalid date");
 	});
 
 	//*********************************************************************************************
-	test("validate (Date)", function () {
-		validate("sap.ui.model.odata.type.DateTime", {displayFormat: "Date"}, "EnterDate");
+	QUnit.test("validate (Date)", function (assert) {
+		validate(assert, "sap.ui.model.odata.type.DateTime", {displayFormat: "Date"}, "EnterDate");
 	});
 
 	//*********************************************************************************************
-	test("format, parse, validate (Date)", function () {
-		formatParseValidate("sap.ui.model.odata.type.DateTime", {displayFormat: "Date"},
+	QUnit.test("format, parse, validate (Date)", function (assert) {
+		formatParseValidate(assert, "sap.ui.model.odata.type.DateTime", {displayFormat: "Date"},
 			oDateOnly);
 	});
 
 	//*********************************************************************************************
 	//*********************************************************************************************
-	module("sap.ui.model.odata.type.DateTimeOffset", {
+	QUnit.module("sap.ui.model.odata.type.DateTimeOffset", {
 		beforeEach: function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
@@ -289,9 +294,9 @@
 		{i: {nullable: false, isDateOnly: true}, o: {nullable: false}},
 		{i: {nullable: "true"}, o: undefined},
 		{i: {nullable: "false"}, o: {nullable: false}},
-		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"},
+		{i: {nullable: "foo"}, o: undefined, warning: "Illegal nullable: foo"}
 	].forEach(function (oFixture) {
-		test("constraints: " + JSON.stringify(oFixture.i) + ")", function () {
+		QUnit.test("constraints: " + JSON.stringify(oFixture.i) + ")", function (assert) {
 			var oType;
 
 			if (oFixture.warning) {
@@ -303,7 +308,7 @@
 			}
 
 			oType = new sap.ui.model.odata.type.DateTimeOffset({},  oFixture.i);
-			deepEqual(oType.oConstraints, oFixture.o);
+			assert.deepEqual(oType.oConstraints, oFixture.o);
 		});
 	});
 
@@ -315,17 +320,16 @@
 		{oFormatOptions: {foo: "bar"}, oExpected: {strictParsing: true, foo: "bar"}},
 		{oFormatOptions: {style: "medium"}, oExpected: {strictParsing: true, style: "medium"}}
 	].forEach(function (oFixture) {
-		test("formatOptions=" + JSON.stringify(oFixture.oFormatOptions),
-			sinon.test(function () {
+		QUnit.test("formatOptions=" + JSON.stringify(oFixture.oFormatOptions),
+			function (assert) {
 					var oType = createInstance("sap.ui.model.odata.type.DateTimeOffset", {},
 						oFixture.oFormatOptions),
 					oSpy = this.spy(sap.ui.core.format.DateFormat, "getDateTimeInstance");
 
-				deepEqual(oType.oFormatOptions, oFixture.oFormatOptions,
+				assert.deepEqual(oType.oFormatOptions, oFixture.oFormatOptions,
 					"format options: " + JSON.stringify(oFixture.oFormatOptions) + " set");
 				oType.formatValue(oDateTime, "string");
-				ok(oSpy.calledWithExactly(oFixture.oExpected));
-			})
-		);
+				assert.ok(oSpy.calledWithExactly(oFixture.oExpected));
+			});
 	});
-} ());
+});

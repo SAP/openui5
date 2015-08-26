@@ -8,7 +8,7 @@ sap.ui.require([
 	"sap/ui/test/TestUtils"
 ], function(BindingParser, ManagedObject, JSONModel, Basics, Expression, ODataModel,
 		PropertyBinding, TestUtils) {
-	/*global deepEqual, ok, QUnit, sinon, strictEqual, throws */
+	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
 	"use strict";
 
@@ -618,6 +618,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	/**
 	 * Tests that the raw value for the given context actually leads to the expected binding.
 	 *
+	 * @param {object} assert the assertions
 	 * @param {sap.ui.model.Context} oCurrentContext
 	 *   the context pointing to the raw value
 	 * @param {any} vExpected
@@ -625,7 +626,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	 * @param {object} oModelData
 	 *   the data for the JSONModel to bind to
 	 */
-	function testBinding(oCurrentContext, vExpected, oModelData) {
+	function testBinding(assert, oCurrentContext, vExpected, oModelData) {
 		var oModel = new JSONModel(oModelData),
 			oControl = new TestControl({
 				models: oModel,
@@ -636,19 +637,20 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			oSingleBindingInfo = parse(sBinding);
 
 		oControl.bindProperty("text", oSingleBindingInfo);
-		strictEqual(oControl.getText(), vExpected, sBinding);
+		assert.strictEqual(oControl.getText(), vExpected, sBinding);
 	}
 
 	/**
 	 * Runs the given code under test with the <code>GWSAMPLE_BASIC</code> meta model.
 	 *
+	 * @param {object} assert the assertions
 	 * @param {function(sap.ui.model.odata.ODataMetaModel)} fnCodeUnderTest
 	 *   the given code under test
 	 * @returns {any|Promise}
 	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
-	function withGwsampleModel(fnCodeUnderTest) {
-		return withGivenService("/GWSAMPLE_BASIC", "/GWSAMPLE_BASIC/annotations",
+	function withGwsampleModel(assert, fnCodeUnderTest) {
+		return withGivenService(assert, "/GWSAMPLE_BASIC", "/GWSAMPLE_BASIC/annotations",
 			fnCodeUnderTest);
 	}
 
@@ -656,13 +658,14 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	 * Runs the given code under test with the <code>GWSAMPLE_BASIC</code> meta model and
 	 * <code>sGwsampleTestAnnotations</code>.
 	 *
+	 * @param {object} assert the assertions
 	 * @param {function(sap.ui.model.odata.ODataMetaModel)} fnCodeUnderTest
 	 *   the given code under test
 	 * @returns {any|Promise}
 	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
-	function withGwsampleModelAndTestAnnotations(fnCodeUnderTest) {
-		return withGivenService("/GWSAMPLE_BASIC", "/GWSAMPLE_BASIC/test_annotations",
+	function withGwsampleModelAndTestAnnotations(assert, fnCodeUnderTest) {
+		return withGivenService(assert, "/GWSAMPLE_BASIC", "/GWSAMPLE_BASIC/test_annotations",
 			fnCodeUnderTest);
 	}
 
@@ -670,19 +673,21 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	 * Runs the given code under test with an <code>ODataMetaModel</code> built from
 	 * <code>sTestMetaData</code> and <code>sTestMetaAnnotations</code>.
 	 *
+	 * @param {object} assert the assertions
 	 * @param {function(sap.ui.model.odata.ODataMetaModel)} fnCodeUnderTest
 	 *   the given code under test
 	 * @returns {any|Promise}
 	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
-	function withTestModel(fnCodeUnderTest) {
-		return withGivenService("/test", "/test/annotations", fnCodeUnderTest);
+	function withTestModel(assert, fnCodeUnderTest) {
+		return withGivenService(assert, "/test", "/test/annotations", fnCodeUnderTest);
 	}
 
 	/**
 	 * Runs the given code under test with an <code>ODataMetaModel</code> (and an
 	 * <code>ODataModel</code>) for the given service and (array of) annotation URLs.
 	 *
+	 * @param {object} assert the assertions
 	 * @param {string} sServiceUrl
 	 *   the service URL
 	 * @param {string|string[]} vAnnotationUrl
@@ -692,7 +697,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	 * @returns {any|Promise}
 	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
-	function withGivenService(sServiceUrl, vAnnotationUrl, fnCodeUnderTest) {
+	function withGivenService(assert, sServiceUrl, vAnnotationUrl, fnCodeUnderTest) {
 		// sets up a v2 ODataModel and retrieves an ODataMetaModel from there
 		var oModel = new ODataModel(sServiceUrl, {
 				annotationURI : vAnnotationUrl,
@@ -705,7 +710,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			while (oParameters.getParameters) { // drill down to avoid circular structure
 				oParameters = oParameters.getParameters();
 			}
-			ok(false, "Failed to load: " + JSON.stringify(oParameters));
+			assert.ok(false, "Failed to load: " + JSON.stringify(oParameters));
 		}
 		oModel.attachMetadataFailed(onFailed);
 		oModel.attachAnnotationsFailed(onFailed);
@@ -721,7 +726,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	[true, false].forEach(function (bWithRawValue) {
-		QUnit.test("forward to getExpression: with RawValue " + bWithRawValue, function () {
+		QUnit.test("forward to getExpression: with RawValue " + bWithRawValue, function (assert) {
 			var oInterface = {
 					getObject: function () {/* will be overwritten by mock*/}
 				},
@@ -736,20 +741,21 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				oGetObjectMock.never();
 
 				// code under test
-				strictEqual(AnnotationHelper.format(oInterface, oRawValue), sResult, "result");
+				assert.strictEqual(AnnotationHelper.format(oInterface, oRawValue), sResult,
+					"result");
 			} else {
 				oGetObjectMock.withExactArgs("").returns(oRawValue);
 
 				// code under test
-				strictEqual(AnnotationHelper.format(oInterface), sResult, "result");
+				assert.strictEqual(AnnotationHelper.format(oInterface), sResult, "result");
 			}
 		});
 	});
 
 	//*********************************************************************************************
 	["", "foo", "{path : 'foo'}", 'path : "{\\f,o,o}"'].forEach(function (sString) {
-		QUnit.test("14.4.11 Expression edm:String: " + sString, function () {
-			return withGwsampleModel(function (oMetaModel) {
+		QUnit.test("14.4.11 Expression edm:String: " + sString, function (assert) {
+			return withGwsampleModel(assert, function (oMetaModel) {
 				var sMetaPath = sPath2Product
 						+ "/com.sap.vocabularies.UI.v1.FieldGroup#Dimensions/Data/0/Label",
 					oCurrentContext = oMetaModel.getContext(sMetaPath),
@@ -758,14 +764,14 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				// evil, test code only: write into ODataMetaModel
 				oRawValue.String = sString;
 
-				strictEqual(formatAndParse(oRawValue, oCurrentContext), sString);
+				assert.strictEqual(formatAndParse(oRawValue, oCurrentContext), sString);
 			});
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("forward to getExpression: raw value automatically determined", function () {
-		return withGwsampleModel(function (oMetaModel) {
+	QUnit.test("forward to getExpression: raw value automatically determined", function (assert) {
+		return withGwsampleModel(assert, function (oMetaModel) {
 			var sMetaPath = sPath2Product
 				+ "/com.sap.vocabularies.UI.v1.FieldGroup#Dimensions/Data/0/Label",
 			oCurrentContext = oMetaModel.getContext(sMetaPath),
@@ -780,8 +786,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	QUnit.test("14.4.11 Expression edm:String: references", function () {
-		return withGwsampleModel(function (oMetaModel) {
+	QUnit.test("14.4.11 Expression edm:String: references", function (assert) {
+		return withGwsampleModel(assert, function (oMetaModel) {
 			var sMetaPath = sPath2Product
 					+ "/com.sap.vocabularies.UI.v1.FieldGroup#Dimensions/Data/0/Label",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
@@ -790,7 +796,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				oSingleBindingInfo;
 
 			function getSetting(sName) {
-				strictEqual(sName, "bindTexts");
+				assert.strictEqual(sName, "bindTexts");
 				return true;
 			}
 
@@ -798,7 +804,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 			oSingleBindingInfo = formatAndParse(oRawValue, oCurrentContext);
 
-			deepEqual(oSingleBindingInfo, {
+			assert.deepEqual(oSingleBindingInfo, {
 				path : "/##/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
 					// "$\{name}" to avoid that Maven replaces "${name}"
 					+ "[$\{name}==='Product']/com.sap.vocabularies.UI.v1.FieldGroup"
@@ -806,7 +812,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			});
 
 			// ensure that the formatted value does not contain double quotes
-			ok(AnnotationHelper.format(oCurrentContext, oRawValue).indexOf('"') < 0);
+			assert.ok(AnnotationHelper.format(oCurrentContext, oRawValue).indexOf('"') < 0);
 
 
 			// check escaping via fake annotation
@@ -820,7 +826,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 			oSingleBindingInfo = formatAndParse(oRawValue, oCurrentContext);
 
-			deepEqual(oSingleBindingInfo, {
+			assert.deepEqual(oSingleBindingInfo, {
 				path : "/##/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
 					+ "[$\{name}==='Product']/foo{Dimensions}/Data/[${Value/Path}==='Width']"
 					+ "/Label/String"
@@ -839,22 +845,22 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		{typeName: "Int", result: "9007199254740992"},
 		{typeName: "TimeOfDay", result: "13:57:06"}
 	].forEach(function (oFixture, index) {
-		QUnit.test("14.4.x Constant Expression edm:" + oFixture.typeName, function () {
-			return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
+		QUnit.test("14.4.x Constant Expression edm:" + oFixture.typeName, function (assert) {
+			return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
 				var sMetaPath = sPath2BusinessPartner
 						+ "/com.sap.vocabularies.UI.v1.Identification/3/Value/Apply/Parameters/"
 						+ (2 * index),
 					oCurrentContext = oMetaModel.getContext(sMetaPath),
 					oRawValue = oMetaModel.getObject(sMetaPath);
 
-				strictEqual(formatAndParse(oRawValue, oCurrentContext), oFixture.result);
+				assert.strictEqual(formatAndParse(oRawValue, oCurrentContext), oFixture.result);
 			});
 		});
 	});
 
 	//*********************************************************************************************
 	["", "/", ".", "foo", "path : 'foo'", 'path : "{\\f,o,o}"'].forEach(function (sPath) {
-		QUnit.test("14.5.12 Expression edm:Path: " + JSON.stringify(sPath), function () {
+		QUnit.test("14.5.12 Expression edm:Path: " + JSON.stringify(sPath), function (assert) {
 			var oMetaModel = new JSONModel({
 					"Value" : {
 						"Path" : sPath
@@ -865,9 +871,9 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				oRawValue = oMetaModel.getProperty(sMetaPath),
 				oSingleBindingInfo = formatAndParse(oRawValue, oCurrentContext);
 
-			strictEqual(typeof oSingleBindingInfo, "object", "got a binding info");
-			strictEqual(oSingleBindingInfo.path, sPath);
-			strictEqual(oSingleBindingInfo.type, undefined);
+			assert.strictEqual(typeof oSingleBindingInfo, "object", "got a binding info");
+			assert.strictEqual(oSingleBindingInfo.path, sPath);
+			assert.strictEqual(oSingleBindingInfo.type, undefined);
 		});
 	});
 
@@ -896,8 +902,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 		QUnit.test("14.5.12 Expression edm:Path w/ type, path = " + sPath
 			+ ", type = " + oType.name,
-			function () {
-				return withTestModel(function (oMetaModel) {
+			function (assert) {
+				return withTestModel(assert, function (oMetaModel) {
 					var oCurrentContext = oMetaModel.getContext(sPath),
 						oRawValue = oMetaModel.getObject(sPath),
 						sBinding,
@@ -905,17 +911,18 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 					sBinding = format(oRawValue, oCurrentContext);
 
-					ok(!/constraints\s*:\s*{}/.test(sBinding), "No empty constraints in binding");
+					assert.ok(!/constraints\s*:\s*{}/.test(sBinding),
+						"No empty constraints in binding");
 
 					oSingleBindingInfo = parse(sBinding);
 
-					strictEqual(oSingleBindingInfo.path, oRawValue.Path);
-					ok(oSingleBindingInfo.type instanceof jQuery.sap.getObject(oType.name),
+					assert.strictEqual(oSingleBindingInfo.path, oRawValue.Path);
+					assert.ok(oSingleBindingInfo.type instanceof jQuery.sap.getObject(oType.name),
 						"type is " + oType.name);
-					deepEqual(oSingleBindingInfo.type.oConstraints, oType.constraints);
+					assert.deepEqual(oSingleBindingInfo.type.oConstraints, oType.constraints);
 
 					// ensure that the formatted value does not contain double quotes
-					ok(AnnotationHelper.format(oCurrentContext, oRawValue).indexOf('"') < 0);
+					assert.ok(AnnotationHelper.format(oCurrentContext, oRawValue).indexOf('"') < 0);
 				});
 			}
 		);
@@ -945,28 +952,28 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	].forEach(function (oApply) {
 		var sError = "Unsupported: " + Basics.toErrorString(oApply);
 
-		QUnit.test("14.5.3 Expression edm:Apply: " + sError, function () {
+		QUnit.test("14.5.3 Expression edm:Apply: " + sError, function (assert) {
 			oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
 
-			return withGwsampleModel(function (oMetaModel) {
+			return withGwsampleModel(assert, function (oMetaModel) {
 				var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
 					oCurrentContext = oMetaModel.getContext(sPath);
 
-				strictEqual(formatAndParse(oApply, oCurrentContext), sError);
+				assert.strictEqual(formatAndParse(oApply, oCurrentContext), sError);
 			});
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("14.5.3.1.1 Function odata.concat", function () {
-		return withGwsampleModel(function (oMetaModel) {
+	QUnit.test("14.5.3.1.1 Function odata.concat", function (assert) {
+		return withGwsampleModel(assert, function (oMetaModel) {
 			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.Badge/Title/Value",
 				oRawValue = oMetaModel.getObject(sPath);
 
 			//TODO remove this workaround to fix whitespace issue
 			oRawValue.Apply.Parameters[1].Value = " ";
 
-			testBinding(oMetaModel.getContext(sPath), "John Doe", {
+			testBinding(assert, oMetaModel.getContext(sPath), "John Doe", {
 				FirstName: "John",
 				LastName: "Doe"
 			});
@@ -974,10 +981,10 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	QUnit.test("14.5.3.1.1 Function odata.concat: escaping & unsupported type", function () {
+	QUnit.test("14.5.3.1.1 Function odata.concat: escaping & unsupported type", function (assert) {
 		oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
 
-		return withGwsampleModel(function (oMetaModel) {
+		return withGwsampleModel(assert, function (oMetaModel) {
 			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
 				oCurrentContext = oMetaModel.getContext(sPath),
 				oParameter = {Type: "Int16", Value: 42},
@@ -990,16 +997,16 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 					}
 				};
 
-			strictEqual(formatAndParse(oRawValue, oCurrentContext),
+			assert.strictEqual(formatAndParse(oRawValue, oCurrentContext),
 				"Unsupported: " + Basics.toErrorString(oRawValue));
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("14.5.3.1.1 Function odata.concat: null parameter", function () {
+	QUnit.test("14.5.3.1.1 Function odata.concat: null parameter", function (assert) {
 		oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
 
-		return withGwsampleModel(function (oMetaModel) {
+		return withGwsampleModel(assert, function (oMetaModel) {
 			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
 				oCurrentContext = oMetaModel.getContext(sPath),
 				oRawValue = {
@@ -1009,20 +1016,20 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 					}
 				};
 
-			strictEqual(formatAndParse(oRawValue, oCurrentContext),
+			assert.strictEqual(formatAndParse(oRawValue, oCurrentContext),
 				"Unsupported: " + Basics.toErrorString(oRawValue));
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("14.5.3.1.1 Function odata.concat: various constants", function () {
-		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
+	QUnit.test("14.5.3.1.1 Function odata.concat: various constants", function (assert) {
+		return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/3/Value",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
 				oRawValue = oMetaModel.getObject(sMetaPath);
 
-			strictEqual(formatAndParse(oRawValue, oCurrentContext),
+			assert.strictEqual(formatAndParse(oRawValue, oCurrentContext),
 				"true|" +
 				"2015-03-24|" +
 				"2015-03-24T14:03:27Z|" +
@@ -1035,13 +1042,13 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	QUnit.test("14.5.3.1.2 odata.fillUriTemplate: fake annotations", function () {
-		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
+	QUnit.test("14.5.3.1.2 odata.fillUriTemplate: fake annotations", function (assert) {
+		return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/0/Url",
 				oContext = oMetaModel.getContext(sMetaPath);
 
-			testBinding(oContext,
+			testBinding(assert, oContext,
 				"#BusinessPartner-displayFactSheet?BusinessPartnerID=0815", {
 				BusinessPartnerID: "0815"
 			});
@@ -1051,7 +1058,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			oContext.getSetting = function (sSetting) {
 				return sSetting === "bindTexts";
 			};
-			strictEqual(format(oContext.getObject(), oContext), "{=odata.fillUriTemplate(${path:"
+			assert.strictEqual(format(oContext.getObject(), oContext),
+				"{=odata.fillUriTemplate(${path:"
 				+ "'/##/dataServices/schema/[${namespace}===\\'GWSAMPLE_BASIC\\']/entityType/"
 				+ "[$\{name}===\\'BusinessPartner\\']/com.sap.vocabularies.UI.v1.Identification/"
 				+ "0/Url/Apply/Parameters/0/Value'},{'ID1':${BusinessPartnerID}})}");
@@ -1059,8 +1067,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	QUnit.test("14.5.3.1.2 odata.fillUriTemplate: various constants", function () {
-		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
+	QUnit.test("14.5.3.1.2 odata.fillUriTemplate: various constants", function (assert) {
+		return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/4/Url",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
@@ -1068,7 +1076,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 			// Note: theoretically, each piece inserted into the template needs to be URI encoded,
 			// this is only done where it actually makes a difference here
-			strictEqual(formatAndParse(oRawValue, oCurrentContext),
+			assert.strictEqual(formatAndParse(oRawValue, oCurrentContext),
 				"#true/2015-03-24/"
 				+ encodeURIComponent("2015-03-24T14:03:27Z")
 				+ "/-123456789012345678901234567890.1234567890/-7.4503e-36"
@@ -1085,12 +1093,12 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		{type: "Unsupported", value: "foo\\bar", error: true}
 	].forEach(function (oFixture) {
 		QUnit.test("14.5.3.1.3 Function odata.uriEncode: " + JSON.stringify(oFixture.type),
-			function () {
+			function (assert) {
 				if (oFixture.error) {
 					oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
 				}
 
-				return withGwsampleModel(function (oMetaModel) {
+				return withGwsampleModel(assert, function (oMetaModel) {
 					var oExpectedResult,
 						sMetaPath = sPath2BusinessPartner
 							+ "/com.sap.vocabularies.UI.v1.Identification/0/Url",
@@ -1108,19 +1116,19 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 					oExpectedResult = oFixture.error
 						? "Unsupported: " + Basics.toErrorString(oRawValue)
 						: oFixture.result;
-					strictEqual(formatAndParse(oRawValue, oCurrentContext), oExpectedResult);
+					assert.strictEqual(formatAndParse(oRawValue, oCurrentContext), oExpectedResult);
 				});
 			}
 		);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("14.5.3.1.3 Function odata.uriEncode", function () {
-		return withGwsampleModel(function (oMetaModel) {
+	QUnit.test("14.5.3.1.3 Function odata.uriEncode", function (assert) {
+		return withGwsampleModel(assert, function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
 					+ "/Url/Apply/Parameters/1/Value";
 
-			testBinding(oMetaModel.getContext(sMetaPath), "'Domplatz'", {
+			testBinding(assert, oMetaModel.getContext(sMetaPath), "'Domplatz'", {
 				Address: {
 					Street : "Domplatz",
 					City : "Speyer"
@@ -1143,26 +1151,26 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		//TODO split seconds, e.g. ".123456789012"
 		{type: "TimeOfDay", result: "time'PT11H11M11S'"}
 	].forEach(function (oFixture, index) {
-		QUnit.test("14.5.3.1.3 odata.uriEncode of edm:" + oFixture.type, function () {
-			return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
+		QUnit.test("14.5.3.1.3 odata.uriEncode of edm:" + oFixture.type, function (assert) {
+			return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
 				var sMetaPath = sPath2BusinessPartner
 						+ "/com.sap.vocabularies.UI.v1.Identification/5/Url/Apply/"
 						+ "Parameters/" + (index + 1) + "/Value",
 					oCurrentContext = oMetaModel.getContext(sMetaPath),
 					oRawValue = oMetaModel.getObject(sMetaPath);
 
-				strictEqual(formatAndParse(oRawValue, oCurrentContext), oFixture.result);
+				assert.strictEqual(formatAndParse(oRawValue, oCurrentContext), oFixture.result);
 			});
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("14.5.3.1.3 odata.uriEncode: integration-like test", function () {
+	QUnit.test("14.5.3.1.3 odata.uriEncode: integration-like test", function (assert) {
 		function encode(s) {
 			return encodeURIComponent(s).replace(/'/g, "%27");
 		}
 
-		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
+		return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
 			var sExpectedUrl,
 				sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/5/Url",
@@ -1190,17 +1198,18 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				+ "+and+Time+eq+"
 				+ encode("time'PT11H11M11S'");
 
-			strictEqual(formatAndParse(oRawValue, oCurrentContext), sExpectedUrl, sExpectedUrl);
+			assert.strictEqual(formatAndParse(oRawValue, oCurrentContext), sExpectedUrl,
+				sExpectedUrl);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("14.5.3 Nested apply (fillUriTemplate embeds uriEncode)", function () {
-		return withGwsampleModel(function (oMetaModel) {
+	QUnit.test("14.5.3 Nested apply (fillUriTemplate embeds uriEncode)", function (assert) {
+		return withGwsampleModel(assert, function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
 					+ "/Url";
 
-			testBinding(oMetaModel.getContext(sMetaPath),
+			testBinding(assert, oMetaModel.getContext(sMetaPath),
 				"https://www.google.de/maps/place/%27Domplatz%27,%27Speyer%27",
 				{
 					Address: {
@@ -1212,41 +1221,42 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	QUnit.test("14.5.3 Nested apply (odata.fillUriTemplate & invalid uriEncode)", function () {
-		oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
+	QUnit.test("14.5.3 Nested apply (odata.fillUriTemplate & invalid uriEncode)",
+		function (assert) {
+			oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
 
-		return withGwsampleModel(function (oMetaModel) {
-			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
-					+ "/Url",
-				oCurrentContext = oMetaModel.getContext(sMetaPath),
-				oRawValue = {
-					Apply : {
-						Name : "odata.fillUriTemplate",
-						Parameters : [{
-							Type: "String",
-							Value: "http://foo.bar/{x}"
-						}, {
-							Name: "x",
-							Value: {
-								Apply: {Name: "odata.uriEncode"}
-							}
-						}]
-					}
-				};
+			return withGwsampleModel(assert, function (oMetaModel) {
+				var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1."
+						+ "Identification/2/Url",
+					oCurrentContext = oMetaModel.getContext(sMetaPath),
+					oRawValue = {
+						Apply : {
+							Name : "odata.fillUriTemplate",
+							Parameters : [{
+								Type: "String",
+								Value: "http://foo.bar/{x}"
+							}, {
+								Name: "x",
+								Value: {
+									Apply: {Name: "odata.uriEncode"}
+								}
+							}]
+						}
+					};
 
-			strictEqual(formatAndParse(oRawValue, oCurrentContext),
-				"Unsupported: " + Basics.toErrorString(oRawValue));
+				assert.strictEqual(formatAndParse(oRawValue, oCurrentContext),
+					"Unsupported: " + Basics.toErrorString(oRawValue));
+			});
 		});
-	});
 
 	//*********************************************************************************************
-	QUnit.test("14.5.3 Nested apply (concat embeds concat & uriEncode)", function () {
+	QUnit.test("14.5.3 Nested apply (concat embeds concat & uriEncode)", function (assert) {
 		// This test is important to show that a nested concat must be expression
-		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
+		return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/1/Value";
 
-			testBinding(oMetaModel.getContext(sMetaPath), "SAP 'SE'", {
+			testBinding(assert, oMetaModel.getContext(sMetaPath), "SAP 'SE'", {
 				CompanyName: "SAP",
 				LegalForm: "SE"
 			});
@@ -1254,12 +1264,12 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	QUnit.test("14.5.3 Nested apply (uriEncode embeds concat)", function () {
-		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
+	QUnit.test("14.5.3 Nested apply (uriEncode embeds concat)", function (assert) {
+		return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/2/Value";
 
-			testBinding(oMetaModel.getContext(sMetaPath), "'SAP SE'", {
+			testBinding(assert, oMetaModel.getContext(sMetaPath), "'SAP SE'", {
 				CompanyName: "SAP",
 				LegalForm: "SE"
 			});
@@ -1267,8 +1277,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	QUnit.test("14.5.1 Comparison and Logical Operators: part 1, comparison", function () {
-		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
+	QUnit.test("14.5.1 Comparison and Logical Operators: part 1, comparison", function (assert) {
+		return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/6/Value",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
@@ -1279,14 +1289,14 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				return {result: "binding", value: oPathValue.value};
 			});
 
-			strictEqual(format(oRawValue, oCurrentContext),
+			assert.strictEqual(format(oRawValue, oCurrentContext),
 				"{=((${p1}<${p2})===(${p4}>${p5}))&&((${p6}>=${p7})!==(${p8}<=${p9}))}");
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("14.5.1 Comparison and Logical Operators: part 2, logical", function () {
-		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
+	QUnit.test("14.5.1 Comparison and Logical Operators: part 2, logical", function (assert) {
+		return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner
 					+ "/com.sap.vocabularies.UI.v1.Identification/7/Value",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
@@ -1297,7 +1307,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				return {result: "binding", value: oPathValue.value};
 			});
 
-			strictEqual(format(oRawValue, oCurrentContext),
+			assert.strictEqual(format(oRawValue, oCurrentContext),
 				"{=(!(${p1}===${p2}))||((${p3}===${p4})&&(${p5}===${p6}))}");
 		});
 	});
@@ -1322,45 +1332,47 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	    {path: "_String80", value: "bar"},
 	    {path: "_Time", value: {__edmType: "Edm.Time", ms: Date.UTC(1970, 0, 1, 12, 43, 7, 236)}}
 	].forEach(function (oFixture, i) {
-		QUnit.test("14.5.1 Comparison and Logical Operators: Eq on" + oFixture.path, function () {
-			return withTestModel(function (oMetaModel) {
-				var sPath = sPath2Product + "/com.sap.vocabularies.UI.v1.Identification/" + i
-						+ "/Value/",
-					oCurrentContext = oMetaModel.getContext(sPath),
-					oTestData = {};
+		QUnit.test("14.5.1 Comparison and Logical Operators: Eq on" + oFixture.path,
+			function (assert) {
+				return withTestModel(assert, function (oMetaModel) {
+					var sPath = sPath2Product + "/com.sap.vocabularies.UI.v1.Identification/" + i
+							+ "/Value/",
+						oCurrentContext = oMetaModel.getContext(sPath),
+						oTestData = {};
 
-				// null handling (no value for the property)
-				testBinding(oCurrentContext, "false", oTestData);
+					// null handling (no value for the property)
+					testBinding(assert, oCurrentContext, "false", oTestData);
 
-				oTestData[oFixture.path] = oFixture.value;
-				testBinding(oCurrentContext, "true", oTestData);
+					oTestData[oFixture.path] = oFixture.value;
+					testBinding(assert, oCurrentContext, "true", oTestData);
+				});
 			});
-		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("14.5.6 Expression edm:If", function () {
-		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
+	QUnit.test("14.5.6 Expression edm:If", function (assert) {
+		return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
 			var sMetaPath = sPath2Contact
 					+ "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
 				oCurrentContext = oMetaModel.getContext(sMetaPath);
 
-			testBinding(oCurrentContext, "Mr. ", {Sex: "M"});
-			testBinding(oCurrentContext, "Mrs. ", {Sex: "F"});
-			testBinding(oCurrentContext, "", {Sex: ""});
+			testBinding(assert, oCurrentContext, "Mr. ", {Sex: "M"});
+			testBinding(assert, oCurrentContext, "Mrs. ", {Sex: "F"});
+			testBinding(assert, oCurrentContext, "", {Sex: ""});
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("14.5.10 Expression edm:Null", function () {
-		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
+	QUnit.test("14.5.10 Expression edm:Null", function (assert) {
+		return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
 			var sMetaPath = sPath2Contact
 					+ "/com.sap.vocabularies.UI.v1.HeaderInfo/ImageUrl/Url",
 				oCurrentContext = oMetaModel.getContext(sMetaPath);
 
-			testBinding(oCurrentContext, undefined, {EmailAddress: null},
+			testBinding(assert, oCurrentContext, undefined, {EmailAddress: null},
 				"null from formatter converted to property's default value");
-			testBinding(oCurrentContext, "mailto:foo@bar.com", {EmailAddress: "foo@bar.com"});
+			testBinding(assert, oCurrentContext, "mailto:foo@bar.com",
+				{EmailAddress: "foo@bar.com"});
 		});
 	});
 
@@ -1369,7 +1381,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	[true, false].forEach(function (bWithRawValue) {
-		QUnit.test("forward to getExpression: with RawValue " + bWithRawValue, function () {
+		QUnit.test("forward to getExpression: with RawValue " + bWithRawValue, function (assert) {
 			var oInterface = {
 					getObject: function () {/* will be overwritten by mock*/}
 				},
@@ -1384,19 +1396,20 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				oGetObjectMock.never();
 
 				// code under test
-				strictEqual(AnnotationHelper.simplePath(oInterface, oRawValue), sResult, "result");
+				assert.strictEqual(AnnotationHelper.simplePath(oInterface, oRawValue), sResult,
+					"result");
 			} else {
 				oGetObjectMock.withExactArgs("").returns(oRawValue);
 
 				// code under test
-				strictEqual(AnnotationHelper.simplePath(oInterface), sResult, "result");
+				assert.strictEqual(AnnotationHelper.simplePath(oInterface), sResult, "result");
 			}
 		});
 	});
 
 	//*********************************************************************************************
 	["", "/", ".", "foo", "{\\}", "path : 'foo'", 'path : "{\\f,o,o}"'].forEach(function (sPath) {
-		QUnit.test("14.5.12 Expression edm:Path: " + JSON.stringify(sPath), function () {
+		QUnit.test("14.5.12 Expression edm:Path: " + JSON.stringify(sPath), function (assert) {
 			var oMetaModel = new JSONModel({
 					"Value" : {
 						"Path" : sPath
@@ -1408,14 +1421,14 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				oSingleBindingInfo
 					= formatAndParse(oRawValue, oCurrentContext, fnSimplePath);
 
-			strictEqual(typeof oSingleBindingInfo, "object", "got a binding info");
-			strictEqual(oSingleBindingInfo.path, sPath);
-			strictEqual(oSingleBindingInfo.type, undefined);
-			strictEqual(oSingleBindingInfo.constraints, undefined);
+			assert.strictEqual(typeof oSingleBindingInfo, "object", "got a binding info");
+			assert.strictEqual(oSingleBindingInfo.path, sPath);
+			assert.strictEqual(oSingleBindingInfo.type, undefined);
+			assert.strictEqual(oSingleBindingInfo.constraints, undefined);
 
 			if (sPath.indexOf(":") < 0 && fnEscape(sPath) === sPath) {
 				// @see sap.ui.base.BindingParser: rObject, rBindingChars
-				strictEqual(fnSimplePath(oCurrentContext, oRawValue), "{" + sPath + "}",
+				assert.strictEqual(fnSimplePath(oCurrentContext, oRawValue), "{" + sPath + "}",
 					"make sure that simple cases look simple");
 			}
 		});
@@ -1572,8 +1585,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			oFixture.isMultiple = false;
 		}
 
-		QUnit.test(sTitle, function () {
-			return withGwsampleModel(function (oMetaModel) {
+		QUnit.test(sTitle, function (assert) {
+			return withGwsampleModel(assert, function (oMetaModel) {
 				var oContext = oMetaModel.createBindingContext(oFixture.metaPath),
 					oRawValue = oMetaModel.getProperty(oFixture.metaPath),
 					oSingleBindingInfo;
@@ -1600,17 +1613,17 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 					oSingleBindingInfo
 						= formatAndParse(oRawValue, oContext, fnGetNavigationPath, bSkipRawValue);
 
-					strictEqual(typeof oSingleBindingInfo, "object",
+					assert.strictEqual(typeof oSingleBindingInfo, "object",
 						"getNavigationPath: got a binding info; skip raw value: "
 							+ bSkipRawValue);
-					strictEqual(oSingleBindingInfo.path, oFixture.navigationPath,
+					assert.strictEqual(oSingleBindingInfo.path, oFixture.navigationPath,
 						"getNavigationPath; skip raw value: " + bSkipRawValue);
-					strictEqual(oSingleBindingInfo.type, undefined,
+					assert.strictEqual(oSingleBindingInfo.type, undefined,
 						"getNavigationPath: no type; skip raw value: " + bSkipRawValue);
 				});
 
 				// gotoEntitySet
-				strictEqual(AnnotationHelper.gotoEntitySet(oContext),
+				assert.strictEqual(AnnotationHelper.gotoEntitySet(oContext),
 					oFixture.entitySet
 						? oMetaModel.getODataEntitySet(oFixture.entitySet, true)
 						: undefined,
@@ -1621,20 +1634,20 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 					if (oFixture.isMultiple === Error) {
 						try {
 							formatAndParse(oRawValue, oContext, fnIsMultiple, bSkipRawValue);
-							ok(false, "Exception expected");
+							assert.ok(false, "Exception expected");
 						} catch (e) {
-							strictEqual(e.message,
+							assert.strictEqual(e.message,
 								'Association end with multiplicity "*" is not the last one: '
 									+ sPath);
 						}
 					} else {
-						strictEqual(formatAndParse(oRawValue, oContext, fnIsMultiple,
+						assert.strictEqual(formatAndParse(oRawValue, oContext, fnIsMultiple,
 							bSkipRawValue), String(oFixture.isMultiple), "isMultiple");
 					}
 				});
 
 				// resolvePath
-				strictEqual(AnnotationHelper.resolvePath(oContext), oFixture.resolvedPath,
+				assert.strictEqual(AnnotationHelper.resolvePath(oContext), oFixture.resolvedPath,
 					"resolvePath");
 			});
 		});
@@ -1660,8 +1673,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		navigationPath : undefined,
 		resolvedPath : undefined
 	}].forEach(function (oFixture) {
-		QUnit.test("Missing path expression, context: " + oFixture.metaPath, function () {
-			return withGwsampleModel(function (oMetaModel) {
+		QUnit.test("Missing path expression, context: " + oFixture.metaPath, function (assert) {
+			return withGwsampleModel(assert, function (oMetaModel) {
 				var oContext = oMetaModel.createBindingContext(oFixture.metaPath),
 					oRawValue = oMetaModel.getProperty(oFixture.metaPath);
 
@@ -1676,18 +1689,20 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				}
 
 				// getNavigationPath
-				strictEqual(AnnotationHelper.getNavigationPath(oContext, oRawValue), "",
+				assert.strictEqual(AnnotationHelper.getNavigationPath(oContext, oRawValue), "",
 					"getNavigationPath");
 
 				// gotoEntitySet
-				strictEqual(AnnotationHelper.gotoEntitySet(oContext), undefined, "gotoEntitySet");
+				assert.strictEqual(AnnotationHelper.gotoEntitySet(oContext), undefined,
+					"gotoEntitySet");
 
 				// isMultiple
-				strictEqual(formatAndParse(oRawValue, oContext, fnIsMultiple), "",
+				assert.strictEqual(formatAndParse(oRawValue, oContext, fnIsMultiple), "",
 					"isMultiple");
 
 				// resolvePath
-				strictEqual(AnnotationHelper.resolvePath(oContext), undefined, "resolvePath");
+				assert.strictEqual(AnnotationHelper.resolvePath(oContext), undefined,
+					"resolvePath");
 			});
 		});
 	});
@@ -1707,32 +1722,33 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	module("sap.ui.model.odata.AnnotationHelper.gotoEntityType");
 
 	//*********************************************************************************************
-	QUnit.test("gotoEntityType called directly on the entity type's qualified name", function () {
-		return withGwsampleModel(function (oMetaModel) {
-			var sMetaPath = "/dataServices/schema/0/entityContainer/0/entitySet/0/entityType",
-				sQualifiedName = "GWSAMPLE_BASIC.BusinessPartner",
-				oContext = oMetaModel.createBindingContext(sMetaPath);
+	QUnit.test("gotoEntityType called directly on the entity type's qualified name",
+		function (assert) {
+			return withGwsampleModel(assert, function (oMetaModel) {
+				var sMetaPath = "/dataServices/schema/0/entityContainer/0/entitySet/0/entityType",
+					sQualifiedName = "GWSAMPLE_BASIC.BusinessPartner",
+					oContext = oMetaModel.createBindingContext(sMetaPath);
 
-			strictEqual(oMetaModel.getProperty(sMetaPath), sQualifiedName);
+				assert.strictEqual(oMetaModel.getProperty(sMetaPath), sQualifiedName);
 
-			strictEqual(AnnotationHelper.gotoEntityType(oContext),
-				oMetaModel.getODataEntityType(sQualifiedName, true));
+				assert.strictEqual(AnnotationHelper.gotoEntityType(oContext),
+					oMetaModel.getODataEntityType(sQualifiedName, true));
+			});
 		});
-	});
 
 	//*********************************************************************************************
 	module("sap.ui.model.odata.AnnotationHelper.gotoEntitySet");
 
 	//*********************************************************************************************
-	QUnit.test("gotoEntitySet called directly on the entity set's name", function () {
-		return withGwsampleModel(function (oMetaModel) {
+	QUnit.test("gotoEntitySet called directly on the entity set's name", function (assert) {
+		return withGwsampleModel(assert, function (oMetaModel) {
 			var sMetaPath
 					= "/dataServices/schema/0/entityContainer/0/associationSet/1/end/1/entitySet",
 				oContext = oMetaModel.createBindingContext(sMetaPath);
 
-			strictEqual(oMetaModel.getProperty(sMetaPath), "ProductSet");
+			assert.strictEqual(oMetaModel.getProperty(sMetaPath), "ProductSet");
 
-			strictEqual(AnnotationHelper.gotoEntitySet(oContext),
+			assert.strictEqual(AnnotationHelper.gotoEntitySet(oContext),
 				oMetaModel.getODataEntitySet("ProductSet", true));
 		});
 	});
@@ -1741,13 +1757,13 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	module("sap.ui.model.odata.AnnotationHelper.gotoFunctionImport");
 
 	//*********************************************************************************************
-	QUnit.test("gotoFunctionImport", function () {
-		return withGwsampleModelAndTestAnnotations(function (oMetaModel) {
+	QUnit.test("gotoFunctionImport", function (assert) {
+		return withGwsampleModelAndTestAnnotations(assert, function (oMetaModel) {
 			var sMetaPath =
 					sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Description/Action",
 				oContext = oMetaModel.createBindingContext(sMetaPath);
 
-			strictEqual(AnnotationHelper.gotoFunctionImport(oContext),
+			assert.strictEqual(AnnotationHelper.gotoFunctionImport(oContext),
 				oMetaModel.getODataFunctionImport("RegenerateAllData", true));
 		});
 	});
@@ -1779,8 +1795,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			window.foo = {
 				Helper : {
 					help : function help(oRawValue) {
-						ok(this instanceof PropertyBinding || this === oControl,
-							"foo.Helper.help: 'this' is kept");
+//TODO						assert.ok(this instanceof PropertyBinding || this === oControl,
+//							"foo.Helper.help: 'this' is kept");
 						return "_" + oRawValue + "_";
 					}
 				}
@@ -1790,12 +1806,13 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		/**
 		 * Checks that createPropertySetting() works as expected for multiple bindings.
 		 *
+		 * @param {object} assert the assertions
 		 * @param {any[]} aParts
 		 *   non-empty array of constants or data binding expressions
 		 * @param {any[]} aExpectedValues
 		 *   the expected values of each part
 		 */
-		checkMultiple : function checkMultiple(aParts, aExpectedValues) {
+		checkMultiple : function checkMultiple(assert, aParts, aExpectedValues) {
 			var oControl = this.oControl;
 
 			// test without and with root formatter
@@ -1811,7 +1828,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 					"text" : AnnotationHelper.createPropertySetting(aParts, fnRootFormatter)
 				});
 
-				strictEqual(oControl.getText(), sExpectedText);
+				assert.strictEqual(oControl.getText(), sExpectedText);
 			});
 		},
 
@@ -1823,7 +1840,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		 * @param {string} sExpectedText
 		 *   the expected value of the test control's "text" property
 		 */
-		checkSingle : function checkSingle(sBinding, sExpectedText) {
+		checkSingle : function checkSingle(assert, sBinding, sExpectedText) {
 			var oControl = this.oControl,
 				vParts = [sBinding];
 
@@ -1836,122 +1853,126 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 					"text" : AnnotationHelper.createPropertySetting(vParts, fnRootFormatter)
 				});
 
-				strictEqual(oControl.getText(), sExpectedText, "sBinding: " + sBinding);
-				strictEqual(vParts[0], sBinding, "array argument unchanged");
+				assert.strictEqual(oControl.getText(), sExpectedText, "sBinding: " + sBinding);
+				assert.strictEqual(vParts[0], sBinding, "array argument unchanged");
 			});
 		}
 	});
 
 	//*********************************************************************************************
-	QUnit.test("some basics", function () {
+	QUnit.test("some basics", function (assert) {
 		// see sap.ui.base.BindingParser: makeSimpleBindingInfo
-		deepEqual(AnnotationHelper.createPropertySetting(["{/foo/bar}"]), {
+		assert.deepEqual(AnnotationHelper.createPropertySetting(["{/foo/bar}"]), {
 			path : "/foo/bar"
 		}, "{/foo/bar}");
-		deepEqual(AnnotationHelper.createPropertySetting(["{meta>foo/bar}"]), {
+		assert.deepEqual(AnnotationHelper.createPropertySetting(["{meta>foo/bar}"]), {
 			model : "meta",
 			path : "foo/bar"
 		}, "{meta>foo/bar}");
 
 		// complex binding syntax
-		deepEqual(AnnotationHelper.createPropertySetting(["{path:'foo/bar'}"]), {
+		assert.deepEqual(AnnotationHelper.createPropertySetting(["{path:'foo/bar'}"]), {
 			path : "foo/bar"
 		}, "{path:'foo/bar'}");
-		deepEqual(AnnotationHelper.createPropertySetting(["{path:'meta>/foo/bar'}"]), {
+		assert.deepEqual(AnnotationHelper.createPropertySetting(["{path:'meta>/foo/bar'}"]), {
 			path : "meta>/foo/bar"
 		}, "{path:'meta>/foo/bar'}");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("simple binding syntax", function () {
-		this.checkSingle("{/foo}", "hello");
-		this.checkSingle("{model>/foo}", "hello");
+	QUnit.test("simple binding syntax", function (assert) {
+		this.checkSingle(assert, "{/foo}", "hello");
+		this.checkSingle(assert, "{model>/foo}", "hello");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("complex binding syntax", function () {
-		this.checkSingle("{path : 'model>/foo', formatter : 'foo.Helper.help'}", "_hello_");
-		this.checkSingle("{model : 'model', path : '/bar', formatter : 'foo.Helper.help'}",
+	QUnit.test("complex binding syntax", function (assert) {
+		this.checkSingle(assert, "{path : 'model>/foo', formatter : 'foo.Helper.help'}", "_hello_");
+		this.checkSingle(assert, "{model : 'model', path : '/bar', formatter : 'foo.Helper.help'}",
 			"_world_");
 
 		// Note: formatters inside parts are not supported!
-//		this.checkSingle("{parts : [{path : '/foo', formatter : 'foo.Helper.help'}]}", "_hello_");
+//		this.checkSingle(assert, "{parts : [{path : '/foo', formatter : 'foo.Helper.help'}]}", "_hello_");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("composite binding", function () {
-		this.checkSingle("hello {path : '/bar', formatter : 'foo.Helper.help'}", "hello _world_");
-		this.checkSingle("hello {path : 'model>/bar', formatter : 'foo.Helper.help'}",
+	QUnit.test("composite binding", function (assert) {
+		this.checkSingle(assert, "hello {path : '/bar', formatter : 'foo.Helper.help'}",
 			"hello _world_");
-		this.checkSingle("hello {model : 'model', path : '/bar', formatter : 'foo.Helper.help'}",
+		this.checkSingle(assert, "hello {path : 'model>/bar', formatter : 'foo.Helper.help'}",
+			"hello _world_");
+		this.checkSingle(assert,
+			"hello {model : 'model', path : '/bar', formatter : 'foo.Helper.help'}",
 			"hello _world_");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("expression binding", function () {
-		this.checkSingle("{:= ${/foo} + ' ' + ${path:'/bar'}}", "hello world");
-		this.checkSingle("{:= ${model>/foo} + ' ' + ${path:'model>/bar'}}", "hello world");
-		this.checkSingle("{:= ${model>/foo} + ' ' + ${model:'model',path:'/bar'}}", "hello world");
+	QUnit.test("expression binding", function (assert) {
+		this.checkSingle(assert, "{:= ${/foo} + ' ' + ${path:'/bar'}}", "hello world");
+		this.checkSingle(assert, "{:= ${model>/foo} + ' ' + ${path:'model>/bar'}}",
+			"hello world");
+		this.checkSingle(assert, "{:= ${model>/foo} + ' ' + ${model:'model',path:'/bar'}}",
+			"hello world");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("empty array of parts", function () {
-		strictEqual(AnnotationHelper.createPropertySetting([]), undefined);
-		strictEqual(AnnotationHelper.createPropertySetting([], this.formatter), "[]");
+	QUnit.test("empty array of parts", function (assert) {
+		assert.strictEqual(AnnotationHelper.createPropertySetting([]), undefined);
+		assert.strictEqual(AnnotationHelper.createPropertySetting([], this.formatter), "[]");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("multiple parts: simple binding syntax", function () {
-		this.checkMultiple(["{/foo}", "{model>/bar}"], ["hello", "world"]);
+	QUnit.test("multiple parts: simple binding syntax", function (assert) {
+		this.checkMultiple(assert, ["{/foo}", "{model>/bar}"], ["hello", "world"]);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("multiple parts: complex binding syntax", function () {
-		this.checkMultiple([
+	QUnit.test("multiple parts: complex binding syntax", function (assert) {
+		this.checkMultiple(assert, [
 				"{path : '/foo', formatter : 'foo.Helper.help'}",
 				"{model : 'model', path : '/bar', formatter : 'foo.Helper.help'}"
 			], ["_hello_", "_world_"]);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("multiple parts: composite binding", function () {
-		this.checkMultiple([
+	QUnit.test("multiple parts: composite binding", function (assert) {
+		this.checkMultiple(assert, [
 				"hello {model : 'model', path : '/bar', formatter : 'foo.Helper.help'}",
 				"{path : 'model>/foo', formatter : 'foo.Helper.help'} world"
 			], ["hello _world_", "_hello_ world"]);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("multiple parts: expression binding", function () {
-		this.checkMultiple([
+	QUnit.test("multiple parts: expression binding", function (assert) {
+		this.checkMultiple(assert, [
 				"{:= ${/foo} + '>' + ${path:'/bar'}}",
 				"{:= ${model>/bar} + '<' + ${model:'model',path:'/foo'}}"
 			], ["hello>world", "world<hello"]);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("single constant string value", function () {
+	QUnit.test("single constant string value", function (assert) {
 		var that = this;
 
 		["", "hello, world!", "}{"].forEach(function (sConstant) {
 			// constant string
-			that.checkSingle(BindingParser.complexParser.escape(sConstant), sConstant);
+			that.checkSingle(assert, BindingParser.complexParser.escape(sConstant), sConstant);
 
 			// constant expression binding
-			that.checkSingle("{:= '" + sConstant + "'}", sConstant);
+			that.checkSingle(assert, "{:= '" + sConstant + "'}", sConstant);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("single constant non-string value", function () {
+	QUnit.test("single constant non-string value", function (assert) {
 		var oControl = this.oControl,
 			that = this;
 
 		function strictEqualOrNaN(vActual, vExpected) {
 			if (vExpected !== vExpected) { // NaN
-				ok(vActual !== vActual);
+				assert.ok(vActual !== vActual);
 			} else {
-				strictEqual(vActual, vExpected);
+				assert.strictEqual(vActual, vExpected);
 			}
 		}
 
@@ -1968,7 +1989,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				vPropertySetting
 					= AnnotationHelper.createPropertySetting(vParts, fnRootFormatter);
 
-				deepEqual(vParts, [vConstant], "array argument unchanged");
+				assert.deepEqual(vParts, [vConstant], "array argument unchanged");
 				strictEqualOrNaN(vPropertySetting, vExpectedValue);
 
 				// Note: sap.ui.base.ManagedObject#validateProperty maps null to undefined
@@ -1994,30 +2015,30 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	});
 
 	//*********************************************************************************************
-	QUnit.test("multiple constant values", function () {
+	QUnit.test("multiple constant values", function (assert) {
 		var aParts = ["", "hello, world!", false, true, 0, 1, NaN, null, undefined, []],
 			aExpectedValues = aParts.slice();
 
 		aParts.push(BindingParser.complexParser.escape("}{"));
 		aExpectedValues.push("}{");
 
-		this.checkMultiple(aParts, aExpectedValues);
+		this.checkMultiple(assert, aParts, aExpectedValues);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Unsupported part", function () {
+	QUnit.test("Unsupported part", function (assert) {
 		[Function].forEach(function (vPart) {
-			throws(function () {
+			assert.throws(function () {
 				AnnotationHelper.createPropertySetting([vPart]);
 			}, new Error("Unsupported part: " + vPart), "Unsupported part: " + vPart);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Function name(s) not found", function () {
+	QUnit.test("Function name(s) not found", function (assert) {
 		var sBinding = "{path:'/foo',formatter:'foo'} {path:'/bar',formatter:'bar'}";
 
-		throws(function () {
+		assert.throws(function () {
 			AnnotationHelper.createPropertySetting([sBinding]);
 		}, new Error("Function name(s) foo, bar not found"), "Function name(s) not found");
 	});
