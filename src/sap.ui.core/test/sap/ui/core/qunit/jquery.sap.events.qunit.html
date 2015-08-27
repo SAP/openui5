@@ -112,7 +112,7 @@
 								"mouseup", "select", "selectstart", "dragstart", "dragenter", "dragover", "dragleave", "dragend", "drop", "paste", "cut", "input",
 								"saptouchstart", "saptouchmove", "saptouchend"];
 	
-	var aMobileBrowserEvents = ["touchstart", "touchend", "touchmove", "touchcancel", "swipe", "tap", "swipeleft", "swiperight", "scrollstart", "scrollstop"];
+	var aMobileBrowserEvents = ["touchstart", "touchend", "touchmove", "touchcancel", "swipe", "tap", "swipeleft", "swiperight", "scrollstart", "scrollstop", "sapmousedown", "sapmousemove", "sapmouseup"];
 	
 	function keyEvent(sName, sAddText, iTrigger, sKeyCode, bShift, bAlt, bCtrl){
 		return {sName: sName, sAddTxt: sAddText, iTrigger: iTrigger, oParams: {keyCode : jQuery.sap.KeyCodes[sKeyCode], shiftKey : bShift || false, altKey : bAlt || false, metaKey : bCtrl || false, ctrlKey : bCtrl || false}};
@@ -281,7 +281,7 @@
 	test("Control Events", function() {
 		var aBrowserEvents = [].concat(aBasicBrowserEvents);
 		
-		if(jQuery.support.touch){
+		if(sap.ui.Device.support.touch){
 			aBrowserEvents = aBrowserEvents.concat(aMobileBrowserEvents);
 		}
 		
@@ -310,7 +310,7 @@
 		
 		fCheck("sapdelayeddoubleclick", "click");
 		
-		if(jQuery.support.touch){
+		if(sap.ui.Device.support.touch){
 			//With mobile events
 			fCheck("swipebegin", bRtl ? "swiperight" : "swipeleft");
 			fCheck("swipeend", !bRtl ? "swiperight" : "swipeleft");
@@ -420,12 +420,12 @@
 	
 	//***************************************
 	
-	if(jQuery.support.touch){
+	if(sap.ui.Device.support.touch){
 		//***************************************
 		module("Mobile Browser Events");
 		
 		for(var i=0; i<aMobileBrowserEvents.length; i++){
-			doTestCtrlEvent(aMobileBrowserEvents[i], null, /*Satisfy jQuery Mobile*/{originalEvent: {touches:[{pageX:0, pageY:0}], targetTouches: [{pageX:0, pageY:0}], changedTouches: [{pageX:0, pageY:0}]}});
+			doTestCtrlEvent(aMobileBrowserEvents[i], null, /*Satisfy jQuery Mobile*/{touches:[{pageX:0, pageY:0}], targetTouches: [{pageX:0, pageY:0}], changedTouches: [{pageX:0, pageY:0}]});
 		}
 		
 		
