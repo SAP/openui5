@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', './ViewRenderer'],
 				rm.addClass("sapUiView");
 				rm.addClass("sapUiXMLView");
 				ViewRenderer.addDisplayClass(rm, oControl);
-				if (oControl._oAsyncState && !oControl._oAsyncState.suppressPreserve) {
+				if (!oControl._oAsyncState || !oControl._oAsyncState.suppressPreserve) {
 					// do not preserve when rendering initially in async mode
 					rm.writeAttribute("data-sap-ui-preserve", oControl.getId());
 				}
