@@ -10,16 +10,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	/**
 	 * Constructor for a new Header.
 	 *
-	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * renders a calendar header
 	 *
 	 * The calendar header consists of 3 buttons where the text can be set and a previous and a next button.
-	 * In the normal calendar the fist button contains the displayed day, the second button the displayed month and the third button the displayed year.
+	 * In the normal calendar the first button contains the displayed day, the second button the displayed month and the third button the displayed year.
 	 *
-	 * <b>Note:</b> This is used inside the calendar. Not for stand alone usage
+	 * <b>Note:</b> This is used inside the calendar. Not for standalone usage
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * If set, the first button will be displayed
 			 *
-			 * <b>Note:</b> the default is set to false to be compatible to older versions
+			 * <b>Note:</b> The default is set to false to be compatible to older versions
 			 * @since 1.32.0
 			 */
 			visibleButton0 : {type : "boolean", group : "Misc", defaultValue : false},
@@ -87,12 +87,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			visibleButton2 : {type : "boolean", group : "Misc", defaultValue : true},
 
 			/**
-			 * enables the previous button
+			 * Enables the previous button
 			 */
 			enabledPrevious : {type : "boolean", group : "Misc", defaultValue : true},
 
 			/**
-			 * enables the Next button
+			 * Enables the Next button
 			 */
 			enabledNext : {type : "boolean", group : "Misc", defaultValue : true}
 
@@ -100,28 +100,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		events : {
 
 			/**
-			 * previous button pressed
+			 * Previous button pressed
 			 */
 			pressPrevious : {},
 
 			/**
-			 * next button pressed
+			 * Next button pressed
 			 */
 			pressNext : {},
 
 			/**
-			 * first button pressed (normally day)
+			 * First button pressed (normally day)
 			 * @since 1.32.0
 			 */
 			pressButton0 : {},
 
 			/**
-			 * second button pressed (normally month)
+			 * Second button pressed (normally month)
 			 */
 			pressButton1 : {},
 
 			/**
-			 * third button pressed (normally year)
+			 * Third button pressed (normally year)
 			 */
 			pressButton2 : {}
 
