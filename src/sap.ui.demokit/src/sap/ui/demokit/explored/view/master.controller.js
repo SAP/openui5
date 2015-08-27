@@ -348,11 +348,10 @@ sap.ui.controller("sap.ui.demokit.explored.view.master", {
 			oBinding = oList.getBinding("items");
 
 		// add filter for search
-		var sQuery = oSearchField.getValue();
-		if (sQuery) {
-			bFilterChanged = true;
-			aFilters.push(new sap.ui.model.Filter("searchTags", "Contains", sQuery));
-		}
+		var sQuery = oSearchField.getValue().trim();
+
+		bFilterChanged = true;
+		aFilters.push(new sap.ui.model.Filter("searchTags", "Contains", sQuery));
 
 		// add filters for view settings
 		jQuery.each(this._oViewSettings.filter, function (sProperty, aValues) {
