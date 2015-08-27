@@ -292,6 +292,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 	};
 
 	/**
+	 * This function invalidates the columns menu. All items will be re-created the next time the menu opens. This only
+	 * happens for generated menus.
+	 * @private
+	 */
+	Column.prototype.invalidateMenu = function() {
+		var oMenu = this.getAggregation("menu");
+		if (oMenu && oMenu._invalidate) {
+			oMenu._invalidate();
+		}
+	};
+
+	/**
 	 * Checks whether or not the menu has items
 	 * @return {Boolean} True if the menu has or could have items.
 	 */
