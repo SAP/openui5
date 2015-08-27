@@ -552,6 +552,15 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element'],
 		
 		sap.ui.core.ResizeHandler.deregisterAllForControl(this.getId());
 	
+		// Controls can have their visible-property set to "false" in which case the Element's destroy method will#
+		// fail to remove the placeholder content from the DOM. We have to remove it here in that case
+		if (!this.getVisible()) {
+			var oPlaceholder = document.getElementById(sap.ui.core.RenderManager.createInvisiblePlaceholderId(this));
+			if (oPlaceholder && oPlaceholder.parentNode) {
+				oPlaceholder.parentNode.removeChild(oPlaceholder);
+			}
+		}
+	
 		Element.prototype.destroy.call(this, bSuppressInvalidate);
 	};
 	
