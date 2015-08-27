@@ -33,6 +33,7 @@
 		"sap.m": {}
 	  }
 	},
+
 	"config": {
 	  "invoiceLocal": "/Invoices.json"
 	},
