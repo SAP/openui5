@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta charset="UTF-8">
+	<title>SAPUI5 Data Binding Tutorial</title>
+	<script
+		id="sap-ui-bootstrap"
+		src="../../../../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-compatVersion="edge"
+		data-sap-ui-preload="async"
+		data-sap-ui-resourceroots='{ "sap.ui.demo.db": "./" }'
+		>
+	</script>
+	<script>
+		// Attach an anonymous function to the SAPUI5 'init' event
+		sap.ui.getCore().attachInit(function () {
+			// Create a JSON model from an object literal
+			var oModel = new sap.ui.model.json.JSONModel({
+				firstName: "Harry",
+				lastName: "Hawk",
+				enabled: true,
+				panelHeaderText: "Data Binding Basics"
+			});
+			
+			oModel.setDefaultBindingMode(sap.ui.model.BindingMode.OneWay);
+			
+			// Assign the model object to the SAPUI5 core
+			sap.ui.getCore().setModel(oModel);
+
+			// Display the XML view called "App"
+			new sap.ui.core.mvc.XMLView({ viewName : "sap.ui.demo.db.view.App" })
+				.placeAt("content");
+		});
+	</script>
+</head>
+<body class="sapUiBody" id="content">
+</body>
+</html>
