@@ -151,10 +151,10 @@
 	</OverflowToolbar>
 	<MessageStrip class="sapUiTinyMargin"
 				  text="Toolbar items can overflow together even if they are on different positions.
-				  This is possible using the group property of the LayoutData control.
-				  By default the group value is 0. This value means that the element does not belong to any group.
-				  When two or more elements have the same property value, this means that they belong to the same group.
-				  Elements that belong to a group is not allowed to have AlwaysOverflow or NeverOverflow priority."
+				  This is possible using the group property of the OverflowToolbarLayoutData element.
+				  By default the group value is 0, which means that the element does not belong to any group.
+				  When two or more elements have the same group value, this means that they belong to the same group.
+				  Elements that belong to a group are not allowed to have AlwaysOverflow or NeverOverflow priority."
 				  type="Information" showIcon="true">
 	</MessageStrip>
 
