@@ -13,28 +13,32 @@
 				value="19:15"
 				valueFormat="HH:mm"
 				displayFormat="HH:mm"
-				change="handleChange"/>
+				change="handleChange"
+				placeholder="Enter meeting start time"/>
 
 		<Label text="HH:mm:ss"/>
 		<TimePicker
 				id="TP2"
 				valueFormat="HH:mm:ss"
 				displayFormat="HH:mm:ss"
-				change="handleChange"/>
+				change="handleChange"
+				placeholder="Enter meeting end time"/>
 
-		<Label text="HH:mm a"/>
+		<Label text="hh:mm a"/>
 		<TimePicker
 				id="TP3"
 				valueFormat="hh:mm a"
 				displayFormat="hh:mm a"
-				change="handleChange"/>
+				change="handleChange"
+				placeholder="Enter daily task deadline"/>
 
-		<Label text="HH:mm:ss a"/>
+		<Label text="hh:mm:ss a"/>
 		<TimePicker
 				id="TP4"
 				valueFormat="hh:mm:ss a"
 				displayFormat="hh:mm:ss a"
-				change="handleChange"/>
+				change="handleChange"
+				placeholder="Enter time"/>
 		<Text
 				id="T1"
 				text="change event result"
