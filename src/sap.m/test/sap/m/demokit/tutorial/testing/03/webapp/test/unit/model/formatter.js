@@ -34,27 +34,5 @@ sap.ui.require(
 		QUnit.test("Should round a zero", function (assert) {
 			numberUnitValueTestCase.call(this, assert, "0", "0.00");
 		});
-
-		QUnit.module("Flagged");
-
-		function flaggedValueTestCase(assert, iValue, bExpectedValue) {
-			// Act
-			var bValue = formatter.flagged(iValue);
-
-			// Assert
-			assert.strictEqual(bValue, bExpectedValue, "The flagged conversion was correct");
-		}
-
-		QUnit.test("Should convert 1 to true", function (assert) {
-			flaggedValueTestCase.call(this, assert, 1, true);
-		});
-
-		QUnit.test("Should convert 0 to false", function (assert) {
-			flaggedValueTestCase.call(this, assert, 0, false);
-		});
-
-		QUnit.test("Should convert an invalid value to false", function (assert) {
-			flaggedValueTestCase.call(this, assert, -666, false);
-		});
 	}
 );

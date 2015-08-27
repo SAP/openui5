@@ -76,19 +76,6 @@ sap.ui.define([
 			this.getModel("worklistView").setProperty("/worklistTableTitle", sTitle);
 		},
 
-		/**
-		 * Event handler when the flagged button of an item gets pressed
-		 * @param {sap.ui.base.Event} oEvent the button press event
-		 * @public
-		 */
-		onFlaggedPress: function (oEvent) {
-			var bPressed = oEvent.getSource().getPressed(),
-				oContext = oEvent.getSource().getBindingContext();
-
-			// update the model (convert boolean to integer)
-			this.getModel().setProperty(oContext + "/Flagged", (bPressed ? 1 : 0));
-		},
-
 		/* =========================================================== */
 		/* internal methods                                            */
 		/* =========================================================== */
@@ -105,8 +92,20 @@ sap.ui.define([
 				sTitle = this.getResourceBundle().getText("worklistTableTitleCount", [iTotalItems]);
 				this.oViewModel.setProperty("/worklistTableTitle", sTitle);
 			}
-		}
+		},
 
+		/**
+		 * Event handler when the share by E-Mail button has been clicked
+		 * @public
+		 */
+		onShareEmailPress: function () {
+			var oViewModel = this.getModel("worklistView");
+			sap.m.URLHelper.triggerEmail(
+				null,
+				oViewModel.getProperty("/shareSendEmailSubject"),
+				oViewModel.getProperty("/shareSendEmailMessage")
+			);
+		}
 	});
 
 });

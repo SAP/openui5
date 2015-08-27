@@ -76,44 +76,9 @@ sap.ui.define([
 			this.getModel("worklistView").setProperty("/worklistTableTitle", sTitle);
 		},
 
-		/**
-		 * Event handler when a table item gets pressed
-		 * @param {sap.ui.base.Event} oEvent the table selectionChange event
-		 * @public
-		 */
-		onPress: function (oEvent) {
-			// The source is the list item that got pressed
-			this._showObject(oEvent.getSource());
-		},
-
-		/**
-		 * Event handler when the flagged button of an item gets pressed
-		 * @param {sap.ui.base.Event} oEvent the button press event
-		 * @public
-		 */
-		onFlaggedPress: function (oEvent) {
-			var bPressed = oEvent.getSource().getPressed(),
-				oContext = oEvent.getSource().getBindingContext();
-
-			// update the model (convert boolean to integer)
-			this.getModel().setProperty(oContext + "/Flagged", (bPressed ? 1 : 0));
-		},
-
 		/* =========================================================== */
 		/* internal methods                                            */
 		/* =========================================================== */
-
-		/**
-		 * Shows the selected item on the object page
-		 * On phones a additional history entry is created
-		 * @param {sap.m.ObjectListItem} oItem selected Item
-		 * @private
-		 */
-		_showObject: function (oItem) {
-			this.getRouter().navTo("object", {
-				objectId: oItem.getBindingContext().getProperty("PostID")
-			});
-		},
 
 		/**
 		 * Sets the item count on the worklist view header
@@ -127,8 +92,20 @@ sap.ui.define([
 				sTitle = this.getResourceBundle().getText("worklistTableTitleCount", [iTotalItems]);
 				this.oViewModel.setProperty("/worklistTableTitle", sTitle);
 			}
-		}
+		},
 
+		/**
+		 * Event handler when the share by E-Mail button has been clicked
+		 * @public
+		 */
+		onShareEmailPress: function () {
+			var oViewModel = this.getModel("worklistView");
+			sap.m.URLHelper.triggerEmail(
+				null,
+				oViewModel.getProperty("/shareSendEmailSubject"),
+				oViewModel.getProperty("/shareSendEmailMessage")
+			);
+		}
 	});
 
 });

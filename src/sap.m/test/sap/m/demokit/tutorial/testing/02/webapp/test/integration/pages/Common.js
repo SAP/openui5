@@ -25,22 +25,16 @@ sap.ui.define([
 			},
 
 			iStartMyApp: function (oOptions) {
-				var sUrlParameters = "";
-				oOptions = oOptions || {};
+				var sUrlParameters;
+				oOptions = oOptions || { delay: 0 };
 
-				if (oOptions.delay) {
-					sUrlParameters = "serverDelay=" + oOptions.delay;
-				}
+				sUrlParameters = "serverDelay=" + oOptions.delay;
 
 				this.iStartMyAppInAFrame(getFrameUrl(oOptions.hash, sUrlParameters));
 			},
 
 			iLookAtTheScreen: function () {
 				return this;
-			},
-
-			iStartMyAppOnADesktopToTestErrorHandler: function (sParam) {
-				this.iStartMyAppInAFrame(getFrameUrl("", sParam));
 			}
 
 		});
