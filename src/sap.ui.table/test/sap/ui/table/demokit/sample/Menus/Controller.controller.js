@@ -3,8 +3,9 @@ sap.ui.define([
 	"sap/ui/table/sample/TableExampleUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/Menu",
-	"sap/ui/unified/MenuItem"
-], function(Controller, TableExampleUtils, JSONModel, Menu, MenuItem) {
+	"sap/ui/unified/MenuItem",
+	"sap/m/MessageToast"
+], function(Controller, TableExampleUtils, JSONModel, Menu, MenuItem, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Menus.Controller", {
@@ -38,29 +39,14 @@ sap.ui.define([
 			if (sap.ui.Device.support.touch) {
 				return; //Do not use context menus on touch devices
 			}
-			
-			var iColumnIndex = oEvent.getParameter("columnIndex");
-			var iRowIndex = oEvent.getParameter("rowIndex");
-			var oTable = this.getView().byId("table");
-			var aColumns = oTable.getColumns();
-			
-			var oColumn;
-			var iVisibleIndex = -1;
-			for (var i=0; i<aColumns.length; i++) {
-				if (aColumns[i].getVisible()) {
-					iVisibleIndex++;
-				}
-				if (iVisibleIndex == iColumnIndex) {
-					oColumn = aColumns[i];
-					break;
-				}
-			}
-			
-			if (oColumn != this.getView().byId("productId")) {
-				return;
+
+			if (oEvent.getParameter("columnId") != this.getView().createId("productId")) {
+				return; //Custom context menu for product id column only
 			}
 			
 			oEvent.preventDefault();
+			
+			var oRowContext = oEvent.getParameter("rowBindingContext");
 			
 			if (!this._oIdContextMenu) {
 				this._oIdContextMenu = new Menu();
@@ -71,16 +57,14 @@ sap.ui.define([
 			this._oIdContextMenu.addItem(new MenuItem({
 				text: "My Custom Cell Action",
 				select: function(oEvent) {
-					var sId = oTable.getContextByIndex(iRowIndex).getProperty("ProductId");
-					alert("Context action triggered on Column 'Product ID' on id '" + sId + "'.");
+					MessageToast.show("Context action triggered on Column 'Product ID' on id '" + oRowContext.getProperty("ProductId") + "'.");
 				}.bind(this)
 			}));
-			
-			var oRelatedControl = oEvent.getParameter("cellControl");
 
 			//Open the menu on the cell
+			var oCellDomRef = oEvent.getParameter("cellDomRef");
 			var eDock = sap.ui.core.Popup.Dock;
-			this._oIdContextMenu.open(false, oRelatedControl, eDock.BeginTop, eDock.BeginBottom, oRelatedControl, "none none");
+			this._oIdContextMenu.open(false, oCellDomRef, eDock.BeginTop, eDock.BeginBottom, oCellDomRef, "none none");
 		},
 		
 		onQuantityCustomItemSelect : function(oEvent) {
