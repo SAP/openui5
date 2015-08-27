@@ -11,12 +11,12 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	/**
 	 * Constructor for a new DropdownBox.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The control provides a field that allows end users to an entry out of a list of pre-defined items. The choosable items can be provided in the form of complete list boxes or single list items.
-	 * Binding (see DataBinding) is also supported for list items.
+	 * The control provides a field that allows end users to an entry out of a list of pre-defined items.
+	 * The choosable items can be provided in the form of a complete <code>ListBox</code>, single <code>ListItems</code>.
 	 * @extends sap.ui.commons.ComboBox
 	 * @version ${version}
 	 *
@@ -46,13 +46,15 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			searchHelpAdditionalText : {type : "string", group : "Appearance", defaultValue : null},
 
 			/**
-			 * (optional) The src of the icon to use for the search help entry.
+			 * (optional) The URI of the icon to use for the search help entry.
 			 */
 			searchHelpIcon : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
 
 			/**
 			 * Maximum number of history items in the list.
-			 * If 0 no history is displayed or stored. The history is locally stored on the client. Therefore do not activate this feature when this control handles confidential data.
+			 *
+			 * If 0 no history is displayed or stored. The history is locally stored on the client.
+			 * Therefore do not activate this feature when this control handles confidential data.
 			 */
 			maxHistoryItems : {type : "int", group : "Behavior", defaultValue : 0}
 		},
@@ -1045,7 +1047,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 		}
 		// find and select the item and update the text and the selection in the inputfield
 		i = oLB.indexOfItem(oItem);
-		var oText = oItem.getText();
+		var sText = oItem.getText();
 		var iPos = i + 1;
 		var iSize = aCurrentItems.length;
 		if (aHistoryItems.length > 0) {
@@ -1064,11 +1066,11 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 				iPos = iPos - 2;
 			}
 		}
-		$Ref.attr("aria-posinset", iPos);
+		this._updatePosInSet( $Ref, iPos, oItem.getAdditionalText());
 		$Ref.attr("aria-setsize", iSize);
-		$Ref.val(oText);
+		$Ref.val(sText);
 		this._sTypedChars = oNewValue;
-		this._doSelect(oValue.length + iMove, oText.length);
+		this._doSelect(oValue.length + iMove, sText.length);
 
 		oLB.setSelectedIndex(i);
 		if (oSHI && i == 2) {
@@ -1085,7 +1087,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			jQuery.sap.delayedCall(300, $Ref, "removeClass", ["sapUiTfErr"]);
 			// move cursor back to old position and select from there
 			$Ref.cursorPos(oValue.length);
-			this._doSelect(oValue.length, oText.length);
+			this._doSelect(oValue.length, sText.length);
 		}
 		this.__doTypeAhead = false;
 		return bValid;
