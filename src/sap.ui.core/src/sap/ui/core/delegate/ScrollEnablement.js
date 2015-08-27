@@ -968,7 +968,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 					this._iY = point.pageY;
 					return;
 				}
-				
+
 				if (sap.ui.Device.os.blackberry) {
 					if (this._iLastTouchMoveTime && oEvent.timeStamp - this._iLastTouchMoveTime < 100) {
 						oEvent.stopPropagation();
@@ -1184,8 +1184,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 							}
 							if (sap.ui.getCore().getConfiguration().getRTL()) {
 								this._scrollX = 9999; // in RTL case initially scroll to the very right
-								if (Device.browser.internet_explorer) {
-									this._bFlipX = true; // in IE RTL, scrollLeft goes opposite direction
+								if (Device.browser.internet_explorer || Device.browser.edge) {
+									this._bFlipX = true; // in IE and Edge RTL, scrollLeft goes opposite direction
 								}
 							}
 							if (Device.os.ios) {
