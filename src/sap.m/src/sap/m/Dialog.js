@@ -347,6 +347,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToo
 		};
 
 		Dialog.prototype.onBeforeRendering = function () {
+			// the resize handler have to be resize because in some edge cases the content ('scroll') dom element can be replaced
+			// Incident ID: 1570796905
+			// this will be unneeded when the positioning is refactored (to be done with css only)
+			this._deregisterResizeHandler();
+
 			//if content has scrolling, disable scrolling automatically
 			if (this._hasSingleScrollableContent()) {
 				this._forceDisableScrolling = true;
@@ -1225,7 +1230,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToo
 			}
 		};
 
-		/**
+		/*
 		 *
 		 * @returns {*|sap.m.IBar|null}
 		 * @private
