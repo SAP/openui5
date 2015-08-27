@@ -1,399 +1,391 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>RangeSlider - sap.ui.commons</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>RangeSlider - sap.ui.commons</title>
 
-<link rel="shortcut icon" type="image/x-icon"
-	href="images/controls/sap.ui.commons.Slider.gif">
+	<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.Slider.gif">
 
-<script src="../../../../resources/sap-ui-core.js"
-	type="text/javascript" id="sap-ui-bootstrap"
-	data-sap-ui-libs="sap.ui.commons"
-	data-sap-ui-theme="sap_goldreflection"
-	data-sap-ui-areas="target1,target2,target3,target4,target5,target6,target7,target8">
-	
-</script>
+	<script id="sap-ui-bootstrap"
+		src="../../../../resources/sap-ui-core.js"
+		type="text/javascript"
+		data-sap-ui-libs="sap.ui.commons"
+		data-sap-ui-theme="sap_goldreflection">
+	</script>
 
-<script src="../../../../resources/sap-ui-debug.js"></script>
+	<script type="text/javascript">
+		var oCore = sap.ui.getCore();
 
-<script type="text/javascript">
-	var oCore = sap.ui.getCore();
-
-	function handleChange(oEvent) {
-		var oSlider = oEvent.oSource;
-		var oText = oCore.getControl("TF1");
-		var oText1b = oCore.getControl("TF1b");
-		oText.setValue(oSlider.getValue());
-		oText1b.setValue(oSlider.getValue2());
-	}
-
-	function handleTextChange(oEvent) {
-		var oText = oEvent.oSource;
-		var oSlider = oCore.getControl("Sli1");
-		oSlider.setValue(parseFloat(oText.getValue()));
-		oText.setValue(oSlider.getValue());
-	}
-	
-	function handleTextChange2(oEvent) {
-		var oText = oEvent.oSource;
-		var oSlider = oCore.getControl("Sli1");
-		oSlider.setValue2(parseFloat(oText.getValue()));
-		oText.setValue(oSlider.getValue2());
-	}
-
-	function toggleEditable(oEvent) {
-		var oCheckBox = oEvent.oSource;
-		var oSlider = oCore.getControl("Sli1");
-		oSlider.setEditable(oCheckBox.getChecked());
-	}
-
-	function toggleEnabled(oEvent) {
-		var oCheckBox = oEvent.oSource;
-		var oSlider = oCore.getControl("Sli1");
-		oSlider.setEnabled(oCheckBox.getChecked());
-	}
-
-	function handleChange2(oEvent) {
-		var oSlider = oEvent.oSource;
-		var oSlider2 = oCore.getControl("Sli8");
-		var oSlider3 = oCore.getControl("Sli9");
-		var fValue = oEvent.getParameter("value");
-		var fValue2 = oEvent.getParameter("value2");
-		var oTextView;
-		if (fValue != undefined) {
-			oSlider2.setValue(fValue);
-			oSlider3.setValue(fValue);
-			oTextView = oCore.getControl("TVV1");
-			oTextView.setText(String(fValue));
-			oTextView = oCore.getControl("TVV2");
-			oTextView.setText(String(oSlider2.getValue()));
-			oTextView = oCore.getControl("TVV3");
-			oTextView.setText(String(oSlider3.getValue()));
-		}
-		if (fValue2 != undefined) {
-			oSlider2.setValue2(fValue2);
-			oSlider3.setValue2(fValue2);
-			oTextView = oCore.getControl("TVV1b");
-			oTextView.setText(String(fValue2));
-			oTextView = oCore.getControl("TVV2b");
-			oTextView.setText(String(oSlider2.getValue2()));
-			oTextView = oCore.getControl("TVV3b");
-			oTextView.setText(String(oSlider3.getValue2()));
-		}
-	}
-
-	function handleChange3(oEvent) {
-		var oSlider = oEvent.oSource;
-
-		if (!oSlider.getEditable()) {
-			alert('READ ONLY: no CHANGE event must be fired');
-		}
-		if (!oSlider.getEnabled()) {
-			alert('Disabled: no CHANGE event must be fired');
+		function handleChange(oEvent) {
+			var oSlider = oEvent.oSource;
+			var oText = oCore.getControl("TF1");
+			var oText1b = oCore.getControl("TF1b");
+			oText.setValue(oSlider.getValue());
+			oText1b.setValue(oSlider.getValue2());
 		}
 
-	}
+		function handleTextChange(oEvent) {
+			var oText = oEvent.oSource;
+			var oSlider = oCore.getControl("Sli1");
+			oSlider.setValue(parseFloat(oText.getValue()));
+			oText.setValue(oSlider.getValue());
+		}
 
-	oCore
-			.attachInitEvent(function() {
+		function handleTextChange2(oEvent) {
+			var oText = oEvent.oSource;
+			var oSlider = oCore.getControl("Sli1");
+			oSlider.setValue2(parseFloat(oText.getValue()));
+			oText.setValue(oSlider.getValue2());
+		}
 
-				jQuery.sap.log
-						.info("Listener of Loaded Event called - Application Code");
+		function toggleEditable(oEvent) {
+			var oCheckBox = oEvent.oSource;
+			var oSlider = oCore.getControl("Sli1");
+			oSlider.setEditable(oCheckBox.getChecked());
+		}
 
-				// 1. Slider
-				var oSlider = new sap.ui.commons.RangeSlider("Sli1");
-				oSlider.setWidth("400px");
-				oSlider.attachChange(handleChange);
-				oSlider.setTooltip("Slider 1");
-				oSlider.placeAt("target1");
-				var oLabel = new sap.ui.commons.Label({
-					text : "Fixed width 400px: ",
-					labelFor : oSlider
-				});
-				oLabel.placeAt("label1");
+		function toggleEnabled(oEvent) {
+			var oCheckBox = oEvent.oSource;
+			var oSlider = oCore.getControl("Sli1");
+			oSlider.setEnabled(oCheckBox.getChecked());
+		}
 
-				var oLyt = new sap.ui.commons.layout.MatrixLayout("matrix1");
-				oLyt.setWidth("500px");
-				oLyt.setColumns(4);
-				oLyt.setWidths([ "70px", "200px", "auto", "auto" ]);
+		function handleChange2(oEvent) {
+			var oSlider = oEvent.oSource;
+			var oSlider2 = oCore.getControl("Sli8");
+			var oSlider3 = oCore.getControl("Sli9");
+			var fValue = oEvent.getParameter("value");
+			var fValue2 = oEvent.getParameter("value2");
+			var oTextView;
+			if (fValue != undefined) {
+				oSlider2.setValue(fValue);
+				oSlider3.setValue(fValue);
+				oTextView = oCore.getControl("TVV1");
+				oTextView.setText(String(fValue));
+				oTextView = oCore.getControl("TVV2");
+				oTextView.setText(String(oSlider2.getValue()));
+				oTextView = oCore.getControl("TVV3");
+				oTextView.setText(String(oSlider3.getValue()));
+			}
+			if (fValue2 != undefined) {
+				oSlider2.setValue2(fValue2);
+				oSlider3.setValue2(fValue2);
+				oTextView = oCore.getControl("TVV1b");
+				oTextView.setText(String(fValue2));
+				oTextView = oCore.getControl("TVV2b");
+				oTextView.setText(String(oSlider2.getValue2()));
+				oTextView = oCore.getControl("TVV3b");
+				oTextView.setText(String(oSlider3.getValue2()));
+			}
+		}
 
-				// second row: label and textfield and checkbox
-				var oLabel = new sap.ui.commons.Label("Label1");
-				oLabel.setText("Value:");
+		function handleChange3(oEvent) {
+			var oSlider = oEvent.oSource;
 
-				var oText = new sap.ui.commons.TextField("TF1");
-				oText.setValue(oSlider.getValue());
-				oText.attachChange(handleTextChange);
-				oLabel.setLabelFor(oText);
+			if (!oSlider.getEditable()) {
+				alert('READ ONLY: no CHANGE event must be fired');
+			}
+			if (!oSlider.getEnabled()) {
+				alert('Disabled: no CHANGE event must be fired');
+			}
 
-				var oCheckBox1 = new sap.ui.commons.CheckBox("CB1");
-				oCheckBox1.setText("Editable");
-				oCheckBox1.setChecked(true);
-				oCheckBox1.attachChange(toggleEditable);
-				var oCheckBox2 = new sap.ui.commons.CheckBox("CB2", {
-					text : "Enabled",
-					checked : true,
-					change : toggleEnabled
-				});
-				oLyt.createRow(oLabel, oText, oCheckBox1, oCheckBox2);
+		}
 
-				var oLabel1b = new sap.ui.commons.Label("Label1b");
-				oLabel1b.setText("Value 2:");
+		oCore.attachInitEvent(function() {
 
-				var oText1b = new sap.ui.commons.TextField("TF1b");
-				oText1b.setValue(oSlider.getValue2());
-				oText1b.attachChange(handleTextChange2);
-				oLabel1b.setLabelFor(oText1b);
+			jQuery.sap.log.info("Listener of Loaded Event called - Application Code");
 
-				oLyt.createRow(oLabel1b, oText1b);
-
-				oLyt.placeAt("target2");
-
-				// 2. Slider
-				oSlider = new sap.ui.commons.RangeSlider("Sli2");
-				oSlider.setWidth("50%");
-				oSlider.setTooltip("Slider 2");
-				oSlider.setTotalUnits(6);
-				oSlider.setStepLabels(true);
-				oSlider.placeAt("target3");
-				oLabel = new sap.ui.commons.Label({
-					text : "Variable width 50%: ",
-					labelFor : oSlider
-				});
-				oLabel.placeAt("label3");
-
-				// 3. Slider
-				oSlider = new sap.ui.commons.RangeSlider("Sli3");
-				oSlider.setWidth("25%");
-				oSlider.setSmallStepWidth(5);
-				oSlider.setTotalUnits(5);
-				oSlider.setStepLabels(true);
-				oSlider.setTooltip("Slider 3");
-				oSlider.attachChange(function() {
-					alert("changed");
-				});
-				oSlider.placeAt("target4");
-				oLabel = new sap.ui.commons.Label({
-					text : "Variable width 25%, Step-wide 5, with Ticks: ",
-					labelFor : oSlider
-				});
-				oLabel.placeAt("label4");
-
-				// 4. Slider
-				oSlider = new sap.ui.commons.RangeSlider("Sli4");
-				oSlider.setWidth("25%");
-				oSlider.setSmallStepWidth(5);
-				oSlider.setMin(10);
-				oSlider.setMax(210);
-				oSlider.setValue(40);
-				oSlider.setTotalUnits(2);
-				oSlider.setStepLabels(true);
-				oSlider.setTooltip("Slider 4");
-				oSlider.placeAt("target5");
-				oLabel = new sap.ui.commons.Label(
-						{
-							text : "Variable width 25%, Step-wide 5, Min 10, Max 210, Start Value 40, with Ticks: ",
-							labelFor : oSlider
-						});
-				oLabel.placeAt("label5");
-
-				// 5. Slider
-				oSlider = new sap.ui.commons.RangeSlider("Sli5");
-				oSlider.setWidth("33%");
-				oSlider.setSmallStepWidth(1);
-				oSlider.setMin(1);
-				oSlider.setMax(10);
-				oSlider.setValue(8);
-				oSlider.setEditable(false);
-				oSlider.setTotalUnits(1);
-				oSlider.setStepLabels(true);
-				oSlider.setTooltip("Slider 5");
-				oSlider.placeAt("target6");
-				oLabel = new sap.ui.commons.Label(
-						{
-							text : "Variable width 33%, Step-wide 1, Min 1, Max 10, Start Value 8, ReadOnly: ",
-							labelFor : oSlider
-						});
-				oLabel.placeAt("label6");
-
-				// 6. Slider
-				oSlider = new sap.ui.commons.RangeSlider("Sli6");
-				oSlider.setVisible(false);
-				oSlider.setTooltip("Slider 6");
-				oSlider.placeAt("target7");
-				oLabel = new sap.ui.commons.Label({
-					text : "Invisible: ",
-					labelFor : oSlider
-				});
-				oLabel.placeAt("label7");
-
-				// 3 similar sliders but with different state
-				// in one matrix with value as text 
-				oLyt = new sap.ui.commons.layout.MatrixLayout("matrix2");
-				oLyt.setWidth("500px");
-				oLyt.setColumns(3);
-				oLyt.setWidths([ "410px", "auto", "auto" ]);
-
-				oLabel = new sap.ui.commons.Label({
-					text : "Editable: "
-				});
-				var oLabel2 = new sap.ui.commons.Label({
-					text : "Value:"
-				});
-				oLyt.createRow(oLabel, oLabel2);
-
-				// 7. Slider
-				oSlider = new sap.ui.commons.RangeSlider("Sli7");
-				oSlider.setWidth("400px");
-				oSlider.setSmallStepWidth(5);
-				oSlider.setMin(0);
-				oSlider.setMax(100);
-				oSlider.setValue(10);
-				oSlider.setTotalUnits(10);
-				oSlider
-						.setTooltip(new sap.ui.commons.RichTooltip(
-								{
-									title : "Slider 7",
-									imageSrc : "images/ui5_small.png",
-									text : "This is a Slider who controls the readonly and disabled sliders below."
-								}));
-				oSlider.attachChange(handleChange2);
-				oSlider.attachLiveChange(handleChange2);
-				oLabel.setLabelFor(oSlider);
-
-				oTextView = new sap.ui.commons.TextView("TVV1");
-				oTextView.setText("10");
-				oTextView.setTooltip("Value");
-				oLabel2.setLabelFor(oTextView);
-				var oTextView2 = new sap.ui.commons.TextView("TVV1b");
-				oTextView2.setText("80");
-				oTextView2.setTooltip("Value");
-				oLyt.createRow(oSlider, oTextView, oTextView2);
-
-				oLabel = new sap.ui.commons.Label({
-					text : "ReadOnly (gets Value from above Slider): "
-				});
-				oLabel2 = new sap.ui.commons.Label({
-					text : "Value:"
-				});
-				oLyt.createRow(oLabel, oLabel2);
-
-				// 8. Slider
-				oSlider = new sap.ui.commons.RangeSlider("Sli8");
-				oSlider.setWidth("400px");
-				oSlider.setSmallStepWidth(5);
-				oSlider.setMin(0);
-				oSlider.setMax(100);
-				oSlider.setValue(10);
-				oSlider.setEditable(false);
-				oSlider.setTotalUnits(10);
-				oSlider.setTooltip("Slider 8");
-				oSlider.attachChange(handleChange3);
-				oSlider.attachLiveChange(handleChange3);
-				oLabel.setLabelFor(oSlider);
-
-				oTextView = new sap.ui.commons.TextView("TVV2");
-				oTextView.setText("10");
-				oTextView.setTooltip("Value");
-				oTextView.setEnabled(false);
-				oLabel2.setLabelFor(oTextView);
-				oTextView2 = new sap.ui.commons.TextView("TVV2b");
-				oTextView2.setText("80");
-				oTextView2.setTooltip("Value");
-				oLyt.createRow(oSlider, oTextView, oTextView2);
-
-				oLabel = new sap.ui.commons.Label({
-					text : "Disabled (gets Value from above Slider): "
-				});
-				oLabel2 = new sap.ui.commons.Label({
-					text : "Value:"
-				});
-				oLyt.createRow(oLabel, oLabel2);
-
-				// 9. Slider
-				oSlider = new sap.ui.commons.RangeSlider("Sli9", {
-					width : "400px",
-					smallStepWidth : 5,
-					min : 0,
-					max : 100,
-					value : 10,
-					enabled : false,
-					totalUnits : 10,
-					tooltip : "Slider 9",
-					change : handleChange3,
-					liveChange : handleChange3
-				});
-				oLabel.setLabelFor(oSlider);
-
-				oTextView = new sap.ui.commons.TextView("TVV3", {
-					text : "10",
-					tooltip : "Value",
-					enabled : false
-				});
-				oLabel2.setLabelFor(oTextView);
-				oTextView2 = new sap.ui.commons.TextView("TVV3b");
-				oTextView2.setText("80");
-				oTextView2.setTooltip("Value");
-				oLyt.createRow(oSlider, oTextView, oTextView2);
-
-				oLyt.placeAt("target8");
-				
-				
-
+			// 1. Slider
+			var oSlider = new sap.ui.commons.RangeSlider("Sli1");
+			oSlider.setWidth("400px");
+			oSlider.attachChange(handleChange);
+			oSlider.setTooltip("Slider 1");
+			oSlider.placeAt("target1");
+			var oLabel = new sap.ui.commons.Label({
+				text : "Fixed width 400px: ",
+				labelFor : oSlider
 			});
+			oLabel.placeAt("label1");
 
-	//10. Slider
-	oSlider = new sap.ui.commons.RangeSlider("Sli10", {
-		width : "400px",
-		min : 1,
-		max : 10,
-		value : 1,
-		labels : [ "Low", "Medium", "High" ],
-		tooltip : "Slider 10"
-	});
-	oSlider.placeAt("target9");
-	
-	oLyt = new sap.ui.commons.layout.MatrixLayout("matrix_hori");
-	
-	//11. Slider
-	oSlider = new sap.ui.commons.RangeSlider("Sli11", {
-				height: "400px", 
-				min: 0,
-				max: 100,
-				value: 1, 
-				tooltip: "Slider 11",
-				vertical: true
-				});	
-	oSlider.setSmallStepWidth(5);
-	oSlider.setTotalUnits(5);
-	oSlider.setStepLabels(true);
-	
-	var oSlider2 = new sap.ui.commons.RangeSlider("Sli12", {
-		height: "400px", 
-		min: -50,
-		max: 50,
-		value: 0, 
-		value2: 20, 
-		tooltip: "Slider 12",
-		vertical: true
-		});	
-	oSlider2.setStepLabels(true);
-	
-	var oSlider3 = new sap.ui.commons.RangeSlider("Sli13", {
-		height: "400px", 
-		min: -50,
-		max: 50,
-		value: 0, 
-		tooltip: "Slider 13",
-		vertical: true
-		});	
-	oSlider3.setSmallStepWidth(5);
-	oSlider3.setEnabled(false);
+			var oLyt = new sap.ui.commons.layout.MatrixLayout("matrix1");
+			oLyt.setWidth("500px");
+			oLyt.setColumns(4);
+			oLyt.setWidths([ "70px", "200px", "auto", "auto" ]);
 
-	oLyt.createRow(oSlider, oSlider2, oSlider3);
-	oLyt.placeAt("target10");
-</script>
+			// second row: label and textfield and checkbox
+			var oLabel = new sap.ui.commons.Label("Label1");
+			oLabel.setText("Value:");
+
+			var oText = new sap.ui.commons.TextField("TF1");
+			oText.setValue(oSlider.getValue());
+			oText.attachChange(handleTextChange);
+			oLabel.setLabelFor(oText);
+
+			var oCheckBox1 = new sap.ui.commons.CheckBox("CB1");
+			oCheckBox1.setText("Editable");
+			oCheckBox1.setChecked(true);
+			oCheckBox1.attachChange(toggleEditable);
+			var oCheckBox2 = new sap.ui.commons.CheckBox("CB2", {
+				text : "Enabled",
+				checked : true,
+				change : toggleEnabled
+			});
+			oLyt.createRow(oLabel, oText, oCheckBox1, oCheckBox2);
+
+			var oLabel1b = new sap.ui.commons.Label("Label1b");
+			oLabel1b.setText("Value 2:");
+
+			var oText1b = new sap.ui.commons.TextField("TF1b");
+			oText1b.setValue(oSlider.getValue2());
+			oText1b.attachChange(handleTextChange2);
+			oLabel1b.setLabelFor(oText1b);
+
+			oLyt.createRow(oLabel1b, oText1b);
+
+			oLyt.placeAt("target2");
+
+			// 2. Slider
+			oSlider = new sap.ui.commons.RangeSlider("Sli2");
+			oSlider.setWidth("50%");
+			oSlider.setTooltip("Slider 2");
+			oSlider.setTotalUnits(6);
+			oSlider.setStepLabels(true);
+			oSlider.placeAt("target3");
+			oLabel = new sap.ui.commons.Label({
+				text : "Variable width 50%: ",
+				labelFor : oSlider
+			});
+			oLabel.placeAt("label3");
+
+			// 3. Slider
+			oSlider = new sap.ui.commons.RangeSlider("Sli3");
+			oSlider.setWidth("25%");
+			oSlider.setSmallStepWidth(5);
+			oSlider.setTotalUnits(5);
+			oSlider.setStepLabels(true);
+			oSlider.setTooltip("Slider 3");
+			oSlider.attachChange(function() {
+				alert("changed");
+			});
+			oSlider.placeAt("target4");
+			oLabel = new sap.ui.commons.Label({
+				text : "Variable width 25%, Step-wide 5, with Ticks: ",
+				labelFor : oSlider
+			});
+			oLabel.placeAt("label4");
+
+			// 4. Slider
+			oSlider = new sap.ui.commons.RangeSlider("Sli4");
+			oSlider.setWidth("25%");
+			oSlider.setSmallStepWidth(5);
+			oSlider.setMin(10);
+			oSlider.setMax(210);
+			oSlider.setValue(40);
+			oSlider.setTotalUnits(2);
+			oSlider.setStepLabels(true);
+			oSlider.setTooltip("Slider 4");
+			oSlider.placeAt("target5");
+			oLabel = new sap.ui.commons.Label(
+					{
+						text : "Variable width 25%, Step-wide 5, Min 10, Max 210, Start Value 40, with Ticks: ",
+						labelFor : oSlider
+					});
+			oLabel.placeAt("label5");
+
+			// 5. Slider
+			oSlider = new sap.ui.commons.RangeSlider("Sli5");
+			oSlider.setWidth("33%");
+			oSlider.setSmallStepWidth(1);
+			oSlider.setMin(1);
+			oSlider.setMax(10);
+			oSlider.setValue(8);
+			oSlider.setEditable(false);
+			oSlider.setTotalUnits(1);
+			oSlider.setStepLabels(true);
+			oSlider.setTooltip("Slider 5");
+			oSlider.placeAt("target6");
+			oLabel = new sap.ui.commons.Label(
+					{
+						text : "Variable width 33%, Step-wide 1, Min 1, Max 10, Start Value 8, ReadOnly: ",
+						labelFor : oSlider
+					});
+			oLabel.placeAt("label6");
+
+			// 6. Slider
+			oSlider = new sap.ui.commons.RangeSlider("Sli6");
+			oSlider.setVisible(false);
+			oSlider.setTooltip("Slider 6");
+			oSlider.placeAt("target7");
+			oLabel = new sap.ui.commons.Label({
+				text : "Invisible: ",
+				labelFor : oSlider
+			});
+			oLabel.placeAt("label7");
+
+			// 3 similar sliders but with different state
+			// in one matrix with value as text 
+			oLyt = new sap.ui.commons.layout.MatrixLayout("matrix2");
+			oLyt.setWidth("500px");
+			oLyt.setColumns(3);
+			oLyt.setWidths([ "410px", "auto", "auto" ]);
+
+			oLabel = new sap.ui.commons.Label({
+				text : "Editable: "
+			});
+			var oLabel2 = new sap.ui.commons.Label({
+				text : "Value:"
+			});
+			oLyt.createRow(oLabel, oLabel2);
+
+			// 7. Slider
+			oSlider = new sap.ui.commons.RangeSlider("Sli7");
+			oSlider.setWidth("400px");
+			oSlider.setSmallStepWidth(5);
+			oSlider.setMin(0);
+			oSlider.setMax(100);
+			oSlider.setValue(10);
+			oSlider.setTotalUnits(10);
+			oSlider.setTooltip(new sap.ui.commons.RichTooltip(
+							{
+								title : "Slider 7",
+								imageSrc : "images/ui5_small.png",
+								text : "This is a Slider who controls the readonly and disabled sliders below."
+							}));
+			oSlider.attachChange(handleChange2);
+			oSlider.attachLiveChange(handleChange2);
+			oLabel.setLabelFor(oSlider);
+
+			oTextView = new sap.ui.commons.TextView("TVV1");
+			oTextView.setText("10");
+			oTextView.setTooltip("Value");
+			oLabel2.setLabelFor(oTextView);
+			var oTextView2 = new sap.ui.commons.TextView("TVV1b");
+			oTextView2.setText("80");
+			oTextView2.setTooltip("Value");
+			oLyt.createRow(oSlider, oTextView, oTextView2);
+
+			oLabel = new sap.ui.commons.Label({
+				text : "ReadOnly (gets Value from above Slider): "
+			});
+			oLabel2 = new sap.ui.commons.Label({
+				text : "Value:"
+			});
+			oLyt.createRow(oLabel, oLabel2);
+
+			// 8. Slider
+			oSlider = new sap.ui.commons.RangeSlider("Sli8");
+			oSlider.setWidth("400px");
+			oSlider.setSmallStepWidth(5);
+			oSlider.setMin(0);
+			oSlider.setMax(100);
+			oSlider.setValue(10);
+			oSlider.setEditable(false);
+			oSlider.setTotalUnits(10);
+			oSlider.setTooltip("Slider 8");
+			oSlider.attachChange(handleChange3);
+			oSlider.attachLiveChange(handleChange3);
+			oLabel.setLabelFor(oSlider);
+
+			oTextView = new sap.ui.commons.TextView("TVV2");
+			oTextView.setText("10");
+			oTextView.setTooltip("Value");
+			oTextView.setEnabled(false);
+			oLabel2.setLabelFor(oTextView);
+			oTextView2 = new sap.ui.commons.TextView("TVV2b");
+			oTextView2.setText("80");
+			oTextView2.setTooltip("Value");
+			oLyt.createRow(oSlider, oTextView, oTextView2);
+
+			oLabel = new sap.ui.commons.Label({
+				text : "Disabled (gets Value from above Slider): "
+			});
+			oLabel2 = new sap.ui.commons.Label({
+				text : "Value:"
+			});
+			oLyt.createRow(oLabel, oLabel2);
+
+			// 9. Slider
+			oSlider = new sap.ui.commons.RangeSlider("Sli9", {
+				width : "400px",
+				smallStepWidth : 5,
+				min : 0,
+				max : 100,
+				value : 10,
+				enabled : false,
+				totalUnits : 10,
+				tooltip : "Slider 9",
+				change : handleChange3,
+				liveChange : handleChange3
+			});
+			oLabel.setLabelFor(oSlider);
+
+			oTextView = new sap.ui.commons.TextView("TVV3", {
+				text : "10",
+				tooltip : "Value",
+				enabled : false
+			});
+			oLabel2.setLabelFor(oTextView);
+			oTextView2 = new sap.ui.commons.TextView("TVV3b");
+			oTextView2.setText("80");
+			oTextView2.setTooltip("Value");
+			oLyt.createRow(oSlider, oTextView, oTextView2);
+
+			oLyt.placeAt("target8");
+
+		});
+
+		//10. Slider
+		oSlider = new sap.ui.commons.RangeSlider("Sli10", {
+			width : "400px",
+			min : 1,
+			max : 10,
+			value : 1,
+			stepLabels: true,
+			labels : [ "Low", "Medium", "High" ],
+			tooltip : "Slider 10"
+		});
+		oSlider.placeAt("target9");
+
+		oLyt = new sap.ui.commons.layout.MatrixLayout("matrix_hori");
+
+		//11. Slider
+		oSlider = new sap.ui.commons.RangeSlider("Sli11", {
+					height: "400px",
+					min: 0,
+					max: 100,
+					value: 1,
+					tooltip: "Slider 11",
+					vertical: true
+					});
+		oSlider.setSmallStepWidth(5);
+		oSlider.setTotalUnits(5);
+		oSlider.setStepLabels(true);
+
+		var oSlider2 = new sap.ui.commons.RangeSlider("Sli12", {
+			height: "400px",
+			min: -50,
+			max: 50,
+			value: 0,
+			value2: 20,
+			tooltip: "Slider 12",
+			vertical: true
+			});
+		oSlider2.setStepLabels(true);
+
+		var oSlider3 = new sap.ui.commons.RangeSlider("Sli13", {
+			height: "400px",
+			min: -50,
+			max: 50,
+			value: 0,
+			tooltip: "Slider 13",
+			vertical: true
+			});
+		oSlider3.setSmallStepWidth(5);
+		oSlider3.setEnabled(false);
+
+		oLyt.createRow(oSlider, oSlider2, oSlider3);
+		oLyt.placeAt("target10");
+	</script>
 </head>
 
 <body class="sapUiBody" role="application">
