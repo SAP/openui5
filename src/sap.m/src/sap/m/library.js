@@ -35,6 +35,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.ButtonType",
 			"sap.m.DateTimeInputType",
 			"sap.m.DialogType",
+			"sap.m.DraftIndicatorState",
 			"sap.m.FacetFilterListDataType",
 			"sap.m.FacetFilterType",
 			"sap.m.FlexAlignItems",
@@ -97,6 +98,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.DateTimeInput",
 			"sap.m.Dialog",
 			"sap.m.DisplayListItem",
+			"sap.m.DraftIndicator",
 			"sap.m.FacetFilter",
 			"sap.m.FacetFilterItem",
 			"sap.m.FacetFilterList",
@@ -396,8 +398,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		Message : "Message"
 
 	};
+	
+	/**
+	 * Enum for the state of sap.m.DraftIndicator control.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.DraftIndicatorState = {
 
+		/**
+		 * This is the default value for DraftIndicatorState type. This state has no visual information displayed.
+		 * @public
+		 */
+		Clear: "Clear",
+		
+		/**
+		 * Indicates that the draft currently is being saved
+		 * @public
+		 */
+		Saving: "Saving",
 
+		/**
+		 * Indicates that the draft is already saved
+		 * @public
+		 */
+		Saved: "Saved"
+
+	};
+
+	
 	/**
 	 * FacetFilterList data types.
 	 *
