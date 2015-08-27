@@ -17,8 +17,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.unified.calendar.MonthsRow} oMonthsRow an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.unified.calendar.MonthsRow} oMonthsRow An object representation of the control that should be rendered
 	 */
 	MonthsRowRenderer.render = function(oRm, oMonthsRow){
 
