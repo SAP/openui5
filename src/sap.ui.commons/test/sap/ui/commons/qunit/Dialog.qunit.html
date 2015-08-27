@@ -118,7 +118,9 @@
 				Core.applyChanges();
 
 				var oNewMinSize = that.oDialog.getMinSize();
-				assert.deepEqual(oMinSize, oNewMinSize, 'should not change when changing the content');
+//				|0  is used to truncate decimal places
+				assert.equal(oMinSize.width|0, oNewMinSize.width|0, 'Width should not change when changing the content')
+				assert.equal(oMinSize.height|0, oNewMinSize.height|0, 'Height should not change when changing the content')
 				done();
 			};
 
