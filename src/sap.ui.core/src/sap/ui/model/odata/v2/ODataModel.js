@@ -1280,7 +1280,20 @@ sap.ui.define([
 			aCallAfterUpdate[i]();
 		}
 	};
-
+	
+	/**
+	 * Private method iterating the registered bindings of this model instance and calls their check dataState method
+	 * 
+	 * @param {boolean} bForceUpdate force update of controls
+	 * @private
+	 */
+	ODataModel.prototype.checkDataState = function(bForceUpdate) {
+		var aBindings = this.aBindings.slice(0);
+		jQuery.each(aBindings, function(iIndex, oBinding) {
+			oBinding.checkDataState(bForceUpdate);
+		});
+	};
+	
 	/**
 	 * @see sap.ui.model.Model.prototype.bindProperty
 	 * @param {string} sPath binding path
@@ -2449,6 +2462,7 @@ sap.ui.define([
 				}
 			});
 		}
+		this.checkDataState();
 		return oRequestHandle.length == 1 ? oRequestHandle[0] : oRequestHandle;
 	};
 
@@ -3773,7 +3787,7 @@ sap.ui.define([
 			oRequest = this._processChange(sKey, {__metadata : oEntry.__metadata});
 			oRequest.key = sKey;
 		} else {
-			oRequest = this._processChange(sKey, oEntry);
+			oRequest = this._processChange(sKey, this._getObject('/' + sKey));
 		}
 
 		this.metadataLoaded().then(function() {

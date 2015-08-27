@@ -204,6 +204,15 @@
 				]
 			},
 			{
+				"id" : "sap.ui.model.DataStateOData",
+				"name" : "OData Data State",
+				"category" : "Data Binding",
+				"since" : "1.32",
+				"samples" : [
+					"sap.ui.core.sample.DataStateOData"
+				]
+			},
+			{
 				"id": "sap.ui.core.tutorial.navigation",
 				"name": "Navigation",
 				"category": "Tutorial",
@@ -268,6 +277,11 @@
 				"description": "A control can react on data state changes of a Binding and update it's states accordingly."
 			},
 			{
+				"id": "sap.ui.core.sample.DataStateOData",
+				"name": "OData Data State",
+				"description": "A control can react on data state changes of a Binding and update it's states accordingly."
+			},
+			{
 				"id": "sap.ui.core.sample.ControlBusyIndicator",
 				"name": "Control Busy Indicator",
 				"description": "A control's busy indicator can be used to block parts of the screen until an operation has finished. In this example we block the content of only one out of two panels."
@@ -276,11 +290,6 @@
 				"id": "sap.ui.core.sample.FieldGroup",
 				"name": "Field Groups",
 				"description": "A control's field group id can be used to define a virtual group of fields that should be validated together. Field groups can be validated usinf the ValidateFieldGroup event if the user presses the enter key in a field belonging to the field group or focusses a control outside of the field group."
-			},
-			{
-				"id": "sap.ui.core.sample.DataState",
-				"name": "Data State",
-				"description": "A control can react on data state changes of a Binding and update it's states accordingly."
 			},
 			{
 				"id": "sap.ui.core.sample.Html",

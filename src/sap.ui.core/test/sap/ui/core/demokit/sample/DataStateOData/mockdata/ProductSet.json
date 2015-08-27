@@ -1,0 +1,4490 @@
+{
+	"d" : {
+		"results" : [
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('AD-1000')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('AD-1000')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "AD-1000",
+					"TypeCode" : "AD",
+					"Category" : "Computer system accessories",
+					"Name" : "Flyer",
+					"NameLanguage" : "E",
+					"Description" : "Flyer for our product palette",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000015",
+					"SupplierName" : "Robert Brown Entertainment",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.01",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "CAD",
+					"Price" : "0.0",
+					"Width" : "0.46",
+					"Depth" : "0.3",
+					"Height" : "0.03",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('AD-1000')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('AD-1000')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1000')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1000')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1000",
+					"TypeCode" : "PR",
+					"Category" : "Notebooks",
+					"Name" : "Notebook Basic 15",
+					"NameLanguage" : "E",
+					"Description" : "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000000",
+					"SupplierName" : "SAP",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "4.2",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "956.0",
+					"Width" : "0.3",
+					"Depth" : "0.18",
+					"Height" : "0.03",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1000')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1000')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1001')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1001')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1001",
+					"TypeCode" : "PR",
+					"Category" : "Notebooks",
+					"Name" : "Notebook Basic 17",
+					"NameLanguage" : "E",
+					"Description" : "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000001",
+					"SupplierName" : "Becker Berlin",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "4.5",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "1249.0",
+					"Width" : "0.29",
+					"Depth" : "0.17",
+					"Height" : "0.03",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1001')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1001')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1002')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1002')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1002",
+					"TypeCode" : "PR",
+					"Category" : "Notebooks",
+					"Name" : "Notebook Basic 18",
+					"NameLanguage" : "E",
+					"Description" : "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000002",
+					"SupplierName" : "DelBont Industries",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "4.2",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "USD",
+					"Price" : "1570.0",
+					"Width" : "0.28",
+					"Depth" : "0.19",
+					"Height" : "0.03",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1002')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1002')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1003')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1003')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1003",
+					"TypeCode" : "PR",
+					"Category" : "Notebooks",
+					"Name" : "Notebook Basic 19",
+					"NameLanguage" : "E",
+					"Description" : "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000003",
+					"SupplierName" : "Talpa",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "4.2",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "1650.0",
+					"Width" : "0.32",
+					"Depth" : "0.21",
+					"Height" : "0.04",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1003')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1003')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1007')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1007')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1007",
+					"TypeCode" : "PR",
+					"Category" : "PDAs/Organizers",
+					"Name" : "ITelO Vault",
+					"NameLanguage" : "E",
+					"Description" : "Digital Organizer with State-of-the-Art Storage Encryption",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000004",
+					"SupplierName" : "Panorama Studios",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.2",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "USD",
+					"Price" : "299.0",
+					"Width" : "0.32",
+					"Depth" : "0.22",
+					"Height" : "0.03",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1007')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1007')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1010')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1010",
+					"TypeCode" : "PR",
+					"Category" : "Notebooks",
+					"Name" : "Notebook Professional 15",
+					"NameLanguage" : "E",
+					"Description" : "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000005",
+					"SupplierName" : "TECUM",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "4.3",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "1999.0",
+					"Width" : "0.33",
+					"Depth" : "0.2",
+					"Height" : "0.03",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1010')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1010')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1011')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1011')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1011",
+					"TypeCode" : "PR",
+					"Category" : "Notebooks",
+					"Name" : "Notebook Professional 17",
+					"NameLanguage" : "E",
+					"Description" : "Notebook Professional 17 with 2,80 GHz quad core, 17\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000006",
+					"SupplierName" : "Asia High tech",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "4.1",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "JPY",
+					"Price" : "2299.0",
+					"Width" : "0.33",
+					"Depth" : "0.23",
+					"Height" : "0.02",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1011')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1011')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1020')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1020",
+					"TypeCode" : "PR",
+					"Category" : "PDAs/Organizers",
+					"Name" : "ITelO Vault Net",
+					"NameLanguage" : "E",
+					"Description" : "Digital Organizer with State-of-the-Art Encryption for Storage and Network Communications",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000007",
+					"SupplierName" : "Laurent",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.16",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "459.0",
+					"Width" : "0.1",
+					"Depth" : "0.02",
+					"Height" : "0.17",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1020')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1020')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1021')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1021')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1021",
+					"TypeCode" : "PR",
+					"Category" : "PDAs/Organizers",
+					"Name" : "ITelO Vault SAT",
+					"NameLanguage" : "E",
+					"Description" : "Digital Organizer with State-of-the-Art Encryption for Storage and Secure Stellite Link",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000008",
+					"SupplierName" : "AVANTEL",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.18",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "MXN",
+					"Price" : "149.0",
+					"Width" : "0.11",
+					"Depth" : "0.02",
+					"Height" : "0.18",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1021')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1021')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1022')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1022')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1022",
+					"TypeCode" : "PR",
+					"Category" : "PDAs/Organizers",
+					"Name" : "Comfort Easy",
+					"NameLanguage" : "E",
+					"Description" : "32 GB Digital Assitant with high-resolution color screen",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000009",
+					"SupplierName" : "Telecomunicaciones Star",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.2",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "ARS",
+					"Price" : "1679.0",
+					"Width" : "0.84",
+					"Depth" : "0.02",
+					"Height" : "0.14",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1022')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1022')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1023')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1023')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1023",
+					"TypeCode" : "PR",
+					"Category" : "PDAs/Organizers",
+					"Name" : "Comfort Senior",
+					"NameLanguage" : "E",
+					"Description" : "64 GB Digital Assitant with high-resolution color screen and synthesized voice output",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000010",
+					"SupplierName" : "Pear Computing Services",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.8",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "USD",
+					"Price" : "512.0",
+					"Width" : "0.8",
+					"Depth" : "0.02",
+					"Height" : "0.13",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1023')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1023')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1030')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1030",
+					"TypeCode" : "PR",
+					"Category" : "Flat screens",
+					"Name" : "Ergo Screen E-I",
+					"NameLanguage" : "E",
+					"Description" : "Optimum Hi-Resolution max. 1920 x 1080 @ 85Hz, Dot Pitch: 0.27mm",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000011",
+					"SupplierName" : "Alpine Systems",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "21.0",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "230.0",
+					"Width" : "0.37",
+					"Depth" : "0.12",
+					"Height" : "0.36",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1030')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1030')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1031')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1031')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1031",
+					"TypeCode" : "PR",
+					"Category" : "Flat screens",
+					"Name" : "Ergo Screen E-II",
+					"NameLanguage" : "E",
+					"Description" : "Optimum Hi-Resolution max. 1920 x 1200 @ 85Hz, Dot Pitch: 0.26mm",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000012",
+					"SupplierName" : "New Line Design",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "21.0",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "GBP",
+					"Price" : "285.0",
+					"Width" : "0.41",
+					"Depth" : "0.19",
+					"Height" : "0.43",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1031')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1031')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1032')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1032')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1032",
+					"TypeCode" : "PR",
+					"Category" : "Flat screens",
+					"Name" : "Ergo Screen E-III",
+					"NameLanguage" : "E",
+					"Description" : "Optimum Hi-Resolution max. 2560 x 1440 @ 85Hz, Dot Pitch: 0.25mm",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000013",
+					"SupplierName" : "HEPA Tec",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "21.0",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "345.0",
+					"Width" : "0.41",
+					"Depth" : "0.19",
+					"Height" : "0.43",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1032')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1032')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1035')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1035')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1035",
+					"TypeCode" : "PR",
+					"Category" : "Flat screens",
+					"Name" : "Flat Basic",
+					"NameLanguage" : "E",
+					"Description" : "Optimum Hi-Resolution max. 1600 x 1200 @ 85Hz, Dot Pitch: 0.24mm",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000014",
+					"SupplierName" : "Anav Ideon",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "14.0",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "USD",
+					"Price" : "399.0",
+					"Width" : "0.39",
+					"Depth" : "0.2",
+					"Height" : "0.41",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1035')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1035')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1036')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1036')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1036",
+					"TypeCode" : "PR",
+					"Category" : "Flat screens",
+					"Name" : "Flat Future",
+					"NameLanguage" : "E",
+					"Description" : "Optimum Hi-Resolution max. 2048 x 1080 @ 85Hz, Dot Pitch: 0.26mm",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000015",
+					"SupplierName" : "Robert Brown Entertainment",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "15.0",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "CAD",
+					"Price" : "430.0",
+					"Width" : "0.45",
+					"Depth" : "0.26",
+					"Height" : "0.46",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1036')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1036')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1037')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1037')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1037",
+					"TypeCode" : "PR",
+					"Category" : "Flat screens",
+					"Name" : "Flat XL",
+					"NameLanguage" : "E",
+					"Description" : "Optimum Hi-Resolution max. 2016 x 1512 @ 85Hz, Dot Pitch: 0.24mm",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000016",
+					"SupplierName" : "Mexican Oil Trading Company",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "17.0",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "MXN",
+					"Price" : "1230.0",
+					"Width" : "0.55",
+					"Depth" : "0.22",
+					"Height" : "0.39",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1037')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1037')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1040')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1040')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1040",
+					"TypeCode" : "PR",
+					"Category" : "Laser printers",
+					"Name" : "Laser Professional Eco",
+					"NameLanguage" : "E",
+					"Description" : "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000017",
+					"SupplierName" : "Meliva",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "32.0",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "830.0",
+					"Width" : "0.51",
+					"Depth" : "0.46",
+					"Height" : "0.3",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1040')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1040')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1041')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1041')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1041",
+					"TypeCode" : "PR",
+					"Category" : "Laser printers",
+					"Name" : "Laser Basic",
+					"NameLanguage" : "E",
+					"Description" : "Up to 22 ppm color or 24 ppm monochrome A4/letter, powerful 500 MHz processor and 128MB of memory",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000018",
+					"SupplierName" : "Compostela",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "23.0",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "ARS",
+					"Price" : "490.0",
+					"Width" : "0.48",
+					"Depth" : "0.42",
+					"Height" : "0.26",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1041')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1041')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1042')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1042')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1042",
+					"TypeCode" : "PR",
+					"Category" : "Laser printers",
+					"Name" : "Laser Allround",
+					"NameLanguage" : "E",
+					"Description" : "Print up to 25 ppm letter and 24 ppm A4 color or monochrome, with a first-page-out-time of less than 13 seconds for monochrome and less than 15 seconds for color",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000019",
+					"SupplierName" : "Pateu",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "17.0",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "349.0",
+					"Width" : "0.53",
+					"Depth" : "0.5",
+					"Height" : "0.65",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1042')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1042')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1050')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1050')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1050",
+					"TypeCode" : "PR",
+					"Category" : "Ink jet printers",
+					"Name" : "Ultra Jet Super Color",
+					"NameLanguage" : "E",
+					"Description" : "4800 dpi x 1200 dpi - up to 35 ppm (mono) / up to 34 ppm (color) - capacity: 250 sheets - Hi-Speed USB, Ethernet",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000020",
+					"SupplierName" : "Russian Electronic Trading Company",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "3.0",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "RUB",
+					"Price" : "139.0",
+					"Width" : "0.41",
+					"Depth" : "0.41",
+					"Height" : "0.28",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1050')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1050')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1051')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1051')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1051",
+					"TypeCode" : "PR",
+					"Category" : "Ink jet printers",
+					"Name" : "Ultra Jet Mobile",
+					"NameLanguage" : "E",
+					"Description" : "1000 dpi x 1000 dpi - up to 35 ppm (mono) / up to 34 ppm (color) - capacity: 250 sheets - Hi-Speed USB - excellent dimensions for the small office",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000021",
+					"SupplierName" : "Florida Holiday Company",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "1.9",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "USD",
+					"Price" : "99.0",
+					"Width" : "0.46",
+					"Depth" : "0.32",
+					"Height" : "0.25",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1051')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1051')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1052')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1052')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1052",
+					"TypeCode" : "PR",
+					"Category" : "Ink jet printers",
+					"Name" : "Ultra Jet Super Highspeed",
+					"NameLanguage" : "E",
+					"Description" : "4800 dpi x 1200 dpi - up to 35 ppm (mono) / up to 34 ppm (color) - capacity: 250 sheets - Hi-Speed USB2.0, Ethernet",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000022",
+					"SupplierName" : "Quimica Madrilenos",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "18.0",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "170.0",
+					"Width" : "0.41",
+					"Depth" : "0.41",
+					"Height" : "0.28",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1052')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1052')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1055')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1055')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1055",
+					"TypeCode" : "PR",
+					"Category" : "Multifunction printers",
+					"Name" : "Multi Print",
+					"NameLanguage" : "E",
+					"Description" : "1000 dpi x 1000 dpi - up to 16 ppm (mono) / up to 15 ppm (color)- capacity 80 sheets - scanner (216 x 297 mm, 1200dpi x 2400dpi)",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000023",
+					"SupplierName" : "Getränkegroßhandel Janssen",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "6.3",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "99.0",
+					"Width" : "0.55",
+					"Depth" : "0.45",
+					"Height" : "0.29",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1055')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1055')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1056')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1056')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1056",
+					"TypeCode" : "PR",
+					"Category" : "Multifunction printers",
+					"Name" : "Multi Color",
+					"NameLanguage" : "E",
+					"Description" : "1200 dpi x 1200 dpi - up to 25 ppm (mono) / up to 24 ppm (color)- capacity 80 sheets - scanner (216 x 297 mm, 2400dpi x 4800dpi, high resolution)",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000024",
+					"SupplierName" : "JaTeCo",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "4.3",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "JPY",
+					"Price" : "119.0",
+					"Width" : "0.51",
+					"Depth" : "0.41",
+					"Height" : "0.22",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1056')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1056')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1060')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1060')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1060",
+					"TypeCode" : "PR",
+					"Category" : "Mice",
+					"Name" : "Cordless Mouse",
+					"NameLanguage" : "E",
+					"Description" : "Cordless Optical USB Mice, Laptop, Color: Black, Plug&Play",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000025",
+					"SupplierName" : "Tessile Casa Di Roma",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.09",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "9.0",
+					"Width" : "0.06",
+					"Depth" : "0.15",
+					"Height" : "0.04",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1060')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1060')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1061')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1061')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1061",
+					"TypeCode" : "PR",
+					"Category" : "Mice",
+					"Name" : "Speed Mouse",
+					"NameLanguage" : "E",
+					"Description" : "Optical USB, PS/2 Mouse, Color: Blue, 3-button-functionality (incl. Scroll wheel)",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000026",
+					"SupplierName" : "Vente Et Réparation de Ordinateur",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.09",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "7.0",
+					"Width" : "0.07",
+					"Depth" : "0.15",
+					"Height" : "0.03",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1061')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1061')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1062')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1062')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1062",
+					"TypeCode" : "PR",
+					"Category" : "Mice",
+					"Name" : "Track Mouse",
+					"NameLanguage" : "E",
+					"Description" : "Optical USB Mouse, Color: Red, 5-button-functionality(incl. Scroll wheel), Plug&Play",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000027",
+					"SupplierName" : "Developement Para O Governo",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.03",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "ARS",
+					"Price" : "11.0",
+					"Width" : "0.0",
+					"Depth" : "0.01",
+					"Height" : "0.04",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1062')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1062')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1063')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1063')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1063",
+					"TypeCode" : "PR",
+					"Category" : "Keyboards",
+					"Name" : "Ergonomic Keyboard",
+					"NameLanguage" : "E",
+					"Description" : "Ergonomic USB Keyboard for Desktop, Plug&Play",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000028",
+					"SupplierName" : "Brazil Technologies",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "2.1",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "BRL",
+					"Price" : "14.0",
+					"Width" : "0.5",
+					"Depth" : "0.21",
+					"Height" : "0.04",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1063')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1063')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1064')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1064')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1064",
+					"TypeCode" : "PR",
+					"Category" : "Keyboards",
+					"Name" : "Internet Keyboard",
+					"NameLanguage" : "E",
+					"Description" : "Corded Keyboard with special keys for Internet Usability, USB",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000029",
+					"SupplierName" : "C.R.T.U.",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "1.8",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "CAD",
+					"Price" : "16.0",
+					"Width" : "0.52",
+					"Depth" : "0.25",
+					"Height" : "0.03",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1064')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1064')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1065')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1065')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1065",
+					"TypeCode" : "PR",
+					"Category" : "Keyboards",
+					"Name" : "Media Keyboard",
+					"NameLanguage" : "E",
+					"Description" : "Corded Ergonomic Keyboard with special keys for Media Usability, USB",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000030",
+					"SupplierName" : "Jologa",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "2.3",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "CHF",
+					"Price" : "26.0",
+					"Width" : "0.51",
+					"Depth" : "0.23",
+					"Height" : "0.04",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1065')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1065')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1066')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1066')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1066",
+					"TypeCode" : "PR",
+					"Category" : "Mousepads",
+					"Name" : "Mousepad",
+					"NameLanguage" : "E",
+					"Description" : "Nice mouse pad with ITelO Logo",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000031",
+					"SupplierName" : "Baleda",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "80.0",
+					"WeightUnit" : "G",
+					"CurrencyCode" : "USD",
+					"Price" : "6.99",
+					"Width" : "0.15",
+					"Depth" : "0.06",
+					"Height" : "0.0",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1066')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1066')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1067')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1067')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1067",
+					"TypeCode" : "PR",
+					"Category" : "Mousepads",
+					"Name" : "Ergo Mousepad",
+					"NameLanguage" : "E",
+					"Description" : "Ergonomic mouse pad with ITelO Logo",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000032",
+					"SupplierName" : "Angeré",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "80.0",
+					"WeightUnit" : "G",
+					"CurrencyCode" : "EUR",
+					"Price" : "8.99",
+					"Width" : "0.15",
+					"Depth" : "0.06",
+					"Height" : "0.0",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1067')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1067')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1068')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1068')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1068",
+					"TypeCode" : "PR",
+					"Category" : "Mousepads",
+					"Name" : "Designer Mousepad",
+					"NameLanguage" : "E",
+					"Description" : "ITelO Mousepad Special Edition",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000033",
+					"SupplierName" : "PC Gym Tec",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "90.0",
+					"WeightUnit" : "G",
+					"CurrencyCode" : "USD",
+					"Price" : "12.99",
+					"Width" : "0.24",
+					"Depth" : "0.24",
+					"Height" : "0.01",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1068')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1068')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1069')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1069')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1069",
+					"TypeCode" : "PR",
+					"Category" : "Computer system accessories",
+					"Name" : "Universal card reader",
+					"NameLanguage" : "E",
+					"Description" : "Universal card reader",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000034",
+					"SupplierName" : "Japan Insurance Partner",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "45.0",
+					"WeightUnit" : "G",
+					"CurrencyCode" : "JPY",
+					"Price" : "14.0",
+					"Width" : "0.01",
+					"Depth" : "0.01",
+					"Height" : "0.0",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1069')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1069')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1070')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1070')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1070",
+					"TypeCode" : "PR",
+					"Category" : "Graphic cards",
+					"Name" : "Proctra X",
+					"NameLanguage" : "E",
+					"Description" : "Proctra X: PCI-E GDDR5 3072MB",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000035",
+					"SupplierName" : "Entertainment Argentinia",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.255",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "ARS",
+					"Price" : "70.9",
+					"Width" : "0.22",
+					"Depth" : "0.35",
+					"Height" : "0.17",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1070')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1070')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1071')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1071')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1071",
+					"TypeCode" : "PR",
+					"Category" : "Graphic cards",
+					"Name" : "Gladiator MX",
+					"NameLanguage" : "E",
+					"Description" : "Gladiator XLN: PCI-E GDDR5 3072MB DVI Out, TV Out low-noise",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000036",
+					"SupplierName" : "African Gold And Diamond Corporation",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.3",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "ZAR",
+					"Price" : "81.7",
+					"Width" : "0.22",
+					"Depth" : "0.35",
+					"Height" : "0.17",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1071')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1071')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1072')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1072')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1072",
+					"TypeCode" : "PR",
+					"Category" : "Graphic cards",
+					"Name" : "Hurricane GX",
+					"NameLanguage" : "E",
+					"Description" : "Hurricane GX: PCI-E 691 GFLOPS game-optimized",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000037",
+					"SupplierName" : "PicoBit",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.4",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "USD",
+					"Price" : "101.2",
+					"Width" : "0.22",
+					"Depth" : "0.35",
+					"Height" : "0.17",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1072')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1072')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1073')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1073')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1073",
+					"TypeCode" : "PR",
+					"Category" : "Graphic cards",
+					"Name" : "Hurricane GX/LN",
+					"NameLanguage" : "E",
+					"Description" : "Hurricane GX/LN: PCI-E 691 GFLOPS game-optimized, low-noise.",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000038",
+					"SupplierName" : "Bionic Research Lab",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.4",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "139.99",
+					"Width" : "0.22",
+					"Depth" : "0.35",
+					"Height" : "0.17",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1073')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1073')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1080')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1080')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1080",
+					"TypeCode" : "PR",
+					"Category" : "Scanners",
+					"Name" : "Photo Scan",
+					"NameLanguage" : "E",
+					"Description" : "Flatbed scanner - 9.600 × 9.600 dpi - 216 x 297 mm - Hi-Speed USB - Bluetooth",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000039",
+					"SupplierName" : "Indian IT Trading Company",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "2.3",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "INR",
+					"Price" : "129.0",
+					"Width" : "0.34",
+					"Depth" : "0.48",
+					"Height" : "0.05",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1080')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1080')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1081')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1081')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1081",
+					"TypeCode" : "PR",
+					"Category" : "Scanners",
+					"Name" : "Power Scan",
+					"NameLanguage" : "E",
+					"Description" : "Flatbed scanner - 9.600 × 9.600 dpi - 216 x 297 mm - SCSI for backward compatibility",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000040",
+					"SupplierName" : "Chemia A Technicznie Fabryka",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "2.4",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "PLN",
+					"Price" : "89.0",
+					"Width" : "0.31",
+					"Depth" : "0.43",
+					"Height" : "0.07",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1081')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1081')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1082')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1082')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1082",
+					"TypeCode" : "PR",
+					"Category" : "Scanners",
+					"Name" : "Jet Scan Professional",
+					"NameLanguage" : "E",
+					"Description" : "Flatbed scanner - Letter - 2400 dpi x 2400 dpi - 216 x 297 mm - add-on module",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000041",
+					"SupplierName" : "South American IT Company",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "3.2",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "ARS",
+					"Price" : "169.0",
+					"Width" : "0.33",
+					"Depth" : "0.41",
+					"Height" : "0.12",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1082')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1082')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1083')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1083')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1083",
+					"TypeCode" : "PR",
+					"Category" : "Scanners",
+					"Name" : "Jet Scan Professional",
+					"NameLanguage" : "E",
+					"Description" : "Flatbed scanner - A4 - 2400 dpi x 2400 dpi - 216 x 297 mm - add-on module",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000042",
+					"SupplierName" : "Siwusha",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "3.2",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "CNY",
+					"Price" : "189.0",
+					"Width" : "0.35",
+					"Depth" : "0.4",
+					"Height" : "0.1",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1083')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1083')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1085')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1085')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1085",
+					"TypeCode" : "PR",
+					"Category" : "Multifunction printers",
+					"Name" : "Copymaster",
+					"NameLanguage" : "E",
+					"Description" : "Copymaster",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000043",
+					"SupplierName" : "Danish Fish Trading Company",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "23.2",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "DKK",
+					"Price" : "1499.0",
+					"Width" : "0.45",
+					"Depth" : "0.42",
+					"Height" : "0.22",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1085')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1085')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1090')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1090')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1090",
+					"TypeCode" : "PR",
+					"Category" : "Speakers",
+					"Name" : "Surround Sound",
+					"NameLanguage" : "E",
+					"Description" : "PC multimedia speakers - 5 Watt (Total)",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000044",
+					"SupplierName" : "Sorali",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "3.0",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "39.0",
+					"Width" : "0.12",
+					"Depth" : "0.1",
+					"Height" : "0.16",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1090')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1090')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1091')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1091')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1091",
+					"TypeCode" : "PR",
+					"Category" : "Speakers",
+					"Name" : "Blaster Extreme",
+					"NameLanguage" : "E",
+					"Description" : "PC multimedia speakers - 10 Watt (Total) - 2-way",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000000",
+					"SupplierName" : "SAP",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "1.4",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "26.0",
+					"Width" : "0.13",
+					"Depth" : "0.11",
+					"Height" : "0.18",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1091')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1091')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1092')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1092')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1092",
+					"TypeCode" : "PR",
+					"Category" : "Speakers",
+					"Name" : "Sound Booster",
+					"NameLanguage" : "E",
+					"Description" : "PC multimedia speakers - optimized for Blutooth/A2DP",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000001",
+					"SupplierName" : "Becker Berlin",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "2.1",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "45.0",
+					"Width" : "0.12",
+					"Depth" : "0.1",
+					"Height" : "0.18",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1092')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1092')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1095')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1095')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1095",
+					"TypeCode" : "PR",
+					"Category" : "Headsets",
+					"Name" : "Lovely Sound 5.1 Wireless",
+					"NameLanguage" : "E",
+					"Description" : "5.1 Headset, 40 Hz-20 kHz, Wireless",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000033",
+					"SupplierName" : "PC Gym Tec",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "80.0",
+					"WeightUnit" : "G",
+					"CurrencyCode" : "USD",
+					"Price" : "49.0",
+					"Width" : "0.24",
+					"Depth" : "0.02",
+					"Height" : "0.23",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1095')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1095')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1096')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1096')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1096",
+					"TypeCode" : "PR",
+					"Category" : "Headsets",
+					"Name" : "Lovely Sound 5.1",
+					"NameLanguage" : "E",
+					"Description" : "5.1 Headset, 40 Hz-20 kHz, 3m cable",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000034",
+					"SupplierName" : "Japan Insurance Partner",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "130.0",
+					"WeightUnit" : "G",
+					"CurrencyCode" : "JPY",
+					"Price" : "39.0",
+					"Width" : "0.25",
+					"Depth" : "0.02",
+					"Height" : "0.19",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1096')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1096')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1097')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1097')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1097",
+					"TypeCode" : "PR",
+					"Category" : "Headsets",
+					"Name" : "Lovely Sound Stereo",
+					"NameLanguage" : "E",
+					"Description" : "5.1 Headset, 40 Hz-20 kHz, 1m cable",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000035",
+					"SupplierName" : "Entertainment Argentinia",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "60.0",
+					"WeightUnit" : "G",
+					"CurrencyCode" : "ARS",
+					"Price" : "29.0",
+					"Width" : "0.21",
+					"Depth" : "0.02",
+					"Height" : "0.2",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1097')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1097')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1100')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1100')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1100",
+					"TypeCode" : "PR",
+					"Category" : "Software",
+					"Name" : "Smart Office",
+					"NameLanguage" : "E",
+					"Description" : "Complete package, 1 User, Office Applications (word processing, spreadsheet, presentations)",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000002",
+					"SupplierName" : "DelBont Industries",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "1.2",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "USD",
+					"Price" : "89.9",
+					"Width" : "0.15",
+					"Depth" : "0.07",
+					"Height" : "0.21",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1100')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1100')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1101')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1101')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1101",
+					"TypeCode" : "PR",
+					"Category" : "Software",
+					"Name" : "Smart Design",
+					"NameLanguage" : "E",
+					"Description" : "Complete package, 1 User, Image editing, processing",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000003",
+					"SupplierName" : "Talpa",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.8",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "79.9",
+					"Width" : "0.14",
+					"Depth" : "0.07",
+					"Height" : "0.24",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1101')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1101')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1102')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1102')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1102",
+					"TypeCode" : "PR",
+					"Category" : "Software",
+					"Name" : "Smart Network",
+					"NameLanguage" : "E",
+					"Description" : "Complete package, 1 User, Network Software Utilities, Useful Applications and Documentation",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000004",
+					"SupplierName" : "Panorama Studios",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.8",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "USD",
+					"Price" : "69.0",
+					"Width" : "0.16",
+					"Depth" : "0.06",
+					"Height" : "0.27",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1102')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1102')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1103')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1103')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1103",
+					"TypeCode" : "PR",
+					"Category" : "Software",
+					"Name" : "Smart Multimedia",
+					"NameLanguage" : "E",
+					"Description" : "Complete package, 1 User, different Multimedia applications, playing music, watching DVDs, only with this Smart package",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000005",
+					"SupplierName" : "TECUM",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.8",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "77.0",
+					"Width" : "0.11",
+					"Depth" : "0.03",
+					"Height" : "0.22",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1103')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1103')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1104')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1104')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1104",
+					"TypeCode" : "PR",
+					"Category" : "Software",
+					"Name" : "Smart Games",
+					"NameLanguage" : "E",
+					"Description" : "Complete package, 1 User, various games for amusement, logic, action, jump&run",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000006",
+					"SupplierName" : "Asia High tech",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "1.1",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "JPY",
+					"Price" : "55.0",
+					"Width" : "0.1",
+					"Depth" : "0.03",
+					"Height" : "0.3",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1104')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1104')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1105')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1105')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1105",
+					"TypeCode" : "PR",
+					"Category" : "Software",
+					"Name" : "Smart Internet Antivirus",
+					"NameLanguage" : "E",
+					"Description" : "Complete package, 1 User, highly recommended for internet users as anti-virus protection",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000007",
+					"SupplierName" : "Laurent",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.7",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "29.0",
+					"Width" : "0.16",
+					"Depth" : "0.04",
+					"Height" : "0.21",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1105')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1105')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1106')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1106')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1106",
+					"TypeCode" : "PR",
+					"Category" : "Software",
+					"Name" : "Smart Firewall",
+					"NameLanguage" : "E",
+					"Description" : "Complete package, 1 User, recommended for internet users, protect your PC against cyber-crime",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000008",
+					"SupplierName" : "AVANTEL",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.9",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "MXN",
+					"Price" : "34.0",
+					"Width" : "0.18",
+					"Depth" : "0.04",
+					"Height" : "0.23",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1106')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1106')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1107')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1107')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1107",
+					"TypeCode" : "PR",
+					"Category" : "Software",
+					"Name" : "Smart Money",
+					"NameLanguage" : "E",
+					"Description" : "Complete package, 1 User, bring your money in your mind, see what you have and what you want",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000009",
+					"SupplierName" : "Telecomunicaciones Star",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.5",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "ARS",
+					"Price" : "29.9",
+					"Width" : "0.12",
+					"Depth" : "0.02",
+					"Height" : "0.19",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1107')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1107')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1110')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1110')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1110",
+					"TypeCode" : "PR",
+					"Category" : "Computer system accessories",
+					"Name" : "PC Lock",
+					"NameLanguage" : "E",
+					"Description" : "Robust 3m anti-burglary protection for your laptop computer",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000010",
+					"SupplierName" : "Pear Computing Services",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.03",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "USD",
+					"Price" : "8.9",
+					"Width" : "0.2",
+					"Depth" : "0.08",
+					"Height" : "0.04",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1110')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1110')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1111')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1111')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1111",
+					"TypeCode" : "PR",
+					"Category" : "Computer system accessories",
+					"Name" : "Notebook Lock",
+					"NameLanguage" : "E",
+					"Description" : "Robust 1m anti-burglary protection for your desktop computer",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000011",
+					"SupplierName" : "Alpine Systems",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.02",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "6.9",
+					"Width" : "0.31",
+					"Depth" : "0.09",
+					"Height" : "0.07",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1111')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1111')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1112')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1112')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1112",
+					"TypeCode" : "PR",
+					"Category" : "Computer system accessories",
+					"Name" : "Web cam reality",
+					"NameLanguage" : "E",
+					"Description" : "Color webcam, color, High-Speed USB",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000012",
+					"SupplierName" : "New Line Design",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.075",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "GBP",
+					"Price" : "39.0",
+					"Width" : "0.09",
+					"Depth" : "0.08",
+					"Height" : "0.01",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1112')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1112')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1113')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1113')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1113",
+					"TypeCode" : "PR",
+					"Category" : "Computer system accessories",
+					"Name" : "Screen clean",
+					"NameLanguage" : "E",
+					"Description" : "10 separately packed screen wipes",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000013",
+					"SupplierName" : "HEPA Tec",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.05",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "2.3",
+					"Width" : "0.02",
+					"Depth" : "0.02",
+					"Height" : "0.0",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1113')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1113')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1114')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1114')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1114",
+					"TypeCode" : "PR",
+					"Category" : "Computer system accessories",
+					"Name" : "Fabric bag professional",
+					"NameLanguage" : "E",
+					"Description" : "Notebook bag, plenty of room for stationery and writing materials",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000014",
+					"SupplierName" : "Anav Ideon",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "1.8",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "USD",
+					"Price" : "31.0",
+					"Width" : "0.42",
+					"Depth" : "0.32",
+					"Height" : "0.07",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1114')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1114')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1115')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1115')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1115",
+					"TypeCode" : "PR",
+					"Category" : "Telecommunication",
+					"Name" : "Wireless DSL Router",
+					"NameLanguage" : "E",
+					"Description" : "Wireless DSL Router (available in blue, black and silver)",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000015",
+					"SupplierName" : "Robert Brown Entertainment",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.45",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "CAD",
+					"Price" : "49.0",
+					"Width" : "0.19",
+					"Depth" : "0.18",
+					"Height" : "0.05",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1115')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1115')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1116')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1116')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1116",
+					"TypeCode" : "PR",
+					"Category" : "Telecommunication",
+					"Name" : "Wireless DSL Router / Repeater",
+					"NameLanguage" : "E",
+					"Description" : "Wireless DSL Router / Repeater (available in blue, black and silver)",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000016",
+					"SupplierName" : "Mexican Oil Trading Company",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.45",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "MXN",
+					"Price" : "59.0",
+					"Width" : "0.19",
+					"Depth" : "0.18",
+					"Height" : "0.05",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1116')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1116')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1117')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1117')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1117",
+					"TypeCode" : "PR",
+					"Category" : "Telecommunication",
+					"Name" : "Wireless DSL Router / Repeater and Print Server",
+					"NameLanguage" : "E",
+					"Description" : "Wireless DSL Router / Repeater and Print Server (available in blue, black and silver)",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000017",
+					"SupplierName" : "Meliva",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.45",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "69.0",
+					"Width" : "0.19",
+					"Depth" : "0.18",
+					"Height" : "0.05",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1117')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1117')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1118')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1118')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1118",
+					"TypeCode" : "PR",
+					"Category" : "Computer system accessories",
+					"Name" : "USB Stick",
+					"NameLanguage" : "E",
+					"Description" : "USB 2.0 High-Speed 64 GB",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000018",
+					"SupplierName" : "Compostela",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.015",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "ARS",
+					"Price" : "35.0",
+					"Width" : "0.02",
+					"Depth" : "0.09",
+					"Height" : "0.01",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1118')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1118')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1119')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1119')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1119",
+					"TypeCode" : "PR",
+					"Category" : "Computer system accessories",
+					"Name" : "Travel Adapter",
+					"NameLanguage" : "E",
+					"Description" : "Universal Travel Adapter",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000010",
+					"SupplierName" : "Pear Computing Services",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "88.0",
+					"WeightUnit" : "G",
+					"CurrencyCode" : "USD",
+					"Price" : "79.0",
+					"Width" : "0.02",
+					"Depth" : "0.03",
+					"Height" : "0.04",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1119')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1119')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1120')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1120')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1120",
+					"TypeCode" : "PR",
+					"Category" : "Keyboards",
+					"Name" : "Cordless Bluetooth Keyboard, english international",
+					"NameLanguage" : "E",
+					"Description" : "Cordless Bluetooth Keyboard with English keys",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000019",
+					"SupplierName" : "Pateu",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "1.0",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "29.0",
+					"Width" : "0.51",
+					"Depth" : "0.23",
+					"Height" : "0.04",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1120')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1120')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1137')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1137')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1137",
+					"TypeCode" : "PR",
+					"Category" : "Flat screens",
+					"Name" : "Flat XXL",
+					"NameLanguage" : "E",
+					"Description" : "Optimum Hi-Resolution max. 2048 × 1536 @ 85Hz, Dot Pitch: 0.24mm",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000020",
+					"SupplierName" : "Russian Electronic Trading Company",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "18.0",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "RUB",
+					"Price" : "1430.0",
+					"Width" : "0.54",
+					"Depth" : "0.22",
+					"Height" : "0.38",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1137')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1137')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1138')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1138')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1138",
+					"TypeCode" : "PR",
+					"Category" : "Mice",
+					"Name" : "Pocket Mouse",
+					"NameLanguage" : "E",
+					"Description" : "Portable pocket Mouse with retracting cord",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000021",
+					"SupplierName" : "Florida Holiday Company",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.02",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "USD",
+					"Price" : "23.0",
+					"Width" : "0.0",
+					"Depth" : "0.01",
+					"Height" : "0.01",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1138')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1138')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1210')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1210')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1210",
+					"TypeCode" : "PR",
+					"Category" : "PCs",
+					"Name" : "PC Power Station",
+					"NameLanguage" : "E",
+					"Description" : "PC Power Station with 3,4 Ghz quad-core, 32 GB DDR3 SDRAM, feels like a PC, Windows 8 Pro",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000022",
+					"SupplierName" : "Quimica Madrilenos",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "2.3",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "2399.0",
+					"Width" : "0.28",
+					"Depth" : "0.31",
+					"Height" : "0.43",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1210')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1210')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1500')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1500')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1500",
+					"TypeCode" : "PR",
+					"Category" : "Servers",
+					"Name" : "Server Basic",
+					"NameLanguage" : "E",
+					"Description" : "Dual socket, quad-core processing server with 1333 MHz Front Side Bus with 10Gb connectivity",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000023",
+					"SupplierName" : "Getränkegroßhandel Janssen",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "18.0",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "5000.0",
+					"Width" : "0.34",
+					"Depth" : "0.35",
+					"Height" : "0.23",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1500')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1500')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1501')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1501')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1501",
+					"TypeCode" : "PR",
+					"Category" : "Servers",
+					"Name" : "Server Professional",
+					"NameLanguage" : "E",
+					"Description" : "Dual socket, quad-core processing server with 1644 MHz Front Side Bus with 10Gb connectivity",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000024",
+					"SupplierName" : "JaTeCo",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "25.0",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "JPY",
+					"Price" : "15000.0",
+					"Width" : "0.29",
+					"Depth" : "0.3",
+					"Height" : "0.27",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1501')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1501')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1502')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1502')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1502",
+					"TypeCode" : "PR",
+					"Category" : "Servers",
+					"Name" : "Server Power Pro",
+					"NameLanguage" : "E",
+					"Description" : "Dual socket, quad-core processing server with 1644 MHz Front Side Bus with 100Gb connectivity",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000025",
+					"SupplierName" : "Tessile Casa Di Roma",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "35.0",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "25000.0",
+					"Width" : "0.22",
+					"Depth" : "0.27",
+					"Height" : "0.37",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1502')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1502')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1600')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1600')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1600",
+					"TypeCode" : "PR",
+					"Category" : "PCs",
+					"Name" : "Family PC Basic",
+					"NameLanguage" : "E",
+					"Description" : "2,8 Ghz dual core, 4 GB DDR3 SDRAM, 500 GB Hard Disc, Graphic Card: Proctra X, Windows 8",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000009",
+					"SupplierName" : "Telecomunicaciones Star",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "4.8",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "ARS",
+					"Price" : "600.0",
+					"Width" : "0.21",
+					"Depth" : "0.29",
+					"Height" : "0.38",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1600')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1600')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1601')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1601')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1601",
+					"TypeCode" : "PR",
+					"Category" : "PCs",
+					"Name" : "Family PC Pro",
+					"NameLanguage" : "E",
+					"Description" : "2,8 Ghz dual core, 4 GB DDR3 SDRAM, 1000 GB Hard Disc, Graphic Card: Gladiator MX, Windows 8",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000008",
+					"SupplierName" : "AVANTEL",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "5.3",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "MXN",
+					"Price" : "900.0",
+					"Width" : "0.25",
+					"Depth" : "0.32",
+					"Height" : "0.4",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1601')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1601')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1602')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1602')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1602",
+					"TypeCode" : "PR",
+					"Category" : "PCs",
+					"Name" : "Gaming Monster",
+					"NameLanguage" : "E",
+					"Description" : "3,4 Ghz quad core, 8 GB DDR3 SDRAM, 2000 GB Hard Disc, Graphic Card: Gladiator MX, Windows 8",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000007",
+					"SupplierName" : "Laurent",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "5.9",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "1200.0",
+					"Width" : "0.27",
+					"Depth" : "0.34",
+					"Height" : "0.47",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1602')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1602')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1603')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1603')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-1603",
+					"TypeCode" : "PR",
+					"Category" : "PCs",
+					"Name" : "Gaming Monster Pro",
+					"NameLanguage" : "E",
+					"Description" : "3,4 Ghz quad core, 16 GB DDR3 SDRAM, 4000 GB Hard Disc, Graphic Card: Hurricane GX, Windows 8",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000006",
+					"SupplierName" : "Asia High tech",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "6.8",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "JPY",
+					"Price" : "1700.0",
+					"Width" : "0.27",
+					"Depth" : "0.28",
+					"Height" : "0.42",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1603')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-1603')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2000')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2000')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-2000",
+					"TypeCode" : "PR",
+					"Category" : "Portable Players",
+					"Name" : "7\" Widescreen Portable DVD Player w MP3",
+					"NameLanguage" : "E",
+					"Description" : "7\" LCD Screen, storage battery holds up to 6 hours!",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000005",
+					"SupplierName" : "TECUM",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.79",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "249.99",
+					"Width" : "0.21",
+					"Depth" : "0.19",
+					"Height" : "0.28",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2000')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2000')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2001')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2001')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-2001",
+					"TypeCode" : "PR",
+					"Category" : "Portable Players",
+					"Name" : "10\" Portable DVD player",
+					"NameLanguage" : "E",
+					"Description" : "10\" LCD Screen, storage battery holds up to 8 hours",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000004",
+					"SupplierName" : "Panorama Studios",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.84",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "USD",
+					"Price" : "449.99",
+					"Width" : "0.24",
+					"Depth" : "0.2",
+					"Height" : "0.29",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2001')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2001')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2002')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2002')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-2002",
+					"TypeCode" : "PR",
+					"Category" : "Portable Players",
+					"Name" : "Portable DVD Player with 9\" LCD Monitor",
+					"NameLanguage" : "E",
+					"Description" : "9\" LCD Screen, storage holds up to 8 hours, 2 speakers included",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000044",
+					"SupplierName" : "Sorali",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.72",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "853.99",
+					"Width" : "0.21",
+					"Depth" : "0.17",
+					"Height" : "0.14",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2002')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2002')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2025')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2025')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-2025",
+					"TypeCode" : "PR",
+					"Category" : "Computer system accessories",
+					"Name" : "CD/DVD case: 264 sleeves",
+					"NameLanguage" : "E",
+					"Description" : "Organizer and protective case for 264 CDs and DVDs",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000003",
+					"SupplierName" : "Talpa",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.65",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "44.99",
+					"Width" : "0.13",
+					"Depth" : "0.13",
+					"Height" : "0.2",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2025')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2025')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2026')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2026')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-2026",
+					"TypeCode" : "PR",
+					"Category" : "Computer system accessories",
+					"Name" : "Audio/Video Cable Kit - 4m",
+					"NameLanguage" : "E",
+					"Description" : "Quality cables for notebooks and beamers",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000002",
+					"SupplierName" : "DelBont Industries",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.2",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "USD",
+					"Price" : "29.99",
+					"Width" : "0.21",
+					"Depth" : "0.1",
+					"Height" : "0.13",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2026')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2026')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2027')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2027')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-2027",
+					"TypeCode" : "PR",
+					"Category" : "Computer system accessories",
+					"Name" : "Removable CD/DVD Laser Labels",
+					"NameLanguage" : "E",
+					"Description" : "Removable jewel case labels, zero residues (100)",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000001",
+					"SupplierName" : "Becker Berlin",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.15",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "8.99",
+					"Width" : "0.06",
+					"Depth" : "0.02",
+					"Height" : "0.02",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2027')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-2027')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6100')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6100')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-6100",
+					"TypeCode" : "PR",
+					"Category" : "Beamers",
+					"Name" : "Beam Breaker B-1",
+					"NameLanguage" : "E",
+					"Description" : "720p, DLP beamer max. 8,45 Meter, 2D",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000000",
+					"SupplierName" : "SAP",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "1.7",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "469.0",
+					"Width" : "0.3",
+					"Depth" : "0.23",
+					"Height" : "0.23",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6100')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6100')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6101')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6101')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-6101",
+					"TypeCode" : "PR",
+					"Category" : "Beamers",
+					"Name" : "Beam Breaker B-2",
+					"NameLanguage" : "E",
+					"Description" : "1080p, DLP max.9,34 Meter, 2D-ready",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000043",
+					"SupplierName" : "Danish Fish Trading Company",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "2.0",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "DKK",
+					"Price" : "679.0",
+					"Width" : "0.3",
+					"Depth" : "0.23",
+					"Height" : "0.23",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6101')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6101')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6102')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6102')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-6102",
+					"TypeCode" : "PR",
+					"Category" : "Beamers",
+					"Name" : "Beam Breaker B-3",
+					"NameLanguage" : "E",
+					"Description" : "1080p, DLP max. 12,3 Meter, 3D-ready",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000042",
+					"SupplierName" : "Siwusha",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "2.5",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "CNY",
+					"Price" : "889.0",
+					"Width" : "0.3",
+					"Depth" : "0.23",
+					"Height" : "0.23",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6102')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6102')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6110')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6110')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-6110",
+					"TypeCode" : "PR",
+					"Category" : "Portable Players",
+					"Name" : "Play Movie",
+					"NameLanguage" : "E",
+					"Description" : "CD-RW, DVD+R/RW, DVD-R/RW, MPEG 2 (Video-DVD), MPEG 4, VCD, SVCD, DivX, Xvid",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000041",
+					"SupplierName" : "South American IT Company",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "2.4",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "ARS",
+					"Price" : "130.0",
+					"Width" : "0.37",
+					"Depth" : "0.24",
+					"Height" : "0.06",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6110')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6110')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6111')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6111')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-6111",
+					"TypeCode" : "PR",
+					"Category" : "Portable Players",
+					"Name" : "Record Movie",
+					"NameLanguage" : "E",
+					"Description" : "160 GB HDD, CD-RW, DVD+R/RW, DVD-R/RW, MPEG 2 (Video-DVD), MPEG 4, VCD, SVCD, DivX, Xvid",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000040",
+					"SupplierName" : "Chemia A Technicznie Fabryka",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "3.1",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "PLN",
+					"Price" : "288.0",
+					"Width" : "0.38",
+					"Depth" : "0.26",
+					"Height" : "0.06",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6111')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6111')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6120')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6120')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-6120",
+					"TypeCode" : "PR",
+					"Category" : "MP3-Players",
+					"Name" : "ITelo MusickStick",
+					"NameLanguage" : "E",
+					"Description" : "64 GB USB Musick-on-a-Stick",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000039",
+					"SupplierName" : "Indian IT Trading Company",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "134.0",
+					"WeightUnit" : "G",
+					"CurrencyCode" : "INR",
+					"Price" : "45.0",
+					"Width" : "0.02",
+					"Depth" : "0.06",
+					"Height" : "0.01",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6120')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6120')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6121')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6121')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-6121",
+					"TypeCode" : "PR",
+					"Category" : "MP3-Players",
+					"Name" : "ITelo Jog-Mate",
+					"NameLanguage" : "E",
+					"Description" : "ITelo Jog-Mate 64 GB HDD and Color Display, can play movies",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000038",
+					"SupplierName" : "Bionic Research Lab",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "134.0",
+					"WeightUnit" : "G",
+					"CurrencyCode" : "EUR",
+					"Price" : "63.0",
+					"Width" : "0.05",
+					"Depth" : "0.08",
+					"Height" : "0.09",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6121')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6121')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6122')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6122')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-6122",
+					"TypeCode" : "PR",
+					"Category" : "MP3-Players",
+					"Name" : "Power Pro Player 40",
+					"NameLanguage" : "E",
+					"Description" : "MP3-Player with 40 GB HDD and Color Display, can play movies",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000037",
+					"SupplierName" : "PicoBit",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "266.0",
+					"WeightUnit" : "G",
+					"CurrencyCode" : "USD",
+					"Price" : "167.0",
+					"Width" : "0.05",
+					"Depth" : "0.08",
+					"Height" : "0.09",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6122')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6122')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6123')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6123')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-6123",
+					"TypeCode" : "PR",
+					"Category" : "MP3-Players",
+					"Name" : "Power Pro Player 80",
+					"NameLanguage" : "E",
+					"Description" : "MP3-Player with 80 GB SSD and Color Display, can play movies",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000036",
+					"SupplierName" : "African Gold And Diamond Corporation",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "267.0",
+					"WeightUnit" : "G",
+					"CurrencyCode" : "ZAR",
+					"Price" : "299.0",
+					"Width" : "0.04",
+					"Depth" : "0.06",
+					"Height" : "0.01",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6123')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6123')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6130')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6130')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-6130",
+					"TypeCode" : "PR",
+					"Category" : "TV flat screens",
+					"Name" : "Flat Watch HD32",
+					"NameLanguage" : "E",
+					"Description" : "32-inch, 1366x768 Pixel, 16:9, HDTV ready",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000026",
+					"SupplierName" : "Vente Et Réparation de Ordinateur",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "2.6",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "1459.0",
+					"Width" : "0.78",
+					"Depth" : "0.22",
+					"Height" : "0.55",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6130')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6130')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6131')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6131')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-6131",
+					"TypeCode" : "PR",
+					"Category" : "TV flat screens",
+					"Name" : "Flat Watch HD37",
+					"NameLanguage" : "E",
+					"Description" : "37-inch, 1366x768 Pixel, 16:9, HDTV ready",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000027",
+					"SupplierName" : "Developement Para O Governo",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "2.2",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "ARS",
+					"Price" : "1199.0",
+					"Width" : "0.99",
+					"Depth" : "0.26",
+					"Height" : "0.61",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6131')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6131')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6132')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6132')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-6132",
+					"TypeCode" : "PR",
+					"Category" : "TV flat screens",
+					"Name" : "Flat Watch HD41",
+					"NameLanguage" : "E",
+					"Description" : "41-inch, 1366x768 Pixel, 16:9, HDTV ready",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000028",
+					"SupplierName" : "Brazil Technologies",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "1.8",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "BRL",
+					"Price" : "899.0",
+					"Width" : "1.28",
+					"Depth" : "0.23",
+					"Height" : "0.79",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6132')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-6132')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7000')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7000')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-7000",
+					"TypeCode" : "PR",
+					"Category" : "PDAs/Organizers",
+					"Name" : "Copperberry",
+					"NameLanguage" : "E",
+					"Description" : "Our new multifunctional Handheld with phone function in copper",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000032",
+					"SupplierName" : "Angeré",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.5",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "549.0",
+					"Width" : "0.08",
+					"Depth" : "0.13",
+					"Height" : "0.12",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7000')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7000')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7010')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7010')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-7010",
+					"TypeCode" : "PR",
+					"Category" : "PDAs/Organizers",
+					"Name" : "Silverberry",
+					"NameLanguage" : "E",
+					"Description" : "Our new multifunctional Handheld with phone function in silver",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000031",
+					"SupplierName" : "Baleda",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.5",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "USD",
+					"Price" : "549.0",
+					"Width" : "0.08",
+					"Depth" : "0.13",
+					"Height" : "0.12",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7010')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7010')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7020')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7020')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-7020",
+					"TypeCode" : "PR",
+					"Category" : "PDAs/Organizers",
+					"Name" : "Goldberry",
+					"NameLanguage" : "E",
+					"Description" : "Our new multifunctional Handheld with phone function in gold",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000030",
+					"SupplierName" : "Jologa",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.5",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "CHF",
+					"Price" : "549.0",
+					"Width" : "0.08",
+					"Depth" : "0.13",
+					"Height" : "0.12",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7020')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7020')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7030')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7030')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-7030",
+					"TypeCode" : "PR",
+					"Category" : "PDAs/Organizers",
+					"Name" : "Platinberry",
+					"NameLanguage" : "E",
+					"Description" : "Our new multifunctional Handheld with phone function in platinum",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000029",
+					"SupplierName" : "C.R.T.U.",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.5",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "CAD",
+					"Price" : "549.0",
+					"Width" : "0.08",
+					"Depth" : "0.13",
+					"Height" : "0.12",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7030')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-7030')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8000')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8000')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-8000",
+					"TypeCode" : "PR",
+					"Category" : "Notebooks",
+					"Name" : "ITelO FlexTop I4000",
+					"NameLanguage" : "E",
+					"Description" : "Notebook with 2,80 GHz dual core, 4 GB DDR3 SDRAM, 500 GB Hard Disc, Windows 8",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000011",
+					"SupplierName" : "Alpine Systems",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "4.0",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "799.0",
+					"Width" : "0.31",
+					"Depth" : "0.19",
+					"Height" : "0.03",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8000')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8000')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8001')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8001')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-8001",
+					"TypeCode" : "PR",
+					"Category" : "Notebooks",
+					"Name" : "ITelO FlexTop I6300c",
+					"NameLanguage" : "E",
+					"Description" : "Notebook with 2,80 GHz dual core, 8 GB DDR3 SDRAM, 500 GB Hard Disc, Windows 8",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000012",
+					"SupplierName" : "New Line Design",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "4.2",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "GBP",
+					"Price" : "999.0",
+					"Width" : "0.32",
+					"Depth" : "0.2",
+					"Height" : "0.03",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8001')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8001')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8002')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8002')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-8002",
+					"TypeCode" : "PR",
+					"Category" : "Notebooks",
+					"Name" : "ITelO FlexTop I9100",
+					"NameLanguage" : "E",
+					"Description" : "Notebook with 2,80 GHz quad core, 4 GB DDR3 SDRAM, 1000 GB Hard Disc, Windows 8",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000013",
+					"SupplierName" : "HEPA Tec",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "3.5",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "1199.0",
+					"Width" : "0.38",
+					"Depth" : "0.21",
+					"Height" : "0.04",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8002')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8002')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8003')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8003')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-8003",
+					"TypeCode" : "PR",
+					"Category" : "Notebooks",
+					"Name" : "ITelO FlexTop I9800",
+					"NameLanguage" : "E",
+					"Description" : "Notebook with 2,80 GHz quad core, 8 GB DDR3 SDRAM, 1000 GB Hard Disc, Windows 8",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000014",
+					"SupplierName" : "Anav Ideon",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "3.8",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "USD",
+					"Price" : "1388.0",
+					"Width" : "0.48",
+					"Depth" : "0.31",
+					"Height" : "0.05",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8003')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-8003')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9991')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9991')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-9991",
+					"TypeCode" : "PR",
+					"Category" : "Accessories",
+					"Name" : "Smartphone Leather Case",
+					"NameLanguage" : "E",
+					"Description" : "Button Clasp, Quality Material, 100% Leather, compatible with many smartphone models",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000024",
+					"SupplierName" : "JaTeCo",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.02",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "JPY",
+					"Price" : "25.0",
+					"Width" : "0.48",
+					"Depth" : "0.31",
+					"Height" : "0.05",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9991')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9991')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9992')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9992')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-9992",
+					"TypeCode" : "PR",
+					"Category" : "Smartphones",
+					"Name" : "Smartphone Alpha",
+					"NameLanguage" : "E",
+					"Description" : "7 inch 1280x800 HD display (216 ppi), Quad-core processor, 16 GB internal storage (actual formatted capacity will be less), 4325 mAh battery (Up to 8 hours of active use), white or black",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000023",
+					"SupplierName" : "Getränkegroßhandel Janssen",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.75",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "599.0",
+					"Width" : "0.48",
+					"Depth" : "0.31",
+					"Height" : "0.05",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9992')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9992')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9993')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9993')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-9993",
+					"TypeCode" : "PR",
+					"Category" : "Tablets",
+					"Name" : "Mini Tablet",
+					"NameLanguage" : "E",
+					"Description" : "7 inch 1280x800 HD display (216 ppi), Quad-core processor, 16 GB internal storage, 4325 mAh battery (Up to 8 hours of active use)",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000022",
+					"SupplierName" : "Quimica Madrilenos",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "3.8",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "833.0",
+					"Width" : "0.48",
+					"Depth" : "0.31",
+					"Height" : "0.05",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9993')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9993')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9994')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9994')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-9994",
+					"TypeCode" : "PR",
+					"Category" : "Camcorders",
+					"Name" : "Camcorder View",
+					"NameLanguage" : "E",
+					"Description" : "1920x1080 Full HD, image stabilization reduces blur, 27x Optical / 32x Extended Zoom, wide angle Lens, 2.7\" wide LCD display",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000021",
+					"SupplierName" : "Florida Holiday Company",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "3.8",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "USD",
+					"Price" : "1388.0",
+					"Width" : "0.48",
+					"Depth" : "0.31",
+					"Height" : "0.27",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9994')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9994')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9995')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9995')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-9995",
+					"TypeCode" : "PR",
+					"Category" : "Accessories",
+					"Name" : "Smartphone Cover",
+					"NameLanguage" : "E",
+					"Description" : "Durable high quality plastic bump-sleeve, lightweight, protects from scratches, rubber coating, multiple colors available, Accurate design and cut-outs for your device, snap-on design",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000020",
+					"SupplierName" : "Russian Electronic Trading Company",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.02",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "RUB",
+					"Price" : "15.0",
+					"Width" : "0.48",
+					"Depth" : "0.31",
+					"Height" : "0.05",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9995')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9995')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9996')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9996')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-9996",
+					"TypeCode" : "PR",
+					"Category" : "Accessories",
+					"Name" : "Tablet Pouch",
+					"NameLanguage" : "E",
+					"Description" : "Stylish tablet pouch, protects from scratches, color: black",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000019",
+					"SupplierName" : "Pateu",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.03",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "20.0",
+					"Width" : "0.25",
+					"Depth" : "0.4",
+					"Height" : "0.05",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9996')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9996')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9997')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9997')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-9997",
+					"TypeCode" : "PR",
+					"Category" : "Tablets",
+					"Name" : "e-Book Reader ReadMe",
+					"NameLanguage" : "E",
+					"Description" : "6-Inch E Ink Screen, Access To e-book Store, Adjustable Font Styles and Sizes, Stores Up To 1,000 Books",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000018",
+					"SupplierName" : "Compostela",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "3.8",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "ARS",
+					"Price" : "633.0",
+					"Width" : "0.48",
+					"Depth" : "0.31",
+					"Height" : "0.05",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9997')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9997')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9998')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9998')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-9998",
+					"TypeCode" : "PR",
+					"Category" : "Smartphones",
+					"Name" : "Smartphone Beta",
+					"NameLanguage" : "E",
+					"Description" : "5 Megapixel Camera, Wi-Fi 802.11 b/g/n, Bluetooth, GPS A-GPS support",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000017",
+					"SupplierName" : "Meliva",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "0.75",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "EUR",
+					"Price" : "699.0",
+					"Width" : "0.48",
+					"Depth" : "0.31",
+					"Height" : "0.05",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9998')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9998')/ToSupplier"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9999')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9999')",
+						"type" : "GWSAMPLE_BASIC.Product",
+						"etag" : "W/\"datetime'2014-10-29T11%3A58%3A19.0000000'\""
+					},
+					"ProductID" : "HT-9999",
+					"TypeCode" : "PR",
+					"Category" : "Tablets",
+					"Name" : "Maxi Tablet",
+					"NameLanguage" : "E",
+					"Description" : "10.1-inch Multitouch HD Screen (1280 x 800), 16GB Internal Memory, Wireless N Wi-Fi; Bluetooth, GPS Enabled, 1GHz Dual-Core Processor",
+					"DescriptionLanguage" : "E",
+					"SupplierID" : "0100000016",
+					"SupplierName" : "Mexican Oil Trading Company",
+					"TaxTarifCode" : 1,
+					"MeasureUnit" : "EA",
+					"WeightMeasure" : "3.8",
+					"WeightUnit" : "KG",
+					"CurrencyCode" : "MXN",
+					"Price" : "749.0",
+					"Width" : "0.48",
+					"Depth" : "0.31",
+					"Height" : "0.05",
+					"DimUnit" : "M",
+					"CreatedAt" : "\/Date(1414583899000)\/",
+					"ChangedAt" : "\/Date(1414583899000)\/",
+					"ToSalesOrderLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9999')/ToSalesOrderLineItems"
+						}
+					},
+					"ToSupplier" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/ProductSet('HT-9999')/ToSupplier"
+						}
+					}
+				}]
+	}
+}
