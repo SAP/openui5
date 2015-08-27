@@ -16,14 +16,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	/**
 	 * Constructor for a new CalendarMonthInterval.
 	 *
-	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * Calendar with granularity of months displayed in one line.
 	 *
-	 * <b>Note:</b> JavaScript Date objects are used to set and return the months, mark them as selected or as special type.
-	 * But the date part of the DateObject is not used. If a Date object is returned the date will be set to the 1st of the corresponding month.
+	 * <b>Note:</b> JavaScript Date objects are used to set and return the months, mark them as selected or as a special type.
+	 * But the date part of the Date object is not used. If a Date object is returned the date will be set to the 1st of the corresponding month.
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
@@ -39,7 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		properties : {
 
 			/**
-			 * Width of the <code>CalendarMonthInterval</code>. The width of the single months depends of this width.
+			 * Width of the <code>CalendarMonthInterval</code>. The width of the single months depends on this width.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			intervalSelection : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
-			 * If set, only a single date or interval, if intervalSelection is enabled, can be selected
+			 * If set, only a single date or interval, if <code>intervalSelection</code> is enabled, can be selected
 			 *
 			 * <b>Note:</b> Selection of multiple intervals is not supported in the current version.
 			 */
@@ -64,7 +64,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * Number of months displayed
 			 *
-			 * <b>Note:</b> On phones always maximum 6 months are displayed in the row.
+			 * <b>Note:</b> On phones, the maximum number of months displayed in the row is always 6.
 			 */
 			months : {type : "int", group : "Misc", defaultValue : 12}
 		},
@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * Date ranges with type to visualize special months in the <code>CalendarMonthInterval</code>.
 			 * If one day is assigned to more than one type, only the first one will be used.
 			 *
-			 * <b>Note:</b> Even if only one day is set as special day, the whole corresponding month is displayed in this way.
+			 * <b>Note:</b> Even if only one day is set as a special day, the whole corresponding month is displayed in this way.
 			 */
 			specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"},
 
@@ -98,7 +98,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		associations: {
 
 			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 		},
@@ -263,9 +263,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		};
 
 		/**
-		 * sets the locale for the DatePicker
-		 * only for internal use
-		 * @param {string} sLocale  new value for <code>locale</code>
+		 * Sets the locale for the <code>CalendarMonthInterval</code>.
+		 * Only for internal use
+		 * @param {string} sLocale  New value for <code>locale</code>
 		 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining
 		 * @private
 		 */
@@ -282,8 +282,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		};
 
 		/**
-		 * gets the used locale for the <code>CalendarMonthInterval</code>
-		 * only for internal use
+		 * Gets the used locale for the <code>CalendarMonthInterval</code>
+		 * Only for internal use
 		 * @return {string} sLocale
 		 * @private
 		 */
@@ -340,7 +340,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		};
 
 		/**
-		 * Displays a month in the <code>CalendarMonthInterval</code> but don't set the focus.
+		 * Displays a month in the <code>CalendarMonthInterval</code> but doesn't set the focus.
 		 *
 		 * @param {object} oDate JavaScript date object for displayed date. (The month of this date will be displayed.)
 		 * @returns {sap.ui.unified.Calendar} <code>this</code> to allow method chaining

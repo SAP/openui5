@@ -9,25 +9,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	"use strict";
 
 	/*
-	 * Inside the TimesRow UniversalDate objects are used. But in the API JS dates are used.
-	 * So conversion must be done on API functions.
+	 * <code>UniversalDate</code> objects are used inside the <code>TimesRow</code>, whereas JavaScript dates are used in the API.
+	 * This means that a conversion must be performed for the API functions.
 	 */
 
 	/**
-	 * Constructor for a new TimesRow.
-	 * It shows a calendar in granularity of time intervals (normally hours)
+	 * Constructor for a new <code>TimesRow</code>.
+	 * It shows a calendar with time granularity (normally hours)
 	 *
-	 * <b>Note:</b> This is used inside the CalendarTimeInterval, not for stand alone usage.
-	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
+	 * <b>Note:</b> This is used inside the CalendarTimeInterval, not for standalone usage.
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * renders a row of time items using ItemNavigation. But there is no paging or navigation outside the rendered area implemented.
+	 * Renders a row of time items using ItemNavigation. There is no paging or navigation outside the rendered area implemented.
 	 * This is done inside the CalendarTimeInterval.
-	 * If used inside the CalendarTimeInterval the properties and aggregation are directly taken from the parent.
-	 * (To not duplicate and synchronize DateRanges and so on...)
+	 * If used inside the CalendarTimeInterval the properties and aggregation are directly taken from the parent
+	 * (to not duplicate and synchronize DateRanges and so on...).
 	 *
-	 * The TimesRow is working with JavaScript Date objects.
+	 * The TimesRow works with JavaScript Date objects.
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
@@ -42,8 +42,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		library : "sap.ui.unified",
 		properties : {
 			/**
-			 * A date as JavaScript Date object. The month including this date is rendered and this date is initial focused (if no other focus set)
-			 * If in rendering phase the date property is not in the range <code>startDate</code> + <code>items</code>,
+			 * A date as JavaScript Date object. The month including this date is rendered and this date is focused initially (if no other focus is set).
+			 * If the date property is not in the range <code>startDate</code> + <code>items</code> in the rendering phase,
 			 * it is set to the <code>startDate</code>.
 			 * So after setting the <code>startDate</code> the date should be set to be in the visible range.
 			 */
@@ -96,7 +96,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			selectedDates : {type : "sap.ui.unified.DateRange", multiple : true, singularName : "selectedDate"},
 
 			/**
-			 * Date ranges with type to visualize special months in the row.
+			 * Date ranges with type to visualize special item in the row.
 			 * If one day is assigned to more than one type, only the first one will be used.
 			 */
 			specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"}
@@ -104,7 +104,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		associations: {
 
 			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 		},
@@ -125,7 +125,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					 */
 					date : {type : "object"},
 					/**
-					 * if set, the focused date is not rendered yet. (This happens by navigation out of the visible area.)
+					 * If set, the focused date is not rendered yet. (This happens by navigating out of the visible area.)
 					 */
 					notVisible : {type : "boolean"}
 				}
@@ -299,10 +299,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		};
 
 		/**
-		 * displays the given date without setting the focus
+		 * Displays the given date without setting the focus
 		 *
 		 * @param {object} oDate JavaScript Date object for focused date.
-		 * @returns {sap.ui.unified.calendar.Month} <code>this</code> to allow method chaining
+		 * @returns {sap.ui.unified.calendar.TimesRow} <code>this</code> to allow method chaining
 		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
@@ -751,7 +751,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		/**
 		 * Checks if a date is focusable in the current rendered output.
-		 * So if not rendered it is not focusable.
+		 * This means that if it is not rendered, it is not focusable.
 		 *
 		 * @param {object} oDate JavaScript Date object for focused date.
 		 * @returns {boolean} flag if focusable
