@@ -199,7 +199,7 @@ sap.ui.define(['jquery.sap.global',
 		 *  or an array of controls (viewName, controlType, multiple id's, regex id's) that matched all matchers.
 		 * Matchers can alter the array or single control to something different. Please read the matcher documentation.
 		 * @param {function} [oOptions.error] Will get invoked, when the timeout is reached and check did never return a true.
-		 * @param {string} [oOptions.errorMessage] Will be displayed as errorMessage depending on your unit test framework. Currently the only adapter for OPA is QUnit. There the message appears when OPA5 is reaching its timeout but qunit has not reached it yet.
+		 * @param {string} [oOptions.errorMessage] Will be displayed as errorMessage depending on your unit test framework.Currently the only adapter for OPA is QUnit. There the message appears when OPA5 is reaching its timeout but qunit has not reached it yet.
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
 		 */
@@ -611,6 +611,7 @@ sap.ui.define(['jquery.sap.global',
 				if (fnFrameOnError) {
 					fnFrameOnError.apply(this, arguments);
 				}
+
 				throw "OpaFrame error message: " + sErrorMsg + " url: " + sUrl + " line: " + iLine;
 			};
 
