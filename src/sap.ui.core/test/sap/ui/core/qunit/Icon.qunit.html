@@ -71,14 +71,22 @@
 			test("Active color", function(){
 				$dummy.css("color", "#222222");
 				$dummy.css("background-color", "#999999");
-				qutils.triggerEvent(jQuery.support.touch ? "touchstart" : "mousedown", oIcon.getId());
+				if (sap.ui.Device.support.touch) {
+					qutils.triggerTouchEvent("touchstart", oIcon.getId());
+				} else {
+					qutils.triggerEvent("mousedown", oIcon.getId());
+				}
 				equal($icon.css("color"), $dummy.css("color"));
 				equal($icon.css("background-color"), $dummy.css("background-color"));
-				qutils.triggerEvent(jQuery.support.touch ? "touchend" : "mouseup", oIcon.getId());
+				if (sap.ui.Device.support.touch) {
+					qutils.triggerTouchEvent("touchend", oIcon.getId());
+				} else {
+					qutils.triggerEvent("mouseup", oIcon.getId());
+				}
 			});
 
 
-			if(!jQuery.support.touch){
+			if(!sap.ui.Device.support.touch){
 				test("Hover color", function(){
 					$dummy.css("color", "#444444");
 					$dummy.css("background-color", "#CCCCCC");
