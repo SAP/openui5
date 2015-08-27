@@ -87,12 +87,23 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			/**
 			 * This event will be fired before the ActionSheet is closed.
 			 */
-			beforeClose : {},
+			beforeClose : {
+				/**
+				 * This indicates the trigger of closing the dialog. If dialog is closed by either leftButton or rightButton, the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null. This is valid only for Phone mode of the ActionSheet
+				 *
+				 */
+				origin: {type: "sap.m.Button"}
+			},
 
 			/**
 			 * This event will be fired after the ActionSheet is closed.
 			 */
-			afterClose : {},
+			afterClose : {
+				/**
+				 * This indicates the trigger of closing the dialog. If dialog is closed by either leftButton or rightButton, the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null. This is valid only for Phone mode of the ActionSheet
+				 */
+				origin: {type: "sap.m.Button"}
+			},
 
 			/**
 			 * This event is fired when the cancelButton is clicked. For iPad, this event is also fired when showCancelButton is set to true, and Popover is closed by clicking outside.
