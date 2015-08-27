@@ -555,7 +555,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		var $indicator = $this.find(".sapMMultiInputBorder").find(".sapMMultiInputIndicator");
 		
 		jQuery(shadowDiv).text(this.getValue());
-		
+		 
 		var inputWidthMinimalNeeded = jQuery(shadowDiv).width();
 		var iIndicatorWidth = jQuery($indicator).width();
 		
@@ -573,10 +573,21 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		var inputWidth;
 		var additionalWidth = 1;
 			
-		if (!this._bUseDialog && this._isMultiLineMode && !this._bShowIndicator) {
+		if (!this._bUseDialog && this._isMultiLineMode && !this._bShowIndicator && this.$().find(".sapMMultiInputBorder").length > 0) {
+			
+			var $border = this.$().find(".sapMMultiInputBorder"),
+				iMaxHeight = parseInt(($border.css("max-height") || 0), 10),
+				iScrollHeight = $border[0].scrollHeight,
+				iTokenizerWidth = availableWidth - iconWidth;
+					
+			if (iMaxHeight < iScrollHeight) {
+				//if scroll height exceeds maxHeight, scroll bar also takes width
+				iTokenizerWidth = iTokenizerWidth - 17; // 17px is scroll bar width
+			}
 				
-			this._tokenizer.setPixelWidth( availableWidth - iconWidth - 17); // 17px is scroll bar width
-			jQuery($this.find(".sapMInputBaseInner")[0]).css("width", availableWidth - iconWidth - 17 + "px");
+			this._tokenizer.setPixelWidth(iTokenizerWidth); // 17px is scroll bar width
+			this.$("inner").css("width", iTokenizerWidth + "px");
+
 		} else {
 			if (totalNeededWidth < availableWidth) {
 				inputWidth = inputWidthMinimalNeeded + availableWidth - totalNeededWidth;
