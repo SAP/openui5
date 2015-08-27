@@ -97,44 +97,60 @@ HTML[data-sap-ui-browser='ie8'] .sapUiLocalBusyIndicator {
 	right: 0px;
 }
 
-@keyframes sapUiBusyAnimationStandard {
+/**
+ * Keyframe definitions
+ */
+.mixin-standard-animation-frames {
 	0%{
-		-webkit-transform: scale3d(0.4, 0.4, 1);
-		-moz-transform: scale3d(0.4, 0.4, 1);
-		-ms-transform: scale3d(0.4, 0.4, 1);
+		-webkit-transform: scale(0.4, 0.4);
+		-moz-transform: scale(0.4, 0.4);
+		-ms-transform: scale(0.4, 0.4);
 		background: fade(@sapUiLocalBusyIndicatorColor, 100%);
 	}
 	40% {
-		-webkit-transform: scale3d(1, 1, 1);
-		-moz-transform: scale3d(1, 1, 1);
-		-ms-transform: scale3d(1, 1, 1);
+		-webkit-transform: scale(1, 1);
+		-moz-transform: scale(1, 1);
+		-ms-transform: scale(1, 1);
 		background: fade(@sapUiLocalBusyIndicatorColor, 10%);
 		box-shadow: inset 0px 0px 2px 1px fade(@sapUiLocalBusyIndicatorColor, 80%);
 	}
 	80% {
-		-webkit-transform: scale3d(0.4, 0.4, 1);
-		-moz-transform: scale3d(0.4, 0.4, 1);
-		-ms-transform: scale3d(0.4, 0.4, 1);
+		-webkit-transform: scale(0.4, 0.4);
+		-moz-transform: scale(0.4, 0.4);
+		-ms-transform: scale(0.4, 0.4);
 	}
 	100% {
-		-webkit-transform: scale3d(0.4, 0.4, 1);
-		-moz-transform: scale3d(0.4, 0.4, 1);
-		-ms-transform: scale3d(0.4, 0.4, 1);
+		-webkit-transform: scale(0.4, 0.4);
+		-moz-transform: scale(0.4, 0.4);
+		-ms-transform: scale(0.4, 0.4);
 	}
 }
 
-@keyframes sapUiBusyAnimationSmall {
+.mixin-small-animation-frames {
 	0%, 100% {
-		-webkit-transform: scale3d(0.3, 0.3, 1);
-		-moz-transform: scale3d(0.3, 0.3, 1);
-		-ms-transform: scale3d(0.3, 0.3, 1);
+		-webkit-transform: scale(0.3, 0.3);
+		-moz-transform: scale(0.3, 0.3);
+		-ms-transform: scale(0.3, 0.3);
 		background: @sapUiLocalBusyIndicatorColor;
 	}
 	50% {
-		-webkit-transform: scale3d(1, 1, 1);
-		-moz-transform: scale3d(1, 1, 1);
-		-ms-transform: scale3d(1, 1, 1);
+		-webkit-transform: scale(1, 1);
+		-moz-transform: scale(1, 1);
+		-ms-transform: scale(1, 1);
 		background: fade(@sapUiLocalBusyIndicatorColor, 10%);
 		box-shadow:  inset 0px 0px 1px 1px fade(@sapUiLocalBusyIndicatorColor, 80%);
 	}
 }
+
+/**
+ * Animations for different browser vendors
+ */
+@keyframes sapUiBusyAnimationStandard { .mixin-standard-animation-frames; }
+@-webkit-keyframes sapUiBusyAnimationStandard { .mixin-standard-animation-frames; }
+@-moz-keyframes sapUiBusyAnimationStandard { .mixin-standard-animation-frames; }
+@-ms-keyframes sapUiBusyAnimationStandard { .mixin-standard-animation-frames; }
+
+@keyframes sapUiBusyAnimationSmall { .mixin-small-animation-frames; }
+@-webkit-keyframes sapUiBusyAnimationSmall { .mixin-small-animation-frames; }
+@-moz-keyframes sapUiBusyAnimationSmall { .mixin-small-animation-frames; }
+@-ms-keyframes sapUiBusyAnimationSmall { .mixin-small-animation-frames; }
