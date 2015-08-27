@@ -346,23 +346,21 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		
 		this._tokenizer.setVisible(true);
 		
-		if (iToken > 1) {
-			// no value is allowed to show in the input when multiline is closed
-			if (this.getValue() !== "") {
-				this.setValue() === "";
-			}
-			
-			var i = 0;
-			for ( i = 0; i < iToken - 1; i++ ) {
-				aTokens[i].setVisible(false);
-			}
-			
-			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			var sSpanText = "<span class=\"sapMMultiInputIndicator\">" + oMessageBundle.getText("MULTIINPUT_SHOW_MORE_TOKENS", iToken - 1) + "</span>";
-			
-			this.$().find(".sapMTokenizer").after(sSpanText);
-
+		// no value is allowed to show in the input when multiline is closed
+		if (this.getValue() !== "") {
+			this.setValue() === "";
 		}
+		
+		var i = 0;
+		for ( i = 0; i < iToken - 1; i++ ) {
+			aTokens[i].setVisible(false);
+		}
+		
+		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var sSpanText = "<span class=\"sapMMultiInputIndicator\">" + oMessageBundle.getText("MULTIINPUT_SHOW_MORE_TOKENS", iToken - 1) + "</span>";
+		
+		this.$().find(".sapMTokenizer").after(sSpanText);
+
 		
 		this._bShowIndicator = true;
 	};
