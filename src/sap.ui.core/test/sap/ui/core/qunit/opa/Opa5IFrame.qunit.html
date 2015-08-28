@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>qUnit Page for sap.ui.test.Opa5 and its IFrame</title>
+
+	<script
+			src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.ui.commons">
+	</script>
+
+	<script>
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		jQuery.sap.require("sap.ui.thirdparty.sinon");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+		sap.ui.require([
+			"sap/ui/test/Opa5"
+		], function (Opa5) {
+				QUnit.module("IFrame getters");
+
+				QUnit.test("Should get the QUnit utils in an IFrame", function(assert) {
+					// Arrange
+					var done = assert.async(),
+						oOpa5 = new Opa5();
+
+					assert.strictEqual(Opa5.getUtils(), null, "Initially null is returned");
+
+					// Act
+					oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
+					oOpa5.waitFor({
+						success: function () {
+							assert.ok(Opa5.getUtils, "IFreame utils are available");
+						}
+					});
+					oOpa5.iTeardownMyAppFrame();
+					oOpa5.waitFor({
+						success: function () {
+							assert.strictEqual(Opa5.getUtils(), null, "After tearing everything down null is returned again");
+						}
+					});
+
+					Opa5.emptyQueue().done(done);
+				});
+			}
+		);
+
+	</script>
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+
+</body>
+</html>
