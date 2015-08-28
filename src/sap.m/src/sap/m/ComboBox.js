@@ -701,6 +701,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 
 				this.bCanNotOpenMessage = false;
 			}
+
+			this.$().addClass("sapMFocus");
 		};
 
 		/**
