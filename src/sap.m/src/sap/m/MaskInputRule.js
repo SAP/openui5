@@ -13,7 +13,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'], function(jQuery, Ele
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The <code>sap.m.MaskInputRule</code> control holds the mapping of one char with its allowed range of chars.
+	 * The <code>sap.m.MaskInputRule</code> control holds the mapping of a single <code>maskFormatSymbol</code>
+	 * to the regular expression <code>regex</code> that defines the allowed characters for the rule.
 	 *
 	 * @author SAP SE
 	 * @extends sap.ui.core.Element
@@ -55,10 +56,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'], function(jQuery, Ele
 	};
 
 	/**
-	 * Sets maskFormatSymbol property.
+	 * Sets <code>maskFormatSymbol</code> property.
 	 * @override
 	 * @param {String} sNewMaskFormatSymbol The new format symbol
-	 * @returns {sap.m.MaskInputRule} this pointer for chaining
+	 * @returns {sap.m.MaskInputRule} The <code>this</code> pointer for chaining
 	 */
 	MaskInputRule.prototype.setMaskFormatSymbol = function (sNewMaskFormatSymbol) {
 		var bIsMaskSymbolValid = validateMaskFormatSymbol.call(this, sNewMaskFormatSymbol);
@@ -70,10 +71,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'], function(jQuery, Ele
 	};
 
 	/**
-	 * Sets regex property.
+	 * Sets <code>regex</code> property.
 	 * @override
-	 * @param {String} sNewRegex The new regex
-	 * @returns {sap.m.MaskInputRule} this pointer for chaining
+	 * @param {String} sNewRegex The new regular expression
+	 * @returns {sap.m.MaskInputRule} The <code>this</code> pointer for chaining
 	 */
 	MaskInputRule.prototype.setRegex = function (sNewRegex) {
 		var bIsRegexValid = validateRegex.call(this, sNewRegex);
@@ -85,8 +86,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'], function(jQuery, Ele
 	};
 
 	/**
-	 * Converts to string representation.
-	 * @returns {String} String representation of this instance.
+	 * Converts the rule into a string.
+	 * @returns {String} String representation of this instance
 	 */
 	MaskInputRule.prototype.toString = function(){
 		return this.getMaskFormatSymbol() + ":" + this.getRegex();
@@ -97,9 +98,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'], function(jQuery, Ele
 	 ********************************************************************************************/
 
 	/**
-	 * Checks if a passed symbol is valid.
+	 * Checks if the specified symbol is valid.
 	 * @param {string} sNewSymbol Symbol to be validated
-	 * @returns {boolean} Whether the passed symbol is valid.
+	 * @returns {boolean} True if the specified symbol is valid, false otherwise
 	 * @private
 	 */
 	function validateMaskFormatSymbol(sNewSymbol) {
@@ -114,9 +115,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'], function(jQuery, Ele
 	}
 
 	/**
-	 * Checks if a passed range of regex is valid.
-	 * @param {String} sRegex The regex string to be validated
-	 * @returns {boolean} Whether the passed regex string is valid
+	 * Checks if the specified regular expression is valid.
+	 * @param {String} sRegex The regular expression string to be validated
+	 * @returns {boolean} True of the specified regular expression string is valid, false otherwise
 	 * @private
 	 */
 	function validateRegex(sRegex) {

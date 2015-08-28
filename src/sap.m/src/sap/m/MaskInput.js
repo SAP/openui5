@@ -14,7 +14,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The <code>sap.m.MaskInput</code> control allows users to more easily enter data in a certain format (dates, times, phone numbers, credit cards, money, IP addresses, MAC addresses and so on) in a fixed width input.
+	 * The <code>sap.m.MaskInput</code> control allows users to easily enter data in a certain format and in a fixed-width input
+	 * (for example: date, time, phone number, credit card number, currency, IP address, MAC address, and others).
 	 *
 	 * @author SAP SE
 	 * @extends sap.m.InputBase
@@ -37,19 +38,19 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 				placeholderSymbol: {type: "string", group: "Misc", defaultValue: "_"},
 
 				/**
-				 * Mask, described by its characters type(thus its length respectively).
-				 * You should have in mind the following important facts:
-				 * 1. The mask characters usually should correspond to an existing rule (one rule per unique char).
-				 * Characters which don't are considered to be immutable character (i.e. mask like "2099", where '9' corresponds to a rule
+				 * Mask defined by its characters type (respectively, by its length).
+				 * You should consider the following important facts:
+				 * 1. The mask characters normally correspond to an existing rule (one rule per unique char).
+				 * Characters which don't, are considered immutable characters (for example, the mask '2099', where '9' corresponds to a rule
 				 * for digits, has the characters '2' and '0' as immutable).
-				 * 2. Adding a rule corresponding to the placeholderSymbol is not recommended and will lead to an unpredictable behaviour.
+				 * 2. Adding a rule corresponding to the <code>placeholderSymbol</code> is not recommended and would lead to an unpredictable behavior.
 				 */
 				mask: {type: "string", group: "Misc", defaultValue: null}
 			},
 			aggregations: {
 
 				/**
-				 * A list of validation rules(one rule per mask symbol).
+				 A list of validation rules (one rule per mask character).
 				 */
 				rules: {type: "sap.m.MaskInputRule", multiple: true, singularName: "rule"}
 			}
@@ -63,7 +64,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	MaskInput.prototype.init = function () {
 		// Stores the caret timeout id for further manipulation (e.g Canceling the timeout)
 		this._iCaretTimeoutId = null;
-		// Stores the first placeholder replaceable position where the user can enter value (immutable characters are ignored)
+		// Stores the first placeholder replaceable position where the user can enter a value (immutable characters are ignored)
 		this._iUserInputStartPosition = null;
 		//Stores the length of the mask
 		this._iMaskLength = null;
@@ -91,10 +92,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	};
 
 	/**
-	 * Handles the internal event onBeforeRendering.
+	 * Handles the internal event <code>onBeforeRendering</code>.
 	 */
 	MaskInput.prototype.onBeforeRendering = function () {
-		/*We need to check if all properties and rules are valid (although current setters validates the input,
+		/*Check if all properties and rules are valid (although current setters validates the input,
 		 because not everything is verified - i.e. modifying an existing rule is not verified in the context of all rules*/
 		var sValidationErrorMsg = validateDependencies.call(this);
 
@@ -105,14 +106,14 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	};
 
 	/**
-	 * Handles the internal event onAfterRendering.
+	 * Handles the internal event <code>onAfterRendering</code>.
 	 */
 	MaskInput.prototype.onAfterRendering = function () {
 		InputBase.prototype.onAfterRendering.apply(this, arguments);
 	};
 
 	/**
-	 * Handles focusin event.
+	 * Handles <code>focusin</code> event.
 	 * @param {object} oEvent The jQuery event
 	 */
 	MaskInput.prototype.onfocusin = function (oEvent) {
@@ -123,7 +124,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	};
 
 	/**
-	 * Handles focusout event.
+	 * Handles <code>focusout</code> event.
 	 * @param {object} oEvent The jQuery event
 	 */
 	MaskInput.prototype.onfocusout = function (oEvent) {
@@ -135,20 +136,19 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 		// remove touch handler from document for mobile devices
 		jQuery(document).off('.sapMIBtouchstart');
 
-		// because dom is replaced during the rendering
-		// onfocusout event is triggered probably focus goes to the document
-		// so we ignore this event that comes during the rendering
+		// Since the DOM is replaced during the rendering, an <code>onfocusout</code> event is fired and possibly the
+		// focus is set on the document, hence you can ignore this event during the rendering.
 		if (this.bRenderingPhase) {
 			return;
 		}
 
-		//close value state message popup when focus is out of the input
+		//close value state message popup when focus is outside the input
 		this.closeValueStateMessage();
 		inputCompletedHandler.call(this);
 	};
 
 	/**
-	 * Handles onInput event.
+	 * Handles <code>onInput</code> event.
 	 * @param {object} oEvent The jQuery event
 	 */
 	MaskInput.prototype.oninput = function (oEvent) {
@@ -158,7 +158,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	};
 
 	/**
-	 * Handles keyPress event.
+	 * Handles <code>keyPress</code> event.
 	 * @param {object} oEvent The jQuery event
 	 */
 	MaskInput.prototype.onkeypress = function (oEvent) {
@@ -166,7 +166,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	};
 
 	/**
-	 * Handles keyDown event.
+	 * Handles <code>keyDown</code> event.
 	 * @param {object} oEvent The jQuery event
 	 */
 	MaskInput.prototype.onkeydown = function (oEvent) {
@@ -207,7 +207,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	/**
 	 * Validates that the rule does not include the currently set placeholder symbol as allowed mask character.
 	 * @param {object} oRule List of regular expressions per mask symbol
-	 * @returns {boolean} Whether the rule is valid.
+	 * @returns {boolean} True if the rule is valid, false otherwise
 	 * @private
 	 */
 	function validateRegexAgainstPlaceHolderSymbol(oRule) {
@@ -222,11 +222,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 * Overrides the method in order to validate the placeholder symbol.
 	 * @param {String} sSymbol The placeholder symbol
 	 * @override
-	 * @returns {sap.ui.base.MaskInput} this pointer for chaining
+	 * @returns {sap.ui.base.MaskInput} <code>this</code> pointer for chaining
 	 */
 	MaskInput.prototype.setPlaceholderSymbol = function (sSymbol) {
 		var bSymbolFound = false;
-		// make sure placeholder symbol is always a single regex supported character
+		// make sure the placeholder symbol is always a single regex supported character
 		if (!/^.$/i.test(sSymbol)) {
 			jQuery.sap.log.error("Invalid placeholder symbol string given");
 			return this;
@@ -251,12 +251,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 * Sets the mask for this instance.
 	 * The mask is mandatory.
 	 * @param {String} sMask The mask
-	 * @returns {sap.m.MaskInput} this pointer for chaining
-	 * @throws {Error} in case the input is not valid
+	 * @returns {sap.m.MaskInput} <code>this</code> pointer for chaining
+	 * @throws {Error} Throws an error if the input is invalid
 	 */
 	MaskInput.prototype.setMask = function (sMask) {
 		if (!sMask) {
-			var sErrorMsg = "Setting empty mask does not make sense. Make sure you set it with a non empty value.";
+			var sErrorMsg = "Setting an empty mask is pointless. Make sure you set it with a non-empty value.";
 			jQuery.sap.log.warning(sErrorMsg);
 			return this;
 		}
@@ -277,13 +277,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 	/**
 	 * Gets a replacement string for the character being placed in the input.
-	 * Sub-classes may override this method in order to get some additional behavior. For instance, switch current input
-	 * character with other for time input purposes like : in 12hours format if the user enters 2 the consumer may use
+	 * Subclasses may override this method in order to get some additional behavior. For instance, switching current input
+	 * character with other for time input purposes. As an example, if the user enters "2" (in 12-hour format), the consumer may use
 	 * this method to replace the input from "2" to "02".
 	 * @param {String} sChar The current character from the input
 	 * @param {integer} iPlacePosition The position the character should occupy
 	 * @param {string} sCurrentInputValue The value currently inside the input field (may differ from the property value)
-	 * @returns {String} A string that replaces the character.
+	 * @returns {String} A string that replaces the character
 	 * @protected
 	 */
 	MaskInput.prototype._feedReplaceChar = function (sChar, iPlacePosition, sCurrentInputValue) {
@@ -326,7 +326,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 	/**
 	 * Checks whether the char array content differs from its original content.
-	 * @returns {boolean} True if different content, false otherwise.
+	 * @returns {boolean} True if different content, false otherwise
 	 * @private
 	 */
 	CharArray.prototype.differsFromOriginal = function () {
@@ -334,8 +334,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	};
 
 	/**
-	 * Checks whether the char array content differs from given string
-	 * @param {string | array} vValue the value to compare the char array with
+	 * Checks whether the char array content differs from given string.
+	 * @param {string | array} vValue The value to compare the char array with
 	 * @returns {boolean} True if different content, false otherwise.
 	 * @private
 	 */
@@ -353,8 +353,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	};
 
 	/**
-	 * Gets the size of the CharArray.
-	 * @returns {int} Number of items in the char array.
+	 * Gets the size of the char array.
+	 * @returns {int} Number of items in the char array
 	 * @private
 	 */
 	CharArray.prototype.getSize = function () {
@@ -363,7 +363,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 	/**
 	 * Encapsulates the work with test rules.
-	 * @param aRules The test rules.
+	 * @param aRules The test rules
 	 * @constructor
 	 * @private
 	 */
@@ -372,8 +372,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	};
 
 	/**
-	 * Finds the next testable position.
-	 * @param {int} iCurrentPos The current position next to which seeking start from (if omitted -1 will be assumed)
+	 * Finds the next testable position in the <code>MaskInput</code>.
+	 * @param {int} iCurrentPos The position next to which seeking starts (if skipped, "-1" will be assumed)
 	 * @returns {int} The found position.
 	 * @private
 	 */
@@ -391,9 +391,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	};
 
 	/**
-	 * Finds the previous testable position in the MaskInput.
-	 * @param {int} iCurrentPos The current position before which seeking starts from
-	 * @returns {int} The found position.
+	 * Finds the previous testable position in the <code>MaskInput</code>.
+	 * @param {int} iCurrentPos The position before which seeking starts
+	 * @returns {int} The found position
 	 * @private
 	 */
 	TestRules.prototype.previous = function (iCurrentPos) {
@@ -407,9 +407,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	};
 
 	/**
-	 * Checks whether there is rule at given index.
+	 * Checks whether there is a rule at the specified index.
 	 * @param {int} iIndex The index of the rule
-	 * @returns {boolean} Whether there is a rule at the specified index.
+	 * @returns {boolean} True, if there is a rule at the specified index, false otherwise
 	 * @private
 	 */
 	TestRules.prototype.hasRuleAt = function (iIndex) {
@@ -417,10 +417,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	};
 
 	/**
-	 * Applies a given rule to a given char.
-	 * @param {String} sChar The character to which a rule will be applied
-	 * @param {integer} iIndex The rule index
-	 * @returns {boolean} True if the char passes the validation rule, false otherwise.
+	 * Applies a rule to a character.
+	 * @param {String} sChar The character to which the rule will be applied
+	 * @param {integer} iIndex The index of the rule
+	 * @returns {boolean} True if the character passes the validation rule, false otherwise.
 	 * @private
 	 */
 	TestRules.prototype.applyCharAt = function (sChar, iIndex) {
@@ -428,7 +428,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	};
 
 	/**
-	 * Set up default mask rules.
+	 * Sets up default mask rules.
 	 * @private
 	 */
 	function setDefaultRules() {
@@ -444,7 +444,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 	/**
 	 * Checks if the dependent properties and aggregations are valid.
-	 * @return {string | null} The errors if any, or false value if no errors.
+	 * @returns {string | null} The errors if any, or false value if no errors
 	 * @private
 	 */
 	function validateDependencies() {
@@ -485,7 +485,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 	/**
 	 * Removes any existing rules with a specific mask symbol.
-	 * @param {string} sSymbol The symbol of MaskInputRule which is to be removed
+	 * @param {string} sSymbol The symbol of <code>MaskInputRule</code> which will be removed
 	 * @private
 	 */
 	function removeRuleWithSymbol(sSymbol) {
@@ -496,17 +496,17 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	}
 
 	/**
-	 * Searches for a particular MaskInputRule by a given symbol.
+	 * Searches for a particular <code>MaskInputRule</code> by a given symbol.
 	 * @param {string} sMaskRuleSymbol The rule symbol to search for
-	 * @param {array} aRules A collection of rules to search in
-	 * @returns {null|object} Two key result (for example, { oRule: {MaskInputRule} The found rule, iIndex: {int} the index of it }).
+	 * @param {array} aRules A collection of rules to search within
+	 * @returns {null|object} Two key results (for example, { oRule: {MaskInputRule} The found rule, iIndex: {int} the index of it })
 	 * @private
 	 */
 	function findRuleBySymbol(sMaskRuleSymbol, aRules) {
 		var oResult = null;
 
 		if (typeof sMaskRuleSymbol !== "string" || sMaskRuleSymbol.length !== 1) {
-			jQuery.sap.log.error(sMaskRuleSymbol + " does not appear to be a valid mask rule symbol");
+			jQuery.sap.log.error(sMaskRuleSymbol + " is not a valid mask rule symbol");
 			return null;
 		}
 
@@ -525,7 +525,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 	/**
 	 * Gets the position range of the selected text.
-	 * @returns {object} An object that contains the start and end positions of the selected text (zero based).
+	 * @returns {object} An object that contains the start and end positions of the selected text (zero based)
 	 * @private
 	 */
 	function getTextSelection() {
@@ -545,7 +545,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	/**
 	 * Places the cursor on a given position (zero based).
 	 * @param {int} iPos The position the cursor to be placed on
-	 * @returns {jQuery} The jQuery object of MaskInput
+	 * @returns {jQuery} The jQuery object of <code>MaskInput</code>
 	 * @private
 	 */
 	function setCursorPosition(iPos) {
@@ -564,7 +564,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	}
 
 	/**
-	 * Setups the mask.
+	 * Sets up the mask.
 	 * @private
 	 */
 	function setupMaskVariables() {
@@ -604,10 +604,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 */
 	function shiftLeft(iFrom, iTo) {
 		var iIndex,
-				iNextApplicableRuleIndex,
-				bCharPassesValidation,
-				sChar,
-				sPlaceholderSymbol = this.getPlaceholderSymbol();
+			iNextApplicableRuleIndex,
+			bCharPassesValidation,
+			sChar,
+			sPlaceholderSymbol = this.getPlaceholderSymbol();
 
 		if (iFrom >= 0) {
 			iNextApplicableRuleIndex = this._oRules.nextTo(iTo);
@@ -666,7 +666,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 	/**
 	 * Resets the temp value with a given range.
-	 * @param {int} iFrom The beginning position to start clearing (optional, zero based, default 0)
+	 * @param {int} iFrom The starting position to start clearing (optional, zero based, default 0)
 	 * @param {int} iTo The ending position to finish clearing (optional, zero based, defaults to last char array index)
 	 * @private
 	 */
@@ -688,7 +688,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 	/**
 	 * Applies rules and updates the DOM input value.
-	 * @param {String} sMaskInputValue MaskInputValue to be applied
+	 * @param {String} sMaskInputValue The input string to which the rules will be applied
 	 * @private
 	 */
 	function applyAndUpdate(sMaskInputValue) {
@@ -707,15 +707,15 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 	/**
 	 * Applies the rules to the given input string and updates char array with the result.
-	 * @param {string} sInput The input string the rules will be applied to
+	 * @param {string} sInput The input string to which the rules will be applied
 	 * @private
 	 */
 	function applyRules(sInput) {
 		var sCharacter,
-				iInputIndex = 0,
-				iMaskIndex,
-				sPlaceholderSymbol = this.getPlaceholderSymbol(),
-				bCharMatched;
+			iInputIndex = 0,
+			iMaskIndex,
+			sPlaceholderSymbol = this.getPlaceholderSymbol(),
+			bCharMatched;
 
 		this._iLastMatch = -1;
 		for (iMaskIndex = 0; iMaskIndex < this._iMaskLength; iMaskIndex++) {
@@ -751,8 +751,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	}
 
 	/**
-	 * Handles onKeyPress event.
-	 * @param {jQuery.event} oEvent jQuery event object
+	 * Handles <code>onKeyPress</code> event.
+	 * @param {jQuery.event} oEvent The jQuery event object
 	 * @private
 	 */
 	function keyPressHandler(oEvent) {
@@ -770,9 +770,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 		}
 
 		if (!oKey.bEnter && !oKey.bShiftLeftOrRightArrow && !oKey.bHome && !oKey.bEnd &&
-				!(oKey.bShift && oKey.bDelete) &&
-				!(oKey.bCtrlKey && oKey.bInsert) &&
-				!(oKey.bShift && oKey.bInsert)) {
+			!(oKey.bShift && oKey.bDelete) &&
+			!(oKey.bCtrlKey && oKey.bInsert) &&
+			!(oKey.bShift && oKey.bInsert)) {
 			if (oSelection.bHasSelection) {
 				resetTempValue.call(this, oSelection.iFrom, oSelection.iTo - 1);
 				shiftLeft.call(this, oSelection.iFrom, oSelection.iTo - 1);
@@ -788,8 +788,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	}
 
 	/**
-	 * Handles onKeyDown event.
-	 * @param {jQuery.event} oEvent jQuery event object
+	 * Handles <code>onKeyDown</code> event.
+	 * @param {jQuery.event} oEvent The jQuery event object
 	 * @private
 	 */
 	function keyDownHandler(oEvent) {
@@ -819,8 +819,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 			inputCompletedHandler.call(this, oEvent);
 
 		} else if ((oKey.bShift && oKey.bDelete) ||
-				(oKey.bCtrlKey && oKey.bInsert) ||
-				(oKey.bShift && oKey.bInsert)) {
+			(oKey.bCtrlKey && oKey.bInsert) ||
+			(oKey.bShift && oKey.bInsert)) {
 			InputBase.prototype.onkeydown.apply(this, arguments);
 
 		} else if (oKey.bDelete || oKey.bBackspace) {
@@ -924,7 +924,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 * Parses the keyboard events.
 	 * @param {object} oEvent
 	 * @private
-	 * @returns {object} Summary object with information about the pressed keys. For example: {{iCode: (*|oEvent.keyCode), sChar: (string|*), bCtrlKey: boolean, bAltKey: boolean, bMetaKey: boolean,
+	 * @returns {object} Summary object with information about the pressed keys, for example: {{iCode: (*|oEvent.keyCode), sChar: (string|*), bCtrlKey: boolean, bAltKey: boolean, bMetaKey: boolean,
 	 * bShift: boolean, bBackspace: boolean, bDelete: boolean, bEscape: boolean, bEnter: boolean, bIphoneEscape: boolean,
 	 * bArrowRight: boolean, bArrowLeft: boolean, bHome: boolean, bEnd: boolean, bShiftLeftOrRightArrow: boolean,
 	 * bBeforeSpace: boolean}}
@@ -960,8 +960,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 	/**
 	 * Positions the caret or selects the whole input.
-	 * @param {boolean} bSelectAllIfInputIsCompleted If true selects the whole input if it is fully completed,
-	 * otherwise always moves the caret to the first placeholder position
+	 * @param {boolean} bSelectAllIfInputIsCompleted If true, selects the whole input if it is fully completed,
+	 * or otherwise, always moves the caret to the first placeholder position
 	 */
 	function positionCaret(bSelectAllIfInputIsCompleted) {
 		var sMask = this.getMask(),

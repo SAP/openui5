@@ -55,7 +55,7 @@
 			ok(oSetterSpy.notCalled, "Invalid placeholder symbol is not accepted");
 			equal(oWarningSpy.calledOnce, true, "Log warning method called");
 			equal(oWarningSpy.getCall(0).args[0],
-					"Setting empty mask does not make sense. Make sure you set it with a non empty value.",
+					"Setting an empty mask is pointless. Make sure you set it with a non-empty value.",
 					"Verify the exact warning");
 		});
 
