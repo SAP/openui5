@@ -1,0 +1,34 @@
+<mvc:View
+		controllerName="sap.ui.demo.bulletinboard.controller.Post"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:semantic="sap.m.semantic">
+	<semantic:FullscreenPage
+			id="page"
+			navButtonPress="onNavBack"
+			showNavButton="true"
+			title="{i18n>objectTitle}">
+		<semantic:content>
+			<IconTabBar id="iconTabBar"
+						expanded="{device>/isNoPhone}"
+						class="sapUiResponsiveContentPadding">
+				<items>
+					<IconTabFilter icon="sap-icon://hint" key="info">
+						<ObjectHeader
+								id="objectHeader"
+								title="{Title}"
+								number="{Price}"
+								numberUnit="{Currency}">
+						</ObjectHeader>
+					</IconTabFilter>
+					<IconTabFilter icon="sap-icon://inspection" key="statistics">
+						<Text text="Viewed 55555 times" id="viewCounter"/>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+		</semantic:content>
+		<semantic:sendEmailAction>
+			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+		</semantic:sendEmailAction>
+	</semantic:FullscreenPage>
+</mvc:View>
