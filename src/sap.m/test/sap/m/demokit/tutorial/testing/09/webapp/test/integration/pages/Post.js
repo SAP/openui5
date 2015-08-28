@@ -26,19 +26,15 @@ sap.ui.require([
 				assertions: {
 					theTitleShouldDisplayTheName: function (sName) {
 						return this.waitFor({
-							success: function () {
-								return this.waitFor({
-									id: "objectHeader",
-									viewName: sViewName,
-									matchers: new Properties({
-										title: sName
-									}),
-									success: function (oPage) {
-										Opa5.assert.ok(true, "was on the remembered detail page");
-									},
-									errorMessage: "The Post " + sName + " is not shown"
-								});
-							}
+							id: "objectHeader",
+							viewName: sViewName,
+							matchers: new Properties({
+								title: sName
+							}),
+							success: function (oPage) {
+								Opa5.assert.ok(true, "was on the remembered detail page");
+							},
+							errorMessage: "The Post " + sName + " is not shown"
 						});
 					}
 				}
