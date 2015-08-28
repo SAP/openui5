@@ -273,24 +273,24 @@
 
 		test("ScrollbarSize", function () {
 			var size = jQuery.sap.scrollbarSize(true);
-			ok(size, "No size for scroll bar returned")
-			ok(size.width, "No width for scroll bar returned");
-			ok(size.height, "No height for scroll bar returned");
+			ok(size, "No size for scroll bar returned");
+			ok(typeof size.width === "number", "No width for scroll bar returned");
+			ok(typeof size.height === "number", "No height for scroll bar returned");
 
 			var size = jQuery.sap.scrollbarSize(null, true);
-			ok(size, "No size for scroll bar returned")
-			ok(size.width, "No width for scroll bar returned");
-			ok(size.height, "No height for scroll bar returned");
+			ok(size, "No size for scroll bar returned");
+			ok(typeof size.width === "number", "No width for scroll bar returned");
+			ok(typeof size.height === "number", "No height for scroll bar returned");
 
 			var size = jQuery.sap.scrollbarSize("someclass", true);
-			ok(size, "No size for scroll bar returned")
-			ok(size.width, "No width for scroll bar returned");
-			ok(size.height, "No height for scroll bar returned");
+			ok(size, "No size for scroll bar returned");
+			ok(typeof size.width === "number", "No width for scroll bar returned");
+			ok(typeof size.height === "number", "No height for scroll bar returned");
 
 			var size = jQuery.sap.scrollbarSize("someclass");
-			ok(size, "No size for scroll bar returned")
-			ok(size.width, "No width for scroll bar returned");
-			ok(size.height, "No height for scroll bar returned");
+			ok(size, "No size for scroll bar returned");
+			ok(typeof size.width === "number", "No width for scroll bar returned");
+			ok(typeof size.height === "number", "No height for scroll bar returned");
 		});
 
 		test("disableSelection", function() {
