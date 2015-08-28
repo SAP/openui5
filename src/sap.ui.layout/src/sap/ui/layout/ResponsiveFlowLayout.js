@@ -502,7 +502,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			this._oDomRef = this.getDomRef();
 			if (this._oDomRef) {
 				var sId = this.getId();
-				var iInnerWidth = this._oDomRef.offsetWidth;
+				var iInnerWidth = jQuery(this._oDomRef).width(); //width without the padding
 				var bRender = false;
 
 				if (this._rows) {
