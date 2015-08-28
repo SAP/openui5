@@ -1,0 +1,79 @@
+<mvc:View
+		controllerName="sap.ui.demo.bulletinboard.controller.Worklist"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:semantic="sap.m.semantic">
+	<semantic:FullscreenPage
+			id="page"
+			title="{i18n>worklistViewTitle}">
+		<semantic:content>
+			<Table
+					id="table"
+					width="auto"
+					class="sapUiResponsiveMargin"
+					growing="true"
+					items="{
+					path: '/Posts',
+					sorter: {
+						path: 'Title',
+						descending: false
+						}
+					}"
+					noDataText="{i18n>tableNoDataText}"
+					busyIndicatorDelay="{worklistView>/tableBusyDelay}"
+					updateFinished="onUpdateFinished">
+				<headerToolbar>
+					<Toolbar>
+						<Label id="tableHeader" text="{worklistView>/worklistTableTitle}"/>
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<Column width="33%" id="nameColumn" vAlign="Middle">
+						<Text text="{i18n>TableNameColumnTitle}" id="nameColumnTitle"/>
+					</Column>
+					<Column width="33%" id="categoryColumn" vAlign="Middle">
+						<Text text="{i18n>TableCategoryColumnTitle}" id="categoryColumnTitle"/>
+					</Column>
+					<Column width="33%" id="unitNumberColumn" hAlign="End" vAlign="Middle">
+						<Text text="{i18n>TableUnitNumberColumnTitle}" id="unitNumberColumnTitle"/>
+					</Column>
+					<Column width="80px" id="flaggedColumn" demandPopin="true"/>
+				</columns>
+				<items>
+					<ColumnListItem
+							type="Navigation"
+							press="onPress">
+						<cells>
+							<ObjectIdentifier
+									title="{Title}"/>
+							<Text
+									text="{Category}"/>
+							<ObjectNumber
+									number="{
+										path: 'Price',
+										formatter: '.formatter.numberUnit'
+									}"
+									state="{
+										path: 'Price',
+										formatter: '.formatter.priceState'
+									}"
+									unit="{Currency}"/>
+							<ToggleButton
+									id="flaggedButton"
+									tooltip="{i18n>flaggedTooltip}"
+									icon="sap-icon://flag"
+									pressed="{
+										path: 'Flagged',
+										type: '.types.flagged'
+									}"
+									class="sapUiMediumMarginBeginEnd"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</semantic:content>
+		<semantic:sendEmailAction>
+			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+		</semantic:sendEmailAction>
+	</semantic:FullscreenPage>
+</mvc:View>

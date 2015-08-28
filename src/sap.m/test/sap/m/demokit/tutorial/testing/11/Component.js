@@ -2,12 +2,12 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function (UIComponent) {
 		"use strict";
 
-		var Component = UIComponent.extend("sap.m.tutorial.testing.10.Component", {
+		var Component = UIComponent.extend("sap.m.tutorial.testing.11.Component", {
 
 			metadata: {
 				config: {
 					sample: {
-						iframe: "webapp/test/testsuite.qunit.html",
+						iframe: "webapp/test/integration/opaTest.qunit.html",
 						stretch: true,
 						files: [
 							"webapp/controller/App.controller.js",
