@@ -218,19 +218,19 @@
 		module("Basic");
 		
 		test("Default Storage", function(){
-			testStorage(null, null, SUPPORTED_CHECK_EXPECT_SUPPORT);
+			testStorage(null, null, sap.ui.Device.os.ios ? SUPPORTED_CHECK_INACTIVE : SUPPORTED_CHECK_EXPECT_SUPPORT);
 		});
 		
 		test("Session Storage", function(){
-			testStorage(jQuery.sap.storage.Type.session, "myprefix", SUPPORTED_CHECK_EXPECT_SUPPORT);
+			testStorage(jQuery.sap.storage.Type.session, "myprefix", sap.ui.Device.os.ios ? SUPPORTED_CHECK_INACTIVE : SUPPORTED_CHECK_EXPECT_SUPPORT);
 		});
 		
 		test("Local Storage", function(){
-			testStorage(jQuery.sap.storage.Type.local, "myprefix", SUPPORTED_CHECK_EXPECT_SUPPORT);
+			testStorage(jQuery.sap.storage.Type.local, "myprefix", sap.ui.Device.os.ios ? SUPPORTED_CHECK_INACTIVE : SUPPORTED_CHECK_EXPECT_SUPPORT);
 		});
 		
 		test("Global Storage", function(){
-			testStorage(jQuery.sap.storage.Type.global, "myprefix", SUPPORTED_CHECK_EXPECT_NO_SUPPORT);
+			testStorage(jQuery.sap.storage.Type.global, "myprefix", sap.ui.Device.os.ios ? SUPPORTED_CHECK_INACTIVE : SUPPORTED_CHECK_EXPECT_NO_SUPPORT);
 		});
 		
 		test("Custom Storage", function(){
