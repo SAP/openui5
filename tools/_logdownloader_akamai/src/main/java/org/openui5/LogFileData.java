@@ -26,12 +26,13 @@ class LogFileData {
 	int getstartedHits;
 	int demokitHits;
 	int coreHits;
+	int versionedCoreHits;
 	int ipCounter;
 	Map<String,Integer> coreVersions;
 
 	public LogFileData(Date date, int runtimeDownloads,
 			int mobileDownloads, int sdkDownloads, int githubHits,
-			int blogHits, int referencesHits, int featuresHits, int getstartedHits, int demokitHits, int coreHits, int ipCounter, Map<String,Integer> coreVersions) {
+			int blogHits, int referencesHits, int featuresHits, int getstartedHits, int demokitHits, int coreHits, int versionedCoreHits, int ipCounter, Map<String,Integer> coreVersions) {
 		super();
 
 		int day = date.getDate();
@@ -52,6 +53,7 @@ class LogFileData {
 		this.getstartedHits = getstartedHits;
 		this.demokitHits = demokitHits;
 		this.coreHits = coreHits;
+		this.versionedCoreHits = versionedCoreHits;
 		this.ipCounter = ipCounter;
 		this.coreVersions = coreVersions;
 	}
@@ -100,6 +102,7 @@ class LogFileData {
 				obj.getInt("getstartedHits"),
 				obj.getInt("demokitHits"),
 				obj.getInt("coreHits"),
+				obj.getInt("versionedCoreHits"),
 				obj.getInt("ipCounter"),
 				coreVersions);
 		return data;
@@ -139,6 +142,9 @@ class LogFileData {
 	public int getCoreHits() {
 		return coreHits;
 	}
+	public int getVersionedCoreHits() {
+		return versionedCoreHits;
+	}
 	public int getIpCounter() {
 		return ipCounter;
 	}
@@ -151,7 +157,7 @@ class LogFileData {
 	public String toString() {
 		// the result string for a line in the CSV file
 		String coreVersionsString = stringifyMap(coreVersions);
-		String csvText = getDDMMYYYY_WithDots() + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + ";" + referencesHits + ";" + featuresHits + ";" + getstartedHits + ";" + coreHits + ";" + coreVersionsString;
+		String csvText = getDDMMYYYY_WithDots() + ";" + runtimeDownloads + ";" + mobileDownloads + ";" + sdkDownloads + ";" + githubHits + ";" + demokitHits + ";" + blogHits + ";" + ipCounter + ";" + referencesHits + ";" + featuresHits + ";" + getstartedHits + ";" + coreHits + ";" + versionedCoreHits + ";" + coreVersionsString;
 		return csvText;
 	}
 	
@@ -183,6 +189,7 @@ class LogFileData {
 		this.getstartedHits += other.getstartedHits;
 		this.demokitHits += other.demokitHits;
 		this.coreHits += other.coreHits;
+		this.versionedCoreHits += other.versionedCoreHits;
 		this.ipCounter = Math.max(this.ipCounter, other.ipCounter);
 		
 		Map<String,Integer> otherCoreVersions = other.getCoreVersions(); // merge and sum up version maps
