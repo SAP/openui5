@@ -21,7 +21,8 @@
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<script>
@@ -56,27 +57,26 @@
 		}
 
 		function getDelegate(mLog) {
-			var oDelegate = {
-				onBeforeFirstShow: function(evt) {
+			return {
+				onBeforeFirstShow: function (evt) {
 					mLog.beforeFirstShow++;
 				},
-				onBeforeShow: function(evt) {
+				onBeforeShow: function (evt) {
 					mLog.beforeShow++;
 					mLog.data = evt.data;
 					mLog.backData = evt.backData;
 				},
-				onAfterShow: function(evt) {
+				onAfterShow: function (evt) {
 					mLog.afterShow++;
 				},
-				onBeforeHide: function(evt) {
+				onBeforeHide: function (evt) {
 					mLog.beforeHide++;
 				},
-				onAfterHide: function(evt) {
+				onAfterHide: function (evt) {
 					mLog.afterHide++;
 				}
-			}
-			return oDelegate;
-		};
+			};
+		}
 
 
 		var nc = new sap.m.NavContainer("myNC",{
@@ -155,7 +155,76 @@
 			ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
+		module("AutoFocus tests", {
+			setup: function () {
+				this.sinon = sinon.sandbox.create();
+				this.spy = this.sinon.spy(sap.m.NavContainer, "_applyAutoFocusTo");
+				this.pageId = "someId";
+			},
+			teardown: function () {
+				this.sinon.restore();
+			}
+		});
 
+		test("Auto focus enabled", function (assert) {
+			this.sinon.stub(nc, "getAutoFocus").returns(true);
+
+			nc._applyAutoFocus({
+				isTo: true,
+				toId: this.pageId
+			});
+
+			assert.ok(this.spy.calledWith(this.pageId));
+
+			this.spy.reset();
+
+			nc._applyAutoFocus({
+				isBack: true,
+				toId: this.pageId
+			});
+
+			assert.ok(this.spy.calledWith(this.pageId));
+
+			this.spy.reset();
+
+			nc._applyAutoFocus({
+				isBackToPage: true,
+				toId: this.pageId
+			});
+
+			assert.ok(this.spy.calledWith(this.pageId));
+
+			this.spy.reset();
+
+			nc._applyAutoFocus({
+				isBackToTop: true,
+				toId: this.pageId
+			});
+
+			assert.ok(this.spy.calledWith(this.pageId));
+
+			this.spy.reset();
+
+			nc._applyAutoFocus({
+				isTo: false,
+				toId: this.pageId
+			});
+
+			assert.ok(!this.spy.calledWith(this.pageId));
+		});
+
+		test("Auto focus disabled", function (assert) {
+			this.sinon.stub(nc, "getAutoFocus").returns(false);
+			nc._applyAutoFocus({
+				isTo: true,
+				toId: this.pageId,
+				isBack: true,
+				isBackToTop: true,
+				isBackToPage: true
+			});
+
+			assert.ok(!this.spy.calledWith(this.pageId));
+		});
 
 		module("Page change");
 
