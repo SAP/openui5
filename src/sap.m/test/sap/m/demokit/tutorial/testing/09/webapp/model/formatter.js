@@ -20,18 +20,24 @@ sap.ui.define([
 		},
 
 		/**
-		 * Formats the integer value from the model to a boolean for the pressed state of the flagged button
+		 * Defines a value state based on the price
 		 *
 		 * @public
-		 * @param {string} iFlagged the integer value from the model
-		 * @returns {boolean} bValue converted to boolean
+		 * @param {number} iPrice the price of a post
+		 * @returns {string} sValue the state for the price
 		 */
-		flagged: function (iFlagged) {
-			if (iFlagged === 1) {
-				return true;
+		priceState: function (iPrice) {
+			if (iPrice < 50) {
+				return "Success";
+			} else if (iPrice >= 50 && iPrice < 250 ) {
+				return "None";
+			} else if (iPrice >= 250 && iPrice < 2000 ) {
+				return "Warning";
+			} else {
+				return "Error";
 			}
-			return false;
 		}
+
 	};
 
 });
