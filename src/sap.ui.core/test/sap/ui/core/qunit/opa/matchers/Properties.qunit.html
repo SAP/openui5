@@ -1,79 +1,76 @@
 <!DOCTYPE HTML>
 <html>
 
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>qUnit Page for sap.ui.test.matchers.Properties</title>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="utf-8" />
+		<title>qUnit Page for sap.ui.test.matchers.Properties</title>
 
-<script
-	src="../../../../../../../resources/sap-ui-core.js"
-	data-sap-ui-libs="sap.ui.commons">
-</script>
-
-
-<script>
-(function () {
-	jQuery.sap.require("sap.ui.qunit.qunit-css");
-	jQuery.sap.require("sap.ui.thirdparty.qunit");
-	jQuery.sap.require("sap.ui.qunit.qunit-junit");
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	jQuery.sap.require("sap.ui.test.matchers.Properties");
-
-	jQuery.sap.require("sap.ui.commons.Button");
-
-	module("Properties", {
-		setup : function(){
-			this.oButton = new sap.ui.commons.Button({
-				text : "text to test",
-				enabled : true
-			});
-		},
-		teardown : function(){
-			this.oButton.destroy();
-		}
-	});
-
-	test("With existing multiple properties", function() {
-
-		var bResult = new sap.ui.test.matchers.Properties({
-			text : "text to test",
-			enabled : true
-		})(this.oButton);
-		strictEqual(bResult, true, "Should match equal properties");
-
-		bResult = new sap.ui.test.matchers.Properties({
-			text : "text to test",
-			enabled : false
-		})(this.oButton);
-		strictEqual(bResult, false, "Should not match non-equal properties");
-	});
-
-	test("With non-existing properties", function() {
-		var bResult = new sap.ui.test.matchers.Properties({
-			text : "text to test",
-			notExistingProperty : "not existing value"
-		})(this.oButton);
-		strictEqual(bResult, false, "Should not match non-existing properties");
-	});
-
-	test("With regexp", function() {
-		var bResult = new sap.ui.test.matchers.Properties({
-			text : /test/i
-		})(this.oButton);
-		strictEqual(bResult, true, "Should match regexp");
-	});
+		<script
+			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.ui.commons">
+		</script>
 
 
-} ());
-</script>
-</head>
-<body>
-	<h1 id="qunit-header">qUnit Page for sap.ui.test.matchers.Properties</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<div id="qunit-fixture"></div>
+		<script>
+			(function () {
+				jQuery.sap.require("sap.ui.qunit.qunit-css");
+				jQuery.sap.require("sap.ui.thirdparty.qunit");
+				jQuery.sap.require("sap.ui.qunit.qunit-junit");
+				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+				jQuery.sap.require("sap.ui.test.matchers.Properties");
 
-</body>
+				jQuery.sap.require("sap.ui.commons.Button");
+
+				module("Properties", {
+					setup : function(){
+						this.oButton = new sap.ui.commons.Button({
+							text : "text to test",
+							enabled : true
+						});
+					},
+					teardown : function(){
+						this.oButton.destroy();
+					}
+				});
+
+				test("With existing multiple properties", function() {
+
+					var bResult = new sap.ui.test.matchers.Properties({
+						text : "text to test",
+						enabled : true
+					})(this.oButton);
+					strictEqual(bResult, true, "Should match equal properties");
+
+					bResult = new sap.ui.test.matchers.Properties({
+						text : "text to test",
+						enabled : false
+					})(this.oButton);
+					strictEqual(bResult, false, "Should not match non-equal properties");
+				});
+
+				test("With non-existing properties", function() {
+					var bResult = new sap.ui.test.matchers.Properties({
+						text : "text to test",
+						notExistingProperty : "not existing value"
+					})(this.oButton);
+					strictEqual(bResult, false, "Should not match non-existing properties");
+				});
+
+				test("With regexp", function() {
+					var bResult = new sap.ui.test.matchers.Properties({
+						text : /test/i
+					})(this.oButton);
+					strictEqual(bResult, true, "Should match regexp");
+				});
+
+			} ());
+		</script>
+	</head>
+
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+
 </html>
