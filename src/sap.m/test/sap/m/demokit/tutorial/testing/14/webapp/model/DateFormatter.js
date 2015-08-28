@@ -2,33 +2,50 @@ sap.ui.define([ "sap/ui/base/Object", "sap/ui/core/format/DateFormat" ],
 	function(Object, DateFormat) {
 
 		return Object.extend("sap.ui.demo.bulletinboard.model.DateFormatter", {
-			constructor : function(properties) {
+			/**
+			 * Formatter for human readable dates.
+			 *
+			 * @param {object} oProperties an object containing the dependencies
+			 * @param {object} oProperties.now the current date
+			 * @param {object} [oProperties.locale] the locale the date should be formatted with - if it is skipped the current locale of the user is taken
+			 */
+			constructor : function(oProperties) {
 				this.timeFormat = DateFormat.getTimeInstance({
 					style : "short"
-				}, properties.locale);
+				}, oProperties.locale);
 				this.weekdayFormat = DateFormat.getDateInstance({
 					pattern : "EEEE"
-				}, properties.locale);
+				}, oProperties.locale);
 				this.dateFormat = DateFormat.getDateInstance({
 					style : "medium"
-				}, properties.locale);
+				}, oProperties.locale);
 
-				this.now = properties.now;
+				this.now = oProperties.now;
 			},
 
-			format : function(date) {
-				if (!date) {
+			/**
+			 * Formats a date into something readable
+			 * today - a time format
+			 * yesterday - Yesterday
+			 * day of the current week - eg: Wednesday
+			 * older dates - date formatted with the locale
+			 *
+			 * @param {date} oDate the date to be formatted
+			 * @returns {string} The formatted date
+			 */
+			format : function(oDate) {
+				if (!oDate) {
 					return "";
 				}
-				var iElapsedDays = this._getElapsedDays(date);
+				var iElapsedDays = this._getElapsedDays(oDate);
 				if (iElapsedDays === 0) {
-					return this.timeFormat.format(date);
+					return this.timeFormat.format(oDate);
 				} else if (iElapsedDays === 1) {
 					return "Yesterday";
 				} else if (iElapsedDays < 7) {
-					return this.weekdayFormat.format(date);
+					return this.weekdayFormat.format(oDate);
 				} else {
-					return this.dateFormat.format(date);
+					return this.dateFormat.format(oDate);
 				}
 			},
 
