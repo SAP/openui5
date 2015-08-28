@@ -78,15 +78,27 @@
 					"pattern": "",
 					"name": "worklist",
 					"target": "worklist"
+				},
+				{
+					"pattern": "Post/{postId}",
+					"name": "post",
+					"target": "post"
 				}
+
 			],
 			"targets": {
 				"worklist": {
 					"viewName": "Worklist",
 					"viewId": "worklist",
 					"viewLevel": 1
+				},
+				"post": {
+					"viewName": "Post",
+					"viewId": "post",
+					"viewLevel": 2
 				}
 			}
+
 		}
 	}
 }
