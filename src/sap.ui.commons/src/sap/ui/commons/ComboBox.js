@@ -11,12 +11,13 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 	/**
 	 * Constructor for a new ComboBox.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 *
-	 * The control provides a field that allows end users to either enter some text, or to choose an entry out of a list of pre-defined items. The choosable items can be provided in the form of complete list boxes, single listbox items, or text strings defined for the current application.
+	 * The control provides a field that allows end users to either enter some text, or to choose an entry out of a list of pre-defined items.
+	 * The choosable items can be provided in the form of a complete <code>ListBox</code>, single <code>ListItems</code>.
 	 * @extends sap.ui.commons.TextField
 	 * @implements sap.ui.commons.ToolbarItem
 	 *
@@ -38,26 +39,30 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 
 			/**
 			 *
-			 * Defines the number of items that shall be displayed at once. If the overall number of list items is higher than the setting, a scrollbar is provided.
+			 * Defines the number of items that shall be displayed at once. If the overall number of items is higher than this setting, a scrollbar is provided.
 			 */
 			maxPopupItems : {type : "int", group : "Behavior", defaultValue : 10},
 
 			/**
-			 * Indicates whether the "additionalText" property that is available for sap.ui.core.ListItem shall be displayed in the list.
+			 * Indicates whether the <code>additionalText</code> property that is available for <code>sap.ui.core.ListItem</code> shall be displayed in the list.
 			 */
 			displaySecondaryValues : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
 			 * Key of the selected item.
+			 *
 			 * If the value has no corresponding item the key is empty.
+			 *
 			 * If duplicate keys exists the first item matching the key is used.
+			 *
 			 * If the key is set to a not existing value it will not be changed.
 			 */
 			selectedKey : {type : "string", group : "Data", defaultValue : null},
 
 			/**
-			 * Id of Selected item. If the value has no corresponding item, the selected item id is empty.
-			 * If the selected item id is set to an not existing item, it will not be changed.
+			 * Id of the selected item. If the value has no corresponding item, the <code>selectedItemId</code> is empty.
+			 *
+			 * If the <code>selectedItemId</code> is set to an not existing item, it will not be changed.
 			 */
 			selectedItemId : {type : "string", group : "Data", defaultValue : null}
 		},
@@ -65,22 +70,22 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		aggregations : {
 
 			/**
-			 *
-			 * Getter for aggregation items. Allows setting ListItems (see sap.ui.core.ListBox) that shall be displayed in the list.
+			 * <code>ListItems</code> (see <code>sap.ui.core.ListBox</code>) that shall be displayed in the list.
 			 */
 			items : {type : "sap.ui.core.ListItem", multiple : true, singularName : "item", bindable : "bindable"},
 
 			/**
-			 *
-			 * The hidden ListBox which is only used when no shared ListBox is set via association listBox
+			 * The hidden <code>ListBox</code> which is only used when no shared <code>ListBox</code> is set via association listBox
 			 */
 			myListBox : {type : "sap.ui.commons.ListBox", multiple : false, visibility : "hidden"}
 		},
 		associations : {
 
 			/**
-			 * Using this method, you provide a listbox control. This allows reuse of item lists in different controls. Either a control id can be used as new target, or a control instance.
-			 * The ListBox must not be rendered somewhere in the UI. But if you want to bind the ListBox Items to a model it must be in the control tree. So we suggest to add it as dependent somewhere (e.g. to the view or the first used ComboBox). If it is not set as child or dependant to an other control it will be automatically set as dependent to the first ComboBox where it is assigned.
+			 * Using this method, you provide a <code>ListBox</code> control. This allows reuse of item lists in different controls. Either a control id can be used as new target, or a control instance.
+			 *
+			 * <b>Note:</b> The ListBox must not be rendered somewhere in the UI. But if you want to bind the <code>ListBox</code> items to a model it must be in the control tree.
+			 * So we suggest to add it as dependent somewhere (e.g. to the view or the first used <code>ComboBox</code>). If it is not set as child or dependant to an other control it will be automatically set as dependent to the first ComboBox where it is assigned.
 			 */
 			listBox : {type : "sap.ui.commons.ListBox", multiple : false}
 		}
@@ -264,9 +269,9 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 			this._iClosedUpDownIdx = this.indexOfItem(oItem);
 			var oListBox = this._getListBox();
 			oListBox.setSelectedIndex(this._iClosedUpDownIdx);
-			jQuery(this.getInputDomRef()).attr("aria-posinset", this._iClosedUpDownIdx + 1);
+			this._updatePosInSet( null, this._iClosedUpDownIdx + 1, oItem.getAdditionalText());
 		} else {
-			jQuery(this.getInputDomRef()).removeAttr("aria-posinset");
+			this._updatePosInSet( null, -1, null);
 			this._iClosedUpDownIdx = -1;
 		}
 
@@ -433,7 +438,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 			// standard behavior of TextField
 			TextField.prototype.onkeypress.apply(this, arguments);
 			if (iKC !== oKC.ESCAPE) {
-				jQuery(this.getInputDomRef()).removeAttr("aria-posinset");
+				this._updatePosInSet( null, -1, null);
 			}
 		}
 		// Do not cancel the event as this would prevent typing in the field.
@@ -596,7 +601,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 			oItem = aItems[i];
 			oText = "" + oItem.getText();
 			if (startsWith(oText, oValue) && oItem.getEnabled()) {
-				$Ref.attr("aria-posinset", i + 1);
+				this._updatePosInSet( $Ref, i + 1, oItem.getAdditionalText());
 				$Ref.val(oText);
 				this._doSelect(oValue.length, oText.length);
 
@@ -613,7 +618,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		oLB.clearSelection();
 		oLB.scrollToIndex(i, true);
 		if (!bFound) {
-			$Ref.removeAttr("aria-posinset");
+			this._updatePosInSet( $Ref, -1, null);
 			if (this.mobile) {
 				this._addDummyOption(oValue);
 			}
@@ -686,7 +691,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 			if (this._determinePosinset) {
 				iPos = this._determinePosinset(aItems, iNewIdx); //in DropdownBox separators must be removed from Posinset
 			}
-			$Ref.attr("aria-posinset", iPos);
+			this._updatePosInSet( $Ref, iPos, oItem.getAdditionalText());
 			$Ref.val(oText);
 			this._doSelect();
 			this._fireLiveChange(oEvent);
@@ -944,7 +949,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		if (iIndex >= 0) {
 			// ensure to mark pending only when set new
 			this._iClosedUpDownIdx = iIndex;
-			$Ref.attr("aria-posinset", iIndex + 1);
+			this._updatePosInSet( $Ref, iIndex + 1, oItem.getAdditionalText());
 			$Ref.val(oNewValue);
 			this._doSelect();
 			var oEvent = new jQuery.Event("sapshow"); // use sapshow event for live change (AutoComplete needs an event here)
@@ -1042,7 +1047,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 			var sNewValue = oItem.getText();
 			this._iClosedUpDownIdx = iSelected;
 			this._close(); // to allow DropdownBox to set this._iClosedUpDownIdx in _cleanupClose
-			jQuery(this.getInputDomRef()).attr("aria-posinset", this._getListBox().getSelectedIndex() + 1);
+			this._updatePosInSet( null, this._getListBox().getSelectedIndex() + 1, oItem.getAdditionalText());
 			var sOldValue = this.getValue();
 			var sOldKey = this.getSelectedKey();
 			var sNewKey = oItem.getKey();
@@ -1191,7 +1196,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		}
 		var sSelectedKey = this.getSelectedKey();
 		var sSelectedItemId = this.getSelectedItemId();
-		var sNewKey, sNewId, sNewValue;
+		var sNewKey, sNewId, sNewValue, sNewAdditionalText;
 		var sValue = this.getValue();
 		var iIndex = -1;
 		var bFoundByKey = false;
@@ -1218,6 +1223,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 				sNewKey = oItem.getKey();
 				sNewId = oItem.getId();
 				sNewValue = oItem.getText();
+				sNewAdditionalText = oItem.getAdditionalText();
 				iIndex = i;
 				this._sWantedSelectedKey = undefined;
 				this._sWantedSelectedItemId = undefined;
@@ -1228,6 +1234,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 				sNewKey = sSelectedKey;
 				sNewId = oItem.getId();
 				sNewValue = oItem.getText();
+				sNewAdditionalText = oItem.getAdditionalText();
 				iIndex = i;
 
 				if (sNewValue == sValue && sNewId == sSelectedItemId
@@ -1245,6 +1252,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 				sNewKey = oItem.getKey();
 				sNewId = sSelectedItemId;
 				sNewValue = oItem.getText();
+				sNewAdditionalText = oItem.getAdditionalText();
 				iIndex = i;
 			} else if (oItem.getText() == sValue && oItem.getEnabled() && !(bFoundByKey && !bBoundValue) && !(bFoundById && !bBoundValue) && !bFoundByValue) {
 				// if not a WantedKey or Id is used and not found by key or ID, search for Value (use only first hit)
@@ -1252,6 +1260,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 				sNewKey = oItem.getKey();
 				sNewId = oItem.getId();
 				sNewValue = sValue;
+				sNewAdditionalText = oItem.getAdditionalText();
 				iIndex = i;
 				if (bBoundValue && !this._sWantedSelectedKey  && !this._sWantedSelectedItemId) {
 					// bound on value and no items searched for existence
@@ -1271,9 +1280,9 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		if ( oDomRef ) {
 			jQuery(this.getInputDomRef()).attr("aria-setsize", aItems.length);
 			if (sNewId) {
-				jQuery(this.getInputDomRef()).attr("aria-posinset", iIndex + 1);
+				this._updatePosInSet( null, iIndex + 1, sNewAdditionalText);
 			} else {
-				jQuery(this.getInputDomRef()).removeAttr("aria-posinset");
+				this._updatePosInSet( null, -1, null);
 			}
 			if (this.mobile) {
 				// refresh und rebulid select options because not ever known what exactly changed
@@ -1495,6 +1504,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		var bNotFound = true;
 		var sSelectedItemId;
 		var iIndex;
+		var sAdditionalText;
 
 		for ( var i = 0; i < aItems.length; i++) {
 			if (aItems[i].getKey() == sSelectedKey && aItems[i].getEnabled()) {
@@ -1502,6 +1512,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 				var oSelectedItem = aItems[i];
 				sSelectedItemId = oSelectedItem.getId();
 				var sValue = oSelectedItem.getText();
+				sAdditionalText = oSelectedItem.getAdditionalText();
 				this.setValue(sValue, true);
 				this._sTypedChars = sValue;
 				iIndex = i;
@@ -1515,7 +1526,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 			this.setProperty("selectedItemId", sSelectedItemId, true); // no rerendering needed
 			var oDomRef = this.getDomRef();
 			if ( oDomRef ) {
-				jQuery(this.getInputDomRef()).attr("aria-posinset", iIndex + 1);
+				this._updatePosInSet( null, iIndex + 1, sAdditionalText);
 				if (this.mobile) {
 					this._removeDummyOption();
 					this.getDomRef("select").selectedIndex = iIndex;
@@ -1565,6 +1576,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		var bNotFound = true;
 		var sKey;
 		var iIndex;
+		var sAdditionalText;
 
 		for ( var i = 0; i < aItems.length; i++) {
 			if (aItems[i].getId() == sSelectedItemId && aItems[i].getEnabled()) {
@@ -1572,6 +1584,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 				var oSelectedItem = aItems[i];
 				sKey = oSelectedItem.getKey();
 				var sValue = oSelectedItem.getText();
+				sAdditionalText = oSelectedItem.getAdditionalText();
 				this.setValue(sValue, true);
 				this._sTypedChars = sValue;
 				iIndex = i;
@@ -1585,7 +1598,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 			this.setProperty("selectedKey", sKey, true); // no rerendering needed
 			var oDomRef = this.getDomRef();
 			if ( oDomRef ) {
-				jQuery(this.getInputDomRef()).attr("aria-posinset", iIndex + 1);
+				this._updatePosInSet( null, iIndex + 1, sAdditionalText);
 				if (this.mobile) {
 					this._removeDummyOption();
 					this.getDomRef("select").selectedIndex = iIndex;
@@ -1615,6 +1628,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 			var sKey;
 			var sSelectedItemId;
 			var iIndex;
+			var sAdditionalText;
 			this._iClosedUpDownIdx = -1;
 
 			for ( var i = 0; i < aItems.length; i++) {
@@ -1623,6 +1637,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 					var oSelectedItem = aItems[i];
 					sSelectedItemId = oSelectedItem.getId();
 					sKey = oSelectedItem.getKey();
+					sAdditionalText = oSelectedItem.getAdditionalText();
 					iIndex = i;
 					this._iClosedUpDownIdx = iIndex;
 					break;
@@ -1633,9 +1648,9 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 			var oDomRef = this.getDomRef();
 			if ( oDomRef ) {
 				if (sSelectedItemId) {
-					jQuery(this.getInputDomRef()).attr("aria-posinset", iIndex + 1);
+					this._updatePosInSet( null, iIndex + 1, sAdditionalText);
 				} else {
-					jQuery(this.getInputDomRef()).removeAttr("aria-posinset");
+					this._updatePosInSet( null, -1, null);
 				}
 				if (this.mobile) {
 					if (!sSelectedItemId) {
@@ -1741,6 +1756,26 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 			return this.getDomRef("select") || null;
 		} else {
 			return this.getDomRef("input") || null;
+		}
+
+	};
+
+	ComboBox.prototype._updatePosInSet = function($Input, iIndex, sAdditionalText) {
+
+		if (!$Input) {
+			$Input = this.$("input");
+		}
+
+		if (iIndex >= 0) {
+			$Input.attr("aria-posinset", iIndex);
+			if (this.getDisplaySecondaryValues()) {
+				this.$("SecVal").text(sAdditionalText);
+			}
+		} else {
+			$Input.removeAttr("aria-posinset");
+			if (this.getDisplaySecondaryValues()) {
+				this.$("SecVal").text("");
+			}
 		}
 
 	};
