@@ -49,9 +49,6 @@
 /* disable scrolling automatically for sap.m.Page sap.m.NavContainer sap.m.ScrollingContainer inside Popover */
 .sapMPopoverHorScrollDisabled .sapMPopoverScroll {
 	display: block;
-	/* This div has position set to absolute when runs in android native browser with version less than 4.1. */
-	/* Width needs to be set to 100% due to position absolute */
-	width: 100%;
 }
 
 .sapMPopoverCont:focus {
@@ -64,26 +61,6 @@
 
 .sapMPopover.sapMPopoverOpaque {
 	opacity: 1;
-}
-
-/* marker for Popover with a bar */
-.sapMPopoverWithBar {
-
-}
-
-/* marker for Popover without a bar */
-.sapMPopoverWithoutBar {
-
-}
-
-/* marker for Popover with NavContainer which includes pages inside */
-.sapMPopoverNav {
-
-}
-
-/* marker for Popover with footer*/
-.sapMPopoverWithFooter {
-
 }
 
 /* disable margin according to the header and footer availability */
@@ -122,12 +99,6 @@
 	box-sizing: border-box;
 	width: auto;
 }
-
-/* This css rule is for mvi theme. Because mvi is deleted right now, this rule will be commented out here in case mvi has to be restored.
-.sapMPopover:not(.sapMPopoverWithFooter) .sapMPopoverCont .sapMPage:not(.sapMPageWithFooter) > section {
-	bottom: 0.625em;
-}
-*/
 
 .sapMPopoverWithoutBar .sapMPage footer.sapMIBar {
 	position: absolute;
