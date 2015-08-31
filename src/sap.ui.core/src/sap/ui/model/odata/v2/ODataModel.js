@@ -1755,7 +1755,7 @@ sap.ui.define([
 			iSeparator, sDataPath, sMetaPath, oMetaContext, sKey, oMetaModel;
 
 		//check for metadata path
-		if (this.oMetadata && sResolvedPath && sResolvedPath.indexOf('/#') > -1)  {
+		if (this.oMetadata && this.oMetadata.isLoaded() && sResolvedPath && sResolvedPath.indexOf('/#') > -1)  {
 			iSeparator = sResolvedPath.indexOf('/##');
 			if (iSeparator >= 0) {
 				// Metadata binding resolved by ODataMetaModel
