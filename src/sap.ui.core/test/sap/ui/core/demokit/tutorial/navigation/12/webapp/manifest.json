@@ -73,7 +73,7 @@
 				"name": "employeeList",
 				"target": "employees"
 			}, {
-				"pattern": "employees/overview:?query:",
+				"pattern": "employee/overview:?query:",
 				"name": "employeeOverview",
 				"target": ["EmployeeOverviewTop", "EmployeeOverviewContent"]
 			}, {

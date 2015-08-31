@@ -30,7 +30,6 @@ sap.ui.define([
 			// save the current query state
 			this._oRouterArgs = oEvent.getParameter("arguments");
 			this._oRouterArgs.query = this._oRouterArgs["?query"] || {};
-			delete this._oRouterArgs["?query"];
 
 			if (this._oRouterArgs.query) {
 
@@ -52,14 +51,14 @@ sap.ui.define([
 		onSortButtonPressed : function (oEvent) {
 			var oRouter = this.getRouter();
 			this._oRouterArgs.query.showDialog = 1;
-			oRouter.navTo("EmployeeOverview",this._oRouterArgs);
+			oRouter.navTo("employeeOverview",this._oRouterArgs);
 		},
 
 		onSearchEmployeesTable : function (oEvent) {
 			var oRouter = this.getRouter();
 			// update the hash with the current search term
 			this._oRouterArgs.query.search = oEvent.getSource().getValue();
-			oRouter.navTo("EmployeeOverview",this._oRouterArgs, true /*no history*/);
+			oRouter.navTo("employeeOverview",this._oRouterArgs, true /*no history*/);
 		},
 
 		_initViewSettingsDialog : function () {
@@ -70,11 +69,11 @@ sap.ui.define([
 					this._oRouterArgs.query.sortField = oSortItem.getKey();
 					this._oRouterArgs.query.sortDescending = oEvent.getParameter("sortDescending");
 					delete this._oRouterArgs.query.showDialog;
-					oRouter.navTo("EmployeeOverview",this._oRouterArgs, true /*without history*/);
+					oRouter.navTo("employeeOverview",this._oRouterArgs, true /*without history*/);
 				}.bind(this),
 				cancel : function (oEvent){
 					delete this._oRouterArgs.query.showDialog;
-					oRouter.navTo("EmployeeOverview",this._oRouterArgs, true /*without history*/);
+					oRouter.navTo("employeeOverview",this._oRouterArgs, true /*without history*/);
 				}.bind(this)
 			});
 
