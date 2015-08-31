@@ -796,13 +796,14 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 			if (oInPlaceEdit._oUndoButton) {
 				var sIcon = Parameters.get('sapUiIpeUndoImageURL');
 				var sIconHovered = Parameters.get('sapUiIpeUndoImageDownURL');
+				var sThemeModuleName = "sap.ui.commons.themes." + sap.ui.getCore().getConfiguration().getTheme();
 				if (sIcon) {
-					sIcon = jQuery.sap.getModulePath("sap.ui.commons", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sIcon;
+					sIcon = jQuery.sap.getModulePath(sThemeModuleName, sIcon);
 				} else {
 					sIcon = "sap-icon://decline";
 				}
 				if (sIconHovered) {
-					sIconHovered = jQuery.sap.getModulePath("sap.ui.commons", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sIconHovered;
+					sIconHovered = jQuery.sap.getModulePath(sThemeModuleName, sIconHovered);
 				}
 				oInPlaceEdit._oUndoButton.setIcon(sIcon);
 				oInPlaceEdit._oUndoButton.setIconHovered(sIconHovered);
@@ -874,13 +875,14 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 			if (oInPlaceEdit._oEditButton) {
 				var sIcon = Parameters.get('sapUiIpeEditImageURL');
 				var sIconHovered = Parameters.get('sapUiIpeEditImageDownURL');
+				var sThemeModuleName = "sap.ui.commons.themes." + sap.ui.getCore().getConfiguration().getTheme();
 				if (sIcon) {
-					sIcon = jQuery.sap.getModulePath("sap.ui.commons", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sIcon;
+					sIcon = jQuery.sap.getModulePath(sThemeModuleName, sIcon);
 				} else {
 					sIcon = "sap-icon://edit";
 				}
 				if (sIconHovered) {
-					sIconHovered = jQuery.sap.getModulePath("sap.ui.commons", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sIconHovered;
+					sIconHovered = jQuery.sap.getModulePath(sThemeModuleName, sIconHovered);
 				}
 				oInPlaceEdit._oEditButton.setIcon(sIcon);
 				oInPlaceEdit._oEditButton.setIconHovered(sIconHovered);
