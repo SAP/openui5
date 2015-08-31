@@ -2282,5 +2282,87 @@
         "references": []
       }
     ]
+  },
+  "1.28.17": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "64b790dde14f25734544b9618b73ea25bd7ee657",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "ComponentContainer: propagate properties when unbinding container",
+        "references": []
+      },
+      {
+        "id": "3ff223c3adf1abcd628fd51b21455aa1912b7578",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "Correctly Remove Invisible Control Placeholder on Destroy",
+        "references": []
+      },
+      {
+        "id": "ebfcaea8232f70d2a33e475ec7178017f6da1829",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "FrameOptions: Whitelist service and no postmessage handler",
+        "references": []
+      },
+      {
+        "id": "32793aa38e4a1f0fd536715f67b8b5fd31272eec",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: support binding expressions with an empty path",
+        "references": []
+      },
+      {
+        "id": "5cf9f91f7c6c900d99a55b29fea901618ee37448",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "ThemeCheck: add null-checks to prevent exceptions",
+        "references": []
+      },
+      {
+        "id": "ee0aa93cfcb8770c5449a20775122b074ccdc18b",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DateTimeInput: Keyboard handling fix for arrow up/down.",
+        "references": []
+      },
+      {
+        "id": "a91857f73340cb0feef32f231cabea3e9f436c4a",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.Device: adapt system detection for Windows 10",
+        "references": []
+      },
+      {
+        "id": "1c764639e96bc020d5f448d690d7a8d79aa27b00",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.IconPool: avoid unnecessary assertions when unknown property is given",
+        "references": []
+      },
+      {
+        "id": "d71d0e7b3c8c3d4bbf3d2cd303c2b28ed389f953",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.DateFormat: properly handle invalid date formatting",
+        "references": []
+      },
+      {
+        "id": "21c22d4694b02eea70058bd4e525d14170821b39",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.test.OPA - performance",
+        "references": []
+      },
+      {
+        "id": "7b713f62eeee14a198ccd2c9f0e83867d265f01b",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.test.Opa5 - IFrame navigation",
+        "references": []
+      }
+    ]
   }
 }

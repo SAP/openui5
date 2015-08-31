@@ -455,5 +455,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.17": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "62870acbed433f35637c256403b029ee33fb0c1f",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.ColumnMenu: Fixes issue with setValue on customFilterButton",
+        "references": []
+      }
+    ]
   }
 }
