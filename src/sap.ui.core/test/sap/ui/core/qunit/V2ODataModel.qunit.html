@@ -62,6 +62,14 @@
 			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sURI].oMetadata;
 		}
 	}
+	
+	/**
+	 * Removes all shared Metadata
+	 */
+	function cleanServiceDataCache() {
+		sap.ui.model.odata.v2.ODataModel.mServiceData = {};
+	}
+	
 	module("ODataModelV2 XML", {
 		setup : function() {
 			initServer();
@@ -225,6 +233,8 @@
 	});
 	
 	asyncTest("test metadata promise rejected refresh and resolve", function() {
+		cleanServiceDataCache();
+		
 		var sTempService = sServiceUri;
 		sServiceUri = "/doesnotWork/";
 		oModel = initModel();
@@ -3409,7 +3419,7 @@
 		teardown : function() {
 			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
