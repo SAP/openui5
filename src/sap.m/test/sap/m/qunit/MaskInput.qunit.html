@@ -302,6 +302,7 @@
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
 			qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.DELETE);
+			this.clock.tick(1000);
 
 			jQuery(oOtherControl).focus();
 			this.clock.tick(1000);
