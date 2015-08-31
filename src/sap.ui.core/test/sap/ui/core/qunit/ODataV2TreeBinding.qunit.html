@@ -519,7 +519,7 @@
 			oBinding.filter(new sap.ui.model.Filter("FirstName", "EQ", "Tom"));
 
 			equal(iWarningCount, 1, "One warning (that filtering is not enabled) should have fired");
-			equal(sMessage, "Filtering is currently not possible in the ODataTreeBinding", "Check warning message");
+			equal(sMessage, "The ODataTreeBinding only supports ApplicationFilters!", "Check warning message");
 			jQuery.sap.log.warning.restore();
 			start();
 		});
@@ -1367,7 +1367,7 @@
 			
 			equal(iErrorCount, 1, "One error logged, if no navigation path properties are given, and hierarchy annotations are missing/incomplete.");
 			equal(iWarningCount, 2, "One warning (that filtering is not enabled) and One for the incomplete annotations.");
-			equal(sMessage, "Filtering is currently not possible in the ODataTreeBinding", "Check warning message");
+			equal(sMessage, "The ODataTreeBinding only supports ApplicationFilters!", "Check warning message");
 			
 			jQuery.sap.log.warning.restore();
 			jQuery.sap.log.error.restore();
