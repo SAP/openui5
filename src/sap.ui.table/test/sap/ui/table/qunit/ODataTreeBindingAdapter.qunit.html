@@ -1137,27 +1137,6 @@
 			oBinding.getContexts(1, 4);
 		});
 	});
-	
-	asyncTest("Check Filtering not supported", function() {
-		oModel.attachMetadataLoaded(function() {
-			createTreeBindingAdapter("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null,null, {
-				rootLevel: 1
-			});
-			var iWarningCount = 0,
-				sMessage = "";
-			
-			sinon.stub(jQuery.sap.log, "warning", function(sMsg) {
-				iWarningCount++;
-				sMessage = sMsg;
-			});
-			
-			oBinding.filter(new sap.ui.model.Filter("ParentNode", "EQ", "000000"));
-			equal(iWarningCount, 1, "One warning (that filtering is not enabled) should have fired");
-			equal(sMessage, "Filtering is currently not possible in the ODataTreeBinding", "Check warning message");
-			jQuery.sap.log.warning.restore();
-			start();
-		});
-	});
 
 	asyncTest("RootNodeID - displayRootNode = true", function () {
 		oModel.attachMetadataLoaded(function() {
