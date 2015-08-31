@@ -3302,7 +3302,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Return the parsed XML metadata as a Javascript object. Please note that when using the model with bLoadMetadataAsync = true then this function might return undefined because the
+	 * Return the parsed XML metadata as a Javascript object. Please note that the metadata is loaded asynchronously and this function might return undefined because the
 	 * metadata has not been loaded yet.
 	 * In this case attach to the <code>metadataLoaded</code> event to get notified when the metadata is available and then call this function.
 	 *
@@ -3331,7 +3331,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Return the annotation object. Please note that when using the model with bLoadMetadataAsync = true then this function might return undefined because the
+	 * Return the annotation object. Please note that the metadata is loaded asynchronously and this function might return undefined because the
 	 * metadata has not been loaded yet.
 	 * In this case attach to the <code>annotationsLoaded</code> event to get notified when the annotations are available and then call this function.
 	 *
