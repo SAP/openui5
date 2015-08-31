@@ -839,5 +839,76 @@
         "references": []
       }
     ]
+  },
+  "1.28.14": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "afffe6b14e1ec1b525db6871d38bae26b903fe4d",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.InPlaceEdit: syntax error if no content",
+        "references": []
+      },
+      {
+        "id": "f5424043f00d0cf4960d43d68fae4c3ce4cc1b08",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
+        "references": []
+      }
+    ]
+  },
+  "1.28.16": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "d7c706da41457d6e99cc2be94fd07b1e6e24450a",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Dialog: The close button has proper name when read by JAWS",
+        "references": []
+      },
+      {
+        "id": "d4f4b3d26c4a19ca48410bc853c8be60124574c9",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Tabs set to non-visible now disappear",
+        "references": []
+      }
+    ]
+  },
+  "1.28.17": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "23ef3655870725c09a4571012398f32ac08429cd",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ApplicationHeader: Placement of the colon fixed in RTL mode",
+        "references": []
+      },
+      {
+        "id": "e1b3390b0177383ae11731d54e3c63f180dcc74b",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ComboBox: screen reader don\u0027t read additional text",
+        "references": []
+      },
+      {
+        "id": "c18fc8c47068150a7cb344ef76382444bc99c49a",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.RangeSlider: Grips not visible if invalid values",
+        "references": []
+      },
+      {
+        "id": "b91f71d9cc758413662948a90581330a7d5355a3",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: Fix selectedIndex when disable selected tab",
+        "references": []
+      }
+    ]
   }
 }

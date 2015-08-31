@@ -3542,5 +3542,272 @@
         "references": []
       }
     ]
+  },
+  "1.28.14": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "2ee2504f331b7112bb74577fb7573cf3e6621ea2",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "Javascript error at activeElement.tagName",
+        "references": []
+      },
+      {
+        "id": "95763e3436595ceb3a0635560d0344a06ba6eb92",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Scrolling performance on BlackBerry 10",
+        "references": []
+      },
+      {
+        "id": "227405d9673a0c87756b4b46b036965a405cf31a",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: run time assigned icon is not visible",
+        "references": []
+      },
+      {
+        "id": "5e70be5a61147044fbd746e029e4cf31fcc18302",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Combobox: Correctly opens the Popover with control instance",
+        "references": []
+      },
+      {
+        "id": "5a202b5ea766e2b09337c7cf815f88ede9d83397",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker, sap.m.DateRangeSelection: adapt API doku",
+        "references": []
+      },
+      {
+        "id": "3f4a4c26fb75b692cd071862a6ab55479b1c2d17",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.List: multi selection is not possible",
+        "references": []
+      },
+      {
+        "id": "bbdf9de7ff691a3cdc52188f0f480a28efc46767",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: select type \"IconOnly\" is announced as button",
+        "references": []
+      },
+      {
+        "id": "010ad211a82ae2c51e7eeacf0211b510c719a409",
+        "author": "Hena Teinzer \u003chena.teinzer@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TextArea: removed double line breaks",
+        "references": []
+      },
+      {
+        "id": "f5424043f00d0cf4960d43d68fae4c3ce4cc1b08",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
+        "references": []
+      },
+      {
+        "id": "a8895867911372546e78a23d99b9f2588583b371",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker, sap.ui.unified.Calendar: position issues",
+        "references": []
+      }
+    ]
+  },
+  "1.28.16": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "ce0cd9b0ee8b88f37619a58b26dc0ff9e5e6f441",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "Microsoft Edge Support: Fix CSS text-align statements",
+        "references": []
+      },
+      {
+        "id": "93808cc13991c396d7421ccb4006378ce1279cb2",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: do not override the selection when the data is not available from the model (part 2)",
+        "references": []
+      },
+      {
+        "id": "8c4d0b0c19795547076e237e4c2733b360d963bd",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: it should correctly set the selection if the items aggregation is bounded to an OData model",
+        "references": []
+      },
+      {
+        "id": "deba1dd4e7f0b2a36d3a6dce3ea833bff62674fa",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: error message shortly appears by closing",
+        "references": []
+      },
+      {
+        "id": "b31274fdf560c7adb07c8aeed0376ae8d0a28417",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: fix combo box button positioning issue in IE11",
+        "references": []
+      },
+      {
+        "id": "680759460fe0e3c5f74979c59aa0d9fa54e7554b",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: initial focus will now be able to focus elements in the subheader too",
+        "references": []
+      },
+      {
+        "id": "4d94c140b57ac3bb93403063400022479bfb05fd",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: correctly restore the value in case of invalidation",
+        "references": []
+      },
+      {
+        "id": "5e66b31232a95e159f0581ab8658dd5ff5561ad6",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: fix default value of the selectedKeys property",
+        "references": []
+      },
+      {
+        "id": "f626dda7bf1d41fc9cdcce331b79b9dd25cc5156",
+        "author": "Gergana Marcheva \u003cgergana.marcheva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectHeader: DOM structure is now valid",
+        "references": []
+      },
+      {
+        "id": "923b60194452a978941664407f62246881fe1c02",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.TextArea: new line is ignored in IE11 in TextArea.",
+        "references": []
+      },
+      {
+        "id": "a489b75dd0adf28602d0ecf8bb79446d9de0de0d",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Control state will stabilized if the uploading fails.",
+        "references": []
+      },
+      {
+        "id": "f7d307157b930bfdc7a9679090675a5ad3c6c82c",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Improve control state in case of edit is done twice.",
+        "references": []
+      },
+      {
+        "id": "d5b81a66a732443bfdeda531bde29d8bb84d6205",
+        "author": "Shweta Sugnani \u003cshweta.sugnani@sap.com\u003e",
+        "type": "FIX",
+        "text": "Facetfilter list closing issue for branch 1.28",
+        "references": []
+      }
+    ]
+  },
+  "1.28.17": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "7cd1f39f4928fe382461781136cb1541e2b2f5a4",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Fiori List Report Page Sample - Improved shrink behavior",
+        "references": []
+      },
+      {
+        "id": "3cc9ee56b8a797f2fcecc96aee23840f6516c1a3",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "Fiori List Report Page Samples - Fixed issue with duplicate IDs",
+        "references": []
+      },
+      {
+        "id": "1b5834a87d8d096308f84195f30b81e05d87d372",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.BusyIndicator: Custom icon rotate animation now works",
+        "references": []
+      },
+      {
+        "id": "c140439b0ac95c5e7e988dd4fa89305e45eabc07",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: fix custom placeholder alignment issue in IE10",
+        "references": []
+      },
+      {
+        "id": "067928c3ad3d9cdccefe3c17b440466c570d5c43",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: missing outline issue fixed (HCB theme + IE11)",
+        "references": []
+      },
+      {
+        "id": "c0d88868827b24a6b1f88f26c6b5347c5e08d038",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: prevent the change event from firing when an item is pressed (downport)",
+        "references": []
+      },
+      {
+        "id": "8ab0cce1c0e5260c24a4ce2632c8be6977875c27",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: the resize handler will be created for each rerender",
+        "references": []
+      },
+      {
+        "id": "b6e230c7fb8959b757c7e270eae99dcdf2ebae02",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Selection is changed when selected filter is removed",
+        "references": []
+      },
+      {
+        "id": "b9a9b93916b3c67ab053ce0787ab6b5ff0e141c5",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: enhance inner input width calculation",
+        "references": []
+      },
+      {
+        "id": "0a49a96ef51ea699bd6d90037ec9df98b27571d2",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: enhance tokenchange event",
+        "references": []
+      },
+      {
+        "id": "26c44b99ae871aa8c9e222593dc47148cf2a4a1c",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: set the focus back to input after deleting token",
+        "references": []
+      },
+      {
+        "id": "d00b0d5e8bb517532da3a992c48b3eb762f4924b",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SearchField: improper focusing in IE",
+        "references": []
+      },
+      {
+        "id": "2378159872697c0441f4ab406a9e10755c5d7115",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: use destroy token instead of remove token in delete event",
+        "references": []
+      }
+    ]
   }
 }

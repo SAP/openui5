@@ -704,5 +704,36 @@
         "references": []
       }
     ]
+  },
+  "1.28.16": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "ce0cd9b0ee8b88f37619a58b26dc0ff9e5e6f441",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "Microsoft Edge Support: Fix CSS text-align statements",
+        "references": []
+      }
+    ]
+  },
+  "1.28.17": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "c140439b0ac95c5e7e988dd4fa89305e45eabc07",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: fix custom placeholder alignment issue in IE10",
+        "references": []
+      },
+      {
+        "id": "c0d88868827b24a6b1f88f26c6b5347c5e08d038",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: prevent the change event from firing when an item is pressed (downport)",
+        "references": []
+      }
+    ]
   }
 }
