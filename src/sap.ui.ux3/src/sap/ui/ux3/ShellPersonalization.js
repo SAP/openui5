@@ -89,7 +89,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 	
 	ShellPersonalization.TRANSPARENT_1x1 = sap.ui.resource('sap.ui.core', 'themes/base/img/1x1.gif');
 	
-	ShellPersonalization.IMAGE_FOLDER_PATH = jQuery.sap.getModulePath("sap.ui.ux3", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + "/img/shell/";
+	ShellPersonalization.IMAGE_FOLDER_PATH = jQuery.sap.getModulePath("sap.ui.ux3.themes." + sap.ui.getCore().getConfiguration().getTheme(), "/img/shell/");
 	
 	ShellPersonalization.getOriginalSettings = function() {
 		// buffer the settings
