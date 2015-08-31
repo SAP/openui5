@@ -424,12 +424,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			var iconUrl = "";
 	
 			if (sUri == null || sUri == "") {
+				var sThemeModuleName = "sap.ui.ux3.themes." + sap.ui.getCore().getConfiguration().getTheme();
 				if (bMessageNotifier) {
-					iconUrl = jQuery.sap.getModulePath("sap.ui.ux3", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme()
-							+ "/img/notification_bar/alert_white_24.png";
+					iconUrl = jQuery.sap.getModulePath(sThemeModuleName, "/img/notification_bar/alert_white_24.png");
 				} else {
-					iconUrl = jQuery.sap.getModulePath("sap.ui.ux3", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme()
-							+ "/img/notification_bar/notification_24.png";
+					iconUrl = jQuery.sap.getModulePath(sThemeModuleName, "/img/notification_bar/notification_24.png");
 				}
 			} else {
 				iconUrl = sUri;

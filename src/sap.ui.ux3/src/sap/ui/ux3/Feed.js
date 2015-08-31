@@ -194,11 +194,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 	
 			var sIcon = sap.ui.core.theming.Parameters.get('sap.ui.ux3.Feed:sapUiFeedToolsIconUrl');
 			var sIconHover = sap.ui.core.theming.Parameters.get('sap.ui.ux3.Feed:sapUiFeedToolsIconHoverUrl');
+			var sThemeModuleName = "sap.ui.ux3.themes." + sap.ui.getCore().getConfiguration().getTheme();
 			if (sIcon) {
-				this.oToolsButton.setProperty('icon', jQuery.sap.getModulePath("sap.ui.ux3", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sIcon, true);
+				this.oToolsButton.setProperty('icon', jQuery.sap.getModulePath(sThemeModuleName, sIcon), true);
 			}
 			if (sIconHover) {
-				this.oToolsButton.setProperty('iconHovered', jQuery.sap.getModulePath("sap.ui.ux3", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sIconHover, true);
+				this.oToolsButton.setProperty('iconHovered', jQuery.sap.getModulePath(sThemeModuleName, sIconHover), true);
 			}
 		}
 	
