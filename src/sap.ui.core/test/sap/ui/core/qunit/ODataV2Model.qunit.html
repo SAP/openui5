@@ -79,6 +79,14 @@
 			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI].oMetadata;
 		}
 	}
+	
+	/**
+	 * Removes all shared Metadata
+	 */
+	function cleanServiceDataCache() {
+		sap.ui.model.odata.v2.ODataModel.mServiceData = {};
+	}
+	
 
 	function initModel(sURI, mParameters, bRemoveMetadata){
 		if (!mParameters) {
@@ -576,6 +584,7 @@
 		oLabel.getElementBinding().attachChange(fnHandler);
 	});
 	asyncTest("test bindElement 5 - change parentContext", 3, function(){
+		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		var oTestContext = oModel.getContext("/Products(2)");
@@ -602,6 +611,7 @@
 	});
 	
 	asyncTest("test bindElement 6 - change parentContext with propagation", 3, function(){
+		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		var oTestContext = oModel.getContext("/Products(2)");
@@ -628,6 +638,7 @@
 	});
 	
 	asyncTest("test data events for bindElement",3, function(){
+		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		var oTestContext = oModel.getContext("/Test");
@@ -647,6 +658,7 @@
 	});
 	
 	asyncTest("test data events for bindElement 204", 3, function(){
+		cleanServiceDataCache();
 		var oModel = initModel(sURI, false, "Categories");
 		sap.ui.getCore().setModel(oModel);
 		var oTestContext = oModel.getContext("/Test");
@@ -666,6 +678,7 @@
 	});
 	
 	asyncTest("test refresh(true) - dependant bindings should reload data",3, function(){
+		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		oPanel2.bindElement("/Categories(7)");
@@ -695,6 +708,7 @@
 	});
 	
 	asyncTest("test bindElement with batchGroupId", 2, function(){
+		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
 		oModel.setUseBatch(true);
 		oModel.setDeferredBatchGroups(["test"]);
@@ -740,6 +754,7 @@
 	});
 	
 	asyncTest("test model bindAggregation on Listbox events", 2, function(){
+		cleanServiceDataCache();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
 		oItemTemplate.bindProperty("text", "CategoryName").bindProperty("additionalText", "Description");
@@ -921,6 +936,7 @@
 	});
 	
 	asyncTest("Custom Header test", function(){
+		cleanServiceDataCache();
 		var spy = sinon.spy(OData.defaultHttpClient, "request");
 		var oModel = initModel(sURI, {headers: {"myCustomHeader1" : "value1", "myCustomHeader2" : "4.555"}});
 		
@@ -1623,8 +1639,7 @@
 	});	
 	
 	asyncTest("async test request events - auto refresh element binding", function(){
-
-		removeSharedMetadata(sURI);
+		cleanServiceDataCache();
 
 		var oModel = initModel(sURI, {
 			json: true,
@@ -1715,6 +1730,7 @@
 	
 	asyncTest("Event order: bindElement", function(){
 		expect(4);
+		cleanServiceDataCache();
 		var oModel = initModel(sURI);
 		oLabel = new sap.ui.commons.Label("myLabel2");
 		oLabel.setModel(oModel);
@@ -1732,6 +1748,7 @@
 
 	asyncTest("Event order: bindElement (setModel after binding)", function(){
 		expect(4);
+		cleanServiceDataCache();
 		var oModel = initModel(sURI);
 		oLabel = new sap.ui.commons.Label("myLabel3");
 		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}});
@@ -1748,6 +1765,7 @@
 	
 	asyncTest("Event order: bindElement (already bound)", function(){
 		expect(6);
+		cleanServiceDataCache();
 		var oModel1 = initModel(sURI);
 		oLabel = new sap.ui.commons.Label("myLabel4");
 		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}});
@@ -1773,6 +1791,7 @@
 	});
 	
 	test("test ODataModel destroy cancel async metadata", function(){
+		cleanServiceDataCache();
 		jQuery.sap.require("sap.ui.thirdparty.datajs");
 		// spy on odata request function
 		var spy = this.spy(OData, "request");
@@ -1792,6 +1811,7 @@
 	});
 	
 	asyncTest("test metadata url parameters: no parameters", function() {
+		cleanServiceDataCache();
 		var spy = sinon.spy(OData, "request");
 		var oModel = initModel(sURI);
 		oModel.attachMetadataLoaded(function() {
@@ -1828,6 +1848,7 @@
 		});
 	});
 	asyncTest("test metadata url parameters: no parameters", function() {
+		cleanServiceDataCache();
 		var spy = sinon.spy(OData, "request");
 		var oModel = initModel(sURI, {serviceUrlParams: {"hubel":"dubel"}});
 		oModel.attachMetadataLoaded(function() {
@@ -1837,6 +1858,7 @@
 		});
 	});
 	asyncTest("test metadata url parameters: service url parameters", function() {
+		cleanServiceDataCache();
 		var spy = sinon.spy(OData, "request");
 		var oModel = initModel(sURI+'?test=x', {serviceUrlParams: {"hubel":"dubel"}});
 		oModel.attachMetadataLoaded(function() {
@@ -1846,6 +1868,7 @@
 		});
 	});
 	asyncTest("test metadata url parameters: metadataUrlParameters", function() {
+		cleanServiceDataCache();
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI, {serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
@@ -1865,6 +1888,7 @@
 	});
 	
 	asyncTest("test service url parameters: serviceUrlParams", function() {
+		cleanServiceDataCache();
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI+'?test=x', {json: false, serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
@@ -1883,6 +1907,7 @@
 	});
 	
 	asyncTest("test service url parameters: serviceUrlParams", function() {
+		cleanServiceDataCache();
 		var spy = sinon.spy(OData, "request");
 		oModel = initModel(sURI, {json: false, serviceUrlParams: {"hubel":"dubel"}, metadataUrlParams: {"sap-language":"en", "test2":"xx"}});
 		oModel.attachMetadataLoaded(function() {
@@ -2031,6 +2056,7 @@
 		});
 	});
 	asyncTest("test metadata loading: sap-value-list",function(){
+		cleanServiceDataCache();
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.metadataLoaded().then(function(){
 			ok(oModel.getServiceMetadata(), "metadata loaded");
@@ -2055,6 +2081,7 @@
 	});
 	
 	asyncTest("test metadata loading (relative metadataUrl): sap-value-list",function(){
+		cleanServiceDataCache();
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.metadataLoaded().then(function(){
 			ok(oModel.getServiceMetadata(), "metadata loaded");
