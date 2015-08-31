@@ -317,7 +317,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 showHeader: false,
                 width: "100%",
                 height: "100%",
-                showHorizontalScrollbar: true
+                showHorizontalScrollbar: true,
+                selectionMode: "Single"
             });
             oTree.addStyleClass("sapUiTreeWithHeader");
             var oTreeNode = new sap.ui.commons.TreeNode({
@@ -964,12 +965,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                         }
 
                         if (bTreeNodeFound) {
-                            aNodes[i].setIsSelected(true);
                             var par = oParent;
                             while (par instanceof sap.ui.commons.TreeNode) {
                                 par.expand();
                                 par = par.getParent();
                             }
+                            aNodes[i].setIsSelected(true);
                             return aNodes[i];
                         } else {
                             var node = findAndSelectTreeNode(sPageName, aNodes[i], false);
