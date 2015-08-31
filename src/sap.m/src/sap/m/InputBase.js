@@ -571,7 +571,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * - IE11 fires input event whenever placeholder attribute is changed
 	 *
 	 * @param {jQuery.Event} oEvent The event object.
-	 * @private
 	 */
 	InputBase.prototype.oninput = function(oEvent) {
 		// ie 10+ fires the input event when an input field with a native placeholder is focused
