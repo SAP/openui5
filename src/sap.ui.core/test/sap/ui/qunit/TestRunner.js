@@ -155,6 +155,9 @@
 					var nBarwidth = parseFloat(jQuery("div#innerBar")[0].style.width, 10);
 					var sNewwidth = nBarwidth + nBarStep + "%";
 					jQuery("div#innerBar").width(sNewwidth);
+					if (parseInt(jQuery("div#reportingHeader span.failed").text()) > 0) {
+						jQuery("div#innerBar")[0].style.backgroundColor = '#ed866f';
+					}
 					jQuery("#selectedTests").find("option").each(function() {
 						if (jQuery(this).text() === sTestPage) {
 							jQuery(this).remove();
@@ -207,9 +210,12 @@
 					var doc = $frame[0].contentWindow.document;
 					var oResult =doc.getElementById("qunit-testresult");
 					if (oResult && jQuery(oResult).text().indexOf("completed") >= 0) {
-						
 						// extract the QUnit result
 						var $testName = jQuery(doc).find("h1#qunit-header").text();
+						if ($testName == " ") {
+							$testName = "QUnit page for " + oResult.baseURI.substring(oResult.baseURI.indexOf("test-resources") +15,oResult.baseURI.length);
+						}
+
 						var $results = jQuery(doc).find("ol#qunit-tests > li");
 						var oContext = oInst.fnGetTestResults($testName, $results);
 						var oCoverage = $frame[0].contentWindow._$blanket;
