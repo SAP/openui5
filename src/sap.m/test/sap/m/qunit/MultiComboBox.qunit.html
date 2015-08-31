@@ -4094,6 +4094,41 @@
 		oMultiComboBoxNext.destroy();
 		this.clock.reset();
 	});
+	
+	test("Keep picker open after re-rendering", function() {
+		// system under test
+		var oMultiComboBox = new sap.m.MultiComboBox({
+			items : [new sap.ui.core.Item({
+				key : "DZ",
+				text : "Algeria"
+			})]
+		});
+
+		// arrange          
+		oMultiComboBox.placeAt("MultiComboBox-content");
+
+		sap.ui.getCore().applyChanges();
+
+		oMultiComboBox.focus();
+
+		oMultiComboBox.open();
+
+		this.clock.tick(500);
+		oMultiComboBox.getList().getItems()[0].focus();
+
+		// act		
+		oMultiComboBox.rerender();
+
+		this.clock.tick(500);
+
+		// assertions
+		ok(oMultiComboBox.isOpen(), "oMultiComboBox is open");
+		ok(oMultiComboBox.getList().getItems()[0].getDomRef() === document.activeElement, "First Item of list is focused");
+
+		// cleanup
+		oMultiComboBox.destroy();
+		this.clock.reset();
+	});
 </script>
 </head>
 <body id="body" class="sapUiBody">

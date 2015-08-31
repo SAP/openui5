@@ -576,13 +576,24 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	MultiComboBox.prototype.onBeforeRendering = function() {
 		ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
 		var aItems = this.getItems();
-		this._synchronizeSelectedItemAndKey(aItems);
-		this._clearList();
-		this._clearTokenizer();
-		this._fillList(aItems);
 
-		// Re-apply editable state to make sure tokens are rendered in right state.
-		this.setEditable(this.getEditable());
+		var oList = this.getList();
+		if (oList) {
+			this._synchronizeSelectedItemAndKey(aItems);
+
+			// prevent closing of popup on re-rendering
+			oList.destroyItems();
+			this._clearTokenizer();
+			this._fillList(aItems);
+
+			// save focused index, and re-apply after rendering of the list
+			if (oList.getItemNavigation()) {
+				this._iFocusedIndex = oList.getItemNavigation().getFocusedIndex();
+			}
+
+			// Re-apply editable state to make sure tokens are rendered in right state.
+			this.setEditable(this.getEditable());
+		}
 	};
 
 	/**
@@ -762,6 +773,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		}).addStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "List").addStyleClass(
 				MultiComboBoxRenderer.CSS_CLASS + "List").attachBrowserEvent("tap", this._handleItemTap, this)
 				.attachSelectionChange(this._handleSelectionLiveChange, this).attachItemPress(this._handleItemPress, this);
+
+		this._oList.addEventDelegate({
+			onAfterRendering : this.onAfterRenderingList
+		}, this);
 	};
 
 	/**
@@ -1398,6 +1413,21 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 
 	MultiComboBox.prototype._onAfterRenderingTokenizer = function() {
 		this._setContainerSizes();
+	};
+
+	/**
+	 * Required adaptations after rendering of List.
+	 *
+	 * @private
+	 */
+	MultiComboBox.prototype.onAfterRenderingList = function() {
+		var oList = this.getList();
+		if (this._iFocusedIndex != null && oList.getItems().length > this._iFocusedIndex) {
+			oList.getItems()[this._iFocusedIndex].focus();
+			this._iFocusedIndex = null;
+		} else {
+			this.getFocusDomRef().focus();
+		}
 	};
 
 	/**
@@ -2399,17 +2429,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 
 	MultiComboBox.prototype.isItemSelected = function(oItem) {
 		return (this.getSelectedItems().indexOf(oItem) > -1 ? true : false);
-	};
-
-	/**
-	 * Destroy the items in the List.
-	 *
-	 * @private
-	 */
-	MultiComboBox.prototype._clearList = function() {
-		if (this.getList()) {
-			this.getList().destroyAggregation("items", true);
-		}
 	};
 
 	/**
