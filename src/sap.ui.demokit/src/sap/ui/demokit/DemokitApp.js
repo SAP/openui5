@@ -888,6 +888,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
         DemokitApp.prototype.navigateTo = function (sName, bSkipSetHash, bSkipSwitchLocation, bNewWindow) {
             var that = this;
             var TREE_ABSOLUTE_LOCATION_LEFT = "0px";
+            // TREE_ABSOLUTE_LOCATION_TOP should be keeped in sync with .sapUiTreeWithHeader > div:first-child bottom property
             var TREE_ABSOLUTE_LOCATION_TOP = "32px";
             var TREE_EXPAND_BUTTON_LOCATION_RIGHT = "30px";
             var TREE_COLLAPSE_BUTTON_LOCATION_RIGHT = "0px";
