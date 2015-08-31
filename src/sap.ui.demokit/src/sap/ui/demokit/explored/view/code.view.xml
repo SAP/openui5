@@ -1,9 +1,9 @@
 <mvc:View
-	controllerName="sap.ui.demokit.explored.view.code"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout"
 	xmlns:d="sap.ui.demokit"
+	controllerName="sap.ui.demokit.explored.view.code"
 	xmlns="sap.m">
 	<Page
 		id="page"
@@ -34,7 +34,7 @@
 							key="{name}"
 							text="{name}" >
 						<content>
-							<d:CodeViewer class="sapUiExploredCodeViewer" source="{raw}"/>
+							<d:CodeViewer class="sapUiExploredCodeViewer" source="{raw}" lineNumbering="true"/>
 						</content>
 					</IconTabFilter>
 				</items>

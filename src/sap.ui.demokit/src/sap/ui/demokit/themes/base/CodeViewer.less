@@ -24,3 +24,52 @@ pre.sapUiCodeViewer.editable {
 pre.codeblock .emphasis {
   background-color: #ffff00;
 }
+
+.sapUiCodeViewerRO ol {
+  position: relative;
+  z-index: 0;
+  counter-reset: item;
+}
+
+.sapUiCodeViewerRO ol li {
+  color: #999999;
+  display: block;
+}
+
+.sapUiCodeViewerRO ol li:before {
+  content: counter(item, decimal-leading-zero) "          ";
+  counter-increment: item;
+  color: #999999;
+  // not select line numbers when copy the code
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -o-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.sapUiCodeViewerRO ol:before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 35px;
+  bottom: 0;
+  width: 30px;
+  z-index: -1;
+  background: lightgoldenrodyellow;
+}
+
+li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8 {
+	.sapUiCodeViewerRO & {
+		list-style-type: decimal;
+	}
+}
+
+li.L1,li.L3,li.L5,li.L7,li.L9 {
+	.sapUiCodeViewerRO & {
+		background: transparent;
+	}
+}
