@@ -1179,8 +1179,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			//Reset needs to be resetted, else destroyRows is called, which is not allowed to be called
 			bSuppressReset = true;
 			this._restoreAppDefaultsColumnHeaderSortFilter();
+			// metadata might have changed
+			this._invalidateColumnMenus();
+			this.updateRows(); // TODO: shouldn't this be more a central feature?!
 		}
-		this.updateRows(); // TODO: shouldn't this be more a central feature?!
+
 		return sap.ui.core.Element.prototype.unbindAggregation.apply(this, [sName, bSuppressReset]);
 	};
 
@@ -5587,9 +5590,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	Table.prototype._invalidateColumnMenus = function() {
 		var aCols = this.getColumns();
 		for (var i = 0, l = aCols.length; i < l; i++) {
-			if (aCols[i].getMenu()) {
-				aCols[i].getMenu()._bInvalidated = true;
-			}
+			aCols[i].invalidateMenu();
 		}
 	};
 

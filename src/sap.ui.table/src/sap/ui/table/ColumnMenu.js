@@ -7,8 +7,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	function(jQuery, RenderManager, library, Menu, MenuItem) {
 	"use strict";
 
-
-	
 	/**
 	 * Constructor for a new ColumnMenu.
 	 *
@@ -23,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.table.ColumnMenu
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) design time metamodel
 	 */
 	var ColumnMenu = Menu.extend("sap.ui.table.ColumnMenu", /** @lends sap.ui.table.ColumnMenu.prototype */ { metadata : {
 	
@@ -77,11 +75,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 			this._invalidate();
 		}
 	};
-	
-	
+
+
 	/**
-	 * Overwrite of {@link sap.ui.unified.Menu#setParent} method.
-	 * @see sap.ui.unified.Menu#setParent
+	 * Defines this object's new parent. If no new parent is given, the parent is
+	 * just unset and we assume that the old parent has removed this child from its
+	 * aggregation. But if a new parent is given, this child is first removed from
+	 * its old parent.
+	 *
+	 * @param {sap.ui.base.ManagedObject} oParent the object that becomes this object's new parent
+	 * @see {sap.ui.base.ManagedObject}
+	 *
+	 * @return {sap.ui.base.ManagedObject}
+	 *            Returns <code>this</code> to allow method chaining
 	 * @private
 	 */
 	ColumnMenu.prototype.setParent = function(oParent) {
@@ -148,7 +154,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 		var that = this;
 
 		if (!sap.ui.Device.support.touch) {
-			this.getPopup().attachClosed(function(oEvent) {
+			this.getPopup().attachClosed(function() {
 				that._iPopupClosedTimeoutId = window.setTimeout(function() {
 					if (that._oColumn) {
 						if (that._lastFocusedDomRef) {
@@ -164,7 +170,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	
 	
 	/**
-	 * Overwrite of {@link sap.ui.unified.Menu#open} method.
+	 * Override {@link sap.ui.unified.Menu#open} method.
 	 * @see sap.ui.unified.Menu#open
 	 * @private
 	 */
@@ -189,6 +195,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	ColumnMenu.prototype._addMenuItems = function() {
 		// when you add or remove menu items here, remember to update the Column.prototype._menuHasItems function
 		if (this._oColumn) {
+			// items can only be created if the menus parent is a column
+			// since column properties must be evaluated in order to create the items.
 			this._addSortMenuItem(false);
 			this._addSortMenuItem(true);
 			this._addFilterMenuItem();
@@ -242,7 +250,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 					"filter",
 					"TBL_FILTER_ITEM",
 					"filter",
-					function(oEvent) {
+					function() {
 						oTable.fireCustomFilter({
 							column: oColumn
 						});
@@ -254,7 +262,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 					"TBL_FILTER",
 					"filter",
 					oColumn.getFilterValue(),
-					function(oEvent) {
+					function() {
 						oColumn.filter(this.getValue());
 					}
 				));
@@ -276,7 +284,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 					"group",
 					"TBL_GROUP",
 					null,
-					jQuery.proxy(function(oEvent) {
+					jQuery.proxy(function() {
 						oTable.setGroupBy(oColumn);
 					},this)
 				));
@@ -299,8 +307,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 				"freeze",
 				bIsFixedColumn ? "TBL_UNFREEZE" : "TBL_FREEZE",
 				null,
-				function(oEvent) {
-					
+				function() {
 					// forward the event
 					var bExecuteDefault = oTable.fireColumnFreeze({
 						column: oColumn
@@ -443,6 +450,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	
 	/**
 	 * sets a new filter value into the filter field
+	 * @param {String} sValue value of the filter input field to be set
+	 * @return {sap.ui.table.ColumnMenu} this reference for chaining
 	 * @private
 	 */
 	ColumnMenu.prototype._setFilterValue = function(sValue) {
@@ -455,9 +464,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 		}
 		return this;
 	};
-	
+
 	/**
-	 * Sets the value state of the filter field
+	 * sets a new filter value into the filter field
+	 * @param {sap.ui.core.ValueState} sFilterState value state for filter text field item
+	 * @return {sap.ui.table.ColumnMenu} this reference for chaining
 	 * @private
 	 */
 	ColumnMenu.prototype._setFilterState = function(sFilterState) {
