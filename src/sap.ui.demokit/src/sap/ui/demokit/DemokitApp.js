@@ -525,7 +525,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                     content: [oLayout],
                     showCloseButton: false,
                     width: "550px",
-                    height: "800px"
+                    height: "800px",
+                    maxHeight: "100%"
                 });
                 oDialog.open();
             };
