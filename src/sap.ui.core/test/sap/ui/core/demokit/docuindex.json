@@ -229,6 +229,31 @@
 					"Handling invalid hashes by listening for bypassed events",
 					"Listening for matched events of any route"
 				]
+			},
+		  {
+			"id": "sap.ui.core.tutorial.databinding",
+			"name": "Data Binding",
+			"category": "Tutorial",
+			"since": "1.30",
+			"formFactors": "-",
+			"description": "In this tutorial, we will explain the concepts of data binding in SAPUI5.",
+			"samplesAsSteps": [
+			  "No Data Binding",
+			  "Creating a Model",
+			  "Create a PropertyBinding",
+			  "Two-Way Data Binding",
+			  "One-way Data Binding",
+			  "Resource Models",
+			  "Resource Bundles and Multiple Languages",
+			  "Binding Paths – Accessing Properties in Hierarchically Structured Models",
+			  "Formatting Values",
+			  "Property Formatting Using Data Types",
+			  "Validation Using the Message Manager",
+			  "Aggregation Binding Using A Template",
+			  "Element Binding",
+			  "Expression Binding",
+			  "Aggregation Binding Using A Factory Function"
+			]
 			}
 		],
 		"samples" : [
