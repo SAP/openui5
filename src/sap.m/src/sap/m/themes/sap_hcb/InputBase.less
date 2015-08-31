@@ -267,13 +267,13 @@ html[dir=rtl] .sapMILI-CTX .sapMInputBasePlaceholder {
 }
 
 /* focus in IE (workaround) */
-html[data-sap-ui-browser^="ie"] { 
+html[data-sap-ui-browser^="ie"] {
 	.sapMInputBase > .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):focus,
 	.sapMInputBase > .sapMInputBaseInner:not(.sapMInputBaseReadonlyInner):hover {
 		outline: none;
 	}
 	.sapMFocus.sapMInputBase:not(.sapMInputBaseReadonly):not(.sapMInputBaseDisabled) {
-		&::after {
+		&::before {
 			content: "";
 			position: absolute;
 			top: 5px;
