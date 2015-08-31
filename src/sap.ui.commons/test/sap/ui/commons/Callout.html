@@ -10,7 +10,21 @@
 	#target1 {
 		width:600px;
 		margin-bottom:200px;
-		text-align:right }
+		text-align:right;
+		margin-right: 5px;
+	}
+	#target2 {
+		margin-right: 5px;
+	}
+	#target3 {
+		margin-right: 5px;
+	}
+	#target4 {
+		margin-right: 5px;
+	}
+	#target5 {
+		margin-right: 5px;
+	}
 	.center {
 		text-align: center }
 	.middle {
@@ -56,7 +70,7 @@ sap.ui.getCore().attachInitEvent(function () {
 	function onEvent(oEvent){
 		jQuery.sap.log.debug(oEvent.getSource().getId() + ": event \"" + oEvent.getId() + "\" received");
 	}
-	
+
 	/* To create and attach a Callout:
 	 * 1. Specify a Callout contents (a control, view or an array of controls)
 	 * 2. Instantiate a Callout control
@@ -172,7 +186,7 @@ sap.ui.getCore().attachInitEvent(function () {
 
 	oButton.setTooltip(oCallout3);
 	oButton.placeAt("target4");
-	
+
 	// [D] - Application may postpone display of the Callout
 	// Use case: wait until remote request is finished before displaying the Callout
 	oButton = new sap.ui.commons.Button("button4", {

@@ -4,10 +4,18 @@
 <meta content="IE=edge" http-equiv="X-UA-Compatible">
 <title>QuickView - sap.ui.ux3</title>
 <style>
-	#target1 { 
+	#target1 {
 		width:600px;
 		margin-bottom:200px;
-		text-align:right }
+		text-align:right;
+		margin-right: 5px;
+	}
+	#target2 {
+		margin-right: 5px;
+	}
+	#target3 {
+		margin-right: 5px;
+	}
 	#QuickViewDS .quickViewDS {
 		border-bottom: 2px solid #e5e5e5;
 		background-color: white;
@@ -37,7 +45,7 @@
 	}
 </style>
 <script src="../../../../resources/sap-ui-core.js"
-	type="text/javascript" 
+	type="text/javascript"
 	id="sap-ui-bootstrap"
 	data-sap-ui-theme="sap_goldreflection"
 	data-sap-ui-libs="sap.ui.core,sap.ui.commons,sap.ui.ux3">
@@ -63,7 +71,7 @@ sap.ui.getCore().attachInitEvent(function () {
 
 	function loadModel(url){
 		if(url){
-			jQuery.sap.log.debug("QuickView data load from: " + url); 
+			jQuery.sap.log.debug("QuickView data load from: " + url);
 			oModel.loadData(url);
 			bDataLoaded = true;
 		}
@@ -71,12 +79,12 @@ sap.ui.getCore().attachInitEvent(function () {
 
 	function loadModelDelayed(event){
 		if(bDataLoaded){ return;}
-		
+
 		var oControl = event.getSource();
 		var dataUrl = oControl.data("dataUrl");
 		var delay = oControl.data("loadDelay");
 		if(isNaN(delay)){ delay = 0; }
-		jQuery.sap.log.debug("Delayed loading data from source: " + dataUrl); 
+		jQuery.sap.log.debug("Delayed loading data from source: " + dataUrl);
 		if(dataUrl && !bDataLoaded){
 			window.setTimeout( function(){
 					loadModel(dataUrl);
@@ -176,12 +184,12 @@ sap.ui.getCore().attachInitEvent(function () {
 		id : "create",
 		text : "Create Survey"
 	});
-	
+
 	var oDeleteAction =  new sap.ui.ux3.ThingAction({
 		id : "delete",
 		text : "Delete Reference"
 	});
-   
+
 	var oDuplicateAction = new sap.ui.ux3.ThingAction({
 		id : "duplicate",
 		text : "Duplicate Reference"
@@ -240,7 +248,7 @@ sap.ui.getCore().attachInitEvent(function () {
 
 	oButton.setTooltip(oQuickView);
 	oButton.placeAt("target2");
-	
+
 	oQuickView.attachOpened(function(){
 		oQuickView.adjustPosition();
 		alert("QuickView has been opened");
