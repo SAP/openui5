@@ -148,10 +148,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 			this.sServiceUrl = this.sServiceUrl.replace(/\/$/, "");
 
 			// Get/create service specific data container or create one if it doesn't exist
-			if (!ODataModel.mServiceData[this.sServiceUrl]) {
-				ODataModel.mServiceData[this.sServiceUrl] = {};
+			var sMetadataUrl = this._createRequestUrl("$metadata", undefined, mMetadataUrlParams);
+			if (!ODataModel.mServiceData[sMetadataUrl]) {
+				ODataModel.mServiceData[sMetadataUrl] = {};
 			}
-			this.oServiceData = ODataModel.mServiceData[this.sServiceUrl];
+			this.oServiceData = ODataModel.mServiceData[sMetadataUrl];
 
 
 			// Get CSRF token, if already available
@@ -167,10 +168,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 
 			if (!this.oServiceData.oMetadata) {
 				//create Metadata object
-				this.oServiceData.oMetadata = new sap.ui.model.odata.ODataMetadata(this._createRequestUrl("$metadata", undefined, mMetadataUrlParams),
-									{ async: this.bLoadMetadataAsync, user: this.sUser, password: this.sPassword, headers: this.mCustomHeaders, namespaces: mMetadataNamespaces, withCredentials: this.bWithCredentials});
+				this.oServiceData.oMetadata = new sap.ui.model.odata.ODataMetadata(sMetadataUrl, { 
+					async: this.bLoadMetadataAsync,
+					user: this.sUser,
+					password: this.sPassword,
+					headers: this.mCustomHeaders,
+					namespaces: mMetadataNamespaces,
+					withCredentials: this.bWithCredentials
+				});
 			}
 			this.oMetadata = this.oServiceData.oMetadata;
+			
+			// USe cached annotations if available
+			if (this.oServiceData.oAnnotationsData) {
+				this._getAnnotationParser(this.oServiceData.oAnnotationsData);
+			}
+			
 			this.pAnnotationsLoaded = this.oMetadata.loaded();
 			
 			if (this.sAnnotationURI || !this.bSkipMetadataAnnotationParsing) {
@@ -183,9 +196,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 						// Don't fire additional events for automatic metadata annotations parsing, but if no annotation URL exists, fire the event
 						this.addAnnotationXML(this.oMetadata.sMetadataBody, !!this.sAnnotationURI);
 					} else {
-						this.pAnnotationsLoaded = this.oMetadata.loaded().then(function(bSupressEvents, mParams) {
+						this.pAnnotationsLoaded = this.oMetadata.loaded().then(function(bSuppressEvents, mParams) {
 							//Don't fire additional events for automatic metadata annotations parsing, but if no annotation URL exists, fire the event
-							return this.addAnnotationXML(mParams["metadataString"], bSupressEvents);
+							if (this.bDestroyed) {
+								return Promise.reject();
+							}
+							return this.addAnnotationXML(mParams["metadataString"], bSuppressEvents);
 						}.bind(this, !!this.sAnnotationURI));
 					}
 				}
@@ -197,6 +213,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 					]);
 				}
 			}
+			
+			if (this.oAnnotations) {
+				this.oServiceData.oAnnotationsData = this.oAnnotations.getAnnotationsData();
+			}
+			
 
 			if (mServiceUrlParams) {
 				// new URL params used -> add to ones from sServiceUrl
@@ -328,10 +349,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 			if (this.oAnnotations && this.oAnnotations.bInitialized) {
 				doFire();
 			} else {
-				this.oAnnotations.attachLoaded(function() {
-					// Now metadata was loaded and the annotations have been parsed
-					doFire();
-				}, this);
+				this.oAnnotations.attachEventOnce("loaded", function() {
+					doFire(true);
+				});
 			}
 		} else {
 			// In case of synchronous or asynchronous non-joined loading, or if no annotations are
@@ -3221,6 +3241,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	 * @public
 	 */
 	ODataModel.prototype.destroy = function() {
+		this.bDestroyed = true;
 
 		// Abort pending requests
 		if (this.aPendingRequestHandles) {
@@ -3254,6 +3275,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 
 
 		if (this.oAnnotations) {
+			this.oAnnotations.detachFailed(this.onAnnotationsFailed);
+			this.oAnnotations.detachLoaded(this.onAnnotationsLoaded);
 			this.oAnnotations.destroy();
 			delete this.oAnnotations;
 		}
@@ -3266,19 +3289,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	 *
 	 * @return {sap.ui.model.odata.Annotations} The annotation parser instance
 	 */
-	ODataModel.prototype._getAnnotationParser = function() {
+	ODataModel.prototype._getAnnotationParser = function(mAnnotationData) {
 		if (!this.oAnnotations) {
 			jQuery.sap.require("sap.ui.model.odata.ODataAnnotations");
-			this.oAnnotations = new sap.ui.model.odata.ODataAnnotations(null, this.oMetadata, { async: this.bLoadMetadataAsync });
-			this.oAnnotations.attachFailed(function(oEvent) {
-				this.fireAnnotationsFailed(oEvent.getParameters());
-			}.bind(this));
-			this.oAnnotations.attachLoaded(function(oEvent) {
-				this.fireAnnotationsLoaded(oEvent.getParameters());
-			}.bind(this));
+			this.oAnnotations = new sap.ui.model.odata.ODataAnnotations({
+				annotationData: mAnnotationData,
+				url: null,
+				metadata: this.oMetadata,
+				async: this.bLoadMetadataAsync
+			});
+			this.oAnnotations.attachFailed(this.onAnnotationsFailed, this);
+			this.oAnnotations.attachLoaded(this.onAnnotationsLoaded, this);
 		}
 
 		return this.oAnnotations;
+	};
+	
+	ODataModel.prototype.onAnnotationsFailed = function(oEvent) {
+		this.fireAnnotationsFailed(oEvent.getParameters());
+	};
+	
+	ODataModel.prototype.onAnnotationsLoaded = function(oEvent) {
+		this.fireAnnotationsLoaded(oEvent.getParameters());
 	};
 	
 	/**
@@ -3319,7 +3351,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 		return this.oMetadata._addUrl(aMetadataUrls).then(function(aParams) {
 			return Promise.all(jQuery.map(aParams, function(oParam) {
 				aEntitySets = aEntitySets.concat(oParam.entitySets);
-				return that.addAnnotationXML(oParam.metadataString);
+				return that.addAnnotationXML(oParam["metadataString"]);
 			}));
 		}).then(function() {
 			return that._getAnnotationParser().addUrl(aAnnotationUrls);
@@ -3349,6 +3381,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 			});
 		}.bind(this));
 	};
+
 
 	/**
 	 * Returns an instance of an OData meta model which offers a unified access to both OData v2
@@ -3384,3 +3417,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	return ODataModel;
 
 });
+

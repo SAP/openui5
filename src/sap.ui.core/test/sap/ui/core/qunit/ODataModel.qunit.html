@@ -36,6 +36,8 @@
 <!-- Test functions -->
 <script language="javascript">
 	sinon.config.useFakeTimers = false;
+	QUnit.config.testTimeout = 6000;
+
 
 	//TODO currently we rely on northwind odata service for tests...
 	//TODO tests depends on server response time and northwind content...so tests may be unstable
@@ -62,6 +64,14 @@
 			delete sap.ui.model.odata.ODataModel.mServiceData[sServiceURI];
 		}
 	}
+	
+	/**
+	 * Removes all shared Metadata
+	 */
+	function cleanServiceDataCache() {
+		sap.ui.model.odata.ODataModel.mServiceData = {};
+	}
+	
 
 	function initModel() {
 		var sURI;
@@ -1036,7 +1046,7 @@
 
 
 	asyncTest("async metadata request check with bindings", function(){
-		removeSharedServicedata(sURI);
+		cleanServiceDataCache();
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
 			json: true, 
 			loadMetadataAsync: true
@@ -1070,8 +1080,7 @@
 	});
 
 	asyncTest("async metadata request check with bindings die zwote", function(){
-
-		removeSharedServicedata(sURI);
+		cleanServiceDataCache();
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
 			json: true, 
 			loadMetadataAsync: true
@@ -1101,7 +1110,7 @@
 	
 	asyncTest("async test createEntity", function(){
 
-		removeSharedServicedata(sURI);
+		cleanServiceDataCache();
 
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, {
 			json: true,
@@ -1180,6 +1189,7 @@
 	
 	asyncTest("Event order: bindElement (already bound)", function(){
 		expect(6);
+		cleanServiceDataCache();
 		var oModel1 = initModel(sURI, true, "Categories");
 		oLabel = new sap.ui.commons.Label("myLabel4");
 		oLabel.bindElement( {path:"/Categories(1)", events:{change:fnChange, dataRequested:fnDataRequested, dataReceived:fnDataReceived}});
@@ -1205,6 +1215,7 @@
 	});
 	
 	test("test ODataModel destroy cancel async metadata", function(){
+		cleanServiceDataCache();
 		jQuery.sap.require("sap.ui.thirdparty.datajs");
 		// spy on odata request function
 		var spy = this.spy(OData, "request");
@@ -1419,6 +1430,7 @@
 		});
 	});
 	asyncTest("test metadata loading: sap-value-list",function(){
+		cleanServiceDataCache();
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.oMetadata.loaded().then(function(){
 			ok(oModel.getServiceMetadata(), "metadata loaded");
@@ -1443,6 +1455,7 @@
 	});
 	
 	asyncTest("test metadata loading (relative metadataUrl): sap-value-list",function(){
+		cleanServiceDataCache();
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
 		oModel.oMetadata.loaded().then(function(){
 			ok(oModel.getServiceMetadata(), "metadata loaded");
@@ -1465,7 +1478,7 @@
 		},
 		teardown: function() {
 			this.oModel.destroy();
-			removeSharedServicedata(sURI);
+			cleanServiceDataCache();
 			delete this.oModel;
 			deleteCsrfToken();
 		}
