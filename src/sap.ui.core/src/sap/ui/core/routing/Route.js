@@ -74,7 +74,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 
 				if (oConfig.parent) {
 					var oRoute = this._getParentRoute(oConfig.parent);
-					if (!oRoute || oRoute._aPattern.length > 1) {
+					if (!oRoute) {
+						$.sap.log.error("No parent route with '" + oConfig.parent + "' could be found", this);
+					} else if (oRoute._aPattern.length > 1) {
 						$.sap.log.error("Routes with multiple patterns cannot be used as parent for nested routes", this);
 						return;
 					} else {
