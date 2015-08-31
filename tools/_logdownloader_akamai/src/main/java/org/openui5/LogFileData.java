@@ -102,7 +102,7 @@ class LogFileData {
 				obj.getInt("getstartedHits"),
 				obj.getInt("demokitHits"),
 				obj.getInt("coreHits"),
-				obj.getInt("versionedCoreHits"),
+				(obj.has("versionedCoreHits") ? obj.getInt("versionedCoreHits") : 0),
 				obj.getInt("ipCounter"),
 				coreVersions);
 		return data;

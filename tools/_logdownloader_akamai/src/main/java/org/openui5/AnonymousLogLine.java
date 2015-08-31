@@ -102,7 +102,7 @@ public class AnonymousLogLine {
 	public static void initializeClass(String applicationName) {
 		ANON_LOGLINE_PATTERN = Pattern.compile("^((\\d{4})-([01]\\d)-([0-3]\\d))	(([0-9]+):([0-5][0-9]):([0-5][0-9]))	(\\d+)	(\\w+)	(/" + applicationName + "\\.(\\w\\w)\\d+\\.hana\\.ondemand.com(/(d+\\.\\d+\\.\\d+))?(/[^\\s]*))	(\\d+)	(\\d+)	(\\d+)	\"(([^\\s]+)|[-])\"	\"([^\"]+)\"	.*$");
 		VERSIONED_CORE_CHECK_PATTERN = Pattern.compile(".*GET\\t/" + applicationName + "\\....\\.hana\\.ondemand\\.com/\\d+\\.\\d+\\.\\d+/resources/sap-ui-core\\.js.*");
-		VERSIONED_CORE_LOGLINE_PATTERN = Pattern.compile("^((\\d{4})-([01]\\d)-([0-3]\\d))	(([0-9]+):([0-5][0-9]):([0-5][0-9]))	(\\d+)	(\\w+)	(/openui5\\.(\\w\\w)\\d+\\.hana\\.ondemand.com((/([\\d\\.]+))/resources/sap-ui-core.js[^\\s]*))	(\\d+)	(\\d+)	(\\d+)	\"(([^\\s]+)|[-])\"	\"([^\"]+)\"	.*$");
+		VERSIONED_CORE_LOGLINE_PATTERN = Pattern.compile("^((\\d{4})-([01]\\d)-([0-3]\\d))	(([0-9]+):([0-5][0-9]):([0-5][0-9]))	(\\d+)	(\\w+)	(/" + applicationName + "\\.(\\w\\w)\\d+\\.hana\\.ondemand.com((/([\\d\\.]+))/resources/sap-ui-core.js[^\\s]*))	(\\d+)	(\\d+)	(\\d+)	\"(([^\\s]+)|[-])\"	\"([^\"]+)\"	.*$");
 	}
 	
 	
