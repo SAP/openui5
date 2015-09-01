@@ -201,13 +201,13 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 								</LabeledElement>\
 								<LabeledElement Name="Date">\
 									<Apply Function="odata.uriEncode">\
-										<Date>2099-03-25</Date>\
+										<Date>2033-03-25</Date>\
 									</Apply>\
 								</LabeledElement>\
 								<LabeledElement Name="DateTimeOffset">\
 									<Apply Function="odata.uriEncode">\
 										<!-- TODO split seconds, e.g. ".123456789012" -->\
-										<DateTimeOffset>2099-01-06T07:25:21Z</DateTimeOffset>\
+										<DateTimeOffset>2033-01-06T07:25:21Z</DateTimeOffset>\
 									</Apply>\
 								</LabeledElement>\
 								<LabeledElement Name="Decimal">\
@@ -1123,9 +1123,9 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	//*********************************************************************************************
 	[ // see http://www.odata.org/documentation/odata-version-2-0/overview/
 		{type: "Bool", result: "false"},
-		{type: "Date", result: "datetime'2099-03-25T00:00:00'"},
+		{type: "Date", result: "datetime'2033-03-25T00:00:00'"},
 		//TODO split seconds, e.g. ".123456789012"
-		{type: "DateTimeOffset", result: "datetimeoffset'2099-01-06T07:25:21Z'"},
+		{type: "DateTimeOffset", result: "datetimeoffset'2033-01-06T07:25:21Z'"},
 		{type: "Decimal", result: "-12345678901234567.12345678901234M"},
 		{type: "Float", result: "1.69E+308d"},
 		{type: "Guid", result: "guid'0050568D-393C-1EE4-A5AE-9AAE85248FF1'"},
@@ -1164,10 +1164,10 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			sExpectedUrl = "/sap/opu/odata/sap/ZUI5_EDM_TYPES/EdmTypesCollection?$filter="
 				+ "Boolean+eq+false"
 				+ "+and+Date+eq+"
-				+ encode("datetime'2099-03-25T00:00:00'")
+				+ encode("datetime'2033-03-25T00:00:00'")
 				+ "+and+DateTimeOffset+eq+"
 				//TODO split seconds, e.g. ".123456789012"
-				+ encode("datetimeoffset'2099-01-06T07:25:21Z'")
+				+ encode("datetimeoffset'2033-01-06T07:25:21Z'")
 				+ "+and+Decimal+eq+"
 				+ encode("-12345678901234567.12345678901234M")
 				+ "+and+Double+eq+"
