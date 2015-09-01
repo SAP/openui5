@@ -226,10 +226,11 @@ sap.ui.define(['jquery.sap.global', './Control', './library'],
 				var iSize = this._iSteps * this._iFactor;
 				
 				if (iSize > this._iMaxContentDivSize) {
-					this._iFactor = Math.ceil(this._iFactor / Math.ceil(iSize / this._iMaxContentDivSize));
+					this._iFactor = this._iFactor / (iSize / this._iMaxContentDivSize);
 				}
 				
-				var iContentSize = this._$ScrollDomRef.height() + this._iSteps * this._iFactor;
+				var iContentSize = this._$ScrollDomRef.height() + Math.ceil(this._iSteps * this._iFactor);
+				
 				// set the content size
 				this._$ScrollDomRef.find("div").height(iContentSize);
 			} else {
