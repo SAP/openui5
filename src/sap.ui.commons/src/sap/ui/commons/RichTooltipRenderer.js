@@ -62,11 +62,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 	
 				// if there is a proper value state -> render corresponding image
 				if (sValueStateImage !== "") {
-					sValueStateImage = jQuery.sap.getModulePath("sap.ui.commons", '/')
-					+ "themes/"
-					+ sap.ui.getCore().getConfiguration().getTheme()
-					+ "/img/richtooltip/" + sValueStateImage;
-				
+					sValueStateImage = jQuery.sap.getModulePath("sap.ui.commons.themes."
+						+ sap.ui.getCore().getConfiguration().getTheme(), "/img/richtooltip/"
+						+ sValueStateImage);
 					rm.write('<img id="' + sId + '-valueStateImage" class="sapUiRttValueStateImage" src="');
 					rm.writeEscaped(sValueStateImage);
 					rm.write('"/>');

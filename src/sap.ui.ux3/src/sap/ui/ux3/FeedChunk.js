@@ -272,11 +272,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/MenuButton', 'sap/ui/core/Co
 	
 			var sIcon = Parameters.get('sap.ui.ux3.Feed:sapUiFeedToolsIconUrl');
 			var sIconHover = Parameters.get('sap.ui.ux3.Feed:sapUiFeedToolsIconHoverUrl');
+			var sThemeModulePath = "sap.ui.ux3.themes." + sap.ui.getCore().getConfiguration().getTheme();
 			if (sIcon) {
-				this.oToolsButton.setProperty('icon', jQuery.sap.getModulePath("sap.ui.ux3", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sIcon, true);
+				this.oToolsButton.setProperty('icon', jQuery.sap.getModulePath(sThemeModulePath, sIcon), true);
 			}
 			if (sIconHover) {
-				this.oToolsButton.setProperty('iconHovered', jQuery.sap.getModulePath("sap.ui.ux3", '/') + "themes/" + sap.ui.getCore().getConfiguration().getTheme() + sIconHover, true);
+				this.oToolsButton.setProperty('iconHovered', jQuery.sap.getModulePath(sThemeModulePath, sIconHover), true);
 			}
 		}
 	
