@@ -426,9 +426,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			if (sUri == null || sUri == "") {
 				var sThemeModuleName = "sap.ui.ux3.themes." + sap.ui.getCore().getConfiguration().getTheme();
 				if (bMessageNotifier) {
-					iconUrl = jQuery.sap.getModulePath(sThemeModuleName, "/img/notification_bar/notification_24.png");
-				} else {
 					iconUrl = jQuery.sap.getModulePath(sThemeModuleName, "/img/notification_bar/alert_white_24.png");
+				} else {
+					iconUrl = jQuery.sap.getModulePath(sThemeModuleName, "/img/notification_bar/notification_24.png");
 				}
 			} else {
 				iconUrl = sUri;
