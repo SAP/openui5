@@ -1,17 +1,22 @@
 /*!
  * ${copyright}
  */
-(function () {
-	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
-	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
-	*/
+sap.ui.require([
+	"sap/ui/core/Control",
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/model/odata/type/Time",
+	"sap/ui/test/TestUtils"
+], function (Control, DateFormat, FormatException, ParseException, ValidateException, ODataType,
+		Time, TestUtils) {
+	/*global QUnit */
 	"use strict";
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
 		oCircular = {};
-
-	jQuery.sap.require("sap.ui.core.format.DateFormat");
-	jQuery.sap.require("sap.ui.test.TestUtils");
 
 	oCircular.self = oCircular;
 
@@ -25,14 +30,14 @@
 	/*
 	 * Tests that the given value leads to a ParseException.
 	 */
-	function parseError(oType, oValue, sReason) {
-		sap.ui.test.TestUtils.withNormalizedMessages(function () {
+	function parseError(assert, oType, oValue, sReason) {
+		TestUtils.withNormalizedMessages(function () {
 			try {
 				oType.parseValue(oValue, "string");
-				ok(false);
+				assert.ok(false);
 			} catch (e) {
-				ok(e instanceof sap.ui.model.ParseException, sReason + ": exception");
-				strictEqual(e.message,
+				assert.ok(e instanceof ParseException, sReason + ": exception");
+				assert.strictEqual(e.message,
 					"EnterTime " + oType.formatValue(createTime(13, 47, 26, 0), "string"),
 					sReason + ": message");
 			}
@@ -40,7 +45,7 @@
 	}
 
 	//*********************************************************************************************
-	module("sap.ui.model.odata.type.Time", {
+	QUnit.module("sap.ui.model.odata.type.Time", {
 		beforeEach: function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
@@ -50,66 +55,66 @@
 	});
 
 	//*********************************************************************************************
-	test("basics", function () {
-		var oType = new sap.ui.model.odata.type.Time();
+	QUnit.test("basics", function (assert) {
+		var oType = new Time();
 
-		ok(oType instanceof sap.ui.model.odata.type.Time, "is a Time");
-		ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
-		strictEqual(oType.getName(), "sap.ui.model.odata.type.Time", "type name");
-		deepEqual(oType.oFormatOptions, undefined, "no format options");
-		deepEqual(oType.oConstraints, undefined, "default constraints");
+		assert.ok(oType instanceof Time, "is a Time");
+		assert.ok(oType instanceof ODataType, "is an ODataType");
+		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Time", "type name");
+		assert.deepEqual(oType.oFormatOptions, undefined, "no format options");
+		assert.deepEqual(oType.oConstraints, undefined, "default constraints");
 	});
 
 	//*********************************************************************************************
 	["false", false, "true", true, undefined].forEach(function (vNullable, i) {
-		test("with nullable=" + JSON.stringify(vNullable), function () {
+		QUnit.test("with nullable=" + JSON.stringify(vNullable), function (assert) {
 			var oType;
 
 			this.mock(jQuery.sap.log).expects("warning").never();
 
-			oType = new sap.ui.model.odata.type.Time({}, {
+			oType = new Time({}, {
 				foo: "a",
 				nullable: vNullable
 			});
-			deepEqual(oType.oConstraints, i >= 2 ? undefined : {nullable: false});
+			assert.deepEqual(oType.oConstraints, i >= 2 ? undefined : {nullable: false});
 		});
 	});
 
 	//*********************************************************************************************
-	test("illegal value for nullable", function () {
-		var oType = new sap.ui.model.odata.type.Time({}, {nullable: false});
+	QUnit.test("illegal value for nullable", function (assert) {
+		var oType = new Time({}, {nullable: false});
 
 		this.mock(jQuery.sap.log).expects("warning").once()
 			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Time");
 
-		oType = new sap.ui.model.odata.type.Time(null, {nullable: "foo"});
-		deepEqual(oType.oConstraints, undefined, "illegal nullable -> default to true");
+		oType = new Time(null, {nullable: "foo"});
+		assert.deepEqual(oType.oConstraints, undefined, "illegal nullable -> default to true");
 	});
 
 	//*********************************************************************************************
-	test("format success", function () {
+	QUnit.test("format success", function (assert) {
 		var oTime = createTime(13, 53, 49, 567),
-			oType = new sap.ui.model.odata.type.Time();
+			oType = new Time();
 
-		strictEqual(oType.formatValue(undefined, "foo"), null, "undefined");
-		strictEqual(oType.formatValue(null, "foo"), null, "null");
+		assert.strictEqual(oType.formatValue(undefined, "foo"), null, "undefined");
+		assert.strictEqual(oType.formatValue(null, "foo"), null, "null");
 
-		strictEqual(oType.formatValue(oTime, "any"), oTime, "null");
-		strictEqual(oType.formatValue(oTime, "string"), "1:53:49 PM", "null");
+		assert.strictEqual(oType.formatValue(oTime, "any"), oTime, "null");
+		assert.strictEqual(oType.formatValue(oTime, "string"), "1:53:49 PM", "null");
 	});
 
 	//*********************************************************************************************
 	["int", "boolean", "float", "foo"].forEach(function (sTargetType) {
-		test("format failure for target type " + sTargetType, function () {
-			var oType = new sap.ui.model.odata.type.Time();
+		QUnit.test("format failure for target type " + sTargetType, function (assert) {
+			var oType = new Time();
 
 			try {
 				oType.formatValue(createTime(0, 0, 0, 0), sTargetType);
-				ok(false);
+				assert.ok(false);
 			} catch (e) {
-				ok(e instanceof sap.ui.model.FormatException);
-				strictEqual(e.message, "Don't know how to format sap.ui.model.odata.type.Time to "
-					+ sTargetType);
+				assert.ok(e instanceof FormatException);
+				assert.strictEqual(e.message,
+					"Don't know how to format sap.ui.model.odata.type.Time to " + sTargetType);
 			}
 		});
 	});
@@ -121,76 +126,78 @@
 		{ms: 1},
 		{__edmType: "Edm.Time", ms: "foo"}
 	].forEach(function (oTime) {
-		test("format failure for " + JSON.stringify(oTime), function () {
-			var oType = new sap.ui.model.odata.type.Time();
+		QUnit.test("format failure for " + JSON.stringify(oTime), function (assert) {
+			var oType = new Time();
 
 			try {
 				oType.formatValue(oTime, "string");
-				ok(false);
+				assert.ok(false);
 			} catch (e) {
-				ok(e instanceof sap.ui.model.FormatException);
-				strictEqual(e.message, "Illegal " + oType.getName() + " value: "
+				assert.ok(e instanceof FormatException);
+				assert.strictEqual(e.message, "Illegal " + oType.getName() + " value: "
 					+ JSON.stringify(oTime));
 			}
 		});
 	});
 
 	//*********************************************************************************************
-	test("parse", function () {
-		var oType = new sap.ui.model.odata.type.Time();
+	QUnit.test("parse", function (assert) {
+		var oType = new Time();
 
-		strictEqual(oType.parseValue(null, "string"), null, "null");
-		strictEqual(oType.parseValue("", "string"), null, "empty string is converted to null");
+		assert.strictEqual(oType.parseValue(null, "string"), null, "null");
+		assert.strictEqual(oType.parseValue("", "string"), null,
+			"empty string is converted to null");
 
-		deepEqual(oType.parseValue("1:45:33 PM", "string"), createTime(13, 45, 33, 0),
+		assert.deepEqual(oType.parseValue("1:45:33 PM", "string"), createTime(13, 45, 33, 0),
 			"valid time");
 
-		parseError(oType, "foo", "not a time");
-		parseError(oType, "1:69:30 AM", "invalid time");
+		parseError(assert, oType, "foo", "not a time");
+		parseError(assert, oType, "1:69:30 AM", "invalid time");
 
 		sap.ui.getCore().getConfiguration().setLanguage("de");
-		oType = new sap.ui.model.odata.type.Time();
-		parseError(oType, "24:00:00", "beyond time of day");
+		oType = new Time();
+		parseError(assert, oType, "24:00:00", "beyond time of day");
 	});
 
 	//*********************************************************************************************
 	[[123, "int"], [true, "boolean"], [1.23, "float"], ["foo", "bar"]].forEach(
 		function (aFixture) {
-			test("parse failure for source type " + aFixture[1], function () {
-				var oType = new sap.ui.model.odata.type.Time();
+			QUnit.test("parse failure for source type " + aFixture[1], function (assert) {
+				var oType = new Time();
 
 				try {
 					oType.parseValue(aFixture[0], aFixture[1]);
-					ok(false);
+					assert.ok(false);
 				} catch (e) {
-					ok(e instanceof sap.ui.model.ParseException);
-					strictEqual(e.message, "Don't know how to parse sap.ui.model.odata.type.Time "
-						+ "from " + aFixture[1]);
+					assert.ok(e instanceof ParseException);
+					assert.strictEqual(e.message,
+						"Don't know how to parse sap.ui.model.odata.type.Time from "
+						+ aFixture[1]);
 				}
 			});
 		}
 	);
 
 	//*********************************************************************************************
-	test("validate success", function () {
-		var oType = new sap.ui.model.odata.type.Time();
+	QUnit.test("validate success", function (assert) {
+		var oType = new Time();
 
 		[null, {__edmType: "Edm.Time", ms: 4711}].forEach(function (sValue) {
 			oType.validateValue(sValue);
 		});
-		expect(0);
+		assert.expect(0);
 	});
 
 	//*********************************************************************************************
-	test("validate: nullable", function () {
-		sap.ui.test.TestUtils.withNormalizedMessages(function () {
-			var oType = new sap.ui.model.odata.type.Time({}, {nullable: false});
+	QUnit.test("validate: nullable", function (assert) {
+		TestUtils.withNormalizedMessages(function () {
+			var oType = new Time({}, {nullable: false});
 			try {
 				oType.validateValue(null);
-				ok(false);
+				assert.ok(false);
 			} catch (e) {
-				ok(e instanceof sap.ui.model.ValidateException, "ValidateException: exception");
-				strictEqual(e.message, "EnterTime 1:47:26 PM", "ValidateException: message");
+				assert.ok(e instanceof ValidateException, "ValidateException: exception");
+				assert.strictEqual(e.message, "EnterTime 1:47:26 PM", "ValidateException: message");
 			}
 		});
 	});
@@ -202,30 +209,30 @@
 		{value: {ms: 1}},
 		{value: oCircular, error: "[object Object]"}
 	].forEach(function (oFixture, i) {
-		test("validation failure for illegal model type #" + i, function () {
-			var oType = new sap.ui.model.odata.type.Time();
+		QUnit.test("validation failure for illegal model type #" + i, function (assert) {
+			var oType = new Time();
 
 			try {
 				oType.validateValue(oFixture.value);
-				ok(false);
+				assert.ok(false);
 			} catch (e) {
-				ok(e instanceof sap.ui.model.ValidateException);
-				strictEqual(e.message, "Illegal " + oType.getName() + " value: "
+				assert.ok(e instanceof ValidateException);
+				assert.strictEqual(e.message, "Illegal " + oType.getName() + " value: "
 					+ (oFixture.error || JSON.stringify(oFixture.value)));
 			}
 		});
 	});
 
 	//*********************************************************************************************
-	test("localization change", function () {
-		var oControl = new sap.ui.core.Control(),
-			oType = new sap.ui.model.odata.type.Time(),
+	QUnit.test("localization change", function (assert) {
+		var oControl = new Control(),
+			oType = new Time(),
 			oValue = createTime(13, 53, 49, 0);
 
 		oControl.bindProperty("tooltip", {path: "/unused", type: oType});
 		oType.formatValue(oValue, "string"); // ensure that a formatter exists
 		sap.ui.getCore().getConfiguration().setLanguage("de");
-		strictEqual(oType.formatValue(oValue, "string"), "13:53:49",
+		assert.strictEqual(oType.formatValue(oValue, "string"), "13:53:49",
 			"adjusted to changed language");
 	});
 
@@ -239,24 +246,22 @@
 		{oFormatOptions: {style: "medium"},
 			oExpected: {UTC: true, strictParsing: true, style: "medium"}}
 	].forEach(function (oFixture) {
-		test("with oFormatOptions=" + JSON.stringify(oFixture.oFormatOptions),
-			sinon.test(function () {
-				var oType = new sap.ui.model.odata.type.Time(oFixture.oFormatOptions),
-				oSpy = this.spy(sap.ui.core.format.DateFormat, "getTimeInstance");
+		QUnit.test("with oFormatOptions=" + JSON.stringify(oFixture.oFormatOptions),
+			function (assert) {
+				var oType = new Time(oFixture.oFormatOptions),
+				oSpy = this.spy(DateFormat, "getTimeInstance");
 
-				deepEqual(oType.oFormatOptions, oFixture.oFormatOptions,
+				assert.deepEqual(oType.oFormatOptions, oFixture.oFormatOptions,
 					"format options: " + JSON.stringify(oFixture.oFormatOptions) + " set");
 				oType.formatValue(createTime(13, 47, 26, 0), "string");
-				ok(oSpy.calledWithExactly(oFixture.oExpected));
-			})
-		);
+				assert.ok(oSpy.calledWithExactly(oFixture.oExpected));
+			});
 	});
 
 	//*********************************************************************************************
-	test("parse milliseconds", function () {
-		var oType = new sap.ui.model.odata.type.Time({pattern: "HH:mm:ss.SSS"});
+	QUnit.test("parse milliseconds", function (assert) {
+		var oType = new Time({pattern: "HH:mm:ss.SSS"});
 
-		deepEqual(oType.parseValue("12:34:56.789", "string"), createTime(12, 34, 56, 789));
+		assert.deepEqual(oType.parseValue("12:34:56.789", "string"), createTime(12, 34, 56, 789));
 	});
-
-} ());
+});

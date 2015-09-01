@@ -2,9 +2,7 @@
  * ${copyright}
  */
 sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
-	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
-	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
-	*/
+	/*global QUnit */
 	"use strict";
 
 	var oContactAnnotationFromV2 = {
@@ -390,7 +388,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 				"com.sap.vocabularies.Communication.v1.Contact" : {
 					"fn" : { "Path" : "NameFromAnnotation" },
 					"adr" : {
-						"code" : { "Path" : "ZipFromAnnotation" },
+						"code" : { "Path" : "ZipFromAnnotation" }
 					},
 					"nickname" : { "Path" : "NickNameFromAnnotation" }
 				}
@@ -430,7 +428,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 	}
 
 	//*********************************************************************************************
-	module("sap.ui.model.odata._ODataMetaModelUtils", {
+	QUnit.module("sap.ui.model.odata._ODataMetaModelUtils", {
 		beforeEach : function () {
 			this.iOldLogLevel = jQuery.sap.log.getLevel();
 			// do not rely on ERROR vs. DEBUG due to minified sources
@@ -545,10 +543,10 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 			sOutput : "com.sap.vocabularies.Communication.v1.ContactInformationType/home",
 			sSemantics : "email",
 			sTypes : "xyz,home"
-		},
+		}
 	].forEach(function (oFixture) {
 		var sSemanticsValue = oFixture.sSemantics + ";type=" + oFixture.sTypes;
-		test("getV4TypesForV2Semantics: " + sSemanticsValue, function () {
+		QUnit.test("getV4TypesForV2Semantics: " + sSemanticsValue, function (assert) {
 			var oLogMock = this.mock(jQuery.sap.log),
 				bLogExpected = oFixture.sOutput === "" || oFixture.oExpectedMessage,
 				oType = { "name" : "Foo" },
@@ -563,7 +561,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 					"Foo.bar",
 					"sap.ui.model.odata._ODataMetaModelUtils");
 
-			strictEqual(Utils.getV4TypesForV2Semantics(oFixture.sSemantics, oFixture.sTypes,
+			assert.strictEqual(Utils.getV4TypesForV2Semantics(oFixture.sSemantics, oFixture.sTypes,
 				oProperty, oType), oFixture.sOutput, sSemanticsValue);
 		});
 	});
@@ -580,7 +578,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 	}].forEach(function (oFixture) {
 		var sTypeName = oFixture.type.name;
 
-		test("addSapSemantics: " + sTypeName, function () {
+		QUnit.test("addSapSemantics: " + sTypeName, function (assert) {
 			var oType = clone(oFixture.type);
 
 			// ensure that sap:semantics properties are available
@@ -593,21 +591,21 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 
 			// verify results
 			["Contact", "Event", "Message", "Task"].forEach(function (sAnnotationTerm) {
-				deepEqual(oType["com.sap.vocabularies.Communication.v1." + sAnnotationTerm],
+				assert.deepEqual(oType["com.sap.vocabularies.Communication.v1." + sAnnotationTerm],
 					oFixture.expectedAnnotations[sAnnotationTerm],
 					sAnnotationTerm + " is as expected");
 			});
 			if (sTypeName === "Contact") {
-				deepEqual(oType.property[3/*EMail*/]
+				assert.deepEqual(oType.property[3/*EMail*/]
 						["com.sap.vocabularies.Communication.v1.IsEmailAddress"],
 					{ "Bool" : "true" });
-				deepEqual(oType.property[4/*EMail2*/]
+				assert.deepEqual(oType.property[4/*EMail2*/]
 						["com.sap.vocabularies.Communication.v1.IsEmailAddress"],
 					{ "Bool" : "true" });
-				deepEqual(oType.property[20/*Tel*/]
+				assert.deepEqual(oType.property[20/*Tel*/]
 						["com.sap.vocabularies.Communication.v1.IsPhoneNumber"],
 					{ "Bool" : "true" });
-				deepEqual(oType.property[22/*Tel3*/]
+				assert.deepEqual(oType.property[22/*Tel3*/]
 						["com.sap.vocabularies.Communication.v1.IsPhoneNumber"],
 					{ "Bool" : "true" });
 			}
@@ -616,75 +614,77 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bIsLoggable) {
-		test("addSapSemantics: unsupported sap:semantics, log = " + bIsLoggable, function () {
-			var oLogMock = this.mock(jQuery.sap.log),
-				oType = {
-					"name" : "Foo",
-					"property" : [
-						{
-							"name" : "Bar",
-							"extensions" : [{
-								"name" : "semantics",
-								"value" : "*",
-								"namespace" : sNamespace
-							}]
-						}
-					]
-				};
+		QUnit.test("addSapSemantics: unsupported sap:semantics, log = " + bIsLoggable,
+			function (assert) {
+				var oLogMock = this.mock(jQuery.sap.log),
+					oType = {
+						"name" : "Foo",
+						"property" : [
+							{
+								"name" : "Bar",
+								"extensions" : [{
+									"name" : "semantics",
+									"value" : "*",
+									"namespace" : sNamespace
+								}]
+							}
+						]
+					};
 
-			// ensure that sap:semantics properties are available
-			oType.property.forEach(function (oProperty) {
-				Utils.liftSAPData(oProperty, "Property");
+				// ensure that sap:semantics properties are available
+				oType.property.forEach(function (oProperty) {
+					Utils.liftSAPData(oProperty, "Property");
+				});
+
+				oLogMock.expects("isLoggable")
+					.withExactArgs(jQuery.sap.log.Level.WARNING)
+					.returns(bIsLoggable);
+				oLogMock.expects("warning")
+					// do not construct arguments in vain!
+					.exactly(bIsLoggable ? 1 : 0)
+					.withExactArgs("Unsupported sap:semantics: *", "Foo.Bar",
+						"sap.ui.model.odata._ODataMetaModelUtils");
+
+				// code under test
+				Utils.addSapSemantics(oType);
 			});
-
-			oLogMock.expects("isLoggable")
-				.withExactArgs(jQuery.sap.log.Level.WARNING)
-				.returns(bIsLoggable);
-			oLogMock.expects("warning")
-				// do not construct arguments in vain!
-				.exactly(bIsLoggable ? 1 : 0)
-				.withExactArgs("Unsupported sap:semantics: *", "Foo.Bar",
-					"sap.ui.model.odata._ODataMetaModelUtils");
-
-			// code under test
-			Utils.addSapSemantics(oType);
-		});
 	});
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bIsLoggable) {
-		test("addSapSemantics: unsupported sap:semantics type, log = " + bIsLoggable, function () {
-			var oLogMock = this.mock(jQuery.sap.log),
-				oType = {
-					"name" : "Foo",
-					"property" : [
-						{
-							"name" : "Bar",
-							"extensions" : [{
-								"name" : "semantics",
-								"value" : "tel;type=foo",
-								"namespace" : sNamespace
-							}]
-						}
-					]
-				};
+		QUnit.test("addSapSemantics: unsupported sap:semantics type, log = " + bIsLoggable,
+			function (assert) {
+				var oLogMock = this.mock(jQuery.sap.log),
+					oType = {
+						"name" : "Foo",
+						"property" : [
+							{
+								"name" : "Bar",
+								"extensions" : [{
+									"name" : "semantics",
+									"value" : "tel;type=foo",
+									"namespace" : sNamespace
+								}]
+							}
+						]
+					};
 
-			// ensure that sap:semantics properties are available
-			oType.property.forEach(function (oProperty) {
-				Utils.liftSAPData(oProperty, "Property");
+				// ensure that sap:semantics properties are available
+				oType.property.forEach(function (oProperty) {
+					Utils.liftSAPData(oProperty, "Property");
+				});
+				oLogMock.expects("isLoggable")
+					.withExactArgs(jQuery.sap.log.Level.WARNING)
+					.returns(bIsLoggable);
+				oLogMock.expects("warning")
+					// do not construct arguments in vain!
+					.exactly(bIsLoggable ? 1 : 0)
+					.withExactArgs("Unsupported type for sap:semantics: foo", "Foo.Bar",
+						"sap.ui.model.odata._ODataMetaModelUtils");
+
+				// code under test
+				Utils.addSapSemantics(oType);
 			});
-			oLogMock.expects("isLoggable")
-				.withExactArgs(jQuery.sap.log.Level.WARNING)
-				.returns(bIsLoggable);
-			oLogMock.expects("warning")
-				// do not construct arguments in vain!
-				.exactly(bIsLoggable ? 1 : 0)
-				.withExactArgs("Unsupported type for sap:semantics: foo", "Foo.Bar",
-					"sap.ui.model.odata._ODataMetaModelUtils");
-
-			// code under test
-			Utils.addSapSemantics(oType);
-		});
 	});
 
 	//*********************************************************************************************
@@ -699,7 +699,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 		expectedTypeAnnotations: oContactAnnotationFromV2,
 		expectedComplexTypeAnnotations: oContactAnnotationFromV2
 	}].forEach(function (oFixture) {
-		test("merge: addSapSemantics called " + oFixture.test, function () {
+		QUnit.test("merge: addSapSemantics called " + oFixture.test, function (assert) {
 			var oData = clone(oDataSchema),
 				oContact = oData.dataServices.schema[0].entityType[0],
 				oCTContact = oData.dataServices.schema[0].complexType[0];
@@ -710,29 +710,29 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 			Utils.merge(oFixture.annotations || {}, oData);
 
 			// verify results
-			deepEqual(oContact["com.sap.vocabularies.Communication.v1.Contact"],
+			assert.deepEqual(oContact["com.sap.vocabularies.Communication.v1.Contact"],
 				oFixture.expectedTypeAnnotations, "Contact annotations for EntityType");
-			deepEqual(oCTContact["com.sap.vocabularies.Communication.v1.Contact"],
+			assert.deepEqual(oCTContact["com.sap.vocabularies.Communication.v1.Contact"],
 				oFixture.expectedComplexTypeAnnotations, "Contact annotations for ComplexType");
 
-			equals(Utils.addSapSemantics.callCount, 9); // 4 complex + 5 entity types
-			ok(Utils.addSapSemantics.calledWithExactly(oCTContact),
+			assert.strictEqual(Utils.addSapSemantics.callCount, 9); // 4 complex + 5 entity types
+			assert.ok(Utils.addSapSemantics.calledWithExactly(oCTContact),
 				"called addSapSemantics with ComplexType");
-			ok(Utils.addSapSemantics.calledWithExactly(oContact),
+			assert.ok(Utils.addSapSemantics.calledWithExactly(oContact),
 				"called addSapSemantics with EntityType");
 
 			// verify email and tel
-			deepEqual(oContact.property[3/*EMail*/]
+			assert.deepEqual(oContact.property[3/*EMail*/]
 					["com.sap.vocabularies.Communication.v1.IsEmailAddress"],
 				{ "Bool" : (oFixture.annotations ? "false" : "true") });
-			deepEqual(oContact
+			assert.deepEqual(oContact
 					.property[20/*Tel*/]["com.sap.vocabularies.Communication.v1.IsPhoneNumber"],
 				{ "Bool" : (oFixture.annotations ? "false" : "true") });
 		});
 	});
 
 	//*********************************************************************************************
-	test("addFilterRestriction: adding valid filter-restrictions", function () {
+	QUnit.test("addFilterRestriction: adding valid filter-restrictions", function (assert) {
 		var aFilterRestrictions,
 			oLogMock = this.mock(jQuery.sap.log),
 			oEntitySet = {},
@@ -756,11 +756,12 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 
 			// check result
 			aFilterRestrictions =
-				oEntitySet["com.sap.vocabularies.Common.v1.FilterExpressionRestrictions"]
+				oEntitySet["com.sap.vocabularies.Common.v1.FilterExpressionRestrictions"];
 
-			ok(aFilterRestrictions, "FilterExpressionRestrictions are available");
-			ok(Array.isArray(aFilterRestrictions), "FilterExpressionRestrictions is an array");
-			deepEqual(aFilterRestrictions[i], {
+			assert.ok(aFilterRestrictions, "FilterExpressionRestrictions are available");
+			assert.ok(Array.isArray(aFilterRestrictions),
+				"FilterExpressionRestrictions is an array");
+			assert.deepEqual(aFilterRestrictions[i], {
 				"Property" : { "PropertyPath" : "Foo" + i},
 				"AllowedExpressions" : {
 					"EnumMember" : "com.sap.vocabularies.Common.v1.FilterExpressionType/"
@@ -772,8 +773,8 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bIsLoggable) {
-		test("addFilterRestriction: unsupported sap:filter-restriction, log = " + bIsLoggable,
-			function () {
+		QUnit.test("addFilterRestriction: unsupported sap:filter-restriction, log = " + bIsLoggable,
+			function (assert) {
 				var oLogMock = this.mock(jQuery.sap.log),
 					oEntitySet = { entityType : "Baz" },
 					oProperty = {
@@ -793,14 +794,14 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 				// code under test
 				Utils.addFilterRestriction(oProperty, oEntitySet);
 
-				deepEqual(oEntitySet, { entityType : "Baz" },
-					"No v4 annotation created in case of unsupported value")
+				assert.deepEqual(oEntitySet, { entityType : "Baz" },
+					"No v4 annotation created in case of unsupported value");
 			}
 		);
 	});
 
 	//*********************************************************************************************
-	test("calculateEntitySetAnnotations: call addFilterRestriction", function () {
+	QUnit.test("calculateEntitySetAnnotations: call addFilterRestriction", function (assert) {
 		var aSchemas = clone(oDataSchema).dataServices.schema,
 			oEntitySet = aSchemas[0].entityContainer[0].entitySet[1], // ProductSet
 			oEntityType = aSchemas[0].entityType[4], // Product
@@ -823,7 +824,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 	});
 
 	//*********************************************************************************************
-	test("merge: addFilterRestriction called", function () {
+	QUnit.test("merge: addFilterRestriction called", function (assert) {
 		var oAnnotations = {
 				"EntityContainer" : { "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities" : {
 					"ProductSet" : {
@@ -850,7 +851,7 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 		Utils.merge({}, oData);
 
 		// verify results
-		deepEqual(oProductSet["com.sap.vocabularies.Common.v1.FilterExpressionRestrictions"],
+		assert.deepEqual(oProductSet["com.sap.vocabularies.Common.v1.FilterExpressionRestrictions"],
 			[{
 				"Property" : { "PropertyPath" : "Foo"},
 				"AllowedExpressions" : {
@@ -862,14 +863,15 @@ sap.ui.require(['sap/ui/model/odata/_ODataMetaModelUtils'], function (Utils) {
 		);
 
 		// with annotations
-		oData = clone(oDataSchema),
+		oData = clone(oDataSchema);
 		oProductSet = oData.dataServices.schema[0].entityContainer[0].entitySet[1];
 
 		// code under test
 		Utils.merge(oAnnotations, oData);
 
 		// verify results
-		deepEqual(oProductSet["com.sap.vocabularies.Common.v1.FilterExpressionRestrictions"],
+		assert.deepEqual(
+			oProductSet["com.sap.vocabularies.Common.v1.FilterExpressionRestrictions"],
 			oAnnotations["EntityContainer"]["GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities"]["ProductSet"]
 				["com.sap.vocabularies.Common.v1.FilterExpressionRestrictions"],
 			"with additional v4 annotations"

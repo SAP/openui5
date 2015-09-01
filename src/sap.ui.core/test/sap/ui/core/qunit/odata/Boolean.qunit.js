@@ -1,18 +1,21 @@
 /*!
  * ${copyright}
  */
-(function () {
-	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
-	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
-	*/
+sap.ui.require([
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/Boolean",
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/test/TestUtils"
+], function (FormatException, ParseException, ValidateException, Boolean, ODataType, TestUtils) {
+	/*global QUnit */
 	"use strict";
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 
-	jQuery.sap.require("sap.ui.test.TestUtils");
-
 	//*********************************************************************************************
-	module("sap.ui.model.odata.type.Boolean", {
+	QUnit.module("Boolean", {
 		beforeEach: function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
@@ -21,78 +24,78 @@
 		}
 	});
 
-	test("basics", function () {
-		var oType = new sap.ui.model.odata.type.Boolean();
+	QUnit.test("basics", function (assert) {
+		var oType = new Boolean();
 
-		ok(oType instanceof sap.ui.model.odata.type.Boolean, "is a Boolean");
-		ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
-		strictEqual(oType.getName(), "sap.ui.model.odata.type.Boolean", "type name");
-		strictEqual(oType.oFormatOptions, undefined, "no format options");
-		strictEqual(oType.oConstraints, undefined, "no constraints");
+		assert.ok(oType instanceof Boolean, "is a Boolean");
+		assert.ok(oType instanceof ODataType, "is an ODataType");
+		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Boolean", "type name");
+		assert.strictEqual(oType.oFormatOptions, undefined, "no format options");
+		assert.strictEqual(oType.oConstraints, undefined, "no constraints");
 	});
 
 	//*********************************************************************************************
-	test("format", function () {
-		var oType = new sap.ui.model.odata.type.Boolean();
+	QUnit.test("format", function (assert) {
+		var oType = new Boolean();
 
-		strictEqual(oType.formatValue(undefined, "foo"), null, "undefined");
-		strictEqual(oType.formatValue(null, "foo"), null, "null");
-		strictEqual(oType.formatValue(true, "boolean"), true, "true");
-		strictEqual(oType.formatValue(false, "boolean"), false, "false");
-		strictEqual(oType.formatValue(true, "any"), true, "true type any");
-		strictEqual(oType.formatValue(false, "any"), false, "false type any");
-		strictEqual(oType.formatValue(true, "string"), "Yes", "true, target type string");
-		strictEqual(oType.formatValue(false, "string"), "No", "false, target type string");
+		assert.strictEqual(oType.formatValue(undefined, "foo"), null, "undefined");
+		assert.strictEqual(oType.formatValue(null, "foo"), null, "null");
+		assert.strictEqual(oType.formatValue(true, "boolean"), true, "true");
+		assert.strictEqual(oType.formatValue(false, "boolean"), false, "false");
+		assert.strictEqual(oType.formatValue(true, "any"), true, "true type any");
+		assert.strictEqual(oType.formatValue(false, "any"), false, "false type any");
+		assert.strictEqual(oType.formatValue(true, "string"), "Yes", "true, target type string");
+		assert.strictEqual(oType.formatValue(false, "string"), "No", "false, target type string");
 		try {
 			oType.formatValue(true, "int");
-			ok(false);
+			assert.ok(false);
 		} catch (e) {
-			ok(e instanceof sap.ui.model.FormatException);
-			strictEqual(e.message,
+			assert.ok(e instanceof FormatException);
+			assert.strictEqual(e.message,
 				"Don't know how to format sap.ui.model.odata.type.Boolean to int");
 		}
 	});
 
 	//*********************************************************************************************
-	test("parse", function () {
-		var oType = new sap.ui.model.odata.type.Boolean();
+	QUnit.test("parse", function (assert) {
+		var oType = new Boolean();
 
-		strictEqual(oType.parseValue(true, "boolean"), true, "true, boolean");
-		strictEqual(oType.parseValue(false, "boolean"), false, "false, boolean");
-		strictEqual(oType.parseValue(null, "boolean"), null, "null, boolean");
-		strictEqual(oType.parseValue("", "string"), null, "empty string, string");
-		strictEqual(oType.parseValue("Yes  ", "string"), true, "Yes");
-		strictEqual(oType.parseValue("  No", "string"), false, "No");
-		strictEqual(oType.parseValue("yes  ", "string"), true, "yes");
-		strictEqual(oType.parseValue(" no ", "string"), false, "no");
+		assert.strictEqual(oType.parseValue(true, "boolean"), true, "true, boolean");
+		assert.strictEqual(oType.parseValue(false, "boolean"), false, "false, boolean");
+		assert.strictEqual(oType.parseValue(null, "boolean"), null, "null, boolean");
+		assert.strictEqual(oType.parseValue("", "string"), null, "empty string, string");
+		assert.strictEqual(oType.parseValue("Yes  ", "string"), true, "Yes");
+		assert.strictEqual(oType.parseValue("  No", "string"), false, "No");
+		assert.strictEqual(oType.parseValue("yes  ", "string"), true, "yes");
+		assert.strictEqual(oType.parseValue(" no ", "string"), false, "no");
 		try {
 			oType.parseValue(42, "int");
-			ok(false);
+			assert.ok(false);
 		} catch (e) {
-			ok(e instanceof sap.ui.model.ParseException);
-			strictEqual(e.message,
+			assert.ok(e instanceof ParseException);
+			assert.strictEqual(e.message,
 				"Don't know how to parse sap.ui.model.odata.type.Boolean from int");
 		}
 	});
 
 	//*********************************************************************************************
-	test("parse: user error", function () {
-		sap.ui.test.TestUtils.withNormalizedMessages(function () {
-			var oType = new sap.ui.model.odata.type.Boolean();
+	QUnit.test("parse: user error", function (assert) {
+		TestUtils.withNormalizedMessages(function () {
+			var oType = new Boolean();
 
 			try {
 				oType.parseValue("foo", "string");
-				ok(false);
+				assert.ok(false);
 			} catch (e) {
-				ok(e instanceof sap.ui.model.ParseException);
-				strictEqual(e.message, 'EnterYesOrNo YES NO');
+				assert.ok(e instanceof ParseException);
+				assert.strictEqual(e.message, 'EnterYesOrNo YES NO');
 			}
 		});
 	});
 
 	//*********************************************************************************************
-	test("validate", function () {
-		var oType = new sap.ui.model.odata.type.Boolean();
+	QUnit.test("validate", function (assert) {
+		var oType = new Boolean();
 
 		[false, true, null].forEach(function (sValue) {
 			oType.validateValue(sValue);
@@ -100,45 +103,45 @@
 
 		try {
 			oType.validateValue("foo");
-			ok(false);
+			assert.ok(false);
 		} catch (e) {
-			ok(e instanceof sap.ui.model.ValidateException);
-			strictEqual(e.message, "Illegal sap.ui.model.odata.type.Boolean value: foo");
+			assert.ok(e instanceof ValidateException);
+			assert.strictEqual(e.message, "Illegal sap.ui.model.odata.type.Boolean value: foo");
 		}
 
-		sap.ui.test.TestUtils.withNormalizedMessages(function () {
-			oType = new sap.ui.model.odata.type.Boolean({}, {nullable: false});
+		TestUtils.withNormalizedMessages(function () {
+			oType = new Boolean({}, {nullable: false});
 			try {
 				oType.validateValue(null);
-				ok(false);
+				assert.ok(false);
 			} catch (e) {
-				ok(e instanceof sap.ui.model.ValidateException);
-				strictEqual(e.message, 'EnterYesOrNo YES NO');
+				assert.ok(e instanceof ValidateException);
+				assert.strictEqual(e.message, 'EnterYesOrNo YES NO');
 			}
 		});
 	});
 
 	//*********************************************************************************************
-	test("setConstraints", function () {
-		var oType = new sap.ui.model.odata.type.Boolean();
+	QUnit.test("setConstraints", function (assert) {
+		var oType = new Boolean();
 
 		this.mock(jQuery.sap.log).expects("warning")
 			.once()
 			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Boolean");
 
-		oType = new sap.ui.model.odata.type.Boolean({}, {nullable: false});
-		deepEqual(oType.oConstraints, {nullable: false}, "nullable false");
+		oType = new Boolean({}, {nullable: false});
+		assert.deepEqual(oType.oConstraints, {nullable: false}, "nullable false");
 
-		oType = new sap.ui.model.odata.type.Boolean({}, {nullable: "false"});
-		deepEqual(oType.oConstraints, {nullable: false}, 'nullable "false"');
+		oType = new Boolean({}, {nullable: "false"});
+		assert.deepEqual(oType.oConstraints, {nullable: false}, 'nullable "false"');
 
-		oType = new sap.ui.model.odata.type.Boolean({}, {nullable: true});
-		strictEqual(oType.oConstraints, undefined, "nullable true");
+		oType = new Boolean({}, {nullable: true});
+		assert.strictEqual(oType.oConstraints, undefined, "nullable true");
 
-		oType = new sap.ui.model.odata.type.Boolean({}, {nullable: "true"});
-		strictEqual(oType.oConstraints, undefined, 'nullable "true"');
+		oType = new Boolean({}, {nullable: "true"});
+		assert.strictEqual(oType.oConstraints, undefined, 'nullable "true"');
 
-		oType = new sap.ui.model.odata.type.Boolean({}, {nullable: "foo"});
-		strictEqual(oType.oConstraints, undefined, "illegal nullable -> ignored");
+		oType = new Boolean({}, {nullable: "foo"});
+		assert.strictEqual(oType.oConstraints, undefined, "illegal nullable -> ignored");
 	});
-} ());
+});

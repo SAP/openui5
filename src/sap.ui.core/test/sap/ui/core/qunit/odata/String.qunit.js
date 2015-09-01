@@ -1,31 +1,34 @@
 /*!
  * ${copyright}
  */
-(function () {
-	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
-	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
-	*/
+sap.ui.require([
+	"sap/ui/model/FormatException",
+	"sap/ui/model/ParseException",
+	"sap/ui/model/ValidateException",
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/model/odata/type/String",
+	"sap/ui/test/TestUtils"
+], function (FormatException, ParseException, ValidateException, ODataType, TypeString,
+		TestUtils) {
+	/*global QUnit */
 	"use strict";
 
-	jQuery.sap.require("sap.ui.model.odata.type.String");
-	jQuery.sap.require("sap.ui.test.TestUtils");
-
 	//*********************************************************************************************
-	module("sap.ui.model.odata.type.String");
+	QUnit.module("sap.ui.model.odata.type.String");
 
-	test("basics", function () {
-		var oType = new sap.ui.model.odata.type.String();
+	QUnit.test("basics", function (assert) {
+		var oType = new TypeString();
 
-		ok(oType instanceof sap.ui.model.odata.type.String, "is a String");
-		ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
-		strictEqual(oType.getName(), "sap.ui.model.odata.type.String", "type name");
-		strictEqual(oType.oFormatOptions, undefined, "no format options");
-		strictEqual(oType.oConstraints, undefined, "default constraints");
+		assert.ok(oType instanceof TypeString, "is a String");
+		assert.ok(oType instanceof ODataType, "is an ODataType");
+		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.String", "type name");
+		assert.strictEqual(oType.oFormatOptions, undefined, "no format options");
+		assert.strictEqual(oType.oConstraints, undefined, "default constraints");
 	});
 
 	//*********************************************************************************************
-	test("w/ constraints", function () {
-		var oType = new sap.ui.model.odata.type.String({}, {
+	QUnit.test("w/ constraints", function (assert) {
+		var oType = new TypeString({}, {
 			contains: "a",
 			endsWith: "foo",
 			endsWithIgnoreCase: "bar",
@@ -37,7 +40,7 @@
 			startsWithIgnoreCase: "you"
 		});
 
-		deepEqual(oType.oConstraints, {maxLength: 12});
+		assert.deepEqual(oType.oConstraints, {maxLength: 12});
 	});
 
 	//*********************************************************************************************
@@ -46,129 +49,130 @@
 		{maxLength: -1, warning: "Illegal maxLength: -1"},
 		{maxLength: 0, warning: "Illegal maxLength: 0"}
 	].forEach(function (oFixture, i) {
-		test("constraints error #" + i, function () {
-			var oType = new sap.ui.model.odata.type.String();
+		QUnit.test("constraints error #" + i, function (assert) {
+			var oType = new TypeString();
 
 			this.mock(jQuery.sap.log).expects("warning")
-				.once().withExactArgs(oFixture.warning, null, "sap.ui.model.odata.type.String");
+				.withExactArgs(oFixture.warning, null, "sap.ui.model.odata.type.String");
 
-			oType = new sap.ui.model.odata.type.String({}, {maxLength: oFixture.maxLength});
-			strictEqual(oType.oConstraints, undefined);
+			oType = new TypeString({}, {maxLength: oFixture.maxLength});
+			assert.strictEqual(oType.oConstraints, undefined);
 		});
 	});
 
 	//*********************************************************************************************
-	test("format", function () {
-		var oType = new sap.ui.model.odata.type.String({}, {maxLength: 5});
+	QUnit.test("format", function (assert) {
+		var oType = new TypeString({}, {maxLength: 5});
 
-		strictEqual(oType.formatValue(undefined, "foo"), null, "undefined");
-		strictEqual(oType.formatValue(null, "foo"), null, "null");
-		strictEqual(oType.formatValue("foo", "any"), "foo", "target type any");
-		strictEqual(oType.formatValue("true", "boolean"), true, "target type boolean");
-		strictEqual(oType.formatValue("3.1415", "float"), 3.1415, "target type float");
-		strictEqual(oType.formatValue("42", "int"), 42, "target type int");
-		strictEqual(oType.formatValue("foobar", "string"), "foobar", "target type string");
+		assert.strictEqual(oType.formatValue(undefined, "foo"), null, "undefined");
+		assert.strictEqual(oType.formatValue(null, "foo"), null, "null");
+		assert.strictEqual(oType.formatValue("foo", "any"), "foo", "target type any");
+		assert.strictEqual(oType.formatValue("true", "boolean"), true, "target type boolean");
+		assert.strictEqual(oType.formatValue("3.1415", "float"), 3.1415, "target type float");
+		assert.strictEqual(oType.formatValue("42", "int"), 42, "target type int");
+		assert.strictEqual(oType.formatValue("foobar", "string"), "foobar", "target type string");
 		try {
 			oType.formatValue("baz", "foo");
-			ok(false);
+			assert.ok(false);
 		} catch (e) {
-			ok(e instanceof sap.ui.model.FormatException);
-			strictEqual(e.message, "Don't know how to format String to foo");
+			assert.ok(e instanceof FormatException);
+			assert.strictEqual(e.message, "Don't know how to format String to foo");
 		}
 	});
 
 	//*********************************************************************************************
-	test("parse", function () {
-		var oType = new sap.ui.model.odata.type.String(); // constraints do not matter
+	QUnit.test("parse", function (assert) {
+		var oType = new TypeString(); // constraints do not matter
 
-		strictEqual(oType.parseValue(null, "string"), null, "null");
-		strictEqual(oType.parseValue("", "string"), null, "empty string is converted to null");
-		strictEqual(oType.parseValue(undefined, "string"), undefined, "undefined");
-		strictEqual(oType.parseValue(true, "boolean"), "true", "source type boolean");
-		strictEqual(oType.parseValue(3.1415, "float"), "3.1415", "source type float");
-		strictEqual(oType.parseValue(42, "int"), "42", "source type int");
-		strictEqual(oType.parseValue("foobar", "string"), "foobar", "source type string");
+		assert.strictEqual(oType.parseValue(null, "string"), null, "null");
+		assert.strictEqual(oType.parseValue("", "string"), null,
+			"empty string is converted to null");
+		assert.strictEqual(oType.parseValue(undefined, "string"), undefined, "undefined");
+		assert.strictEqual(oType.parseValue(true, "boolean"), "true", "source type boolean");
+		assert.strictEqual(oType.parseValue(3.1415, "float"), "3.1415", "source type float");
+		assert.strictEqual(oType.parseValue(42, "int"), "42", "source type int");
+		assert.strictEqual(oType.parseValue("foobar", "string"), "foobar", "source type string");
 		try {
 			oType.parseValue("baz", "foo");
-			ok(false);
+			assert.ok(false);
 		} catch (e) {
-			ok(e instanceof sap.ui.model.ParseException);
-			strictEqual(e.message, "Don't know how to parse String from foo");
+			assert.ok(e instanceof ParseException);
+			assert.strictEqual(e.message, "Don't know how to parse String from foo");
 		}
 	});
 
 	//*********************************************************************************************
-	test("validate", function () {
-		var oType = new sap.ui.model.odata.type.String({}, {maxLength: 3});
+	QUnit.test("validate", function (assert) {
+		var oType = new TypeString({}, {maxLength: 3});
 
 		["", "A", "AB", "ABC"].forEach(function (sValue) {
 			oType.validateValue(sValue);
 		});
 
-		sap.ui.test.TestUtils.withNormalizedMessages(function () {
+		TestUtils.withNormalizedMessages(function () {
 			try {
 				oType.validateValue("ABCD");
-				ok(false);
+				assert.ok(false);
 			} catch (e) {
-				ok(e instanceof sap.ui.model.ValidateException);
-				strictEqual(e.message, "EnterTextMaxLength 3");
+				assert.ok(e instanceof ValidateException);
+				assert.strictEqual(e.message, "EnterTextMaxLength 3");
 			}
 		});
 
 		try {
 			oType.validateValue(42);
-			ok(false);
+			assert.ok(false);
 		} catch (e) {
-			ok(e instanceof sap.ui.model.ValidateException);
-			strictEqual(e.message, "Illegal sap.ui.model.odata.type.String value: 42");
+			assert.ok(e instanceof ValidateException);
+			assert.strictEqual(e.message, "Illegal sap.ui.model.odata.type.String value: 42");
 		}
 	});
 
 	//*********************************************************************************************
-	test("nullable", function () {
-		sap.ui.test.TestUtils.withNormalizedMessages(function () {
-			var oType = new sap.ui.model.odata.type.String({}, {nullable: false});
+	QUnit.test("nullable", function (assert) {
+		TestUtils.withNormalizedMessages(function () {
+			var oType = new TypeString({}, {nullable: false});
 
-			deepEqual(oType.oConstraints, {nullable: false}, "nullable: false");
+			assert.deepEqual(oType.oConstraints, {nullable: false}, "nullable: false");
 			try {
 				oType.validateValue(null);
-				ok(false);
+				assert.ok(false);
 			} catch (e) {
-				ok(e instanceof sap.ui.model.ValidateException);
-				strictEqual(e.message, "EnterText");
+				assert.ok(e instanceof ValidateException);
+				assert.strictEqual(e.message, "EnterText");
 			}
 
-			oType = new sap.ui.model.odata.type.String({}, {nullable: false, maxLength: 3});
+			oType = new TypeString({}, {nullable: false, maxLength: 3});
 			try {
 				oType.validateValue(null);
-				ok(false);
+				assert.ok(false);
 			} catch (e) {
-				ok(e instanceof sap.ui.model.ValidateException);
-				strictEqual(e.message, "EnterTextMaxLength 3");
+				assert.ok(e instanceof ValidateException);
+				assert.strictEqual(e.message, "EnterTextMaxLength 3");
 			}
 
-			oType = new sap.ui.model.odata.type.String({}, {nullable: true});
+			oType = new TypeString({}, {nullable: true});
 			oType.validateValue(null); // does not throw
-			strictEqual(oType.oConstraints, undefined, "nullable: true");
+			assert.strictEqual(oType.oConstraints, undefined, "nullable: true");
 
 			this.mock(jQuery.sap.log).expects("warning").once()
 				.withExactArgs("Illegal nullable: ", null, "sap.ui.model.odata.type.String");
 
-			oType = new sap.ui.model.odata.type.String(null, {nullable: ""});
-			strictEqual(oType.oConstraints, undefined, "illegal nullable -> default");
+			oType = new TypeString(null, {nullable: ""});
+			assert.strictEqual(oType.oConstraints, undefined, "illegal nullable -> default");
 		});
 	});
 
 	//*********************************************************************************************
-	test("setConstraints w/ strings", function () {
-		var oType = new sap.ui.model.odata.type.String();
+	QUnit.test("setConstraints w/ strings", function (assert) {
+		var oType = new TypeString();
 
 		this.mock(jQuery.sap.log).expects("warning").never();
 
-		oType = new sap.ui.model.odata.type.String({}, {nullable: "true", maxLength: "10"});
-		deepEqual(oType.oConstraints, {maxLength: 10});
+		oType = new TypeString({}, {nullable: "true", maxLength: "10"});
+		assert.deepEqual(oType.oConstraints, {maxLength: 10});
 
-		oType = new sap.ui.model.odata.type.String({}, {nullable: "false"});
-		deepEqual(oType.oConstraints, {nullable: false});
+		oType = new TypeString({}, {nullable: "false"});
+		assert.deepEqual(oType.oConstraints, {nullable: false});
 	});
-} ());
+});

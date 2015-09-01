@@ -1,37 +1,36 @@
 /*!
  * ${copyright}
  */
-(function () {
-	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
-	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
-	*/
+sap.ui.require([
+	"sap/ui/model/SimpleType",
+	"sap/ui/model/odata/type/ODataType"
+], function (SimpleType, ODataType) {
+	/*global QUnit */
 	"use strict";
 
-	jQuery.sap.require("sap.ui.model.odata.type.ODataType");
-
 	//*********************************************************************************************
-	module("sap.ui.model.odata.type.ODataType");
+	QUnit.module("sap.ui.model.odata.type.ODataType");
 
-	test("basics", function () {
-		var oType = new sap.ui.model.odata.type.ODataType();
+	QUnit.test("basics", function (assert) {
+		var oType = new ODataType();
 
-		ok(oType instanceof sap.ui.model.odata.type.ODataType, "is a ODataType");
-		ok(oType instanceof sap.ui.model.SimpleType, "is a SimpleType");
-		strictEqual(oType.getName(), undefined, "no type name is set");
-		strictEqual(oType.sName, undefined, "no sName");
+		assert.ok(oType instanceof ODataType, "is an ODataType");
+		assert.ok(oType instanceof SimpleType, "is a SimpleType");
+		assert.strictEqual(oType.getName(), undefined, "no type name is set");
+		assert.strictEqual(oType.sName, undefined, "no sName");
 
-		strictEqual(oType.hasOwnProperty("oFormatOptions"), false, "no format options");
-		strictEqual(oType.hasOwnProperty("oConstraints"), false, "no constraints");
+		assert.strictEqual(oType.hasOwnProperty("oFormatOptions"), false, "no format options");
+		assert.strictEqual(oType.hasOwnProperty("oConstraints"), false, "no constraints");
 
-		ok(sap.ui.model.odata.type.ODataType.prototype.setConstraints !==
-			sap.ui.model.SimpleType.prototype.setConstraints, "type overwrites setConstraints");
+		assert.ok(ODataType.prototype.setConstraints !==
+			SimpleType.prototype.setConstraints, "type overwrites setConstraints");
 		oType.setConstraints({foo: "bar"});
-		strictEqual(oType.oConstraints, undefined, "no constraints");
+		assert.strictEqual(oType.oConstraints, undefined, "no constraints");
 
-		ok(sap.ui.model.odata.type.ODataType.prototype.setFormatOptions !==
-			sap.ui.model.SimpleType.prototype.setFormatOptions, "type overwrites setFormatOptions");
+		assert.ok(ODataType.prototype.setFormatOptions !==
+			SimpleType.prototype.setFormatOptions, "type overwrites setFormatOptions");
 		oType.setFormatOptions({foo: "bar"});
-		strictEqual(oType.oFormatOptions, undefined, "no format options");
+		assert.strictEqual(oType.oFormatOptions, undefined, "no format options");
 	});
 
-} ());
+});
