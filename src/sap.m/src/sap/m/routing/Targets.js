@@ -304,10 +304,20 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 					};
 				}
 
+				// temporarily: for checking the url param
+				function checkUrl() {
+					if (jQuery.sap.getUriParameters().get("sap-ui-xx-asyncRouting") === "true") {
+						jQuery.sap.log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "MobileTargets");
+						return true;
+					}
+					return false;
+				}
+
 				// Config object doesn't have _async set which means the Targets is instantiated standalone by given a non-empty config object
 				// Assign the oConfig.async to oConfig._async and set the default value to sync
 				if (oOptions.config._async === undefined) {
-					oOptions.config._async = (oOptions.config.async === undefined) ? false : oOptions.config.async;
+					// temporarily: set the default value depending on the url parameter "sap-ui-xx-asyncRouting"
+					oOptions.config._async = (oOptions.config.async === undefined) ? checkUrl() : oOptions.config.async;
 				}
 
 				if (oOptions.targetHandler) {

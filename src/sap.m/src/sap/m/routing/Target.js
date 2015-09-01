@@ -21,10 +21,19 @@ sap.ui.define(['sap/ui/core/routing/Target', './async/Target', './sync/Target'],
 		var MobileTarget = Target.extend("sap.m.routing.Target", /** @lends sap.m.routing.Target.prototype */ {
 			constructor : function (oOptions, oViews, oParent, oTargetHandler) {
 				this._oTargetHandler = oTargetHandler;
+				// temporarily: for checking the url param
+				function checkUrl() {
+					if (jQuery.sap.getUriParameters().get("sap-ui-xx-asyncRouting") === "true") {
+						jQuery.sap.log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "MobileTarget");
+						return true;
+					}
+					return false;
+				}
 
 				// Set the default value to sync
 				if (oOptions._async === undefined) {
-					oOptions._async = false;
+					// temporarily: set the default value depending on the url parameter "sap-ui-xx-asyncRouting"
+					oOptions._async = checkUrl();
 				}
 
 				Target.prototype.constructor.apply(this, arguments);
