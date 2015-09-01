@@ -1,0 +1,156 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>SearchField - sap.m</title>
+<script src="../../../resources/sap-ui-core.js"
+	type="text/javascript" 
+	id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.m"
+	data-sap-ui-theme="sap_bluecrystal">
+</script>
+<script type="text/javascript">
+
+	jQuery.sap.require("sap.ui.model.json.JSONModel");
+	var aSuggestionData = [
+		{text: "ABCDEFGHI", description: "cat 01",  key: "001", icon: ""},
+		{text: "ABCDEFGH" , description: "cat 02",  key: "002", icon: ""},
+		{text: "ABCDEFG"  , description: "cat 03",  key: "003", icon: ""},
+		{text: "ABCDEF"   , description: "cat 04",  key: "004", icon: ""},
+		{text: "ABCDE"    , description: "cat 05",  key: "005", icon: ""},
+		{text: "ABCD"     , description: "cat 06",  key: "006", icon: ""},
+		{text: "ABC"      , description: "cat 07",  key: "007", icon: ""},
+		{text: "AB"       , description: "cat 08",  key: "008", icon: ""},
+		{text: "A"        , description: "cat 09",  key: "009", icon: ""},
+	];
+
+	function createSuggestionModel() {
+		var model = new sap.ui.model.json.JSONModel();
+		model.setData(aSuggestionData.slice());
+		return model;
+	}
+
+	var oSuggestionListItemTemplate = new sap.m.SuggestionItem({
+		text : "{text}",
+		description : "{description}",
+		key: "{key}",
+		icon: "{icon}"
+	});
+
+	var app = new sap.m.App("searchSuggestionsApp", {initialPage:"searchPage"});
+
+	function onSearch(event) {
+		jQuery.sap.log.debug("searchField: search for: " + event.getParameter("query"));
+		if(event.getParameter("refreshButtonPressed")){
+			jQuery.sap.log.debug("searchField: refresh button was pressed");
+		}
+		var item = event.getParameter("suggestionItem");
+		if (item) {
+			jQuery.sap.log.debug("searchField: suggestion item with text '" + item.getText() + "' was selected");
+		}
+	}
+	function onLiveChange(event) {
+		jQuery.sap.log.debug("searchField: liveChange for: " + event.getParameter("newValue"));
+	}
+	function onSuggest(event) {
+		var value = event.getParameter("suggestValue");
+		var newData;
+		if (value) {
+			value = value.toUpperCase();
+			newData = aSuggestionData.filter(function(item){
+				return (item.text || "").toUpperCase().indexOf(value) > -1 || (item.description || "").toUpperCase().indexOf(value) > -1;
+			});
+		} else {
+			newData = aSuggestionData.slice();
+		}
+		event.getSource().getModel().setData(newData);
+		jQuery.sap.log.debug("searchField: Suggest for: " + event.getParameter("value"));
+	}
+
+	function doSuggest(event) {
+		onSuggest(event);
+		if (true || event.getSource() === barSearchField || event.getParameter("suggestValue")){
+			event.getSource().suggest();
+		}
+	}
+
+	var barSearchField = new sap.m.SearchField("SFB1", {
+		placeholder: "search for...", 
+		enableSuggestions: true,
+		search:onSearch,
+		suggest: doSuggest
+	});
+	barSearchField
+		.setModel(createSuggestionModel())
+		.bindAggregation("suggestionItems", "/", oSuggestionListItemTemplate);
+
+	var dialogBarSearchField = barSearchField.clone("dialogBar", {cloneBindings:true});
+	var dialogSearchField = new sap.m.SearchField("SFDialog", {
+			placeholder: "search for...", 
+			enableSuggestions: true,
+			search:onSearch,
+			suggest: doSuggest
+		})
+		.setModel(createSuggestionModel())
+		.bindAggregation("suggestionItems", "/", oSuggestionListItemTemplate);
+
+	var oDialog = new sap.m.Dialog("Dialog", {
+		title: "SearchField in a Dialog",
+		state: sap.ui.core.ValueState.Success,
+		subHeader: new sap.m.Bar({
+			contentLeft: dialogBarSearchField
+		}),
+		content: [
+			dialogSearchField
+		],
+		beginButton:
+			new sap.m.Button({
+				text: "Accept",
+				press : function() {
+					oDialog.close();
+				}
+			}),
+		endButton:
+			new sap.m.Button({
+				text: "Reject",
+				press : function() {
+					oDialog.close();
+				}
+			})
+	});
+
+	var searchField = new sap.m.SearchField("SF1", {
+			placeholder: "search for...", 
+			enableSuggestions: true,
+			search:onSearch,
+			liveChange: onLiveChange,
+			suggest: doSuggest
+		});
+
+	searchField.setModel(createSuggestionModel())
+		.bindAggregation("suggestionItems", "/", oSuggestionListItemTemplate);
+
+
+	var page = new sap.m.Page("searchPage", {
+		enableScrolling: true,
+		title:"Search Field with suggestions",
+		customHeader: new sap.m.Bar("P1Header", {
+			contentLeft: [
+				new sap.m.Button({
+					text: "Open a Dialog",
+					press : function() {
+						oDialog.open();
+					}
+				})
+			],
+			contentRight: [barSearchField]
+		}),
+		content : [searchField]
+	});
+
+	app.addPage(page).placeAt("body");
+</script>
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>
