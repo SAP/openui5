@@ -215,11 +215,27 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	};
 
 	/**
-	 * Checks if grouping is enabled for the binding<br/>
+	 * Indicates whether grouping is enabled for the binding.
+	 * Grouping is enabled for a list binding, if at least one sorter exists on the binding and the first sorter
+	 * is a grouping sorter.
 	 * @public
+	 * @returns {boolean} whether grouping is enabled
 	 */
 	ListBinding.prototype.isGrouped = function() {
-		return this.aSorters.length > 0 && !!this.aSorters[0].fnGroup;
+		return !!(this.aSorters && this.aSorters[0] && this.aSorters[0].fnGroup);
+	};
+
+	/**
+	 * Gets the group for the given context.
+	 * Must only be called if isGrouped() returns that grouping is enabled for this binding. The grouping will be 
+	 * performed using the first sorter (in case multiple sorters are defined).
+	 * @param {sap.ui.model.Context} oContext the binding context
+	 * @public
+	 * @returns {object} the group object containing a key property and optional custom properties
+	 * @see sap.ui.model.Sorter.getGroup
+	 */
+	ListBinding.prototype.getGroup = function(oContext) {
+		return this.aSorters[0].getGroup(oContext);
 	};
 
 	/**

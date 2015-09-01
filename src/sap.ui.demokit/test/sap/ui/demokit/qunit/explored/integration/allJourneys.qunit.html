@@ -15,12 +15,17 @@
 			jQuery.sap.require("sap.ui.qunit.qunit-css");
 			jQuery.sap.require("sap.ui.thirdparty.qunit");
 			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+			QUnit.config.autostart = false;
 
 			sap.ui.require(['sap/ui/test/Opa5',
 						'test/page/Common',
 						'sap/ui/test/opaQunit',
 						'test/page/entity',
 						'test/page/master',
+						'test/page/masterHeader',
 						'test/page/code',
 						'test/page/sample'
 					],
@@ -33,7 +38,9 @@
 						});
 
 						// require all journeys
-						sap.ui.require(['test/journey/download']);
+						sap.ui.require(['test/journey/download', 'test/journey/list'], function () {
+							QUnit.start();
+						});
 
 					});
 		}());
@@ -41,12 +48,7 @@
 
 </head>
 <body>
-<h1 id="qunit-header">Opa test for the explored app</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testresult"></div>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-<div id="qunit-fixture"></div>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
 </body>
 </html>

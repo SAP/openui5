@@ -12,7 +12,12 @@
 				id="sideContentContainer"
 				showHeader="false"
 				showNavButton="false">
-				<l:DynamicSideContent id="DynamicSideContent" class="sapUiDSCExplored sapUiContentPadding" containerQuery="true" breakpointChanged="updateToggleButtonState">
+				<l:DynamicSideContent
+					id="DynamicSideContent"
+					class="sapUiDSCExplored sapUiContentPadding"
+					sideContentFallDown="BelowM"
+					containerQuery="true"
+					breakpointChanged="updateToggleButtonState">
 					<l:mainContent>
 						<Title level="H1" text="Main content" />
 						<Text text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.

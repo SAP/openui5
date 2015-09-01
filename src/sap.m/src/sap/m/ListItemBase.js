@@ -12,11 +12,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Constructor for a new ListItemBase.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * ListItemBase contains the core features of all specific list items.
+	 * ListItemBase contains the base features of all specific list items.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -33,29 +33,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		properties : {
 	
 			/**
-			 * Type of the list item, defines the behaviour
+			 * Defines the visual indication and behavior of the list items, e.g. <code>Active</code>, <code>Navigation</code>, <code>Detail</code>.
 			 */
 			type : {type : "sap.m.ListType", group : "Misc", defaultValue : sap.m.ListType.Inactive},
 	
 			/**
-			 * Invisible list items are not rendered
+			 * Whether the control should be visible on the screen. If set to false, a placeholder is rendered instead of the real control.
 			 */
 			visible : {type : "boolean", group : "Appearance", defaultValue : true},
 	
 			/**
-			 * If the unread indicator is set on the list, this boolean defines if it will be shown on this list item. Default is false.
+			 * Activates the unread indicator for the list item, if set to <code>true</code>.
+			 * <b>Note:</b> This flag is ignored when the <code>showUnread</code> property of the parent is set to <code>false</code>.
 			 */
 			unread : {type : "boolean", group : "Misc", defaultValue : false},
 	
 			/**
-			 * This property defines the select state of the list item when using Single/Multi-Selection.
-			 * 
-			 * Note: Binding the "selected" property in single selection mode, may cause unwanted results, if you have more than one selected item in your binding
+			 * Defines the selected state of the list items.
+			 * <b>Note:</b> Binding the <code>selected</code> property in single selection modes may cause unwanted results if you have more than one selected items in your binding.
 			 */
 			selected : {type : "boolean", defaultValue : false},
 	
 			/**
-			 * Property sets a counter bubble with the integer given.
+			 * Defines the counter value of the list items.
 			 */
 			counter : {type : "int", group : "Misc", defaultValue : null}
 		},
@@ -70,32 +70,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		events : {
 	
 			/**
-			 * Event is fired when the user taps on the control.
-			 * @deprecated Since version 1.20.0. 
-			 * This event is deprecated, use the press event instead.
+			 * Fires when the user taps on the control.
+			 * @deprecated Since version 1.20.0. Instead, use <code>press</code> event.
 			 */
 			tap : {deprecated: true}, 
 	
 			/**
-			 * Event is fired when the user taps on the detail button of the control.
-			 * @deprecated Since version 1.20.0. 
-			 * This event is deprecated, use the detailPress event instead.
+			 * Fires when the user taps on the detail button of the control.
+			 * @deprecated Since version 1.20.0. Instead, use <code>detailPress</code> event.
 			 */
 			detailTap : {deprecated: true}, 
 	
 			/**
-			 * Event is fired when the user clicks on the control.
-			 * 
-			 * Note: When the parent mode is SingleSelectMaster or includeItemInSelection is true then this event is not fired but the parent fires a selectionChange event instead.
-			 * Also if there is an interactive element that handles the press event then the list item's press is not fired.
-			 * 
-			 * If mode detection is not necessary for the press event then the itemPress event of the parent can be used. 
-			 * {@link sap.m.ListBase#attachItemPress}
+			 * Fires when the user clicks on the control. 
+			 * <b>Note:</b> This event is not fired when the parent <code>mode</code> is <code>SingleSelectMaster</code> or when the <code>includeItemInSelection</code> property is set to <code>true</code>.
+			 * If there is an interactive element that handles its own <code>press</code> event then the list item's <code>press</code> event is not fired.
+			 * Also see {@link sap.m.ListBase#attachItemPress}.
 			 */
 			press : {}, 
 	
 			/**
-			 * Event is fired when the user clicks on the detail button of the control.
+			 * Fires when the user clicks on the detail button of the control.
 			 */
 			detailPress : {}
 		}
@@ -637,11 +632,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		});
 	};
 	
-	// touch move to prevent active state when scrolling
+	// handle touchmove to prevent active state when scrolling
 	ListItemBase.prototype.ontouchmove = function(oEvent) {
-		var bTouchMovement = Math.abs(this._touchedY - oEvent.targetTouches[0].clientY) > 10 || Math.abs(this._touchedX - oEvent.targetTouches[0].clientX) > 10;
-	
-		if ((this._active || this._timeoutIdStart) && bTouchMovement) {
+		
+		if ((this._active || this._timeoutIdStart) && 
+			(Math.abs(this._touchedY - oEvent.targetTouches[0].clientY) > 10 || Math.abs(this._touchedX - oEvent.targetTouches[0].clientX) > 10)) {
 	
 			// there is movement and therefore no tap...remove active styles
 			clearTimeout(this._timeoutIdStart);

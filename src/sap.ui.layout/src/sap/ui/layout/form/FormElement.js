@@ -8,13 +8,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 	"use strict";
 
 	/**
-	 * Constructor for a new form/FormElement.
+	 * Constructor for a new sap.ui.layout.form.FormElement.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * A form element is a combination of one label and different controls associated to this label.
+	 * A <code>FormElement</code> represents a row in a <code>FormContainer</code>.
+	 * A <code>FormElement</code> is a combination of one label and different controls associated to this label.
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
@@ -32,7 +33,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 		properties : {
 
 			/**
-			 * Invisible FormElements are not rendered.
+			 * If set to <code>false</code>, the <code>FormElement</code> is not rendered.
 			 */
 			visible : {type : "boolean", group : "Misc", defaultValue : true}
 		},
@@ -40,12 +41,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 		aggregations : {
 
 			/**
-			 * Label of the fields. Can either be a Label object, or a simple string.
+			 * Label of the fields. Can either be a <code>Label</code> object, or a string.
+			 * If a <code>Label</code> object is used, the properties of the <code>Label</code> can be set.
+			 * If no assignment between <code>Label</code> and the fields is set, it will be done automatically by the
+			 * <code>FormElement</code>. In this case the <code>Label</code> is assigned to the fields of the <code>FormElement</code>.
 			 */
 			label : {type : "sap.ui.core.Label", altTypes : ["string"], multiple : false}, 
 
 			/**
-			 * Formular controls.
+			 * Formular controls that belong together to be displayed in one row of a <code>Form</code>.
 			 */
 			fields : {type : "sap.ui.core.Control", multiple : true, singularName : "field"}
 		}
@@ -120,9 +124,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 		};
 
 		/**
-		 * Returns the Label Control, even if the Label is entered as Text.
+		 * Returns the <code>Label</code> of the <code>FormElement</code>, even if the <code>Label</code> is assigned as string.
+		 * The <code>FormLayout</code> needs the information of the label to render the <code>Form</code>.
 		 *
-		 * @returns {sap.ui.core.Label}  <code>this</code> to allow method chaining
+		 * @returns {sap.ui.core.Label} <code>Label</code> control used to render the label
 		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
@@ -265,7 +270,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/EnabledP
 		};
 
 		/**
-		 * As Elements must not have an DOM reference it is not sure if one exists
+		 * As Elements must not have a DOM reference it is not sure if one exists
 		 * If the FormElement has a DOM representation this function returns it,
 		 * independent from the ID of this DOM element
 		 * @return {Element} The Element's DOM representation or null

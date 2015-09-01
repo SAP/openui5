@@ -10,7 +10,7 @@
 	display: inline-block;
 }
 
-.sapUiCalDateInt{
+.sapUiCalInt{
 	box-sizing: border-box;
 }
 
@@ -103,16 +103,16 @@
 	display: inline-block;
 }
 
-.sapUiCalDateInt > .sapUiCalContent > .sapUiCalMonthPicker,
-.sapUiCalDateInt > .sapUiCalContent > .sapUiCalYearPicker{
+.sapUiCalInt > .sapUiCalContent > .sapUiCalMonthPicker,
+.sapUiCalInt > .sapUiCalContent > .sapUiCalYearPicker{
 	width: auto;
 }
 
-.sapUiCalMonthHead{
+.sapUiCalHeadText{
 	text-align: center;
 }
 
-.sapUiCalDatesRow .sapUiCalMonthHead{
+.sapUiCalRow .sapUiCalHeadText{
 	float: left;
 	text-align: left;
 	overflow: hidden;
@@ -120,15 +120,14 @@
 	whitespace: nowrap;
 }
 
-.sapUiCalDays{
+.sapUiCalItems{
 	display: inline-block;
 	width: 100%;
+	white-space: nowrap;
 }
 
 .sapUiCalWH,
-.sapUiCalDay,
-.sapUiCalMonth,
-.sapUiCalYear{
+.sapUiCalItem{
 	display: block;
 	overflow: hidden;
 	float: left;
@@ -141,16 +140,16 @@
 }
 
 .sapUiCalMonthView .sapUiCalWH,
-.sapUiCalMonthView .sapUiCalDay{
+.sapUiCalMonthView .sapUiCalItem{
 	width: 12.5%;
 }
 
 .sapUiCalMonthView.sapUiCalNoWeekNum .sapUiCalWH,
-.sapUiCalMonthView.sapUiCalNoWeekNum .sapUiCalDay{
+.sapUiCalMonthView.sapUiCalNoWeekNum .sapUiCalItem{
 	width: 14.2857%;
 }
 
-.sapUiCalDayNum{
+.sapUiCalItemText{
 	width: 100%;
 	height: 100%;
 	display: inline-block;
@@ -171,16 +170,12 @@
 	white-space: nowrap;
 }
 
-.sapUiCalDay,
-.sapUiCalMonth,
-.sapUiCalYear{
+.sapUiCalItem{
 	color: @sapUiBaseText;
 	background-color: @sapUiExtraLightBG;
 }
 
-.sap-desktop .sapUiCalDay:focus,
-.sap-desktop .sapUiCalMonth:focus,
-.sap-desktop .sapUiCalYear:focus{
+.sap-desktop .sapUiCalItem:focus{
 	background-color: @sapUiFieldFocusBackground;
 }
 
@@ -195,21 +190,19 @@
 	margin-left: 0;
 }
 
-.sapUiCalDayOtherMonth{
+.sapUiCalItemOtherMonth{
 	color: @sapUiContentDisabledTextColor;
 }
 
-.sapUiCalDayToday{
+.sapUiCalItemNow{
 	color: @sapUiHighlight;
 }
 
-.sapUiCalDayWeekEnd{
+.sapUiCalItemWeekEnd{
 	background-color: @sapUiLightBG;
 }
 
-.sapUiCalDaySel,
-.sapUiCalMonthSel,
-.sapUiCalYearSel{
+.sapUiCalItemSel{
 	background-color: @sapUiSelected;
 }
 
@@ -231,13 +224,18 @@
 }
 
 .sapUiCalContent > .sapUiCalMonthPicker,
-.sapUiCalContent > .sapUiCalYearPicker{
+.sapUiCalContent > .sapUiCalYearPicker,
+.sapUiCalTimeInt > .sapUiCalContent > .sapUiCalDatesRow{
 	position: absolute;
 	top: @sapUiLineHeight;
 	bottom: 0;
 	left: 0;
 	right: 0;
 	background-color: @sapUiFieldBackground;
+}
+
+.sapUiCalTimeInt > .sapUiCalContent > .sapUiCalDatesRow .sapUiCalWH{
+	display: none;
 }
 
 .sapUiCalCancel{

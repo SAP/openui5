@@ -197,7 +197,7 @@ xhr.onCreate = function(request) {
 			
 		}
 		
-		if (sRandomServiceUrl) {
+		if (sRandomServiceUrl !== null) {
 			// Use RandomService
 			oRandomService.serveUrl({ 
 				url: sRandomServiceUrl, 
@@ -290,6 +290,8 @@ ODataRandomService.prototype._createResponse = function(mUrlInfo, mOptions) {
 };
 
 
+// TODO: !!! Batch support is very shaky and only works for the specific tests - this should be built more robust and standards compliant
+
 ODataRandomService.prototype.handleBatchRequest = function(mOptions) {
 	var mBatchResponse = {}
 	var aSubRequests = this.parseBatchRequest(mOptions.request.requestBody);
@@ -305,18 +307,43 @@ ODataRandomService.prototype.handleBatchRequest = function(mOptions) {
 	};
 	mBatchResponse.body = "";
 
+	var bInChangeset = false;
 	for (var i = 0; i < aSubRequests.length; ++i) {
+		
 		var mRequest = aSubRequests[i];
-		if (mRequest.method !== "GET") {
-			jQuery.sap.log.error("ODataRandomService only supports reading");
-		}
 		
 		var mResponse = this._createResponse(this._parseUrl(mRequest.url), mOptions);
 		
+		var sBatchContentType = "Content-Type: application/http\r\n";
+		
+		if (mRequest.method == "GET") {
+			// All is good
+			bInChangeset = false;
+			
+		} else if (mRequest.method === "HEAD") {
+			bInChangeset = false;
+			
+			mResponse.status = 204;
+			mResponse.body = "";
+		} else {
+			jQuery.sap.log.warning("ODataRandomService ignores writes...");
+			if (!bInChangeset) {
+				mBatchResponse.body += "\r\n--" + sBatchSeparator + "\r\n";
+				mBatchResponse.body += "Content-Type: multipart/mixed; boundary=changeset_" + sBatchSeparator + "\r\n";
+				// TODO: Content-Length: ###
+			}
+			bInChangeset = true;
+			
+			mResponse.status = 204;
+			mResponse.body = "";
+			delete mResponse.headers["Content-Type"];
+		}
+			
 		// Start new sub request
-		mBatchResponse.body += "\r\n--" + sBatchSeparator + "\r\n";
+		mBatchResponse.body += "\r\n--" + (bInChangeset ? "changeset_" : "") + sBatchSeparator + "\r\n";
 		// Add batch headers
-		mBatchResponse.body += "Content-Type: application/http\r\n";
+		
+		mBatchResponse.body += sBatchContentType;
 		mBatchResponse.body += "Content-Transfer-Encoding:binary\r\n";
 		mBatchResponse.body += "\r\n";
 		
@@ -328,8 +355,11 @@ ODataRandomService.prototype.handleBatchRequest = function(mOptions) {
 		mBatchResponse.body += mResponse.body + "\r\n\r\n";
 	}
 	
+	if (bInChangeset) {
+		mBatchResponse.body += "--changeset_" + sBatchSeparator + "--\r\n";
+	}
 	
-	mBatchResponse.body += "\r\n--" + sBatchSeparator + "--";
+	mBatchResponse.body += "--" + sBatchSeparator + "--";
 	
 	return mBatchResponse;
 };
@@ -359,9 +389,24 @@ ODataRandomService.prototype.parseBatchRequest = function(sBatchContent) {
 	
 	var sSeparator = aMatches[1].trim();
 	
+	var aContentParts = sBatchContent.replace(sSeparator + "--", "").trim().split(sSeparator).slice(1);
+	
+	// TODO: Handle changesets correctly
+	if (aContentParts.length == 1) {
+		sBatchContent = aContentParts[0];
+		aMatches = sBatchContent.match(/^.*boundary=([^\n]*)/m);
+
+		if (!aMatches || !aMatches[1]) {
+			throw new Error("Changeset did not contain separator");
+		}
+
+		sSeparator = aMatches[1].trim();		
+		
+		aContentParts = aContentParts[0].replace(sSeparator + "--", "").trim().split(sSeparator).slice(2);
+	}
 	
 	
-	var aRequests = sBatchContent.replace(sSeparator + "--", "").trim().split(sSeparator).slice(1).map(function(sSingleRequest) {
+	var aRequests = aContentParts.map(function(sSingleRequest) {
 		var mRequest = {};
 		
 		// Replace \r\n and \r with just \n so we can split easier

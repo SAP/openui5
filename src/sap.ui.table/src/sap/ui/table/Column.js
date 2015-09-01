@@ -292,6 +292,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 	};
 
 	/**
+	 * This function invalidates the columns menu. All items will be re-created the next time the menu opens. This only
+	 * happens for generated menus.
+	 * @private
+	 */
+	Column.prototype.invalidateMenu = function() {
+		var oMenu = this.getAggregation("menu");
+		if (oMenu && oMenu._invalidate) {
+			oMenu._invalidate();
+		}
+	};
+
+	/**
 	 * Checks whether or not the menu has items
 	 * @return {Boolean} True if the menu has or could have items.
 	 */
@@ -300,16 +312,60 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 		var oTable = this.getParent();
 		var fnMenuHasItems = function() {
 			return (
-				(this.getSortProperty() && this.getShowSortMenuEntry()) || // Sorter
-				(this.getFilterProperty() && this.getShowFilterMenuEntry()) || // Filter
-				(oTable && oTable.getEnableGrouping() && this.getSortProperty()) || // Grouping
+				this.isSortableByMenu() || // Sorter
+				this.isFilterableByMenu() || // Filter
+				this.isGroupableByMenu() || // Grouping
 				(oTable && oTable.getEnableColumnFreeze()) || // Column Freeze
 				(oTable && oTable.getShowColumnVisibilityMenu()) // Column Visibility Menu
 			);
 
 		}.bind(this);
 
-		return (oMenu && oMenu.getItems().length > 0) || fnMenuHasItems();
+		return !!((oMenu && oMenu.getItems().length > 0) || fnMenuHasItems());
+	};
+
+	/**
+	 * This function checks whether a filter column menu item will be created. Although it evaluates some column
+	 * properties, it does not check the metadata.
+	 *
+	 * For Columns the following applies:
+	 * - filterProperty must be defined
+	 * - showFilterMenuEntry must be true (which is the default)
+	 *
+	 * @returns {boolean}
+	 */
+	Column.prototype.isFilterableByMenu = function() {
+		return !!(this.getFilterProperty() && this.getShowFilterMenuEntry());
+	};
+
+	/**
+	 * This function checks whether sort column menu items will be created. Although it evaluates some column
+	 * properties, it does not check the metadata.
+	 *
+	 * For Columns the following applies:
+	 * - sortProperty must be defined
+	 * - showSortMenuEntry must be true (which is the default)
+	 *
+	 * @returns {boolean}
+	 */
+	Column.prototype.isSortableByMenu = function() {
+		return !!(this.getSortProperty() && this.getShowSortMenuEntry());
+	};
+
+	/**
+	 * This function checks whether a grouping column menu item will be created. Although it evaluates some column
+	 * properties, it does not check the metadata. Since a property of the table must be checked, this function will
+	 * return false when the column is not a child of a table.
+	 *
+	 * For Columns the following applies:
+	 * - sortProperty must be defined
+	 * - showFilterMenuEntry must be true (which is the default)
+	 *
+	 * @returns {boolean}
+	 */
+	Column.prototype.isGroupableByMenu = function() {
+		var oTable = this.getParent();
+		return !!(oTable && oTable.getEnableGrouping && oTable.getEnableGrouping() && this.getSortProperty());
 	};
 
 	/*

@@ -21,6 +21,7 @@
 			function createControls() {
 
 				oTabStrip1 = new sap.ui.commons.TabStrip("tabstrip1");
+				oTabStrip1.setEnableTabReordering(true);
 				oTabStrip1.setWidth("700px");
 				oTabStrip1.setHeight("300px");
 				oTabStrip1.setTooltip("Weekdays");
@@ -79,9 +80,10 @@
 				oTabStrip1.setSelectedIndex(0);
 
 	      var oTV = new sap.ui.commons.TextView("TV1")
-	      oTV.placeAt("uiArea2"); 
+	      oTV.placeAt("uiArea2");
 
 				var oTabStrip2 = new sap.ui.commons.TabStrip({
+					enableTabReordering : true,
 					width: "300px",
 					tabs: [
 						new sap.ui.commons.Tab("Tab2-1", {title: new sap.ui.core.Title({text: "Tab1"}), closable: true, content: new sap.ui.commons.TextView({text: "Content 1"})}),

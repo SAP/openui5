@@ -57,7 +57,6 @@
 					iUnormDiffs++;
 				}
 			});
-			alert("iHits: " + iHits + "; UI5 diff: " + iUi5Diffs + "; UNorm diff: " + iUnormDiffs);
 		}());
 
 		function runPerfTest(fnMethod, iGrowth) {
@@ -86,12 +85,45 @@
 				iBaseLength * iGrowth + " words, each " +
 				iWordLength + " characters: " +
 				iDuration + " milliseconds..."
-			}).placeAt("content");
+			}).placeAt("results");
 			sap.ui.getCore().applyChanges();
 		}
 
-		// setup test
+		// build test ui
 		new sap.ui.layout.VerticalLayout("content").placeAt("uiArea");
+		new sap.m.ComboBox({
+			id: "iterations",
+			items: [
+				{
+					"key": 1,
+					"text": "1 iteration"
+				},
+				{
+					"key": 10,
+					"text": "10 iterations"
+				},
+				{
+					"key": 100,
+					"text": "100 iterations"
+				},
+				{
+					"key": 1000,
+					"text": "1000 iterations"
+				},
+			]
+		}).placeAt("content");
+
+		new sap.m.Button({
+			text: "Start",
+			press: function() {
+				var i = sap.ui.getCore().byId("iterations").getSelectedKey();
+				new sap.m.Text({ text: "[TEST] ********** " + i + " iteration" + ( i > 1 ? "s" : "") + " *********"}).placeAt("results"); 
+				runPerfTest(fnUnorm, i);
+				runPerfTest(fnUi5Norm, i);
+				runPerfTest(fnBrowser, i);
+			}
+		}).placeAt("content");
+
 		new sap.m.Text({
 			text: "Testing browser " + navigator.userAgent
 		}).placeAt("content");
@@ -101,20 +133,7 @@
 		new sap.m.Text({
 			text: "WordBase length: " + iBaseLength + "; Unicode range: 0 - " + iUnicodeRange + "; Normalized Words: " + iHits
 		}).placeAt("content");
-
-		runPerfTest(fnUnorm, 1);
-		runPerfTest(fnUi5Norm, 1)
-		runPerfTest(fnBrowser, 1);
-		// runPerfTest(fnUnorm, 10);
-		// runPerfTest(fnUi5Norm, 10)
-		// runPerfTest(fnBrowser, 10);
-		// runPerfTest(fnUnorm, 100);
-		// runPerfTest(fnUi5Norm, 100)
-		// runPerfTest(fnBrowser, 100);
-		// be careful with the following
-		// runPerfTest(fnUnorm, 1000);
-		// runPerfTest(fnUi5Norm, 1000)
-		// runPerfTest(fnBrowser, 1000);
+		new sap.ui.layout.VerticalLayout("results").placeAt("content");
 	</script>
 </head>
 

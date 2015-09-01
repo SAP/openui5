@@ -71,9 +71,7 @@ sap.ui.define(['sap/ui/model/odata/type/DateTimeBase'],
 	 * @public
 	 * @since 1.27.0
 	 */
-	var DateTime = DateTimeBase.extend("sap.ui.model.odata.type.DateTime",
-			/** @lends sap.ui.model.odata.type.DateTime.prototype */
-			{
+	var DateTime = DateTimeBase.extend("sap.ui.model.odata.type.DateTime", {
 				constructor : function (oFormatOptions, oConstraints) {
 					DateTimeBase.call(this, oFormatOptions, adjustConstraints(this, oConstraints));
 				}

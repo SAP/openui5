@@ -53,6 +53,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
 			this.processor = mParameters.processor;
 			this.persistent = mParameters.persistent || false;
 			this.technical = mParameters.technical || false;
+			this.references = mParameters.references || {};
+			
 		}
 	});
 	
@@ -236,6 +238,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
 	 */
 	Message.prototype.getTechnical = function() {
 		return this.technical;
+	};
+	
+	Message.prototype.addReference = function(sId, sProperty) {
+		if (!sId) {
+			return;
+		}
+		if (!this.references[sId]) {
+			this.references[sId] = {
+				properties: {}
+			};
+		}
+		if (!this.references[sId].properties[sProperty]) {
+			this.references[sId].properties[sProperty] = true; 
+		}
+	};
+	
+	Message.prototype.removeReference = function(sId, sProperty) {
+		if (!sId) {
+			return;
+		}
+		if (sId in this.references) {
+			if (!sProperty) {
+				delete this.references[sId];
+			} else {
+				if (this.references[sId].properties[sProperty]) {
+					delete this.references[sId].properties[sProperty];
+				}
+			}
+		}
 	};
 	
 	return Message;

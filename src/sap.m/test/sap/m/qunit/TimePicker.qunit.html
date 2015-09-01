@@ -1,0 +1,1618 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	<title>Test Page for sap.m.TimePicker</title>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-language="en-US"
+			data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+	</script>
+
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<script type="text/javascript">
+		sinon.config.useFakeTimers = true;
+	</script>
+
+	<script>
+		jQuery.sap.require("sap.ui.core.format.DateFormat");
+
+		module("API", {
+			setup : function() {
+				this.oTimePicker = new sap.m.TimePicker("t1");
+				this.oTimePicker.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			teardown : function() {
+				this.oTimePicker.destroy();
+			}
+		});
+
+		test("DOM", function() {
+			strictEqual(this.oTimePicker.$().length, 1, "the control is in the DOM");
+		});
+
+		test("After creating a timePicker, the picker aggregation is empty until the picker is opened", function () {
+			ok(!this.oTimePicker._getPicker(), "the picker aggregation is empty before opening the picker")
+		});
+
+		test("After creating a timePicker, the picker aggregation holds a responsivePopover instance", function() {
+			this.oTimePicker._openPicker();
+			ok(this.oTimePicker._getPicker(), "the picker aggregation is not empty");
+			strictEqual(this.oTimePicker._getPicker().getMetadata().getName(), "sap.m.ResponsivePopover", "the picker aggregation holds an instance of responsivePopover");
+		});
+
+		test("After creating new timePicker, the format property is initialized with its default value", function() {
+			strictEqual(this.oTimePicker.getDisplayFormat(), "h:mm:ss a", "the default value is h:mm:ss a");
+		});
+
+		test("After changing the displayFormat property, the getDisplayFormat function returns the new value", function() {
+			var newFormat = "hh:mm:ss";
+			this.oTimePicker.setDisplayFormat(newFormat);
+			strictEqual(this.oTimePicker.getDisplayFormat(), newFormat, "the format property was changed");
+		});
+
+		test("The method generatePickerListValues generates the correct result", function() {
+			var iStart = 2;
+			var iEnd = 5;
+			this.oTimePicker._openPicker();
+			var aList = this.oTimePicker._getSliders()._generatePickerListValues(iStart, iEnd);
+			strictEqual(jQuery.isArray(aList), true, "the method returns an array");
+			strictEqual(aList.length, iEnd - iStart + 1, "the method returns an array with the correct number of objects");
+			strictEqual(typeof aList[0], "object", "the first element of the array is an object");
+			strictEqual(parseInt(aList[0].key), iStart, "the key property of the first element of the array is correct");
+			strictEqual(parseInt(aList[0].text), iStart, "the text property of the first element of the array is correct");
+			strictEqual(typeof aList[aList.length-1], "object", "the last element of the array is an object");
+			strictEqual(parseInt(aList[aList.length-1].key), iEnd, "the key property of the last element of the array is correct");
+			strictEqual(parseInt(aList[aList.length-1].text), iEnd, "the text property of the last element of the array is correct");
+		});
+
+		module("Input formats, display formats and values", {
+			beforeEach: function() {
+				this._defaultFormatter = sap.ui.core.format.DateFormat.getTimeInstance({style: "medium", strictParsing: true, relative: false});
+			}
+		});
+
+		//helpers
+		var caseIndex = 0;
+		function getID() {
+			return "case" + (++caseIndex).toString();
+		}
+
+		function getDate(hours, minutes, seconds) {
+			return new Date("2000", "1", "1", hours, minutes, seconds);
+		}
+
+		//test the final result after setting some properties in order
+		function generateValuesTest(aSetValues, oExpectedValues) {
+			//system under test
+			var tpId = "tp" + ++caseIndex,
+					tp = new sap.m.TimePicker(tpId),
+					i, key;
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//act
+			for (i = 0; i < aSetValues.length; i++) {
+				tp[aSetValues[i]["key"]](aSetValues[i]["value"]);
+			}
+
+			//assert
+			// trim because the framework formatter has no leading space,
+			// but the tp now has a leading space for for h:mm, H:mm format
+			equals(jQuery("#" + tpId + "-inner").val().trim(), oExpectedValues["expInputVal"], "$input.val() ok");
+
+			equals(tp.getValue(), oExpectedValues["expValue"], "getValue() ok");
+
+			var oDateValue = tp.getDateValue();
+			oDateValue.setFullYear(oExpectedValues["expDateValue"].getFullYear());
+			oDateValue.setMonth(oExpectedValues["expDateValue"].getMonth());
+			oDateValue.setDate(oExpectedValues["expDateValue"].getDate());
+			equals(oDateValue.toString(), oExpectedValues["expDateValue"].toString(), "getDateValue ok");
+
+			//cleanup
+			tp.destroy();
+		}
+
+		test(getID(), function() {
+			var that = this;
+			generateValuesTest([
+						{ key: "setValue", value: "13:34:00" },
+						{ key: "setValueFormat", value: "HH:mm:ss" }
+					],
+					{
+						expInputVal: that._defaultFormatter.format(getDate(13, 34, 0)),
+						expValue: "13:34:00",
+						expDateValue: getDate(13, 34, 0)
+					});
+		});
+
+		test(getID(), function() {
+			var that = this;
+			generateValuesTest([
+						{ key: "setValueFormat", value: "HH:mm:ss" },
+						{ key: "setValue", value: "21:13:14" }
+					],
+					{
+						expInputVal: that._defaultFormatter.format(getDate(21, 13, 14)),
+						expValue: "21:13:14",
+						expDateValue: getDate(21, 13, 14)
+					});
+		});
+
+		test(getID(), function() {
+			var that = this;
+			generateValuesTest([
+						{ key: "setValue", value: "4:15:55" }
+					],
+					{
+						expInputVal: that._defaultFormatter.format(getDate(4, 15, 55)),
+						expValue: "4:15:55",
+						expDateValue: getDate(4, 15, 55)
+					});
+		});
+
+		test(getID(), function() {
+			var that = this;
+			generateValuesTest([
+						{ key: "setValue", value: that._defaultFormatter.format(getDate(17, 27, 43)) },
+						{ key: "setDisplayFormat", value: "HH:mm" }
+					],
+					{
+						expInputVal: "17:27",
+						expValue: that._defaultFormatter.format(getDate(17, 27, 43)),
+						expDateValue: getDate(17, 27, 43)
+					});
+		});
+
+		test(getID(), function() {
+			var that = this;
+			generateValuesTest([
+						{ key: "setDisplayFormat", value: "HH:mm" },
+						{ key: "setValue", value:  that._defaultFormatter.format(getDate(17, 5, 33)) }
+					],
+					{
+						expInputVal: "17:05",
+						expValue:  that._defaultFormatter.format(getDate(17, 5, 33)),
+						expDateValue: getDate(17, 5, 33)
+					});
+		});
+
+		test(getID(), function() {
+			var that = this;
+			generateValuesTest([
+						{ key: "setDisplayFormat", value: "HH:mm" },
+						{ key: "setDateValue", value: getDate(17, 27, 43) }
+					],
+					{
+						expInputVal: "17:27",
+						expValue: that._defaultFormatter.format(getDate(17, 27, 43)),
+						expDateValue: getDate(17, 27, 43)
+					});
+		});
+
+		test(getID(), function() {
+			var that = this;
+			generateValuesTest([
+						{ key: "setDateValue", value: getDate(17, 27, 43) },
+						{ key: "setDisplayFormat", value: "HH:mm" }
+					],
+					{
+						expInputVal: "17:27",
+						expValue: that._defaultFormatter.format(getDate(17, 27, 43)),
+						expDateValue: getDate(17, 27, 43)
+					});
+		});
+
+		test(getID(), function() {
+			var that = this;
+			generateValuesTest([
+						{ key: "setDateValue", value: getDate(17, 27, 43) },
+						{ key: "setValue", value: that._defaultFormatter.format(getDate(18, 37, 23)) }
+					],
+					{
+						expInputVal: that._defaultFormatter.format(getDate(18, 37, 23)),
+						expValue: that._defaultFormatter.format(getDate(18, 37, 23)),
+						expDateValue: getDate(18, 37, 23)
+					});
+		});
+
+		test(getID(), function() {
+			var that = this;
+			generateValuesTest([
+						{ key: "setValue", value: that._defaultFormatter.format(getDate(6, 37, 23)) },
+						{ key: "setDateValue", value: getDate(5, 28, 40) }
+					],
+					{
+						expInputVal: that._defaultFormatter.format(getDate(5, 28, 40)),
+						expValue: that._defaultFormatter.format(getDate(5, 28, 40)),
+						expDateValue: getDate(5, 28, 40)
+					});
+		});
+
+		test(getID(), function() {
+			var that = this;
+			generateValuesTest([
+						{ key: "setValue", value: that._defaultFormatter.format(getDate(6, 37, 23)) },
+						{ key: "setDisplayFormat", value: "hh:mm a" },
+						{ key: "setDateValue", value: getDate(5, 28, 40) }
+					],
+					{
+						expInputVal: sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh:mm a", strictParsing: true, relative: false}).format(getDate(5, 28, 40)),
+						expValue: that._defaultFormatter.format(getDate(5, 28, 40)),
+						expDateValue: getDate(5, 28, 40)
+					});
+		});
+
+		test(getID(), function() {
+			var that = this;
+			generateValuesTest([
+						{ key: "setValue", value: that._defaultFormatter.format(getDate(6, 37, 23)) },
+						{ key: "setDateValue", value: getDate(5, 28, 40) },
+						{ key: "setDisplayFormat", value: "hh:mm a" }
+					],
+					{
+						expInputVal: sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh:mm a", strictParsing: true, relative: false}).format(getDate(5, 28, 40)),
+						expValue: that._defaultFormatter.format(getDate(5, 28, 40)),
+						expDateValue: getDate(5, 28, 40)
+					});
+		});
+
+		test(getID(), function() {
+			generateValuesTest([
+						{ key: "setValueFormat", value: "HH:mm" },
+						{ key: "setValue", value: "18:37" },
+						{ key: "setDisplayFormat", value: "hh:mm:ss a" }
+					],
+					{
+						expInputVal: sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh:mm:ss a", strictParsing: true, relative: false}).format(getDate(18, 37, 0)),
+						expValue:  "18:37",
+						expDateValue: getDate(18, 37, 0)
+					});
+		});
+
+		test(getID(), function() {
+			generateValuesTest([
+						{ key: "setValueFormat", value: "HH:mm" },
+						{ key: "setValue", value: "18:37" },
+						{ key: "setDisplayFormat", value: "hh a" }
+					],
+					{
+						expInputVal: sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh a", strictParsing: true, relative: false}).format(getDate(18, 37, 0)),
+						expValue: "18:37",
+						expDateValue: getDate(18, 37, 0)
+					});
+		});
+
+		test(getID(), function() {
+			generateValuesTest([
+						{ key: "setValueFormat", value: "HH:mm" },
+						{ key: "setDateValue", value: getDate(18, 37, 0) },
+						{ key: "setDisplayFormat", value: "hh a" }
+					],
+					{
+						expInputVal: sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh a", strictParsing: true, relative: false}).format(getDate(18, 37, 0)),
+						expValue: "18:37",
+						expDateValue: getDate(18, 37, 0)
+					});
+		});
+
+		test("test locale", function() {
+			generateValuesTest([
+						{ key: "setValueFormat", value: "hh:mm a" },
+						{ key: "setValue", value: "11:50 nachm." },
+						{ key: "setDisplayFormat", value: "hh:mm a" },
+						{ key: "setLocaleId", value: "de_DE"}
+					],
+					{
+						expInputVal: "11:50 nachm.",
+						expValue: "11:50 nachm.",
+						expDateValue: getDate(23, 50, 0)
+					});
+		});
+
+		module("Keyboard handling of picker");
+
+		test("initial focus", function() {
+			var tp = new sap.m.TimePicker();
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			tp._openPicker();
+			this.clock.tick(1000);
+
+			var $firstSlider = tp._getSliders().getAggregation("_columns")[0];
+			var oSliderFocusSpy = this.spy($firstSlider, "focus");
+
+			ok(oSliderFocusSpy.callCount >= 0, "picker exists and its first slider is focussed at some point");
+
+			//cleanup
+			tp.destroy();
+			$firstSlider.focus.restore();
+		});
+
+		test("arrow left", function() {
+			var tp = new sap.m.TimePicker();
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			tp._openPicker();
+			this.clock.tick(1000);
+
+			var $oElement = document.activeElement;
+			var sliders = tp._getSliders();
+			var firstSlider = sliders.getAggregation("_columns")[0];
+			var lastSlider = sliders.getAggregation("_columns")[3];
+			var secondLastSlider = sliders.getAggregation("_columns")[2];
+
+			equal($oElement.id, firstSlider.getId(), "picker exists and first slider is the current focussed element");
+
+			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT);
+			this.clock.tick(1);
+
+			$oElement = document.activeElement;
+			equal($oElement.id, lastSlider.getId(), "the last slider is the focussed element");
+
+			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT);
+			this.clock.tick(1);
+
+			$oElement = document.activeElement;
+			equal($oElement.id, secondLastSlider.getId(), "the second last slider is the focussed element");
+
+			//cleanup
+			tp.destroy();
+		});
+
+
+		test("arrow right", function() {
+			var tp = new sap.m.TimePicker();
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			tp._openPicker();
+			this.clock.tick(1000);
+
+			var $oElement = document.activeElement;
+			var sliders = tp._getSliders();
+			var firstSlider = sliders.getAggregation("_columns")[0];
+			var secondSlider = sliders.getAggregation("_columns")[1];
+
+			equal($oElement.id, firstSlider.getId(), "picker exists and first slider is the current focussed element");
+
+			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			this.clock.tick(1);
+
+			$oElement = document.activeElement;
+			equal($oElement.id, secondSlider.getId(), "the second slider is the focussed element");
+
+			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			this.clock.tick(1);
+			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			this.clock.tick(1);
+			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			this.clock.tick(1);
+
+			$oElement = document.activeElement;
+			equal($oElement.id, firstSlider.getId(), "the first slider is the focussed element again");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("end and home", function() {
+			var tp = new sap.m.TimePicker();
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			tp._openPicker();
+			this.clock.tick(1000);
+
+			var $oElement = document.activeElement;
+			var sliders = tp._getSliders();
+			var firstSlider = sliders.getAggregation("_columns")[0];
+			var lastSlider = sliders.getAggregation("_columns")[3];
+
+			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.END);
+			this.clock.tick(1);
+
+			$oElement = document.activeElement;
+			equal($oElement.id, lastSlider.getId(), "the last slider is the focussed element");
+
+			qutils.triggerKeydown(sliders.getDomRef(), jQuery.sap.KeyCodes.HOME);
+			this.clock.tick(1);
+
+			$oElement = document.activeElement;
+			equal($oElement.id, firstSlider.getId(), "the first slider is the focussed element again");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("pageup and pagedown", function() {
+			var tp = new sap.m.TimePicker();
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			tp._openPicker();
+			this.clock.tick(1000);
+
+			var sliders = tp._getSliders();
+			var firstSlider = sliders.getAggregation("_columns")[0];
+
+			qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
+			this.clock.tick(1);
+
+
+			equal(firstSlider.getSelectedValue(), firstSlider.getItems()[0].getKey(), "the selected value is the first value");
+
+			qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
+			this.clock.tick(1);
+
+			equal(firstSlider.getSelectedValue(), firstSlider.getItems()[firstSlider.getItems().length - 1].getKey(), "the selected value is the last value");
+
+			qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
+			this.clock.tick(1);
+
+			equal(firstSlider.getSelectedValue(), firstSlider.getItems()[0].getKey(), "the selected value is the first value again");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("up and down", function() {
+			var oDate = new Date();
+			oDate.setHours(4);
+			var tp = new sap.m.TimePicker({
+				dateValue: oDate
+			});
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			tp._openPicker();
+			this.clock.tick(1000);
+
+			var sliders = tp._getSliders();
+			var firstSlider = sliders.getAggregation("_columns")[0];
+
+			qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+			this.clock.tick(210);
+
+
+			equal(firstSlider.getSelectedValue(), "3", "the selected value is one value upwards");
+
+			qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+			this.clock.tick(210);
+
+			equal(firstSlider.getSelectedValue(), "4", "the selected value is one value downwards");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("Alt + up", function() {
+			var oDate = new Date();
+			oDate.setHours(4);
+			var tp = new sap.m.TimePicker({
+				dateValue: oDate
+			});
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			tp._openPicker();
+			this.clock.tick(1);
+
+			var sliders = tp._getSliders();
+			var firstSlider = sliders.getAggregation("_columns")[0];
+			var picker = tp._getPicker();
+			var oHandleOkSpy = this.spy(tp, "_handleOkPress");
+
+			//slider one up
+			qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+			this.clock.tick(300);
+
+			//close and save
+			qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, true, false);
+			this.clock.tick(300);
+
+			ok(!picker.isOpen(), "picker is closed");
+			equal(oHandleOkSpy.callCount, 1, "the picker date value is saved");
+
+			//cleanup
+			tp.destroy();
+			tp._handleOkPress.restore();
+		});
+
+		test("Alt + down", function() {
+			var oDate = new Date();
+			oDate.setHours(4);
+			var tp = new sap.m.TimePicker({
+				dateValue: oDate
+			});
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			tp._openPicker();
+			this.clock.tick(1);
+
+			var sliders = tp._getSliders();
+			var firstSlider = sliders.getAggregation("_columns")[0];
+			var picker = tp._getPicker();
+			var oHandleOkSpy = this.spy(tp, "_handleOkPress");
+
+			//slider one up
+			qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
+			this.clock.tick(300);
+
+			//close and save
+			qutils.triggerKeydown(firstSlider.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true, false);
+			this.clock.tick(300);
+
+			ok(!picker.isOpen(), "picker is closed");
+			equal(oHandleOkSpy.callCount, 1, "the picker date value is saved");
+
+			//cleanup
+			tp.destroy();
+			tp._handleOkPress.restore();
+		});
+
+		module("Keyboard handling of input");
+
+		test("pageup increases the hours", function() {
+			//arrange
+			var oDate = new Date();
+			oDate.setHours(5);
+
+			//sut
+			var tp = new sap.m.TimePicker({
+				dateValue: oDate
+			});
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp.focus();
+
+			//act
+			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
+
+			//assert
+			equal(tp.getDateValue().getHours(), 6, "The time picker hours are increased");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("pagedown decreases the hours", function() {
+			//arrange
+			var oDate = new Date();
+			oDate.setHours(5);
+
+			//sut
+			var tp = new sap.m.TimePicker({
+				dateValue: oDate
+			});
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp.focus();
+
+			//act
+			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
+
+			//assert
+			equal(tp.getDateValue().getHours(), 4, "The time picker hours are decreased");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("pageup does not have side effects", function() {
+			//arrange
+			var oDate = new Date();
+			oDate.setMinutes(20);
+			oDate.setSeconds(21);
+
+			//sut
+			var tp = new sap.m.TimePicker({
+				dateValue: oDate
+			});
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp.focus();
+
+			//act
+			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
+
+			//assert
+			equal(tp.getDateValue().getMinutes(), 20, "The time picker minutes stay the same");
+			equal(tp.getDateValue().getSeconds(), 21, "The time picker seconds stay the same");
+			ok(!tp._getPicker(), "picker is missing");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("shift+pageup increases the minutes", function() {
+			//arrange
+			var oDate = new Date();
+			oDate.setMinutes(15);
+
+			//sut
+			var tp = new sap.m.TimePicker({
+				dateValue: oDate
+			});
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp.focus();
+
+			//act
+			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, true, false, false);
+
+			//assert
+			equal(tp.getDateValue().getMinutes(), 16, "The time picker minutes are increased");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("shift+pagedown decreases the minutes", function() {
+			//arrange
+			var oDate = new Date();
+			oDate.setMinutes(13);
+
+			//sut
+			var tp = new sap.m.TimePicker({
+				dateValue: oDate
+			});
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp.focus();
+
+			//act
+			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN, true, false, false);
+
+			//assert
+			equal(tp.getDateValue().getMinutes(), 12, "The time picker minutes are decreased");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("shift+pageup does not have side effects", function() {
+			//arrange
+			var oDate = new Date();
+			oDate.setHours(5);
+			oDate.setSeconds(21);
+
+			//sut
+			var tp = new sap.m.TimePicker({
+				dateValue: oDate
+			});
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp.focus();
+
+			//act
+			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, true, false, false);
+
+			//assert
+			equal(tp.getDateValue().getHours(), 5, "The time picker hours stay the same");
+			equal(tp.getDateValue().getSeconds(), 21, "The time picker seconds stay the same");
+			ok(!tp._getPicker(), "picker is missing");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("ctrl+shift+pageup increases the seconds", function() {
+			//arrange
+			var oDate = new Date();
+			oDate.setSeconds(11);
+
+			//sut
+			var tp = new sap.m.TimePicker({
+				dateValue: oDate
+			});
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp.focus();
+
+			//act
+			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, true, false, true);
+
+			//assert
+			equal(tp.getDateValue().getSeconds(), 12, "The time picker seconds are increased");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("ctrl+shift+pagedown decreases the seconds", function() {
+			//arrange
+			var oDate = new Date();
+			oDate.setSeconds(4);
+
+			//sut
+			var tp = new sap.m.TimePicker({
+				dateValue: oDate
+			});
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp.focus();
+
+			//act
+			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN, true, false, true);
+
+			//assert
+			equal(tp.getDateValue().getSeconds(), 3, "The time picker seconds are decreased");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("ctrl+pageup does not have side effects", function() {
+			//arrange
+			var oDate = new Date();
+			oDate.setHours(5);
+			oDate.setMinutes(38);
+
+			//sut
+			var tp = new sap.m.TimePicker({
+				dateValue: oDate
+			});
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp.focus();
+
+			//act
+			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.PAGE_UP, false, false, true);
+
+			//assert
+			equal(tp.getDateValue().getHours(), 5, "The time picker hours stay the same");
+			equal(tp.getDateValue().getMinutes(), 38, "The time picker minutes stay the same");
+			ok(!tp._getPicker(), "picker is missing");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("arrow up opens the picker", function() {
+			//sut
+			var tp = new sap.m.TimePicker();
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp.focus();
+
+			//assert
+			ok(!tp._getPicker(), "picker does not exist");
+
+			//act
+			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.ARROW_UP, false, true, false);
+
+			//assert
+			ok(tp._getPicker().isOpen(), "picker is open");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("arrow down opens the picker", function() {
+			//sut
+			var tp = new sap.m.TimePicker();
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp.focus();
+
+			//assert
+			ok(!tp._getPicker(), "picker does not exist");
+
+			//act
+			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true, false);
+
+			//assert
+			ok(tp._getPicker().isOpen(), "picker is open");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("right moves the cursor but jumps over the immutable chars", function() {
+			//arrange
+			var oDate = new Date();
+			oDate.setHours(5);
+			oDate.setMinutes(38);
+
+			//sut
+			var tp = new sap.m.TimePicker({
+				dateValue: oDate,
+				displayFormat: "HH:mm"
+			});
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp.focus();
+
+			//act
+			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+
+			//assert
+			equal(jQuery(tp.getFocusDomRef()).cursorPos(), 3, "After right + right the cursor is at the first minute digit");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("left moves the cursor but jumps over the immutable chars", function() {
+			//arrange
+			var oDate = new Date();
+			oDate.setHours(5);
+			oDate.setMinutes(38);
+
+			//sut
+			var tp = new sap.m.TimePicker({
+				dateValue: oDate,
+				displayFormat: "HH:mm"
+			});
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp.focus();
+
+			jQuery(tp.getFocusDomRef()).cursorPos(3);
+			equal(jQuery(tp.getFocusDomRef()).cursorPos(), 3, "Initially the cursor is at the first minute digit");
+
+			qutils.triggerKeydown(tp.getDomRef(), jQuery.sap.KeyCodes.ARROW_LEFT, false, false, false);
+			equal(jQuery(tp.getFocusDomRef()).cursorPos(), 1, "After left the cursor is at the second hour digit");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		module("picker interaction");
+
+		test("cancel button closes the picker", function() {
+			//sut
+			var tp = new sap.m.TimePicker();
+			var oBtnCancel, oPopoverCloseSpy;
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp._openPicker();
+
+			oPopoverCloseSpy = this.spy(tp._getPicker(), "close");
+			oBtnCancel = tp._getPicker().getEndButton();
+
+			//act
+			oBtnCancel.firePress();
+
+			equal(oPopoverCloseSpy.callCount, 1, "At the end cancel button invokes the popover's close method");
+
+			//cleanup
+			tp._getPicker().close.restore();
+			tp.destroy();
+		});
+
+		module("data binding");
+
+		test("binding to value property is correct", function() {
+			//sut
+			var tp = new sap.m.TimePicker({
+				value: {
+					path: "/timeValue",
+					type: new sap.ui.model.type.Time({pattern: "HH:mm", strictParsing: true})
+				}
+			});
+
+			//arrange
+			var oModel = new sap.ui.model.json.JSONModel();
+			var oDate = new Date(2000, 1, 2, 16, 35, 54);
+			var oDate2 = new Date(2000, 1, 2, 20, 10, 11);
+			oModel.setData({
+				timeValue: oDate
+			});
+
+			tp.setModel(oModel);
+
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//act
+
+			//assert
+			equal(tp.getValue(), "16:35", "the value property is set in and formatted correctly");
+
+			//act
+			oModel.setData({
+				timeValue: oDate2
+			});
+
+			//assert
+			equal(tp.getValue(), "20:10", "the value property has changed with the model");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		module("slider interactions");
+
+		test("fireTap expands slider", function() {
+			//sut
+			var tp = new sap.m.TimePicker();
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp._openPicker();
+			this.clock.tick(1);
+
+			var sliders = tp._getSliders();
+			var sliderMinutes = sliders.getAggregation("_columns")[1];
+
+			ok(!sliderMinutes.getIsExpanded(), "slider is collapsed");
+
+			//act
+			sliderMinutes.fireTap(null);
+
+			//assert
+			ok(sliderMinutes.getIsExpanded(), "slider is expanded");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("_getUpdatedCycleScrollTop returns a new top value with the right offset", function() {
+			//sut
+			var tp = new sap.m.TimePicker();
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp._openPicker();
+			this.clock.tick(1);
+
+			var sliders = tp._getSliders();
+			var sliderHours = sliders.getAggregation("_columns")[0];
+			sliderHours._bIsDrag = true;
+
+			var params = [
+				600, //$ContainerHeight
+				5000, //$ContentHeight,
+				100, //current top position
+				150, //dragMargin
+				5 //contentRepeat value
+			];
+
+			//act
+			var updatedTop = sliderHours._getUpdatedCycleScrollTop.apply(sliderHours, params);
+
+			//assert
+			equal(updatedTop, 1100, "_getUpdatedCycleScrollTop has jumped top by one time the unique content height");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("_doDrag method updates the top position", function() {
+			//sut
+			var tp = new sap.m.TimePicker();
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp._openPicker();
+			this.clock.tick(1);
+
+			var sliders = tp._getSliders();
+			var sliderHours = sliders.getAggregation("_columns")[0];
+
+			//act
+			sliderHours._startDrag(200);
+
+			var oJQueryScrollTopSpy = this.spy(jQuery.fn, "scrollTop");
+			sliderHours._doDrag(240, 1435829481235);
+			sliderHours._doDrag(293, 1435829481277);
+
+			//assert
+			equal(oJQueryScrollTopSpy.callCount, 2, "slider's top position has been updated once for every _doDrag");
+
+			//cleanup
+			jQuery.fn.scrollTop.restore();
+			tp.destroy();
+		});
+
+		test("_endDrag method initiates an animation on the slider's content", function() {
+			//sut
+			var tp = new sap.m.TimePicker();
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp._openPicker();
+			this.clock.tick(1);
+
+			var sliders = tp._getSliders();
+			var sliderHours = sliders.getAggregation("_columns")[0];
+			var oAnimateScrollSpy = this.spy(sliderHours, "_animateScroll");
+
+			//act
+			sliderHours._startDrag(200);
+			sliderHours._doDrag(240, 1435829481235); //about 40ms offset each drag
+			sliderHours._doDrag(293, 1435829481277);
+			sliderHours._doDrag(340, 1435829481323);
+			sliderHours._doDrag(382, 1435829481364);
+			sliderHours._endDrag(439, 1435829481402);
+
+			//assert
+			equal(oAnimateScrollSpy.callCount, 1, "animation was started");
+			ok(Math.abs(oAnimateScrollSpy.args[0][0]) < 2, "animation was started with reasonable speed");
+
+			//cleanup
+			sliderHours._animateScroll.restore();
+			tp.destroy();
+		});
+
+		test("mouse down on the input icon open/closes the picker", function() {
+			var tp = new sap.m.TimePicker();
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var icon = tp.$().find(".sapUiIcon");
+			icon.click();
+			this.clock.tick(1000);
+
+			strictEqual(jQuery(".sapMPopover").is(":visible"), true, "the picker is opened");
+
+			icon.click();
+			this.clock.tick(1000);
+
+			strictEqual(jQuery(".sapMPopover").is(":visible"), false, "the picker is closed");
+
+			tp.destroy();
+		});
+
+		test("focussed input is styled correctly", function() {
+			var tp = new sap.m.TimePicker();
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			tp._openPicker();
+			this.clock.tick(1000);
+
+			strictEqual(jQuery(".sapMTPInputActive").is(":visible"), true, "the picker is opened and focussed");
+
+			tp._closePicker();
+			this.clock.tick(1000);
+
+			strictEqual(jQuery(".sapMTPInputActive").is(":visible"), false, "the picker is closed and not focussed");
+
+			qutils.triggerEvent("focusout", tp.getDomRef());
+			ok(!tp.$().hasClass(".sapMTPInputActive"), "the picker is closed and not focussed");
+
+
+			tp.destroy();
+		});
+
+		test("_getInputValue", function() {
+			var tp = new sap.m.TimePicker();
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			tp.setValue("10:55:13 AM");
+			var result = tp._getInputValue();
+
+			assert.strictEqual(result, "10:55:13 AM", "_getInputValue returns the correct time");
+
+			tp.destroy();
+		});
+
+		/* Temporary disabled until robust solution (across all timezones is implemented) test("decrease time when daylight saving begins", function() {
+		 var tp = new sap.m.TimePicker();
+		 tp.placeAt("qunit-fixture");
+		 sap.ui.getCore().applyChanges();
+
+		 tp.setDateValue(new Date(2015, 2, 29, 3, 12, 15));
+		 tp._increaseTime(-1, "hour");
+
+		 equal(tp.getDateValue().toString(), new Date(2015, 2, 29, 1, 12, 15).toString(), "_increaseTime works as expected when decreasing in daylight saving");
+
+		 tp.destroy();
+		 });*/
+
+		module("properties in constructor options", {
+			beforeEach: function() {
+				this._defaultFormatter = sap.ui.core.format.DateFormat.getTimeInstance({style: "medium", strictParsing: true, relative: false});
+			}
+		});
+
+		test("displayFormat after value", function() {
+			//system under test
+			var tpId = "tp" + ++caseIndex,
+					tp = new sap.m.TimePicker(tpId, {
+						value: this._defaultFormatter.format(getDate(17, 27, 43)),
+						displayFormat: "HH:mm"
+					}),
+					expDateValue = getDate(17, 27, 43);
+
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//render
+
+			//assert
+			equals(jQuery("#" + tpId + "-inner").val(), "17:27", "$input.val() ok");
+			equals(tp.getValue(), this._defaultFormatter.format(getDate(17, 27, 43)), "getValue() ok");
+
+			var oDateValue = tp.getDateValue();
+			oDateValue.setFullYear(expDateValue.getFullYear());
+			oDateValue.setMonth(expDateValue.getMonth());
+			oDateValue.setDate(expDateValue.getDate());
+			equals(oDateValue.toString(), expDateValue.toString(), "getDateValue ok");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		module("MaskInput integration", {
+			beforeEach : function() {
+				this._defaultFormatter = sap.ui.core.format.DateFormat.getTimeInstance({style: "medium", strictParsing: true, relative: false});
+				this._leadingZero24HFormatter = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "HH:mm:ss", strictParsing: true, relative: false});
+				this._leadingZero12HFormatter = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "hh:mm a", strictParsing: true, relative: false});
+				this._noLeadingZero24HFormatter = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "H:mm:ss", strictParsing: true, relative: false});
+				this._noLeadingZero12HFormatter = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "h:mm a", strictParsing: true, relative: false});
+			},
+			_triggerMultipleKeypress: function(timePicker, sFeed) {
+				var aFeed = sFeed.split(""),
+						$TimePicker = timePicker.getDomRef(),
+						sChar;
+
+				while (aFeed.length) {
+					sChar = aFeed.splice(0, 1)[0];
+					qutils.triggerKeydown($TimePicker, sChar);
+					qutils.triggerKeypress($TimePicker, sChar);
+				}
+			},
+			_clearInput: function(timePicker) {
+				jQuery("#" + timePicker.getId() + "-inner").val("");
+			},
+			typeAndCheckValueForDisplayFormat: function(sDisplayFormat, sInput, sExpectedValue, sPrefilledValue) {
+				//system under test
+				var tp = new sap.m.TimePicker({
+					displayFormat: sDisplayFormat
+				});
+
+//				sPrefilledValue || (sPrefilledValue = "");
+
+
+				//arrange
+				tp.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//act
+//				this._triggerMultipleKeypress(tp, sPrefilledValue + sInput);
+				this._triggerMultipleKeypress(tp, sInput);
+
+				//assert
+				equals(jQuery("#" + tp.getId() + "-inner").val(), sExpectedValue, "$input.val() ok");
+
+				//cleanup
+				tp.destroy();
+			}
+		});
+
+		//valid
+		test("allows input of valid time string - HH format, hours < 9", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "0615", "06:15");
+		});
+
+		test("allows input of valid time string - HH format, hours === 11", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "1115", "11:15");
+		});
+
+		test("allows input of valid time string - HH format, hours > 12", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "1715", "17:15");
+		});
+
+		test("allows input of valid time string - hh format, hours < 9", function() {
+			this.typeAndCheckValueForDisplayFormat("hh:mm", "0615", "06:15");
+		});
+
+		test("allows input of valid time string - hh format, hours === 12", function() {
+			this.typeAndCheckValueForDisplayFormat("hh:mm", "1215", "12:15");
+		});
+
+
+
+		//time semantics - shifts and replaces
+		//first number in hour
+		//no leading zero
+		test("1 for first hour digit is valid - h format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("h:mm", "115", "11:5-"); //not " 1:15"
+		});
+
+		test("2 for first hour digit are preceded by space - h format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("h:mm", "215", " 2:15");
+		});
+
+		test("numbers > 2 for first hour digit are preceded by space - h format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("h:mm", "315", " 3:15");
+		});
+
+
+
+		test("2 for first hour digit is valid - H format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("H:mm", "215", "21:5-"); //not " 2:15"
+		});
+
+		test("numbers > 2 for first hour digit are preceded by space - H format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("H:mm", "315", " 3:15");
+		});
+
+
+		test("space is valid for hours - H format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("H:mm", " 115", " 1:15"); //not "11:5-"
+		});
+
+		//...could have more of those
+
+		test("0 is replaced with space for hours - h format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("h:mm", "0115", " 1:15");
+		});
+
+		test("0 is preceeded with space for hours - H format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("H:mm", "0115", " 0:11");
+		});
+
+
+		//leading zero
+		test("1 for first hour digit is valid - hh format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("hh:mm", "115", "11:5-");
+		});
+
+		test("2 for first hour digit are preceded by 0 - hh format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("hh:mm", "215", "02:15");
+		});
+
+
+
+		test("2 for first hour digit is valid - HH format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "215", "21:5-"); //not " 2:15"
+		});
+
+		test("numbers > 2 for first hour digit are preceded by 0 - HH format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "415", "04:15");
+		});
+
+
+
+
+		test("space is replaced with 0 for hours - HH format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", " 115", "01:15");
+		});
+
+		test("0 is valid for hours - hh format, pos 0", function() {
+			this.typeAndCheckValueForDisplayFormat("hh:mm", "0115", "01:15"); //not "11:5-"
+		});
+
+
+
+		//invalid (partially valid)
+		test("do not allow letters, placeholders, immutables and asterisks - HH format", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "-:aQ*?spam1", "1-:--");
+		});
+
+		test("do not allow letters, placeholders, immutables and asterisks - hh format", function() {
+			this.typeAndCheckValueForDisplayFormat("hh:mm", "-1:spamaQ1*?", "11:--");
+		});
+
+		//second number in hour
+		test("do not allow numbers > 2 for 2nd number in hour if 1st === 1 - hh format", function() {
+			this.typeAndCheckValueForDisplayFormat("hh:mm", "13", "1-:--");
+		});
+
+		test("allow numbers <= 2 for 2nd number in hour if 1st === 1 - hh format", function() {
+			this.typeAndCheckValueForDisplayFormat("hh:mm", "12", "12:--");
+		});
+
+		test("do not allow numbers > 2 for 2nd number in hour if 1st === 1 - h format", function() {
+			this.typeAndCheckValueForDisplayFormat("h:mm", "13", "1-:--");
+		});
+
+		test("allow numbers <= 2 for 2nd number in hour if 1st === 1 - h format", function() {
+			this.typeAndCheckValueForDisplayFormat("h:mm", "12", "12:--");
+		});
+
+
+
+		test("do not allow numbers > 3 for 2nd number in hour if 1st === 2 - HH format", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "24", "2-:--");
+		});
+
+		test("allow numbers <= 3 for 2nd number in hour if 1st === 2 - HH format", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "23", "23:--");
+		});
+
+		test("do not allow numbers > 3 for 2nd number in hour if 1st === 2 - H format", function() {
+			this.typeAndCheckValueForDisplayFormat("H:mm", "24", "2-:--");
+		});
+
+		test("allow numbers <= 3 for 2nd number in hour if 1st === 2 - H format", function() {
+			this.typeAndCheckValueForDisplayFormat("H:mm", "23", "23:--");
+		});
+
+		//first number in minutes
+		test("numbers > 5 for 1st number in minutes are preceded by 0", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "226", "22:06");
+		});
+
+		test("allow numbers <= 5 for 1st number in minutes", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "225", "22:5-");
+		});
+
+		//we probably do not need this separately
+		test("allow 0 for 1st number in minutes", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm", "220", "22:0-");
+		});
+
+		//first number in seconds
+		test("numbers > 5 for 1st number in seconds are preceded by 0", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm:ss", "22556", "22:55:06");
+		});
+
+		test("allow numbers <= 5 for 1st number in seconds", function() {
+			this.typeAndCheckValueForDisplayFormat("HH:mm:ss", "22595", "22:59:5-");
+		});
+
+		//am/pm values type assistence
+		test("am autocompletes the value on first different letter", function() {
+			this.typeAndCheckValueForDisplayFormat("hh a", "01A", "01 AM");
+		});
+
+		test("pm autocompletes the value on first different letter", function() {
+			this.typeAndCheckValueForDisplayFormat("hh a", "01P", "01 PM");
+		});
+
+		test("am match start - then autocomplete on any letter", function() {
+			//system under test
+			var tp = new sap.m.TimePicker({
+				valueFormat: "hh a",
+				value: "12 AM",
+				displayFormat: "hh a"
+			});
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.BACKSPACE);
+
+			equals(jQuery("#" + tp.getId() + "-inner").val(), "12 A-", "$input.val() correctly preset");
+
+			this._triggerMultipleKeypress(tp, "y");
+
+			//assert
+			equals(jQuery("#" + tp.getId() + "-inner").val(), "12 AM", "$input.val() ok");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("pm match start - then autocomplete on any letter", function() {
+			//system under test
+			var tp = new sap.m.TimePicker({
+				valueFormat: "hh a",
+				value: "12 PM",
+				displayFormat: "hh a"
+			});
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			qutils.triggerKeydown(jQuery(tp.getFocusDomRef()), jQuery.sap.KeyCodes.BACKSPACE);
+
+			equals(jQuery("#" + tp.getId() + "-inner").val(), "12 P-", "$input.val() correctly preset");
+
+			this._triggerMultipleKeypress(tp, "b");
+
+			//assert
+			equals(jQuery("#" + tp.getId() + "-inner").val(), "12 PM", "$input.val() ok");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("TimeSemanticMaskHelper.replaceChar replaces any char when am or pm value match is the only possible", function() {
+			//system under test
+			var tp = new sap.m.TimePicker({
+				displayFormat: "hh a"
+			});
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("y", 4, "12 P-");
+
+			equals(sCharReplaced, "M", "replaceChar replaces correctly");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("TimeSemanticMaskHelper.replaceChar replaces with unique value and completes with spaces when am,pm length differs", function() {
+			//system under test
+			var tp = new sap.m.TimePicker({
+				localeId: "de_DE",
+				displayFormat: "hh a"
+			});
+
+			//am/pm translation is - vorm./nachm. - which are different length
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("v", 3, "12 ------");
+
+			equals(sCharReplaced, "vorm. ", "replaceChar completes with spaces");
+
+			//cleanup
+			tp.destroy();
+		});
+
+		test("TimeSemanticMaskHelper.replaceChar any char completes am pm values to the first difference", function() {
+			sinon.stub(sap.ui.core.LocaleData.prototype, "getDayPeriods").returns([ "MA", "MP"]);
+
+			//system under test
+			var tp = new sap.m.TimePicker({
+				displayFormat: "hh a"
+			});
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+
+			var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("b", 3, "12 --");
+
+			equals(sCharReplaced, "M", "replaceChar completes to the first difference");
+
+			//cleanup
+			sap.ui.core.LocaleData.prototype.getDayPeriods.restore();
+			tp.destroy();
+		});
+
+		test("TimeSemanticMaskHelper.replaceChar correct char only completes am pm values on the position with difference", function() {
+			sinon.stub(sap.ui.core.LocaleData.prototype, "getDayPeriods").returns([ "MABC", "MPBC"]);
+
+			//system under test
+			var tp = new sap.m.TimePicker({
+				displayFormat: "hh a"
+			});
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+
+			var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("b", 4, "12 M---");
+
+			equals(sCharReplaced, "b", "replaceChar does not replace invalid char");
+
+			//cleanup
+			sap.ui.core.LocaleData.prototype.getDayPeriods.restore();
+			tp.destroy();
+		});
+
+		test("TimeSemanticMaskHelper.replaceChar completes am pm values on a middle position with difference, to the end", function() {
+			sinon.stub(sap.ui.core.LocaleData.prototype, "getDayPeriods").returns([ "MABC", "MPBC"]);
+
+			//system under test
+			var tp = new sap.m.TimePicker({
+				displayFormat: "hh a"
+			});
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+
+			var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("A", 4, "12 M---");
+
+			equals(sCharReplaced, "ABC", "replaceChar completes when difference is in the middle");
+
+			//cleanup
+			sap.ui.core.LocaleData.prototype.getDayPeriods.restore();
+			tp.destroy();
+		});
+
+		test("TimeSemanticMaskHelper.replaceChar autocomplete not case sensitive: a fills AM", function() {
+			sinon.stub(sap.ui.core.LocaleData.prototype, "getDayPeriods").returns([ "AM", "PM"]);
+
+			//system under test
+			var tp = new sap.m.TimePicker({
+				displayFormat: "hh a"
+			});
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+
+			var sCharReplaced = tp._oTimeSemanticMaskHelper.replaceChar("a", 3, "12 --");
+
+			equals(sCharReplaced, "AM", "replaceChar is not case sensitive");
+
+			//cleanup
+			sap.ui.core.LocaleData.prototype.getDayPeriods.restore();
+			tp.destroy();
+		});
+
+		//todo - test caret position
+
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit page for sap.m.TimePicker</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<div id="qunit-fixture"></div>
+<ol id="qunit-tests"></ol>
+<div id="content"></div>
+<br>
+<div id="uiArea1"></div>
+<br>
+<div id="uiArea2"></div>
+<br>
+<div id="uiArea3"></div>
+</body>
+</html>
+

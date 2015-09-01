@@ -110,9 +110,7 @@ sap.ui.define(['sap/ui/core/format/NumberFormat', 'sap/ui/model/FormatException'
 	 * @public
 	 * @since 1.27.1
 	 */
-	var Single = ODataType.extend("sap.ui.model.odata.type.Single",
-			/** @lends sap.ui.model.odata.type.Single.prototype */
-			{
+	var Single = ODataType.extend("sap.ui.model.odata.type.Single", {
 				constructor : function (oFormatOptions, oConstraints) {
 					ODataType.apply(this, arguments);
 					this.oFormatOptions = oFormatOptions;

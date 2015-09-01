@@ -94,9 +94,13 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select'], function (Sema
 	SemanticSelect.prototype.getSelectedItem = function () {
 		return this._getControl().getSelectedItem();
 	};
+	
+	SemanticSelect.prototype.setSelectedItem = function(oItem) {
+		this._getControl().setSelectedItem(oItem);
 
-	SemanticSelect.prototype.setSelectedItem = function (vItem) {
-		this._getControl().setSelectedItem(vItem);
+		// since "selectedKey" is dependent on "selectedItem", update it accordingly
+		this.setSelectedKey(this._getControl().getSelectedKey());
+
 		return this;
 	};
 
@@ -111,13 +115,35 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Select'], function (Sema
 			this.setAggregation('_control',
 					new Select({
 						id: this.getId() + "-select",
-						change: jQuery.proxy(this.fireChange, this)
-					}), true); //TODO: check bSuppressInvalidate needed?
+						change: this._onInnerSelectChange.bind(this)
+					}), true); // don't invalidate - this is only called before/during rendering, where invalidation would lead to double rendering,  or when invalidation anyway happens
 			oControl = this.getAggregation('_control');
 			oControl.applySettings(this._getConfiguration().getSettings());
+			if (typeof this._getConfiguration().getEventDelegates === "function") {
+				oControl.addEventDelegate(this._getConfiguration().getEventDelegates(oControl));
+			}
 		}
 
 		return oControl;
+	};
+
+	/**
+	 * Fires change event from the inner select when the selectedItem value of the inner select is changed via UI interaction 
+	 * (tap/click/key-press) rather than via an API call from the application. 
+	 * 
+	 * In this case, you have to:
+	 * (1) update the selectedItem value of the outer select as well
+	 * (2) fire change event from the outer select so that application listeners for change on the outer select are notified
+	 *
+	 * @param oEvent
+	 * @private
+	 */
+	SemanticSelect.prototype._onInnerSelectChange = function (oEvent) {
+
+		var oSelectedItem = oEvent.getSource().getSelectedItem();
+
+		this.setSelectedItem(oSelectedItem);
+		this.fireChange({selectedItem: oSelectedItem});
 	};
 
 	return SemanticSelect;

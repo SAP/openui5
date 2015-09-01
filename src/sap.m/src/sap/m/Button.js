@@ -493,36 +493,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	Button.prototype.setIcon = function(sIcon) {
-		var sValue = this.getIcon();
-
-		if (sIcon === null || sIcon === undefined) {
-			sIcon = "";
-		}
+		var sValue = this.getIcon() || "";
+		sIcon = sIcon || "";
 
 		if (sValue !== sIcon) {
-			var oDomRef = this.getDomRef("img");
-			var bShouldSupressRendering = !!oDomRef;
-
-			// Check if old and new icon URI is equal
-			if (IconPool.isIconURI(sIcon) === IconPool.isIconURI(sValue)) {
-				bShouldSupressRendering = true;
-			} else {
-				bShouldSupressRendering = false;
-			}
-
-			// Control needs to be re-rendered when icon should be removed
-			if (sIcon.length === 0) {
-				bShouldSupressRendering = false;
-			}
-
-			// Render control if element is not available in the DOM
-			this.setProperty("icon", sIcon, bShouldSupressRendering);
-
-			if (bShouldSupressRendering && this._image) {
+			var bSupressRendering = !!sValue && !!sIcon && IconPool.isIconURI(sIcon) === IconPool.isIconURI(sValue);
+			this.setProperty("icon", sIcon, bSupressRendering);
+			if (bSupressRendering && this._image) {
 				this._image.setSrc(sIcon);
 			}
 		}
-
 		return this;
 	};
 

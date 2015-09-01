@@ -908,15 +908,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	UIArea.prototype._handleGroupChange = function(oEvent, oElement) {
 		var oKey = UIArea._oFieldGroupValidationKey;
 		if (oEvent.type === "focusin") {
-			//check for field group change delayed to allow focus forwarding and resetting focus after selection 
+			//check for field group change delayed to allow focus forwarding and resetting focus after selection
 			if (UIArea._iFieldGroupDelayTimer) {
 				jQuery.sap.clearDelayedCall(UIArea._iFieldGroupDelayTimer);
 				UIArea._iFieldGroupDelayTimer = null;
 			}
 			UIArea._iFieldGroupDelayTimer = jQuery.sap.delayedCall(0,this, this.setFieldGroupControl,[oElement]);
 			return true; //no further checks because setFieldGroupControl already looked for a group id and fired the enter and leave events that bubble
-		} else if (this.getFieldGroupControl() && 
-				oEvent.type === "keyup" && 
+		} else if (this.getFieldGroupControl() &&
+				oEvent.type === "keyup" &&
 				oEvent.keyCode === oKey.keyCode &&
 				oEvent.shiftKey === oKey.shiftKey &&
 				oEvent.altKey === oKey.altKey &&
@@ -936,7 +936,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	};
 
 	/**
-	 * Sets the field group control and triggers the validateFieldGroup event for 
+	 * Sets the field group control and triggers the validateFieldGroup event for
 	 * the current field group control.
 	 * There is only one field group control for all UI areas.
 	 *
@@ -970,7 +970,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 					return oElement instanceof sap.ui.core.Control;
 				});
 			}
-			var aCurrentGroupIds = (oCurrentControl ? oCurrentControl.getFieldGroupIds() : []), 
+			var aCurrentGroupIds = (oCurrentControl ? oCurrentControl.getFieldGroupIds() : []),
 				aNewGroupIds = (oControl ? oControl.getFieldGroupIds() : []),
 				aTargetFieldGroupIds = [];
 			for (var i = 0; i < aCurrentGroupIds.length; i++) {
@@ -983,7 +983,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 				oCurrentControl.triggerValidateFieldGroup(aTargetFieldGroupIds);
 			}
 			UIArea._oFieldGroupControl = oControl;
-		} 
+		}
 		return this;
 	};
 

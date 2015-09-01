@@ -16,14 +16,15 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * Table which handles analytical OData backends
+	 * Table which handles analytical OData backends. The AnalyticalTable only works with an AnalyticalBinding and
+	 * correctly annotated OData services. Please check on the SAP Annotations for OData Version 2.0 documentation for further details.
+	 * @see http://scn.sap.com/docs/DOC-44986
+	 *
 	 * @extends sap.ui.table.Table
 	 * @version ${version}
 	 *
 	 * @constructor
 	 * @public
-	 * @experimental Since version 1.21.
-	 * The AnalyticalTable will be productized soon.
 	 * @alias sap.ui.table.AnalyticalTable
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -108,9 +109,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 
 			// defaulting the rowHeight -> is set via CSS
 		}
-		
-		this._bBindingAttachedListener = false;
-
 	};
 
 	AnalyticalTable.prototype.setFixedRowCount = function() {
@@ -171,9 +169,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		this._bSupressRefresh = true;
 		this._updateColumns();
 		this._bSupressRefresh = false;
-		
-		this._bBindingAttachedListener = false;
-		
+
 		return vReturn;
 	};
 
@@ -244,21 +240,6 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 		}
 	};
 	
-	/**
-	 * Removes complete selection.
-	 *
-	 * @type sap.ui.table.Table
-	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	AnalyticalTable.prototype.clearSelection = function() {
-		var oBinding = this.getBinding("rows");
-		if (oBinding && oBinding.clearSelection) {
-			oBinding.clearSelection();
-		}
-		return this;
-	};
-	
 	AnalyticalTable.prototype._sanitizeBindingInfo = function (oBindingInfo) {
 		var sPath,
 			oTemplate,
@@ -320,16 +301,12 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype._attachBindingListener = function() {
-		if (!this._bBindingAttachedListener) {
-			this._bBindingAttachedListener = true;
+		var oBinding = this.getBinding("rows");
 
-			var oBinding = this.getBinding("rows");
-			
-			// The selectionchanged event is also a special AnalyticalTreeBindingAdapter event.
-			// The event interface is the same as in sap.ui.model.SelectionModel, due to compatibility with the sap.ui.table.Table
-			if (oBinding && !oBinding.hasListeners("selectionChanged")){
-				oBinding.attachSelectionChanged(this._onSelectionChanged, this);
-			}
+		// The selectionChanged event is also a special AnalyticalTreeBindingAdapter event.
+		// The event interface is the same as in sap.ui.model.SelectionModel, due to compatibility with the sap.ui.table.Table
+		if (oBinding && !oBinding.hasListeners("selectionChanged")){
+			oBinding.attachSelectionChanged(this._onSelectionChanged, this);
 		}
 
 		Table.prototype._attachDataRequestedListeners.apply(this);
@@ -391,13 +368,28 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			iFixedBottomRowCount = this.getFixedBottomRowCount(),
 			iCount = this.getVisibleRowCount(),
 			aCols = this.getColumns();
-		
-		//check if the table has columns
+
+		var fnRemoveClasses = function (oRow) {
+			var $row = oRow.getDomRefs(true);
+
+			$row.row.removeAttr("data-sap-ui-level");
+			$row.row.removeData("sap-ui-level");
+			$row.row.removeAttr('aria-level');
+			$row.row.removeAttr('aria-expanded');
+			$row.row.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
+			$row.rowSelector.html("");
+		};
+
+		var aRows = this.getRows();
+		//check if the table has rows (data to display)
 		if (!oBinding) {
+			// restore initial table state, remove group headers and total row formatting
+			for (var i = 0; i < aRows.length; i++) {
+				fnRemoveClasses(aRows[i]);
+			}
 			return;
 		}
 
-		var aRows = this.getRows();
 		for (var iRow = 0, l = Math.min(iCount, aRows.length); iRow < l; iRow++) {
 			var bIsFixedRow = iRow > (iCount - iFixedBottomRowCount - 1) && oBinding.getLength() > iCount,
 				iRowIndex = bIsFixedRow ? (oBinding.getLength() - 1 - (iCount - 1 - iRow)) : iFirstRow + iRow,
@@ -416,22 +408,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			var iLevel = oContextInfo ? oContextInfo.level : 0;
 
 			if (!oContextInfo || !oContextInfo.context) {
-				$row.removeAttr("data-sap-ui-level");
-				$row.removeData("sap-ui-level");
-				$row.removeAttr('aria-level');
-				$row.removeAttr('aria-expanded');
-				$row.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
-				$fixedRow.removeAttr("data-sap-ui-level");
-				$fixedRow.removeData("sap-ui-level");
-				$fixedRow.removeAttr('aria-level');
-				$fixedRow.removeAttr('aria-expanded');
-				$fixedRow.removeClass("sapUiTableGroupHeader");
-				$rowHdr.html("");
-				$rowHdr.removeAttr("data-sap-ui-level");
-				$rowHdr.removeData("sap-ui-level");
-				$rowHdr.removeAttr('aria-level');
-				$rowHdr.removeAttr('aria-expanded');
-				$rowHdr.removeClass("sapUiTableGroupHeader sapUiAnalyticalTableSum sapUiAnalyticalTableDummy");
+				fnRemoveClasses(oRow);
 				if (oContextInfo && !oContextInfo.context) {
 					$row.addClass("sapUiAnalyticalTableDummy");
 					$rowHdr.addClass("sapUiAnalyticalTableDummy");

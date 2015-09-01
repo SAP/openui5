@@ -96,9 +96,11 @@
 		oModel.setData(aData);
 		
 		var oSuggestInput2 = new sap.m.Input("suginput2", {
-			placeholder: "Suggest with JSONModel",
+			placeholder: "Suggest JSONModel, filter:false, start:3",
 			showSuggestion: true,
 			showValueHelp: true,
+			filterSuggests: false,
+			startSuggestion: 3,
 			valueHelpRequest: function(evt) {
 				sap.m.MessageBox.alert("Value help requested");
 			}

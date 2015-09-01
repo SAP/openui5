@@ -1845,6 +1845,22 @@
 		oMultiComboBox.destroy();
 	});
 
+	// BCP 0020079747 0000613914 2015
+	test("it should not throw an exception, when the undefined value is passed in as an argument to the addSelectedKeys() method", function() {
+
+		// system under test
+		var oMultiComboBox = new sap.m.MultiComboBox();
+
+		// act
+		var aKeys = oMultiComboBox.addSelectedKeys(undefined);
+
+		// assert
+		ok(Array.isArray(oMultiComboBox.getSelectedKeys()));
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
 	test("constructor - binding", function() {
 
 		// system under test
@@ -2913,11 +2929,14 @@
 		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), oItem.getText());
 		sap.ui.test.qunit.triggerEvent("focusout", oMultiComboBox.getDomRef());
 
-		// assertions        
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
+		// assertions     
+		var aSelectedItems = oMultiComboBox.getSelectedItems();
+		strictEqual(aSelectedItems.length, 1, "One token was selected on Focus Out");
+		strictEqual(aSelectedItems[0].getText(), "Algeria", "Algeria was selected");
+		
 		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
-		strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
-		strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
+		strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was not fired");
+		strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was not fired");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3194,7 +3213,7 @@
 		sap.ui.test.qunit
 				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
-		var oDomListItem = jQuery.find(".sapMComboBoxBaseItem")[0];
+		var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
 		sap.ui.test.qunit.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
@@ -3251,7 +3270,7 @@
 		sap.ui.test.qunit
 				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
-		var oDomListItem = jQuery.find(".sapMComboBoxBaseItem")[0];
+		var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
 		sap.ui.test.qunit.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
@@ -3613,7 +3632,7 @@
 				ok(oMultiComboBox._isListInSuggestMode(), 'Suggest list is open');
 
 				// act
-				var oDomListItem = jQuery.find(".sapMComboBoxBaseItem")[0];
+				var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 				sap.ui.test.qunit.triggerKeyup(oDomListItem, jQuery.sap.KeyCodes.SPACE);
 				this.clock.tick(500);
 
@@ -3714,7 +3733,7 @@
 		this.clock.tick(500);
 
 		// act
-		var oDomListItem = jQuery.find(".sapMComboBoxBaseItem")[0];
+		var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
 		sap.ui.test.qunit.triggerEvent("tap", oDomListItem, {
 			srcControl : oListItem
@@ -3862,7 +3881,7 @@
 		this.clock.tick(500);
 
 		// act
-		var oDomListItem = jQuery.find(".sapMComboBoxBaseItem")[0];
+		var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
 		sap.ui.test.qunit.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
@@ -3959,7 +3978,7 @@
 		sap.ui.test.qunit
 				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick(500);
-		var oDomListItem = jQuery.find("." + sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Item")[0];
+		var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
 		sap.ui.test.qunit.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
@@ -4033,6 +4052,48 @@
 		// cleanup
 		oMultiComboBox.destroy();
 	});
+	
+	test("Input Value - reset on focus out", function() {
+		// system under test
+		var oMultiComboBox = new sap.m.MultiComboBox({
+			items : [new sap.ui.core.Item({
+				key : "DZ",
+				text : "Algeria"
+			})]
+		});
+		
+		var oMultiComboBoxNext = new sap.m.MultiComboBox({
+			items : [new sap.ui.core.Item({
+				key : "DZ",
+				text : "Algeria"
+			})]
+		});
+
+		// arrange          
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		oMultiComboBoxNext.placeAt("MultiComboBox-content");
+		
+		sap.ui.getCore().applyChanges();
+		oMultiComboBox.setValue("Foo")
+
+		// act
+		oMultiComboBox.focus();
+		oMultiComboBoxNext.focus();
+		
+		this.clock.tick(500);
+		var sInputValue = oMultiComboBox.getValue();
+		
+		// assertions                                  
+		strictEqual(sInputValue, "",
+				'The InputValue of the MultiComboBox must be resetted (empty) when it loses the focus.');
+		strictEqual(oMultiComboBox.getValueState(), "Error",
+		'ValueState must be "Error"');
+
+		// cleanup
+		oMultiComboBox.destroy();
+		oMultiComboBoxNext.destroy();
+		this.clock.reset();
+	});
 </script>
 </head>
 <body id="body" class="sapUiBody">
@@ -4044,5 +4105,3 @@
 	<div id="MultiComboBox-content" class="select-content"></div>
 </body>
 </html>
-
-

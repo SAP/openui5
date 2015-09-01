@@ -154,9 +154,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 * @public
 	 * @since 1.27.0
 	 */
-	var Time = ODataType.extend("sap.ui.model.odata.type.Time",
-			/** @lends sap.ui.model.odata.type.Time.prototype */
-			{
+	var Time = ODataType.extend("sap.ui.model.odata.type.Time", {
 				constructor : function (oFormatOptions, oConstraints) {
 					ODataType.apply(this, arguments);
 					setConstraints(this, oConstraints);

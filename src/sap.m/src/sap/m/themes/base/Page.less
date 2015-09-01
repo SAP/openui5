@@ -21,6 +21,14 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
+
+	/*
+	* Performance tweak - force the section content on to the GPU effectively separating it in a different
+	* composite layer. This is better done with will-change: transform, but at the moment is not supported on
+	* many platforms. When will-change becomes widely adopted than it's better to use it rather than translate3d
+	*/
+	-webkit-transform: translateZ(0);
+	transform: translateZ(0);
 }
 
 .sapMPageScroll:not(.sapMPageScrollEnabled) {
@@ -33,7 +41,7 @@
 	box-sizing: border-box;
 }
 
-/* 
+/*
 	* Workaround for IOS 7 - on orientation change to lanscape mode:
 	* on the Ipad the footer is cut off.
 	* on the phone, the header is cut off and if you open the nav Bar(clicking in the footer), the header will be cut off even more.
@@ -57,7 +65,7 @@
 * workaround on the phone footer has to be fixed or the footer will not be shown
 * on tablet this breaks the split app
 */
-html[data-sap-ui-os^="iOS7"][data-sap-ui-browser^="msf"]:not(.sap-tablet){ 
+html[data-sap-ui-os^="iOS7"][data-sap-ui-browser^="msf"]:not(.sap-tablet){
 	.sapMPageWithFooter > section > .sapMPageScroll {
 		bottom: 3rem;
 	}

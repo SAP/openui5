@@ -104,7 +104,11 @@
 		  "name": "Carousel",
 		  "category": "Container",
 		  "since": "1.10",
-		  "samples": ["sap.m.sample.Carousel"]
+		  "samples": [
+			  "sap.m.sample.Carousel",
+			  "sap.m.sample.CarouselWithControls"
+
+		  ]
 		},
 		{
 		  "id": "sap.m.CheckBox",
@@ -352,8 +356,8 @@
 		  "since": "1.10",
 		  "samples": [
 			"sap.m.sample.MessageBox",
-			"sap.m.sample.MessageBoxInfo",
-			"sap.m.sample.MessageBoxTypes"
+			"sap.m.sample.MessageBoxInitialFocus",
+			"sap.m.sample.MessageBoxInfo"
 		  ]
 		},
 		{
@@ -759,6 +763,13 @@
 		  "samples": ["sap.m.sample.TileContainer"]
 		},
 		{
+		"id": "sap.m.TimePicker",
+		"name": "Time Picker",
+		"category": "User Input",
+		"since": "1.30",
+		"samples": ["sap.m.sample.TimePicker"]
+	  },
+		{
 		  "id": "sap.m.Title",
 		  "name": "Title",
 		  "category": "Display",
@@ -865,6 +876,24 @@
 		  ]
 		},
 		{
+		  "id" : "sap.m.SplitApp",
+		  "name" : "SplitApp",
+		  "category" : "Container",
+		  "since" : "1.11",
+		  "samples" : [
+			"sap.m.sample.SplitApp"
+		  ]
+		},
+		{
+		  "id" : "sap.m.SplitContainer",
+		  "name" : "SplitContainer",
+		  "category" : "Container",
+		  "since" : "1.11",
+		  "samples" : [
+			"sap.m.sample.SplitApp"
+		  ]
+		},
+		{
 		  "id": "sap.m.tutorial.walkthrough",
 		  "name": "Walkthrough",
 		  "category": "Tutorial",
@@ -881,8 +910,8 @@
 			"Modules",
 			"JSON Model",
 			"Translatable Texts",
-			"App Component and App Descriptor",
 			"Component Configuration",
+			"App Descriptor",
 			"Pages and Panels",
 			"Shell Container",
 			"Margins and Paddings",
@@ -912,37 +941,26 @@
 		},
 		{
 		  "id": "sap.m.tutorial.testing",
-		  "name": "[PREVIEW] Testing Apps",
+		  "name": "Testing Apps",
 		  "category": "Tutorial",
 		  "since": "1.30",
 		  "formFactors": "-",
-		  "description": "In this tutorial we will test application functionality with QUnit, OPA5, and the mock server. Pleaae have a look at the tutorial documentation in the developer guide for more details",
+		  "description": "In this tutorial we will test application functionality with QUnit, OPA5, and the mock server. Please have a look at the tutorial documentation in the developer guide for more details",
 		  "samplesAsSteps": [
 			"Handover and Testing Strategy",
 			"A first Unit Test",
+			"Adding a price formatter",
+			"Testing a new type module",
 			"Adding a flagged button",
 			"A first OPA Test",
 			"Changing the Table to grow",
 			"Testing Navigation",
-			"Adding the Detail Page",
+			"Adding the Post Page",
 			"Testsuite and Automated Testing",
-			"Mocking Data and Defining URL Parameters for Testing"
-		  ],
-		  "unfinishedStepsThatAreNotParsedByExplored": [
-			"Testing Control Visibility",
-			"Adding an Info Tab",
 			"Testing Interactions",
-			"Adding a Statistics Tab",
-			"Testing Internationalization",
-			"Implementing more fields for the statistics tab",
-			"Testing Custom Formatters",
-			"Writing a Date Formatter",
-			"Testing Controllers",
-			"Implement a Controller Feature",
-			"Testing Responsiveness",
-			"Make the table responsive",
-			"Testing Errors",
-			"Implementing an interaction that can fail"
+			"Adding Tabs",
+			"Writing a Short Date Formatter TDD style",
+			"Adding the date formatter"
 		  ]
 		}
 	  ],
@@ -1060,6 +1078,11 @@
 		{
 		  "id": "sap.m.sample.Carousel",
 		  "name": "Carousel",
+		  "description": "A sample of a Carousel that contains images."
+		},
+		{
+		  "id": "sap.m.sample.CarouselWithControls",
+		  "name": "Carousel With Controls",
 		  "description": "With the Carousel a user can browse through multi-page content by swiping left or right."
 		},
 		{
@@ -1150,27 +1173,27 @@
 		{
 		  "id": "sap.m.sample.IconTabBar",
 		  "name": "Icon Tab Bar - Filter",
-		  "description": "In this example the Icon Tab Bar is used to apply filters on the same content and show a quick preview of how many items can be expected for each view."
+		  "description": "In this example, the Icon Tab Bar is used to apply filters on a table and display the count of the items for each view."
 		},
 		{
 		  "id": "sap.m.sample.IconTabBarMulti",
-		  "name": "Icon Tab Bar - Fiori Wave 1-4",
-		  "description": "In this example the Icon Tab Bar is used to organize different content objects with only one being visible at a time."
+		  "name": "Icon Tab Bar - Icons Only",
+		  "description": "In this example, the Icon Tab Bar tabs display icons only."
 		},
 		{
 		  "id": "sap.m.sample.IconTabBarFiori2",
-		  "name": "Icon Tab Bar - Fiori Wave 5",
-		  "description": "This is an example of the standard Icon Tab Bar for Wave 5 Fiori applications."
+		  "name": "Icon Tab Bar - Text and Count",
+		  "description": "In this example, the Icon Tab Bar tabs display text and corresponding count."
 		},
 		{
 		  "id": "sap.m.sample.IconTabBarProcess",
 		  "name": "Icon Tab Bar - Process",
-		  "description": "In this example the Icon Tab Bar is used to apply filters on the same content along a business process."
+		  "description": "In this example, the Icon Tab Bar is used to apply filters on the same content along a business process."
 		},
 		{
 		  "id": "sap.m.sample.IconTabBarNoIcons",
-		  "name": "Icon Tab Bar - Text-only",
-		  "description": "This is similar to the 'Icon Tab Bar - Multi' example but has no icons. Instead, the text is highlighted on selection."
+		  "name": "Icon Tab Bar - Text Only",
+		  "description": "In this example, the Icon Tab Bar tabs display text only."
 		},
 		{
 		  "id": "sap.m.sample.IconTabBarStretchContent",
@@ -1180,7 +1203,7 @@
 		{
 		  "id": "sap.m.sample.IconTabSeparator",
 		  "name": "Icon Tab - Separator",
-		  "description": "This is an examle how to use separators in the Icon Tab Bar. It's possible to choose an icon as a separator or use the default vertical line."
+		  "description": "This is an example how to use separators in the Icon Tab Bar. You can choose an icon as a separator or use the default vertical line."
 		},
 		{
 		  "id": "sap.m.sample.BusyIndicator",
@@ -1703,9 +1726,9 @@
 		  "description": "MessageBox with the option to display detailed information."
 		},
 		{
-		  "id": "sap.m.sample.MessageBoxTypes",
-		  "name": "Message Box Header Icons",
-		  "description": "MessageBox icons can be used to show the different value states that a MessageBox can display: success, warning, error, information and question."
+		  "id": "sap.m.sample.MessageBoxInitialFocus",
+		  "name": "Message Box Initial Focus",
+		  "description": "Shows how to set initial focus to MessageBox button."
 		},
 		{
 		  "id": "sap.m.sample.MessagePopover",
@@ -1838,6 +1861,11 @@
 		  "description": "Use our standard 'No-Margins' classes to remove existing margins from your control. You can either remove all margins at once or remove the margin on one or more sides."
 		},
 		{
+		"id": "sap.m.sample.TimePicker",
+		"name": "Time Picker",
+		"description": "TimePicker examples displaying the four time formats: \nHH : mm, \nHH : mm : ss, \nHH : mm : pp, \nHH : mm : ss : pp"
+		},
+		{
 		  "id": "sap.m.sample.ContainerNoPadding",
 		  "name": "No Container Content Padding",
 		  "description": "Many UI5 containers support the standard container content padding CSS classes. Apply the CSS class 'sapUiNoContentPadding' on a UI5 container control (e.g. Panel, IconTabBar, ...) to remove the default padding around the container content area."
@@ -1876,6 +1904,11 @@
 		  "id": "sap.m.sample.WizardBranching",
 		  "name": "Wizard branching use case",
 		  "description": "The Wizard could be used in branching mode, where the choice of next step depends on the decision made for the current one."
+		},
+		{
+		  "id": "sap.m.sample.SplitApp",
+		  "name": "SplitApp standard use case",
+		  "description": "The SplitApp is the base for each master detail application. It extends the sap.m.SplitContainer control. The display of master NavContainer depends on the portrait/landscape orientation of the device and the mode of SplitApp."
 		}
 	  ]
 	}

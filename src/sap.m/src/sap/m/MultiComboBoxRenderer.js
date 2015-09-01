@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './ComboBoxRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport'],
-	function(jQuery, ComboBoxRenderer, Renderer, ValueStateSupport) {
+sap.ui.define(['jquery.sap.global', './ComboBoxBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport'],
+	function(jQuery, ComboBoxBaseRenderer, Renderer, ValueStateSupport) {
 	"use strict";
 
 	/**
@@ -50,7 +50,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxRenderer', 'sap/ui/core/Renderer'
 	 *          oControl An object representation of the control that should be rendered.
 	 */
 	MultiComboBoxRenderer.addInnerClasses = function(oRm, oControl) {
-		sap.m.ComboBoxBaseRenderer.addInnerClasses.apply(this, arguments);
+		ComboBoxBaseRenderer.addInnerClasses.apply(this, arguments);
 		oRm.addClass(MultiComboBoxRenderer.CSS_CLASS + "InputInner");
 	};
 
@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxRenderer', 'sap/ui/core/Renderer'
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
 	MultiComboBoxRenderer.addButtonClasses = function(oRm, oControl) {
-		ComboBoxRenderer.addButtonClasses.apply(this, arguments);
+		ComboBoxBaseRenderer.addButtonClasses.apply(this, arguments);
 		oRm.addClass(MultiComboBoxRenderer.CSS_CLASS + "Arrow");
 	};
 
@@ -74,11 +74,11 @@ sap.ui.define(['jquery.sap.global', './ComboBoxRenderer', 'sap/ui/core/Renderer'
 		oRm.renderControl(oControl._oTokenizer);
 
 		oRm.write("<div class=\"sapMMultiComboBoxInputContainer\">");
-		ComboBoxRenderer.openInputTag.call(this, oRm, oControl);
+		ComboBoxBaseRenderer.openInputTag.call(this, oRm, oControl);
 	};
 
 	MultiComboBoxRenderer.closeInputTag = function(oRm, oControl) {
-		ComboBoxRenderer.closeInputTag.call(this, oRm, oControl);
+		ComboBoxBaseRenderer.closeInputTag.call(this, oRm, oControl);
 		oRm.write("</div>");
 		oRm.write("</div>");
 		oRm.write("<div class=\"sapMMultiComboBoxShadowDiv\"/>");

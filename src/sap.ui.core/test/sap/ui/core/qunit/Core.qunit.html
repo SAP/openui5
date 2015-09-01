@@ -177,7 +177,7 @@
 			equal(corePath, "http://third.preconfig.com/ui5-themes/sap/ui/core/themes/my_third_preconfigured_theme/", "path should be as configured");
 		});
 
-		test("Browser Version Test", 5, function() {
+		test("Browser Version Test", 4, function() {
 			var browser = sap.ui.Device.browser;
 			var ua = navigator.userAgent;
 			var value = jQuery("html").attr("data-sap-ui-browser");
@@ -185,10 +185,6 @@
 
 			var version = browser.version;
 			ok(typeof version === "number", "Browser version is set");
-
-			var oExpMobile = /Mobile/;
-			var bMobile = oExpMobile.test(navigator.userAgent);
-			equal(bMobile, !!browser.mobile, "Mobile is detected right");
 
 			if (browser.firefox) {
 				ok(value.indexOf("ff") === 0, "Browser is Firefox and data attribute is set right");

@@ -283,14 +283,82 @@ sap.ui.define(['jquery.sap.global', './Column', './library'],
 			var oTable = this.getParent();
 			var oBinding = oTable.getBinding("rows");
 			var oResultSet = oBinding && oBinding.getAnalyticalQueryResult();
-			return  ((oTable && oResultSet && oResultSet.findDimensionByPropertyName(this.getLeadingProperty())
-					&& jQuery.inArray(this.getLeadingProperty(), oBinding.getSortablePropertyNames()) > -1
-					&& jQuery.inArray(this.getLeadingProperty(), oBinding.getFilterablePropertyNames()) > -1) || // group menu item
-				(oTable && oResultSet && oResultSet.findMeasureByPropertyName(this.getLeadingProperty()))
-			);
+			return  (oTable && oResultSet && oResultSet.findMeasureByPropertyName(this.getLeadingProperty())); // totals menu entry
 		}.bind(this);
 
 		return Column.prototype._menuHasItems.apply(this) || fnMenuHasItems();
+	};
+
+	/**
+	 * This function checks whether a filter column menu item will be created. This function considers
+	 * several column properties and evaluates metadata to determine whether filtering for a column is applicable.
+	 * Since for the AnalyticalBinding metadata is very important to determine whether the column can be filtered it
+	 * is required to have a binding. If there is no binding, this function will return false.
+	 *
+	 * For Analytical Columns the following applies:
+	 * - filterProperty must be defined or it must be possible to derive it from the leadingProperty + filterable = true in the metadata
+	 * - showFilterMenuEntry must be true (which is the default)
+	 * - The filter property must be a property of the bound collection however it may differ from the leading property
+	 * - With OData v1 and v2 the filter property must not be a measure
+	 * - The analytical column must be a child of an AnalyticalTable
+	 *
+	 * @returns {boolean}
+	 */
+	AnalyticalColumn.prototype.isFilterableByMenu = function() {
+		var sFilterProperty = this.getFilterProperty();
+		if (!sFilterProperty || !this.getShowFilterMenuEntry()) {
+			// not required to get binding and do addtional checks if there is no filterProperty set or derived
+			// or if the filter menu entry shall not be displayed at all
+			return false;
+		}
+
+		var oParent = this.getParent();
+		if (oParent && oParent instanceof sap.ui.table.AnalyticalTable) {
+			var oBinding = oParent.getBinding("rows");
+			// metadata must be evaluated which can only be done when the collection is known and the metadata is loaded
+			// this is usually the case when a binding exists.
+			if (oBinding) {
+				// OData v2 does not allow to proper filter for measures
+				if (jQuery.inArray(sFilterProperty, oBinding.getFilterablePropertyNames()) > -1 &&
+					!oBinding.isMeasure(sFilterProperty) &&
+					oBinding.getProperty(sFilterProperty)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	};
+
+	/**
+	 * This function checks whether a grouping column menu item will be created.
+	 *
+	 * Since a property of the table must be checked, this function will return false when the column is not a child of a table.
+	 *
+	 * For Columns the following applies:
+	 * - table must be bound
+	 * - column must be child of an AnalyticalTable
+	 * - metadata must be loaded
+	 * - leadingProperty must be sortable
+	 * - leadingProperty must be filterable
+	 *
+	 * @returns {boolean}
+	 */
+	AnalyticalColumn.prototype.isGroupableByMenu = function() {
+		var oParent = this.getParent();
+		if (oParent && oParent instanceof sap.ui.table.AnalyticalTable) {
+			var oBinding = oParent.getBinding("rows");
+			if (oBinding) {
+				var oResultSet = oBinding.getAnalyticalQueryResult();
+				if (oResultSet && oResultSet.findDimensionByPropertyName(this.getLeadingProperty())
+					&& jQuery.inArray(this.getLeadingProperty(), oBinding.getSortablePropertyNames()) > -1
+					&& jQuery.inArray(this.getLeadingProperty(), oBinding.getFilterablePropertyNames()) > -1) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	};
 
 	return AnalyticalColumn;

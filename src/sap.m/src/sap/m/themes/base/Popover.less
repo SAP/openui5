@@ -2,7 +2,7 @@
 /* CSS for controlsap.m/Popover.control */
 /* ============================================= */
 
-.sapMPopover{
+.sapMPopover {
 	position: absolute;
 	color: @sapUiText;
 	min-width: 100px;
@@ -13,14 +13,14 @@
 	overflow: hidden;
 	-webkit-transition: opacity 0.2s linear;
 	-moz-transition: opacity 0.2s linear;
- 	transition: opacity 0.2s linear;
+	transition: opacity 0.2s linear;
 }
 
 .sapMPopoverHeader .sapMTitle {
 	font-size: .865rem;
 }
 
-.sapMPopover .sapMPopoverCont{
+.sapMPopover .sapMPopoverCont {
 	overflow: hidden;
 	position: relative;
 	/* set margin to every side */
@@ -28,8 +28,8 @@
 	background-color: @sapUiLightBG;
 }
 
-.sapMPopover .sapMPopoverScroll{
-/* 	width: 100%;  when set width to 100%, the horizontal scrolling will be disabled and this is done in the end of setArrowPosition method*/
+.sapMPopover .sapMPopoverScroll {
+	/* 	width: 100%;  when set width to 100%, the horizontal scrolling will be disabled and this is done in the end of setArrowPosition method*/
 	display: inline-block;
 	overflow: hidden;
 	vertical-align: middle;
@@ -37,7 +37,7 @@
 	box-sizing: border-box;
 }
 
-.sapMPopover.sapUiPopupWithPadding .sapMPopoverScroll{
+.sapMPopover.sapUiPopupWithPadding .sapMPopoverScroll {
 	padding: 1rem;
 }
 
@@ -49,12 +49,9 @@
 /* disable scrolling automatically for sap.m.Page sap.m.NavContainer sap.m.ScrollingContainer inside Popover */
 .sapMPopoverHorScrollDisabled .sapMPopoverScroll {
 	display: block;
-	/* This div has position set to absolute when runs in android native browser with version less than 4.1. */
-	/* Width needs to be set to 100% due to position absolute */
-	width: 100%;
 }
 
-.sapMPopoverCont:focus{
+.sapMPopoverCont:focus {
 	outline: none;
 }
 
@@ -66,34 +63,17 @@
 	opacity: 1;
 }
 
-/* marker for Popover with a bar */
-.sapMPopoverWithBar{
-
-}
-
-/* marker for Popover without a bar */
-.sapMPopoverWithoutBar{
-
-}
-
-/* marker for Popover with NavContainer which includes pages inside */
-.sapMPopoverNav{
-
-}
-/* marker for Popover with footer*/
-.sapMPopoverWithFooter{
-
-}
-
 /* disable margin according to the header and footer availability */
 .sapMPopoverWithBar.sapMPopoverWithFooter > .sapMPopoverCont {
 	margin-bottom: 0;
 	margin-top: 0;
 }
+
 /* disable margin according to the header and footer availability */
 .sapMPopoverWithoutBar.sapMPopoverWithFooter > .sapMPopoverCont {
 	margin-bottom: 0;
 }
+
 /* disable margin according to the header and footer availability */
 .sapMPopoverWithBar.sapMPopoverWithoutFooter > .sapMPopoverCont {
 	margin-top: 0;
@@ -101,17 +81,17 @@
 
 .sapMPopoverWithoutBar.sapMPopoverNav > .sapMPopoverCont,
 .sapMPopoverWithoutBar.sapMPopoverPage > .sapMPopoverCont,
-.sapMActionSheetPopover > .sapMPopoverCont{
+.sapMActionSheetPopover > .sapMPopoverCont {
 	margin: 0;
 	background-color: transparent;
 }
 
-.sapMPopover > .sapMBar{
+.sapMPopover > .sapMBar {
 	position: relative;
 	width: auto;
 }
 
-.sapMPopoverWithoutBar.sapMPopoverNav .sapMPopoverCont .sapMPage{
+.sapMPopoverWithoutBar.sapMPopoverNav .sapMPopoverCont .sapMPage {
 	background-color: transparent;
 }
 
@@ -120,13 +100,7 @@
 	width: auto;
 }
 
-/* This css rule is for mvi theme. Because mvi is deleted right now, this rule will be commented out here in case mvi has to be restored.
-.sapMPopover:not(.sapMPopoverWithFooter) .sapMPopoverCont .sapMPage:not(.sapMPageWithFooter) > section {
-	bottom: 0.625em;
-}
-*/
-
-.sapMPopoverWithoutBar .sapMPage footer.sapMIBar{
+.sapMPopoverWithoutBar .sapMPage footer.sapMIBar {
 	position: absolute;
 }
 

@@ -54,7 +54,7 @@
 			</l:Grid>
 		</content>
 		<beginButton>
-			<Button text="Ok" press="onSaveAppSettings"/>
+			<Button text="OK" press="onSaveAppSettings"/>
 		</beginButton>
 		<endButton>
 			<Button text="Cancel" press="onDialogCloseButton"/>

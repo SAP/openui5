@@ -150,7 +150,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			visibleRowCountMode : {type : "sap.ui.table.VisibleRowCountMode", group : "Appearance", defaultValue : sap.ui.table.VisibleRowCountMode.Fixed},
 
 			/**
-			 * This property is used to set the minimum count of visible rows when the property visibleRowCountMode is set to Auto. For any other visibleRowCountMode, it is ignored.
+			 * This property is used to set the minimum count of visible rows when the property visibleRowCountMode is set to Auto or Interactive.
+			 * For any other visibleRowCountMode, it is ignored.
 			 */
 			minAutoRowCount : {type : "int", group : "Appearance", defaultValue : 5},
 
@@ -326,9 +327,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					column : {type : "sap.ui.table.Column"},
 
 					/**
-					 * new width of the table in pixel.
+					 * new width of the table column as CSS Size definition.
 					 */
-					width : {type : "int"}
+					width : {type : "sap.ui.core.CSSSize"}
 				}
 			},
 
@@ -396,7 +397,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			 */
 			group : {allowPreventDefault : true,
 				parameters : {
-
 					/**
 					 * grouped column.
 					 */
@@ -428,11 +428,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			 */
 			cellClick : {allowPreventDefault : true,
 				parameters : {
-
 					/**
 					 * The control of the cell.
 					 */
 					cellControl : {type : "sap.ui.core.Control"},
+
+					/**
+					 * DOM reference of the clicked cell. Can be used to position the context menu.
+					 */
+					cellDomRef : {type : "Object"},
 
 					/**
 					 * Row index of the selected cell.
@@ -440,23 +444,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					rowIndex : {type : "int"},
 
 					/**
-					 * Column index of the selected cell.
+					 * Column index of the selected cell. This is the index of visible columns and might differ from
+					 * the index maintained in the column aggregation.
 					 */
-					columnIndex : {type : "int"}
+					columnIndex : {type : "int"},
+
+					/**
+					 * Column ID of the selected cell.
+					 */
+					columnId : {type : "string"},
+
+					/**
+					 * Row binding context of the selected cell.
+					 */
+					rowBindingContext : {type : "sap.ui.model.Context"}
 				}
 			},
 
 			/**
-			 * fired when the user clicks a cell of the table (experimental!).
+			 * fired when the user clicks a cell of the table.
 			 * @since 1.21.0
 			 */
 			cellContextmenu : {allowPreventDefault : true,
 				parameters : {
-
 					/**
 					 * The control of the cell.
 					 */
 					cellControl : {type : "sap.ui.core.Control"},
+
+					/**
+					 * DOM reference of the clicked cell. Can be used to position the context menu.
+					 */
+					cellDomRef : {type : "Object"},
 
 					/**
 					 * Row index of the selected cell.
@@ -464,9 +483,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					rowIndex : {type : "int"},
 
 					/**
-					 * Column index of the selected cell.
+					 * Column index of the selected cell. This is the index of visible columns and might differ from
+					 * the index maintained in the column aggregation.
 					 */
-					columnIndex : {type : "int"}
+					columnIndex : {type : "int"},
+
+					/**
+					 * Column ID of the selected cell.
+					 */
+					columnId : {type : "string"},
+
+					/**
+					 * Row binding context of the selected cell.
+					 */
+					rowBindingContext : {type : "sap.ui.model.Context"}
 				}
 			},
 
@@ -490,14 +520,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			 */
 			customFilter : {
 				/**
-				 * The column instance on which the custom filter button was pressed
+				 * The column instance on which the custom filter button was pressed.
 				 */
 				column : {type : "sap.ui.table.Column"},
 
 				/**
-				 * The ID of the table instance
+				 * Filter value.
 				 */
-				id : {type : "String"}
+				value : {type : "string"}
 			}
 		}
 	}});
@@ -752,34 +782,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		var iFixedBottomRows = this.getFixedBottomRowCount();
 		var iVisibleRowCount = this.getVisibleRowCount();
 
-		if (oBinding) {
-			jQuery.each(this.getRows(), function(iIndex, oRow) {
-				var $rowDomRefs = oRow.getDomRefs(true);
-				
-				// update row header tooltip
-				if (oRow.getBindingContext()) {
-					$rowDomRefs.rowSelector.attr("title", this._oResBundle.getText("TBL_ROW_SELECT"));
-				} else {
-					$rowDomRefs.rowSelector.attr("title", "");
-				}
-				
-				if (iFixedTopRows > 0) {
-					$rowDomRefs.row.toggleClass("sapUiTableFixedTopRow", iIndex < iFixedTopRows);
-					$rowDomRefs.row.toggleClass("sapUiTableFixedLastTopRow", iIndex == iFixedTopRows - 1);
-				}
+		jQuery.each(this.getRows(), function(iIndex, oRow) {
+			var $rowDomRefs = oRow.getDomRefs(true);
 
-				if (iFixedBottomRows > 0) {
-					var bIsPreBottomRow;
+			// update row header tooltip
+			if (oRow.getBindingContext() && this._isRowSelectable(oRow.getIndex())) {
+				$rowDomRefs.rowSelector.attr("title", this._oResBundle.getText("TBL_ROW_SELECT"));
+			} else {
+				$rowDomRefs.rowSelector.attr("title", "");
+			}
+
+			if (iFixedTopRows > 0) {
+				$rowDomRefs.row.toggleClass("sapUiTableFixedTopRow", iIndex < iFixedTopRows);
+				$rowDomRefs.row.toggleClass("sapUiTableFixedLastTopRow", iIndex == iFixedTopRows - 1);
+			}
+
+			if (iFixedBottomRows > 0) {
+				var bIsPreBottomRow = false;
+				if (oBinding) {
 					if (oBinding.getLength() >= iVisibleRowCount) {
 						bIsPreBottomRow = (iIndex == iVisibleRowCount - iFixedBottomRows - 1);
 					} else {
 						bIsPreBottomRow = (this.getFirstVisibleRow() + iIndex) == (oBinding.getLength() - iFixedBottomRows - 1) && (this.getFirstVisibleRow() + iIndex) < oBinding.getLength();
 					}
-					
-					$rowDomRefs.row.toggleClass("sapUiTableFixedPreBottomRow", bIsPreBottomRow);
 				}
-			}.bind(this));
-		}
+
+				$rowDomRefs.row.toggleClass("sapUiTableFixedPreBottomRow", bIsPreBottomRow);
+			}
+		}.bind(this));
 
 		// update the row header (sync row heights)
 		this._updateRowHeader();
@@ -1149,8 +1179,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			//Reset needs to be resetted, else destroyRows is called, which is not allowed to be called
 			bSuppressReset = true;
 			this._restoreAppDefaultsColumnHeaderSortFilter();
+			// metadata might have changed
+			this._invalidateColumnMenus();
+			this.updateRows(); // TODO: shouldn't this be more a central feature?!
 		}
-		this.updateRows(); // TODO: shouldn't this be more a central feature?!
+
 		return sap.ui.core.Element.prototype.unbindAggregation.apply(this, [sName, bSuppressReset]);
 	};
 
@@ -1168,8 +1201,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 */
 	Table.prototype.setVisibleRowCount = function(iVisibleRowCount) {
 		if (iVisibleRowCount != null && !isFinite(iVisibleRowCount)) {
-			return;
+			return this;
 		}
+
+		if (iVisibleRowCount <= (this.getFixedRowCount() + this.getFixedBottomRowCount())) {
+			jQuery.sap.log.error("Table: " + this.getId() + " visibleRowCount('" + iVisibleRowCount + "') must be bigger than number of fixed rows('" + (this.getFixedRowCount() + this.getFixedBottomRowCount()) + "')");
+			return this;
+		}
+
 		iVisibleRowCount = this.validateProperty("visibleRowCount", iVisibleRowCount);
 		if (this.getBinding("rows") && this.getBinding("rows").getLength() <= iVisibleRowCount) {
 			this.setProperty("firstVisibleRow", 0);
@@ -1502,6 +1541,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 						oClone.setEditable(false);
 					}
 					oClone.data("sap-ui-colindex", i);
+					oClone.data("sap-ui-colid", aCols[i].getId());
 					oTemplate.addCell(oClone);
 					this._aIdxCols2Cells[i] = iCellIndex++;
 				}
@@ -2735,23 +2775,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 */
 	Table.prototype._oncellcontextmenu = function(mParams) {
 		if (this.getEnableCellFilter()) {
-
 			// create the contextmenu instance the first time it is needed
 			if (!this._oContextMenu) {
-
 				jQuery.sap.require("sap.ui.unified.Menu");
 				jQuery.sap.require("sap.ui.unified.MenuItem");
 
 				this._oContextMenu = new sap.ui.unified.Menu(this.getId() + "-contextmenu");
 				this.addDependent(this._oContextMenu);
-
 			}
 
 			// does the column support filtering?
-			var oColumn = this._getVisibleColumns()[mParams.columnIndex];
+			var oColumn = sap.ui.getCore().byId(mParams.columnId);
 			var sProperty = oColumn.getFilterProperty();
-			if (sProperty && oColumn.getShowFilterMenuEntry()) {
-
+			// currently only filter is possible by default cell context menu, if filtering is not allowed by
+			// menu, don't open the context menu at all.
+			if (oColumn && oColumn.isFilterableByMenu() && mParams.rowBindingContext) {
 				// destroy all items of the menu and recreate
 				this._oContextMenu.destroyItems();
 				this._oContextMenu.addItem(new sap.ui.unified.MenuItem({
@@ -2759,7 +2797,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					select: [function() {
 						var oContext = this.getContextByIndex(mParams.rowIndex);
 						var sValue = oContext.getProperty(sProperty);
-						this.filter(oColumn, sValue);
+						if (this.getEnableCustomFilter()) {
+							// only fire custom filter event
+							this.fireCustomFilter({
+								column: oColumn,
+								value: sValue
+							});
+						} else {
+							this.filter(oColumn, sValue);
+						}
+
 					}, this]
 				}));
 
@@ -2825,10 +2872,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			var oRow = this.getRows()[iRow];
 			var oCell = oRow && oRow.getCells()[iCol];
 			var iRealRowIndex = oRow && oRow.getIndex();
+			var sColId = oCell.data("sap-ui-colid");
+
+			var oRowBindingContext;
+			if (this.getBindingInfo("rows")) {
+				oRowBindingContext = oRow.getBindingContext(this.getBindingInfo("rows").model);
+			}
+
 			var mParams = {
 				rowIndex: iRealRowIndex,
 				columnIndex: iCol,
-				cellControl: oCell
+				columnId: sColId,
+				cellControl: oCell,
+				rowBindingContext: oRowBindingContext,
+				cellDomRef: $cell.get(0)
 			};
 			bCancel = !fnFire.call(this, mParams);
 			if (!bCancel && typeof fnContextMenu === "function") {
@@ -2915,7 +2972,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	// SELECTION HANDLING
 	// =============================================================================
 
-	/**
+		/**
 	 * handles the row selection and the column header menu
 	 * @private
 	 */
@@ -2958,7 +3015,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		}
 
 		// table control? (only if the selection behavior is set to row)
-		if (/*!this._bActionMode && */ (
+		if (oEvent.target && oEvent.target.getAttribute("role") == "gridcell" && (
 		    this.getSelectionBehavior() === sap.ui.table.SelectionBehavior.Row ||
 		    this.getSelectionBehavior() === sap.ui.table.SelectionBehavior.RowOnly)) {
 			var $row = $target.closest(".sapUiTableCtrl > tbody > tr");
@@ -4081,7 +4138,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		}
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
-			this._oSelection.setSelectionInterval(0, (oBinding.getLength() || 0) - 1);
+			// first give the higher number. The toIndex will be used as leadIndex. It more likely that
+			// in oData case the index 0 is already loaded than that the last index is loaded. The leadIndex will
+			// be used to determine the leadContext in the selectionChange event. If not yet loaded it would need to
+			// be request. To avoid unnecessary roundtrips the lead index is set to 0.
+			this._oSelection.setSelectionInterval((oBinding.getLength() || 0) - 1, 0);
 			this.$("selall").attr('title',this._oResBundle.getText("TBL_DESELECT_ALL")).removeClass("sapUiTableSelAll");
 		}
 		return this;
@@ -4409,12 +4470,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		this._bEventSapSelect = true;
 	};
 
+	Table.prototype.onsapspace = function(oEvent) {
+		var $target = jQuery(oEvent.target);
+		if (((this.getSelectionBehavior() == sap.ui.table.SelectionBehavior.Row || this.getSelectionBehavior() == sap.ui.table.SelectionBehavior.RowOnly) && oEvent.srcControl instanceof sap.ui.table.Row) ||
+			$target.hasClass("sapUiTableRowHdr") || $target.hasClass("sapUiTableColRowHdr") || $target.hasClass("sapUiTableCol")) {
+			oEvent.preventDefault();
+		}
+	};
+
 	/**
 	 * handle the row selection via SPACE or ENTER key
 	 * @private
 	 */
 	Table.prototype.onkeydown = function(oEvent) {
 		var $this = this.$();
+
 		if (!this._bActionMode &&
 			oEvent.keyCode == jQuery.sap.KeyCodes.F2 ||
 			oEvent.keyCode == jQuery.sap.KeyCodes.ENTER) {
@@ -5479,6 +5549,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		return this;
 	};
 
+	/*
+	 * @see JSDoc generated by SAPUI5 control API generator
+	 */
+	Table.prototype.setFixedRowCount = function(iFixedRowCount) {
+		if (!(parseInt(iFixedRowCount, 10) >= 0)) {
+			jQuery.sap.log.error("Number of fixed rows must be greater or equal 0");
+			return this;
+		}
+
+		if ((iFixedRowCount + this.getFixedBottomRowCount()) < this.getVisibleRowCount()) {
+			this.setProperty("fixedRowCount", iFixedRowCount);
+		} else {
+			jQuery.sap.log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedBottomRowCount()) + "') must be smaller than numberOfVisibleRows('" + this.getVisibleRowCount() + "')");
+		}
+		return this;
+	};
+
+	/*
+	 * @see JSDoc generated by SAPUI5 control API generator
+	 */
+	Table.prototype.setFixedBottomRowCount = function(iFixedRowCount) {
+		if (!(parseInt(iFixedRowCount, 10) >= 0)) {
+			jQuery.sap.log.error("Number of fixed bottom rows must be greater or equal 0");
+			return this;
+		}
+
+		if ((iFixedRowCount + this.getFixedRowCount()) < this.getVisibleRowCount()) {
+			this.setProperty("fixedBottomRowCount", iFixedRowCount);
+		} else {
+			jQuery.sap.log.error("Table '" + this.getId() + "' fixed rows('" + (iFixedRowCount + this.getFixedRowCount()) + "') must be smaller than numberOfVisibleRows('" + this.getVisibleRowCount() + "')");
+		}
+		return this;
+	};
+
 	/**
 	 *
 	 * @private
@@ -5486,9 +5590,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	Table.prototype._invalidateColumnMenus = function() {
 		var aCols = this.getColumns();
 		for (var i = 0, l = aCols.length; i < l; i++) {
-			if (aCols[i].getMenu()) {
-				aCols[i].getMenu()._bInvalidated = true;
-			}
+			aCols[i].invalidateMenu();
 		}
 	};
 
@@ -5596,7 +5698,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		var iAvailableSpace = Math.min(iCalculatedSpace, iMaxHeight);
 		
 		// the last content row height is iRowHeight - 1, therefore + 1 in the formula below:
-		return Math.max(iMinRowCount, Math.floor((iAvailableSpace + 1) / iRowHeight));
+		// to avoid issues with having more fixed rows than visible row count, the number of visible rows must be
+		// adjusted.
+		return Math.max((this.getFixedRowCount() + this.getFixedBottomRowCount()) + 1, Math.max(iMinRowCount, Math.floor((iAvailableSpace + 1) / iRowHeight)));
 	};
 
 
@@ -5905,8 +6009,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				this.setBusy(true);
 			}
 
-			if (bSetBusy || (oBinding.isInitial() || oBinding._bInitial) || (mParameters.receivedLength === 0 && this._iDataRequestedCounter !== 0) ||
-				(mParameters.receivedLength < mParameters.requestedLength && mParameters.receivedLength !== oBinding.getLength())) {
+			var iLength = oBinding.getLength();
+			if (bSetBusy || (oBinding.isInitial()) || (mParameters.receivedLength === 0 && this._iDataRequestedCounter !== 0) ||
+				(mParameters.receivedLength < mParameters.requestedLength && mParameters.receivedLength !== iLength &&
+				 mParameters.receivedLength !== iLength - this.getFirstVisibleRow())) {
 				this.setBusy(true);
 			}
 		}

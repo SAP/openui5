@@ -1,555 +1,555 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
-		<title>Popover - sap.m</title>
-		
-		<style>
-			body{
-				overflow: hidden;
-			}
-/*			bottom */ 
-			.positioned{
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+	<title>Popover - sap.m</title>
+
+	<style>
+		body {
+			overflow: hidden;
+		}
+
+		/*			bottom */
+		.positioned {
 			position: absolute !important;
-				top: 10px;
-				right: 0px;
-			}
-			html[dir="rtl"] .positioned{
-				left: 0px;
-				right: auto;
-			}
-			
-/* 			right */
-			.positioned1{ 
-				position: absolute !important;
-				top: 25px;
-				left: 25px;
-			}
-					
-			html[dir="rtl"] .positioned1{
-				left: auto;
-				right: 25px;
-			}
-			
-/*			left */
-			.positioned2{
-				position: absolute !important;
-				top: 80px;
-				right: 10px;
-			}
-			
-			html[dir="rtl"] .positioned2{
-				left: 10px; 
-				right: auto;
-			}
-			
-/*			top */
-			.positioned3{
-				position: absolute !important;
-				bottom: 10px;
-				left: 100px;
-			}
-			
-			html[dir="rtl"] .positioned3{
-				left: auto;
-				right: 100px;
-			}
+			top: 10px;
+			right: 0;
+		}
 
-/* 			vertical bottom */
-			.positioned4{
-				position: absolute !important;
-				top: 150px;
-				right: 10px;
-			}
-			
-			html[dir="rtl"] .positioned4{
-				left: 10px;
-				right: auto;
-			}
-			
-/* 			vertical top */
-			.positioned5{
-				position: absolute !important;
-				bottom: 100px;
-				left: 100px;
-			}
-			
-			html[dir="rtl"] .positioned5{
-				left: auto;
-				right: 100px;
-			}
-			
-/* 			horizontal left */
-			.positioned6{
-				position: absolute !important;
-				top: 200px;
-				right: 10px;
-			}
-			
-			html[dir="rtl"] .positioned6{
-				left: 10px;
-				right: auto;
-			}
-						
-/* 			horizontal right */
-			.positioned7{
-				position: absolute !important;
-				top: 350px;
-				left: 100px;
-			}
-			
-			html[dir="rtl"] .positioned7{
-				left: auto;
-				right: 100px;
-			}
-			
-/* 			auto 1 */
-			.positioned8{
-				position: absolute !important;
-				top: 200px;
-				right: 200px;
-			}
-			
-			html[dir="rtl"] .positioned8{
-				left: 200px;
-				right: auto;
-			}
-/* 			auto 2 */
-			.positioned9{
-				position: absolute !important;
-				bottom: 200px;
-				left: 200px;
-			}
-			
-			html[dir="rtl"] .positioned9{	
-				left: auto;
-				right: 200px;
-			}
-			
-			.vbox{
-				position: absolute !important;
-				top: 100px;
-				left: 10px;
-			}
-			
-			html[dir="rtl"] .vbox{
-				left: auto;
-				right: 10px;
-			}			
+		html[dir="rtl"] .positioned {
+			left: 0;
+			right: auto;
+		}
 
-		</style>
-		
-		<script src="../../../resources/sap-ui-core.js"
-			type="text/javascript" 
+		/* 			right */
+		.positioned1 {
+			position: absolute !important;
+			top: 25px;
+			left: 25px;
+		}
+
+		html[dir="rtl"] .positioned1 {
+			left: auto;
+			right: 25px;
+		}
+
+		/*			left */
+		.positioned2 {
+			position: absolute !important;
+			top: 80px;
+			right: 10px;
+		}
+
+		html[dir="rtl"] .positioned2 {
+			left: 10px;
+			right: auto;
+		}
+
+		/*			top */
+		.positioned3 {
+			position: absolute !important;
+			bottom: 10px;
+			left: 100px;
+		}
+
+		html[dir="rtl"] .positioned3 {
+			left: auto;
+			right: 100px;
+		}
+
+		/* 			vertical bottom */
+		.positioned4 {
+			position: absolute !important;
+			top: 150px;
+			right: 10px;
+		}
+
+		html[dir="rtl"] .positioned4 {
+			left: 10px;
+			right: auto;
+		}
+
+		/* 			vertical top */
+		.positioned5 {
+			position: absolute !important;
+			bottom: 100px;
+			left: 100px;
+		}
+
+		html[dir="rtl"] .positioned5 {
+			left: auto;
+			right: 100px;
+		}
+
+		/* 			horizontal left */
+		.positioned6 {
+			position: absolute !important;
+			top: 200px;
+			right: 10px;
+		}
+
+		html[dir="rtl"] .positioned6 {
+			left: 10px;
+			right: auto;
+		}
+
+		/* 			horizontal right */
+		.positioned7 {
+			position: absolute !important;
+			top: 350px;
+			left: 100px;
+		}
+
+		html[dir="rtl"] .positioned7 {
+			left: auto;
+			right: 100px;
+		}
+
+		/* 			auto 1 */
+		.positioned8 {
+			position: absolute !important;
+			top: 200px;
+			right: 200px;
+		}
+
+		html[dir="rtl"] .positioned8 {
+			left: 200px;
+			right: auto;
+		}
+
+		/* 			auto 2 */
+		.positioned9 {
+			position: absolute !important;
+			bottom: 200px;
+			left: 200px;
+		}
+
+		html[dir="rtl"] .positioned9 {
+			left: auto;
+			right: 200px;
+		}
+
+		.vbox {
+			position: absolute !important;
+			top: 100px;
+			left: 10px;
+		}
+
+		html[dir="rtl"] .vbox {
+			left: auto;
+			right: 10px;
+		}
+
+	</style>
+
+	<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript"
 			id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-theme="sap_bluecrystal">
-		</script>
-		
-		<script type="text/javascript">
-			var app = new sap.m.App("myApp", {initialPage:"page1"});
+	</script>
 
-//create the list
-			var oList2 = new sap.m.List({
-				inset : true
-			});
-			
-			var data = {
-				navigation : [ {
-					title : "Travel Expend",
-					description : "Access the travel expend workflow",
-					icon : "images/travel_expend.png",
-					iconInset : false,
-					type : "Navigation",
-					press : 'detailPage'
-				}, {
-					title : "Travel and expense report",
-					description : "Access travel and expense reports",
-					icon : "images/travel_expense_report.png",
-					iconInset : false,
-					type : "Navigation",
-					press : 'detailPage'
-				}, {
-					title : "Travel Request",
-					description : "Access the travel request workflow",
-					icon : "images/travel_request.png",
-					iconInset : false,
-					type : "Navigation",
-					press : 'detailPage'
-				}, {
-					title : "Work Accidents",
-					description : "Report your work accidents",
-					icon : "images/wounds_doc.png",
-					iconInset : false,
-					type : "Navigation",
-					press : 'detailPage'
-				}, {
-					title : "Travel Settings",
-					description : "Change your travel worflow settings",
-					icon : "images/settings.png",
-					iconInset : false,
-					type : "Navigation",
-					press : 'detailPage'
-				}, {
-					title : "Travel Expend",
-					description : "Access the travel expend workflow",
-					icon : "images/travel_expend.png",
-					iconInset : false,
-					type : "Navigation",
-					press : 'detailPage'
-				}, {
-					title : "Travel and expense report",
-					description : "Access travel and expense reports",
-					icon : "images/travel_expense_report.png",
-					iconInset : false,
-					type : "Navigation",
-					press : 'detailPage'
-				}, {
-					title : "Travel Request",
-					description : "Access the travel request workflow",
-					icon : "images/travel_request.png",
-					iconInset : false,
-					type : "Navigation",
-					press : 'detailPage'
-				}, {
-					title : "Work Accidents",
-					description : "Report your work accidents",
-					icon : "images/wounds_doc.png",
-					iconInset : false,
-					type : "Navigation",
-					press : 'detailPage'
-				}, {
-					title : "Travel Settings",
-					description : "Change your travel worflow settings",
-					icon : "images/settings.png",
-					iconInset : false,
-					type : "Navigation",
-					press : 'detailPage'
-				} ]
-			};
-			
-			var oItemTemplate1 = new sap.m.StandardListItem({
-				title : "{title}",
-				description : "{description}",
-				icon : "{icon}",
-				iconInset : "{iconInset}",
-				type : "{type}"
-			});
-			
-			function bindListData(data, itemTemplate, list)
-			{
-				var oModel = new sap.ui.model.json.JSONModel();
-				// set the data for the model
-				oModel.setData(data);
-				// set the model to the list
-				list.setModel(oModel);
+	<script type="text/javascript">
+		var app = new sap.m.App("myApp", {initialPage: "page1"});
 
-				// bind Aggregation
-				list.bindAggregation("items", "/navigation", itemTemplate);
-			}
-			
-			bindListData(data, oItemTemplate1, oList2)
-//end of the list creation
+		//create the list
+		var oList2 = new sap.m.List({
+			inset: true
+		});
 
-//create the scrollContainer
-// 			var oScrollContainer = new sap.m.ScrollContainer({
-//  				height: "100%",
-// 				horizontal: false,
-// 				vertical: true,
-// 				content: oList2
-// 			});
-			
-			
-			
-			var oBeginButton = new sap.m.Button({
-				text: "Modal",
-				type: sap.m.ButtonType.Reject,
-				press: function(){
-					oPopover.setModal(!oPopover.getModal());
+		var data = {
+			navigation: [{
+				title: "Travel Expend",
+				description: "Access the travel expend workflow",
+				icon: "images/travel_expend.png",
+				iconInset: false,
+				type: "Navigation",
+				press: 'detailPage'
+			}, {
+				title: "Travel and expense report",
+				description: "Access travel and expense reports",
+				icon: "images/travel_expense_report.png",
+				iconInset: false,
+				type: "Navigation",
+				press: 'detailPage'
+			}, {
+				title: "Travel Request",
+				description: "Access the travel request workflow",
+				icon: "images/travel_request.png",
+				iconInset: false,
+				type: "Navigation",
+				press: 'detailPage'
+			}, {
+				title: "Work Accidents",
+				description: "Report your work accidents",
+				icon: "images/wounds_doc.png",
+				iconInset: false,
+				type: "Navigation",
+				press: 'detailPage'
+			}, {
+				title: "Travel Settings",
+				description: "Change your travel worflow settings",
+				icon: "images/settings.png",
+				iconInset: false,
+				type: "Navigation",
+				press: 'detailPage'
+			}, {
+				title: "Travel Expend",
+				description: "Access the travel expend workflow",
+				icon: "images/travel_expend.png",
+				iconInset: false,
+				type: "Navigation",
+				press: 'detailPage'
+			}, {
+				title: "Travel and expense report",
+				description: "Access travel and expense reports",
+				icon: "images/travel_expense_report.png",
+				iconInset: false,
+				type: "Navigation",
+				press: 'detailPage'
+			}, {
+				title: "Travel Request",
+				description: "Access the travel request workflow",
+				icon: "images/travel_request.png",
+				iconInset: false,
+				type: "Navigation",
+				press: 'detailPage'
+			}, {
+				title: "Work Accidents",
+				description: "Report your work accidents",
+				icon: "images/wounds_doc.png",
+				iconInset: false,
+				type: "Navigation",
+				press: 'detailPage'
+			}, {
+				title: "Travel Settings",
+				description: "Change your travel worflow settings",
+				icon: "images/settings.png",
+				iconInset: false,
+				type: "Navigation",
+				press: 'detailPage'
+			}]
+		};
+
+		var oItemTemplate1 = new sap.m.StandardListItem({
+			title: "{title}",
+			description: "{description}",
+			icon: "{icon}",
+			iconInset: "{iconInset}",
+			type: "{type}"
+		});
+
+		function bindListData (data, itemTemplate, list) {
+			var oModel = new sap.ui.model.json.JSONModel();
+			// set the data for the model
+			oModel.setData(data);
+			// set the model to the list
+			list.setModel(oModel);
+
+			// bind Aggregation
+			list.bindAggregation("items", "/navigation", itemTemplate);
+		}
+
+		bindListData(data, oItemTemplate1, oList2);
+		//end of the list creation
+
+		//create the scrollContainer
+		// 			var oScrollContainer = new sap.m.ScrollContainer({
+		//  				height: "100%",
+		// 				horizontal: false,
+		// 				vertical: true,
+		// 				content: oList2
+		// 			});
+
+
+		var oBeginButton = new sap.m.Button({
+			text: "Modal",
+			type: sap.m.ButtonType.Reject,
+			press: function () {
+				oPopover.setModal(!oPopover.getModal());
 // 					oPopover.setLeftButton(null);
-				}
-			});
-			
-			
-			var oEndButton = new sap.m.Button({
-				text: "Close",
-				type: sap.m.ButtonType.Accept,
-				press: function(){
-					oPopover.close();
+			}
+		});
+
+
+		var oEndButton = new sap.m.Button({
+			text: "Close",
+			type: sap.m.ButtonType.Accept,
+			press: function () {
+				oPopover.close();
 // 					oPopover.setRightButton(null);
-				}
-			});
+			}
+		});
 
-			var footer = new sap.m.Bar({ 
-				contentMiddle: [new sap.m.Button({icon: "sap-icon://inspection", text: "short"}),
-				              new sap.m.Button({icon: "sap-icon://home", text: "loooooong text"})]
-			});
-			
-			var oPopover = new sap.m.Popover("pop1", {
-				placement: sap.m.PlacementType.Bottom,
-				title: "Popover",
-				showHeader: true,
-				beginButton: oBeginButton,
-				endButton: oEndButton,
-				beforeOpen: function(oEvent){
-					jQuery.sap.log.info("before popover opens!!!");
-				},
-				afterOpen: function(oEvent){
-					jQuery.sap.log.info("popover is opened finally!!!");
-				},
-				beforeClose: function(oEvent){
-					jQuery.sap.log.info("before popover closes!!!");
-				},
-				afterClose: function(oEvent){
-					jQuery.sap.log.info("popover is closed properly!!!");
-				},
-				footer: footer,
-				content: [
-					new sap.m.Input("focusInput"), oList2
-				],
-				initialFocus: "focusInput"
-			});
-			
-			//uncomment this line when padding is needed in content area
-			//oPopover.addStyleClass("sapUiPopupWithPadding");
-			
-			oPopover.setTitle("New Popover with long title");
+		var footer = new sap.m.Bar({
+			contentMiddle: [new sap.m.Button({icon: "sap-icon://inspection", text: "short"}),
+				new sap.m.Button({icon: "sap-icon://home", text: "loooooong text"})]
+		});
 
-			var oPopover2 = new sap.m.Popover("pop2", {
-				placement: sap.m.PlacementType.Horizontal,
-				title: "Popover2",
-				showHeader: true,
-				subHeader: new sap.m.Bar({
-					contentMiddle: [
-						new sap.m.SearchField({
-							placeholder: "Search ...",
-							width: "100%"
-						})
+		var oPopover = new sap.m.Popover("pop1", {
+			placement: sap.m.PlacementType.Bottom,
+			title: "Popover",
+			showHeader: true,
+			beginButton: oBeginButton,
+			endButton: oEndButton,
+			beforeOpen: function (oEvent) {
+				jQuery.sap.log.info("before popover opens!!!");
+			},
+			afterOpen: function (oEvent) {
+				jQuery.sap.log.info("popover is opened finally!!!");
+			},
+			beforeClose: function (oEvent) {
+				jQuery.sap.log.info("before popover closes!!!");
+			},
+			afterClose: function (oEvent) {
+				jQuery.sap.log.info("popover is closed properly!!!");
+			},
+			footer: footer,
+			content: [
+				new sap.m.Input("focusInput", {placeholder: "Search"}), oList2
+			],
+			initialFocus: "focusInput"
+		});
+
+		//uncomment this line when padding is needed in content area
+		//oPopover.addStyleClass("sapUiPopupWithPadding");
+
+		oPopover.setTitle("New Popover with long title");
+
+		var oPopover2 = new sap.m.Popover("pop2", {
+			placement: sap.m.PlacementType.Horizontal,
+			title: "Popover2",
+			showHeader: true,
+			subHeader: new sap.m.Bar({
+				contentMiddle: [
+					new sap.m.SearchField({
+						placeholder: "Search ...",
+						width: "100%"
+					})
+				]
+			}),
+			//modal : true,
+			verticalScrolling: true,
+			horizontalScrolling: false,
+			content: [
+				oList2.clone()
+			]
+		});
+
+		var oPopover3 = new sap.m.Popover("pop3", {
+			placement: sap.m.PlacementType.Horizontal,
+			title: "Popover3",
+			showHeader: true,
+			//modal : true,
+			verticalScrolling: false,
+			horizontalScrolling: true,
+			content: [
+				oList2.clone()
+			]
+		});
+
+
+		var oButton = new sap.m.Button("btn0", {
+			text: "Popover Bottom",
+			press: function () {
+				oPopover.setPlacement(sap.m.PlacementType.Bottom);
+				oPopover.openBy(this);
+			}
+		});
+
+		oButton.addStyleClass("positioned");
+		var oButton1 = new sap.m.Button("btn1", {
+			text: "Popover Right",
+			press: function () {
+				oPopover.setPlacement(sap.m.PlacementType.Right);
+				oPopover.openBy(this);
+			}
+		});
+
+		oButton1.addStyleClass("positioned1");
+		var oButton2 = new sap.m.Button("btn2", {
+			text: "Popover Left",
+			press: function () {
+				oPopover.setPlacement(sap.m.PlacementType.Left);
+				oPopover.openBy(this);
+			}
+		});
+
+		oButton2.addStyleClass("positioned2");
+
+		var oButton3 = new sap.m.Button("btn3", {
+			text: "Popover Top",
+			press: function () {
+				oPopover.setPlacement(sap.m.PlacementType.Top);
+				oPopover.openBy(this);
+			}
+		});
+		oButton3.addStyleClass("positioned3");
+
+		var oButton4 = new sap.m.Button("btn4", {
+			text: "Popover Vertical",
+			press: function () {
+				oPopover.setPlacement(sap.m.PlacementType.Vertical);
+				oPopover.openBy(this);
+			}
+		});
+		oButton4.addStyleClass("positioned4");
+
+		var oButton5 = new sap.m.Button("btn5", {
+			text: "Popover Vertical",
+			press: function () {
+				oPopover.setPlacement(sap.m.PlacementType.Vertical);
+				oPopover.openBy(this);
+			}
+		});
+		oButton5.addStyleClass("positioned5");
+
+		var oButton6 = new sap.m.Button("btn6", {
+			text: "Popover Horizontal",
+			press: function () {
+				//oPopover.setPlacement(sap.m.PlacementType.Horizontal);
+				oPopover3.openBy(this);
+			}
+		});
+		oButton6.addStyleClass("positioned6");
+
+		var oButton7 = new sap.m.Button("btn7", {
+			text: "Popover Horizontal",
+			press: function () {
+				//oPopover.setPlacement(sap.m.PlacementType.Horizontal);
+				oPopover2.openBy(this);
+			}
+		});
+		oButton7.addStyleClass("positioned7");
+
+		var oButton8 = new sap.m.Button("btn8", {
+			text: "Popover Auto",
+			press: function () {
+				oPopover.setPlacement(sap.m.PlacementType.Auto);
+				oPopover.openBy(this);
+			}
+		});
+		oButton8.addStyleClass("positioned8");
+
+		var oButton9 = new sap.m.Button("btn9", {
+			text: "Popover Auto",
+			press: function () {
+				oPopover.setPlacement(sap.m.PlacementType.Auto);
+				oPopover.openBy(this);
+			}
+		});
+		oButton9.addStyleClass("positioned9");
+
+		var oButton10 = new sap.m.Button("btn10", {
+			text: "Popover with dangers",
+			press: function () {
+				oPopoverSelect.openBy(this);
+			}
+		});
+
+		var oSearchProvider = new sap.ui.core.search.OpenSearchProvider({
+			suggestUrl: "../../../proxy/http/en.wikipedia.org/w/api.php?action=opensearch&namespace=0&search={searchTerms}",
+			suggestType: "json"
+		});
+
+		var oPopoverSelect = new sap.m.Popover("popSelect", {
+			content: [
+				new sap.m.Select({
+					items: [
+						new sap.ui.core.Item({
+							key: "0",
+							text: "item 0"
+						}),
+						new sap.ui.core.Item({
+							key: "1",
+							text: "item 1"
+						}),
+						new sap.ui.core.Item({
+							key: "2",
+							text: "item 2"
+						}),
+						new sap.ui.core.Item({
+							key: "3",
+							text: "item 3"
+						}),
 					]
 				}),
-				//modal : true,
-				verticalScrolling : true,
-				horizontalScrolling : false,
-				content: [
-					oList2.clone()
-				]
-			});
-			
-			var oPopover3 = new sap.m.Popover("pop3", {
-				placement: sap.m.PlacementType.Horizontal,
-				title: "Popover3",
-				showHeader: true,
-				//modal : true,
-				verticalScrolling : false,
-				horizontalScrolling : true,
-				content: [
-					oList2.clone()
-				]
-			});
-			
-
-			
-			var oButton = new sap.m.Button("btn0", {
-				text : "Popover Bottom",
-				press : function() {
-					oPopover.setPlacement(sap.m.PlacementType.Bottom);
-					oPopover.openBy(this);
-				}
-			});
-			
-			oButton.addStyleClass("positioned");
-			var oButton1 = new sap.m.Button("btn1", {
-				text : "Popover Right",
-				press : function() {
-					oPopover.setPlacement(sap.m.PlacementType.Right);
-					oPopover.openBy(this);
-				}
-			});
-			
-			oButton1.addStyleClass("positioned1");
-			var oButton2 = new sap.m.Button("btn2", {
-				text : "Popover Left",
-				press : function() {
-					oPopover.setPlacement(sap.m.PlacementType.Left);
-					oPopover.openBy(this);
-				}
-			});
-			
-			oButton2.addStyleClass("positioned2");
-			
-			var oButton3 = new sap.m.Button("btn3", {
-				text : "Popover Top",
-				press : function() {
-					oPopover.setPlacement(sap.m.PlacementType.Top);
-					oPopover.openBy(this);
-				}
-			});
-			oButton3.addStyleClass("positioned3");
-			
-			var oButton4 = new sap.m.Button("btn4", {
-				text : "Popover Vertical",
-				press : function() {
-					oPopover.setPlacement(sap.m.PlacementType.Vertical);
-					oPopover.openBy(this);
-				}
-			});
-			oButton4.addStyleClass("positioned4");
-			
-			var oButton5 = new sap.m.Button("btn5", {
-				text : "Popover Vertical",
-				press : function() {
-					oPopover.setPlacement(sap.m.PlacementType.Vertical);
-					oPopover.openBy(this);
-				}
-			});
-			oButton5.addStyleClass("positioned5");
-			
-			var oButton6 = new sap.m.Button("btn6", {
-				text : "Popover Horizontal",
-				press : function() {
-					//oPopover.setPlacement(sap.m.PlacementType.Horizontal);
-					oPopover3.openBy(this);
-				}
-			});
-			oButton6.addStyleClass("positioned6");
-			
-			var oButton7 = new sap.m.Button("btn7", {
-				text : "Popover Horizontal",
-				press : function() {
-					//oPopover.setPlacement(sap.m.PlacementType.Horizontal);
-					oPopover2.openBy(this);
-				}
-			});
-			oButton7.addStyleClass("positioned7");
-			
-			var oButton8 = new sap.m.Button("btn8", {
-				text : "Popover Auto",
-				press : function() {
-					oPopover.setPlacement(sap.m.PlacementType.Auto);
-					oPopover.openBy(this);
-				}
-			});
-			oButton8.addStyleClass("positioned8");
-			
-			var oButton9 = new sap.m.Button("btn9", {
-				text : "Popover Auto",
-				press : function() {
-					oPopover.setPlacement(sap.m.PlacementType.Auto);
-					oPopover.openBy(this);
-				}
-			});
-			oButton9.addStyleClass("positioned9");
-			
-			var oButton10 = new sap.m.Button("btn10", {
-				text: "Popover with dangers",
-				press: function(){
-					oPopoverSelect.openBy(this);
-				}
-			});
-			
-			var oSearchProvider = new sap.ui.core.search.OpenSearchProvider({
-				suggestUrl: "../../../proxy/http/en.wikipedia.org/w/api.php?action=opensearch&namespace=0&search={searchTerms}",
-				suggestType: "json"
-			});
-			
-			var oPopoverSelect = new sap.m.Popover("popSelect", {
-				content: [
-					new sap.m.Select({
-						items: [
-							new sap.ui.core.Item({
-								key: "0",
-								text: "item 0"
-							}),
-							new sap.ui.core.Item({
-								key: "1",
-								text: "item 1"
-							}),
-							new sap.ui.core.Item({
-								key: "2",
-								text: "item 2"
-							}),
-							new sap.ui.core.Item({
-								key: "3",
-								text: "item 3"
-							}),
-						]
-					}),
-					new sap.m.Input({
-						showSuggestion: true,
-						placeholder: "Type here ...",
-						suggest: function(oEvent){
-							var that = this;
-							oSearchProvider.suggest(oEvent.getParameter("suggestValue"), function(sValue, aSuggestions){
-								if(sValue === that.getValue()){
-									that.destroySuggestionItems();
-									for(var i=0; i<aSuggestions.length; i++){
-										that.addSuggestionItem(new sap.ui.core.Item({text: aSuggestions[i]}));
-									}
+				new sap.m.Input({
+					showSuggestion: true,
+					placeholder: "Type here ...",
+					suggest: function (oEvent) {
+						var that = this;
+						oSearchProvider.suggest(oEvent.getParameter("suggestValue"), function (sValue, aSuggestions) {
+							if (sValue === that.getValue()) {
+								that.destroySuggestionItems();
+								for (var i = 0; i < aSuggestions.length; i++) {
+									that.addSuggestionItem(new sap.ui.core.Item({text: aSuggestions[i]}));
 								}
-							});
-						}
-					})
-				],
-				contentWidth: "20em",
-				contentHeight: "50%"
-			});
-			
-			var oVBox = new sap.m.VBox({
-				items: [
-					new sap.m.Button({
-						text: "WithH WithF",
-						press: function(){
-							oPopover.setShowHeader(true);
-							oPopover.setFooter(footer);
-							oPopover.setPlacement(sap.m.PlacementType.Right);
-							oPopover.openBy(this);
-						}
-					}),
-					new sap.m.Button({
-						text: "NoH WithF",
-						press: function(){
-							oPopover.setShowHeader(false);
-							oPopover.setFooter(footer);
-							oPopover.setPlacement(sap.m.PlacementType.Right);
-							oPopover.openBy(this);
-						}
-					}),
-					new sap.m.Button({
-						text: "WithH NoF",
-						press: function(){
-							oPopover.setShowHeader(true);
-							oPopover.setFooter(null);
-							oPopover.setPlacement(sap.m.PlacementType.Right);
-							oPopover.openBy(this);
-						}
-					}),
-					new sap.m.Button({
-						text: "NoH NoF",
-						press: function(){
-							oPopover.setShowHeader(false);
-							oPopover.setFooter(null);
-							oPopover.setPlacement(sap.m.PlacementType.Right);
-							oPopover.openBy(this);
-						}
-					}),
-					oButton10
-				]
-			});
-			
-			oVBox.addStyleClass("vbox");
-			
-			var page1 = new sap.m.Page("page1", {
-				title:"Page 1",
-				content: [
-					oButton, oButton1, oButton2, oButton3, oButton4, oButton5, oButton6, oButton7, oButton8, oButton9, oVBox
-				]
-			});
-			
-			app.addPage(page1);
-			app.placeAt("body");
-		</script>
-	</head>
-	<body id="body" class="sapUiBody" role="application">
-	</body>
+							}
+						});
+					}
+				})
+			],
+			contentWidth: "20em",
+			contentHeight: "50%"
+		});
+
+		var oVBox = new sap.m.VBox({
+			items: [
+				new sap.m.Button({
+					text: "WithH WithF",
+					press: function () {
+						oPopover.setShowHeader(true);
+						oPopover.setFooter(footer);
+						oPopover.setPlacement(sap.m.PlacementType.Right);
+						oPopover.openBy(this);
+					}
+				}),
+				new sap.m.Button({
+					text: "NoH WithF",
+					press: function () {
+						oPopover.setShowHeader(false);
+						oPopover.setFooter(footer);
+						oPopover.setPlacement(sap.m.PlacementType.Right);
+						oPopover.openBy(this);
+					}
+				}),
+				new sap.m.Button({
+					text: "WithH NoF",
+					press: function () {
+						oPopover.setShowHeader(true);
+						oPopover.setFooter(null);
+						oPopover.setPlacement(sap.m.PlacementType.Right);
+						oPopover.openBy(this);
+					}
+				}),
+				new sap.m.Button({
+					text: "NoH NoF",
+					press: function () {
+						oPopover.setShowHeader(false);
+						oPopover.setFooter(null);
+						oPopover.setPlacement(sap.m.PlacementType.Right);
+						oPopover.openBy(this);
+					}
+				}),
+				oButton10
+			]
+		});
+
+		oVBox.addStyleClass("vbox");
+
+		var page1 = new sap.m.Page("page1", {
+			title: "Page 1",
+			content: [
+				oButton, oButton1, oButton2, oButton3, oButton4, oButton5, oButton6, oButton7, oButton8, oButton9, oVBox
+			]
+		});
+
+		app.addPage(page1);
+		app.placeAt("body");
+	</script>
+</head>
+<body id="body" class="sapUiBody" role="application">
+</body>
 </html>

@@ -17,14 +17,7 @@ sap.ui.define([
 				name : "x-csrf-token",
 				value : "securityTokenFromModel"
 			});
-			// Header Slug
-			var oCustomerHeaderSlug = new UploadCollectionParameter({
-				name : "slug",
-				value : oEvent.getParameter("files")[0].name
-			});
-
 			oUploadCollection.addHeaderParameter(oCustomerHeaderToken);
-			oUploadCollection.addHeaderParameter(oCustomerHeaderSlug);
 			MessageToast.show("Event change triggered");
 		},
 
@@ -69,6 +62,18 @@ sap.ui.define([
 
 		},
 
+		onBeforeUploadStarts: function(oEvent) {
+			// Header Slug
+			var oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
+				name : "slug",
+				value : oEvent.getParameter("fileName")
+			});
+			oEvent.getParameters().addHeaderParameter(oCustomerHeaderSlug);
+			setTimeout(function() {
+				MessageToast.show("Event beforeUploadStarts triggered");
+			}, 4000);
+		},
+
 		onUploadComplete: function(oEvent) {
 			var oPage = this.getView().byId("Page");
 			var oTextArea = this.getView().byId("TextArea");
@@ -93,15 +98,16 @@ sap.ui.define([
 				filenameLengthExceed: [this.getView().getController().onFilenameLengthExceed, this],
 				fileSizeExceed: [this.getView().getController().onFileSizeExceed, this],
 				typeMissmatch: [this.getView().getController().onTypeMissmatch, this],
-				uploadComplete: [this.getView().getController().onUploadComplete, this]	
+				uploadComplete: [this.getView().getController().onUploadComplete, this],
+				beforeUploadStarts: [this.getView().getController().onBeforeUploadStarts, this]
 			});
 
 			oPage.insertContent(oUploadCollection, 3);
 
-			// delay the success message for to notice onChange message
+			// delay the success message in order to see other messages before
 			setTimeout(function() {
 				MessageToast.show("Event uploadComplete triggered")
-			}, 4000);
+			}, 8000);
 		},
 
 		onSelectChange: function(oEvent) {

@@ -5,9 +5,9 @@
 sap.ui.define(['./Matcher'], function (Matcher) {
 
 	/**
-	 * BindingPath - checks if a control has an binding context with the exact same binding path.
+	 * BindingPath - checks if a control has a binding context with the exact same binding path.
 	 *
-	 * @class BindingPath - checks if a control have an binding context with the exact same binding path
+	 * @class BindingPath - checks if a control has a binding context with the exact same binding path
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @param {object} [mSettings] Map/JSON-object with initial settings for the new BindingPath.
 	 * @param {string} [mSettings.path] {@Link #getPath path} The value of the binding path that is used for matching.

@@ -334,14 +334,16 @@ html.sap-tablet input, html.sap-tablet textarea, html.sap-tablet [contenteditabl
 /********************************************************************************************************************************/
 /* Reset BackgroundColor, -Images to ensure proper display in ThemeDesigner (loads original and modified theme in the same page)*/
 
-.sapUiUfdShellBackground,
-.sapMGlobalBackgroundColor,
+.sapMGlobalBackgroundColor, /*Only legacy support: Use sapUiGlobalBackgroundColor instead*/
+.sapUiGlobalBackgroundColor,
 .sapUshellShellBackground,
-html[data-sap-ui-browser="ie9"] .sapUiUfdShellBackground, 
 html[data-sap-ui-browser="ie9"] .sapUshellShellBackground,
-html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor,
-.sapMGlobalBackgroundColorStrong,
-html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColorStrong,
+html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor, /*Only legacy support: Use sapUiGlobalBackgroundColor instead*/
+html[data-sap-ui-browser="ie9"] .sapUiGlobalBackgroundColor,
+.sapMGlobalBackgroundColorStrong, /*Only legacy support: Use sapUiStrongBackgroundColor instead*/
+html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColorStrong, /*Only legacy support: Use sapUiStrongBackgroundColor instead*/
+.sapUiStrongBackgroundColor,
+html[data-sap-ui-browser="ie9"] .sapUiStrongBackgroundColor,
 .sapMShellGlobalOuterBackground,
 html[data-sap-ui-browser="ie9"] .sapMShellGlobalOuterBackground,
 .sapMShellGlobalInnerBackground,
@@ -362,25 +364,27 @@ html[data-sap-ui-browser="ie9"] {
 /********************************************************************************************************************************/
 
 
-.sapUiUfdShellBackground,
 .sapUshellShellBackground,
-.sapMGlobalBackgroundColor {
+.sapUiGlobalBackgroundColor,
+.sapMGlobalBackgroundColor { /*Only legacy support: Use sapUiGlobalBackgroundColor instead*/
 	background-color: @sapUiGlobalBackgroundColorDefault;
 
 	.sapGlobalBackgroundColorMixin;
 }
 
-html[data-sap-ui-browser="ie9"] .sapUiUfdShellBackground, 
 html[data-sap-ui-browser="ie9"] .sapUshellShellBackground,
-html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor {
+html[data-sap-ui-browser="ie9"] .sapUiGlobalBackgroundColor,
+html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor { /*Only legacy support: Use sapUiGlobalBackgroundColor instead*/
 	.sapGlobalBackgroundColorMixinIE9;
 }
 
-.sapMGlobalBackgroundColorStrong {
+.sapMGlobalBackgroundColorStrong, /*Only legacy support: Use sapUiStrongBackgroundColor instead*/
+.sapUiStrongBackgroundColor {
 	.sapGlobalBackgroundColorStrongMixin;
 }
 
-html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColorStrong {
+html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColorStrong, /*Only legacy support: Use sapUiStrongBackgroundColor instead*/
+html[data-sap-ui-browser="ie9"] .sapUiStrongBackgroundColor {
 	.sapGlobalBackgroundColorStrongMixinIE9;
 }
 
@@ -410,16 +414,23 @@ html[data-sap-ui-browser="ie9"] .sapMShellGlobalInnerBackground {
 
 
 /* no standard background for nested elements */
-.sapMGlobalBackgroundColor .sapMGlobalBackgroundColor {
+.sapUiGlobalBackgroundColor .sapUiGlobalBackgroundColor:not(.sapUiGlobalBackgroundColorForce),
+.sapMGlobalBackgroundColor .sapUiGlobalBackgroundColor:not(.sapUiGlobalBackgroundColorForce),
+.sapUiGlobalBackgroundColor .sapMGlobalBackgroundColor, /*Only legacy support: Use sapUiGlobalBackgroundColor instead*/
+.sapMGlobalBackgroundColor .sapMGlobalBackgroundColor { /*Only legacy support: Use sapUiGlobalBackgroundColor instead*/
 	background-color: transparent;
 	background-image: none;
 }
 
-html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor .sapMGlobalBackgroundColor {
+html[data-sap-ui-browser="ie9"] .sapUiGlobalBackgroundColor .sapUiGlobalBackgroundColor:not(.sapUiGlobalBackgroundColorForce),
+html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor .sapUiGlobalBackgroundColor:not(.sapUiGlobalBackgroundColorForce),
+html[data-sap-ui-browser="ie9"] .sapUiGlobalBackgroundColor .sapMGlobalBackgroundColor, /*Only legacy support: Use sapUiGlobalBackgroundColor instead*/
+html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor .sapMGlobalBackgroundColor { /*Only legacy support: Use sapUiGlobalBackgroundColor instead*/
 	filter: none;
 }
 
-.sapMGlobalBackgroundImage {
+.sapMGlobalBackgroundImage, /*Only legacy support: Use sapUiGlobalBackgroundImage instead*/
+.sapUiGlobalBackgroundImage {
 	display: block;
 	position: absolute;
 	box-sizing: border-box;
@@ -433,7 +444,8 @@ html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor .sapMGlobalBackground
 	.sapGlobalBackgroundRepeatMixin;
 }
 
-.sapMGlobalBackgroundImageOnlyIfDefault {
+.sapMGlobalBackgroundImageOnlyIfDefault, /*Only legacy support: Use sapUiGlobalBackgroundImageOnlyIfDefault instead*/
+.sapUiGlobalBackgroundImageOnlyIfDefault {
 	display: block;
 	position: absolute;
 	box-sizing: border-box;
@@ -444,13 +456,17 @@ html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor .sapMGlobalBackground
 	.sapGlobalBackgroundImageOnlyDefaultMixin;
 }
 
-.sapMGlobalBackgroundColor * > .sapMGlobalBackgroundImage { /* hide this background image if a background image is configured somewhere above */
+/* hide this background image if a background is configured somewhere above */
+.sapUiGlobalBackgroundColor * > .sapMGlobalBackgroundImage, /*Only legacy support: Use sapUiGlobalBackgroundImage instead*/
+.sapMGlobalBackgroundColor * > .sapMGlobalBackgroundImage, /*Only legacy support: Use sapUiGlobalBackgroundImage and sapUiGlobalBackgroundColor instead*/
+.sapMGlobalBackgroundColor * > .sapUiGlobalBackgroundImage, /*Only legacy support: Use sapUiGlobalBackgroundColor instead*/
+.sapUiGlobalBackgroundColor * > .sapUiGlobalBackgroundImage { 
 	display: none;
 }
 
-.sapMGlobalBackgroundImage.sapUiUfdShellBG,
-.sapMGlobalBackgroundImage.sapUshellShellBG,
-.sapMShellGlobalOuterBackground > .sapMGlobalBackgroundImage {
+/* Ensure that background image is shown again when forced to do so (overrides previous declaration) */
+.sapMGlobalBackgroundImage.sapUshellShellBG, /* Remove this when UShell control is adapted accordingly */
+.sapUiGlobalBackgroundImage.sapUiGlobalBackgroundImageForce {
 	display: block;
 }
 
@@ -545,4 +561,11 @@ html[data-sap-ui-browser="ie9"] .sapUiBodyBackgroundIE9Layer2 {
 
 .sapUiOverlay {
 	background-color: fade(@sapUiLightestBG, 80%);
+}
+
+/**
+ * Class used to hide the line-sliding busy indicator at the top (as used in goldreflection)
+ */
+.sapUiBusy {
+	display: none;
 }

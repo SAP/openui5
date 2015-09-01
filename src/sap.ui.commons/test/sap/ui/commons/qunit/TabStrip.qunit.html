@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested control/class: sap.ui.commons.TabStrip
   Author: SAP
 -->
@@ -8,7 +8,7 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
@@ -166,13 +166,13 @@
 
 		test("mouse interaction", function() {
 			//click on title ID -> otherwise DOM element would be needed
-			qutils.triggerMouseEvent("tab1", "click");
+			qutils.triggerMouseEvent("tab1", "mousedown");
 			sap.ui.getCore().applyChanges(); // rerendering must be finished
 			equal(oTabStrip1.getSelectedIndex(), 1, "Selection index after click on 2. Tab :");
 			equal(iEvent, 1, "Event number after click on 2. Tab :");
 			equal(iIndex, 1, "event index after click on 2. Tab :");
-			iEvent = 0; 
-			iIndex = -1; 
+			iEvent = 0;
+			iIndex = -1;
 			ok(!jQuery("#tabstrip1-0").hasClass("sapUiTabSel"), "1.Tab is not Selected - has no Class sapUiTabSel");
 			ok(jQuery("#tabstrip1-0").hasClass("sapUiTab"), "1.Tab is not Selected - has Class sapUiTab");
 			equal(jQuery("#tabstrip1-0").attr("aria-selected"), "false", "ARIA-SELECTED of 1. tab");
@@ -180,13 +180,13 @@
 			ok(!jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is Selected - has no Class sapUiTab");
 			equal(jQuery("#tab1").attr("aria-selected"), "true", "ARIA-SELECTED of 2. tab");
 
-			qutils.triggerMouseEvent("tab2", "click"); // disabled tab
+			qutils.triggerMouseEvent("tab2", "mousedown"); // disabled tab
 			sap.ui.getCore().applyChanges(); // rerendering must be finished
 			equal(oTabStrip1.getSelectedIndex(), 1, "Selection index after click on 3. Tab :");
 			equal(iEvent, 0, "Event number after click on 3. Tab :");
 			equal(iIndex, -1, "event index after click on 3. Tab :");
-			iEvent = 0; 
-			iIndex = -1; 
+			iEvent = 0;
+			iIndex = -1;
 			ok(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is Selected - has Class sapUiTabSel");
 			ok(!jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is Selected - has no Class sapUiTab");
 			equal(jQuery("#tab1").attr("aria-selected"), "true", "ARIA-SELECTED of 2. tab");
@@ -199,8 +199,8 @@
 			qutils.triggerMouseEvent(oCloseDom, "click");
 			equal(iEvent, 2, "Event number after click on Close icon of 2.Tab :");
 			equal(iIndex, 1, "Event index after click on Close icon of 2.Tab :");
-			iEvent = 0; 
-			iIndex = -1; 
+			iEvent = 0;
+			iIndex = -1;
 
 		});
 
@@ -210,8 +210,8 @@
 			equal(oTabStrip1.getSelectedIndex(), 0, "Selection index after SPACE on 1. Tab :");
 			equal(iEvent, 1, "Event number after SPACE on 1. Tab :");
 			equal(iIndex, 0, "event index after SPACE on 1. Tab :");
-			iEvent = 0; 
-			iIndex = -1; 
+			iEvent = 0;
+			iIndex = -1;
 			ok(jQuery("#tabstrip1-0").hasClass("sapUiTabSel"), "1.Tab is Selected - has Class sapUiTabSel");
 			ok(!jQuery("#tabstrip1-0").hasClass("sapUiTab"), "1.Tab is Selected - has no Class sapUiTab");
 			equal(jQuery("#tabstrip1-0").attr("aria-selected"), "true", "ARIA-SELECTED of 1. tab");
@@ -224,8 +224,8 @@
 			equal(oTabStrip1.getSelectedIndex(), 0, "Selection index after SPACE on 3. Tab :");
 			equal(iEvent, 0, "Event number after SPACE on 3. Tab :");
 			equal(iIndex, -1, "event index after SPACE on 3. Tab :");
-			iEvent = 0; 
-			iIndex = -1; 
+			iEvent = 0;
+			iIndex = -1;
 			ok(jQuery("#tabstrip1-0").hasClass("sapUiTabSel"), "1.Tab is Selected - has Class sapUiTabSel");
 			ok(!jQuery("#tabstrip1-0").hasClass("sapUiTab"), "1.Tab is Selected - has no Class sapUiTab");
 			equal(jQuery("#tabstrip1-0").attr("aria-selected"), "true", "ARIA-SELECTED of 1. tab");
@@ -233,19 +233,19 @@
 			ok(jQuery("#tab2").hasClass("sapUiTabDsbl"), "3.Tab is Disabled - has Class sapUiTabDsbl");
 			equal(jQuery("#tab2").attr("aria-selected"), "false", "ARIA-SELECTED of 3. tab");
 
-			qutils.triggerKeyboardEvent("tab1", "DELETE"); 
+			qutils.triggerKeyboardEvent("tab1", "DELETE");
 			sap.ui.getCore().applyChanges(); // rerendering must be finished
 			equal(iEvent, 2, "Event number after DELETE on 2. Tab :");
 			equal(iIndex, 1, "event index after DELETE on 2. Tab :");
-			iEvent = 0; 
-			iIndex = -1; 
+			iEvent = 0;
+			iIndex = -1;
 
 			qutils.triggerKeyboardEvent("tabstrip1-0", "DELETE");
 			sap.ui.getCore().applyChanges(); // rerendering must be finished
 			equal(iEvent, 0, "Event number after DELETE on 1. Tab :");
 			equal(iIndex, -1, "event index after DELETE on 1. Tab :");
-			iEvent = 0; 
-			iIndex = -1; 
+			iEvent = 0;
+			iIndex = -1;
 		});
 
 		test("switching using method", function() {
@@ -254,8 +254,8 @@
 			equal(oTabStrip1.getSelectedIndex(), 1, "Selection index after SetSelectedIndex to 2. Tab :");
 			equal(iEvent, 0, "Event number after SetSelectedIndex to 2. Tab :");
 			equal(iIndex, -1, "event index after SetSelectedIndex to 2. Tab :");
-			iEvent = 0; 
-			iIndex = -1; 
+			iEvent = 0;
+			iIndex = -1;
 			ok(!jQuery("#tabstrip1-0").hasClass("sapUiTabSel"), "1.Tab is not Selected - has no Class sapUiTabSel");
 			ok(jQuery("#tabstrip1-0").hasClass("sapUiTab"), "1.Tab is not Selected - has Class sapUiTab");
 			equal(jQuery("#tabstrip1-0").attr("aria-selected"), "false", "ARIA-SELECTED of 1. tab");
@@ -269,8 +269,8 @@
 			equal(oTabStrip1.getSelectedIndex(), 1, "Selection index after SetSelectedIndex to 3. Tab :");
 			equal(iEvent, 0, "Event number after SetSelectedIndex to 3. Tab :");
 			equal(iIndex, -1, "event index after SetSelectedIndex to 3. Tab :");
-			iEvent = 0; 
-			iIndex = -1; 
+			iEvent = 0;
+			iIndex = -1;
 			ok(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is Selected - has Class sapUiTabSel");
 			ok(!jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is Selected - has no Class sapUiTab");
 			equal(jQuery("#tab1").attr("aria-selected"), "true", "ARIA-SELECTED of 2. tab");
@@ -284,8 +284,8 @@
 			equal(oTabStrip1.getSelectedIndex(), 1, "Selection index after SetSelectedIndex to 4. Tab(invisible) :");
 			equal(iEvent, 0, "Event number after SetSelectedIndex to 4. Tab(invisible) :");
 			equal(iIndex, -1, "event index after SetSelectedIndex to 4. Tab(invisible) :");
-			iEvent = 0; 
-			iIndex = -1; 
+			iEvent = 0;
+			iIndex = -1;
 			ok(jQuery("#tab1").hasClass("sapUiTabSel"), "2.Tab is Selected - has Class sapUiTabSel");
 			ok(!jQuery("#tab1").hasClass("sapUiTab"), "2.Tab is Selected - has no Class sapUiTab");
 			equal(jQuery("#tab1").attr("aria-selected"), "true", "ARIA-SELECTED of 2. tab");
@@ -327,7 +327,7 @@
 			equal(oTabStrip1.getSelectedIndex(), 0, "Selection index after remove of 5.Tab :");
 			ok(!jQuery("#tab4").get(0), "1.Tab is Invisible: expected undefined");
 			equals(oTabStrip1.getTabs().length, 4, "Only 4 tabs assigned to TabStrip");
-			var bFound = false; 
+			var bFound = false;
 			for(var i = 1; i  < oTabStrip1.getTabs().length; i++){
 				if(oTabStrip1.getTabs()[i] == oTab4){
 					bFound = true;
@@ -393,6 +393,43 @@
 			ok(jQuery("#T2-tab1-panel").get(0), "Tab2 - panel rendered");
 			equal(jQuery("#T2-tab1-panel").children().length, 1, "Panel has content");
 			equal(jQuery(jQuery("#T2-tab1-panel").children()[0]).text(), "Test 2", "Text 2 is rendered");
+		});
+
+		test("change properties", function() {
+
+			var $tabs = jQuery('#tabstrip1 .sapUiTabBarCnt').children();
+			ok ($tabs.length == 2, 'TabStrip has 2 tabs visible');
+
+			oTabStrip1.getTabs()[2].setVisible(false);
+			sap.ui.getCore().applyChanges(); // rerendering must be finished
+
+			$tabs = jQuery('#tabstrip1 .sapUiTabBarCnt').children();
+			ok ($tabs.length == 1, 'TabStrip has 1 tabs visible');
+
+			oTabStrip1.getTabs()[2].setVisible(true);
+			sap.ui.getCore().applyChanges(); // rerendering must be finished
+
+			$tabs = jQuery('#tabstrip1 .sapUiTabBarCnt').children();
+			ok ($tabs.length == 2, 'TabStrip has 2 tabs visible');
+		});
+
+
+		test("tab reordering", function() {
+
+			oTabStrip1.setEnableTabReordering(true);
+
+			var $tab = jQuery('#tabstrip1-0');
+			var mOffset = $tab.offset();
+
+			ok (oTabStrip1.getTabs()[0].getText() == 'First tab', 'First Tab is "First Tab"');
+			ok (oTabStrip1.getSelectedIndex() == 0, 'Selected index is 0"');
+
+			qutils.triggerMouseEvent($tab, "mousedown", 0, 0, mOffset.left + 10, mOffset.top + 10);
+			qutils.triggerMouseEvent($tab, "mousemove", 0, 0, mOffset.left + 200, mOffset.top + 10);
+			qutils.triggerMouseEvent($tab, "mouseup");
+
+			ok (oTabStrip1.getTabs()[0].getText() !='First tab', 'First Tab is not "First Tab"');
+			ok (oTabStrip1.getSelectedIndex() == 2, 'Selected index is 1"');
 		});
 
 	</script>

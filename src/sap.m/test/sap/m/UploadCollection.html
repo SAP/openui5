@@ -500,11 +500,6 @@
 			var aItems = jQuery.extend(true, {}, oData).items;
 			var oItem = {};
 			var sUploadedFile = oEvent.getParameter("files")[0].fileName;
-			// at the moment parameter fileName is not set in IE9
-			if (!sUploadedFile) {
-				var aUploadedFile = (oEvent.getParameters().getSource().getProperty("value")).split(/\" "/);
-				sUploadedFile = aUploadedFile[0];
-			}
 			oItem = {
 				"contributor" : "You",
 				"documentId" : jQuery.now().toString(), // generate Id
@@ -525,6 +520,27 @@
 		setTimeout(function () {
 			sap.m.MessageToast.show("UploadComplete event triggered.");
 		}, 3000);
+	};
+
+	var fnBeforeUploadStarts = function(oEvent) {
+		var sHeaderParameterName = "timestamp";
+		if (!oEvent.getParameters().getHeaderParameter(sHeaderParameterName) ) {
+			var oHeaderParameter = new sap.m.UploadCollectionParameter({
+				name: sHeaderParameterName,
+				value: jQuery.now()
+			});
+			oEvent.getParameters().addHeaderParameter(oHeaderParameter);
+		}
+		setTimeout(function () {
+			sap.m.MessageToast.show("BeforeUploadStarts event triggered.");
+		}, 2000);
+	};
+
+	var fnUploadTerminated = function(oEvent) {
+		// get parameter file name
+		var sFileName = oEvent.getParameter("fileName");
+		// get a header parameter (in case no parameter specified, the callback function getHeaderParameter returns all request headers)
+		var oRequestHeaders = oEvent.getParameters().getHeaderParameter();
 	};
 
 	var oAttributeTemplate = new sap.m.ObjectAttribute({
@@ -583,7 +599,9 @@
 		fileRenamed : fnFileRenamed,
 		fileSizeExceed : fnFileSizeExceed,
 		typeMissmatch : fnTypeMissmatch,
-		uploadComplete : fnUploadComplete
+		uploadComplete : fnUploadComplete,
+		beforeUploadStarts : fnBeforeUploadStarts,
+		uploadTerminated : fnUploadTerminated
 	});
 
 	oUploadCollection.setShowSeparators(oComboBox.getSelectedKey());

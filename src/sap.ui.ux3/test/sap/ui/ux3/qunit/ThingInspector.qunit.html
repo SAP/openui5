@@ -1,154 +1,152 @@
 <!DOCTYPE HTML>
 <html>
 
-<!-- 
+<!--
   Tested class: sap.ui.ux3.ThingInspector
   Author: d026828, d049080
 -->
 
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>qUnit Page for sap.ui.ux3.ThingInspector</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>qUnit Page for sap.ui.ux3.ThingInspector</title>
 
-<script id="sap-ui-bootstrap" type="text/javascript"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.ui.ux3,sap.ui.commons">
-	
-</script>
+	<script id="sap-ui-bootstrap" type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.ux3,sap.ui.commons">
 
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
-	media="screen" />
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	</script>
 
+	<link rel="stylesheet"
+		  href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
+		  media="screen" />
+	<script type="text/javascript"
+			src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript"
+			src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript"
+			src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-<!-- Test help functions -->
-<script type="text/javascript">
+	<script type="text/javascript">
 	var c = sap.ui.commons; /* shorthand */
 
 	// helper function to create a row with label and text
 	function createLMatrixLayoutRowRow(sLabel, sText) {
-		var oLabel = new c.Label({
-			text : sLabel + ":"
-		});
-		var oTextView = new c.TextView({
-			text : sText
-		});
+	var oLabel = new c.Label({
+	text : sLabel + ":"
+	});
+	var oTextView = new c.TextView({
+	text : sText
+	});
 
-		var oMLCell1 = new c.layout.MatrixLayoutCell({
-			hAlign : c.layout.HAlign.End,
-			vAlign : c.layout.VAlign.Top,
-			content : [ oLabel ]
-		});
-		var oMLCell2 = new c.layout.MatrixLayoutCell({
-			hAlign : c.layout.HAlign.Begin,
-			vAlign : c.layout.VAlign.Top,
-			content : [ oTextView ]
-		});
+	var oMLCell1 = new c.layout.MatrixLayoutCell({
+	hAlign : c.layout.HAlign.End,
+	vAlign : c.layout.VAlign.Top,
+	content : [ oLabel ]
+	});
+	var oMLCell2 = new c.layout.MatrixLayoutCell({
+	hAlign : c.layout.HAlign.Begin,
+	vAlign : c.layout.VAlign.Top,
+	content : [ oTextView ]
+	});
 
-		return new c.layout.MatrixLayoutRow({
-			cells : [ oMLCell1, oMLCell2 ]
-		});
+	return new c.layout.MatrixLayoutRow({
+	cells : [ oMLCell1, oMLCell2 ]
+	});
 	}
 
 	//event handler for facet event, action and standard action events, for close and open event
 	function facetSelectedEventHandler(oEvent) {
-		ok(true, "facet select event handler has been executed."); // this test tests by just being counted in the respective test
-		var id = oEvent.getParameter("id");
-		equal(id, facet, facet + " Facet should be selected");
-		var oTG1 = new sap.ui.ux3.ThingGroup({
-			title : "Block1"
-		});
-		oTG1.addContent(new c.Button(oThingInspector.getId() + facet + "FacetButton", {
-			text : id
-		}));
-		oThingInspector.addFacetContent(oTG1);
+	ok(true, "facet select event handler has been executed."); // this test tests by just being counted in the respective test
+	var id = oEvent.getParameter("id");
+	equal(id, facet, facet + " Facet should be selected");
+	var oTG1 = new sap.ui.ux3.ThingGroup({
+	title : "Block1"
+	});
+	oTG1.addContent(new c.Button(oThingInspector.getId() + facet + "FacetButton", {
+	text : id
+	}));
+	oThingInspector.addFacetContent(oTG1);
 	}
 	function actionSelectedEventHandler(oEvent) {
-		ok(true, "action select event handler has been executed."); // this test tests by just being counted in the respective test
-		var id = oEvent.getParameter("id");
-		equal(id, action, action + " Action should be selected");
+	ok(true, "action select event handler has been executed."); // this test tests by just being counted in the respective test
+	var id = oEvent.getParameter("id");
+	equal(id, action, action + " Action should be selected");
 	}
 	function feedSubmitEventHandler(oEvent) {
-		ok(true, "feed submit event handler has been executed."); // this test tests by just being counted in the respective test
-		var text = oEvent.getParameter("text"); 
-		equal(text, "my feed entry", "Feed text should be 'my feed entry'");
+	ok(true, "feed submit event handler has been executed."); // this test tests by just being counted in the respective test
+	var text = oEvent.getParameter("text");
+	equal(text, "my feed entry", "Feed text should be 'my feed entry'");
 	}
 	function closeEventHandler(oEvent) {
-		ok(true, "close event handler has been executed."); // this test tests by just being counted in the respective test
+	ok(true, "close event handler has been executed."); // this test tests by just being counted in the respective test
 	}
 	function openEventHandler(oEvent) {
-		ok(true, "open event handler has been executed."); // this test tests by just being counted in the respective test
+	ok(true, "open event handler has been executed."); // this test tests by just being counted in the respective test
 	}
 	function openNewEventHandler(oEvent) {
-		ok(true, "open new event handler has been executed."); // this test tests by just being counted in the respective test
+	ok(true, "open new event handler has been executed."); // this test tests by just being counted in the respective test
 	}
-</script>
+	</script>
 
-<!-- Control initialization -->
-<script type="text/javascript">
-    var oShell = new sap.ui.ux3.Shell("myShell", {
+	<!-- Control initialization -->
+	<script type="text/javascript">
+	var oShell = new sap.ui.ux3.Shell("myShell", {
 	appTitle : "SAPUI5 Gold Reflection Shell",
 	logout : function() {
-		alert("Logout Button has been clicked.");
-		oShell.forceInvalidation();
-		oShell.destroy();
-		oThingInspector();
-		oThingInspector = null;
-		sap.ui.getCore().applyChanges();
+	alert("Logout Button has been clicked.");
+	oShell.forceInvalidation();
+	oShell.destroy();
+	oThingInspector();
+	oThingInspector = null;
+	sap.ui.getCore().applyChanges();
 
 	},
 	search : function(oEvent) {
-		alert("Search triggered: " + oEvent.getParameter("text"));
+	alert("Search triggered: " + oEvent.getParameter("text"));
 	},
 	feedSubmit : function(oEvent) {
-		alert("Feed entry submitted: " + oEvent.getParameter("text"));
+	alert("Feed entry submitted: " + oEvent.getParameter("text"));
 	}
-});
-    oShell.placeAt("uiArea1");
+	});
+	oShell.placeAt("uiArea1");
 	var oThingInspector;
 	oThingInspector = new sap.ui.ux3.ThingInspector("myThingInspector", {
-		icon : "../images/Account_48.png", // put the Account icon
-		firstTitle : "My Thing Inspector", // give a title
-		type : "Account", // give thing type
-		//enableFollowAction:false,
-		actions : [ // add some actions
-		new sap.ui.ux3.ThingAction("survey", {
-			text : "Create Survey"
-		}), new sap.ui.ux3.ThingAction("delete", {
-			text : "Delete"
-		}), new sap.ui.ux3.ThingAction("duplicate", {
-			text : "Duplicate"
-		}) ],
-		facets : [ // add some facets
-		new sap.ui.ux3.NavigationItem("overview", {
-			key : "overview",
-			text : "Overview"
-		}), new sap.ui.ux3.NavigationItem("activities", {
-			key : "activities",
-			text : "Activities"
-		}) ],
-		actionSelected : actionSelectedEventHandler,
-		followSelected : actionSelectedEventHandler,
-		flagSelected : actionSelectedEventHandler,
-		favoriteSelected : actionSelectedEventHandler,
-		feedSubmit : feedSubmitEventHandler,
-		close : closeEventHandler,
-		openNew : openNewEventHandler
+	icon : "../images/Account_48.png", // put the Account icon
+	firstTitle : "My Thing Inspector", // give a title
+	type : "Account", // give thing type
+	//enableFollowAction:false,
+	actions : [ // add some actions
+	new sap.ui.ux3.ThingAction("survey", {
+	text : "Create Survey"
+	}), new sap.ui.ux3.ThingAction("delete", {
+	text : "Delete"
+	}), new sap.ui.ux3.ThingAction("duplicate", {
+	text : "Duplicate"
+	}) ],
+	facets : [ // add some facets
+	new sap.ui.ux3.NavigationItem("overview", {
+	key : "overview",
+	text : "Overview"
+	}), new sap.ui.ux3.NavigationItem("activities", {
+	key : "activities",
+	text : "Activities"
+	}) ],
+	actionSelected : actionSelectedEventHandler,
+	followSelected : actionSelectedEventHandler,
+	flagSelected : actionSelectedEventHandler,
+	favoriteSelected : actionSelectedEventHandler,
+	feedSubmit : feedSubmitEventHandler,
+	close : closeEventHandler,
+	openNew : openNewEventHandler
 	});
 
 	// set content for the header
 	var oTC1 = new sap.ui.ux3.ThingGroup({
-		title : "About"
+	title : "About"
 	});
 	var oTC2 = new sap.ui.ux3.ThingGroup({
-		title : "Contact"
+	title : "Contact"
 	});
 	var oLayout = new c.layout.MatrixLayout();
 	oLayout.addRow(createLMatrixLayoutRowRow("Status", "active"));
@@ -167,317 +165,783 @@
 	oLayout2.addRow(createLMatrixLayoutRowRow("Email", "hugo.m@web.de"));
 	oTC2.addContent(oLayout2);
 	oThingInspector.addHeaderContent(oTC2);
-	
+
 	//TI must be opened after the shell is rendered. Otherwise the sync will not work correctly
 	oShell.addDelegate({onAfterRendering:function() {
-		oThingInspector.open();
-		oThingInspector.attachFacetSelected(facetSelectedEventHandler);
-		oThingInspector.attachOpen(openEventHandler);
-		}});
-</script>
+	oThingInspector.open();
+	oThingInspector.attachFacetSelected(facetSelectedEventHandler);
+	oThingInspector.attachOpen(openEventHandler);
+	}});
+	</script>
 
-<!-- Test functions -->
-<script type="text/javascript">
-	module("Appearance");
+	<!-- Test functions -->
+	<script type="text/javascript">
+			module("Appearance");
 
-	var action;
-	var facet;
+			var action;
+			var facet;
 
-	test("ThingInspector exists", function() {
-		equals(true, true, "...");
-		var oDomRef = jQuery.sap.domById(oThingInspector.getId());
-		ok(oDomRef, "Rendered ThingInspector should exist in the page");
-		equal(oDomRef.className, "sapUiUx3Overlay sapUiUx3TI sapUiShd", "Rendered ThingInspector should have the class 'sapUiUx3TI'");
-	});
-	
-	test("Swatch", function() {
-		var oSwatch = jQuery.sap.domById(oThingInspector.getId() + "-thingViewer-swatch");
-		ok(oSwatch, "Rendered Swatch should exist in the page");
-		equal(oSwatch.className, "sapUiUx3TVIcon", "Rendered Swatch should have the class 'sapUiUx3TVIcon'");
-	});
+			test("ThingInspector exists", function() {
+				equals(true, true, "...");
+				var oDomRef = jQuery.sap.domById(oThingInspector.getId());
+				ok(oDomRef, "Rendered ThingInspector should exist in the page");
+				equal(oDomRef.className, "sapUiUx3Overlay sapUiUx3TI sapUiShd", "Rendered ThingInspector should have the class 'sapUiUx3TI'");
+			});
 
-	test("Facets", function() {
-		//number of navigation items must be the same as number of facets
-		var facets = oThingInspector.getFacets();
-		var $facets = jQuery(".sapUiUx3TIFacetBar");
-		for ( var i = 0; i < facets.length; i++) {
-			ok(jQuery.sap.domById(facets[i].sId), "Rendered ThingInspector Facet " + facets[i].sId + " should exist in the page");
-		}
-	});
+			test("Swatch", function() {
+				var oSwatch = jQuery.sap.domById(oThingInspector.getId() + "-thingViewer-swatch");
+				ok(oSwatch, "Rendered Swatch should exist in the page");
+				equal(oSwatch.className, "sapUiUx3TVIcon", "Rendered Swatch should have the class 'sapUiUx3TVIcon'");
+			});
 
-	test("Toolbar",	function() {
-		var oActionBar = oThingInspector.getActionBar();
-		ok(oActionBar, "ActionBar should exist");
-		ok(jQuery(".sapUiUx3ActionBar")[0], "ActionBar rendering ok");
-		oThingInspector.setActionBar();
-		sap.ui.getCore().applyChanges();
-		ok(!jQuery(".sapUiUx3ActionBar")[0], "ActionBar should be destroyed");
-		oThingInspector.setActionBar(oActionBar);
-	});
+			test("Facets", function() {
+				//number of navigation items must be the same as number of facets
+				var facets = oThingInspector.getFacets();
+				var $facets = jQuery(".sapUiUx3TIFacetBar");
+				for ( var i = 0; i < facets.length; i++) {
+					ok(jQuery.sap.domById(facets[i].sId), "Rendered ThingInspector Facet " + facets[i].sId + " should exist in the page");
+				}
+			});
 
-	module("Behaviour");
+			test("Toolbar",	function() {
+				var oActionBar = oThingInspector.getActionBar();
+				ok(oActionBar, "ActionBar should exist");
+				ok(jQuery(".sapUiUx3ActionBar")[0], "ActionBar rendering ok");
+				oThingInspector.setActionBar();
+				sap.ui.getCore().applyChanges();
+				ok(!jQuery(".sapUiUx3ActionBar")[0], "ActionBar should be destroyed");
+				oThingInspector.setActionBar(oActionBar);
+			});
 
-	test("OpenNew Event", function() {
-		expect(1);
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-openNew"), "click", 1, 1, 1, 1);
-	});
-	
-	test("OpenNew via Keyboard Event", function() {
-		expect(2);
-		qutils.triggerKeyboardEvent(oThingInspector.getId() + "-openNew", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		qutils.triggerKeyboardEvent(oThingInspector.getId() + "-openNew", jQuery.sap.KeyCodes.SPACE, false, false, false);
-	});
+			module("Behaviour");
 
-	test("ActionSelected Event", function() {
-		expect(2);
-		action = "delete";
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-deleteButton"), "click", 1, 1, 1, 1);
-	});
+			test("OpenNew Event", function() {
+				expect(1);
+				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-openNew"), "click", 1, 1, 1, 1);
+			});
 
-	test("FavoriteSelected Event", function() {
-		expect(7);
-		ok(!oThingInspector.getFavoriteState(), "Favorite State is false");
-		action = "favorite";
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Favorite"), "click", 1, 1, 1, 1);
-		ok(oThingInspector.getFavoriteState(), "Favorite State is true");
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Favorite"), "click", 1, 1, 1, 1);
-		ok(!oThingInspector.getFavoriteState(), "Favorite State is false");
-	});
+			test("OpenNew via Keyboard Event", function() {
+				expect(2);
+				qutils.triggerKeyboardEvent(oThingInspector.getId() + "-openNew", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				qutils.triggerKeyboardEvent(oThingInspector.getId() + "-openNew", jQuery.sap.KeyCodes.SPACE, false, false, false);
+			});
 
-	test("Disable Favorite Action", function() {
-		expect(1);
-		oThingInspector.setFavoriteActionEnabled(false);
-		ok(!oThingInspector.getFavoriteActionEnabled(), "Favorite Action enabled is false");
-	});
-	
-	asyncTest("Favorite Action disabled: no event anymore", function() {
-		expect(1);
-		action = "favorite";
-		setTimeout(function() {
-			ok(!jQuery.sap.byId(oThingInspector.getId() + "-favorite")[0], "Action not rendered anymore");
-			qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-favorite"), "click", 1, 1, 1, 1);
-			start();
-		},500);
-	});
-	
-	test("FlagSelected Event", function() {
-		expect(7);
-		ok(!oThingInspector.getFlagState(), "Flag State is false");
-		action = "flag";
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Flag"), "click", 1, 1, 1, 1);
-		ok(oThingInspector.getFlagState(), "Flag State is true");
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Flag"), "click", 1, 1, 1, 1);
-		ok(!oThingInspector.getFlagState(), "Flag State is false");
-	});
-	
-	test("FlagSelected via Keyboard Event", function() {
-		expect(7);
-		ok(!oThingInspector.getFlagState(), "Flag State is false");
-		action = "flag";
-		//jQuery.sap.byId(oThingInspector.getId() + "-flag").focus();
-		qutils.triggerKeyboardEvent(oThingInspector.getId() + "-actionBar-Flag", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		ok(oThingInspector.getFlagState(), "Flag State is true");
-		qutils.triggerKeyboardEvent(oThingInspector.getId() + "-actionBar-Flag", jQuery.sap.KeyCodes.SPACE, false, false, false);
-		ok(!oThingInspector.getFlagState(), "Flag State is false");
-	});
-	
-	test("Disable Flag Action", function() {
-		expect(1);
-		oThingInspector.setFlagActionEnabled(false);
-		ok(!oThingInspector.getFlagActionEnabled(), "Flag Action enabled is false");
-	});
-	
-	asyncTest("Flag Action disabled: no event anymore", function() {
-		expect(1);
-		action = "flag";
-		setTimeout(function() {
-			ok(!jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Flag")[0], "Action not rendered anymore");
-			qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Flag"), "click", 1, 1, 1, 1);
-			start();
-		},500);
-	});
-	
-	asyncTest("UpdateSelected Event", function() {
-		expect(2);
-		action = "update";
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Update"), "click", 1, 1, 1, 1);
-		setTimeout(function() {
-			ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-UpdateActionPopup"), "Rendered update popup should exist in the page");
-			//click again should hide comment popup
-			qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Update"), "click", 1, 1, 1, 1);
-			setTimeout(function() {
-				start();
-				equal(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup").length, 0,
-						"Rendered update popup was removed in the page");
-			}, 500);
-		}, 500);
-	});
+			test("ActionSelected Event", function() {
+				expect(2);
+				action = "delete";
+				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-deleteButton"), "click", 1, 1, 1, 1);
+			});
 
-	asyncTest("FeedSubmit Event", function() {
-		expect(5);
-		action = "update";
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Update"), "click", 1, 1, 1, 1);
-		setTimeout(function() {
-			ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-UpdateActionPopup"), "Rendered update popup should exist in the page");
-			jQuery(jQuery(".sapUiFeederInput")[0]).focus();
-			setTimeout(function() {
-				jQuery(".sapUiFeederInput")[0].innerHTML = "my feed entry";
+			test("FavoriteSelected Event", function() {
+				expect(7);
+				ok(!oThingInspector.getFavoriteState(), "Favorite State is false");
+				action = "favorite";
+				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Favorite"), "click", 1, 1, 1, 1);
+				ok(oThingInspector.getFavoriteState(), "Favorite State is true");
+				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Favorite"), "click", 1, 1, 1, 1);
+				ok(!oThingInspector.getFavoriteState(), "Favorite State is false");
+			});
+
+			test("Disable Favorite Action", function() {
+				expect(1);
+				oThingInspector.setFavoriteActionEnabled(false);
+				ok(!oThingInspector.getFavoriteActionEnabled(), "Favorite Action enabled is false");
+			});
+
+			asyncTest("Favorite Action disabled: no event anymore", function() {
+				expect(1);
+				action = "favorite";
 				setTimeout(function() {
-					jQuery(jQuery(".sapUiFeederInput")[0]).keyup();
+					ok(!jQuery.sap.byId(oThingInspector.getId() + "-favorite")[0], "Action not rendered anymore");
+					qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-favorite"), "click", 1, 1, 1, 1);
+					start();
+				},500);
+			});
+
+			test("FlagSelected Event", function() {
+				expect(7);
+				ok(!oThingInspector.getFlagState(), "Flag State is false");
+				action = "flag";
+				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Flag"), "click", 1, 1, 1, 1);
+				ok(oThingInspector.getFlagState(), "Flag State is true");
+				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Flag"), "click", 1, 1, 1, 1);
+				ok(!oThingInspector.getFlagState(), "Flag State is false");
+			});
+
+			test("FlagSelected via Keyboard Event", function() {
+				expect(7);
+				ok(!oThingInspector.getFlagState(), "Flag State is false");
+				action = "flag";
+				//jQuery.sap.byId(oThingInspector.getId() + "-flag").focus();
+				qutils.triggerKeyboardEvent(oThingInspector.getId() + "-actionBar-Flag", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				ok(oThingInspector.getFlagState(), "Flag State is true");
+				qutils.triggerKeyboardEvent(oThingInspector.getId() + "-actionBar-Flag", jQuery.sap.KeyCodes.SPACE, false, false, false);
+				ok(!oThingInspector.getFlagState(), "Flag State is false");
+			});
+
+			test("Disable Flag Action", function() {
+				expect(1);
+				oThingInspector.setFlagActionEnabled(false);
+				ok(!oThingInspector.getFlagActionEnabled(), "Flag Action enabled is false");
+			});
+
+			asyncTest("Flag Action disabled: no event anymore", function() {
+				expect(1);
+				action = "flag";
+				setTimeout(function() {
+					ok(!jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Flag")[0], "Action not rendered anymore");
+					qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Flag"), "click", 1, 1, 1, 1);
+					start();
+				},500);
+			});
+
+			asyncTest("UpdateSelected Event", function() {
+				expect(2);
+				action = "update";
+				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Update"), "click", 1, 1, 1, 1);
+				setTimeout(function() {
+					ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-UpdateActionPopup"), "Rendered update popup should exist in the page");
+					//click again should hide comment popup
+					qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Update"), "click", 1, 1, 1, 1);
 					setTimeout(function() {
-						//click on feed submit button should hide comment popup
-						qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + '-actionBar-Feeder-send'), "click", 1, 1, 1, 1);
+						start();
+						equal(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup").length, 0,
+								"Rendered update popup was removed in the page");
+					}, 500);
+				}, 500);
+			});
+
+			asyncTest("FeedSubmit Event", function() {
+				expect(5);
+				action = "update";
+				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Update"), "click", 1, 1, 1, 1);
+				setTimeout(function() {
+					ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-UpdateActionPopup"), "Rendered update popup should exist in the page");
+					jQuery(jQuery(".sapUiFeederInput")[0]).focus();
+					setTimeout(function() {
+						jQuery(".sapUiFeederInput")[0].innerHTML = "my feed entry";
 						setTimeout(function() {
-							start();
-							ok(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup"), "Rendered comment popup should exist in the page");
-							equal(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup").length, 0,
-							"Rendered update popup was removed in the page");
+							jQuery(jQuery(".sapUiFeederInput")[0]).keyup();
+							setTimeout(function() {
+								//click on feed submit button should hide comment popup
+								qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + '-actionBar-Feeder-send'), "click", 1, 1, 1, 1);
+								setTimeout(function() {
+									start();
+									ok(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup"), "Rendered comment popup should exist in the page");
+									equal(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-UpdateActionPopup").length, 0,
+											"Rendered update popup was removed in the page");
+								}, 500);
+							}, 500);
 						}, 500);
 					}, 500);
 				}, 500);
-			}, 500);
-		}, 500);
-	});	
-	test("Disable Update Action", function() {
-		expect(1);
-		oThingInspector.setUpdateActionEnabled(false);
-		ok(!oThingInspector.getUpdateActionEnabled(), "Flag Action enabled is false");
-	});
-	
-	asyncTest("Update Action disabled: no event anymore", function() {
-		expect(1);
-		action = "update";
-		setTimeout(function() {
-			ok(!jQuery.sap.byId(oThingInspector.getId() + "-update")[0], "Action not rendered anymore");
-			qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-update"), "click", 1, 1, 1, 1);
-			start();
-		},500);
-	});
+			});
 
-	asyncTest("Open Method", function() {
-		expect(5);
-		facet = "overview";
-		oThingInspector.close();
-		oThingInspector.setSelectedFacet(null);
-		setTimeout(function() {
-			oThingInspector.open();
-			ok(oThingInspector.isOpen(), "Rendered ThingInspector is open");
-			setTimeout(
-					function() {
-						ok(jQuery.sap.domById(oThingInspector.getId() + facet + "FacetButton"), "Rendered Facet Content for facet " + facet
-								+ " should exist in the page");
-						start();
-					}, 500);
-		}, 500);
-	});
+			test("Disable Update Action", function() {
+				expect(1);
+				oThingInspector.setUpdateActionEnabled(false);
+				ok(!oThingInspector.getUpdateActionEnabled(), "Flag Action enabled is false");
+			});
 
-	asyncTest("FacetSelected Event", function() {
-		expect(3);
-		facet = "activities";
-		qutils.triggerMouseEvent(jQuery.sap.domById("activities"), "click", 1, 1, 1, 1);
-		setTimeout(
-				function() {
+			asyncTest("Update Action disabled: no event anymore", function() {
+				expect(1);
+				action = "update";
+				setTimeout(function() {
+					ok(!jQuery.sap.byId(oThingInspector.getId() + "-update")[0], "Action not rendered anymore");
+					qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-update"), "click", 1, 1, 1, 1);
 					start();
-					ok(jQuery.sap.domById(oThingInspector.getId() + facet + "FacetButton"), "Rendered Facet Content for facet " + facet
-							+ " should exist in the page");
+				},500);
+			});
+
+			asyncTest("Open Method", function() {
+				expect(5);
+				facet = "overview";
+				oThingInspector.close();
+				oThingInspector.setSelectedFacet(null);
+				setTimeout(function() {
+					oThingInspector.open();
+					ok(oThingInspector.isOpen(), "Rendered ThingInspector is open");
+					setTimeout(
+							function() {
+								ok(jQuery.sap.domById(oThingInspector.getId() + facet + "FacetButton"), "Rendered Facet Content for facet " + facet
+										+ " should exist in the page");
+								start();
+							}, 500);
 				}, 500);
-	});
+			});
 
-	asyncTest("FollowSelected Event", function() {
-		expect(19);
-		equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
-		action = "follow";
-		// trigger follow
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Follow"), "click", 1, 1, 1, 1);
-		equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Follow, "Follow State is sap.ui.ux3.FollowActionState.Follow");
-		// menu must exist after click
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Follow"), "click", 1, 1, 1, 1);
-		ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-followActionMenu"), "Rendered Follow Action menu should exist in the page");
+			asyncTest("FacetSelected Event", function() {
+				expect(3);
+				facet = "activities";
+				qutils.triggerMouseEvent(jQuery.sap.domById("activities"), "click", 1, 1, 1, 1);
+				setTimeout(
+						function() {
+							start();
+							ok(jQuery.sap.domById(oThingInspector.getId() + facet + "FacetButton"), "Rendered Facet Content for facet " + facet
+									+ " should exist in the page");
+						}, 500);
+			});
 
-		setTimeout(function() {
-			// menu entries with unhold and unfollow must exist
-			ok(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-holdState"), "Rendered Follow Action menu with holdState should exist in the page");
-			ok(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-unfollowState"), "Rendered Follow Action menu with unfollowState should exist in the page");
-			// trigger hold
-			qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-holdState"), "click", 1, 1, 1, 1);
-			setTimeout(function() {
-				equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Hold, "Follow State is sap.ui.ux3.FollowActionState.Hold");
+			asyncTest("FollowSelected Event", function() {
+				expect(19);
+				equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
+				action = "follow";
+				// trigger follow
+				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Follow"), "click", 1, 1, 1, 1);
+				equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Follow, "Follow State is sap.ui.ux3.FollowActionState.Follow");
 				// menu must exist after click
 				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Follow"), "click", 1, 1, 1, 1);
 				ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-followActionMenu"), "Rendered Follow Action menu should exist in the page");
-	
-				setTimeout(
-						function() {
-							// menu entries with unhold and unfollow must exist
-							ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-unholdState"),
-									"Rendered Follow Action menu with unholdState should exist in the page");
-							ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-unfollowState"),
-									"Rendered Follow Action menu with unfollowState should exist in the page");
-							// trigger unfollow
-							qutils.triggerMouseEvent(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-unfollowState"), "click", 1, 1, 1, 1);
-							equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
-	
-							setTimeout(function() {
-								
-								// menu entries with hold, unhold and unfollow must not exist only follow
-								ok(!jQuery.sap.domById(oThingInspector.getId() + "-actionBar-holdState"),
-										"Rendered Follow Action menu with holdState should not exists in the page");
-								ok(!jQuery.sap.domById(oThingInspector.getId() + "-actionBar-unholdState"),
-										"Rendered Follow Action menu with unholdState should not exists in the page");
-								ok(!jQuery.sap.domById(oThingInspector.getId() + "-actionBar-unfollowState"),
-										"Rendered Follow Action menu with unfollowState should not exists in the page");
-								start();
-							}, 500);
-						}, 500);
-			}, 500);			
-		}, 500);
 
-	});
-	
-	test("Disable Follow Action", function() {
-		expect(1);
-		oThingInspector.setFollowActionEnabled(false);
-		ok(!oThingInspector.getFollowActionEnabled(), "Follow Action enabled is false");
-	});
-	
-	asyncTest("Follow Action disabled: no event anymore", function() {
-		expect(1);
-		action = "follow";
-		setTimeout(function() {
-			ok(!jQuery.sap.byId(oThingInspector.getId() + "-follow")[0], "Action not rendered anymore");
-			qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-follow"), "click", 1, 1, 1, 1);
-			start();
-		},500);
-	});
-	
-	// at the end close
-	asyncTest("Close Event", function() {
-		expect(3);
-		ok(oThingInspector.isOpen(), "Rendered ThingInspector is open");
-		
-		qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-close"), "click", 1, 1, 1, 1);
-		setTimeout(function() {
-			start();
-			ok(!oThingInspector.isOpen(), "Rendered ThingInspector is not open");
-		}, 500);
-	});
-	
-	test("Destroy and remove control", function() {
-		oThingInspector.destroy();
-		sap.ui.getCore().applyChanges();
-		var oDomRef = jQuery.sap.domById(oThingInspector.getId());
-		ok(!oDomRef, "Rendered ThingInspector should not exist in the page after destruction");
-		oShell.destroy();
-	});
-	
-</script>
+				setTimeout(function() {
+					// menu entries with unhold and unfollow must exist
+					ok(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-holdState"), "Rendered Follow Action menu with holdState should exist in the page");
+					ok(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-unfollowState"), "Rendered Follow Action menu with unfollowState should exist in the page");
+					// trigger hold
+					qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-holdState"), "click", 1, 1, 1, 1);
+					setTimeout(function() {
+						equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Hold, "Follow State is sap.ui.ux3.FollowActionState.Hold");
+						// menu must exist after click
+						qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-actionBar-Follow"), "click", 1, 1, 1, 1);
+						ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-followActionMenu"), "Rendered Follow Action menu should exist in the page");
+
+						setTimeout(
+								function() {
+									// menu entries with unhold and unfollow must exist
+									ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-unholdState"),
+											"Rendered Follow Action menu with unholdState should exist in the page");
+									ok(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-unfollowState"),
+											"Rendered Follow Action menu with unfollowState should exist in the page");
+									// trigger unfollow
+									qutils.triggerMouseEvent(jQuery.sap.domById(oThingInspector.getId() + "-actionBar-unfollowState"), "click", 1, 1, 1, 1);
+									equal(oThingInspector.getFollowState(), sap.ui.ux3.FollowActionState.Default, "Follow State is sap.ui.ux3.FollowActionState.Default");
+
+									setTimeout(function() {
+
+										// menu entries with hold, unhold and unfollow must not exist only follow
+										ok(!jQuery.sap.domById(oThingInspector.getId() + "-actionBar-holdState"),
+												"Rendered Follow Action menu with holdState should not exists in the page");
+										ok(!jQuery.sap.domById(oThingInspector.getId() + "-actionBar-unholdState"),
+												"Rendered Follow Action menu with unholdState should not exists in the page");
+										ok(!jQuery.sap.domById(oThingInspector.getId() + "-actionBar-unfollowState"),
+												"Rendered Follow Action menu with unfollowState should not exists in the page");
+										start();
+									}, 500);
+								}, 500);
+					}, 500);
+				}, 500);
+
+			});
+
+			test("Disable Follow Action", function() {
+				expect(1);
+				oThingInspector.setFollowActionEnabled(false);
+				ok(!oThingInspector.getFollowActionEnabled(), "Follow Action enabled is false");
+			});
+
+			asyncTest("Follow Action disabled: no event anymore", function() {
+				expect(1);
+				action = "follow";
+				setTimeout(function() {
+					ok(!jQuery.sap.byId(oThingInspector.getId() + "-follow")[0], "Action not rendered anymore");
+					qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-follow"), "click", 1, 1, 1, 1);
+					start();
+				},500);
+			});
+
+			// at the end close
+			asyncTest("Close Event", function() {
+				expect(3);
+				ok(oThingInspector.isOpen(), "Rendered ThingInspector is open");
+
+				qutils.triggerMouseEvent(jQuery.sap.byId(oThingInspector.getId() + "-close"), "click", 1, 1, 1, 1);
+				setTimeout(function() {
+					start();
+					ok(!oThingInspector.isOpen(), "Rendered ThingInspector is not open");
+				}, 500);
+			});
+
+			test("Destroy and remove control", function() {
+				oThingInspector.destroy();
+				sap.ui.getCore().applyChanges();
+				var oDomRef = jQuery.sap.domById(oThingInspector.getId());
+				ok(!oDomRef, "Rendered ThingInspector should not exist in the page after destruction");
+				oShell.destroy();
+			});
+		QUnit.module("Aggregation overrides", {
+			setup : function () {
+				this.oTI = new sap.ui.ux3.ThingInspector({
+
+				});
+				this.oTI.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			teardown : function () {
+				this.oTI.destroy();
+				this.oTI = null;
+			}
+		});
+
+		QUnit.test("insertAction",function(assert){
+			var action1 = new sap.ui.ux3.ThingAction("survey1", {
+				text : "Create Survey"
+			});
+			var action2 = new sap.ui.ux3.ThingAction("survey2", {
+				text : "Create Survey"
+			});
+
+			this.oTI.insertAction(action1, 0);
+			this.oTI.insertAction(action2, 1);
+
+			var result = this.oTI.getActions()[0];
+
+			assert.strictEqual(this.oTI.getActions().indexOf(action1), 0, "action is inserted on the correct position");
+			assert.strictEqual(this.oTI.getActions().indexOf(action2), 1, "action is inserted on the correct position");
+		});
+
+		QUnit.test("removeAction",function(assert){
+			var action = new sap.ui.ux3.ThingAction("survey3", {
+				text : "Create Survey"
+			});
+			this.oTI.insertAction(action, 0);
+			this.oTI.removeAction(action);
+			assert.strictEqual(this.oTI.getActions().indexOf(action), -1, "action is removed");
+		});
+
+		QUnit.test("removeAllActions",function(assert){
+			var action1 = new sap.ui.ux3.ThingAction("survey4", {
+				text : "Create Survey"
+			});
+
+			var action2 = new sap.ui.ux3.ThingAction("survey5", {
+				text : "Create Survey"
+			});
+
+			this.oTI.insertAction(action1, 0);
+			this.oTI.insertAction(action2, 1);
+
+			this.oTI.removeAllActions();
+			assert.strictEqual(this.oTI.getActions().length, 0, "all actions are removed");
+		});
+
+		QUnit.test("destroyActions",function(assert){
+			var action1 = new sap.ui.ux3.ThingAction("survey6", {
+				text : "Create Survey"
+			});
+
+			this.oTI.addAction(action1);
+
+			this.oTI.destroyActions();
+			assert.strictEqual(this.oTI.getActions().length, 0, "all actions are destroyed");
+		});
+
+		QUnit.test("indexOfAction",function(assert){
+			var action1 = new sap.ui.ux3.ThingAction("action1", {
+				text : "Create Survey"
+			});
+
+			var action2 = new sap.ui.ux3.ThingAction("action2", {
+				text : "Create Survey"
+			});
+
+			var action3 = new sap.ui.ux3.ThingAction("action3", {
+				text : "Create Survey"
+			});
+
+			this.oTI.insertAction(action1, 0);
+			this.oTI.insertAction(action2, 1);
+			this.oTI.insertAction(action3, 2);
+
+			assert.strictEqual(this.oTI.indexOfAction(action1), 0, "action is inserted on the correct position");
+			assert.strictEqual(this.oTI.indexOfAction(action2), 1, "action is inserted on the correct position");
+			assert.strictEqual(this.oTI.indexOfAction(action3), 2, "action is inserted on the correct position");
+		});
+
+		QUnit.test("getFacets",function(assert){
+
+			var facet1 = new sap.ui.ux3.NavigationItem("overview1", {
+				key: "overview",
+				text: "Overview"
+			});
+			var facet2 = new sap.ui.ux3.NavigationItem("overview2", {
+				key: "overview",
+				text: "Overview"
+			});
+
+			assert.strictEqual(this.oTI.getFacets().length, 0, "there are no facets added");
+
+			this.oTI.addFacet(facet1);
+			this.oTI.addFacet(facet2);
+			assert.strictEqual(this.oTI.getFacets().length, 2, "there are two facets added");
+
+			var result = this.oTI.getFacets()[0];
+			assert.strictEqual(result, facet1, "the added facets exists");
+
+		});
+
+		QUnit.test("insertFacets",function(assert){
+
+			var facet1 = new sap.ui.ux3.NavigationItem("overview3", {
+				key: "overview",
+				text: "Overview"
+			});
+			var facet2 = new sap.ui.ux3.NavigationItem("overview4", {
+				key: "overview",
+				text: "Overview"
+			});
+
+			this.oTI.insertFacet(facet1, 0);
+			this.oTI.insertFacet(facet2, 1);
+
+			var result = this.oTI.getFacets()[0];
+			assert.strictEqual(this.oTI.getFacets().indexOf(facet1), 0, "the inserted facets exists");
+			assert.strictEqual(this.oTI.getFacets().indexOf(facet2), 1, "the inserted facets exists");
+
+		});
+
+		QUnit.test("removeFacet",function(assert){
+
+			var facet1 = new sap.ui.ux3.NavigationItem("overview5", {
+				key: "overview",
+				text: "Overview"
+			});
+
+			this.oTI.insertFacet(facet1, 0);
+			this.oTI.removeFacet(facet1);
+
+			var result = this.oTI.getFacets()[0];
+			assert.strictEqual(this.oTI.getFacets().indexOf(facet1), -1, "the facet is removed");
+
+		});
+		QUnit.test("removeAllFacets",function(assert){
+
+			var facet1 = new sap.ui.ux3.NavigationItem("overview6", {
+				key: "overview",
+				text: "Overview"
+			});
+			var facet2 = new sap.ui.ux3.NavigationItem("overview7", {
+				key: "overview",
+				text: "Overview"
+			});
+
+			this.oTI.insertFacet(facet1, 0);
+			this.oTI.insertFacet(facet2, 1);
+			this.oTI.removeAllFacets();
+
+			assert.strictEqual(this.oTI.getFacets().length, 0, "all facets are removed");
+		});
+
+		QUnit.test("destroyFacets",function(assert){
+
+			var facet1 = new sap.ui.ux3.NavigationItem("overview8", {
+				key: "overview",
+				text: "Overview"
+			});
+			var facet2 = new sap.ui.ux3.NavigationItem("overview9", {
+				key: "overview",
+				text: "Overview"
+			});
+
+			this.oTI.insertFacet(facet1, 0);
+			this.oTI.insertFacet(facet2, 1);
+			this.oTI.destroyFacets();
+
+			assert.strictEqual(this.oTI.getFacets().length, 0, "all facets are destroyed");
+		});
+
+		QUnit.test("setFollowState",function(assert){
+
+			assert.strictEqual(this.oTI.getFollowState(), sap.ui.ux3.FollowActionState.Default, "follow state is set correctly");
+
+			this.oTI.setFollowState(sap.ui.ux3.FollowActionState.Follow);
+			assert.strictEqual(this.oTI.getFollowState(sap.ui.ux3.FollowActionState.Follow), sap.ui.ux3.FollowActionState.Follow, "follow state is set correctly");
+
+		});
+
+		QUnit.test("setFlagState",function(assert){
+
+			assert.strictEqual(this.oTI.getFlagState(), false, "flag state is set correctly");
+
+			this.oTI.setFlagState(true);
+			assert.strictEqual(this.oTI.getFlagState(), true, "flag state is set correctly");
+		});
+
+		QUnit.test("setFavoriteState",function(assert){
+			this.oTI.setFavoriteState(false);
+			assert.strictEqual(this.oTI.getFavoriteState(), false, "favorite state is set correctly");
+		});
+
+		QUnit.test("setIcon",function(assert){
+			this.oTI.setIcon("sap-icon://home");
+			assert.strictEqual(this.oTI.getIcon(), "sap-icon://home", "icon is set correctly");
+		});
+
+		QUnit.test("setType",function(assert){
+
+			assert.strictEqual(this.oTI.getType(), "", "type is set correctly - the default value is null");
+
+			this.oTI.setType("Test type");
+			assert.strictEqual(this.oTI.getType(), "Test type", "type is set correctly");
+
+		});
+
+		QUnit.test("insertFacetContent",function(assert){
+
+			var facet1 = new sap.ui.ux3.ThingGroup("overview10", {
+				text: "Overview"
+			});
+
+			this.oTI.insertFacetContent(facet1, 0);
+			assert.strictEqual(this.oTI.getFacetContent()[0], facet1, "the content is inserted");
+		});
+
+		QUnit.test("addFacetContent",function(assert){
+
+			var facet1 = new sap.ui.ux3.ThingGroup("overview11", {
+				text: "Overview"
+			});
+
+			this.oTI.addFacetContent(facet1);
+			assert.strictEqual(this.oTI.getFacetContent()[0], facet1, "the content is added");
+		});
+
+		QUnit.test("removeFacetContent",function(assert){
+
+			var facet1 = new sap.ui.ux3.ThingGroup("overview12", {
+				text: "Overview"
+			});
+
+			this.oTI.addFacetContent(facet1);
+			this.oTI.removeFacetContent(facet1);
+
+			var result = this.oTI.getFacetContent()[0];
+			assert.strictEqual(this.oTI.getFacetContent().indexOf(facet1), -1, "the facet content is removed");
+		});
+
+		QUnit.test("removeAllFacetContent",function(assert){
+
+			var facet1 = new sap.ui.ux3.ThingGroup("overview13", {
+				text: "Overview"
+			});
+			var facet2 = new sap.ui.ux3.ThingGroup("overview14", {
+				text: "Overview"
+			});
+
+			this.oTI.addFacetContent(facet1);
+			this.oTI.addFacetContent(facet2);
+			this.oTI.removeAllFacetContent();
+
+			var result = this.oTI.getFacetContent()[0];
+			assert.strictEqual(this.oTI.getFacetContent().length, 0, "all facets are removed");
+		});
+
+		QUnit.test("destroyFacetContent",function(assert){
+
+			var facet1 = new sap.ui.ux3.ThingGroup("overview15", {
+				text: "Overview"
+			});
+
+			this.oTI.addFacetContent(facet1);
+			this.oTI.destroyFacetContent(facet1);
+
+			var result = this.oTI.getFacetContent()[0];
+			assert.strictEqual(this.oTI.getFacetContent().indexOf(facet1), -1, "the facet content is destroyed");
+		});
+
+		QUnit.test("indexOfFacetContent",function(assert){
+			var facet1 = new sap.ui.ux3.ThingGroup("overview16", {
+				text: "Overview"
+			});
+
+			var facet2 = new sap.ui.ux3.ThingGroup("overview17", {
+				text: "Overview"
+			});
+
+			var facet3 = new sap.ui.ux3.ThingGroup("overview18", {
+				text: "Overview"
+			});
+
+			this.oTI.insertFacetContent(facet1, 0);
+			this.oTI.insertFacetContent(facet2, 1);
+			this.oTI.insertFacetContent(facet3, 2);
+
+			assert.strictEqual(this.oTI.indexOfFacetContent(facet1), 0, "facet content is inserted on the correct position");
+			assert.strictEqual(this.oTI.indexOfFacetContent(facet2), 1, "facet content is inserted on the correct position");
+			assert.strictEqual(this.oTI.indexOfFacetContent(facet3), 2, "facet content is inserted on the correct position");
+		});
+
+		QUnit.test("destroyActionBar",function(assert){
+
+			var facet1 = new sap.ui.ux3.ActionBar("overview19", {
+				text: "Overview"
+			});
+
+			this.oTI.setActionBar(facet1);
+			this.oTI.destroyActionBar(facet1);
+
+			assert.strictEqual(this.oTI.getActionBar(), null, "the action bar is destroyed");
+		});
+
+		QUnit.test("insertHeaderContent",function(assert){
+
+			var facet1 = new sap.ui.ux3.ThingGroup("overview20", {
+				text: "Overview"
+			});
+
+			this.oTI.insertHeaderContent(facet1, 0);
+			assert.strictEqual(this.oTI.getHeaderContent()[0], facet1, "the header content is inserted");
+		});
+
+		QUnit.test("addHeaderContent",function(assert){
+
+			var facet1 = new sap.ui.ux3.ThingGroup("overview21", {
+				text: "Overview"
+			});
+
+			this.oTI.addHeaderContent(facet1);
+			assert.strictEqual(this.oTI.getHeaderContent()[0], facet1, "the header content is added");
+		});
+
+		QUnit.test("removeHeaderContent ",function(assert){
+
+			var facet1 = new sap.ui.ux3.ThingGroup("overview22", {
+				text: "Overview"
+			});
+
+			this.oTI.addHeaderContent (facet1);
+			assert.strictEqual(this.oTI.getHeaderContent()[0], facet1, "the header content is added");
+
+			this.oTI.removeHeaderContent (facet1);
+			assert.strictEqual(this.oTI.getHeaderContent ().indexOf(facet1), -1, "the header content is removed");
+		});
+
+		QUnit.test("removeAllHeaderContent",function(assert){
+
+			var facet1 = new sap.ui.ux3.ThingGroup("overview23", {
+				text: "Overview"
+			});
+			var facet2 = new sap.ui.ux3.ThingGroup("overview24", {
+				text: "Overview"
+			});
+
+			this.oTI.addHeaderContent(facet1);
+			assert.strictEqual(this.oTI.getHeaderContent()[0], facet1, "the header content is added");
+
+			this.oTI.addHeaderContent(facet2);
+			this.oTI.removeAllHeaderContent();
+
+			var result = this.oTI.getHeaderContent()[0];
+			assert.strictEqual(this.oTI.getHeaderContent().length, 0, "all header content is removed");
+		});
+
+		QUnit.test("destroyHeaderContent",function(assert){
+
+			var facet1 = new sap.ui.ux3.ThingGroup("overview25", {
+				text: "Overview"
+			});
+
+			this.oTI.addHeaderContent (facet1);
+			assert.strictEqual(this.oTI.getHeaderContent()[0], facet1, "the header content is added");
+
+			this.oTI.destroyHeaderContent(facet1);
+			assert.strictEqual(this.oTI.getHeaderContent().indexOf(facet1), -1, "the header content is destroyed");
+		});
+
+		QUnit.test("indexOfHeaderContent ",function(assert){
+			var facet1 = new sap.ui.ux3.ThingGroup("overview26", {
+				text: "Overview"
+			});
+
+			var facet2 = new sap.ui.ux3.ThingGroup("overview27", {
+				text: "Overview"
+			});
+
+			var facet3 = new sap.ui.ux3.ThingGroup("overview28", {
+				text: "Overview"
+			});
+
+			this.oTI.insertHeaderContent(facet1, 0);
+			this.oTI.insertHeaderContent(facet2, 1);
+			this.oTI.insertHeaderContent(facet3, 2);
+
+			assert.strictEqual(this.oTI.indexOfHeaderContent(facet1), 0, "header content is inserted on the correct position");
+			assert.strictEqual(this.oTI.indexOfHeaderContent(facet2), 1, "header content is inserted on the correct position");
+			assert.strictEqual(this.oTI.indexOfHeaderContent(facet3), 2, "header content is inserted on the correct position");
+		});
+
+		QUnit.test("setSelectedFacet",function(assert){
+
+			assert.strictEqual(this.oTI.getSelectedFacet(), null, "selected facet is set originally empty");
+
+			this.oTI.setSelectedFacet("test facet");
+			assert.strictEqual(this.oTI.getSelectedFacet(), "test facet", "selected facet is set correctly");
+		});
+
+		QUnit.test("setFavoriteActionEnabled",function(assert){
+
+			assert.strictEqual(this.oTI.getFavoriteActionEnabled(), true, "favorite state is enabled");
+
+			this.oTI.setFavoriteActionEnabled(false);
+			assert.strictEqual(this.oTI.getFavoriteActionEnabled(), false, "favorite state is enabled");
+		});
+
+		QUnit.test("setFlagActionEnabled",function(assert){
+
+			assert.strictEqual(this.oTI.getFlagActionEnabled(), true, "flag action is set enabled");
+
+			this.oTI.setFlagActionEnabled(false);
+			assert.strictEqual(this.oTI.getFlagActionEnabled(), false, "flag action is set enabled");
+		});
+
+		QUnit.test("setUpdateActionEnabled",function(assert){
+
+			assert.strictEqual(this.oTI.getUpdateActionEnabled(), true, "update action is enabled");
+
+			this.oTI.setUpdateActionEnabled(false);
+			assert.strictEqual(this.oTI.getUpdateActionEnabled(), false, "update action is enabled");
+		});
+
+		QUnit.test("setFollowActionEnabled",function(assert){
+
+			assert.strictEqual(this.oTI.getFollowActionEnabled(), true, "follow action is enabled");
+
+			this.oTI.setFollowActionEnabled(false);
+			assert.strictEqual(this.oTI.getFollowActionEnabled(), false, "follow action is enabled");
+		});
+
+		QUnit.test("setFirstTitle",function(assert){
+
+			assert.strictEqual(this.oTI.getFirstTitle(), "", "the default value of the first title is set correctly");
+
+			this.oTI.setFirstTitle("title");
+			assert.strictEqual(this.oTI.getFirstTitle(), "title", "first title is set correctly");
+		});
+
+		QUnit.test("setSecondTitle",function(assert){
+
+			assert.strictEqual(this.oTI.getSecondTitle(), "", "the default value of the second title is set correctly");
+
+			this.oTI.setSecondTitle("second title");
+			assert.strictEqual(this.oTI.getSecondTitle(), "second title", "second title is set correctly");
+		});
+
+		QUnit.test("setHeaderType",function(assert){
+			this.oTI.setHeaderType(sap.ui.ux3.ThingViewerHeaderType.Standard);
+			assert.strictEqual(this.oTI.getHeaderType(sap.ui.ux3.ThingViewerHeaderType.Standard), sap.ui.ux3.ThingViewerHeaderType.Standard, "the default value of the header type is set correctly");
+
+			this.oTI.setHeaderType(sap.ui.ux3.ThingViewerHeaderType.Horizontal);
+			assert.strictEqual(this.oTI.getHeaderType(), sap.ui.ux3.ThingViewerHeaderType.Horizontal, "header type is set correctly");
+		});
+
+
+	</script>
 </head>
 <body>
-	<h1 id="qunit-header">qUnit Page for sap.ui.ux3.ThingInspector</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<ol id="qunit-tests"></ol>
-
-	<div id="uiArea1"></div>
+<h1 id="qunit-header">qUnit Page for sap.ui.ux3.ThingInspector</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<ol id="qunit-tests"></ol>
+<div id="qunit-fixture">test markup, will be hidden</div>
+<div id="uiArea1"></div>
 </body>
 </html>

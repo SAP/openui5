@@ -3,6 +3,7 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>Test Page for sap.m.Select</title>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_bluecrystal"
@@ -1571,6 +1572,7 @@
 
 				// cleanup
 				oMockServer.stop();
+				oMockServer.destroy();
 				oSelect.destroy();
 			});
 
@@ -1604,6 +1606,7 @@
 
 				// cleanup
 				oMockServer.stop();
+				oMockServer.destroy();
 				oSelect.destroy();
 			});
 
@@ -1680,6 +1683,7 @@
 
 				// cleanup
 				oMockServer.stop();
+				oMockServer.destroy();
 				oSelect.destroy();
 			});
 
@@ -1728,6 +1732,7 @@
 
 				// cleanup
 				oSelect.destroy();
+				oModel.destroy();
 			});
 
 			// unit test for CSN 0120061532 0001300097 2014
@@ -1776,6 +1781,7 @@
 
 				// cleanup
 				oSelect.destroy();
+				oModel.destroy();
 			});
 
 			// BCP 1570296493
@@ -2217,6 +2223,7 @@
 
 				// cleanup
 				oSelect.destroy();
+				oModel.destroy();
 			});
 
 			/* ------------------------------ */
@@ -3302,6 +3309,7 @@
 
 				// cleanup
 				oSelect.destroy();
+				oModel.destroy();
 			});
 
 			test("removeItem() it should remove the selected item and change the selection to the first enabled item will be selected if any (test case 2)", function() {
@@ -3374,6 +3382,7 @@
 
 				// cleanup
 				oSelect.destroy();
+				oModel.destroy();
 			});
 
 			test("removeItem() it should remove the selected item and change the selection to null (test case 3)", function() {
@@ -4761,6 +4770,7 @@
 
 				// cleanup
 				oSelect.destroy();
+				oModel.destroy();
 			});
 
 			/* ------------------------------ */
@@ -4931,6 +4941,7 @@
 
 				// cleanup
 				oSelect.destroy();
+				oModel.destroy();
 			});
 
 			/* ------------------------------------ */
@@ -5199,6 +5210,7 @@
 
 				// cleanup
 				oSelect.destroy();
+				oModel.destroy();
 			});
 
 			/* ------------------------------------ */
@@ -5248,6 +5260,7 @@
 
 				// cleanup
 				oSelect.destroy();
+				oModel.destroy();
 			});
 
 			/* ------------------------------------ */
@@ -5308,6 +5321,7 @@
 
 				// cleanup
 				oSelect.destroy();
+				oModel.destroy();
 			});
 
 			/* ------------------------------------ */
@@ -5745,7 +5759,12 @@
 						ok(oSelect.$("icon").hasClass(CSS_CLASS + "Icon"), 'The select html span element must have the CSS class "' + CSS_CLASS + 'Icon"');
 					}
 
-					strictEqual(oSelect.getDomRef().getAttribute("role"), "combobox");
+					if (oSelect.getType() === sap.m.SelectType.Default) {
+						strictEqual(oSelect.getDomRef().getAttribute("role"), "combobox");
+					} else if (oSelect.getType() === sap.m.SelectType.IconOnly) {
+						strictEqual(oSelect.getDomRef().getAttribute("role"), "button");
+					}
+
 					strictEqual(oSelect.getDomRef().getAttribute("aria-expanded"), "false");
 					strictEqual(oSelect.getDomRef().getAttribute("aria-live"), "polite");
 

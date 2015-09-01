@@ -765,6 +765,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		if (oPopup instanceof Popover) {
 			if (oEvent.relatedControlId && jQuery.sap.containsOrEquals(oPopup.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
 				// Force the focus to stay in input
+				this._bPopupHasFocus = true;
 				this.focus();
 			} else {
 				// When the input still has the value of the last jQuery.val call, a change event has to be
@@ -781,9 +782,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				&& oFocusedControl
 				&& jQuery.sap.containsOrEquals(oPopup.getDomRef(), oFocusedControl.getFocusDomRef())
 			)) {
-			// This keeps the inheritance chain to the InputBase
-			// sap.m.Input connects onsapfocusleave to InputBase's onfocusout because only in onsapfocusleave the document.activeElement is updated and the needed check can be done
-			InputBase.prototype.onfocusout.apply(this, [oEvent]);
+			InputBase.prototype.onsapfocusleave.apply(this, arguments);
 		}
 	};
 
@@ -1165,6 +1164,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 
 						oInput._updateTokenizerInMultiInput();
 						oInput._tokenizerInPopup.destroy();
+						oInput.setValue("");
 						setTimeout(function() {
 							oInput._setContainerSizes();
 						}, 0);
@@ -1341,9 +1341,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			var oItem,
 				aItems = oInput.getSuggestionItems(),
 				aTabularRows = oInput.getSuggestionRows(),
-				sTypedChars = oInput._$input.val(),
+				sTypedChars = oInput._$input.val() || "",
 				oList = oInput._oList,
-				bFilter = sTypedChars && sTypedChars.length > 0,
+				bFilter = oInput.getFilterSuggests(),
 				aHitItems = [],
 				iItemsLength = 0,
 				oPopup = oInput._oSuggestionPopup,
@@ -1360,11 +1360,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				if (oInput._oList instanceof Table) {
 					oList.removeSelections(true);
 				} else {
+					//TODO: avoid flickering when !bFilter
 					oList.destroyItems();
 				}
 			}
 
-			if (!bFilter && oInput.getFilterSuggests()) {
+			// hide suggestions list/table if the number of characters is smaller than limit
+			if (sTypedChars.length < oInput.getStartSuggestion()) {
 				// when the input has no value, close the Popup when not runs on the phone because the opened dialog on phone shouldn't be closed.
 				if (!oInput._bUseDialog) {
 					oInput._iPopupListSelectedIndex = -1;
@@ -1379,8 +1381,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				oInput.$("inner").removeAttr("aria-haspopup");
 				oInput.$("inner").removeAttr("aria-activedescendant");
 				return false;
-			} else {
-				bFilter = oInput.getFilterSuggests();
 			}
 
 			if (oInput._hasTabularSuggestions()) {
@@ -1430,7 +1430,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				} else {
 					sAriaText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUT_SUGGESTIONS_MORE_HITS", iItemsLength);
 				}
-				this.$("inner").attr("aria-haspopup", "true");
+				oInput.$("inner").attr("aria-haspopup", "true");
 
 				if (!oInput._hasTabularSuggestions()) {
 					for (i = 0; i < iItemsLength; i++) {
@@ -1483,9 +1483,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		this.$().addClass("sapMInputFocused");
 
 		// fires suggest event when startSuggestion is set to 0 and input has no text
-		if (!this.getStartSuggestion() && !this.getValue()) {
+		if (!this._bPopupHasFocus && !this.getStartSuggestion() && !this.getValue()) {
 			this._triggerSuggest(this.getValue());
 		}
+		this._bPopupHasFocus = undefined;
 	};
 
 	/**
@@ -1509,6 +1510,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	};
 
 	Input.prototype.onfocusout = function(oEvent) {
+		InputBase.prototype.onfocusout.apply(this, arguments);
 		this.$().removeClass("sapMInputFocused");
 		this.closeValueStateMessage(this);
 	};

@@ -52,12 +52,14 @@
 	transition-duration: 0.5s;
 }
 
-/* special handling for IE, as it does not support text-align: end */
-html[data-sap-ui-browser^="ie"] .sapMCrslInner {
+/* special handling for IE / Edge, as it does not support text-align: end */
+html[data-sap-ui-browser^="ie"] .sapMCrslInner,
+html[data-sap-ui-browser^="ed"] .sapMCrslInner {
  	text-align: left;
 }
 
-html[dir=rtl][data-sap-ui-browser^="ie"] .sapMCrslInner {
+html[dir=rtl][data-sap-ui-browser^="ie"] .sapMCrslInner,
+html[dir=rtl][data-sap-ui-browser^="ed"] .sapMCrslInner {
 	text-align: right;
 }
 

@@ -75,6 +75,9 @@
 
 				sinon.stub(sap.ui.base.ObjectPool.prototype, "returnObject", function () {
 				});
+
+				this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
 			},
 			teardown: function () {
 				this.oWizard.destroy();
@@ -93,7 +96,8 @@
 			this.oWizard.nextStep();
 			this.oWizard.nextStep();
 			var text = this.oWizard._getNextButton().getText();
-			assert.strictEqual(text, "Finish", "Default text of finish button should be equal to 'Finish'");
+			var sText = this.oResourceBundle.getText("WIZARD_FINISH");
+			assert.strictEqual(text, sText, "Default text of finish button should be equal to '" + sText + "'");
 		});
 
 		QUnit.test("setFinishLabel() should change the finish button text", function (assert) {
@@ -120,7 +124,7 @@
 		});
 
 		QUnit.test("validateStep(step) should validate the given step", function (assert) {
-			var step1 = this.oWizard._getWizardStep(0);
+			var step1 = this.oWizard._getStartingStep();
 			this.oWizard.validateStep(step1);
 			assert.ok(this.oWizard.getSteps()[0].getValidated(), "Step should be validated");
 		});
@@ -132,12 +136,12 @@
 
 		QUnit.test("invalidateStep(step) should invalidate the given step", function (assert) {
 			this.oWizard._getNextButton().firePress();
-			this.oWizard.invalidateStep(this.oWizard._getWizardStep(0));
+			this.oWizard.invalidateStep(this.oWizard._getStartingStep());
 			assert.ok(!this.oWizard.getSteps()[0].getValidated(), "Step should not be validated");
 		});
 
 		QUnit.test("validateStep(step) should change the enablement of the button", function (assert) {
-			this.oWizard.validateStep(this.oWizard._getWizardStep(0));
+			this.oWizard.validateStep(this.oWizard._getStartingStep());
 			var oButton = this.oWizard._getNextButton();
 			assert.ok(oButton.getEnabled(), "Button should be enabled");
 		});
@@ -163,7 +167,7 @@
 		});
 
 		QUnit.test("Click on next button should change the enable state of the button", function (assert) {
-			this.oWizard.invalidateStep(this.oWizard._getWizardStep(0));
+			this.oWizard.invalidateStep(this.oWizard._getStartingStep());
 			var firstStepEnablement = this.oWizard._getNextButton().getEnabled();
 			this.oWizard._getNextButton().firePress();
 			assert.strictEqual(firstStepEnablement, false, "On the first step button should not be enabled");
@@ -180,14 +184,17 @@
 		QUnit.test("Click on next button should change text going to last step", function (assert) {
 			this.oWizard._getNextButton().firePress();	//step2
 			this.oWizard._getNextButton().firePress();	//step3
-			assert.strictEqual(this.oWizard._getNextButton().getText(), "Finish", "Text should be changed to finish");
+			var sText = this.oResourceBundle.getText("WIZARD_FINISH");
+			assert.strictEqual(this.oWizard._getNextButton().getText(), sText, "Text should be changed to " + sText);
 		});
 
 		QUnit.test("Click on next button should change WizardStep visibility", function (assert) {
-			assert.strictEqual(this.oWizard._getWizardStep(0).$().css("display"), "block", "First step should be visible");
-			assert.strictEqual(this.oWizard._getWizardStep(1).$().css("display"), "none", "Second step should not be visible");
+			var steps = this.oWizard.getSteps();
+
+			assert.strictEqual(steps[0].$().css("display"), "block", "First step should be visible");
+			assert.strictEqual(steps[1].$().css("display"), "none", "Second step should not be visible");
 			this.oWizard._getNextButton().firePress();
-			assert.strictEqual(this.oWizard._getWizardStep(1).$().css("display"), "block", "Second step should be visible");
+			assert.strictEqual(steps[1].$().css("display"), "block", "Second step should be visible");
 
 		});
 
@@ -224,7 +231,7 @@
 			oButton.firePress();
 			oButton.firePress();
 			this.oWizard.discardProgress(this.oWizard.getSteps()[1]);
-			assert.strictEqual(this.oWizard._getWizardStep(2).$().css("display"), "none", "Step should be hidden");
+			assert.strictEqual(this.oWizard.getSteps()[2].$().css("display"), "none", "Step should be hidden");
 		});
 
 		QUnit.test("nextStep() should change the current step of the wizard", function (assert) {

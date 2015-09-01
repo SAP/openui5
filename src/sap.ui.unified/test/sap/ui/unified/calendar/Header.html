@@ -17,6 +17,7 @@
 		<script type="text/javascript">
 
 			var oHeader = new sap.ui.unified.calendar.Header("H1",{
+				textButton0: "Day",
 				textButton1: "Month",
 				textButton2: "Year",
 				pressPrevious: function(oEvent){
@@ -25,10 +26,13 @@
 				pressNext: function(oEvent){
 					alert("Previous");
 				},
+				pressButton0: function(oEvent){
+					alert("Button 0");
+				},
 				pressButton1: function(oEvent){
 					alert("Button 1");
 				},
-			pressButton2: function(oEvent){
+				pressButton2: function(oEvent){
 					alert("Button2");
 				}
 			}).placeAt("sample1");
@@ -72,6 +76,36 @@
 					var oHeader = sap.ui.getCore().byId("H1");
 					var bPressed = oEvent.getParameter("pressed");
 					oHeader.setEnabledNext(bPressed);
+				}
+			}).placeAt("event1");
+
+			oButton = new sap.ui.commons.ToggleButton({
+				text: "Button 0",
+				pressed: false,
+				press: function(oEvent){
+					var oHeader = sap.ui.getCore().byId("H1");
+					var bPressed = oEvent.getParameter("pressed");
+					oHeader.setVisibleButton0(bPressed);
+				}
+			}).placeAt("event1");
+
+			oButton = new sap.ui.commons.ToggleButton({
+				text: "Button 1",
+				pressed: true,
+				press: function(oEvent){
+					var oHeader = sap.ui.getCore().byId("H1");
+					var bPressed = oEvent.getParameter("pressed");
+					oHeader.setVisibleButton1(bPressed);
+				}
+			}).placeAt("event1");
+
+			oButton = new sap.ui.commons.ToggleButton({
+				text: "Button 2",
+				pressed: true,
+				press: function(oEvent){
+					var oHeader = sap.ui.getCore().byId("H1");
+					var bPressed = oEvent.getParameter("pressed");
+					oHeader.setVisibleButton2(bPressed);
 				}
 			}).placeAt("event1");
 

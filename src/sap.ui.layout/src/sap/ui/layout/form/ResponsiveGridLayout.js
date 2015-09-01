@@ -8,15 +8,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	"use strict";
 
 	/**
-	 * Constructor for a new form/ResponsiveGridLayout.
+	 * Constructor for a new sap.ui.layout.form.ResponsiveGridLayout.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * Renders a form using a Grid. Internally the Grid is used.
-	 * On the FormContainers, Labels and Fields GridData can be used to change the default rendering. On FormElements GridDada are not supported.
-	 * If own GridData are used this may be much more complex than the default. So in some cases the calculation for the other content may nor bring the expected result. In this case GridData should be used at all content to disable the default behaviour.
+	 * Renders a <code>Form</code> using a responsive grid. Internally the <code>Grid</code> control is used for rendering.
+	 * Using this layout, the <code>Form</code> is rendered in a responsive way.
+	 * Depending on the available space, the <code>FormContainers</code> are rendered in one or different columns and the labels are rendered in the same row as the fields or above the fields.
+	 * This behavior can be influenced by the properties of this layout control.
+	 *
+	 * On the <code>FormContainers</code>, labels and content fields, <code>GridData</code> can be used to change the default rendering.
+	 * <code>GridData</code> are not supported for <code>FormElements</code>.
+	 *
+	 * <b>Note:</b> If <code>GridData</code> are used, this may result in a much more complex layout than the default one.
+	 * This means that in some cases, the calculation for the other content may not bring the expected result.
+	 * In such cases, <code>GridData</code> should be used for all content controls to disable the default behavior.
+	 *
+	 * This control cannot be used stand alone, it only renders a <code>Form</code>, so it must be assigned to a <code>Form</code>.
 	 * @extends sap.ui.layout.form.FormLayout
 	 * @version ${version}
 	 *
@@ -33,14 +43,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 			/**
 			 * Default span for labels in large size.
-			 * This span is only used if more than 1 container is in one line, if only 1 container is in the line the labelSpanM value is used.
+			 * This span is only used if more than 1 <code>FormContainer</code> is in one line. If only 1 <code>FormContainer</code> is in the line, then the <code>labelSpanM</code> value is used.
 			 * @since 1.16.3
 			 */
 			labelSpanL : {type : "int", group : "Misc", defaultValue : 4},
 
 			/**
 			 * Default span for labels in medium size.
-			 * This property is used for full size containers. if more than one Container is in one line, labelSpanL is used.
+			 * This property is used for full-size <code>FormContainers</code>. If more than one <code>FormContainer</code> is in one line, <code>labelSpanL</code> is used.
 			 * @since 1.16.3
 			 */
 			labelSpanM : {type : "int", group : "Misc", defaultValue : 2},
@@ -70,26 +80,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			emptySpanS : {type : "int", group : "Misc", defaultValue : 0},
 
 			/**
-			 * Form columns for large size.
-			 * The number of columns for large size must not be smaller that the number of columns for medium size
+			 * Number of columns for large size.
+			 * The number of columns for large size must not be smaller than the number of columns for medium size
 			 * @since 1.16.3
 			 */
 			columnsL : {type : "int", group : "Misc", defaultValue : 2},
 
 			/**
-			 * Form columns for medium size.
+			 * Number of columns for medium size.
 			 * @since 1.16.3
 			 */
 			columnsM : {type : "int", group : "Misc", defaultValue : 1},
 
 			/**
-			 * Breakpoint between Medium size and Large size.
+			 * Breakpoint (in pixel) between Medium size and Large size.
 			 * @since 1.16.3
 			 */
 			breakpointL : {type : "int", group : "Misc", defaultValue : 1024},
 
 			/**
-			 * Breakpoint between Small size and Medium size.
+			 * Breakpoint (in pixel) between Small size and Medium size.
 			 * @since 1.16.3
 			 */
 			breakpointM : {type : "int", group : "Misc", defaultValue : 600}
@@ -101,7 +111,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	 * If more than one FormContainer is used there is an outer Grid (mainGrid) that holds the FormContainers
 	 * Each FormContainer holds it's own Grid where the FormElements content is placed.
 	 * If a FormContainer has a Title or is expandable it is rendered as a ResponsiveGridLayoutPanel.
-	 * The panels and GridLayouts are stored in this.mContainers. This has the following structure:
+	 * The panels and Grid layouts are stored in this.mContainers. This has the following structure:
 	 * - For each FormContainer there is an entry inside the object. (this.mContainers[FormContainerId])
 	 * - For each FormContainer there is an array with 2 entries:
 	 *   - [0]: The Panel that renders the Container (undefined if no panel is used)
@@ -327,11 +337,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		};
 
 		/**
-		 * As Elements must not have an DOM reference it is not sure if one exists.
-		 * If the FormContainer has a title or is expandable a internal Panel is rendered.
-		 * In this case the Panels DOM reference is returned, otherwise the DOM reference
-		 * of the Grid rendering the containers content.
-		 * @param {sap.ui.layout.form.FormConatiner} oContainer FormContainer
+		 * As Elements must not have a DOM reference it is not sure if one exists.
+		 * If the <code>FormContainer</code> has a title or is expandable an internal panel is rendered.
+		 * In this case, the panel's DOM reference is returned, otherwise the DOM reference
+		 * of the <code>Grid</code> rendering the container's content.
+		 * @param {sap.ui.layout.form.FormContainer} oContainer <code>FormContainer</code>
 		 * @return {Element} The Element's DOM representation or null
 		 * @private
 		 */
@@ -356,10 +366,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		};
 
 		/**
-		 * As Elements must not have an DOM reference it is not sure if one exists.
-		 * In this Layout a FormElement has no DOM representation,
-		 * so always null will be returned
-		 * @param {sap.ui.layout.form.FormElement} oElement FormElement
+		 * As Elements must not have a DOM reference it is not sure if one exists.
+		 * In this Layout a <code>FormElement</code> has no DOM representation,
+		 * so null will always be returned
+		 * @param {sap.ui.layout.form.FormElement} oElement <code>FormElement</code>
 		 * @return {Element} The Element's DOM representation or null
 		 * @private
 		 */

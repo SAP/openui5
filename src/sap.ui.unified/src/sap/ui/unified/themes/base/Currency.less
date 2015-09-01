@@ -9,11 +9,13 @@
 	width: 200px;
 	float: right;
 }
-/* special handling for IE, as it does not support text-align: end */
-html[data-sap-ui-browser^="ie"] .sapUiUfdCurrencyAlign {
+/* special handling for IE / Edge, as it does not support text-align: end */
+html[data-sap-ui-browser^="ie"] .sapUiUfdCurrencyAlign,
+html[data-sap-ui-browser^="ed"] .sapUiUfdCurrencyAlign {
 	text-align: right;
 }
-html[dir=rtl][data-sap-ui-browser^="ie"] .sapUiUfdCurrencyAlign {
+html[dir=rtl][data-sap-ui-browser^="ie"] .sapUiUfdCurrencyAlign,
+html[dir=rtl][data-sap-ui-browser^="ed"] .sapUiUfdCurrencyAlign {
 	text-align: left;
 }
 
@@ -26,11 +28,13 @@ html[dir=rtl][data-sap-ui-browser^="ie"] .sapUiUfdCurrencyAlign {
 .sapUiUfdCurrencyValue {
 	text-align: end;
 }
-/* special handling for IE, as it does not support text-align: end */
-html[data-sap-ui-browser^="ie"] .sapUiUfdCurrencyValue {
+/* special handling for IE / Edge, as it does not support text-align: end */
+html[data-sap-ui-browser^="ie"] .sapUiUfdCurrencyValue,
+html[data-sap-ui-browser^="ed"] .sapUiUfdCurrencyValue {
 	text-align: right;
 }
-html[dir=rtl][data-sap-ui-browser^="ie"] .sapUiUfdCurrencyValue {
+html[dir=rtl][data-sap-ui-browser^="ie"] .sapUiUfdCurrencyValue,
+html[dir=rtl][data-sap-ui-browser^="ed"] .sapUiUfdCurrencyValue {
 	text-align: left;
 }
 

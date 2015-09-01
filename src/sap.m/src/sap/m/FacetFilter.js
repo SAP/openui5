@@ -646,7 +646,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
-			oEvent.hover();
+			//oEvent.hover();
 			oEvent.preventDefault();
 			oEvent.setMarked();
 			return;
@@ -657,7 +657,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
-			oEvent.hover();
+			//oEvent.hover();
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
@@ -667,7 +667,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
-			oEvent.hover();
+			//oEvent.hover();
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
@@ -676,7 +676,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
-			oEvent.hover();
+			//oEvent.hover();
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
@@ -696,7 +696,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 	// move focus to the next/prev tabbable element after or before the list
 	// TODO: This implementation search parent which means we are out of our sandbox!
-	sap.m.FacetFilter.prototype._navToTabChain = function(bForward) {
+	/*sap.m.FacetFilter.prototype._navToTabChain = function(bForward) {
 		var $Current = this.$();
 		var $Tabbables = $Current.find(":sapTabbable");
 		var $Reference = $Tabbables.eq(bForward ? -1 : 0).add($Current).eq(-1);
@@ -727,7 +727,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		// focus and return the found tabbable if possible
 		return $Tabbables[iIndex] && $Tabbables.eq(iIndex).focus();
 	};
-
+*/
 	/**
 	 * Get the facet popover displayed when the user presses the facet button (Simple type only). The popover is created if it does not exist
 	 * and is available via the "popover" aggregation. This aggregation is destroyed when the popover is closed.
@@ -780,18 +780,18 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 					} else {
 					//that._handlePopoverAfterClose(oList);
 //fix remove icon press issue. click remove icon and can't remove facet, so delay the popover close
-						jQuery.sap.delayedCall(200, that, that._handlePopoverAfterClose, [oList]);
+						jQuery.sap.delayedCall(120, that, that._handlePopoverAfterClose, [oList]);
 						oPopover.destroySubHeader();
 					}
 				},
 				horizontalScrolling: false
-			});
+			}); 
 
 			// Suppress invalidate so that FacetFilter is not rerendered when the popover is opened (causing it to immediately close)
 			this.setAggregation("popover", oPopover, true);
-			oPopover.setContentWidth("30%");
+			oPopover.setContentWidth("30%");   
 
-		//IE9
+		//IE9 
 			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
 
 				oPopover.setContentWidth("30%");

@@ -10,11 +10,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Constructor for a new RadioButtonGroup.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given 
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * a group of RadioButtons to hande as one UI element.
+	 * The RadioButtonGroup is a basic control that is used to provide area for making interactive 
+	 * choice out of a set of options. It represents a list with items where exactly one item can 
+	 * be selected in a session. For the representation of the single group entries, the RadioButton 
+	 * items are created automatically. For the RadioButton choice, mouse and keyboard navigation 
+	 * usage is supported.
+	 * 
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
@@ -29,32 +34,41 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		properties : {
 
 			/**
-			 * Width of the RadioButtonGroup.
+			 * Defines the width of the RadioButtonGroup.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * Number of RadioButtons displayed in one Line.
+			 * Determines the maximum number of RadioButtons displayed in one line.
 			 */
 			columns : {type : "int", group : "Appearance", defaultValue : 1},
 
 			/**
-			 * Specifies whether the user can choose a radio button.
+			 * Specifies whether the user can change the selected value of the RadioButtonGroup.
+			 * When the property is set to false, the control obtains visual styles
+			 * different from its visual styles for the normal and the disabled state.
+			 * Additionally the control is no longer interactive, but can receive focus.
 			 */
 			editable : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * The value state to be displayed.
+			 * Тhe value state to be displayed for the RadioButton. Possible values are: sap.ui.core.ValueState.Error,
+			 * sap.ui.core.ValueState.Warning, sap.ui.core.ValueState.Success and sap.ui.core.ValueState.None.
+			 * Note: Setting this attribute to sap.ui.core.ValueState.Error when the accessibility feature is enabled,
+			 * sets the value of the invalid property for the whole RadioButtonGroup to true.
 			 */
 			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
 
 			/**
-			 * Index of the selected/checked RadioButton.
+			 * The index of the selected/checked RadioButton.
 			 */
 			selectedIndex : {type : "int", group : "Data", defaultValue : 0},
 
 			/**
-			 * If set the RadioButtonGroup is enabled, if not it is disabled. If it is disabled all RadioButtons will be shown as disabled. The enabled property of the item will not be uses in this case. If the RadioButtonGroup is enabled the enabled property of the item will define if a RadioButton is enabled or not.
+			 * Enables/disables the RadioButtonGroup. If it is disabled all RadioButtons will be displayed as disabled. 
+			 * The enabled property of the Item will not be used in this case. If the RadioButtonGroup is enabled, the 
+			 * enabled property of the Item will define if a RadioButton is enabled or not.
+			 * 
 			 * @since 1.10.3
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true}
@@ -63,26 +77,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		aggregations : {
 
 			/**
-			 * RadioButtons of this RadioButtonGroup
+			 * The RadioButtons of this RadioButtonGroup.
 			 */
 			items : {type : "sap.ui.core.Item", multiple : true, singularName : "item", bindable : "bindable"}
 		},
 		associations : {
 
 			/**
-			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 * Association to controls / IDs, which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
 			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}, 
 
 			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * Association to controls / IDs, which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
 		events : {
 
 			/**
-			 * Event is fired when selection is changed by user interaction.
+			 * Fires when selection is changed by user interaction.
 			 */
 			select : {
 				parameters : {
@@ -127,8 +141,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * initialize ItemNavigation. Transfer RadioButtons to ItemNavigation.
-	 * TabIndexes are set by ItemNavigation
+	 * Initializes ItemNavigation. Transfers RadioButtons to ItemNavigation.
+	 * TabIndexes are set by ItemNavigation.
 	 * @private
 	 */
 	RadioButtonGroup.prototype.initItemNavigation = function(){
@@ -178,7 +192,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * Set selected RadioButton via Index
+	 * Sets the selected RadioButton using Index.
 	 * @public
 	 */
 	RadioButtonGroup.prototype.setSelectedIndex = function(iSelectedIndex) {
@@ -213,13 +227,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * Set selected RadioButton via Item
-	 * @param {sap.ui.core.Item} oSelectedItem the item to be selected.
+	 * Sets selected RadioButton using Item
+	 * @param {sap.ui.core.Item} oSelectedItem The Item to be selected
 	 * @public
 	 */
 
 	/**
-	 * Sets the item as selected and removes the selection from the old one.
+	 * Sets the Item as selected and removes the selection from the previous one.
 	 *
 	 * @param {sap.ui.core.Item} oSelectedItem Selected item
 	 * @public
@@ -236,14 +250,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * Get item of selected RadioButton
+	 * Gets the Item of the selected RadioButton and returns it.
 	 * @public
+	 * 
 	 */
 
 	/**
-	 * Returns selected item. When no item is selected, "null" is returned.
+	 * When no item is selected, "null" is returned.
 	 *
-	 * @returns {sap.ui.core.Item} selected item
+	 * @returns {sap.ui.core.Item} Selected Item
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -254,8 +269,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * Adds a new Item
-	 * If an item is added a new RadioButton must be added
+	 * Adds a new Item.
+	 * If an Item is added, a new RadioButton must be added too.
 	 * @public
 	 */
 	RadioButtonGroup.prototype.addItem = function(oItem) {
@@ -284,8 +299,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * Inserts a new Item
-	 * If an item is inserted a new RadioButton must be inserted
+	 * Inserts a new Item.
+	 * If an Item is inserted, a new RadioButton must be inserted too.
 	 * @public
 	 */
 	RadioButtonGroup.prototype.insertItem = function(oItem, iIndex) {
@@ -328,7 +343,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * create RadioButton for an item
+	 * Creates RadioButton for an Item.
 	 * @private
 	 */
 	RadioButtonGroup.prototype.createRadioButton = function(oItem, iIndex){
@@ -364,8 +379,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * Removes an Item
-	 * If an item is removed the corresponding RadioButton must be deleted
+	 * Removes an Item.
+	 * If an Item is removed, the corresponding RadioButton must be deleted.
 	 * @public
 	 */
 	RadioButtonGroup.prototype.removeItem = function(vElement) {
@@ -410,8 +425,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * Removes all items
-	 * If all items are removed all RadioButtons must be deleted
+	 * Removes all Items.
+	 * If all Items are removed, all RadioButtons must be deleted.
 	 * @public
 	 */
 	RadioButtonGroup.prototype.removeAllItems = function() {
@@ -440,8 +455,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * destroys all items
-	 * If all items are destroyed all RadioButtons must be deleted
+	 * Destroys all Items.
+	 * If all Items are destroyed, all RadioButtons must be deleted.
 	 * @public
 	 */
 	RadioButtonGroup.prototype.destroyItems = function() {
@@ -469,6 +484,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	};
 
+	/*
+	 * Update all Items.
+	 * Update RadioButtonGroup Items in regard to the aggregation binding.
+	 * @public
+	 */
 	RadioButtonGroup.prototype.updateItems = function() {
 
 		var iSelectedIndex = this.getSelectedIndex();
@@ -492,6 +512,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	};
 
+	/**
+	 * Creates a new instance of RadioButtonGroup, with the same settings as the RadioButtonGroup
+	 * on which the method is called.
+	 * Event handlers are not cloned.
+	 * @returns {sap.ui.commons.RadioButtonGroup} New instance of RadioButtonGroup
+	 * @public
+	 */
 	RadioButtonGroup.prototype.clone = function(){
 
 		// on clone don't clone event handler
@@ -512,7 +539,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * On SELECT event of single Radio Buttons fire Select Event for group
+	 * Fires Select event for the group on Select event for single RadioButtons.
 	 * @private
 	 */
 	RadioButtonGroup.prototype.handleRBSelect = function(oControlEvent){
@@ -530,7 +557,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * Set all RadioButtons to Editable/ReadOnly
+	 * Sets all RadioButtons to Editable/ReadOnly.
 	 * @public
 	 */
 	RadioButtonGroup.prototype.setEditable = function(bEditable){
@@ -545,7 +572,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * Set all RadioButtons to Enabled/Disabled
+	 * Sets all RadioButtons to Enabled/Disabled.
 	 * @public
 	 */
 	RadioButtonGroup.prototype.setEnabled = function(bEnabled){
@@ -567,7 +594,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * Set ValueState for all RadioButtons
+	 * Sets ValueState for all RadioButtons.
 	 * @public
 	 */
 	RadioButtonGroup.prototype.setValueState = function(sValueState){
@@ -583,9 +610,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/*
 	 * Handles the event that gets fired by the {@link sap.ui.core.delegate.ItemNavigation} delegate.
-	 * Ensures that focused element is selected
+	 * Ensures that focused element is selected.
 	 *
-	 * @param {sap.ui.base.Event} oControlEvent The event that gets fired by the {@link sap.ui.core.delegate.ItemNavigation} delegate.
+	 * @param {sap.ui.base.Event} oControlEvent The event that gets fired by the {@link sap.ui.core.delegate.ItemNavigation} delegate
 	 * @private
 	 */
 	RadioButtonGroup.prototype._handleAfterFocus = function(oControlEvent){
@@ -601,6 +628,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
+	/**
+	 * Forwards the change of the RadioButtonGroup to the RadioButton that is affected.
+	 * @param {sap.ui.base.Event} oEvent
+	 * @private
+	 */
 	RadioButtonGroup.prototype._handleItemChanged = function(oEvent){
 
 		var oItem = oEvent.oSource;

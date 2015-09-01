@@ -9,6 +9,15 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 	"use strict";
 
 	/**
+	 * @static
+	 * @namespace
+	 * @alias sap.ui.base.BindingParser
+	 */
+	var BindingParser = {
+			_keepBindingStrings : false
+		};
+
+	/**
 	 * Regular expression to check for a (new) object literal
 	 */
 	var rObject = /^\{\s*[a-zA-Z_][a-zA-Z0-9_]*\s*:/;
@@ -26,15 +35,38 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 	var rBindingChars = /([\\\{\}])/g;
 
 	/**
-	 * A simple "formatter" function which just returns its first argument.
+	 * Creates a composite formatter which calls <code>fnRootFormatter</code> on the results of the
+	 * given formatters, which in turn are called on the original arguments.
 	 *
-	 * @param {object} o
-	 *   its first argument
-	 * @returns {object}
-	 *   its first argument
+	 * @param {function[]} aFormatters
+	 *   list of leaf-level formatters
+	 * @param {function} [fnRootFormatter]
+	 *   root level formatter; default: <code>Array.prototype.join(., " ")</code>
+	 * @return {function}
+	 *   a composite formatter
 	 */
-	function firstArgument(o) {
-		return o;
+	function composeFormatters(aFormatters, fnRootFormatter) {
+		function formatter() {
+			var i,
+				n = aFormatters.length,
+				aResults = new Array(n);
+
+			for (i = 0; i < n; i += 1) {
+				aResults[i] = aFormatters[i].apply(this, arguments);
+			}
+
+			if (fnRootFormatter) {
+				return fnRootFormatter.apply(this, aResults);
+			}
+			// @see sap.ui.model.CompositeBinding#getExternalValue
+			// "default: multiple values are joined together as space separated list if no
+			//  formatter or type specified"
+			return n > 1 ? aResults.join(" ") : aResults[0];
+		}
+		// @see sap.ui.core.ManagedObject#_bindProperty
+		formatter.textFragments = fnRootFormatter && fnRootFormatter.textFragments
+			|| "sap.ui.base.BindingParser: composeFormatters";
+		return formatter;
 	}
 
 	/**
@@ -42,32 +74,26 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 	 *
 	 * @param {number[]|string[]} aFragments
 	 *   array of fragments, either a literal text or the index of the binding's part
-	 * @param {function[]} [aFormatters]
-	 *   optional array of formatter functions for each index in <code>aFragments</code>
 	 * @returns {function}
 	 *   a formatter function
 	 */
-	function makeFormatter(aFragments, aFormatters) {
+	function makeFormatter(aFragments) {
 		var fnFormatter = function() {
-			var aResult = [],
-				l = aFragments.length,
-				i;
+				var aResult = [],
+					l = aFragments.length,
+					i;
 
-			for (i = 0; i < l; i++) {
-				if ( typeof aFragments[i] === "number" ) {
-					// a numerical fragment references the part with the same number
-					if (aFormatters) {
-						aResult.push(aFormatters[aFragments[i]].apply(this, arguments));
-					} else {
+				for (i = 0; i < l; i++) {
+					if ( typeof aFragments[i] === "number" ) {
+						// a numerical fragment references the part with the same number
 						aResult.push(arguments[aFragments[i]]);
+					} else {
+						// anything else is a string fragment
+						aResult.push(aFragments[i]);
 					}
-				} else {
-					// anything else is a string fragment
-					aResult.push(aFragments[i]);
 				}
-			}
-			return aResult.join('');
-		};
+				return aResult.join('');
+			};
 		fnFormatter.textFragments = aFragments;
 		return fnFormatter;
 	}
@@ -97,39 +123,21 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 	}
 
 	/**
-	 * Merges the given binding info object's parts, which may have parts themselves, into a flat
-	 * list of parts, taking care of existing formatter functions and fragments.
+	 * Delegates to <code>BindingParser.mergeParts</code>, but stifles any errors.
 	 *
 	 * @param {object} oBindingInfo
 	 *   a binding info object
-	 * @param {number[]|string[]} aFragments
-	 *   array of fragments, either a literal text or the index of the binding's part
+	 * @param {string} [sBinding]
+	 *   the original binding string as a detail for error logs
 	 */
-	function mergeParts(oBindingInfo, aFragments) {
-		var aFormatters = [],
-			aParts = [];
-
-		oBindingInfo.parts.forEach(function (oEmbeddedBinding) {
-			var iEnd,
-				fnFormatter = oEmbeddedBinding.formatter || firstArgument,
-				iStart = aParts.length;
-
-			if (oEmbeddedBinding.parts) {
-				aParts = aParts.concat(oEmbeddedBinding.parts);
-			} else {
-				aParts.push(oEmbeddedBinding);
-			}
-			iEnd = aParts.length;
-
-			aFormatters.push(function () {
-				// each formatter needs to operate on its own slice of the overall arguments
-				return fnFormatter.apply(this,
-					Array.prototype.slice.call(arguments, iStart, iEnd));
-			});
-		});
-
-		oBindingInfo.parts = aParts;
-		oBindingInfo.formatter = makeFormatter(aFragments, aFormatters);
+	function mergeParts(oBindingInfo, sBinding) {
+		try {
+			BindingParser.mergeParts(oBindingInfo);
+		} catch (e) {
+			jQuery.sap.log.error("Cannot merge parts: " + e.message, sBinding,
+				"sap.ui.base.BindingParser");
+			// rely on error in ManagedObject
+		}
 	}
 
 	/**
@@ -163,10 +171,10 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 
 		function resolveRef(o,sProp) {
 			if ( typeof o[sProp] === "string" ) {
-				var sName = o[sProp];
+				var fn, sName = o[sProp];
 				if ( jQuery.sap.startsWith(o[sProp], ".") ) {
-					o[sProp] = jQuery.proxy(jQuery.sap.getObject(o[sProp].slice(1), undefined,
-						oEnv.oContext), oEnv.oContext);
+					fn = jQuery.sap.getObject(o[sProp].slice(1), undefined, oEnv.oContext);
+					o[sProp] = oEnv.bStaticContext ? fn : jQuery.proxy(fn, oEnv.oContext);
 				} else {
 					o[sProp] = jQuery.sap.getObject(o[sProp]);
 				}
@@ -254,15 +262,6 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 		};
 	}
 
-	/**
-	 * @static
-	 * @namespace
-	 * @alias sap.ui.base.BindingParser
-	 */
-	var BindingParser = {};
-
-	BindingParser._keepBindingStrings = false;
-
 	BindingParser.simpleParser = function(sString, oContext) {
 
 		if ( jQuery.sap.startsWith(sString, "{") && jQuery.sap.endsWith(sString, "}") ) {
@@ -281,20 +280,21 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 	 *   if true, function names which cannot be resolved to a reference are reported via the
 	 *   string array <code>functionsNotFound</code> of the result object; else they are logged
 	 *   as errors
+	 * @param {boolean} [bStaticContext=false]
+	 *   if true, relative function names found via <code>oContext</code> will not be treated as
+	 *   instance methods of the context, but as static methods
 	 */
-	BindingParser.complexParser = function(sString, oContext, bUnescape, bTolerateFunctionsNotFound) {
+	BindingParser.complexParser = function(sString, oContext, bUnescape,
+			bTolerateFunctionsNotFound, bStaticContext) {
 		var oBindingInfo = {parts:[]},
-			// whether all top-level parts are "flat" binding infos w/o parts
-			bAllFlat = true,
-			// whether some top-level part is s.th. more complicated than an expression binding
-			bMoreThanExpression = false,
+			bMergeNeeded = false, // whether some top-level parts again have parts
 			oEnv = {
 				oContext: oContext,
 				aFunctionsNotFound: undefined, // lazy creation
+				bStaticContext: bStaticContext,
 				bTolerateFunctionsNotFound: bTolerateFunctionsNotFound
 			},
 			aFragments = [],
-			sName,
 			bUnescaped,
 			p = 0,
 			m,
@@ -323,7 +323,9 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 			}
 			oBinding.at += 1;
 			if (oBinding.result) {
-				oBinding.result.mode = oBindingMode;
+				oBinding.result.parts.forEach(function (oPart) {
+					oPart.mode = oBindingMode;
+				});
 			} else {
 				aFragments[aFragments.length - 1] = String(oBinding.constant);
 				bUnescaped = true;
@@ -354,16 +356,10 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 					oEmbeddedBinding = expression(sString, m.index + 2, BindingMode.OneWay);
 				} else {
 					oEmbeddedBinding = resolveEmbeddedBinding(oEnv, sString, m.index);
-					for (sName in oEmbeddedBinding.result) {
-						if (sName !== "formatter" && sName !== "parts" && sName !== "path") {
-							bMoreThanExpression = true;
-							break;
-						}
-					}
 				}
 				if (oEmbeddedBinding.result) {
-					bAllFlat = bAllFlat && !("parts" in oEmbeddedBinding.result);
 					oBindingInfo.parts.push(oEmbeddedBinding.result);
+					bMergeNeeded = bMergeNeeded || "parts" in oEmbeddedBinding.result;
 				}
 				rFragments.lastIndex = oEmbeddedBinding.at;
 			}
@@ -383,11 +379,12 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 			if ( aFragments.length === 1 /* implies: && typeof aFragments[0] === "number" */ ) {
 				// special case: a single binding only
 				oBindingInfo = oBindingInfo.parts[0];
-			} else if (!bAllFlat && !bMoreThanExpression) {
-				mergeParts(oBindingInfo, aFragments);
-			} else { //TODO !bAllFlat && bMoreThanExpression --> error in ManagedObject!
+			} else {
 				// create the formatter function from the fragments
 				oBindingInfo.formatter = makeFormatter(aFragments);
+				if (bMergeNeeded) {
+					mergeParts(oBindingInfo, sString);
+				}
 			}
 			if (BindingParser._keepBindingStrings) {
 				oBindingInfo.bindingString = sString;
@@ -404,6 +401,87 @@ sap.ui.define(['jquery.sap.global', './ExpressionParser', 'sap/ui/model/BindingM
 
 	BindingParser.complexParser.escape = function(sValue) {
 		return sValue.replace(rBindingChars, "\\$1");
+	};
+
+	/**
+	 * Merges the given binding info object's parts, which may have parts themselves, into a flat
+	 * list of parts, taking care of existing formatter functions. If the given binding info does
+	 * not have a root formatter, <code>Array.prototype.join(., " ")</code> is used instead.
+	 * Parts which are not binding info objects are also supported; they are removed from the
+	 * "parts" array and taken care of by the new root-level formatter function, which feeds them
+	 * into the old formatter function at the right place.
+	 *
+	 * Note: Truly hierarchical composite bindings are not yet supported. This method deals with a
+	 * special case of a two-level hierarchy which can be turned into a one-level hierarchy. The
+	 * precondition is that the parts which have parts themselves are not too complex, i.e. must
+	 * have no other properties than "formatter" and "parts". A missing formatter on that level
+	 * is replaced with the default <code>Array.prototype.join(., " ")</code>.
+	 *
+	 * @param {object} oBindingInfo
+	 *   a binding info object with a possibly empty array of parts and a new formatter function
+	 * @throws {Error}
+	 *   in case precondition is not met
+	 * @private
+	 */
+	BindingParser.mergeParts = function (oBindingInfo) {
+		var aFormatters = [],
+			aParts = [];
+
+		oBindingInfo.parts.forEach(function (vEmbeddedBinding) {
+			var iEnd,
+				fnFormatter = function () {
+					return vEmbeddedBinding; // just return constant value
+				},
+				sName,
+				iStart = aParts.length;
+
+			/*
+			 * Selects the overall argument corresponding to the current part.
+			 *
+			 * @returns {any}
+			 *   the argument at index <code>iStart</code>
+			 */
+			function select() {
+				return arguments[iStart];
+			}
+
+			// @see sap.ui.base.ManagedObject#extractBindingInfo
+			if (vEmbeddedBinding && typeof vEmbeddedBinding === "object") {
+				if (vEmbeddedBinding.parts) {
+					for (sName in vEmbeddedBinding) {
+						if (sName !== "formatter" && sName !== "parts") {
+							throw new Error("Unsupported property: " + sName);
+						}
+					}
+
+					aParts = aParts.concat(vEmbeddedBinding.parts);
+					iEnd = aParts.length;
+					if (vEmbeddedBinding.formatter) {
+						fnFormatter = function () {
+							// old formatter needs to operate on its own slice of overall arguments
+							return vEmbeddedBinding.formatter.apply(this,
+								Array.prototype.slice.call(arguments, iStart, iEnd));
+						};
+					} else if (iEnd - iStart > 1) {
+						fnFormatter = function () {
+							// @see sap.ui.model.CompositeBinding#getExternalValue
+							// "default: multiple values are joined together as space separated
+							//  list if no formatter or type specified"
+							return Array.prototype.slice.call(arguments, iStart, iEnd).join(" ");
+						};
+					} else {
+						fnFormatter = select;
+					}
+				} else if (vEmbeddedBinding.path) {
+					aParts.push(vEmbeddedBinding);
+					fnFormatter = select;
+				}
+			}
+			aFormatters.push(fnFormatter);
+		});
+
+		oBindingInfo.parts = aParts;
+		oBindingInfo.formatter = composeFormatters(aFormatters, oBindingInfo.formatter);
 	};
 
 	/**

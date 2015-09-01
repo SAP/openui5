@@ -55,6 +55,20 @@
 	
 	var parse = sap.ui.base.ManagedObject.bindingParser;
 
+	var TestControl = sap.ui.base.ManagedObject.extend("TestControl", {
+			metadata: {
+				properties: {
+					any: "any",
+					text: "string"
+				}
+			}
+		});
+
+	function checkTextFragments(fnFormatter) {
+		strictEqual(fnFormatter.textFragments, "sap.ui.base.BindingParser: composeFormatters",
+			"'textFragments' (mis)used as debug information");
+	}
+
 	module("sap.ui.base.BindingParser");
 
 	test("Binding Parser", function(){
@@ -118,6 +132,7 @@
 	});
 	
 	test("Single Binding with multiple filters", function(){
+		//TODO "Wrong parameters defined for filter."
 		var o = parse("{path:'something', filters: [{path:'someFilterPath', operator:'EQ', value1:'someCompareValue'},{path:'someFilterPath2', value1: 'someCompareValue', value2: 'someOtherCompareValue'}]}");
 		equal(typeof o, "object", "parse should return an object");
 		equal(o.filters.length, 2, "two filters should be defined");
@@ -261,7 +276,6 @@
 			strictEqual(sap.ui.base.ExpressionParser.parse.args[0][2], 2);
 			deepEqual(oBindingInfo, {
 				formatter: oParseResult.result.formatter,
-				mode: sap.ui.model.BindingMode.OneWay,
 				parts: oFixture.parts
 			}, "binding info in success case");
 		});
@@ -297,18 +311,241 @@
 		}, new RegExp(jQuery.sap.escapeRegExp(sMsg)), "expression binding must end with }");
 	});
 
+	test("mergeParts w/o root formatter", function () {
+		var oBindingInfo = {
+				parts : [
+					parse("{:= ${/foo} + '>' + ${path:'/bar'}}"),
+					{formatter : function (oValue) { return "*" + oValue + "*"; }, path : "/foo"},
+					parse("{:= ${/bar} + '<' + ${path:'/foo'}}")
+				]
+			},
+			oModel = new sap.ui.model.json.JSONModel({bar : "world", foo : "hello"}),
+			oControl = new TestControl({
+				models: oModel
+			});
+
+		sap.ui.base.BindingParser.mergeParts(oBindingInfo);
+
+		oControl.bindProperty("text", oBindingInfo);
+		strictEqual(oControl.getText(), "hello>world *hello* world<hello");
+		checkTextFragments(oBindingInfo.formatter);
+	});
+
+	test("mergeParts w/o any formatter", function () {
+		var oBindingInfo = {
+				parts : [
+					{parts : [{path : '/foo'}, {path : '/bar'}]},
+					{parts : [{path : '/bar'}, {path : '/foo'}]}
+				]
+			},
+			oModel = new sap.ui.model.json.JSONModel({bar : "world", foo : "hello"}),
+			oControl = new TestControl({
+				models: oModel
+			});
+
+		sap.ui.base.BindingParser.mergeParts(oBindingInfo);
+
+		deepEqual(oBindingInfo.parts,
+			[{path : '/foo'}, {path : '/bar'}, {path : '/bar'}, {path : '/foo'}]);
+		oControl.bindProperty("text", oBindingInfo);
+		strictEqual(oControl.getText(), "hello world world hello");
+		checkTextFragments(oBindingInfo.formatter);
+	});
+
+	test("mergeParts w/ root formatter", function () {
+		var oBindingInfo = {
+				formatter : function () {
+					strictEqual(this, oControl, "formatter: 'this' is kept");
+					return "*" + Array.prototype.join.call(arguments) + "*";
+				},
+				parts : [
+					parse("{:= ${/foo} + '>' + ${path:'/bar'}}"),
+					{path : "/foo"},
+					parse("{:= ${/bar} + '<' + ${path:'/foo'}}")
+				]
+			},
+			oModel = new sap.ui.model.json.JSONModel({bar : "world", foo : "hello"}),
+			oControl = new TestControl({
+				models: oModel
+			});
+
+		sap.ui.base.BindingParser.mergeParts(oBindingInfo);
+
+		oControl.bindProperty("text", oBindingInfo);
+		strictEqual(oControl.getText(), "*hello>world,hello,world<hello*");
+		checkTextFragments(oBindingInfo.formatter);
+	});
+
+	test("mergeParts w/ root formatter JSON.stringify", function () {
+		var oBindingInfo = {
+				formatter : function () {
+					// turn arguments into a real array and return its JSON representation
+					var aArray = Array.prototype.slice.apply(arguments);
+					return JSON.stringify.call(JSON, aArray);
+				},
+				parts : [
+					parse("{:= ${/foo} + '>' + ${path:'/bar'}}"),
+					{path : "/foo"},
+					{parts : [{path : '/forty2'}]} // Note: 42 should not be turned into a string!
+				]
+			},
+			oModel = new sap.ui.model.json.JSONModel({bar : "world", foo : "hello", forty2 : 42}),
+			oControl = new TestControl({
+				models: oModel
+			});
+
+		sap.ui.base.BindingParser.mergeParts(oBindingInfo);
+
+		oControl.bindProperty("text", oBindingInfo);
+		strictEqual(oControl.getText(), '["hello>world","hello",42]');
+		checkTextFragments(oBindingInfo.formatter);
+	});
+
+	test("mergeParts w/ root formatter: 'textFragments' kept", function () {
+		var oBindingInfo = {
+				formatter : function () {},
+				parts : [
+					parse("{:= ${/foo} + '>' + ${path:'/bar'}}"),
+					{path : "/foo"},
+					parse("{:= ${/bar} + '<' + ${path:'/foo'}}")
+				]
+			};
+
+		oBindingInfo.formatter.textFragments = "abc";
+
+		sap.ui.base.BindingParser.mergeParts(oBindingInfo);
+
+		strictEqual(oBindingInfo.formatter.textFragments, "abc", "'textFragments' kept");
+	});
+
+	test("mergeParts fails for unsupported properties", function () {
+		throws(function () {
+			sap.ui.base.BindingParser.mergeParts({
+				parts : [
+					{foo : "bar"}, // w/o parts, all properties are supported
+					{formatter : function () {}, mode : "OneWay", parts : []}
+				]
+			});
+		}, /Unsupported property: mode/);
+	});
+	//TODO have mergeParts fail on hierarchies with more than two levels?
+
+	test("mergeParts fails for unsupported properties, error is logged", function () {
+		var sBinding
+			= "prefix {parts:[{path:'/p1'},{path:'/p2'}],type:'sap.ui.model.type.Currency'}",
+			oBindingInfo;
+
+		this.mock(jQuery.sap.log).expects("error")
+			.withExactArgs("Cannot merge parts: Unsupported property: type", sBinding,
+				"sap.ui.base.BindingParser");
+
+		//TODO complex binding with type: does not work (but is left untouched by mergeParts())
+		oBindingInfo = parse(sBinding);
+//		throws(function () {
+//			oControl.bindProperty("text", oBindingInfo);
+//			strictEqual(oControl.getText(), "foo0.00", "foo0.00");
+//		});
+
+		strictEqual(oBindingInfo.parts.length, 1, "# embedded bindings in composite binding");
+		ok(oBindingInfo.parts[0].type instanceof sap.ui.model.type.Currency);
+	});
+
+	test("mergeParts with constants", function () {
+		var oBindingInfo = {
+				formatter : function () {
+					// turn arguments into a real array and return its JSON representation
+					var aArray = Array.prototype.slice.apply(arguments);
+					return JSON.stringify.call(JSON, aArray);
+				},
+				parts : [
+					{path : '/foo'},
+					{parts : [{path : '/foo'}, {path : '/bar'}]},
+					"",
+					false,
+					0,
+					{foo : "bar"},
+					null,
+					undefined,
+					[]
+				]
+			},
+			aExpectedArray = [
+				"hello", "hello world", "", false, 0, {foo : "bar"}, null, undefined, []
+			],
+			oModel = new sap.ui.model.json.JSONModel({bar : "world", foo : "hello"}),
+			oControl = new TestControl({
+				models: oModel
+			});
+
+		sap.ui.base.BindingParser.mergeParts(oBindingInfo);
+
+		deepEqual(oBindingInfo.parts,
+			[{path : '/foo'}, {path : '/foo'}, {path : '/bar'}]);
+		oControl.bindProperty("text", oBindingInfo);
+		strictEqual(oControl.getText(), JSON.stringify(aExpectedArray));
+		checkTextFragments(oBindingInfo.formatter);
+	});
+
+	test("mergeParts with constants only", function () {
+		var oBindingInfo = {
+				parts : [
+					"",
+					false,
+					0
+				]
+			},
+			oControl = new TestControl();
+
+		sap.ui.base.BindingParser.mergeParts(oBindingInfo);
+
+		deepEqual(oBindingInfo.parts, []);
+		oControl.bindProperty("text", oBindingInfo);
+		strictEqual(oControl.getText(), " false 0");
+		checkTextFragments(oBindingInfo.formatter);
+	});
+
+	test("mergeParts with single constant", function () {
+		["", false, 0, null, undefined, []].forEach(function (vConstant) {
+			var oBindingInfo = {parts : [vConstant]},
+				oControl = new TestControl();
+
+			sap.ui.base.BindingParser.mergeParts(oBindingInfo);
+
+			deepEqual(oBindingInfo.parts, []);
+			checkTextFragments(oBindingInfo.formatter);
+
+			strictEqual(oBindingInfo.formatter(), vConstant);
+
+			// Note: sap.ui.base.ManagedObject#validateProperty maps null to undefined
+			oControl.bindProperty("any", oBindingInfo);
+			strictEqual(oControl.getAny(), oControl.validateProperty("any", vConstant));
+
+			oControl.bindProperty("text", oBindingInfo);
+			strictEqual(oControl.getText(), oControl.validateProperty("text", vConstant));
+		});
+	});
+
+	test("functionsNotFound", function () {
+		//TODO "{parts:[{path:'/foo',formatter:'foo'},{path:'/bar',formatter:'bar'}]}"
+		//     formatters inside parts are not supported?!
+
+		var sBinding = "{path:'/foo',formatter:'foo'} {path:'/bar',formatter:'bar'}",
+			oBindingInfo;
+
+		this.mock(jQuery.sap.log).expects("error").never();
+
+		oBindingInfo = parse(sBinding, null, true, true);
+
+		deepEqual(oBindingInfo.functionsNotFound, ["foo", "bar"]);
+	});
+
 	test("Expression binding: usage in composite binding", function () {
 		var oBindingInfo,
-			oControl = new (sap.ui.base.ManagedObject.extend("TestControl", {
-				metadata: {
-					properties: {
-						text: "string"
-					}
-				}
-			}));
+			oControl = new TestControl(),
+			oModel = new sap.ui.model.json.JSONModel({p1 : 0, p2 : "foo", p3 : "bar", p4 : 1});
 
-		oControl.setModel(new sap.ui.model.json.JSONModel(
-			{p1 : 0, p2 : "foo", p3 : "bar", p4 : 1}));
+		oControl.setModel(oModel);
+		oControl.setModel(oModel, "model");
 
 		// code under test
 		oBindingInfo = parse("prefix {= ${/p1} + 10} {= ${/p2} + ${/p3}} {= ${/p4} + 20}");
@@ -337,12 +574,26 @@
 
 		strictEqual(oControl.getText(), "prefix foo 10", "prefix foo 10");
 
-		// composite binding with complex binding syntax
+		// composite binding with simple binding syntax: model>path
+		oBindingInfo = parse("prefix {= ${model>/p1} + 10} {model>/p2}");
+		oControl.bindProperty("text", oBindingInfo);
+
+		strictEqual(oControl.getText(), "prefix 10 foo",
+			"composite binding with simple binding syntax: model>path");
+
+		// composite binding with complex binding syntax: path
 		oBindingInfo = parse("prefix {= ${path:'/p1'} + 10} {path:'/p2'}");
 		oControl.bindProperty("text", oBindingInfo);
 
 		strictEqual(oControl.getText(), "prefix 10 foo",
-			"composite binding with complex binding syntax");
+			"composite binding with complex binding syntax: path");
+
+		// composite binding with complex binding syntax: model
+		oBindingInfo = parse("prefix {= ${model:'model',path:'/p1'} + 10} {path:'/p2'}");
+		oControl.bindProperty("text", oBindingInfo);
+
+		strictEqual(oControl.getText(), "prefix 10 foo",
+			"composite binding with complex binding syntax: model");
 
 		// constant expression
 		oBindingInfo = parse("prefix {= 10} {/p2}");
@@ -356,17 +607,6 @@
 		oControl.bindProperty("text", oBindingInfo);
 
 		strictEqual(oControl.getText(), "prefix 0,foo,bar", "prefix 0,foo,bar");
-
-		//TODO complex binding with type: does not work (but is left untouched by mergeParts())
-		oBindingInfo = parse("prefix {parts:[{path:'/p1'},{path:'/p2'}],"
-			+ "type:'sap.ui.model.type.Currency'}");
-//		throws(function () {
-//			oControl.bindProperty("text", oBindingInfo);
-//			strictEqual(oControl.getText(), "foo0.00", "foo0.00");
-//		});
-
-		strictEqual(oBindingInfo.parts.length, 1, "# embedded bindings in composite binding");
-		ok(oBindingInfo.parts[0].type instanceof sap.ui.model.type.Currency);
 	});
 
 	test("parseExpression: uses Expression.parse", function () {
@@ -396,10 +636,9 @@
 	});
 
 	test("Expression binding: one time binding", function () {
-		var oIcon = new sap.ui.core.Icon(),
-			oModel = new sap.ui.model.json.JSONModel({blue: false});
+		var oModel = new sap.ui.model.json.JSONModel({blue: false}),
+			oIcon = new sap.ui.core.Icon({models : oModel});
 
-		oIcon.setModel(oModel);
 		oIcon.bindProperty("color", parse("{:= ${/blue} ? 'blue' : 'red' }"));
 		strictEqual(oIcon.getColor(), "red");
 
@@ -408,6 +647,32 @@
 
 		oIcon.bindProperty("color", parse("{/blue} {:= 'green' }"));
 		strictEqual(oIcon.getColor(), "true green");
+	});
+
+	test("Expression binding: one time binding inside composite binding", function () {
+		var oModel = new sap.ui.model.json.JSONModel({blue: false}),
+			oIcon = new sap.ui.core.Icon({models : oModel});
+
+		oIcon.bindProperty("color", parse("*{:= ${/blue} ? 'blue' : 'red' }*"));
+		strictEqual(oIcon.getColor(), "*red*");
+
+		oModel.setProperty("/blue", true);
+		strictEqual(oIcon.getColor(), "*red*", "one time binding -> value unchanged");
+	});
+
+	test("jQuery.proxy(..., oEnv.oContext)", function () {
+		var sBinding = "{path : '/', formatter : '.foo'}",
+			oBindingInfo,
+			oScope = {
+				foo : function () {
+					strictEqual(this, oBindingInfo, "no jQuery.proxy() used");
+				}
+			};
+
+		oBindingInfo = parse(sBinding, oScope, /*bUnescape*/false,
+			/*bTolerateFunctionsNotFound*/false, /*bStaticContext*/true);
+
+		oBindingInfo.formatter();
 	});
 
 	</script>

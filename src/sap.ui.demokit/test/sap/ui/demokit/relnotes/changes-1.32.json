@@ -1,0 +1,49 @@
+{
+  "1.32.0": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "a77f33b991a3ab21e9f2949f527fccc182ddf97e",
+        "author": "Evgeni Katsarski \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "Demokit/Expl.App: Code section downloads fixed\"",
+        "references": []
+      },
+      {
+        "id": "9a735cc95ef9c7eefe805013c1a4d2189a01b48b",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Demokit.Explored App: Code Section Improvements",
+        "references": []
+      },
+      {
+        "id": "8bbd202d129907cfd247789e72c516cd2463ac9c",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Demokit tree expand collapse buttons changed position",
+        "references": []
+      },
+      {
+        "id": "b3f6064f3aa032ad88742c55abdfd3631e098ae4",
+        "author": "I043819 \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Introduce demokit ExploredApp example code highlighting",
+        "references": []
+      },
+      {
+        "id": "b8f80617fd884a34fc17b7dc89f3257c6c88f793",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.core.Icon/IconPool: Icon font is updated to version 3.2 with 11 new icons",
+        "references": []
+      },
+      {
+        "id": "b9b47c1eb764d3fed52bfed63ed0577b11dfb81d",
+        "author": "I043819 \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Demokit tree filter placeholder value change",
+        "references": []
+      }
+    ]
+  }
+}

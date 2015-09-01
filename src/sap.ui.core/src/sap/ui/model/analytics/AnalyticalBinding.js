@@ -2020,9 +2020,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			//ensure absolute path if no context is set
 			if (!this.oContext && sPath[0] !== "/") {
 				sPath = "/" + sPath;
-			} else if (this.oContext && sPath[0] === "/") {
-				sPath = sPath.substring(1);
 			}
+			/*
+			 * This might be needed, as soon as the AnalyticalBinding can handle relative binding
+			 * @see odata4analytics -> getRequestURi... and _getResourcePath -> enforces always an absolute path
+			 * else if (this.oContext && sPath[0] === "/") {
+				sPath = sPath.substring(1);
+			}*/
 			if (!this._isRequestPending(oRequestDetails.sRequestId)) {
 				/* side note: the check for a pending request is repeated at this point (first check occurs in _getContextsForParentGroupId),
 				   because the logic executed for a call to the binding API may yield to identical OData requests in a single batch.
@@ -2445,7 +2449,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 					var oMultiUnitRepresentative = this._createMultiUnitRepresentativeEntry(sGroupId, oData.results[iFirstMatchingEntryIndex], aSelectedUnitPropertyName, aDeviatingUnitPropertyName, oRequestDetails.bIsFlatListRequest);
 					if (oMultiUnitRepresentative.aReloadMeasurePropertyName.length > 0) {
 						oReloadMeasuresRequestDetails = this._prepareReloadMeasurePropertiesQueryRequest(AnalyticalBinding._requestType.reloadMeasuresQuery, oRequestDetails, oMultiUnitRepresentative);
-						aReloadMeasuresRequestDetails.push(oReloadMeasuresRequestDetails);
+						// only schedule reloadMeasure requests if there is something to select -> it might be that some measure could be reloaded, but the column
+						// might not be totaled (yet might be visible/inResult)
+						// BCP: 1570786546
+						if (oReloadMeasuresRequestDetails.oAnalyticalQueryRequest && oReloadMeasuresRequestDetails.oAnalyticalQueryRequest.getURIQueryOptionValue("$select") != null) {
+							aReloadMeasuresRequestDetails.push(oReloadMeasuresRequestDetails);
+						}
 					}
 					var iNewServiceKeyCount = this._setAdjacentMultiUnitKeys(oKeyIndexMapping, oMultiUnitRepresentative, aMultiUnitEntry);
 
@@ -2806,7 +2815,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		}
 
 		var oReloadedEntry = oData.results[0];
-		var oReloadedEntryKey = this.oModel.getKey(oReloadedEntry);
 		var oMultiUnitEntry = this.oModel.getObject("/" + sMultiUnitEntryKey);
 		if (!oMultiUnitEntry) {
 			jQuery.sap.log.fatal("assertion failed: no entity found with key " + sMultiUnitEntryKey);
@@ -2817,7 +2825,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 // 			this._trace_debug_if(oReloadedEntry[aMeasureName[i]] === undefined || oReloadedEntry[aMeasureName[i]] == "", "no value for reloaded measure property");
 			oMultiUnitEntry[aMeasureName[i]] = oReloadedEntry[aMeasureName[i]];
 		}
-		this.oModel.deleteCreatedEntry(this.oModel.getContext("/" + oReloadedEntryKey));
 // 		this._trace_leave("ReqExec", "_processReloadMeasurePropertiesQueryResponse", "measures=" + oMultiUnitRepresentative.aReloadMeasurePropertyName.join()); // DISABLED FOR PRODUCTION
 	};
 

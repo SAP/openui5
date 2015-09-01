@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				/**
 				 * Determines the icon displayed on the MessagePage.
 				 */
-				icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : "sap-icon://documents" },
+				icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : IconPool.getIconURI("documents") },
 				/**
 				 * Determines the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 				 */
@@ -238,7 +238,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @private
 		 * @returns {sap.m.IBar}
 		 */
-		MessagePage.prototype._getAnyHeader = function() {
+		MessagePage.prototype._getAnyHeader = function() {
 			return this._getInternalHeader();
 		};
 
@@ -248,8 +248,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @private
 		 */
 
-		MessagePage.prototype._getInternalHeader = function() {
-			return this.getAggregation("_page").getAggregation("_internalHeader");
+		MessagePage.prototype._getInternalHeader = function() {
+			return this.getAggregation("_page").getAggregation("_internalHeader");
 		};
 
 

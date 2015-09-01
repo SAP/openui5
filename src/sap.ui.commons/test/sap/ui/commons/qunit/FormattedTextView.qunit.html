@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<!-- 
+<!--
   Tested control/class: sap.ui.commons.FormattedTextView
   Author: D034262
 -->
@@ -18,12 +18,14 @@
 <script type="text/javascript"
 	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript"
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 
 <!-- Control initialization -->
 <script language="javascript">
+
+
 	var oHtmlText = 'If this does not work, please write an email to: <embed data-index=\"0\"><br>';
 	oHtmlText += '&lt;i&gt;Here is an XSS attack that alerts "XSS attack"&lt;/i&gt;<br>';
 	oHtmlText += '&lt;scr' + 'ipt&gt;alert("XSS attack");&lt;/scr'
@@ -43,7 +45,7 @@
 		href: "mailto:test.me@sap.com"
 	});
 	oFTV.addControl(oLink);
-	
+
 	var oLink2 = new sap.ui.commons.Link("l2", {
 		text: "Test me too",
 		tooltip: "This will send a mail to test.me@sap.com",
@@ -76,22 +78,25 @@
 	var oFTV3 = new sap.ui.commons.FormattedTextView("textView3");
 	oFTV3.placeAt("uiArea3");
 
+	var oFTV4 = new sap.ui.commons.FormattedTextView("textView4");
+	oFTV4.placeAt('uiArea4');
+
 	module("Appearance");
-	
+
 	test("Visibility", function() {
 		// Visible
 		ok(jQuery("#textView1").get(0), "Visible, expected defined");
 		equals(jQuery("#textView1-__clone0").get(0), undefined, "Invisible");
 	});
-	
+
 	test("Placeholders", function(){
 		var placeHolderPattern = new RegExp("\<embed data-index=\"([0-9]*[0-9])\">", "gim");
 		var oTVDom = jQuery.sap.domById('textView1');
 		var renderedText = jQuery(oTVDom).text();
 		ok((placeHolderPattern.exec(renderedText) == null), "All placeholders correctly replaced");
-		
+
 	});
-	
+
 	test("Sanitizing", function(){
 		var goodText = 'Within this formatted text view, sanitizing is tested. You should not see anything but empty space between START and END below this sentence.<br>';
 		var evilText = goodText + 'START ' + '<img src="http://www.sap.com/global/images/SAPLogo.gif">'; // <p> is now alloed in FTV + '&lt;p&gt;Here is an XSS attack that alerts "XSS attack"&lt;/p&gt;';
@@ -106,7 +111,7 @@
 		var deliveredText = jQuery(jQuery.sap.domById('textView3')).html().toLowerCase();
 		equal(deliveredText, goodText, "Text has been sanitized");
 	});
-	
+
 
 	test("Invalid Controls", function(){
 		var controlAdded = true;
@@ -117,6 +122,16 @@
 			controlAdded = false;
 		}
 		ok(controlAdded, "Button is not an allowed control within FormattedTextView");
+	});
+
+	test("Content with html and embed placeholder is rendered", function(){
+		var LinkToEmbed = new sap.ui.commons.Link('lte', { text: 'LinkToEmbed', href:'www.sap.com'});
+		oFTV4.setContent('<div>This div is a FormattedTextView Control</div><embed data-index="0">', [LinkToEmbed]);
+		sap.ui.getCore().applyChanges();
+
+		var renderedHTML = sap.ui.getCore().byId('textView4').getDomRef().innerHTML;
+		ok(~renderedHTML.indexOf('<div'), 'The div is rendered');
+		ok(~renderedHTML.indexOf('<a'), 'The link is rendered');
 	});
 
 </script>
@@ -131,5 +146,6 @@
 	<div id="uiArea1"></div>
 	<div id="uiArea2"></div>
 	<div id="uiArea3"></div>
+	<div id="uiArea4"></div>
 </body>
 </html>

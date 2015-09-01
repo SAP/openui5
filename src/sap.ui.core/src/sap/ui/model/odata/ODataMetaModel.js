@@ -170,9 +170,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.27.0
 	 */
-	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.ODataMetaModel",
-			/** @lends sap.ui.model.odata.ODataMetaModel.prototype */ {
-
+	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.ODataMetaModel", {
 			constructor : function (oMetadata, oAnnotations, oODataModelInterface) {
 				var that = this;
 
@@ -205,10 +203,6 @@ sap.ui.define([
 				this.mQName2PendingRequest = {};
 				this.oResolver = undefined;
 				this.mSupportedBindingModes = {"OneTime" : true};
-			},
-
-			metadata : {
-				publicMethods : ["loaded"]
 			}
 		});
 
@@ -312,12 +306,17 @@ sap.ui.define([
 					// Set the resolver on the internal JSON model, so that resolving does not use
 					// this._getObject itself.
 					this.oResolver = this.oResolver || new Resolver({models: this.oModel});
-					this.oResolver.bindProperty("any", oBinding);
 					for (i = 0; i < oNode.length; i++) {
 						this.oResolver.bindObject(sProcessedPath + i);
-						if (this.oResolver.getAny()) {
-							this.mQueryCache[sCacheKey] = vPart = i;
-							break;
+						this.oResolver.bindProperty("any", oBinding);
+						try {
+							if (this.oResolver.getAny()) {
+								this.mQueryCache[sCacheKey] = vPart = i;
+								break;
+							}
+						} finally {
+							this.oResolver.unbindProperty("any");
+							this.oResolver.unbindObject();
 						}
 					}
 				}

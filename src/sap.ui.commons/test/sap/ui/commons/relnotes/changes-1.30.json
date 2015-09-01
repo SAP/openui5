@@ -347,5 +347,76 @@
         "references": []
       }
     ]
+  },
+  "1.30.3": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "33daaa4610a0e96c3aafb93aaf960a198aa99a3d",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "commons.Dialog: In modal mode can be dragged properly in scrolled page",
+        "references": []
+      },
+      {
+        "id": "02259e48f3cb896be26370bd9e91f4457385d376",
+        "author": "Diana Shtilyanova \u003cdiana.shtilianova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.SearchField: Implement F2 keyboard handling",
+        "references": []
+      }
+    ]
+  },
+  "1.30.4": {
+    "date": "July 2015",
+    "notes": [
+      {
+        "id": "d2fa2039b1f2401dca06d7f0b90a1f52963467a1",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Button - Contrast for semantic color buttons in High Contrast Black mode is now correct",
+        "references": []
+      },
+      {
+        "id": "97073c4585e7957cce1073e908a286d895c90e5a",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField, ComboBox, DropdownBox: wrong tooltip",
+        "references": []
+      },
+      {
+        "id": "1e7bd5a099bf8b05dbfde4180a7cb1bd51aabe11",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": ": sap.ui.commons.InPlaceEdit: alignment of button in HCB",
+        "references": []
+      }
+    ]
+  },
+  "1.30.5": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "e8403257234debb23279a2b0b9ba6b2b0c092bd0",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.InPlaceEdit: syntax error if no content",
+        "references": []
+      },
+      {
+        "id": "1688e37f38d1556e0e9fe4ac6cc8eaeb777732bc",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
+        "references": []
+      },
+      {
+        "id": "55e65f43c025e6083edecf094717d045073eb604",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Tree node not expanding properly on Chrome",
+        "references": []
+      }
+    ]
   }
 }

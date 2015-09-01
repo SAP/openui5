@@ -8,6 +8,7 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>QUnit page for V2ODataModelB - sap.ui.core</title>
 <script>
 	//fix IE 11 bug 
 	window.ActiveXObject = undefined;
@@ -98,6 +99,7 @@
 			oModel = initModel();
 		},
 		teardown : function() {
+			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
 			stopServer();
@@ -959,6 +961,7 @@
 			oModel.setRefreshAfterChange(false);
 		},
 		teardown : function() {
+			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
 			stopServer();
@@ -2756,6 +2759,7 @@
 			oModel = initModel();
 		},
 		teardown : function() {
+			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
 			stopServer();
@@ -3374,6 +3378,7 @@
 			oModel = initModel();
 		},
 		teardown : function() {
+			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
 			stopServer();
@@ -3523,6 +3528,8 @@
 			iCount++;
 			if (iCount === 1 ) {
 				ok(true, "batch request completed");
+				oInput1.destroy();
+				oInput2.destroy();
 				start();
 			}
 		});
@@ -3544,6 +3551,8 @@
 			iChange++;
 			if (iChange == 2) {
 				ok(true, "checkupdate done");
+				oInput1.destroy();
+				oInput2.destroy();
 				start();
 			}
 		}
@@ -3814,6 +3823,7 @@
 			oModel = initModel();
 		},
 		teardown : function() {
+			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
 			stopServer();
@@ -3874,6 +3884,7 @@
 					iCount++;
 					if (iCount === 2 && spy.callCount === 2) {
 						ok(true,"2 for refresh batch requests sent");
+						oTable.destroy();
 						start();
 					}				
 				});
@@ -3938,6 +3949,7 @@
 				oModel.attachBatchRequestCompleted(this, function(oEventInfo) {
 					if (spy.callCount === 1) {
 						ok(true,"1 for refresh batch requests sent");
+						oTable.destroy();
 						start();
 					}				
 				});
@@ -4005,6 +4017,7 @@
 					iCount++;
 					if (iCount === 2 && spy.callCount === 2) {
 						ok(true,"1 for refresh batch requests sent");
+						oTable.destroy();
 						start();
 					}				
 				});
@@ -4069,6 +4082,7 @@
 				oModel.attachBatchRequestCompleted(this, function(oEventInfo) {
 					if (spy.callCount === 1) {
 						ok(true,"1 for refresh batch requests sent");
+						oTable.destroy();
 						start();
 					}				
 				});
@@ -4136,6 +4150,7 @@
 				oModel.attachBatchRequestCompleted(this, function(oEventInfo) {
 					if (spy.callCount === 1) {
 						ok(true,"1 for refresh batch requests sent");
+						oTable.destroy();
 						start();
 					}				
 				});
@@ -4205,6 +4220,7 @@
 					iCount++;
 					if (iCount === 2 && spy.callCount === 2) {
 						ok(true,"2 refresh batch requests sent");
+						oTable.destroy();
 						start();
 					}				
 				});

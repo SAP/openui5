@@ -199,6 +199,93 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	};
 
 	/**
+	 * Adds an origin to the given service URL.
+	 * If an origin is already present, it will only be replaced if the parameters object contains the flag "force: true".
+	 * In case the URL already contains URL parameters, these will be kept.
+	 * As a parameter, a sole alias is sufficient. The parameters vParameters.system and vParameters.client however have to be given in pairs.
+	 * In case all three origin specifying parameters are given (system/client/alias), the alias has precedence.
+	 * 
+	 * Examples:
+	 * setOrigin("/backend/service/url/", "DEMO_123");
+	 * - result: /backend/service/url;o=DEMO_123/
+	 * 
+	 * setOrigin("/backend/service/url;o=OTHERSYS8?myUrlParam=true&x=4", {alias: "DEMO_123", force: true});
+	 * - result /backend/service/url;o=DEMO_123?myUrlParam=true&x=4
+	 * 
+	 * setOrigin("/backend/service/url/", {system: "DEMO", client: 134});
+	 * - result /backend/service/url;o=sid(DEMO.134)/
+	 * 
+	 * @param {string} sServiceURL the URL which will be enriched with an origin
+	 * @param {object|string} vParameters if string then it is asumed its the system alias, else if the argument is an object then additional Parameters can be given
+	 * @param {string} vParameters.alias the system alias which will be used as the origin
+	 * @param {string} vParameters.system the system id which will be used as the origin
+	 * @param {string} vParameters.client the system's client
+	 * @param {string} vParameters.force setting this flag to 'true' overrides the already existing origin
+	 * 
+	 * @public
+	 * @since 1.30.7
+	 * @returns {string} the service URL with the added origin.
+	 */
+	ODataUtils.setOrigin = function (sServiceURL, vParameters) {
+		var sOrigin, sSystem, sClient;
+			
+		// if multi origin is set, do nothing
+		if (!sServiceURL || !vParameters || sServiceURL.indexOf(";mo") > 0) {
+			return sServiceURL;
+		}
+		
+		// accept string as second argument -> only alias given
+		if (typeof vParameters == "string") {
+			sOrigin = vParameters;
+		} else {
+			// vParameters is an object
+			sOrigin = vParameters.alias;
+			
+			if (!sOrigin) {
+				sSystem = vParameters.system;
+				sClient = vParameters.client;
+				// sanity check
+				if (!sSystem || !sClient) {
+					jQuery.sap.log.warning("ODataUtils.setOrigin: No Client or System ID given for Origin");
+					return sServiceURL;
+				} 
+				sOrigin = "sid(" + sSystem + "." + sClient + ")";
+			}
+		}
+		
+		// determine the service base url and the url parameters
+		var aUrlParts = sServiceURL.split("?");
+		var sBaseURL = aUrlParts[0];
+		var sURLParams = aUrlParts[1] ? "?" + aUrlParts[1] : "";
+		
+		//trim trailing "/" from url if present
+		var sTrailingSlash = "";
+		if (jQuery.sap.endsWith(sBaseURL, "/")) {
+			sBaseURL = sBaseURL.substring(0, sBaseURL.length - 1);
+			sTrailingSlash = "/"; // append the trailing slash later if necessary
+		}
+		
+		// origin already included
+		// regex will only match ";o=" occurrences which do not end in a slash "/" at the end of the string.
+		// The last ";o=" occurrence at the end of the baseURL is the only origin that can match.
+		var rOriginCheck = /(;o=[^/]+)$/;
+		if (sBaseURL.match(rOriginCheck) != null) {
+			// enforce new origin
+			if (vParameters.force) {
+				// same regex as above
+				sBaseURL = sBaseURL.replace(rOriginCheck, ";o=" + sOrigin);
+				return sBaseURL + sTrailingSlash + sURLParams;
+			}
+			//return the URL as it was
+			return sServiceURL;
+		}
+		
+		// new service url with origin
+		sBaseURL = sBaseURL + ";o=" + sOrigin + sTrailingSlash;
+		return sBaseURL + sURLParams;
+	};
+	
+	/**
 	 * convert multi filter to filter string
 	 *
 	 * @private

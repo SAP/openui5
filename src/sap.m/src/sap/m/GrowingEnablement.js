@@ -314,8 +314,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 * Only call when grouped
 		 */
 		_getGroupForContext : function(oContext) {
-			// TODO: we should document that group header depends on the first sorter
-			return this._oControl.getBinding("items").aSorters[0].getGroup(oContext);
+			return this._oControl.getBinding("items").getGroup(oContext);
 		},
 
 		/**
@@ -674,6 +673,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			if (!oTriggerListDomRef) {
 				return;
 			}
+
+			// switch between more button and loading 
+			var bHasScrollbars = this._getHasScrollbars();
+			var bHasScrollToLoad = this._oControl.getGrowingScrollToLoad();
+			this._checkTriggerType(bHasScrollToLoad, bHasScrollbars);
 
 			// hide trigger if no items or maximum of items reached
 			var iMaxItems = this._oControl.getMaxItemsCount();

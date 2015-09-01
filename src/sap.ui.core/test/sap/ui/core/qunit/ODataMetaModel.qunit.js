@@ -11,9 +11,8 @@ sap.ui.require([
 ], function(BindingParser, BindingMode, ClientContextBinding, Context, FilterProcessor,
 	JSONListBinding, JSONPropertyBinding, JSONTreeBinding, MetaModel, Model, Utils, ODataMetaModel,
 	ODataModel1, ODataModel, TestUtils) {
-	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
-	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
-	*/
+	/*global QUnit, sinon */
+	/*eslint camelcase: 0, max-nested-callbacks: 4, no-multi-str: 0, no-warning-comments: 0*/
 	"use strict";
 
 	//TODO remove this workaround in IE9 for
@@ -302,11 +301,6 @@ sap.ui.require([
 <Schema Namespace="foo" xmlns="http://docs.oasis-open.org/odata/ns/edm"/>\
 </edmx:DataServices>\
 </edmx:Edmx>\
-		', sEmptyMetadata = '\
-<?xml version="1.0" encoding="utf-8"?>\
-<edmx:Edmx Version="1.0"\
-	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"\
-	/>\
 		', sEmptyDataServices = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="1.0"\
@@ -430,7 +424,6 @@ sap.ui.require([
 		mFixture = {
 			"/fake/emptyDataServices/$metadata" : {headers: mHeaders, message: sEmptyDataServices},
 			"/fake/emptyEntityType/$metadata" : {headers: mHeaders, message: sEmptyEntityType},
-			"/fake/emptyMetadata/$metadata" : {headers: mHeaders, message: sEmptyDataServices},
 			"/fake/emptySchema/$metadata" : {headers: mHeaders, message: sEmptySchema},
 			"/fake/emptySchemaWithAnnotations/$metadata" :
 				{headers: mHeaders, message: sEmptySchemaWithAnnotations},
@@ -468,32 +461,48 @@ sap.ui.require([
 	/**
 	 * Runs the given code under test with an <code>ODataMetaModel</code> for the service URL
 	 * "/GWSAMPLE_BASIC" and annotation URL "/GWSAMPLE_BASIC/annotations".
+	 *
+	 * @param {object} assert the assertions
+	 * @param {function(sap.ui.model.odata.ODataMetaModel)} fnCodeUnderTest
+	 *   the given code under test
+	 * @returns {any|Promise}
+	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
-	function withMetaModel(fnCodeUnderTest) {
-		return withGivenService("/GWSAMPLE_BASIC", "/GWSAMPLE_BASIC/annotations", fnCodeUnderTest);
+	function withMetaModel(assert, fnCodeUnderTest) {
+		return withGivenService(assert, "/GWSAMPLE_BASIC", "/GWSAMPLE_BASIC/annotations", fnCodeUnderTest);
 	}
 
 	/**
 	 * Runs the given code under test with an <code>ODataMetaModel</code> for the service URL
 	 * "/GWSAMPLE_BASIC" and (array of) annotation URLs.
+	 *
+	 * @param {object} assert the assertions
+	 * @param {string|string[]} vAnnotationUrl
+	 *   the (array of) annotation URLs
+	 * @param {function(sap.ui.model.odata.ODataMetaModel)} fnCodeUnderTest
+	 *   the given code under test
+	 * @returns {any|Promise}
+	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
-	function withGivenAnnotations(vAnnotationUrl, fnCodeUnderTest) {
-		return withGivenService("/GWSAMPLE_BASIC", vAnnotationUrl, fnCodeUnderTest);
+	function withGivenAnnotations(assert, vAnnotationUrl, fnCodeUnderTest) {
+		return withGivenService(assert, "/GWSAMPLE_BASIC", vAnnotationUrl, fnCodeUnderTest);
 	}
 
 	/**
 	 * Runs the given code under test with an <code>ODataMetaModel</code> (and an
 	 * <code>ODataModel</code>) for the given service and (array of) annotation URLs.
 	 *
+	 * @param {object} assert the assertions
 	 * @param {string} sServiceUrl
 	 *   the service URL
 	 * @param {string|string[]} vAnnotationUrl
 	 *   the (array of) annotation URLs
 	 * @param {function} fnCodeUnderTest
+	 *   the given code under test
 	 * @returns {any|Promise}
 	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
-	function withGivenService(sServiceUrl, vAnnotationUrl, fnCodeUnderTest) {
+	function withGivenService(assert, sServiceUrl, vAnnotationUrl, fnCodeUnderTest) {
 		// sets up a v2 ODataModel and retrieves an ODataMetaModel from there
 		var oModel = new ODataModel(sServiceUrl, {
 				annotationURI : vAnnotationUrl,
@@ -506,7 +515,7 @@ sap.ui.require([
 			while (oParameters.getParameters) { // drill down to avoid circular structure
 				oParameters = oParameters.getParameters();
 			}
-			ok(false, "Failed to load: " + JSON.stringify(oParameters));
+			assert.ok(false, "Failed to load: " + JSON.stringify(oParameters));
 		}
 		oModel.attachMetadataFailed(onFailed);
 		oModel.attachAnnotationsFailed(onFailed);
@@ -518,7 +527,7 @@ sap.ui.require([
 	}
 
 	//*********************************************************************************************
-	module("sap.ui.model.odata.ODataMetaModel", {
+	QUnit.module("sap.ui.model.odata.ODataMetaModel", {
 		beforeEach : function () {
 			oGlobalSandbox = sinon.sandbox.create();
 			TestUtils.useFakeServer(oGlobalSandbox, "sap/ui/core/qunit/model", mFixture);
@@ -531,12 +540,11 @@ sap.ui.require([
 			ODataModel.mServiceData = {}; // clear cache
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
 			oGlobalSandbox.verifyAndRestore();
-			sinon.FakeXMLHttpRequest.filters = [];
 		}
 	});
 
 	//*********************************************************************************************
-	test("TestUtils.deepContains", function () {
+	QUnit.test("TestUtils.deepContains", function (assert) {
 		TestUtils.notDeepContains(null, {}, "null");
 		TestUtils.notDeepContains(undefined, {}, "undefined");
 		TestUtils.notDeepContains({}, [], "not an array");
@@ -556,7 +564,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("compatibility with synchronous ODataModel", function () {
+	QUnit.test("compatibility with synchronous ODataModel", function (assert) {
 		var oModel = new ODataModel1("/GWSAMPLE_BASIC", {
 				annotationURI : "/GWSAMPLE_BASIC/annotations",
 				json : true,
@@ -564,28 +572,28 @@ sap.ui.require([
 			}),
 			oMetaModel = oModel.getMetaModel();
 
-		strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
+		assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
 			"GWSAMPLE_BASIC", "meta data available");
-		strictEqual(
+		assert.strictEqual(
 			oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/sap:label"),
 			"Bus. Part. ID", "SAPData is lifted");
-		strictEqual(
+		assert.strictEqual(
 			oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
 				+ "com.sap.vocabularies.Common.v1.Label/String"),
 			"Bus. Part. ID", "v2 --> v4");
-		strictEqual(
+		assert.strictEqual(
 			oMetaModel.getProperty("/dataServices/schema/0/entityType/0/"
 				+ "com.sap.vocabularies.UI.v1.HeaderInfo/TypeName/String"),
 			"Business Partner", "v4 annotations available");
 
 		return oMetaModel.loaded().then(function () {
-			strictEqual(arguments.length, 1, "almost no args");
-			deepEqual(arguments[0], undefined, "almost no args");
+			assert.strictEqual(arguments.length, 1, "almost no args");
+			assert.deepEqual(arguments[0], undefined, "almost no args");
 		});
 	});
 
 	//*********************************************************************************************
-	test("compatibility with asynchronous old ODataModel", function () {
+	QUnit.test("compatibility with asynchronous old ODataModel", function (assert) {
 		var oModel = new ODataModel1("/GWSAMPLE_BASIC", {
 				annotationURI : "/GWSAMPLE_BASIC/annotations",
 				json : true,
@@ -594,19 +602,19 @@ sap.ui.require([
 			oMetaModel = oModel.getMetaModel();
 
 		return oMetaModel.loaded().then(function () {
-			strictEqual(arguments.length, 1, "almost no args");
-			deepEqual(arguments[0], undefined, "almost no args");
+			assert.strictEqual(arguments.length, 1, "almost no args");
+			assert.deepEqual(arguments[0], undefined, "almost no args");
 
-			strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
+			assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
 				"GWSAMPLE_BASIC", "meta data available");
-			strictEqual(
+			assert.strictEqual(
 				oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/sap:label"),
 				"Bus. Part. ID", "SAPData is lifted");
-			strictEqual(
+			assert.strictEqual(
 				oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
 					+ "com.sap.vocabularies.Common.v1.Label/String"),
 				"Bus. Part. ID", "v2 --> v4");
-			strictEqual(
+			assert.strictEqual(
 				oMetaModel.getProperty("/dataServices/schema/0/entityType/0/"
 					+ "com.sap.vocabularies.UI.v1.HeaderInfo/TypeName/String"),
 				"Business Partner", "v4 annotations available");
@@ -614,7 +622,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("compatibility with asynchronous old ODataModel: use after load", function (assert) {
+	QUnit.test("compatibility w/ asynchronous old ODataModel: use after load", function (assert) {
 		var iCount = 0,
 			fnDone = assert.async(),
 			oModel = new ODataModel1("/GWSAMPLE_BASIC", {
@@ -631,22 +639,22 @@ sap.ui.require([
 				oMetaModel = oModel.getMetaModel();
 
 				try {
-					strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
+					assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
 						"GWSAMPLE_BASIC", "meta data available");
-					strictEqual(
+					assert.strictEqual(
 						oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
 							+ "sap:label"),
 						"Bus. Part. ID", "SAPData is lifted");
-					strictEqual(
+					assert.strictEqual(
 						oMetaModel.getProperty("/dataServices/schema/0/entityType/0/property/1/"
 							+ "com.sap.vocabularies.Common.v1.Label/String"),
 						"Bus. Part. ID", "v2 --> v4");
-					strictEqual(
+					assert.strictEqual(
 						oMetaModel.getProperty("/dataServices/schema/0/entityType/0/"
 							+ "com.sap.vocabularies.UI.v1.HeaderInfo/TypeName/String"),
 						"Business Partner", "v4 annotations available");
 				} catch (ex) {
-					ok(false, ex);
+					assert.ok(false, ex);
 				}
 
 				fnDone();
@@ -659,7 +667,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("compatibility with old ODataModel: separate value list load", function () {
+	QUnit.test("compatibility with old ODataModel: separate value list load", function (assert) {
 		var oModel = new ODataModel1("/FAR_CUSTOMER_LINE_ITEMS", {
 				json : true,
 				loadMetadataAsync : false
@@ -670,7 +678,7 @@ sap.ui.require([
 			oContext = oMetaModel.getMetaContext("/Items('foo')/Customer");
 
 		return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
-			deepEqual(mValueLists, {
+			assert.deepEqual(mValueLists, {
 				"" : oProperty["com.sap.vocabularies.Common.v1.ValueList"],
 				"DEBID" : oProperty["com.sap.vocabularies.Common.v1.ValueList#DEBID"]
 			});
@@ -682,7 +690,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("functions using 'this.oModel' directly", function () {
+	QUnit.test("functions using 'this.oModel' directly", function (assert) {
 		var oModel = new ODataModel("/GWSAMPLE_BASIC", {
 				annotationURI : "/GWSAMPLE_BASIC/annotations",
 				json : true,
@@ -690,18 +698,18 @@ sap.ui.require([
 			}),
 			oMetaModel = oModel.getMetaModel();
 
-		ok(oMetaModel instanceof ODataMetaModel);
-		strictEqual(typeof oMetaModel.oODataModelInterface.addAnnotationUrl, "function",
+		assert.ok(oMetaModel instanceof ODataMetaModel);
+		assert.strictEqual(typeof oMetaModel.oODataModelInterface.addAnnotationUrl, "function",
 			"function addAnnotationUrl");
 
 		// call functions before loaded() promise has been resolved
-		throws(function () {
+		assert.throws(function () {
 			oMetaModel._getObject("/");
-		}, "_getObject")
-		throws(function () {
+		}, "_getObject");
+		assert.throws(function () {
 			oMetaModel.destroy();
-		}, "destroy")
-		throws(function () {
+		}, "destroy");
+		assert.throws(function () {
 			oMetaModel.getODataAssociationEnd({
 				"navigationProperty" : [{
 					"name" : "ToSalesOrders",
@@ -710,25 +718,25 @@ sap.ui.require([
 					"toRole" : "ToRole_Assoc_BusinessPartner_SalesOrders"
 				}]
 			}, "ToSalesOrders");
-		}, "getODataAssociationEnd")
-		throws(function () {
+		}, "getODataAssociationEnd");
+		assert.throws(function () {
 			oMetaModel.getODataComplexType("don't care");
-		}, "getODataComplexType")
-		throws(function () {
+		}, "getODataComplexType");
+		assert.throws(function () {
 			oMetaModel.getODataEntityContainer();
-		}, "getODataEntityContainer")
-		throws(function () {
+		}, "getODataEntityContainer");
+		assert.throws(function () {
 			oMetaModel.getODataEntityType("don't care");
-		}, "getODataEntityType")
-		throws(function () {
+		}, "getODataEntityType");
+		assert.throws(function () {
 			oMetaModel.isList();
-		}, "isList")
+		}, "isList");
 
 		return oMetaModel.loaded();
 	});
 
 	//*********************************************************************************************
-	test("basics", function () {
+	QUnit.test("basics", function (assert) {
 		var oMetaModel = new ODataMetaModel({
 				getServiceMetadata : function () { return {dataServices : {}}; }
 			});
@@ -738,8 +746,8 @@ sap.ui.require([
 				oModelMock = oGlobalSandbox.mock(oMetaModel.oModel),
 				oResult = {};
 
-			strictEqual(arguments.length, 1, "almost no args");
-			deepEqual(arguments[0], undefined, "almost no args");
+			assert.strictEqual(arguments.length, 1, "almost no args");
+			assert.deepEqual(arguments[0], undefined, "almost no args");
 
 			oGlobalSandbox.mock(Model.prototype).expects("destroy");
 			// do not mock/stub this or else "destroy" will not bubble up!
@@ -749,40 +757,40 @@ sap.ui.require([
 			["destroy", "isList"].forEach(function (sName) {
 				oModelMock.expects(sName).withExactArgs("foo", 0, false).returns(oResult);
 
-				strictEqual(oMetaModel[sName]("foo", 0, false), oResult, sName);
+				assert.strictEqual(oMetaModel[sName]("foo", 0, false), oResult, sName);
 			});
 
 			// getProperty dispatches to _getObject
 			oMetaModelMock.expects("_getObject").withExactArgs("foo", 0, false)
 				.returns(oResult);
-			strictEqual(oMetaModel.getProperty("foo", 0, false), oResult, "getProperty");
+			assert.strictEqual(oMetaModel.getProperty("foo", 0, false), oResult, "getProperty");
 
-			ok(MetaModel.prototype.destroy.calledOnce);
+			assert.ok(MetaModel.prototype.destroy.calledOnce);
 
-			throws(function () {
+			assert.throws(function () {
 				oMetaModel.refresh();
 			}, /Unsupported operation: ODataMetaModel#refresh/);
 
 			oMetaModel.setLegacySyntax(); // allowed
 			oMetaModel.setLegacySyntax(false); // allowed
-			throws(function () {
+			assert.throws(function () {
 				oMetaModel.setLegacySyntax(true);
 			}, /Legacy syntax not supported by ODataMetaModel/);
 
-			strictEqual(oMetaModel.getDefaultBindingMode(), BindingMode.OneTime);
-			strictEqual(oMetaModel.oModel.getDefaultBindingMode(), BindingMode.OneTime);
-			throws(function () {
+			assert.strictEqual(oMetaModel.getDefaultBindingMode(), BindingMode.OneTime);
+			assert.strictEqual(oMetaModel.oModel.getDefaultBindingMode(), BindingMode.OneTime);
+			assert.throws(function () {
 				oMetaModel.setDefaultBindingMode(BindingMode.OneWay);
 			});
-			throws(function () {
+			assert.throws(function () {
 				oMetaModel.setDefaultBindingMode(BindingMode.TwoWay);
 			});
 		});
 	});
 
 	//*********************************************************************************************
-	test("bindings", function () {
-		return withMetaModel(function (oMetaModel) {
+	QUnit.test("bindings", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
 			var oBinding,
 				oContext = oMetaModel.createBindingContext("/dataServices"),
 				aFilters = [],
@@ -792,45 +800,46 @@ sap.ui.require([
 
 			// Note: support for events not needed
 			oBinding = oMetaModel.bindContext(sPath, oContext, mParameters);
-			ok(oBinding instanceof ClientContextBinding);
-			strictEqual(oBinding.getModel(), oMetaModel);
-			strictEqual(oBinding.getPath(), sPath);
-			strictEqual(oBinding.getContext(), oContext);
-			strictEqual(oBinding.mParameters, mParameters);
+			assert.ok(oBinding instanceof ClientContextBinding);
+			assert.strictEqual(oBinding.getModel(), oMetaModel);
+			assert.strictEqual(oBinding.getPath(), sPath);
+			assert.strictEqual(oBinding.getContext(), oContext);
+			assert.strictEqual(oBinding.mParameters, mParameters);
 
 			oBinding = oMetaModel.bindProperty(sPath, oContext, mParameters);
-			ok(oBinding instanceof JSONPropertyBinding);
-			strictEqual(oBinding.getModel(), oMetaModel);
-			strictEqual(oBinding.getPath(), sPath);
-			strictEqual(oBinding.getContext(), oContext);
-			strictEqual(oBinding.mParameters, mParameters);
+			assert.ok(oBinding instanceof JSONPropertyBinding);
+			assert.strictEqual(oBinding.getModel(), oMetaModel);
+			assert.strictEqual(oBinding.getPath(), sPath);
+			assert.strictEqual(oBinding.getContext(), oContext);
+			assert.strictEqual(oBinding.mParameters, mParameters);
 
-			throws(function () {
+			assert.throws(function () {
 				oBinding.setValue("foo");
 			}, /Unsupported operation: ODataMetaModel#setProperty/);
 
 			oBinding = oMetaModel.bindList(sPath, oContext, aSorters, aFilters, mParameters);
-			ok(oBinding instanceof JSONListBinding);
-			strictEqual(oBinding.getModel(), oMetaModel, "inner model not leaked");
-			strictEqual(oBinding.getPath(), sPath);
-			strictEqual(oBinding.getContext(), oContext);
-			strictEqual(oBinding.aSorters, aSorters);
-			strictEqual(oBinding.aApplicationFilters, aFilters); //TODO spy on ListBinding instead?
-			strictEqual(oBinding.mParameters, mParameters);
+			assert.ok(oBinding instanceof JSONListBinding);
+			assert.strictEqual(oBinding.getModel(), oMetaModel, "inner model not leaked");
+			assert.strictEqual(oBinding.getPath(), sPath);
+			assert.strictEqual(oBinding.getContext(), oContext);
+			assert.strictEqual(oBinding.aSorters, aSorters);
+			//TODO spy on ListBinding instead?
+			assert.strictEqual(oBinding.aApplicationFilters, aFilters);
+			assert.strictEqual(oBinding.mParameters, mParameters);
 
 			oBinding = oMetaModel.bindTree(sPath, oContext, aFilters, mParameters);
-			ok(oBinding instanceof JSONTreeBinding);
-			strictEqual(oBinding.getModel(), oMetaModel);
-			strictEqual(oBinding.getPath(), sPath);
-			strictEqual(oBinding.getContext(), oContext);
-			strictEqual(oBinding.aFilters, aFilters);
-			strictEqual(oBinding.mParameters, mParameters);
+			assert.ok(oBinding instanceof JSONTreeBinding);
+			assert.strictEqual(oBinding.getModel(), oMetaModel);
+			assert.strictEqual(oBinding.getPath(), sPath);
+			assert.strictEqual(oBinding.getContext(), oContext);
+			assert.strictEqual(oBinding.aFilters, aFilters);
+			assert.strictEqual(oBinding.mParameters, mParameters);
 		});
 	});
 
 	//*********************************************************************************************
-	test("bindList", function () {
-		return withMetaModel(function (oMetaModel) {
+	QUnit.test("bindList", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
 			var fnApply = oGlobalSandbox.mock(FilterProcessor).expects("apply"),
 				oBinding,
 				oContext = oMetaModel.createBindingContext("/"),
@@ -847,8 +856,8 @@ sap.ui.require([
 			oBinding = oMetaModel.bindList(sPath, oContext, aSorters, aFilters, mParameters);
 			// implicitly calls oBinding.applyFilter()
 
-			strictEqual(oBinding.aIndices, aIndices);
-			strictEqual(oBinding.iLength, oBinding.aIndices.length);
+			assert.strictEqual(oBinding.aIndices, aIndices);
+			assert.strictEqual(oBinding.iLength, oBinding.aIndices.length);
 
 			fnGetValue = fnApply.args[0][2];
 			oGlobalSandbox.mock(oMetaModel).expects("getProperty")
@@ -856,51 +865,53 @@ sap.ui.require([
 				.returns("foo");
 
 			// code under test
-			strictEqual(fnGetValue("schema", "0/namespace"), "foo");
+			assert.strictEqual(fnGetValue("schema", "0/namespace"), "foo");
 
 			// code under test
-			strictEqual(fnGetValue("schema", "@sapui.name"), "schema");
+			assert.strictEqual(fnGetValue("schema", "@sapui.name"), "schema");
 		});
 	});
 
 	//*********************************************************************************************
-	test("_getObject", function () {
-		return withMetaModel(function (oMetaModel) {
+	QUnit.test("_getObject", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
 			var oContext;
 
 			// w/o context
-			strictEqual(oMetaModel._getObject("/"), oMetaModel.oModel._getObject("/"));
-			strictEqual(oMetaModel._getObject("/foo"), undefined);
-			strictEqual(oMetaModel._getObject("/dataServices"),
+			assert.strictEqual(oMetaModel._getObject("/"), oMetaModel.oModel._getObject("/"));
+			assert.strictEqual(oMetaModel._getObject("/foo"), undefined);
+			assert.strictEqual(oMetaModel._getObject("/dataServices"),
 				oMetaModel.oModel._getObject("/dataServices"));
-			strictEqual(oMetaModel._getObject("/dataServices/schema"),
+			assert.strictEqual(oMetaModel._getObject("/dataServices/schema"),
 				oMetaModel.oModel._getObject("/dataServices/schema"));
 
 			// with sap.ui.model.Context
 			oContext = oMetaModel.getContext("/dataServices/schema");
-			strictEqual(oMetaModel._getObject(undefined, oContext),
+			assert.strictEqual(oMetaModel._getObject(undefined, oContext),
 				oMetaModel.oModel._getObject("/dataServices/schema"));
 			oContext = oMetaModel.getContext("/dataServices");
-			strictEqual(oMetaModel._getObject("schema", oContext),
+			assert.strictEqual(oMetaModel._getObject("schema", oContext),
 				oMetaModel.oModel._getObject("/dataServices/schema"));
 
 			// with object context
 			oContext = oMetaModel._getObject("/dataServices");
-			strictEqual(oMetaModel._getObject("schema", oContext),
+			assert.strictEqual(oMetaModel._getObject("schema", oContext),
 				oMetaModel.oModel._getObject("/dataServices/schema"));
 			oContext = oMetaModel._getObject("/dataServices/schema");
-			strictEqual(oMetaModel._getObject(undefined, oContext),
+			assert.strictEqual(oMetaModel._getObject(undefined, oContext),
 				oMetaModel.oModel._getObject("/dataServices/schema"));
 			// absolute path wins over object context
 			oContext = oMetaModel._getObject("/dataServices/schema/0/entityType/0");
-			strictEqual(oMetaModel._getObject("/dataServices/schema/0/entityType/1", oContext),
+			assert.strictEqual(
+				oMetaModel._getObject("/dataServices/schema/0/entityType/1", oContext),
 				oMetaModel.oModel._getObject("/dataServices/schema/0/entityType/1"));
 		});
 	});
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bIsLoggable) {
-		test("_getObject: queries instead of indexes, log = " + bIsLoggable, function () {
+		QUnit.test(
+				"_getObject: queries instead of indexes, log = " + bIsLoggable, function (assert) {
 			var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
 
 			jQuery.sap.log.setLevel(bIsLoggable
@@ -920,7 +931,7 @@ sap.ui.require([
 					+ "entityType' after pos:2", undefined, "sap.ui.base.ExpressionParser");
 			oLogMock.expects("warning").never();
 
-			return withMetaModel(function (oMetaModel) {
+			return withMetaModel(assert, function (oMetaModel) {
 				[{
 					i: "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']",
 					o: "/dataServices/schema/0"
@@ -971,19 +982,21 @@ sap.ui.require([
 						"/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']")
 				}, { // query on non-array
 					i: "/dataServices/[${namespace}==='GWSAMPLE_BASIC']",
-					o: null,
+					o: null
 				}, { // stupid query with [], but returning true
 					i: "/dataServices/schema/['GWSAMPLE_BASIC/foo'.split('/')[0]===${namespace}]"
 						+ "/entityType",
-					o: "/dataServices/schema/0/entityType",
+					o: "/dataServices/schema/0/entityType"
 				}, { // syntax error in query
 					i: "/dataServices/schema/[${namespace==='GWSAMPLE_BASIC']/entityType",
 					o: undefined,
 					m: "Invalid part: entityType"
 				}, { // search for the first property having a maxLength
 					i: "/dataServices/schema/0/entityType/0/property/[${maxLength}]",
-					o: "/dataServices/schema/0/entityType/0/property/1",
+					o: "/dataServices/schema/0/entityType/0/property/1"
 				}].forEach(function (oFixture) {
+					var fnBindObject, fnUnbindObject;
+
 					if (oFixture.m) {
 						oLogMock.expects("warning")
 							// do not construct arguments in vain!
@@ -991,112 +1004,134 @@ sap.ui.require([
 							.withExactArgs(oFixture.m, "path: " + oFixture.i
 								+ ", context: undefined", "sap.ui.model.odata.ODataMetaModel");
 					}
-					strictEqual(oMetaModel._getObject(oFixture.i, oFixture.c), oFixture.o
+					if (oMetaModel.oResolver) {
+						fnBindObject = oMetaModel.oResolver.bindObject;
+						oMetaModel.oResolver.bindObject = function () {
+							assert.strictEqual(this.getBinding("any"), undefined,
+								"no property binding on bindObject");
+							fnBindObject.apply(this, arguments);
+						};
+						fnUnbindObject = oMetaModel.oResolver.unbindObject;
+						oMetaModel.oResolver.unbindObject = function () {
+							assert.strictEqual(this.getBinding("any"), undefined,
+								"no property binding on unbindObject");
+							fnUnbindObject.apply(this, arguments);
+						};
+					}
+					assert.strictEqual(oMetaModel._getObject(oFixture.i, oFixture.c), oFixture.o
 						? oMetaModel.oModel.getObject(oFixture.o)
 						: oFixture.o, oFixture.i);
+					assert.strictEqual(oMetaModel.oResolver.getBinding("any"), undefined,
+						"no property binding in the end");
+					assert.strictEqual(oMetaModel.oResolver.getObjectBinding(), undefined,
+						"no object binding in the end");
 				});
 			});
 		});
 	});
 
 	//*********************************************************************************************
-	test("_getObject: some error in parseExpression (not SyntaxError)", function () {
+	QUnit.test("_getObject: some error in parseExpression (not SyntaxError)", function (assert) {
 		var oError = new Error();
 
 		oGlobalSandbox.mock(BindingParser).expects("parseExpression").throws(oError);
 
-		return withMetaModel(function (oMetaModel) {
-			throws(function () {
+		return withMetaModel(assert, function (oMetaModel) {
+			assert.throws(function () {
 				oMetaModel.getObject("/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']");
 			}, oError);
 		});
 	});
 
 	//*********************************************************************************************
-	test("_getObject: caching queries", function () {
-		return withMetaModel(function (oMetaModel) {
+	QUnit.test("_getObject: caching queries", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
 			var sPath = "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
 					+ "[$\{name}==='Product']",
 				oResult = oMetaModel._getObject(sPath);
 
 			oGlobalSandbox.mock(oMetaModel.oResolver).expects("bindProperty").never();
 
-			strictEqual(oMetaModel._getObject(sPath), oResult);
+			assert.strictEqual(oMetaModel._getObject(sPath), oResult);
 		});
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bIsLoggable) {
-		test("_getObject: warning w/o context, log = " + bIsLoggable, function () {
+	[false, true].forEach(function (bWarn) {
+		QUnit.test("_getObject: warning w/o context, log = " + bWarn, function (assert) {
 			var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
 
 			oLogMock.expects("isLoggable")
 				.withExactArgs(jQuery.sap.log.Level.WARNING)
-				.returns(bIsLoggable);
+				.returns(bWarn);
 			oLogMock.expects("warning")
-				.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
+				.exactly(bWarn ? 1 : 0) // do not construct arguments in vain!
 				.withExactArgs("Invalid part: bar", "path: /foo/bar, context: undefined",
 					"sap.ui.model.odata.ODataMetaModel");
 
-			return withMetaModel(function (oMetaModel) {
-				strictEqual(oMetaModel._getObject("/foo/bar"), undefined);
+			return withMetaModel(assert, function (oMetaModel) {
+				assert.strictEqual(oMetaModel._getObject("/foo/bar"), undefined);
 			});
 		});
 
-		test("_getObject: warning with sap.ui.model.Context, log = " + bIsLoggable, function () {
+		QUnit.test("_getObject: warning with sap.ui.model.Context, log = " + bWarn,
+			function (assert) {
+				var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
+
+				oLogMock.expects("isLoggable")
+					.withExactArgs(jQuery.sap.log.Level.WARNING)
+					.returns(bWarn);
+				oLogMock.expects("warning")
+					.exactly(bWarn ? 1 : 0) // do not construct arguments in vain!
+					.withExactArgs("Invalid part: relative",
+						"path: some/relative/path, context: /dataServices/schema/0/entityType/0",
+						"sap.ui.model.odata.ODataMetaModel");
+
+				return withMetaModel(assert, function (oMetaModel) {
+					var oContext = oMetaModel.getContext("/dataServices/schema/0/entityType/0");
+					assert.strictEqual(oMetaModel._getObject("some/relative/path", oContext),
+						undefined);
+				});
+			});
+
+		QUnit.test("_getObject: warning with object context, log = " + bWarn, function (assert) {
 			var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
 
 			oLogMock.expects("isLoggable")
 				.withExactArgs(jQuery.sap.log.Level.WARNING)
-				.returns(bIsLoggable);
+				.returns(bWarn);
 			oLogMock.expects("warning")
-				.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
-				.withExactArgs("Invalid part: relative",
-					"path: some/relative/path, context: /dataServices/schema/0/entityType/0",
-					"sap.ui.model.odata.ODataMetaModel");
-
-			return withMetaModel(function (oMetaModel) {
-				var oContext = oMetaModel.getContext("/dataServices/schema/0/entityType/0");
-				strictEqual(oMetaModel._getObject("some/relative/path", oContext), undefined);
-			});
-		});
-
-		test("_getObject: warning with object context, log = " + bIsLoggable, function () {
-			var oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
-
-			oLogMock.expects("isLoggable")
-				.withExactArgs(jQuery.sap.log.Level.WARNING)
-				.returns(bIsLoggable);
-			oLogMock.expects("warning")
-				.exactly(bIsLoggable ? 1 : 0) // do not construct arguments in vain!
+				.exactly(bWarn ? 1 : 0) // do not construct arguments in vain!
 				.withExactArgs("Invalid part: relative",
 					"path: some/relative/path, context: [object Object]",
 					"sap.ui.model.odata.ODataMetaModel");
 
-			return withMetaModel(function (oMetaModel) {
+			return withMetaModel(assert, function (oMetaModel) {
 				var oContext = oMetaModel._getObject("/dataServices/schema/0/entityType/0");
-				strictEqual(oMetaModel._getObject("some/relative/path", oContext), undefined);
+				assert.strictEqual(oMetaModel._getObject("some/relative/path", oContext),
+					undefined);
 			});
 		});
 	});
 
 	//*********************************************************************************************
-	test("_getObject: Invalid relative path w/o context", function () {
+	QUnit.test("_getObject: Invalid relative path w/o context", function (assert) {
 		oGlobalSandbox.mock(jQuery.sap.log).expects("error").withExactArgs(
 			"Invalid relative path w/o context",
 			"some/relative/path",
 			"sap.ui.model.odata.ODataMetaModel");
 
-		return withMetaModel(function (oMetaModel) {
-			strictEqual(oMetaModel._getObject("some/relative/path"), null);
+		return withMetaModel(assert, function (oMetaModel) {
+			assert.strictEqual(oMetaModel._getObject("some/relative/path"), null);
 		});
 	});
 
 	//*********************************************************************************************
-	test("/dataServices/schema/<i>/annotations dropped", function () {
-		return withGivenService("/fake/emptySchemaWithAnnotations", "", function (oMetaModel) {
+	QUnit.test("/dataServices/schema/<i>/annotations dropped", function (assert) {
+		return withGivenService(assert, "/fake/emptySchemaWithAnnotations", "", function (oMetaModel) {
 			return oMetaModel.loaded().then(function () {
-				strictEqual(oMetaModel.getObject("/dataServices/schema/0/annotations"), undefined);
+				assert.strictEqual(oMetaModel.getObject("/dataServices/schema/0/annotations"),
+					undefined);
 			});
 		});
 	});
@@ -1112,9 +1147,9 @@ sap.ui.require([
 		annotationURI : ["/fake/annotations", "/fake/annotations2"],
 		title : "multiple annotation files"
 	}].forEach(function (oFixture, i) {
-		test("ODataMetaModel loaded: " + oFixture.title, function () {
-			return withGivenService("/fake/service", oFixture.annotationURI, function (oMetaModel,
-				oModel) {
+		QUnit.test("ODataMetaModel loaded: " + oFixture.title, function (assert) {
+			return withGivenService(assert,
+					"/fake/service", oFixture.annotationURI, function (oMetaModel, oModel) {
 				var oMetadata = oModel.getServiceMetadata(),
 					oMetaModelData = oMetaModel.getObject("/"),
 					oGWSampleBasic = oMetaModelData.dataServices.schema[0],
@@ -1141,7 +1176,6 @@ sap.ui.require([
 					oProductSet = oEntityContainer.entitySet[1],
 					oProductWeightMeasure =  oProduct.property[2],
 					oProductWeightUnit =  oProduct.property[3],
-					sSAPData = "http://www.sap.com/Protocols/SAPData",
 					oVHSex = oGWSampleBasic.entityType[1],
 					oVHSexSet = oEntityContainer.entitySet[2];
 
@@ -1162,90 +1196,93 @@ sap.ui.require([
 							sProperty = "Insertable";
 					}
 
-					deepEqual(oVHSexSet["sap:" + sExtension], "false");
+					assert.deepEqual(oVHSexSet["sap:" + sExtension], "false");
 					delete oVHSexSet["sap:" + sExtension];
 					oExpected = {};
 					oExpected[sProperty] = {"Bool": "false"};
-					deepEqual(oVHSexSet["Org.OData.Capabilities.V1." + sCapability], oExpected,
-						sExtension + " at entity set");
+					assert.deepEqual(oVHSexSet["Org.OData.Capabilities.V1." + sCapability],
+						oExpected, sExtension + " at entity set");
 					delete oVHSexSet["Org.OData.Capabilities.V1." + sCapability];
 				}
 
-				strictEqual(oBusinessPartner.name, "BusinessPartner");
-				strictEqual(oBusinessPartnerId.name, "BusinessPartnerID");
+				assert.strictEqual(oBusinessPartner.name, "BusinessPartner");
+				assert.strictEqual(oBusinessPartnerId.name, "BusinessPartnerID");
 
-				ok(oMetadata, "metadata is loaded");
+				assert.ok(oMetadata, "metadata is loaded");
 
-				strictEqual(oBusinessPartner.namespace, "GWSAMPLE_BASIC");
+				assert.strictEqual(oBusinessPartner.namespace, "GWSAMPLE_BASIC");
 				delete oBusinessPartner.namespace;
-				strictEqual(oBusinessPartner.$path, "/dataServices/schema/0/entityType/0");
+				assert.strictEqual(oBusinessPartner.$path, "/dataServices/schema/0/entityType/0");
 				delete oBusinessPartner.$path;
-				strictEqual(oVHSex.namespace, "GWSAMPLE_BASIC");
+				assert.strictEqual(oVHSex.namespace, "GWSAMPLE_BASIC");
 				delete oVHSex.namespace;
-				strictEqual(oVHSex.$path, "/dataServices/schema/0/entityType/1");
+				assert.strictEqual(oVHSex.$path, "/dataServices/schema/0/entityType/1");
 				delete oVHSex.$path;
-				strictEqual(oProduct.namespace, "GWSAMPLE_BASIC");
+				assert.strictEqual(oProduct.namespace, "GWSAMPLE_BASIC");
 				delete oProduct.namespace;
-				strictEqual(oProduct.$path, "/dataServices/schema/0/entityType/2");
+				assert.strictEqual(oProduct.$path, "/dataServices/schema/0/entityType/2");
 				delete oProduct.$path;
-				strictEqual(oContact.namespace, "GWSAMPLE_BASIC");
+				assert.strictEqual(oContact.namespace, "GWSAMPLE_BASIC");
 				delete oContact.namespace;
-				strictEqual(oContact.$path, "/dataServices/schema/0/entityType/3");
+				assert.strictEqual(oContact.$path, "/dataServices/schema/0/entityType/3");
 				delete oContact.$path;
 
-				strictEqual(oGWSampleBasic.$path, "/dataServices/schema/0");
+				assert.strictEqual(oGWSampleBasic.$path, "/dataServices/schema/0");
 				delete oGWSampleBasic.$path;
-				deepEqual(oGWSampleBasic["sap:schema-version"], "0000");
+				assert.deepEqual(oGWSampleBasic["sap:schema-version"], "0000");
 				delete oGWSampleBasic["sap:schema-version"];
 
-				deepEqual(oBusinessPartner["sap:content-version"], "1");
+				assert.deepEqual(oBusinessPartner["sap:content-version"], "1");
 				delete oBusinessPartner["sap:content-version"];
 
-				strictEqual(oCTAddress.namespace, "GWSAMPLE_BASIC");
+				assert.strictEqual(oCTAddress.namespace, "GWSAMPLE_BASIC");
 				delete oCTAddress.namespace;
-				strictEqual(oCTAddress.$path, "/dataServices/schema/0/complexType/0", "$path");
+				assert.strictEqual(oCTAddress.$path, "/dataServices/schema/0/complexType/0",
+					"$path");
 				delete oCTAddress.$path;
 
-				deepEqual(oAssociation["sap:content-version"], "1");
+				assert.deepEqual(oAssociation["sap:content-version"], "1");
 				delete oAssociation["sap:content-version"];
 
-				strictEqual(oAssociation.namespace, "GWSAMPLE_BASIC");
+				assert.strictEqual(oAssociation.namespace, "GWSAMPLE_BASIC");
 				delete oAssociation.namespace;
-				strictEqual(oAssociation.$path, "/dataServices/schema/0/association/0");
+				assert.strictEqual(oAssociation.$path, "/dataServices/schema/0/association/0");
 				delete oAssociation.$path;
 
-				deepEqual(oAssociationSet["sap:creatable"], "false");
+				assert.deepEqual(oAssociationSet["sap:creatable"], "false");
 				delete oAssociationSet["sap:creatable"];
 
-				deepEqual(oBusinessPartnerSet["sap:content-version"], "1");
+				assert.deepEqual(oBusinessPartnerSet["sap:content-version"], "1");
 				delete oBusinessPartnerSet["sap:content-version"];
 
-				deepEqual(oEntityContainer["sap:use-batch"], "false");
+				assert.deepEqual(oEntityContainer["sap:use-batch"], "false");
 				delete oEntityContainer["sap:use-batch"];
 
-				strictEqual(oEntityContainer.namespace, "GWSAMPLE_BASIC");
+				assert.strictEqual(oEntityContainer.namespace, "GWSAMPLE_BASIC");
 				delete oEntityContainer.namespace;
-				strictEqual(oEntityContainer.$path, "/dataServices/schema/0/entityContainer/0");
+				assert.strictEqual(oEntityContainer.$path,
+					"/dataServices/schema/0/entityContainer/0");
 				delete oEntityContainer.$path;
 
-				deepEqual(oFunctionImport["sap:action-for"], "GWSAMPLE_BASIC.BusinessPartner");
+				assert.deepEqual(oFunctionImport["sap:action-for"],
+					"GWSAMPLE_BASIC.BusinessPartner");
 				delete oFunctionImport["sap:action-for"];
 
-				deepEqual(oNavigationProperty["sap:filterable"], "true");
+				assert.deepEqual(oNavigationProperty["sap:filterable"], "true");
 				delete oNavigationProperty["sap:filterable"];
 
-				deepEqual(oVHSex["sap:content-version"], "1");
+				assert.deepEqual(oVHSex["sap:content-version"], "1");
 				delete oVHSex["sap:content-version"];
-				deepEqual(oVHSexSet["sap:content-version"], "1");
+				assert.deepEqual(oVHSexSet["sap:content-version"], "1");
 				delete oVHSexSet["sap:content-version"];
 
 				if (i > 0) {
-					deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Label"], {
+					assert.deepEqual(oBusinessPartner["com.sap.vocabularies.Common.v1.Label"], {
 						"String" : "Label via external annotation: Business Partner"
 					});
 					delete oBusinessPartner["com.sap.vocabularies.Common.v1.Label"];
 
-					deepEqual(oBusinessPartner["com.sap.vocabularies.UI.v1.HeaderInfo"], {
+					assert.deepEqual(oBusinessPartner["com.sap.vocabularies.UI.v1.HeaderInfo"], {
 						"RecordType" : "com.sap.vocabularies.UI.v1.HeaderInfoType",
 						"Title" : {
 							"Label" : {
@@ -1276,53 +1313,53 @@ sap.ui.require([
 
 					if (i > 1) { // additional tests for 2nd annotations file
 						// schema
-						deepEqual(oGWSampleBasic["acme.Foo.v1.Foo"], {
+						assert.deepEqual(oGWSampleBasic["acme.Foo.v1.Foo"], {
 							"String" : "GWSAMPLE_BASIC"
 						});
 						delete oGWSampleBasic["acme.Foo.v1.Foo"];
 						// entity type: navigation property
-						deepEqual(oNavigationProperty["acme.Foo.v1.Foo"], {
+						assert.deepEqual(oNavigationProperty["acme.Foo.v1.Foo"], {
 							"String" : "GWSAMPLE_BASIC.BusinessPartner/ToFoo"
 						});
 						delete oNavigationProperty["acme.Foo.v1.Foo"];
 						// complex type
-						deepEqual(oCTAddress["acme.Foo.v1.Foo"], {
+						assert.deepEqual(oCTAddress["acme.Foo.v1.Foo"], {
 							"String" : "GWSAMPLE_BASIC.CT_Address"
 						});
 						delete oCTAddress["acme.Foo.v1.Foo"];
 						// association
-						deepEqual(oAssociation["acme.Foo.v1.Foo"], {
+						assert.deepEqual(oAssociation["acme.Foo.v1.Foo"], {
 							"String" : "GWSAMPLE_BASIC.Assoc_Foo"
 						});
 						delete oAssociation["acme.Foo.v1.Foo"];
 						// association: end
-						deepEqual(oAssociationEnd["acme.Foo.v1.Foo"], {
+						assert.deepEqual(oAssociationEnd["acme.Foo.v1.Foo"], {
 							"String" : "GWSAMPLE_BASIC.Assoc_Foo/FromRole_Foo"
 						});
 						delete oAssociationEnd["acme.Foo.v1.Foo"];
 						// entity container
-						deepEqual(oEntityContainer["acme.Foo.v1.Foo"], {
+						assert.deepEqual(oEntityContainer["acme.Foo.v1.Foo"], {
 							"String" : "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities"
 						});
 						delete oEntityContainer["acme.Foo.v1.Foo"];
 						// entity container: association set
-						deepEqual(oAssociationSet["acme.Foo.v1.Foo"], {
+						assert.deepEqual(oAssociationSet["acme.Foo.v1.Foo"], {
 							"String" : "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Assoc_FooSet"
 						});
 						delete oAssociationSet["acme.Foo.v1.Foo"];
 						// Note: "entity container: association set: end" is not needed!
 						// entity container: entity set
-						deepEqual(oBusinessPartnerSet["acme.Foo.v1.Foo"], {
+						assert.deepEqual(oBusinessPartnerSet["acme.Foo.v1.Foo"], {
 							"String" : "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/BusinessPartnerSet"
 						});
 						delete oBusinessPartnerSet["acme.Foo.v1.Foo"];
 						// entity container: function import
-						deepEqual(oFunctionImport["acme.Foo.v1.Foo"], {
+						assert.deepEqual(oFunctionImport["acme.Foo.v1.Foo"], {
 							"String" : "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Foo"
 						});
 						delete oFunctionImport["acme.Foo.v1.Foo"];
 						// entity container: function import: parameter
-						deepEqual(oParameter["acme.Foo.v1.Foo"], {
+						assert.deepEqual(oParameter["acme.Foo.v1.Foo"], {
 							"String"
 								: "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/Foo/BusinessPartnerID"
 						});
@@ -1332,31 +1369,31 @@ sap.ui.require([
 
 				// check SAP V2 annotations as V4 annotations
 				// sap:label
-				deepEqual(oBusinessPartnerId["sap:label"], "Bus. Part. ID");
+				assert.deepEqual(oBusinessPartnerId["sap:label"], "Bus. Part. ID");
 				delete oBusinessPartnerId["sap:label"];
-				deepEqual(oBusinessPartnerId["com.sap.vocabularies.Common.v1.Label"], {
+				assert.deepEqual(oBusinessPartnerId["com.sap.vocabularies.Common.v1.Label"], {
 					"String" : "Bus. Part. ID"
 				}, "Label derived from sap:label");
 				delete oBusinessPartnerId["com.sap.vocabularies.Common.v1.Label"];
 
 				// in case of i > 1 property has been overwritten by annotation file
 				// complex type: property
-				deepEqual(oCTAddressCity["sap:label"], "City");
+				assert.deepEqual(oCTAddressCity["sap:label"], "City");
 				delete oCTAddressCity["sap:label"];
-				deepEqual(oCTAddressCity["com.sap.vocabularies.Common.v1.Label"], {
+				assert.deepEqual(oCTAddressCity["com.sap.vocabularies.Common.v1.Label"], {
 					"String" : i <= 1 ? "City" : "GWSAMPLE_BASIC.CT_Address/City"
 				}, "Label derived from sap:label");
 				delete oCTAddressCity["com.sap.vocabularies.Common.v1.Label"];
 				// check sap:semantics
-				deepEqual(oCTAddressCity["sap:semantics"], "city");
+				assert.deepEqual(oCTAddressCity["sap:semantics"], "city");
 				delete oCTAddressCity["sap:semantics"];
-				deepEqual(oCTAddress["com.sap.vocabularies.Communication.v1.Contact"],
+				assert.deepEqual(oCTAddress["com.sap.vocabularies.Communication.v1.Contact"],
 					{ "adr": { "locality": { "Path": "City" } } });
 				delete oCTAddress["com.sap.vocabularies.Communication.v1.Contact"];
 
-				deepEqual(oParameter["sap:label"], "ID");
+				assert.deepEqual(oParameter["sap:label"], "ID");
 				delete oParameter["sap:label"];
-				deepEqual(oParameter["com.sap.vocabularies.Common.v1.Label"], {
+				assert.deepEqual(oParameter["com.sap.vocabularies.Common.v1.Label"], {
 					"String" : "ID"
 				}, "Label derived from sap:label");
 				delete oParameter["com.sap.vocabularies.Common.v1.Label"];
@@ -1371,116 +1408,119 @@ sap.ui.require([
 				checkCapabilities("deletable");
 
 				// sap:creatable=false and sap:updatable=false on property level
-				deepEqual(oBusinessPartnerId["sap:creatable"], "false");
+				assert.deepEqual(oBusinessPartnerId["sap:creatable"], "false");
 				delete oBusinessPartnerId["sap:creatable"];
-				deepEqual(oBusinessPartnerId["sap:updatable"], "false");
+				assert.deepEqual(oBusinessPartnerId["sap:updatable"], "false");
 				delete oBusinessPartnerId["sap:updatable"];
-				deepEqual(oBusinessPartnerId["Org.OData.Core.V1.Computed"], {
+				assert.deepEqual(oBusinessPartnerId["Org.OData.Core.V1.Computed"], {
 					"Bool" : (i > 0 ? "false" : "true")
 				}, "sap:creatable=false and sap:updatable=false on property level");
 				delete oBusinessPartnerId["Org.OData.Core.V1.Computed"];
 
 				// sap:creatable=true and sap:updatable=false on property level
 				// sap:creatable=true is the default and thus no SAP V2 annotation is added
-				deepEqual(oAnyProperty["sap:updatable"], "false");
+				assert.deepEqual(oAnyProperty["sap:updatable"], "false");
 				delete oAnyProperty["sap:updatable"];
-				deepEqual(oAnyProperty["Org.OData.Core.V1.Immutable"], {
+				assert.deepEqual(oAnyProperty["Org.OData.Core.V1.Immutable"], {
 					"Bool" : "true"
 				}, "sap:creatable=true and sap:updatable=false on property level");
 				delete oAnyProperty["Org.OData.Core.V1.Immutable"];
 
 				// sap:searchable
-				deepEqual(oVHSexSet["sap:searchable"], "true");
+				assert.deepEqual(oVHSexSet["sap:searchable"], "true");
 				delete oVHSexSet["sap:searchable"];
-				deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.SearchRestrictions"], {
-					"Searchable": {"Bool" : (i > 0 ? "true" : "false")}
-				}, "BusinessPartnerSet not searchable");
+				assert.deepEqual(
+					oBusinessPartnerSet["Org.OData.Capabilities.V1.SearchRestrictions"], {
+						"Searchable": {"Bool" : (i > 0 ? "true" : "false")}
+					}, "BusinessPartnerSet not searchable");
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.SearchRestrictions"];
 
 				// sap:pageable
-				deepEqual(oVHSexSet["sap:pageable"], "false");
+				assert.deepEqual(oVHSexSet["sap:pageable"], "false");
 				delete oVHSexSet["sap:pageable"];
-				deepEqual(oVHSexSet["Org.OData.Capabilities.V1.TopSupported"], {"Bool" : "false"},
-					"VH_SexSet not TopSupported");
-				deepEqual(oVHSexSet["Org.OData.Capabilities.V1.SkipSupported"], {"Bool" : "false"},
-					"VH_SexSet not SkipSupported");
+				assert.deepEqual(oVHSexSet["Org.OData.Capabilities.V1.TopSupported"],
+					{"Bool" : "false"}, "VH_SexSet not TopSupported");
+				assert.deepEqual(oVHSexSet["Org.OData.Capabilities.V1.SkipSupported"],
+					{"Bool" : "false"}, "VH_SexSet not SkipSupported");
 				delete oVHSexSet["Org.OData.Capabilities.V1.TopSupported"];
 				delete oVHSexSet["Org.OData.Capabilities.V1.SkipSupported"];
 
 				// sap:topable
-				deepEqual(oBusinessPartnerSet["sap:topable"], "false");
+				assert.deepEqual(oBusinessPartnerSet["sap:topable"], "false");
 				delete oBusinessPartnerSet["sap:topable"];
-				deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.TopSupported"],
+				assert.deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.TopSupported"],
 					{"Bool" : "false"}, "oBusinessPartnerSet not TopSupported");
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.TopSupported"];
 
 				// sap:requires-filter
-				deepEqual(oBusinessPartnerSet["sap:requires-filter"], "true");
+				assert.deepEqual(oBusinessPartnerSet["sap:requires-filter"], "true");
 				delete oBusinessPartnerSet["sap:requires-filter"];
-				deepEqual(
+				assert.deepEqual(
 					oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"].
 						RequiresFilter, {"Bool" : "true"}, "BusinessPartnerSet requires filter");
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"].
 					RequiresFilter;
 
 				// sap:text
-				deepEqual(oBusinessPartnerId["sap:text"], "AnyProperty");
+				assert.deepEqual(oBusinessPartnerId["sap:text"], "AnyProperty");
 				delete oBusinessPartnerId["sap:text"];
-				deepEqual(oBusinessPartnerId["com.sap.vocabularies.Common.v1.Text"],
+				assert.deepEqual(oBusinessPartnerId["com.sap.vocabularies.Common.v1.Text"],
 					{ "Path" : "AnyProperty" }, "BusinessPartnerId text");
 				delete oBusinessPartnerId["com.sap.vocabularies.Common.v1.Text"];
 
 				// sap:precision
-				deepEqual(oProductPrice["sap:precision"], "PriceScale");
+				assert.deepEqual(oProductPrice["sap:precision"], "PriceScale");
 				delete oProductPrice["sap:precision"];
-				deepEqual(oProductPrice["Org.OData.Measures.V1.Scale"],
+				assert.deepEqual(oProductPrice["Org.OData.Measures.V1.Scale"],
 					{ "Path" : "PriceScale" }, "ProductPrice precision");
 				delete oProductPrice["Org.OData.Measures.V1.Scale"];
 
 				// sap:unit - currency
-				deepEqual(oProductPrice["sap:unit"], "CurrencyCode");
+				assert.deepEqual(oProductPrice["sap:unit"], "CurrencyCode");
 				delete oProductPrice["sap:unit"];
-				deepEqual(oProductCurrencyCode["sap:semantics"], "currency-code");
+				assert.deepEqual(oProductCurrencyCode["sap:semantics"], "currency-code");
 				delete oProductCurrencyCode["sap:semantics"];
-				deepEqual(oProductPrice["Org.OData.Measures.V1.ISOCurrency"],
+				assert.deepEqual(oProductPrice["Org.OData.Measures.V1.ISOCurrency"],
 					{ "Path" : (i > 0 ? "CurrencyCodeFromAnnotation" : "CurrencyCode") },
 					"ProductPrice currency");
 				delete oProductPrice["Org.OData.Measures.V1.ISOCurrency"];
 				// sap:unit - unit
-				deepEqual(oProductWeightMeasure["sap:unit"], "WeightUnit");
+				assert.deepEqual(oProductWeightMeasure["sap:unit"], "WeightUnit");
 				delete oProductWeightMeasure["sap:unit"];
-				deepEqual(oProductWeightUnit["sap:semantics"], "unit-of-measure");
+				assert.deepEqual(oProductWeightUnit["sap:semantics"], "unit-of-measure");
 				delete oProductWeightUnit["sap:semantics"];
-				deepEqual(oProductWeightMeasure["Org.OData.Measures.V1.Unit"],
+				assert.deepEqual(oProductWeightMeasure["Org.OData.Measures.V1.Unit"],
 					{ "Path" : "WeightUnit" }, "ProductWeightMeasure unit");
 				delete oProductWeightMeasure["Org.OData.Measures.V1.Unit"];
 
 				// sap:field-control
-				deepEqual(oAnyProperty["sap:field-control"], "UX_FC_READONLY");
+				assert.deepEqual(oAnyProperty["sap:field-control"], "UX_FC_READONLY");
 				delete oAnyProperty["sap:field-control"];
-				deepEqual(oAnyProperty["com.sap.vocabularies.Common.v1.FieldControl"],
+				assert.deepEqual(oAnyProperty["com.sap.vocabularies.Common.v1.FieldControl"],
 					{ "Path" : "UX_FC_READONLY" }, "AnyProperty FieldControl");
 				delete oAnyProperty["com.sap.vocabularies.Common.v1.FieldControl"];
 
 				// sap:sortable
-				deepEqual(oBusinessPartnerId["sap:sortable"], "false");
+				assert.deepEqual(oBusinessPartnerId["sap:sortable"], "false");
 				delete oBusinessPartnerId["sap:sortable"];
-				deepEqual(oAnyProperty["sap:sortable"], "false");
+				assert.deepEqual(oAnyProperty["sap:sortable"], "false");
 				delete oAnyProperty["sap:sortable"];
-				deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.SortRestrictions"], {
-					"NonSortableProperties": [
-						{"PropertyPath" : "BusinessPartnerID"},
-						{"PropertyPath" : "AnyProperty"}
-					]
-				}, "BusinessPartnerSet not searchable");
+				assert.deepEqual(
+					oBusinessPartnerSet["Org.OData.Capabilities.V1.SortRestrictions"], {
+						"NonSortableProperties": [
+							{"PropertyPath" : "BusinessPartnerID"},
+							{"PropertyPath" : "AnyProperty"}
+						]
+					}, "BusinessPartnerSet not searchable");
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.SortRestrictions"];
 
 				// sap:filterable
-				deepEqual(oAnyProperty["sap:filterable"], "false");
+				assert.deepEqual(oAnyProperty["sap:filterable"], "false");
 				delete oAnyProperty["sap:filterable"];
-				deepEqual(oNonFilterable["sap:filterable"], "false");
+				assert.deepEqual(oNonFilterable["sap:filterable"], "false");
 				delete oNonFilterable["sap:filterable"];
-				deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"]
+				assert.deepEqual(
+					oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"]
 						["NonFilterableProperties"],
 					i > 0 ? undefined :
 						[
@@ -1492,14 +1532,15 @@ sap.ui.require([
 					["NonFilterableProperties"];
 
 				// sap:required-in-filter
-				deepEqual(oBusinessPartnerId["sap:required-in-filter"], "true");
+				assert.deepEqual(oBusinessPartnerId["sap:required-in-filter"], "true");
 				delete oBusinessPartnerId["sap:required-in-filter"];
 				// check that v4 annotations win
-				deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"], {
-					"RequiredProperties": i === 0
-					? [ {"PropertyPath" : "BusinessPartnerID"} ]
-					: [ {"PropertyPath" : "AnyProperty"} ]
-				}, "BusinessPartnerSet filter restrictions");
+				assert.deepEqual(
+					oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"], {
+						"RequiredProperties": i === 0
+						? [ {"PropertyPath" : "BusinessPartnerID"} ]
+						: [ {"PropertyPath" : "AnyProperty"} ]
+					}, "BusinessPartnerSet filter restrictions");
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"];
 
 				// sap:semantics for Communication.Contact
@@ -1507,10 +1548,10 @@ sap.ui.require([
 				oContact.property.forEach(function (oProperty) {
 					// check only availability of sap:semantics
 					// lift is tested multiple times before
-					ok(oProperty["sap:semantics"], oProperty.name + " has sap:semantics");
+					assert.ok(oProperty["sap:semantics"], oProperty.name + " has sap:semantics");
 					delete oProperty["sap:semantics"];
 				});
-				deepEqual(oContact["com.sap.vocabularies.Communication.v1.Contact"], i === 0
+				assert.deepEqual(oContact["com.sap.vocabularies.Communication.v1.Contact"], i === 0
 					? {
 						"adr": {
 							"code": { "Path": "Zip" }
@@ -1558,85 +1599,89 @@ sap.ui.require([
 				);
 				delete oContact["com.sap.vocabularies.Communication.v1.Contact"];
 
-				deepEqual(oContactTel["com.sap.vocabularies.Communication.v1.IsPhoneNumber"],
-						{ "Bool" : "true" }, "IsPhoneNumber");
+				assert.deepEqual
+					(oContactTel["com.sap.vocabularies.Communication.v1.IsPhoneNumber"],
+					{ "Bool" : "true" }, "IsPhoneNumber");
 				delete oContactTel["com.sap.vocabularies.Communication.v1.IsPhoneNumber"];
 
 				// sap:display-format
-				deepEqual(oAnyProperty["sap:display-format"], "NonNegative");
+				assert.deepEqual(oAnyProperty["sap:display-format"], "NonNegative");
 				delete oAnyProperty["sap:display-format"];
-				deepEqual(oAnyProperty["com.sap.vocabularies.Common.v1.IsDigitSequence"], {
+				assert.deepEqual(oAnyProperty["com.sap.vocabularies.Common.v1.IsDigitSequence"], {
 					"Bool" : (i === 0 ? "true" : "false")
 				}, "sap:display-format=NonNegative");
 				delete oAnyProperty["com.sap.vocabularies.Common.v1.IsDigitSequence"];
 
-				deepEqual(oBusinessPartnerId["sap:display-format"], "UpperCase");
+				assert.deepEqual(oBusinessPartnerId["sap:display-format"], "UpperCase");
 				delete oBusinessPartnerId["sap:display-format"];
-				deepEqual(oBusinessPartnerId["com.sap.vocabularies.Common.v1.IsUpperCase"], {
-					"Bool" : "true"
-				}, "sap:display-format=UpperCase");
+				assert.deepEqual(
+					oBusinessPartnerId["com.sap.vocabularies.Common.v1.IsUpperCase"], {
+						"Bool" : "true"
+					}, "sap:display-format=UpperCase");
 				delete oBusinessPartnerId["com.sap.vocabularies.Common.v1.IsUpperCase"];
 
 				// sap:heading
-				deepEqual(oNonFilterable["sap:heading"], "No Filter");
+				assert.deepEqual(oNonFilterable["sap:heading"], "No Filter");
 				delete oNonFilterable["sap:heading"];
-				deepEqual(oNonFilterable["com.sap.vocabularies.Common.v1.Heading"], {
+				assert.deepEqual(oNonFilterable["com.sap.vocabularies.Common.v1.Heading"], {
 					"String" : (i === 0 ? "No Filter" : "No Filter via Annotation")
 				}, "sap:heading");
 				delete oNonFilterable["com.sap.vocabularies.Common.v1.Heading"];
 
 				// sap:quickinfo
-				deepEqual(oNonFilterable["sap:quickinfo"], "No Filtering");
+				assert.deepEqual(oNonFilterable["sap:quickinfo"], "No Filtering");
 				delete oNonFilterable["sap:quickinfo"];
-				deepEqual(oNonFilterable["com.sap.vocabularies.Common.v1.QuickInfo"], {
+				assert.deepEqual(oNonFilterable["com.sap.vocabularies.Common.v1.QuickInfo"], {
 					"String" : (i === 0 ? "No Filtering" : "No Filtering via Annotation")
 				}, "sap:quickinfo");
 				delete oNonFilterable["com.sap.vocabularies.Common.v1.QuickInfo"];
 
 				// sap:visible
-				deepEqual(oProductWeightUnit["sap:visible"], "false");
+				assert.deepEqual(oProductWeightUnit["sap:visible"], "false");
 				delete oProductWeightUnit["sap:visible"];
-				deepEqual(oProductWeightMeasure["sap:visible"], "true");
+				assert.deepEqual(oProductWeightMeasure["sap:visible"], "true");
 				delete oProductWeightMeasure["sap:visible"];
-				deepEqual(oProductWeightUnit["com.sap.vocabularies.Common.v1.FieldControl"], {
-					"EnumMember" : "com.sap.vocabularies.Common.v1.FieldControlType/" +
-						(i === 0 ? "Hidden" : "ReadOnly")},
+				assert.deepEqual(
+					oProductWeightUnit["com.sap.vocabularies.Common.v1.FieldControl"], {
+						"EnumMember" : "com.sap.vocabularies.Common.v1.FieldControlType/" +
+							(i === 0 ? "Hidden" : "ReadOnly")},
 					"Product WeightUnit invisible");
 				delete oProductWeightUnit["com.sap.vocabularies.Common.v1.FieldControl"];
 
 				// sap:deletable-path (EntitySet)
-				deepEqual(oBusinessPartnerSet["sap:deletable-path"], "Deletable");
+				assert.deepEqual(oBusinessPartnerSet["sap:deletable-path"], "Deletable");
 				delete oBusinessPartnerSet["sap:deletable-path"];
-				deepEqual(oBusinessPartnerSet["Org.OData.Core.V1.DeleteRestrictions"],
+				assert.deepEqual(oBusinessPartnerSet["Org.OData.Core.V1.DeleteRestrictions"],
 					{ "Deletable" : { "Path" :
 						( i === 0 ? "Deletable" : "DeletableFromAnnotation") }}, "deletable-path");
 				delete oBusinessPartnerSet["Org.OData.Core.V1.DeleteRestrictions"];
 
 				// sap:updatable-path (EntitySet)
-				deepEqual(oBusinessPartnerSet["sap:updatable-path"], "Updatable");
+				assert.deepEqual(oBusinessPartnerSet["sap:updatable-path"], "Updatable");
 				delete oBusinessPartnerSet["sap:updatable-path"];
-				deepEqual(oBusinessPartnerSet["Org.OData.Core.V1.UpdateRestrictions"],
+				assert.deepEqual(oBusinessPartnerSet["Org.OData.Core.V1.UpdateRestrictions"],
 					{ "Updatable" : { "Path" :
 						( i === 0 ? "Updatable" : "UpdatableFromAnnotation") }}, "updatable-path");
 				delete oBusinessPartnerSet["Org.OData.Core.V1.UpdateRestrictions"];
 
 				// sap:filter-restriction (Property)
-				deepEqual(oBusinessPartnerId["sap:filter-restriction"], "multi-value");
+				assert.deepEqual(oBusinessPartnerId["sap:filter-restriction"], "multi-value");
 				delete oBusinessPartnerId["sap:filter-restriction"];
-				deepEqual(oProductPrice["sap:filter-restriction"], "interval");
+				assert.deepEqual(oProductPrice["sap:filter-restriction"], "interval");
 				delete oProductPrice["sap:filter-restriction"];
-				deepEqual(oProductCurrencyCode["sap:filter-restriction"], "single-value");
+				assert.deepEqual(oProductCurrencyCode["sap:filter-restriction"], "single-value");
 				delete oProductCurrencyCode["sap:filter-restriction"];
 
 				sPrefix = "com.sap.vocabularies.Common.v1.";
-				deepEqual(oBusinessPartnerSet[sPrefix + "FilterExpressionRestrictions"], [{
+				assert.deepEqual(oBusinessPartnerSet[sPrefix + "FilterExpressionRestrictions"], [{
 						"Property" : { "PropertyPath" : "BusinessPartnerID" },
 						"AllowedExpressions" : {
 							"EnumMember" : sPrefix + "FilterExpressionType/MultiValue"
 						}
 					}], "filter-restriction at BusinessPartnerSet");
 				delete oBusinessPartnerSet[sPrefix + "FilterExpressionRestrictions"];
-				deepEqual(oProductSet[sPrefix + "FilterExpressionRestrictions"], (i === 0 ? [{
+				assert.deepEqual(oProductSet[sPrefix + "FilterExpressionRestrictions"],
+					(i === 0 ? [{
 						"Property" : { "PropertyPath" : "Price" },
 						"AllowedExpressions" : {
 							"EnumMember" : sPrefix + "FilterExpressionType/SingleInterval"
@@ -1654,8 +1699,8 @@ sap.ui.require([
 					}]), "filter-restriction at ProductSet");
 				delete oProductSet[sPrefix + "FilterExpressionRestrictions"];
 
-				deepEqual(oMetaModelData, oMetadata, "nothing else left...");
-				notStrictEqual(oMetaModelData, oMetadata, "is clone");
+				assert.deepEqual(oMetaModelData, oMetadata, "nothing else left...");
+				assert.notStrictEqual(oMetaModelData, oMetadata, "is clone");
 			});
 		});
 	});
@@ -1665,7 +1710,7 @@ sap.ui.require([
 	// "Any errors thrown in the constructor callback will be implicitly passed to reject()."
 	// We make sure the same happens even with our asynchronous constructor.
 	[false, true].forEach(function (bAsync) {
-		test("Errors thrown inside load(), async = " + bAsync, function () {
+		QUnit.test("Errors thrown inside load(), async = " + bAsync, function (assert) {
 			var oError = new Error("This call failed intentionally"),
 				oModel = new (bAsync ? ODataModel : ODataModel1)("/fake/service", {
 					annotationURI : "",
@@ -1680,18 +1725,20 @@ sap.ui.require([
 			return oModel.getMetaModel().loaded().then(function () {
 				throw new Error("Unexpected success");
 			}, function (ex) {
-				strictEqual(ex, oError, ex.message);
+				assert.strictEqual(ex, oError, ex.message);
 			});
 		});
 	});
 
 	//*********************************************************************************************
 	["annotations", "emptyAnnotations"].forEach(function (sAnnotation) {
-		["emptyMetadata", "emptyDataServices", "emptySchema", "emptyEntityType"].forEach(
+		["emptyDataServices", "emptySchema", "emptyEntityType"].forEach(
+			// Note: w/o dataServices, sap.ui.model.odata.ODataMetadata#_loadMetadata throws
+			//   "Invalid metadata document"
 
 			function (sPath) {
-				test("check that no errors happen for empty/missing structures:"
-						+ sAnnotation + ", " + sPath, function () {
+				QUnit.test("check that no errors happen for empty/missing structures:"
+						+ sAnnotation + ", " + sPath, function (assert) {
 					var oMetaModel, oModel;
 
 					oModel = new ODataModel("/fake/" + sPath, {
@@ -1704,17 +1751,19 @@ sap.ui.require([
 					oMetaModel = oModel.getMetaModel();
 
 					return oMetaModel.loaded().then(function () {
-						strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
+						assert.strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
 							null, "getODataEntityType");
-						strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product", true),
+						assert.strictEqual(
+							oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product", true),
 							undefined, "getODataEntityType as path");
-						strictEqual(oMetaModel.getODataEntitySet("ProductSet"),
+						assert.strictEqual(oMetaModel.getODataEntitySet("ProductSet"),
 							null, "getODataEntitySet");
-						strictEqual(oMetaModel.getODataEntitySet("ProductSet", true),
+						assert.strictEqual(oMetaModel.getODataEntitySet("ProductSet", true),
 							undefined, "getODataEntitySet as path");
-						strictEqual(oMetaModel.getODataFunctionImport("RegenerateAllData"),
+						assert.strictEqual(oMetaModel.getODataFunctionImport("RegenerateAllData"),
 							null, "getODataFunctionImport");
-						strictEqual(oMetaModel.getODataFunctionImport("RegenerateAllData", true),
+						assert.strictEqual(
+							oMetaModel.getODataFunctionImport("RegenerateAllData", true),
 							undefined, "getODataFunctionImport as path");
 					});
 				});
@@ -1723,64 +1772,64 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("getODataEntityContainer", function () {
-		return withMetaModel(function (oMetaModel) {
-			strictEqual(oMetaModel.getODataEntityContainer(),
+	QUnit.test("getODataEntityContainer", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+			assert.strictEqual(oMetaModel.getODataEntityContainer(),
 				oMetaModel.getObject("/dataServices/schema/0/entityContainer/0"));
 		});
 	});
 
 	//*********************************************************************************************
-	test("getODataEntityContainer as path", function () {
-		return withMetaModel(function (oMetaModel) {
-			strictEqual(oMetaModel.getODataEntityContainer(true),
+	QUnit.test("getODataEntityContainer as path", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+			assert.strictEqual(oMetaModel.getODataEntityContainer(true),
 				"/dataServices/schema/0/entityContainer/0");
 		});
 	});
 
 	//*********************************************************************************************
-	test("getODataEntitySet", function () {
-		return withMetaModel(function (oMetaModel) {
-			strictEqual(oMetaModel.getODataEntitySet("ProductSet"),
+	QUnit.test("getODataEntitySet", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+			assert.strictEqual(oMetaModel.getODataEntitySet("ProductSet"),
 				oMetaModel.getObject("/dataServices/schema/0/entityContainer/0/entitySet/1"));
-			strictEqual(oMetaModel.getODataEntitySet("FooSet"), null);
-			strictEqual(oMetaModel.getODataEntitySet(), null);
+			assert.strictEqual(oMetaModel.getODataEntitySet("FooSet"), null);
+			assert.strictEqual(oMetaModel.getODataEntitySet(), null);
 		});
 	});
 
 	//*********************************************************************************************
-	test("getODataEntitySet as path", function () {
-		return withMetaModel(function (oMetaModel) {
-			strictEqual(oMetaModel.getODataEntitySet("ProductSet", true),
+	QUnit.test("getODataEntitySet as path", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+			assert.strictEqual(oMetaModel.getODataEntitySet("ProductSet", true),
 				"/dataServices/schema/0/entityContainer/0/entitySet/1");
-			strictEqual(oMetaModel.getODataEntitySet("FooSet", true), undefined);
-			strictEqual(oMetaModel.getODataEntitySet(undefined, true), undefined);
+			assert.strictEqual(oMetaModel.getODataEntitySet("FooSet", true), undefined);
+			assert.strictEqual(oMetaModel.getODataEntitySet(undefined, true), undefined);
 		});
 	});
 
 	//*********************************************************************************************
-	test("getODataFunctionImport", function () {
-		return withMetaModel(function (oMetaModel) {
-			strictEqual(oMetaModel.getODataFunctionImport("RegenerateAllData"),
+	QUnit.test("getODataFunctionImport", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+			assert.strictEqual(oMetaModel.getODataFunctionImport("RegenerateAllData"),
 				oMetaModel.getObject("/dataServices/schema/0/entityContainer/0/functionImport/0"));
-			strictEqual(oMetaModel.getODataFunctionImport(
+			assert.strictEqual(oMetaModel.getODataFunctionImport(
 				"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/RegenerateAllData"),
 				oMetaModel.getObject("/dataServices/schema/0/entityContainer/0/functionImport/0"));
-			strictEqual(oMetaModel.getODataFunctionImport(
+			assert.strictEqual(oMetaModel.getODataFunctionImport(
 				"FOO_Bar/RegenerateAllData"),
 				null);
-			strictEqual(oMetaModel.getODataFunctionImport("Foo"), null);
-			strictEqual(oMetaModel.getODataFunctionImport(), null);
+			assert.strictEqual(oMetaModel.getODataFunctionImport("Foo"), null);
+			assert.strictEqual(oMetaModel.getODataFunctionImport(), null);
 		});
 	});
 
 	//*********************************************************************************************
-	test("getODataFunctionImport as path", function () {
-		return withMetaModel(function (oMetaModel) {
-			strictEqual(oMetaModel.getODataFunctionImport("RegenerateAllData", true),
+	QUnit.test("getODataFunctionImport as path", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+			assert.strictEqual(oMetaModel.getODataFunctionImport("RegenerateAllData", true),
 				"/dataServices/schema/0/entityContainer/0/functionImport/0");
-			strictEqual(oMetaModel.getODataFunctionImport("Foo", true), undefined);
-			strictEqual(oMetaModel.getODataFunctionImport(undefined, true), undefined);
+			assert.strictEqual(oMetaModel.getODataFunctionImport("Foo", true), undefined);
+			assert.strictEqual(oMetaModel.getODataFunctionImport(undefined, true), undefined);
 		});
 	});
 
@@ -1804,209 +1853,212 @@ sap.ui.require([
 	 */
 
 	//*********************************************************************************************
-	test("getODataComplexType", function () {
-		return withMetaModel(function (oMetaModel) {
-			strictEqual(oMetaModel.getODataComplexType("GWSAMPLE_BASIC.CT_Address"),
+	QUnit.test("getODataComplexType", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+			assert.strictEqual(oMetaModel.getODataComplexType("GWSAMPLE_BASIC.CT_Address"),
 					oMetaModel.getObject("/dataServices/schema/0/complexType/0"));
-			strictEqual(oMetaModel.getODataComplexType("FOO.CT_Address"), null);
-			strictEqual(oMetaModel.getODataComplexType("GWSAMPLE_BASIC.Foo"), null);
-			strictEqual(oMetaModel.getODataComplexType("GWSAMPLE_BASIC"), null);
-			strictEqual(oMetaModel.getODataComplexType(), null);
+			assert.strictEqual(oMetaModel.getODataComplexType("FOO.CT_Address"), null);
+			assert.strictEqual(oMetaModel.getODataComplexType("GWSAMPLE_BASIC.Foo"), null);
+			assert.strictEqual(oMetaModel.getODataComplexType("GWSAMPLE_BASIC"), null);
+			assert.strictEqual(oMetaModel.getODataComplexType(), null);
 		});
 	});
 
 	//*********************************************************************************************
-	test("getODataEntityType", function () {
-		return withMetaModel(function (oMetaModel) {
-			strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
+	QUnit.test("getODataEntityType", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+			assert.strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
 				oMetaModel.getObject("/dataServices/schema/0/entityType/1"));
-			strictEqual(oMetaModel.getODataEntityType("FOO.Product"), null);
-			strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Foo"), null);
-			strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC"), null);
-			strictEqual(oMetaModel.getODataEntityType(), null);
+			assert.strictEqual(oMetaModel.getODataEntityType("FOO.Product"), null);
+			assert.strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Foo"), null);
+			assert.strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC"), null);
+			assert.strictEqual(oMetaModel.getODataEntityType(), null);
 
 			// change the namespace to contain a dot
 			oMetaModel.getObject("/dataServices/schema/0").namespace = "GWSAMPLE.BASIC";
-			strictEqual(oMetaModel.getODataEntityType("GWSAMPLE.BASIC.Product"),
+			assert.strictEqual(oMetaModel.getODataEntityType("GWSAMPLE.BASIC.Product"),
 				oMetaModel.getObject("/dataServices/schema/0/entityType/1"));
 		});
 	});
 
 	//*********************************************************************************************
-	test("getODataEntityType as path", function () {
-		return withMetaModel(function (oMetaModel) {
-			strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product", true),
+	QUnit.test("getODataEntityType as path", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+			assert.strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product", true),
 				"/dataServices/schema/0/entityType/1");
-			strictEqual(oMetaModel.getODataEntityType("FOO.Product", true), undefined);
-			strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Foo", true), undefined);
-			strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC", true), undefined);
-			strictEqual(oMetaModel.getODataEntityType(undefined, true), undefined);
+			assert.strictEqual(oMetaModel.getODataEntityType("FOO.Product", true), undefined);
+			assert.strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Foo", true),
+				undefined);
+			assert.strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC", true), undefined);
+			assert.strictEqual(oMetaModel.getODataEntityType(undefined, true), undefined);
 		});
 	});
 
 	//*********************************************************************************************
-	test("getODataAssociationEnd", function () {
-		return withMetaModel(function (oMetaModel) {
+	QUnit.test("getODataAssociationEnd", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
 			var oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product");
 
-			strictEqual(oMetaModel.getODataAssociationEnd(oEntityType, "ToSupplier"),
+			assert.strictEqual(oMetaModel.getODataAssociationEnd(oEntityType, "ToSupplier"),
 				oMetaModel.getObject("/dataServices/schema/0/association/5/end/0"));
-			strictEqual(oMetaModel.getODataAssociationEnd(oEntityType, "ToFoo"), null);
-			strictEqual(oMetaModel.getODataAssociationEnd(null, "ToSupplier"), null);
-			strictEqual(oMetaModel.getODataAssociationEnd({}, "ToSupplier"), null);
+			assert.strictEqual(oMetaModel.getODataAssociationEnd(oEntityType, "ToFoo"), null);
+			assert.strictEqual(oMetaModel.getODataAssociationEnd(null, "ToSupplier"), null);
+			assert.strictEqual(oMetaModel.getODataAssociationEnd({}, "ToSupplier"), null);
 		});
 	});
 
 	//*********************************************************************************************
-	test("getODataAssociation*Set*End", function () {
-		return withMetaModel(function (oMetaModel) {
+	QUnit.test("getODataAssociation*Set*End", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
 			var oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product");
 
-			strictEqual(oMetaModel.getODataAssociationSetEnd(oEntityType, "ToSupplier"),
+			assert.strictEqual(oMetaModel.getODataAssociationSetEnd(oEntityType, "ToSupplier"),
 				oMetaModel.getObject(
 					"/dataServices/schema/0/entityContainer/0/associationSet/10/end/0"));
-			strictEqual(oMetaModel.getODataAssociationSetEnd(oEntityType, "ToFoo"), null);
-			strictEqual(oMetaModel.getODataAssociationSetEnd(null, "ToSupplier"), null);
-			strictEqual(oMetaModel.getODataAssociationSetEnd({}, "ToSupplier"), null);
+			assert.strictEqual(oMetaModel.getODataAssociationSetEnd(oEntityType, "ToFoo"), null);
+			assert.strictEqual(oMetaModel.getODataAssociationSetEnd(null, "ToSupplier"), null);
+			assert.strictEqual(oMetaModel.getODataAssociationSetEnd({}, "ToSupplier"), null);
 		});
 	});
 
 	//*********************************************************************************************
-	test("getODataProperty", function () {
-		return withMetaModel(function (oMetaModel) {
+	QUnit.test("getODataProperty", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
 			var oComplexType = oMetaModel.getODataComplexType("GWSAMPLE_BASIC.CT_Address"),
 				oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.BusinessPartner"),
 				aParts;
 
 			// entity type
-			strictEqual(oMetaModel.getODataProperty(oEntityType, "Address"),
+			assert.strictEqual(oMetaModel.getODataProperty(oEntityType, "Address"),
 				oMetaModel.getObject("/dataServices/schema/0/entityType/0/property/0"));
-			strictEqual(oMetaModel.getODataProperty(), null);
-			strictEqual(oMetaModel.getODataProperty(oEntityType), null);
-			strictEqual(oMetaModel.getODataProperty(oEntityType, "foo"), null);
+			assert.strictEqual(oMetaModel.getODataProperty(), null);
+			assert.strictEqual(oMetaModel.getODataProperty(oEntityType), null);
+			assert.strictEqual(oMetaModel.getODataProperty(oEntityType, "foo"), null);
 
 			// complex type
-			strictEqual(oMetaModel.getODataProperty(oComplexType, "Street"),
+			assert.strictEqual(oMetaModel.getODataProperty(oComplexType, "Street"),
 				oMetaModel.getObject("/dataServices/schema/0/complexType/0/property/2"));
-			strictEqual(oMetaModel.getODataProperty(oComplexType), null);
-			strictEqual(oMetaModel.getODataProperty(oComplexType, "foo"), null);
+			assert.strictEqual(oMetaModel.getODataProperty(oComplexType), null);
+			assert.strictEqual(oMetaModel.getODataProperty(oComplexType, "foo"), null);
 
 			// {string[]} path
 			aParts = ["foo"];
-			strictEqual(oMetaModel.getODataProperty(oEntityType, aParts), null);
-			strictEqual(aParts.length, 1, "no parts consumed");
+			assert.strictEqual(oMetaModel.getODataProperty(oEntityType, aParts), null);
+			assert.strictEqual(aParts.length, 1, "no parts consumed");
 			aParts = ["Address"];
-			strictEqual(oMetaModel.getODataProperty(oEntityType, aParts),
+			assert.strictEqual(oMetaModel.getODataProperty(oEntityType, aParts),
 				oMetaModel.getObject("/dataServices/schema/0/entityType/0/property/0"));
-			strictEqual(aParts.length, 0, "all parts consumed");
+			assert.strictEqual(aParts.length, 0, "all parts consumed");
 			aParts = ["Address", "foo"];
-			strictEqual(oMetaModel.getODataProperty(oEntityType, aParts),
+			assert.strictEqual(oMetaModel.getODataProperty(oEntityType, aParts),
 				oMetaModel.getObject("/dataServices/schema/0/entityType/0/property/0"));
-			strictEqual(aParts.length, 1, "one part consumed");
+			assert.strictEqual(aParts.length, 1, "one part consumed");
 			aParts = ["Street"];
-			strictEqual(oMetaModel.getODataProperty(oComplexType, aParts),
+			assert.strictEqual(oMetaModel.getODataProperty(oComplexType, aParts),
 				oMetaModel.getObject("/dataServices/schema/0/complexType/0/property/2"));
-			strictEqual(aParts.length, 0, "all parts consumed");
+			assert.strictEqual(aParts.length, 0, "all parts consumed");
 			aParts = ["Address", "Street"];
-			strictEqual(oMetaModel.getODataProperty(oEntityType, aParts),
+			assert.strictEqual(oMetaModel.getODataProperty(oEntityType, aParts),
 				oMetaModel.getObject("/dataServices/schema/0/complexType/0/property/2"));
-			strictEqual(aParts.length, 0, "all parts consumed");
+			assert.strictEqual(aParts.length, 0, "all parts consumed");
 		});
 	});
 
 	//*********************************************************************************************
-	test("getODataProperty as path", function () {
-		return withMetaModel(function (oMetaModel) {
+	QUnit.test("getODataProperty as path", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
 			var oComplexType = oMetaModel.getODataComplexType("GWSAMPLE_BASIC.CT_Address"),
 				oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.BusinessPartner"),
 				aParts;
 
 			// entity type
-			strictEqual(oMetaModel.getODataProperty(oEntityType, "Address", true),
+			assert.strictEqual(oMetaModel.getODataProperty(oEntityType, "Address", true),
 				"/dataServices/schema/0/entityType/0/property/0");
-			strictEqual(oMetaModel.getODataProperty(null, "", true), undefined);
-			strictEqual(oMetaModel.getODataProperty(oEntityType, undefined, true), undefined);
-			strictEqual(oMetaModel.getODataProperty(oEntityType, "foo", true), undefined);
+			assert.strictEqual(oMetaModel.getODataProperty(null, "", true), undefined);
+			assert.strictEqual(oMetaModel.getODataProperty(oEntityType, undefined, true),
+				undefined);
+			assert.strictEqual(oMetaModel.getODataProperty(oEntityType, "foo", true), undefined);
 
 			// complex type
-			strictEqual(oMetaModel.getODataProperty(oComplexType, "Street", true),
+			assert.strictEqual(oMetaModel.getODataProperty(oComplexType, "Street", true),
 				"/dataServices/schema/0/complexType/0/property/2");
-			strictEqual(oMetaModel.getODataProperty(oComplexType, undefined, true), undefined);
-			strictEqual(oMetaModel.getODataProperty(oComplexType, "foo", true), undefined);
+			assert.strictEqual(oMetaModel.getODataProperty(oComplexType, undefined, true),
+				undefined);
+			assert.strictEqual(oMetaModel.getODataProperty(oComplexType, "foo", true), undefined);
 
 			// {string[]} path
 			aParts = ["foo"];
-			strictEqual(oMetaModel.getODataProperty(oEntityType, aParts, true), undefined);
-			strictEqual(aParts.length, 1, "no parts consumed");
+			assert.strictEqual(oMetaModel.getODataProperty(oEntityType, aParts, true), undefined);
+			assert.strictEqual(aParts.length, 1, "no parts consumed");
 			aParts = ["Address"];
-			strictEqual(oMetaModel.getODataProperty(oEntityType, aParts, true),
+			assert.strictEqual(oMetaModel.getODataProperty(oEntityType, aParts, true),
 				"/dataServices/schema/0/entityType/0/property/0");
-			strictEqual(aParts.length, 0, "all parts consumed");
+			assert.strictEqual(aParts.length, 0, "all parts consumed");
 			aParts = ["Address", "foo"];
-			strictEqual(oMetaModel.getODataProperty(oEntityType, aParts, true),
+			assert.strictEqual(oMetaModel.getODataProperty(oEntityType, aParts, true),
 				"/dataServices/schema/0/entityType/0/property/0");
-			strictEqual(aParts.length, 1, "one part consumed");
+			assert.strictEqual(aParts.length, 1, "one part consumed");
 			aParts = ["Street"];
-			strictEqual(oMetaModel.getODataProperty(oComplexType, aParts, true),
+			assert.strictEqual(oMetaModel.getODataProperty(oComplexType, aParts, true),
 				"/dataServices/schema/0/complexType/0/property/2");
-			strictEqual(aParts.length, 0, "all parts consumed");
+			assert.strictEqual(aParts.length, 0, "all parts consumed");
 			aParts = ["Address", "Street"];
-			strictEqual(oMetaModel.getODataProperty(oEntityType, aParts, true),
+			assert.strictEqual(oMetaModel.getODataProperty(oEntityType, aParts, true),
 				"/dataServices/schema/0/complexType/0/property/2");
-			strictEqual(aParts.length, 0, "all parts consumed");
+			assert.strictEqual(aParts.length, 0, "all parts consumed");
 		});
 	});
 
 	//*********************************************************************************************
-	test("getMetaContext: empty data path", function () {
-		return withMetaModel(function (oMetaModel) {
-			strictEqual(oMetaModel.getMetaContext(undefined), null);
-			strictEqual(oMetaModel.getMetaContext(null), null);
-			strictEqual(oMetaModel.getMetaContext(""), null);
+	QUnit.test("getMetaContext: empty data path", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+			assert.strictEqual(oMetaModel.getMetaContext(undefined), null);
+			assert.strictEqual(oMetaModel.getMetaContext(null), null);
+			assert.strictEqual(oMetaModel.getMetaContext(""), null);
 		});
 	});
 
 	//*********************************************************************************************
-	test("getMetaContext: entity set only", function () {
-		return withMetaModel(function (oMetaModel) {
+	QUnit.test("getMetaContext: entity set only", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
 			var oMetaContext = oMetaModel.getMetaContext("/ProductSet('ABC')");
 
-			ok(oMetaContext instanceof Context);
-			strictEqual(oMetaContext.getModel(), oMetaModel);
-			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/1");
+			assert.ok(oMetaContext instanceof Context);
+			assert.strictEqual(oMetaContext.getModel(), oMetaModel);
+			assert.strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/1");
 
-			strictEqual(oMetaModel.getMetaContext("/ProductSet('ABC')"), oMetaContext,
+			assert.strictEqual(oMetaModel.getMetaContext("/ProductSet('ABC')"), oMetaContext,
 				"the context has been cached");
 
-			throws(function () {
+			assert.throws(function () {
 				oMetaModel.getMetaContext("foo/bar");
 			}, /Not an absolute path: foo\/bar/);
-			throws(function () {
+			assert.throws(function () {
 				oMetaModel.getMetaContext("/FooSet('123')");
 			}, /Entity set not found: FooSet\('123'\)/);
-			throws(function () {
+			assert.throws(function () {
 				oMetaModel.getMetaContext("/('123')");
 			}, /Entity set not found: \('123'\)/);
 		});
 	});
 
 	//*********************************************************************************************
-	test("getMetaContext: entity set & navigation properties", function () {
-		return withMetaModel(function (oMetaModel) {
+	QUnit.test("getMetaContext: entity set & navigation properties", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
 			var oMetaContext = oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier");
 
-			ok(oMetaContext instanceof Context);
-			strictEqual(oMetaContext.getModel(), oMetaModel);
-			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/0");
+			assert.ok(oMetaContext instanceof Context);
+			assert.strictEqual(oMetaContext.getModel(), oMetaModel);
+			assert.strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/0");
 
-			strictEqual(oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier"), oMetaContext,
-				"the context has been cached");
+			assert.strictEqual(oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier"),
+				oMetaContext, "the context has been cached");
 
-			throws(function () {
+			assert.throws(function () {
 				oMetaModel.getMetaContext("/ProductSet('ABC')/ToFoo(0)");
 			}, /Property not found: ToFoo\(0\)/);
 
-			throws(function () {
+			assert.throws(function () {
 				oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier('ABC')");
 			}, /Multiplicity is 1: ToSupplier\('ABC'\)/);
 
@@ -2014,185 +2066,196 @@ sap.ui.require([
 			oMetaContext = oMetaModel.getMetaContext(
 				"/SalesOrderSet('123')/ToLineItems(SalesOrderID='123',ItemPosition='1')/ToProduct"
 				+ "/ToSupplier/ToContacts(guid'01234567-89AB-CDEF-0123-456789ABCDEF')");
-			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/4");
+			assert.strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/4");
 		});
 	});
 
 	//*********************************************************************************************
-	test("getMetaContext: entity set & property", function () {
-		return withMetaModel(function (oMetaModel) {
+	QUnit.test("getMetaContext: entity set & property", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
 			var sPath = "/ProductSet('ABC')/ProductID",
 				oMetaContext = oMetaModel.getMetaContext(sPath);
 
-			ok(oMetaContext instanceof Context);
-			strictEqual(oMetaContext.getModel(), oMetaModel);
-			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/1/property/0");
+			assert.ok(oMetaContext instanceof Context);
+			assert.strictEqual(oMetaContext.getModel(), oMetaModel);
+			assert.strictEqual(oMetaContext.getPath(),
+				"/dataServices/schema/0/entityType/1/property/0");
 
-			strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
+			assert.strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
 
-			throws(function () {
+			assert.throws(function () {
 				oMetaModel.getMetaContext("/ProductSet('ABC')/ProductID(0)");
 			}, /Property not found: ProductID\(0\)/);
 
-			throws(function () {
+			assert.throws(function () {
 				oMetaModel.getMetaContext("/FooSet('123')/Bar");
 			}, /Entity set not found: FooSet/);
 		});
 	});
 
 	//*********************************************************************************************
-	test("getMetaContext: entity set, navigation property & property", function () {
-		return withMetaModel(function (oMetaModel) {
+	QUnit.test("getMetaContext: entity set, navigation property & property", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
 			var sPath = "/ProductSet('ABC')/ToSupplier/BusinessPartnerID",
 				oMetaContext = oMetaModel.getMetaContext(sPath);
 
-			ok(oMetaContext instanceof Context);
-			strictEqual(oMetaContext.getModel(), oMetaModel);
-			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/entityType/0/property/1");
+			assert.ok(oMetaContext instanceof Context);
+			assert.strictEqual(oMetaContext.getModel(), oMetaModel);
+			assert.strictEqual(oMetaContext.getPath(),
+				"/dataServices/schema/0/entityType/0/property/1");
 
-			strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
+			assert.strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
 
-			throws(function () {
+			assert.throws(function () {
 				oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier/Foo");
 			}, /Property not found: Foo/);
 		});
 	});
 
 	//*********************************************************************************************
-	test("getMetaContext: entity set & complex property", function () {
-		return withMetaModel(function (oMetaModel) {
+	QUnit.test("getMetaContext: entity set & complex property", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
 			var sPath = "/ProductSet('ABC')/ToSupplier/Address/Street",
 				oMetaContext = oMetaModel.getMetaContext(sPath);
 
-			ok(oMetaContext instanceof Context);
-			strictEqual(oMetaContext.getModel(), oMetaModel);
-			strictEqual(oMetaContext.getPath(), "/dataServices/schema/0/complexType/0/property/2");
+			assert.ok(oMetaContext instanceof Context);
+			assert.strictEqual(oMetaContext.getModel(), oMetaModel);
+			assert.strictEqual(oMetaContext.getPath(),
+				"/dataServices/schema/0/complexType/0/property/2");
 
-			strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
+			assert.strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
 
-			throws(function () {
+			assert.throws(function () {
 				oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier/Address/Foo");
 			}, /Property not found: Foo/);
 
 			//TODO "nested" complex types are supported, we just need an example
-			throws(function () {
+			assert.throws(function () {
 				oMetaModel.getMetaContext("/ProductSet('ABC')/ToSupplier/Address/Street/AndSoOn");
 			}, /Property not found: AndSoOn/);
 		});
 	});
 
 	//*********************************************************************************************
-	test("getODataValueLists: Metadata loaded completely, ValueList w/o qualifier", function () {
-		return withMetaModel(function (oMetaModel) {
-			var oContext = oMetaModel.getMetaContext("/ProductSet(foo)/Category"),
-				oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
-				oInterface = oMetaModel.oODataModelInterface,
-				oPromise,
-				oProperty = oMetaModel.getODataProperty(oEntityType, "Category");
+	QUnit.test("getODataValueLists: Metadata loaded completely, ValueList w/o qualifier",
+		function (assert) {
+			return withMetaModel(assert, function (oMetaModel) {
+				var oContext = oMetaModel.getMetaContext("/ProductSet(foo)/Category"),
+					oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
+					oInterface = oMetaModel.oODataModelInterface,
+					oPromise,
+					oProperty = oMetaModel.getODataProperty(oEntityType, "Category");
 
-			oGlobalSandbox.stub(oInterface, "addAnnotationUrl", function () {
-				return Promise.reject(new Error("Unexpected call to addAnnotationUrl"));
+				oGlobalSandbox.stub(oInterface, "addAnnotationUrl", function () {
+					return Promise.reject(new Error("Unexpected call to addAnnotationUrl"));
+				});
+
+				oPromise = oMetaModel.getODataValueLists(oContext);
+
+				assert.strictEqual(oInterface.addAnnotationUrl.callCount, 0,
+					"no separate load of value list");
+				oPromise.then(function (mValueLists) {
+					assert.deepEqual(mValueLists,
+						{"" : oProperty["com.sap.vocabularies.Common.v1.ValueList"]});
+				});
+				return oPromise;
 			});
-
-			oPromise = oMetaModel.getODataValueLists(oContext);
-
-			strictEqual(oInterface.addAnnotationUrl.callCount, 0,
-				"no separate load of value list");
-			oPromise.then(function (mValueLists) {
-				deepEqual(mValueLists,
-					{"" : oProperty["com.sap.vocabularies.Common.v1.ValueList"]});
-			});
-			return oPromise;
-		});
-	});
+		}
+	);
 
 	//*********************************************************************************************
-	test("getODataValueLists: Metadata loaded completely, no ValueList", function () {
-		return withMetaModel(function (oMetaModel) {
+	QUnit.test("getODataValueLists: Metadata loaded completely, no ValueList", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
 			var oContext = oMetaModel.getMetaContext("/ProductSet(foo)/TypeCode"),
 				oPromise = oMetaModel.getODataValueLists(oContext);
 
 			oPromise.then(function (mValueLists) {
-				deepEqual(mValueLists, {});
+				assert.deepEqual(mValueLists, {});
 			});
 			return oPromise;
 		});
 	});
 
 	//*********************************************************************************************
-	test("getODataValueLists: Metadata loaded completely, multiple ValueLists", function () {
-		return withGivenAnnotations(["/GWSAMPLE_BASIC/annotations", "/fake/multipleValueLists"],
-			function (oMetaModel) {
-				var oContext = oMetaModel.getMetaContext("/ProductSet(foo)/WeightUnit"),
-					oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
-					oPromise = oMetaModel.getODataValueLists(oContext),
-					oProperty = oMetaModel.getODataProperty(oEntityType, "WeightUnit");
+	QUnit.test("getODataValueLists: Metadata loaded completely, multiple ValueLists",
+		function (assert) {
+			return withGivenAnnotations(assert,
+				["/GWSAMPLE_BASIC/annotations", "/fake/multipleValueLists"],
+				function (oMetaModel) {
+					var oContext = oMetaModel.getMetaContext("/ProductSet(foo)/WeightUnit"),
+						oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
+						oPromise = oMetaModel.getODataValueLists(oContext),
+						oProperty = oMetaModel.getODataProperty(oEntityType, "WeightUnit");
 
-				oPromise.then(function (mValueLists) {
-					deepEqual(mValueLists, {
-						"" : oProperty["com.sap.vocabularies.Common.v1.ValueList"],
-						"FOO" : oProperty["com.sap.vocabularies.Common.v1.ValueList#FOO"]
+					oPromise.then(function (mValueLists) {
+						assert.deepEqual(mValueLists, {
+							"" : oProperty["com.sap.vocabularies.Common.v1.ValueList"],
+							"FOO" : oProperty["com.sap.vocabularies.Common.v1.ValueList#FOO"]
+						});
 					});
-				});
-				return oPromise;
-			}
-		);
-	});
-
-	//*********************************************************************************************
-	test("getODataValueLists: Metadata loaded w/o annot., separate value list load", function () {
-		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
-			var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
-				oContextNoValueList = oMetaModel.getMetaContext("/Items('foo')/GeneratedID"),
-				oEntityType = oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.Item"),
-				oExpectedVL = { //value list with no qualifier
-					"CollectionPath" : {"String":"VL_SH_DEBIA"},
-					"Parameters" :[{
-						"LocalDataProperty" : {"PropertyPath":"Customer"},
-						"ValueListProperty" : {"String":"KUNNR"},
-						"RecordType":"com.sap.vocabularies.Common.v1.ValueListParameterInOut"
-					}]
-				},
-				oExpectedVL_DEBID = { //value list for qualifier DEBID
-					"CollectionPath" : {"String": "VL_SH_DEBID"},
-					"Parameters" : [{
-						"LocalDataProperty" : {"PropertyPath": "CompanyCode"},
-						"ValueListProperty" : {"String": "BUKRS"},
-						"RecordType" : "com.sap.vocabularies.Common.v1.ValueListParameterInOut"
-					}]
-				},
-				oInterface = oMetaModel.oODataModelInterface,
-				oPromise;
-
-			oGlobalSandbox.spy(oInterface, "addAnnotationUrl");
-
-			// no sap:value-list => no request
-			oMetaModel.getODataValueLists(oContextNoValueList);
-			strictEqual(oInterface.addAnnotationUrl.callCount, 0);
-
-			// separate value list load
-			oPromise = oMetaModel.getODataValueLists(oContext);
-			strictEqual(oMetaModel.getODataValueLists(oContext), oPromise, "promise is cached");
-			return oPromise.then(function (mValueLists) {
-				deepEqual(mValueLists, {
-					"" : oExpectedVL,
-					"DEBID" : oExpectedVL_DEBID
-				});
-
-				strictEqual(oInterface.addAnnotationUrl.callCount, 1, "addAnnotationUrl once");
-				ok(oInterface.addAnnotationUrl.calledWithExactly(
-					"$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer"),
-					"addAnnotationUrl arguments");
-
-				notStrictEqual(oMetaModel.getODataValueLists(oContext), oPromise,
-					"resolved promises deleted from cache");
-			});
+					return oPromise;
+				}
+			);
 		});
-	});
 
 	//*********************************************************************************************
-	test("getODataValueLists: addAnnotationUrl rejects", function () {
-		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+	QUnit.test("getODataValueLists: Metadata loaded w/o annot., separate value list load",
+		function (assert) {
+			return withGivenService(
+					assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+				var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
+					oContextNoValueList = oMetaModel.getMetaContext("/Items('foo')/GeneratedID"),
+					oExpectedVL = { //value list with no qualifier
+						"CollectionPath" : {"String":"VL_SH_DEBIA"},
+						"Parameters" :[{
+							"LocalDataProperty" : {"PropertyPath":"Customer"},
+							"ValueListProperty" : {"String":"KUNNR"},
+							"RecordType":"com.sap.vocabularies.Common.v1.ValueListParameterInOut"
+						}]
+					},
+					oExpectedVL_DEBID = { //value list for qualifier DEBID
+						"CollectionPath" : {"String": "VL_SH_DEBID"},
+						"Parameters" : [{
+							"LocalDataProperty" : {"PropertyPath": "CompanyCode"},
+							"ValueListProperty" : {"String": "BUKRS"},
+							"RecordType" : "com.sap.vocabularies.Common.v1.ValueListParameterInOut"
+						}]
+					},
+					oInterface = oMetaModel.oODataModelInterface,
+					oPromise;
+
+				oGlobalSandbox.spy(oInterface, "addAnnotationUrl");
+
+				// no sap:value-list => no request
+				oMetaModel.getODataValueLists(oContextNoValueList);
+				assert.strictEqual(oInterface.addAnnotationUrl.callCount, 0);
+
+				// separate value list load
+				oPromise = oMetaModel.getODataValueLists(oContext);
+				assert.strictEqual(oMetaModel.getODataValueLists(oContext), oPromise,
+					"promise cached");
+				return oPromise.then(function (mValueLists) {
+					assert.deepEqual(mValueLists, {
+						"" : oExpectedVL,
+						"DEBID" : oExpectedVL_DEBID
+					});
+
+					assert.strictEqual(oInterface.addAnnotationUrl.callCount, 1,
+						"addAnnotationUrl once");
+					assert.ok(oInterface.addAnnotationUrl.calledWithExactly(
+						"$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer"),
+						"addAnnotationUrl arguments");
+
+					assert.notStrictEqual(oMetaModel.getODataValueLists(oContext), oPromise,
+						"resolved promises deleted from cache");
+				});
+			});
+		}
+	);
+
+	//*********************************************************************************************
+	QUnit.test("getODataValueLists: addAnnotationUrl rejects", function (assert) {
+		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
 			var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
 				oInterface = oMetaModel.oODataModelInterface,
 				oMyError = new Error(),
@@ -2206,8 +2269,8 @@ sap.ui.require([
 			return oPromise.then(function () {
 				throw new Error("Unexpected success");
 			}, function (oError) {
-				strictEqual(oError, oMyError, "error propagated");
-				strictEqual(oMetaModel.getODataValueLists(oContext), oPromise,
+				assert.strictEqual(oError, oMyError, "error propagated");
+				assert.strictEqual(oMetaModel.getODataValueLists(oContext), oPromise,
 					"rejected promises are cached");
 			});
 		});
@@ -2215,14 +2278,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	["/Items('foo')/Invalid", "/Foos('foo')/Invalid"].forEach(function (sPath) {
-		test("getODataValueLists: reject invalid response for " + sPath, function () {
-			return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+		QUnit.test("getODataValueLists: reject invalid response for " + sPath, function (assert) {
+			return withGivenService(
+					assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
 				var oContext = oMetaModel.getMetaContext(sPath);
 
 				return oMetaModel.getODataValueLists(oContext).then(function () {
 					throw new Error("Unexpected success");
 				}, function (oError) {
-					strictEqual(oError.message,
+					assert.strictEqual(oError.message,
 						"No value lists returned for " + oContext.getPath());
 				});
 			});
@@ -2230,19 +2294,19 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("getODataValueLists: reject unsupported path", function () {
-		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+	QUnit.test("getODataValueLists: reject unsupported path", function (assert) {
+		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
 			var oContext = oMetaModel.getMetaContext("/Items('foo')");
 
-			raises(function () {
+			assert.throws(function () {
 				oMetaModel.getODataValueLists(oContext);
 			}, /Unsupported property context with path \/dataServices\/schema\/0\/entityType\/0/);
 		});
 	});
 
 	//*********************************************************************************************
-	test("getODataValueLists: request bundling", function () {
-		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+	QUnit.test("getODataValueLists: request bundling", function (assert) {
+		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
 			var oCompanyCode = oMetaModel.getMetaContext("/Items('foo')/CompanyCode"),
 				oCustomer = oMetaModel.getMetaContext("/Items('foo')/Customer"),
 				oInterface = oMetaModel.oODataModelInterface,
@@ -2256,13 +2320,14 @@ sap.ui.require([
 			oPromiseCompanyCode = oMetaModel.getODataValueLists(oCompanyCode);
 
 			// check caching of pending requests
-			strictEqual(oMetaModel.getODataValueLists(oCompanyCode), oPromiseCompanyCode);
-			strictEqual(oMetaModel.getODataValueLists(oCustomer), oPromiseCustomer);
+			assert.strictEqual(oMetaModel.getODataValueLists(oCompanyCode), oPromiseCompanyCode);
+			assert.strictEqual(oMetaModel.getODataValueLists(oCustomer), oPromiseCustomer);
 
 			return Promise.all([oPromiseCustomer, oPromiseCompanyCode]).then(function () {
 				// check bundling
-				strictEqual(oInterface.addAnnotationUrl.callCount, 1, "addAnnotationUrl once");
-				strictEqual(oInterface.addAnnotationUrl.args[0][0],
+				assert.strictEqual(oInterface.addAnnotationUrl.callCount, 1,
+					"addAnnotationUrl once");
+				assert.strictEqual(oInterface.addAnnotationUrl.args[0][0],
 					"$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode" +
 					",FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer",
 					oInterface.addAnnotationUrl.printf("addAnnotationUrl calls: %C"));
@@ -2277,8 +2342,8 @@ sap.ui.require([
 	//     i.e. "bus leaves" only after some idle time!
 
 	//*********************************************************************************************
-	test("_sendBundledRequest", function () {
-		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+	QUnit.test("_sendBundledRequest", function (assert) {
+		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
 			var oError = new Error(),
 				fnBarReject = sinon.spy(),
 				fnBarResolve = sinon.stub().throws(oError),
@@ -2303,7 +2368,7 @@ sap.ui.require([
 				"FOO" : {
 					resolve : fnFooResolve,
 					reject : function (oError) {
-						ok(false, oError);
+						assert.ok(false, oError);
 					}
 				}
 			};
@@ -2311,39 +2376,40 @@ sap.ui.require([
 			oMetaModel._sendBundledRequest();
 
 			// check bundling
-			strictEqual(oInterface.addAnnotationUrl.callCount, 1, "addAnnotationUrl once");
-			strictEqual(oInterface.addAnnotationUrl.args[0][0],
+			assert.strictEqual(oInterface.addAnnotationUrl.callCount, 1, "addAnnotationUrl once");
+			assert.strictEqual(oInterface.addAnnotationUrl.args[0][0],
 				"$metadata?sap-value-list=BAR,FOO",
 				oInterface.addAnnotationUrl.printf("addAnnotationUrl calls: %C"));
-			deepEqual(Object.keys(oMetaModel.mQName2PendingRequest), [], "nothing pending");
+			assert.deepEqual(Object.keys(oMetaModel.mQName2PendingRequest), [], "nothing pending");
 
 			oPromise = oInterface.addAnnotationUrl.returnValues[0];
 			return oPromise.then(function (oResponse0) {
-				strictEqual(oResponse0, oResponse);
+				assert.strictEqual(oResponse0, oResponse);
 				// technical test: oResponse is delivered to all pending requests, regardless of
 				// errors thrown
-				ok(fnBarResolve.calledWithExactly(oResponse), fnBarResolve.printf("%C"));
-				ok(fnFooResolve.calledWithExactly(oResponse), fnFooResolve.printf("%C"));
+				assert.ok(fnBarResolve.calledWithExactly(oResponse), fnBarResolve.printf("%C"));
+				assert.ok(fnFooResolve.calledWithExactly(oResponse), fnFooResolve.printf("%C"));
 				// if "resolve" handler throws, "reject" handler is called
-				ok(fnBarReject.calledWithExactly(oError), fnBarReject.printf("%C"));
+				assert.ok(fnBarReject.calledWithExactly(oError), fnBarReject.printf("%C"));
 			});
 		});
 	});
 	// Note: rejecting a promise in _sendBundledRequest() cannot realistically throw errors
 
 	//*********************************************************************************************
-	test("getODataValueLists: Merge metadata with separate value list load", function () {
-		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+	QUnit.test(
+			"getODataValueLists: Merge metadata with separate value list load", function (assert) {
+		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
 			var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
 				oItemSetLabel = oMetaModel.getODataEntitySet("Items")
 					["com.sap.vocabularies.Common.v1.Label"],
 				oItemTypeLabel = oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.Item")
 					["com.sap.vocabularies.Common.v1.Label"];
 
-			ok(!oMetaModel.getODataEntitySet("VL_SH_DEBIA"));
-			ok(!oMetaModel.getODataEntitySet("VL_SH_DEBID"));
-			ok(!oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA"));
-			ok(!oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"));
+			assert.ok(!oMetaModel.getODataEntitySet("VL_SH_DEBIA"));
+			assert.ok(!oMetaModel.getODataEntitySet("VL_SH_DEBID"));
+			assert.ok(!oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBIA"));
+			assert.ok(!oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID"));
 
 			return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
 				var oODataMetadataSchema
@@ -2360,42 +2426,42 @@ sap.ui.require([
 						"FAR_CUSTOMER_LINE_ITEMS.VL_SH_DEBID");
 
 				TestUtils.deepContains(oClonedSet_DEBIA, oSet_DEBIA);
-				notStrictEqual(oClonedSet_DEBIA, oSet_DEBIA);
+				assert.notStrictEqual(oClonedSet_DEBIA, oSet_DEBIA);
 				TestUtils.deepContains(oClonedSet_DEBID, oSet_DEBID);
-				notStrictEqual(oClonedSet_DEBID, oSet_DEBID);
+				assert.notStrictEqual(oClonedSet_DEBID, oSet_DEBID);
 
 				TestUtils.deepContains(oClonedType_DEBIA, oType_DEBIA);
-				notStrictEqual(oClonedType_DEBIA, oType_DEBIA);
+				assert.notStrictEqual(oClonedType_DEBIA, oType_DEBIA);
 				TestUtils.deepContains(oClonedType_DEBID, oType_DEBID);
-				notStrictEqual(oClonedType_DEBID, oType_DEBID);
+				assert.notStrictEqual(oClonedType_DEBID, oType_DEBID);
 
-				strictEqual(
+				assert.strictEqual(
 					oMetaModel.getODataEntitySet("Items")["com.sap.vocabularies.Common.v1.Label"],
 					oItemSetLabel,
 					"existing sets remain unchanged, as reference");
-				strictEqual(
+				assert.strictEqual(
 					oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.Item")
 						["com.sap.vocabularies.Common.v1.Label"],
 					oItemTypeLabel,
 					"existing types remain unchanged, as reference");
 
 				// check that v4 annotations are properly merged and that v2 ones are lifted etc.
-				strictEqual(
+				assert.strictEqual(
 					oClonedType_DEBIA.property[2/*LAND1*/]
 						["com.sap.vocabularies.Common.v1.ValueList"].CollectionPath.String,
 					"VL_SH_FARP_T005");
-				strictEqual(oClonedType_DEBIA.property[2/*LAND1*/]["sap:label"], "Country");
-				strictEqual(
+				assert.strictEqual(oClonedType_DEBIA.property[2/*LAND1*/]["sap:label"], "Country");
+				assert.strictEqual(
 					oClonedType_DEBIA.property[2/*LAND1*/]
 						["com.sap.vocabularies.Common.v1.Label"].String,
 					"Country");
 
-				strictEqual(oClonedSet_DEBIA["sap:creatable"], "false");
-				strictEqual(oClonedSet_DEBIA["sap:deletable"], "false");
-				deepEqual(
+				assert.strictEqual(oClonedSet_DEBIA["sap:creatable"], "false");
+				assert.strictEqual(oClonedSet_DEBIA["sap:deletable"], "false");
+				assert.deepEqual(
 					oClonedSet_DEBIA["Org.OData.Capabilities.V1.InsertRestrictions"],
 					{Insertable : {Bool : "false"}}, "v2 --> v4");
-				deepEqual(
+				assert.deepEqual(
 					oClonedSet_DEBIA["Org.OData.Capabilities.V1.DeleteRestrictions"],
 					{Deletable : {Bool : "true"}}, "v4 wins");
 			});
@@ -2403,8 +2469,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	test("getODataValueLists: Merge metadata with existing entity set", function () {
-		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+	QUnit.test("getODataValueLists: Merge metadata with existing entity set", function (assert) {
+		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
 			var oContext = oMetaModel.getMetaContext("/Items('foo')/CompanyCode"),
 				aEntitySet = oMetaModel.getObject(
 					"/dataServices/schema/0/entityContainer/0/entitySet"),
@@ -2415,14 +2481,14 @@ sap.ui.require([
 			iOriginalLength = aEntitySet.length;
 
 			return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
-				strictEqual(aEntitySet.length, iOriginalLength, "set not added twice");
+				assert.strictEqual(aEntitySet.length, iOriginalLength, "set not added twice");
 			});
 		});
 	});
 
 	//*********************************************************************************************
-	test("getODataValueLists: Merge metadata with existing entity type", function () {
-		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+	QUnit.test("getODataValueLists: Merge metadata with existing entity type", function (assert) {
+		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
 			var oContext = oMetaModel.getMetaContext("/Items('foo')/CompanyCode"),
 				aEntityType = oMetaModel.getObject("/dataServices/schema/0/entityType"),
 				iOriginalLength;
@@ -2432,22 +2498,22 @@ sap.ui.require([
 			iOriginalLength = aEntityType.length;
 
 			return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
-				strictEqual(aEntityType.length, iOriginalLength, "type not added twice");
-				ok(oMetaModel.getODataEntitySet("VL_SH_H_T001"), "set is added");
+				assert.strictEqual(aEntityType.length, iOriginalLength, "type not added twice");
+				assert.ok(oMetaModel.getODataEntitySet("VL_SH_H_T001"), "set is added");
 			});
 		});
 	});
 
 	//*********************************************************************************************
-	test("getODataValueLists: ValueList on ComplexType", function () {
-		return withGivenService("/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+	QUnit.test("getODataValueLists: ValueList on ComplexType", function (assert) {
+		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
 			var oContext = oMetaModel.getMetaContext("/Items('foo')/Complex/Customer"),
 				oInterface = oMetaModel.oODataModelInterface;
 
 			oGlobalSandbox.spy(oInterface, "addAnnotationUrl");
 
 			return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
-				deepEqual(mValueLists, {
+				assert.deepEqual(mValueLists, {
 					"" : {
 						"CollectionPath" : {"String":"VL_SH_DEBIA"},
 						"Parameters" :[{
@@ -2458,7 +2524,7 @@ sap.ui.require([
 					}
 				});
 
-				ok(oInterface.addAnnotationUrl.calledWithExactly(
+				assert.ok(oInterface.addAnnotationUrl.calledWithExactly(
 					"$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.MyComplexType%2FCustomer"),
 					oInterface.addAnnotationUrl.printf("addAnnotationUrl calls: %C"));
 			});

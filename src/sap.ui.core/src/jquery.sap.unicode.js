@@ -14,15 +14,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 	var bNativeSupport = !!String.prototype.normalize;
 
-	// only load unorm if required
+	// only load unorm and apply polyfill if needed and when not in a mobile browser
 	/*global UNorm *///declare unusual global vars for JSLint/SAPUI5 validation
-	if (!bNativeSupport) {
+	if (!bNativeSupport && !Device.browser.mobile) {
 		jQuery.sap.require("sap.ui.thirdparty.unorm");
 		jQuery.sap.require("sap.ui.thirdparty.unormdata");
-	}
 
-	// apply polyfill if needed and when not in a mobile browser
-	if (!String.prototype.normalize && !Device.browser.mobile) {
 		/*eslint-disable no-extend-native */
 		String.prototype.normalize = function(str) {
 		/*eslint-enable no-extend-native */

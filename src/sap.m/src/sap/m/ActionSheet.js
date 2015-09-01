@@ -87,12 +87,23 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			/**
 			 * This event will be fired before the ActionSheet is closed.
 			 */
-			beforeClose : {},
+			beforeClose : {
+				/**
+				 * This indicates the trigger of closing the dialog. If dialog is closed by either leftButton or rightButton, the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null. This is valid only for Phone mode of the ActionSheet
+				 *
+				 */
+				origin: {type: "sap.m.Button"}
+			},
 
 			/**
 			 * This event will be fired after the ActionSheet is closed.
 			 */
-			afterClose : {},
+			afterClose : {
+				/**
+				 * This indicates the trigger of closing the dialog. If dialog is closed by either leftButton or rightButton, the button that closes the dialog is set to this parameter. Otherwise this parameter is set to null. This is valid only for Phone mode of the ActionSheet
+				 */
+				origin: {type: "sap.m.Button"}
+			},
 
 			/**
 			 * This event is fired when the cancelButton is clicked. For iPad, this event is also fired when showCancelButton is set to true, and Popover is closed by clicking outside.
@@ -103,10 +114,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 
 	ActionSheet.prototype.init = function() {
-		// Delegate keyboard processing to ItemNavigation, see commons.SegmentedButton
-		this._oItemNavigation = new ItemNavigation();
-		this._oItemNavigation.setCycling(false);
-		this.addDelegate(this._oItemNavigation);
+		// this method is kept here empty in case some control inherits from it but forgets to check the existence of this function when chaining the call
 	};
 
 	ActionSheet.prototype.exit = function(){
@@ -119,6 +127,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			this._oCancelButton = null;
 		}
 
+		this._clearItemNavigation();
+	};
+
+	ActionSheet.prototype._clearItemNavigation = function() {
 		if (this._oItemNavigation) {
 			this.removeDelegate(this._oItemNavigation);
 			this._oItemNavigation.destroy();
@@ -147,22 +159,22 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			this._oItemNavigation.setPageSize(5);
 		}
 	};
-	ActionSheet.prototype.onAfterRendering = function() {
-		this._setItemNavigation();
-		this.$().on("keyup.ActionSheet", jQuery.proxy(this.onKeyUp, this));
-	};
+
 	ActionSheet.prototype.onBeforeRendering = function() {
-		if (this.getDomRef()) {
-			this.$().off("keyup.ActionSheet");
-		}
+		// The item navigation instance has to be destroyed and created again once the control is rerendered
+		// because the intital tabindex setting is only done once inside the item navigation but we need it here
+		// every time after the control is rerendered
+		this._clearItemNavigation();
 	};
-	ActionSheet.prototype.onKeyUp = function(event) {
-		if ( event.which == jQuery.sap.KeyCodes.ESCAPE) {
-			this.close();
-			event.stopPropagation();
-			event.preventDefault();
-		}
+
+	ActionSheet.prototype.onAfterRendering = function() {
+		// delegate the keyboard handling to ItemNavigation
+		this._oItemNavigation = new ItemNavigation();
+		this._oItemNavigation.setCycling(false);
+		this.addDelegate(this._oItemNavigation);
+		this._setItemNavigation();
 	};
+
 	ActionSheet.prototype.sapfocusleave = function() {
 		this.close();
 	};
@@ -221,8 +233,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 				}).addStyleClass("sapMActionSheetPopover");
 
 				if (sap.ui.Device.browser.internet_explorer) {
-					this._parent._fnSetArrowPosition = jQuery.proxy(function(){
-						Popover.prototype._setArrowPosition.apply(this);
+					this._parent._fnAdjustPositionAndArrow = jQuery.proxy(function(){
+						Popover.prototype._adjustPositionAndArrow.apply(this);
 
 						var $this = this.$(),
 							fContentWidth = $this.children(".sapMPopoverCont")[0].getBoundingClientRect().width;

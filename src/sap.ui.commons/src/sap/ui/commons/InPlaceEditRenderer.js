@@ -13,7 +13,7 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var InPlaceEditRenderer = {
 	};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * 
@@ -21,28 +21,30 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oInPlaceEdit an object representation of the control that should be rendered
 	 */
 	InPlaceEditRenderer.render = function(rm, oInPlaceEdit){
-	
+
 		var oContent = oInPlaceEdit.getContent();
 		var sWidth;
-	
+
 		if (oContent) {
 			if (oContent.getWidth) {
 				sWidth = oContent.getWidth();
 			}
 			if (oContent.getVisible && !oContent.getVisible()) {
 				// invisible -> render nothing
+				jQuery.sap.log.warning("Content is not visivle - nothing is rendered", this);
 				return;
 			}
 		} else {
 			// no content -> render nothing
+			jQuery.sap.log.warning("No content provided - nothing is rendered", this);
 			return;
 		}
-	
+
 		// write the HTML into the render manager
 		rm.write("<DIV");
 		rm.writeControlData(oInPlaceEdit);
 		rm.addClass("sapUiIpe");
-	
+
 		if (!oInPlaceEdit.getEditable()) {
 			rm.addClass("sapUiIpeRo");
 		} else if (!oInPlaceEdit._bEditMode) {
@@ -60,16 +62,16 @@ sap.ui.define(['jquery.sap.global'],
 			// edit mode
 			rm.addClass("sapUiIpeEdit");
 		}
-	
+
 		if (sWidth) {
 			rm.addStyle("width", sWidth);
 		}
-	
+
 		if (oInPlaceEdit.getUndoEnabled() && oInPlaceEdit._sOldTextAvailable && ( !oInPlaceEdit._bEditMode || ( oInPlaceEdit._bEditMode && oInPlaceEdit._oEditControl.getValue() != oInPlaceEdit._sOldText))) {
 			// there is an old text available - visualize Undo
 			rm.addClass("sapUiIpeUndo");
 		}
-	
+
 		switch (oInPlaceEdit.getValueState()) {
 		case sap.ui.core.ValueState.Error:
 			rm.addClass('sapUiIpeErr');
@@ -83,12 +85,12 @@ sap.ui.define(['jquery.sap.global'],
 		default:
 		break;
 		}
-	
+
 		var tooltip = sap.ui.core.ValueStateSupport.enrichTooltip(oInPlaceEdit, oInPlaceEdit.getTooltip_AsString());
 		if (tooltip) {
 			rm.writeAttributeEscaped('title', tooltip);
 		}
-	
+
 		rm.writeClasses();
 		rm.writeStyles();
 		rm.write(">"); // DIV
@@ -102,7 +104,7 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			rm.writeClasses();
 			rm.write(">"); // DIV
-	
+
 		}
 		if (oInPlaceEdit._bEditMode) {
 			this.renderEditContent(rm, oInPlaceEdit);
@@ -118,24 +120,24 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		rm.write("</DIV>");
 	};
-	
+
 	InPlaceEditRenderer.renderDisplayContent = function(rm, oInPlaceEdit){
-	
+
 		if (oInPlaceEdit._oDisplayControl) {
 			rm.renderControl(oInPlaceEdit._oDisplayControl);
 			if (oInPlaceEdit.getEditable() && oInPlaceEdit._oDisplayControl.getMetadata().getName() == "sap.ui.commons.Link") {
 				rm.renderControl(oInPlaceEdit._oEditButton);
 			}
 		}
-	
+
 	};
-	
+
 	InPlaceEditRenderer.renderEditContent = function(rm, oInPlaceEdit){
-	
+
 		if (oInPlaceEdit._oEditControl) {
 			rm.renderControl(oInPlaceEdit._oEditControl);
 		}
-	
+
 	};
 
 	return InPlaceEditRenderer;

@@ -4,7 +4,7 @@
 
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap/ui/core/Core', 'sap/ui/core/ElementMetadata'],
 	function (jQuery, library, Global, Core, ElementMetadata) {
-		"use strict";
+		'use strict';
 
 		var configurationInfo = sap.ui.getCore().getConfiguration();
 
@@ -169,7 +169,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 				Object.keys(controlPropertiesFromMetadata).forEach(function (key) {
 					result.properties[key] = Object.create(null);
 					result.properties[key].value = control.getProperty(key);
-					result.properties[key].type = controlPropertiesFromMetadata[key].getType().getName();
+					result.properties[key].type = controlPropertiesFromMetadata[key].getType().getName ? controlPropertiesFromMetadata[key].getType().getName() : '';
 				});
 
 				return result;
@@ -193,7 +193,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 				Object.keys(inheritedMetadataProperties).forEach(function (key) {
 					result.properties[key] = Object.create(null);
 					result.properties[key].value = inheritedMetadataProperties[key].get(control);
-					result.properties[key].type = inheritedMetadataProperties[key].getType().getName();
+					result.properties[key].type = inheritedMetadataProperties[key].getType().getName ? inheritedMetadataProperties[key].getType().getName() : '';
 				});
 
 				return result;
@@ -248,7 +248,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 			_getModelFromContext: function (control, controlProperty) {
 				var bindingContext = control.getBinding(controlProperty),
 					bindingContextModel = bindingContext.getModel(),
-					bindingInfoParts = control.getBindingInfo(controlProperty).parts,
+					bindingInfoParts = (control.getBindingInfo(controlProperty).parts) ? control.getBindingInfo(controlProperty).parts : [],
 					modelNames = [];
 
 				for (var i = 0; i < bindingInfoParts.length; i++) {
@@ -284,7 +284,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 						propertiesBindingData[key] = Object.create(null);
 						propertiesBindingData[key].path = control.getBinding(key).getPath();
 						propertiesBindingData[key].value = control.getBinding(key).getValue();
-						propertiesBindingData[key].type =  control.getMetadata().getProperty(key).getType().getName();
+						propertiesBindingData[key].type = control.getMetadata().getProperty(key).getType().getName ? control.getMetadata().getProperty(key).getType().getName() : '';
 						propertiesBindingData[key].mode = control.getBinding(key).getBindingMode();
 						propertiesBindingData[key].model = this._getModelFromContext(control, key);
 					}
@@ -306,7 +306,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 				for (var key in aggregations) {
 					if (aggregations.hasOwnProperty(key) && control.getBinding(key)) {
 						aggregationsBindingData[key] = Object.create(null);
-						aggregationsBindingData[key].model = this._getModelFromContext(control.getBinding(key));
+						aggregationsBindingData[key].model = this._getModelFromContext(control, key);
 					}
 				}
 
@@ -369,13 +369,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 				bindingContext = control.getBindingContext();
 
 				result.meta = Object.create(null);
-				result.contextPath = bindingContext ? bindingContext.sPath : null;
+				result.contextPath = bindingContext ? bindingContext.getPath() : null;
 				result.aggregations = controlInformation._getBindDataForAggregations(control);
 				result.properties = controlInformation._getBindDataForProperties(control);
 
 				return result;
 			}
 		};
-
 
 	});

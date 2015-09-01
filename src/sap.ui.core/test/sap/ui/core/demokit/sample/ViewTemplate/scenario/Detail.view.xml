@@ -1,5 +1,6 @@
 <mvc:View
 	controllerName="sap.ui.core.sample.ViewTemplate.scenario.Detail"
+	template:require="sap.ui.core.sample.ViewTemplate.scenario.Helper"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:form="sap.ui.layout.form"
@@ -8,60 +9,76 @@
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 	<layout:VerticalLayout>
 		<!-- Note: "meta>" MUST point to an entity set! -->
-		<template:with path="meta>entityType" helper="sap.ui.model.odata.AnnotationHelper.gotoEntityType" var="entityType">
+		<template:alias name=".AH" value="sap.ui.model.odata.AnnotationHelper">
+			<template:alias name=".formatParts" value="sap.ui.core.sample.ViewTemplate.scenario.Helper.formatParts">
+				<template:with path="meta>entityType" helper=".AH.gotoEntityType" var="entityType">
 
-			<template:if test="{entityType>com.sap.vocabularies.UI.v1.LineItem}">
-				<!-- Note: this limits the data shown to 5 rows! -->
-				<Table includeItemInSelection="true" mode="SingleSelectMaster" selectionChange="onSelectionChange"
-						items="{:= '{path:\'/' + ${meta>name} + '\', length: 5}' }">
-					<template:with path="entityType>com.sap.vocabularies.UI.v1.LineItem" var="target">
-						<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Table" type="XML"/>
-					</template:with>
-				</Table>
-			</template:if>
+					<template:if test="{entityType>com.sap.vocabularies.UI.v1.LineItem}">
+						<!-- Note: this limits the data shown to 5 rows! -->
+						<Table includeItemInSelection="true" mode="SingleSelectMaster" selectionChange="onSelectionChange"
+								items="{:= '{path:\'/' + ${meta>name} + '\', length: 5}' }">
+							<template:with path="entityType>com.sap.vocabularies.UI.v1.LineItem" var="target">
+								<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Table" type="XML"/>
+							</template:with>
+						</Table>
+					</template:if>
 
-			<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.ChartAnnotation" type="XML"/>
+					<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.ChartAnnotation" type="XML"/>
 
-			<!-- expression binding just to test dynamic name -->
-			<core:ExtensionPoint name="{:= 'HeaderInfo' }">
-				<form:SimpleForm>
-					<form:title>
-						<core:Title text="HeaderInfo"/>
-					</form:title>
-					<template:with path="entityType>com.sap.vocabularies.UI.v1.HeaderInfo">
-						<!-- Note: composite bindings instead of separate labels for testing only! -->
-						<Text text="[Type Name] {path: 'entityType>TypeName', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-						<!-- Text text="[{path: 'entityType>Title/Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}] {path: 'entityType>Title/Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" / -->
-						<Text text="{parts: [{path: 'entityType>Title/Label'}, {path: 'entityType>Title/Value'}], formatter: 'sap.ui.core.sample.ViewTemplate.scenario.formatParts'}"/>
-						<template:if test="{entityType>Description}"> <!-- HeaderInfo Description is Nullable -->
-							<Text text="[{path: 'entityType>Description/Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}] {path: 'entityType>Description/Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-						</template:if>
-					</template:with>
-				</form:SimpleForm>
-			</core:ExtensionPoint>
+					<!-- expression binding just to test dynamic name -->
+					<core:ExtensionPoint name="{:= 'HeaderInfo' }">
+						<form:SimpleForm>
+							<form:title>
+								<core:Title text="HeaderInfo"/>
+							</form:title>
+							<template:with path="entityType>com.sap.vocabularies.UI.v1.HeaderInfo">
+								<!-- Note: composite bindings instead of separate labels for testing only! -->
+								<Text text="[Type Name] {path: 'entityType>TypeName', formatter: '.AH.format'}"/>
+								<!-- Text text="[{path: 'entityType>Title/Label', formatter: '.AH.format'}] {path: 'entityType>Title/Value', formatter: '.AH.format'}" / -->
+								<Text text="{parts: [{path: 'entityType>Title/Label'}, {path: 'entityType>Title/Value'}], formatter: '.formatParts'}"/>
+								<template:if test="{entityType>Description}"> <!-- HeaderInfo Description is Nullable -->
+									<Text text="[{path: 'entityType>Description/Label', formatter: '.AH.format'}] {path: 'entityType>Description/Value', formatter: '.AH.format'}"/>
+								</template:if>
+							</template:with>
+						</form:SimpleForm>
+					</core:ExtensionPoint>
 
-			<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Identification" type="XML"/>
+					<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Identification" type="XML"/>
 
-			<template:repeat list="{path:'entityType>', filters: {path: '@sapui.name', operator: 'StartsWith', value1: 'com.sap.vocabularies.UI.v1.FieldGroup'}}" var="fieldGroup">
-				<form:SimpleForm>
-					<form:title>
-						<core:Title text="{path: 'fieldGroup>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-					</form:title>
-					<template:repeat list="{fieldGroup>Data}" var="field">
-						<Label text="{path: 'field>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-						<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Field" type="XML"/>
+					<template:repeat list="{path:'entityType>', filters: {path: '@sapui.name', operator: 'StartsWith', value1: 'com.sap.vocabularies.UI.v1.FieldGroup'}}" var="fieldGroup">
+						<form:SimpleForm>
+							<form:title>
+								<core:Title text="{path: 'fieldGroup>Label', formatter: '.AH.format'}"/>
+							</form:title>
+							<template:repeat list="{fieldGroup>Data}" var="field">
+								<Label text="{path: 'field>Label', formatter: '.AH.format'}"/>
+								<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Field" type="XML"/>
+							</template:repeat>
+						</form:SimpleForm>
 					</template:repeat>
-				</form:SimpleForm>
-			</template:repeat>
 
-			<form:SimpleForm>
-				<form:title>
-					<core:Title text="Facets"/>
-				</form:title>
-				<template:with path="entityType>com.sap.vocabularies.UI.v1.Facets" var="facets">
-					<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Facets" type="XML"/>
+					<form:SimpleForm>
+						<form:title>
+							<core:Title text="Facets"/>
+						</form:title>
+						<template:with path="entityType>com.sap.vocabularies.UI.v1.Facets" var="facets">
+							<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Facets" type="XML"/>
+						</template:with>
+					</form:SimpleForm>
 				</template:with>
-			</form:SimpleForm>
-		</template:with>
+
+				<template:with path="meta>com.sap.vocabularies.UI.v1.DataPoint" var="dataPoint">
+					<template:if test="{dataPoint>}">
+						<form:SimpleForm>
+							<form:title>
+								<core:Title text="DataPoint@EntitySet - {path: 'dataPoint>Title', formatter: '.AH.format'}"/>
+							</form:title>
+							<Label text="{path: 'dataPoint>Description', formatter: '.AH.format'}"/>
+							<Text text="{path: 'dataPoint>Value', formatter: '.AH.format'}"/>
+						</form:SimpleForm>
+					</template:if>
+				</template:with>
+			</template:alias>
+		</template:alias>
 	</layout:VerticalLayout>
 </mvc:View>

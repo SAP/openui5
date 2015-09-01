@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0"
+		   xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+	<edmx:DataServices m:DataServiceVersion="2.0"
+					   xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+		<Schema Namespace="BULLETINBOARD" xml:lang="en"
+				xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+
+			<EntityType Name="Post" sap:content-version="1"
+						xmlns:sap="http://www.sap.com/Protocols/SAPData">
+				<Key>
+					<PropertyRef Name="PostID"/>
+				</Key>
+				<Property Name="PostID" Type="Edm.String" Nullable="false"
+						  MaxLength="40" sap:label="Post ID" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="Title" Type="Edm.String" Nullable="false"
+						  MaxLength="255" sap:label="Title" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="Description" Type="Edm.String" Nullable="false"
+						  sap:label="Description" sap:creatable="false"
+						  sap:updatable="false"/>
+				<Property Name="Timestamp" Type="Edm.DateTime" Nullable="false"
+						  sap:label="Posted On" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="true"/>
+				<Property Name="Category" Type="Edm.String" Nullable="false"
+						  MaxLength="60" sap:label="Category" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="true"/>
+				<Property Name="Contact" Type="Edm.String" Nullable="false"
+						  MaxLength="255" sap:label="Contact" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="true"/>
+				<Property Name="Currency" Type="Edm.String" Nullable="false"
+						  MaxLength="3" sap:label="Unit of Measure" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="true" sap:filterable="false"/>
+				<Property Name="Price" Type="Edm.Decimal" Nullable="false"
+						  Precision="23" Scale="4" sap:label="Unit Number" sap:creatable="false"
+						  sap:updatable="false" sap:filterable="false"/>
+				<Property Name="Flagged" Type="Edm.Boolean" Nullable="false"/>
+			</EntityType>
+
+			<EntityContainer Name="BULLETINBOARD_ENTITIES"
+							 m:IsDefaultEntityContainer="true">
+				<EntitySet Name="Posts" EntityType="BULLETINBOARD.Post"
+						   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+						   sap:pageable="false" sap:content-version="1"
+						   xmlns:sap="http://www.sap.com/Protocols/SAPData"/>
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

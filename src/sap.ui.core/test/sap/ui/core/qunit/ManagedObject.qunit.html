@@ -61,7 +61,7 @@
 				// needed for grouping test
 				addSubObjGroup : function(oGroup, oControl) {
 					if (!oControl) {
-						oControl = new sap.ui.core.TestManagedObject({value: oGroup.key});
+						oControl = new sap.ui.core.TestManagedObject({value: oGroup.key, booleanValue: true});
 					}
 					this.addSubObj(oControl);
 				}
@@ -844,28 +844,54 @@
 
 			test("Bind aggregation with grouping", function() {
 				jQuery.each(["value", "intValue", "groupValue"], function(i, sGroupProperty) {
+					var binding, subobjects;
 					this.obj.bindAggregation("subObjects", {
 						path: "/list",
 						template: this.template,
 						sorter: new sap.ui.model.Sorter(sGroupProperty, false, true)
 					});
 					equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
-					equal(this.obj.getAggregation("subObjects", []).length, 6, "Aggregation length should match defined length plus headers");
+					subobjects = this.obj.getAggregation("subObjects", []);
+					equal(subobjects.length, 6, "Aggregation length should match defined length plus headers");
+					equal(subobjects[0].getBooleanValue(), true, "Entry must be a header entry")
+					equal(subobjects[2].getBooleanValue(), true, "Entry must be a header entry")
+					equal(subobjects[4].getBooleanValue(), true, "Entry must be a header entry")
+					
+					binding = this.obj.getBinding("subObjects");
+					binding.sort(); //ungroup
+					subobjects = this.obj.getAggregation("subObjects", []);
+					equal(subobjects.length, 3, "Aggregation length should match array length");
+					equal(subobjects[0].getBooleanValue(), false, "Entry must not be a header entry")
+					equal(subobjects[1].getBooleanValue(), false, "Entry must not be a header entry")
+					equal(subobjects[2].getBooleanValue(), false, "Entry must not be a header entry")
 				}.bind(this));
 			});
 
 			test("Bind aggregation with grouping and header factory", function() {
 				jQuery.each(["value", "intValue", "groupValue"], function(i, sGroupProperty) {
+					var binding, subobjects;
 					this.obj.bindAggregation("subObjects", {
 						path: "/list",
 						template: this.template,
 						sorter: new sap.ui.model.Sorter(sGroupProperty, false, true),
 						groupHeaderFactory: function(oGroup) {
-							return  new sap.ui.core.TestManagedObject({value: oGroup.key});
+							return  new sap.ui.core.TestManagedObject({value: oGroup.key, booleanValue: true});
 						}
 					});
 					equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
-					equal(this.obj.getAggregation("subObjects", []).length, 6, "Aggregation length should match defined length plus headers");
+					subobjects = this.obj.getAggregation("subObjects", []);
+					equal(subobjects.length, 6, "Aggregation length should match defined length plus headers");
+					equal(subobjects[0].getBooleanValue(), true, "Entry must be a header entry")
+					equal(subobjects[2].getBooleanValue(), true, "Entry must be a header entry")
+					equal(subobjects[4].getBooleanValue(), true, "Entry must be a header entry")
+					
+					binding = this.obj.getBinding("subObjects");
+					binding.sort(); //ungroup
+					subobjects = this.obj.getAggregation("subObjects", []);
+					equal(subobjects.length, 3, "Aggregation length should match array length");
+					equal(subobjects[0].getBooleanValue(), false, "Entry must not be a header entry")
+					equal(subobjects[1].getBooleanValue(), false, "Entry must not be a header entry")
+					equal(subobjects[2].getBooleanValue(), false, "Entry must not be a header entry")
 				}.bind(this));
 			});
 

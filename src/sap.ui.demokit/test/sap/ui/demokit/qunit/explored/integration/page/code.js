@@ -1,4 +1,4 @@
-sap.ui.require([
+sap.ui.define([
 		'sap/ui/test/Opa5',
 		'test/page/Common',
 		'test/page/matchers',
@@ -29,7 +29,7 @@ sap.ui.require([
 
 								aButtons[0].$().trigger("tap");
 
-								strictEqual(oOpenFileStub.callCount, 1, "did open the generated file");
+								Opa5.assert.strictEqual(oOpenFileStub.callCount, 1, "did open the generated file");
 								oOpenFileStub.restore();
 							},
 							errorMessage: "Did not find the download Button"

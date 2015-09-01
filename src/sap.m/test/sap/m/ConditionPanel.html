@@ -71,10 +71,13 @@
 	var btnShow2 = new sap.m.Button({
 		text: "Filtering",
 		press: function() {
-		  	var oCondition1= { "key": "i1", "text": "CompanyCode: -100.5..1000", "exclude": false, "operation": sap.m.P13nConditionOperation.BT, "keyField": "CompanyCode", "value1": -100.5, "value2": 1000};
-			var oCondition2= { "key": "i2", "text": "CompanyName: =foo", "exclude": false, "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyName", "value1": "foo", "value2": ""};
-			var oCondition3= { "key": "i3", "text": "CompanyDate: =1/1/00", "exclude": false, "operation": sap.m.P13nConditionOperation.EQ, "keyField": "CompanyDate", "value1": new Date(), "value2": ""};
-			aConditions= [oCondition1, oCondition2, oCondition3];    
+		  	var oCondition1= { key: "i1", text: "Numeric: -100.5..1000", exclude: false, operation: sap.m.P13nConditionOperation.BT, keyField: "numeric", value1: -100.5, value2: 1000};
+			var oCondition2= { key: "i2", text: "String: =foo", exclude: false, operation: sap.m.P13nConditionOperation.EQ, keyField: "string", value1: "foo", value2: ""};
+			var oCondition3= { key: "i3", text: "Date: =1/1/00", exclude: false, operation: sap.m.P13nConditionOperation.EQ, keyField: "date", value1: new Date(), value2: ""};
+			var oCondition4= { key: "i4", text: "Boolean: =True", exclude: false, operation: sap.m.P13nConditionOperation.EQ, keyField: "boolean", value1: true, value2: ""};
+			var oCondition5= { key: "i5", text: "Boolean: ''", exclude: false, operation: sap.m.P13nConditionOperation.Empty, keyField: "boolean", value1: "", value2: ""};
+			var oCondition6= { key: "i6", text: "Enum: =enumVal1", exclude: false, operation: sap.m.P13nConditionOperation.EQ, keyField: "enum", value1: "enumVal2", value2: ""};
+			aConditions= [oCondition1, oCondition2, oCondition3, oCondition4, oCondition5, oCondition6];    
 	
 			oConditionPanel = new sap.m.P13nConditionPanel({
 	 			maxConditions: -1,
@@ -83,7 +86,13 @@
 	 			alwaysShowAddIcon: false
 			});
 			
-			oConditionPanel.setKeyFields([{key: "CompanyCode", text: "Number", type: "numeric", precision: "5", scale: "2", tooltip : "Company Code", isDefault: true}, {key: "CompanyName", text: "Name", type: "text", maxLength: "10"}, {key: "CompanyDate", text: "Date", type: "date"}]);
+			oConditionPanel.setKeyFields([{key: "numeric", text: "Numeric", type: "numeric", precision: "5", scale: "2", tooltip : "", isDefault: true}, 
+			                              {key: "string", text: "String", type: "text", maxLength: "10"}, 
+			                              {key: "date", text: "Date", type: "date"},
+            							  {key: "boolean", text: "Boolean", type: "boolean", operations: [sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.Empty], values: ["Off", "On"] },
+            							  {key: "enum", text: "Enum", type: "enum", operations: [sap.m.P13nConditionOperation.EQ] }
+			                              ]);
+			
  			oConditionPanel.setOperations([ sap.m.P13nConditionOperation.EQ, 
 				                     		sap.m.P13nConditionOperation.BT, 
 		                             		sap.m.P13nConditionOperation.Contains, 
@@ -92,14 +101,24 @@
 		                             		sap.m.P13nConditionOperation.LT, 
 		                             		sap.m.P13nConditionOperation.LE, 
 		                             		sap.m.P13nConditionOperation.GT, 
-		                             		sap.m.P13nConditionOperation.GE ]);
+		                             		sap.m.P13nConditionOperation.GE,
+		                             		sap.m.P13nConditionOperation.Empty,
+		                             		sap.m.P13nConditionOperation.NotEmpty]);
  			oConditionPanel.setOperations([sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT,
  			    									sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE,
  			    									sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE], "date");
  			oConditionPanel.setOperations([sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT,
  			    									sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE,
  			    									sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE], "numeric");
-			aConditions.forEach(function(oCondition){
+ 			oConditionPanel.setOperations([sap.m.P13nConditionOperation.EQ, 
+ 			                               sap.m.P13nConditionOperation.Empty,
+		                             	   sap.m.P13nConditionOperation.NotEmpty], "boolean");
+
+ 			//oConditionPanel.setValues([false, true], "boolean");
+ 			oConditionPanel.setValues(["Open", "Closed"], "boolean");
+ 			oConditionPanel.setValues(["enumVal1", "enumVal2","enumVal3"], "enum");
+			
+ 			aConditions.forEach(function(oCondition){
 				oConditionPanel.addCondition(oCondition);
 			}, this)
 

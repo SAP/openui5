@@ -70,9 +70,9 @@ sap.ui.define(['jquery.sap.global'],
 
 			oRm.write("<div");
 			oRm.writeAttribute("id", sId + "-y" + iYear);
-			oRm.addClass("sapUiCalYear");
+			oRm.addClass("sapUiCalItem");
 			if (iYear == iCurrentYear) {
-				oRm.addClass("sapUiCalYearSel");
+				oRm.addClass("sapUiCalItemSel");
 			}
 			oRm.writeAttribute("tabindex", "-1");
 			oRm.addStyle("width", sWidth);

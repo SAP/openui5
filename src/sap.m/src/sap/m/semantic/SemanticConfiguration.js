@@ -10,8 +10,8 @@
  */
 
 // Provides class sap.m.semantic.SemanticConfiguration
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolbarLayoutData", "sap/ui/core/InvisibleText"],
-	function(jQuery, Metadata, OverflowToolbarLayoutData, InvisibleText) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolbarLayoutData", "sap/ui/core/InvisibleText", "sap/ui/core/IconPool"],
+	function(jQuery, Metadata, OverflowToolbarLayoutData, InvisibleText, IconPool) {
 	"use strict";
 
 	/**
@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.headerRight,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://multi-select",
+					icon: IconPool.getIconURI("multi-select"),
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_MULTI_SELECT"),
 					ariaLabelledBy: _ensureInvisibleText("MultiSelectAction", oBundle.getText("SEMANTIC_CONTROL_MULTI_SELECT"))
 				};
@@ -229,7 +229,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			triggers: SemanticConfiguration._PageMode.edit,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://add",
+					icon: IconPool.getIconURI("add"),
 					text: oBundle.getText("SEMANTIC_CONTROL_ADD"),
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_ADD"),
 					ariaLabelledBy: _ensureInvisibleText("AddAction", oBundle.getText("SEMANTIC_CONTROL_ADD"))
@@ -243,7 +243,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.footerRight_IconOnly,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://favorite",
+					icon: IconPool.getIconURI("favorite"),
 					text: oBundle.getText("SEMANTIC_CONTROL_FAVORITE"),
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_FAVORITE"),
 					ariaLabelledBy: _ensureInvisibleText("FavoriteAction", oBundle.getText("SEMANTIC_CONTROL_FAVORITE"))
@@ -257,7 +257,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.footerRight_IconOnly,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://flag",
+					icon: IconPool.getIconURI("flag"),
 					text: oBundle.getText("SEMANTIC_CONTROL_FLAG"),
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_FLAG"),
 					ariaLabelledBy: _ensureInvisibleText("FlagAction", oBundle.getText("SEMANTIC_CONTROL_FLAG"))
@@ -283,7 +283,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.footerRight_IconOnly,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://sort",
+					icon: IconPool.getIconURI("sort"),
 					text: oBundle.getText("SEMANTIC_CONTROL_SORT"),
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_SORT"),
 					ariaLabelledBy: _ensureInvisibleText("SortAction", oBundle.getText("SEMANTIC_CONTROL_SORT")),
@@ -301,7 +301,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.footerRight_IconOnly,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://sort",
+					icon: IconPool.getIconURI("sort"),
 					type: "IconOnly",
 					autoAdjustWidth: true,
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_SORT"),
@@ -312,6 +312,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					})
 				};
 			},
+			getEventDelegates: function(oContext) {
+				return {
+					onAfterRendering: function () {
+						this.$().attr({"aria-haspopup": true, "role": ""});
+					}.bind(oContext)
+				};
+			},
 			order: 3,
 			constraints: "IconOnly"
 		};
@@ -320,7 +327,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.footerRight_IconOnly,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://filter",
+					icon: IconPool.getIconURI("filter"),
 					text: oBundle.getText("SEMANTIC_CONTROL_FILTER"),
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_FILTER"),
 					ariaLabelledBy: _ensureInvisibleText("FilterAction", oBundle.getText("SEMANTIC_CONTROL_FILTER")),
@@ -338,7 +345,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.footerRight_IconOnly,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://filter",
+					icon: IconPool.getIconURI("filter"),
 					type: "IconOnly",
 					autoAdjustWidth: true,
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_FILTER"),
@@ -357,7 +364,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.footerRight_IconOnly,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://group-2",
+					icon: IconPool.getIconURI("group-2"),
 					text: oBundle.getText("SEMANTIC_CONTROL_GROUP"),
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_GROUP"),
 					ariaLabelledBy: _ensureInvisibleText("GroupAction", oBundle.getText("SEMANTIC_CONTROL_GROUP")),
@@ -375,7 +382,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.footerRight_IconOnly,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://group-2",
+					icon: IconPool.getIconURI("group-2"),
 					type: "IconOnly",
 					autoAdjustWidth: true,
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_GROUP"),
@@ -384,6 +391,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 						moveToOverflow: true,
 						stayInOverflow: false
 					})
+				};
+			},
+			getEventDelegates: function(oContext) {
+				return {
+					onAfterRendering: function () {
+						this.$().attr({"aria-haspopup": true, "role": ""});
+					}.bind(oContext)
 				};
 			},
 			order: 5,
@@ -403,7 +417,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.shareMenu,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://discussion-2",
+					icon: IconPool.getIconURI("discussion-2"),
 					text: oBundle.getText("SEMANTIC_CONTROL_DISCUSS_IN_JAM"),
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_DISCUSS_IN_JAM"),
 					ariaLabelledBy: _ensureInvisibleText("DiscussInJamAction", oBundle.getText("SEMANTIC_CONTROL_DISCUSS_IN_JAM"))
@@ -416,7 +430,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.shareMenu,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://share-2",
+					icon: IconPool.getIconURI("share-2"),
 					text: oBundle.getText("SEMANTIC_CONTROL_SHARE_IN_JAM"),
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_SHARE_IN_JAM"),
 					ariaLabelledBy: _ensureInvisibleText("ShareInJamAction", oBundle.getText("SEMANTIC_CONTROL_SHARE_IN_JAM"))
@@ -429,7 +443,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.shareMenu,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://discussion",
+					icon: IconPool.getIconURI("discussion"),
 					text: oBundle.getText("SEMANTIC_CONTROL_SEND_MESSAGE"),
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_SEND_MESSAGE"),
 					ariaLabelledBy: _ensureInvisibleText("SendMessageAction", oBundle.getText("SEMANTIC_CONTROL_SEND_MESSAGE"))
@@ -442,7 +456,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.shareMenu,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://email",
+					icon: IconPool.getIconURI("email"),
 					text: oBundle.getText("SEMANTIC_CONTROL_SEND_EMAIL"),
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_SEND_EMAIL"),
 					ariaLabelledBy: _ensureInvisibleText("SendEmailAction", oBundle.getText("SEMANTIC_CONTROL_SEND_EMAIL"))
@@ -455,7 +469,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.shareMenu,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://print",
+					icon: IconPool.getIconURI("print"),
 					text: oBundle.getText("SEMANTIC_CONTROL_PRINT"),
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_PRINT"),
 					ariaLabelledBy: _ensureInvisibleText("PrintAction", oBundle.getText("SEMANTIC_CONTROL_PRINT"))
@@ -468,7 +482,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.footerLeft,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://alert",
+					icon: IconPool.getIconURI("message-popup"),
 					text: {
 						path: "message>/",
 						formatter: function (aMessages) {
@@ -491,6 +505,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					})
 				};
 			}
+		};
+		
+		oTypeConfigs["sap.m.semantic.DraftIndicator"] = {
+			position: SemanticConfiguration.prototype._PositionInPage.footerLeft,
+			getSettings: function() {
+				return {
+					layoutData: new sap.m.OverflowToolbarLayoutData({shrinkable: false})
+				};
+			},
+			order: 1
 		};
 
 		return oTypeConfigs;

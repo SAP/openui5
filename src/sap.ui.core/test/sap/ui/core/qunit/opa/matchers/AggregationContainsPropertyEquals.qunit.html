@@ -1,195 +1,193 @@
 <!DOCTYPE HTML>
 <html>
 
-<head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>qUnit Page for sap.ui.test.matchers.AggregationContainsPropertyEqual</title>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="utf-8" />
+		<title>qUnit Page for sap.ui.test.matchers.AggregationContainsPropertyEqual</title>
 
-<script
-	src="../../../../../../../resources/sap-ui-core.js"
-	data-sap-ui-libs="sap.ui.commons">
-</script>
-
-
-<script>
-(function () {
-	jQuery.sap.require("sap.ui.qunit.qunit-css");
-	jQuery.sap.require("sap.ui.thirdparty.qunit");
-	jQuery.sap.require("sap.ui.qunit.qunit-junit");
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-	jQuery.sap.require("sap.ui.thirdparty.sinon");
-	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-
-	jQuery.sap.require("sap.ui.test.matchers.AggregationContainsPropertyEqual");
-	jQuery.sap.require("sap.ui.commons.ComboBox");
-	jQuery.sap.require("sap.ui.core.ListItem");
+		<script
+			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.ui.commons">
+		</script>
 
 
-	module("positive tests");
+		<script>
+			(function () {
+				jQuery.sap.require("sap.ui.qunit.qunit-css");
+				jQuery.sap.require("sap.ui.thirdparty.qunit");
+				jQuery.sap.require("sap.ui.qunit.qunit-junit");
+				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+				jQuery.sap.require("sap.ui.thirdparty.sinon");
+				jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
-	test("Should match an aggregation with items that match the property", function() {
-		// Arrange
-		var oComboBox = new  sap.ui.commons.ComboBox({
-			items :
-			[
-				new sap.ui.core.ListItem(), new sap.ui.core.ListItem({ text : "" }),
-				new sap.ui.core.ListItem({ key : "foo" }),
-				new sap.ui.core.ListItem({ text : "foo" })
-			]});
+				jQuery.sap.require("sap.ui.test.matchers.AggregationContainsPropertyEqual");
+				jQuery.sap.require("sap.ui.commons.ComboBox");
+				jQuery.sap.require("sap.ui.core.ListItem");
 
-		// System under Test
-		var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({
-			aggregationName : "items",
-			propertyName : "text",
-			propertyValue : "foo"
-		});
 
-		// Act
-		var bResult = oMatcher.isMatching(oComboBox);
+				module("positive tests");
 
-		// Assert
-		ok(bResult, "Did match because there was a matching item");
+				test("Should match an aggregation with items that match the property", function() {
+					// Arrange
+					var oComboBox = new  sap.ui.commons.ComboBox({
+						items :
+						[
+							new sap.ui.core.ListItem(), new sap.ui.core.ListItem({ text : "" }),
+							new sap.ui.core.ListItem({ key : "foo" }),
+							new sap.ui.core.ListItem({ text : "foo" })
+						]});
 
-		// Cleanup
-		oComboBox.destroy();
-	});
+					// System under Test
+					var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({
+						aggregationName : "items",
+						propertyName : "text",
+						propertyValue : "foo"
+					});
 
-	test("Should not match an aggregation filled with multiple items that match the property", function() {
-		// Arrange
-		var oComboBox = new  sap.ui.commons.ComboBox({
-			items :
-			[
-				new sap.ui.core.ListItem(), new sap.ui.core.ListItem({ key : "", text : "baz" }),
-				new sap.ui.core.ListItem({ text : "foo" }),
-				new sap.ui.core.ListItem({ text : "foo" })
-			]});
+					// Act
+					var bResult = oMatcher.isMatching(oComboBox);
 
-		// System under Test
-		var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({
-			aggregationName : "items",
-			propertyName : "text",
-			propertyValue : "foo"
-		});
+					// Assert
+					ok(bResult, "Did match because there was a matching item");
 
-		// Act
-		var bResult = oMatcher.isMatching(oComboBox);
+					// Cleanup
+					oComboBox.destroy();
+				});
 
-		// Assert
-		ok(bResult, "Did match because there were two matching items");
+				test("Should not match an aggregation filled with multiple items that match the property", function() {
+					// Arrange
+					var oComboBox = new  sap.ui.commons.ComboBox({
+						items :
+						[
+							new sap.ui.core.ListItem(), new sap.ui.core.ListItem({ key : "", text : "baz" }),
+							new sap.ui.core.ListItem({ text : "foo" }),
+							new sap.ui.core.ListItem({ text : "foo" })
+						]});
 
-		// Cleanup
-		oComboBox.destroy();
-	});
+					// System under Test
+					var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({
+						aggregationName : "items",
+						propertyName : "text",
+						propertyValue : "foo"
+					});
 
-	module("negative tests");
+					// Act
+					var bResult = oMatcher.isMatching(oComboBox);
 
-	test("Should not match a filled with items that do not have the property", function() {
-		// Arrange
-		var oComboBox = new  sap.ui.commons.ComboBox({
-			items :
-			[
-				new sap.ui.core.ListItem(), new sap.ui.core.ListItem({ text : "foo" }),
-				new sap.ui.core.ListItem({ text : "bar" }),
-				new sap.ui.core.ListItem({ key : "foo" })
-			]});
+					// Assert
+					ok(bResult, "Did match because there were two matching items");
 
-		// System under Test
-		var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({
-			aggregationName : "items",
-			propertyName : "someUnknownProperty",
-			propertyValue : "foo"
-		});
+					// Cleanup
+					oComboBox.destroy();
+				});
 
-		// Act
-		var bResult = oMatcher.isMatching(oComboBox);
+				module("negative tests");
 
-		// Assert
-		ok(!bResult, "Did not match because there is no item with such a property");
+				test("Should not match a filled with items that do not have the property", function() {
+					// Arrange
+					var oComboBox = new  sap.ui.commons.ComboBox({
+						items :
+						[
+							new sap.ui.core.ListItem(), new sap.ui.core.ListItem({ text : "foo" }),
+							new sap.ui.core.ListItem({ text : "bar" }),
+							new sap.ui.core.ListItem({ key : "foo" })
+						]});
 
-		// Cleanup
-		oComboBox.destroy();
-	});
+					// System under Test
+					var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({
+						aggregationName : "items",
+						propertyName : "someUnknownProperty",
+						propertyValue : "foo"
+					});
 
-	test("Should not match a filled with items that do not match the property", function() {
-		// Arrange
-		var oComboBox = new  sap.ui.commons.ComboBox({
-			items :
-			[
-				new sap.ui.core.ListItem(), new sap.ui.core.ListItem({ text : "" }),
-				new sap.ui.core.ListItem({ text : "bar" }),
-				new sap.ui.core.ListItem({ key : "foo" })
-			]});
+					// Act
+					var bResult = oMatcher.isMatching(oComboBox);
 
-		// System under Test
-		var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({
-			aggregationName : "items",
-			propertyName : "text",
-			propertyValue : "foo"
-		});
+					// Assert
+					ok(!bResult, "Did not match because there is no item with such a property");
 
-		// Act
-		var bResult = oMatcher.isMatching(oComboBox);
+					// Cleanup
+					oComboBox.destroy();
+				});
 
-		// Assert
-		ok(!bResult, "Did not match because there was no matching item");
+				test("Should not match a filled with items that do not match the property", function() {
+					// Arrange
+					var oComboBox = new  sap.ui.commons.ComboBox({
+						items :
+						[
+							new sap.ui.core.ListItem(), new sap.ui.core.ListItem({ text : "" }),
+							new sap.ui.core.ListItem({ text : "bar" }),
+							new sap.ui.core.ListItem({ key : "foo" })
+						]});
 
-		// Cleanup
-		oComboBox.destroy();
-	});
+					// System under Test
+					var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({
+						aggregationName : "items",
+						propertyName : "text",
+						propertyValue : "foo"
+					});
 
-	test("Should not match an empty aggregation", function() {
-		// Arrange
-		var oComboBox = new  sap.ui.commons.ComboBox({items : []});
+					// Act
+					var bResult = oMatcher.isMatching(oComboBox);
 
-		// System under Test
-		var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({
-			aggregationName : "items",
-			propertyName : "text",
-			propertyValue : "foo"
-		});
+					// Assert
+					ok(!bResult, "Did not match because there was no matching item");
 
-		// Act
-		var bResult = oMatcher.isMatching(oComboBox);
+					// Cleanup
+					oComboBox.destroy();
+				});
 
-		// Assert
-		ok(!bResult, "Did not match because there was no item");
+				test("Should not match an empty aggregation", function() {
+					// Arrange
+					var oComboBox = new  sap.ui.commons.ComboBox({items : []});
 
-		// Cleanup
-		oComboBox.destroy();
-	});
+					// System under Test
+					var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({
+						aggregationName : "items",
+						propertyName : "text",
+						propertyValue : "foo"
+					});
 
-	test("Should complain if control does not have an aggregation", function() {
-		// Arrange
-		var oComboBox = new  sap.ui.commons.ComboBox();
-		var oErrorSpy = this.spy(jQuery.sap.log,"error");
+					// Act
+					var bResult = oMatcher.isMatching(oComboBox);
 
-		// System under Test
-		var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({
-			aggregationName : "anAggregationThatWillNeverBeAddedToTheCombobox",
-			propertyName : "text",
-			propertyValue : "foo"
-		});
+					// Assert
+					ok(!bResult, "Did not match because there was no item");
 
-		// Act
-		var bResult = oMatcher.isMatching(oComboBox);
+					// Cleanup
+					oComboBox.destroy();
+				});
 
-		// Assert
-		strictEqual(bResult, false, "Did not match");
-		strictEqual(oErrorSpy.callCount, 1, "Did complain");
+				test("Should complain if control does not have an aggregation", function() {
+					// Arrange
+					var oComboBox = new  sap.ui.commons.ComboBox();
+					var oErrorSpy = this.spy(jQuery.sap.log,"error");
 
-		// Cleanup
-		oComboBox.destroy();
-	});
-} ());
-</script>
-</head>
-<body>
-	<h1 id="qunit-header">qUnit Page for sap.ui.test.matchers.AggregationContainsPropertyEqual</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<div id="qunit-fixture"></div>
+					// System under Test
+					var oMatcher = new sap.ui.test.matchers.AggregationContainsPropertyEqual({
+						aggregationName : "anAggregationThatWillNeverBeAddedToTheCombobox",
+						propertyName : "text",
+						propertyValue : "foo"
+					});
 
-</body>
+					// Act
+					var bResult = oMatcher.isMatching(oComboBox);
+
+					// Assert
+					strictEqual(bResult, false, "Did not match");
+					strictEqual(oErrorSpy.callCount, 1, "Did complain");
+
+					// Cleanup
+					oComboBox.destroy();
+				});
+			} ());
+		</script>
+	</head>
+
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+
 </html>

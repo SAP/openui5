@@ -1,0 +1,72 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	controllerName="sap.m.sample.SplitApp.C"
+	xmlns="sap.m">
+	<SplitApp id="SplitAppDemo" initialDetail="detail" initialMaster="master" >
+		<detailPages>
+			<Page id="detail" title="Detail 1" class="sapUiStdPage">
+				<content>
+					<Label text="Detail page 1" />
+					<Button text="Go to Detail page2" press="onPressNavToDetail" />
+				</content>
+			</Page>
+			<Page id="detailDetail" title="Detail Detail" class="sapUiStdPage" showNavButton="true"
+				  navButtonText="Back" navButtonPress="onPressDetailBack">
+				<content>
+					<VBox class="sapUiSmallMargin">
+						<Label text="This is Detail Page2" />
+						<Text text="Here you could change the Split Application mode. After the mode change, resize the browser window to see the difference in the master form behaviour." />
+						<RadioButtonGroup columns="4" width="500px" class="sapUiMediumMarginBottom" select="onPressModeBtn">
+							<buttons>
+								<RadioButton id="RB1-1" text="show/hide" selected="true" custom:splitAppMode="ShowHideMode" />
+								<RadioButton id="RB1-2" text="stretch/compress" custom:splitAppMode="StretchCompressMode" />
+								<RadioButton id="RB1-3" text="hide" custom:splitAppMode="HideMode" />
+								<RadioButton id="RB1-4" text="popover" custom:splitAppMode="PopoverMode" />
+							</buttons>
+						</RadioButtonGroup>
+					</VBox>
+				</content>
+			</Page>
+			<Page id="detail2" title="Detail 3 Page" class="sapUiStdPage" showNavButton="true"
+				  navButtonText="Back" navButtonPress="onPressDetailBack">
+
+				<content>
+					<Label text="This is Detail Page3" />
+					<Input/>
+					<Label text="Label 2" />
+					<Input/>
+					<Label text="Label 3" />
+					<Input/>
+					<Label text="Label 4" />
+					<Input/>
+					<Label text="Label 5" />
+					<Input/>
+				</content>
+			</Page>
+		</detailPages>
+		<masterPages>
+			<Page id="master" title="Master 1" icon="sap-icon://action" class="sapUiStdPage">
+				<content>
+					<List>
+						<items>
+							<StandardListItem title="To Master2" type="Navigation" press="onPressGoToMaster"/>
+						</items>
+					</List>
+				</content>
+			</Page>
+			<Page id="master2" title="Master 2" icon="sap-icon://action" class="sapUiStdPage" showNavButton="true"
+				  navButtonPress="onPressMasterBack">
+				<content>
+					<List itemPress="onListItemPress">
+						<items>
+							<StandardListItem title="To Detail 1" type="Active" custom:to="detail"/>
+							<StandardListItem title="To Detail 2" type="Active" custom:to="detailDetail"/>
+							<StandardListItem title="To Detail 3" type="Active" custom:to="detail2"/>
+						</items>
+					</List>
+				</content>
+			</Page>
+		</masterPages>
+	</SplitApp>
+</mvc:View>

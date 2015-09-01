@@ -51,6 +51,7 @@ sap.ui.define([
 	 * @param {string} [mParameters.defaultUpdateMethod] sets the default update method which is used for all update requests. If not set, sap.ui.model.odata.UpdateMethod.Merge is used.
 	 * @param {map} [mParameters.metadataNamespaces] a map of namespaces (name => URI) used for parsing the service metadata.
 	 * @param {boolean} [mParameters.skipMetadataAnnotationParsing] Whether to skip the automated loading of annotations from the metadata document. Loading annotations from metadata does not have any effects (except the lost performance by invoking the parser) if there are not annotations inside the metadata document
+	 * @param {bolean} [mParameters.disableHeadRequestForToken=false] Set this flag to true if your service does not support HEAD requests for fetching the service document (and thus the CSRF-token) to avoid sending a HEAD-request before falling back to GET
 	 *
 	 * @class
 	 * Model implementation for oData format
@@ -75,7 +76,7 @@ sap.ui.define([
 			bUseBatch, bRefreshAfterChange, sAnnotationURI, bLoadAnnotationsJoined,
 			sDefaultCountMode, sDefaultBindingMode, sDefaultOperationMode, mMetadataNamespaces,
 			mServiceUrlParams, mMetadataUrlParams, aMetadataUrlParams, bJSON, oMessageParser,
-			bSkipMetadataAnnotationParsing, sDefaultUpdateMethod,
+			bSkipMetadataAnnotationParsing, sDefaultUpdateMethod, bDisableHeadRequestForToken,
 			that = this;
 
 			if (typeof (sServiceUrl) === "object") {
@@ -104,6 +105,7 @@ sap.ui.define([
 				oMessageParser = mParameters.messageParser;
 				bSkipMetadataAnnotationParsing = mParameters.skipMetadataAnnotationParsing;
 				sDefaultUpdateMethod = mParameters.defaultUpdateMethod;
+				bDisableHeadRequestForToken = mParameters.disableHeadRequestForToken;
 			}
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
 			this.sDefaultBindingMode = sDefaultBindingMode || BindingMode.OneWay;
@@ -116,6 +118,7 @@ sap.ui.define([
 			this.mChangedEntities = {};
 			this.mChangeHandles = {};
 			this.mDeferredGroups = {};
+			this.mLaunderingState = {};
 			this.sDefaultUpdateMethod = sDefaultUpdateMethod || UpdateMethod.Merge;
 
 			this.bTokenHandling = bTokenHandling !== false;
@@ -133,6 +136,7 @@ sap.ui.define([
 			this.sRefreshGroupId = undefined;
 			this.bIncludeInCurrentBatch = false;
 			this.bSkipMetadataAnnotationParsing = bSkipMetadataAnnotationParsing;
+			this.bDisableHeadRequestForToken = !!bDisableHeadRequestForToken;
 
 			if (oMessageParser) {
 				oMessageParser.setProcessor(this);
@@ -174,21 +178,35 @@ sap.ui.define([
 			this.setHeaders(mHeaders);
 
 			// Get/create service specific data container
-			this.oServiceData = ODataModel.mServiceData[this.sServiceUrl];
+			aMetadataUrlParams = ODataUtils._createUrlParamsArray(mMetadataUrlParams);
+			var sMetadataUrl = this._createRequestUrl("/$metadata", undefined, aMetadataUrlParams);
+			this.oServiceData = ODataModel.mServiceData[sMetadataUrl];
 			if (!this.oServiceData) {
-				ODataModel.mServiceData[this.sServiceUrl] = {};
-				this.oServiceData = ODataModel.mServiceData[this.sServiceUrl];
+				ODataModel.mServiceData[sMetadataUrl] = {};
+				this.oServiceData = ODataModel.mServiceData[sMetadataUrl];
 			}
 
 			if (!this.oServiceData.oMetadata) {
-				aMetadataUrlParams = ODataUtils._createUrlParamsArray(mMetadataUrlParams);
 				//create Metadata object
-				this.oMetadata = new ODataMetadata(this._createRequestUrl("/$metadata", undefined, aMetadataUrlParams),
-						{ async: this.bLoadMetadataAsync, user: this.sUser, password: this.sPassword, headers: this.mCustomHeaders, namespaces: mMetadataNamespaces, withCredentials: this.bWithCredentials});
+				this.oMetadata = new ODataMetadata(sMetadataUrl,{
+					async: this.bLoadMetadataAsync,
+					user: this.sUser,
+					password: this.sPassword,
+					headers: this.mCustomHeaders,
+					namespaces: mMetadataNamespaces,
+					withCredentials: this.bWithCredentials
+				});
 				this.oServiceData.oMetadata = this.oMetadata;
 			} else {
 				this.oMetadata = this.oServiceData.oMetadata;
 			}
+			
+			// USe cached annotations if available
+			if (this.oServiceData.oAnnotationsData) {
+				this._getAnnotationParser(this.oServiceData.oAnnotationsData);
+			}
+
+
 			this.pAnnotationsLoaded = this.oMetadata.loaded();
 
 			if (this.sAnnotationURI || !this.bSkipMetadataAnnotationParsing) {
@@ -198,6 +216,9 @@ sap.ui.define([
 				if (!this.bSkipMetadataAnnotationParsing) {
 					this.pAnnotationsLoaded = this.oMetadata.loaded().then(function(bSuppressEvents, mParams) {
 						// Only fire annotationsLoaded event if no further annotation URLs will be loaded
+						if (this.bDestroyed) {
+							return Promise.reject();
+						}
 						return this.addAnnotationXML(mParams["metadataString"], bSuppressEvents);
 					}.bind(this, !!this.sAnnotationURI));
 				}
@@ -208,6 +229,9 @@ sap.ui.define([
 						oAnnotations.addUrl(this.sAnnotationURI)
 					]);
 				}
+			}
+			if (this.oAnnotations) {
+				this.oServiceData.oAnnotationsData = this.oAnnotations.getAnnotationsData();
 			}
 
 
@@ -659,6 +683,7 @@ sap.ui.define([
 			}
 		};
 
+
 		if (this.bLoadMetadataAsync && this.sAnnotationURI && this.bLoadAnnotationsJoined) {
 			// In case of joined loading, wait for the annotations before firing the event
 			// This is also tested in the fireMetadataLoaded-method and no event is fired in case
@@ -666,10 +691,9 @@ sap.ui.define([
 			if (this.oAnnotations && this.oAnnotations.bInitialized) {
 				doFire(true);
 			} else {
-				this.oAnnotations.attachLoaded(function() {
-					// Now metadata was loaded and the annotations have been parsed
+				this.oAnnotations.attachEventOnce("loaded", function() {
 					doFire(true);
-				}, this);
+				});
 			}
 		} else {
 			// In case of synchronous or asynchronous non-joined loading, or if no annotations are
@@ -677,6 +701,8 @@ sap.ui.define([
 			doFire(this.bLoadMetadataAsync, bDelayEvent);
 		}
 	};
+
+
 
 	/**
 	 * Refreshes the metadata for model, e.g. in case the request for metadata has failed. 
@@ -1267,6 +1293,7 @@ sap.ui.define([
 		var aBindings = this.aBindings.slice(0);
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			oBinding.checkUpdate(bForceUpdate, mChangedEntities);
+			oBinding.checkDataState(bForceUpdate);
 		});
 		//handle calls after update
 		var aCallAfterUpdate = this.aCallAfterUpdate;
@@ -1275,7 +1302,20 @@ sap.ui.define([
 			aCallAfterUpdate[i]();
 		}
 	};
-
+	
+	/**
+	 * Private method iterating the registered bindings of this model instance and calls their check dataState method
+	 * 
+	 * @param {boolean} bForceUpdate force update of controls
+	 * @private
+	 */
+	ODataModel.prototype.checkDataState = function(bForceUpdate) {
+		var aBindings = this.aBindings.slice(0);
+		jQuery.each(aBindings, function(iIndex, oBinding) {
+			oBinding.checkDataState(bForceUpdate);
+		});
+	};
+	
 	/**
 	 * @see sap.ui.model.Model.prototype.bindProperty
 	 * @param {string} sPath binding path
@@ -1737,7 +1777,7 @@ sap.ui.define([
 			iSeparator, sDataPath, sMetaPath, oMetaContext, sKey, oMetaModel;
 
 		//check for metadata path
-		if (this.oMetadata && sResolvedPath && sResolvedPath.indexOf('/#') > -1)  {
+		if (this.oMetadata && this.oMetadata.isLoaded() && sResolvedPath && sResolvedPath.indexOf('/#') > -1)  {
 			iSeparator = sResolvedPath.indexOf('/##');
 			if (iSeparator >= 0) {
 				// Metadata binding resolved by ODataMetaModel
@@ -1772,9 +1812,10 @@ sap.ui.define([
 				oNode = !sKey ? this.oData : oOrigNode;
 			}
 			while (oNode && aParts[iIndex]) {
+				var bHasChange = oChangedNode && oChangedNode.hasOwnProperty(aParts[iIndex]);
 				oChangedNode = oChangedNode && oChangedNode[aParts[iIndex]];
 				oOrigNode = oOrigNode && oOrigNode[aParts[iIndex]];
-				oNode = bOriginalValue ? oOrigNode : oChangedNode || oOrigNode;
+				oNode = bOriginalValue || !bHasChange ? oOrigNode : oChangedNode;
 				if (oNode) {
 					if (oNode.__ref) {
 						oChangedNode = this.mChangedEntities[oNode.__ref];
@@ -1821,6 +1862,7 @@ sap.ui.define([
 	ODataModel.prototype.resetSecurityToken = function() {
 		delete this.oServiceData.securityToken;
 		delete this.oHeaders["x-csrf-token"];
+		delete this.pSecurityToken;
 	};
 
 	/**
@@ -1840,6 +1882,30 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a promise, which will resolve with the security token as soon as it is available
+	 *
+	 * @returns {Promise} the CSRF security token
+	 *
+	 * @public
+	 */
+	ODataModel.prototype.securityTokenAvailable = function() {
+		if (!this.pSecurityToken) {
+			if (this.oServiceData.securityToken) {
+				this.pSecurityToken = Promise.resolve(this.oServiceData.securityToken);
+			} else {
+				this.pSecurityToken = new Promise(function(resolve, reject) {
+					this.refreshSecurityToken(function() {
+						resolve(this.oServiceData.securityToken);
+					}.bind(this),function(){
+						reject();
+					}, true);
+				}.bind(this));
+			}
+		}
+		return this.pSecurityToken;
+	};
+
+	/**
 	 * refresh XSRF token by performing a GET request against the service root URL.
 	 *
 	 * @param {function} [fnSuccess] a callback function which is called when the data has
@@ -1851,22 +1917,24 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ODataModel.prototype.refreshSecurityToken = function(fnSuccess, fnError) {
-		var that = this, sUrl, sToken;
+	ODataModel.prototype.refreshSecurityToken = function(fnSuccess, fnError, bAsync) {
+		var sToken;
+		var that = this;
+		var sUrl = this._createRequestUrl("/");
 
-		// bAsync default is false ?!
-		//var bAsync = false;
-
-		// trigger a read to the service url to fetch the token
-		sUrl = this._createRequestUrl("/");
-		var oRequest = this._createRequest(sUrl, "GET", this._getHeaders(), null, null, false);
-		oRequest.headers["x-csrf-token"] = "Fetch";
+		var mTokenRequest = {
+			abort: function() {
+				this.request.abort();
+			}
+		};
+		
 
 		function _handleSuccess(oData, oResponse) {
 			if (oResponse) {
 				sToken = that._getHeader("x-csrf-token", oResponse.headers);
 				if (sToken) {
 					that.oServiceData.securityToken = sToken;
+					that.pSecurityToken = Promise.resolve(sToken);
 					// For compatibility with applications, that are using getHeaders() to retrieve the current
 					// CSRF token additionally keep it in the oHeaders object
 					that.oHeaders["x-csrf-token"] = sToken;
@@ -1882,7 +1950,7 @@ sap.ui.define([
 			}
 		}
 
-		function _handleError(oError) {
+		function _handleGetError(oError) {
 			// Disable token handling, if token request returns an error
 			that.resetSecurityToken();
 			that.bTokenHandling = false;
@@ -1892,8 +1960,28 @@ sap.ui.define([
 				fnError(oError);
 			}
 		}
+		
+		function _handleHeadError(oError) {
+			// Disable token handling, if token request returns an error
+			mTokenRequest.request = requestToken("GET", _handleGetError);
+		}
 
-		return this._request(oRequest, _handleSuccess, _handleError, undefined, undefined, this.getServiceMetadata());
+		function requestToken(sRequestType, fnError) {
+			// trigger a read to the service url to fetch the token
+			var oRequest = that._createRequest(sUrl, sRequestType, that._getHeaders(), null, null, !!bAsync);
+			oRequest.headers["x-csrf-token"] = "Fetch";
+			return that._request(oRequest, _handleSuccess, fnError, undefined, undefined, that.getServiceMetadata());
+		}
+
+
+		// Initially try method "HEAD", error handler falls back to "GET" unless the flag forbids HEAD request
+		if (this.bDisableHeadRequestForToken) {
+			mTokenRequest.request = requestToken("GET", _handleGetError);
+		} else {
+			mTokenRequest.request = requestToken("HEAD", _handleHeadError);
+		}
+		return mTokenRequest;
+
 	};
 
 	/**
@@ -1905,7 +1993,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._submitRequest = function(oRequest, fnSuccess, fnError){
-		var that = this, /* oResponseData, mChangedEntities = {}, */ oHandler;
+		var that = this, /* oResponseData, mChangedEntities = {}, */ oHandler, oRequestHandle, bAborted;
 
 		function _handleSuccess(oData, oResponse) {
 			//if batch the responses are handled by the batch success handler
@@ -1933,19 +2021,33 @@ sap.ui.define([
 		}
 
 		function _submit() {
+			//handler only needed for $batch; datajs gets the handler from the accept header
+			oHandler = that._getODataHandler(oRequest.requestUri);
+			
 			// request token only if we have change operations or batch requests
 			// token needs to be set directly on request headers, as request is already created
 			if (that.bTokenHandling && oRequest.method !== "GET") {
-				that.updateSecurityToken();
-				// Check bTokenHandling again, as updateSecurityToken() might disable token handling
-				if (that.bTokenHandling) {
-					oRequest.headers["x-csrf-token"] = that.oServiceData.securityToken;
-				}
+				that.securityTokenAvailable().then(function(sToken) {
+					// Check bTokenHandling again, as updating the token might disable token handling
+					if (that.bTokenHandling) {
+						oRequest.headers["x-csrf-token"] = sToken;
+					}
+					oRequestHandle = that._request(oRequest, _handleSuccess, _handleError, oHandler, undefined, that.getServiceMetadata());
+					if (bAborted) {
+						oRequestHandle.abort();
+					}
+				});
+				return {
+					abort: function() {
+						if (oRequestHandle) {
+							oRequestHandle.abort();
+						}
+						bAborted = true;
+					}
+				};
+			} else {
+				return that._request(oRequest, _handleSuccess, _handleError, oHandler, undefined, that.getServiceMetadata());
 			}
-			//handler only needed for $batch; datajs gets the handler from the accept header
-			oHandler = that._getODataHandler(oRequest.requestUri);
-
-			return that._request(oRequest, _handleSuccess, _handleError, oHandler, undefined, that.getServiceMetadata());
 		}
 
 		return _submit();
@@ -1979,7 +2081,6 @@ sap.ui.define([
 						that._refresh(false, undefined, mChangeEntities, mEntityTypes);
 					}
 				}
-				that._updateChangedEntities(mChangeEntities);
 			};
 			that._processSuccess(oRequest, oResponse, fnSingleSuccess, mGetEntities, mChangeEntities, mEntityTypes);
 		};
@@ -2189,6 +2290,7 @@ sap.ui.define([
 
 		if (!oRequestGroup) {
 			oRequestGroup = {};
+			oRequestGroup.map = {};
 			oRequestGroup.requests = [];
 			mRequests[sGroupId] = oRequestGroup;
 		}
@@ -2197,19 +2299,20 @@ sap.ui.define([
 				oRequestGroup.changes = {};
 			}
 			if (oRequest.key && oRequestGroup.map && oRequest.key in oRequestGroup.map) {
-				oRequestGroup.map[oRequest.key].method = oRequest.method;
+				var oChangeRequest = oRequestGroup.map[oRequest.key]; 
+				oChangeRequest.method = oRequest.method;
 				if (oRequest.method === "PUT") {
 					// if stored request was a MERGE before (created by setProperty) but is now sent via PUT
 					// (by submitChanges) the merge header must be removed
-					delete oRequestGroup.map[oRequest.key].headers["x-http-method"];
+					delete oChangeRequest.headers["x-http-method"];
 				}
 
 				// if change is aborted (resetChanges) and a change happens before submit we should delete
 				// the aborted flag
-				if (oRequestGroup.map[oRequest.key]._aborted) {
-					delete oRequestGroup.map[oRequest.key]._aborted;
+				if (oChangeRequest._aborted) {
+					delete oChangeRequest._aborted;
 				}
-				oRequestGroup.map[oRequest.key].data = oRequest.data;
+				oChangeRequest.data = oRequest.data;
 
 			} else {
 				oChangeGroup = oRequestGroup.changes[sChangeSetId];
@@ -2225,9 +2328,6 @@ sap.ui.define([
 					changeSetId: sChangeSetId
 				});
 				if (oRequest.key) {
-					if (!oRequestGroup.map) {
-						oRequestGroup.map = {};
-					}
 					oRequestGroup.map[oRequest.key] = oRequest;
 				}
 			}
@@ -2281,7 +2381,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processRequestQueue = function(mRequests, sGroupId, fnSuccess, fnError){
-		var that = this,
+		var that = this, sPath,
 			oRequestHandle = [];
 
 		if (this.oRequestTimer && mRequests !== this.mDeferredRequests) {
@@ -2297,7 +2397,7 @@ sap.ui.define([
 							mEntityTypes = {};
 						that._collectChangedEntities(oRequestGroup, mChangedEntities, mEntityTypes);
 						that.bIncludeInCurrentBatch = true;
-						that._refresh(false, sGroupId, mChangedEntities, mEntityTypes);
+						that._refresh(false, sRequestGroupId, mChangedEntities, mEntityTypes);
 						that.bIncludeInCurrentBatch = false;
 					}
 				});
@@ -2311,6 +2411,9 @@ sap.ui.define([
 							oChangeSet = {__changeRequests:[]};
 							aChanges = [];
 							for (var i = 0; i < aChangeSet.length; i++) {
+								//increase laundering
+								sPath = '/' + that.getKey(aChangeSet[i].request.data);
+								that.increaseLaundering(sPath, aChangeSet[i].request.data);
 								//clear metadata.create
 								if (aChangeSet[i].request._aborted) {
 									that._processAborted(aChangeSet[i].request, null, aChangeSet[i].fnError);
@@ -2352,6 +2455,9 @@ sap.ui.define([
 					if (oRequestGroup.changes) {
 						jQuery.each(oRequestGroup.changes, function(sChangeSetId, aChangeSet){
 							for (var i = 0; i < aChangeSet.length; i++) {
+								//increase laundering
+								sPath = '/' + that.getKey(aChangeSet[i].request.data);
+								that.increaseLaundering(sPath, aChangeSet[i].request.data);
 								// store last request Handle. If no batch there will be only 1 and we cpould return it?
 								if (aChangeSet[i].request._aborted) {
 									that._processAborted(aChangeSet[i].request, null, aChangeSet[i].fnError);
@@ -2378,6 +2484,7 @@ sap.ui.define([
 				}
 			});
 		}
+		this.checkDataState();
 		return oRequestHandle.length == 1 ? oRequestHandle[0] : oRequestHandle;
 	};
 
@@ -2395,11 +2502,20 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._processSuccess = function(oRequest, oResponse, fnSuccess, mGetEntities, mChangeEntities, mEntityTypes) {
 		var oResultData = oResponse.data, bContent, sUri, sPath, aParts,
-		oEntityMetadata, mLocalGetEntities = {}, that = this;
+		oEntityMetadata, mLocalGetEntities = {}, mLocalChangeEntities = {}, that = this;
 
 		bContent = !(oResponse.statusCode === 204 || oResponse.statusCode === '204');
 
-
+		sUri = oRequest.requestUri;
+		sPath = sUri.replace(this.sServiceUrl,"");
+		//in batch requests all paths are relative
+		if (!jQuery.sap.startsWith(sPath,'/')) {
+			sPath = '/' + sPath;
+		}
+		sPath = this._normalizePath(sPath);
+		// decrease laundering
+		this.decreaseLaundering(sPath, oRequest.data);
+		
 		// no data available
 		if (bContent && !oResultData && oResponse) {
 			// Parse error messages from the back-end
@@ -2421,22 +2537,15 @@ sap.ui.define([
 			that._importData(oResultData, mLocalGetEntities);
 		}
 
-		sUri = oRequest.requestUri;
-		sPath = sUri.replace(this.sServiceUrl,"");
-		//in batch requests all paths are relative
-		if (!jQuery.sap.startsWith(sPath,'/')) {
-			sPath = '/' + sPath;
-		}
-		sPath = this._normalizePath(sPath);
 
 		//get change entities for update/remove
 		if (!bContent) {
 			aParts = sPath.split("/");
 			if (aParts[1]) {
-				mChangeEntities[aParts[1]] = true;
+				mLocalChangeEntities[aParts[1]] = oRequest;
 				//cleanup of this.mChangedEntities; use only the actual response key
 				var oMap = {};
-				oMap[aParts[1]] = true;
+				oMap[aParts[1]] = oRequest;
 				this._updateChangedEntities(oMap);
 			}
 			//for delete requests delete data in model
@@ -2461,13 +2570,14 @@ sap.ui.define([
 		}
 
 		// Parse messages from the back-end
-		this._parseResponse(oResponse, oRequest, mLocalGetEntities, mChangeEntities);
+		this._parseResponse(oResponse, oRequest, mLocalGetEntities, mLocalChangeEntities);
 
-		// Add the Get-Entities from this request to the main ones (which differ in case of batch requests)
+		// Add the Get and Change entities from this request to the main ones (which differ in case of batch requests)
 		jQuery.extend(mGetEntities, mLocalGetEntities);
+		jQuery.extend(mChangeEntities, mLocalChangeEntities);
 
 		this._updateETag(oRequest, oResponse);
-
+		
 		if (fnSuccess) {
 			fnSuccess(oResponse.data, oResponse);
 		}
@@ -2487,11 +2597,15 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processError = function(oRequest, oResponse, fnError) {
-		var oError = this._handleError(oResponse, oRequest);
+		var sPath, oError = this._handleError(oResponse, oRequest);
+		// decrease laundering
+		sPath = '/' + this.getKey(oRequest.data);
+		this.decreaseLaundering(sPath, oRequest.data);
+
 		if (fnError) {
 			fnError(oError);
 		}
-
+		
 		var oEventInfo = this._createEventInfo(oRequest, oError);
 		this.fireRequestCompleted(oEventInfo);
 		this.fireRequestFailed(oEventInfo);
@@ -2507,6 +2621,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processAborted = function(oRequest, oResponse, fnError) {
+		var sPath;
 		var oError = {
 			message: "Request aborted",
 			statusCode: 0,
@@ -2514,9 +2629,13 @@ sap.ui.define([
 			headers: {},
 			responseText: ""
 		};
+		// decrease laundering
+		sPath = '/' + this.getKey(oRequest.data);
+		this.decreaseLaundering(sPath, oRequest.data);
 		if (fnError) {
 			fnError(oError);
 		}
+		
 		// If no response is contained, request was never sent and completes event can be omitted
 		if (oResponse) {
 			var oEventInfo = this._createEventInfo(oRequest, oError);
@@ -2535,7 +2654,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processChange = function(sKey, oData, sUpdateMethod) {
-		var oPayload, oEntityType, sETag, sMethod, sUrl, mHeaders, oRequest, sType, oUnModifiedEntry, that = this;
+		var oPayload, oEntityType, sETag, sMethod, sUrl, mHeaders, oRequest, oUnModifiedEntry, that = this;
 
 		// delete expand properties = navigation properties
 		oEntityType = this.oMetadata._getEntityTypeByPath(sKey);
@@ -2560,19 +2679,10 @@ sap.ui.define([
 		oPayload = jQuery.sap.extend(true, {}, oData);
 		// remove metadata, navigation properties to reduce payload
 		if (oPayload.__metadata) {
-			sType = oPayload.__metadata.type;
-			sETag = oPayload.__metadata.etag;
-			delete oPayload.__metadata;
-			if (sType || sETag) {
-				oPayload.__metadata = {};
-			}
-			// type information may be needed by an odata service!!!
-			if (sType) {
-				oPayload.__metadata.type = sType;
-			}
-			// etag information may be needed by an odata service, too!!!
-			if (sETag) {
-				oPayload.__metadata.etag = sETag;
+			for (var n in oPayload.__metadata) {
+				if (n !== 'type' && n !== 'uri' && n !== 'etag') {
+					delete oPayload.__metadata[n];
+				}
 			}
 		}
 
@@ -2588,7 +2698,7 @@ sap.ui.define([
 			jQuery.each(oPayload, function(sPropName, oPropValue) {
 				if (sPropName !== '__metadata') {
 					// remove unmodified properties and keep only modified properties for delta MERGE
-					if (jQuery.sap.equal(oUnModifiedEntry[sPropName], oPropValue)) {
+					if (jQuery.sap.equal(oUnModifiedEntry[sPropName], oPropValue) && !that.isLaundering('/' + sKey + '/' + sPropName)) {
 						delete oPayload[sPropName];
 					}
 				}
@@ -3311,7 +3421,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Return the parsed XML metadata as a Javascript object. Please note that when using the model with bLoadMetadataAsync = true then this function might return undefined because the
+	 * Return the parsed XML metadata as a Javascript object. Please note that the metadata is loaded asynchronously and this function might return undefined because the
 	 * metadata has not been loaded yet.
 	 * In this case attach to the <code>metadataLoaded</code> event to get notified when the metadata is available and then call this function.
 	 *
@@ -3340,7 +3450,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Return the annotation object. Please note that when using the model with bLoadMetadataAsync = true then this function might return undefined because the
+	 * Return the annotation object. Please note that the metadata is loaded asynchronously and this function might return undefined because the
 	 * metadata has not been loaded yet.
 	 * In this case attach to the <code>annotationsLoaded</code> event to get notified when the annotations are available and then call this function.
 	 *
@@ -3359,19 +3469,29 @@ sap.ui.define([
 	 *
 	 * @return {sap.ui.model.odata.Annotations} The annotation parser instance
 	 */
-	ODataModel.prototype._getAnnotationParser = function() {
+	ODataModel.prototype._getAnnotationParser = function(mAnnotationData) {
 		if (!this.oAnnotations) {
 			jQuery.sap.require("sap.ui.model.odata.ODataAnnotations");
-			this.oAnnotations = new ODataAnnotations(null, this.oMetadata, { async: this.bLoadMetadataAsync });
-			this.oAnnotations.attachFailed(function(oEvent) {
-				this.fireAnnotationsFailed(oEvent.getParameters());
-			}.bind(this));
-			this.oAnnotations.attachLoaded(function(oEvent) {
-				this.fireAnnotationsLoaded(oEvent.getParameters());
-			}.bind(this));
+			this.oAnnotations = new ODataAnnotations({
+				annotationData: mAnnotationData,
+				url: null,
+				metadata: this.oMetadata,
+				async: this.bLoadMetadataAsync
+			});
+			
+			this.oAnnotations.attachFailed(this.onAnnotationsFailed, this);
+			this.oAnnotations.attachLoaded(this.onAnnotationsLoaded, this);
 		}
 
 		return this.oAnnotations;
+	};
+
+	ODataModel.prototype.onAnnotationsFailed = function(oEvent) {
+		this.fireAnnotationsFailed(oEvent.getParameters());
+	};
+	
+	ODataModel.prototype.onAnnotationsLoaded = function(oEvent) {
+		this.fireAnnotationsLoaded(oEvent.getParameters());
 	};
 
 	/**
@@ -3412,7 +3532,7 @@ sap.ui.define([
 		return this.oMetadata._addUrl(aMetadataUrls).then(function(aParams) {
 			return Promise.all(jQuery.map(aParams, function(oParam) {
 				aEntitySets = aEntitySets.concat(oParam.entitySets);
-				return that.addAnnotationXML(oParam.metadataString);
+				return that.addAnnotationXML(oParam["metadataString"]);
 			}));
 		}).then(function() {
 			return that._getAnnotationParser().addUrl(aAnnotationUrls);
@@ -3429,7 +3549,7 @@ sap.ui.define([
 	 * can be retrieved by calling the getServiceAnnotations()-method.
 	 *
 	 * @param {string} sXMLContent - The string that should be parsed as annotation XML
-	 * @param {boolean} [bSuppressEvents=false] - Wheter not to fire annotationsLoaded event on the annotationParser
+	 * @param {boolean} [bSuppressEvents=false] - Whether not to fire annotationsLoaded event on the annotationParser
 	 * @return {Promise} The Promise to parse the given XML-String, resolved if parsed without errors, rejected if errors occur
 	 * @protected
 	 */
@@ -3442,7 +3562,6 @@ sap.ui.define([
 			});
 		}.bind(this));
 	};
-
 	/**
 	 * Submits the collected changes which were collected by the setProperty method. The update method is defined by the global <code>defaultUpdateMethod</code>
 	 * parameter which is sap.ui.model.odata.UpdateMethod.Merge by default. In case of a sap.ui.model.odata.UpdateMethod.Merge request only the changed properties will be updated.
@@ -3468,7 +3587,7 @@ sap.ui.define([
 	ODataModel.prototype.submitChanges = function(mParameters) {
 		var oRequest, sGroupId, oGroupInfo, fnSuccess, fnError,
 			oRequestHandle, vRequestHandleInternal,
-			bAborted = false, sMethod,
+			bAborted = false, sMethod, 
 			that = this;
 
 		if (mParameters) {
@@ -3499,7 +3618,6 @@ sap.ui.define([
 			});
 
 			vRequestHandleInternal = that._processRequestQueue(that.mDeferredRequests, sGroupId, fnSuccess, fnError);
-
 			if (bAborted) {
 				oRequestHandle.abort();
 			}
@@ -3530,15 +3648,38 @@ sap.ui.define([
 	 * @param {map} mChangedEntities Map of changedEntities
 	 */
 	ODataModel.prototype._updateChangedEntities = function(mChangedEntities) {
-		var that = this;
-
-		jQuery.each(mChangedEntities, function(sKey, bChanged) {
+		var that = this, sRootPath;
+		function updateChangedEntities(oOriginalObject, oChangedObject) {
+			jQuery.each(oChangedObject,function(sKey) {
+				var sActPath = sRootPath + '/' + sKey;
+				if (jQuery.isPlainObject(oChangedObject[sKey]) && jQuery.isPlainObject(oOriginalObject[sKey])) {
+					updateChangedEntities(oOriginalObject[sKey], oChangedObject[sKey]);
+					if (jQuery.isEmptyObject(oChangedObject[sKey])) {
+						delete oChangedObject[sKey];
+					}
+				} else if (oChangedObject[sKey] === oOriginalObject[sKey] && !that.isLaundering(sActPath)) { 
+					delete oChangedObject[sKey];
+				} 
+			});
+		}
+		
+		jQuery.each(mChangedEntities, function(sKey, oRequest) {
 			if (sKey in that.mChangedEntities) {
+				var oEntry = that._getObject('/' + sKey, null, true);
 				var oChangedEntry = that._getObject('/' + sKey);
-				delete that.mChangedEntities[sKey];
-				var oEntry = that._getObject('/' + sKey);
-				jQuery.sap.extend(true, oEntry, oChangedEntry);
-
+				
+				jQuery.sap.extend(true, oEntry, oRequest.data);
+				
+				sRootPath = '/' + sKey;
+				updateChangedEntities(oEntry, oChangedEntry);
+				
+				if (jQuery.isEmptyObject(oChangedEntry)) {
+					delete that.mChangedEntities[sKey];
+				} else {
+					that.mChangedEntities[sKey] = oChangedEntry;
+					oChangedEntry.__metadata = {};
+					jQuery.extend(oChangedEntry.__metadata, oEntry.__metadata);
+				}
 			}
 		});
 	};
@@ -3578,7 +3719,9 @@ sap.ui.define([
 					oEntityMetadata = that.mChangedEntities[sKey].__metadata;
 					delete that.mChangedEntities[sKey].__metadata;
 					if (jQuery.isEmptyObject(that.mChangedEntities[sKey]) || !oEntityInfo.propertyPath) {
-						that.mChangeHandles[sKey].abort();
+						that.metadataLoaded().then(function() {
+							that.mChangeHandles[sKey].abort();
+						});
 						delete that.mChangedEntities[sKey];
 					} else {
 						that.mChangedEntities[sKey].__metadata = oEntityMetadata;
@@ -3589,8 +3732,10 @@ sap.ui.define([
 			});
 		} else {
 			jQuery.each(this.mChangedEntities, function(sKey, oObject) {
-				that.mChangeHandles[sKey].abort();
-				delete that.mChangeHandles[sKey];
+				that.metadataLoaded().then(function() {
+					that.mChangeHandles[sKey].abort();
+					delete that.mChangeHandles[sKey];
+				});
 				delete that.mChangedEntities[sKey];
 			});
 		}
@@ -3614,16 +3759,16 @@ sap.ui.define([
 
 		var oOriginalValue, sPropertyPath, mRequests, oRequest, oEntry = { },
 		sResolvedPath, aParts,	sKey, oGroupInfo, oRequestHandle, oEntityMetadata,
-		mChangedEntities = {}, oEntityInfo = {};
+		mChangedEntities = {}, oEntityInfo = {}, that = this;
 		
-		sResolvedPath = this.resolve(sPath, oContext);
-		sPropertyPath = sResolvedPath.substring(sResolvedPath.lastIndexOf("/") + 1); 
+		sResolvedPath = this.resolve(sPath, oContext, true);
 		
 		var oEntry = this.getEntityByPath(sResolvedPath, null, oEntityInfo);
 		if (!oEntry) {
 			return false;
 		}
 		
+		sPropertyPath = sResolvedPath.substring(sResolvedPath.lastIndexOf("/") + 1); 
 		sKey = oEntityInfo.key;
 		oOriginalValue = this._getObject(sPath, oContext, true);
 		
@@ -3647,13 +3792,15 @@ sap.ui.define([
 		}
 		
 		//reset clone if oValue equals the original value
-		if (oValue == oOriginalValue) {
+		if (oValue == oOriginalValue && !this.isLaundering('/' + sKey)) {
 			delete oChangeObject[sPropertyPath];
 			//delete metadata to check if object has changes
 			oEntityMetadata = this.mChangedEntities[sKey].__metadata;
 			delete this.mChangedEntities[sKey].__metadata;
 			if (jQuery.isEmptyObject(this.mChangedEntities[sKey])) {
-				this.mChangeHandles[sKey].abort();
+				that.metadataLoaded().then(function() {
+					that.mChangeHandles[sKey].abort();
+				});
 				delete this.mChangedEntities[sKey];
 				return true;
 			}
@@ -3671,24 +3818,25 @@ sap.ui.define([
 			oRequest = this._processChange(sKey, {__metadata : oEntry.__metadata});
 			oRequest.key = sKey;
 		} else {
-			oRequest = this._processChange(sKey, oEntry);
+			oRequest = this._processChange(sKey, this._getObject('/' + sKey));
 		}
 
-		if (!this.mChangeHandles[sKey]) {
-			oRequestHandle = {
-					abort: function() {
-						oRequest._aborted = true;
-					}
-			};
+		this.metadataLoaded().then(function() {
+			if (!that.mChangeHandles[sKey]) {
+				oRequestHandle = {
+						abort: function() {
+							oRequest._aborted = true;
+						}
+				};
+	
+				that.mChangeHandles[sKey] = oRequestHandle;
+			}
 
-			this.mChangeHandles[sKey] = oRequestHandle;
-		}
-
-		this._pushToRequestQueue(mRequests, oGroupInfo.groupId, oGroupInfo.changeSetId, oRequest);
-
-		if (!this.oRequestTimer) {
-			this.oRequestTimer = jQuery.sap.delayedCall(0,this, this._processRequestQueue, [this.mRequests]);
-		}
+			that._pushToRequestQueue(mRequests, oGroupInfo.groupId, oGroupInfo.changeSetId, oRequest);
+			if (!that.oRequestTimer) {
+				that.oRequestTimer = jQuery.sap.delayedCall(0,that, that._processRequestQueue, [that.mRequests]);
+			}
+		});
 		
 		mChangedEntities[sKey] = true;
 		this.checkUpdate(false, bAsyncUpdate, mChangedEntities);
@@ -3838,6 +3986,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.deleteCreatedEntry = function(oContext) {
+		var that = this;
 		if (oContext) {
 			var sPath = oContext.getPath();
 			delete this.mContexts[sPath]; // contexts are stored starting with /
@@ -3845,8 +3994,10 @@ sap.ui.define([
 			if (jQuery.sap.startsWith(sPath, "/")) {
 				sPath = sPath.substr(1);
 			}
-			this.mChangeHandles[sPath].abort();
-			delete this.mChangeHandles[sPath];
+			that.metadataLoaded().then(function() {
+				that.mChangeHandles[sPath].abort();
+				delete that.mChangeHandles[sPath];
+			});
 			delete this.mChangedEntities[sPath];
 			delete this.oData[sPath];
 		}
@@ -3963,20 +4114,21 @@ sap.ui.define([
 				mRequests = that.mDeferredRequests;
 			}
 
-			that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, mParameters);
-
-			oRequestHandle = {
-					abort: function() {
-						oRequest._aborted = true;
-					}
-			};
-
-			that.mChangeHandles[sKey] = oRequestHandle;
-
-			if (!that.oRequestTimer) {
-				that.oRequestTimer = jQuery.sap.delayedCall(0,that, that._processRequestQueue, [that.mRequests]);
-			}
-		
+			that.metadataLoaded().then(function() {
+				that._pushToRequestQueue(mRequests, sGroupId, sChangeSetId, oRequest, fnSuccess, fnError, mParameters);
+	
+				oRequestHandle = {
+						abort: function() {
+							oRequest._aborted = true;
+						}
+				};
+	
+				that.mChangeHandles[sKey] = oRequestHandle;
+	
+				if (!that.oRequestTimer) {
+					that.oRequestTimer = jQuery.sap.delayedCall(0,that, that._processRequestQueue, [that.mRequests]);
+				}
+			});
 			return oCreatedContext;
 		}
 
@@ -4130,6 +4282,8 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.destroy = function() {
+		this.bDestroyed = true;
+		
 		Model.prototype.destroy.apply(this, arguments);
 
 		// Abort pending requests
@@ -4164,6 +4318,9 @@ sap.ui.define([
 
 
 		if (this.oAnnotations) {
+			this.oAnnotations.detachLoaded(this.onAnnotationsLoaded);
+			this.oAnnotations.detachFailed(this.onAnnotationsFailed);
+
 			this.oAnnotations.destroy();
 			delete this.oAnnotations;
 		}
@@ -4439,6 +4596,84 @@ sap.ui.define([
 			}
 		}
 		return sResolvedPath;
+	};
+	
+	/**
+	 * Returns whether a given path relative to the given contexts is in laundering state.
+	 * If data is send to the server the data state becomes laundering until the 
+	 * data was accepted or rejected
+	 * 
+	 * @param {string} sPath path to resolve
+	 * @param {sap.ui.core.Context} [oContext] context to resolve a relative path against
+	 * @returns {boolean} true if the data in this path is laundering
+	 */
+	ODataModel.prototype.isLaundering = function(sPath, oContext) {
+		var sResolvedPath = this.resolve(sPath, oContext);
+		return (sResolvedPath in this.mLaunderingState) && this.mLaunderingState[sResolvedPath] > 0;
+	};
+	
+	/**
+	 * Increases laundering state for a canonical path
+	 * @param {string} sPath the canonical path
+	 * @param {object} oChangedEntity the changed entity
+	 * @private
+	 */
+	ODataModel.prototype.increaseLaundering = function(sPath, oChangedEntity) {
+		if (!oChangedEntity) {
+			return;
+		}
+		for (var n in oChangedEntity) {
+			if (n === "__metadata") {
+				continue;
+			}
+			var  oObject = oChangedEntity[n];
+			if (jQuery.isPlainObject(oObject)) {
+				this.increaseLaundering(sPath + "/" + n, oObject);
+			} else {
+				var sTargetPath = sPath + "/" + n;
+				if (!(sTargetPath in this.mLaunderingState)) {
+					this.mLaunderingState[sTargetPath] = 0;
+				}
+				this.mLaunderingState[sTargetPath]++;
+			}
+		}
+		if (!(sPath in this.mLaunderingState)) {
+			this.mLaunderingState[sPath] = 0;
+		}
+		this.mLaunderingState[sPath]++;
+	};
+
+	/**
+	 * Decrease one laundering state for the given canonical path
+	 * @param {string} sPath the canonical path
+	 * @param {object} oChangedEntity the changed entity
+	 * @private
+	 */
+	ODataModel.prototype.decreaseLaundering = function(sPath, oChangedEntity) {
+		if (!oChangedEntity) {
+			return;
+		}
+		for (var n in oChangedEntity) {
+			if (n === "__metadata") {
+				continue;
+			}
+			var oObject = oChangedEntity[n],
+				sTargetPath = sPath + "/" + n;
+			if (jQuery.isPlainObject(oObject)) {
+				this.decreaseLaundering(sTargetPath, oObject);
+			} else {
+				if (sTargetPath in this.mLaunderingState) {
+					this.mLaunderingState[sTargetPath]--;
+					if (this.mLaunderingState[sTargetPath] === 0) {
+						delete this.mLaunderingState[sTargetPath];
+					}
+				}
+			}
+		}
+		this.mLaunderingState[sPath]--;
+		if (this.mLaunderingState[sPath] === 0) {
+			delete this.mLaunderingState[sPath];
+		}
 	};
 	
 	return ODataModel;

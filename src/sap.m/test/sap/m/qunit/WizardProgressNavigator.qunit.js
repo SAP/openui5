@@ -20,6 +20,22 @@
 		assert.strictEqual(this.oProgressNavigator.getVaryingStepCount(), false, "should be false");
 	});
 
+	QUnit.test("Default value for stepTitles", function (assert) {
+		assert.deepEqual(this.oProgressNavigator.getStepTitles(), [], "should be and empty array");
+	});
+
+	QUnit.test("Default value for stepIcons", function (assert) {
+		assert.deepEqual(this.oProgressNavigator.getStepIcons(), [], "should be and empty array");
+	});
+
+	QUnit.test("stepIcons should default to an empty array when NOT ALL steps have icons", function (assert) {
+		this.oProgressNavigator.setStepCount(3);
+		this.oProgressNavigator.setStepIcons(["sap-icon://warning"]);
+		sap.ui.getCore().applyChanges();
+
+		assert.deepEqual(this.oProgressNavigator.getStepIcons(), [], "should be and empty array");
+	});
+
 	QUnit.test("NextStep() should go to the next step", function (assert) {
 		var iCurrentStep = this.oProgressNavigator.getCurrentStep();
 

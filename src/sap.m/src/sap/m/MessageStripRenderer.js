@@ -55,7 +55,9 @@ sap.ui.define(["sap/m/MessageStripUtilities"],
 
 	MessageStripRenderer.renderIcon = function (oRm, oControl) {
 		oRm.write("<div class='" + MSUtils.CLASSES.ICON + "'>");
-		oRm.writeIcon(oControl.getCustomIcon());
+		oRm.writeIcon(oControl.getCustomIcon(), null, {
+			"title": null // prevent the icon title (icon is only decorative)
+		});
 		oRm.write("</div>");
 	};
 

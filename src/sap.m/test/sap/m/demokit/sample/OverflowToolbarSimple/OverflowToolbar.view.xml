@@ -1,120 +1,237 @@
-<mvc:View
-	controllerName="sap.m.sample.OverflowToolbarSimple.OverflowToolbar"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:core="sap.ui.core"
-	xmlns="sap.m">
+<mvc:View controllerName="sap.m.sample.OverflowToolbarSimple.OverflowToolbar"
+	xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">
 
-    <MessageStrip class="sapUiTinyMargin"
-            text="Use this slider to resize the toolbars and observe their behaviour."
-            type="Information"
-            showIcon="true">
-    </MessageStrip>
+	<MessageStrip class="sapUiTinyMargin"
+		text="Use this slider to resize the toolbars and observe their behaviour."
+		type="Information" showIcon="true">
+	</MessageStrip>
 
-    <Slider value="100" liveChange="onSliderMoved"></Slider>
+	<Slider value="100" liveChange="onSliderMoved"></Slider>
 
-    <MessageStrip class="sapUiTinyMargin"
-            text="When buttons have no special layout, they are all moved to the overflow area."
-            type="Information"
-            showIcon="true">
-    </MessageStrip>
+	<MessageStrip class="sapUiTinyMargin"
+		text="When buttons have no special layout, they are all moved to the overflow area."
+		type="Information" showIcon="true">
+	</MessageStrip>
 
-    <OverflowToolbar id="otb1">
-        <Label text="Buttons:"/>
-        <ToolbarSpacer/>
-        <Button text="New" type="Transparent"></Button>
-        <Button text="Open" type="Transparent"></Button>
-        <Button text="Save" type="Transparent"></Button>
-        <Button text="Save as" type="Transparent"></Button>
-        <Button text="Cut" type="Transparent"></Button>
-        <Button text="Copy" type="Transparent"></Button>
-        <Button text="Paste" type="Transparent"></Button>
-        <Button text="Undo" type="Transparent"></Button>
-        <Button text="Redo" type="Transparent"></Button>
-    </OverflowToolbar>
+	<OverflowToolbar id="otb1">
+		<Label text="Buttons:" />
+		<ToolbarSpacer />
+		<Button text="New" type="Transparent"></Button>
+		<Button text="Open" type="Transparent"></Button>
+		<Button text="Save" type="Transparent"></Button>
+		<Button text="Save as" type="Transparent"></Button>
+		<Button text="Cut" type="Transparent"></Button>
+		<Button text="Copy" type="Transparent"></Button>
+		<Button text="Paste" type="Transparent"></Button>
+		<Button text="Undo" type="Transparent"></Button>
+		<Button text="Redo" type="Transparent"></Button>
+	</OverflowToolbar>
 
-    <Label/>
+	<Label />
 
-    <MessageStrip class="sapUiTinyMargin"
-            text="The buttons &quot;Cut, Copy and Paste&quot; have a special layout to never move to the overflow area."
-            type="Information"
-            showIcon="true">
-    </MessageStrip>
+	<MessageStrip class="sapUiTinyMargin"
+		text="The Cut, Copy and Paste buttons have a special layout and never move to the overflow area."
+		type="Information" showIcon="true">
+	</MessageStrip>
 
-    <OverflowToolbar id="otb2">
-        <Label text="Buttons:"/>
-        <ToolbarSpacer/>
-        <Button text="New" type="Transparent"></Button>
-        <Button text="Open" type="Transparent"></Button>
-        <Button text="Save" type="Transparent"></Button>
-        <Button text="Save as" type="Transparent"></Button>
-        <Button text="Cut" type="Transparent">
-            <layoutData><OverflowToolbarLayoutData moveToOverflow="false" /></layoutData>
-        </Button>
-        <Button text="Copy" type="Transparent">
-            <layoutData><OverflowToolbarLayoutData moveToOverflow="false" /></layoutData>
-        </Button>
-        <Button text="Paste" type="Transparent">
-            <layoutData><OverflowToolbarLayoutData moveToOverflow="false" /></layoutData>
-        </Button>
-        <Button text="Undo" type="Transparent"></Button>
-        <Button text="Redo" type="Transparent"></Button>
-    </OverflowToolbar>
+	<OverflowToolbar id="otb2">
+		<Label text="Buttons:" />
+		<ToolbarSpacer />
+		<Button text="New" type="Transparent"></Button>
+		<Button text="Open" type="Transparent"></Button>
+		<Button text="Save" type="Transparent"></Button>
+		<Button text="Save as" type="Transparent"></Button>
+		<Button text="Cut" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow" />
+			</layoutData>
+		</Button>
+		<Button text="Copy" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow" />
+			</layoutData>
+		</Button>
+		<Button text="Paste" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow" />
+			</layoutData>
+		</Button>
+		<Button text="Undo" type="Transparent"></Button>
+		<Button text="Redo" type="Transparent"></Button>
+	</OverflowToolbar>
 
-    <Label/>
+	<Label />
 
-    <MessageStrip class="sapUiTinyMargin"
-            text="The last two buttons have a special layout to always stay in the overflow area. Even if there is enough space for them, they will not be displayed."
-            type="Information"
-            showIcon="true">
-    </MessageStrip>
+	<MessageStrip class="sapUiTinyMargin"
+		text="The last two buttons have a special layout to always stay in the overflow area. Even if there is enough space for them, they will not be displayed."
+		type="Information" showIcon="true">
+	</MessageStrip>
 
-    <OverflowToolbar id="otb3">
-        <Label text="Buttons:"/>
-        <ToolbarSpacer/>
-        <Button text="New" type="Transparent"></Button>
-        <Button text="Open" type="Transparent"></Button>
-        <Button text="Save" type="Transparent"></Button>
-        <Button text="Save as" type="Transparent"></Button>
-        <Button text="Cut" type="Transparent"></Button>
-        <Button text="Copy" type="Transparent"></Button>
-        <Button text="Paste" type="Transparent"></Button>
-        <Button text="Undo" type="Transparent">
-            <layoutData><OverflowToolbarLayoutData stayInOverflow="true" /></layoutData>
-        </Button>
-        <Button text="Redo">
-            <layoutData><OverflowToolbarLayoutData stayInOverflow="true" /></layoutData>
-        </Button>
-    </OverflowToolbar>
+	<OverflowToolbar id="otb3">
+		<Label text="Buttons:" />
+		<ToolbarSpacer />
+		<Button text="New" type="Transparent"></Button>
+		<Button text="Open" type="Transparent"></Button>
+		<Button text="Save" type="Transparent"></Button>
+		<Button text="Save as" type="Transparent"></Button>
+		<Button text="Cut" type="Transparent"></Button>
+		<Button text="Copy" type="Transparent"></Button>
+		<Button text="Paste" type="Transparent"></Button>
+		<Button text="Undo" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="AlwaysOverflow" />
+			</layoutData>
+		</Button>
+		<Button text="Redo">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="AlwaysOverflow" />
+			</layoutData>
+		</Button>
+	</OverflowToolbar>
 
-    <Label/>
+	<Label />
 
-    <MessageStrip class="sapUiTinyMargin"
-            text="Segmented buttons are shown as Selects when in the overflow area."
-            type="Information"
-            showIcon="true">
-    </MessageStrip>
+	<MessageStrip class="sapUiTinyMargin"
+		text="The available priorities for the toolbar items are: AlwaysOverflow, Disappear, Low, High and NeverOverflow.
+		By default the priority of each toolbar item is High.
+		Items with AlwaysOverflow priority remain visible in the overflow area.
+		Items with NeverOverflow priority remain visible in the toolbar.
+		Items with Disappear, Low and High priority overflow depending on their priority and position in the toolbar.
+		Items with Disappear priority overflow but they are not displayed in the overflow area."
+		type="Information" showIcon="true">
+	</MessageStrip>
 
-    <OverflowToolbar id="otb4">
-        <ToolbarSpacer/>
-        <Select>
-            <items>
-                <core:Item key="1" text="Option 1" />
-                <core:Item key="2" text="Option 2" />
-                <core:Item key="3" text="Option 3" />
-                <core:Item key="4" text="Option 4" />
-                <core:Item key="5" text="Option 5" />
-            </items>
-        </Select>
-        <Button text="Button 1" type="Transparent"></Button>
-        <Button text="Button 2" type="Transparent"></Button>
-        <ToggleButton text="Toggle Button" type="Transparent"></ToggleButton>
-        <Button text="Button 3" type="Transparent"></Button>
-        <SegmentedButton>
-            <Button text="Segmented" type="Transparent"></Button>
-            <Button text="Button" type="Transparent"></Button>
-        </SegmentedButton>
-        <Button text="Button 4" type="Transparent"></Button>
-    </OverflowToolbar>
+	<OverflowToolbar id="otb4">
+		<Label text="Buttons:" /><Label />
+		<ToolbarSpacer />
+		<Button text="Always 1" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData
+					priority="AlwaysOverflow" />
+			</layoutData>
+		</Button>
+		<Button text="Always 2" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData
+					priority="AlwaysOverflow" />
+			</layoutData>
+		</Button>
+		<Button text="Never" type="Emphasized">
+			<layoutData>
+				<OverflowToolbarLayoutData
+					priority="NeverOverflow" />
+			</layoutData>
+		</Button>
+		<Button text="Default" type="Transparent">	</Button>
+		<Button text="Low 1" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="Low" />
+			</layoutData>
+		</Button>
+		<Button text="High 1" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="High" />
+			</layoutData>
+		</Button>
+		<Button text="Disappear" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="Disappear" />
+			</layoutData>
+		</Button>
+		<Button text="High 2" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="High" />
+			</layoutData>
+		</Button>
+		<Button text="Low 2" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="Low" />
+			</layoutData>
+		</Button>
+	</OverflowToolbar>
+	<MessageStrip class="sapUiTinyMargin"
+				  text="Toolbar items can overflow together even if they are on different positions.
+				  This is possible using the group property of the OverflowToolbarLayoutData element.
+				  By default the group value is 0, which means that the element does not belong to any group.
+				  When two or more elements have the same group value, this means that they belong to the same group.
+				  Elements that belong to a group are not allowed to have AlwaysOverflow or NeverOverflow priority."
+				  type="Information" showIcon="true">
+	</MessageStrip>
+
+	<OverflowToolbar id="otb5">
+		<Label text="Buttons:" /><Label />
+		<ToolbarSpacer />
+		<Button text="Always 1" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData
+						priority="AlwaysOverflow" />
+			</layoutData>
+		</Button>
+		<Button text="Always 2" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData
+						priority="AlwaysOverflow" />
+			</layoutData>
+		</Button>
+		<Button text="Never" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData
+						priority="NeverOverflow" />
+			</layoutData>
+		</Button>
+		<Button text="Group 1" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="High" group="1"/>
+			</layoutData>
+		</Button>
+		<Button text="Group 1" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="High" group="1"/>
+			</layoutData>
+		</Button>
+		<Button text="Disappear" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="Disappear" />
+			</layoutData>
+		</Button>
+		<Button text="Group 2" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="Low" group="2" />
+			</layoutData>
+		</Button>
+		<Button text="Group 2" type="Transparent">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="Low" group="2"/>
+			</layoutData>
+		</Button>
+	</OverflowToolbar>
+
+	<MessageStrip class="sapUiTinyMargin"
+		text="Segmented buttons are shown as Selects when in the overflow area."
+		type="Information" showIcon="true">
+	</MessageStrip>
+
+	<OverflowToolbar id="otb6">
+		<ToolbarSpacer />
+		<Select>
+			<items>
+				<core:Item key="1" text="Option 1" />
+				<core:Item key="2" text="Option 2" />
+				<core:Item key="3" text="Option 3" />
+				<core:Item key="4" text="Option 4" />
+				<core:Item key="5" text="Option 5" />
+			</items>
+		</Select>
+		<Button text="Button 1" type="Transparent"></Button>
+		<Button text="Button 2" type="Transparent"></Button>
+		<ToggleButton text="Toggle Button" type="Transparent"></ToggleButton>
+		<Button text="Button 3" type="Transparent"></Button>
+		<SegmentedButton>
+			<Button text="Segmented" type="Transparent"></Button>
+			<Button text="Button" type="Transparent"></Button>
+		</SegmentedButton>
+		<Button text="Button 4" type="Transparent"></Button>
+	</OverflowToolbar>
 
 
 

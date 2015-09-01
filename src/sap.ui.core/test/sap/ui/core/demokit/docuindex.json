@@ -83,6 +83,16 @@
 				]
 			},
 			{
+				"id": "sap.ui.test.matchers",
+				"name": "Matcher",
+				"category": "Testing",
+				"since": "1.32",
+				"samples": [
+					"sap.ui.core.sample.matcher.BindingPath",
+					"sap.ui.core.sample.OpaMatchers"
+				]
+			},
+			{
 				"id" : "sap.ui.core.theming",
 				"name" : "Theming",
 				"category" : "Theming",
@@ -130,14 +140,14 @@
 				]
 			},
 			{
-			  "id" : "sap.ui.model.type.Date",
-			  "name" : "Date Type",
-			  "category" : "Data Binding",
-			  "since" : "1.10",
-			  "samples" : [
-				"sap.ui.core.sample.TypeDateAsDate",
-				"sap.ui.core.sample.TypeDateAsString"
-			  ]
+				"id" : "sap.ui.model.type.Date",
+				"name" : "Date Type",
+				"category" : "Data Binding",
+				"since" : "1.10",
+				"samples" : [
+					"sap.ui.core.sample.TypeDateAsDate",
+					"sap.ui.core.sample.TypeDateAsString"
+				]
 			},
 			{
 				"id" : "sap.ui.core.type.DateTime",
@@ -145,7 +155,17 @@
 				"category" : "Data Binding",
 				"since" : "1.28",
 				"samples" : [
-					"sap.ui.core.sample.TypeDateTime"
+					"sap.ui.core.sample.TypeDateTimeAsDate",
+					"sap.ui.core.sample.TypeDateTimeAsString"
+				]
+			},
+			{
+				"id" : "sap.ui.model.type.Time",
+				"name" : "Time Type",
+				"category" : "Data Binding",
+				"since" : "1.28",
+				"samples" : [
+					"sap.ui.core.sample.TypeTimeAsTime"
 				]
 			},
 			{
@@ -185,6 +205,24 @@
 				]
 			},
 			{
+				"id" : "sap.ui.model.DataState",
+				"name" : "Data State",
+				"category" : "Data Binding",
+				"since" : "1.32",
+				"samples" : [
+					"sap.ui.core.sample.DataState"
+				]
+			},
+			{
+				"id" : "sap.ui.model.DataStateOData",
+				"name" : "OData Data State",
+				"category" : "Data Binding",
+				"since" : "1.32",
+				"samples" : [
+					"sap.ui.core.sample.DataStateOData"
+				]
+			},
+			{
 				"id": "sap.ui.core.tutorial.navigation",
 				"name": "Navigation",
 				"category": "Tutorial",
@@ -210,6 +248,31 @@
 					"Handling invalid hashes by listening for bypassed events",
 					"Listening for matched events of any route"
 				]
+			},
+		  {
+			"id": "sap.ui.core.tutorial.databinding",
+			"name": "Data Binding",
+			"category": "Tutorial",
+			"since": "1.30",
+			"formFactors": "-",
+			"description": "In this tutorial, we will explain the concepts of data binding in SAPUI5.",
+			"samplesAsSteps": [
+			  "No Data Binding",
+			  "Creating a Model",
+			  "Create a PropertyBinding",
+			  "Two-Way Data Binding",
+			  "One-way Data Binding",
+			  "Resource Models",
+			  "Resource Bundles and Multiple Languages",
+			  "Binding Paths – Accessing Properties in Hierarchically Structured Models",
+			  "Formatting Values",
+			  "Property Formatting Using Data Types",
+			  "Validation Using the Message Manager",
+			  "Aggregation Binding Using A Template",
+			  "Element Binding",
+			  "Expression Binding",
+			  "Aggregation Binding Using A Factory Function"
+			]
 			}
 		],
 		"samples" : [
@@ -224,14 +287,34 @@
 				"description": "This sample explains the formatting options of the date type with the date being available as string."
 			},
 			{
-				"id": "sap.ui.core.sample.TypeDateTime",
-				"name": "DateTime Type",
+				"id": "sap.ui.core.sample.TypeDateTimeAsDate",
+				"name": "DateTime Type - Source As Date",
 				"description": "This sample explains the formatting options of the datetime type."
+			},
+			{
+				"id": "sap.ui.core.sample.TypeDateTimeAsString",
+				"name": "DateTime Type - Source As String",
+				"description": "This sample explains the formatting options of the datetime type."
+			},
+			{
+				"id": "sap.ui.core.sample.TypeTimeAsTime",
+				"name": "Time Type - Source As Time",
+				"description": "This sample explains the formatting options of the time type."
 			},
 			{
 				"id": "sap.ui.core.sample.TypeFileSize",
 				"name": "FileSize Type",
 				"description": "This sample explains the formatting options of the filesize type."
+			},
+			{
+				"id": "sap.ui.core.sample.DataState",
+				"name": "Data State",
+				"description": "A control can react on data state changes of a Binding and update it's states accordingly."
+			},
+			{
+				"id": "sap.ui.core.sample.DataStateOData",
+				"name": "OData Data State",
+				"description": "A control can react on data state changes of a Binding and update it's states accordingly."
 			},
 			{
 				"id": "sap.ui.core.sample.ControlBusyIndicator",
@@ -362,6 +445,11 @@
 				"id" : "sap.ui.core.sample.RoutingFullscreen",
 				"name" : "Routing between Fullscreen pages a simple sample",
 				"description" : "A mini app with 2 pages. Both are bookmarkable."
+			},
+			{
+				"id": "sap.ui.core.sample.matcher.BindingPath",
+				"name": "Binding Path",
+				"description": "Checks if a control has a binding context with the exact same binding path"
 			}
 		]
 	}

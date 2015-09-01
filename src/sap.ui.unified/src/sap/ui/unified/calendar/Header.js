@@ -8,14 +8,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	"use strict";
 
 	/**
-	 * Constructor for a new MonthPicker.
+	 * Constructor for a new Header.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * renders a calendar header
-	 * This is used inside the calendar. Not for stand alone usage
+	 *
+	 * The calendar header consists of 3 buttons where the text can be set and a previous and a next button.
+	 * In the normal calendar the first button contains the displayed day, the second button the displayed month and the third button the displayed year.
+	 *
+	 * <b>Note:</b> This is used inside the calendar. Not for standalone usage
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
@@ -31,32 +35,64 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		properties : {
 
 			/**
-			 * Text of the first button (normally month)
+			 * Text of the first button (normally day)
+			 * @since 1.32.0
+			 */
+			textButton0 : {type : "string", group : "Misc"},
+
+			/**
+			 * aria-label of the first button (normally day)
+			 * @since 1.32.0
+			 */
+			ariaLabelButton0 : {type : "string", group : "Misc"},
+
+			/**
+			 * If set, the first button will be displayed
+			 *
+			 * <b>Note:</b> The default is set to false to be compatible to older versions
+			 * @since 1.32.0
+			 */
+			visibleButton0 : {type : "boolean", group : "Misc", defaultValue : false},
+
+			/**
+			 * Text of the second button (normally month)
 			 */
 			textButton1 : {type : "string", group : "Misc"},
 
 			/**
-			 * aria-label of the first button (normally month)
+			 * aria-label of the second button (normally month)
 			 */
 			ariaLabelButton1 : {type : "string", group : "Misc"},
 
 			/**
-			 * Text of the second button (normally year)
+			 * If set, the second button will be displayed
+			 * @since 1.32.0
+			 */
+			visibleButton1 : {type : "boolean", group : "Misc", defaultValue : true},
+
+			/**
+			 * Text of the third button (normally year)
 			 */
 			textButton2 : {type : "string", group : "Misc"},
 
 			/**
-			 * aria-label of the second button (normally year)
+			 * aria-label of the third button (normally year)
 			 */
 			ariaLabelButton2 : {type : "string", group : "Misc"},
 
 			/**
-			 * enables the previous button
+			 * If set, the third button will be displayed
+			 * @since 1.32.0
+			 */
+			visibleButton2 : {type : "boolean", group : "Misc", defaultValue : true},
+
+			/**
+			 * Enables the previous button
 			 */
 			enabledPrevious : {type : "boolean", group : "Misc", defaultValue : true},
 
 			/**
-			 * enables the Next button
+			 * Enables the Next button
 			 */
 			enabledNext : {type : "boolean", group : "Misc", defaultValue : true}
 
@@ -64,22 +100,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		events : {
 
 			/**
-			 * previous button pressed
+			 * Previous button pressed
 			 */
 			pressPrevious : {},
 
 			/**
-			 * next button pressed
+			 * Next button pressed
 			 */
 			pressNext : {},
 
 			/**
-			 * first button pressed (normally month)
+			 * First button pressed (normally day)
+			 * @since 1.32.0
+			 */
+			pressButton0 : {},
+
+			/**
+			 * Second button pressed (normally month)
 			 */
 			pressButton1 : {},
 
 			/**
-			 * second button pressed (normally year)
+			 * Third button pressed (normally year)
 			 */
 			pressButton2 : {}
 
@@ -94,11 +136,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
+		Header.prototype.setTextButton0 = function(sText){
+
+			this.setProperty("textButton0", sText, true);
+
+			if (this.getDomRef() && this.getVisibleButton0()) {
+				this.$("B0").text(sText);
+			}
+
+		};
+
+		Header.prototype.setAriaLabelButton0 = function(sText){
+
+			this.setProperty("ariaLabelButton0", sText, true);
+
+			if (this.getDomRef() && this.getVisibleButton0()) {
+				if (sText) {
+					this.$("B0").attr("aria-label", sText);
+				} else {
+					this.$("B0").removeAttr("aria-label");
+				}
+			}
+
+		};
+
 		Header.prototype.setTextButton1 = function(sText){
 
 			this.setProperty("textButton1", sText, true);
 
-			if (this.getDomRef()) {
+			if (this.getDomRef() && this.getVisibleButton1()) {
 				this.$("B1").text(sText);
 			}
 
@@ -108,7 +174,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this.setProperty("ariaLabelButton1", sText, true);
 
-			if (this.getDomRef()) {
+			if (this.getDomRef() && this.getVisibleButton1()) {
 				if (sText) {
 					this.$("B1").attr("aria-label", sText);
 				} else {
@@ -122,7 +188,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this.setProperty("textButton2", sText, true);
 
-			if (this.getDomRef()) {
+			if (this.getDomRef() && this.getVisibleButton2()) {
 				this.$("B2").text(sText);
 			}
 
@@ -132,7 +198,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this.setProperty("ariaLabelButton2", sText, true);
 
-			if (this.getDomRef()) {
+			if (this.getDomRef() && this.getVisibleButton2()) {
 				if (sText) {
 					this.$("B2").attr("aria-label", sText);
 				} else {
@@ -180,6 +246,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				this.firePressPrevious();
 			}	else if (jQuery.sap.containsOrEquals(this.getDomRef("next"), oEvent.target) && this.getEnabledNext()){
 				this.firePressNext();
+			} else if (oEvent.target.id == this.getId() + "-B0"){
+				this.firePressButton0();
 			} else if (oEvent.target.id == this.getId() + "-B1"){
 				this.firePressButton1();
 			} else if (oEvent.target.id == this.getId() + "-B2"){

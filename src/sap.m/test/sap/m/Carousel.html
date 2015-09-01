@@ -197,12 +197,6 @@
 				press : openPopover
 			}),
 
-			new sap.m.Slider({
-				min : 0,
-				max : 100,
-				value : 50
-			}),
-
 			new sap.m.HBox({
 				items : [ new sap.m.Label({
 					text : "This is a Switch:"
@@ -374,12 +368,12 @@
 			decorative: false
 		});
 
-		var imgFishImg = new Lightbox("fish", {
-			src: "images/demo/nature/fish.jpg",
-			large: "images/demo/nature/fish.jpg",
-			alt: "Lively Fish",
+		var imgDesert2 = new sap.m.Image("desert2", {
+			src: "images/demo/nature/desert.jpg",
+			alt: "Majestic Desert",
+			densityAware: false,
+			decorative: false
 		});
-
 
 		var imgForest =  new sap.m.Image("forest", {
 			src: "images/demo/nature/forest.jpg",
@@ -458,8 +452,7 @@
 			//showPageIndicator: false,
 			loop: true,
 			//showBusyIndicator: false,
-			pages: [imgDesert, oView, imgElephant, imgFishImg, demoPage, imgPrairie, scrollForest, imgWaterfall, imgLeopard, imgWaterfall2, imgLeopard2, imgWaterfall3]
-			//pages: [imgDesert, imgElephant, imgFishImg]
+			pages: [imgDesert, oView, imgElephant, imgDesert2, demoPage, imgPrairie, scrollForest, imgWaterfall, imgLeopard, imgWaterfall2, imgLeopard2, imgWaterfall3]
 		});
 
 

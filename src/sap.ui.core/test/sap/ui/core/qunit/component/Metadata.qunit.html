@@ -24,6 +24,12 @@
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
+	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<!--[if IE]>
+		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<![endif]-->
+	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>	
+
 	<script language="javascript">
 
 	/*
@@ -152,6 +158,9 @@
 				"description": "App Description"
 			},
 			"sap.ui5": {
+				"resourceRoots": {
+					"x.y.z": "anypath"
+				},
 				"resources": iMetadataVersion === 1 ? {
 					"js": [
 						{
@@ -335,6 +344,7 @@
 				].forEach(function(oManifest) {
 					oManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
 					oManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.commons"] = {};
+					delete oManifest["sap.ui5"]["resourceRoots"];
 					delete oManifest["sap.app"]["title"];
 					delete oManifest["sap.app"]["description"];
 				});
@@ -377,6 +387,7 @@
 			].forEach(function(oManifest) {
 				oManifest["sap.ui5"]["dependencies"]["components"]["sap.ui.test.other"] = {};
 				oManifest["sap.ui5"]["dependencies"]["libs"]["sap.ui.commons"] = {};
+				delete oManifest["sap.ui5"]["resourceRoots"];
 				delete oManifest["sap.app"]["title"];
 				delete oManifest["sap.app"]["description"];
 			});
@@ -635,6 +646,100 @@
 		this.assertResolvedUri("http://absolute:1234/uri", "../../../path/to/base/", "http://absolute:1234/uri");
 		this.assertResolvedUri("//absolute:1234/uri",      "../../../path/to/base/", "//absolute:1234/uri");
 		this.assertResolvedUri("/server-absolute/uri",     "../../../path/to/base/", "/server-absolute/uri");
+	});
+
+	/*
+	 * TEST CODE: Resource Roots
+	 */
+
+	module("Component Metadata: Resource Roots", {
+		setup: function() {
+			moduleSetup.call(this, "v2", 2);
+		},
+		teardown: function() {
+			moduleTeardown.call(this);
+		}
+	});
+
+	test("GetModulePath", function(assert) {
+		equal(jQuery.sap.getModulePath("x.y.z"), "anypath", "ResourceRoot registered!");
+	});
+
+	/*
+	 * TEST CODE: Version Check
+	 */
+
+	module("Component Metadata: Version Check", {
+		setup: function() {
+			this.fnGetVersionInfo = sap.ui.getVersionInfo;
+			try {
+				this.oVersionInfo = this.fnGetVersionInfo();
+			} catch (e) {
+				// if no version info is there we fake it
+				this.oVersionInfo = {
+					version: sap.ui.version
+				};
+			}
+			sap.ui.getVersionInfo = function() {
+				return this.oVersionInfo;
+			}.bind(this);
+			sinon.spy(jQuery.sap.log, "warning");
+		},
+		teardown: function() {
+			jQuery.sap.log.warning.restore();
+			sap.ui.getVersionInfo = this.fnGetVersionInfo;
+		}
+	});
+
+	test("MinVersion gt Version", function(assert) {
+		this.oVersionInfo.version = "1.20.0";
+		moduleSetup.call(this, "v2version", 2);
+		var aCalls = jQuery.sap.log.warning.getCalls();
+		var bFound = false;
+		for (var i = 0, l = aCalls.length; i < l; i++) {
+			if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.20.0\"!") {
+				bFound = true;
+			}
+		}
+		// in case of debug mode is on the warning should be reported
+		// when it is turned off => no warning!
+		if (sap.ui.getCore().getConfiguration().getDebug()) {
+			ok(bFound, "Warning has been reported!");
+		} else {
+			ok(!bFound, "Warning has not been reported!");
+		}
+		moduleTeardown.call(this);
+		sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
+	});
+
+	test("MinVersion eq Version", function(assert) {
+		this.oVersionInfo.version = "1.22.5";
+		moduleSetup.call(this, "v2version", 2);
+		var aCalls = jQuery.sap.log.warning.getCalls();
+		var bFound = false;
+		for (var i = 0, l = aCalls.length; i < l; i++) {
+			if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.22.5\"!") {
+				bFound = true;
+			}
+		}
+		ok(!bFound, "Warning has not been reported!");
+		moduleTeardown.call(this);
+		sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
+	});
+
+	test("MinVersion lt Version", function(assert) {
+		this.oVersionInfo.version = "1.31.0";
+		moduleSetup.call(this, "v2version", 2);
+		var aCalls = jQuery.sap.log.warning.getCalls();
+		var bFound = false;
+		for (var i = 0, l = aCalls.length; i < l; i++) {
+			if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.31.0\"!") {
+				bFound = true;
+			}
+		}
+		ok(!bFound, "Warning has not been reported!");
+		moduleTeardown.call(this);
+		sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
 	});
 
 	</script>

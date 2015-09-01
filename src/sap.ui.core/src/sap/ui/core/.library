@@ -334,6 +334,12 @@
                 <module>sap/ui/core/InvisibleText</module>
             </modules>
         </component>
+        <component>
+            <name>CA-WDE-MCK</name>
+            <modules>
+                <module>sap/ui/core/util/MockServer</module>
+            </modules>
+        </component>
     </ownership>
     
   </appData>

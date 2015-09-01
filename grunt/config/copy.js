@@ -61,10 +61,14 @@ module.exports = function(grunt, config) {
 						src: '**',
 						dest: '../packaged-' + library.name
 					},
-					// license file should also be present in each bower repo
+					// license and notice file should also be present in each bower repo
 					{
 						src: 'LICENSE.txt',
 						dest: '../packaged-' + library.name + '/LICENSE.txt'
+					},
+					{
+						src: 'NOTICE.txt',
+						dest: '../packaged-' + library.name + '/NOTICE.txt'
 					}
 				]
 			};

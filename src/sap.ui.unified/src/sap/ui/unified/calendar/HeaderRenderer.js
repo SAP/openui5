@@ -52,34 +52,42 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeIcon("sap-icon://slim-arrow-left", null, { title: null });
 		oRm.write("</button>");
 
-		oRm.write("<button");
-		oRm.writeAttributeEscaped('id', sId + '-B1');
-		oRm.addClass("sapUiCalHeadB");
-		oRm.addClass("sapUiCalHeadB1");
-		oRm.writeAttribute('tabindex', "-1");
-		oRm.writeClasses();
-		if (oHead.getAriaLabelButton1()) {
-			mAccProps["label"] = oHead.getAriaLabelButton1();
+		var iFirst = -1;
+		var iLast = -1;
+		var i = 0;
+		for (i = 0; i < 3; i++) {
+			if (oHead["getVisibleButton" + i]()) {
+				if (iFirst < 0) {
+					iFirst = i;
+				}
+				iLast = i;
+			}
 		}
-		oRm.writeAccessibilityState(null, mAccProps);
-		mAccProps = {};
-		oRm.write(">"); // button element
-		oRm.write(oHead.getTextButton1() || "");
-		oRm.write("</button>");
 
-		oRm.write("<button");
-		oRm.writeAttributeEscaped('id', sId + '-B2');
-		oRm.addClass("sapUiCalHeadB");
-		oRm.addClass("sapUiCalHeadB2");
-		oRm.writeAttribute('tabindex', "-1");
-		oRm.writeClasses();
-		if (oHead.getAriaLabelButton2()) {
-			mAccProps["label"] = oHead.getAriaLabelButton2();
+		for (i = 0; i < 3; i++) {
+			if (oHead["getVisibleButton" + i]()) {
+				oRm.write("<button");
+				oRm.writeAttributeEscaped('id', sId + '-B' + i);
+				oRm.addClass("sapUiCalHeadB");
+				oRm.addClass("sapUiCalHeadB" + i);
+				if (iFirst == i) {
+					oRm.addClass("sapUiCalHeadBFirst");
+				}
+				if (iLast == i) {
+					oRm.addClass("sapUiCalHeadBLast");
+				}
+				oRm.writeAttribute('tabindex', "-1");
+				oRm.writeClasses();
+				if (oHead["getAriaLabelButton" + i]()) {
+					mAccProps["label"] = oHead["getAriaLabelButton" + i]();
+				}
+				oRm.writeAccessibilityState(null, mAccProps);
+				mAccProps = {};
+				oRm.write(">"); // button element
+				oRm.write(oHead["getTextButton" + i]() || "");
+				oRm.write("</button>");
+			}
 		}
-		oRm.writeAccessibilityState(null, mAccProps);
-		oRm.write(">"); // button element
-		oRm.write(oHead.getTextButton2() || "");
-		oRm.write("</button>");
 
 		oRm.write("<button");
 		oRm.writeAttributeEscaped('id', sId + '-next');

@@ -282,7 +282,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			
 		}
 		
-		if ( aRemoveTokens ) {
+		if (aRemoveTokens.length > 0) {
 			for ( i = 0; i < aRemoveTokens.length; i++ ){
 				this._tokenizer.removeToken(aRemoveTokens[i]);
 			}
@@ -346,23 +346,21 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		
 		this._tokenizer.setVisible(true);
 		
-		if (iToken > 1) {
-			// no value is allowed to show in the input when multiline is closed
-			if (this.getValue() !== "") {
-				this.setValue() === "";
-			}
-			
-			var i = 0;
-			for ( i = 0; i < iToken - 1; i++ ) {
-				aTokens[i].setVisible(false);
-			}
-			
-			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			var sSpanText = "<span class=\"sapMMultiInputIndicator\">" + oMessageBundle.getText("MULTIINPUT_SHOW_MORE_TOKENS", iToken - 1) + "</span>";
-			
-			this.$().find(".sapMTokenizer").after(sSpanText);
-
+		// no value is allowed to show in the input when multiline is closed
+		if (this.getValue() !== "") {
+			this.setValue() === "";
 		}
+		
+		var i = 0;
+		for ( i = 0; i < iToken - 1; i++ ) {
+			aTokens[i].setVisible(false);
+		}
+		
+		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var sSpanText = "<span class=\"sapMMultiInputIndicator\">" + oMessageBundle.getText("MULTIINPUT_SHOW_MORE_TOKENS", iToken - 1) + "</span>";
+		
+		this.$().find(".sapMTokenizer").after(sSpanText);
+
 		
 		this._bShowIndicator = true;
 	};
@@ -445,6 +443,9 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			this._$input.parent().addClass("sapMMultiInputMultiModeInputContainer");
 		}
 
+		//need this attribute to enable value help icon focusable
+		this.$().find(".sapMInputValHelp").attr("tabindex","-1");
+
 		// necessary to display expanded MultiInput which is inside layout
 		var oParent = this.getParent();
 		this._originalOverflow = null;
@@ -457,10 +458,13 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		var $Parent;			
 		if (this.$().parents(".sapUiRFLContainer")) {
 			$Parent = this.$().parents(".sapUiRFLContainer");
-			if ($Parent.css("overflow") === "hidden") {
-				$Parent.css("overflow", "visible");
-			}
-		}	
+		} else if (this.$().parent('[class*="sapUiRespGridSpan"]')) {
+			$Parent = this.$().parent('[class*="sapUiRespGridSpan"]');
+		}
+		
+		if ($Parent && $Parent.length > 0 && $Parent.css("overflow") === "hidden") {
+			$Parent.css("overflow", "visible");
+		}
 
 	};
 	
@@ -475,7 +479,10 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			if (this._$input) {
 				this._$input.parent().removeClass("sapMMultiInputMultiModeInputContainer");
 			}
-			
+
+			//remove this attribute to set value help icon back not focusable
+			this.$().find(".sapMInputValHelp").removeAttr("tabindex");
+
 			// set overflow back
 			if (this._originalOverflow) {
 				var oParent = this.getParent();
@@ -545,15 +552,22 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		
 		// calculate minimal needed width for input field
 		var shadowDiv = $this.children(".sapMMultiInputShadowDiv")[0];
+		var $indicator = $this.find(".sapMMultiInputBorder").find(".sapMMultiInputIndicator");
+		
 		jQuery(shadowDiv).text(this.getValue());
 		
 		var inputWidthMinimalNeeded = jQuery(shadowDiv).width();
+		var iIndicatorWidth = jQuery($indicator).width();
 		
 		var tokenizerWidth = this._tokenizer.getScrollWidth();
 		
 			
 		// the icon
 		var iconWidth = $this.find(".sapMInputValHelp").outerWidth(true);
+		
+		if (iIndicatorWidth !== null && this._isMultiLineMode && this._bShowIndicator) {
+			inputWidthMinimalNeeded = iIndicatorWidth;
+		}
 		
 		var totalNeededWidth = tokenizerWidth + inputWidthMinimalNeeded + iconWidth;
 		var inputWidth;
@@ -567,10 +581,17 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			if (totalNeededWidth < availableWidth) {
 				inputWidth = inputWidthMinimalNeeded + availableWidth - totalNeededWidth;
 			} else {
-				inputWidth = inputWidthMinimalNeeded + additionalWidth;
-				tokenizerWidth = availableWidth - inputWidth - iconWidth;
-			}
+				if (tokenizerWidth === 0 && inputWidthMinimalNeeded > availableWidth) {
+				//if there is no token in multiinput, the innerinput width should not exceed multiinput width
+					inputWidth = availableWidth;
+				} else {
+					inputWidth = inputWidthMinimalNeeded + additionalWidth;
+					tokenizerWidth = availableWidth - inputWidth - iconWidth;
+				}
 				
+			}
+			
+			
 			jQuery($this.find(".sapMInputBaseInner")[0]).css("width", inputWidth + "px");
 				
 			this._tokenizer.setPixelWidth(tokenizerWidth);
@@ -878,6 +899,16 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		
 		this.focus();
 	};
+
+	
+	/**
+	 * Checks whether the MultiInput or one of its internal DOM elements has the focus.
+	 * 
+	 * @private
+	 */
+	MultiInput.prototype._checkFocus = function() {
+		return this.getDomRef() && jQuery.sap.containsOrEquals(this.getDomRef(), document.activeElement);
+	};
 	
 	/**
 	 * Event handler called when control is losing the focus, checks if token validation is necessary 
@@ -890,6 +921,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		var oPopup = this._oSuggestionPopup;
 		var bNewFocusIsInSuggestionPopup = false;
 		var bNewFocusIsInTokenizer = false;
+		var bNewFocusIsInMultiInput = this._checkFocus();
 		if (oPopup instanceof sap.m.Popover) {
 			if (oEvent.relatedControlId) {
 				bNewFocusIsInSuggestionPopup = jQuery.sap.containsOrEquals(oPopup.getFocusDomRef(), sap.ui.getCore().byId(
@@ -924,14 +956,10 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		}
 
 		if (!this._bUseDialog && this._isMultiLineMode && !this._bShowIndicator) {
-			var oRelatedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
-			if (oRelatedControl) {
-				var bFocusInsideMI = jQuery.sap.containsOrEquals(this.getDomRef(), oRelatedControl.getDomRef());
-				
-				if (bFocusInsideMI || bNewFocusIsInSuggestionPopup ) {
-					return;
-				}
-			} 
+			
+			if (bNewFocusIsInMultiInput || bNewFocusIsInSuggestionPopup) {
+				return;				
+			}
 
 			this.closeMultiLine();
 			this._showIndicator();

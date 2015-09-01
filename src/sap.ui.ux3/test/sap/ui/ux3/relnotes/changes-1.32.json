@@ -1,0 +1,56 @@
+{
+  "1.32.0": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "b7a6de74fc4558cc91568e7c4ac7ebc6f90155ef",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.OverlayDialog: Close is now red when focus is changed",
+        "references": []
+      },
+      {
+        "id": "ac4748ad31acb0ff1b2064514e986e0d9fd494e9",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.Shell: Prevent default icon tooltip",
+        "references": []
+      },
+      {
+        "id": "00b855f1b6a23579a4df58f8a2a60def162b3f3a",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ThingViewer: Prevent default icon tooltip",
+        "references": []
+      },
+      {
+        "id": "095afab8c419b3ed689e991a63148f61df4a3cbf",
+        "author": "Ivan Kazandzhiev \u003civan.kazandzhiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: Resize functionality now works under jQuery 1.7.1",
+        "references": []
+      },
+      {
+        "id": "deb0e628eb6d145db06f0c3704374b5684235be0",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.Shell \u0026 NotificationBar: Reducing the z-index if NotificationBar is minimized",
+        "references": []
+      },
+      {
+        "id": "409544fe0ee240e4d9d217ce1856f2a428947ff9",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.Shell: Set a static z-index for NotificationBar",
+        "references": []
+      },
+      {
+        "id": "78001fa5e50fdeeadb81c3883743e115499c19dc",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.ToolPopup: Remove DOM when hiding ToolPopup",
+        "references": []
+      }
+    ]
+  }
+}

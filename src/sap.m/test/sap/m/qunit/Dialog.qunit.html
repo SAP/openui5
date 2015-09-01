@@ -40,8 +40,9 @@
 
 		<script language="javascript">
 
-			function ceil(number) {
-				return Math.ceil(number);
+			function marginCompare(value1, value2, margin) {
+				var margin = margin || 1;
+				return (Math.abs(value1 - value2)) < margin;
 			}
 
 			sap.ui.test.qunit.delayTestStart();
@@ -143,14 +144,14 @@
 						oTitleDom = jQuery.sap.domById(oDialog.getId() + "-title"),
 						oSubHeaderDom = $Dialog.children(".sapMDialogSubHeader")[0],
 						oIconDom = jQuery.sap.domById(oDialog.getId() + "-icon"),
-						oLeftButtonFocusDom = sap.ui.getCore().byId("leftButton").getFocusDomRef();
+						oSearchField = sap.ui.getCore().byId("__field0").getFocusDomRef();
 				ok(jQuery.sap.domById("dialog"), "dialog is rendered after it's opened.");
 				ok($Dialog.closest("#sap-ui-static")[0], "dialog should be rendered inside the static uiArea.");
 				ok(oSubHeaderDom, "Sub header should be rendered inside the dialog");
 				equal($ScrollDiv.css("display"), "inline-block", "Scroll div should always have display: inline-block");
 
 				if (!jQuery.support.touch && !jQuery.sap.simulateMobileOnDesktop) {
-					equal(oLeftButtonFocusDom, document.activeElement, "left button should have the focus");
+					equal(oSearchField, document.activeElement, "searchfield should have the focus");
 				}
 
 				if (jQuery.support.touch || jQuery.sap.simulateMobileOnDesktop) {
@@ -185,7 +186,7 @@
 				oDialog.open();
 				ok(oDialog.isOpen(), "Dialog is already open");
 				this.clock.tick(500);
-				ok(ceil(oDialog.$().outerWidth()) <= (ceil(jQuery(window).width()) - 32), "Dialog adapts to the screen on phone");
+				ok(oDialog.$().outerWidth() <= (jQuery(window).width() - 32), "Dialog adapts to the screen on phone");
 
 				oDialog.destroy();
 			});
@@ -289,7 +290,8 @@
 				strictEqual(resultingScrollPaneWidth, resultingContentWidth, "scroll pane width " + resultingScrollPaneWidth + " was as bis as the content: " + resultingContentWidth);
 				ok(90 <= resultingScrollPaneWidth, "The content fits in the scollpane");
 				sut.destroy();
-				jQuery("html").removeClass("sap-desktop");
+				// Removing the sap-desktop breaks the focus tests
+				// jQuery("html").removeClass("sap-desktop");
 			});
 
 			test("Dialog: set stretch to true", function () {
@@ -304,9 +306,9 @@
 				this.clock.tick(500);
 
 				var $Dialog = oDialog.$();
-				equal(ceil(jQuery(window).width()), ceil($Dialog.outerWidth()), "Stretched Dialog's width equals window's width");
-				equal(ceil(jQuery(window).height()), ceil($Dialog.outerHeight()), "Stretched Dialog's height equals window's height");
-				equal(ceil($Dialog.width()), ceil(oDialog._$content.width()), "content should be as wide as dialog");
+				ok(marginCompare(jQuery(window).width(), $Dialog.outerWidth()), "Stretched Dialog's width equals window's width");
+				ok(marginCompare(jQuery(window).height(), $Dialog.outerHeight()), "Stretched Dialog's height equals window's height");
+				ok(marginCompare($Dialog.width(), oDialog._$content.width()), "content should be as wide as dialog");
 				oDialog.destroy();
 				jQuery("html").css("overflow", ""); // restore scrollbar after test
 			});
@@ -324,9 +326,9 @@
 				this.clock.tick(500);
 
 				var $Dialog = oDialog.$();
-				equal(ceil(jQuery(window).width()), ceil($Dialog.outerWidth()), "Stretched Dialog's width equals window's width");
-				equal(ceil(jQuery(window).height()), ceil($Dialog.outerHeight()), "Stretched Dialog's height equals window's height");
-				equal(ceil($Dialog.width()), ceil(oDialog._$content.width()), "content should be as wide as dialog");
+				ok(marginCompare(jQuery(window).width(), $Dialog.outerWidth()), "Stretched Dialog's width equals window's width");
+				ok(marginCompare(jQuery(window).height(), $Dialog.outerHeight()), "Stretched Dialog's height equals window's height");
+				ok(marginCompare($Dialog.width(), oDialog._$content.width()), "content should be as wide as dialog");
 				oDialog.destroy();
 				jQuery("html").css("overflow", ""); // restore scrollbar after test
 			});
@@ -353,8 +355,8 @@
 
 				var $Dialog = oDialog.$();
 
-				equal(ceil(oDialog._$content.width()), iValue, "contentWidth should be set to content div");
-				equal(ceil($Dialog.width()), iValue, "dialog should also be as big as content");
+				ok(marginCompare(oDialog._$content.width(), iValue), "contentWidth should be set to content div");
+				ok(marginCompare($Dialog.width(), iValue), "dialog should also be as big as content");
 				oDialog.destroy();
 			});
 
@@ -391,8 +393,8 @@
 
 					var $Dialog = oDialog.$();
 
-					equal(ceil(oDialog._$content.width()), iValue, "Landscape: contentWidth should be set to content div");
-					equal(ceil($Dialog.width()), iValue, "Landscape: dialog should also be as big as content");
+					ok(marginCompare(oDialog._$content.width(), iValue), "Landscape: contentWidth should be set to content div");
+					ok(marginCompare($Dialog.width(), iValue), "Landscape: dialog should also be as big as content");
 
 					oDialog.close();
 					this.clock.tick(500);
@@ -404,8 +406,8 @@
 
 					$Dialog = oDialog.$();
 
-					equal(ceil(oDialog._$content.width()), iValue, "Portrait: contentWidth should be set to content div");
-					equal(ceil($Dialog.width()), iValue, "Portrait: dialog should also be as big as content");
+					ok(marginCompare(oDialog._$content.width(), iValue), "Portrait: contentWidth should be set to content div");
+					ok(marginCompare($Dialog.width(), iValue), "Portrait: dialog should also be as big as content");
 					oDialog.destroy();
 				});
 			}
@@ -425,8 +427,8 @@
 				});
 
 				oDialog.open();
-				ok(ceil(oDialog._$content.width()) <= ceil(jQuery(window).width() * 0.5) || (oDialog._$content.width() === 398)), "Dialog content width " + oDialog._$content.width() + " is equal or less than part of window width " + jQuery(window).width() * 0.5;
-				ok(ceil(oDialog._$content.height()) <= ceil(jQuery(window).height() * 0.5), "Dialog content height " + oDialog._$content.height() + " is equal or less than part of window height " + jQuery(window).height() * 0.5);
+				ok(marginCompare(oDialog._$content.width(), (jQuery(window).width() * 0.5)) || (oDialog._$content.width() === 398)), "Dialog content width " + oDialog._$content.width() + " is equal or less than part of window width " + jQuery(window).width() * 0.5;
+				ok(marginCompare(oDialog._$content.height(), jQuery(window).height() * 0.5), "Dialog content height " + oDialog._$content.height() + " is equal or less than part of window height " + jQuery(window).height() * 0.5);
 
 				oDialog.destroy();
 			});
@@ -643,7 +645,7 @@
 				oDialog.destroy();
 			});
 
-			test("Aggregations \"beginButton\" and \"endButton\" - both visible", function () {
+			test('Aggregations "beginButton" and "endButton" - both visible', function () {
 				// Arrange
 				var oButton1 = new sap.m.Button();
 				var oButton2 = new sap.m.Button();
@@ -666,7 +668,7 @@
 				oDialogInitialFocus.destroy();
 			});
 
-			test("Aggregations \"beginButton\" and \"endButton\" - only endButton visible", function () {
+			test('Aggregations "beginButton" and "endButton" - only endButton visible', function () {
 				// Arrange
 				var oButton1 = new sap.m.Button({visible: false});
 				var oButton2 = new sap.m.Button();

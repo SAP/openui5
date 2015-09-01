@@ -299,7 +299,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					rm.write(" tabindex='0' role='button' aria-pressed='false'>");
 					var sIconUrl = oToolItem.getIcon();
 					if (IconPool.isIconURI(sIconUrl)) {
-						rm.writeIcon(sIconUrl, ["sapUiUx3ShellToolFontIcon"], {});
+						rm.writeIcon(sIconUrl, ["sapUiUx3ShellToolFontIcon"], {
+							// prevent default icon tooltip / ARIA attribute
+							// the outer <a> tag has the information required
+							"title": null,
+							"aria-label": null
+						});
 					} else {
 						rm.write("<img src='");
 						rm.writeEscaped(sIconUrl);

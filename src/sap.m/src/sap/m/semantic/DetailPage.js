@@ -32,6 +32,7 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 	 * 	<li>{@link sap.m.semantic.SendMessageAction}</li>
 	 * 	<li>{@link sap.m.semantic.PrintAction}</li>
 	 * 	<li>{@link sap.m.semantic.MessagesIndicator}</li>
+	 * 	<li>{@link sap.m.semantic.DraftIndicator}</li>
 	 * </ul>
 	 *
 	 *
@@ -180,6 +181,13 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 				 */
 				pagingAction: {
 					type: "sap.m.PagingButton",
+					multiple: false
+				},
+				/**
+				 * DraftIndicator
+				 */
+				draftIndicator: {
+					type: "sap.m.semantic.DraftIndicator",
 					multiple: false
 				}
 			}

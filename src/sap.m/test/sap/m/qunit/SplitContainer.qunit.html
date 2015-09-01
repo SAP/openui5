@@ -677,7 +677,7 @@
 				oSplitContainer.destroy();
 			});
 
-			test("Switch between different modes", function() {
+			asyncTest("Switch between different modes", function() {
 				var oSplitContainer = new sap.m.SplitContainer({
 						masterPages: new sap.m.Page(),
 						detailPages: new sap.m.Page()
@@ -708,25 +708,64 @@
 				ok(oSplitContainer._bMasterisOpen, "flag of whether master is open is set");
 
 				oSplitContainer.setMode(sap.m.SplitAppMode.HideMode);
-				ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "visible class is set to master");
-				ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
-				ok(oSplitContainer._bMasterisOpen, "flag of whether master is open is set");
-
-				qutils.triggerEvent("tap", oSplitContainer._oDetailNav.getDomRef());
-				ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "hidden class isn't set to master");
-				ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class is set to master");
-
-				this.stub(sap.ui.Device, "orientation", oPortrait);
-				oSplitContainer._handleResize();
+				ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "hidden class is set to master after switching to HideMode");
+				ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "visible class is removed from master after switching to HideMode");
+				ok(!oSplitContainer._bMasterisOpen, "flag of whether master is open is correctly maintained after switching to HideMode");
 
 				oSplitContainer.showMaster();
 				ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "visible class is set to master");
 				ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class isn't set to master");
 
-				oSplitContainer.setMode(sap.m.SplitAppMode.ShowHideMode);
-				qutils.triggerEvent("tap", oSplitContainer._oDetailNav.getDomRef());
-				ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "hidden class isn't set to master");
-				ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class is set to master");
+				oSplitContainer.attachAfterMasterOpen(function() {
+					var oOldOrientation = sap.ui.Device.orientation;
+					sap.ui.Device.orientation = oPortrait;
+					oSplitContainer._handleResize();
+
+					oSplitContainer.setMode(sap.m.SplitAppMode.ShowHideMode);
+					qutils.triggerEvent("tap", oSplitContainer._oDetailNav.getDomRef());
+					ok(!oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterVisible"), "hidden class isn't set to master");
+					ok(oSplitContainer._oMasterNav.hasStyleClass("sapMSplitContainerMasterHidden"), "hidden class is set to master");
+
+					oSplitContainer.destroy();
+					sap.ui.Device.orientation = oOldOrientation;
+					start();
+				});
+			});
+
+			test("Initialize the SplitContainer in portrait mode and switch to landscape, the sapMSplitContainerPortrait class should be correctly removed", function() {
+				var oSystem = {
+						desktop: true,
+						tablet: false,
+						phone: false
+					},
+					oLandscape = {
+						landscape: true,
+						portrait: false
+					},
+					oPortrait = {
+						landscape: false,
+						portrait: true
+					};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+				this.stub(sap.ui.Device, "orientation", oPortrait);
+
+				var oSplitContainer = new sap.m.SplitContainer({
+					masterPages: new sap.m.Page(),
+					detailPages: new sap.m.Page()
+				});
+
+				oSplitContainer.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				ok(oSplitContainer.hasStyleClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be added as a control style class");
+				ok(oSplitContainer.$().hasClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be output to the DOM node");
+
+				this.stub(sap.ui.Device, "orientation", oLandscape);
+				oSplitContainer._handleResize();
+
+				ok(!oSplitContainer.hasStyleClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be removed from control style class");
+				ok(!oSplitContainer.$().hasClass("sapMSplitContainerPortrait"), "The sapMSplitContainerPortrait class should be removed from the DOM node");
 
 				oSplitContainer.destroy();
 			});

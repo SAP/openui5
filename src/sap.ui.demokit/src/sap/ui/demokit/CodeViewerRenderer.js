@@ -38,6 +38,9 @@ sap.ui.define(['jquery.sap.global'],
 		} else {
 			oRM.addClass("prettyprint"); // this class acts as a 'TODO' for the pretty printer!
 		}
+		if (oControl.getLineNumbering()) {
+			oRM.addClass("linenums");
+		}
 			
 		var sHeight = oControl.getHeight();
 		if (sHeight) {

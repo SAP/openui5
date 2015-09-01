@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<meta charset="UTF-8">
 		<title>Test Page for sap.m.SelectList</title>
 		<script id="sap-ui-bootstrap"
@@ -17,13 +18,8 @@
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-		<!-- use the sinon faketimers for this test -->
-		<script type="text/javascript">
-			sinon.config.useFakeTimers = true;
-		</script>
-
 		<script>
+			sinon.config.useFakeTimers = true;
 			QUnit.config.autostart = false;
 			sap.ui.test.qunit.delayTestStart();
 
@@ -2084,6 +2080,7 @@
 
 				// cleanup
 				oSelectList.destroy();
+				oModel.destroy();
 			});
 
 			test("removeItem() remove the selected item", function() {
@@ -2151,6 +2148,7 @@
 
 				// cleanup
 				oSelectList.destroy();
+				oModel.destroy();
 			});
 
 			test("removeItem()", function() {
@@ -2890,6 +2888,7 @@
 
 				// cleanup
 				oSelectList.destroy();
+				oModel.destroy();
 			});
 
 			/* ------------------------------ */
@@ -3087,6 +3086,85 @@
 				ok(!(oItem.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Item")), "The list item css class is rendered");
 				ok(oItem.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "SeparatorItem"), "The list item separator css class is rendered");
 				strictEqual(oItem.$().attr("tabindex"), undefined, "The tabindex attribute is rendered");
+
+				// cleanup
+				oSelectList.destroy();
+			});
+
+			test("it should display the item", function() {
+
+				// system under test
+				var oItem;
+				var oSelectList = new sap.m.SelectList({
+					items: [
+						oItem = new sap.ui.core.Item({
+							text: "lorem ipsum"
+						})
+					]
+				});
+
+				// arrange
+				oSelectList.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "list-item");
+				strictEqual(oSelectList.getVisibleItems().length, 1);
+
+				// cleanup
+				oSelectList.destroy();
+			});
+
+			test("it should display the item", function() {
+
+				// system under test
+				var oItem;
+				var oSelectList = new sap.m.SelectList({
+					items: [
+						oItem = new sap.ui.core.Item({
+							text: "lorem ipsum"
+						})
+					]
+				});
+
+				// act
+				oItem.bVisible = true;
+
+				// arrange
+				oSelectList.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "list-item");
+				strictEqual(oSelectList.getVisibleItems().length, 1);
+
+				// cleanup
+				oSelectList.destroy();
+			});
+
+			test("it should not display the item", function() {
+
+				// system under test
+				var oItem;
+				var oSelectList = new sap.m.SelectList({
+					items: [
+						oItem = new sap.ui.core.Item({
+							text: "lorem ipsum"
+						})
+					]
+				});
+
+				// act
+				oItem.bVisible = false;
+
+				// arrange
+				oSelectList.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "none");
+				ok(oItem.$().hasClass(oSelectList.getRenderer().CSS_CLASS + "ItemInvisible"));
+				strictEqual(oSelectList.getVisibleItems().length, 0);
 
 				// cleanup
 				oSelectList.destroy();

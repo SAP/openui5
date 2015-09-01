@@ -30,7 +30,7 @@ sap.ui.define([
 		handleIconTabBarSelect : function (oEvent) {
 			var oTable = oEvent.getSource().getContent()[0];
 			var oBinding = oTable.getBinding("items"),
-				sKey = oEvent.getParameter("selectedKey"),
+				sKey = oEvent.getParameter("key"),
 				oFilter;
 			if (sKey === "Ok") {
 				oFilter = new Filter("WeightMeasure", "LE", 1000);

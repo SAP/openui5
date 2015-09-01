@@ -9,6 +9,8 @@
 
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="utf-8"/>
+	<!-- legacy meta tag for IE9 compatibility -->
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<title>qUnit Page for jquery.sap.unicode</title>
 
 	<script id="sap-ui-bootstrap"
@@ -92,7 +94,8 @@
 				// ref: http://unicode.org/reports/tr15/#Design_Goals
 				QUnit.test("chaining", function() {
 					o.compatible ? assert.expect(6) : assert.expect(2);
-					var sRef = this.s.normalize(o.form);
+					// primitive value of the normalized string as reference
+					var sRef = this.s.normalize(o.form).valueOf();
 					assert.equal(this.s.normalize("NFC").normalize(o.form), sRef, "\"NFC\"");
 					assert.equal(this.s.normalize("NFD").normalize(o.form), sRef, "\"NFD\"");
 					if(o.compatible) {
@@ -127,20 +130,20 @@
 			});
 
 			QUnit.test("verify test string", function() {
-				assert.strictEqual(this.sBlind, this.sBlind.normalize("NFC"), "NFC verified");
-				assert.strictEqual(this.sSomething, this.sSomething.normalize("NFC"), "NFC verified");
-				assert.strictEqual(this.sNFC, this.sNFC.normalize("NFC"), "NFC verified");
-				assert.strictEqual(this.sNFD, this.sNFD.normalize("NFD"), "NFD verified");
-				assert.strictEqual(this.sNFKC, this.sNFKC.normalize("NFKC"), "NFKC verified");
-				assert.strictEqual(this.sNFKD, this.sNFKD.normalize("NFKD"), "NFKD verified");
-				assert.notStrictEqual(this.s, this.s.normalize("NFC"), "not NFC verified");
-				assert.notStrictEqual(this.s, this.s.normalize("NFD"), "not NFD verified");
-				assert.notStrictEqual(this.s, this.s.normalize("NFKC"), "not NFKC verified");
-				assert.notStrictEqual(this.s, this.s.normalize("NFKD"), "not NFKD verified");
-				assert.strictEqual(this.sNFC + this.sNFC + this.sNFKC + this.sNFKC, this.s.normalize("NFC"), "NFC concatenation verified");
-				assert.strictEqual(this.sNFD + this.sNFD + this.sNFKD + this.sNFKD, this.s.normalize("NFD"), "NFD concatenation verified");
-				assert.strictEqual(this.sNFKC + this.sNFKC + this.sNFKC + this.sNFKC, this.s.normalize("NFKC"), "NFKC concatenation verified");
-				assert.strictEqual(this.sNFKD + this.sNFKD + this.sNFKD + this.sNFKD, this.s.normalize("NFKD"), "NFKD concatenation verified");
+				assert.equal(this.sBlind, this.sBlind.normalize("NFC"), "NFC verified");
+				assert.equal(this.sSomething, this.sSomething.normalize("NFC"), "NFC verified");
+				assert.equal(this.sNFC, this.sNFC.normalize("NFC"), "NFC verified");
+				assert.equal(this.sNFD, this.sNFD.normalize("NFD"), "NFD verified");
+				assert.equal(this.sNFKC, this.sNFKC.normalize("NFKC"), "NFKC verified");
+				assert.equal(this.sNFKD, this.sNFKD.normalize("NFKD"), "NFKD verified");
+				assert.notEqual(this.s, this.s.normalize("NFC"), "not NFC verified");
+				assert.notEqual(this.s, this.s.normalize("NFD"), "not NFD verified");
+				assert.notEqual(this.s, this.s.normalize("NFKC"), "not NFKC verified");
+				assert.notEqual(this.s, this.s.normalize("NFKD"), "not NFKD verified");
+				assert.equal(this.sNFC + this.sNFC + this.sNFKC + this.sNFKC, this.s.normalize("NFC"), "NFC concatenation verified");
+				assert.equal(this.sNFD + this.sNFD + this.sNFKD + this.sNFKD, this.s.normalize("NFD"), "NFD concatenation verified");
+				assert.equal(this.sNFKC + this.sNFKC + this.sNFKC + this.sNFKC, this.s.normalize("NFKC"), "NFKC concatenation verified");
+				assert.equal(this.sNFKD + this.sNFKD + this.sNFKD + this.sNFKD, this.s.normalize("NFKD"), "NFKD concatenation verified");
 			});
 
 			QUnit.test("isStringNFC", function() {

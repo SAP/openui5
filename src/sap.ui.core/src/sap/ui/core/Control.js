@@ -3,8 +3,8 @@
  */
 
 // Provides base class sap.ui.core.Control for all controls
-sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', './UIArea', /* cyclic: './RenderManager', */ './ResizeHandler'],
-	function(jQuery, CustomStyleClassSupport, Element, UIArea, ResizeHandler) {
+sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', './UIArea', /* cyclic: './RenderManager', */ './ResizeHandler', './BusyIndicatorUtils'],
+	function(jQuery, CustomStyleClassSupport, Element, UIArea, ResizeHandler, BusyIndicatorUtils) {
 	"use strict";
 
 	/**
@@ -577,6 +577,15 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 
 		ResizeHandler.deregisterAllForControl(this.getId());
 
+		// Controls can have their visible-property set to "false" in which case the Element's destroy method will#
+		// fail to remove the placeholder content from the DOM. We have to remove it here in that case
+		if (!this.getVisible()) {
+			var oPlaceholder = document.getElementById(sap.ui.core.RenderManager.createInvisiblePlaceholderId(this));
+			if (oPlaceholder && oPlaceholder.parentNode) {
+				oPlaceholder.parentNode.removeChild(oPlaceholder);
+			}
+		}
+
 		Element.prototype.destroy.call(this, bSuppressInvalidate);
 	};
 
@@ -596,17 +605,23 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				var $this = this.$(this._sBusySection),
 					aForbiddenTags = ["area", "base", "br", "col", "embed", "hr", "img", "input", "keygen", "link", "menuitem", "meta", "param", "source", "track", "wbr"];
 
-
 				//If there is a pending delayed call to append the busy indicator, we can clear it now
 				if (this._busyIndicatorDelayedCallId) {
 					jQuery.sap.clearDelayedCall(this._busyIndicatorDelayedCallId);
 					delete this._busyIndicatorDelayedCallId;
 				}
 
+				// if no busy section/control jquery instance could be retrieved -> the control is not part of the dom anymore
+				// this might happen in certain scenarios when e.g. a dialog is closed faster than the busyIndicatorDelay
+				if (!$this || $this.length === 0) {
+					jQuery.sap.log.warning("BusyIndicator could not be rendered. The outer control instance is not valid anymore.");
+					return;
+				}
+
 				//Check if DOM Element where the busy indicator is supposed to be placed can handle content
 				var sTag = $this.get(0) && $this.get(0).tagName;
 				if (sTag && jQuery.inArray(sTag.toLowerCase(), aForbiddenTags) >= 0) {
-					jQuery.sap.log.warning("Busy Indicator cannot be placed in elements with tag " + sTag);
+					jQuery.sap.log.warning("BusyIndicator cannot be placed in elements with tag '" + sTag + "'.");
 					return;
 				}
 
@@ -618,23 +633,9 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				}
 
 				//Append busy indicator to control DOM
-				var $BusyIndicator = jQuery('<div class="sapUiLocalBusyIndicator" aria-role="progressbar" aria-valuemin="0" aria-valuemax="100">' +
-					'<div class="sapUiLocalBusyIndicatorAnimation">' +
-						'<div class="sapUiLocalBusyIndicatorBox"></div>' +
-						'<div class="sapUiLocalBusyIndicatorBox"></div>' +
-						'<div class="sapUiLocalBusyIndicatorBox"></div>' +
-					'</div>' +
-				'</div>');
-				var sBusyIndicatorId = this.getId() + "-busyIndicator";
-				$BusyIndicator.attr("id", sBusyIndicatorId);
-				$this.append($BusyIndicator);
-				$this.addClass('sapUiLocalBusy');
-				//Set the actual DOM Element to 'aria-busy'
-				$this.attr('aria-busy', true);
-				if (this._busyDelayedCallId) {
-					jQuery.sap.clearDelayedCall(this._busyDelayedCallId);
-				}
-				this._busyDelayedCallId = jQuery.sap.delayedCall(1200, this, fnAnimate);
+				this._$BusyIndicator = BusyIndicatorUtils.addHTML($this, this.getId() + "-busyIndicator");
+
+				BusyIndicatorUtils.animateIE9.start(this._$BusyIndicator);
 				fnHandleInteraction.apply(this, [true]);
 			},
 			fnHandleInteraction = function(bBusy) {
@@ -643,7 +644,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				if (bBusy) {
 					// all focusable elements must be processed for the "tabindex=-1"
 					// attribute. The dropdownBox for example has got two focusable elements
-					// (arrow and intput field) and both shouldn't be focusable. Otherwise
+					// (arrow and input field) and both shouldn't be focusable. Otherwise
 					// the input field will still be focused on keypress (tab) because the
 					// browser focuses the element
 					var $TabRefs = $this.find(":sapTabbable"),
@@ -698,26 +699,6 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				jQuery.sap.log.debug("Local Busy Indicator Event Suppressed: " + oEvent.type);
 				oEvent.preventDefault();
 				oEvent.stopImmediatePropagation();
-			},
-			fnAnimate = function() {
-				var $bubbles = this.$(this._sBusySection).children('.sapUiLocalBusyIndicator').children('.sapUiLocalBusyIndicatorAnimation');
-				var that = this;
-				that._busyAnimationTimer1 = setTimeout(function() {
-					$bubbles.children(":eq(0)").addClass('active');
-					$bubbles.children(":not(:eq(0))").removeClass('active');
-					that._busyAnimationTimer2 = setTimeout(function() {
-						$bubbles.children(":eq(1)").addClass('active');
-						$bubbles.children(":not(:eq(1))").removeClass('active');
-						that._busyAnimationTimer3 = setTimeout(function() {
-							$bubbles.children(":eq(2)").addClass('active');
-							$bubbles.children(":not(:eq(2))").removeClass('active');
-							that._busyAnimationTimer4 = setTimeout(function() {
-								$bubbles.children().removeClass('active');
-							}, 150);
-						}, 150);
-					}, 150);
-				}, 150);
-				this._busyDelayedCallId = jQuery.sap.delayedCall(1200, this, fnAnimate);
 			};
 
 		/**
@@ -774,10 +755,8 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 					delete this._busyStoredPosition;
 				}
 				fnHandleInteraction.apply(this, [false]);
-				if (this._busyDelayedCallId) {
-					jQuery.sap.clearDelayedCall(this._busyDelayedCallId);
-					delete this._busyDelayedCallId;
-				}
+				
+				BusyIndicatorUtils.animateIE9.stop(this._$BusyIndicator);
 			}
 			return this;
 		};
@@ -815,26 +794,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				jQuery.sap.clearDelayedCall(this._busyIndicatorDelayedCallId);
 				delete this._busyIndicatorDelayedCallId;
 			}
-			if (this._busyDelayedCallId) {
-				jQuery.sap.clearDelayedCall(this._busyDelayedCallId);
-				delete this._busyDelayedCallId;
-			}
-			if (this._busyAnimationTimer1) {
-				clearTimeout(this._busyAnimationTimer1);
-				delete this._busyAnimationTimer1;
-			}
-			if (this._busyAnimationTimer2) {
-				clearTimeout(this._busyAnimationTimer2);
-				delete this._busyAnimationTimer2;
-			}
-			if (this._busyAnimationTimer3) {
-				clearTimeout(this._busyAnimationTimer3);
-				delete this._busyAnimationTimer3;
-			}
-			if (this._busyAnimationTimer4) {
-				clearTimeout(this._busyAnimationTimer4);
-				delete this._busyAnimationTimer4;
-			}
+			BusyIndicatorUtils.animateIE9.stop(this._$BusyIndicator);
 		};
 
 		/**

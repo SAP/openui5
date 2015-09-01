@@ -1537,8 +1537,21 @@
 		oList.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		var oIcon = oStdLI.$().find(".sapUiIcon").control(0);
-		
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oStdLI.getDomRef(), {
+
+		function createEvent(sEventName, oTarget, oParams) {
+			var oEvent = jQuery.Event(sEventName);
+			oEvent.originalEvent = {};
+			oEvent.target = oTarget;
+			if (oParams) {
+				for (var x in oParams) {
+					oEvent[x] = oParams[x];
+					oEvent.originalEvent[x] = oParams[x];
+				}
+			}
+			return oEvent;
+		};
+
+		var oTouchStart = createEvent("touchstart", oStdLI.getDomRef(), {
 			srcControl : oStdLI,
 			touches : [{
 				clientX: 0,
@@ -1549,21 +1562,23 @@
 				clientY: 0
 			}]
 		});
-		
+		oStdLI.ontouchstart(oTouchStart);
+
 		strictEqual(oIcon.getSrc(), sIcon, "Icon has correct path before active handling.");
 		
 		// wait active feedback
-		this.clock.tick(100);
+		this.clock.tick(300);
 		
 		strictEqual(oIcon.getSrc(), sActiveIcon, "Active icon has correct path during active handling");
-		sap.ui.test.qunit.triggerTouchEvent("touchend", oStdLI.getDomRef(), {
+		var oTouchEnd = createEvent("touchend", oStdLI.getDomRef(), {
 			srcControl : oStdLI,
 			targetTouches : [{
 				clientX: 0,
 				clientY: 0
 			}]
 		});
-		
+		oStdLI.ontouchend(oTouchEnd);
+
 		strictEqual(oIcon.getSrc(), sActiveIcon, "Active icon is changed with the previous state after active handling");
 	});
 	

@@ -106,7 +106,7 @@
 			var oCBInput2 = jQuery("#testCmb2 > input");
 			equal(oCB.attr("role"), "combobox", "Role");
 			equal(oCB.attr("aria-owns"), "testCmb-input testCmb-lb", "aria-owns");
-			equal(oCBInput.attr("aria-describedby"), "D1 D2", "aria-describesby");
+			equal(oCBInput.attr("aria-describedby"), "D1 D2 testCmb-SecVal", "aria-describesby");
 			equal(oCBInput.attr("aria-labelledby"), "L1 L2", "aria-labelledby");
 			equal(oCBInput.attr("aria-live"), "polite", "aria-live");
 			equal(oCBInput.attr("aria-autocomplete"), "inline", "aria-autocomplete");
@@ -699,22 +699,36 @@
 
 		asyncTest("update binding with key", function(){
 			// even if selectedKey is set before items it must be used after items are added
-   			oModel.setProperty("/key", "IC");
+			oModel.setProperty("/key", "IC");
 			oModel.oData.items = [{text: "Item A", key: "IA"},
-			      		            {text: "Item B", key: "IB"},
-			    		              {text: "Item C", key: "IC"}];
-   			oModel.checkUpdate();
-			setTimeout( function() {	
-	   			equal(oCombo4.getValue(), "Item C", "Text of third item must be set");
+			                      {text: "Item B", key: "IB"},
+			                      {text: "Item C", key: "IC"}];
+			oModel.checkUpdate();
+			setTimeout( function() {
+				equal(oCombo4.getValue(), "Item C", "Text of third item must be set");
 				equal(jQuery.sap.domById(oCombo4.getId()+"-input").value, "Item C", "Text of third item must be set in the HTML.");
 				equal(oCombo4.getSelectedKey(), "IC", "Key of third item must be selected");
 				start();
 			},0);
 		});
 
+		asyncTest("update binding without key", function(){
+			// selectd key not changed and item still exist, so it should be still selected.
+			oModel.oData.items = [{text: "Item C", key: "IC"},
+			                      {text: "Item D", key: "ID"},
+			                      {text: "Item E", key: "IE"}];
+			oModel.checkUpdate();
+			setTimeout( function() {
+				equal(oCombo4.getValue(), "Item C", "Text must not be changed");
+				equal(jQuery.sap.domById(oCombo4.getId()+"-input").value, "Item C", "Text of third item must not be changed in the HTML.");
+				equal(oCombo4.getSelectedKey(), "IC", "Key must not be changed");
+				start();
+			},0);
+		});
+
 		test("manual with ID", function(){
 			// even if selectedItemId is set before items it must be used after items are added
-   		oCombo4.setSelectedItemId("Item-Y");
+			oCombo4.setSelectedItemId("Item-Y");
 			oCombo4.removeAllItems();
 			oCombo4.addItem(new sap.ui.core.ListItem("Item-X",{text:"Item X", key:"IX"}));
 			oCombo4.addItem(new sap.ui.core.ListItem("Item-Z",{text:"Item Z", key:"IZ"}));

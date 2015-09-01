@@ -12,12 +12,12 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	/**
 	 * Constructor for a new Table.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The Table control provides a set of sophisticated and convenience functions for responsive table design.
-	 * For mobile devices, the recommended limit of table rows is 100(based on 4 columns) to assure proper performance. To improve initial rendering on large tables, use the "growing" feature. Please refer to the SAPUI5 Developer Guide for more information
+	 * <code>sap.m.Table</code> control provides a set of sophisticated and convenience functions for responsive table design.
+	 * For mobile devices, the recommended limit of table rows is 100 (based on 4 columns) to assure proper performance. To improve initial rendering on large tables, use the <code>growing</code> feature.
 	 * @extends sap.m.ListBase
 	 *
 	 * @author SAP SE
@@ -35,24 +35,23 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		properties : {
 	
 			/**
-			 * This property is used to set the background color of the table. Depending on the theme you can change the state of the background from "Solid" over "Translucent" to "Transparent".
+			 * Sets the background style of the table. Depending on the theme, you can change the state of the background from <code>Solid</code> to <code>Translucent</code> or to <code>Transparent</code>.
 			 */
 			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : sap.m.BackgroundDesign.Translucent},
 	
 			/**
 			 * Defines the algorithm to be used to layout the table cells, rows, and columns.
+			 * By default, a table is rendered with fixed layout algorithm. This means the horizontal layout only depends on the table's width and the width of the columns, not the contents of the cells. Cells in subsequent rows do not affect column widths. This allows a browser to layout the table faster than the auto table layout since the browser can begin to display the table once the first row has been analyzed.
 			 * 
-			 * If you set this property to false, then table is rendered with "auto" layout algorithm. This means, the width of the table and its cells depends on the content thereof. The column width is set by the widest unbreakable content in the cells. This can make the rendering slow, since the browser needs to read through all the content in the table, before determining the final layout.
-			 * Note: Since table does not have own scroll container, setting fixedLayout to false can force the table to overflow and this can cause visual problems. So, we highly suggest to use this property when table has a few columns in wide screens or horizontal scroll container(e.g Dialog, Popover) to handle overflow.
-			 * Please note that with "auto" layout mode Column width property is taken into account as minimum width.
-			 * 
-			 * By default, table is rendered with "fixed" layout algorithm. This means the horizontal layout only depends on the table's width and the width of the columns, not the contents of the cells. Cells in subsequent rows do not affect column widths. This allows a browser to layout the table faster than the auto table layout since the browser can begin to display the table once the first row has been analyzed.
+			 * When this property is set to <code>false</code>, <code>sap.m.Table</code> is rendered with auto layout algorithm. This means, the width of the table and its cells depends on the contents of the cells. The column width is set by the widest unbreakable content inside the cells. This can make the rendering slow, since the browser needs to read through all the content in the table before determining the final layout.
+			 * <b>Note:</b> Since <code>sap.m.Table</code> does not have its own scrollbars, setting <code>fixedLayout</code> to false can force the table to overflow, which may cause visual problems. It is suggested to use this property when a table has a few columns in wide screens or within the horizontal scroll container (e.g <code>sap.m.Dialog</code>) to handle overflow.
+			 * In auto layout mode the <code>width</code> property of <code>sap.m.Column</code> is taken into account as a minimum width.
 			 * @since 1.22
 			 */
 			fixedLayout : {type : "boolean", group : "Behavior", defaultValue : true},
 	
 			/**
-			 * Setting this property to true will show an overlay on top of the Table content and users cannot click anymore on the Table content.
+			 * Setting this property to <code>true</code> will show an overlay on top of the table content and prevents the user interaction with it.
 			 * @since 1.22.1
 			 */
 			showOverlay : {type : "boolean", group : "Appearance", defaultValue : false}
@@ -60,7 +59,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		aggregations : {
 	
 			/**
-			 * Columns of the Table
+			 * Defines the columns of the table.
 			 */
 			columns : {type : "sap.m.Column", multiple : true, singularName : "column"}
 		}

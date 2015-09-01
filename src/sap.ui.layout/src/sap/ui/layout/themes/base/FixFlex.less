@@ -111,13 +111,28 @@
    ========================================================================== */
 .sapUiFixFlexInnerScrolling {
 	& > .sapUiFixFlexFlexible {
-		overflow-y: auto;
+		// The change from overflow-y to overflow is needed due to a bug in "Edge" browser
+		// BCP: 1570807842
+		overflow: auto;
+
 		-webkit-overflow-scrolling: touch;
+
+		/*
+		* Performance tweak - force the section content on to the GPU effectively separating it in a different
+		* composite layer. This is better done with will-change: transform, but at the moment is not supported on
+		* many platforms. When will-change becomes widely adopted than it's better to use it rather than translate3d
+		*/
+		-webkit-transform: translateZ(0);
+		transform: translateZ(0);
+
+		// BCP: 1570807842
+		.sapUiFixFlexFlexibleContainer {
+			overflow-x: hidden;
+		}
 	}
 
 	&.sapUiFixFlexRow {
 		& > .sapUiFixFlexFlexible {
-			overflow-x: auto;
 			overflow-y: hidden;
 		}
 	}
@@ -127,6 +142,15 @@
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 	display: block;
+
+	/*
+	* Performance tweak - force the section content on to the GPU effectively separating it in a different
+	* composite layer. This is better done with will-change: transform, but at the moment is not supported on
+	* many platforms. When will-change becomes widely adopted than it's better to use it rather than translate3d
+	*/
+
+	-webkit-transform: translateZ(0);
+	transform: translateZ(0);
 
 	& > .sapUiFixFlexFlexible {
 		display: block;

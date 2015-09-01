@@ -10,7 +10,7 @@ sap.ui.define([],
 		var SIDE_CONTENT_LABEL = "SIDE_CONTENT_LABEL";
 
 		/**
-		 * Renderer for sap.ui.layout.DynamicSideContent
+		 * Renderer for sap.ui.layout.DynamicSideContent.
 		 * @namespace
 		 */
 		var DynamicSideContentRenderer = {};

@@ -42,6 +42,11 @@
 	text-align: start;
 }
 
+html[dir=rtl][data-sap-ui-browser^="ie"] .sapMTitleAlignBegin,
+html[dir=rtl][data-sap-ui-browser^="ed"] .sapMTitleAlignBegin {
+	text-align: right;
+}
+
 .sapMTitleAlignLeft {
 	text-align: left;
 }
@@ -49,6 +54,11 @@
 .sapMTitleAlignEnd {
 	text-align: right;
 	text-align: end;
+}
+
+html[dir=rtl][data-sap-ui-browser^="ie"] .sapMTitleAlignEnd,
+html[dir=rtl][data-sap-ui-browser^="ed"] .sapMTitleAlignEnd {
+	text-align: left;
 }
 
 .sapMTitleAlignRight {
@@ -70,6 +80,13 @@
 
 .sapMTB-Transparent-CTX > .sapMTitleTB.sapMTitleStyleAuto {
 	font-size: @sapMTitleSize4;
+}
+
+.sapMTB-Info-CTX > .sapMTitle {
+	font-size: @sapMTitleSize6;
+	font-style: italic;
+	text-shadow: none;
+	color: @sapUiContentContrastTextColor;
 }
 
 /* Level H1 */

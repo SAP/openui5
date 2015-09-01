@@ -71,9 +71,7 @@ sap.ui.define(['sap/ui/model/FormatException', 'sap/ui/model/odata/type/ODataTyp
 	 * @public
 	 * @since 1.27.0
 	 */
-	var EdmString = ODataType.extend("sap.ui.model.odata.type.String",
-			/** @lends sap.ui.model.odata.type.String.prototype */
-			{
+	var EdmString = ODataType.extend("sap.ui.model.odata.type.String", {
 				constructor : function (oFormatOptions, oConstraints) {
 					ODataType.apply(this, arguments);
 					setConstraints(this, oConstraints);

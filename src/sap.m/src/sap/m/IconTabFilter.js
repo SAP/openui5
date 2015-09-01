@@ -12,11 +12,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 	/**
 	 * Constructor for a new IconTabFilter.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The filter item class
+	 * Represents a selectable item inside an IconTabBar.
+	 *
 	 * @extends sap.ui.core.Item
 	 * @implements sap.m.IconTab
 	 *
@@ -40,21 +41,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 		properties : {
 
 			/**
-			 * The number of available items if this filter is applied
+			 * Represents the "count" text, which is displayed in the tab filter.
 			 */
 			count : {type : "string", group : "Data", defaultValue : ''},
 
 			/**
-			 * Enables special visualization for disabled filter (show all items)
+			 * Enables special visualization for disabled filter (show all items).
 			 */
 			showAll : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
-			 * The icon to display for this item.
+			 * Specifies the icon to be displayed for the tab filter.
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : ''},
 
 			/**
+			 * Specifies the icon color.
+			 *
 			 * If an icon font is used, the color can be chosen from the icon colors (sap.ui.core.IconColor).
 			 * Possible semantic colors are: Neutral, Positive, Critical, Negative.
 			 * Instead of the semantic icon color the brand color can be used, this is named Default.
@@ -63,19 +66,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 			iconColor : {type : "sap.ui.core.IconColor", group : "Appearance", defaultValue : sap.ui.core.IconColor.Default},
 
 			/**
-			 * By default, this is set to true but then one or more requests are sent trying to get the density perfect version of image if this version of image doesn't exist on the server.
+			 * If set to true, it sends one or more requests,
+			 * trying to get the density perfect version of the image if this version of
+			 * the image doesn't exist on the server. Default value is set to true.
 			 *
-			 * If bandwidth is the key for the application, set this value to false.
+			 * If bandwidth is key for the application, set this value to false.
 			 */
 			iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * If set to false, the control is not rendered.
+			 * Specifies whether the tab filter is rendered.
 			 */
 			visible : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Design for the filter item.
+			 * Specifies whether the icon and the texts are placed vertically or horizontally.
 			 */
 			design : {type : "sap.m.IconTabFilterDesign", group : "Appearance", defaultValue : sap.m.IconTabFilterDesign.Vertical}
 		},
@@ -83,8 +88,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 		aggregations : {
 
 			/**
-			 * The content to show for this item (optional).
-			 * If this content is set, it will be displayed instead of the general content inside the IconTabBar.
+			 * The content displayed for this item (optional).
+			 *
+			 * If this content is set, it is displayed instead of the general content inside the IconTabBar.
 			 * @since 1.15.0
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
@@ -94,10 +100,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 	/**
 	 * Lazy load icon tab filter image.
 	 *
-	 * @param {Array} aCssClassesToAdd array of css classes which will be added if the image needs to be created.
-	 * @param {sap.ui.core.Control} oParent this element's parent.
-	 * @param {Array} aCssClassesToRemove all css clases that oImageControl has and which are contained in this array
-	 * are removed before adding the css classes listed in aCssClassesToAdd.
+	 * @param {Array} aCssClassesToAdd Array of CSS classes, which will be added if the image needs to be created.
+	 * @param {sap.ui.core.Control} oParent This element's parent
+	 * @param {Array} aCssClassesToRemove All CSS clases, that oImageControl has and which are
+	 * contained in this array are removed before adding the CSS classes listed in aCssClassesToAdd.
 	 *
 	 * @private
 	 */
@@ -180,7 +186,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 	};
 
 	/**
-	 * If the IconTabFilter doesn't have a key, the function returns the id of the IconTabFilter,
+	 * If the IconTabFilter doesn't have a key, the function returns the ID of the IconTabFilter,
 	 * so the IconTabBar can remember the selected IconTabFilter.
 	 *
 	 * @private

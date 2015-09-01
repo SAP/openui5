@@ -15,12 +15,27 @@
 	border: 1px solid @sapHCStandardFG;
 	border-radius: 0.25rem;
 
+	// centering the content of the ::after element
+	// does not work in IE if directly set on ::after
+	// 1.375rem - 6px (1px on the button and 2px on the ::after per side)
+	line-height: 1rem;
+
 	&:hover {
 		background-color: @sapHCHighlightBG;
 	}
 
-	&:focus {
-		border-style: dotted;
+	&:focus::after {
+		border: 2px dotted @sapHCStandardFG;
+	}
+
+	&::after {
+		// 0 positions the element inside
+		// the border of the parent element
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		border: 2px dotted transparent;
 	}
 }
 

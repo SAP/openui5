@@ -1208,6 +1208,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 				var oButton = new sap.ui.commons.Button();
 				return oButton;
 			},
+			addFormClass: function(){ return null; },
 			bFinal: false /* to allow mobile to overwrite  */
 		};
 	}

@@ -5,7 +5,7 @@
 // Provides class sap.ui.core.util.MockServer for mocking a server
 sap.ui
 	.define(
-				['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/ManagedObject', 'sap/ui/thirdparty/sinon'],
+		['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/ManagedObject', 'sap/ui/thirdparty/sinon'],
 		function(jQuery, Device, ManagedObject, sinon) {
 			"use strict";
 
@@ -618,8 +618,14 @@ sap.ui
 					if (iComplexType !== -1) {
 						var sPropName = sPath.substring(iComplexType + 1);
 						var sComplexType = sPath.substring(0, iComplexType);
-						if (!aDataSet[0][sComplexType].hasOwnProperty(sPropName)) {
-							that._logAndThrowMockServerCustomError(400, that._oErrorMessages.PROPERTY_NOT_FOUND, sPropName);
+						if (aDataSet[0][sComplexType]) {
+							if (!aDataSet[0][sComplexType].hasOwnProperty(sPropName)) {
+								var sErrorMessage = that._oErrorMessages.PROPERTY_NOT_FOUND.replace("##", "'" + sPropName + "'");
+								jQuery.sap.log.error("MockServer: navigation property '" + sComplexType + "' was not expanded, so " + sErrorMessage);
+								return aDataSet;
+							}
+						} else {
+							that._logAndThrowMockServerCustomError(400, that._oErrorMessages.PROPERTY_NOT_FOUND, sPath);
 						}
 						return fnSelectFilteredData(sPath, sValue, sComplexType, sPropName);
 					} else {
@@ -943,7 +949,7 @@ sap.ui
 				var fnResolveNavProp = function(sRole, aAssociation, aAssociationSet, bFrom) {
 					var sEntitySet = jQuery(aAssociationSet).find("End[Role=" + sRole + "]").attr("EntitySet");
 					var sMultiplicity = jQuery(aAssociation).find("End[Role=" + sRole + "]").attr("Multiplicity");
-					
+
 					var aPropRef = [];
 					var aConstraint = jQuery(aAssociation).find("ReferentialConstraint > [Role=" + sRole + "]");
 					if (aConstraint && aConstraint.length > 0) {
@@ -961,7 +967,7 @@ sap.ui
 							}
 						});
 					}
-					
+
 					return {
 						"role": sRole,
 						"entitySet": sEntitySet,
@@ -982,17 +988,16 @@ sap.ui
 					});
 					// resolve the navigation properties
 					var aNavProps = jQuery(oMetadata).find("EntityType[Name='" + oEntitySet.type + "'] NavigationProperty");
-					
 					jQuery.each(aNavProps, function(iIndex, oNavProp) {
 						var $NavProp = jQuery(oNavProp);
-						var aRelationship  = $NavProp.attr("Relationship").split(".");
-						var aAssociation = jQuery(oMetadata).find("Association[Name = '" + aRelationship[1] + "']" );
-						//TODO find a better soultion
-						var aAssociationSet = jQuery(oMetadata).find("AssociationSet[Association = '" + aRelationship[0] + "\\." + aRelationship[1] + "']" );
+						var aRelationship = $NavProp.attr("Relationship").split(".");
+						var aAssociationSet = jQuery(oMetadata).find("AssociationSet[Association = '" + aRelationship.join(".") + "']");
+						var sName = aRelationship.pop();
+						var aAssociation = jQuery(oMetadata).find("Association[Name = '" + sName + "']");
 						oEntitySet.navprops[$NavProp.attr("Name")] = {
 							"name": $NavProp.attr("Name"),
-							"from": fnResolveNavProp($NavProp.attr("FromRole"), aAssociation,aAssociationSet, true),
-							"to": fnResolveNavProp($NavProp.attr("ToRole"),aAssociation, aAssociationSet, false)
+							"from": fnResolveNavProp($NavProp.attr("FromRole"), aAssociation, aAssociationSet, true),
+							"to": fnResolveNavProp($NavProp.attr("ToRole"), aAssociation, aAssociationSet, false)
 						};
 					});
 				});
@@ -1507,6 +1512,7 @@ sap.ui
 					oEntity[oProperty.name] = this._generatePropertyValue(oProperty.name, oProperty.type, mComplexTypes, iIndex);
 				}
 				return oEntity;
+
 			};
 
 			/**
@@ -1535,33 +1541,25 @@ sap.ui
 			MockServer.prototype._generateMockdata = function(mEntitySets, oMetadata) {
 				var that = this;
 				var oMockData = {};
+				var sRootUri = this._getRootUri();
 				jQuery.each(mEntitySets, function(sEntitySetName, oEntitySet) {
 					var mEntitySet = {};
 					mEntitySet[oEntitySet.name] = oEntitySet;
 					oMockData[sEntitySetName] = that._generateODataMockdataForEntitySet(mEntitySet, oMetadata)[sEntitySetName];
 				});
-
-				this._oMockdata = oMockData;
-			};
-
-			/**
-			 * Generate some mock data based on the metadata specified for the odata service.
-			 * @param {map} mEntitySets map of the entity sets
-			 * @param {object} oMetadata the complete metadata for the service
-			 * @private
-			 */
-			MockServer.prototype._generateODataMockdataForEntitySet = function(mEntitySets, oMetadata) {
-				// load the entity sets (map the entity type data to the entity set)
-				var that = this,
-					sRootUri = this._getRootUri(),
-					oMockData = {};
-
-				// here we need to analyse the EDMX and identify the entity types and complex types
-				var mEntityTypes = this._findEntityTypes(oMetadata);
-				var mComplexTypes = this._findComplexTypes(oMetadata);
-
+				// changing the values if there is a referential constraint
 				jQuery.each(mEntitySets, function(sEntitySetName, oEntitySet) {
-					oMockData[sEntitySetName] = that._generateDataFromEntitySet(oEntitySet, mEntityTypes, mComplexTypes);
+					for (var navprop in oEntitySet.navprops) {
+						var oNavProp = oEntitySet.navprops[navprop];
+						var iPropRefLength = oNavProp.from.propRef.length;
+						for (var j = 0; j < iPropRefLength; j++) {
+							for (var i = 0; i < oMockData[sEntitySetName].length; i++) {
+								var oEntity = oMockData[sEntitySetName][i];
+								// copy the value from the principle to the dependant;
+								oMockData[oNavProp.to.entitySet][i][oNavProp.to.propRef[j]] = oEntity[oNavProp.from.propRef[j]];
+							}
+						}
+					}
 					jQuery.each(oMockData[sEntitySetName], function(iIndex, oEntry) {
 						// add the metadata for the entry
 						oEntry.__metadata = {
@@ -1577,6 +1575,28 @@ sap.ui
 							};
 						});
 					});
+				});
+				this._oMockdata = oMockData;
+			};
+
+			/**
+			 * Generate some mock data based on the metadata specified for the odata service.
+			 * @param {map} mEntitySets map of the entity sets
+			 * @param {object} oMetadata the complete metadata for the service
+			 * @private
+			 */
+			MockServer.prototype._generateODataMockdataForEntitySet = function(mEntitySets, oMetadata) {
+				// load the entity sets (map the entity type data to the entity set)
+				var that = this,
+					// sRootUri = this._getRootUri(),
+					oMockData = {};
+
+				// here we need to analyse the EDMX and identify the entity types and complex types
+				var mEntityTypes = this._findEntityTypes(oMetadata);
+				var mComplexTypes = this._findComplexTypes(oMetadata);
+
+				jQuery.each(mEntitySets, function(sEntitySetName, oEntitySet) {
+					oMockData[sEntitySetName] = that._generateDataFromEntitySet(oEntitySet, mEntityTypes, mComplexTypes);
 				});
 				return oMockData;
 			};
@@ -1694,7 +1714,7 @@ sap.ui
 									break;
 								case "Edm.Int16":
 								case "Edm.Int32":
-								case "Edm.Int64":
+									//case "Edm.Int64": In ODataModel this type is represented as a string. (https://openui5.hana.ondemand.com/docs/api/symbols/sap.ui.model.odata.type.Int64.html)
 								case "Edm.Decimal":
 								case "Edm.Byte":
 								case "Edm.Double":
@@ -1790,7 +1810,7 @@ sap.ui
 					};
 
 					for (var i = 0; i < aUrlParams.length; i++) {
-					    // there is no ' and no " in param values
+						// there is no ' and no " in param values
 						if (!fnStartsWith(aUrlParams[i])) {
 							aUrlParamsNormalized.push(aUrlParams[i]);
 						}
@@ -1852,6 +1872,22 @@ sap.ui
 					}
 				});
 
+				// add the service request (HEAD request for CSRF Token)
+				aRequests.push({
+					method: "HEAD",
+					path: new RegExp("$"),
+					response: function(oXhr) {
+						jQuery.sap.log.debug("MockServer: incoming request for url: " + oXhr.url);
+						var mHeaders = {
+							"Content-Type": "application/json;charset=utf-8"
+						};
+						fnHandleXsrfTokenHeader(oXhr, mHeaders);
+						oXhr.respond(200, mHeaders);
+						jQuery.sap.log.debug("MockServer: response sent with: 200");
+						return true;
+					}
+				});
+
 				// add the service request
 				aRequests.push({
 					method: "GET",
@@ -1901,7 +1937,7 @@ sap.ui
 									case 404:
 										return "404 Not Found";
 									default:
-										break;
+										return iStatusCode;
 								}
 							};
 							var fnBuildResponseString = function(oResponse, sContentType) {
@@ -2891,15 +2927,14 @@ sap.ui
 							}
 					}
 				});
-
+				if (iExpandIndex >= 0) {
+					aOrderedUrlParams.push(aUrlParams[iExpandIndex]);
+				}
 				if (iFilterIndex >= 0) {
 					aOrderedUrlParams.push(aUrlParams[iFilterIndex]);
 				}
 				if (iInlinecountIndex >= 0) {
 					aOrderedUrlParams.push(aUrlParams[iInlinecountIndex]);
-				}
-				if (iExpandIndex >= 0) {
-					aOrderedUrlParams.push(aUrlParams[iExpandIndex]);
 				}
 				if (iOrderbyIndex >= 0) {
 					aOrderedUrlParams.push(aUrlParams[iOrderbyIndex]);

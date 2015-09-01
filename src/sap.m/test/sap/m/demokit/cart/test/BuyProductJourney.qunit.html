@@ -32,49 +32,15 @@
 			viewNamespace : "view."
 		});
 
-		opaTest("Should see the category list", function (Given, When, Then) {
-			// Arrangements
-			Given.iStartMyAppInAFrame('../index.html?responderOn=true');
-
-			//Actions
-			When.iLookAtTheScreen();
-
-			// Assertions
-			Then.iShouldSeeTheCategoryList().
-				and.theCategoryListShouldHaveSomeEntries();
+		sap.ui.require(["sap/ui/demo/cart/test/BuyProductJourney"], function (journey) {
+			journey.start(function (Given) {
+				Given.iStartMyAppInAFrame('../index.html?responderOn=true')
+			},
+			function (Then) {
+				Then.iTeardownMyAppFrame();
+			});
 		});
 
-		//We are still on the second category
-		opaTest("Should see the product list", function (Given, When, Then) {
-			// Actions
-			When.iPressOnTheSecondCategory();
-
-			// Assertions
-			Then.iShouldBeTakenToTheSecondCategory().
-				and.iShouldSeeTheProductList().
-				and.theProductListShouldHaveSomeEntries();
-		});
-
-		opaTest("Should add a product to the cart", function (Given, When, Then) {
-			// Actions
-			When.iPressOnTheFirstProduct().and.
-				iAddTheDisplayedProductToTheCart().and.iGoToTheCartPage();
-
-			// Assertions
-			Then.iShouldSeeTheProductInMyCart().
-				and.theProceedButtonShouldBeEnabled();
-		});
-
-		opaTest("Should order the cart", function (Given, When, Then) {
-			// Actions
-			When.iPressOnTheProceedButton().and.
-				iFillTheForm().and.
-				iPressOrderNow().and.
-				iGoToTheCartPage();
-
-			// Assertions
-			Then.iShouldSeeAnEmptyCart();
-		});
 	</script>
 
 </head>

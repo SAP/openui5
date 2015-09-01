@@ -38,12 +38,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item"],
 						/**
 						 * Specifies the title of the message
 						 */
-						title: { type: "string", group: "Appearance" },
+						title: { type: "string", group: "Appearance", defaultValue: "" },
 
 						/**
 						 * Specifies detailed description of the message
 						 */
-						description: { type: "string", group: "Appearance" },
+						description: { type: "string", group: "Appearance", defaultValue: "" },
 
 						/**
 						 * Specifies if description should be interpreted as markup

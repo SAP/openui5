@@ -1,27 +1,25 @@
 <mvc:View
-	controllerName="sap.ui.demo.bulletinboard.controller.Worklist"
-	xmlns="sap.m"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:core="sap.ui.core"
-	xmlns:semantic="sap.m.semantic">
+		controllerName="sap.ui.demo.bulletinboard.controller.Worklist"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:semantic="sap.m.semantic">
 	<semantic:FullscreenPage
-		id="page"
-		title="{i18n>worklistViewTitle}">
+			id="page"
+			title="{i18n>worklistViewTitle}">
 		<semantic:content>
 			<Table
-				id="table"
-				width="auto"
-				class="sapUiResponsiveMargin"
-				items="{
+					id="table"
+					width="auto"
+					class="sapUiResponsiveMargin"
+					items="{
 					path: '/Posts',
 					sorter: {
 						path: 'Title',
 						descending: false
 						}
 					}"
-				noDataText="{i18n>tableNoDataText}"
-				busyIndicatorDelay="{worklistView>/tableBusyDelay}"
-				updateFinished="onUpdateFinished">
+					busyIndicatorDelay="{worklistView>/tableBusyDelay}"
+					updateFinished="onUpdateFinished">
 				<headerToolbar>
 					<Toolbar>
 						<Label id="tableHeader" text="{worklistView>/worklistTableTitle}"/>
@@ -37,51 +35,31 @@
 					<Column width="33%" id="unitNumberColumn" hAlign="End">
 						<Text text="{i18n>TableUnitNumberColumnTitle}" id="unitNumberColumnTitle"/>
 					</Column>
-					<Column width="80px" id="flaggedColumn" demandPopin="true"/>
 				</columns>
 				<items>
 					<ColumnListItem>
 						<cells>
 							<ObjectIdentifier
-								title="{Title}"/>
+									title="{Title}"/>
 							<Text
-								text="{Category}"/>
+									text="{Category}"/>
 							<ObjectNumber
-								number="{
-                                    path: 'Price',
-                                    formatter: '.formatter.numberUnit'
-                                }"
-								unit="{Currency}"
-								/>
-							<ToggleButton
-								id="flaggedButton"
-								tooltip="{i18n>flaggedTooltip}"
-								icon="sap-icon://flag"
-								pressed="{
-									path: 'Flagged',
-									formatter: '.formatter.flagged'
-								}"
-								press="onFlaggedPress"
-								class="sapUiMediumMarginBeginEnd"/>
+									number="{
+										path: 'Price',
+										formatter: '.formatter.numberUnit'
+									}"
+									state="{
+										path: 'Price',
+										formatter: '.formatter.priceState'
+									}"
+									unit="{Currency}"/>
 						</cells>
 					</ColumnListItem>
 				</items>
 			</Table>
 		</semantic:content>
-		<semantic:customFooterContent>
-			<Toolbar id="footerToolbar">
-				<ToolbarSpacer/>
-				<Button id="shareButton" tooltip="{i18n>shareTooltip}" icon="sap-icon://action" press="onSharePress">
-					<dependents>
-						<ActionSheet id="shareSheet" showCancelButton="true" placement="Top">
-							<buttons>
-								<Button id="shareEmail" icon="sap-icon://email" text="{i18n>shareSendEmail}"
-										press="onShareEmailPress"/>
-							</buttons>
-						</ActionSheet>
-					</dependents>
-				</Button>
-			</Toolbar>
-		</semantic:customFooterContent>
+		<semantic:sendEmailAction>
+			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+		</semantic:sendEmailAction>
 	</semantic:FullscreenPage>
 </mvc:View>

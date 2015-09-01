@@ -7,6 +7,10 @@
 	height: 3.0rem;
 }
 
+li.sapMMultiComboBoxItem {
+	border: none;
+}
+
 /* ------------------------------ */
 /* BorderDiv                      */
 /* ------------------------------ */
@@ -200,10 +204,6 @@
 	}
 }
 
-/* ------------------------------ */
-/* MultiComboBox's Arrow          */
-/* ------------------------------ */
-
 .sapMMultiComboBoxInputContainer > .sapMComboBoxBaseArrow,
 .sapMMultiComboBoxInputContainer > .sapMComboBoxBaseBar::before {
 	right: 0;
@@ -212,6 +212,19 @@
 /* focus to allow go down via keyboard navigation into list */
 .sap-desktop .sapMMultiComboBoxList li.sapMComboBoxBaseItem:focus {
 	outline: 1px dotted @sapUiFocus;
+}
+
+.sapMMultiComboBoxItem .sapMCb {
+	height: 2.5rem;
+	line-height: 2.5rem;
+}
+
+li.sapMMultiComboBoxItem {
+	height: 2.5rem;
+}
+
+.sapMMultiComboBoxPicker .sapMSLITitleOnly {
+	font-size: 0.875rem;
 }
 
 .sap-desktop li.sapMMultiComboBoxItemRangeSelection {

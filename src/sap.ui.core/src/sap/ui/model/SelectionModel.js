@@ -192,17 +192,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		var iTo = Math.max(iFromIndex, iToIndex);
 	
 		// set new selection range, determine set of changed indices
-		var aChangedRowIndices = this.aSelectedIndices.slice();
+		var aOldSelectedRowIndices = this.aSelectedIndices.slice();
+
+		// build a lookup map
+		var mLookup = {};
+		var aChangedRowIndices = [];
+		for (var i = 0; i < aOldSelectedRowIndices.length; i++) {
+			mLookup[aOldSelectedRowIndices[i]] = true;
+			if (aOldSelectedRowIndices[i] < iFromIndex || aOldSelectedRowIndices[i] > iToIndex) {
+				// the old index will be deselected when it's not in the range of the new interval, therefore it's a changed index
+				aChangedRowIndices.push(aOldSelectedRowIndices[i]);
+			}
+		}
+
 		var aSelectedIndices = [];
 		for (var iIndex = iFrom; iIndex <= iTo; iIndex++) {
 			aSelectedIndices.push(iIndex);
-			var pos = jQuery.inArray(iIndex, aChangedRowIndices);
-			if ( pos === -1 ) {
+			// if the index was not selected before it is now selected and therefore part of changed indices
+			if (!mLookup[iIndex]) {
 				aChangedRowIndices.push(iIndex);
-			} else {
-				aChangedRowIndices.splice(pos, 1);
 			}
 		}
+
 		this._update(aSelectedIndices, iToIndex, aChangedRowIndices);
 		return this;
 	};

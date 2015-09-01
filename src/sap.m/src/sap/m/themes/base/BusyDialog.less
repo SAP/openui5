@@ -2,82 +2,54 @@
 /* CSS for control sap.m.BusyScreen              */
 /* ============================================= */
 
-.sapMBusyDialog {
-	outline: none;
+//this selectors need to be more specific from the Dialog's
+.sapMBusyDialog.sapMDialog {
+	min-width: 18.75rem !important;
 	text-align: center;
-	width: 18.75em;
+	width: 18.75rem !important;
 
 	.sapMBusyIndicator {
 		margin: 1em;
 	}
 
-	.sapMDialogTitle {
-		height: 3rem;
-		line-height: 3rem;
+	&.sapUiPopupWithPadding .sapMDialogScrollCont {
+		padding: 0 !important;
 	}
 
-	.sapMBusyDialogFooter {
-		height: 3rem;
-		padding: 0 0.25rem;
+	.sapMDialogSection {
+		overflow: hidden !important;
 	}
 
-	.sapMDialogBtnPhone {
+	&.sapMBusyDialog-Light {
+		//lightBusyDialog
+		-moz-box-shadow: none;
+		-webkit-box-shadow: none;
+		box-shadow: none;
 		background: transparent;
 		border: none;
-		color: white;
-		font-size: 0.875rem;
-		line-height: 3.0rem;
-		margin: 0;
-		padding: 0;
-		width: 100%;
+
+		.sapMDialogSection {
+			background: transparent;
+		}
 	}
 }
 
 .sapMLabel.sapMBusyDialogLabel {
 	display: block;
-	font-family: @sapUiFontFamily;
-	font-size: @sapUiFontSize;
+	font-size: 1rem;
 	line-height: 1.5em;
-	margin-left: 1em;
-	margin-right: 1em;
+	margin: 1rem 1rem 0;
 	text-align: center !important;
 	white-space: normal;
 }
 
-.sapMBusyDialogSimple {
-	background: transparent;
-	border: none;
-}
-
-.sapMBusyDialogLabel {
-	margin-top: 1em;
-}
-
-/* Compact size */
-.sapMBusyDialog.sapUiSizeCompact {
-
-	.sapMDialogTitle {
-		height: 1.625rem;
-		line-height: 1.625rem;
-		padding: 0.1875rem 0.5rem;
-	}
-
-	.sapMBusyIndicator {
-		margin: 0.5rem;
-	}
-
+// compact sizing
+.sapUiSizeCompact .sapMBusyDialog {
 	.sapMBusyDialogLabel {
 		margin-top: 0.5rem;
 	}
 
-	.sapMBusyDialogFooter {
-		height: 2rem;
-		line-height: 1.625rem;
-		padding: 0.1875rem 0.25rem;
-	}
-
-	.sapMDialogBtnPhone {
-		line-height: 1.625rem;
-		border: none;
+	.sapMBusyIndicator {
+		margin: 0.5rem;
 	}
 }

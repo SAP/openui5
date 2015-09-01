@@ -18,6 +18,7 @@
 var oTabStrip1 = new sap.ui.commons.TabStrip("TabStrip1");
 oTabStrip1.setWidth("400px");
 oTabStrip1.setHeight("200px");
+oTabStrip1.setEnableTabReordering(true);
 oTabStrip1.attachClose( function (oEvent) {
 	var oTabStrip = oEvent.oSource;
 	oTabStrip.closeTab(oEvent.getParameter("index"));
@@ -89,7 +90,7 @@ oTabStrip1.placeAt("sample1");
 	<h1 color="Green" icon="images/ctrls/tabstrip-icon.png">TabStrip</h1>
 
 	<h2>Introduction</h2>
-	<p>The TabStrip control is a container for one or more tabs in one place. 
+	<p>The TabStrip control is a container for one or more tabs in one place.
 	Navigation through the tabs changes the content display of the currently active content area.
 	A tab can be labeled with some text and an icon.
 	</p>

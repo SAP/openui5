@@ -213,6 +213,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		SelectRenderer.addStyleClass = function(oRm, oSelect) {};
 
 		/**
+		 * Gets accessibility role.
+		 * To be overwritten by subclasses.
+		 *
+		 * @param {sap.ui.core.Control} oSelect An object representation of the control that should be rendered.
+		 * @protected
+		 */
+		SelectRenderer.getAriaRole = function(oSelect) {
+			switch (oSelect.getType()) {
+				case sap.m.SelectType.Default:
+					return "combobox";
+
+				case sap.m.SelectType.IconOnly:
+					return "button";
+
+				// no default
+			}
+		};
+
+		/**
 		 * Writes the accessibility state.
 		 * To be overwritten by subclasses.
 		 *
@@ -221,7 +240,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		 */
 		SelectRenderer.writeAccessibilityState = function(oRm, oSelect) {
 			oRm.writeAccessibilityState(oSelect, {
-				role: "combobox",
+				role: this.getAriaRole(oSelect),
 				expanded: oSelect.isOpen(),
 				live: "polite",
 				labelledby: {

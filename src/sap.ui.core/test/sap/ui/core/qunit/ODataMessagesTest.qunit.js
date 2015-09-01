@@ -700,5 +700,65 @@ function runODataMessagesTests() {
 	asyncTest("Message with groups - Batch: off, JSON: false", fnTestBatchGroups.bind(this, false, false));
 	asyncTest("Message with groups - Batch: on,  JSON: true",  fnTestBatchGroups.bind(this, true,  true));
 	asyncTest("Message with groups - Batch: on,  JSON: false", fnTestBatchGroups.bind(this, true,  false));
+
+
+
+	var fnTestWriteBatchGroups = function(bUseBatch, bJSON) {
+		expect(bUseBatch ? 9 : 5);
+		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", {
+			useBatch: bUseBatch,
+			json: bJSON
+		});
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		
+		equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+		
+		oModel.attachMetadataLoaded(function() {
+			var aMessages = oMessageModel.getProperty("/");
+
+			equal(oMessageModel.getProperty("/").length, 0, "No messages are set after metadata loaded")
+
+			oModel.setDeferredBatchGroups(["deferredId"]);
+			oModel.update("/Products(1)", { ProductName: "Updated 1" }, { batchGroupId : "deferredId" });
+			oModel.update("/Products(2)", { ProductName: "Updated 2" }, { batchGroupId : "deferredId" });
+			oModel.update("/Products(3)", { ProductName: "Updated 3" }, { batchGroupId : "deferredId" });
+
+			oModel.attachBatchRequestSent(function() {
+				ok(bUseBatch, "Only receive batchRequestSent event in batch mode");
+				var aMessages = oMessageModel.getProperty("/");
+				equals(aMessages.length, 0, "No messages when requests have been sent");
+			});
+			oModel.attachBatchRequestCompleted(function(oEvent) {
+				ok(bUseBatch, "Only receive batchRequestCompleted event in batch mode");
+				var aMessages = oMessageModel.getProperty("/");
+				equals(aMessages.length, 1 + iRequestsCompleted, "One Message for the EntitySet plus one for every item");
+
+				onCompleted();
+			});
+			
+			var iRequestsCompleted = 0;
+			oModel.attachRequestCompleted(function(oEvent) {
+				++iRequestsCompleted;
+				var aMessages = oMessageModel.getProperty("/");
+				equals(aMessages.length, 1 + iRequestsCompleted, "One Message for the EntitySet plus one for every item");
+				
+				if (!bUseBatch && iRequestsCompleted === 3) {
+					onCompleted();
+				}
+			});
+			
+			oModel.submitChanges();
+		});
+		
+		function onCompleted() {
+			oModel.destroy();
+			start();
+		}
+	}
+	
+	asyncTest("Message with groups (write) - Batch: off, JSON: true",  fnTestWriteBatchGroups.bind(this, false, true));
+	asyncTest("Message with groups (write) - Batch: off, JSON: false", fnTestWriteBatchGroups.bind(this, false, false));
+	asyncTest("Message with groups (write) - Batch: on,  JSON: true",  fnTestWriteBatchGroups.bind(this, true,  true));
+	asyncTest("Message with groups (write) - Batch: on,  JSON: false", fnTestWriteBatchGroups.bind(this, true,  false));
 	
 }

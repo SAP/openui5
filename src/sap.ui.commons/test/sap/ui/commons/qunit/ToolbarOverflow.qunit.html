@@ -115,8 +115,21 @@
 		}
 
 
-		var oCtrl = new sap.ui.commons.Toolbar("Toolbar", {width: "300px"}).placeAt("uiArea1");
-		addManyItems(oCtrl);
+		var oCtrl = null;
+		module("Testing Overflow", {
+			beforeEach: function () {
+				oCtrl = new sap.ui.commons.Toolbar("Toolbar", {width: "300px"}).placeAt("uiArea1");
+				addManyItems(oCtrl);
+				oCtrl.placeAt("uiArea1");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				if (oCtrl) {
+					oCtrl.destroy();
+				}
+			}
+		});
+
 		//when toolbar width is set to 300px, the first "invisible" (on the second row) item is Toolbar_b_6
 		aItemsOnTheSecondRow = ["Toolbar_b_6", "Toolbar_b_7", "Toolbar_sep_8", "Toolbar_b_8", "Toolbar_b_9", "Toolbar_tf", "Toolbar_cmb"];
 
@@ -432,6 +445,13 @@
 			});
 			oCtrl.placeAt('uiArea1');
 			equal(isOverflowVisible(oCtrl), false, "Overflow button must not be visible");
+		});
+
+		test("Overflow menu in popup is deleted upon toolbar destroy", function () {
+			oCtrl.handleOverflowButtonTriggered();
+			ok(getPopupDomRef(oCtrl), "Overflow menu must be part of the dom");
+			oCtrl.destroy();
+			ok(!getPopupDomRef(oCtrl), "Once the toolbar is destroyed, the overflow menu must not be part of the dom");
 		});
 
 

@@ -21,8 +21,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	 * @param {sap.ui.model.odata.CountMode} [mParameters.countMode] defines the count mode of this binding
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode] defines the operation mode of this binding
 	 * @param {boolean} [mParameters.faultTolerant] turns on the fault tolerance mode, data is not reset if a backend request returns an error
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: sets the batch group id to be used for requests originating from this binding
-	 * @param {string} [mParameters.groupId] sets the group id to be used for requests originating from this binding
+	 * @param {string} [mParameters.batchGroupId] sets the batch group id to be used for requests originating from this binding
+	 * @param {int} [mParameters.threshold] a threshold which will be used if the OperationMode is set to "Auto".
+	 * 										In case of OperationMode.Auto, the binding tries to fetch (at least) as many entries as the threshold.
+	 * 										Also see API documentation for {@link sap.ui.model.OperationMode.Auto}.
 	 *
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataListBinding
@@ -50,7 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			this.bIgnoreSuspend = false;
 			this.sGroupId = undefined;
 			this.sRefreshGroupId = undefined;
-			this.bLengthRequestd = false;
+			this.bLengthRequested = false;
 			this.bUseExtendedChangeDetection = true;
 			this.bFaultTolerant = mParameters && mParameters.faultTolerant;
 			this.bLengthFinal = false;
@@ -63,17 +65,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			if (mParameters && (mParameters.batchGroupId || mParameters.groupId)) {
 				this.sGroupId = mParameters.groupId || mParameters.batchGroupId;
 			}
-
-			// if nested list is already available and no filters or sorters are set,
-			// use the data and don't send additional requests
-			// TODO: what if nested list is not complete, because it was too large?
+			
+			this.iThreshold = (mParameters && mParameters.threshold) || 0;
+			
+			// the internal operation mode is defined by the OperationMode set by the application, and in case of
+			// "Auto" several other indicators at runtime
+			switch (this.sOperationMode) {
+				default:
+				case OperationMode.Server: this.bClientOperation = false; break;
+				case OperationMode.Client: this.bClientOperation = true; break;
+				case OperationMode.Auto: this.bClientOperation = false; break; //initially start with server mode
+			}
+			// flag to check if the threshold was rejected after a count was issued
+			this.bThresholdRejected = false;
+			if (this.sCountMode == CountMode.None) {
+				// In CountMode.None, the threshold is implicitly rejected
+				this.bThresholdRejected = true;
+			}
+			
+			// if nested list is already available and no filters or sorters are set, use the data and don't send additional requests
+			// $expand loads all associated entities, no paging parameters possible, so we can safely assume all data is available
 			var oRef = this.oModel._getObject(this.sPath, this.oContext);
 			this.aExpandRefs = oRef;
-			if (jQuery.isArray(oRef) && !aSorters && !aFilters) {
+			// oRef needs to be an array, so that it is the list of expanded entries
+			if (jQuery.isArray(oRef)) {
 				this.aKeys = oRef;
 				this.iLength = oRef.length;
 				this.bLengthFinal = true;
 				this.bDataAvailable = true;
+				// since $expand loads all associated entries, we can directly switch to client operations
+				this.bClientOperation = true;
+				this.applyFilter();
+				this.applySort();
 			} else if (oRef === null && this.oModel.resolve(this.sPath, this.oContext)) { // means that expanded data has no data available e.g. for 0..n relations
 				this.aKeys = [];
 				this.iLength = 0;
@@ -92,7 +115,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		}
 
 	});
-
+	
 	/**
 	 * Return contexts for the list
 	 *
@@ -108,12 +131,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			return [];
 		}
 
-		//get length
-		if (!this.bLengthFinal && !this.bPendingRequest && !this.bLengthRequestd) {
-			this._getLength();
-			this.bLengthRequestd = true;
+		// OperationMode.Auto: handle synchronized count to check what the actual internal operation mode should be
+		// but only when using CountMode.Request or Both.
+		if (!this.bLengthFinal && this.sOperationMode == OperationMode.Auto && (this.sCountMode == CountMode.Request || this.sCountMode == CountMode.Both)) {
+			if (!this.bLengthRequested) {
+				this._getLength();
+				this.bLengthRequested = true;
+			}
+			return [];
 		}
-
+		
+		//get length
+		if (!this.bLengthFinal && !this.bPendingRequest && !this.bLengthRequested) {
+			this._getLength();
+			this.bLengthRequested = true;
+		}
+		
 		//this.bInitialized = true;
 		this.iLastLength = iLength;
 		this.iLastStartIndex = iStartIndex;
@@ -132,13 +165,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		if (!iThreshold) {
 			iThreshold = 0;
 		}
+		
+		// re-set the threshold in OperationMode.Auto
+		// between binding-treshold and the threshold given as an argument, the bigger one will be taken
+		if (this.sOperationMode == OperationMode.Auto) {
+			if (this.iThreshold >= 0) {
+				iThreshold = Math.max(this.iThreshold, iThreshold);
+			}
+		}
 
 		var bLoadContexts = true,
 		aContexts = this._getContexts(iStartIndex, iLength),
 		oContextData = {},
 		oSection;
 
-		if (this.sOperationMode == OperationMode.Server) {
+		if (this.bClientOperation) {
+			if (!this.aAllKeys && !this.bPendingRequest && this.oModel.getServiceMetadata()) {
+				this.loadData();
+				aContexts.dataRequested = true;
+			}
+		} else {
 			oSection = this.calculateSection(iStartIndex, iLength, iThreshold, aContexts);
 			bLoadContexts = aContexts.length !== iLength && !(this.bLengthFinal && aContexts.length >= this.iLength - iStartIndex);
 
@@ -149,11 +195,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 					this.loadData(oSection.startIndex, oSection.length);
 					aContexts.dataRequested = true;
 				}
-			}
-		} else if (this.sOperationMode == OperationMode.Client) {
-			if (!this.aAllKeys) {
-				this.loadData();
-				aContexts.dataRequested = true;
 			}
 		}
 
@@ -336,13 +377,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 
 				if (!this.bInitial){
 					// if nested list is already available, use the data and don't send additional requests
-					// TODO: what if nested list is not complete, because it was too large?
+					// $expand loads all associated entities, no paging parameters possible, so we can safely assume all data is available
 					var oRef = this.oModel._getObject(this.sPath, this.oContext);
 					this.aExpandRefs = oRef;
-					if (jQuery.isArray(oRef) && !this.aSorters.length > 0 && !this.aFilters.length > 0) {
+					// oRef needs to be an array, so that it is the list of expanded entries
+					if (jQuery.isArray(oRef)) {
 						this.aKeys = oRef;
 						this.iLength = oRef.length;
 						this.bLengthFinal = true;
+						// since $expand loads all associated entries, we can directly switch to client operations
+						this.bClientOperation = true;
+						this.applyFilter();
+						this.applySort();
 						this._fireChange();
 					} else if (!this.oModel.resolve(this.sPath, this.oContext) || oRef === null){
 						// if path does not resolve, or data is known to be null (e.g. expanded list)
@@ -382,14 +428,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		}
 
 		// create the request url
+		// $skip/$top and are excluded for OperationMode.Client and Auto if the threshold was sufficient
 		var aParams = [];
-		if (this.sRangeParams) {
+		if (this.sRangeParams && (this.sOperationMode != OperationMode.Auto || this.bThresholdRejected || !this.bLengthFinal)) {
 			aParams.push(this.sRangeParams);
 		}
 		if (this.sSortParams) {
 			aParams.push(this.sSortParams);
 		}
-		if (this.sFilterParams) {
+		// When in OperationMode.Auto, the filters are excluded and applied clientside,
+		// except when the threshold was rejected, and the binding will internally run in Server Mode (bClientOperation=false)
+		if (this.sFilterParams && (this.sOperationMode != OperationMode.Auto || this.bThresholdRejected)) {
 			aParams.push(this.sFilterParams);
 		}
 		if (this.sCustomParams) {
@@ -405,19 +454,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 
 		function fnSuccess(oData) {
 
-			// Collecting contexts
-			jQuery.each(oData.results, function(i, entry) {
-				that.aKeys[iStartIndex + i] = that.oModel._getKey(entry);
-			});
-
 			// update iLength (only when the inline count was requested and is available)
 			if (bInlineCountRequested && oData.__count) {
 				that.iLength = parseInt(oData.__count, 10);
 				if (that.sCountMode != CountMode.InlineRepeat) {
 					that.bLengthFinal = true;
 				}
+				
+				// in the OpertionMode.Auto, we check if the count is LE than the given threshold (which also was requested!)
+				if (that.sOperationMode == OperationMode.Auto) {
+					if (that.iLength <= that.mParameters.threshold) {
+						//the requested data is enough to satisfy the threshold
+						that.bClientOperation = true;
+						that.bThresholdRejected = false;
+					} else {
+						that.bClientOperation = false;
+						that.bThresholdRejected = true;
+						
+						//clean up successful request
+						delete that.mRequestHandles[sPath];
+						that.bPendingRequest = false;
+						
+						// If request is originating from this binding, change must be fired afterwards
+						that.bNeedsUpdate = true;
+						that.bIgnoreSuspend = true;
+						
+						// return since we can't do anything here anymore,
+						// we have to trigger the loading again, this time with application filters
+						return;
+					}
+				}
 			}
 
+			// Collecting contexts, after the $inlinecount was evaluated, so we do not have to clear it again when
+			// the Auto modes initial threshold <> count check failed.
+			jQuery.each(oData.results, function(i, entry) {
+				that.aKeys[iStartIndex + i] = that.oModel._getKey(entry);
+			});
+			
 			// if we got data and the results + startindex is larger than the
 			// length we just apply this value to the length
 			if (that.iLength < iStartIndex + oData.results.length) {
@@ -446,7 +520,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			}
 
 			// For clientside sorting filtering store all keys separately and set length to final
-			if (that.sOperationMode == OperationMode.Client) {
+			if (that.bClientOperation) {
 				that.aAllKeys = that.aKeys.slice();
 				that.applyFilter();
 				that.applySort();
@@ -478,6 +552,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 				that.iLength = that.aKeys.length;
 				that.bLengthFinal = true;
 				that.bDataAvailable = true;
+				
 			} else if (!bAborted) {
 				// reset data and trigger update
 				that.aKeys = [];
@@ -554,7 +629,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	 * @private
 	 */
 	ODataListBinding.prototype._getLength = function() {
-
 		var that = this;
 		var sGroupId;
 		
@@ -563,15 +637,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		}
 
 		// create a request object for the data request
+		// In OperationMode.Auto we explicitly omitt the filters for the count,
+		// filters will be applied afterwards on the client if count comes under the threshold
 		var aParams = [];
-		if (this.sFilterParams) {
+		if (this.sFilterParams && this.sOperationMode != OperationMode.Auto) {
 			aParams.push(this.sFilterParams);
 		}
 
 		// use only custom params for count and not expand,select params
 		if (this.mParameters && this.mParameters.custom) {
 			var oCust = { custom: {}};
-			jQuery.each(this.mParameters.custom, function (sParam, oValue){
+			jQuery.each(this.mParameters.custom, function (sParam, oValue) {
 				oCust.custom[sParam] = oValue;
 			});
 			aParams.push(this.oModel.createCustomParams(oCust));
@@ -580,8 +656,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		function _handleSuccess(oData) {
 			that.iLength = parseInt(oData, 10);
 			that.bLengthFinal = true;
-			that.bLengthRequestd = true;
+			that.bLengthRequested = true;
 			delete that.mRequestHandles[sPath];
+			
+			// in the OpertionMode.Auto, we check if the count is LE than the given threshold and set the client operation flag accordingly
+			if (that.sOperationMode == OperationMode.Auto) {
+				if (that.iLength <= that.mParameters.threshold) {
+					that.bClientOperation = true;
+					that.bThresholdRejected = false;
+				} else {
+					that.bClientOperation = false;
+					that.bThresholdRejected = true;
+				}
+				// fire change because of synchronized $count
+				that._fireChange({reason: ChangeReason.Change});
+			}
 		}
 
 		function _handleError(oError) {
@@ -787,7 +876,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		this.bLengthFinal = false;
 		this.sChangeReason = undefined;
 		this.bDataAvailable = false;
-		this.bLengthRequestd = false;
+		this.bLengthRequested = false;
+		
+		// reset the client operation flag based on the OperationMode
+		switch (this.sOperationMode) {
+			default:
+			case OperationMode.Server: this.bClientOperation = false; break;
+			case OperationMode.Client: this.bClientOperation = true; break;
+			case OperationMode.Auto: this.bClientOperation = false; break;
+		}
+		
+		this.bThresholdRejected = false;
+		// In CountMode.None, the threshold is implicitly rejected
+		if (this.sCountMode == CountMode.None) {
+			this.bThresholdRejected = true;
+		}
 	};
 
 
@@ -855,12 +958,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 
 		this.aSorters = aSorters;
 
-		if (this.sOperationMode == OperationMode.Server) {
+		if (!this.bClientOperation) {
 			this.createSortParams(aSorters);
 		}
 
 		if (!this.bInitial) {
-			if (this.sOperationMode == OperationMode.Server) {
+			if (this.bClientOperation) {
+				this.applySort();
+				this._fireChange({reason: ChangeReason.Sort});
+			} else {
 				// Only reset the keys, length usually doesn't change when sorting
 				this.aKeys = [];
 				this.abortPendingRequest();
@@ -869,9 +975,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 				// TODO remove this if the sort event gets removed which is now deprecated
 				this._fireSort({sorter: aSorters});
 				bSuccess = true;
-			} else if (this.sOperationMode == OperationMode.Client) {
-				this.applySort();
-				this._fireChange({reason: ChangeReason.Sort});
 			}
 		}
 
@@ -938,12 +1041,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			this.aApplicationFilters = [];
 		}
 
-		if (this.sOperationMode == OperationMode.Server) {
+		if (!this.bClientOperation) {
 			this.createFilterParams(aFilters);
 		}
 
 		if (!this.bInitial) {
-			if (this.sOperationMode == OperationMode.Server) {
+			
+			if (this.bClientOperation) {
+				this.applyFilter();
+				this.applySort();
+				this._fireChange({reason: ChangeReason.Filter});
+			} else {
 				this.resetData();
 				this.abortPendingRequest();
 				this.sChangeReason = ChangeReason.Filter;
@@ -955,11 +1063,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 					this._fireFilter({filters: this.aFilters});
 				}
 				bSuccess = true;
-			} else if (this.sOperationMode == OperationMode.Client) {
-				this.applyFilter();
-				this.applySort();
-				this._fireChange({reason: ChangeReason.Filter});
 			}
+			
 		}
 
 		if (bReturnSuccess) {
@@ -1002,7 +1107,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			return;
 		}
 		this.oEntityType = this._getEntityType();
-		if (this.sOperationMode == OperationMode.Server) {
+		if (!this.bClientOperation) {
 			this.createSortParams(this.aSorters);
 			this.createFilterParams(this.aFilters.concat(this.aApplicationFilters));
 		}

@@ -12,11 +12,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Constructor for a new TileContainer.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A container that arranges same-size tiles nicely on carousel pages
+	 * A container that arranges same-size tiles nicely on carousel pages.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -34,22 +34,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		properties : {
 
 			/**
-			 * The width of the container in pixel
+			 * Defines the width of the TileContainer in px.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
 
 			/**
-			 * The height of the container in pixel
+			 * Defines the height of the TileContainer in px.
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
 
 			/**
-			 * Whether the tile container is editable and you can move or delete or add tiles.
+			 * Determines whether the TileContainer is editable so you can move, delete or add tiles.
 			 */
 			editable : {type : "boolean", group : "Misc", defaultValue : null},
 
 			/**
-			 * Determines whether the user is allowed to add tiles in edit mode (editable = true)
+			 * Determines whether the user is allowed to add Tiles in Edit mode (editable = true).
 			 */
 			allowAdd : {type : "boolean", group : "Misc", defaultValue : null}
 		},
@@ -57,45 +57,45 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		aggregations : {
 
 			/**
-			 * The tiles to be displayed by the tile container
+			 * The Tiles to be displayed by the TileContainer.
 			 */
 			tiles : {type : "sap.m.Tile", multiple : true, singularName : "tile"}
 		},
 		events : {
 
 			/**
-			 * Fired if a tile was moved
+			 * Fires if a Tile is moved.
 			 */
 			tileMove : {
 				parameters : {
 
 					/**
-					 * The tile that has been moved
+					 * The Tile that has been moved.
 					 */
 					tile : {type : "sap.m.Tile"},
 
 					/**
-					 * The new index of the tile in the tiles aggregation
+					 * The new index of the Tile in the tiles aggregation.
 					 */
 					newIndex : {type : "int"}
 				}
 			},
 
 			/**
-			 * Fired if a tile is deleted during edit mode.
+			 * Fires if a Tile is deleted in Edit mode.
 			 */
 			tileDelete : {
 				parameters : {
 
 					/**
-					 * The tile
+					 * The deleted Tile.
 					 */
 					tile : {type : "sap.m.Tile"}
 				}
 			},
 
 			/**
-			 * Fired if a Tile is added
+			 * Fires when a Tile is added.
 			 */
 			tileAdd : {}
 		}
@@ -107,7 +107,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	TileContainer.prototype._bRtl  = sap.ui.getCore().getConfiguration().getRTL();
 
 	/**
-	 * Initializes the control
+	 * Initializes the control.
 	 *
 	 * @private
 	 */
@@ -382,8 +382,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Finds the next tabbable element after the tile container
-	 * @returns {Element} the next tabbable element after the tile container
+	 * Finds the next tabbable element after the TileContainer.
+	 * @returns {Element} The next tabbable element after the tile container
 	 * @private
 	 */
 	TileContainer.prototype._findNextTabbable = function() {
@@ -442,11 +442,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Sets the editable property to the tile container that allows to move icons.
-	 * This is currently also set with a long tap
+	 * Sets the editable property to the TileContainer, allowing to move icons.
+	 * This is currently also set with a long tap.
 	 *
-	 * @param {boolean} bValue Whether the container is in edit mode or not.
-	 * @returns {sap.m.TileContainer} This tile container.
+	 * @param {boolean} bValue Whether the container is in edit mode or not
+	 * @returns {sap.m.TileContainer} this pointer for chaining
 	 * @public
 	 */
 	TileContainer.prototype.setEditable = function(bValue) {
@@ -469,7 +469,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Applies the containers dimensions.
+	 * Applies the container's dimensions.
 	 *
 	 * @private
 	 */
@@ -523,8 +523,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Handles the resize event for the tile container.
-	 * This is called whenever the orientation of browser size changes.
+	 * Handles the resize event for the TileContainer.
+	 * Called whenever the orientation of browser size changes.
 	 *
 	 * @private
 	 */
@@ -564,7 +564,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Updates all tiles
+	 * Updates all Tiles.
 	 *
 	 * @private
 	 */
@@ -587,9 +587,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Returns the index of the first tile that is visible in the current page
+	 * Returns the index of the first Tile visible in the current page.
 	 *
-	 * @returns {int} The index of the first tile that is visible in the current page.
+	 * @returns {int} The index of the first Tile that is visible in the current page
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -598,11 +598,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Moves a given tile to the given index.
+	 * Moves a given Tile to the given index.
 	 *
 	 * @param {sap.m.Tile} vTile The tile to move
-	 * @param {int} iNewIndex The new Tile position in the tiles aggregation.
-	 * @returns {sap.m.TileContainer} This tile container.
+	 * @param {int} iNewIndex The new Tile position in the tiles aggregation
+	 * @returns {sap.m.TileContainer} this pointer for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -623,10 +623,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Adds a tile to the end of the tiles collection
+	 * Adds a Tile to the end of the tiles collection.
 	 *
-	 * @param {sap.m.Tile} oTile The tile to add.
-	 * @returns {sap.m.TileContainer} This tile container.
+	 * @param {sap.m.Tile} oTile The tile to add
+	 * @returns {sap.m.TileContainer} this pointer for chaining
 	 * @override
 	 * @public
 	 */
@@ -635,11 +635,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Inserts a tile to the given index
+	 * Inserts a Tile to the given index.
 	 *
-	 * @param {sap.m.Tile} oTile The tile to insert
-	 * @param {int} iIndex The new Tile position in the tiles aggregation.
-	 * @returns {sap.m.TileContainer} This tile container.
+	 * @param {sap.m.Tile} oTile The Tile to insert
+	 * @param {int} iIndex The new Tile position in the tiles aggregation
+	 * @returns {sap.m.TileContainer} this pointer for chaining
 	 * @override
 	 * @public
 	 */
@@ -716,7 +716,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * If there is no tile focusable e.g.tabindex = 0 update the first tile.
+	 * Updates the tab index of the Tiles.
+	 * If there is no focusable Tile (for example, tabindex = 0), updates the first tile.
 	 * @private
 	 */
 	TileContainer.prototype._updateTilesTabIndex = function () {
@@ -732,7 +733,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Checks if a DOM element is focusable - to be used within jQuery.filter function
+	 * Checks if a DOM element is focusable.
+	 * To be used within jQuery.filter function.
 	 * @param {int} index Index of the element within an array
 	 * @param {Element} element DOM element to check
 	 * @returns {Boolean} If a DOM element is focusable
@@ -761,10 +763,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Deletes a tile.
+	 * Deletes a Tile.
 	 *
 	 * @param {sap.m.Tile} oTile The tile to move
-	 * @returns {sap.m.TileContainer} This tile container.
+	 * @returns {sap.m.TileContainer} this pointer for chaining
 	 * @override
 	 * @public
 	 */
@@ -828,7 +830,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Scrolls one page to the left
+	 * Scrolls one page to the left.
 	 *
 	 * @public
 	 */
@@ -854,11 +856,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Scrolls to the page where the given tile or tile index is included.
+	 * Scrolls to the page where the given Tile or tile index is included.
 	 * Optionally this can be done animated or not. With IE9 the scroll is never animated.
 	 *
-	 * @param {sap.m.Tile|int} vTile The tile or tile index to be scrolled into view.
-	 * @param {boolean} bAnimated Whether the scroll should be animated.
+	 * @param {sap.m.Tile|int} vTile The Tile or tile index to be scrolled into view
+	 * @param {boolean} bAnimated Whether the scroll should be animated
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -935,7 +937,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Convenience method which returns $node if it has css class 'sapMTile'
+	 * Finds a Tile.
+	 * Convenience method, which returns $node if it has Css class sapMTile
 	 * or the first child with that class.
 	 *
 	 * @private
@@ -950,8 +953,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Updates the pager part of the tile container.
-	 * This is done dynamically
+	 * Updates the pager part of the TileContainer.
+	 * This is done dynamically.
 	 *
 	 * @private
 	 */
@@ -1035,9 +1038,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Returns the dimension (width and height) of the tile container content.
+	 * Returns the dimension (width and height) of the TileContainer content.
 	 *
-	 * @returns {object} Width and height of the pages content.
+	 * @returns {object} Width and height of the pages content
 	 * @private
 	 */
 	TileContainer.prototype._getContainerDimension = function() {
@@ -1056,7 +1059,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Calculates the tile page sizes.
+	 * Calculates the Tile page sizes.
 	 *
 	 * @private
 	 */
@@ -1099,12 +1102,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Returns an array for a given pixel position in the tile container.
-	 * Normally there is only one tile for a position.
+	 * Gets Tiles from a given position.
+	 * Returns an array for a given pixel position in the TileContainer.
+	 * Normally, there is only one Tile for a position.
 	 *
-	 * @param {int} iX Position in pixels.
-	 * @param {int} iY Position in pixels.
-	 * @returns {array} Array of tiles for the given position
+	 * @param {int} iX Position in px
+	 * @param {int} iY Position in px
+	 * @returns {array} Array of Tiles for the given position
 	 * @private
 	 */
 	TileContainer.prototype._getTilesFromPosition = function(iX, iY) {
@@ -1136,9 +1140,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Applies the start index of the pages first tile according to the given index.
+	 * Applies the start index of the pages' first Tile according to the given index.
 	 *
-	 * @param {int} iIndex The index of the tile that should be visible.
+	 * @param {int} iIndex The index of the tile that should be visible
 	 * @private
 	 */
 	TileContainer.prototype._applyPageStartIndex = function(iIndex) {
@@ -1168,7 +1172,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Scrolls to the given position.
 	 *
-	 * @param {int} The new scroll position.
+	 * @param {int} iScrollLeft The new scroll position
+	 * @param {boolean} bAnimated Whether the scroll is animated
 	 * @private
 	 */
 	TileContainer.prototype._scrollTo = function(iScrollLeft, bAnimated) {
@@ -1189,9 +1194,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Applies the translate x and y to the given jQuery object.
 	 *
 	 * @param {object} o$ The jQuery object
-	 * @param {int} iX The pixel x value for the translate
-	 * @param {int} iY The pixel y value for the translate
-	 * @param {boolean} bAnimated Whether the translate should be animated or not.
+	 * @param {int} iX The px x value for the translate
+	 * @param {int} iY The px y value for the translate
+	 * @param {boolean} bAnimated Whether the translate should be animated or not
 	 * @private
 	 */
 	TileContainer.prototype._applyTranslate = function(o$, iX, iY, bAnimated) {
@@ -1211,9 +1216,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Initializes the touch session for the tile container.
+	 * Initializes the touch session for the TileContainer.
 	 *
-	 * @param {jQuery.Event} oEvent The event object that started the touch.
+	 * @param {jQuery.Event} oEvent The event object that started the touch
 	 * @private
 	 */
 	TileContainer.prototype._initTouchSession = function(oEvent) {
@@ -1242,9 +1247,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Initializes the drag session for the tile container.
+	 * Initializes the drag session for the TileContainer.
 	 *
-	 * @param {jQuery.Event} oEvent The event object that started the drag.
+	 * @param {jQuery.Event} oEvent The event object that started the drag
 	 * @private
 	 */
 	TileContainer.prototype._initDragSession = function(oEvent) {
@@ -1281,9 +1286,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Handle click events for scollers in desktop case.
+	 * Handles click events for scrollers on desktop.
 	 *
-	 * @param {jQuery.Event} oEvent The event object that started the drag.
+	 * @param {jQuery.Event} oEvent The event object that started the drag
 	 * @private
 	 */
 	TileContainer.prototype.onclick = function(oEvent) {
@@ -1303,9 +1308,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Handle the touchstart event on the TileContainer.
+	 * Handles the touchstart event on the TileContainer.
 	 *
-	 * @param {jQuery.Event} oEvent The event object.
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	TileContainer.prototype.ontouchstart = function(oEvent) {
@@ -1341,9 +1346,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Handle the touch move event on the TileContainer.
+	 * Handles the touchmove event on the TileContainer.
 	 *
-	 * @param {jQuery.Event} oEvent The event object.
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	TileContainer.prototype._onmove = function(oEvent) {
@@ -1399,9 +1404,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Handle the touchend and mouseup events on the TileContainer.
+	 * Handles the touchend and mouseup events on the TileContainer.
 	 *
-	 * @param {jQuery.Event} The event object.
+	 * @param {jQuery.Event} The event object
 	 * @private
 	 */
 	TileContainer.prototype._onend = function(oEvent) {
@@ -1473,9 +1478,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Handles the drag start of an item in edit mode.
+	 * Handles the drag start of an item in Edit mode.
 	 *
-	 * @param {jQuery.Event} oEvent The event object.
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	TileContainer.prototype._onDragStart = function(oEvent) {
@@ -1489,7 +1494,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Handles the dragging of an item.
 	 *
-	 * @param {jQuery.Event} oEvent The event object.
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	TileContainer.prototype._onDrag = function(oEvent) {
@@ -1632,9 +1637,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Handles the drop of a tile.
+	 * Handles the drop of a Tile.
 	 *
-	 * @param {jQuery.Event} oEvent The event object.
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	TileContainer.prototype._onDrop = function(oEvent) {
@@ -1678,7 +1683,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Handles the WAI ARIA property aria-activedescendant
+	 * Handles the WAI ARIA property aria-activedescendant.
 	 *
 	 * @private
 	 */
@@ -1696,10 +1701,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Calculates a common tile dimension (width and height),
-	 * that should be applied for all tiles.
-	 * Function {@link getLastCalculatedDimension} does not do the calculation,
-	 * the caller must explicitly call the {@link calc} function before it, or when he/she wants up-to-date dimension
+	 * Calculates a common Tile dimension (width and height) applied for all the Tiles.
+	 * Function {@link getLastCalculatedDimension} does not do the calculation.
+	 * The caller must explicitly call the {@link calc} function before it, or when he/she wants up-to-date dimension.
 	 * @private
 	 */
 	var TileDimensionCalculator = function(oTileContainer) {
@@ -1707,8 +1711,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._oTileContainer = oTileContainer;
 	};
 	/**
-	 * Calculates the dimension (width and height) of a tile.
-	 * @returns {object} Width and height of a tile.
+	 * Calculates the dimension (width and height) of a Tile.
+	 * @returns {object} Width and height of a tile
 	 * @protected
 	 */
 	TileDimensionCalculator.prototype.calc = function() {
@@ -1729,9 +1733,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this._oDimension;
 	};
 	/**
-	 * Returns the current dimension (width and height) of a tile.
+	 * Returns the current dimension (width and height) of a Tile.
 	 *
-	 * @returns {object} Width and height of a tile.
+	 * @returns {object} Width and height of a Tile.
 	 * @protected
 	 */
 	TileDimensionCalculator.prototype.getLastCalculatedDimension = function() {
@@ -1739,7 +1743,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Handles the WAI ARIA property "aria-setsize" after a change in the tile container
+	 * Handles the WAI ARIA property aria-setsize after a change in the TileContainer.
 	 *
 	 * @private
 	 */
@@ -1754,9 +1758,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		});
 	}
 	/**
-	 * Handles the WAI ARIA property "aria-posinset" after a change in the tile container
-	 * @param {int} iStartIndex the index of the tile to start with
-	 * @param {int} iEndIndex the index of the tile to complete with
+	 * Handles the WAI ARIA property aria-posinset after a change in the TileContainer.
+	 * @param {int} iStartIndex The index of the Tile to start with
+	 * @param {int} iEndIndex The index of the Tile to complete with
 	 * @private
 	 */
 	function handleAriaPositionInSet(iStartIndex, iEndIndex) {

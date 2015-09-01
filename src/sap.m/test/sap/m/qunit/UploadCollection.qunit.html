@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript" src="UploadCollectionForPendingUpload.qunit.js"></script>
@@ -211,6 +211,73 @@
 			}
 		}
 		assert.equal(sFileNameRequestIdValue, sFileName + sRequestId, "Unique key for a File is set correctly into requestHeaders");
+	});
+
+	QUnit.test("handleTerminate opens a dialog which could be cancelled.", function(assert) {
+		var done = assert.async();
+		var oItem = new sap.m.UploadCollectionItem({
+			fileName : "otto4711.txt"
+		});
+		this.oUploadCollection._handleTerminate({}, oItem);
+		sap.ui.getCore().applyChanges();
+		var oDialog = sap.ui.getCore().byId(this.oUploadCollection.getId() + "deleteDialog");
+		assert.ok(oDialog.getDomRef(), "Dialog was rendered.");
+		oDialog.attachAfterClose(function () {
+			assert.ok(true, "Dialog is closed.");
+			done();
+		});
+		oDialog.getButtons()[1].firePress();
+		sap.ui.getCore().applyChanges();
+	});
+
+	QUnit.test("handleTerminate - abort on FileUploader is called.", function(assert) {
+		var done = assert.async();
+		// Prepare FileUploader Spy
+		this.oUploadCollection._getFileUploader()._aXhr = [];
+		sinon.spy(this.oUploadCollection._getFileUploader(), "abort");
+		// Prepare UploadCollectionItem
+		var oItem = new sap.m.UploadCollectionItem({
+			fileName : "otto4711.txt"
+		});
+		oItem._status = sap.m.UploadCollection._uploadingStatus;
+		oItem._requestIdName = 0;
+		this.oUploadCollection.insertItem(oItem);
+		sap.ui.getCore().applyChanges();
+		// Call termination
+		this.oUploadCollection._handleTerminate({}, oItem);
+		var oDialog = sap.ui.getCore().byId(this.oUploadCollection.getId() + "deleteDialog");
+		oDialog.attachAfterClose(function () {
+			assert.ok(true, "Dialog is closed.");
+			done();
+		});
+		oDialog.getButtons()[0].firePress();
+		sap.ui.getCore().applyChanges();
+		assert.equal(this.oUploadCollection._getFileUploader().abort.callCount, 1, "Abort on FileUploader was called.");
+	});
+
+	QUnit.test("handleTerminate - deleteFile is fired if the upload is done before a confirmation of the termination.", function(assert) {
+		var done = assert.async();
+		// Prepare UploadCollectionItem and UploadCollection itself
+		var oItem = new sap.m.UploadCollectionItem({
+			fileName : "otto4711.txt",
+			documentId : "4712"
+		});
+		oItem._status = sap.m.UploadCollection._displayStatus;
+		this.oUploadCollection.insertItem(oItem);
+		this.oUploadCollection.attachFileDeleted(function (oEvent) {
+			assert.equal(oEvent.getParameter("documentId"), "4712", "Correct documentId passed.");
+			assert.deepEqual(oEvent.getParameter("item"), oItem, "Correct item passed.");
+		});
+		sap.ui.getCore().applyChanges();
+		// Call termination
+		this.oUploadCollection._handleTerminate({}, oItem);
+		var oDialog = sap.ui.getCore().byId(this.oUploadCollection.getId() + "deleteDialog");
+		oDialog.attachAfterClose(function () {
+			assert.ok(true, "Dialog is closed.");
+			done();
+		});
+		oDialog.getButtons()[0].firePress();
+		sap.ui.getCore().applyChanges();
 	});
 
 	/* --------------------------------------- */
@@ -459,15 +526,67 @@
 	});
 
 	QUnit.test("Event terminate", function(assert) {
-		assert.expect(1); // verifies the event handler was executed
 		var sFileName = "file1";
+		var aRequestHeaders = [{
+			name: "someRequestHeaderName",
+			value: "someRequestHeaderValue"
+		}];
+		var oUploadCollectionParamter = new sap.m.UploadCollectionParameter({
+			name: "someRequestHeaderName",
+			value: "someRequestHeaderValue"
+		});
 		function onUploadTerminated(oEvent) {
-			assert.ok(true, "Event uploadTerminated fired");
+			assert.equal(oEvent.getParameter("fileName"), sFileName, "FileName parameter is provided correctly by the uploadTerminated event");
+			assert.ok(oEvent.getParameter("getHeaderParameter"), "Proper method 'getHeaderParameter' in parameters of uploadTerminated event");
+			assert.equal(oEvent.getParameters().getHeaderParameter("someRequestHeaderName").getValue(), "someRequestHeaderValue", "Value of the request header parameter retrieved correctly, header parameter name specified");
+			assert.equal(oEvent.getParameters().getHeaderParameter()[0].getName(), oUploadCollectionParamter.getName(), "Name of the request header parameter retrieved correctly, , header parameter name not specified");
+			assert.equal(oEvent.getParameters().getHeaderParameter()[0].getValue(), oUploadCollectionParamter.getValue(), "Name of the request header parameter retrieved correctly, , header parameter name not specified");
 		}
 		this.oUploadCollection.attachUploadTerminated(onUploadTerminated);
 		this.oUploadCollection._getFileUploader().fireUploadAborted({
-			fileName : sFileName
+			fileName: sFileName,
+			requestHeaders: aRequestHeaders
 		})
+	});
+
+	QUnit.test("Event beforeUploadStarts", function(assert) {
+		var sFileName = "someFileName", sRequestId = "1",  aRequestHeaders = [{
+			name: this.oUploadCollection._headerParamConst.requestIdName,
+			value: sRequestId
+		}];
+		var sSlugName = "slug", sSlugValueBefore = jQuery.now(), sSlugValueAfter, sSecurityTokenName = "securuityToken", sSecurityTokenValueBefore = jQuery.now(), sSecurityTokenValueAfter;
+		function onBeforeUploadStarts(oEvent) {
+			var oHeaderParameter1 = new sap.m.UploadCollectionParameter({name: sSlugName, value: sSlugValueBefore});
+			oEvent.getParameters().addHeaderParameter(oHeaderParameter1);
+			var oHeaderParameter2 = new sap.m.UploadCollectionParameter({name: sSecurityTokenName, value: sSecurityTokenValueBefore});
+			oEvent.getParameters().addHeaderParameter(oHeaderParameter2);
+			assert.equal(oEvent.getParameter("fileName"), sFileName, "Correct FileName in beforeUploadStarts event");
+			assert.ok(oEvent.getParameter("addHeaderParameter"), "Correct method 'addHeaderParameter' in parameters of beforeUploadStarts event");
+			assert.ok(oEvent.getParameter("getHeaderParameter"), "Correct method 'getHeaderParameter' in parameters of beforeUploadStarts event");
+			assert.equal(oEvent.getParameters().getHeaderParameter(sSlugName).getValue(), sSlugValueBefore, "Value of the header parameter1 retrieved correctly");
+			assert.equal(oEvent.getParameters().getHeaderParameter(sSecurityTokenName).getValue(), sSecurityTokenValueBefore, "Value of the header parameter2 retrieved correctly");
+			assert.equal(oEvent.getParameters().getHeaderParameter()[2].getName(), sSlugName, "Name of the first header parameter should be slug.");
+
+			var oSlugParameter = oEvent.getParameters().getHeaderParameter()[2];
+			oSlugParameter.setValue("ChangedSlugValue");
+		}
+		this.oUploadCollection.attachBeforeUploadStarts(onBeforeUploadStarts);
+		this.oUploadCollection._getFileUploader().fireUploadStart({
+			fileName : sFileName,
+			requestHeaders: aRequestHeaders
+		});
+		var iParamCounter = aRequestHeaders.length;
+		for (var i = 0; i < iParamCounter; i++ ) {
+			if (aRequestHeaders[i].name === sSlugName) {
+				sSlugValueAfter = aRequestHeaders[i].value;
+			}
+			if (aRequestHeaders[i].name === sSecurityTokenName) {
+				sSecurityTokenValueAfter = aRequestHeaders[i].value;
+			}
+		}
+		assert.equal(sSlugValueAfter, "ChangedSlugValue");
+		assert.notEqual(sSlugValueBefore, sSlugValueAfter, "Slug value is set correctly by the method 'addHeaderParameter' of the beforeUploadStarts event");
+		assert.equal(sSecurityTokenValueBefore, sSecurityTokenValueAfter, "SecurityToken value is set correctly by the method 'addHeaderParameter' of the beforeUploadStarts event");
 	});
 
 	QUnit.module("Edit tests", {
@@ -632,6 +751,7 @@
 			sap.m.UploadCollection.prototype._triggerLink = this.fnTriggerLink;
 		}
 	});
+
 	QUnit.test("Display", function(assert) {
 		sap.m.UploadCollection.prototype._triggerLink = function(oEvent, oContext) {
 			assert.ok(true, "Link is triggered");

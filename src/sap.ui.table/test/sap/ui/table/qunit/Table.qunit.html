@@ -8,6 +8,8 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="utf-8" />
+
 	<title>qUnit Page for sap.ui.table.Table</title>
 	<script id="sap-ui-bootstrap" 
 		type="text/javascript"
@@ -654,6 +656,97 @@
 		equals($table.find('.sapUiTableCtrlScr .sapUiTableCtrlRowFixedBottom tbody tr').length, 2, "Right fixed bottom table has 2 rows");
 		equals($table.find('.sapUiTableVSb').css('top'), ($table.find('.sapUiTableCtrl.sapUiTableCtrlRowScroll.sapUiTableCtrlScroll')[0].offsetTop - 1) + "px", "Vertical scrollbar has correct top padding");
 		equals($table.find('.sapUiTableVSb').css('height'), ($table.find('.sapUiTableCtrl.sapUiTableCtrlRowScroll.sapUiTableCtrlScroll')[0].offsetHeight) + "px", "Vertical scrollbar has correct height");
+	});
+
+	QUnit.test("Sanity check for fixed rows", function(assert) {
+		oTable.setVisibleRowCount(10);
+		oTable.setFixedRowCount(1);
+		assert.equal(oTable.getFixedRowCount(), 1,
+						"Set(visible: 10, *fixed: 1, fixedBottom: 1), " +
+						"Get(visible: " + oTable.getVisibleRowCount() + ", fixed: " + oTable.getFixedRowCount() + ", fixedBottom: " + oTable.getFixedBottomRowCount() + ")");
+
+		oTable.setFixedBottomRowCount(1);
+		assert.equal(oTable.getFixedBottomRowCount(), 1,
+						"Set(visible: 10, fixed: 1, *fixedBottom: 1), " +
+						"Get(visible: " + oTable.getVisibleRowCount() + ", fixed: " + oTable.getFixedRowCount() + ", fixedBottom: " + oTable.getFixedBottomRowCount() + ")");
+
+		oTable.setFixedRowCount(8);
+		assert.equal(oTable.getFixedRowCount(), 8,
+						"Set(visible: 10, *fixed: 8, fixedBottom: 1), " +
+						"Get(visible: " + oTable.getVisibleRowCount() + ", fixed: " + oTable.getFixedRowCount() + ", fixedBottom: " + oTable.getFixedBottomRowCount() + ")");
+
+		oTable.setFixedRowCount(9);
+		assert.equal(oTable.getFixedRowCount(), 8,
+						"Set(visible: 10, *fixed: 9 (expect 8), fixedBottom: 1), " +
+						"Get(visible: " + oTable.getVisibleRowCount() + ", fixed: " + oTable.getFixedRowCount() + ", fixedBottom: " + oTable.getFixedBottomRowCount() + ")");
+
+		oTable.setFixedRowCount(0);
+		assert.equal(oTable.getFixedRowCount(), 0,
+						"Set(visible: 10, *fixed: 0, fixedBottom: 1), " +
+						"Get(visible: " + oTable.getVisibleRowCount() + ", fixed: " + oTable.getFixedRowCount() + ", fixedBottom: " + oTable.getFixedBottomRowCount() + ")");
+
+		oTable.setFixedRowCount(10);
+		assert.equal(oTable.getFixedRowCount(), 0,
+						"Set(visible: 10, *fixed: 10 (expect 0), fixedBottom: 1), " +
+						"Get(visible: " + oTable.getVisibleRowCount() + ", fixed: " + oTable.getFixedRowCount() + ", fixedBottom: " + oTable.getFixedBottomRowCount() + ")");
+
+		oTable.setFixedBottomRowCount(5);
+		assert.equal(oTable.getFixedBottomRowCount(), 5,
+						"Set(visible: 10, fixed: 0, *fixedBottom: 5), " +
+						"Get(visible: " + oTable.getVisibleRowCount() + ", fixed: " + oTable.getFixedRowCount() + ", fixedBottom: " + oTable.getFixedBottomRowCount() + ")");
+
+		oTable.setFixedBottomRowCount(9);
+		assert.equal(oTable.getFixedBottomRowCount(), 9,
+						"Set(visible: 10, fixed: 0, *fixedBottom: 9), " +
+						"Get(visible: " + oTable.getVisibleRowCount() + ", fixed: " + oTable.getFixedRowCount() + ", fixedBottom: " + oTable.getFixedBottomRowCount() + ")");
+
+		oTable.setFixedBottomRowCount(10);
+		assert.equal(oTable.getFixedBottomRowCount(), 9,
+						"Set(visible: 10, fixed: 0, *fixedBottom: 10 (expect 9)), " +
+						"Get(visible: " + oTable.getVisibleRowCount() + ", fixed: " + oTable.getFixedRowCount() + ", fixedBottom: " + oTable.getFixedBottomRowCount() + ")");
+
+		oTable.setFixedBottomRowCount(11);
+		assert.equal(oTable.getFixedBottomRowCount(), 9,
+						"Set(visible: 10, fixed: 0, *fixedBottom: 11 (expect 9)), " +
+						"Get(visible: " + oTable.getVisibleRowCount() + ", fixed: " + oTable.getFixedRowCount() + ", fixedBottom: " + oTable.getFixedBottomRowCount() + ")");
+
+		oTable.setFixedBottomRowCount(3);
+		oTable.setFixedRowCount(3);
+
+		assert.equal(oTable.getFixedBottomRowCount(), 3,
+						"Set(visible: 10, fixed: 3, *fixedBottom: 3), " +
+						"Get(visible: " + oTable.getVisibleRowCount() + ", fixed: " + oTable.getFixedRowCount() + ", fixedBottom: " + oTable.getFixedBottomRowCount() + ")");
+
+		assert.equal(oTable.getFixedRowCount(), 3,
+						"Set(visible: 10, *fixed: 3, fixedBottom: 3), " +
+						"Get(visible: " + oTable.getVisibleRowCount() + ", fixed: " + oTable.getFixedRowCount() + ", fixedBottom: " + oTable.getFixedBottomRowCount() + ")");
+
+		oTable.setVisibleRowCount(8);
+		assert.equal(oTable.getVisibleRowCount(), 8,
+						"Set(*visible: 8, fixed: 3, fixedBottom: 3), " +
+						"Get(visible: " + oTable.getVisibleRowCount() + ", fixed: " + oTable.getFixedRowCount() + ", fixedBottom: " + oTable.getFixedBottomRowCount() + ")");
+
+		oTable.setVisibleRowCount(7);
+		assert.equal(oTable.getVisibleRowCount(), 7,
+						"Set(*visible: 7, fixed: 3, fixedBottom: 3), " +
+						"Get(visible: " + oTable.getVisibleRowCount() + ", fixed: " + oTable.getFixedRowCount() + ", fixedBottom: " + oTable.getFixedBottomRowCount() + ")");
+
+		oTable.setVisibleRowCount(6);
+		assert.equal(oTable.getVisibleRowCount(), 7,
+						"Set(*visible: 6 (expect 7), fixed: 3, fixedBottom: 3), " +
+						"Get(visible: " + oTable.getVisibleRowCount() + ", fixed: " + oTable.getFixedRowCount() + ", fixedBottom: " + oTable.getFixedBottomRowCount() + ")");
+
+		oTable.setVisibleRowCount(5);
+		assert.equal(oTable.getVisibleRowCount(), 7,
+						"Set(*visible: 5 (expect 7), fixed: 3, fixedBottom: 3), " +
+						"Get(visible: " + oTable.getVisibleRowCount() + ", fixed: " + oTable.getFixedRowCount() + ", fixedBottom: " + oTable.getFixedBottomRowCount() + ")");
+
+		oTable.setFixedRowCount(0);
+		oTable.setVisibleRowCount(5);
+		assert.equal(oTable.getVisibleRowCount(), 5,
+						"Set(*visible: 5, fixed: 3, fixedBottom: 3), " +
+						"Get(visible: " + oTable.getVisibleRowCount() + ", fixed: " + oTable.getFixedRowCount() + ", fixedBottom: " + oTable.getFixedBottomRowCount() + ")");
+
 	});
 
 	module("Grouping", {

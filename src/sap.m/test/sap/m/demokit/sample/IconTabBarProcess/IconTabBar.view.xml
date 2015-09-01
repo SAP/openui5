@@ -4,7 +4,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<IconTabBar
-		expanded="false"
+		expanded="true"
 		id="idIconTabBar"
 		select="handleIconTabBarSelect"
 		class="sapUiResponsiveContentPadding">

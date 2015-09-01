@@ -22,6 +22,11 @@ function getHeader(headers, header) {
 	return undefined;
 }
 
+window.odataFakeServiceData = {
+	forbidHeadRequest: false,
+	csrfRequests: []
+};
+
 xhr.useFilters = true;
 xhr.addFilter(function(method, url) {
 	return url.indexOf(baseURL) != 0;
@@ -215,12 +220,20 @@ xhr.onCreate = function(request) {
 	};
 	
 	var getResponse = function(method, url) {
-		if (url.indexOf("Fail500") >= 0) {
+		var bError = 
+			url.indexOf("Fail500") >= 0 || 
+			(url === "/Categories(1-NOHEAD)" && method === "HEAD");
+			
+		if (bError) {
 			return [500, oHTMLHeaders, "Server Error"];
 		}
 		switch (method) {
 			case "GET":
 				return responses[url] || [404, oJSONHeaders, ""];
+			case "HEAD":
+				var aReturnValues = responses[url] || [404, oJSONHeaders, ""];
+				aReturnValues[2] = ""; // Same as "GET" but without body
+				return aReturnValues;
 			case "PUT":
 				return [204, oJSONHeaders, ""];
 			case "MERGE":
@@ -250,14 +263,27 @@ xhr.onCreate = function(request) {
 		}	
 		
 		// CSRF Token handling
-		if (request.method != "GET" && csrfToken) {
+		
+		// Special case: Simulate backend that does not allow HEAD requests
+		if (window.odataFakeServiceData.forbidHeadRequest && request.method === "HEAD") {
+			if (request.url == baseURL) {
+				window.odataFakeServiceData.csrfRequests.push(request.method); // Log Requests to service document
+			}
+			
+			respond(500, oHTMLHeaders, "Server Error");
+			return;
+		}
+		
+		if (["GET", "HEAD"].indexOf(request.method) === -1 && csrfToken) {
 			if (getHeader(request.requestHeaders, "X-CSRF-Token") != csrfToken) {
 				respond(403, oCsrfRequireHeaders, "");
 				return;
 			}
 		}
+		
 		if (request.url == baseURL) {
 			oCsrfResponseHeaders["X-CSRF-Token"] = csrfToken;
+			window.odataFakeServiceData.csrfRequests.push(request.method); // Log Requests to service document
 			respond(200, oCsrfResponseHeaders, sServiceDocXML);
 			return;
 		}

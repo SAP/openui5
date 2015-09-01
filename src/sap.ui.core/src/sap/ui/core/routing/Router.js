@@ -170,6 +170,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 				this._oRouter = crossroads.create();
 				this._oRouter.ignoreState = true;
 				this._oRoutes = {};
+				this._oOwner = oOwner;
 				this._oViews = new Views({component : oOwner});
 
 				if (oTargetsConfig) {
@@ -206,7 +207,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 			 * Adds a route to the router
 			 *
 			 * @param {object} oConfig configuration object for the route @see sap.ui.core.routing.Route#constructor
-			 * @param {sap.ui.core.routing.Route} oParent the parent of the route
+			 * @param {sap.ui.core.routing.Route} oParent The parent route - if a parent route is given, the routeMatched event of this route will also trigger the route matched of the parent and it will also create the view of the parent (if provided).
 			 * @public
 			 */
 			addRoute : function (oConfig, oParent) {

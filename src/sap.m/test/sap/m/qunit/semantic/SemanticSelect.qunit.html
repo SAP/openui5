@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
 	<title>Test Page for sap.m.semantic.SemanticSelect</title>
 	<script id="sap-ui-bootstrap"
-			data-sap-ui-noConflict="true"
-			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
 			data-sap-ui-libs="sap.m"
-			data-sap-ui-theme="sap_bluecrystal">
+			src="../../../../../resources/sap-ui-core.js">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<script>
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+		jQuery.sap.require("sap.ui.thirdparty.sinon");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
 		jQuery.sap.require("sap.m.semantic.SortSelect");
-		//jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 
 		module("Semantic Select Control", {
@@ -96,6 +95,86 @@
 
 			// Assert
 			strictEqual(oSemanticSelect.getSelectedItem(), oItemToSetAsSelected, "'getSelectedItem()' returns the selected item correctly");
+			strictEqual(oSemanticSelect.getSelectedKey(), oItemToSetAsSelected.getKey(), "'getSelectedKey()' returns the selected item correctly");
+
+			// Act
+			oItemToSetAsSelected = oSemanticSelect.getItemAt(2);
+			oSemanticSelect.setSelectedKey(oItemToSetAsSelected.getKey());
+			oSelectedItem = oSemanticSelect.getSelectedItem();
+
+			// Assert
+			strictEqual(oSelectedItem, oItemToSetAsSelected, "'setSelectedKey()' changes the selected item correctly");
+
+			// Assert
+			strictEqual(oSemanticSelect.getSelectedItem(), oItemToSetAsSelected, "'getSelectedItem()' returns the selected item correctly");
+			strictEqual(oSemanticSelect.getSelectedKey(), oItemToSetAsSelected.getKey(), "'getSelectedKey()' returns the selected item correctly");
+
+			// Clean up
+			oSemanticSelect.destroy();
+		});
+
+		test("selectedKey databinding", function () {
+			// Arrange
+			var oModel = new sap.ui.model.json.JSONModel(),
+					aSampleData = {
+						selected: "name",
+						items: [
+							{
+								key: "price"
+							},
+							{
+								key: "name"
+							},
+							{
+								key: "date"
+							},
+							{
+								key: "description"
+							}
+						]
+					}, oItemTemplate = new sap.ui.core.Item({
+						key: "{key}"
+					}),
+					bChangeEventHasFired = false,
+					oSemanticSelect = new sap.m.semantic.SortSelect({
+						items: {
+							path: "/items",
+							template: oItemTemplate
+						}, change: function () {
+							bChangeEventHasFired = true;
+						},
+						selectedKey: "{/selected}"
+					});
+
+			sap.ui.getCore().applyChanges();
+
+			// Act
+			oModel.setData(aSampleData);
+			oSemanticSelect.setModel(oModel);
+
+			// Assert
+			notEqual(oSemanticSelect.getSelectedKey(), null, "selectedKey is not null");
+			strictEqual(oSemanticSelect.getSelectedKey(), "name", "selectedKey value is correct");
+			strictEqual(oSemanticSelect.getSelectedItem(), oSemanticSelect.getItemAt(1), "'selectedItem corresponds to selectedKey");
+
+			// Act
+			oModel.setData({selected: "date"}, true);
+
+			// Assert
+			notEqual(oSemanticSelect.getSelectedKey(), null, "selectedKey is not null after update from model");
+			strictEqual(oSemanticSelect.getSelectedKey(), "date", "selectedKey value is correct after update from model");
+			strictEqual(oSemanticSelect.getSelectedItem(), oSemanticSelect.getItemAt(2), "'selectedItem corresponds to selectedKey after update from model");
+
+			// Act
+			oSemanticSelect.setSelectedItem(oSemanticSelect.getItemAt(3));
+
+			// Assert
+			notEqual(oSemanticSelect.getSelectedKey(), "selectedKey is not null after update from API");
+			strictEqual(oSemanticSelect.getSelectedKey(), "description", "selectedKey value is correct after update from API");
+			strictEqual(oModel.getData().selected, "description", "model is correctly updated after update from API");
+
+			// Clean up
+			oSemanticSelect.destroy();
 		});
 
 	</script>

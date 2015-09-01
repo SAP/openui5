@@ -22,15 +22,19 @@
 	position: relative;
 }
 
-/* Internet Explorer  does not support "text-align: start"!
+/* Internet Explorer / Edge  does not support "text-align: start"!
 Therefore the title needs to be positioned separately for RTL and LTR mode */
 [data-sap-ui-browser^=ie] .sapUiGrid th > .sapUiFormTitle,
-[data-sap-ui-browser^=ie] .sapUiGrid td > .sapUiFormTitle{ 
+[data-sap-ui-browser^=ie] .sapUiGrid td > .sapUiFormTitle,
+[data-sap-ui-browser^=ed] .sapUiGrid th > .sapUiFormTitle,
+[data-sap-ui-browser^=ed] .sapUiGrid td > .sapUiFormTitle { 
 	text-align: left;
 }
 
 html[dir=rtl][data-sap-ui-browser^=ie] .sapUiGrid th > .sapUiFormTitle,
-html[dir=rtl][data-sap-ui-browser^=ie] .sapUiGrid td > .sapUiFormTitle{ 
+html[dir=rtl][data-sap-ui-browser^=ie] .sapUiGrid td > .sapUiFormTitle,
+html[dir=rtl][data-sap-ui-browser^=ed] .sapUiGrid th > .sapUiFormTitle,
+html[dir=rtl][data-sap-ui-browser^=ed] .sapUiGrid td > .sapUiFormTitle { 
 	text-align: right;
 }
 

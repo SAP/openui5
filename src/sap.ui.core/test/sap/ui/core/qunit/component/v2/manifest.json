@@ -13,6 +13,10 @@
 	
 	"sap.ui5": {
 		
+		"resourceRoots": {
+			"x.y.z": "anypath"
+		},
+		
 		"resources": {
 			"js": [
 				{

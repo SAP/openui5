@@ -8,6 +8,7 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>QUnit page for V2ODataModel - sap.ui.core</title>
 <script>
 	//fix IE 11 bug 
 	window.ActiveXObject = undefined;
@@ -61,12 +62,21 @@
 			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sURI].oMetadata;
 		}
 	}
+	
+	/**
+	 * Removes all shared Metadata
+	 */
+	function cleanServiceDataCache() {
+		sap.ui.model.odata.v2.ODataModel.mServiceData = {};
+	}
+	
 	module("ODataModelV2 XML", {
 		setup : function() {
 			initServer();
 			oModel = initModel({json: false});
 		},
 		teardown : function() {
+			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
 			stopServer();
@@ -94,6 +104,7 @@
 			oModel = initModel();
 		},
 		teardown : function() {
+			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
 			stopServer();
@@ -222,6 +233,8 @@
 	});
 	
 	asyncTest("test metadata promise rejected refresh and resolve", function() {
+		cleanServiceDataCache();
+		
 		var sTempService = sServiceUri;
 		sServiceUri = "/doesnotWork/";
 		oModel = initModel();
@@ -952,6 +965,7 @@
 			oModel.setRefreshAfterChange(false);
 		},
 		teardown : function() {
+			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
 			stopServer();
@@ -1263,6 +1277,7 @@
 			
 			if (iCount === 2 && bSetProp) {
 				equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
+				oTable.destroy();
 				start();
 			}
 		});
@@ -1304,6 +1319,7 @@
 					ok(bSetProp, "set Property succesful");
 					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
+					oTable.destroy();
 					start();
 				}});
 			}
@@ -1358,6 +1374,7 @@
 					equal(oParams.__batchResponses[1].__changeResponses[0].statusCode,"204", "statuscode OK");
 					
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
+					oTable.destroy();
 					start();
 				}});
 			}
@@ -1410,6 +1427,7 @@
 					equal(oParams.__batchResponses[0].__changeResponses[1].statusCode,"204", "statuscode OK");
 					
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
+					oTable.destroy();
 					start();
 				}});
 			}
@@ -1426,6 +1444,54 @@
 				ok(oModel.hasPendingChanges(), "model has pending changes");
 				oModel.setProperty("/ProductSet('AD-1000')/Name", sName);
 				ok(!oModel.hasPendingChanges(), "model should not have pending changes");
+				start();
+			},
+			error: function() {
+				ok(false, "reqauest failed");
+				start();
+			}
+		});
+	});
+	
+	asyncTest("test oDataModel setProperty to undefined/null/''/0/false", function() {
+		oModel.read("/ProductSet('AD-1000')", {
+			success: function() {
+				var sName = oModel.getProperty("/ProductSet('AD-1000')/Name");
+				oModel.setProperty("/ProductSet('AD-1000')/Name", undefined);
+				ok(oModel.hasPendingChanges(), "model has pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") === undefined, "property ok");
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "test");
+				ok(oModel.hasPendingChanges(), "model should have pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") == "test", "property ok");
+				
+				oModel.setProperty("/ProductSet('AD-1000')/Name", null);
+				ok(oModel.hasPendingChanges(), "model has pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") === null, "property ok");
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "test");
+				ok(oModel.hasPendingChanges(), "model should have pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") == "test", "property ok");
+	
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "");
+				ok(oModel.hasPendingChanges(), "model has pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") === "", "property ok");
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "test");
+				ok(oModel.hasPendingChanges(), "model should have pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") == "test", "property ok");
+	
+				oModel.setProperty("/ProductSet('AD-1000')/Name", 0);
+				ok(oModel.hasPendingChanges(), "model has pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") === 0, "property ok");
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "test");
+				ok(oModel.hasPendingChanges(), "model should have pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") == "test", "property ok");
+				
+				oModel.setProperty("/ProductSet('AD-1000')/Name", false);
+				ok(oModel.hasPendingChanges(), "model has pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") === false, "property ok");
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "test");
+				ok(oModel.hasPendingChanges(), "model should have pending changes");
+				ok(oModel.getProperty("/ProductSet('AD-1000')/Name") == "test", "property ok");
+	
 				start();
 			},
 			error: function() {
@@ -1495,7 +1561,7 @@
 				oModel.setProperty("/ProductSet('AD-1000')/NameLanguage", "D");
 				ok(oModel.hasPendingChanges(), "model has pending changes");
 				oModel.resetChanges(["/ProductSet('AD-1000')/Name"]);
-				ok(oModel.hasPendingChanges(), "model should not have pending changes");
+				ok(oModel.hasPendingChanges(), "model has pending changes");
 				oModel.setProperty("/ProductSet('AD-1000')/Name", "NewName");
 				oModel.resetChanges(["/ProductSet('AD-1000')"]);
 				ok(!oModel.hasPendingChanges(), "model should not have pending changes");
@@ -1542,6 +1608,7 @@
 				equal(oBinding.getLength(), 115, "length check");
 				ok(oBinding.getContexts(), "context check");
 				ok(oBinding.sCountMode, "Request", "count mode check");
+				oTable.destroy();
 				start();
 			}
 
@@ -2757,6 +2824,7 @@
 			oModel = initModel();
 		},
 		teardown : function() {
+			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
 			stopServer();
@@ -3349,8 +3417,9 @@
 			oModel = initModel();
 		},
 		teardown : function() {
+			oModel.destroy();
 			oModel = undefined;
-			removeSharedMetadata();
+			cleanServiceDataCache();
 			stopServer();
 		}
 	});
@@ -3485,6 +3554,8 @@
 			iCount++;
 			if (iCount === 1 ) {
 				ok(true, "batch request completed");
+				oInput1.destroy();
+				oInput2.destroy();
 				start();
 			}
 		});
@@ -3505,6 +3576,8 @@
 			iChange++;
 			if (iChange == 2) {
 				ok(true, "checkupdate done");
+				oInput1.destroy();
+				oInput2.destroy();
 				start();
 			}
 		}
@@ -3564,7 +3637,7 @@
 						dataReceived: function() {
 							ok(iCount == 0, "dataReceived called once");
 							iCount++;
-							oModel.setProperty("/ProductSet('HT-1000')/Name", "Test");
+							oInput1.destroy();
 							start();
 						}
 					}
@@ -3796,6 +3869,7 @@
 			oModel = initModel({json: true, useBatch: false, defaultCountMode: 'None'});
 		},
 		teardown : function() {
+			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
 			stopServer();
@@ -4068,6 +4142,7 @@
 				
 				if (iCount === 2 && bSetProp) {
 					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
+					oTable.destroy();
 					start();
 				}
 			});
@@ -4113,6 +4188,7 @@
 					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
 					oModel.detachRequestCompleted(fnHandler);
+					oTable.destroy();
 					start();
 				}
 			};
@@ -4165,6 +4241,7 @@
 					
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
 					oModel.detachRequestCompleted(this, fnHandler);
+					oTable.destroy();
 					start();
 				}
 			}
@@ -4215,6 +4292,7 @@
 					
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
 					oModel.detachRequestCompleted(this, fnHandler);
+					oTable.destroy();
 					start();
 				}
 			}

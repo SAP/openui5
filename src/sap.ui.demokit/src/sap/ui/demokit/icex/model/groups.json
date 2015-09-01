@@ -38,7 +38,11 @@
 				{ "name" : "tag-cloud-chart" },
 				{ "name" : "area-chart" },
 				{ "name" : "gantt-bars" },
-				{ "name" : "legend" }
+				{ "name" : "legend" },
+				{ "name" : "donut-chart" },
+				{ "name" : "heatmap-chart" },
+				{ "name" : "horizontal-bullet-chart" },
+				{ "name" : "vertical-bullet-chart" }
 			]
 		},
 		
@@ -377,7 +381,10 @@
 				{ "name" : "resize-vertical" },
 				{ "name" : "edit-outside" },
 				{ "name" : "minimize" },
-				{ "name" : "back-to-top" }
+				{ "name" : "back-to-top" },
+				{ "name" : "call" },
+				{ "name" : "download-from-cloud" },
+				{ "name" : "upload-to-cloud" }
 			]
 		},
 		
@@ -513,7 +520,8 @@
 				{ "name" : "discussion-2" },
 				{ "name" : "discussion" },
 				{ "name" : "tag-cloud-chart" },
-				{ "name" : "hello-world" }
+				{ "name" : "hello-world" },
+				{ "name" : "message-popup" }
 			]
 		},
 		
@@ -573,7 +581,10 @@
 				{ "name" : "sys-monitor" },
 				{ "name" : "sys-find" },
 				{ "name" : "display" },
-				{ "name" : "key" }
+				{ "name" : "key" },
+				{ "name" : "jam" },
+				{ "name" : "sap-ui5" },
+				{ "name" : "cloud" }
 			]
 		},
 		
@@ -591,7 +602,8 @@
 				{ "name" : "mileage" },
 				{ "name" : "building" },
 				{ "name" : "official-service" },
-				{ "name" : "offsite-work" }
+				{ "name" : "offsite-work" },
+				{ "name" : "cloud" }
 			]
 		}
 	]

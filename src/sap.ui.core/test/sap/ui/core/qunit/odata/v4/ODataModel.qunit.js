@@ -28,7 +28,7 @@ sap.ui.require([
 				{code: 404, source: "TEAMS('UNKNOWN').json"}
 		},
 		bRealOData = jQuery.sap.getUriParameters().get("realOData") === "true",
-		TestControl = sap.ui.core.Element.extend("TestControl", {
+		TestControl = sap.ui.core.Element.extend("test.sap.ui.model.odata.v4.ODataModel", {
 			metadata: {
 				properties: {
 					text: "string"

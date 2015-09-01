@@ -60,6 +60,7 @@
 				"items" : [{
 					"key" : "c0",
 					"text" : "Name",
+					"type" : "string",
 					"maxLength" : "10" 
 				}, {
 					"key" : "c1",
@@ -73,7 +74,12 @@
 					"type" : "numeric",
 					"precision" : "5", 
 					"scale": "2"
-				}],
+				}, {
+					"key" : "c3",
+					"text" : "Boolean",
+					"tooltip" : "Boolean",
+					"type" : "boolean"
+				}				],
 				"filterItems" : [{
 					"key" : "f0",
 					"columnKey" : "c2",
@@ -85,6 +91,12 @@
 					"columnKey" : "c0",
 					"operation" : "GT",
 					"value1" : "A",
+					"value2" : ""
+				}, {
+					"key" : "f2",
+					"columnKey" : "c3",
+					"operation" : "EQ",
+					"value1" : true,
 					"value2" : ""
 				}, {
 					"key" : "f2",
@@ -135,6 +147,9 @@
 					sap.m.MessageToast.show("addFilterItem ---> " + params.key + " #" + oModel.getData().filterItems.length);
 				}				
 			});
+			oFilterPanel.setIncludeOperations([
+			                           sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.Empty, sap.m.P13nConditionOperation.NotEmpty
+			                           ], "boolean");			
 			oFilterPanel.setModel(oModel);
 			oFilterPanel.bindItems("/items", new sap.m.P13nItem({
 				columnKey : "{key}",

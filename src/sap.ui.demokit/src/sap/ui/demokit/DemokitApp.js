@@ -3,8 +3,8 @@
  */
 
 // Main class for Demokit-like applications
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/commons/TextView', 'sap/ui/commons/Link', 'sap/ui/commons/Splitter', 'sap/ui/commons/layout/AbsoluteLayout', 'sap/ui/core/ListItem', 'sap/ui/core/search/OpenSearchProvider', './Tag', './TagCloud', './library', 'sap/ui/ux3/NavigationItem', 'sap/ui/ux3/Shell'],
-    function (jQuery, DropdownBox, TextView, Link, Splitter, AbsoluteLayout, ListItem, OpenSearchProvider, Tag, TagCloud, library, NavigationItem, Shell) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/commons/TextView', 'sap/ui/commons/Link', 'sap/ui/commons/Splitter', 'sap/ui/commons/layout/AbsoluteLayout', 'sap/ui/core/ListItem', 'sap/ui/core/search/OpenSearchProvider', './Tag', './TagCloud', './library', 'sap/ui/ux3/NavigationItem', 'sap/ui/ux3/Shell', 'sap/ui/model/json/JSONModel'],
+    function (jQuery, DropdownBox, TextView, Link, Splitter, AbsoluteLayout, ListItem, OpenSearchProvider, Tag, TagCloud, library, NavigationItem, Shell, JSONModel) {
         "use strict";
 
 
@@ -317,7 +317,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 showHeader: false,
                 width: "100%",
                 height: "100%",
-                showHorizontalScrollbar: true
+                showHorizontalScrollbar: true,
+                selectionMode: "Single"
             });
             oTree.addStyleClass("sapUiTreeWithHeader");
             var oTreeNode = new sap.ui.commons.TreeNode({
@@ -342,7 +343,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
             var aTreeData = [];
             initTreeNodes(aTreeData, oTopLevelNavItem.links.links, 0, "");
 
-            var oJSONModel = new sap.ui.model.json.JSONModel();
+            var oJSONModel = new JSONModel();
             oJSONModel.setSizeLimit(iNodes);
             oTree.setModel(oJSONModel);
             oJSONModel.setData(aTreeData);
@@ -420,11 +421,340 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 });
             }
 
-            var oVersionInfo = new Link({
+            var oVersionInfoMainPage = new sap.ui.commons.TextView({
+              text: this._sVersionStr,
+              tooltip: "Used SAPUI5 Version is " + this._sVersionStr
+            });
+
+            var oVersionInfoDialog = new sap.ui.commons.TextView({
                 text: this._sVersionStr,
-                tooltip: "Open Version Info",
-                press: function () {
-                    that.navigateTo("versioninfo.html");
+                tooltip: "SAPUI5 Version"
+              });
+
+            var fnCreateAboutDialogContent = function() {
+                var oBtnBack = new sap.ui.commons.Button({
+                    text : "Back",
+                    visible : false,
+                    press : function() {
+                        oDialog.removeAllContent();
+                        oDialog.addContent(oLayout);
+                        this.setVisible(false);
+                    }
+                });
+
+                var oBtnCancel = new sap.ui.commons.Button({
+                    text : "Close",
+                    press : function() {
+                        oDialog.close();
+                    }
+                });
+
+                var oSAPUI5Logo = new sap.ui.commons.Image();
+                oSAPUI5Logo.setSrc("resources/sap/ui/demokit/themes/base/images/logo-SAPUI5-blue-446x140.png");
+
+                oSAPUI5Logo.setTooltip("SAPUI5 logo blue");
+                oSAPUI5Logo.addStyleClass("extraLeftPadding");
+
+                var sAboutDialogContentHtml  = '<h2>UI Development Toolkit for HTML5 - Demo Kit</h2>';
+                sAboutDialogContentHtml  += '<span>SAP SE 2015 All rights reserved</span><br><br><br>';
+                sAboutDialogContentHtml  += '<span>SAPUI5 Version <embed data-index="0"></span><br>';
+
+                sAboutDialogContentHtml  += '<span>This software includes the following library versions</span><br>';
+                sAboutDialogContentHtml  += '<span>(a full change log for all libraries can be found <embed data-index="1">).</span><br>';
+                sAboutDialogContentHtml  += '<embed data-index="2"><br><br><br>';
+
+                var sAboutDialogContentHtmlOnlyForUI5 = '<span>This software includes third-party open source software.</span><br>';
+                sAboutDialogContentHtmlOnlyForUI5 += '<embed data-index="0"><br>';
+
+                var oLinkToVersionChangeLog = new sap.ui.commons.Link({
+                    text : "here",
+                    tooltip: "Go to Version Change Log",
+                    press: function() {
+                        oDialog.close();
+                    },
+                    href: "releasenotes.html",
+                    target: "content"
+
+                });
+                var oLinkToVersionInfo = new sap.ui.commons.Link({
+                    text : "Version Details",
+                    tooltip: "Go to Version Details",
+                    press: function() {
+                        oDialog.removeAllContent();
+                        oDialog.addContent(fnParseLibInformationVersionInfo());
+
+                        oBtnBack.setVisible(true);
+                    }
+                });
+
+                var oLinkToCredits = new sap.ui.commons.Link({
+                    text : "Included Third-Party Software",
+                    tooltip: "Go to Included Third-Party Software list",
+                    press: function() {
+                        oDialog.removeAllContent();
+                        oDialog.addContent(fnParseLibInformationCredits());
+                       
+                        oBtnBack.setVisible(true);
+                    }
+                });
+
+                var oDialogInitialPageContent = new sap.ui.commons.FormattedTextView();
+                oDialogInitialPageContent.setContent(sAboutDialogContentHtml, [oVersionInfoDialog, oLinkToVersionChangeLog, oLinkToVersionInfo]);
+                oDialogInitialPageContent.addStyleClass("extraLeftPadding");
+                
+                var oDialogInitialPageContentOnlyForUI5 = new sap.ui.commons.FormattedTextView();
+                oDialogInitialPageContentOnlyForUI5.setContent(sAboutDialogContentHtmlOnlyForUI5, [oLinkToCredits]);
+                oDialogInitialPageContentOnlyForUI5.addStyleClass("extraLeftPadding");
+
+              //check if it is on http://veui5infra.dhcp.wdf.sap.corp:8080/demokit/ or in openui5.hana.ondemand.com
+                var bIsUI5 = sap.ui.getVersionInfo().gav.slice(0,19) == "com.sap.ui5:demokit";
+                if (bIsUI5) {
+                    var oLayout = new sap.ui.layout.VerticalLayout({
+                        content : [oSAPUI5Logo, oDialogInitialPageContent, oDialogInitialPageContentOnlyForUI5]
+                    });
+                } else {
+                    var oLayout = new sap.ui.layout.VerticalLayout({
+                        content : [oSAPUI5Logo, oDialogInitialPageContent]
+                    });
+                }
+
+                var oDialog = new sap.ui.commons.Dialog({
+                    title: "About",
+                    modal: true,
+                    buttons : [oBtnBack, oBtnCancel],
+                    content: [oLayout],
+                    showCloseButton: false,
+                    width: "550px",
+                    height: "800px",
+                    maxHeight: "100%"
+                });
+                oDialog.open();
+            };
+
+            var fnParseLibInformationVersionInfo = function() {
+                sap.ui.localResources("versioninfo");
+                var oModelVersionInfo = new JSONModel();
+
+                sap.ui.demokit._loadAllLibInfo("", "_getLibraryInfo","", function(aLibs, oLibInfos){
+                    var data = {};
+                    var oLibInfo = new sap.ui.core.util.LibraryInfo();
+
+                    for (var i = 0, l = aLibs.length; i < l; i++) {
+                        aLibs[i] = oLibInfos[aLibs[i]];
+                        aLibs[i].libDefaultComponent = oLibInfo._getDefaultComponent(aLibs[i]);
+                    }
+                    data.libs = aLibs;
+                    oModelVersionInfo.setData(data);
+                });
+
+               var fnOpenReleaseDialog = function openReleaseDialog() {
+                   
+                   var oNotesModel;
+                   var oNotesView = sap.ui.getCore().byId("notesView");
+                   var oDialog = sap.ui.getCore().byId("notesDialog");
+                   if (!oDialog) {
+                       var oText = new sap.ui.commons.TextView({text: "No changes for this library!", id: "noRelNote"});
+                       oNotesView = sap.ui.view({id:"notesView", viewName:"versioninfo.notes", type:sap.ui.core.mvc.ViewType.Template});
+                       oNotesModel = new JSONModel();
+                       oNotesView.setModel(oNotesModel);
+                       oDialog = new sap.ui.commons.Dialog("notesDialog");    
+                       oDialog.addButton(new sap.ui.commons.Button({
+                           text: "OK", 
+                           press: function(){
+                               oDialog.close();
+                           }
+                       }));
+                       oDialog.setModal(true);
+                       oDialog.setHeight("40%");
+                       oDialog.setWidth("40%");
+                       oNotesView.addStyleClass("myReleaseNotes");
+                       oDialog.setResizable(true);
+                   }
+
+                   var oLibInfo = new sap.ui.core.util.LibraryInfo();
+                   oDialog.setTitle("Change log for: " + this.getBindingContext().getProperty("library"));
+                   
+                   var oVersion = jQuery.sap.Version(this.getBindingContext().getProperty("version"));
+                   var sVersion = oVersion.getMajor() + "." + oVersion.getMinor() + "." + oVersion.getPatch() + oVersion.getSuffix() ;
+                   
+                   oLibInfo._getReleaseNotes(this.getBindingContext().getProperty("library"), sVersion, function(oRelNotes, sVersion) {
+                       oDialog.removeAllContent();
+
+                       if (oRelNotes && oRelNotes[sVersion] && oRelNotes[sVersion].notes && oRelNotes[sVersion].notes.length > 0) {
+                           oDialog.addContent(oNotesView);
+                           oNotesView.getModel().setData(oRelNotes);
+                           oNotesView.bindElement("/" + sVersion);
+                           oDialog.open();
+                       } else {
+
+                       if (oText) {
+                           oDialog.addContent(oText);
+                       } else {
+                           oDialog.addContent(sap.ui.getCore().byId("noRelNote"));
+                       }
+                           oDialog.open();
+                       }
+
+                   });
+               };
+
+               var oDataSetVersionInfo = new sap.ui.ux3.DataSet({
+                   items : {
+                       path : "/libs",
+                       template : new sap.ui.ux3.DataSetItem({
+                           title : "{library}"
+                       })
+                   },
+                   views : [ new sap.ui.ux3.DataSetSimpleView({
+                       floating : false,
+                       template : new sap.ui.commons.form.Form({
+                           title : new sap.ui.core.Title({text : "{library}"}),
+                           width : "100%",
+                           layout : new sap.ui.commons.form.GridLayout(),
+                           formContainers : [ new sap.ui.commons.form.FormContainer({
+                               formElements : [
+                                   new sap.ui.commons.form.FormElement({
+                                       label : new sap.ui.commons.Label({text : "Version:", layoutData : new sap.ui.commons.form.GridElementData({hCells : "3"})}),
+                                       fields : [ new sap.ui.commons.TextView({text : "{version}"})]
+                                   }),
+                                   /*new sap.ui.commons.form.FormElement({
+                                       label : new sap.ui.commons.Label({text : "Vendor:", layoutData : new sap.ui.commons.form.GridElementData({hCells : "3"})}),
+                                       fields : [ new sap.ui.commons.TextView({text : "{vendor}"})]
+                                   }),*/
+                                   new sap.ui.commons.form.FormElement({
+                                       label : new sap.ui.commons.Label({text : "Description:", layoutData : new sap.ui.commons.form.GridElementData({hCells : "3"})}),
+                                       fields : [ new sap.ui.commons.TextView({text : "{documentation}"})]
+                                   }),
+                                   new sap.ui.commons.form.FormElement({
+                                       label : new sap.ui.commons.Label({text : "Change Log:", layoutData : new sap.ui.commons.form.GridElementData({hCells : "3"})}),
+                                       fields : [ new sap.ui.commons.Link({text : "Open Change Log", press : fnOpenReleaseDialog})],
+                                       visible : {
+                                           path: "releasenotes",
+                                           formatter: function(oValue) {
+                                               return !!oValue; 
+                                           }
+                                       }
+                                   }),
+                                   new sap.ui.commons.form.FormElement({
+                                       label : new sap.ui.commons.Label({text : "Component:", layoutData : new sap.ui.commons.form.GridElementData({hCells : "3"})}),
+                                       fields : [ new sap.ui.commons.TextView({text : "{libDefaultComponent}"})],
+                                       visible : {
+                                           path: "libDefaultComponent",
+                                           formatter: function(oValue) {
+                                               return !!oValue;
+                                           }
+                                       }
+                                   })
+                               ]
+                           })]
+                       })
+                   })],
+                   showToolbar: false,
+                   selectionChanged: function(){
+                       oDataSetVersionInfo.setLeadSelection(-1);
+                   }
+               });
+               
+               oDataSetVersionInfo.setModel(oModelVersionInfo);
+
+               var oLayoutVersionInfo = new sap.ui.layout.VerticalLayout({
+                   content : [oDataSetVersionInfo]
+               });
+
+               return oLayoutVersionInfo;
+            };
+
+            var fnParseLibInformationCredits = function() {
+                var oModelCredits = new JSONModel();
+
+                sap.ui.demokit._loadAllLibInfo("", "_getThirdPartyInfo", function(aLibs, oLibInfos){
+                    if (!aLibs){
+                        return;
+                    }
+                    var data = {};
+                    data.thirdparty = [];
+                    for (var j = 0; j < aLibs.length; j++) {
+                        var oData = oLibInfos[aLibs[j]];
+                        for (var i = 0; i < oData.libs.length; i++) {
+                            var oOpenSourceLib = oData.libs[i];
+                            oOpenSourceLib._lib = aLibs[j];
+                            data.thirdparty.push(oOpenSourceLib);
+                        }
+                    }
+
+                    data.thirdparty.sort(function(a,b){
+                        var aName = (a.displayName || "").toUpperCase();
+                        var bName = (b.displayName || "").toUpperCase();
+                        
+                        if (aName > bName){
+                            return 1;
+                        } else if (aName < bName){
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    });
+                    
+                    oModelCredits.setData(data);
+                });
+
+                var oDataSetCredits = new sap.ui.ux3.DataSet({
+                    items : {
+                        path : "/thirdparty",
+                        template : new sap.ui.ux3.DataSetItem({
+                            title : "{displayName}"
+                        })
+                    },
+                    views : [ new sap.ui.ux3.DataSetSimpleView({
+                        floating : false,
+                        template : new sap.ui.commons.form.Form({
+                            title : new sap.ui.core.Title({text : "{displayName}"}),
+                            width : "100%",
+                            layout : new sap.ui.commons.form.GridLayout(),
+                            formContainers : [ new sap.ui.commons.form.FormContainer({
+                                formElements : [
+                                    new sap.ui.commons.form.FormElement({
+                                        fields : [ new sap.ui.commons.Link({text : "Web Site", target : "_blank", href : "{homepage}",layoutData: new sap.ui.layout.form.GridElementData({hCells: "auto"})}),
+                                                   new sap.ui.commons.Link({text : "License Conditions", target : "_blank", href : "{license/url}",layoutData: new sap.ui.layout.form.GridElementData({hCells: "5"})})]
+                                    }),
+
+                                    new sap.ui.commons.form.FormElement({
+                                        fields : [ new sap.ui.commons.Link({text : "Licensed by SAP under '{license/type}'", target : "_blank", href : "{license/file}"})]
+                                    })
+                                ]
+                            })]
+                        })
+                    })],
+                    //end old
+                    showToolbar: false,
+                    selectionChanged: function(){
+                        oModelCredits.setLeadSelection(-1);
+                    }
+                });
+
+                jQuery.sap.require("jquery.sap.script");
+                var sDebug = jQuery.sap.getUriParameters().get("sap-ui-debug");
+                if (sDebug === "x" || sDebug === "X" || sDebug === "true"){
+                    oModelCredits.getViews()[0].getTemplate().getFormContainers()[0].addFormElement(new sap.ui.commons.form.FormElement({
+                        label : new sap.ui.commons.Label({text : "Requested by UI Library:", layoutData : new sap.ui.commons.form.GridElementData({hCells : "3"})}),
+                        fields : [ new sap.ui.commons.TextView({text : "{_lib}"})]
+                    }));
+                }
+
+                oDataSetCredits.setModel(oModelCredits);
+
+                var oLayoutCredits = new sap.ui.layout.VerticalLayout({
+                    content : [oDataSetCredits]
+                });
+
+                return oLayoutCredits;
+            };
+
+            var oAboutDialogLink = new sap.ui.commons.Link({
+                text : "About",
+                tooltip: "About",
+                press : function() {
+                     fnCreateAboutDialogContent();
                 }
             });
 
@@ -465,7 +795,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                         showScrollBars: bShowScrollBars
                     })
                 ],
-                headerItems: oDevWarning ? [oDevWarning, oVersionInfo] : [oVersionInfo]
+                headerItems: oDevWarning ? [oAboutDialogLink, oDevWarning, oVersionInfoMainPage] : [oAboutDialogLink, oVersionInfoMainPage]
             });
 
             this._oShell.addStyleClass("sapDkShell");
@@ -560,6 +890,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
         DemokitApp.prototype.navigateTo = function (sName, bSkipSetHash, bSkipSwitchLocation, bNewWindow) {
             var that = this;
             var TREE_ABSOLUTE_LOCATION_LEFT = "0px";
+            // TREE_ABSOLUTE_LOCATION_TOP should be keeped in sync with .sapUiTreeWithHeader > div:first-child bottom property
             var TREE_ABSOLUTE_LOCATION_TOP = "32px";
             var TREE_EXPAND_BUTTON_LOCATION_RIGHT = "30px";
             var TREE_COLLAPSE_BUTTON_LOCATION_RIGHT = "0px";
@@ -635,12 +966,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                         }
 
                         if (bTreeNodeFound) {
-                            aNodes[i].setIsSelected(true);
                             var par = oParent;
                             while (par instanceof sap.ui.commons.TreeNode) {
                                 par.expand();
                                 par = par.getParent();
                             }
+                            aNodes[i].setIsSelected(true);
                             return aNodes[i];
                         } else {
                             var node = findAndSelectTreeNode(sPageName, aNodes[i], false);
@@ -678,21 +1009,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                         updateTree(oTree, oEvent.getParameter("value"), oEmptyLabel);
                     }
                 });
-                
+
                 oSearch.addEventDelegate({
-                    onAfterRendering: function () {
+                    onAfterRendering: function () {
                         oSearch._ctrl.$("searchico").addClass('sapUiIcon sapUiSearchFieldFilterIcon');
                         oSearch._ctrl.$("searchico").attr('style', 'font-family: SAP-icons; cursor: default;');
                         oSearch._ctrl.$("searchico").attr('data-sap-ui-icon-content', '');
                     }
                 });
-                
+
                 oSearch._ctrl.setPlaceholder("Filter");
-                
+
                 oSearch.addStyleClass("sapUiDemokitAbsLayoutFirtsRow sapUiDemokitSearchField");
                 return oSearch;
             }
-            
+
             function createTreeButtons(oTree, fTreeAction, sIcon, sTooltip, sStyle) {
                 var oButton = new sap.ui.commons.Button({
                     lite: true,
@@ -704,25 +1035,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                     oButton.addStyleClass(sStyle);
                 }
                 oButton.setTooltip(sTooltip);
-                                                
+
                 oButton.addEventDelegate({
-                    onAfterRendering: function () {
+                    onAfterRendering: function () {
                         oButton.$("icon").attr("title", sTooltip);
                         oButton.$("icon").attr("aria-label", sTooltip);
                     }
                 });
-                
+
                 return oButton;
             }
-            
+
             function createCollapseButton(oTree) {
                 return createTreeButtons(oTree, oTree.collapseAll, "sap-icon://collapse-group", "Collapse All", "sapUiDemokitCollapseButton");
             }
-            
+
             function createExpandButton(oTree) {
                 return createTreeButtons(oTree, oTree.expandAll, "sap-icon://expand-group", "Expand All");
             }
-            
+
             //Update Top Level Navigation and Navigation Tree
             var oSelectedNavEntry = null;
             var oNewNavItem = oNewTLNItem && oNewTLNItem.navItem;

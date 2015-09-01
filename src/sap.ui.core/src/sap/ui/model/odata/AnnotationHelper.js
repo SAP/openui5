@@ -4,113 +4,35 @@
 
 // Provides object sap.ui.model.odata.AnnotationHelper
 sap.ui.define([
-	"jquery.sap.global", "./_AnnotationHelperBasics", "./_AnnotationHelperExpression"
-], function(jQuery, Basics, Expression) {
+	"jquery.sap.global",
+	"sap/ui/base/BindingParser",
+	"./_AnnotationHelperBasics",
+	"./_AnnotationHelperExpression"
+], function(jQuery, BindingParser, Basics, Expression) {
 		'use strict';
 
-		var AnnotationHelper,
-			// path to entity type ("/dataServices/schema/<i>/entityType/<j>")
-			rEntityTypePath = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/;
+		var AnnotationHelper;
 
 		/**
-		 * Follows the dynamic "14.5.12 Expression edm:Path" (or variant thereof) contained within
-		 * the given raw value, starting the absolute path identified by the given interface, and
-		 * returns the resulting absolute path as well as some other aspects about the path.
+		 * Returns a function representing the composition <code>fnAfter</code> after
+		 * <code>fnBefore</code>.
 		 *
-		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
-		 *   the callback interface related to the current formatter call; the path must be within
-		 *   an entity type!
-		 * @param {any} vRawValue
-		 *   the raw value from the meta model, e.g. <code>{AnnotationPath :
-		 *   "ToSupplier/@com.sap.vocabularies.Communication.v1.Address"}</code> or <code>
-		 *   {AnnotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"}</code>
-		 * @returns {object}
-		 *   - {object} [associationSetEnd=undefined]
-		 *   association set end corresponding to the last navigation property
-		 *   - {boolean} [navigationAfterMultiple=false]
-		 *   if the navigation path has an association end with multiplicity "*" which is not
-		 *   the last one
-		 *   - {boolean} [isMultiple=false]
-		 *   whether the navigation path ends with an association end with multiplicity "*"
-		 *   - {string[]} [navigationProperties=[]]
-		 *   all navigation property names
-		 *   - {string} [resolvedPath=undefined]
-		 *   the resulting absolute path
-		 * @see sap.ui.model.odata.AnnotationHelper.isMultiple
+		 * @param {function} fnAfter
+		 *   the second function, taking a single argument
+		 * @param {function} [fnBefore]
+		 *   the optional first function, taking multiple arguments
+		 * @returns {function}
+		 *   the composition <code>fnAfter</code> after <code>fnBefore</code>
 		 */
-		function followPath(oInterface, vRawValue) {
-			var oAssociationEnd,
-				sContextPath,
-				oEntity,
-				iIndexOfAt,
-				aMatches,
-				oModel = oInterface.getModel(),
-				aParts,
-				sPath,
-				oResult = {
-					associationSetEnd : undefined,
-					navigationAfterMultiple : false,
-					isMultiple : false,
-					navigationProperties : [],
-					resolvedPath : undefined
-				},
-				sSegment;
-
-			if (vRawValue && vRawValue.hasOwnProperty("AnnotationPath")) {
-				sPath = vRawValue.AnnotationPath;
-			} else if (vRawValue && vRawValue.hasOwnProperty("Path")) {
-				sPath = vRawValue.Path;
-			} else if (vRawValue && vRawValue.hasOwnProperty("PropertyPath")) {
-				sPath = vRawValue.PropertyPath;
-			} else if (vRawValue && vRawValue.hasOwnProperty("NavigationPropertyPath")) {
-				sPath = vRawValue.NavigationPropertyPath;
-			} else {
-				return undefined; // some unsupported case
+		function chain(fnAfter, fnBefore) {
+			if (!fnBefore) {
+				return fnAfter;
 			}
 
-			aMatches = rEntityTypePath.exec(oInterface.getPath());
-			if (!aMatches) {
-				return undefined;
+			function formatter() {
+				return fnAfter.call(this, fnBefore.apply(this, arguments));
 			}
-
-			// start at entity type ("/dataServices/schema/<i>/entityType/<j>")
-			sContextPath = aMatches[1];
-			aParts = sPath.split("/");
-
-			while (sPath && aParts.length && sContextPath) {
-				sSegment = aParts[0];
-				iIndexOfAt = sSegment.indexOf("@");
-				if (iIndexOfAt === 0) {
-					// term cast
-					sContextPath += "/" + sSegment.slice(1);
-					aParts.shift();
-					continue;
-//				} else if (iIndexOfAt > 0) { // annotation of a navigation property
-//					sSegment = sSegment.slice(0, iIndexOfAt);
-				}
-
-				oEntity = oModel.getObject(sContextPath);
-				oAssociationEnd = oModel.getODataAssociationEnd(oEntity, sSegment);
-				if (oAssociationEnd) {
-					// navigation property
-					oResult.associationSetEnd
-						= oModel.getODataAssociationSetEnd(oEntity, sSegment);
-					oResult.navigationProperties.push(sSegment);
-					if (oResult.isMultiple) {
-						oResult.navigationAfterMultiple = true;
-					}
-					oResult.isMultiple = oAssociationEnd.multiplicity === "*";
-					sContextPath = oModel.getODataEntityType(oAssociationEnd.type, true);
-					aParts.shift();
-					continue;
-				}
-
-				// structural properties or some unsupported case
-				sContextPath = oModel.getODataProperty(oEntity, aParts, true);
-			}
-
-			oResult.resolvedPath = sContextPath;
-			return oResult;
+			return formatter;
 		}
 
 		/**
@@ -128,13 +50,148 @@ sap.ui.define([
 		 * instructions in XML template views, e.g. <code>&lt;template:with path="meta>Value"
 		 * helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target"></code>.
 		 *
-		 * You need to {@link jQuery.sap.require} this module before use!
+		 * Since 1.31.0, you DO NOT need to {@link jQuery.sap.require} this module before use.
 		 *
 		 * @public
 		 * @since 1.27.0
 		 * @namespace sap.ui.model.odata.AnnotationHelper
 		 */
 		AnnotationHelper = /** @lends sap.ui.model.odata.AnnotationHelper */ {
+			/**
+			 * Creates a property setting (which is either a constant value or a binding info
+			 * object) from the given parts and from the optional root formatter function.
+			 * Each part can have one of the following types:
+			 * <ul>
+			 *   <li><code>boolean</code>, <code>number</code>, <code>undefined</code>: The part is
+			 *   a constant value.
+			 *
+			 *   <li><code>string</code>: The part is a data binding expression with complex
+			 *   binding syntax (for example, as created by {@link #.format format}) and is parsed
+			 *   accordingly to create either a constant value or a binding info object. Proper
+			 *   backslash escaping must be used for constant values with curly braces.
+			 *
+			 *   <li><code>object</code>: The part is a binding info object if it has a "path" or
+			 *   "parts" property, otherwise it is a constant value.
+			 * </ul>
+			 * If a binding info object is not the only part and has a "parts" property itself,
+			 * then it must have no other properties except "formatter"; this is the case for
+			 * expression bindings and data binding expressions created by {@link #.format format}.
+			 *
+			 * If all parts are constant values, the resulting property setting is also a constant
+			 * value computed by applying the root formatter function to the constant parts once.
+			 * If at least one part is a binding info object, the resulting property setting is
+			 * also a binding info object and the root formatter function will be applied again and
+			 * again to the current values of all parts, no matter whether constant or variable.
+			 *
+			 * Note: The root formatter function should not rely on its <code>this</code> value
+			 * because it depends on how the function is called.
+			 *
+			 * Note: A single data binding expression can be given directly to
+			 * {@link sap.ui.base.ManagedObject#applySettings applySettings}, no need to call this
+			 * function first.
+			 *
+			 * Example:
+			 * <pre>
+			 * function myRootFormatter(oValue1, oValue2, sFullName, sGreeting, iAnswer) {
+			 *     return ...; //TODO compute something useful from the given values
+			 * }
+			 *
+			 * oSupplierContext = oMetaModel.getMetaContext("/ProductSet('HT-1021')/ToSupplier");
+			 * oValueContext = oMetaModel.createBindingContext("com.sap.vocabularies.UI.v1.DataPoint/Value", oSupplierContext);
+			 *
+			 * vPropertySetting =  sap.ui.model.odata.AnnotationHelper.createPropertySetting([
+			 *     sap.ui.model.odata.AnnotationHelper.format(oValueContext),
+			 *     "{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.simplePath'}",
+			 *     "{:= 'Mr. ' + ${/FirstName} + ' ' + ${/LastName}}",
+			 *     "hello, world!",
+			 *     42
+			 * ], myRootFormatter);
+			 *
+			 * oControl.applySettings({"someProperty" : vPropertySetting});
+			 * </pre>
+			 *
+			 * @param {any[]} vParts
+			 *   array of parts
+			 * @param {function} [fnRootFormatter]
+			 *   root formatter function; default: <code>Array.prototype.join(., " ")</code>
+			 *   in case of multiple parts, just like
+			 *   {@link sap.ui.model.CompositeBinding#getExternalValue getExternalValue}
+			 * @returns {any|object}
+			 *   constant value or binding info object for a property as expected by
+			 *   {@link sap.ui.base.ManagedObject#applySettings applySettings}
+			 * @throws {Error}
+			 *   if some part has an unsupported type or refers to a function name which is not
+			 *   found
+			 * @public
+			 * @since 1.31.0
+			 */
+			createPropertySetting : function (vParts, fnRootFormatter) {
+				var bMergeNeeded = false,
+					vPropertySetting;
+
+				vParts = vParts.slice(); // shallow copy to avoid changes visible to caller
+				vParts.forEach(function (vPart, i) {
+					switch (typeof vPart) {
+					case "boolean":
+					case "number":
+					case "undefined":
+						bMergeNeeded = true;
+						break;
+
+					case "string":
+						vPropertySetting = BindingParser.complexParser(vPart, null, true, true);
+						if (vPropertySetting !== undefined) {
+							if (vPropertySetting.functionsNotFound) {
+								throw new Error("Function name(s) "
+									+ vPropertySetting.functionsNotFound.join(", ")
+									+  " not found");
+							}
+							vParts[i] = vPart = vPropertySetting;
+						}
+						// falls through
+					case "object":
+						// merge is needed if some parts are constants or again have parts
+						// Note: a binding info object has either "path" or "parts"
+						if (!vPart || typeof vPart !== "object" || !("path" in vPart)) {
+							bMergeNeeded = true;
+						}
+						break;
+
+					default:
+						throw new Error("Unsupported part: " + vPart);
+					}
+				});
+
+				vPropertySetting = {
+					formatter : fnRootFormatter,
+					parts : vParts
+				};
+				if (bMergeNeeded) {
+					BindingParser.mergeParts(vPropertySetting);
+				}
+
+				if (vPropertySetting.parts.length === 0) {
+					// special case: all parts are constant values, call formatter once
+					vPropertySetting = vPropertySetting.formatter && vPropertySetting.formatter();
+					if (typeof vPropertySetting === "string") {
+						vPropertySetting = BindingParser.complexParser.escape(vPropertySetting);
+					}
+				} else if (vPropertySetting.parts.length === 1) {
+					// special case: a single property setting only
+					// Note: sap.ui.base.ManagedObject#_bindProperty cannot handle the single-part
+					//       case with two formatters, unless the root formatter is marked with
+					//       "textFragments". We unpack here and chain the formatters ourselves.
+					fnRootFormatter = vPropertySetting.formatter;
+					vPropertySetting = vPropertySetting.parts[0];
+					if (fnRootFormatter) {
+						vPropertySetting.formatter
+							= chain(fnRootFormatter, vPropertySetting.formatter);
+					}
+				}
+
+				return vPropertySetting;
+			},
+
 			/**
 			 * A formatter function to be used in a complex binding inside an XML template view
 			 * in order to interpret OData v4 annotations. It knows about
@@ -188,7 +245,8 @@ sap.ui.define([
 			 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 			 *   the callback interface related to the current formatter call
 			 * @param {any} [vRawValue]
-			 *   the raw value from the meta model:
+			 *   the raw value from the meta model, which is embedded within an entity set or
+			 *   entity type:
 			 *   <ul>
 			 *   <li>if this function is used as formatter the value
 			 *   is provided by the framework</li>
@@ -236,7 +294,7 @@ sap.ui.define([
 			 *   the raw value from the meta model, e.g. <code>{AnnotationPath :
 			 *   "ToSupplier/@com.sap.vocabularies.Communication.v1.Address"}</code> or <code>
 			 *   {AnnotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"}</code>;
-			 *   embedded within an entity type;
+			 *   embedded within an entity set or entity type;
 			 *   <ul>
 			 *   <li>if this function is used as formatter the value
 			 *   is provided by the framework</li>
@@ -256,7 +314,7 @@ sap.ui.define([
 				if (arguments.length === 1) {
 					vRawValue = oInterface.getObject("");
 				}
-				var oResult = followPath(oInterface, vRawValue);
+				var oResult = Basics.followPath(oInterface, vRawValue);
 
 				return oResult
 					? "{" + oResult.navigationProperties.join("/") + "}"
@@ -266,7 +324,7 @@ sap.ui.define([
 			/**
 			 * Helper function for a <code>template:with</code> instruction that depending on how
 			 * it is called goes to the entity set with the given name or to the one determined
-			 * by the last navigation property of one of the following dynamic expressions:
+			 * by the last navigation property. Supports the following dynamic expressions:
 			 * <ul>
 			 * <li>"14.5.2 Expression edm:AnnotationPath"</li>
 			 * <li>"14.5.11 Expression edm:NavigationPropertyPath"</li>
@@ -284,7 +342,7 @@ sap.ui.define([
 			 *   a context which must point to a simple string or to an annotation (or annotation
 			 *   property) of type <code>Edm.AnnotationPath</code>,
 			 *   <code>Edm.NaviagtionPropertyPath</code>, <code>Edm.Path</code>, or
-			 *   <code>Edm.PropertyPath</code> embedded within an entity type;
+			 *   <code>Edm.PropertyPath</code> embedded within an entity set or entity type;
 			 *   the context's model must be an {@link sap.ui.model.odata.ODataMetaModel}
 			 * @returns {string}
 			 *   the path to the entity set, or <code>undefined</code> if no such set is found
@@ -298,7 +356,7 @@ sap.ui.define([
 				if (typeof vRawValue === "string") {
 					sEntitySet = vRawValue;
 				} else {
-					oResult = followPath(oContext, vRawValue);
+					oResult = Basics.followPath(oContext, vRawValue);
 					sEntitySet = oResult
 						&& oResult.associationSetEnd
 						&& oResult.associationSetEnd.entitySet;
@@ -389,7 +447,7 @@ sap.ui.define([
 			 *   the raw value from the meta model, e.g. <code>{AnnotationPath :
 			 *   "ToSupplier/@com.sap.vocabularies.Communication.v1.Address"}</code> or <code>
 			 *   {AnnotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"}</code>;
-			 *   embedded within an entity type;
+			 *   embedded within an entity set or entity type;
 			 *   <ul>
 			 *   <li>if this function is used as formatter the value
 			 *   is provided by the framework</li>
@@ -412,7 +470,7 @@ sap.ui.define([
 				if (arguments.length === 1) {
 					vRawValue = oInterface.getObject("");
 				}
-				var oResult = followPath(oInterface, vRawValue);
+				var oResult = Basics.followPath(oInterface, vRawValue);
 
 				if (oResult) {
 					if (oResult.navigationAfterMultiple) {
@@ -441,7 +499,7 @@ sap.ui.define([
 			 *   a context which must point to an annotation or annotation property of type
 			 *   <code>Edm.AnnotationPath</code>, <code>Edm.NavigationPropertyPath</code>,
 			 *   <code>Edm.Path</code> or <code>Edm.PropertyPath</code>, embedded within an entity
-			 *   type;
+			 *   set or entity type;
 			 *   the context's model must be an {@link sap.ui.model.odata.ODataMetaModel}
 			 * @returns {string}
 			 *   the path to the target, or <code>undefined</code> in case the path cannot be
@@ -449,7 +507,7 @@ sap.ui.define([
 			 * @public
 			 */
 			resolvePath : function (oContext) {
-				var oResult = followPath(oContext, oContext.getObject());
+				var oResult = Basics.followPath(oContext, oContext.getObject());
 
 				return oResult
 					? oResult.resolvedPath
@@ -475,7 +533,8 @@ sap.ui.define([
 			 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
 			 *   the callback interface related to the current formatter call
 			 * @param {any} [vRawValue]
-			 *   the raw value from the meta model:
+			 *   the raw value from the meta model, which is embedded within an entity set or
+			 *   entity type:
 			 *   <ul>
 			 *   <li>if this function is used as formatter the value
 			 *   is provided by the framework</li>
@@ -496,6 +555,7 @@ sap.ui.define([
 			}
 		};
 
+		// BEWARE: keep this in sync with sap/ui/core/library.js!
 		AnnotationHelper.format.requiresIContext = true;
 		AnnotationHelper.getNavigationPath.requiresIContext = true;
 		AnnotationHelper.isMultiple.requiresIContext = true;

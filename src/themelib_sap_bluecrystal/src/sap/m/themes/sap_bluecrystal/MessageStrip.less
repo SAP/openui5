@@ -1,5 +1,5 @@
 .sapMMsgStripInformation {
-	background-color: sapUiNeutralBG;
+	background-color: @sapUiNeutralBG;
 	border-color: @sapUiNeutralBorder;
 	color: @sapUiStandardText;
 
@@ -35,5 +35,24 @@
 
 	& .sapMMsgStripIcon {
 		color: @sapUiNegativeElement;
+	}
+}
+
+.sapMMsgStripCloseButton {
+	// centering the content of the ::after element
+	// does not work in IE if directly set on ::after
+	// 1.5rem - 4px (1px border and 1px offset per side)
+	line-height: 1.25rem;
+
+	&:focus::after {
+		border-color: @sapUiFocus;
+	}
+
+	&::after {
+		top: 1px;
+		left: 1px;
+		bottom: 1px;
+		right: 1px;
+		border: 1px dotted transparent;
 	}
 }

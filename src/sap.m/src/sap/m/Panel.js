@@ -268,24 +268,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 
-		var iHeight = 0,
-			oHeaderToolbar = this.getHeaderToolbar(),
-			oInfoToolbar = this.getInfoToolbar(),
-			$this = this.$();
+		var thisDomRef = this.getDomRef();
 
-		if (oHeaderToolbar) {
-			iHeight += parseInt(oHeaderToolbar.$().outerHeight(), 10);
-		}
+		// 'offsetTop' measures the vertical space occupied by siblings before this one
+		// Earlier each previous sibling's height was calculated separately and then all height values were summed up
+		var iOffsetTop = thisDomRef.querySelector(".sapMPanelContent").offsetTop;
+		var iAdjustedContentHeight = thisDomRef.clientHeight - iOffsetTop;
 
-		if (!oHeaderToolbar && this.getHeaderText() !== "") {
-			iHeight += parseInt($this.find(".sapMPanelHdr").first().outerHeight(), 10);
-		}
-
-		if (oInfoToolbar) {
-			iHeight += parseInt(oInfoToolbar.$().outerHeight(), 10);
-		}
-
-		$this.children(".sapMPanelContent").css("height", parseInt($this.outerHeight(), 10) - iHeight);
+		thisDomRef.querySelector(".sapMPanelContent")
+			.style.height = iAdjustedContentHeight + 'px';
 	};
 
 	Panel.prototype._toggleExpandCollapse = function () {

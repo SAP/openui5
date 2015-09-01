@@ -40,10 +40,12 @@
 .sapMSwt {
 	width: 4rem;
 	height: 2rem;
-	border: 0.0625rem solid;
 
-	// note: some browsers like Samsung Galaxy S4 with Android 4.2 does not support the "border-radius" shorthand property
-	// but does support the long-hand properties for each corner like "border-top-left-radius"
+	/* use px instead of rem, borders sized in "rem" disappear when the page is zoomed out in Chrome. */
+	border: 1px solid;
+
+	/* note: some browsers like Samsung Galaxy S4 with Android 4.2 does not support the "border-radius" shorthand property
+	but does support the long-hand properties for each corner like "border-top-left-radius" */
 	border-top-left-radius: 1rem;
 	border-top-right-radius: 1rem;
 	border-bottom-right-radius: 1rem;

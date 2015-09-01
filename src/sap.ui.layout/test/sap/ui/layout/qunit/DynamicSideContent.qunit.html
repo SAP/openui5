@@ -35,6 +35,8 @@
 					SPAN_SIZE_8 = 8,
 					SPAN_SIZE_9 = 9,
 					SPAN_SIZE_12 = 12,
+					MC_FIXED_CLASS = "sapUiDSCMCFixed",
+					SC_FIXED_CLASS = "sapUiDSCSCFixed",
 					INVALID_BREAKPOINT_ERROR_MSG = "Invalid Breakpoint. Expected: S, M, L or XL",
 					SIDE_CONTENT_LABEL = "SIDE_CONTENT_LABEL";
 
@@ -261,29 +263,31 @@
 				});
 
 				QUnit.test("Calculate breakpoint from width",function(assert){
+					var sBreakpoint;
+
 					// test S breakpoint
-					var sBreakpoint = this.oDSC._getBreakPointFromWidth(200);
+					sBreakpoint = this.oDSC._getBreakPointFromWidth(200);
 					strictEqual(sBreakpoint, S, "If parent container's width is under 720px, the breakpoint should be 'S'");
 
 					sBreakpoint = this.oDSC._getBreakPointFromWidth(720);
 					strictEqual(sBreakpoint, S, "If parent container's width is equal to 720px, the breakpoint should be 'S'");
 
 					// test M breakpoint
-					var sBreakpoint = this.oDSC._getBreakPointFromWidth(800);
+					sBreakpoint = this.oDSC._getBreakPointFromWidth(800);
 					strictEqual(sBreakpoint, M, "If parent container's width is in the range 720px-1024px includingly, the breakpoint should be 'M'");
 
 					sBreakpoint = this.oDSC._getBreakPointFromWidth(1024);
 					strictEqual(sBreakpoint, M, "If parent container's width is in the range 720px-1024px includingly, the breakpoint should be 'M'");
 
 					// test L breakpoint
-					var sBreakpoint = this.oDSC._getBreakPointFromWidth(1060);
+					sBreakpoint = this.oDSC._getBreakPointFromWidth(1060);
 					strictEqual(sBreakpoint, L, "If parent container's width is in the range 1024px-1440px includingly, the breakpoint should be 'L'");
 
 					sBreakpoint = this.oDSC._getBreakPointFromWidth(1440);
 					strictEqual(sBreakpoint, L, "If parent container's width is in the range 1024px-1440px includingly, the breakpoint should be 'L'");
 
 					// test XL breakpoint
-					var sBreakpoint = this.oDSC._getBreakPointFromWidth(1500);
+					sBreakpoint = this.oDSC._getBreakPointFromWidth(1500);
 					strictEqual(sBreakpoint, XL, "If parent container's width is above 1440px, the breakpoint should be 'XL'");
 
 					assert.throws(function () {
@@ -426,7 +430,7 @@
 					var SC_GRID_CELL_SELECTOR = "SCGridCell",
 						MC_GRID_CELL_SELECTOR = "MCGridCell",
 						HIDDEN_CLASS = "sapUiHidden",
-						SPAN_SIZE_12_CLASS = "sapUiSCSpan12",
+						SPAN_SIZE_12_CLASS = "sapUiDSCSpan12",
 					    $sideContent = this.oDSC.$(SC_GRID_CELL_SELECTOR),
 						$mainContent = this.oDSC.$(MC_GRID_CELL_SELECTOR);
 
@@ -484,6 +488,17 @@
 
 					ok($mainContent.hasClass(HIDDEN_CLASS), "Main content has class '" + HIDDEN_CLASS + "' if side content is hidden");
 					ok($sideContent.hasClass(SPAN_SIZE_12_CLASS), "Side content has class '" + SPAN_SIZE_12_CLASS + "' if only side content is visible");
+
+					this.oDSC.setShowSideContent(true);
+					this.oDSC.setShowMainContent(true);
+					this.oDSC.setSideContentFallDown(sap.ui.layout.SideContentFallDown.BelowM);
+					this.oDSC._bFixedSideContent = true;
+
+					this.oDSC._changeGridState();
+
+					ok($mainContent.hasClass(MC_FIXED_CLASS), "Main content has class '" + MC_FIXED_CLASS + "' if side content is fixed size");
+					ok($sideContent.hasClass(SC_FIXED_CLASS), "Side content has class '" + SC_FIXED_CLASS + "' if main content is fixed size");
+
 				});
 
 				QUnit.test("Check if height should be set",function(){
@@ -510,6 +525,11 @@
 					this.oDSC.setShowMainContent(true);
 					this.oDSC.setShowSideContent(false);
 					ok(!this.oDSC._shouldSetHeight(), "Height should not be set if either main or side content is not visible.");
+
+					this.oDSC._bFixedSideContent = true;
+					this.oDSC.setShowMainContent(true);
+					this.oDSC.setShowSideContent(true);
+					ok(this.oDSC._shouldSetHeight(), "Height should be set if fixed side content is set.");
 				});
 
 				QUnit.test("Set main and side content span sizes",function(){

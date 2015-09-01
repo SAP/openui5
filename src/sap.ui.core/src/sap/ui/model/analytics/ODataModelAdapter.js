@@ -61,7 +61,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./AnalyticalTreeBind
 		
 		// disable the count support (inline count is required for AnalyticalBinding)
 		if (iModelVersion === AnalyticalVersionInfo.V1 && this.isCountSupported()) {
-			jQuery.sap.log.info("ODataModelAdapter: switched ODataModel to use inlinecount (mandatory for analytical bindings)");
+			jQuery.sap.log.info("ODataModelAdapter: switched ODataModel to use inlinecount (mandatory for the AnalyticalBinding)");
 			this.setCountSupported(false);
 		}
 		

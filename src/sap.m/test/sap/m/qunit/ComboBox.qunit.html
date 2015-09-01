@@ -3,6 +3,7 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>Test Page for sap.m.ComboBox</title>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_bluecrystal"
@@ -10,20 +11,24 @@
 				data-sap-ui-libs="sap.m"
 				src="../../../../resources/sap-ui-core.js">
 		</script>
+		<script>
+			jQuery.sap.require("sap.ui.core.util.MockServer");
+		</script>
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script>
 			window._setTimeout = this.setTimeout;
 			sinon.config.useFakeTimers = true;
+
 			// make jQuery.now work with Sinon fake timers (since jQuery 2.x, jQuery.now caches the native Date.now)
 			jQuery.now = function() {
 				return Date.now();
 			};
+
 			QUnit.config.autostart = false;
 			sap.ui.test.qunit.delayTestStart();
 
@@ -46,6 +51,27 @@
 				test("get" + sProperty + "()", function() {
 					strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
 				});
+			};
+
+			var fnStartMockServer = function(sUri, iAutoRespondAfter) {
+				var sMetadataUrl = "data/metadata.xml";
+				sUri = sUri || "/service/";
+
+				// configure respond to requests delay
+				sap.ui.core.util.MockServer.config({
+					autoRespond: true,
+					autoRespondAfter: iAutoRespondAfter || 10
+				});
+
+				// create mock server
+				var oMockServer = new sap.ui.core.util.MockServer({
+					rootUri: sUri
+				});
+
+				// start and return
+				oMockServer.simulate(sMetadataUrl, "data");
+				oMockServer.start();
+				return oMockServer;
 			};
 
 			/* =========================================================== */
@@ -157,6 +183,7 @@
 
 				// cleanup
 				oComboBox.destroy();
+				oModel.destroy();
 			});
 
 			/* ------------------------------ */
@@ -183,7 +210,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "0");
-				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getValue(), "item 0");
 				strictEqual(oComboBox.getProperty("value"), "item 0");
 
@@ -271,7 +298,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "2");
-				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getValue(), "item 2");
 				strictEqual(oComboBox.getProperty("value"), "item 2");
 
@@ -313,7 +340,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "1");
-				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
 
@@ -615,7 +642,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "2");
-				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getValue(), "item 2");
 				strictEqual(oComboBox.getProperty("value"), "item 2");
 
@@ -662,7 +689,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "3");
-				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getValue(), "item 3");
 				strictEqual(oComboBox.getProperty("value"), "item 3");
 
@@ -704,7 +731,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "1");
-				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
 
@@ -889,7 +916,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "0");
-				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getValue(), "item 0");
 				strictEqual(oComboBox.getProperty("value"), "item 0");
 
@@ -902,7 +929,7 @@
 
 				// system under test
 				var oItem;
-				var oSelect = new sap.m.ComboBox({
+				var oComboBox = new sap.m.ComboBox({
 					items: [
 						oItem = new sap.ui.core.Item({
 							key: "CU",
@@ -917,12 +944,12 @@
 				oItem.setText("Germany");
 
 				// assert
-				strictEqual(oSelect.getSelectedKey(), "GER");
-				strictEqual(oSelect.getSelectedItem().getText(), "Germany");
-				strictEqual(oSelect.getValue(), "Germany");
+				strictEqual(oComboBox.getSelectedKey(), "GER");
+				strictEqual(oComboBox.getSelectedItem().getText(), "Germany");
+				strictEqual(oComboBox.getValue(), "Germany");
 
 				// cleanup
-				oSelect.destroy();
+				oComboBox.destroy();
 			});
 
 			/* ------------------------------ */
@@ -996,7 +1023,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "2");
-				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getValue(), "item 2");
 				strictEqual(oComboBox.getProperty("value"), "item 2");
 
@@ -1043,7 +1070,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "3");
-				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getValue(), "item 3");
 				strictEqual(oComboBox.getProperty("value"), "item 3");
 
@@ -1085,7 +1112,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "1");
-				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
 
@@ -1318,8 +1345,6 @@
 				var oComboBox = new sap.m.ComboBox();
 
 				// arrange
-				var fnAddAggregationSpy = this.spy(oComboBox, "addAggregation");
-				var fnListAddAggregationSpy = this.spy(oComboBox.getList(), "addAggregation");
 				var fnAddItemSpy = this.spy(oComboBox, "addItem");
 				var oItem = new sap.ui.core.Item({
 					key: "0",
@@ -1330,11 +1355,11 @@
 				oComboBox.addItem(oItem);
 
 				// assert
-				ok(fnAddAggregationSpy.calledWith("items", oItem), "sap.m.ComboBox.addAggregation() method was called with the expected arguments");
-				ok(fnListAddAggregationSpy.calledWith("items", oComboBox.getListItem(oItem)), "sap.m.List.addAggregation() method was called with the expected arguments");
+				ok(oComboBox.getFirstItem() === oItem);
+				ok(oComboBox.getList().getFirstItem() === oItem);
 				ok(fnAddItemSpy.returned(oComboBox));
 				ok(oItem.hasListeners("_change"));
-				ok(oComboBox.getListItem(oItem).getVisible(), "The item is visible");
+				ok(oComboBox.isItemVisible(oItem));
 
 				// cleanup
 				oComboBox.destroy();
@@ -1379,8 +1404,6 @@
 				var oComboBox = new sap.m.ComboBox();
 
 				// arrange
-				var fnInsertAggregation = this.spy(oComboBox, "insertAggregation");
-				var fnListInsertAggregation = this.spy(oComboBox.getList(), "insertAggregation");
 				var fnInsertItem = this.spy(oComboBox, "insertItem");
 				var oItem = new sap.ui.core.Item({
 					key: "0",
@@ -1391,11 +1414,11 @@
 				oComboBox.insertItem(oItem, 0);
 
 				// assert
-				ok(fnInsertAggregation.calledWith("items", oItem, 0), "oComboBox.insertAggregation() method was called with the expected arguments");
-				ok(fnListInsertAggregation.calledWith("items", oComboBox.getListItem(oItem), 0), "oList.insertAggregation() method was called with the expected arguments");
+				ok(oComboBox.getFirstItem() === oItem);
+				ok(oComboBox.getList().getFirstItem() === oItem);
 				ok(fnInsertItem.returned(oComboBox), 'oComboBox.insertAggregation() method return the "this" reference');
 				ok(oItem.hasListeners("_change"));
-				ok(oComboBox.getListItem(oItem).getVisible(), "The item is visible");
+				ok(oComboBox.isItemVisible(oItem));
 
 				// cleanup
 				oComboBox.destroy();
@@ -1425,7 +1448,7 @@
 				this.clock.tick(1000);
 
 				// act
-				sap.ui.test.qunit.triggerEvent("tap", oComboBox.getListItem(oComboBox.getFirstItem()).getDomRef());
+				sap.ui.test.qunit.triggerEvent("tap", oComboBox.getFirstItem().getDomRef());
 
 				// assert
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).cursorPos(), 7, "The text cursor is at the endmost position");
@@ -1478,7 +1501,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "1");
-				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
@@ -1530,7 +1553,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "1");
-				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
@@ -1576,7 +1599,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "2");
-				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getValue(), "item 2");
 				strictEqual(oComboBox.getProperty("value"), "item 2");
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
@@ -1718,7 +1741,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "1");
-				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
@@ -1762,7 +1785,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "2");
-				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getValue(), "item 2");
 				strictEqual(oComboBox.getProperty("value"), "item 2");
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
@@ -1921,7 +1944,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "2");
-				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getValue(), "item 2");
 				strictEqual(oComboBox.getProperty("value"), "item 2");
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
@@ -1960,7 +1983,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "1");
-				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
@@ -2015,7 +2038,7 @@
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getSelectedItemId(), "item-id");
 				strictEqual(oComboBox.getSelectedKey(), "1");
-				ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getValue(), "item 1");
 				strictEqual(oComboBox.getProperty("value"), "item 1");
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
@@ -2133,7 +2156,7 @@
 				// arrange
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
-				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
+				var sExpectedActiveDescendantId = oExpectedItem.getId();
 
 				oComboBox.open();
 				this.clock.tick(1000);	// wait 1s after the open animation is completed
@@ -2213,8 +2236,7 @@
 				var oComboBox = new sap.m.ComboBox();
 
 				// arrange
-				var fnRemoveAggregationSpy = this.spy(oComboBox, "removeAggregation");
-				var fnListRemoveAggregationSpy = this.spy(oComboBox.getList(), "removeAggregation");
+				var fnRemoveAggregationSpy = this.spy(oComboBox.getList(), "removeAggregation");
 				var fnRemoveItemSpy = this.spy(oComboBox, "removeItem");
 				var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 
@@ -2222,10 +2244,8 @@
 				oComboBox.removeItem(undefined);
 
 				// assert
-				strictEqual(fnRemoveAggregationSpy.callCount, 1, "sap.m.ComboBox.prototype.removeAggregation() method was called");
-				strictEqual(fnListRemoveAggregationSpy.callCount, 1, "sap.m.List.prototype.removeAggregation() method was called");
-				ok(fnRemoveAggregationSpy.calledWith("items", undefined), "sap.m.ComboBox.prototype.removeAggregation() method was called with the expected argument");
-				ok(fnListRemoveAggregationSpy.calledWith("items", null), "sap.m.List.prototype.removeAggregation() method was called with the expected argument");
+				strictEqual(fnRemoveAggregationSpy.callCount, 1, "sap.m.SelectList.removeAggregation() method was called");
+				ok(fnRemoveAggregationSpy.calledWith("items", undefined), "sap.m.SelectList.prototype.removeAggregation() method was called with the expected argument");
 				strictEqual(fnFireChangeSpy.callCount, 0, "The change event is not fired");
 				ok(fnRemoveItemSpy.returned(null), "sap.m.ComboBox.prototype.removeItem() method returns null");
 
@@ -2253,8 +2273,7 @@
 
 				// arrange
 				var oModel = new sap.ui.model.json.JSONModel();
-				var fnRemoveAggregationSpy = this.spy(oComboBox, "removeAggregation");
-				var fnListRemoveAggregationSpy = this.spy(oComboBox.getList(), "removeAggregation");
+				var fnRemoveAggregationSpy = this.spy(oComboBox.getList(), "removeAggregation");
 				var mData = {
 					"items": [
 						{
@@ -2316,9 +2335,8 @@
 				oComboBox.removeItem(8);
 
 				// assert
-				strictEqual(fnRemoveAggregationSpy.callCount, 1, "sap.m.ComboBox.prototype.removeAggregation() method was called");
-				strictEqual(fnListRemoveAggregationSpy.callCount, 1, "sap.m.List.prototype.removeAggregation() method was called");
-				ok(fnRemoveAggregationSpy.calledWith("items", 8), "sap.m.ComboBox.prototype.removeAggregation() method was called with the expected argument");
+				strictEqual(fnRemoveAggregationSpy.callCount, 1, "sap.m.SelectList.prototype.removeAggregation() method was called");
+				ok(fnRemoveAggregationSpy.calledWith("items", 8), "sap.m.SelectList.prototype.removeAggregation() method was called with the expected argument");
 				ok(oComboBox.getSelectedItem() === null);
 				strictEqual(oComboBox.getSelectedItemId(), "");
 				strictEqual(oComboBox.getSelectedKey(), "");
@@ -2329,6 +2347,7 @@
 
 				// cleanup
 				oComboBox.destroy();
+				oModel.destroy();
 			});
 
 			test("removeItem() it should remove the selected item and change the selection (test case 2)", function() {
@@ -2403,6 +2422,7 @@
 
 				// cleanup
 				oComboBox.destroy();
+				oModel.destroy();
 			});
 
 			test("removeItem() it should remove the selected item and change the selection (test case 3)", function() {
@@ -2434,7 +2454,6 @@
 				strictEqual(oComboBox.getValue(), "");
 				strictEqual(oComboBox.getProperty("value"), "");
 				ok(oExpectedItem.getDomRef() === null);
-				ok(oComboBox.getListItem(oExpectedItem).getDomRef() === null);
 				strictEqual(oExpectedItem.hasListeners("_change"), false);
 
 				// cleanup
@@ -2473,7 +2492,6 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				var fnRemoveAllItemsSpy = this.spy(oComboBox, "removeAllItems");
-				var fnRemoveAllAggregationSpy = this.spy(oComboBox, "removeAllAggregation");
 				var fnListRemoveAllItemsSpy = this.spy(oComboBox.getList(), "removeAllItems");
 
 				// act
@@ -2483,8 +2501,7 @@
 				var mDomRefs = fnGetDomRefs(oComboBox.getId());
 
 				// assert
-				ok(fnRemoveAllAggregationSpy.calledWith("items"), "sap.m.ComboBox.prototype.removeAllAggregation() method was called with the expected argument");
-				strictEqual(fnListRemoveAllItemsSpy.callCount, 1, "sap.m.List.prototype.removeAllItems() method was called");
+				strictEqual(fnListRemoveAllItemsSpy.callCount, 1, "sap.m.SelectList.prototype.removeAllItems() method was called");
 				ok(fnRemoveAllItemsSpy.returned(aItems), "sap.m.ComboBox.prototype.removeAllItems() method returns an array of the removed items");
 				ok(oComboBox.getSelectedItem() === null);
 				strictEqual(oComboBox.getSelectedItemId(), "");
@@ -2856,23 +2873,44 @@
 				oComboBox.destroy();
 			});
 
-			/* ------------------------------------------ */
-			/* mapItemToListItem() and findMappedItem()   */
-			/* ------------------------------------------ */
+			/* ------------------------------ */
+			/* setSelectedIndex()             */
+			/* ------------------------------ */
 
-			test("mapItemToListItem() and findMappedItem()", function() {
+			var setSelectedIndexTestCase = function(sTestName, mOptions) {
+				test("setSelectedIndex()", function() {
 
-				// system under test
+					// system under test
+					var oComboBox = mOptions.control;
+
+					// act
+					oComboBox.setSelectedIndex(mOptions.input);
+
+					// assert
+					ok(oComboBox.getSelectedItem() === mOptions.output, sTestName);
+
+					// cleanup
+					oComboBox.destroy();
+				});
+			};
+
+			(function() {
 				var oExpectedItem;
 				var aItems = [
-					oExpectedItem = new sap.ui.core.Item({
+					new sap.ui.core.Item({
 						key: "0",
-						text: "item 0"
+						text: "item 0",
+						enabled: false
 					}),
 
 					new sap.ui.core.Item({
 						key: "1",
 						text: "item 1"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						key: "3",
+						text: "item 3"
 					}),
 
 					new sap.ui.core.Item({
@@ -2881,20 +2919,54 @@
 					})
 				];
 
-				var oComboBox = new sap.m.ComboBox({
-					items: aItems
+				setSelectedIndexTestCase("", {
+					control: new sap.m.Select({
+						items: aItems
+					}),
+					input: 2,
+					output: oExpectedItem
 				});
+			}());
 
-				// act
-				var oListItem = oComboBox._mapItemToListItem(oExpectedItem);
-
-				// assert
-				ok(oComboBox._findMappedItem(oListItem, aItems) === oExpectedItem);
-				ok(oComboBox._findMappedItem({}, aItems) === null);
-
-				// cleanup
-				oComboBox.destroy();
+			setSelectedIndexTestCase("", {
+				control: new sap.m.Select(),
+				input: 2,
+				output: null
 			});
+
+			(function() {
+				var oExpectedItem;
+				var aItems = [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0",
+						enabled: false
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "3",
+						text: "item 3"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				];
+
+				setSelectedIndexTestCase("The provided index is bigger than the last item's index", {
+					control: new sap.m.Select({
+						items: aItems
+					}),
+					input: 10,
+					output: oExpectedItem
+				});
+			}());
 
 			/* ------------------------------ */
 			/* getItemAt()                    */
@@ -3339,6 +3411,133 @@
 			});
 
 			/* ------------------------------------ */
+			/* addAggregation() + getAggregation()  */
+			/* ------------------------------------ */
+
+			test("addAggregation() + getAggregation()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox();
+				var oItem = new sap.ui.core.Item({
+					key: "GER",
+					text: "Germany"
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var fnAddAggregationSpy = this.spy(oComboBox, "addAggregation");
+				var fnInvalidateSpy = this.spy(oComboBox, "invalidate");
+
+				// act
+				oComboBox.addAggregation("items", oItem);
+
+				// assert
+				ok(fnAddAggregationSpy.returned(oComboBox), "sap.m.ComboBox.prototype.addAggregation() returns this to allow method chaining");
+				ok(fnInvalidateSpy.calledWithExactly(oItem));
+				ok(oComboBox.getAggregation("items")[0] === oItem);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("addAggregation()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox();
+				var oItem = new sap.ui.core.Item({
+					key: "GER",
+					text: "Germany"
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var fnAddAggregationSpy = this.spy(oComboBox, "addAggregation");
+				var fnInvalidateSpy = this.spy(oComboBox, "invalidate");
+
+				// act
+				oComboBox.addAggregation("items", oItem, true);
+
+				// assert
+				ok(fnAddAggregationSpy.returned(oComboBox), "sap.m.ComboBox.prototype.addAggregation() returns this to allow method chaining");
+				ok(!fnInvalidateSpy.calledWithExactly(oItem));
+				ok(oComboBox.getAggregation("items")[0] === oItem);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* setAssociation() + getAssociation()  */
+			/* ------------------------------------ */
+
+			test("setAssociation() + getAssociation()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "CU",
+							text: "Cuba"
+						}),
+						new sap.ui.core.Item({
+							id: "item-id",
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				var fnSetAssociationSpy = this.spy(oComboBox, "setAssociation");
+
+				// act
+				oComboBox.setAssociation("selectedItem", "item-id");
+
+				// assert
+				ok(fnSetAssociationSpy.returned(oComboBox), "sap.m.ComboBox.prototype.setAssociation() returns this to allow method chaining");
+				ok(oComboBox.getAssociation("selectedItem") === "item-id");
+				ok(oComboBox.getList().getAssociation("selectedItem") === "item-id");
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("setAssociation() + getAssociation()", function() {
+
+				// system under test
+				var oItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "CU",
+							text: "Cuba"
+						}),
+						oItem = new sap.ui.core.Item({
+							id: "item-id",
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				var fnSetAssociationSpy = this.spy(oComboBox, "setAssociation");
+
+				// act
+				oComboBox.setAssociation("selectedItem", oItem);
+
+				// assert
+				ok(fnSetAssociationSpy.returned(oComboBox), "sap.m.ComboBox.prototype.setAssociation() returns this to allow method chaining");
+				ok(oComboBox.getAssociation("selectedItem") === "item-id");
+				ok(oComboBox.getList().getAssociation("selectedItem") === "item-id");
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------------ */
 			/* updateAggregation()                  */
 			/* ------------------------------------ */
 
@@ -3386,13 +3585,608 @@
 
 				// act
 				oComboBox.updateAggregation("items");
-				sap.ui.getCore().applyChanges();
 
 				// assert
 				strictEqual(oComboBox.getSelectedKey(), "CU");
 
 				// cleanup
 				oComboBox.destroy();
+				oModel.destroy();
+				sap.ui.getCore().applyChanges();
+			});
+
+			test("it should correctly set the selection if the items aggregation is bounded to an OData model", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: {
+						path: "/Products",
+						template: new sap.ui.core.Item({
+							key: "{ProductId}",
+							text: "{Name}"
+						})
+					}
+				});
+
+				// arrange
+				var sUri = "/service/";
+				var iAutoRespondAfter = 10;
+				var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
+				var oModel = new sap.ui.model.odata.ODataModel(sUri, true);
+				oComboBox.setModel(oModel);
+
+				// IDs and names of the products in the model:
+				//
+				// id_1  Gladiator MX
+				// id_2  Psimax
+				// id_3  Hurricane GX
+				// id_4  Webcam
+				// id_5  Monitor Locking Cable
+				// id_6  Laptop Case
+				// id_7  Removable CD/DVD
+				// id_8  USB Stick 16 GByte
+				// id_9  Deskjet Super Highspeed
+				// id_10 Laser Allround Pro
+				// id_11 Flat S
+				// id_12 Flat Medium
+				// id_13 Flat X-large II
+				// id_14 High End Laptop 2b
+				// id_15 Very Natural Keyboard
+				// id_16 Hardcore Hacker
+
+				oComboBox.setSelectedKey("id_5");
+				oComboBox.placeAt("content");
+				this.clock.tick(iAutoRespondAfter + 1);	// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting to make sure that the data from the OData model is available)
+
+				// assert
+				strictEqual(oComboBox.getSelectedKey(), "id_5");
+				strictEqual(oComboBox.getSelectedItem().getText(), "Monitor Locking Cable");
+
+				// cleanup
+				oMockServer.stop();
+				oMockServer.destroy();
+				oComboBox.destroy();
+				oModel.destroy();
+			});
+
+			// BCP 1570460580
+			test("it should not override the selection when binding context is changed", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					selectedKey: "{selected}",
+					items: {
+						path: "entries",
+						template: new sap.ui.core.Item({
+							key: "{key}",
+							text: "{country}"
+						})
+					}
+				});
+
+				// arrange
+				var oModel = new sap.ui.model.json.JSONModel([
+					{
+						selected: "DZ",
+						entries: [
+							{
+								"key": "DZ",
+								"country": "Algeria"
+							},
+							{
+								"key": "AR",
+								"country": "Argentina"
+							},
+							{
+								"key": "AU",
+								"country": "Australia"
+							}
+						]
+					},
+					{
+						selected: "BA",
+						entries: [
+							{
+								"key": "AT",
+								"country": "Austria"
+							},
+
+							{
+								"key": "BH",
+								"country": "Bahrain"
+							},
+
+							{
+								"key": "BE",
+								"country": "Belgium"
+							},
+
+							{
+								"key": "BA",
+								"country": "Bosnia and Herzegovina"
+							}
+						]
+					}
+				]);
+
+				oModel.setDefaultBindingMode("OneWay");
+				sap.ui.getCore().setModel(oModel);
+				oComboBox.setBindingContext(oModel.getContext("/1"));
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oComboBox.setBindingContext(oModel.getContext("/0"));
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oComboBox.getSelectedKey(), "DZ");
+				strictEqual(oComboBox.getValue(), "Algeria");
+
+				// cleanup
+				oComboBox.destroy();
+				oModel.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* destroyAggregation()                 */
+			/* ------------------------------------ */
+
+			test("destroyAggregation()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				var fnDestroyAggregationSpy = this.spy(oComboBox, "destroyAggregation");
+				var fnInvalidateSpy = this.spy(oComboBox, "invalidate");
+
+				// act
+				oComboBox.destroyAggregation("items");
+
+				// assert
+				ok(fnDestroyAggregationSpy.returned(oComboBox), "sap.m.ComboBox.prototype.destroyAggregation() returns this to allow method chaining");
+				strictEqual(fnInvalidateSpy.callCount, 0, "destroying the items in the list should not invalidate the input field");
+				strictEqual(oComboBox.getItems().length, 0);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("destroyAggregation()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				var fnDestroyAggregationSpy = this.spy(oComboBox, "destroyAggregation");
+				var fnInvalidateSpy = this.spy(oComboBox, "invalidate");
+
+				// act
+				oComboBox.destroyAggregation("items", true);
+
+				// assert
+				ok(fnDestroyAggregationSpy.returned(oComboBox), "sap.m.ComboBox.prototype.destroyAggregation() returns this to allow method chaining");
+				ok(!fnInvalidateSpy.calledOnce);
+				strictEqual(oComboBox.getItems().length, 0);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* findAggregatedObjects()              */
+			/* ------------------------------------ */
+
+			test("findAggregatedObjects()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				var fnFindAggregatedObjectsSpy = this.spy(oComboBox, "findAggregatedObjects");
+
+				// act
+				oComboBox.findAggregatedObjects();
+
+				// assert
+				ok(fnFindAggregatedObjectsSpy.returned(oComboBox.getItems()));
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* -------------------------------------------------- */
+			/* getBinding() + getBindingInfo() + getBindingPath() */
+			/* -------------------------------------------------- */
+
+			test("getBinding() + getBindingInfo() + getBindingPath()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox();
+
+				// arrange
+				var oModel = new sap.ui.model.json.JSONModel();
+				var mData = {
+					"countries": [
+						{
+							"value": "GER",
+							"text": "Germany"
+						}
+					],
+					"selected": "GER"
+				};
+				var oItemTemplate = new sap.ui.core.Item({
+					key: "{select-model>value}",
+					text: "{select-model>text}"
+				});
+
+				oModel.setData(mData);
+				oComboBox.setModel(oModel, "select-model");
+
+				// act
+				oComboBox.bindItems({
+					path: "select-model>/countries",
+					template: oItemTemplate
+				});
+
+				oComboBox.bindProperty("selectedKey", {
+					path: "select-model>/selected"
+				});
+
+				// assert
+				ok(oComboBox.getBinding("selectedKey"));
+				ok(oComboBox.getBinding("items"));
+				ok(oComboBox.getBindingInfo("selectedKey"));
+				ok(oComboBox.getBindingInfo("items"));
+				strictEqual(oComboBox.getBindingPath("selectedKey"), "/selected");
+				strictEqual(oComboBox.getBindingPath("items"), "/countries");
+				ok(oComboBox.isBound("selectedKey"));
+				ok(oComboBox.isBound("items"));
+
+				// cleanup
+				oComboBox.destroy();
+				oModel.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* setProperty() + getProperty()        */
+			/* ------------------------------------ */
+
+			test('setProperty() + getProperty() test for "selectedKey" property', function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "CU",
+							text: "Cuba"
+						}),
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				var fnInvalidateSpy = this.spy(oComboBox, "invalidate");
+
+				// act
+				oComboBox.setProperty("selectedKey", "GER");
+
+				// assert
+				strictEqual(oComboBox.getSelectedKey(), "GER");
+				strictEqual(oComboBox.getProperty("selectedKey"), "GER");
+				strictEqual(oComboBox.getList().getSelectedKey(), "GER");
+				strictEqual(oComboBox.getList().getProperty("selectedKey"), "GER");
+				ok(fnInvalidateSpy.called);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test('setProperty() + getProperty() test for "selectedItemId" property', function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							id: "item-cu",
+							key: "CU",
+							text: "Cuba"
+						}),
+						new sap.ui.core.Item({
+							id: "item-ger",
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// arrange
+				var fnInvalidateSpy = this.spy(oComboBox, "invalidate");
+
+				// act
+				oComboBox.setProperty("selectedItemId", "item-ger", true);
+
+				// assert
+				strictEqual(oComboBox.getSelectedItemId(), "item-ger");
+				strictEqual(oComboBox.getProperty("selectedItemId"), "item-ger");
+				strictEqual(oComboBox.getList().getSelectedItemId(), "item-ger");
+				strictEqual(oComboBox.getList().getProperty("selectedItemId"), "item-ger");
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* indexOfAggregation()                 */
+			/* ------------------------------------ */
+
+			test("indexOfAggregation()", function() {
+
+				// system under test
+				var oExpectedItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							text: "Cuba"
+						}),
+						oExpectedItem = new sap.ui.core.Item({
+							text: "Germany"
+						})
+					]
+				});
+
+				// assert
+				strictEqual(oComboBox.indexOfAggregation("items", oExpectedItem), 1);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* insertAggregation()                  */
+			/* ------------------------------------ */
+
+			test("insertAggregation()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox();
+				var oItem = new sap.ui.core.Item({
+					text: "Germany"
+				});
+
+				// act
+				oComboBox.insertAggregation("items", oItem);
+
+				// assert
+				ok(oComboBox.getItems()[0] === oItem);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* removeAggregation()                  */
+			/* ------------------------------------ */
+
+			test("removeAggregation()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						})
+					]
+				});
+
+				// act
+				oComboBox.removeAggregation("items", 0);
+
+				// assert
+				strictEqual(oComboBox.getItems().length, 0);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* removeAllAggregation()               */
+			/* ------------------------------------ */
+
+			test("removeAllAggregation()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: "GER",
+							text: "Germany"
+						}),
+						new sap.ui.core.Item({
+							key: "CU",
+							text: "Cuba"
+						})
+					]
+				});
+
+				// act
+				oComboBox.removeAllAggregation("items");
+
+				// assert
+				strictEqual(oComboBox.getItems().length, 0);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* removeAllAssociation()               */
+			/* ------------------------------------ */
+
+			test("removeAllAssociation()", function() {
+
+				// system under test
+				var oExpectedItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							id: "ger-id",
+							key: "GER",
+							text: "Germany"
+						}),
+						oExpectedItem = new sap.ui.core.Item({
+							id: "cu-id",
+							key: "CU",
+							text: "Cuba"
+						})
+					],
+
+					selectedItem: oExpectedItem
+				});
+
+				// arrange
+				var fnRemoveAllAssociationSpy = this.spy(oComboBox, "removeAllAssociation");
+
+				// act
+				oComboBox.removeAllAssociation("selectedItem");
+
+				// assert
+				ok(oComboBox.getSelectedItem() === null);
+				ok(oComboBox.getList().getSelectedItem() === null);
+				ok(fnRemoveAllAssociationSpy.returned("cu-id"));
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* unbindProperty()                     */
+			/* ------------------------------------ */
+
+			test("unbindProperty()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox();
+
+				// arrange
+				var oModel = new sap.ui.model.json.JSONModel();
+				var mData = {
+					"countries": [
+						{
+							"code": "GER",
+							"name": "Germany"
+						},
+						{
+							"code": "CU",
+							"name": "Cuba"
+						}
+					],
+					"selected": "CU"
+				};
+
+				var oItemTemplate = new sap.ui.core.Item({
+					key: "{code}",
+					text: "{name}"
+				});
+
+				oComboBox.bindItems({
+					path: "/countries",
+					template: oItemTemplate
+				});
+
+				oComboBox.bindProperty("selectedKey", {
+					path: "/selected"
+				});
+
+				oModel.setData(mData);
+				oComboBox.setModel(oModel);
+
+				// act
+				oComboBox.unbindProperty("selectedKey");
+
+				// assert
+				strictEqual(oComboBox.isBound("selectedKey"), false, "The property is not bound");
+				strictEqual(oComboBox.getProperty("selectedKey"), "", 'Property "selectedKey" is reset to the default value');
+
+				// cleanup
+				oComboBox.destroy();
+				oModel.destroy();
+			});
+
+			/* ------------------------------------ */
+			/* unbindAggregation()                  */
+			/* ------------------------------------ */
+
+			test("unbindAggregation()", function() {
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox();
+
+				// arrange
+				var oModel = new sap.ui.model.json.JSONModel();
+				var mData = {
+					"countries": [
+						{
+							"code": "GER",
+							"name": "Germany"
+						},
+						{
+							"code": "CU",
+							"name": "Cuba"
+						}
+					],
+					"selected": "CU"
+				};
+
+				var oItemTemplate = new sap.ui.core.Item({
+					key: "{code}",
+					text: "{name}"
+				});
+
+				oComboBox.bindItems({
+					path: "/countries",
+					template: oItemTemplate
+				});
+
+				oModel.setData(mData);
+				oComboBox.setModel(oModel);
+
+				// act
+				oComboBox.unbindAggregation("items");
+
+				// assert
+				strictEqual(oComboBox.isBound("items"), false, 'The aggregation "items" is not bound');
+				strictEqual(oComboBox.getAggregation("items", []).length, 0, 'The aggregation "items" must be reset');
+
+				// cleanup
+				oComboBox.destroy();
+				oModel.destroy();
 			});
 
 			/* ------------------------------------ */
@@ -3874,7 +4668,7 @@
 					equal($Input.attr("tabindex"), undefined, "No tabindex for Input field");
 					equal($Arrow.attr("tabindex"), -1, "Tabindex set for Arrow");
 
-					oComboBox.setBusy(true)
+					oComboBox.setBusy(true);
 
 					window._setTimeout(function() {
 						// check whether all element do have a tabindex now
@@ -3891,6 +4685,9 @@
 							equal($Arrow.attr("tabindex"), -1, "Still Tabindex set for Arrow");
 
 							start();
+
+							// cleanup
+							oComboBox.destroy();
 						}, 10)
 					}, 10);
 
@@ -5043,11 +5840,7 @@
 				strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), sExpectedValue);
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
-
-				if (oComboBox.getList()) {
-					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
-				}
-
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getFocusDomRef().value, sExpectedValue);
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
@@ -5080,11 +5873,7 @@
 				// assert
 				strictEqual(fnFireSelectionChangeSpy.callCount, 0, 'The "selectionChange" event was not fired');
 				ok(oComboBox.getSelectedItem() === null);
-
-				if (oComboBox.getList()) {
-					ok(oComboBox.getList().getSelectedItem() === null);
-				}
-
+				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getFocusDomRef().value, "");
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
@@ -5131,11 +5920,7 @@
 				strictEqual(fnKeyDownSpy.callCount, 1, "onsapdown() method was called exactly once");
 				strictEqual(fnFireSelectionChangeSpy.callCount, 0, 'The "selectionChange" event is not fired');
 				ok(oComboBox.getSelectedItem() === null);
-
-				if (oComboBox.getList()) {
-					ok(oComboBox.getList().getSelectedItem() === null);
-				}
-
+				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getValue(), "");
 				strictEqual(oComboBox.getProperty("value"), "");
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
@@ -5186,11 +5971,7 @@
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "item 0");
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getFocusDomRef().value, "item 0");
-
-				if (oComboBox.getList()) {
-					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
-				}
-
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
@@ -5345,7 +6126,7 @@
 				oComboBox.focus();
 				oComboBox.open();
 				this.clock.tick(1000);	// wait after the open animation is completed
-				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
+				var sExpectedActiveDescendantId = oExpectedItem.getId();
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
@@ -5404,11 +6185,7 @@
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).getSelectedText(), "item 0 is selected");
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getFocusDomRef().value, "item 0 is selected");
-
-				if (oComboBox.getList()) {
-					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
-				}
-
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
@@ -5449,11 +6226,7 @@
 				strictEqual(fnFireSelectionChangeSpy.callCount, 0, 'The "selectionChange" event was not fired');
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getFocusDomRef().value, "item 1");
-
-				if (oComboBox.getList()) {
-					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
-				}
-
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 				// cleanup
@@ -5498,11 +6271,7 @@
 				// assert
 				strictEqual(fnKeyUpSpy.callCount, 1, "onsapup() method was called exactly once");
 				ok(oComboBox.getSelectedItem() === null);
-
-				if (oComboBox.getList()) {
-					ok(oComboBox.getList().getSelectedItem() === null);
-				}
-
+				ok(oComboBox.getList().getSelectedItem() === null);
 				strictEqual(oComboBox.getValue(), "");
 				strictEqual(oComboBox.getProperty("value"), "");
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
@@ -5552,11 +6321,7 @@
 				strictEqual(fnKeyUpSpy.callCount, 1, "onsapup() method was called exactly once");
 				strictEqual(fnFireSelectionChangeSpy.callCount, 0, 'The "selectionChange" event is not fired');
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
-
-				if (oComboBox.getList()) {
-					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
-				}
-
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getValue(), "item 2");
 				strictEqual(oComboBox.getProperty("value"), "item 2");
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
@@ -5730,7 +6495,7 @@
 				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				oComboBox.open();
 				this.clock.tick(1000);	// wait after the open animation is completed
-				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
+				var sExpectedActiveDescendantId = oExpectedItem.getId();
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
@@ -5801,11 +6566,7 @@
 				strictEqual(oComboBox.getFocusDomRef().selectionStart, 0);
 				strictEqual(oComboBox.getFocusDomRef().selectionEnd, 18);
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
-
-				if (oComboBox.getList()) {
-					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
-				}
-
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getFocusDomRef().value, "item 0 is selected");
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
@@ -5899,11 +6660,7 @@
 				strictEqual(oComboBox.getFocusDomRef().selectionStart, 0);
 				strictEqual(oComboBox.getFocusDomRef().selectionEnd, 18);
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
-
-				if (oComboBox.getList()) {
-					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
-				}
-
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(oComboBox.getFocusDomRef().value, "item 1 is selected");
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
@@ -6008,7 +6765,7 @@
 				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
 				oComboBox.open();
 				this.clock.tick(1000);	// wait after the open animation is completed
-				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
+				var sExpectedActiveDescendantId = oExpectedItem.getId();
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.HOME);
@@ -6075,11 +6832,7 @@
 				strictEqual(oComboBox.getFocusDomRef().selectionStart, 0);
 				strictEqual(oComboBox.getFocusDomRef().selectionEnd, 18);
 				ok(oComboBox.getSelectedItem() === oExpectedItem);
-
-				if (oComboBox.getList()) {
-					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(oExpectedItem));
-				}
-
+				ok(oComboBox.getList().getSelectedItem() === oExpectedItem);
 				strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 				strictEqual(oComboBox.getFocusDomRef().value, "item 4 is selected");
 
@@ -6215,7 +6968,7 @@
 				oComboBox.focus();
 				oComboBox.open();
 				this.clock.tick(1000);	// wait after the open animation is completed
-				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
+				var sExpectedActiveDescendantId = oExpectedItem.getId();
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.END);
@@ -6256,7 +7009,7 @@
 					ok(oComboBox.getSelectedItem() === mOptions.output);
 					strictEqual(oComboBox.getSelectedItemId(), mOptions.output.getId());
 					strictEqual(oComboBox.getSelectedKey(), mOptions.output.getKey());
-					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(mOptions.output));
+					ok(oComboBox.getList().getSelectedItem() === mOptions.output);
 					strictEqual(oComboBox.getFocusDomRef().value, mOptions.output.getText());
 
 					// cleanup
@@ -6537,7 +7290,7 @@
 				oComboBox.focus();
 				oComboBox.open();
 				this.clock.tick(1000);	// wait after the open animation is completed
-				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
+				var sExpectedActiveDescendantId = oExpectedItem.getId();
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
@@ -6578,7 +7331,7 @@
 					ok(oComboBox.getSelectedItem() === mOptions.output);
 					strictEqual(oComboBox.getSelectedItemId(), mOptions.output.getId());
 					strictEqual(oComboBox.getSelectedKey(), mOptions.output.getKey());
-					ok(oComboBox.getList().getSelectedItem() === oComboBox.getListItem(mOptions.output));
+					ok(oComboBox.getList().getSelectedItem() === mOptions.output);
 					strictEqual(oComboBox.getFocusDomRef().value, mOptions.output.getText());
 
 					// cleanup
@@ -6863,7 +7616,7 @@
 				oComboBox.focus();
 				oComboBox.open();
 				this.clock.tick(1000);	// wait 1s after the open animation is completed
-				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
+				var sExpectedActiveDescendantId = oExpectedItem.getId();
 
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
@@ -6906,7 +7659,7 @@
 				oComboBox.focus();
 				var fnOpenSpy = this.spy(oComboBox, "open");
 				var fnFireSelectionChangeSpy = this.spy(oComboBox, "fireSelectionChange");
-				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
+				var sExpectedActiveDescendantId = oExpectedItem.getId();
 
 				// act
 				oComboBox.getFocusDomRef().value = "G";
@@ -7129,6 +7882,7 @@
 			test("onBeforeOpen", function() {
 
 				// system under test
+				var fnOnBeforeOpenSpy = this.spy(sap.m.ComboBox.prototype, "onBeforeOpen");
 				var oComboBox = new sap.m.ComboBox({
 					value: "Germany"
 				});
@@ -7136,7 +7890,6 @@
 				// arrange
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
-				var fnOnBeforeOpenSpy = this.spy(sap.m.ComboBox.prototype, "onBeforeOpen");
 				oComboBox.focus();
 
 				// act
@@ -7158,6 +7911,7 @@
 			test("onAfterOpen test case 1", function() {
 
 				// system under test
+				var fnOnAfterOpenSpy = this.spy(sap.m.ComboBox.prototype, "onAfterOpen");
 				var oComboBox = new sap.m.ComboBox({
 					items: [
 						new sap.ui.core.Item({
@@ -7170,7 +7924,6 @@
 				// arrange
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
-				var fnOnAfterOpenSpy = this.spy(sap.m.ComboBox.prototype, "onAfterOpen");
 				oComboBox.focus();
 
 				// act
@@ -7204,7 +7957,7 @@
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oComboBox.focus();
-				var sExpectedActiveDescendantId = oComboBox.getListItem(oExpectedItem).getId();
+				var sExpectedActiveDescendantId = oExpectedItem.getId();
 
 				// act
 				oComboBox.open();
@@ -7224,6 +7977,7 @@
 			test("onAfterClose", function() {
 
 				// system under test
+				var fnOnAfterCloseSpy = this.spy(sap.m.ComboBox.prototype, "onAfterClose");
 				var oComboBox = new sap.m.ComboBox({
 					items: [
 						new sap.ui.core.Item({
@@ -7236,7 +7990,6 @@
 				// arrange
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
-				var fnOnAfterCloseSpy = this.spy(sap.m.ComboBox.prototype, "onAfterClose");
 				oComboBox.focus();
 				oComboBox.open();
 
@@ -7263,12 +8016,12 @@
 			test("onBeforeClose", function() {
 
 				// system under test
+				var fnOnBeforeCloseSpy = this.spy(sap.m.ComboBox.prototype, "onBeforeClose");
 				var oComboBox = new sap.m.ComboBox();
 
 				// arrange
 				oComboBox.placeAt("content");
 				sap.ui.getCore().applyChanges();
-				var fnOnBeforeCloseSpy = this.spy(sap.m.ComboBox.prototype, "onBeforeClose");
 				oComboBox.focus();
 				oComboBox.open();
 				this.clock.tick(1000);
@@ -7310,6 +8063,7 @@
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
 				oComboBox.getFocusDomRef().blur();
+				this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
 				// assert
 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
@@ -7379,6 +8133,7 @@
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_UP);
 				oComboBox.getFocusDomRef().blur();
+				this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
 				// assert
 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
@@ -7453,6 +8208,7 @@
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.HOME);
 				oComboBox.getFocusDomRef().blur();
+				this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
 				// assert
 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
@@ -7527,6 +8283,7 @@
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.END);
 				oComboBox.getFocusDomRef().blur();
+				this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
 				// assert
 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
@@ -7605,6 +8362,7 @@
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.PAGE_DOWN);
 				oComboBox.getFocusDomRef().blur();
+				this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
 				// assert
 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
@@ -7687,6 +8445,7 @@
 				// act
 				sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.PAGE_UP);
 				oComboBox.getFocusDomRef().blur();
+				this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
 				// assert
 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired');
@@ -7755,6 +8514,7 @@
 				// act
 				oComboBox.focus();
 				oComboBox.getFocusDomRef().blur();	// the DOM value has not changed => the change event should not be fired again
+				this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
 				// assert
 				strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is not fired');
@@ -7821,12 +8581,12 @@
 				sap.ui.getCore().applyChanges();
 
 				// act
-				oComboBox.getListItem(oItem).setVisible(false);
+				oItem.bVisible = false;
 				oComboBox.rerender();
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				strictEqual(oComboBox.getListItem(oItem).getVisible(), false);
+				strictEqual(oComboBox.isItemVisible(oItem), false);
 
 				// cleanup
 				oComboBox.destroy();

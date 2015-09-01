@@ -8,6 +8,7 @@
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Test Page for jquery.sap.promise</title>
 	<script>
 		//Ensure that custom API is populated to global namespace for testimng purposes
 		window.sap = {__ui5PublishPromisePolyfill : true};
@@ -181,46 +182,6 @@
 				});
 			}, 40);
 		});
-
-		asyncTest(sTestPrefix + "Promise vs setTimeout, immediate resolve", function() {
-			var p = P.resolve(),
-				i = 0;
-
-			equal(i++, 0, "before");
-
-			p.then(function() {
-				equal(i++, 2, "promise first");
-			});
-
-			setTimeout(function() {
-				equal(i++, 3, "setTimeout second");
-				start();
-			}, 0);
-
-
-			equal(i++, 1, "after");
-		});
-
-		asyncTest(sTestPrefix + "Promise vs setTimeout, after timeout", function() {
-			var p = P.resolve(),
-				i = 0;
-
-			setTimeout(function() {
-				equal(i++, 0, "before");
-
-				p.then(function() {
-					equal(i++, 2, "promise first");
-				});
-
-				setTimeout(function() {
-					equal(i++, 3, "setTimeout second");
-					start();
-				}, 0);
-
-				equal(i++, 1, "after");
-			}, 0);
-		});
-
 
 		module(sTestPrefix + "promise.catch");
 

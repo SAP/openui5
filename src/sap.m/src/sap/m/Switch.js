@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Switch.
-sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, SwitchRenderer, library, Control, EnabledPropagator, IconPool, Parameters) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/theming/Parameters'],
+	function(jQuery, library, Control, EnabledPropagator, IconPool, Parameters) {
 		"use strict";
 
 		/**
@@ -129,7 +129,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		};
 
 		Switch.prototype._setDomState = function(bState) {
-			var CSS_CLASS = SwitchRenderer.CSS_CLASS,
+			var CSS_CLASS = this.getRenderer().CSS_CLASS,
 				sState = bState ? this._sOn : this._sOff,
 				oDomRef = this.getDomRef();
 
@@ -233,7 +233,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 		 */
 		Switch.prototype.ontouchstart = function(oEvent) {
 			var oTargetTouch = oEvent.targetTouches[0],
-				CSS_CLASS = SwitchRenderer.CSS_CLASS,
+				CSS_CLASS = this.getRenderer().CSS_CLASS,
 				$SwitchInner = this.$("inner");
 
 			// mark the event for components that needs to know if the event was handled by the Switch
@@ -366,7 +366,7 @@ sap.ui.define(['jquery.sap.global', './SwitchRenderer', './library', 'sap/ui/cor
 				assert(!fnTouch.find(oEvent.touches, this._iActiveTouchId), "touchend still active");
 
 				// remove active state
-				this.$("switch").removeClass(SwitchRenderer.CSS_CLASS + "Pressed");
+				this.$("switch").removeClass(this.getRenderer().CSS_CLASS + "Pressed");
 
 				// note: update the DOM before the change event is fired for better user experience
 				this._setDomState(this._bDragging ? this._bTempState : !this.getState());

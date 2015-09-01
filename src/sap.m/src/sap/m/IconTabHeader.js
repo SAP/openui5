@@ -3,18 +3,19 @@
  */
 
 // Provides control sap.m.IconTabHeader.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/delegate/ItemNavigation'],
-	function(jQuery, library, Control, EnabledPropagator, ItemNavigation) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/IconPool'],
+	function(jQuery, library, Control, EnabledPropagator, ItemNavigation, IconPool) {
 	"use strict";
 
 	/**
 	 * Constructor for a new IconTabHeader.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * This control display a number of iconTabFilters and Separators. If the available horizontal space is exceeded, it will allow for scrolling horziontally to show all items.
+	 * This control displays a number of IconTabFilters and IconTabSeparators. If the available horizontal
+	 * space is exceeded, a horizontal scrolling appears.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -31,8 +32,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		properties : {
 
 			/**
-			 * Defines whether the current selection should be visualized.
-			 * @deprecated Since version 1.15.0.
+			 * Defines whether the current selection is visualized.
+			 * @deprecated As of 1.15.0.
 			 * Regarding to changes of this control this property is not needed anymore.
 			 */
 			showSelection : {type : "boolean", group : "Misc", defaultValue : true, deprecated: true},
@@ -41,13 +42,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Key of the selected item.
 			 *
 			 * If the key has no corresponding aggregated item, no changes will apply.
-			 * If duplicate keys exists the first item matching the key is used.
+			 * If duplicate keys exists the first item matching, the key is used.
 			 * @since 1.15.0
 			 */
 			selectedKey : {type : "string", group : "Data", defaultValue : null},
 
 			/**
-			 * Invisible controls are not rendered.
+			 * Specifies whether the control is rendered.
 			 * @since 1.15.0
 			 */
 			visible : {type : "boolean", group : "Behavior", defaultValue : true}
@@ -55,26 +56,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		aggregations : {
 
 			/**
-			 * The items displayed in the IconTabBar
+			 * The items displayed in the IconTabHeader.
 			 */
 			items : {type : "sap.m.IconTab", multiple : true, singularName : "item"}
 		},
 		events : {
 
 			/**
-			 * This event will be fired when an item is selected.
+			 * Fires when an item is selected.
 			 */
 			select : {
 				parameters : {
 
 					/**
-					 * The selected item.
+					 * The selected item
 					 * @since 1.15.0
 					 */
 					item : {type : "sap.m.IconTabFilter"},
 
 					/**
-					 * The key of the selected item.
+					 * The key of the selected item
 					 * @since 1.15.0
 					 */
 					key : {type : "string"}
@@ -90,9 +91,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	// When to create a scroll delegate:
 	IconTabHeader.prototype._bDoScroll = !sap.ui.Device.system.desktop || (sap.ui.Device.os.windows && sap.ui.Device.os.version === 8);
 
-	/**
-	 * Init
-	 */
 	IconTabHeader.prototype.init = function() {
 		this._bPreviousScrollForward = false; // remember the item overflow state
 		this._bPreviousScrollBack = false;
@@ -151,7 +149,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Adjusts arrows when keyboard is used for navigation and the beginning/end of the toolbar is reached
+	 * Adjusts arrows when keyboard is used for navigation and the beginning/end of the toolbar is reached.
+	 * @private
 	 */
 	IconTabHeader.prototype._onItemNavigationAfterFocus = function(oEvent) {
 		var oHead = this.getDomRef("head"),
@@ -173,7 +172,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Returns all tab filters, without the tab separators
+	 * Returns all tab filters, without the tab separators.
 	 * @private
 	 */
 	IconTabHeader.prototype.getTabFilters = function() {
@@ -190,9 +189,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return aTabFilters;
 	};
 
-	/**
-	 * Exit
-	 */
 	IconTabHeader.prototype.exit = function() {
 		if (this._oArrowLeft) {
 			this._oArrowLeft.destroy();
@@ -221,9 +217,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
-	/**
-	 * Before Rendering
-	 */
 	IconTabHeader.prototype.onBeforeRendering = function() {
 		var aItems = this.getItems(),
 			sSelectedKey = this.getSelectedKey(),
@@ -280,10 +273,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Sets the selected item based on key
+	 * Sets the selected item based on key.
 	 * @overwrite
 	 * @public
-	 * @param {string} sKey the key of the item to be selected
+	 * @param {string} sKey The key of the item to be selected
 	 * @return {sap.m.IconTabHeader} this pointer for chaining
 	 */
 	IconTabHeader.prototype.setSelectedKey = function (sKey) {
@@ -306,9 +299,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * Sets the selected item, updates the UI, and fires the select event
+	 * Sets the selected item, updates the UI, and fires the select event.
 	 * @private
-	 * @param {sap.m.IconTabFilter} oItem the item to be selected
+	 * @param {sap.m.IconTabFilter} oItem The item to be selected
 	 * @return {sap.m.IconTabHeader} this pointer for chaining
 	 */
 	IconTabHeader.prototype.setSelectedItem = function(oItem, bAPIchange) {
@@ -414,7 +407,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * return first visible item, which is needed for correct arrow calculation
+	 * Returns the first visible item, which is needed for correct arrow calculation.
 	 */
 	IconTabHeader.prototype._getFirstVisibleItem = function(aItems) {
 		for (var i = 0; i < aItems.length; i++) {
@@ -426,9 +419,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return null;
 	};
 
-	/**
-	 * afterRendering
-	 */
 	IconTabHeader.prototype.onAfterRendering = function() {
 		var oHeadDomRef = this.getDomRef("head"),
 			$bar = this.$();
@@ -562,11 +552,50 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return oItem;
 	};
 
+	IconTabHeader.prototype.removeAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
+		var aItems = this.getItems();
+
+		var oItem = Control.prototype.removeAggregation.apply(this, arguments);
+
+		if (oItem && oItem == this.oSelectedItem && sAggregationName == 'items') {
+
+			var iIndexOf = jQuery.inArray(oItem, aItems);
+			aItems = this.getItems();
+
+			iIndexOf = Math.max(0, Math.min(iIndexOf, aItems.length - 1));
+
+			var oSelectedItem = aItems[iIndexOf];
+
+			if (oSelectedItem) {
+				this.setSelectedItem(oSelectedItem);
+			} else {
+				var oIconTabBar = this.getParent();
+				if (oIconTabBar instanceof sap.m.IconTabBar && oIconTabBar.getExpanded()) {
+					oIconTabBar.$("content").children().remove();
+				}
+			}
+		}
+
+		return oItem;
+	};
+
+	IconTabHeader.prototype.removeAllAggregation = function (sAggregationName, bSuppressInvalidate) {
+
+		if (sAggregationName == 'items') {
+			var oIconTabBar = this.getParent();
+			if (oIconTabBar instanceof sap.m.IconTabBar && oIconTabBar.getExpanded()) {
+				oIconTabBar.$("content").children().remove();
+			}
+		}
+
+		return Control.prototype.removeAllAggregation.apply(this, arguments);
+	};
+
 
 	/**
 	 * Checks if all tabs are textOnly version.
 	 * @private
-	 * @returns true if all tabs are textOnly version, otherwise false
+	 * @returns True if all tabs are textOnly version, otherwise false
 	 */
 	IconTabHeader.prototype._checkTextOnly = function(aItems) {
 		if (aItems.length > 0) {
@@ -586,7 +615,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Checks if all tabs are noText version.
 	 * @private
-	 * @returns true if all tabs are noText version, otherwise false
+	 * @returns True if all tabs are noText version, otherwise false
 	 */
 	IconTabHeader.prototype._checkNoText = function(aItems) {
 		if (aItems.length > 0) {
@@ -604,7 +633,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Checks if scrolling is needed.
 	 * @private
-	 * @returns true if scrolling is needed, otherwise false
+	 * @returns True if scrolling is needed, otherwise false
 	 */
 	IconTabHeader.prototype._checkScrolling = function(oHead, $bar) {
 		var bScrolling = false;
@@ -640,18 +669,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Gets the icon of the requested arrow (left/right).
 	 * @private
-	 * @param sName left or right
-	 * @returns icon of the requested arrow
+	 * @param sName Left or right
+	 * @returns Icon of the requested arrow
 	 */
 	IconTabHeader.prototype._getScrollingArrow = function(sName) {
 		var src;
 
 		if (sap.ui.Device.system.desktop) {
 			// use navigation arrows on desktop and win8 combi devices
-			src = "sap-icon://navigation-" + sName + "-arrow";
+			src = IconPool.getIconURI("navigation-" + sName + "-arrow");
 		} else {
 			// use slim arrows on mobile devices
-			src = "sap-icon://slim-arrow-" + sName;
+			src = IconPool.getIconURI("slim-arrow-" + sName);
 		}
 
 		var mProperties = {
@@ -683,9 +712,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Changes the state of the scroll arrows depending on whether they are required due to overflow.
 	 *
-	 * @param oListDomRef the ul tag containing the items
-	 * @param of_back the backward scroll arrow
-	 * @param of_fw the forward scroll arrow
+	 * @param oListDomRef The ul tag containing the items
+	 * @param of_back The backward scroll arrow
+	 * @param of_fw The forward scroll arrow
 	 * @private
 	 */
 	IconTabHeader.prototype._checkOverflow = function(oBarHead, $bar) {
@@ -833,7 +862,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/*
-	 * Scrolls to the item passed as parameter if it is not (fully) visible
+	 * Scrolls to the item passed as parameter if it is not (fully) visible.
 	 * If the item is to the left of the viewport it will be put leftmost.
 	 * If the item is to the right of the viewport it will be put rightmost.
 	 * @param {sap.m.IconTabFilter} oItem The item to be scrolled into view
@@ -904,8 +933,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/*
 	 * Scrolls the items if possible, using an animation.
 	 *
-	 * @param iDelta how far to scroll
-	 * @param iDuration how long to scroll (ms)
+	 * @param iDelta How far to scroll
+	 * @param iDuration How long to scroll (ms)
 	 * @private
 	 */
 	IconTabHeader.prototype._scroll = function(iDelta, iDuration) {
@@ -913,7 +942,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		var oDomRef = this.getDomRef("head");
 		var iScrollLeft = oDomRef.scrollLeft;
-		if (!!!sap.ui.Device.browser.internet_explorer && this._bRtl) {
+		var bIsIE = sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge;
+		if (!bIsIE && this._bRtl) {
 			iDelta = -iDelta;
 		} // RTL lives in the negative space
 		var iScrollTarget = iScrollLeft + iDelta;
@@ -922,7 +952,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Adjusts the arrow position and shows the arrow.
+	 * Adjusts the arrow position and displays the arrow.
 	 * @private
 	 */
 	IconTabHeader.prototype._adjustAndShowArrow = function() {
@@ -1057,7 +1087,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Handles touch end and events and trigger selection if bar was not dragged.
+	 * Handles touch end and events and triggers selection if bar was not dragged.
 	 *
 	 * @param {jQuery.Event} oEvent
 	 * @private
@@ -1073,7 +1103,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 
 	/**
-	 * Handle the touch cancel event.
+	 * Handles the touch cancel event.
 	 *
 	 * @param {jQuery.EventObject} oEvent The event object
 	 * @private
@@ -1081,7 +1111,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	IconTabHeader.prototype.ontouchcancel = IconTabHeader.prototype.ontouchend;
 
 	/**
-	 * Keyboard navigation event when the user presses Enter or Space.
+	 * Fires keyboard navigation event when the user presses Enter or Space.
 	 *
 	 * @param {jQuery.Event} oEvent
 	 * @private

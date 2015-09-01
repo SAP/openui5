@@ -43,10 +43,6 @@
 	padding: 1.125rem 0 1rem 0;
 }
 
-.sapUiIcon:focus {
-	outline:none;
-}
-
 .sapMOHIntro {
 	white-space: nowrap;
 	overflow: hidden;
@@ -196,11 +192,13 @@
 	font-size: 1.125rem;
 }
 
-html[data-sap-ui-browser^=ie] .sapMOHNumberDiv {
+html[data-sap-ui-browser^=ie] .sapMOHNumberDiv,
+html[data-sap-ui-browser^=ed] .sapMOHNumberDiv {
 	text-align: right;
 }
 
-html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHNumberDiv {
+html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHNumberDiv,
+html[dir=rtl][data-sap-ui-browser^=ed] .sapMOHNumberDiv {
 	text-align: left;
 }
 
@@ -252,11 +250,13 @@ html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHNumberDiv {
 	float: left;
 }
 
-html[data-sap-ui-browser^=ie] .sapMOHAttr {
+html[data-sap-ui-browser^=ie] .sapMOHAttr,
+html[data-sap-ui-browser^=ed] .sapMOHAttr {
 	text-align: left;
 }
 
-html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHAttr {
+html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHAttr,
+html[dir=rtl][data-sap-ui-browser^=ed] .sapMOHAttr {
 	text-align: right;
 }
 
@@ -301,12 +301,16 @@ div[class*='sapUiRespGrid'] > .sapMOH > .sapMOHLastDivider {
 
 
 html[data-sap-ui-browser^=ie] .sapMOHStatus,
-html[data-sap-ui-browser^=ie] .sapMOHStatusFixedWidth {
+html[data-sap-ui-browser^=ie] .sapMOHStatusFixedWidth,
+html[data-sap-ui-browser^=ed] .sapMOHStatus,
+html[data-sap-ui-browser^=ed] .sapMOHStatusFixedWidth {
 	text-align: right;
 }
 
 html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHStatus,
-html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHStatusFixedWidth {
+html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHStatusFixedWidth,
+html[dir=rtl][data-sap-ui-browser^=ed] .sapMOHStatus,
+html[dir=rtl][data-sap-ui-browser^=ed] .sapMOHStatusFixedWidth {
 	text-align: left;
 }
 
@@ -490,11 +494,13 @@ html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
 	text-align: end;
 }
 
-html[data-sap-ui-browser^=ie].sap-desktop .sapMOHRStatesOneOrThree > .sapMOHRStates {
+html[data-sap-ui-browser^=ie].sap-desktop .sapMOHRStatesOneOrThree > .sapMOHRStates,
+html[data-sap-ui-browser^=ed].sap-desktop .sapMOHRStatesOneOrThree > .sapMOHRStates {
 	text-align: right;
 }
 
-html[dir=rtl][data-sap-ui-browser^=ie].sap-desktop .sapMOHRStatesOneOrThree > .sapMOHRStates {
+html[dir=rtl][data-sap-ui-browser^=ie].sap-desktop .sapMOHRStatesOneOrThree > .sapMOHRStates,
+html[dir=rtl][data-sap-ui-browser^=ed].sap-desktop .sapMOHRStatesOneOrThree > .sapMOHRStates {
 	text-align: left;
 }
 
@@ -589,11 +595,13 @@ html[dir=rtl][data-sap-ui-browser^=ie].sap-desktop .sapMOHRStatesOneOrThree > .s
 	padding-left: 0.5rem;
 }
 
-html[data-sap-ui-browser^=ie] .sapMOHRTwoCols.sapMOHRStatesCont2 {
+html[data-sap-ui-browser^=ie] .sapMOHRTwoCols.sapMOHRStatesCont2,
+html[data-sap-ui-browser^=ed] .sapMOHRTwoCols.sapMOHRStatesCont2 {
 	text-align: right;
 }
 
-html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHRTwoCols.sapMOHRStatesCont2 {
+html[dir=rtl][data-sap-ui-browser^=ie] .sapMOHRTwoCols.sapMOHRStatesCont2,
+html[dir=rtl][data-sap-ui-browser^=ed] .sapMOHRTwoCols.sapMOHRStatesCont2 {
 	text-align: left;
 }
 

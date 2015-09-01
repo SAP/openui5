@@ -68,8 +68,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 		var $Style = jQuery(oStyle);
 
 		try {
-			var res = !oStyle || !!((oStyle.sheet && oStyle.sheet.cssRules.length > 0) ||
-							!!(oStyle.styleSheet && oStyle.styleSheet.cssText.length > 0) ||
+			var res = !oStyle || !!((oStyle.sheet && oStyle.sheet.cssRules && oStyle.sheet.cssRules.length > 0) ||
+							!!(oStyle.styleSheet && oStyle.styleSheet.cssText && oStyle.styleSheet.cssText.length > 0) ||
 							!!(oStyle.innerHTML && oStyle.innerHTML.length > 0));
 			var res2 = $Style.attr("sap-ui-ready");
 			res2 = !!(res2 === "true" || res2 === "false");
@@ -220,10 +220,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 			aRules = [];
 		if (jQuery.sap.domById("sap-ui-theme-" + lib)) {
 			var cssFile = jQuery.sap.domById("sap-ui-theme-" + lib);
-			if (cssFile.sheet) {
+			if (cssFile.sheet && cssFile.sheet.cssRules) {
 				aRules = cssFile.sheet.cssRules;
-			} else if (cssFile.styleSheet) {
-				//we're in an old IE version
+			} else if (cssFile.styleSheet && cssFile.styleSheet.rules) {
+				// we're in an old IE version
 				aRules = cssFile.styleSheet.rules;
 			}
 		}

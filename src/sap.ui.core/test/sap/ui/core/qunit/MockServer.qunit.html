@@ -1548,13 +1548,20 @@
 		
 		oMockServer.start();
 		ok(oMockServer.isStarted(), "Mock server is started");
+		
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/",
+			type : 'HEAD',
+			dataType : "json"
+		});
+		ok(oResponse.success);
 
 		var oResponse = jQuery.sap.sjax({
 			url : "/myservice/",
 			dataType : "json"
 		});
-		ok(oResponse.success, "");
-		equal(oResponse.data.d.EntitySets.length, 9, "");
+		ok(oResponse.success);
+		equal(oResponse.data.d.EntitySets.length, 9);
 
 		oMockServer.destroy();
 
@@ -1684,6 +1691,25 @@
 		});
 		ok(oResponse.success, "");
 		equal(oResponse.data.d.results.length, 7, "");
+
+		oMockServer.destroy();
+
+	});
+	
+	test("test Relationship name with multiple dots", function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/apfapp/metadata.xml";
+		oMockServer.simulate(sMetadataUrl);
+		oMockServer.start();
+		ok(oMockServer.isStarted(), "Mock server is started");
+
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/EVALUATIONS('ID 1')/FILTERS?$format=json",
+			dataType : "json"
+		});
+		ok(oResponse.success);
 
 		oMockServer.destroy();
 
@@ -1873,6 +1899,13 @@
 		equal(oResponse.data.d.results.length, 100, "navigation to collection");
 		equal(oResponse.data.d.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Flight", "simple navigation returns flight");
 
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/FlightCollection?$top=1&$expand=flightbooking",
+			dataType : "json"
+		});
+		ok(oResponse.success, "Mock server responded");
+		equal(oResponse.data.d.results[0].fldate, oResponse.data.d.results[0].flightbooking.fldate,  "FlightCollection?$top=1&$expand=flightbooking");
+		
 		oResponse = jQuery.sap.sjax({
 			url : "/myservice/CarrierCollection('carrid 1')/carrierFlights/$count",
 			dataType : "json"
@@ -2369,8 +2402,22 @@
 				});
 				ok(oResponse);
 				
-
+				oResponse = jQuery.sap.sjax({
+					url : "/myservice/Products?$top=20&$filter=Category/CategoryName eq 'Beverages'",
+					dataType : "json"
+				});
+				ok(oResponse.success, "$filter=Category/CategoryName eq 'Beverages'");
+				ok(!oResponse.data.d.results[0].Category.CategoryName);
+				
+				oResponse = jQuery.sap.sjax({
+					url : "/myservice/Products?$top=20&$filter=Category/CategoryName eq 'Beverages'&$expand=Category",
+					dataType : "json"
+				});
+				ok(oResponse.success, "/myservice/Products?$top=20&$filter=Category/CategoryName eq 'Beverages'&$expand=Category");
+				equal(oResponse.data.d.results[0].Category.CategoryName, "Beverages");
+				
 				oMockServer.destroy();
+
 			});
 
 	test("test OData $select", function() {
@@ -2519,7 +2566,7 @@
 				});
 				ok(oResponse.success, "Mock server responded");
 				equal(oResponse.data.d.results.length, 100, "Expand with nav- return 100 nav entries");
-				ok(jQuery.isEmptyObject(oResponse.data.d.results[0].flightbooking), "Expand with nav- return expand");
+				equal(oResponse.data.d.results[0].fldate, oResponse.data.d.results[0].flightbooking.fldate);
 
 				oResponse = jQuery.sap.sjax({
 					url : "/myservice/CarrierCollection?$expand=carrierFlights/flightbooking",
@@ -2530,8 +2577,6 @@
 						"Expand on carrier collection with deepDown, result of type carrier collection");
 				equal(oResponse.data.d.results[0].carrierFlights.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Flight",
 						"Expand deepDown first level, entry of type Flight");
-				ok(jQuery.isEmptyObject(oResponse.data.d.results[0].carrierFlights.results[0].flightbooking),
-						"Expand deepDown second level, flightBooking empty");
 				ok(!jQuery.isEmptyObject(oResponse.data.d.results[0].carrierFlights.results[0].flightBookings),
 						"Expand deepDown second level, flightBookings not in expand, not empty");
 				ok(oResponse.data.d.results[0].carrierFlights.results[0].flightBookings.__deferred,
@@ -2546,8 +2591,6 @@
 						"Expand on carrier entry with deepDown, result of type carrier ");
 				equal(oResponse.data.d.carrierFlights.results[0].__metadata.type, "RMTSAMPLEFLIGHT.Flight",
 						"Expand deepDown first level, entry of type Flight");
-				ok(jQuery.isEmptyObject(oResponse.data.d.carrierFlights.results[0].flightbooking),
-						"Expand deepDown second level, flightBooking empty");
 				ok(!jQuery.isEmptyObject(oResponse.data.d.carrierFlights.results[0].flightBookings),
 						"Expand deepDown second level, flightBookings not in expand, not empty");
 				ok(oResponse.data.d.carrierFlights.results[0].flightBookings.__deferred,

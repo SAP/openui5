@@ -9,13 +9,12 @@ sap.ui.define([
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/core/mvc/View',
 		'sap/ui/model/json/JSONModel',
-		'sap/ui/model/odata/AnnotationHelper',
 		'sap/ui/model/odata/ODataUtils',
 		'jquery.sap.encoder',
 		'jquery.sap.script',
 		'jquery.sap.xml'
-	], function(jQuery, MessageBox, Component, ListItem, Controller, View, JSONModel,
-		AnnotationHelper, ODataUtils/*, jQuerySapEncoder, jQuerySapScript, jQuerySapXML */) {
+	], function (jQuery, MessageBox, Component, ListItem, Controller, View, JSONModel, ODataUtils
+		/*, jQuerySapEncoder, jQuerySapScript, jQuerySapXML */) {
 	"use strict";
 
 	function alertError(oError) {
@@ -92,7 +91,7 @@ sap.ui.define([
 			}
 		},
 
-		_bindSelectInstance: function() {
+		_bindSelectInstance: function () {
 			var oBinding,
 				oControl = this.getView().byId("selectInstance");
 
@@ -161,59 +160,5 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * Custom formatter function for complex bindings to demonstrate access to ith part of binding.
-	 * Delegates to {@link sap.ui.model.odata.AnnotationHelper#format} and wraps label texts in
-	 * square brackets. Joins parts together, separated by a space.
-	 *
-	 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
-	 *   the callback interface related to the current formatter call
-	 * @param {...any} [vRawValue]
-	 *   the raw value(s) from the meta model
-	 * @returns {string}
-	 *   the resulting string value to write into the processed XML
-	 */
-	sap.ui.core.sample.ViewTemplate.scenario.formatParts = function (oInterface, vRawValue) {
-		var i, aResult;
-
-		/*
-		 * Delegates to {@link sap.ui.model.odata.AnnotationHelper#format} and wraps label texts
-		 * in square brackets.
-		 *
-		 * @param {sap.ui.model.Context} oInterface
-		 *   the callback interface related to the current formatter call
-		 * @param {any} [vRawValue0]
-		 *   the raw value from the meta model
-		 * @returns {string}
-		 */
-		function formatLabelValue(oInterface, vRawValue0) {
-			var sResult = sap.ui.model.odata.AnnotationHelper.format(oInterface, vRawValue0);
-			return jQuery.sap.endsWith(oInterface.getPath(), "/Label")
-				? "[" + sResult + "]"
-				: sResult;
-		}
-
-		try {
-			if (oInterface.getModel()) {
-				return formatLabelValue(oInterface, vRawValue);
-			} else {
-				// root formatter for a composite binding
-				aResult = [];
-				// "probe for the smallest non-negative integer"
-				for (i = 0; oInterface.getModel(i); i += 1) {
-					aResult.push(
-						// Note: arguments[i + 1] is the raw value of the ith part!
-						formatLabelValue(oInterface.getInterface(i), arguments[i + 1])
-					);
-				}
-				return aResult.join(" ");
-			}
-		} catch (e) {
-			return e.message;
-		}
-	};
-	sap.ui.core.sample.ViewTemplate.scenario.formatParts.requiresIContext = true;
-
 	return MainController;
-
 });

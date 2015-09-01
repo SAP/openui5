@@ -8,15 +8,22 @@ sap.ui.define(['jquery.sap.global', './FormLayout', './GridContainerData', './Gr
 	"use strict";
 
 	/**
-	 * Constructor for a new form/GridLayout.
+	 * Constructor for a new sap.ui.layout.form.GridLayout.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * This Layout implements a guideline 2.0 grid. This can be a 16 column grid or an 8 column grid.
-	 * 
-	 * To adjust the content inside the GridLayout GridContainerData and GridElementData could be used.
+	 * This <code>FormLayout</code> renders a <code>Form</code> using a HTML-table based grid.
+	 * This can be a 16 column grid or an 8 column grid. The grid is stable, so the alignment of the fields is the same for all screen sizes or widths of the <code>Form</code>.
+	 * Only the width of the single grid columns depends on the available width.
+	 *
+	 * To adjust the appearance inside the <code>GridLayout</code>, you can use <code>GridContainerData</code> for <code>FormContainers</code>
+	 * and <code>GridElementData</code> for content fields.
+	 *
+	 * <b>Note:</b> If content fields have a <code>width</code> property this will be ignored, as the width of the controls is set by the grid cells.
+	 *
+	 * This control cannot be used stand alone, it only renders a <code>Form</code>, so it must be assigned to a <code>Form</code>.
 	 * @extends sap.ui.layout.form.FormLayout
 	 *
 	 * @author SAP SE
@@ -34,9 +41,9 @@ sap.ui.define(['jquery.sap.global', './FormLayout', './GridContainerData', './Gr
 		properties : {
 
 			/**
-			 * If set the Grid allows only one container column. That means one container is below the other. The whole grid has 8 cells per row.
-			 * 
-			 * If not set containers can use the full width of the grid or two container can be placed beside each other. In this case the whole grid has 16 cell per row.
+			 * If set, the grid renders only one <code>FormContainer</code> per column. That means one <code>FormContainer</code> is below the other. The whole grid has 8 cells per row.
+			 *
+			 * If not set, <code>FormContainer</code> can use the full width of the grid or two <code>FormContainers</code> can be placed beside each other. In this case the whole grid has 16 cells per row.
 			 */
 			singleColumn : {type : "boolean", group : "Misc", defaultValue : false}
 		}
@@ -217,10 +224,10 @@ sap.ui.define(['jquery.sap.global', './FormLayout', './GridContainerData', './Gr
 		};
 
 		/**
-		 * As Elements must not have an DOM reference it is not sure if one exists
-		 * In GridLayout a Container can't have a surrounding DOM element, so it always
-		 * returns null
-		 * @param {sap.ui.layout.form.FormConatiner} oContainer FormContainer
+		 * As Elements must not have a DOM reference it is not sure if one exists
+		 * In <code>GridLayout</code> a <code>FormContainer</code> can't have a surrounding DOM element,
+		 * so it always returns null
+		 * @param {sap.ui.layout.form.FormContainer} oContainer <code>FormContainer</code>
 		 * @return {Element} The Element's DOM representation or null
 		 * @private
 		 */
@@ -231,10 +238,10 @@ sap.ui.define(['jquery.sap.global', './FormLayout', './GridContainerData', './Gr
 		};
 
 		/**
-		 * As Elements must not have an DOM reference it is not sure if one exists.
-		 * In this Layout a FormElement only a DOM representation if it's FormContainer
+		 * As Elements must not have a DOM reference it is not sure if one exists.
+		 * In this layout a <code>FormElement</code> only has a DOM representation if its <code>FormContainer</code>
 		 * has the whole width
-		 * @param {sap.ui.layout.form.FormElement} oElement FormElement
+		 * @param {sap.ui.layout.form.FormElement} oElement <code>FormElement</code>
 		 * @return {Element} The Element's DOM representation or null
 		 * @private
 		 */

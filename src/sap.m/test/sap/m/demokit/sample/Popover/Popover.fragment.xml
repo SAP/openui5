@@ -12,7 +12,6 @@
 				<Button
 					id="email"
 					text="Email"
-					icon="sap-icon://email"
 					press="handleEmailPress" />
 			</Toolbar>
 		</footer>

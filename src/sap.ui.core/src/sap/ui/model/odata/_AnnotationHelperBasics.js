@@ -10,6 +10,11 @@ sap.ui.define([
 
 	var rBadChars = /[\\\{\}:]/, // @see sap.ui.base.BindingParser: rObject, rBindingChars
 		Basics,
+		// path to entity set ("/dataServices/schema/<i>/entityContainer/<j>/entitySet/<k>")
+		rEntitySetPath
+			= /^(\/dataServices\/schema\/\d+\/entityContainer\/\d+\/entitySet\/\d+)(?:\/|$)/,
+		// path to entity type ("/dataServices/schema/<i>/entityType/<j>")
+		rEntityTypePath = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/,
 		mUi5TypeForEdmType = {
 			"Edm.Boolean" : "sap.ui.model.odata.type.Boolean",
 			"Edm.Byte" : "sap.ui.model.odata.type.Byte",
@@ -106,6 +111,161 @@ sap.ui.define([
 		},
 
 		/**
+		 * Follows the dynamic "14.5.12 Expression edm:Path" (or variant thereof) contained within
+		 * the given raw value, starting the absolute path identified by the given interface, and
+		 * returns the resulting absolute path as well as some other aspects about the path.
+		 *
+		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
+		 *   the callback interface related to the current formatter call; the path must be within
+		 *   an entity type!
+		 * @param {object} oRawValue
+		 *   the raw value from the meta model, e.g. <code>{AnnotationPath :
+		 *   "ToSupplier/@com.sap.vocabularies.Communication.v1.Address"}</code> or <code>
+		 *   {AnnotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"}</code>;
+		 *   embedded within an entity set or entity type
+		 * @returns {object}
+		 *   - {object} [associationSetEnd=undefined]
+		 *   association set end corresponding to the last navigation property
+		 *   - {boolean} [navigationAfterMultiple=false]
+		 *   if the navigation path has an association end with multiplicity "*" which is not
+		 *   the last one
+		 *   - {boolean} [isMultiple=false]
+		 *   whether the navigation path ends with an association end with multiplicity "*"
+		 *   - {string[]} [navigationProperties=[]]
+		 *   all navigation property names
+		 *   - {string} [resolvedPath=undefined]
+		 *   the resulting absolute path
+		 *
+		 * @see sap.ui.model.odata.AnnotationHelper.getNavigationPath
+		 * @see sap.ui.model.odata.AnnotationHelper.gotoEntitySet
+		 * @see sap.ui.model.odata.AnnotationHelper.isMultiple
+		 * @see sap.ui.model.odata.AnnotationHelper.resolvePath
+		 */
+		followPath: function (oInterface, oRawValue) {
+			var oAssociationEnd,
+				sPath = Basics.getPath(oRawValue),
+				sContextPath = sPath !== undefined && Basics.getStartingPoint(oInterface, sPath),
+				oEntity,
+				iIndexOfAt,
+				oModel = oInterface.getModel(),
+				aParts,
+				oResult = {
+					associationSetEnd : undefined,
+					navigationAfterMultiple : false,
+					isMultiple : false,
+					navigationProperties : [],
+					resolvedPath : undefined
+				},
+				sSegment;
+
+			if (!sContextPath) {
+				return undefined;
+			}
+			aParts = sPath.split("/");
+
+			while (sPath && aParts.length && sContextPath) {
+				sSegment = aParts[0];
+				iIndexOfAt = sSegment.indexOf("@");
+				if (iIndexOfAt === 0) {
+					// term cast
+					sContextPath += "/" + sSegment.slice(1);
+					aParts.shift();
+					continue;
+//				} else if (iIndexOfAt > 0) { // annotation of a navigation property
+//					sSegment = sSegment.slice(0, iIndexOfAt);
+				}
+
+				oEntity = oModel.getObject(sContextPath);
+				oAssociationEnd = oModel.getODataAssociationEnd(oEntity, sSegment);
+				if (oAssociationEnd) {
+					// navigation property
+					oResult.associationSetEnd
+						= oModel.getODataAssociationSetEnd(oEntity, sSegment);
+					oResult.navigationProperties.push(sSegment);
+					if (oResult.isMultiple) {
+						oResult.navigationAfterMultiple = true;
+					}
+					oResult.isMultiple = oAssociationEnd.multiplicity === "*";
+					sContextPath = oModel.getODataEntityType(oAssociationEnd.type, true);
+					aParts.shift();
+					continue;
+				}
+
+				// structural properties or some unsupported case
+				sContextPath = oModel.getODataProperty(oEntity, aParts, true);
+			}
+
+			oResult.resolvedPath = sContextPath;
+			return oResult;
+		},
+
+		/**
+		 * Returns the dynamic "14.5.12 Expression edm:Path" (or variant thereof) contained within
+		 * the given raw value.
+		 *
+		 * @param {object} oRawValue
+		 *   the raw value from the meta model, e.g. <code>{AnnotationPath :
+		 *   "ToSupplier/@com.sap.vocabularies.Communication.v1.Address"}</code> or <code>
+		 *   {AnnotationPath : "@com.sap.vocabularies.UI.v1.FieldGroup#Dimensions"}</code>
+		 * @returns {string}
+		 *   the path or <code>undefined</code> in case the raw value is not supported
+		 */
+		getPath: function (oRawValue) {
+			if (oRawValue) {
+				if (oRawValue.hasOwnProperty("AnnotationPath")) {
+					return oRawValue.AnnotationPath;
+				}
+				if (oRawValue.hasOwnProperty("Path")) {
+					return oRawValue.Path;
+				}
+				if (oRawValue.hasOwnProperty("PropertyPath")) {
+					return oRawValue.PropertyPath;
+				}
+				if (oRawValue.hasOwnProperty("NavigationPropertyPath")) {
+					return oRawValue.NavigationPropertyPath;
+				}
+			}
+			// Note: we cannot return undefined above!
+			return undefined; // some unsupported case
+		},
+
+		/**
+		 * Returns the starting point for the given dynamic "14.5.12 Expression edm:Path" (or
+		 * variant thereof).
+		 *
+		 * @param {sap.ui.core.util.XMLPreprocessor.IContext|sap.ui.model.Context} oInterface
+		 *   the callback interface related to the current formatter call; the path must be within
+		 *   an entity type!
+		 * @param {string} sPath
+		 *   the path (just to see if it's empty)
+		 * @returns {string}
+		 *   the meta model path to use as a starting point for following the given path
+		 */
+		getStartingPoint: function (oInterface, sPath) {
+			var oEntity,
+				aMatches = rEntityTypePath.exec(oInterface.getPath()),
+				oModel;
+
+			if (aMatches) {
+				return aMatches[1]; // start at entity type
+			}
+
+			aMatches = rEntitySetPath.exec(oInterface.getPath());
+			if (aMatches) {
+				if (!sPath) {
+					return aMatches[1]; // start at entity set
+				}
+
+				// go from entity set to entity type
+				oModel = oInterface.getModel();
+				oEntity = oModel.getObject(aMatches[1]);
+				return oModel.getODataEntityType(oEntity.entityType, true);
+			}
+
+			return undefined; // some unsupported case
+		},
+
+		/**
 		 * Fetches the given property or array element at the path/value pair. Logs an error and
 		 * throws an error if the property value is not of the expected type.
 		 *
@@ -134,10 +294,10 @@ sap.ui.define([
 		 * @param {object} oResult
 		 *   an object with the following properties:
 		 *   result: "constant", "binding", "composite" or "expression"
-		 *   value: the value to write into the resulting string depending on result:
-		 *     when "constant": {any} the constant value w/o escaping
-		 *     when "binding": {string} the binding path
-		 *     when "expression": {string} a binding expression not wrapped (no "{=" and "}")
+		 *   value: {string} the value to write into the resulting string depending on result:
+		 *     when "constant": the constant value as a string (from the annotation)
+		 *     when "binding": the binding path
+		 *     when "expression": a binding expression not wrapped (no "{=" and "}")
 		 *     when "composite": a composite binding string
 		 *   type: an EDM data type (like "Edm.String")
 		 *   constraints: {object} optional type constraints when result is "binding"
@@ -152,14 +312,14 @@ sap.ui.define([
 		 *   the resulting string to embed into an composite binding or a binding expression
 		 */
 		resultToString: function (oResult, bExpression, bWithType) {
-			var vValue = oResult.value;
+			var sValue = oResult.value;
 
 			function binding(bAddType) {
 				var sConstraints, sResult;
 
 				bAddType = bAddType && !oResult.ignoreTypeInPath && oResult.type;
-				if (bAddType || rBadChars.test(vValue)) {
-					sResult = "{path:" + Basics.toJSON(vValue);
+				if (bAddType || rBadChars.test(sValue)) {
+					sResult = "{path:" + Basics.toJSON(sValue);
 					if (bAddType) {
 						sResult += ",type:'" + mUi5TypeForEdmType[oResult.type] + "'";
 						sConstraints = Basics.toJSON(oResult.constraints);
@@ -169,7 +329,18 @@ sap.ui.define([
 					}
 					return sResult + "}";
 				}
-				return "{" + vValue + "}";
+				return "{" + sValue + "}";
+			}
+
+			function constant(oResult) {
+				switch (oResult.type) {
+					case "Edm.Boolean":
+					case "Edm.Double":
+					case "Edm.Int32":
+						return oResult.value;
+					default:
+						return Basics.toJSON(oResult.value);
+				}
 			}
 
 			switch (oResult.result) {
@@ -181,18 +352,18 @@ sap.ui.define([
 					throw new Error(
 						"Trying to embed a composite binding into an expression binding");
 				}
-				return vValue;
+				return sValue;
 
 			case "constant":
 				if (oResult.type === "edm:Null") {
 					return bExpression ? "null" : null;
 				}
 				return bExpression
-					? Basics.toJSON(vValue)
-					: BindingParser.complexParser.escape(vValue);
+					? constant(oResult)
+					: BindingParser.complexParser.escape(sValue);
 
 			case "expression":
-				return bExpression ? vValue : "{=" + vValue + "}";
+				return bExpression ? sValue : "{=" + sValue + "}";
 
 			// no default
 			}

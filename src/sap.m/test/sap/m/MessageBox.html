@@ -324,10 +324,10 @@
 		);
 
 		oVL.addContent(new sap.m.Button({
-			text: "Simple show",
+			text: "Simple show with title",
 			width: "270px",
 			press: function () {
-				sap.m.MessageBox.show("Hello curly { brace");
+				sap.m.MessageBox.show("Hello curly { brace", {title: "Simple Title"});
 			}
 		}));
 

@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/unified/cale
 
 	DatesRowRenderer.getClass = function(){
 
-		return "sapUiCalDatesRow";
+		return "sapUiCalDatesRow sapUiCalRow";
 
 	};
 
@@ -70,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/unified/cale
 		for (i = 0; i < aMonthDays.length; i++) {
 			var oMonthDays = aMonthDays[i];
 			sWidth = ( 100 / iDays * oMonthDays.iDays) + "%";
-			oRm.write("<div id=\"" + sId + "-Head" + i + "\"class=\"sapUiCalMonthHead\" style=\"width:" + sWidth + "\">");
+			oRm.write("<div id=\"" + sId + "-Head" + i + "\"class=\"sapUiCalHeadText\" style=\"width:" + sWidth + "\">");
 			oRm.write(aMonthNames[oMonthDays.iMonth]);
 			oRm.write("</div>");
 		}

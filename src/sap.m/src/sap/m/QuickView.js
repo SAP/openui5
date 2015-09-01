@@ -4,10 +4,10 @@
 
 // Provides control sap.m.QuickView.
 sap.ui.define([
-	'jquery.sap.global', './library', 'sap/ui/core/Control',
+	'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool',
 		'./QuickViewBase', './ResponsivePopover', './NavContainer',
 		'./PlacementType', './Page', './Bar', './Button'],
-	function(jQuery, library, Control,
+	function(jQuery, library, Control, IconPool,
 			QuickViewBase, ResponsivePopover, NavContainer,
 			PlacementType, Page, Bar, Button) {
 	"use strict";
@@ -15,21 +15,26 @@ sap.ui.define([
 	/**
 	 * Constructor for a new QuickView.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
+	 *
 	 * @class The QuickView control renders a responsive popover (sap.m.Popover or sap.m.Dialog)
 	 * and displays information of an object in a business-card format. It also allows this object to be linked to
 	 * another object using one of the links in the responsive popover. Clicking that link updates the information in the
 	 * popover with the data of the linked object. Unlimited number of objects can be linked.
+	 *
 	 * @extends sap.m.QuickViewBase
+	 *
 	 * @author SAP SE
+	 * @version ${version}
+	 *
 	 * @constructor
 	 * @public
+	 * @since 1.28.11
 	 * @alias sap.m.QuickView
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var QuickView = QuickViewBase.extend("sap.m.QuickView",
-			{
+	var QuickView = QuickViewBase.extend("sap.m.QuickView", /** @lends sap.m.QuickView.prototype */	{
 				metadata: {
 
 					library: "sap.m",
@@ -43,7 +48,7 @@ sap.ui.define([
 							defaultValue : PlacementType.Right
 						},
 						/**
-						 * The width of the QuickView.
+						 * The width of the QuickView. The property takes effect only when running on desktop or tablet.
 						 */
 						width : {
 							type : 'sap.ui.core.CSSSize',
@@ -232,20 +237,39 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Creates a new {@link sap.m.Page} that can be inserted in a QuickView.
+	 * @param {sap.m.QuickViewPage} oQuickViewPage The object that contains the data to be displayed.
+	 * @returns {sap.m.Page} The created page
+	 * @private
+	 */
 	QuickView.prototype._createPage = function(oQuickViewPage) {
 		return oQuickViewPage._createPage();
 	};
 
+	/**
+	 * Keyboard handling function when the down arrow is pressed.
+	 * @param {sap.ui.base.Event} oEvent The event object for this event.
+	 * @private
+	 */
 	QuickView.prototype._onPopupKeyDown = function(oEvent) {
 		this._processKeyboard(oEvent);
 	};
 
+	/**
+	 * Helper function to restore the focus to the proper element after the QuickView is opened on phone.
+	 * @private
+	 */
 	QuickView.prototype._afterOpen = function(oEvent) {
 		if (sap.ui.Device.system.phone) {
 			this._restoreFocus();
 		}
 	};
 
+	/**
+	 * Creates a new empty {@link sap.m.Page} and adds it to the QuickView.
+	 * @private
+	 */
 	QuickView.prototype._addEmptyPage = function() {
 		var oPage = new Page({
 			customHeader : new Bar()
@@ -256,7 +280,7 @@ sap.ui.define([
 		var oCustomHeader = oPage.getCustomHeader();
 		oCustomHeader.addContentRight(
 			new Button({
-				icon : "sap-icon://decline",
+				icon : IconPool.getIconURI("decline"),
 				press : function() {
 					that._oPopover.close();
 				}
@@ -267,6 +291,10 @@ sap.ui.define([
 		this._oNavContainer.addPage(oPage);
 	};
 
+	/**
+	 * Adjusts the popup height based on the QuickView's content.
+	 * @private
+	 */
 	QuickView.prototype._adjustContainerHeight = function() {
 		var oPopupControl = this._oPopover.getAggregation("_popup");
 		var $container = oPopupControl.$().find('.sapMPopoverCont');
@@ -277,11 +305,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns this button, which closes the QuickView.
+	 * Returns the button, which closes the QuickView.
 	 * On desktop or tablet, this method returns undefined.
+	 * @returns {sap.ui.core.Control} The close button of the QuickView on phone or undefined on desktop and tablet.
 	 * @private
 	 */
-		QuickView.prototype.getCloseButton = function() {
+	QuickView.prototype.getCloseButton = function() {
 		if (!sap.ui.Device.system.phone) {
 			return undefined;
 		}
@@ -295,8 +324,9 @@ sap.ui.define([
 	/**
 	 * The method sets placement position of the QuickView.
 	 *
-	 * @param {sap.m.PlacementType} sPlacement Placement type
-	 * @returns {QuickView} this pointer for chaining
+	 * @param {sap.m.PlacementType} sPlacement The side from which the QuickView appears relative to the control that opens it.
+	 * @returns {sap.m.QuickView} Pointer to the control instance for chaining.
+	 * @public
 	 */
 	QuickView.prototype.setPlacement = function (sPlacement) {
 		this.setProperty("placement", sPlacement, true); // no re-rendering
@@ -307,9 +337,10 @@ sap.ui.define([
 
 	/**
 	 * The method sets the width of the QuickView.
-	 *
-	 * @param {sap.ui.core.CSSSize} sWidth The new width of the QuickView
-	 * @returns {QuickView} this pointer for chaining
+	 * Works only on desktop or tablet.
+	 * @param {sap.ui.core.CSSSize} sWidth The new width of the QuickView.
+	 * @returns {sap.m.QuickView} Pointer to the control instance for chaining
+	 * @public
 	 */
 	QuickView.prototype.setWidth = function (sWidth) {
 		if (this._oNavContainer) {
@@ -319,11 +350,11 @@ sap.ui.define([
 
 		return this;
 	};
+
 	/**
-	 * Opens the QuickView
-	 *
-	 * @param {sap.ui.core.Control} oControl Control which opens the QuickView
-	 * @returns {QuickView} this pointer for chaining
+	 * Opens the QuickView.
+	 * @param {sap.ui.core.Control} oControl The control which opens the QuickView.
+	 * @returns {sap.m.QuickView} Pointer to the control instance for chaining
 	 * @public
 	 */
 	QuickView.prototype.openBy = function(oControl) {

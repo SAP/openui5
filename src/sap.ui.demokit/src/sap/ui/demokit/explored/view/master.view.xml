@@ -6,9 +6,9 @@
 		id="page" >
 		<customHeader>
 			<Toolbar>
-				<Button icon="sap-icon://drop-down-list" press="onOpenViewSettings" />
+				<Button icon="sap-icon://drop-down-list" id="viewSettingsButton" press="onOpenViewSettings" />
 				<ToolbarSpacer/>
-				<Label text="Entities ({entity>/entityCount})" />
+				<Title text="Entities ({entity>/entityCount})" />
 				<ToolbarSpacer/>
 				<Button icon="sap-icon://action-settings" tooltip="{i18n>settings}" press="onOpenAppSettings" />
 			</Toolbar>
@@ -35,7 +35,15 @@
 				selectionChange="onNavToEntity"
 				items="{
 					path: 'entity>/entities',
-					groupHeaderFactory: '.getGroupHeader'
+					groupHeaderFactory: '.getGroupHeader',
+					sorter: [{
+						path: 'category',
+						descending: false,
+						group: true
+					},{
+						path: 'name',
+						descending: false
+					}]
 				}" >
 				<infoToolbar>
 					<Toolbar

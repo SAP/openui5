@@ -28,7 +28,7 @@
 		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript">
 
-		jQuery.sap.require("sap.ui.dt.Overlay");
+		jQuery.sap.require("sap.ui.dt.ElementOverlay");
 		jQuery.sap.require("sap.ui.dt.plugin.DragDrop");
 
 		QUnit.module("Given that an DragDrop is initialized ", {
@@ -38,9 +38,9 @@
 				this.oLayout.placeAt("content");
 
 
-				this.oLayoutOverlay = new sap.ui.dt.Overlay({element : this.oLayout});
+				this.oLayoutOverlay = new sap.ui.dt.ElementOverlay({element : this.oLayout});
 				this.oAggregationOverlay = this.oLayoutOverlay.getAggregationOverlay("content");
-				this.oButtonOverlay = new sap.ui.dt.Overlay({element : this.oButton});
+				this.oButtonOverlay = new sap.ui.dt.ElementOverlay({element : this.oButton});
 				this.oButtonOverlay.setDraggable(true);
 				
 				sap.ui.getCore().applyChanges();

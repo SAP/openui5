@@ -8,15 +8,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new RoadMap.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Is used to display step-by-step work flows of a clearly defined work process
+	 * RoadMap is used to display step-by-step work flows of a clearly defined work process.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -28,70 +28,70 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RoadMap = Control.extend("sap.ui.commons.RoadMap", /** @lends sap.ui.commons.RoadMap.prototype */ { metadata : {
-	
+
 		library : "sap.ui.commons",
 		properties : {
-	
+
 			/**
 			 * Total number of steps to be displayed at once
 			 */
 			numberOfVisibleSteps : {type : "int", group : "Misc", defaultValue : null},
-	
+
 			/**
-			 * Id of the first step to be displayed
+			 * ID of the first step to be displayed
 			 */
 			firstVisibleStep : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
-			 * Id of the step which is currently selected
+			 * ID of the step which is currently selected
 			 */
 			selectedStep : {type : "string", group : "Misc", defaultValue : null},
-	
+
 			/**
-			 * Control width in CSS size
+			 * Determines the control width in CSS size
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'}
 		},
 		defaultAggregation : "steps",
 		aggregations : {
-	
+
 			/**
 			 * Steps that are composing the RoadMap
 			 */
 			steps : {type : "sap.ui.commons.RoadMapStep", multiple : true, singularName : "step"}
 		},
 		events : {
-	
+
 			/**
-			 * Event is fired when the user selects a step; assumption is that this step was not selected with the previously done select action.
+			 * Event is fired when the user selects a step.
 			 */
 			stepSelected : {
 				parameters : {
-	
+
 					/**
-					 * Id of the selected step
+					 * ID of the selected step
 					 */
 					stepId : {type : "string"}
 				}
-			}, 
-	
+			},
+
 			/**
 			 * Event is fired when a given step is expanded or collapsed by user.
 			 */
 			stepExpanded : {
 				parameters : {
-	
+
 					/**
-					 * Id of the expanded/collapsed step
+					 * ID of the expanded/collapsed step
 					 */
 					stepId : {type : "string"}
 				}
 			}
 		}
 	}});
-	
+
 	(function() {
-	
+
 	/**
 	 * Does the setup when the RoadMap is created.
 	 * @private
@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		this.iStepWidth = -1;
 		this.sCurrentFocusedStepRefId = null;
 	};
-	
+
 	/**
 	 * Does all the cleanup when the RoadMap is to be destroyed.
 	 * Called from Element's destroy() method.
@@ -113,8 +113,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			this.sResizeListenerId = null;
 		}
 	};
-	
-	
+
+
 	//Setter for property numberOfVisibleSteps which suppresses rerendering if possible -> Comment generated automatically
 	RoadMap.prototype.setNumberOfVisibleSteps = function(iNumberOfVisibleSteps) {
 		var bIsRendered = this.getDomRef() ? true : false;
@@ -124,8 +124,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		return this;
 	};
-	
-	
+
+
 	//Setter for property firstVisibleStep which suppresses rerendering if possible -> Comment generated automatically
 	RoadMap.prototype.setFirstVisibleStep = function(sFirstVisibleStep) {
 		var bIsRendered = this.getDomRef() ? true : false;
@@ -145,8 +145,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		return this;
 	};
-	
-	
+
+
 	//Setter for property width which suppresses rerendering if possible -> Comment generated automatically
 	RoadMap.prototype.setWidth = function(sWidth) {
 		var bIsRendered = this.getDomRef() ? true : false;
@@ -157,8 +157,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		return this;
 	};
-	
-	
+
+
 	//Setter for property selectedStep which suppresses rerendering if possible -> Comment generated automatically
 	RoadMap.prototype.setSelectedStep = function(sSelectedStep) {
 		var bIsRendered = this.getDomRef() ? true : false;
@@ -179,8 +179,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 		return this;
 	};
-	
-	
+
+
 	/**
 	 * Called when the theme is changed.
 	 * @private
@@ -191,8 +191,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			this.invalidate();
 		}
 	};
-	
-	
+
+
 	/**
 	 * Called before rendering starts by the renderer
 	 * (This is not the onBeforeRendering method which would be not called for the first rendering)
@@ -219,7 +219,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			if (oStep.getVisible() && this.getFirstVisibleStep() == oStep.getId()) {
 				bIsValidFirstStep = true;
 			}
-	
+
 			var aSubSteps = oStep.getSubSteps();
 			for (var j = 0; j < aSubSteps.length; j++) {
 				var oSubStep = aSubSteps[j];
@@ -237,36 +237,36 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				}
 			}
 		}
-	
+
 		if (!bIsValidSelectedStep) {
 			this.setProperty("selectedStep", "", true);
 		}
 		if (!bIsValidFirstStep) {
 			this.setProperty("firstVisibleStep", "", true);
 		}
-	
+
 		// Cleanup resize event registration before re-rendering
 		if (this.sResizeListenerId) {
 			sap.ui.core.ResizeHandler.deregister(this.sResizeListenerId);
 			this.sResizeListenerId = null;
 		}
 	};
-	
-	
+
+
 	/**
 	 * Called when the rendering is complete
 	 * @private
 	 */
 	RoadMap.prototype.onAfterRendering = function(){
-	
+
 		var aSteps = this.getSteps();
-	
+
 		//Compute the step width
 		if (this.iStepWidth == -1 && aSteps.length > 0) {
 			var jRef = aSteps[0].$();
 			this.iStepWidth = jRef.outerWidth();
 		}
-	
+
 		//Adapt the step labels if needed
 		for (var i = 0; i < aSteps.length; i++) {
 			var oStep = aSteps[i];
@@ -276,15 +276,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				sap.ui.commons.RoadMapRenderer.addEllipses(aSubSteps[j]);
 			}
 		}
-	
+
 		//Adapt the size of the scroll area
 		sap.ui.commons.RoadMapRenderer.updateScrollArea(this);
-	
+
 		// Listen to resizing
 		this.sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef(), jQuery.proxy(this.onresize, this));
 	};
-	
-	
+
+
 	/**
 	 * Called when the Roadmap is resized
 	 * @private
@@ -298,7 +298,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				this.sResizeInProgress = null;
 			}
 		};
-	
+
 		if (!!sap.ui.Device.browser.firefox) {
 			fDoOnResize.apply(this, []);
 		} else {
@@ -307,8 +307,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 		}
 	};
-	
-	
+
+
 	/**
 	 * Behavior implementation which is executed when the user clicks the step.
 	 *
@@ -318,8 +318,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	RoadMap.prototype.onclick = function(oEvent){
 		handleSelect(this, oEvent);
 	};
-	
-	
+
+
 	/**
 	 * Behavior implementation which is executed when the user presses the space or enter key.
 	 *
@@ -329,8 +329,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	RoadMap.prototype.onsapselect = function(oEvent){
 		handleSelect(this, oEvent);
 	};
-	
-	
+
+
 	/**
 	 * Behavior implementation which is executed when the focus comes into the control or on one of its children.
 	 *
@@ -354,8 +354,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		//Remove the control from tab chain to make tab out working (see onfocusout)
 		this.$().attr("tabindex", "-1");
 	};
-	
-	
+
+
 	/**
 	 * Behavior implementation which is executed when the focus leaves the control or one of its children.
 	 *
@@ -366,8 +366,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		//Add the control to tab chain again to make tab in working (see onfocusin)
 		this.$().attr("tabindex", "0");
 	};
-	
-	
+
+
 	/**
 	 * Behavior implementation which is executed when the user presses the arrow up or arrow left (RTL: arrow right) key.
 	 *
@@ -377,8 +377,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	RoadMap.prototype.onsapprevious = function(oEvent){
 		focusStep(oEvent, this, "prev");
 	};
-	
-	
+
+
 	/**
 	 * Behavior implementation which is executed when the user presses the arrow down or arrow right (RTL: arrow left) key.
 	 *
@@ -388,8 +388,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	RoadMap.prototype.onsapnext = function(oEvent){
 		focusStep(oEvent, this, "next");
 	};
-	
-	
+
+
 	/**
 	 * Behavior implementation which is executed when the user presses the home/pos1 key.
 	 *
@@ -399,8 +399,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	RoadMap.prototype.onsaphome = function(oEvent){
 		focusStep(oEvent, this, "first");
 	};
-	
-	
+
+
 	/**
 	 * Behavior implementation which is executed when the user presses the end key.
 	 *
@@ -410,23 +410,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	RoadMap.prototype.onsapend = function(oEvent){
 		focusStep(oEvent, this, "last");
 	};
-	
-	
+
+
 	//********* Private *********
-	
-	
+
+
 	//Called when either the Roadmap is clicked or the space or enter key is pressed
 	var handleSelect = function(oThis, oEvent){
 		oEvent.stopPropagation();
 		oEvent.preventDefault();
-	
+
 		var jTarget = jQuery(oEvent.target);
 		var sTargetId = jTarget.attr("id");
-	
+
 		if (!sTargetId) {
 			return;
 		}
-	
+
 		//Handle event for the end of an expandable step
 		var iIdx = sTargetId.lastIndexOf("-expandend");
 		if (iIdx != -1) {
@@ -436,7 +436,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				return;
 			}
 		}
-	
+
 		//Handle select on delimiter
 		if (sTargetId == oThis.getId() + "-Start") {
 			if (jTarget.hasClass("sapUiRoadMapStartScroll")) {
@@ -452,8 +452,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 		}
 	};
-	
-	
+
+
 	//Helper function to scroll to following step (optionally with updating the focus (see focusStep)).
 	//Allowed directions are: next, prev, first, last.
 	var scrollToNextStep = function(oThis, sDir, bUpdateFocus){
@@ -463,14 +463,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				sFirstVisibleNodeId = sFirstVisibleNodeId.substring(0, iIdx);
 			}
 			oThis.setProperty("firstVisibleStep", sFirstVisibleNodeId, true);
-	
+
 			if (bUpdateFocus) {
 				refreshFocus(oThis, sDir);
 			}
 		});
 	};
-	
-	
+
+
 	//Helper function to focus the following step of the current focused step in the given direction.
 	//Allowed directions are: next, prev, first, last. If this step is not visible an automatic scrolling is done.
 	var focusStep = function(oEvent, oThis, sDir){
@@ -481,7 +481,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		if (!oThis.sCurrentFocusedStepRefId) {
 			return;
 		}
-	
+
 		var sFoo = sDir + "All";
 		var bIsJumpToDelimiter = false;
 		if (sDir == "first") {
@@ -491,7 +491,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			sFoo = "nextAll";
 			bIsJumpToDelimiter = true;
 		}
-	
+
 		var jCurrentFocusStep = jQuery.sap.byId(oThis.sCurrentFocusedStepRefId);
 		var jFollowingSteps = jCurrentFocusStep[sFoo](":visible");
 		var sFollowingFocusStepId = jQuery(jFollowingSteps.get(bIsJumpToDelimiter ? jFollowingSteps.length - 1 : 0)).attr("id");
@@ -499,26 +499,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			if (!sap.ui.commons.RoadMapRenderer.isVisibleRef(oThis, sFollowingFocusStepId)) {
 				scrollToNextStep(oThis, sDir);
 			}
-	
+
 			jQuery.sap.byId(sFollowingFocusStepId + "-box").get(0).focus();
 		}
 	};
-	
-	
+
+
 	//Sets the focus on the current focused step again. If the current focused step is not visible anymore
 	//the following step in the given direction is focused. Allowed directions are: next, prev, first, last
 	var refreshFocus = function(oThis, sDir){
 		if (!oThis.sCurrentFocusedStepRefId) {
 			return;
 		}
-	
+
 		if (sDir && !sap.ui.commons.RoadMapRenderer.isVisibleRef(oThis, oThis.sCurrentFocusedStepRefId)) {
 			focusStep(null, oThis, sDir);
 		} else {
 			jQuery.sap.byId(oThis.sCurrentFocusedStepRefId + "-box").get(0).focus();
 		}
 	};
-	
+
 	}());
 
 	return RoadMap;

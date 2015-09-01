@@ -12,11 +12,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Constructor for a new SegmentedButton.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A SegmentedButton Control is a horizontal control made of multiple buttons which can display a title or an image. It automatically resizes the buttons to fit proportionally within the control. When no width is set, the control uses the available width.
+	 * SegmentedButton is a horizontal control made of multiple buttons, which can display a title or an image. It automatically resizes the buttons to fit proportionally within the control. When no width is set, the control uses the available width.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -33,18 +33,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		properties : {
 
 			/**
-			 * Set the width of the SegmentedButton control. If not set, it uses the minimum required width to make all buttons inside of the same size (based on the biggest button).
+			 * Defines the width of the SegmentedButton control. If not set, it uses the minimum required width to make all buttons inside of the same size (based on the biggest button).
 			 *
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
 
 			/**
-			 * If disabled all buttons look grey, you cannot focus on them, you can not even click on them.
+			 * Disables all the buttons in the SegmentedButton control. When disabled all the buttons look grey and you cannot focus or click on them.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Key of the selected item. If no item to this key is found in the aggregation "items", no changes will apply. Only the "items" aggregation is affected. If duplicate keys exist, the first item matching the key is used.
+			 * Key of the selected item. If no item to this key is found in the items aggregation, no changes will apply. Only the items aggregation is affected. If duplicate keys exist, the first item matching the key is used.
 			 * @since 1.28.0
 			 */
 			selectedKey: { type: "string", group: "Data", defaultValue: "", bindable: "bindable" }
@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		aggregations : {
 
 			/**
-			 * The buttons of the SegmentedButton control. The items set in this aggregation are used as an interface for the buttons displayed by the control. Only the properties "id", "icon", "text", "enabled" and "textDirections" of the Button control are evaluated. Setting other properties of the button will have no effect. Alternatively, you can use the "createButton" method to add buttons.
+			 * The buttons of the SegmentedButton control. The items set in this aggregation are used as an interface for the buttons displayed by the control. Only the properties ID, icon, text, enabled and textDirections of the Button control are evaluated. Setting other properties of the button will have no effect. Alternatively, you can use the createButton method to add buttons.
 			 * @deprecated Since 1.28.0 Instead use the "items" aggregation.
 			 */
 			buttons : {type : "sap.m.Button", multiple : true, singularName : "button"},
@@ -66,48 +66,48 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			items : { type : "sap.m.SegmentedButtonItem", multiple : true, singularName : "item", bindable : "bindable" },
 
 			/**
-			 * Hidden aggregation that holds an instance of sap.m.Select to be used in some contexts as a representation of the segmented button (f.e. in a popover with little space)
+			 * Hidden aggregation that holds an instance of sap.m.Select to be used in some contexts as a representation of the segmented button (for example, in a popover with little space).
 			 */
 			_select: { type : "sap.m.Select", multiple : false, visibility : "hidden"}
 		},
 		associations : {
 
 			/**
-			 * A reference to the currently selected button control. By default or if the association is set to a falsy value (null, undefined, "", false), the first button will be selected.
-			 * If the association is set to an invalid value (e.g. an ID of a button that does not exist) the selection on the SegmentedButton will be removed.
+			 * A reference to the currently selected button control. By default or if the association is set to false (null, undefined, "", false), the first button will be selected.
+			 * If the association is set to an invalid value (for example, an ID of a button that does not exist) the selection on the SegmentedButton will be removed.
 			 */
 			selectedButton : {type : "sap.m.Button", multiple : false},
 
 			/**
-			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 * Association to controls / IDs, which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
 			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
 
 			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * Association to controls / IDs, which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
 		events : {
 
 			/**
-			 * Event is fired when the user selects a button, which returns the id and button object
+			 * Fires when the user selects a button, which returns the ID and button object.
 			 */
 			select : {
 				parameters : {
 
 					/**
-					 * Reference to the button that has been selected
+					 * Reference to the button, that has been selected.
 					 */
 					button : {type : "sap.m.Button"},
 
 					/**
-					 * Id of the button which has been selected
+					 * ID of the button, which has been selected.
 					 */
 					id : {type : "string"},
 
 					/**
-					 * Key of the button which has been selected. This property is only filled when the control is initiated with the "items" aggregation
+					 * Key of the button, which has been selected. This property is only filled when the control is initiated with the items aggregation.
 					 * @since 1.28.0
 					 */
 					key : {type : "string"}
@@ -307,16 +307,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Called after the theme has been switched, required for new width calc
+	 * Required for new width calculation, called after the theme has been switched.
 	 * @private
 	 */
 	SegmentedButton.prototype.onThemeChanged = function (oEvent){
 		//this._fCalcBtnWidth();
 	};
 	/**
-	 * This function is called to manually set the width of each segmentedbutton button
-	 * on the basis of the widest item after they have been rendered or an orientation change/theme change
-	 * took place.
+	 * Called to manually set the width of each SegmentedButton button on the basis of the
+	 * widest item after they have been rendered or an orientation change/theme change took place.
 	 * @private
 	 */
 	SegmentedButton.prototype._fCalcBtnWidth = function () {
@@ -382,7 +381,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		iMaxWidth = Math.floor(iMaxWidth);
 
 		for (var i = 0; i < iItm; i++) {
-			var $button = $this.children('#' + oButtons[i].getId()),
+			var $button = oButtons[i].$(),
 				sBtnWidth = oButtons[i].getWidth();
 			if (!isNaN(iMaxWidth) && iMaxWidth > 0) {
 				// Bug: +2px for IE9(10)
@@ -408,7 +407,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._removeGhostButton();
 	};
 	/**
-	 * The orientationchange event listener
+	 * The orientation change event listener.
+	 * @private
 	 */
 	SegmentedButton.prototype._fHandleResize = function () {
 		this._fCalcBtnWidth();
@@ -444,20 +444,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Convenient method to add a button with a text as title, an uri for an icon, enabled and textDirection.
+	 * Adds a Button with a text as title, an URI for an icon, enabled and textDirection.
 	 * Only one is allowed.
 	 *
 	 * @param {string} sText
-	 *         defines the title text of the newly created button
+	 *         Defines the title text of the newly created Button
 	 * @param {sap.ui.core.URI} sURI
-	 *         Icon to be displayed as graphical element within the button.
+	 *         Icon to be displayed as graphical element within the Button.
 	 *         Density related image will be loaded if image with density awareness name in format [imageName]@[densityValue].[extension] is provided.
-	 * @param {boolean} [bEnabled]
-	 *         Boolean property to enable the control (default is true). Buttons that are disabled have other colors than enabled ones, depending on custom settings
+	 * @param {boolean} bEnabled
+	 *         Enables the control (default is true). Buttons that are disabled have other colors than enabled ones, depending on custom settings.
 	 * @param {sap.ui.core.TextDirection} [sTextDirection]
-	 *         element's text directionality with enumerated options
+	 *         Element's text directionality with enumerated options
 	 *         @since 1.28.0
-	 * @return {sap.m.Button} the created button
+	 * @return {sap.m.Button} The created Button
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -484,9 +484,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Private method to create a button from item
+	 * Private method to create a Button from an item.
 	 *
-	 * @param {sap.m.SegmentedButtonItem} oItem item from the items aggregation
+	 * @param {sap.m.SegmentedButtonItem} oItem Item from the items aggregation
 	 * @private
 	 * @since 1.28
 	 */
@@ -544,11 +544,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	})();
 
 	/**
-	 * Called whenever the binding of the aggregation items is changed.
-	 * This method creates all the buttons from the items aggregation or
+	 * Creates all the buttons from the items aggregation or
 	 * replaces the current ones if the binding changes.
 	 *
-	 * @param {sap.ui.model.ChangeReason} sReason enumeration reason for the model update
+	 * Called whenever the binding of the items aggregation is changed.
+	 *
+	 * @param {sap.ui.model.ChangeReason} sReason Enumeration reason for the model update
 	 * @private
 	 * @override
 	 * @since 1.28.0
@@ -560,7 +561,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			bUpdate = false,
 			i = 0;
 
-		/* Update aggregation only if a update reason is available */
+		/* Update aggregation only if an update reason is available */
 		if (sReason !== undefined) {
 			this.updateAggregation("items");
 		}
@@ -586,9 +587,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Getter for the selectedKey property. Usable only when the control is initiated with the "items" aggregation.
+	 * Gets the selectedKey and is usable only when the control is initiated with the items aggregation.
 	 *
-	 * @return {string} current selected key
+	 * @return {string} Current selected key
 	 * @override
 	 * @since 1.28.0
 	 */
@@ -610,9 +611,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Setter for the selectedKey property. Usable only when the control is initiated with the "items" aggregation.
+	 * Sets the selectedKey and is usable only when the control is initiated with the items aggregation.
 	 *
-	 * @param {string} sKey the key of the button to be selected.
+	 * @param {string} sKey The key of the button to be selected
 	 * @override
 	 * @since 1.28.0
 	 */
@@ -662,7 +663,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
-	/** event handler for the internal button press events
+	/** Event handler for the internal button press events.
 	 * @private
 	 */
 	SegmentedButton.prototype._buttonPressed = function (oEvent) {
@@ -703,9 +704,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Setter for association <code>selectedButton</code>.
 	 *
-	 * @param {string | sap.m.Button | null | undefined} vButton new value for association <code>setSelectedButton</code>
-	 *    An sap.m.Button instance which becomes the new target of this <code>selectedButton</code> association.
-	 *    Alternatively, the id of an sap.m.Button instance may be given as a string.
+	 * @param {string | sap.m.Button | null | undefined} vButton New value for association <code>setSelectedButton</code>
+	 *    A sap.m.Button instance which becomes the new target of this <code>selectedButton</code> association.
+	 *    Alternatively, the ID of a sap.m.Button instance may be given as a string.
 	 *    If the value of null, undefined, or an empty string is provided the first item will be selected.
 	 * @returns {sap.m.SegmentedButton} <code>this</code> this pointer for chaining
 	 * @public
@@ -767,7 +768,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/** Select form function **/
 
 	/**
-	 * Lazy loader for the select hidden aggregation
+	 * Lazy loader for the select hidden aggregation.
 	 * @private
 	 */
 	SegmentedButton.prototype._lazyLoadSelectForm = function() {
@@ -782,7 +783,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * This method is called when the select is changed so that the segmented button internals stay in sync
+	 * Called when the select is changed so that the SegmentedButton internals stay in sync.
 	 * @param oEvent
 	 * @private
 	 */
@@ -801,7 +802,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Builds/rebuilds the select from the buttons in the segmented button
+	 * Builds/rebuilds the select from the buttons in the SegmentedButton.
 	 * @private
 	 */
 	SegmentedButton.prototype._syncSelect = function() {
@@ -831,7 +832,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * To be called to make the control go to select mode
+	 * To be called to make the control go to select mode.
 	 * @private
 	 */
 	SegmentedButton.prototype._toSelectMode = function() {
@@ -842,7 +843,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * To be called to make the control go back to the default mode
+	 * To be called to make the control go back to the default mode.
 	 * @private
 	 */
 	SegmentedButton.prototype._toNormalMode = function() {
@@ -853,8 +854,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Image does not have an onload event but we need to recalculate the button sizes after the image is loaded
-	 * we override the onload method once and call the calculation method after the original method is called
+	 * Image does not have an onload event but we need to recalculate the button sizes - after the image is loaded
+	 * we override the onload method once and call the calculation method after the original method is called.
 	 * @param {sap.m.Image} oImage instance of the image
 	 * @private
 	 */
@@ -874,9 +875,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Get native SAP icon name
-	 * @param {sap.ui.core.Icon} oIcon icon object
-	 * @returns {string} the generic name of the icon
+	 * Gets native SAP icon name.
+	 * @param {sap.ui.core.Icon} oIcon Icon object
+	 * @returns {string} The generic name of the icon
 	 * @private
 	 */
 	SegmentedButton.prototype._getIconAriaLabel = function (oIcon) {

@@ -3,15 +3,15 @@
  */
 
 // Provides an abstract property binding.
-sap.ui.define(['jquery.sap.global', './Binding', './SimpleType'],
-	function(jQuery, Binding, SimpleType) {
+sap.ui.define(['jquery.sap.global', './Binding', './SimpleType','./DataState'],
+	function(jQuery, Binding, SimpleType, DataState) {
 	"use strict";
 
 
 	/**
 	 * Constructor for PropertyBinding
 	 *
-	 * @class
+	 * @class 
 	 * The PropertyBinding is used to access single data values in the data model.
 	 *
 	 * @param {sap.ui.model.Model} oModel
@@ -27,6 +27,7 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType'],
 	
 		constructor : function (oModel, sPath, oContext, mParameters) {
 			Binding.apply(this, arguments);
+			this.vInvalidValue = null;
 		},
 		metadata : {
 			"abstract" : true,
@@ -70,7 +71,19 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType'],
 	 * @public
 	 */
 	PropertyBinding.prototype.getExternalValue = function() {
-		var oValue = this.getValue();
+		return this._toExternalValue(this.getValue());
+	};
+	
+	/**
+	 * Returns the current external value of the given value which is formatted via a type or formatter function. 
+	 *
+	 * @throws sap.ui.model.FormatException
+	 *
+	 * @return {object} the current value of the bound target
+	 *
+	 * @private
+	 */
+	PropertyBinding.prototype._toExternalValue = function(oValue) {
 		if (this.oType) {
 			oValue = this.oType.formatValue(oValue, this.sInternalType);
 		}
@@ -94,16 +107,24 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType'],
 	 * @public
 	 */
 	PropertyBinding.prototype.setExternalValue = function(oValue) {
+		
 		// formatter doesn't support two way binding
 		if (this.fnFormatter) {
 			jQuery.sap.log.warning("Tried to use twoway binding, but a formatter function is used");
 			return;
 		}
-		if (this.oType) {
-			oValue = this.oType.parseValue(oValue, this.sInternalType);
-			this.oType.validateValue(oValue);
+		try {
+			if (this.oType) {
+				oValue = this.oType.parseValue(oValue, this.sInternalType);
+				this.oType.validateValue(oValue);
+			}
+		} catch (oException) {
+			this.vInvalidValue = oValue;
+			this.checkDataState(); //data ui state is dirty inform the control
+			throw oException;
 		}
 		// if no type specified set value directly
+		this.vInvalidValue = null;
 		this.setValue(oValue);
 	};
 	
@@ -169,6 +190,35 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType'],
 	};
 	
 
+	/**
+	 * Checks whether an update of the messages of this binding is required.
+	 *
+	 * @private
+	 */
+	PropertyBinding.prototype._updateDataState = function() {
+		var oDataState = Binding.prototype._updateDataState.call(this); //super first to apply general status data like messages and laundering
+		if (this.oModel && this.sPath) {
+			oDataState.setInvalidValue(this.vInvalidValue);
+			/*if (this.vInvalidValue) {
+				return oDataState; // no further processing needed
+			}*/
+			try  {
+				var oOriginalValue = this.oModel.getOriginalProperty(this.sPath, this.oContext);
+				oDataState.setOriginalValue(this._toExternalValue(oOriginalValue));
+				oDataState.setOriginalInternalValue(oOriginalValue);
+			} catch (ex) {
+				jQuery.sap.log.debug("type validation of original model value failed");
+			}
+			try  {
+				oDataState.setValue(this.getExternalValue());
+			} catch (ex) {
+				jQuery.sap.log.debug("formatting of value failed");
+			}
+		}
+		oDataState.setInternalValue(this.getValue());
+		return oDataState;
+	};
+	
 	return PropertyBinding;
 
 });

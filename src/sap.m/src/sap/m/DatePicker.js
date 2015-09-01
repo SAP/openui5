@@ -11,12 +11,37 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 	/**
 	 * Constructor for a new DatePicker.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * This is an date input control with a calendar DatePicker.
-	 * It internal uses the sap.ui.unified.Calendar. So the sap.ui.unified library should be loaded from applications using this control. (Otherwise it will be loaded by opening the DatePicker.)
+	 * This is a date input control with a calendar as date picker.
+	 *
+	 * A date can be entered using a calendar that opens in a popup. Alternatively a value can be entered directly in the input field by typing it in.
+	 * (This is only possible on desktop devices, on mobile devices keyboard input is not possible.)
+	 * If a date is entered by typing it into the input field, it must fit to the used date format and locale. (See <code>sap.ui.core.format.DateFormat</code>)
+	 *
+	 * There are two options to provide a date for the <code>DatePicker</code>.
+	 * You can put a date as a string to the property <code>value</code> or you can put a JavaScript Date object to the property <code>dateValue</code>.
+	 * Only one of the properties should be used at one time, but they are synchronized internally.
+	 * What property you should use depends on the use case of the application:
+	 * <ul>
+	 * <li>Use the <code>value</code> property if you want to bind the <code>DatePicker</code> to a model using the <code>sap.ui.model.type.Date</code>.</li>
+	 * <li>Use the <code>value</code> property if the date is provided as a string from the backend or inside the application (e.g. as ABAP type DATS field).</li>
+	 * <li>Use the <code>dateValue</code> property if the date is already provided as a JavaScript Date object or you want to work with a JavaScript Date object.</li>
+	 * </ul>
+	 *
+	 * All formatting and parsing of dates from and to strings is done using the {@link sap.ui.core.format.DateFormat}, so read the corresponding documentation if you need some information about this.
+	 *
+	 * Supported format options are pattern-based on Unicode LDML Date Format notation. {@link http://unicode.org/reports/tr35/#Date_Field_Symbol_Table}
+	 *
+	 * For example, if the <code>valueFormat</code> is "yyyy-MM-dd", <code>displayFormat</code> is "MMM d, y" and the used locale is English,
+	 * a valid <code>value</code> string is "2015-07-30", which leads to an output of "Jul 30, 2015".
+	 *
+	 * Internally the <code>sap.ui.unified.Calendar</code> is used, but it is only needed if the <code>DatePicker</code> is opened. This means that it is not needed for the initial rendering.
+	 * If the <code>sap.ui.unified</code> library is not loaded before the <code>DatePicker</code> is opened, it will be loaded upon opening.
+	 * This could lead to a waiting time before a <code>DatePicker</code> is opened the first time. To prevent this, applications using the <code>DatePicker</code> should also load
+	 * the <code>sap.ui.unified</code> library.
 	 * @extends sap.m.InputBase
 	 * @version ${version}
 	 *
@@ -32,30 +57,39 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 		properties : {
 
 			/**
-			 * Displays date value in this given format in text field. Default value is taken from locale settings.
-			 * If you use data-binding on value property with type sap.ui.model.type.Date then you can ignore this property or latter wins.
+			 * The date is displayed in the input field using this format. By default, the medium format of the used locale is used.
+			 *
+			 * Supported format options are pattern-based on Unicode LDML Date Format notation. {@link http://unicode.org/reports/tr35/#Date_Field_Symbol_Table}
+			 * <b>Note:</b> If you use data binding on the <code>value</code> property with type <code>sap.ui.model.type.Date</code> this property will be ignored.
+			 * The format defined in the binding will be used.
 			 */
 			displayFormat : {type : "string", group : "Appearance", defaultValue : null},
 
 			/**
-			 * Given value property should match with valueFormat to parse date. Default value is taken from locale settings.
-			 * You can set and get value in this format.
-			 * the value is always expected and updated in gregorian calendar
-			 * If you use data-binding on value property with type sap.ui.model.type.Date you can ignore this property or latter wins.
+			 * The date string expected and returned in the <code>value</code> property uses this format. By default the short format of the used locale is used.
+			 *
+			 *
+			 * Supported format options are pattern-based on Unicode LDML Date Format notation. {@link http://unicode.org/reports/tr35/#Date_Field_Symbol_Table}
+			 *
+			 * For example, if the date string represents an ABAP DATS type, the format should be "yyyyMMdd".
+			 *
+			 * <b>Note:</b> If data binding on <code>value</code> property with type <code>sap.ui.model.type.Date</code> is used, this property will be ignored.
+			 * The format defined in the binding will be used.
 			 */
 			valueFormat : {type : "string", group : "Data", defaultValue : null},
 
 			/**
-			 * This property as JavaScript Date Object can be used to assign a new value which is independent from valueFormat.
-			 * If this property is used, the value property should not be changed from the caller.
+			 * The date as JavaScript Date object. This is independent from any formatter.
+			 *
+			 * <b>Note:</b> If this property is used, the <code>value</code> property should not be changed from the caller.
 			 */
 			dateValue : {type : "object", group : "Data", defaultValue : null},
 
 			/**
-			 * Displays date value in this given type in text field. Default value is taken from locale settings.
-			 * Acceptes are values of sap.ui.core.CalendarType or an empty string. If no type is set the default one of the 
+			 * Displays date in this given type in input field. Default value is taken from locale settings.
+			 * Accepted are values of <code>sap.ui.core.CalendarType</code> or an empty string. If no type is set, the default type of the
 			 * configuration is used.
-			 * If you use data-binding on value property with type sap.ui.model.type.Date then you can ignore this property or latter wins.
+			 * <b>Note:</b> If data binding on <code>value</code> property with type <code>sap.ui.model.type.Date</code> is used, this property will be ignored.
 			 * @since 1.28.6
 			 */
 			displayFormatType : {type : "string", group : "Appearance", defaultValue : ""}
@@ -101,10 +135,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 			this._sUsedDisplayPattern = undefined;
 			this._sUsedDisplayCalendarType = undefined;
-			this._sDisplayFormat = undefined;
+			this._oDisplayFormat = undefined;
 			this._sUsedValuePattern = undefined;
 			this._sUsedValueCalendarType = undefined;
-			this._sValueFormat = undefined;
+			this._oValueFormat = undefined;
 
 		};
 
@@ -266,6 +300,36 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 		};
 
+		/**
+		 * Getter for property <code>value</code>.
+		 *
+		 * Returns a date as a string in the format defined in property <code>valueFormat</code>.
+		 *
+		 * <b>Note:</b> The value is always expected and updated in Gregorian calendar format. (If data binding is used the format of the binding is used.)
+		 *
+		 * If this property is used, the <code>dateValue</code> property should not be changed from the caller.
+		 *
+		 * @returns {string} the value of property <code>value</code>
+		 * @public
+		 * @name sap.m.DateRangeSelection#getValue
+		 * @function
+		 */
+
+		/**
+		 * Setter for property <code>value</code>.
+		 *
+		 * Expects a date as a string in the format defined in property <code>valueFormat</code>.
+		 *
+		 * <b>Note:</b> The value is always expected and updated in Gregorian calendar format. (If data binding is used the format of the binding is used.)
+		 *
+		 * If this property is used, the <code>dateValue</code> property should not be changed from the caller.
+		 *
+		 * @param {string} sValue The new value of the input.
+		 * @return {sap.m.DatePicker} <code>this</code> to allow method chaining
+		 * @public
+		 * @name sap.m.DateRangeSelection#setValue
+		 * @function
+		 */
 		DatePicker.prototype.setValue = function(sValue) {
 
 			sValue = this.validateProperty("value", sValue); // to convert null and undefined to ""
@@ -667,10 +731,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 			var oDate;
 			var sValue = "";
 
-			this._oPopup.close();
-			this._bFocusNoPopup = true;
-			this.focus();
-
 			if (aSelectedDates.length > 0) {
 				oDate = aSelectedDates[0].getStartDate();
 			}
@@ -696,6 +756,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 					this.fireChangeEvent(sValue, {valid: true});
 				}
 			}
+
+			// close popup and focus input after change event to allow application to reset value state or similar things
+			this._oPopup.close();
+			this._bFocusNoPopup = true;
+			this.focus();
 
 		};
 
@@ -770,7 +835,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 		function _handleOpened(oEvent) {
 
-			this._renderedDays = this._oCalendar.$("days").children(".sapUiCalDay").length;
+			this._renderedDays = this._oCalendar.$("-Month0-days").find(".sapUiCalItem").length;
 
 		}
 
@@ -785,7 +850,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 			}
 
 		}
-
 
 		function _getFormatter(oThis, bDisplayFormat) {
 
@@ -819,11 +883,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 
 			if (bDisplayFormat) {
 				if (sPattern == oThis._sUsedDisplayPattern && sCalendarType == oThis._sUsedDisplayCalendarType) {
-					oFormat = oThis._sDisplayFormat;
+					oFormat = oThis._oDisplayFormat;
 				}
 			} else {
 				if (sPattern == oThis._sUsedValuePattern && sCalendarType == oThis._sUsedValueCalendarType) {
-					oFormat = oThis._sValueFormat;
+					oFormat = oThis._oValueFormat;
 				}
 			}
 
@@ -836,11 +900,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 				if (bDisplayFormat) {
 					oThis._sUsedDisplayPattern = sPattern;
 					oThis._sUsedDisplayCalendarType = sCalendarType;
-					oThis._sDisplayFormat = oFormat;
+					oThis._oDisplayFormat = oFormat;
 				} else {
 					oThis._sUsedValuePattern = sPattern;
 					oThis._sUsedValueCalendarType = sCalendarType;
-					oThis._sValueFormat = oFormat;
+					oThis._oValueFormat = oFormat;
 				}
 			}
 
@@ -858,7 +922,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 	 * @param {sap.ui.base.Event} oControlEvent
 	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
 	 * @param {object} oControlEvent.getParameters
-	 * @param {string} oControlEvent.getParameters.value The new value of the input.
+	 * @param {string} oControlEvent.getParameters.value The new value of the <code>sap.m.DatePicker</code>.
 	 * @param {boolean} oControlEvent.getParameters.valid Indicator for a valid date.
 	 * @public
 	 */
@@ -868,7 +932,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 	 *
 	 * Expects following event parameters:
 	 * <ul>
-	 * <li>'value' of type <code>string</code> The new value of the input.</li>
+	 * <li>'value' of type <code>string</code> The new value of the <code>sap.m.DatePicker</code>.</li>
 	 * <li>'valid' of type <code>boolean</code> Indicator for a valid date.</li>
 	 * </ul>
 	 *
@@ -878,7 +942,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', 'sap/ui/model/type/Date', 'sa
 	 * @name sap.m.DatePicker#fireChange
 	 * @function
 	 */
-
 
 	return DatePicker;
 

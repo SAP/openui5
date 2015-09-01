@@ -36,9 +36,7 @@ sap.ui.define(['sap/ui/model/odata/type/Int'],
 	 * @public
 	 * @since 1.27.0
 	 */
-	var Int16 = Int.extend("sap.ui.model.odata.type.Int16",
-		/** @lends sap.ui.model.odata.type.Int16.prototype */
-		{
+	var Int16 = Int.extend("sap.ui.model.odata.type.Int16", {
 			constructor : function () {
 				Int.apply(this, arguments);
 			}

@@ -14,8 +14,8 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var OverlayRenderer = {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -25,26 +25,26 @@ sap.ui.define(['jquery.sap.global'],
 	OverlayRenderer.render = function(oRenderManager, oControl){
 		// convenience variable
 		var rm = oRenderManager;
-	
+
 		// write the HTML into the render manager
 		rm.write("<div");
 		rm.writeControlData(oControl);
 		rm.addClass("sapUiUx3Overlay");
-	
+
 		if (this.addRootClasses) {
 			this.addRootClasses(rm, oControl);
 		}
-	
+
 		rm.writeClasses();
 		rm.write(">");
-	
+
 		rm.write("<div role='presentation'");
 		rm.addClass("sapUiUx3OverlayOverlay");
-	
+
 		if (this.addOverlayClasses) {
 			this.addOverlayClasses(rm, oControl);
 		}
-	
+
 		rm.writeClasses();
 		rm.write(">");
 		rm.write("</div>");
@@ -57,16 +57,16 @@ sap.ui.define(['jquery.sap.global'],
 				}
 		if (oControl.getCloseButtonVisible()) {
 		rm.write("<a role=\"button\" aria-disabled=\"false\" class='sapUiUx3OverlayCloseButton' id='" + oControl.getId()
-				+ "-close' tabindex=\"0\" title=\"" + oControl._getText("OVERLAY_CLOSE_BUTTON_TOOLTIP") + "\"></a>");
+				+ "-close' tabindex=\"0\" aria-label='" + oControl._getText("OVERLAY_CLOSE_BUTTON_TOOLTIP") + "'></a>");
 		}
 		if (this.renderContent) {
 			this.renderContent(rm, oControl);
 		}
 		rm.write("<span class='sapUiUx3OverlayFocusDummyPane' id='" + oControl.getId() + "-LastFocusDummyPane'></span>");
 		rm.write("</div>");
-	
+
 	};
-	
+
 
 	return OverlayRenderer;
 

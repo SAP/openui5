@@ -285,6 +285,32 @@ sap.ui.define([
 		return this;
 	};
 
+	P13nGroupPanel.prototype.updateGroupItems = function(sReason) {
+		this.updateAggregation("groupItems");
+
+		if (sReason !== "change") {
+			return;
+		}
+		if (!this._bIgnoreBindCalls) {
+			var aConditions = [];
+			this.getGroupItems().forEach(function(oGroupItem_) {
+				// Note: current implementation assumes that the length of sortItems aggregation is equal
+				// to the number of corresponding model items.
+				// Currently the model data is up-to-date so we need to resort to the Binding Context;
+				// the "groupItems" aggregation data - obtained via getGroupItems() - has the old state !
+				var oContext = oGroupItem_.getBindingContext();
+				var oModelItem = oContext.getObject();
+				aConditions.push({
+					key: oGroupItem_.getKey(),
+					keyField: oModelItem.columnKey,
+					operation: oModelItem.operation,
+					showIfGrouped: oModelItem.showIfGrouped
+				});
+			});
+			this._oGroupPanel.setConditions(aConditions);
+		}
+	};
+
 	P13nGroupPanel.prototype.removeGroupItem = function(oGroupItem) {
 		oGroupItem = this.removeAggregation("groupItems", oGroupItem);
 
@@ -358,7 +384,7 @@ sap.ui.define([
 			}
 		};
 	};
-	
+
 	P13nGroupPanel.prototype.getOkPayload = function() {
 		if (!this.getModel()) {
 			return null;

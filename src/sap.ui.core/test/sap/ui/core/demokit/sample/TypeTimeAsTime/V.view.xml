@@ -1,0 +1,51 @@
+<mvc:View
+	controllerName="sap.ui.core.sample.TypeTimeAsTime.C"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:form="sap.ui.layout.form"
+	xmlns="sap.m">
+	
+	<form:SimpleForm
+		width="auto"
+		class="sapUiResponsiveMargin"
+		layout="ResponsiveGridLayout"
+		editable="true"
+		labelSpanL="3"
+		labelSpanM="3"
+		emptySpanL="4"
+		emptySpanM="4"
+		columnsL="1"
+		columnsM="1"
+		title="Time Input" >
+		<form:content>
+			<Label text="Time" />
+			<Input value="{
+				path: '/time',
+				type: 'sap.ui.model.type.Time'}" />
+		</form:content>
+	</form:SimpleForm>
+
+	<form:SimpleForm
+		width="auto"
+		class="sapUiResponsiveMargin"
+		layout="ResponsiveGridLayout"
+		labelSpanL="3"
+		labelSpanM="3"
+		emptySpanL="4"
+		emptySpanM="4"
+		columnsL="1"
+		columnsM="1"
+		title="Relative Time Format" >
+		<form:content>
+
+			<Label text="Relative Time" />
+			<Text text="{
+				path: '/time',
+				type: 'sap.ui.model.type.Time',
+				formatOptions: {
+					relative: true,
+					relativeScale: 'auto'
+				}
+			}" />
+		</form:content>
+	</form:SimpleForm>
+</mvc:View>

@@ -12,13 +12,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * Constructor for a new RadioButton.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given 
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Consists of a round element and a descriptive text. Generally, you would create at least two radio button controls;
-	 * by this, you provide a limited choice for the user. Radio buttons can trigger events.
-	 * Available value states are "Error", "None", "Success", "Warning".
+	 * RadioButton is a control similar to CheckBox, but it allows the user to choose only one of the predefined set of options.
+	 * 
+	 * Usually, RadioButton is used in a group with other RadioButtons (with the groupName property or by using
+	 * sap.ui.commons.RadioButtonGroup), thus providing a limited choice for the user. An event is triggered when
+	 * the user makes a change of the selection.
+	 * 
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -35,78 +38,79 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		properties : {
 	
 			/**
-			 * Defines the text displayed next to the radio button.
+			 * Defines the text displayed next to the RadioButton.
 			 */
 			text : {type : "string", group : "Data", defaultValue : null},
 	
 			/**
 			 * 
-			 * Disabled controls are displayed in another color, depending on the customer settings.
+			 * Displays the disabled controls in another color, depending on the customer settings.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 	
 			/**
-			 * Specifies whether the user can select the radio button
+			 * Specifies whether the user can select the RadioButton.
 			 */
 			editable : {type : "boolean", group : "Behavior", defaultValue : true},
 	
 			/**
-			 * Specifies the select state of the radio button
+			 * Specifies the select state of the RadioButton.
 			 */
 			selected : {type : "boolean", group : "Data", defaultValue : false},
 	
 			/**
 			 * 
-			 * Enumeration sap.ui.core.ValueState provides state values Error, Success, Warning, None
+			 * Enumeration sap.ui.core.ValueState provides state values Error, Success, Warning and None.
 			 */
 			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
 	
 			/**
-			 * The control width depends on the text length. Alternatively, CSS-sizes in % or px can be set.
+			 * Determines the control width. By default, it depends on the text length. Alternatively, CSS sizes in % or px can be set.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 	
 			/**
 			 * 
-			 * Available options are LTR and RTL. Alternatively, the control can inherit the text direction from its parent container.
+			 * Defines the text direction - options are left-to-right (LTR) and right-to-left (RTL). Alternatively, the control can 
+			 * inherit the text direction from its parent container.
 			 */
 			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
 	
 			/**
-			 * Name of the radio button group the current radio button belongs to. You can define a new name for the group.
-			 * If no new name is specified, this radio button belongs to the sapUiRbDefaultGroup per default. Default behavior of a radio button
-			 * in a group is that when one of the radio buttons in a group is selected, all others are unselected.
+			 * Defines the name of the RadioButtonGroup, in which the current RadioButton belongs to. You can define a new name for 
+			 * the group. If no new name is specified, the default is sapUiRbDefaultGroup. By default, when one of the RadioButtons 
+			 * in a group is selected, all others are unselected.
 			 */
 			groupName : {type : "string", group : "Behavior", defaultValue : 'sapUiRbDefaultGroup'},
 	
 			/**
-			 * Can be used for subsequent actions
+			 * Can be used for subsequent actions.
 			 */
 			key : {type : "string", group : "Data", defaultValue : null}
 		},
 		associations : {
 	
 			/**
-			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 * Association to controls / IDs, which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
 			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"}, 
 	
 			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * Association to controls / IDs, which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		},
 		events : {
 	
 			/**
-			 * Event is triggered when the user makes a change on the radio button.
+			 * Triggers when the user makes a change on the RadioButton.
 			 */
 			select : {}
 		}
 	}});
 	
 	/**
-	 * Event handler called when the radio button is clicked.
+	 * Event handler called, when the RadioButton is clicked.
 	 *
 	 * @param {jQuery.Event} oEvent
 	 * @private
@@ -129,7 +133,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	RadioButton.prototype._groupNames = {};
 	
 	/**
-	 * Event handler called when the space key is pressed.
+	 * Event handler called, when the space key is pressed.
 	 *
 	 * @param {jQuery.Event} oEvent
 	 * @private
@@ -143,8 +147,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 	
 	/**
-	 * Event handler called focus is set on Radio button
-	 * Problem in HCB: Focus is set in IE8 to bullet, not to whole control
+	 * Event handler, called when the focus is set on a RadioButton.
+	 * Problem in HCB: Focus is set in IE8 to bullet, and not to the whole control.
 	 *
 	 * @param {jQuery.Event} oEvent
 	 * @private
@@ -159,8 +163,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 	
 	/**
-	 * Event handler called when the radio button is focused
-	 * Problem in HCB: Focus is sometimes set in IE8 to bullet, not to whole control
+	 * Event handler called when the radio button is focused.
+	 * Problem in HCB: Focus is sometimes set in IE8 to bullet, and not to the whole control.
 	 *
 	 * @param {jQuery.Event} oEvent
 	 * @private
@@ -189,8 +193,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 	
 	/**
-	 * Event handler called when the radio button is left
-	 * Problem in IE: Tabindex must be set back to -1
+	 * Event handler, called when the focus is moved out of the RadioButton.
+	 * Problem in IE: Tabindex must be set back to -1.
 	 *
 	 * @param {jQuery.Event} oEvent
 	 * @private
@@ -205,8 +209,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	
 	};
 	/**
-	 * This method is used internally only, whenever the user somehow selects the RadioButton.
-	 * It is responsible for event cancellation and for firing the select event.
+	 * Handles event cancellation and fires the select event.
+	 * Used only internally, whenever the user selects the RadioButton.
 	 *
 	 * @param {jQuery.Event} oEvent
 	 * @private
@@ -234,7 +238,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	// #############################################################################
 	
 	/*
-	 * Overwrite the definition from RadioButton.API.js
+	 * Overwrites the definition from RadioButton.API.js
 	 */
 	RadioButton.prototype.setSelected = function(bSelected) {
 		var oControl,

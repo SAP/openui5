@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopover.
-sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePopoverControls'],
-	function(Popover, PopoverRenderer, OverflowToolbarAssociativePopoverControls) {
+sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePopoverControls', './OverflowToolbarLayoutData'],
+	function(Popover, PopoverRenderer, OverflowToolbarAssociativePopoverControls, OverflowToolbarLayoutData) {
 	"use strict";
 
 
@@ -102,6 +102,12 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 			this.oControlsManager[sPreProcessFnName](oControl);
 		}
 
+		var oLayoutData = oControl.getLayoutData();
+
+		if (oLayoutData instanceof OverflowToolbarLayoutData && oLayoutData.getPriority() === sap.m.OverflowToolbarPriority.Disappear) {
+			oControl.addStyleClass("sapMOTAPHidden");
+		}
+
 		return this;
 	};
 
@@ -127,6 +133,8 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 		if (typeof this.oControlsManager[sPostProcessFnName] === "function") {
 			this.oControlsManager[sPostProcessFnName](oControl);
 		}
+
+		oControl.removeStyleClass("sapMOTAPHidden");
 
 		// It is important to explicitly destroy the control from the popover's DOM when using associations, because the toolbar will render it again and there will be a DOM duplication side effect
 		oControl.$().remove();

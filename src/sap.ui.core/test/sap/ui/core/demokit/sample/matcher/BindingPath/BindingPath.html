@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="UTF-8"/>
+		<title>Opa sample for binding path matcher</title>
+
+		<script id="sap-ui-bootstrap"
+		        src="../../../../../../../../resources/sap-ui-core.js"
+		        data-sap-ui-libs="sap.m">
+		</script>
+
+		<script>
+
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+
+			sap.ui.require([
+				'sap/ui/test/matchers/BindingPath',
+				'sap/ui/test/opaQunit',
+				'sap/ui/test/Opa5'
+			], function (BindingPath, opaTest, Opa5) {
+
+				QUnit.module("Binding Path");
+
+				opaTest("Should match the binding path for selected item", function (Given, When, Then) {
+					// Arrangements
+					Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
+
+					//Actions
+					When.waitFor({
+						id: "productList",
+						viewName: "view.Main",
+						success: function (oList) {
+							oList.setSelectedItem(oList.getItems()[0]);
+						},
+						errorMessage: "Could not select the first item"
+					});
+
+					// Assertions
+					Then.waitFor({
+						controlType: "sap.m.StandardListItem",
+						matchers: new BindingPath({path: "/ProductCollection/0"}),
+						success: function () {
+							Opa5.assert.ok(true,
+								"The binding path for selected item was matched");
+						},
+						errorMessage: "The binding path for selected item was not matched"
+					});
+
+					// Tear down should be done in real use case
+					// In this sample we commented it out so you can see the result
+//					Then.iTeardownMyAppFrame();
+
+				});
+
+			});
+
+		</script>
+
+	</head>
+
+	<body>
+
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+
+	</body>
+</html>

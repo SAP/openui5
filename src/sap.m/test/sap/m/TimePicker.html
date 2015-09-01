@@ -1,0 +1,159 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>sap.m.TimePicker Test</title>
+
+<script src="../../../resources/sap-ui-core.js"
+		type="text/javascript"
+		id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-theme="sap_bluecrystal">
+</script>
+
+</head>
+<body id="body" class="sapUiBody" role="application">
+	<script type="text/javascript">
+		jQuery.sap.require("sap.ui.core.HTML");
+		jQuery.sap.require("sap.ui.core.IconPool");
+
+		var app = new sap.m.App("myApp", {
+			initialPage:"page1"
+		});
+		app.placeAt("body");
+
+		// TODO: do the resize listening only when ScrollContainer becomes visible and unbind when getting visible
+
+		var options = [
+			{},
+			{
+				displayFormat: "hh:mm a"
+			},
+			{
+				localeId: "de_DE",
+				displayFormat: "hh:mm a"
+			},
+			{
+				displayFormat: "HH:mm:ss"
+			},
+			{
+				value: "09:15:16 PM",
+				title: "Departure time"
+			},
+			{
+				value: "9:12:13"
+			},
+			{
+				value: "09:59"
+			},
+			{
+				value: "21:37",
+				valueFormat: "HH:mm" //needed
+			},
+			{
+				value: "21+-44-+01",
+				valueFormat: "HH+-mm-+ss" //needed
+			},
+			{
+				value: "21 March 2013 5:21 PM",
+				valueFormat: "dd MMMM yyyy h:mm a"
+			},
+			{
+				value: "04:33 PM 17 May",
+				valueFormat: "hh:mm a dd MMMM"
+			},
+			{
+				value: "12/02/99 17:00",
+				valueFormat: "dd/MM/yy HH:mm"
+			},
+			{
+				value: "09:15:16 PM",
+				displayFormat: "mm"
+			},
+			{
+				value: "09:15:16 PM",
+				displayFormat: "HH:mm"
+			},
+			{
+				valueState: "Error",
+				valueStateText: "Error Message"
+			},
+			{
+				value: {
+					path: "/timeValue",
+					type: new sap.ui.model.type.Time({style: "medium", strictParsing: true})
+		 		}
+		 	}
+		];
+
+		var generateTimePickers = function() {
+			var i,
+				aControls = [],
+				sInfo,
+				oBar;
+
+			for (i = 0; i < options.length; i++) {
+				options[i].change = handleChange;
+
+				if (options[i].value && options[i].value.path) { //data binding
+					oBar = new sap.m.Toolbar({
+						content: [
+							new sap.m.TimePicker(options[i]),
+							new sap.m.Text({
+								text: {
+									path: "/timeValue",
+									type: new sap.ui.model.type.Time({style: "medium", strictParsing: true})
+								}
+							})
+						]
+					});
+				} else {
+					sInfo =  JSON.stringify(options[i]).split("\"").join("").replace("{", "").replace(",", " ").replace("}", "");
+					oBar = new sap.m.Toolbar({
+						content: [
+							new sap.m.TimePicker(options[i]),
+							new sap.m.Text({ text: sInfo })
+						]
+					});
+				}
+
+				aControls.push(oBar);
+			}
+
+			return aControls;
+		};
+
+
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData({
+			timeValue: new Date()
+		});
+		sap.ui.getCore().setModel(oModel);
+
+		var page = new sap.m.Page("page1", {
+			title: "TimePicker",
+			content : [
+				generateTimePickers(),
+				new sap.ui.core.HTML({
+					content: "<div id='eventsDiv' style='float:right;'>Some Events:</div>"
+				})
+			]
+		});
+
+		var iEvent = 0;
+
+		function handleChange(oEvent) {
+			var oTP = oEvent.oSource;
+			var oInput = jQuery("#eventsDiv");
+			var sValue = oEvent.getParameter("value");
+			var bValid = oEvent.getParameter("valid");
+			iEvent++;
+			oInput.html("Change - Event " + iEvent + "<br>TimePicker " + oTP.getId() + ":<br>" + sValue + "<br>valid: " + bValid);
+		}
+
+		app.addPage(page);
+	</script>
+</body>
+</html>

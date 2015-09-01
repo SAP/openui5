@@ -12,8 +12,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * Constructor for a new Paginator.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * Provides navigation between pages within a list of numbered pages.
@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 
 	/**
-	 * When the user clicks on a page link, we navigae to that page, either with animation or with rerendering
+	 * When the user clicks on a page link, we navigate to that page, either with animation or with rerendering
 	 * @param {jQuery.Event} oEvent The current event
 	 * @private
 	 */

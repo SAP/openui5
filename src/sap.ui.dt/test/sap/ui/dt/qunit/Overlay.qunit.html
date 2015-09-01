@@ -99,6 +99,7 @@
 				this.oOverlay.attachSelectionChange(function(oEvent) {
 					assert.ok(oEvent.getParameter("selected"), 'and a "selectionChange" event is fired which provides the right selected state');
 				}, this);
+				this.oOverlay.setSelectable(true);
 				this.oOverlay.setSelected(true);
 				assert.ok(this.oOverlay.isSelected(), 'then the state of the overlay is "selected"');
 			});
@@ -127,6 +128,7 @@
 			});
 
 			QUnit.test("when the overlay is focused", function(assert) {
+				this.oOverlay.$().attr("tabindex", 0);
 				this.oOverlay.focus();
 				var that = this;
 				var done = assert.async();

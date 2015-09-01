@@ -419,7 +419,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			//to check how many tokens are selected before Ctrl + A in MultiInput
 			this._iSelectedToken = this.getSelectedTokens().length;
 			
-			if (!this.isAllTokenSelected()) {
+			if (this.getTokens().length > 0) {
 				this.focus();
 				this.selectAllTokens(true);
 				oEvent.preventDefault();
@@ -804,7 +804,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			type : Tokenizer.TokenChangeType.Added
 		});
 	};
-	
+
 	Tokenizer.prototype.removeToken = function(oToken) {
 		oToken = this.removeAggregation("tokens", oToken);
 		if (oToken) {
@@ -821,7 +821,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 		return oToken;
 	};
-	
+
 	Tokenizer.prototype.setTokens = function(aTokens) {
 		var oldTokens = this.getTokens();
 		this.removeAllTokens(false);
@@ -950,7 +950,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	/**
-	 * Function is called when token's delete icon was pressed function removes token from Tokenizer's aggregation
+	 * Function is called when token's delete icon was pressed function destroys token from Tokenizer's aggregation
 	 * 
 	 * @private
 	 * @param oEvent
@@ -958,12 +958,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Tokenizer.prototype._onDeleteToken = function(oEvent) {
 		var token = oEvent.getParameter("token");
 		if (token) {
-			this.removeToken(token);
+			token.destroy();
 			this.fireTokenChange({
 				addedTokens : [],
 				removedTokens : [token],
 				type : Tokenizer.TokenChangeType.TokensChanged
 			});
+			
+			if (this.getParent() &&  this.getParent() instanceof sap.m.MultiInput) {
+				var $oParent = this.getParent().$();
+				$oParent.find("input").focus();
+			}
+
 		}
 	
 	};

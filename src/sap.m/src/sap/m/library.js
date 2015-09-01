@@ -1,4 +1,4 @@
-﻿/*!
+/*!
  * ${copyright}
  */
 
@@ -52,6 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.ListMode",
 			"sap.m.ListSeparators",
 			"sap.m.ListType",
+			"sap.m.OverflowToolbarPriority",
 			"sap.m.P13nPanelType",
 			"sap.m.PageBackgroundDesign",
 			"sap.m.PlacementType",
@@ -116,6 +117,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.List",
 			"sap.m.ListBase",
 			"sap.m.ListItemBase",
+			"sap.m.MaskInput",
 			"sap.m.MessagePage",
 			"sap.m.MessagePopover",
 			"sap.m.MessageStrip",
@@ -171,6 +173,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.TextArea",
 			"sap.m.Tile",
 			"sap.m.TileContainer",
+			"sap.m.TimePicker",
 			"sap.m.Title",
 			"sap.m.ToggleButton",
 			"sap.m.Token",
@@ -193,6 +196,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.IconTabFilter",
 			"sap.m.IconTabSeparator",
 			"sap.m.OverflowToolbarLayoutData",
+			"sap.m.MaskInputRule",
 			"sap.m.MessagePopoverItem",
 			"sap.m.P13nFilterItem",
 			"sap.m.P13nItem",
@@ -652,6 +656,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		/**
 		 * Box items are evenly distributed in the line, with half-size spaces on either end.
+		 * <b>Note:</b> This value behaves like SpaceBetween in Internet Explorer 10.
 		 * @public
 		 */
 		SpaceAround : "SpaceAround",
@@ -1026,7 +1031,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 
 	/**
-	 * Different modes for the list selection (predefined modes)
+	 * Defines the mode of the list.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1035,40 +1040,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	sap.m.ListMode = {
 
 		/**
-		 * default mode (no selection)
+		 * Default mode (no selection).
 		 * @public
 		 */
 		None : "None",
 
 		/**
-		 * right positioned single selection mode (only one list item can be selected)
+		 * Right-positioned single selection mode (only one list item can be selected).
 		 * @public
 		 */
 		SingleSelect : "SingleSelect",
 
 		/**
-		 * multi selection mode (whole list item including checkbox will be selected)
+		 * Left-positioned single selection mode (only one list item can be selected).
 		 * @public
 		 */
-		MultiSelect : "MultiSelect",
+		SingleSelectLeft : "SingleSelectLeft",
 
 		/**
-		 * delete mode (only one list item can be deleted)
-		 * @public
-		 */
-		Delete : "Delete",
-
-		/**
-		 * Single selection master mode (only one list item can be selected), selected item is highlighted but no radiobutton is visible.
+		 * Selected item is highlighted but no selection control is visible (only one list item can be selected).
 		 * @public
 		 */
 		SingleSelectMaster : "SingleSelectMaster",
 
 		/**
-		 * left positioned single selection mode (only one list item can be selected)
+		 * Multi selection mode (more than one list item can be selected).
 		 * @public
 		 */
-		SingleSelectLeft : "SingleSelectLeft"
+		MultiSelect : "MultiSelect",
+
+		/**
+		 * Delete mode (only one list item can be deleted via provided delete button)
+		 * @public
+		 */
+		Delete : "Delete"
 
 	};
 
@@ -1105,7 +1110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 
 	/**
-	 * List types
+	 * Defines the visual indication and behaviour of the list items.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1114,37 +1119,80 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	sap.m.ListType = {
 
 		/**
-		 * Inactive
+		 * Indicates the list item does not have any active feedback when item is pressed.
+		 * <b>Note:</b> <code>Inactive</code> type cannot be used to disable list items.
 		 * @public
 		 */
 		Inactive : "Inactive",
 
 		/**
-		 * Detail
+		 * Enables detail button of the list item that fires <code>detailPress</code> event.
+		 * Also see {@link sap.m.ListBase#attachDetailPress}.
 		 * @public
 		 */
 		Detail : "Detail",
 
 		/**
-		 * Navigation
+		 * Indicates the list item is navigable to show extra information about the item.
 		 * @public
 		 */
 		Navigation : "Navigation",
 
 		/**
-		 * Active
+		 * Indicates that the item is clickable via active feedback when item is pressed.
 		 * @public
 		 */
 		Active : "Active",
 
 		/**
-		 * DetailAndActive
+		 * Enables {@link sap.m.ListType#Detail} and {@link sap.m.ListType#Active} enumerations together.
 		 * @public
 		 */
 		DetailAndActive : "DetailAndActive"
 
 	};
 
+	/**
+	 * Defines the priorities of the controls within sap.m.OverflowToolbar
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.32
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.OverflowToolbarPriority = {
+
+		/**
+		 * NeverOverflow priority forces OverflowToolbar items to remain always in the toolbar
+		 * @public
+		 */
+		NeverOverflow : "Never",
+
+		/**
+		 * High priority OverflowToolbar items overflow after the items with lower priority
+		 * @public
+		 */
+		High : "High",
+
+		/**
+		 * Low priority  OverflowToolbar items overflow before the items with higher priority such as High priority items
+		 * @public
+		 */
+		Low : "Low",
+
+		/**
+		 * Disappear priority  OverflowToolbar items overflow before the items with higher priority such as Low and High priority items and remain hidden in the overflow area
+		 * @public
+		 */
+		Disappear : "Disappear",
+
+		/**
+		 * AlwaysOverflow priority forces OverflowToolbar items to remain always in the overflow area
+		 * @public
+		 */
+		AlwaysOverflow : "Always"
+
+	};
 
 	/**
 	 * Marker interface for controls which are suitable as items for the ObjectHeader.
@@ -2231,7 +2279,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 * @function
 			 */
 			addBackgroundColorStyles: function(rm, sBgColor, sBgImgUrl, sCustomBGClass) {
-				rm.addClass(sCustomBGClass || "sapMGlobalBackgroundColor");
+				rm.addClass(sCustomBGClass || "sapUiGlobalBackgroundColor");
 
 				if (sBgColor || sBgImgUrl) { // when an image or color is configured, the gradient needs to be removed, so the color can be seen behind the image
 					rm.addStyle("background-image", "none");
@@ -2267,7 +2315,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 *
 			 * @param rm the RenderManager
 			 * @param {sap.ui.core.Control} oControl the control within which the tag will be rendered; its ID will be used to generate the element ID
-			 * @param {String}  sCssClass a css class to add to the element
+			 * @param {String|String[]}  vCssClass a css class or an array of css classes to add to the element
 			 * @param {sap.ui.core.URI}  [sBgImgUrl] the image of a configured background image; if this is not given, the theme background will be used and also the other settings are ignored.
 			 * @param {boolean} [bRepeat] whether the background image should be repeated/tiled (or stretched)
 			 * @param {float}   [fOpacity] the background image opacity, if any
@@ -2276,10 +2324,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 * @name sap.m.BackgroundHelper#renderBackgroundImageTag
 			 * @function
 			 */
-			renderBackgroundImageTag: function(rm, oControl, sCssClass, sBgImgUrl, bRepeat, fOpacity) {
+			renderBackgroundImageTag: function(rm, oControl, vCssClass, sBgImgUrl, bRepeat, fOpacity) {
 				rm.write("<div id='" + oControl.getId() + "-BG' ");
-				rm.addClass(sCssClass);
-				rm.addClass("sapMGlobalBackgroundImage"); // this adds the background image from the theme
+
+				if (jQuery.isArray(vCssClass)) {
+					for (var i = 0; i < vCssClass.length; i++) {
+						rm.addClass(vCssClass[i]);
+					}
+				} else {
+					rm.addClass(vCssClass);
+				}
+
+				rm.addClass("sapUiGlobalBackgroundImage"); // this adds the background image from the theme
 
 				if (sBgImgUrl) { // use the settings only if a background image is configured
 					rm.addStyle("display", "block"); // enforce visibility even if a parent has also a background image
@@ -2304,7 +2360,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					rm.addStyle("opacity", fOpacity);
 				}
 
-				rm.writeClasses();
+				// no custom class from the control's custom class
+				// If a class is added using addStyleClass, this class will be output to this background image div without the 'false' param.
+				rm.writeClasses(false);
 				rm.writeStyles();
 				rm.write("></div>");
 			}
@@ -2712,6 +2770,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var oButton = new sap.m.Button();
 			return oButton;
 		},
+		addFormClass: function(){ return "sapUiFUM"; },
 		bFinal: true
 	});
 
@@ -2741,7 +2800,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	if (sap.ui.Device.os.blackberry || sap.ui.Device.os.android && sap.ui.Device.os.version >= 4) {
 		jQuery(window).on("resize", function(){
 			var oActive = document.activeElement;
-			var sTagName = oActive.tagName;
+			var sTagName = oActive ? oActive.tagName : "";
 			if (sTagName == "INPUT" || sTagName == "TEXTAREA") {
 				window.setTimeout(function(){
 					oActive.scrollIntoViewIfNeeded();

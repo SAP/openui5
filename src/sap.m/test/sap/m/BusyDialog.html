@@ -1,0 +1,182 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'/>
+		<title>Dialog - sap.m</title>
+		<script src='../../../resources/sap-ui-core.js'
+				type='text/javascript'
+				id='sap-ui-bootstrap'
+				data-sap-ui-libs='sap.m'
+				data-sap-ui-theme='sap_bluecrystal'
+				data-sap-ui-compatVersion='1.16'>
+		</script>
+		<script type='text/javascript'>
+
+			var app = new sap.m.App('myApp', {initialPage: 'initialPage'});
+			var _buttonWidth = '300px';
+
+			var defaultLightBusyDialog = new sap.m.BusyDialog('defaultLightBusyDialog', {
+				close: function (oEvent) {
+					alert('cancelPressed: ' + oEvent.getParameter('cancelPressed'));
+				}
+			});
+
+			var standartBusyDialog = new sap.m.BusyDialog('standaratBusyDialog', {
+				title: 'Dummy preloader',
+				text: '... this is just a demo, we are not waiting for anything.',
+				showCancelButton: true,
+				close: function (oEvent) {
+					alert('cancelPressed: ' + oEvent.getParameter('cancelPressed'));
+				}
+			});
+
+			var standartNoHeaderBusyDialog = new sap.m.BusyDialog('standartNoHeaderBusyDialog', {
+				text: 'Sending data...',
+				showCancelButton: true
+			});
+
+			var standartNoHeaderAndFooterBusyDialog = new sap.m.BusyDialog('standartNoHeaderAndFooterBusyDialog', {
+				text: 'Loading data...'
+			});
+
+			// Binding example =========================================================================================
+			var data = {
+				text: 'Initial text',
+				title: 'Initial title'
+			};
+
+			var model = new sap.ui.model.json.JSONModel();
+			model.setData(data);
+
+			var bindingBusyDialog = new sap.m.BusyDialog('bindingBusyDialog', {
+				text: '{/text}',
+				title: '{/title}'
+			}).setModel(model);
+
+			//==========================================================================================================
+
+			var initialPage = new sap.m.Page('initialPage', {
+				title: 'Busy Dialog Control',
+				content: [
+					new sap.m.Button({
+						text: 'Default (light)',
+						width: _buttonWidth,
+						press: function () {
+							defaultLightBusyDialog.open();
+							jQuery.sap.delayedCall(2000, this, function () {
+								defaultLightBusyDialog.close();
+							});
+						}
+					}),
+					new sap.m.Button({
+						text: 'Default (light, no autoclose)',
+						width: _buttonWidth,
+						press: function () {
+							defaultLightBusyDialog.open();
+						}
+					}),
+					new sap.m.Button({
+						text: 'Standart (static)',
+						width: _buttonWidth,
+						press: function () {
+							standartBusyDialog.open();
+						}
+					}),
+					new sap.m.Button({
+						text: 'Standart (testing setters)',
+						width: _buttonWidth,
+						press: function () {
+							standartBusyDialog.open();
+
+							var delay = 0;
+							var step = 1000;
+
+							// =========================================================================================
+							// test the title
+							// =========================================================================================
+							jQuery.sap.delayedCall(delay += step, this, function () {
+								standartBusyDialog.setTitle('');
+							});
+
+							jQuery.sap.delayedCall(delay += step, this, function () {
+								standartBusyDialog.setTitle('Set Title');
+							});
+
+							// =========================================================================================
+							// test the toolbar
+							// =========================================================================================
+							jQuery.sap.delayedCall(delay += step, this, function () {
+								standartBusyDialog.setCancelButtonText('');
+							});
+
+							jQuery.sap.delayedCall(delay += step, this, function () {
+								standartBusyDialog.setCancelButtonText('SetCancelButtonText');
+							});
+
+							// =========================================================================================
+							// test the toolbar visibility
+							// =========================================================================================
+							jQuery.sap.delayedCall(delay += step, this, function () {
+								standartBusyDialog.setShowCancelButton(false);
+							});
+
+							jQuery.sap.delayedCall(delay += step, this, function () {
+								standartBusyDialog.setShowCancelButton(true);
+							});
+
+							// =========================================================================================
+							// test the text
+							// =========================================================================================
+
+							jQuery.sap.delayedCall(delay += step, this, function () {
+								standartBusyDialog.setText('');
+							});
+
+							jQuery.sap.delayedCall(delay += step, this, function () {
+								standartBusyDialog.setText('Set text');
+							});
+						}
+					}),
+					new sap.m.Button({
+						text: 'Standart - no header',
+						width: _buttonWidth,
+						press: function () {
+							standartNoHeaderBusyDialog.open();
+						}
+					}),
+					new sap.m.Button({
+						text: 'Standart without footer and header',
+						width: _buttonWidth,
+						press: function () {
+							standartNoHeaderAndFooterBusyDialog.open();
+
+							jQuery.sap.delayedCall(2000, this, function () {
+								standartNoHeaderAndFooterBusyDialog.close();
+							});
+						}
+					}),
+					new sap.m.Button({
+						text: "Binding BusyDialog",
+						width: _buttonWidth,
+						press: function () {
+							bindingBusyDialog.open();
+
+							setTimeout(function () {
+								model.setData({
+									title: 'Changed data',
+									text: 'Changed text'
+								});
+							}, 1000);
+						}
+					})
+				]
+			});
+
+			app.addPage(initialPage).placeAt('content');
+		</script>
+
+	</head>
+	<body id='body' class='sapUiBody' role='application'>
+		<div id='content'></div>
+	</body>
+</html>

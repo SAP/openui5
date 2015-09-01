@@ -13,18 +13,8 @@
 	}
 
 	&:focus {
-		outline: none;
-
-		&::before {
-			content: " ";
-			position: absolute;
-			display: block;
-			border: 1px dotted @sapUiFocus;
-			top: -2px;
-			right: -2px;
-			bottom: -2px;
-			left: -2px;
-		}
+		outline: 1px dotted @sapUiFocus;
+		outline-offset: 1px;
 	}
 }
 

@@ -1,0 +1,345 @@
+{
+	"d" : {
+		"results" : [
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000000')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000000')",
+						"type" : "GWSAMPLE_BASIC.SalesOrder"
+					},
+					"SalesOrderID" : "0500000000",
+					"Note" : "EPM DG: SO ID 0500000000 Deliver as fast as possible",
+					"NoteLanguage" : "E",
+					"CustomerID" : "0100000000",
+					"CustomerName" : "SAP",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "25867.03",
+					"NetAmount" : "21737.0",
+					"TaxAmount" : "4130.03",
+					"LifecycleStatus" : "N",
+					"LifecycleStatusDescription" : "New",
+					"BillingStatus" : "",
+					"BillingStatusDescription" : "Initial",
+					"DeliveryStatus" : null,
+					"DeliveryStatusDescription" : "Initial",
+					"CreatedAt" : "\/Date(1414623600000)\/",
+					"ChangedAt" : "\/Date(1414623600000)\/",
+					"ToBusinessPartner" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000000')/ToBusinessPartner"
+						}
+					},
+					"ToLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000000')/ToLineItems"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000001')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000001')",
+						"type" : "GWSAMPLE_BASIC.SalesOrder"
+					},
+					"SalesOrderID" : "0500000001",
+					"Note" : "EPM DG: SO ID 0500000001 Deliver as fast as possible",
+					"NoteLanguage" : "E",
+					"CustomerID" : "0100000002",
+					"CustomerName" : "DelBont Industries",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "14602.49",
+					"NetAmount" : "12271.0",
+					"TaxAmount" : "2331.49",
+					"LifecycleStatus" : "N",
+					"LifecycleStatusDescription" : "New",
+					"BillingStatus" : "",
+					"BillingStatusDescription" : "Initial",
+					"DeliveryStatus" : "D",
+					"DeliveryStatusDescription" : "Delivered",
+					"CreatedAt" : "\/Date(1414623600000)\/",
+					"ChangedAt" : "\/Date(1414623600000)\/",
+					"ToBusinessPartner" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000001')/ToBusinessPartner"
+						}
+					},
+					"ToLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000001')/ToLineItems"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000002')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000002')",
+						"type" : "GWSAMPLE_BASIC.SalesOrder"
+					},
+					"SalesOrderID" : "0500000002",
+					"Note" : "EPM DG: SO ID 0500000002 Deliver as fast as possible",
+					"NoteLanguage" : "E",
+					"CustomerID" : "0100000005",
+					"CustomerName" : "TECUM",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "5631.08",
+					"NetAmount" : "4732.0",
+					"TaxAmount" : "899.08",
+					"LifecycleStatus" : "N",
+					"LifecycleStatusDescription" : "New",
+					"BillingStatus" : "",
+					"BillingStatusDescription" : "Initial",
+					"DeliveryStatus" : "",
+					"DeliveryStatusDescription" : "Initial",
+					"CreatedAt" : "\/Date(1414623600000)\/",
+					"ChangedAt" : "\/Date(1414623600000)\/",
+					"ToBusinessPartner" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000002')/ToBusinessPartner"
+						}
+					},
+					"ToLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000002')/ToLineItems"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000003')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000003')",
+						"type" : "GWSAMPLE_BASIC.SalesOrder"
+					},
+					"SalesOrderID" : "0500000003",
+					"Note" : "EPM DG: SO ID 0500000003 Deliver as fast as possible",
+					"NoteLanguage" : "E",
+					"CustomerID" : "0100000006",
+					"CustomerName" : "Asia High tech",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "1704.04",
+					"NetAmount" : "1431.97",
+					"TaxAmount" : "272.07",
+					"LifecycleStatus" : "N",
+					"LifecycleStatusDescription" : "New",
+					"BillingStatus" : "",
+					"BillingStatusDescription" : "Initial",
+					"DeliveryStatus" : "",
+					"DeliveryStatusDescription" : "Initial",
+					"CreatedAt" : "\/Date(1414623600000)\/",
+					"ChangedAt" : "\/Date(1414623600000)\/",
+					"ToBusinessPartner" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000003')/ToBusinessPartner"
+						}
+					},
+					"ToLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000003')/ToLineItems"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000004')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000004')",
+						"type" : "GWSAMPLE_BASIC.SalesOrder"
+					},
+					"SalesOrderID" : "0500000004",
+					"Note" : "EPM DG: SO ID 0500000004 Deliver as fast as possible",
+					"NoteLanguage" : "E",
+					"CustomerID" : "0100000006",
+					"CustomerName" : "Asia High tech",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "761.24",
+					"NetAmount" : "639.7",
+					"TaxAmount" : "121.54",
+					"LifecycleStatus" : "N",
+					"LifecycleStatusDescription" : "New",
+					"BillingStatus" : "",
+					"BillingStatusDescription" : "Initial",
+					"DeliveryStatus" : "",
+					"DeliveryStatusDescription" : "Initial",
+					"CreatedAt" : "\/Date(1414623600000)\/",
+					"ChangedAt" : "\/Date(1414623600000)\/",
+					"ToBusinessPartner" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000004')/ToBusinessPartner"
+						}
+					},
+					"ToLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000004')/ToLineItems"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000005')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000005')",
+						"type" : "GWSAMPLE_BASIC.SalesOrder"
+					},
+					"SalesOrderID" : "0500000005",
+					"Note" : "EPM DG: SO ID 0500000005 Deliver as fast as possible",
+					"NoteLanguage" : "E",
+					"CustomerID" : "0100000008",
+					"CustomerName" : "AVANTEL",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "101299.22",
+					"NetAmount" : "85125.4",
+					"TaxAmount" : "16173.82",
+					"LifecycleStatus" : "N",
+					"LifecycleStatusDescription" : "New",
+					"BillingStatus" : "",
+					"BillingStatusDescription" : "Initial",
+					"DeliveryStatus" : "",
+					"DeliveryStatusDescription" : "Initial",
+					"CreatedAt" : "\/Date(1414623600000)\/",
+					"ChangedAt" : "\/Date(1414623600000)\/",
+					"ToBusinessPartner" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000005')/ToBusinessPartner"
+						}
+					},
+					"ToLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000005')/ToLineItems"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000006')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000006')",
+						"type" : "GWSAMPLE_BASIC.SalesOrder"
+					},
+					"SalesOrderID" : "0500000006",
+					"Note" : "EPM DG: SO ID 0500000006 Deliver as fast as possible",
+					"NoteLanguage" : "E",
+					"CustomerID" : "0100000003",
+					"CustomerName" : "Talpa",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "250.73",
+					"NetAmount" : "210.7",
+					"TaxAmount" : "40.03",
+					"LifecycleStatus" : "N",
+					"LifecycleStatusDescription" : "New",
+					"BillingStatus" : "",
+					"BillingStatusDescription" : "Initial",
+					"DeliveryStatus" : "",
+					"DeliveryStatusDescription" : "Initial",
+					"CreatedAt" : "\/Date(1414623600000)\/",
+					"ChangedAt" : "\/Date(1414623600000)\/",
+					"ToBusinessPartner" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000006')/ToBusinessPartner"
+						}
+					},
+					"ToLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000006')/ToLineItems"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000007')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000007')",
+						"type" : "GWSAMPLE_BASIC.SalesOrder"
+					},
+					"SalesOrderID" : "0500000007",
+					"Note" : "EPM DG: SO ID 0500000007 Deliver as fast as possible",
+					"NoteLanguage" : "E",
+					"CustomerID" : "0100000004",
+					"CustomerName" : "Panorama Studios",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "10311.35",
+					"NetAmount" : "8665.0",
+					"TaxAmount" : "1646.35",
+					"LifecycleStatus" : "N",
+					"LifecycleStatusDescription" : "New",
+					"BillingStatus" : "",
+					"BillingStatusDescription" : "Initial",
+					"DeliveryStatus" : "",
+					"DeliveryStatusDescription" : "Initial",
+					"CreatedAt" : "\/Date(1414623600000)\/",
+					"ChangedAt" : "\/Date(1414623600000)\/",
+					"ToBusinessPartner" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000007')/ToBusinessPartner"
+						}
+					},
+					"ToLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000007')/ToLineItems"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000008')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000008')",
+						"type" : "GWSAMPLE_BASIC.SalesOrder"
+					},
+					"SalesOrderID" : "0500000008",
+					"Note" : "EPM DG: SO ID 0500000008 Deliver as fast as possible",
+					"NoteLanguage" : "E",
+					"CustomerID" : "0100000009",
+					"CustomerName" : "Telecomunicaciones Star",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "195.16",
+					"NetAmount" : "164.0",
+					"TaxAmount" : "31.16",
+					"LifecycleStatus" : "N",
+					"LifecycleStatusDescription" : "New",
+					"BillingStatus" : "",
+					"BillingStatusDescription" : "Initial",
+					"DeliveryStatus" : "",
+					"DeliveryStatusDescription" : "Initial",
+					"CreatedAt" : "\/Date(1414623600000)\/",
+					"ChangedAt" : "\/Date(1414623600000)\/",
+					"ToBusinessPartner" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000008')/ToBusinessPartner"
+						}
+					},
+					"ToLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000008')/ToLineItems"
+						}
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000009')",
+						"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000009')",
+						"type" : "GWSAMPLE_BASIC.SalesOrder"
+					},
+					"SalesOrderID" : "0500000009",
+					"Note" : "EPM DG: SO ID 0500000009 Deliver as fast as possible",
+					"NoteLanguage" : "E",
+					"CustomerID" : "0100000000",
+					"CustomerName" : "SAP",
+					"CurrencyCode" : "EUR",
+					"GrossAmount" : "3972.22",
+					"NetAmount" : "3338.0",
+					"TaxAmount" : "634.22",
+					"LifecycleStatus" : "N",
+					"LifecycleStatusDescription" : "New",
+					"BillingStatus" : "",
+					"BillingStatusDescription" : "Initial",
+					"DeliveryStatus" : "",
+					"DeliveryStatusDescription" : "Initial",
+					"CreatedAt" : "\/Date(1414623600000)\/",
+					"ChangedAt" : "\/Date(1414623600000)\/",
+					"ToBusinessPartner" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000009')/ToBusinessPartner"
+						}
+					},
+					"ToLineItems" : {
+						"__deferred" : {
+							"uri" : "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/SalesOrderSet('0500000009')/ToLineItems"
+						}
+					}
+				}]
+	}
+}

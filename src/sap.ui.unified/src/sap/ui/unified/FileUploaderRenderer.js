@@ -29,6 +29,12 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write('<div');
 		rm.writeControlData(oFileUploader);
 		rm.addClass("sapUiFup");
+
+		var sClass = sap.ui.unified.FileUploaderHelper.addFormClass();
+		if (sClass) {
+			rm.addClass(sClass);
+		}
+
 		rm.writeClasses();
 		rm.write('>');
 

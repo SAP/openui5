@@ -14,8 +14,8 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var TabStripRenderer = function() {
 	};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global'],
 		// convenience variable
 		var rm = oRenderManager;
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
-	
+
 		//outer DIV
 		rm.write("<div role='presentation'");
 		rm.addClass("sapUiTabStrip");
@@ -42,7 +42,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		// menu and list header
 		rm.write("><div class=\"sapUiTabMenu\"></div><ul class=\"sapUiTabBarCnt\" role=\"tablist\">");
-	
+
 		var aTabs = oControl.getTabs();
 		// check if selected tab exists and is visible -> otherwise select first active one
 		var bWrongIndex = false;
@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global'],
 			oControl._warningInvalidSelectedIndex(iSelectedIndex, oSelectedTab);
 			bWrongIndex = true;
 		}
-	
+
 		// for ARIA determine number of visible tabs
 		oControl.iVisibleTabs = 0;
 		for (var i = 0;i < aTabs.length;i++) {
@@ -67,7 +67,7 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			oControl.iVisibleTabs++;
 		}
-	
+
 		var iVisibleIndex = 0;
 		// tabs
 		for (var i = 0; i < aTabs.length; i++) {
@@ -75,15 +75,15 @@ sap.ui.define(['jquery.sap.global'],
 			if (oTab.getVisible() === false) {
 				continue;
 			}
-	
+
 			if (bWrongIndex && oTab.getEnabled()) {
 				oControl.setProperty( 'selectedIndex', i, true );
 				iSelectedIndex = i;
 				bWrongIndex = false;
 			}
-	
+
 			rm.write("<li");
-	
+
 			if (oTab.getEnabled() == false) {
 				rm.addClass("sapUiTabDsbl");
 			} else if (i == iSelectedIndex) {
@@ -91,23 +91,23 @@ sap.ui.define(['jquery.sap.global'],
 			} else {
 				rm.addClass("sapUiTab");
 			}
-	
+
 			// enable the successor tab to overlap this tab if selected
 			if (i == iSelectedIndex - 1) {
 				rm.addClass("sapUiTabBeforeSel");
 			} else if (i == iSelectedIndex + 1) {
 				rm.addClass("sapUiTabAfterSel");
 			}
-	
+
 			rm.writeControlData(oTab);
 			rm.writeAttribute("tabidx", i);
-	
+
 			//ARIA
 			iVisibleIndex++;
-	
+
 			rm.writeAttribute("tabindex", "-1");
 			rm.writeAttribute("role", "tab");
-	
+
 			rm.writeAccessibilityState(oTab, {selected: i == iSelectedIndex,
 											  controls: oTab.getId() + "-panel",
 											  disabled: !oTab.getEnabled(),
@@ -117,12 +117,9 @@ sap.ui.define(['jquery.sap.global'],
 				// close button text must be read
 				rm.writeAccessibilityState(oTab, {describedby: oTab.getId() + "-close"});
 			}
-	
-			if (iVisibleIndex == oControl.iVisibleTabs) {
-				rm.addClass("sapUiTabLast"); // needed for IE8
-			}
+
 			rm.writeClasses();
-	
+
 			var oTitle = oTab.getTitle();
 			// tooltip: if title has a tooltip use it, if not use the tooltip of the tab
 			if (oTitle && oTitle.getTooltip_AsString()) {
@@ -131,14 +128,16 @@ sap.ui.define(['jquery.sap.global'],
 				rm.writeAttributeEscaped('title', oTab.getTooltip_AsString());
 			}
 			rm.write(">");
-	
+
 			// title with icon
 			if (oTitle) {
 				var sIcon = oTitle.getIcon();
 				if (sIcon) {
 					var aClasses = [];
-					var mAttributes = {};
-	
+					var mAttributes = {
+						"title": null // prevent icon tooltip
+					};
+
 					aClasses.push("sapUiTabIco");
 					rm.writeIcon(sIcon, aClasses, mAttributes);
 				}
@@ -153,7 +152,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.write("</li>");
 		}
 		rm.write("</ul></div>");
-	
+
 		if (bWrongIndex) {
 			// still wrong index - no tab is selected -> render empty panel area
 			oControl.setProperty( 'selectedIndex', -1, true );
@@ -172,7 +171,7 @@ sap.ui.define(['jquery.sap.global'],
 				if (i != iSelectedIndex || oTab.getVisible() === false) {
 					continue;
 				}
-	
+
 				// Improved version... now announcing the title when clicked into the tabpanel... into the full tabpanel!
 				// ARIA requires ID for the Panel...
 				rm.write("<div id=\"" + oTab.getId() + "-panel" + "\" role=\"tabpanel\" aria-labelledby=\"" + oTab.getId() + "\"");
@@ -182,30 +181,30 @@ sap.ui.define(['jquery.sap.global'],
 				}
 				rm.writeClasses();
 				rm.write(">");
-	
+
 				TabStripRenderer.renderTabContents(rm,oTab);
 				rm.write("</div>");
 			}
 		}
 		rm.write("</div>");
-	
+
 		// reset invalidate flag
 		oControl.invalidated = false;
-	
+
 	};
-	
+
 	/*moved over from former (and replaced) Panel control
 	 * @private
 	 */
 	TabStripRenderer.renderTabContents = function(rm, oControl) {
-	
+
 		// Content
 		var oControls = oControl.getContent(),
 		iLength = oControls.length;
 		for (var i = 0;i < iLength;i++) {
 			rm.renderControl(oControls[i]);
 		}
-	
+
 	};
 
 	return TabStripRenderer;

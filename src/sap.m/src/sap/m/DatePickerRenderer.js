@@ -21,7 +21,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 	DatePickerRenderer.addOuterClasses = function(oRm, oDP) {
 
 		oRm.addClass("sapMDP");
-		oRm.addClass("sapMInputVH"); // just reuse styling of value help icon
+		if (oDP.getEnabled() && oDP.getEditable()) {
+			oRm.addClass("sapMInputVH"); // just reuse styling of value help icon
+		}
 
 		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
 			oRm.addClass("sapMInputIE9");

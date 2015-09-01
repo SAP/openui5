@@ -2257,7 +2257,7 @@ sap.ui.define([
 				// if value contains ui5object property, this is not a binding info,
 				// remove it and not check for path or parts property
 				delete oValue.ui5object;
-			} else if (oValue.path || oValue.parts) {
+			} else if (oValue.path != undefined || oValue.parts) {
 				// allow JSON syntax for templates
 				if (oValue.template) {
 					oValue.template = ManagedObject.create(oValue.template);
@@ -2553,6 +2553,7 @@ sap.ui.define([
 		var oModel,
 			oContext,
 			oBinding,
+			oDataStateTimer,
 			sMode,
 			sCompositeMode = BindingMode.TwoWay,
 			oType,
@@ -2562,41 +2563,40 @@ sap.ui.define([
 			that = this,
 			aBindings = [],
 			fModelChangeHandler = function(oEvent){
-				var oMessageManager = sap.ui.getCore().getMessageManager();
 				that.updateProperty(sName);
 				//clear Messages from messageManager
-				if (oMessageManager && that._aMessages && that._aMessages.length > 0) {
-					sap.ui.getCore().getMessageManager().removeMessages(that._aMessages);
-					that._aMessages = [];
-				}
-				//delete control Messages (value is updated from model) and update control with model messages
-				if (oBinding.getMessages()) {
-					that.propagateMessages(sName, oBinding.getMessages());
+				var oDataState = oBinding.getDataState();
+				if (oDataState) {
+					var oControlMessages = oDataState.getControlMessages();
+					if (oControlMessages.length > 0) {
+						var oMessageManager = sap.ui.getCore().getMessageManager();
+						oDataState.setControlMessages([]); //remove the controlMessages before informing manager to avoid DataStateChange event to fire
+						if (oControlMessages) {
+							oMessageManager.removeMessages(oControlMessages);
+						}
+					}
+					oDataState.setInvalidValue(null); //assume that the model always sends valid data
 				}
 				if (oBinding.getBindingMode() === BindingMode.OneTime) {
 					oBinding.detachChange(fModelChangeHandler);
 					oBinding.detachEvents(oBindingInfo.events);
 					oBinding.destroy();
-					// TODO remove the binding from the binding info or mark it somehow as "deactivated"?
+					// TODO remove the binding from the binding info or mark it somehow as "deactivated"? 
 				}
 			},
-			fMessageChangeHandler = function(oEvent){
-				var aAllMessages = [];
-
-				var sMessageSource = oEvent.getParameter("messageSource");
-				var aMessages = oEvent.getParameter("messages");
-
-				if (sMessageSource == "control") {
-					that._aMessages = aMessages;
+			fDataStateChangeHandler = function(){
+				var oDataState = oBinding.getDataState();
+				if (!oDataState) {
+					return;
 				}
-				//merge object/model messages
-				if (that._aMessages && that._aMessages.length > 0) {
-					aAllMessages = aAllMessages.concat(that._aMessages);
+				//inform generic refreshDataState method
+				if (that.refreshDataState) {
+					if (!oDataStateTimer) {
+						this.oDataStateTimer = jQuery.sap.delayedCall(0, this, function() {
+							that.refreshDataState(sName, oDataState);
+						});
+					}
 				}
-				if (oBinding.getMessages()) {
-					aAllMessages = aAllMessages.concat(oBinding.getMessages());
-				}
-				that.propagateMessages(sName, aAllMessages);
 			};
 
 		// Only use context for bindings on the primary model
@@ -2645,8 +2645,10 @@ sap.ui.define([
 		}
 
 		oBinding.attachChange(fModelChangeHandler);
-		oBinding.attachMessageChange(fMessageChangeHandler);
-
+		if (this.refreshDataState) {
+			oBinding.attachDataStateChange(fDataStateChangeHandler);
+		}
+	
 		// set only one formatter function if any
 		// because the formatter gets the context of the element we have to set the context via proxy to ensure compatibility
 		// for formatter function which is now called by the property binding
@@ -3052,7 +3054,7 @@ sap.ui.define([
 		// Check the current context for its group. If the group key changes, call the
 		// group function on the control.
 		function updateGroup(oContext) {
-			var oNewGroup = oBinding.aSorters[0].getGroup(oContext);
+			var oNewGroup = oBinding.getGroup(oContext);
 			if (oNewGroup.key !== sGroup) {
 				var oGroupHeader;
 				//If factory is defined use it
@@ -3079,9 +3081,11 @@ sap.ui.define([
 		if (oBinding instanceof ListBinding) {
 			// If grouping is enabled, use updateGroup as fnBefore to create groups
 			bGrouped = oBinding.isGrouped() && sGroupFunction;
-			if (bGrouped) {
+			// Destroy children if binding is grouped or was grouped last time
+			if (bGrouped || oBinding.bWasGrouped) {
 				this[oAggregationInfo._sDestructor]();
 			}
+			oBinding.bWasGrouped = bGrouped;
 			aContexts = oBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
 			update(this, aContexts, bGrouped ? updateGroup : null);
 		} else if (oBinding instanceof TreeBinding) {

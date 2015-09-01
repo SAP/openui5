@@ -1,13 +1,11 @@
-/*global opaTest *///declare unusual global vars for JSLint/SAPUI5 validation
-
 sap.ui.require(
-	[],
-	function () {
+	["sap/ui/test/opaQunit"],
+	function (opaTest) {
 		"use strict";
 
-		module("Worklist");
+		QUnit.module("Posts");
 
-		opaTest("Should see the table with all entries", function (Given, When, Then) {
+		opaTest("Should see the table with all Posts", function (Given, When, Then) {
 			// Arrangements
 			Given.iStartMyApp();
 
@@ -15,17 +13,16 @@ sap.ui.require(
 			When.onTheWorklistPage.iLookAtTheScreen();
 
 			// Assertions
-			Then.onTheWorklistPage.theTableShouldHaveAllEntries().
-				and.theTitleShouldDisplayTheTotalAmountOfItems();
+			Then.onTheWorklistPage.theTitleShouldDisplayTheTotalAmountOfItems();
 		});
 
-		opaTest("Should be able to load 10 more items", function (Given, When, Then) {
+		opaTest("Should be able to load more items", function (Given, When, Then) {
 			//Actions
 			When.onTheWorklistPage.iPressOnMoreData();
 
 			// Assertions
-			Then.onTheWorklistPage.theTableShouldHaveTheDoubleAmountOfInitialEntries().
+			Then.onTheWorklistPage.theTableShouldHaveAllEntries().
 				and.iTeardownMyAppFrame();
 		});
-
-	});
+	}
+);

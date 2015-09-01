@@ -250,12 +250,17 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'jquery.sap.strin
 
 	//see sap.ui.commons.ComboBox.prototype._handleItemsChanged
 	AutoComplete.prototype._handleItemsChanged = function(oEvent, bDelayed){
-		if (this.bNoItemCheck) {
-			return;
-		}
 
 		if (bDelayed) {
+			// Items are updated by binding. As items can be "reused" and have same IDSs,
+			// only one check at the end of all changes is needed
+			// only clear if really from an delayed call
 			this._sHandleItemsChanged = null;
+			this._bNoItemCheck = undefined;
+		}
+
+		if (this._bNoItemCheck) {
+			return;
 		}
 
 		var aItems = [];

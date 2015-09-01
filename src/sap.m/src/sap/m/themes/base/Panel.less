@@ -3,6 +3,8 @@
 /* ============================================= */
 .sapMPanel {
 	overflow: hidden;
+	// The following needed for calculation of height for content child
+	position: relative;
 }
 
 .sapMPanelHdr {
@@ -44,6 +46,10 @@
 	/* 400ms is standard jQuery duration */
 	-webkit-transition: -webkit-transform 0.4s ease-out;
 	transition: transform 0.4s ease-out;
+
+	&:focus {
+		outline: none;
+	}
 
 	&:focus::after {
 		content: "";
