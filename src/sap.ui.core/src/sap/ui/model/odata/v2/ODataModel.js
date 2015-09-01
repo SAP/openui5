@@ -201,12 +201,6 @@ sap.ui.define([
 				this.oMetadata = this.oServiceData.oMetadata;
 			}
 			
-			// USe cached annotations if available
-			if (this.oServiceData.oAnnotationsData) {
-				this._getAnnotationParser(this.oServiceData.oAnnotationsData);
-			}
-
-
 			this.pAnnotationsLoaded = this.oMetadata.loaded();
 
 			if (this.sAnnotationURI || !this.bSkipMetadataAnnotationParsing) {
@@ -229,9 +223,6 @@ sap.ui.define([
 						oAnnotations.addUrl(this.sAnnotationURI)
 					]);
 				}
-			}
-			if (this.oAnnotations) {
-				this.oServiceData.oAnnotationsData = this.oAnnotations.getAnnotationsData();
 			}
 
 
