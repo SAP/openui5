@@ -158,7 +158,9 @@
 		oTB.destroy();
 	});
 
-    test("Check ARIA attributes", function() {
+	module("ARIA");
+
+    test("Default ARIA attributes", function() {
         // Arrange + System under Test
         var oBtn = new sap.m.Button({
             text : "Button Text"
@@ -171,8 +173,8 @@
 
         //Assert
         equal(oTB.$().attr("role"), "toolbar", "Toolbar has attribute role='toolbar'");
-        equal(oTB.$().attr("aria-labelledby"), oTB.getId() + "-ariaLabel", "Toolbar has attribute aria-labelledby='"+oTB.getId() + "-ariaLabel'");
-        equal(oTB.$().find("#" + oTB.getId() + "-ariaLabel").length, 1, "Toolbar dom has a label describing it.");
+        equal(oTB.$().attr("aria-labelledby"), oTB._sInternalAriaLabelId, "Toolbar has attribute aria-labelledby to the internal label");
+        equal(jQuery.find("#" + oTB._sInternalAriaLabelId).length, 1, "Toolbar dom has a label describing it.");
         equal(oTB.$().attr("aria-disabled"), undefined, "Toolbar has no attribute aria-disabled");
 
         //Act
@@ -187,6 +189,49 @@
         oBtn.destroy();
         oTB.destroy();
     });
+
+	test("ariaLabelledBy external label", function() {
+		// Arrange + System under Test
+		var oLabel = new sap.m.Label({
+			text : "Toolbar Label"
+		});
+		var oTB = new sap.m.Toolbar({
+			content : oLabel,
+			ariaLabelledBy: oLabel.getId()
+		});
+		oTB.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		equal(oTB.$().attr("aria-labelledby"), oLabel.getId(), "Toolbar has attribute aria-labelledby external label");
+
+		oTB.applyTagAndContextClassFor("header");
+		sap.ui.getCore().applyChanges();
+
+		//Cleanup
+		oLabel.destroy();
+		oTB.destroy();
+	});
+
+	test("ariaLabelledBy internal and external labels", function() {
+		// Arrange + System under Test
+		var oLabel = new sap.m.Label({
+			text : "Toolbar Label"
+		});
+		var oTB = new sap.m.Toolbar({
+			content : oLabel,
+			ariaLabelledBy: oLabel.getId()
+		}).applyTagAndContextClassFor("header");
+		oTB.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		equal(oTB.$().attr("aria-labelledby"), oLabel.getId() + " " + oTB._sInternalAriaLabelId, "Toolbar has attribute aria-labelledby for internal and external labels");
+
+		//Cleanup
+		oLabel.destroy();
+		oTB.destroy();
+	});
 
 	module("Properties");
 
