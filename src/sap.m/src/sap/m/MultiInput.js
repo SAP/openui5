@@ -445,11 +445,11 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		}
 		
 		// necessary to display expanded MultiInput which is inside SimpleForm
-		var $Parent;			
-		if (this.$().parents(".sapUiRFLContainer")) {
-			$Parent = this.$().parents(".sapUiRFLContainer");
-		} else if (this.$().parent('[class*="sapUiRespGridSpan"]')) {
+		var $Parent;
+		if (this.$().parent('[class*="sapUiRespGridSpan"]')) {
 			$Parent = this.$().parent('[class*="sapUiRespGridSpan"]');
+		} else if (this.$().parents(".sapUiRFLContainer")) {
+			$Parent = this.$().parents(".sapUiRFLContainer");
 		}
 		
 		if ($Parent && $Parent.length > 0 && $Parent.css("overflow") === "hidden") {
