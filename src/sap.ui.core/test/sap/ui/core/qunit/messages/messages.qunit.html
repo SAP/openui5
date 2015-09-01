@@ -28,31 +28,40 @@
 <script language="javascript" charset="utf-8"> // IE needs this :-/
 	
 	var oModel;
+	var oLabel, oLabel2, oStreet, oZip, oNr;
 	
-	// create some control for testing
-	var oLabel = new sap.m.Input({value:"{path:'/form/firstname'}"});
-	var oLabel2 = new sap.m.Input({value:"{/form/lastname}"});
-	
-	var oString = new sap.ui.model.type.String(null,{maxLength: 5});
-	var oInteger = new sap.ui.model.type.Integer();
-	var oNrFormat = function(oValue) { 
-		if (typeof(oValue) === 'string') {
-			throw new sap.ui.model.FormatException("Error");
-		} else {
-			return oValue;
-		}
+	function createControls() {
+		// create some control for testing
+		oLabel = new sap.m.Input({value:"{path:'/form/firstname'}"});
+		oLabel2 = new sap.m.Input({value:"{/form/lastname}"});
+		oString = new sap.ui.model.type.String(null,{maxLength: 5});
+		oInteger = new sap.ui.model.type.Integer();
+		oNrFormat = function(oValue) { 
+			if (typeof(oValue) === 'string') {
+				throw new sap.ui.model.FormatException("Error");
+			} else {
+				return oValue;
+			}
+		};
+		
+		oZip = new sap.m.Input({value:{path:'/form/zip', type: oInteger}});
+		oStreet = new sap.m.Input({value:{path:'/form/street', type: oString}});
+		oNr = new sap.m.Input({value:{path:'/form/nr', formatter: oNrFormat}});
+		
+		oLabel.placeAt("content");
+		oLabel2.placeAt("content");
+		oZip.placeAt("content");
+		oStreet.placeAt("content");
+		oNr.placeAt("content");
 	};
 	
-	var oZip = new sap.m.Input({value:{path:'/form/zip', type: oInteger}});
-	var oStreet = new sap.m.Input({value:{path:'/form/street', type: oString}});
-	var oNr = new sap.m.Input({value:{path:'/form/nr', formatter: oNrFormat}});
-	
-	oLabel.placeAt("content");
-	oLabel2.placeAt("content");
-	oZip.placeAt("content");
-	oStreet.placeAt("content");
-	oNr.placeAt("content");
-	var mMap = {};
+	function destroyControls() {
+		oLabel.destroy();
+		oLabel2.destroy();
+		oZip.destroy();
+		oStreet.destroy();
+		oNr.destroy();	
+	};
 	
 	function spyDataState(oControl, fnTest) {
 		if (oControl.refreshDataState) {
@@ -89,6 +98,7 @@
 			oModel.setData(oData);
 		}
 		sap.ui.getCore().setModel(oModel);
+		createControls();
 	}
 	module("MessageManager", {
 		setup : function() {
@@ -96,7 +106,9 @@
 		},
 		
 		teardown : function() {
+			destroyControls();
 			oModel.destroy();
+			oModel = undefined;
 		}
 	});
 
