@@ -9,6 +9,8 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 	// Note: The dependency to Sinon.js has been omitted deliberately. Most test files load it via
 	// <script> anyway and declaring the dependency would cause it to be loaded twice.
 
+	var mMessageForPath = {}; // a cache for files, see useFakeServer
+
 	/**
 	 * Checks that the actual value deeply contains the expected value, ignoring additional
 	 * properties.
@@ -119,13 +121,111 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		},
 
 		/**
+		 * Activates a sinon fakeserver in the given sandbox. The fake server responds only to
+		 * those GET requests given in the fixture. It is automatically restored when the sandbox
+		 * is restored.
+		 *
+		 * The function uses <a href="http://sinonjs.org/docs/">Sinon.js</a> and expects that it
+		 * has been loaded.
+		 *
+		 * @param {object} oSandbox
+		 *   a Sinon sandbox as created using <code>sinon.sandbox.create()</code>
+		 * @param {string} sBase
+		 *   The base path for <code>source</code> values in the fixture. The path must be relative
+		 *   to the <code>test</code> folder of the <code>sap.ui.core</code> project, typically it
+		 *   should start with "sap". It must not end with '/'.
+		 *   Example: <code>"sap/ui/core/qunit/model"</code>
+		 * @param {map} mFixture
+		 *   The fixture. Each key represents a URL to respond to. The value is an object that may
+		 *   have the following properties:
+		 *   <ul>
+		 *   <li>{number} <code>code</code>: The response code (<code>200</code> if not given)
+		 *   <li>{map} <code>headers</code>: A list of headers to set in the response
+		 *   <li>{string} <code>message</code>: The response message
+		 *   <li>{string} <code>source</code>: The path of a file relative to <code>sBase</code> to
+		 *     be used for the response message. It will be read synchronously in advance. In this
+		 *     case the header <code>Content-Type</code> is determined from the source name's
+		 *     extension.
+		 *   </ul>
+		 */
+		useFakeServer : function (oSandbox, sBase, mFixture) {
+			var oHeaders,
+				sMessage,
+				sPath,
+				oResponse,
+				fnRestore,
+				oResult,
+				oServer,
+				sUrl,
+				mUrls = {};
+
+			function contentType(sName) {
+				if (/\.xml$/.test(sName)) {
+					return "application/xml";
+				}
+				if (/\.json$/.test(sName)) {
+					return "application/json";
+				}
+				return "application/x-octet-stream";
+			}
+
+			sBase = "/" + window.location.pathname.split("/")[1] + "/test-resources/" + sBase + "/";
+			for (sUrl in mFixture) {
+				oResponse = mFixture[sUrl];
+				oHeaders = oResponse.headers || {};
+				if (oResponse.source) {
+					sPath = sBase + oResponse.source;
+					if (!mMessageForPath[sPath]) {
+						oResult = jQuery.sap.sjax({
+							url: sPath,
+							dataType: "text"
+						});
+						if (!oResult.success) {
+							throw new Error(sPath + ": resource not found");
+						}
+						mMessageForPath[sPath] = oResult.data;
+					}
+					sMessage = mMessageForPath[sPath];
+					oHeaders["Content-Type"] = oHeaders["Content-Type"] || contentType(sPath);
+				} else {
+					sMessage = oResponse.message || "";
+				}
+				mUrls[sUrl] = [oResponse.code || 200, oHeaders, sMessage];
+			}
+
+			//TODO remove this workaround in IE9 for
+			// https://github.com/cjohansen/Sinon.JS/commit/e8de34b5ec92b622ef76267a6dce12674fee6a73
+			sinon.xhr.supportsCORS = true;
+
+			// set up the fake server
+			oServer = oSandbox.useFakeServer();
+			for (sUrl in mUrls) {
+				oServer.respondWith(sUrl, mUrls[sUrl]);
+			}
+			oServer.autoRespond = true;
+
+			// set up a filter so that other requests (e.g. from jQuery.sap.require) go through
+			sinon.FakeXMLHttpRequest.useFilters = true;
+			sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl, bAsync) {
+				return !(sUrl in mFixture); // do not fake if URL is unknown
+			});
+
+			// wrap oServer.restore to also clear the filter
+			fnRestore = oServer.restore;
+			oServer.restore = function () {
+				sinon.FakeXMLHttpRequest.filters = []; // no API to clear the filter
+				fnRestore.apply(this, arguments); // call the original restore
+			};
+		},
+
+		/**
 		 * If a test is wrapped by this function, you can test that locale-dependent texts are
 		 * created as expected, but avoid checking against the real message text. The function
 		 * ensures that every message retrieved using
 		 * <code>sap.ui.getCore().getLibraryResourceBundle().getText()</code> consists of the key
 		 * followed by all parameters referenced in the bundle's text in order of their numbers.
 		 *
-		 * The function uses <a href="http://sinonjs.org/docs/">SSinon.js</a> and expects that it
+		 * The function uses <a href="http://sinonjs.org/docs/">Sinon.js</a> and expects that it
 		 * has been loaded. It creates a <a href="http://sinonjs.org/docs/#sandbox">Sinon
 		 * sandbox</a> which is available as <code>this</code> in the code under test.
 		 *
