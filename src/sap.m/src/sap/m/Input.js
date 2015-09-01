@@ -1088,6 +1088,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				oInput._oPopupInput = new Input(oInput.getId() + "-popup-input", {
 					width : "100%",
 					valueLiveUpdate: true,
+					showValueHelp: oInput.getShowValueHelp(),
+					valueHelpRequest: function(oEvent) {
+						// it is the same behavior as by ShowMoreButton:
+						oInput.fireValueHelpRequest({fromSuggestions: true});
+						oInput._iPopupListSelectedIndex = -1;
+						oInput._closeSuggestionPopup();
+					},
 					liveChange : function(oEvent) {
 						var sValue = oEvent.getParameter("newValue");
 						// call _getInputValue to apply the maxLength to the typed value
