@@ -4,9 +4,9 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for sap.m.routing.Router</title>
 
-		<script src="../../../../../resources/sap-ui-core.js"
+		<script src="../../../../../../resources/sap-ui-core.js"
 				data-sap-ui-libs="sap.m"
-				data-sap-ui-resourceroots='{"qunit": "../"}'>
+				data-sap-ui-resourceroots='{"qunit": "../../"}'>
 		</script>
 
 		<script>
@@ -26,16 +26,32 @@
 							"sap/m/SplitContainer",
 							"sap/m/Page",
 							"sap/ui/core/routing/Views",
-							"qunit/routing/commonIntegrationTests"
+							"qunit/routing/sync/commonIntegrationTests"
 						],
 						function (Router, TargetHandler, NavContainer, SplitContainer, Page, Views, integrationTests) {
 							"use strict";
+
+							var fnCreateRouter = function() {
+								var args = Array.prototype.slice.call(arguments);
+
+								args.unshift(Router);
+
+								if (args.length < 3) {
+									args[2] = {};
+								}
+								if (args[2] === null) {
+									args[2] = {};
+								}
+								args[2].async = false;
+
+								return new (Function.prototype.bind.apply(Router, args));
+							}
 
 							QUnit.module("Construction and destruction");
 
 							QUnit.test("Should pass the targetHandler to the targets instance", function (assert) {
 								// System under test
-								var oRouter = new Router(null, null, null, {});
+								var oRouter = fnCreateRouter(null, null, null, {});
 
 								// Assert
 								assert.strictEqual(oRouter._oTargets._oTargetHandler, oRouter._oTargetHandler, "Did pass the target handler");
@@ -59,7 +75,7 @@
 										transitionParameters: { some: "parameter"}
 									};
 									// System under test
-									this.oRouter = new sap.m.routing.Router({
+									this.oRouter = fnCreateRouter({
 												myRoute: {
 													pattern: this.sPattern,
 													target: "myTarget"
@@ -128,7 +144,7 @@
 							QUnit.test("Should respect the viewlevel for multiple targets", function (assert) {
 								//Arrange
 								var oNavContainer = new NavContainer(),
-										oRouter = new Router(
+										oRouter = fnCreateRouter(
 											{
 												"route": {
 													pattern: "anyPattern",
@@ -181,7 +197,7 @@
 								var oSplitContainer = new SplitContainer({
 											masterPages: [createViewAndController("InitialMaster")]
 										}),
-										oRouter = new Router({
+										oRouter = fnCreateRouter({
 											"Master": {
 												targetControl: oSplitContainer.getId(),
 												pattern: "{id}",
@@ -226,7 +242,7 @@
 									this.oDetailView = createViewAndController("Detail");
 									this.sPattern = "somePattern";
 									// System under test
-									this.oRouter = new sap.m.routing.Router({
+									this.oRouter = fnCreateRouter({
 												myMasterRoute: {
 													targetAggregation: "masterPages",
 													view: "Master",
@@ -275,7 +291,7 @@
 
 							integrationTests.start({
 								setup: function (oConfig) {
-									var oRouter = new Router(oConfig);
+									var oRouter = fnCreateRouter(oConfig);
 
 									this.oRouter = oRouter;
 									return oRouter;

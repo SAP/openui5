@@ -4,10 +4,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>qUnit Page for sap.m.routing.Targets</title>
 
-	<script src="../../../../../resources/sap-ui-core.js"
+	<script src="../../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-libs="sap.m"
-		data-sap-ui-resourceroots='{"qunit": "../"}'>
+		data-sap-ui-resourceroots='{"qunit": "../../"}'>
 </script>
 
 <script>
@@ -26,15 +26,16 @@
 					"sap/m/NavContainer",
 					"sap/m/Page",
 					"sap/ui/core/routing/Views",
-					"qunit/routing/commonIntegrationTests",
+					"qunit/routing/async/commonIntegrationTests",
 					"sap/ui/core/routing/Route",
-					"qunit/routing/helpers"
+					"qunit/routing/async/helpers"
 				],
 				function (Targets, NavContainer, Page, Views, integrationTests, Route, helpers) {
 					"use strict";
 
-					module("add and execute navigations", {
+					QUnit.module("add and execute navigations", {
 						setup: function () {
+							var that = this;
 							this.oStartPage = new Page();
 							this.oNavContainer = new NavContainer({
 								pages: this.oStartPage
@@ -48,17 +49,23 @@
 								viewLevel: 5,
 								transitionParameters: { some: "parameter"}
 							};
-							this.oViews = new Views();
+							this.oViews = new Views({async: true});
 							// System under test
 							this.oTargets = new Targets({
 								targets: {
 									myTarget: this.oTargetConfiguration
 								},
 								config: {
-									controlAggregation: "pages"
+									controlAggregation: "pages",
+									async: true
 								},
 								views: this.oViews
 							});
+							this.oViewMock = {
+								loaded: function() {
+									return Promise.resolve(that.oToPage);
+								}
+							}
 						},
 						teardown: function () {
 							this.oNavContainer.destroy();
@@ -69,29 +76,32 @@
 						}
 					});
 
-					test("Should do a forward navigation", function () {
+					QUnit.test("Should do a forward navigation", function () {
 						//Arrange
 						var that = this,
-								oToSpy = this.spy(this.oNavContainer, "to"),
-								oNavigateSpy = this.spy(this.oTargets._oTargetHandler, "navigate"),
+								oToSpy = sinon.spy(this.oNavContainer, "to"),
+								oNavigateSpy = sinon.spy(this.oTargets._oTargetHandler, "navigate"),
 								oEventData = { eventData: "myData"};
 
 						this.stub(Views.prototype, "_getView", function () {
-							return that.oToPage;
+							return that.oViewMock;
 						});
 
 						//Act
-						this.oTargets.display("myTarget", oEventData);
+						return this.oTargets.display("myTarget", oEventData).then(function() {
+							//Assert
+							strictEqual(oToSpy.callCount, 1, "did call the 'to' function on the oNavContainer instance");
+							sinon.assert.calledWithExactly(oToSpy, this.oToPage.getId(), this.oTargetConfiguration.transition, oEventData, this.oTargetConfiguration.transitionParameters);
 
-						//Assert
-						strictEqual(oToSpy.callCount, 1, "did call the 'to' function on the oNavContainer instance");
-						sinon.assert.calledWithExactly(oToSpy, this.oToPage.getId(), this.oTargetConfiguration.transition, oEventData, this.oTargetConfiguration.transitionParameters);
+							strictEqual(oNavigateSpy.callCount, 1, "did call the 'navigate' function on the TargetHandler instance");
+							sinon.assert.calledWithExactly(oNavigateSpy, {
+								navigationIdentifier: "myTarget",
+								viewLevel: 5
+							});
+							oToSpy.restore();
+							oNavigateSpy.restore();
+						}.bind(this));
 
-						strictEqual(oNavigateSpy.callCount, 1, "did call the 'navigate' function on the TargetHandler instance");
-						sinon.assert.calledWithExactly(oNavigateSpy, {
-							navigationIdentifier: "myTarget",
-							viewLevel: 5
-						});
 					});
 
 					///////////////////////////////////////////////////////
@@ -105,8 +115,8 @@
 						//Arrange
 						var oFirstNavContainer = new NavContainer(),
 								oSecondNavContainer = new NavContainer(),
-								fnFirstBackSpy = this.spy(oFirstNavContainer, "backToPage"),
-								fnSecondBackSpy = this.spy(oSecondNavContainer, "backToPage"),
+								fnFirstBackSpy = sinon.spy(oFirstNavContainer, "backToPage"),
+								fnSecondBackSpy = sinon.spy(oSecondNavContainer, "backToPage"),
 								oTargetConfig = {
 									first: {
 										controlId: oFirstNavContainer.getId(),
@@ -132,12 +142,13 @@
 										viewLevel: 1
 									}
 								},
-								oViews = new Views(),
+								oViews = new Views({async: true}),
 								oTargets = new Targets({
 									targets: oTargetConfig,
 									config: {
 										viewType: "JS",
-										controlAggregation: "pages"
+										controlAggregation: "pages",
+										async: true
 									},
 									views: oViews
 								});
@@ -149,17 +160,74 @@
 						helpers.createViewAndController("FourthView");
 
 						//Act
-						oTargets.display("first");
-						oTargets.display("fourth");
+						var oFirstPromise = oTargets.display("first");
+						var oFourthPromise = oTargets.display("fourth");
 
-						//Assert
-						assert.strictEqual(fnFirstBackSpy.callCount, 1, "did a back navigation on the first container since a navigation from 2 to 1 took place");
-						assert.strictEqual(fnSecondBackSpy.callCount, 1, "did a back navigation on the second container since a navigation from 2 to 1 took place");
+						return Promise.all([oFirstPromise, oFourthPromise]).then(function() {
+							//Assert
+							assert.strictEqual(fnFirstBackSpy.callCount, 1, "did a back navigation on the first container since a navigation from 2 to 1 took place");
+							assert.strictEqual(fnSecondBackSpy.callCount, 1, "did a back navigation on the second container since a navigation from 2 to 1 took place");
 
-						oViews.destroy();
-						oTargets.destroy();
-						oFirstNavContainer.destroy();
-						oSecondNavContainer.destroy();
+							fnFirstBackSpy.restore();
+							fnSecondBackSpy.restore();
+							oViews.destroy();
+							oTargets.destroy();
+							oFirstNavContainer.destroy();
+							oSecondNavContainer.destroy();
+						});
+					});
+
+					QUnit.test("Should keep order of display calls when displaying asyncly", function (assert) {
+						//Arrange
+						var oFirstNavContainer = new NavContainer({
+								pages: new sap.m.Page()
+							}),
+							fnFirstToSpy = sinon.spy(oFirstNavContainer, "to"),
+							oTargetConfig = {
+								first: {
+									controlId: oFirstNavContainer.getId(),
+									// the viewname here determines the order of loading, this one loads second
+									viewName: "firstView",
+								},
+								second: {
+									controlId: oFirstNavContainer.getId(),
+									// the viewname here determines the order of loading, this one loads first
+									viewName: "secondView",
+								}
+							},
+							oViews = new Views({async: true}),
+							oTargets = new Targets({
+								targets: oTargetConfig,
+								config: {
+									viewType: "JS",
+									controlAggregation: "pages",
+									async: true
+								},
+								views: oViews
+							});
+
+						helpers.setViewDelays({
+							"firstView": 100,
+							"secondView": 0
+						});
+
+						var fnStub = this.stub(oViews, "_getView", helpers.createViewMock);
+
+						//Act
+						var oFirstPromise = oTargets.display("first");
+						var oSecondPromise = oTargets.display("second");
+
+						return Promise.all([oFirstPromise, oSecondPromise]).then(function() {
+							//Assert
+							assert.strictEqual(fnFirstToSpy.callCount, 1, "did a back navigation on the first container since a navigation from 2 to 1 took place");
+							assert.strictEqual(fnFirstToSpy.args[0][0], "secondView", "Only second view gets displayed");
+							// assert.strictEqal(fnFirstToSpy.args[1][0], "2", "Second target displayed second");
+
+							fnFirstToSpy.restore();
+							oViews.destroy();
+							oTargets.destroy();
+							oFirstNavContainer.destroy();
+						});
 					});
 
 					/**
@@ -206,17 +274,19 @@
 						setup: function (oConfig) {
 
 							modifyConfig(oConfig, oConfig);
-							this.oViews = new Views();
+							this.oViews = new Views({async: true});
+							this.oGetViewStub = sinon.stub(this.oViews, "_getView", helpers.createViewMock);
 
-							var oTargets = new Targets({ targets: oConfig, views : this.oViews });
+							var oTargets = new Targets({ targets: oConfig, views : this.oViews, config: {async: true}});
 
 							this.oTargets = oTargets;
 							return oTargets;
 						},
 						act: function (sPatternOrName) {
-							this.oTargets.display(sPatternOrName);
+							return this.oTargets.display(sPatternOrName);
 						},
 						teardown: function () {
+							this.oGetViewStub.restore();
 							this.oTargets.destroy();
 							this.oViews.destroy();
 						}

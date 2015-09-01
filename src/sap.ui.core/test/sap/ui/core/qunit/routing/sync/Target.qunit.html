@@ -6,7 +6,7 @@
 <title>qUnit Page for sap.ui.core.routing.Target</title>
 
 <script id="sap-ui-bootstrap" type="text/javascript"
-	src="../../../../../../resources/sap-ui-core.js"
+	src="../../../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.ux3,sap.m"
 	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
@@ -366,13 +366,12 @@
 
 		QUnit.test("Should destroy all dependencies", function () {
 			// Arrange
-			var oParentTarget = new sap.ui.core.routing.Target(),
+			var oParentTarget = new sap.ui.core.routing.Target({}),
 					oViews = new sap.ui.core.routing.Views();
 
 			// System under test
 			var oTarget = new sap.ui.core.routing.Target(
-					{
-					},
+					{},
 					oViews,
 					oParentTarget
 			);

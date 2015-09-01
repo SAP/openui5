@@ -1,6 +1,8 @@
 /*!
  * ${copyright}
  */
+
+ /*global Promise*/
 sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer', 'sap/m/SplitContainer', 'sap/ui/base/Object', 'sap/ui/core/routing/History', 'sap/ui/core/routing/Router'],
 	function($, InstanceManager, NavContainer, SplitContainer, BaseObject, History, Router) {
 		"use strict";
@@ -21,6 +23,9 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 			constructor : function (bCloseDialogs) {
 				//until we reverse the order of events fired by router we need to queue handleRouteMatched
 				this._aQueue = [];
+
+				// The Promise object here is used to make the navigations in the same order as they are triggered, only for async
+				this._oNavigationOrderPromise = Promise.resolve();
 
 				if (bCloseDialogs === undefined) {
 					this._bCloseDialogs = true;
@@ -81,6 +86,15 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 		 * private
 		 * =================================
 		 */
+
+		/**
+		 * This method is used to chain navigations to be triggered in the correct order, only relevant for async
+		 * @private
+		 */
+		TargetHandler.prototype._chainNavigation = function(fnNavigation) {
+			this._oNavigationOrderPromise = this._oNavigationOrderPromise.then(fnNavigation);
+			return this._oNavigationOrderPromise;
+		};
 
 		/**
 		 * @private

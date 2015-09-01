@@ -6,7 +6,7 @@
 <title>qUnit Page for sap.ui.core.routing.Views</title>
 
 <script id="sap-ui-bootstrap" type="text/javascript"
-	src="../../../../../../resources/sap-ui-core.js"
+	src="../../../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.ux3,sap.m"
 	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
@@ -190,32 +190,36 @@
 
 			QUnit.module("error handling");
 
-			QUnit.test("Should log an error if the options are missing", function (assert) {
+			QUnit.test("Should log an error if the options are missing", 2, function (assert) {
 				// Arrange
 				var fnErrorSpy = this.spy(jQuery.sap.log, "error");
 
 				var oViews = new Views();
 
-				// Act
-				oViews.getView();
-
-				// Assert
-				assert.strictEqual(fnErrorSpy.callCount, 1, "the error spy was called");
-				sinon.assert.calledWith(fnErrorSpy, sinon.match(/oOptions/), sinon.match(oViews));
+				try {
+					// Act
+					oViews.getView();
+				} catch (e) {
+					// Assert
+					assert.strictEqual(fnErrorSpy.callCount, 1, "the error spy was called");
+					sinon.assert.calledWith(fnErrorSpy, sinon.match(/oOptions/), sinon.match(oViews));
+				}
 			});
 
-			QUnit.test("Should log an error if the viewName is missing", function (assert) {
+			QUnit.test("Should log an error if the viewName is missing", 2, function (assert) {
 				// Arrange
 				var fnErrorSpy = this.spy(jQuery.sap.log, "error");
 
 				var oViews = new Views();
 
-				// Act
-				oViews.getView({});
-
-				// Assert
-				assert.strictEqual(fnErrorSpy.callCount, 1, "the error spy was called");
-				sinon.assert.calledWith(fnErrorSpy, sinon.match(/name for the view has to be defined/), sinon.match(oViews));
+				try {
+					// Act
+					oViews.getView({});
+				} catch (e) {
+					// Assert
+					assert.strictEqual(fnErrorSpy.callCount, 1, "the error spy was called");
+					sinon.assert.calledWith(fnErrorSpy, sinon.match(/name for the view has to be defined/), sinon.match(oViews));
+				}
 			});
 
 			QUnit.module("events", {

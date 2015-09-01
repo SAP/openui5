@@ -10,7 +10,7 @@
 <title>qUnit Page for sap.ui.core.routing.Router</title>
 
 <script id="sap-ui-bootstrap" type="text/javascript"
-	src="../../../../../../resources/sap-ui-core.js"
+	src="../../../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.commons,sap.ui.ux3,sap.m"
 	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
@@ -1158,7 +1158,6 @@
 				return createXmlView();
 			});
 
-			var oPlaceSpy = this.spy(sap.ui.core.routing.Target.prototype, "_place");
 
 			var oTargetConfig = {
 				myTarget : {
@@ -1169,6 +1168,7 @@
 
 			// System under test
 			this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
+			var oPlaceSpy = this.spy(this.oRouter.getTarget("myTarget"), "_place");
 
 			// Act
 			this.oRouter.parse(this.sPattern);
@@ -1189,8 +1189,6 @@
 				return createXmlView();
 			});
 
-			var oPlaceSpy = this.spy(sap.ui.core.routing.Target.prototype, "_place");
-
 			var oTargetConfig = {
 				myTarget : {
 					controlId: this.oShell.getId()
@@ -1203,15 +1201,18 @@
 
 			// System under test
 			this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
+			var oPlaceSpy = this.spy(this.oRouter.getTarget("myTarget"), "_place");
+			var oPlaceSecondSpy = this.spy(this.oRouter.getTarget("secondTarget"), "_place");
 
 			// Act
 			this.oRouter.parse(this.sPattern);
 
 			// Assert
-			strictEqual(oPlaceSpy.callCount, 2, "Did place both targets");
+			strictEqual(oPlaceSpy.callCount, 1, "Did place the first target");
+			strictEqual(oPlaceSecondSpy.callCount, 1, "Didplace the second target");
 
 			sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myTarget"));
-			sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("secondTarget"));
+			sinon.assert.calledOn(oPlaceSecondSpy, this.oRouter.getTarget("secondTarget"));
 
 			strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
 			strictEqual(this.oSecondShell.getContent().length, 1, "Did place the view in the second shell");
@@ -1223,7 +1224,6 @@
 				return createXmlView();
 			});
 
-			var oPlaceSpy = this.spy(sap.ui.core.routing.Target.prototype, "_place");
 			var oTargetConfig = {
 				myTarget : {
 					controlId: this.oShell.getId()
@@ -1237,14 +1237,17 @@
 
 			// System under test
 			this.oRouter = new sap.ui.core.routing.Router(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
+			var oPlaceSpy = this.spy(this.oRouter.getTarget("myTarget"), "_place");
+			var oPlaceChildSpy = this.spy(this.oRouter.getTarget("myChild"), "_place");
 
 			// Act
 			this.oRouter.parse(this.sPattern);
 
 			// Assert
-			strictEqual(oPlaceSpy.callCount, 2, "Did place myTarget");
+			strictEqual(oPlaceSpy.callCount, 1, "Did place myTarget");
+			strictEqual(oPlaceChildSpy.callCount, 1, "Did place myChild");
 			sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myTarget"));
-			sinon.assert.calledOn(oPlaceSpy, this.oRouter.getTarget("myChild"));
+			sinon.assert.calledOn(oPlaceChildSpy, this.oRouter.getTarget("myChild"));
 
 			strictEqual(this.oShell.getContent().length, 1, "Did place the view in the shell");
 			strictEqual(this.oSecondShell.getContent().length, 1, "Did place the view in the shell");

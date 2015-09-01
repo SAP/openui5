@@ -10,7 +10,7 @@
 <title>qUnit Page for sap.ui.core.navigation.History</title>
 
 <script id="sap-ui-bootstrap" type="text/javascript"
-	src="../../../../../../resources/sap-ui-core.js"
+	src="../../../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.commons">
 
@@ -65,7 +65,7 @@
 		// The HashChanger allows to replace the default instance with a custom implementation to intercept the logic -
 		// this is currently done by the unified shell in order to handle cross-application navigation.
 		// Factoring out the unit tests into this module allows to execute the same test suite in the shell context
-		jQuery.sap.registerModulePath("sap.ui.core.qunit", "../../../../../../test-resources/sap/ui/core/qunit/routing");
+		jQuery.sap.registerModulePath("sap.ui.core.qunit", "../../../../../../../test-resources/sap/ui/core/qunit/routing/async");
 		jQuery.sap.require("sap.ui.core.qunit.HistoryQunit");
 	})();
 

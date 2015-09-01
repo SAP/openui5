@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/routing/Target'],
-	function(Target) {
+sap.ui.define(['sap/ui/core/routing/Target', './async/Target', './sync/Target'],
+	function(Target, asyncTarget, syncTarget) {
 		"use strict";
 
 		/**
@@ -22,25 +22,20 @@ sap.ui.define(['sap/ui/core/routing/Target'],
 			constructor : function (oOptions, oViews, oParent, oTargetHandler) {
 				this._oTargetHandler = oTargetHandler;
 
+				// Set the default value to sync
+				if (oOptions._async === undefined) {
+					oOptions._async = false;
+				}
+
 				Target.prototype.constructor.apply(this, arguments);
-			},
 
-			_place : function (oParentInfo, vData) {
-				var oReturnValue = Target.prototype._place.apply(this, arguments);
+				var TargetStub = oOptions._async ? asyncTarget : syncTarget;
 
-				this._oTargetHandler.addNavigation({
-
-					navigationIdentifier : this._oOptions.name,
-					transition: this._oOptions.transition,
-					transitionParameters: this._oOptions.transitionParameters,
-					eventData: vData,
-					targetControl: oReturnValue.oTargetControl,
-					view: oReturnValue.oTargetParent,
-					preservePageInSplitContainer: this._oOptions.preservePageInSplitContainer
-				});
-
-				return oReturnValue;
-
+				this._super = {};
+				for (var fn in TargetStub) {
+					this._super[fn] = this[fn];
+					this[fn] = TargetStub[fn];
+				}
 			}
 		});
 

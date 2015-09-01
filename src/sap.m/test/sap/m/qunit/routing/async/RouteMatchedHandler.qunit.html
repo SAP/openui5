@@ -1,0 +1,532 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>qUnit Page for RouteMatchedHandler</title>
+
+<script
+		src="../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-resourceroots='{"qunit": "../../"}'>
+</script>
+
+<script>
+(function () {
+	jQuery.sap.require("sap.ui.qunit.qunit-css");
+	jQuery.sap.require("sap.ui.thirdparty.qunit");
+	jQuery.sap.require("sap.ui.qunit.qunit-junit");
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	jQuery.sap.require("sap.ui.thirdparty.sinon");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+	sinon.config.useFakeTimers = true;
+
+	sap.ui.require([
+				"sap/m/routing/RouteMatchedHandler",
+				"sap/m/NavContainer",
+				"sap/m/SplitContainer",
+				"sap/ui/core/routing/HashChanger",
+				"sap/ui/core/routing/Router",
+				"sap/ui/core/routing/History",
+				"sap/m/routing/TargetHandler",
+				"sap/m/InstanceManager",
+				"qunit/routing/async/commonIntegrationTests",
+				"sap/m/Page",
+				"qunit/routing/async/helpers"
+			],
+			function (RouteMatchedHandler, NavContainer, SplitContainer, HashChanger, Router, History, TargetHandler, InstanceManager, integrationTests, Page, helpers) {
+				"use strict";
+
+				HashChanger.getInstance().init();
+
+				var fnCreateRouter = function() {
+					var args = Array.prototype.slice.call(arguments);
+
+					args.unshift(Router);
+
+					if (args.length < 3) {
+						args[2] = {};
+					}
+					args[2].async = true;
+
+					return new (Function.prototype.bind.apply(Router, args));
+				}
+
+				QUnit.module("initialization");
+
+				function createViewAndController(sName) {
+					sap.ui.controller(sName, {});
+					sap.ui.jsview(sName, {
+						createContent: function () {
+						},
+						getController: function () {
+							return sap.ui.controller(sName);
+						}
+					});
+
+					return sap.ui.jsview(sName);
+				}
+
+				test("Should destroy correctly", function () {
+					//Arrange
+					var oRouteMatchedSpy = this.spy(RouteMatchedHandler.prototype, "_onHandleRouteMatched"),
+							oRoutePatternMatchedSpy = this.spy(RouteMatchedHandler.prototype, "_handleRoutePatternMatched"),
+							oRouter = fnCreateRouter({
+								myRoute : {}
+							}),
+					//System under Test
+							oRouteMatchedHandler = new RouteMatchedHandler(oRouter, false);
+
+
+					//Fire once to make sure we registered
+					oRouter.fireRouteMatched({config: {}, name: "myRoute"});
+					oRouter.fireRoutePatternMatched({config: {}});
+
+					strictEqual(oRouteMatchedSpy.callCount, 1, "did fire the event");
+					strictEqual(oRoutePatternMatchedSpy.callCount, 1, "did fire the pattern matched event");
+
+					//Act
+					oRouteMatchedHandler.destroy();
+
+					//Fire the events again
+					oRouter.fireRouteMatched({config: {}});
+					oRouter.fireRoutePatternMatched({config: {}});
+
+					//Assert
+					strictEqual(oRouteMatchedSpy.callCount, 1, "did not fire the event again");
+					strictEqual(oRoutePatternMatchedSpy.callCount, 1, "did not fire the pattern matched event again");
+
+					strictEqual(oRouteMatchedHandler.getCloseDialogs(), false, "close dialogs was set to false");
+				});
+
+				QUnit.module("Transition Directions");
+
+				test("Should forward the Direction info to the TargetHandler", function () {
+					//Arrange
+					var view = createViewAndController("dummy"),
+							oRouter = fnCreateRouter({
+								myRoute : {}
+							}),
+							oNavContainer = new NavContainer(),
+							oEvent = {
+								config: {
+									viewLevel: 1
+								},
+								name: "myRoute",
+								view: "foo",
+								targetControl: oNavContainer
+							},
+							oNavigateStub = this.stub(TargetHandler.prototype, "navigate");
+
+					//System under Test
+					var oRouteMatchedHandler = new RouteMatchedHandler(oRouter);
+
+					//Act
+					oRouter.fireRoutePatternMatched(oEvent);
+
+					//Assert
+					strictEqual(oNavigateStub.callCount, 1, "did call navigate");
+					var oDirectionInfo = oNavigateStub.firstCall.args[0];
+
+					strictEqual(oEvent.config.viewLevel, oDirectionInfo.viewLevel, "did have the correct viewlevel");
+					ok(oDirectionInfo.askHistory, "did ask the history");
+
+					oRouter.destroy();
+				});
+
+				QUnit.module("Managing Containers", {
+					setup: function () {
+						this.oRouter = fnCreateRouter({
+							myRoute: {}
+						});
+					},
+					teardown: function () {
+						this.oRouter.destroy();
+					}
+				});
+
+				QUnit.test("Should do a forward navigation", function (assert) {
+					//Arrange
+					var view = createViewAndController("dummy"),
+							oNavContainer = new NavContainer({
+								pages: [ createViewAndController("initial"), view]
+							}),
+							oEvent = {
+								targetControl: oNavContainer,
+								arguments: { foo: "bar" },
+								config: {
+									transition: "flip",
+									transitionParameters: { testie: "test"}
+								},
+								view: view,
+								name: "myRoute"
+							},
+							oToSpy = this.spy(NavContainer.prototype, "to");
+
+					//System under Test
+					var oRouteMatchedHandler = new RouteMatchedHandler(this.oRouter);
+
+					//Act
+					this.oRouter.fireRouteMatched(oEvent);
+					this.oRouter.fireRoutePatternMatched(oEvent);
+
+					//Assert
+					assert.strictEqual(oToSpy.callCount, 1, "did call the 'to' function on the oNavContainer instance");
+					var oFirstCall = oToSpy.firstCall;
+
+					assert.strictEqual(oFirstCall.args[0], oEvent.view.getId(), "did navigate to the correct view");
+					assert.strictEqual(oFirstCall.args[1], oEvent.config.transition, "did show the correct transition");
+					assert.strictEqual(oFirstCall.args[2], oEvent.arguments, "did pass the correct arguments");
+					assert.strictEqual(oFirstCall.args[3], oEvent.config.transitionParameters, "did pass the transition parameters");
+				});
+
+			QUnit.test("Should do a backwards navigation", function (assert) {
+					//Arrange
+					var view = createViewAndController("dummy"),
+							oRouter = fnCreateRouter(),
+							oSplitContainer = new SplitContainer({
+								masterPages: [ createViewAndController("initial"), view]
+							}),
+							oEvent = {
+								targetControl: oSplitContainer,
+								arguments: { foo: "bar" },
+								config: {
+									transition: "flip",
+									transitionParameters: { testie: "test"}
+								},
+								view: view,
+								name: "myRoute"
+							},
+							oInsertPreviousPageSpy = this.spy(NavContainer.prototype, "insertPreviousPage"),
+							oBackToPageSpy = this.spy(NavContainer.prototype, "backToPage");
+
+					//simulate backwards navigation
+					this.stub(History.prototype, "getDirection", function () {
+						return "Backwards";
+					});
+
+					//System under Test
+					var oRouteMatchedHandler = new RouteMatchedHandler(this.oRouter);
+
+					//Act
+					this.oRouter.fireRouteMatched(oEvent);
+					this.oRouter.fireRoutePatternMatched(oEvent);
+
+					//Assert
+					assert.strictEqual(oInsertPreviousPageSpy.callCount, 1, "did insert the page in the navigation stack");
+					assert.strictEqual(oBackToPageSpy.callCount, 1, "did a backwards navigation to the page");
+
+					var oInsertCall = oInsertPreviousPageSpy.firstCall;
+					var oBackCall = oBackToPageSpy.firstCall;
+
+					assert.strictEqual(oInsertCall.args[0], oEvent.view.getId(), "did insert the correct view");
+					assert.strictEqual(oInsertCall.args[1], oEvent.config.transition, "did show the correct transition");
+					assert.strictEqual(oInsertCall.args[2], oEvent.arguments, "did pass the correct arguments");
+
+					assert.strictEqual(oBackCall.args[0], oEvent.view.getId(), "did a back to the correct view");
+					assert.strictEqual(oBackCall.args[1], oEvent.arguments, "did pass the correct arguments");
+					assert.strictEqual(oBackCall.args[2], oEvent.config.transitionParameters, "did pass the transition parameters");
+				});
+
+				QUnit.test("Should not navigate if the currentPage is already displayed", function (assert) {
+					//Arrange
+					var view = createViewAndController("dummy"),
+						oNavContainer = new NavContainer({
+							pages: [ view]
+						}),
+						oEvent = {
+							targetControl: oNavContainer,
+							config: {},
+							view: view,
+							name: "myRoute"
+						},
+						oToSpy = this.spy(NavContainer.prototype, "to"),
+						oNavigateSpy = this.spy(TargetHandler.prototype, "navigate");
+
+					//System under Test
+					var oRouteMatchedHandler = new RouteMatchedHandler(this.oRouter);
+
+					//Act
+					this.oRouter.fireRouteMatched(oEvent);
+					this.oRouter.fireRoutePatternMatched(oEvent);
+
+					//Assert
+					assert.strictEqual(oToSpy.callCount, 0, "did not call the 'to' function on the oNavContainer instance");
+					assert.strictEqual(oNavigateSpy.callCount, 1, "did call navigate");
+				});
+
+				module("Dialog closing", {
+					setup: function () {
+						var oPageToNavigateTo = new Page();
+						this.oNavContainer = new NavContainer({
+							pages: [ new Page(), oPageToNavigateTo ]
+						});
+						this.oEvent = {
+							targetControl: this.oNavContainer,
+							config: {},
+							view: oPageToNavigateTo,
+							name: "myRoute"
+						};
+						this.oRouter = fnCreateRouter({
+							myRoute: {}
+						});
+					},
+					teardown: function () {
+						this.oNavContainer.destroy();
+						this.oRouter.destroy();
+					}
+				});
+
+				function closeDialogsTestCase (bCloseDialogs) {
+					//Arrange
+					var bHasInstances = function () {
+								return true;
+							},
+							iExpectedCallCount = bCloseDialogs ? 1 : 0,
+							oCloseAllPopoversSpy = this.spy(InstanceManager, "closeAllPopovers"),
+							oCloseAllDialogsSpy = this.spy(InstanceManager, "closeAllDialogs"),
+
+							//System under Test
+							oRouteMatchedHandler = new RouteMatchedHandler(this.oRouter, bCloseDialogs);
+
+					this.stub(InstanceManager, "hasOpenPopover", bHasInstances);
+					this.stub(InstanceManager, "hasOpenDialog", bHasInstances);
+
+					//Act
+					this.oRouter.fireRouteMatched(this.oEvent);
+					this.oRouter.fireRoutePatternMatched(this.oEvent);
+
+					//Assert
+					strictEqual(oCloseAllPopoversSpy.callCount, iExpectedCallCount, "did close the popups");
+					strictEqual(oCloseAllDialogsSpy.callCount, iExpectedCallCount, "did close the dialogs");
+				}
+
+				test("Should close all dialogs", function () {
+					closeDialogsTestCase.call(this, true);
+				});
+
+				test("Should not close all dialogs", function () {
+					closeDialogsTestCase.call(this, false);
+				});
+
+				test("Should get/set close all dialogs", function (assert) {
+					// System under test
+					var oRouteMatchedHandler = new RouteMatchedHandler(fnCreateRouter());
+
+					// Assert + Act
+					assert.ok(oRouteMatchedHandler.getCloseDialogs(), "By default the routematched handler closes dialogs");
+
+					oRouteMatchedHandler.setCloseDialogs(false);
+
+					assert.ok(!oRouteMatchedHandler.getCloseDialogs(), "The setter changed the getter");
+					assert.ok(!oRouteMatchedHandler._oTargetHandler.getCloseDialogs(), "The setter changed the getter");
+				});
+
+
+				module("Routing with targets", {
+					setup: function () {
+						this.oDummyMaster = createViewAndController("DummyMaster");
+						this.oDummyDetail = createViewAndController("DummyDetail");
+						this.oSplitContainer = new SplitContainer({
+							masterPages: [ this.oDummyMaster ],
+							detailPages: [ this.oDummyDetail ]
+						});
+					},
+					teardown: function () {
+						this.oSplitContainer.destroy();
+						this.oDummyMaster.destroy();
+						this.oDummyDetail.destroy();
+					}
+				});
+
+				test("Should also work for routes with targets", function () {
+					//Arrange
+					var oMasterView = createViewAndController("Master"),
+						oDetailView = createViewAndController("Detail"),
+						sPattern = "anything",
+						oRouter =  fnCreateRouter({
+									detail: {
+										pattern: sPattern,
+										target: ["master", "detail"]
+									}
+								},
+								{
+									controlId: this.oSplitContainer.getId(),
+									viewType: "JS"
+								},
+								null,
+								{
+									master: {
+										viewName: "Master",
+										controlAggregation: "masterPages"
+									},
+									detail: {
+										viewName: "Detail",
+										controlAggregation: "detailPages"
+									}
+								}),
+						oRouteMatchedSpy = sinon.spy(oRouter.getRoute("detail"), "_routeMatched");
+
+					this.stub(sap.ui.Device.system, "phone", false);
+
+					// System under test
+					var oRouteMatchedHandler = new RouteMatchedHandler(oRouter);
+
+					//Act
+					oRouter.parse(sPattern);
+					return oRouteMatchedSpy.returnValues[0].then(function() {
+						//Assert
+						strictEqual(this.oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
+						strictEqual(this.oSplitContainer.getCurrentMasterPage().getViewName(), "Master", "did navigate to the master view");
+
+						oMasterView.destroy();
+						oDetailView.destroy();
+						oRouter.destroy();
+						oRouteMatchedHandler.destroy();
+
+						oRouteMatchedSpy.restore();
+					}.bind(this));
+				});
+
+				test("Should work with routes without targets mixed with routes with targets", function (assert) {
+					//Arrange
+					var oMasterView = createViewAndController("Master"),
+						oDetailView = createViewAndController("Detail"),
+						sPattern = "anything",
+						oRouter =  fnCreateRouter({
+									master: {
+										view: "Master",
+										targetControl: this.oSplitContainer.getId(),
+										targetAggregation: "masterPages",
+										subroutes: {
+											detail: {
+												pattern: sPattern,
+												target: ["detail"]
+											}
+										}
+									}
+								},
+								{
+									viewType: "JS"
+								},
+								null,
+								{
+									detail: {
+										viewName: "Detail",
+										controlAggregation: "detailPages",
+										controlId: this.oSplitContainer.getId()
+									}
+								});
+
+					this.stub(sap.ui.Device.system, "phone", false);
+
+					// System under test
+					var oRouteMatchedHandler = new RouteMatchedHandler(oRouter);
+					var fnAddNavigationSpy = sinon.spy(oRouteMatchedHandler._oTargetHandler, "addNavigation");
+					var oRouteMatchedSpy = sinon.spy(oRouter.getRoute("detail"), "_routeMatched");
+					// Act
+					oRouter.parse(sPattern);
+					return oRouteMatchedSpy.returnValues[0].then(function() {
+						//Assert
+						assert.strictEqual(this.oSplitContainer.getCurrentDetailPage().getViewName(), "Detail", "did navigate to the detail view");
+						assert.strictEqual(this.oSplitContainer.getCurrentMasterPage().getViewName(), "Master", "did navigate to the master view");
+						assert.strictEqual(fnAddNavigationSpy.callCount, 2, "did add exactly 2 navigations");
+
+						oMasterView.destroy();
+						oDetailView.destroy();
+						oRouter.destroy();
+						oRouteMatchedHandler.destroy();
+						oRouteMatchedSpy.restore();
+						fnAddNavigationSpy.restore();
+					}.bind(this));
+				});
+
+				///////////////////////////////////////////////////////
+				/// Integation test
+				///////////////////////////////////////////////////////
+				module("Integration tests");
+
+				QUnit.test("Should pass some data to the navContainer", function (assert) {
+					//Arrange
+					var oSplitContainer = new SplitContainer({
+								masterPages: [createViewAndController("InitialMaster")]
+							}),
+							oRouter = fnCreateRouter({
+								"Master": {
+									targetControl: oSplitContainer.getId(),
+									pattern: "{id}",
+									view: "Master",
+									viewType: "JS",
+									targetAggregation: "masterPages"
+								}
+							}),
+							data = null;
+
+					this.stub(sap.ui.Device.system, "phone", false);
+					var oRouteMatchedSpy = sinon.spy(oRouter.getRoute("Master"), "_routeMatched");
+
+					// System under test
+					var oRouteMatchedHandler = new RouteMatchedHandler(oRouter);
+
+
+					// views
+					createViewAndController("Master");
+
+					oRouter.getView("Master", "JS").addEventDelegate({
+						onBeforeShow: function (oEvent) {
+							data = oEvent.data.id;
+						}
+					});
+
+					// Act
+					oRouter.parse("5");
+					return oRouteMatchedSpy.returnValues[0].then(function() {
+						// Assert
+						assert.strictEqual(data, "5", "should pass 5 to the page");
+
+						// Cleanup
+						oRouter.destroy();
+						oRouteMatchedSpy.restore();
+					});
+				});
+
+				integrationTests.start({
+					setup: function (oConfig) {
+						var oRouter = fnCreateRouter(oConfig);
+						this.oGetViewStub = sinon.stub(oRouter._oViews, "_getViewWithGlobalId", helpers.createViewMock);
+
+						this.oRouter = oRouter;
+						this.oRouteMatchedHandler = new RouteMatchedHandler(oRouter);
+						return oRouter;
+					},
+					act: function (sPatternOrName, assert) {
+						var oRouteMatchedSpy = sinon.spy(this.oRouter.getRoute(sPatternOrName), "_routeMatched");
+						this.oRouter.parse(sPatternOrName);
+						if (assert) {
+							assert.strictEqual(oRouteMatchedSpy.callCount, 1, "_routeMatched method is called once");
+						}
+						var oPromise = oRouteMatchedSpy.returnValues[0];
+						oRouteMatchedSpy.restore();
+						return oPromise;
+					},
+					teardown: function () {
+						this.oRouter.destroy();
+						this.oRouteMatchedHandler.destroy();
+					}
+				});
+			});
+
+})();
+
+
+</script>
+</head>
+<body>
+<h1 id="qunit-header">qUnit Page for RouteMatchedHandler</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+
+</body>
+</html>

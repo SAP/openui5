@@ -171,10 +171,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 				this._oRouter.ignoreState = true;
 				this._oRoutes = {};
 				this._oOwner = oOwner;
-				this._oViews = new Views({component : oOwner});
+
+				// set the default view loading mode to sync for compatibility reasons
+				this._oConfig._async = this._oConfig.async;
+				if (this._oConfig._async === undefined) {
+					this._oConfig._async = false;
+				}
+
+				this._oViews = new Views({
+					component : oOwner,
+					async : this._oConfig._async
+				});
 
 				if (oTargetsConfig) {
-					this._oTargets = this._createTargets(oConfig, oTargetsConfig);
+					this._oTargets = this._createTargets(this._oConfig, oTargetsConfig);
 				}
 
 				var that = this,
@@ -678,6 +688,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 				this.fireBypassed({
 					hash: sHash
 				});
+			},
+
+			_isAsync : function() {
+				return this._oConfig._async;
 			},
 
 			metadata : {
