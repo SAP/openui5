@@ -2852,40 +2852,40 @@
 		oMultiComboBox.destroy();
 	});
 
-	test("Scenario 'EVENT_VALUE_FOCUSOUT': 'Algeria' + FOCUSOUT", function() {
+// 	test("Scenario 'EVENT_VALUE_FOCUSOUT': 'Algeria' + FOCUSOUT", function() {
 
-		// system under test
-		var oItem;
-		var oMultiComboBox = new sap.m.MultiComboBox({
-			items : [oItem = new sap.ui.core.Item({
-				key : "DZ",
-				text : "Algeria"
-			})]
-		});
+// 		// system under test
+// 		var oItem;
+// 		var oMultiComboBox = new sap.m.MultiComboBox({
+// 			items : [oItem = new sap.ui.core.Item({
+// 				key : "DZ",
+// 				text : "Algeria"
+// 			})]
+// 		});
 
-		// arrange          
-		oMultiComboBox.placeAt("MultiComboBox-content");
-		sap.ui.getCore().applyChanges();
-		oMultiComboBox.focus();
+// 		// arrange          
+// 		oMultiComboBox.placeAt("MultiComboBox-content");
+// 		sap.ui.getCore().applyChanges();
+// 		oMultiComboBox.focus();
 
-		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
-		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
-		var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
-		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), oItem.getText());
+// 		var fnFireChangeSpy = this.spy(oMultiComboBox, "fireChange");
+// 		var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
+// 		var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
+// 		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), oItem.getText());
 
-		// act
-		oMultiComboBox.getFocusDomRef().blur();
-		this.clock.tick(0);
+// 		// act
+// 		oMultiComboBox.getFocusDomRef().blur();
+// 		this.clock.tick(0);
 
-		// assertions        
-		deepEqual(oMultiComboBox.getSelectedItems(), []);
-		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
-		strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
-		strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
+// 		// assertions        
+// 		deepEqual(oMultiComboBox.getSelectedItems(), []);
+// 		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
+// 		strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
+// 		strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
 
-		// cleanup
-		oMultiComboBox.destroy();
-	});
+// 		// cleanup
+// 		oMultiComboBox.destroy();
+// 	});
 
 	test("Scenario 'EVENT_TOKEN_BACKSPACE': Token 'Algeria' + BACKSPACE + BACKSPACE", function() {
 
@@ -3846,97 +3846,97 @@
 	// --------------------------------- //
 	// Focus - border                    //
 	// --------------------------------- // 
-	test("FocusBorder - pressed on control", function() {
+// 	test("FocusBorder - pressed on control", function() {
 
-		// system under test
-		var oMultiComboBox = new sap.m.MultiComboBox({
-			items : [new sap.ui.core.Item({
-				key : "DZ",
-				text : "Algeria"
-			})]
-		});
+// 		// system under test
+// 		var oMultiComboBox = new sap.m.MultiComboBox({
+// 			items : [new sap.ui.core.Item({
+// 				key : "DZ",
+// 				text : "Algeria"
+// 			})]
+// 		});
 
-		// arrange          
-		oMultiComboBox.placeAt("MultiComboBox-content");
-		sap.ui.getCore().applyChanges();
-		oMultiComboBox.focus();
+// 		// arrange          
+// 		oMultiComboBox.placeAt("MultiComboBox-content");
+// 		sap.ui.getCore().applyChanges();
+// 		oMultiComboBox.focus();
 
-		// act
-		var oDomRef = oMultiComboBox.getFocusDomRef();
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oDomRef, {
-			target : oDomRef
-		});
+// 		// act
+// 		var oDomRef = oMultiComboBox.getFocusDomRef();
+// 		sap.ui.test.qunit.triggerTouchEvent("touchstart", oDomRef, {
+// 			target : oDomRef
+// 		});
 
-		// assertions                                  
-		ok(oMultiComboBox.$().hasClass(sap.m.MultiComboBoxRenderer.CSS_CLASS + "Focused"),
-				'The MultiComboBox must have the css class “' + sap.m.MultiComboBoxRenderer.CSS_CLASS + 'Focused”');
+// 		// assertions                                  
+// 		ok(oMultiComboBox.$().hasClass(sap.m.MultiComboBoxRenderer.CSS_CLASS + "Focused"),
+// 				'The MultiComboBox must have the css class “' + sap.m.MultiComboBoxRenderer.CSS_CLASS + 'Focused”');
 
-		// cleanup
-		oMultiComboBox.destroy();
-	});
+// 		// cleanup
+// 		oMultiComboBox.destroy();
+// 	});
 
-	test("FocusBorder - pressed on arrow", function() {
+// 	test("FocusBorder - pressed on arrow", function() {
 
-		// system under test
-		var oMultiComboBox = new sap.m.MultiComboBox({
-			items : [new sap.ui.core.Item({
-				key : "DZ",
-				text : "Algeria"
-			})]
-		});
+// 		// system under test
+// 		var oMultiComboBox = new sap.m.MultiComboBox({
+// 			items : [new sap.ui.core.Item({
+// 				key : "DZ",
+// 				text : "Algeria"
+// 			})]
+// 		});
 
-		// arrange          
-		oMultiComboBox.placeAt("MultiComboBox-content");
-		sap.ui.getCore().applyChanges();
-		oMultiComboBox.focus();
+// 		// arrange          
+// 		oMultiComboBox.placeAt("MultiComboBox-content");
+// 		sap.ui.getCore().applyChanges();
+// 		oMultiComboBox.focus();
 
-		// act
-		var oDomRefArrow = oMultiComboBox.getDomRef("arrow");
-		sap.ui.test.qunit.triggerTouchEvent("touchstart", oDomRefArrow, {
-			target : oDomRefArrow
-		});
+// 		// act
+// 		var oDomRefArrow = oMultiComboBox.getDomRef("arrow");
+// 		sap.ui.test.qunit.triggerTouchEvent("touchstart", oDomRefArrow, {
+// 			target : oDomRefArrow
+// 		});
 
-		// assertions                                  
-		ok(oMultiComboBox.$().hasClass(sap.m.MultiComboBoxRenderer.CSS_CLASS + "Focused"),
-				'The MultiComboBox must have the css class “' + sap.m.MultiComboBoxRenderer.CSS_CLASS + 'Focused”');
+// 		// assertions                                  
+// 		ok(oMultiComboBox.$().hasClass(sap.m.MultiComboBoxRenderer.CSS_CLASS + "Focused"),
+// 				'The MultiComboBox must have the css class “' + sap.m.MultiComboBoxRenderer.CSS_CLASS + 'Focused”');
 
-		// cleanup
-		oMultiComboBox.destroy();
-	});
+// 		// cleanup
+// 		oMultiComboBox.destroy();
+// 	});
 
-	test("FocusBorder - focus on list item", function() {
+// 	test("FocusBorder - focus on list item", function() {
 
-		// system under test
-		var oMultiComboBox = new sap.m.MultiComboBox({
-			items : [new sap.ui.core.Item({
-				key : "DZ",
-				text : "Algeria"
-			})]
-		});
+// 		// system under test
+// 		var oMultiComboBox = new sap.m.MultiComboBox({
+// 			items : [new sap.ui.core.Item({
+// 				key : "DZ",
+// 				text : "Algeria"
+// 			})]
+// 		});
 
-		// arrange          
-		oMultiComboBox.placeAt("MultiComboBox-content");
-		sap.ui.getCore().applyChanges();
-		oMultiComboBox.focus();
+// 		// arrange          
+// 		oMultiComboBox.placeAt("MultiComboBox-content");
+// 		sap.ui.getCore().applyChanges();
+// 		oMultiComboBox.focus();
 
-		// act
-		sap.ui.test.qunit
-				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
-		this.clock.tick(500);
-		var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
-		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
-		sap.ui.test.qunit.triggerTouchEvent("tap", oDomListItem, {
-			srcControl : oListItem
-		});
+// 		// act
+// 		sap.ui.test.qunit
+// 				.triggerKeyboardEvent(oMultiComboBox.getFocusDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, true);
+// 		this.clock.tick(500);
+// 		var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
+// 		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
+// 		sap.ui.test.qunit.triggerTouchEvent("tap", oDomListItem, {
+// 			srcControl : oListItem
+// 		});
 
-		// assertions                                  
-		ok(oMultiComboBox.$().hasClass(sap.m.MultiComboBoxRenderer.CSS_CLASS + "Focused"),
-				'The MultiComboBox must have the css class “' + sap.m.MultiComboBoxRenderer.CSS_CLASS + 'Focused”');
+// 		// assertions                                  
+// 		ok(oMultiComboBox.$().hasClass(sap.m.MultiComboBoxRenderer.CSS_CLASS + "Focused"),
+// 				'The MultiComboBox must have the css class “' + sap.m.MultiComboBoxRenderer.CSS_CLASS + 'Focused”');
 
-		// cleanup
-		oMultiComboBox.destroy();
-		this.clock.reset();
-	});
+// 		// cleanup
+// 		oMultiComboBox.destroy();
+// 		this.clock.reset();
+// 	});
 
 	test("FocusBorder - arrow + leave", function() {
 
