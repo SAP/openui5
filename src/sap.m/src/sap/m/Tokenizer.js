@@ -804,7 +804,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			type : Tokenizer.TokenChangeType.Added
 		});
 	};
-	
+
 	Tokenizer.prototype.removeToken = function(oToken) {
 		oToken = this.removeAggregation("tokens", oToken);
 		if (oToken) {
@@ -821,7 +821,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 		return oToken;
 	};
-	
+
 	Tokenizer.prototype.setTokens = function(aTokens) {
 		var oldTokens = this.getTokens();
 		this.removeAllTokens(false);
@@ -950,7 +950,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	/**
-	 * Function is called when token's delete icon was pressed function removes token from Tokenizer's aggregation
+	 * Function is called when token's delete icon was pressed function destroys token from Tokenizer's aggregation
 	 * 
 	 * @private
 	 * @param oEvent
@@ -958,7 +958,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Tokenizer.prototype._onDeleteToken = function(oEvent) {
 		var token = oEvent.getParameter("token");
 		if (token) {
-			this.removeToken(token);
+			token.destroy();
 			this.fireTokenChange({
 				addedTokens : [],
 				removedTokens : [token],
