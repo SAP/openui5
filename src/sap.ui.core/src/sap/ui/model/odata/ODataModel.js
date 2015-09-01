@@ -179,11 +179,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 			}
 			this.oMetadata = this.oServiceData.oMetadata;
 			
-			// USe cached annotations if available
-			if (this.oServiceData.oAnnotationsData) {
-				this._getAnnotationParser(this.oServiceData.oAnnotationsData);
-			}
-			
 			this.pAnnotationsLoaded = this.oMetadata.loaded();
 			
 			if (this.sAnnotationURI || !this.bSkipMetadataAnnotationParsing) {
@@ -213,11 +208,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 					]);
 				}
 			}
-			
-			if (this.oAnnotations) {
-				this.oServiceData.oAnnotationsData = this.oAnnotations.getAnnotationsData();
-			}
-			
 
 			if (mServiceUrlParams) {
 				// new URL params used -> add to ones from sServiceUrl

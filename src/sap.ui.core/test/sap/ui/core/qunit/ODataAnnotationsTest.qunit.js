@@ -4393,7 +4393,7 @@ function runODataAnnotationTests() {
 
 	
 	var fnTestCachedValueLists = function(iModelVersion) {
-		expect(49);
+		expect(40);
 
 		var mTest = mAdditionalTestsServices["Cached Value Lists"];
 		var oModel = fnCreateModel(iModelVersion, mTest.service, mTest.annotations);
@@ -4506,15 +4506,6 @@ function runODataAnnotationTests() {
 					oAnnotations["ui5.test.Annotation"], 
 					{ 
 						"ui5.test.SimpleAnnotation": { 
-							"String": "From Metadata"
-						},
-						"ui5.test.SimpleAnnotation-1": { 
-							"String": "From Metadata"
-						},
-						"ui5.test.SimpleAnnotation-2": { 
-							"String": "From Metadata"
-						},
-						"ui5.test.SimpleAnnotation-3": { 
 							"String": "From Metadata"
 						}
 					},
