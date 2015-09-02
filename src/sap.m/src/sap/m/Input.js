@@ -1146,7 +1146,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					contentHeight : oInput._bFullScreen ? undefined : "20rem",
 					customHeader : new Bar(oInput.getId()
 							+ "-popup-header", {
-						contentMiddle : oInput._oPopupInput
+						contentMiddle : oInput._oPopupInput.addEventDelegate({onsapenter: function(){
+								oInput._closeSuggestionPopup();
+							}}, this)
 					}),
 					horizontalScrolling : false,
 					initialFocus : oInput._oPopupInput
