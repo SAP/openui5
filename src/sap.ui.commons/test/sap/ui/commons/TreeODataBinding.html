@@ -26,7 +26,6 @@
 		height : "300px"
 	});
 	
-	
 	var oFactSheetNodeTemplate = new sap.ui.commons.TreeNode({
 		text : {
 			parts : [ "FirstName", "LastName" ],
@@ -57,7 +56,8 @@
 			navigation : {
 				'Employees' : 'Employees1'
 			}
-		}
+		},
+		filters: new sap.ui.model.Filter("FirstName", "EQ", "Nancy")
 	});
 	
 	oTree.placeAt('content');
