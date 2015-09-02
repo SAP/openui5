@@ -2923,7 +2923,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		}
 
 		// table control? (only if the selection behavior is set to row)
-		if (oEvent.target && oEvent.target.getAttribute("role") == "gridcell" && (
+		var oClosestTd;
+		if (oEvent.target) {
+			var $ClosestTd = jQuery(oEvent.target).closest("td");
+			if ($ClosestTd.length > 0) {
+				oClosestTd = $ClosestTd[0];
+			}
+		}
+
+		if (oClosestTd && oClosestTd.getAttribute("role") == "gridcell" && (
 		    this.getSelectionBehavior() === sap.ui.table.SelectionBehavior.Row ||
 		    this.getSelectionBehavior() === sap.ui.table.SelectionBehavior.RowOnly)) {
 			var $row = $target.closest(".sapUiTableCtrl > tbody > tr");
