@@ -1030,9 +1030,16 @@ sap.ui.define([
 								oControl.setValue(sValue);
 								// oCtrl.setValueState(sap.ui.core.ValueState.None);
 							} else {
-								oControl.setValue(oValue);
-								// oCtrl.setValueState(sap.ui.core.ValueState.Warning);
-								// oCtrl.setValueStateText(this._sValidationDialogFieldMessage);
+
+								if (!oValue && sValue && oConditionGrid.oFormatter instanceof sap.ui.core.format.DateFormat) {
+									oValue = new Date(sValue);
+									sValue = oConditionGrid.oFormatter.format(oValue);
+									oControl.setValue(sValue);
+								} else {									
+									oControl.setValue(oValue);
+									// oCtrl.setValueState(sap.ui.core.ValueState.Warning);
+									// oCtrl.setValueStateText(this._sValidationDialogFieldMessage);
+								}
 							}
 						}
 					}
