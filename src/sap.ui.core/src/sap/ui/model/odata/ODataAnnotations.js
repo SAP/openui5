@@ -238,6 +238,16 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 			// This also leads to using a difference XPath implementation @see getXPath
 			oXMLDoc = new ActiveXObject("Microsoft.XMLDOM"); // ??? "Msxml2.DOMDocument.6.0"
 			oXMLDoc.preserveWhiteSpace = true;
+
+			// The MSXML implementation does not parse documents with the technically correct "xmlns:xml"-attribute
+			// So if a document contains 'xmlns:xml="http://www.w3.org/XML/1998/namespace"', IE will stop working.
+			// This hack removes the XML namespace declaration which is then implicitly set to the default one.
+			if (sXMLContent.indexOf(" xmlns:xml=") > -1) {
+				sXMLContent = sXMLContent
+					.replace(' xmlns:xml="http://www.w3.org/XML/1998/namespace"', "")
+					.replace(" xmlns:xml='http://www.w3.org/XML/1998/namespace'", "");
+			}
+
 			oXMLDoc.loadXML(sXMLContent);
 		} else if (vXML) {
 			oXMLDoc = vXML;
@@ -246,6 +256,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 		} else {
 			jQuery.sap.log.fatal("The browser does not support XML parsing. Annotations are not available.");
 		}
+		
 
 		return oXMLDoc;
 	};
