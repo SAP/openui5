@@ -42,7 +42,6 @@
 		jQuery.sap.require("sap.m.semantic.SortSelect");
 		jQuery.sap.require("sap.m.semantic.FilterSelect");
 		jQuery.sap.require("sap.m.semantic.GroupSelect");
-		jQuery.sap.require("sap.m.semantic.DraftIndicator");
 
 		var aActionClasses = [sap.m.semantic.MultiSelectAction,
 							sap.m.semantic.MainAction,
@@ -65,7 +64,7 @@
 							sap.m.semantic.SendMessageAction,
 							sap.m.semantic.PrintAction,
 							sap.m.semantic.MessagesIndicator,
-							sap.m.semantic.DraftIndicator
+							sap.m.DraftIndicator
 		];
 
 		var aSelectClasses = [sap.m.semantic.SortSelect,
@@ -1155,7 +1154,7 @@
 			filter: new sap.m.semantic.FilterAction({press: onSemanticBtnPress}),
 			customHeaderContent: [new sap.m.Button({text: "Custom in header"})]
 		});
-	var draftInd = new sap.m.semantic.DraftIndicator();
+	var draftInd = new sap.m.DraftIndicator();
 		var page2 = new sap.m.semantic.DetailPage("detail", {
 			title: "{status>/detail/title}",
 			showNavButton: "{status>/detail/showNavButton}",

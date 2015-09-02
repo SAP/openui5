@@ -507,7 +507,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			}
 		};
 		
-		oTypeConfigs["sap.m.semantic.DraftIndicator"] = {
+		oTypeConfigs["draftIndicator"] = {
 			position: SemanticConfiguration.prototype._PositionInPage.footerLeft,
 			getSettings: function() {
 				return {

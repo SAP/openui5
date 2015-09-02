@@ -198,6 +198,16 @@
 		  "samples": ["sap.m.sample.DisplayListItem"]
 		},
 		{
+		  "id": "sap.m.DraftIndicator",
+		  "name": "Draft Indicator",
+		  "category": "Display",
+		  "since": "1.32",
+		  "samples": [
+		  	"sap.m.sample.DraftIndicator",
+		  	"sap.m.sample.SemanticPageDraftIndicator"
+		  ]
+		},
+		{
 		  "id": "sap.m.FacetFilter",
 		  "name": "Facet Filter",
 		  "category": "User Input",
@@ -634,7 +644,8 @@
 		  "since": "1.30",
 		  "samples": [
 			"sap.m.sample.SemanticPage",
-			"sap.m.sample.SemanticPageFullScreen"
+			"sap.m.sample.SemanticPageFullScreen",
+			"sap.m.sample.SemanticPageDraftIndicator"
 		  ]
 		},
 		{
@@ -1397,6 +1408,11 @@
 		  "description": "Semantic Page Full Screen"
 		},
 		{
+		  "id": "sap.m.sample.SemanticPageDraftIndicator",
+		  "name": "Semantic Page using Draft Indicator",
+		  "description": "Integration of Draft Indicator inside Semantic Page"
+		},
+		{
 		  "id": "sap.m.sample.ActionSelect",
 		  "name": "Action Select",
 		  "description": "Illustrates an Action Select with 2 actions."
@@ -1920,6 +1936,11 @@
 		  "id": "sap.m.sample.SplitApp",
 		  "name": "SplitApp standard use case",
 		  "description": "The SplitApp is the base for each master detail application. It extends the sap.m.SplitContainer control. The display of master NavContainer depends on the portrait/landscape orientation of the device and the mode of SplitApp."
+		},
+		{
+		  "id": "sap.m.sample.DraftIndicator",
+		  "name": "Draft Indicator",
+		  "description": "The Draft Indicator shows that eighter currently a draft is saving or that it is already saved. It does not block the current UI screen so other operations could be triggered in parallel."
 		}
 	  ]
 	}
