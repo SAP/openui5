@@ -935,10 +935,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		};
 
 		/**
-		 * Checks if the given node can be selected. Always true for TreeTable controls.
+		 * Checks if the given node can be selected. Always true for TreeTable controls, except the node is not defined.
 		 */
 		TreeBindingAdapter.prototype._isNodeSelectable = function (oNode) {
-			return true;
+			return !!oNode;
 		};
 
 		/**
@@ -949,7 +949,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		TreeBindingAdapter.prototype.setSelectedIndex = function (iRowIndex) {
 			var oNode = this.findNode(iRowIndex);
 
-			if (oNode) {
+			if (oNode && this._isNodeSelectable(oNode)) {
 				// clear and fetch the changes on the selection
 				var oChanges = this._clearSelection();
 
@@ -970,7 +970,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 				this._publishSelectionChanges(oChanges);
 			} else {
-				jQuery.sap.log.warning("TreeTable: Please make sure to only select rows, for which data has been fetched to the client.");
+				jQuery.sap.log.warning("TreeBindingAdapter: The selection was ignored. Please make sure to only select rows, for which data has been fetched to the client. For AnalyticalTables, some rows might not be selectable at all.");
 			}
 		};
 

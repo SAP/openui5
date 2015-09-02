@@ -1411,6 +1411,15 @@
 			deepEqual(oContext, aSelectedContexts[0], "Contexts should still equal");
 			equal(oContext.getProperty("HierarchyNode"), "001180", "Last Node should be selected");
 			
+			//select index out of range
+			oBinding.setSelectedIndex(300);
+			equal(oBinding.getSelectedIndex(), 9, "Selected index is still 9.");
+			
+			equal(oBinding._isNodeSelectable(0), false, "Illegal nodes are not selectable.");
+			equal(oBinding._isNodeSelectable(null), false, "Illegal nodes are not selectable.");
+			equal(oBinding._isNodeSelectable(undefined), false, "Illegal nodes are not selectable.");
+			equal(oBinding._isNodeSelectable(""), false, "Illegal nodes are not selectable.");
+			
 			start();
 		});
 	});
