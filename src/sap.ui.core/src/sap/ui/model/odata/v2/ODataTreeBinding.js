@@ -582,9 +582,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			// If rows are missing send a request
 			if (aMissingSections.length > 0) {
 				var aParams = [];
+				var sFilterParams = this.getFilterParams();
 				if (this.bHasTreeAnnotations) {
 					// application/control filter parameters, will be added to the node/level filter
-					var sFilterParams = this.getFilterParams() ? "%20and%20" + this.getFilterParams() : "";
+					sFilterParams = sFilterParams ? "%20and%20" + sFilterParams : "";
 					if (sNodeId) {
 						var sNodeFilterParams = this._getNodeFilterParams({id: sNodeId});
 						aParams.push("$filter=" + sNodeFilterParams + sFilterParams);
@@ -593,12 +594,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 						// in this case we use the root level
 						aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + " eq " + this.getRootLevel()) + sFilterParams);
 					}
-				}
-				/*else {
-					if (mRequestParameters.navPath) {
-						aParams.push("$expand=" + mRequestParameters.navPath);
+				} else {
+					// append application filters for navigation property case
+					if (sFilterParams) {
+						aParams.push("$filter=" + sFilterParams);
 					}
-				}*/
+				}
+				
 				if (this.sCustomParams) {
 					aParams.push(this.sCustomParams);
 				}
@@ -1398,8 +1400,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * @returns {string} the concatenated OData filters
 	 */
 	ODataTreeBinding.prototype.getFilterParams = function() {
-		if (this.aFilters && this.aFilters.length > 0) {
-			if (!this.sFilterParams) {
+		if (this.aFilters) {
+			this.aFilters = jQuery.isArray(this.aFilters) ? this.aFilters : [this.aFilters];
+			if (this.aFilters.length > 0 && !this.sFilterParams) {
 				this.sFilterParams = ODataUtils._createFilterParams(this.aFilters, this.oModel.oMetadata, this.oEntityType);
 				this.sFilterParams = this.sFilterParams ? this.sFilterParams : "";
 			}
