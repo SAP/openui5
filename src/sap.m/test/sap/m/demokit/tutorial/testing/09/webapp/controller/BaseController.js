@@ -76,30 +76,8 @@ sap.ui.define([
 				var bReplace = true;
 				this.getRouter().navTo(sRoute, mData, bReplace);
 			}
-		},
-
-		/**
-		 * Event handler when the share button has been clicked
-		 * @public
-		 */
-		onSharePress: function () {
-			var oShareSheet = this.getView().byId("shareSheet");
-			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), oShareSheet);
-			oShareSheet.openBy(this.byId("shareButton"));
-		},
-
-		/**
-		 * Event handler when the share by E-Mail button has been clicked
-		 * @public
-		 */
-		onShareEmailPress: function () {
-			var oViewModel = (this.getModel("objectView") || this.getModel("worklistView"));
-			sap.m.URLHelper.triggerEmail(
-				null,
-				oViewModel.getProperty("/shareSendEmailSubject"),
-				oViewModel.getProperty("/shareSendEmailMessage")
-			);
 		}
+
 
 	});
 

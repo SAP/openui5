@@ -35,30 +35,54 @@ sap.ui.require(
 			numberUnitValueTestCase.call(this, assert, "0", "0.00");
 		});
 
-		QUnit.module("Flagged");
+		QUnit.module("Price State");
 
-		function flaggedValueTestCase(assert, iValue, bExpectedValue) {
+		function priceStateTestCase(oOptions) {
 			// Act
-			var bValue = formatter.flagged(iValue);
+			var sState = formatter.priceState(oOptions.price);
 
 			// Assert
-			assert.strictEqual(bValue, bExpectedValue, "The flagged conversion was correct");
+			oOptions.assert.strictEqual(sState, oOptions.expected, "The price state was correct");
 		}
 
-		QUnit.test("Should convert 1 to true", function (assert) {
-			flaggedValueTestCase.call(this, assert, 1, true);
+		QUnit.test("Should format the products with a price lower than 50 to Success", function (assert) {
+			priceStateTestCase.call(this, {
+				assert: assert,
+				price: 42,
+				expected: "Success"
+			});
 		});
 
-		QUnit.test("Should convert 0 to false", function (assert) {
-			flaggedValueTestCase.call(this, assert, 0, false);
+		QUnit.test("Should format the products with a price of 50 to Normal", function (assert) {
+			priceStateTestCase.call(this, {
+				assert: assert,
+				price: 50,
+				expected: "None"
+			});
 		});
 
-		QUnit.test("Should convert an invalid value to false", function (assert) {
-			flaggedValueTestCase.call(this, assert, -666, false);
+		QUnit.test("Should format the products with a price between 50 and 250 to Normal", function (assert) {
+			priceStateTestCase.call(this, {
+				assert: assert,
+				price: 112,
+				expected: "None"
+			});
 		});
 
-		for (var i = 0; i < 1000; i++) {
-			console.log("haölsfd" + 1);
-		}
+		QUnit.test("Should format the products with a price between 250 and 2000 to Warning", function (assert) {
+			priceStateTestCase.call(this, {
+				assert: assert,
+				price: 798,
+				expected: "Warning"
+			});
+		});
+
+		QUnit.test("Should format the products with a price higher than 2000 to Error", function (assert) {
+			priceStateTestCase.call(this, {
+				assert: assert,
+				price: 2001,
+				expected: "Error"
+			});
+		});
 	}
 );

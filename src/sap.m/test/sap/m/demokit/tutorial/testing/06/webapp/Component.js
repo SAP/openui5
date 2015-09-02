@@ -2,9 +2,8 @@ sap.ui.define([
 	'sap/ui/core/UIComponent',
 	'sap/ui/model/resource/ResourceModel',
 	'sap/ui/demo/bulletinboard/model/models',
-	'sap/ui/Device',
-	'sap/ui/demo/bulletinboard/controller/ErrorHandler'
-], function (UIComponent, ResourceModel, models, Device, ErrorHandler) {
+	'sap/ui/Device'
+], function (UIComponent, ResourceModel, models, Device) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.bulletinboard.Component", {
@@ -21,61 +20,17 @@ sap.ui.define([
 		 */
 		init: function () {
 
-			// create the metadata promise
-			this._createMetadataPromise(this.getModel());
-
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
 
-			// initialize the error handler with the component
-			this._oErrorHandler = new ErrorHandler(this);
+			// allow saving values to the OData model
+			this.getModel().setDefaultBindingMode("TwoWay");
 
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
 
 			// create the views based on the url/hash
 			this.getRouter().initialize();
-		},
-
-		/**
-		 * In this function, the rootView is initialized and stored.
-		 * @public
-		 * @override
-		 * @returns {sap.ui.mvc.View} the root view of the component
-		 */
-		createContent: function () {
-			// call the base component's createContent function
-			var oRootView = UIComponent.prototype.createContent.apply(this, arguments);
-			oRootView.addStyleClass(this.getCompactCozyClass());
-			return oRootView;
-		},
-
-		/**
-		 * This method can be called to determine whether the sapUiSizeCompact or sapUiSizeCozy design mode class should be set, which influences the size appearance of some controls.
-		 * @public
-		 * @return {string} css class, either 'sapUiSizeCompact' or 'sapUiSizeCozy'
-		 */
-		getCompactCozyClass: function () {
-			if (!this._sCompactCozyClass) {
-				if (!Device.support.touch) { // apply compact mode if touch is not supported; this could me made configurable for the user on "combi" devices with touch AND mouse
-					this._sCompactCozyClass = "sapUiSizeCompact";
-				} else {
-					this._sCompactCozyClass = "sapUiSizeCozy"; // needed for desktop-first controls like sap.ui.table.Table
-				}
-			}
-			return this._sCompactCozyClass;
-		},
-
-		/**
-		 * Creates a promise which is resolved when the metadata is loaded.
-		 * @param {sap.ui.core.Model} oModel the app model
-		 * @private
-		 */
-		_createMetadataPromise: function (oModel) {
-			this.oWhenMetadataIsLoaded = new Promise(function (fnResolve, fnReject) {
-				oModel.attachEventOnce("metadataLoaded", fnResolve);
-				oModel.attachEventOnce("metadataFailed", fnReject);
-			});
 		}
 
 	});

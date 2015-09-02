@@ -952,37 +952,26 @@
 		},
 		{
 		  "id": "sap.m.tutorial.testing",
-		  "name": "[PREVIEW] Testing Apps",
+		  "name": "Testing Apps",
 		  "category": "Tutorial",
 		  "since": "1.30",
 		  "formFactors": "-",
-		  "description": "In this tutorial we will test application functionality with QUnit, OPA5, and the mock server. Pleaae have a look at the tutorial documentation in the developer guide for more details",
+		  "description": "In this tutorial we will test application functionality with QUnit, OPA5, and the mock server. Please have a look at the tutorial documentation in the developer guide for more details",
 		  "samplesAsSteps": [
 			"Handover and Testing Strategy",
 			"A first Unit Test",
+			"Adding a price formatter",
+			"Testing a new type module",
 			"Adding a flagged button",
 			"A first OPA Test",
 			"Changing the Table to grow",
 			"Testing Navigation",
-			"Adding the Detail Page",
+			"Adding the Post Page",
 			"Testsuite and Automated Testing",
-			"Mocking Data and Defining URL Parameters for Testing"
-		  ],
-		  "unfinishedStepsThatAreNotParsedByExplored": [
-			"Testing Control Visibility",
-			"Adding an Info Tab",
 			"Testing Interactions",
-			"Adding a Statistics Tab",
-			"Testing Internationalization",
-			"Implementing more fields for the statistics tab",
-			"Testing Custom Formatters",
-			"Writing a Date Formatter",
-			"Testing Controllers",
-			"Implement a Controller Feature",
-			"Testing Responsiveness",
-			"Make the table responsive",
-			"Testing Errors",
-			"Implementing an interaction that can fail"
+			"Adding Tabs",
+			"Writing a Short Date Formatter TDD style",
+			"Adding the date formatter"
 		  ]
 		}
 	  ],

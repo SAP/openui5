@@ -9,21 +9,13 @@ sap.ui.require([
 			onTheBrowser: {
 				baseClass: Common,
 				actions: {
-					iRestartTheAppWithTheRememberedItem: function (oOptions) {
-						this.waitFor({
-							success: function () {
-								this.iTeardownMyAppFrame();
-							}
-						});
-
+					iPressOnTheForwardButton: function () {
 						return this.waitFor({
 							success: function () {
-								var sObjectId = this.getContext().currentItem.getBindingContext().getProperty("PostID");
-								oOptions.hash = "Posts/" + encodeURIComponent(sObjectId);
-								this.iStartMyApp(oOptions);
+								Opa5.getWindow().history.forward();
 							}
 						});
-					}
+					},
 				},
 				assertions: {}
 			}
