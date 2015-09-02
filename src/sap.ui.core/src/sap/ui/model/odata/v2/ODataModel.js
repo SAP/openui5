@@ -4503,6 +4503,16 @@ sap.ui.define([
 			this.oMetaModel.loaded().then(function() {
 				that.bMetaModelLoaded = true;
 				that.checkUpdate();
+			})["catch"](function (oError) {
+				var sMessage = oError.message,
+					sDetails;
+
+				if (!sMessage && oError.xmlDoc && oError.xmlDoc.parseError) {
+					sMessage = oError.xmlDoc.parseError.reason;
+					sDetails = oError.xmlDoc.parseError.srcText;
+				}
+				jQuery.sap.log.error("error in ODataMetaModel.loaded(): " + sMessage, sDetails,
+					"sap.ui.model.odata.v2.ODataModel");
 			});
 		}
 		return this.oMetaModel;
