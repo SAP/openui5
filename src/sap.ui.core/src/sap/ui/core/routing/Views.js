@@ -35,7 +35,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UI
 
 				EventProvider.apply(this, arguments);
 
-				var async = (oOptions.async === undefined) ? false : oOptions.async;
+				// temporarily: for checking the url param
+				function checkUrl() {
+					if (jQuery.sap.getUriParameters().get("sap-ui-xx-asyncRouting") === "true") {
+						jQuery.sap.log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "Views");
+						return true;
+					}
+					return false;
+				}
+
+				// set the default view loading mode to sync for compatibility reasons
+				// temporarily: set the default value depending on the url parameter "sap-ui-xx-asyncRouting"
+				var async = (oOptions.async === undefined) ? checkUrl() : oOptions.async;
 				var ViewsStub = async ? asyncViews : syncViews;
 
 				for (var fn in ViewsStub) {
