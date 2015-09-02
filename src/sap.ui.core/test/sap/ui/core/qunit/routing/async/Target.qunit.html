@@ -22,7 +22,7 @@
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-		sinon.config.useFakeTimers = true;
+		sinon.config.useFakeTimers = false;
 
 		jQuery.sap.require("sap.ui.core.routing.Views");
 		jQuery.sap.require("sap.ui.core.routing.Target");
@@ -80,6 +80,8 @@
 
 			// Act
 			var oDisplayed = this.oTarget.display();
+
+
 
 			return oDisplayed.then(function() {
 				// Assert
