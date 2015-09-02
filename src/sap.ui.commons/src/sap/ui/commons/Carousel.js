@@ -605,7 +605,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			$Me.height(maxHeight);
 
 			var iVisibleItemsCount = this.getContent().length < visibleItems ? this.getContent().length : visibleItems;
-			$Me.width(maxWidth * iVisibleItemsCount + (this.getHandleSize() * 2 - 1));
+			//If the width is set explicitly by the developer the carousel will be set to this value.
+			//Othervise it will be the visible items plus the handles
+			if (this.getWidth()) {
+				$Me.width(this.getWidth());
+			} else {
+				$Me.width(maxWidth * iVisibleItemsCount + (this.getHandleSize() * 2 - 1));
+			}
 		} else {
 			contentBarSize = $Me.height() - this.getHandleSize() * 2 - 1;
 			$ContentArea.css('top', this.getHandleSize() + "px").css('bottom', this.getHandleSize() + "px");
