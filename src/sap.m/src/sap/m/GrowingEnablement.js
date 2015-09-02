@@ -298,6 +298,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				return sap.m.ListMode.None;
 			};
 			
+			// stop tab forwarding of the ListItemBase
+			this._oTrigger.onsaptabnext = function() {
+			};
+			
 			return this._oTrigger;
 		},
 
