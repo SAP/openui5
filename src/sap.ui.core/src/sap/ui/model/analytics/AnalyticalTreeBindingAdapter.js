@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.model.odata.ODataAnnotations
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBinding', 'sap/ui/table/TreeAutoExpandMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/odata/ODataTreeBindingAdapter', 'sap/ui/model/TreeBindingUtils'],
-	function(jQuery, TreeBinding, AnalyticalBinding, TreeAutoExpandMode, ChangeReason, ODataTreeBindingAdapter, TreeBindingUtils) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBinding', 'sap/ui/table/TreeAutoExpandMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/odata/ODataTreeBindingAdapter', 'sap/ui/model/TreeBindingAdapter', 'sap/ui/model/TreeBindingUtils'],
+	function(jQuery, TreeBinding, AnalyticalBinding, TreeAutoExpandMode, ChangeReason, ODataTreeBindingAdapter, TreeBindingAdapter, TreeBindingUtils) {
 	"use strict";
 
 	/**
@@ -114,6 +114,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	 * In the AnalyticalTable, only leaf nodes can be selected.
 	 */
 	AnalyticalTreeBindingAdapter.prototype._isNodeSelectable = function (oNode) {
+		if (!oNode) {
+			return false;
+		}
 		return oNode.isLeaf && !oNode.isArtificial;
 	};
 	
@@ -625,7 +628,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	AnalyticalTreeBindingAdapter.prototype.collapseToLevel = function(iLevel) {
 		// reconfigure the auto expand level
 		this.setNumberOfExpandedLevels(iLevel, true);
-		ODataTreeBindingAdapter.prototype.collapseToLevel.call(this, iLevel);
+		TreeBindingAdapter.prototype.collapseToLevel.call(this, iLevel);
 	};
 
 	
