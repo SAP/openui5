@@ -267,7 +267,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			var cancelButtonText = this.getCancelButtonText();
 			var closeButtonText = cancelButtonText ? cancelButtonText : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUSYDIALOG_CANCELBUTTON_TEXT");
 
-			return this._cancelButton ? this._cancelButton : this._cancelButton = new sap.m.Button({
+			return this._cancelButton ? this._cancelButton : this._cancelButton = new sap.m.Button(this.getId() + 'busyCancelBtn', {
 				text: closeButtonText,
 				press: function () {
 					this.close(true);
