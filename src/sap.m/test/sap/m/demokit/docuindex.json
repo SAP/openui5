@@ -910,7 +910,7 @@
 		  "category": "Tutorial",
 		  "since": "1.30",
 		  "formFactors": "-",
-		  "description": "In this tutorial we are introducing you to all major development paradigms of SAPUI5.",
+		  "description": "In this tutorial we are introducing you to all major development paradigms of SAPUI5",
 		  "docuLink": "#docs/guide/3da5f4be63264db99f2e5b04c5e853db.html",
 		  "samplesAsSteps": [
 			"Hello World!",
@@ -956,7 +956,7 @@
 		  "category": "Tutorial",
 		  "since": "1.30",
 		  "formFactors": "-",
-		  "description": "In this tutorial we will test application functionality with QUnit, OPA5, and the mock server. Please have a look at the tutorial documentation in the developer guide for more details",
+		  "description": "In this tutorial we will test application functionality with QUnit, OPA5, and the mock server",
 		  "samplesAsSteps": [
 			"Handover and Testing Strategy",
 			"A first Unit Test",
