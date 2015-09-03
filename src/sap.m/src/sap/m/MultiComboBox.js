@@ -347,8 +347,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			if (oItem) {
 				this.getListItem(oItem).focus();
 			}
-
-			return;
 		}
 	};
 
@@ -1076,12 +1074,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * @private
 	 */
 	MultiComboBox.prototype._hasTokens = function() {
-
-		if (this._oTokenizer.getTokens().length) {
-			return true;
-		}
-
-		return false;
+		return this._oTokenizer.getTokens().length;
 	};
 
 	/**
