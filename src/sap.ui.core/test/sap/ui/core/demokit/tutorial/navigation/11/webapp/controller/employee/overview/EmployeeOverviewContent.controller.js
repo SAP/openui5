@@ -19,17 +19,15 @@ sap.ui.define([
 			this._initViewSettingsDialog();
 		},
 
-		onSortButtonPressed : function (oEvent) {
+		onSortButtonPressed : function () {
 			this._oVSD.open();
 		},
 
 		onSearchEmployeesTable : function (oEvent) {
-			var sQuery = oEvent.getSource().getValue();
 			this._applySearchFilter( oEvent.getSource().getValue() );
 		},
 
 		_initViewSettingsDialog : function () {
-			var oRouter = this.getRouter();
 			this._oVSD = new sap.m.ViewSettingsDialog("vsd", {
 				confirm: function (oEvent) {
 					var oSortItem = oEvent.getParameter("sortItem");
