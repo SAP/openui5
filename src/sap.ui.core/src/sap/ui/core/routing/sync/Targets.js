@@ -4,12 +4,24 @@
 sap.ui.define([], function() {
 	"use strict";
 
+	/**
+	 * Provide methods for sap.ui.core.routing.Targets in sync mode
+	 * @private
+	 * @experimental
+	 * @since 1.33
+	 */
 	return {
 
+		/**
+		 * @private
+		 */
 		display: function(vTargets, vData) {
 			this._display(vTargets, vData);
 		},
 
+		/**
+		 * @private
+		 */
 		_display: function(vTargets, vData) {
 			var that = this;
 
@@ -24,6 +36,9 @@ sap.ui.define([], function() {
 			return this;
 		},
 
+		/**
+		 * @private
+		 */
 		_displaySingleTarget: function(sName, vData) {
 			var oTarget = this.getTarget(sName);
 

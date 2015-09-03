@@ -4,8 +4,17 @@
 sap.ui.define([], function() {
 	"use strict";
 
+	/**
+	 * Provide methods for sap.ui.core.routing.Views in sync mode
+	 * @private
+	 * @experimental
+	 * @since 1.33
+	 */
 	return {
 
+		/**
+		 * @private
+		 */
 		_getViewWithGlobalId : function (oOptions) {
 			function fnCreateView() {
 				return sap.ui.view(oOptions);

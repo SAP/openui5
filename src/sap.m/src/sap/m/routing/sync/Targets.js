@@ -4,8 +4,17 @@
 sap.ui.define([], function() {
 	"use strict";
 
+	/**
+	 * Provide methods for sap.m.routing.Targets in sync mode
+	 * @private
+	 * @experimental
+	 * @since 1.33
+	 */
 	return {
 
+		/**
+		 * @private
+		 */
 		display: function () {
 			var iViewLevel,
 				sName;
@@ -29,6 +38,10 @@ sap.ui.define([], function() {
 			return oReturnValue;
 		},
 
+
+		/**
+		 * @private
+		 */
 		_displaySingleTarget: function (sName) {
 			var oTarget = this.getTarget(sName);
 			if (oTarget) {
