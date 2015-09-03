@@ -54,12 +54,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 					/**
 					 * Aggregation that contains the up arrow.
 					 */
-					_arrowUp: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden" },
+					_arrowUp: {type: "sap.m.Button", multiple: false, visibility: "hidden" },
 
 					/**
 					 * Aggregation that contains the down arrow.
 					 */
-					_arrowDown: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden" }
+					_arrowDown: {type: "sap.m.Button", multiple: false, visibility: "hidden" }
 				},
 				events: {
 					/**
@@ -839,11 +839,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		TimePickerSlider.prototype._initArrows = function() {
 			var that = this, oArrowUp, oArrowDown;
 
-			oArrowUp = new sap.ui.core.Icon({
-				src: IconPool.getIconURI("slim-arrow-up"),
+			oArrowUp = new sap.m.Button({
+				icon: IconPool.getIconURI("slim-arrow-up"),
 				press: function (oEvent) {
 					that._offsetValue(-1);
-				}
+				},
+				type: 'Transparent'
 			});
 			oArrowUp.addEventDelegate({
 				onAfterRendering: function () {
@@ -853,11 +854,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 			this.setAggregation("_arrowUp", oArrowUp);
 
-			oArrowDown = new sap.ui.core.Icon({
-				src: IconPool.getIconURI("slim-arrow-down"),
+			oArrowDown = new sap.m.Button({
+				icon: IconPool.getIconURI("slim-arrow-down"),
 				press: function (oEvent) {
 					that._offsetValue(1);
-				}
+				},
+				type: 'Transparent'
 			});
 
 			oArrowDown.addStyleClass("sapMTimePickerItemArrowDown");
