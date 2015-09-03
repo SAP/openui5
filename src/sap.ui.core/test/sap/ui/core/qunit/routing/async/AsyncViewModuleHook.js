@@ -29,15 +29,23 @@ sap.ui.define([], function() {
 						return url.indexOf("testdata/routing") === -1;
 					});
 
-					var server = this.server = sinon.fakeServer.create();
-					this.server.autoRespond = true;
-					aViews.forEach(function(oViewSetting, iIndex) {
-						server.respondWith("GET", oViewSetting.path, [
-							200, {
+					xhr.onCreate = function(request) {
+						var fnRespond = function() {
+							request.respond(200, {
 								"Content-Type": "application/xml",
-							}, oViewSetting.content
-						]);
-					});
+								"Cache-Control": "no-cache, no-store, must-revalidate",
+								"Pragma": "no-cache",
+								"Expires": "0"
+							}, aViews[parseInt(request.url.slice(-10, -9)) - 1].content);
+						};
+						request.onSend = function() {
+							if (!request.async) {
+								fnRespond();
+							} else {
+								setTimeout(fnRespond, 50);
+							}
+						};
+					};
 
 					if (oSetting && oSetting.beforeEach) {
 						oSetting.beforeEach.apply(this);
@@ -45,7 +53,6 @@ sap.ui.define([], function() {
 				},
 
 				afterEach: function() {
-					this.server.restore();
 					if (oSetting && oSetting.afterEach) {
 						oSetting.afterEach.apply(this);
 					}
