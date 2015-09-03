@@ -412,7 +412,32 @@
 		});
 	});
 
-	asyncTest("Tried filtering", function() {
+	asyncTest("Application filtering allowed", function() {
+
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/Employees", null, [new sap.ui.model.Filter("FirstName", "EQ", "Nancy")], {
+				navigation: {}
+			});
+			
+			var handler1 = function(oEvent) {
+				oBinding.detachChange(handler1);
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts();
+				
+				equal(aContexts.length, 1, "TreeBinding rootContexts length is 1 after application filtering");
+				
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FirstName", oContext), "Nancy", "After refresh: TreeBinding root contexts[0] is correct (Tom)");
+				
+				start();
+			}
+			
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts();
+		});
+	});
+
+	asyncTest("Control filtering prohibited", function() {
 
 		oModel.attachMetadataLoaded(function() {
 			var iWarningCount = 0,
