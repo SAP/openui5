@@ -340,6 +340,10 @@
 			return false;
 		}
 
+		if (navigator.userAgent.indexOf("SAPFioriClient") !== -1) {
+			return false;
+		}
+
 		return true;
 	}
 
