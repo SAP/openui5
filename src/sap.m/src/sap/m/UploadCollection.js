@@ -1375,7 +1375,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	UploadCollection.prototype._handleEdit = function(oEvent, oItem) {
 		var i,
 			sItemId = oItem.getId(),
-			cItems = this.aItems.length;
+			cItems = this.aItems.length;			
+			if (this.editModeItem) {
+				sap.m.UploadCollection.prototype._handleOk(oEvent, this, this.editModeItem, false);
+			}
 		if (this.sErrorState !== "Error") {
 			for (i = 0; i < cItems ; i++) {
 				if (this.aItems[i].getId() === sItemId) {
@@ -1396,19 +1399,22 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @param {string} sSourceId List item id/identifier were the click was triggered
 	 * @private
 	 */
-	UploadCollection.prototype._handleClick = function(oEvent, oContext, sSourceId) {
-		if (oEvent.target.id.lastIndexOf("editButton") > 0) {
-			sap.m.UploadCollection.prototype._handleOk(oEvent, oContext, sSourceId, false);
-		} else if (oEvent.target.id.lastIndexOf("cancelButton") > 0) {
-			sap.m.UploadCollection.prototype._handleCancel(oEvent, oContext, sSourceId);
-		} else if (oEvent.target.id.lastIndexOf("ia_imageHL") < 0 &&
-					oEvent.target.id.lastIndexOf("ia_iconHL") < 0 &&
-					oEvent.target.id.lastIndexOf("deleteButton") < 0 &&
-					oEvent.target.id.lastIndexOf("ta_editFileName-inner") < 0) {
-			if (oEvent.target.id.lastIndexOf("cli") > 0) {
-				oContext.sFocusId = oEvent.target.id;
+	UploadCollection.prototype._handleClick = function(oEvent, oContext, sSourceId) {        
+		// if the target of the click event is an editButton, than this case has already been processed
+		// in the _handleEdit (in particular, by executing the _handleOk function).
+		// Therefore only the remaining cases of click event targets are handled.
+		if (oEvent.target.id.lastIndexOf("editButton") < 0) {
+			if (oEvent.target.id.lastIndexOf("cancelButton") > 0) {
+				sap.m.UploadCollection.prototype._handleCancel(oEvent, oContext, sSourceId);
+			} else if (oEvent.target.id.lastIndexOf("ia_imageHL") < 0 
+					   && oEvent.target.id.lastIndexOf("ia_iconHL") < 0
+					   && oEvent.target.id.lastIndexOf("deleteButton") < 0
+					   && oEvent.target.id.lastIndexOf("ta_editFileName-inner") < 0) {
+				if (oEvent.target.id.lastIndexOf("cli") > 0) {
+					oContext.sFocusId = oEvent.target.id;
+				}
+				sap.m.UploadCollection.prototype._handleOk(oEvent, oContext, sSourceId, true);
 			}
-			sap.m.UploadCollection.prototype._handleOk(oEvent, oContext, sSourceId, true);
 		}
 	};
 
