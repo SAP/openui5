@@ -1905,7 +1905,7 @@ if ( eventCaptureSupported ) {
 	// events and the mouse event's target is different than the target of the
 	// touch event.
 	// Do not suppress mouse and click events on Windows Phone.
-	if (!sap.ui.Device.os.windows_phone) {
+	if (!(sap.ui.Device.os.windows_phone && sap.ui.Device.os.version < 10)) {
 		document.addEventListener( "mousedown", suppressEvent, true );
 		document.addEventListener( "mouseup", suppressEvent, true );
 		document.addEventListener( "click", suppressEvent, true );
