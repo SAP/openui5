@@ -2645,7 +2645,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._processChange = function(sKey, oData, sUpdateMethod) {
-		var oPayload, oEntityType, sETag, sMethod, sUrl, mHeaders, oRequest, oUnModifiedEntry, that = this;
+		var oPayload, oEntityType, sMethod, sUrl, mHeaders, oRequest, oUnModifiedEntry, that = this;
 
 		// delete expand properties = navigation properties
 		oEntityType = this.oMetadata._getEntityTypeByPath(sKey);
@@ -2714,7 +2714,7 @@ sap.ui.define([
 
 		sUrl = this._createRequestUrl('/' + sKey);
 		mHeaders = this._getHeaders();
-		oRequest = this._createRequest(sUrl, sMethod, mHeaders, oPayload, sETag);
+		oRequest = this._createRequest(sUrl, sMethod, mHeaders, oPayload, this.getETag(oPayload));
 
 		if (this.bUseBatch) {
 			oRequest.requestUri = oRequest.requestUri.replace(this.sServiceUrl + '/','');
