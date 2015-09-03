@@ -52,45 +52,51 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 			return formattedLibraries;
 		}
 
-		// Name space for all technical information about the framework
-		var frameworkInformation = {
+		/**
+		 * Get all the relevant information for the framework.
+		 * @returns {Object}
+		 * @private
+		 */
+		function _getFrameworkInformation() {
+			return {
+				commonInformation: {
+					frameworkName: _getFrameworkName(),
+					version: Global.version,
+					buildTime: Global.buildinfo.buildtime,
+					lastChange: Global.buildinfo.lastchange,
+					userAgent: navigator.userAgent,
+					applicationHREF: window.location.href,
+					documentTitle: document.title,
+					documentMode: document.documentMode || '',
+					debugMode: jQuery.sap.debug(),
+					statistics: jQuery.sap.statistics()
+				},
 
-			commonInformation: {
-				frameworkName: _getFrameworkName(),
-				version: Global.version,
-				buildTime: Global.buildinfo.buildtime,
-				lastChange: Global.buildinfo.lastchange,
-				userAgent: navigator.userAgent,
-				applicationHREF: window.location.href,
-				documentTitle: document.title,
-				documentMode: document.documentMode || '',
-				debugMode: jQuery.sap.debug(),
-				statistics: jQuery.sap.statistics()
-			},
+				configurationBootstrap: window['sap-ui-config'] || Object.create(null),
 
-			configurationBootstrap: window['sap-ui-config'] || Object.create(null),
+				configurationComputed: {
+					theme: configurationInfo.getTheme(),
+					language: configurationInfo.getLanguage(),
+					formatLocale: configurationInfo.getFormatLocale(),
+					accessibility: configurationInfo.getAccessibility(),
+					animation: configurationInfo.getAnimation(),
+					rtl: configurationInfo.getRTL(),
+					debug: configurationInfo.getDebug(),
+					inspect: configurationInfo.getInspect(),
+					originInfo: configurationInfo.getOriginInfo(),
+					noDuplicateIds: configurationInfo.getNoDuplicateIds()
+				},
 
-			configurationComputed: {
-				theme: configurationInfo.getTheme(),
-				language: configurationInfo.getLanguage(),
-				formatLocale: configurationInfo.getFormatLocale(),
-				accessibility: configurationInfo.getAccessibility(),
-				animation: configurationInfo.getAnimation(),
-				rtl: configurationInfo.getRTL(),
-				debug: configurationInfo.getDebug(),
-				inspect: configurationInfo.getInspect(),
-				originInfo: configurationInfo.getOriginInfo(),
-				noDuplicateIds: configurationInfo.getNoDuplicateIds()
-			},
+				libraries: _getLibraries(),
 
-			libraries: _getLibraries(),
+				loadedLibraries: _getLoadedLibraries(),
 
-			loadedLibraries: _getLoadedLibraries(),
+				loadedModules: jQuery.sap.getAllDeclaredModules().sort(),
 
-			loadedModules: jQuery.sap.getAllDeclaredModules().sort(),
+				URLParameters: jQuery.sap.getUriParameters().mParams
+			};
+		}
 
-			URLParameters: jQuery.sap.getUriParameters().mParams
-		};
 
 		//================================================================================
 		// Control tree Information
@@ -328,9 +334,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 			 * Common information about the framework
 			 * @returns {*}
 			 */
-			getFrameworkInformation: function () {
-				return frameworkInformation;
-			},
+			getFrameworkInformation: _getFrameworkInformation,
 
 			/**
 			 * Array model of the rendered control as a tree
