@@ -81,12 +81,12 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			/**
 			 * This property is supported by both variants. Please see the documentation on sap.m.Popover#horizontalScrolling and sap.m.Dialog#horizontalScrolling
 			 */
-			horizontalScrolling : {type : "boolean", group : "Misc", defaultValue : null},
+			horizontalScrolling : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
 			 * This property is supported by both variants. Please see the documentation on sap.m.Popover#verticalScrolling and sap.m.Dialog#verticalScrolling
 			 */
-			verticalScrolling : {type : "boolean", group : "Misc", defaultValue : null},
+			verticalScrolling : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
 			 * Whether a close button should be inserted to the dialog's header dynamically to close the dialog. This property only takes effect when runs on the phone.
