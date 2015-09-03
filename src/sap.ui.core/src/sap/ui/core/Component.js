@@ -601,9 +601,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 						// default 'undefined' is already set in this case
 				}
 			}
-
+			
+			// Origin: if sap-system paramter is given -> add this alias to the service url(s) of ODataModels
+			var oComponentData = this.getComponentData();
+			var sSystemParameter = oComponentData && oComponentData.startupParameters && oComponentData.startupParameters["sap-system"];
+			// Check the URL as "fallback", the system parameter of the componentData.startup has precedence over a URL parameter
+			if (!sSystemParameter) {
+				sSystemParameter = oUriParams.get("sap-system");
+			}
+			
+			// lazy load the ODataUtils if systemParameter is given
+			var bAddOrigin = false;
+			var ODataUtils;
+			if (sSystemParameter && jQuery.inArray(oModelConfig.type, ["sap.ui.model.odata.ODataModel", "sap.ui.model.odata.v2.ODataModel"]) != -1) {
+				bAddOrigin = true;
+				jQuery.sap.require("sap.ui.model.odata.ODataUtils");
+				ODataUtils = sap.ui.require("sap/ui/model/odata/ODataUtils");
+			}
+			
 			// include "uri" property in "settings" object, depending on "uriSettingName"
 			if (oModelConfig.uri) {
+				
+				if (bAddOrigin) {
+					// Origin segment: pre- and postOriginBaseUris do not include uri params, they will be used for annotation uri adaption
+					oModelConfig.preOriginBaseUri = oModelConfig.uri.split("?")[0];
+					oModelConfig.uri = ODataUtils.setOrigin(oModelConfig.uri, {
+						alias: sSystemParameter
+					});
+					oModelConfig.postOriginBaseUri = oModelConfig.uri.split("?")[0];
+				}
+				
 				if (oModelConfig.uriSettingName !== undefined) {
 					oModelConfig.settings = oModelConfig.settings || {};
 
@@ -619,13 +646,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 					// only use 1st argument with "uri" string if there are no settings
 					oModelConfig.settings = [ oModelConfig.uri ];
 				}
+			} else {
+				// Origin segment: check if the uri is given via the respective settingsName, e.g. "serviceURL"
+				if (bAddOrigin && oModelConfig.uriSettingName !== undefined && oModelConfig.settings && oModelConfig.settings[oModelConfig.uriSettingName]) {
+					oModelConfig.preOriginBaseUri = oModelConfig.settings[oModelConfig.uriSettingName].split("?")[0];
+					oModelConfig.settings[oModelConfig.uriSettingName] = ODataUtils.setOrigin(oModelConfig.settings[oModelConfig.uriSettingName], {
+						alias: sSystemParameter
+					});
+					oModelConfig.postOriginUri = oModelConfig.settings[oModelConfig.uriSettingName].split("?")[0];
+				}
 			}
-
+			
+			// Origin segment: Adapt annotation uris here, based on the base part of the service uri.
+			// Replaces the base uri prefix with the one after adding the origin
+			if (bAddOrigin && oModelConfig.settings && oModelConfig.settings.annotationURI) {
+				var aAnnotationUris = [].concat(oModelConfig.settings.annotationURI); //"to array"
+				var aOriginAnnotations = [];
+				for (var i = 0; i < aAnnotationUris.length; i++) {
+					aOriginAnnotations.push(aAnnotationUris[i].replace(oModelConfig.preOriginBaseUri, oModelConfig.postOriginBaseUri.split("?")[0]));
+				}
+				oModelConfig.settings.annotationURI = aOriginAnnotations;
+			}
+			
 			// normalize settings object to array
 			if (oModelConfig.settings && !jQuery.isArray(oModelConfig.settings)) {
 				oModelConfig.settings = [ oModelConfig.settings ];
 			}
-
+			
 			// create arguments array with leading "null" value so that it can be passed to the apply function
 			var aArgs = [null].concat(oModelConfig.settings || []);
 
