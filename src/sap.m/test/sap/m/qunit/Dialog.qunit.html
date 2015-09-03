@@ -442,15 +442,15 @@
 
 				this.stub(sap.ui.Device, "system", oSystem);
 
-				var oBBtn = new sap.m.Button("beginButton"),
-						oEBtn = new sap.m.Button("endButton"),
-						aButtons = [
-							new sap.m.Button("buttons1"),
-							new sap.m.Button("buttons2"),
-							new sap.m.Button("buttons3")
-						];
+				var oBBtn = new sap.m.Button("beginButton", { text: "beginButton" });
+				var oEBtn = new sap.m.Button("endButton", { text: "endButton" });
+				var aButtons = [
+						new sap.m.Button("buttons1", { text: "buttons1" }),
+						new sap.m.Button("buttons2", { text: "buttons2" }),
+						new sap.m.Button("buttons3", { text: "buttons3" })
+					];
 
-				// instanciate dialog with begin and endButton
+				// instantiate dialog with begin and endButton
 				var oDialog = new sap.m.Dialog("testDialog", {
 					beginButton: oBBtn,
 					endButton: oEBtn
@@ -506,15 +506,17 @@
 					tablet: false
 				};
 
+				jQuery("html").addClass("sap-phone");
+
 				this.stub(sap.ui.Device, "system", oSystem);
 
-				var oBBtn = new sap.m.Button("beginButton"),
-						oEBtn = new sap.m.Button("endButton"),
-						aButtons = [
-							new sap.m.Button("buttons1"),
-							new sap.m.Button("buttons2"),
-							new sap.m.Button("buttons3")
-						];
+				var oBBtn = new sap.m.Button("beginButton", { text: "beginButton" });
+				var oEBtn = new sap.m.Button("endButton", { text: "endButton" });
+				var aButtons = [
+						new sap.m.Button("buttons1", { text: "buttons1" }),
+						new sap.m.Button("buttons2", { text: "buttons2" }),
+						new sap.m.Button("buttons3", { text: "buttons3" })
+					];
 
 				// instantiate dialog with begin/endButton
 				var oDialog = new sap.m.Dialog("testDialog", {
@@ -523,14 +525,12 @@
 				});
 
 				oDialog.open();
-				this.clock.tick(400);
-				ok(!oDialog._oToolbar, "Toolbar instance is not created");
+				this.clock.tick(500);
+				ok(oDialog._oToolbar, "Toolbar instance is not created");
 				ok(oDialog.getDomRef(), "Dialog is rendered");
-				ok(oDialog.$().find(".sapMDialogActions").length, "Begin/End buttons are rendered in equal width container");
-				ok(oBBtn.$().closest(".sapMDialogActions").length, "BeginButton should be rendered");
-				ok(oEBtn.$().closest(".sapMDialogActions").length, "EndButton should be rendered");
 				equal(oDialog.getBeginButton(), oBBtn, "Getter of beginButton should return the button itself");
 				equal(oDialog.getEndButton(), oEBtn, "Getter of endButton should return the button itself");
+				equal(oBBtn.$().width(), oEBtn.$().width(), "BeginButton and EndButton are with equal width");
 
 				// add button to "buttons" aggregation while begin/endButton are set
 				aButtons.forEach(function (oButton) {
@@ -552,9 +552,8 @@
 				oDialog.setEndButton(oEBtn);
 				oDialog.removeAllButtons();
 				sap.ui.getCore().applyChanges();
-				ok(oDialog.$().find(".sapMDialogActions").length, "Begin/End buttons are rendered in equal width container");
-				ok(oBBtn.$().closest(".sapMDialogActions").length, "BeginButton should be rendered");
-				ok(oEBtn.$().closest(".sapMDialogActions").length, "EndButton should be rendered");
+				ok(oBBtn.$().closest(".sapMIBar").length, "BeginButton should be rendered");
+				ok(oEBtn.$().closest(".sapMIBar").length, "EndButton should be rendered");
 
 				//destroy
 				oDialog.destroy();
@@ -563,6 +562,8 @@
 				aButtons.forEach(function (oButton) {
 					oButton.destroy();
 				});
+
+				jQuery("html").addClass("sap-phone");
 			});
 
 			test("Setting starting and ending buttons", function () {
