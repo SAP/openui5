@@ -808,7 +808,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					aAttributes[i].addStyleClass("sapMUCAttr");
 					oRm.renderControl(aAttributes[i]);
 					if ((i + 1) < iAttrCounter) {
-						oRm.write('<span class="sapMUCSeparator">&nbsp&#x00B7&#160</span>'); // separator between attributes
+						oRm.write('<div class="sapMUCSeparator">&nbsp&#x00B7&#160</div>'); // separator between attributes
 					}
 				}
 				oRm.write('</div>'); // end of attributes container
@@ -819,7 +819,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					aStatuses[i].detachBrowserEvent("hover");
 					oRm.renderControl(aStatuses[i]);
 					if ((i + 1) < iStatusesCounter){
-						oRm.write("<span>&nbsp&#x00B7&#160</span>"); // separator between statuses
+						oRm.write('<div class="sapMUCSeparator">&nbsp&#x00B7&#160</div>'); // separator between statuses
 					}
 				}
 				oRm.write('</div>'); // end of statuses container
