@@ -1010,14 +1010,14 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		};
 
 		/**
-		 * Shrinks the height of the MessagePopover to 48px so that only the header with
+		 * Sets the height of the MessagePopover to auto so that only the header with
 		 * the SegmentedButton is visible
 		 * @private
 		 */
 		MessagePopover.prototype._collapseMsgPopover = function () {
 			this._oPopover
 				.addStyleClass(CSS_CLASS + "-init")
-				.setContentHeight("48px");
+				.setContentHeight("auto");
 
 			this._oSegmentedButton.setSelectedButton("none");
 		};
