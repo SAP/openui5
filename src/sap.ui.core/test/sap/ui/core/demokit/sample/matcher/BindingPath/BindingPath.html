@@ -16,6 +16,8 @@
 			jQuery.sap.require("sap.ui.thirdparty.qunit");
 			jQuery.sap.require("sap.ui.qunit.qunit-css");
 
+			QUnit.config.autostart = false;
+
 			sap.ui.require([
 				'sap/ui/test/matchers/BindingPath',
 				'sap/ui/test/opaQunit',
@@ -42,8 +44,8 @@
 					Then.waitFor({
 						controlType: "sap.m.StandardListItem",
 						matchers: new BindingPath({path: "/ProductCollection/0"}),
-						success: function () {
-							Opa5.assert.ok(true,
+						success: function (aItems) {
+							Opa5.assert.ok(aItems[0].getSelected(),
 								"The binding path for selected item was matched");
 						},
 						errorMessage: "The binding path for selected item was not matched"
@@ -54,6 +56,7 @@
 //					Then.iTeardownMyAppFrame();
 
 				});
+				QUnit.start();
 
 			});
 
