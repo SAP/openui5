@@ -256,8 +256,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		/**
 		* Register a preprocessor for all views of a specific type.
 		*
-		* The preprocessor can be registered for several stages of view initialization, which are
-		* dependant from the view type, e.g. "raw", "xml" or already initialized "controls". For each
+		* The preprocessor can be registered for several stages of view initialization, for xml views these are
+		* either the plain "xml" or the already initialized "controls". For each
 		* type one preprocessor is executed. If there is a preprocessor passed to or activated at the
 		* view instance already, that one is used.
 		*
