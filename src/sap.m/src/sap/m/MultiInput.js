@@ -772,16 +772,20 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		if (oEvent.ctrlKey || oEvent.metaKey) {
 
 			if (oEvent.which === jQuery.sap.KeyCodes.A) {
+				var sValue = this.getValue();
+				
 				if (document.activeElement === this._$input[0]) {
 					
-					// if focus is on text
-					if (this._$input.getSelectedText() !== this.getValue()){
+					if (this._$input.getSelectedText() !== sValue){
 						
 						// if text are not selected, then selected all text
-						this.selectText(0, this.getValue().length);
+						this.selectText(0, sValue.length);
 					} else if (this._tokenizer){
 						
 						// if text are selected, then selected all tokens
+						if (!sValue && this._tokenizer.getTokens().length) {
+							this._tokenizer.focus();
+						}
 						this._tokenizer.selectAllTokens(true);
 					}
 				} else if (document.activeElement === this._tokenizer.$()[0]) {
@@ -790,7 +794,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 					if (this._tokenizer._iSelectedToken === this._tokenizer.getTokens().length) {
 
 						// if tokens are all selected, then select all tokens
-						this.selectText(0, this.getValue().length);
+						this.selectText(0, sValue.length);
 					}
 				}
 				 
