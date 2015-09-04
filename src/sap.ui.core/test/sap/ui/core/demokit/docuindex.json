@@ -218,7 +218,7 @@
 				"category": "Tutorial",
 				"since": "1.30",
 				"formFactors": "-",
-				"description": "This tutorial illustrates the major features of navigation and routing inside SAPUI5 apps. Please have a look at the tutorial documentation in the developer guide for more details",
+				"description": "This tutorial illustrates the major features of navigation and routing inside SAPUI5 apps",
 				"docuLink": "#docs/guide/1b6dcd39a6a74f528b27ddb22f15af0d.html",
 				"samplesAsSteps": [
 					"Creating the initial app",
@@ -240,31 +240,31 @@
 					"Listening for matched events of any route"
 				]
 			},
-		  {
-			"id": "sap.ui.core.tutorial.databinding",
-			"name": "Data Binding",
-			"category": "Tutorial",
-			"since": "1.30",
-			"formFactors": "-",
-			"description": "In this tutorial, we will explain the concepts of data binding in SAPUI5. Please have a look at the tutorial documentation in the developer guide for more details",
-			"docuLink": "#docs/guide/e5310932a71f42daa41f3a6143efca9c.html",
-			"samplesAsSteps": [
-			  "No Data Binding",
-			  "Creating a Model",
-			  "Create a PropertyBinding",
-			  "Two-Way Data Binding",
-			  "One-way Data Binding",
-			  "Resource Models",
-			  "Resource Bundles and Multiple Languages",
-			  "Binding Paths – Accessing Properties in Hierarchically Structured Models",
-			  "Formatting Values",
-			  "Property Formatting Using Data Types",
-			  "Validation Using the Message Manager",
-			  "Aggregation Binding Using A Template",
-			  "Element Binding",
-			  "Expression Binding",
-			  "Aggregation Binding Using A Factory Function"
-			]
+			{
+				"id": "sap.ui.core.tutorial.databinding",
+				"name": "Data Binding",
+				"category": "Tutorial",
+				"since": "1.30",
+				"formFactors": "-",
+				"description": "In this tutorial, we will explain the concepts of data binding in SAPUI5",
+				"docuLink": "#docs/guide/e5310932a71f42daa41f3a6143efca9c.html",
+				"samplesAsSteps": [
+					"No Data Binding",
+					"Creating a Model",
+					"Create a PropertyBinding",
+					"Two-Way Data Binding",
+					"One-way Data Binding",
+					"Resource Models",
+					"Resource Bundles and Multiple Languages",
+					"Binding Paths – Accessing Properties in Hierarchically Structured Models",
+					"Formatting Values",
+					"Property Formatting Using Data Types",
+					"Validation Using the Message Manager",
+					"Aggregation Binding Using A Template",
+					"Element Binding",
+					"Expression Binding",
+					"Aggregation Binding Using A Factory Function"
+				]
 			}
 		],
 		"samples" : [
