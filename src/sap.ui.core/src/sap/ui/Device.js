@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/** 
+/**
  * Device and Feature Detection API of the SAP UI5 Library.
  *
  * @version ${version}
@@ -441,6 +441,14 @@ if (typeof window.sap.ui !== "object") {
 	 * @public
 	 */
 	/**
+	 * If this flag is set to <code>true</code>, the Microsoft Edge browser is used.
+	 *
+	 * @name sap.ui.Device.browser#edge
+	 * @type boolean
+	 * @since 1.28.0
+	 * @public
+	 */
+	/**
 	 * Flag indicating the Firefox browser.
 	 * 
 	 * @name sap.ui.Device.browser#firefox
@@ -485,6 +493,14 @@ if (typeof window.sap.ui !== "object") {
 	 * @public
 	 */
 	/**
+	 * Edge browser name.
+	 *
+	 * @see sap.ui.Device.browser#name
+	 * @name sap.ui.Device.browser.BROWSER#EDGE
+	 * @since 1.28.0
+	 * @public
+	 */
+	/**
 	 * Firefox browser name.
 	 * 
 	 * @see sap.ui.Device.browser#name
@@ -512,9 +528,10 @@ if (typeof window.sap.ui !== "object") {
 	 * @alias sap.ui.Device.browser.BROWSER#ANDROID
 	 * @public
 	 */
-	
+
 	var BROWSER = {
 		"INTERNET_EXPLORER": "ie",
+		"EDGE": "ed",
 		"FIREFOX": "ff",
 		"CHROME": "cr",
 		"SAFARI": "sf",
@@ -544,12 +561,13 @@ if (typeof window.sap.ui !== "object") {
 		var rwebkit = /(webkit)[ \/]([\w.]+)/;
 		var ropera = /(opera)(?:.*version)?[ \/]([\w.]+)/;
 		var rmsie = /(msie) ([\w.]+)/;
-		//TODO this might needs to be adjusted in future IE version > 11
-		var rmsienew = /(trident)\/[\w.]+;.*rv:([\w.]+)/;
+		var rmsie11 = /(trident)\/[\w.]+;.*rv:([\w.]+)/;
+		var redge = /(edge)[ \/]([\w.]+)/;
 		var rmozilla = /(mozilla)(?:.*? rv:([\w.]+))?/;
 
 		// WinPhone IE11 userAgent contains "WebKit" and "Mozilla" and therefore must be checked first
-		var browserMatch = rmsienew.exec( _ua ) ||
+		var browserMatch = redge.exec( _ua ) ||
+					rmsie11.exec( _ua ) ||
 					rwebkit.exec( _ua ) ||
 					ropera.exec( _ua ) ||
 					rmsie.exec( _ua ) ||
@@ -654,6 +672,14 @@ if (typeof window.sap.ui !== "object") {
 				version: version,
 				msie: true,
 				mobile: false // TODO: really?
+			};
+		} else if ( b.edge ) {
+			var version = version = parseFloat(b.version);
+			return {
+				name: BROWSER.EDGE,
+				versionStr: "" + version,
+				version: version,
+				edge: true
 			};
 		}
 		return {
