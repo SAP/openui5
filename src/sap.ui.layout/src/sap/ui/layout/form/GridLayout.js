@@ -107,25 +107,13 @@ sap.ui.define(['jquery.sap.global', './FormLayout', './GridContainerData', './Gr
 
 		GridLayout.prototype.onsaptabnext = function(oEvent){
 
-			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
-
-			if (!bRtl) {
-				this.tabForward(oEvent);
-			} else {
-				this.tabBack(oEvent);
-			}
+			this.tabForward(oEvent);
 
 		};
 
 		GridLayout.prototype.onsaptabprevious = function(oEvent){
 
-			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
-
-			if (!bRtl) {
-				this.tabBack(oEvent);
-			} else {
-				this.tabForward(oEvent);
-			}
+			this.tabBack(oEvent);
 
 		};
 
