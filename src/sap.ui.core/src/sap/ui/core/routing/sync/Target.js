@@ -4,8 +4,20 @@
 sap.ui.define([], function() {
 	"use strict";
 
+	/**
+	 * Provide methods for sap.ui.core.routing.Target in sync mode
+	 * @private
+	 * @experimental
+	 * @since 1.33
+	 */
 	return {
 
+		/**
+		 * Creates a view and puts it in an aggregation of a control that has been defined in the {@link #constructor}.
+		 *
+		 * @param {*} [vData] an object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
+		 * @private
+		 */
 		display : function (vData) {
 			var oParentInfo;
 
@@ -16,6 +28,9 @@ sap.ui.define([], function() {
 			return this._place(oParentInfo, vData);
 		},
 
+		/**
+		 * @private
+		 */
 		_place : function (oParentInfo, vData) {
 			var oOptions = this._oOptions;
 			oParentInfo = oParentInfo || {};
@@ -105,6 +120,14 @@ sap.ui.define([], function() {
 			};
 		},
 
+		/**
+		 * Validates the target options, will also be called from the route but route will not log errors
+		 *
+		 * @param oParentInfo
+		 * @param bLog
+		 * @returns {boolean}
+		 * @private
+		 */
 		_isValid : function (oParentInfo, bLog) {
 			var oOptions = this._oOptions,
 				oControl = oParentInfo && oParentInfo.oTargetControl,

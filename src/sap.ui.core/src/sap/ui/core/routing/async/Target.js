@@ -4,13 +4,20 @@
 sap.ui.define([], function() {
 	"use strict";
 
+	/**
+	 * Provide methods for sap.ui.core.routing.Target in async mode
+	 * @private
+	 * @experimental
+	 * @since 1.33
+	 */
 	return {
+
 		/**
 		 * Creates a view and puts it in an aggregation of a control that has been defined in the {@link #constructor}.
 		 *
 		 * @param {*} [vData] an object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
 		 * @return {Promise} resolves with {name: *, view: *, control: *} if the target can be successfully displayed otherwise it resolves with {name: *, error: *}
-		 * @public
+		 * @private
 		 */
 		display : function (vData) {
 			// Create an immediately resolving promise for parentless Target
@@ -26,6 +33,9 @@ sap.ui.define([], function() {
 			});
 		},
 
+		/**
+		 * @private
+		 */
 		_display: function (vData, oSequencePromise) {
 			if (this._oParent) {
 				// replace the sync
@@ -196,6 +206,9 @@ sap.ui.define([], function() {
 			return bIsValid || sLogMessage;
 		},
 
+		/**
+		 * @private
+		 */
 		_refuseInvalidTarget : function(sName, sMessage) {
 			if (sMessage) {
 				jQuery.sap.log.error(sMessage, this);

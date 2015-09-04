@@ -4,8 +4,17 @@
 sap.ui.define([], function() {
 	"use strict";
 
+	/**
+	 * Provide methods for sap.ui.core.routing.Route in sync mode
+	 * @private
+	 * @experimental
+	 * @since 1.33
+	 */
 	return {
 
+		/**
+		 * @private
+		 */
 		_routeMatched : function(oArguments, bInital, oNestingChild) {
 			var oRouter = this._oRouter,
 				oParentPlaceInfo,

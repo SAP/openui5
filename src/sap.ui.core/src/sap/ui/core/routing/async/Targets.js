@@ -4,13 +4,19 @@
 sap.ui.define([], function() {
 	"use strict";
 
+	/**
+	 * Provide methods for sap.ui.core.routing.Targets in async mode
+	 * @private
+	 * @experimental
+	 * @since 1.33
+	 */
 	return {
 		/**
 		 * Creates a view and puts it in an aggregation of the specified control.
 		 *
 		 * @param {string|string[]} vTargets the key of the target as specified in the {@link #constructor}. To display multiple targets you may also pass an array of keys.
 		 * @param {any} [vData] an object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
-		 * @public
+		 * @private
 		 * @returns {Promise} resolving with {{name: *, view: *, control: *}|undefined} for every vTargets, object for single, array for multiple
 		 */
 		display : function (vTargets, vData) {

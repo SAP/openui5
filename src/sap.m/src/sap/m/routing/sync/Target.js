@@ -4,8 +4,17 @@
 sap.ui.define([], function() {
 	"use strict";
 
+	/**
+	 * Provide methods for sap.m.routing.Target in sync mode
+	 * @private
+	 * @experimental
+	 * @since 1.33
+	 */
 	return {
 
+		/**
+		 * @private
+		 */
 		_place : function (oParentInfo, vData) {
 				var oReturnValue = this._super._place.apply(this, arguments);
 

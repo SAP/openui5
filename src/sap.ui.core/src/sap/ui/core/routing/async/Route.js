@@ -4,12 +4,16 @@
 sap.ui.define([], function() {
 	"use strict";
 
+	/**
+	 * Provide methods for sap.ui.core.routing.Route in async mode
+	 * @private
+	 * @experimental
+	 * @since 1.33
+	 */
 	return {
+
 		/**
-		 * Executes the behaviour when route is matched
-		 *
 		 * @private
-		 * @function
 		 */
 		_routeMatched : function(oArguments, oSequencePromise, oNestingChild) {
 
