@@ -64,13 +64,13 @@ sap.ui.core.mvc.Controller</title>
 
 
 	QUnit.module("Preserve DOM");
-	
+
 	QUnit.test("sync loading", function(assert) {
-		
+
 		// load and place view, force rendering
 		var oView = sap.ui.xmlview('example.mvc.test').placeAt('content');
 		sap.ui.getCore().applyChanges();
-		
+
 		// check that DOM exists
 		var oElemPanel1 = oView.byId("myPanel").getDomRef();
 		var oElemTable1 = jQuery.sap.domById(oView.createId("localTableId"));
@@ -80,17 +80,17 @@ sap.ui.core.mvc.Controller</title>
 		// force a rerendering
 		oView.invalidate();
 		sap.ui.getCore().applyChanges();
-		
+
 		// check that DOM has been preserved
 		var oElemPanel2 = oView.byId("myPanel").getDomRef();
 		var oElemTable2 = jQuery.sap.domById(oView.createId("localTableId"));
 		assert.ok(oElemPanel2, "DOM for myPanel should exist after rerendering");
 		assert.ok(oElemTable2, "DOM for localTableId should exist after rerendering");
-		assert.ok(oElemPanel1 !== oElemPanel2, "DOM for panel should differ"); // Note: this will fail if DOM patching becomes the default 
+		assert.ok(oElemPanel1 !== oElemPanel2, "DOM for panel should differ"); // Note: this will fail if DOM patching becomes the default
 		assert.ok(oElemTable1 === oElemTable2, "DOM for table must not differ");
 
 	});
-	
+
 	QUnit.test("async loading", function(assert) {
 		var done = assert.async();
 
@@ -100,23 +100,23 @@ sap.ui.core.mvc.Controller</title>
 			async: true
 		}).placeAt('content');
 		sap.ui.getCore().applyChanges();
-		
+
 		// check that placeholder DOM is not marked for preservation
 		var oElemView = oView.getDomRef();
 		assert.ok(oElemView, "DOM for view must exist");
 		assert.ok(oElemView.getAttribute("data-sap-ui-preserve") == null, "DOM must not be marked as 'to be preserved' after construction but before afterInit");
-		
+
 		// wait for the async load to complete
 		oView.attachAfterInit(function() {
-			
+
 			// ensure rendering
 			sap.ui.getCore().applyChanges();
-			
+
 			// check that DOm now exists and that it is correctly marked for preservation
 			var oElemView = oView.getDomRef();
 			assert.ok(oElemView, "DOM for view must exist");
 			assert.ok(oElemView.getAttribute("data-sap-ui-preserve"), "DOM must be marked as 'to be preserved' after init");
-			
+
 			// check DOM of controls
 			var oElemPanel1 = oView.byId("myPanel").getDomRef();
 			var oElemTable1 = jQuery.sap.domById(oView.createId("localTableId"));
@@ -126,13 +126,13 @@ sap.ui.core.mvc.Controller</title>
 			// force a rerendering
 			oView.invalidate();
 			sap.ui.getCore().applyChanges();
-			
+
 			// check that DOM has been preserved
 			var oElemPanel2 = oView.byId("myPanel").getDomRef();
 			var oElemTable2 = jQuery.sap.domById(oView.createId("localTableId"));
 			assert.ok(oElemPanel2, "DOM for myPanel should exist after rerendering");
 			assert.ok(oElemTable2, "DOM for localTableId should exist after rerendering");
-			assert.ok(oElemPanel1 !== oElemPanel2, "DOM for panel should differ"); // Note: this will fail if DOM patching becomes the default 
+			assert.ok(oElemPanel1 !== oElemPanel2, "DOM for panel should differ"); // Note: this will fail if DOM patching becomes the default
 			assert.ok(oElemTable1 === oElemTable2, "DOM for table must not differ");
 
 			// complete execution only in next tick as the controller code will execute further QUnit asserts in the current tick
@@ -272,14 +272,16 @@ sap.ui.core.mvc.Controller</title>
 	QUnit.module("Preprocessor API");
 
 	QUnit.test("registration", function(assert) {
-		var XMLView = sap.ui.core.mvc.XMLView,
-			View =  sap.ui.core.mvc.View,
+		jQuery.sap.require("sap.ui.core.mvc.XMLView");
+		jQuery.sap.require("sap.ui.core.mvc.View");
+		var XMLView =  jQuery.sap.getObject("sap.ui.core.mvc.XMLView"),
+			View =   jQuery.sap.getObject("sap.ui.core.mvc.View"),
 			oPreprocessor = function(vSource, sCaller, mSettings) {
 				return vSource;
 			};
 
-		XMLView.registerPreprocessor("xml", oPreprocessor, false, {type: "xml"});
-		XMLView.registerPreprocessor("controls", oPreprocessor, false, {type: "controls"});
+		XMLView.registerPreprocessor(XMLView.PreprocessorType.XML, oPreprocessor, false, {type: "xml"});
+		XMLView.registerPreprocessor(XMLView.PreprocessorType.CONTROLS, oPreprocessor, false, {type: "controls"});
 
 		assert.strictEqual(View._mPreprocessors["XML"]["xml"].settings.type, "xml", "Registration for xml successful");
 		assert.strictEqual(View._mPreprocessors["XML"]["controls"].settings.type, "controls", "Registration for content successful");
