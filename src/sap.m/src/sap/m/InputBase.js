@@ -10,11 +10,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Constructor for a new InputBase.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Base control for Input fields.
+	 * The <code>sap.m.InputBase</code> control provides a base functionality of the Input controls, e.g. <code>sap.m.Input</code>, <code>sap.m.DatePicker</code>, <code>sap.m.TextArea</code>, <code>sap.m.ComboBox</code>.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -32,61 +32,63 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		properties: {
 
 			/**
-			 * Defines the value of the input.
+			 * Defines the value of the control.
 			 */
 			value: { type: "string", group: "Data", defaultValue: null, bindable: "bindable" },
 
 			/**
-			 * Defines the width of the input.
+			 * Defines the width of the control.
 			 */
 			width: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: null },
 
 			/**
-			 * Determines whether the user can change the input value (default is true).
+			 * Indicates whether the user can interact with the control or not.
+			 * <b>Note:<b> Disabled controls cannot be focused and they are out of the tab-chain.
 			 */
 			enabled: { type: "boolean", group: "Behavior", defaultValue: true },
 
 			/**
-			 * Visualizes warnings or errors related to the text field. Possible values: Warning, Error, Success.
+			 * Visualizes the validation state of the the control, e.g. <code>Error</code>, <code>Warning</code>, <code>Success</code>.
 			 */
 			valueState: { type: "sap.ui.core.ValueState", group: "Appearance", defaultValue: sap.ui.core.ValueState.None },
 
 			/**
-			 * The "name" property to be used in the HTML code (e.g. for HTML forms that send data to the server via 'submit').
+			 * Defines the name of the control for the purposes of form submission.
 			 */
 			name: { type: "string", group: "Misc", defaultValue: null },
 
 			/**
-			 * Text shown when no value available.
+			 * Defines a short hint intended to aid the user with data entry when the control has no value.
 			 */
 			placeholder: { type: "string", group: "Misc", defaultValue: null },
 
 			/**
-			 * Controls if a user can change the value.
+			 * Defines whether the control can be modified by the user or not.
+			 * <b>Note:<b> A user can tab to non-editable control, highlight it, and copy the text from it.
 			 * @since 1.12.0
 			 */
 			editable: { type: "boolean", group: "Behavior", defaultValue: true },
 
 			/**
-			 * The text which is shown in the value state message popup. If not specfied a default text is shown. This property is already available for sap.m.Input since 1.16.0.
+			 * Defines the text that appears in the value state message pop-up. If this is not specified, a default text is shown from the resource bundle.
 			 * @since 1.26.0
 			 */
 			valueStateText: { type: "string", group: "Misc", defaultValue: null },
 
 			/**
-			 * Whether the value state message should be shown. This property is already available for sap.m.Input since 1.16.0.
+			 * Indicates whether the value state message should be shown or not.
 			 * @since 1.26.0
 			 */
 			showValueStateMessage: { type: "boolean", group: "Misc", defaultValue: true },
 
 			/**
-			 * Sets the horizontal alignment of the text.
+			 * Defines the horizontal alignment of the text that is shown inside the input field.
 			 * @since 1.26.0
 			 */
 			textAlign: { type: "sap.ui.core.TextAlign", group: "Appearance", defaultValue: sap.ui.core.TextAlign.Initial },
 
 			/**
-			 * This property specifies the element's text directionality with enumerated options. By default, the control inherits text direction from the DOM.
+			 * Defines the text directionality of the input field, e.g. <code>RTL</code>, <code>LTR</code>
 			 * @since 1.28.0
 			 */
 			textDirection: { type: "sap.ui.core.TextDirection", group: "Appearance", defaultValue: sap.ui.core.TextDirection.Inherit }
@@ -94,7 +96,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		associations: {
 
 			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * Association to controls / IDs that label this control (see WAI-ARIA attribute aria-labelledby).
 			 * @since 1.27.0
 			 */
 			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
@@ -102,13 +104,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		events: {
 
 			/**
-			 * This event gets fired when the text in the input field has changed and the focus leaves the input field or the enter key is pressed.
+			 * Is fired when the text in the input field has changed and the focus leaves the input field or the enter key is pressed.
 			 */
 			change: {
 				parameters: {
 
 					/**
-					 * The new value of the input.
+					 * The new <code>value</code> of the <code>control</code>.
 					 */
 					value: { type: "string" }
 				}
