@@ -16,9 +16,11 @@ xhr.onCreate = function(request) {
 		"$metadata?sap-value-list=all": 
 			[200, oMetaDataHeaders, sMetaData2],
 		"$metadata?sap-value-list=Test": 
-				[200, oMetaDataHeaders, sMetaData2],
+			[200, oMetaDataHeaders, sMetaData2],
 		"$metadata?sap-value-list=Test2": 
 			[200, oMetaDataHeaders, sMetaData2],
+		"$metadata?sap-value-list=Test3": 
+			[200, oMetaDataHeaders, sMetaData3],
 		"$metadata?test=x": 
 			[200, oMetaDataHeaders, sMetaData],
 		"$metadata?test=x&sap-language=en&test2=xx": 
@@ -6454,6 +6456,151 @@ var sProductsForFilterANDing3 = "<feed xml:base=\"http://services.odata.org/V3/N
 				"			</Annotations>\n" + 
 				"			<Annotations xmlns=\"http://docs.oasis-open.org/odata/ns/edm\"\n" + 
 				"				Target=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV.Item/PostingKey\">\n" + 
+				"				<Annotation Term=\"com.sap.vocabularies.Common.v1.ValueList\">\n" + 
+				"					<Record>\n" + 
+				"						<PropertyValue Property=\"Label\" String=\"Help_View for TBSL\" />\n" + 
+				"						<PropertyValue Property=\"CollectionPath\" String=\"VL_SH_H_TBSL\" />\n" + 
+				"						<PropertyValue Property=\"SearchSupported\" Bool=\"true\" />\n" + 
+				"						<PropertyValue Property=\"Parameters\">\n" + 
+				"							<Collection>\n" + 
+				"								<Record Type=\"com.sap.vocabularies.Common.v1.ValueListParameterInOut\">\n" + 
+				"									<PropertyValue Property=\"LocalDataProperty\"\n" + 
+				"										PropertyPath=\"PostingKey\" />\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"BSCHL\" />\n" + 
+				"								</Record>\n" + 
+				"								<Record Type=\"com.sap.vocabularies.Common.v1.ValueListParameterInOut\">\n" + 
+				"									<PropertyValue Property=\"LocalDataProperty\"\n" + 
+				"										PropertyPath=\"FinancialAccountType\" />\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"KOART\" />\n" + 
+				"								</Record>\n" + 
+				"								<Record Type=\"com.sap.vocabularies.Common.v1.ValueListParameterInOut\">\n" + 
+				"									<PropertyValue Property=\"LocalDataProperty\"\n" + 
+				"										PropertyPath=\"DebitCreditCode\" />\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"SHKZG\" />\n" + 
+				"								</Record>\n" + 
+				"								<Record Type=\"com.sap.vocabularies.Common.v1.ValueListParameterInOut\">\n" + 
+				"									<PropertyValue Property=\"LocalDataProperty\"\n" + 
+				"										PropertyPath=\"IndustryName\" />\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"LTEXT\" />\n" + 
+				"								</Record>\n" + 
+				"							</Collection>\n" + 
+				"						</PropertyValue>\n" + 
+				"					</Record>\n" + 
+				"				</Annotation>\n" + 
+				"			</Annotations>\n" + 
+				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"self\"\n" + 
+				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" + 
+				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"latest-version\"\n" + 
+				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" + 
+				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"self\"\n" + 
+				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" + 
+				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"latest-version\"\n" + 
+				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" + 
+				"		</Schema>\n" + 
+				"	</edmx:DataServices>\n" + 
+				"</edmx:Edmx>";
+		var sMetaData3 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
+				"<edmx:Edmx xmlns:edmx=\"http://schemas.microsoft.com/ado/2007/06/edmx\"\n" + 
+				"	xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\"\n" + 
+				"	xmlns:sap=\"http://www.sap.com/Protocols/SAPData\" Version=\"1.0\">\n" + 
+				"	<edmx:Reference xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\"\n" + 
+				"		Uri=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_COMMON\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" + 
+				"		<edmx:Include Namespace=\"com.sap.vocabularies.Common.v1\"\n" + 
+				"			Alias=\"Common\" />\n" + 
+				"	</edmx:Reference>\n" + 
+				"	<edmx:Reference xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\"\n" + 
+				"		Uri=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_UI\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" + 
+				"		<edmx:Include Namespace=\"com.sap.vocabularies.UI.v1\"\n" + 
+				"			Alias=\"UI\" />\n" + 
+				"	</edmx:Reference>\n" + 
+				"	<edmx:DataServices m:DataServiceVersion=\"2.0\">\n" + 
+				"		<Schema xmlns=\"http://schemas.microsoft.com/ado/2008/09/edm\"\n" + 
+				"			Namespace=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV\" xml:lang=\"en\"\n" + 
+				"			sap:schema-version=\"0\">\n" + 
+				"			<EntityType Name=\"VL_CH_ANLH\" sap:content-version=\"1\">\n" + 
+				"				<Key>\n" + 
+				"					<PropertyRef Name=\"BUKRS\" />\n" + 
+				"					<PropertyRef Name=\"ANLN1\" />\n" + 
+				"				</Key>\n" + 
+				"				<Property Name=\"BUKRS\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
+				"					MaxLength=\"4\" sap:display-format=\"UpperCase\" sap:label=\"Company Code\" />\n" + 
+				"				<Property Name=\"ANLN1\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
+				"					MaxLength=\"12\" sap:display-format=\"UpperCase\" sap:label=\"Main Asset No.\" />\n" + 
+				"			</EntityType>\n" + 
+				"			<EntityType Name=\"VL_CH_ANLA\" sap:content-version=\"1\">\n" + 
+				"				<Key>\n" + 
+				"					<PropertyRef Name=\"BUKRS\" />\n" + 
+				"					<PropertyRef Name=\"ANLN1\" />\n" + 
+				"					<PropertyRef Name=\"ANLN2\" />\n" + 
+				"				</Key>\n" + 
+				"				<Property Name=\"BUKRS\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
+				"					MaxLength=\"4\" sap:display-format=\"UpperCase\" sap:label=\"Company Code\" />\n" + 
+				"				<Property Name=\"ANLN1\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
+				"					MaxLength=\"12\" sap:display-format=\"UpperCase\" sap:label=\"Main Asset No.\" />\n" + 
+				"				<Property Name=\"ANLN2\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
+				"					MaxLength=\"4\" sap:display-format=\"UpperCase\" sap:label=\"Subnumber\" />\n" + 
+				"			</EntityType>\n" + 
+				"			<EntityContainer Name=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV_Entities\"\n" + 
+				"				m:IsDefaultEntityContainer=\"true\" sap:supported-formats=\"atom json xlsx\">\n" + 
+				"				<EntitySet Name=\"VL_CH_ANLA\" EntityType=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA\"\n" + 
+				"					sap:creatable=\"false\" sap:updatable=\"false\" sap:deletable=\"false\"\n" + 
+				"					sap:content-version=\"1\" sap:countable=\"false\" sap:semantics=\"aggregate\" />\n" + 
+				"			</EntityContainer>\n" + 
+				"			<Annotations xmlns=\"http://docs.oasis-open.org/odata/ns/edm\"\n" + 
+				"				Target=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV.Item/MyProp1\">\n" + 
+				"				<Annotation Term=\"com.sap.vocabularies.Common.v1.ValueList\">\n" + 
+				"					<Record>\n" + 
+				"						<PropertyValue Property=\"Label\" String=\"boolean true/false\" />\n" + 
+				"						<PropertyValue Property=\"CollectionPath\" String=\"VL_FV_FARP_BOOLEAN\" />\n" + 
+				"						<PropertyValue Property=\"Parameters\">\n" + 
+				"							<Collection>\n" + 
+				"								<Record Type=\"com.sap.vocabularies.Common.v1.ValueListParameterInOut\">\n" + 
+				"									<PropertyValue Property=\"LocalDataProperty\"\n" + 
+				"										PropertyPath=\"BooleanParameter\" />\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"Code\" />\n" + 
+				"								</Record>\n" + 
+				"								<Record\n" + 
+				"									Type=\"com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly\">\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"Text\" />\n" + 
+				"								</Record>\n" + 
+				"							</Collection>\n" + 
+				"						</PropertyValue>\n" + 
+				"					</Record>\n" + 
+				"				</Annotation>\n" + 
+				"			</Annotations>\n" + 
+				"			<Annotations xmlns=\"http://docs.oasis-open.org/odata/ns/edm\"\n" + 
+				"				Target=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV.Item/MyProp2\">\n" + 
+				"				<Annotation Term=\"com.sap.vocabularies.Common.v1.ValueList\">\n" + 
+				"					<Record>\n" + 
+				"						<PropertyValue Property=\"Label\" String=\"&quot;Industry Texts&quot;\" />\n" + 
+				"						<PropertyValue Property=\"CollectionPath\" String=\"VL_SH_H_T016\" />\n" + 
+				"						<PropertyValue Property=\"SearchSupported\" Bool=\"true\" />\n" + 
+				"						<PropertyValue Property=\"Parameters\">\n" + 
+				"							<Collection>\n" + 
+				"								<Record Type=\"com.sap.vocabularies.Common.v1.ValueListParameterInOut\">\n" + 
+				"									<PropertyValue Property=\"LocalDataProperty\"\n" + 
+				"										PropertyPath=\"Industry\" />\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"BRSCH\" />\n" + 
+				"								</Record>\n" + 
+				"								<Record\n" + 
+				"									Type=\"com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly\">\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"BRTXT\" />\n" + 
+				"								</Record>\n" + 
+				"							</Collection>\n" + 
+				"						</PropertyValue>\n" + 
+				"					</Record>\n" + 
+				"				</Annotation>\n" + 
+				"			</Annotations>\n" + 
+				"			<Annotations xmlns=\"http://docs.oasis-open.org/odata/ns/edm\"\n" + 
+				"				Target=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV.Item/MyProp3\">\n" + 
 				"				<Annotation Term=\"com.sap.vocabularies.Common.v1.ValueList\">\n" + 
 				"					<Record>\n" + 
 				"						<PropertyValue Property=\"Label\" String=\"Help_View for TBSL\" />\n" + 
