@@ -1,5 +1,5 @@
 /*!
- * ${copyright}
+  * ${copyright}
  */
 
 // Provides the JSON model implementation of a list binding
@@ -165,7 +165,8 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 	};
 	
 	ClientTreeBinding.prototype._saveSubContext = function(oNode, aContexts, sContextPath, sName) {
-		if (typeof oNode == "object") {
+		// only collect node if it is defined (and not null), because typeof null == "object"!
+		if (oNode && typeof oNode == "object") {
 			var oNodeContext = this.oModel.getContext(sContextPath + sName);
 			// check if there is a filter on this level applied
 			if (this.aFilters && !this.bIsFiltering) {
