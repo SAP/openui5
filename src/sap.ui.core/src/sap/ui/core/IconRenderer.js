@@ -73,6 +73,10 @@ sap.ui.define(function() {
 			oRm.addClass("sapUiIconMirrorInRTL");
 		}
 
+		if (oControl.hasListeners("press")) {
+			oRm.addClass("sapUiIconPointer");
+		}
+
 		oRm.writeClasses();
 		oRm.writeStyles();
 
