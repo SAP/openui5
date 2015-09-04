@@ -9,6 +9,7 @@
 		xmlns:ui="sap.ca.ui"
 		displayBlock="true">
 
+
 			<semantic:FullscreenPage title="FullScreen Page Title"
 									 showNavButton="true"
 									 navButtonPress="onNavButtonPress">
@@ -43,7 +44,7 @@
 						<semantic:MessagesIndicator press="onMessagesButtonPress"/>
 					</semantic:messagesIndicator>
 					<semantic:draftIndicator>
-						<DraftIndicator id="draftIndi"></DraftIndicator>
+						<DraftIndicator id="draftIndi" state="Saved"></DraftIndicator>
 					</semantic:draftIndicator>
 
 					<semantic:content>
