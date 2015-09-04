@@ -1018,6 +1018,39 @@
 					this.obj.setModel(oModel);
 				}
 			});
+			
+			test("Cleanup on destroy", function() {
+				var iExistingBindings = oModel.aBindings.length;
+				
+				this.obj.bindObject({path:"/list/0"});
+				this.obj.bindObject({path:"late>/list/0"});
+				this.obj.bindObject({path:"never>/list/0"});
+				this.obj.bindProperty("value", "value");
+				this.obj.bindProperty("intValue", "late>intValue");
+				this.obj.bindProperty("stringValue", "never>value");
+				
+				// until now, only the default model bindings should exist 
+				ok(typeof this.obj.mBindingInfos === 'object' && Object.keys(this.obj.mBindingInfos).length === 3, "there should be 3 binding infos");
+				ok(typeof this.obj.mBoundObjects === 'object' && Object.keys(this.obj.mBoundObjects).length === 3, "there should be 3 bound objects");
+				ok(typeof this.obj.mBoundObjects.undefined === 'object' && this.obj.mBoundObjects.undefined.binding, "there should be a ContextBinding for the default model");
+				ok(typeof this.obj.mBoundObjects.late === 'object' && !this.obj.mBoundObjects.late.binding, "there should be no ContextBinding yet for the late model");
+				ok(typeof this.obj.mBoundObjects.never === 'object' && !this.obj.mBoundObjects.never.binding, "there should be no ContextBinding yet for the never model");
+				
+				// after setting the late model, the corr. binding should exist 
+				this.obj.setModel(oModel, 'late');
+				ok(typeof this.obj.mBindingInfos === 'object' && Object.keys(this.obj.mBindingInfos).length === 3, "there still should be 3 binding infos");
+				ok(typeof this.obj.mBoundObjects === 'object' && Object.keys(this.obj.mBoundObjects).length === 3, "there still should be 3 bound objects");
+				ok(typeof this.obj.mBoundObjects.undefined === 'object' && this.obj.mBoundObjects.undefined.binding, "there still should be a ContextBinding for the default model");
+				ok(typeof this.obj.mBoundObjects.late === 'object' && this.obj.mBoundObjects.late.binding, "there should be a ContextBinding now for the late model");
+				ok(typeof this.obj.mBoundObjects.never === 'object' && !this.obj.mBoundObjects.never.binding, "there still should be no ContextBinding for the never model");
+				
+				// after destroying the object, all bindings should have gone
+				this.obj.destroy();
+				ok(this.obj.mBindingInfos == null || Object.keys(this.obj.mBindingInfos).length === 0, "there should be no more binding infos");
+				ok(this.obj.mBoundObjects == null || Object.keys(this.obj.mBoundObjects).length === 0, "there should be no more bound objects");
+				equal(oModel.aBindings.length, iExistingBindings, "there should be the same number of bindings in the model as before starting the test");
+			});
+
 			test("Bind object/pass event handler", function() {
 				this.obj.bindObject({path:"/list/0", events:{change:fnChange}});
 				equal(changed,true,"handler attached/change event fired");
