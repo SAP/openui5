@@ -322,6 +322,88 @@
 		oInput.onsapshow(evt);
 		strictEqual(spy.callCount, 1, "The value help was requested by pressing F4");
 	});
+	
+	test("Submit Event", function() {
+		
+		var sEvents = "";
+		var sValue = "";
+		var oInput = new sap.m.Input("hello", {
+			submit: function(oEvent){
+				sEvents += "E";
+				sValue = oEvent.getParameter("value");
+			},
+			change: function(){
+				sEvents += "C";
+			}
+		});
+		oInput.placeAt("content");
+		
+		function checkSubmit(sText, bSubmitExpected, bChangeExpected, sExpectedValue) {
+			var e = "";
+			if (bChangeExpected) {
+				e += "C";
+			}
+			if (bSubmitExpected) {
+				e += "E";
+			}
+			
+			sEvents = "";
+			sValue = "";
+			sap.ui.getCore().applyChanges();
+			sap.ui.test.qunit.triggerKeydown(oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ENTER);
+			equal(sEvents, e, sText + ": Correct number of events fired and order correct: " + e.length + (e.length > 0 ? "/" + e : ""));
+			if (bSubmitExpected) {
+				if (sExpectedValue) {
+					equal(sValue, sExpectedValue, sText + ": Correct parameter 'value' in enter event: " + sExpectedValue);
+				} else {
+					ok(!sValue, sText + ": Correct parameter 'value' in enter event: Value empty");
+				}
+			}
+		}
+		
+		checkSubmit("Enter pressed without change", true, false, "");
+		oInput.$("inner").val("hello");
+		checkSubmit("Enter pressed after change", true, true, "hello");
+		oInput.setEnabled(false);
+		checkSubmit("Enter pressed on disabled field", false, false);
+		oInput.setEnabled(true);
+		oInput.setEditable(false);
+		checkSubmit("Enter pressed on readonly field", false, false);
+		oInput.setEditable(true);
+		oInput.setShowValueHelp(true);
+		checkSubmit("Enter pressed on field with value help", true, false, "hello");
+		oInput.setValueHelpOnly(true);
+		checkSubmit("Enter pressed on field with value help only", false, false);
+		oInput.setShowValueHelp(false);
+		oInput.setValueHelpOnly(false);
+		
+		// Enter on Suggestions
+		if (sap.ui.Device.system.desktop) {
+			oInput.setShowSuggestion(true);
+			var aItemsAdded = [];
+			oInput.attachSuggest(function() {
+				var aNames = ["abcTom", "abcPhilips", "abcAnna"];
+				for (var i = 0; i < aNames.length; i++) {
+					if(jQuery.inArray(aNames[i], aItemsAdded) === -1){
+						oInput.addSuggestionItem(new sap.ui.core.Item({text: aNames[i]}));
+						aItemsAdded.push(aNames[i]);
+					}
+				}
+			});
+			sap.ui.getCore().applyChanges();
+			
+			oInput.onfocusin();
+			oInput._$input.focus().val("abc").trigger("input");
+			this.clock.tick(1000);
+	
+			ok(oInput._oSuggestionPopup && oInput._oSuggestionPopup.isOpen && oInput._oSuggestionPopup.isOpen(), "Suggestion Popup is open now");
+			sap.ui.test.qunit.triggerKeydown(oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ARROW_DOWN);
+			checkSubmit("Enter pressed on open Suggestions", true, true, "abcTom");
+			ok(oInput._oSuggestionPopup && oInput._oSuggestionPopup.isOpen && !oInput._oSuggestionPopup.isOpen(), "Suggestion Popup should be closed");
+		}
+		
+		oInput.destroy();
+	});
 
 	test("Value Help Only CSS Classes and event", function() {
 		var spy = this.spy(),
