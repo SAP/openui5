@@ -445,7 +445,7 @@ if (typeof window.sap.ui !== "object") {
 	 *
 	 * @name sap.ui.Device.browser#edge
 	 * @type boolean
-	 * @since 1.30.0
+	 * @since 1.28.0
 	 * @experimental
 	 * @public
 	 */
