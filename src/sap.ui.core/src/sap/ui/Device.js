@@ -460,7 +460,6 @@ if (typeof window.sap.ui !== "object") {
 	 * @name sap.ui.Device.browser#edge
 	 * @type boolean
 	 * @since 1.30.0
-	 * @experimental The final version of this browser is not yet available. As a result, the detection might not yet be stable.
 	 * @public
 	 */
 	/**
@@ -724,7 +723,6 @@ if (typeof window.sap.ui !== "object") {
 				mobile: false // TODO: really?
 			};
 		} else if ( b.edge ) {
-			logger.log(WARNING, "New MS Edge browser detected. Be aware that this browser is not yet officially supported by UI5.", _ua);
 			var version = version = parseFloat(b.version);
 			return {
 				name: BROWSER.EDGE,
@@ -1203,7 +1201,7 @@ if (typeof window.sap.ui !== "object") {
 
 	/**
 	 * Removes a previously attached event handler from the change events of the screen width.
-	 * 
+	 *
 	 * The passed parameters must match those used for registration with {@link #attachHandler} beforehand.
 	 *
 	 * @param {function}
@@ -1411,10 +1409,10 @@ if (typeof window.sap.ui !== "object") {
 
 	/**
 	 * Provides a basic categorization of the used device based on various indicators.
-	 * 
+	 *
 	 * These indicators are for example the support of touch events, the screen size, the used operation system or
 	 * the user agent of the browser.
-	 * 
+	 *
 	 * <b>Note:</b> Depending on the capabilities of the device it is also possible that multiple flags are set to <code>true</code>.
 	 *
 	 * @namespace
@@ -1423,7 +1421,7 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * If this flag is set to <code>true</code>, the device is recognized as a tablet.
-	 * 
+	 *
 	 * Furthermore, a CSS class <code>sap-tablet</code> is added to the document root element.
 	 *
 	 * @name sap.ui.Device.system#tablet
@@ -1432,7 +1430,7 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * If this flag is set to <code>true</code>, the device is recognized as a phone.
-	 * 
+	 *
 	 * Furthermore, a CSS class <code>sap-phone</code> is added to the document root element.
 	 *
 	 * @name sap.ui.Device.system#phone
@@ -1441,7 +1439,7 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * If this flag is set to <code>true</code>, the device is recognized as a desktop system.
-	 * 
+	 *
 	 * Furthermore, a CSS class <code>sap-desktop</code> is added to the document root element.
 	 *
 	 * @name sap.ui.Device.system#desktop
@@ -1450,9 +1448,9 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * If this flag is set to <code>true</code>, the device is recognized as a combination of a desktop system and tablet.
-	 * 
+	 *
 	 * Furthermore, a CSS class <code>sap-combi</code> is added to the document root element.
-	 * 
+	 *
 	 * <b>Note:</b> This property is mainly for Microsoft Windows 8 (and following) devices where the mouse and touch event may be supported
 	 * natively by the browser being used. This property is set to <code>true</code> only when both mouse and touch event are natively supported.
 	 *
@@ -1570,7 +1568,7 @@ if (typeof window.sap.ui !== "object") {
 
 	/**
 	 * Common API for orientation change notifications across all platforms.
-	 * 
+	 *
 	 * For browsers or devices that do not provide native support for orientation change events
 	 * the API simulates them based on the ratio of the document's width and height.
 	 *
@@ -1616,12 +1614,12 @@ if (typeof window.sap.ui !== "object") {
 	 * @type integer
 	 * @public
 	 */
-	
+
 	device.resize = {};
 
 	/**
 	 * Registers the given event handler to orientation change events of the document's window.
-	 * 
+	 *
 	 * The event is fired whenever the screen orientation changes and the width of the document's window
 	 * becomes greater than its height or the other way round.
 	 *
@@ -1637,7 +1635,7 @@ if (typeof window.sap.ui !== "object") {
 	 * @param {object}
 	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
 	 *                        handler function). If it is not specified, the handler function is called in the context of the <code>window</code>.
-	 * 
+	 *
 	 * @name sap.ui.Device.orientation#attachHandler
 	 * @function
 	 * @public
@@ -1648,7 +1646,7 @@ if (typeof window.sap.ui !== "object") {
 
 	/**
 	 * Registers the given event handler to resize change events of the document's window.
-	 * 
+	 *
 	 * The event is fired whenever the document's window size changes.
 	 *
 	 * The event handler is called with a single argument: a map <code>mParams</code> which provides the following information:
@@ -1664,7 +1662,7 @@ if (typeof window.sap.ui !== "object") {
 	 * @param {object}
 	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
 	 *                        handler function). If it is not specified, the handler function is called in the context of the <code>window</code>.
-	 * 
+	 *
 	 * @name sap.ui.Device.resize#attachHandler
 	 * @function
 	 * @public
@@ -1675,14 +1673,14 @@ if (typeof window.sap.ui !== "object") {
 
 	/**
 	 * Removes a previously attached event handler from the orientation change events.
-	 * 
+	 *
 	 * The passed parameters must match those used for registration with {@link #attachHandler} beforehand.
 	 *
 	 * @param {function}
 	 *            fnFunction The handler function to detach from the event
 	 * @param {object}
 	 *            [oListener] The object that wanted to be notified when the event occurred
-	 * 
+	 *
 	 * @name sap.ui.Device.orientation#detachHandler
 	 * @function
 	 * @public
@@ -1693,14 +1691,14 @@ if (typeof window.sap.ui !== "object") {
 
 	/**
 	 * Removes a previously attached event handler from the resize events.
-	 * 
+	 *
 	 * The passed parameters must match those used for registration with {@link #attachHandler} beforehand.
 	 *
 	 * @param {function}
 	 *            fnFunction The handler function to detach from the event
 	 * @param {object}
 	 *            [oListener] The object that wanted to be notified when the event occurred
-	 * 
+	 *
 	 * @name sap.ui.Device.resize#detachHandler
 	 * @function
 	 * @public
