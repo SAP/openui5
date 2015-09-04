@@ -64,7 +64,7 @@
 				this.oButton = new sap.m.Button("button1", {text : "Button"});
 				this.oForm.addContent(this.oButton);
 				var oOverlayForButton = OverlayRegistry.getOverlay(this.oButton);
-				ok(oOverlayForButton, "overlay for button exists");
+				assert.ok(oOverlayForButton, "overlay for button exists");
 			});
 
 		</script>

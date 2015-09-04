@@ -1,0 +1,123 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.DesignTime and IconTabBar</title>
+
+		<style>
+			#content {
+				position: absolute;
+				left: 400px;
+				top : 10px;
+			}
+			.sapUiDtElementOverlay {
+				box-sizing: border-box;
+				border: 1px dashed grey;
+			}
+		</style>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.commons,sap.ui.layout"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.ui.dt.DesignTime");
+			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
+			var OverlayRegistry = sap.ui.dt.OverlayRegistry;
+
+			QUnit.module("Given the IconTabBar is created with 3 filters and different content..", {
+				beforeEach : function() {
+					this.oList = new sap.m.List({
+						items : [ 
+							new sap.m.StandardListItem({
+								title : "List Item 1"
+							}),
+							new sap.m.StandardListItem({
+								title : "List Item 2"
+							}),
+							new sap.m.StandardListItem({
+								title : "List Item 3"
+							}) 
+						]
+					});
+					this.oButton = new sap.m.Button({text : "Text"});
+					this.oIconTabBar = new sap.m.IconTabBar({
+						items : [
+							new sap.m.IconTabFilter({
+								showAll : true,
+								count : "22",
+								text : "Orders",
+								content : [
+									this.oList
+								]
+							}),
+							new sap.m.IconTabFilter({
+								icon : "sap-icon://task",
+								iconColor : sap.ui.core.IconColor.Critical,
+								count : "10",
+								key : "Open",
+								text : "Open"
+							}),
+							new sap.m.IconTabFilter({
+								icon : "sap-icon://shipping-status",
+								iconColor : sap.ui.core.IconColor.Positive,
+								count : "5",
+								key : "Shipped",
+								text : "Shipped"
+							})
+						],
+						content : [
+							this.oButton
+						]
+					}).placeAt("content");
+
+					this.oFormDesignTime = new sap.ui.dt.DesignTime({
+						rootElements : [this.oIconTabBar]
+					});
+
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oList.destroy();
+					this.oIconTabBar.destroy();
+					this.oFormDesignTime.destroy();
+				}
+			});
+
+			QUnit.test("initially...", function(assert) {
+				var oListOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oList);
+				var oButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton);
+				assert.strictEqual(oListOverlay.$().is(":visible"), true, "List overlay is visible");
+				assert.strictEqual(oButtonOverlay.$().is(":visible"), false, "Button overlay is visible");
+			});
+
+			QUnit.test("when the filter is switched...", function(assert) {
+				var oListOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oList);
+				var oButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton);
+
+				this.oIconTabBar.setSelectedKey("Open");
+				sap.ui.getCore().applyChanges();
+
+				assert.strictEqual(oListOverlay.$().is(":visible"), false, "List overlay is visible");
+				assert.strictEqual(oButtonOverlay.$().is(":visible"), true, "Button overlay is visible");
+			});
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit Page for sap.ui.dt.DesignTime and IconTabBar</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>
