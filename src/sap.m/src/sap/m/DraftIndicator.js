@@ -33,7 +33,7 @@ sap.ui.define(["sap/ui/core/Control", "sap/m/Label"], function(Control, Label) {
 				 * State of the indicator. Could be "Saving", "Saved" and "Clear".
 				 */
 				state : {
-					type: "DraftIndicatorState",
+					type: "sap.m.DraftIndicatorState",
 					group : "Behavior", 
 					defaultValue : sap.m.DraftIndicatorState.Clear
 				},
