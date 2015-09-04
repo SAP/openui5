@@ -542,7 +542,7 @@ if (typeof window.sap.ui !== "object") {
 	 *
 	 * @see sap.ui.Device.browser#name
 	 * @name sap.ui.Device.browser.BROWSER#EDGE
-	 * @since 1.30.0
+	 * @since 1.28.0
 	 * @public
 	 */
 	/**
