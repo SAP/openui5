@@ -12,11 +12,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 	/**
 	 * Constructor for a new TextArea.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given 
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Enable users to input multi-line text.
+	 * The <code>sap.m.TextArea</code> enables multi-line text input.
 	 * @extends sap.m.InputBase
 	 *
 	 * @author SAP SE
@@ -34,32 +34,34 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 		properties : {
 	
 			/**
-			 * Specifies the height of the text area (in lines).
+			 * Defines the number of visible text lines for the control.
+			 * <b>Note:</b> The <code>height</code> property wins over the <code>rows</code> property, if both are set.
 			 */
 			rows : {type : "int", group : "Appearance", defaultValue : 2},
 	
 			/**
-			 * Specifies the width of the textarea (in average character width).
+			 * Defines the visible width of the control, in average character widths.
+			 * <b>Note:</b> The <code>width</code> property wins over the <code>cols</code> property, if both are set.
 			 */
 			cols : {type : "int", group : "Appearance", defaultValue : 20},
 	
 			/**
-			 * Defines the height of the textarea with CSS. This property can overwrite the rows property.
+			 * Defines the height of the control. 
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
 	
 			/**
-			 * Maximum number of characters that user can input. If your value property's length bigger than maxLength then value is not truncated and user can see whole value property but cannot write anymore.
+			 * Defines the maximum number of characters that the <code>value</code> can be. 
 			 */
 			maxLength : {type : "int", group : "Behavior", defaultValue : 0},
 	
 			/**
-			 * The wrap attribute specifies how the text in a text area is to be wrapped when submitted in a form. Possible values are: Soft, Hard, Off.
+			 * Indicates how the control wraps the text, e.g. <code>Soft</code>, <code>Hard</code>, <code>Off</code>.
 			 */
 			wrapping : {type : "sap.ui.core.Wrapping", group : "Behavior", defaultValue : null},
 	
 			/**
-			 * Indicates when the value gets updated with the user changes: At each keystroke (true) or first when the user presses enter or tabs out (false).
+			 * Indicates when the <code>value</code> property gets updated with the user changes. Setting it to <code>true</code> updates the <code>value</code> property whenever the user has modified the text shown on the text area.
 			 * @since 1.30
 			 */
 			valueLiveUpdate : {type : "boolean", group : "Behavior", defaultValue : false}
@@ -67,13 +69,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 		events : {
 	
 			/**
-			 * This event is fired when the value of the input is changed - e.g. at each keypress
+			 * Is fired whenever the user has modified the text shown on the text area.
 			 */
 			liveChange : {
 				parameters : {
 	
 					/**
-					 * The new value of the textarea.
+					 * The new <code>value</code> of the control.
 					 */
 					value : {type : "string"}
 				}
