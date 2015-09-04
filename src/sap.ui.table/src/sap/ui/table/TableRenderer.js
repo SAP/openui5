@@ -116,7 +116,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 			rm.writeStyles();
 			rm.write(">");
 			if (oTable.getTitle() && oTable.getTitle().getText && oTable.getTitle().getText() != "") {
-				rm.write(oTable.getTitle().getText());
+				rm.writeEscaped(oTable.getTitle().getText());
 			} else {
 				rm.write(oTable._oResBundle.getText("TBL_TABLE"));
 			}
