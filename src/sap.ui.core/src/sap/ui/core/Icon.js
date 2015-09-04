@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * Icon uses embeded font instead of pixel image. Comparing to image, Icon is easily scalable, color can be altered live and various effects can be added using css.
+	 * Icon uses embedded font instead of pixel image. Comparing to image, Icon is easily scalable, color can be altered live and various effects can be added using css.
 	 *
 	 * A set of built in Icons is available and they can be fetched by calling sap.ui.core.IconPool.getIconURI and set this value to the src property on the Icon.
 	 * @extends sap.ui.core.Control
@@ -107,7 +107,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 			 * If it's set to true, Icon control never has tab stop no matter whether press event handler exists or not.
 			 * @since 1.30.1
 			 */
-			noTabStop : {type : "boolean", group : "Accessibility", defaultValue : false} 
+			noTabStop : {type : "boolean", group : "Accessibility", defaultValue : false}
 		},
 		associations : {
 
@@ -124,30 +124,6 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 			press : {}
 		}
 	}});
-
-
-	/* =========================================================== */
-	/* Lifecycle methods                                           */
-	/* =========================================================== */
-
-	/**
-	 * Required adaptations after rendering.
-	 *
-	 * @private
-	 */
-	Icon.prototype.onAfterRendering = function() {
-		var $Icon = this.$();
-
-		if (this.hasListeners("press")) {
-			$Icon.css("cursor", "pointer");
-		}
-		// This is to check if no cursor property inherited from parent DOM.
-		// If the current value is auto, set it to default.
-		// This is to fix the cursor: auto interpreted as text cursor in firefox and IE.
-		if ($Icon.css("cursor") === "auto") {
-			$Icon.css("cursor", "default");
-		}
-	};
 
 	/* =========================================================== */
 	/* Event handlers                                              */
@@ -441,17 +417,18 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 		return this.setProperty("hoverBackgroundColor", sColor, true);
 	};
 
-	Icon.prototype.attachPress = function() {
+	Icon.prototype.attachPress = function () {
 		var aMyArgs = Array.prototype.slice.apply(arguments);
 		aMyArgs.unshift("press");
 
 		Control.prototype.attachEvent.apply(this, aMyArgs);
 
 		if (this.hasListeners("press")) {
-			this.$().css("cursor", "pointer").attr({
-				role: "button",
-				tabindex: this.getNoTabStop() ? undefined : 0
-			});
+			this.$().toggleClass("sapUiIconPointer", true)
+					.attr({
+						role: "button",
+						tabindex: this.getNoTabStop() ? undefined : 0
+					});
 		}
 
 		return this;
@@ -464,10 +441,13 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 		Control.prototype.detachEvent.apply(this, aMyArgs);
 
 		if (!this.hasListeners("press")) {
-			this.$().css("cursor", "default").attr({
-				role: this.getDecorative() ? "presentation" : "img"
-			}).removeAttr("tabindex");
+			this.$().toggleClass("sapUiIconPointer", false)
+					.attr({
+						role: this.getDecorative() ? "presentation" : "img"
+					})
+					.removeAttr("tabindex");
 		}
+
 		return this;
 	};
 
