@@ -10,25 +10,31 @@
 		<link rel="stylesheet" href="../../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 
 		<script>
-			(function () {
-				jQuery.sap.require("sap.ui.thirdparty.qunit");
-				jQuery.sap.require("sap.ui.test.Opa5");
-				jQuery.sap.require("sap.ui.test.opaQunit");
-				var Opa5 = sap.ui.test.Opa5;
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			QUnit.config.autostart = false;
+
+			sap.ui.require([
+				"sap/ui/test/Opa5",
+				"sap/ui/test/opaQunit",
+				"sap/ui/test/matchers/PropertyStrictEquals"
+			], function (Opa5, opaTest, PropertyStrictEquals) {
 
 				module("Nested waitFors", {
 					setup : function () {
 
 						Opa5.extendConfig({
-							viewName : "view.Main",
-	
+							viewName : "appUnderTest.view.Main",
+
 							actions : new Opa5({
 
 								iExpandRecursively : function() {
 									return this.waitFor({
 										controlType : "sap.ui.commons.TreeNode",
-										matchers : new sap.ui.test.matchers.PropertyStrictEquals({
-											name : "expanded", 
+										matchers : new PropertyStrictEquals({
+											name : "expanded",
 											value : false
 										}),
 										success : function (aTreeNodes) {
@@ -49,8 +55,8 @@
 								iSeeAllNodesExpanded : function() {
 									return this.waitFor({
 										controlType : "sap.ui.commons.TreeNode",
-										matchers : new sap.ui.test.matchers.PropertyStrictEquals({
-											name : "expanded", 
+										matchers : new PropertyStrictEquals({
+											name : "expanded",
 											value : true
 										}),
 										success : function (aTreeNodes) {
@@ -75,15 +81,13 @@
 					Then.iTeardownMyAppFrame();
 				});
 
-			})();
+				QUnit.start();
+			});
 		</script>
 
 	</head>
 	<body>
-		<h1 id="qunit-header">Opa sample for dynamic wait statements</h1>
-		<h2 id="qunit-banner"></h2>
-		<h2 id="qunit-userAgent"></h2>
-		<ol id="qunit-tests"></ol>
+		<div id="qunit"></div>
 		<div id="qunit-fixture"></div>
 	</body>
 </html>

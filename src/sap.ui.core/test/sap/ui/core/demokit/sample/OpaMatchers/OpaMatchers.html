@@ -7,17 +7,21 @@
 
 		<script id="sap-ui-bootstrap" src="../../../../../../../resources/sap-ui-core.js"></script>
 
-		<link rel="stylesheet" href="../../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-
 		<script>
-			(function () {
-				jQuery.sap.require("sap.ui.thirdparty.qunit");
-				jQuery.sap.require("sap.ui.test.Opa5");
-				jQuery.sap.require("sap.ui.test.opaQunit");
-				var Opa = sap.ui.test.Opa;
-				var Opa5 = sap.ui.test.Opa5;
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			QUnit.config.autostart = false;
 
-				module("Matchers");
+			sap.ui.require([
+				"sap/ui/test/Opa5",
+				"sap/ui/test/opaQunit",
+				"sap/ui/test/matchers/PropertyStrictEquals",
+				"sap/ui/test/matchers/Properties",
+				"sap/ui/test/matchers/Ancestor"
+			], function (Opa5, opaTest, PropertyStrictEquals, Properties, Ancestor) {
+				QUnit.module("Matchers");
 
 				opaTest("Should find a Button with a matching property", function(Given, When, Then) {
 
@@ -25,9 +29,9 @@
 					Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
 
 					When.waitFor({
-						viewName : "view.Main",
+						viewName : "appUnderTest.view.Main",
 						controlType : "sap.m.Button",
-						matchers : new sap.ui.test.matchers.PropertyStrictEquals({name : "text", value : "Changed text"}),
+						matchers : new PropertyStrictEquals({name : "text", value : "Changed text"}),
 						success : function (aButtons) {
 							Opa5.assert.ok(true, "Found the button: " + aButtons[0]);
 						},
@@ -52,7 +56,7 @@
 					Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
 
 					When.waitFor({
-						viewName : "view.Main",
+						viewName : "appUnderTest.view.Main",
 						controlType : "sap.m.Bar",
 						// inline-matcher directly as function
 						matchers : function(oControl) {
@@ -63,17 +67,17 @@
 
 							// nested waitFor
 							this.waitFor({
-								viewName : "view.Main",
+								viewName : "appUnderTest.view.Main",
 								controlType : "sap.m.Button",
 								matchers : [
 									// Properties matcher takes an object containing a properties to match as a parameter:
 									// {propertyName : propertyValue, secondPropertyName : secondPropertyValue, ...}
 									// where property values can be a regexp values also (with a string typed properties)
-									new sap.ui.test.matchers.Properties({
+									new Properties({
 										text : "Changed text"
 									}),
 									// Ancestor matcher takes a control as a parameter
-									new sap.ui.test.matchers.Ancestor(oInternalHeader)
+									new Ancestor(oInternalHeader)
 								],
 								success : function (aButtons) {
 									Opa5.assert.ok(true, "Found the button: " + aButtons[0] + "in a bar" + oInternalHeader);
@@ -87,15 +91,13 @@
 					Then.iTeardownMyAppFrame();
 				});
 
-			})();
+				QUnit.start();
+			});
 		</script>
 
 	</head>
 	<body>
-		<h1 id="qunit-header">Opa sample for matchers</h1>
-		<h2 id="qunit-banner"></h2>
-		<h2 id="qunit-userAgent"></h2>
-		<ol id="qunit-tests"></ol>
-		<div id="qunit-fixture"></div>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
 	</body>
 </html>

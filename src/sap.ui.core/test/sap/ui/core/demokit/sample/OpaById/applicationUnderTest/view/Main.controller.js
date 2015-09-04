@@ -1,8 +1,8 @@
 sap.ui.define(['sap/ui/core/mvc/Controller'],
-	function(Controller) {
+function(Controller) {
 	"use strict";
 
-	var MainController = Controller.extend("view.Main", {
+	var MainController = Controller.extend("appUnderTest.view.Main", {
 
 		onNavButtonPress : function () {
 			this.byId("myApp").to(this.byId("secondPage").getId());

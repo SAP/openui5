@@ -3,21 +3,19 @@
 
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<title>Opa sample for matchers</title>
+		<title>Opa sample for retrieving controls by id</title>
 
 		<script id="sap-ui-bootstrap" src="../../../../../../../resources/sap-ui-core.js"></script>
 
-		<link rel="stylesheet" href="../../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-
 		<script>
-			(function () {
-				jQuery.sap.require("sap.ui.thirdparty.qunit");
-				jQuery.sap.require("sap.ui.test.Opa5");
-				jQuery.sap.require("sap.ui.test.opaQunit");
-				var Opa = sap.ui.test.Opa;
-				var Opa5 = sap.ui.test.Opa5;
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			QUnit.config.autostart = false;
 
-				module("Controls by id");
+			sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function (Opa5, opaTest) {
+				QUnit.module("Controls by id");
 
 				opaTest("Should find a Button with an id", function(Given, When, Then) {
 
@@ -25,16 +23,16 @@
 					Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
 
 					When.waitFor({
-						viewName : "view.Main",
+						viewName : "appUnderTest.view.Main",
 						id : "navigationButton",
 						success : function (oButton) {
 							oButton.$().trigger("tap");
 						},
-						errorMessage : "Did not find the naviationButton"
+						errorMessage : "Did not find the navigation-button"
 					});
 
 					Then.waitFor({
-						viewName : "view.Main",
+						viewName : "appUnderTest.view.Main",
 						id : ["firstButtonOnSecondPage", "secondButtonOnSecondPage"],
 						success : function (aButtons) {
 							Opa5.assert.strictEqual(aButtons.length, 2, "Found both buttons");
@@ -46,21 +44,19 @@
 						success : function (aButtons) {
 							Opa5.assert.ok(true, "Found the button: " + aButtons[0]);
 						},
-						errorMessage : "Did not find the button with corresponding ID"
+						errorMessage : "Did not find the button with corresponding id"
 					});
 
 					Then.iTeardownMyAppFrame();
 				});
 
-			})();
+				QUnit.start();
+			});
 		</script>
 
 	</head>
 	<body>
-		<h1 id="qunit-header">Opa sample for matchers</h1>
-		<h2 id="qunit-banner"></h2>
-		<h2 id="qunit-userAgent"></h2>
-		<ol id="qunit-tests"></ol>
+		<div id="qunit"></div>
 		<div id="qunit-fixture"></div>
 	</body>
 </html>
