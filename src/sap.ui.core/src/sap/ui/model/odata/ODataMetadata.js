@@ -936,14 +936,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 * @private
 	 */
 	ODataMetadata.prototype.merge = function(oTarget, oSource, aEntitySets) {
+		var that = this;
 		jQuery.each(oTarget.dataServices.schema, function(i, oTargetSchema) {
 			// find schema
 			jQuery.each(oSource.dataServices.schema, function(j, oSourceSchema) {
 				if (oSourceSchema.namespace === oTargetSchema.namespace) {
 					//merge entityTypes
 					if (oSourceSchema.entityType) {
+						//cache entityType names
+						if (!that.mEntityTypeNames) {
+							that.mEntityTypeNames = {};
+							oTargetSchema.entityType.map(function(o) {
+								that.mEntityTypeNames[o.name] = true;
+							});
+						}
 						oTargetSchema.entityType = !oTargetSchema.entityType ? [] : oTargetSchema.entityType;
-						oTargetSchema.entityType = oTargetSchema.entityType.concat(oSourceSchema.entityType);
+						for (var i = 0; i < oSourceSchema.entityType.length; i++) {
+							if (!(oSourceSchema.entityType[i].name in that.mEntityTypeNames)) {
+								oTargetSchema.entityType.push(oSourceSchema.entityType[i]);
+								that.mEntityTypeNames[oSourceSchema.entityType[i].name] = true;
+							}
+						}
 					}
 					//find EntityContainer if any
 					if (oTargetSchema.entityContainer && oSourceSchema.entityContainer) {
@@ -952,8 +965,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 							jQuery.each(oSourceSchema.entityContainer, function(l, oSourceContainer) {
 								if (oSourceContainer.entitySet) {
 									if (oSourceContainer.name === oTargetContainer.name) {
+										//cache entitySet names
+										if (!that.mEntitySetNames) {
+											that.mEntitySetNames = {};
+											oTargetContainer.entitySet.map(function(o) {
+												that.mEntitySetNames[o.name] = true;
+											});
+										}
 										oTargetContainer.entitySet = !oTargetContainer.entitySet ? [] : oTargetContainer.entitySet;
-										oTargetContainer.entitySet = oTargetContainer.entitySet.concat(oSourceContainer.entitySet);
+										for (var i = 0; i < oSourceContainer.entitySet.length; i++) {
+											if (!(oSourceContainer.entitySet[i].name in that.mEntitySetNames)) {
+												oTargetContainer.entitySet.push(oSourceContainer.entitySet[i]);
+												that.mEntitySetNames[oSourceContainer.entitySet[i].name] = true;
+											}
+										}
 										oSourceContainer.entitySet.forEach(function(oElement) {
 											aEntitySets.push(oElement);
 										});
