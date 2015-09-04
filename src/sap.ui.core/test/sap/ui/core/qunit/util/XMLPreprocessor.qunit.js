@@ -1,14 +1,23 @@
 /*!
  * ${copyright}
  */
-(function () {
+sap.ui.require([
+	"sap/ui/Device",
+	"sap/ui/base/BindingParser",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/CustomizingConfiguration",
+	"sap/ui/core/XMLTemplateProcessor",
+	"sap/ui/core/util/XMLPreprocessor",
+	"sap/ui/model/BindingMode",
+	"sap/ui/model/Context",
+	"sap/ui/model/json/JSONModel"
+], function(Device, BindingParser, ManagedObject, CustomizingConfiguration, XMLTemplateProcessor,
+		XMLPreprocessor, BindingMode, Context, JSONModel) {
 	/*global QUnit, sinon, window */
 	/*eslint consistent-this: 0, no-loop-func: 0, no-warning-comments: 0*/
 	"use strict";
 
 	jQuery.sap.require("jquery.sap.xml");
-	jQuery.sap.require("sap.ui.core.CustomizingConfiguration");
-	jQuery.sap.require("sap.ui.core.util.XMLPreprocessor");
 
 	var sComponent = "sap.ui.core.util.XMLPreprocessor",
 		iOldLogLevel = jQuery.sap.log.getLevel();
@@ -47,7 +56,7 @@
 			.replace(/ xmlns.*?=\".+?\"/g, "")
 			// Note: browsers differ in whitespace for empty HTML(!) tags
 			.replace(/ \/>/g, '/>');
-		if (sap.ui.Device.browser.msie || sap.ui.Device.browser.edge) {
+		if (Device.browser.msie || Device.browser.edge) {
 			// Microsoft shuffles attribute order
 			// remove helper, type and var, then no tag should have more that one attribute
 			sXml = sXml.replace(/ (helper|type|var)=".*?"/g, "");
@@ -84,24 +93,23 @@
 	 *   code under test
 	 */
 	function withBalancedBindAggregation(assert, fnCodeUnderTest) {
-		var fnBindAggregation = sap.ui.base.ManagedObject.prototype.bindAggregation,
+		var fnBindAggregation = ManagedObject.prototype.bindAggregation,
 			oSandbox = sinon.sandbox.create(),
 			fnUnbindAggregation;
 
 		try {
-			oSandbox.stub(sap.ui.base.ManagedObject.prototype, "bindAggregation",
+			oSandbox.stub(ManagedObject.prototype, "bindAggregation",
 				function (sName, oBindingInfo) {
 					assert.strictEqual(sName, "list");
-					assert.strictEqual(oBindingInfo.mode, sap.ui.model.BindingMode.OneTime);
+					assert.strictEqual(oBindingInfo.mode, BindingMode.OneTime);
 					fnBindAggregation.apply(this, arguments);
 				});
-			fnUnbindAggregation
-				= oSandbox.spy(sap.ui.base.ManagedObject.prototype, "unbindAggregation");
+			fnUnbindAggregation = oSandbox.spy(ManagedObject.prototype, "unbindAggregation");
 
 			fnCodeUnderTest();
 
 			assert.strictEqual(fnUnbindAggregation.callCount,
-				sap.ui.base.ManagedObject.prototype.bindAggregation.callCount,
+				ManagedObject.prototype.bindAggregation.callCount,
 				"balance of bind and unbind");
 			if (fnUnbindAggregation.callCount) {
 				sinon.assert.alwaysCalledWith(fnUnbindAggregation, "list", true);
@@ -120,28 +128,28 @@
 	 *   code under test
 	 */
 	function withBalancedBindProperty(assert, fnCodeUnderTest) {
-		var fnBindProperty = sap.ui.base.ManagedObject.prototype.bindProperty,
+		var fnBindProperty = ManagedObject.prototype.bindProperty,
 			oSandbox = sinon.sandbox.create();
 
 		try {
-			oSandbox.stub(sap.ui.base.ManagedObject.prototype, "bindProperty",
+			oSandbox.stub(ManagedObject.prototype, "bindProperty",
 				function (sName, oBindingInfo) {
 					assert.strictEqual(sName, "any");
-					assert.strictEqual(oBindingInfo.mode, sap.ui.model.BindingMode.OneTime);
+					assert.strictEqual(oBindingInfo.mode, BindingMode.OneTime);
 					(oBindingInfo.parts || []).forEach(function (oInfoPart) {
-						assert.strictEqual(oInfoPart.mode, sap.ui.model.BindingMode.OneTime);
+						assert.strictEqual(oInfoPart.mode, BindingMode.OneTime);
 					});
 					fnBindProperty.apply(this, arguments);
 				});
-			oSandbox.spy(sap.ui.base.ManagedObject.prototype, "unbindProperty");
+			oSandbox.spy(ManagedObject.prototype, "unbindProperty");
 
 			fnCodeUnderTest();
 
-			assert.strictEqual(sap.ui.base.ManagedObject.prototype.unbindProperty.callCount,
-				sap.ui.base.ManagedObject.prototype.bindProperty.callCount,
+			assert.strictEqual(ManagedObject.prototype.unbindProperty.callCount,
+				ManagedObject.prototype.bindProperty.callCount,
 				"balance of bind and unbind");
-			if (sap.ui.base.ManagedObject.prototype.unbindProperty.callCount) {
-				sinon.assert.alwaysCalledWith(sap.ui.base.ManagedObject.prototype.unbindProperty,
+			if (ManagedObject.prototype.unbindProperty.callCount) {
+				sinon.assert.alwaysCalledWith(ManagedObject.prototype.unbindProperty,
 					"any", true);
 			}
 		} finally {
@@ -166,7 +174,7 @@
 				componentId : "this._sOwnerId",
 				name : "this.sViewName"
 			};
-		return sap.ui.core.util.XMLPreprocessor.process(oViewContent, oViewInfo, mSettings);
+		return XMLPreprocessor.process(oViewContent, oViewInfo, mSettings);
 	}
 
 	/**
@@ -202,8 +210,7 @@
 		return oLogMock.expects("warning")
 			// do not construct arguments in vain!
 			.exactly(jQuery.sap.log.isLoggable(jQuery.sap.log.Level.WARNING) ? 1 : 0)
-			.withExactArgs(matchArg(sExpectedWarning), matchArg(vDetails || null),
-				"sap.ui.core.util.XMLPreprocessor");
+			.withExactArgs(matchArg(sExpectedWarning), matchArg(vDetails || null), sComponent);
 	}
 
 	/**
@@ -303,8 +310,7 @@
 			vOffender = aViewContent[vOffender || 1];
 		}
 		sExpectedMessage = sExpectedMessage.replace("{0}", vOffender);
-		oLogMock.expects("error").withExactArgs(matchArg(sExpectedMessage), "qux",
-			"sap.ui.core.util.XMLPreprocessor");
+		oLogMock.expects("error").withExactArgs(matchArg(sExpectedMessage), "qux", sComponent);
 
 		try {
 			process(oViewContent, mSettings);
@@ -529,7 +535,7 @@
 					'</t:if>',
 					'</mvc:View>'
 				], {
-					models: new sap.ui.model.json.JSONModel({flag: oFlag})
+					models: new JSONModel({flag: oFlag})
 				});
 			}
 		);
@@ -547,7 +553,7 @@
 					'</template:if>',
 					'</mvc:View>'
 				], {
-					models: new sap.ui.model.json.JSONModel({flag: oFlag})
+					models: new JSONModel({flag: oFlag})
 				});
 			}
 		);
@@ -558,7 +564,7 @@
 	["true", true, 1, "X"].forEach(function (oFlag) {
 		QUnit.test("XML with template:if test='{flag}', truthy, flag = " + oFlag,
 			function (assert) {
-				var oModel = new sap.ui.model.json.JSONModel({flag: oFlag});
+				var oModel = new JSONModel({flag: oFlag});
 
 				check.call(this, assert, [
 					mvcView(),
@@ -589,7 +595,7 @@
 			'</template:if>',
 			'</mvc:View>'
 		], {
-			models: new sap.ui.model.json.JSONModel({flag: false})
+			models: new JSONModel({flag: false})
 		});
 	});
 
@@ -636,7 +642,7 @@
 
 					this.mock(sap.ui.core.CustomizingConfiguration).expects("getViewExtension")
 						.never();
-					this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate").never();
+					this.mock(XMLTemplateProcessor).expects("loadTemplate").never();
 					if (!bWarn) {
 						jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
 					}
@@ -656,11 +662,11 @@
 					if (bWarn && oFixture.aDebugMessages) {
 						checkTracing.call(oLogMock, assert, true, oFixture.aDebugMessages,
 							aViewContent, {
-								models: new sap.ui.model.json.JSONModel({flag: true})
+								models: new JSONModel({flag: true})
 							}, vExpected);
 					} else {
 						check.call(oLogMock, assert, aViewContent, {
-							models: new sap.ui.model.json.JSONModel({flag: true})
+							models: new JSONModel({flag: true})
 						}, vExpected);
 					}
 				}
@@ -732,7 +738,7 @@
 
 				this.mock(sap.ui.core.CustomizingConfiguration).expects("getViewExtension")
 					.never();
-				this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate").never();
+				this.mock(XMLTemplateProcessor).expects("loadTemplate").never();
 				if (!bWarn) {
 					jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR);
 				}
@@ -742,7 +748,7 @@
 					.exactly(bWarn ? 1 : 0); // do not construct arguments in vain!
 
 				check.call(oLogMock, assert, aViewContent, {
-					models: new sap.ui.model.json.JSONModel()
+					models: new JSONModel()
 				}, vExpected);
 			});
 		});
@@ -764,7 +770,7 @@
 			'</template:if>',
 			'</mvc:View>'
 		], {
-			models: new sap.ui.model.json.JSONModel({flag: true})
+			models: new JSONModel({flag: true})
 		});
 	});
 
@@ -1042,7 +1048,7 @@
 				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/TypeImageUrl\'}"/>',
 			'</mvc:View>'
 		], {
-			models: new sap.ui.model.json.JSONModel({
+			models: new JSONModel({
 				"com.sap.vocabularies.UI.v1.HeaderInfo": {
 					"TypeImageUrl": {
 						"String": "/coco/apps/main/img/Icons/product_48.png"
@@ -1072,7 +1078,7 @@
 	[false, true].forEach(function (bDebug) {
 		QUnit.test(
 				"binding resolution: interface to formatter, debug = " + bDebug, function (assert) {
-			var oModel = new sap.ui.model.json.JSONModel({
+			var oModel = new JSONModel({
 					"somewhere": {
 						"com.sap.vocabularies.UI.v1.HeaderInfo": {
 							"Title": {
@@ -1379,7 +1385,7 @@
 						+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value\'}"/>',
 					'</mvc:View>'
 				], {
-					models: new sap.ui.model.json.JSONModel({
+					models: new JSONModel({
 						"com.sap.vocabularies.UI.v1.HeaderInfo": {
 							"Title": {
 								"Label": {
@@ -1407,7 +1413,7 @@
 			'</template:with>',
 			'</mvc:View>'
 		], {
-			models: new sap.ui.model.json.JSONModel({
+			models: new JSONModel({
 				some: {
 					random: {
 						path: {
@@ -1440,7 +1446,7 @@
 					'</template:with>',
 					'</mvc:View>'
 				], {
-					models: new sap.ui.model.json.JSONModel({
+					models: new JSONModel({
 						some: {
 							random: {
 								path: {
@@ -1479,14 +1485,14 @@
 			'<template:with path="some/random/place" var="place"/>',
 			'</mvc:View>'
 		], "Cannot resolve path for {0}", {
-			models: new sap.ui.model.json.JSONModel()
+			models: new JSONModel()
 		});
 	});
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bWithVar) {
 		QUnit.test("template:with and helper, with var = " + bWithVar, function (assert) {
-			var oModel = new sap.ui.model.json.JSONModel({
+			var oModel = new JSONModel({
 					target: {
 						flag: true
 					}
@@ -1495,7 +1501,7 @@
 			window.foo = {
 				Helper : {
 					help : function (oContext) {
-						assert.ok(oContext instanceof sap.ui.model.Context);
+						assert.ok(oContext instanceof Context);
 						assert.strictEqual(oContext.getModel(), oModel);
 						assert.strictEqual(oContext.getPath(), "/some/random/path");
 						return "/target";
@@ -1521,17 +1527,17 @@
 	[false, true].forEach(function (bWithVar) {
 		QUnit.test("template:with and helper changing the model, with var = " + bWithVar,
 			function (assert) {
-				var oMetaModel = new sap.ui.model.json.JSONModel({
+				var oMetaModel = new JSONModel({
 						target: {
 							flag: true
 						}
 					}),
-					oModel = new sap.ui.model.json.JSONModel();
+					oModel = new JSONModel();
 
 				window.foo = {
 					Helper : {
 						help : function (oContext) {
-							assert.ok(oContext instanceof sap.ui.model.Context);
+							assert.ok(oContext instanceof Context);
 							assert.strictEqual(oContext.getModel(), oModel);
 							assert.strictEqual(oContext.getPath(), "/some/random/path");
 							return oMetaModel.createBindingContext("/target");
@@ -1566,7 +1572,7 @@
 				'<template:with path="/unused" var="target" helper="foo"/>',
 				'</mvc:View>'
 			], "Cannot resolve helper for {0}", {
-				models: new sap.ui.model.json.JSONModel()
+				models: new JSONModel()
 			});
 		});
 	});
@@ -1578,7 +1584,7 @@
 			'<template:with path="/unused" var="target" helper="."/>',
 			'</mvc:View>'
 		], "Cannot resolve helper for {0}", {
-			models: new sap.ui.model.json.JSONModel()
+			models: new JSONModel()
 		});
 	});
 
@@ -1593,7 +1599,7 @@
 				'<template:with path="/unused" var="target" helper="foo"/>',
 				'</mvc:View>'
 			], "Illegal helper result '" + vResult + "' in {0}", {
-				models: new sap.ui.model.json.JSONModel()
+				models: new JSONModel()
 			});
 		});
 	});
@@ -1601,7 +1607,7 @@
 	//*********************************************************************************************
 	QUnit.test('template:with repeated w/ same variable and value', function (assert) {
 		var oLogMock = this.mock(jQuery.sap.log),
-			oModel = new sap.ui.model.json.JSONModel(),
+			oModel = new JSONModel(),
 			sTemplate1 = '<template:with path="bar>/my/path" var="bar"/>',
 			sTemplate2 = '<template:with path="bar>bla" helper="foo"/>',
 			sTemplate3 = '<template:with path="bar>/my/path"/>';
@@ -1637,7 +1643,7 @@
 			'</template:repeat>',
 			'</mvc:View>'
 		], {
-			models: new sap.ui.model.json.JSONModel({
+			models: new JSONModel({
 				items: [{
 					src: "A"
 				}, {
@@ -1662,7 +1668,7 @@
 			'</template:repeat>',
 			'</mvc:View>'
 		], {
-			models: new sap.ui.model.json.JSONModel({
+			models: new JSONModel({
 				items: [{
 					src: "A"
 				}, {
@@ -1689,7 +1695,7 @@
 			'</mvc:View>'
 		], {
 			models: {
-				modelName: new sap.ui.model.json.JSONModel({
+				modelName: new JSONModel({
 					items: [{
 						src: "A"
 					}, {
@@ -1742,7 +1748,7 @@
 			'<template:repeat list="{/unsupported/path}"/>',
 			'</mvc:View>'
 		], {
-			models: new sap.ui.model.json.JSONModel()
+			models: new JSONModel()
 		});
 	});
 
@@ -1757,7 +1763,7 @@
 			'</mvc:View>'
 		], {
 			models: {
-				modelName: new sap.ui.model.json.JSONModel({
+				modelName: new JSONModel({
 					items: [{
 						src: "A"
 					}, {
@@ -1787,7 +1793,7 @@
 			'</mvc:View>'
 		], {
 			models: {
-				customer: new sap.ui.model.json.JSONModel({
+				customer: new JSONModel({
 					orders: [{
 						id: "A",
 						items: [{
@@ -1825,7 +1831,7 @@
 			'</mvc:View>'
 		], {
 			models: {
-				modelName: new sap.ui.model.json.JSONModel({
+				modelName: new JSONModel({
 					items: [{
 						src: "A"
 					}, {
@@ -1859,7 +1865,7 @@
 			+ ' template:require="' + sModuleName + '"/>';
 
 		this.mock(jQuery.sap).expects("require").on(jQuery.sap).withExactArgs(sModuleName);
-		this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate")
+		this.mock(XMLTemplateProcessor).expects("loadTemplate")
 			.withExactArgs("myFragment", "fragment")
 			.returns(xml(assert, [sInElement]));
 		check.call(this, assert, [
@@ -1875,7 +1881,7 @@
 
 	//*********************************************************************************************
 	QUnit.test("dynamic fragment names", function (assert) {
-		this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate")
+		this.mock(XMLTemplateProcessor).expects("loadTemplate")
 			.withExactArgs("dynamicFragmentName", "fragment")
 			.returns(xml(assert, ['<In xmlns="sap.ui.core"/>']));
 		check.call(this, assert, [
@@ -1899,7 +1905,7 @@
 		// Note: jQuery.sap.require() supports "varargs" style
 		oExpectation.on(jQuery.sap).withExactArgs.apply(oExpectation, aModuleNames);
 
-		this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate")
+		this.mock(XMLTemplateProcessor).expects("loadTemplate")
 			.withExactArgs("myFragment", "fragment")
 			.returns(xml(assert, ['<FragmentDefinition xmlns="sap.ui.core" xmlns:template='
 							+ '"http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
@@ -1919,7 +1925,7 @@
 
 	//*********************************************************************************************
 	QUnit.test("fragment in repeat", function (assert) {
-		var oXMLTemplateProcessorMock = this.mock(sap.ui.core.XMLTemplateProcessor);
+		var oXMLTemplateProcessorMock = this.mock(XMLTemplateProcessor);
 
 		// BEWARE: use fresh XML document for each call because liftChildNodes() makes it empty!
 		oXMLTemplateProcessorMock.expects("loadTemplate")
@@ -1939,7 +1945,7 @@
 			'</template:repeat>',
 			'</mvc:View>'
 		], {
-			models: new sap.ui.model.json.JSONModel({
+			models: new JSONModel({
 				items: [{
 					src: "A"
 				}, {
@@ -1957,7 +1963,7 @@
 
 	//*********************************************************************************************
 	QUnit.test("fragment with type != XML", function (assert) {
-		this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate").never();
+		this.mock(XMLTemplateProcessor).expects("loadTemplate").never();
 		check.call(this, assert, [
 				mvcView(),
 				'<Fragment fragmentName="nonXMLFragment" type="JS"/>',
@@ -1969,7 +1975,7 @@
 
 	//*********************************************************************************************
 	QUnit.test("error on fragment with simple cyclic reference", function (assert) {
-		this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate")
+		this.mock(XMLTemplateProcessor).expects("loadTemplate")
 			.once() // no need to load the fragment in vain!
 			.withExactArgs("cycle", "fragment")
 			.returns(xml(assert,
@@ -1995,7 +2001,7 @@
 				'</FragmentDefinition>'
 			],
 			oLogMock = this.mock(jQuery.sap.log),
-			oXMLTemplateProcessorMock = this.mock(sap.ui.core.XMLTemplateProcessor);
+			oXMLTemplateProcessorMock = this.mock(XMLTemplateProcessor);
 
 		warn(oLogMock, "[ 6] Set unchanged path: /foo", aFragmentContent[1]);
 		warn(oLogMock, "[ 7] Set unchanged path: /bar", aFragmentContent[2]);
@@ -2015,14 +2021,14 @@
 				'<Fragment fragmentName="A" type="XML"/>',
 				'</mvc:View>'
 			], "Cyclic reference to fragment 'B' {0}", {
-				models: new sap.ui.model.json.JSONModel()
+				models: new JSONModel()
 			}, aFragmentContent[3]);
 	});
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bDebug) {
 		QUnit.test("tracing, debug=" + bDebug, function (assert) {
-			var oBarModel = new sap.ui.model.json.JSONModel({
+			var oBarModel = new JSONModel({
 					"com.sap.vocabularies.UI.v1.HeaderInfo": {
 						"Title": {
 							"Label": {
@@ -2041,7 +2047,7 @@
 						Value: { Path: "C"}
 					}]
 				}),
-				oBazModel = new sap.ui.model.json.JSONModel({}),
+				oBazModel = new JSONModel({}),
 				oLogMock = this.mock(jQuery.sap.log),
 				aViewContent = [
 					mvcView("t"),
@@ -2071,7 +2077,7 @@
 				warn(oLogMock, "Warning(s) during processing of qux");
 			}
 			warn(oLogMock, '[ 0] Binding not ready', aViewContent[19]);
-			this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate")
+			this.mock(XMLTemplateProcessor).expects("loadTemplate")
 				.returns(xml(assert, ['<FragmentDefinition xmlns="sap.ui.core">',
 					'<In src="fragment"/>',
 					'</FragmentDefinition>']));
@@ -2146,7 +2152,7 @@
 				]);
 		}
 
-		this.mock(sap.ui.core.XMLTemplateProcessor).expects("loadTemplate").never();
+		this.mock(XMLTemplateProcessor).expects("loadTemplate").never();
 
 		[
 			undefined,
@@ -2176,7 +2182,7 @@
 						'<ExtensionPoint name="outerReplacement"/>',
 						'</template:if>'
 					],
-					oXMLTemplateProcessorMock = this.mock(sap.ui.core.XMLTemplateProcessor);
+					oXMLTemplateProcessorMock = this.mock(XMLTemplateProcessor);
 
 				// <ExtensionPoint name="outerExtensionPoint">
 				oCustomizingConfigurationMock.expects("getViewExtension")
@@ -2280,7 +2286,7 @@
 
 	//*********************************************************************************************
 	QUnit.test("template:alias", function (assert) {
-		var fnComplexParser = sap.ui.base.BindingParser.complexParser,
+		var fnComplexParser = BindingParser.complexParser,
 			fnGetObject = jQuery.sap.getObject;
 
 		window.foo = {
@@ -2302,7 +2308,7 @@
 			assert.strictEqual(iNoCreates, undefined, sName);
 			return fnGetObject.apply(this, arguments);
 		});
-		this.stub(sap.ui.base.BindingParser, "complexParser",
+		this.stub(BindingParser, "complexParser",
 			function (s, o, b1, bTolerateFunctionsNotFound, bStaticContext) {
 				assert.strictEqual(bTolerateFunctionsNotFound, true, JSON.stringify(arguments));
 				assert.strictEqual(bStaticContext, true, JSON.stringify(arguments));
@@ -2344,7 +2350,7 @@
 			'</template:alias>',
 			'</mvc:View>'
 		], {
-			models: new sap.ui.model.json.JSONModel({/*don't care*/})
+			models: new JSONModel({/*don't care*/})
 		}, [ // Note: XML serializer outputs &gt; encoding...
 			"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
 			"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
@@ -2391,6 +2397,6 @@
 			], "Invalid value in {0}");
 		});
 	});
-}());
+});
 //TODO we have completely missed support for unique IDs in fragments via the "id" property!
 //TODO somehow trace ex.stack, but do not duplicate ex.message and take care of PhantomJS
