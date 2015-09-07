@@ -336,8 +336,6 @@ html.sap-tablet input, html.sap-tablet textarea, html.sap-tablet [contenteditabl
 
 .sapMGlobalBackgroundColor, /*Only legacy support: Use sapUiGlobalBackgroundColor instead*/
 .sapUiGlobalBackgroundColor,
-.sapUshellShellBackground,
-html[data-sap-ui-browser="ie9"] .sapUshellShellBackground,
 html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor, /*Only legacy support: Use sapUiGlobalBackgroundColor instead*/
 html[data-sap-ui-browser="ie9"] .sapUiGlobalBackgroundColor,
 .sapMGlobalBackgroundColorStrong, /*Only legacy support: Use sapUiStrongBackgroundColor instead*/
@@ -364,7 +362,6 @@ html[data-sap-ui-browser="ie9"] {
 /********************************************************************************************************************************/
 
 
-.sapUshellShellBackground,
 .sapUiGlobalBackgroundColor,
 .sapMGlobalBackgroundColor { /*Only legacy support: Use sapUiGlobalBackgroundColor instead*/
 	background-color: @sapUiGlobalBackgroundColorDefault;
@@ -372,7 +369,6 @@ html[data-sap-ui-browser="ie9"] {
 	.sapGlobalBackgroundColorMixin;
 }
 
-html[data-sap-ui-browser="ie9"] .sapUshellShellBackground,
 html[data-sap-ui-browser="ie9"] .sapUiGlobalBackgroundColor,
 html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor { /*Only legacy support: Use sapUiGlobalBackgroundColor instead*/
 	.sapGlobalBackgroundColorMixinIE9;
@@ -465,7 +461,6 @@ html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor .sapMGlobalBackground
 }
 
 /* Ensure that background image is shown again when forced to do so (overrides previous declaration) */
-.sapMGlobalBackgroundImage.sapUshellShellBG, /* Remove this when UShell control is adapted accordingly */
 .sapUiGlobalBackgroundImage.sapUiGlobalBackgroundImageForce {
 	display: block;
 }
