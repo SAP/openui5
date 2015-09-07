@@ -318,5 +318,45 @@
         "references": []
       }
     ]
+  },
+  "1.32.1": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "44afd519d690f13868e1183715fd2eaab3e6f4da",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sao.ui.table.AnalyticalTable: fixes selection issue after re-bind",
+        "references": []
+      },
+      {
+        "id": "c5643dc96d9a8694ba2321ce52832999847938b3",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sao.ui.table.AnalyticalTable: fixes that \"group\" menu entry gets hidden",
+        "references": []
+      },
+      {
+        "id": "a9e6563f994d578585e9405c8d18980e92f5090b",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: Fixes row selection for selectionBehavior RowOnly",
+        "references": []
+      },
+      {
+        "id": "0b746a777f72b425af483b7d37e6007b3fa13c2b",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: prevents default for SPACE key when row select",
+        "references": []
+      },
+      {
+        "id": "39d826737a95dac2633f4babb8dc3253aba348ac",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: fixes that selectAll cannot be removed if no leaf was selected",
+        "references": []
+      }
+    ]
   }
 }

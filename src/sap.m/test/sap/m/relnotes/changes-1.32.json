@@ -1326,5 +1326,178 @@
         "references": []
       }
     ]
+  },
+  "1.32.1": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "b2458e4a2c759cfe6fed84d2c3cceb2a44bc6db2",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Fiori List Report Page Sample - Improved shrink behavior",
+        "references": []
+      },
+      {
+        "id": "b7a45ed1b6b11d231ee07a8db96bbd0952bb1bc4",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.BusyIndicator: Changed default animation",
+        "references": []
+      },
+      {
+        "id": "828121d764889ae68a8e98ca267493ed4b6efb89",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.MultiInput: Properly select tokens on Ctrl+A when focus is on empty input",
+        "references": []
+      },
+      {
+        "id": "597a0b70e9004c6824a857fccfba950461bb7b45",
+        "author": "Thomas Gauguin Houghton - Larsen \u003cthomas.houghton-larsen@sap.com\u003e",
+        "type": "FIX",
+        "text": "messagebundle.properties: localization",
+        "references": []
+      },
+      {
+        "id": "07323651f67c533770210b92bc99569d62de60be",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Button: scroll bar is incorrectly shown in IE",
+        "references": []
+      },
+      {
+        "id": "1f94a7518df10964c98a6a5e5b8869ef09ed2922",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: focus to the input when synthetic placeholder is pressed",
+        "references": []
+      },
+      {
+        "id": "7ef439fe6e7970784733e26db7dc734ee22ec401",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: missing outline issue fixed (HCB theme + IE11)",
+        "references": []
+      },
+      {
+        "id": "da3e59b4227874236ccfeafb8b31b432e03f5a27",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: the resize handler will be created for each rerender",
+        "references": []
+      },
+      {
+        "id": "a92d616f9de81fd2ff73a0565dcb482581a28244",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GrowingEnablement: Grow button should be tabbable.",
+        "references": []
+      },
+      {
+        "id": "f842f687ccb4356cc2c08cd4f27ca1ff69ff8547",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: IconTabHeader is not invalidated when the same value is set to a property",
+        "references": []
+      },
+      {
+        "id": "7caeecd6bdf9836b7d1ee1549e369528b84545ca",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessagePopover: Correct heigh when initiallyExpanded false",
+        "references": []
+      },
+      {
+        "id": "e232f74233688172647c92d3055009243f6b522b",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MessageStrip: Enable scrolling on mobile devices",
+        "references": []
+      },
+      {
+        "id": "c8b3346e3c9cb437372e5889d2ee3fe69b829b76",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: enhance multiinput in Grid layout",
+        "references": []
+      },
+      {
+        "id": "39701dab775aa7eec7050becc2be00473892f8e1",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: fix tokentruncation width calculation in compact mode",
+        "references": []
+      },
+      {
+        "id": "48ef204b0e82d78666e8b9eee47fcd3728d8a4c5",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: recaculate tokenizer width in edit mode",
+        "references": []
+      },
+      {
+        "id": "584204d21bf2188f263c2b4a42900b27ccf3ad97",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: show token indicator when there is more than one token in multiinput",
+        "references": []
+      },
+      {
+        "id": "207890cb2a316feb88438def40cd66feaca88f5f",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NavContainer - add property to alter the default focusing behavior",
+        "references": []
+      },
+      {
+        "id": "7b7390c04e8c70280ae05e3d7959727ac6db03c8",
+        "author": "Thomas Gauguin Houghton - Larsen \u003cthomas.houghton-larsen@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.P13nConditionPanel : Date type handling",
+        "references": []
+      },
+      {
+        "id": "163c38ce95527759499f5fd82c0f8482b6f9c630",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Text in sap.ui.layout.form.SimpleForm is with display \u0027block\u0027 due to layout requirements",
+        "references": []
+      },
+      {
+        "id": "5947bef620269d68d8290d65745f89e6e67020b3",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: fix line height issue for IE",
+        "references": []
+      },
+      {
+        "id": "b4a47dab87949706a5fd661a20e520ecb5367ed9",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: use destroy token instead of remove token in delete event",
+        "references": []
+      },
+      {
+        "id": "9d519a06827aff5d8ec7348bdb0d628b421068eb",
+        "author": "D064730 \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: All attribute characters are shown in IE11 during resizing",
+        "references": []
+      },
+      {
+        "id": "4979b2f5cdb63b6dbef21d1ea0d9625fe8ea7538",
+        "author": "D064730 \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: When clicking on the Edit button, only one list item can be changed in edit mode.",
+        "references": []
+      },
+      {
+        "id": "1dfdb11f6e813a9945bbf5ef559ec2c355e04c05",
+        "author": "Martin Daskalov \u003cm.daskalov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog - fixed freezing of the control",
+        "references": []
+      }
+    ]
   }
 }

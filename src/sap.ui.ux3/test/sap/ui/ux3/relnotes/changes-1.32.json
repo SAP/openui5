@@ -52,5 +52,17 @@
         "references": []
       }
     ]
+  },
+  "1.32.1": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "0b5893021be1d114e3c8189af6b36e7c9803fa07",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Respect \"themeroots\" when resolving img URLs in Controls",
+        "references": []
+      }
+    ]
   }
 }

@@ -45,5 +45,31 @@
         "references": []
       }
     ]
+  },
+  "1.32.1": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "20e6842f94bd0c386e6b66e3c9cebdeb2eae14a1",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Api Reference Tree clipping issue",
+        "references": []
+      },
+      {
+        "id": "9c7eaeca9a72d0add1cfa5184b846ff0f3ab8b23",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "Demokit About dialog is all visible now in small resolutions",
+        "references": []
+      },
+      {
+        "id": "be81ecd4c73f405ec5aa05e4ed35b4f2afc3eeb9",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Navigating back does not update the demokit tree",
+        "references": []
+      }
+    ]
   }
 }

@@ -87,5 +87,31 @@
         "references": []
       }
     ]
+  },
+  "1.32.1": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "0b5893021be1d114e3c8189af6b36e7c9803fa07",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Respect \"themeroots\" when resolving img URLs in Controls",
+        "references": []
+      },
+      {
+        "id": "e4c2c9494d8ae57280c8561d56e3c6ddd016514f",
+        "author": "Alexander Ivanov \u003calexander.ivanov01@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.ResponsiveFlowLayout - Cyclic re-rendering when the width is small solved",
+        "references": []
+      },
+      {
+        "id": "96bc2a14d5baa26b46b2753ca4790e6e69024524",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.GridLayout: wrong tab sequence in RTL",
+        "references": []
+      }
+    ]
   }
 }
