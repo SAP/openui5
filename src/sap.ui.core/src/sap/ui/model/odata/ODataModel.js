@@ -202,10 +202,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 				}
 				
 				if (this.sAnnotationURI) {
-					this.pAnnotationsLoaded = Promise.all([
-						this.pAnnotationsLoaded,
-						oAnnotations.addUrl(this.sAnnotationURI)
-					]);
+					if (this.bLoadMetadataAsync) {
+						this.pAnnotationsLoaded = this.pAnnotationsLoaded
+							.then(oAnnotations.addUrl.bind(oAnnotations, this.sAnnotationURI));
+					} else {
+						this.pAnnotationsLoaded = Promise.all([
+							this.pAnnotationsLoaded,
+							oAnnotations.addUrl(this.sAnnotationURI)
+						]);
+					}
 				}
 			}
 

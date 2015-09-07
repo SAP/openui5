@@ -215,10 +215,8 @@ sap.ui.define([
 				}
 				
 				if (this.sAnnotationURI) {
-					this.pAnnotationsLoaded = Promise.all([
-						this.pAnnotationsLoaded,
-						oAnnotations.addUrl(this.sAnnotationURI)
-					]);
+					this.pAnnotationsLoaded = this.pAnnotationsLoaded
+						.then(oAnnotations.addUrl.bind(oAnnotations, this.sAnnotationURI));
 				}
 			}
 
