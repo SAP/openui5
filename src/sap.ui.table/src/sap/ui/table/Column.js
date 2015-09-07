@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 		properties : {
 
 			/**
-			 * Width of the column.
+			 * Width of the column. Works only with px/em/rem values. Em will handled like rem values.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
