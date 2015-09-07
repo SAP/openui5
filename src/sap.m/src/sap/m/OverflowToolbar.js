@@ -476,6 +476,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 				// A tooltip will be used automatically by the button
 				// using to the icon-name provided
 				oOverflowButton = new ToggleButton({
+					id: this.getId() + "-overflowButton",
 					icon: IconPool.getIconURI("overflow"),
 					press: this._overflowButtonPressed.bind(this),
 					ariaLabelledBy: this._sAriaOverflowButtonLabelId,
