@@ -1058,7 +1058,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 				iPos = iPos - 2;
 			}
 		}
-		this._updatePosInSet( $Ref, iPos, oItem.getAdditionalText());
+		this._updatePosInSet( $Ref, iPos, (oItem.getAdditionalText ? oItem.getAdditionalText() : ""));
 		$Ref.attr("aria-setsize", iSize);
 		$Ref.val(sText);
 		this._sTypedChars = oNewValue;
