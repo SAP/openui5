@@ -83,22 +83,11 @@ sap.ui.define(['jquery.sap.global'],
 
 		if (oHeaderTBar) {
 			oHeaderTBar.setDesign(sap.m.ToolbarDesign.Transparent, true);
-
-			if (bIsExpandable) {
-				// use this class as marker class - to ease selection later in onAfterRendering
-				oHeaderTBar.addStyleClass("sapMPanelHdrExpandable");
-			}
-
 			oRm.renderControl(oHeaderTBar);
 
 		} else if (sHeaderText || bIsExpandable) {
 			oRm.write("<h1");
 			oRm.addClass("sapMPanelHdr");
-			if (bIsExpandable) {
-				// use this class as marker class - to ease selection later in onAfterRendering
-				oRm.addClass("sapMPanelHdrExpandable");
-			}
-
 			oRm.writeClasses();
 			oRm.writeAttribute("id", oControl.getId() + "-header");
 			oRm.write(">");
