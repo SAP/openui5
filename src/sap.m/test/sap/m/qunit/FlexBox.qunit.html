@@ -21,11 +21,11 @@
 			var sVendorPrefix = "";
 
 			if(jQuery.support.flexBoxPrefixed) {
-				if(jQuery.browser.webkit) {
+				if(sap.ui.Device.browser.webkit) {
 					sVendorPrefix = "-webkit-";
-				} else if(jQuery.browser.mozilla) {
+				} else if(sap.ui.Device.browser.mozilla) {
 					sVendorPrefix = "-moz-";
-				} else if(jQuery.browser.msie) {
+				} else if(sap.ui.Device.browser.msie) {
 					sVendorPrefix = "-ms-";
 				}
 			}
@@ -380,9 +380,17 @@
 						equal(jQuery("#item1").parent().css(sVendorPrefix + 'flex-basis'), "200px", "Item 1 " + sVendorPrefix + "flex-basis property should be set correctly");
 						equal(jQuery("#item2").parent().css(sVendorPrefix + 'flex-basis'), "2500px", "Item 2 " + sVendorPrefix + "flex-basis property should be set correctly");
 						equal(jQuery("#item3").parent().css(sVendorPrefix + 'flex-basis'), "137px", "Item 3 " + sVendorPrefix + "flex-basis property should be set correctly");
-						equal(Math.round(parseFloat(jQuery("#item4").parent().css(sVendorPrefix + 'flex-basis'))*100)/100, 213.33, "Item 4 " + sVendorPrefix + "flex-basis property should be set correctly");
+						if (sap.ui.Device.browser.msie) {
+							equal(jQuery("#item4").parent().css(sVendorPrefix + 'flex-basis'), "160pt", "Item 4 " + sVendorPrefix + "flex-basis property should be set correctly");
+						} else {
+							equal(Math.round(parseFloat(jQuery("#item4").parent().css(sVendorPrefix + 'flex-basis'))*100)/100, 213.33, "Item 4 " + sVendorPrefix + "flex-basis property should be set correctly");
+						}
 						equal(jQuery("#item5").parent().css(sVendorPrefix + 'flex-basis'), "888px", "Item 5 " + sVendorPrefix + "flex-basis property should be set correctly");
-						equal(jQuery("#item6").parent().css(sVendorPrefix + 'flex-basis'), "112px", "Item 6 " + sVendorPrefix + "flex-basis property should be set correctly");
+						if (sap.ui.Device.browser.msie) {
+							equal(jQuery("#item6").parent().css(sVendorPrefix + 'flex-basis'), "7em", "Item 6 " + sVendorPrefix + "flex-basis property should be set correctly");
+						} else {
+							equal(jQuery("#item6").parent().css(sVendorPrefix + 'flex-basis'), "112px", "Item 6 " + sVendorPrefix + "flex-basis property should be set correctly");
+						}
 					});
 				}
 
