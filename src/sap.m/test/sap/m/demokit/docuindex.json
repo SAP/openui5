@@ -196,6 +196,15 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.NotificationListItem",
+		  "name": "Notification List Item",
+		  "category": "List",
+		  "since": "1.34",
+		  "samples": [
+			"sap.m.sample.NotificationListItem"
+		  ]
+		},
+		{
 		  "id": "sap.m.DisplayListItem",
 		  "name": "Display List Item",
 		  "category": "List",
@@ -1791,6 +1800,11 @@
 		  "id": "sap.m.sample.TableSelectDialog",
 		  "name": "Table Select Dialog",
 		  "description": "Similar to the Select Dialog, the Table Select Dialog presents selectable items in a table-based dialog, with filter functions. You can have single select or multi select mode. The dialog can remember the selections previously set on the dialog."
+		},
+		{
+		  "id": "sap.m.sample.NotificationListItem",
+		  "name": "Notification List Item",
+		  "description": "A list item suitable for showing notifications to the user."
 		},
 		{
 		  "id": "sap.m.sample.Dialog",

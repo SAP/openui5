@@ -126,6 +126,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.MultiComboBox",
 			"sap.m.MultiInput",
 			"sap.m.NavContainer",
+			"sap.m.NotificationListItem",
 			"sap.m.PagingButton",
 			"sap.m.ObjectAttribute",
 			"sap.m.ObjectHeader",
@@ -398,7 +399,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		Message : "Message"
 
 	};
-	
+
 	/**
 	 * Enum for the state of sap.m.DraftIndicator control.
 	 *
@@ -413,7 +414,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		 * @public
 		 */
 		Clear: "Clear",
-		
+
 		/**
 		 * Indicates that the draft currently is being saved
 		 * @public
@@ -428,7 +429,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	};
 
-	
+
 	/**
 	 * FacetFilterList data types.
 	 *
@@ -1438,6 +1439,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	};
 
+
+	/**
+	 * Priorities for notifications.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.NotificationPriority = {
+
+		/**
+		 * none is the default priority if non is defined
+		 * @public
+		 */
+		None: "none",
+
+		/**
+		 * Low notification priority
+		 * @public
+		 */
+		Low: "low",
+
+		/**
+		 * Medium notification priority
+		 * @public
+		 */
+		Medium: "medium",
+
+		/**
+		 * High notification priority
+		 * @public
+		 */
+		High: "high"
+	};
+
 	/**
 	* Types for the placement of message popover control.
 	*
@@ -1736,6 +1772,63 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		 */
 		AcceptReject : "AcceptReject"
 
+	};
+
+	/**
+	 * Enumeration for different Notification List Item priorities.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.32
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.NotificationListItemPriority = {
+		/**
+		 * High Notification List Item priority
+		 * @public
+		 */
+		High : "High",
+
+		/**
+		 * Medium Notification List Item priority
+		 * @public
+		 */
+		Medium : "Medium",
+
+		/**
+		 * Neutral Notification List Item priority
+		 * @public
+		 */
+		Low : "Low",
+
+		/**
+		 * Neutral Notification List Item priority
+		 * @public
+		 */
+		Neutral : "Neutral"
+
+	};
+
+	/**
+	 * Enumeration for Notification List Item status.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.32
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.NotificationListItemStatus = {
+		/**
+		 * Read status
+		 * @public
+		 */
+		Read : "Read",
+
+		/**
+		 * Unread status
+		 * @public
+		 */
+		Unread : "Unread"
 	};
 
 

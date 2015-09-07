@@ -1,0 +1,37 @@
+<mvc:View
+		controllerName="sap.m.sample.NotificationListItem.C"
+		xmlns:l="sap.ui.layout"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+	<l:VerticalLayout
+			class="sapUiContentPadding"
+			width="100%">
+		<l:content>
+
+			<List>
+				<NotificationListItem
+					title="New order (#2525)"
+					text="Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis."
+					showCloseButton="true"
+					due="Thu Sep 13 2015 14:28:59 GMT+0300 (E. Europe Daylight Time)"
+					read="false"
+					priority="high"
+				/>
+
+				<NotificationListItem
+						title="New order (#2525)"
+						text="Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis."
+						showCloseButton="falseue"
+						read="false"
+						due="Thu Sep 30 2015 14:28:59 GMT+0300 (E. Europe Daylight Time)"
+						priority="true"
+						>
+					<buttons>
+						<Button text="Accept"></Button>
+						<Button text="Reject"></Button>
+					</buttons>
+				</NotificationListItem>
+			</List>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>
