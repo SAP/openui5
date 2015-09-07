@@ -153,6 +153,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
+	BusyIndicator.prototype.setSize = function (sSize) {
+		this.setProperty("size", sSize, true);
+
+		var oDomRef = this.getDomRef();
+		if (oDomRef) {
+			oDomRef.style.fontSize = sSize;
+		}
+
+		return this;
+	};
+
 	BusyIndicator.prototype.onBeforeRendering = function () {
 		if (this.getCustomIcon()) {
 			this.setBusy(false);
