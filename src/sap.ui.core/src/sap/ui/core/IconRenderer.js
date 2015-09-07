@@ -34,7 +34,7 @@ sap.ui.define(function() {
 		oRm.writeAccessibilityState(oControl, oControl._getAccessibilityAttributes());
 
 		if (sTooltip || (bUseIconTooltip && oIconInfo && oIconInfo.text)) {
-			oRm.writeAttribute("title", sTooltip || oIconInfo.text);
+			oRm.writeAttributeEscaped("title", sTooltip || oIconInfo.text);
 		}
 
 		if (oControl.hasListeners("press") && !bNoTabStop) {
