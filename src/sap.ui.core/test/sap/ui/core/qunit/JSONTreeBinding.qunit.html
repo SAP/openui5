@@ -173,6 +173,29 @@
 		context = contexts[0];
 		equal(oModel.getProperty("name", context), "subnode2", "TreeBinding node content");
 	});
+	
+	test("TreeBinding single filters", function(){
+		setup();
+		createTreeBinding("/orgStructure");
+
+		var treeBinding = bindings[0];
+
+		// Filter for node with name containing 'in', only one expected: Gina Rush
+		var oFilter1 = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "in");
+		treeBinding.filter(oFilter1);
+		
+		var filteredContext = treeBinding.getRootContexts();
+		equal(filteredContext.length, 1, "TreeBinding rootContexts length");
+		
+		var nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
+		equal(nodeContexts1.length, 2, "TreeBinding nodeContexts length");
+		
+		var nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
+		equal(nodeContexts2.length, 1, "TreeBinding nodeContexts length");
+		
+		equal(oModel.getProperty(nodeContexts2[0].getPath()).name, "Gina Rush", "TreeBinding filter value");
+		equal(oModel.getProperty(nodeContexts1[1].getPath()).name, "Catherine Platte", "TreeBinding filter value");
+	});
 
 	test("TreeBinding multi filters", function(){
 		setup();
