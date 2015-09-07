@@ -36,6 +36,8 @@ sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
 	 * </code>
 	 *
 	 * When you require this file, it will also introduce a global variable: opaTest.
+	 * It will also alter some settings of QUnit.config - testTimout will be increased to 90 if you do not specify your own.
+	 * QUnit.reorder will be set to false, because OPA tests are often depending on each other.
 	 * @public
 	 * @alias sap.ui.test.opaQunit
 	 * @function
@@ -54,6 +56,7 @@ sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
 		if (!QUnit.config.testTimeout) {
 			QUnit.config.testTimeout  = 90000;
 		}
+		QUnit.config.reorder = false;
 
 		if (arguments.length === 2) {
 			callback = expected;
