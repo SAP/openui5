@@ -458,5 +458,59 @@
         "references": []
       }
     ]
+  },
+  "1.30.8": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "1f16a72434740b89851939c0b5c78fd44132be33",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Respect \"themeroots\" when resolving img URLs in Controls",
+        "references": []
+      },
+      {
+        "id": "985e5a7a268e36ddc396af7033cecd7421b39c3c",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Carousel: Issue with calculating carousel size when width is set fixed",
+        "references": []
+      },
+      {
+        "id": "f088cce292a9559655aeba3e93df1953841c5cf1",
+        "author": "Nikolay Vankov \u003cnikolay.vankov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Carousel: Issue with toolbar arrow not on place fixed",
+        "references": []
+      },
+      {
+        "id": "bd6e2cd6903baf835951809aa0065bd5bdaebec6",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ComboBox: screen reader don\u0027t read additional text",
+        "references": []
+      },
+      {
+        "id": "7a36ba3a17ad1dcc1eb994d3f2aebd07a2d19634",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.RangeSlider: Grips not visible if invalif values",
+        "references": []
+      },
+      {
+        "id": "480401d380e11d117825eeb3a2dff26cf58f8e54",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField: Allow \"AltGr+z\" as input",
+        "references": []
+      },
+      {
+        "id": "e13f6ac82dc9772bfe974bd5f35430dfcc444145",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataTreeBinding - ApplicationFilters were not attached",
+        "references": []
+      }
+    ]
   }
 }

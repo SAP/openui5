@@ -1956,5 +1956,136 @@
         "references": []
       }
     ]
+  },
+  "1.30.8": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "fba144d6e7330860964b4d9b271eca08738ffdfb",
+        "author": "Michael Graf \u003cmi.graf@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.core.tutorial.databinding: initial content",
+        "references": []
+      },
+      {
+        "id": "5b8a2612750f47bcc9c80127ec272cdf7a0ac5c0",
+        "author": "Alexander Schmalzhaf \u003calexander.schmalzhaf@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnnotationHelper qunit tests fail due to Blackberry 10 Bug - changing test parameters to work around",
+        "references": []
+      },
+      {
+        "id": "d784830192d257b94102b45df17c54e588966728",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBinding.js - Missing null check",
+        "references": []
+      },
+      {
+        "id": "91673fac435e2231ce00288fa5515662a53f8e84",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "ComponentContainer: propagate properties when unbinding container",
+        "references": []
+      },
+      {
+        "id": "6dad0c9a25b02cddeccfcd79a935cf18c092fa96",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "Correctly Remove Invisible Control Placeholder on Destroy",
+        "references": []
+      },
+      {
+        "id": "155d3ab43ac0f00e13e360779fb0b611b79c2120",
+        "author": "Alexander Schmalzhaf \u003calexander.schmalzhaf@sap.com\u003e",
+        "type": "FIX",
+        "text": "Deletion of obsolete and misplaced Device API Unit Test",
+        "references": []
+      },
+      {
+        "id": "97cecf10c6a5fb581e9ba4da54fbd9f5570caccc",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: XML parsing in IE",
+        "references": []
+      },
+      {
+        "id": "0f6f70078e9d7dda91c6daed395b326c88ae8153",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: Cache Annotations with Service Metadata",
+        "references": []
+      },
+      {
+        "id": "f78df0704a87f185741cb0f0aeb2b66ab2a639fc",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: Don\u0027t cache annotations based on metadata URL",
+        "references": []
+      },
+      {
+        "id": "a880360b61c0e86a4ec372f5d250bfce8fbfbda1",
+        "author": "Alexander Schmalzhaf \u003calexander.schmalzhaf@sap.com\u003e",
+        "type": "FIX",
+        "text": "On Windows 10 Mobile Browser (Edge) mouse and click events must be suppressed.",
+        "references": []
+      },
+      {
+        "id": "1f16a72434740b89851939c0b5c78fd44132be33",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Respect \"themeroots\" when resolving img URLs in Controls",
+        "references": []
+      },
+      {
+        "id": "f51f9099281ce4a87312f90da3add98ec65c1503",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "XMLView: re-enable DOM preservation for synchronously loaded views",
+        "references": []
+      },
+      {
+        "id": "a82fc72a04b58f106bd2b42065e7dd9d7aa7cd6a",
+        "author": "Alexander Schmalzhaf \u003calexander.schmalzhaf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.Device detection for MS Edge:  change since in APIDoc",
+        "references": []
+      },
+      {
+        "id": "f76adbf9dacc74c9b1370ebc3f80b68a1a7a30e3",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Scrollbar: Scrolling in the table with millions of steps.",
+        "references": []
+      },
+      {
+        "id": "696b4a840d26598e446ed43cf830f2dec75d6b55",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataMetadata: duplicate entityTypes/entitySets",
+        "references": []
+      },
+      {
+        "id": "beaf625ee26b6e987120de88e8977bc9cc3743c5",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel documentation",
+        "references": []
+      },
+      {
+        "id": "e13f6ac82dc9772bfe974bd5f35430dfcc444145",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataTreeBinding - ApplicationFilters were not attached",
+        "references": []
+      },
+      {
+        "id": "af02b8141f5b85e43c9fa74effcbdbc128e239e4",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.OdataModel: unnecessary assertion when accessing annotations",
+        "references": []
+      }
+    ]
   }
 }
