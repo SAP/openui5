@@ -89,6 +89,15 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 					type: "boolean",
 					group: "Behavior",
 					defaultValue: true
+				},
+
+				/**
+				 * Hides or shows the page footer
+				 */
+				showFooter: {
+					type: "boolean",
+					group: "Appearance",
+					defaultValue: true
 				}
 			},
 			defaultAggregation: "content",
