@@ -3,14 +3,16 @@
 		"entitiesDefaults" : {
 			"formFactors" : "-"
 		},
-		"samplesRef" : [{
-			"namespace" : "sap.ui.core.sample",
-			"ref" : "test-resources/sap/ui/core/demokit/sample"
-		},
-		{
-		  "namespace": "sap.ui.core.tutorial",
-		  "ref": "test-resources/sap/ui/core/demokit/tutorial"
-		}],
+		"samplesRef": [
+			{
+				"namespace" : "sap.ui.core.sample",
+				"ref" : "test-resources/sap/ui/core/demokit/sample"
+			},
+			{
+				"namespace" : "sap.ui.core.tutorial",
+				"ref" : "test-resources/sap/ui/core/demokit/tutorial"
+			}
+		],
 		"entities" : [
 			{
 				"id" : "sap.ui.core.Control",
@@ -166,6 +168,34 @@
 				"since" : "1.28",
 				"samples" : [
 					"sap.ui.core.sample.TypeFileSize"
+				]
+			},
+			{
+				"id": "sap.ui.core.tutorial.navigation",
+				"name": "Navigation",
+				"category": "Tutorial",
+				"since": "1.30",
+				"formFactors": "-",
+				"description": "This tutorial illustrates the major features of navigation and routing inside SAPUI5 apps",
+				"docuLink": "#docs/guide/1b6dcd39a6a74f528b27ddb22f15af0d.html",
+				"samplesAsSteps": [
+					"Creating the initial app",
+					"Enable Routing in the app",
+					"Catching invalid hashes similar to 'Not Found'",
+					"Adding a Back Button to the NotFound Page",
+					"Displaying a Target without changing the hash",
+					"Navigating to routes with hard coded patterns",
+					"Navigating to routes with mandatory parameters",
+					"Navigation to a page with a flip transition",
+					"Allowing bookmarkable tabs with optional query parameters",
+					"Lazy loading of content",
+					"Assigning multiple targets to a route",
+					"Making a search bookmarkable",
+					"Making table sorting bookmarkable",
+					"Making dialogs bookmarkable",
+					"Reusing an existing route",
+					"Handling invalid hashes by listening for bypassed events",
+					"Listening for matched events of any route"
 				]
 			},
 			{
