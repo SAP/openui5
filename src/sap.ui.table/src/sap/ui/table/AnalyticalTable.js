@@ -1037,22 +1037,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype._updateTotalRow = function(aColumnInfo, bSuppressInvalidate) {
-
-		var bHasTotal = false;
-		for (var i = 0, l = aColumnInfo ? aColumnInfo.length : 0; i < l; i++) {
-			if (aColumnInfo[i].visible && aColumnInfo[i].total) {
-				bHasTotal = true;
-				break;
-			}
-		}
-
 		var oBinding = this.getBinding("rows");
-		if (oBinding && (!oBinding.providesGrandTotal() || !oBinding.hasTotaledMeasures())) {
-			bHasTotal = false;
-		}
 
 		var iFixedBottomRowCount = this.getFixedBottomRowCount();
-		if (bHasTotal) {
+		if (oBinding && (oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures())) {
 			if (iFixedBottomRowCount !== 1) {
 				this.setProperty("fixedBottomRowCount", 1, bSuppressInvalidate);
 			}
@@ -1183,7 +1171,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype._hasData = function() {
 		var oBinding = this.getBinding("rows"),
 			iLength = oBinding && (oBinding.getLength() || 0),
-			bHasTotal = oBinding && (oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures());
+			bHasTotal = oBinding && oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures();
 
 		if (!oBinding || (bHasTotal && iLength < 2) || (!bHasTotal && iLength === 0)) {
 			return false;

@@ -78,7 +78,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	AnalyticalTreeBindingAdapter.prototype.getContextByIndex = function (iIndex) {
 		// If we have fewer root level entries than the table has rows,
 		// the table expectes the last entry in the flat nodes array to be the root node (sum row)
-		if (iIndex === this._aRowIndexMap.length && this.bProvideGrandTotals && this._oRootNode) {
+		if (this._oRootNode && iIndex === (this.getLength() - 1) && this.providesGrandTotal() && this.hasTotaledMeasures()) {
 			return this._oRootNode.context;
 		}
 		
@@ -96,7 +96,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	AnalyticalTreeBindingAdapter.prototype.getNodeByIndex = function(iIndex) {
 		// If we have fewer root level entries than the table has rows,
 		// the table expectes the last entry in the flat nodes array to be the root node (sum row)
-		if (iIndex === (this.getLength() - 1) && this.bProvideGrandTotals) {
+		if (iIndex === (this.getLength() - 1) && this.providesGrandTotal() && this.hasTotaledMeasures()) {
 			return this._oRootNode;
 		}
 		
@@ -263,7 +263,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 		var sumNode;
 		
 		// check for grand totals requested
-		if (this.bProvideGrandTotals && !this.mParameters.sumOnTop && this.hasMeasures() && oNode.children.length > 1) {
+		if (this.bProvideGrandTotals && !this.mParameters.sumOnTop && this.hasTotaledMeasures() && oNode.children.length > 1) {
 			sumNode = this._createNode({
 				parent: oNode.parent, 
 				positionInParent: oNode.children.length, //sum row has position after every child in the parent node
@@ -496,7 +496,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 		
 		// add up the total number of sum rows (expanded nodes with at least one child)
 		// the number of totals for the root node is always 1 except in case the grand totals were not requested
-		if (oNode.sumNode || (oNode === this._oRootNode && this.bProvideGrandTotals)) {
+		if (oNode.sumNode || (oNode === this._oRootNode && this.providesGrandTotal() && this.hasTotaledMeasures())) {
 			oNode.numberOfTotals += 1;
 		}
 		
@@ -686,6 +686,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	/**
 	 * Checks if the AnalyticalBinding has totaled measures available.
 	 * Used for rendering sum rows.
+	 * 
+	 * @public
+	 * @returns {boolean} wether the binding has totaled measures or not
 	 */
 	AnalyticalTreeBindingAdapter.prototype.hasTotaledMeasures = function() {
 		var bHasMeasures = false;
@@ -754,7 +757,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	AnalyticalTreeBindingAdapter.prototype.getNumberOfExpandedLevels = function() {
 		return this.mParameters.numberOfExpandedLevels;
 	};
-
+	
 	return AnalyticalTreeBindingAdapter;
 	
 }, /* bExport= */ true);
