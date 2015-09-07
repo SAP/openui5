@@ -2080,8 +2080,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 
 	/**
-	 * returns the min width of all columns
+	 * Returns the summed width of all rendered columns
 	 * @private
+	 * @param {Number} iStartColumn starting column for calculating the width
+	 * @param {Number} iEndColumn ending column for calculating the width
+	 * @returns {Number} the summed column width
 	 */
 	Table.prototype._getColumnsWidth = function(iStartColumn, iEndColumn) {
 		// first calculate the min width of the table for all columns
@@ -2095,15 +2098,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			iEndColumn = aCols.length;
 		}
 
+		var iBaseFontSize = parseFloat(jQuery("body").css("font-size"));
 		for (var i = iStartColumn, l = iEndColumn; i < l; i++) {
 			if (aCols[i] && aCols[i].shouldRender()) {
 				var sWidth = aCols[i].getWidth();
-				var iWidth = parseInt(sWidth, 10);
 				if (jQuery.sap.endsWith(sWidth, "px")) {
-					iColsWidth += iWidth;
+					iColsWidth += parseInt(sWidth, 10);
+				} else if (jQuery.sap.endsWith(sWidth, "em") || jQuery.sap.endsWith(sWidth, "rem")) {
+					iColsWidth += parseInt(sWidth, 10) * iBaseFontSize;
 				} else {
 					// for unknown width we use the min width
-					iColsWidth += /* aCols[i].getMinWidth() || */ this._iColMinWidth;
+					iColsWidth += this._iColMinWidth;
 				}
 			}
 		}
