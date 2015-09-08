@@ -36,7 +36,6 @@ sap.ui.define([], function () {
 		oRm.writeClasses();
 		oRm.write('>');
 
-		//Rendering the notification list item's status
 		this.renderIcons(oRm, oControl);
 		this.renderHeader(oRm, oControl);
 		this.renderBody(oRm, oControl);
@@ -80,8 +79,8 @@ sap.ui.define([], function () {
 	};
 
 	NotificationListItemRenderer.renderUnreadStatus = function (oRm, oControl) {
-		var readStatus = oControl.getRead();
-		var statusClass = readStatus ? classNameRead : classNameUnread;
+		var unreadStatus = oControl.getUnread();
+		var statusClass = unreadStatus ? classNameUnread : classNameRead;
 
 		oRm.write('<div class=' + statusClass + '></div>');
 	};
@@ -113,7 +112,7 @@ sap.ui.define([], function () {
 
 	NotificationListItemRenderer.renderText = function (oRm, oControl) {
 		var text = new sap.m.Text({
-			text: oControl.getText(),
+			text: oControl.getDescription(),
 			maxLines: 2
 		}).addStyleClass(classNameText);
 
@@ -122,13 +121,13 @@ sap.ui.define([], function () {
 
 
 	NotificationListItemRenderer.renderDueTime = function (oRm, oControl) {
-		function _getDayDue() {
+		function _getDateTime() {
 			var _created = new Date();
 
 			var MILISECONDS_PER_DAY = (1000 * 60 * 60 * 24);
 
 			/** @type {number} */
-			var daysLeft = (new Date(oControl.getDue()) - _created) / MILISECONDS_PER_DAY;
+			var daysLeft = (new Date(oControl.getDatetime()) - _created) / MILISECONDS_PER_DAY;
 
 			if (daysLeft > 0) {
 				return 'Due in ' + Math.round(daysLeft) + ' days';
@@ -140,7 +139,7 @@ sap.ui.define([], function () {
 			}
 		}
 
-		var dueTimeText = new sap.m.Text({text: _getDayDue()}).addStyleClass(classNameDueDate);
+		var dueTimeText = new sap.m.Text({text: _getDateTime()}).addStyleClass(classNameDueDate);
 		oRm.renderControl(dueTimeText);
 	};
 
