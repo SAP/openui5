@@ -33,10 +33,11 @@
 
 			function switchTriggerTestcase (bHasScrollbars, bShouldShowTrigger) {
 				// System under Test
+				var $Dummy = jQuery("<div>").insertAfter("#qunit-fixture");
 				var oGrowingEnablement = new sap.m.GrowingEnablement(new sap.m.List()),
 					ojQueryStub = this.stub(oGrowingEnablement._oControl, "$", function () {
 						//we need a valid jQuery node
-						return jQuery("#qunit-fixture");
+						return $Dummy;
 					});
 
 				// Act
@@ -61,10 +62,11 @@
 
 			test("Should not change trigger if growing is not enabled", function() {
 				// System under Test
+				var $Dummy = jQuery("<div>").insertAfter("#qunit-fixture");
 				var oGrowingEnablement = new sap.m.GrowingEnablement(new sap.m.List()),
 					ojQueryStub = this.stub(oGrowingEnablement._oControl, "$", function () {
 						//we need a valid jQuery node
-						return jQuery("#qunit-fixture");
+						return $Dummy;
 					});
 
 				// Act
@@ -295,7 +297,8 @@
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
-
 		<div id="qunit-fixture"></div>
+		<div id="growing1"></div>
+		<div id="growing2"></div>
 	</body>
 </html>
