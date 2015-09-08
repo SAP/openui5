@@ -3,8 +3,8 @@
  */
 
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/routing/async/Target', 'sap/ui/core/routing/sync/Target'],
-	function($, EventProvider, asyncTarget, syncTarget) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
+	function($, EventProvider) {
 		"use strict";
 
 		/**
@@ -44,7 +44,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 				EventProvider.apply(this, arguments);
 
 				// branch by abstraction
-				var TargetStub = this._oOptions._async ?  asyncTarget : syncTarget;
+				var TargetStub;
+				if (this._oOptions._async) {
+					jQuery.sap.require("sap.ui.core.routing.async.Target");
+					TargetStub = sap.ui.require("sap/ui/core/routing/async/Target");
+				} else {
+					jQuery.sap.require("sap.ui.core.routing.sync.Target");
+					TargetStub = sap.ui.require("sap/ui/core/routing/sync/Target");
+				}
 				for (var fn in TargetStub) {
 					this[fn] = TargetStub[fn];
 				}

@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/View', 'sap/ui/core/routing/async/Views', 'sap/ui/core/routing/sync/Views'],
-	function($, EventProvider, UIComponent, View, asyncViews, syncViews) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/View'],
+	function($, EventProvider, UIComponent, View) {
 		"use strict";
 
 		/**
@@ -47,7 +47,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UI
 				// set the default view loading mode to sync for compatibility reasons
 				// temporarily: set the default value depending on the url parameter "sap-ui-xx-asyncRouting"
 				var async = (oOptions.async === undefined) ? checkUrl() : oOptions.async;
-				var ViewsStub = async ? asyncViews : syncViews;
+
+				var ViewsStub;
+				if (async) {
+					jQuery.sap.require("sap.ui.core.routing.async.Views");
+					ViewsStub = sap.ui.require("sap/ui/core/routing/async/Views");
+				} else {
+					jQuery.sap.require("sap.ui.core.routing.sync.Views");
+					ViewsStub = sap.ui.require("sap/ui/core/routing/sync/Views");
+				}
 
 				for (var fn in ViewsStub) {
 					this[fn] = ViewsStub[fn];

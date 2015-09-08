@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './async/Targets', './sync/Targets'],
-	function(Targets, TargetHandler, Target, asyncTargets, syncTargets) {
+sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target'],
+	function(Targets, TargetHandler, Target) {
 		"use strict";
 
 		/**
@@ -329,7 +329,14 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 
 				Targets.prototype.constructor.apply(this, arguments);
 
-				var TargetsStub = oOptions.config._async ? asyncTargets : syncTargets;
+				var TargetsStub;
+				if (oOptions.config._async) {
+					jQuery.sap.require("sap.m.routing.async.Targets");
+					TargetsStub = sap.ui.require("sap/m/routing/async/Targets");
+				} else {
+					jQuery.sap.require("sap.m.routing.sync.Targets");
+					TargetsStub = sap.ui.require("sap/m/routing/sync/Targets");
+				}
 
 				this._super = {};
 				for (var fn in TargetsStub) {
