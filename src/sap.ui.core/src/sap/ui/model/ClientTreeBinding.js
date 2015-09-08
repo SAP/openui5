@@ -173,6 +173,11 @@ sap.ui.define(['jquery.sap.global', './TreeBinding', 'sap/ui/model/FilterProcess
 	ClientTreeBinding.prototype.filter = function(aFilters){
 		// The filtering is applied recursively through the tree and stores all filtered contexts and its parent contexts in an array.
 	
+		// wrap single filters in an array
+		if (aFilters && !jQuery.isArray(aFilters)) {
+			aFilters = [aFilters];
+		}
+		
 		// reset previous stored filter contexts
 		this.filterInfo.aFilteredContexts = [];
 		this.filterInfo.oParentContext = {};
