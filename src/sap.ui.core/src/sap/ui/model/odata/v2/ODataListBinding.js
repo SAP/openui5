@@ -89,7 +89,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			this.aExpandRefs = oRef;
 			// oRef needs to be an array, so that it is the list of expanded entries
 			if (jQuery.isArray(oRef)) {
-				this.aKeys = oRef;
+				this.aAllKeys = oRef;
 				this.iLength = oRef.length;
 				this.bLengthFinal = true;
 				this.bDataAvailable = true;
@@ -382,7 +382,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 					this.aExpandRefs = oRef;
 					// oRef needs to be an array, so that it is the list of expanded entries
 					if (jQuery.isArray(oRef)) {
-						this.aKeys = oRef;
+						this.aAllKeys = oRef;
 						this.iLength = oRef.length;
 						this.bLengthFinal = true;
 						// since $expand loads all associated entries, we can directly switch to client operations
