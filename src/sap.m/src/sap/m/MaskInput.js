@@ -170,8 +170,20 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 * @param {object} oEvent The jQuery event
 	 */
 	MaskInput.prototype.onkeydown = function (oEvent) {
-		InputBase.prototype.onkeydown.apply(this, arguments);
-		keyDownHandler.call(this, oEvent);
+		var oKey = parseKeyBoardEvent(oEvent),
+		    mBrowser = sap.ui.Device.browser;
+
+		/* When user types character, the flow of triggered events is keydown -> keypress -> input. The MaskInput
+		 handles user input in keydown (for special keys like Delete and Backspace) or in keypress - for any other user
+		 input and suppresses the input events. This is not true for IE9, where the input event is fired, because of
+		 the underlying InputBase takes control and fires it (see {@link sap.m.InputBase#onkeydown})
+		 */
+		var bIE9AndBackspaceDeleteScenario = (oKey.bBackspace || oKey.bDelete) && mBrowser.msie && mBrowser.version < 10;
+
+        if (!bIE9AndBackspaceDeleteScenario) {
+			InputBase.prototype.onkeydown.apply(this, arguments);
+		}
+		keyDownHandler.call(this, oEvent, oKey);
 	};
 
 	MaskInput.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
@@ -792,13 +804,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 * @param {jQuery.event} oEvent The jQuery event object
 	 * @private
 	 */
-	function keyDownHandler(oEvent) {
+	function keyDownHandler(oEvent, oKey) {
 		var oSelection,
 			iBegin,
 			iEnd,
 			iCursorPos,
 			iNextCursorPos,
-			oKey = parseKeyBoardEvent(oEvent);
+			oKey = oKey || parseKeyBoardEvent(oEvent);
 
 		if (!this.getEditable()) {
 			return;

@@ -550,7 +550,7 @@
 					"Invalid mask input: Empty mask. Duplicated rule's maskFormatSymbol [+]", "Message");
 		});
 
-		test("Once the user completed the input, the property 'value' is chaned", function () {
+		test("Once the user completed the input, the property 'value' is changed", function () {
 			var oControl = this.oMaskInput.setPlaceholder("Enter number").setPlaceholderSymbol("#").setMask("999").setValue("123"),
 					oOtherControl = new sap.m.Input({value: "some other value"});
 			oOtherControl.placeAt("content");
@@ -576,6 +576,55 @@
 
 			oOtherControl.destroy();
 		});
+
+		test("Backspace when only one character left should restore the default input value all browsers", function () {
+			checkForDeleteAndBackspace.call(this);
+		});
+
+		if (sap.ui.Device.browser.msie) {
+			test("Backspace when only one character left should restore the default input value IE9", function () {
+				//stub - IE9
+				this.sandbox.stub(sap.ui.Device.browser, "version", 9);
+				checkForDeleteAndBackspace.call(this);
+			});
+		}
+
+		function checkForDeleteAndBackspace() {
+			var oRule = new sap.m.MaskInputRule();
+			oRule.setMaskFormatSymbol("h");
+			oRule.setRegex("[ 1]");
+			var oControl = this.oMaskInput.setMask("h9:99:99 ");
+			oControl.addRule(oRule);
+
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+			this.sendAndValidate(0, "1", "1_:__:__ ", oControl);
+			qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.BACKSPACE);
+			this.clock.tick(1000);
+			equal(oControl._getInputValue(), "__:__:__ ", "the value after backspace should be empty");
+
+			this.sendAndValidate(0, "1", "1_:__:__ ", oControl);
+			setCursorPosition(0, oControl);
+			qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.DELETE);
+			this.clock.tick(1000);
+			equal(oControl._getInputValue(), "__:__:__ ", "the value after delete should be empty");
+
+			this.sendAndValidate(0, "1", "1_:__:__ ", oControl);
+			this.sendAndValidate(1, "2", "12:__:__ ", oControl);
+			oControl.selectText(0, 2);
+			this.clock.tick(1000);
+			qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.BACKSPACE);
+			this.clock.tick(1000);
+			equal(oControl._getInputValue(), "__:__:__ ", "the value after backspace should be empty");
+
+			this.sendAndValidate(0, "1", "1_:__:__ ", oControl);
+			this.sendAndValidate(1, "2", "12:__:__ ", oControl);
+			oControl.selectText(0, 2);
+			this.clock.tick(1000);
+			qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.DELETE);
+			this.clock.tick(1000);
+			equal(oControl._getInputValue(), "__:__:__ ", "the value after delete should be empty");
+		}
 
 		function setCursorPosition(iPosition, oControl) {
 			var _$oControl = jQuery(oControl.getFocusDomRef());
