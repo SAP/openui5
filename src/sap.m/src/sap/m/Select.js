@@ -1837,12 +1837,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			var oList = this.getList(),
 				aItems = oList ? oList.removeAllItems() : [];
 
-			// clear the selection
 			this.clearSelection();
-
-			if (!this.isInvalidateSuppressed()) {
-				this.invalidate();
-			}
+			this.setValue("");
+			this.$("select").children().remove();
 
 			for (var i = 0; i < aItems.length; i++) {
 				aItems[i].detachEvent("_change", this.onItemChange, this);
