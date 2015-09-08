@@ -31,6 +31,7 @@ sap.ui.require([
 			SimpleType.prototype.setFormatOptions, "type overwrites setFormatOptions");
 		oType.setFormatOptions({foo: "bar"});
 		assert.strictEqual(oType.oFormatOptions, undefined, "no format options");
+		assert.strictEqual(oType.getInterface(), oType, "returns no interface facade");
 	});
 
 });
