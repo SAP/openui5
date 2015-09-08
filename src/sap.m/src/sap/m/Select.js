@@ -100,7 +100,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				 * Specifies the direction of the text within the input field with enumerated options. By default, the control inherits text direction from the DOM.
 				 * @since 1.28
 				 */
-				textDirection: { type: "sap.ui.core.TextDirection", group: "Appearance", defaultValue: sap.ui.core.TextDirection.Inherit }
+				textDirection: { type: "sap.ui.core.TextDirection", group: "Appearance", defaultValue: sap.ui.core.TextDirection.Inherit },
+
+				/**
+				 * Indicates whether the selection is restricted to one of the items in the list.
+				 * @since 1.34
+				 */
+				forceSelection: { type: "boolean", group: "Behavior", defaultValue: true }
 			},
 			defaultAggregation : "items",
 			aggregations: {
@@ -1312,7 +1318,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @since 1.22.0
 		 */
 		Select.prototype.getDefaultSelectedItem = function(aItems) {
-			return this.findFirstEnabledItem();
+			return this.getForceSelection() ? this.findFirstEnabledItem() : null;
 		};
 
 		/**
