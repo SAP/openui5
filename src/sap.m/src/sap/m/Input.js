@@ -1198,6 +1198,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 						oInput._updateTokenizerInMultiInput();
 						oInput._tokenizerInPopup.destroy();
 						oInput.setValue("");
+						oInput._showIndicator();
 						setTimeout(function() {
 							oInput._setContainerSizes();
 						}, 0);
