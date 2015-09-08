@@ -88,7 +88,7 @@ sap.ui.define([], function () {
 	NotificationListItemRenderer.renderPriority = function (oRm, oControl) {
 		var priority = oControl.getPriority();
 
-		if (priority && priority === sap.m.NotificationPriority.High) {
+		if (priority && priority === sap.ui.core.Priority.High) {
 			var icon = new sap.ui.core.Icon({src: 'sap-icon://warning'});
 			oRm.renderControl(icon);
 		}
