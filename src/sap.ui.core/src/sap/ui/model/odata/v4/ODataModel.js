@@ -56,9 +56,6 @@ sap.ui.define([
 	 *   <code>mParameters.serviceUrl</code>
 	 * @param {object} [mParameters]
 	 *   the parameters
-	 * @param {boolean} [mParameters.automaticTypeDetermination=false]
-	 *   If this parameter is set, all property bindings request a type from the meta model
-	 *   unless given otherwise
 	 * @param {string} [mParameters.serviceUrl]
 	 *   base URL of the service to request data from; only used if the parameter
 	 *   <code>sServiceUrl</code> has not been given
@@ -89,7 +86,6 @@ sap.ui.define([
 						throw new Error("Service URL must end with '/'");
 					}
 					this.sServiceUrl = sServiceUrl.slice(0, -1);
-					this.mParameters = mParameters;
 					this.oMetaModel = new ODataMetaModel(
 						new ODataDocumentModel(this.sServiceUrl + "/$metadata"));
 				}
@@ -149,12 +145,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.bindProperty = function (sPath, oContext) {
-		var that = this;
-
-		return new ODataPropertyBinding(this, sPath, oContext, {
-			automaticTypeDetermination:
-				that.mParameters && that.mParameters.automaticTypeDetermination
-		});
+		return new ODataPropertyBinding(this, sPath, oContext);
 	};
 
 	ODataModel.prototype.bindTree = function () {

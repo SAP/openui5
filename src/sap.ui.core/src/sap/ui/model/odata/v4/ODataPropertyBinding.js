@@ -37,11 +37,6 @@ sap.ui.define([
 	 *   the binding path in the model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   the context which is required as base for a relative path
-	 * @param {object} [mParameters]
-	 *   the parameters
-	 * @param {boolean} [mParameters.automaticTypeDetermination=false]
-	 *   If this parameter is set, the property binding requests a type from the meta model
-	 *   unless given otherwise
 	 *
 	 * @class Property binding for an OData v4 model.
 	 *
@@ -58,7 +53,6 @@ sap.ui.define([
 				constructor : function () {
 					PropertyBinding.apply(this, arguments);
 					this.oValue = undefined;
-					this.bRequestsType = this.bHasValue = false;
 				},
 				metadata : {
 					publicMethods : []
@@ -71,9 +65,8 @@ sap.ui.define([
 	 * latest <code>checkUpdate</code> nothing else happens. Otherwise a change event is fired;
 	 * this event will always be asynchronous.
 	 *
-	 * If the parameter <code>automaticTypeDetermination<code> is set, the property's type is
-	 * requested from the meta model and set. In this case, the change event is only fired when the
-	 * type and the value are known.
+	 * If the binding has no type, the property's type is requested from the meta model and set.
+	 * In this case, the change event is only fired when the type and the value are known.
 	 *
 	 * @param {boolean} [bForceUpdate=false]
 	 *   if <code>true</code> the change event is fired even if the value has not changed.
@@ -83,40 +76,37 @@ sap.ui.define([
 	 * @protected
 	 */
 	ODataPropertyBinding.prototype.checkUpdate = function (bForceUpdate) {
-		var sResolvedPath = this.getModel().resolve(this.getPath(), this.getContext()),
+		var bFire = false,
+			aPromises = [],
+			sResolvedPath = this.getModel().resolve(this.getPath(), this.getContext()),
 			that = this;
-
-		function fireChange() {
-			if (!that.bRequestsType && that.bHasValue) {
-				that._fireChange({reason: ChangeReason.Change});
-			}
-		}
 
 		if (!sResolvedPath) {
 			return Promise.resolve();
-		} else if (!this.getType() && !this.getFormatter() && this.mParameters
-					&& this.mParameters.automaticTypeDetermination) {
-			this.mParameters.automaticTypeDetermination = false;
-			this.bRequestsType = true;
-			this.getModel().getMetaModel().requestUI5Type(sResolvedPath).then(function (oType) {
-				that.bRequestsType = false;
-				that.setType(oType, that.sInternalType);
-				fireChange();
-			})["catch"](function (oError) {
-				jQuery.sap.log.warning(oError.message, sResolvedPath, sClassName);
-				that.bRequestsType = false;
-				fireChange();
-			});
+		} else if (!this.getType() && bForceUpdate) {
+			// request type only initially
+			aPromises.push(this.getModel().getMetaModel().requestUI5Type(sResolvedPath)
+				.then(function (oType) {
+					that.setType(oType, that.sInternalType);
+				})["catch"](function (oError) {
+					jQuery.sap.log.warning(oError.message, sResolvedPath, sClassName);
+				})
+			);
 		}
-		return this.getModel().read(sResolvedPath).then(function (oData) {
-			that.bHasValue = true;
+		aPromises.push(this.getModel().read(sResolvedPath).then(function (oData) {
 			if (bForceUpdate || !jQuery.sap.equal(that.oValue, oData.value)) {
 				that.oValue = oData.value;
-				fireChange();
+				bFire = true;
 			}
 		})["catch"](function () {
 			// do not rethrow, ManagedObject doesn't react on this either
 			// throwing an exception would cause "Uncaught (in promise)" in Chrome
+		}));
+
+		return Promise.all(aPromises).then(function () {
+			if (bFire) {
+				that._fireChange({reason: ChangeReason.Change});
+			}
 		});
 	};
 
