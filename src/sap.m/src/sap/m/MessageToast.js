@@ -135,9 +135,9 @@ sap.ui.define(['jquery.sap.global', './InstanceManager', 'sap/ui/core/Popup'],
 
 		MessageToast._validateOf = function(vElement) {
 			if (!(vElement instanceof jQuery) &&
-				!jQuery.isWindow(vElement) &&
 				!(vElement && vElement.nodeType === 1) &&
-				!(vElement instanceof sap.ui.core.Control)) {
+				!(vElement instanceof sap.ui.core.Control) &&
+				vElement !== window) {
 
 				jQuery.sap.log.error('"of" needs to be an instance of sap.ui.core.Control or an Element or a jQuery object or the window on ' + this + "._validateOf");
 			}
