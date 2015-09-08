@@ -30,10 +30,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			metadata: {
 				library: 'sap.m',
 				properties: {
-					/**
-					 * Determines the it the Notification read or unread.
-					 */
-					read: {type: 'boolean', group: 'Behavior', defaultValue: false},
+					// unread is inherit from the ListItemBase.
 
 					/**
 					 * Determines the it the Notification is with priority.
@@ -52,12 +49,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 					/**
 					 * Determines the title of the Notification List Item.
 					 */
-					text: {type: 'string', group: 'Appearance', defaultValue: ''},
+					description: {type: 'string', group: 'Appearance', defaultValue: ''},
 
 					/**
 					 * Determines the due date of the Notification List Item.
 					 */
-					due: {type: 'string', group: 'Appearance'},
+					datetime: {type: 'string', group: 'Appearance'},
 
 					/**
 					 * Determines the actions buttons visibility
@@ -79,11 +76,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 					/**
 					 * Fired when the list item is closed
 					 */
-					close: {},
-					/**
-					 * Fired when the list item is tapped. Can be used for acting when the item is tapped.
-					 */
-					tap: {}
+					close: {}
+
+					// 'tap' and 'press' events are inherited from ListItemBase.
 				}
 			}
 		});
@@ -106,18 +101,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		NotificationListItem.prototype.close = function () {
 			this.fireClose();
 			this.destroy();
-		};
-
-		NotificationListItem.prototype.ontap = function (oEvent) {
-			var target = oEvent.target;
-			var buttonClassName = 'sapMBtn';
-
-			//TODO: if no IS9 support is needed classList.contains() can be used.
-			if (target.className.indexOf(buttonClassName) === -1 && target.parentNode.className.indexOf(buttonClassName) === -1) {
-				this.fireTap();
-
-				oEvent.stopPropagation();
-			}
 		};
 
 		return NotificationListItem;

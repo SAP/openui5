@@ -53,6 +53,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.ListMode",
 			"sap.m.ListSeparators",
 			"sap.m.ListType",
+			"sap.m.NotificationPriority",
 			"sap.m.OverflowToolbarPriority",
 			"sap.m.P13nPanelType",
 			"sap.m.PageBackgroundDesign",
@@ -1453,25 +1454,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		 * none is the default priority if non is defined
 		 * @public
 		 */
-		None: "none",
+		None: "None",
 
 		/**
 		 * Low notification priority
 		 * @public
 		 */
-		Low: "low",
+		Low: "Low",
 
 		/**
 		 * Medium notification priority
 		 * @public
 		 */
-		Medium: "medium",
+		Medium: "Medium",
 
 		/**
 		 * High notification priority
 		 * @public
 		 */
-		High: "high"
+		High: "High"
 	};
 
 	/**
@@ -1772,63 +1773,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		 */
 		AcceptReject : "AcceptReject"
 
-	};
-
-	/**
-	 * Enumeration for different Notification List Item priorities.
-	 *
-	 * @enum {string}
-	 * @public
-	 * @since 1.32
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	sap.m.NotificationListItemPriority = {
-		/**
-		 * High Notification List Item priority
-		 * @public
-		 */
-		High : "High",
-
-		/**
-		 * Medium Notification List Item priority
-		 * @public
-		 */
-		Medium : "Medium",
-
-		/**
-		 * Neutral Notification List Item priority
-		 * @public
-		 */
-		Low : "Low",
-
-		/**
-		 * Neutral Notification List Item priority
-		 * @public
-		 */
-		Neutral : "Neutral"
-
-	};
-
-	/**
-	 * Enumeration for Notification List Item status.
-	 *
-	 * @enum {string}
-	 * @public
-	 * @since 1.32
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	sap.m.NotificationListItemStatus = {
-		/**
-		 * Read status
-		 * @public
-		 */
-		Read : "Read",
-
-		/**
-		 * Unread status
-		 * @public
-		 */
-		Unread : "Unread"
 	};
 
 

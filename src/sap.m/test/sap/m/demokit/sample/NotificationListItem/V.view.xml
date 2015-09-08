@@ -11,20 +11,20 @@
 			<List>
 				<NotificationListItem
 					title="New order (#2525)"
-					text="Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis."
+					description="Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis."
 					showCloseButton="true"
-					due="Thu Sep 13 2015 14:28:59 GMT+0300 (E. Europe Daylight Time)"
-					read="false"
-					priority="high"
+					datetime="Thu Sep 13 2015 14:28:59 GMT+0300 (E. Europe Daylight Time)"
+					unread="true"
+					priority="None"
 				/>
 
 				<NotificationListItem
 						title="New order (#2525)"
-						text="Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis."
+						description="Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis."
 						showCloseButton="falseue"
-						read="false"
-						due="Thu Sep 30 2015 14:28:59 GMT+0300 (E. Europe Daylight Time)"
-						priority="true"
+						unread="false"
+						datetime="Thu Sep 30 2015 14:28:59 GMT+0300 (E. Europe Daylight Time)"
+						priority="High"
 						>
 					<buttons>
 						<Button text="Accept"></Button>
