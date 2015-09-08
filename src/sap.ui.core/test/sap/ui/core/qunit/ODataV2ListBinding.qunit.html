@@ -150,6 +150,41 @@
 			oBinding.setContext(oContext);
 		});
 	});
+	
+	asyncTest("ListBinding relative with context and client-side filters", function(){
+		var oModel = initModel(sURI, false, "Categories");
+		var oBinding = oModel.bindList("Products");
+		var iCount = 0;
+
+		var changeHandler = function() {
+			iCount++;
+			if (iCount == 1) {
+				// expanded entries will be filtered on the client
+				equal(oBinding.getPath(), "Products", "ListBinding path");
+				ok(oBinding.getModel() == oModel, "ListBinding model");
+				equal(oBinding.getLength(), 1, "length of items after filtering");
+				var oContext = oBinding.getContexts(0, 1)[0];
+				equal(oContext.getProperty("ProductName"), "Uncle Bob's Organic Dried Pears");
+				equal(oBinding.isLengthFinal(), true, "isLengthFinal");
+				oBinding.setContext(null);
+			} else {
+				equal(oBinding.getLength(), 0, "length of items");
+				equal(oBinding.isLengthFinal(), true, "isLengthFinal");
+				oBinding.detachChange(changeHandler);
+				start(); // resume normal testing
+			}
+		}
+
+		oBinding.attachRefresh(function() {
+			this.getContexts();
+		});
+		oBinding.attachChange(changeHandler);
+		oBinding.initialize();
+		oBinding.filter(new sap.ui.model.Filter("ProductName", "Contains", "Uncle"));
+		oModel.createBindingContext("/Categories(7)", undefined, {expand: "Products"}, function(oContext) {
+			oBinding.setContext(oContext);
+		});
+	});
 
 	asyncTest("ListBinding sort", function(){
 		var oBinding = oModel.bindList("/Categories");
