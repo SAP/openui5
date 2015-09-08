@@ -237,7 +237,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Panel.prototype.exit = function () {
 		if (this.oIconCollapsed) {
 			this.oIconCollapsed.destroy();
-			delete this.oIconCollapsed;
+			this.oIconCollapsed = null;
 		}
 	};
 
