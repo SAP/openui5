@@ -1,0 +1,14 @@
+<mvc:View
+	controllerName="sap.ui.demo.nav.controller.employee.overview.EmployeeOverview"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout">
+	<Page id="EmployeeOverviewParent" title="{i18n>EmployeeOverview}"
+		showNavButton="true"
+		navButtonPress="onNavBack"
+		class="sapUiResponsiveContentPadding">
+		<content>
+			<!-- inserted by routing -->
+		</content>
+	</Page>
+</mvc:View>
