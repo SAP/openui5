@@ -84,6 +84,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		});
 
 		NotificationListItem.prototype.init = function () {
+			//set it to an active ListItemBase to the press and tap events are fired
+			this.setType('Active');
+
 			/**
 			 *
 			 * @type {sap.m.Button}
@@ -101,6 +104,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		NotificationListItem.prototype.close = function () {
 			this.fireClose();
 			this.destroy();
+		};
+
+		// override the ListItemBase class toggling
+		NotificationListItem.prototype._activeHandling = function () {
+			this.$().toggleClass("sapMNLIActive", this._active);
 		};
 
 		return NotificationListItem;

@@ -18,7 +18,7 @@ sap.ui.define([], function () {
 	var classNameHeader = 'sapMNLI-Header';
 	var classNameBody = 'sapMNLI-Body';
 	var classNameText = 'sapMNLI-Text';
-	var classNameDueDate = 'sapMNLI-DueDate';
+	var classNameDatetime = 'sapMNLI-Datetime';
 	var classNameFooter = 'sapMNLI-Footer';
 	var classNameCloseButton = 'sapMNLI-CloseButton';
 
@@ -54,15 +54,15 @@ sap.ui.define([], function () {
 	NotificationListItemRenderer.renderHeader = function (oRm, oControl) {
 		oRm.write('<div class=' + classNameHeader + '>');
 		this.renderTitle(oRm, oControl);
-		this.renderCloseIcon(oRm, oControl);
+		this.renderCloseButton(oRm, oControl);
 		oRm.write('</div>');
 	};
 
 	NotificationListItemRenderer.renderBody = function (oRm, oControl) {
 		oRm.write('<div class=' + classNameBody + '>');
 
-		this.renderText(oRm, oControl);
-		this.renderDueTime(oRm, oControl);
+		this.renderDescription(oRm, oControl);
+		this.renderDatetime(oRm, oControl);
 
 		oRm.write('</div>');
 	};
@@ -72,7 +72,7 @@ sap.ui.define([], function () {
 
 		if (aButtons && aButtons.length && oControl.getShowButtons()) {
 			oRm.write('<div class=' + classNameFooter + '>');
-			this.renderActionButtons(oRm, oControl, aButtons);
+			this.renderButtons(oRm, oControl, aButtons);
 			oRm.write('</div>');
 		}
 
@@ -94,7 +94,6 @@ sap.ui.define([], function () {
 		}
 	};
 
-
 	NotificationListItemRenderer.renderTitle = function (oRm, oControl) {
 		var title = new sap.m.Title({
 			text: oControl.getTitle()
@@ -103,14 +102,13 @@ sap.ui.define([], function () {
 		oRm.renderControl(title);
 	};
 
-	NotificationListItemRenderer.renderCloseIcon = function (oRm, oControl) {
+	NotificationListItemRenderer.renderCloseButton = function (oRm, oControl) {
 		if (oControl.getShowCloseButton()) {
 			oRm.renderControl(oControl._closeButton.addStyleClass(classNameCloseButton));
 		}
 	};
 
-
-	NotificationListItemRenderer.renderText = function (oRm, oControl) {
+	NotificationListItemRenderer.renderDescription = function (oRm, oControl) {
 		var text = new sap.m.Text({
 			text: oControl.getDescription(),
 			maxLines: 2
@@ -119,31 +117,15 @@ sap.ui.define([], function () {
 		oRm.renderControl(text);
 	};
 
-
-	NotificationListItemRenderer.renderDueTime = function (oRm, oControl) {
-		function _getDateTime() {
-			var _created = new Date();
-
-			var MILISECONDS_PER_DAY = (1000 * 60 * 60 * 24);
-
-			/** @type {number} */
-			var daysLeft = (new Date(oControl.getDatetime()) - _created) / MILISECONDS_PER_DAY;
-
-			if (daysLeft > 0) {
-				return 'Due in ' + Math.round(daysLeft) + ' days';
-			}
-			if (daysLeft < 0) {
-				return 'Overdue';
-			} else {
-				return 'Due today';
-			}
-		}
-
-		var dueTimeText = new sap.m.Text({text: _getDateTime()}).addStyleClass(classNameDueDate);
-		oRm.renderControl(dueTimeText);
+	NotificationListItemRenderer.renderDatetime = function (oRm, oControl) {
+		var datetimeTextControl = new sap.m.Text({
+			text: oControl.getDatetime(),
+			textAlign: 'End'
+		}).addStyleClass(classNameDatetime);
+		oRm.renderControl(datetimeTextControl);
 	};
 
-	NotificationListItemRenderer.renderActionButtons = function (oRm, oControl, aButtons) {
+	NotificationListItemRenderer.renderButtons = function (oRm, oControl, aButtons) {
 		aButtons.forEach(function (button) {
 			oRm.renderControl(button);
 		});

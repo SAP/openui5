@@ -21,16 +21,16 @@
 
 			var listItem = new sap.m.NotificationListItem({
 				title: "Notification List Title",
-				text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor. ",
+				description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor. ",
 				showCloseButton: false,
-				due: new Date(new Date().getTime() + 30 * 60000),
+				datetime: '5 minutes',
 				priority: sap.m.NotificationPriority.High
 			});
 
 			var listItem2 = new sap.m.NotificationListItem({
 				title: "Notification List Title",
-				text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.",
-				due: 'Thu Sep 31 2015 11:24:39 GMT+0300 (E. Europe Daylight Time)',
+				description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.",
+				datetime: '2 hours',
 				buttons: [
 					new sap.m.Button({
 						text: "Accept",
