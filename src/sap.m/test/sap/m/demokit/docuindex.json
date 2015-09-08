@@ -792,7 +792,7 @@
 		"id": "sap.m.TimePicker",
 		"name": "Time Picker",
 		"category": "User Input",
-		"since": "1.30",
+		"since": "1.32",
 		"samples": ["sap.m.sample.TimePicker"]
 	  },
 		{
