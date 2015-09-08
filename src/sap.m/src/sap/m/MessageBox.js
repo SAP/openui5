@@ -392,19 +392,9 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/co
 						verticalScrolling: mOptions.verticalScrolling,
 						horizontalScrolling: mOptions.horizontalScrolling,
 						afterOpen: onOpen,
-						afterClose: onclose
+						afterClose: onclose,
+						buttons: aButtons
 					});
-
-					if (aButtons.length > 2) {
-						for (i = 0; i < aButtons.length; i++) {
-							oDialog.addButton(aButtons[i]);
-						}
-					} else {
-						oDialog.setBeginButton(aButtons[0]);
-						if (aButtons[1]) {
-							oDialog.setEndButton(aButtons[1]);
-						}
-					}
 
 					if (mClasses[mOptions.icon]) {
 						oDialog.addStyleClass(mClasses[mOptions.icon]);

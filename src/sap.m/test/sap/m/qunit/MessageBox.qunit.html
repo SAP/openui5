@@ -290,8 +290,7 @@
 			var oMessageBox = sap.ui.getCore().byId("alertbox1");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
-			ok(oMessageBox.getLeftButton(), "Left button is created");
-			ok(!oMessageBox.getRightButton(), "No right button in alert dialog");
+			ok(oMessageBox.getButtons().length, "Only one button in alert.");
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			ok(oMessageBox.$().hasClass(sClassName));
 			oMessageBox.destroy();
@@ -308,8 +307,7 @@
 			var oMessageBox = sap.ui.getCore().byId("confirmbox1");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
-			ok(oMessageBox.getLeftButton(), "Left button is created");
-			ok(oMessageBox.getRightButton(), "Right button is also created");
+			ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			ok(oMessageBox.$().hasClass(sClassName));
 			oMessageBox.destroy();
@@ -334,8 +332,7 @@
 			var oMessageBox = sap.ui.getCore().byId("alertbox1");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
-			ok(oMessageBox.getLeftButton(), "Left button is created");
-			ok(!oMessageBox.getRightButton(), "No right button in alert dialog");
+			ok(oMessageBox.getButtons().length, "Only one button is created");
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			ok(oMessageBox.$().hasClass(sClassName));
 			oMessageBox.destroy();
@@ -347,8 +344,7 @@
 			var oMessageBox = sap.ui.getCore().byId("confirmbox1");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
-			ok(oMessageBox.getLeftButton(), "Left button is created");
-			ok(oMessageBox.getRightButton(), "Right button is also created");
+			ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			ok(oMessageBox.$().hasClass(sClassName));
 			oMessageBox.destroy();
@@ -414,8 +410,7 @@
 			var oMessageBox = sap.ui.getCore().byId("messagedialog1");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
-			ok(oMessageBox.getLeftButton(), "Left button is created");
-			ok(oMessageBox.getRightButton(), "Right button is also created");
+			ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
 			ok(oMessageBox.$().find('a.sapMMessageBoxLinkText').length != 0, "MessageBox has formatted link text");
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
@@ -459,8 +454,7 @@
 			var oMessageBox = sap.ui.getCore().byId("messagedialog2");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
-			ok(oMessageBox.getLeftButton(), "Left button is created");
-			ok(oMessageBox.getRightButton(), "Right button is also created");
+			ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			ok(oMessageBox.getContent()[0] instanceof sap.ui.core.Control, "Content is control");
 			ok(oMessageBox.$().hasClass(sClassName));
@@ -482,8 +476,7 @@
 			var oMessageBox = sap.ui.getCore().byId("messagedialog2");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
-			ok(oMessageBox.getLeftButton(), "Left button is created");
-			ok(oMessageBox.getRightButton(), "Right button is also created");
+			ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
 			ok(oMessageBox.$().find('a.sapMMessageBoxLinkText').length != 0, "MessageBox has formatted link text");
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
@@ -515,8 +508,7 @@
 			var oMessageBox = sap.ui.getCore().byId("messagedialog3");
 			ok(oMessageBox, "Dialog should be created");
 			equal(oMessageBox.getType(), sap.m.DialogType.Message, "Dialog should have type Message");
-			ok(oMessageBox.getLeftButton(), "Left button is created");
-			ok(oMessageBox.getRightButton(), "Right button is also created");
+			ok(oMessageBox.getButtons().length === 2, "Two buttons are created");
 			ok(oMessageBox.$().find('a.sapMMessageBoxLinkText').length != 0, "MessageBox has formatted link text");
 			equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
@@ -551,9 +543,9 @@
 
 			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId("messagebox5");
-			ok(oMessageBox.getLeftButton(), "Left button is created and leftButton aggregation is used.");
-			ok(oMessageBox.getRightButton(), "Right button is created and rightButton aggregation is used.");
-			equal(oMessageBox.getButtons().length, 0, "Buttons aggregation is empty and not used.");
+			ok(!oMessageBox.getLeftButton(), "LeftButton aggregation is not used.");
+			ok(!oMessageBox.getRightButton(), "RightButton aggregation is not used.");
+			equal(oMessageBox.getButtons().length, 2, "Buttons aggregation is used.");
 			oMessageBox.destroy();
 		});
 
