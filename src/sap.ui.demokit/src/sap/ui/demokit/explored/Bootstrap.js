@@ -23,6 +23,7 @@ sap.ui.define(['jquery.sap.global'],
 
 			var aCategoryWhiteList = [
 				"Action",
+				"Application",
 				"Container",
 				"Display",
 				"Chart",
