@@ -94,7 +94,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 	
 	
 	JSONTreeBinding.prototype._saveSubContext = function(oNode, aContexts, sContextPath, sName) {
-		if (typeof oNode == "object") {
+		if (oNode && typeof oNode == "object") {
 			var oNodeContext = this.oModel.getContext(sContextPath + sName);
 			// check if there is a filter on this level applied
 			if (this.aFilters && !this.bIsFiltering) {
