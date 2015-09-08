@@ -75,12 +75,6 @@ sap.ui.define(['jquery.sap.global'],
 			rm.writeAttribute("dir", sControlTextDir.toLowerCase());
 		}
 
-		if (bEnabled) {
-			rm.writeAttribute("tabindex", "0");
-		} else {
-			rm.writeAttribute("tabindex", "-1");
-		}
-
 		// ARIA
 		rm.writeAccessibilityState(oRBGroup, {
 			role : "radiogroup"
