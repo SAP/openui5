@@ -29,6 +29,7 @@ pre.codeblock .emphasis {
   position: relative;
   z-index: 0;
   counter-reset: item;
+  padding: 0 0;
 }
 
 .sapUiCodeViewerRO ol li {
@@ -37,7 +38,7 @@ pre.codeblock .emphasis {
 }
 
 .sapUiCodeViewerRO ol li:before {
-  content: counter(item, decimal-leading-zero) "          ";
+  content: counter(item, decimal-leading-zero);
   counter-increment: item;
   color: #999999;
   // not select line numbers when copy the code
@@ -48,6 +49,7 @@ pre.codeblock .emphasis {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  margin-right: 40px;
 }
 
 .sapUiCodeViewerRO ol:before {
@@ -55,9 +57,9 @@ pre.codeblock .emphasis {
   display: block;
   position: absolute;
   top: 0;
-  left: 35px;
+  left: 0px;
   bottom: 0;
-  width: 30px;
+  width: 28px;
   z-index: -1;
   background: lightgoldenrodyellow;
 }
