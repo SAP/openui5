@@ -66,7 +66,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		/**
 		 * Called, whenever the binding of the aggregation items is changed.
 		 *
-		 * @private
 		 */
 		ComboBoxBase.prototype.updateItems = function(sReason) {
 			this.bDataUpdated = false;
@@ -76,13 +75,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		};
 
 		/**
-		 * Called, when the items' aggregation needs to be refreshed.<br>
+		 * Called, when the items' aggregation needs to be refreshed.
 		 *
 		 * <b>Note:</b> This method has been overwritten to prevent <code>updateItems()</code>
 		 * from being called when the bindings are refreshed.
 		 * @see sap.ui.base.ManagedObject#bindAggregation
-		 *
-		 * @private
 		 */
 		ComboBoxBase.prototype.refreshItems = function() {
 			this.bDataUpdated = false;
@@ -90,7 +87,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		};
 
 		/**
-		 * Gets the Select's <code>List</code>.
+		 * Gets the Select's <code>list</code>.
 		 *
 		 * @returns {sap.m.SelectList}
 		 * @private
@@ -110,7 +107,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		/**
 		 * Initialization hook.
 		 *
-		 * @private
 		 */
 		ComboBoxBase.prototype.init = function() {
 			InputBase.prototype.init.apply(this, arguments);
@@ -130,7 +126,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		/**
 		 * Cleans up before destruction.
 		 *
-		 * @private
 		 */
 		ComboBoxBase.prototype.exit = function() {
 			InputBase.prototype.exit.apply(this, arguments);
@@ -149,7 +144,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * Handle the touch start event on the control.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
-		 * @private
 		 */
 		ComboBoxBase.prototype.ontouchstart = function(oEvent) {
 
@@ -171,7 +165,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * Handle the touch end event on the control.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
-		 * @private
 		 */
 		ComboBoxBase.prototype.ontouchend = function(oEvent) {
 
@@ -193,7 +186,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * Handles the tap event on the control.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
-		 * @private
 		 */
 		ComboBoxBase.prototype.ontap = function(oEvent) {
 			InputBase.prototype.ontap.apply(this, arguments);
@@ -233,10 +225,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		/* ----------------------------------------------------------- */
 
 		/**
-		 * Handles when F4 or Alt + DOWN arrow are pressed.
+		 * Handles the <code>onsapshow</code> event when F4 or Alt and DOWN arrow are pressed.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
-		 * @private
 		 */
 		ComboBoxBase.prototype.onsapshow = function(oEvent) {
 
@@ -271,10 +262,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * Handles when escape is pressed.
 		 *
 		 * If picker popup is closed, cancel changes and revert to the original value when the input field got its focus.
-		 * If List is open, close list.
+		 * If list is open, close list.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
-		 * @private
 		 */
 		ComboBoxBase.prototype.onsapescape = function(oEvent) {
 
@@ -299,7 +289,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * Handle when Alt + UP arrow are pressed.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
-		 * @private
 		 */
 		ComboBoxBase.prototype.onsaphide = ComboBoxBase.prototype.onsapshow;
 
@@ -307,7 +296,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		 * Handles the <code>sapfocusleave</code> event of the input field.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
-		 * @private
 		 */
 		ComboBoxBase.prototype.onsapfocusleave = function(oEvent) {
 
@@ -518,7 +506,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		};
 
 		/**
-		 * Retrieves an item by searching for the given property/value from the aggregation named <code>items</code>.<br>
+		 * Retrieves an item by searching for the given property/value from the aggregation named <code>items</code>.
+		 *
 		 * <b>Note:</b> If duplicate values exist, the first item matching the value is returned.
 		 *
 		 * @param {string} sProperty An item property.
@@ -531,7 +520,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		};
 
 		/*
-		 * Gets the item with the given value from the aggregation named <code>items</code>.<br>
+		 * Gets the item with the given value from the aggregation named <code>items</code>.
+		 *
 		 * <b>Note: </b> If duplicate values exist, the first item matching the value is returned.
 		 *
 		 * @param {string} sText An item value that specifies the item to retrieve.
@@ -568,7 +558,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 			// bottom edge of item > bottom edge of viewport
 			} else if ((iItemOffsetTop + iItemHeight) > (iPickerScrollTop + iPickerHeight)) {
 
-				// scroll down, the item is partly below the viewport of the List
+				// scroll down, the item is partly below the viewport of the list
 				oPickerDomRef.scrollTop = Math.ceil(iItemOffsetTop + iItemHeight - iPickerHeight);
 			}
 		};
@@ -623,9 +613,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 
 		/**
 		 * Getter for property <code>value</code>.
-		 * Defines the value of the control's input field.
 		 *
-		 * Default value is empty/<code>undefined</code>
+		 * Default value is empty/<code>undefined</code>.
 		 *
 		 * @return {string} the value of property <code>value</code>
 		 * @public
@@ -726,7 +715,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		};
 
 		/**
-		 * Gets the item with the given key from the aggregation named <code>items</code>.<br>
+		 * Gets the item with the given key from the aggregation named <code>items</code>.
+		 *
 		 * <b>Note:</b> If duplicate keys exist, the first item matching the key is returned.
 		 *
 		 * @param {string} sKey An item key that specifies the item to retrieve.
@@ -780,7 +770,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 			if (vItem) {
 				vItem.detachEvent("_change", this.onItemChange, this);
 			}
-	
+
 			return vItem;
 		};
 
