@@ -1,6 +1,7 @@
 /* global sinon */
 var xhr = sinon.useFakeXMLHttpRequest(),
-	responseDelay = 50,
+	maxResponseDelay = 250,
+	bRandomizeResponseDelay = false,
 	_setTimeout = window.setTimeout;
 
 xhr.useFilters = true;
@@ -202,6 +203,14 @@ xhr.onCreate = function(request) {
 				sAnswer = sMetadataString;
 				break;
 
+			case "fakeService://testdata/odata/overwrite-on-term-level-1":
+				sAnswer = aOverwriteOnTermLevel[0];
+				break;
+
+			case "fakeService://testdata/odata/overwrite-on-term-level-2":
+				sAnswer = aOverwriteOnTermLevel[1];
+				break;
+
 			default:
 				// You used the wrong URL, dummy!
 				debugger;
@@ -210,8 +219,9 @@ xhr.onCreate = function(request) {
 
 		if (request.async === true) {
 			_setTimeout(function() {
+				console.log("[FakeService] Responding to: " + request.url);
 				request.respond(iStatus, mHeaders, sAnswer);
-			}, responseDelay);
+			}, bRandomizeResponseDelay ? Math.round(Math.random() * maxResponseDelay) : 50);
 		} else {
 			request.respond(iStatus, mHeaders, sAnswer);
 		}
@@ -5075,3 +5085,100 @@ var sNorthwindMetadataWithValueListPlaceholder = '\
 		</Schema>\
 	</edmx:DataServices>\
 </edmx:Edmx>';
+
+var aOverwriteOnTermLevel = ['\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="ui5.test"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="Test.NorthwindEntities/X">\
+				<Annotation Term="Test.OverwriteMe">\
+					<Record>\
+						<PropertyValue Property="From" String="1"/>\
+						<PropertyValue Property="Deleted" String="1"/>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.DontOverwriteMe1">\
+					<Record>\
+						<PropertyValue Property="From" String="1"/>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="Test/NorthwindEntities">\
+				<Annotation Term="Test.OverwriteMe">\
+					<Record>\
+						<PropertyValue Property="From" String="1"/>\
+						<PropertyValue Property="Deleted" String="1"/>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.DontOverwriteMe1">\
+					<Record>\
+						<PropertyValue Property="From" String="1"/>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="Test.Annotation">\
+				<Annotation Term="Test.OverwriteMe">\
+					<Record>\
+						<PropertyValue Property="From" String="1"/>\
+						<PropertyValue Property="Deleted" String="1"/>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.DontOverwriteMe1">\
+					<Record>\
+						<PropertyValue Property="From" String="1"/>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>', '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edm:Edm xmlns:edm="http://docs.oasis-open.org/odata/ns/edm" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">\
+	<edmx:Reference Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">\
+		<edmx:Include Alias="Test" Namespace="ui5.test"/>\
+	</edmx:Reference>\
+	<edm:DataServices>\
+		<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm">\
+			<Annotations Target="Test.NorthwindEntities/X">\
+				<Annotation Term="Test.OverwriteMe">\
+					<Record>\
+						<PropertyValue Property="From" String="2"/>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.DontOverwriteMe2">\
+					<Record>\
+						<PropertyValue Property="From" String="2"/>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="Test/NorthwindEntities">\
+				<Annotation Term="Test.OverwriteMe">\
+					<Record>\
+						<PropertyValue Property="From" String="2"/>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.DontOverwriteMe2">\
+					<Record>\
+						<PropertyValue Property="From" String="2"/>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+			<Annotations Target="Test.Annotation">\
+				<Annotation Term="Test.OverwriteMe">\
+					<Record>\
+						<PropertyValue Property="From" String="2"/>\
+					</Record>\
+				</Annotation>\
+				<Annotation Term="Test.DontOverwriteMe2">\
+					<Record>\
+						<PropertyValue Property="From" String="2"/>\
+					</Record>\
+				</Annotation>\
+			</Annotations>\
+		</Schema>\
+	</edm:DataServices>\
+</edm:Edm>'];
