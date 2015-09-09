@@ -143,7 +143,7 @@
 		//Cleanup
 		sut.destroy();
 	});
-	
+
 	test("Should not rerender the ObjectIdentifier if the title is changed", function() {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
@@ -170,7 +170,7 @@
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
+
 	test("Should not rerender the ObjectIdentifier if the new  title is empty", function() {
 		// Arrange
 		var sTextToSet = undefined,
@@ -191,11 +191,11 @@
 		// Assert
 		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
 		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
-	
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
+
 	test("Should not rerender the ObjectIdentifier if the title is empty initially", function() {
 		// Arrange
 		var sTextToSet = "non empty",
@@ -216,11 +216,11 @@
 		// Assert
 		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
 		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
-	
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
+
 	test("Should not rerender the ObjectIdentifier if the text is changed", function() {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
@@ -248,7 +248,7 @@
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
+
 	test("Should not rerender the ObjectIdentifier if the new  text is empty", function() {
 		// Arrange
 		var sTextToSet = undefined,
@@ -270,11 +270,11 @@
 		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
 		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 		equal(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is not visible");
-	
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
+
 	test("Should not rerender the ObjectIdentifier if the text is empty initially", function() {
 		// Arrange
 		var sTextToSet = "non empty",
@@ -296,64 +296,129 @@
 		strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
 		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
 		notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
-	
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
-	test("The text control should be invisible if the text is empty", function() {
-		
+
+	test("The title control should be invisible if the title is empty", function() {
+
+		//Arrange
+		var sEmptyTitle = "",
+			sDummyTitle = "Dummy title",
+			oObjectIdentifier = new sap.m.ObjectIdentifier();
+
+		//System under test
+		oObjectIdentifier.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		strictEqual(oObjectIdentifier.$("title").children(0).text(), sEmptyTitle, "The title text is empty as expected");
+		equal(oObjectIdentifier.$("title").children(0).css("display"), "none", "The title control should not be visible if title is empty initially");
+
+		//Act
+		oObjectIdentifier.setTitle(sDummyTitle);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		strictEqual(oObjectIdentifier.$("title").children(0).text(), sDummyTitle, "The title text is correctly set");
+		notEqual(oObjectIdentifier.$("title").children(0).css("display"), "none", "The title control should be visible if title is not empty");
+
+		//Act
+		oObjectIdentifier.setTitle(sEmptyTitle);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		strictEqual(oObjectIdentifier.$("title").children(0).text(), sEmptyTitle, "The title text is empty as expected");
+		equal(oObjectIdentifier.$("title").children(0).css("display"), "none", "The title control should not be visible if title is empty");
+
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+
+	test("The title control should be visible if the title is not empty", function() {
+
 		//Arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title : "Title"
 		});
-		
+
 		//System under test
 		oObjectIdentifier.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		
+
 		//Assert
-		equal(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is not visible");
-		
+		notEqual(oObjectIdentifier.$("title").children(0).css("display"), "none", "The text control is visible");
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
+
+	test("The text control should be invisible if the text is empty", function() {
+
+		//Arrange
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({
+			title : "Title"
+		});
+
+		//System under test
+		oObjectIdentifier.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		equal(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is not visible");
+
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+
 	test("The text control should be visible if the text is not empty", function() {
-		
+
 		//Arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title : "Title",
 			text : "Text"
 		});
-		
+
 		//System under test
 		oObjectIdentifier.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		
+
 		//Assert
 		notEqual(oObjectIdentifier.$("text").children(0).css("display"), "none", "The text control is visible");
-		
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
+
 	module("API");
-	
+
 	test("default values", function() {
 
 		// arrange
-		var oObjectIdentifier = new sap.m.ObjectIdentifier();
+		var oObjectIdentifier = new sap.m.ObjectIdentifier(),
+			oObjectIdentifierTitleControl = oObjectIdentifier._getTitleControl(),
+			oObjectIdentifierTitleText = oObjectIdentifier.getTitle(),
+			oObjectIdentifierTextControl = oObjectIdentifier._getTextControl(),
+			oObjectIdentifierTextControlText = oObjectIdentifierTextControl.getText();
 
-		// assertions
+		// assertions for title
 		strictEqual(oObjectIdentifier.getTitleActive(), false, 'Default value for titleActive is false');
+		ok(oObjectIdentifierTitleControl === oObjectIdentifier.getAggregation("_titleControl"), 'The title control is present and properly assigned to its private aggregation');
+		ok(oObjectIdentifierTitleControl instanceof sap.m.Text, 'The default type of title control is correct');
+		strictEqual(oObjectIdentifierTitleControl.getVisible(), false, 'No title control is visible');
+		strictEqual(oObjectIdentifierTitleText.length === 0, true, 'The title text is empty');
+		// assertions for text
+		ok(oObjectIdentifierTextControl === oObjectIdentifier.getAggregation("_textControl"), 'The text control is present and properly assigned to its private aggregation');
+		strictEqual(oObjectIdentifierTextControl.getVisible(), false, 'No text control is visible');
+		ok(oObjectIdentifierTextControlText.length === 0, 'The text of ObjectIdentifier\'s text is empty');
 
 		// cleanup
 		oObjectIdentifier.destroy();
 	});
-	
+
 	test("setTitleActive()", function() {
-		
+
 		// arrange
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title: 'Test title',
@@ -361,11 +426,11 @@
 		});
 		oObjectIdentifier.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		
+
 		// assertions
 		equal(oObjectIdentifier.getTitleActive(), true, "The ObjectIdentifier's title should be active");
 		equal(oObjectIdentifier.$('title').children(0).hasClass("sapMLnk"), true, "A Link control should be rendered inside the title");
-		
+
 		// cleanup
 		oObjectIdentifier.destroy();
 	});
@@ -410,16 +475,18 @@
 		oObjectIdentifier.destroy();
 	});
 
-	
+
 	module("Keyboard handling");
-	
+
 	function checkKeyboardEventhandling(sTestName, oOptions) {
 		test(sTestName, function() {
 			// arrange
 			var oObjectIdentifier = new sap.m.ObjectIdentifier({
-				titleActive: true
+				titleActive: true,
+				title: "Title example",
+				text: "Text example"
 			});
-			
+
 			oObjectIdentifier.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
@@ -428,14 +495,14 @@
 			sap.ui.test.qunit.triggerKeydown(oObjectIdentifier.$('title').children(0), oOptions.keyCode);
 			this.clock.tick(1);
 
-			// assertions	
+			// assertions
 			strictEqual(fnFireSelectSpy.callCount, 1, "Event should be fired");
-			
+
 			// cleanup
-			 oObjectIdentifier.destroy(); 
-			
+			 oObjectIdentifier.destroy();
+
 		});
-	};
+	}
 
 	checkKeyboardEventhandling("Firing ENTER event", {
 		keyCode : jQuery.sap.KeyCodes.ENTER
@@ -443,18 +510,19 @@
 
 	checkKeyboardEventhandling("Firing SPACE event", {
 		keyCode : jQuery.sap.KeyCodes.SPACE
-	}); 
-	
+	});
+
 	module("Event testing");
-	
+
 	test("ObjectIdentifier titlePress Event", function() {
-		
+
 		// arrange
 		var oObjectIdentifier1 = new sap.m.ObjectIdentifier({
-			titleActive: true
+			titleActive: true,
+			title: "Title example"
 		});
 		var oObjectIdentifier2 = new sap.m.ObjectIdentifier();
-		
+
 		oObjectIdentifier1.placeAt("qunit-fixture");
 		oObjectIdentifier2.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
@@ -465,19 +533,19 @@
 		sap.ui.test.qunit.triggerKeydown(oObjectIdentifier1.$('title').children(0), jQuery.sap.KeyCodes.ENTER);
 		sap.ui.test.qunit.triggerKeydown(oObjectIdentifier2.$('title').children(0), jQuery.sap.KeyCodes.ENTER);
 		this.clock.tick(1);
-		
-		// assertions	
+
+		// assertions
 		strictEqual(fnFireSelectSpy1.callCount, 1, "Event should be fired once");
-		strictEqual(fnFireSelectSpy2.callCount, 0, "Event should not be fired, ObjectIdentifier's titleActive property is false");			
+		strictEqual(fnFireSelectSpy2.callCount, 0, "Event should not be fired, ObjectIdentifier's titleActive property is false");
 
 		// cleanup
-		oObjectIdentifier1.destroy(); 
-		oObjectIdentifier2.destroy(); 
+		oObjectIdentifier1.destroy();
+		oObjectIdentifier2.destroy();
 	});
-	
+
 	/***********************************************************************************************************************/
 	module("Styles");
-	
+
 	test("Should add separator class if title added at runtime", function() {
 
 		// arrange
@@ -487,14 +555,14 @@
 		// act
 		oObjectIdentifier.setTitle("not empty title");
 		sap.ui.getCore().applyChanges();
-		
+
 		// Assert
 		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), true, "Should have separator class");
-		
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
+
 	test("Should add separator class if text added at runtime", function() {
 
 		// arrange
@@ -504,14 +572,14 @@
 		// act
 		oObjectIdentifier.setText("not empty text");
 		sap.ui.getCore().applyChanges();
-		
+
 		// Assert
 		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), true, "Should have separator class");
-		
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
+
 	test("Should remove separator class if title removed at runtime", function() {
 
 		// arrange
@@ -522,14 +590,14 @@
 		// act
 		oObjectIdentifier.setTitle("");
 		sap.ui.getCore().applyChanges();
-		
+
 		// Assert
 		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have separator class");
-		
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
+
 	test("Should remove separator class if text removed at runtime", function() {
 
 		// arrange
@@ -540,14 +608,14 @@
 		// act
 		oObjectIdentifier.setText("");
 		sap.ui.getCore().applyChanges();
-		
+
 		// Assert
 		equals(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), false, "Should have separator class");
-		
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
+
 	test("Should have separator class if both title and text nonempty initially", function() {
 
 		// arrange
@@ -557,11 +625,11 @@
 
 		// Assert
 		ok(oObjectIdentifier.$().children(".sapMObjectIdentifierText").hasClass("sapMObjectIdentifierTextBellow"), "Should have separator class");
-		
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
+
 	test("Should have no separator class if title is empty initially", function() {
 
 		// System under Test
@@ -574,7 +642,7 @@
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
+
 	test("Should have no separator class if text is empty initially", function() {
 
 		// System under Test
@@ -587,76 +655,76 @@
 		//Cleanup
 		oObjectIdentifier.destroy();
 	});
-	
+
 	module("Databinding");
-	
+
 	test("Model sets titleActive = true", function() {
-		
+
 		//Arrange
 		var oModel = new sap.ui.model.json.JSONModel({
  			"text": "Title Active",
 			"titleActive" : true
 		});
-		
+
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title : "{/text}",
 			text : "Model sets true",
 			titleActive : "{/titleActive}"
 		});
-		
+
 		//System under test
 		oObjectIdentifier.setModel(oModel);
 		oObjectIdentifier.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		
+
 		//Assert
 		ok(oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should be active");
 		ok(oObjectIdentifier.$("title").children(0).hasClass("sapMLnk"), "A Link control should be rendered inside the title");
 		equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
-		
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 		oModel.destroy()
-		
+
 	});
-	
+
 	test("Model sets titleActive = false", function() {
-		
+
 		//Arrange
 		var oModel = new sap.ui.model.json.JSONModel({
  			"text": "Title Not Active",
 			"titleActive" : false
 		});
-		
+
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title : "{/text}",
 			text : "Model sets false",
 			titleActive : "{/titleActive}"
 		});
-		
+
 		//System under test
 		oObjectIdentifier.setModel(oModel);
 		oObjectIdentifier.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		
+
 		//Assert
 		ok(!oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should not be active");
 		ok(oObjectIdentifier.$("title").children(0).hasClass("sapMText"), "A Text control should be rendered inside the title");
 		equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
-		
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 		oModel.destroy()
 	});
-	
+
 	test("Formatter sets titleActive = true", function() {
-		
+
 		//Arrange
 		var oModel = new sap.ui.model.json.JSONModel({
  			"text": "Title Active",
 			"formatterString" : "active"
 		});
-		
+
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title : "{/text}",
 			text : "Model sets true",
@@ -667,30 +735,30 @@
 				}
 			}
 		});
-		
+
 		//System under test
 		oObjectIdentifier.setModel(oModel);
 		oObjectIdentifier.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		
+
 		//Assert
 		ok(oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should be active");
 		ok(oObjectIdentifier.$("title").children(0).hasClass("sapMLnk"), "A Link control should be rendered inside the title");
 		equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
-		
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 		oModel.destroy()
 	});
-	
+
 	test("Formatter sets titleActive = false", function() {
-		
+
 		//Arrange
 		var oModel = new sap.ui.model.json.JSONModel({
  			"text": "Title Active",
 			"formatterString" : "notActive"
 		});
-		
+
 		var oObjectIdentifier = new sap.m.ObjectIdentifier({
 			title : "{/text}",
 			text : "Model sets true",
@@ -701,17 +769,17 @@
 				}
 			}
 		});
-		
+
 		//System under test
 		oObjectIdentifier.setModel(oModel);
 		oObjectIdentifier.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		
+
 		//Assert
 		ok(!oObjectIdentifier.getTitleActive(), "The ObjectIdentifier's title should not be active");
 		ok(oObjectIdentifier.$("title").children(0).hasClass("sapMText"), "A Text control should be rendered inside the title");
 		equal(oObjectIdentifier.getTitle(), oObjectIdentifier.$("title").children(0).html(), "The title text is rendered");
-		
+
 		//Cleanup
 		oObjectIdentifier.destroy();
 		oModel.destroy()
