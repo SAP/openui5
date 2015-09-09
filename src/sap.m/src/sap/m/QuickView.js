@@ -272,7 +272,7 @@ sap.ui.define([
 	 */
 	QuickView.prototype._addEmptyPage = function() {
 		var oPage = new Page({
-			customHeader : new Bar()
+			customHeader : new Bar().addStyleClass("sapMQuickViewHeader")
 		});
 
 		var that = this;
