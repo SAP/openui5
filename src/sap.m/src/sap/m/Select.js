@@ -173,15 +173,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		}
 
 		Select.prototype._handleFocusout = function() {
-
 			this._bFocusoutDueRendering = this._bRenderingPhase;
 
-			if (!this._bFocusoutDueRendering) {
+			if (this._bFocusoutDueRendering) {
+				this._bProcessChange = false;
+				return;
+			}
 
-				if (this._bProcessChange) {
-					this._checkSelectionChange();
-				}
-
+			if (this._bProcessChange) {
+				this._checkSelectionChange();
+				this._bProcessChange = false;
+			} else {
 				this._bProcessChange = true;
 			}
 		};
