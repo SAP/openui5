@@ -257,6 +257,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 
+		oTitleControl.setVisible(!!this.getTitle());
+
 		return oTitleControl;
 	};
 
@@ -309,6 +311,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		//if text is empty or not
 		var oTitleControl = this._getTitleControl();
 		oTitleControl.setProperty("text", sTitle, false);
+		oTitleControl.setVisible(!!sTitle);
 		this.setProperty("title", sTitle, true);
 		this.$("text").toggleClass("sapMObjectIdentifierTextBellow",
 				!!this.getProperty("text") && !!this.getProperty("title"));
