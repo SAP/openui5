@@ -6947,6 +6947,37 @@
 				oSelect.destroy();
 			});
 
+			// BCP 1570819144
+			test("it should not fire the change event after the selected item is removed and re-added again", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item()
+					]
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+				oSelect.getFocusDomRef().blur();
+				oSelect.removeAllItems();
+				oSelect.addItem(new sap.ui.core.Item());
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+				var fnFireChangeSpy = this.spy(oSelect, "fireChange");
+
+				// act
+				oSelect.getFocusDomRef().blur();
+
+				// assert
+				strictEqual(fnFireChangeSpy.callCount, 0);
+
+				// cleanup
+				oSelect.destroy();
+			});
+
 			test("it should fire the change event", function() {
 
 				// system under test

@@ -398,7 +398,11 @@
 				template: oItemTemplate
 			},
 			change: function(oControlEvent) {
-				jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+				var oSelectedItem = oControlEvent.getParameter("selectedItem");
+
+				if (oSelectedItem) {
+					jQuery.sap.log.info("Event fired: 'change' value to " + oSelectedItem.getText() + " on " + this);
+				}
 			}
 		});
 
@@ -407,7 +411,14 @@
 				path: "/items",
 				template: oItemTemplate
 			},
-			selectedKey: "GER"
+			selectedKey: "GER",
+			change: function(oControlEvent) {
+				var oSelectedItem = oControlEvent.getParameter("selectedItem");
+
+				if (oSelectedItem) {
+					jQuery.sap.log.info("Event fired: 'change' value to " + oSelectedItem.getText() + " on " + this);
+				}
+			}
 		});
 
 		var oLabel = new sap.m.Label({
