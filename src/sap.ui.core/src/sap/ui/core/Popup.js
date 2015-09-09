@@ -1120,23 +1120,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	};
 
 	/**
-	 * Returns an object containing as much information about the current focus as possible, or null if no focus is present or no focus information can be gathered.
+	 * Returns an object containing as much information about the current focus as
+	 * possible, or null if no focus is present or no focus information can be gathered.
+	 *
+	 * @returns {object} oPreviousFocus with the information which control/element
+	 *                                  was focused before the Popup has been opened.
+	 *                                  If a control was focused the control will add
+	 *                                  additional information if the control
+	 *                                  implemented 'getFocusInfo'.
 	 */
 	Popup.getCurrentFocusInfo = function() {
 		var _oPreviousFocus = null;
 		var focusedControlId = sap.ui.getCore().getCurrentFocusedControlId();
 		if (focusedControlId) {
-
 			// a SAPUI5 control was focused before
 			var oFocusedControl = sap.ui.getCore().getControl(focusedControlId);
-			_oPreviousFocus = {'sFocusId':focusedControlId,'oFocusInfo': oFocusedControl ? oFocusedControl.getFocusInfo() : {}}; // add empty oFocusInfo to avoid the need for all recipients to check
+			_oPreviousFocus = {
+				'sFocusId' : focusedControlId,
+				// add empty oFocusInfo to avoid the need for all recipients to check
+				'oFocusInfo' : oFocusedControl ? oFocusedControl.getFocusInfo() : {}
+			};
 		} else {
+			// not a SAPUI5 control... but if something has focus, save as much information about it as available
 			try {
-
-				// not a SAPUI5 control... but if something has focus, save as much information about it as available
 				var oElement = document.activeElement;
 				if (oElement) {
-					_oPreviousFocus = {'sFocusId':oElement.id,'oFocusedElement':oElement,'oFocusInfo':{}}; // add empty oFocusInfo to avoid the need for all recipients to check
+					_oPreviousFocus = {
+						'sFocusId' : oElement.id,
+						'oFocusedElement' : oElement,
+						// add empty oFocusInfo to avoid the need for all recipients to check
+						'oFocusInfo': {}
+					};
 				}
 			} catch (ex) {
 
@@ -1146,11 +1160,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 				_oPreviousFocus = null;
 			}
 		}
+
+		if (_oPreviousFocus) {
+			// Storing the information that this focusInfo is processed by the Popup.
+			// There are two different scenarios using the FocusInfo:
+			// - Keep the value inside an input field if the renderer re-renders the
+			// input
+			// - The Popup focuses the previous focused control/element and uses
+			// the FocusInfo mechanism as well.
+			_oPreviousFocus.popup = this;
+		}
 		return _oPreviousFocus;
 	};
 
 	/**
+	 * Applies the stored FocusInfo to the control/element where the focus
+	 * was before the Popup was opened.
+	 * When the FocusInfo has been applied the corresponding control/element
+	 * will be focused.
 	 *
+	 * @param {object} oPreviousFocus is the stored focusInfo that was fetched
+	 *                                from the control (if available)
 	 */
 	Popup.applyFocusInfo = function(oPreviousFocus) {
 		if (oPreviousFocus) {

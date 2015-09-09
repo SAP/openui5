@@ -1347,7 +1347,14 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 	ComboBox.prototype.applyFocusInfo = function(oFocusInfo){
 
 		var $Inp = jQuery(this.getInputDomRef());
-		$Inp.val(oFocusInfo.sTypedChars);
+
+		// only apply the stored value if the FocusInfo wasn't processed by
+		// the Popup. It might be possible that an application changed the value
+		// within the ComboBox in the meantime and the stored value in the FocusInfo
+		// is outdated.
+		if (!oFocusInfo.popup) {
+			$Inp.val(oFocusInfo.sTypedChars);
+		}
 		if (!this.getSelectedItemId() || sap.ui.getCore().byId(this.getSelectedItemId()).getText() != oFocusInfo.sTypedChars) {
 			// text entred before and is not the currently selected item -> just restore type-ahead
 			this._doTypeAhead();
