@@ -62,6 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 	}
 
 	function internalEmpty(deferred) {
+		var iInitialDelay = Device.browser.internet_explorer ? 50 : 0;
 		if (queue.length === 0) {
 			deferred.resolve();
 			return true;
@@ -69,12 +70,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 
 		var queueElement = queue.shift();
 
-		// This has to be here for IFrame with IE - if there is no timeout, there is a window with all properties undefined.
+		// TODO: this only affects IE with the IFrame startup without the frame the timeout can probably be 0 but this need to be evaluated as soon as we have an alternative startup
+		// This has to be here for IFrame with IE - if there is no timeout 50, there is a window with all properties undefined.
 		// Therefore the core code throws exceptions, when functions like setTimeout are called.
 		// I don't have a proper explanation for this.
 		setTimeout(function () {
 			internalWait(queueElement.callback, queueElement.options, deferred);
-		}, 0);
+		}, iInitialDelay);
 	}
 
 	function ensureNewlyAddedWaitForStatementsPrepended(iPreviousQueueLength, nestedInOptions){
