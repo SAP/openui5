@@ -198,6 +198,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			RadioButtonGroup.prototype.setSelectedIndex = function(iSelectedIndex) {
 
 				var iIndexOld = this.getSelectedIndex();
+				// if a radio button in the group is focused is true, otherwise - false
+				var hasFocusedRadioButton = document.activeElement.parentNode.parentNode === this.getDomRef();
+				// if radio button group has buttons and one of them is selected is true, otherwise - false
+				var isRadioGroupSelected = !!(this.aRBs && this.aRBs[iSelectedIndex]);
 
 				if (iSelectedIndex < -1) {
 					// invalid negative index -> don't change index.
@@ -220,6 +224,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				if (this._oItemNavigation) {
 					this._oItemNavigation.setSelectedIndex(iSelectedIndex);
 					this._oItemNavigation.setFocusedIndex(iSelectedIndex);
+				}
+
+				// if focus is in the group - focus the selected element
+				if (isRadioGroupSelected && hasFocusedRadioButton) {
+					this.aRBs[iSelectedIndex].getDomRef().focus();
 				}
 
 				return this;
@@ -523,8 +532,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				for (var i = 0; i < this.aRBs.length; i++) {
 					if (this.aRBs[i].getId() == oControlEvent.getParameter("id") && oControlEvent.getParameter("selected")) {
 						this.setSelectedIndex(i);
-						this._oItemNavigation.setSelectedIndex(i);
-						this._oItemNavigation.setFocusedIndex(i);
 						this.fireSelect({
 							selectedIndex : i
 						});
@@ -608,11 +615,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				var iIndex = oControlEvent.getParameter("index");
 				var oEvent = oControlEvent.getParameter("event");
 
+				// handle only keyboard navigation here
+				if (oEvent.keyCode === undefined) {
+					return;
+				}
+
 				if (iIndex != this.getSelectedIndex() && !(oEvent.ctrlKey || oEvent.metaKey) && this.aRBs[iIndex].getEditable()
 						&& this.aRBs[iIndex].getEnabled()) {
 					// if CTRL key is used do not switch selection
 					this.setSelectedIndex(iIndex);
-					this._oItemNavigation.setSelectedIndex(iIndex);
 					this.fireSelect({
 						selectedIndex : iIndex
 					});
