@@ -107,6 +107,19 @@
 @sapUiChartSequence3: @sapChart_Sequence_3;
 @sapUiChartSequenceNeutral: @sapChart_Sequence_Neutral;
 
+/* ----------- New Base Parameters Expert Mode? ---- */
+@sapUiHeaderBackground: @sapUiExtraLightBG;
+@sapUiFooterBackground: fade(#363e43, 96);
+@sapUiHeaderBorderColor: @sapLightBorderColor;
+@sapUiHeaderTextColor: @sapUiLightText;
+@sapUiFooterTextColor: @sapUiContentContrastTextColor;
+@sapUiInfobarBackground: mix(@sapUiAccent7, #fff, 73);
+@sapUiBlockLayerBackground: @sapUiDarkestBG;
+@sapUiTileBackground: @sapUiLightestBG;
+@sapUiTileBorderColor: @sapLightBorderColor;
+@sapUiTileTextColor: @sapUiDarkText;
+@sapUiGroupHeaderBackground: @sapUiLightestBG;
+
 
 /* ===================================== */
 /* Accent Colors                         */
@@ -621,10 +634,10 @@
 /* ToolPopup */
 @sapUiUx3ToolPopupInverted: ~"false"; /* Telling the ToolPopup if it's inverted per default */
 @sapUiUx3ToolPopupArrowRightMarginCorrection: -1px;
-@sapUiUx3ToolPopupShadow: 0 0 30px fade(@sapUiShadowTint, 20%);
+@sapUiUx3ToolPopupShadow: 0 0 30px fade(@sapUiDarkShadowTint, 20);
 
 /* Callout */
-@sapUiCalloutShadow: 0 0 30px fade(@sapUiShadowTint, 20%);
+@sapUiCalloutShadow: 0 0 30px fade(@sapUiDarkShadowTint, 20);
 
 @sapUiButtonIconColor: contrast(@sapUiButtonBackground, @sapUiElement, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiButtonActiveBackground: @sapUiHighlight;
@@ -654,10 +667,12 @@
 @sapUiButtonLiteHoverBorderColor: fadeout(darken(@sapUiButtonBackground, 10), 50);
 @sapUiButtonLiteActiveBackground: @sapUiHighlight;
 @sapUiButtonLiteActiveBorderColor: @sapUiHighlight;
-@sapUiButtonHeaderTextColor: @sapUiBarText;
-@sapUiButtonHeaderDisabledTextColor: @sapUiDarkText;
+@sapUiButtonHeaderTextColor: @sapUiButtonTextColor;
+@sapUiButtonHeaderDisabledTextColor: @sapUiButtonTextColor;
+@sapUiButtonFooterTextColor: @sapUiFooterTextColor;
 @sapUiButtonFooterHoverBackground: fadeout(@sapUiButtonHoverBackground, 90);
-@sapUiButtonActionSelectBackground: @sapUiFooterBG;
+@sapUiFooterButtonHoverColor: contrast(@sapUiFooterOnDesktopBG, darken(@sapUiFooterOnDesktopBG, 3), lighten(@sapUiFooterOnDesktopBG, 6));  //delete
+@sapUiButtonActionSelectBackground: @sapUiFooterBackground;
 @sapUiButtonActionSelectBorderColor: contrast(@sapUiButtonActionSelectBackground, darken(@sapUiButtonActionSelectBackground, 10), lighten(@sapUiButtonActionSelectBackground,20));
 @sapUiButtonLiteActionSelectHoverBackground: contrast(@sapUiButtonActionSelectBackground, darken(@sapUiButtonActionSelectBackground, 6), lighten(@sapUiButtonActionSelectBackground,6));
 @sapUiToggleButtonPressedBackground: @sapUiHighlight;
@@ -681,9 +696,8 @@
 @sapUiSegmentedButtonIconColor: contrast(@sapUiSegmentedButtonBackground, @sapUiElement, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiSegmentedButtonActiveIconColor: contrast(@sapUiSegmentedButtonActiveBackground, @sapUiElement, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiSegmentedButtonSelectedIconColor: contrast(@sapUiSegmentedButtonSelectedBackground, @sapUiElement, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
-@sapUiSegmentedButtonFooterBorderColor: contrast(@sapUiFooterBG, darken(@sapUiFooterBG, 10), lighten(@sapUiFooterBG, 20));
+@sapUiSegmentedButtonFooterBorderColor: contrast(@sapUiFooterBackground, darken(@sapUiFooterBackground, 10), lighten(@sapUiFooterBackground, 20));
 @sapUiSegmentedButtonFooterHoverBackground: fade(darken(@sapUiButtonBackground, 5), 10);
-@sapUiFooterButtonHoverColor: contrast(@sapUiFooterOnDesktopBG, darken(@sapUiFooterOnDesktopBG, 3), lighten(@sapUiFooterOnDesktopBG, 6));
 
 @sapUiFieldTextColor: @sapUiBaseText;
 @sapUiFieldPlaceholderTextColor: @sapUiExtraLightText;
@@ -707,6 +721,10 @@
 @sapUiListTableTextSize: 0.875rem;
 @sapUiListTableIconSize: 1rem;
 
+@sapUiFooterBorderColor: contrast(@sapUiFooterBackground, darken(@sapUiFooterBackground, 10), lighten(@sapUiFooterBackground, 20));
+
+@sapUiInfobarHoverBackground: darken(@sapUiInfobarBackground, 8);
+@sapUiInfobarActiveBackground: darken(@sapUiInfobarBackground, 15);
 
 @sapUiCalendarColorToday: #ffc51c;
 
