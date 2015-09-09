@@ -324,9 +324,19 @@
 	border-top: none;
 }
 
-//for some reason buttons have offset of 1px when focused and not exactly in the verticle middle
-.sapMDialog > footer .sapMBtn {
-	margin-top: -1px;
+.sapMDialog > footer {
+	padding: 0 0.25rem;
+
+	.sapMBtn {
+		//for some reason buttons have offset of 1px when focused and not exactly in the vertical middle
+		margin-top: -1px;
+		margin-left: 0;
+		margin-right: 0.25rem;
+
+		&:last-child {
+			margin-right: 0;
+		}
+	}
 }
 
 /* Compact size */
