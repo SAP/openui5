@@ -3459,7 +3459,6 @@
 
 				// act
 				var oRemovedItems = oSelect.removeAllItems();
-				sap.ui.getCore().applyChanges();
 
 				// assert
 				ok(fnRemoveAllAggregationSpy.calledWith("items"), "sap.m.Select.prototype.removeAllAggregation() method was called with the expected argument");
@@ -3473,7 +3472,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "");
 				strictEqual(oSelect.getList().getSelectedKey(), "");
 				strictEqual(oSelect.$("label").text(), "");
-				strictEqual(oSelect.$().children("select").length, 1);
+				strictEqual(oSelect.$("select").children().length, 0);
 
 				for (var i = 0; i < oRemovedItems.length; i++) {
 					strictEqual(oRemovedItems[i].hasListeners("_change"), false);
