@@ -319,6 +319,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 			} else if (this.getWidth() === "auto") {
 				return true;
 			}
+
+			return false;
 		};
 
 		/**
