@@ -16,7 +16,7 @@
 		"links": [
 			{
 				"text": "Shopping Cart",
-				"ref": "test-resources/sap/m/demokit/cart/index.html?responderOn=true",
+				"ref": "test-resources/sap/m/demokit/sample/ShoppingCart/webapp/index.html",
 				"icon": "sapmdemo/cart",
 				"desc": "The classic business process of finding & ordering products"
 			},
@@ -31,6 +31,12 @@
 				"ref": "test-resources/sap/m/demokit/worklist/webapp/test/testOpenUI5Service.html",
 				"icon": "task",
 				"desc": "Simple starting point for a worklist-style app according to the best practices"
+			},
+			{
+				"text": "Downloads",
+				"ref": "explored.html#/entity/sap.m.demo.Apps/samples",
+				"icon": "task",
+				"desc": "Download our Demoapps here"
 			}
 		]
 	},
@@ -988,6 +994,15 @@
 			"Writing a Short Date Formatter TDD style",
 			"Adding the date formatter"
 		  ]
+		},
+		{
+			"id" : "sap.m.demo.Apps",
+			"name" : "Demo Apps",
+			"category" : "Application",
+			"since" : "1.11",
+			"samples" : [
+				"sap.m.sample.ShoppingCart"
+			]
 		}
 	  ],
 	  "samples": [
@@ -1950,6 +1965,11 @@
 		  "id": "sap.m.sample.DraftIndicator",
 		  "name": "Draft Indicator",
 		  "description": "The Draft Indicator shows that eighter currently a draft is saving or that it is already saved. It does not block the current UI screen so other operations could be triggered in parallel."
+		},
+		{
+		  "id": "sap.m.sample.ShoppingCart",
+		  "name": "Shopping Cart",
+		  "description": "The classic business process of finding & ordering products"
 		}
 	  ]
 	}

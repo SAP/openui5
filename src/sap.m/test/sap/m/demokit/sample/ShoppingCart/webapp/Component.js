@@ -116,7 +116,7 @@ sap.ui.define([
 
 			// set i18n model
 			var oI18nModel = new ResourceModel({
-				bundleUrl: "i18n/appTexts.properties"
+				bundleName: "sap.ui.demo.cart.i18n.appTexts"
 			});
 			sap.ui.getCore().setModel(oI18nModel, "i18n");
 
@@ -133,18 +133,16 @@ sap.ui.define([
 			var sUrl = model.Config.getServiceUrl();
 
 			// start mock server
-			if (model.Config.isMock) {
-				jQuery.sap.require("sap.ui.core.util.MockServer");
-				var oMockServer = new sap.ui.core.util.MockServer({
-					rootUri: sUrl
-				});
-				oMockServer.simulate("model/metadata.xml", "model/");
-				oMockServer.start();
-				var sMsg = "Running in demo mode with mock data.";
-				sap.m.MessageToast.show(sMsg, {
-					duration: 2000
-				});
-			}
+			jQuery.sap.require("sap.ui.core.util.MockServer");
+			var oMockServer = new sap.ui.core.util.MockServer({
+				rootUri: sUrl
+			});
+			oMockServer.simulate(jQuery.sap.getModulePath("model/metadata", ".xml"), jQuery.sap.getModulePath("model",""));
+			oMockServer.start();
+			var sMsg = "Running in demo mode with mock data.";
+			sap.m.MessageToast.show(sMsg, {
+				duration: 2000
+			});
 
 			var oModel = new ODataModel(sUrl, true, model.Config.getUser(), model.Config.getPwd());
 			//if we do not set this property to false, this would lead to a synchronized request which blocks the ui
