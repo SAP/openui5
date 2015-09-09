@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/routing/Target', './async/Target', './sync/Target'],
-	function(Target, asyncTarget, syncTarget) {
+sap.ui.define(['sap/ui/core/routing/Target'],
+	function(Target) {
 		"use strict";
 
 		/**
@@ -38,7 +38,14 @@ sap.ui.define(['sap/ui/core/routing/Target', './async/Target', './sync/Target'],
 
 				Target.prototype.constructor.apply(this, arguments);
 
-				var TargetStub = oOptions._async ? asyncTarget : syncTarget;
+				var TargetStub;
+				if (oOptions._async) {
+					jQuery.sap.require("sap.m.routing.async.Target");
+					TargetStub = sap.ui.require("sap/m/routing/async/Target");
+				} else {
+					jQuery.sap.require("sap.m.routing.sync.Target");
+					TargetStub = sap.ui.require("sap/m/routing/sync/Target");
+				}
 
 				this._super = {};
 				for (var fn in TargetStub) {
