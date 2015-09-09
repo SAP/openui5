@@ -5335,6 +5335,52 @@
 			/* unbindObject()                       */
 			/* ------------------------------------ */
 
+			/* ------------------------------------ */
+			/* _isRequiredSelectElement()           */
+			/* ------------------------------------ */
+
+			test("_isRequiredSelectElement() it should return true when the width property is set to auto", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					width: "auto"
+				});
+
+				// assert
+				strictEqual(oSelect._isRequiredSelectElement(), true);
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			test("_isRequiredSelectElement() it should return false when the autoAdjustWidth property is set to true", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					autoAdjustWidth: true
+				});
+
+				// assert
+				strictEqual(oSelect._isRequiredSelectElement(), false);
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			test("_isRequiredSelectElement() it should return false", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					width: "15rem"
+				});
+
+				// assert
+				strictEqual(oSelect._isRequiredSelectElement(), false);
+
+				// cleanup
+				oSelect.destroy();
+			});
+
 			/* =========================================================== */
 			/* HTML module                                                 */
 			/* =========================================================== */
