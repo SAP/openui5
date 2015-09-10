@@ -5,13 +5,14 @@
 .sapMMessageToast {
 	font-size: @sapMFontMediumSize;
 	padding: 1rem;
-	background: @sapUiFooterBG;
+	background: @sapUiFooterBackground;
 	text-shadow: 0 0.0625rem @sapUiDarkShadowTint;
 	color: @sapUiContentContrastTextColor;
-	box-shadow: 0 0.125rem 2.750rem 0.125rem fade(@sapUiDarkShadowTint, 50%), 0 0.250rem 0.250rem 0 fade(@sapUiDarkShadowTint, 15%);
+	-webkit-box-shadow: 0 0.125rem 2.750rem 0.125rem fade(@sapUiDarkShadowTint, 50), 0 0.250rem 0.250rem 0 fade(@sapUiDarkShadowTint, 15);
+	box-shadow: 0 0.125rem 2.750rem 0.125rem fade(@sapUiDarkShadowTint, 50), 0 0.250rem 0.250rem 0 fade(@sapUiDarkShadowTint, 15);
 	border-radius: 0.14285rem;
 }
 
 .sap-desktop .sapMMessageToast {
-	background: @sapUiFooterOnDesktopBG;
+	background: @sapUiFooterBackground;
 }
