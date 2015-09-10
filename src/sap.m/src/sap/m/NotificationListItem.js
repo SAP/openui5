@@ -36,9 +36,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 					 * Determines the it the Notification is with priority.
 					 */
 					priority: {
-						type: 'sap.m.NotificationPriority',
+						type: 'sap.ui.core.Priority',
 						group: 'Appearance',
-						defaultValue: sap.m.NotificationPriority.None
+						defaultValue: sap.ui.core.Priority.None
 					},
 
 					/**

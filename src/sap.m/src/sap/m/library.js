@@ -53,7 +53,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.ListMode",
 			"sap.m.ListSeparators",
 			"sap.m.ListType",
-			"sap.m.NotificationPriority",
 			"sap.m.OverflowToolbarPriority",
 			"sap.m.P13nPanelType",
 			"sap.m.PageBackgroundDesign",
@@ -1440,40 +1439,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	};
 
-
-	/**
-	 * Priorities for notifications.
-	 *
-	 * @enum {string}
-	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	sap.m.NotificationPriority = {
-
-		/**
-		 * none is the default priority if non is defined
-		 * @public
-		 */
-		None: "None",
-
-		/**
-		 * Low notification priority
-		 * @public
-		 */
-		Low: "Low",
-
-		/**
-		 * Medium notification priority
-		 * @public
-		 */
-		Medium: "Medium",
-
-		/**
-		 * High notification priority
-		 * @public
-		 */
-		High: "High"
-	};
 
 	/**
 	* Types for the placement of message popover control.
