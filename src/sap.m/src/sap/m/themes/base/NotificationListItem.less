@@ -1,11 +1,14 @@
 @leftIconsSpace: 2rem;
-@dueDataWidth: 20%;
+@datetimeWidth: 20%;
 @containerPadding: 1rem;
 @closeButtonSize: 1.625rem;
 @bottomMargin: 0.5rem;
 @readIconSize: 0.5rem;
 
+// NotificationListItem
+
 .sapMNLI {
+	border-radius: 3px;
 	margin-bottom: @bottomMargin;
 }
 
@@ -44,6 +47,7 @@
 }
 
 .sapMNLI-Header > .sapMTitle {
+	color: @sapUiDeepText;
 	display: block;
 	font-weight: normal;
 	line-height: 1.25;
@@ -54,6 +58,7 @@
 .sapMNLI-CloseButton {
 	background: none;
 	border: none;
+	box-sizing: border-box;
 	cursor: pointer;
 	height: @closeButtonSize;
 	opacity: 0.75;
@@ -70,6 +75,7 @@
 }
 
 .sapMNLI-CloseButton .sapMBtnIcon {
+	cursor: pointer;
 	font-size: 0.75rem;
 	height: @closeButtonSize;
 	line-height: @closeButtonSize;
@@ -82,22 +88,25 @@
 	position: relative;
 }
 
-.sapMNLI-Body .sapMNLI-Text {
+.sapMNLI-Body .sapMText.sapMNLI-Text {
 	color: @sapUiLightText;
 	display: block;
 	line-height: 1.25;
-	padding-bottom: 10px;
+	padding-bottom: 1rem;
 	padding-left: @leftIconsSpace;
 	padding-right: 2rem;
-	width: 100% - @dueDataWidth;
+	width: 100% - @datetimeWidth;
 }
 
-.sapMNLI-DueDate {
+.sapMText.sapMNLI-Datetime {
 	color: @sapUiLightText;
+	overflow: hidden;
 	position: absolute;
 	right: @containerPadding;
+	text-overflow: ellipsis;
 	top: 0;
-	width: @dueDataWidth;
+	white-space: nowrap;
+	width: @datetimeWidth
 }
 
 // Footer styles =======================================================================================================
