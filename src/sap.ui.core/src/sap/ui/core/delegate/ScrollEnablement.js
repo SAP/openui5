@@ -1068,7 +1068,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 				this._setOverflow();
 
 				// apply the previous scroll state
-				this._scrollTo(this._scrollX, this._scrollY);
+				if (this._scrollX !== 0 || this._scrollY !== 0) {
+					this._scrollTo(this._scrollX, this._scrollY);
+				}
 
 				this._refresh();
 
