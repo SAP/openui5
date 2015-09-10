@@ -196,10 +196,10 @@ sap.ui.define([
 		}, this);
 
 		var that = this;
-		var fnSetArrowPosition = oPopupControl._fnSetArrowPosition;
+		var fnSetArrowPosition = oPopupControl._fnAdjustPositionAndArrow;
 
 		if (fnSetArrowPosition) {
-			oPopupControl._fnSetArrowPosition = function () {
+			oPopupControl._fnAdjustPositionAndArrow = function () {
 				fnSetArrowPosition.apply(oPopupControl, arguments);
 
 				that._adjustContainerHeight();
