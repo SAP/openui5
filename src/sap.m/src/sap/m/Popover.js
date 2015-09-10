@@ -1585,23 +1585,30 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 			this._recalculateMargins(sCalculatedPlacement, oPosParams);
 
+			var oPopoverPosition = this._getPopoverPositionCss(oPosParams),
+				oContentSize = this._getContentDimensionsCss(oPosParams),
+				bIsScrollbarNeeded = this._isScrollbarNeeded(oPosParams);
+
 			// Reposition popover
-			$popover.css(this._getPopoverPositionCss(oPosParams));
+			$popover.css(oPopoverPosition);
 
 			// Resize popover content, if necessary
-			$content.css(this._getContentDimensionsCss(oPosParams));
+			$content.css(oContentSize);
 
 			// Enable the scrollbar, if necessary
-			if (this._isScrollbarNeeded(oPosParams)) {
+			if (bIsScrollbarNeeded) {
 				$scrollArea.css("display", "block");
 			}
 
 			if (this.getShowArrow()) {
 				// Set the arrow next to the opener
-				$arrow.css(this._getArrowOffsetCss(sCalculatedPlacement, oPosParams));
+				var iArrowOffset = this._getArrowOffsetCss(sCalculatedPlacement, oPosParams),
+					sArrowPositionClass = this._getArrowPositionCssClass(sCalculatedPlacement);
+
+				$arrow.css(iArrowOffset);
 
 				// Add position class to the arrow
-				$arrow.addClass(this._getArrowPositionCssClass(sCalculatedPlacement));
+				$arrow.addClass(sArrowPositionClass);
 
 				// Style the arrow according to the header/footer/content if it is to the left or right
 				if (sCalculatedPlacement === sap.m.PlacementType.Left || sCalculatedPlacement === sap.m.PlacementType.Right) {
