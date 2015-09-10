@@ -1134,47 +1134,37 @@ function runODataAnnotationTests() {
 			ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
 			ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
 			ok(oAnnotations.UnitTest["Test.Merged"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
-			asyncStart();
+			startTest4();
 		});
 
-		// Don't use metadata/annotation cache
-		cleanOdataCache();
-		var oModel4 = new sap.ui.model.odata.ODataModel(
-			"fakeService://testdata/odata/northwind-annotated/", 
-			{
-				annotationURI : [
-					"fakeService://testdata/odata/northwind-annotated/$metadata",
-					"fakeService://testdata/odata/northwind-annotations-normal.xml"
-				],
-				json : true,
-				loadAnnotationsJoined : false,
-				loadMetadataAsync : true
-			}
-		);
-		oModel4.attachAnnotationsLoaded(function() {
-			var oAnnotations = oModel4.getServiceAnnotations();
-			ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
-			ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
-			ok(oAnnotations.UnitTest["Test.Merged"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
-			asyncStart();
-		});
+		function startTest4() {
+			// Don't use metadata/annotation cache
+			cleanOdataCache();
+			var oModel4 = new sap.ui.model.odata.ODataModel(
+				"fakeService://testdata/odata/northwind-annotated/", 
+				{
+					annotationURI : [
+						"fakeService://testdata/odata/northwind-annotated/$metadata",
+						"fakeService://testdata/odata/northwind-annotations-normal.xml"
+					],
+					json : true,
+					loadAnnotationsJoined : false,
+					loadMetadataAsync : true
+				}
+			);
+			oModel4.attachAnnotationsLoaded(function() {
+				var oAnnotations = oModel4.getServiceAnnotations();
+				ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
+				ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
+				ok(oAnnotations.UnitTest["Test.Merged"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
 
-
-		function asyncStart() {
-			if (asyncStart.num === undefined) {
-				asyncStart.num = 0;
-			}
-
-			if (++asyncStart.num >= asyncStartsExpected) {
 				oModel1.destroy();
 				oModel2.destroy();
 				oModel3.destroy();
 				oModel4.destroy();
-
 				start();
-			}
+			});
 		}
-	
 	});
 
 	module("V2: Multiple Annotation Sources Merged");
