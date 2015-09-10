@@ -12,6 +12,10 @@ sap.ui.require([
 	*/
 	"use strict";
 
+	//TODO remove this workaround in IE9 for
+	// https://github.com/cjohansen/Sinon.JS/commit/e8de34b5ec92b622ef76267a6dce12674fee6a73
+	sinon.xhr.supportsCORS = true;
+
 	var oCIRCULAR = {},
 		oBoolean = {
 			name : "sap.ui.model.odata.type.Boolean",
@@ -478,7 +482,6 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	</edmx:DataServices>\
 </edmx:Edmx>\
 		',
-		mMetaModel = {}, // cached instances, see withGivenMetaModel()
 		aNonStrings = [undefined, null, {}, false, true, 0, 1, NaN],
 		sPath2BusinessPartner = "/dataServices/schema/0/entityType/0",
 		sPath2Product = "/dataServices/schema/0/entityType/1",
@@ -506,9 +509,32 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			"/GWSAMPLE_BASIC/test_annotations" : [200, mHeaders, sGwsampleTestAnnotations],
 			"/test/$metadata" : [200, mHeaders, sTestMetadata],
 			"/test/annotations" : [200, mHeaders, sTestAnnotations],
-		};
+		},
+		oGlobalSandbox; // global sandbox for async tests
 
 	oCIRCULAR.circle = oCIRCULAR; // some circular structure
+
+	/**
+	 * Override QUnit's original <code>module</code> function in order to automatically provide a
+	 * properly configured sandbox.
+	 *
+	 * @param {string} sTitle
+	 *   the module's title
+	 */
+	function module(sTitle) {
+		QUnit.module(sTitle, {
+			beforeEach : function () {
+				oGlobalSandbox = sinon.sandbox.create();
+				setupSandbox(oGlobalSandbox);
+			},
+			afterEach : function () {
+				ODataModel.mServiceData = {}; // clear cache
+				// I would consider this an API,
+				// see https://github.com/cjohansen/Sinon.JS/issues/614
+				oGlobalSandbox.verifyAndRestore();
+			}
+		});
+	}
 
 	/**
 	 * Formats the value using the AnnotationHelper. Provides access to the given current context.
@@ -590,89 +616,25 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	}
 
 	/**
-	 * Runs the given code under test with an <code>ODataMetaModel</code> loaded from the given
-	 * metamodel and annotations URL.
+	 * Sets up the given sandbox in order to use the URLs and responses defined in mFixture;
+	 * leaves unknown URLs alone.
 	 *
-	 * Note: The resulting meta model is cached by the annotation URL.
-	 *
-	 * @param {string} sMetaModelUrl
-	 * @param {string} sAnnotationUrl
-	 * @param {function(sap.ui.model.odata.ODataMetaModel)} fnCodeUnderTest
-	 * @returns {any|Promise}
-	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
+	 * @param {object} oSandbox
+	 *   <a href ="http://sinonjs.org/docs/#sandbox">a Sinon.JS sandbox</a>
 	 */
-	function withGivenMetaModel(sMetaModelUrl, sAnnotationUrl, fnCodeUnderTest) {
-		var oMetaModel,
-			oModel,
-			oSandbox, // <a href ="http://sinonjs.org/docs/#sandbox">a Sinon.JS sandbox</a>
-			oServer,
-			sUrl;
+	function setupSandbox(oSandbox) {
+		var oServer = oSandbox.useFakeServer(), sUrl;
 
-		function onFailed(oEvent) {
-			var oParameters = oEvent.getParameters();
-			while (oParameters.getParameters) { // drill down to avoid circular structure
-				oParameters = oParameters.getParameters();
-			}
-			ok(false, "Failed to load: " + JSON.stringify(oParameters));
+		//TODO how to properly tear down this stuff?
+		sinon.FakeXMLHttpRequest.useFilters = true;
+		sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl, bAsync) {
+			return mFixture[sUrl] === undefined; // do not fake if URL is unknown
+		});
+
+		for (sUrl in mFixture) {
+			oServer.respondWith(sUrl, mFixture[sUrl]);
 		}
-
-		/*
-		 * Call the given "code under test" with the given OData meta model, making sure that
-		 * no changes to the model are kept in the cached singleton.
-		 */
-		function call(fnCodeUnderTest, oDataMetaModel) {
-			var sCopy = JSON.stringify(oDataMetaModel.getObject("/"));
-
-			try {
-				return fnCodeUnderTest(oDataMetaModel);
-			} finally {
-				oDataMetaModel.getObject("/").dataServices = JSON.parse(sCopy).dataServices;
-			}
-		}
-
-		if (mMetaModel[sAnnotationUrl]) {
-			return call(fnCodeUnderTest, mMetaModel[sAnnotationUrl]);
-		}
-
-		try {
-			// sets up a sandbox in order to use the URLs and responses defined in mFixture;
-			// leaves unknown URLs alone
-			sinon.config.useFakeServer = true;
-			//TODO remove this workaround in IE9 for
-			// https://github.com/cjohansen/Sinon.JS/commit/e8de34b5ec92b622ef76267a6dce12674fee6a73
-			sinon.xhr.supportsCORS = true;
-			oSandbox = sinon.sandbox.create();
-			oServer = oSandbox.useFakeServer();
-
-			//TODO how to properly tear down this stuff?
-			sinon.FakeXMLHttpRequest.useFilters = true;
-			sinon.FakeXMLHttpRequest.addFilter(function(sMethod, sUrl, bAsync) {
-				return mFixture[sUrl] === undefined; // do not fake if URL is unknown
-			});
-
-			for (sUrl in mFixture) {
-				oServer.respondWith(sUrl, mFixture[sUrl]);
-			}
-			oServer.autoRespond = true;
-
-			// sets up a v2 ODataModel and retrieves an ODataMetaModel from there
-			oModel = new ODataModel(sMetaModelUrl, {
-				annotationURI : sAnnotationUrl,
-				json : true,
-				loadMetadataAsync : true
-			});
-			oModel.attachMetadataFailed(onFailed);
-			oModel.attachAnnotationsFailed(onFailed);
-			mMetaModel[sAnnotationUrl] = oModel.getMetaModel();
-
-			// calls the code under test once the meta model has loaded
-			return mMetaModel[sAnnotationUrl].loaded().then(function() {
-				return call(fnCodeUnderTest, mMetaModel[sAnnotationUrl]);
-			});
-		} finally {
-			oSandbox.restore();
-			ODataModel.mServiceData = {}; // clear cache
-		}
+		oServer.autoRespond = true;
 	}
 
 	/**
@@ -683,7 +645,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
 	function withGwsampleModel(fnCodeUnderTest) {
-		return withGivenMetaModel("/GWSAMPLE_BASIC", "/GWSAMPLE_BASIC/annotations",
+		return withGivenService("/GWSAMPLE_BASIC", "/GWSAMPLE_BASIC/annotations",
 			fnCodeUnderTest);
 	}
 
@@ -696,7 +658,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
 	function withGwsampleModelAndTestAnnotations(fnCodeUnderTest) {
-		return withGivenMetaModel("/GWSAMPLE_BASIC", "/GWSAMPLE_BASIC/test_annotations",
+		return withGivenService("/GWSAMPLE_BASIC", "/GWSAMPLE_BASIC/test_annotations",
 			fnCodeUnderTest);
 	}
 
@@ -709,7 +671,43 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
 	 */
 	function withTestModel(fnCodeUnderTest) {
-		return withGivenMetaModel("/test", "/test/annotations", fnCodeUnderTest);
+		return withGivenService("/test", "/test/annotations", fnCodeUnderTest);
+	}
+
+	/**
+	 * Runs the given code under test with an <code>ODataMetaModel</code> (and an
+	 * <code>ODataModel</code>) for the given service and (array of) annotation URLs.
+	 *
+	 * @param {string} sServiceUrl
+	 *   the service URL
+	 * @param {string|string[]} vAnnotationUrl
+	 *   the (array of) annotation URLs
+	 * @param {function} fnCodeUnderTest
+	 * @returns {any|Promise}
+	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
+	 */
+	function withGivenService(sServiceUrl, vAnnotationUrl, fnCodeUnderTest) {
+		// sets up a v2 ODataModel and retrieves an ODataMetaModel from there
+		var oModel = new ODataModel(sServiceUrl, {
+				annotationURI : vAnnotationUrl,
+				json : true,
+				loadMetadataAsync : true
+			});
+
+		function onFailed(oEvent) {
+			var oParameters = oEvent.getParameters();
+			while (oParameters.getParameters) { // drill down to avoid circular structure
+				oParameters = oParameters.getParameters();
+			}
+			ok(false, "Failed to load: " + JSON.stringify(oParameters));
+		}
+		oModel.attachMetadataFailed(onFailed);
+		oModel.attachAnnotationsFailed(onFailed);
+
+		// calls the code under test once the meta model has loaded
+		return oModel.getMetaModel().loaded().then(function () {
+			return fnCodeUnderTest(oModel.getMetaModel(), oModel);
+		});
 	}
 
 	//*********************************************************************************************
@@ -723,9 +721,9 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				},
 				oRawValue = {},
 				sResult = {},
-				oGetObjectMock = this.mock(oInterface).expects("getObject");
+				oGetObjectMock = oGlobalSandbox.mock(oInterface).expects("getObject");
 
-			this.mock(Expression).expects("getExpression")
+			oGlobalSandbox.mock(Expression).expects("getExpression")
 				.withExactArgs(oInterface, oRawValue, true).returns(sResult);
 
 			if (bWithRawValue) {
@@ -761,7 +759,6 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	test("forward to getExpression: raw value automatically determined", function () {
-		var that = this;
 		return withGwsampleModel(function (oMetaModel) {
 			var sMetaPath = sPath2Product
 				+ "/com.sap.vocabularies.UI.v1.FieldGroup#Dimensions/Data/0/Label",
@@ -769,7 +766,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 			sString = "{path : 'foo'}",
 			oRawValue = oMetaModel.getProperty(sMetaPath);
 
-			that.mock(Expression).expects("getExpression")
+			oGlobalSandbox.mock(Expression).expects("getExpression")
 				.withExactArgs(oCurrentContext, oRawValue, true).returns(sString);
 
 			AnnotationHelper.format(oCurrentContext);
@@ -941,7 +938,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		var sError = "Unsupported: " + Basics.toErrorString(oApply);
 
 		test("14.5.3 Expression edm:Apply: " + sError, function () {
-			this.mock(Basics).expects("error").once().throws(new SyntaxError());
+			oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
 
 			return withGwsampleModel(function (oMetaModel) {
 				var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
@@ -970,7 +967,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	test("14.5.3.1.1 Function odata.concat: escaping & unsupported type", function () {
-		this.mock(Basics).expects("error").once().throws(new SyntaxError());
+		oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
 
 		return withGwsampleModel(function (oMetaModel) {
 			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
@@ -992,7 +989,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	test("14.5.3.1.1 Function odata.concat: null parameter", function () {
-		this.mock(Basics).expects("error").once().throws(new SyntaxError());
+		oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
 
 		return withGwsampleModel(function (oMetaModel) {
 			var sPath = sPath2Contact + "/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Value",
@@ -1079,7 +1076,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	].forEach(function (oFixture) {
 		test("14.5.3.1.3 Function odata.uriEncode: " + JSON.stringify(oFixture.type), function () {
 			if (oFixture.error) {
-				this.mock(Basics).expects("error").once().throws(new SyntaxError());
+				oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
 			}
 
 			return withGwsampleModel(function (oMetaModel) {
@@ -1204,7 +1201,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 	//*********************************************************************************************
 	test("14.5.3 Nested apply (odata.fillUriTemplate & invalid uriEncode)", function () {
-		this.mock(Basics).expects("error").once().throws(new SyntaxError());
+		oGlobalSandbox.mock(Basics).expects("error").once().throws(new SyntaxError());
 
 		return withGwsampleModel(function (oMetaModel) {
 			var sMetaPath = sPath2BusinessPartner + "/com.sap.vocabularies.UI.v1.Identification/2"
@@ -1355,9 +1352,9 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				},
 				oRawValue = {},
 				sResult = {},
-				oGetObjectMock = this.mock(oInterface).expects("getObject");
+				oGetObjectMock = oGlobalSandbox.mock(oInterface).expects("getObject");
 
-			this.mock(Expression).expects("getExpression")
+			oGlobalSandbox.mock(Expression).expects("getExpression")
 				.withExactArgs(oInterface, oRawValue, false).returns(sResult);
 
 			if (bWithRawValue) {
@@ -1588,7 +1585,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 							ok(false, "Exception expected");
 						} catch (e) {
 							strictEqual(e.message,
-								'Association end with multiplicity "*" is not the last one: ' + sPath);
+								'Association end with multiplicity "*" is not the last one: '
+									+ sPath);
 						}
 					} else {
 						strictEqual(formatAndParse(oRawValue, oContext, fnIsMultiple,
