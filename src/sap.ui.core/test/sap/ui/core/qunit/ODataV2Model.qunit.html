@@ -2338,6 +2338,24 @@
 		}.bind(this))
 	});
 	
+	asyncTest("createEntry with complex types wich have namespace with . characters", function() {
+		var oModel = initModel(sURI, {metadataUrlParams : {test: "complex"}});
+		oModel.metadataLoaded().then(function() {
+			var oContext = oModel.createEntry("BusinessPartnerSet");
+			ok(oContext, "context should be created");
+			var oData = oContext.getObject();
+			ok(oData, " check context data");
+			ok(oData.Address, " check context data");
+			ok(oData.Address.hasOwnProperty('AddressType'), " check context data");
+			ok(oData.Address.hasOwnProperty('Building'), " check context data");
+			ok(oData.Address.hasOwnProperty('City'), " check context data");
+			ok(oData.Address.hasOwnProperty('Country'), " check context data");
+			ok(oData.Address.hasOwnProperty('Street'), " check context data");
+			oModel.destroy();
+			start();
+		}.bind(this))
+	});
+	
 	asyncTest("test setProperty on complex Types (internal)",function(){
 		var oModel = initModel(sURI, {useBatch : true});
 		oModel.attachMetadataLoaded(function(){
