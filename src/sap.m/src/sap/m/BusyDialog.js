@@ -256,6 +256,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			return this;
 		};
 
+		BusyDialog.prototype.getDomRef = function () {
+			return this._oDialog && this._oDialog.getDomRef();
+		};
+
 		//private functions
 
 		BusyDialog.prototype._destroyTheCloseButton = function () {
