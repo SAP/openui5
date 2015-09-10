@@ -3517,7 +3517,6 @@
 
 				// act
 				oSelect.destroyItems();
-				sap.ui.getCore().applyChanges();
 
 				// assert
 				ok(fnDestroyItemsSpy.returned(oSelect), "sap.m.Select.prototype.destroyItems() returns this to allow method chaining");
@@ -3525,7 +3524,8 @@
 				// strictEqual(oSelect.getValue(), "");	// not implemented
 				ok(oSelect.getList().getSelectedItem() === null);
 				strictEqual(oSelect.$("label").text(), "");
-				strictEqual(oSelect.$().children("select").length, 1);
+				strictEqual(oSelect.$("select").length, 1);
+				strictEqual(oSelect.$("select").children().length, 0);
 
 				for (var i = 0; i < aItems.length; i++) {
 					strictEqual(aItems[i].hasListeners("_change"), false);
