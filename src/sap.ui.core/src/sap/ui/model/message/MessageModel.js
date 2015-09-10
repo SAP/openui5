@@ -121,7 +121,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Cl
 		
 		if (oContext instanceof Context) {
 			oNode = this._getObject(oContext.getPath());
+		} else if (oContext) {
+			oNode = oContext;
 		}
+		
 		if (!sPath) {
 			return oNode;
 		}
