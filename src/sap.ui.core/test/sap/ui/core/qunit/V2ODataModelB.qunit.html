@@ -57,20 +57,20 @@
 	}
 
 	function removeSharedMetadata() {
-		var sURI = sServiceUri.replace(/\/$/, "");
-		if (sap.ui.model.odata.v2.ODataModel.mServiceData
-				&& sap.ui.model.odata.v2.ODataModel.mServiceData[sURI]) {
-			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sURI].oMetadata;
-		}
+		jQuery.each(function(sUri, oData) {
+			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sUri].oMetadata
+		});
 	}
+	
 	/*module("ODataModelV2 XML", {
 		setup : function() {
 			initServer();
 			oModel = initModel(false);
 		},
 		teardown : function() {
-			oModel = undefined;
 			removeSharedMetadata();
+			oModel.destroy();
+			oModel = undefined;
 			stopServer();
 		}
 	});
@@ -96,7 +96,6 @@
 	module("ODataModelV2 JSON", {
 		setup : function() {
 			initServer();
-			oModel = initModel();
 		},
 		teardown : function() {
 			oModel.destroy();
@@ -107,12 +106,13 @@
 	});
 
 	test("Mockserver initialisation",  function(){
+		oModel = initModel();
 		ok(oMockServer,"MockServer created");
 		ok(oMockServer.isStarted(), "Mock server is started");
 	});
 	
 	asyncTest("test init Model", function() {
-		oModel = initModel(true);	
+		oModel = initModel();
 		var fnTest = function() {
 			ok(true, "metadataloaded");
 			start();
@@ -121,6 +121,7 @@
 	});
 	
 	asyncTest("read JSON", function() {
+		oModel = initModel();
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
 				success : function() {
@@ -139,6 +140,7 @@
 	});
 
 	asyncTest("test oDataModel read with URLParams and headers JSON", function() {
+		oModel = initModel();
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
 				urlParameters : {
@@ -166,7 +168,7 @@
 	});
 
 	asyncTest("test metadata promise", function() {
-		oModel = initModel(true);
+		oModel = initModel();
 		var fnTest = function() {
 			var oPromise = oModel.metadataLoaded();
 			ok(oPromise, "promise exists");
@@ -181,8 +183,7 @@
 	});
 	
 	asyncTest("test metadata promise and refresh", function() {
-		oModel = initModel(true);
-		
+		oModel = initModel();
 		var fnTest = function() {
 			oModel.detachMetadataLoaded(fnTest);
 			var oPromise = oModel.metadataLoaded();
@@ -214,8 +215,7 @@
 	});
 	
 	asyncTest("test metadata promise ok then refresh failed", function() {
-		
-		oModel = initModel(true);
+		oModel = initModel();
 		var fnTest = function() {
 			var sTempService = sServiceUri;
 			oModel.detachMetadataLoaded(fnTest);
@@ -244,8 +244,7 @@
 	});
 	
 	asyncTest("test metadata promise ok then refresh failed then refresh ok", function() {
-		
-		oModel = initModel(true);
+		oModel = initModel();
 		var fnTest = function() {
 			oModel.detachMetadataLoaded(fnTest);
 			var sTempService = sServiceUri;
@@ -283,6 +282,7 @@
 	});
 	
 	asyncTest("test oDataModel read filter test", function() {
+		oModel = initModel();
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
 				filters : [ new sap.ui.model.Filter("ProductID", "EQ",
@@ -303,6 +303,7 @@
 	});
 
 	asyncTest("test oDataModel read count request with filter test", function() {
+		oModel = initModel();
 		var fnTest = function() {
 			oModel.read("/ProductSet/$count", {
 				filters : [ new sap.ui.model.Filter("ProductID", "EQ",
@@ -320,6 +321,7 @@
 	});
 
 	asyncTest("test oDataModel read sort test", function() {
+		oModel = initModel();
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
 				sorters : [ new sap.ui.model.Sorter("ProductID", true) ],
@@ -343,6 +345,7 @@
 	});
 
 	asyncTest("test oDataModel read error test", function() {
+		oModel = initModel();
 		var fnTest = function() {
 			oModel.read("/ProductXYSet", {
 				success : function(oData, oResponse) {
@@ -359,6 +362,7 @@
 	});
 
 	asyncTest("test oDataModel remove error test", function() {
+		oModel = initModel();
 		var fnTest = function() {
 			oModel.remove("/ProductSet('Error')", {
 				success : function(oData, oResponse) {
@@ -374,6 +378,7 @@
 	});
 
 	asyncTest("test oDataModel remove error test batch off", function() {
+		oModel = initModel();
 		oModel.setUseBatch(false);
 		var fnTest = function() {
 			oModel.remove("/ProductSet('Error')", {
@@ -394,6 +399,7 @@
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
+		oModel = initModel();
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
 				success : function(oData, oResponse) {
@@ -428,7 +434,7 @@
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
-		
+		oModel = initModel();
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
 				batchGroupId : "myId1",
@@ -466,6 +472,7 @@
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
+		oModel = initModel();
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
 				batchGroupId : "myId",
@@ -499,6 +506,7 @@
 	});
 
 	asyncTest("test oDataModel read deferred with batchGroupId", function() {
+		oModel = initModel();
 		oModel.setDeferredBatchGroups([ "myId" ]);
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
@@ -521,7 +529,7 @@
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
-		
+		oModel = initModel();
 		oModel.setDeferredBatchGroups([ undefined ]);
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
@@ -559,7 +567,7 @@
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
-				
+		oModel = initModel();				
 		oModel.setDeferredBatchGroups([ "myId1" ]);
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
@@ -599,7 +607,7 @@
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
-		
+		oModel = initModel();
 		oModel.setDeferredBatchGroups([ "myId1", "myId2" ]);
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
@@ -634,9 +642,10 @@
 		});
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
-
+	
 	asyncTest("test oDataModel read deferred with batchGroupId and submitChanges callback handler test", function() {
 		var bSuccess = false;
+		oModel = initModel();
 		oModel.setDeferredBatchGroups([ "myId" ]);
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
@@ -666,6 +675,7 @@
 
 	asyncTest("test oDataModel bind Object", function() {
 		var iCount = 0;
+		oModel = initModel();
 		var oTxt = new sap.ui.commons.TextField({
 			value : "{Category}"
 		});
@@ -688,6 +698,7 @@
 
 	asyncTest("test oDataModel read and bind Object", function() {
 		var iCount = 0;
+		oModel = initModel();
 		var oTxt = new sap.ui.commons.TextField({
 			value : "{Category}"
 		});
@@ -709,6 +720,7 @@
 						if (iCount === 2) {
 							ok(false, "request performed but should not go out as data already loaded by read request before");
 						}
+						oTxt.destroy();
 						start();
 					}
 					oModel.attachBatchRequestCompleted(
@@ -741,7 +753,7 @@
 
 	asyncTest("test oDataModel listbinding with table", function() {
 		var iCount = 0;
-
+		oModel = initModel();
 		var mEntities = {
 			categories : {
 				collection : "/VH_CategorySet",
@@ -762,27 +774,25 @@
 		var fnCheck = function() {
 			iCount++;
 			ok(iCount === 1, "request performed");
-			equal(
-					oModel
-							.getProperty("/VH_CategorySet('Beamers')/Category"),
+			equal(oModel.getProperty("/VH_CategorySet('Beamers')/Category"),
 					"Beamers", "Category loaded check");
-			equal(
-					oModel
-							.getProperty("/VH_CategorySet('Headsets')/Category"),
+			equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"),
 					"Headsets", "Category loaded check");
 			ok(oTable.getBinding('rows').getLength() >= 2,
 					"Category size check");
 			oTable.destroy();
+			oTable= null;
 			start();
 		};
 		
 		oModel.attachBatchRequestCompleted(this, fnCheck);
 		oModel.attachMetadataLoaded(this, fnTest);
 	});
-
+	
 	asyncTest("test oDataModel listbinding with aggregation binding and read in default batch group", function() {
 		var iCallCount = 0;
 		var bRead1 = false;
+		oModel = initModel();
 		var mEntities = {
 			categories : {
 				collection : "/VH_CategorySet",
@@ -791,7 +801,7 @@
 		}
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
-
+		sap.ui.getCore().applyChanges();
 		oTable.setModel(oModel);
 		var fnTest = function() {
 			oTable.bindRows({
@@ -818,6 +828,7 @@
 				equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
+				oTable = null;
 				start();
 			}
 		}
@@ -828,6 +839,7 @@
 	asyncTest("test oDataModel listbinding with aggregation binding and read in different batch groups", function() {
 		var iCallCount = 0;
 		var bRead1 = false;
+		oModel = initModel();
 		var mEntities = {
 			categories : {
 				collection : "/VH_CategorySet",
@@ -836,7 +848,6 @@
 		}
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
-
 		oTable.setModel(oModel);
 		var fnTest = function() {
 			oTable.bindRows({
@@ -864,6 +875,7 @@
 				equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
+				oTable = null;
 				start();
 			}
 		}
@@ -872,6 +884,7 @@
 	});
 
 	asyncTest("test oDataModel listbinding with aggregation binding and read in different deferred batch groups", function() {
+		oModel = initModel();
 		var iCallCount = 0;
 		var bRead1 = false;
 		var mEntities = {
@@ -910,6 +923,7 @@
 				equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
+				oTable = null;
 				start();
 			}
 		}
@@ -921,6 +935,7 @@
 		var iCount = 0;
 		var bRead1 = false;
 		var bRead2 = false;
+		oModel = initModel();
 		oModel.setUseBatch(false);
 
 		oModel.attachRequestCompleted(this,function(test) {
@@ -957,8 +972,6 @@
 	module("ODataModelV2 write", {
 		setup : function() {
 			initServer();
-			oModel = initModel();
-			oModel.setRefreshAfterChange(false);
 		},
 		teardown : function() {
 			oModel.destroy();
@@ -970,7 +983,8 @@
 
 	asyncTest("test oDataModel update", function() {
 		var iCount = 0;
-		
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var fnTest = function() {
 			oModel.update("/ProductSet('AD-1000')", {
 				Name : "Test"
@@ -994,7 +1008,8 @@
 	asyncTest("test oDataModel update Read default batchgroup", function() {
 		var bUpdate = false;
 		var bRead = false;
-		
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var fnTest = function() {
 			oModel.update("/ProductSet('AD-1000')", {
 				Name : "Hello"
@@ -1034,6 +1049,8 @@
 	});
 
 	asyncTest("test oDataModel update and read in different batchgroups",function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bUpdate = false;
 		var bRead = false;
@@ -1075,6 +1092,8 @@
 	});
 	
 	asyncTest("test oDataModel update and 2 read in different deferred and non deferred batchgroups", function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bUpdate = false;
 		var bRead = false;
@@ -1131,6 +1150,8 @@
 	});
 	
 	asyncTest("test oDataModel create", function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bCreate = false;
 		var fnTest = function() {
@@ -1180,6 +1201,8 @@
 	});
 	
 	asyncTest("test oDataModel delete", function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bRemove = false;
 		var fnTest = function() {
@@ -1207,6 +1230,8 @@
 	});
 	
 	asyncTest("test oDataModel READ and delete in different batch groups, DELETE deferred", function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bRead = false;
 		var bRemove = false;
@@ -1251,6 +1276,8 @@
 	});
 
 	asyncTest("test oDataModel Two Way", function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bMetadataLoaded = false;
 		var bsetProp = false;
@@ -1288,6 +1315,8 @@
 			
 			if (iCount === 2 && bSetProp) {
 				equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
+				oTable.destroy();
+				oTable = null;
 				start();
 			}
 		});
@@ -1295,6 +1324,8 @@
 	});
 	
 	asyncTest("test oDataModel Two Way deferred with using changeBatchGroups", function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bMetadataLoaded = false;
 		var bsetProp = false;
@@ -1332,6 +1363,8 @@
 					ok(bSetProp, "set Property succesful");
 					equal(oModel.getProperty("/ProductSet('AD-1000')/Name"), "NewValue", "Two Way check");
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
+					oTable.destroy();
+					oTable = null;
 					start();
 				}});
 			}
@@ -1340,6 +1373,8 @@
 	});
 	
 	asyncTest("test oDataModel Two Way 2 changes deferred with using changeBatchGroups and single=true (= 2 changesets)", function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bMetadataLoaded = false;
 		var bsetProp = false;
@@ -1389,6 +1424,8 @@
 					equal(oParams.__batchResponses[1].__changeResponses[0].statusCode,"204", "statuscode OK");
 					
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
+					oTable.destroy()
+					oTable = null;
 					start();
 				}});
 			}
@@ -1397,6 +1434,8 @@
 	});
 	
 	asyncTest("test oDataModel Two Way 2 changes deferred with using changeBatchGroups and single=false (= 1 changeset)", function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bMetadataLoaded = false;
 		var bsetProp = false;
@@ -1445,6 +1484,8 @@
 					equal(oParams.__batchResponses[0].__changeResponses[1].statusCode,"204", "statuscode OK");
 					
 					ok(!oModel.hasPendingChanges(), "Pending changes test");
+					oTable.destroy()
+					oTable = null;
 					start();
 				}});
 			}
@@ -1453,6 +1494,8 @@
 	});
 	
 	asyncTest("test oDataModel list binding", function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bMetadataLoaded = false;
 		oModel.setDefaultBindingMode("TwoWay");
@@ -1482,6 +1525,8 @@
 				equal(oBinding.getLength(), 115, "length check");
 				ok(oBinding.getContexts(), "context check");
 				ok(oBinding.sCountMode, "Request", "count mode check");
+				oTable.destroy()
+				oTable = null;
 				start();
 			}
 		});
@@ -1489,6 +1534,8 @@
 	});
 		
 	asyncTest("test oDataModel setProperty with non deferred requests", function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
@@ -1524,6 +1571,8 @@
 	});
 	
 	asyncTest("test oDataModel setProperty without batch", function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
@@ -1559,6 +1608,8 @@
 	});
 	
 	asyncTest("test oDataModel setProperty deferred", function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
@@ -1604,6 +1655,8 @@
 	});
 	
 	asyncTest("test oDataModel setProperty aka MERGE and GET in same batch deferred", function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bRead = false;
 		var bRead2 = false;
@@ -1664,6 +1717,8 @@
 	});
 	
 	asyncTest("test oDataModel two Way MERGE delta change batch on", function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bRead = false;
 		var bRead2 = false;
@@ -1745,6 +1800,8 @@
 	});
 	
 	asyncTest("test oDataModel two Way MERGE delta change batch on with sap:unit modified", function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bRead = false;
 		var bRead2 = false;
@@ -1823,6 +1880,8 @@
 	});
 	
 	asyncTest("test oDataModel two Way MERGE delta change batch off", function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
@@ -1886,6 +1945,8 @@
 	});
 	
 	asyncTest("test oDataModel two Way submitChanges with PUT option and batch on", function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bRead = false;
 		var bRead2 = false;
@@ -1969,6 +2030,8 @@
 	});
 	
 	asyncTest("test oDataModel two Way submitChanges with defaultUpdateMethod= PUT option and batch on", function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bRead = false;
 		var bRead2 = false;
@@ -2054,6 +2117,8 @@
 	});
 	
 	asyncTest("test oDataModel two Way submitChanges with PUT option and batch off", function() {
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		var iCount = 0;
 		var bRead = false;
 		var bSetProp = false;
@@ -2496,6 +2561,8 @@
 		var bSuccess1 = false;
 		var bSuccess2 = false;
 		var oContext;
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		
 		oModel.setDeferredBatchGroups(["myId"]);
 		oModel.setChangeBatchGroups({
@@ -2567,7 +2634,8 @@
 	asyncTest("test oDataModel createEntry", function() {
 		var iCount = 0;
 		var oContext;
-		
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		// make request non deferred...
 		oModel.setChangeBatchGroups({
 			"*" : {batchgroupId : "myId"}
@@ -2616,7 +2684,8 @@
 	
 	asyncTest("test oDataModel createEntry and deleteCreatedEntry", function() {
 		var oContext;
-		
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		oModel.setDeferredBatchGroups(["myId"]);
 		oModel.setChangeBatchGroups({
 			"Product": {
@@ -2673,7 +2742,8 @@
 	
 	asyncTest("test oDataModel 2 times createEntry and one deleteCreatedEntry", function() {
 		var oContext, oContext2;
-		
+		oModel = initModel();
+		oModel.setRefreshAfterChange(false);
 		oModel.setDeferredBatchGroups(["myId"]);
 		oModel.setChangeBatchGroups({
 			"Product": {
@@ -2771,7 +2841,7 @@
 		var iReqComp = 0;
 		var iReqSent = 0;
 		var sReqId = null;
-		
+		oModel = initModel();
 		var fnTest = function() {
 			oModel.read("/ProductSet", {
 				success : function() {
@@ -2844,7 +2914,7 @@
 		var iReqSent = 0;
 		var iReqFailed = 0;
 		var sReqId = null;
-		
+		oModel = initModel();
 		var fnTest = function() {
 			oModel.read("/ProductXYSet", {
 				success : function(oData, oResponse) {
@@ -2916,6 +2986,7 @@
 		var iReqSent = 0;
 		var iReqFailed = 0;
 		var sReqId = null;
+		oModel = initModel();
 		oModel.setDeferredBatchGroups([ "myId1" ]);
 		
 		var fnTest = function() {
@@ -3006,6 +3077,7 @@
 		var iReqComp = 0;
 		var iReqSent = 0;
 		var sReqId = null;
+		oModel = initModel();
 		oModel.setUseBatch(false);
 		
 		var fnTest = function() {
@@ -3063,6 +3135,7 @@
 		var iReqSent = 0;
 		var iReqFailed = 0;
 		var sReqId = null;
+		oModel = initModel();
 		oModel.setUseBatch(false);
 		
 		oModel.attachRequestFailed(this, function(oEvent) {
@@ -3138,6 +3211,7 @@
 		var iReqComp = 0;
 		var iReqSent = 0;
 		var sReqId = null;
+		oModel = initModel();
 		var fnTest = function() {
 			oModel.read("/ProductSet('HT-1001')", {
 				success : function() {
@@ -3260,6 +3334,7 @@
 		var sReqId3 = null;
 		var iCount1 = 0;
 		var iCount2 = 0;
+		oModel = initModel();
 		oModel.setUseBatch(false);
 		var fnTest = function() {
 			oModel.read("/ProductSet('HT-1001')", {
@@ -3388,7 +3463,7 @@
 	asyncTest("test abort of request in batch request", function() {
 		var bSuccess = false;
 		var oAbort = {};
-		
+		oModel = initModel();
 		var fnTest = function() {
 			oModel.read("/ProductSet('HT-1001')", {
 				success : function() {
@@ -3422,6 +3497,7 @@
 	asyncTest("test abort of deferred batch request", function() {
 		var bSuccess = false;
 		var oAbort = {};
+		oModel = initModel();
 		oModel.setDeferredBatchGroups([ "myId1" ]);
 		
 		var fnTest = function() {
@@ -3462,6 +3538,7 @@
 	asyncTest("test abort of request in non batch request", function() {
 		var bSuccess = false;
 		var oAbort = {};
+		oModel = initModel();
 		oModel.setUseBatch(false);
 		
 		var fnTest = function() {
@@ -3503,7 +3580,7 @@
 		var bRead1 = false;
 		var bRead2 = false;
 		var oInput1, oInput2;
-		
+		oModel = initModel();
 		oInput1 = new sap.m.Input();
 		oInput1.setModel(oModel);
 		oInput2 = new sap.m.Input();
@@ -3541,7 +3618,7 @@
 		var iChange = 0;
 		var iReceived = 0;
 		var oInput1, oInput2;
-		
+		oModel = initModel();
 		oInput1 = new sap.m.Input();
 		oInput1.setModel(oModel);
 		oInput2 = new sap.m.Input();
@@ -3601,7 +3678,7 @@
 		var iCount = 0,
 			iChange = 0,
 			iReceived = 0;
-
+		oModel = initModel();
 		var mEntities = {
 				categories: { 
 					collection: "/VH_CategorySet", 
@@ -3630,6 +3707,7 @@
 			var fnCheck = function() {
 				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
+				oTable = null;
 				start();
 			}
 			oModel.attachBatchRequestCompleted(this, fnCheck);
@@ -3642,7 +3720,7 @@
 		var iCount = 0,
 			iChange = 0,
 			iReceived = 0;
-
+		oModel = initModel();
 		var mEntities = {
 				categories: { 
 					collection: "/VH_CategorySet", 
@@ -3664,6 +3742,7 @@
 			if (iReceived == 1) {
 				ok(true, "dataReceived after checkUpdate");
 				oTable.destroy();
+				oTable = null;
 				start();
 			}
 		}
@@ -3698,7 +3777,7 @@
 	asyncTest("test oDataModel createEntry, submit fails, change again and submit", function() {
 		var iCount = 0;
 		var oContext;
-		
+		oModel = initModel();
 		oModel.setDeferredBatchGroups(["myId"]);
 		oModel.setChangeBatchGroups({
 					"Product": {
@@ -3769,7 +3848,7 @@
 		asyncTest("test oDataModel callFunction: Parameter without mode", function() {
 		var iCount = 0;
 		var oContext;
-		
+		oModel = initModel();
 		var fnTest = function(){
 			oModel.callFunction("/SalesOrder_InvoiceCreated",{method:"POST",urlParameters:{"SalesOrderID":"test"}})
 		};
@@ -3786,7 +3865,7 @@
 	asyncTest("test oDataModel callFunction: Parameter with mode", function() {
 		var iCount = 0;
 		var oContext;
-		
+		oModel = initModel();
 		var fnTest = function(){
 			oModel.callFunction("/SalesOrder_Confirm",{method:"POST",urlParameters:{"SalesOrderID":"test"}})
 		};
@@ -3803,7 +3882,7 @@
 	asyncTest("test oDataModel callFunction: invalid parameter", function() {
 		var iCount = 0;
 		var oContext;
-		
+		oModel = initModel();
 		var fnTest = function(){
 			oModel.callFunction("/SalesOrder_Confirm",{method:"POST",urlParameters:{"Test":"test"}})
 		};
@@ -3833,6 +3912,7 @@
 	asyncTest("test oDataModel refresh default batchGroup", function() {
 		var iCount = 0;
 		var oContext;
+		oModel = initModel();
 		var mEntities = [
 			{
 				categories : {
@@ -3885,6 +3965,9 @@
 					if (iCount === 2 && spy.callCount === 2) {
 						ok(true,"2 for refresh batch requests sent");
 						oTable.destroy();
+						oTable2.destroy();
+						oTable = null;
+						oTable2 = null;
 						start();
 					}				
 				});
@@ -3900,6 +3983,7 @@
 	asyncTest("test oDataModel refresh in one batchGroup", function() {
 		var iCount = 0;
 		var oContext;
+		oModel = initModel();
 		var mEntities = [
 			{
 				categories : {
@@ -3950,6 +4034,9 @@
 					if (spy.callCount === 1) {
 						ok(true,"1 for refresh batch requests sent");
 						oTable.destroy();
+						oTable2.destroy();
+						oTable = null;
+						oTable2 = null;
 						start();
 					}				
 				});
@@ -3965,6 +4052,7 @@
 	asyncTest("test ListBindingRefresh with batchGroup of binding info", function() {
 		var iCount = 0;
 		var oContext;
+		oModel = initModel();
 		var mEntities = [
 			{
 				categories : {
@@ -4018,6 +4106,9 @@
 					if (iCount === 2 && spy.callCount === 2) {
 						ok(true,"1 for refresh batch requests sent");
 						oTable.destroy();
+						oTable2.destroy();
+						oTable = null;
+						oTable2 = null;
 						start();
 					}				
 				});
@@ -4032,6 +4123,7 @@
 	asyncTest("test ListBindingRefresh passing a batchGroup", function() {
 		var iCount = 0;
 		var oContext;
+		oModel = initModel();
 		var mEntities = [
 			{
 				categories : {
@@ -4083,6 +4175,9 @@
 					if (spy.callCount === 1) {
 						ok(true,"1 for refresh batch requests sent");
 						oTable.destroy();
+						oTable2.destroy();
+						oTable = null;
+						oTable2 = null;
 						start();
 					}				
 				});
@@ -4098,6 +4193,7 @@
 	asyncTest("test refresh ContextBinding", function() {
 		var iCount = 0;
 		var oContext;
+		oModel = initModel();
 		var mEntities = [
 			{
 				categories : {
@@ -4151,6 +4247,9 @@
 					if (spy.callCount === 1) {
 						ok(true,"1 for refresh batch requests sent");
 						oTable.destroy();
+						oTable2.destroy();
+						oTable = null;
+						oTable2 = null;
 						start();
 					}				
 				});
@@ -4166,6 +4265,7 @@
 	asyncTest("test refresh ContextBinding", function() {
 		var iCount = 0;
 		var oContext;
+		oModel = initModel();
 		var mEntities = [
 			{
 				categories : {
@@ -4220,7 +4320,10 @@
 					iCount++;
 					if (iCount === 2 && spy.callCount === 2) {
 						ok(true,"2 refresh batch requests sent");
-						oTable.destroy();
+					oTable.destroy();
+						oTable2.destroy();
+						oTable = null;
+						oTable2 = null;
 						start();
 					}				
 				});
