@@ -729,6 +729,8 @@ sap.ui.define(['jquery.sap.global',
 		}
 
 		function destroyFrame () {
+			// Workaround for IE - there are errors even after removing the frame so setting the onerror to noop again seems to be fine
+			oFrameWindow.onerror = $.noop;
 			$Frame.remove();
 			oFrameWindow = null;
 			oFrameJQuery = null;
