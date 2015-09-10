@@ -206,6 +206,8 @@ sap.ui.define([
 			};
 		}
 
+		this._bItemsChanged = true;
+
 		this._oPopover.addStyleClass("sapMQuickView");
 	};
 
