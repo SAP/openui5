@@ -72,6 +72,13 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 					navButtonText: {type: "string", group: "Misc", defaultValue: null, deprecated: true},
 
 					/**
+					 * The tooltip of the nav button
+					 *
+					 * Since version 1.34
+					 */
+					navButtonTooltip: {type: "string", group: "Misc", defaultValue: null},
+
+					/**
 					 * Enable vertical scrolling of page contents. Page headers and footers are fixed and do not scroll.
 					 * If set to false, there will be no scrolling at all.
 					 *
@@ -247,12 +254,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		};
 
 		Page.prototype._ensureNavButton = function () {
+			var sBackText = this.getNavButtonTooltip() || sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("PAGE_NAVBUTTON_TEXT"); // any other types than "Back" do not make sense anymore in Blue Crystal
+
 			if (!this._navBtn) {
-				var sNavButtonType = this.getNavButtonType(),
-					sBackText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("PAGE_NAVBUTTON_TEXT"); // any other types than "Back" do not make sense anymore in Blue Crystal
+				var sNavButtonType = this.getNavButtonType();
 
 				this._navBtn = new sap.m.Button(this.getId() + "-navButton", {
-					tooltip: sBackText,
 					press: jQuery.proxy(function () {
 						this.fireNavButtonPress();
 						this.fireNavButtonTap();
@@ -265,6 +272,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 					this._navBtn.setType(sNavButtonType);
 				}
 			}
+
+			this._navBtn.setTooltip(sBackText);
 		};
 
 		Page.prototype.setShowNavButton = function (bShowNavBtn) {
@@ -304,6 +313,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 		Page.prototype.setNavButtonText = function (sText) {
 			this._ensureNavButton(); // creates this._navBtn, if required
 			this.setProperty("navButtonText", sText, true);
+			return this;
+		};
+
+		Page.prototype.setNavButtonTooltip = function (sText) {
+			this.setProperty("navButtonTooltip", sText, true);
+			this._ensureNavButton(); // creates this._navBtn, if required
 			return this;
 		};
 
