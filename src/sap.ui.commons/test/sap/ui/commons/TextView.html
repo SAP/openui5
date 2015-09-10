@@ -4,14 +4,13 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-		<title>TextView -sap.ui.commons</title>
+		<title>TextView - sap.ui.commons</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.commons.TextView.gif">
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_goldreflection"
 				type="text/javascript"
 				data-sap-ui-libs="sap.ui.commons"
-				src="../../../../resources/sap-ui-core.js"
-				>
+				src="../../../../resources/sap-ui-core.js">
 		</script>
 
 	 	<script src="../../../../resources/sap-ui-debug.js"></script>
@@ -21,7 +20,7 @@
 			function changeText(oControlEvent){
 				oTextView15.setText(oTextField.getValue());
 			}
-			
+
 			function changeText1(oControlEvent){
 				oTextView18.setText(oTextField1.getValue());
 			}
@@ -58,8 +57,8 @@
 			oTextView17.setWrapping(false);
 			oTextView17.setSemanticColor(sap.ui.commons.TextViewColor.Default);
 			oTextView17.setDesign(sap.ui.commons.TextViewDesign.Standard);
-			
-			
+
+
 			var oTextView18 = new sap.ui.commons.TextView("textView18",{text: "Text...", tooltip: "Change me!!!"});
 			oTextView18.setTooltip("Tests for wrapping");
 			oTextView18.setWidth("100%");
@@ -70,7 +69,7 @@
 			var oTextField1 = new sap.ui.commons.TextField("textField2",{value: "New text"});
 			var oButton1 = new sap.ui.commons.Button("button1",{text: "Change text"});
 			oButton1.attachPress(changeText1);
-			
+
 			var oTextView20 = new sap.ui.commons.TextView("textView20",{text: "Ñagçyfox", tooltip: "Test for Alignment"});
 
 			var oTextView21 = new sap.ui.commons.TextView("textView21",{text: "Ñagçyfox - without tooltip"});
@@ -112,10 +111,10 @@
 			oTextView18.placeAt("target28");
 			oTextField1.placeAt("target29");
 			oButton1.placeAt("target30");
-			
+
 
 		</script>
-</head>
+	</head>
 	<body class="sapUiBody" role="application">
 		<h1>Test Page for sap.ui.commons.TextView</h1>
 
@@ -142,8 +141,9 @@
 		<div id="target18"></div>
 		<div id="target19"></div>
 		<div style="border: 1px solid;">
-		This box contains a TextView with text=null. This should not break.<br />
-		<div id="target20"></div></div>
+			This box contains a TextView with text=null. This should not break.<br />
+			<div id="target20"></div>
+		</div>
         <br> Test for Wrapping:
 		<div id="target21" style="width: 200px; border:2px dashed blue;"></div>
 		<br>
