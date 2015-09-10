@@ -8,16 +8,11 @@ sap.ui.define([],
 	"use strict";
 	
 	return {
-		defaultSettings : {
-			width : "100%"
-		},
 		aggregations : {
 			content : {
-				cssSelector : ":sap-domref"
+				domRef : ":sap-domref"
 			}
-		},
-		name: "{name}",
-		description: "{description}"
+		}
 	};
 	
 }, /* bExport= */ true);
