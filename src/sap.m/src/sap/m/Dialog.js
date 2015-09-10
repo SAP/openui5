@@ -1225,6 +1225,19 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			return oEndButton ? oEndButton.getId() : null;
 		};
 
+		//get buttons should return the buttons, beginButton and endButton aggregations
+		Dialog.prototype.getAggregation = function (sAggregationName, oDefaultForCreation, bPassBy) {
+			var originalResponse = Control.prototype.getAggregation.apply(this, Array.prototype.slice.call(arguments, 0, 2));
+
+			//if no buttons are set returns the begin and end buttons
+			if (sAggregationName === 'buttons' && originalResponse.length === 0) {
+				this.getBeginButton() && originalResponse.push(this.getBeginButton());
+				this.getEndButton() && originalResponse.push(this.getEndButton());
+			}
+
+			return originalResponse;
+		};
+
 		Dialog.prototype.setTitle = function (sTitle) {
 			this.setProperty("title", sTitle, true);
 
