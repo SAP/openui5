@@ -10,8 +10,8 @@
  */
 
 // Provides class sap.m.semantic.SemanticPageSegment
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolbarLayoutData", "sap/ui/core/InvisibleText"],
-	function(jQuery, Metadata, OverflowToolbarLayoutData, InvisibleText) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolbarLayoutData", "sap/ui/core/InvisibleText", "sap/ui/core/IconPool"],
+	function(jQuery, Metadata, OverflowToolbarLayoutData, InvisibleText, IconPool) {
 	"use strict";
 
 	/**
@@ -469,7 +469,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.footerLeft,
 			getSettings: function() {
 				return {
-					icon: "sap-icon://message-popup",
+					icon: IconPool.getIconURI("alert"),
 					text: {
 						path: "message>/",
 						formatter: function (aMessages) {
