@@ -49,6 +49,8 @@ xhr.onCreate = function(request) {
 			[200, oMetaDataHeaders, sMetaData],
 		"$metadata?test=x&sap-language=en&test2=xx": 
 			[200, oMetaDataHeaders, sMetaData],
+		"$metadata?test=complex": 
+			[200, oMetaDataHeaders, sMetadataComplex],
 		"$metadata?sap-language=en&test2=xx": 
 			[200, oMetaDataHeaders, sMetaData],
 		"Categories/$count":
@@ -7006,3 +7008,71 @@ var sCategories7ExpandXML = "<entry xml:base=\"http://services.odata.org/V3/Nort
 		"</m:properties>\n" + 
 		"</content>\n" + 
 		"</entry>";
+		
+var sMetadataComplex = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + 
+		"<edmx:Edmx Version=\"1.0\"\n" + 
+		"	xmlns:edmx=\"http://schemas.microsoft.com/ado/2007/06/edmx\"\n" + 
+		"	xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\"\n" + 
+		"	xmlns:sap=\"http://www.sap.com/Protocols/SAPData\">\n" + 
+		"	<edmx:DataServices m:DataServiceVersion=\"2.0\">\n" + 
+		"		<Schema Namespace=\"sap.ui.test\" xml:lang=\"en\"\n" + 
+		"			sap:schema-version=\"0000\" xmlns=\"http://schemas.microsoft.com/ado/2008/09/edm\">\n" + 
+		"			<EntityType Name=\"BusinessPartner\" sap:content-version=\"1\">\n" + 
+		"				<Key>\n" + 
+		"					<PropertyRef Name=\"BusinessPartnerID\" />\n" + 
+		"				</Key>\n" + 
+		"				<Property Name=\"Address\" Type=\"sap.ui.test.CT_Address\"\n" + 
+		"					Nullable=\"false\" />\n" + 
+		"				<Property Name=\"BusinessPartnerID\" Type=\"Edm.String\"\n" + 
+		"					Nullable=\"false\" MaxLength=\"10\" sap:label=\"Bus. Part. ID\"\n" + 
+		"					sap:creatable=\"false\" sap:updatable=\"false\" />\n" + 
+		"				<Property Name=\"CompanyName\" Type=\"Edm.String\" MaxLength=\"80\"\n" + 
+		"					sap:label=\"Company Name\" />\n" + 
+		"				<Property Name=\"WebAddress\" Type=\"Edm.String\" sap:label=\"Web Address\"\n" + 
+		"					sap:sortable=\"false\" sap:filterable=\"false\" sap:semantics=\"url\" />\n" + 
+		"				<Property Name=\"EmailAddress\" Type=\"Edm.String\" MaxLength=\"255\"\n" + 
+		"					sap:label=\"E-Mail Address\" sap:semantics=\"email\" />\n" + 
+		"				<Property Name=\"PhoneNumber\" Type=\"Edm.String\" MaxLength=\"30\"\n" + 
+		"					sap:label=\"Phone No.\" sap:semantics=\"tel\" />\n" + 
+		"				<Property Name=\"FaxNumber\" Type=\"Edm.String\" MaxLength=\"30\"\n" + 
+		"					sap:label=\"Fax Number\" />\n" + 
+		"				<Property Name=\"LegalForm\" Type=\"Edm.String\" MaxLength=\"10\"\n" + 
+		"					sap:label=\"Legal Form\" />\n" + 
+		"				<Property Name=\"CurrencyCode\" Type=\"Edm.String\" MaxLength=\"5\"\n" + 
+		"					sap:label=\"Currency\" sap:semantics=\"currency-code\" />\n" + 
+		"				<Property Name=\"BusinessPartnerRole\" Type=\"Edm.String\"\n" + 
+		"					MaxLength=\"3\" sap:label=\"Bus. Part. Role\" />\n" + 
+		"				<Property Name=\"CreatedAt\" Type=\"Edm.DateTime\" Precision=\"7\"\n" + 
+		"					sap:label=\"Time Stamp\" sap:creatable=\"false\" sap:updatable=\"false\" />\n" + 
+		"				<Property Name=\"ChangedAt\" Type=\"Edm.DateTime\" Precision=\"7\"\n" + 
+		"					ConcurrencyMode=\"Fixed\" sap:label=\"Time Stamp\" sap:creatable=\"false\"\n" + 
+		"					sap:updatable=\"false\" />\n" + 
+		"			</EntityType>\n" + 
+		"			<ComplexType Name=\"CT_Address\">\n" + 
+		"				<Property Name=\"City\" Type=\"Edm.String\" MaxLength=\"40\"\n" + 
+		"					sap:label=\"City\" sap:semantics=\"city\" />\n" + 
+		"				<Property Name=\"PostalCode\" Type=\"Edm.String\" MaxLength=\"10\"\n" + 
+		"					sap:label=\"Postal Code\" sap:semantics=\"zip\" />\n" + 
+		"				<Property Name=\"Street\" Type=\"Edm.String\" MaxLength=\"60\"\n" + 
+		"					sap:label=\"Street\" sap:semantics=\"street\" />\n" + 
+		"				<Property Name=\"Building\" Type=\"Edm.String\" MaxLength=\"10\"\n" + 
+		"					sap:label=\"Building\" />\n" + 
+		"				<Property Name=\"Country\" Type=\"Edm.String\" MaxLength=\"3\"\n" + 
+		"					sap:label=\"Country\" sap:semantics=\"country\" />\n" + 
+		"				<Property Name=\"AddressType\" Type=\"Edm.String\" MaxLength=\"2\"\n" + 
+		"					sap:label=\"Address Type\" />\n" + 
+		"			</ComplexType>\n" + 
+		"			<EntityContainer Name=\"gwsample_basic_Entities\"\n" + 
+		"				m:IsDefaultEntityContainer=\"true\">\n" + 
+		"				<EntitySet Name=\"BusinessPartnerSet\" EntityType=\"sap.ui.test.BusinessPartner\"\n" + 
+		"					sap:content-version=\"1\" />\n" + 
+		"			</EntityContainer>\n" + 
+		"			<atom:link rel=\"self\"\n" + 
+		"				href=\"/SalesOrderSrv//$metadata\"\n" + 
+		"				xmlns:atom=\"http://www.w3.org/2005/Atom\" />\n" + 
+		"			<atom:link rel=\"latest-version\"\n" + 
+		"				href=\"/SalesOrderSrv//$metadata\"\n" + 
+		"				xmlns:atom=\"http://www.w3.org/2005/Atom\" />\n" + 
+		"		</Schema>\n" + 
+		"	</edmx:DataServices>\n" + 
+		"</edmx:Edmx>"
