@@ -1811,7 +1811,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 			this.clearSelection();
 			this.setValue("");
-			this.$("select").children().remove();
+
+			if (this._isRequiredSelectElement()) {
+				this.$("select").children().remove();
+			}
 
 			for (var i = 0; i < aItems.length; i++) {
 				aItems[i].detachEvent("_change", this.onItemChange, this);
@@ -1833,8 +1836,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				oList.destroyItems();
 			}
 
-			if (!this.isInvalidateSuppressed()) {
-				this.invalidate();
+			this.setValue("");
+
+			if (this._isRequiredSelectElement()) {
+				this.$("select").children().remove();
 			}
 
 			return this;
