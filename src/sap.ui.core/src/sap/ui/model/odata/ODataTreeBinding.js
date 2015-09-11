@@ -19,6 +19,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './CountMode'],
 	 * @param {array} [aFilters] predefined filter/s (can be either a filter or an array of filters)
 	 * @param {object} [mParameters]
 	 * 
+	 * @deprecated please use the <code>sap.ui.model.odata.v2.ODataModel</code> for improved tree binding support (e.g. filtering which is not supported in V1).
+	 * 
 	 * @alias sap.ui.model.odata.ODataTreeBinding
 	 * @extends sap.ui.model.TreeBinding
 	 */
