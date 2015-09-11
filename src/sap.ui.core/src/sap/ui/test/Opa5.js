@@ -50,27 +50,37 @@ sap.ui.define(['jquery.sap.global',
 		);
 
 		function iStartMyAppInAFrame (sSource, iTimeout) {
-			//invalidate the cache
-			$Frame = $("#OpaFrame");
+			this.waitFor({
+				// make sure no controls are searched by the defaults
+				viewName: null,
+				controlType: null,
+				id: null,
+				searchOpenDialogs: false,
+				success: function () {
+					//invalidate the cache
+					$Frame = $("#OpaFrame");
 
-			// include styles
-			var sIframeStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaFrame",".css");
-			jQuery.sap.includeStyleSheet(sIframeStyleLocation);
+					// include styles
+					var sIFrameStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaFrame",".css");
+					jQuery.sap.includeStyleSheet(sIFrameStyleLocation);
 
-			if (!$Frame.length) {
-				//invalidate other caches
+					if (!$Frame.length) {
+						//invalidate other caches
 
-				$Frame = $('<iframe id="OpaFrame" class="opaFrame" src="' + sSource + '"></iframe>');
+						$Frame = $('<iframe id="OpaFrame" class="opaFrame" src="' + sSource + '"></iframe>');
 
-				$("body").append($Frame);
+						$("body").append($Frame);
 
-			}
+					}
 
-			if ($Frame[0].contentDocument && $Frame[0].contentDocument.readyState === "complete") {
-				handleFrameLoad();
-			} else {
-				$Frame.on("load", handleFrameLoad);
-			}
+					if ($Frame[0].contentDocument && $Frame[0].contentDocument.readyState === "complete") {
+						handleFrameLoad();
+					} else {
+						$Frame.on("load", handleFrameLoad);
+					}
+				}
+			});
+
 
 			return this.waitFor({
 				// make sure no controls are searched by the defaults
