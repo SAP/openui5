@@ -5,7 +5,7 @@
 		<meta charset="UTF-8">
 		<title>sap.m.ComboBox</title>
 		<script id="sap-ui-bootstrap"
-				src="../../../resources/sap-ui-core.js"
+				src="../../../../resources/sap-ui-core.js"
 				data-sap-ui-libs="sap.m"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-xx-bindingSyntax="complex">
@@ -395,18 +395,6 @@
 			items: {
 				path: "/items",
 				template: oItemTemplate
-			},
-
-			change: function(oControlEvent) {
-				sap.m.MessageToast.show("change " + oControlEvent.getParameter("value"));
-			},
-
-			selectionChange: function(oControlEvent) {
-				var oSelectedItem = oControlEvent.getParameter("selectedItem");
-
-				if (oSelectedItem) {
-					jQuery.sap.log.info('Event fired: "selectionChange" selected item change to ' + oSelectedItem.getText() + " on", this);
-				}
 			}
 		});
 
