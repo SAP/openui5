@@ -72,14 +72,14 @@
 
 .sapMTC .sapMTCPager SPAN {
 	display: inline-block;
-	background-color : lighten(@sapUiDarkBG, 20%);
+	background-color : lighten(@sapUiBase, 9.8);
 	border-radius: 4px;
 	height: 8px;
 	width: 8px;
 	margin-right:8px;
 	margin-bottom:1px;
 	cursor:default;
-	box-shadow: 0px 0px 1px 1px @sapUiWhite;
+	box-shadow: 0px 0px 1px 1px @sapUiLightShadowTint;
 }
 
 .sapMTC .sapMTCBlind {
@@ -91,12 +91,12 @@
 	bottom:0px;
 	right:0px;
 	display:none;
-	box-shadow: 0px 0px 5px 5px @sapUiWhite;
+	box-shadow: 0px 0px 5px 5px @sapUiLightShadowTint;
 }
 
 .sapMTC .sapMTCPager SPAN.sapMTCActive {
 	background-color: @sapUiHighlight;
-	box-shadow: 0px 0px 2px 2px @sapUiWhite;
+	box-shadow: 0px 0px 2px 2px @sapUiLightShadowTint;
 }
 
 .sapMTC .sapMTCScroller {
@@ -104,7 +104,7 @@
 	display:none;
 	top:41%;
 	border-radius: 50%;
-	background-color: lighten(@sapUiDarkBG, 100%);
+	background-color: sapUiInvertedElement;
 	height: 48px;
 	width: 48px;
 	opacity:0;
@@ -115,7 +115,10 @@
 	-moz-transition-duration: 0.4s;
 	transition-property: opacity, left, right;
 	transition-duration: 0.4s;
-	box-shadow: 0px 1px 4px lighten(@sapUiDarkBG,5%);
+	-webkit-box-shadow: fade(@sapUiDarkShadowTint,30%) 0 0.0625rem 0.25rem;
+	-moz-box-shadow: fade(@sapUiDarkShadowTint,30%) 0 0.0625rem 0.25rem;
+	-ms-box-shadow: fade(@sapUiDarkShadowTint,30%) 0 0.0625rem 0.25rem;
+	box-shadow: 0px 0.0625rem 0.25rem fade(@sapUiDarkShadowTint,30%);
 	padding:4px;
 	-moz-box-sizing: border-box;
 	box-sizing:border-box;
@@ -129,7 +132,7 @@
 	font-family:"SAP-icons";
 	font-size: 21px;
 	vertical-align:middle;
-	color: lighten(@sapUiDarkBG, 100%);
+	color: @sapUiInvertedElement;
 	padding-top: 8px;
 	-moz-box-sizing: border-box;
 	box-sizing:border-box;
@@ -195,24 +198,24 @@ html[dir=rtl] .sapMTC .sapMCustomTile{
 
 .sapMTC.sapMTCEditable .sapMTile {
 	cursor: move;
-	box-shadow: 0px 1px 5px fade(@sapUiShadowTint,60%);
+	box-shadow: 0px 1px 5px fade(@sapUiDarkShadowTint,60);
 }
 
 .sapMTC.sapMTCEditable .sapMTile .sapMTCRemove {
-	background-color: darken(@sapUiDarkBG,10%);
+	background-color: @sapUiElement;
 	display:block;
 	height:24px;
 	width:25px;
 	border-radius: 50%;
 	font-family:"SAP-icons";
 	font-size: 20px;
-	color: lighten(@sapUiDarkBG, 100%);
+	color: @sapUiInvertedElement;
 	padding-top: 0px;
 	padding-left: 2px;
 	box-sizing:border-box;
 	margin-top : -0.5em;
 	margin-left : -0.5em;
-	box-shadow: 0px 1px 3px darken(@sapUiDarkBG,10%);
+	box-shadow: 0px 1px 3px fade(@sapUiDarkShadowTint,60);
 	z-index:1;
 	cursor:default;
 }
@@ -231,15 +234,15 @@ html[data-sap-ui-browser^="ff"] .sapMTC.sapMTCEditable .sapMTile .sapMTCRemove {
 }
 
 .sapMTC.sapMTCEditable .sapMTCRemove:hover {
-	background-color: lighten(@sapUiHighlight,10%);
+	background-color: @sapUiHighlight;
 }
 
 .sapMTC.sapMTCEditable .sapMTCRemove:active {
-	background-color: lighten(@sapUiHighlight,20%);
+	background-color: @sapUiHighlight;
 }
 
 .sapMTC.sapMTCEditable .sapMTCRemove::before {
-	content:"\e1c7";
+	content:"\e03e";
 }
 
 /* use dir-specific rules to prevent mirroring in dir=rtl mode */
@@ -250,7 +253,7 @@ html[dir=rtl] .sapMTC .sapMTCEdgeLeft {
 	right:0;
 	width: 40px;
 	height: 100%;
-	border-right: 2px solid  fade(lighten(@sapUiHighlight,20%),60%);
+	border-right: 2px solid fade(lighten(@sapUiHighlight,20),60);
 	opacity: 0.01;
 	background: -moz-linear-gradient(left, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 76%, rgba(255,255,255,1) 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,0)), color-stop(76%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,1))); /* Chrome,Safari4+ */
@@ -269,7 +272,7 @@ html[dir=rtl] .sapMTC .sapMTCEdgeRight {
 	left:0;
 	width: 40px;
 	height: 100%;
-	border-left: 2px solid  fade(lighten(@sapUiHighlight,20%),60%);
+	border-left: 2px solid fade(lighten(@sapUiHighlight,20),60);
 	opacity: 0.01;
 	background: -moz-linear-gradient(left, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 24%, rgba(255,255,255,0) 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,1)), color-stop(24%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,0))); /* Chrome,Safari4+ */

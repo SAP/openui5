@@ -3,7 +3,7 @@
 /* ====================================== */
 
 .sapMTile {
-	border: 1px solid @sapUiLightBorder;
+	border: 1px solid @sapUiTileBorderColor;
 	display: inline-block;
 	-webkit-transition-property: transform3d;
 	-webkit-transition-duration: 0.2s;
@@ -15,7 +15,7 @@
 	height: 14rem;
 	margin:0.5rem;
 	-webkit-touch-callout: none;
-	background-color: @sapUiWhite;
+	background-color: @sapUiTileBackground;
 }
 
 .sapMTile * {   /* FIXME!!! (star rule with any-parent selector...) */
@@ -26,7 +26,7 @@
 }
 
 .sapMTCEditable .sapMTile {
-	background-color: fade(@sapUiWhite, 50%);
+	background-color: fade(@sapUiTileBackground, 50);
 }
 
 html[data-sap-ui-browser*='ie'] .sapMTile {
