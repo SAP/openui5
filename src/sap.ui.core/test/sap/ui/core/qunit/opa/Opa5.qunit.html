@@ -20,6 +20,7 @@
 	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
 	sinon.config.useFakeTimers = false;
+	var iInitialDelay = sap.ui.Device.browser.msie ? 50 : 0;
 
 	jQuery.sap.require("sap.ui.test.Opa5");
 	var Opa5 = sap.ui.test.Opa5;
@@ -52,6 +53,8 @@
 	});
 
 	// TODO: check why the following tests do not work
+	// Answer from tobias: our bootstrap does not work if the UI5 script tag is included in an async way when serving with grunt.
+	// The page we test includes UI5 after some time so its not a test issue.
 	if (window["sap-ui-bootstrap-tests"]) {
 
 		asyncTest("Should be able to defer the loading of ui5 and replace the hashchanger", function() {
@@ -113,8 +116,8 @@
 
 			oOpa5.emptyQueue();
 		});
-
 	}
+
 	asyncTest("Should always load opaPlugin of the same OPA version running the test and not from the version running in the app (it might not have OPA available)", function() {
 		// System under Test
 		var oOpa5 = new Opa5();
@@ -137,7 +140,7 @@
 	});
 
 	// For IE 9 errors in frame are disabled see comment in OPA5.js
-	if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version === 9)) {
+	if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9)) {
 		QUnit.asyncTest("Should throw error if the IFrame throws an error", function (assert) {
 			// Arrange
 			jQuery("body").append('<iframe id="OpaFrame" src="../testdata/emptySite.html"></iframe>');
@@ -168,7 +171,7 @@
 	}
 
 	QUnit.module("IFrame navigation", {
-		beforeEach: function (assert) {
+		beforeEach: function () {
 			this.oOpa5 = new Opa5();
 			this.oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
 
@@ -311,7 +314,7 @@
 	});
 
 	//Sinon timers do not work in IE8 -.-
-	if(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8) {
+	if(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8) {
 		return;
 	}
 
@@ -449,7 +452,7 @@
 		});
 		oOpa5.emptyQueue();
 
-		this.clock.tick(0);
+		this.clock.tick(iInitialDelay);
 		strictEqual(oMatchSpy.callCount, 1, "called the matcher for the first time");
 		this.clock.tick(200);
 		strictEqual(oMatchSpy.callCount, 2, "called the matcher for the second time");
@@ -494,7 +497,7 @@
 		});
 		Opa5.emptyQueue();
 
-		this.clock.tick(0);
+		this.clock.tick(iInitialDelay);
 		// Assert
 		strictEqual(oTextMatcherSpy.callCount, 0, "did not call the oTextMatcher yet");
 		strictEqual(oEnabledMatcherSpy.callCount, 1, "called the oEnabledMatcher");
@@ -624,7 +627,8 @@
 			timeout : 1 //second
 		});
 		oOpa5.emptyQueue();
-		this.clock.tick(0);
+		this.clock.tick(iInitialDelay);
+		this.clock.tick(iInitialDelay);
 
 		strictEqual(fnMatcher.callCount, 2, "called the matcher twice");
 

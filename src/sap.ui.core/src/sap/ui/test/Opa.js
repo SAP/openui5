@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 	}
 
 	function internalEmpty(deferred) {
-		var iInitialDelay = Device.browser.internet_explorer ? 50 : 0;
+		var iInitialDelay = Device.browser.msie ? 50 : 0;
 		if (queue.length === 0) {
 			deferred.resolve();
 			return true;

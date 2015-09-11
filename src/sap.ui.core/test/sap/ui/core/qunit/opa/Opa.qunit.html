@@ -22,6 +22,9 @@
 	jQuery.sap.require("sap.ui.test.Opa");
 	var Opa = sap.ui.test.Opa;
 
+
+	var iInitialDelay = sap.ui.Device.browser.msie ? 50 : 0;
+
 	test("Should have the same context", function() {
 		// System under Test
 		var oOpa = new Opa();
@@ -32,7 +35,7 @@
 	});
 
 	//Sinon does not work in IE8 -.-
-	if(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8) {
+	if(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8) {
 		return;
 	}
 
@@ -97,12 +100,12 @@
 				return true;
 			},
 			success : function () {
-				QUnit.ok(true, "Success is called synchronously");
+				asssert.ok(true, "Success is called synchronously");
 			}
 		});
 
 		Opa.emptyQueue();
-		this.clock.tick(0);
+		this.clock.tick(iInitialDelay);
 	});
 
 	test("Should wait for additional waitFor's declared in the success handler before continuing the queue", function() {
@@ -157,7 +160,7 @@
 		sap.ui.test.Opa.emptyQueue();
 
 		//Ensure all timers have been triggered
-		this.clock.tick(100);
+		this.clock.tick(1000);
 
 		// Assert
 		//		Ensure Order
@@ -206,6 +209,11 @@
 		});
 
 		sap.ui.test.Opa.emptyQueue().done(oDoneSpy);
+
+		// 2 wait fors and an empty queue - 3 times initial delay
+		this.clock.tick(iInitialDelay);
+		this.clock.tick(iInitialDelay);
+		this.clock.tick(iInitialDelay);
 
 		this.clock.tick(1000);
 		strictEqual(oFirstCheckSpy.callCount, 6, "Did apply the polling of the extendConfig");

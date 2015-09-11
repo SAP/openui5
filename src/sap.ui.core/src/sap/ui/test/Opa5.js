@@ -601,7 +601,7 @@ sap.ui.define(['jquery.sap.global',
 		function registerOnError () {
 			// In IE9 retrieving the active element in an iframe when it has no focus produces an error.
 			// Since we use it all over the UI5 libraries, the only solution is to ignore frame errors in IE9.
-			if (Device.browser.internet_explorer && Device.browser.version === 9) {
+			if (Device.browser.msie && Device.browser.version === 9) {
 				return;
 			}
 
