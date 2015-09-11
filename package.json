@@ -21,7 +21,6 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "adm-zip": "^0.4.7",
     "async": "^0.9.0",
     "coffee-script": "^1.9.1",
     "download": "^3.3.0",
@@ -37,6 +36,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-eslint": "^13.0.0",
     "grunt-mocha-test": "^0.12.6",
+    "grunt-npm-install": "^0.2.0",
     "grunt-openui5": "^0.7.0",
     "grunt-text-replace": "^0.4.0",
     "grunt-timer": "^0.5.4",

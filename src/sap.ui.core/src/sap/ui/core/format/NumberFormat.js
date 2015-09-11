@@ -553,7 +553,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 		}
 
 		var oShortFormat = getShortenedFormat(oValue, this.oFormatOptions.style, this.oLocaleData);
-		if (oShortFormat) {
+		if (oShortFormat && oShortFormat.formatString != "0") {
 			if (oOptions.shortDecimals !== undefined) {
 				oOptions.minFractionDigits = oOptions.shortDecimals;
 				oOptions.maxFractionDigits = oOptions.shortDecimals;
@@ -960,15 +960,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 
 		var sCldrFormat = oLocaleData.getDecimalFormat(sStyle, iKey.toString(), sPlural);
 
-		if (!sCldrFormat) {
-			return oShortFormat;
-		}
-
-		oShortFormat = {};
-		if (!sCldrFormat ||  sCldrFormat == "0") {
+		if (!sCldrFormat || sCldrFormat == "0") {
 			//no format or special "0" format => number doesn't need to be shortified
-			oShortFormat.magnitude = 1;
-		}else {
+			return oShortFormat;
+		} else {
+			oShortFormat = {};
 			oShortFormat.formatString = sCldrFormat;
 			var match = sCldrFormat.match(/0+\.*0*/);
 			if (match) {
@@ -982,11 +978,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 				if (decimalSeparatorPosition == -1) {
 					oShortFormat.decimals = 0;
 					oShortFormat.magnitude = iKey * Math.pow(10,1 - oShortFormat.valueSubString.length);
-				}else {
+				} else {
 					oShortFormat.decimals = oShortFormat.valueSubString.length -  decimalSeparatorPosition - 1;
 					oShortFormat.magnitude = iKey * Math.pow(10,1 - decimalSeparatorPosition);
 				}
-			}else {
+			} else {
 				//value pattern has not be recognized
 				//we cannot shortify
 				oShortFormat.magnitude = 1;

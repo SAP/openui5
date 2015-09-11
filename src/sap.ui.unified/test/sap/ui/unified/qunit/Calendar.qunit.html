@@ -7,6 +7,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8">
 		<title>Calendar - sap.ui.unified</title>
 		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.unified.Calendar.gif">
 		<script id="sap-ui-bootstrap"
@@ -123,7 +124,7 @@
 				}
 				ok(bOK, "Only Saturday and Sunday are Weekend");
 
-				equal(jQuery("#Cal3--Head-B1").text(), "Januar - Februar", "January - Februar shown");
+				equal(jQuery("#Cal3--Head-B1").text(), "Januar – Februar", "January – Februar shown");
 				equal(jQuery("#Cal3--Head-B2").text(), "2015", "year 2015 shown");
 				aMonths = jQuery(jQuery("#Cal3-content").children(".sapUiCalMonthView"));
 				equal(aMonths.length, 2, "2 months rendered");
@@ -237,14 +238,14 @@
 				qutils.triggerKeyboardEvent($January.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 				qutils.triggerEvent("click", "Cal3--Head-prev");
-				equal(jQuery("#Cal3--Head-B1").text(), "November - Dezember", "November - December shown");
+				equal(jQuery("#Cal3--Head-B1").text(), "November – Dezember", "November – December shown");
 				equal(jQuery("#Cal3--Head-B2").text(), "2014", "year 2014 shown");
 				aDays = jQuery("#Cal3--Month0-days").find(".sapUiCalItem");
 				equal(jQuery(aDays[0]).attr("data-sap-day"), "20141028", "first displayed day");
 				aDays = jQuery("#Cal3--Month1-days").find(".sapUiCalItem");
 				equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20150105", "last displayed day");
 				qutils.triggerEvent("click", "Cal3--Head-next");
-				equal(jQuery("#Cal3--Head-B1").text(), "Januar - Februar", "january - february shown again");
+				equal(jQuery("#Cal3--Head-B1").text(), "Januar – Februar", "january – february shown again");
 				equal(jQuery("#Cal3--Head-B2").text(), "2015", "year 2015 shown again");
 				aDays = jQuery("#Cal3--Month0-days").find(".sapUiCalItem");
 				equal(jQuery(aDays[0]).attr("data-sap-day"), "20141230", "first displayed day");
