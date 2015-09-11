@@ -8,12 +8,12 @@ sap.ui.require(
 		var oFormatter = null;
 
 		QUnit.module("DateFormatter", {
-			beforeEach : function() {
+			beforeEach: function() {
 				oFormatter = new DateFormatter({
-					now : function() {
+					now: function() {
 						return new Date(2015, 2, 14, 14, 0, 0, 0).getTime();
 					},
-					locale : new Locale("en-US")
+					locale: new Locale("en-US")
 				});
 			}
 		});
