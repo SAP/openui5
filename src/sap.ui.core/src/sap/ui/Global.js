@@ -115,7 +115,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	
 		return jQuery.sap.getObject(sNamespace, 0);
 	};
-	
+
 	/**
 	 * Creates a lazy loading stub for a given class <code>sClassName</code>.
 	 *
@@ -134,7 +134,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	 * won't work as expected. This is a fundamental restriction of the lazy loader approach.
 	 * It could only be fixed with JavaScript 1.5 features that are not available in all
 	 * UI5 target browsers (e.g. not in IE8).
-	 *
+	 * 
 	 * <b>Note</b>: As a side effect of this method, the namespace containing the given
 	 * class is created <b>immediately</b>.
 	 *
@@ -163,7 +163,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 		if (!oClass) {
 	
 			if ( iConstructor >= 0 ) {
-	
+
 				// Create dummy constructor which loads the class on demand
 				oClass = function() {
 					jQuery.sap.log.debug("lazy stub for '" + sFullClass + "' (constructor) called.");
@@ -173,7 +173,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 					if ( oRealClass._sapUiLazyLoader ) {
 						throw new Error("lazyRequire: stub '" + sFullClass + "'has not been replaced by module '" + sModuleName + "'");
 					}
-	
+
 					// create a new instance and invoke the constructor
 					var oInstance = jQuery.sap.newObject(oRealClass.prototype);
 					var oResult = oRealClass.apply(oInstance, arguments);
@@ -184,16 +184,16 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 				};
 				// mark the stub as lazy loader
 				oClass._sapUiLazyLoader = true;
-	
+		
 				aMethods.splice(iConstructor,1);
-	
+
 			} else {
-	
+
 				// Create dummy object
 				oClass = {};
-	
+
 			}
-	
+
 			// remember the stub
 			oPackage[sClass] = oClass;
 	
@@ -220,7 +220,26 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 		});
 	
 	};
-	
+
+	/**
+	 * Note: this method only works when sClassName has been stubbed itself, not when
+	 *    it has been stubbed as a static utility class with individual stubs for its methods.
+	 *    (e.g. might not work for 'sap.ui.core.BusyIndicator').
+	 * Must not be used outside the core, e.g. not by controls, apps, tests etc.
+	 * @private
+	 */
+	sap.ui.lazyRequire._isStub = function(sClassName) {
+		jQuery.sap.assert(typeof sClassName === "string" && sClassName, "lazyRequire._isStub: sClassName must be a non-empty string");
+
+		var iLastDotPos = sClassName.lastIndexOf("."),
+			sContext = sClassName.slice(0, iLastDotPos),
+			sProperty = sClassName.slice(iLastDotPos + 1),
+			oContext = jQuery.sap.getObject(sContext);
+
+		return !!(oContext && typeof oContext[sProperty] === "function" && oContext[sProperty]._sapUiLazyLoader);
+
+	};
+
 	/**
 	 * Returns the URL of a resource that belongs to the given library and has the given relative location within the library.
 	 * This is mainly meant for static resources like images that are inside the library.

@@ -2,75 +2,69 @@
 <!--
   Tests the bootstrap variant where the bootstrap tag is part of the head.
   
-  @author Frank Weigel    
+  @author Frank Weigel
   -->
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<title>Test Page for Bootstrap with 'preload' Files</title>
-    		
+		<meta charset="UTF-8" />
+		<title>Test Page for Bootstrap with preload=sync</title>
+
 		<script id="sap-ui-bootstrap" 
-				type="text/javascript" 
 				src="../../../../../../resources/sap-ui-core.js"
 				data-sap-ui-libs="sap.ui.commons,sap.ui.table,sap.ui.ux3"
 				data-sap-ui-preload="async" 
 				>
-		</script>    
+		</script>
 
 		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script type="text/javascript" src="checkLibLoading.js"></script>
+		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="checkLibLoading.js"></script>
 
-		<!-- Initialization -->
-		<script language="javascript">
-		
-			test("Check Existance of Core", function() {
-				jQuery.sap.log.info("1st test tests");
-				/* check that SAPUI5 has been loaded */
-				ok(!!jQuery, "jQuery has been loaded");
-				ok(!!jQuery.sap, "jQuery.sap namespace exists");
-				ok(!!window.sap, "sap namespace exists");
-				ok(!!sap.ui, "sap.ui namespace exists");
-				ok(typeof sap.ui.getCore === "function", "sap.ui.getCore exists");
-				ok(!!sap.ui.getCore(), "sap.ui.getCore() returns a value");
-	
-				var id = jQuery("html").attr("data-sap-ui-browser");
-				ok(typeof id === "string" && id, "id exists and is not empty");
-	
-				var oCfg = new sap.ui.core.Configuration();
-				deepEqual(oCfg.modules, ["sap.ui.commons.library","sap.ui.table.library","sap.ui.ux3.library"], "Libraries");	
-			});
-	
-			jQuery.each(["sap.ui.core","sap.ui.commons","sap.ui.table","sap.ui.ux3"], function(i,sLib) {
-				
-				asyncTest("Check that library " + sLib + " has been loaded", function() {
-					if (sap.ui.getCore().isInitialized()) {
-						checkLibrary(sLib, /* bExpectLazyStubs */ true);
-						start();
+		<script>
+
+			QUnit.config.autostart = false;
+
+			sap.ui.getCore().attachInit(function() {
+
+				QUnit.test("Check Existance of Core", function(assert) {
+					/* check that SAPUI5 has been loaded */
+					assert.ok(jQuery, "jQuery has been loaded");
+					assert.ok(jQuery.sap, "jQuery.sap namespace exists");
+					assert.ok(window.sap, "sap namespace exists");
+					assert.ok(sap.ui, "sap.ui namespace exists");
+					assert.ok(typeof sap.ui.getCore === "function", "sap.ui.getCore exists");
+					assert.ok(sap.ui.getCore(), "sap.ui.getCore() returns a value");
+
+					var id = jQuery("html").attr("data-sap-ui-browser");
+					if ( sap.ui.Device.browser.name ) {
+						assert.ok(typeof id === "string" && id, "browser is known: data-sap-ui-browser should have been set and must not be empty");
 					} else {
-						sap.ui.getCore().attachInitEvent(function() {
-							checkLibrary(sLib, /* bExpectLazyStubs */ true);
-							start();	
-						});
+						assert.ok(!id, "browser is unknown: data-sap-ui-browser should not have been set (or empty)");
 					}
-				});
-			}); 
 
-			
-			
+					var oCfg = new sap.ui.core.Configuration();
+					assert.deepEqual(oCfg.modules, ["sap.ui.commons.library","sap.ui.table.library","sap.ui.ux3.library"], "Libraries");	
+				});
+
+				["sap.ui.core","sap.ui.commons","sap.ui.table","sap.ui.ux3"].forEach(function(sLib) {
+
+					QUnit.test("Check that library " + sLib + " has been loaded", function(assert) {
+						checkLibrary(sLib, /* bExpectLazyStubs */ true, assert);
+					});
+
+				});
+
+				QUnit.start();
+			});
+
 		</script>
-		
+
 	</head>
-	
-    <body class="sapUiBody" role="application">
-		<h1 id="qunit-header">Test Page for Bootstrap with 'preload' Files</h1>
-		<h2 id="qunit-banner"></h2>
-	 	<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<br>
-	    <div id="uiArea"></div>
-    </body>
+
+	<body class="sapUiBody" role="application">
+		<div id="qunit"></div>
+	</body>
 </html>

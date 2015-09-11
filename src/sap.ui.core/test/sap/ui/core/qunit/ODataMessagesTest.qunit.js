@@ -58,7 +58,7 @@ function runODataMessagesTests() {
 		}
 	});
 	
-	var oMainLayout = sap.ui.layout.HorizontalLayout({
+	var oMainLayout = new sap.ui.layout.HorizontalLayout({
 		content: [ oJsonLayout, oXmlLayout ]
 	});
 	oMainLayout.placeAt("content");

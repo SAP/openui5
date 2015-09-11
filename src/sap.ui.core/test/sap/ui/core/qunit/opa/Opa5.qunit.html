@@ -741,7 +741,7 @@
 		this.oOpa5.waitFor({
 			success: function () {
 				setTimeout(function () {
-					new Opa5.getWindow().sap.ui.commons.Button().placeAt("body");
+					new (Opa5.getWindow().sap.ui.commons.Button)().placeAt("body");
 				}, 1000);
 			}
 		});

@@ -1,11 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-	
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8" />
+
 		<title>Test Page for Module Loading (define/require/declare)</title>
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_bluecrystal"
-				type="text/javascript"
 				data-sap-ui-noConflict="true"
 				data-sap-ui-libs="sap.ui.commons"
 				src="../../../../../resources/sap-ui-core.js">
@@ -14,7 +15,22 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script type="text/javascript">
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<!--[if IE 9]>
+			<script>
+				// If this flag is set to `false` sinon will only fake `XDomainRequest` but not `XMLHttpRequest`
+				// GH Issues:
+				// - https://github.com/cjohansen/Sinon.JS/issues/715
+				// - https://github.com/cjohansen/Sinon.JS/issues/732
+				// TODO: remove once this has been fixed!!!
+				sinon.xhr.supportsCORS = true;
+			</script>
+		<![endif]-->
+		<!--[if IE]>
+			<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<![endif]-->
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script >
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 		QUnit.module('old syntax APIs');
@@ -198,6 +214,205 @@
 			
 		});
 
+
+
+
+		QUnit.module("lazyRequire", {
+			beforeEach: function(assert) {
+
+				// an AMD module that defines a simple class
+				sap.ui.predefine("sap/test/lazy/MyClass", [], function() { 
+					var MyClass = sap.ui.base.ManagedObject.extend("sap.test.lazy.MyClass"); 
+					return MyClass; 
+				});
+
+				// a module implemented with declare/require that defines a simple class
+				jQuery.sap.registerPreloadedModules({
+					version: "2.0",
+					modules: {
+						"sap/test/lazy/MyLegacyClass.js": 
+							"jQuery.sap.getObject('sap.test.lazy.MyLegacyClass', 1);" +
+							"jQuery.sap.declare('sap.test.lazy.MyLegacyClass');" +
+							"sap.test.lazy.MyLegacyClass = sap.ui.base.ManagedObject.extend('sap.test.lazy.MyLegacyClass');"
+					}
+				});
+
+				// an AMD module that defines a static utility class
+				sap.ui.predefine("sap/test/lazy/MyUtility", [], function() { 
+					var MyUtility = {
+						// simple public method 
+						show : function() {
+						},
+						// another public method that relies on a proper 'this' 
+						hide : function() {
+							this._internal();
+						},
+						_internal : function() {
+						}
+					}; 
+
+					// an out-of-line method with name 'sap.test.factory',
+					sap.test.factory = function() {
+						MyUtility.show();
+					};
+					return MyUtility; 
+				}, true);
+
+				// preconditions
+				assert.ok(
+					!jQuery.sap.isDeclared("sap/test/lazy/MyClass")
+					&& !jQuery.sap.isDeclared("sap/test/lazy/MyLegacyClass")
+					&& !jQuery.sap.isDeclared("sap/test/lazy/MyUtility")
+					&& sap.test.lazy === undefined 
+					&& sap.test.factory === undefined, "precondition: modules not loaded before test");
+
+ 			},
+
+			afterEach: function(assert) {
+				jQuery.sap.unloadResources('sap/test/lazy/MyClass.js', false, true, true);
+				jQuery.sap.unloadResources('sap/test/lazy/MyLegacyClass.js', false, true, true);
+				jQuery.sap.unloadResources('sap/test/lazy/MyUtility.js', false, true, true);
+				delete sap.test.lazy;
+				delete sap.test.factory; // don't forget the out-of-line method
+			},
+
+			isLazyStub: function isLazyStub(oContext, sProperty, sMethods) {
+				if ( sMethods ) {
+					oContext = oContext[sProperty];
+					var isStub = typeof oContext === 'object'; 
+					return sMethods.split(" ").reduce(function(isStub,name) {
+						return isStub && isLazyStub(oContext, name);
+					}, isStub);
+				}
+
+//				var oDescriptor = Object.getOwnPropertyDescriptor(oContext, sProperty);
+//				return !!(oDescriptor && oDescriptor.get && oDescriptor.set);
+				return !!(oContext && typeof oContext[sProperty] === 'function' && oContext[sProperty]._sapUiLazyLoader === true);
+			}
+
+		});
+
+		QUnit.test("simple class scenario, read first", function(assert) {
+			
+			sap.ui.lazyRequire('sap.test.lazy.MyClass');
+
+			assert.ok(!jQuery.sap.isDeclared('sap/test/lazy/MyClass'), "module still not loaded after creation of lazy stub");
+			assert.ok(sap.test && typeof sap.test.lazy === 'object', "lazy loader did create the parent namespace sap.test.lazy");
+			assert.ok(this.isLazyStub(sap.test.lazy, 'MyClass'), "lazy loader defined property 'MyClass' with get and set methods");
+
+			// read access first
+			var oRequireSpy = this.spy(jQuery.sap, 'require');
+			var oResult = new sap.test.lazy.MyClass();
+			sinon.assert.calledWith(oRequireSpy, 'sap.test.lazy.MyClass');
+			assert.ok(jQuery.sap.isDeclared('sap/test/lazy/MyClass'), "read access should load the expected module");
+			assert.ok(oResult instanceof sap.ui.base.ManagedObject && oResult.getMetadata().getName() === 'sap.test.lazy.MyClass', "read access should return the expected module content");
+			assert.ok(!this.isLazyStub(sap.test.lazy, 'MyClass'), "the property must no longer be a lazy stub");
+			oRequireSpy.restore();
+
+			// second read access must no longer require module
+			var oRequireSpy = this.spy(jQuery.sap, 'require');
+			var Result = sap.test.lazy.MyClass;
+			sinon.assert.neverCalledWith(oRequireSpy, 'sap.test.lazy.MyClass');
+			oRequireSpy.restore();
+
+		});
+
+		QUnit.test("simple class scenario, write first", function(assert) {
+
+			sap.ui.lazyRequire('sap.test.lazy.MyClass');
+
+			assert.ok(this.isLazyStub(sap.test.lazy, 'MyClass'), "lazy loader created a stub for the property MyClass");
+
+			// explicitly require the module
+			jQuery.sap.require('sap.test.lazy.MyClass');
+
+			assert.ok(!this.isLazyStub(sap.test.lazy, 'MyClass'), "the property must no longer be a lazy stub");
+
+			var oRequireSpy = this.spy(jQuery.sap, 'require');
+			var oResult = new sap.test.lazy.MyClass();
+			sinon.assert.neverCalledWith(oRequireSpy, 'sap.test.lazy.MyClass');
+			oRequireSpy.restore();
+			assert.ok(oResult instanceof sap.ui.base.ManagedObject && oResult.getMetadata().getName() === 'sap.test.lazy.MyClass', "read access should return the expected module content");
+
+		});
+
+		QUnit.test("simple static class scenario", function(assert) {
+
+			sap.ui.lazyRequire('sap.test.lazy.MyUtility', 'show hide');
+
+			assert.ok(sap.test && typeof sap.test.lazy === 'object', "lazy loader did create the parent namespace sap.test.lazy");
+			assert.ok(this.isLazyStub(sap.test.lazy, 'MyUtility', 'show hide'), "lazy loader created a stub for the namespace");
+			
+			sap.test.lazy.MyUtility.show();
+
+			assert.ok(jQuery.sap.isDeclared('sap/test/lazy/MyUtility'), "read access should load the expected module");
+
+		});
+
+		QUnit.test("complex static class scenario", function(assert) {
+
+			sap.ui.lazyRequire('sap.test.lazy.MyUtility', 'show hide');
+
+			assert.ok(sap.test && typeof sap.test.lazy === 'object', "lazy loader did create the parent namespace sap.test.lazy");
+			assert.ok(this.isLazyStub(sap.test.lazy, 'MyUtility', 'show hide'), "lazy loader created a stub for the namespace");
+			
+			// method hide() calls an internal method via 'this', so the right context must be set when invoking 'show'
+			sap.test.lazy.MyUtility.hide();
+
+		});
+
+		QUnit.test("out-of-line method (factory)", function(assert) {
+
+			sap.ui.lazyRequire('sap.test', 'factory', 'sap.test.lazy.MyUtility');
+
+			assert.ok(!jQuery.sap.isDeclared('sap/test/lazy/MyUtility'), "module still not loaded after creation of lazy stub");
+			assert.ok(this.isLazyStub(sap.test, 'factory'), "lazy loader created a stub for the namespace");
+
+			// invoke out-of-line method, should load the right module
+			sap.test.factory(0);
+
+			assert.ok(jQuery.sap.isDeclared("sap/test/lazy/MyUtility"), "read access should load the expected module");
+
+		});
+
+		QUnit.test("class that reads global property before writing it", function(assert) {
+			
+			// this module reads the global property before it defines it
+			// with a bad implementation of lazyRequire, this could result in an endless recursion
+			sap.ui.lazyRequire('sap.test.lazy.MyLegacyClass');
+
+			new sap.test.lazy.MyLegacyClass();
+
+			assert.ok(jQuery.sap.isDeclared('sap/test/lazy/MyLegacyClass'), "read access should load the expected module");
+
+		});
+
+		QUnit.test("wrong usage", function(assert) {
+			
+			// we do a lazyRequire for an out-of-line method that doesn't exist 
+			// So loading the module will not properly replace the lazy stub.
+			// this needs to be detected and reported
+			sap.ui.lazyRequire('sap.test', 'noSuchFactory', 'sap.test.lazy.MyUtility');
+
+			assert.ok(this.isLazyStub(sap.test, 'noSuchFactory'), "lazy loader created a stub for the namespace");
+
+			var oLogSpy = this.spy(jQuery.sap.log, 'error');
+			var raised = false;
+			try { 
+				sap.test.noSuchFactory();
+			} catch (error) {
+				raised = true;
+			}
+			assert.ok(raised, "read access doesn't resolve the property, but throws an error");
+			//assert.equal(sap.test.noSuchFactory, undefined, "read access doesn't resolve the property, but writes an error"); // executed twice by intention!
+			//sinon.assert.calledOnce(oLogSpy);
+			oLogSpy.restore();
+
+			assert.ok(jQuery.sap.isDeclared('sap/test/lazy/MyUtility'), "read access should load the expected module");
+
+			delete sap.test.noSuchFactory;
+
+		});
 		</script>
 		
 	</head>

@@ -12,7 +12,7 @@
 	var iAjaxCalls = 0;
 	var aAjaxCalls = [];
 	var sRoot = jQuery.sap.getModulePath("", "/");
-	
+
 	jQuery.ajax = function(settings) {
 		if ( settings && settings.url && /\.js$/.test(settings.url) ) {
 			var sUrl = settings.url;
@@ -23,17 +23,17 @@
 		}
 		iAjaxCalls++;
 		return fnOldAjax.apply(this, arguments);
-	}
-	
+	};
+
 	window.ajaxCallsReset = function() {
 		aAjaxCalls = [];
-	} 
+	};
 	window.ajaxCalls = function() {
 		return aAjaxCalls;
-	} 
+	};
 	window.ajaxCallsCount = function() {
 		return iAjaxCalls;
-	} 
+	};
 }());
 
 
@@ -50,17 +50,19 @@ var _aExpectedAjaxCalls = {
 	]
 	*/
 };
-		
 
-function checkLibrary(sLibraryName, bExpectLazyStubs) {
+function checkLibrary(sLibraryName, bExpectLazyStubs, assert) {
+
+	// ensure that assert.* even works if a test page doesn't provide 'assert' as a param (e.g. pages outside openui5 repo) 
+	assert = assert || window;
 
 	ajaxCallsReset();
-	
-	ok(jQuery.sap.isDeclared(sLibraryName + ".library"), "module for library " + sLibraryName + " must have been declared");
-	ok(jQuery.sap.getObject(sLibraryName), "namespace " + sLibraryName + " must exists");
-	
+
+	assert.ok(jQuery.sap.isDeclared(sLibraryName + ".library"), "module for library " + sLibraryName + " must have been declared");
+	assert.ok(jQuery.sap.getObject(sLibraryName), "namespace " + sLibraryName + " must exists");
+
 	var oLib = sap.ui.getCore().getLoadedLibraries()[sLibraryName];
-	ok(!!oLib, "library info object must exists");
+	assert.ok(!!oLib, "library info object must exists");
 
 	// Check that all modules have been loaded. As we don't have access to the "all modules", 
 	// we simply check for all types, elements and controls
@@ -71,63 +73,63 @@ function checkLibrary(sLibraryName, bExpectLazyStubs) {
 	jQuery.each(oLib.types, function(idx,sType) {
 		if ( jQuery.inArray(sType, aExcludes) < 0 ) {
 			var oClass = jQuery.sap.getObject(sType);
-        	ok(typeof oClass === "object", "type " + sType + " must be an object");
+			assert.ok(typeof oClass === "object", "type " + sType + " must be an object");
 		}
 	});
 
 	// check existence and lazy loader status
 	var sMessage = bExpectLazyStubs ? "class must be a lazy loader only" : "class must not be a lazy loader";
-	var aExcludes = "sap.ui.core.Element sap.ui.core.Control sap.ui.core.Component sap.ui.core.tmpl.Template".split(" ");
+	var aExcludes = "sap.ui.core.Element sap.ui.core.Control sap.ui.core.Component sap.ui.table.Column".split(" ");
 	
 	jQuery.each(oLib.elements, function(idx,sElement) {
-    	if ( jQuery.inArray(sElement, aExcludes) < 0 ) {
-    		ok(jQuery.sap.isDeclared(sElement) !== bExpectLazyStubs, "module for element " + sElement + " must have been declared");
-    	}
-		var oClass = jQuery.sap.getObject(sElement);
-    	equal(typeof oClass, "function", "Element constructor for " + sElement + " must exist and must be a function");
-    	if ( jQuery.inArray(sElement, aExcludes) < 0 ) {
-    		ok(!!oClass._sapUiLazyLoader === bExpectLazyStubs, sMessage + ":" + sElement);
-    	}
+		if ( jQuery.inArray(sElement, aExcludes) < 0 ) {
+			assert.notEqual(jQuery.sap.isDeclared(sElement), bExpectLazyStubs, "module for element " + sElement + " must have been declared");
+			assert.equal(sap.ui.lazyRequire._isStub(sElement), bExpectLazyStubs, sMessage + ":" + sElement);
+			if ( !bExpectLazyStubs ) {
+				var oClass = jQuery.sap.getObject(sElement);
+				assert.equal(typeof oClass, "function", "Element constructor for " + sElement + " must exist and must be a function");
+			}
+		}
 	});
-	
+
 	jQuery.each(oLib.controls, function(idx,sControl) {
-    	if ( jQuery.inArray(sControl, aExcludes) < 0 ) {
-    		ok(jQuery.sap.isDeclared(sControl) !== bExpectLazyStubs, "module for element " + sControl + " must have been declared");
-    	}
-		var oClass = jQuery.sap.getObject(sControl);
-    	equal(typeof oClass, "function", "Control constructor for " + sControl + " must exist and must be a function");
-    	if ( jQuery.inArray(sControl, aExcludes) < 0 ) {
-    		ok(!!oClass._sapUiLazyLoader === bExpectLazyStubs, sMessage + ":" + sControl);
-    	}
+		if ( jQuery.inArray(sControl, aExcludes) < 0 ) {
+			assert.notEqual(jQuery.sap.isDeclared(sControl), bExpectLazyStubs, "module for element " + sControl + " must have been declared");
+			assert.equal(sap.ui.lazyRequire._isStub(sControl), bExpectLazyStubs, sMessage + ":" + sControl);
+			if ( !bExpectLazyStubs ) {
+				var oClass = jQuery.sap.getObject(sControl);
+				assert.equal(typeof oClass, "function", "Control constructor for " + sControl + " must exist and must be a function");
+			}
+		}
 	});
 
 	jQuery.each(oLib.elements, function(idx,sElement) {
 		var oClass = jQuery.sap.getObject(sElement);
-    	if ( bExpectLazyStubs ) {
-	    	try {
+		if ( bExpectLazyStubs ) {
+			try {
 				new oClass();
-	    	} catch (e) {
-	    		jQuery.sap.log.error(e.message || e);
-	    	}
+			} catch (e) {
+				jQuery.sap.log.error(e.message || e);
+			}
 			oClass = jQuery.sap.getObject(sElement);
-    	}
-    	ok(typeof oClass.prototype.getMetadata === "function", "Element class " + sElement + " should have been loaded and initialized");
+		}
+		assert.ok(typeof oClass.prototype.getMetadata === "function", "Element class " + sElement + " should have been loaded and initialized");
 	});
-	
+
 	jQuery.each(oLib.controls, function(idx,sControl) {
 		var oClass = jQuery.sap.getObject(sControl);
-    	if ( bExpectLazyStubs ) {
-	    	try {
+		if ( bExpectLazyStubs ) {
+			try {
 				new oClass();
-	    	} catch (e) {
-	    		jQuery.sap.log.error(e.message || e);
-	    	}
+			} catch (e) {
+				jQuery.sap.log.error(e.message || e);
+			}
 			oClass = jQuery.sap.getObject(sControl);
-    	}
-    	ok(typeof oClass.prototype.getMetadata === "function", "Control class " + sControl + " should have been loaded and initialized");
+		}
+		assert.ok(typeof oClass.prototype.getMetadata === "function", "Control class " + sControl + " should have been loaded and initialized");
 	});
 
 	var aExpectedCalls = bExpectLazyStubs ? (_aExpectedAjaxCalls[sLibraryName] || []) : [];
-	deepEqual(ajaxCalls(), aExpectedCalls, (aExpectedCalls.length == 0 ? "no" : "only some expected") + " additional ajax calls should have happened");
-	
+	assert.deepEqual(ajaxCalls(), aExpectedCalls, (aExpectedCalls.length === 0 ? "no" : "only some expected") + " additional ajax calls should have happened");
+
 }
