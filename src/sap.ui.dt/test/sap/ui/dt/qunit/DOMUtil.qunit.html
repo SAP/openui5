@@ -11,6 +11,13 @@
 				top : 10px;
 				z-index: 1000;
 			}
+			#left-part .withAfterElement::after {
+				content: ":";
+			}
+			#left-part .withBeforeElement::before {
+				content: "Nr.";
+				color: white;
+			}
 		</style>
 
 		<script id="sap-ui-bootstrap"
@@ -62,6 +69,37 @@
 			// * Add tests for CSSSelector
 			// * Add tests for escapedID (is this needed?)
 
+			//cloneDOMAndStyles
+			QUnit.module("Given that some DOM element with child nodes is rendered...", {
+				beforeEach : function() {
+					this.oDomElement = jQuery("<div data-find='div' class='withBeforeElement' style='width:200px; height: 200px;'><span data-find='span' class='withAfterElement' style='color: rgb(255, 0, 0);'>Text</span></div>");
+					this.oDomElement.appendTo("#left-part");
+				},
+				afterEach : function() {
+					// this.oDomElement.remove();
+				}
+			});
+
+			QUnit.test("when this element, it's children and styling is copied", function(assert) {
+				sap.ui.dt.DOMUtil.cloneDOMAndStyles(this.oDomElement, jQuery("#right-part"));
+
+				var oCopyDiv = jQuery("#right-part > [data-find=div]");
+				ok(oCopyDiv, "element is copied");
+				strictEqual(oCopyDiv.css("width"), "200px", "styles for element are also copied");
+
+				var sBeforeDivContent = window.getComputedStyle( this.oDomElement.get(0), ':before' ).getPropertyValue('content').replace(/\"/g, "");
+				var sBeforeCopyDivContent = oCopyDiv.children().first().html();
+				strictEqual(sBeforeCopyDivContent, sBeforeDivContent, "and the pseudoElements are also copied");
+
+				var oCopySpan = oCopyDiv.find("> [data-find=span]");
+				ok(oCopySpan, "child elemen is copied");
+				strictEqual(oCopySpan.css("color"), 'rgb(255, 0, 0)', "styles for child elemen are also copied");
+
+				var sAfterSpanContent = window.getComputedStyle( this.oDomElement.find(">span").get(0), ':after' ).getPropertyValue('content').replace(/\"/g, "");
+				var sAfterCopySpanContent =oCopySpan.children().last().html();
+				strictEqual(sAfterCopySpanContent, sAfterSpanContent, "and the pseudoElements are also copied");
+			});
+
 		</script>
 	</head>
 	<body>
@@ -70,6 +108,9 @@
 	 	<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
 		<ol id="qunit-tests"></ol>
-		<div id="content"></div>
+		<div id="content">
+			<div style='float: left; width: 50%; height: 100%;' id="left-part"></div>
+			<div style='float: left; width: 50%; height: 100%;' id="right-part"></div>
+		</div>
 	</body>
 </html>

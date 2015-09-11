@@ -141,78 +141,92 @@ function(jQuery, ElementUtil) {
 	/**
 	 * 
 	 */
-	DOMUtil.setDraggable = function($element, bValue) {
-		$element.attr("draggable", bValue);
-	};
+	DOMUtil.setDraggable = function(oElement, bValue) {
+		oElement = jQuery(oElement);
 
-	/**
-	 * 
-	 */
-	DOMUtil.getComputedStyles = function(oElem) {
-		var mComputedStyle;
-
-		if ( typeof oElem.currentStyle != 'undefined' ) {
-			mComputedStyle = oElem.currentStyle;
-		} else {
-			mComputedStyle = document.defaultView.getComputedStyle(oElem);
-		}
-
-		return mComputedStyle;
+		oElement.attr("draggable", bValue);
 	};
 
 	/**
 	 * 
 	 */
 	DOMUtil.copyComputedStyle = function(oSrc, oDest) {
-		var mStyles = this.getComputedStyles(oSrc);
-		for ( var sStyle in mStyles ) {
-			try {
-				// Do not use `hasOwnProperty`, nothing will get copied
-				if ( typeof sStyle == "string" && sStyle != "cssText" && !/\d/.test(sStyle) && sStyle.indexOf("margin") === -1 ) {
-					oDest.style[sStyle] = mStyles[sStyle];
-					// `fontSize` comes before `font` If `font` is empty, `fontSize` gets
-					// overwritten.  So make sure to reset this property. (hackyhackhack)
-					// Other properties may need similar treatment
-					if ( sStyle == "font" ) {
-						oDest.style.fontSize = mStyles.fontSize;
+		var fnCopyStylesTo = function(mStyles, oDest) {
+			for ( var sStyle in mStyles ) {
+				try {
+					// Do not use `hasOwnProperty`, nothing will get copied
+					if ( typeof sStyle == "string" && sStyle != "cssText" && !/\d/.test(sStyle) && sStyle.indexOf("margin") === -1 ) {
+						oDest.style[sStyle] = mStyles[sStyle];
+						// `fontSize` comes before `font` If `font` is empty, `fontSize` gets
+						// overwritten.  So make sure to reset this property. (hackyhackhack)
+						// Other properties may need similar treatment
+						if ( sStyle == "font" ) {
+							oDest.style.fontSize = mStyles.fontSize;
+						}
 					}
+				/*eslint-disable no-empty */
+				} catch (exc) {
+					// readonly properties must not through an error
 				}
-			/*eslint-disable no-empty */
-			} catch (exc) {
-				// readonly properties must not through an error
+				/*eslint-enable no-empty */
 			}
-			/*eslint-enable no-empty */
+		};
+
+		oSrc = jQuery(oSrc).get(0);
+		oDest = jQuery(oDest).get(0);
+
+		var mStyles = window.getComputedStyle(oSrc);
+		fnCopyStylesTo(mStyles, oDest);
+
+		// copy styles fro pseudo elements as well, if they exist (have content)
+		// pseudo elements can't be inserted via js, so we should create a real elements, which copy pseudo styling
+		mStyles = window.getComputedStyle(oSrc, ":after");
+		var sContent = mStyles.getPropertyValue("content");
+		if (sContent) {
+			var oAfterElement = jQuery("<span></span>").appendTo(oDest);
+			oAfterElement.text(sContent.replace(/\"/g, ""));
+			fnCopyStylesTo(mStyles, oAfterElement.get(0));
+			oAfterElement.css("display", "inline");
 		}
+
+		mStyles = window.getComputedStyle(oSrc, ":before");
+		sContent = mStyles.getPropertyValue("content");
+		if (sContent) {
+			var oBeforeElement = jQuery("<span></span>").prependTo(oDest);
+			oBeforeElement.text(sContent.replace(/\"/g, ""));
+			fnCopyStylesTo(mStyles, oBeforeElement.get(0));
+			oBeforeElement.css("display", "inline");
+		}
+
 	};
 
 	/**
 	 * 
 	 */
 	DOMUtil.copyComputedStylesForDOM = function(oSrc, oDest) {
-		this.copyComputedStyle(oSrc, oDest);
+		oSrc = jQuery(oSrc).get(0);
+		oDest = jQuery(oDest).get(0);
+
 		for (var i = 0; i < oSrc.children.length; i++) {
 			this.copyComputedStylesForDOM(oSrc.children[i], oDest.children[i]);
 		}
+		jQuery(oDest).removeClass();
+		this.copyComputedStyle(oSrc, oDest);
 	};
 
 	/**
 	 * 
 	 */
 	DOMUtil.cloneDOMAndStyles = function(oNode, oTarget) {
+		oNode = jQuery(oNode).get(0);
+		oTarget = jQuery(oTarget).get(0);
+
 		var oCopy = oNode.cloneNode(true);
 		this.copyComputedStylesForDOM(oNode, oCopy);
 
 		var $copy = jQuery(oCopy);
 
 		jQuery(oTarget).append($copy);
-
-		var oPosition = $copy.position();
-		if (oPosition.left) {
-			$copy.css("cssText", "margin-left : " + -oPosition.left + "px !important");
-		}
-		if (oPosition.top) {
-			$copy.css("cssText", "margin-top : " + -oPosition.top + "px !important");
-		}
 	};
 
 	return DOMUtil;
