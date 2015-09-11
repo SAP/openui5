@@ -281,12 +281,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				this.oPopup.setModal(true, "sapMDialogBlockLayerInit");
 			}
 
-			//avoid playing fancy animation in native browser with android version smaller than 4.1
-			//because it has problem with keyframe animation that it always sets back to the first
-			//keyframe after the animation which causes flickering during the animation.
-			if (!(sap.ui.Device.os.android && sap.ui.Device.os.version < 4.1 && window.navigator.userAgent.toLowerCase().indexOf("chrome") === -1)) {
-				this.oPopup.setAnimations(jQuery.proxy(this._openAnimation, this), jQuery.proxy(this._closeAnimation, this));
-			}
+			this.oPopup.setAnimations(jQuery.proxy(this._openAnimation, this), jQuery.proxy(this._closeAnimation, this));
 
 			//keyboard support for desktop environments
 			//use pseudo event 'onsapescape' to implement keyboard-trigger for closing this dialog
@@ -711,8 +706,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			}
 
 			if ((bStretch && !bMessageType) || (bStretchOnPhone && jQuery.device.is.iphone)) {
-				oStyles.right = oStyles.bottom = oStyles.top = oStyles.left = 0;
-				oStyles.height = oStyles.width = 'auto';
+				this.$().addClass('sapMDialogStretched');
 			}
 
 			$this.css(oStyles);
