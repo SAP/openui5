@@ -61,7 +61,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				this._oScrollDelegate = null;
 			}
 
-			jQuery(this._oControl.getId() + "-triggerList").remove();
+			this._oControl.$("triggerList").remove();
 			this._oControl.bUseExtendedChangeDetection = false;
 			this._oControl.removeDelegate(this);
 			this._sGroupingPath = "";
@@ -175,8 +175,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 		// called after new page loaded
 		_onAfterPageLoaded : function(sChangeReason) {
-			this._hideIndicator();
 			this._updateTrigger();
+			this._hideIndicator();
 			this._bLoading = false;
 			this._oControl.onAfterPageLoaded(this.getInfo(), sChangeReason);
 		},
@@ -719,8 +719,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			} else {
 				this._oControl.$("trigger-busyIndicator").addClass("sapMGrowingListBusyIndicatorVisible");
 			}
-
-			this._getBusyIndicator().setVisible(true);
 		},
 
 		/**
@@ -770,6 +768,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 			$TriggerList.empty();
 			rm.render(oActionItem, $TriggerList[0]);
+			rm.destroy();
 		},
 
 		/**
@@ -778,7 +777,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		_hideIndicator : function() {
 			jQuery.sap.delayedCall(0, this, function() {
 				if (this._oControl) {	// maybe control is already destroyed
-					this._getBusyIndicator().setVisible(false);
 					if (this._oControl.getGrowingScrollToLoad() && this._getHasScrollbars()) {
 						this._oControl.$("triggerList").css("display", "none");
 					} else {
