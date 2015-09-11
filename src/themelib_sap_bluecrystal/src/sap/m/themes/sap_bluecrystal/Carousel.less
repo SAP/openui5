@@ -45,11 +45,12 @@
 	width: 0;
 	height: 0;
 	margin: 0 0.25rem;
-	color: lighten(@sapUiBase, 10);
-	background-color: lighten(@sapUiBase, 10);
+	color: lighten(@sapUiBase, 9.8);
+	background-color: lighten(@sapUiBase, 9.8);
 	-webkit-transition: background-color 0.1s ease-in;
+	-moz-transition: background-color 0.1s ease-in;
 	transition: background-color 0.1s ease-in;
-	box-shadow: 0 0 0.0625rem 0.0625rem @sapUiLightestBorder;
+	box-shadow: 0px 0px 0.0625rem 0.0625rem @sapUiLightShadowTint;
 	border-radius: 50%;
 }
 
@@ -80,12 +81,14 @@
 	padding: 0;
 	text-decoration: none;
 	overflow: hidden;
-	background-color: @sapUiLightestBG;
+	background-color: @sapUiInvertedElement;
 	border-radius: 50%;
 	color: @sapUiInvertedElement;
 	-webkit-transition: opacity 0.1s ease-in;
+	-moz-transition: opacity 0.1s ease-in;
 	transition: opacity 0.1s ease-in;
-	box-shadow: 0 0.0625rem 0.25rem fade(@sapUiShadowTint,30%);
+	border-radius: 50%;
+	box-shadow: 0px 0.0625rem 0.25rem fade(@sapUiDarkShadowTint, 30);
 }
 
 .sapMCrsl{
