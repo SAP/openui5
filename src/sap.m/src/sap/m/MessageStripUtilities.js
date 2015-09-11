@@ -30,15 +30,6 @@ sap.ui.define(function () {
 
 	MessageStripUtilities.RESOURCE_BUNDLE = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
 
-	MessageStripUtilities.setIconIfVisible = function () {
-		var sIconURI;
-
-		if (this.getShowIcon()) {
-			sIconURI = MessageStripUtilities.getIconURI.call(this);
-			this.setCustomIcon(sIconURI);
-		}
-	};
-
 	/**
 	 * Calculate the icon uri that should be set to the control property.
 	 * Custom icons are allowed for all message types.
