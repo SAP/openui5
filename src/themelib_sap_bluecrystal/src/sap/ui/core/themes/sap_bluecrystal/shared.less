@@ -348,11 +348,8 @@ html[data-sap-ui-browser="ie9"] .sapMShellGlobalOuterBackground,
 html[data-sap-ui-browser="ie9"] .sapMShellGlobalInnerBackground,
 .sapUiBodyBackground,
 .sapUiBody,
-html[data-sap-ui-browser="ie8"] .sapUiBodyBackground,
 html[data-sap-ui-browser="ie9"] .sapUiBodyBackground,
 html[data-sap-ui-browser="ie9"] .sapUiBodyBackgroundIE9Layer1,
-html[data-sap-ui-browser="ie8"] .sapUiBodyBackgroundIE9Layer1,
-html[data-sap-ui-browser="ie8"],
 html[data-sap-ui-browser="ie9"] {
 	background-color: transparent;
 	background-image: none;
@@ -487,13 +484,11 @@ html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor .sapMGlobalBackground
 	background-attachment: fixed;
 }
 
-html[data-sap-ui-browser="ie8"] .sapUiBodyBackground,
 html[data-sap-ui-browser="ie9"] .sapUiBodyBackground {
 	.sapGlobalBackgroundColorMixin;
 	.sapGlobalBackgroundColorMixinIE9;
 }
 
-html[data-sap-ui-browser="ie8"],
 html[data-sap-ui-browser="ie9"] {
 	.sapGlobalBackgroundColorMixin;
 	.sapGlobalBackgroundColorMixinIE9;
@@ -532,8 +527,7 @@ html.sapUiSuppressBackgroundStyles .sapUiBody:before {
   Classes to be used on the container element when UI5 is used in IE9 inside an element that
   is not the HTML body tag 
 */
-html[data-sap-ui-browser="ie9"] .sapUiBodyBackgroundIE9Layer1,
-html[data-sap-ui-browser="ie8"] .sapUiBodyBackgroundIE9Layer1 {
+html[data-sap-ui-browser="ie9"] .sapUiBodyBackgroundIE9Layer1 {
 	background-color: @sapUiGlobalBackgroundColorDefault;
 	.sapGlobalBackgroundColorMixin;
 	.sapGlobalBackgroundColorMixinIE9;

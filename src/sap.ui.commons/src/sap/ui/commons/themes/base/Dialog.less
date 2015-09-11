@@ -62,19 +62,6 @@ html[data-sap-ui-browser="ff3"] .sapUiDlgHdrBtns > a {
 	-webkit-user-select: none;
 }
 
-/* make x text invisible for IE */
-html[data-sap-ui-browser="ie7"] .sapUiDlgHdrBtns > a,
-html[data-sap-ui-browser="ie8"] .sapUiDlgHdrBtns > a {
-	text-indent: -30px;
-	overflow: hidden;
-}
-
-/* fix for IE7 to display the close X button at the right position...
-   there is a problem with the text-indent */
-html[data-sap-ui-browser="ie7"] .sapUiDlgHdrBtns > a {
-	margin-left: 30px;
-}
-
 /* content */
 
 .sapUiDlgCont {
@@ -150,11 +137,4 @@ html[data-sap-ui-browser="ie7"] .sapUiDlgHdrBtns > a {
 html[data-sap-ui-browser="ff3"] .sapUiDlgGrip {
 	-moz-user-select: none;
 	-webkit-user-select: none;
-}
-
-/* make resize text invisible for IE */
-html[data-sap-ui-browser="ie7"] .sapUiDlgGrip,
-html[data-sap-ui-browser="ie8"] .sapUiDlgGrip {
-	text-indent: -30px;
-	overflow: hidden;
 }

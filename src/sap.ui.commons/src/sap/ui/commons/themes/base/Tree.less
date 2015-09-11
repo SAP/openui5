@@ -31,7 +31,7 @@ invert its text to white as well */
 	padding-right: 2px;
 }
 
-html:not([data-sap-ui-browser="ie8"]) .sapUiTreeContScroll .sapUiTreeList {
+.sapUiTreeContScroll .sapUiTreeList {
 	float: left;
 	min-width: 100%;
 	-webkit-box-sizing: border-box;
@@ -134,7 +134,7 @@ html[dir=rtl] .sapUiTreeTitle {
 	-moz-user-select: none;
 }
 
-html:not([data-sap-ui-browser="ie8"]) .sapUiTreeContScroll .sapUiTreeNode {
+.sapUiTreeContScroll .sapUiTreeNode {
 	float: left;
 	clear: left;
 	width: 100%;
@@ -150,10 +150,6 @@ html:not([data-sap-ui-browser="ie8"]) .sapUiTreeContScroll .sapUiTreeNode {
 
 .sapUiInverted-CTX .sapUiTreeNode:hover {
 	background-color: mix(@sapUiHighlight, @sapUiBlackBG, 60%);
-}
-
-html[data-sap-ui-browser="ie8"] .sapUiTreeNode{
-	padding-right:2px;
 }
 
 .sapUiTreeNodeContent {

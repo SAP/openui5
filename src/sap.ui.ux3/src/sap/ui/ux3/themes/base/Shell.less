@@ -343,22 +343,6 @@ html[data-sap-ui-browser^="ff"] .sapUiUx3ShellToolFontIcon {
 	line-height: @sapUiUx3ShellSideBarBaseWidth;
 }
 
-
-html[data-sap-ui-browser="ie8"] .sapUiUx3ShellPaneBarRight > .sapUiUx3ShellPaneOverflowButton > .sapUiUx3ShellPaneOverflowWrapper {
-    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
-	position: static;
-}
-
-html[data-sap-ui-browser="ie8"][dir="rtl"] .sapUiUx3ShellPaneBarRight > .sapUiUx3ShellPaneOverflowButton > .sapUiUx3ShellPaneOverflowWrapper {
-	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
-	text-align: right;
-}
-
-
-html[data-sap-ui-browser="ie8"] .sapUiUx3ShellPaneOverflowText {
-	margin-right: 0;
-}
-
 .sapUiUx3ShellPaneBarRight > .sapUiUx3ShellPaneOverflowButton > div > .sapUiUx3ShellPaneOverflowText {
 	box-sizing: border-box;
 	text-align: right;
@@ -378,32 +362,6 @@ html[data-sap-ui-browser="ie8"] .sapUiUx3ShellPaneOverflowText {
     margin: 0;
     line-height: @sapUiUx3ShellSideBarBaseWidth;
     padding-left: 26px;
-}
-
-/* rotation for IE8 */
-html[data-sap-ui-browser="ie8"] .sapUiUx3ShellPaneEntries {
-	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
-	padding-left: 0;
-	margin-top: 20px;
-	width: 1000px; /* otherwise only the first or so entry is visible */
-}
-
-/**
- * In RTL case, IE8 has a bug where the clickable area is different from the visible elements.
- * So the plan here is: switch to LTR for rotation, rotate into the opposite direction, switch
- * back to RTL inside. Because of LTR the pane bar content needs to be right-aligned.
- */
-html[data-sap-ui-browser="ie8"][dir="rtl"] .sapUiUx3ShellPaneBarRight {
-	direction: ltr;
-}
-
-html[data-sap-ui-browser="ie8"][dir="rtl"] .sapUiUx3ShellPaneEntries {
-	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
-	text-align: right;
-}
-
-html[data-sap-ui-browser="ie8"][dir="rtl"] .sapUiUx3ShellPaneEntry {
-	direction: rtl;
 }
 
 .sapUiUx3ShellPaneEntry {
@@ -499,11 +457,6 @@ html[data-sap-ui-browser="ie8"][dir="rtl"] .sapUiUx3ShellPaneEntry {
 
 .sapUiUx3ShellNoContentPadding .sapUiUx3ShellCanvas {
 	padding: 0px 0px 0px 0px;
-}
-
-/* FIX: Height of the Canvas not adopted in IE8 - Snippix #5411 */
-html[data-sap-ui-browser="ie8"] .sapUiUx3ShellCanvas {
-	overflow-y: auto;
 }
 
 .sapUiUx3ShellCanvas > .sapUiUx3NavBar {
