@@ -69,7 +69,7 @@
 							key="about"
 							text="About"
 							visible="{/show/about}" >
-							<Text text="{/description}" />
+							<core:HTML content="{/description}" />
 							<Table
 								class="myTable"
 								visible="{/show/values}"
