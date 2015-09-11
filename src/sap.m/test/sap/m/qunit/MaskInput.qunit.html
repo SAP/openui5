@@ -181,7 +181,7 @@
 			equal(oControl.getRules()[2].getRegex(), "[{}]", "The rule with mask format symbol '~' regex must be the last one set");
 		});
 
-		module("Shifting", {
+		module("Deletion", {
 			beforeEach: function () {
 				this.oMaskInput = new sap.m.MaskInput();
 				this.oMaskInput.placeAt("content");
@@ -191,12 +191,13 @@
 				this.oMaskInput.destroy();
 			},
 			//sets certain properties, and deletes certain character
-			setAndDel: function (sMask, sValue, iCharPosition, oControl) {
+			setAndDel: function (sKey, sMask, sValue, iCarretPosition, iCarretEndPosition, oControl ) {
 				if (!oControl) {
 					oControl = this.oMaskInput;
 				}
 				oControl.setMask(sMask);
 				oControl.setValue(sValue);
+
 				if (oControl._bFocused) {
 					oControl.onfocusin(); // an element can get focus only once, so this time only call the handler
 				} else {
@@ -205,22 +206,30 @@
 					oControl._bFocused = true
 				}
 
-				setCursorPosition(iCharPosition, oControl);
+				if (iCarretEndPosition && iCarretEndPosition > iCarretPosition) {
+					oControl.selectText(iCarretPosition, iCarretEndPosition);
+				} else {
+					setCursorPosition(iCarretPosition, oControl);
+				}
 
-				qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.DELETE);
+				qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes[sKey.toUpperCase()]);
 				return getMaskInputDomValue(oControl);
 			}
 		});
 
-		test("Delete shifts to the left", function () {
+		test("Del button", function () {
 			var oControl = this.oMaskInput.setPlaceholderSymbol('_');
+			strictEqual(this.setAndDel('delete', 'aaaaa', 'abcde', 0), "_bcde", "Delete single character");
+			strictEqual(this.setAndDel('delete', 'aaaaa', 'abcd', 4), "abcd_", "Try deleting non existing character");
+			strictEqual(this.setAndDel('delete', '9a-9-aa', '2b-2-de', 1), '2_-2-de', "Delete parameter before immutable character");
+			strictEqual(this.setAndDel('delete', 'aaaaa', 'abcde', 0, 3), "___de", "Delete selection");
+		});
 
-			strictEqual(this.setAndDel('aaaaa', 'abcde', 0), "bcde_", "Shift for mask with single rule type only");
-			strictEqual(this.setAndDel('aa-a-aa', 'ab-c-de', 0), 'bc-d-e_', "Shift for mask with rule and immutable chars");
-			strictEqual(this.setAndDel('aa-9-aa', 'ab-2-de', 0), 'b_-2-de', "Shift for mask with multiple rule type and immutable chars");
-			strictEqual(this.setAndDel('9a-9-aa', '2b-2-de', 0), '_b-2-de', "Shift at the beginning when the first shift char does not match its newer position");
-			strictEqual(this.setAndDel('9a-9-aa', '2b-2-de', 1), '2_-2-de', "Shift non start character when the first shift char does not match its newer position");
-			strictEqual(this.setAndDel('9a-a-aa', '2b-c-de', 1), '2c-d-e_', "Shift non start character when the first shift char does match its newer position");
+		test("Backspace button", function () {
+			var oControl = this.oMaskInput.setPlaceholderSymbol('_');
+			strictEqual(this.setAndDel('backspace', '99/9', '12/3', 2), "1_/3", "Delete single character");
+			strictEqual(this.setAndDel('backspace', '99/9', '12/3', 3), "1_/3", "Delete single character behind immutable character");
+			strictEqual(this.setAndDel('backspace', '99/9', '12/3', 2, 4), "12/_", "Delete selection with immutable characters");
 		});
 
 		module("Paste", {
@@ -309,6 +318,34 @@
 			checkForEmptyValue(oControl);
 			strictEqual(getMaskInputDomValue(oControl), "", "Once deleted the DOM should be empty");
 			oOtherControl.destroy();
+		});
+
+
+		test("Focus after invalid value is set through the API", function () {
+			var oControl = this.oMaskInput.setPlaceholderSymbol('#'),
+				sMask = 'aa-aa';
+
+			oControl.setMask(sMask);
+
+			// test setting a an invalid value
+			oControl.setValue(12456);
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+
+			strictEqual(getMaskInputDomValue(oControl), '##-##', "On intial focus, the mask that the user needs to follow is shown");
+		});
+
+		test("Focus after partially filled value is set through the API", function () {
+			var oControl = this.oMaskInput.setPlaceholderSymbol('#'),
+				sMask = 'aa-aa';
+
+			oControl.setMask(sMask);
+			// test setting a an invalid value
+			oControl.setValue('#a-bc');
+			jQuery(oControl).focus();
+			this.clock.tick(1000);
+
+			strictEqual(getMaskInputDomValue(oControl), 'ab-c#');
 		});
 
 		module("Events", {
