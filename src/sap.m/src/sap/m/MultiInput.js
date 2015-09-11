@@ -206,7 +206,13 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 				} else {
 					that._oList.destroyItems();
 				}
+
+				var oScroll = that._oSuggestionPopup.getScrollDelegate();
+				if (oScroll) {
+					oScroll.scrollTo(0, 0, 0);
+				}
 				
+
 				that._oPopupInput.focus();
 				
 			}
