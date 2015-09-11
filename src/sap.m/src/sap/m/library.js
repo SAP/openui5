@@ -47,12 +47,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.IBarHTMLTag",
 			"sap.m.IconTabFilterDesign",
 			"sap.m.ImageMode",
+			"sap.m.InfoTileSize",
+			"sap.m.InfoTileTextColor",
+			"sap.m.InfoTileValueColor",
 			"sap.m.InputType",
 			"sap.m.LabelDesign",
 			"sap.m.ListHeaderDesign",
 			"sap.m.ListMode",
 			"sap.m.ListSeparators",
 			"sap.m.ListType",
+			"sap.m.LoadState",
 			"sap.m.OverflowToolbarPriority",
 			"sap.m.P13nPanelType",
 			"sap.m.PageBackgroundDesign",
@@ -916,7 +920,108 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * A subset of input types that fit to a simple API returning one string.
+	* Enumeration of possible size settings.
+	*
+	* @enum {string}
+	* @public
+	*/
+	sap.m.InfoTileSize = {
+
+		/**
+		 * Extra small size.
+		 * @public
+		 */
+		XS : "XS",
+
+		/**
+		 * Small size.
+		 * @public
+		 */
+		S : "S",
+
+		/**
+		 * Medium size.
+		 * @public
+		 */
+		M : "M",
+
+		/**
+		 * Large size.
+		 * @public
+		 */
+		L : "L",
+
+		/**
+		 * The size of the tile depends on the device it is running on. It is medium size for desktop and tablet and small size for phone.
+		 * @public
+		 */
+		Auto : "Auto"
+	};
+
+	/**
+	 * Enumeration of possible text color settings.
+	 *
+	 * @enum {string}
+	 * @public
+	 */
+	sap.m.InfoTileTextColor = {
+
+		/**
+		 * Positive text color.
+		 * @public
+		 */
+		Positive : "Positive",
+
+		/**
+		 * Critical text color.
+		 * @public
+		 */
+		Critical : "Critical",
+
+		/**
+		 * Negative text color.
+		 * @public
+		 */
+		Negative : "Negative"
+
+	};
+
+	/**
+	 * Enumeration of possible value color settings.
+	 *
+	 * @enum {string}
+	 * @public
+	 */
+	sap.m.InfoTileValueColor = {
+
+		/**
+		 * Neutral value color.
+		 * @public
+		 */
+		Neutral : "Neutral",
+
+		/**
+		 * Good value color.
+		 * @public
+		 */
+		Good : "Good",
+
+		/**
+		 * Critical value color.
+		 * @public
+		 */
+		Critical : "Critical",
+
+		/**
+		 * Error value color.
+		 * @public
+		 */
+		Error : "Error"
+
+	};
+
+	/**
+	 * A subset of input types that fits to a simple API returning one string.
 	 * Not available on purpose: button, checkbox, hidden, image, password, radio, range, reset, search, submit.
 	 *
 	 * @enum {string}
@@ -1183,7 +1288,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		DetailAndActive : "DetailAndActive"
 
 	};
+	
+	/**
+	 * Enumeration of possible load statuses.
+	 *
+	 * @enum {string}
+	 * @public
+	 */
+	sap.m.LoadState = {
 
+		/**
+		 * The control is loading.
+		 * @public
+		 */
+		Loading : "Loading",
+
+		/**
+		 * The control has loaded.
+		 * @public
+		 */
+		Loaded : "Loaded",
+
+		/**
+		 * The control failed to load.
+		 * @public
+		 */
+		Failed : "Failed",
+
+		/**
+		 * The control is disabled.
+		 * @public
+		 */
+		Disabled : "Disabled"
+	};
+	
 	/**
 	 * Defines the priorities of the controls within sap.m.OverflowToolbar
 	 *
@@ -1438,7 +1576,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		pageLink : "pageLink"
 
 	};
-
 
 	/**
 	* Types for the placement of message popover control.
