@@ -729,14 +729,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._adjustScrollingPane = function () {
-			var $scrollArea = this._$scrollPane;
-
-			//In Android version less than 4.1, the scrollEnablement needs to set position: absolute to $scrollArea.
-			//Thus the width 100% has to be set in order to make the scrollArea as big as the contentArea
-			if ($scrollArea.css("position") === "absolute") {
-				$scrollArea.css("width", "100%");
-			}
-
 			if (this._oScroller) {
 				this._oScroller.refresh();
 			}
