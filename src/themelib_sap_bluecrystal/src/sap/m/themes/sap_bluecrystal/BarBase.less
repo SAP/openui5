@@ -1,6 +1,6 @@
-/* ============================================= */
+/* ===================================== */
 /* CSS for control sap.m/BarBase.control */
-/* ============================================= */
+/* ===================================== */
 
 .sapMIBar .sapMBarChild:first-child {
 	margin-left:0.25rem;
@@ -15,27 +15,27 @@
 }
 
 .sapMIBar-CTX.sapMFooter-CTX {
-	color: @sapUiFooterText;
+	color: @sapUiFooterTextColor;
 	/* 1px down black shadow with 50% opacity */
-	text-shadow: 0em 0.0625em 0em fade(@sapUiStandardText, 50%);
-	background-color: @sapUiFooterBG;
+	text-shadow: 0em 0.0625em 0em fade(@sapUiDarkShadowTint, 50);
+	background-color: @sapUiFooterBackground;
 	background-image: none;
-	border-top: 0.0625rem solid fade(@sapUiExtraLightBorder,20%);
+	border-top: 0.0625rem solid @sapUiFooterBorderColor;
 	box-shadow: none;
 }
 
 .sapMIBar.sapMSubHeader-CTX {
-	color: @sapUiBarText;
-	background-color: @sapUiHeaderBG;
+	color: @sapUiHeaderTextColor;
+	background-color: @sapUiHeaderBackground;
 }
 
 .sap-desktop .sapMIBar.sapMFooter-CTX {
-	background-color: @sapUiFooterOnDesktopBG;
+	background-color: @sapUiFooterBackground;
 }
 
 /* footer separator inside of a SplitContainer control */
 .sapMSplitContainerMaster .sapMFooter-CTX {
-	border-right: 0.0625rem solid fade(@sapUiExtraLightBorder,20%);
+	border-right: 0.0625rem solid @sapUiFooterBorderColor;
 }
 
 .sapMBarGradient(@color, @alpha:100%) {
@@ -47,18 +47,18 @@
 }
 
 .sapMIBar.sapMHeader-CTX {
-	.sapMBarGradient(@sapUiBarBG);
-	color: @sapUiBarHeading;
+	.sapMBarGradient(@sapUiHeaderBackground);
+	color: @sapUiHeaderTextColor;
 }
 
 .sap-desktop .sapMIBar.sapMHeader-CTX { /* remove gradient on desktop */
-	background-color: @sapUiLightestBG;
+	background-color: lighten(@sapUiHeaderBackground, 5);
 	filter: none;
 	background-image: none;
 }
 
 .sapMPopup-CTX .sapMIBar.sapMHeader-CTX { /* remove gradient in popups; restore grey header color when in popup on desktop */
-	background-color: @sapUiBarBG;
+	background-color: @sapUiHeaderBackground;
 	filter: none;
 	background-image: none;
 }
@@ -68,5 +68,5 @@ html[data-sap-ui-browser*='ie9'] .sapMPageHeader::after {
 	position: absolute;
 	width:100%;
 	bottom: 0;
-	border-bottom: 0.0625em solid @sapUiLightBorder;
+	border-bottom: 0.0625em solid @sapUiHeaderBorderColor;
 }

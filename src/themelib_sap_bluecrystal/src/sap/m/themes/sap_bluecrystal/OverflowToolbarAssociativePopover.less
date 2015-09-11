@@ -2,11 +2,15 @@
   .sapMOTAPopover {
 
 	&.sapMOTAPopoverNoShadowTop {
-	  box-shadow: 0px 16px 30px 2px fade(@sapUiShadowTint, 15%);
+	  -webkit-box-shadow: 0px 16px 30px 2px fade(@sapUiDarkShadowTint, 15);
+	  -moz-box-shadow: 0px 16px 30px 2px fade(@sapUiDarkShadowTint, 15);
+	  box-shadow: 0px 16px 30px 2px fade(@sapUiDarkShadowTint, 15);
 	}
 
 	&.sapMOTAPopoverNoShadowBottom {
-	  box-shadow: 0px -16px 30px 2px fade(@sapUiShadowTint, 15%);
+	  -webkit-box-shadow: 0px -16px 30px 2px fade(@sapUiDarkShadowTint, 15);
+	  -moz-box-shadow: 0px -16px 30px 2px fade(@sapUiDarkShadowTint, 15);
+	  box-shadow: 0px -16px 30px 2px fade(@sapUiDarkShadowTint, 15);
 	}
 
   }
