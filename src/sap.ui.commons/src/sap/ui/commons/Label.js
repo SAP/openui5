@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.Label.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup', 'sap/ui/core/LabelEnablement'],
-	function(jQuery, library, Control, Popup, LabelEnablement) {
+sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/LabelEnablement'],
+	function(library, Control, LabelEnablement) {
 	"use strict";
 
 
@@ -128,38 +128,27 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.removeDelegate(this.oForTooltip);
 			this.oForTooltip = null;
 		}
-	
-		if (this._oPopup) {
-			this._oPopup.destroy();
-			delete this._oPopup;
-		}
-	
+
 		if (this._oFor) {
 			this._oFor.detachEvent("requiredChanged",this._handleRequiredChanged, this);
 			this._oFor = undefined;
 		}
 	
 	};
-	
+
 	Label.prototype.exit = function(){
 	
 		if (this.oForTooltip) {
 			this.removeDelegate(this.oForTooltip);
 			this.oForTooltip = null;
 		}
-	
-		if (this._oPopup) {
-			this._oPopup.destroy();
-			delete this._oPopup;
-		}
-	
+
 		if (this._oFor) {
 			this._oFor.detachEvent("requiredChanged",this._handleRequiredChanged, this);
 			this._oFor = undefined;
 		}
 	
 	};
-	
 	/**
 	 * Checks whether either the label itself or the associated control is marked as required.
 	 */
@@ -169,7 +158,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// method of the associated "labelFor" control. If the associated control doesn't 
 		// have a getRequired method, this is treated like a return value of "false".
 		var oFor = this._getLabeledControl();
-		return this.getRequired() || (oFor && oFor.getRequired && oFor.getRequired() === true);
+		return this.getRequired() || (oFor && oFor.getRequired && oFor.getRequired());
 	
 	};
 	
@@ -182,21 +171,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.invalidate();
 	
 	};
-	
+
 	/**
 	 * @deprecated
 	 */
 	Label.prototype.setReqiuredAtBegin = function(bReqiuredAtBegin){
 		return this.setRequiredAtBegin(bReqiuredAtBegin);
 	};
-	
+
 	/**
 	 * @deprecated
 	 */
 	Label.prototype.getReqiuredAtBegin = function(){
 		return this.getRequiredAtBegin();
 	};
-	
+
 	/**
 	 * Returns the labeled control instance, if exists.
 	 * @return {sap.ui.core.Control} the labeled control instance, if exists
@@ -209,46 +198,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 		return sap.ui.getCore().byId(sId);
 	};
-	
-	
-	/*
-	sap.ui.commons.Label.prototype.onmouseover = function(oEvent) {
-		var oRef = this.getDomRef();
-		if (Math.abs(oRef.clientWidth - oRef.scrollWidth) < 2){
-			return;
-		}
-	
-		if (!this._oPopup) {
-			 this._oPopup = new sap.ui.core.Popup();
-			 this._oPopup.setDurations(0, 0); // no animations
-			 this._oPopup.setContent(this._createInfo());
-			 this._oPopup.attachOpened(this._handleOpened, this);
-		}
-	
-		var eDock = sap.ui.core.Popup.Dock;
-		this._oPopup.open(0, eDock.BeginTop, eDock.BeginTop, this, "0 1", "fit", true);
-	};
-	
-	sap.ui.commons.Label.prototype._createInfo = function(){
-		var $Me   = jQuery(this.getDomRef());
-		var sText = $Me.html();
-		var sHtml = "<span id='" + this.getId()+'-info' + "' class='sapUiLblInfo " + $Me.attr("class") + "'>" + sText + "</span>";
-	
-		var oDomRef = jQuery(sHtml).appendTo(sap.ui.getCore().getStaticAreaRef());
-		var that = this;
-		jQuery(oDomRef).mouseout([this.getId()], function(oEvent){
-			that._oPopup.close();
-		});
-		return oDomRef;
-	};
-	
-	sap.ui.commons.Label.prototype._handleOpened = function(){
-		var that = this;
-		jQuery.sap.byId(this.getId()+'-info').mouseout([this.getId()], function(oEvent){
-			that._oPopup.close();
-		});
-	};*/
-	
+
 	//Enrich Label functionality
 	LabelEnablement.enrich(Label.prototype);
 
