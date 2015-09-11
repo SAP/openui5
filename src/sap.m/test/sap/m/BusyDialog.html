@@ -168,6 +168,16 @@
 								});
 							}, 1000);
 						}
+					}),
+					new sap.m.Button({
+						text: 'Get the Dom reference',
+						width: _buttonWidth,
+						press: function () {
+							defaultLightBusyDialog.open();
+							sap.ui.getCore().applyChanges();
+
+							alert('oBusyDialog.$() should be 1 dom element: ' + defaultLightBusyDialog.$().length);
+						}
 					})
 				]
 			});
