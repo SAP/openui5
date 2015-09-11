@@ -1,12 +1,44 @@
 <mvc:View
+	controllerName="sap.ui.core.sample.odata.v4.ListBinding.Main"
 	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
 	>
 	<VBox>
-		<Table items="{/EMPLOYEES}">
+		<Toolbar>
+			<Title text="Teams"></Title>
+			<Select id="TeamSelect" change="onTeamSelect" autoAdjustWidth="true"
+				items="{path: '/TEAMS',
+					parameters: {'$expand':
+						'TEAM_2_EMPLOYEES($expand=EMPLOYEE_2_EQUIPMENTS),TEAM_2_MANAGER'}}" >
+				<core:Item  key="{Team_Id}" text="{Name}"/>
+			</Select>
+		</Toolbar>
+		<form:SimpleForm id="TeamDetails" layout="ResponsiveGridLayout">
+			<form:content>
+				<Label text="Team ID" />
+				<Text text="{Team_Id}" />
+				<Label text="Team Name" />
+				<Text text="{Name}" />
+				<Label text="Member Count" />
+				<Text text="{MEMBER_COUNT}" />
+				<Label text="Manager ID" />
+				<Text text="{TEAM_2_MANAGER/ID}" />
+				<Label text="Budget" />
+				<Text text="{Budget}" />
+				<Label text="Currency" />
+				<Text text="{BudgetCurrency}" />
+			</form:content>
+		</form:SimpleForm>
+		<Table id="Employees" headerText="Team Members" items="{TEAM_2_EMPLOYEES}"
+			mode="SingleSelectMaster" selectionChange="onEmployeeSelect">
 			<columns>
 				<Column>
-					<Text text="Name"/>
+					<Text text="Employee Name"/>
+				</Column>
+				<Column>
+					<Text text="Employee ID"/>
 				</Column>
 				<Column>
 					<Text text="Age"/>
@@ -17,14 +49,14 @@
 				<Column>
 					<Text text="Entry Date"/>
 				</Column>
-				<Column>
-					<Text text="Entry Date 2"/>
-				</Column>
 			</columns>
 			<items>
 				<ColumnListItem>
 					<cells>
 						<Text text="{Name}"/>
+					</cells>
+					<cells>
+						<Text text="{ID}"/>
 					</cells>
 					<cells>
 						<Text text="{AGE}"/>
@@ -33,12 +65,34 @@
 						<Text text="{LOCATION/City/CITYNAME}"/>
 					</cells>
 					<cells>
-						<!-- type is automatically determined by binding -->
 						<Text text="{ENTRYDATE}"/>
 					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+		<Table id="EmployeeEquipments" headerText="Employee Equipments"
+			items="{EMPLOYEE_2_EQUIPMENTS}">
+			<columns>
+				<Column>
+					<Text text="Category"/>
+				</Column>
+				<Column>
+					<Text text="ID"/>
+				</Column>
+				<Column>
+					<Text text="Equipment Name"/>
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem>
 					<cells>
-						<!-- app specified type wins over automatically determined type -->
-						<Text text="{path: 'ENTRYDATE', type: 'sap.ui.model.type.String'}"/>
+						<Text text="{Category}"/>
+					</cells>
+					<cells>
+						<Text text="{ID}"/>
+					</cells>
+					<cells>
+						<Text text="{Name}"/>
 					</cells>
 				</ColumnListItem>
 			</items>
