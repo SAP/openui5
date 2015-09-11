@@ -20,17 +20,19 @@
 /* =========================================================== */
 
 	var aFileTypes = ["jPg", "tXT", "ppt", "doc", "xls", "pdf", "PNG"];
+	var iRequestCounter = 0, sFileName;
+	var oButton = new sap.m.Button({text: "start upload", press : fnUpload});
 
-	// create instance of UploadCollection
+	// Creates an instance of UploadCollection
 	var oUploadCollection = new sap.m.UploadCollection({
 		id : "UploadCollection",
 		maximumFilenameLength : 55,
-		maximumFileSize: 50,
+		maximumFileSize : 50,
 		multiple : true,
 		fileType : aFileTypes,
 		sameFilenameAllowed : true,
 		instantUpload : false,
-	// events
+		// events
 		change : fnChange,
 		fileDeleted : fnFileDeleted,
 		filenameLengthExceed : fnfilenameLengthExceed,
@@ -38,15 +40,28 @@
 		typeMissmatch : fnTypeMissmatch,
 		uploadComplete : fnUploadComplete,
 		beforeUploadStarts : fnBeforeUploadStarts
-		});
-
-	var oButton = new sap.m.Button({text: "start upload", press : fnUpload});
+	});
 
 	/* =========================================================== */
 	/* Handle UploadCollection Events                              */
 	/* =========================================================== */
 	function fnChange(oEvent) {
 		sap.m.MessageToast.show("Event change triggered");
+	}
+
+	function fnUpload(oEvent) {
+		oUploadCollection.upload();
+		sap.m.MessageToast.show("Upload has been started");
+	}
+
+	function fnBeforeUploadStarts(oEvent) {
+		sFileName = oEvent.getParameter("fileName");
+		iRequestCounter ++;
+		// Delays the beforeUploadStarts message in order to see the upload message
+		setTimeout(function() {
+			sap.m.MessageToast.show("Event beforeUploadStarts triggered, see log for more ...");
+		}, 2000);
+		jQuery.sap.log.info("Event beforeUploadStarts triggered for file " + sFileName);
 	}
 
 	function fnFileDeleted(oEvent) {
@@ -66,83 +81,55 @@
 	}
 
 	function fnUploadComplete(oEvent) {
-		// destroy old UploadCollection instance and create a new one
-		oPage.removeContent(oUploadCollection);
-		oUploadCollection.destroy();
-		// create instance of UploadCollection
-		oUploadCollection = new sap.m.UploadCollection({
-			maximumFilenameLength : 55,
-			maximumFileSize: 50,
-			multiple : true,
-			fileType : aFileTypes,
-			sameFilenameAllowed : true,
-			instantUpload : false,
-		// events
-			change : fnChange,
-			fileDeleted : fnFileDeleted,
-			filenameLengthExceed : fnfilenameLengthExceed,
-			fileSizeExceed : fnFileSizeExceed,
-			typeMissmatch : fnTypeMissmatch,
-			uploadComplete : fnUploadComplete,
-			beforeUploadStarts : fnBeforeUploadStarts
-			});
-		oPage.insertContent(oUploadCollection);
-		// delay the success message in order to see the 'Upload started' message
+		sFileName = oEvent.getParameter("files")[0].fileName;
+		// Delays the uploadComplete message in order to see the beforeUploadStarts message
 		setTimeout(function() {
-			sap.m.MessageToast.show("Event uploadComplete triggered")
+			sap.m.MessageToast.show("Event uploadComplete triggered, see log for more ...")
 		}, 4000);
-	}
-
-	function fnUpload(oEvent) {
-		oUploadCollection.upload();
-		sap.m.MessageToast.show("Upload has been started");
-	}
-
-	function fnBeforeUploadStarts(oEvent) {
-		var sHeaderParameterName = "timestamp";
-		if (!oEvent.getParameters().getHeaderParameter(sHeaderParameterName)) {
-			var oHeaderParameter = new sap.m.UploadCollectionParameter({
-				name: sHeaderParameterName,
-				value: jQuery.now()
-			});
-			oEvent.getParameters().addHeaderParameter(oHeaderParameter);
+		jQuery.sap.log.info("Event uploadComplete triggered for file " + sFileName);
+		if (iRequestCounter <= 1) {
+			setTimeout(function() {
+				// Destroys old UploadCollection instance and creates a new one
+				oPage.removeContent(oUploadCollection);
+				oUploadCollection.destroy();
+				// Creates an instance of UploadCollection
+				oUploadCollection = new sap.m.UploadCollection({
+					maximumFilenameLength : 55,
+					maximumFileSize : 50,
+					multiple : true,
+					fileType : aFileTypes,
+					sameFilenameAllowed : true,
+					instantUpload : false,
+					// events
+					change : fnChange,
+					fileDeleted : fnFileDeleted,
+					filenameLengthExceed : fnfilenameLengthExceed,
+					fileSizeExceed : fnFileSizeExceed,
+					typeMissmatch : fnTypeMissmatch,
+					uploadComplete : fnUploadComplete,
+					beforeUploadStarts : fnBeforeUploadStarts
+				});
+				oPage.insertContent(oUploadCollection);
+			}, 6000);
+			iRequestCounter = 0;
+		} else {
+			iRequestCounter --;
 		}
-		setTimeout(function () {
-			sap.m.MessageToast.show("BeforeUploadStarts event triggered.");
-		}, 2000);
 	}
-
-	// create instance of UploadCollection and set model
-	var oUploadCollection = new sap.m.UploadCollection({
-		maximumFilenameLength : 55,
-		maximumFileSize: 50,
-		multiple : true,
-		fileType : aFileTypes,
-		sameFilenameAllowed : true,
-		instantUpload : false,
-		// events
-		change : fnChange,
-		fileDeleted : fnFileDeleted,
-		filenameLengthExceed : fnfilenameLengthExceed,
-		fileSizeExceed : fnFileSizeExceed,
-		typeMissmatch : fnTypeMissmatch,
-		uploadComplete : fnUploadComplete,
-		beforeUploadStarts : fnBeforeUploadStarts
-		});
-
-	var oButton = new sap.m.Button({text: "start upload", press : fnUpload});
 
 	/* ============================================================	*/
 	/* Create Page                   								*/
 	/* ============================================================ */
-// as we use jQuery.sap.initMobile() we do not need to create an App and can put the page directly into the HTML document
-	var oPage = new sap.m.Page("page", {
-		title : "Test Page for sap.m.UploadCollection with Pending Uploading Files",
-		content : oUploadCollection,
-		footer : new sap.m.Bar({
-			contentMiddle: oButton })
-		}).placeAt("body");
-
+	// As jQuery.sap.initMobile() is used, it is not needed to create an app and the page can be put directly into the HTML document
+	var oPage = new sap.m.Page(
+			"page",
+			{
+				title : "Test Page for sap.m.UploadCollection with Upload Pending files",
+				content : oUploadCollection,
+				footer : new sap.m.Bar({
+					contentMiddle : oButton
+				})
+			}).placeAt("body");
 </script>
 
 </head>
