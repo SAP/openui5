@@ -49,7 +49,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		}
 	}});
 	
-	
+	/**
+	 * Sets count for the FacetFilter list
+	 * @param iCount - the counter to be set to
+	 */
 	FacetFilterItem.prototype.setCount = function(iCount) {
 		
 		 // App dev can still call setCounter on ListItemBase, so we have redundancy here.
@@ -57,6 +60,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		this.setProperty("counter", iCount);
 	};
 	
+	/**
+	 * Sets counter for the FacetFilter list
+	 * @param iCount - the counter to be set to
+	 */
 	FacetFilterItem.prototype.setCounter = function(iCount) {
 		
 		this.setProperty("count", iCount);
