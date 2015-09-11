@@ -3669,8 +3669,9 @@
 				// redefine AJAX call
 				jQuery.ajax = function( url, options ){
 					jQuery.sap.measure.start(url.url, "Request for " + url.url);
-					fnAjax.apply(this,arguments);
+					var oXhr = fnAjax.apply(this,arguments);
 					jQuery.sap.measure.end(url.url);
+					return oXhr;
 				};
 			} else if (fnAjax) {
 				jQuery.ajax = fnAjax;
