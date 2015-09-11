@@ -274,7 +274,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 	
 	RadioButton.prototype.getTooltipDomRefs = function() {
-		return this.$().children();
+		return this.getDomRef().children;
 	};
 
 	RadioButton.prototype._changeGroupName = function(sNewGroupName, sOldGroupName) {

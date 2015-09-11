@@ -136,7 +136,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// update ARIA information of RadioButtons
 		for (var i = 0; i < this.aRBs.length; i++) {
-			this.aRBs[i].$().attr("aria-posinset", i + 1).attr("aria-setsize", this.aRBs.length);
+			this.aRBs[i].getDomRef().setAttribute("aria-posinset", i + 1);
+			this.aRBs[i].getDomRef().setAttribute("aria-setsize", this.aRBs.length);
 		}
 	};
 
