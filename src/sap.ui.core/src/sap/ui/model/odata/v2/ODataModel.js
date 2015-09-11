@@ -3716,10 +3716,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 				for (var i = 0; i < oEntityMetadata.property.length; i++) {
 					var oPropertyMetadata = oEntityMetadata.property[i];
 	
-					var aType = oPropertyMetadata.type.split('.');
 					var bPropertyInArray = jQuery.inArray(oPropertyMetadata.name,vProperties) > -1;
 					if (!vProperties || bPropertyInArray)  {
-						oEntity[oPropertyMetadata.name] = that._createPropertyValue(aType);
+						oEntity[oPropertyMetadata.name] = that._createPropertyValue(oPropertyMetadata.type);
 						if (bPropertyInArray) {
 							vProperties.splice(vProperties.indexOf(oPropertyMetadata.name),1);
 						}
@@ -3784,21 +3783,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 	/**
 	 * Return value for a property. This can also be a ComplexType property
-	 * @param {array} aType Type splitted by dot and passed as array
+	 * @param {string} full qualified Type name
 	 * @returns {any} vValue The property value
 	 * @private
 	 */
-	ODataModel.prototype._createPropertyValue = function(aType) {
-		var sNamespace = aType[0];
-		var sTypeName = aType[1];
+	ODataModel.prototype._createPropertyValue = function(sType) {
+		var aTypeName = this.oMetadata._splitName(sType); // name, namespace
+		var sNamespace = aTypeName[1];
+		var sTypeName = aTypeName[0];
 		if (sNamespace.toUpperCase() !== 'EDM') {
 			var oComplexType = {};
 			var oComplexTypeMetadata = this.oMetadata._getObjectMetadata("complexType",sTypeName,sNamespace);
-			jQuery.sap.assert(oComplexTypeMetadata, "Compley type " + sTypeName + " not found in the metadata !");
+			jQuery.sap.assert(oComplexTypeMetadata, "Complex type " + sType + " not found in the metadata !");
 			for (var i = 0; i < oComplexTypeMetadata.property.length; i++) {
 				var oPropertyMetadata = oComplexTypeMetadata.property[i];
-				aType = oPropertyMetadata.type.split('.');
-				oComplexType[oPropertyMetadata.name] = this._createPropertyValue(aType);
+				oComplexType[oPropertyMetadata.name] = this._createPropertyValue(oPropertyMetadata.type);
 			}
 			return oComplexType;
 		} else {
