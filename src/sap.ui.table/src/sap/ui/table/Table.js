@@ -5743,15 +5743,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 		var $this = this.$();
 		if (!$this.get(0)) {
-			return;
+			return iMinRowCount;
 		}
 
 		// usage of getBoundingClientRect() for retrieving subpixel correct value of the height. Necessary for zooming/flickering bugs in Chrome
 		var iControlHeight = $this.get(0).getBoundingClientRect().height;
 		var iContentHeight = $this.find('.sapUiTableCCnt').outerHeight();
 
-		// Determine default row height.
-		var iRowHeight = $this.find("tr:not(.sapUiAnalyticalTableSum) > td").outerHeight();
+		var aRows = this.getRows();
+		if (!aRows.length) {
+			return iMinRowCount;
+		}
+
+		var oDomRefs = aRows[0].getDomRefs(true);
+		var $row = oDomRefs.rowFixedPart || oDomRefs.rowScrollPart;
+		var iRowHeight = $row.outerHeight();
 
 		// No rows displayed when visible row count == 0, no row height can be determined, therefore we set standard row height
 		if (!iRowHeight) {
