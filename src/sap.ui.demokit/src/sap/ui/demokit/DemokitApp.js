@@ -493,7 +493,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                     press: function() {
                         oDialog.removeAllContent();
                         oDialog.addContent(fnParseLibInformationCredits());
-                       
+
                         oBtnBack.setVisible(true);
                     }
                 });
@@ -501,20 +501,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 var oDialogInitialPageContent = new sap.ui.commons.FormattedTextView();
                 oDialogInitialPageContent.setContent(sAboutDialogContentHtml, [oVersionInfoDialog, oLinkToVersionChangeLog, oLinkToVersionInfo]);
                 oDialogInitialPageContent.addStyleClass("extraLeftPadding");
-                
+
                 var oDialogInitialPageContentOnlyForUI5 = new sap.ui.commons.FormattedTextView();
                 oDialogInitialPageContentOnlyForUI5.setContent(sAboutDialogContentHtmlOnlyForUI5, [oLinkToCredits]);
                 oDialogInitialPageContentOnlyForUI5.addStyleClass("extraLeftPadding");
 
-              //check if it is on http://veui5infra.dhcp.wdf.sap.corp:8080/demokit/ or in openui5.hana.ondemand.com
-                var bIsUI5 = sap.ui.getVersionInfo().gav.slice(0,19) == "com.sap.ui5:demokit";
-                if (bIsUI5) {
+              //check if it is on http://veui5infra.dhcp.wdf.sap.corp:8080/sapui5-sdk-dist/ or http://veui5infra.dhcp.wdf.sap.corp:8080/demokit/ or openui5.hana.ondemand.com
+                var sVersionInfoGav = sap.ui.getVersionInfo().gav.slice(0,24);
+                if (sVersionInfoGav == "com.sap.openui5.dist:sdk") {
                     var oLayout = new sap.ui.layout.VerticalLayout({
-                        content : [oSAPUI5Logo, oDialogInitialPageContent, oDialogInitialPageContentOnlyForUI5]
+                        content : [oSAPUI5Logo, oDialogInitialPageContent]
                     });
                 } else {
                     var oLayout = new sap.ui.layout.VerticalLayout({
-                        content : [oSAPUI5Logo, oDialogInitialPageContent]
+                        content : [oSAPUI5Logo, oDialogInitialPageContent, oDialogInitialPageContentOnlyForUI5]
                     });
                 }
 
