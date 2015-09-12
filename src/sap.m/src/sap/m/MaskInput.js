@@ -562,7 +562,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	/**
 	 * Places the cursor on a given position (zero based).
 	 * @param {int} iPos The position the cursor to be placed on
-	 * @returns {jQuery} The jQuery object of <code>MaskInput</code>
 	 * @private
 	 */
 	function setCursorPosition(iPos) {
@@ -937,14 +936,14 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	/**
 	 * Determines if a given string contains characters that will not comply to the mask input rules.
 	 *
-	 * @param {string} sInput
-	 * @returns {boolean}
+	 * @param {string} sInput the input
+	 * @returns {boolean} True if the whole <code>sInput</code> passes the validation, false otherwise.
 	 * @private
 	 */
 	function isValidInput(sInput) {
 		var iLimit = sInput.length;
 		for (var i = 0; i < iLimit; i++) {
-			var sChar = this._sOldInputValue[i];
+			var sChar = sInput[i];
 
 			/* consider the input invalid if any character except the placeholder symbol does not comply to the mask
 			 rules of the corresponding position or if in case there is no rule, if the character is not exactly the same
