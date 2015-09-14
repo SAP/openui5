@@ -18,6 +18,17 @@ sap.ui.require(
 			}
 		});
 
+		QUnit.test("Should return empty string if no date is given", function(assert) {
+			var sFormattedDate = oFormatter.format(null);
+			assert.strictEqual(sFormattedDate, "");
+		});
+
+		QUnit.test("Should return time if date from today", function(assert) {
+			var oDate = new Date(2015, 2, 14, 12, 5, 0, 0);
+			var sFormattedDate = oFormatter.format(oDate);
+			assert.strictEqual(sFormattedDate, "12:05 PM");
+		});
+
 		QUnit.test("Should return 'Yesterday' if date from yesterday", function(assert) {
 			var oDate = new Date(2015, 2, 13);
 			var sFormattedDate = oFormatter.format(oDate);
