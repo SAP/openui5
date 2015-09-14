@@ -4,13 +4,17 @@
 	xmlns="sap.m">
 	<Page
 		id="page" >
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Master" headerRole="Region" headerLabel="Header" subHeaderRole="Search" subHeaderLabel="Object Search" contentRole="Navigation" contentLabel="Items"></PageAccessibleLandmarkInfo>
+		</landmarkInfo>
 		<customHeader>
 			<Toolbar>
-				<Button icon="sap-icon://drop-down-list" id="viewSettingsButton" press="onOpenViewSettings" />
-				<ToolbarSpacer/>
-				<Title text="Entities ({entity>/entityCount})" />
-				<ToolbarSpacer/>
-				<Button icon="sap-icon://action-settings" tooltip="{i18n>settings}" press="onOpenAppSettings" />
+					<Button icon="sap-icon://drop-down-list" id="viewSettingsButton" press="onOpenViewSettings" />
+					<ToolbarSpacer/>
+					<Title text="Entities ({entity>/entityCount})" />
+					<ToolbarSpacer/>
+					<Button icon="sap-icon://action-settings" tooltip="{i18n>settings}" press="onOpenAppSettings" />
+
 			</Toolbar>
 		</customHeader>
 		<subHeader>

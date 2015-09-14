@@ -10,6 +10,9 @@
 		class="sapUiFioriObjectPage"
 		navButtonPress="onNavBack"
 		id="page">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>
+		</landmarkInfo>
 		<headerContent>
 			<Button
 			    id="toggleFullScreenBtn"
