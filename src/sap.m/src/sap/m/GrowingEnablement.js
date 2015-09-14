@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.m.GrowingEnablement
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
-	function(jQuery, BaseObject) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/NumberFormat'],
+	function(jQuery, BaseObject, NumberFormat) {
 	"use strict";
 
 
@@ -311,7 +311,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 * -> maximum items to be displayed
 		 */
 		_getListItemInfo : function() {
-			return ("[ " + this._iRenderedDataItems + " / " + this._oControl.getMaxItemsCount() + " ]");
+			return ("[ " + this._iRenderedDataItems + " / " + NumberFormat.getFloatInstance().format(this._oControl.getMaxItemsCount()) + " ]");
 		},
 
 		/**
