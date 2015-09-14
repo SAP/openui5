@@ -71,7 +71,6 @@
 						}"
 						numberUnit="EUR"
 						press="handleEntryListPress"
-						iconInset="false"
 						iconDensityAware="false" >
 						<attributes>
 							<ObjectAttribute
