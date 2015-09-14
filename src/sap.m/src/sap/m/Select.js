@@ -521,7 +521,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 			var that = this,
 				oPicker = new Popover({
-				showArrow: false,
 				showHeader: false,
 				placement: sap.m.PlacementType.Vertical,
 				offsetX: 0,
