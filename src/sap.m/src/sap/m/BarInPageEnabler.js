@@ -3,8 +3,8 @@
  */
 
 // Provides helper sap.m.BarInPageEnabler
-sap.ui.define(['sap/ui/base/Object'],
-	function(Object) {
+sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo'],
+	function(Object, PageAccessibleLandmarkInfo) {
 	"use strict";
 
 	var mContexts = {
@@ -112,6 +112,37 @@ sap.ui.define(['sap/ui/base/Object'],
 			return this;
 		},
 
+		/**
+		 * Sets landmarks members to the bar instance
+		 *
+		 * @param bHasLandmarkInfo {boolean} indicates that bar has landmarkinfo
+		 * @param sContext {string} context of the bar
+		 * @private
+		 */
+		_setLandmarkInfo: function (bHasLandmarkInfo, sContext) {
+			this._bHasLandmarkInfo = bHasLandmarkInfo;
+
+			if (bHasLandmarkInfo) {
+				this._sLandmarkContext = sContext;
+			} else {
+				this._sLandmarkContext = null;
+			}
+		},
+
+		/**
+		 * Writes landmarks info to the bar
+		 *
+		 * @private
+		 */
+		_writeLandmarkInfo: function (oRm, oControl) {
+			if (oControl._bHasLandmarkInfo) {
+				PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, oControl.getParent(), oControl._sLandmarkContext);
+			} else {
+				oRm.writeAccessibilityState(oControl, {
+					role: "toolbar"
+				});
+			}
+		},
 
 		//Rendering
 		/**

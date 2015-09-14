@@ -40,6 +40,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 
 			// simple types and enums
 			"sap.ui.core.AccessibleRole",
+			"sap.ui.core.AccessibleLandmarkRole",
 			"sap.ui.core.BarColor",
 			"sap.ui.core.CalendarType",
 			"sap.ui.core.CSSColor",
@@ -121,13 +122,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.ui.core.AccessibleRole = {
-
-		/**
-		 * No explicit role is applicable. An AccessibleName should be specified for the control.
-		 *
-		 * @public
-		 */
-		None : "None",
 
 		/**
 		 * A message with an alert or error information.
@@ -508,7 +502,82 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 		TreeItem : "TreeItem"
 
 	};
+	
+	/**
+	 * Defines the accessible landmark roles for ARIA support. This enumeration is used with the AccessibleRole control property.
+	 * For more information, goto "Roles for Accessible Rich Internet Applications (WAI-ARIA Roles)" at the www.w3.org homepage.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.core.AccessibleLandmarkRole = {
 
+		/**
+		 * No explicit role is applicable.
+		 * 
+		 * The interpretation of this value depends on the control / element which defines a property with this type.
+		 * Normally this value means that no accessible landmark should be written.
+		 *
+		 * @public
+		 */
+		None : "None",
+
+		/**
+		 * Represents the ARIA role <code>banner</code>.
+		 * 
+		 * A banner usually appears at the top of the page and typically spans the full width.
+		 *
+		 * @public
+		 */
+		Banner : "Banner",
+
+		/**
+		 * Represents the ARIA role <code>main</code>.
+		 * 
+		 * The main content of a page.
+		 *
+		 * @public
+		 */
+		Main : "Main",
+
+		/**
+		 * Represents the ARIA role <code>region</code>.
+		 * 
+		 * A section of a page, that is important enough to be included in a page summary or table of contents.
+		 *
+		 * @public
+		 */
+		Region : "Region",
+
+		/**
+		 * Represents the ARIA role <code>navigation</code>.
+		 * 
+		 * A region that contains a collection of items and objects that, as a whole, combine to create a navigation facility.
+		 *
+		 * @public
+		 */
+		Navigation : "Navigation",
+
+		/**
+		 * Represents the ARIA role <code>search</code>.
+		 * 
+		 * A region that contains a collection of items and objects that, as a whole, combine to create a search facility.
+		 *
+		 * @public
+		 */
+		Search : "Search",
+
+		/**
+		 * Represents the ARIA role <code>complementary</code>.
+		 * 
+		 * A section of the page, designed to be complementary to the main content at a similar level in the DOM hierarchy.
+		 *
+		 * @public
+		 */
+		Complementary : "Complementary"
+
+	};
 
 	/**
 	 * Configuration options for the colors of a progress bar

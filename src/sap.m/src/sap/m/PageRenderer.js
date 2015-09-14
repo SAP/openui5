@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/m/PageAccessibleLandmarkInfo'],
+	function(jQuery, PageAccessibleLandmarkInfo) {
 	"use strict";
 
 
@@ -66,22 +66,26 @@ sap.ui.define(['jquery.sap.global'],
 		if (sTooltip) {
 			rm.writeAttributeEscaped("title", sTooltip);
 		}
+		
+		PageAccessibleLandmarkInfo._writeLandmarkInfo(rm, oPage, "root");
 	
 		rm.write(">");
 	
 		//render headers
-		this.renderBarControl(rm, oHeader, {
+		this.renderBarControl(rm, oPage, oHeader, {
 			context : "header",
 			styleClass : "sapMPageHeader"
 		});
 	
-		this.renderBarControl(rm, oSubHeader, {
-			context : "subheader",
+		this.renderBarControl(rm, oPage, oSubHeader, {
+			context : "subHeader",
 			styleClass : "sapMPageSubHeader"
 		});
 	
 		// render child controls
-		rm.write('<section id="' + oPage.getId() + '-cont">');
+		rm.write('<section id="' + oPage.getId() + '-cont"');
+		PageAccessibleLandmarkInfo._writeLandmarkInfo(rm, oPage, "content");
+		rm.write('>');
 		
 		if (oPage._bUseScrollDiv) { // fallback to old rendering
 			rm.write('<div id="' + oPage.getId() + '-scroll" class="sapMPageScroll' + sEnableScrolling + '">');
@@ -101,7 +105,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write("</section>");
 	
 		// render footer Element
-		this.renderBarControl(rm, oFooter, {
+		this.renderBarControl(rm, oPage, oFooter, {
 			context : "footer",
 			styleClass : "sapMPageFooter"
 		});
@@ -116,13 +120,15 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.m.IBar} oBarControl the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {object} oOptions object containing the tag, contextClass and styleClass added to the bar
 	 */
-	PageRenderer.renderBarControl = function (rm, oBarControl, oOptions) {
+	PageRenderer.renderBarControl = function (rm, oPage, oBarControl, oOptions) {
 		if (!oBarControl) {
 			return;
 		}
 	
-		oBarControl.applyTagAndContextClassFor(oOptions.context);
+		oBarControl.applyTagAndContextClassFor(oOptions.context.toLowerCase());
 	
+		oBarControl._setLandmarkInfo(oPage.getLandmarkInfo(), oOptions.context);
+
 		oBarControl.addStyleClass(oOptions.styleClass);
 	
 		rm.renderControl(oBarControl);

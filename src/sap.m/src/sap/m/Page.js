@@ -158,6 +158,13 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 					headerContent: {type: "sap.ui.core.Control", multiple: true, singularName: "headerContent"},
 
 					/**
+					 * Accessible landmark settings to be applied on the containers of the <code>sap.m.Page</code> control.
+					 * 
+					 * If not set, no landmarks will be written.
+					 */
+					landmarkInfo : {type : "sap.m.PageAccessibleLandmarkInfo", multiple : false},
+
+					/**
 					 * A header bar which is managed internally by the Page control
 					 */
 					_internalHeader: {type: "sap.m.IBar", multiple: false, visibility: "hidden"}

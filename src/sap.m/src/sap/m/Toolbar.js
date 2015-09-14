@@ -706,6 +706,21 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 */
 	Toolbar.prototype.applyTagAndContextClassFor = BarInPageEnabler.prototype.applyTagAndContextClassFor;
 
+	/**
+	 * Sets landmarks members to the bar instance
+	 *
+	 * @param bHasLandmarkInfo {boolean} indicates that bar has landmarkinfo
+	 * @param sContext {string} context of the bar
+	 * @private
+	 */
+	Toolbar.prototype._setLandmarkInfo = BarInPageEnabler.prototype._setLandmarkInfo;
+
+	/**
+	 * Writes landmarks info to the bar
+	 *
+	 * @private
+	 */
+	Toolbar.prototype._writeLandmarkInfo = BarInPageEnabler.prototype._writeLandmarkInfo;
 
 	return Toolbar;
 

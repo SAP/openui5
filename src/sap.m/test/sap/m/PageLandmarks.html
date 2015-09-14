@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>sap.m.Page - Accessible Landmarks</title>
+<script src="../../../resources/sap-ui-core.js"
+		id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-theme="sap_bluecrystal"></script>
+<script>
+	var oApp = new sap.m.App();
+	oApp.placeAt("body");
+	
+	var oDefaultLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo();
+	var oCustomLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
+		rootRole: sap.ui.core.AccessibleLandmarkRole.Region,
+		rootLabel: "Master",
+		contentRole: sap.ui.core.AccessibleLandmarkRole.None
+	});
+
+	var oPage = new sap.m.Page({
+		title : "A Page",
+		content : [
+			new sap.m.Button({
+				text: "Clear Landmarks",
+				press: function(){
+					oPage.setLandmarkInfo(null);
+				}
+			}),
+			new sap.m.Button({
+				text: "Add Default Landmarks",
+				press: function(){
+					oPage.setLandmarkInfo(oDefaultLandmarkInfo);
+				}
+			}),
+			new sap.m.Button({
+				text: "Add Custom Landmarks",
+				press: function(){
+					oPage.setLandmarkInfo(oCustomLandmarkInfo);
+				}
+			})
+		]
+	});
+	oApp.addPage(oPage);
+</script>
+</head>
+<body id="body" class="sapUiBody" role="application" >
+</body>
+</html>
