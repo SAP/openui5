@@ -135,6 +135,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.destroyItems();
 			this.updateAggregation("items");
 			this._bDataAvailable = true;
+			this.synchronizeSelection();
 		};
 
 		/**
