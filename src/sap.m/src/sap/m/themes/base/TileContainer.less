@@ -83,7 +83,7 @@
 }
 
 .sapMTC .sapMTCBlind {
-	background-color: @sapUiWhite;
+	background-color: @sapUiGroupContentBackground;
 	opacity: 0.4;
 	position:absolute;
 	top:0px;
@@ -204,24 +204,24 @@ html[dir=rtl] .sapMTC .sapMCustomTile{
 .sapMTC.sapMTCEditable .sapMTile .sapMTCRemove {
 	background-color: @sapUiElement;
 	display:block;
-	height:24px;
-	width:25px;
+	height:2rem;
+	width:2rem;
 	border-radius: 50%;
 	font-family:"SAP-icons";
-	font-size: 20px;
+	font-size: 16px;
 	color: @sapUiInvertedElement;
-	padding-top: 0px;
-	padding-left: 2px;
+	padding-top: 0.375rem;
+	padding-left: 0.5rem;
 	box-sizing:border-box;
-	margin-top : -0.5em;
-	margin-left : -0.5em;
+	margin-top : -0.5rem;
+	margin-left : -0.5rem;
 	box-shadow: 0px 1px 3px fade(@sapUiDarkShadowTint,60);
 	z-index:1;
 	cursor:default;
 }
 
 html[data-sap-ui-browser^="ff"] .sapMTC.sapMTCEditable .sapMTile .sapMTCRemove {
-	width: 22px;
+	width: 2rem;
 }
 
 .sapMTC.sapMTCEditable .sapMTile .sapMTCNoRemove {
