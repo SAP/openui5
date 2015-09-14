@@ -700,6 +700,7 @@
 			ok(iCount === 1, "request performed");
 			equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 			oTxt.destroy();
+			oModel.detachBatchRequestCompleted(fnCheck);
 			start();
 		}
 		oModel.attachBatchRequestCompleted(this, fnCheck);
@@ -728,6 +729,8 @@
 					if (iCount === 2) {
 						ok(false, "request performed but should not go out as data already loaded by read request before");
 					}
+					oTxt.destroy();
+					oModel.detachBatchRequestCompleted(fnCheck);
 					start();
 				}
 				oModel.attachBatchRequestCompleted(
@@ -787,6 +790,7 @@
 			ok(oTable.getBinding('rows').getLength() >= 2,
 					"Category size check");
 			oTable.destroy();
+			oModel.detachBatchRequestCompleted(fnCheck);
 			start();
 
 		}
@@ -804,7 +808,7 @@
 		}
 		var oTable = initTable(mEntities);
 		oTable.placeAt("target1");
-
+		sap.ui.getCore().applyChanges();
 		oTable.setModel(oModel);
 		oTable.bindRows({
 			path : mEntities.categories.collection
@@ -829,6 +833,7 @@
 				equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
+				oModel.detachBatchRequestCompleted(fnCheck);
 				start();
 			}
 		}
@@ -873,6 +878,7 @@
 				equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
+				oModel.detachBatchRequestCompleted(fnCheck);
 				start();
 			}
 		}
@@ -916,6 +922,7 @@
 				equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
+				oModel.detachBatchRequestCompleted(fnCheck);
 				start();
 			}
 		}
