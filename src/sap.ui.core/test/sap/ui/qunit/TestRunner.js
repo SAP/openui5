@@ -160,6 +160,7 @@
 				this.runTest(sTestPage, true, that).then(function(oResult) {
 					var nBarwidth = parseFloat(jQuery("div#innerBar")[0].style.width, 10);
 					var sNewwidth = nBarwidth + nBarStep + "%";
+					jQuery("div#innerBar").text(Math.round(nBarwidth + nBarStep) + "%");
 					jQuery("div#innerBar").width(sNewwidth);
 					if (parseInt(jQuery("div#reportingHeader span.failed").text()) > 0) {
 						jQuery("div#innerBar")[0].style.backgroundColor = '#ed866f';
