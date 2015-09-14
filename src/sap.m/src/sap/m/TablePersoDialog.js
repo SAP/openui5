@@ -165,8 +165,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 		this._fnHandleResize = function() {
 			// Check if dialog is rendered
 			if (that._oDialog) {
-				var $dialogCont = jQuery("#" + that._oDialog.getId() + "-cont");
-				var $scrollCont = jQuery("#" + that._oDialog.getId() + "-scrollCont");
+				var $dialogCont = that._oDialog.$("cont");
+				var $scrollCont = that._oDialog.$("scrollCont");
 				if ($dialogCont.children().length > 0) {
 					var iContentHeight = $dialogCont.children()[0].clientHeight;
 					var iPaddingHeight = $scrollCont[0].clientHeight - iContentHeight;

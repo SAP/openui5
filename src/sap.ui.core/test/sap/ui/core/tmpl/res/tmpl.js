@@ -22,7 +22,7 @@
 		// find all templates and create <pre> elements
 		jQuery("div[data-type]").each(function(iIndex, oDiv) {
 			var sTemplate = jQuery(oDiv).html();
-			sTemplate = jQuery.sap.escapeHTML(sTemplate);
+			sTemplate = jQuery.sap.encodeHTML(sTemplate);
 			var $pre = jQuery("<pre>").css("display", "none").html(sTemplate).insertAfter(oDiv);
 			jQuery("<button>").css({
 				"position": "absolute",

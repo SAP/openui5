@@ -2009,7 +2009,7 @@ FacetFilter.prototype._addResetToSummary = function(oSummaryBar) {
 
 	       var oDomRef = this.getDomRef("head");
 	       var iScrollLeft = oDomRef.scrollLeft;
-		if (!!!sap.ui.Device.browser.internet_explorer && this._bRtl) {
+		if (!sap.ui.Device.browser.internet_explorer && this._bRtl) {
 			iDelta = -iDelta;
 		} // RTL lives in the negative space
 

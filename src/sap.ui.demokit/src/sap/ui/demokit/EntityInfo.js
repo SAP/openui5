@@ -1,5 +1,5 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
 // Provides reuse functionality for reading documentation from metamodel entities

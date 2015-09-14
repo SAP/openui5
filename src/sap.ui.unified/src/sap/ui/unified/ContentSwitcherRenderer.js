@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapUiUfdCSwitcher");
-		oRm.addClass("sapUiUfdCSwitcherAnimation" + sAnimation);
+		oRm.addClass("sapUiUfdCSwitcherAnimation" + jQuery.sap.encodeHTML(sAnimation));
 		oRm.writeClasses();
 		oRm.write(">");
 		

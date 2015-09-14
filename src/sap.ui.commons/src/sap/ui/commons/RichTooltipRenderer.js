@@ -91,8 +91,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		var sImage = oRichTooltip.getImageSrc();
 		if (sImage) {
 			var sAltText = oRichTooltip.getImageAltText();
-			rm.write('<img id="' + sId + '-image" alt="' + sAltText + '" class="sapUiRttImage" src="');
-			rm.writeEscaped(sImage);
+			rm.write('<img id="' + sId + '-image" class="sapUiRttImage"');
+			rm.writeAttributeEscaped('alt', sAltText);
+			rm.writeAttributeEscaped('src', sImage);
 			rm.write('"/>');
 		}
 		

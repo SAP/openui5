@@ -148,7 +148,7 @@ sap.ui.define(['jquery.sap.global'],
 		}
 	
 		// header title text
-		var text = jQuery.sap.escapeHTML(oControl.getText());
+		var text = jQuery.sap.encodeHTML(oControl.getText());
 		if (!text) {
 			text = "&nbsp;";
 		}

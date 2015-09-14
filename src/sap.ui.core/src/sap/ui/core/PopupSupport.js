@@ -164,15 +164,15 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/Device', './Element', './Control'],
 				sName = mParameters.that.getMetadata().getName(),
 				oFocusDomRef;
 
-			if ((!!!mParameters.$FocusablesContent ||  !!!mParameters.$FocusablesFooter) ||
+			if ((!mParameters.$FocusablesContent ||  !mParameters.$FocusablesFooter) ||
 				 (!mParameters.$FocusablesContent.length && !mParameters.$FocusablesFooter.length)) {
 				// if there is neither content nor footer content (yet) simply do nothing
 				return;
 			}
 			/*
 			 * It's not needed to check if buttons are set since
-			 * jQuery(":focusable", jQuery.sap.byId(this.getId() + "-fhfe")) or
-			 * jQuery(":sapFocusable", jQuery.sap.byId(this.getId() + "-fhfe"))
+			 * jQuery(":focusable", this.$("fhfe")) or
+			 * jQuery(":sapFocusable", this.$("fhfe"))
 			 * returns an empty array. Therefore these elements won't be found
 			 * via 'lastFocusableDomRef()'
 			 */

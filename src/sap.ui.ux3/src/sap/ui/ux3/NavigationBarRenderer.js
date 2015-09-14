@@ -95,11 +95,11 @@ sap.ui.define(['jquery.sap.global'],
 				
 				var tooltip = item.getTooltip_AsString();
 				if (tooltip) {
-					oRm.write(" title='" + jQuery.sap.escapeHTML(tooltip) + "'");
+					oRm.write(" title='" + jQuery.sap.encodeHTML(tooltip) + "'");
 				}
 			
 				oRm.write(">");
-				oRm.write(jQuery.sap.escapeHTML(item.getText()));
+				oRm.write(jQuery.sap.encodeHTML(item.getText()));
 				oRm.write("</a></li>");
 			}
 		}
