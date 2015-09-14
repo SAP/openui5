@@ -2,83 +2,80 @@
 /* CSS for control sap.m/ActionSheet.control     */
 /* BlueCrystal theme                             */
 /* ============================================= */
-.sapMActionSheet.sapMActionSheetMixedButtons button.sapMActionSheetButtonNoIcon > .sapMBtnInner > span.sapMBtnContent {
+.sapMActionSheetMixedButtons .sapMActionSheetButtonNoIcon .sapMBtnContent {
 	margin-left: 1.625rem;
 }
 
-.sapMActionSheet button.sapMActionSheetButton > .sapMBtnInner {
+.sapMActionSheetButton > .sapMBtnInner {
 	text-align: start;
 }
 
-html[data-sap-ui-browser^=ie] .sapMActionSheet button.sapMActionSheetButton > .sapMBtnInner,
-html[data-sap-ui-browser^=ed] .sapMActionSheet button.sapMActionSheetButton > .sapMBtnInner {
+html[data-sap-ui-browser^=ie] .sapMActionSheetButton > .sapMBtnInner,
+html[data-sap-ui-browser^=ed] .sapMActionSheetButton > .sapMBtnInner {
 	text-align: left;
 }
 
-html[dir=rtl][data-sap-ui-browser^=ie] .sapMActionSheet button.sapMActionSheetButton > .sapMBtnInner,
-html[dir=rtl][data-sap-ui-browser^=ed] .sapMActionSheet button.sapMActionSheetButton > .sapMBtnInner {
+html[dir=rtl][data-sap-ui-browser^=ie] .sapMActionSheetButton > .sapMBtnInner,
+html[dir=rtl][data-sap-ui-browser^=ed] .sapMActionSheetButton > .sapMBtnInner {
 	text-align: right;
 }
 
-.sapMActionSheet button.sapMActionSheetButton > .sapMBtnInner.sapMBtnTransparent .sapUiIcon {
+.sapMActionSheetButton > .sapMBtnInner.sapMBtnTransparent .sapUiIcon {
 	color: @sapUiButtonFooterTextColor;
 	text-shadow: none;
-}
-
-.sapMDialog.sapMActionSheetDialog.sapUiPopupWithPadding .sapMDialogScrollCont {
-	padding: 0;
 }
 
 /* ====== BEGIN ====== */
 /*Style for ActionSheet shown as a dialog sliding in from bottom*/
 /* ====== ====== ===== */
-.sapMDialog.sapMActionSheetDialog.sapMDialogPhone {
+.sapMDialog.sapMActionSheetDialog {
 	background-color: transparent;
 	border-radius: 0;
 	box-shadow: none;
 	border: none;
 }
-.sapMDialog.sapMActionSheetDialog.sapMDialogPhone > section {
+
+.sapMDialog.sapMActionSheetDialog > section {
 	border-radius: 0;
-	background-color: sapUiFooterBackground;
+	background-color: @sapUiFooterBackground;
 }
 
-.sapMActionSheetDialogWithTitle.sapMActionSheetDialog.sapMDialogPhone > section {
+.sapMActionSheetDialogWithTitle > section {
 	-webkit-box-shadow: 0px -20px 30px 2px fade(@sapUiDarkShadowTint, 15);
 	-moz-box-shadow: 0px -20px 30px 2px fade(@sapUiDarkShadowTint, 15);
 	box-shadow: 0px -20px 30px 2px fade(@sapUiDarkShadowTint, 15);
 }
 
-.sapMActionSheetDialog.sapMDialogPhone .sapMActionSheet button.sapMActionSheetButton {
+.sapMActionSheetDialog .sapMActionSheetButton {
 	width: 100%;
 	padding-left: 0.25rem;
 	padding-right: 0.25rem;
 }
 
-.sapMActionSheetDialog.sapMDialogPhone .sapMActionSheet button.sapMActionSheetButton > .sapMBtnInner {
+.sapMActionSheetDialog .sapMBtnInner {
 	color: @sapUiButtonFooterTextColor;
 	text-shadow: 0 -0.0625rem 0 fade(@sapUiDarkShadowTint, 60);
 	box-sizing: border-box;
 	vertical-align: top;
 }
 
-.sapMActionSheetDialog.sapMDialogPhone .sapMActionSheet button.sapMActionSheetButton.sapMBtnAccept > .sapMBtnInner,
-.sapMActionSheetDialog.sapMDialogPhone .sapMActionSheet button.sapMActionSheetButton.sapMBtnReject > .sapMBtnInner {
+.sapMActionSheetDialog .sapMBtnAccept > .sapMBtnInner,
+.sapMActionSheetDialog .sapMBtnReject > .sapMBtnInner {
 	border-bottom: none;
-} 
+}
 
-.sapMActionSheetDialog.sapMDialogPhone .sapMActionSheet button.sapMActionSheetCancelButton > .sapMBtnInner {
+.sapMActionSheetDialog .sapMActionSheetCancelButton > .sapMBtnInner {
 	text-align: center;
 }
 
-.sapMActionSheetDialog.sapMDialogPhone .sapMActionSheet button.sapMActionSheetCancelButton > .sapMBtnInner {
+.sapMActionSheetDialog .sapMActionSheetCancelButton > .sapMBtnInner {
 	box-shadow: none;
 	font-weight: normal;
 	border-radius: 0;
 	vertical-align: top;
 }
 
-.sapMActionSheetDialog.sapMDialogPhone > .sapMIBar.sapMHeader-CTX{
+.sapMActionSheetDialog > .sapMIBar.sapMHeader-CTX {
 	background: transparent;
 	box-shadow: none;
 	-webkit-box-shadow: none;
@@ -87,21 +84,21 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapMActionSheet button.sapMActionSheetBu
 	text-shadow: 0 -0.0625rem 0 fade(@sapUiDarkShadowTint, 60);
 }
 
-.sapMActionSheetDialog.sapMDialogPhone > .sapMBar.sapMHeader-CTX > .sapMBarMiddle {
+.sapMActionSheetDialog > .sapMBar.sapMHeader-CTX > .sapMBarMiddle {
 	text-align: start;
 }
 
-html[data-sap-ui-browser^=ie] .sapMActionSheetDialog.sapMDialogPhone > .sapMBar.sapMHeader-CTX > .sapMBarMiddle,
-html[data-sap-ui-browser^=ed] .sapMActionSheetDialog.sapMDialogPhone > .sapMBar.sapMHeader-CTX > .sapMBarMiddle {
+html[data-sap-ui-browser^=ie] .sapMActionSheetDialog > .sapMBar.sapMHeader-CTX > .sapMBarMiddle,
+html[data-sap-ui-browser^=ed] .sapMActionSheetDialog > .sapMBar.sapMHeader-CTX > .sapMBarMiddle {
 	text-align: left;
 }
 
-html[dir=rtl][data-sap-ui-browser^=ie] .sapMActionSheetDialog.sapMDialogPhone > .sapMBar.sapMHeader-CTX > .sapMBarMiddle,
-html[dir=rtl][data-sap-ui-browser^=ed] .sapMActionSheetDialog.sapMDialogPhone > .sapMBar.sapMHeader-CTX > .sapMBarMiddle {
+html[dir=rtl][data-sap-ui-browser^=ie] .sapMActionSheetDialog > .sapMBar.sapMHeader-CTX > .sapMBarMiddle,
+html[dir=rtl][data-sap-ui-browser^=ed] .sapMActionSheetDialog > .sapMBar.sapMHeader-CTX > .sapMBarMiddle {
 	text-align: right;
 }
 
-.sapMActionSheetDialog.sapMDialogPhone > .sapMBar.sapMHeader-CTX > .sapMBarMiddle > .sapMBarPH > .sapMDialogTitle{
+.sapMActionSheetDialog > .sapMBar.sapMHeader-CTX > .sapMBarMiddle > .sapMBarPH > .sapMDialogTitle {
 	color: @sapUiButtonFooterTextColor;
 	text-shadow: 0 -0.0625rem 0 fade(@sapUiDarkShadowTint, 60);
 	font-size: 0.875rem;
@@ -118,46 +115,31 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapMActionSheetDialog.sapMDialogPhone > 
 .sapMActionSheetPopover.sapMPopover {
 	background-color: @sapUiFooterBackground;
 }
-.sap-desktop .sapMActionSheetPopover.sapMPopover {
-	background-color: @sapUiFooterBackground;
-}
 
 .sapMActionSheetPopover.sapMPopover > .sapMPopoverArrDown:after {
-	border-top-color: @sapUiFooterBackground;
-}
-.sap-desktop .sapMActionSheetPopover.sapMPopover > .sapMPopoverArrDown:after {
 	border-top-color: @sapUiFooterBackground;
 }
 
 .sapMActionSheetPopover.sapMPopover > .sapMPopoverArrUp:after {
 	border-bottom-color: @sapUiFooterBackground;
 }
-.sap-desktop .sapMActionSheetPopover.sapMPopover > .sapMPopoverArrUp:after {
-	border-bottom-color: @sapUiFooterBackground;
-}
 
 .sapMActionSheetPopover.sapMPopover > .sapMPopoverArrLeft:after {
-	border-right-color: @sapUiFooterBackground;
-}
-.sap-desktop .sapMActionSheetPopover.sapMPopover > .sapMPopoverArrLeft:after {
 	border-right-color: @sapUiFooterBackground;
 }
 
 .sapMActionSheetPopover.sapMPopover > .sapMPopoverArrRight:after {
 	border-left-color: @sapUiFooterBackground;
 }
-.sap-desktop .sapMActionSheetPopover.sapMPopover > .sapMPopoverArrRight:after {
-	border-left-color: @sapUiFooterBackground;
-}
 
-.sapMActionSheetPopover.sapMPopover .sapMActionSheet button.sapMActionSheetButton {
+.sapMActionSheetPopover .sapMActionSheetButton {
 	display: block;
 	width: 100%;
 	padding-left: 0.25rem;
 	padding-right: 0.25rem;
 }
 
-.sapMActionSheetPopover.sapMPopover .sapMActionSheet button.sapMActionSheetButton > .sapMBtnInner {
+.sapMActionSheetPopover .sapMBtnInner {
 	color: @sapUiButtonFooterTextColor;
 	text-shadow: 0 -0.0625rem 0 fade(@sapUiDarkShadowTint, 60);
 	box-sizing: border-box;
