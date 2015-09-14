@@ -1,75 +1,64 @@
 <!DOCTYPE HTML>
-
-<!-- 
+<!--
   Tested class: sap.ui.core.Configuration
   Author: d020684
--->
-
+  -->
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8" />
+
 	<!-- Initialization -->
 	<script id="sap-ui-bootstrap" 
-			type="text/javascript" 
 			src="../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-config="theme:'fantasy',language:'klingon',accessibility:true,animation:false,rtl:true,debug:true,noConflict:true,trace:true,libs:'sap.ui.commons',modules:'sap.ui.commons.Button',areas:'area-51,no-go',onInit:'window[\'I was here\']=\'u.g.a.d.m.k.\';',ignoreUrlParams:true" 
 			>
 	</script>
-	
+
 	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-	<!-- Test functions -->
-	<script language="javascript">
+	<script>
 
-		module("Configuration From Config Attribute");
+		QUnit.module("Configuration From Config Attribute");
 
-		test("Settings", function() {
+		QUnit.test("Settings", function(assert) {
 			var oCfg = new sap.ui.core.Configuration();
 
 			// compare values where possible 
-			equal(oCfg.theme, "fantasy", "theme");
-			equal(oCfg.language, "klingon", "language");
-			equal(oCfg.accessibility, true, "accessibility");
-			equal(oCfg.animation, false, "animation");
-			equal(oCfg.rtl, true, "rtl");
-			equal(oCfg.debug, true, "debug");
-			equal(oCfg.noConflict, true, "noConflict");
-			equal(oCfg.trace, true, "trace");
+			assert.equal(oCfg.theme, "fantasy", "theme");
+			assert.equal(oCfg.language, "klingon", "language");
+			assert.equal(oCfg.accessibility, true, "accessibility");
+			assert.equal(oCfg.animation, false, "animation");
+			assert.equal(oCfg.rtl, true, "rtl");
+			assert.equal(oCfg.debug, true, "debug");
+			assert.equal(oCfg.noConflict, true, "noConflict");
+			assert.equal(oCfg.trace, true, "trace");
 			// Note: libs and modules can not be checked in that simple way, see below   
-			deepEqual(oCfg.areas, ["area-51", "no-go"], "areas");
-			equal(typeof oCfg.onInit, "string", "onInit");
-			equal(oCfg.ignoreUrlParams, true, "ignoreUrlParams");
+			assert.deepEqual(oCfg.areas, ["area-51", "no-go"], "areas");
+			assert.equal(typeof oCfg.onInit, "string", "onInit");
+			assert.equal(oCfg.ignoreUrlParams, true, "ignoreUrlParams");
 
 			// libs must have been converted and prepended to modules
-			deepEqual(oCfg.modules, ["sap.ui.commons.library", "sap.ui.commons.Button"], "modules and libraries");
+			assert.deepEqual(oCfg.modules, ["sap.ui.commons.library", "sap.ui.commons.Button"], "modules and libraries");
 
 			// init function must have been called
-			strictEqual(window["I was here"], "u.g.a.d.m.k.", "onInit hook has not been called");
+			assert.strictEqual(window["I was here"], "u.g.a.d.m.k.", "onInit hook has not been called");
 		});
-		
-		test("jQuery and $", function() {
+
+		QUnit.test("jQuery and $", function(assert) {
 			// we configured noConflict=true, so $ shouldn'T be the same as jQuery
-			ok(window.jQuery, "window.jQuery is available");
-			ok(!window.$ || window.$ !== window.jQuery, "window.$ not available or not the same as jQuery");
+			assert.ok(window.jQuery, "window.jQuery is available");
+			assert.ok(!window.$ || window.$ !== window.jQuery, "window.$ not available or not the same as jQuery");
 		});
 
 	</script>
-  
+
 </head>
 <body>
-	<h1 id="qunit-header">QUnit tests: SAPUI5 Configuration (from data-sap-ui-config attribute)</h1>
-	<h2 id="qunit-banner"></h2>
- 	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<br>
-	<div id="uiArea1"></div>
-	<div id="uiArea2"></div>
-	<div id="uiArea3"></div>
-	<input id="customInput" type="text"></input>
+	<div id="qunit"></div>
 	<div id="area-51"></div>
 	<div id="no-go"></div>
 </body>

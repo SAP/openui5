@@ -541,6 +541,13 @@ sap.ui.define(['jquery.sap.global',
 
 			oOptions.sOriginalControlType = vControlType;
 			var oWindow = oFrameWindow || window;
+
+			// if the new _isStub is available, check for a stub first before accessing the object via its global name
+			if (oWindow.sap.ui.lazyRequire && oWindow.sap.ui.lazyRequire._isStub && oWindow.sap.ui.lazyRequire._isStub(vControlType)) {
+				jQuery.sap.log.debug("The control type " + vControlType + " is currently a lazy stub. Skipped check and will wait until it is invoked", this);
+				return false;
+			}
+
 			var fnControlType = oWindow.jQuery.sap.getObject(vControlType);
 
 			// no control type

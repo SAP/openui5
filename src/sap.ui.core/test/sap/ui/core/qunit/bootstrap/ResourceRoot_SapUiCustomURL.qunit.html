@@ -13,72 +13,68 @@
  
   Tricky, but works ;-)
   
-  @author Frank Weigel    
+  @author Frank Weigel	
   -->
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<title>...</title>
-    		
+		<meta charset="UTF-8" />
+		<title>Test Page for Resource Root when 'src' contains 'sap-ui-boot|core|custom' but no 'resources/'</title>
+
 		<!-- Initialization -->
 		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script>
-		    /*
-		     * FireFix 10 throws an exception for failed script loads and newer QUnit versions
-		     * register an onerror handler and report global errors as test failures.
-		     *
-		     * This test intentionally references non-existing files and therefore fails 
+			/*
+			 * FireFix 10 throws an exception for failed script loads and newer QUnit versions
+			 * register an onerror handler and report global errors as test failures.
+			 *
+			 * This test intentionally references non-existing files and therefore fails 
 			 * in FireFox 10, when newer QUnit versions are used.   
-		     *  
-		     * As a workarund, a 'Don't care' global event handler is used, which is honored by QUnit.
-		     */
+			 *  
+			 * As a workarund, a 'Don't care' global event handler is used, which is honored by QUnit.
+			 */
 			window.onerror = function(e) { 
 				return true;
 			};
 		</script>
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 
 		<!-- 'broken' script tag that bears the configuration -->
 		<script id="sap-ui-bootstrap" 
-				type="text/javascript" 
 				src="/my-download-app/phx/sap-ui-custom.js"
 				>
 		</script>
 
-    <!-- configure redirect for "sap.ui.*" resources -->
-    <script>
-    window["sap-ui-config"] = {
-    		resourceRoots : {
-    			"sap.ui" : "../../../../../../resources/sap/ui/"
-    		}
-    }
-    </script>		
-    <!-- correctly load the core -->
-		<script	type="text/javascript" src="../../../../../../resources/sap-ui-core.js"	></script>
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<!-- configure redirect for "sap.ui.*" resources -->
+		<script>
+		window["sap-ui-config"] = {
+				resourceRoots : {
+					"sap.ui" : "../../../../../../resources/sap/ui/"
+				}
+		}
+		</script>
+		<!-- correctly load the core -->
+		<script	src="../../../../../../resources/sap-ui-core.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-		<script language="javascript">
-			test("Check Resource Root", function() {
+		<script>
+			QUnit.test("Check Resource Root", function(assert) {
 				/* check that SAPUI5 has been loaded */
-				ok(!!window.jQuery, "jQuery has been loaded");
-				ok(!!jQuery.sap, "jQuery.sap namespace exists");
-				ok(!!window.sap, "sap namespace exists");
-				ok(!!sap.ui, "sap.ui namespace exists");
-				ok(typeof sap.ui.getCore === "function", "sap.ui.getCore exists");
-				ok(!!sap.ui.getCore(), "sap.ui.getCore() returns a value");
-				equal(jQuery.sap.getModulePath("", "/"), "/my-download-app/phx/");
+				assert.ok(window.jQuery, "jQuery has been loaded");
+				assert.ok(jQuery.sap, "jQuery.sap namespace exists");
+				assert.ok(window.sap, "sap namespace exists");
+				assert.ok(sap.ui, "sap.ui namespace exists");
+				assert.ok(typeof sap.ui.getCore === "function", "sap.ui.getCore exists");
+				assert.ok(sap.ui.getCore(), "sap.ui.getCore() returns a value");
+				assert.equal(jQuery.sap.getModulePath("", "/"), "/my-download-app/phx/");
 			});
 
 		</script>
-		
+
 	</head>
-	
-  <body class="sapUiBody" role="application">
-		<h1 id="qunit-header">Bootstrap Variant 'within Head'</h1>
-		<h2 id="qunit-banner"></h2>
-	 	<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-  </body>
+
+	<body class="sapUiBody" role="application">
+		<div id="qunit"></div>
+	</body>
 </html>
