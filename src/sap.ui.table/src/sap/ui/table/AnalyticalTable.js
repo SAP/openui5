@@ -506,12 +506,16 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			$rowHdr.data("sap-ui-level", iLevel);
 			
 			if ('ontouchstart' in document) {
+				var iScrollBarOffset = 0;
+				if (this.$().hasClass("sapUiTableVScr")) {
+					iScrollBarOffset += this.$().find('.sapUiTableVSb').width();
+				}
 				var $GroupHeaderMenuButton = $rowHdr.find(".sapUiTableGroupMenuButton");
 				
 				if (this._bRtlMode) {
-					$GroupHeaderMenuButton.css("right", (this.$().width() - $GroupHeaderMenuButton.width() + $rowHdr.position().left - 20) + "px");
+					$GroupHeaderMenuButton.css("right", (this.$().width() - $GroupHeaderMenuButton.width() + $rowHdr.position().left - iScrollBarOffset) + "px");
 				} else {
-					$GroupHeaderMenuButton.css("left", (this.$().width() - $GroupHeaderMenuButton.width() - $rowHdr.position().left - 20) + "px");
+					$GroupHeaderMenuButton.css("left", (this.$().width() - $GroupHeaderMenuButton.width() - $rowHdr.position().left - iScrollBarOffset) + "px");
 				}
 			}
 
