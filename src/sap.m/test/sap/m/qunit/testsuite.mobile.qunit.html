@@ -19,9 +19,9 @@
 				ie9 = (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version === 9);
 
 			if (!navigator.userAgent.match(/MSIE 8.0/g) && navigator.platform.indexOf("Linux") === -1) {
+				// Apps and samples
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/testsuites/testsuite.demokit.qunit.html");
 
-				// Cart Application
-				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/samples/ShoppingCart/test/opaTestsWithIFrame.qunit.html");
 
 				// ActionSelect
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ActionSelect.qunit.html");
