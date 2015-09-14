@@ -36,6 +36,18 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("headerValue", function (assert) {
+		assert.strictEqual(Helper.headerValue("my-header"), undefined,
+			"headers need not be present");
+		assert.strictEqual(Helper.headerValue("toString", {}), undefined);
+		assert.strictEqual(Helper.headerValue("my-header", {}), undefined);
+		assert.strictEqual(Helper.headerValue("my-header", {foo: "bar"}), undefined);
+		assert.strictEqual(Helper.headerValue("my-header", {'My-Header': "bar"}), "bar");
+		assert.strictEqual(Helper.headerValue("my-header", {'MY-HEADER': "bar"}), "bar");
+		assert.strictEqual(Helper.headerValue("My-Header", {'my-header': "bar"}), "bar");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("splitPath", function (assert) {
 		assert.throws(function () {
 			Helper.splitPath("foo");

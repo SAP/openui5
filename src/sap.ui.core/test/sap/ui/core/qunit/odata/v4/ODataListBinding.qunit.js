@@ -482,7 +482,7 @@ sap.ui.require([
 		);
 	});
 
-	//**** Paging                            ****************************************************
+	//*********************************************************************************************
 	[
 		{start : 0, result: 0, isFinal: true, length: 0, text: "no data"},
 		{start : 20, result: 29, isFinal: true, length: 49, text: "less data than requested"},
@@ -510,6 +510,7 @@ sap.ui.require([
 		});
 	});
 
+	//*********************************************************************************************
 	[
 		{start : 40, result: 5, isFinal: true, length: 45, text: "greater than before"},
 		{start : 20, result: 5, isFinal: true, length: 25, text: "less than before"},
@@ -550,6 +551,7 @@ sap.ui.require([
 		});
 	});
 
+	//*********************************************************************************************
 	QUnit.test("paging: full read before length; length at boundary", function (assert) {
 		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			done = assert.async();
@@ -587,6 +589,7 @@ sap.ui.require([
 		}, 10);
 	});
 
+	//*********************************************************************************************
 	QUnit.test("paging: lower boundary reset", function (assert) {
 		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			done = assert.async(),
@@ -628,6 +631,7 @@ sap.ui.require([
 		}, 10);
 	});
 
+	//*********************************************************************************************
 	QUnit.test("paging: adjust max length got from server", function (assert) {
 		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			done = assert.async();
@@ -679,6 +683,7 @@ sap.ui.require([
 	//  where listbinding is not nested but has a context. This is currently not possible but
 	//  if you think on a relative binding "TEAMS" which becomes context "/" -> here the relative
 	//  binding must create the it's own cache which has to be deleted with setContext()
+	//TODO custom headers for readRange(), e.g. "X-CSRF-Token": "Fetch"
 
 	//TODO integration: 2 entity sets with same $expand, but different $select
 });

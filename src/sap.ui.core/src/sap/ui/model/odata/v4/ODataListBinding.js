@@ -162,8 +162,8 @@ sap.ui.define([
 				oModel.read(sResolvedPath, true)
 					.then(createContexts.bind(undefined, getDependentPath));
 			}  else { // absolute path
+				sUrl = oModel.sServiceUrl + sResolvedPath.slice(1);
 				if (!this.oCache) {
-					sUrl = oModel.sServiceUrl + sResolvedPath;
 					if (this.sExpand) {
 						sUrl += "?$expand=" + jQuery.sap.encodeURL(this.sExpand);
 					}
@@ -175,9 +175,8 @@ sap.ui.define([
 				}
 				this.oCache.readRange(iStart, iLength)
 					.then(createContexts.bind(undefined, getBasePath), function (oError) {
-						jQuery.sap.log.error("Failed to get contexts for "
-							+ oModel.sServiceUrl + sResolvedPath + " with start index " + iStart
-							+ " and length " + iLength, oError,
+						jQuery.sap.log.error("Failed to get contexts for " + sUrl
+							+ " with start index " + iStart + " and length " + iLength, oError,
 							"sap.ui.model.odata.v4.ODataListBinding");
 					});
 			}
@@ -231,7 +230,8 @@ sap.ui.define([
 		return new Promise(function (fnResolve, fnReject) {
 			function reject(oError) {
 				var oModel = that.getModel(),
-					sUrl = oModel.sServiceUrl + oModel.resolve(that.getPath(), that.getContext());
+					sUrl = oModel.sServiceUrl
+						+ oModel.resolve(that.getPath(), that.getContext()).slice(1);
 				jQuery.sap.log.error("Failed to read value with index " + iIndex + " for "
 					+ sUrl + " and path " + sPath,
 					oError, "sap.ui.model.odata.v4.ODataListBinding");

@@ -38,31 +38,146 @@ sap.ui.require([
 		});
 
 	/**
-	 * Gets the correct service URL. Adjusts it in case of <code>bRealOData</code>, so that it is
-	 * passed through the proxy.
+	 * Creates a v4 OData service for <code>TEA_BUSI</code>.
 	 *
-	 * @param {string} sUrl the URL
-	 * @returns {string} the adjusted URL
+	 * @param {object} [mParameters] the model properties
+	 * @returns {sap.ui.model.odata.v4.oDataModel} the model
 	 */
-	function getServiceUrl(sUrl) {
-		if (bRealOData) {
-			sUrl = "../../../../../../../proxy" + sUrl;
-		}
-		return sUrl;
+	function createModel(mParameters) {
+		return new ODataModel(getServiceUrl(), mParameters);
 	}
 
 	/**
-	 * Creates a v4 OData service for <code>TEA_BUSI</code>.
+	 * Returns a URL within the service.
 	 *
-	 * @returns {sap.ui.model.odata.v4.oDataModel} the model
+	 * @param {string} [sPath]
+	 *   relative path (with initial /) within service
+	 * @returns {string}
+	 *   a URL within the service
 	 */
-	function createModel() {
-		return new ODataModel(getServiceUrl("/sap/opu/local_v4/IWBEP/TEA_BUSI/"));
+	function getServiceUrl(sPath) {
+		return proxy("/sap/opu/local_v4/IWBEP/TEA_BUSI/" + (sPath && sPath.slice(1) || ""));
+	}
+
+	/**
+	 * Adjusts the given absolute path so that (in case of <code>bRealOData</code>), is passed
+	 * through a proxy.
+	 *
+	 * @param {string} sAbsolutePath
+	 *   some absolute path
+	 * @returns {string}
+	 *   the absolute path transformed in a way that invokes a proxy
+	 */
+	function proxy(sAbsolutePath) {
+		return bRealOData
+			? "/" + window.location.pathname.split("/")[1] + "/proxy" + sAbsolutePath
+			: sAbsolutePath;
+	}
+
+	/**
+	 * Sets up stubs for "odatajs.oData.request" and "ODataModel#refreshSecurityToken" in the given
+	 * sandbox, suitable for entity creation.
+	 *
+	 * With <code>bRequestSucceeds === false</code>, "request" always fails,
+	 * with <code>bRequestSucceeds === true</code>, "request" always succeeds,
+	 * else "request" first fails due to missing CSRF token which can be fetched via
+	 * "ODataModel#refreshSecurityToken".
+	 *
+	 * Assertions are put in place based on the given model's headers and the given employee data.
+	 *
+	 * @param {object} oSandbox
+	 *   Sinon's global sandbox
+	 * @param {object} assert
+	 *   Sinon's "assert" object
+	 * @param {object} oEmployeeData
+	 *   the employee data expected by "request"
+	 * @param {sap.ui.model.odata.v4.Model} oModel
+	 *   the OData model
+	 * @param {boolean} bRequestSucceeds
+	 *   see above
+	 * @param {boolean} [bReadFails=false]
+	 *   whether reading of CSRF token fails
+	 * @param {string} [sRequired="Required"]
+	 *   some variation of "Required"
+	 * @param {boolean} [bDoNotDeliverToken=false]
+	 *   whether read of CSRF token will succeed, but not deliver a valid CSRF token
+	 * @return {object|string}
+	 *   the data returned by a successful "request" or the error message in case of certain
+	 *   failure
+	 */
+	function setupForCreate(oSandbox, assert, oEmployeeData, oModel, bRequestSucceeds,
+			bReadFails, sRequired, bDoNotDeliverToken) {
+		var oData = {},
+			sReadError = "HTTP request failed - 400 Bad Request: ",
+			oRequestError = {
+				"message" : "HTTP request failed",
+				"request" : {/*...*/},
+				"response" : {
+					"body" : "CSRF token validation failed",
+					"headers" : {
+						"x-csrf-token" : sRequired || "Required",
+						"Content-Length" : "28",
+						"Content-Type" : "text/plain;charset=utf-8"
+					},
+					"requestUri" : getServiceUrl("/EMPLOYEES"),
+					"statusCode" : 403,
+					"statusText" : "Forbidden"
+				}
+			};
+
+		if (bRequestSucceeds === false) {
+			// simulate a server which does not require a CSRF token, but fails otherwise
+			delete oRequestError.response.headers["x-csrf-token"];
+		}
+
+		oSandbox.stub(odatajs.oData, "request", function (oRequest, fnSuccess, fnFailure) {
+			assert.strictEqual(oRequest.data, oEmployeeData);
+			assert.deepEqual(oRequest.headers, oModel.mHeaders);
+			assert.strictEqual(oRequest.method, "POST");
+			assert.strictEqual(oRequest.requestUri, getServiceUrl("/EMPLOYEES"));
+
+			if (bRequestSucceeds === true
+				|| bRequestSucceeds === undefined
+				&& oRequest.headers["X-CSRF-Token"] === "abc123") {
+				setTimeout(fnSuccess.bind(null, oData), 0);
+			} else {
+				setTimeout(fnFailure.bind(null, oRequestError), 0);
+			}
+		});
+
+		if (bRequestSucceeds !== undefined) {
+			oSandbox.mock(oModel).expects("refreshSecurityToken").never();
+		} else {
+			oSandbox.stub(oModel, "refreshSecurityToken", function () {
+				return new Promise(function (fnResolve, fnReject) {
+					setTimeout(function () {
+						if (bReadFails) {
+							fnReject(new Error(sReadError));
+						} else {
+							oModel.mHeaders["X-CSRF-Token"]
+								= bDoNotDeliverToken ? undefined : "abc123";
+							fnResolve();
+						}
+					}, 0);
+				});
+			});
+		}
+
+		if (bRequestSucceeds === false || bDoNotDeliverToken) {
+			// expect failure
+			return "HTTP request failed - 403 Forbidden: CSRF token validation failed";
+		}
+		if (bReadFails) {
+			// expect failure
+			return sReadError;
+		}
+		return oData; // expect success
 	}
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataModel", {
 		beforeEach : function () {
+			sap.ui.getCore().getConfiguration().setLanguage("ab-CD");
 			this.oSandbox = sinon.sandbox.create();
 			if (!bRealOData) {
 				TestUtils.useFakeServer(this.oSandbox, "sap/ui/core/qunit/odata/v4/data",
@@ -92,8 +207,8 @@ sap.ui.require([
 		}, new Error("Service root URL must end with '/'"));
 
 		assert.ok(new ODataModel("/foo/") instanceof Model);
-		assert.strictEqual(new ODataModel("/foo/").sServiceUrl, "/foo", "remove trailing /");
-		assert.strictEqual(new ODataModel({"serviceUrl" : "/foo/"}).sServiceUrl, "/foo",
+		assert.strictEqual(new ODataModel("/foo/").sServiceUrl, "/foo/");
+		assert.strictEqual(new ODataModel({"serviceUrl" : "/foo/"}).sServiceUrl, "/foo/",
 			"serviceUrl in mParameters");
 	});
 
@@ -135,25 +250,64 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("ODataModel.read: missing /", function (assert) {
+		var oModel = createModel();
+
+		assert.throws(function () {
+			oModel.read("TEAMS('TEAM_01')/Name");
+		}, new Error("Not an absolute data binding path: TEAMS('TEAM_01')/Name"));
+	});
+
+	//*********************************************************************************************
+	["X-CSRF-Token", "x-csrf-token", ""].forEach(function (sHeaderName) {
+		QUnit.test("ODataModel.read: success with " + sHeaderName, function (assert) {
+			var oModel = createModel(),
+				sOldCsrfToken = oModel.mHeaders["X-CSRF-Token"];
+
+			this.oSandbox.stub(odatajs.oData, "read", function (oRequest, fnSuccess) {
+				var oResponse = {headers : {}};
+
+				oResponse.headers[sHeaderName] = "abc123";
+				assert.strictEqual(oRequest.headers["Accept-Language"], "ab-CD");
+				assert.strictEqual(oRequest.headers["X-CSRF-Token"], "Fetch");
+				assert.strictEqual(oRequest.requestUri, getServiceUrl("/TEAMS('TEAM_01')/Name"));
+				setTimeout(fnSuccess.bind(null, {/*oData*/}, oResponse), 0);
+			});
+
+			return oModel.read("/TEAMS('TEAM_01')/Name").then(function (oData) {
+				if (!sHeaderName) {
+					assert.strictEqual(oModel.mHeaders["X-CSRF-Token"], sOldCsrfToken,
+						"keep old CSRF token in case no one is sent");
+				} else {
+					assert.strictEqual(oModel.mHeaders["X-CSRF-Token"], "abc123");
+				}
+			}, function (oError) {
+				assert.ok(false, "Unexpected failure");
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("ODataModel.read: failure", function (assert) {
 		var oModel = createModel();
 
-		sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		this.oLogMock.expects("error")
 			.withExactArgs(
 				"The requested entity of type 'TEAM' cannot be accessed. It does not exist.",
-				"read(" + getServiceUrl("/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('UNKNOWN')") + ")",
+				"read(" + getServiceUrl("/TEAMS('UNKNOWN')") + ")",
 				"sap.ui.model.odata.v4.ODataModel");
 		this.oSandbox.spy(odatajs.oData, "read");
+		//TODO how can we implement v4 failure handling based on the v2 mock server's response?
 
 		return oModel.read("/TEAMS('UNKNOWN')").then(function (oData) {
 			assert.ok(false, "Unexpected success");
 		}, function (oError) {
 			assert.ok(oError instanceof Error);
-			assert.strictEqual(odatajs.oData.read.args[0][0].headers["accept-language"], "en-US");
+			assert.strictEqual(odatajs.oData.read.args[0][0].headers["Accept-Language"], "ab-CD");
+			assert.strictEqual(odatajs.oData.read.args[0][0].headers["X-CSRF-Token"], "Fetch");
 			assert.strictEqual(oError.error.code, "/IWBEP/CM_V4_APPS/002");
 			assert.strictEqual(oError.message,
-				"The requested entity of type 'TEAM' cannot be accessed. It does not exist.");
+			"The requested entity of type 'TEAM' cannot be accessed. It does not exist.");
 		});
 	});
 
@@ -239,8 +393,160 @@ sap.ui.require([
 			assert.strictEqual(sResult, "Edm.Date");
 		});
 	});
-	// TODO constructor: sDefaultBindingMode, mSupportedBindingModes
-	// TODO constructor: test that the service root URL is absolute?
-	// TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId
-	// TODO read: abort
+
+	//*********************************************************************************************
+	[{
+		bRequestSucceeds : true, sTitle : "success"
+	}, {
+		bRequestSucceeds : false, sTitle : "failure"
+	}, {
+		sRequired : "Required", sTitle : "CSRF token Required"
+	}, {
+		sRequired : "required", sTitle : "CSRF token required"
+	}, {
+		bReadFails : true, sTitle : "fetch CSRF token fails"
+	}, {
+		bDoNotDeliverToken : true, sTitle : "no CSRF token can be fetched"
+	}].forEach(function (o) {
+		QUnit.test("create: " + o.sTitle, function (assert) {
+			var oEmployeeData = {},
+				oModel = createModel(),
+				vExpectedResult = setupForCreate(this.oSandbox, assert, oEmployeeData, oModel,
+					o.bRequestSucceeds, o.bReadFails, o.sRequired, o.bDoNotDeliverToken),
+				bSuccess = o.bRequestSucceeds !== false && !o.bReadFails && !o.bDoNotDeliverToken;
+
+			assert.deepEqual(oModel.mHeaders, {
+				"Accept-Language" : "ab-CD",
+				"X-CSRF-Token" : "Fetch"
+			});
+
+			return oModel.create("/EMPLOYEES", oEmployeeData).then(function (oData) {
+				assert.ok(bSuccess, "success possible");
+				assert.strictEqual(oData, vExpectedResult);
+			}, function (oError) {
+				assert.ok(!bSuccess, "certain failure");
+				assert.ok(oError instanceof Error);
+				assert.strictEqual(oError.message, vExpectedResult);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ODataModel.create: missing /", function (assert) {
+		var oModel = createModel();
+
+		assert.throws(function () {
+			oModel.create("EMPLOYEES");
+		}, new Error("Not an absolute data binding path: EMPLOYEES"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshSecurityToken: success", function (assert) {
+		var fnAbort = function () {},
+			oModel = createModel(),
+			oPromise;
+
+		this.oSandbox.stub(odatajs.oData, "read", function (oRequest, fnSuccess, fnFailure) {
+			assert.strictEqual(oRequest.headers["X-CSRF-Token"], "Fetch");
+			assert.strictEqual(oRequest.method, "HEAD");
+			assert.strictEqual(oRequest.requestUri, getServiceUrl());
+
+			setTimeout(fnSuccess.bind(null, undefined, {
+				"body" : "",
+				"headers" : {
+					"x-csrf-token" : "abc123",
+					"Content-Length" : "0"
+				},
+				"requestUri" : getServiceUrl(),
+				"statusCode" : 200,
+				"statusText" : "OK"
+			}), 0);
+
+			return {abort: fnAbort};
+		});
+
+		oPromise = oModel.refreshSecurityToken();
+
+		assert.strictEqual(oPromise.abort, fnAbort, "access to abort provided");
+		assert.strictEqual(oModel.refreshSecurityToken(), oPromise, "promise reused");
+		assert.ok(odatajs.oData.read.calledOnce, "only one HEAD request underway at any time");
+
+		return oPromise.then(function () {
+			assert.strictEqual(oModel.mHeaders["X-CSRF-Token"], "abc123");
+
+			assert.notStrictEqual(oModel.refreshSecurityToken(), oPromise, "new promise");
+		}, function (oError) {
+			assert.ok(false, oError.message + "@" + oError.stack);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshSecurityToken: failure", function (assert) {
+		var fnAbort = function () {},
+			oModel = createModel(),
+			oPromise;
+
+		this.oSandbox.stub(odatajs.oData, "read", function (oRequest, fnSuccess, fnFailure) {
+			assert.strictEqual(oRequest.headers["X-CSRF-Token"], "Fetch");
+			assert.strictEqual(oRequest.method, "HEAD");
+			assert.strictEqual(oRequest.requestUri, getServiceUrl());
+
+			setTimeout(fnFailure.bind(null, {
+				"message" : "HTTP request failed",
+				"request" : {/*...*/},
+				"response" : {
+					"body" : "",
+					"headers" : {
+						"Content-Length" : "0"
+					},
+					"requestUri" : getServiceUrl(),
+					"statusCode" : 400,
+					"statusText" : "Bad Request"
+				}
+			}), 0);
+
+			return {abort: fnAbort};
+		});
+
+		oPromise = oModel.refreshSecurityToken();
+
+		assert.strictEqual(oPromise.abort, fnAbort, "access to abort provided");
+		assert.strictEqual(oModel.refreshSecurityToken(), oPromise, "promise reused");
+		assert.ok(odatajs.oData.read.calledOnce, "only one HEAD request underway at any time");
+
+		return oPromise.then(function () {
+			assert.ok(false);
+		}, function (oError) {
+			var oNewPromise;
+
+			assert.ok(oError instanceof Error);
+			assert.strictEqual(oError.message, "HTTP request failed - 400 Bad Request: ");
+			assert.strictEqual(oModel.mHeaders["X-CSRF-Token"], "Fetch");
+
+			oNewPromise = oModel.refreshSecurityToken();
+
+			assert.notStrictEqual(oNewPromise, oPromise, "new promise");
+			// avoid "Uncaught (in promise)"
+			oNewPromise["catch"](function (oError0) {
+				assert.strictEqual(oError0.message, "HTTP request failed - 400 Bad Request: ");
+			});
+		});
+	});
 });
+// TODO constructor: sDefaultBindingMode, mSupportedBindingModes
+// TODO constructor: test that the service root URL is absolute?
+// TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId
+// TODO read, create etc.: provide access to "abort" functionality
+
+// oResponse.headers look like this:
+//Content-Type:application/json; odata.metadata=minimal;charset=utf-8
+//etag:W/"20150915102433.7994750"
+//location:https://ldai1ui3.wdf.sap.corp:44332/sap/opu/local_v4/IWBEP/TEA_BUSI/EMPLOYEES('7')
+//TODO can we make use of "location" header? relation to canonical URL?
+// oData looks like this:
+//{
+//	"@odata.context" : "$metadata#EMPLOYEES",
+//	"@odata.etag" : "W/\"20150915102433.7994750\"",
+//}
+//TODO can we make use of @odata.context in response data?
+//TODO etag handling

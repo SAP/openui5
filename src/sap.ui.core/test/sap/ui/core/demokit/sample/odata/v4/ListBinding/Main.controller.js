@@ -2,8 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
-		'sap/ui/core/mvc/Controller'
-	], function(Controller) {
+		'sap/m/Dialog',
+		'sap/m/MessageBox',
+		'sap/ui/core/mvc/Controller',
+		'sap/ui/model/json/JSONModel',
+		'sap/ui/model/odata/v4/_ODataHelper',
+		"sap/ui/thirdparty/odatajs-4.0.0"
+	], function(Dialog, MessageBox, Controller, JSONModel, ODataHelper, Olingo) {
 	"use strict";
 
 	var MainController = Controller.extend("sap.ui.core.sample.odata.v4.ListBinding.Main", {
@@ -31,6 +36,47 @@ sap.ui.define([
 			oView.byId("TeamSelect").getBinding("items").attachEventOnce("change", setTeamContext);
 		},
 
+		onCancelEmployee : function (oEvent) {
+			var oCreateEmployeeDialog = this.getView().byId("createEmployeeDialog");
+
+			oCreateEmployeeDialog.close();
+		},
+
+		onCreateEmployee : function (oEvent) {
+			var oCreateEmployeeDialog = this.getView().byId("createEmployeeDialog");
+
+			oCreateEmployeeDialog.setModel(new JSONModel({
+				"ENTRYDATE" : "2015-10-01"
+			}), "new");
+			oCreateEmployeeDialog.open();
+		},
+
+		onEmployeeSelect : function (oEvent) {
+			var oContext = oEvent.getParameters().listItem.getBindingContext();
+			this.getView().byId("EmployeeEquipments").setBindingContext(oContext);
+		},
+
+		onSaveEmployee : function (oEvent) {
+			var oCreateEmployeeDialog = this.getView().byId("createEmployeeDialog"),
+				oEmployeeData = oCreateEmployeeDialog.getModel("new").getObject("/"),
+				that = this;
+
+			//TODO validate oEmployeeData according to types
+			//TODO deep create incl. LOCATION etc.
+
+			this.getView().getModel().create("/EMPLOYEES", oEmployeeData).then(function (oData) {
+				MessageBox.alert(JSON.stringify(oData), {
+					icon: sap.m.MessageBox.Icon.SUCCESS,
+					title: "Success"});
+				that.onCancelEmployee();
+			}, function (oError) {
+				jQuery.sap.log.error(oError.message, oError.stack);
+				MessageBox.alert(oError.message, {
+					icon: sap.m.MessageBox.Icon.ERROR,
+					title: "Error"});
+			});
+		},
+
 		onTeamSelect : function (oEvent) {
 			var oView = this.getView(),
 				oEmployeesControl = oView.byId("Employees"),
@@ -46,13 +92,8 @@ sap.ui.define([
 			oEmployeesControl.setBindingContext(oTeamContext);
 			oEmployeesBinding.attachEventOnce("change", setEquipmentContext);
 			oView.byId("TeamDetails").setBindingContext(oTeamContext);
-		},
-		onEmployeeSelect : function (oEvent) {
-			var oContext = oEvent.getParameters().listItem.getBindingContext();
-			this.getView().byId("EmployeeEquipments").setBindingContext(oContext);
 		}
 	});
 
 	return MainController;
-
 });

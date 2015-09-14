@@ -25,20 +25,6 @@ sap.ui.require([
 		sDocumentUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata";
 
 	/**
-	 * Gets the correct service URL. Adjusts it in case of <code>bRealOData</code>, so that it is
-	 * passed through the proxy.
-	 *
-	 * @param {string} sUrl the URL
-	 * @returns {string} the adjusted URL
-	 */
-	function getServiceUrl(sUrl) {
-		if (bRealOData) {
-			sUrl = "../../../../../../../proxy" + sUrl;
-		}
-		return sUrl;
-	}
-
-	/**
 	 * Returns a resolved promised for the given object. Clones the object.
 	 *
 	 * @param {object} o
@@ -48,6 +34,21 @@ sap.ui.require([
 	 */
 	function promiseFor(o) {
 		return Promise.resolve(JSON.parse(JSON.stringify(o)));
+	}
+
+	/**
+	 * Adjusts the given absolute path so that (in case of <code>bRealOData</code>), is passed
+	 * through a proxy.
+	 *
+	 * @param {string} sAbsolutePath
+	 *   some absolute path
+	 * @returns {string}
+	 *   the absolute path transformed in a way that invokes a proxy
+	 */
+	function proxy(sAbsolutePath) {
+		return bRealOData
+			? "/" + window.location.pathname.split("/")[1] + "/proxy" + sAbsolutePath
+			: sAbsolutePath;
 	}
 
 	//*********************************************************************************************
@@ -62,7 +63,7 @@ sap.ui.require([
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
-			this.oDocumentModel = new ODataDocumentModel(getServiceUrl(sDocumentUrl));
+			this.oDocumentModel = new ODataDocumentModel(proxy(sDocumentUrl));
 		},
 
 		afterEach : function () {

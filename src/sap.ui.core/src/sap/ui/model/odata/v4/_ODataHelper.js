@@ -125,6 +125,29 @@ sap.ui.define([
 		},
 
 		/**
+		 * Iterates over the given headers map and returns the first value for the requested key
+		 * (case insensitive). If no such key is found, <code>undefined</code> is returned.
+		 *
+		 * @param {string} sKey
+		 *   the requested key
+		 * @param {object} [mHeaders={}]
+		 *   an object treated as a <code>map&lt;string, any&gt;</code>
+		 * @returns {any}
+		 *   the header value or <code>undefined</code> if the header was not found
+		 */
+		headerValue : function (sKey, mHeaders) {
+			var sCurrentKey;
+
+			sKey = sKey.toLowerCase();
+			for (sCurrentKey in mHeaders) {
+				if (sCurrentKey.toLowerCase() === sKey) {
+					return mHeaders[sCurrentKey];
+				}
+			}
+//			return undefined;
+		},
+
+		/**
 		 * Decodes a segment of an OData v4 path. Recognizes the key predicate.
 		 *
 		 * @param {string} sPathSegment
