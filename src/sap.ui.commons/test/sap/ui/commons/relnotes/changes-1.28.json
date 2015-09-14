@@ -910,5 +910,31 @@
         "references": []
       }
     ]
+  },
+  "1.28.18": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "0e4dbbb8ba97d0354d76283bc2fb874bcf71bd28",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Respect \"themeroots\" when resolving img URLs in Controls",
+        "references": []
+      },
+      {
+        "id": "9fc1e4c4b6537999299dfc75d1d9d4e7f6fd5b96",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ComboBox: error if sap.ui.core.Item is used",
+        "references": []
+      },
+      {
+        "id": "883c038e8f242f4293bd8b27ceba21cf057436f2",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField: Allow \"AltGr+z\" as input",
+        "references": []
+      }
+    ]
   }
 }
