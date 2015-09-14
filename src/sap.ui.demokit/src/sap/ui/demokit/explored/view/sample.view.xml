@@ -6,6 +6,9 @@
 		id="page"
 		showNavButton="{/showNavButton}"
 		navButtonPress="onNavBack" >
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>
+		</landmarkInfo>
 		<headerContent>
 			<Button
 				id="prevSample"
