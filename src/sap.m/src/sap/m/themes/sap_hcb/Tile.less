@@ -3,10 +3,12 @@
 /* ============================================================ */
 .sapMTile,
 .sapMCustomTile {
+	border: 1px solid @sapHCStandardFG;
 	border-radius: 0.25rem;
 	-webkit-transition-property: none;
 	-moz-transition-property: none;
 	transition-property: none;
+	background-color: @sapHCStandardBG;
 }
 
 .sapMTile:focus,
@@ -60,14 +62,14 @@
 }
 
 .sapMTC.sapMTCEditable .sapMTile .sapMTCRemove {
-	position: relative;
-	padding: 0;
+	padding-top: 0.375;
+	padding-left: 0.5;
 	cursor: pointer;
 	box-shadow: none;
 	background-color: @sapHCStandardBG;
-	width: 1.375rem;
-	height: 1.375rem;
-	font-size: 22px;
+	width: 2rem;
+	height: 2rem;
+	font-size: 16px;
 	&:hover {
 		background-color: @sapHCHighlightBG;
 	}
