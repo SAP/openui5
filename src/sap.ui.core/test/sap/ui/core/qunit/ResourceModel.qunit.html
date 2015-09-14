@@ -18,7 +18,9 @@
 </script>
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.testlib"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.ui.testlib"
+	data-sap-ui-language="en"
 	data-sap-ui-originInfo="true">
 </script>
 
@@ -109,7 +111,7 @@
 	module("Resource Model: Resources bundle loaded via url");
 	
 	//model created
-	test("Model instantiated successful", 2, function(){
+	test("Model instantiated successful", 5, function(){
 		oModel = new sap.ui.model.resource.ResourceModel({bundleUrl:"./testdata/messages.properties"});
 		sap.ui.getCore().setModel(oModel,"i18n");
 		 
@@ -118,6 +120,12 @@
 		
 		ok(oModel, "model must exist after creation");
 		ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
+		
+		ok(oModel.mSupportedBindingModes.OneWay, "OneWay is an allowed binding mode");
+		ok(!oModel.mSupportedBindingModes.TwoWay, "TwoWay is a not an allowed binding mode");
+		ok(!oModel.bAsync && oModel.mSupportedBindingModes.OneTime, "OneTime is an allowed binding mode with synchronous models");
+		
+		oLabel.destroy();
 	});
 	//getProperty()
 	test("test model getProperty", 1, function(){
@@ -202,34 +210,43 @@
 	
 	module("Resource Model: Async");
 	
-	asyncTest("Test async mode", function(){
-		oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages", async: true});
-		sap.ui.getCore().setModel(oModel, "async");
-		 
-		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{async>TEST_TEXT}"});
-		oLabel.placeAt("target1");
-		
-		ok(oModel, "model must exist after creation");
-		ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
-		
-		ok(oModel.bAsync, "model is in async mode");
-		equal(oModel.sDefaultBindingMode, sap.ui.model.BindingMode.OneWay, "Default binding mode is OneWay");
-		ok(oModel.mSupportedBindingModes.OneWay && !oModel.mSupportedBindingModes.TwoWay && oModel.mSupportedBindingModes.OneTime, "TwoWay is a not allowed binding mode");
-		
-		equal(oLabel.getText(), "", "Initially no texts available");
-		equal(oModel.getProperty("TEST_TEXT"), null, "Initially getProperty returns null");
-		
-		var oPromise = oModel.getResourceBundle();
-		ok(oPromise instanceof window.Promise, "getResourceBundle returns Promise");
-		
-		oPromise.then(function(oBundle){
-			equal(oLabel.getText(), "A text en", "Texts available after async load");
-			equal(oModel.getProperty("TEST_TEXT"), "A text en", "getProperty returns text after async load");
-			ok(oBundle == oModel._oResourceBundle, "A text en", "Bundle available after async load");
+	//we can't run this test in firefox properly as then is called synchronously in firefox
+	if (!sap.ui.Device.browser.firefox) {
+		asyncTest("Test async mode", function(){
+			expect(13);
+			var oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages", async: true});
+			sap.ui.getCore().setModel(oModel,"i18n");
+
+			var oLabel = new sap.ui.testlib.TestButton("myLabel", {text:"{i18n>TEST_TEXT}"});
+			oLabel.placeAt("target1");
+
+			ok(oModel, "model must exist after creation");
+			ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
 			
-			start();
+
+			ok(oModel.bAsync, "model is in async mode");
+			equal(oModel.sDefaultBindingMode, sap.ui.model.BindingMode.OneWay, "Default binding mode is OneWay");
+			ok(oModel.mSupportedBindingModes.OneWay, "OneWay is an allowed binding mode");
+			ok(!oModel.mSupportedBindingModes.TwoWay, "TwoWay is a not an allowed binding mode");
+			ok(oModel.bAsync && !oModel.mSupportedBindingModes.OneTime, "OneTime is a not allowed binding mode with asynchronous models");
+			
+			equal(oLabel.getText(), "", "Initially no texts available");
+			equal(oModel.getProperty("TEST_TEXT"), null, "Initially getProperty returns null");
+			
+			var oPromise = oModel.getResourceBundle();
+			ok(oPromise instanceof window.Promise, "getResourceBundle returns Promise");
+			
+			oPromise.then(function(oBundle){
+				ok(oBundle == oModel._oResourceBundle, "Bundle available after async load");
+				equal(oModel.getProperty("TEST_TEXT"), "A text en", "getProperty returns text after async load");
+				equal(oLabel.getText(), "A text en", "Texts available after async load");
+				
+				oModel.destroy();
+				oLabel.destroy();
+				start();
+			});
 		});
-	});
+	}
 	
 	asyncTest("Enhancement after load", function(){
 		oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages", async: true});
@@ -284,21 +301,65 @@
 		oModel.attachRequestCompleted(function(){
 			equal(oLabel2.getText(), "A text en", "RequestCompleted: Texts available after async load");
 			equal(oModel.getProperty("TEST_TEXT"), "A text en", "RequestCompleted: getProperty returns text after async load");
+			oModel.destroy();
 			start();
 		});
 	});
-	
-	//clean up
-	test("clean up", 0, function(){
-		oModel = null;
-		oLabel.destroy();
-		oLabel2.destroy();
-		sap.ui.getCore().setModel(null, "async");
-		sap.ui.getCore().setModel(null, "async2");
-		sap.ui.getCore().setModel(null, "async3");
-		sap.ui.getCore().setModel(null, "async4");
+
+
+	asyncTest("OneWay Binding and Language Change (Asynchronous)", function() {
+		expect(2);
+		var oBtn = new sap.ui.testlib.TestButton({
+			text: "{async5>TEST_TEXT}"
+		});
+		oBtn.placeAt("target1");
+
+		var oAsyncModel = new sap.ui.model.resource.ResourceModel({
+			bundleName: "testdata.messages",
+			async: true 
+		});
+		sap.ui.getCore().setModel(oAsyncModel, "async5");
+
+		
+		var iChangeCount = 0;
+		oBtn.getBinding("text").attachChange(function() {
+			if (iChangeCount++ === 0) {
+				equal(oBtn.getText(), "A text en", "Binding Change: Texts available after sync load");
+				sap.ui.getCore().getConfiguration().setLanguage("de");
+			} else {
+				equal(oBtn.getText(), "Ein Text de", "Binding Change: Texts available after sync load");
+				
+				oBtn.destroy();
+				oAsyncModel.destroy();
+				start();
+			}
+		});
+		
 	});
-	
+
+	test("OneWay Binding and Language Change (Synchronous)", function() {
+		sap.ui.getCore().getConfiguration().setLanguage("en");
+		
+		var oBtn = new sap.ui.testlib.TestButton({
+			text: "{sync5>TEST_TEXT}"
+		});
+		oBtn.placeAt("target1");
+
+		var oSyncModel = new sap.ui.model.resource.ResourceModel({
+			bundleName: "testdata.messages",
+			async: false
+		});
+		sap.ui.getCore().setModel(oSyncModel, "sync5");
+
+		equal(oBtn.getText(), "A text en", "Binding Change: Texts available after sync load");
+		sap.ui.getCore().getConfiguration().setLanguage("de");
+
+		equal(oBtn.getText(), "Ein Text de", "Binding Change: Texts available after sync load");
+		oBtn.destroy();
+		oSyncModel.destroy();
+		
+	});
+
 	</script>
 
 </head>
