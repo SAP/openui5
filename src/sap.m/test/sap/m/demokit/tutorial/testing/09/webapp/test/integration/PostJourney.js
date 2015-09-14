@@ -10,10 +10,10 @@ sap.ui.require(
 			Given.iStartMyApp();
 
 			//Actions
-			When.onTheWorklistPage.iPressOnTheItemWithTheID("PostID_2");
+			When.onTheWorklistPage.iPressOnTheItemWithTheID("PostID_15");
 
 			// Assertions
-			Then.onThePostPage.theTitleShouldDisplayTheName("Post 02");
+			Then.onThePostPage.theTitleShouldDisplayTheName("Jeans");
 		});
 
 		opaTest("Should go back to the TablePage", function (Given, When, Then) {
@@ -29,7 +29,7 @@ sap.ui.require(
 			When.onTheBrowser.iPressOnTheForwardButton();
 
 			// Assertions
-			Then.onThePostPage.theTitleShouldDisplayTheName("Post 02").
+			Then.onThePostPage.theTitleShouldDisplayTheName("Jeans").
 				and.iTeardownMyAppFrame();
 		});
 	}
