@@ -1438,6 +1438,27 @@
 			tp.destroy();
 		});
 
+		test("minutes only values are correctly synced with the input", function() {
+			//system under test
+			var oTp = new sap.m.TimePicker({
+				displayFormat: "mm"
+			});
+
+			//arrange
+			oTp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//act
+			this._triggerMultipleKeypress(oTp, "15");
+			qutils.triggerKeydown(jQuery(oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
+
+			//assert
+			equals(jQuery("#" + oTp.getId() + "-inner").val(), "15", "$input.val() ok");
+
+			//cleanup
+			oTp.destroy();
+		});
+
 		test("pm match start - then autocomplete on any letter", function() {
 			//system under test
 			var tp = new sap.m.TimePicker({

@@ -302,12 +302,14 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * Handles input's change event by synchronizing <code>value</code>,
 		 * and <code>dateValue</code> properties with the input field.
 		 *
+		 * @param {string} sValue The string value to be synchronized with, if the input value is used
 		 * @private
 		 */
-		TimePicker.prototype._handleInputChange = function () {
-			var sValue = this._$Input.val(),
-				oDate,
+		TimePicker.prototype._handleInputChange = function (sValue) {
+			var oDate,
 				oPicker;
+
+			sValue = sValue || this._$Input.val();
 
 			this._bValid = true;
 			if (sValue !== "") {
@@ -356,9 +358,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		TimePicker.prototype.onChange = function(oEvent) {
 			// don't call InputBase onChange because this calls setValue what would trigger a new formatting
 
+			var sValueParam = oEvent ? oEvent.value : null;
+
 			// check the control is editable or not
 			if (this.getEditable() && this.getEnabled()) {
-				this._handleInputChange();
+				this._handleInputChange(sValueParam);
 			}
 		};
 
