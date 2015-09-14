@@ -689,6 +689,7 @@
 			ok(iCount === 1, "request performed");
 			equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
 			oTxt.destroy();
+			oModel.detachBatchRequestCompleted(fnCheck);
 			start();
 		}
 		
@@ -721,6 +722,7 @@
 							ok(false, "request performed but should not go out as data already loaded by read request before");
 						}
 						oTxt.destroy();
+						oModel.detachBatchRequestCompleted(fnCheck);
 						start();
 					}
 					oModel.attachBatchRequestCompleted(
@@ -782,6 +784,7 @@
 					"Category size check");
 			oTable.destroy();
 			oTable= null;
+			oModel.detachBatchRequestCompleted(fnCheck);
 			start();
 		};
 		
@@ -829,6 +832,7 @@
 				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
 				oTable = null;
+				oModel.detachBatchRequestCompleted(fnCheck);
 				start();
 			}
 		}
@@ -876,6 +880,7 @@
 				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
 				oTable = null;
+				oModel.detachBatchRequestCompleted(fnCheck);
 				start();
 			}
 		}
@@ -924,6 +929,7 @@
 				ok(oTable.getBinding('rows').getLength() >= 2, "Category size check");
 				oTable.destroy();
 				oTable = null;
+				oModel.detachBatchRequestCompleted(fnCheck);
 				start();
 			}
 		}
