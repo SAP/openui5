@@ -3820,7 +3820,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 			jQuery.each(aVisibleColumns, function(iIndex, oCurrentColumn) {
 				//Check columns if they are fixed = they have a pixel width
-				if (!jQuery.sap.endsWith(oCurrentColumn.getWidth(), "px")) {
+				if (!jQuery.sap.endsWith(oCurrentColumn.getWidth(), "px")
+					&& !jQuery.sap.endsWith(oCurrentColumn.getWidth(), "em")
+					&& !jQuery.sap.endsWith(oCurrentColumn.getWidth(), "rem")) {
 					iNonFixedColumns++;
 					return false;
 				}
@@ -3864,7 +3866,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		var sColumnWidth = oColumn.getWidth();
 		var iColumnPercentage = parseInt(oColumn.getWidth(),10);
 		var iTotalWidth = this.$().find(".sapUiTableCtrl").width();
-		if (jQuery.sap.endsWith(sColumnWidth, "px")) {
+		if (jQuery.sap.endsWith(sColumnWidth, "px") || jQuery.sap.endsWith(sColumnWidth, "em") || jQuery.sap.endsWith(sColumnWidth, "rem")) {
 			iColumnPercentage = Math.round(100 / iTotalWidth * iColumnPercentage);
 		} else if (!jQuery.sap.endsWith(sColumnWidth, "%")) {
 			iColumnPercentage = Math.round(100 / iTotalWidth * oColumn.$().width());
