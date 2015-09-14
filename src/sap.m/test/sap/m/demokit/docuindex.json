@@ -24,7 +24,13 @@
 				"text": "Hello World",
 				"ref": "test-resources/sap/m/demokit/helloworld/index.html",
 				"icon": "sapmdemo/helloworld",
-				"desc": "This is where it all starts when developing with sap.m"
+				"desc": "This is where it all starts when developing with UI5"
+			},
+			{
+				"text": "Worklist",
+				"ref": "test-resources/sap/m/demokit/worklist/webapp/test/testOpenUI5Service.html",
+				"icon": "task",
+				"desc": "Simple starting point for a worklist-style app according to the best practices"
 			}
 		]
 	},
