@@ -61,9 +61,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 			"onAfterRendering": true
 		};
 
+		function mixinControllerDefinition(oController, oCustomControllerDef) {
+			/*eslint-disable no-loop-func */
+			for (var memberName in oCustomControllerDef) { // TODO: check whether it is a function? This does not happen until now, so rather not.
+
+				if (mControllerLifecycleMethods[memberName] !== undefined) {
+					// special handling for lifecycle methods
+					var fnOri = oController[memberName];
+					if (fnOri && typeof fnOri === "function") {
+						// use closure to keep correct values inside overridden function
+						(function(fnCust, fnOri, bOriBefore){
+							oController[memberName] = function() {
+								// call original function before or after the custom one
+								// depending on the lifecycle method (see mControllerLifecycleMethods object above)
+								if (bOriBefore) {
+									fnOri.apply(oController, arguments);
+									fnCust.apply(oController, arguments);
+								} else {
+									fnCust.apply(oController, arguments);
+									fnOri.apply(oController, arguments);
+								}
+							};
+						})(oCustomControllerDef[memberName], fnOri, mControllerLifecycleMethods[memberName]);
+					} else {
+						oController[memberName] = oCustomControllerDef[memberName];
+					}
+
+				} else {
+					// other methods just override the original implementation
+					oController[memberName] = oCustomControllerDef[memberName];
+				}
+			}
+			/*eslint-enable no-loop-func */
+		}
+
 		function extendIfRequired(oController, sName) {
 			var oCustomControllerDef;
-
+			
 			if (sap.ui.core.CustomizingConfiguration) {
 				var controllerExtensionConfig = sap.ui.core.CustomizingConfiguration.getControllerExtension(sName, ManagedObject._sOwnerId);
 				if (controllerExtensionConfig) {
@@ -94,37 +128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 							}
 
 							if ((oCustomControllerDef = mRegistry[sControllerName]) !== undefined) { //variable init, not comparison!
-								/*eslint-disable no-loop-func */
-								for (var memberName in oCustomControllerDef) { // TODO: check whether it is a function? This does not happen until now, so rather not.
-
-									if (mControllerLifecycleMethods[memberName] !== undefined) {
-										// special handling for lifecycle methods
-										var fnOri = oController[memberName];
-										if (fnOri && typeof fnOri === "function") {
-											// use closure to keep correct values inside overridden function
-											(function(fnCust, fnOri, bOriBefore){
-												oController[memberName] = function() {
-													// call original function before or after the custom one
-													// depending on the lifecycle method (see mControllerLifecycleMethods object above)
-													if (bOriBefore) {
-														fnOri.apply(oController, arguments);
-														fnCust.apply(oController, arguments);
-													} else {
-														fnCust.apply(oController, arguments);
-														fnOri.apply(oController, arguments);
-													}
-												};
-											})(oCustomControllerDef[memberName], fnOri, mControllerLifecycleMethods[memberName]);
-										} else {
-											oController[memberName] = oCustomControllerDef[memberName];
-										}
-
-									} else {
-										// other methods just override the original implementation
-										oController[memberName] = oCustomControllerDef[memberName];
-									}
-								}
-								/*eslint-enable no-loop-func */
+								mixinControllerDefinition(oController, oCustomControllerDef);
 							}// else {
 								// FIXME: what to do for typed controllers?
 							//}
@@ -136,7 +140,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 				} else {
 					jQuery.sap.log.debug("Customizing: no Controller extension found for Controller '" + sName + "'.");
 				}
+
 			}
+
+			// coding extensibility via extension provider hook
+			if (Controller._sExtensionProvider) {
+				jQuery.sap.require(Controller._sExtensionProvider);
+				var ExtensionProvider = jQuery.sap.getObject(Controller._sExtensionProvider);
+				if (ExtensionProvider) {
+					var oExtensionProvider = new ExtensionProvider();
+					var aControllerExtensions = oExtensionProvider.getControllerExtensions(sName /* controller name */, ManagedObject._sOwnerId /* component ID / clarfiy if this is needed? */);
+					for (var i = 0, l = aControllerExtensions.length; i < l; i++) {
+						mixinControllerDefinition(oController, aControllerExtensions[i]);
+					}
+				} else {
+					jQuery.sap.log.error("Controller Extension Provider: Extension Provider " + Controller._sExtensionProvider + " could not be found");
+				}
+			}
+
 			return oController;
 		}
 
@@ -270,6 +291,64 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 			//oView.addDelegate(this);
 		};
 
+
+		/**
+		 * Global extension provider name which will be used to create the 
+		 * instance of the extension provider.
+		 *
+		 * @private
+		 */
+		Controller._sExtensionProvider = null;
+		
+		
+		/**
+		 * Registers a callback module which provides code enhancements for the 
+		 * lifecycle and event handler functions of a specific controller.
+		 * <br/>
+		 * The extension provider module needs to provide a function called 
+		 * <code>getControllerExtensions</code> which returns an array of 
+		 * objects. Those objects are an object literal defining the methods 
+		 * and properties of the Controller similar like for {@link sap.ui.controller}.
+		 * <br/>
+		 * 
+		 * <b>Example for a callback module definition:</b>
+		 * <pre>
+		 * <code>
+		 * sap.ui.define("my/custom/ExtensionProvider", ['jquery.sap.global'], function(jQuery) {
+		 *   var ExtensionProvider = function() {};
+		 *   ExtensionProvider.prototype.getControllerExtensions = function(sControllerName, sComponentId) {
+		 *     return [{
+		 *       onInit: function() {
+		 *         // Do something here... 
+		 *       },
+		 *       onAfterRendering: function() {
+		 *         // Do something here... 
+		 *       },
+		 *       onButtonClick: function(oEvent) {
+		 *         // Handle the button click event
+		 *       }
+		 *     }];
+		 *   };
+		 *   return ExtensionProvider;
+		 * }, true);
+		 * </pre>
+		 * </code>
+		 * 
+		 * The lifecycle functions <code>onInit</code>, <code>onExit</code>,
+		 * <code>onBeforeRendering</code> and <code>onAfterRendering</code>
+		 * will be added before/after the lifecycle functions of the original
+		 * Controller. The event handler functions e.g. <code>onButtonClick</code>
+		 * are replacing the original Controllers function.
+		 * 
+		 * @param {string} sExtensionProvider the module name of the extension provider
+		 * 
+		 * @see sap.ui.controller for an overview of the available functions on controllers.
+		 * @since 1.34.0
+		 * @public
+		 */
+		Controller.registerExtensionProvider = function(sExtensionProvider) {
+			Controller._sExtensionProvider = sExtensionProvider;
+		};
 
 
 	return Controller;
