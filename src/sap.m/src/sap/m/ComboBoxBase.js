@@ -52,9 +52,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 			}
 		}});
 
-		IconPool.insertFontFaceStyle();
-		EnabledPropagator.apply(ComboBoxBase.prototype, [true]);
-
 		/* =========================================================== */
 		/* Private methods and properties                              */
 		/* =========================================================== */
