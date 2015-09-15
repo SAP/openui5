@@ -308,6 +308,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                     }
                 }
             }
+            
+            function collapseDevGuideTree(sTopLevelNavItemId, oTree) {
+                if (sTopLevelNavItemId === "mi-devguidekm") {
+                    oTree.collapseAll();
+                    var aTreeNodes = oTree.getNodes();
+                    for (var i = 0; i < aTreeNodes.length; i++) {
+                        var aNodeCustomData = aTreeNodes[i].getCustomData();
+                        for (var p = 0; p < aNodeCustomData.length; p++) {
+                            // "95d113be50ae40d5b0b562b84d715227" is the guide id of "SAPUI5: UI Development Toolkit for HTML5" root node which should be expanded.
+                            if (aNodeCustomData[p].getKey() === "_ref_" && aNodeCustomData[p].getValue().indexOf("95d113be50ae40d5b0b562b84d715227") !== -1) {
+                                aTreeNodes[i].expand();
+                            }
+                        }
+                    }
+                }
+            }
 
             if (oTopLevelNavItem._oTree) {
                 return;
@@ -349,6 +365,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
             oJSONModel.setData(aTreeData);
             oTree.bindNodes("/", oTreeNode);
 
+            collapseDevGuideTree(oTopLevelNavItem.id, oTree);
+            
             if (aTreeData.length > 25) {
                 oTree.collapseAll();
             }
