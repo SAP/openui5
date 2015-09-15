@@ -321,6 +321,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				//mobify carousel is 1-based
 				this._oMobifyCarousel.move(iIndex + 1);
 				this._changePage(iIndex + 1);
+
+				// BCP: 1580078315
+				if (sap.ui.commons && this.getParent() instanceof sap.ui.commons.layout.PositionContainer) {
+					if (this._isCarouselUsedWithCommonsLayout === undefined){
+						jQuery.sap.delayedCall(0, this, "invalidate");
+						this._isCarouselUsedWithCommonsLayout = true;
+					}
+				}
 			}
 		}
 
