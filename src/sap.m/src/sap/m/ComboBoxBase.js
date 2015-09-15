@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ComboBoxBase.
-sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './SelectList', './Popover', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool'],
-	function(jQuery, Bar, Dialog, InputBase, SelectList, Popover, library, EnabledPropagator, IconPool) {
+sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', './SelectList', './Popover', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool'],
+	function(jQuery, Bar, Dialog, ComboBoxTextField, SelectList, Popover, library, EnabledPropagator, IconPool) {
 		"use strict";
 
 		/**
@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Selec
 		 *
 		 * @class
 		 * An abstract class for combo boxes.
-		 * @extends sap.m.InputBase
+		 * @extends sap.m.ComboBoxTextField
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -26,17 +26,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Selec
 		 * @alias sap.m.ComboBoxBase
 		 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 		 */
-		var ComboBoxBase = InputBase.extend("sap.m.ComboBoxBase", /** @lends sap.m.ComboBoxBase.prototype */ { metadata: {
-
-			"abstract": true,
+		var ComboBoxBase = ComboBoxTextField.extend("sap.m.ComboBoxBase", /** @lends sap.m.ComboBoxBase.prototype */ { metadata: {
 			library: "sap.m",
-			properties: {
-
-				/**
-				 * Sets the maximum width of the text field.
-				 */
-				maxWidth: { type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%" }
-			},
 			defaultAggregation: "items",
 			aggregations: {
 
@@ -106,7 +97,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Selec
 		 *
 		 */
 		ComboBoxBase.prototype.init = function() {
-			InputBase.prototype.init.apply(this, arguments);
+			ComboBoxTextField.prototype.init.apply(this, arguments);
 
 			// sets the picker popup type
 			this.setPickerType("Popover");
@@ -125,7 +116,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Selec
 		 *
 		 */
 		ComboBoxBase.prototype.exit = function() {
-			InputBase.prototype.exit.apply(this, arguments);
+			ComboBoxTextField.prototype.exit.apply(this, arguments);
 
 			if (this.getList()) {
 				this.getList().destroy();
@@ -185,7 +176,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Selec
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		ComboBoxBase.prototype.ontap = function(oEvent) {
-			InputBase.prototype.ontap.apply(this, arguments);
+			ComboBoxTextField.prototype.ontap.apply(this, arguments);
 
 			var CSS_CLASS = this.getRenderer().CSS_CLASS_COMBOBOXBASE;
 
@@ -278,7 +269,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Selec
 			} else {	// the picker is closed
 
 				// cancel changes and revert to the value which the Input field had when it got the focus
-				InputBase.prototype.onsapescape.apply(this, arguments);
+				ComboBoxTextField.prototype.onsapescape.apply(this, arguments);
 			}
 		};
 
@@ -297,7 +288,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Selec
 		ComboBoxBase.prototype.onsapfocusleave = function(oEvent) {
 
 			if (!oEvent.relatedControlId) {
-				InputBase.prototype.onsapfocusleave.apply(this, arguments);
+				ComboBoxTextField.prototype.onsapfocusleave.apply(this, arguments);
 				return;
 			}
 
@@ -316,7 +307,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Selec
 				return;
 			}
 
-			InputBase.prototype.onsapfocusleave.apply(this, arguments);
+			ComboBoxTextField.prototype.onsapfocusleave.apply(this, arguments);
 		};
 
 		/* =========================================================== */
@@ -589,7 +580,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Selec
 		ComboBoxBase.prototype.clearSelection = function() {};
 
 		ComboBoxBase.prototype.updateValueStateClasses = function(sValueState, sOldValueState) {
-			InputBase.prototype.updateValueStateClasses.apply(this, arguments);
+			ComboBoxTextField.prototype.updateValueStateClasses.apply(this, arguments);
 
 			var mValueState = sap.ui.core.ValueState,
 				CSS_CLASS = this.getRenderer().CSS_CLASS_COMBOBOXBASE,
