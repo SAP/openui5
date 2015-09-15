@@ -42,10 +42,6 @@
 						<semantic:MessagesIndicator press="onMessagesButtonPress"/>
 					</semantic:messagesIndicator>
 
-					<semantic:customHeaderContent>
-						<Button text="CustomHeaderBtn" press="onPress"/>
-					</semantic:customHeaderContent>
-
 					<semantic:customFooterContent>
 						<Button text="CustomFooterBtn" press="onPress"/>
 						<OverflowToolbarButton icon="sap-icon://settings" text="Settings" press="onPress"/>
