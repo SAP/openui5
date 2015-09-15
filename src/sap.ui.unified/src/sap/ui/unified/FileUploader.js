@@ -809,7 +809,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 */
 	FileUploader.prototype.clear = function () {
 		var uploadForm = this.getDomRef("fu_form");
-		uploadForm.reset();
+		if (uploadForm) {
+			uploadForm.reset();
+		}
 		//clear the value, don't fire change event, and supress the refocusing of the file input field
 		return this.setValue("", false, true);
 	};
