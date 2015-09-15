@@ -1591,6 +1591,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				// TODO: in case of bForceUpdateVSb the scrolling doesn't work anymore
 				//       height changes of the scrollbar should not require a re-rendering!
 				this._sScrollBarTimer = jQuery.sap.delayedCall(bOnAfterRendering ? 0 : 250, this, function() {
+					// When the scrollbar timer is planned iSteps might be 0 because the binding might not have data yet.
+					// This can even happen with JSON ListBinding if setProperty is called on a collection
+					// Make sure to get the current length from the binding.
+					var iSteps = 0;
+					if (oBinding) {
+						// the binding might have changed by the time the function gets called
+						iSteps = Math.max(0, (oBinding.getLength() || 0) - this.getVisibleRowCount());
+					}
 
 					this._oVSb.setSteps(iSteps);
 					if (this._oVSb.getDomRef()) {
