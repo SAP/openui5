@@ -694,41 +694,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this.focus();
 	};
 
-	// move focus to the next/prev tabbable element after or before the list
-	// TODO: This implementation search parent which means we are out of our sandbox!
-	/*sap.m.FacetFilter.prototype._navToTabChain = function(bForward) {
-		var $Current = this.$();
-		var $Tabbables = $Current.find(":sapTabbable");
-		var $Reference = $Tabbables.eq(bForward ? -1 : 0).add($Current).eq(-1);
-		var oStaticUIArea = sap.ui.getCore().getStaticAreaRef();
-		var sTabIndex = $Reference.attr("tabindex");
-		var iStep = bForward ? 1 : -1;
-
-		// make the dummy tabbable
-		$Reference.attr("tabindex", "0");
-
-		// search all dom parents to find next/prev tabbable item
-		while (($Current = $Current.parent()) && $Current[0] && $Current[0] !== oStaticUIArea) {
-			$Tabbables = $Current.find(":sapTabbable");
-			var iLimit = bForward ? $Tabbables.length - 1 : 0;
-			var iIndex = $Tabbables.index($Reference);
-
-			// should have more tabbables element then before or after reference
-			// should keep searching if the $Reference is the first or last one
-			if ($Tabbables.length > 1 && iIndex != iLimit) {
-				break;
-			}
-		}
-
-		// find next/prev tabbable item and reset tabindex
-		iIndex = $Tabbables.index($Reference) + iStep;
-		$Reference.attr("tabindex", sTabIndex);
-
-		// focus and return the found tabbable if possible
-		return $Tabbables[iIndex] && $Tabbables.eq(iIndex).focus();
-	};
-*/
-	/**
+	/**  
 	 * Get the facet popover displayed when the user presses the facet button (Simple type only). The popover is created if it does not exist
 	 * and is available via the "popover" aggregation. This aggregation is destroyed when the popover is closed.
 	 *
