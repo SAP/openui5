@@ -519,7 +519,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		// make sure to also check that the entities before the requested start index can be served
 		var i = Math.max((iStartIndex - iThreshold - this._iPageSize), 0);
 		if (this.oKeys[sNodeId]) {
-			for (i; i < iStartIndex + iLength + (iThreshold); i++) {
+			
+			// restrict loop to the maximum available length if we have a $(inline)count
+			// this will make sure we do not find "missing" sections at the end of the known datablock, if it is outside the $(inline)count
+			var iMaxIndexToCheck = iStartIndex + iLength + (iThreshold);
+			if (this.oLengths[sNodeId]) {
+				iMaxIndexToCheck = Math.min(iMaxIndexToCheck, this.oLengths[sNodeId]);
+			}
+			
+			for (i; i < iMaxIndexToCheck; i++) {
 				sKey = this.oKeys[sNodeId][i];
 				if (!sKey) {
 					if (!fnFindInLoadedSections(i)) {
@@ -558,6 +566,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 				//last missing section will be appended with additional threshold ("positive")
 				i = aMissingSections[aMissingSections.length - 1].startIndex + aMissingSections[aMissingSections.length - 1].length;
 				var iEndIndex = i + iThreshold + this._iPageSize;
+				// if we already have a count -> clamp the end index
+				if (this.oLengths[sNodeId]) {
+					iEndIndex = Math.min(iEndIndex, this.oLengths[sNodeId]);
+				}
+				
 				for (i; i < iEndIndex; i++) {
 					var sKey = this.oKeys[sNodeId][i];
 					if (!sKey) {
@@ -725,51 +738,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 		
 		function fnSuccess(oData) {
 
+			if (oData) {
+				// make sure we have a keys array
+				that.oKeys[sNodeId] = that.oKeys[sNodeId] || [];
+				
+				// evaluate the count
+				if (bInlineCountRequested && oData.__count >= 0) {
+					that.oLengths[sNodeId] = parseInt(oData.__count, 10);
+					that.oFinalLengths[sNodeId] = true;
+				}
+			}
+			
 			// Collecting contexts
-			//beware: oData.results can be an empty array -> so the length has to be checked
-			if (oData.results && oData.results.length > 0) {
-				//Case 1: Result is an entity set
+			// beware: oData.results can be an empty array -> so the length has to be checked
+			if (jQuery.isArray(oData.results) && oData.results.length > 0) {
+
+				// Case 1: Result is an entity set
+				// Case 1a: Tree Annotations
 				if (that.bHasTreeAnnotations) {
 					var mLastNodeIdIndices = {};
-					
-					// evaluate the count
-					if (bInlineCountRequested && oData.__count) {
-						that.oLengths[sNodeId] = parseInt(oData.__count, 10);
-						that.oFinalLengths[sNodeId] = true;
-					}
-					
+
 					for (var i = 0; i < oData.results.length; i++) {
 						var oEntry = oData.results[i];
-						
-						var sEntryNodeId = sNodeId;
-						
+
 						if (i == 0) {
-							mLastNodeIdIndices[sEntryNodeId] = iStartIndex;
-						} else if (mLastNodeIdIndices[sEntryNodeId] == undefined) {
-							mLastNodeIdIndices[sEntryNodeId] = 0;
+							mLastNodeIdIndices[sNodeId] = iStartIndex;
+						} else if (mLastNodeIdIndices[sNodeId] == undefined) {
+							mLastNodeIdIndices[sNodeId] = 0;
 						}
 						
-						if (!(sEntryNodeId in that.oKeys)) {
-							that.oKeys[sEntryNodeId] = [];
-							
-							// update length (only when the inline count was requested and is available)
-							if (bInlineCountRequested && oData.__count) {
-								that.oLengths[sEntryNodeId] = parseInt(oData.__count, 10);
-								that.oFinalLengths[sEntryNodeId] = true;
-							}
-						}
-						
-						that.oKeys[sEntryNodeId][mLastNodeIdIndices[sEntryNodeId]] = that.oModel._getKey(oEntry);
-						mLastNodeIdIndices[sEntryNodeId]++;
+						that.oKeys[sNodeId][mLastNodeIdIndices[sNodeId]] = that.oModel._getKey(oEntry);
+						mLastNodeIdIndices[sNodeId]++;
 					}
 				} else {
-					// update length (only when the inline count was requested and is available)
-					if (bInlineCountRequested && oData.__count) {
-						that.oLengths[sNodeId] = parseInt(oData.__count, 10);
-						that.oFinalLengths[sNodeId] = true;
-					}
-					
-					that.oKeys[sNodeId] = [];
+					// Case 1b: Navigation Properties
 					for (var i = 0; i < oData.results.length; i++) {
 						var oEntry = oData.results[i];
 						var sKey = that.oModel._getKey(oEntry);
@@ -777,14 +779,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 						that.oKeys[sNodeId][i + iStartIndex] = sKey;
 					}
 				}
-			} else if (oData.results && oData.results.length === 0) {
-				//Case 2: we have an empty result (and possible a count)
-				if (bInlineCountRequested && oData.__count) {
-					that.oLengths[sNodeId] = parseInt(oData.__count, 10);
-				}
-				that.oFinalLengths[sNodeId] = true;
-			} else {
-				//Case 3: Single entity (this only happens if you bind to a single entity as root element)
+			} else if (oData && !jQuery.isArray(oData.results)){
+				// Case 2: oData.results is not an array, so oData is a single entity
+				// this only happens if you bind to a single entity as root element)
 				that.oKeys[null] = that.oModel._getKey(oData);
 				if (!that.bHasTreeAnnotations) {
 					that._processODataObject(oData, sNodeId, mParameters.navPath);
@@ -809,50 +806,48 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			that.fireDataReceived();
 
 			if (oRequestedSection) {
-			// remove section from loadedSections so the data can be requested again.
-			// this might be required when e.g. when the service was not available for a short time
-			var aLoadedSections = [];
-			for (var i = 0; i < that._mLoadedSections[sNodeId].length; i++) {
-				var oCurrentSection = that._mLoadedSections[sNodeId][i];
-				if (oRequestedSection.startIndex >= oCurrentSection.startIndex && oRequestedSection.startIndex + oRequestedSection.length <= oCurrentSection.startIndex + oCurrentSection.length) {
-					// remove the section interval and maintain adapted sections. If start index and length are the same, ignore the section
-					if (oRequestedSection.startIndex !== oCurrentSection.startIndex && oRequestedSection.length !== oCurrentSection.length) {
-						aLoadedSections = TreeBindingUtils.mergeSections(aLoadedSections, {startIndex: oCurrentSection.startIndex, length: oRequestedSection.startIndex - oCurrentSection.startIndex});
-						aLoadedSections = TreeBindingUtils.mergeSections(aLoadedSections, {startIndex: oRequestedSection.startIndex + oRequestedSection.length, length: (oCurrentSection.startIndex + oCurrentSection.length) - (oRequestedSection.startIndex + oRequestedSection.length)});
+				// remove section from loadedSections so the data can be requested again.
+				// this might be required when e.g. when the service was not available for a short time
+				var aLoadedSections = [];
+				for (var i = 0; i < that._mLoadedSections[sNodeId].length; i++) {
+					var oCurrentSection = that._mLoadedSections[sNodeId][i];
+					if (oRequestedSection.startIndex >= oCurrentSection.startIndex && oRequestedSection.startIndex + oRequestedSection.length <= oCurrentSection.startIndex + oCurrentSection.length) {
+						// remove the section interval and maintain adapted sections. If start index and length are the same, ignore the section
+						if (oRequestedSection.startIndex !== oCurrentSection.startIndex && oRequestedSection.length !== oCurrentSection.length) {
+							aLoadedSections = TreeBindingUtils.mergeSections(aLoadedSections, {startIndex: oCurrentSection.startIndex, length: oRequestedSection.startIndex - oCurrentSection.startIndex});
+							aLoadedSections = TreeBindingUtils.mergeSections(aLoadedSections, {startIndex: oRequestedSection.startIndex + oRequestedSection.length, length: (oCurrentSection.startIndex + oCurrentSection.length) - (oRequestedSection.startIndex + oRequestedSection.length)});
+						}
+	
+					} else {
+						aLoadedSections.push(oCurrentSection);
 					}
-
-				} else {
-					aLoadedSections.push(oCurrentSection);
 				}
-			}
-			that._mLoadedSections[sNodeId] = aLoadedSections;
+				that._mLoadedSections[sNodeId] = aLoadedSections;
 			}
 		}
 		
 		// !== because we use "null" as sNodeId in case the user only provided a root level
 		if (sNodeId !== undefined) {
-			if ((!this.oFinalLengths[sNodeId] || this.bHasTreeAnnotations)) {
-				// execute the request and use the metadata if available
-				this.fireDataRequested();
-				var sAbsolutePath;
-				if (this.bHasTreeAnnotations) {
-					sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
-				} else {
-					sAbsolutePath = sNodeId;
-				}
-				
-				if (this.mRequestHandles[sRequestKey]) {
-					this.mRequestHandles[sRequestKey].abort();
-				}
-				sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
-				this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
-					urlParameters: aParams,
-					success: fnSuccess,
-					error: fnError,
-					sorters: this.aSorters,
-					groupId: sGroupId
-				});
+			// execute the request and use the metadata if available
+			this.fireDataRequested();
+			var sAbsolutePath;
+			if (this.bHasTreeAnnotations) {
+				sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+			} else {
+				sAbsolutePath = sNodeId;
 			}
+			
+			if (this.mRequestHandles[sRequestKey]) {
+				this.mRequestHandles[sRequestKey].abort();
+			}
+			sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
+			this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
+				urlParameters: aParams,
+				success: fnSuccess,
+				error: fnError,
+				sorters: this.aSorters,
+				groupId: sGroupId
+			});
 		}
 	};
 	
