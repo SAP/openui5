@@ -21,8 +21,7 @@ sap.ui.define([
 		createContent : function () {
 			var sServiceUri = this.proxy("/sap/opu/local_v4/IWBEP/TEA_BUSI/"),
 				oModel = new ODataModel({
-					serviceUrl: sServiceUri,
-					automaticTypeDetermination : true
+					serviceUrl: sServiceUri
 				});
 
 			return sap.ui.view({

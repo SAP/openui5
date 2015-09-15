@@ -3,13 +3,14 @@
  */
 sap.ui.require([
 	"sap/ui/model/Model",
+	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/v4/ODataContextBinding",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (Model, ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel,
+], function (Model, TypeString, ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel,
 		ODataPropertyBinding, TestUtils) {
 	/*global odatajs, QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
@@ -53,11 +54,10 @@ sap.ui.require([
 	/**
 	 * Creates a v4 OData service for <code>TEA_BUSI</code>.
 	 *
-	 * @param {object} [mParameters] the model properties
 	 * @returns {sap.ui.model.odata.v4.oDataModel} the model
 	 */
-	function createModel(mParameters) {
-		return new ODataModel(getServiceUrl("/sap/opu/local_v4/IWBEP/TEA_BUSI/"), mParameters);
+	function createModel() {
+		return new ODataModel(getServiceUrl("/sap/opu/local_v4/IWBEP/TEA_BUSI/"));
 	}
 
 	//*********************************************************************************************
@@ -103,7 +103,10 @@ sap.ui.require([
 			oControl = new TestControl({models: oModel}),
 			done = assert.async();
 
-		oControl.bindProperty("text", "/TEAMS('TEAM_01')/Name");
+		oControl.bindProperty("text", {
+			path : "/TEAMS('TEAM_01')/Name",
+			type : new TypeString()
+		});
 		// bindProperty creates an ODataPropertyBinding and calls its initialize which results in
 		// checkUpdate and a request. The value is updated asynchronously via a change event later
 		oControl.getBinding("text").attachChange(function () {
@@ -119,7 +122,10 @@ sap.ui.require([
 			done = assert.async();
 
 		oControl.bindObject("/TEAMS('TEAM_01')");
-		oControl.bindProperty("text", "Name");
+		oControl.bindProperty("text", {
+			path : "Name",
+			type : new TypeString()
+		});
 		// bindProperty creates an ODataPropertyBinding and calls its initialize which results in
 		// checkUpdate and a request. The value is updated asynchronously via a change event later
 		oControl.getBinding("text").attachChange(function () {
@@ -153,7 +159,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("bindList", function (assert) {
-		var oModel = new ODataModel("/foo/"),
+		var oModel = createModel(),
 			oContext = {},
 			oBinding = oModel.bindList("/path", oContext);
 

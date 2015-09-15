@@ -57,7 +57,10 @@ sap.ui.require([
 			return new Promise(function (fnResolve, fnReject) {
 				var oBinding;
 
-				oControl.bindProperty("text", "/EntitySet('foo')/property");
+				oControl.bindProperty("text", {
+					path : "/EntitySet('foo')/property",
+					type : new TypeString()
+				});
 
 				assert.strictEqual(oControl.getText(), undefined, "synchronous: no value yet");
 				oBinding = oControl.getBinding("text");
@@ -125,7 +128,10 @@ sap.ui.require([
 			oControl = new TestControl({models: oModel});
 
 		oModelMock.expects("read").never();
-		oControl.bindProperty("text", "property");
+		oControl.bindProperty("text",{
+			path : "property",
+			type : new TypeString()
+		});
 		oControl.getBinding("text").attachChange(function () {
 			assert.strictEqual(oControl.getText(), "value");
 			done();
@@ -156,8 +162,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("automaticTypeDetermination", function (assert) {
-		var oModel = new ODataModel("/service/", {automaticTypeDetermination : true}),
+	QUnit.test("automaticTypes", function (assert) {
+		var oModel = new ODataModel("/service/"),
 			oControl = new TestControl({models: oModel}),
 			sPath = "/EntitySet('foo')/property",
 			oType = new TypeString(),
@@ -179,8 +185,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("automaticTypeDetermination: type already set by app", function (assert) {
-		var oModel = new ODataModel("/service/", {automaticTypeDetermination : true}),
+	QUnit.test("automaticTypes: type already set by app", function (assert) {
+		var oModel = new ODataModel("/service/"),
 			oControl = new TestControl({models: oModel}),
 			sPath = "/EntitySet('foo')/property",
 			done = assert.async();
@@ -201,15 +207,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("automaticTypeDetermination: formatter set by app", function (assert) {
-		var oModel = new ODataModel("/service/", {automaticTypeDetermination : true}),
+	QUnit.test("automaticTypes: formatter set by app", function (assert) {
+		var oModel = new ODataModel("/service/"),
 			oControl = new TestControl({models: oModel}),
 			sPath = "/EntitySet('foo')/property",
+			oType = new TypeString(),
 			done = assert.async();
 
 		this.oSandbox.mock(oModel).expects("read").withExactArgs(sPath)
 			.returns(Promise.resolve({value: "foo"}));
-		this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type").never();
+		this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type")
+			.withExactArgs(sPath)
+			.returns(Promise.resolve(oType));
+		this.oSandbox.mock(oType).expects("formatValue")
+			.withExactArgs("foo", "string")
+			.returns("*foo*");
 
 		oControl.bindProperty("text", {
 			path: sPath,
@@ -219,39 +231,51 @@ sap.ui.require([
 		});
 		var oBinding = oControl.getBinding("text");
 		oBinding.attachChange(function () {
-			assert.strictEqual(oControl.getText(), "~foo~");
+			assert.strictEqual(oBinding.getType(), oType);
+			assert.strictEqual(oControl.getText(), "~*foo*~");
 			done();
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("automaticTypeDetermination: invalid type", function (assert) {
-		var oBinding,
-			oError = new Error("invalid type"),
-			done = assert.async(),
-			oModel = new ODataModel("/service/", {automaticTypeDetermination : true}),
-			oControl = new TestControl({models: oModel}),
-			sPath = "/EntitySet('foo')/property";
+	[false, true].forEach(function (bForceUpdate) {
+		QUnit.test("automaticTypes: failed type, bForceUpdate = " + bForceUpdate,
+			function (assert) {
+				var oBinding,
+					iCalls = bForceUpdate ? 2 : 1,
+					oError = new Error("failed type"),
+					done = assert.async(),
+					oModel = new ODataModel("/service/"),
+					oModelMock = this.oSandbox.mock(oModel),
+					oControl = new TestControl({models: oModel}),
+					sPath = "/EntitySet('foo')/property";
 
-		this.oSandbox.mock(oModel).expects("read").twice().withExactArgs(sPath)
-			.returns(Promise.resolve({value: "foo"}));
-		this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type")
-			.withExactArgs(sPath)
-			.returns(Promise.reject(oError));
-		this.oLogMock.expects("warning").withExactArgs("invalid type", sPath,
-			"sap.ui.model.odata.v4.ODataPropertyBinding");
+				oModelMock.expects("read").withExactArgs(sPath)
+					.returns(Promise.resolve({value: "foo"}));
+				oModelMock.expects("read").withExactArgs(sPath)
+					.returns(Promise.resolve({value: "update"})); // 2nd read gets an update
+				this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type")
+					.exactly(iCalls).withExactArgs(sPath)
+					.returns(Promise.reject(oError)); // UI5 type not found
+				this.oLogMock.expects("warning").exactly(iCalls)
+					.withExactArgs("failed type", sPath,
+						"sap.ui.model.odata.v4.ODataPropertyBinding");
 
-		function onChange() {
-			oBinding.detachChange(onChange);
-			oBinding.attachChange(done);
-			setTimeout(function () {
-				oBinding.checkUpdate(true);
-			}, 0);
-		}
+				function onChange() {
+					oBinding.detachChange(onChange);
+					oBinding.attachChange(done);
+					setTimeout(function () {
+						// only with force update, failed type is requested again
+						oBinding.checkUpdate(bForceUpdate);
+					}, 0);
+				}
 
-		oControl.bindProperty("text", sPath);
-		oBinding = oControl.getBinding("text");
-		oBinding.attachChange(onChange);
+				// initially, type is requested
+				oControl.bindProperty("text", sPath);
+				oBinding = oControl.getBinding("text");
+				oBinding.attachChange(onChange);
+			}
+		);
 	});
 
 	// TODO bSuspended? In v2 it is ignored (check with core)
