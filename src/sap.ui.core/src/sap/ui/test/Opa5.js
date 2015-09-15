@@ -398,6 +398,8 @@ sap.ui.define(['jquery.sap.global',
 		 * 	<li>actions: instance of OPA5</li>
 		 * 	<li>assertions: instance of OPA5</li>
 		 * 	<li>visible: true</li>
+		 * 	<li>timeout : 15 seconds, is increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true</li>
+		 * 	<li>pollingInterval: 400 milliseconds</li>
 		 * </ul>
 		 * @public
 		 * @since 1.25
