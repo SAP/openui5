@@ -1004,15 +1004,18 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype.removeColumn = function(vColumn, bSuppressInvalidate) {
 		var oResult = Table.prototype.removeColumn.apply(this, arguments);
 		
-		//TODO: Make sure vColumn is really an AnalyticalColumn instance
-		this._aGroupedColumns = jQuery.grep(this._aGroupedColumns, function(sValue) {
-			//check if vColum is an object with getId function
-			if (vColumn.getId) {
-				return sValue != vColumn.getId();
-			} else {
-				return sValue == vColumn;
-			}
-		});
+		// only remove from grouped columns if not caused by column move. If this._iNewColPos
+		// is set, the column was moved by user.-
+		if (!this._iNewColPos) {
+			this._aGroupedColumns = jQuery.grep(this._aGroupedColumns, function(sValue) {
+				//check if vColum is an object with getId function
+				if (vColumn.getId) {
+					return sValue != vColumn.getId();
+				} else {
+					return sValue == vColumn;
+				}
+			});
+		}
 		
 		this.updateAnalyticalInfo(bSuppressInvalidate);
 
