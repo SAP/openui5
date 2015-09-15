@@ -44,11 +44,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 			
 			this.bAsync = !!(oData && oData.async);
 		
-			this.sDefaultBindingMode = this.bAsync ? BindingMode.OneWay : BindingMode.OneTime;
+			this.sDefaultBindingMode = oData.defaultBindingMode || BindingMode.OneWay;
+			
 			this.mSupportedBindingModes = {
 				"OneWay" : true,
 				"TwoWay" : false,
-				"OneTime" : true
+				"OneTime" : !this.bAsync
 			};
 			
 			if (this.bAsync && this.sDefaultBindingMode == BindingMode.OneTime) {
@@ -111,6 +112,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 		function doEnhance(){
 			if (jQuery.sap.resources.isBundle(oData)) {
 				that._oResourceBundle._enhance(oData);
+				that.checkUpdate(true);
 				if (oPromise) {
 					fResolve(true);
 				}
@@ -120,12 +122,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 				if (bundle instanceof Promise) {
 					bundle.then(function(customBundle){
 						that._oResourceBundle._enhance(customBundle);
+						that.checkUpdate(true);
 						fResolve(true);
 					}, function(){
 						fResolve(true);
 					});
 				} else if (bundle) {
 					that._oResourceBundle._enhance(bundle);
+					that.checkUpdate(true);
 				}
 			}
 		}
@@ -205,6 +209,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 				});
 			} else {
 				oModel._oResourceBundle = res;
+				oModel.checkUpdate(true);
 			}
 		} else if (bThrowError) {
 			throw new Error("Neither bundleUrl nor bundleName are given. One of these is mandatory.");
