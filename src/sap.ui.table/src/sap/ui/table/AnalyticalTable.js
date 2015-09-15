@@ -1397,7 +1397,14 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype._isRowSelectable = function(iRowIndex) {
-		return this.getBinding("rows").isIndexSelectable(iRowIndex);
+		var oBinding = this.getBinding("rows");
+		if (oBinding) {
+			return oBinding.isIndexSelectable(iRowIndex);
+		} else {
+			// if there is no binding the selection can't be handled, therefore the row is not selectable
+			return false;
+		}
+
 	};
 	
 	return AnalyticalTable;
