@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-<!-- 
+<!--
   JSUNIT:
     Tested control/class: sap.ui.commons.Label
     Author: SAP
@@ -20,6 +20,7 @@
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript">
 
@@ -30,8 +31,8 @@
 			sWidth = "111px",
 			bVisible = true,
 			oTextAlign = sap.ui.core.TextAlign.End,
-			bWrapping = false, 
-			oTextDirection = sap.ui.core.TextDirection.RTL, 
+			bWrapping = false,
+			oTextDirection = sap.ui.core.TextDirection.RTL,
 			oDesign = sap.ui.commons.LabelDesign.Bold;
 
 		var oLabel1 = new sap.ui.commons.Label("l1");
@@ -43,17 +44,17 @@
 		oLabel1.setWrapping(bWrapping);
 		oLabel1.setTextDirection(oTextDirection);
 		oLabel1.setDesign(oDesign);
-		oLabel1.setLabelFor(oTextField); 
+		oLabel1.setLabelFor(oTextField);
 		sap.ui.setRoot("uiArea1", oLabel1);
 
 		var oLabel2 = new sap.ui.commons.Label("l2", {
 			text : sText,
-			icon : sIcon, 
-			width : sWidth,			
+			icon : sIcon,
+			width : sWidth,
 			visible : bVisible,
 			textAlign : oTextAlign,
-			wrapping : bWrapping, 
-			textDirection : oTextDirection,  
+			wrapping : bWrapping,
+			textDirection : oTextDirection,
 			design : oDesign,
 			labelFor : "t1"
 		});
@@ -61,7 +62,7 @@
 
 		var l1, l2;
 
-		module("Basic", {		 
+		module("Basic", {
 			setup : function() {
 				l1 = sap.ui.getCore().getControl("l1");
 				l2 = sap.ui.getCore().getControl("l2");
@@ -82,7 +83,7 @@
 			}
 		});
 
-		// test property accessor methods 
+		// test property accessor methods
 
 		test("TextOk", function() {
 			strictEqual(l1.getText(), sText, "l1.getText() returns wrong result");
@@ -128,12 +129,9 @@
 
 		// nothing to do here
 
+		// TODO
 
-		// test methods
-
-		// TODO 
-
-		// test misc (control interaction, metadata, styles, etc.)	
+		// test misc (control interaction, metadata, styles, etc.)
 
 		test("CssClassesOk", function() {
 			var sClasses = window.document.getElementById("l1").className;
@@ -142,7 +140,7 @@
 			ok(sClasses.indexOf("sapUiLblEmph") > -1, "l1 className is missing 'sapUiLblEmph'");
 		});
 
-		test("CssClassesAfterSetDesignStandardOk", function() {		
+		test("CssClassesAfterSetDesignStandardOk", function() {
 			l1.setDesign(sap.ui.commons.LabelDesign.Standard);
 			sap.ui.getCore().applyChanges();
 			var sClasses = window.document.getElementById("l1").className;
@@ -162,7 +160,7 @@
 			strictEqual(oMetadata.getProperties()["text"]["type"], "string");
 			ok(isEmpty(oMetadata.getAggregations()));
 			ok(oMetadata.getAssociations() !== undefined);
-			ok(oMetadata.getAssociations()["labelFor"] !== undefined); 
+			ok(oMetadata.getAssociations()["labelFor"] !== undefined);
 		});
 
 		test("DirectionStyleOk", function() {
@@ -219,6 +217,37 @@
 			ok(!l1.$().hasClass("sapUiLblReqEnd"), "l1 has no class 'sapUiLblReqEnd'");
 		});
 
+		// test methods
+
+		module("Methods", {
+			setup: function () {
+				this.oLabel3 = new sap.ui.commons.Label('label3', {text: 'Label 3'});
+				ok(this.oLabel3, "oLabel3 should not be null");
+			},
+			teardown: function () {
+				this.oLabel3 = null;
+			}
+		});
+
+		test("On exit call", function() {
+			var fnExitSpy = sinon.spy(this.oLabel3, "exit");
+			this.oLabel3.destroy();
+
+			strictEqual(fnExitSpy.callCount, 1, "Should call exit() method");
+		});
+
+		test("On onBeforeRendering call", function() {
+			var fnExitSpy = sinon.spy(this.oLabel3, "onBeforeRendering");
+			this.oLabel3.placeAt("uiArea3");
+			sap.ui.getCore().applyChanges();
+
+			if (this.oLabel3.oForTooltip) {
+			    strictEqual(this.oLabel3.oForTooltip, null, "oForTooltip should be cleared");
+			}
+
+			strictEqual(fnExitSpy.callCount, 1, "Should call onBeforeRendering () method");
+		});
+
 		</script>
 	</head>
 	<body>
@@ -226,8 +255,9 @@
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>	
+		<ol id="qunit-tests"></ol>
 		<div id="uiArea1"></div>
 		<div id="uiArea2"></div>
+		<div id="uiArea3"></div>
 	</body>
 </html>
