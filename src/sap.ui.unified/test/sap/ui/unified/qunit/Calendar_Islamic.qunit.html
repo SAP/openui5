@@ -1,0 +1,201 @@
+<!DOCTYPE HTML>
+
+<!-- 
+  Tested control/class: sap.ui.unified.Calendar
+-->
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Calendar - sap.ui.unified</title>
+		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.unified.Calendar.gif">
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.unified"
+			data-sap-ui-language="en-US"
+			data-sap-ui-calendarType="islamic">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<!-- Test functions -->
+		<script language="javascript">
+		
+			jQuery.sap.require("sap.ui.core.LocaleData");
+			var oLocaleData = sap.ui.core.LocaleData.getInstance(new sap.ui.core.Locale("en-US"));
+			var aMonthNames = oLocaleData.getMonths("wide")
+		
+			jQuery.sap.require("sap.ui.core.format.DateFormat");
+			var oFormat = sap.ui.core.format.DateFormat.getDateInstance({
+				UTC: true,
+				pattern: "yyyyMMdd",
+				calendarType: sap.ui.core.CalendarType.Gregorian
+			});
+
+			var oCal1 = new sap.ui.unified.Calendar("Cal1", {}).placeAt("uiArea1");
+			
+			function initializeCalendar(sSelectedDate) {
+				var oDate = oFormat.parse(sSelectedDate, true);
+				oCal1.destroySelectedDates();
+				oCal1.addSelectedDate(new sap.ui.unified.DateRange({startDate : oDate}));
+				sap.ui.getCore().applyChanges();
+				oCal1.displayDate(oDate);
+			}
+			
+			function checkDate(sSelectedDate, iExpectedDay, iExpectedMonth, iExpectedYear,
+				iExpectedDaysOfOtherMonthBefore, iExpectedDaysOfOtherMonthAfter) {
+				
+				initializeCalendar(sSelectedDate);
+				
+				var $Month = oCal1.getAggregation("month")[0].$();
+				
+				equal($Month.find(".sapUiCalWH").length, 7, "Islamic week has 7 days");
+				equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpectedMonth-1], "Islamic Month is correct");
+				equal(oCal1.$("-Head-B2").text(), "" + iExpectedYear, "Islamic Year is correct");
+				
+				var aDays = $Month.find(".sapUiCalItem"),
+					sMonthAndYear = iExpectedYear + (iExpectedMonth < 10 ? "0" : "") + iExpectedMonth,
+					sSelectedDateIslamic = sMonthAndYear + (iExpectedDay < 10 ? "0" : "") + iExpectedDay,
+					$Day,
+					sDate,
+					iCount = 0,
+					iExpectedDaysInMonth = 35 - iExpectedDaysOfOtherMonthBefore - iExpectedDaysOfOtherMonthAfter;
+				
+				equal(aDays.length, 35, "Calendar shows 35 days");
+				
+				for (var i=0; i<35; i++) {
+					$Day = jQuery(aDays[i]);
+					sDate = $Day.attr("data-sap-day");
+					
+					if (i < iExpectedDaysOfOtherMonthBefore || i >= aDays.length - iExpectedDaysOfOtherMonthAfter) {
+						ok($Day.hasClass("sapUiCalItemOtherMonth"), "Item " + i + " (" + sDate + ") is not in current month.");
+					} else {
+						iCount++;
+						ok(!$Day.hasClass("sapUiCalItemOtherMonth"), "Item " + i + " (" + sDate + ") is in current month.");
+						equal(sDate, sMonthAndYear + (iCount < 10 ? "0" : "") + iCount, "Item " + i + " (" + sDate + ") has correct date (data-sap-day).");
+						equal($Day.text(), "" + iCount, "Item " + i + " (" + sDate + ") has correct date (text).");
+					}
+					
+					if (sSelectedDateIslamic == sDate) {
+						ok($Day.hasClass("sapUiCalItemSel"), "Item " + i + " (" + sDate + ") is selected.");
+					} else {
+						ok(!$Day.hasClass("sapUiCalItemSel"), "Item " + i + " (" + sDate + ") is not selected.");
+					}
+				}
+				
+				equal(iCount, iExpectedDaysInMonth, "Number of days in the month correct.");
+			}
+			
+			function checkMonthNavigation(sSelectedDate, iExpectedMonth, bForwardNavigation) {
+				
+				function checkNav(iExpMonth) {
+					equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iExpMonth-1], "Islamic Month is correct before navigation: " + aMonthNames[iExpMonth-1]);
+					
+					oCal1.$("-Head-" + (bForwardNavigation ? "next" : "prev")).click();
+					
+					var iNextMonthIdx = bForwardNavigation ? iExpMonth : iExpMonth-2;
+					if (iNextMonthIdx < 0) {
+						iNextMonthIdx = aMonthNames.length - 1;
+					} else if (iNextMonthIdx >= aMonthNames.length) {
+						iNextMonthIdx = 0;
+					}
+					
+					equal(oCal1.$("-Head-B1").text(), "" + aMonthNames[iNextMonthIdx], "Islamic Month is correct after navigation: " + aMonthNames[iNextMonthIdx]);
+					
+					return iNextMonthIdx + 1;
+				}
+				
+				initializeCalendar(sSelectedDate);
+				var iMonth = iExpectedMonth; 
+				for (var i=0; i<12; i++) {
+					iMonth = checkNav(iMonth);
+				}
+			}
+			
+			function checkMonthPicker(sSelectedDate, iExpectedMonth) {
+				initializeCalendar(sSelectedDate);
+				oCal1.$("-Head-B1").click();
+				
+				var aMonths = oCal1.$("-MP").find(".sapUiCalItem"),
+					$Month,
+					sExpectedName;
+				
+				equal(aMonths.length, 12, "Number of months is correct.");
+				
+				for (var i=0; i<12; i++) {
+					sExpectedName = aMonthNames[i];
+					$Month = jQuery(aMonths[i]);
+					
+					equal($Month.text(), "" + sExpectedName, "Month name (" + sExpectedName + ") is correct.");
+					
+					if (iExpectedMonth == i+1) {
+						ok($Month.hasClass("sapUiCalItemSel"), "Month " + sExpectedName + " is selected.");
+					} else {
+						ok(!$Month.hasClass("sapUiCalItemSel"), "Month " + sExpectedName + " is not selected.");
+					}
+				}
+			}
+			
+			
+			
+			qutils.delayTestStart();
+
+			module("Dates");
+
+			test("20150701", function() {
+				checkDate("20150701", 14, 9, 1436, 4, 1);
+			});
+			
+			test("20140701", function() {
+				checkDate("20140701", 3, 9, 1435, 0, 5);
+			});
+			
+			test("20150805", function() {
+				checkDate("20150805", 19, 10, 1436, 6, 0);
+			});
+			
+			module("Navigation to next/previous Month");
+			
+			test("20150701 -> next", function() {
+				checkMonthNavigation("20150701", 9, true);
+			});
+			
+			test("20150701 -> prev", function() {
+				checkMonthNavigation("20150701", 9, false);
+			});
+			
+			module("Monthpicker");
+			
+			test("20150701 Monthpicker", function() {
+				checkMonthPicker("20150701", 9);
+			});
+			
+			test("20140701 Monthpicker", function() {
+				checkMonthPicker("20140701", 9);
+			});
+			
+			test("20150805 Monthpicker", function() {
+				checkMonthPicker("20150805", 10);
+			});
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1 id="qunit-header">QUnit tests: sap.ui.unified.Calendar (Islamic)</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<br>
+		<div id="uiArea1"></div>
+		<br>
+		<div id="uiArea2"></div>
+		<br>
+		<div id="uiArea3"></div>
+	</body>
+</html>
