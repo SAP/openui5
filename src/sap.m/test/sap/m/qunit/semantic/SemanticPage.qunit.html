@@ -837,19 +837,38 @@
 			oPage.destroy();
 		});
 
-
-		test("add positiveAction", function () {
+		test("set positiveAction", function () {
 
 			//setup
 			var oPage = new sap.m.semantic.DetailPage();
 			var oPositiveAction = new sap.m.semantic.PositiveAction();
 
 			//act
-			oPage.setPositiveAction(oPositiveAction);
+			var oResult = oPage.setPositiveAction(oPositiveAction);
 			var iInitFooterContentLength = 2; //spacer + shareMenuButton
 
-			notEqual(oPage.getPositiveAction(), null, "page has positive action");
+			strictEqual(oPage.getPositiveAction(), oPositiveAction, "page has positive action");
 			strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has semantic content");
+			strictEqual(oResult, oPage, "setPositiveAction returns reference to page");
+
+			// Clean up
+			oPage.destroy();
+		});
+
+		test("replace positiveAction", function () {
+
+			//setup
+			var oPage = new sap.m.semantic.DetailPage();
+			var oPositiveAction1 = new sap.m.semantic.PositiveAction();
+			var oPositiveAction2 = new sap.m.semantic.PositiveAction();
+
+			//act
+			oPage.setPositiveAction(oPositiveAction1);
+			oPage.setPositiveAction(oPositiveAction2); //replace
+			var iInitFooterContentLength = 2; //spacer + shareMenuButton
+
+			strictEqual(oPage.getPositiveAction(), oPositiveAction2, "page has the latest set positive action");
+			strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has correct number of semantic content");
 
 			// Clean up
 			oPage.destroy();
@@ -912,17 +931,18 @@
 			strictEqual(oPage._getPage().getFooter().getContent().length, (1 + iInitFooterContentLength), "footer has semantic content");
 
 			//act
-			oPage.destroyPositiveAction(undefined);
+			var oResult = oPage.destroyPositiveAction(undefined);
 			var oRevievedAction = oPage.getPositiveAction();
 			equal(oRevievedAction, null, "page has no positive action");
 			strictEqual(oPage._getPage().getFooter().getContent().length, (iInitFooterContentLength), "footer does not have semantic content");
 			strictEqual(oPositiveAction.bIsDestroyed, true, "action is destroyed");
+			strictEqual(oResult, oPage, "destroyPositiveAction returns reference to page");
 
 			// Clean up
 			oPage.destroy();
 		});
 
-		test("add saveAsTileAction", function () {
+		test("set saveAsTileAction", function () {
 
 			//setup
 			var oPage = new sap.m.semantic.DetailPage();
@@ -1006,7 +1026,7 @@
 			oPage.destroy();
 		});
 
-		test("add paging action", function () {
+		test("set paging action", function () {
 
 			//setup
 			var oPage = new sap.m.semantic.DetailPage();

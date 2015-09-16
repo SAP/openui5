@@ -218,10 +218,10 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 					this[oPrivateReferenceName] = null;
 				}
 			}
-			return;
+			return this;
 		}
 
-		ShareMenuPage.prototype.setAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
+		return ShareMenuPage.prototype.setAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
 	};
 
 	DetailPage.prototype.getAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
