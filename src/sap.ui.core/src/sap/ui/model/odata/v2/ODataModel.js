@@ -1221,9 +1221,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {boolean} bForceUpdate force update of controls
 	 * @param {boolean} bAsync asynchronous execution
 	 * @param {map} mChangedEntities Map of changed entities
+	 * @param {boolean} bMetaModelOnly update metamodel bindings only
 	 * @private
 	 */
-	ODataModel.prototype.checkUpdate = function(bForceUpdate, bAsync, mChangedEntities) {
+	ODataModel.prototype.checkUpdate = function(bForceUpdate, bAsync, mChangedEntities, bMetaModelOnly) {
 		if (bAsync) {
 			if (!this.sUpdateTimer) {
 				this.sUpdateTimer = jQuery.sap.delayedCall(0, this, function() {
@@ -1238,8 +1239,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 		}
 		var aBindings = this.aBindings.slice(0);
 		jQuery.each(aBindings, function(iIndex, oBinding) {
-			oBinding.checkUpdate(bForceUpdate, mChangedEntities);
-		});
+			if (!bMetaModelOnly || this.isMetaModelPath(oBinding.getPath())) {
+				oBinding.checkUpdate(bForceUpdate, mChangedEntities);
+			}
+		}.bind(this));
 		//handle calls after update
 		var aCallAfterUpdate = this.aCallAfterUpdate;
 		this.aCallAfterUpdate = [];
@@ -1708,10 +1711,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			iSeparator, sDataPath, sMetaPath, oMetaContext, sKey, oMetaModel;
 
 		//check for metadata path
-		if (this.oMetadata && sResolvedPath && sResolvedPath.indexOf('/#') > -1)  {
-			iSeparator = sResolvedPath.indexOf('/##');
-			if (iSeparator >= 0) {
+		if (this.oMetadata && this.oMetadata.isLoaded() && sResolvedPath && sResolvedPath.indexOf('/#') > -1)  {
+			if (this.isMetaModelPath(sResolvedPath)) {
 				// Metadata binding resolved by ODataMetaModel
+				iSeparator = sResolvedPath.indexOf('/##');
 				oMetaModel = this.getMetaModel();
 				if (!this.bMetaModelLoaded) {
 					return null;
@@ -3860,6 +3863,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	};
 
 	/**
+	 * Checks if path points to a metamodel property
+	 * @param {string} sPath The binding path
+	 * @returns {boolean}
+	 * @private
+	 */
+	ODataModel.prototype.isMetaModelPath = function(sPath) {
+		return sPath.indexOf("##") == 0 || sPath.indexOf("/##") > -1;
+	};
+
+	/**
 	 * Wraps the OData.request method and keeps track of pending requests
 	 *
 	 * @param {object} oRequest The request object
@@ -4078,7 +4091,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 			// Call checkUpdate when metamodel has been loaded to update metamodel bindings
 			this.oMetaModel.loaded().then(function() {
 				that.bMetaModelLoaded = true;
-				that.checkUpdate();
+				// Update metamodel bindings only
+				that.checkUpdate(false, false, null, true);
+			})["catch"](function (oError) {
+				var sMessage = oError.message,
+					sDetails;
+
+				if (!sMessage && oError.xmlDoc && oError.xmlDoc.parseError) {
+					sMessage = oError.xmlDoc.parseError.reason;
+					sDetails = oError.xmlDoc.parseError.srcText;
+				}
+				jQuery.sap.log.error("error in ODataMetaModel.loaded(): " + sMessage, sDetails,
+					"sap.ui.model.odata.v2.ODataModel");
 			});
 		}
 		return this.oMetaModel;

@@ -1296,7 +1296,7 @@
 
 	module("Metamodel binding", {
 		setup: function() {
-			this.oModel = initModel(sURI, true);
+			this.oModel = initModel(sURI, false);
 		},
 		teardown: function() {
 			this.oModel.destroy();
@@ -1317,7 +1317,7 @@
 
 	asyncTest("Entityset metadata w/ context", function() {
 		this.oModel.getMetaModel().loaded().then(function() {
-			var oContext = this.oModel.getContext("/Categories(1)")
+			var oContext = this.oModel.getContext("/Categories(1)");
 			equal(this.oModel.getProperty("##name", oContext), "Category");
 			equal(this.oModel.getProperty("##property/0/name", oContext), "CategoryID");
 			equal(this.oModel.getProperty("CategoryID/##type", oContext), "Edm.Int32");
@@ -1326,7 +1326,49 @@
 			start();
 		}.bind(this))
 	});
-	
+
+	asyncTest("Metamodel binding refresh after metamodel load", function() {
+		var oPropertyBinding, oListBinding, oMetaBindingRelative, oMetaBindingAbsolute,
+			propertySpy, listSpy, metaRelativeSpy, metaAbsoluteSpy;
+		
+		this.oModel.createBindingContext("/Categories(7)", null, {expand: "Products"}, function(oContext) {
+			oPropertyBinding = this.oModel.bindProperty("CategoryName", oContext);
+			oPropertyBinding.attachChange(function(){});
+			oPropertyBinding.initialize();
+			oListBinding = this.oModel.bindList("Products", oContext);
+			oListBinding.attachChange(function(){});
+			oListBinding.initialize();
+			
+			// createBindingContext callback is executed before checkUpdate, so wait for RequestCompleted
+			this.oModel.attachRequestCompleted(function() {
+				propertySpy = sinon.spy(oPropertyBinding, "checkUpdate");
+				listSpy = sinon.spy(oListBinding, "checkUpdate");
+				
+				oMetaBindingRelative = this.oModel.bindProperty("##name", oContext);
+				oMetaBindingRelative.attachChange(function(){});
+				oMetaBindingRelative.initialize();
+				metaRelativeSpy = sinon.spy(oMetaBindingRelative, "checkUpdate");
+
+				oMetaBindingAbsolute = this.oModel.bindProperty("/Categories(7)/##name");
+				oMetaBindingAbsolute.attachChange(function(){});
+				oMetaBindingAbsolute.initialize();
+				metaAbsoluteSpy = sinon.spy(oMetaBindingAbsolute, "checkUpdate");
+				
+				// Metamodel bindings trigger the creation of the metamodel, so we can wait for loaded() here
+				this.oModel.getMetaModel().loaded().then(function() {
+					ok(!propertySpy.called, "Property binding checkUpdate not called");
+					equal(oPropertyBinding.getValue(), "Produce", "Property value returns correct value");
+					ok(!listSpy.called, "List binding checkUpdate not called");
+					equal(oListBinding.getContexts().length, 5, "List binding returns right amount of contexts");
+					ok(metaRelativeSpy.calledOnce, "Relative metamodel binding checkUpdate called once");
+					equal(oMetaBindingRelative.getValue(), "Category", "Relative metamodel binding returns correct value");
+					ok(metaAbsoluteSpy.calledOnce, "Absolute metamodel binding checkUpdate called once");
+					equal(oMetaBindingAbsolute.getValue(), "Category", "Absolute metamodel binding returns correct value");
+					start();
+				});
+			}.bind(this));
+		}.bind(this));
+	});
 	</script>
 
 </head>
