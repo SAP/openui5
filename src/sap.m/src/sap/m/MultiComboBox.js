@@ -1074,7 +1074,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * @private
 	 */
 	MultiComboBox.prototype._hasTokens = function() {
-		return this._oTokenizer.getTokens().length;
+		return this._oTokenizer.getTokens().length > 0;
 	};
 
 	/**
