@@ -9,7 +9,6 @@
 	"rules": {
 		"block-scoped-var": 1,
 		"brace-style": [2, "1tbs", { "allowSingleLine": true }],
-		"global-strict": 2,
 		"no-div-regex": 2,
 		"no-floating-decimal": 2,
 		"no-irregular-whitespace": 2,
@@ -36,7 +35,7 @@
 		"no-unused-expressions": 1,
 		"no-use-before-define": [1, "nofunc"],
 		"no-warning-comments": 1,
-		"strict": 1,
+		"strict": [2, "function"],
 		"valid-jsdoc": [1, {
 			"requireReturn": false
 		}],

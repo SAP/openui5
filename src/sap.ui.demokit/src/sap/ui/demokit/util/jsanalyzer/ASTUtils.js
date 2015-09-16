@@ -5,7 +5,8 @@
 // Provides implementation of sap.ui.demokit.util.jsanalyzer.ASTUtils
 sap.ui.define(['jquery.sap.global', 'sap/ui/demokit/js/esprima'],
 	function(jQuery, esprima_) {
-	
+	"use strict";
+
 	/*global esprima */
 
 	var Syntax = esprima.Syntax;

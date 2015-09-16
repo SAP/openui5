@@ -6,7 +6,8 @@
  * FEATURE TO INCREASE DEVELOPMENT EXPERIENCE! NO PRODUCTIVE USAGE ALLOWED!
  */
 (function() {
-	
+	"use strict";
+
 	/**
 	 * wraps the definition of the LessSupport in order to be able to delay
 	 * the definition until the body is loaded and sap.ui.define is available
@@ -16,8 +17,7 @@
 		// Provides class sap.ui.core.plugin.LessSupport
 		sap.ui.define('sap/ui/core/plugin/LessSupport', ['jquery.sap.global', 'sap/ui/core/Core'],
 			function(jQuery, Core) {
-			"use strict";
-	
+
 			var LESS_FILENAME = "library.source";
 			var CSS_FILENAME = "library";
 	

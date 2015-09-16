@@ -4,6 +4,7 @@
 
 /*global QUnit, URI*/// declare unusual global vars for JSLint/SAPUI5 validation
 (function() {
+	"use strict";
 
 	if (typeof QUnit !== "undefined") {
 

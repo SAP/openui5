@@ -31,6 +31,7 @@ if (typeof window.sap.ui !== "object") {
 }
 
 (function() {
+	"use strict";
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
