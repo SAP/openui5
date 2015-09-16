@@ -28,7 +28,7 @@
 			},
 			{
 				"text": "Worklist",
-				"ref": "test-resources/sap/m/demokit/worklist/webapp/test/testOpenUI5Service.html",
+				"ref": "test-resources/sap/m/demokit/sample/Worklist/webapp/test/testOpenUI5Service.html",
 				"icon": "task",
 				"desc": "Simple starting point for a worklist-style app according to the best practices"
 			},
@@ -36,7 +36,7 @@
 				"text": "Downloads",
 				"ref": "explored.html#/entity/sap.m.demo.Apps/samples",
 				"icon": "task",
-				"desc": "Download our DEMO APPS here"
+				"desc": "Download our Demo Apps here"
 			}
 		]
 	},
@@ -1002,7 +1002,8 @@
 			"since" : "1.11",
 			"samples" : [
 				"sap.m.sample.HelloWorld",
-				"sap.m.sample.ShoppingCart"
+				"sap.m.sample.ShoppingCart",
+				"sap.m.sample.Worklist"
 			]
 		}
 	  ],
@@ -1976,6 +1977,11 @@
 			"id": "sap.m.sample.HelloWorld",
 			"name": "Hello World",
 			"description": "This is where it all starts when developing with UI5"
+		},
+		{
+			"id": "sap.m.sample.Worklist",
+			"name": "Worklist",
+			"description": "Simple starting point for a worklist-style app according to the best practices"
 		}
 	  ]
 	}
