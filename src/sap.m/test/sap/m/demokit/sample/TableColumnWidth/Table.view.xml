@@ -1,0 +1,67 @@
+<mvc:View
+	controllerName="sap.m.sample.TableColumnWidth.Table"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<MessageStrip
+		text="Do not try to give percent width to all columns even it reaches 100% total column width. Leave the most important column's width empty that it takes much space as it can."
+		type="Information"
+		showIcon="true">
+	</MessageStrip>
+	<Table
+		mode="MultiSelect"
+		items="{
+			path: 'products>/ProductCollection'
+		}"
+		columns="{
+			path: 'columns>/'
+		}">
+		<headerToolbar>
+			<Toolbar>
+				<Title text="Products Original" level="H2"/>
+			</Toolbar>
+		</headerToolbar>
+		<columns>
+			<Column width="{columns>width}" styleClass="{columns>styleClass}" demandPopin="{columns>demandPopin}" minScreenWidth="{columns>minScreenWidth}" popinDisplay="WithoutHeader">
+				<Input value="{columns>width}" description="{columns>header}"/>
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem vAlign="Middle" type="Navigation">
+				<cells>
+					<Text text="{products>Name}" wrapping="false" />
+					<Text text="{products>SupplierName}" wrapping="false"/>
+					<Text text="{products>Description}" wrapping="false" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+	<Table
+		mode="MultiSelect"
+		items="{
+			path: 'products>/ProductCollection'
+		}"
+		columns="{
+			path: 'clone>/'
+		}">
+		<headerToolbar>
+			<Toolbar>
+				<Title text="Products Clone" level="H2"/>
+			</Toolbar>
+		</headerToolbar>
+		<columns>
+			<Column width="{clone>width}" styleClass="{clone>styleClass}" demandPopin="{clone>demandPopin}" minScreenWidth="{clone>minScreenWidth}" popinDisplay="WithoutHeader">
+				<Input value="{clone>width}" description="{clone>header}"/>
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem vAlign="Middle" type="Navigation">
+				<cells>
+					<Text text="{products>Name}" wrapping="false" />
+					<Text text="{products>SupplierName}" wrapping="false"/>
+					<Text text="{products>Description}" wrapping="false" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</mvc:View>
