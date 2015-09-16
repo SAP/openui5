@@ -4306,6 +4306,34 @@
 			oModel.attachRequestCompleted(this, fnHandler);
 		});
 	});
+	
+	asyncTest("test oDataModel OneTime bindings with bindObject and resolve checks", function() {
+		var iCount = 0;
+		var oTxt = new sap.ui.commons.TextField();
+		oTxt.bindValue({path: "Category", mode: 'OneTime'});
+		oTxt.placeAt("target1");
+		oModel.setUseBatch(true);
+		oTxt.setModel(oModel);
+
+		equal(oTxt.getBinding('value').getBindingMode(), "OneTime", "Binding mode check!");
+		ok(!oTxt.getBinding('value').isResolved(), "Binding should not be resolved!");
+		ok(oTxt.getValue() === "", "text value should be null");
+
+		var fnCheck = function() {
+			iCount++;
+			ok(iCount === 1, "request performed");
+			equal(oTxt.getBinding('value').getBindingMode(), "OneTime", "Binding mode check!");
+			ok(oTxt.getBinding('value').isResolved(), "Binding should be resolved!");
+			ok(oTxt.getValue() === "Headsets", "text value should be set");
+			
+			equal(oModel.getProperty("/VH_CategorySet('Headsets')/Category"), "Headsets", "Category loaded check");
+			oTxt.destroy();
+			oModel.detachBatchRequestCompleted(fnCheck);
+			start();
+		}
+		oTxt.bindObject("/VH_CategorySet('Headsets')");
+		oModel.attachBatchRequestCompleted(this, fnCheck);
+	});
 
 	</script>
 

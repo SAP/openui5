@@ -2577,11 +2577,12 @@ sap.ui.define([
 					}
 					oDataState.setInvalidValue(null); //assume that the model always sends valid data
 				}
-				if (oBinding.getBindingMode() === BindingMode.OneTime) {
+				if (oBinding.getBindingMode() === BindingMode.OneTime && oBinding.isResolved()) {
+					// if binding is one time but not resolved yet we don't destroy it yet.
 					oBinding.detachChange(fModelChangeHandler);
 					oBinding.detachEvents(oBindingInfo.events);
 					oBinding.destroy();
-					// TODO remove the binding from the binding info or mark it somehow as "deactivated"? 
+					// TODO remove the binding from the binding info or mark it somehow as "deactivated"?
 				}
 			},
 			fDataStateChangeHandler = function(){
