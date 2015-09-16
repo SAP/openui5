@@ -16,10 +16,10 @@ sap.ui.define(['jquery.sap.global', 'sap/m/PageAccessibleLandmarkInfo'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oPage an object representation of the control that should be rendered
 	 */
-	PageRenderer.render = function(rm, oPage) {
+	PageRenderer.render = function(oRm, oPage) {
 		var oHeader = null,
 			oFooter = null,
 			oSubHeader = null,
@@ -36,91 +36,91 @@ sap.ui.define(['jquery.sap.global', 'sap/m/PageAccessibleLandmarkInfo'],
 		if (oPage.getShowFooter()) {
 			oFooter = oPage.getFooter();
 		}
-		rm.write("<div");
-		rm.writeControlData(oPage);
-		rm.addClass("sapMPage");
+		oRm.write("<div");
+		oRm.writeControlData(oPage);
+		oRm.addClass("sapMPage");
 
-		rm.addClass("sapMPageBg" + oPage.getBackgroundDesign());
+		oRm.addClass("sapMPageBg" + oPage.getBackgroundDesign());
 
 		if (oHeader) {
-			rm.addClass("sapMPageWithHeader");
+			oRm.addClass("sapMPageWithHeader");
 		}
 
 		if (oSubHeader) {
-			rm.addClass("sapMPageWithSubHeader");
+			oRm.addClass("sapMPageWithSubHeader");
 		}
 
 		if (oFooter) {
 			// it is used in the PopOver to remove additional margin bottom for page with footer
-			rm.addClass("sapMPageWithFooter");
+			oRm.addClass("sapMPageWithFooter");
 		}
 
 		if (!oPage.getContentOnlyBusy()) {
-			rm.addClass("sapMPageBusyCoversAll");
+			oRm.addClass("sapMPageBusyCoversAll");
 		}
 
-		rm.writeClasses();
+		oRm.writeClasses();
 
 		var sTooltip = oPage.getTooltip_AsString();
 
 		if (sTooltip) {
-			rm.writeAttributeEscaped("title", sTooltip);
+			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 
-		PageAccessibleLandmarkInfo._writeLandmarkInfo(rm, oPage, "root");
+		PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, oPage, "root");
 
-		rm.write(">");
+		oRm.write(">");
 
 		//render headers
-		this.renderBarControl(rm, oPage, oHeader, {
+		this.renderBarControl(oRm, oPage, oHeader, {
 			context : "header",
 			styleClass : "sapMPageHeader"
 		});
 
-		this.renderBarControl(rm, oPage, oSubHeader, {
+		this.renderBarControl(oRm, oPage, oSubHeader, {
 			context : "subHeader",
 			styleClass : "sapMPageSubHeader"
 		});
 
 		// render child controls
-		rm.write('<section id="' + oPage.getId() + '-cont"');
-		PageAccessibleLandmarkInfo._writeLandmarkInfo(rm, oPage, "content");
-		rm.write('>');
+		oRm.write('<section id="' + oPage.getId() + '-cont"');
+		PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, oPage, "content");
+		oRm.write('>');
 
 		if (oPage._bUseScrollDiv) { // fallback to old rendering
-			rm.write('<div id="' + oPage.getId() + '-scroll" class="sapMPageScroll' + sEnableScrolling + '">');
+			oRm.write('<div id="' + oPage.getId() + '-scroll" class="sapMPageScroll' + sEnableScrolling + '">');
 		}
 
 		var aContent = oPage.getContent();
 		var l = aContent.length;
 
 		for (var i = 0; i < l; i++) {
-			rm.renderControl(aContent[i]);
+			oRm.renderControl(aContent[i]);
 		}
 
 		if (oPage._bUseScrollDiv) { // fallback to old rendering
-			rm.write("</div>");
+			oRm.write("</div>");
 		}
 
-		rm.write("</section>");
+		oRm.write("</section>");
 
 		// render footer Element
-		this.renderBarControl(rm, oPage, oFooter, {
+		this.renderBarControl(oRm, oPage, oFooter, {
 			context : "footer",
 			styleClass : "sapMPageFooter"
 		});
 
-		rm.write("</div>");
+		oRm.write("</div>");
 	};
 
 	/**
 	 * Renders the bar control if it is defined. Also adds classes to it.
 	 *
-	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.m.IBar} oBarControl the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {object} oOptions object containing the tag, contextClass and styleClass added to the bar
 	 */
-	PageRenderer.renderBarControl = function (rm, oPage, oBarControl, oOptions) {
+	PageRenderer.renderBarControl = function (oRm, oPage, oBarControl, oOptions) {
 		if (!oBarControl) {
 			return;
 		}
@@ -131,7 +131,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/PageAccessibleLandmarkInfo'],
 
 		oBarControl.addStyleClass(oOptions.styleClass);
 
-		rm.renderControl(oBarControl);
+		oRm.renderControl(oBarControl);
 	};
 
 	return PageRenderer;
