@@ -1330,10 +1330,12 @@ sap.ui
 							sKeyValue = aPair[1];
 						}
 					}
-					if (sKeyValue.indexOf('\'') === 0) {
-						oResult[sKeyName] = sKeyValue.slice(1, sKeyValue.length - 1);
-					} else {
-						oResult[sKeyName] = sKeyValue;
+					if (sKeyValue) {
+						if (sKeyValue.indexOf('\'') === 0) {
+							oResult[sKeyName] = sKeyValue.slice(1, sKeyValue.length - 1);
+						} else {
+							oResult[sKeyName] = sKeyValue;
+						}
 					}
 				}
 				return oResult;
@@ -2587,6 +2589,9 @@ sap.ui
 									var sRespondContentType = null;
 									var iResult = 405; // default: method not allowed
 									try {
+										if (sKeys && !sKeys.split('=')[1]) {
+											sKeys = that._mEntitySets[sEntitySetName].keys[0] + "=" + sKeys;
+										}
 										var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
 											decodeURIComponent(sKeys), sNavName);
 										if (sTargetEntityName) {
