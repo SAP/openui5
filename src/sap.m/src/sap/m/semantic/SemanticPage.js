@@ -401,25 +401,31 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 
 	SemanticPage.prototype.setAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 
-		var oAggregationInfo = this.getMetadata().getAggregations()[sAggregationName];
-		if (oAggregationInfo && SemanticConfiguration.isKnownSemanticType(oAggregationInfo.type)) {
+		var oOldChild = this.mAggregations[sAggregationName];
+		if (oOldChild === oObject) {
+			return this;
+		} // no change
+		oObject = this.validateAggregation(sAggregationName, oObject, /* multiple */ false);
+
+		var sType = this.getMetadata().getManagedAggregation(sAggregationName).type;
+
+		if (SemanticConfiguration.isKnownSemanticType(sType)) {
+
+			if (oOldChild) {
+				this._stopMonitor(oOldChild);
+				this._removeFromInnerAggregation(oOldChild._getControl(), SemanticConfiguration.getPositionInPage(sType), bSuppressInvalidate);
+			}
 
 			if (oObject) {
 				this._initMonitor(oObject);
 				this._addToInnerAggregation(oObject._getControl(),
-						SemanticConfiguration.getPositionInPage(oAggregationInfo.type),
-						SemanticConfiguration.getSequenceOrderIndex(oAggregationInfo.type),
+						SemanticConfiguration.getPositionInPage(sType),
+						SemanticConfiguration.getSequenceOrderIndex(sType),
 						bSuppressInvalidate);
-			} else { //removing object
-				var oObjectToRemove = ManagedObject.prototype.getAggregation.call(this, sAggregationName);
-				if (oObjectToRemove) {
-					this._stopMonitor(oObjectToRemove);
-					this._removeFromInnerAggregation(oObjectToRemove._getControl(), SemanticConfiguration.getPositionInPage(oAggregationInfo.type), bSuppressInvalidate);
-				}
 			}
 		}
 
-		ManagedObject.prototype.setAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
+		return ManagedObject.prototype.setAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
 	};
 
 	SemanticPage.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
@@ -436,7 +442,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 			}
 		}
 
-		ManagedObject.prototype.destroyAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
+		return ManagedObject.prototype.destroyAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
 	};
 
 	SemanticPage.prototype._getTitle = function () {
