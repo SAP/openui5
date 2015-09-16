@@ -3646,7 +3646,7 @@ sap.ui.define([
 					if (jQuery.isEmptyObject(oChangedObject[sKey])) {
 						delete oChangedObject[sKey];
 					}
-				} else if (oChangedObject[sKey] === oOriginalObject[sKey] && !that.isLaundering(sActPath)) { 
+				} else if (jQuery.sap.equal(oChangedObject[sKey], oOriginalObject[sKey]) && !that.isLaundering(sActPath)) { 
 					delete oChangedObject[sKey];
 				} 
 			});
