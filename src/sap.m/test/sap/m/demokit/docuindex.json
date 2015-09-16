@@ -22,7 +22,7 @@
 			},
 			{
 				"text": "Hello World",
-				"ref": "test-resources/sap/m/demokit/helloworld/index.html",
+				"ref": "test-resources/sap/m/demokit/sample/HelloWorld/index.html",
 				"icon": "sapmdemo/helloworld",
 				"desc": "This is where it all starts when developing with UI5"
 			},
@@ -36,7 +36,7 @@
 				"text": "Downloads",
 				"ref": "explored.html#/entity/sap.m.demo.Apps/samples",
 				"icon": "task",
-				"desc": "Download our Demoapps here"
+				"desc": "Download our DEMO APPS here"
 			}
 		]
 	},
@@ -1001,6 +1001,7 @@
 			"category" : "Application",
 			"since" : "1.11",
 			"samples" : [
+				"sap.m.sample.HelloWorld",
 				"sap.m.sample.ShoppingCart"
 			]
 		}
@@ -1970,6 +1971,11 @@
 		  "id": "sap.m.sample.ShoppingCart",
 		  "name": "Shopping Cart",
 		  "description": "The classic business process of finding & ordering products"
+		},
+		{
+			"id": "sap.m.sample.HelloWorld",
+			"name": "Hello World",
+			"description": "This is where it all starts when developing with UI5"
 		}
 	  ]
 	}
