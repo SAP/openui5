@@ -7583,18 +7583,6 @@
 	"CreationDate": "19980427"
 },
 {
-	"FinancialStatementItemText": "Nicht durch Eigenkapital gedeckter Fehlbetrag",
-	"FinStatementHierarchyLevelVal": "04",
-	"GLAccountName": "Aktivierung d. n. durch EK gedeckten Fehlbetrages",
-	"GLAccount": "0000950000",
-	"ParentNode": "000360",
-	"HierarchyNode": "000360",
-	"FunctionalArea": "",
-	"CreatedBy": "SAP",
-	"FinancialStatementItem": "1070000",
-	"CreationDate": "19920623"
-},
-{
 	"FinancialStatementItemText": "Umgliederung des nicht durch Eigenkapital",
 	"FinStatementHierarchyLevelVal": "05",
 	"GLAccountName": "Nicht durch Eigenkapital gedeckter Fehlbetrag",
