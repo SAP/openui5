@@ -561,6 +561,46 @@
 		});
 	});
 	
+	asyncTest("test DataState submitChanges with expanded nav props",function(){
+		// create dummy testdata
+		oModel.read("/ProductSet('HT-1000')", {
+			urlParameters: {$expand : "ToSalesOrderLineItems"},
+			success: function() {
+				var oNameBinding = oModel.bindProperty("/ProductSet('HT-1000')/Name");
+				oModel.addBinding(oNameBinding);
+				testDataState (oNameBinding,
+					function() {
+						oModel.setProperty("/ProductSet('HT-1000')/Name","blabla2");
+					},
+					{
+						originalValue : "Notebook Basic 15",
+						value : "blabla2",
+						invalidValue : null,
+						laundering: false
+					},
+					"Setting a 'blabla2' to a string type binding"
+				);
+				ok(oModel.hasPendingChanges(), "model should have pending changes");
+				oModel.submitChanges(
+					{ 
+						success: function() {
+							ok(!oModel.hasPendingChanges(), "model should not have pending changes");
+							var oOrigData = oModel.getOriginalProperty("/ProductSet('HT-1000')");
+							var oData = oModel.getProperty("/ProductSet('HT-1000')");
+							equal(oOrigData.Name,oModel.getOriginalProperty("/ProductSet('HT-1000')/Name"),"blabla2");
+							equal(oData.Name,oModel.getProperty("/ProductSet('HT-1000')/Name"),"blabla2");
+							ok(jQuery.sap.equal(oOrigData, oData), "Same reference - no changed Entity");
+							start();
+						}
+					}
+				);
+			},
+			error: function() {
+				ok(false,"request failed");
+			}
+		});
+	});
+	
 	asyncTest("test DataState multiple submits with complext type",function(){
 		// create dummy testdata
 		oModel.read("/ProductSet('AD-1000')", {
