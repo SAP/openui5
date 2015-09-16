@@ -144,7 +144,7 @@
 		var oMessage = createMessage();
 		oMessageManager.addMessages(oMessage);
 		spyDataState(oLabel, function(sName, oDataState) {
-				ok(oDataState.getMessages().length == 0, 'Message propagated to control - remove');
+				ok(!oDataState.getMessages() || oDataState.getMessages().length == 0, 'Message propagated to control - remove');
 				ok(oLabel.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
 				ok(oLabel.getValueStateText() === '', 'Input: ValueStateText set correctly')
 			start();
@@ -185,12 +185,12 @@
 		
 		jQuery.sap.delayedCall(0, this, function() {
 			spyDataState(oLabel, function(sName, oDataState) {
-				ok(oDataState.getMessages().length == 0, 'Message propagated to control - remove');
+				ok(!oDataState.getMessages() || oDataState.getMessages().length == 0, 'Message propagated to control - remove');
 				ok(oLabel.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
 				ok(oLabel.getValueStateText() === '', 'Input: ValueStateText set correctly')
 			});
 			spyDataState(oLabel2, function(sName, oDataState) {
-				ok(oDataState.getMessages().length == 0, 'Message propagated to control - remove');
+				ok(!oDataState.getMessages() || oDataState.getMessages().length == 0, 'Message propagated to control - remove');
 				ok(oLabel2.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
 				ok(oLabel2.getValueStateText() === '', 'Input: ValueStateText set correctly')
 				start();
