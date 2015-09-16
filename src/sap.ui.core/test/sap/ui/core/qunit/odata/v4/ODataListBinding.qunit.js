@@ -65,7 +65,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataListBinding", {
 		beforeEach : function () {
-			var oDataCache = {readRange : function() {}};
+			var oDataCache = {readRange : function() {}, count : function() {}};
 
 			this.oSandbox = sinon.sandbox.create();
 
@@ -77,6 +77,7 @@ sap.ui.require([
 			this.oModel = new ODataModel("/service/");
 			this.oModel.setSizeLimit(3);
 			this.oDataCacheMock = this.oSandbox.mock(oDataCache);
+			this.oDataCacheMock.expects("count").never(); // do not use the build in count function
 			this.oSandbox.stub(odatajs.cache, "createDataCache").returns(oDataCache);
 		},
 		afterEach : function () {
@@ -481,6 +482,193 @@ sap.ui.require([
 		);
 	});
 
+	//**** Paging                            ****************************************************
+	[
+		{start : 0, result: 0, isFinal: true, length: 0, text: "no data"},
+		{start : 20, result: 29, isFinal: true, length: 49, text: "less data than requested"},
+		{start : 20, result: 0, isFinal: false, length: 10, text: "no data for given start > 0"},
+		{start : 20, result: 30, isFinal: false, length: 60, text: "maybe more data"}
+	].forEach(function (oFixture) {
+		QUnit.test("paging: " + oFixture.text, function (assert) {
+			var oListBinding = this.oModel.bindList("/EMPLOYEES"),
+				done = assert.async();
+
+			assert.strictEqual(oListBinding.isLengthFinal(), false, "Length is not yet final");
+			assert.strictEqual(oListBinding.getLength(), 10, "Initial estimated length is 10");
+
+			this.oDataCacheMock.expects("readRange").withExactArgs(oFixture.start, 30)
+				.returns(createDeferredResult(oFixture.result));
+
+			oListBinding.getContexts(oFixture.start, 30); // creates cache
+
+			setTimeout(function () {
+				// if there are less entries returned than requested then final length is known
+				assert.strictEqual(oListBinding.isLengthFinal(), oFixture.isFinal);
+				assert.strictEqual(oListBinding.getLength(), oFixture.length);
+				done();
+			}, 10);
+		});
+	});
+
+	[
+		{start : 40, result: 5, isFinal: true, length: 45, text: "greater than before"},
+		{start : 20, result: 5, isFinal: true, length: 25, text: "less than before"},
+		{start : 0, result: 30, isFinal: true, length: 35, text: "full read before"},
+		{start : 20, result: 30, isFinal: false, length: 60, text: "full read after"},
+		{start : 15, result: 0, isFinal: true, length: 15, text: "empty read before"},
+		{start : 40, result: 0, isFinal: true, length: 35, text: "empty read after"}
+	].forEach(function (oFixture) {
+		QUnit.test("paging: adjust final length: " + oFixture.text, function (assert) {
+			var oListBinding = this.oModel.bindList("/EMPLOYEES"),
+				i, n,
+				done = assert.async();
+
+			this.oDataCacheMock.expects("readRange").withExactArgs(20, 30)
+				.returns(createDeferredResult(15));
+			this.oDataCacheMock.expects("readRange").withExactArgs(oFixture.start, 30)
+				.returns(createDeferredResult(oFixture.result));
+
+			oListBinding.getContexts(20, 30); // creates cache
+
+			setTimeout(function () {
+				assert.strictEqual(oListBinding.isLengthFinal(), true);
+				assert.strictEqual(oListBinding.getLength(), 35);
+				oListBinding.getContexts(oFixture.start, 30);
+
+				setTimeout(function () {
+					assert.strictEqual(oListBinding.isLengthFinal(), oFixture.isFinal, "final");
+					assert.strictEqual(oListBinding.getLength(), oFixture.length);
+					assert.strictEqual(oListBinding.aContexts.length,
+						oFixture.length - (oFixture.isFinal ? 0 : 10), "Context array length");
+					for (i = oFixture.start, n = oFixture.start + oFixture.result; i < n; i++) {
+						assert.strictEqual(oListBinding.aContexts[i].sPath,
+							"/EMPLOYEES[" + i + "];list=0", "check content");
+					}
+					done();
+				}, 10);
+			}, 10);
+		});
+	});
+
+	QUnit.test("paging: full read before length; length at boundary", function (assert) {
+		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
+			done = assert.async();
+
+		// 1. read and get [20..50) -> estimated length 60
+		this.oDataCacheMock.expects("readRange").withExactArgs(20, 30)
+			.returns(createDeferredResult(30));
+		// 2. read and get [0..30) -> length still 60
+		this.oDataCacheMock.expects("readRange").withExactArgs(0, 30)
+			.returns(createDeferredResult(30));
+		// 3. read [50..80) get no entries -> length is now final 50
+		this.oDataCacheMock.expects("readRange").withExactArgs(50, 30)
+			.returns(createDeferredResult(0));
+
+		oListBinding.getContexts(20, 30);
+
+		setTimeout(function () {
+			assert.strictEqual(oListBinding.isLengthFinal(), false);
+			assert.strictEqual(oListBinding.getLength(), 60);
+
+			oListBinding.getContexts(0, 30); // read more data from beginning
+
+			setTimeout(function () {
+				assert.strictEqual(oListBinding.isLengthFinal(), false, "still not final");
+				assert.strictEqual(oListBinding.getLength(), 60, "length not reduced");
+
+				oListBinding.getContexts(50, 30); // no more data; length at paging boundary
+
+				setTimeout(function () {
+					assert.strictEqual(oListBinding.isLengthFinal(), true, "now final");
+					assert.strictEqual(oListBinding.getLength(), 50, "length at boundary");
+					done();
+				}, 10);
+			}, 10);
+		}, 10);
+	});
+
+	QUnit.test("paging: lower boundary reset", function (assert) {
+		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
+			done = assert.async(),
+			oSandbox = this.oSandbox;
+
+		// 1. read [20..50) and get [20..35) -> final length 35
+		this.oDataCacheMock.expects("readRange").withExactArgs(20, 30)
+			.returns(createDeferredResult(15));
+		// 2. read [30..60) and get no entries -> estimated length 10 (after lower boundary reset)
+		this.oDataCacheMock.expects("readRange").withExactArgs(30, 30)
+			.returns(createDeferredResult(0));
+		// 3. read [35..65) and get no entries -> estimated length still 10
+		this.oDataCacheMock.expects("readRange").withExactArgs(35, 30)
+			.returns(createDeferredResult(0));
+
+		oListBinding.getContexts(20, 30);
+
+		setTimeout(function () {
+			assert.strictEqual(oListBinding.isLengthFinal(), true);
+			assert.strictEqual(oListBinding.getLength(), 35);
+			assert.strictEqual(oListBinding.aContexts.length, 35);
+
+			oListBinding.getContexts(30, 30);
+
+			setTimeout(function () {
+				assert.strictEqual(oListBinding.isLengthFinal(), true, "new lower boundary");
+				assert.strictEqual(oListBinding.getLength(), 30,
+					"length 10 (after lower boundary reset)");
+				assert.strictEqual(oListBinding.aContexts.length, 30, "contexts array reduced");
+
+				oListBinding.getContexts(35, 30);
+
+				setTimeout(function () {
+					assert.strictEqual(oListBinding.isLengthFinal(), true, "still estimated");
+					assert.strictEqual(oListBinding.getLength(), 30, "still 30");
+					done();
+				}, 10);
+			}, 10);
+		}, 10);
+	});
+
+	QUnit.test("paging: adjust max length got from server", function (assert) {
+		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
+			done = assert.async();
+
+		// 1. read [20..50) and get [20..35) -> final length 35
+		this.oDataCacheMock.expects("readRange").withExactArgs(20, 30)
+			.returns(createDeferredResult(15));
+		// 2. read [20..50) and get [20..34) -> final length 34
+		this.oDataCacheMock.expects("readRange").withExactArgs(20, 30)
+			.returns(createDeferredResult(14));
+		// 3. read [35..65) and get no entries -> final length still 34
+		this.oDataCacheMock.expects("readRange").withExactArgs(35, 30)
+			.returns(createDeferredResult(0));
+
+		oListBinding.getContexts(20, 30);
+
+		setTimeout(function () {
+			assert.strictEqual(oListBinding.isLengthFinal(), true);
+			assert.strictEqual(oListBinding.getLength(), 35);
+
+			oListBinding.getContexts(20, 30);
+
+			setTimeout(function () {
+				assert.strictEqual(oListBinding.isLengthFinal(), true, "final 34");
+				assert.strictEqual(oListBinding.getLength(), 34, "length 34");
+
+				oListBinding.getContexts(35, 30);
+
+				setTimeout(function () {
+					assert.strictEqual(oListBinding.isLengthFinal(), true, "still final");
+					assert.strictEqual(oListBinding.getLength(), 34, "length still 34");
+					done();
+				}, 10);
+			}, 10);
+		}, 10);
+	});
+	//TODO to avoid complete re-rendering of lists implement bUseExtendedChangeDetection support
+	//The implementation of getContexts needs to provide next to the resulting context array a diff
+	//array with information which entry has been inserted or deleted (see jQuery.sap.arrayDiff and
+	//sap.m.GrowingEnablement)
+	//TODO refresh, reset the list binding
 	//TODO jsdoc: {@link sap.ui.model.odata.v4.ODataModel#bindList bindList} generates no link as
 	//  there is no jsdoc for v4.ODataModel
 	//TODO lists within lists for deferred navigation or structural properties

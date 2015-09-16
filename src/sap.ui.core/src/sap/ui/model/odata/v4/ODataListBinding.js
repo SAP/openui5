@@ -41,8 +41,12 @@ sap.ui.define([
 			ListBinding.call(this, oModel, sPath, oContext, undefined, undefined, mParameters);
 			this.oCache = undefined;
 			this.aContexts = [];
+			// upper boundary for server-side list length (based on observations so far)
+			this.iMaxLength = Infinity;
 			this.iIndex = iIndex;
 			this.sExpand = this.mParameters && this.mParameters["$expand"];
+			// this.bLengthFinal = this.aContexts.length === this.iMaxLength
+			this.bLengthFinal = false;
 		}
 	});
 
@@ -114,7 +118,8 @@ sap.ui.define([
 		function createContexts(fnGetPath, oResult) {
 			var bChanged = false,
 				i,
-				n = iStart + oResult.value.length;
+				iResultLength = oResult.value.length,
+				n = iStart + iResultLength;
 
 			for (i = iStart; i < n; i += 1) {
 				if (that.aContexts[i] === undefined) {
@@ -122,6 +127,20 @@ sap.ui.define([
 					that.aContexts[i] = oModel.getContext(fnGetPath(i));
 				}
 			}
+			if (that.aContexts.length > that.iMaxLength) {
+				// upper boundary obsolete: reset it
+				that.iMaxLength = Infinity;
+			}
+			if (iResultLength < iLength) {
+				// less data -> reduce upper boundary for list length and delete obsolete content
+				that.iMaxLength = Math.min(iStart + iResultLength, that.iMaxLength);
+				if (that.aContexts.length > that.iMaxLength) {
+					// delete all contexts after iMaxLength
+					that.aContexts.splice(that.iMaxLength, that.aContexts.length - that.iMaxLength);
+				}
+			}
+			// some controls use this flag instead of calling isLengthFinal
+			that.bLengthFinal = that.aContexts.length === that.iMaxLength;
 
 			if (bChanged) {
 				that._fireChange({reason : ChangeReason.Change});
@@ -164,6 +183,32 @@ sap.ui.define([
 			}
 		}
 		return this.aContexts.slice(iStart, iStart + iLength);
+	};
+
+	/**
+	 * Returns the number of entries in the list. As long as the client does not know the size on
+	 * the server an estimated length is returned.
+	 *
+	 * @return {number}
+	 *   the number of entries in the list
+	 * @see sap.ui.model.ListBinding#getLength
+	 * @public
+	 */
+	ODataListBinding.prototype.getLength = function() {
+		return this.bLengthFinal ? this.aContexts.length : this.aContexts.length + 10;
+	};
+
+	/**
+	 * Returns <code>true</code> if the length has been determined by the data returned from server.
+	 * If the length is a client side estimation <code>false</code> is returned.
+	 *
+	 * @return {boolean}
+	 *   <code>true</true> if the length is determined by server side data
+	 * @see sap.ui.model.ListBinding#isLengthFinal
+	 * @public
+	 */
+	ODataListBinding.prototype.isLengthFinal = function() {
+		return this.bLengthFinal;
 	};
 
 	/**

@@ -31,8 +31,8 @@
 				<Text text="{BudgetCurrency}" />
 			</form:content>
 		</form:SimpleForm>
-		<Table id="Employees" headerText="Team Members" items="{TEAM_2_EMPLOYEES}"
-			mode="SingleSelectMaster" selectionChange="onEmployeeSelect">
+		<Table id="Employees" growing="true" growingThreshold="1" headerText="Team Members"
+			items="{TEAM_2_EMPLOYEES}" mode="SingleSelectMaster" selectionChange="onEmployeeSelect">
 			<columns>
 				<Column>
 					<Text text="Employee Name"/>
