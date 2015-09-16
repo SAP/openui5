@@ -2,20 +2,6 @@
 /* CSS for control sap.m/ComboBoxBase.control HCB theme */
 /* ==================================================== */
 
-.sapMComboBoxBaseArrow::before,
-.sapMComboBoxBaseBar::before {
-	font-family: "SAP-icons";
-	speak: none;
-	content: "\e1ef";
-}
-
-.sapMComboBoxBaseArrow,
-.sapMComboBoxBaseBar::before {
-	position: absolute;
-	text-align: center;
-	color: @sapHCStandardFG;
-}
-
 /* ------------------------------ */
 /* ComboBox                       */
 /* ------------------------------ */
@@ -34,10 +20,19 @@ input.sapMComboBoxBaseInputInner:not(.sapMComboBoxBaseInputInnerReadonly) {
 /* ------------------------------ */
 
 .sapMComboBoxBaseArrow {
+	position: absolute;
+	text-align: center;
+	color: @sapHCStandardFG;
 	width: 2.5rem;
 	height: 2.375rem;
 	line-height: 2.375rem;
 	right: 0.0625rem;
+}
+
+.sapMComboBoxBaseArrow::before {
+	font-family: "SAP-icons";
+	speak: none;
+	content: "\e1ef";
 }
 
 /* hover */
@@ -88,32 +83,6 @@ div.sapMComboBoxBasePicker {
 
 div.sapMComboBoxBasePicker .sapMDialogScrollCont {
 	padding: 0;
-}
-
-/* pressed */
-
-.sapMComboBoxBaseBar::before {
-	top: 0;
-	right: 0;
-	bottom: 0;
-	width: 3.5rem;
-	border-left: 1px solid @sapHCStandardFG;
-	color: @sapHCStandardFG;
-	background: @sapHCHighlightAltBG;
-}
-
-/* Bar inside the ComboBox's Dialog */
-
-.sapMComboBoxBasePicker .sapMComboBoxBaseBar {
-	background: @sapHCHighlightAltBG;
-	border: 0.0625rem solid @sapHCStandardFG;
-}
-
-/* Input inside the ComboBox's Dialog */
-
-.sapMComboBoxBasePicker input {
-	padding-right: 3.5rem;
-	vertical-align: top; /* override the default vertical align of the input control */
 }
 
 /* ===================================================================== */
