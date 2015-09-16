@@ -229,10 +229,40 @@ sap.ui.define([
 			tooltip: oItem.getTooltip()
 		};
 
+		if (!this._bKeyFieldsChanged) {
+			setTimeout(jQuery.proxy( function() { 
+				this._bKeyFieldsChanged = false;
+				if (this._oSortPanel) {
+					this._oSortPanel.setKeyFields(this._aKeyFields);
+				}
+			}, this), 0);			
+		}
+		this._bKeyFieldsChanged = true;
 		this._aKeyFields.push(oKeyField);
+	};
 
-		if (this._oSortPanel) {
-			this._oSortPanel.addKeyField(oKeyField);
+	P13nSortPanel.prototype.removeItem = function(oItem) {
+		P13nPanel.prototype.removeItem.apply(this, arguments);
+
+		var foundIndex = -1;
+		this._aKeyFields.some(function(item, index) {
+			if (item.key === oItem.getColumnKey()) {
+				foundIndex = index;
+				return true;
+			}
+		});
+		
+		if (foundIndex != -1) {
+			if (!this._bKeyFieldsChanged) {
+				setTimeout(jQuery.proxy( function() { 
+					this._bKeyFieldsChanged = false;
+					if (this._oSortPanel) {
+						this._oSortPanel.setKeyFields(this._aKeyFields);
+					}
+				}, this), 0);			
+			}
+			this._bKeyFieldsChanged = true;
+			this._aKeyFields.splice(foundIndex, 1);
 		}
 	};
 
