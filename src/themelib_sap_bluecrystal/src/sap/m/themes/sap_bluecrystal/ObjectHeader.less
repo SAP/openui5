@@ -7,12 +7,12 @@
 }
 
 .sapMOHC.sapMOHBgSolid {
-	background-color: @sapUiGroupHeaderBackground;
-	border-bottom: 0.063rem @sapUiHeaderBorderColor;
+	background-color: @sapUiObjectHeaderBackground;
+	border-bottom: 0.063rem @sapUiPageHeaderBorderColor;
 }
 
 .sapMOHC.sapMOHBgTranslucent {
-	background: fade(@sapUiGroupHeaderBackground, 60);
+	background: fade(@sapUiObjectHeaderBackground, 60);
 }
 
 .sapMOHIntro {
@@ -148,7 +148,7 @@ html[data-sap-ui-browser ^= "ie"] {
 /*** styles for responsive object header ***/
 .sapMOHR {
 	background: fade(@sapUiContentContrastTextColor, 60);
-	border-bottom: 1px solid lighten(@sapUiHeaderBorderColor, 3);
+	border-bottom: 1px solid lighten(@sapUiPageHeaderBorderColor, 3);
 	box-shadow: 0 1px 0 fade(@sapUiDarkShadowTint, 5);
 }
 

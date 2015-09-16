@@ -643,6 +643,61 @@
 // [Tags "Base", "Scrollbar", "Color"]
 @sapScrollBar_Hover_FaceColor: darken(@sapScrollBar_FaceColor, 3);
 
+// [Label "Page Header Background Color"]
+// [Description "The background color of page headers."]
+// [Tags "Base", "Header", "Color"]
+@sapPageHeader_Background: @sapExtraLightBackground;
+
+// [Label "Page Header Border Color"]
+// [Description "The border color of page headers."]
+// [Tags "Base", "Header", "Color"]
+@sapPageHeader_BorderColor: @sapLightBorderColor;
+
+// [Label "Page Header Text Color"]
+// [Description "The color of texts on page headers."]
+// [Tags "Base", "Header", "Color", "Font"]
+@sapPageHeader_TextColor: contrast(@sapPageHeader_Background, @sapLightTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Label "Page Footer Background Color"]
+// [Description "The background color of page footers."]
+// [Tags "Base", "Footer", "Color"]
+@sapPageFooter_Background: fade(#363e43, 96);
+
+// [Label "Page Footer Text Color"]
+// [Description "The color of texts on page footers."]
+// [Tags "Base", "Footer", "Color", "Font"]
+@sapPageFooter_TextColor: contrast(@sapPageFooter_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+// [Label "Infobar Background Color"]
+// [Description "The background color of infobars."]
+// [Tags "Base", "Infobar", "Color"]
+@sapInfobar_Background: mix(@sapAccentColor7, #fff, 73);
+
+// [Label "Object Header Background Color"]
+// [Description "The background color of object headers."]
+// [Tags "Base", "Header", "Color"]
+@sapObjectHeader_Background: @sapLightestBackground;
+
+// [Label "BlockLayer Background Color"]
+// [Description "The background color of blocklayers."]
+// [Tags "Base", "BlockLayer", "Color"]
+@sapBlockLayer_Background: @sapDarkestBackground;
+
+// [Label "Tile Background Color"]
+// [Description "The background color of tiles."]
+// [Tags "Base", "Tile", "Color"]
+@sapTile_Background: @sapLightestBackground;
+
+// [Label "Tile Border Color"]
+// [Description "The border color of tiles."]
+// [Tags "Base", "Tile", "Color"]
+@sapTile_BorderColor: @sapLightBorderColor;
+
+// [Label "Tile Text Color"]
+// [Description "The color of texts on tiles."]
+// [Tags "Base", "Tile", "Color", "Font"]
+@sapTile_TextColor: contrast(@sapTile_Background, @sapDarkTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
 // [Label "Chart Ordered Color 1"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
