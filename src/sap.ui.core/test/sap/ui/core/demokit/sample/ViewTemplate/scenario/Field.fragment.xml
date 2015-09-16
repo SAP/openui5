@@ -2,7 +2,7 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
-	<HBox>
+	<HBox><!-- needed to keep Icon and Text together or in case no field is shown -->
 		<template:if test="{field>Value}"><!-- duck typing for com.sap.vocabularies.UI.v1.DataField -->
 			<template:with path="field>Value" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
 				<!--  check that IsEmailAddress annotation is available and that it has value true -->
