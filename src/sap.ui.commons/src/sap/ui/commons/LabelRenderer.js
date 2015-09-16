@@ -7,9 +7,9 @@ sap.ui.define([ 'sap/ui/core/Renderer'],
 	function(Renderer) {
 	"use strict";
 
-
-	
 	/**
+	 * Label renderer.
+	 *
 	 * @author SAP SE
 	 * @namespace
 	 */
@@ -125,6 +125,7 @@ sap.ui.define([ 'sap/ui/core/Renderer'],
 	
 	/**
 	 * Dummy inheritance of static methods/functions.
+	 *
 	 * @see sap.ui.core.Renderer.getTextAlign
 	 * @private
 	 */
