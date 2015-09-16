@@ -122,6 +122,12 @@
 .sapMNLI-Footer > .sapMBtn {
 	margin-left: 0.25rem;
 	padding: 0;
+
+  /* Buttons in footer don't render correctly due to fix for IE, overwriting the fix in sap.m.Button */
+  html[data-sap-ui-browser*='ie'] .sapMBtnInner {
+	display: block;
+	width: auto;
+  }
 }
 
 .sapMNLI-Footer .sapMBtnInner,
