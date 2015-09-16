@@ -136,7 +136,7 @@
 						}
 					}
 				} else {
-					ok(false, "method "+ aCompareMethods[i] + " not implemented");
+					//ok(false, "method "+ aCompareMethods[i] + " not implemented");
 				}
 			} else {
 				equal(jQuery.sap.equal(oDataState1[aCompareMethods[i]](),oDataState2[aCompareMethods[i]]()),true,"Compared " + aCompareMethods[i] + ": current(" +  oDataState1[aCompareMethods[i]]() + "), expected("+ oDataState2[aCompareMethods[i]]() +"): "+ sComment);
@@ -994,13 +994,44 @@
 												},
 												"Added warning and Error on Name input",
 												function () {
-													setTimeout(function() {
-														oVerticalLayout.destroy();
-														oFloatInput.destroy();
-														oNameInput.destroy();
-														oCompositeInput.destroy();
-														start();
-													},0);
+													testDataState (oNameInput.getBinding("value"),
+															function() {
+																sap.ui.getCore().getMessageManager().removeMessages(oMessage1);
+																sap.ui.getCore().getMessageManager().removeMessages(oMessage2);
+															},
+															{
+																originalValue : "Flyer",
+																value : "Test2",
+																invalidValue : null,
+																laundering: false,
+																messages:[oMessage2]
+															},
+															"Remove warning and Error on Name input",
+															function () {
+																testDataState (oNameInput.getBinding("value"),
+																		function() {
+																		},
+																		{
+																			originalValue : "Flyer",
+																			value : "Test2",
+																			invalidValue : null,
+																			laundering: false,
+																			messages:null
+																		},
+																		"Remove warning and Error on Name input",
+																		function () {
+																			setTimeout(function() {
+																				oVerticalLayout.destroy();
+																				oFloatInput.destroy();
+																				oNameInput.destroy();
+																				oCompositeInput.destroy();
+																				start();
+																			},0);
+																		}
+																	);
+															}
+														);
+													
 												}
 											);
 										}

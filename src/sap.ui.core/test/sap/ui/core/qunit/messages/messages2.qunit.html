@@ -120,7 +120,7 @@
 		var oCompZip = sap.ui.getCore().byId("zip_disabled");
 		
 		var oValHandler = function(oEvent) {
-			if (oEvent.getParameter("dataState").getMessages().length > 0) {
+			if (oEvent.getParameter("dataState").getMessages() && oEvent.getParameter("dataState").getMessages().length > 0) {
 				ok(false,"should never be called");
 			}
 		};
@@ -136,7 +136,7 @@
 		var oMessageModel = oMessageManager.getMessageModel();
 		var oCompZip = sap.ui.getCore().byId("zip");
 		var oChangeHandler = function(oEvent) {
-			if (oEvent.getParameter("dataState").getMessages().length > 0) {
+			if (oEvent.getParameter("dataState").getMessages() && oEvent.getParameter("dataState").getMessages().length > 0) {
 				ok(false,"should never be called");
 			}
 		};

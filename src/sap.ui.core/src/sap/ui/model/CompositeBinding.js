@@ -374,8 +374,12 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 			} else {
 				aOriginalValues.push(oInnerDataState.getOriginalInternalValue());
 			}
-			aModelMessages = aModelMessages.concat(oInnerDataState.getModelMessages());
-			aControlMessages = aControlMessages.concat(oInnerDataState.getControlMessages());
+			if (oInnerDataState.getModelMessages()) {
+				aModelMessages = aModelMessages.concat(oInnerDataState.getModelMessages());
+			} 
+			if (oInnerDataState.getControlMessages()) {
+				aControlMessages = aControlMessages.concat();
+			}
 		});
 		oDataState.setModelMessages(aModelMessages);
 		oDataState.setControlMessages(aControlMessages);
