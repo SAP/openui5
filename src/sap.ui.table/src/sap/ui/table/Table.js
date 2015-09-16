@@ -1690,11 +1690,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				bForceUpdateVSb = true;
 			}
 
-			var iSteps = Math.max(0, (oBinding.getLength() || 0) - this.getVisibleRowCount());
+			var iLength = oBinding.getLength();
+			var iSteps = Math.max(0, (iLength || 0) - this.getVisibleRowCount());
 			// check for paging mode or scrollbar mode
 			if (this._oPaginator && this.getNavigationMode() === sap.ui.table.NavigationMode.Paginator) {
 				// update the paginator (set the first visible row property)
-				var iNumberOfPages = Math.ceil((oBinding.getLength() || 0) / this.getVisibleRowCount());
+				var iNumberOfPages = Math.ceil((iLength || 0) / this.getVisibleRowCount());
 				this._oPaginator.setNumberOfPages(iNumberOfPages);
 				var iPage = Math.min(iNumberOfPages, Math.ceil((this.getFirstVisibleRow() + 1) / this.getVisibleRowCount()));
 				this.setProperty("firstVisibleRow", (Math.max(iPage,1) - 1) * this.getVisibleRowCount(), true);
@@ -1715,8 +1716,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					}
 				} else {
 					//scroll to top when the scrollbar vanishes -> the binding length is smaller than the number of visible rows
-					this.setFirstVisibleRow(0);
-					
+					if (iLength > 0) {
+						// only set the scroll position to 0 if there is some data which can be shown.
+						// this allows the application to set a scroll position even though the data was not yet loaded.
+						this.setFirstVisibleRow(0);
+					}
+
 					if ($this.hasClass("sapUiTableVScr")) {
 						$this.removeClass("sapUiTableVScr");
 						bDoResize = true;
