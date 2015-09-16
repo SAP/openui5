@@ -74,25 +74,25 @@
 			items="{EMPLOYEE_2_EQUIPMENTS}">
 			<columns>
 				<Column>
-					<Text text="Category"/>
-				</Column>
-				<Column>
-					<Text text="ID"/>
-				</Column>
-				<Column>
 					<Text text="Equipment Name"/>
+				</Column>
+				<Column>
+					<Text text="Equipment ID"/>
+				</Column>
+				<Column>
+					<Text text="Category"/>
 				</Column>
 			</columns>
 			<items>
 				<ColumnListItem>
 					<cells>
-						<Text text="{Category}"/>
+						<Text text="{Name}"/>
 					</cells>
 					<cells>
 						<Text text="{ID}"/>
 					</cells>
 					<cells>
-						<Text text="{Name}"/>
+						<Text text="{Category}"/>
 					</cells>
 				</ColumnListItem>
 			</items>

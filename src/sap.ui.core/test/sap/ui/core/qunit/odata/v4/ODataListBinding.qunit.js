@@ -99,24 +99,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getContexts creates cache once for list with context", function (assert) {
-		var oContext = new Context(this.oModel, "/Products(1)");
-
-		this.oDataCacheMock.expects("readRange").returns(createDeferredResult(0));
-		this.mock(this.oModel).expects("resolve")
-			.withExactArgs("Suppliers", oContext).returns("/Resolved");
-
-		this.oModel.bindList("Suppliers", oContext).getContexts();
-
-		assert.ok(odatajs.cache.createDataCache.calledWithExactly({
-			mechanism : "memory",
-			name : "/service/Resolved",
-			source : "/service/Resolved"
-		}), odatajs.cache.createDataCache.printf("cache creation settings %C"));
-
-	});
-
-	//*********************************************************************************************
 	// fixture with range for aggregation binding info (default {}) and
 	//              number of entities (default is length requested to readRange)
 	[
@@ -157,10 +139,17 @@ sap.ui.require([
 				done();
 			}
 
-			this.oDataCacheMock.expects("readRange")
-				.withExactArgs(iStartIndex, iLength)
-				.twice()
-				.returns(createDeferredResult(iEntityCount));
+			if (iEntityCount < iLength) {
+				this.oDataCacheMock.expects("readRange")
+					.withExactArgs(iStartIndex, iLength)
+					// readRange is called twice because contexts are created asynchronously
+					.twice()
+					.returns(createDeferredResult(iEntityCount));
+			} else {
+				this.oDataCacheMock.expects("readRange")
+					.withExactArgs(iStartIndex, iLength)
+					.returns(createDeferredResult(iEntityCount));
+			}
 			// spies to check and document calls to model and binding methods from ManagedObject
 			this.spy(this.oModel, "bindList");
 			this.spy(ODataListBinding.prototype, "checkUpdate");
@@ -182,6 +171,101 @@ sap.ui.require([
 			oControl.getBinding("items").attachChange(onChange);
 			assert.deepEqual(oControl.getItems(), [], "initial synchronous result");
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("nested listbinding", function (assert) {
+		var oControl = new TestControl(),
+			done = assert.async(),
+			oContext = new Context(this.oModel, "/TEAMS[0];list=0"),
+			sPath = "TEAM_2_EMPLOYEES",
+			oRange = {startIndex : 1, length : 3};
+
+		// change event handler for initial read for list binding
+		function onChange() {
+			var aChildControls = oControl.getItems(),
+			sExpectedPath,
+			i;
+
+			assert.strictEqual(aChildControls.length, 3, "# child controls");
+			for (i = 0; i < 3; i += 1) {
+				sExpectedPath = oContext.getPath() + "/" + sPath + "/" + (i + oRange.startIndex);
+				assert.strictEqual(aChildControls[i].getBindingContext().getPath(),
+					sExpectedPath, "child control binding path: " + sExpectedPath);
+			}
+			assert.ok(!odatajs.cache.createDataCache.called, "no cache created");
+
+			// code under test
+			oControl.getBinding("items").setContext();
+			assert.strictEqual(oControl.getBinding("items").aContexts.length, 0, "reset context");
+			done();
+		}
+
+		oControl.setModel(this.oModel);
+
+		this.oDataCacheMock.expects("readRange").never();
+
+		this.oSandbox.mock(this.oModel).expects("read")
+			.withExactArgs(oContext.getPath() + "/" + sPath, true)
+			.returns(createDeferredResult(oRange.length));
+
+		// code under test
+		oControl.setBindingContext(oContext);
+
+		oControl.bindAggregation("items", jQuery.extend({
+				path : sPath,
+				template : new TestControl()
+			}, oRange));
+
+		oControl.getBinding("items").attachEventOnce("change", onChange);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("nested listbinding (context not yet set)", function (assert) {
+		var oControl = new TestControl(),
+			oRange = {startIndex : 1, length : 3},
+			done = assert.async();
+
+		// change event handler for initial read for list binding
+		function onChange() {
+			assert.ok(false, "unexpected event called");
+		}
+
+		oControl.setModel(this.oModel);
+
+		this.oDataCacheMock.expects("readRange").never();
+		this.oSandbox.mock(this.oModel).expects("read").never();
+
+		// code under test
+		oControl.bindAggregation("items", jQuery.extend({
+				path : "TEAM_2_EMPLOYEES",
+				template : new TestControl()
+			}, oRange));
+
+		oControl.getBinding("items").attachChange(onChange);
+		assert.deepEqual(oControl.getBinding("items").getContexts(), [],
+			"list binding contexts not set");
+		setTimeout(done, 10); //TODO Is there a better way to finalize the test after console log?
+	});
+
+	//*********************************************************************************************
+	QUnit.test("listbinding with immutable expand, encoded URLs", function (assert) {
+		var sExpand = "TEAM_2_EMPLOYEES($expand=EMPLOYEES_2_EQUIPMENTS)",
+			mParameters = { "$expand": sExpand },
+			sEncodedUrl = "/service/TEAMS?$expand=" + jQuery.sap.encodeURL(sExpand),
+			oListBinding = this.oModel.bindList("/TEAMS",  undefined, undefined, undefined,
+					mParameters);
+
+		this.oDataCacheMock.expects("readRange").returns(createDeferredResult(0));
+
+		mParameters["$expand"] = "bar";
+
+		oListBinding.getContexts();
+		assert.ok(odatajs.cache.createDataCache.calledWithExactly({
+			mechanism : "memory",
+			name : sEncodedUrl,
+			source : sEncodedUrl
+		}), odatajs.cache.createDataCache.printf("cache creation settings %C"));
 	});
 
 	//*********************************************************************************************
@@ -226,9 +310,11 @@ sap.ui.require([
 				iStart = oFixture[iRangeIndex].start || 0,
 				sMessage;
 
-			that.oDataCacheMock.expects("readRange")
-				.withExactArgs(iStart, iLength)
-				.returns(createDeferredResult(iLength));
+			if (bSync && iRangeIndex < oFixture.length - 1) {
+				that.oDataCacheMock.expects("readRange")
+					.withExactArgs(iStart, iLength)
+					.returns(createDeferredResult(iLength));
+			}
 
 			// code under test, read synchronously with previous range
 			aContexts = oListBinding.getContexts(iStart, iLength);
@@ -394,14 +480,17 @@ sap.ui.require([
 			}
 		);
 	});
+
 	//TODO jsdoc: {@link sap.ui.model.odata.v4.ODataModel#bindList bindList} generates no link as
 	//  there is no jsdoc for v4.ODataModel
-	//TODO lists within lists for navigation properties contained in cache via $expand
-	//     enhance integration test first!
 	//TODO lists within lists for deferred navigation or structural properties
 	//TODO (how to) get rid of global cache objects when model is garbage collected
 	//TODO integration test for cache eviction if size exceeds cacheSize (1MB per default)
 	//TODO (how to) set pageSize, prefetchSize, cacheSize of cache?
+	//TODO setContext() must delete this.oCache when it has its own cache (e.g. scenario
+	//  where listbinding is not nested but has a context. This is currently not possible but
+	//  if you think on a relative binding "TEAMS" which becomes context "/" -> here the relative
+	//  binding must create the it's own cache which has to be deleted with setContext()
 
-	//TODO integration: 3 tables: 2 different entity sets, 2 with same, but different $select
+	//TODO integration: 2 entity sets with same $expand, but different $select
 });

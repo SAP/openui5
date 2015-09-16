@@ -4,9 +4,9 @@
 
 //Provides class sap.ui.model.odata.v4.ODataListBinding
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/model/ChangeReason", "sap/ui/model/ListBinding",
-	"sap/ui/thirdparty/odatajs-4.0.0"
-], function (jQuery, ChangeReason, ListBinding, ODataModel, Olingo) {
+	"jquery.sap.global", "sap/ui/model/Binding", "sap/ui/model/ChangeReason",
+	"sap/ui/model/ListBinding", "./_ODataHelper"
+], function (jQuery, Binding, ChangeReason, ListBinding, Helper) {
 	"use strict";
 
 	/*global odatajs */
@@ -24,6 +24,10 @@ sap.ui.define([
 	 * @param {number} iIndex
 	 *   the index of this list binding in the array of list bindings kept by the model, see
 	 *   {@link sap.ui.model.odata.v4.ODataModel#bindList bindList}
+	 * @param {object} [mParameters]
+	 *   map of parameters
+	 * @param {string} [mParameters.$expand]
+	 *   the expand parameter used in the url to read data
 	 *
 	 * @class List binding for an OData v4 model.
 	 * @alias sap.ui.model.odata.v4.ODataListBinding
@@ -33,11 +37,12 @@ sap.ui.define([
 	var ODataListBinding = ListBinding.extend("sap.ui.model.odata.v4.ODataListBinding",
 		/** @lends sap.ui.model.odata.v4.ODataListBinding.prototype */ {
 
-		constructor : function (oModel, sPath, oContext, iIndex) {
-			ListBinding.apply(this, arguments);
+		constructor : function (oModel, sPath, oContext, iIndex, mParameters) {
+			ListBinding.call(this, oModel, sPath, oContext, undefined, undefined, mParameters);
 			this.oCache = undefined;
 			this.aContexts = [];
 			this.iIndex = iIndex;
+			this.sExpand = this.mParameters && this.mParameters["$expand"];
 		}
 	});
 
@@ -68,44 +73,96 @@ sap.ui.define([
 	 * @protected
 	 */
 	ODataListBinding.prototype.getContexts = function (iStart, iLength) {
-		var oModel = this.getModel(),
-			sPath = oModel.resolve(this.getPath(), this.getContext()),
-			sUrl = oModel.sServiceUrl + sPath,
+		var oContext = this.getContext(),
+			oModel = this.getModel(),
+			sResolvedPath = oModel.resolve(this.getPath(), oContext),
+			sUrl,
 			that = this;
 
-		iStart = iStart || 0;
-		if (iLength === undefined) {
-			iLength = oModel.iSizeLimit;
+		function getBasePath(iIndex) {
+			return sResolvedPath + "[" + iIndex + "];list=" + that.iIndex;
 		}
 
-		if (!this.oCache) {
-			this.oCache = odatajs.cache.createDataCache({
-				mechanism : "memory",
-				name : sUrl,
-				source : sUrl
-			});
+		function getDependentPath(iIndex) {
+			return sResolvedPath + "/" + iIndex;
 		}
-		this.oCache.readRange(iStart, iLength).then(function (oResult) {
-			var bChanged = false;
 
-			oResult.value.forEach(function (oEntity, i) {
-				var iIndex = iStart + i;
+		/**
+		 * Checks, whether the contexts exist for the requested range
+		 * @return {boolean}
+		 *   <code>true</code> if the contexts in the range exist
+		 */
+		function isRangeInContext() {
+			var i,
+				n = iStart + iLength;
 
-				if (that.aContexts[iIndex] === undefined) {
-					bChanged = true;
-					that.aContexts[iIndex] =
-						oModel.getContext(sPath + "[" + iIndex + "];list=" + that.iIndex);
+			for (i = iStart; i < n; i += 1) {
+				if (that.aContexts[i] === undefined) {
+					return false;
 				}
-			});
+			}
+			return true;
+		}
+
+		/**
+		 * Creates entries in aContexts for each value in oResult.
+		 * Uses fnGetPath to create the context path
+		 * Fires "change" event if new contexts are created
+		 * @param {function} fnGetPath function calculating base or dependent path
+		 * @param {object} oResult resolved OData result
+		 */
+		function createContexts(fnGetPath, oResult) {
+			var bChanged = false,
+				i,
+				n = iStart + oResult.value.length;
+
+			for (i = iStart; i < n; i += 1) {
+				if (that.aContexts[i] === undefined) {
+					bChanged = true;
+					that.aContexts[i] = oModel.getContext(fnGetPath(i));
+				}
+			}
+
 			if (bChanged) {
 				that._fireChange({reason : ChangeReason.Change});
 				// no code below this line
 			}
-		}).then(undefined, function (oError) { // no ["catch"] as this is a jQuery.Deferred object
-			jQuery.sap.log.error("Failed to get contexts for " + sUrl + " with start index "
-					+ iStart + " and length " + iLength, oError,
-					"sap.ui.model.odata.v4.ODataListBinding");
-		});
+		}
+
+		iStart = iStart || 0;
+		iLength = iLength || oModel.iSizeLimit;
+
+		if (!sResolvedPath) {
+			// oModel.resolve() called with relative path w/o context
+			// -> e.g. nested listbinding but context not yet set
+			return [];
+		}
+
+		if (!isRangeInContext(iStart, iLength)) {
+			if (oContext) { // nested list binding
+				oModel.read(sResolvedPath, true)
+					.then(createContexts.bind(undefined, getDependentPath));
+			}  else { // absolute path
+				if (!this.oCache) {
+					sUrl = oModel.sServiceUrl + sResolvedPath;
+					if (this.sExpand) {
+						sUrl += "?$expand=" + jQuery.sap.encodeURL(this.sExpand);
+					}
+					this.oCache = odatajs.cache.createDataCache({
+						mechanism : "memory",
+						name : sUrl,
+						source : sUrl
+					});
+				}
+				this.oCache.readRange(iStart, iLength)
+					.then(createContexts.bind(undefined, getBasePath), function (oError) {
+						jQuery.sap.log.error("Failed to get contexts for "
+							+ oModel.sServiceUrl + sResolvedPath + " with start index " + iStart
+							+ " and length " + iLength, oError,
+							"sap.ui.model.odata.v4.ODataListBinding");
+					});
+			}
+		}
 		return this.aContexts.slice(iStart, iStart + iLength);
 	};
 
@@ -117,11 +174,13 @@ sap.ui.define([
 	 *   the item's index
 	 * @param {string} sPath
 	 *   the path to the property
+	 * @param {boolean} [bAllowObjectAccess=false]
+	 *   whether access to whole objects is allowed
 	 * @return {Promise}
 	 *   the promise which is resolved with the value
 	 * @private
 	 */
-	ODataListBinding.prototype.readValue = function (iIndex, sPath) {
+	ODataListBinding.prototype.readValue = function (iIndex, sPath, bAllowObjectAccess) {
 		var that = this;
 
 		return new Promise(function (fnResolve, fnReject) {
@@ -146,13 +205,26 @@ sap.ui.define([
 					oResult = oResult[sSegment];
 					return true;
 				});
-				if (typeof oResult === "object") {
+				if (!bAllowObjectAccess && typeof oResult === "object") {
 					reject(new Error("Accessed value is not primitive"));
 					return;
 				}
 				fnResolve(oResult);
 			}, reject);
 		});
+	};
+
+	/**
+	 * Sets the context and resets the cached contexts of the list items
+	 *
+	 * @param {sap.ui.model.Context} oContext
+	 *   the context object
+	 * @protected
+	 * @override
+	 */
+	ODataListBinding.prototype.setContext = function (oContext) {
+		this.aContexts = [];
+		Binding.prototype.setContext.call(this, oContext);
 	};
 
 	return ODataListBinding;

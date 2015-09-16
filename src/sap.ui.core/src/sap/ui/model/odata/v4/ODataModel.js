@@ -117,15 +117,23 @@ sap.ui.define([
 	 *   the binding path in the model
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   the context which is required as base for a relative path
+	 * @param {sap.ui.model.Sorter[]} [aSorters]
+	 *   initial sort order
+	 * @param {sap.ui.model.Filter[]} [aFilters]
+	 *   predefined filters
+	 * @param {object} [mParameters]
+	 *   map of parameters
+	 * @param {string} [mParameters.$expand]
+	 *   the expand parameter used in the url to read list binding data
 	 * @return {sap.ui.model.odata.v4.ODataListBinding}
 	 *   the list binding
 	 * @public
 	 */
-	ODataModel.prototype.bindList = function (sPath, oContext) {
+	ODataModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters, mParameters) {
 		var oListBinding;
 
 		this.aLists = this.aLists || [];
-		oListBinding = new ODataListBinding(this, sPath, oContext, this.aLists.length);
+		oListBinding = new ODataListBinding(this, sPath, oContext, this.aLists.length, mParameters);
 		this.aLists.push(oListBinding);
 		return oListBinding;
 	};
@@ -180,12 +188,14 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   A relative path to the data which should be retrieved
+	 * @param {boolean} [bAllowObjectAccess=false]
+	 *   whether access to whole objects is allowed
 	 * @returns {Promise}
 	 *   A promise to be resolved when the OData request is finished
 	 *
 	 * @protected
 	 */
-	ODataModel.prototype.read = function (sPath) {
+	ODataModel.prototype.read = function (sPath, bAllowObjectAccess) {
 		var that = this;
 
 		return new Promise(function (fnResolve, fnReject) {
@@ -193,12 +203,13 @@ sap.ui.define([
 				sRequestUri;
 
 			if (aMatches) { // use list binding to retrieve the value
-				that.aLists[Number(aMatches[2])].readValue(Number(aMatches[1]), aMatches[3]).then(
-					function (oValue) {
-						fnResolve({value : oValue});
-					},
-					function (oError) {
-						fnReject(oError);
+				that.aLists[Number(aMatches[2])]
+					.readValue(Number(aMatches[1]), aMatches[3], bAllowObjectAccess)
+					.then( function (oValue) {
+							fnResolve({value : oValue});
+						},
+						function (oError) {
+							fnReject(oError);
 					});
 				return;
 			}

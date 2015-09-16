@@ -189,7 +189,7 @@ sap.ui.require([
 		}],
 		expected: sMetaTeam + "/Type/Properties(Name='Team_Id')"
 	}, {
-		path: "/Employees(ID='1')/EMPLOYEE_2_TEAM/TEAM_2_EMPLOYEES/ID",
+		path: "/Employees[1];list=0/EMPLOYEE_2_TEAM/TEAM_2_EMPLOYEES/0/ID",
 		nav: [{
 			object: oEntityContainer.EntitySets[0],
 			property: "EntityType"
@@ -452,7 +452,7 @@ sap.ui.require([
 			QUnit.test(sTitle, function (assert) {
 				var oConstraints = oFixture.constraints,
 					oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
-					sPath = "/Employees/ENTRYDATE",
+					sPath = "/Employees[0];list=1/ENTRYDATE",
 					oMetaContext = {metaContextFor: sPath},
 					oProperty = {
 						"Type" : {
@@ -484,7 +484,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("requestUI5Types: not a property", function (assert) {
 		var oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
-			sPath = "/Employees/foo",
+			sPath = "/Employees[0];list=1/foo",
 			oMetaContext = {metaContextFor: sPath},
 			oProperty = {};
 
@@ -503,7 +503,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("requestUI5Types: unsupported type", function (assert) {
 		var oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
-			sPath = "/Employees/foo",
+			sPath = "/Employees[0];list=1/foo",
 			oMetaContext = {metaContextFor: sPath},
 			oProperty =  {
 				"Type" : {

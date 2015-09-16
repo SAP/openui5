@@ -161,16 +161,22 @@ sap.ui.require([
 	QUnit.test("bindList", function (assert) {
 		var oModel = createModel(),
 			oContext = {},
-			oBinding = oModel.bindList("/path", oContext);
+			mParameters = {"$expand" : "foo"},
+			oBinding = oModel.bindList("/path", oContext, undefined, undefined, mParameters);
 
 		assert.ok(oBinding instanceof ODataListBinding);
 		assert.strictEqual(oBinding.getModel(), oModel);
 		assert.strictEqual(oBinding.getContext(), oContext);
 		assert.strictEqual(oBinding.getPath(), "/path");
 		assert.strictEqual(oBinding.iIndex, 0, "list binding unique index");
+		assert.deepEqual(oBinding.mParameters, mParameters, "list binding parameters");
+		assert.strictEqual(oBinding.sExpand, mParameters["$expand"],
+			"list binding stores copy of expand param.");
+
 		assert.strictEqual(oModel.bindList("/path", oContext).iIndex, 1);
 		assert.strictEqual(oModel.aLists[0], oBinding, "model stores list bindings");
 		//TODO add further tests once exact behavior of bindList is clear
+		//TODO parameter aSorters and aFilters
 	});
 
 	//*********************************************************************************************
@@ -180,11 +186,11 @@ sap.ui.require([
 			oListBinding = oModel.bindList("/TEAMS"),
 			oResult = {};
 
-		this.oSandbox.mock(oListBinding).expects("readValue").withExactArgs(iIndex, "foo/bar")
+		this.oSandbox.mock(oListBinding).expects("readValue").withExactArgs(iIndex, "foo/bar", true)
 			.returns(Promise.resolve(oResult));
 		this.oSandbox.mock(odatajs.oData).expects("read").never();
 
-		return oModel.read("/TEAMS[" + iIndex + "];list=0/foo/bar").then(function (oData) {
+		return oModel.read("/TEAMS[" + iIndex + "];list=0/foo/bar", true).then(function (oData) {
 			assert.deepEqual(oData, {value : oResult});
 			assert.strictEqual(oData.value, oResult);
 		});

@@ -9,7 +9,8 @@ sap.ui.define([
 ], function (MetaModel, Helper) {
 	"use strict";
 
-	var rEntitySetName = /^(\w+)(\[|\(|$)/; // identifier followed by [,( or at end of string
+	var rEntitySetName = /^(\w+)(\[|\(|$)/, // identifier followed by [,( or at end of string
+		rNumber = /^\d+$/;
 
 	/**
 	 * Do <strong>NOT</strong> call this private constructor for a new <code>ODataMetaModel</code>,
@@ -174,6 +175,11 @@ sap.ui.define([
 				}
 				oProperty = oResult.object;
 				i += 1;
+				if (rNumber.test(aSegments[i])) {
+					// skip index in data path e.g. .../TEAM_2_EMPLOYEES/2/Name
+					i += 1;
+				}
+
 				if (!aSegments[i]) {
 					return sMetaPath;
 				}
