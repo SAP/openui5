@@ -241,10 +241,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 		 */
 		ComboBox.prototype._createDialog = function() {
 			var CSS_CLASS = sap.m.ComboBoxBaseRenderer.CSS_CLASS;
-
-			// initialize Dialog
 			var oDialog = new sap.m.Dialog({
-				stretchOnPhone: true,
+				stretch: true,
 				customHeader: new sap.m.Bar({
 					contentLeft: new sap.m.InputBase({
 						value: this.getSelectedItem().getText(),
