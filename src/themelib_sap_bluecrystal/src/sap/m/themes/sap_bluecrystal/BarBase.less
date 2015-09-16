@@ -15,27 +15,27 @@
 }
 
 .sapMIBar-CTX.sapMFooter-CTX {
-	color: @sapUiFooterTextColor;
+	color: @sapUiPageFooterTextColor;
 	/* 1px down black shadow with 50% opacity */
 	text-shadow: 0em 0.0625em 0em fade(@sapUiDarkShadowTint, 50);
-	background-color: @sapUiFooterBackground;
+	background-color: @sapUiPageFooterBackground;
 	background-image: none;
-	border-top: 0.0625rem solid @sapUiFooterBorderColor;
+	border-top: 0.0625rem solid @sapUiPageFooterBorderColor;
 	box-shadow: none;
 }
 
 .sapMIBar.sapMSubHeader-CTX {
-	color: @sapUiHeaderTextColor;
-	background-color: @sapUiHeaderBackground;
+	color: @sapUiPageHeaderTextColor;
+	background-color: @sapUiPageHeaderBackground;
 }
 
 .sap-desktop .sapMIBar.sapMFooter-CTX {
-	background-color: @sapUiFooterBackground;
+	background-color: @sapUiPageFooterBackground;
 }
 
 /* footer separator inside of a SplitContainer control */
 .sapMSplitContainerMaster .sapMFooter-CTX {
-	border-right: 0.0625rem solid @sapUiFooterBorderColor;
+	border-right: 0.0625rem solid @sapUiPageFooterBorderColor;
 }
 
 .sapMBarGradient(@color, @alpha:100%) {
@@ -47,18 +47,18 @@
 }
 
 .sapMIBar.sapMHeader-CTX {
-	.sapMBarGradient(@sapUiHeaderBackground);
-	color: @sapUiHeaderTextColor;
+	.sapMBarGradient(@sapUiPageHeaderBackground);
+	color: @sapUiPageHeaderTextColor;
 }
 
 .sap-desktop .sapMIBar.sapMHeader-CTX { /* remove gradient on desktop */
-	background-color: lighten(@sapUiHeaderBackground, 5);
+	background-color: lighten(@sapUiPageHeaderBackground, 5);
 	filter: none;
 	background-image: none;
 }
 
 .sapMPopup-CTX .sapMIBar.sapMHeader-CTX { /* remove gradient in popups; restore grey header color when in popup on desktop */
-	background-color: @sapUiHeaderBackground;
+	background-color: @sapUiPageHeaderBackground;
 	filter: none;
 	background-image: none;
 }
@@ -68,5 +68,5 @@ html[data-sap-ui-browser*='ie9'] .sapMPageHeader::after {
 	position: absolute;
 	width:100%;
 	bottom: 0;
-	border-bottom: 0.0625em solid @sapUiHeaderBorderColor;
+	border-bottom: 0.0625em solid @sapUiPageHeaderBorderColor;
 }
