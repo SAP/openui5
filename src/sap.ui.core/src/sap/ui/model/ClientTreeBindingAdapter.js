@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.model.odata.ODataAnnotations
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/ClientTreeBinding', './TreeBindingAdapter', 'sap/ui/table/TreeAutoExpandMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/TreeBindingUtils'],
-	function(jQuery, TreeBinding, ClientTreeBinding, TreeBindingAdapter, TreeAutoExpandMode, ChangeReason, TreeBindingUtils) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/ClientTreeBinding', './TreeBindingAdapter', 'sap/ui/table/TreeAutoExpandMode', 'sap/ui/model/ChangeReason'],
+	function(jQuery, TreeBinding, ClientTreeBinding, TreeBindingAdapter, TreeAutoExpandMode, ChangeReason) {
 		"use strict";
 
 		/**
@@ -48,7 +48,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 		/**
 		 * Returns true or false, depending on the child count of the given node.
-		 * @override
+		 * @param {Object} oNode Node instance to check whether it has children
+		 * @returns {boolean} True if the node has children
 		 */
 		ClientTreeBindingAdapter.prototype.nodeHasChildren = function(oNode) {
 			jQuery.sap.assert(oNode, "TreeBindingAdapter.nodeHasChildren: No node given!");
@@ -89,6 +90,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		};
 
 		/**
+		 * Calculates a unique group ID for a given node
+		 * @param {Object} oNode Node of which the group ID shall be calculated
+		 * @returns {string} Group ID for oNode
+		 * @override
+		 */
+		ClientTreeBindingAdapter.prototype._calculateGroupID = function (oNode) {
+			var sBindingPath = this.getPath();
+			var sGroupId;
+			if (oNode.context) {
+				var sContextPath = oNode.context.getPath();
+				sGroupId = sContextPath.split(sBindingPath)[1];
+				if (!sGroupId) {
+					sGroupId = sContextPath;
+				}
+
+				// slashes are used to separate levels. As in the data model not every path-part represents a level,
+				// the remaining slashes must be replaced by some other character. "_" is used
+				if (jQuery.sap.startsWith(sGroupId,"/")) {
+					sGroupId = sGroupId.substring(1, sGroupId.length);
+				}
+				sGroupId = oNode.parent.groupID + sGroupId.replace(/\//g, "_") + "/";
+
+			} else if (oNode.context === null) {
+				// only the root node should have null as context
+				sGroupId = "/";
+			}
+
+			return sGroupId;
+		};
+
+		/**
+		 * Builds the tree from start index with the specified number of nodes
+		 * @param {int} iStartIndex Index from which the tree shall be built
+		 * @param {int} iLength Number of Nodes
 		 * @override
 		 */
 		ClientTreeBindingAdapter.prototype._buildTree = function(iStartIndex, iLength) {
@@ -96,7 +131,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 				iStartIndex = iStartIndex || 0;
 				iLength = iLength || this.getRootContexts().length;
 				this._invalidTree = false;
-				return TreeBindingAdapter.prototype._buildTree.call(this, iStartIndex, iLength);
+				TreeBindingAdapter.prototype._buildTree.call(this, iStartIndex, iLength);
 			}
 		};
 
