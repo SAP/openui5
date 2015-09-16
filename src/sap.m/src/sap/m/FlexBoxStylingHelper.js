@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 			FlexBoxStylingHelper.setStyle(oRm, null, "align-self", alignSelf);
 		}
 	
-		if (jQuery.support.newFlexBoxLayout) {
+		if (jQuery.support.newFlexBoxLayout || jQuery.support.ie10FlexBoxLayout) {
 			var shrinkFactor = oLayoutData.getShrinkFactor();
 			if (shrinkFactor !== 1) {
 				FlexBoxStylingHelper.setStyle(oRm, null, "flex-shrink", shrinkFactor);
@@ -143,7 +143,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 		if (jQuery.support.flexBoxPrefixed) {
 			if (sap.ui.Device.browser.webkit) {
 				sVendorPrefix = "-webkit-";
-			} else if (jQuery.browser.mozilla) {
+			} else if (sap.ui.Device.browser.mozilla) {
 				sVendorPrefix = "-moz-";
 			} else if (sap.ui.Device.browser.internet_explorer) {
 				sVendorPrefix = "-ms-";
