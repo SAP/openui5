@@ -70,8 +70,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 			var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
 				aPeriods = sap.ui.core.LocaleData.getInstance(oLocale).getDayPeriods("abbreviated");
 
-			this._fnOrientationChanged = jQuery.proxy(this._onOrientationChanged, this);
-			sap.ui.Device.resize.attachHandler(this._fnOrientationChanged);
+			this._fnLayoutChanged = jQuery.proxy(this._onOrientationChanged, this);
+			sap.ui.Device.resize.attachHandler(this._fnLayoutChanged);
 
 			this._sAM = aPeriods[0];
 			this._sPM = aPeriods[1];
@@ -90,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		 * Called after the control is rendered.
 		 */
 		TimePickerSliders.prototype.onAfterRendering = function() {
-			if (sap.ui.Device.browser.name !== "ie") {
+			if (!sap.ui.Device.browser.internet_explorer) {
 				/* This method is called here prematurely to ensure slider loading on time.
 				 * Make sure _the browser native focus_ is not actually set on the early call (the "true" param)
 				 * because that fires events and results in unexpected behaviors */
@@ -349,11 +349,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		TimePickerSliders.prototype._onOrientationChanged = function() {
 			var aSliders = this.getAggregation("_columns");
 
-			if (aSliders) {
-				for ( var i = 0; i < aSliders.length; i++) {
-					if (aSliders[i].getIsExpanded()) {
-						aSliders[i]._updateSelectionFrameLayout();
-					}
+			if (!aSliders) {
+				return;
+			}
+
+			for ( var i = 0; i < aSliders.length; i++) {
+				if (aSliders[i].getIsExpanded()) {
+					aSliders[i]._updateSelectionFrameLayout();
 				}
 			}
 		};

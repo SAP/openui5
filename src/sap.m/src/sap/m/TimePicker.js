@@ -73,10 +73,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 					localeId: {type : "string", group: "Data", defaultValue : "en-US"},
 
 					/**
-					 * Defines the time, represented in the control, as a JavaScript Date Object.
-					 *
-					 * Used as an alternative to the <code>value</code> and <code>valueFormat</code>
-					 * pair properties - recommended when the time is already in JavaScript format.
+					 *  Holds a reference to a JavaScript Date Object. The <code>value</code> (string)
+					 * property will be set according to it. Alternatively, if the <code>value</code>
+					 * and <code>valueFormat</code> pair properties are supplied instead,
+					 * the <code>dateValue</code> will be instantiated аccording to the parsed
+					 * <code>value</code>.
 					 */
 					dateValue : {type : "object", group : "Data", defaultValue : null},
 
@@ -106,8 +107,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 				Hour: "hour",
 				Minute: "minute",
 				Second: "second"
-			},
-			PICKER_CONTENT_HEIGHT = "25rem";
+			};
 
 		/**
 		 * Initializes the control.
@@ -115,6 +115,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @public
 		 */
 		TimePicker.prototype.init = function() {
+
 			MaskInput.prototype.init.apply(this, arguments);
 
 			this.setDisplayFormat(getDefaultDisplayFormat());
@@ -595,7 +596,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 					sPlaceholder = TimeFormatStyles.Medium;
 				}
 
-				if (sPlaceholder === TimeFormatStyles.Short || sPlaceholder === TimeFormatStyles.Medium || sPlaceholder === TimeFormatStyles.Long) {
+				if (Object.keys(TimeFormatStyles).indexOf(sPlaceholder) !== -1 ) {
 					sPlaceholder = getDefaultDisplayFormat();
 				}
 			}
@@ -725,7 +726,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 			if (oPicker) {
 				oPopover = oPicker.getAggregation("_popup");
-				if (this._oPopoverKeydownEventDelegate) {
+				if (typeof this._oPopoverKeydownEventDelegate === 'function') {
 					oPopover.removeEventDelegate(this._oPopoverKeydownEventDelegate);
 				}
 			}
@@ -818,7 +819,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 						invokedBy: that.getId()
 					})
 				],
-				contentHeight: PICKER_CONTENT_HEIGHT
+				contentHeight: TimePicker._PICKER_CONTENT_HEIGHT
 			});
 
 			oPopover = oPicker.getAggregation("_popup");
@@ -1346,6 +1347,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @name sap.m.TimePicker#fireChange
 		 * @function
 		 */
+
+
+
+
+		TimePicker._PICKER_CONTENT_HEIGHT = "25rem";
 
 		return TimePicker;
 

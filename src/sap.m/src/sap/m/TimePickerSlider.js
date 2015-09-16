@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		 * @version ${version}
 		 *
 		 * @constructor
-		 * @public
+		 * @private
 		 * @since 1.32
 		 * @alias sap.m.TimePickerSlider
 		 */
@@ -95,6 +95,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			this._marginTop = null;
 			this._marginBottom = null;
 			this._bOneTimeValueSelectionAnimation = false;
+			this._SCROLL_ANIMATION_DURATION = 200;
 
 			this._initArrows();
 		};
@@ -118,7 +119,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		 * @param {jQuery.Event} oEvent Event object
 		 */
 		TimePickerSlider.prototype.onThemeChanged = function(oEvent) {
-			this.rerender();
+			this.invalidate();
 		};
 
 		/**
@@ -157,7 +158,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		 *
 		 * @override
 		 * @param {string} sValue The key of the new selected value
-		 * @returns {*|boolean|void|sap.ui.base.ManagedObject}
+		 * @returns {sap.ui.base.ManagedObject}
 		 * @public
 		 */
 		TimePickerSlider.prototype.setSelectedValue = function(sValue) {
@@ -166,7 +167,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			}),
 					that = this;
 			if (iIndexOfValue === -1) {
-				return;
+				return this;
 			}
 
 			//scroll
@@ -181,7 +182,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 				if (this._bOneTimeValueSelectionAnimation) {
 					this._animatingSnap = true;
-					this._getSliderContainerDomRef().animate({scrollTop: iIndex * this._getItemHeightInPx() - this._selectionOffset}, 200, 'linear', function () {
+					this._getSliderContainerDomRef().animate({scrollTop: iIndex * this._getItemHeightInPx() - this._selectionOffset}, this._SCROLL_ANIMATION_DURATION, 'linear', function () {
 						that._getSliderContainerDomRef().clearQueue();
 						that._animatingSnap = false;
 						that._bOneTimeValueSelectionAnimation = false;
@@ -211,46 +212,49 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		TimePickerSlider.prototype.setIsExpanded = function(bValue, suppressEvent) {
 			this.setProperty("isExpanded", bValue, true);
 
-			if (this.getDomRef()) {
-				var $This = this.$();
+			if (!this.getDomRef()) {
+				return this;
+			}
 
-				if (bValue) {
-					if (!$This.hasClass("sapMTPSliderExpanded")) {
-						$This.addClass("sapMTPSliderExpanded");
-					}
+			var $This = this.$();
 
-					if (sap.ui.Device.system.phone) {
-						jQuery.sap.delayedCall(0, this, function() {
-							this._updateSelectionFrameLayout();
-							if (!suppressEvent) {
-								this.fireExpanded({ctrl: this});
-							}
-						});
-					} else {
+			if (bValue) {
+				if (!$This.hasClass("sapMTPSliderExpanded")) {
+					$This.addClass("sapMTPSliderExpanded");
+				}
+
+				if (sap.ui.Device.system.phone) {
+					jQuery.sap.delayedCall(0, this, function() {
 						this._updateSelectionFrameLayout();
 						if (!suppressEvent) {
 							this.fireExpanded({ctrl: this});
 						}
-					}
+					});
 				} else {
-					this._stopAnimation();
-					//stop snap animation also
-					if (this._animatingSnap === true) {
-						this._animatingSnap = false;
-						this._getSliderContainerDomRef().stop(true);
-						//be careful not to invoke this method twice (the first time is on animate finish callback)
-						this._scrollerSnapped(this._iSelectedIndex);
-					}
-
-					$This.removeClass("sapMTPSliderExpanded");
-
-					if (sap.ui.Device.system.phone) {
-						jQuery.sap.delayedCall(0, this, this._afterExpandCollapse);
-					} else {
-						this._afterExpandCollapse();
+					this._updateSelectionFrameLayout();
+					if (!suppressEvent) {
+						this.fireExpanded({ctrl: this});
 					}
 				}
+			} else {
+				this._stopAnimation();
+				//stop snap animation also
+				if (this._animatingSnap === true) {
+					this._animatingSnap = false;
+					this._getSliderContainerDomRef().stop(true);
+					//be careful not to invoke this method twice (the first time is on animate finish callback)
+					this._scrollerSnapped(this._iSelectedIndex);
+				}
+
+				$This.removeClass("sapMTPSliderExpanded");
+
+				if (sap.ui.Device.system.phone) {
+					jQuery.sap.delayedCall(0, this, this._afterExpandCollapse);
+				} else {
+					this._afterExpandCollapse();
+				}
 			}
+
 
 			return this;
 		};

@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global'],
 
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
-			oRm.writeAttributeEscaped("tabindex", "0");
+			oRm.writeAttribute("tabindex", "0");
 
 			oRm.addClass("sapMTPColumn");
 			if (oControl.getIsExpanded()) {

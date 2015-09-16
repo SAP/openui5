@@ -97,9 +97,9 @@
 		//test the final result after setting some properties in order
 		function generateValuesTest(aSetValues, oExpectedValues) {
 			//system under test
-			var tpId = "tp" + ++caseIndex,
-					tp = new sap.m.TimePicker(tpId),
-					i, key;
+			var tp = new sap.m.TimePicker(),
+				i,
+				key;
 
 			//arrange
 			tp.placeAt("qunit-fixture");
@@ -113,7 +113,7 @@
 			//assert
 			// trim because the framework formatter has no leading space,
 			// but the tp now has a leading space for for h:mm, H:mm format
-			equals(jQuery("#" + tpId + "-inner").val().trim(), oExpectedValues["expInputVal"], "$input.val() ok");
+			equals(jQuery("#" + tp.getId() + "-inner").val().trim(), oExpectedValues["expInputVal"], "$input.val() ok");
 
 			equals(tp.getValue(), oExpectedValues["expValue"], "getValue() ok");
 
