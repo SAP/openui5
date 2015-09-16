@@ -398,6 +398,7 @@
 			},
 
 			change: function(oControlEvent) {
+				jQuery.sap.log.info('Event fired: "change" the value of the input change to ' + oControlEvent.getParameter("value") + " on", this);
 				sap.m.MessageToast.show("change " + oControlEvent.getParameter("value"));
 			},
 
@@ -482,14 +483,6 @@
 			}
 		});
 
-		var oComboBoxBusy = new sap.m.ComboBox({
-			busy: true,
-			items: {
-				path: "/items",
-				template: oItemTemplate
-			}
-		});
-
 		new sap.m.App().addPage(new sap.m.Page({
 			title: "sap.m.ComboBox",
 			content: [
@@ -525,10 +518,6 @@
 
 				new sap.ui.core.HTML({ content: "<h3>Error state</h3>" }),
 				oComboBoxError,
-				new sap.ui.core.HTML({ content: "<hr>" }),
-
-				new sap.ui.core.HTML({ content: "<h3>Busy</h3>" }),
-				oComboBoxBusy,
 				new sap.ui.core.HTML({ content: "<hr>" })
 			]
 		}).addStyleClass("sapUiContentPadding")).placeAt("body");
