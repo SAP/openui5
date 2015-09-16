@@ -43,22 +43,6 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 		return oClassInfo;
 	};
 
-	UIComponentMetadata.prototype.applySettings = function(oClassInfo) {
-
-		ComponentMetadata.prototype.applySettings.call(this, oClassInfo);
-
-		// if the root view is a string we convert it into a view
-		// configuration object and assume that it is a XML view
-		var oUI5Manifest = this._oStaticInfo.manifest["sap.ui5"];
-		if (oUI5Manifest && typeof oUI5Manifest.rootView === "string") {
-			oUI5Manifest.rootView = {
-					viewName: oUI5Manifest.rootView,
-					type: sap.ui.core.mvc.ViewType.XML
-			};
-		}
-
-	};
-
 	/**
 	 * Returns the root view of the component.
 	 * @param {boolean} [bDoNotMerge] true, to return only the local root view config
@@ -143,8 +127,24 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 		// if no manifest entry exists otherwise the metadata entry will be
 		// ignored by the converter
 		var oUI5Manifest = oManifest["sap.ui5"];
-		oUI5Manifest["rootView"] = oUI5Manifest["rootView"] || oStaticInfo["rootView"];
-		oUI5Manifest["routing"] = oUI5Manifest["routing"] || oStaticInfo["routing"];
+		var oRootView = oUI5Manifest["rootView"] || oStaticInfo["rootView"];
+		if (oRootView) {
+			oUI5Manifest["rootView"] = oRootView;
+		}
+		var oRouting = oUI5Manifest["routing"] || oStaticInfo["routing"];
+		if (oRouting) {
+			oUI5Manifest["routing"] = oRouting;
+		}
+
+		// if the root view is a string we convert it into a view
+		// configuration object and assume that it is a XML view
+		// !This should be kept in sync with the UIComponent#createContent functionality!
+		if (oUI5Manifest["rootView"] && typeof oUI5Manifest["rootView"] === "string") {
+			oUI5Manifest["rootView"] = {
+				viewName: oUI5Manifest["rootView"],
+				type: sap.ui.core.mvc.ViewType.XML
+			};
+		}
 
 	};
 
