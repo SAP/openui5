@@ -152,7 +152,7 @@ sap.ui.define([
 
 		var that = this;
 
-		this._oPopover = new ResponsivePopover({
+		this._oPopover = new ResponsivePopover(this.getId() + '-quickView', {
 			placement: this.getPlacement(),
 			content: [this._oNavContainer],
 			showHeader: false,
