@@ -145,15 +145,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 	/**
 	 * the global configuration of Opa.
 	 * All of the global values can be overwritten in an individual waitFor call.
-	 * defaults are :
+	 * The default values are:
 	 * <ul>
-	 * 		<li>arrangements: a new Opa instance</li>
-	 * 		<li>actions: a new Opa instance</li>
-	 * 		<li>assertions: a new Opa instance</li>
+	 * 		<li>arrangements: A new Opa instance</li>
+	 * 		<li>actions: A new Opa instance</li>
+	 * 		<li>assertions: A new Opa instance</li>
 	 * 		<li>timeout : 15 seconds, is increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true</li>
 	 * 		<li>pollingInterval: 400 milliseconds</li>
 	 * </ul>
-	 * You can either directly manipulate the config, or extend it, using {@link sap.ui.test.Opa#.extendConfig}
+	 * You can either directly manipulate the config, or extend it using {@link sap.ui.test.Opa#.extendConfig}
 	 * @public
 	 */
 	Opa.config = {};
@@ -161,7 +161,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 	/**
 	 * Extends and overwrites default values of the Opa.config
 	 *
-	 * @param {object} options the values to be added to the existing config
+	 * @param {object} options The values to be added to the existing config
 	 * @public
 	 */
 	Opa.extendConfig = function (options) {
@@ -169,14 +169,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 	};
 
 	/**
-	 * Reset Opa.config to its default values
+	 * Reset Opa.config to its default values.
 	 * All of the global values can be overwritten in an individual waitFor call.
 	 *
-	 * defaults are :
+	 * The default values are:
 	 * <ul>
-	 * 		<li>arrangements: a new Opa instance</li>
-	 * 		<li>actions: a new Opa instance</li>
-	 * 		<li>assertions: a new Opa instance</li>
+	 * 		<li>arrangements: A new Opa instance</li>
+	 * 		<li>actions: A new Opa instance</li>
+	 * 		<li>assertions: A new Opa instance</li>
 	 * 		<li>timeout : 15 seconds, is increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true</li>
 	 * 		<li>pollingInterval: 400 milliseconds</li>
 	 * </ul>
@@ -197,7 +197,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 
 	/**
 	 * Gives access to a singleton object you can save values in.
-	 * same as {@link sap.ui.test.Opa#getContext}
+	 * Same as {@link sap.ui.test.Opa#getContext}
 	 * @since 1.29.0
 	 * @returns {object} the context object
 	 * @public
@@ -248,8 +248,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 
 		/**
 		 * Gives access to a singleton object you can save values in.
-		 * This object will only be created once and never destroyed.
-		 * So you may use it across different tests.
+		 * This object will only be created once and it will never be destroyed.
+		 * That means you can use it to save values you need in multiple separated tests.
 		 *
 		 * @returns {object} the context object
 		 * @public
@@ -264,21 +264,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 		 *
 		 * If you are using Opa5, waitFor takes additional parameters.
 		 * They can be found here: {@link sap.ui.test.Opa5#waitFor}.
-		 * Waits for a check condition to return true. Then a success function will be called.
-		 * If check does not return true until timeout is reached, an error function will be called.
+		 * Waits for a check condition to return true, in which case a success function will be called.
+		 * If the timeout is reached before the check returns true, an error function will be called.
 		 *
 		 *
 		 * @public
-		 * @param {object} options containing check, success and error functions
-		 * @param {integer} [oOptions.timeout] default: 15 - (seconds) specifies how long the waitFor function polls before it fails.
-		 * @param {integer} [oOptions.pollingInterval] default: 400 - (milliseconds) specifies how often the waitFor function polls.
+		 * @param {object} options These contain check, success and error functions
+		 * @param {integer} [oOptions.timeout] default: 15 - (seconds) Specifies how long the waitFor function polls before it fails.
+		 * @param {integer} [oOptions.pollingInterval] default: 400 - (milliseconds) Specifies how often the waitFor function polls.
 		 * @param {function} [oOptions.check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
 		 * The first parameter passed into the function is the same value that gets passed to the success function.
-		 * Returning something different than boolean in check will not change the first parameter of success.
-		 * @param {function} [oOptions.success] will get invoked after the check function returns true. If there is no check function defined,
+		 * Returning something other than boolean in the check will not change the first parameter of success.
+		 * @param {function} [oOptions.success] Will get invoked after the check function returns true. If there is no check function defined,
 		 * it will be directly invoked. waitFor statements added in the success handler will be executed before previously added waitFor statements
-		 * @param {string} [oOptions.errorMessage] Will be displayed as errorMessage depending on your unit test framework. Currently the only adapter for OPA is QUnit. There the message appears when OPA5 is reaching its timeout but QUnit has not reached it yet.
-		 * @returns {jQuery.promise} a promise that gets resolved on success.
+		 * @param {string} [oOptions.errorMessage] Will be displayed as an errorMessage depending on your unit test framework.
+		 * Currently the only adapter for Opa is QUnit.
+		 * This message is displayed there if Opa has reached its timeout but QUnit has not yet reached it.
+		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 */
 		waitFor : function (options) {
 			var deferred = $.Deferred();

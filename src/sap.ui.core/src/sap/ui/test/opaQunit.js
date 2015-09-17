@@ -12,7 +12,7 @@ sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
 	/**
 	 * QUnit test adapter for opa.js has the same signature as a test of QUnit.
 	 * Suggested usage:
-	 * <code>
+	 * <pre><code>
 	 * sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function (Opa5, opaTest) {
 	 *
 	 *    Opa5.extendConfig({
@@ -33,7 +33,7 @@ sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
 	 *    });
 	 *
 	 * });
-	 * </code>
+	 * </code></pre>
 	 *
 	 * When you require this file, it will also introduce a global variable: opaTest.
 	 * It will also alter some settings of QUnit.config - testTimout will be increased to 90 if you do not specify your own.
@@ -42,13 +42,21 @@ sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
 	 * @alias sap.ui.test.opaQunit
 	 * @function
 	 * @static
-	 * @param {string} testName the name of the created QUnit test.
-	 * @param {integer|function} expected Integer - How many qunit assertions are expected by the test. If a function is passed it is interpreted as callback and the expected is skipped.
-	 * @param {function} callback - The test function. It will get 3 arguments passed to it.
-	 * The first argument will be {@link sap.ui.test.Opa#.config}.arrangements.
-	 * The second argument will be {@link sap.ui.test.Opa#.config}.actions.
-	 * The third argument will be {@link sap.ui.test.Opa#.config}.assertions.
-	 * @returns {QUnit.test} a function to register opaTests
+	 * @param {string} testName The name of the created QUnit test.
+	 * @param {integer|function} expected Integer showing how many QUnit assertions are expected by the test. If a function is passed, it is interpreted as callback and the expected is skipped.
+	 * @param {function} callback The test function. It will get 3 arguments passed to it.
+	 * <ol>
+	 *     <li>
+	 *         Will be {@link sap.ui.test.Opa#.config} .arrangements.
+	 *     </li>
+	 *     <li>
+	 *        Will be {@link sap.ui.test.Opa#.config} .actions.
+	 *     </li>
+	 *     <li>
+	 *         Will be {@link sap.ui.test.Opa#.config} .assertions.
+	 *     </li>
+	 * </ol>
+	 * @returns {QUnit.test} A function to register opaTests
 	 */
 	var opaTest = function (testName, expected, callback, async) {
 		var config = Opa.config;
