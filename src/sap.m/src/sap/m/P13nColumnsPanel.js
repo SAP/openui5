@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nColumnsPanel.
 sap.ui.define([
-	'jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nColumnsItem', './SearchField', './Table', './library', 'sap/ui/core/Control'
-], function(jQuery, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField, Table, library, Control) {
+	'jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nColumnsItem', './SearchField', './Table', './library', 'sap/ui/core/Control','jquery.sap.dom'
+], function(jQuery, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField, Table, library, Control/* jQueryPlugin2 */) {
 	"use strict";
 
 	/**
@@ -1359,7 +1359,7 @@ sap.ui.define([
 				var oParent = null, $dialogCont = null, iContentHeight, iHeaderHeight;
 				oParent = that.getParent();
 				if (oParent) {
-					$dialogCont = oParent.$("cont");
+					$dialogCont = jQuery.sap.byId(oParent.getId() + "-cont");
 					if ($dialogCont.children().length > 0 && that._oToolbar.$().length > 0) {
 						iScrollContainerHeightOld = that._oScrollContainer.$()[0].clientHeight;
 
