@@ -317,7 +317,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @private
 	 */
 	RoadMapRenderer.setStepLabel = function(oStep, sLabel){
-		var l = sLabel ? jQuery.sap.escapeHTML(sLabel) : "";
+		var l = sLabel ? jQuery.sap.encodeHTML(sLabel) : "";
 		oStep.$("label").html(l);
 		oStep.$("expandend-label").html(l);
 		
@@ -489,12 +489,12 @@ sap.ui.define(['jquery.sap.global'],
 		while (sText.length > 0 && jClone.height() > jStepLabel.height()) {
 			//TODO: Do we need special RTL handling here?
 			sText = sText.substr(0, sText.length - 1);
-			jClone.html(jQuery.sap.escapeHTML(sText + "..."));
+			jClone.html(jQuery.sap.encodeHTML(sText + "..."));
 			bIsShortened = true;
 		}
 	
 		if (bIsShortened) {
-			jStepLabel.html("<span>" + jQuery.sap.escapeHTML(sText) + "</span>");
+			jStepLabel.html("<span>" + jQuery.sap.encodeHTML(sText) + "</span>");
 			jStepLabel.attr("title", oStep.getLabel());
 		} else {
 			jStepLabel.attr("title", getStepTooltip(oStep));
@@ -842,7 +842,7 @@ sap.ui.define(['jquery.sap.global'],
 	//  -IE:      right side has scrollleft=0, scrolling is indicated with positive values
 	//  -Safari:  left side has scrollleft=0, scrolling is indicated with positive values
 	var getRTLFactor = function(){
-		return sap.ui.getCore().getConfiguration().getRTL() && !!!sap.ui.Device.browser.internet_explorer ? -1 : 1;
+		return sap.ui.getCore().getConfiguration().getRTL() && !sap.ui.Device.browser.internet_explorer ? -1 : 1;
 	};
 	
 	

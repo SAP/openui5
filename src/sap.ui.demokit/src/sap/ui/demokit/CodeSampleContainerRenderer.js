@@ -1,5 +1,5 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
 // Provides default renderer for control sap.ui.demokit.CodeSampleContainer
@@ -36,7 +36,7 @@ sap.ui.define(['jquery.sap.global'],
 		rm.writeStyles();
 		rm.write(">");
 	
-		rm.write("<div id='", jQuery.sap.escapeHTML(oControl.getUiAreaId()), "'");
+		rm.write("<div id='", jQuery.sap.encodeHTML(oControl.getUiAreaId()), "'");
 		rm.write(" class='sapUiBody'");
 		rm.write(">");
 		var aContent = oControl._oUIArea.getContent();

@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global'],
 			
 			var oQV = new sap.ui.ux3.QuickView({firstTitle: "{title}", firstTitleHref: "{titleLinkURL}", type:"{Thing/text}", icon:"{imageURL}"});
 			oQV.setModel(oModel);
-			oQV.bindElement("/QuickviewConfigs(name='" + sConfigName + "',thingKey='" + sThingKey + "')",{expand:"Thing,QVAttributes/Attribute,QVActions/Action"});
+			oQV.bindObject("/QuickviewConfigs(name='" + sConfigName + "',thingKey='" + sThingKey + "')",{expand:"Thing,QVAttributes/Attribute,QVActions/Action"});
 			
 			var oMQVC = new sap.ui.suite.hcm.QvContent();
 			oMQVC.bindAggregation("items",{path:"QVAttributes",factory: function(sId, oContext) {
@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global'],
 			oQV.bindProperty("firstTitleHref", "titleLinkURL");
 			oQV.bindProperty("type", "Thing/text");
 			oQV.bindProperty("icon", "imageURL");
-			oQV.bindElement("/QuickviewConfigs(name='" + sConfigName + "',thingKey='" + sThingKey + "')",{expand:"Thing,QVAttributes/Attribute,QVActions/Action"});
+			oQV.bindObject("/QuickviewConfigs(name='" + sConfigName + "',thingKey='" + sThingKey + "')",{expand:"Thing,QVAttributes/Attribute,QVActions/Action"});
 			
 			var oMQVC = new sap.ui.suite.hcm.QvContent();
 			oMQVC.bindAggregation("items",{path:"QVAttributes",factory: function(sId, oContext) {

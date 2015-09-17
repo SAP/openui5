@@ -6,7 +6,7 @@
 sap.ui.define([
 		'jquery.sap.global',
 		'../base/Interface', '../base/Object', 'sap/ui/core/LabelEnablement',
-		'jquery.sap.act', 'jquery.sap.encoder'
+		'jquery.sap.act', 'jquery.sap.encoder', 'jquery.sap.dom'
 	], function(jQuery, Interface, BaseObject, LabelEnablement /* , jQuerySap1, jQuerySap */) {
 
 	"use strict";
@@ -651,7 +651,7 @@ sap.ui.define([
 			ATTR_UI_AREA_MARKER = "data-sap-ui-area";
 
 		function getPreserveArea() {
-			var $preserve = jQuery("#" + ID_PRESERVE_AREA);
+			var $preserve = jQuery.sap.byId(ID_PRESERVE_AREA);
 			if ($preserve.length === 0) {
 				$preserve = jQuery("<DIV/>",{"aria-hidden":"true",id:ID_PRESERVE_AREA}).
 					addClass("sapUiHidden").addClass("sapUiForcedHidden").css("width", "0").css("height", "0").css("overflow", "hidden").
@@ -1077,7 +1077,7 @@ sap.ui.define([
 	 */
 	RenderManager.prototype.writeAttributeEscaped = function(sName, vValue) {
 		// writeAttribute asserts
-		this.writeAttribute(sName, jQuery.sap.escapeHTML(String(vValue)));
+		this.writeAttribute(sName, jQuery.sap.encodeHTML(String(vValue)));
 		return this;
 	};
 

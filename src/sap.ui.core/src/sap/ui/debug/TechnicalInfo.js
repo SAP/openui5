@@ -30,9 +30,9 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 				}
 				jQuery.each(o, function(i,v) {
 					if ( !v || typeof v === 'string' || typeof v === 'number' || v instanceof Date ) {
-						html.push("<tr><td>", prefix, "<b>", jQuery.sap.escapeHTML(serialize(i)), "</b></td><td>", jQuery.sap.escapeHTML(serialize(v)), "</td></tr>");
+						html.push("<tr><td>", prefix, "<b>", jQuery.sap.encodeHTML(serialize(i)), "</b></td><td>", jQuery.sap.encodeHTML(serialize(v)), "</td></tr>");
 					} else {
-						html.push("<tr><td>", prefix, "<b>", jQuery.sap.escapeHTML(serialize(i)), "</b></td><td></td></tr>");
+						html.push("<tr><td>", prefix, "<b>", jQuery.sap.encodeHTML(serialize(i)), "</b></td><td></td></tr>");
 						list(v, prefix + "&nbsp;&nbsp;");
 					}
 				});
@@ -76,7 +76,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 				html.push("<tr><td align='right' valign='top'><b>SAPUI5 Version</b></td><td>not available</td></tr>");
 			}
 			html.push("<tr><td align='right' valign='top'><b>Core Version</b></td><td>", sap.ui.version, " (built at ", sap.ui.buildinfo.buildtime, ", last change ", sap.ui.buildinfo.lastchange, ")</td></tr>");
-			html.push("<tr><td align='right' valign='top'><b>User Agent</b></td><td>", jQuery.sap.escapeHTML(navigator.userAgent), (document.documentMode ? ", Document Mode '" + document.documentMode + "'" : ""), "</td></tr>");
+			html.push("<tr><td align='right' valign='top'><b>User Agent</b></td><td>", jQuery.sap.encodeHTML(navigator.userAgent), (document.documentMode ? ", Document Mode '" + document.documentMode + "'" : ""), "</td></tr>");
 			html.push("<tr><td align='right' valign='top'><b>Configuration</b></td><td><div class='sapUiTInfCfg'>");
 			list(ojQSData.config);
 			html.push("</div></td></tr>");
@@ -151,7 +151,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 			this._$Ref.find('#sap-ui-techinfo-weinre').click(jQuery.proxy(this.onOpenWebInspector, this));
 			this._$Ref.find('#sap-ui-techinfo-useStatistics').click(jQuery.proxy(this.onUseStatistics, this));
 			this._oPopup = new Popup(this._$Ref.get(0), /*modal*/true, /*shadow*/true, /*autoClose*/false);
-			var bValidBrowser = !!!Device.browser.internet_explorer || !!Device.browser.internet_explorer && Device.browser.version > 8;
+			var bValidBrowser = !Device.browser.internet_explorer || !!Device.browser.internet_explorer && Device.browser.version > 8;
 			var bDevAvailable = bValidBrowser && jQuery.sap.sjax({type: "HEAD", url: sap.ui.resource("sap.ui.dev", "library.js")}).success;
 			if (bDevAvailable) {
 				this._oPopup.attachOpened(function(oEvent) {
@@ -210,7 +210,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 			jQuery.each(modnames, function(i,v) {
 				var mod = modules[v];
 				html.push("<span",
-						" title='", mod.url ? jQuery.sap.escapeHTML(mod.url) : ("embedded in " + mod.parent), "'",
+						" title='", mod.url ? jQuery.sap.encodeHTML(mod.url) : ("embedded in " + mod.parent), "'",
 						" class='sapUiTInfM", CLASS_4_MOD_STATE[mod.state] || "", "'>", v, ",</span> ");
 			});
 			if ( iMore ) {
@@ -417,7 +417,7 @@ sap.ui.define('sap/ui/debug/TechnicalInfo', ['jquery.sap.global', 'sap/ui/Device
 			if (!sap.ui.getCore().getConfiguration().getWeinreServer()) {
 				alert("Cannot start Web Inspector - WEINRE server is not configured.");
 				e.preventDefault();
-			} else if (!!!Device.browser.webkit) {
+			} else if (!Device.browser.webkit) {
 				alert("Cannot start Web Inspector - WEINRE only runs on WebKit, please use Chrome or Safari.");
 				e.preventDefault();
 			}

@@ -3,7 +3,7 @@
  */
 
 // Provides control sap.ui.table.DataTable.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IntervalTrigger', 'sap/ui/core/ScrollBar', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters', 'sap/ui/model/SelectionModel', './Row', 'sap/ui/model/odata/ODataTreeBindingAdapter', './library', 'sap/ui/core/IconPool'],
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IntervalTrigger', 'sap/ui/core/ScrollBar', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters', 'sap/ui/model/SelectionModel', './Row', 'sap/ui/model/odata/ODataTreeBindingAdapter', './library', 'sap/ui/core/IconPool', 'jquery.sap.dom'],
 	function(jQuery, Control, IntervalTrigger, ScrollBar, ItemNavigation, Parameters, SelectionModel, Row, ODataTreeBindingAdapter, library, IconPool) {
 		"use strict";
 
@@ -3706,7 +3706,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				var iColSpan = $Column.attr("data-sap-ui-colspan");
 
 				var sResizerId = this._getResizerIdForColumn(iColIndex, iColSpan);
-				this._$colResize = jQuery("#" + sResizerId);
+				this._$colResize = jQuery.sap.byId(sResizerId);
 
 				jQuery(document.body).bind("touchmove", jQuery.proxy(this._onColumnResize, this));
 				jQuery(document.body).bind("touchend", jQuery.proxy(this._onColumnResized, this));

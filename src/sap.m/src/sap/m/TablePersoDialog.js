@@ -165,7 +165,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 		this._fnHandleResize = function() {
 			// Check if dialog is rendered
 			if (that._oDialog) {
-				var $dialogCont = jQuery("#" + that._oDialog.getId() + "-cont");
+				var $dialogCont = that._oDialog.$("cont");
 				if ($dialogCont.children().length > 0) {
 					var iContentHeight = $dialogCont.children()[0].clientHeight;
 

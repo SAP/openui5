@@ -38,9 +38,9 @@ sap.ui.define(['jquery.sap.global'],
 		} else {
 			// preload the image with a window.Image instance. The source uri is set to the output DOM node via CSS style 'background-image' after the source image is loaded (in onload function)
 			oImage._preLoadImage(oImage._getDensityAwareSrc());
-			rm.addStyle("background-size", oImage.getBackgroundSize());
-			rm.addStyle("background-position", oImage.getBackgroundPosition());
-			rm.addStyle("background-repeat", oImage.getBackgroundRepeat());
+			rm.addStyle("background-size", jQuery.sap.encodeHTML(oImage.getBackgroundSize()));
+			rm.addStyle("background-position", jQuery.sap.encodeHTML(oImage.getBackgroundPosition()));
+			rm.addStyle("background-repeat", jQuery.sap.encodeHTML(oImage.getBackgroundRepeat()));
 		}
 
 		rm.addClass("sapMImg");
