@@ -235,6 +235,22 @@ sap.ui.define([
 		this._aOperations = null;
 	};
 
+//	P13nGroupPanel.prototype.addItem = function(oItem) {
+//		P13nPanel.prototype.addItem.apply(this, arguments);
+//
+//		var oKeyField = {
+//			key: oItem.getColumnKey(),
+//			text: oItem.getText(),
+//			tooltip: oItem.getTooltip()
+//		};
+//
+//		this._aKeyFields.push(oKeyField);
+//
+//		if (this._oGroupPanel) {
+//			this._oGroupPanel.addKeyField(oKeyField);
+//		}
+//	};
+
 	P13nGroupPanel.prototype.addItem = function(oItem) {
 		P13nPanel.prototype.addItem.apply(this, arguments);
 
@@ -244,14 +260,43 @@ sap.ui.define([
 			tooltip: oItem.getTooltip()
 		};
 
-		this._aKeyFields.push(oKeyField);
-
-		if (this._oGroupPanel) {
-			this._oGroupPanel.addKeyField(oKeyField);
+		if (!this._bKeyFieldsChanged) {
+			setTimeout(jQuery.proxy( function() { 
+				this._bKeyFieldsChanged = false;
+				if (this._oGroupPanel) {
+					this._oGroupPanel.setKeyFields(this._aKeyFields);
+				}
+			}, this), 0);			
 		}
+		this._bKeyFieldsChanged = true;
+		this._aKeyFields.push(oKeyField);
 	};
 
-	// TODO ER:fast implementation, please check!
+	P13nGroupPanel.prototype.removeItem = function(oItem) {
+		P13nPanel.prototype.removeItem.apply(this, arguments);
+
+		var foundIndex = -1;
+		this._aKeyFields.some(function(item, index) {
+			if (item.key === oItem.getColumnKey()) {
+				foundIndex = index;
+				return true;
+			}
+		});
+		
+		if (foundIndex != -1) {
+			if (!this._bKeyFieldsChanged) {
+				setTimeout(jQuery.proxy( function() { 
+					this._bKeyFieldsChanged = false;
+					if (this._oGroupPanel) {
+						this._oGroupPanel.setKeyFields(this._aKeyFields);
+					}
+				}, this), 0);			
+			}
+			this._bKeyFieldsChanged = true;
+			this._aKeyFields.splice(foundIndex, 1);
+		}
+	};
+	
 	P13nGroupPanel.prototype.destroyItems = function() {
 		this.destroyAggregation("items");
 		if (this._oGroupPanel) {
