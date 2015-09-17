@@ -1110,17 +1110,25 @@
 				oFFL.getItems()[1].setSelected(false);
 				strictEqual(oCheckBox.getSelected(), true, "Select all checkbox should be selected");
 
+				oCheckBox.setSelected(false);
+				
 				// Verify the select all checkbox state is set correctly after search
-				oFFL._search("c");
-				oFFL.getItems()[0].setSelected(true);
-				strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
+				if (!sap.ui.Device.browser.internet_explorer) {
+	 				oFFL._search("c");
+					oFFL.getItems()[0].setSelected(true);
+					strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected"); 
+				};
+
 				oFFL._search("");
 				strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
 
 				// Verify the select all checkbox state remains unchanged after search
-				oFFL._search("a");
-				oFFL.getItems()[0].setSelected(false);
-				strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
+				if (!sap.ui.Device.browser.internet_explorer) { 
+	 				oFFL._search("a");
+					oFFL.getItems()[0].setSelected(false);
+					strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
+				};
+
 				oFFL._search("");
 				strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
 
