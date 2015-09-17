@@ -969,7 +969,18 @@
 			tp.destroy();
 		});
 
-		module("slider interactions");
+		module("slider interactions", {
+			_createMouseWheelEvent: function(iWheelSteps) {
+				var oEvent = {};
+				oEvent.originalEvent = {};
+				oEvent.originalEvent.wheelDelta = iWheelSteps * 120;
+				oEvent.originalEvent.detail = iWheelSteps * -3;
+				oEvent.preventDefault = function() {};
+				oEvent.stopPropagation = function() {};
+
+				return oEvent;
+			}
+		});
 
 		test("fireTap expands slider", function() {
 			//sut
@@ -1103,6 +1114,46 @@
 
 			strictEqual(jQuery(".sapMPopover").is(":visible"), false, "the picker is closed");
 
+			tp.destroy();
+		});
+
+		test("mouse wheel scrolls the sliders proportionally to the speed", function() {
+			//sut
+			var tp = new sap.m.TimePicker({
+					displayFormat: "HH:mm",
+					dateValue: new Date(2000, 1, 2, 16, 35, 54)
+				}),
+				oEvent,
+				oSliders,
+				oSliderHours;
+
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp._openPicker();
+			this.clock.tick(1000); //wait the initial focus of the first slider
+
+			oSliders = tp._getSliders();
+			oSliderHours = oSliders.getAggregation("_columns")[0];
+
+			//act
+			oEvent = this._createMouseWheelEvent(1);
+			oSliders._onmousewheel(oEvent); //these values are inside the event object when we scroll just a little
+			this.clock.tick(160);
+
+			//assert
+			equals(oSliderHours.getSelectedValue(), "15", "slider's value changed by 1");
+
+			//act again
+			oEvent = this._createMouseWheelEvent(-2);
+			oSliders._onmousewheel(oEvent);
+			this.clock.tick(160);
+
+			//assert
+			equals(oSliderHours.getSelectedValue(), "17", "slider's value changed by 2 in the other direction");
+
+			//cleanup
 			tp.destroy();
 		});
 

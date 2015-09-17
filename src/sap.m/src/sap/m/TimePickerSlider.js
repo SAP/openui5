@@ -293,6 +293,50 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			}
 		};
 
+		TimePickerSlider.prototype._onmousewheel = function(oEvent) {
+			// prevent the default behavior
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
+
+			if (!this.getIsExpanded()) {
+				return false;
+			}
+
+			var oOriginalEvent = oEvent.originalEvent,
+					bDirectionPositive = oOriginalEvent.detail ? (-oOriginalEvent.detail > 0) : (oOriginalEvent.wheelDelta > 0),
+					fnRound = bDirectionPositive ? Math.ceil : Math.floor,
+					wheelData = oOriginalEvent.detail ? (-oOriginalEvent.detail / 3) : (oOriginalEvent.wheelDelta / 120),
+					that = this,
+					iResultOffset;
+
+			if (!this._aWheelDeltas) {
+				this._aWheelDeltas = [];
+			}
+
+			that._aWheelDeltas.push(wheelData);
+
+			if (!this._bWheelScrolling) {
+				this._bWheelScrolling = true;
+
+				this._intervalId = setInterval(function () {
+					if (!that._aWheelDeltas.length) {
+						clearInterval(that._intervalId);
+						that._bWheelScrolling = false;
+					} else {
+						iResultOffset = that._aWheelDeltas[0]; //simplification, we could still use the array in some cases
+						that._aWheelDeltas = [];
+
+						iResultOffset = fnRound(iResultOffset);
+						if (iResultOffset) { // !== 0, actually move
+							that._offsetSlider(iResultOffset);
+						}
+					}
+				}, 150);
+			}
+
+			return false;
+		};
+
 		/**
 		 * Handles the pageup event.
 		 *
@@ -497,7 +541,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 				//calculate the new scroll offset by subtracting the distance
 				iPreviousScrollTop = iPreviousScrollTop - iSpeed * frameFrequencyMs;
 				if (bCycle) {
-					iPreviousScrollTop = that._getUpdatedCycleScrollTop($ContainerHeight, $ContentHeight, iPreviousScrollTop, iDragMargin, iContentRepeat);
+					if (this._bIsDrag) {
+						iPreviousScrollTop = that._getUpdatedCycleScrollTop($ContainerHeight, $ContentHeight, iPreviousScrollTop, iDragMargin, iContentRepeat);
+					}
 				} else {
 					if (iPreviousScrollTop > that._maxScrollTop) {
 						iPreviousScrollTop = that._maxScrollTop;
@@ -676,17 +722,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		 * @private
 		 */
 		TimePickerSlider.prototype._getUpdatedCycleScrollTop = function(iContainerHeight, iContentHeight, iTop, fDragMargin, iContentRepeatNumber) {
-			if (this._bIsDrag) {
-				var fContentHeight = iContentHeight - iTop - iContainerHeight;
+			var fContentHeight = iContentHeight - iTop - iContainerHeight;
 
-				if (fContentHeight < fDragMargin) {
-					iTop = iTop - iContentHeight / iContentRepeatNumber;
-				}
+			while (fContentHeight < fDragMargin) {
+				iTop = iTop - iContentHeight / iContentRepeatNumber;
+				fContentHeight = iContentHeight - iTop - iContainerHeight;
+			}
 
-				//they are not exclusive, we depend on a content long enough
-				if (iTop < fDragMargin) {
-					iTop = iTop + iContentHeight / iContentRepeatNumber;
-				}
+			//they are not exclusive, we depend on a content long enough
+			while (iTop < fDragMargin) {
+				iTop = iTop + iContentHeight / iContentRepeatNumber;
 			}
 
 			return iTop;
@@ -838,6 +883,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 				oThat._animatingSnap = false;
 				oThat._scrollerSnapped(iSelIndex);
 			});
+		};
+
+		/**
+		 * Repositions the slider to match the current item plus or minus the given integer offset.
+		 *
+		 * @param {number} iOffsetNumberOfItems The number of items to be added or removed to the current item's index
+		 * @private
+		 */
+		TimePickerSlider.prototype._offsetSlider = function(iOffsetNumberOfItems) {
+			var iScrollTop = this._getSliderContainerDomRef().scrollTop(),
+				that = this,
+				$ContainerHeight = that._getSliderContainerDomRef().height(),
+				$ContentHeight = that.$("content").height(),
+				iDragMarginBuffer = 200,
+				iDragMargin = $ContainerHeight + iDragMarginBuffer,
+				iContentRepeat = that._getContentRepeat(),
+				bCycle = that.getIsCyclic(),
+				iItemHeight = that._getItemHeightInPx();
+
+				//calculate the new scroll offset by subtracting the distance
+				iScrollTop = iScrollTop - iOffsetNumberOfItems * iItemHeight;
+				if (bCycle) {
+					if (this._bIsDrag) {
+						iScrollTop = that._getUpdatedCycleScrollTop($ContainerHeight, $ContentHeight, iScrollTop, iDragMargin, iContentRepeat);
+					}
+				} else {
+					if (iScrollTop > that._maxScrollTop) {
+						iScrollTop = that._maxScrollTop;
+					}
+
+					if (iScrollTop < that._minScrollTop) {
+						iScrollTop = that._minScrollTop;
+					}
+				}
+
+				that._getSliderContainerDomRef().scrollTop(iScrollTop);
+				that._iSelectedIndex = Math.floor(iScrollTop / iItemHeight);
+				that._scrollerSnapped(that._iSelectedIndex);
 		};
 
 		TimePickerSlider.prototype._initArrows = function() {

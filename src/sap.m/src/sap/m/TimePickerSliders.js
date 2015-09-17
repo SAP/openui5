@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 				associations: {
 
 					/**
-					 * The time picker control that instanciated this sliders
+					 * The time picker control that instantiated this sliders
 					 */
 					invokedBy: { type: "sap.m.TimePicker", multiple: false }
 				}
@@ -83,6 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		 * @private
 		 */
 		TimePickerSliders.prototype.exit = function () {
+			this.$().off(!!sap.ui.Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
 			sap.ui.Device.resize.detachHandler(this._fnOrientationChanged);
 		};
 
@@ -90,7 +91,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		 * Called after the control is rendered.
 		 */
 		TimePickerSliders.prototype.onAfterRendering = function() {
-			if (!sap.ui.Device.browser.internet_explorer) {
+			this.$().off(!!sap.ui.Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
+			this.$().on(!!sap.ui.Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", jQuery.proxy(this._onmousewheel, this));
+
+			if (!sap.ui.Device.browser.msie) {
 				/* This method is called here prematurely to ensure slider loading on time.
 				 * Make sure _the browser native focus_ is not actually set on the early call (the "true" param)
 				 * because that fires events and results in unexpected behaviors */
@@ -338,6 +342,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 				iCurrentSliderIndex = aSliders.indexOf(oCurrentSlider);
 				iNextIndex = iCurrentSliderIndex < aSliders.length - 1 ? iCurrentSliderIndex + 1 : 0;
 				aSliders[iNextIndex].focus();
+			}
+		};
+
+		/**
+		 * Handles the mouse scroll event.
+		 *
+		 * @param {jQuery.Event} oEvent Event object
+		 */
+		TimePickerSliders.prototype._onmousewheel = function(oEvent) {
+			var currentSlider = this._getCurrentSlider();
+
+			if (currentSlider) {
+				currentSlider._onmousewheel(oEvent);
 			}
 		};
 
