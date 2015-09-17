@@ -314,6 +314,18 @@
 			]
 		});
 
+		var oToolbar14 = new sap.ui.commons.Toolbar("tb14", {
+			items: [
+				new sap.ui.commons.Button({text: 'Area 1.1'}),
+				new sap.ui.commons.Button({text: 'Area 1.2'}),
+				new sap.ui.commons.Button({text: 'Area 1.3'})
+			],
+			layoutData: new sap.ui.layout.SplitterLayoutData({size: "50%"})
+		});
+
+		var oSplitter = new sap.ui.layout.Splitter({contentAreas: [oToolbar14, new sap.ui.commons.Button({text: 'Area 2.1'})]});
+		oSplitter.setWidth("500px");
+
 		// all the UiAreas...
 		oToolbar.placeAt("uiArea");
 		oToolbar2.placeAt("uiArea2");
@@ -329,6 +341,7 @@
 		oToolbar11.placeAt("uiAreaToolbarWithInvisibleItems");
 		oToolbar12.placeAt("uiAreaToolbarWithInvisibleItemsWithOverflow");
 		oToolbar13.placeAt("uiAreaToolbarWithFirstItemSeparator");
+		oSplitter.placeAt("uiAreaToolbarInSplitter");
 	</script>
 </head>
 <body class="sapUiBody" role="application">
@@ -384,6 +397,9 @@ As there is no space for the 3th visible item, it goes into the overflow</b>
 
 <br> <b>Toolbar (300px width) with ToolbarSeparator as first item and an invisible item as last</b>
 <div id="uiAreaToolbarWithFirstItemSeparator"></div>
+
+<br> <b>Toolbar inside Splitter (drag the splitter and check overflow functionality)</b>
+<div id="uiAreaToolbarInSplitter"></div>
 
 <p>
 	<span id="targetForOutput"></span>
