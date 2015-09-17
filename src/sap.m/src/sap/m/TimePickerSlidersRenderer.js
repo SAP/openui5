@@ -40,7 +40,8 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 			oRenderManager.writeClasses();
 			oRenderManager.write(">");
 			oRenderManager.addStyle("display", "block");
-			oRenderManager.write(sLabelText + "</div>");
+			oRenderManager.writeEscaped(sLabelText);
+			oRenderManager.write("</div>");
 		}
 
 		for (var iSlider = 0; iSlider < aSliders.length; iSlider++) {

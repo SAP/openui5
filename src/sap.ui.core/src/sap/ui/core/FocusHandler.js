@@ -87,7 +87,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 				return null;
 			}
 			
-			var oControl = this.oCore.getElementById(sControlId);
+			var oControl = this.oCore.byId(sControlId);
 			if (oControl) {
 				return {
 				    id : sControlId,
@@ -129,8 +129,8 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 			if (!oInfo) {
 				return;
 			}
-			
-			var oControl = this.oCore.getElementById(oInfo.id);
+
+			var oControl = this.oCore.byId(oInfo.id);
 			if (oControl && oInfo.info
 					&& oControl.getMetadata().getName() == oInfo.type
 					&& oControl.getFocusDomRef() != oInfo.focusref
@@ -215,7 +215,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 		 * @private
 		 */
 		FocusHandler.prototype.onfocusEvent = function(sControlId){
-			var oControl = this.oCore.getElementById(sControlId);
+			var oControl = this.oCore.byId(sControlId);
 			if (oControl) {
 				this.oLastFocusedControlInfo = this.getControlFocusInfo(sControlId);
 				jQuery.sap.log.debug("Store focus info of control " + sControlId, null, "sap.ui.core.FocusHandler");

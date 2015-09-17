@@ -72,7 +72,9 @@ sap.ui.define(['jquery.sap.global', './TextFieldRenderer', 'sap/ui/core/Renderer
 				if (!oItem.getEnabled()) {
 					rm.writeAttribute("disabled", "disabled");
 				}
-				rm.write(">" + oItem.getText() + "</option>");
+				rm.write(">");
+				rm.writeEscaped(oItem.getText());
+				rm.write("</option>");
 			}
 			rm.write("</select>");
 		}

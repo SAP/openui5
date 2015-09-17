@@ -113,7 +113,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper'],
 						oRm.write(" id='" + oLayoutData.getId() + "'");
 					}
 					if (oLayoutData.getStyleClass()) {
-						oRm.addClass(oLayoutData.getStyleClass());
+						oRm.addClass(jQuery.sap.encodeHTML(oLayoutData.getStyleClass()));
 					}
 	
 					if (!FlexBoxRenderer.usePolyfill) {

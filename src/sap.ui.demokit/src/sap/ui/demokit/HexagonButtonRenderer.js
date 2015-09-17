@@ -1,5 +1,5 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
 // Provides default renderer for control sap.ui.demokit.HexagonButton
@@ -30,12 +30,12 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write("<div ");
 		rm.writeControlData(oControl);
 		rm.addClass("sapUiHexBtn");
-		rm.addClass("sapUiHexBtn" + jQuery.sap.escapeHTML(oControl.getEnabled() ? oControl.getColor() : "Gray"));
+		rm.addClass("sapUiHexBtn" + jQuery.sap.encodeHTML(oControl.getEnabled() ? oControl.getColor() : "Gray"));
 		if ( oControl.getEnabled() && oControl.hasListeners('press') ) {
 			rm.addClass("sapUiHexBtnActive");
 		}
 		rm.writeClasses();
-		rm.write(" style='" + jQuery.sap.escapeHTML(oControl.getPosition()) + "'");
+		rm.write(" style='" + jQuery.sap.encodeHTML(oControl.getPosition()) + "'");
 		if (oControl.getTooltip_AsString()) {
 			rm.writeAttributeEscaped("title", oControl.getTooltip_AsString());
 		}
@@ -45,7 +45,7 @@ sap.ui.define(['jquery.sap.global'],
 			rm.writeAttributeEscaped("src", oControl.getIcon());
 			var sImagePosition = oControl.getImagePosition();
 			if (sImagePosition) {
-				rm.write(" style='" + jQuery.sap.escapeHTML(sImagePosition) + "'");
+				rm.write(" style='" + jQuery.sap.encodeHTML(sImagePosition) + "'");
 			} else {
 				rm.write(" style='position:relative;left:40px;top:45px;'");
 			}

@@ -1,5 +1,5 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 // Creates Index Page within the Demokit
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', './IndexLayout', 'sap/ui/model/json/JSONModel', 'jquery.sap.encoder'],

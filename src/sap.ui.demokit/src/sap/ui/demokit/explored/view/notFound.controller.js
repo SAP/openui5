@@ -1,5 +1,5 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
 sap.ui.controller("sap.ui.demokit.explored.view.notFound", {

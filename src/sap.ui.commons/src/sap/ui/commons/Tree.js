@@ -393,7 +393,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	   var afocusedNodeDom	= jQuery(".sapUiTreeNode:focus");
 	   if (afocusedNodeDom.length) {
 
-		   var oCurrNode = sap.ui.getCore().getControl(afocusedNodeDom[0].id);
+		   var oCurrNode = sap.ui.getCore().byId(afocusedNodeDom[0].id);
 		   var aDomAllNodes = this.$().find(".sapUiTreeNode:visible");
 		   var currIndex	= aDomAllNodes.index(afocusedNodeDom[0]);
 
@@ -406,7 +406,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		   if (nextIndex >= 0 && nextIndex < aDomAllNodes.length) {
 				var oDomNextNode	= aDomAllNodes.eq( nextIndex );
-				var oNextNode = sap.ui.getCore().getControl(oDomNextNode[0].id);
+				var oNextNode = sap.ui.getCore().byId(oDomNextNode[0].id);
 				oCurrNode.blur();
 				oNextNode.focus();
 		   }
@@ -462,7 +462,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 
 		oDomTargetNode.setAttribute("tabindex", "0");
-		var oTargetNode = sap.ui.getCore().getControl(oDomTargetNode.id);
+		var oTargetNode = sap.ui.getCore().byId(oDomTargetNode.id);
 		oTargetNode.focus();
 	};
 

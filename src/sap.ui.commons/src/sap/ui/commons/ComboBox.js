@@ -781,7 +781,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		var sListBox = this.getListBox(),
 			oListBox;
 		if (sListBox) {
-			oListBox = sap.ui.getCore().getControl(sListBox);
+			oListBox = sap.ui.getCore().byId(sListBox);
 		} else if (this._oListBox) {
 			oListBox = this._getPrivateListBox();
 		}
@@ -1385,7 +1385,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 		// static UI Area. Not needed for private ListBox
 		var sListBox = this.getListBox();
 		if (sListBox) {
-			var oListBox = sap.ui.getCore().getControl(sListBox);
+			var oListBox = sap.ui.getCore().byId(sListBox);
 			if (oListBox.getDomRef()) {
 				oListBox.$().appendTo(sap.ui.getCore().getStaticAreaRef());
 			}

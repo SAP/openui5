@@ -1,5 +1,5 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
 jQuery.sap.require("sap.ui.demokit.icex.model.Config");

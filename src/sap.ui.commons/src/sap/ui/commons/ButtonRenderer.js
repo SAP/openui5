@@ -46,7 +46,7 @@ sap.ui.define(['jquery.sap.global'],
 		var sStyle = oButton.getStyle();
 
 		if (sStyle != "" && sStyle != sap.ui.commons.ButtonStyle.Default) {
-			rm.addClass("sapUiBtn" + jQuery.sap.escapeHTML(sStyle));
+			rm.addClass("sapUiBtn" + jQuery.sap.encodeHTML(sStyle));
 		}
 
 		//ARIA

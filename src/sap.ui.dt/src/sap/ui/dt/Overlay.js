@@ -8,7 +8,8 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/dt/OverlayUtil',
-	'sap/ui/dt/DOMUtil'
+	'sap/ui/dt/DOMUtil',
+	'jquery.sap.dom'
 ],
 function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	"use strict";
@@ -86,7 +87,7 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	 */
 	Overlay.getOverlayContainer = function() {
 		if (!oOverlayContainer) {
-			oOverlayContainer = jQuery("#" + sOverlayContainerId);
+			oOverlayContainer = jQuery.sap.byId(sOverlayContainerId);
 			if (!oOverlayContainer.length) {
 				oOverlayContainer = jQuery("<div id='" + sOverlayContainerId + "'></div>").appendTo("body");
 			}
