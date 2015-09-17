@@ -33,6 +33,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 							"uri": "/path/to/default/datasource",
 							"settings": {
 								"annotations": [ "annotations2", "annotations1" ],
+								"maxAge": 500
 							}
 						},
 

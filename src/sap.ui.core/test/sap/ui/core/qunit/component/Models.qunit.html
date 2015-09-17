@@ -116,7 +116,8 @@
 			// model: "default-with-annotations"
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/default/datasource?sap-client=foo&sap-server=bar',
-				annotationURI: [ 'v2models/parent/path/to/local/odata/annotations/2', '/path/to/odata/annotations/1' ]
+				annotationURI: [ 'v2models/parent/path/to/local/odata/annotations/2', '/path/to/odata/annotations/1' ],
+				headers: { "Cache-Control": "max-age=500" }
 			});
 
 			// model: "old-uri-syntax"
@@ -404,7 +405,8 @@
 			// model: "default-with-annotations"
 			sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
 				serviceUrl: '/path/to/default/datasource?sap-client=foo&sap-server=bar',
-				annotationURI: [ 'v2models/parent/path/to/local/odata/annotations/2', '/path/to/odata/annotations/1' ]
+				annotationURI: [ 'v2models/parent/path/to/local/odata/annotations/2', '/path/to/odata/annotations/1' ],
+				headers: { "Cache-Control": "max-age=500" }
 			});
 
 			// model: "old-uri-syntax"
@@ -582,7 +584,8 @@
 					'v2models/parent/path/to/local/odata/annotations/2',
 					'/path/to/odata/annotations/1',
 					'v2models/extension/path/to/local/extension/annotation'
-				]
+				],
+				headers: { "Cache-Control": "max-age=360" }
 			});
 
 			// model: "old-uri-syntax"

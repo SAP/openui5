@@ -504,6 +504,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 						bIsDataSourceUri = true;
 					}
 
+					if (oDataSource.type === 'OData' && oDataSource.settings && typeof oDataSource.settings.maxAge === "number") {
+						oModelConfig.settings = oModelConfig.settings || {};
+						oModelConfig.settings.headers = oModelConfig.settings.headers || {};
+						oModelConfig.settings.headers["Cache-Control"] = "max-age=" + oDataSource.settings.maxAge;
+					}
+
 					// read out OData annotations and create ODataModel settings for it
 					if (oDataSource.type === 'OData' && oDataSource.settings && oDataSource.settings.annotations) {
 						var aAnnotations = oDataSource.settings.annotations;
