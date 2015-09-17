@@ -432,7 +432,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
 			this._isMie9 = true;
 		}
-		this.oCore = sap.ui.getCore();
+
 		// Pages arrays: As we delegate the pages to internal navigation container we have to remember the pages
 		// in private member variables. By doing this we can return the right pages for master /detail aggregations.
 		this._aMasterPages = [];
@@ -545,10 +545,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	SplitContainer.prototype.onAfterRendering = function() {
-		if (!sap.ui.Device.system.phone) {
-			if (this._oPopOver && this._oPopOver.isOpen()) {
-				this._oPopOver.close();
-			}
+		if (!sap.ui.Device.system.phone && this._oPopOver && this._oPopOver.isOpen()) {
+			this._oPopOver.close();
 		}
 
 		if (!this._fnResize) {
@@ -569,11 +567,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	**************************************************************/
 	SplitContainer.prototype.ontouchstart = function(oEvent){
 		if (!sap.ui.Device.system.phone) {
-			if (oEvent.originalEvent && oEvent.originalEvent._sapui_handledByControl) {
-				this._bIgnoreSwipe = true;
-			} else {
-				this._bIgnoreSwipe = false;
-			}
+				this._bIgnoreSwipe = (oEvent.originalEvent && oEvent.originalEvent._sapui_handledByControl);
 		}
 	};
 
@@ -581,13 +575,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		//only enabled on tablet or Windows 8
 		if ((sap.ui.Device.system.tablet || (sap.ui.Device.os.windows && sap.ui.Device.os.version >= 8))
 			&& (this._portraitHide() || this._hideMode())
-			&& !this._bIgnoreSwipe) {
+			&& !this._bIgnoreSwipe
+			&& !this._bDetailNavButton) {
 			//if event is already handled by inner control, master won't be shown.
 			//this fix the problem when for example, carousel control in rendered in detail area.
 			//CSN 2013 224661
-			if (!this._bDetailNavButton) {
-				this.showMaster();
-			}
+			this.showMaster();
+
 		}
 	};
 
@@ -1851,7 +1845,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			aHeaderContent = oHeaderAggregation.aAggregationContent;
 
 		for (var i = 0; i < aHeaderContent.length; i++) {
-			if (aHeaderContent[i] instanceof sap.m.Button && aHeaderContent[i].getVisible() && (aHeaderContent[i].getType() == sap.m.ButtonType.Back || (aHeaderContent[i].getType() == sap.m.ButtonType.Up && aHeaderContent[i] !== this._oShowMasterBtn))) {
+			if (aHeaderContent[i] instanceof sap.m.Button && aHeaderContent[i].getVisible()
+				&& (aHeaderContent[i].getType() == sap.m.ButtonType.Back || (aHeaderContent[i].getType() == sap.m.ButtonType.Up
+				&& aHeaderContent[i] !== this._oShowMasterBtn))) {
 				this._bDetailNavButton = true;
 				return;
 			}
@@ -2008,14 +2004,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	SplitContainer.prototype._hasPageInArray = function (array, oPage) {
-		var bFound = false;
-
-		array.forEach(function(oArrayEntry) {
-			if (oPage === oArrayEntry) {
-				bFound = true;
-			}
+		return array.some(function(oArrayEntry) {
+			return oPage && (oPage === oArrayEntry);
 		});
-		return bFound;
 	};
 
 	/**************************************************************
