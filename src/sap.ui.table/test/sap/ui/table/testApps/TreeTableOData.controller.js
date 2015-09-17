@@ -11,9 +11,9 @@ sap.ui.define([
 				collection: "orgHierarchy",
 				selectProperties: "HIERARCHY_NODE,DESCRIPTION,LEVEL,DRILLDOWN_STATE",
 				countMode: "Inline",
-				operationMode: "Server",
+				operationMode: "Auto",
 				tableThreshold: 10,
-				bindingThreshold: 200,
+				bindingThreshold: 10000,
 				rootLevel: 0,
 				filterProperty: "DESCRIPTION",
 				filterOperator: "Contains",
@@ -35,8 +35,8 @@ sap.ui.define([
 			var sOperationMode = oView.byId("operationMode").getSelectedKey();
 			
 			// threshold for OperationMode.Auto
-			var sTableThreshold = oView.byId("tableThreshold").getValue();
-			var sBindingThreshold = oView.byId("bindingThreshold").getValue();
+			var iTableThreshold = parseInt(oView.byId("tableThreshold").getValue(), 10);
+			var iBindingThreshold = parseInt(oView.byId("bindingThreshold").getValue(), 10);
 			
 			// the root level of the tree
 			var iRootLevel = parseInt(oView.byId("rootLevel").getValue(), 10);
@@ -83,13 +83,13 @@ sap.ui.define([
 			
 			oTable.setModel(oModel);
 			
-			oTable.setThreshold(parseInt(sTableThreshold, 10));
+			oTable.setThreshold(iTableThreshold);
 			
 			oTable.bindRows({
 				path: "/" + sCollection,
 				filters: oApplicationFilter,
 				parameters: {
-					threshold: sBindingThreshold,
+					threshold: iBindingThreshold,
 					countMode: sCountMode,
 					operationMode: sOperationMode,
 					//navigation: {orgHierarchyRoot: "toChildren", orgHierarchy: "toChildren"}
