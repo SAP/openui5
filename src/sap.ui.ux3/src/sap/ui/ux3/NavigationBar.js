@@ -578,7 +578,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	NavigationBar.prototype._scroll = function(iDelta, iDuration) {
 		var oDomRef = this.$()[0].firstChild;
 		var iScrollLeft = oDomRef.scrollLeft;
-		if (!!!sap.ui.Device.browser.internet_explorer && this._bRtl) {
+		if (!sap.ui.Device.browser.internet_explorer && this._bRtl) {
 			iDelta = -iDelta;
 		} // RTL lives in the negative space
 		var iScrollTarget = iScrollLeft + iDelta;

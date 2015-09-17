@@ -287,8 +287,8 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @private
 	 */
 	FeedListItem.prototype._toggleTextExpanded = function() {
-		var $text = jQuery.sap.byId(this.getId() + "-realtext");
-		var $threeDots = jQuery.sap.byId(this.getId() + "-threeDots");
+		var $text = this.$("realtext");
+		var $threeDots = this.$("threeDots");
 		if (this._bTextExpanded) {
 			$text.html(jQuery.sap.encodeHTML(this._sShortText).replace(/&#xa;/g, "<br>"));
 			$threeDots.text(" ... ");

@@ -162,7 +162,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				// check if item has been pushed needed if no element was found that
 				// is allowed to be wrapped into a new line
 				var bPushed = false;
-				if (!!!bLinebreakable) {
+				if (!bLinebreakable) {
 					// if an element mustn't break -> find any previous element that
 					// is allowed to do wrapping
 					for (var br = length; br > 0; br--) {

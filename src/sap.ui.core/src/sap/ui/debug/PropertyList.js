@@ -79,7 +79,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 		var sControlId = oParams.getParameter("controlId");
 		this.oParentDomRef.innerHTML = "";
 	
-		var oControl = this.oCore.getElementById(sControlId);
+		var oControl = this.oCore.byId(sControlId);
 		if (!oControl) {
 			this.oParentDomRef.innerHTML = "Please select a valid control";
 			return;
@@ -197,7 +197,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 					}
 					sTitle = ' title="This aggregation currently references an Element. You can set a ' + sType +  ' value instead"';
 				}
-				aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;" + sColor + "' value='" + jQuery.sap.escapeHTML("" + oValue) + "'" + sTitle + " sap-name='" + sName + "'/>");
+				aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;" + sColor + "' value='" + jQuery.sap.encodeHTML("" + oValue) + "'" + sTitle + " sap-name='" + sName + "'/>");
 			} else if (sType == "boolean") {
 				aHTML.push("<input type='checkbox' sap-name='" + sName + "' ");
 				if (oValue == true) {
@@ -208,7 +208,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 				//Enum or Custom Type
 				var oEnum = jQuery.sap.getObject(sType);
 				if (!oEnum || oEnum instanceof DataType) {
-					aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;' value='" + jQuery.sap.escapeHTML("" + oValue) + "'" + sTitle + " sap-name='" + sName + "'/>");
+					aHTML.push("<input type='text' style='width:100%;font-size:8pt;background-color:#f5f5f5;' value='" + jQuery.sap.encodeHTML("" + oValue) + "'" + sTitle + " sap-name='" + sName + "'/>");
 				} else {
 					aHTML.push("<select style='width:100%;font-size:8pt;background-color:#f5f5f5;' sap-name='" + sName + "'>");
 					sType = sType.replace("/",".");
@@ -272,7 +272,7 @@ sap.ui.define('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base/Da
 	PropertyList.prototype.applyChanges = function(sId) {
 		var oSource = this.oParentDomRef.ownerDocument.getElementById(sId),
 			sControlId = oSource.getAttribute("sap-id"),
-			oControl = this.oCore.getElementById(sControlId),
+			oControl = this.oCore.byId(sControlId),
 			aInput = oSource.parentNode.getElementsByTagName("INPUT"),
 			aSelect = oSource.parentNode.getElementsByTagName("SELECT"),
 			oMethod;
