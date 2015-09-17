@@ -204,7 +204,9 @@
 				ok(value.indexOf("ed") === 0, "Browser is Edge and data attribute is set right");
 			}
 
-			ok(value.indexOf(Math.floor(version)) != -1, "Version is set right in data attribute");
+			if (browser.safari && !browser.fullscreen && !browser.webview) {
+				ok(value.indexOf(Math.floor(version)) != -1, "Version is set right in data attribute");
+			}
 		});
 
 		// now check the locale configuration to be applied as lang attribute
