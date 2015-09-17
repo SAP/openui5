@@ -479,7 +479,9 @@ if (typeof window.sap.ui !== "object") {
 	/**
 	 * If this flag is set to <code>true</code>, the Apple Safari browser is used.
 	 *
-	 * <b>Note:</b> Please also note the flag {@link sap.ui.Device.browser#fullscreen}.
+	 * <b>Note:</b>
+	 * This flag is also <code>true</code> when the standalone (fullscreen) mode or webview is used on iOS devices.
+	 * Please also note the flags {@link sap.ui.Device.browser#fullscreen} and {@link sap.ui.Device.browser#webview}.
 	 *
 	 * @name sap.ui.Device.browser#safari
 	 * @type boolean
@@ -497,10 +499,22 @@ if (typeof window.sap.ui !== "object") {
 	 * If this flag is set to <code>true</code>, the Safari browser runs in standalone fullscreen mode on iOS.
 	 *
 	 * <b>Note:</b> This flag is only available if the Safari browser was detected. Furthermore, if this mode is detected,
-	 * technically a WebView is used and not a standard Safari. There might be slight differences in behavior and detection, e.g.
+	 * technically not a standard Safari is used. There might be slight differences in behavior and detection, e.g.
 	 * the availability of {@link sap.ui.Device.browser#version}.
 	 *
 	 * @name sap.ui.Device.browser#fullscreen
+	 * @type boolean
+	 * @since 1.31.0
+	 * @public
+	 */
+	/**
+	 * If this flag is set to <code>true</code>, the Safari browser runs in webview mode on iOS.
+	 *
+	 * <b>Note:</b> This flag is only available if the Safari browser was detected. Furthermore, if this mode is detected,
+	 * technically not a standard Safari is used. There might be slight differences in behavior and detection, e.g.
+	 * the availability of {@link sap.ui.Device.browser#version}.
+	 *
+	 * @name sap.ui.Device.browser#webview
 	 * @type boolean
 	 * @since 1.31.0
 	 * @public
@@ -623,9 +637,10 @@ if (typeof window.sap.ui !== "object") {
 		return res;
 	}
 
-	function getBrowser(customUa) {
+	function getBrowser(customUa, customNav) {
 		var b = calcBrowser(customUa);
 		var _ua = customUa || ua;
+		var _navigator = customNav || window.navigator;
 
 		// jQuery checks for user agent strings. We differentiate between browsers
 		var oExpMobile;
@@ -678,6 +693,7 @@ if (typeof window.sap.ui !== "object") {
 				};
 			} else { // Safari might have an issue with _ua.match(...); thus changing
 				var oExp = /(Version|PhantomJS)\/(\d+\.\d+).*Safari/;
+				var bStandalone = _navigator.standalone;
 				if (oExp.test(_ua)) {
 					var aParts = oExp.exec(_ua);
 					var version = parseFloat(aParts[2]);
@@ -685,17 +701,26 @@ if (typeof window.sap.ui !== "object") {
 						name: BROWSER.SAFARI,
 						versionStr: "" + version,
 						fullscreen: false,
+						webview: false,
 						version: version,
 						mobile: oExpMobile.test(_ua),
 						webkit: true,
 						webkitVersion: webkitVersion,
 						phantomJS: aParts[1] === "PhantomJS"
 					};
-				} else { // other webkit based browser
-					var bFullScreenSafari = window.navigator.standalone && /iPhone|iPad|iPod/.test(_ua) && !(/CriOS/.test(_ua));
+				} else if (/iPhone|iPad|iPod/.test(_ua) && !(/CriOS/.test(_ua)) && (bStandalone === true || bStandalone === false)) {
+					//WebView or Standalone mode on iOS
 					return {
-						name: bFullScreenSafari ? BROWSER.SAFARI : undefined,
-						fullscreen: bFullScreenSafari ? bFullScreenSafari : undefined,
+						name: BROWSER.SAFARI,
+						version: -1,
+						fullscreen: bStandalone,
+						webview: !bStandalone,
+						mobile: oExpMobile.test(_ua),
+						webkit: true,
+						webkitVersion: webkitVersion
+					};
+				} else { // other webkit based browser
+					return {
 						mobile: oExpMobile.test(_ua),
 						webkit: true,
 						webkitVersion: webkitVersion,
@@ -850,7 +875,7 @@ if (typeof window.sap.ui !== "object") {
 	device.support.matchmedia = !!window.matchMedia;
 	var m = device.support.matchmedia ? window.matchMedia("all and (max-width:0px)") : null; //IE10 doesn't like empty string as argument for matchMedia, FF returns null when running within an iframe with display:none
 	device.support.matchmedialistener = !!(m && m.addListener);
-	if (device.browser.safari && device.browser.version < 6) {
+	if (device.browser.safari && device.browser.version < 6 && !device.browser.fullscreen && !device.browser.webview) {
 		//Safari seems to have addListener but no events are fired ?!
 		device.support.matchmedialistener = false;
 	}
