@@ -1,5 +1,5 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
 jQuery.sap.require("jquery.sap.storage");

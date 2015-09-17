@@ -217,14 +217,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'jquery.sap.strings'
 						rm.addClass("sapUiLbxIIco");
 						rm.addClass("sapUiLbxIIcoFont");
 						var oIconInfo = sap.ui.core.IconPool.getIconInfo(sIcon);
-						rm.addStyle("font-family", "'" + oIconInfo.fontFamily + "'");
+						rm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oIconInfo.fontFamily) + "'");
 						if (oIconInfo && !oIconInfo.skipMirroring) {
 							rm.addClass("sapUiIconMirrorInRTL");
 						}
 						rm.writeClasses();
 						rm.writeStyles();
 						rm.write(">");
-						rm.write(oIconInfo.content);
+						rm.writeEscaped(oIconInfo.content);
 					} else {
 						rm.write(" class='sapUiLbxIIco'><img src='");
 						// if the item has an icon, use it; otherwise use something empty

@@ -260,7 +260,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 			}
 			var oParent = oSource.parentNode,
 				sId = oParent.getAttribute("sap-id"),
-				oElement = this.oCore.getElementById(sId),
+				oElement = this.oCore.byId(sId),
 				sNodeId = oParent.getAttribute("sap-type") === "Link" ? "sap-debug-controltree-" + sId : oParent.id;
 			this.oSelectionHighlighter.hide();
 			if (oElement && oElement instanceof sap.ui.core.Element) {
@@ -348,7 +348,7 @@ sap.ui.define('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/Eve
 	ControlTree.prototype.getTargetDomRef = function(oTreeNodeDomRef) {
 		var sType = oTreeNodeDomRef.getAttribute("sap-type"),
 			sId = oTreeNodeDomRef.getAttribute("sap-id"),
-			oSomething = sType === "UIArea" ? this.oCore.getUIArea(sId) : this.oCore.getElementById(sId);
+			oSomething = sType === "UIArea" ? this.oCore.getUIArea(sId) : this.oCore.byId(sId);
 	
 		while (oSomething && oSomething instanceof sap.ui.core.Element) {
 			var oDomRef = oSomething.getDomRef();

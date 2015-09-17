@@ -342,7 +342,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'jq
 
 
 	function getSupportArea() {
-		var $support = jQuery("#" + ID_SUPPORT_AREA);
+		var $support = jQuery.sap.byId(ID_SUPPORT_AREA);
 		if ($support.length === 0) {
 			$support = jQuery("<DIV/>", {id:ID_SUPPORT_AREA}).
 				addClass("sapUiHidden").

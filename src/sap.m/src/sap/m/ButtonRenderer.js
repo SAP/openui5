@@ -158,7 +158,7 @@ sap.ui.define(['jquery.sap.global'],
 		// set button specific styles
 		if (!oButton._isUnstyled() && sType !== "") {
 			// set button specific styles
-			oRm.addClass("sapMBtn" + jQuery.sap.escapeHTML(sType));
+			oRm.addClass("sapMBtn" + jQuery.sap.encodeHTML(sType));
 		}
 
 		// add all classes to inner button tag

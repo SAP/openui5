@@ -344,7 +344,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oEvent.stopPropagation();
 		}
 
-		if (!!!sap.ui.Device.browser.firefox) {
+		if (!sap.ui.Device.browser.firefox) {
 			this._doOnEscape(oEvent);
 		}
 

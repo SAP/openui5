@@ -327,7 +327,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Declarat
 		var oElement = new DOMElement(mSettings);
 		if (sParentPath) {
 			// set the context for the DOM element
-			oElement.bindElement(sParentPath);
+			oElement.bindObject(sParentPath);
 		}
 		if (!bDoNotAdd) {
 			this.addAggregation("controls", oElement);
@@ -359,7 +359,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Declarat
 		var oControl = DeclarativeSupport._createControl($control.get(0), oView);
 		if (sParentPath) {
 			// set the context for the control
-			oControl.bindElement(sParentPath);
+			oControl.bindObject(sParentPath);
 		}
 		if (!bDoNotAdd) {
 			this.addAggregation("controls", oControl);

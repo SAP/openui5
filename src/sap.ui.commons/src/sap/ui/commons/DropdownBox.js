@@ -504,7 +504,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			this.onkeypress(oEvent);
 		}
 
-		if (!!!sap.ui.Device.browser.internet_explorer || oEvent.which !== jQuery.sap.KeyCodes.BACKSPACE) {
+		if (!sap.ui.Device.browser.internet_explorer || oEvent.which !== jQuery.sap.KeyCodes.BACKSPACE) {
 			return;
 		}
 

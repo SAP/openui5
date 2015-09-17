@@ -116,7 +116,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 				align = oColumn.getCssAlign();
 	
 			rm.write("<" + cellTag);
-			cls && rm.addClass(cls);
+			cls && rm.addClass(jQuery.sap.encodeHTML(cls));
 			rm.addClass(clsPrefix + "Cell");
 			rm.addClass(clsPrefix + type + "erCell");
 			rm.writeAttribute("id", idPrefix + type + index);
