@@ -408,6 +408,14 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 	};
 	
 	/**
+	 * Handle backspace
+	 */
+	DateTimeInput.prototype.onsapbackspace = function(oEvent) {
+		// since input is readonly does not allow browsers back navigation
+		oEvent.preventDefault();
+	};
+	
+	/**
 	 * Opens scroller via keyboard [ALT]+[UP]
 	 */
 	DateTimeInput.prototype.onsaphide = DateTimeInput.prototype.ontap;
