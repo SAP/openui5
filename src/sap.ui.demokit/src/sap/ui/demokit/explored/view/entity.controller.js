@@ -180,7 +180,7 @@ sap.ui.define([
 				baseTypeText: (oDoc) ? this._formatTypeText(oDoc.baseType) : "-",
 				baseTypeNav: (oDoc) ? this._formatTypeNav(oDoc.baseType) : null,
 				shortDescription: (oDoc) ? this._formatDeprecatedDescription(oDoc.deprecation) : null,
-				description: (oDoc) ? oDoc.doc : null,
+				description: (oDoc) ? this._wrapInSpanTag(oDoc.doc) : null,
 				docuLink: null,
 				properties: [],
 				events: [],
@@ -226,6 +226,7 @@ sap.ui.define([
 					oProp.name = key;
 					oProp.deprecatedDescription = this._formatDeprecatedDescription(oProp.deprecation);
 					oProp.deprecated = this._formatDeprecated(oProp.deprecation);
+					oProp.doc = this._wrapInSpanTag(oProp.doc);
 					oProp.typeText = this._formatTypeText(oProp.type);
 					oProp.typeNav = this._formatTypeNav(oProp.type);
 					oProp.type = this._formatType(oProp.type);
@@ -239,6 +240,7 @@ sap.ui.define([
 					oEvent.name = key;
 					oEvent.deprecatedDescription = this._formatDeprecatedDescription(oEvent.deprecation);
 					oEvent.deprecated = this._formatDeprecated(oEvent.deprecation);
+					oEvent.doc = this._wrapInSpanTag(oEvent.doc);
 					oData.events.push(oEvent);
 					eventsCount++;
 					for (var p in oEvent.parameters) { // TODO why is parameters not an array ???
@@ -263,6 +265,7 @@ sap.ui.define([
 					oMethod.name = key;
 					oMethod.deprecatedDescription = this._formatDeprecatedDescription(oMethod.deprecation);
 					oMethod.deprecated = this._formatDeprecated(oMethod.deprecation);
+					oMethod.doc = this._wrapInSpanTag(oMethod.doc);
 					oMethod.param = "returnValue";
 					oMethod.typeText = this._formatTypeText(oMethod.type);
 					oMethod.typeNav = this._formatTypeNav(oMethod.type);
@@ -278,7 +281,7 @@ sap.ui.define([
 								typeText: this._formatTypeText(oMethod.parameters[i].type),
 								typeNav: this._formatTypeNav(oMethod.parameters[i].type),
 								type: this._formatType(oMethod.parameters[i].type),
-								doc: oMethod.parameters[i].doc,
+								doc: this._wrapInSpanTag(oMethod.parameters[i].doc),
 								deprecatedDescription: this._formatDeprecatedDescription(oMethod.parameters[i].deprecation),
 								deprecated: this._formatDeprecated(oMethod.parameters[i].deprecation)
 							});
@@ -294,6 +297,7 @@ sap.ui.define([
 					oAggr.name = key;
 					oAggr.deprecated = this._formatDeprecated(oAggr.deprecation);
 					oAggr.deprecatedDescription = this._formatDeprecatedDescription(oAggr.deprecation);
+					oAggr.doc = this._wrapInSpanTag(oAggr.doc);
 					oAggr.typeText = this._formatTypeText(oAggr.type);
 					oAggr.typeNav = this._formatTypeNav(oAggr.type);
 					oAggr.type = this._formatType(oAggr.type);
@@ -306,6 +310,7 @@ sap.ui.define([
 					oAssoc.name = key;
 					oAssoc.deprecatedDescription = this._formatDeprecatedDescription(oAssoc.deprecation);
 					oAssoc.deprecated = this._formatDeprecated(oAssoc.deprecation);
+					oAssoc.doc = this._wrapInSpanTag(oAssoc.doc);
 					oAssoc.typeText = this._formatTypeText(oAssoc.type);
 					oAssoc.typeNav = this._formatTypeNav(oAssoc.type);
 					oAssoc.type = this._formatType(oAssoc.type);
@@ -338,6 +343,16 @@ sap.ui.define([
 			oData.count.associations = oData.associations.length;
 
 			return oData;
+		},
+
+		/**
+		 * This function wraps a text in a span tag so that it can be represented in an HTML control.
+		 * @param {string} sText
+		 * @returns {string}
+		 * @private
+		 */
+		_wrapInSpanTag: function (sText) {
+			return '<span class="fs0875">' + sText + '</span>';
 		},
 
 		/**
