@@ -449,6 +449,25 @@
 				ok(!getPopupDomRef(oCtrl), "Once the toolbar is destroyed, the overflow menu must not be part of the dom");
 			});
 
+			asyncTest("Overflow button is visible when toolbar is inside sap.ui.layout.Splitter and there is not free space", function () {
+				var oToolbar = new sap.ui.commons.Toolbar("tb14", {
+					items: [
+						new sap.ui.commons.Button({text: 'Area 1.1'}).setWidth("100px"),
+						new sap.ui.commons.Button({text: 'Area 1.2'}).setWidth("100px"),
+						new sap.ui.commons.Button({text: 'Area 1.3'}).setWidth("100px")
+					],
+					layoutData: new sap.ui.layout.SplitterLayoutData({size: "50%"})
+				});
+				var oSplitter = new sap.ui.layout.Splitter({contentAreas: [oToolbar, new sap.ui.commons.Button({text: 'Area 2.1'})]});
+				oSplitter.setWidth("500px"); //so the available space for the toolbar is 250px
+				oSplitter.placeAt("uiArea1");
+				setTimeout(function() {
+					ok(isOverflowVisible(oToolbar), "Overflow button must be visible");
+					start();
+					oSplitter.destroy();
+				}, 500);
+			});
+
 			// ==================================================
 			//          helper functions
 			// ==================================================
@@ -472,8 +491,8 @@
 				return jQuery.sap.byId(oPopup.id).css("display") === "block";
 			}
 			function isOverflowVisible(oToolbar) {
-				var oOverflowButton = getOverflowButtonId(oToolbar);
-				return jQuery.sap.byId(oOverflowButton.id).css("display") === "block";
+				var sOverflowButtonId = getOverflowButtonId(oToolbar);
+				return jQuery.sap.byId(sOverflowButtonId).css("display") === "block";
 			}
 			function getPopupContentIds(oToolbar) {
 				var oPopup = getPopupDomRef(oToolbar);
