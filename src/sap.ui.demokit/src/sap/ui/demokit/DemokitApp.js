@@ -1,5 +1,5 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
 // Main class for Demokit-like applications
@@ -601,7 +601,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                        if (oRelNotes && oRelNotes[sVersion] && oRelNotes[sVersion].notes && oRelNotes[sVersion].notes.length > 0) {
                            oDialog.addContent(oNotesView);
                            oNotesView.getModel().setData(oRelNotes);
-                           oNotesView.bindElement("/" + sVersion);
+                           oNotesView.bindObject("/" + sVersion);
                            oDialog.open();
                        } else {
 

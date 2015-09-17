@@ -6,7 +6,7 @@
 sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolbar", "./ToolbarSpacer", "./Bar", "./List",
 		"./StandardListItem", "./library", "sap/ui/core/Control", "./PlacementType", "sap/ui/core/IconPool",
 		"sap/ui/core/HTML", "./Text", "sap/ui/core/Icon", "./SegmentedButton", "./Page", "./NavContainer",
-		"./semantic/SemanticPage", "./Popover"],
+		"./semantic/SemanticPage", "./Popover", "jquery.sap.dom"],
 	function (jQuery, ResponsivePopover, Button, Toolbar, ToolbarSpacer, Bar, List,
 			  StandardListItem, library, Control, PlacementType, IconPool,
 			  HTML, Text, Icon, SegmentedButton, Page, NavContainer, SemanticPage, Popover) {
@@ -769,7 +769,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 					oValidation
 						.then(function (result) {
 							// Update link in output
-							var $link = jQuery("#" + "sap-ui-" + that.getId() + "-link-under-validation-" + result.id);
+							var $link = jQuery.sap.byId("sap-ui-" + that.getId() + "-link-under-validation-" + result.id);
 
 							if (result.allowed) {
 								jQuery.sap.log.info("Allow link " + href);

@@ -1,5 +1,5 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
 /*global JSZip *///declare unusual global vars for JSLint/SAPUI5 validation

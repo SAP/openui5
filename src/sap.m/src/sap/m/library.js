@@ -2457,7 +2457,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					rm.addStyle("filter", "none");
 				}
 				if (sBgColor) {
-					rm.addStyle("background-color", jQuery.sap.escapeHTML(sBgColor));
+					rm.addStyle("background-color", jQuery.sap.encodeHTML(sBgColor));
 				}
 			},
 
