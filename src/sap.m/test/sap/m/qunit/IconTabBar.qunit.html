@@ -243,6 +243,32 @@
 		   		oIconTabBar.destroy();
 		   	});
 
+			test("setEmptySelectedKey()", function() {
+
+				// Arrange
+				var oIconTabBar = new sap.m.IconTabBar({
+					selectedKey: 'key2',
+					items: [
+						new sap.m.IconTabFilter({key: "key1"}),
+						new sap.m.IconTabFilter({key: "key2"})
+					]
+				});
+
+				// Assert
+				strictEqual(oIconTabBar.getSelectedKey(), "key2", "getSelectedKey() is correct");
+
+				// Act
+				oIconTabBar.setSelectedKey("");
+
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				strictEqual(oIconTabBar.getSelectedKey(), "key1", "selected item is set correctly");
+
+				// Clean up
+				oIconTabBar.destroy();
+			});
+
 		    test("getShowSelection()", function() {
 
 				// Arrange
