@@ -190,10 +190,10 @@
 		equal(oDataState.getMessages().length,2, "All Messages length 2");
 		oDataState.setControlMessages(null);
 		equal(oDataState.getMessages().length,1, "All Messages length 1");
-		equal(jQuery.sap.equal(oDataState.getControlMessages(),[]), true, "Control Message reset");
+		equal(jQuery.sap.equal(oDataState.getControlMessages(),null), true, "Control Message reset");
 		oDataState.setModelMessages(null);
-		equal(oDataState.getMessages().length,0, "All Messages length 1");
-		equal(jQuery.sap.equal(oDataState.getModelMessages(),[]),true, "Control Message reset");
+		equal(oDataState.getMessages(),null, "All Messages length 1");
+		equal(jQuery.sap.equal(oDataState.getModelMessages(),null),true, "Control Message reset");
 		
 	});
 	
@@ -293,12 +293,12 @@
 				equal(oChanges.dirty.value, oField.getValue() != oModel.getOriginalProperty("/Email"), sModelText + " dirty " + oChanges.dirty.value);
 			}
 		}
-		if (aControlMessageTypes.length > 0 && oChanges.controlMessages && oChanges.controlMessages.length > 0) {
+		if (aControlMessageTypes && aControlMessageTypes.length > 0 && oChanges.controlMessages && oChanges.controlMessages.length > 0) {
 			for (var i=0;i<aControlMessageTypes.length;i++) {
 				equal(aControlMessageTypes[i], oChanges.controlMessages.value[i].getType(),sModelText + " controlMessage " + aControlMessageTypes[i]);
 			}
 		}
-		if (oDataState.getControlMessages().length > 0 && aControlMessageTypes.length !== oDataState.getControlMessages().length) {
+		if (oDataState.getControlMessages() && oDataState.getControlMessages().length > 0 && aControlMessageTypes.length !== oDataState.getControlMessages().length) {
 			ok(false,sModelText + " controlMessage but none expeced");
 		}
 		
@@ -340,7 +340,7 @@
 	};
 	
 	function checkControlMessageEmpty (oControl,sBinding) {
-		return !oControl || oControl.getBinding(sBinding).getDataState().getControlMessages().length === 0;
+		return !oControl || !oControl.getBinding(sBinding).getDataState().getControlMessages() || oControl.getBinding(sBinding).getDataState().getControlMessages().length === 0;
 	}
 	test("test DataState in client JSON model",function(){
 		oField1.setValue("test@test.com");

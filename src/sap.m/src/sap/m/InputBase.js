@@ -1074,7 +1074,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @see sap.ui.core.Element.refreshDataState
 	 */
 	InputBase.prototype.refreshDataState = function(sName, oDataState) {
-		if (sName === "value") {
+		if (sName === "value" && oDataState.getMessages()) {
 			this.propagateMessages(sName, oDataState.getMessages());
 		}
 	};
