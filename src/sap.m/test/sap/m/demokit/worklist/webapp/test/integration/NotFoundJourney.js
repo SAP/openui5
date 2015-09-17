@@ -1,5 +1,6 @@
 sap.ui.define([
-	], function () {
+		"sap/ui/test/opaQunit"
+	], function (opaTest) {
 		"use strict";
 
 		QUnit.module("NotFound");

@@ -1,5 +1,6 @@
 sap.ui.define([
-	], function () {
+		"sap/ui/test/opaQunit"
+	], function (opaTest) {
 		"use strict";
 
 		QUnit.module("Navigation");
@@ -17,7 +18,7 @@ sap.ui.define([
 
 		opaTest("Should react on hashchange", function (Given, When, Then) {
 			// Actions
-			When.onTheWorklistPage.iRememberTheItemAtPosition(7);
+			When.onTheWorklistPage.iRememberTheItemAtPosition(2);
 			When.onTheBrowser.iChangeTheHashToTheRememberedItem();
 
 			// Assertions

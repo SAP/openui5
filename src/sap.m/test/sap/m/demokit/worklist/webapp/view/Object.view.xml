@@ -2,8 +2,7 @@
 	controllerName="sap.ui.demo.worklist.controller.Object"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:semantic="sap.m.semantic"
-	xmlns:footerbar="sap.ushell.ui.footerbar">
+	xmlns:semantic="sap.m.semantic">
 
 	<semantic:FullscreenPage
 		id="page"
