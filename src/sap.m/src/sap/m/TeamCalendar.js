@@ -626,6 +626,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this.setStartDate(new Date());
 
+			this.fireStartDateChange();
+
 		}
 
 		function _handleStartDateChange(oEvent){

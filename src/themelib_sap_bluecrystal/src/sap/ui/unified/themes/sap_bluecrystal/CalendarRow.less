@@ -97,6 +97,10 @@
 	font-size: @sapMFontSmallSize;
 }
 
+.sapUiCalendarRowNow{
+	border-color: @sapUiAccent4;
+}
+
 /* colors for types */
 .calendarRowTypeColorMixIn(@class, @color){
 	.@{class}.sapUiCalendarApp,
@@ -140,4 +144,4 @@
 .calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType07, @sapUiAccent7);
 .calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType08, @sapUiAccent8);
 .calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType09, lighten(@sapUiAccent6, 15%));
-.calendarRowTypeColorIntervalMixIn(sapUiCalendarAppsIntHeadType10, darken(@sapUiAccent4, 10%));
+.calendarRowTypeColorIntervalMixIn(sapUiCalendarRowAppsIntHeadType10, darken(@sapUiAccent4, 10%));

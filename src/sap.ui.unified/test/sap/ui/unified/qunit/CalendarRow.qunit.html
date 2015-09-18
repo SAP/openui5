@@ -140,6 +140,13 @@
 												]
 				}).placeAt("uiArea1");
 
+			var initializeRow1 = function(){
+				oRow1.setIntervals(12);
+				oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Hour);
+				oRow1.setStartDate(new Date("2015", "01", "01", "10", "15"));
+				sap.ui.getCore().applyChanges();
+			};
+
 			var oRow2 = new sap.ui.unified.CalendarRow("Row2",  {
 				startDate: new Date("2015", "01", "01", "10", "15"),
 				height: "100px",
@@ -177,6 +184,9 @@
 				aTest = sStyle.match(/width:(\s?)(\d+(.?)(\d+))/);
 				iWidth = aTest[2];
 				equal(iWidth, 100 / 5 + "", "Row2: interval width");
+
+				ok(jQuery("#Row1-Now").get(0), "Now indicatior is rendered");
+				ok(!jQuery("#Row1-Now").is(":visible"), "Now indicatior is not visible");
 			});
 
 			test("Appointments row - non working items", function() {
@@ -308,6 +318,14 @@
 
 			test("Appointments - new start date", function() {
 				var sLevel = jQuery("#App2").attr("data-sap-level");
+
+				var oDate = new Date();
+				oDate.setHours(oDate.getHours() - 3);
+				oRow1.setStartDate(oDate);
+				sap.ui.getCore().applyChanges();
+				ok(jQuery("#Row1-Now").get(0), "Now indicatior is rendered");
+				ok(jQuery("#Row1-Now").is(":visible"), "Now indicatior is visible");
+				initializeRow1();
 
 				oRow1.setStartDate(new Date("2015", "0", "31", "22", "15"));
 				sap.ui.getCore().applyChanges();
@@ -484,10 +502,7 @@
 
 			test("click on appointment", function() {
 				// initialize Row1
-				oRow1.setIntervals(12);
-				oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Hour);
-				oRow1.setStartDate(new Date("2015", "01", "01", "10", "15"));
-				sap.ui.getCore().applyChanges();
+				initializeRow1();
 
 				qutils.triggerEvent("click", "App1");
 				equal(sSelectedAppointmentId, "App1", "Appointment 1: click fires select event");
@@ -509,8 +524,7 @@
 				ok(sap.ui.getCore().byId("App3").getSelected(), "Appointment3: selected property set");
 				ok(jQuery("#App3").hasClass("sapUiCalendarAppSel"), "Appointment3: selected rendered");
 			});
-// group appointments: 
-// select event for all grouped appointments
+
 		</script>
 
 	</head>
