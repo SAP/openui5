@@ -308,7 +308,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                     }
                 }
             }
-            
+
             function collapseDevGuideTree(sTopLevelNavItemId, oTree) {
                 if (sTopLevelNavItemId === "mi-devguidekm") {
                     oTree.collapseAll();
@@ -366,7 +366,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
             oTree.bindNodes("/", oTreeNode);
 
             collapseDevGuideTree(oTopLevelNavItem.id, oTree);
-            
+
             if (aTreeData.length > 25) {
                 oTree.collapseAll();
             }
@@ -536,7 +536,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                     });
                 }
 
-                var oDialog = new sap.ui.commons.Dialog({
+                var oDialog = new sap.ui.commons.Dialog('aboutDlg', {
                     title: "About",
                     modal: true,
                     buttons : [oBtnBack, oBtnCancel],
@@ -566,7 +566,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 });
 
                var fnOpenReleaseDialog = function openReleaseDialog() {
-                   
+
                    var oNotesModel;
                    var oNotesView = sap.ui.getCore().byId("notesView");
                    var oDialog = sap.ui.getCore().byId("notesDialog");
@@ -575,9 +575,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                        oNotesView = sap.ui.view({id:"notesView", viewName:"versioninfo.notes", type:sap.ui.core.mvc.ViewType.Template});
                        oNotesModel = new JSONModel();
                        oNotesView.setModel(oNotesModel);
-                       oDialog = new sap.ui.commons.Dialog("notesDialog");    
+                       oDialog = new sap.ui.commons.Dialog("notesDialog");
                        oDialog.addButton(new sap.ui.commons.Button({
-                           text: "OK", 
+                           text: "OK",
                            press: function(){
                                oDialog.close();
                            }
@@ -591,10 +591,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 
                    var oLibInfo = new sap.ui.core.util.LibraryInfo();
                    oDialog.setTitle("Change log for: " + this.getBindingContext().getProperty("library"));
-                   
+
                    var oVersion = jQuery.sap.Version(this.getBindingContext().getProperty("version"));
                    var sVersion = oVersion.getMajor() + "." + oVersion.getMinor() + "." + oVersion.getPatch() + oVersion.getSuffix() ;
-                   
+
                    oLibInfo._getReleaseNotes(this.getBindingContext().getProperty("library"), sVersion, function(oRelNotes, sVersion) {
                        oDialog.removeAllContent();
 
@@ -649,7 +649,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                                        visible : {
                                            path: "releasenotes",
                                            formatter: function(oValue) {
-                                               return !!oValue; 
+                                               return !!oValue;
                                            }
                                        }
                                    }),
@@ -672,7 +672,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                        oDataSetVersionInfo.setLeadSelection(-1);
                    }
                });
-               
+
                oDataSetVersionInfo.setModel(oModelVersionInfo);
 
                var oLayoutVersionInfo = new sap.ui.layout.VerticalLayout({
@@ -703,7 +703,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                     data.thirdparty.sort(function(a,b){
                         var aName = (a.displayName || "").toUpperCase();
                         var bName = (b.displayName || "").toUpperCase();
-                        
+
                         if (aName > bName){
                             return 1;
                         } else if (aName < bName){
@@ -712,7 +712,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                             return 0;
                         }
                     });
-                    
+
                     oModelCredits.setData(data);
                 });
 
