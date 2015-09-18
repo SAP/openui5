@@ -33,6 +33,9 @@ sap.ui.define([
 					throw new Error("Missing metadata model");
 				}
 				this.oModel = oModel;
+				// this entity container cache is managed from ODataDocumentModel in
+				// _ODataHelper.requestEntityContainer
+				this._oEntityContainer = undefined;
 			}
 		});
 
