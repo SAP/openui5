@@ -1,5 +1,6 @@
 sap.ui.define([
-	], function () {
+		"sap/ui/test/opaQunit"
+	], function (opaTest) {
 		"use strict";
 
 		module("Worklist");
@@ -15,14 +16,6 @@ sap.ui.define([
 			Then.onTheWorklistPage.theTableShouldHaveAllEntries().
 				and.theTableShouldContainOnlyFormattedUnitNumbers().
 				and.theTitleShouldDisplayTheTotalAmountOfItems();
-		});
-
-		opaTest("Should be able to load 10 more items", function (Given, When, Then) {
-			//Actions
-			When.onTheWorklistPage.iPressOnMoreData();
-
-			// Assertions
-			Then.onTheWorklistPage.theTableShouldHaveTheDoubleAmountOfInitialEntries();
 		});
 
 		opaTest("Search for the First object should deliver results that contain the firstObject in the name", function (Given, When, Then) {

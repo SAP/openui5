@@ -4,7 +4,7 @@ sap.ui.define([
 		"sap/ui/demo/worklist/model/formatter",
 		"sap/ui/model/Filter",
 		"sap/ui/model/FilterOperator"
-    ], function (BaseController, JSONModel, formatter, Filter, FilterOperator) {
+	], function (BaseController, JSONModel, formatter, Filter, FilterOperator) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.worklist.controller.Worklist", {
@@ -29,8 +29,8 @@ sap.ui.define([
 				// taken care of by the table itself.
 				iOriginalBusyDelay = oTable.getBusyIndicatorDelay();
 				this._oTable = oTable;
-                // keeps the search state
-   				this._oTableSearchState = [];
+				// keeps the search state
+				this._oTableSearchState = [];
 
 				// Model used to manipulate control states
 				oViewModel = new JSONModel({
@@ -115,14 +115,14 @@ sap.ui.define([
 					// refresh the list binding.
 					this.onRefresh();
 				} else {
-                    var oTableSearchState = [];
-                    var sQuery = oEvent.getParameter("query");
+					var oTableSearchState = [];
+					var sQuery = oEvent.getParameter("query");
 
-                    if (sQuery && sQuery.length > 0) {
-                        oTableSearchState = [new Filter("Name", FilterOperator.Contains, sQuery)];
-                    }
-                    this._applySearch(oTableSearchState);
-                }
+					if (sQuery && sQuery.length > 0) {
+						oTableSearchState = [new Filter("Name", FilterOperator.Contains, sQuery)];
+					}
+					this._applySearch(oTableSearchState);
+				}
 
 			},
 
@@ -152,20 +152,6 @@ sap.ui.define([
 			},
 
 			/**
-			 * Sets the item count on the worklist view header
-			 * @param {integer} iTotalItems the total number of items in the table
-			 * @private
-			 */
-			_updateListItemCount : function (iTotalItems) {
-				var sTitle;
-				// only update the counter if the length is final
-				if (this._oTable.getBinding("items").isLengthFinal()) {
-					sTitle = this.getResourceBundle().getText("worklistTableTitleCount", [iTotalItems]);
-					this.oViewModel.setProperty("/worklistTableTitle", sTitle);
-				}
-			},
-
-			/**
 			 * Internal helper method to apply both filter and search state together on the list binding
 			 * @private
 			 */
@@ -179,4 +165,5 @@ sap.ui.define([
 			}
 
 		});
-});
+	}
+);
