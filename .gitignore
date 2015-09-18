@@ -31,3 +31,4 @@ bower_components
 *.suo
 web.config
 /.user.project.json
+/sap-ui-cachebuster-info.json
