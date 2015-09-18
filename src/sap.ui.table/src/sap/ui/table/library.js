@@ -192,7 +192,11 @@ sap.ui.define(['jquery.sap.global',
 		Interactive : "Interactive",
 
 		/**
-		 * The table automatically fills the height of the surrounding container. The visibleRowCount property is automatically changed accordingly. All rows need the same height, otherwise the auto mode doesn't always work as expected.
+		 * The table automatically fills the height of the surrounding container.
+		 * The visibleRowCount property is automatically changed accordingly.
+		 * All rows need the same height, otherwise the auto mode doesn't always work as expected.
+		 * The height of all siblings within the same layout container of the table will be subtracted from the available height.
+		 * For performance reasons, it is recommended to add no siblings in the table's parent container.
 		 * @public
 		 */
 		Auto : "Auto"
