@@ -46,17 +46,6 @@
 		assert.strictEqual(this.oMessageStrip.getShowCloseButton(), false, "showCloseButton should be false");
 	});
 
-	QUnit.test("Error type should render specific icon", function(assert) {
-		// act
-		this.oMessageStrip.setType("Error");
-		this.oMessageStrip.setShowIcon(true);
-		sap.ui.getCore().applyChanges();
-
-		//assert
-		assert.strictEqual(this.oMessageStrip.getCustomIcon(), "sap-icon://message-error",
-			"message-error icon should be inherited from the type");
-	});
-
 	QUnit.test("Setting None type", function(assert) {
 		// act
 		this.oMessageStrip.setType("None");
@@ -74,6 +63,15 @@
 
 		//assert
 		assert.strictEqual(this.oMessageStrip.getCustomIcon(), "sap-icon://undo", "icon should be undo");
+	});
+
+	QUnit.test("Custom icon should not be set by the type icon", function(assert) {
+		// act
+		this.oMessageStrip.setType("Error");
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.strictEqual(this.oMessageStrip.getCustomIcon(), "", "custom icon should not be defined");
 	});
 
 	QUnit.test("Link control via setLink", function(assert) {
@@ -113,7 +111,7 @@
 
 	});
 
-	QUnit.module("Data bindig", {
+	QUnit.module("Data binding", {
 		setup: function() {
 			this.oMessageStrip = new sap.m.MessageStrip();
 
