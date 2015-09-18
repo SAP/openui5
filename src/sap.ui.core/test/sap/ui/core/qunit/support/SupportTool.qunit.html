@@ -28,9 +28,14 @@
 	sap.ui.require([
 		"jquery.sap.global",
 		"sap/ui/thirdparty/qunit",
+		"sap/ui/qunit/qunit-junit",
+		"sap/ui/qunit/qunit-coverage",
+		"sap/ui/qunit/QUnitUtils",
 		"sap/ui/core/support/Support"
 	],
-	function(jQuery, __QUnit__, Support) {
+	function(jQuery) {
+
+		var Support = sap.ui.require("sap/ui/core/support/Support");
 
 		QUnit.test("Load Support module and check App plugins", function(assert) {
 
