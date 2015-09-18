@@ -3855,6 +3855,109 @@
 		});
 	});
 	
+	asyncTest("test oDataModel binding function import parameters deferred", function() {
+		var iCount = 0;
+		var oContext;
+		oModel.setDefaultBindingMode("TwoWay");
+		var oHandle = oModel.callFunction("/SalesOrder_InvoiceCreated", {
+			groupId: "changes", 
+			method: "POST", 
+			urlParameters: {"SalesOrderID": "test"}
+		});
+		
+		oInput = new sap.m.Input();
+		oInput.bindValue("SalesOrderID");
+		oInput.setModel(oModel);
+				
+		oHandle.contextCreated().then(function(oContext) {
+			oInput.setBindingContext(oContext);
+			equal(oInput.getValue(), "test", "Value check");
+			equal(oContext.getProperty("SalesOrderID"), "test", "Value check in model");
+			oInput.setValue("Blubb");
+			equal(oInput.getValue(), "Blubb", "Value check");
+			equal(oContext.getProperty("SalesOrderID"), "Blubb", "Value check in model");
+			oModel.submitChanges();
+		}, function() {
+			ok(false, "Test failed");
+		});
+		oModel.attachRequestSent(this, function(oEventInfo) {
+			ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID='Blubb'");
+			start();
+		});
+	});
+	
+	asyncTest("test oDataModel binding function import parameters not deferred", function() {
+		var iCount = 0;
+		var oContext;
+		var oHandle;
+		var oInput;
+		oModel.setDefaultBindingMode("TwoWay");
+		
+		oHandle = oModel.callFunction("/SalesOrder_InvoiceCreated", {
+			method: "POST", 
+			urlParameters: {"SalesOrderID": "test"}
+		});
+		
+		oInput = new sap.m.Input();
+		oInput.bindValue("SalesOrderID");
+		oInput.setModel(oModel);
+		
+		var handler1 = function(oEventInfo) {
+			oModel.detachRequestSent(handler1);
+			oModel.attachRequestSent(handler2);
+			ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID='test'");
+			oHandle.contextCreated().then(function(oContext) {
+				oInput.setBindingContext(oContext);
+				equal(oInput.getValue(), "test", "Value check");
+				equal(oContext.getProperty("SalesOrderID"), "test", "Value check in model");
+				oInput.setValue("Blubb");
+				equal(oInput.getValue(), "Blubb", "Value check");
+				equal(oContext.getProperty("SalesOrderID"), "Blubb", "Value check in model");
+			}, function() {
+				ok(false, "Test failed");
+			});
+		};
+		var handler2 = function(oEventInfo) {
+			oModel.detachRequestSent(handler2);
+			ok(oEventInfo.getParameter("url") === "SalesOrder_InvoiceCreated?SalesOrderID='Blubb'");
+			start();
+		};
+		oModel.attachRequestSent(this, handler1);
+	});
+	
+	asyncTest("test oDataModel binding function import parameters result check error", function() {
+		var iCount = 0;
+		var oContext;
+		oModel.setDefaultBindingMode("TwoWay");
+		var oHandle = oModel.callFunction("/SalesOrder_InvoiceCreated", {
+			groupId: "changes", 
+			method: "POST", 
+			urlParameters: {"SalesOrderID": "test"}
+		});
+		
+		oInput = new sap.m.Input();
+		oInput.bindValue("SalesOrderID");
+		oInput.setModel(oModel);
+				
+		oHandle.contextCreated().then(function(oContext) {
+			oInput.setBindingContext(oContext);
+			equal(oInput.getValue(), "test", "Value check");
+			equal(oContext.getProperty("SalesOrderID"), "test", "Value check in model");
+			oInput.setValue("Blubb");
+			equal(oInput.getValue(), "Blubb", "Value check");
+			equal(oContext.getProperty("SalesOrderID"), "Blubb", "Value check in model");
+			oModel.submitChanges();
+		}, function() {
+			ok(false, "Test failed");
+		});
+
+		oModel.attachRequestCompleted(this, function(oEventInfo) {
+			ok(!oEventInfo.getParameter("success"), "request should have failed!");
+			start();
+		});
+		
+	});
+	
 	asyncTest("test getETag", 3, function(){
 		oInput = new sap.m.Input();
 		oInput.setModel(oModel);
