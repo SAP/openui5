@@ -3,10 +3,9 @@
  */
 
 // Provides class sap.m.MessageBox
-sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/core/IconPool', 'sap/ui/core/theming/Parameters'],
-		function (jQuery, Button, Dialog, Text, IconPool, Parameters) {
+sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', 'sap/ui/core/IconPool'],
+		function (jQuery, Button, Dialog, Text, IconPool) {
 			"use strict";
-
 
 			/**
 			 * Provides easier methods to create sap.m.Dialog with type sap.m.DialogType.Message, such as standard alerts,
