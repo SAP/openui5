@@ -2529,6 +2529,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		this.oMessageManager = oMessageManager;
 	};
 
+	/**
+	 * Returns the active <code>MessageManager</code> instance.
+	 *
+	 * @return {sap.ui.core.message.MessageManager}
+	 * @public
+	 * @since 1.33.0
+	 */
 	Core.prototype.getMessageManager = function() {
 		if (!this.oMessageManager) {
 			this.oMessageManager = new MessageManager();
