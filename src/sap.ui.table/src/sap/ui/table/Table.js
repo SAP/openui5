@@ -82,6 +82,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			 * how the selection can be extended. It may also influence the visual appearance.
 			 */
 			selectionMode : {type : "sap.ui.table.SelectionMode", group : "Behavior", defaultValue : sap.ui.table.SelectionMode.Multi},
+            
+            /**
+			 * Flag whether selected columns will be restored after a sort or filter operation
+			 */
+			selectionRestoration : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
 			 * Selection behavior of the Table. This property defines whether the row selector is displayed and whether the row, the row selector or both
@@ -1164,7 +1169,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	Table.prototype._onBindingChange = function(oEvent) {
 		var sReason = typeof (oEvent) === "object" ? oEvent.getParameter("reason") : oEvent;
 		if (sReason === "sort" || sReason === "filter") {
-			this.clearSelection();
+            if(this.getSelectionRestoration() === true) {
+                var aIndicesOld = typeof (oEvent) === "object" ? oEvent.getParameter("aIndicesOld") : [];
+                var aIndicesNew = typeof (oEvent) === "object" ? oEvent.getParameter("aIndicesNew") : [];     
+			    this._oSelection.restoreSelection(aIndicesOld, aIndicesNew);
+            } else {
+                this.clearSelection();
+            }
 			this.setFirstVisibleRow(0);
 		}
 	};

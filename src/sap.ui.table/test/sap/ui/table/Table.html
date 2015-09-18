@@ -277,7 +277,8 @@
 	aData[100].lastName = "Multi\nLine";
 
 	var oTable = new sap.ui.table.Table("table", {
-		firstVisibleRow: 5
+		firstVisibleRow: 5,
+        selectionRestoration: true
 	});
 
 	oTable.setTitle("Title of the Table");

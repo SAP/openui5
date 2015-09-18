@@ -339,6 +339,50 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		this._update(aSelectedIndices, iLeadIndex, aChangedRowIndices);
 		return this;
 	};
+    
+    /**
+     *Restores the selected indices after a sort or filter operation. 
+     * @param {Array} aIndicesOld indices before sort operation
+     * @param {Array} aIndicesNew indices after sort operation
+     * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
+	 * @public
+    */
+    SelectionModel.prototype.restoreSelection = function(aIndicesOld, aIndicesNew) { 
+         var findNewIndex = function( iSelIndexOld ) {
+            if (iSelIndexOld >= aIndicesOld.length){ return -1; }
+                
+            var iObj = aIndicesOld[iSelIndexOld];
+            var found = false;
+            var i = 0;
+            while(found === false && i < aIndicesNew.length){
+                if(aIndicesNew[i] === iObj) {
+                    found = true;
+                } else {
+                    i++;
+                }
+            }
+            return (found === true) ? i : -1; 
+        }  
+        
+        aIndicesOld = aIndicesOld || [];
+        aIndicesNew = aIndicesNew || [];
+         
+        var aSelectedIndicesNew = [];
+        var iLeadIndexNew = -1;
+        
+        for(var i = 0; i < this.aSelectedIndices.length; i++) {
+            var selectedIndexNew = findNewIndex( this.aSelectedIndices[i] );
+            if( selectedIndexNew !== -1 ) {
+               aSelectedIndicesNew.push( selectedIndexNew ); 
+               if( this.aSelectedIndices[i] === this.iLeadIndex ) {
+                 iLeadIndexNew = selectedIndexNew;
+               }
+            }
+        }
+        
+        this._update(aSelectedIndicesNew.sort(this.fnSort), iLeadIndexNew, [] );
+        return this;        
+    };
 	
 	/**
 	 * Slices a the indices between the two indices from the selection.
