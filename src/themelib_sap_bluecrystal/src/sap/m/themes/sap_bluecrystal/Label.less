@@ -10,14 +10,6 @@
 	font-weight: normal;
 }
 
-.sapMLabel.sapMLabelTBHeader {
-	font-family: @sapUiFontHeaderFamily;
-	font-size: @sapMFontHeader5Size;
-	font-weight: @sapUiFontHeaderWeight;
-	color: @sapUiGroupTitleTextColor;
-	text-shadow: 0 0.0625rem 0 fade(@sapUiLightShadowTint, 50%);
-}
-
 .sapMLabel.sapMLabelBold{
 	font-weight: bold;
 }
@@ -38,13 +30,6 @@
 	font-size: @sapMFontMediumSize;
 	color: @sapUiPageFooterTextColor;
 	text-shadow: 0 0.0625rem 0 fade(@sapUiDarkShadowTint, 50);
-}
-
-.sapMIBar-CTX.sapMPageHeader .sapMLabel,
-.sapMDialog-CTX .sapMIBar-CTX .sapMLabel {
-	font-family: @sapUiFontHeaderFamily;
-	font-size: @sapMFontHeader5Size;
-	font-weight: @sapUiFontHeaderWeight;
 }
 
 .sapMLIBActive .sapMLabel,
@@ -107,15 +92,9 @@ html[dir=rtl] .sapMTB-Info-CTX .sapMLabel {
 /* Transparent Toolbar Context*/
 .sapMTB-Transparent-CTX .sapMLabel{
 	font-weight: @sapUiFontHeaderWeight;
-	font-size: @sapMFontHeader5Size;
 	font-family: @sapUiFontHeaderFamily;
 	text-shadow: 0 1px 0 @sapUiLightShadowTint;
 	color: @sapUiGroupTitleTextColor;
-}
-
-/* Transparent Toolbar Label Header */
-.sapMTB-Transparent-CTX > .sapMLabelTBHeader {
-	font-size: @sapMFontHeader4Size;
 }
 
 /* ============================ */
@@ -213,14 +192,6 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-LargeDesktop.sapU
 	.sapMIBar-CTX.sapMPageHeader .sapMLabel,
 	.sapMDialog-CTX .sapMIBar-CTX .sapMLabel {
 		font-size: @sapMFontHeader6Size;
-	}
-
-	.sapMTB-Transparent-CTX .sapMLabel{
-		font-size: @sapMFontHeader6Size;
-	}
-	
-	.sapMTB-Transparent-CTX > .sapMLabelTBHeader {
-		font-size: @sapMFontHeader4Size;
 	}
 }
 .sapUiSizeCondensed .sapUiTableCell>.sapMLabel{
