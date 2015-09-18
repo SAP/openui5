@@ -864,10 +864,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		log.info("Plugins started",null,METHOD);
 
 		this._createUIAreas();
+		
+		this.oThemeCheck.fireThemeChangedEvent(true);
 
 		this._executeOnInit();
-
-		this.oThemeCheck.fireThemeChangedEvent(true);
 
 		this._setupRootComponent();
 
