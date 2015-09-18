@@ -131,6 +131,8 @@
 					mozilla: undefined,
 					chrome: undefined,
 					safari: true,
+					fullscreen: false,
+					webview: false,
 					firefox: undefined,
 					edge: undefined,
 					version: 7,
@@ -140,16 +142,55 @@
 			{
 				name: "iOS 6 (iPhone)",
 				ua: "Mozilla/5.0 (iPhone; CPU iPhone OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5376e Safari/8536.25",
+				nav: {standalone: false},
 				expected: {
 					msie: undefined,
 					webkit: true,
 					mozilla: undefined,
 					chrome: undefined,
 					safari: true,
+					fullscreen: false,
+					webview: false,
 					firefox: undefined,
 					edge: undefined,
 					version: 6,
 					versionStr: "6"
+				}
+			},
+			{
+				name: "iOS 8 (iPhone) Fiori Client",
+				ua: "Mozilla/5.0 (iPhone; CPU iPhone OS 8_4_1 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Mobile/12H321 (5484896690) SAPFioriClient/1.3.0",
+				nav: {standalone: false},
+				expected: {
+					msie: undefined,
+					webkit: true,
+					mozilla: undefined,
+					chrome: undefined,
+					safari: true,
+					fullscreen: false,
+					webview: true,
+					firefox: undefined,
+					edge: undefined,
+					version: -1,
+					versionStr: undefined
+				}
+			},
+			{
+				name: "iOS 8 (iPhone) Standalone mode",
+				ua: "Mozilla/5.0 (iPhone; CPU iPhone OS 8_4_1 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) Mobile/12H321",
+				nav: {standalone: true},
+				expected: {
+					msie: undefined,
+					webkit: true,
+					mozilla: undefined,
+					chrome: undefined,
+					safari: true,
+					fullscreen: true,
+					webview: false,
+					firefox: undefined,
+					edge: undefined,
+					version: -1,
+					versionStr: undefined
 				}
 			},
 			{
@@ -342,7 +383,7 @@
 			test(oUserAgentAndResult.name, function() {
 
 				var currentTest = oUserAgentAndResult;
-				var actualResult = sap.ui.Device._testUserAgent(currentTest.ua);
+				var actualResult = sap.ui.Device._testUserAgent(currentTest.ua, currentTest.nav);
 
 				// redo additional settings normally done later
 				if(actualResult.name){
