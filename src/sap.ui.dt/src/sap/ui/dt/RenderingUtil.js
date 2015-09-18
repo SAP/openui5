@@ -32,7 +32,6 @@ function(jQuery) {
 	 */
 	RenderingUtil.renderOverlay = function(oRm, oOverlay, sClassName) {
 		if (oOverlay.getDomRef()) {
-			oOverlay.$().empty();
 			this._triggerOnAfterRenderingWithoutRendering(oRm, oOverlay);
 
 			return;
@@ -70,6 +69,7 @@ function(jQuery) {
 	/**
 	 */
 	RenderingUtil._triggerOnAfterRenderingWithoutRendering = function(oRm, oOverlay) {
+		// to trigger after rendering without renfering we need to write something in a renderManager buffer
 		oRm.write("");
 		this._renderChildren(oRm, oOverlay);
 	};
