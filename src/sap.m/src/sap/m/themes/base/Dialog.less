@@ -325,9 +325,17 @@
 			line-height: @SapBarCompactHeight;
 		}
 
-    &.sapMDialogWithSubHeader {
-      padding-top: @SapBarCompactHeight + @SapBarCompactHeight;
-    }
+		&.sapMDialogWithSubHeader {
+			padding-top: @SapBarCompactHeight + @SapBarCompactHeight;
+
+		  	&.sapMDialog-NoHeader {
+				padding-top: @SapBarCompactHeight;
+
+				& > .sapMDialogSubHeader {
+			  		top: 0;
+				}
+		  	}
+		}
 
     &.sapMMessageDialog {
       min-height: @SapBarCompactHeight + 1rem;
@@ -424,7 +432,15 @@
   }
 
   &.sapMDialogWithSubHeader {
-    padding-top: @SapBarHeight + @SapBarHeight;
+	padding-top: @SapBarHeight + @SapBarHeight;
+
+	&.sapMDialog-NoHeader {
+	  padding-top: @SapBarHeight;
+
+	    & > .sapMDialogSubHeader {
+		  top: 0;
+		}
+	}
   }
 
   &.sapMMessageDialog {
