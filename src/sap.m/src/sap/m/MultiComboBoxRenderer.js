@@ -16,14 +16,14 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBaseRenderer', 'sap/ui/core/Rende
 	 *
 	 * @type {string}
 	 */
-	MultiComboBoxRenderer.CSS_CLASS = "sapMMultiComboBox";
+	MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX = "sapMMultiComboBox";
 
 	/**
 	 * CSS class to be applied to the HTML root element of the MultiComboBox control.
 	 *
 	 * @type {string}
 	 */
-	MultiComboBoxRenderer.DOT_CSS_CLASS = ".sapMMultiComboBox";
+	MultiComboBoxRenderer.DOT_CSS_CLASS_MULTICOMBOBOX = ".sapMMultiComboBox";
 
 	/**
 	 * Add classes to the MultiComboBox.
@@ -35,7 +35,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBaseRenderer', 'sap/ui/core/Rende
 	 */
 	MultiComboBoxRenderer.addOuterClasses = function(oRm, oControl) {
 		sap.m.ComboBoxBaseRenderer.addOuterClasses.apply(this, arguments);
-		oRm.addClass(MultiComboBoxRenderer.CSS_CLASS);
+		oRm.addClass(MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX);
 		if (oControl._hasTokens()) {
 			oRm.addClass("sapMMultiComboBoxHasToken");
 		}
@@ -51,7 +51,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBaseRenderer', 'sap/ui/core/Rende
 	 */
 	MultiComboBoxRenderer.addInnerClasses = function(oRm, oControl) {
 		ComboBoxBaseRenderer.addInnerClasses.apply(this, arguments);
-		oRm.addClass(MultiComboBoxRenderer.CSS_CLASS + "InputInner");
+		oRm.addClass(MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX + "InputInner");
 	};
 
 	/**
@@ -63,7 +63,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBaseRenderer', 'sap/ui/core/Rende
 	 */
 	MultiComboBoxRenderer.addButtonClasses = function(oRm, oControl) {
 		ComboBoxBaseRenderer.addButtonClasses.apply(this, arguments);
-		oRm.addClass(MultiComboBoxRenderer.CSS_CLASS + "Arrow");
+		oRm.addClass(MultiComboBoxRenderer.CSS_CLASS_MULTICOMBOBOX + "Arrow");
 	};
 
 	MultiComboBoxRenderer.openInputTag = function(oRm, oControl) {

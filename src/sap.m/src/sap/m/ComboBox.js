@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ComboBox.
-sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','./ComboBoxRenderer', './SelectList', './library'],
-	function(jQuery, ComboBoxBase, ComboBoxBaseRenderer, ComboBoxRenderer, SelectList, library) {
+sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './SelectList', './library'],
+	function(jQuery, ComboBoxBase, ComboBoxRenderer, SelectList, library) {
 		"use strict";
 
 		/**
@@ -240,7 +240,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 		 * @private
 		 */
 		ComboBox.prototype._createDialog = function() {
-			var CSS_CLASS = sap.m.ComboBoxBaseRenderer.CSS_CLASS;
+			var CSS_CLASS = this.getRenderer().CSS_CLASS_COMBOBOXBASE;
 			var oDialog = new sap.m.Dialog({
 				stretch: true,
 				customHeader: new sap.m.Bar({
@@ -783,7 +783,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 		 */
 		ComboBox.prototype.createPicker = function(sPickerType) {
 			var oPicker = this.getAggregation("picker"),
-				CSS_CLASS = ComboBoxBaseRenderer.CSS_CLASS;
+				CSS_CLASS = this.getRenderer().CSS_CLASS_COMBOBOXBASE;
 
 			if (oPicker) {
 				return oPicker;
@@ -858,7 +858,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 				oDomRef = this.getFocusDomRef();
 
 			// add the active state to the control field
-			this.addStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed");
+			this.addStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
 
 			if (oDomRef) {
 
@@ -915,7 +915,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 			}
 
 			// remove the active state of the control's field
-			this.removeStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed");
+			this.removeStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
 			sap.ui.Device.resize.detachHandler(this._synchronizePickerWidth, this);
 		};
 
