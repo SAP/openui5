@@ -125,10 +125,6 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 		return this;
 	};
 
-	MessageStrip.prototype.onBeforeRendering = function () {
-		MSUtils.setIconIfVisible.call(this);
-	};
-
 	/**
 	 * Handles tap/click
 	 * @type void
