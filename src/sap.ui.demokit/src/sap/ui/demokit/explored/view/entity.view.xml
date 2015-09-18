@@ -156,7 +156,7 @@
 											</Link>
 											<Text text="{defaultValue}" wrapping="false" />
 											<l:VerticalLayout>
-												<Text text="{doc}" />
+												<core:HTML content="{doc}" />
 												<ObjectStatus
 													text="{deprecatedDescription}"
 													state="Warning"	/>
@@ -207,7 +207,7 @@
 												</customData>
 											</Link>
 											<l:VerticalLayout>
-												<Text text="{doc}" />
+												<core:HTML content="{doc}" />
 												<ObjectStatus
 													text="{deprecatedDescription}"
 													state="Warning"	/>
@@ -257,7 +257,7 @@
 												</customData>
 											</Link>
 											<l:VerticalLayout>
-												<Text text="{doc}" />
+												<core:HTML content="{doc}" />
 												<ObjectStatus
 													text="{deprecatedDescription}"
 													state="Warning"	/>
@@ -301,7 +301,7 @@
 												</customData>
 											</Link>
 											<l:VerticalLayout>
-												<Text text="{doc}" />
+												<core:HTML content="{doc}" />
 												<ObjectStatus
 													text="{deprecatedDescription}"
 													state="Warning"	/>
@@ -345,7 +345,7 @@
 												</customData>
 											</Link>
 											<l:VerticalLayout>
-												<Text text="{doc}" />
+												<core:HTML content="{doc}" />
 												<ObjectStatus
 													text="{deprecatedDescription}"
 													state="Warning"	/>
