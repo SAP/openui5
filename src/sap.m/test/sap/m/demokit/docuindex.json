@@ -749,6 +749,7 @@
 		  "since": "1.12",
 		  "samples": [
 			"sap.m.sample.Table",
+			"sap.m.sample.TableColumnWidth",
 			"sap.m.sample.TableBreadcrumb",
 			"sap.m.sample.TableLayout",
 			"sap.m.sample.TableMergeCells",
@@ -1662,6 +1663,11 @@
 		  "id": "sap.m.sample.TableLayout",
 		  "name": "Table - Fixed vs Auto Layout",
 		  "description": "You can use fixedLayout property to define the layout algorithm to be used for the table cells, rows, and columns.\nWhen fixedLayout property is set to false, the width of the table and its cells depends on the content thereof. The column width is set by the widest unbreakable content in the cells.\nBy default, table is rendered with fixed layout algorithm. This means the horizontal layout only depends on the table's width and the width of the columns, not the contents of the cells. Cells in subsequent rows do not affect column widths."
+		},
+		{
+		  "id": "sap.m.sample.TableColumnWidth",
+		  "name": "Table - Defining Column Width",
+		  "description": "While defining the column width you can use percent values but you should be careful with them. Click to see some traps and tipps."
 		},
 		{
 		  "id": "sap.m.sample.TablePerso",
