@@ -34,6 +34,11 @@
 			var oLocaleUS = new sap.ui.core.Locale("en-US");
 			var oLocaleDataUS = sap.ui.core.LocaleData.getInstance(oLocaleUS);
 
+			var bStartDateChanged = false;
+			var handleStartDateChange = function(oEvent){
+				bStartDateChanged = true;
+			};
+
 			var oCal1 = new sap.ui.unified.CalendarMonthInterval("Cal1",{
 				select: function(oEvent){
 					bSelectFired = true;
@@ -42,10 +47,12 @@
 					if (aSelectedDates.length > 0 ) {
 						oSelectedDate = aSelectedDates[0].getStartDate();
 					}
-				}
+				},
+			startDateChange: handleStartDateChange
 			}).placeAt("uiArea1");
 
 			var oCal2 = new sap.ui.unified.CalendarMonthInterval("Cal2",{
+				startDateChange: handleStartDateChange,
 				width: "1500px",
 				startDate: new Date("2015", "7", "4"),
 				months: 18,
@@ -140,7 +147,9 @@
 
 			module("change date via navigation");
 			test("next/prev months", function() {
+				bStartDateChanged = false;
 				qutils.triggerEvent("click", "Cal2--Head-next");
+				ok(bStartDateChanged, "Calendar2: startDateChangeEvent fired");
 				var oStartDate = oCal2.getStartDate();
 				equal(oFormatYyyymmdd.format(oStartDate), "20150901", "Calendar2: new start date");
 				var $MonthsRow = sap.ui.getCore().byId("Cal2").getAggregation("monthsRow").$();
@@ -148,7 +157,9 @@
 				equal(jQuery(aMonths[0]).attr("data-sap-month"), "201509", "Calendar2: new start month rendered");
 				equal(jQuery(aMonths[1]).attr("tabindex"), "0", "Calendar2: second month still has focus");
 
+				bStartDateChanged = false;
 				qutils.triggerEvent("click", "Cal2--Head-prev");
+				ok(bStartDateChanged, "Calendar2: startDateChangeEvent fired");
 				oStartDate = oCal2.getStartDate();
 				equal(oFormatYyyymmdd.format(oStartDate), "20140301", "Calendar2: new start date");
 				aMonths = $MonthsRow.find(".sapUiCalItem");
@@ -201,6 +212,7 @@
 
 			module("Interaction");
 			test("year switch", function() {
+				bStartDateChanged = false;
 				qutils.triggerEvent("click", "Cal1--Head-B2");
 				var $NewYear = jQuery("#Cal1--YP-y2013"); // use keybord to select year to prevent event processing from ItemNavigation
 				$NewYear.focus();
@@ -210,6 +222,7 @@
 				var $MonthsRow = sap.ui.getCore().byId("Cal1").getAggregation("monthsRow").$();
 				var aMonths = $MonthsRow.find(".sapUiCalItem");
 				equal(jQuery(aMonths[0]).attr("data-sap-month"), "201303", "Calendar1: new start month");
+				ok(bStartDateChanged, "Calendar2: startDateChangeEvent fired");
 			});
 
 			test("select event", function() {

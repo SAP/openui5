@@ -81,6 +81,12 @@
 				},
 				cancel: function(oEvent){
 					alert("Cancel");
+				},
+				startDateChange: function(oEvent){
+					var oTF = sap.ui.getCore().byId("TF2");
+					var oCalendar = oEvent.oSource;
+					var oDate = oCalendar.getStartDate();
+					oTF.setValue(oFormatYyyymmdd.format(oDate));
 				}
 			}).placeAt("sample1");
 
@@ -106,6 +112,31 @@
 					}else if(!sValue){
 						oCalendar.destroySelectedDates();
 					}
+				}
+			}).placeAt("event1");
+
+			oLabel = new sap.ui.commons.Label({text: "start date", labelFor: "TF2"}).placeAt("event1");
+			oInput = new sap.ui.commons.TextField("TF2",{
+				editable: true,
+				placeholder: "yyyyMMdd",
+				change: function(oEvent){
+					var oTF = oEvent.oSource;
+					var sValue = oEvent.getParameter('newValue');
+					var oCalendar = sap.ui.getCore().byId("Cal1");
+					var oDate = oFormatYyyymmdd.parse(sValue);
+					if(oDate){
+						oCalendar.setStartDate(oDate);
+						oTF.setValueState(sap.ui.core.ValueState.None);
+					}else {
+						oTF.setValueState(sap.ui.core.ValueState.Error);
+					}
+				}
+			}).placeAt("event1");
+
+			var oButton = new sap.ui.commons.Button({
+				text: "focus now",
+				press: function(oEvent){
+					sap.ui.getCore().byId("Cal1").focusDate(new Date());
 				}
 			}).placeAt("event1");
 
