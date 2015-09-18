@@ -769,6 +769,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			oConfig.areas = undefined;
 		}
 
+		this.oThemeCheck.fireThemeChangedEvent(true);
+
 		// execute a configured init hook
 		if ( oConfig.onInit ) {
 			if ( typeof oConfig.onInit === "function" ) {
@@ -779,8 +781,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			}
 			oConfig.onInit = undefined;
 		}
-
-		this.oThemeCheck.fireThemeChangedEvent(true);
 
 		// load the root component
 		var sRootComponent = oConfig.getRootComponent();
