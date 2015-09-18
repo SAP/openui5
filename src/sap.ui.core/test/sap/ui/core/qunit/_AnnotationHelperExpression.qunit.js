@@ -1333,6 +1333,19 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	test("getExpression: undefined SHOULD return undefined", function () {
+		var oInterface = null, // MUST NOT be used
+			oRawValue = undefined, // "code under test"
+			bWithType = undefined; // don't care!
+
+		this.mock(Basics).expects("resultToString").never();
+		this.mock(Basics).expects("toErrorString").never();
+		this.mock(Expression).expects("expression").never();
+
+		strictEqual(Expression.getExpression(oInterface, oRawValue, bWithType), undefined);
+	});
+
+	//*********************************************************************************************
 	test("parseDate", function () {
 		strictEqual(Expression.parseDate("2015-03-08").getTime(), Date.UTC(2015, 2, 8));
 		strictEqual(Expression.parseDate("2015-02-30"), null);

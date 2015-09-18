@@ -422,10 +422,15 @@ sap.ui.define([
 		 * @param {boolean} bWithType
 		 *   if <code>true</code>, embedded bindings contain type information
 		 * @returns {string}
-		 *   the expression value or "Unsupported: oRawValue" in case of an error.
+		 *   the expression value or "Unsupported: oRawValue" in case of an error or
+		 *   <code>undefined</code> in case the raw value is undefined.
 		 */
 		getExpression: function (oInterface, oRawValue, bWithType) {
 			var oResult;
+
+			if (oRawValue === undefined) {
+				return undefined;
+			}
 
 			try {
 				oResult = Expression.expression(oInterface, {
