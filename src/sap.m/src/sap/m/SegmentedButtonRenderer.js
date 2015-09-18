@@ -25,8 +25,7 @@ sap.ui.define(['jquery.sap.global'],
 			oButton,
 			sTooltip,
 			sButtonWidth,
-			sButtonTextDirection,
-			i = 0;
+			sButtonTextDirection;
 
 		// Select representation mockup
 		if (oControl._bInOverflow) {
@@ -41,6 +40,11 @@ sap.ui.define(['jquery.sap.global'],
 
 		// write the HTML into the render manager
 		oRM.write("<ul");
+
+
+		if (SegmentedButtonRenderer._addAllIconsClass(aButtons)) {
+			oRM.addClass("sapMSegBIcons");
+		}
 		oRM.addClass("sapMSegB");
 		oRM.addClass("sapMSegBHide");
 		oRM.writeClasses();
@@ -61,7 +65,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		oRM.write(">");
 
-		for (; i < aButtons.length; i++) {
+		for (var i = 0; i < aButtons.length; i++) {
 			oButton = aButtons[i];
 
 			var sButtonText = oButton.getText(),
@@ -152,6 +156,15 @@ sap.ui.define(['jquery.sap.global'],
 			oRM.write("</li>");
 		}
 		oRM.write("</ul>");
+	};
+
+	SegmentedButtonRenderer._addAllIconsClass = function (aButtons) {
+		for (var i = 0; i < aButtons.length; i++) {
+			if (!aButtons[i].getIcon()) {
+				return false;
+			}
+		}
+		return true;
 	};
 
 	return SegmentedButtonRenderer;

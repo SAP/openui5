@@ -280,20 +280,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		//Flag if control is inside a dialog
 		this._bInsideDialog = (this.$().closest('.sapMDialogScrollCont').length > 0);
 
-		var aButtons = this.getButtons();
-		var bAllIcons = true;
-		var that = this;
-		for (var i = 0; i < aButtons.length; i++) {
-			if (aButtons[i].getIcon() === "") {
-				bAllIcons = false;
-			}
 
-			// update ARIA information of Buttons
-			aButtons[i].$().attr("aria-posinset", i + 1).attr("aria-setsize", aButtons.length);
-		}
-		if (bAllIcons) {
-			this.$().toggleClass("sapMSegBIcons", true);
-		}
+		var that = this;
 		if (this._isMie || this._bInsideDialog) {
 			setTimeout(function () {
 				that._fCalcBtnWidth();
