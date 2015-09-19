@@ -500,7 +500,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			jQuery.browser.fVersion = b.version;
 			jQuery.browser.mobile = b.mobile;
 
-			id = id + Math.floor(b.version);
+			id = id + (b.version === -1 ? "" : Math.floor(b.version));
 			$html.attr("data-sap-ui-browser", id);
 			log.debug("Browser-Id: " + id, null, METHOD);
 		}
