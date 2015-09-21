@@ -22,9 +22,7 @@ sap.ui.define([
 			// detail page is busy indication immediately so there is no break in
 			// between the busy indication for loading the view's meta data
 			var oViewModel = new JSONModel({
-					shareSendEmailSubject: "",
-					shareSendEmailMessage: "",
-					busy: true
+					busy: false
 				});
 
 			this.getRouter().getRoute("post").attachPatternMatched(this._onPostMatched, this);
@@ -61,7 +59,6 @@ sap.ui.define([
 			this.getView().bindElement({
 				path: "/Posts('" + oEvent.getParameter("arguments").postId + "')",
 				events: {
-					change: this._onBindingChange.bind(this),
 					dataRequested: function () {
 						oDataModel.metadataLoaded().then(function () {
 							// Busy indicator on view should only be set if metadata is loaded,
@@ -76,20 +73,6 @@ sap.ui.define([
 					}
 				}
 			});
-		},
-
-		_onBindingChange : function (oEvent) {
-			var oView = this.getView(),
-				oViewModel = this.getModel("postView"),
-				oResourceBundle = this.getResourceBundle(),
-				oPost = oView.getBindingContext().getObject(),
-				sPostId = oPost.PostID;
-
-			// Everything went fine.
-			oViewModel.setProperty("/shareSendEmailSubject",
-				oResourceBundle.getText("shareSendEmailObjectSubject", [sPostId]));
-			oViewModel.setProperty("/shareSendEmailMessage",
-				oResourceBundle.getText("shareSendEmailObjectMessage", [oPost.Title, sPostId, window.location.href]));
 		}
 
 	});
