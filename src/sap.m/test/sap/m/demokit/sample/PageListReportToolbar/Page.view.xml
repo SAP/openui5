@@ -5,7 +5,7 @@
 	xmlns:fb="sap.ui.comp.filterbar"
 	xmlns:var="sap.ui.comp.variants"
 	height="100%">
-	<Page enableScrolling="true" title="Title" class="sapMSampleFioriListReportPageOverflow">
+	<Page enableScrolling="true" title="Title">
 		<content>
 			<VBox fitContainer="true">
 				<fb:FilterBar>
@@ -75,7 +75,7 @@
 						<t:AnalyticalColumn />
 					</t:columns>
 					<t:layoutData>
-						<FlexItemData growFactor="1" baseSize="0%" styleClass="sapMSampleFioriListReportTable" />
+						<FlexItemData growFactor="1" baseSize="0%" styleClass="sapUiResponsiveContentPadding" />
 					</t:layoutData>
 				</t:AnalyticalTable>
 			</VBox>
