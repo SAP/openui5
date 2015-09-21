@@ -1134,7 +1134,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 		var focusedControlId = sap.ui.getCore().getCurrentFocusedControlId();
 		if (focusedControlId) {
 			// a SAPUI5 control was focused before
-			var oFocusedControl = sap.ui.getCore().getControl(focusedControlId);
+			var oFocusedControl = sap.ui.getCore().byId(focusedControlId);
 			_oPreviousFocus = {
 				'sFocusId' : focusedControlId,
 				// add empty oFocusInfo to avoid the need for all recipients to check
@@ -1184,7 +1184,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Ob
 	 */
 	Popup.applyFocusInfo = function(oPreviousFocus) {
 		if (oPreviousFocus) {
-			var oFocusedControl = sap.ui.getCore().getControl(oPreviousFocus.sFocusId);
+			var oFocusedControl = sap.ui.getCore().byId(oPreviousFocus.sFocusId);
 			if (oFocusedControl) {
 
 				// if a SAPUI5 control had been focused, just re-focus it

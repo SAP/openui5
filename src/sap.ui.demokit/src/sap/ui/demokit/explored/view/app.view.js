@@ -1,5 +1,5 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
 sap.ui.jsview("sap.ui.demokit.explored.view.app", {

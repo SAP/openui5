@@ -4,7 +4,7 @@
 
 // Provides control sap.m.QuickViewBase.
 sap.ui.define([
-	'jquery.sap.global', './library', 'sap/ui/core/Control', './NavContainer', './Page'],
+	'jquery.sap.global', './library', 'sap/ui/core/Control', './NavContainer', './Page', 'jquery.sap.dom'],
 	function(jQuery, library, Control, NavContainer, Page) {
 	"use strict";
 
@@ -296,8 +296,8 @@ sap.ui.define([
 			var sToPageId = oEvent.getParameter('toId');
 			var sFromPageId = oEvent.getParameter('fromId');
 
-			var iFromPageIndex = jQuery('#' + sFromPageId).index();
-			var iToPageIndex = jQuery('#' + sToPageId).index();
+			var iFromPageIndex = jQuery.sap.byId(sFromPageId).index();
+			var iToPageIndex = jQuery.sap.byId(sToPageId).index();
 
 			if (iToPageIndex == -1 || iToPageIndex > iFromPageIndex) {
 				oToPage.addStyleClass('sapMNavItemOffset');
@@ -315,8 +315,8 @@ sap.ui.define([
 			var sToPageId = oEvent.getParameter('toId');
 			var sFromPageId = oEvent.getParameter('fromId');
 
-			var iFromPageIndex = jQuery('#' + sFromPageId).index();
-			var iToPageIndex = jQuery('#' + sToPageId).index();
+			var iFromPageIndex = jQuery.sap.byId(sFromPageId).index();
+			var iToPageIndex = jQuery.sap.byId(sToPageId).index();
 
 			if (iToPageIndex > iFromPageIndex) {
 				oToPage.removeStyleClass('sapMNavItemOffset');

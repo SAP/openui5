@@ -96,10 +96,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', 'sap/ui/core/su
 			this.$("clear").click(jQuery.proxy(function(oEvent) {
 				this._oStub.sendEvent(this.getId() + "Clear");
 			}, this));
-	/*		jQuery.sap.byId(this.getId() + "-start").click(jQuery.proxy(function(oEvent) {
+	/*		this.$("start").click(jQuery.proxy(function(oEvent) {
 				this._oStub.sendEvent(this.getId() + "Start");
 			}, this));
-			jQuery.sap.byId(this.getId() + "-end").click(jQuery.proxy(function(oEvent) {
+			this.$("end").click(jQuery.proxy(function(oEvent) {
 				this._oStub.sendEvent(this.getId() + "End");
 			}, this));
 	*/

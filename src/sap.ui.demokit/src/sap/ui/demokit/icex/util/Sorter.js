@@ -1,5 +1,5 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
 jQuery.sap.declare("sap.ui.demokit.icex.util.Sorter");

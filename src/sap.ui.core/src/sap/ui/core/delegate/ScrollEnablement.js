@@ -767,7 +767,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 	
 				if (!(this._oPullDown && this._oPullDown._bTouchMode)
 					&& !this._fnScrollLoadCallback
-					&& !!!sap.ui.Device.browser.internet_explorer) {
+					&& !sap.ui.Device.browser.internet_explorer) {
 					// for IE the resize listener must remain in place for the case when navigating away and coming back.
 					// For the other browsers it seems to work fine without.
 					sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);

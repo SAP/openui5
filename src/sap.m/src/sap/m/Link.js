@@ -197,11 +197,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if ($this.length) { // only when actually rendered
 			$this.toggleClass("sapMLnkSubtle", bSubtle);
 			if (bSubtle) {
-				if (!jQuery.sap.domById(this.getId() + "-linkSubtle")) {
+				if (!this.getDomRef("linkSubtle")) {
 					$this.append("<label id='" + this.getId() + "-linkSubtle" + "' class='sapUiHidden'>" + this._getLinkDescription("LINK_SUBTLE") + "</label>");
 				}
 			} else {
-				jQuery.sap.byId(this.getId() + "-linkSubtle").remove();
+				this.$("linkSubtle").remove();
 			}
 		}
 		return this;
@@ -214,11 +214,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if ($this.length) { // only when actually rendered
 			$this.toggleClass("sapMLnkEmphasized", bEmphasized);
 			if (bEmphasized) { // strictly spoken this should only be done when accessibility mode is true. But it is true by default, so not sure it is worth checking...
-				if (!jQuery.sap.domById(this.getId() + "-linkEmphasized")) {
+				if (!this.getDomRef("linkEmphasized")) {
 					$this.append("<label id='" + this.getId() + "-linkEmphasized" + "' class='sapUiHidden'>" + this._getLinkDescription("LINK_EMPHASIZED") + "</label>");
 				}
 			} else {
-				jQuery.sap.byId(this.getId() + "-linkEmphasized").remove();
+				this.$("linkEmphasized").remove();
 			}
 		}
 		return this;

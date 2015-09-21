@@ -40,10 +40,10 @@ sap.ui.define(["jquery.sap.global"],
 		}
 
 		if (oIconInfo) {
-			oRm.writeAttribute("data-sap-ui-icon-content", oIconInfo.content);
+			oRm.writeAttributeEscaped("data-sap-ui-icon-content", oIconInfo.content);
 			oRm.writeAttribute("role", "img");
 			oRm.writeAttributeEscaped("aria-label", sTooltip || oIconInfo.name);
-			oRm.addStyle("font-family", "'" + oIconInfo.fontFamily + "'");
+			oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oIconInfo.fontFamily) + "'");
 		}
 
 		if (sWidth) {
@@ -56,11 +56,11 @@ sap.ui.define(["jquery.sap.global"],
 		}
 
 		if (!(sColor in sap.ui.core.IconColor)) {
-			oRm.addStyle("color", sColor);
+			oRm.addStyle("color", jQuery.sap.encodeHTML(sColor));
 		}
 
 		if (!(sBackgroundColor in sap.ui.core.IconColor)) {
-			oRm.addStyle("background-color", sBackgroundColor);
+			oRm.addStyle("background-color", jQuery.sap.encodeHTML(sBackgroundColor));
 		}
 
 		if (sSize) {

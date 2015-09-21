@@ -44,7 +44,7 @@ sap.ui.define(['jquery.sap.global'],
 	
 		if (oControl.getShowHeader()) {
 			rm.write("<div class=\"sapUiUx3ExactBrwsrHd\"><h2 id=\"" + oControl.getId() + "-hdtitle\">");
-			rm.write(jQuery.sap.escapeHTML(oControl.getHeaderTitle()));
+			rm.write(jQuery.sap.encodeHTML(oControl.getHeaderTitle()));
 			rm.write("</h2><div class=\"sapUiUx3ExactBrwsrHdTool\" role=\"toolbar\">");
 			if (oControl.getEnableSave()) {
 				rm.renderControl(oControl._saveButton);

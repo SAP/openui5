@@ -442,12 +442,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			var sInitFocus = this.getInitialFocus(),
 				oFocusCtrl;
-			if (sInitFocus && (oFocusCtrl = sap.ui.getCore().getControl(sInitFocus))) { // an additional previous check was  oFocusCtrl.getParent() === this  which prevented nested children from being focused
+			if (sInitFocus && (oFocusCtrl = sap.ui.getCore().byId(sInitFocus))) { // an additional previous check was  oFocusCtrl.getParent() === this  which prevented nested children from being focused
 				oFocusCtrl.focus();
 				this._bInitialFocusSet = true;
 			} else {
 				sInitFocus = this.getDefaultButton();
-				if (sInitFocus && (oFocusCtrl = sap.ui.getCore().getControl(sInitFocus)) && oFocusCtrl.getParent() === this) {
+				if (sInitFocus && (oFocusCtrl = sap.ui.getCore().byId(sInitFocus)) && oFocusCtrl.getParent() === this) {
 					oFocusCtrl.focus();
 					this._bInitialFocusSet = true;
 				} else if (this.getButtons().length > 0) {
@@ -647,7 +647,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 */
 		Dialog.prototype.restoreFocus = function () {
 			if (this.oRestoreFocusInfo && this.oPopup.bOpen) { // do not restore the focus if Dialog is no longer open
-				var oCtrl = sap.ui.getCore().getControl(this.oRestoreFocusInfo.sFocusId);
+				var oCtrl = sap.ui.getCore().byId(this.oRestoreFocusInfo.sFocusId);
 				if (oCtrl) {
 					oCtrl.applyFocusInfo(this.oRestoreFocusInfo.oFocusInfo);
 				}

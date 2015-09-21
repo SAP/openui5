@@ -738,7 +738,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					if (sChildId === this.getId()) {
 						return;
 					}
-					var oCtrl = sap.ui.getCore().getControl(sChildId);
+					var oCtrl = sap.ui.getCore().byId(sChildId);
 					//else
 					var oContent;
 					if (oCtrl && this.popup && (oContent = this.popup.getContent()) &&

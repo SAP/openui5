@@ -72,7 +72,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.en
 				buffer.push(oData.version, " (built at ", oData.build, ", last change ", oData.change, ")");
 			});
 			line(html, true, true, "User Agent", function(buffer){
-				buffer.push(jQuery.sap.escapeHTML(oData.useragent), (oData.docmode ? ", Document Mode '" + oData.docmode + "'" : ""));
+				buffer.push(jQuery.sap.encodeHTML(oData.useragent), (oData.docmode ? ", Document Mode '" + oData.docmode + "'" : ""));
 			});
 			line(html, true, true, "Debug Sources", function(buffer){
 				buffer.push((oData.debug ? "ON" : "OFF"), "<a href='javascript:void(0);' id='", that.getId(), "-tggleDbgSrc' class='sapUiSupportLink'>Toggle</a>");
@@ -290,13 +290,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', 'jquery.sap.en
 	
 	
 		function line(buffer, right, border, label, content){
-			buffer.push("<tr><td ", right ? "align='right' " : "", "valign='top'>", "<label class='sapUiSupportLabel'>", jQuery.sap.escapeHTML(label), "</label></td><td",
+			buffer.push("<tr><td ", right ? "align='right' " : "", "valign='top'>", "<label class='sapUiSupportLabel'>", jQuery.sap.encodeHTML(label), "</label></td><td",
 					border ? " class='sapUiSupportTechInfoBorder'" : "", ">");
 			var ctnt = content;
 			if (jQuery.isFunction(content)) {
 				ctnt = content(buffer) || "";
 			}
-			buffer.push(jQuery.sap.escapeHTML(ctnt));
+			buffer.push(jQuery.sap.encodeHTML(ctnt));
 			buffer.push("</td></tr>");
 		}
 	

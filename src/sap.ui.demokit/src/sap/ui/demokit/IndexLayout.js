@@ -223,7 +223,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 		var top = 0,
 			left = 0;
 			  
-		jQuery.sap.byId(this.getId() + "-cntnt").css({
+		this.$("cntnt").css({
 			"padding-left": IndexLayout._MINMARGIN + "px",
 			"width": (t * itemWidth + IndexLayout._MINMARGIN * 2) + "px",
 			"height": Math.ceil(itemCount / t) * itemHeight
@@ -302,7 +302,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 		var width = this._scale(this._itemWidth);
 		var height = this._scale(this._itemHeight);
 		
-		jQuery.sap.byId(this.getId() + "-cntnt").children().each(function(){
+		this.$("cntnt").children().each(function(){
 			jQuery(this).css({width: width, height: height});
 		});
 		

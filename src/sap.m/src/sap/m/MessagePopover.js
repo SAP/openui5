@@ -5,7 +5,7 @@
 // Provides control sap.m.MessagePopover.
 sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "sap/m/Button", "sap/m/Toolbar", "sap/m/ToolbarSpacer", "./List",
 				"./StandardListItem", "./library", "sap/ui/core/Control", "sap/m/PlacementType", "sap/ui/core/IconPool",
-				"sap/ui/core/HTML", "sap/ui/core/Icon", "sap/m/SegmentedButton", "sap/m/Page", "sap/m/NavContainer"],
+				"sap/ui/core/HTML", "sap/ui/core/Icon", "sap/m/SegmentedButton", "sap/m/Page", "sap/m/NavContainer", "jquery.sap.dom"],
 	function (jQuery, ResponsivePopover, Button, Toolbar, ToolbarSpacer, List,
 			 StandardListItem, library, Control, PlacementType, IconPool,
 			 HTML, Icon, SegmentedButton, Page, NavContainer) {
