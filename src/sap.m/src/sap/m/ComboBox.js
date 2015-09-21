@@ -669,7 +669,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 				// note: This occurs only in some specific mobile devices
 				if (sap.ui.Device.system.desktop) {
 					setTimeout(function() {
-						if (document.activeElement === this.getFocusDomRef()) {
+						var oDomRef = this.getFocusDomRef();
+						if (document.activeElement === oDomRef && !this.bFocusoutDueRendering && !jQuery(oDomRef).getSelectedText()) {
 							this.selectText(0, this.getValue().length);
 						}
 					}.bind(this), 0);
