@@ -312,7 +312,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './TextView', './library', 's
 				// Escape fires no keypress in webkit
 				// In Firefox value can not be changed in keydown (onsapescape) event
 				// So the escape event is stored in this._bEsc and the value in this._sValue
-				if (!!!sap.ui.Device.browser.firefox) {
+				if (!sap.ui.Device.browser.firefox) {
 					var that = this;
 					undoTextChange(that);
 				} else {

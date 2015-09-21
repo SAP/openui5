@@ -40,7 +40,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.write(">"); // div element
 
 		oRm.write("<button");
-		oRm.writeAttributeEscaped('id', sId + '-prev');
+		oRm.writeAttribute('id', sId + '-prev');
 		oRm.addClass("sapUiCalHeadPrev");
 		if (!oHead.getEnabledPrevious()) {
 			oRm.addClass("sapUiCalDsbl");
@@ -53,36 +53,36 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.write("</button>");
 
 		oRm.write("<button");
-		oRm.writeAttributeEscaped('id', sId + '-B1');
+		oRm.writeAttribute('id', sId + '-B1');
 		oRm.addClass("sapUiCalHeadB");
 		oRm.addClass("sapUiCalHeadB1");
 		oRm.writeAttribute('tabindex', "-1");
 		oRm.writeClasses();
 		if (oHead.getAriaLabelButton1()) {
-			mAccProps["label"] = oHead.getAriaLabelButton1();
+			mAccProps["label"] = jQuery.sap.encodeHTML(oHead.getAriaLabelButton1());
 		}
 		oRm.writeAccessibilityState(null, mAccProps);
 		mAccProps = {};
 		oRm.write(">"); // button element
-		oRm.write(oHead.getTextButton1() || "");
+		oRm.writeEscaped(oHead.getTextButton1() || "");
 		oRm.write("</button>");
 
 		oRm.write("<button");
-		oRm.writeAttributeEscaped('id', sId + '-B2');
+		oRm.writeAttribute('id', sId + '-B2');
 		oRm.addClass("sapUiCalHeadB");
 		oRm.addClass("sapUiCalHeadB2");
 		oRm.writeAttribute('tabindex', "-1");
 		oRm.writeClasses();
 		if (oHead.getAriaLabelButton2()) {
-			mAccProps["label"] = oHead.getAriaLabelButton2();
+			mAccProps["label"] = jQuery.sap.encodeHTML(oHead.getAriaLabelButton2());
 		}
 		oRm.writeAccessibilityState(null, mAccProps);
 		oRm.write(">"); // button element
-		oRm.write(oHead.getTextButton2() || "");
+		oRm.writeEscaped(oHead.getTextButton2() || "");
 		oRm.write("</button>");
 
 		oRm.write("<button");
-		oRm.writeAttributeEscaped('id', sId + '-next');
+		oRm.writeAttribute('id', sId + '-next');
 		oRm.addClass("sapUiCalHeadNext");
 		if (!oHead.getEnabledNext()) {
 			oRm.addClass("sapUiCalDsbl");

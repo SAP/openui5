@@ -457,7 +457,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (bShouldSupressRendering) {
 				// Get text to have the type conversation for non-string values done by the framework
 				sText = this.getText();
-				oDomRef.innerHTML = jQuery.sap.escapeHTML(sText);
+				oDomRef.innerHTML = jQuery.sap.encodeHTML(sText);
 
 				// Check if an icon is set
 				if (this.getIcon()) {

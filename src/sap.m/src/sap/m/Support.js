@@ -72,12 +72,12 @@ sap.ui.define(['jquery.sap.global'],
 
 		// copied from core
 		function line(buffer, right, border, label, content) {
-			buffer.push("<tr class='sapUiSelectable'><td class='sapUiSupportTechInfoBorder sapUiSelectable'><label class='sapUiSupportLabel sapUiSelectable'>", jQuery.sap.escapeHTML(label), "</label><br>");
+			buffer.push("<tr class='sapUiSelectable'><td class='sapUiSupportTechInfoBorder sapUiSelectable'><label class='sapUiSupportLabel sapUiSelectable'>", jQuery.sap.encodeHTML(label), "</label><br>");
 			var ctnt = content;
 			if ($.isFunction(content)) {
 				ctnt = content(buffer) || "";
 			}
-			buffer.push($.sap.escapeHTML(ctnt));
+			buffer.push($.sap.encodeHTML(ctnt));
 			buffer.push("</td></tr>");
 		}
 

@@ -179,7 +179,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 			// check column properties
 			if (oColumn) {
 				cls = oColumn.getStyleClass(true);
-				cls && rm.addClass(cls);
+				cls && rm.addClass(jQuery.sap.encodeHTML(cls));
 				
 				// aria for virtual keyboard mode
 				oHeader = oColumn.getHeader();
@@ -299,7 +299,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 			/* row start */
 			rm.write("<div");
 			rm.addClass("sapMListTblSubCntRow");
-			sStyleClass && rm.addClass(sStyleClass);
+			sStyleClass && rm.addClass(jQuery.sap.encodeHTML(sStyleClass));
 			rm.writeClasses();
 			rm.write(">");
 	

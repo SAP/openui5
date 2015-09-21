@@ -215,7 +215,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		// logout button
 		if (oControl.getShowLogoutButton()) {
 			rm.write("<a id='" + oControl.getId() + "-logout' title='");
-			rm.write(oControl.getLogoutButtonTooltip() ? jQuery.sap.escapeHTML(oControl.getLogoutButtonTooltip()) : rb.getText("SHELL_LOGOUT"));
+			rm.write(oControl.getLogoutButtonTooltip() ? jQuery.sap.encodeHTML(oControl.getLogoutButtonTooltip()) : rb.getText("SHELL_LOGOUT"));
 			rm.write("' tabindex='0' role='button' class='sapUiUx3ShellHeaderButton sapUiUx3ShellHeader-logout'></a>");
 		}
 		rm.write("</span>");
