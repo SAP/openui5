@@ -16,7 +16,8 @@
 		"links": [
 			{
 				"text": "Shopping Cart",
-				"ref": "test-resources/sap/m/demokit/sample/ShoppingCart/webapp/index.html",
+				"ref": "test-resources/sap/m/demokit/cart/index.html",
+				"config": "test-resources/sap/m/demokit/cart/demoapp.json",
 				"icon": "sapmdemo/cart",
 				"desc": "The classic business process of finding & ordering products"
 			},
@@ -1003,7 +1004,6 @@
 			"since" : "1.11",
 			"samples" : [
 				"sap.m.sample.HelloWorld",
-				"sap.m.sample.ShoppingCart",
 				"sap.m.sample.Worklist"
 			]
 		}
@@ -1973,21 +1973,6 @@
 		  "id": "sap.m.sample.DraftIndicator",
 		  "name": "Draft Indicator",
 		  "description": "The Draft Indicator shows that eighter currently a draft is saving or that it is already saved. It does not block the current UI screen so other operations could be triggered in parallel."
-		},
-		{
-		  "id": "sap.m.sample.ShoppingCart",
-		  "name": "Shopping Cart",
-		  "description": "The classic business process of finding & ordering products"
-		},
-		{
-			"id": "sap.m.sample.HelloWorld",
-			"name": "Hello World",
-			"description": "This is where it all starts when developing with UI5"
-		},
-		{
-			"id": "sap.m.sample.Worklist",
-			"name": "Worklist",
-			"description": "Simple starting point for a worklist-style app according to the best practices"
 		}
 	  ]
 	}
