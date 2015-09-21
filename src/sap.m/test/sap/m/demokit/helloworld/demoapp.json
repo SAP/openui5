@@ -1,0 +1,6 @@
+{
+	"cwd": "test-resources/sap/m/demokit/helloworld/",
+	"files" : [
+		"index.html"
+	]
+}
