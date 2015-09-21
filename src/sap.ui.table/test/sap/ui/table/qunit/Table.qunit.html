@@ -325,6 +325,30 @@
 		oMenu.close();
 	});
 
+	test("ColumnMenuOpen Event", function() {
+		var oColumn = oTable.getColumns()[1];
+		var oMenu = oColumn.getMenu();
+		var fnHandler = function(oEvent) {
+			deepEqual(oEvent.getSource(), oColumn, "Correct Event Source");
+			deepEqual(oEvent.getParameter("menu"), oMenu, "Correct Column Menu Parameter");
+		};
+
+		var fnHandlerPreventDefault = function(oEvent) {
+			oEvent.preventDefault();
+		};
+
+		oColumn.attachColumnMenuOpen(fnHandler);
+		oColumn._openMenu();
+		equals(oMenu.getPopup().getOpenState(), sap.ui.core.OpenState.OPEN, "ColumnMenu open");
+		oMenu.close();
+		oColumn.detachColumnMenuOpen(fnHandler);
+
+		oColumn.attachColumnMenuOpen(fnHandlerPreventDefault);
+		oColumn._openMenu();
+		equals(oMenu.getPopup().getOpenState(), sap.ui.core.OpenState.CLOSED, "PreventDefault, ColumnMenu not open");
+		oColumn.detachColumnMenuOpen(fnHandlerPreventDefault);
+	});
+
 	test("ColumnVisibilityEvent", 4, function() {
 		oTable.setShowColumnVisibilityMenu(true);
 

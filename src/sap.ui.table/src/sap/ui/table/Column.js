@@ -160,6 +160,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 			 * The menu used by the column. By default the {@link sap.ui.table.ColumnMenu} is used.
 			 */
 			menu : {type : "sap.ui.unified.Menu", multiple : false}
+		},
+
+		events : {
+			/**
+			 * Fires before the column menu is opened.
+			 * @since 1.33.0
+			 */
+			columnMenuOpen: {
+				allowPreventDefault: true,
+				parameters: {
+					/**
+					 * Refence to the selected <code>menu</code> instance to be opened.
+					 */
+					menu: {type: "sap.ui.unified.Menu"}
+				}
+			}
 		}
 	}});
 
@@ -520,14 +536,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 			this._bSkipOpen = false;
 			return;
 		}
+
 		var oMenu = this.getMenu();
-		var eDock = sap.ui.core.Popup.Dock;
-		var oFocusDomRef = oDomRef;
-		if (!oDomRef) {
-			oDomRef = this.getDomRef();
-			oFocusDomRef = this.getFocusDomRef();
+		var bExecuteDefault = this.fireColumnMenuOpen({
+			menu: oMenu
+		});
+
+		if (bExecuteDefault) {
+			var eDock = sap.ui.core.Popup.Dock;
+			var oFocusDomRef = oDomRef;
+			if (!oDomRef) {
+				oDomRef = this.getDomRef();
+				oFocusDomRef = this.getFocusDomRef();
+			}
+			oMenu.open(false, oFocusDomRef, eDock.BeginTop, eDock.BeginBottom, oDomRef, "none none");
 		}
-		oMenu.open(false, oFocusDomRef, eDock.BeginTop, eDock.BeginBottom, oDomRef, "none none");
 	};
 
 

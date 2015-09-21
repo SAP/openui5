@@ -27,10 +27,18 @@ sap.ui.define([
 		onColumnSelect : function (oEvent) {
 			var oCurrentColumn = oEvent.getParameter("column");
 			var oImageColumn = this.getView().byId("image");
+			if (oCurrentColumn === oImageColumn) {
+				MessageToast.show("Column header " + oCurrentColumn.getLabel().getText() + " pressed.");
+			}
+		},
+
+		onColumnMenuOpen: function (oEvent) {
+			var oCurrentColumn = oEvent.getSource();
+			var oImageColumn = this.getView().byId("image");
 			if (oCurrentColumn != oImageColumn) {
 				return;
 			}
-			
+
 			//Just skip opening the column Menu on column "Image"
 			oEvent.preventDefault();
 		},
