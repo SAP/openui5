@@ -67,16 +67,14 @@ function(Element) {
 	 * @public
 	 */
 	Preloader.loadLibraries = function(aLibraryNames) {
-		var aControlsToLoad = [];
+		var aElementsToLoad = [];
 		aLibraryNames.forEach(function(sLibraryName) {
-			var mLib = jQuery.sap.getObject(sLibraryName);
-			for (var sClassName in mLib) {
-				if (mLib.hasOwnProperty(sClassName)) {
-					aControlsToLoad.push(sLibraryName + "." + sClassName);
-				}
-			}	
+			var oLib = sap.ui.getCore().getLoadedLibraries()[sLibraryName];
+			if (oLib) {
+				aElementsToLoad = aElementsToLoad.concat(oLib.controls).concat(oLib.elements);
+			}
 		});
-		return this.load(aControlsToLoad);
+		return this.load(aElementsToLoad);
 	};
 
 	/**
@@ -86,14 +84,7 @@ function(Element) {
 	 * @public
 	 */
 	Preloader.loadAllLibraries = function() {
-		var aLibrariesToLoad = [];
-		var mLibs = sap.ui.getCore().getLoadedLibraries();
-		for (var sLib in mLibs) {
-			if (mLibs.hasOwnProperty(sLib)) {
-				aLibrariesToLoad.push(sLib);
-			}
-		}
-		return this.loadLibraries(aLibrariesToLoad);
+		return this.loadLibraries(sap.ui.getCore().getLoadedLibraries());
 	};
 
 	return Preloader;
