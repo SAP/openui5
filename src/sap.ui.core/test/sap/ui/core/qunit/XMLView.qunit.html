@@ -8,28 +8,26 @@
 
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8" />
 <title>qUnit Page for sap.ui.core.mvc.XMLView +
 sap.ui.core.mvc.Controller</title>
 
-<script id="sap-ui-bootstrap" type="text/javascript"
+<script id="sap-ui-bootstrap"
 	src="../../../../../resources/sap-ui-core.js"
 	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.ui.commons"
-	data-sap-ui-xx-bindingSyntax="complex"
+	data-sap-ui-bindingSyntax="complex"
 	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
 </script>
 
 <link rel="stylesheet"
 	href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"
 	media="screen" />
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script type="text/javascript" src="AnyView.qunit.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="AnyView.qunit.js"></script>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script>
@@ -89,6 +87,8 @@ sap.ui.core.mvc.Controller</title>
 		assert.ok(oElemPanel1 !== oElemPanel2, "DOM for panel should differ"); // Note: this will fail if DOM patching becomes the default 
 		assert.ok(oElemTable1 === oElemTable2, "DOM for table must not differ");
 
+		oView.destroy();
+		sap.ui.getCore().applyChanges();
 	});
 	
 	QUnit.test("async loading", function(assert) {
@@ -136,8 +136,41 @@ sap.ui.core.mvc.Controller</title>
 			assert.ok(oElemTable1 === oElemTable2, "DOM for table must not differ");
 
 			// complete execution only in next tick as the controller code will execute further QUnit asserts in the current tick
-			setTimeout(done);
+			setTimeout(function() {
+				done();
+				oView.destroy();
+				sap.ui.getCore().applyChanges();
+			});
 		});
+	});
+
+	QUnit.test("with custom RenderManager", function(assert) {
+
+		// load view, embed it in a Panel and force rendering
+		var oView = sap.ui.xmlview('example.mvc.test');
+		var oPanel = new sap.ui.commons.Panel({
+			text: "My View",
+			content: [oView]
+		}).placeAt('content');
+		sap.ui.getCore().applyChanges();
+
+		// check that DOM exists
+		var oElemViewBefore = oView.getDomRef();
+		assert.ok(oElemViewBefore, "DOM for view should exist");
+
+		// simulate a rendering with a custom RenderManager
+		var oPanelContent = oPanel.getDomRef("cont");
+		var rm = sap.ui.getCore().createRenderManager();
+		rm.renderControl(oView);
+		rm.flush(oPanelContent);
+
+		// check that DOM has been preserved
+		var oElemViewAfter = oView.getDomRef();
+		assert.ok(oElemViewBefore, "DOM for view should exist after rerendering");
+		assert.ok(oElemViewBefore === oElemViewAfter, "DOM must be the same");
+
+		oPanel.destroy();
+		sap.ui.getCore().applyChanges();
 	});
 
 
