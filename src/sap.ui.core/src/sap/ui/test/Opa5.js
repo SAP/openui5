@@ -10,13 +10,15 @@ sap.ui.define(['jquery.sap.global',
 			'sap/ui/qunit/QUnitUtils',
 			'sap/ui/base/Object',
 			'sap/ui/Device',
+			'./launchers/componentLauncher',
+			'sap/ui/core/routing/HashChanger',
 			'./matchers/Matcher',
 			'./matchers/AggregationFilled',
 			'./matchers/PropertyStrictEquals',
 			'./matchers/Properties',
 			'./matchers/Ancestor',
 			'./matchers/AggregationContainsPropertyEqual'],
-	function($, URI, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Device, Matcher, AggregationFilled, PropertyStrictEquals) {
+	function($, URI, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Device, componentLauncher, HashChanger, Matcher, AggregationFilled, PropertyStrictEquals) {
 		"use strict";
 
 		var oPlugin = new OpaPlugin(),
@@ -26,7 +28,8 @@ sap.ui.define(['jquery.sap.global',
 			oFrameUtils = null,
 			$Frame = null,
 			bFrameLoaded = false,
-			bUi5Loaded = false;
+			bUi5Loaded = false,
+			bComponentLoaded = false;
 
 		/**
 		 * Helps you when writing tests for UI5 applications.
@@ -63,7 +66,7 @@ sap.ui.define(['jquery.sap.global',
 					$Frame = $("#OpaFrame");
 
 					// include styles
-					var sIFrameStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaFrame",".css");
+					var sIFrameStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaCss",".css");
 					jQuery.sap.includeStyleSheet(sIFrameStyleLocation);
 
 					if (!$Frame.length) {
@@ -101,6 +104,69 @@ sap.ui.define(['jquery.sap.global',
 				errorMessage : "unable to load the iframe with the url: " + sSource
 			});
 		}
+
+		/**
+		 * Starts an app in a component.
+		 * @param {object} options An Object that contains the configuration for starting up a component
+		 * @param {object} options.componentConfig will be passed to {@link sap.ui#.component}, please read the respective documentation
+		 * @param {string} [options.hash] sets the hash {@link sap.ui.core.routing.HashChanger.setHash} to the given value.
+		 * If this parameter is omitted, the hash will always be reset to the empty hash - ""
+		 * @returns {jQuery.promise} a promise that gets resolved on success.
+		 * @public
+		 * @function
+		 */
+		Opa5.prototype.iStartMyAppInAComponent = function iStartMyAppInAComponent (options){
+			options = options || {};
+
+			// wait for starting of component launcher
+			this.waitFor({
+				viewName: null,
+				controlType: null,
+				id: null,
+				searchOpenDialogs: false,
+				success: function () {
+					// include stylesheet
+					var sComponentStyleLocation = jQuery.sap.getModulePath("sap.ui.test.OpaCss",".css");
+					jQuery.sap.includeStyleSheet(sComponentStyleLocation);
+
+					HashChanger.getInstance().setHash(options.hash || "");
+
+					componentLauncher.start(options.componentConfig).then(function () {
+						bComponentLoaded = true;
+					});
+				}
+			});
+
+			return this.waitFor({
+				// make sure no controls are searched by the defaults
+				viewName: null,
+				controlType: null,
+				id: null,
+				searchOpenDialogs: false,
+				check: function () {
+					return bComponentLoaded;
+				},
+				errorMessage: "Unable to load the component with the name: " + options.name
+			});
+		};
+
+
+		/**
+		 * Destroys the component and removes the div from the dom like all the references on its objects
+		 * @returns {jQuery.promise} a promise that gets resolved on success.
+		 * @public
+		 * @function
+		 */
+		Opa5.prototype.iTeardownMyComponent = function iTeardownMyComponent () {
+
+			return this.waitFor({
+				success : function () {
+					componentLauncher.teardown();
+					bComponentLoaded = false;
+				}
+			});
+
+		};
 
 		/**
 		 * Starts an app in an IFrame. Only works reliably if running on the same server.
