@@ -969,6 +969,83 @@
 			equal(aHeaders['TesT'], "new Header", "model check custom header");
 		});
 	});
+	
+	QUnit.test("header content-type test for GET JSON", function(){
+		var done = assert.async();
+		cleanServiceDataCache();
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		var oModel = initModel(sURI);
+		
+		oModel.metadataLoaded().then(function() {
+
+			oModel.read("/Categories", {
+				success: function() {
+					equal(spy.args[1][0].headers['Accept'], "application/json", "spy check header");
+					equal(spy.args[1][0].headers['Content-Type'], undefined, "there should be no content type header for GET requests");
+					OData.defaultHttpClient.request.restore();
+					done();
+				}
+			});
+		});
+	});
+	
+	QUnit.test("header content-type test for POST JSON", function(){
+		var done = assert.async();
+		cleanServiceDataCache();
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		var oModel = initModel(sURI, {tokenHandling: false});
+		
+		oModel.metadataLoaded().then(function() {
+
+			oModel.create("/Categories", {}, {
+				success: function() {
+					equal(spy.args[1][0].headers['Accept'], "application/json", "spy check header");
+					equal(spy.args[1][0].headers['Content-Type'], "application/json", "there should be a content type header for POST requests");
+					OData.defaultHttpClient.request.restore();
+					done();
+				}
+			});
+		});
+	});
+
+	
+	QUnit.test("header content-type test for GET xml", function(){
+		var done = assert.async();
+		cleanServiceDataCache();
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		var oModel = initModel(sURI, {json :false});
+		
+		oModel.metadataLoaded().then(function() {
+
+			oModel.read("/Categories", {
+				success: function() {
+					equal(spy.args[1][0].headers['Accept'], "application/atom+xml,application/atomsvc+xml,application/xml", "spy check header");
+					equal(spy.args[1][0].headers['Content-Type'], undefined, "there should be no content type header for GET requests");
+					OData.defaultHttpClient.request.restore();
+					done();
+				}
+			});
+		});
+	});
+	
+	QUnit.test("header content-type test for POST xml", function(){
+		var done = assert.async();
+		cleanServiceDataCache();
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		var oModel = initModel(sURI, {json :false, tokenHandling: false});
+		
+		oModel.metadataLoaded().then(function() {
+
+			oModel.create("/Categories", {}, {
+				success: function() {
+					equal(spy.args[1][0].headers['Accept'], "application/atom+xml,application/atomsvc+xml,application/xml", "spy check header");
+					equal(spy.args[1][0].headers['Content-Type'], "application/atom+xml", "there should be a content type header for POST requests");
+					OData.defaultHttpClient.request.restore();
+					done();
+				}
+			});
+		});
+	});
 
 	asyncTest("async metadata request check", function(){
 		var oModel = initModel(sURI, {
