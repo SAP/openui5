@@ -2977,6 +2977,7 @@
 						oModule.state = FAILED;
 						oModule.errorMessage = xhr ? xhr.status + " - " + xhr.statusText : textStatus;
 						oModule.errorStack = error && error.stack;
+						oModule.loadError = true;
 					}
 				});
 				/*eslint-enable no-loop-func */
@@ -2992,6 +2993,7 @@
 			if ( oModule.state !== READY ) {
 				var oError = new Error("failed to load '" + sModuleName +  "' from " + oModule.url + ": " + oModule.errorMessage);
 				enhanceStacktrace(oError, oModule.errorStack);
+				oError.loadError = oModule.loadError;
 				throw oError;
 			}
 
@@ -3386,6 +3388,17 @@
 		jQuery.sap.isDeclared = function isDeclared(sModuleName, bIncludePreloaded) {
 			sModuleName = ui5ToRJS(sModuleName) + ".js";
 			return mModules[sModuleName] && (bIncludePreloaded || mModules[sModuleName].state !== PRELOADED);
+		};
+
+		/**
+		 * Whether the given resource has been loaded (or preloaded).
+		 * @param {string} sResourceName Name of the resource to check, in unified resource name format
+		 * @returns {boolean} Whether the resource has been loaded already
+		 * @private
+		 * @sap-restricted sap.ui.core
+		 */
+		jQuery.sap.isResourceLoaded = function isResourceLoaded(sResourceName) {
+			return mModules[sResourceName];
 		};
 
 		/**
@@ -3935,9 +3948,15 @@
 			return requireModule(sModuleName + ".js", true);
 		};
 
+		/**
+		 * @private
+		 * @deprecated
+		 */
 		jQuery.sap.preloadModules = function(sPreloadModule, bAsync, oSyncPoint) {
 
 			var sURL, iTask, sMsg;
+
+			jQuery.sap.log.error("[Deprecated] jQuery.sap.preloadModules was never a public API and will be removed soon. Migrate to Core.loadLibraries()!");
 
 			jQuery.sap.assert(!bAsync || oSyncPoint, "if mode is async, a syncpoint object must be given");
 
@@ -3960,15 +3979,21 @@
 
 			log.debug("preload file " + sPreloadModule);
 			iTask = oSyncPoint && oSyncPoint.startTask("load " + sPreloadModule);
+
 			jQuery.ajax({
 				dataType : "json",
 				async : bAsync,
 				url : sURL,
 				success : function(data) {
 					if ( data ) {
-						data.url = sURL;
+						jQuery.sap.registerPreloadedModules(data, sURL);
+						// also preload dependencies
+						if ( Array.isArray(data.dependencies) ) {
+							data.dependencies.forEach(function(sDependency) {
+								jQuery.sap.preloadModules(sDependency, bAsync, oSyncPoint);
+							});
+						}
 					}
-					jQuery.sap.registerPreloadedModules(data, bAsync, oSyncPoint);
 					oSyncPoint && oSyncPoint.finishTask(iTask);
 				},
 				error : function(xhr, textStatus, error) {
@@ -3979,7 +4004,21 @@
 
 		};
 
-		jQuery.sap.registerPreloadedModules = function(oData, bAsync, oSyncPoint) {
+		/**
+		 * Adds all resources from a preload bundle to the preload cache.
+		 *
+		 * When a resource exists already in the cache, the new content is ignored.
+		 *
+		 * @param {object} oData Preload bundle
+		 * @param {string} [oData.url] URL from which the bundle has been loaded
+		 * @param {string} [oData.name] Unique name of the bundle
+		 * @param {string} [oData.version='1.0'] Format version of the preload bundle
+		 * @param {object} oData.modules Map of resources keyed by their resource name; each resource must be a string or a function
+		 *
+		 * @private
+		 * @sap-restricted sap.ui.core,preloadfiles
+		 */
+		jQuery.sap.registerPreloadedModules = function(oData) {
 
 			var bOldSyntax = Version(oData.version || "1.0").compareTo("2.0") < 0;
 
@@ -3991,7 +4030,7 @@
 				mPreloadModules[oData.name] = true;
 			}
 
-			jQuery.each(oData.modules, function(sName,sContent) {
+			jQuery.each(oData.modules, function(sName, sContent) {
 				sName = bOldSyntax ? ui5ToRJS(sName) + ".js" : sName;
 				Module.get(sName).preload(oData.url + "/" + sName, sContent, oData.name);
 				// when a library file is preloaded, also mark its preload file as loaded
@@ -4002,11 +4041,6 @@
 				}
 			});
 
-			if ( oData.dependencies ) {
-				jQuery.each(oData.dependencies, function(idx,sModuleName) {
-					jQuery.sap.preloadModules(sModuleName, bAsync, oSyncPoint);
-				});
-			}
 		};
 
 		/**
