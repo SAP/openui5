@@ -158,7 +158,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 */
 		SelectList.prototype._activateItem = function(oItem) {
 
-			if (oItem instanceof sap.ui.core.Item && (this.getSelectedItem() !== oItem)) {
+			if (oItem instanceof sap.ui.core.Item && (this.getSelectedItem() !== oItem) && oItem && oItem.getEnabled()) {
 
 				this.setSelection(oItem);
 				this.fireSelectionChange({
