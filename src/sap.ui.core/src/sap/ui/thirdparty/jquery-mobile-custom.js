@@ -916,6 +916,9 @@ function cssPointerEventsTest() {
 	var element = document.createElement( 'x' ),
 		documentElement = document.documentElement,
 		getComputedStyle = window.getComputedStyle,
+		// ##### BEGIN: MODIFIED BY SAP
+		computed = getComputedStyle && getComputedStyle(element, ''),
+		// ##### END: MODIFIED BY SAP
 		supports;
 
 	if ( !( 'pointerEvents' in element.style ) ) {
@@ -925,8 +928,11 @@ function cssPointerEventsTest() {
 	element.style.pointerEvents = 'auto';
 	element.style.pointerEvents = 'x';
 	documentElement.appendChild( element );
-	supports = getComputedStyle &&
-	getComputedStyle( element, '' ).pointerEvents === 'auto';
+	// ##### BEGIN: MODIFIED BY SAP
+	//supports = getComputedStyle &&
+	//getComputedStyle( element, '' ).pointerEvents === 'auto';
+	supports = computed && computed.pointerEvents === 'auto';
+	// ##### END: MODIFIED BY SAP
 	documentElement.removeChild( element );
 	return !!supports;
 }
