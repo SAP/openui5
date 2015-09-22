@@ -218,9 +218,14 @@
 		equals(oTable.getBinding("rows").iLength, 200, "RowCount after removing filter");
 	});
 	
-	test("SelectionMode", 1, function() {
+	test("SelectionMode", function() {
 		oTable.setSelectionMode(sap.ui.table.SelectionMode.Multi);
 		equals(oTable.getSelectionMode(), "Multi", "Selection mode is Multi!");
+
+		// check selection mode none without columns BCP: 1570822620
+		oTable.removeAllColumns();
+		oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
+		equals(oTable.getSelectionMode(), "None", "Selection mode is None!");
 	});
 
 	test("SelectedIndex", 1, function() {

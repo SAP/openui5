@@ -2355,6 +2355,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		var oRectTable = this.getDomRef().getBoundingClientRect();
 		var iTableWidth = oRectTable.right - oRectTable.left;
 		var aVisibleColumns = this._getVisibleColumns();
+		if (aVisibleColumns.length == 0) {
+			return;
+		}
 		var iInvisibleColWidth = 0;
 		
 		var bRtl = this._bRtlMode;
@@ -2374,7 +2377,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		// Create map with source table headers and their corresponding resizers.
 		var mHeaders = {};
 		
-		// Traverse the source table headers, which are needed for determine to column head width
+		// Traverse the source table headers, which are needed to determine the column head width
 		$tableHeaders.each(function(iIndex, oElement) {
 			var iHeadColIndex = oElement.getAttribute("data-sap-ui-headcolindex");
 			var oRect = oElement.getBoundingClientRect();
@@ -2385,7 +2388,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			if (oVisibleColumn) {
 				iTargetWidth = oRect.right - oRect.left;
 			}
-			
+
 			//for the first column also calculate the width of the hidden column
 			if (iIndex == 0) {
 				iTargetWidth += iInvisibleColWidth;
