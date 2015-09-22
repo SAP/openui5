@@ -21,14 +21,27 @@ sap.ui.define(['jquery.sap.global',
 	 *
 	 * @class
 	 * Tree binding implementation for odata models.
-	 * This CountMode is set as default. To use the ODataTreeBinding with an odata service, which exposed hierarchy annotations, please
-	 * consult the "SAP Annotations for OData Version 2.0" Specification. The necessary property annotations, as well as accepted/default values
-	 * are documented in the specification.
+	 * To use the v2.ODataTreeBinding with an odata service, which exposes hierarchy annotations, please
+	 * consult the "SAP Annotations for OData Version 2.0" Specification.
+	 * The necessary property annotations, as well as accepted/default values are documented in the specification.
 	 * 
-	 * Filtering on the ODataTreeBinding is only supported with initial filters. However please be aware that this applies only to filters which do not obstruct the
-	 * creation of a hierarchy. So filtering on a property (e.g. a "Customer") is fine, as long as the application can ensure, that the responses from the backend are enough
-	 * to construct a tree hierarchy. Subsequent paging requests for sibiling and child nodes must return responses.
-	 * Filtering with the filter() function is not supported.
+	 * In addition to these hieararchy annotations, the ODataTreeBinding also supports (cyclic) references between entities based on navigation properties.
+	 * To do this you have to specify the binding parameter "navigation".
+	 * The pattern for this is as follows: { entitySetName: "navigationPropertyName" }.
+	 * Example: { 
+	 *     "Employees": "toColleagues"
+	 * }
+	 * 
+	 * In OperationMode.Server, the filtering on the ODataTreeBinding is only supported with initial filters. 
+	 * However please be aware that this applies only to filters which do not obstruct the creation of a hierarchy.
+	 * So filtering on a property (e.g. a "Customer") is fine, as long as the application can ensure, that the responses from the backend are enough
+	 * to construct a tree hierarchy. Subsequent paging requests for sibiling and child nodes must also return responses since the filters will be sent with
+	 * every request.
+	 * Filtering with the filter() function is not supported for the OperationMode.Server.
+	 * 
+	 * With OperationMode.Client and OperationMode.Auto, the ODataTreeBinding also supports control filters.
+	 * In these OperationModes, the filters and sorters will be applied clientside, same as for the v2.ODataListBinding.
+	 * The OperationModes "Client" and "Auto" are only supported for trees which will be constructed based upon hierarchy annotations.
 	 *
 	 * @param {sap.ui.model.Model} oModel
 	 * @param {string} sPath
@@ -44,7 +57,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @param {string} [mParameters.treeAnnotationProperties.hierarchyNodeFor] Mapping to the property holding the hierarchy node id,
 	 * @param {string} [mParameters.treeAnnotationProperties.hierarchyParentNodeFor] Mapping to the property holding the parent node id,
 	 * @param {string} [mParameters.treeAnnotationProperties.hierarchyDrillStateFor] Mapping to the property holding the drill state for the node,
-	 * 
+	 * @param {object} [mParameters.navigation] An map describing the navigation properties between entity sets, which should be used for constructing and paging the tree.
 	 * @param {int} [mParameters.numberOfExpandedLevels=0] This property defines the number of levels, which will be expanded initially.
 	 *                                                   Please be aware, that this property leads to multiple backend requests. Default value is 0.
 	 * @param {int} [mParameters.rootLevel=0] The root level is the level of the topmost tree nodes, which will be used as an entry point for OData services.
@@ -53,6 +66,9 @@ sap.ui.define(['jquery.sap.global',
 	 * @param {string} [mParameters.batchGroupId] Deprecated - use groupId instead: sets the batch group id to be used for requests originating from this binding
 	 * @param {string} [mParameters.groupId] sets the group id to be used for requests originating from this binding
 	 * @param {sap.ui.model.Sorter[]} [aSorters] predefined sorter/s (can be either a sorter or an array of sorters)
+	 * @param {int} [mParameters.threshold] a threshold, which will be used if the OperationMode is set to "Auto".
+	 * 										In case of OperationMode.Auto, the binding tries to fetch (at least) as many entries as the threshold.
+	 * 										Also see API documentation for {@link sap.ui.model.OperationMode.Auto}.
 	 * 
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataTreeBinding
@@ -94,7 +110,7 @@ sap.ui.define(['jquery.sap.global',
 			if (mParameters) {
 				this.sBatchGroupId = mParameters.groupId || mParameters.batchGroupId;
 			}
-			//this.sCountMode = (mParameters && mParameters.countMode) || this.oModel.sDefaultCountMode;
+			
 			this.bInitial = true;
 			this._mLoadedSections = {};
 			this._iPageSize = 0;
@@ -109,7 +125,17 @@ sap.ui.define(['jquery.sap.global',
 			switch (this.sOperationMode) {
 				case OperationMode.Server: this.bClientOperation = false; break;
 				case OperationMode.Client: this.bClientOperation = true; break;
+				case OperationMode.Auto: this.bClientOperation = false; break; //initially start the same as the server mode
 			}
+			
+			// the threshold for the OperationMode.Auto
+			this.iThreshold = (mParameters && mParameters.threshold) || 0;
+			
+			// flag to check if the threshold was rejected after a count was issued
+			this.bThresholdRejected = false;
+			
+			// the total collection count is the number of entries available in the backend (starting at the given rootLevel)
+			this.iTotalCollectionCount = null;
 			
 			this.oAllKeys = null;
 			this.oAllLengths = null;
@@ -402,10 +428,31 @@ sap.ui.define(['jquery.sap.global',
 		var aContexts = [],
 			sKey;
 		
+		// OperationMode.Auto: handle synchronized count to check what the actual internal operation mode should be
+		// If the $count or $inlinecount is used, is determined by the respective 
+		if (this.sOperationMode == OperationMode.Auto) {
+			// as long as we do not have a collection count, we return an empty array
+			if (this.iTotalCollectionCount == null) {
+				if (!this.bCollectionCountRequested) {
+					this._getCountForCollection();
+					this.bCollectionCountRequested = true;
+				}
+				return [];
+			}
+		}
+		
 		// Set default values if startindex, threshold or length are not defined
 		iStartIndex = iStartIndex || 0;
 		iLength = iLength || this.oModel.iSizeLimit;
 		iThreshold = iThreshold || 0;
+		
+		// re-set the threshold in OperationMode.Auto
+		// between binding-treshold and the threshold given as an argument, the bigger one will be taken
+		if (this.sOperationMode == OperationMode.Auto) {
+			if (this.iThreshold >= 0) {
+				iThreshold = Math.max(this.iThreshold, iThreshold);
+			}
+		}
 
 		if (!this._mLoadedSections[sNodeId]) {
 			this._mLoadedSections[sNodeId] = [];
@@ -561,6 +608,78 @@ sap.ui.define(['jquery.sap.global',
 		}
 	
 		return aContexts;
+	};
+	
+	/**
+	 * Simple request to count how many nodes are available in the collection, starting at the given rootLevel.
+	 * Depending on the countMode of the binding, either a $count or a $inlinecount is sent.
+	 */
+	ODataTreeBinding.prototype._getCountForCollection = function () {
+		
+		if (!this.bHasTreeAnnotations || this.sOperationMode != OperationMode.Auto) {
+			jQuery.sap.log.error("The Count for the collection can only be retrieved with Hierarchy Annotations and in OperationMode.Auto.");
+			return;
+		}
+		
+		// create a request object for the data request
+		var aParams = [];
+		
+		function _handleSuccess(oData) {
+			
+			// $inlinecount is in oData.__count, the $count is just oData
+			var iCount = oData.__count ? parseInt(oData.__count, 10) : parseInt(oData, 10);
+
+			this.iTotalCollectionCount = iCount;
+			
+			// in the OpertionMode.Auto, we check if the count is LE than the given threshold and set the client operation flag accordingly
+			if (this.sOperationMode == OperationMode.Auto) {
+				if (this.iTotalCollectionCount <= this.mParameters.threshold) {
+					this.bClientOperation = true;
+					this.bThresholdRejected = false;
+				} else {
+					this.bClientOperation = false;
+					this.bThresholdRejected = true;
+				}
+				this._fireChange({reason: ChangeReason.Change});
+			}
+		}
+	
+		function _handleError(oError) {
+			// Only perform error handling if the request was not aborted intentionally
+			if (oError && oError.statusCode === 0 && oError.statusText === "abort") {
+				return;
+			}
+			var sErrorMsg = "Request for $count failed: " + oError.message;
+			if (oError.response){
+				sErrorMsg += ", " + oError.response.statusCode + ", " + oError.response.statusText + ", " + oError.response.body;
+			}
+			jQuery.sap.log.warning(sErrorMsg);
+		}
+		
+		var sPath = this.oModel.resolve(this.getPath(), this.getContext());
+		
+		// the only applied filter is on the rootLevel, everything else will be applied afterwards on the client
+		var sNodeFilter = "$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + " ge " + this.getRootLevel());
+		aParams.push(sNodeFilter);
+		
+		// figure out how to request the count
+		var sCountType = "";
+		if (this.sCountMode == CountMode.Request || this.sCountMode == CountMode.Both) {
+			sCountType = "/$count";
+		} else if (this.sCountMode == CountMode.Inline) {
+			aParams.push("$top=0");
+			aParams.push("$inlinecount=allpages");
+		}
+		
+		// send the counting request
+		if (sPath) {
+			this.oModel.read(sPath + sCountType, {
+				urlParameters: aParams,
+				success: _handleSuccess.bind(this),
+				error: _handleError.bind(this),
+				groupId: this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId
+			});
+		}
 	};
 	
 	/**
@@ -919,11 +1038,19 @@ sap.ui.define(['jquery.sap.global',
 			this.oKeys = {};
 			
 			// the internal operation mode might change, the external operation mode (this.sOperationMode) will always be the original value
+			// internal operation mode switch, default is the same as "OperationMode.Server"
+			this.bClientOperation = false;
+			
+			// the internal operation mode might change, the external operation mode (this.sOperationMode) will always be the original value
 			switch (this.sOperationMode) {
-				default:
 				case OperationMode.Server: this.bClientOperation = false; break;
 				case OperationMode.Client: this.bClientOperation = true; break;
+				case OperationMode.Auto: this.bClientOperation = false; break; //initially start the same as the server mode
 			}
+			// if no data is available after the reset we can't be sure the threshold is met or rejected
+			this.bThresholdRejected = false;
+			// the count might be wrong after a resetData, so we clear it
+			this.iTotalCollectionCount = null;
 			
 			// objects used for client side filter/sort
 			this.oAllKeys = null;
@@ -1022,7 +1149,7 @@ sap.ui.define(['jquery.sap.global',
 	
 	/**
 	 * Applying ControlFilters is not suported for OperationMode.Server.
-	 * Since 1.34.0 the filtering is supported for OperationMode.Client.
+	 * Since 1.34.0 the filtering is supported for OperationMode.Client and if the threshold for OperationMode.Auto could be satisfied.
 	 * See also: {@link sap.ui.model.odata.OperationMode.Auto}.
 	 * 
 	 * Only initial ApplicationFilters, given as constructor arguments, are supported with the other possible OperationModes.
@@ -1058,12 +1185,17 @@ sap.ui.define(['jquery.sap.global',
 			
 			this._fireChange({reason: ChangeReason.Filter});
 		} else {
-			jQuery.sap.log.warning("Filtering is ONLY possible if the ODataTreeBinding is running in OperationMode.Client.");
+			jQuery.sap.log.warning("Filtering is ONLY possible if the ODataTreeBinding is running in OperationMode.Client or " +
+					"OperationMode.Auto, in case the given threshold is lower than the total number of tree nodes.");
 		}
 		
 		return this;
 	};
 	
+	/**
+	 * Process the currently set filters clientside. Uses the FilterProcessor and only works if the binding is running
+	 * in the OperationModes "Client" or "Auto".
+	 */
 	ODataTreeBinding.prototype._applyFilter = function () {
 		var that = this;
 		
@@ -1133,6 +1265,7 @@ sap.ui.define(['jquery.sap.global',
 	
 	/**
 	 * Sorts the Tree according to the given Sorter(s).
+	 * In OperationMode.Client or OperationMode.Auto (if the given threshold is satisfied), the sorters are applied locally on the client.
 	 * 
 	 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} aSorters the Sorter or an Array of sap.ui.model.Sorter instances
 	 * @return {sap.ui.model.odata.v2.ODataTreeBinding} returns <code>this</code> to facilitate method chaining
