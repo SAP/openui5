@@ -399,7 +399,9 @@ sap.ui.define([
 		this._aKeyFields = aKeyFields;
 
 		this._updateKeyFieldItems(this._oConditionsGrid, true);
+		this._updateAllConditionsEnableStates();
 		this._createAndUpdateAllKeyFields();
+		this._updateAllOperations();
 	};
 
 	/**
@@ -911,13 +913,6 @@ sap.ui.define([
 
 						this._fillKeyFieldListItems(oControl, this._aKeyFields);
 
-						if (oControl.attachChange) {
-							oControl.attachChange(function(oEvent) {
-								that._handleChangeOnKeyField(oTargetGrid, oConditionGrid);
-								// sap.m.MessageToast.show("Change");
-							});
-						}
-
 						if (oControl.attachSelectionChange) {
 							oControl.attachSelectionChange(function(oEvent) {
 								var fValidate = that.getValidationExecutor();
@@ -925,8 +920,7 @@ sap.ui.define([
 									fValidate();
 								}
 
-								that._enableCondition(oConditionGrid, true);
-								// sap.m.MessageToast.show("SelectionChange");
+								that._handleChangeOnKeyField(oTargetGrid, oConditionGrid);
 							});
 						}
 
@@ -1438,6 +1432,7 @@ sap.ui.define([
 
 			var ctrlIndex = oConditionGrid.indexOfContent(oCtrl);
 			oConditionGrid.removeContent(oCtrl);
+			oCtrl.destroy();
 			var fieldInfo = this._aConditionsFields[index];
 			oCtrl = this._createValueField(oCurrentKeyField, fieldInfo, oConditionGrid);
 			oConditionGrid[fieldInfo["ID"]] = oCtrl;
@@ -1456,11 +1451,16 @@ sap.ui.define([
 			}
 		};
 
-		// update Value1 field control
-		jQuery.proxy(fnCreateAndUpdateField, this)(oConditionGrid.value1, 5);
-
-		// update Value2 field control
-		jQuery.proxy(fnCreateAndUpdateField, this)(oConditionGrid.value2, 6);
+		var sNewType = oCurrentKeyField ? oCurrentKeyField.type : "";
+		if (sNewType !== oConditionGrid.valueType) {
+			// update Value1 field control
+			jQuery.proxy(fnCreateAndUpdateField, this)(oConditionGrid.value1, 5);
+	
+			// update Value2 field control
+			jQuery.proxy(fnCreateAndUpdateField, this)(oConditionGrid.value2, 6);
+			
+			oConditionGrid.valueType = sNewType;
+		}
 	};
 
 	P13nConditionPanel.prototype._updateAllOperations = function() {
@@ -1614,51 +1614,68 @@ sap.ui.define([
 			if (oValue1.setPlaceholder) {
 				oValue1.setPlaceholder(this._sFromLabelText);
 			}
-			oValue1.setVisible(true);
+			if (!oValue1.getVisible()) {
+				oValue1.setVisible(true);
+				// workaround: making fields invisible for all mode L/M/S does not work, so we remove the fields from the grid.
+				oConditionGrid.insertContent(oValue1, oConditionGrid.getContent().length - 1);
+			}
 
 			if (oValue2.setPlaceholder) {
 				oValue2.setPlaceholder(this._sToLabelText);
 			}
-			oValue2.setVisible(true);
-
-			// workaround:
-			oConditionGrid.insertContent(oValue1, oConditionGrid.getContent().length - 1);
-			oConditionGrid.insertContent(oValue2, oConditionGrid.getContent().length - 1);
+			if (!oValue2.getVisible()) {
+				oValue2.setVisible(true);
+				// workaround: making fields invisible for all mode L/M/S does not work, so we remove the fields from the grid.
+				oConditionGrid.insertContent(oValue2, oConditionGrid.getContent().length - 1);
+			}
 		} else {
 			if (sOperation === sap.m.P13nConditionOperation.GroupAscending || sOperation === sap.m.P13nConditionOperation.GroupDescending) {
 
 				// update visible of fields
-				oValue1.setVisible(false);
-				oValue2.setVisible(false);
-				oOperation.setVisible(false);
+				if (oValue1.getVisible()) {
+					oValue1.setVisible(false);
+					// workaround: making fields invisible for all mode L/M/S does not work, so we remove the fields from the grid.
+					oConditionGrid.removeContent(oValue1);
+				}
+				if (oValue2.getVisible()) {
+					oValue2.setVisible(false);
+					oConditionGrid.removeContent(oValue2);
+				}
+				if (oOperation.getVisible()) {
+					oOperation.setVisible(false);
+					oConditionGrid.removeContent(oOperation);
+				}
 				oShowIfGroupedvalue.setVisible(this._getMaxConditionsAsNumber() != 1);
-
-				// workaround: making fields invisible for all mode L/M/S does not work, so we remove the fields from the grid.
-				oConditionGrid.removeContent(oValue1);
-				oConditionGrid.removeContent(oValue2);
-				oConditionGrid.removeContent(oOperation);
 			} else {
 				if (sOperation === sap.m.P13nConditionOperation.NotEmpty || sOperation === sap.m.P13nConditionOperation.Empty || sOperation === sap.m.P13nConditionOperation.Initial || sOperation === sap.m.P13nConditionOperation.Ascending || sOperation === sap.m.P13nConditionOperation.Descending || sOperation === sap.m.P13nConditionOperation.Total || sOperation === sap.m.P13nConditionOperation.Average || sOperation === sap.m.P13nConditionOperation.Minimum || sOperation === sap.m.P13nConditionOperation.Maximum) {
 
 					// for this operations we disable both value fields
-					oValue1.setVisible(false);
-					oValue2.setVisible(false);
+					if (oValue1.getVisible()) {
+						oValue1.setVisible(false);
+						// workaround: making fields invisible for all mode L/M/S does not work, so we remove the fields from the grid.
+						oConditionGrid.removeContent(oValue1);
+					}
+					if (oValue2.getVisible()) {
+						oValue2.setVisible(false);
+						oConditionGrid.removeContent(oValue2);
+					}
 
 					// workaround: making fields invisible for all mode L/M/S does not work, so we remove the fields from the grid.
-					oConditionGrid.removeContent(oValue1);
-					oConditionGrid.removeContent(oValue2);
 					oConditionGrid.removeContent(oShowIfGroupedvalue);
-
 				} else {
 					// for all other operations we enable only the Value1 fields
 					if (oValue1.setPlaceholder) {
 						oValue1.setPlaceholder(this._sValueLabelText);
 					}
-					oValue1.setVisible(true);
-					oValue2.setVisible(false);
-
-					// workaround:
-					oConditionGrid.insertContent(oValue1, oConditionGrid.getContent().length - 1);
+					if (!oValue1.getVisible()) {
+						oValue1.setVisible(true);
+						// workaround: making fields invisible for all mode L/M/S does not work, so we remove the fields from the grid.
+						oConditionGrid.insertContent(oValue1, oConditionGrid.getContent().length - 1);
+					}
+					if (oValue2.getVisible()) {
+						oValue2.setVisible(false);
+						oConditionGrid.removeContent(oValue2);
+					}
 				}
 			}
 		}
