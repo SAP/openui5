@@ -1780,6 +1780,34 @@
 			// return undefined;
 		}
 
+		function extractStacktrace(oError) {
+			if (!oError.stack) {
+				try {
+					throw oError;
+				} catch (ex) {
+					return ex.stack;
+				}
+			}
+			return oError.stack;
+		}
+
+		function enhanceStacktrace(oError, oCausedByStack) {
+			// concat the error stack for better traceability of loading issues
+			// (ignore for PhantomJS since Error.stack is readonly property!)
+			if (!sap.ui.Device.browser.phantomJS) {
+				var oErrorStack = extractStacktrace(oError);
+				if (oErrorStack && oCausedByStack) {
+					oError.stack = oErrorStack + "\nCaused by: " + oCausedByStack;
+				}
+			}
+			// for non Chrome browsers we log the caused by stack manually in the console
+			if (window.console && !sap.ui.Device.browser.chrome) {
+				/*eslint-disable no-console */
+				console.error(oError.message + "\nCaused by: " + oCausedByStack);
+				/*eslint-enable no-console */
+			}
+		}
+
 		var rDotsAnywhere = /(?:^|\/)\.+/;
 		var rDotSegment = /^\.*$/;
 
@@ -1927,7 +1955,9 @@
 					}
 					return this;
 				} else if ( oModule.state === FAILED ) {
-					throw new Error("found in negative cache: '" + sModuleName +  "' from " + oModule.url + ": " + oModule.error);
+					var oError = new Error("found in negative cache: '" + sModuleName +  "' from " + oModule.url + ": " + oModule.errorMessage);
+					enhanceStacktrace(oError, oModule.errorStack);
+					throw oError;
 				} else {
 					// currently loading
 					return this;
@@ -1956,7 +1986,8 @@
 					},
 					error : function(xhr, textStatus, error) {
 						oModule.state = FAILED;
-						oModule.error = xhr ? xhr.status + " - " + xhr.statusText : textStatus;
+						oModule.errorMessage = xhr ? xhr.status + " - " + xhr.statusText : textStatus;
+						oModule.errorStack = error && error.stack;
 					}
 				});
 				/*eslint-enable no-loop-func */
@@ -1968,7 +1999,9 @@
 			}
 
 			if ( oModule.state !== READY ) {
-				throw new Error("failed to load '" + sModuleName +  "' from " + oModule.url + ": " + oModule.error);
+				var oError = new Error("failed to load '" + sModuleName +  "' from " + oModule.url + ": " + oModule.errorMessage);
+				enhanceStacktrace(oError, oModule.errorStack);
+				throw oError;
 			}
 
 		}
@@ -2049,7 +2082,8 @@
 
 				} catch (err) {
 					oModule.state = FAILED;
-					oModule.error = ((err.toString && err.toString()) || err.message) + (err.line ? "(line " + err.line + ")" : "" );
+					oModule.errorStack = err && err.stack;
+					oModule.errorMessage = ((err.toString && err.toString()) || err.message) + (err.line ? "(line " + err.line + ")" : "" );
 					oModule.data = undefined;
 					if ( window["sap-ui-debug"] && (/sap-ui-xx-show(L|-l)oad(E|-e)rrors=(true|x|X)/.test(location.search) || oCfgData["xx-showloaderrors"]) ) {
 						log.error("error while evaluating " + sModuleName + ", embedding again via script tag to enforce a stack trace (see below)");
