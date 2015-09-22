@@ -253,10 +253,8 @@ sap.ui.define([
 				} else {
 					this.oHeaders["Accept"] = "application/json";
 				}
-				this.oHeaders["Content-Type"] = "application/json";
 			} else {
 				this.oHeaders["Accept"] = "application/atom+xml,application/atomsvc+xml,application/xml";
-				this.oHeaders["Content-Type"] = "application/atom+xml";
 			}
 
 			// Get CSRF token, if already available
@@ -2812,8 +2810,12 @@ sap.ui.define([
 		/* make sure to set content type header for POST/PUT requests when using JSON
 		 * format to prevent datajs to add "odata=verbose" to the content-type header
 		 * may be removed as later gateway versions support this */
-		if (this.bJSON && sMethod !== "DELETE" && this.sMaxDataServiceVersion === "2.0") {
-			mHeaders["Content-Type"] = "application/json";
+		if (sMethod !== "DELETE" && sMethod !== "GET") {
+			if (this.bJSON) {
+				mHeaders["Content-Type"] = "application/json";
+			} else {
+				mHeaders["Content-Type"] = "application/atom+xml";
+			}
 		}
 
 		// Set Accept header for $count requests
