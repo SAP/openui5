@@ -245,57 +245,36 @@ module.exports = function(grunt, config) {
 
 		},
 
-		'cldr': function() {
+		// CLDR modules are not added to package.json/devDependencies to avoid bloating of the node_modules folder
+		'cldr': [
+		    'cldr-download',
+		    'cldr-generate'
+		],
+		'cldr-download': [
+		    'npm-install:cldr-core:cldr-dates-full:cldr-numbers-full:cldr-misc-full:cldr-localenames-full:cldr-cal-islamic-full:cldr-cal-japanese-full'
+		],
+		'cldr-generate': function() {
 			var done = this.async();
 
 			var baseFolder = path.join(__dirname, "../../");
 
-			var zipPath = grunt.option("zip"),
-				tempFolder = grunt.option("tmp") || "temp",
-				dryRun = grunt.option("dryrun"),
-				outputFolder = grunt.option("output"),
-				download = grunt.option("download"),
-				fileName = grunt.option("file"),
+			var outputFolder = grunt.option("output"),
 				prettyPrint = grunt.option("prettyPrint") || grunt.option("prettyprint");
 
-			if (typeof dryRun !== "boolean") {
-				dryRun = true;
-			}
-
-			if (!dryRun && !outputFolder) {
+			if (!outputFolder) {
 				outputFolder = path.join(baseFolder, "src/sap.ui.core/src/sap/ui/core/cldr");
 			}
 
-			if (zipPath && download) {
-				grunt.fail.warn("Parameter 'zip' and 'download' can't be given at the same time. If you have the zip file on hand, use 'zip' otherwise use download with the version of CLDR zip file.");
-			}
-
-			if ((zipPath || download) && outputFolder) {
+			if (outputFolder) {
 				cldr({
-					zip: zipPath,
-					tmp: tempFolder,
 					output: outputFolder,
-					download: download,
-					file: fileName,
 					prettyPrint: prettyPrint
-				}).on("download", function(url) {
-					grunt.log.ok("Downloading CLDR zip file from", url);
-				}).on("downloaded", function() {
-					grunt.log.oklns("The CLDR zip file downloaded and saved to TEMP folder");
-				}).on("unzip", function() {
-					grunt.log.oklns("Extracting original CLDR JSON files to TEMP folder");
-				}).on("unzipped", function() {
-					grunt.log.oklns("Extracting finished. Generating the UI5 locale JSONs");
 				}).on("generated", function() {
 					grunt.log.ok("DONE", "Files saved to", outputFolder);
-				}).on("tempFolderDeleted", function() {
-					done();
 				}).on("error", function(err) {
 					grunt.log.error(err);
 					done(false);
 				}).start();
-			} else {
-				grunt.fail.fatal("grunt cldr requires 'zip' and 'output' options");
 			}
 		},
 

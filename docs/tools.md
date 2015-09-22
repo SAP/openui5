@@ -91,22 +91,25 @@ grunt test --browsers=<browsers>
 
 ## cldr
 
+Install required npm modules and regenerate CLDR files contained in sap.ui.core.cldr.
+
+## cldr-download
+
+Install the required npm modules for UI5 CLDR generation.
+
+## cldr-generate
+
 Argument | Description | Default
 ---------- | --------------------------------------------------------------------------------------------- | -------------
-download | The version of CLDR package which is downloaded from http://cldr.unicode.org | none
-file | The name of the zip file which is stored on http://cldr.unicode.org. CLDR doesn't have a consistent name for the zip file, for example it's named json-full.zip with version 26 but named json_full.zip with version 25 | json-full.zip
-output | The folder path where the generated JSON files are stored | none
+output | The folder path where the generated JSON files are stored. | none
 prettyPrint | Whether the output JSON files are pretty printed | false
-zip | The file path to the local zip file if the zip file is already downloaded from http://cldr.unicode.org | none
-tmp | The folder path where the temporary files are stored | temp
-dryrun | If this parameter is set to false, the generated JSON files will replace the corresponding JSON file in UI5 library | true
 
-Generate UI5 locale JSON files using the CLDR zip bundle.
+Generate UI5 locale JSON files using the CLDR npm mpdules.
 
 ```
-grunt cldr (--download=<version-to-download> | --zip=<file-path>) (--output=<output-foler-path>) [--file=<download-file-name>] [--prettyPrint] [--tmp=<temp-folder-path>] [--dryrun]
+grunt cldr-generate [--output=<output-folder-path>] [--prettyPrint]
 
 # example
-#  grunt cldr --download=26 --output=cldr --prettyPrint   # download CLDR version 26 and generate the UI5 locale JSON files which are saved in folder "cldr" and pretty printed
-#  grunt cldr --download=26 --no-dryrun   # download CLDR version 26 and generate the UI5 locale JSON files which replace the UI5 locale JSON files directly
+#  grunt cldr-generate --output=cldr --prettyPrint   # generate the UI5 locale JSON files which are saved in folder "cldr" and pretty printed
+#  grunt cldr-generate  # generate the UI5 locale JSON files which replace the UI5 locale JSON files directly
 ```

@@ -102,20 +102,20 @@
 		equal(oFormat.format(123456), "123" + String.fromCharCode(160) + "Tsd.", "123456 formatted");
 		equal(oFormat.parse("100 Tsd."), 100000, "\"100 Tsd\" parsed");
 		equal(oFormat.parse("1000 Tsd."), 1000000, "\"1000 Tsd\" parsed");
-		equal(oFormat.format(1234567), "1" + String.fromCharCode(160) + "Mio", "1234567 formatted");
-		equal(oFormat.parse("1 Mio"), 1000000, "\"1 Mio\" parsed");
-		equal(oFormat.format(12345678), "12" + String.fromCharCode(160) + "Mio", "12345678 formatted");
-		equal(oFormat.parse("10 Mio"), 10000000, "\"10 Mio\" parsed");
-		equal(oFormat.format(123456789), "123" + String.fromCharCode(160) + "Mio", "123456789 formatted");
-		equal(oFormat.parse("100 Mio"), 100000000, "\"100 Mio\" parsed");
-		equal(oFormat.format(1234567890), "1" + String.fromCharCode(160) + "Mrd", "1234567890 formatted");
-		equal(oFormat.parse("1 Mrd"), 1000000000, "\"1 Mrd\" parsed");
-		equal(oFormat.format(12345678901), "12" + String.fromCharCode(160) + "Mrd", "12345678901 formatted");
-		equal(oFormat.parse("10 Mrd"), 10000000000, "\"10 Mrd\" parsed");
-		equal(oFormat.format(123456789012), "123" + String.fromCharCode(160) + "Mrd", "123456789012 formatted");
-		equal(oFormat.parse("100 Mrd"), 100000000000, "\"100 Mrd\" parsed");
+		equal(oFormat.format(1234567), "1" + String.fromCharCode(160) + "Mio.", "1234567 formatted");
+		equal(oFormat.parse("1 Mio."), 1000000, "\"1 Mio.\" parsed");
+		equal(oFormat.format(12345678), "12" + String.fromCharCode(160) + "Mio.", "12345678 formatted");
+		equal(oFormat.parse("10 Mio."), 10000000, "\"10 Mio.\" parsed");
+		equal(oFormat.format(123456789), "123" + String.fromCharCode(160) + "Mio.", "123456789 formatted");
+		equal(oFormat.parse("100 Mio."), 100000000, "\"100 Mio.\" parsed");
+		equal(oFormat.format(1234567890), "1" + String.fromCharCode(160) + "Mrd.", "1234567890 formatted");
+		equal(oFormat.parse("1 Mrd."), 1000000000, "\"1 Mrd.\" parsed");
+		equal(oFormat.format(12345678901), "12" + String.fromCharCode(160) + "Mrd.", "12345678901 formatted");
+		equal(oFormat.parse("10 Mrd."), 10000000000, "\"10 Mrd.\" parsed");
+		equal(oFormat.format(123456789012), "123" + String.fromCharCode(160) + "Mrd.", "123456789012 formatted");
+		equal(oFormat.parse("100 Mrd."), 100000000000, "\"100 Mrd.\" parsed");
 		equal(oFormat.format(1234567890123), "1" + String.fromCharCode(160) + "Bio.", "1234567890123 formatted");
-		equal(oFormat.parse("1 Bio."), 1000000000000, "\"1 Bio\" parsed");
+		equal(oFormat.parse("1 Bio."), 1000000000000, "\"1 Bio.\" parsed");
 	});
 
 	test("float default format", function(){
