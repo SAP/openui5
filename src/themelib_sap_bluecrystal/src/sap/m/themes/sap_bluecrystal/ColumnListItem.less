@@ -3,15 +3,32 @@
 	outline-offset: -1px;
 }
 
-.sapMListTblSubRow {
-	background: fade(@sapUiListBackground, 80);
+.sapMListBGTransparent .sapMListTblSubRow {
+	background: fade(@sapUiListBackground, 0%);
 }
 
-.sapMLIBSelected.sapMLIB + .sapMListTblSubRow {
+.sapMListBGTranslucent .sapMListTblSubRow {
+	background: fade(@sapUiListBackground, @sapUiTranslucentBGOpacity);
+}
+
+.sapMListBGSolid .sapMListTblSubRow{
+	background: @sapUiListBackground;
+}
+
+.sapMLIBHoverable:hover + .sapMListTblSubRow {
+	background : @sapUiListHoverBackground;
+}
+
+.sapMLIBSelected + .sapMListTblSubRow {
 	background: @sapUiListSelectionBackgroundColor;
 }
 
-.sapMLIBActive.sapMLIB + .sapMListTblSubRow {
+.sapMLIBHoverable.sapMLIBSelected:hover + .sapMListTblSubRow {
+	background : @sapUiListSelectionHoverBackground;
+}
+
+.sapMLIB.sapMLIBActive + .sapMListTblSubRow{
+	color: @sapUiListActiveTextColor;
 	background: @sapUiListActiveBackground;
 }
 
