@@ -974,11 +974,12 @@
 		},
 		{
 		  "id": "sap.m.tutorial.testing",
-		  "name": "Testing Apps",
+		  "name": "Testing",
 		  "category": "Tutorial",
 		  "since": "1.30",
 		  "formFactors": "-",
 		  "description": "In this tutorial we will test application functionality with QUnit, OPA5, and the mock server",
+		  "docuLink": "#docs/guide/291c9121e6044ab381e0b51716f97f52.html",
 		  "samplesAsSteps": [
 			"Handover and Testing Strategy",
 			"A first Unit Test",
@@ -986,7 +987,7 @@
 			"Testing a new type module",
 			"Adding a flagged button",
 			"A first OPA Test",
-			"Changing the Table to grow",
+			"Changing the table to grow",
 			"Testing Navigation",
 			"Adding the Post Page",
 			"Testsuite and Automated Testing",
@@ -994,6 +995,22 @@
 			"Adding Tabs",
 			"Writing a Short Date Formatter TDD style",
 			"Adding the date formatter"
+		  ]
+		},
+		{
+		  "id": "sap.m.tutorial.worklist",
+		  "name": "Worklist App",
+		  "category": "Tutorial",
+		  "since": "1.32",
+		  "formFactors": "-",
+		  "description": "In this tutorial we implement typical features of a full-screen worklist app, a typical SAP Fiori design pattern",
+		  "samplesAsSteps": [
+			"Getting started with the worklist template",
+			"Extending the worklist table",
+			"Adding quick filters",
+			"Reorder or unlist products",
+			"Adjusting the object view",
+			"Adding a comments section"
 		  ]
 		},
 		{

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Unit tests for Manage Products</title>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'/>
+		<meta charset="UTF-8">
+
+		<script id="sap-ui-bootstrap"
+			src="https://openui5beta.hana.ondemand.com/resources/sap-ui-core.js"
+			data-sap-ui-resourceroots='{
+				"myCompany.myApp": "../../",
+				"test.unit": "./"
+			}'>
+		</script>
+
+		<script>
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+			QUnit.config.autostart = false;
+
+			sap.ui.require(
+				["test/unit/allTests"],
+					function () {
+						QUnit.start();
+					}
+			);
+		</script>
+
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

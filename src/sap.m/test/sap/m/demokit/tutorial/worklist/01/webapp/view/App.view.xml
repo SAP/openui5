@@ -1,0 +1,3 @@
+<mvc:View controllerName="myCompany.myApp.controller.App" displayBlock="true" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+	<App busy="{appView>/busy}" busyIndicatorDelay="{appView>/delay}" id="app"/>
+</mvc:View>
