@@ -7875,6 +7875,47 @@
 				oComboBox.destroy();
 			});
 
+			// BCP 1570441294
+			test("onfocusin it should correctly restore the selection of the text after re-rendering", function() {
+
+				this.stub(sap.ui.Device, "system", {
+					desktop: true,
+					phone: false,
+					tablet: false
+				});
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							text: "lorem ipsum"
+						})
+					]
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+				sap.ui.qunit.QUnitUtils.triggerEvent("keydown", oComboBox.getFocusDomRef(), {
+					which: jQuery.sap.KeyCodes.L
+				});
+				oComboBox.getFocusDomRef().value = "l";
+				sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef(), {
+					value: "l"
+				});
+
+				// act
+				oComboBox.rerender();
+				this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() in the focusin event handler does not override the type ahead
+
+				// assert
+				strictEqual(oComboBox.getSelectedText(), "orem ipsum");
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
 			/* ------------------------------ */
 			/* onBeforeOpen                   */
 			/* ------------------------------ */
