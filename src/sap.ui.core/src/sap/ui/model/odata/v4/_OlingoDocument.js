@@ -194,7 +194,7 @@ sap.ui.define([
 						"Fullname" : oResult.QualifiedName + "/" + oEntitySet.name,
 						"NavigationPropertyBindings" :
 							OlingoDocument.transformNavigationPropertyBindings(
-								oEntitySet.navigationPropertyBinding),
+								oEntitySet.navigationPropertyBinding, oResult.QualifiedName),
 						"EntityType@odata.navigationLink" :
 							"Types(QualifiedName='" + oEntitySet.entityType + "')"
 					});
@@ -207,7 +207,7 @@ sap.ui.define([
 						"Fullname" : oResult.QualifiedName + "/" + oSingleton.name,
 						"NavigationPropertyBindings" :
 							OlingoDocument.transformNavigationPropertyBindings(
-								oSingleton.navigationPropertyBinding),
+								oSingleton.navigationPropertyBinding, oResult.QualifiedName),
 						"Type@odata.navigationLink" :
 							"Types(QualifiedName='" + oSingleton.type + "')"
 					});
@@ -221,19 +221,27 @@ sap.ui.define([
 		 *
 		 * @param {object[]} aNavigationPropertyBindings
 		 *   the array of NavigationPropertyBindings
+		  * @param {string} sContainerName
+		 *   the full qualified name of the entity container
 		 * @return {object[]}
 		 *   the transformed array of NavigationPropertyBindings
 		 * @private
 		 */
-		transformNavigationPropertyBindings : function (aNavigationPropertyBindings) {
+		transformNavigationPropertyBindings : function (aNavigationPropertyBindings,
+			sContainerName) {
 			var aResult = [];
 
 			if (aNavigationPropertyBindings) {
 				aNavigationPropertyBindings.forEach(function(oNavigationPropertyBinding) {
+					var sTargetName = oNavigationPropertyBinding.target;
+
+					if (sTargetName.indexOf("/") < 0) {
+						sTargetName = sContainerName + "/" + sTargetName;
+					}
 					aResult.push({
 						"Path" : oNavigationPropertyBinding.path,
 						"Target@odata.navigationLink" : "EntitySets(Fullname='"
-							+ encodeURIComponent(oNavigationPropertyBinding.target) + "')"
+							+ encodeURIComponent(sTargetName) + "')"
 					});
 				});
 			}

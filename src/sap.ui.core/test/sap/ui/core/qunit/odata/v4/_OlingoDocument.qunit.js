@@ -25,20 +25,6 @@ sap.ui.require([
 		sDocumentUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata";
 
 	/**
-	 * Gets the correct service URL. Adjusts it in case of <code>bRealOData</code>, so that it is
-	 * passed through the proxy.
-	 *
-	 * @param {string} sUrl the URL
-	 * @returns {string} the adjusted URL
-	 */
-	function getServiceUrl(sUrl) {
-		if (bRealOData) {
-			sUrl = "../../../../../../../proxy" + sUrl;
-		}
-		return sUrl;
-	}
-
-	/**
 	 * Creates a fake model with the given URL.
 	 *
 	 * @param {string} [sUrl=sDocumentUrl]
@@ -48,8 +34,23 @@ sap.ui.require([
 	 */
 	function createModel(sUrl) {
 		return {
-			sDocumentUrl : getServiceUrl(sUrl || sDocumentUrl)
+			sDocumentUrl : proxy(sUrl || sDocumentUrl)
 		};
+	}
+
+	/**
+	 * Adjusts the given absolute path so that (in case of <code>bRealOData</code>), is passed
+	 * through a proxy.
+	 *
+	 * @param {string} sAbsolutePath
+	 *   some absolute path
+	 * @returns {string}
+	 *   the absolute path transformed in a way that invokes a proxy
+	 */
+	function proxy(sAbsolutePath) {
+		return bRealOData
+			? "/" + window.location.pathname.split("/")[1] + "/proxy" + sAbsolutePath
+			: sAbsolutePath;
 	}
 
 	//*********************************************************************************************
@@ -279,20 +280,29 @@ sap.ui.require([
 			var oContainer = oDocument.dataServices.schema[0].entityContainer;
 
 			oMock.expects("transformNavigationPropertyBindings")
-				.withExactArgs(oContainer.entitySet[0].navigationPropertyBinding).returns(1);
+				.withExactArgs(oContainer.entitySet[0].navigationPropertyBinding,
+					oEntityContainer.QualifiedName).returns(1);
 			oMock.expects("transformNavigationPropertyBindings")
-				.withExactArgs(oContainer.entitySet[1].navigationPropertyBinding).returns(2);
+				.withExactArgs(oContainer.entitySet[1].navigationPropertyBinding,
+					oEntityContainer.QualifiedName).returns(2);
 			oMock.expects("transformNavigationPropertyBindings")
-				.withExactArgs(oContainer.entitySet[2].navigationPropertyBinding).returns(3);
+				.withExactArgs(oContainer.entitySet[2].navigationPropertyBinding,
+					oEntityContainer.QualifiedName).returns(3);
 			oMock.expects("transformNavigationPropertyBindings")
-				.withExactArgs(oContainer.entitySet[3].navigationPropertyBinding).returns(4);
+				.withExactArgs(oContainer.entitySet[3].navigationPropertyBinding,
+					oEntityContainer.QualifiedName).returns(4);
 			oMock.expects("transformNavigationPropertyBindings")
-				.withExactArgs(oContainer.entitySet[4].navigationPropertyBinding).returns(5);
-			oMock.expects("transformNavigationPropertyBindings")
-				.withExactArgs(oContainer.singleton[0].navigationPropertyBinding).returns(6);
+				.withExactArgs(oContainer.entitySet[4].navigationPropertyBinding,
+					oEntityContainer.QualifiedName).returns(5);
+			if (bRealOData) { //TODO enhance backend service
+				oEntityContainer.Singletons = [];
+			} else {
+				oMock.expects("transformNavigationPropertyBindings")
+					.withExactArgs(oContainer.singleton[0].navigationPropertyBinding,
+					oEntityContainer.QualifiedName).returns(6);
+			}
 
-			assert.deepEqual(OlingoDocument.transformEntityContainer(oDocument),
-				oEntityContainer);
+			assert.deepEqual(OlingoDocument.transformEntityContainer(oDocument), oEntityContainer);
 		});
 	});
 
@@ -324,17 +334,18 @@ sap.ui.require([
 		return this.withMetamodel(function (oDocument) {
 			var aBindings = oDocument.dataServices.schema[0].entityContainer.entitySet[1]
 					.navigationPropertyBinding,
+				sContainerName = "com.sap.gateway.iwbep.tea_busi.v0001.Container",
 				aResult = [{
 					"Path" : "EMPLOYEE_2_TEAM",
-					"Target@odata.navigationLink" : "EntitySets(Fullname='com.sap.gateway"
-							+ ".iwbep.tea_busi.v0001.Container%2FTEAMS')"
+					"Target@odata.navigationLink" : "EntitySets(Fullname='" + sContainerName +
+						"%2FTEAMS')"
 				}, {
 					"Path" : "EMPLOYEE_2_EQUIPMENTS",
-					"Target@odata.navigationLink" : "EntitySets(Fullname='com.sap.gateway"
-							+ ".iwbep.tea_busi.v0001.Container%2FEquipments')"
+					"Target@odata.navigationLink" : "EntitySets(Fullname='" + sContainerName +
+						"%2FEquipments')"
 				}];
-			assert.deepEqual(OlingoDocument.transformNavigationPropertyBindings(aBindings),
-				aResult);
+			assert.deepEqual(OlingoDocument.transformNavigationPropertyBindings(aBindings,
+				sContainerName), aResult);
 		});
 	});
 	// TODO set Fullname. But what is the Fullname of NavigationPropertyBindings?
