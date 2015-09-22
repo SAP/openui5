@@ -37,7 +37,7 @@
 
 				var oComboBox = sap.ui.getCore().byId(sId),
 					$ComboBox = oComboBox.$(),
-					$Arrow = $ComboBox.children("." + sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Arrow");
+					$Arrow = $ComboBox.children("." + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Arrow");
 
 				return {
 					$ComboBox: $ComboBox,
@@ -2610,7 +2610,7 @@
 					strictEqual(document.activeElement, oComboBox.getFocusDomRef(), "The ComboBox should get the focus");
 				}
 
-				ok(oComboBox.hasStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"));
+				ok(oComboBox.hasStyleClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed"));
 
 				if (sap.ui.Device.system.desktop || sap.ui.Device.system.tablet) {
 					strictEqual(oComboBox.$().outerWidth(), oComboBox.getPicker().$().outerWidth(), "The width of the picker pop-up is strictEqual to the width of the input");
@@ -2658,7 +2658,7 @@
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				ok(oComboBox.hasStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"));
+				ok(oComboBox.hasStyleClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed"));
 
 				// cleanup
 				oComboBox.destroy();
@@ -3319,8 +3319,8 @@
 				oComboBox.setValueState(sap.ui.core.ValueState.Error);
 
 				// assert
-				ok(oComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS));
-				ok(oComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Error"));
+				ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE));
+				ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Error"));
 
 				// cleanup
 				oComboBox.destroy();
@@ -4616,15 +4616,15 @@
 					strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-expanded"), "false");
 					strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-autocomplete"), "both");
 					strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-required"), undefined);
-					ok(oComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS), 'The combo box element has the CSS class "' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + '"');
+					ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE), 'The combo box element has the CSS class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + '"');
 					ok(oComboBox.$("arrow").length, "The HTML span element for the arrow exists");
-					ok(oComboBox.$("arrow").hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Arrow"), 'The arrow button has the CSS class "' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Arrow"');
+					ok(oComboBox.$("arrow").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Arrow"), 'The arrow button has the CSS class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + 'Arrow"');
 					ok(oComboBox.$("arrow").hasClass(sap.m.ComboBoxRenderer.CSS_CLASS + "Arrow"), 'The arrow button has the CSS class "' + sap.m.ComboBoxRenderer.CSS_CLASS + 'Arrow"');
 					strictEqual(oComboBox.getDomRef("arrow").getAttribute("tabindex"), "-1", "The arrow button is focusable, but it is not reachable via sequential keyboard navigation");
 					strictEqual(oComboBox.getDomRef("arrow").getAttribute("aria-labelledby"), oComboBox.getDomRef("buttonlabel").id);
 					ok(oComboBox.getDomRef("buttonlabel"), "The button label exists");
 					ok(oComboBox.$("buttonlabel").hasClass("sapUiInvisibleText"));
-					ok(oComboBox.$("buttonlabel").hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ButtonLabel"));
+					ok(oComboBox.$("buttonlabel").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "ButtonLabel"));
 					strictEqual(getComputedStyle(oComboBox.getDomRef("buttonlabel")).getPropertyValue("display"), "none");
 
 					// cleanup
@@ -4738,7 +4738,7 @@
 					});
 
 					var bHasClass = oComboBox.getDomRef().className.split(" ").some(function(sClass) {
-						return sClass === sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed";
+						return sClass === oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed";
 					});
 
 					// assert
@@ -4873,7 +4873,7 @@
 				});
 
 				// assert
-				ok(!oComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"), 'The ComboBox must not have the CSS class "' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Pressed"');
+				ok(!oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed"), 'The ComboBox must not have the CSS class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + 'Pressed"');
 
 				// cleanup
 				oComboBox.destroy();
@@ -4957,7 +4957,7 @@
 				ok(fnTapSpy.calledOnce, "ontap() event handler must be called exactly once");
 				strictEqual(fnPickerCloseSpy.callCount, 0, "close() method of the popover must not be called");
 				strictEqual(fnOpenSpy.callCount, 1, "open() method was called exactly once");
-				ok(oComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"), 'The ComboBox must have the css class "' + sap.m.ComboBoxBaseRenderer.CSS_CLASS + 'Pressed"');
+				ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed"), 'The ComboBox must have the css class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + 'Pressed"');
 				this.clock.tick(0);
 
 				if (sap.ui.Device.system.desktop) {
@@ -5040,7 +5040,7 @@
 
 				// assert
 				strictEqual(oComboBox.isOpen(), false, "Control picker pop-up is closed");
-				ok(!oComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"), "The ComboBox's input field must not have the css class '" + sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed'");
+				ok(!oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed"), "The ComboBox's input field must not have the css class '" + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed'");
 
 				// cleanup
 				oComboBox.destroy();
@@ -7897,7 +7897,7 @@
 
 				// assert
 				strictEqual(fnOnBeforeOpenSpy.callCount, 1, "onBeforeOpen() called exactly once");
-				ok(oComboBox.$().hasClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed"), "The ComboBox's input field must have the CSS class '" + sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed'");
+				ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed"), "The ComboBox's input field must have the CSS class '" + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed'");
 				strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-owns"), oComboBox.getList().getId(), 'the attribute "aria-owns" is set after the list is rendered');
 
 				// cleanup

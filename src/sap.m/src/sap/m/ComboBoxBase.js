@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ComboBoxBase.
-sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog', './InputBase', './SelectList', './Popover', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool'],
-	function(jQuery, Bar, ComboBoxBaseRenderer, Dialog, InputBase, SelectList, Popover, library, EnabledPropagator, IconPool) {
+sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './SelectList', './Popover', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool'],
+	function(jQuery, Bar, Dialog, InputBase, SelectList, Popover, library, EnabledPropagator, IconPool) {
 		"use strict";
 
 		/**
@@ -154,7 +154,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 			if (this.isOpenArea(oEvent.target)) {
 
 				// add the active state to the control's field
-				this.addStyleClass(ComboBoxBaseRenderer.CSS_CLASS + "Pressed");
+				this.addStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
 			}
 		};
 
@@ -175,7 +175,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 			if ((!this.isOpen() || !this.hasContent()) && this.isOpenArea(oEvent.target)) {
 
 				// remove the active state of the control's field
-				this.removeStyleClass(ComboBoxBaseRenderer.CSS_CLASS + "Pressed");
+				this.removeStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
 			}
 		};
 
@@ -187,7 +187,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 		ComboBoxBase.prototype.ontap = function(oEvent) {
 			InputBase.prototype.ontap.apply(this, arguments);
 
-			var CSS_CLASS = ComboBoxBaseRenderer.CSS_CLASS;
+			var CSS_CLASS = this.getRenderer().CSS_CLASS_COMBOBOXBASE;
 
 			// in case of a non-editable or disabled combo box, the picker popup cannot be opened
 			if (!this.getEnabled() || !this.getEditable()) {
@@ -592,7 +592,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './ComboBoxBaseRenderer', './Dialog
 			InputBase.prototype.updateValueStateClasses.apply(this, arguments);
 
 			var mValueState = sap.ui.core.ValueState,
-				CSS_CLASS = ComboBoxBaseRenderer.CSS_CLASS,
+				CSS_CLASS = this.getRenderer().CSS_CLASS_COMBOBOXBASE,
 				$DomRef = this.$();
 
 			if (sOldValueState !== mValueState.None) {
