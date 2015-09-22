@@ -37,7 +37,23 @@
 				beforeUploadStarts="onBeforeUploadStarts"
 				uploadTerminated="onUploadTerminated"
 				items="{/items}"
-				numberOfAttachmentsText="Uploaded (8)">
+				numberOfAttachmentsText="Uploaded (8)"
+				mode="SingleSelectMaster">
+				<toolbar>
+					<OverflowToolbar id="myId" >
+						<Title id="attachmentTitle"/>
+						<ToolbarSpacer/>
+						<SearchField width="10rem" search="onSearch"></SearchField>
+						<UploadCollectionToolbarPlaceholder></UploadCollectionToolbarPlaceholder>
+						<Button id="deleteSelectedButton" text="Delete selected items" press="onDeleteSelectedItems" enabled="false" type="Transparent"></Button >
+						<Button id="countButton" text="Count" press="onCountPress" enabled="false" type="Transparent"></Button>
+						<ToggleButton id="selectAllButton" text="Select All" press="onSelectAllPress" enabled="false" type="Transparent"></ToggleButton>
+						<Label text="Enable File Uploader"></Label>
+						<Switch state="true" change="onSwitchUploaderChange" type="Transparent"></Switch>
+						<Label text="Multiselect mode"></Label>
+						<Switch id="modeSwitch" state="false" change="onSwitchModeChange" type="Transparent"></Switch>
+					</OverflowToolbar>
+				</toolbar>
 				<items>
 					<UploadCollectionItem
 						documentId="{documentId}"
@@ -50,7 +66,8 @@
 						visibleDelete="{visibleDelete}"
 						visibleEdit="{visibleEdit}"
 						attributes="{attributes}"
-						statuses="{statuses}">
+						statuses="{statuses}"
+						selected="{selected}">
 						<attributes>
 							<ObjectAttribute
 								title="{title}"

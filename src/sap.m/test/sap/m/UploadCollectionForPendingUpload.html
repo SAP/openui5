@@ -15,43 +15,62 @@
 	jQuery.sap.initMobile();
 	jQuery.sap.require("sap.m.MessageToast");
 
-/* =========================================================== */
-/* UploadCollection                                            */
-/* =========================================================== */
+	/* =========================================================== */
+	/* UploadCollection                                            */
+	/* =========================================================== */
 
 	var aFileTypes = ["jPg", "tXT", "ppt", "doc", "xls", "pdf", "PNG"];
 	var iRequestCounter = 0, sFileName;
 	var oButton = new sap.m.Button({text: "start upload", press : fnUpload});
-
-	// Creates an instance of UploadCollection
-	var oUploadCollection = new sap.m.UploadCollection({
-		id : "UploadCollection",
-		maximumFilenameLength : 55,
-		maximumFileSize : 50,
-		multiple : true,
-		fileType : aFileTypes,
-		sameFilenameAllowed : true,
-		instantUpload : false,
-		// events
-		change : fnChange,
-		fileDeleted : fnFileDeleted,
-		filenameLengthExceed : fnfilenameLengthExceed,
-		fileSizeExceed : fnFileSizeExceed,
-		typeMissmatch : fnTypeMissmatch,
-		uploadComplete : fnUploadComplete,
-		beforeUploadStarts : fnBeforeUploadStarts
-	});
+	var oUploadCollection = fnCreateUploadCollection();
 
 	/* =========================================================== */
-	/* Handle UploadCollection Events                              */
+	/* Creates an instance of UploadCollection                     */
+	/* =========================================================== */
+	function fnCreateUploadCollection() {
+		return new sap.m.UploadCollection({
+			maximumFilenameLength : 55,
+			maximumFileSize : 50,
+			multiple : true,
+			fileType : aFileTypes,
+			sameFilenameAllowed : true,
+			instantUpload : false,
+			mode : "SingleSelectMaster",
+			toolbar : new sap.m.OverflowToolbar({
+				content : [ new sap.m.Title("attachmentTitle"),
+							new sap.m.ToolbarSpacer(),
+							new sap.m.SearchField({width: "10rem", search: fnSearch}),
+							new sap.m.UploadCollectionToolbarPlaceholder(),
+							new sap.m.Button({icon: "sap-icon://money-bills", enabled: false, type: "Transparent"}),
+							new sap.m.Button({text: "Details", press: fnDetailsPress, type: "Transparent"})
+				]
+			}),
+			// events
+			change : fnChange,
+			filenameLengthExceed : fnfilenameLengthExceed,
+			fileSizeExceed : fnFileSizeExceed,
+			typeMissmatch : fnTypeMissmatch,
+			uploadComplete : fnUploadComplete,
+			beforeUploadStarts : fnBeforeUploadStarts
+		}).addEventDelegate({
+			onBeforeRendering : function () {
+				fnUpdateAttachmentTitle();
+			}
+		});
+	}
+
+	/* =========================================================== */
+	/* Handles UploadCollection Events                              */
 	/* =========================================================== */
 	function fnChange(oEvent) {
 		sap.m.MessageToast.show("Event change triggered");
 	}
 
 	function fnUpload(oEvent) {
-		oUploadCollection.upload();
-		sap.m.MessageToast.show("Upload has been started");
+		if (oUploadCollection.getItems().length > 0){
+			oUploadCollection.upload();
+			sap.m.MessageToast.show("Upload has been started");
+		}
 	}
 
 	function fnBeforeUploadStarts(oEvent) {
@@ -62,10 +81,6 @@
 			sap.m.MessageToast.show("Event beforeUploadStarts triggered, see log for more ...");
 		}, 2000);
 		jQuery.sap.log.info("Event beforeUploadStarts triggered for file " + sFileName);
-	}
-
-	function fnFileDeleted(oEvent) {
-		sap.m.MessageToast.show("Event fileDeleted triggered");
 	}
 
 	function fnfilenameLengthExceed(oEvent) {
@@ -80,6 +95,22 @@
 		sap.m.MessageToast.show("Event typeMissmatch triggered");
 	}
 
+	function fnDetailsPress(oEvent) {
+		if (oUploadCollection.getSelectedItem()){
+			sap.m.MessageToast.show("Details button was clicked for file: " + oUploadCollection.getSelectedItem().getFileName());
+		} else {
+			sap.m.MessageToast.show("First, select an item");
+		}
+	}
+
+	function fnSearch(oEvent) {
+		sap.m.MessageToast.show("Search feature isn't available in this sample");
+	}
+
+	function fnUpdateAttachmentTitle() {
+		sap.ui.getCore().byId("attachmentTitle").setText("Attachments (" +  oUploadCollection.getItems().length + ")");
+	}
+
 	function fnUploadComplete(oEvent) {
 		sFileName = oEvent.getParameter("files")[0].fileName;
 		// Delays the uploadComplete message in order to see the beforeUploadStarts message
@@ -92,23 +123,7 @@
 				// Destroys old UploadCollection instance and creates a new one
 				oPage.removeContent(oUploadCollection);
 				oUploadCollection.destroy();
-				// Creates an instance of UploadCollection
-				oUploadCollection = new sap.m.UploadCollection({
-					maximumFilenameLength : 55,
-					maximumFileSize : 50,
-					multiple : true,
-					fileType : aFileTypes,
-					sameFilenameAllowed : true,
-					instantUpload : false,
-					// events
-					change : fnChange,
-					fileDeleted : fnFileDeleted,
-					filenameLengthExceed : fnfilenameLengthExceed,
-					fileSizeExceed : fnFileSizeExceed,
-					typeMissmatch : fnTypeMissmatch,
-					uploadComplete : fnUploadComplete,
-					beforeUploadStarts : fnBeforeUploadStarts
-				});
+				oUploadCollection = fnCreateUploadCollection();
 				oPage.insertContent(oUploadCollection);
 			}, 6000);
 			iRequestCounter = 0;
@@ -118,18 +133,16 @@
 	}
 
 	/* ============================================================	*/
-	/* Create Page                   								*/
+	/* Creates Page                   								*/
 	/* ============================================================ */
 	// As jQuery.sap.initMobile() is used, it is not needed to create an app and the page can be put directly into the HTML document
-	var oPage = new sap.m.Page(
-			"page",
-			{
-				title : "Test Page for sap.m.UploadCollection with Upload Pending files",
-				content : oUploadCollection,
-				footer : new sap.m.Bar({
-					contentMiddle : oButton
-				})
-			}).placeAt("body");
+	var oPage = new sap.m.Page( "page", {
+		title : "Test Page for sap.m.UploadCollection with Upload Pending files",
+		content : oUploadCollection,
+		footer : new sap.m.Bar({
+			contentMiddle : oButton
+		})
+	}).placeAt("body");
 </script>
 
 </head>
