@@ -140,10 +140,6 @@
 	-webkit-box-shadow: inset 1px 1px 0 1px @sapUiCalendarColorToday, inset -1px -1px 0 1px @sapUiCalendarColorToday;
 }
 
-html[data-sap-ui-browser="ie8"] .sapUiCalItemNow > .sapUiCalItemText{
-	background-color: @sapUiCalendarColorToday; /*As IE8 don't support shadows - complete filled*/
-}
-
 .sap-desktop .sapUiCalItemNow:hover > .sapUiCalItemText,
 .sap-desktop .sapUiCalItemNow:focus > .sapUiCalItemText{
 	background-color: @sapUiHighlight;
@@ -233,9 +229,4 @@ html[data-sap-ui-browser="ie8"] .sapUiCalItemNow > .sapUiCalItemText{
 	box-shadow: inset 1px 1px 0 0 @sapUiButtonHoverBackground, inset -1px -1px 0 0 @sapUiButtonHoverBackground;
 	-moz-box-shadow: inset 1px 1px 0 0 @sapUiButtonHoverBackground, inset -1px -1px 0 0 @sapUiButtonHoverBackground;
 	-webkit-box-shadow: inset 1px 1px 0 0 @sapUiButtonHoverBackground, inset -1px -1px 0 0 @sapUiButtonHoverBackground;
-}
-
-html[data-sap-ui-browser="ie8"] .sapUiCalMonthPicker .sapUiCalItemSel,
-html[data-sap-ui-browser="ie8"] .sapUiCalYearPicker .sapUiCalItemSel{
-	border-color: @sapUiButtonHoverBackground; /* As IE8 don't support shadows - use border */
 }
