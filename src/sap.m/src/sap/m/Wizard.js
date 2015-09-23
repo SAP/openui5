@@ -419,7 +419,7 @@ sap.ui.define([
 		 */
 		Wizard.prototype._initProgressNavigator = function () {
 			var that = this,
-				progressNavigator = new WizardProgressNavigator({
+				progressNavigator = new WizardProgressNavigator(this.getId() + "-progressNavigator", {
 					stepChanged: this._handleStepChanged.bind(this),
 					stepActivated: this._handleStepActivated.bind(this)
 				});
@@ -455,7 +455,7 @@ sap.ui.define([
 		Wizard.prototype._createNextButton = function () {
 			var firstStep = this._getStartingStep(),
 				isStepValidated = (firstStep) ? firstStep.getValidated() : true,
-				nextButton = new Button({
+				nextButton = new Button(this.getId() + "-nextButton", {
 					text: this._resourceBundle.getText("WIZARD_STEP") + " " + 2,
 					type: sap.m.ButtonType.Emphasized,
 					enabled: isStepValidated,
