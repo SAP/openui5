@@ -943,6 +943,7 @@
 					equal(spy.args[2][0].headers['MyCustomHeader2'], "blubb", "spy check custom header");
 					equal(spy.args[2][0].headers['TesT'], "new Header", "spy check custom header");
 					equal(spy.callCount, 3, "spy read count");
+					OData.defaultHttpClient.request.restore();
 					start();
 				}
 			});
@@ -953,6 +954,79 @@
 		});
 	});
 
+	asyncTest("header content-type test for GET JSON", function(){
+		sap.ui.model.odata.v2.ODataModel.mServiceData = {};
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		var oModel = initModel(sURI);
+		
+		oModel.oMetadata.loaded().then(function() {
+
+			oModel.read("/Categories", {
+				success: function() {
+					equal(spy.args[1][0].headers['Accept'], "application/json", "spy check header");
+					equal(spy.args[1][0].headers['Content-Type'], undefined, "there should be no content type header for GET requests");
+					OData.defaultHttpClient.request.restore();
+					start();
+				}
+			});
+		});
+	});
+	
+	asyncTest("header content-type test for POST JSON", function(){
+		sap.ui.model.odata.v2.ODataModel.mServiceData = {};
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		var oModel = initModel(sURI, {tokenHandling: false});
+		
+		oModel.oMetadata.loaded().then(function() {
+
+			oModel.create("/Categories", {}, {
+				success: function() {
+					equal(spy.args[1][0].headers['Accept'], "application/json", "spy check header");
+					equal(spy.args[1][0].headers['Content-Type'], "application/json", "there should be a content type header for POST requests");
+					OData.defaultHttpClient.request.restore();
+					start();
+				}
+			});
+		});
+	});
+
+	
+	asyncTest("header content-type test for GET xml", function(){
+		sap.ui.model.odata.v2.ODataModel.mServiceData = {};
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		var oModel = initModel(sURI, {json :false});
+		
+		oModel.oMetadata.loaded().then(function() {
+
+			oModel.read("/Categories", {
+				success: function() {
+					equal(spy.args[1][0].headers['Accept'], "application/atom+xml,application/atomsvc+xml,application/xml", "spy check header");
+					equal(spy.args[1][0].headers['Content-Type'], undefined, "there should be no content type header for GET requests");
+					OData.defaultHttpClient.request.restore();
+					start();
+				}
+			});
+		});
+	});
+	
+	asyncTest("header content-type test for POST xml", function(){
+		sap.ui.model.odata.v2.ODataModel.mServiceData = {};
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		var oModel = initModel(sURI, {json :false, tokenHandling: false});
+		
+		oModel.oMetadata.loaded().then(function() {
+
+			oModel.create("/Categories", {}, {
+				success: function() {
+					equal(spy.args[1][0].headers['Accept'], "application/atom+xml,application/atomsvc+xml,application/xml", "spy check header");
+					equal(spy.args[1][0].headers['Content-Type'], "application/atom+xml", "there should be a content type header for POST requests");
+					OData.defaultHttpClient.request.restore();
+					start();
+				}
+			});
+		});
+	});
+	
 	asyncTest("async metadata request check", function(){
 		var oModel = initModel(sURI, {
 			json: true, 
