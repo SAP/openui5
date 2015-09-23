@@ -15,10 +15,13 @@
 
 			var sUrlParameters = "?noglobals=true";
 
-			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/RouteMatchedHandler.qunit.html" + sUrlParameters);
-			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/Router.qunit.html" + sUrlParameters);
 			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/TargetHandler.qunit.html" + sUrlParameters);
-			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/Targets.qunit.html" + sUrlParameters);
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/sync/RouteMatchedHandler.qunit.html" + sUrlParameters);
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/sync/Router.qunit.html" + sUrlParameters);
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/sync/Targets.qunit.html" + sUrlParameters);
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/async/RouteMatchedHandler.qunit.html" + sUrlParameters);
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/async/Router.qunit.html" + sUrlParameters);
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/routing/async/Targets.qunit.html" + sUrlParameters);
 			return suite;
 		}
 

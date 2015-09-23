@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.model.odata.TreeBindingAdapter
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/ClientTreeBinding', 'sap/ui/table/TreeAutoExpandMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/TreeBindingUtils'],
-	function(jQuery, TreeBinding, ClientTreeBinding, TreeAutoExpandMode, ChangeReason, TreeBindingUtils) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/ClientTreeBinding', 'sap/ui/table/TreeAutoExpandMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/TreeBindingUtils', 'sap/ui/model/odata/OperationMode'],
+	function(jQuery, TreeBinding, ClientTreeBinding, TreeAutoExpandMode, ChangeReason, TreeBindingUtils, OperationMode) {
 		"use strict";
 
 		/**
@@ -472,6 +472,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 				}
 			}
 
+			// if the binding is running in the OperationMode "Client", make sure the node sections are optimised to load everything
+			if (this.sOperationMode === OperationMode.Client) {
+				oNodeState.sections = [{
+					startIndex: 0,
+					length: iMaxGroupSize
+				}];
+			}
+			
 			//iterate all loaded (known) sections
 			for (var i = 0; i < oNodeState.sections.length; i++) {
 
@@ -600,52 +608,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		};
 
 		/**
-		 * @override
+		 * Returns if the Binding is grouped, default is true.
+		 * AnalyticalBindings might differ.
 		 */
 		TreeBindingAdapter.prototype.isGrouped = function () {
 			return true;
 		};
 
 		/**
-		 * @override
+		 * Hook which needs to be implemented by subclasses
 		 */
 		TreeBindingAdapter.prototype._calculateGroupID = function (oNode) {
-
-			var sGroupIDBase = "";
-			var sGroupIDSuffix = "";
-
-			//artificial root has always "/" as groupID
-			if (oNode.context === null) {
-				return "/";
-			}
-
-			if (oNode.parent) {
-				//case 1: nested node, group id is the path along the parents
-				sGroupIDBase = oNode.parent.groupID;
-				sGroupIDBase = sGroupIDBase[sGroupIDBase.length - 1] !== "/" ? sGroupIDBase + "/" : sGroupIDBase;
-				if (this.bHasTreeAnnotations) {
-					sGroupIDSuffix = oNode.context.getProperty(this.oTreeProperties["hierarchy-node-for"]) + "/";
-				} else {
-					//odata navigation properties
-					sGroupIDSuffix = oNode.context.sPath.substring(1) + "/";
-				}
-			} else {
-				//case 2: node sits on root level
-				if (this.bHasTreeAnnotations) {
-					sGroupIDBase = "/";
-					sGroupIDSuffix = oNode.context.getProperty(this.oTreeProperties["hierarchy-node-for"]) + "/";
-				} else {
-					//odata nav properties case
-					sGroupIDBase = "/";
-					sGroupIDSuffix = oNode.context.sPath[0] === "/" ? oNode.context.sPath.substring(1) : oNode.context.sPath;
-				}
-			}
-
-			var sGroupID = sGroupIDBase + sGroupIDSuffix;
-
-			return sGroupID;
+			jQuery.sap.log.error("TreeBindingAdapter#_calculateGroupID: Not implemented. Needs to be implemented in respective sub-classes.");
 		};
 
+		/**
+		 * Creates a new tree node with valid default values
+		 * @params {object} mParameters a set of parameters which might differ from the default values
+		 * @returns {object} a newly created tree node
+		 */
 		TreeBindingAdapter.prototype._createNode = function (mParameters) {
 			mParameters = mParameters || {};
 
@@ -935,10 +916,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		};
 
 		/**
-		 * Checks if the given node can be selected. Always true for TreeTable controls.
+		 * Checks if the given node can be selected. Always true for TreeTable controls, except the node is not defined.
 		 */
 		TreeBindingAdapter.prototype._isNodeSelectable = function (oNode) {
-			return true;
+			return !!oNode;
 		};
 
 		/**
@@ -949,7 +930,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		TreeBindingAdapter.prototype.setSelectedIndex = function (iRowIndex) {
 			var oNode = this.findNode(iRowIndex);
 
-			if (oNode) {
+			if (oNode && this._isNodeSelectable(oNode)) {
 				// clear and fetch the changes on the selection
 				var oChanges = this._clearSelection();
 
@@ -970,7 +951,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 				this._publishSelectionChanges(oChanges);
 			} else {
-				jQuery.sap.log.warning("TreeTable: Please make sure to only select rows, for which data has been fetched to the client.");
+				jQuery.sap.log.warning("TreeBindingAdapter: The selection was ignored. Please make sure to only select rows, for which data has been fetched to the client. For AnalyticalTables, some rows might not be selectable at all.");
 			}
 		};
 

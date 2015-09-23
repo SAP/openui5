@@ -34,6 +34,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UI
 				}
 
 				EventProvider.apply(this, arguments);
+
+				// temporarily: for checking the url param
+				function checkUrl() {
+					if (jQuery.sap.getUriParameters().get("sap-ui-xx-asyncRouting") === "true") {
+						jQuery.sap.log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "Views");
+						return true;
+					}
+					return false;
+				}
+
+				// set the default view loading mode to sync for compatibility reasons
+				// temporarily: set the default value depending on the url parameter "sap-ui-xx-asyncRouting"
+				var async = (oOptions.async === undefined) ? checkUrl() : oOptions.async;
+
+				var ViewsStub;
+				if (async) {
+					jQuery.sap.require("sap.ui.core.routing.async.Views");
+					ViewsStub = sap.ui.require("sap/ui/core/routing/async/Views");
+				} else {
+					jQuery.sap.require("sap.ui.core.routing.sync.Views");
+					ViewsStub = sap.ui.require("sap/ui/core/routing/sync/Views");
+				}
+
+				for (var fn in ViewsStub) {
+					this[fn] = ViewsStub[fn];
+				}
 			},
 
 			metadata : {
@@ -49,12 +75,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UI
 			 * So you can retrieve the view later by calling the {@link sap.ui.core.UIComponent#byId} function of the UIComponent.
 			 *
 			 * @param {string} oOptions.viewName If you do not use setView please see {@link sap.ui.view} for the documentation. This is used as a key in the cache of the Views instance. If you want to retrieve a view that has been given an alternative name in {@link #setView} you need to provide the same name here and you can skip all the other viewOptions.
-			 * @return {Window.Promise} A promise that is resolved when the view is loaded. The view instance will be passed to the promise.
+			 * @return {Window.Promise} A promise that is resolved when the view is loaded {@link sap.ui.core.mvc.View#loaded}. The view instance will be passed to the promise.
 			 */
 			getView : function (oOptions) {
-				return new Promise(function (fnSuccess) {
-					fnSuccess(this._getView(oOptions));
-				}.bind(this));
+				return this._getView(oOptions).loaded();
 			},
 
 			/**
@@ -166,43 +190,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/UI
 			/**
 			 * hook for the deprecated property viewId on the route, will not prefix the id with the component
 			 *
+			 * @name sap.ui.core.routing.Views#_getViewWithGlobalId
 			 * @returns {*}
 			 * @private
 			 */
-			_getViewWithGlobalId : function (oOptions) {
-				function fnCreateView() {
-					return sap.ui.view(oOptions);
-				}
-
-				if (!oOptions) {
-					$.sap.log.error("the oOptions parameter of getView is mandatory", this);
-				}
-
-				var oView,
-					sViewName = oOptions.viewName;
-
-				this._checkViewName(sViewName);
-				oView = this._oViews[sViewName];
-
-				if (oView) {
-					return oView;
-				}
-
-				if (this._oComponent) {
-					oView = this._oComponent.runAsOwner(fnCreateView);
-				} else {
-					oView = fnCreateView();
-				}
-
-				this._oViews[sViewName] = oView;
-
-				this.fireCreated({
-					view: oView,
-					viewOptions: oOptions
-				});
-
-				return oView;
-			},
 
 			/**
 			 * @param {string} sViewName logs an error if it is empty or undefined

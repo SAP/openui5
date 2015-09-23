@@ -2171,7 +2171,7 @@ sap.ui.define([
 				that.unbindProperty(sName, true);
 			}
 		});
-
+		
 		jQuery.each(this.mBoundObjects, function(sName, oBoundObject) {
 			that.unbindObject(sName, /* _bSkipUpdateBindingContext */ true);
 		});
@@ -2568,7 +2568,7 @@ sap.ui.define([
 				var oDataState = oBinding.getDataState();
 				if (oDataState) {
 					var oControlMessages = oDataState.getControlMessages();
-					if (oControlMessages.length > 0) {
+					if (oControlMessages && oControlMessages.length > 0) {
 						var oMessageManager = sap.ui.getCore().getMessageManager();
 						oDataState.setControlMessages([]); //remove the controlMessages before informing manager to avoid DataStateChange event to fire
 						if (oControlMessages) {
@@ -2658,7 +2658,7 @@ sap.ui.define([
 		// Set additional information on the binding info
 		oBindingInfo.binding = oBinding;
 		oBindingInfo.modelChangeHandler = fModelChangeHandler;
-
+		oBindingInfo.dataStateChangeHandler = fDataStateChangeHandler;
 		oBinding.attachEvents(oBindingInfo.events);
 
 		oBinding.initialize();
@@ -2678,6 +2678,9 @@ sap.ui.define([
 		if (oBindingInfo) {
 			if (oBindingInfo.binding) {
 				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
+				if (this.refreshDataState) {
+					oBindingInfo.binding.detachDataStateChange(oBindingInfo.dataStateChangeHandler);
+				}
 				oBindingInfo.binding.detachEvents(oBindingInfo.events);
 				oBindingInfo.binding.destroy();
 			}

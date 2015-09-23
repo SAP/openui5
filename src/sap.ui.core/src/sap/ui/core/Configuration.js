@@ -54,16 +54,20 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 			this._oCore = oCore;
 
 			function detectLanguage() {
-				var match;
-				if ( Device.os.android ) {
-					// on Android, navigator.language is hardcoded to 'en', so check UserAgent string instead
-					match = navigator.userAgent.match(/\s([a-z]{2}-[a-z]{2})[;)]/i);
-					if ( match ) {
-						return match[1];
+
+				function navigatorLanguage() {
+					if ( Device.os.android ) {
+						// on Android, navigator.language is hardcoded to 'en', so check UserAgent string instead
+						var match = navigator.userAgent.match(/\s([a-z]{2}-[a-z]{2})[;)]/i);
+						if ( match ) {
+							return match[1];
+						}
+						// okay, we couldn't find a language setting. It might be better to fallback to 'en' instead of having no language
 					}
-					// okay, we couldn't find a language setting. It might be better to fallback to 'en' instead of having no language
+					return navigator.language;
 				}
-				return (navigator.languages && navigator.languages[0]) || navigator.language || navigator.userLanguage || navigator.browserLanguage;
+
+				return (navigator.languages && navigator.languages[0]) || navigatorLanguage() || navigator.userLanguage || navigator.browserLanguage;
 			}
 
 			// definition of supported settings

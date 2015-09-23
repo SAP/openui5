@@ -16,15 +16,27 @@
 		"links": [
 			{
 				"text": "Shopping Cart",
-				"ref": "test-resources/sap/m/demokit/cart/index.html?responderOn=true",
+				"ref": "test-resources/sap/m/demokit/sample/ShoppingCart/webapp/index.html",
 				"icon": "sapmdemo/cart",
 				"desc": "The classic business process of finding & ordering products"
 			},
 			{
 				"text": "Hello World",
-				"ref": "test-resources/sap/m/demokit/helloworld/index.html",
+				"ref": "test-resources/sap/m/demokit/sample/HelloWorld/index.html",
 				"icon": "sapmdemo/helloworld",
-				"desc": "This is where it all starts when developing with sap.m"
+				"desc": "This is where it all starts when developing with UI5"
+			},
+			{
+				"text": "Worklist",
+				"ref": "test-resources/sap/m/demokit/sample/Worklist/webapp/test/testOpenUI5Service.html",
+				"icon": "task",
+				"desc": "Best-practice starting point for a worklist-style app"
+			},
+			{
+				"text": "Downloads",
+				"ref": "explored.html#/entity/sap.m.demo.Apps/samples",
+				"icon": "task",
+				"desc": "Download our Demo Apps here"
 			}
 		]
 	},
@@ -190,12 +202,31 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.NotificationListItem",
+		  "name": "Notification List Item",
+		  "category": "List",
+		  "since": "1.34",
+		  "samples": [
+			"sap.m.sample.NotificationListItem"
+		  ]
+		},
+		{
 		  "id": "sap.m.DisplayListItem",
 		  "name": "Display List Item",
 		  "category": "List",
 		  "since": "1.10",
 		  "formFactors": "L",
 		  "samples": ["sap.m.sample.DisplayListItem"]
+		},
+		{
+		  "id": "sap.m.DraftIndicator",
+		  "name": "Draft Indicator",
+		  "category": "Display",
+		  "since": "1.32",
+		  "samples": [
+		  	"sap.m.sample.DraftIndicator",
+		  	"sap.m.sample.SemanticPageDraftIndicator"
+		  ]
 		},
 		{
 		  "id": "sap.m.FacetFilter",
@@ -634,7 +665,8 @@
 		  "since": "1.30",
 		  "samples": [
 			"sap.m.sample.SemanticPage",
-			"sap.m.sample.SemanticPageFullScreen"
+			"sap.m.sample.SemanticPageFullScreen",
+			"sap.m.sample.SemanticPageDraftIndicator"
 		  ]
 		},
 		{
@@ -717,6 +749,7 @@
 		  "since": "1.12",
 		  "samples": [
 			"sap.m.sample.Table",
+			"sap.m.sample.TableColumnWidth",
 			"sap.m.sample.TableBreadcrumb",
 			"sap.m.sample.TableLayout",
 			"sap.m.sample.TableMergeCells",
@@ -766,7 +799,7 @@
 		"id": "sap.m.TimePicker",
 		"name": "Time Picker",
 		"category": "User Input",
-		"since": "1.30",
+		"since": "1.32",
 		"samples": ["sap.m.sample.TimePicker"]
 	  },
 		{
@@ -899,7 +932,7 @@
 		  "category": "Tutorial",
 		  "since": "1.30",
 		  "formFactors": "-",
-		  "description": "In this tutorial we are introducing you to all major development paradigms of SAPUI5.",
+		  "description": "In this tutorial we are introducing you to all major development paradigms of SAPUI5",
 		  "docuLink": "#docs/guide/3da5f4be63264db99f2e5b04c5e853db.html",
 		  "samplesAsSteps": [
 			"Hello World!",
@@ -941,11 +974,12 @@
 		},
 		{
 		  "id": "sap.m.tutorial.testing",
-		  "name": "Testing Apps",
+		  "name": "Testing",
 		  "category": "Tutorial",
 		  "since": "1.30",
 		  "formFactors": "-",
-		  "description": "In this tutorial we will test application functionality with QUnit, OPA5, and the mock server. Please have a look at the tutorial documentation in the developer guide for more details",
+		  "description": "In this tutorial we will test application functionality with QUnit, OPA5, and the mock server",
+		  "docuLink": "#docs/guide/291c9121e6044ab381e0b51716f97f52.html",
 		  "samplesAsSteps": [
 			"Handover and Testing Strategy",
 			"A first Unit Test",
@@ -953,7 +987,7 @@
 			"Testing a new type module",
 			"Adding a flagged button",
 			"A first OPA Test",
-			"Changing the Table to grow",
+			"Changing the table to grow",
 			"Testing Navigation",
 			"Adding the Post Page",
 			"Testsuite and Automated Testing",
@@ -962,6 +996,33 @@
 			"Writing a Short Date Formatter TDD style",
 			"Adding the date formatter"
 		  ]
+		},
+		{
+		  "id": "sap.m.tutorial.worklist",
+		  "name": "Worklist App",
+		  "category": "Tutorial",
+		  "since": "1.32",
+		  "formFactors": "-",
+		  "description": "In this tutorial we implement typical features of a full-screen worklist app, a typical SAP Fiori design pattern",
+		  "samplesAsSteps": [
+			"Getting started with the worklist template",
+			"Extending the worklist table",
+			"Adding quick filters",
+			"Reorder or unlist products",
+			"Adjusting the object view",
+			"Adding a comments section"
+		  ]
+		},
+		{
+			"id" : "sap.m.demo.Apps",
+			"name" : "Demo Apps",
+			"category" : "Application",
+			"since" : "1.11",
+			"samples" : [
+				"sap.m.sample.HelloWorld",
+				"sap.m.sample.ShoppingCart",
+				"sap.m.sample.Worklist"
+			]
 		}
 	  ],
 	  "samples": [
@@ -1386,6 +1447,11 @@
 		  "description": "Semantic Page Full Screen"
 		},
 		{
+		  "id": "sap.m.sample.SemanticPageDraftIndicator",
+		  "name": "Semantic Page using Draft Indicator",
+		  "description": "Integration of Draft Indicator inside Semantic Page"
+		},
+		{
 		  "id": "sap.m.sample.ActionSelect",
 		  "name": "Action Select",
 		  "description": "Illustrates an Action Select with 2 actions."
@@ -1616,6 +1682,11 @@
 		  "description": "You can use fixedLayout property to define the layout algorithm to be used for the table cells, rows, and columns.\nWhen fixedLayout property is set to false, the width of the table and its cells depends on the content thereof. The column width is set by the widest unbreakable content in the cells.\nBy default, table is rendered with fixed layout algorithm. This means the horizontal layout only depends on the table's width and the width of the columns, not the contents of the cells. Cells in subsequent rows do not affect column widths."
 		},
 		{
+		  "id": "sap.m.sample.TableColumnWidth",
+		  "name": "Table - Defining Column Width",
+		  "description": "While defining the column width you can use percent values but you should be careful with them. Click to see some traps and tipps."
+		},
+		{
 		  "id": "sap.m.sample.TablePerso",
 		  "name": "Table - Personalization",
 		  "description": "The Table Perso Dialog is a simple dialog to be used for allowing the user to set table personalizations, specifically column visibility and order. Use the Table Perso Controller in conjunction with a persistence service based on the abstract Table Perso Provider to have changes made and persisted."
@@ -1771,6 +1842,11 @@
 		  "description": "Similar to the Select Dialog, the Table Select Dialog presents selectable items in a table-based dialog, with filter functions. You can have single select or multi select mode. The dialog can remember the selections previously set on the dialog."
 		},
 		{
+		  "id": "sap.m.sample.NotificationListItem",
+		  "name": "Notification List Item",
+		  "description": "A list item suitable for showing notifications to the user."
+		},
+		{
 		  "id": "sap.m.sample.Dialog",
 		  "name": "Dialog",
 		  "description": "Typically a Dialog prompts the user for decisions or additional information required by the application. The content of a dialog is fully customizable. If you want to highlight important information you should use the special type of 'Message Dialog'."
@@ -1909,6 +1985,26 @@
 		  "id": "sap.m.sample.SplitApp",
 		  "name": "SplitApp standard use case",
 		  "description": "The SplitApp is the base for each master detail application. It extends the sap.m.SplitContainer control. The display of master NavContainer depends on the portrait/landscape orientation of the device and the mode of SplitApp."
+		},
+		{
+		  "id": "sap.m.sample.DraftIndicator",
+		  "name": "Draft Indicator",
+		  "description": "The Draft Indicator shows that eighter currently a draft is saving or that it is already saved. It does not block the current UI screen so other operations could be triggered in parallel."
+		},
+		{
+		  "id": "sap.m.sample.ShoppingCart",
+		  "name": "Shopping Cart",
+		  "description": "The classic business process of finding & ordering products"
+		},
+		{
+			"id": "sap.m.sample.HelloWorld",
+			"name": "Hello World",
+			"description": "This is where it all starts when developing with UI5"
+		},
+		{
+			"id": "sap.m.sample.Worklist",
+			"name": "Worklist",
+			"description": "Simple starting point for a worklist-style app according to the best practices"
 		}
 	  ]
 	}

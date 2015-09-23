@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>qUnit Page for sap.ui.core.ComponentContainer</title>
+
+	<script src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-resourceroots='{"qunit": "../../"}'>
+	</script>
+
+
+	<!-- Initialization -->
+	<script>
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		jQuery.sap.require("sap.ui.thirdparty.sinon");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+		QUnit.config.autostart = false;
+		jQuery.sap.registerModulePath("samples.components", "../../../../../test-resources/sap/ui/core/samples/components/");
+
+		sap.ui.require(["sap/ui/core/ComponentContainer"], function (ComponentContainer) {
+
+			QUnit.test("Should be able to chain setComponent", function (assert) {
+				var oComponentContainter = new ComponentContainer();
+
+				var oComponent = sap.ui.component({
+					name: "samples.components.button"
+				});
+
+				oComponentContainter.setComponent(oComponent).setComponent(oComponent);
+
+				assert.strictEqual(oComponent.getId(), oComponentContainter.getComponent(), "Was able to chain the setter");
+			});
+
+			QUnit.start();
+		});
+	</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

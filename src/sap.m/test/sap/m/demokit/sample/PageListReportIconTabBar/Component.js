@@ -12,12 +12,10 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					"sap.ui.comp"
 				]
 			},
-			includes : [ "PageListReportIconTabBar/style.css" ],
 			config : {
 				sample : {
 					stretch : true,
 					files : [
-						"style.css",
 						"Page.view.xml"
 					]
 				}

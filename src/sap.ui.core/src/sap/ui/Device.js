@@ -31,6 +31,7 @@ if (typeof window.sap.ui !== "object") {
 }
 
 (function() {
+	"use strict";
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
@@ -460,7 +461,6 @@ if (typeof window.sap.ui !== "object") {
 	 * @name sap.ui.Device.browser#edge
 	 * @type boolean
 	 * @since 1.30.0
-	 * @experimental The final version of this browser is not yet available. As a result, the detection might not yet be stable.
 	 * @public
 	 */
 	/**
@@ -480,7 +480,9 @@ if (typeof window.sap.ui !== "object") {
 	/**
 	 * If this flag is set to <code>true</code>, the Apple Safari browser is used.
 	 *
-	 * <b>Note:</b> Please also note the flag {@link sap.ui.Device.browser#fullscreen}.
+	 * <b>Note:</b>
+	 * This flag is also <code>true</code> when the standalone (fullscreen) mode or webview is used on iOS devices.
+	 * Please also note the flags {@link sap.ui.Device.browser#fullscreen} and {@link sap.ui.Device.browser#webview}.
 	 *
 	 * @name sap.ui.Device.browser#safari
 	 * @type boolean
@@ -498,10 +500,22 @@ if (typeof window.sap.ui !== "object") {
 	 * If this flag is set to <code>true</code>, the Safari browser runs in standalone fullscreen mode on iOS.
 	 *
 	 * <b>Note:</b> This flag is only available if the Safari browser was detected. Furthermore, if this mode is detected,
-	 * technically a WebView is used and not a standard Safari. There might be slight differences in behavior and detection, e.g.
+	 * technically not a standard Safari is used. There might be slight differences in behavior and detection, e.g.
 	 * the availability of {@link sap.ui.Device.browser#version}.
 	 *
 	 * @name sap.ui.Device.browser#fullscreen
+	 * @type boolean
+	 * @since 1.31.0
+	 * @public
+	 */
+	/**
+	 * If this flag is set to <code>true</code>, the Safari browser runs in webview mode on iOS.
+	 *
+	 * <b>Note:</b> This flag is only available if the Safari browser was detected. Furthermore, if this mode is detected,
+	 * technically not a standard Safari is used. There might be slight differences in behavior and detection, e.g.
+	 * the availability of {@link sap.ui.Device.browser#version}.
+	 *
+	 * @name sap.ui.Device.browser#webview
 	 * @type boolean
 	 * @since 1.31.0
 	 * @public
@@ -542,7 +556,7 @@ if (typeof window.sap.ui !== "object") {
 	 *
 	 * @see sap.ui.Device.browser#name
 	 * @name sap.ui.Device.browser.BROWSER#EDGE
-	 * @since 1.30.0
+	 * @since 1.28.0
 	 * @public
 	 */
 	/**
@@ -624,9 +638,10 @@ if (typeof window.sap.ui !== "object") {
 		return res;
 	}
 
-	function getBrowser(customUa) {
+	function getBrowser(customUa, customNav) {
 		var b = calcBrowser(customUa);
 		var _ua = customUa || ua;
+		var _navigator = customNav || window.navigator;
 
 		// jQuery checks for user agent strings. We differentiate between browsers
 		var oExpMobile;
@@ -679,6 +694,7 @@ if (typeof window.sap.ui !== "object") {
 				};
 			} else { // Safari might have an issue with _ua.match(...); thus changing
 				var oExp = /(Version|PhantomJS)\/(\d+\.\d+).*Safari/;
+				var bStandalone = _navigator.standalone;
 				if (oExp.test(_ua)) {
 					var aParts = oExp.exec(_ua);
 					var version = parseFloat(aParts[2]);
@@ -686,17 +702,26 @@ if (typeof window.sap.ui !== "object") {
 						name: BROWSER.SAFARI,
 						versionStr: "" + version,
 						fullscreen: false,
+						webview: false,
 						version: version,
 						mobile: oExpMobile.test(_ua),
 						webkit: true,
 						webkitVersion: webkitVersion,
 						phantomJS: aParts[1] === "PhantomJS"
 					};
-				} else { // other webkit based browser
-					var bFullScreenSafari = window.navigator.standalone && /iPhone|iPad|iPod/.test(_ua) && !(/CriOS/.test(_ua));
+				} else if (/iPhone|iPad|iPod/.test(_ua) && !(/CriOS/.test(_ua)) && (bStandalone === true || bStandalone === false)) {
+					//WebView or Standalone mode on iOS
 					return {
-						name: bFullScreenSafari ? BROWSER.SAFARI : undefined,
-						fullscreen: bFullScreenSafari ? bFullScreenSafari : undefined,
+						name: BROWSER.SAFARI,
+						version: -1,
+						fullscreen: bStandalone,
+						webview: !bStandalone,
+						mobile: oExpMobile.test(_ua),
+						webkit: true,
+						webkitVersion: webkitVersion
+					};
+				} else { // other webkit based browser
+					return {
 						mobile: oExpMobile.test(_ua),
 						webkit: true,
 						webkitVersion: webkitVersion,
@@ -724,7 +749,6 @@ if (typeof window.sap.ui !== "object") {
 				mobile: false // TODO: really?
 			};
 		} else if ( b.edge ) {
-			logger.log(WARNING, "New MS Edge browser detected. Be aware that this browser is not yet officially supported by UI5.", _ua);
 			var version = version = parseFloat(b.version);
 			return {
 				name: BROWSER.EDGE,
@@ -852,7 +876,7 @@ if (typeof window.sap.ui !== "object") {
 	device.support.matchmedia = !!window.matchMedia;
 	var m = device.support.matchmedia ? window.matchMedia("all and (max-width:0px)") : null; //IE10 doesn't like empty string as argument for matchMedia, FF returns null when running within an iframe with display:none
 	device.support.matchmedialistener = !!(m && m.addListener);
-	if (device.browser.safari && device.browser.version < 6) {
+	if (device.browser.safari && device.browser.version < 6 && !device.browser.fullscreen && !device.browser.webview) {
 		//Safari seems to have addListener but no events are fired ?!
 		device.support.matchmedialistener = false;
 	}
@@ -1203,7 +1227,7 @@ if (typeof window.sap.ui !== "object") {
 
 	/**
 	 * Removes a previously attached event handler from the change events of the screen width.
-	 * 
+	 *
 	 * The passed parameters must match those used for registration with {@link #attachHandler} beforehand.
 	 *
 	 * @param {function}
@@ -1411,10 +1435,10 @@ if (typeof window.sap.ui !== "object") {
 
 	/**
 	 * Provides a basic categorization of the used device based on various indicators.
-	 * 
+	 *
 	 * These indicators are for example the support of touch events, the screen size, the used operation system or
 	 * the user agent of the browser.
-	 * 
+	 *
 	 * <b>Note:</b> Depending on the capabilities of the device it is also possible that multiple flags are set to <code>true</code>.
 	 *
 	 * @namespace
@@ -1423,7 +1447,7 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * If this flag is set to <code>true</code>, the device is recognized as a tablet.
-	 * 
+	 *
 	 * Furthermore, a CSS class <code>sap-tablet</code> is added to the document root element.
 	 *
 	 * @name sap.ui.Device.system#tablet
@@ -1432,7 +1456,7 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * If this flag is set to <code>true</code>, the device is recognized as a phone.
-	 * 
+	 *
 	 * Furthermore, a CSS class <code>sap-phone</code> is added to the document root element.
 	 *
 	 * @name sap.ui.Device.system#phone
@@ -1441,7 +1465,7 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * If this flag is set to <code>true</code>, the device is recognized as a desktop system.
-	 * 
+	 *
 	 * Furthermore, a CSS class <code>sap-desktop</code> is added to the document root element.
 	 *
 	 * @name sap.ui.Device.system#desktop
@@ -1450,9 +1474,9 @@ if (typeof window.sap.ui !== "object") {
 	 */
 	/**
 	 * If this flag is set to <code>true</code>, the device is recognized as a combination of a desktop system and tablet.
-	 * 
+	 *
 	 * Furthermore, a CSS class <code>sap-combi</code> is added to the document root element.
-	 * 
+	 *
 	 * <b>Note:</b> This property is mainly for Microsoft Windows 8 (and following) devices where the mouse and touch event may be supported
 	 * natively by the browser being used. This property is set to <code>true</code> only when both mouse and touch event are natively supported.
 	 *
@@ -1570,7 +1594,7 @@ if (typeof window.sap.ui !== "object") {
 
 	/**
 	 * Common API for orientation change notifications across all platforms.
-	 * 
+	 *
 	 * For browsers or devices that do not provide native support for orientation change events
 	 * the API simulates them based on the ratio of the document's width and height.
 	 *
@@ -1616,12 +1640,12 @@ if (typeof window.sap.ui !== "object") {
 	 * @type integer
 	 * @public
 	 */
-	
+
 	device.resize = {};
 
 	/**
 	 * Registers the given event handler to orientation change events of the document's window.
-	 * 
+	 *
 	 * The event is fired whenever the screen orientation changes and the width of the document's window
 	 * becomes greater than its height or the other way round.
 	 *
@@ -1637,7 +1661,7 @@ if (typeof window.sap.ui !== "object") {
 	 * @param {object}
 	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
 	 *                        handler function). If it is not specified, the handler function is called in the context of the <code>window</code>.
-	 * 
+	 *
 	 * @name sap.ui.Device.orientation#attachHandler
 	 * @function
 	 * @public
@@ -1648,7 +1672,7 @@ if (typeof window.sap.ui !== "object") {
 
 	/**
 	 * Registers the given event handler to resize change events of the document's window.
-	 * 
+	 *
 	 * The event is fired whenever the document's window size changes.
 	 *
 	 * The event handler is called with a single argument: a map <code>mParams</code> which provides the following information:
@@ -1664,7 +1688,7 @@ if (typeof window.sap.ui !== "object") {
 	 * @param {object}
 	 *            [oListener] The object that wants to be notified when the event occurs (<code>this</code> context within the
 	 *                        handler function). If it is not specified, the handler function is called in the context of the <code>window</code>.
-	 * 
+	 *
 	 * @name sap.ui.Device.resize#attachHandler
 	 * @function
 	 * @public
@@ -1675,14 +1699,14 @@ if (typeof window.sap.ui !== "object") {
 
 	/**
 	 * Removes a previously attached event handler from the orientation change events.
-	 * 
+	 *
 	 * The passed parameters must match those used for registration with {@link #attachHandler} beforehand.
 	 *
 	 * @param {function}
 	 *            fnFunction The handler function to detach from the event
 	 * @param {object}
 	 *            [oListener] The object that wanted to be notified when the event occurred
-	 * 
+	 *
 	 * @name sap.ui.Device.orientation#detachHandler
 	 * @function
 	 * @public
@@ -1693,14 +1717,14 @@ if (typeof window.sap.ui !== "object") {
 
 	/**
 	 * Removes a previously attached event handler from the resize events.
-	 * 
+	 *
 	 * The passed parameters must match those used for registration with {@link #attachHandler} beforehand.
 	 *
 	 * @param {function}
 	 *            fnFunction The handler function to detach from the event
 	 * @param {object}
 	 *            [oListener] The object that wanted to be notified when the event occurred
-	 * 
+	 *
 	 * @name sap.ui.Device.resize#detachHandler
 	 * @function
 	 * @public

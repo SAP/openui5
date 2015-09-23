@@ -119,7 +119,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	MaskInput.prototype.onfocusin = function (oEvent) {
 		this._sOldInputValue = this._getInputValue();
 		InputBase.prototype.onfocusin.apply(this, arguments);
-		applyMask.call(this);
+
+		// if input does not differ from original (i.e. empty mask) OR differs from original but has invalid characters
+		if (!this._oTempValue.differsFromOriginal() || !isValidInput.call(this, this._sOldInputValue)) {
+			applyMask.call(this);
+		}
+
 		positionCaret.call(this, true);
 	};
 
@@ -170,8 +175,20 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 * @param {object} oEvent The jQuery event
 	 */
 	MaskInput.prototype.onkeydown = function (oEvent) {
-		InputBase.prototype.onkeydown.apply(this, arguments);
-		keyDownHandler.call(this, oEvent);
+		var oKey = parseKeyBoardEvent(oEvent),
+		    mBrowser = sap.ui.Device.browser;
+
+		/* When user types character, the flow of triggered events is keydown -> keypress -> input. The MaskInput
+		 handles user input in keydown (for special keys like Delete and Backspace) or in keypress - for any other user
+		 input and suppresses the input events. This is not true for IE9, where the input event is fired, because of
+		 the underlying InputBase takes control and fires it (see {@link sap.m.InputBase#onkeydown})
+		 */
+		var bIE9AndBackspaceDeleteScenario = (oKey.bBackspace || oKey.bDelete) && mBrowser.msie && mBrowser.version < 10;
+
+        if (!bIE9AndBackspaceDeleteScenario) {
+			InputBase.prototype.onkeydown.apply(this, arguments);
+		}
+		keyDownHandler.call(this, oEvent, oKey);
 	};
 
 	MaskInput.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
@@ -545,7 +562,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	/**
 	 * Places the cursor on a given position (zero based).
 	 * @param {int} iPos The position the cursor to be placed on
-	 * @returns {jQuery} The jQuery object of <code>MaskInput</code>
 	 * @private
 	 */
 	function setCursorPosition(iPos) {
@@ -597,74 +613,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	}
 
 	/**
-	 * Performs left shifting starting from a specified position.
-	 * @param {int} iFrom The most left position to shift
-	 * @param {int} iTo The most right position to shift
-	 * @private
-	 */
-	function shiftLeft(iFrom, iTo) {
-		var iIndex,
-			iNextApplicableRuleIndex,
-			bCharPassesValidation,
-			sChar,
-			sPlaceholderSymbol = this.getPlaceholderSymbol();
-
-		if (iFrom >= 0) {
-			iNextApplicableRuleIndex = this._oRules.nextTo(iTo);
-			for (iIndex = iFrom; iIndex < this._iMaskLength; iIndex++) {
-
-				if (this._oRules.hasRuleAt(iIndex)) {
-					sChar = this._oTempValue.charAt(iNextApplicableRuleIndex);
-					bCharPassesValidation = this._oRules.applyCharAt(sChar,  iIndex);
-
-					if (iNextApplicableRuleIndex < this._iMaskLength && bCharPassesValidation) {
-						this._oTempValue.setCharAt(sPlaceholderSymbol, iNextApplicableRuleIndex);
-						this._oTempValue.setCharAt(sChar, iIndex);
-						iNextApplicableRuleIndex = this._oRules.nextTo(iNextApplicableRuleIndex);
-					} else {
-						this.updateDomValue(this._oTempValue.toString());
-						setCursorPosition.call(this, Math.max(this._iUserInputStartPosition, iFrom));
-						return;
-					}
-				}
-			}
-		}
-
-	}
-
-	/**
-	 * Performs right shifting starting from a specified position.
-	 * @param {int} iStartPosition The starting position
-	 * @private
-	 */
-	function shiftRight(iStartPosition) {
-		var iIndex,
-			iNextApplicableRuleIndex,
-			sTempChar,
-			sPlaceholderSymbol = this.getPlaceholderSymbol(),
-			sChar = sPlaceholderSymbol;
-
-		for (iIndex = iStartPosition; iIndex < this._iMaskLength; iIndex++) {
-
-			if (this._oRules.hasRuleAt(iIndex)) {
-				this._oTempValue.setCharAt(sChar, iIndex);
-				iNextApplicableRuleIndex = this._oRules.nextTo(iIndex);
-
-				if (iNextApplicableRuleIndex >= this._iMaskLength) {
-					return;
-				}
-				sTempChar = this._oTempValue.charAt(iIndex);
-
-				if (!this._oRules.applyCharAt(sTempChar,  iNextApplicableRuleIndex)) {
-					return;
-				}
-
-				sChar = sTempChar;
-			}
-		}
-	}
-
-	/**
 	 * Resets the temp value with a given range.
 	 * @param {int} iFrom The starting position to start clearing (optional, zero based, default 0)
 	 * @param {int} iTo The ending position to finish clearing (optional, zero based, defaults to last char array index)
@@ -697,12 +645,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	}
 
 	/**
-	 * Finds the first placeholder replaceable position.
-	 * @returns {int} The first placeholder replaceable position (zero based)
+	 * Finds the first placeholder symbol position.
+	 * @returns {int} The first placeholder symbol position or -1 if none
 	 * @private
 	 */
 	function findFirstPlaceholderPosition() {
-		return this._iLastMatch;
+		return this._oTempValue.toString().indexOf(this.getPlaceholderSymbol());
 	}
 
 	/**
@@ -717,35 +665,31 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 			sPlaceholderSymbol = this.getPlaceholderSymbol(),
 			bCharMatched;
 
-		this._iLastMatch = -1;
 		for (iMaskIndex = 0; iMaskIndex < this._iMaskLength; iMaskIndex++) {
 			if (this._oRules.hasRuleAt(iMaskIndex)) {
-				this._oTempValue.setCharAt(sPlaceholderSymbol, iMaskIndex);
-				bCharMatched = false;
+					this._oTempValue.setCharAt(sPlaceholderSymbol, iMaskIndex);
+					bCharMatched = false;
 
-				if (sInput.length) {
-					do {
-						sCharacter = sInput.charAt(iInputIndex);
-						iInputIndex++;
+					if (sInput.length) {
+						do {
+							sCharacter = sInput.charAt(iInputIndex);
+							iInputIndex++;
+							if (this._oRules.applyCharAt(sCharacter, iMaskIndex)) {
+								this._oTempValue.setCharAt(sCharacter, iMaskIndex);
+								bCharMatched = true;
+							}
+						} while (!bCharMatched && (iInputIndex < sInput.length));
+					}
 
-						if (this._oRules.applyCharAt(sCharacter, iMaskIndex)) {
-							this._oTempValue.setCharAt(sCharacter, iMaskIndex);
-							this._iLastMatch = iMaskIndex;
-							bCharMatched = true;
-						}
-					} while (!bCharMatched && (iInputIndex < sInput.length));
-				}
-
-				// the input string is over ->reset the rest of the char array to the end
-				if (!bCharMatched) {
-					resetTempValue.call(this, iMaskIndex + 1, this._iMaskLength - 1);
-					break;
-				}
+					// the input string is over ->reset the rest of the char array to the end
+					if (!bCharMatched) {
+						resetTempValue.call(this, iMaskIndex + 1, this._iMaskLength - 1);
+						break;
+					}
 			} else {
 				if (this._oTempValue.charAt(iMaskIndex) === sInput.charAt(iInputIndex)) {
 					iInputIndex++;
 				}
-				this._iLastMatch = iMaskIndex;
 			}
 		}
 	}
@@ -775,7 +719,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 			!(oKey.bShift && oKey.bInsert)) {
 			if (oSelection.bHasSelection) {
 				resetTempValue.call(this, oSelection.iFrom, oSelection.iTo - 1);
-				shiftLeft.call(this, oSelection.iFrom, oSelection.iTo - 1);
+				this.updateDomValue(this._oTempValue.toString());
+				setCursorPosition.call(this, Math.max(this._iUserInputStartPosition, oSelection.iFrom));
 			}
 			iPosition = this._oRules.nextTo(oSelection.iFrom - 1);
 
@@ -792,13 +737,13 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 * @param {jQuery.event} oEvent The jQuery event object
 	 * @private
 	 */
-	function keyDownHandler(oEvent) {
+	function keyDownHandler(oEvent, oKey) {
 		var oSelection,
 			iBegin,
 			iEnd,
 			iCursorPos,
 			iNextCursorPos,
-			oKey = parseKeyBoardEvent(oEvent);
+			oKey = oKey || parseKeyBoardEvent(oEvent);
 
 		if (!this.getEditable()) {
 			return;
@@ -812,7 +757,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 		} else if (oKey.bEscape) {
 			applyAndUpdate.call(this, this._sOldInputValue);
-			positionCaret.call(this, true);//this.selectText(0, findFirstPlaceholderPosition.call(this) + 1);
+			positionCaret.call(this, true);
 			oEvent.preventDefault();
 
 		} else if (oKey.bEnter) {
@@ -829,16 +774,18 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 			iEnd = oSelection.iTo;
 
 			if (!oSelection.bHasSelection) {
-				if (oKey.bDelete) {
-					iEnd = this._oRules.nextTo(iBegin - 1);
-					iBegin = iEnd;
-					iEnd = this._oRules.nextTo(iEnd);
-				} else {
+				if (oKey.bBackspace) {
 					iBegin = this._oRules.previous(iBegin);
 				}
 			}
-			resetTempValue.call(this, iBegin, iEnd - 1);
-			shiftLeft.call(this, iBegin, iEnd - 1);
+
+			if (oKey.bBackspace || (oKey.bDelete && oSelection.bHasSelection)) {
+				iEnd = iEnd - 1;
+			}
+
+			resetTempValue.call(this, iBegin, iEnd);
+			this.updateDomValue(this._oTempValue.toString());
+			setCursorPosition.call(this, Math.max(this._iUserInputStartPosition, iBegin));
 
 			oEvent.preventDefault();
 		}
@@ -855,7 +802,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 			if (this._oRules.applyCharAt(sNextChar, iPos)) {
 				bAtLeastOneSuccessfulCharPlacement = true;
 
-				shiftRight.call(this, iPos);
 				this._oTempValue.setCharAt(sNextChar, iPos);
 				iPos = this._oRules.nextTo(iPos);
 			}
@@ -969,16 +915,49 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 		clearTimeout(this._iCaretTimeoutId);
 		iEndSelectionIndex = findFirstPlaceholderPosition.call(this);
+		if (iEndSelectionIndex < 0) {
+			iEndSelectionIndex = sMask.length;
+		}
+
 		this._iCaretTimeoutId = jQuery.sap.delayedCall(0, this, function () {
 			if (this.getFocusDomRef() !== document.activeElement) {
 				return;
 			}
-			if (bSelectAllIfInputIsCompleted && (iEndSelectionIndex === (sMask.length - 1))) {
-				this.selectText(0, iEndSelectionIndex + 1); //iEndSelectionIndex+1, because selectText end index is exclusive
+			if (bSelectAllIfInputIsCompleted && (iEndSelectionIndex === (sMask.length))) {
+				this.selectText(0, iEndSelectionIndex);
 			} else {
-				setCursorPosition.call(this, iEndSelectionIndex + 1);
+				setCursorPosition.call(this, iEndSelectionIndex);
 			}
 		});
+	}
+
+
+
+	/**
+	 * Determines if a given string contains characters that will not comply to the mask input rules.
+	 *
+	 * @param {string} sInput the input
+	 * @returns {boolean} True if the whole <code>sInput</code> passes the validation, false otherwise.
+	 * @private
+	 */
+	function isValidInput(sInput) {
+		var iLimit = sInput.length;
+		for (var i = 0; i < iLimit; i++) {
+			var sChar = sInput[i];
+
+			/* consider the input invalid if any character except the placeholder symbol does not comply to the mask
+			 rules of the corresponding position or if in case there is no rule, if the character is not exactly the same
+			 as the current mask character at that position (i.e. immutable characters) */
+			if (this._oRules.hasRuleAt(i) && (!this._oRules.applyCharAt(sChar, i) && sChar !== this.getPlaceholderSymbol())) {
+				return false;
+			}
+
+			if (!this._oRules.hasRuleAt(i) && sChar !== this._oTempValue.charAt(i)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	return MaskInput;

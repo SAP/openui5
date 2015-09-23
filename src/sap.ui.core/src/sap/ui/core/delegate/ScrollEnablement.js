@@ -821,7 +821,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 
 				if (!(this._oPullDown && this._oPullDown._bTouchMode)
 					&& !this._fnScrollLoadCallback
-					&& !!!Device.browser.internet_explorer) {
+					&& !Device.browser.internet_explorer) {
 					// for IE the resize listener must remain in place for the case when navigating away and coming back.
 					// For the other browsers it seems to work fine without.
 					sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
@@ -1068,7 +1068,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 				this._setOverflow();
 
 				// apply the previous scroll state
-				this._scrollTo(this._scrollX, this._scrollY);
+				if (this._scrollX !== 0 || this._scrollY !== 0) {
+					this._scrollTo(this._scrollX, this._scrollY);
+				}
 
 				this._refresh();
 

@@ -3459,7 +3459,6 @@
 
 				// act
 				var oRemovedItems = oSelect.removeAllItems();
-				sap.ui.getCore().applyChanges();
 
 				// assert
 				ok(fnRemoveAllAggregationSpy.calledWith("items"), "sap.m.Select.prototype.removeAllAggregation() method was called with the expected argument");
@@ -3473,7 +3472,7 @@
 				strictEqual(oSelect.getList().getSelectedItemId(), "");
 				strictEqual(oSelect.getList().getSelectedKey(), "");
 				strictEqual(oSelect.$("label").text(), "");
-				strictEqual(oSelect.$().children("select").length, 1);
+				strictEqual(oSelect.$("select").children().length, 0);
 
 				for (var i = 0; i < oRemovedItems.length; i++) {
 					strictEqual(oRemovedItems[i].hasListeners("_change"), false);
@@ -3518,7 +3517,6 @@
 
 				// act
 				oSelect.destroyItems();
-				sap.ui.getCore().applyChanges();
 
 				// assert
 				ok(fnDestroyItemsSpy.returned(oSelect), "sap.m.Select.prototype.destroyItems() returns this to allow method chaining");
@@ -3526,7 +3524,8 @@
 				// strictEqual(oSelect.getValue(), "");	// not implemented
 				ok(oSelect.getList().getSelectedItem() === null);
 				strictEqual(oSelect.$("label").text(), "");
-				strictEqual(oSelect.$().children("select").length, 1);
+				strictEqual(oSelect.$("select").length, 1);
+				strictEqual(oSelect.$("select").children().length, 0);
 
 				for (var i = 0; i < aItems.length; i++) {
 					strictEqual(aItems[i].hasListeners("_change"), false);
@@ -5336,6 +5335,52 @@
 			/* unbindObject()                       */
 			/* ------------------------------------ */
 
+			/* ------------------------------------ */
+			/* _isRequiredSelectElement()           */
+			/* ------------------------------------ */
+
+			test("_isRequiredSelectElement() it should return true when the width property is set to auto", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					width: "auto"
+				});
+
+				// assert
+				strictEqual(oSelect._isRequiredSelectElement(), true);
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			test("_isRequiredSelectElement() it should return false when the autoAdjustWidth property is set to true", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					autoAdjustWidth: true
+				});
+
+				// assert
+				strictEqual(oSelect._isRequiredSelectElement(), false);
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			test("_isRequiredSelectElement() it should return false", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					width: "15rem"
+				});
+
+				// assert
+				strictEqual(oSelect._isRequiredSelectElement(), false);
+
+				// cleanup
+				oSelect.destroy();
+			});
+
 			/* =========================================================== */
 			/* HTML module                                                 */
 			/* =========================================================== */
@@ -6894,6 +6939,37 @@
 				// act
 				sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
 				oSelect.rerender();
+
+				// assert
+				strictEqual(fnFireChangeSpy.callCount, 0);
+
+				// cleanup
+				oSelect.destroy();
+			});
+
+			// BCP 1570819144
+			test("it should not fire the change event after the selected item is removed and re-added again", function() {
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item()
+					]
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+				oSelect.getFocusDomRef().blur();
+				oSelect.removeAllItems();
+				oSelect.addItem(new sap.ui.core.Item());
+				sap.ui.getCore().applyChanges();
+				oSelect.focus();
+				var fnFireChangeSpy = this.spy(oSelect, "fireChange");
+
+				// act
+				oSelect.getFocusDomRef().blur();
 
 				// assert
 				strictEqual(fnFireChangeSpy.callCount, 0);

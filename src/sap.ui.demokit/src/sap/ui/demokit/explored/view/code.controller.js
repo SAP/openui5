@@ -1,5 +1,5 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
 /*global JSZip *///declare unusual global vars for JSLint/SAPUI5 validation
@@ -152,13 +152,14 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 				oZipFile.file(sFileName, that.fetchSourceFile(sRef, sFileName));
 			});
 
-			var oContent = oZipFile.generate();
+			var oContent = oZipFile.generate({type:"blob"});
 
 			this._openGeneratedFile(oContent);
 		},
 
 		_openGeneratedFile : function (oContent) {
-			location.href = "data:application/zip;base64," + oContent;
+			jQuery.sap.require("sap.ui.core.util.File");
+			sap.ui.core.util.File.save(oContent, this._sId, "zip", "application/zip");
 		},
 
 		createIndexFile : function(oData) {

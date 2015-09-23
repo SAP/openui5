@@ -268,15 +268,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 		};
 
 		oTypeConfigs["sap.m.semantic.ISort"] = {
-			position: SemanticConfiguration.prototype._PositionInPage.footerRight_IconOnly
-		};
-
-		oTypeConfigs["sap.m.semantic.IGroup"] = {
-			position: SemanticConfiguration.prototype._PositionInPage.footerRight_IconOnly
+			position: SemanticConfiguration.prototype._PositionInPage.footerRight_IconOnly,
+			order: 3
 		};
 
 		oTypeConfigs["sap.m.semantic.IFilter"] = {
-			position: SemanticConfiguration.prototype._PositionInPage.footerRight_IconOnly
+			position: SemanticConfiguration.prototype._PositionInPage.footerRight_IconOnly,
+			order: 4
+		};
+
+		oTypeConfigs["sap.m.semantic.IGroup"] = {
+			position: SemanticConfiguration.prototype._PositionInPage.footerRight_IconOnly,
+			order: 5
 		};
 
 		oTypeConfigs["sap.m.semantic.SortAction"] = {
@@ -293,7 +296,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					})
 				};
 			},
-			order: 3,
 			constraints: "IconOnly"
 		};
 
@@ -319,7 +321,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					}.bind(oContext)
 				};
 			},
-			order: 3,
 			constraints: "IconOnly"
 		};
 
@@ -337,7 +338,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					})
 				};
 			},
-			order: 4,
 			constraints: "IconOnly"
 		};
 
@@ -356,7 +356,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					})
 				};
 			},
-			order: 4,
 			constraints: "IconOnly"
 		};
 
@@ -374,7 +373,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					})
 				};
 			},
-			order: 5,
 			constraints: "IconOnly"
 		};
 
@@ -400,7 +398,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					}.bind(oContext)
 				};
 			},
-			order: 5,
 			constraints: "IconOnly"
 		};
 
@@ -506,8 +503,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 				};
 			}
 		};
-		
-		oTypeConfigs["sap.m.semantic.DraftIndicator"] = {
+
+		oTypeConfigs["draftIndicator"] = {
 			position: SemanticConfiguration.prototype._PositionInPage.footerLeft,
 			getSettings: function() {
 				return {

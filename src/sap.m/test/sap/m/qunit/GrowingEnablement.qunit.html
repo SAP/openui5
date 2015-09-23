@@ -33,10 +33,11 @@
 
 			function switchTriggerTestcase (bHasScrollbars, bShouldShowTrigger) {
 				// System under Test
+				var $Dummy = jQuery("<div>").insertAfter("#qunit-fixture");
 				var oGrowingEnablement = new sap.m.GrowingEnablement(new sap.m.List()),
 					ojQueryStub = this.stub(oGrowingEnablement._oControl, "$", function () {
 						//we need a valid jQuery node
-						return jQuery("#qunit-fixture");
+						return $Dummy;
 					});
 
 				// Act
@@ -47,6 +48,8 @@
 				strictEqual(oGrowingEnablement._showsTrigger, bShouldShowTrigger, "did show the trigger correctly");
 				strictEqual(oGrowingEnablement._showsLoading, !bShouldShowTrigger, "did show the loading correctly");
 				strictEqual(ojQueryStub.callCount, 1, "did modify the dom only once");
+
+				oGrowingEnablement.destroy();
 			}
 
 			test("Should show the trigger", function() {
@@ -59,10 +62,11 @@
 
 			test("Should not change trigger if growing is not enabled", function() {
 				// System under Test
+				var $Dummy = jQuery("<div>").insertAfter("#qunit-fixture");
 				var oGrowingEnablement = new sap.m.GrowingEnablement(new sap.m.List()),
 					ojQueryStub = this.stub(oGrowingEnablement._oControl, "$", function () {
 						//we need a valid jQuery node
-						return jQuery("#qunit-fixture");
+						return $Dummy;
 					});
 
 				// Act
@@ -73,6 +77,8 @@
 				ok(!oGrowingEnablement._showsTrigger, "did not show the trigger");
 				ok(!oGrowingEnablement._showsLoading, "did not show the loading");
 				strictEqual(ojQueryStub.callCount, 0, "did not modify the dom");
+
+				oGrowingEnablement.destroy();
 			});
 
 			module("Integration tests");
@@ -80,7 +86,7 @@
 			test("Should determine if the list is scrollable", function() {
 				//Arrange
 				var data = { items: [ {},{}] };
-			
+
 				var oModel = new sap.ui.model.json.JSONModel();
 				oModel.setData(data);
 
@@ -88,7 +94,7 @@
 					growing : true,
 					growingScrollToLoad : true,
 					items : {
-					path : "/items", 
+					path : "/items",
 					template : new sap.m.CustomListItem({
 							content : new sap.ui.core.HTML({content:'<div style="height: 1000px"></div>'}),
 						})
@@ -108,6 +114,10 @@
 
 				//Act + Assert
 				ok(sut._getHasScrollbars(), "The list has scrollbars");
+
+				page.destroy();
+				oModel.destroy();
+				sut.destroy();
 			});
 
 			test("Should determine if the list is not scrollable", function() {
@@ -125,6 +135,9 @@
 
 				//Act + Assert
 				ok(!sut._getHasScrollbars(), "The list has no scrollbars");
+
+				sut.destroy();
+				oList.destroy();
 			});
 
 			module("Odata");
@@ -284,7 +297,8 @@
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
-
 		<div id="qunit-fixture"></div>
+		<div id="growing1"></div>
+		<div id="growing2"></div>
 	</body>
 </html>

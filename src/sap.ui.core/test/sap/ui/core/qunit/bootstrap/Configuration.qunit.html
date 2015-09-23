@@ -1,22 +1,21 @@
 <!DOCTYPE HTML>
-
 <!-- 
   Tested class: sap.ui.core.Configuration
   Author: d020684
--->
-
+  -->
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8" />
+
 	<!-- Initialization -->
-	<script language="javascript">
+	<script>
 		window["sap-ui-config"] = {
 			theme : "sap_bluecrystal"
 		}
 	</script>
 	
 	<script id="sap-ui-bootstrap" 
-		type="text/javascript"
 		src="../../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-calendarType="islamic"
@@ -26,28 +25,27 @@
 	</script>
 	
 	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-	<!-- Test functions -->
-	<script language="javascript">
+	<script>
 
-		module("Basic");
+		QUnit.module("Basic");
 
-		test("Settings", function() {
+		QUnit.test("Settings", function(assert) {
 			var oCfg = new sap.ui.core.Configuration();
-			equal(oCfg.theme, "sap_bluecrystal", "tag config should override global config");
-			deepEqual(oCfg.modules, ["sap.ui.core.library"], "Module List in configuration matches configured modules/libraries");
+			assert.equal(oCfg.theme, "sap_bluecrystal", "tag config should override global config");
+			assert.deepEqual(oCfg.modules, ["sap.ui.core.library"], "Module List in configuration matches configured modules/libraries");
 		});
 
-		test("jQuery and $", function() {
+		QUnit.test("jQuery and $", function(assert) {
 			// we configured noConflict=true, so $ shouldn'T be the same as jQuery
-			ok(window.jQuery, "window.jQuery is available");
-			ok(!window.$ || window.$ !== window.jQuery, "window.$ not available or not the same as jQuery");
+			assert.ok(window.jQuery, "window.jQuery is available");
+			assert.ok(!window.$ || window.$ !== window.jQuery, "window.$ not available or not the same as jQuery");
 		});
 
-		test("LegacyDateCalendarCustomizing", function() {
+		QUnit.test("LegacyDateCalendarCustomizing", function(assert) {
 			var oCfg = new sap.ui.core.Configuration(),
 				oFormatSettings = oCfg.getFormatSettings();
 
@@ -65,43 +63,34 @@
 				"gregDate": "20141123"
 			}];
 
-			ok(oFormatSettings, "FormatSettings object is created");
+			assert.ok(oFormatSettings, "FormatSettings object is created");
 			oFormatSettings.setLegacyDateCalendarCustomizing(aData);
-			strictEqual(oFormatSettings.getLegacyDateCalendarCustomizing(), aData, "The customizing data set can be retrieved");
+			assert.strictEqual(oFormatSettings.getLegacyDateCalendarCustomizing(), aData, "The customizing data set can be retrieved");
 		});
 
-		test("getter and setter for option 'calendar'", function() {
+		QUnit.test("getter and setter for option 'calendar'", function(assert) {
 			var oCfg = new sap.ui.core.Configuration(),
 				oFormatSettings = oCfg.getFormatSettings();
 
-			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The bootstrap parameter is respected");
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The bootstrap parameter is respected");
 
 			oCfg.setCalendarType(null);
-			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Gregorian, "The default calendar type is determined using the current locale");
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Gregorian, "The default calendar type is determined using the current locale");
 
 			oFormatSettings.setLegacyDateFormat("A");
-			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
 
 			oCfg.setCalendarType(sap.ui.core.CalendarType.Gregorian);
-			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Gregorian, "The calendar type is modified back to gregorian via calling setCalendarType");
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Gregorian, "The calendar type is modified back to gregorian via calling setCalendarType");
 
 			oCfg.setCalendarType(null);
 			oFormatSettings.setLegacyDateFormat("B");
-			equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The legacy date format 'B' changes the calendar type to islamic");
+			assert.equal(oCfg.getCalendarType(), sap.ui.core.CalendarType.Islamic, "The legacy date format 'B' changes the calendar type to islamic");
 		});
 	</script>
   
 </head>
 <body>
-	<h1 id="qunit-header">QUnit tests: SAPUI5 Configuration (results)</h1>
-	<h2 id="qunit-banner"></h2>
- 	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<br>
-	<div id="uiArea1"></div>
-	<div id="uiArea2"></div>
-	<div id="uiArea3"></div>
-	<input id="customInput" type="text"></input>
+	<div id="qunit"></div>
 </body>
 </html>

@@ -3,6 +3,7 @@
  */
 
 sap.ui.define(['./Matcher'], function (fnMatcher) {
+	"use strict";
 
 	/**
 	 * PropertyStrictEquals - checks if a property has the exact same value

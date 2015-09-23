@@ -1,5 +1,5 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
 // Provides default renderer for control sap.ui.demokit.TagCloud

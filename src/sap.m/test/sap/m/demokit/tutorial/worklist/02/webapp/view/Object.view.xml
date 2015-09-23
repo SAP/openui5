@@ -1,0 +1,11 @@
+<mvc:View controllerName="myCompany.myApp.controller.Object" xmlns:mvc="sap.ui.core.mvc" xmlns:semantic="sap.m.semantic" xmlns="sap.m">
+	<semantic:FullscreenPage busy="{objectView>/busy}" busyIndicatorDelay="{objectView>/delay}" id="page" navButtonPress="onNavBack"
+		showNavButton="true" title="{i18n>objectTitle}">
+		<semantic:content>
+			<ObjectHeader id="objectHeader" number="{ path: 'UnitsInStock', formatter: '.formatter.numberUnit' }" title="{ProductName}"></ObjectHeader>
+		</semantic:content>
+		<semantic:sendEmailAction>
+			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+		</semantic:sendEmailAction>
+	</semantic:FullscreenPage>
+</mvc:View>

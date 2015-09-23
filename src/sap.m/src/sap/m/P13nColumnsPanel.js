@@ -1046,13 +1046,7 @@ sap.ui.define([
 				sLanguage = sap.ui.getCore().getConfiguration().getLocale().toString();
 			} catch (exception) {
 				// this exception can happen if the configured language is not convertible to BCP47 -> getLocale will deliver an exception
-				if (window.console && window.console.log) {
-					if (!!exception.stack) {
-						window.console.log(exception.stack);
-					} else {
-						window.console.log(exception.toString());
-					}
-				}
+				jQuery.sap.log.error("sap.m.P13nColumnsPanel : no available Language/Locale to sort table items");
 				sLanguage = null;
 			}
 

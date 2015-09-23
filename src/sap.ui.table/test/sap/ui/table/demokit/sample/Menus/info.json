@@ -7,7 +7,7 @@
 		"text"	: "Like Column 1, but instead of the default cell filter context menu the cellContextmenu event is used to implement a custom context menu."
 	},{
 		"title" : "Column 'Image'",
-		"text"	: "No header menu at all because the default of the columnSelect event is prevented."
+		"text"	: "No header menu at all because the default of the columnMenuOpen event is prevented."
 	},{
 		"title" : "Column 'Quantity'",
 		"text"	: "A custom header menu is implemented and replaces the default menu."

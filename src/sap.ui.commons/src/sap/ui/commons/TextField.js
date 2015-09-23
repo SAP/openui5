@@ -344,7 +344,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oEvent.stopPropagation();
 		}
 
-		if (!!!sap.ui.Device.browser.firefox) {
+		if (!sap.ui.Device.browser.firefox) {
 			this._doOnEscape(oEvent);
 		}
 
@@ -429,13 +429,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		} else if ((sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) &&
 					(oEvent.which === jQuery.sap.KeyCodes.DELETE || oEvent.which === jQuery.sap.KeyCodes.BACKSPACE)) {
 			this._fireLiveChange(oEvent);
-		}else if ((sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 9) &&
-		          (oEvent.keyCode != jQuery.sap.KeyCodes.TAB && oEvent.keyCode != jQuery.sap.KeyCodes.ENTER
-		           && oEvent.keyCode != jQuery.sap.KeyCodes.F4)) {
-			// as IE8 has no oninput event
-			this._fireLiveChange(oEvent);
 		}
-
 	};
 
 	TextField.prototype.oninput = function(oEvent) {

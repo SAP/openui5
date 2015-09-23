@@ -3,6 +3,7 @@
  */
 
 sap.ui.define(['./Matcher'], function (fnMatcher) {
+	"use strict";
 
 	/**
 	 * AggregationFilled - checks if an aggregation contains at least one entry

@@ -476,10 +476,10 @@ function(jQuery, library, Control, IconPool) {
 
 		// set selected = true for this item & selected = false for all others items
 		for (i = 0; i < aItems.length; i++) {
-			aItems[i].setSelected(false);
+			aItems[i].setProperty('selected', false, true);
 		}
 		if (oItem) {
-			oItem.setSelected(true);
+			oItem.setProperty('selected', true, true);
 		}
 
 		// update the list selection
@@ -514,10 +514,10 @@ function(jQuery, library, Control, IconPool) {
 
 		// set selected = true for this item & selected = false for all others items
 		for (i = 0; i < aItems.length; i++) {
-			aItems[i].setSelected(false);
+			aItems[i].setProperty('selected', false, true);
 		}
 		if (oItem) {
-			oItem.setSelected(true);
+			oItem.setProperty('selected', true, true);
 		}
 
 		// update the list selection
@@ -551,10 +551,10 @@ function(jQuery, library, Control, IconPool) {
 		}
 		// set selected = true for this item & selected = false for all others items
 		for (i = 0; i < aItems.length; i++) {
-			aItems[i].setSelected(false);
+			aItems[i].setProperty('selected', false, true);
 		}
 		if (oItem) {
-			oItem.setSelected(true);
+			oItem.setProperty('selected', true, true);
 			// clear filters (only one mode is allowed, preset filters or filters)
 			this._clearSelectedFilters();
 		}
@@ -790,7 +790,7 @@ function(jQuery, library, Control, IconPool) {
 						// just compare the key of this control
 						if (aFilterItems[i].getKey() === sKey) {
 							oFilterItem = aFilterItems[i];
-							aFilterItems[i].setSelected(oSelectedFilterKeys[sKey]);
+							aFilterItems[i].setProperty('selected', oSelectedFilterKeys[sKey], true);
 						}
 					} else if (aFilterItems[i] instanceof sap.m.ViewSettingsFilterItem) {
 						// find the sub filter item with the specified key
@@ -803,7 +803,7 @@ function(jQuery, library, Control, IconPool) {
 								// entries
 								if (!bMultiSelect) {
 									for (k = 0; k < aSubFilterItems.length; k++) {
-										aSubFilterItems[k].setSelected(false);
+										aSubFilterItems[k].setProperty('selected', false, true);
 									}
 								}
 								break;
@@ -823,7 +823,7 @@ function(jQuery, library, Control, IconPool) {
 				}
 
 				// set the the selected state on the item
-				oFilterItem.setSelected(oSelectedFilterKeys[sKey]);
+				oFilterItem.setProperty('selected', oSelectedFilterKeys[sKey], true);
 			}
 		}
 
@@ -1788,7 +1788,7 @@ function(jQuery, library, Control, IconPool) {
 									for (; i < aSubItems.length; i++) {
 										for (var j = 0; j < aEventListItems.length; j++){
 											if (aSubItems[i].getKey() === aEventListItems[j].getCustomData()[0].getValue().getKey()){
-												aSubItems[i].setSelected(aEventListItems[j].getSelected());
+												aSubItems[i].setProperty('selected', aEventListItems[j].getSelected(), true);
 											}
 										}
 									}
@@ -1799,10 +1799,10 @@ function(jQuery, library, Control, IconPool) {
 									if (!oItem.getMultiSelect()) {
 										aSubItems = oItem.getItems();
 										for (; i < aSubItems.length; i++) {
-											aSubItems[i].setSelected(false);
+											aSubItems[i].setProperty('selected', false, true);
 										}
 									}
-									oSubItem.setSelected(oEvent.getParameter("listItem").getSelected());
+									oSubItem.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
 								}
 							}
 						});
@@ -1942,10 +1942,10 @@ function(jQuery, library, Control, IconPool) {
 			if (items[i] instanceof sap.m.ViewSettingsFilterItem) {
 				subItems = items[i].getItems();
 				for (j = 0; j < subItems.length; j++) {
-					subItems[j].setSelected(false);
+					subItems[j].setProperty('selected', false, true);
 				}
 			}
-			items[i].setSelected(false);
+			items[i].setProperty('selected', false, true);
 		}
 
 		// update counters if visible
@@ -2013,7 +2013,7 @@ function(jQuery, library, Control, IconPool) {
 	function resetFilterPage() {
 		this._vContentPage = 2;
 		this._oContentItem = null;
-		jQuery.sap.delayedCall(0, this._navContainer, "to", [this._getPage1().getId(), "show"]);
+		this._navContainer.to(this._getPage1().getId(), "show");
 	}
 
 	/* =========================================================== */

@@ -4,6 +4,9 @@
 	<Page
 		title="Welcome"
 		enableScrolling="false">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>
+		</landmarkInfo>
 		<content>
 			<mvc:HTMLView
 				id="titles"

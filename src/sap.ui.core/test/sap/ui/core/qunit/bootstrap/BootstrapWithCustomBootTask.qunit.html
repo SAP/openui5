@@ -1,11 +1,14 @@
 <!DOCTYPE HTML>
+<!--
+  Tests the bootstrap variant where a custom boot task is used
+  
+  @author Frank Weigel
+  -->
 <html>
 	<head>
-	<!-- 
-    Tested module: sap-ui-core in general
-    -->
-
-		<title>Test Page for the SAPUI5 Bootstrap functionality</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8" />
+		<title>Test Page for Bootstrap with a Custom Boot Task</title>
 		<script>
 			window.testresults = {
 				bHookCalled : false,
@@ -30,9 +33,9 @@
 							sap.ui.getCore().applyTheme("sap_goldreflection");
 							testresults.$LinksAfter = jQuery('head > link[id^="sap-ui-theme-"]');
 							testresults.bThemeAfterAsExpected = sap.ui.getCore().getConfiguration().getTheme() === "sap_goldreflection";
-							testresults.bApplyThemeFails = false;							
+							testresults.bApplyThemeFails = false;
 						} catch (e) {
-							testresults.bApplyThemeFails = true;							
+							testresults.bApplyThemeFails = true;
 						}
 					}
 					callback();
@@ -46,34 +49,29 @@
 				src="../../../../../../resources/sap-ui-core.js">
 		</script>
 		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script type="text/javascript">
+		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script>
 
 		/**
 		 * Tests whether basic classes are available that together can be considered the SAPUI5 Core
 		 */
-		test("BasicClassesAvailable", function() {
+		QUnit.test("BasicClassesAvailable", function(assert) {
 			
-			ok(testresults.bHookCalled, "boottask should be called");
-			ok(testresults.bSapUiCoreExists, "sap.ui.getCore() should exist in the boor task");
-			ok(testresults.bApplyThemeExists, "sap.ui.getCore().applyTheme() should exist when the boot task is executed");
-			ok(testresults.bThemeBeforeAsExpected, "theme before applyTheme should be as configured in bootstrap tag");
-			ok(!testresults.bApplyThemeFails, "applyTheme should not fail");
-			ok(testresults.bThemeAfterAsExpected, "theme should have changed after apply theme");
-			ok(testresults.$LinksBefore && testresults.$LinksBefore.size() == 0, "there should be no link tags for theme styles when the hook is called");
-			ok(testresults.$LinksAfter && testresults.$LinksBefore.size() == 0, "there should be no link tags for theme styles after the hook has been called");
-			ok(jQuery('head > link[id^="sap-ui-theme-"]').size() > 0, "there should be no link tags for theme styles after the hook has been called");
+			assert.ok(testresults.bHookCalled, "boottask should be called");
+			assert.ok(testresults.bSapUiCoreExists, "sap.ui.getCore() should exist in the boor task");
+			assert.ok(testresults.bApplyThemeExists, "sap.ui.getCore().applyTheme() should exist when the boot task is executed");
+			assert.ok(testresults.bThemeBeforeAsExpected, "theme before applyTheme should be as configured in bootstrap tag");
+			assert.ok(!testresults.bApplyThemeFails, "applyTheme should not fail");
+			assert.ok(testresults.bThemeAfterAsExpected, "theme should have changed after apply theme");
+			assert.ok(testresults.$LinksBefore && testresults.$LinksBefore.size() == 0, "there should be no link tags for theme styles when the hook is called");
+			assert.ok(testresults.$LinksAfter && testresults.$LinksBefore.size() == 0, "there should be no link tags for theme styles after the hook has been called");
+			assert.ok(jQuery('head > link[id^="sap-ui-theme-"]').size() > 0, "there should be no link tags for theme styles after the hook has been called");
 		});
 		</script>
 	</head>
 	<body>
-		<h1 id="qunit-header">Bootstrap Variant 'within Head'</h1>
-		<h2 id="qunit-banner"></h2>
-	 	<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<br>
+		<div id="qunit"></div>
 	</body>
 </html>

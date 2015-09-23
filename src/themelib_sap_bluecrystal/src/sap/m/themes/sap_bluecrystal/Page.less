@@ -3,7 +3,7 @@
 /* ==================================================== */
 
 .sapMPageBgSolid {
-	background-color: @sapUiPageBG;
+	background-color: lighten(@sapUiBaseBG, 5);
 }
 
 /* page with standard padding */
@@ -53,7 +53,7 @@
 	position: absolute;
 	width:100%;
 	top: 0;
-	border-top: 0.25rem solid @sapUiBarBrandingBG;
+	border-top: 0.25rem solid @sapUiBrand;
 	/* I don't know why its 7 but i will definitely not change it because i fear i will break something */
 	z-index: 7;
 }

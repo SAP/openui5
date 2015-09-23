@@ -5,6 +5,7 @@
 sap.ui.define([
 		'./Matcher'
 	], function (fnMatcher) {
+	"use strict";
 
 	/**
 	 * 	 * AggregationContainsPropertyEqual - checks if an aggregation contains at least one item that has a Property set to a certain value

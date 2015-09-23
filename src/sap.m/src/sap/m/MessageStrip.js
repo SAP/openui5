@@ -83,7 +83,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 		}
 	});
 
-	MessageStrip.prototype.init = function() {
+	MessageStrip.prototype.init = function () {
 		this.data("sap-ui-fastnavgroup", "true", true);
 		this.setAggregation("_text", new Text());
 	};
@@ -125,10 +125,6 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 		return this;
 	};
 
-	MessageStrip.prototype.onBeforeRendering = function () {
-		MSUtils.setIconIfVisible.call(this);
-	};
-
 	/**
 	 * Handles tap/click
 	 * @type void
@@ -149,6 +145,16 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Messa
 	 * @private
 	 */
 	MessageStrip.prototype.onsapspace = MSUtils.handleMSCloseButtonInteraction;
+
+	/**
+	 * Handles mobile touch events
+	 * @type void
+	 * @private
+	 */
+	MessageStrip.prototype.ontouchmove = function (oEvent) {
+		// mark the event for components that needs to know if the event was handled
+		oEvent.setMarked();
+	};
 
 	/**
 	 * Closes the MessageStrip.

@@ -22,7 +22,7 @@
 	padding: 0;
 	min-width: 18rem;
 	position: relative;
-	background: @sapUiDTICustomArrowBG;
+	background: @sapUiGroupContentBackground;
 	font-size:0;
 }
 
@@ -30,19 +30,14 @@
 	height: 3rem;
 	line-height: 3rem;
 	font-size: 1rem;
-	color: @sapUiDTICustomHeaderTextColor;
-	font-family: @sapUiDTICustomFontFamily;
-	text-shadow: 0 0.063rem 0 @sapUiDTICustomHeaderTextShadow;
-	-webkit-box-shadow: inset 0 -0.063rem 0 0 @sapUiDTICustomHeaderBoxShadow;
-	-moz-box-shadow: inset 0 -0.063rem 0 0 @sapUiDTICustomHeaderBoxShadow;
-	-ms-box-shadow: inset 0 -0.07rem 0 0 @sapUiDTICustomHeaderBoxShadow;
-	box-shadow: inset 0 -0.063rem 0 0 @sapUiDTICustomHeaderBoxShadow;
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,fade(lighten(@sapUiDTICustomHeaderBG,2%),100%)), color-stop(33%,fade(@sapUiDTICustomHeaderBG,100%)), color-stop(75%,fade(@sapUiDTICustomHeaderBG,100%)), color-stop(100%,fade(darken(@sapUiDTICustomHeaderBG,2%),100%)));
-	background: -webkit-linear-gradient(top, fade(lighten(@sapUiDTICustomHeaderBG,2%),100%) 0%, fade(@sapUiDTICustomHeaderBG,100%) 33%, fade(@sapUiDTICustomHeaderBG,100%) 75%, fade(darken(@sapUiDTICustomHeaderBG,2%),100%) 100%);
-	background: -moz-linear-gradient(top, fade(lighten(@sapUiDTICustomHeaderBG,2%),100%) 0%, fade(@sapUiDTICustomHeaderBG,100%) 33%, fade(@sapUiDTICustomHeaderBG,100%) 75%, fade(darken(@sapUiDTICustomHeaderBG,2%),100%) 100%);
-	background: -ms-linear-gradient(top, fade(lighten(@sapUiDTICustomHeaderBG,2%),100%) 0%, fade(@sapUiDTICustomHeaderBG,100%) 33%, fade(@sapUiDTICustomHeaderBG,100%) 75%, fade(darken(@sapUiDTICustomHeaderBG,2%),100%) 100%);
-	background: linear-gradient(top, fade(lighten(@sapUiDTICustomHeaderBG,2%),100%) 0%, fade(@sapUiDTICustomHeaderBG,100%) 33%, fade(@sapUiDTICustomHeaderBG,100%) 75%, fade(darken(@sapUiDTICustomHeaderBG,2%),100%) 100%);
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr=fade(lighten(@sapUiDTICustomHeaderBG,2%),100%), endColorstr=fade(darken(@sapUiDTICustomHeaderBG,2%),100%),GradientType=0);
+	color: @sapUiPageHeaderTextColor;
+	font-family: @sapUiFontFamily;
+	text-shadow: 0 0.063rem 0 fade(@sapUiLightShadowTint, 50);
+	-webkit-box-shadow: inset 0 -0.063rem 0 0 @sapUiPageHeaderBorderColor;
+	-moz-box-shadow: inset 0 -0.063rem 0 0 @sapUiPageHeaderBorderColor;
+	-ms-box-shadow: inset 0 -0.07rem 0 0 @sapUiPageHeaderBorderColor;
+	box-shadow: inset 0 -0.063rem 0 0 @sapUiPageHeaderBorderColor;
+	background: @sapUiPageHeaderBackground;
 	padding: 0 1rem;
 	border-bottom-width: 0;
 	white-space: nowrap;
@@ -51,10 +46,10 @@
 }
 
 .sapMDTICustom .dwbg{
-	-webkit-box-shadow:  fade(@sapUiDTICustomDialogBorder,60%) 0.063rem 0 0 0,  fade(@sapUiDTICustomDialogBorder,60%) -0.063rem 0 0 0,  fade(@sapUiDTICustomDialogBorder,60%) 0 0.063rem 0 0,  fade(@sapUiDTICustomDialogBorder,60%) 0 -0.063rem 0 0;
-	-moz-box-shadow:  fade(@sapUiDTICustomDialogBorder,60%) 0.063rem 0 0 0,  fade(@sapUiDTICustomDialogBorder,60%) -0.063rem 0 0 0,  fade(@sapUiDTICustomDialogBorder,60%) 0 0.063rem 0 0,  fade(@sapUiDTICustomDialogBorder,60%) 0 -0.063rem 0 0;
-	-ms-box-shadow:  fade(@sapUiDTICustomDialogBorder,60%) 0.07rem 0 0 0,  fade(@sapUiDTICustomDialogBorder,60%) -0.07rem 0 0 0,  fade(@sapUiDTICustomDialogBorder,60%) 0 0.07rem 0 0,  fade(@sapUiDTICustomDialogBorder,60%) 0 -0.07rem 0 0;
-	box-shadow:  fade(@sapUiDTICustomDialogBorder,60%) 0.063rem 0 0 0,  fade(@sapUiDTICustomDialogBorder,60%) -0.063rem 0 0 0,  fade(@sapUiDTICustomDialogBorder,60%) 0 0.063rem 0 0,  fade(@sapUiDTICustomDialogBorder,60%) 0 -0.063rem 0 0;
+	-webkit-box-shadow: @sapUiContentForegroundBorderColor;
+	-moz-box-shadow: @sapUiContentForegroundBorderColor;
+	-ms-box-shadow: @sapUiContentForegroundBorderColor;
+	box-shadow: @sapUiContentForegroundBorderColor;
 	border-radius: .125rem;
 }
 
@@ -79,21 +74,21 @@
 }
 
 .sapMDTICustom .dwbg .dwwbp{
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,fade(@sapUiDTICustomArrowBG,0%)), color-stop(66%,@sapUiDTICustomArrowBG));
-	background: -webkit-linear-gradient(top, fade(@sapUiDTICustomArrowBG,0%) 0%,@sapUiDTICustomArrowBG 66%);
-	background: -moz-linear-gradient(top, fade(@sapUiDTICustomArrowBG,0%) 0%,@sapUiDTICustomArrowBG 66%);
-	background: -ms-linear-gradient(top, fade(@sapUiDTICustomArrowBG,0%) 0%,@sapUiDTICustomArrowBG 66%);
-	background: linear-gradient(top, fade(@sapUiDTICustomArrowBG,0%) 0%,@sapUiDTICustomArrowBG 66%);
-	filter: ~"progid:DXImageTransform.Microsoft.gradient(startColorStr='@{sapUiDTICustomArrowBG}', EndColorStr='@{sapUiDTICustomArrowBG}')";  /* IE8+9 */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,fade(@sapUiGroupContentBackground,0%)), color-stop(66%,@sapUiGroupContentBackground));
+	background: -webkit-linear-gradient(top, fade(@sapUiGroupContentBackground,0%) 0%,@sapUiGroupContentBackground 66%);
+	background: -moz-linear-gradient(top, fade(@sapUiGroupContentBackground,0%) 0%,@sapUiGroupContentBackground 66%);
+	background: -ms-linear-gradient(top, fade(@sapUiGroupContentBackground,0%) 0%,@sapUiGroupContentBackground 66%);
+	background: linear-gradient(top, fade(@sapUiGroupContentBackground,0%) 0%,@sapUiGroupContentBackground 66%);
+	filter: ~"progid:DXImageTransform.Microsoft.gradient(startColorStr='@{sapUiGroupContentBackground}', EndColorStr='@{sapUiGroupContentBackground}')";  /* IE8+9 */
 	top:auto;
 	bottom:0;
 }
 .sapMDTICustom .dwbg .dwwbm{
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(33%,@sapUiDTICustomArrowBG), color-stop(100%,fade(@sapUiDTICustomArrowBG,0%)));
-	background: -moz-linear-gradient(top, @sapUiDTICustomArrowBG 33%,fade(@sapUiDTICustomArrowBG,0%) 100%);
-	background: -ms-linear-gradient(top, @sapUiDTICustomArrowBG 33%,fade(@sapUiDTICustomArrowBG,0%) 100%);
-	background: linear-gradient(top, @sapUiDTICustomArrowBG 33%,fade(@sapUiDTICustomArrowBG,0%) 100%);
-	filter: ~"progid:DXImageTransform.Microsoft.gradient(startColorStr='@{sapUiDTICustomArrowBG}', EndColorStr='@{sapUiDTICustomArrowBG}')";  /* IE8+9 */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(33%,@sapUiGroupContentBackground), color-stop(100%,fade(@sapUiGroupContentBackground,0%)));
+	background: -moz-linear-gradient(top, @sapUiGroupContentBackground 33%,fade(@sapUiGroupContentBackground,0%) 100%);
+	background: -ms-linear-gradient(top, @sapUiGroupContentBackground 33%,fade(@sapUiGroupContentBackground,0%) 100%);
+	background: linear-gradient(top, @sapUiGroupContentBackground 33%,fade(@sapUiGroupContentBackground,0%) 100%);
+	filter: ~"progid:DXImageTransform.Microsoft.gradient(startColorStr='@{sapUiGroupContentBackground}', EndColorStr='@{sapUiGroupContentBackground}')";  /* IE8+9 */
 	top:0;
 	bottom:auto;
 }
@@ -107,7 +102,7 @@
 
 .sap-desktop .sapMDTICustom .dwwb:hover,
 .sapMDTICustom .dwbg .dwwl .dwb-a{
-	background: @sapUiDTICustomArrowBG;
+	background: @sapUiGroupContentBackground;
 }
 
 .sapMDTICustom .dwa .dwwb{
@@ -124,7 +119,7 @@
 
 .sapMDTICustom .dwwb > span:before{
 	font-size: 1.375rem;
-	color: @sapUiDTICustomArrowColor;
+	color: @sapUiElement;
 	font-family: 'SAP-icons';
 	font-weight: normal;
 	text-shadow: none;
@@ -136,13 +131,13 @@
 }
 
 html[data-sap-ui-browser^="ie9"] .sapMDTICustom .dwwb > span:before{
-	color: @sapUiDTICustomArrowColor;
+	color: @sapUiElement;
 	opacity: .40;
 }
 
 .sap-desktop .sapMDTICustom .dwwb:hover > span:before,
 .sapMDTICustom .dwb-a > span:before{
-	color: @sapUiDTICustomArrowHoverColor;
+	color: @sapUiHighlight;
 	opacity: .75;
 	-webkit-transition-property: opacity, background;
 	transition-property: opacity, background;
@@ -161,7 +156,7 @@ html[data-sap-ui-browser^="ie9"] .sapMDTICustom .dwwb > span:before{
 
 .sapMDTICustom .dwwc{
 	padding: 0 .750rem;
-	background: @sapUiDTICustomDialogWheelsBG;
+	background: none;
 }
 
 .sapMDTICustom .dwwc > table{
@@ -174,19 +169,19 @@ html[data-sap-ui-browser^="ie9"] .sapMDTICustom .dwwb > span:before{
 }
 
 .sapMDTICustom .dwwc td .dww{
-	background: @sapUiDTICustomDialogWheelBG;
+	background: none;
 	padding: 1px 0;
 	margin: 0;
 }
 
 .sapMDTICustom .dwwc td .dww:before {
 	content: "";
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,@sapUiDTICustomArrowBG), color-stop(20%,fade(@sapUiDTICustomArrowBG,0%)));
-	background: -webkit-linear-gradient(top, @sapUiDTICustomArrowBG 20%,fade(@sapUiDTICustomArrowBG,0%) 100%);
-	background: -moz-linear-gradient(top, @sapUiDTICustomArrowBG 20%,fade(@sapUiDTICustomArrowBG,0%) 100%);
-	background: -ms-linear-gradient(top, @sapUiDTICustomArrowBG 20%,fade(@sapUiDTICustomArrowBG,0%) 100%);
-	background: linear-gradient(top, @sapUiDTICustomArrowBG 20%,fade(@sapUiDTICustomArrowBG,0%) 100%);
-	filter: ~"progid:DXImageTransform.Microsoft.gradient(startColorStr='@{sapUiDTICustomArrowBG}', EndColorStr='@{sapUiDTICustomArrowBG}')";  /* IE8+9 */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,@sapUiGroupContentBackground), color-stop(20%,fade(@sapUiGroupContentBackground,0%)));
+	background: -webkit-linear-gradient(top, @sapUiGroupContentBackground 20%,fade(@sapUiGroupContentBackground,0%) 100%);
+	background: -moz-linear-gradient(top, @sapUiGroupContentBackground 20%,fade(@sapUiGroupContentBackground,0%) 100%);
+	background: -ms-linear-gradient(top, @sapUiGroupContentBackground 20%,fade(@sapUiGroupContentBackground,0%) 100%);
+	background: linear-gradient(top, @sapUiGroupContentBackground 20%,fade(@sapUiGroupContentBackground,0%) 100%);
+	filter: ~"progid:DXImageTransform.Microsoft.gradient(startColorStr='@{sapUiGroupContentBackground}', EndColorStr='@{sapUiGroupContentBackground}')";  /* IE8+9 */
 	position: absolute;
 	left: 0;
 	right: 0;
@@ -197,12 +192,12 @@ html[data-sap-ui-browser^="ie9"] .sapMDTICustom .dwwb > span:before{
 
 .sapMDTICustom .dwwc td .dww:after {
 	content: "";
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,fade(@sapUiDTICustomArrowBG,0%)), color-stop(80%,@sapUiDTICustomArrowBG));
-	background: -webkit-linear-gradient(top, fade(@sapUiDTICustomArrowBG,0%) 0%,@sapUiDTICustomArrowBG 80%);
-	background: -moz-linear-gradient(top, fade(@sapUiDTICustomArrowBG,0%) 0%,@sapUiDTICustomArrowBG 80%);
-	background: -ms-linear-gradient(top, fade(@sapUiDTICustomArrowBG,0%) 0%,@sapUiDTICustomArrowBG 80%);
-	background: linear-gradient(top, fade(@sapUiDTICustomArrowBG,0%) 0%,@sapUiDTICustomArrowBG 80%);
-	filter: ~"progid:DXImageTransform.Microsoft.gradient(startColorStr='@{sapUiDTICustomArrowBG}', EndColorStr='@{sapUiDTICustomArrowBG}')";  /* IE8+9 */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,fade(@sapUiGroupContentBackground,0%)), color-stop(80%,@sapUiGroupContentBackground));
+	background: -webkit-linear-gradient(top, fade(@sapUiGroupContentBackground,0%) 0%,@sapUiGroupContentBackground 80%);
+	background: -moz-linear-gradient(top, fade(@sapUiGroupContentBackground,0%) 0%,@sapUiGroupContentBackground 80%);
+	background: -ms-linear-gradient(top, fade(@sapUiGroupContentBackground,0%) 0%,@sapUiGroupContentBackground 80%);
+	background: linear-gradient(top, fade(@sapUiGroupContentBackground,0%) 0%,@sapUiGroupContentBackground 80%);
+	filter: ~"progid:DXImageTransform.Microsoft.gradient(startColorStr='@{sapUiGroupContentBackground}', EndColorStr='@{sapUiGroupContentBackground}')";  /* IE8+9 */
 	position: absolute;
 	left: 0;
 	right: 0;
@@ -241,15 +236,15 @@ html[data-sap-ui-browser^="ie9"] .sapMDTICustom .dwwb > span:before{
 .sapMDTICustom .dw-sel .dw-i{
 	color: @sapUiStandardText;
 	border-radius: 0.125rem;
-	box-shadow: 0 0.063rem 0.188rem fade(@sapUiShadowTint,15%),inset 0.063rem 0 0 0 @sapUiLightBorder,inset -0.063rem 0 0 0 @sapUiLightBorder,inset 0 0.063rem 0 0 @sapUiLightBorder,inset 0 -0.063rem 0 0 @sapUiLightBorder;
-	background: @sapUiDTICustomArrowBG;
+	box-shadow: 0 0.063rem 0.188rem fade(@sapUiDarkShadowTint,15%),inset 0.063rem 0 0 0 @sapUiLightBorder,inset -0.063rem 0 0 0 @sapUiLightBorder,inset 0 0.063rem 0 0 @sapUiLightBorder,inset 0 -0.063rem 0 0 @sapUiLightBorder;
+	background: @sapUiGroupContentBackground;
 		
 }
 
 .sapMDTICustom .dw-li{
 	font-size: 1rem;
-	color: @sapUiDTICustomItemText;
-	font-family: @sapUiDTICustomFontFamily;
+	color: @sapUiContentLabelColor;
+	font-family: @sapUiFontFamily;
 	text-shadow: none;
 	padding: 0;
 	margin: 0;
@@ -262,22 +257,18 @@ html[data-sap-ui-browser^="ie9"] .sapMDTICustom .dwwb > span:before{
 .sapMDTICustom .dwc{
 	margin: 0;
 	overflow: hidden;
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,fade(@sapUiDTICustomButtonHoverBG,0%)), color-stop(25%,fade(@sapUiDTICustomButtonHoverBG,0%)), color-stop(50%,fade(@sapUiDTICustomButtonHoverBG,7.5%)), color-stop(75%,fade(@sapUiDTICustomButtonHoverBG,0%)), color-stop(100%,fade(@sapUiDTICustomButtonHoverBG,0%)));
-	background: -webkit-linear-gradient(top, fade(@sapUiDTICustomButtonHoverBG,0%) 0%, fade(@sapUiDTICustomButtonHoverBG,0%) 25%, fade(@sapUiDTICustomButtonHoverBG,7.5%) 50%, fade(@sapUiDTICustomButtonHoverBG,0%) 75%, fade(@sapUiDTICustomButtonHoverBG,0%) 100%);
-	background: -moz-linear-gradient(top, fade(@sapUiDTICustomButtonHoverBG,0%) 0%, fade(@sapUiDTICustomButtonHoverBG,0%) 25%, fade(@sapUiDTICustomButtonHoverBG,7.5%) 50%, fade(@sapUiDTICustomButtonHoverBG,0%) 75%, fade(@sapUiDTICustomButtonHoverBG,0%) 100%);
-	background: -ms-linear-gradient(top, fade(@sapUiDTICustomButtonHoverBG,0%) 0%, fade(@sapUiDTICustomButtonHoverBG,0%) 25%, fade(@sapUiDTICustomButtonHoverBG,7.5%) 50%, fade(@sapUiDTICustomButtonHoverBG,0%) 75%, fade(@sapUiDTICustomButtonHoverBG,0%) 100%);
-	background: linear-gradient(top, fade(@sapUiDTICustomButtonHoverBG,0%) 0%, fade(@sapUiDTICustomButtonHoverBG,0%) 25%, fade(@sapUiDTICustomButtonHoverBG,7.5%) 50%, fade(@sapUiDTICustomButtonHoverBG,0%) 75%, fade(@sapUiDTICustomButtonHoverBG,0%) 100%);
+	background: @sapUiGroupContentBackground;
 }
 
 .sapMDTICustom .dwbc{
 	margin: 0;
 	padding: 0;
 	height: 3rem;
-	background-color: @sapUiDTICustomButtonBG;
+	background-color: @sapUiPageFooterBackground;
 	background-image: none;
 }
 .sap-desktop .sapMDTICustom .dwbc{
-	background-color: @sapUiDTICustomButtonOnDesktopBG;
+	background-color: @sapUiPageFooterBackground;
 }
 
 .sapMDTICustom .dwbw{
@@ -293,8 +284,8 @@ html[data-sap-ui-browser^="ie9"] .sapMDTICustom .dwwb > span:before{
 	-moz-box-shadow: none;
 	-ms-box-shadow: none;
 	box-shadow: none;
-	color: @sapUiDTICustomButtonText;
-	font-family: @sapUiDTICustomFontFamily;
+	color: @sapUiButtonFooterTextColor;
+	font-family: @sapUiFontFamily;
 	font-size: .875rem;
 	line-height: 3rem;
 	border: none;
@@ -311,7 +302,7 @@ html[data-sap-ui-browser^="ie9"] .sapMDTICustom .dwwb > span:before{
 .sap-desktop .sapMDTICustom .dwbg .dwbw:hover .dwb,
 .sapMDTICustom .dwbg .dwbw .dwb-a{
 	text-shadow: none;
-	background: @sapUiDTICustomButtonHoverBG;
+	background: @sapUiButtonActiveBackground;
 }
 
 .sapMDTICustom .dwbg .dwbw{
@@ -319,10 +310,10 @@ html[data-sap-ui-browser^="ie9"] .sapMDTICustom .dwwb > span:before{
 }
 
 .sapMDTICustom.dw-bubble .dw-arr{
-	-webkit-box-shadow: inset @sapUiDTICustomDialogBorder 0.063rem 0 0 0, inset @sapUiDTICustomDialogBorder 0 0.063rem 0 0, inset @sapUiDTICustomDialogBorder -0.063rem 0 0 0, inset @sapUiDTICustomDialogBorder -0.063rem 0 0 0;
-	-moz-box-shadow: inset @sapUiDTICustomDialogBorder 0.063rem 0 0 0, inset @sapUiDTICustomDialogBorder 0 0.063rem 0 0, inset @sapUiDTICustomDialogBorder -0.063rem 0 0 0, inset @sapUiDTICustomDialogBorder -0.063rem 0 0 0;
-	-ms-box-shadow: inset @sapUiDTICustomDialogBorder 0.063rem 0 0 0, inset @sapUiDTICustomDialogBorder 0 0.063rem 0 0, inset @sapUiDTICustomDialogBorder -0.063rem 0 0 0, inset @sapUiDTICustomDialogBorder -0.063rem 0 0 0;
-	box-shadow: inset @sapUiDTICustomDialogBorder 0.063rem 0 0 0, inset @sapUiDTICustomDialogBorder 0 0.063rem 0 0, inset @sapUiDTICustomDialogBorder -0.063rem 0 0 0, inset @sapUiDTICustomDialogBorder -0.063rem 0 0 0;
+	-webkit-box-shadow: inset @sapUiContentForegroundBorderColor 0.063rem 0 0 0, inset @sapUiContentForegroundBorderColor 0 0.063rem 0 0, inset @sapUiContentForegroundBorderColor -0.063rem 0 0 0, inset @sapUiContentForegroundBorderColor -0.063rem 0 0 0;
+	-moz-box-shadow: inset @sapUiContentForegroundBorderColor 0.063rem 0 0 0, inset @sapUiContentForegroundBorderColor 0 0.063rem 0 0, inset @sapUiContentForegroundBorderColor -0.063rem 0 0 0, inset @sapUiContentForegroundBorderColor -0.063rem 0 0 0;
+	-ms-box-shadow: inset @sapUiContentForegroundBorderColor 0.063rem 0 0 0, inset @sapUiContentForegroundBorderColor 0 0.063rem 0 0, inset @sapUiContentForegroundBorderColor -0.063rem 0 0 0, inset @sapUiContentForegroundBorderColor -0.063rem 0 0 0;
+	box-shadow: inset @sapUiContentForegroundBorderColor 0.063rem 0 0 0, inset @sapUiContentForegroundBorderColor 0 0.063rem 0 0, inset @sapUiContentForegroundBorderColor -0.063rem 0 0 0, inset @sapUiContentForegroundBorderColor -0.063rem 0 0 0;
 	border: none;
 	height: 1.5rem;
 	width: 1.5rem;
@@ -338,21 +329,21 @@ html[data-sap-ui-browser^="ie9"] .sapMDTICustom .dwwb > span:before{
 }
 
 .sapMDTICustom.sapMDTICustomHdr .dw-bubble-bottom .dw-arr{
-	background-color: lighten(@sapUiDTICustomHeaderBG,2%);
+	background-color: @sapUiPageHeaderBackground;
 	top: 1.5rem;
 }
 
 .sapMDTICustom .dw-bubble-bottom .dw-arr{
-	background-color: @sapUiDTICustomArrowBG;
+	background-color: @sapUiGroupContentBackground;
 	top: 1.5rem;
 }
 
 .sapMDTICustom .dw-bubble-top .dw-arr{
-	background-color: @sapUiDTICustomFooterBG;
+	background-color: @sapUiPageFooterBackground;
 	top: -0.75rem;
 }
 .sap-desktop .sapMDTICustom .dw-bubble-top .dw-arr{
-	background-color: @sapUiDTICustomFooterOnDesktopBG;
+	background-color: @sapUiPageFooterBackground;
 }
 
 .sapMDTICustom.dw-bubble .dw-persp{
@@ -395,9 +386,9 @@ html[data-sap-ui-browser^="ie9"] .sapMDTICustom .dwwb > span:before{
 	-moz-box-shadow: rgba(0, 0, 0, 0.14902) 0 0 1.875rem 0.125rem;
 	-ms-box-shadow: rgba(0, 0, 0, 0.14902) 0 0 1.875rem 0.125rem;
 	box-shadow: rgba(0, 0, 0, 0.14902) 0 0 1.875rem 0.125rem;
-	border: 0.063rem solid fade(@sapUiDTICustomDialogBorder, 60);
+	border: 0.063rem solid sapUiContentForegroundBorderColor;
 }
 
 html[data-sap-ui-browser^="ie"] .sapMCustomSlt.dw-bubble .dw {
-	border: 0.07rem solid fade(@sapUiDTICustomDialogBorder, 60);
+	border: 0.07rem solid sapUiContentForegroundBorderColor;
 }

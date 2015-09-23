@@ -387,7 +387,7 @@ sap.ui.define([
 		
 		if (!this._aIncludeOperations["default"]) {
 			this.setIncludeOperations([
-				sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
+                sap.m.P13nConditionOperation.Contains, sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.StartsWith, sap.m.P13nConditionOperation.EndsWith, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
 			]);
 		}
 		
@@ -496,16 +496,49 @@ sap.ui.define([
 			isDefault: oItem.getIsDefault()
 		};
 
+		if (!this._bKeyFieldsChanged) {
+			setTimeout(jQuery.proxy( function() { 
+				this._bKeyFieldsChanged = false;
+				if (this._oIncludeFilterPanel) {
+					this._oIncludeFilterPanel.setKeyFields(this._aKeyFields);
+				}
+				if (this._oExcludeFilterPanel) {
+					this._oExcludeFilterPanel.setKeyFields(this._aKeyFields);
+				}				
+			}, this), 0);			
+		}
+		this._bKeyFieldsChanged = true;
 		this._aKeyFields.push(oKeyField);
-
-		if (this._oIncludeFilterPanel) {
-			this._oIncludeFilterPanel.addKeyField(oKeyField);
-		}
-		if (this._oExcludeFilterPanel) {
-			this._oExcludeFilterPanel.addKeyField(oKeyField);
-		}
 	};
 
+	P13nFilterPanel.prototype.removeItem = function(oItem) {
+		P13nPanel.prototype.removeItem.apply(this, arguments);
+
+		var foundIndex = -1;
+		this._aKeyFields.some(function(item, index) {
+			if (item.key === oItem.getColumnKey()) {
+				foundIndex = index;
+				return true;
+			}
+		});
+		
+		if (foundIndex != -1) {
+			if (!this._bKeyFieldsChanged) {
+				setTimeout(jQuery.proxy( function() { 
+					this._bKeyFieldsChanged = false;
+					if (this._oIncludeFilterPanel) {
+						this._oIncludeFilterPanel.setKeyFields(this._aKeyFields);
+					}
+					if (this._oExcludeFilterPanel) {
+						this._oExcludeFilterPanel.setKeyFields(this._aKeyFields);
+					}				
+				}, this), 0);			
+			}
+			this._bKeyFieldsChanged = true;
+			this._aKeyFields.splice(foundIndex, 1);
+		}
+	};
+	
 	P13nFilterPanel.prototype.destroyItems = function() {
 		this.destroyAggregation("items");
 		if (this._oIncludeFilterPanel) {

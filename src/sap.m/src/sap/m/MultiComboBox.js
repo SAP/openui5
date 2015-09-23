@@ -295,7 +295,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * @private
 	 */
 	MultiComboBox.prototype.onfocusin = function(oEvent) {
-		this.addStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Focused");
+		this.addStyleClass(this.getRenderer().CSS_CLASS_MULTICOMBOBOX + "Focused");
 
 		if (oEvent.target === this.getOpenArea()) {
 			// force the focus to stay in the input field
@@ -347,8 +347,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			if (oItem) {
 				this.getListItem(oItem).focus();
 			}
-
-			return;
 		}
 	};
 
@@ -555,10 +553,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		// define a parent-child relationship between the control's and the picker pop-up (Popover or Dialog)
 		this.setAggregation("picker", oPicker, true);
 
+		var oRenderer = this.getRenderer(),
+			CSS_CLASS_MULTICOMBOBOX = oRenderer.CSS_CLASS_MULTICOMBOBOX;
+
 		// configuration
-		oPicker.setHorizontalScrolling(false).addStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Picker")
-											.addStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Picker")
-											.addStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Picker-CTX")
+		oPicker.setHorizontalScrolling(false).addStyleClass(oRenderer.CSS_CLASS_COMBOBOXBASE + "Picker")
+											.addStyleClass(CSS_CLASS_MULTICOMBOBOX + "Picker")
+											.addStyleClass(CSS_CLASS_MULTICOMBOBOX + "Picker-CTX")
 				.attachBeforeOpen(this.onBeforeOpen, this).attachAfterOpen(this.onAfterOpen, this).attachBeforeClose(
 						this.onBeforeClose, this).attachAfterClose(this.onAfterClose, this).addEventDelegate({
 					onBeforeRendering : this.onBeforeRenderingPicker,
@@ -576,13 +577,24 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	MultiComboBox.prototype.onBeforeRendering = function() {
 		ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
 		var aItems = this.getItems();
-		this._synchronizeSelectedItemAndKey(aItems);
-		this._clearList();
-		this._clearTokenizer();
-		this._fillList(aItems);
 
-		// Re-apply editable state to make sure tokens are rendered in right state.
-		this.setEditable(this.getEditable());
+		var oList = this.getList();
+		if (oList) {
+			this._synchronizeSelectedItemAndKey(aItems);
+
+			// prevent closing of popup on re-rendering
+			oList.destroyItems();
+			this._clearTokenizer();
+			this._fillList(aItems);
+
+			// save focused index, and re-apply after rendering of the list
+			if (oList.getItemNavigation()) {
+				this._iFocusedIndex = oList.getItemNavigation().getFocusedIndex();
+			}
+
+			// Re-apply editable state to make sure tokens are rendered in right state.
+			this.setEditable(this.getEditable());
+		}
 	};
 
 	/**
@@ -619,7 +631,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		var fnPickerTypeBeforeOpen = this["_onBeforeOpen" + this.getPickerType()];
 
 		// add the active state to the MultiComboBox's field
-		this.addStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed");
+		this.addStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
 		this._resetCurrentItem();
 		this.addContent();
 
@@ -654,7 +666,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	MultiComboBox.prototype.onAfterClose = function() {
 
 		// remove the active state of the MultiComboBox's field
-		this.removeStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed");
+		this.removeStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
 
 		// Show all items when the list will be opened next time
 		this.clearFilter();
@@ -692,14 +704,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * @private
 	 */
 	MultiComboBox.prototype._createDialog = function() {
+		var CSS_CLASS_COMBOBOXBASE = this.getRenderer().CSS_CLASS_COMBOBOXBASE;
+
 		var oDialog = new Dialog({
 			stretchOnPhone : true,
 			customHeader : new Bar({
 				contentLeft : new sap.m.InputBase({
 					width : "100%",
 					editable : false
-				}).addStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Input")
-			}).addStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Bar")
+				}).addStyleClass(CSS_CLASS_COMBOBOXBASE + "Input")
+			}).addStyleClass(CSS_CLASS_COMBOBOXBASE + "Bar")
 		});
 
 		oDialog.getAggregation("customHeader").attachBrowserEvent("tap", function() {
@@ -720,7 +734,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 
 		oPopover.open = function() {
 			var oDomRef = jQuery(that.getDomRef());
-			var oBorder = oDomRef.find(MultiComboBoxRenderer.DOT_CSS_CLASS + "Border");
+			var oBorder = oDomRef.find(MultiComboBoxRenderer.DOT_CSS_CLASS_MULTICOMBOBOX + "Border");
 			return this.openBy(oBorder[0]);
 		};
 	};
@@ -752,6 +766,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * @returns {sap.m.List} protected
 	 */
 	MultiComboBox.prototype.createList = function() {
+		var oRenderer = this.getRenderer();
 
 		// list to use inside the picker
 		this._oList = new List({
@@ -759,9 +774,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			mode : sap.m.ListMode.MultiSelect,
 			includeItemInSelection : true,
 			rememberSelections : false
-		}).addStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "List").addStyleClass(
-				MultiComboBoxRenderer.CSS_CLASS + "List").attachBrowserEvent("tap", this._handleItemTap, this)
+		}).addStyleClass(oRenderer.CSS_CLASS_COMBOBOXBASE + "List").addStyleClass(
+				oRenderer.CSS_CLASS_MULTICOMBOBOX + "List").attachBrowserEvent("tap", this._handleItemTap, this)
 				.attachSelectionChange(this._handleSelectionLiveChange, this).attachItemPress(this._handleItemPress, this);
+
+		this._oList.addEventDelegate({
+			onAfterRendering : this.onAfterRenderingList
+		}, this);
 	};
 
 	/**
@@ -800,7 +819,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			text : mOptions.item.getText(),
 			tooltip : mOptions.item.getText()
 		});
-		mOptions.item.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token", oToken);
+		mOptions.item.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Token", oToken);
 		this._oTokenizer.addToken(oToken);
 		this.$().toggleClass("sapMMultiComboBoxHasToken", this._hasTokens());
 		this.setValue('');
@@ -856,7 +875,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		// Synch the Tokenizer
 		if (!mOptions.tokenUpdated) {
 			var oToken = this._getTokenByItem(mOptions.item);
-			mOptions.item.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token", null);
+			mOptions.item.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Token", null);
 			this._oTokenizer.removeToken(oToken);
 		}
 
@@ -953,8 +972,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			return;
 		}
 
-		var $InputContainer = $MultiComboBox.find(MultiComboBoxRenderer.DOT_CSS_CLASS + "InputContainer");
-		var $ShadowDiv = $MultiComboBox.children(MultiComboBoxRenderer.DOT_CSS_CLASS + "ShadowDiv");
+		var DOT_CSS_CLASS_MULTICOMBOBOX = this.getRenderer().DOT_CSS_CLASS_MULTICOMBOBOX;
+
+		var $InputContainer = $MultiComboBox.find(DOT_CSS_CLASS_MULTICOMBOBOX + "InputContainer");
+		var $ShadowDiv = $MultiComboBox.children(DOT_CSS_CLASS_MULTICOMBOBOX + "ShadowDiv");
 		$ShadowDiv.text(this.getValue());
 
 		var iIconWidth = jQuery(this.getOpenArea()).outerWidth(true);
@@ -974,7 +995,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * @private
 	 */
 	MultiComboBox.prototype._getTokenByItem = function(oItem) {
-		return oItem ? oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token") : null;
+		return oItem ? oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Token") : null;
 	};
 
 	/**
@@ -1054,19 +1075,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 */
 	MultiComboBox.prototype._isRangeSelectionSet = function(oListItem) {
 		var $ListItem = oListItem.getDomRef();
-		return $ListItem.indexOf(MultiComboBoxRenderer.CSS_CLASS + "ItemRangeSelection") > -1 ? true : false;
+		return $ListItem.indexOf(this.getRenderer().CSS_CLASS_MULTICOMBOBOX + "ItemRangeSelection") > -1 ? true : false;
 	};
 
 	/**
 	 * @private
 	 */
 	MultiComboBox.prototype._hasTokens = function() {
-
-		if (this._oTokenizer.getTokens().length) {
-			return true;
-		}
-
-		return false;
+		return this._oTokenizer.getTokens().length > 0;
 	};
 
 	/**
@@ -1299,11 +1315,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			},
 
 			onfocusin: function(oEvent) {
-				this.addStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Focused");
+				this.addStyleClass(this.getRenderer().CSS_CLASS_MULTICOMBOBOX + "Focused");
 			},
 
 			onfocusout: function(oEvent) {
-				this.removeStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Focused");
+				this.removeStyleClass(this.getRenderer().CSS_CLASS_MULTICOMBOBOX + "Focused");
 			},
 
 			onsapfocusleave: function(oEvent) {
@@ -1401,6 +1417,21 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	};
 
 	/**
+	 * Required adaptations after rendering of List.
+	 *
+	 * @private
+	 */
+	MultiComboBox.prototype.onAfterRenderingList = function() {
+		var oList = this.getList();
+		if (this._iFocusedIndex != null && oList.getItems().length > this._iFocusedIndex) {
+			oList.getItems()[this._iFocusedIndex].focus();
+			this._iFocusedIndex = null;
+		} else {
+			this.getFocusDomRef().focus();
+		}
+	};
+
+	/**
 	 * Required adaptations after rendering.
 	 *
 	 * @private
@@ -1412,7 +1443,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		// oPopover._oOpenBy = this.$().children("....")[0];
 		var oPicker = this.getPicker();
 		var oDomRef = jQuery(this.getDomRef());
-		var oBorder = oDomRef.find(MultiComboBoxRenderer.DOT_CSS_CLASS + "Border");
+		var oBorder = oDomRef.find(this.getRenderer().DOT_CSS_CLASS_MULTICOMBOBOX + "Border");
 		oPicker._oOpenBy = oBorder[0];
 	};
 
@@ -1448,7 +1479,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			}
 		}
 
-		this.removeStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Focused");
+		this.removeStyleClass(this.getRenderer().CSS_CLASS_MULTICOMBOBOX + "Focused");
 		ComboBoxBase.prototype.onfocusout.apply(this, arguments);
 	};
 
@@ -2141,7 +2172,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			return null;
 		}
 
-		var sListItem = MultiComboBoxRenderer.CSS_CLASS + "Item";
+		var sListItem = this.getRenderer().CSS_CLASS_MULTICOMBOBOX + "Item";
 		var sListItemSelected = (this.isItemSelected(oItem)) ? sListItem + "Selected" : "";
 		var oListItem = new sap.m.StandardListItem({
 			title : oItem.getText(),
@@ -2149,7 +2180,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 			visible : oItem.getEnabled()
 		}).addStyleClass(sListItem + " " + sListItemSelected);
 		oListItem.setTooltip(oItem.getTooltip());
-		oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem", oListItem);
+		oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "ListItem", oListItem);
 
 		if (sListItemSelected) {
 			var oToken = new sap.m.Token({
@@ -2157,7 +2188,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 				text : oItem.getText(),
 				tooltip : oItem.getText()
 			});
-			oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Token", oToken);
+			oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Token", oToken);
 			this._oTokenizer.addToken(oToken);
 		}
 
@@ -2402,17 +2433,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	};
 
 	/**
-	 * Destroy the items in the List.
-	 *
-	 * @private
-	 */
-	MultiComboBox.prototype._clearList = function() {
-		if (this.getList()) {
-			this.getList().destroyAggregation("items", true);
-		}
-	};
-
-	/**
 	 * Retrieves an item by searching for the given property/value from the aggregation named <code>items</code>.<br>
 	 * <b>Note:</b> If duplicate values exist, the first item matching the value is returned.
 	 *
@@ -2537,7 +2557,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * @since 1.24.0
 	 */
 	MultiComboBox.prototype._getItemBy = function(oDataObject, sDataName) {
-		sDataName = sap.m.ComboBoxBaseRenderer.CSS_CLASS + sDataName;
+		sDataName = this.getRenderer().CSS_CLASS_COMBOBOXBASE + sDataName;
 
 		for ( var i = 0, aItems = this.getItems(), iItemsLength = aItems.length; i < iItemsLength; i++) {
 			if (aItems[i].data(sDataName) === oDataObject) {
@@ -2557,7 +2577,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * @since 1.24.0
 	 */
 	MultiComboBox.prototype.getListItem = function(oItem) {
-		return oItem ? oItem.data(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "ListItem") : null;
+		return oItem ? oItem.data(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "ListItem") : null;
 	};
 
 	return MultiComboBox;

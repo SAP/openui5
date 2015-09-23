@@ -4,14 +4,14 @@
 /* ============================================= */
 
 .sapMPopover {
-	background-color: @sapUiPopoverContBG;
-	border: @sapUiPopupBorder;
-	-webkit-box-shadow: @sapUiPopupBoxShadow;
-	-moz-box-shadow: @sapUiPopupBoxShadow;
-	box-shadow: @sapUiPopupBoxShadow;
-	-webkit-border-radius: @sapUiPopupBorderRadius;
-	-moz-border-radius: @sapUiPopupBorderRadius;
-	border-radius: @sapUiPopupBorderRadius;
+	background-color: @sapUiGroupContentBackground;
+	border: 1px @sapUiContentForegroundBorderColor solid;
+	-webkit-box-shadow: 0px 0px 30px 2px fade(@sapUiDarkShadowTint, 15);
+	-moz-box-shadow: 0px 0px 30px 2px fade(@sapUiDarkShadowTint, 15);
+	box-shadow: 0px 0px 30px 2px fade(@sapUiDarkShadowTint, 15);
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
 }
 
 .sapMPopover .sapMPopoverCont {
@@ -127,58 +127,58 @@ html[data-sap-ui-browser='ie9'] .sapMPopoverSpecialFooter > .sapMBarMiddle > .sa
 /*Arrow Down*/
 .sapMPopoverArrDown {
 	border-color: transparent;
-	border-top-color: @sapUiPopupBorderColor;
+	border-top-color: @sapUiContentForegroundBorderColor;
 }
 
 .sapMPopoverArrDown:after {
 	border-color: transparent;
-	border-top-color: @sapUiPopoverContBG;
+	border-top-color: @sapUiGroupContentBackground;
 	bottom: -15px;
 	left: -16px;
 }
 
 .sapMPopoverWithFooter > .sapMPopoverArrDown {
-	border-top-color: @sapUiExtraLightBorder;
+	border-top-color: @sapUiContentForegroundBorderColor;
 }
 
 .sapMPopoverWithFooter > .sapMPopoverArrDown:after {
-	border-top-color: @sapUiFooterBG;
+	border-top-color: @sapUiPageFooterBackground;
 }
 
 .sap-desktop .sapMPopoverWithFooter > .sapMPopoverArrDown:after {
-	border-top-color: @sapUiFooterOnDesktopBG;
+	border-top-color: @sapUiPageFooterBackground;
 }
 
 /* Arrow Up */
 .sapMPopoverArrUp {
 	border-color: transparent;
-	border-bottom-color: @sapUiPopupBorderColor;
+	border-bottom-color: @sapUiContentForegroundBorderColor;
 }
 
 .sapMPopoverArrUp:after,
 .sapMPopoverWithoutBar.sapMPopoverNav.sapMPopoverWithHeaderCont > .sapMPopoverArrUp:after,
 .sapMPopoverWithoutBar.sapMPopoverPage.sapMPopoverWithHeaderCont > .sapMPopoverArrUp:after {
 	border-color: transparent;
-	border-bottom-color: @sapUiHeaderBG; /* arrow content area when adjacent to Bar */
+	border-bottom-color: @sapUiPageHeaderBackground; /* arrow content area when adjacent to Bar */
 	bottom: -17px;
 	left: -16px;
 }
 
 .sapMPopoverWithoutBar > .sapMPopoverArrUp:after {
 	border-color: transparent;
-	border-bottom-color: @sapUiPopoverContBG;
+	border-bottom-color: @sapUiGroupContentBackground;
 }
 
 /*Arrow Left*/
 .sapMPopoverArrLeft {
 	border-color: transparent;
-	border-right-color: @sapUiPopupBorderColor;
+	border-right-color: @sapUiContentForegroundBorderColor;
 }
 
 html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverArrRight:after,
 .sapMPopoverArrLeft:after {
 	border-color: transparent;
-	border-right-color: @sapUiPopoverContBG;
+	border-right-color: @sapUiGroupContentBackground;
 	top: -16px;
 	left: -15px;
 }
@@ -190,32 +190,32 @@ html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverArrLeft:after {
 html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverHeaderAlignArr.sapMPopoverArrRight:after,
 .sapMPopoverHeaderAlignArr.sapMPopoverArrLeft:after {
 	border-color: transparent;
-	border-right-color: @sapUiHeaderBG;
+	border-right-color: @sapUiPageHeaderBackground;
 }
 
 html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverCrossArr.sapMPopoverArrLeft:after,
 .sapMPopoverCrossArr.sapMPopoverArrLeft:after {
 	border-color: transparent;
-	border-right-color: @sapUiPopupBorderColor;
+	border-right-color: @sapUiContentForegroundBorderColor;
 	/* 	left: -16px; */
 }
 
 html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverFooterAlignArr.sapMPopoverArrRight:after,
 .sapMPopoverFooterAlignArr.sapMPopoverArrLeft:after {
 	border-color: transparent;
-	border-right-color: @sapUiFooterOnDesktopBG;
+	border-right-color: @sapUiPageFooterBackground;
 }
 
 /*Arrow Right*/
 .sapMPopoverArrRight {
 	border-color: transparent;
-	border-left-color: @sapUiPopupBorderColor;
+	border-left-color: @sapUiContentForegroundBorderColor;
 }
 
 html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverArrLeft:after,
 .sapMPopoverArrRight:after {
 	border-color: transparent;
-	border-left-color: @sapUiPopoverContBG;
+	border-left-color: @sapUiGroupContentBackground;
 	top: -16px;
 	left: -17px;
 }
@@ -228,19 +228,19 @@ html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverArrRight:after {
 html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverHeaderAlignArr.sapMPopoverArrLeft:after,
 .sapMPopoverHeaderAlignArr.sapMPopoverArrRight:after {
 	border-color: transparent;
-	border-left-color: @sapUiHeaderBG;
+	border-left-color: @sapUiPageHeaderBackground;
 }
 
 html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverCrossArr.sapMPopoverArrLeft:after,
 .sapMPopoverCrossArr.sapMPopoverArrRight:after {
 	border-color: transparent;
-	border-left-color: @sapUiPopupBorderColor;
+	border-left-color: @sapUiContentForegroundBorderColor;
 }
 
 html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverFooterAlignArr.sapMPopoverArrLeft:after,
 .sapMPopoverFooterAlignArr.sapMPopoverArrRight:after {
 	border-color: transparent;
-	border-left-color: fade(@sapUiExtraDarkBG, 90);
+	border-left-color: @sapUiPageFooterBackground;
 }
 
 /* Compact size */
@@ -276,7 +276,7 @@ html[dir=rtl][data-sap-ui-browser='ie9'] .sapMPopoverFooterAlignArr.sapMPopoverA
 
 	.sapMPopoverArrDown:after {
 		border-color: transparent;
-		border-top-color: @sapUiPopoverContBG;
+		border-top-color: @sapUiGroupContentBackground;
 		bottom: -7px;
 		left: -8px;
 	}

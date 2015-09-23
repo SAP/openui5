@@ -12,11 +12,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * Constructor for a new Token.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
+	 * @param {object} [mSettings] Initial settings for the new control.
 	 *
 	 * @class
-	 * renders a token containing text and an optional delete icon
+	 * The <code>sap.m.Token</code> is a container of a single text item with a delete icon if the token is in edit mode.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @constructor
 	 * @public
 	 * @alias sap.m.Token
-	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) design time meta model.
 	 */
 	var Token = Control.extend("sap.m.Token", /** @lends sap.m.Token.prototype */ { metadata : {
 
@@ -33,22 +33,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		properties : {
 
 			/**
-			 * current selection status of token
+			 * Indicates the current selection status of the token.
 			 */
 			selected : {type : "boolean", group : "Misc", defaultValue : false},
 
 			/**
-			 * token's identifier key
+			 * Key of the token.
 			 */
 			key : {type : "string", group : "Misc", defaultValue : ""},
 
 			/**
-			 * token's display text
+			 * Displayed text of the token.
 			 */
 			text : {type : "string", group : "Misc", defaultValue : ""},
 
 			/**
-			 * if true, token displays delete icon and fires events accordingly
+			 * Indicates the editable status of the token. If it is set to <code>true</code>, token displays a delete icon.
 			 */
 			editable : {type : "boolean", group : "Misc", defaultValue : true},
 			
@@ -68,29 +68,29 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		associations : {
 
 			/**
-			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 * Association to controls / IDs which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
 			ariaDescribedBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy"},
 
 			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
 		},
 		events : {
 
 			/**
-			 * Fired if the user click the token's delete button.
+			 * This event is fired if the user clicks the token's delete icon.
 			 */
 			"delete" : {},
 
 			/**
-			 * Event is fired when the user clicks on the control.
+			 * This event is fired when the user clicks on the token.
 			 */
 			press : {},
 
 			/**
-			 * Event is fired when the user selects a token (could be a keyboard navigation, could be a press)
+			 * This event is fired when the token gets selected.
 			 */
 			select : {}
 		}
@@ -117,6 +117,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 		this._deleteIcon.addStyleClass("sapMTokenIcon");
 		this.setAggregation("deleteIcon", this._deleteIcon);
+		this._deleteIcon.setUseIconTooltip(false);
 	};
 
 	Token.prototype.setEditable = function(bEditable){
@@ -132,10 +133,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	/**
-	 * Event handler called when control is touched, registers left mouse down
+	 * Handles the touch start event on the token.
 	 *
-	 * @param {jQuery.Event}
-	 * 			oEvent
+	 * @param {jQuery.Event} oEvent The event object.
 	 * @private
 	 */
 	Token.prototype.ontouchstart = function(oEvent) {
@@ -154,6 +154,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	};
 
+	/**
+	 * Sets the selection status of the token.
+	 *
+	 * @param {boolean} bSelected Indicates if the token is selected.
+	 * @param {boolean} bMultiSelect Indicates if the token is one of the multi-selected tokens.
+	 */
 	Token.prototype.setSelected = function(bSelected, bMultiSelect) {
 
 		if (bSelected && !bMultiSelect) {
@@ -192,8 +198,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * Function is called when token is pressed to select/deselect token.
 	 * @private
-	 * @param {jQuery.Event}
-	 *          oEvent
+	 * @param {jQuery.Event} oEvent
 	 */
 	Token.prototype._onTokenPress = function() {
 		var bSelected = this.getSelected();

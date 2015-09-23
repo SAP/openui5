@@ -79,12 +79,12 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.writeAttribute('tabindex', "-1");
 				oRm.writeClasses();
 				if (oHead["getAriaLabelButton" + i]()) {
-					mAccProps["label"] = oHead["getAriaLabelButton" + i]();
+					mAccProps["label"] = jQuery.sap.encodeHTML(oHead["getAriaLabelButton" + i]());
 				}
 				oRm.writeAccessibilityState(null, mAccProps);
 				mAccProps = {};
 				oRm.write(">"); // button element
-				oRm.write(oHead["getTextButton" + i]() || "");
+				oRm.writeEscaped(oHead["getTextButton" + i]() || "");
 				oRm.write("</button>");
 			}
 		}

@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.m.RadioButtonGroup
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 
@@ -73,12 +73,6 @@ sap.ui.define(['jquery.sap.global'],
 		// check global rtl config and textDirection property and add "dir" attribute
 		if (!bGlobalTextDir && sControlTextDir != sap.ui.core.TextDirection.Inherit) {
 			rm.writeAttribute("dir", sControlTextDir.toLowerCase());
-		}
-
-		if (bEnabled) {
-			rm.writeAttribute("tabindex", "0");
-		} else {
-			rm.writeAttribute("tabindex", "-1");
 		}
 
 		// ARIA

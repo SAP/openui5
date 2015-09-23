@@ -13,8 +13,13 @@
 
 		<script>
 
-			jQuery.sap.require("sap.ui.thirdparty.qunit");
 			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.qunit.QUnitUtils");
+
+			QUnit.config.autostart = false;
 
 			sap.ui.require([
 				'sap/ui/test/matchers/BindingPath',
@@ -42,18 +47,22 @@
 					Then.waitFor({
 						controlType: "sap.m.StandardListItem",
 						matchers: new BindingPath({path: "/ProductCollection/0"}),
-						success: function () {
-							Opa5.assert.ok(true,
+						success: function (aItems) {
+							Opa5.assert.ok(aItems[0].getSelected(),
 								"The binding path for selected item was matched");
 						},
 						errorMessage: "The binding path for selected item was not matched"
 					});
 
-					// Tear down should be done in real use case
-					// In this sample we commented it out so you can see the result
-//					Then.iTeardownMyAppFrame();
+					// Tear down should always be done in real use case
+					// In this sample we commented it out so you can see the result.
+					// If no globals is activated, IE will fail because the frame with an id will be recogniced as global.
+					if (QUnit.config.noglobals) {
+						Then.iTeardownMyAppFrame();
+					}
 
 				});
+				QUnit.start();
 
 			});
 

@@ -82,6 +82,13 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
 		},
+		associations : {
+
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
+		},
 		events : {
 
 			/**
@@ -706,6 +713,21 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 */
 	Toolbar.prototype.applyTagAndContextClassFor = BarInPageEnabler.prototype.applyTagAndContextClassFor;
 
+	/**
+	 * Sets landmarks members to the bar instance
+	 *
+	 * @param bHasLandmarkInfo {boolean} indicates that bar has landmarkinfo
+	 * @param sContext {string} context of the bar
+	 * @private
+	 */
+	Toolbar.prototype._setLandmarkInfo = BarInPageEnabler.prototype._setLandmarkInfo;
+
+	/**
+	 * Writes landmarks info to the bar
+	 *
+	 * @private
+	 */
+	Toolbar.prototype._writeLandmarkInfo = BarInPageEnabler.prototype._writeLandmarkInfo;
 
 	return Toolbar;
 

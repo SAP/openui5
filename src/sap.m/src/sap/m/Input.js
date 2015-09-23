@@ -206,6 +206,26 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					 */
 					selectedRow : {type : "sap.m.ColumnListItem"}
 				}
+			},
+			
+			/**
+			 * This event is fired when user presses the <code>Enter</code> key on the input.
+			 * 
+			 * <b>Note:</b>
+			 * The event is fired independent of whether there was a change before or not. If a change was performed the event is fired after the change event.
+			 * The event is also fired when an item of the select list is selected via <code>Enter</code>.
+			 * The event is only fired on an input which allows text input (<code>editable</code>, <code>enabled</code> and not <code>valueHelpOnly</code>).
+			 * 
+			 * @since 1.33.0
+			 */
+			submit : {
+				parameters: {
+
+					/**
+					 * The new value of the input.
+					 */
+					value: { type: "string" }
+				}
 			}
 		}
 	}});
@@ -757,6 +777,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 			}
 			this._closeSuggestionPopup();
 		}
+		
+		if (this.getEnabled() && this.getEditable() && !(this.getValueHelpOnly() && this.getShowValueHelp())) {
+			this.fireSubmit({value: this.getValue()});
+		}
 	};
 
 	Input.prototype.onsapfocusleave = function(oEvent) {
@@ -1088,6 +1112,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				oInput._oPopupInput = new Input(oInput.getId() + "-popup-input", {
 					width : "100%",
 					valueLiveUpdate: true,
+					showValueHelp: oInput.getShowValueHelp(),
+					valueHelpRequest: function(oEvent) {
+						// it is the same behavior as by ShowMoreButton:
+						oInput.fireValueHelpRequest({fromSuggestions: true});
+						oInput._iPopupListSelectedIndex = -1;
+						oInput._closeSuggestionPopup();
+					},
 					liveChange : function(oEvent) {
 						var sValue = oEvent.getParameter("newValue");
 						// call _getInputValue to apply the maxLength to the typed value
@@ -1139,7 +1170,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					contentHeight : oInput._bFullScreen ? undefined : "20rem",
 					customHeader : new Bar(oInput.getId()
 							+ "-popup-header", {
-						contentMiddle : oInput._oPopupInput
+						contentMiddle : oInput._oPopupInput.addEventDelegate({onsapenter: function(){
+								oInput._closeSuggestionPopup();
+							}}, this)
 					}),
 					horizontalScrolling : false,
 					initialFocus : oInput._oPopupInput
@@ -1165,6 +1198,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 						oInput._updateTokenizerInMultiInput();
 						oInput._tokenizerInPopup.destroy();
 						oInput.setValue("");
+						oInput._showIndicator();
 						setTimeout(function() {
 							oInput._setContainerSizes();
 						}, 0);

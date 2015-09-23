@@ -1,8 +1,9 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
 sap.ui.define([], function () {
+	"use strict";
 
 	/**
 	 * @class Ancestor - checks if a control has a defined ancestor

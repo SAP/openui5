@@ -7,12 +7,12 @@
 }
 
 .sapMStdIconMonitor {
-	color: @sapUiLightText;
+	color: lighten(@sapUiTileTextColor, 20);
 }
 
 
 .sapMStdIconCreate {
-	color: @sapUiLightText;
+	color: lighten(@sapUiTileTextColor, 20);
 	opacity: .3;
 }
 
@@ -21,11 +21,11 @@
 .sapMStdTileNumS {
 	font-family: @sapUiFontCondensedFamily;
 	font-stretch: condensed; /* for Firefox */
-	color: @sapUiLightText;
+	color: lighten(@sapUiTileTextColor, 20);
 }
 
 .sapMStdTileNumUnit {
-	color: @sapUiLightText;
+	color: lighten(@sapUiTileTextColor, 20);
 	text-transform: uppercase;
 }
 
@@ -50,15 +50,15 @@
 }
 
 .sapMStdTileMonitorType {
-	background-color: @sapUiExtraLightBG;
+	background-color: darken(@sapUiTileBackground, 5);
 }
 
 .sapMTCEditable .sapMStdTileMonitorType {
-	background-color: fade(@sapUiExtraLightBG, 50%);
+	background-color: fade(darken(@sapUiTileBackground, 5), 50);
 }
 
 .sapMStdTileMonitorType .sapMStdTileTitle {
-	color: @sapUiLightText;
+	color: lighten(@sapUiTileTextColor, 20);
 }
 
 .sapMTileActive-CTX .sapMStdTileMonitorType {
@@ -78,7 +78,7 @@
 .sapMTileActive-CTX .sapMStdTileNumM,
 .sapMTileActive-CTX .sapMStdTileNumS,
 .sapMTileActive-CTX .sapMStdTileInfo {
-	color: @sapUiTextInverted;
+	color: @sapUiContentContrastTextColor;
 } 
 
 .sapMTileActive-CTX .sapMStdTileIconDiv,

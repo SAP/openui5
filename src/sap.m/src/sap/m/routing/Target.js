@@ -21,26 +21,37 @@ sap.ui.define(['sap/ui/core/routing/Target'],
 		var MobileTarget = Target.extend("sap.m.routing.Target", /** @lends sap.m.routing.Target.prototype */ {
 			constructor : function (oOptions, oViews, oParent, oTargetHandler) {
 				this._oTargetHandler = oTargetHandler;
+				// temporarily: for checking the url param
+				function checkUrl() {
+					if (jQuery.sap.getUriParameters().get("sap-ui-xx-asyncRouting") === "true") {
+						jQuery.sap.log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "MobileTarget");
+						return true;
+					}
+					return false;
+				}
+
+				// Set the default value to sync
+				if (oOptions._async === undefined) {
+					// temporarily: set the default value depending on the url parameter "sap-ui-xx-asyncRouting"
+					oOptions._async = checkUrl();
+				}
 
 				Target.prototype.constructor.apply(this, arguments);
-			},
 
-			_place : function (oParentInfo, vData) {
-				var oReturnValue = Target.prototype._place.apply(this, arguments);
+				var TargetStub;
+				if (oOptions._async) {
+					jQuery.sap.require("sap.m.routing.async.Target");
+					TargetStub = sap.ui.require("sap/m/routing/async/Target");
+				} else {
+					jQuery.sap.require("sap.m.routing.sync.Target");
+					TargetStub = sap.ui.require("sap/m/routing/sync/Target");
+				}
 
-				this._oTargetHandler.addNavigation({
-
-					navigationIdentifier : this._oOptions.name,
-					transition: this._oOptions.transition,
-					transitionParameters: this._oOptions.transitionParameters,
-					eventData: vData,
-					targetControl: oReturnValue.oTargetControl,
-					view: oReturnValue.oTargetParent,
-					preservePageInSplitContainer: this._oOptions.preservePageInSplitContainer
-				});
-
-				return oReturnValue;
-
+				this._super = {};
+				for (var fn in TargetStub) {
+					this._super[fn] = this[fn];
+					this[fn] = TargetStub[fn];
+				}
 			}
 		});
 

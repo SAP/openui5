@@ -2,63 +2,59 @@
 <!--
   Tests the bootstrap variant where the bootstrap tag is part of the head.
   
-  @author Frank Weigel    
+  @author Frank Weigel
   -->
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<title>...</title>
-    		
+		<meta charset="UTF-8" />
+		<title>Test Page for Bootstrap within Head</title>
+
 		<!-- Initialization -->
 		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script id="sap-ui-bootstrap" 
-				type="text/javascript" 
 				src="../../../../../../resources/sap-ui-core.js"
 				data-sap-ui-libs="sap.ui.commons" 
 				>
-		</script>    
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		</script>
+		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
-		<script language="javascript">
-			test("Check Core Functionality", function() {
+		<script>
+			QUnit.test("Check Core Functionality", function(assert) {
 				/* check that SAPUI5 has been loaded */
-				ok(!!jQuery, "jQuery has been loaded");
-				ok(!!jQuery.sap, "jQuery.sap namespace exists");
-				ok(!!window.sap, "sap namespace exists");
-				ok(!!sap.ui, "sap.ui namespace exists");
-				ok(typeof sap.ui.getCore === "function", "sap.ui.getCore exists");
-				ok(!!sap.ui.getCore(), "sap.ui.getCore() returns a value");
+				assert.ok(jQuery, "jQuery has been loaded");
+				assert.ok(jQuery.sap, "jQuery.sap namespace exists");
+				assert.ok(window.sap, "sap namespace exists");
+				assert.ok(sap.ui, "sap.ui namespace exists");
+				assert.ok(typeof sap.ui.getCore === "function", "sap.ui.getCore exists");
+				assert.ok(sap.ui.getCore(), "sap.ui.getCore() returns a value");
 
 				var oCfg = new sap.ui.core.Configuration();
-				deepEqual(oCfg.modules, ["sap.ui.commons.library"], "Libraries");
+				assert.deepEqual(oCfg.modules, ["sap.ui.commons.library"], "Libraries");
 			});
 
-			test("Check boot() has run", function() {
-				
-				var id = jQuery("html").attr("data-sap-ui-browser");
-				ok(typeof id === "string", "id exists");
-				ok(id !== "", "id not empty");
+			QUnit.test("Check boot() has run", function(assert) {
 
-            	ok(!!jQuery.sap.getObject("sap.ui.commons"), "lib namespace exists");
-            	ok(!!sap.ui.commons.Button, "Control from lib is available");
-            	ok(!sap.ui.commons.Button.prototype.attachPress, "control not initialized");
-            	new sap.ui.commons.Button();
-            	ok(typeof sap.ui.commons.Button.prototype.attachPress === "function", "control lazily loaded initialized");
-			}); 
+				var id = jQuery("html").attr("data-sap-ui-browser");
+				if ( sap.ui.Device.browser.name ) {
+					assert.ok(typeof id === "string" && id, "browser is known: data-sap-ui-browser should have been set and must not be empty");
+				} else {
+					assert.ok(!id, "browser is unknown: data-sap-ui-browser should not have been set (or empty)");
+				}
+
+				assert.ok(jQuery.sap.getObject("sap.ui.commons"), "lib namespace exists");
+				assert.ok(sap.ui.lazyRequire._isStub("sap.ui.commons.Button"), "Control from lib is available at least as lazy stub");
+				new sap.ui.commons.Button();
+				assert.ok(typeof sap.ui.commons.Button.prototype.attachPress === "function", "control lazily loaded initialized");
+			});
 
 		</script>
-		
+
 	</head>
-	
-    <body class="sapUiBody" role="application">
-		<h1 id="qunit-header">Bootstrap Variant 'within Head'</h1>
-		<h2 id="qunit-banner"></h2>
-	 	<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<br>
-	    <div id="uiArea"></div>
-    </body>
+
+	<body class="sapUiBody" role="application">
+		<div id="qunit"></div>
+	</body>
 </html>

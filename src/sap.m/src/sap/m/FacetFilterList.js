@@ -121,7 +121,10 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		}
 	}});
 	
-	
+	/**
+	 * Setter for property title
+	 * @param {string} sTitle	new value for property title
+	 */
 	FacetFilterList.prototype.setTitle = function(sTitle) {
 		
 		this.setProperty("title", sTitle, true);
@@ -131,6 +134,11 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		return this;
 	};
 	
+	/**
+	 * Setter for property multiSelect. Default value is true.
+	 * @param {boolean}	bMultiSelect	new value for property multiSelect
+	 * @returns {sap.m.FacetFilterList}	this to allow method chaining
+	 */
 	FacetFilterList.prototype.setMultiSelect = function(bVal) {
 		
 		this.setProperty("multiSelect", bVal, true);
@@ -163,7 +171,10 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		}
 	};
 	
-	
+	/*
+	 * Returns an array containing the selected list items. 
+	 * If no items are selected, an empty array is returned.
+	 */
 	FacetFilterList.prototype.getSelectedItems = function() {
 		
 		var aSelectedItems = [];
@@ -203,6 +214,13 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		return aSelectedItems;
 	};
 	
+	/**
+	 * Returns selected list item. 
+	 * When no item is selected, "null" is returned. 
+	 * When "multi-selection" is enabled and multiple items 
+	 * are selected, only the up-most selected item is returned.
+	 * @param {sap.m.ListItemBase}	
+	 */
 	FacetFilterList.prototype.getSelectedItem = function() {
 		
 		var oItem = sap.m.ListBase.prototype.getSelectedItem.apply(this, arguments);
@@ -217,6 +235,11 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		return oItem;
 	};
 	
+	/**
+	 * Removes visible selections of the current selection mode
+	 * @param {boolean} bAll 
+	 * @returns {sap.m.ListBase}
+	 */
 	FacetFilterList.prototype.removeSelections = function(bAll) {
 		
 		// See _resetItemsBinding to understand why we override the ListBase method
@@ -610,13 +633,16 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		}, this);
 	};
 	
-	
+	/**
+	 * This method override runs when setSelected is called from ListItemBase. Here we update
+	 * the selected keys cache based on whether the item is being selected or not. We also
+	 * update the select all checkbox state and list active state based on the selected
+	 * state of all items taken as a whole.
+	 * @param bSelect {boolean} true if selected
+	 * @param oItem item that needs to be selected 
+	 */
 	FacetFilterList.prototype.onItemSelectedChange = function(oItem, bSelect) {
 		
-		// This method override runs when setSelected is called from ListItemBase. Here we update
-		// the selected keys cache based on whether the item is being selected or not. We also
-		// update the select all checkbox state and list active state based on the selected
-		// state of all items taken as a whole.
 		if (bSelect) {
 			this._addSelectedKey(oItem.getKey(), oItem.getText());
 		} else {
@@ -630,11 +656,14 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	};
 	
 	
+	/**
+	 * This method override runs when the list updates its items. The reason
+	 * for the update is given by sReason, which for example can be when the
+	 * list is filtered or when it grows.
+	 * @param sReason reason for update
+	 * @returns updated FacetFilter list
+	 */
 	FacetFilterList.prototype.updateItems = function(sReason) {
-		
-		// This method override runs when the list updates its items. The reason
-		// for the update is given by sReason, which for example can be when the
-		// list is filtered or when it grows.
 	  this._filtering = sReason === sap.ui.model.ChangeReason.Filter;
 	  sap.m.ListBase.prototype.updateItems.apply(this,arguments);
 	  this._filtering = false;

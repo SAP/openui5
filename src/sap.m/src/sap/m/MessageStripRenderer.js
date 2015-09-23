@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/MessageStripUtilities"],
+sap.ui.define(["./MessageStripUtilities"],
 	function (MSUtils) {
 	"use strict";
 
@@ -55,7 +55,7 @@ sap.ui.define(["sap/m/MessageStripUtilities"],
 
 	MessageStripRenderer.renderIcon = function (oRm, oControl) {
 		oRm.write("<div class='" + MSUtils.CLASSES.ICON + "'>");
-		oRm.writeIcon(oControl.getCustomIcon(), null, {
+		oRm.writeIcon(MSUtils.getIconURI.call(oControl), null, {
 			"title": null // prevent the icon title (icon is only decorative)
 		});
 		oRm.write("</div>");

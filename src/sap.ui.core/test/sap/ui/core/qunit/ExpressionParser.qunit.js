@@ -12,6 +12,10 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 4, no-warning-comments: 0 */
 	"use strict";
 
+	var oModel = new JSONModel(
+			{mail: "mail", tel: "tel", tel2: "tel", 3: 3, five: 5, thirteen: 13}
+		);
+
 	/**
 	 * Checks the string result of an expression binding when bound to a control property of type
 	 * string.
@@ -23,12 +27,11 @@ sap.ui.require([
 	 */
 	function check(assert, sExpression, vResult, oScope) {
 		var oIcon = new Icon({
-				color: sExpression.charAt(0) === "{" ? sExpression : "{=" + sExpression + "}"
+				color: sExpression.charAt(0) === "{" ? sExpression : "{=" + sExpression + "}",
+				models: oModel
 			}, oScope);
 
-		oIcon.setModel(new JSONModel(
-			{mail: "mail", tel: "tel", tel2: "tel", 3: 3, five: 5, thirteen: 13}
-		));
+		oIcon.bindObject("/");
 		assert.strictEqual(oIcon.getColor(), oIcon.validateProperty("color", vResult));
 	}
 
@@ -521,5 +524,64 @@ sap.ui.require([
 
 		//TODO drop String() once BindingParser can properly handle constant result values
 		check(assert, sExpression, String(undefined));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Internal incident 1570800230", function (assert) {
+		var oIcon,
+			oModel = new JSONModel({/*IsActiveEntity : undefined*/});
+
+		oIcon = new Icon({
+			decorative : "{= !${/IsActiveEntity} }",
+			models : oModel
+		});
+		assert.strictEqual(oIcon.getDecorative(), true);
+
+		oIcon = new Icon({
+			decorative : "{= !!${/IsActiveEntity} }",
+			models : oModel
+		});
+		assert.strictEqual(oIcon.getDecorative(), false);
+
+		oIcon = new Icon({
+			decorative : "{= ${/IsActiveEntity} }",
+			models : oModel
+		});
+		assert.strictEqual(oIcon.getDecorative(), true, "default value used!");
+		assert.strictEqual(oIcon.validateProperty("decorative", undefined), true,
+			"default value used!");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("multiple references to the same binding", function (assert) {
+		var oScope = {
+				myFormatter: function (vValue) {
+					return "~" + String(vValue) + "~";
+				}
+			};
+
+		function checkParts(sExpression, sExpectedResult, iExpectedParts) {
+			var sBinding = "{=" + sExpression + "}",
+				oBindingInfo = BindingParser.complexParser(sBinding, oScope, true);
+			assert.strictEqual(oBindingInfo.parts.length, iExpectedParts, sExpression);
+			check(assert, sBinding, sExpectedResult, oScope);
+		}
+
+		this.mock(jQuery.sap.log).expects("warning").never();
+
+		checkParts("${/five} ? ${/five} : '7'", "5", 1);
+		checkParts("${/five} ? ${path: '/five', type: 'sap.ui.model.type.String'} : '7'", "5", 2);
+		checkParts("${path: '/five', type: 'sap.ui.model.type.String'} ? "
+				+ "${path: '/five', type: 'sap.ui.model.type.String'} : '7'", "5", 1);
+		checkParts("${/five} ? ${path: '/five', formatter: '.myFormatter'} : '7'", "~5~", 2);
+		checkParts("${path: '/five', formatter: '.myFormatter'} ? "
+				+ "${path: '/five', formatter: '.myFormatter'} : '7'", "~5~", 1);
+
+		// if we do not ensure that both ${mail} become the same part, evaluation is performed on
+		// partly resolved parts when calling oIcon.bindObject() after oIcon.bindProperty() in
+		// check(). Then the first ${mail} is already resolved (-> truthy) while the second still
+		// is null, the expression runs into an exception (" Cannot read property 'indexOf' of
+		// null") and raises a warning.
+		check(assert, "${mail} && ${mail}.indexOf('mail')", "0");
 	});
 });

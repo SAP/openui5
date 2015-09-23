@@ -115,6 +115,15 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 			}
 		);
 
+	/**
+	 * @see sap.ui.base.Object#getInterface
+	 *
+	 * @returns {object} this
+	 * @public
+	 */
+	ODataType.prototype.getInterface = function() {
+		return this;
+	};
 
 	/**
 	 * ODataTypes are immutable and do not allow modifying the type's constraints.

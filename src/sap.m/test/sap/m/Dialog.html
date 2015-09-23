@@ -13,17 +13,10 @@
 				overflow: hidden;
 			}
 
-			.padding {
-				padding: 16px;
-			}
-
 			#p1 {
 				width: 500px;
 			}
 
-			.sapMBtn {
-				margin-right: 5px !important;
-			}
 		</style>
 		<script src="../../../resources/sap-ui-core.js"
 				type="text/javascript"
@@ -830,6 +823,28 @@
 			}
 			_startResizingInterval();
 
+			// dialogWithWidthButton
+
+			var endButton = new sap.m.Button('largeButton', {
+				press: function() {
+					dialogWithWidthButton.close();
+				},
+				text: "Close"
+			});
+
+			var dialogWithWidthButton = new sap.m.Dialog({
+				endButton: endButton,
+				content: [
+					new sap.ui.core.HTML({content: '<div>Do you want to start a new world domination campaign?</div>'})
+				]
+			}).addDelegate({
+						onAfterRendering: function() {
+							jQuery('#largeButton').css({ width: '100%' });
+						}
+					});
+
+			// disabledScrollingDialogWithSplitter
+
 			var disabledScrollingDialogWithSplitter = new sap.m.Dialog({
 				contentWidth: '20rem',
 				contentHeight: "100%",
@@ -1270,6 +1285,14 @@
 						width: _buttonWidth,
 						press: function () {
 							dialogWithButtonsWithLongText.open();
+						}
+					}),
+
+					new sap.m.Button({
+						text: "Button with w:100% inline style",
+						width: _buttonWidth,
+						press: function () {
+							dialogWithWidthButton.open();
 						}
 					})
 				]

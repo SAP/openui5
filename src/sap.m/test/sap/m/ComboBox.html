@@ -19,7 +19,6 @@
 		</style>
 		<script>
 		var oModel = new sap.ui.model.json.JSONModel();
-
 		var mData = {
 			"items": [
 				{
@@ -399,12 +398,16 @@
 			},
 
 			change: function(oControlEvent) {
-				jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("value") + " on", this);
+				jQuery.sap.log.info('Event fired: "change" the value of the input change to ' + oControlEvent.getParameter("value") + " on", this);
 				sap.m.MessageToast.show("change " + oControlEvent.getParameter("value"));
 			},
 
 			selectionChange: function(oControlEvent) {
-				jQuery.sap.log.info('Event fired: "selectionChange" value property to ' + oControlEvent.getParameter("selectedItem") + " on", this);
+				var oSelectedItem = oControlEvent.getParameter("selectedItem");
+
+				if (oSelectedItem) {
+					jQuery.sap.log.info('Event fired: "selectionChange" selected item change to ' + oSelectedItem.getText() + " on", this);
+				}
 			}
 		});
 
@@ -480,14 +483,6 @@
 			}
 		});
 
-		var oComboBoxBusy = new sap.m.ComboBox({
-			busy: true,
-			items: {
-				path: "/items",
-				template: oItemTemplate
-			}
-		});
-
 		new sap.m.App().addPage(new sap.m.Page({
 			title: "sap.m.ComboBox",
 			content: [
@@ -523,10 +518,6 @@
 
 				new sap.ui.core.HTML({ content: "<h3>Error state</h3>" }),
 				oComboBoxError,
-				new sap.ui.core.HTML({ content: "<hr>" }),
-
-				new sap.ui.core.HTML({ content: "<h3>Busy</h3>" }),
-				oComboBoxBusy,
 				new sap.ui.core.HTML({ content: "<hr>" })
 			]
 		}).addStyleClass("sapUiContentPadding")).placeAt("body");

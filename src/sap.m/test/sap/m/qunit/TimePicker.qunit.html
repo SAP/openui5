@@ -97,9 +97,9 @@
 		//test the final result after setting some properties in order
 		function generateValuesTest(aSetValues, oExpectedValues) {
 			//system under test
-			var tpId = "tp" + ++caseIndex,
-					tp = new sap.m.TimePicker(tpId),
-					i, key;
+			var tp = new sap.m.TimePicker(),
+				i,
+				key;
 
 			//arrange
 			tp.placeAt("qunit-fixture");
@@ -113,7 +113,7 @@
 			//assert
 			// trim because the framework formatter has no leading space,
 			// but the tp now has a leading space for for h:mm, H:mm format
-			equals(jQuery("#" + tpId + "-inner").val().trim(), oExpectedValues["expInputVal"], "$input.val() ok");
+			equals(jQuery("#" + tp.getId() + "-inner").val().trim(), oExpectedValues["expInputVal"], "$input.val() ok");
 
 			equals(tp.getValue(), oExpectedValues["expValue"], "getValue() ok");
 
@@ -969,7 +969,18 @@
 			tp.destroy();
 		});
 
-		module("slider interactions");
+		module("slider interactions", {
+			_createMouseWheelEvent: function(iWheelSteps) {
+				var oEvent = {};
+				oEvent.originalEvent = {};
+				oEvent.originalEvent.wheelDelta = iWheelSteps * 120;
+				oEvent.originalEvent.detail = iWheelSteps * -3;
+				oEvent.preventDefault = function() {};
+				oEvent.stopPropagation = function() {};
+
+				return oEvent;
+			}
+		});
 
 		test("fireTap expands slider", function() {
 			//sut
@@ -1103,6 +1114,46 @@
 
 			strictEqual(jQuery(".sapMPopover").is(":visible"), false, "the picker is closed");
 
+			tp.destroy();
+		});
+
+		test("mouse wheel scrolls the sliders proportionally to the speed", function() {
+			//sut
+			var tp = new sap.m.TimePicker({
+					displayFormat: "HH:mm",
+					dateValue: new Date(2000, 1, 2, 16, 35, 54)
+				}),
+				oEvent,
+				oSliders,
+				oSliderHours;
+
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//arrange
+			tp._openPicker();
+			this.clock.tick(1000); //wait the initial focus of the first slider
+
+			oSliders = tp._getSliders();
+			oSliderHours = oSliders.getAggregation("_columns")[0];
+
+			//act
+			oEvent = this._createMouseWheelEvent(1);
+			oSliders._onmousewheel(oEvent); //these values are inside the event object when we scroll just a little
+			this.clock.tick(160);
+
+			//assert
+			equals(oSliderHours.getSelectedValue(), "15", "slider's value changed by 1");
+
+			//act again
+			oEvent = this._createMouseWheelEvent(-2);
+			oSliders._onmousewheel(oEvent);
+			this.clock.tick(160);
+
+			//assert
+			equals(oSliderHours.getSelectedValue(), "17", "slider's value changed by 2 in the other direction");
+
+			//cleanup
 			tp.destroy();
 		});
 
@@ -1436,6 +1487,27 @@
 
 			//cleanup
 			tp.destroy();
+		});
+
+		test("minutes only values are correctly synced with the input", function() {
+			//system under test
+			var oTp = new sap.m.TimePicker({
+				displayFormat: "mm"
+			});
+
+			//arrange
+			oTp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//act
+			this._triggerMultipleKeypress(oTp, "15");
+			qutils.triggerKeydown(jQuery(oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
+
+			//assert
+			equals(jQuery("#" + oTp.getId() + "-inner").val(), "15", "$input.val() ok");
+
+			//cleanup
+			oTp.destroy();
 		});
 
 		test("pm match start - then autocomplete on any letter", function() {

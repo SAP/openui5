@@ -1,10 +1,9 @@
 <mvc:View
-	controllerName="sap.ui.table.sample.Menus.Controller"
-	xmlns="sap.ui.table"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:u="sap.ui.unified"
-	xmlns:c="sap.ui.core"
-	xmlns:m="sap.m">
+		controllerName="sap.ui.table.sample.Menus.Controller"
+		xmlns="sap.ui.table"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:u="sap.ui.unified"
+		xmlns:m="sap.m">
 	<m:Page
 		showHeader="false"
 		enableScrolling="false"
@@ -63,7 +62,8 @@
 					</Column>
 					<Column
 						id="image"
-						width="9rem">
+						width="9rem"
+						columnMenuOpen="onColumnMenuOpen">
 						<m:Label text="Image" />
 						<template>
 							<m:Link text="Show Image" href="{ProductPicUrl}" target="_blank"/>

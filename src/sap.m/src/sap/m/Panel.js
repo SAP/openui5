@@ -27,26 +27,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @alias sap.m.Panel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var Panel = Control.extend("sap.m.Panel", /** @lends sap.m.Panel.prototype */ { metadata : {
-		library : "sap.m",
-		properties : {
+	var Panel = Control.extend("sap.m.Panel", /** @lends sap.m.Panel.prototype */ { metadata: {
+		library: "sap.m",
+		properties: {
 
 			/**
 			 * This property is used to set the header text of the Panel.
 			 * The "headerText" is visible in both expanded and collapsed state.
 			 * Note: This property is overwritten by the "headerToolbar" aggregation.
 			 */
-			headerText : {type : "string", group : "Data", defaultValue : null},
+			headerText: {type: "string", group: "Data", defaultValue: ""},
 
 			/**
 			 * Determines the Panel width.
 			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : "100%"},
+			width: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "100%"},
 
 			/**
 			 * Determines the Panel height.
 			 */
-			height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : "auto"},
+			height: {type: "sap.ui.core.CSSSize", group: "Appearance", defaultValue: "auto"},
 
 			/**
 			 * Specifies whether the control is expandable.
@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Note: If expandable is set to false, the Panel will always be rendered expanded.
 			 * @since 1.22
 			 */
-			expandable : {type : "boolean", group : "Appearance", defaultValue : false},
+			expandable: {type: "boolean", group: "Appearance", defaultValue: false},
 
 			/**
 			 * Indicates whether the Panel is expanded or not.
@@ -62,30 +62,30 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * If expanded is set to false, then only the headerText or headerToolbar is rendered.
 			 * @since 1.22
 			 */
-			expanded : {type : "boolean", group : "Appearance", defaultValue : false},
+			expanded: {type: "boolean", group: "Appearance", defaultValue: false},
 
 			/**
 			 * Indicates whether the transition between the expanded and the collapsed state of the control is animated.
 			 * By default the animation is enabled.
 			 * @since 1.26
 			 */
-			expandAnimation : {type : "boolean", group : "Behavior", defaultValue : true},
+			expandAnimation: {type: "boolean", group: "Behavior", defaultValue: true},
 
 			/**
 			 * This property is used to set the background color of the Panel.
 			 * Depending on the theme you can change the state of the background from "Solid" over "Translucent" to "Transparent".
 			 * @since 1.30
 			 */
-			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : sap.m.BackgroundDesign.Translucent}
+			backgroundDesign: {type: "sap.m.BackgroundDesign", group: "Appearance", defaultValue: sap.m.BackgroundDesign.Translucent}
 		},
-		defaultAggregation : "content",
-		aggregations : {
+		defaultAggregation: "content",
+		aggregations: {
 
 			/**
 			 * Determines the content of the Panel.
 			 * The content will be visible only when the Panel is expanded.
 			 */
-			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"},
+			content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"},
 
 			/**
 			 * This aggregation allows the use of a custom Toolbar as header for the Panel.
@@ -94,7 +94,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Note: This aggregation overwrites "headerText" property.
 			 * @since 1.16
 			 */
-			headerToolbar : {type : "sap.m.Toolbar", multiple : false},
+			headerToolbar: {type: "sap.m.Toolbar", multiple: false},
 
 			/**
 			 * This aggregation allows the use of a custom Toolbar as information bar for the Panel.
@@ -102,22 +102,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Use it when you want to show extra information to the user.
 			 * @since 1.16
 			 */
-			infoToolbar : {type : "sap.m.Toolbar", multiple : false}
+			infoToolbar: {type: "sap.m.Toolbar", multiple: false}
 		},
-		events : {
+		events: {
 
 			/**
 			 * Indicates that the panel will expand or collapse
 			 * @since 1.22
 			 */
-			expand : {
-				parameters : {
+			expand: {
+				parameters: {
 
 					/**
 					 * If the panel will expand, this is true.
 					 * If the panel will collapse, this is false.
 					 */
-					expand : {type : "boolean"}
+					expand: {type : "boolean"}
 				}
 			}
 		}
@@ -223,9 +223,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this.getExpandable()) {
 			$icon = this.oIconCollapsed.$();
 			if (this.getExpanded()) {
-				// this is relevant when we create Panel specifying the expanded property as 'constructor parameter'
-				$this.children(".sapMPanelWrappingDiv").addClass("sapMPanelWrappingDivExpanded");
-				$this.children(".sapMPanelWrappingDivTb").addClass("sapMPanelWrappingDivTbExpanded");
 				//ARIA
 				$icon.attr("aria-expanded", "true");
 			} else {
@@ -240,7 +237,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Panel.prototype.exit = function () {
 		if (this.oIconCollapsed) {
 			this.oIconCollapsed.destroy();
-			delete this.oIconCollapsed;
+			this.oIconCollapsed = null;
 		}
 	};
 

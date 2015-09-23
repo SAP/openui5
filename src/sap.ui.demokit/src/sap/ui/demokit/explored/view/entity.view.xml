@@ -10,6 +10,9 @@
 		class="sapUiFioriObjectPage"
 		navButtonPress="onNavBack"
 		id="page">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>
+		</landmarkInfo>
 		<headerContent>
 			<Button
 			    id="toggleFullScreenBtn"
@@ -69,7 +72,7 @@
 							key="about"
 							text="About"
 							visible="{/show/about}" >
-							<Text text="{/description}" />
+							<core:HTML content="{/description}" />
 							<Table
 								class="myTable"
 								visible="{/show/values}"
@@ -156,7 +159,7 @@
 											</Link>
 											<Text text="{defaultValue}" wrapping="false" />
 											<l:VerticalLayout>
-												<Text text="{doc}" />
+												<core:HTML content="{doc}" />
 												<ObjectStatus
 													text="{deprecatedDescription}"
 													state="Warning"	/>
@@ -207,7 +210,7 @@
 												</customData>
 											</Link>
 											<l:VerticalLayout>
-												<Text text="{doc}" />
+												<core:HTML content="{doc}" />
 												<ObjectStatus
 													text="{deprecatedDescription}"
 													state="Warning"	/>
@@ -257,7 +260,7 @@
 												</customData>
 											</Link>
 											<l:VerticalLayout>
-												<Text text="{doc}" />
+												<core:HTML content="{doc}" />
 												<ObjectStatus
 													text="{deprecatedDescription}"
 													state="Warning"	/>
@@ -301,7 +304,7 @@
 												</customData>
 											</Link>
 											<l:VerticalLayout>
-												<Text text="{doc}" />
+												<core:HTML content="{doc}" />
 												<ObjectStatus
 													text="{deprecatedDescription}"
 													state="Warning"	/>
@@ -345,7 +348,7 @@
 												</customData>
 											</Link>
 											<l:VerticalLayout>
-												<Text text="{doc}" />
+												<core:HTML content="{doc}" />
 												<ObjectStatus
 													text="{deprecatedDescription}"
 													state="Warning"	/>

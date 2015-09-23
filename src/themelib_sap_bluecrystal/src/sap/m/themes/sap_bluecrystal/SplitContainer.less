@@ -1,10 +1,10 @@
 /* ============================================= */
-/* CSS for control sap.m/SplitContainer.control        */
+/* CSS for control sap.m/SplitContainer.control  */
 /* BlueCrystal theme                             */
 /* ============================================= */
 
 .sapMSplitContainerMaster {
-	background-color: @sapUiSplitContainerMasterBG;
+	background-color: lighten(@sapUiBaseBG, 5);
 }
 
 /* separator line over the content of the master page */
@@ -15,7 +15,7 @@
 	right: 0px;
 	height: 100%;
 	bottom: 0;
-	border-right: 1px solid @sapUiLightBorder;
+	border-right: 1px solid @sapUiPageHeaderBorderColor;
 	z-index: 5;
 }
 
@@ -74,10 +74,10 @@
 
 .sapMSplitContainerPortrait.sapMSplitContainerShowHide > .sapMSplitContainerMaster,
 .sapMSplitContainerHideMode > .sapMSplitContainerMaster {
-	box-shadow: @sapUiSplitContainerMasterShadow;
-	-webkit-box-shadow: @sapUiSplitContainerMasterShadow;
-	-moz-box-shadow: @sapUiSplitContainerMasterShadow;
-	border-right: @sapUiSplitContainerMasterBorder;
+	box-shadow: fade(@sapUiDarkShadowTint, 15);
+	-webkit-box-shadow: 1px 0 10px fade(@sapUiDarkShadowTint, 15);
+	-moz-box-shadow: 1px 0 10px fade(@sapUiDarkShadowTint, 15);
+	border-right: @sapUiPageHeaderBorderColor;
 	background-clip: padding-box;
 	-webkit-background-clip: padding-box;
 	-ms-background-clip: padding-box;

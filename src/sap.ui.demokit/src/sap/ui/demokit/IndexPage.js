@@ -1,5 +1,5 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 // Provides a pseudo control for index pages within the Demokit
 sap.ui.define(['jquery.sap.global', './DemokitApp'],

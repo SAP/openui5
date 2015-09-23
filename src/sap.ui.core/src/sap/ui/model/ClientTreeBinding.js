@@ -1,5 +1,5 @@
 /*!
- * ${copyright}
+  * ${copyright}
  */
 
 // Provides the JSON model implementation of a list binding
@@ -165,7 +165,8 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 	};
 	
 	ClientTreeBinding.prototype._saveSubContext = function(oNode, aContexts, sContextPath, sName) {
-		if (typeof oNode == "object") {
+		// only collect node if it is defined (and not null), because typeof null == "object"!
+		if (oNode && typeof oNode == "object") {
 			var oNodeContext = this.oModel.getContext(sContextPath + sName);
 			// check if there is a filter on this level applied
 			if (this.aFilters && !this.bIsFiltering) {
@@ -194,7 +195,12 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 	 */
 	ClientTreeBinding.prototype.filter = function(aFilters){
 		// The filtering is applied recursively through the tree and stores all filtered contexts and its parent contexts in an array.
-	
+		
+		// wrap single filters in an array
+		if (aFilters && !jQuery.isArray(aFilters)) {
+			aFilters = [aFilters];
+		}
+		
 		// reset previous stored filter contexts
 		this.filterInfo.aFilteredContexts = [];
 		this.filterInfo.oParentContext = {};
@@ -269,15 +275,14 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 	};
 	
 	/**
-	 * Sorting on ClientTreeBindings is not yet supported.
-	 * Sorting is only possible in the ODataTreeBinding.
+	 * Sorts the contexts of this ClientTreeBinding.
+	 * The tree will be sorted level by level. So the nodes are NOT sorted absolute, but relative to their parent node,
+	 * to keep the hierarchy untouched.
 	 * 
 	 * @param {sap.ui.model.Sorter[]} an array of Sorter instances which will be applied
 	 * @return {sap.ui.model.ClientTreeBinding} returns <code>this</code> to facilitate method chaining
 	 */
 	ClientTreeBinding.prototype.sort = function (aSorters) {
-		jQuery.sap.log.warning("The ClientTreeBindings (e.g. JSONTreeBinding, XMLTreeBinding) do not yet support sorting.");
-		
 		aSorters = aSorters || [];
 		this.aSorters = jQuery.isArray(aSorters) ? aSorters : [aSorters];
 		

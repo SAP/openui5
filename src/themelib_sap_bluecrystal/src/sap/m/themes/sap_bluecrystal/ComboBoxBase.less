@@ -2,20 +2,6 @@
 /* CSS for control sap.m/ComboBoxBase.control BlueCrystal theme */
 /* ============================================================ */
 
-.sapMComboBoxBaseArrow::before,
-.sapMComboBoxBaseBar::before {
-	font-family: "SAP-icons";
-	speak: none;
-	content: "\e1ef";
-}
-
-.sapMComboBoxBaseArrow,
-.sapMComboBoxBaseBar::before {
-	position: absolute;
-	text-align: center;
-	color: @sapUiElement;
-}
-
 /* ------------------------------ */
 /* ComboBox                       */
 /* ------------------------------ */
@@ -34,6 +20,9 @@ input.sapMComboBoxBaseInputInner:not(.sapMComboBoxBaseInputInnerReadonly) {
 /* ------------------------------ */
 
 .sapMComboBoxBaseArrow {
+	position: absolute;
+	text-align: center;
+	color: @sapUiElement;
 	width: 2.5rem;
 	height: 2.375rem;
 	line-height: 2.375rem;
@@ -41,6 +30,12 @@ input.sapMComboBoxBaseInputInner:not(.sapMComboBoxBaseInputInnerReadonly) {
 
 	/* note: add a non-transparent background because the input field text overflows arrow button in IE10 */
 	background: @sapUiFieldBackground;
+}
+
+.sapMComboBoxBaseArrow::before {
+	font-family: "SAP-icons";
+	speak: none;
+	content: "\e1ef";
 }
 
 .sapMComboBoxBaseState .sapMComboBoxBaseArrow {
@@ -87,31 +82,6 @@ div.sapMComboBoxBasePicker {
 
 div.sapMComboBoxBasePicker .sapMDialogScrollCont {
 	padding: 0;
-}
-
-/* pressed */
-
-.sapMComboBoxBaseBar::before {
-	top: 0;
-	right: 0;
-	line-height: 3rem;
-	width: 3.5rem;
-	color: @sapUiInvertedElement;
-	background: @sapUiFieldActiveBackground;
-}
-
-/* Bar inside the ComboBox's Dialog */
-
-.sapMComboBoxBasePicker .sapMComboBoxBaseBar {
-	background: @sapUiFieldBackground;
-	border: 0.0625rem solid @sapUiFieldActiveBorderColor;
-}
-
-/* Input inside the ComboBox's Dialog */
-
-.sapMComboBoxBasePicker input {
-	padding-right: 3.5rem;
-	vertical-align: top; /* override the default vertical align of the input control */
 }
 
 /* ===================================================================== */

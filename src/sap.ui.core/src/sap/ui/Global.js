@@ -69,6 +69,13 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 		});
 
 	/**
+	 * Stores the loading Promise for "sap-ui-version.json".
+	 * @see sap.ui.getVersionInfo
+	 * @private
+	 */
+	var oVersionInfoPromise = null;
+
+	/**
 	 * Loads the version info file (resources/sap-ui-version.json) and returns 
 	 * it or if a library name is specified then the version info of the individual 
 	 * library will be returned.
@@ -76,26 +83,108 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	 * In case of the version info file is not available an error will occur when
 	 * calling this function.
 	 * 
-	 * @param {string} [sLibName] name of the library (e.g. "sap.ui.core")
-	 * @return {object} either the full version info or the library specific one
+	 * @param {string|object} [mOptions] name of the library (e.g. "sap.ui.core") or a object map (see below)
+	 * @param {boolean} [mOptions.library] name of the library (e.g. "sap.ui.core")
+	 * @param {boolean} [mOptions.async=false] whether "sap-ui-version.json" should be loaded asynchronously
+	 * @param {boolean} [mOptions.failOnError=true] whether to propagate load errors or not
+	 * @return {object|undefined|Promise} the full version info, the library specific one,
+	 *                                    undefined (if library is not listed or there was an error and "failOnError" is set to "false")
+	 *                                    or a Promise which resolves with one of them
 	 * @public
 	 * @static
 	 */
-	sap.ui.getVersionInfo = function(sLibName) {
-		if (!sap.ui.versioninfo) {
-			sap.ui.versioninfo = jQuery.sap.loadResource("sap-ui-version.json");
+	sap.ui.getVersionInfo = function(mOptions) {
+
+		// Check for no parameter / library name as string
+		if (typeof mOptions !== "object") {
+			mOptions = {
+				library: mOptions
+			};
 		}
-		if (sLibName !== undefined) {
-			// find the version of the individual library 
-			var aLibs = sap.ui.versioninfo.libraries;
-			for (var i = 0, l = aLibs.length; i < l; i++) {
-				if (aLibs[i].name === sLibName) {
-					return aLibs[i];
-				}
+
+		// Cast "async" to boolean (defaults to false)
+		mOptions.async = mOptions.async === true;
+
+		// Cast "failOnError" to boolean (defaults to true)
+		mOptions.failOnError = mOptions.failOnError !== false;
+
+		if (!sap.ui.versioninfo) {
+			// Load and cache the versioninfo
+
+			// When async is enabled and the file is currently being loaded
+			// return the promise and make sure the requested options are passed.
+			// This is to prevent returning the full object as requested in a
+			// first call (which created this promise) to the one requested just a
+			// single lib in a second call (which re-uses this same promise) or vice versa.
+			if (mOptions.async && oVersionInfoPromise instanceof Promise) {
+				return oVersionInfoPromise.then(function() {
+					return sap.ui.getVersionInfo(mOptions);
+				});
 			}
+
+			var fnHandleSuccess = function(oVersionInfo) {
+				// Remove the stored Promise as the versioninfo is now cached.
+				// This allows reloading the file by clearing "sap.ui.versioninfo"
+				// (however this is not documented and therefore not supported).
+				oVersionInfoPromise = null;
+
+				// "jQuery.sap.loadResource" returns "null" in case of an error when
+				// "failOnError" is set to "false". In this case the won't be persisted
+				// and undefined will be returned.
+				if (oVersionInfo === null) {
+					return undefined;
+				}
+
+				// Persist the info object to return it in subsequent calls
+				sap.ui.versioninfo = oVersionInfo;
+
+
+				// Calling the function again with the same arguments will return the
+				// cached value from "sap.ui.versioninfo".
+				return sap.ui.getVersionInfo(mOptions);
+			};
+			var fnHandleError = function(oError) {
+				// Remove the stored Promise as the versioninfo couldn't be loaded
+				// and should be requested again the next time.
+				oVersionInfoPromise = null;
+
+				// Re-throw the error to give it to the user
+				throw oError;
+			};
+
+			var vReturn = jQuery.sap.loadResource("sap-ui-version.json", {
+				async: mOptions.async,
+				failOnError: mOptions.failOnError
+			});
+
+			if (vReturn instanceof Promise) {
+				oVersionInfoPromise = vReturn;
+				return vReturn.then(fnHandleSuccess, fnHandleError);
+			} else {
+				return fnHandleSuccess(vReturn);
+			}
+
 		} else {
-			// returns the full version info
-			return sap.ui.versioninfo;
+			// Return the cached versioninfo
+
+			var oResult;
+			if (typeof mOptions.library !== "undefined") {
+				// Find the version of the individual library
+				var aLibs = sap.ui.versioninfo.libraries;
+				if (aLibs) {
+					for (var i = 0, l = aLibs.length; i < l; i++) {
+						if (aLibs[i].name === mOptions.library) {
+							oResult = aLibs[i];
+							break;
+						}
+					}
+				}
+			} else {
+				// Return the full version info
+				oResult = sap.ui.versioninfo;
+			}
+
+			return mOptions.async ? Promise.resolve(oResult) : oResult;
 		}
 	};
 	
@@ -115,7 +204,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	
 		return jQuery.sap.getObject(sNamespace, 0);
 	};
-	
+
 	/**
 	 * Creates a lazy loading stub for a given class <code>sClassName</code>.
 	 *
@@ -134,7 +223,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	 * won't work as expected. This is a fundamental restriction of the lazy loader approach.
 	 * It could only be fixed with JavaScript 1.5 features that are not available in all
 	 * UI5 target browsers (e.g. not in IE8).
-	 *
+	 * 
 	 * <b>Note</b>: As a side effect of this method, the namespace containing the given
 	 * class is created <b>immediately</b>.
 	 *
@@ -163,7 +252,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 		if (!oClass) {
 	
 			if ( iConstructor >= 0 ) {
-	
+
 				// Create dummy constructor which loads the class on demand
 				oClass = function() {
 					jQuery.sap.log.debug("lazy stub for '" + sFullClass + "' (constructor) called.");
@@ -173,7 +262,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 					if ( oRealClass._sapUiLazyLoader ) {
 						throw new Error("lazyRequire: stub '" + sFullClass + "'has not been replaced by module '" + sModuleName + "'");
 					}
-	
+
 					// create a new instance and invoke the constructor
 					var oInstance = jQuery.sap.newObject(oRealClass.prototype);
 					var oResult = oRealClass.apply(oInstance, arguments);
@@ -184,16 +273,16 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 				};
 				// mark the stub as lazy loader
 				oClass._sapUiLazyLoader = true;
-	
+		
 				aMethods.splice(iConstructor,1);
-	
+
 			} else {
-	
+
 				// Create dummy object
 				oClass = {};
-	
+
 			}
-	
+
 			// remember the stub
 			oPackage[sClass] = oClass;
 	
@@ -220,7 +309,26 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 		});
 	
 	};
-	
+
+	/**
+	 * Note: this method only works when sClassName has been stubbed itself, not when
+	 *    it has been stubbed as a static utility class with individual stubs for its methods.
+	 *    (e.g. might not work for 'sap.ui.core.BusyIndicator').
+	 * Must not be used outside the core, e.g. not by controls, apps, tests etc.
+	 * @private
+	 */
+	sap.ui.lazyRequire._isStub = function(sClassName) {
+		jQuery.sap.assert(typeof sClassName === "string" && sClassName, "lazyRequire._isStub: sClassName must be a non-empty string");
+
+		var iLastDotPos = sClassName.lastIndexOf("."),
+			sContext = sClassName.slice(0, iLastDotPos),
+			sProperty = sClassName.slice(iLastDotPos + 1),
+			oContext = jQuery.sap.getObject(sContext);
+
+		return !!(oContext && typeof oContext[sProperty] === "function" && oContext[sProperty]._sapUiLazyLoader);
+
+	};
+
 	/**
 	 * Returns the URL of a resource that belongs to the given library and has the given relative location within the library.
 	 * This is mainly meant for static resources like images that are inside the library.

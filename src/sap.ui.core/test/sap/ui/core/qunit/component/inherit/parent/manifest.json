@@ -11,6 +11,10 @@
 
 	"sap.ui5": {
 
+		"resourceRoots": {
+			"x.y.z": "anypath"
+		},
+
 		"dependencies": {
 			"minUI5Version": "1.22.5",
 			"libs": {

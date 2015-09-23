@@ -3,19 +3,17 @@
  */
 
 // Provides default renderer for control sap.ui.commons.Label
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
-	function(jQuery, Renderer) {
+sap.ui.define([ 'sap/ui/core/Renderer'],
+	function(Renderer) {
 	"use strict";
 
-
-	
 	/**
+	 * Label renderer.
+	 *
 	 * @author SAP SE
 	 * @namespace
 	 */
-	var LabelRenderer = {
-	//	sap.ui.core.Renderer.apply(this, arguments);
-	};
+	var LabelRenderer = {};
 	
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -127,6 +125,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	
 	/**
 	 * Dummy inheritance of static methods/functions.
+	 *
 	 * @see sap.ui.core.Renderer.getTextAlign
 	 * @private
 	 */

@@ -28,7 +28,7 @@
 
 .sapMPopover.sapMMsgPopover.sapMMsgPopover-init {
 	.sapMPopoverArr:after {
-		border-top-color: @sapUiHeaderBG;
+		border-top-color: @sapUiPageHeaderBackground;
 	}
 }
 
@@ -37,11 +37,11 @@
 		background-color: transparent;
 		border-color: transparent;
 		border-radius: 0.125rem;
-		color: @sapUiDarkText;
+		color: @sapUiButtonHeaderTextColor;
 
 		&:hover {
 			background-color: fade(darken(@sapUiButtonStandardBG, 20%), 50%);
-			color: @sapUiDarkText;
+			color: @sapUiButtonHeaderTextColor;
 
 			.sapMBtnIcon {
 				color: @sapUiElement;
@@ -49,8 +49,8 @@
 		}
 
 		&:active {
-			background-color: @sapUiHighlight;
-			color: @sapUiTextInverted;
+			background-color: @sapUiButtonActiveBackground;
+			color: @sapUiButtonActiveTextColor;
 
 			.sapMBtnIcon.sapUiIcon {
 				color: @sapUiInvertedElement;
@@ -62,16 +62,16 @@
 		}
 
 		&.sapMSegBBtnSel {
-			background-color: @sapUiHighlight;
-			color: @sapUiTextInverted;
+			background-color: @sapUiSegmentedButtonSelectedBackground;
+			color: @sapUiSegmentedButtonSelectedTextColor;
 
 			.sapMBtnIcon {
 				color: @sapUiInvertedElement;
 			}
 
 			&:hover, &:active {
-				background-color: darken(@sapUiHighlight, 5%);
-				color: @sapUiTextInverted;
+				background-color: @sapUiSegmentedButtonSelectedHoverBackground;
+				color: @sapUiSegmentedButtonSelectedTextColor;
 
 				.sapMBtnIcon {
 					color: @sapUiInvertedElement;

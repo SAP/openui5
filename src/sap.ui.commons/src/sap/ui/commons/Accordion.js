@@ -874,18 +874,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Accordion.prototype.onAfterRendering = function() {
 
 		// Collect the dom references of the items
-		var accordion = this.getDomRef();
-		var leftBorder = "0px";
-		var rightBorder = "0px";
-		//need to make sure IE8 does not deliver medium if no border width is set
-		if (jQuery(accordion).css("borderLeftStyle") !== "none") {
-			leftBorder = jQuery(accordion).css("border-left-width");
-		}
-		if (jQuery(accordion).css("borderRightStyle") !== "none") {
-			rightBorder = jQuery(accordion).css("border-right-width");
-		}
-		var borderTotal = parseFloat(leftBorder.substring(0, leftBorder.indexOf("px"))) + parseFloat(rightBorder.substring(0, rightBorder.indexOf("px")));
-		accordion.style.height = accordion.offsetHeight - borderTotal - 7 + "px";
+		var oDomRef = this.getDomRef();
+		oDomRef.style.height = oDomRef.clientHeight - 7 + "px";
 
 		this.$().sortable({
 			handle: "> div.sapUiAcdSectionHdr > div",

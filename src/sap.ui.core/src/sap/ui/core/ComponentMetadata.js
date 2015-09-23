@@ -403,7 +403,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 					// only create a resource bundle if there is something to replace
 					if (!oResourceBundle) {
 						oResourceBundle = jQuery.sap.resources({
-							url: that._resolveUri(new URI(sComponentRelativeI18nUri))
+							url: that._resolveUri(new URI(sComponentRelativeI18nUri)).toString()
 						});
 					}
 					return oResourceBundle.getText(s1);
@@ -984,7 +984,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 		}
 
 		for (var sResourceRoot in mResourceRoots) {
-			jQuery.sap.registerModulePath(sResourceRoot, mResourceRoots[sResourceRoot]);
+			var sResourceRootPath = mResourceRoots[sResourceRoot];
+			var oResourceRootURI = new URI(sResourceRootPath);
+			if (oResourceRootURI.is("absolute") || (oResourceRootURI.path() && oResourceRootURI.path()[0] === "/")) {
+				jQuery.sap.log.error("Resource root for \"" + sResourceRoot + "\" is absolute and therefore won't be registered! \"" + sResourceRootPath + "\"", this.getComponentName());
+				continue;
+			}
+			sResourceRootPath = this._resolveUri(oResourceRootURI).toString();
+			jQuery.sap.registerModulePath(sResourceRoot, sResourceRootPath);
 		}
 
 	};

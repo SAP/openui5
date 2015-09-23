@@ -506,12 +506,16 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 			$rowHdr.data("sap-ui-level", iLevel);
 			
 			if ('ontouchstart' in document) {
+				var iScrollBarOffset = 0;
+				if (this.$().hasClass("sapUiTableVScr")) {
+					iScrollBarOffset += this.$().find('.sapUiTableVSb').width();
+				}
 				var $GroupHeaderMenuButton = $rowHdr.find(".sapUiTableGroupMenuButton");
 				
 				if (this._bRtlMode) {
-					$GroupHeaderMenuButton.css("right", (this.$().width() - $GroupHeaderMenuButton.width() + $rowHdr.position().left - 20) + "px");
+					$GroupHeaderMenuButton.css("right", (this.$().width() - $GroupHeaderMenuButton.width() + $rowHdr.position().left - iScrollBarOffset) + "px");
 				} else {
-					$GroupHeaderMenuButton.css("left", (this.$().width() - $GroupHeaderMenuButton.width() - $rowHdr.position().left - 20) + "px");
+					$GroupHeaderMenuButton.css("left", (this.$().width() - $GroupHeaderMenuButton.width() - $rowHdr.position().left - iScrollBarOffset) + "px");
 				}
 			}
 
@@ -1004,15 +1008,18 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype.removeColumn = function(vColumn, bSuppressInvalidate) {
 		var oResult = Table.prototype.removeColumn.apply(this, arguments);
 		
-		//TODO: Make sure vColumn is really an AnalyticalColumn instance
-		this._aGroupedColumns = jQuery.grep(this._aGroupedColumns, function(sValue) {
-			//check if vColum is an object with getId function
-			if (vColumn.getId) {
-				return sValue != vColumn.getId();
-			} else {
-				return sValue == vColumn;
-			}
-		});
+		// only remove from grouped columns if not caused by column move. If this._iNewColPos
+		// is set, the column was moved by user.-
+		if (!this._iNewColPos) {
+			this._aGroupedColumns = jQuery.grep(this._aGroupedColumns, function(sValue) {
+				//check if vColum is an object with getId function
+				if (vColumn.getId) {
+					return sValue != vColumn.getId();
+				} else {
+					return sValue == vColumn;
+				}
+			});
+		}
 		
 		this.updateAnalyticalInfo(bSuppressInvalidate);
 
@@ -1063,22 +1070,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype._updateTotalRow = function(aColumnInfo, bSuppressInvalidate) {
-
-		var bHasTotal = false;
-		for (var i = 0, l = aColumnInfo ? aColumnInfo.length : 0; i < l; i++) {
-			if (aColumnInfo[i].visible && aColumnInfo[i].total) {
-				bHasTotal = true;
-				break;
-			}
-		}
-
 		var oBinding = this.getBinding("rows");
-		if (oBinding && (!oBinding.providesGrandTotal() || !oBinding.hasTotaledMeasures())) {
-			bHasTotal = false;
-		}
 
 		var iFixedBottomRowCount = this.getFixedBottomRowCount();
-		if (bHasTotal) {
+		if (oBinding && (oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures())) {
 			if (iFixedBottomRowCount !== 1) {
 				this.setProperty("fixedBottomRowCount", 1, bSuppressInvalidate);
 			}
@@ -1209,7 +1204,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype._hasData = function() {
 		var oBinding = this.getBinding("rows"),
 			iLength = oBinding && (oBinding.getLength() || 0),
-			bHasTotal = oBinding && (oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures());
+			bHasTotal = oBinding && oBinding.providesGrandTotal() && oBinding.hasTotaledMeasures();
 
 		if (!oBinding || (bHasTotal && iLength < 2) || (!bHasTotal && iLength === 0)) {
 			return false;
@@ -1406,7 +1401,14 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype._isRowSelectable = function(iRowIndex) {
-		return this.getBinding("rows").isIndexSelectable(iRowIndex);
+		var oBinding = this.getBinding("rows");
+		if (oBinding) {
+			return oBinding.isIndexSelectable(iRowIndex);
+		} else {
+			// if there is no binding the selection can't be handled, therefore the row is not selectable
+			return false;
+		}
+
 	};
 	
 	return AnalyticalTable;

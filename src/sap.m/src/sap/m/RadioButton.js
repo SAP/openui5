@@ -229,16 +229,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		if ((bSelectedOld !== bSelected) && this.getDomRef()) {
-			this.$().toggleClass('sapMRbSel', bSelected);
+			this.$().toggleClass("sapMRbSel", bSelected);
 
 			if (bSelected) {
-				this.$().attr('aria-checked', 'true');
+				this.getDomRef().setAttribute("aria-checked", "true");
 				this.getDomRef("RB").checked = true;
-				this.getDomRef("RB").setAttribute('checked', 'checked');
+				this.getDomRef("RB").setAttribute("checked", "checked");
 			} else {
-				this.$().removeAttr('aria-checked'); // aria-checked=false is default value and need not be set explicitly
+				this.getDomRef().removeAttribute("aria-checked"); // aria-checked=false is default value and need not be set explicitly
 				this.getDomRef("RB").checked = false;
-				this.getDomRef("RB").removeAttribute('checked');
+				this.getDomRef("RB").removeAttribute("checked");
 			}
 		}
 
@@ -318,7 +318,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			aControlsInGroup = this._groupNames[sGroupName],
 			iGroupNameIndex = aControlsInGroup && aControlsInGroup.indexOf(this);
 
-		delete this._iTabIndex;
+		this._iTabIndex = null;
 		if (this._oLabel) {
 			this._oLabel.destroy();
 		}
@@ -348,9 +348,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @protected
 	 */
 	RadioButton.prototype.setTabIndex = function(iTabIndex) {
-
+		var oInternalButton = this.getFocusDomRef("Button");
 		this._iTabIndex = iTabIndex;
-		this.$("Button").attr("tabindex", iTabIndex);
+
+		if (oInternalButton) {
+			oInternalButton.setAttribute("tabindex", iTabIndex);
+		}
+
 		return this;
 	};
 

@@ -171,10 +171,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 				this._oRouter.ignoreState = true;
 				this._oRoutes = {};
 				this._oOwner = oOwner;
-				this._oViews = new Views({component : oOwner});
+
+				// temporarily: for checking the url param
+				function checkUrl() {
+					if (jQuery.sap.getUriParameters().get("sap-ui-xx-asyncRouting") === "true") {
+						jQuery.sap.log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "Router");
+						return true;
+					}
+					return false;
+				}
+
+				// set the default view loading mode to sync for compatibility reasons
+				this._oConfig._async = this._oConfig.async;
+				if (this._oConfig._async === undefined) {
+					// temporarily: set the default value depending on the url parameter "sap-ui-xx-asyncRouting"
+					this._oConfig._async = checkUrl();
+				}
+
+				this._oViews = new Views({
+					component : oOwner,
+					async : this._oConfig._async
+				});
 
 				if (oTargetsConfig) {
-					this._oTargets = this._createTargets(oConfig, oTargetsConfig);
+					this._oTargets = this._createTargets(this._oConfig, oTargetsConfig);
 				}
 
 				var that = this,
@@ -678,6 +698,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 				this.fireBypassed({
 					hash: sHash
 				});
+			},
+
+			_isAsync : function() {
+				return this._oConfig._async;
 			},
 
 			metadata : {

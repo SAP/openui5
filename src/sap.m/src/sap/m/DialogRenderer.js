@@ -169,21 +169,10 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			oRm.write("</div>");
 			oRm.write("</section>");
 
-			if (oControl._oToolbar && oControl._oToolbar.getContent().length > 1) {
+			if (!(noToolbarAndNobuttons || emptyToolbarAndNoButtons)) {
 				oRm.renderControl(oControl._oToolbar);
-			} else if (oLeftButton || oRightButton) {
-				oRm.write('<footer id="' + id + '-footer" class="sapMDialogActions sapMBar-CTX sapMFooter-CTX sapMIBar-CTX">');
-				// Render actions
-				if (oLeftButton) {
-					oRm.renderControl(oLeftButton.addStyleClass("sapMDialogBtn", true));
-				}
-
-				if (oRightButton) {
-					oRm.renderControl(oRightButton.addStyleClass("sapMDialogBtn", true));
-				}
-
-				oRm.write("</footer>");
 			}
+
 			if (sap.ui.Device.system.desktop) {
 				// Invisible element which is used to determine when desktop keyboard navigation
 				// has reached the last focusable element of a dialog and went beyond. In that case, the controller

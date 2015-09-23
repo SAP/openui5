@@ -199,7 +199,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			}
 
 			if (aItemsLength === 0) {
-				oRm.write("<option>" + sSelectedItemText + "</option>");
+				oRm.write("<option>");
+				oRm.writeEscaped(sSelectedItemText);
+				oRm.write("</option>");
 			}
 		};
 

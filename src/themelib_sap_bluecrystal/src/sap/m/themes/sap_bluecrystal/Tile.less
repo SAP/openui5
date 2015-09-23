@@ -3,15 +3,15 @@
 /* ====================================== */
 
 .sapMTile {
-	border: 1px solid @sapUiLightBorder;
+	border: 1px solid @sapUiTileBorderColor;
 	border-radius: 2px;	
-	box-shadow: 0px 1px 3px fade(@sapUiShadowTint,15%); 
+	box-shadow: 0px 1px 3px fade(@sapUiDarkShadowTint,15); 
 	/*margin:0.6em;*/ /* in case of some behavior problems uncomment this line, it was comment because the margin causes the blurring of the focus rectangle in IE9*/
-	background-color: @sapUiLightestBG;
+	background-color: @sapUiTileBackground;
 }
 
 .sapMTCEditable .sapMTile {
-	background-color: fade(@sapUiLightestBG, 50%);
+	background-color: fade(@sapUiTileBackground, 50);
 }
 
 .sapMTile:focus {
@@ -20,5 +20,5 @@
 
 .sapMTile .sapMTileDrag {
 	opacity : 0.6;
-	box-shadow: 0px 1px 3px fade(@sapUiShadowTint,60%);
+	box-shadow: 0px 1px 3px fade(@sapUiDarkShadowTint,60);
 }

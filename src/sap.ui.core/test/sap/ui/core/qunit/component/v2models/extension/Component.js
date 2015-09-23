@@ -35,6 +35,7 @@ sap.ui.define(["sap/ui/test/v2models/empty/Component"], function(EmptyExtensionC
 							"uri": "/path/to/default/datasource",
 							"settings": {
 								"annotations": [ "annotations2", "annotations1", "extension-annotation" ],
+								"maxAge": 360
 							}
 						},
 

@@ -32,7 +32,7 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 	 * 	<li>{@link sap.m.semantic.SendMessageAction}</li>
 	 * 	<li>{@link sap.m.semantic.PrintAction}</li>
 	 * 	<li>{@link sap.m.semantic.MessagesIndicator}</li>
-	 * 	<li>{@link sap.m.semantic.DraftIndicator}</li>
+	 * 	<li>{@link sap.m.DraftIndicator}</li>
 	 * </ul>
 	 *
 	 *
@@ -187,7 +187,7 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 				 * DraftIndicator
 				 */
 				draftIndicator: {
-					type: "sap.m.semantic.DraftIndicator",
+					type: "sap.m.DraftIndicator",
 					multiple: false
 				}
 			}
@@ -201,7 +201,8 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 	DetailPage.prototype.setAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 
 		if ((sAggregationName === "saveAsTileAction")
-				|| (sAggregationName === "pagingAction")) {
+				|| (sAggregationName === "pagingAction")
+				|| (sAggregationName === "draftIndicator")) {
 
 			var oPrivateReferenceName = '_' + sAggregationName;
 
@@ -217,16 +218,17 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 					this[oPrivateReferenceName] = null;
 				}
 			}
-			return;
+			return this;
 		}
 
-		ShareMenuPage.prototype.setAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
+		return ShareMenuPage.prototype.setAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
 	};
 
 	DetailPage.prototype.getAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
 
 		if ((sAggregationName === "saveAsTileAction")
-				|| (sAggregationName === "pagingAction")) {
+				|| (sAggregationName === "pagingAction")
+				|| (sAggregationName === "draftIndicator")) {
 
 				return this['_' + sAggregationName];
 		}
@@ -237,7 +239,8 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 	DetailPage.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
 
 		if ((sAggregationName === "saveAsTileAction")
-			|| (sAggregationName === "pagingAction")) {
+			|| (sAggregationName === "pagingAction")
+			|| (sAggregationName === "draftIndicator")) {
 
 			var oPrivateReferenceName = '_' + sAggregationName;
 

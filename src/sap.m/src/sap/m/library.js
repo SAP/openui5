@@ -35,6 +35,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.ButtonType",
 			"sap.m.DateTimeInputType",
 			"sap.m.DialogType",
+			"sap.m.DraftIndicatorState",
 			"sap.m.FacetFilterListDataType",
 			"sap.m.FacetFilterType",
 			"sap.m.FlexAlignItems",
@@ -46,12 +47,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.IBarHTMLTag",
 			"sap.m.IconTabFilterDesign",
 			"sap.m.ImageMode",
+			"sap.m.InfoTileSize",
+			"sap.m.InfoTileTextColor",
+			"sap.m.InfoTileValueColor",
 			"sap.m.InputType",
 			"sap.m.LabelDesign",
 			"sap.m.ListHeaderDesign",
 			"sap.m.ListMode",
 			"sap.m.ListSeparators",
 			"sap.m.ListType",
+			"sap.m.LoadState",
 			"sap.m.OverflowToolbarPriority",
 			"sap.m.P13nPanelType",
 			"sap.m.PageBackgroundDesign",
@@ -97,6 +102,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.DateTimeInput",
 			"sap.m.Dialog",
 			"sap.m.DisplayListItem",
+			"sap.m.DraftIndicator",
 			"sap.m.FacetFilter",
 			"sap.m.FacetFilterItem",
 			"sap.m.FacetFilterList",
@@ -124,6 +130,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.MultiComboBox",
 			"sap.m.MultiInput",
 			"sap.m.NavContainer",
+			"sap.m.NotificationListItem",
 			"sap.m.PagingButton",
 			"sap.m.ObjectAttribute",
 			"sap.m.ObjectHeader",
@@ -169,6 +176,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.Switch",
 			"sap.m.Table",
 			"sap.m.TableSelectDialog",
+			"sap.m.TeamCalendar",
 			"sap.m.Text",
 			"sap.m.TextArea",
 			"sap.m.Tile",
@@ -198,10 +206,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.OverflowToolbarLayoutData",
 			"sap.m.MaskInputRule",
 			"sap.m.MessagePopoverItem",
+			"sap.m.PageAccessibleLandmarkInfo",
 			"sap.m.P13nFilterItem",
 			"sap.m.P13nItem",
 			"sap.m.P13nSortItem",
 			"sap.m.SegmentedButtonItem",
+			"sap.m.TeamCalendarRow",
 			"sap.m.ToolbarLayoutData",
 			"sap.m.UploadCollectionItem",
 			"sap.m.UploadCollectionParameter",
@@ -394,6 +404,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		 * @public
 		 */
 		Message : "Message"
+
+	};
+
+	/**
+	 * Enum for the state of sap.m.DraftIndicator control.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.DraftIndicatorState = {
+
+		/**
+		 * This is the default value for DraftIndicatorState type. This state has no visual information displayed.
+		 * @public
+		 */
+		Clear: "Clear",
+
+		/**
+		 * Indicates that the draft currently is being saved
+		 * @public
+		 */
+		Saving: "Saving",
+
+		/**
+		 * Indicates that the draft is already saved
+		 * @public
+		 */
+		Saved: "Saved"
 
 	};
 
@@ -884,7 +923,108 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * A subset of input types that fit to a simple API returning one string.
+	* Enumeration of possible size settings.
+	*
+	* @enum {string}
+	* @public
+	*/
+	sap.m.InfoTileSize = {
+
+		/**
+		 * Extra small size.
+		 * @public
+		 */
+		XS : "XS",
+
+		/**
+		 * Small size.
+		 * @public
+		 */
+		S : "S",
+
+		/**
+		 * Medium size.
+		 * @public
+		 */
+		M : "M",
+
+		/**
+		 * Large size.
+		 * @public
+		 */
+		L : "L",
+
+		/**
+		 * The size of the tile depends on the device it is running on. It is medium size for desktop and tablet and small size for phone.
+		 * @public
+		 */
+		Auto : "Auto"
+	};
+
+	/**
+	 * Enumeration of possible text color settings.
+	 *
+	 * @enum {string}
+	 * @public
+	 */
+	sap.m.InfoTileTextColor = {
+
+		/**
+		 * Positive text color.
+		 * @public
+		 */
+		Positive : "Positive",
+
+		/**
+		 * Critical text color.
+		 * @public
+		 */
+		Critical : "Critical",
+
+		/**
+		 * Negative text color.
+		 * @public
+		 */
+		Negative : "Negative"
+
+	};
+
+	/**
+	 * Enumeration of possible value color settings.
+	 *
+	 * @enum {string}
+	 * @public
+	 */
+	sap.m.InfoTileValueColor = {
+
+		/**
+		 * Neutral value color.
+		 * @public
+		 */
+		Neutral : "Neutral",
+
+		/**
+		 * Good value color.
+		 * @public
+		 */
+		Good : "Good",
+
+		/**
+		 * Critical value color.
+		 * @public
+		 */
+		Critical : "Critical",
+
+		/**
+		 * Error value color.
+		 * @public
+		 */
+		Error : "Error"
+
+	};
+
+	/**
+	 * A subset of input types that fits to a simple API returning one string.
 	 * Not available on purpose: button, checkbox, hidden, image, password, radio, range, reset, search, submit.
 	 *
 	 * @enum {string}
@@ -1151,7 +1291,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		DetailAndActive : "DetailAndActive"
 
 	};
+	
+	/**
+	 * Enumeration of possible load statuses.
+	 *
+	 * @enum {string}
+	 * @public
+	 */
+	sap.m.LoadState = {
 
+		/**
+		 * The control is loading.
+		 * @public
+		 */
+		Loading : "Loading",
+
+		/**
+		 * The control has loaded.
+		 * @public
+		 */
+		Loaded : "Loaded",
+
+		/**
+		 * The control failed to load.
+		 * @public
+		 */
+		Failed : "Failed",
+
+		/**
+		 * The control is disabled.
+		 * @public
+		 */
+		Disabled : "Disabled"
+	};
+	
 	/**
 	 * Defines the priorities of the controls within sap.m.OverflowToolbar
 	 *
@@ -2286,7 +2459,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					rm.addStyle("filter", "none");
 				}
 				if (sBgColor) {
-					rm.addStyle("background-color", jQuery.sap.escapeHTML(sBgColor));
+					rm.addStyle("background-color", jQuery.sap.encodeHTML(sBgColor));
 				}
 			},
 

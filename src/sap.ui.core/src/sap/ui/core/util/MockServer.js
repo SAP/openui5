@@ -9,7 +9,7 @@ sap.ui
 		function(jQuery, Device, ManagedObject, sinon) {
 			"use strict";
 
-			if (!!Device.browser.internet_explorer) {
+			if (Device.browser.internet_explorer) {
 				jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 				// sinon internally checks the transported data to be an instance
 				// of FormData and this fails in case of IE9! - therefore we
@@ -1330,10 +1330,12 @@ sap.ui
 							sKeyValue = aPair[1];
 						}
 					}
-					if (sKeyValue.indexOf('\'') === 0) {
-						oResult[sKeyName] = sKeyValue.slice(1, sKeyValue.length - 1);
-					} else {
-						oResult[sKeyName] = sKeyValue;
+					if (sKeyValue) {
+						if (sKeyValue.indexOf('\'') === 0) {
+							oResult[sKeyName] = sKeyValue.slice(1, sKeyValue.length - 1);
+						} else {
+							oResult[sKeyName] = sKeyValue;
+						}
 					}
 				}
 				return oResult;
@@ -1664,6 +1666,17 @@ sap.ui
 					this._sMockdataBaseUrl = vMockdataSettings.sMockdataBaseUrl;
 					this._bGenerateMissingMockData = vMockdataSettings.bGenerateMissingMockData;
 				}
+
+				// load the metadata
+				this._loadMetadata(this._sMetadataUrl);
+
+				jQuery.sap.require("sap.ui.core.util.MockServerAnnotationsHandler");
+				var MockServerAnnotationsHandler = sap.ui.require("sap/ui/core/util/MockServerAnnotationsHandler");
+				var oAnnotations = MockServerAnnotationsHandler.parse(this._oMetadata);
+
+				jQuery.sap.require("sap.ui.core.util.DraftEnabledMockServer");
+				var DraftEnabledMockServer = sap.ui.require("sap/ui/core/util/DraftEnabledMockServer");
+				DraftEnabledMockServer.handleDraft(oAnnotations, this);
 
 				this._refreshData();
 
@@ -2461,7 +2474,7 @@ sap.ui
 															var aEntries, oFilteredData = {};
 
 															aEntries = that._resolveNavigation(sEntitySetName,
-																oEntry.entry, sNavProp);
+																oEntry.entry, sNavProp, oEntry.entry);
 															var sMultiplicity = that._mEntitySets[sEntitySetName].navprops[sNavProp].to.multiplicity;
 															if (sMultiplicity === "*") {
 																oFilteredData = {
@@ -2576,6 +2589,9 @@ sap.ui
 									var sRespondContentType = null;
 									var iResult = 405; // default: method not allowed
 									try {
+										if (sKeys && !sKeys.split('=')[1]) {
+											sKeys = that._mEntitySets[sEntitySetName].keys[0] + "=" + sKeys;
+										}
 										var sTargetEntityName = fnResolveTargetEntityName(oEntitySet,
 											decodeURIComponent(sKeys), sNavName);
 										if (sTargetEntityName) {

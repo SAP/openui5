@@ -709,7 +709,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ObjectHeader.prototype.onAfterRendering = function() {
 		var oObjectNumber = this.getAggregation("_objectNumber");
 		var bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
-		var $titleArrow = jQuery.sap.byId(this.getId() + "-titleArrow");
+		var $titleArrow = this.$("titleArrow");
 
 		$titleArrow.attr("aria-haspopup", "true");
 		$titleArrow.attr("role", "link");

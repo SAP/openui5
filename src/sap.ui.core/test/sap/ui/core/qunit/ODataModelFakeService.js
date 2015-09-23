@@ -40,13 +40,17 @@ xhr.onCreate = function(request) {
 		"$metadata?sap-value-list=all": 
 			[200, oMetaDataHeaders, sMetaData2],
 		"$metadata?sap-value-list=Test": 
-				[200, oMetaDataHeaders, sMetaData2],
+			[200, oMetaDataHeaders, sMetaData2],
 		"$metadata?sap-value-list=Test2": 
 			[200, oMetaDataHeaders, sMetaData2],
+		"$metadata?sap-value-list=Test3": 
+			[200, oMetaDataHeaders, sMetaData3],
 		"$metadata?test=x": 
 			[200, oMetaDataHeaders, sMetaData],
 		"$metadata?test=x&sap-language=en&test2=xx": 
 			[200, oMetaDataHeaders, sMetaData],
+		"$metadata?test=complex": 
+			[200, oMetaDataHeaders, sMetadataComplex],
 		"$metadata?sap-language=en&test2=xx": 
 			[200, oMetaDataHeaders, sMetaData],
 		"Categories/$count":
@@ -63,6 +67,8 @@ xhr.onCreate = function(request) {
 			[200, oXMLHeaders, sCategories2XML],
 		"Categories(7)":
 			[200, oXMLHeaders, sCategories7XML],
+		"Categories(7)?$expand=Products":
+			[200, oXMLHeaders, sCategories7ExpandXML],
 		"Categories":
 			[200, oXMLHeaders, sCategoriesXML],
 		"Categories?hubel=dubel":
@@ -6655,6 +6661,151 @@ var sProductsForFilterANDing3 = "<feed xml:base=\"http://services.odata.org/V3/N
 				"		</Schema>\n" + 
 				"	</edmx:DataServices>\n" + 
 				"</edmx:Edmx>";
+		var sMetaData3 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
+				"<edmx:Edmx xmlns:edmx=\"http://schemas.microsoft.com/ado/2007/06/edmx\"\n" + 
+				"	xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\"\n" + 
+				"	xmlns:sap=\"http://www.sap.com/Protocols/SAPData\" Version=\"1.0\">\n" + 
+				"	<edmx:Reference xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\"\n" + 
+				"		Uri=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_COMMON\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" + 
+				"		<edmx:Include Namespace=\"com.sap.vocabularies.Common.v1\"\n" + 
+				"			Alias=\"Common\" />\n" + 
+				"	</edmx:Reference>\n" + 
+				"	<edmx:Reference xmlns:edmx=\"http://docs.oasis-open.org/odata/ns/edmx\"\n" + 
+				"		Uri=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName=\'%2FIWBEP%2FVOC_UI\',Version=\'0001\',SAP__Origin=\'ER3_200\')/$value\">\n" + 
+				"		<edmx:Include Namespace=\"com.sap.vocabularies.UI.v1\"\n" + 
+				"			Alias=\"UI\" />\n" + 
+				"	</edmx:Reference>\n" + 
+				"	<edmx:DataServices m:DataServiceVersion=\"2.0\">\n" + 
+				"		<Schema xmlns=\"http://schemas.microsoft.com/ado/2008/09/edm\"\n" + 
+				"			Namespace=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV\" xml:lang=\"en\"\n" + 
+				"			sap:schema-version=\"0\">\n" + 
+				"			<EntityType Name=\"VL_CH_ANLH\" sap:content-version=\"1\">\n" + 
+				"				<Key>\n" + 
+				"					<PropertyRef Name=\"BUKRS\" />\n" + 
+				"					<PropertyRef Name=\"ANLN1\" />\n" + 
+				"				</Key>\n" + 
+				"				<Property Name=\"BUKRS\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
+				"					MaxLength=\"4\" sap:display-format=\"UpperCase\" sap:label=\"Company Code\" />\n" + 
+				"				<Property Name=\"ANLN1\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
+				"					MaxLength=\"12\" sap:display-format=\"UpperCase\" sap:label=\"Main Asset No.\" />\n" + 
+				"			</EntityType>\n" + 
+				"			<EntityType Name=\"VL_CH_ANLA\" sap:content-version=\"1\">\n" + 
+				"				<Key>\n" + 
+				"					<PropertyRef Name=\"BUKRS\" />\n" + 
+				"					<PropertyRef Name=\"ANLN1\" />\n" + 
+				"					<PropertyRef Name=\"ANLN2\" />\n" + 
+				"				</Key>\n" + 
+				"				<Property Name=\"BUKRS\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
+				"					MaxLength=\"4\" sap:display-format=\"UpperCase\" sap:label=\"Company Code\" />\n" + 
+				"				<Property Name=\"ANLN1\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
+				"					MaxLength=\"12\" sap:display-format=\"UpperCase\" sap:label=\"Main Asset No.\" />\n" + 
+				"				<Property Name=\"ANLN2\" Type=\"Edm.String\" Nullable=\"false\"\n" + 
+				"					MaxLength=\"4\" sap:display-format=\"UpperCase\" sap:label=\"Subnumber\" />\n" + 
+				"			</EntityType>\n" + 
+				"			<EntityContainer Name=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV_Entities\"\n" + 
+				"				m:IsDefaultEntityContainer=\"true\" sap:supported-formats=\"atom json xlsx\">\n" + 
+				"				<EntitySet Name=\"VL_CH_ANLA\" EntityType=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA\"\n" + 
+				"					sap:creatable=\"false\" sap:updatable=\"false\" sap:deletable=\"false\"\n" + 
+				"					sap:content-version=\"1\" sap:countable=\"false\" sap:semantics=\"aggregate\" />\n" + 
+				"			</EntityContainer>\n" + 
+				"			<Annotations xmlns=\"http://docs.oasis-open.org/odata/ns/edm\"\n" + 
+				"				Target=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV.Item/MyProp1\">\n" + 
+				"				<Annotation Term=\"com.sap.vocabularies.Common.v1.ValueList\">\n" + 
+				"					<Record>\n" + 
+				"						<PropertyValue Property=\"Label\" String=\"boolean true/false\" />\n" + 
+				"						<PropertyValue Property=\"CollectionPath\" String=\"VL_FV_FARP_BOOLEAN\" />\n" + 
+				"						<PropertyValue Property=\"Parameters\">\n" + 
+				"							<Collection>\n" + 
+				"								<Record Type=\"com.sap.vocabularies.Common.v1.ValueListParameterInOut\">\n" + 
+				"									<PropertyValue Property=\"LocalDataProperty\"\n" + 
+				"										PropertyPath=\"BooleanParameter\" />\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"Code\" />\n" + 
+				"								</Record>\n" + 
+				"								<Record\n" + 
+				"									Type=\"com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly\">\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"Text\" />\n" + 
+				"								</Record>\n" + 
+				"							</Collection>\n" + 
+				"						</PropertyValue>\n" + 
+				"					</Record>\n" + 
+				"				</Annotation>\n" + 
+				"			</Annotations>\n" + 
+				"			<Annotations xmlns=\"http://docs.oasis-open.org/odata/ns/edm\"\n" + 
+				"				Target=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV.Item/MyProp2\">\n" + 
+				"				<Annotation Term=\"com.sap.vocabularies.Common.v1.ValueList\">\n" + 
+				"					<Record>\n" + 
+				"						<PropertyValue Property=\"Label\" String=\"&quot;Industry Texts&quot;\" />\n" + 
+				"						<PropertyValue Property=\"CollectionPath\" String=\"VL_SH_H_T016\" />\n" + 
+				"						<PropertyValue Property=\"SearchSupported\" Bool=\"true\" />\n" + 
+				"						<PropertyValue Property=\"Parameters\">\n" + 
+				"							<Collection>\n" + 
+				"								<Record Type=\"com.sap.vocabularies.Common.v1.ValueListParameterInOut\">\n" + 
+				"									<PropertyValue Property=\"LocalDataProperty\"\n" + 
+				"										PropertyPath=\"Industry\" />\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"BRSCH\" />\n" + 
+				"								</Record>\n" + 
+				"								<Record\n" + 
+				"									Type=\"com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly\">\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"BRTXT\" />\n" + 
+				"								</Record>\n" + 
+				"							</Collection>\n" + 
+				"						</PropertyValue>\n" + 
+				"					</Record>\n" + 
+				"				</Annotation>\n" + 
+				"			</Annotations>\n" + 
+				"			<Annotations xmlns=\"http://docs.oasis-open.org/odata/ns/edm\"\n" + 
+				"				Target=\"ZFAR_CUSTOMER_LINE_ITEMS2_SRV.Item/MyProp3\">\n" + 
+				"				<Annotation Term=\"com.sap.vocabularies.Common.v1.ValueList\">\n" + 
+				"					<Record>\n" + 
+				"						<PropertyValue Property=\"Label\" String=\"Help_View for TBSL\" />\n" + 
+				"						<PropertyValue Property=\"CollectionPath\" String=\"VL_SH_H_TBSL\" />\n" + 
+				"						<PropertyValue Property=\"SearchSupported\" Bool=\"true\" />\n" + 
+				"						<PropertyValue Property=\"Parameters\">\n" + 
+				"							<Collection>\n" + 
+				"								<Record Type=\"com.sap.vocabularies.Common.v1.ValueListParameterInOut\">\n" + 
+				"									<PropertyValue Property=\"LocalDataProperty\"\n" + 
+				"										PropertyPath=\"PostingKey\" />\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"BSCHL\" />\n" + 
+				"								</Record>\n" + 
+				"								<Record Type=\"com.sap.vocabularies.Common.v1.ValueListParameterInOut\">\n" + 
+				"									<PropertyValue Property=\"LocalDataProperty\"\n" + 
+				"										PropertyPath=\"FinancialAccountType\" />\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"KOART\" />\n" + 
+				"								</Record>\n" + 
+				"								<Record Type=\"com.sap.vocabularies.Common.v1.ValueListParameterInOut\">\n" + 
+				"									<PropertyValue Property=\"LocalDataProperty\"\n" + 
+				"										PropertyPath=\"DebitCreditCode\" />\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"SHKZG\" />\n" + 
+				"								</Record>\n" + 
+				"								<Record Type=\"com.sap.vocabularies.Common.v1.ValueListParameterInOut\">\n" + 
+				"									<PropertyValue Property=\"LocalDataProperty\"\n" + 
+				"										PropertyPath=\"IndustryName\" />\n" + 
+				"									<PropertyValue Property=\"ValueListProperty\"\n" + 
+				"										String=\"LTEXT\" />\n" + 
+				"								</Record>\n" + 
+				"							</Collection>\n" + 
+				"						</PropertyValue>\n" + 
+				"					</Record>\n" + 
+				"				</Annotation>\n" + 
+				"			</Annotations>\n" + 
+				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"self\"\n" + 
+				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" + 
+				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"latest-version\"\n" + 
+				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" + 
+				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"self\"\n" + 
+				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" + 
+				"			<atom:link xmlns:atom=\"http://www.w3.org/2005/Atom\" rel=\"latest-version\"\n" + 
+				"				href=\"https://ldai3er3.wdf.sap.corp:44335/sap/opu/odata/sap/ZFAR_CUSTOMER_LINE_ITEMS2_SRV/$metadata\" />\n" + 
+				"		</Schema>\n" + 
+				"	</edmx:DataServices>\n" + 
+				"</edmx:Edmx>";
 var sInvoicesJSON = "{\n" + 
 		"\"d\" : {\n" +
 		"\"results\" : [\n" +
@@ -6694,3 +6845,234 @@ var sInvoicesJSON = "{\n" +
 		"]\n" +
 		"}\n" +
 		"}";
+var sCategories7ExpandXML = "<entry xml:base=\"http://services.odata.org/V3/Northwind/Northwind.svc/\" xmlns=\"http://www.w3.org/2005/Atom\" xmlns:d=\"http://schemas.microsoft.com/ado/2007/08/dataservices\" xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\">\n" + 
+		"<id>http://services.odata.org/V3/Northwind/Northwind.svc/Categories(7)</id>\n" + 
+		"<category term=\"NorthwindModel.Category\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>\n" + 
+		"<link rel=\"edit\" title=\"Category\" href=\"Categories(7)\"/>\n" + 
+		"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Products\" type=\"application/atom+xml;type=feed\" title=\"Products\" href=\"Categories(7)/Products\">\n" + 
+		"<m:inline>\n" + 
+		"<feed>\n" + 
+		"<id>http://services.odata.org/V3/Northwind/Northwind.svc/Categories(7)/Products</id>\n" + 
+		"<title type=\"text\">Products</title>\n" + 
+		"<updated>2015-09-08T14:17:59Z</updated>\n" + 
+		"<link rel=\"self\" title=\"Products\" href=\"Categories(7)/Products\"/>\n" + 
+		"<entry>\n" + 
+		"<id>http://services.odata.org/V3/Northwind/Northwind.svc/Products(7)</id>\n" + 
+		"<category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>\n" + 
+		"<link rel=\"edit\" title=\"Product\" href=\"Products(7)\"/>\n" + 
+		"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(7)/Category\"/>\n" + 
+		"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(7)/Order_Details\"/>\n" + 
+		"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(7)/Supplier\"/>\n" + 
+		"<title/>\n" + 
+		"<updated>2015-09-08T14:17:59Z</updated>\n" + 
+		"<author>\n" + 
+		"<name/>\n" + 
+		"</author>\n" + 
+		"<content type=\"application/xml\">\n" + 
+		"<m:properties>\n" + 
+		"<d:ProductID m:type=\"Edm.Int32\">7</d:ProductID>\n" + 
+		"<d:ProductName>Uncle Bob\'s Organic Dried Pears</d:ProductName>\n" + 
+		"<d:SupplierID m:type=\"Edm.Int32\">3</d:SupplierID>\n" + 
+		"<d:CategoryID m:type=\"Edm.Int32\">7</d:CategoryID>\n" + 
+		"<d:QuantityPerUnit>12 - 1 lb pkgs.</d:QuantityPerUnit>\n" + 
+		"<d:UnitPrice m:type=\"Edm.Decimal\">30.0000</d:UnitPrice>\n" + 
+		"<d:UnitsInStock m:type=\"Edm.Int16\">15</d:UnitsInStock>\n" + 
+		"<d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder>\n" + 
+		"<d:ReorderLevel m:type=\"Edm.Int16\">10</d:ReorderLevel>\n" + 
+		"<d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued>\n" + 
+		"</m:properties>\n" + 
+		"</content>\n" + 
+		"</entry>\n" + 
+		"<entry>\n" + 
+		"<id>http://services.odata.org/V3/Northwind/Northwind.svc/Products(14)</id>\n" + 
+		"<category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>\n" + 
+		"<link rel=\"edit\" title=\"Product\" href=\"Products(14)\"/>\n" + 
+		"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(14)/Category\"/>\n" + 
+		"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(14)/Order_Details\"/>\n" + 
+		"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(14)/Supplier\"/>\n" + 
+		"<title/>\n" + 
+		"<updated>2015-09-08T14:17:59Z</updated>\n" + 
+		"<author>\n" + 
+		"<name/>\n" + 
+		"</author>\n" + 
+		"<content type=\"application/xml\">\n" + 
+		"<m:properties>\n" + 
+		"<d:ProductID m:type=\"Edm.Int32\">14</d:ProductID>\n" + 
+		"<d:ProductName>Tofu</d:ProductName>\n" + 
+		"<d:SupplierID m:type=\"Edm.Int32\">6</d:SupplierID>\n" + 
+		"<d:CategoryID m:type=\"Edm.Int32\">7</d:CategoryID>\n" + 
+		"<d:QuantityPerUnit>40 - 100 g pkgs.</d:QuantityPerUnit>\n" + 
+		"<d:UnitPrice m:type=\"Edm.Decimal\">23.2500</d:UnitPrice>\n" + 
+		"<d:UnitsInStock m:type=\"Edm.Int16\">35</d:UnitsInStock>\n" + 
+		"<d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder>\n" + 
+		"<d:ReorderLevel m:type=\"Edm.Int16\">0</d:ReorderLevel>\n" + 
+		"<d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued>\n" + 
+		"</m:properties>\n" + 
+		"</content>\n" + 
+		"</entry>\n" + 
+		"<entry>\n" + 
+		"<id>http://services.odata.org/V3/Northwind/Northwind.svc/Products(28)</id>\n" + 
+		"<category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>\n" + 
+		"<link rel=\"edit\" title=\"Product\" href=\"Products(28)\"/>\n" + 
+		"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(28)/Category\"/>\n" + 
+		"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(28)/Order_Details\"/>\n" + 
+		"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(28)/Supplier\"/>\n" + 
+		"<title/>\n" + 
+		"<updated>2015-09-08T14:17:59Z</updated>\n" + 
+		"<author>\n" + 
+		"<name/>\n" + 
+		"</author>\n" + 
+		"<content type=\"application/xml\">\n" + 
+		"<m:properties>\n" + 
+		"<d:ProductID m:type=\"Edm.Int32\">28</d:ProductID>\n" + 
+		"<d:ProductName>Rössle Sauerkraut</d:ProductName>\n" + 
+		"<d:SupplierID m:type=\"Edm.Int32\">12</d:SupplierID>\n" + 
+		"<d:CategoryID m:type=\"Edm.Int32\">7</d:CategoryID>\n" + 
+		"<d:QuantityPerUnit>25 - 825 g cans</d:QuantityPerUnit>\n" + 
+		"<d:UnitPrice m:type=\"Edm.Decimal\">45.6000</d:UnitPrice>\n" + 
+		"<d:UnitsInStock m:type=\"Edm.Int16\">26</d:UnitsInStock>\n" + 
+		"<d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder>\n" + 
+		"<d:ReorderLevel m:type=\"Edm.Int16\">0</d:ReorderLevel>\n" + 
+		"<d:Discontinued m:type=\"Edm.Boolean\">true</d:Discontinued>\n" + 
+		"</m:properties>\n" + 
+		"</content>\n" + 
+		"</entry>\n" + 
+		"<entry>\n" + 
+		"<id>http://services.odata.org/V3/Northwind/Northwind.svc/Products(51)</id>\n" + 
+		"<category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>\n" + 
+		"<link rel=\"edit\" title=\"Product\" href=\"Products(51)\"/>\n" + 
+		"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(51)/Category\"/>\n" + 
+		"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(51)/Order_Details\"/>\n" + 
+		"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(51)/Supplier\"/>\n" + 
+		"<title/>\n" + 
+		"<updated>2015-09-08T14:17:59Z</updated>\n" + 
+		"<author>\n" + 
+		"<name/>\n" + 
+		"</author>\n" + 
+		"<content type=\"application/xml\">\n" + 
+		"<m:properties>\n" + 
+		"<d:ProductID m:type=\"Edm.Int32\">51</d:ProductID>\n" + 
+		"<d:ProductName>Manjimup Dried Apples</d:ProductName>\n" + 
+		"<d:SupplierID m:type=\"Edm.Int32\">24</d:SupplierID>\n" + 
+		"<d:CategoryID m:type=\"Edm.Int32\">7</d:CategoryID>\n" + 
+		"<d:QuantityPerUnit>50 - 300 g pkgs.</d:QuantityPerUnit>\n" + 
+		"<d:UnitPrice m:type=\"Edm.Decimal\">53.0000</d:UnitPrice>\n" + 
+		"<d:UnitsInStock m:type=\"Edm.Int16\">20</d:UnitsInStock>\n" + 
+		"<d:UnitsOnOrder m:type=\"Edm.Int16\">0</d:UnitsOnOrder>\n" + 
+		"<d:ReorderLevel m:type=\"Edm.Int16\">10</d:ReorderLevel>\n" + 
+		"<d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued>\n" + 
+		"</m:properties>\n" + 
+		"</content>\n" + 
+		"</entry>\n" + 
+		"<entry>\n" + 
+		"<id>http://services.odata.org/V3/Northwind/Northwind.svc/Products(74)</id>\n" + 
+		"<category term=\"NorthwindModel.Product\" scheme=\"http://schemas.microsoft.com/ado/2007/08/dataservices/scheme\"/>\n" + 
+		"<link rel=\"edit\" title=\"Product\" href=\"Products(74)\"/>\n" + 
+		"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category\" type=\"application/atom+xml;type=entry\" title=\"Category\" href=\"Products(74)/Category\"/>\n" + 
+		"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details\" type=\"application/atom+xml;type=feed\" title=\"Order_Details\" href=\"Products(74)/Order_Details\"/>\n" + 
+		"<link rel=\"http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier\" type=\"application/atom+xml;type=entry\" title=\"Supplier\" href=\"Products(74)/Supplier\"/>\n" + 
+		"<title/>\n" + 
+		"<updated>2015-09-08T14:17:59Z</updated>\n" + 
+		"<author>\n" + 
+		"<name/>\n" + 
+		"</author>\n" + 
+		"<content type=\"application/xml\">\n" + 
+		"<m:properties>\n" + 
+		"<d:ProductID m:type=\"Edm.Int32\">74</d:ProductID>\n" + 
+		"<d:ProductName>Longlife Tofu</d:ProductName>\n" + 
+		"<d:SupplierID m:type=\"Edm.Int32\">4</d:SupplierID>\n" + 
+		"<d:CategoryID m:type=\"Edm.Int32\">7</d:CategoryID>\n" + 
+		"<d:QuantityPerUnit>5 kg pkg.</d:QuantityPerUnit>\n" + 
+		"<d:UnitPrice m:type=\"Edm.Decimal\">10.0000</d:UnitPrice>\n" + 
+		"<d:UnitsInStock m:type=\"Edm.Int16\">4</d:UnitsInStock>\n" + 
+		"<d:UnitsOnOrder m:type=\"Edm.Int16\">20</d:UnitsOnOrder>\n" + 
+		"<d:ReorderLevel m:type=\"Edm.Int16\">5</d:ReorderLevel>\n" + 
+		"<d:Discontinued m:type=\"Edm.Boolean\">false</d:Discontinued>\n" + 
+		"</m:properties>\n" + 
+		"</content>\n" + 
+		"</entry>\n" + 
+		"</feed>\n" + 
+		"</m:inline>\n" + 
+		"</link>\n" + 
+		"<title/>\n" + 
+		"<updated>2015-09-08T14:17:59Z</updated>\n" + 
+		"<author>\n" + 
+		"<name/>\n" + 
+		"</author>\n" + 
+		"<content type=\"application/xml\">\n" + 
+		"<m:properties>\n" + 
+		"<d:CategoryID m:type=\"Edm.Int32\">7</d:CategoryID>\n" + 
+		"<d:CategoryName>Produce</d:CategoryName>\n" + 
+		"<d:Description>Dried fruit and bean curd</d:Description>\n" + 
+		"<d:Picture m:type=\"Edm.Binary\">FRwvAAIAAAANAA4AFAAhAP////9CaXRtYXAgSW1hZ2UAUGFpbnQuUGljdHVyZQABBQAAAgAAAAcAAABQQnJ1c2gAAAAAAAAAAACgKQAAQk2YKQAAAAAAAFYAAAAoAAAArAAAAHgAAAABAAQAAAAAAAAAAACICwAAiAsAAAgAAAAIAAAA////AAD//wD/AP8AAAD/AP//AAAA/wAA/wAAAAAAAAAzJzNzM3NzNzNzFyF3dlZ3FDR3ISZXd3d2Vnd2d3d3dHB3d3d3d3d3d3d3dXd3dUdXd3d3d3d3d3d3N3d3d3d3d3d3d3d3N3d3d3d3d3d3ECE2dwAHdwAANzNzNzIzNzNzNyFzYTd3dndzYXcXcld3d2d3d3Z3d3d3dxd3d3d3d3dXd3d3cHdGdXd3d3d3d3d3d3d3d3d3d3d3d3d3d3d3c3d3d3d3d3dSQSV2cGAzJ3M3MXNzc3I3M3NzMDdjRwd3Z1Zycwc3Z3d3Z3dnd3d3d3d3d3d3d3d3d1d3dARHV1Z3d3d3d3d3d3d3d3N3d3d3d3d3d3d3d3d3d3d3d3d3dxJSY3YWNzMzczczNzMzczc3M3NzE3N3Vld3V0d3JxdWd3dnd2d3d3d3d3d3d3d3dXd3cGBwBHVlR3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3cBBDd3M3czcyc3MXNzNzIzc3M3N1I2N3J2d3YXZ3N0NHd3d3Z2d3d3d3d3d3V3d3d3QFdxBldyV3d3d3d3d3d3d3d3c3d3d3d3d3d3d3d3d3d3d3d3d3d3d3MAMzczcyczc3I3NzFzczc3NjNzU1J1dSd3d1NnN3d0d3d3d3d3d3d3d3V3d3d3QEF3d0BldGV3d3d3d3d3d3d3d3d3d3c3d3c3d3d3d3d3d3d3d3N3d3d3dwczdzdzNzNzczJzNzdzczNzNzczEjN1ZWdnV0c3N3dnd3d3d3d3d3d3d1d3QGVGdGdQB0dWV3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3dzcyMzM3M3Mzc3M3MzIzN3N3Nzc3c0Nzd3d2d3R3c3NXd3d3d3d3V3V3d3VgZUJXdXdQR1ZWV3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3N3d3d3d3d3d3dzd3NzcyczdzM3Mzdzc3M3MzNyczc3NDcHd3d3YWV3c3d3d3d3d3d3d3dgR1YEBHdwZARldWVnd3d3d3d3d3d3d3d3d3d3N3d3d3d3d3d3d3c3d3d3d3d3MzM3MzczczNzc3YzNzc3M3N2Nzdzc3Nzdwd2d3d3d3d3d3d3d3d3d3dwBFJTQEBHR1JAQ0dWFSdnd3d3d3d3d3d3d3d3d3d3N3d3d3d3d3d3d3d3c3d3d3NzM3JzNzNyNzMzc3M3I3MnM3NzNzc3N3N3cXd3d3d3d3d3V3dXdXd0BAQEZFJWVhdkVxZWdHZxN0dnd3d3d3d3d3d3d3d3d3d3d3d3d3d3N3d3d3d3d3c3Mzc3M3E3M3I3Nzczczc3Nzczc3Nzc3c3c3d3d3d3d3d3d3dXd3dxQEJQBBQ1YUBEQGd0R1R1J3Y1F3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3c3d3d3N3M3JzM3M3I3M3M3M3Jzdzc3M3Nzc3Nzczc3c3c3d3d3d3d3d3d3d3ZCQEBABAQEBEAARHdwR3RlY1JnJSR3d3d3d3d3d3d3d3d3d3d3d3c3d3d3d3d3d3dzc3Nzc3M3M3MXM3M3Mzczc3Nzc2Nzc3dzc3c3d3d3d3d3d3V3d3dBRQQEJBAAAAAHRAd3dwR1dHR1JXNTcBd3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3d3dzMzNzM3M3M3M2M3M3czdzNzNzc3NzczN3Nzdzd3d3d3d3V3d3cEBnAAAUEEAAAAdABnd1dAR0dHdlYkchZ2V3d3d3d3d3d3d3d3d3d3d3d3c3d3d3N3d3Nzc3NjczczYzc3NzczNzM3NnNzc3N3N3c3d3N3c3d3d1d3d3dwR0dXZFZQAAAAREAFd2VjcEZXRSd3dSVnMSBHd3d3d3d3d3d3d3d3d3d3d3dzd3d3d3dzNzM3NzJzczNzM3MzcnNyc3M3Nzc3c3c3c3N3d3d3d3d3d3d0BSR0d1NHBQEAVXAAR3dXRHdQB2VENHdyUkZ3MAZ3d3d3d3d3d3d3d3d3d3N3d3d3d3d3c3Nnc3NzMzc3N3M3Nzc3Nzc3Nzc3czc3c3d3N3N3d3d3d3d3AGRAQkZ1dHRGV3YEB3d0YHRGd0R2VkNCR3cXB3cxJXd3d3d3d3d3d3d3d3d3d3d3d3d3d3M3MzM3NzczczM3I3M3NzNzc3Nzczdzdzc3N3d3d3V3V3d3QEcEJQRQR2QAJHQAQHd3QFRABFcEBWVHcHBHZ3QEZzAlZ3d3d3d3d3d3d3d3d3d3d3d3N3d3c3N3c3NzJzNjc3Nzczc3Nzc3M3N3N3N3d3c3N3d3d3d3QAR0BAQFJGdQBFQEBAdXBAZABFQmUEZ0djc2NCVndzRHMSEHZ3d3d3d3d3d3d3d3d3d3d3d3czMzMzc3NzNzNzM3M3NzNzNzc2c3c3N3Nzc3d3d3d3d3dABFQEBARkFEJENDRAV3ZEBEBABgRWcUB0RUd1JWNHR3JWJWMTB3d3d3d3d3d3d3d3d3d3d3d3N3clITc3N3N3Nzc3JzcnNyc3M3czc3N3N3dzd3V1d3dwAEBhYEBAVkBEBHRAd3dABAAAREBAREZUVlJ1Z3NlJnNHNWNGJDBmN3d3d3d3d3d3d3d3d3d3dzMzc3chI1M3MzNzczMzc3Nzc3czdzc3c3c3N3N3d3d0AEJAR0EENAQEAEdQd1Z0B0AEFAAABAQHcGVlR3dnU3EkdlZ0cWUnE1Z3d3d3d3d3d3d3d3d3d3clIXRwdzczczd3Mzd3dzc3NzczN3N3Nzdzd3d3V3d0AEQUBDQUAEdwBABHd3RlBHUEBwQAAEB0dXdEZWVld3ZSUyEmFnZTZSRjFQdnd3d3d3d3d3d3d3d3c3dzdzRwcjcwM3dzMzNzc3Nzd3c3N3dzd3N3d3dzQAAEZHdRAAAEdAAARnd0FkB0AAUAAAAHQEd3cUdCVnZ3d3ZWEWNHdHZ3FnJzcFd3d3d3d3d3d3d3d3RwFjVzd3Vhc1MjV3dzc3NzdzNzd3Nzdzd3c3d3dAQ0AEBBYBAAAWQAAFd3cEFXcAQUAAAABAR3d3YEdWVlZ3d3d2YXMHJHFnc0IDYwNXd3d3d3d3d3d3dzd3dDZ1Jzd2cnFzMzc3Nzdzd3Nzc3d3N3N3d3dAAARwAENRFAAERAAHdgdGV2dwQAAAAAAEB3d3d1UEZUdHZ2dnR3dlMlcndWVldDBwcnd3d3d3d3d3d3FjVyd3Q3V3cXd3Y3dTY3c3Nzc3d3d3N3d3d3dwAEBHQWQFBAAAQAAFd0BUBWUHRABAAABEQkd3ZXZSRHVlJXZ0dnZGd3QwNHZWN2NHYyUxZ3d3d3d3d3d3dDNTQ3d3JSdzU3ZWNxc3d3d3dzc3N3dzd3d3AAAAUHRxQBEAAAQAd2FAQkB1YAdwBAAEAAV3V1dQZXAGVlZHdld3d2d3d3c3J0B0dxZDZzE0d3d3d3d3dyd3c3ElJ3d3R2d3N3d3c3N3Nzd3d3dzd3d3d3AAQEQEdDQAAEAAR3VHRlFAAFQFZABEAAR3dkd0JQdWUGVlZ3dnd2dHZ3d3cBJ3FgZ3dDRmMwFHd3d3d3NTRzd3c3EyU3d3F3d3d3d3c3d3N3dzd3d3d3d3AAAABABAAEQABXcGcEEAAAVhQEBAAARXdgU2BHdAZARWR0dndkdlZ3Z2dndhIWdwBDd3EUY2M0F2d3d3c3d3Nzd3d3dxd3d3d3d3d3d3d3dzd3d3d3d3dxAABAAEBQQABHd3REQQQAAEBEAAAABXZxRXZUVlNAR3BHR0NWd3dnZHZ3R0d3YQA2dkZHZzZSQ3ITZ3dzdzM3dzd3dzd3d3d3d3d3d3dSVEZEZHd3d3d3dxAABEAEdwAEd0NAAHQQAAQAQEJQdHd1RAZ1AABEAAR3RHQ3JxZnd3dld3Z2d3dzUxIScWRxZzcHJDF3d3N3d3dzd3d3N3d3d3d2dWBAQAAAAAAAZXZ3d3d2AAAEAAQAF3RUdAABAAABQAQEd3d3c3QAdwAABAQEdwVnRzR1N1Z3dnd3ZWd3dnRwcSYWZ0dHZXNDBjM3czdzc3N3d3c3d3d1JQAAAAAAEAUAQABAFHd3dxAABAAAV3QHYEBEFAAABwAAB3d3QURAR1AQAAAAB3d0BHdHJ2FnNHdnZ1Z1ZGdnZ3JRITQ0cXJ0dnN3d3d3N3d3c3d3d3dlAABAUAclZWVyVxQUAEAEU3dwAABEcWVlYEUAQBAAAAQEAFd3dQZABXEFAAAARHd1cEd2d1YWc1Y2VndnZ2d3dHZ3dnNDcyZnR3NWczd2F3d3d3d3d3d1AAQABwd1d3d3V3Z3d3UlAAQFdwAAAEd0BBQGRwcAAABwAEBkd3dABAJHEFAABAd3dwQAd1Z3ZxZjVwdHd3Z2d3dHR3d0dhYXE2NGZXd3N3Nzd3d3d3d1AAACV3d1d0dXd2V1ZWdXd3dBYAVwAAAEcEBAQUBAUAAARAAFB0R3FABEBBEAAAB3d0QABDc3dlZ1dDYyNCdxZWdmdnZlZ2dnYWE3NTZ2F3d3d3d3d3dxQAAHd3ZWVld3dzV3dlR1ZHV3d0FARwAAAEBCQHQEQAAABAAEd0QFZ2VkAEEAAAAHdUAAAHN3dxd3dndlZWNTB3Z0d3dnVnd3Z3d2UwNDN3N3d3d3d3d3BAAHd0dHd1d3dXBWF1NXZAdXZ1d3cBBAAAAEBARHNABQAEAER0BABldQQARxAAAEdQQAAHd3d3d3BwdWVlNhYHYDQ2dHd2Z3V0dnd3Z3M3d3d3d3d3d3dAAAdHd0FFdwd1MREQU1N1dEZUVnd1dlAAAAAFBABHdAQAQEA0B0FhRAZ1BABEBAdXRAAAV3d3d3d3d2NydlZ3dhdDYTcWd3Z2d2V2dnRkd3d3d3d3d3dwAAd3dEd2RSV3UlNDAQEFBxdBZQV1d3d3RQAABAQARAQEAAAERlQGVgBFZABAAAd3QAAABnZlZ3Z3d3dWdTd0NgdnJTZScWBWd2d2dWd3d2d3d3d3d3d3AAF3VDR0RTRXdXEVEVAUEAFlZlZ2VlZXd3AAAABABABAAAR0BHUABABFAAR0AEdXQAAABUdFBkBAYEZWd3Z0N3V0cHZ1JHJzc0Z3d3Z3d3Z3d3d3d3d3EARXdWdEBFZXd1MVdzcBIRQAFXV1dXV1d3d3UAAABEAAAHV3QEcQQAAFJABDd3V0NAAAdHZkZGR2R0RkBCQHd3QGNzRlQ2c0NCQ3FHZ3ZWZlZ3d3d3d3d0ADd2BUZWFhZXd1dxd1NRUhAUN3d3d3d3Vld3dAAAAEQFBHRzQEQAAABEFgRHYWUEAABEdHR1Z1ZWR2VmVGQERndwQ3MnZXR0dzQyc3FnZXdnd3d3d3d3AAV3BWQEBHV3dXc1d1VxNTUQAVd3d3d3d3d1d3cQAAAAd3QHRGEAAAAAB0QAd1QEAABWdnZWZ0ZkZ2R0VmR0QkBkd2A1MHJ2Z2VnR2FjQ3J3d3d3d3d3dAAXdHR1Z1d0dXd3dzQwAUEWFxB3d3d3d3d3d2dXdAAABEdQYFAUEAAAAHBAR1BAQABHdHR0ZWR3R1ZWZmdHRnRkBGR1cnMHE1JWNTYXJTYXR3d3d3d3dxAEdwdHR3V3F3d3d1NREXETEFEFd3d1NXdXN3V1d3cAAAAEdAVgQAAAAEdUcHUEAAAFZ0dnZ3d3dndnZ3V0dGdGVGQABmQ1MyUjclZldlZwcjAwd3d3d3cAB3d1d3F3F3F3d3d1BxAQFBEHEnd3d3cXd3d3d3dXdAAAAHcEBxAAAAQUYEdAQAAEZ3d3d3d2dnd3d3dnZ2d0dGZWRkBHZjczcDBxclZhZxdHZ3d3d3d0AHd0d1d3F2F1NXd3cRB1UxMFEFV3dXF1cXV3d3d3d3cAAABFcERhQFBAQFcUQAAAd3d2d2d2d3d2d2d3d3d2dnZWZWR0BAVhczNzAwchdlRnJTZ3d3d3cAF3V3d3F3U1N3d3dxA1MSFQEQEnd1c3NwdTUXd1ZXV3dAAAB0QABABgQHdAQAAAd3d3d3d3d3d3d3d3Z3Z2d3d3dlZlZGBEZCc3NzNyFjEnNFdld3d3dwBHdXdxcXcXd3V3d3cBUVcVMQMAV3d3dUFTU0d1d3d3d3AAAARwAEAEBHdUBAAAd3d3dnd3d3d3dXd3d3d3d3dnZ2d2VmVkYARwczM3MzMSUlJyVnd3d3UAB3Z1d3c1cXVzV3dxEDAxcQUUEAd1dxcxNWVxcXd1d1d3AAAABABAQFd3QAAAB3d3d3d3dnZ2RmZWdHR3Z3d3d3d3Z2VmVkZARjc3M3FzczMhJSd3d3d3AHd1d3U1cHdzV3F3dhURQwcTASECd3d1U0MXd1Y1c0d1d1QAAARwQAd3VAAAB3d3d3d3ZWQEQFQWQUcHQHRgZWd3Z3d2VmVlYERgc3AzNjc3NzMDd3V3cAB3V3dTdxcXV3NWF3UwFhFRcVNRBXU1dzUVd3cRV3R1d3dwFQAAQFd3QAAAB3d3d3d2QARBdTd3ERNzURcBRUIGRnd2d2UGdGQARSM3NzMzIzM3M3d3d1AEd3d3d1B1d3N1cRVzEXERIUMREQd3d3FQN3cXB3d1d3V3cEdwAABEVAAAB3d3d3dkAEFnN3d3cQU1dRMFFXM1UBBEZ3d2ZAZWVAZjczM3M1NzUzd3cHdwB3dXVxc1cXV1d3dxBWERcVMVcHAXcXFXNXdTRxdXR3Fnd3cAdwAAAAAAAHd3d3dkAAU1NXc3dzExFzMVEhcXUzdXEAQGd3dGBmQARzNyU2MzIzYzd1B3UAd3d3d1cBdyU1d3d3FXFBIVIXUAAHd3NXd3QTV1NXR3V3V3UFdwAAAAAHd3d3d0AUFxcXN1d3dxEhdTEhUlczUTMXcRQEd2dWFkZAQHMzM3M3Mzc3dwdwAHd1d3UxdxUXVzV3d3cxMVExUwARB1d3d3dzd3MHd3dXdXd2AHdwAAAFd3d3dgQHdzExYXc3c3ExETNRFRFzFTBRcTdxAEJ3Z0Z0QEYzc3MzczczN3UHcAV3d3cXBXBTdWNXd3d3FBcXB3UBAAF3V3dxcVcVdXV1Z3d3dQV3dwAAd3d3dkBTV3EVFxNTd3dTAQN3EBIXNRMTExNTF3MARndkBnQENzczFjNSM3dwB3AAd1d1dxMXFhcVd3dXdXFwcXU3AREAF3d3d1c1d3d3d3V1d3cAd3dzR3d3d3QSU3F3MSE1NXN3MxERMRMVNTMRURBQEXNXcQAHd3RGBEMzJ3NzM3M3cAdwBHd1d3V1AXVxd3cVNTdXF1dTUBBwEAV3d1d1cldxd3V3d3V3cFd3dHd3d3RAUTU3NxEXExM1N3ESEXMREwNXExMRMXFTc3c3AEdnBlBENzMzNzM3N3AHcAB3R3dXNTVzV3d1EhUUN3FzdQNRAQAXd3d3d3V3R1d3d3dXd1B3d3d3d3dAcTcSV1cwMRQ1E3MTERA1MBEVMxARARUDcXETU1AGd2RCQHNzc3JzczdwB3AEd3d3d1NXdXd3UxUQE1dXd1NXUHEDd3d3d3d3NTUnV3V3d3cEd3dnd3dkFxNxU1M3ERExMDUxcTATExE0M3ETE1MDFxcBcRd3AAdnZAQzNyMzMyN3cAdwAHcXV1d3d3d3dzAQA0Exd3d3dzEBFXd3d3d3dXUEFTd3d1d3cFd3V3d3UXNxETU3c3MSUxcTQzERAVExERUXERERFTUxExU3N3UAd0ZAZzNxc3FzN3AHcQB3d3d3d3d3d3dRcRAQQVN3dXV1F3dldDV3d3dzU0dHd3d3d1Fnd3d3dENXNxcDERFxcRMRERBTExA3EhMDExMTASFzEREDV3NzcAZ3RAFzNzMzNzdwB3QAd3V3d1c3d3d3ExABARIFd3d3d3dwFxcVNHd3dBQXF1d3dXdgV3d3d0Fzc1EhFTc3MxMQEhEBMWETdTERFRERARcXMQMBdzMXV3EEdnBGNzNzY3M3cQdxAEd3d3F3V1N3dQEAEAUBV3d3d3d3QXUBU0FXd1NQdHd3d3d3FXd3d3QTU1c3ETExEBFxETESERERNTc1EDE0NTExMRERFzEVNTd3EGdkQTM2Mzcyd3QHdwAHdXV1N3d3d3FxAQATEBBXd3d3cBd3cBAQAVc1JQFTdXdXd0B3d3c0FxczcTFBBTFxA1MXMTE0E1NxdzEQETcTU1MSEDFxMBNTd3EHdiQ3M3FzczdxB3dAAXd3d1B1NXd3FxABB1MXE3d3V3V3d1NAMRAld1NAdXd3d3dUd3d1QxMRdTcRMTERExExNXcXExAxc3d3ExcTdzdxERFzERMBNTd3AGdAQ3MzMzc3dwd3MAB3V3F3F3d3cREBAFMVAUV3d3dTd3UwERQAU3U0EQd3d1d3QXd3dDU1NxNxcxERIQETEBNzMRERFzVzcxcTdDFXExEHERMRU1JTd3AHZDM3NzYzN3dHd1AAd3d1cVJXd3FwEBFzUDFzd3d3N3cQFTcBMAdTUVJXd1d3cRd3dwMRMXE3NzEQMBExMVN3MVMTA1MXNTEhBxMXM3EBMRMBETExdXd1B2BzcyNzNzd3N3dxAAdxU3dxF3d3FwBTUQFQFXd3d1dHEFNBFBEBdzcFNXdld3ZHd3VBc1ITUwNTMREQEQExEXMxERATc3MTUTE1MRV3cXMRMSE0Fzd3dwBlIzc3NzN3d1d3dwAAd3V1dWF3d3cQFTEABQNXNXdhcQcXEBNwBldXFld3d3d1F3d2FxMTUzFxNTMTExMRBzcXEhMTEDUzUSFTU1MTd3dxIREVE1d3d3d1JlIzMzNzN3d3d3cAAEdWN3N1dXdxdTAQAQMVN1d1EQUxcXFhUXc3NXc3d1d3UHd3cFNTUxNTExMRMXcRFxETcxMRERNTcTERITEwd3d3dxEwU3czU1NzcAcDUHFzNzd3d3d3cAAFMEc1Fxd3FHcQEFABQ1BHE3NRdBQQEXd3V1c3V1F3dSV3dwU3MTExIRMSE1dxEDEFNxFTESExMxMBE3FzU1MTExExATUxFRMXV3FGdCMzIWM3d3d3d3cAAEAEV3AXdDEFMQERARFhB3UFMBEBAUNXd3d3V3dnd3dBd3VDcXE1FxExMRA3dxERMBFzMTEREBcRESETFzMTEQExEXdzFxMUMXF3EGN0JHMTJ3d3d3d3UAAEAAU3QXEBAFcQABBxVARzUlNXEAAXdhd1d3V3V3d1F3d3ATc3EzEzERMRcXNzARExFTETExMXMTEXNzERERMRAQF3ETEQcVN3U3AUN3NCBhd3d3d3d3AAAEAAdTUEEQdxARNTVhMXdRBQASF3dXF1d3V3ZXd3UHd3cBcTUzETEQMRFzc3ERExATEQdxEBd3EBc1MTEwEQExE3cTUQNRNRc3dwZzQ0NWFnd3d3d3d3AABAAEd1MRZXFwd3QQEQR3d3U1dXd1d3EHd3dVd3dkF3d3BxcTQ1MRExATNTU3MBARMRBTcTN3NTU3UxEQETATETVxcTE1E1J3V3cANDRzYWN3d3d3V3d3AAAFAAYXVxd3V3dRdXdRF3d3d3d3d3BXdTV2d3d1UXd3dBMTUxMWEzFxNTEzUxMRAQEBNzc1MXM3dzERMTFTEXB3cxEFE3E1Fzd3UGNjBhYXd3d3c3J3d3QABhAAQlZVN3d3cBd3dld3d3d3d3dXBTV3VXd1cAd3d3UlcTFTExUxExNSUTUxMRAQFTc1c3MXE1NxMBETNTMXd3c1MXF1c1d3d3QXFjVjYHd3d3d3U2dzAABXAARBZXV3dxd3d3EEd3d3d1d0d3dwdHd3VgV3d3dwUzFxMXEzETETETFwFxAxMRJTUzE1MTE1dxE1JxMVNRdTUxc3Mxc3d3dwJ3NSNBZ3c3dXd3dxd1AAAHUABEdTdxQXd1dQQHd3V1d3V3VTV1d3cWFTd3d3Q3EXElMTEQMSEBNTETAXElE1NzcXExNRF3MTExEBEhExN3NzURFTV1d3cXc3c1Nzd3czd3d3d3c3AAAAdxAERldTUHdwFCQHd3NxdTVzdHF3d3RQd3d3d3R3MTERMTUxERFxMDERMREwEXNxM1MRMBJXARExExEREBV3cRMSEQMTd3ADczMzN3dXdzQ3N3d3d3FAAAV3MABCVxFTdQBURld1dxdwVBF3d3BAF3d3d3dQdxcTExcTExMBExFTARMREQM1NxMTcRMRMXExExARITUzdxMBERMRFBd3Qzd3cnMzdzNzcWd3dnd3MAAABXU1AUMENRAFJDVDR3R0Bxd3d3QEF3d3d3d3cHETFTEBMTEBEzQTERMBAxAXFzE0MRMRExMTUSExNxNTVxMREQEwFwETUBNzczc3dzR3Nzc3F3d1d3dAAAAHd3U1ARAARkREZERQUXV3d1BAQ1d3d3d3dwdxNTMXEwETE1MRMRMBExEBc3MXMxEwEDU1NTM1MXE1NzMxESUzURETV3EnMnNzMzNzM3Jzc3JTc2d3c1AAAAR3d3c1MVFBYVNTd3d3dwQEABd3c3d3d3dwFxMVITE1MRE1MRIRMQEBMXMXMRETExMXc3M1MXE1Exd1ESETUTc3cTF0AHE0N3N3N3c3Nzc3Nwc1c1dzcAAAAEBXd3c3d3d3d3d3dEBAAFd3d3d3d3d3VhM1MTUXExMTExMRMRExEBd1cXNxMRERd3cXE1MTExV3c3ETUzURU1d3dxIWM3JXM3Izc3Nzc3MzcjUnN3dwAAAAAEBWV1dXR0RAQAAAAXN3d3d3d3d3d3BXETFTM1NTUBdzUxAxETF3VzMTExMQF3cxExExcWFzd3cTUTEBMTBzd3AHY0YFMnc3N3Nzc3NzdzdzNyU3F3cAAAAAAAAAAAAAAAAAVnd3d3d3d3d3d3dwcxcFMVETExNXdzETEFMRV3NxMRIQE3dzETEDERF3d3UxMRMRExEVNXdwdzVhNiUzc3M3Nzc3NzNzN3Nzc2NxdzUhAAAAAAAABBB0d3d3d3c3U3d3d3d3cEcRExM2MXERNzU1NRMxEwN1d1MRExc3NTcTETEhFXd3ExExExESEBd3UGFnN0NWN3M3Nzczc3NzNzNzc3Nzcnd3d3dwcHE0Nzd3d3d3d3d3d3dzdyV3d3cHcxFBERETAXd3MxARFwEXExF3N1d3UxMTcTETETAXc3FxFhE1EREBd2ByUlJ2N3M3c3Nzdzcyc3NzNzc3NzczB3d3d3c3Zxd3dnd3d3d3d3d3d3d3c3d1B3cTE1MTERNXc1FxNxExQzUxNXd3cTEFERE1MRMBBXcTExETUzUwF3cXNSUnUlI3NzNzc3M3NzY3N3c3Nzc3N3MHd3d3d3d2U3Nzd3d3d3d3d3d3d3dzdwR3cTERMQExNzcTARATETNTEBdxM3cRExITczExERN3NTU3N3dRERdxR3d3NSFhc3M3Nyczc3Mzc2MzNzNzc3M3c3B3dWd3d3d3d1N1d3d3d2d3d3d3d3cwd3NTMBUxFxFxMRMXMRMXMTERA1EQNTEREQF3UxMBV3c3NTUxN3d3dwd3d3d3NzNzc3Nzdzc3czc3dydzc3N3czc3NDdzR3N3Z1d3c3d3dnd3d3d3d3d3cUdXNTExFxEhFxcRERMBc1NTMTExMRNTExExA3NxEHd3NzMTEQF3d3R3d3d3d3c3Nzc3NzNyczczczNzNzc3Mzdzc3NwNHN0d3d2d3dzR3d3d3Z3d3d3d3Qzc1MXEzExETExAxMRFzVzMRERExERMXExEBNTExN3c1MRMAEVd3dQd3d3d3d3c3Nzczc3c3NzdzN3N3M3NzdzM3c3N3MzQzBzd3d3d3c3N3d3d3d2d3Z3BXExcTUREBAXExEQFzNzMxcxMHETAQcxcRMRFzU3d3ExEwERIXd1J3d3d3d3dzc3M3NzczczcyM3M3M3c3NzN3czc3M3Nzc3NSNSd3d3d3d3d3dnd3d3d3A3UxMQMTEQIXExMTF3FxcxERE3MRERUxMREhF3dXczExU3MRd3dld3d3d3d3dzc3M3Mzdzdzdzc3N3M3M3NzM3c3N3M3Nzc3N3NzQ3d3d3c3d3d3d3d3d1ATU1MREQERNxcRF3NzNxNzEHFzUxA3FxMREQFxMXUxAxd3cRd3B3d3d3d3d3M3M2M3dzMzNzNzc3M3c2M3N2Mzc3M3NzNzNzM3Nzc0NWd3d3dTd3d3Z3dgcTExExAQNRExNzcXFxMxETUzcTEBF3MXExExMRETETF3Uxd3cHd3d3d3d3d3M3MTcjM3d3M3NzY3czc3c3Mzdzc3cnM3M3N3c3Nzdzc1d1d3d3NDd3dncQdxcXETE1MDUTU1MTFzUzMTF3ExE3V3cXFzUxUhMBMVc3d3dxd3d3d3d3d3c2M2NjFjcSM3c3Nzczdzczc3NzJzczczY3c2Mzc3NzNzc3JzZ3d3dzc3d3dAdzcXNTcxcTEDExNTETU1NxMXcTUSV3cXFzUxEREBM3d3d3dHd3d3d3d3d3MTd3F2Fjc3M3M3NzdzNzczc3Nzc3czdzM3M3c3Nzdzc3c3NTc2d3d3dxdndgdTUHNTUxETEHFxEXEDUxNxMXdzcTV3MTU3E1MREFd3d3dwd3d3d3d3d3d2Njc3d3dSUnMWc3NzNzNzdjM3NzczdzN3M3czc3NzNzczNzc3Fxd3dndnFzEAdTU1NzUxcRExMTMRETFxExE1NTFRJTEREHExExE3d3d2V3d3d3d3d3d3d3F3R2N3N3dWczFzc3N3NzM2c3M3N3M3MzczN3Nzcnc3J3c3Nzc2FhdXd3d3QAcRU1MTEhEHE1NREwEHMTEhd3MVMFNRAwEXNTETV3d3cXd3d3d3d3d3d3c3c3E0NHd3NzVnEzc3M3Nzczczc3M3c3JzN3M3Nzczc3Mzc3Jzc3NzY3d3Z3cAdzU1NTExMXExJTExEXNxERN1MRMRNxEQAXMXEBd3d0d3d3d3d3d3d3d3R2d3dzclJ3d3N2dTQ3E3Nzczdyc3czc3NzNyc3Nzc3N3c3Jzc3N3NzdSc1Y3dAdxMRNTERMXExMREBAXMxMHc3cVNBNRMQAXExE3d3B3d3d3d3d3d3d3c3E3Nzc3c3Fnc3c1JzMnI3NzczNzczdzc3NjNzc3Nzc1Mzc3M3NzM3NzNzQzR3MAd3ExMTBTU1NRNTERc1MQEXdxcBMVMxEBYXE1d3VHd3d3d3d3d3d3d3d3dwc3Nzd3NzR3d3dWU3QwNzc3NzdzN3Nzc3Nzc3NzczdzNzc3N3c3N3M3NzMHUAR3cRERMBMTExMRMzUxMRd3FzFxU3EQEBd3d3VANXNnd3d3d3d3d3d3Nzc3Z3V3d3N3NHcnc3Rzd0NDU3NzN3M3Nzc3NzY3NzNzNXNzc3Mzc3M3czNzczcwB3dzU1NTcRFxMQVzcRETd3NTESFXEQB3d3c0N2NHN3d3d3d3d3d3dwczQ3AzI3N3Nzc3UndzdnN3cnAyNTM3c3Nzc3Nzc3NnNzNzc3M3czc3Mzd3Nzc3NwAGdzExERNTARExcTcTARd3NTUTdzEQF3dwRXQ2NDQ2F3d3d3d3d3c3Z3d3dHU3N3d3dzcWFhd3dzd3dXJzczczc3M3Nzc3M3NjNzY3Mjczc3czMXNzc3NxIUN1MTUxMRMXVlNRMRF3F3MRNXd1N3cABjdndXd3cWJSdzd3d3dzQ3cWV3NydhcWNzd3c3NzQ2dHc3clJSFzNzc3c3Nzc3c3NzczNzc3NjcyNzY3MnMyc3AAQ1cTERExU3dzEhATd3dTU1d3d3VQR1NTYXZ2d3JxY0NDQ0d3d3d3c3B0dxdyc3Nzc3N3dzcTcHR3d3d3ByNzUzc3Nzczc3Nzc3M3czczN3NzM3M3NzczcwAAdXd3V3V3V1ETV3d3d3d3d2dAJHZ3dhcHN1Z1Z0d3YWcyYXcWV3d3Nwd3d3dHdDR3Nzd3dzc3NDdzd3dWFyczc3Nzdzc3Nzc3MzczdzM3Nzc3M3Mzc3NzcABQV3d3d3d3V3d3d3d3d3AQdHd3Z3dndlJxZxZ2NHd0dwcnc3d3d3dzQ0dDc3NzclNhc3M3dzd3B0c2N3JSUhY3NzNzc3Nzc3NzczNzczczczc3NzNzNzNxJARBZ1d3d3d3d3c1YUBFZ2d3Z2dnd2d3djQ0NUd2B2V2V3d3d3d3d3c3N3d3d3d3Nzd3dzd3c3c3d3d3d3dzczc3Nzc3Nzc3Nzc3NzNzNzNzM3M3M3M3M3MzFhQ0VldHR1ZWVhYWN3d3Z3d3dnd3Z3d3Z3Y3JXd3Z3d3cAAAAAAAAAAAAAAQUAAAAAAACSrQX+</d:Picture>\n" + 
+		"</m:properties>\n" + 
+		"</content>\n" + 
+		"</entry>";
+		
+var sMetadataComplex = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + 
+		"<edmx:Edmx Version=\"1.0\"\n" + 
+		"	xmlns:edmx=\"http://schemas.microsoft.com/ado/2007/06/edmx\"\n" + 
+		"	xmlns:m=\"http://schemas.microsoft.com/ado/2007/08/dataservices/metadata\"\n" + 
+		"	xmlns:sap=\"http://www.sap.com/Protocols/SAPData\">\n" + 
+		"	<edmx:DataServices m:DataServiceVersion=\"2.0\">\n" + 
+		"		<Schema Namespace=\"sap.ui.test\" xml:lang=\"en\"\n" + 
+		"			sap:schema-version=\"0000\" xmlns=\"http://schemas.microsoft.com/ado/2008/09/edm\">\n" + 
+		"			<EntityType Name=\"BusinessPartner\" sap:content-version=\"1\">\n" + 
+		"				<Key>\n" + 
+		"					<PropertyRef Name=\"BusinessPartnerID\" />\n" + 
+		"				</Key>\n" + 
+		"				<Property Name=\"Address\" Type=\"sap.ui.test.CT_Address\"\n" + 
+		"					Nullable=\"false\" />\n" + 
+		"				<Property Name=\"BusinessPartnerID\" Type=\"Edm.String\"\n" + 
+		"					Nullable=\"false\" MaxLength=\"10\" sap:label=\"Bus. Part. ID\"\n" + 
+		"					sap:creatable=\"false\" sap:updatable=\"false\" />\n" + 
+		"				<Property Name=\"CompanyName\" Type=\"Edm.String\" MaxLength=\"80\"\n" + 
+		"					sap:label=\"Company Name\" />\n" + 
+		"				<Property Name=\"WebAddress\" Type=\"Edm.String\" sap:label=\"Web Address\"\n" + 
+		"					sap:sortable=\"false\" sap:filterable=\"false\" sap:semantics=\"url\" />\n" + 
+		"				<Property Name=\"EmailAddress\" Type=\"Edm.String\" MaxLength=\"255\"\n" + 
+		"					sap:label=\"E-Mail Address\" sap:semantics=\"email\" />\n" + 
+		"				<Property Name=\"PhoneNumber\" Type=\"Edm.String\" MaxLength=\"30\"\n" + 
+		"					sap:label=\"Phone No.\" sap:semantics=\"tel\" />\n" + 
+		"				<Property Name=\"FaxNumber\" Type=\"Edm.String\" MaxLength=\"30\"\n" + 
+		"					sap:label=\"Fax Number\" />\n" + 
+		"				<Property Name=\"LegalForm\" Type=\"Edm.String\" MaxLength=\"10\"\n" + 
+		"					sap:label=\"Legal Form\" />\n" + 
+		"				<Property Name=\"CurrencyCode\" Type=\"Edm.String\" MaxLength=\"5\"\n" + 
+		"					sap:label=\"Currency\" sap:semantics=\"currency-code\" />\n" + 
+		"				<Property Name=\"BusinessPartnerRole\" Type=\"Edm.String\"\n" + 
+		"					MaxLength=\"3\" sap:label=\"Bus. Part. Role\" />\n" + 
+		"				<Property Name=\"CreatedAt\" Type=\"Edm.DateTime\" Precision=\"7\"\n" + 
+		"					sap:label=\"Time Stamp\" sap:creatable=\"false\" sap:updatable=\"false\" />\n" + 
+		"				<Property Name=\"ChangedAt\" Type=\"Edm.DateTime\" Precision=\"7\"\n" + 
+		"					ConcurrencyMode=\"Fixed\" sap:label=\"Time Stamp\" sap:creatable=\"false\"\n" + 
+		"					sap:updatable=\"false\" />\n" + 
+		"			</EntityType>\n" + 
+		"			<ComplexType Name=\"CT_Address\">\n" + 
+		"				<Property Name=\"City\" Type=\"Edm.String\" MaxLength=\"40\"\n" + 
+		"					sap:label=\"City\" sap:semantics=\"city\" />\n" + 
+		"				<Property Name=\"PostalCode\" Type=\"Edm.String\" MaxLength=\"10\"\n" + 
+		"					sap:label=\"Postal Code\" sap:semantics=\"zip\" />\n" + 
+		"				<Property Name=\"Street\" Type=\"Edm.String\" MaxLength=\"60\"\n" + 
+		"					sap:label=\"Street\" sap:semantics=\"street\" />\n" + 
+		"				<Property Name=\"Building\" Type=\"Edm.String\" MaxLength=\"10\"\n" + 
+		"					sap:label=\"Building\" />\n" + 
+		"				<Property Name=\"Country\" Type=\"Edm.String\" MaxLength=\"3\"\n" + 
+		"					sap:label=\"Country\" sap:semantics=\"country\" />\n" + 
+		"				<Property Name=\"AddressType\" Type=\"Edm.String\" MaxLength=\"2\"\n" + 
+		"					sap:label=\"Address Type\" />\n" + 
+		"			</ComplexType>\n" + 
+		"			<EntityContainer Name=\"gwsample_basic_Entities\"\n" + 
+		"				m:IsDefaultEntityContainer=\"true\">\n" + 
+		"				<EntitySet Name=\"BusinessPartnerSet\" EntityType=\"sap.ui.test.BusinessPartner\"\n" + 
+		"					sap:content-version=\"1\" />\n" + 
+		"			</EntityContainer>\n" + 
+		"			<atom:link rel=\"self\"\n" + 
+		"				href=\"/SalesOrderSrv//$metadata\"\n" + 
+		"				xmlns:atom=\"http://www.w3.org/2005/Atom\" />\n" + 
+		"			<atom:link rel=\"latest-version\"\n" + 
+		"				href=\"/SalesOrderSrv//$metadata\"\n" + 
+		"				xmlns:atom=\"http://www.w3.org/2005/Atom\" />\n" + 
+		"		</Schema>\n" + 
+		"	</edmx:DataServices>\n" + 
+		"</edmx:Edmx>"

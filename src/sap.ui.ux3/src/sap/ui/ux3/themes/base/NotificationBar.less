@@ -29,10 +29,6 @@
 	z-index: 2; /* needed when the NotiBar has to cover the Table's row headers */
 }
 
-HTML[data-sap-ui-browser='ie8'] .sapUiNotificationBar {
-	background-color: @sapUiNotificationBarBG_IE;
-}
-
 .sapUiNotificationBarMaximized {
 	/* height needs to be calculated corresponding to current window height */
 	/*height: @sapUiNotificationBarHeightMaximized;*/
@@ -72,10 +68,6 @@ HTML[data-sap-ui-browser='ie8'] .sapUiNotificationBar {
 	-webkit-transition: all 0.2s linear;
 	-moz-transition: all 0.2s linear;
 	transition: all 0.2s linear;
-}
-
-HTML[data-sap-ui-browser='ie8'] .sapUiBarToggle {
-	background-color: @sapUiNotificationBarBG_IE;
 }
 
 .sapUiBarToggle.sapUiBarToggleWide {
@@ -208,25 +200,12 @@ HTML[data-sap-ui-browser='ie8'] .sapUiBarToggle {
 	max-width: 250px;
 }
 
-HTML[data-sap-ui-browser='ie8'] .sapUiNotifierCallout {
-	background-color: @sapUiNotificationBarBG_IE;
-	border: 4px solid @sapUiNotificationBarCalloutBorder_IE;
-}
-
-HTML[data-sap-ui-browser='ie8'] .sapUiNotifierCallout.sapUiShd {
-	outline-width: 0px;
-}
-
 html[dir=rtl] .sapUiNotifierCallout {
 	max-width: 250px;
 }
 
 .sapUiNotifierCallout > .sapUiCltBaseCont {
 	background-color: transparent;
-}
-
-HTML[data-sap-ui-browser='ie8'] .sapUiNotifierCallout > .sapUiCltBaseCont {
-	background-color: @sapUiNotificationBarBG_IE;
 }
 
 .sapUiNotifierCallout .sapUiCltArr.sapUiCltBaseArr {
@@ -249,12 +228,6 @@ HTML[data-sap-ui-browser='ie8'] .sapUiNotifierCallout > .sapUiCltBaseCont {
 	width: 0;
 }
 
-HTML[data-sap-ui-browser='ie8'] .sapUiNotifierCallout .sapUiCltArr.sapUiCltBaseArr {
-	/* equals a rotation of 0 degrees */
-	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=1, M12=0, M21=0, M22=1, SizingMethod='auto expand')";
-	border-top-color: @sapUiNotificationBarCalloutBorder_IE;
-}
-
 .sapUiNotifierContainers {
 	max-height: @sapUiNotificationBarHeightMaximized;
 	overflow: auto;
@@ -269,11 +242,6 @@ HTML[data-sap-ui-browser='ie8'] .sapUiNotifierCallout .sapUiCltArr.sapUiCltBaseA
 .sapUiNotifierContent {
 	overflow: auto;
 	overflow-x: hidden;
-}
-
-/*HTML[data-sap-ui-browser^='ff'] .sapUiNotifierContent .sapUiCommonsHoriDiv,*/
-HTML[data-sap-ui-browser='ie8'] .sapUiNotifierContent .sapUiCommonsHoriDiv {
-	margin-left: -45px;
 }
 
 .sapUiNotifierTitle {

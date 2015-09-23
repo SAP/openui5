@@ -35,6 +35,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		properties : {
 
 			/**
+			 * Determines whether the initial focus is set automatically on first rendering and after navigating to a new page.
+			 * This is useful when on touch devices the keyboard pops out due to the focus being automatically set on an input field.
+			 * If necessary the "afterShow" event can be used to focus another element.
+			 * @since 1.30
+			 */
+			autoFocus: {type: "boolean", group: "Behavior", defaultValue: true},
+
+			/**
 			 * The height of the NavContainer. Can be changed when the NavContainer should not cover the whole available area.
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
@@ -257,26 +265,28 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	NavContainer.prototype.onAfterRendering = function() {
-		var pageToRenderFirst = this.getCurrentPage();
+		var pageToRenderFirst = this.getCurrentPage(),
+			bIsInsideAPopup = !!this.$().closest('[data-sap-ui-area="sap-ui-static"]').length,
+			focusObject, oNavInfo, pageId, oEvent;
+
 		// for the very first rendering
 		if (this._bNeverRendered && pageToRenderFirst) {
 			this._bNeverRendered = false;
 			delete this._bNeverRendered;
 
 			// special handling for the page which is the first one which is rendered in this NavContainer
-			var pageId = pageToRenderFirst.getId();
+			pageId = pageToRenderFirst.getId();
 
 			// set focus to first focusable object
 			// when NavContainer is inside a popup, the focus is managed by the popup and shouldn't be set here
-			if (!this.$().closest('[data-sap-ui-area="sap-ui-static"]').length) {
-				var focusObject = jQuery.sap.byId(pageId).firstFocusableDomRef();
+			if (!bIsInsideAPopup && this.getAutoFocus()) {
+				focusObject = NavContainer._applyAutoFocusTo(pageId);
 				if (focusObject) {
-					jQuery.sap.focus(focusObject);
 					this._mFocusObject[pageId] = focusObject;
 				}
 			}
 
-			var oNavInfo = {
+			oNavInfo = {
 					from:null,
 					fromId:null,
 					to:pageToRenderFirst,
@@ -289,7 +299,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					direction:"initial"
 			};
 
-			var oEvent = jQuery.Event("AfterShow", oNavInfo);
+			oEvent = jQuery.Event("AfterShow", oNavInfo);
 			oEvent.srcControl = this;
 			oEvent.data = this._oToDataBeforeRendering || {};
 			oEvent.backData = {};
@@ -447,6 +457,36 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
+	NavContainer._applyAutoFocusTo = function (sId) {
+		var focusSubjectDomRef = jQuery.sap.byId(sId).firstFocusableDomRef();
+		if (focusSubjectDomRef) {
+			jQuery.sap.focus(focusSubjectDomRef);
+		}
+
+		return focusSubjectDomRef;
+	};
+
+	NavContainer.prototype._applyAutoFocus = function (oNavInfo) {
+		var sPageId = oNavInfo.toId,
+			domRefRememberedFocusSubject,
+			bAutoFocus = this.getAutoFocus(),
+			bNavigatingBackToPreviousLocation = oNavInfo.isBack || oNavInfo.isBackToPage || oNavInfo.isBackToTop;
+
+		// check navigation type (backward or forward)
+		if (bNavigatingBackToPreviousLocation) {
+			// set focus to the remembered focus object if available
+			// if no focus was set set focus to first focusable object in "to page"
+			domRefRememberedFocusSubject = this._mFocusObject[sPageId];
+			if (domRefRememberedFocusSubject) {
+				jQuery.sap.focus(domRefRememberedFocusSubject);
+			} else if (bAutoFocus){
+				NavContainer._applyAutoFocusTo(sPageId);
+			}
+		} else if (oNavInfo.isTo && bAutoFocus) {
+			// set focus to first focusable object in "to page"
+			NavContainer._applyAutoFocusTo(sPageId);
+		}
+	};
 
 	NavContainer.prototype._afterTransitionCallback = function(oNavInfo, oData, oBackData) {
 		var oEvent = jQuery.Event("AfterShow", oNavInfo);
@@ -461,29 +501,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		this._iTransitionsCompleted++;
 		this._bNavigating = false;
-
-		// check navigation type (backward or forward)
-		var focusObject = null;
-		if (oNavInfo.isBack || oNavInfo.isBackToPage || oNavInfo.isBackToTop) {
-			// set focus to the remembered focus object if available
-			// if no focus was set set focus to first focusable object in "to page"
-			focusObject = this._mFocusObject[oNavInfo.toId];
-			if (focusObject) {
-				jQuery.sap.focus(focusObject);
-			} else {
-				focusObject = jQuery('#' + oNavInfo.toId).firstFocusableDomRef();
-				if (focusObject) {
-					jQuery.sap.focus(focusObject);
-				}
-			}
-		} else if (oNavInfo.isTo) {
-			// set focus to first focusable object in "to page"
-			focusObject = jQuery('#' + oNavInfo.toId).firstFocusableDomRef();
-			if (focusObject) {
-				jQuery.sap.focus(focusObject);
-			}
-		}
-
+		this._applyAutoFocus(oNavInfo);
 		this.fireAfterNavigate(oNavInfo);
 		// TODO: destroy HTML? Remember to destroy ALL HTML of several pages when backToTop has been called
 

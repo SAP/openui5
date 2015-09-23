@@ -256,6 +256,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			return this;
 		};
 
+		BusyDialog.prototype.getDomRef = function () {
+			return this._oDialog && this._oDialog.getDomRef();
+		};
+
 		//private functions
 
 		BusyDialog.prototype._destroyTheCloseButton = function () {
@@ -267,7 +271,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			var cancelButtonText = this.getCancelButtonText();
 			var closeButtonText = cancelButtonText ? cancelButtonText : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("BUSYDIALOG_CANCELBUTTON_TEXT");
 
-			return this._cancelButton ? this._cancelButton : this._cancelButton = new sap.m.Button({
+			return this._cancelButton ? this._cancelButton : this._cancelButton = new sap.m.Button(this.getId() + 'busyCancelBtn', {
 				text: closeButtonText,
 				press: function () {
 					this.close(true);

@@ -53,7 +53,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 				associations: {
 
 					/**
-					 * The time picker control that instanciated this sliders
+					 * The time picker control that instantiated this sliders
 					 */
 					invokedBy: { type: "sap.m.TimePicker", multiple: false }
 				}
@@ -70,8 +70,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 			var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
 				aPeriods = sap.ui.core.LocaleData.getInstance(oLocale).getDayPeriods("abbreviated");
 
-			this._fnOrientationChanged = jQuery.proxy(this._onOrientationChanged, this);
-			sap.ui.Device.resize.attachHandler(this._fnOrientationChanged);
+			this._fnLayoutChanged = jQuery.proxy(this._onOrientationChanged, this);
+			sap.ui.Device.resize.attachHandler(this._fnLayoutChanged);
 
 			this._sAM = aPeriods[0];
 			this._sPM = aPeriods[1];
@@ -83,6 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		 * @private
 		 */
 		TimePickerSliders.prototype.exit = function () {
+			this.$().off(!!sap.ui.Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
 			sap.ui.Device.resize.detachHandler(this._fnOrientationChanged);
 		};
 
@@ -90,7 +91,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		 * Called after the control is rendered.
 		 */
 		TimePickerSliders.prototype.onAfterRendering = function() {
-			if (sap.ui.Device.browser.name !== "ie") {
+			this.$().off(!!sap.ui.Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", this._onmousewheel);
+			this.$().on(!!sap.ui.Device.browser.firefox ? "DOMMouseScroll" : "mousewheel", jQuery.proxy(this._onmousewheel, this));
+
+			if (!sap.ui.Device.browser.msie) {
 				/* This method is called here prematurely to ensure slider loading on time.
 				 * Make sure _the browser native focus_ is not actually set on the early call (the "true" param)
 				 * because that fires events and results in unexpected behaviors */
@@ -342,6 +346,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		};
 
 		/**
+		 * Handles the mouse scroll event.
+		 *
+		 * @param {jQuery.Event} oEvent Event object
+		 */
+		TimePickerSliders.prototype._onmousewheel = function(oEvent) {
+			var currentSlider = this._getCurrentSlider();
+
+			if (currentSlider) {
+				currentSlider._onmousewheel(oEvent);
+			}
+		};
+
+		/**
 		 * Handles the orientation change event.
 		 *
 		 * @private
@@ -349,11 +366,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSlidersR
 		TimePickerSliders.prototype._onOrientationChanged = function() {
 			var aSliders = this.getAggregation("_columns");
 
-			if (aSliders) {
-				for ( var i = 0; i < aSliders.length; i++) {
-					if (aSliders[i].getIsExpanded()) {
-						aSliders[i]._updateSelectionFrameLayout();
-					}
+			if (!aSliders) {
+				return;
+			}
+
+			for ( var i = 0; i < aSliders.length; i++) {
+				if (aSliders[i].getIsExpanded()) {
+					aSliders[i]._updateSelectionFrameLayout();
 				}
 			}
 		};

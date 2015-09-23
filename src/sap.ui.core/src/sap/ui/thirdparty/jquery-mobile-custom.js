@@ -916,6 +916,9 @@ function cssPointerEventsTest() {
 	var element = document.createElement( 'x' ),
 		documentElement = document.documentElement,
 		getComputedStyle = window.getComputedStyle,
+		// ##### BEGIN: MODIFIED BY SAP
+		computed = getComputedStyle && getComputedStyle(element, ''),
+		// ##### END: MODIFIED BY SAP
 		supports;
 
 	if ( !( 'pointerEvents' in element.style ) ) {
@@ -925,8 +928,11 @@ function cssPointerEventsTest() {
 	element.style.pointerEvents = 'auto';
 	element.style.pointerEvents = 'x';
 	documentElement.appendChild( element );
-	supports = getComputedStyle &&
-	getComputedStyle( element, '' ).pointerEvents === 'auto';
+	// ##### BEGIN: MODIFIED BY SAP
+	//supports = getComputedStyle &&
+	//getComputedStyle( element, '' ).pointerEvents === 'auto';
+	supports = computed && computed.pointerEvents === 'auto';
+	// ##### END: MODIFIED BY SAP
 	documentElement.removeChild( element );
 	return !!supports;
 }
@@ -1905,7 +1911,7 @@ if ( eventCaptureSupported ) {
 	// events and the mouse event's target is different than the target of the
 	// touch event.
 	// Do not suppress mouse and click events on Windows Phone.
-	if (!sap.ui.Device.os.windows_phone) {
+	if (!(sap.ui.Device.os.windows_phone && sap.ui.Device.os.version < 10)) {
 		document.addEventListener( "mousedown", suppressEvent, true );
 		document.addEventListener( "mouseup", suppressEvent, true );
 		document.addEventListener( "click", suppressEvent, true );

@@ -448,7 +448,7 @@
 	});
 	
 	module("FocusAfterBindingUpdate");
-	testOData("Focus should be retained after binding update", function() {
+	document.hasFocus() && testOData("Focus should be retained after binding update", function() {
 		var sFocusedControlId,
 			oMockServer = startMockServer(),
 			oDeferred = jQuery.Deferred(),

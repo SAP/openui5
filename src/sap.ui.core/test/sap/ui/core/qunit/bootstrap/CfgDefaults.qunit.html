@@ -1,66 +1,70 @@
 <!DOCTYPE HTML>
-
 <!-- 
   Tested class: sap.ui.core.Configuration
   Author: d020684
 -->
-
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8" />
+
 	<!-- Initialization -->
-	<script id="sap-ui-bootstrap" type="text/javascript" src="../../../../../../resources/sap-ui-core.js" ></script>
-	
+	<script id="sap-ui-bootstrap" 
+			src="../../../../../../resources/sap-ui-core.js" 
+			>
+	</script>
+
 	<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-	<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<!-- Test functions -->
-	<script language="javascript">
+	<script>
 
-		module("Configuration Defaults");
+		function navigatorLanguage() {
+			if ( sap.ui.Device.os.android ) {
+				// on Android, navigator.language is hardcoded to 'en', so check UserAgent string instead
+				var match = navigator.userAgent.match(/\s([a-z]{2}-[a-z]{2})[;)]/i);
+				if ( match ) {
+					return match[1];
+				}
+				// okay, we couldn't find a language setting. It might be better to fallback to 'en' instead of having no language
+			}
+			return navigator.language;
+		}
 
-		test("Settings", function() {
+		QUnit.module("Configuration Defaults");
+
+		QUnit.test("Settings", function(assert) {
 			var oCfg = new sap.ui.core.Configuration();
 
 			// compare values where possible 
-			equal(oCfg.theme, "base", "theme");
-			equal(oCfg.language, (navigator.languages && navigator.languages[0]) || navigator.language || navigator.userLanguage || navigator.browserLanguage, "language");
-			equal(oCfg.accessibility, true, "accessibility");
-			equal(oCfg.animation, true, "animation");
-			equal(oCfg.getRTL(), false, "rtl");
-			equal(oCfg.debug, false, "debug");
-			equal(oCfg.noConflict, false, "noConflict");
-			equal(oCfg.trace, false, "trace");
-			deepEqual(oCfg.modules, [], "modules");   
-			deepEqual(oCfg.areas, null, "areas");
-			equal(oCfg.onInit, undefined, "onInit");
-			equal(oCfg.ignoreUrlParams, false, "ignoreUrlParams");
+			assert.equal(oCfg.theme, "base", "theme");
+			assert.equal(oCfg.language, (navigator.languages && navigator.languages[0]) || navigatorLanguage() || navigator.userLanguage || navigator.browserLanguage, "language");
+			assert.equal(oCfg.accessibility, true, "accessibility");
+			assert.equal(oCfg.animation, true, "animation");
+			assert.equal(oCfg.getRTL(), false, "rtl");
+			assert.equal(oCfg.debug, false, "debug");
+			assert.equal(oCfg.noConflict, false, "noConflict");
+			assert.equal(oCfg.trace, false, "trace");
+			assert.deepEqual(oCfg.modules, [], "modules");
+			assert.deepEqual(oCfg.areas, null, "areas");
+			assert.equal(oCfg.onInit, undefined, "onInit");
+			assert.equal(oCfg.ignoreUrlParams, false, "ignoreUrlParams");
 		});
 
 		// in the default case, noConflict must not have been called -> $ is available
-		test("jQuery and $", function() {
-			ok(window.jQuery, "window.jQuery is available");
-			ok(window.$, "window.$ is available");
-			equal(jQuery, $, "$ is a synonym for jQuery");
+		QUnit.test("jQuery and $", function(assert) {
+			assert.ok(window.jQuery, "window.jQuery is available");
+			assert.ok(window.$, "window.$ is available");
+			assert.equal(jQuery, $, "$ is a synonym for jQuery");
 		});
-		
+
 	</script>
-  
+
 </head>
 <body>
-	<h1 id="qunit-header">QUnit tests: SAPUI5 Configuration (using defaults only)</h1>
-	<h2 id="qunit-banner"></h2>
- 	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<br>
-	<div id="uiArea1"></div>
-	<div id="uiArea2"></div>
-	<div id="uiArea3"></div>
-	<input id="customInput" type="text"></input>
-	<div id="area-51"></div>
-	<div id="no-go"></div>
+	<div id="qunit"></div>
 </body>
 </html>

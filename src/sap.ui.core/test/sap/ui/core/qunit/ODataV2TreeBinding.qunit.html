@@ -501,8 +501,33 @@
 			start();
 		});
 	});
+	
+	asyncTest("Application filtering allowed", function() {
 
-	asyncTest("Tried filtering", function() {
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/Employees", null, [new sap.ui.model.Filter("FirstName", "EQ", "Nancy")], {
+				navigation: {}
+			});
+			
+			var handler1 = function(oEvent) {
+				oBinding.detachChange(handler1);
+				// contexts should be now loaded
+				var aContexts = oBinding.getRootContexts();
+				
+				equal(aContexts.length, 1, "TreeBinding rootContexts length is 1 after application filtering");
+				
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FirstName", oContext), "Nancy", "After refresh: TreeBinding root contexts[0] is correct (Tom)");
+				
+				start();
+			}
+			
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts();
+		});
+	});
+
+	asyncTest("Control filtering prohibited", function() {
 
 		oModel.attachMetadataLoaded(function() {
 			var iWarningCount = 0,
@@ -519,7 +544,6 @@
 			oBinding.filter(new sap.ui.model.Filter("FirstName", "EQ", "Tom"));
 
 			equal(iWarningCount, 1, "One warning (that filtering is not enabled) should have fired");
-			equal(sMessage, "The ODataTreeBinding only supports ApplicationFilters!", "Check warning message");
 			jQuery.sap.log.warning.restore();
 			start();
 		});
@@ -1367,7 +1391,6 @@
 			
 			equal(iErrorCount, 1, "One error logged, if no navigation path properties are given, and hierarchy annotations are missing/incomplete.");
 			equal(iWarningCount, 2, "One warning (that filtering is not enabled) and One for the incomplete annotations.");
-			equal(sMessage, "The ODataTreeBinding only supports ApplicationFilters!", "Check warning message");
 			
 			jQuery.sap.log.warning.restore();
 			jQuery.sap.log.error.restore();
@@ -1396,6 +1419,156 @@
 			};
 			oBinding.attachChange(handler1);
 			oBinding.getRootContexts();
+		});
+	});
+	
+	asyncTest("OperationMode.Client: initial load + expanding nodes", function(){
+		oModel.attachMetadataLoaded(function() {
+			var oContext;
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+				displayRootNode: true,
+				rootLevel: 1,
+				operationMode: sap.ui.model.odata.OperationMode.Client
+			});
+			
+			var oContext;
+			
+			//trigger initial loading of the complete tree
+			oBinding.attachChange(fnChangeHandler);
+			oBinding.getRootContexts();
+			
+			function fnChangeHandler() {
+				var aContexts = oBinding.getRootContexts();
+				equal(aContexts.length, 1, "rootContexts length is correct = 1");
+				
+				//Level 0
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "01", "1st node sits on the correct level = '01'");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000001", "1st node has correct ID");
+				
+				//Level 0.0
+				aContexts = oBinding.getNodeContexts(oContext);
+				
+				equal(aContexts.length, 9, "nodeContexts length is correct = 9");
+				
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "02", "Node context for root children could be loaded instantly");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "Retrieved node is correct = 000002");
+				
+				//Level 0.0.0
+				var aSubContexts = oBinding.getNodeContexts(oContext);
+				
+				equal(aSubContexts.length, 7, "nodeContexts length is correct = 7");
+				
+				oContext = aSubContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "3rd level expanded node is on the correct level");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000003", "3rd level expanded node is correct");
+				
+				oContext = aSubContexts[6];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), "03", "last 3rd level node is also loaded, nothing missing");
+				
+				start();
+			}
+		});
+	});
+	
+	asyncTest("OperationMode.Client: initial load + sorter", function(){
+		oModel.attachMetadataLoaded(function() {
+			var oContext;
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+				rootLevel: 2,
+				operationMode: sap.ui.model.odata.OperationMode.Client
+			},
+			[new sap.ui.model.Sorter("HierarchyNode", true)]);
+			
+			var oContext;
+			
+			//trigger initial loading
+			oBinding.attachChange(fnChangeHandler);
+			oBinding.getRootContexts();
+			
+			function fnChangeHandler(oEvent) {
+				var aRootContexts = oBinding.getRootContexts();
+				
+				//check if the root contexts are sorted correctly
+				ok(true, "Sorted descending test:");
+				equal(aRootContexts.length, 9, "Exactly 9 contexts returned")
+				equal(aRootContexts[0].getProperty("HierarchyNode"), "001180", "First Root Node is 001180");
+				equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
+				equal(aRootContexts[8].getProperty("HierarchyNode"), "000002", "Last Root Node is 000002");
+				
+				//loading the children of a node
+				var aChildContexts = oBinding.getNodeContexts(aRootContexts[4]);
+				
+				ok(true, "Check if sorting is still applied after expanding a node:");
+				equal(aChildContexts.length, 2, "Exactly 2 contexts returned.");
+				equal(aChildContexts[0].getProperty("HierarchyNode"), "001134", "aChildContexts[0] of expanded node is also sorted: 001134");
+				equal(aChildContexts[1].getProperty("HierarchyNode"), "001132", "aChildContexts[1] of expanded node is also sorted: 001132");
+				
+				start();
+			}
+			
+		});
+	});
+	
+	asyncTest("OperationMode.Auto: Backend has fewer entries than the threshold.", function () {
+		oModel.attachMetadataLoaded(function() {
+			var oContext;
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", [], null, {
+				rootLevel: 2,
+				operationMode: sap.ui.model.odata.OperationMode.Auto,
+				threshold: 20000
+			});
+			
+			var oContext;
+			
+			//trigger initial count request
+			oBinding.attachChange(fnChangeHandler);
+			oBinding.getRootContexts();
+			
+			// change for the count request
+			function fnChangeHandler(oEvent) {
+				oBinding.detachChange(fnChangeHandler);
+				equal(oBinding.bClientOperation, true, "Binding switched to clientside operations");
+				
+				//get the actual data
+				oBinding.attachChange(fnChangeHandler2);
+				oBinding.getRootContexts();
+			}
+			
+			//change for the data request
+			function fnChangeHandler2(oEvent) {
+				oBinding.detachChange(fnChangeHandler2);
+				var aRootContexts = oBinding.getRootContexts();
+				
+				//check if the root contexts are sorted correctly
+				ok(true, "Sorted descending test:");
+				equal(aRootContexts.length, 9, "Exactly 9 contexts returned")
+				equal(aRootContexts[0].getProperty("HierarchyNode"), "000002", "First Root Node is 000002");
+				equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
+				equal(aRootContexts[8].getProperty("HierarchyNode"), "001180", "Last Root Node is 001180");
+				
+				//loading the children of a node
+				var aChildContexts = oBinding.getNodeContexts(aRootContexts[4]);
+				
+				ok(true, "Check if sorting is still applied after expanding a node:");
+				equal(aChildContexts.length, 2, "Exactly 2 contexts returned.");
+				equal(aChildContexts[0].getProperty("HierarchyNode"), "001132", "aChildContexts[0] of expanded node is also sorted: 001134");
+				equal(aChildContexts[1].getProperty("HierarchyNode"), "001134", "aChildContexts[1] of expanded node is also sorted: 001132");
+				
+				//apply clientside sorter -> NO request anymore
+				ok(true, "Sorting on the client");
+				oBinding.sort([new sap.ui.model.Sorter("HierarchyNode", true)]);
+				aRootContexts = oBinding.getRootContexts();
+				equal(aRootContexts.length, 9, "Still exactly 9 contexts after sorting - No Request sent");
+				equal(aRootContexts[0].getProperty("HierarchyNode"), "001180", "First Root Node is 001180");
+				equal(aRootContexts[4].getProperty("HierarchyNode"), "001131", "Root from the middle is 001131");
+				equal(aRootContexts[8].getProperty("HierarchyNode"), "000002", "Last Root Node is 000002");
+				
+				start();
+			}
+			
+			//[new sap.ui.model.Sorter("HierarchyNode", true)]
 		});
 	});
 

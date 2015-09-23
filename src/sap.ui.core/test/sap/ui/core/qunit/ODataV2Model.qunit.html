@@ -2086,6 +2086,50 @@
 		});
 	});
 	
+	asyncTest("test metadata loading: sap-value-list - double entityTypes",function(){
+		cleanServiceDataCache();
+		var iEntitySetCount, iEntityTypeCount, iAnnotationCount;
+		
+		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
+		oModel.metadataLoaded().then(function(){
+			ok(oModel.getServiceMetadata(), "metadata loaded");
+			ok(!oModel.getServiceAnnotations(), "annotations not loaded");
+			ok(!oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Annotation EntityType not yet loaded");
+			ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+			oModel.addAnnotationUrl([sURI+"$metadata?sap-value-list=Test", sURI+"$metadata?sap-value-list=Test2"]).then(function(oParams) {
+				equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
+				ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+				ok(oModel.getServiceAnnotations(), "annotations loaded");
+				ok(oParams.entitySets, "array of entitySets returned");
+				ok(oParams.entitySets.length === 2, "2 entitySet added");
+				ok(typeof oParams.entitySets[0] == "object", "entitySet metadata object exists");
+				ok(oParams.entitySets[0].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
+				ok(oParams.entitySets[0].name === "VL_CH_ANLA", "entitySetName ok");
+				ok(typeof oParams.entitySets[1] == "object", "entitySet metadata object exists");
+				ok(oParams.entitySets[1].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
+				ok(oParams.entitySets[1].name === "VL_CH_ANLA", "entitySetName ok");
+				iEntitySetCount = oModel.getServiceMetadata().dataServices.schema[0].entityContainer[0].entitySet.length;
+				iEntityTypeCount = oModel.getServiceMetadata().dataServices.schema[0].entityType.length; 
+				iAnnotationCount = oModel.getServiceMetadata().dataServices.schema[0].annotations.length;
+			}).then(function() {
+				oModel.addAnnotationUrl([sURI+"$metadata?sap-value-list=Test3"]).then(function(oParams) {
+					equal(oModel.getProperty("/#VL_CH_ANLA/BUKRS/@sap:label"), "Company Code", "Annotation EntityType loaded");
+					ok(oModel.getProperty("/#UpdatableItem/CompanyCode/@sap:label"), "Company Code");
+					ok(oModel.getServiceAnnotations(), "annotations loaded");
+					ok(oParams.entitySets, "array of entitySets returned");
+					ok(oParams.entitySets.length === 1, "1 entitySet added");
+					ok(typeof oParams.entitySets[0] == "object", "entitySet metadata object exists");
+					ok(oParams.entitySets[0].entityType === "ZFAR_CUSTOMER_LINE_ITEMS2_SRV.VL_CH_ANLA", "entityType ok");
+					ok(oParams.entitySets[0].name === "VL_CH_ANLA", "entitySetName ok");
+					ok(iEntitySetCount == oModel.getServiceMetadata().dataServices.schema[0].entityContainer[0].entitySet.length,"no EntitySet added");
+					ok(iEntityTypeCount == oModel.getServiceMetadata().dataServices.schema[0].entityType.length,"no EntityType added");
+					ok(iAnnotationCount < oModel.getServiceMetadata().dataServices.schema[0].annotations.length,"annotations added");
+					start();
+				});
+			});
+		});
+	});
+	
 	asyncTest("test metadata loading (relative metadataUrl): sap-value-list",function(){
 		cleanServiceDataCache();
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
@@ -2290,6 +2334,24 @@
 			equal(this.oModel.getProperty("CategoryID/##type", oContext), "Edm.Int32");
 			equal(this.oModel.getProperty("Products(0)/##name", oContext), "Product");
 			equal(this.oModel.getProperty("Products(0)/ProductID/##type", oContext), "Edm.Int32");
+			start();
+		}.bind(this))
+	});
+	
+	asyncTest("createEntry with complex types wich have namespace with . characters", function() {
+		var oModel = initModel(sURI, {metadataUrlParams : {test: "complex"}});
+		oModel.metadataLoaded().then(function() {
+			var oContext = oModel.createEntry("BusinessPartnerSet");
+			ok(oContext, "context should be created");
+			var oData = oContext.getObject();
+			ok(oData, " check context data");
+			ok(oData.Address, " check context data");
+			ok(oData.Address.hasOwnProperty('AddressType'), " check context data");
+			ok(oData.Address.hasOwnProperty('Building'), " check context data");
+			ok(oData.Address.hasOwnProperty('City'), " check context data");
+			ok(oData.Address.hasOwnProperty('Country'), " check context data");
+			ok(oData.Address.hasOwnProperty('Street'), " check context data");
+			oModel.destroy();
 			start();
 		}.bind(this))
 	});

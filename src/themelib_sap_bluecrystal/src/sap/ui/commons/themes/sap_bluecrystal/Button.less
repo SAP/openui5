@@ -108,10 +108,6 @@
    perfect alignment inside the Button as per the spec is a pain.
    Welcome to pain:     */
 
-html[data-sap-ui-browser="ie8"] .sapUiBtnS.sapUiBtnIconOnly > .sapUiBtnIco {
-	margin-top: -3px;
-}
-
 html[data-sap-ui-browser="sf5"] .sapUiBtnS > .sapUiBtnIcoL,
 html[data-sap-ui-browser="sf5"] .sapUiBtnS > .sapUiBtnIcoR,
 html[data-sap-ui-browser="sf5"] .sapUiBtnS > .sapUiBtnTxt,
@@ -246,7 +242,6 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .s
 	don't use filter because of problems with font, round corners and no shadow with filter
 	background-image: url(img/button/EmphButton_regular_BG.png);
 	background-repeat: repeat-x;
-	background-position: left bottom; because IE8 don't know background-size
 	background-size: 1px 100%;
 	-moz-background-size: 1px 100%;
 	-webkit-background-size: 1px 100%;
@@ -327,7 +322,6 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .s
 	don't use filter because of problems with font, round corners and no shadow with filter
 	background-image: url(img/button/EmphButton_accept_BG.png);
 	background-repeat: repeat-x;
-	background-position: left bottom; because IE8 don't know background-size
 	background-size: 1px 100%;
 	-moz-background-size: 1px 100%;
 	-webkit-background-size: 1px 100%;
@@ -375,10 +369,6 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .s
 	opacity: 1;
 }
 
-/*html[data-sap-ui-browser="ie8"] .sapUiBtnS.sapUiBtnNorm.sapUiBtnAccept.sapUiBtnDsbl{
-	filter: alpha(opacity=25);
-}*/
-
 .sapUiBtnS.sapUiBtnLite.sapUiBtnAccept.sapUiBtnDsbl,
 .sapUiBtnS.sapUiBtnLite.sapUiBtnAccept.sapUiBtnDsbl > span.sapUiBtnIco{
 	color: @sapUiFieldSuccessColor;
@@ -417,7 +407,6 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .s
 	don't use filter because of problems with font, round corners and no shadow with filter
 	background-image: url(img/button/EmphButton_reject_BG.png);
 	background-repeat: repeat-x;
-	background-position: left bottom; because IE8 don't know background-size
 	background-size: 1px 100%;
 	-moz-background-size: 1px 100%;
 	-webkit-background-size: 1px 100%;
@@ -464,10 +453,6 @@ html[data-sap-ui-browser="ie9"] .sapUiBtnS.sapUiBtnLite.sapUiBtnDsbl:active > .s
 	/*no opacity on icon because whole button has one*/
 	opacity: 1;
 }
-
-/*html[data-sap-ui-browser="ie8"] .sapUiBtnS.sapUiBtnNorm.sapUiBtnReject.sapUiBtnDsbl{
-	filter: alpha(opacity=25);
-}*/
 
 .sapUiBtnS.sapUiBtnLite.sapUiBtnReject.sapUiBtnDsbl,
 .sapUiBtnS.sapUiBtnLite.sapUiBtnReject.sapUiBtnDsbl > span.sapUiBtnIco{
@@ -537,8 +522,7 @@ html[data-sap-ui-browser="ie10"] .sapUiBtn > span.sapUiBtnIco{
 	color: @sapUiTextInverted;
 }
 
-html[data-sap-ui-browser^="cr"] .sapUiBtnS.sapUiBtnIconOnly > span.sapUiBtnIco,
-html[data-sap-ui-browser="ie8"] .sapUiBtnS.sapUiBtnIconOnly > span.sapUiBtnIco{
+html[data-sap-ui-browser^="cr"] .sapUiBtnS.sapUiBtnIconOnly > span.sapUiBtnIco {
 	margin-top: 1px;
 }
 

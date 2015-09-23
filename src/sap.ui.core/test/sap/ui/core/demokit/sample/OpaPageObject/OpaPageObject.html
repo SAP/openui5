@@ -5,8 +5,8 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>Opa sample for matchers</title>
 
-		<script 
-			id="sap-ui-bootstrap" src="../../../../../../../resources/sap-ui-core.js" 
+		<script
+			id="sap-ui-bootstrap" src="../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-resourceroots='{"myApp.test": "./"}'>
 		</script>
 
@@ -15,19 +15,22 @@
 		<script>
 			(function () {
 				jQuery.sap.require("sap.ui.thirdparty.qunit");
+				jQuery.sap.require("sap.ui.qunit.qunit-junit");
+				jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+				jQuery.sap.require("sap.ui.qunit.QUnitUtils");
 				jQuery.sap.require("sap.ui.test.Opa5");
 				jQuery.sap.require("sap.ui.test.opaQunit");
 				var Opa = sap.ui.test.Opa;
 				var Opa5 = sap.ui.test.Opa5;
 
 				jQuery.sap.require("myApp.test.arrangements.Common");
-				//Ensure to add arrangements, action, assertions before loading the page objects, 
+				//Ensure to add arrangements, action, assertions before loading the page objects,
 				//otherwise they would be overwritten.
 				Opa5.extendConfig({
 					viewName : "view.Main",
 					arrangements : new myApp.test.arrangement.Common()
 				});
-				
+
 				//Load all page objects needed for this test
 				jQuery.sap.require("myApp.test.pageObjects.Intro");
 				jQuery.sap.require("myApp.test.pageObjects.Overview");
@@ -67,10 +70,7 @@
 
 	</head>
 	<body>
-		<h1 id="qunit-header">Opa sample for Page Objects</h1>
-		<h2 id="qunit-banner"></h2>
-		<h2 id="qunit-userAgent"></h2>
-		<ol id="qunit-tests"></ol>
+		<div id="qunit"></div>
 		<div id="qunit-fixture"></div>
 	</body>
 </html>

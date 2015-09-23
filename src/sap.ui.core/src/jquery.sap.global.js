@@ -22,6 +22,7 @@
  */
 
 (function() {
+	"use strict";
 
 	if (!window.jQuery ) {
 		throw new Error("SAPUI5 requires jQuery as a prerequisite (>= version 1.7)");
@@ -3670,8 +3671,9 @@
 				// redefine AJAX call
 				jQuery.ajax = function( url, options ){
 					jQuery.sap.measure.start(url.url, "Request for " + url.url);
-					fnAjax.apply(this,arguments);
+					var oXhr = fnAjax.apply(this,arguments);
 					jQuery.sap.measure.end(url.url);
+					return oXhr;
 				};
 			} else if (fnAjax) {
 				jQuery.ajax = fnAjax;
@@ -4309,6 +4311,8 @@
  * @SecSink {0|XSS} Parameter is evaluated
  */
 jQuery.sap.globalEval = function() {
+	"use strict";
+
 	/*eslint-disable no-eval */
 	eval(arguments[0]);
 	/*eslint-enable no-eval */

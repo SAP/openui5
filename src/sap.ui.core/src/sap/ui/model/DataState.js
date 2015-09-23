@@ -61,8 +61,8 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 		metadata : {},
 		constructor : function() {
 			this.mProperties = {
-				modelMessages : [],
-				controlMessages: [],
+				modelMessages : null,
+				controlMessages: null,
 				laundering: false,
 				originalValue : null,
 				originalInternalValue: null,
@@ -94,10 +94,20 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 					oldValue : jQuery.isArray(this.mProperties[sProperty]) ? this.mProperties[sProperty].slice(0) : this.mProperties[sProperty]
 				};
 				if (sProperty === "modelMessages" || sProperty === "controlMessages") {
-					this.mChangedProperties["messages"] = {
-						oldValue : this.getMessages().slice(0)
-					};
-					vValue = vValue.slice(0);
+					if (this.getMessages()) {
+						this.mChangedProperties["messages"] = {
+							oldValue : this.getMessages().slice(0)
+						};
+					} else {
+						this.mChangedProperties["messages"] = {
+							oldValue : null
+						};
+					}
+					if (jQuery.isArray(vValue)) {
+						vValue = vValue.slice(0);
+					} else {
+						vValue = null;
+					}
 				}
 			}
 			this.mProperties[sProperty] = vValue;
@@ -131,14 +141,20 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	};
 
 	/**
-	 * Returns the array of all state messages or undefined.
+	 * Returns the array of all state messages or null.
 	 * This combines the model and control messages.
 	 * 
-	 * @returns {sap.ui.core.Message[]} the array of all messages
+	 * @returns {sap.ui.core.Message[]} the array of all messages or null if no {link:sap.ui.core.messages.ModelManager ModelManager} is used.
 	 * @public
 	 */
 	DataState.prototype.getMessages = function() {
-		return this.getModelMessages().concat(this.getControlMessages());
+		var aMessages = null,
+			aControlMessages = this.getControlMessages(),
+			aModelMessages = this.getModelMessages();
+		if (aModelMessages || aControlMessages) {
+			aMessages = [].concat(aModelMessages ? aModelMessages : [], aControlMessages ? aControlMessages : []);
+		}
+		return aMessages;
 	};
 
 	/**
@@ -149,17 +165,17 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * @public
 	 */
 	DataState.prototype.setModelMessages = function(aMessages) {
-		return this._updateProperty("modelMessages",aMessages || []);
+		return this._updateProperty("modelMessages",aMessages || null);
 	};
 
 	/**
 	 * Returns the array of state messages of the model or undefined
 	 * 
-	 * @returns {sap.ui.core.Message[]} the array of messages of the model
+	 * @returns {sap.ui.core.Message[]} the array of messages of the model or null if no {link:sap.ui.core.messages.ModelManager ModelManager} is used.
 	 * @public
 	 */
 	DataState.prototype.getModelMessages = function() {
-		return this.getProperty("modelMessages") || [];
+		return this.getProperty("modelMessages");
 	};
 
 	/**
@@ -170,17 +186,17 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * @protected
 	 */
 	DataState.prototype.setControlMessages = function(aMessages) {
-		return this._updateProperty("controlMessages",aMessages || []);
+		return this._updateProperty("controlMessages",aMessages || null);
 	};
 
 	/**
 	 * Returns the array of state messages of the control or undefined.
 	 * 
-	 * @return {sap.ui.core.Message[]} the array of messages of the control
+	 * @return {sap.ui.core.Message[]} the array of messages of the control or null if no {link:sap.ui.core.messages.ModelManager ModelManager} is used.
 	 * @public
 	 */
 	DataState.prototype.getControlMessages = function() {
-		return this.getProperty("controlMessages") || [];
+		return this.getProperty("controlMessages");
 	};
 
 	/**

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Dialog.
-sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToolbar', './ToolbarSpacer', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/theming/Parameters'],
-	function (jQuery, Bar, InstanceManager, OverflowToolbar, ToolbarSpacer, library, Control, IconPool, Popup, ScrollEnablement, Parameters) {
+sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './AssociativeOverflowToolbar', './ToolbarSpacer', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', 'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/core/theming/Parameters'],
+	function (jQuery, Bar, InstanceManager, AssociativeOverflowToolbar, ToolbarSpacer, library, Control, IconPool, Popup, ScrollEnablement, Parameters) {
 		"use strict";
 
 
@@ -270,8 +270,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToo
 			this._$Window = jQuery(window);
 			this._oManuallySetSize = null;
 
-			this._aButtons = [];
-
 			// used to judge if enableScrolling needs to be disabled
 			this._scrollContentList = ["NavContainer", "Page", "ScrollContainer"];
 
@@ -283,12 +281,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToo
 				this.oPopup.setModal(true, "sapMDialogBlockLayerInit");
 			}
 
-			//avoid playing fancy animation in native browser with android version smaller than 4.1
-			//because it has problem with keyframe animation that it always sets back to the first
-			//keyframe after the animation which causes flickering during the animation.
-			if (!(sap.ui.Device.os.android && sap.ui.Device.os.version < 4.1 && window.navigator.userAgent.toLowerCase().indexOf("chrome") === -1)) {
-				this.oPopup.setAnimations(jQuery.proxy(this._openAnimation, this), jQuery.proxy(this._closeAnimation, this));
-			}
+			this.oPopup.setAnimations(jQuery.proxy(this._openAnimation, this), jQuery.proxy(this._closeAnimation, this));
 
 			//keyboard support for desktop environments
 			//use pseudo event 'onsapescape' to implement keyboard-trigger for closing this dialog
@@ -374,6 +367,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToo
 					});
 				}
 			}
+
+			this._createToolbarButtons();
 		};
 
 		Dialog.prototype.onAfterRendering = function () {
@@ -419,18 +414,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToo
 			if (this._iconImage) {
 				this._iconImage.destroy();
 				this._iconImage = null;
-			}
-
-			// begin/endButton are added to the toolbar in onBeforeRendering when runs on tablet or desktop
-			// They have to be destroyed here if dialog is never opened
-			if (this._oBeginButton) {
-				this._oBeginButton.destroy();
-				this._oBeginButton = null;
-			}
-
-			if (this._oEndButton) {
-				this._oEndButton.destroy();
-				this._oEndButton = null;
 			}
 		};
 		/* =========================================================== */
@@ -723,8 +706,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToo
 			}
 
 			if ((bStretch && !bMessageType) || (bStretchOnPhone && jQuery.device.is.iphone)) {
-				oStyles.right = oStyles.bottom = oStyles.top = oStyles.left = 0;
-				oStyles.height = oStyles.width = 'auto';
+				this.$().addClass('sapMDialogStretched');
 			}
 
 			$this.css(oStyles);
@@ -741,14 +723,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToo
 		 * @private
 		 */
 		Dialog.prototype._adjustScrollingPane = function () {
-			var $scrollArea = this._$scrollPane;
-
-			//In Android version less than 4.1, the scrollEnablement needs to set position: absolute to $scrollArea.
-			//Thus the width 100% has to be set in order to make the scrollArea as big as the contentArea
-			if ($scrollArea.css("position") === "absolute") {
-				$scrollArea.css("width", "100%");
-			}
-
 			if (this._oScroller) {
 				this._oScroller.refresh();
 			}
@@ -1042,31 +1016,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToo
 
 		/**
 		 *
-		 * @param {Object} oButton
-		 * @private
-		 */
-		Dialog.prototype._processButton = function (oButton) {
-			var that = this;
-
-			if (!this._oButtonDelegate) {
-				this._oButtonDelegate = {
-					ontap: function () {
-						that._oCloseTrigger = this;
-					}
-				};
-			}
-
-			if (oButton) {
-				oButton.addDelegate(this._oButtonDelegate, true, oButton);
-
-				if (!(oButton.getType() === sap.m.ButtonType.Accept || oButton.getType() === sap.m.ButtonType.Reject)) {
-					oButton.setType(sap.m.ButtonType.Transparent);
-				}
-			}
-		};
-
-		/**
-		 *
 		 * @returns {boolean}
 		 * @private
 		 */
@@ -1088,55 +1037,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToo
 		 * @private
 		 */
 		Dialog.prototype._setButton = function (oButton, sPos, bSkipFlag) {
-			var sPosModified = this._firstLetterUpperCase(sPos),
-				sGetterName = "get" + sPosModified + "Button",
-				sAggregationName = sPos.toLowerCase() + "Button",
-				sOldButtonName = "_o" + this._firstLetterUpperCase(sPos) + "Button",
-				sOtherButtonSetter = "set" + (sPosModified === "Begin" ? "End" : "Begin") + "Button",
-				oOldButton = sap.ui.Device.system.phone ? this[sGetterName]() : this[sOldButtonName];
-
-			if (oOldButton && !(oOldButton instanceof sap.m.Button)) {
-				oOldButton = sap.ui.getCore().byId(oOldButton);
-			}
-
-			if (oButton && oOldButton === oButton) {
-				return this;
-			}
-
-			this._processButton(oButton);
-
-			if (oOldButton) {
-				oOldButton.removeDelegate(this._oButtonDelegate);
-			}
-
-			if (sap.ui.Device.system.phone) {
-				this.setAggregation(sAggregationName, oButton, false, /*avoid infinite loop*/true);
-			} else {
-				var oToolbar = this._getToolbar();
-				var isToolbarEmptyBeforeAction = this._isToolbarEmpty();
-
-				if (oOldButton && !this._aButtons.length) {
-					oToolbar.removeContent(oOldButton);
-				}
-
-				// if the same button which is already added to begin/endButton aggregation is now being added
-				// to end/beginButton aggregation again. The button should be removed from the former aggregation first.
-				if (oToolbar.indexOfContent(oButton) !== -1) {
-					this[sOtherButtonSetter](null);
-				}
-
-				this[sOldButtonName] = oButton;
-				// if buttons aggregation isn't set, add the button to toolbar
-				if (!this._aButtons.length) {
-					oToolbar.insertContent(oButton, sPos === "begin" ? 1 : 2);
-				}
-
-				// invalidate and render if the toolbar is not empty
-				if (!this._isToolbarEmpty() && isToolbarEmptyBeforeAction) {
-					this.invalidate();
-				}
-			}
-
 			return this;
 		};
 
@@ -1230,6 +1130,30 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToo
 			}
 		};
 
+		Dialog.prototype._createToolbarButtons = function () {
+			var toolbar = this._getToolbar();
+			var buttons = this.getButtons();
+			var beginButton = this.getBeginButton();
+			var endButton = this.getEndButton();
+
+			toolbar.removeAllContent();
+			toolbar.addContent(new ToolbarSpacer());
+
+			//if there are buttons they should be in the toolbar and the begin and end buttons should not be used
+			if (buttons && buttons.length) {
+				buttons.forEach(function (button) {
+					toolbar.addContent(button);
+				});
+			} else {
+				if (beginButton) {
+					toolbar.addContent(beginButton);
+				}
+				if (endButton) {
+					toolbar.addContent(endButton);
+				}
+			}
+		};
+
 		/*
 		 *
 		 * @returns {*|sap.m.IBar|null}
@@ -1237,57 +1161,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToo
 		 */
 		Dialog.prototype._getToolbar = function () {
 			if (!this._oToolbar) {
-				var that = this;
-				this._oToolbar = new OverflowToolbar(this.getId() + "-footer", {
-					content: [
-						new ToolbarSpacer()
-					]
-				}).addStyleClass("sapMTBNoBorders")
-					.applyTagAndContextClassFor("footer");
-				// Buttons are now added to the Toolbar and Toolbar is the parent of the button
-				// There's already code written on button:
-				// oButton.getParent().close()
-				// which worked before because dialog was the parent of the button. But now because button's parent is toolbar
-				// and in order not to bread the existing code, the close method on the parent is created in which the close method
-				// is forwarded to the dialog.
-				this._oToolbar.close = function () {
-					jQuery.sap.log.warning("Function 'close' is called on the internal Toolbar instance instead of the Dialog instance with id '" + that.getId() + "'. Although the function call is forwarded to the Dialog instance, the 'close' function should be called on the Dialog instance directly.");
-					that.close();
-				};
+				this._oToolbar = new AssociativeOverflowToolbar(this.getId() + "-footer").addStyleClass("sapMTBNoBorders").applyTagAndContextClassFor("footer");
+
 				this.setAggregation("_toolbar", this._oToolbar);
 			}
 
 			return this._oToolbar;
 		};
 
-		/**
-		 *
-		 * @private
-		 */
-		Dialog.prototype._restoreBeginAndEndButtons = function () {
-			// _oBeginButton or _oEndButton are set when runs on tablet or desktop so device api doesn't need to be checked here
-			// add beginButton and endButton to toolbar when all buttons in buttons aggregation is removed.
-			// this function is called in removeAggregation, removeAllAggregation and destroyAggregation
-			if ((this._oBeginButton || this._oEndButton) && !this._aButtons.length) {
-				var oToolbar = this._getToolbar();
-				oToolbar.addContent(this._oBeginButton).
-					addContent(this._oEndButton);
-			}
-		};
-
-		/**
-		 *
-		 * @private
-		 */
-		Dialog.prototype._removeBeginAndEndButtons = function () {
-			// if this is the first button added to buttons aggregation
-			// remove the already set beginButton and endButton
-			if (!this._aButtons.length) {
-				var oToolbar = this._getToolbar();
-				oToolbar.removeContent(this._oBeginButton);
-				oToolbar.removeContent(this._oEndButton);
-			}
-		};
 		/* =========================================================== */
 		/*                      end: private functions                 */
 		/* =========================================================== */
@@ -1297,14 +1178,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToo
 		/* =========================================================== */
 
 		//The public setters and getters should not be documented via JSDoc because they will appear in the explored app
-
-		Dialog.prototype.setBeginButton = function (oButton) {
-			return this._setButton(oButton, "begin");
-		};
-
-		Dialog.prototype.setEndButton = function (oButton) {
-			return this._setButton(oButton, "end");
-		};
 
 		Dialog.prototype.setLeftButton = function (vButton) {
 			if (!(vButton instanceof sap.m.Button)) {
@@ -1336,6 +1209,19 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToo
 		Dialog.prototype.getRightButton = function () {
 			var oEndButton = this.getEndButton();
 			return oEndButton ? oEndButton.getId() : null;
+		};
+
+		//get buttons should return the buttons, beginButton and endButton aggregations
+		Dialog.prototype.getAggregation = function (sAggregationName, oDefaultForCreation, bPassBy) {
+			var originalResponse = Control.prototype.getAggregation.apply(this, Array.prototype.slice.call(arguments, 0, 2));
+
+			//if no buttons are set returns the begin and end buttons
+			if (sAggregationName === 'buttons' && originalResponse.length === 0) {
+				this.getBeginButton() && originalResponse.push(this.getBeginButton());
+				this.getEndButton() && originalResponse.push(this.getEndButton());
+			}
+
+			return originalResponse;
 		};
 
 		Dialog.prototype.setTitle = function (sTitle) {
@@ -1485,137 +1371,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './OverflowToo
 		/* =========================================================== */
 		/*                           end: setters                      */
 		/* =========================================================== */
-
-		// Pass the setter of beginButton and endButton from dialog to internal header
-		// Both of them are singular aggregation, only the following three methods need
-		// to be overwritten
-		Dialog.prototype.setAggregation = function (sAggregationName, oObject, bSuppressInvalidate, bPassBy) {
-			if (!bPassBy && (sAggregationName === "beginButton" || sAggregationName === "endButton")) {
-				return this._setButton(oObject, sAggregationName.substring(0, sAggregationName.indexOf("Button")));
-			} else {
-				return Control.prototype.setAggregation.apply(this, Array.prototype.slice.call(arguments, 0, 3));
-			}
-		};
-
-		Dialog.prototype.getAggregation = function (sAggregationName, oDefaultForCreation, bPassBy) {
-			if (!bPassBy && (sAggregationName === "beginButton" || sAggregationName === "endButton")) {
-				return this._getButton(sAggregationName.substring(0, sAggregationName.indexOf("Button"))) || oDefaultForCreation || null;
-			} else if (sAggregationName === "buttons") {
-				return this._oToolbar ? this._oToolbar.getContent().slice(1) : [];
-			} else {
-				return Control.prototype.getAggregation.apply(this, Array.prototype.slice.call(arguments, 0, 2));
-			}
-		};
-
-		Dialog.prototype.destroyAggregation = function (sAggregationName, bSuppressInvalidate) {
-			if ((sAggregationName === "beginButton" || sAggregationName === "endButton")) {
-				var sPos = sAggregationName.substring(0, sAggregationName.indexOf("Button")),
-					sPos = this._firstLetterUpperCase(sPos),
-					sButtonName;
-				if (!sap.ui.Device.system.phone) {
-					sButtonName = "_o" + sPos + "Button";
-					if (this[sButtonName]) {
-						this[sButtonName].destroy();
-						this[sButtonName] = null;
-
-						// invalidate and render if the toolbar is empty and should be not visible
-						if (this._isToolbarEmpty()) {
-							this.invalidate();
-						}
-					}
-				} else {
-					Control.prototype.destroyAggregation.apply(this, arguments);
-				}
-				return this;
-			} else if (sAggregationName === "buttons") {
-				var oToolbar = this._getToolbar();
-				oToolbar.destroyContent();
-				oToolbar.addContent(new ToolbarSpacer());
-				this._restoreBeginAndEndButtons();
-				return this;
-			} else {
-				return Control.prototype.destroyAggregation.apply(this, arguments);
-			}
-		};
-
-		Dialog.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
-			if (sAggregationName === "buttons") {
-				var oToolbar = this._getToolbar();
-				this._removeBeginAndEndButtons();
-				if (this._aButtons.indexOf(oObject) === -1) {
-					this._aButtons.push(oObject);
-				}
-				oToolbar.addContent(oObject);
-				return this;
-			} else {
-				return Control.prototype.addAggregation.apply(this, arguments);
-			}
-		};
-
-		Dialog.prototype.indexOfAggregation = function (sAggregationName, oObject) {
-			if (sAggregationName === "buttons") {
-				var oToolbar = this._getToolbar();
-				var iIndex = oToolbar.indexOfContent(oObject);
-				if (iIndex !== -1) {
-					iIndex = iIndex - 1;
-				}
-				return iIndex;
-			} else {
-				return Control.prototype.indexOfAggregation.apply(this, arguments);
-			}
-		};
-
-		Dialog.prototype.insertAggregation = function (sAggregationName, oObject, iIndex, bSuppressInvalidate) {
-			if (sAggregationName === "buttons") {
-				this._removeBeginAndEndButtons();
-				if (this._aButtons.indexOf(oObject) === -1) {
-					this._aButtons.push(oObject);
-				}
-				var oToolbar = this._getToolbar();
-				oToolbar.insertContent(oObject, iIndex + 1);
-				return this;
-			} else {
-				return Control.prototype.insertAggregation.apply(this, arguments);
-			}
-		};
-
-		Dialog.prototype.removeAggregation = function (sAggregationName, vObject, bSuppressInvalidate) {
-			if (sAggregationName === "buttons") {
-				var oToolbar = this._getToolbar(),
-					oButton;
-				if (typeof (vObject) == "number") {
-					this._aButtons.splice(vObject, 1);
-					oButton = oToolbar.getContent(vObject + 1);
-				} else {
-					var iIndex = this._aButtons.indexOf(vObject);
-					if (iIndex !== -1) {
-						this._aButtons.splice(iIndex, 1);
-					}
-					oButton = vObject;
-				}
-				oButton = oToolbar.removeContent(oButton);
-				this._restoreBeginAndEndButtons();
-
-				return oButton;
-			} else {
-				return Control.prototype.removeAggregation.apply(this, arguments);
-			}
-		};
-
-		Dialog.prototype.removeAllAggregation = function (sAggregationName, bSuppressInvalidate) {
-			if (sAggregationName === "buttons") {
-				this._aButtons = [];
-
-				var oToolbar = this._getToolbar();
-				var aChildren = oToolbar.removeAllContent();
-				oToolbar.addContent(new ToolbarSpacer());
-				this._restoreBeginAndEndButtons();
-
-				return aChildren.splice(0, 1);
-			} else {
-				return Control.prototype.removeAllAggregation.apply(this, arguments);
-			}
-		};
 
 		Dialog.prototype.forceInvalidate = Control.prototype.invalidate;
 

@@ -1,12 +1,23 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
 sap.ui.define([], function () {
+	"use strict";
 
 	/**
-	 * @class Properties - checks if a control's properties have the following values
-	 * @param {object} the object with a properties to check { propertyName : propertyValue, ... }, if value is regexp, it evaluates regexp with a control's property value
+	 * @class Properties - checks if a control's properties have the provided values - all properties have to match their values.
+	 * @param {object} oProperties the object with the properties to be checked. Example:
+	 * <pre><code>
+	 * // Would filter for an enabled control with the text "Accept".
+	 * new Properties({
+	 *     // The property text has the exact value "Accept"
+	 *     text: "Accept",
+	 *     // The property enabled also has to be true
+	 *     enabled: true
+	 * })
+	 * </code></pre>
+	 * If the value is a RegExp, it tests the RegExp with the value. RegExp only works with string properties.
 	 * @public
 	 * @alias sap.ui.test.matchers.Properties
 	 * @author SAP SE

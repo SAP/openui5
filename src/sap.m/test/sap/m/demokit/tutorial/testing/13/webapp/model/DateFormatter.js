@@ -1,4 +1,4 @@
-sap.ui.define([ "sap/ui/base/Object", "sap/ui/core/format/DateFormat" ],
+sap.ui.define(["sap/ui/base/Object", "sap/ui/core/format/DateFormat"],
 	function(Object, DateFormat) {
 
 		return Object.extend("sap.ui.demo.bulletinboard.model.DateFormatter", {
@@ -9,15 +9,15 @@ sap.ui.define([ "sap/ui/base/Object", "sap/ui/core/format/DateFormat" ],
 			 * @param {object} oProperties.now the current date
 			 * @param {object} [oProperties.locale] the locale the date should be formatted with - if it is skipped the current locale of the user is taken
 			 */
-			constructor : function(oProperties) {
+			constructor: function(oProperties) {
 				this.timeFormat = DateFormat.getTimeInstance({
-					style : "short"
+					style: "short"
 				}, oProperties.locale);
 				this.weekdayFormat = DateFormat.getDateInstance({
-					pattern : "EEEE"
+					pattern: "EEEE"
 				}, oProperties.locale);
 				this.dateFormat = DateFormat.getDateInstance({
-					style : "medium"
+					style: "medium"
 				}, oProperties.locale);
 
 				this.now = oProperties.now;
@@ -33,7 +33,7 @@ sap.ui.define([ "sap/ui/base/Object", "sap/ui/core/format/DateFormat" ],
 			 * @param {date} oDate the date to be formatted
 			 * @returns {string} The formatted date
 			 */
-			format : function(oDate) {
+			format: function(oDate) {
 				if (!oDate) {
 					return "";
 				}
@@ -49,7 +49,7 @@ sap.ui.define([ "sap/ui/base/Object", "sap/ui/core/format/DateFormat" ],
 				}
 			},
 
-			_getElapsedDays : function(oDate) {
+			_getElapsedDays: function(oDate) {
 				var iElapsedMilliseconds = this.now() - oDate.getTime();
 				var fElapsedDays = iElapsedMilliseconds / 1000 / 60 / 60 / 24;
 				return Math.floor(fElapsedDays);

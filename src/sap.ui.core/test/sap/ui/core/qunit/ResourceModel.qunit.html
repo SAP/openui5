@@ -18,7 +18,9 @@
 </script>
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.testlib"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.ui.testlib"
+	data-sap-ui-language="en"
 	data-sap-ui-originInfo="true">
 </script>
 
@@ -36,88 +38,118 @@
 <script language="javascript">
 
 	sap.ui.localResources("testdata");
-	var oModel,oLabel;
+	var oModel;
 	
-	module("Resource Model: Resources bundle loaded via name");
+	module("Resource Model: Resources bundle loaded via name", {
+		setup : function() {
+			oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages"});
+			sap.ui.getCore().setModel(oModel);
+		},
+		teardown : function() {
+			sap.ui.getCore().setModel(null);
+			oModel.destroy();
+			oModel = undefined;
+		}
+	});
 	
 	//model created
 	test("Model instantiated successful", 2, function(){
-		oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages"});
-		sap.ui.getCore().setModel(oModel);
-		 
 		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{TEST_TEXT}"});
 		oLabel.placeAt("target1");
 		
 		ok(oModel, "model must exist after creation");
 		ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
+		oLabel.destroy();
 	});
+	
 	//getProperty()
 	test("test model getProperty", 1, function(){
 		var value = oModel.getProperty("TEST_TEXT");
 		equal(value, "A text en");
 	});
+	
 	//setProperty must not exist!
 	test("set Property must have no effect", function(){
 		ok(!oModel.setProperty,"set Property method should not be defined");
 	});
+	
 	//getProperty()/binding
 	test("test model getProperty", 2, function(){
+		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{TEST_TEXT}"});
+		oLabel.placeAt("target1");
 		var value = oModel.getProperty("TEST_TEXT");
 		equal(value, "A text en");
 		equal(oLabel.getText(),"A text en");
-	});
-	//clean up
-	test("clean up", 0, function(){
-		oModel = null;
 		oLabel.destroy();
 	});
 	
-	module("Resource Model: Resources bundle loaded via name / set Model with alias");
+	module("Resource Model: Resources bundle loaded via name / set Model with alias", {
+		setup : function() {
+			oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages"});
+			sap.ui.getCore().setModel(oModel,"i18n");
+		},
+		teardown : function() {
+			sap.ui.getCore().setModel(null, "i18n");
+			oModel.destroy();
+			oModel = undefined;
+		}
+	});
 	
 	//model created
 	test("Model instantiated successful", 2, function(){
-		oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages"});
-		sap.ui.getCore().setModel(oModel,"i18n");
-		 
 		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{i18n>TEST_TEXT}"});
 		oLabel.placeAt("target1");
 		
 		ok(oModel, "model must exist after creation");
 		ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
+		oLabel.destroy();
 	});
+	
 	//getProperty()
 	test("test model getProperty", 1, function(){
 		var value = oModel.getProperty("TEST_TEXT");
 		equal(value, "A text en");
 	});
+	
 	//setProperty must not exist!
 	test("set Property must have no effect", function(){
 		ok(!oModel.setProperty,"set Property method should not be defined");
 	});
+	
 	//getProperty()/binding
 	test("test model getProperty", 2, function(){
+		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{i18n>TEST_TEXT}"});
+		oLabel.placeAt("target1");
 		var value = oModel.getProperty("TEST_TEXT");
 		equal(value, "A text en");
 		equal(oLabel.getText(),"A text en");
-	});
-	//clean up
-	test("clean up", 0, function(){
-		oModel = null;
 		oLabel.destroy();
 	});
 	
-	module("Resource Model: Resources bundle loaded via url");
-	
+	module("Resource Model: Resources bundle loaded via url", {
+		setup : function() {
+			oModel = new sap.ui.model.resource.ResourceModel({bundleUrl:"./testdata/messages.properties"});
+			sap.ui.getCore().setModel(oModel,"i18n");
+		},
+		teardown : function() {
+			sap.ui.getCore().setModel(null, "i18n");
+			oModel.destroy();
+			oModel = undefined;
+		}
+	});
 	//model created
-	test("Model instantiated successful", 2, function(){
-		oModel = new sap.ui.model.resource.ResourceModel({bundleUrl:"./testdata/messages.properties"});
-		sap.ui.getCore().setModel(oModel,"i18n");
-		 
+	test("Model instantiated successful", 5, function(){
 		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{i18n>TEST_TEXT}"});
 		oLabel.placeAt("target1");
 		
 		ok(oModel, "model must exist after creation");
 		ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
+		
+		ok(oModel.mSupportedBindingModes.OneWay, "OneWay is an allowed binding mode");
+		ok(!oModel.mSupportedBindingModes.TwoWay, "TwoWay is a not an allowed binding mode");
+		ok(!oModel.bAsync && oModel.mSupportedBindingModes.OneTime, "OneTime is an allowed binding mode with synchronous models");
+		
+		oLabel.destroy();
 	});
 	//getProperty()
 	test("test model getProperty", 1, function(){
@@ -130,20 +162,21 @@
 	});
 	//getProperty()/binding
 	test("test model getProperty", 2, function(){
+		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{i18n>TEST_TEXT}"});
+		oLabel.placeAt("target1");
 		var value = oModel.getProperty("TEST_TEXT");
 		equal(value, "A text en");
 		equal(oLabel.getText(),"A text en");
+		oLabel.destroy();
 	});
 	//CompositeBinding
 	test("test composite bindings", 2, function(){
-		oModel = new sap.ui.model.resource.ResourceModel({bundleUrl:"./testdata/messages.properties"});
-		sap.ui.getCore().setModel(oModel,"i18n");
-		 
 		oLabel2 = new sap.ui.testlib.TestButton("myLabel2",{text:{parts:[{path:"i18n>TEST_TEXT"},{path:"i18n>TEST_TEXT"}]}});
 		oLabel2.placeAt("target1");
 		
 		ok(oLabel2, "Label with composite binding must be created");
 		equal(oLabel2.getText(), "A text en A text en", "Text msut be: 'A text en A text en'");
+		oLabel2.destroy();
 	});
 	//origin info
 	test("test model origin info", 3, function(){
@@ -154,16 +187,7 @@
 		equal(info.key, "TEST_TEXT");
 	});
 	
-	//clean up
-	test("clean up", 0, function(){
-		oModel = null;
-		oLabel.destroy();
-		oLabel2.destroy();
-		sap.ui.getCore().setModel(null);
-	});
-
 	test("Model instantiated successful", function(){
-		oModel = new sap.ui.model.resource.ResourceModel({bundleUrl:"./testdata/messages.properties"});
 		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{i18n>TEST_TEXT}"});
 		oLabel.setModel(oModel, "i18n");
 		oDolly = oLabel.clone();
@@ -175,7 +199,6 @@
 	});
 
 	test("Model instantiated successful", function(){
-		oModel = new sap.ui.model.resource.ResourceModel({bundleUrl:"./testdata/messages.properties"});
 		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{i18n>TEST_TEXT}"});
 		oDolly = oLabel.clone();
 		oDolly.setModel(oModel, "i18n");
@@ -186,7 +209,6 @@
 	});
 
 	test("Model enhancement", function(){
-		oModel = new sap.ui.model.resource.ResourceModel({bundleUrl:"./testdata/messages.properties"});
 		equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
 		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 		oModel.enhance({bundleUrl:"./testdata/messages_custom.properties"});
@@ -195,7 +217,6 @@
 	});
 
 	test("Model enhancement (with bundle)", function(){
-		oModel = new sap.ui.model.resource.ResourceModel({bundleUrl:"./testdata/messages.properties"});
 		equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of original model is correct");
 		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A custom text", "text TEST_TEXT_CUSTOM of original model is correct");
 		var oBundle = jQuery.sap.resources({url: "./testdata/messages_custom.properties"});
@@ -203,48 +224,53 @@
 		equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
 	});
-
-	//clean up
-	test("clean up", 0, function(){
-		oModel = null;
-		sap.ui.getCore().setModel(null);
+	
+	module("Resource Model: Async", {
+		setup : function() {
+			oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{async>TEST_TEXT}"});
+			oLabel.placeAt("target1");
+			oLabel2 = new sap.ui.testlib.TestButton("myLabel2",{text:"{async>TEST_TEXT}"});
+			oLabel2.placeAt("target1");
+			oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages", async: true});
+			sap.ui.getCore().setModel(oModel, "async");
+		},
+		teardown : function() {
+			sap.ui.getCore().setModel(null, "async");
+			oModel.destroy();
+			oModel = undefined;
+			oLabel.destroy();
+			oLabel2.destroy();
+		}
 	});
 	
-	module("Resource Model: Async");
-	
-	asyncTest("Test async mode", function(){
-		oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages", async: true});
-		sap.ui.getCore().setModel(oModel, "async");
-		 
-		oLabel = new sap.ui.testlib.TestButton("myLabel",{text:"{async>TEST_TEXT}"});
-		oLabel.placeAt("target1");
-		
-		ok(oModel, "model must exist after creation");
-		ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
-		
-		ok(oModel.bAsync, "model is in async mode");
-		equal(oModel.sDefaultBindingMode, sap.ui.model.BindingMode.OneWay, "Default binding mode is OneWay");
-		ok(oModel.mSupportedBindingModes.OneWay && !oModel.mSupportedBindingModes.TwoWay && oModel.mSupportedBindingModes.OneTime, "TwoWay is a not allowed binding mode");
-		
-		equal(oLabel.getText(), "", "Initially no texts available");
-		equal(oModel.getProperty("TEST_TEXT"), null, "Initially getProperty returns null");
-		
-		var oPromise = oModel.getResourceBundle();
-		ok(oPromise instanceof window.Promise, "getResourceBundle returns Promise");
-		
-		oPromise.then(function(oBundle){
-			equal(oLabel.getText(), "A text en", "Texts available after async load");
-			equal(oModel.getProperty("TEST_TEXT"), "A text en", "getProperty returns text after async load");
-			ok(oBundle == oModel._oResourceBundle, "A text en", "Bundle available after async load");
+	//we can't run this test in firefox properly as then is called synchronously in firefox
+	if (!sap.ui.Device.browser.firefox) {
+		asyncTest("Test async mode", function(){
+			expect(13);
+			ok(oModel, "model must exist after creation");
+			ok(oModel instanceof sap.ui.model.resource.ResourceModel, "model must be instanceof sap.ui.model.resource.ResourceModel");
 			
-			start();
+			ok(oModel.bAsync, "model is in async mode");
+			equal(oModel.sDefaultBindingMode, sap.ui.model.BindingMode.OneWay, "Default binding mode is OneWay");
+			ok(oModel.mSupportedBindingModes.OneWay, "OneWay is an allowed binding mode");
+			ok(!oModel.mSupportedBindingModes.TwoWay, "TwoWay is a not an allowed binding mode");
+			ok(oModel.bAsync && !oModel.mSupportedBindingModes.OneTime, "OneTime is a not allowed binding mode with asynchronous models");
+			
+			equal(oLabel.getText(), "", "Initially no texts available");
+			equal(oModel.getProperty("TEST_TEXT"), null, "Initially getProperty returns null");
+			
+			var oPromise = oModel.getResourceBundle();
+			ok(oPromise instanceof window.Promise, "getResourceBundle returns Promise");
+			
+			oPromise.then(function(oBundle){
+				equal(oLabel.getText(), "A text en", "Texts available after async load");
+				equal(oModel.getProperty("TEST_TEXT"), "A text en", "getProperty returns text after async load");
+				ok(oBundle == oModel._oResourceBundle, "A text en", "Bundle available after async load");
+				start();
+			});
 		});
-	});
-	
+	}
 	asyncTest("Enhancement after load", function(){
-		oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages", async: true});
-		sap.ui.getCore().setModel(oModel, "async2");
-		
 		equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
 		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
 		 
@@ -261,9 +287,6 @@
 	});
 	
 	asyncTest("Enhancement after load (with bundle)", function(){
-		oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages", async: true});
-		sap.ui.getCore().setModel(oModel, "async2");
-		
 		equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
 		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
 		
@@ -281,9 +304,6 @@
 	});
 	
 	asyncTest("Enhancement before load", function(){
-		oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages", async: true});
-		sap.ui.getCore().setModel(oModel, "async3");
-		
 		equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
 		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
 		var oPromise = oModel.enhance({bundleUrl:"./testdata/messages_custom.properties"});
@@ -297,31 +317,25 @@
 		});
 	});
 	
-	asyncTest("Enhancement before load (with bundle)", function(){
-		oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages", async: true});
-		sap.ui.getCore().setModel(oModel, "async3");
-		
-		equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
-		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
-		var oBundle = jQuery.sap.resources({url: "./testdata/messages_custom.properties"});
-		var oPromise = oModel.enhance(oBundle);
-		equal(oModel.getProperty("TEST_TEXT"), null, "text TEST_TEXT of enhanced model is still null");
-		equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "text TEST_TEXT_CUSTOM of enhanced model is still null");
-		
-		Promise.all([oModel.getResourceBundle(), oPromise]).then(function(args){
-			equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct after async load");
-			equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct after async load");
-			start();
+	//we can't run this test in firefox properly as then is called synchronously in firefox
+	if (!sap.ui.Device.browser.firefox) {
+		asyncTest("Enhancement before load (with bundle)", function(){
+			equal(oModel.getProperty("TEST_TEXT"), null, "initial text TEST_TEXT of original model is null");
+			equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "initial text TEST_TEXT_CUSTOM of original model is null");
+			var oBundle = jQuery.sap.resources({url: "./testdata/messages_custom.properties"});
+			var oPromise = oModel.enhance(oBundle);
+			equal(oModel.getProperty("TEST_TEXT"), null, "text TEST_TEXT of enhanced model is still null");
+			equal(oModel.getProperty("TEST_TEXT_CUSTOM"), null, "text TEST_TEXT_CUSTOM of enhanced model is still null");
+			
+			Promise.all([oModel.getResourceBundle(), oPromise]).then(function(args){
+				equal(oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct after async load");
+				equal(oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct after async load");
+				start();
+			});
 		});
-	});
+	}
 	
 	asyncTest("Events", function(){
-		oModel = new sap.ui.model.resource.ResourceModel({bundleName:"testdata.messages", async: true});
-		sap.ui.getCore().setModel(oModel, "async4");
-		
-		oLabel2 = new sap.ui.testlib.TestButton("myLabel2",{text:"{async4>TEST_TEXT}"});
-		oLabel2.placeAt("target1");
-		
 		equal(oLabel2.getText(), "", "Initially no texts available");
 		equal(oModel.getProperty("TEST_TEXT"), null, "Initially getProperty returns null");
 		
@@ -335,18 +349,61 @@
 			start();
 		});
 	});
+
 	
-	//clean up
-	test("clean up", 0, function(){
-		oModel = null;
-		oLabel.destroy();
-		oLabel2.destroy();
-		sap.ui.getCore().setModel(null, "async");
-		sap.ui.getCore().setModel(null, "async2");
-		sap.ui.getCore().setModel(null, "async3");
-		sap.ui.getCore().setModel(null, "async4");
+	asyncTest("OneWay Binding and Language Change (Asynchronous)", function() {
+		expect(2);
+		var oBtn = new sap.ui.testlib.TestButton({
+			text: "{async5>TEST_TEXT}"
+		});
+		oBtn.placeAt("target1");
+
+		var oAsyncModel = new sap.ui.model.resource.ResourceModel({
+			bundleName: "testdata.messages",
+			async: true 
+		});
+		sap.ui.getCore().setModel(oAsyncModel, "async5");
+
+		
+		var iChangeCount = 0;
+		oBtn.getBinding("text").attachChange(function() {
+			if (iChangeCount++ === 0) {
+				equal(oBtn.getText(), "A text en", "Binding Change: Texts available after sync load");
+				sap.ui.getCore().getConfiguration().setLanguage("de");
+			} else {
+				equal(oBtn.getText(), "Ein Text de", "Binding Change: Texts available after sync load");
+				
+				oBtn.destroy();
+				oAsyncModel.destroy();
+				start();
+			}
+		});
+		
 	});
-	
+
+	test("OneWay Binding and Language Change (Synchronous)", function() {
+		sap.ui.getCore().getConfiguration().setLanguage("en");
+		
+		var oBtn = new sap.ui.testlib.TestButton({
+			text: "{sync5>TEST_TEXT}"
+		});
+		oBtn.placeAt("target1");
+
+		var oSyncModel = new sap.ui.model.resource.ResourceModel({
+			bundleName: "testdata.messages",
+			async: false
+		});
+		sap.ui.getCore().setModel(oSyncModel, "sync5");
+
+		equal(oBtn.getText(), "A text en", "Binding Change: Texts available after sync load");
+		sap.ui.getCore().getConfiguration().setLanguage("de");
+
+		equal(oBtn.getText(), "Ein Text de", "Binding Change: Texts available after sync load");
+		oBtn.destroy();
+		oSyncModel.destroy();
+		
+	});
+
 	</script>
 
 </head>

@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 * @param {sap.m.Text} oText An object representation of the control that should be rendered.
 	 */
 	TextRenderer.renderMaxLines = function(oRm, oText) {
-		oRm.write("<div");
+		oRm.write("<span");
 		oRm.writeAttribute("id", oText.getId() + "-inner");
 		oRm.addClass("sapMTextMaxLine");
 
@@ -97,7 +97,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		oRm.writeStyles();
 		oRm.write(">");
 		this.renderText(oRm, oText);
-		oRm.write("</div>");
+		oRm.write("</span>");
 	};
 
 	/**

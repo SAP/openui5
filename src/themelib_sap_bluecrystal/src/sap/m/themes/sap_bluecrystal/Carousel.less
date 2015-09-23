@@ -45,16 +45,12 @@
 	width: 0;
 	height: 0;
 	margin: 0 0.25rem;
-	color: lighten(@sapUiBase, 10);
-	background-color: lighten(@sapUiBase, 10);
+	color: lighten(@sapUiBase, 9.8);
+	background-color: lighten(@sapUiBase, 9.8);
 	-webkit-transition: background-color 0.1s ease-in;
 	-moz-transition: background-color 0.1s ease-in;
 	transition: background-color 0.1s ease-in;
-	-webkit-box-shadow: 0px 0px 0.0625rem 0.0625rem @sapUiLightestBorder;
-	-moz-box-shadow: 0px 0px 0.0625rem 0.0625rem @sapUiLightestBorder;
-	box-shadow: 0px 0px 0.0625rem 0.0625rem @sapUiLightestBorder;
-	-webkit-border-radius: 50%;
-	-moz-border-radius: 50%;
+	box-shadow: 0 0px 0.0625rem 0.0625rem @sapUiLightShadowTint;
 	border-radius: 50%;
 }
 
@@ -85,21 +81,13 @@
 	padding: 0;
 	text-decoration: none;
 	overflow: hidden;
-	background-color: @sapUiLightestBG;
-	-webkit-border-radius: 50%;
-	-moz-border-radius: 50%;
+	background-color: @sapUiInvertedElement;
 	border-radius: 50%;
 	color: @sapUiInvertedElement;
 	-webkit-transition: opacity 0.1s ease-in;
 	-moz-transition: opacity 0.1s ease-in;
 	transition: opacity 0.1s ease-in;
-	-webkit-border-radius: 50%;
-	-moz-border-radius: 50%;
-	border-radius: 50%;
-	-webkit-box-shadow: fade(@sapUiShadowTint,30%) 0 0.0625rem 0.25rem;
-	-moz-box-shadow: fade(@sapUiShadowTint,30%) 0 0.0625rem 0.25rem;
-	-ms-box-shadow: fade(@sapUiShadowTint,30%) 0 0.0625rem 0.25rem;
-	box-shadow: 0px 0.0625rem 0.25rem fade(@sapUiShadowTint,30%);
+	box-shadow: 0 0.0625rem 0.25rem fade(@sapUiDarkShadowTint, 30);
 }
 
 .sapMCrsl{
@@ -127,8 +115,6 @@
 }
 
 .sapMCrslHud .sapMCrslHudInner {
-	-webkit-border-radius: 50%;
-	-moz-border-radius: 50%;
 	border-radius: 50%;
 	margin:0.25rem;
 	background-color: @sapUiHighlight;
@@ -201,5 +187,3 @@ html[dir='rtl'] .sapMCrslNext > .sapMCrslHudInner > .sapUiIcon,
 .sapMCrslItem.sapMCrslBottomOffset {
 	padding-bottom: 1.6875rem;
 }
-
-

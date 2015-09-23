@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.m.GrowingEnablement
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
-	function(jQuery, BaseObject) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/NumberFormat'],
+	function(jQuery, BaseObject, NumberFormat) {
 	"use strict";
 
 
@@ -61,7 +61,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				this._oScrollDelegate = null;
 			}
 
-			jQuery(this._oControl.getId() + "-triggerList").remove();
+			this._oControl.$("triggerList").remove();
 			this._oControl.bUseExtendedChangeDetection = false;
 			this._oControl.removeDelegate(this);
 			this._sGroupingPath = "";
@@ -175,8 +175,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 		// called after new page loaded
 		_onAfterPageLoaded : function(sChangeReason) {
-			this._hideIndicator();
 			this._updateTrigger();
+			this._hideIndicator();
 			this._bLoading = false;
 			this._oControl.onAfterPageLoaded(this.getInfo(), sChangeReason);
 		},
@@ -298,6 +298,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				return sap.m.ListMode.None;
 			};
 			
+			// stop tab forwarding of the ListItemBase
+			this._oTrigger.onsaptabnext = function() {
+			};
+			
 			return this._oTrigger;
 		},
 
@@ -307,7 +311,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 * -> maximum items to be displayed
 		 */
 		_getListItemInfo : function() {
-			return ("[ " + this._iRenderedDataItems + " / " + this._oControl.getMaxItemsCount() + " ]");
+			return ("[ " + this._iRenderedDataItems + " / " + NumberFormat.getFloatInstance().format(this._oControl.getMaxItemsCount()) + " ]");
 		},
 
 		/**
@@ -715,8 +719,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 			} else {
 				this._oControl.$("trigger-busyIndicator").addClass("sapMGrowingListBusyIndicatorVisible");
 			}
-
-			this._getBusyIndicator().setVisible(true);
 		},
 
 		/**
@@ -766,6 +768,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 
 			$TriggerList.empty();
 			rm.render(oActionItem, $TriggerList[0]);
+			rm.destroy();
 		},
 
 		/**
@@ -774,7 +777,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		_hideIndicator : function() {
 			jQuery.sap.delayedCall(0, this, function() {
 				if (this._oControl) {	// maybe control is already destroyed
-					this._getBusyIndicator().setVisible(false);
 					if (this._oControl.getGrowingScrollToLoad() && this._getHasScrollbars()) {
 						this._oControl.$("triggerList").css("display", "none");
 					} else {

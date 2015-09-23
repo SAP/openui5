@@ -39,7 +39,7 @@ sap.ui.define(['jquery.sap.global'],
 				if (oToolbarItem instanceof sap.ui.commons.ToolbarSeparator) {
 					sap.ui.commons.ToolbarRenderer.renderSeparator(rm, oToolbarItem);
 				} else if (oToolbarItem instanceof sap.ui.ux3.ExactAreaToolbarTitle) {
-					rm.write("<div class=\"sapUiUx3ExactAreaTbTitle\">" + jQuery.sap.escapeHTML(oToolbarItem.getText()) + "</div>");
+					rm.write("<div class=\"sapUiUx3ExactAreaTbTitle\">" + jQuery.sap.encodeHTML(oToolbarItem.getText()) + "</div>");
 				} else {
 					rm.renderControl(oToolbarItem);
 				}

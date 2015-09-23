@@ -29,7 +29,6 @@
 }
 
 /* List - Focus, Hover, Select */
-html[data-sap-ui-browser="ie8"] .sapUiUx3ExactLstLb > ul > .sapUiLbxISel,
 html[data-sap-ui-browser="ie9"] .sapUiUx3ExactLstLb > ul > .sapUiLbxISel,
 html[data-sap-ui-browser="ie10"] .sapUiUx3ExactLstLb > ul > .sapUiLbxISel {
 	border: 1px solid @sapUiHighlight;
@@ -139,10 +138,6 @@ html[data-sap-ui-browser="ie10"] .sapUiUx3ExactLstLb > ul > .sapUiLbxISel {
 
 .sapUiUx3ExactLstCollapsed > .sapUiUx3ExactLstHead {
 	border-bottom: 1px solid @sapUiExtraLightBorder;
-}
-
-html[dir=rtl][data-sap-ui-browser="ie8"] .sapUiUx3ExactLstCollapsed > .sapUiUx3ExactLstHead > .sapUiUx3ExactLstHeadTxt {
-	left: -4px; /*should be right -> swapped with right by RTL transformation*/
 }
 
 /* Content */

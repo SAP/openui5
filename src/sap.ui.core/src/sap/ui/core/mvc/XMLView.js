@@ -256,9 +256,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		/**
 		* Register a preprocessor for all views of a specific type.
 		*
-		* The preprocessor can be registered for several stages of view initialization, which are
-		* dependant from the view type, e.g. "raw", "xml" or already initialized "controls". For each
-		* type one preprocessor is executed. If there is a preprocessor passed to or activated at the
+		* The preprocessor can be registered for several stages of view initialization, for xml views these are
+		* either the plain "xml" or the already initialized "controls" , see {@link sap.ui.core.mvc.XMLView.PreprocessorType}.
+		* For each type one preprocessor is executed. If there is a preprocessor passed to or activated at the
 		* view instance already, that one is used.
 		*
 		* It can be either a module name as string of an implementation of {@link sap.ui.core.mvc.View.Preprocessor} or a
@@ -270,7 +270,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		*
 		* @public
 		* @static
-		* @param {string} sType
+		* @param {string|sap.ui.core.mvc.XMLView.PreprocessorType} sType
 		* 		the type of content to be processed
 		* @param {string|function} vPreprocessor
 		* 		module path of the preprocessor implementation or a preprocessor function
@@ -285,11 +285,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		* 		optional configuration for preprocessor
 		*/
 		XMLView.registerPreprocessor = function(sType, vPreprocessor, bSyncSupport, bOnDemand, mSettings) {
-			if (sType == "xml" || sType == "controls") {
-				sap.ui.core.mvc.View.registerPreprocessor(sType, vPreprocessor, this.getMetadata().getClass()._sType, bSyncSupport, bOnDemand, mSettings);
+			sType = sType.toUpperCase();
+			if (XMLView.PreprocessorType[sType]) {
+				sap.ui.core.mvc.View.registerPreprocessor(XMLView.PreprocessorType[sType], vPreprocessor, this.getMetadata().getClass()._sType, bSyncSupport, bOnDemand, mSettings);
 			} else {
 				jQuery.sap.log.error("Preprocessor could not be registered due to unknown sType \"" + sType + "\"", this.getMetadata().getName());
 			}
+		};
+
+		/**
+		 * Specifies the available preprocessor types for XMLViews
+		 *
+		 * @see sap.ui.core.mvc.XMLView
+		 * @see sap.ui.core.mvc.View.Preprocessor
+		 * @enum {string}
+		 * @public
+		 */
+		XMLView.PreprocessorType = {
+
+			/**
+			 * This preprocessor receives the plain xml source of the view
+			 * @public
+			 */
+			XML : "xml",
+
+			/**
+			 * This preprocessor receives the control tree produced through the view source
+			 * @public
+			 */
+			CONTROLS : "controls"
 		};
 
 		/**

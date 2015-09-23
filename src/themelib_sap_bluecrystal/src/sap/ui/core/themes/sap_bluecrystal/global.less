@@ -85,6 +85,22 @@
 @sapUiScrollBarSymbolColor: @sapScrollBar_SymbolColor;
 @sapUiScrollBarHoverFaceColor: @sapScrollBar_Hover_FaceColor;
 
+@sapUiPageHeaderBackground: @sapPageHeader_Background;
+@sapUiPageHeaderBorderColor: @sapPageHeader_BorderColor;
+@sapUiPageHeaderTextColor: @sapPageHeader_TextColor;
+@sapUiPageFooterBackground: @sapPageFooter_Background;
+@sapUiPageFooterTextColor: @sapPageFooter_TextColor;
+
+@sapUiInfobarBackground: @sapInfobar_Background;
+
+@sapUiObjectHeaderBackground: @sapObjectHeader_Background;
+
+@sapUiBlockLayerBackground: @sapBlockLayer_Background;
+
+@sapUiTileBackground: @sapTile_Background;
+@sapUiTileBorderColor: @sapTile_BorderColor;
+@sapUiTileTextColor: @sapTile_TextColor;
+
 @sapUiChart1: @sapChart_OrderedColor_1;
 @sapUiChart2: @sapChart_OrderedColor_2;
 @sapUiChart3: @sapChart_OrderedColor_3;
@@ -621,10 +637,10 @@
 /* ToolPopup */
 @sapUiUx3ToolPopupInverted: ~"false"; /* Telling the ToolPopup if it's inverted per default */
 @sapUiUx3ToolPopupArrowRightMarginCorrection: -1px;
-@sapUiUx3ToolPopupShadow: 0 0 30px fade(@sapUiShadowTint, 20%);
+@sapUiUx3ToolPopupShadow: 0 0 30px fade(@sapUiDarkShadowTint, 20);
 
 /* Callout */
-@sapUiCalloutShadow: 0 0 30px fade(@sapUiShadowTint, 20%);
+@sapUiCalloutShadow: 0 0 30px fade(@sapUiDarkShadowTint, 20);
 
 @sapUiButtonIconColor: contrast(@sapUiButtonBackground, @sapUiElement, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiButtonActiveBackground: @sapUiHighlight;
@@ -654,10 +670,11 @@
 @sapUiButtonLiteHoverBorderColor: fadeout(darken(@sapUiButtonBackground, 10), 50);
 @sapUiButtonLiteActiveBackground: @sapUiHighlight;
 @sapUiButtonLiteActiveBorderColor: @sapUiHighlight;
-@sapUiButtonHeaderTextColor: @sapUiBarText;
-@sapUiButtonHeaderDisabledTextColor: @sapUiDarkText;
+@sapUiButtonHeaderTextColor: @sapUiButtonTextColor;
+@sapUiButtonHeaderDisabledTextColor: @sapUiButtonTextColor;
+@sapUiButtonFooterTextColor: @sapUiPageFooterTextColor;
 @sapUiButtonFooterHoverBackground: fadeout(@sapUiButtonHoverBackground, 90);
-@sapUiButtonActionSelectBackground: @sapUiFooterBG;
+@sapUiButtonActionSelectBackground: @sapUiPageFooterBackground;
 @sapUiButtonActionSelectBorderColor: contrast(@sapUiButtonActionSelectBackground, darken(@sapUiButtonActionSelectBackground, 10), lighten(@sapUiButtonActionSelectBackground,20));
 @sapUiButtonLiteActionSelectHoverBackground: contrast(@sapUiButtonActionSelectBackground, darken(@sapUiButtonActionSelectBackground, 6), lighten(@sapUiButtonActionSelectBackground,6));
 @sapUiToggleButtonPressedBackground: @sapUiHighlight;
@@ -681,9 +698,8 @@
 @sapUiSegmentedButtonIconColor: contrast(@sapUiSegmentedButtonBackground, @sapUiElement, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiSegmentedButtonActiveIconColor: contrast(@sapUiSegmentedButtonActiveBackground, @sapUiElement, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiSegmentedButtonSelectedIconColor: contrast(@sapUiSegmentedButtonSelectedBackground, @sapUiElement, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
-@sapUiSegmentedButtonFooterBorderColor: contrast(@sapUiFooterBG, darken(@sapUiFooterBG, 10), lighten(@sapUiFooterBG, 20));
+@sapUiSegmentedButtonFooterBorderColor: contrast(@sapUiPageFooterBackground, darken(@sapUiPageFooterBackground, 10), lighten(@sapUiPageFooterBackground, 20));
 @sapUiSegmentedButtonFooterHoverBackground: fade(darken(@sapUiButtonBackground, 5), 10);
-@sapUiFooterButtonHoverColor: contrast(@sapUiFooterOnDesktopBG, darken(@sapUiFooterOnDesktopBG, 3), lighten(@sapUiFooterOnDesktopBG, 6));
 
 @sapUiFieldTextColor: @sapUiBaseText;
 @sapUiFieldPlaceholderTextColor: @sapUiExtraLightText;
@@ -707,6 +723,10 @@
 @sapUiListTableTextSize: 0.875rem;
 @sapUiListTableIconSize: 1rem;
 
+@sapUiPageFooterBorderColor: contrast(@sapUiPageFooterBackground, darken(@sapUiPageFooterBackground, 10), lighten(@sapUiPageFooterBackground, 20));
+
+@sapUiInfobarHoverBackground: darken(@sapUiInfobarBackground, 8);
+@sapUiInfobarActiveBackground: darken(@sapUiInfobarBackground, 15);
 
 @sapUiCalendarColorToday: #ffc51c;
 

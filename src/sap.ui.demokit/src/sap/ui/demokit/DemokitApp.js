@@ -1,5 +1,5 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
 // Main class for Demokit-like applications
@@ -309,6 +309,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 }
             }
 
+            function collapseDevGuideTree(sTopLevelNavItemId, oTree) {
+                if (sTopLevelNavItemId === "mi-devguidekm") {
+                    oTree.collapseAll();
+                    var aTreeNodes = oTree.getNodes();
+                    for (var i = 0; i < aTreeNodes.length; i++) {
+                        var aNodeCustomData = aTreeNodes[i].getCustomData();
+                        for (var p = 0; p < aNodeCustomData.length; p++) {
+                            // "95d113be50ae40d5b0b562b84d715227" is the guide id of "SAPUI5: UI Development Toolkit for HTML5" root node which should be expanded.
+                            if (aNodeCustomData[p].getKey() === "_ref_" && aNodeCustomData[p].getValue().indexOf("95d113be50ae40d5b0b562b84d715227") !== -1) {
+                                aTreeNodes[i].expand();
+                            }
+                        }
+                    }
+                }
+            }
+
             if (oTopLevelNavItem._oTree) {
                 return;
             }
@@ -348,6 +364,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
             oTree.setModel(oJSONModel);
             oJSONModel.setData(aTreeData);
             oTree.bindNodes("/", oTreeNode);
+
+            collapseDevGuideTree(oTopLevelNavItem.id, oTree);
 
             if (aTreeData.length > 25) {
                 oTree.collapseAll();
@@ -493,7 +511,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                     press: function() {
                         oDialog.removeAllContent();
                         oDialog.addContent(fnParseLibInformationCredits());
-                       
+
                         oBtnBack.setVisible(true);
                     }
                 });
@@ -501,24 +519,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 var oDialogInitialPageContent = new sap.ui.commons.FormattedTextView();
                 oDialogInitialPageContent.setContent(sAboutDialogContentHtml, [oVersionInfoDialog, oLinkToVersionChangeLog, oLinkToVersionInfo]);
                 oDialogInitialPageContent.addStyleClass("extraLeftPadding");
-                
+
                 var oDialogInitialPageContentOnlyForUI5 = new sap.ui.commons.FormattedTextView();
                 oDialogInitialPageContentOnlyForUI5.setContent(sAboutDialogContentHtmlOnlyForUI5, [oLinkToCredits]);
                 oDialogInitialPageContentOnlyForUI5.addStyleClass("extraLeftPadding");
 
-              //check if it is on http://veui5infra.dhcp.wdf.sap.corp:8080/demokit/ or in openui5.hana.ondemand.com
-                var bIsUI5 = sap.ui.getVersionInfo().gav.slice(0,19) == "com.sap.ui5:demokit";
-                if (bIsUI5) {
-                    var oLayout = new sap.ui.layout.VerticalLayout({
-                        content : [oSAPUI5Logo, oDialogInitialPageContent, oDialogInitialPageContentOnlyForUI5]
-                    });
-                } else {
+              //check if it is on http://veui5infra.dhcp.wdf.sap.corp:8080/sapui5-sdk-dist/ or http://veui5infra.dhcp.wdf.sap.corp:8080/demokit/ or openui5.hana.ondemand.com
+                var sVersionInfoGav = sap.ui.getVersionInfo().gav.slice(0,24);
+                if (sVersionInfoGav == "com.sap.openui5.dist:sdk") {
                     var oLayout = new sap.ui.layout.VerticalLayout({
                         content : [oSAPUI5Logo, oDialogInitialPageContent]
                     });
+                } else {
+                    var oLayout = new sap.ui.layout.VerticalLayout({
+                        content : [oSAPUI5Logo, oDialogInitialPageContent, oDialogInitialPageContentOnlyForUI5]
+                    });
                 }
 
-                var oDialog = new sap.ui.commons.Dialog({
+                var oDialog = new sap.ui.commons.Dialog('aboutDlg', {
                     title: "About",
                     modal: true,
                     buttons : [oBtnBack, oBtnCancel],
@@ -548,7 +566,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 });
 
                var fnOpenReleaseDialog = function openReleaseDialog() {
-                   
+
                    var oNotesModel;
                    var oNotesView = sap.ui.getCore().byId("notesView");
                    var oDialog = sap.ui.getCore().byId("notesDialog");
@@ -557,9 +575,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                        oNotesView = sap.ui.view({id:"notesView", viewName:"versioninfo.notes", type:sap.ui.core.mvc.ViewType.Template});
                        oNotesModel = new JSONModel();
                        oNotesView.setModel(oNotesModel);
-                       oDialog = new sap.ui.commons.Dialog("notesDialog");    
+                       oDialog = new sap.ui.commons.Dialog("notesDialog");
                        oDialog.addButton(new sap.ui.commons.Button({
-                           text: "OK", 
+                           text: "OK",
                            press: function(){
                                oDialog.close();
                            }
@@ -573,17 +591,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 
                    var oLibInfo = new sap.ui.core.util.LibraryInfo();
                    oDialog.setTitle("Change log for: " + this.getBindingContext().getProperty("library"));
-                   
+
                    var oVersion = jQuery.sap.Version(this.getBindingContext().getProperty("version"));
                    var sVersion = oVersion.getMajor() + "." + oVersion.getMinor() + "." + oVersion.getPatch() + oVersion.getSuffix() ;
-                   
+
                    oLibInfo._getReleaseNotes(this.getBindingContext().getProperty("library"), sVersion, function(oRelNotes, sVersion) {
                        oDialog.removeAllContent();
 
                        if (oRelNotes && oRelNotes[sVersion] && oRelNotes[sVersion].notes && oRelNotes[sVersion].notes.length > 0) {
                            oDialog.addContent(oNotesView);
                            oNotesView.getModel().setData(oRelNotes);
-                           oNotesView.bindElement("/" + sVersion);
+                           oNotesView.bindObject("/" + sVersion);
                            oDialog.open();
                        } else {
 
@@ -631,7 +649,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                                        visible : {
                                            path: "releasenotes",
                                            formatter: function(oValue) {
-                                               return !!oValue; 
+                                               return !!oValue;
                                            }
                                        }
                                    }),
@@ -654,7 +672,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                        oDataSetVersionInfo.setLeadSelection(-1);
                    }
                });
-               
+
                oDataSetVersionInfo.setModel(oModelVersionInfo);
 
                var oLayoutVersionInfo = new sap.ui.layout.VerticalLayout({
@@ -685,7 +703,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                     data.thirdparty.sort(function(a,b){
                         var aName = (a.displayName || "").toUpperCase();
                         var bName = (b.displayName || "").toUpperCase();
-                        
+
                         if (aName > bName){
                             return 1;
                         } else if (aName < bName){
@@ -694,7 +712,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                             return 0;
                         }
                     });
-                    
+
                     oModelCredits.setData(data);
                 });
 

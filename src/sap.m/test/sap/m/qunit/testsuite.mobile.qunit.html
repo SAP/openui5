@@ -19,9 +19,9 @@
 				ie9 = (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version === 9);
 
 			if (!navigator.userAgent.match(/MSIE 8.0/g) && navigator.platform.indexOf("Linux") === -1) {
+				// Apps and samples
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/testsuites/testsuite.demokit.qunit.html");
 
-				// Cart Application
-				suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/cart/test/BuyProductJourney.qunit.html");
 
 				// ActionSelect
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ActionSelect.qunit.html");
@@ -50,7 +50,7 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/BusyDialog.qunit.html");
 
 				// BusyIndicator
-				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/BusyIndicator_desktop.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/BusyIndicator.qunit.html");
 
 				// Button
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Button.qunit.html");
@@ -273,7 +273,6 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/semantic/SemanticPage.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/semantic/Segment.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/semantic/ShareMenu.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/semantic/SemanticDraftIndicator.qunit.html");
 
 				// Shell
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Shell.qunit.html");
@@ -306,6 +305,9 @@
 
 				// TableSelectDialog
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TableSelectDialog.qunit.html");
+
+				// TeamCalendar
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TeamCalendar.qunit.html");
 
 				// Text
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Text.qunit.html");

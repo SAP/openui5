@@ -4,6 +4,7 @@
 /* ============================================= */
 
 .sapUiIcon {
+	cursor: default;
 	text-align: center;
 	display: inline-block;
 	vertical-align: baseline;
@@ -17,17 +18,6 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL) {
 	transform: scale(-1,1);
 	-ms-transform: scale(-1,1); /* IE 9 */
 	-webkit-transform: scale(-1,1); /* Safari and Chrome */
-}
-
-/* IE 8 */
-html[dir=rtl][data-sap-ui-browser*='ie8'] .sapUiIconMirrorInRTL {
-	filter: FlipH;
-	-ms-filter: "FlipH";
-}
-
-html[dir=rtl][data-sap-ui-browser*='ie8'] .sapUiIconMirrorInRTL.sapUiIconSuppressMirrorInRTL {
-	filter: none;
-	-ms-filter: "none";
 }
 
 .sapUiIcon:before {

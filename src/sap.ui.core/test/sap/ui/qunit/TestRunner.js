@@ -160,6 +160,7 @@
 				this.runTest(sTestPage, true, that).then(function(oResult) {
 					var nBarwidth = parseFloat(jQuery("div#innerBar")[0].style.width, 10);
 					var sNewwidth = nBarwidth + nBarStep + "%";
+					jQuery("div#innerBar").text(Math.round(nBarwidth + nBarStep) + "%");
 					jQuery("div#innerBar").width(sNewwidth);
 					if (parseInt(jQuery("div#reportingHeader span.failed").text()) > 0) {
 						jQuery("div#innerBar")[0].style.backgroundColor = '#ed866f';
@@ -253,9 +254,14 @@
 					var sTestName = jQuery(doc).find("h1#qunit-header").text();
 					var $results = jQuery(doc).find("ol#qunit-tests > li");
 					var oResult = doc.getElementById("qunit-testresult");
+
 					if (oResult && jQuery(oResult).text().indexOf("completed") >= 0) {
+						
+						//IE workaround for the lack of document.baseURI property
+						baseURI = doc.location.href;
+
 						if (sTestName == " ") {
-							sTestName = "QUnit page for " + oResult.baseURI.substring(oResult.baseURI.indexOf("test-resources") +15,oResult.baseURI.length);
+							sTestName = "QUnit page for " + baseURI.substring(baseURI.indexOf("test-resources") +15,baseURI.length);
 						}
 						oContext = oInst.fnGetTestResults(sTestName, $results);
 						this.printTestResultAndRemoveFrame(oInst, $frame, $framediv, oContext);

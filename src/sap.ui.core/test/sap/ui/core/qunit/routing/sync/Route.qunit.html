@@ -1,0 +1,226 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>qUnit Page for sap.ui.core.routing.Route</title>
+
+	<script src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m">
+	</script>
+
+	<script>
+		(function () {
+			"use strict";
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+			sinon.config.useFakeTimers = true;
+
+
+			jQuery.sap.require("sap.ui.core.routing.Route");
+			jQuery.sap.require("sap.ui.core.UIComponent");
+
+			var oRouterStub = {
+				fireRouteMatched : function () {},
+				fireRoutePatternMatched : function () {},
+				_isAsync: function() {
+					return false;
+				}
+			};
+
+			test("Should not call pattern matched only matched", function () {
+				// Arrange
+				var oRoute = new sap.ui.core.routing.Route(oRouterStub, { name : "testRoute" }),
+						fnMatchedSpy = this.spy(),
+						fnPatternMatchedSpy = this.spy();
+
+				oRoute.attachMatched(fnMatchedSpy);
+				oRoute.attachPatternMatched(fnPatternMatchedSpy);
+
+				// Act
+				oRoute._routeMatched({});
+				this.clock.tick(0);
+
+				// Assert
+				strictEqual(fnMatchedSpy.callCount, 1, "did call the attachMatched spy");
+				strictEqual(fnPatternMatchedSpy.callCount, 0, "did not call the attachPatternMatched spy");
+
+				// Cleanup
+				oRoute.destroy();
+			});
+
+			function fnRouteEventsTestCase (sTestName, sEventName) {
+				test(sTestName, function() {
+					// Arrange
+					var sName = "testRoute",
+							oRoute = new sap.ui.core.routing.Route(oRouterStub, { name : sName }),
+							fnEventSpy = this.spy(function(oEvent, oActualData) {
+								strictEqual(oActualData, oData, "the data is correct");
+								strictEqual(oEvent.getParameters().name, sName, "the name is correct");
+								strictEqual(this, oListener, "the this pointer is correct");
+							}),
+							oListener = {},
+							oData = {some: "data"},
+							oAttachReturnValue = oRoute["attach" + sEventName](oData, fnEventSpy, oListener);
+
+					// Act
+					oRoute._routeMatched({},
+							true);
+					this.clock.tick(0);
+
+					// Assert
+					strictEqual(fnEventSpy.callCount, 1, "did call the attach spy for the event " + sEventName);
+					strictEqual(oAttachReturnValue, oRoute, "did return this for chaining for the event " + sEventName);
+				});
+			}
+
+			fnRouteEventsTestCase("Should attach to the matched event", "Matched");
+			fnRouteEventsTestCase("Should attach to the patternMatched event", "PatternMatched");
+
+			function fnDetachRouteEventTestCase(sTestName, sEventName) {
+				test(sTestName, function() {
+					// Arrange
+					var sName = "testRoute",
+						fnRouteMatchedSpy = this.spy(),
+						oRoute = new sap.ui.core.routing.Route({
+							fireRouteMatched : fnRouteMatchedSpy,
+							fireRoutePatternMatched : fnRouteMatchedSpy,
+							_isAsync : function() {
+								return false;
+							}
+						}, { name : sName }),
+						fnEventSpy = this.spy(),
+						oListener = {};
+
+					oRoute["attach" + sEventName](fnEventSpy, oListener);
+					oRoute["attach" + sEventName](fnEventSpy);
+
+					// Act
+					var oDetachedReturnValue = oRoute["detach" + sEventName](fnEventSpy, oListener);
+					oRoute["detach" + sEventName](fnEventSpy);
+
+					// FireEvent to make sure no spy is called
+					oRoute._routeMatched(
+							{},
+							true);
+
+					// Assert
+					strictEqual(fnEventSpy.callCount, 0, "did not call the spy since it was detached");
+					strictEqual(oDetachedReturnValue, oRoute, "did return this for chaining");
+				});
+			}
+
+			fnDetachRouteEventTestCase("Should detach the matched event", "Matched");
+			fnDetachRouteEventTestCase("Should detach the patternMatched event", "PatternMatched");
+
+
+			QUnit.module("nested routes",{
+				beforeEach: function() {
+					var that = this;
+					this.oSpy = sinon.spy(function(sRoute) {
+						return {
+							matched: {
+								add: function() {
+
+								}
+							}
+						}
+					});
+					this.oRouterStub = {
+						_oRouter: {
+							addRoute: this.oSpy
+						},
+						_isAsync: function() {
+							return false;
+						},
+						getRoute: function() {
+							return that.oParentRoute;
+						}
+					};
+
+					this.oParentRoute = new sap.ui.core.routing.Route(this.oRouterStub, {
+						name: "parentRoute",
+						pattern: "parent"
+					});
+
+					this.oChildRoute = new sap.ui.core.routing.Route(this.oRouterStub, {
+						name: "childRoute",
+						pattern: "child",
+						parent: ":parentRoute"
+					});
+
+					var ParentComponent = sap.ui.core.UIComponent.extend("parent.component", {
+						metadata : {
+							routing:  {
+								routes: [
+									{
+										pattern: "category/{id}",
+										name: "category"
+									}
+								]
+							}
+						},
+						createContent: function() {
+							that.oChildComponent = new ChildComponent("child");
+							return sap.ui.jsview("view", {
+								content: that.oChildComponent
+							});
+						}
+					});
+
+					var ChildComponent = sap.ui.core.UIComponent.extend("child.component", {
+						metadata : {
+							routing:  {
+								routes: [
+									{
+										pattern: "product/{id}",
+										name: "product",
+										parent: "parent.component:category"
+									}
+								]
+							}
+						}
+					});
+
+					this.oGetParentRouteSpy = sinon.spy(sap.ui.core.routing.Route.prototype, "_getParentRoute");
+
+					this.oParentComponent = new ParentComponent("parent");
+
+				},
+				afterEach: function() {
+					this.oGetParentRouteSpy.restore();
+					this.oParentRoute.destroy();
+					this.oChildRoute.destroy();
+					this.oParentComponent.destroy();
+					this.oChildComponent.destroy();
+				}
+			});
+
+			test("Route with prefixed pattern is added to router", function(assert) {
+				assert.strictEqual(this.oSpy.callCount, 2, "Two patterns are added to the router");
+				assert.strictEqual(this.oSpy.args[0][0], "parent", "Pattern of parent route is added to router");
+				assert.strictEqual(this.oSpy.args[1][0], "parent/child", "Pattern of child route is prefixed with the parent route and added to router");
+			});
+
+			test("Route with prefixed pattern matches for nested components", function(assert) {
+				var oParentRouter = this.oParentComponent.getRouter();
+				assert.strictEqual(this.oGetParentRouteSpy.callCount, 1, "getParentRoute is called once on the child route");
+				assert.strictEqual(this.oGetParentRouteSpy.args[0][0], "parent.component:category", "parameter is correctly given");
+				assert.strictEqual(this.oGetParentRouteSpy.returnValues[0], oParentRouter.getRoute("category"), "The parent route instance is fetched from the component");
+			});
+
+		})();
+
+	</script>
+</head>
+<body>
+<h1 id="qunit-header">qUnit Page for sap.ui.core.routing.Route</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+</body>
+</html>

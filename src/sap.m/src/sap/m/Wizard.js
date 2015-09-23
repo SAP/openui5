@@ -882,8 +882,9 @@ sap.ui.define([
 				throw new Error("The step that you are trying to activate has already been visited. You are creating " +
 				"a loop inside the wizard.");
 			}
-			step._activate();
+
 			this._stepPath.push(step);
+			step._activate();
 		};
 
 		return Wizard;

@@ -157,7 +157,7 @@ sap.ui.define([
 
 		var that = this;
 
-		this._oPopover = new ResponsivePopover({
+		this._oPopover = new ResponsivePopover(this.getId() + '-quickView', {
 			placement: this.getPlacement(),
 			content: [this._oNavContainer],
 			showHeader: false,
@@ -196,15 +196,17 @@ sap.ui.define([
 		}, this);
 
 		var that = this;
-		var fnSetArrowPosition = oPopupControl._fnSetArrowPosition;
+		var fnSetArrowPosition = oPopupControl._fnAdjustPositionAndArrow;
 
 		if (fnSetArrowPosition) {
-			oPopupControl._fnSetArrowPosition = function () {
+			oPopupControl._fnAdjustPositionAndArrow = function () {
 				fnSetArrowPosition.apply(oPopupControl, arguments);
 
 				that._adjustContainerHeight();
 			};
 		}
+
+		this._bItemsChanged = true;
 
 		this._oPopover.addStyleClass("sapMQuickView");
 	};
@@ -272,7 +274,7 @@ sap.ui.define([
 	 */
 	QuickView.prototype._addEmptyPage = function() {
 		var oPage = new Page({
-			customHeader : new Bar()
+			customHeader : new Bar().addStyleClass("sapMQuickViewHeader")
 		});
 
 		var that = this;

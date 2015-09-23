@@ -17,10 +17,15 @@
 }
 
 .sapMIBar-CTX .sapMTitle {
-	color: @sapUiBarText;
+	color: @sapUiPageHeaderTextColor;
 	text-shadow: none;
 }
 
 .sapMTB-Transparent-CTX .sapMTitle {
 	text-shadow: 0 0.0625rem 0 @sapUiLightShadowTint;
+}
+
+.sapMIBar-CTX.sapMFooter-CTX .sapMTitle {
+	color: @sapUiPageFooterTextColor;
+	text-shadow: 0 0.0625rem 0 fade(@sapUiDarkShadowTint, 50);
 }

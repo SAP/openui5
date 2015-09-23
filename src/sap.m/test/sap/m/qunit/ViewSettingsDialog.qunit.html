@@ -271,6 +271,7 @@
 		//	var vsd4 = vsd2.clone();
 			var vsd5 = vsd2.clone(); // this one will be used for focus on previously clicked filter element
 			var vsd6 = vsd2.clone(); // this one will be used for initial focus in filter view
+			var vsd8 = vsd2.clone(); // this one will be used for initial focus in filter view
 
 
 			var oButton = new sap.m.Button({
@@ -348,6 +349,29 @@
 				ok(compareFilterKeys(filterState, vsd2.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
 			});
 
+			module("Performance");
+
+			test("The control is not invalidated on setting sort, group or filter Items", function () {
+
+				sinon.spy(vsd2, "invalidate");
+
+				vsd2.setSelectedSortItem(selectedSortItem);
+
+
+				assert.ok(!vsd2.invalidate.called, "The control is not invalidated on setting selected Sort Item");
+
+				vsd2.setSelectedGroupItem(vsd2.getGroupItems()[1]);
+				assert.ok(!vsd2.invalidate.called, "The control is not invalidated on setting selected Group Item");
+
+				vsd2.setSelectedPresetFilterItem(selectedPresetFilterItem);
+				assert.ok(!vsd2.invalidate.called, "The control is not invalidated on setting preset Filter Item");
+
+				vsd2.setSelectedFilterKeys(filterState);
+				assert.ok(!vsd2.invalidate.called, "The control is not invalidated on setting Filter keys");
+
+				vsd2.invalidate.restore();
+			});
+
 			module("Open and Close");
 
 			test("Open ViewSettingsDialog", function (){
@@ -375,6 +399,29 @@
 
 				});
 			}
+
+			test("Last Opened Page is correct on Cancel on second opening of the filter detail view", function () {
+
+				vsd8.open();
+
+				vsd8._switchToPage(2);
+				jQuery.sap.delayedCall(0, vsd8._navContainer, "to", [vsd8.getId() + '-page2', "show"]);
+				vsd8._switchToPage(3,vsd8.getFilterItems()[0]); // name details page
+
+
+				vsd8._dialog.getBeginButton().firePress();
+
+				vsd8.open();
+
+				jQuery.sap.delayedCall(0, vsd8._navContainer, "to", [vsd8.getId() + '-page2', "show"]);
+				vsd8._switchToPage(3,vsd8.getFilterItems()[0]); // name details page
+
+				vsd8._dialog.getEndButton().firePress();
+
+				equal(vsd8._navContainer.getCurrentPage(), vsd8._getPage1(), "NavContainer should be on the first page");
+
+				vsd8.destroy();
+			});
 
 			module ("Events");
 
@@ -1735,14 +1782,14 @@
 			});
 
 
-			module("Focus", {
-				setup: function() {
-					this.clock = sinon.useFakeTimers();
-				},
-				teardown: function() {
-					this.clock.restore();
-				}
-			});
+//			module("Focus", {
+//				setup: function() {
+//					this.clock = sinon.useFakeTimers();
+//				},
+//				teardown: function() {
+//					this.clock.restore();
+//				}
+//			});
 
 			// TODO check this test on refactoring unit tests. It just freezes on IE.
 			/*if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
@@ -1770,6 +1817,7 @@
 			}*/
 
 			/* [end]  Actual unit tests of custom tabs */
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

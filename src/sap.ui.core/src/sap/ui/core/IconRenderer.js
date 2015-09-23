@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(function() {
+sap.ui.define(['jquery.sap.global'], function(jQuery) {
 	"use strict";
 
 	/**
@@ -34,7 +34,7 @@ sap.ui.define(function() {
 		oRm.writeAccessibilityState(oControl, oControl._getAccessibilityAttributes());
 
 		if (sTooltip || (bUseIconTooltip && oIconInfo)) {
-			oRm.writeAttribute("title", sTooltip || oIconInfo.text || oIconInfo.name);
+			oRm.writeAttributeEscaped("title", sTooltip || oIconInfo.text || oIconInfo.name);
 		}
 
 		if (oControl.hasListeners("press") && !bNoTabStop) {
@@ -42,8 +42,8 @@ sap.ui.define(function() {
 		}
 
 		if (oIconInfo) {
-			oRm.writeAttribute("data-sap-ui-icon-content", oIconInfo.content);
-			oRm.addStyle("font-family", "'" + oIconInfo.fontFamily + "'");
+			oRm.writeAttributeEscaped("data-sap-ui-icon-content", oIconInfo.content);
+			oRm.addStyle("font-family", "'" + jQuery.sap.encodeHTML(oIconInfo.fontFamily) + "'");
 		}
 
 		if (sWidth) {
@@ -56,11 +56,11 @@ sap.ui.define(function() {
 		}
 
 		if (!(sColor in sap.ui.core.IconColor)) {
-			oRm.addStyle("color", sColor);
+			oRm.addStyle("color", jQuery.sap.encodeHTML(sColor));
 		}
 
 		if (!(sBackgroundColor in sap.ui.core.IconColor)) {
-			oRm.addStyle("background-color", sBackgroundColor);
+			oRm.addStyle("background-color", jQuery.sap.encodeHTML(sBackgroundColor));
 		}
 
 		if (sSize) {
@@ -71,6 +71,10 @@ sap.ui.define(function() {
 
 		if (oIconInfo && !oIconInfo.suppressMirroring) {
 			oRm.addClass("sapUiIconMirrorInRTL");
+		}
+
+		if (oControl.hasListeners("press")) {
+			oRm.addClass("sapUiIconPointer");
 		}
 
 		oRm.writeClasses();

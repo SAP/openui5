@@ -41,13 +41,13 @@ html.sap-tablet input, html.sap-tablet textarea, html.sap-tablet [contenteditabl
 	width: 100%;
 	height: 100%;
 	margin: 0;
-	background-color: @sapUiPageBG;
+	background-color: lighten(@sapUiBaseBG, 5);
 	font-family: @sapUiFontFamily;
 	font-size: 1rem;
 }
 
 .sapUiBLy {
-	background-color: @sapUiBlockLayerColor;
+	background-color: @sapUiBlockLayerBackground;
 	opacity: 0.6;
 	filter: alpha(opacity=60);
 /* 	this overwrites the default position: fixed which extends the window when something rendered outside */
@@ -106,8 +106,8 @@ html.sap-tablet input, html.sap-tablet textarea, html.sap-tablet [contenteditabl
 .sapMH6Style {
 	font-family: @sapUiFontHeaderFamily !important;
 	font-weight: @sapUiFontHeaderWeight !important;
-	color: @sapUiHeaderText !important;
-	text-shadow: 0 0.0625rem 0 fade(@sapUiLightShadowTint, 50%) !important;
+	color: @sapUiGroupTitleTextColor !important;
+	text-shadow: 0 0.0625rem 0 fade(@sapUiLightShadowTint, 50) !important;
 }
 
 
@@ -336,8 +336,6 @@ html.sap-tablet input, html.sap-tablet textarea, html.sap-tablet [contenteditabl
 
 .sapMGlobalBackgroundColor, /*Only legacy support: Use sapUiGlobalBackgroundColor instead*/
 .sapUiGlobalBackgroundColor,
-.sapUshellShellBackground,
-html[data-sap-ui-browser="ie9"] .sapUshellShellBackground,
 html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor, /*Only legacy support: Use sapUiGlobalBackgroundColor instead*/
 html[data-sap-ui-browser="ie9"] .sapUiGlobalBackgroundColor,
 .sapMGlobalBackgroundColorStrong, /*Only legacy support: Use sapUiStrongBackgroundColor instead*/
@@ -350,11 +348,8 @@ html[data-sap-ui-browser="ie9"] .sapMShellGlobalOuterBackground,
 html[data-sap-ui-browser="ie9"] .sapMShellGlobalInnerBackground,
 .sapUiBodyBackground,
 .sapUiBody,
-html[data-sap-ui-browser="ie8"] .sapUiBodyBackground,
 html[data-sap-ui-browser="ie9"] .sapUiBodyBackground,
 html[data-sap-ui-browser="ie9"] .sapUiBodyBackgroundIE9Layer1,
-html[data-sap-ui-browser="ie8"] .sapUiBodyBackgroundIE9Layer1,
-html[data-sap-ui-browser="ie8"],
 html[data-sap-ui-browser="ie9"] {
 	background-color: transparent;
 	background-image: none;
@@ -364,7 +359,6 @@ html[data-sap-ui-browser="ie9"] {
 /********************************************************************************************************************************/
 
 
-.sapUshellShellBackground,
 .sapUiGlobalBackgroundColor,
 .sapMGlobalBackgroundColor { /*Only legacy support: Use sapUiGlobalBackgroundColor instead*/
 	background-color: @sapUiGlobalBackgroundColorDefault;
@@ -372,7 +366,6 @@ html[data-sap-ui-browser="ie9"] {
 	.sapGlobalBackgroundColorMixin;
 }
 
-html[data-sap-ui-browser="ie9"] .sapUshellShellBackground,
 html[data-sap-ui-browser="ie9"] .sapUiGlobalBackgroundColor,
 html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor { /*Only legacy support: Use sapUiGlobalBackgroundColor instead*/
 	.sapGlobalBackgroundColorMixinIE9;
@@ -465,7 +458,6 @@ html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor .sapMGlobalBackground
 }
 
 /* Ensure that background image is shown again when forced to do so (overrides previous declaration) */
-.sapMGlobalBackgroundImage.sapUshellShellBG, /* Remove this when UShell control is adapted accordingly */
 .sapUiGlobalBackgroundImage.sapUiGlobalBackgroundImageForce {
 	display: block;
 }
@@ -492,13 +484,11 @@ html[data-sap-ui-browser="ie9"] .sapMGlobalBackgroundColor .sapMGlobalBackground
 	background-attachment: fixed;
 }
 
-html[data-sap-ui-browser="ie8"] .sapUiBodyBackground,
 html[data-sap-ui-browser="ie9"] .sapUiBodyBackground {
 	.sapGlobalBackgroundColorMixin;
 	.sapGlobalBackgroundColorMixinIE9;
 }
 
-html[data-sap-ui-browser="ie8"],
 html[data-sap-ui-browser="ie9"] {
 	.sapGlobalBackgroundColorMixin;
 	.sapGlobalBackgroundColorMixinIE9;
@@ -537,8 +527,7 @@ html.sapUiSuppressBackgroundStyles .sapUiBody:before {
   Classes to be used on the container element when UI5 is used in IE9 inside an element that
   is not the HTML body tag 
 */
-html[data-sap-ui-browser="ie9"] .sapUiBodyBackgroundIE9Layer1,
-html[data-sap-ui-browser="ie8"] .sapUiBodyBackgroundIE9Layer1 {
+html[data-sap-ui-browser="ie9"] .sapUiBodyBackgroundIE9Layer1 {
 	background-color: @sapUiGlobalBackgroundColorDefault;
 	.sapGlobalBackgroundColorMixin;
 	.sapGlobalBackgroundColorMixinIE9;

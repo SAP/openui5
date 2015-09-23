@@ -7,241 +7,201 @@
 		xmlns:u="sap.ui.unified"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
-	<Page
-			showHeader="false">
-		<content>
-			<Wizard id="CreateProductWizard"
-					enableBranching="true"
-					complete="wizardCompletedHandler">
-				<WizardStep id="ProductTypeStep"
-							title="Product Type"
-							complete="productTypeComplete"
-							subsequentSteps="MobileStep OtherStep DesktopStep"
-							validated="true">
-					<MessageStrip class="sapUiSmallMarginBottom"
-								  text="The branching mode should be used in cases when the next step depends on user action that was taken in the current step.
-								  To set the next step of the wizard, attach it in the complete event of the current step."
-								  showIcon="true"/>
-					<Text class="sapUiSmallMarginBottom"
-						  text="Sed fermentum, mi et tristique ullamcorper, sapien sapien faucibus sem, quis pretium nibh lorem malesuada diam. Nulla quis arcu aliquet, feugiat massa semper, volutpat diam. Nam vitae ante posuere, molestie neque sit amet, dapibus velit. Maecenas eleifend tempor lorem. Mauris vitae elementum mi, sed eleifend ligula. Nulla tempor vulputate dolor, nec dignissim quam convallis ut. Praesent vitae commodo felis, ut iaculis felis. Fusce quis eleifend sapien, eget facilisis nibh. Suspendisse est velit, scelerisque ut commodo eget, dignissim quis metus. Cras faucibus consequat gravida. Curabitur vitae quam felis. Phasellus ac leo eleifend, commodo tortor et, varius quam. Aliquam erat volutpat"/>
-					<HBox
-							alignItems="Center"
-							justifyContent="Center"
-							width="100%">
-						<SegmentedButton
-								width="320px"
-								select="setProductTypeFromSegmented">
-							<Button icon="sap-icon://iphone" text="Mobile"/>
-							<Button icon="sap-icon://sys-monitor" text="Desktop"/>
-							<Button icon="sap-icon://database" text="Other"/>
-						</SegmentedButton>
-					</HBox>
-				</WizardStep>
-				<WizardStep id="MobileStep"
-							title="Mobile Devices"
-							nextStep="ProductInfoStep">
-					<MessageStrip class="sapUiSmallMarginBottom"
-								  text="This is a step for the MOBILE devices. It is shown because you set MOBILE as your product type."
-								  showIcon="true"/>
-					<HBox
-						alignItems="Center"
-						justifyContent="Center"
-						width="100%">
-						<Panel	width="240px">
-							<core:Icon src="sap-icon://iphone-2" size="152px" />
-						</Panel>
-						<Panel	width="500px">
+	<NavContainer id="wizardNavContainer">
+		<pages>
+			<Page
+					id="wizardContentPage"
+					showHeader="false">
+				<content>
+					<Wizard id="ShoppingCartWizard"
+							complete="completedHandler"
+							enableBranching="true">
+						<WizardStep
+								id="ContentsStep"
+								nextStep="PaymentTypeStep"
+								title="Shopping cart contents"
+								icon="sap-icon://cart">
+							<ObjectHeader
+									title="Total"
+									number="{/ProductsTotalPrice}"
+									numberUnit="EUR">
+								<attributes>
+									<ObjectAttribute	text="This is the list of items in your shopping cart" />
+								</attributes>
+							</ObjectHeader>
+							<List mode="Delete"
+								  items="{/ProductCollection}"
+								  enableBusyIndicator="true"
+								  delete="handleDelete"
+								  headerText="Items">
+								<StandardListItem
+										title="{Name}"
+										type="Active"
+										description="{Description}"
+										icon="{ProductPicUrl}"
+										info="{Price} {CurrencyCode}"
+										iconDensityAware="false"
+										iconInset="false" />
+							</List>
+						</WizardStep>
+						<WizardStep
+								id="PaymentTypeStep"
+								title="Payment type"
+								subsequentSteps="CreditCardStep, BankAccountStep, CashOnDeliveryStep"
+								complete="goToPaymentStep"
+								icon="sap-icon://money-bills">
 							<Text class="sapUiSmallMarginBottom"
-							  text="Sed fermentum, mi et tristique ullamcorper, sapien sapien faucibus sem, quis pretium nibh lorem malesuada diam. Nulla quis arcu aliquet, feugiat massa semper, volutpat diam. Nam vitae ante posuere, molestie neque sit amet, dapibus velit. Maecenas eleifend tempor lorem. Mauris vitae elementum mi, sed eleifend ligula. Nulla tempor vulputate dolor, nec dignissim quam convallis ut. Praesent vitae commodo felis, ut iaculis felis. Fusce quis eleifend sapien, eget facilisis nibh. Suspendisse est velit, scelerisque ut commodo eget, dignissim quis metus. Cras faucibus consequat gravida. Curabitur vitae quam felis. Phasellus ac leo eleifend, commodo tortor et, varius quam. Aliquam erat volutpat"/>
-						</Panel>
-					</HBox>
-				</WizardStep>
-				<WizardStep id="DesktopStep"
-							title="Desktop Devices"
-							nextStep="ProductInfoStep">
-					<MessageStrip class="sapUiSmallMarginBottom"
-								  text="This is a step for the DESKTOP devices. It is shown because you set DESKTOP as your product type."
-								  showIcon="true"/>
-					<HBox
-							alignItems="Center"
-							justifyContent="Center"
-							width="100%">
-						<Panel	width="240px">
-							<core:Icon src="sap-icon://sys-monitor" size="152px" />
-						</Panel>
-						<Panel	width="500px">
+								  text="We accept all major credit cards. No extra cost will be charged when paying with a credit card. Bank transfer and Cash on delivery are only possible for inland deliveries. A service charge of 2.99 EUR will be charged for these types of deliveries. Be aware, that for Bank transfers, the shipping will start on the day after the payment is received."/>
+							<HBox
+									alignItems="Center"
+									justifyContent="Center"
+									width="100%">
+								<SegmentedButton select="setPaymentMethod" id="paymentMethodSelection" selectedKey="{/selectedPayment}">
+									<items>
+										<SegmentedButtonItem key="Credit Card" icon="sap-icon://credit-card" text="Credit card" />
+										<SegmentedButtonItem key="Bank Transfer" icon="sap-icon://official-service" text="Bank transfer" />
+										<SegmentedButtonItem key="Cash on Delivery" icon="sap-icon://money-bills" text="Cash on delivery" />
+									</items>
+								</SegmentedButton>
+							</HBox>
+						</WizardStep>
+						<WizardStep
+								id="CreditCardStep"
+								title="Credit card info"
+								nextStep="BillingStep"
+								activate="checkCreditCardStep"
+								icon="sap-icon://credit-card">
+							<MessageStrip text="Enter at least 3 symbols for credit card name." />
+							<form:SimpleForm
+									editable="true">
+								<Label text="Name on card" required="true" />
+								<Input value="{/CreditCard/Name}" liveChange="checkCreditCardStep" valueLiveUpdate="true" />
+								<Label text="Card number"/>
+								<Input value="{/CardNumber}" />
+								<Label text="Security code" />
+								<Input value="{/CreditCard/SecurityCode}" />
+								<Label text="Expiration date" />
+								<DatePicker value="{/CreditCard/Expire}" />
+							</form:SimpleForm>
+						</WizardStep>
+						<WizardStep
+								id="BankAccountStep"
+								title="Beneficial bank info"
+								nextStep="BillingStep"
+								icon="sap-icon://official-service">
+							<Panel>
+								<headerToolbar>
+									<Toolbar height="0rem">
+										<Title text=""/>
+									</Toolbar>
+								</headerToolbar>
+								<layout:Grid
+										defaultSpan="L6 M6 S10"
+										hSpacing="2">
+									<Label text="Beneficiary Name" design="bold" />
+									<Label text="Singapore Hardware e-Commerce LTD" />
+									<Label text="Beneficiary Bank" design="bold" />
+									<Label text="CITY BANK, SINGAPORE BRANCH" />
+									<Label text="Beneficiary Account Number" design="bold" />
+									<Label text="06110702027218" />
+									<Label text="Bank Phone Number" design="bold" />
+									<Label text="+65-6224-2622" />
+									<Label text="Bank Email Address" design="bold" />
+									<Label text="customerservice@citybank.com" />
+								</layout:Grid>
+							</Panel>
+						</WizardStep>
+						<WizardStep
+								id="CashOnDeliveryStep"
+								title="Cash on delivery info"
+								nextStep="BillingStep"
+								activate="checkCashOnDeliveryStep"
+								icon="sap-icon://money-bills">
+							<MessageStrip text="Enter at least 3 symbols for first name." />
+							<form:SimpleForm
+									editable="true">
+								<Label text="First Name" required="true" />
+								<Input value="{/CashOnDelivery/FirstName}" liveChange="checkCashOnDeliveryStep" valueLiveUpdate="true"  />
+								<Label text="Last Name" />
+								<Input value="{/CashOnDelivery/LastName}" />
+								<Label text="Phone Number" />
+								<Input value="{/CashOnDelivery/Phone Number}" />
+								<Label text="Email address" />
+								<Input value="{/CashOnDelivery/Email}" />
+							</form:SimpleForm>
+						</WizardStep>
+						<WizardStep
+								id="BillingStep"
+								title="Billing address"
+								subsequentSteps="DeliveryAddressStep, DeliveryTypeStep"
+								activate="checkBillingStep"
+								complete="billingAddressComplete"
+								icon="sap-icon://sales-quote">
+							<MessageStrip text="Enter at least 3 symbols for each required field" />
+							<form:SimpleForm
+									editable="true">
+								<Label text="Delivery address is different" />
+								<CheckBox
+										selected="{/differentDeliveryAddress}"
+										select="setDifferentDeliveryAddress"/>
+								<Label text="Address" required="true" />
+								<Input value="{/BillingAddress/Address}" liveChange="checkBillingStep" valueLiveUpdate="true" />
+								<Label text="City" required="true" />
+								<Input value="{/BillingAddress/City}" liveChange="checkBillingStep" valueLiveUpdate="true" />
+								<Label text="Zip Code" required="true"  />
+								<Input value="{/BillingAddress/ZipCode}" liveChange="checkBillingStep" valueLiveUpdate="true" />
+								<Label text="Country" required="true" />
+								<Input value="{/BillingAddress/Country}" liveChange="checkBillingStep" valueLiveUpdate="true" />
+								<Label text="Note" required="false" />
+								<TextArea rows="8" value="{/BillingAddress/Note}" />
+							</form:SimpleForm>
+						</WizardStep>
+						<WizardStep
+								id="DeliveryAddressStep"
+								title="Delivery address"
+								nextStep="DeliveryTypeStep"
+								icon="sap-icon://sales-quote">
+							<form:SimpleForm
+									editable="true">
+								<Label text="Address" />
+								<Input />
+								<Label text="City" />
+								<Input />
+								<Label text="Zip Code" />
+								<Input />
+								<Label text="Country" />
+								<Input />
+								<Label text="Note" />
+								<TextArea rows="8" />
+							</form:SimpleForm>
+						</WizardStep>
+						<WizardStep
+								id="DeliveryTypeStep"
+								title="Delivery type"
+								icon="sap-icon://insurance-car">
 							<Text class="sapUiSmallMarginBottom"
-								  text="Sed fermentum, mi et tristique ullamcorper, sapien sapien faucibus sem, quis pretium nibh lorem malesuada diam. Nulla quis arcu aliquet, feugiat massa semper, volutpat diam. Nam vitae ante posuere, molestie neque sit amet, dapibus velit. Maecenas eleifend tempor lorem. Mauris vitae elementum mi, sed eleifend ligula. Nulla tempor vulputate dolor, nec dignissim quam convallis ut. Praesent vitae commodo felis, ut iaculis felis. Fusce quis eleifend sapien, eget facilisis nibh. Suspendisse est velit, scelerisque ut commodo eget, dignissim quis metus. Cras faucibus consequat gravida. Curabitur vitae quam felis. Phasellus ac leo eleifend, commodo tortor et, varius quam. Aliquam erat volutpat"/>
-						</Panel>
-					</HBox>
-				</WizardStep>
-				<WizardStep id="OtherStep"
-							title="Other Devices"
-							nextStep="ProductInfoStep">
-					<MessageStrip class="sapUiSmallMarginBottom"
-								  text="This is a step for the OTHER devices. It is shown because you set OTHER as your product type."
-								  showIcon="true"/>
-					<HBox
-							alignItems="Center"
-							justifyContent="Center"
-							width="100%">
-						<Panel	width="240px">
-							<core:Icon src="sap-icon://database" size="152px" />
-						</Panel>
-						<Panel	width="500px">
-							<Text class="sapUiSmallMarginBottom"
-								  text="Sed fermentum, mi et tristique ullamcorper, sapien sapien faucibus sem, quis pretium nibh lorem malesuada diam. Nulla quis arcu aliquet, feugiat massa semper, volutpat diam. Nam vitae ante posuere, molestie neque sit amet, dapibus velit. Maecenas eleifend tempor lorem. Mauris vitae elementum mi, sed eleifend ligula. Nulla tempor vulputate dolor, nec dignissim quam convallis ut. Praesent vitae commodo felis, ut iaculis felis. Fusce quis eleifend sapien, eget facilisis nibh. Suspendisse est velit, scelerisque ut commodo eget, dignissim quis metus. Cras faucibus consequat gravida. Curabitur vitae quam felis. Phasellus ac leo eleifend, commodo tortor et, varius quam. Aliquam erat volutpat"/>
-						</Panel>
-					</HBox>
-				</WizardStep>
-				<WizardStep id="ProductInfoStep"
-							validated="false"
-							subsequentSteps="OptionalInfoStep PricingStep"
-							complete="productInfoComplete"
-							title="Product Information">
-					<MessageStrip class="sapUiSmallMarginBottom"
-								  text="Validation in the wizard is controlled by calling the validateStep(Step) and invalidateStep(Step) methods "
-								  showIcon="true"/>
-					<Text text="Cras tellus leo, volutpat vitae ullamcorper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien et viverra imperdiet, orci erat porttitor nulla, eget commodo metus nibh nec ipsum. Aliquam lacinia euismod metus, sollicitudin pellentesque purus volutpat eget. Pellentesque egestas erat quis eros convallis mattis. Mauris hendrerit sapien a malesu corper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien  corper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien  "/>
-					<form:SimpleForm
-							editable="true">
-						<Label text="Name" required="true"/>
-						<Input valueStateText="Enter 6 symbols or more"
-							   valueState="{/productNameState}" id="ProductName" liveChange="additinalInfoValidation"
-							   placeholder="Enter name with length greater than 6" value="{/productName}"/>
-						<Label text="Weight" required="true"/>
-						<Input valueStateText="Enter digits"
-							   valueState="{/productWeightState}" id="ProductWeight"
-							   liveChange="additinalInfoValidation" type="Number" placeholder="Enter digits"
-							   value="{/productWeight}"/>
-						<Label text="Manufacturer"/>
-						<Select selectedKey="{/productManufacturer}">
-							<core:Item key="Apple" text="Apple"/>
-							<core:Item key="Microsoft" text="Microsoft"/>
-							<core:Item key="Google" text="Google"/>
-							<core:Item key="Sony" text="Sony"/>
-							<core:Item key="Samsung" text="Samsung"/>
-							<core:Item key="Logitech" text="Logitech"/>
-						</Select>
-						<Label text="Description"/>
-						<TextArea value="{/productDescription}" rows="8"/>
-						<Label text="Go to optional step" required="true"/>
-						<CheckBox id="GoToOptionalStep" selected="true" />
-					</form:SimpleForm>
-				</WizardStep>
-				<WizardStep id="OptionalInfoStep"
-							validated="true"
-							nextStep="PricingStep"
-							activate="optionalStepActivation"
-							title="Optional Information">
-					<MessageStrip class="sapUiSmallMarginBottom"
-								  text="You can validate steps by default with the validated='true' property of the step. The next button is always enabled."
-								  showIcon="true"/>
-					<Text text="Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec ppellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien  corper eu, posuere malesuada nisl. Integer pellentesque leo sit amet dui vehicula, quis ullamcorper est pulvinar. Nam in libero sem. Suspendisse arcu metus, molestie a turpis a, molestie aliquet dui. Donec pulvinar, sapien  "/>
-					<form:SimpleForm
-							editable="true">
-						<Label text="Cover photo"/>
-						<u:FileUploader
-								width="400px"
-								tooltip="Upload product cover photo to the local server"
-								style="Emphasized"
-								placeholder="Choose a file for Upload..."/>
-						<Label text="Manufacturing date"/>
-						<DatePicker
-								id="DP3"
-								displayFormat="short"
-								change="handleChange"/>
-						<Label text="Availability"/>
-						<SegmentedButton selectedButton="inStock">
-							<Button text="In store" id="inStock"/>
-							<Button text="In depot"/>
-							<Button text="In repository"/>
-							<Button text="Out of stock"/>
-						</SegmentedButton>
-						<Label text="Size"/>
-						<Input/>
-						<ComboBox maxWidth="100px">
-							<core:Item key="X" text="X"/>
-							<core:Item key="Y" text="Y"/>
-							<core:Item key="Z" text="Z"/>
-						</ComboBox>
-
-					</form:SimpleForm>
-				</WizardStep>
-				<WizardStep id="PricingStep"
-							nextStep="SummaryStep"
-							activate="pricingActivate"
-							complete="pricingComplete"
-							validated="false"
-							title="Pricing">
-					<MessageStrip class="sapUiSmallMarginBottom"
-								  text="You can use the wizard previousStep() and nextStep() methods to navigate from step to step without validation. Also you can use the GoToStep(step) method to scroll programmatically to previously visited steps."
-								  showIcon="true"/>
-					<form:SimpleForm
-							editable="true">
-						<Label text="Price"/>
-						<Input value="{/productPrice}"/>
-						<Label text="Discoung group"/>
-						<MultiComboBox>
-							<core:Item key="Children" text="Kids"/>
-							<core:Item key="Children" text="Teens"/>
-							<core:Item key="Children" text="Adults"/>
-							<core:Item key="Children" text="Old people"/>
-						</MultiComboBox>
-						<Label text=" VAT is included"/>
-						<CheckBox selected="{/productVAT}"/>
-						<Label text="Go to next without validation"/>
-						<Button press="goFrom4to5" text="Next" enabled="{/navApiEnabled}" />
-						<Label text="Go to previous"/>
-						<Button press="goFrom4to3" text="Previous" enabled="{/navApiEnabled}"/>
-						<Label text="Go to step 2"/>
-						<Button press="scrollFrom4to2" text="Scroll to step Product information"/>
-					</form:SimpleForm>
-				</WizardStep>
-				<WizardStep
-						id="SummaryStep"
-						title="Summary">
-					<MessageStrip class="sapUiSmallMarginBottom"
-								  text="You can use the discardProgress(Step) method to discard the current progress, and go back to the defined step. Press the discard button to test it."
-								  showIcon="true"/>
-					<form:SimpleForm
-							minWidth="1024"
-							maxContainerCols="2"
-							editable="false"
-							layout="ResponsiveGridLayout"
-							labelSpanL="3"
-							labelSpanM="3"
-							emptySpanL="4"
-							emptySpanM="4"
-							columnsL="1"
-							columnsM="1">
-						<form:content>
-							<Label text="Type"/>
-							<Text id="ProductTypeChosen" text="{/productType}"/>
-							<Label text="Name"/>
-							<Text id="ProductNameChosen" text="{/productName}"/>
-							<Label text="Weight"/>
-							<Text id="ProductWeightChosen" text="{/productWeight}"/>
-							<Label text="Manufacturer"/>
-							<Text id="ProductManufacturerChosen" text="{/productManufacturer}"/>
-							<Label text="Description"/>
-							<Text id="ProductDescriptionChosen" text="{/productDescription}"/>
-							<Label text="Price"/>
-							<Text id="ProductPriceChosen" text="{/productPrice}"/>
-							<Label text="VAT Included"/>
-							<Text id="ProductVATChosen" text="{/productVAT}"/>
-							<Label text="Discard" />
-						</form:content>
-					</form:SimpleForm>
-					<Button press="discardProgress" text="Discard"/>
-				</WizardStep>
-			</Wizard>
-		</content>
-		<footer>
-			<Toolbar>
-				<ToolbarSpacer/>
-				<Button text="Cancel"/>
-			</Toolbar>
-		</footer>
-	</Page>
+								  text="Standard delivery will be delivered within 5 workdays. Be aware, that around high-season sales, standard delivery may take up to one additional day. Express delivery is delivered within 36 hours. A service fee of 5.49 EUR is charged for Express delivery on a workday. For a holiday delivery, the service fee is 8,00 EUR. Express delivery is only available for inland deliveries. All service fees vary for deliveries  abroad."/>
+							<HBox
+									alignItems="Center"
+									justifyContent="Center"
+									width="100%">
+								<SegmentedButton selectedKey="{/selectedDeliveryMethod}">
+									<items>
+										<SegmentedButtonItem key="Standard Delivery" text="Standard" />
+										<SegmentedButtonItem key="Express Delivery" text="Express" />
+									</items>
+								</SegmentedButton>
+							</HBox>
+						</WizardStep>
+					</Wizard>
+				</content>
+				<footer>
+					<Toolbar>
+						<ToolbarSpacer/>
+						<Button text="Cancel" press="handleWizardCancel"/>
+					</Toolbar>
+				</footer>
+			</Page>
+		</pages>
+	</NavContainer>
 </mvc:View>

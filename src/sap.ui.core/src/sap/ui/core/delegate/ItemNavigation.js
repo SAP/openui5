@@ -12,83 +12,63 @@
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	function(jQuery, EventProvider) {
 	"use strict";
+	/* eslint-disable no-lonely-if */
 
 	/**
-	 * Creates an ItemNavigation delegate that can be attached to Controls requiring
+	 * Creates an <code>ItemNavigation</code> delegate that can be attached to controls requiring
 	 * capabilities for keyboard navigation between items.
 	 *
-	 * @class Delegate for the ItemNavigation with the keyboard.
+	 * @class Delegate for the navigation between DOM nodes with the keyboard.
 	 *
-	 * @author SAP SE
+	 * The <code>ItemNavigation</code> provides keyboard and mouse navigation between DOM nodes representing items.
+	 * This means that controls rendering a list of items can attach this delegate to get a common keyboard and mouse support
+	 * to navigate between these items.
+	 * It is possible to navigate between the items via the arrow keys.
+	 * If needed, paging using the Page Up and Page Down keys is possible. (To activate call <code>setPageSize</code> with a value &gt; 0.)
+	 * HOME and END keys are also supported.
+	 * Focusing an item via mouse also is also supported. For mouse navigation, the <code>mousedown</code> event is used.
 	 *
-	 * Delegate for the ItemNavigation with
-	 * arrow keys over a one dimensional list of items.
+	 * As the <code>ItemNavigation</code> works with DOM nodes, the items and the control area must be provided as
+	 * DOM references. There is one root DOM reference (set via <code>setRootDomRef</code>).
+	 * All item DOM references (set via <code>setItemDomRefs</code>) must be places somewhere inside of this root DOM reference.
+	 * Only focusable items are used for the navigation, meaning disabled items or separator items are just ignored by navigating
+	 * through the items. In some cases however, it makes sense to put the non-focusable items in the array of the DOM references to
+	 * keep the indexes stable or like in the calling control.
+	 * <b>Hint:</b> To make a DOM reference focusable a <code>tabindex</code> of -1 can be set.
 	 *
-	 * The ItemNavigation gets a main DOM reference and
-	 * an array of DOM references that represent the
-	 * DOM nodes that should be focused.
+	 * <b>Note</b> After re-rendering of the control or changing the DOM nodes of the control, the
+	 * DOM references of the <code>ItemNavigation</code> must be updated. Then the same item
+	 * (corresponding to the index) will get the focus.
 	 *
-	 * If there are disabled nodes or not focusable nodes like separators that should be used
-	 * (e.g. for paging issues) in the ItemNavigation they
-	 * can be added to the DOM reference array as empty (false) entries. These nodes are
-	 * not focused by keyboard navigation but are useful because the index of the nodes in the
-	 * ItemNavigation is the same like in the calling control.
+	 * The <code>ItemNavigation</code> adjusts the <code>tabindex</code> of all DOM references relating to the current
+	 * focused item. So if the control containing the items gets the focus (e.g. via tab navigation),
+	 * it is always the focused items which will be focused.
 	 *
-	 * If the DOM references are submitted to the ItemNavigation the TabIndexes of the
-	 * nodes are adjusted regarding to the Focused Index.
+	 * <b>Note:</b> If the <code>ItemNavigation</code> is nested in another <code>ItemNavigation</code> 
+	 * (e.g. <code>SegmentedButton</code> in <code>Toolbar</code>), the <code>RootDomRef</code> will always have <code>tabindex</code> -1.
 	 *
-	 * If the ItemNavigation is nested in an other ItemNavigation (e.g. SegmentedButton in Toolbar)
-	 * the RootDomRef will always have TabIndex -1.
-	 *
-	 * Per default the ItemNavigation cycles over the items.
-	 * It starts again on the top if arrow down is pressed while
-	 * the last item has the focus. It starts at the end if arrow up or
-	 * left is pressed while the first item has the focus.
-	 * If you like to stop the navigation at the first and last item,
+	 * Per default the <code>ItemNavigation</code> cycles over the items.
+	 * It navigates again to the first item if the Arrow Down or Arrow Right key is pressed while
+	 * the last item has the focus. It navigates to the last item if arrow up or
+	 * arrow left is pressed while the first item has the focus.
+	 * If you want to stop the navigation at the first and last item,
 	 * call the <code>setCycling</code> method with a value of <code>false</code>.
 	 *
 	 * It is possible to have multiple columns in the item navigation. If multiple columns
-	 * are used the keyboard navigation changes. Right and left will get to the next or previous
-	 * node. but up and down will navigate the same way but in vertical direction.
+	 * are used, the keyboard navigation changes. The Arrow Right and Arrow Left keys will take the user to the next or previous
+	 * item, and the Arrow Up and Arrow Down keys will navigate the same way but in a vertical direction.
 	 *
-	 * The ItemNavigation helper also allows to set a selected index that is used
-	 * if the user initially enters the navigated control (for a radio group there
-	 * is one selected).
+	 * The <code>ItemNavigation</code> also allows setting a selected index that is used to identify
+	 * the selected item. Initially, if no other focus is set, the selected item will be the focused one.
+	 * Note that navigating through the items will not change the selected item, only the focus.
+	 * (For example a radio group has one selected item.)
 	 *
-	 * This class listens to mousedown event and if it occurs on an item in the
-	 * list aItemDomRefs, it sets the focus to it.
-	 *
-	 * Remembering the focused item after a server roundtrip or after re-rendering is
-	 * up to the control that uses this delegate.
-	 *
-	 * When the <code>setPageSize</code> method is called with a value &gt; 0,
-	 * then page up and down events will be handled.
-	 *
-	 * The <code>BeforeFocus</code> event is fired before the actual item is focused.
-	 * The control can register to this event and e.g. make the item visible
-	 * if it is not currently visible.
-	 * The index of the focused Item and the triggering event are returned.
-	 * !!! But this is not usable in the moment because not visible items are not reached
-	 * !!! by keyboard navigation. It is to late to make them visible on this event or it
-	 * !!! is fired to late.
-	 * !!! This must be redesigned if the feature is really needed. (e.g. in TabStrip for
-	 * !!! tabs that are not visible in the moment...)
-	 *
-	 * The <code>AfterFocus</code> event is fired after the actual item is focused.
-	 * The control can register to this event and react on the focus change.
-	 * The index of the focused Item and the triggering event are returned.
-	 *
-	 * The <code>BorderReached</code> event is fired if the border of the items is reached and
-	 * no cycling is used. So an application can react on this.
-	 * For example if the first item is focused and the LEFT key is pressed.
-	 *
-	 * The <code>FocusAgain</code> event is fired if the current focused item is focused again
-	 * (e.G. click again on focused item)
+	 * @author SAP SE
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 *
-	 * @param {Element} oDomRef the DOM element that is focused if the item navigation is started
-	 * @param {Element[]} aItemDomRefs Array of DOM elements representing the items for the navigation
+	 * @param {Element} oDomRef The root DOM reference that includes all items
+	 * @param {Element[]} aItemDomRefs Array of DOM references representing the items for the navigation
 	 * @param {boolean} [bNotInTabChain=false] Whether the selected element should be in the tab chain or not
 	 *
 	 * @version ${version}
@@ -155,11 +135,66 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
+	 * The 'beforeFocus' event is fired before the actual item is focused.
+	 *
+	 * @name sap.ui.core.delegate.ItemNavigation#beforeFocus
+	 * @event
+	 * @param {int} index Index of the item
+	 * @param {jQuery.Event} event Event that leads to the focus change
+	 * @public
+	 */
+
+	/**
+	 * The 'afterFocus' event is fired after the actual item is focused.
+	 * The control can register to this event and react on the focus change.
+	 *
+	 * @name sap.ui.core.delegate.ItemNavigation#afterFocus
+	 * @event
+	 * @param {int} index Index of the item
+	 * @param {jQuery.Event} event Event that leads to the focus change
+	 * @public
+	 */
+
+	/**
+	 * The 'borderReached' event is fired if the border of the items is reached and
+	 * no cycling is used, meaning an application can react on this.
+	 *
+	 * For example if the first item is focused and the Arrow Left key is pressed.
+	 *
+	 * @name sap.ui.core.delegate.ItemNavigation#borderReached
+	 * @event
+	 * @param {int} index Index of the item
+	 * @param {jQuery.Event} event Event that leads to the focus change
+	 * @public
+	 */
+
+	/**
+	 * The 'focusAgain' event is fired if the current focused item is focused again
+	 * (e.g. click again on focused item.)
+	 *
+	 * @name sap.ui.core.delegate.ItemNavigation#focusAgain
+	 * @event
+	 * @param {int} index Index of the item
+	 * @param {jQuery.Event} event Event that leads to the focus change
+	 * @public
+	 */
+
+	/**
+	 * The 'focusLeave' event fired if the focus is set outside the control handled by the <code>ItemNavigation</code>.
+	 *
+	 * @name sap.ui.core.delegate.ItemNavigation#focusLeave
+	 * @event
+	 * @param {int} index Index of the item
+	 * @param {jQuery.Event} event Event that leads to the focus change
+	 * @public
+	 */
+
+	/**
 	 * Sets the disabled modifiers
-	 * These modifiers will not be handled by ItemNavigation
+	 * These modifiers will not be handled by the <code>ItemNavigation</code>
 	 *
 	 * <pre>
-	 * Example: Disable shift + up handling of ItemNavigation
+	 * Example: Disable shift + up handling of the <code>ItemNavigation</code>
 	 *
 	 * oItemNavigation.setDisabledModifiers({
 	 *     sapnext : ["shift"]
@@ -180,10 +215,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	/**
 	 * Returns disabled modifiers
-	 * These modifiers will not be handled by ItemNavigation
+	 * These modifiers will not be handled by the <code>ItemNavigation</code>
 	 *
-	 * @param {object} oDisabledModifiers
-	 * @return {object}
+	 * @param {object} oDisabledModifiers Object that includes event type with disabled keys as an array
+	 * @return {object} Object that includes event type with disabled keys as an array
 	 * @public
 	 */
 	ItemNavigation.prototype.getDisabledModifiers = function(oDisabledModifiers) {
@@ -194,7 +229,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Check whether given event has disabled modifier or not
 	 *
 	 * @param {jQuery.Event} oEvent jQuery event
-	 * @return {Boolean}
+	 * @return {Boolean} Flag if disabled modifiers are set
 	 * @public
 	 */
 	ItemNavigation.prototype.hasDisabledModifier = function(oEvent) {
@@ -211,9 +246,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Sets the root reference surrounding the items
+	 * Sets the root DOM reference surrounding the items
 	 *
-	 * @param {object} oDomRef
+	 * @param {object} oDomRef Root DOM reference
 	 * @return {sap.ui.core.delegate.ItemNavigation} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -235,9 +270,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * returns the root dom reference surrounding the items
+	 * Returns the root DOM reference surrounding the items
 	 *
-	 * @return {Element} root dom reference surrounding the items
+	 * @return {Element} Root DOM reference
 	 * @public
 	 */
 	ItemNavigation.prototype.getRootDomRef = function() {
@@ -245,9 +280,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * returns the array of item dom refs
+	 * Returns the array of item DOM references
 	 *
-	 * @return {Element[]} array of item dom refs
+	 * @return {Element[]} Array of item DOM references
 	 * @public
 	 */
 	ItemNavigation.prototype.getItemDomRefs = function() {
@@ -255,9 +290,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Sets the item dom refs as an array the items
+	 * Sets the item DOM references as an array for the items
 	 *
-	 * @param {any[]} aItemDomRefs
+	 * @param {Element[]} aItemDomRefs Array of DOM references representing the items
 	 * @return {sap.ui.core.delegate.ItemNavigation} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -298,11 +333,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Sets the tabindex of the items.
+	 * Sets the <code>tabindex</code> of the items.
 	 *
-	 * This can not be done while setting items because at this point of time the items might
-	 * be invisible (because e.g. popup closed). So the focusable check will fail
-	 * So the item tabindexes are set if the rootDom ist focused the first time.
+	 * This cannot be done while setting items because at this point of time the items might
+	 * be invisible (because e.g. a popup closed), meaning the focusable check will fail.
+	 * So the items <code>tabindex</code>es are set if the rootDom is focused the first time.
 	 *
 	 * @return {sap.ui.core.delegate.ItemNavigation} <code>this</code> to allow method chaining
 	 * @private
@@ -328,10 +363,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Sets tabindex if item to -1
-	 * called from parent ItemNavigation if ItemNavigation is nested
-	 * In the nested case the tabindex is ruled by the parent ItemNavigation,
-	 * only the top items can have tabindex = 0.
+	 * Sets <code>tabindex</code> of item to -1
+	 * if called from parent <code>ItemNavigation</code> if ItemNavigation is nested.
+	 * In the nested case the <code>tabindex</code> is ruled by the parent <code>ItemNavigation</code>,
+	 * only the top items can have <code>tabindex</code> = 0.
 	 *
 	 * @return {sap.ui.core.delegate.ItemNavigation} <code>this</code> to allow method chaining
 	 * @private
@@ -349,7 +384,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Destroys the delegate and releases all dom references.
+	 * Destroys the delegate and releases all DOM references.
 	 *
 	 */
 	ItemNavigation.prototype.destroy = function() {
@@ -375,9 +410,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Sets whether the ItemNavigation should cycle through the items.
+	 * Sets whether the <code>ItemNavigation</code> should cycle through the items.
 	 *
-	 * @param {boolean} bCycling true if cycling should be done, else false
+	 * If cycling is disabled the navigation stops at the first and last item, if the corresponding arrow keys are used.
+	 *
+	 * @param {boolean} bCycling Set to true if cycling should be done, else false
 	 * @return {sap.ui.core.delegate.ItemNavigation} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -387,14 +424,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Sets whether the ItemNavigation should use the table mode to navigate through
+	 * Sets whether the <code>ItemNavigation</code> should use the table mode to navigate through
 	 * the items (navigation in a grid).
 	 *
-	 * @param {boolean} bTableMode true if table mode should be done, else false
-	 * @param {boolean} [bTableList] this sets a different behaviour for table mode.
+	 * @param {boolean} bTableMode Set to true if table mode should be used, else false
+	 * @param {boolean} [bTableList] This sets a different behavior for table mode.
 	 * In this mode we keep using table navigation but there are some differences. e.g.
-	 * 	- Page-up moves focus to the first row, not first cell like in table mode
-	 * 	- Page-down moves focus to the last row, not last cell like in table mode
+	 * <ul>
+	 * 	<li>Page-up moves focus to the first row, not to the first cell like in table mode</li>
+	 * 	<li>Page-down moves focus to the last row, not to the last cell like in table mode</li>
+	 * </ul>
 	 *
 	 * @return {sap.ui.core.delegate.ItemNavigation} <code>this</code> to allow method chaining
 	 * @public
@@ -406,9 +445,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Sets the page size of the item navigation to allow pageup and down keys.
+	 * Sets the page size of the item navigation to allow Page Up and Page Down keys.
 	 *
-	 * @param {int} iPageSize the pagesize, needs to be at least 1
+	 * @param {int} iPageSize The page size, needs to be at least 1
 	 * @return {sap.ui.core.delegate.ItemNavigation} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -420,7 +459,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	/**
 	 * Sets the selected index if the used control supports selection.
 	 *
-	 * @param {int} iIndex the index of the first selected item
+	 * @param {int} iIndex Index of the first selected item
 	 * @return {sap.ui.core.delegate.ItemNavigation} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -430,10 +469,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Sets whether the items are displayed in columns
+	 * Sets whether the items are displayed in columns.
 	 *
-	 * @param {int} iColumns count of columns for the table mode or cycling mode
-	 * @param {boolean} bNoColumnChange forbid to jump to an other column with up and down keys
+	 * If columns are used, the Arrow Up and Arrow Down keys navigate to the next or previous
+	 * item of the column. If the first or last item of the column is reached, the next focused
+	 * item is then in the next or previous column.
+	 *
+	 * @param {int} iColumns Count of columns for the table mode or cycling mode
+	 * @param {boolean} bNoColumnChange Forbids jumping to an other column with Arrow Up and Arrow Down keys
 	 * @return {sap.ui.core.delegate.ItemNavigation} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -444,9 +487,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Sets behaviour of HOME and END if columns are used
+	 * Sets behavior of HOME and END keys if columns are used.
 	 *
-	 * @param {boolean} bStayInRow HOME -> got to first item in row; END -> go to last item in row
+	 * @param {boolean} bStayInRow HOME -> go to first item in row; END -> go to last item in row
 	 * @param {boolean} bCtrlEnabled HOME/END with CTRL -> go to first/last item of all
 	 * @return {sap.ui.core.delegate.ItemNavigation} <code>this</code> to allow method chaining
 	 * @public
@@ -456,12 +499,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			this._bStayInRow = bStayInRow;
 			this._bCtrlEnabled = bCtrlEnabled;
 
+			return this;
+
 	};
 
 	/**
 	 * Sets the focus to the item with the given index.
 	 *
-	 * @param {int} iIndex the index of the item to focus
+	 * @param {int} iIndex Index of the item to focus
+	 * @param {jQuery.event} oEvent Event that leads to focus change
 	 * @private
 	 */
 	ItemNavigation.prototype.focusItem = function(iIndex, oEvent) {
@@ -524,7 +570,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	/**
 	 * Sets the focused index to the given index.
 	 *
-	 * @param {int} iIndex the index of the item
+	 * @param {int} iIndex Index of the item
 	 * @return {sap.ui.core.delegate.ItemNavigation} <code>this</code> to allow method chaining
 	 * @private
 	 */
@@ -565,9 +611,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Returns the focused dom ref.
+	 * Returns the focused DOM reference.
 	 *
-	 * @return {Element} focused dom ref
+	 * @return {Element} Focused DOM reference
 	 * @private
 	 */
 	ItemNavigation.prototype.getFocusedDomRef = function() {
@@ -575,7 +621,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Returns the focused index.
+	 * Returns index of the focused item.
 	 *
 	 * @return {int} focused index
 	 * @private
@@ -593,6 +639,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	ItemNavigation.prototype.onfocusin = function(oEvent) {
 
 		var oSource = oEvent.target;
+		var i = 0;
 
 		if (oSource == this.oDomRef) {
 
@@ -650,7 +697,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			if (this.iFocusedIndex == -1) {
 
 				// no item focused, maybe not focusable -> try the next one
-				for (var i = iIndex + 1; i < this.aItemDomRefs.length; i++) {
+				for (i = iIndex + 1; i < this.aItemDomRefs.length; i++) {
 					this.focusItem(i, oEvent);
 					if (this.iFocusedIndex == i) {
 						break;
@@ -660,7 +707,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				if (this.iFocusedIndex == -1 && iIndex > 0) {
 
 					// still no item selected, try to find a previous one
-					for (var i = iIndex - 1; i >= 0; i--) {
+					for (i = iIndex - 1; i >= 0; i--) {
 						this.focusItem(i, oEvent);
 						if (this.iFocusedIndex == i) {
 							break;
@@ -677,7 +724,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			// check if this is really the already focused item
 			// in case of a click on a label this could be an other item
 			if (this.aItemDomRefs && oEvent.target != this.aItemDomRefs[this.iFocusedIndex]) {
-				for (var i = 0; i < this.aItemDomRefs.length; i++) {
+				for (i = 0; i < this.aItemDomRefs.length; i++) {
 					if (oEvent.target == this.aItemDomRefs[i]) {
 						this.focusItem(i, oEvent);
 						break;
@@ -713,11 +760,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			}
 			this.setFocusedIndex(iIndex);
 
+			var $DomRef;
+
 			if (jQuery(this.oDomRef).data("sap.INItem")) {
 
 				// if in nested ItemNavigation and focus moves to item of parent ItemNavigation -> do not set Tabindex
-				var oParentDomRef,
-					$DomRef = jQuery(this.oDomRef);
+				var oParentDomRef;
+				$DomRef = jQuery(this.oDomRef);
 
 				while (!oParentDomRef) {
 					$DomRef = $DomRef.parent();
@@ -731,7 +780,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 				}
 			}
 
-			var $DomRef = jQuery(this.oDomRef);
+			$DomRef = jQuery(this.oDomRef);
 			if ($DomRef.data("sap.InNavArea") === false) { // check for false to avoid undefinded
 
 				// if in action mode switch back to navigation mode
@@ -941,6 +990,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Ensure the sapnext event with modifiers is also handled
 	 *
 	 * @see #onsapnext
+	 * @param {jQuery.Event} oEvent the browser event
 	 * @private
 	 */
 	ItemNavigation.prototype.onsapnextmodifiers = function(oEvent) {
@@ -981,11 +1031,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		var iIndex = this.iFocusedIndex,
 			bFirstTime = true,
 			bBorderReached = false;
+		var iCol = 0;
 
 		if (iIndex > -1) {
 			if (this.bTableMode) {
-				var iRow = Math.floor(iIndex / this.iColumns),
-					iCol = iIndex % this.iColumns;
+				var iRow = Math.floor(iIndex / this.iColumns);
+				iCol = iIndex % this.iColumns;
 
 				if (oEvent.keyCode == jQuery.sap.KeyCodes.ARROW_UP) {
 					if (iRow  > 0) {
@@ -1002,7 +1053,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 						if ((iIndex - this.iColumns) < 0) {
 							if (!this.bNoColumnChange) {
 								// on top -> begin on end of previous column
-								var iCol = 0;
+								iCol = 0;
 
 								if ((iIndex % this.iColumns) > 0) {
 									iCol = (iIndex % this.iColumns) - 1;
@@ -1082,6 +1133,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Ensure the sapprevious event with modifiers is also handled
 	 *
 	 * @see #onsapprevious
+	 * @param {jQuery.Event} oEvent the browser event
 	 * @private
 	 */
 	ItemNavigation.prototype.onsappreviousmodifiers = function(oEvent) {
@@ -1094,7 +1146,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 
 	/**
 	 * Handles the onsappageup event
-	 * Sets the focus to the previous page item of iPageSize>0
+	 * Sets the focus to the previous page item of <code>iPageSize</code> > 0
 	 * @param {jQuery.Event} oEvent the browser event
 	 * @private
 	 */
@@ -1156,7 +1208,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	/**
 	 * Handles the onsappagedown event.
 	 *
-	 * Sets the focus to the previous page item of iPageSize>0
+	 * Sets the focus to the previous page item of <code>iPageSize</code> > 0
 	 *
 	 * @param {jQuery.Event} oEvent the browser event
 	 * @private
@@ -1240,10 +1292,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 
 		var iIndex = 0;
+		var iRow = 0;
 		if (this.bTableMode) {
 
 			if (!this.bTableList && !(oEvent.metaKey || oEvent.ctrlKey)) {
-				var iRow = Math.floor(this.iFocusedIndex / this.iColumns);
+				iRow = Math.floor(this.iFocusedIndex / this.iColumns);
 				iIndex = iRow * this.iColumns;
 			}
 		} else {
@@ -1254,7 +1307,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			}
 
 			if (this._bStayInRow && !(this._bCtrlEnabled && (oEvent.metaKey || oEvent.ctrlKey)) && this.iColumns > 0) {
-				var iRow = Math.floor(this.iFocusedIndex / this.iColumns);
+				iRow = Math.floor(this.iFocusedIndex / this.iColumns);
 				iIndex = iRow * this.iColumns;
 			} else {
 				while (!this.aItemDomRefs[iIndex] || !jQuery(this.aItemDomRefs[iIndex]).is(":sapFocusable")) {
@@ -1280,6 +1333,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Ensure the sapprevious event with modifiers is also handled
 	 *
 	 * @see #onsaphome
+	 * @param {jQuery.Event} oEvent the browser event
 	 * @private
 	 */
 	ItemNavigation.prototype.onsaphomemodifiers = function(oEvent) {
@@ -1312,10 +1366,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 		}
 
 		var iIndex = this.aItemDomRefs.length - 1;
+		var iRow = 0;
 
 		if (this.bTableMode) {
 			if (!this.bTableList && !(oEvent.metaKey || oEvent.ctrlKey)) {
-				var iRow = Math.floor(this.iFocusedIndex / this.iColumns);
+				iRow = Math.floor(this.iFocusedIndex / this.iColumns);
 				iIndex = iRow * this.iColumns + this.iColumns - 1;
 			}
 		} else {
@@ -1327,7 +1382,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 			}
 
 			if (this._bStayInRow && !(this._bCtrlEnabled && (oEvent.metaKey || oEvent.ctrlKey)) && this.iColumns > 0) {
-				var iRow = Math.floor(this.iFocusedIndex / this.iColumns);
+				iRow = Math.floor(this.iFocusedIndex / this.iColumns);
 				iIndex = (iRow + 1) * this.iColumns - 1;
 				if (iIndex >= this.aItemDomRefs.length) {
 					// item not exist -> use last one
@@ -1357,6 +1412,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Ensure the sapprevious event with modifiers is also handled.
 	 *
 	 * @see #onsapend
+	 * @param {jQuery.Event} oEvent the browser event
 	 * @private
 	 */
 	ItemNavigation.prototype.onsapendmodifiers = function(oEvent) {
@@ -1368,7 +1424,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	};
 
 	/**
-	 * Sets tabIndex of the RootElement to 0. Is used, for example in image map for IE browser in order to avoid tabIndex -1 on image with what it would not be tabable at all.
+	 * Sets <code>tabindex</code> of the root DOM reference to 0.
+	 * Is used, for example in image map for IE browser in order to avoid <code>tabindex</code> -1 on image
+	 * with which it would not be tabable at all.
 	 *
 	 * @private
 	 */
@@ -1380,6 +1438,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	/**
 	 * toggle navigation/action mode on F2
 	 *
+	 * @param {jQuery.Event} oEvent the browser event
 	 * @private
 	 */
 	ItemNavigation.prototype.onkeyup = function(oEvent) {

@@ -321,7 +321,17 @@ function runODataAnnotationTests() {
 			annotations      : null,
 			serviceValid     : true,
 			annotationsValid : "metadata"
+		},
+		"Overwrite on Term Level": {
+			service          : "fakeService://testdata/odata/valuelists/",
+			annotations      : [
+				"fakeService://testdata/odata/overwrite-on-term-level-1",
+				"fakeService://testdata/odata/overwrite-on-term-level-2"
+			],
+			serviceValid     : true,
+			annotationsValid : "all"
 		}
+		
 	};
 
 
@@ -1134,47 +1144,37 @@ function runODataAnnotationTests() {
 			ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
 			ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
 			ok(oAnnotations.UnitTest["Test.Merged"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
-			asyncStart();
+			startTest4();
 		});
 
-		// Don't use metadata/annotation cache
-		cleanOdataCache();
-		var oModel4 = new sap.ui.model.odata.ODataModel(
-			"fakeService://testdata/odata/northwind-annotated/", 
-			{
-				annotationURI : [
-					"fakeService://testdata/odata/northwind-annotated/$metadata",
-					"fakeService://testdata/odata/northwind-annotations-normal.xml"
-				],
-				json : true,
-				loadAnnotationsJoined : false,
-				loadMetadataAsync : true
-			}
-		);
-		oModel4.attachAnnotationsLoaded(function() {
-			var oAnnotations = oModel4.getServiceAnnotations();
-			ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
-			ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
-			ok(oAnnotations.UnitTest["Test.Merged"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
-			asyncStart();
-		});
+		function startTest4() {
+			// Don't use metadata/annotation cache
+			cleanOdataCache();
+			var oModel4 = new sap.ui.model.odata.ODataModel(
+				"fakeService://testdata/odata/northwind-annotated/", 
+				{
+					annotationURI : [
+						"fakeService://testdata/odata/northwind-annotated/$metadata",
+						"fakeService://testdata/odata/northwind-annotations-normal.xml"
+					],
+					json : true,
+					loadAnnotationsJoined : false,
+					loadMetadataAsync : true
+				}
+			);
+			oModel4.attachAnnotationsLoaded(function() {
+				var oAnnotations = oModel4.getServiceAnnotations();
+				ok(oAnnotations.UnitTest["Test.FromAnnotations"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
+				ok(oAnnotations.UnitTest["Test.FromMetadata"][0].Value.Path === "Metadata", "Annotation from correct source (Metadata)");
+				ok(oAnnotations.UnitTest["Test.Merged"][0].Value.Path === "Annotations", "Annotation from correct source (Annotations)");
 
-
-		function asyncStart() {
-			if (asyncStart.num === undefined) {
-				asyncStart.num = 0;
-			}
-
-			if (++asyncStart.num >= asyncStartsExpected) {
 				oModel1.destroy();
 				oModel2.destroy();
 				oModel3.destroy();
 				oModel4.destroy();
-
 				start();
-			}
+			});
 		}
-	
 	});
 
 	module("V2: Multiple Annotation Sources Merged");
@@ -4393,7 +4393,7 @@ function runODataAnnotationTests() {
 
 	
 	var fnTestCachedValueLists = function(iModelVersion) {
-		expect(49);
+		expect(40);
 
 		var mTest = mAdditionalTestsServices["Cached Value Lists"];
 		var oModel = fnCreateModel(iModelVersion, mTest.service, mTest.annotations);
@@ -4506,15 +4506,6 @@ function runODataAnnotationTests() {
 					oAnnotations["ui5.test.Annotation"], 
 					{ 
 						"ui5.test.SimpleAnnotation": { 
-							"String": "From Metadata"
-						},
-						"ui5.test.SimpleAnnotation-1": { 
-							"String": "From Metadata"
-						},
-						"ui5.test.SimpleAnnotation-2": { 
-							"String": "From Metadata"
-						},
-						"ui5.test.SimpleAnnotation-3": { 
 							"String": "From Metadata"
 						}
 					},
@@ -4664,4 +4655,248 @@ function runODataAnnotationTests() {
 	asyncTest("V2: Cached Value Lists with additional Metadata Parameters", fnTestCachedMetadataValueListsAdditionParameters.bind(this, 2));
 
 
+
+	var fnTestOverwritingOnTermLevel = function(iModelVersion) {
+		expect(3);
+		
+		var mTest = mAdditionalTestsServices["Overwrite on Term Level"];
+		var oModel = fnCreateModel(iModelVersion, mTest.service, mTest.annotations);
+		
+		
+		oModel.attachAnnotationsLoaded(function() {
+			var oAnnotations = oModel.getServiceAnnotations();
+			
+			// Not using deepContains, because we want to make sure that "ui5.test.OverwriteMe" has been replaced
+			deepEqual(
+				oAnnotations["ui5.test.Annotation"], 
+				{
+					"ui5.test.SimpleAnnotation": { 
+						"String": "From Metadata"
+					},
+					"ui5.test.OverwriteMe": { 
+						"From": {
+							"String": "2"
+						}
+					},
+					"ui5.test.DontOverwriteMe1": { 
+						"From": {
+							"String": "1"
+						}
+					},
+					"ui5.test.DontOverwriteMe2": { 
+						"From": {
+							"String": "2"
+						}
+					}
+				},
+				"Correctly overwritten annotations: ui5.test.Annotation"
+			);
+			
+			deepEqual(
+				oAnnotations.propertyAnnotations.Test.NorthwindEntities, 
+				{
+					"ui5.test.OverwriteMe": { 
+						"From": {
+							"String": "2"
+						}
+					},
+					"ui5.test.DontOverwriteMe1": { 
+						"From": {
+							"String": "1"
+						}
+					},
+					"ui5.test.DontOverwriteMe2": { 
+						"From": {
+							"String": "2"
+						}
+					}
+				},
+				"Correctly overwritten annotations: propertyAnnotations.Test.NorthwindEntities"
+			);
+
+			deepEqual(
+				oAnnotations.EntityContainer["ui5.test.NorthwindEntities"].X, 
+				{
+					"ui5.test.OverwriteMe": { 
+						"From": {
+							"String": "2"
+						}
+					},
+					"ui5.test.DontOverwriteMe1": { 
+						"From": {
+							"String": "1"
+						}
+					},
+					"ui5.test.DontOverwriteMe2": { 
+						"From": {
+							"String": "2"
+						}
+					}
+				},
+				"Correctly overwritten annotations: EntityContainer.ui5.test.NorthwindEntities"
+			);
+
+			start();
+		});
+		
+	}
+
+	asyncTest("V1: Overwrite on Term Level", fnTestOverwritingOnTermLevel.bind(this, 1));
+	asyncTest("V2: Overwrite on Term Level", fnTestOverwritingOnTermLevel.bind(this, 2));
+
+
+
+	var fnTestOverwritingOnTermLevel2 = function(iModelVersion) {
+		expect(6);
+		
+		var mTest = mAdditionalTestsServices["Overwrite on Term Level"];
+		var oModel = fnCreateModel(iModelVersion, mTest.service);
+		
+		oModel.addAnnotationUrl(mTest.annotations[0]).then(function() {
+			var oAnnotations = oModel.getServiceAnnotations();
+			
+			// Not using deepContains, because we want to make sure that "ui5.test.OverwriteMe" has been replaced
+			deepEqual(
+				oAnnotations["ui5.test.Annotation"], 
+				{
+					"ui5.test.SimpleAnnotation": { 
+						"String": "From Metadata"
+					},
+					"ui5.test.OverwriteMe": { 
+						"From": {
+							"String": "1"
+						},
+						"Deleted": {
+							"String": "1"
+						}
+					},
+					"ui5.test.DontOverwriteMe1": { 
+						"From": {
+							"String": "1"
+						}
+					}
+				},
+				"Correctly loaded annotations: ui5.test.Annotation"
+			);
+			
+			deepEqual(
+				oAnnotations.propertyAnnotations.Test.NorthwindEntities, 
+				{
+					"ui5.test.OverwriteMe": { 
+						"From": {
+							"String": "1"
+						},
+						"Deleted": {
+							"String": "1"
+						}
+					},
+					"ui5.test.DontOverwriteMe1": { 
+						"From": {
+							"String": "1"
+						}
+					}
+				},
+				"Correctly overwritten annotations: propertyAnnotations.Test.NorthwindEntities"
+			);
+
+			deepEqual(
+				oAnnotations.EntityContainer["ui5.test.NorthwindEntities"].X, 
+				{
+					"ui5.test.OverwriteMe": { 
+						"From": {
+							"String": "1"
+						},
+						"Deleted": {
+							"String": "1"
+						}
+					},
+					"ui5.test.DontOverwriteMe1": { 
+						"From": {
+							"String": "1"
+						}
+					}
+				},
+				"Correctly overwritten annotations: EntityContainer.ui5.test.NorthwindEntities"
+			);
+			
+			oModel.addAnnotationUrl(mTest.annotations[1]).then(function() {
+				var oAnnotations = oModel.getServiceAnnotations();
+
+				deepEqual(
+					oAnnotations["ui5.test.Annotation"], 
+					{
+						"ui5.test.SimpleAnnotation": { 
+							"String": "From Metadata"
+						},
+						"ui5.test.OverwriteMe": { 
+							"From": {
+								"String": "2"
+							}
+						},
+						"ui5.test.DontOverwriteMe1": { 
+							"From": {
+								"String": "1"
+							}
+						},
+						"ui5.test.DontOverwriteMe2": { 
+							"From": {
+								"String": "2"
+							}
+						}
+					},
+					"Correctly overwritten annotations: ui5.test.Annotation"
+				);
+				
+				deepEqual(
+					oAnnotations.propertyAnnotations.Test.NorthwindEntities, 
+					{
+						"ui5.test.OverwriteMe": { 
+							"From": {
+								"String": "2"
+							}
+						},
+						"ui5.test.DontOverwriteMe1": { 
+							"From": {
+								"String": "1"
+							}
+						},
+						"ui5.test.DontOverwriteMe2": { 
+							"From": {
+								"String": "2"
+							}
+						}
+					},
+					"Correctly overwritten annotations: propertyAnnotations.Test.NorthwindEntities"
+				);
+	
+				deepEqual(
+					oAnnotations.EntityContainer["ui5.test.NorthwindEntities"].X, 
+					{
+						"ui5.test.OverwriteMe": { 
+							"From": {
+								"String": "2"
+							}
+						},
+						"ui5.test.DontOverwriteMe1": { 
+							"From": {
+								"String": "1"
+							}
+						},
+						"ui5.test.DontOverwriteMe2": { 
+							"From": {
+								"String": "2"
+							}
+						}
+					},
+					"Correctly overwritten annotations: EntityContainer.ui5.test.NorthwindEntities"
+				);
+				
+				start();
+			});
+		});
+	};
+
+	asyncTest("V1: Overwrite on Term Level 2", fnTestOverwritingOnTermLevel2.bind(this, 1));
+	asyncTest("V2: Overwrite on Term Level 2", fnTestOverwritingOnTermLevel2.bind(this, 2));
+		
 }

@@ -1,5 +1,5 @@
-/**
- * @copyright
+/*!
+ * ${copyright}
  */
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	function(jQuery, IconPool) {
@@ -746,6 +746,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 **/
 	ObjectHeaderRenderer._renderChildControl = function(oRM, oOH, oControl){
 		oRM.renderControl(oControl);
+		if (!oOH.getResponsive() && oOH.__controlsToBeRendered) { // if control is rendered remove it from the array
+			oOH.__controlsToBeRendered[oControl.getId()] = undefined;
+		}
 	};
 
 	/**

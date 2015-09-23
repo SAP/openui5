@@ -8,13 +8,13 @@
 
 /*The active indicator of the list is not specific enough to overwrite this style*/
 .sapMList .sapMLIB.sapMALI:not(.sapMLIBActive) {
-	background: @sapUiFooterBG;
-	border-color: contrast(@sapUiFooterBG, darken(@sapUiFooterBG, 10%), lighten(@sapUiFooterBG, 20%));
+	background: @sapUiPageFooterBackground;
+	border-color: @sapUiPageFooterBorderColor;
 }
 
 .sap-desktop .sapMList .sapMLIB.sapMALI:not(.sapMLIBActive) {
-	background: @sapUiFooterOnDesktopBG;
-	border-color: contrast(@sapUiFooterOnDesktopBG, darken(@sapUiFooterOnDesktopBG, 10%), lighten(@sapUiFooterOnDesktopBG, 20%));
+	background: @sapUiPageFooterBackground;
+	border-color: @sapUiPageFooterBorderColor;
 }
 
 .sapMList .sapMLIB.sapMALI:focus {
@@ -35,7 +35,7 @@
 }
 
 .sap-desktop .sapMList .sapMLIB.sapMALI:hover:not(.sapMLIBActive) {
-	background: @sapUiFooterButtonHoverColor;
+	background: lighten(@sapUiPageFooterBackground, 6);
 }
 
 /* Compact size */

@@ -1,5 +1,5 @@
 /*!
- * @copyright@
+ * ${copyright}
  */
 
 // Bootstrap for the 'explored' app.
@@ -23,6 +23,7 @@ sap.ui.define(['jquery.sap.global'],
 
 			var aCategoryWhiteList = [
 				"Action",
+				"Application",
 				"Container",
 				"Display",
 				"Chart",

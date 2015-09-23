@@ -28,7 +28,7 @@ sap.ui.define(['jquery.sap.global'],
 
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
-			oRm.writeAttributeEscaped("tabindex", "0");
+			oRm.writeAttribute("tabindex", "0");
 
 			oRm.addClass("sapMTPColumn");
 			if (oControl.getIsExpanded()) {
@@ -56,15 +56,15 @@ sap.ui.define(['jquery.sap.global'],
 
 			//Title label of the slider
 			oRm.write("<div");
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-label");
+			oRm.writeAttribute("id", oControl.getId() + "-label");
 			oRm.addClass("sapMTimePickerLabel");
 			oRm.writeClasses();
 			oRm.write(">");
-			oRm.write(sControlLabel);
+			oRm.writeEscaped(sControlLabel);
 			oRm.write("</div>");
 
 			oRm.write("<div");
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-valDescription");
+			oRm.writeAttribute("id", oControl.getId() + "-valDescription");
 			oRm.addClass("sapUiInvisibleText");
 			oRm.writeClasses();
 			oRm.write("></div>");
@@ -75,14 +75,14 @@ sap.ui.define(['jquery.sap.global'],
 
 			oRm.write("<div");
 			oRm.addClass("sapMTimePickerSlider");
-			oRm.writeAttributeEscaped("unselectable", "on");
+			oRm.writeAttribute("unselectable", "on");
 			oRm.writeStyles();
 			oRm.writeClasses();
 			oRm.write(">");
 
 			oRm.write("<ul");
-			oRm.writeAttributeEscaped("id", oControl.getId() + "-content");
-			oRm.writeAttributeEscaped("unselectable", "on");
+			oRm.writeAttribute("id", oControl.getId() + "-content");
+			oRm.writeAttribute("unselectable", "on");
 			oRm.write(">");
 
 			for (iRepetition = 1; iRepetition <= nContentRepetitions; iRepetition++) {
@@ -94,7 +94,9 @@ sap.ui.define(['jquery.sap.global'],
 						role: "option",
 						selected: false
 					});
-					oRm.write(">" + aItems[iIndex].getText() + "</li>");
+					oRm.write(">");
+					oRm.writeEscaped(aItems[iIndex].getText());
+					oRm.write("</li>");
 				}
 			}
 			oRm.write("</ul>");

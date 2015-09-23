@@ -5,9 +5,9 @@
 	xmlns:fb="sap.ui.comp.filterbar"
 	xmlns:var="sap.ui.comp.variants"
 	height="100%">
-	<Page title="Title" enableScrolling="true" class="sapMSampleFioriListReportIconTabBarOverflow">
+	<Page title="Title" enableScrolling="true">
 		<content>
-			<VBox fitContainer="true" class="sapMSampleFioriListReportIconTabBar">
+			<VBox fitContainer="true">
 				<fb:FilterBar>
 					<fb:filterItems>
 						<fb:FilterItem name="A" label="labelA">
@@ -84,7 +84,7 @@
 						</t:AnalyticalTable>
 					</content>
 					<layoutData>
-						<FlexItemData growFactor="1" />
+						<FlexItemData growFactor="1" baseSize="0%"/>
 					</layoutData>
 				</IconTabBar>
 			</VBox>

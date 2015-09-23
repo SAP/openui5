@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 */
 
 	/**
-	 * Constructor for a new CalendarTimeInterval.
+	 * Constructor for a new <code>CalendarTimeInterval</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
@@ -119,7 +119,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * Time selection was cancelled
 			 */
-			cancel : {}
+			cancel : {},
+
+			/**
+			 * <code>startDate</code> was changed while navigation in <code>CalendarTimeInterval</code>
+			 * @since 1.34.0
+			 */
+			startDateChange : {}
 		}
 	}});
 
@@ -648,7 +654,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			// remove tabindex of dummy element if focus is inside calendar
-			jQuery.sap.byId(this.getId() + "-end").attr("tabindex", "-1");
+			this.$("end").attr("tabindex", "-1");
 
 		};
 
@@ -656,7 +662,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			if (!oEvent.relatedControlId || !jQuery.sap.containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
 				// put dummy element back to tab-chain
-				jQuery.sap.byId(this.getId() + "-end").attr("tabindex", "0");
+				this.$("end").attr("tabindex", "0");
 
 				if (!this._bPoupupMode) {
 					// restore Tabindex from day and year
@@ -829,6 +835,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					oTimesRow.setDate(oDate);
 				}
 			}
+
+			this.fireStartDateChange();
 
 		}
 

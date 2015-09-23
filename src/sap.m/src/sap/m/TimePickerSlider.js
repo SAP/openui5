@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		 * @version ${version}
 		 *
 		 * @constructor
-		 * @public
+		 * @private
 		 * @since 1.32
 		 * @alias sap.m.TimePickerSlider
 		 */
@@ -54,12 +54,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 					/**
 					 * Aggregation that contains the up arrow.
 					 */
-					_arrowUp: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden" },
+					_arrowUp: {type: "sap.m.Button", multiple: false, visibility: "hidden" },
 
 					/**
 					 * Aggregation that contains the down arrow.
 					 */
-					_arrowDown: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden" }
+					_arrowDown: {type: "sap.m.Button", multiple: false, visibility: "hidden" }
 				},
 				events: {
 					/**
@@ -95,6 +95,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			this._marginTop = null;
 			this._marginBottom = null;
 			this._bOneTimeValueSelectionAnimation = false;
+			this._SCROLL_ANIMATION_DURATION = 200;
 
 			this._initArrows();
 		};
@@ -118,7 +119,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		 * @param {jQuery.Event} oEvent Event object
 		 */
 		TimePickerSlider.prototype.onThemeChanged = function(oEvent) {
-			this.rerender();
+			this.invalidate();
 		};
 
 		/**
@@ -157,7 +158,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		 *
 		 * @override
 		 * @param {string} sValue The key of the new selected value
-		 * @returns {*|boolean|void|sap.ui.base.ManagedObject}
+		 * @returns {sap.ui.base.ManagedObject}
 		 * @public
 		 */
 		TimePickerSlider.prototype.setSelectedValue = function(sValue) {
@@ -166,7 +167,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			}),
 					that = this;
 			if (iIndexOfValue === -1) {
-				return;
+				return this;
 			}
 
 			//scroll
@@ -181,7 +182,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 				if (this._bOneTimeValueSelectionAnimation) {
 					this._animatingSnap = true;
-					this._getSliderContainerDomRef().animate({scrollTop: iIndex * this._getItemHeightInPx() - this._selectionOffset}, 200, 'linear', function () {
+					this._getSliderContainerDomRef().animate({scrollTop: iIndex * this._getItemHeightInPx() - this._selectionOffset}, this._SCROLL_ANIMATION_DURATION, 'linear', function () {
 						that._getSliderContainerDomRef().clearQueue();
 						that._animatingSnap = false;
 						that._bOneTimeValueSelectionAnimation = false;
@@ -211,46 +212,49 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		TimePickerSlider.prototype.setIsExpanded = function(bValue, suppressEvent) {
 			this.setProperty("isExpanded", bValue, true);
 
-			if (this.getDomRef()) {
-				var $This = this.$();
+			if (!this.getDomRef()) {
+				return this;
+			}
 
-				if (bValue) {
-					if (!$This.hasClass("sapMTPSliderExpanded")) {
-						$This.addClass("sapMTPSliderExpanded");
-					}
+			var $This = this.$();
 
-					if (sap.ui.Device.system.phone) {
-						jQuery.sap.delayedCall(0, this, function() {
-							this._updateSelectionFrameLayout();
-							if (!suppressEvent) {
-								this.fireExpanded({ctrl: this});
-							}
-						});
-					} else {
+			if (bValue) {
+				if (!$This.hasClass("sapMTPSliderExpanded")) {
+					$This.addClass("sapMTPSliderExpanded");
+				}
+
+				if (sap.ui.Device.system.phone) {
+					jQuery.sap.delayedCall(0, this, function() {
 						this._updateSelectionFrameLayout();
 						if (!suppressEvent) {
 							this.fireExpanded({ctrl: this});
 						}
-					}
+					});
 				} else {
-					this._stopAnimation();
-					//stop snap animation also
-					if (this._animatingSnap === true) {
-						this._animatingSnap = false;
-						this._getSliderContainerDomRef().stop(true);
-						//be careful not to invoke this method twice (the first time is on animate finish callback)
-						this._scrollerSnapped(this._iSelectedIndex);
-					}
-
-					$This.removeClass("sapMTPSliderExpanded");
-
-					if (sap.ui.Device.system.phone) {
-						jQuery.sap.delayedCall(0, this, this._afterExpandCollapse);
-					} else {
-						this._afterExpandCollapse();
+					this._updateSelectionFrameLayout();
+					if (!suppressEvent) {
+						this.fireExpanded({ctrl: this});
 					}
 				}
+			} else {
+				this._stopAnimation();
+				//stop snap animation also
+				if (this._animatingSnap === true) {
+					this._animatingSnap = false;
+					this._getSliderContainerDomRef().stop(true);
+					//be careful not to invoke this method twice (the first time is on animate finish callback)
+					this._scrollerSnapped(this._iSelectedIndex);
+				}
+
+				$This.removeClass("sapMTPSliderExpanded");
+
+				if (sap.ui.Device.system.phone) {
+					jQuery.sap.delayedCall(0, this, this._afterExpandCollapse);
+				} else {
+					this._afterExpandCollapse();
+				}
 			}
+
 
 			return this;
 		};
@@ -287,6 +291,50 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			if (sap.ui.Device.system.desktop && this.getIsExpanded()) {
 				this.setIsExpanded(false);
 			}
+		};
+
+		TimePickerSlider.prototype._onmousewheel = function(oEvent) {
+			// prevent the default behavior
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
+
+			if (!this.getIsExpanded()) {
+				return false;
+			}
+
+			var oOriginalEvent = oEvent.originalEvent,
+					bDirectionPositive = oOriginalEvent.detail ? (-oOriginalEvent.detail > 0) : (oOriginalEvent.wheelDelta > 0),
+					fnRound = bDirectionPositive ? Math.ceil : Math.floor,
+					wheelData = oOriginalEvent.detail ? (-oOriginalEvent.detail / 3) : (oOriginalEvent.wheelDelta / 120),
+					that = this,
+					iResultOffset;
+
+			if (!this._aWheelDeltas) {
+				this._aWheelDeltas = [];
+			}
+
+			that._aWheelDeltas.push(wheelData);
+
+			if (!this._bWheelScrolling) {
+				this._bWheelScrolling = true;
+
+				this._intervalId = setInterval(function () {
+					if (!that._aWheelDeltas.length) {
+						clearInterval(that._intervalId);
+						that._bWheelScrolling = false;
+					} else {
+						iResultOffset = that._aWheelDeltas[0]; //simplification, we could still use the array in some cases
+						that._aWheelDeltas = [];
+
+						iResultOffset = fnRound(iResultOffset);
+						if (iResultOffset) { // !== 0, actually move
+							that._offsetSlider(iResultOffset);
+						}
+					}
+				}, 150);
+			}
+
+			return false;
 		};
 
 		/**
@@ -493,7 +541,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 				//calculate the new scroll offset by subtracting the distance
 				iPreviousScrollTop = iPreviousScrollTop - iSpeed * frameFrequencyMs;
 				if (bCycle) {
-					iPreviousScrollTop = that._getUpdatedCycleScrollTop($ContainerHeight, $ContentHeight, iPreviousScrollTop, iDragMargin, iContentRepeat);
+					if (this._bIsDrag) {
+						iPreviousScrollTop = that._getUpdatedCycleScrollTop($ContainerHeight, $ContentHeight, iPreviousScrollTop, iDragMargin, iContentRepeat);
+					}
 				} else {
 					if (iPreviousScrollTop > that._maxScrollTop) {
 						iPreviousScrollTop = that._maxScrollTop;
@@ -624,7 +674,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 			if (!this.getIsCyclic()) {
 				var $Slider = this._getSliderContainerDomRef();
-				var $List = jQuery("#" + this.getId() + "-content");
+				var $List = this.$("content");
 
 				//if we do not cycle the items, we fill the remaining space with margins
 				if (this.getIsExpanded()) {
@@ -672,17 +722,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		 * @private
 		 */
 		TimePickerSlider.prototype._getUpdatedCycleScrollTop = function(iContainerHeight, iContentHeight, iTop, fDragMargin, iContentRepeatNumber) {
-			if (this._bIsDrag) {
-				var fContentHeight = iContentHeight - iTop - iContainerHeight;
+			var fContentHeight = iContentHeight - iTop - iContainerHeight;
 
-				if (fContentHeight < fDragMargin) {
-					iTop = iTop - iContentHeight / iContentRepeatNumber;
-				}
+			while (fContentHeight < fDragMargin) {
+				iTop = iTop - iContentHeight / iContentRepeatNumber;
+				fContentHeight = iContentHeight - iTop - iContainerHeight;
+			}
 
-				//they are not exclusive, we depend on a content long enough
-				if (iTop < fDragMargin) {
-					iTop = iTop + iContentHeight / iContentRepeatNumber;
-				}
+			//they are not exclusive, we depend on a content long enough
+			while (iTop < fDragMargin) {
+				iTop = iTop + iContentHeight / iContentRepeatNumber;
 			}
 
 			return iTop;
@@ -836,14 +885,53 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 			});
 		};
 
+		/**
+		 * Repositions the slider to match the current item plus or minus the given integer offset.
+		 *
+		 * @param {number} iOffsetNumberOfItems The number of items to be added or removed to the current item's index
+		 * @private
+		 */
+		TimePickerSlider.prototype._offsetSlider = function(iOffsetNumberOfItems) {
+			var iScrollTop = this._getSliderContainerDomRef().scrollTop(),
+				that = this,
+				$ContainerHeight = that._getSliderContainerDomRef().height(),
+				$ContentHeight = that.$("content").height(),
+				iDragMarginBuffer = 200,
+				iDragMargin = $ContainerHeight + iDragMarginBuffer,
+				iContentRepeat = that._getContentRepeat(),
+				bCycle = that.getIsCyclic(),
+				iItemHeight = that._getItemHeightInPx();
+
+				//calculate the new scroll offset by subtracting the distance
+				iScrollTop = iScrollTop - iOffsetNumberOfItems * iItemHeight;
+				if (bCycle) {
+					if (this._bIsDrag) {
+						iScrollTop = that._getUpdatedCycleScrollTop($ContainerHeight, $ContentHeight, iScrollTop, iDragMargin, iContentRepeat);
+					}
+				} else {
+					if (iScrollTop > that._maxScrollTop) {
+						iScrollTop = that._maxScrollTop;
+					}
+
+					if (iScrollTop < that._minScrollTop) {
+						iScrollTop = that._minScrollTop;
+					}
+				}
+
+				that._getSliderContainerDomRef().scrollTop(iScrollTop);
+				that._iSelectedIndex = Math.floor(iScrollTop / iItemHeight);
+				that._scrollerSnapped(that._iSelectedIndex);
+		};
+
 		TimePickerSlider.prototype._initArrows = function() {
 			var that = this, oArrowUp, oArrowDown;
 
-			oArrowUp = new sap.ui.core.Icon({
-				src: IconPool.getIconURI("slim-arrow-up"),
+			oArrowUp = new sap.m.Button({
+				icon: IconPool.getIconURI("slim-arrow-up"),
 				press: function (oEvent) {
 					that._offsetValue(-1);
-				}
+				},
+				type: 'Transparent'
 			});
 			oArrowUp.addEventDelegate({
 				onAfterRendering: function () {
@@ -853,11 +941,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 
 			this.setAggregation("_arrowUp", oArrowUp);
 
-			oArrowDown = new sap.ui.core.Icon({
-				src: IconPool.getIconURI("slim-arrow-down"),
+			oArrowDown = new sap.m.Button({
+				icon: IconPool.getIconURI("slim-arrow-down"),
 				press: function (oEvent) {
 					that._offsetValue(1);
-				}
+				},
+				type: 'Transparent'
 			});
 
 			oArrowDown.addStyleClass("sapMTimePickerItemArrowDown");

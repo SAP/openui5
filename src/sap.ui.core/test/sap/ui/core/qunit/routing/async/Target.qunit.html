@@ -1,0 +1,536 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>qUnit Page for sap.ui.core.routing.Target</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.ui.commons,sap.ui.ux3,sap.m"
+	data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
+
+</script>
+
+<script>
+	(function () {
+		"use strict";
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		jQuery.sap.require("sap.ui.thirdparty.sinon");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+		sinon.config.useFakeTimers = false;
+
+		jQuery.sap.require("sap.ui.core.routing.Views");
+		jQuery.sap.require("sap.ui.core.routing.Target");
+
+		function createView (aContent, sId, bAsync) {
+			var sXmlViewContent = aContent.join(''),
+					oViewOptions = {
+						id : sId,
+						viewContent: sXmlViewContent,
+						type: "XML",
+						async: !!bAsync
+					};
+
+			return sap.ui.view(oViewOptions);
+		}
+
+		QUnit.module("views - creation", {
+			setup: function () {
+				this.oShell = new sap.ui.ux3.Shell();
+				this.oViews = new sap.ui.core.routing.Views();
+				this.oView = createView(
+						['<View xmlns="sap.ui.core">',
+							'</View>']);
+
+				// System under test + Arrange
+				this.oTarget = new sap.ui.core.routing.Target(
+					{
+						name: "myTarget",
+						viewPath: "bar",
+						viewName: "foo",
+						controlAggregation: "content",
+						controlId: this.oShell.getId(),
+						viewType: "XML",
+						viewId: "baz",
+						_async: true
+					},
+					this.oViews
+				);
+			},
+			teardown: function () {
+				this.oShell.destroy();
+				this.oTarget.destroy();
+				this.oViews.destroy();
+				this.oView.destroy();
+			}
+		});
+
+		QUnit.test("Should create a view specified by a target", function () {
+			// Arrange
+			var oView = this.oView;
+
+			var oStub = this.stub(this.oViews, "_getView", function () {
+				return oView;
+			});
+
+			// Act
+			var oDisplayed = this.oTarget.display();
+
+
+
+			return oDisplayed.then(function() {
+				// Assert
+				strictEqual(oView.getParent(), this.oShell, "the view was placed inside of the shell");
+			}.bind(this));
+
+		});
+
+		QUnit.test("Should resolve with correct values for view creation", function () {
+			// Arrange
+			var that = this,
+				oStub = this.stub(this.oViews, "_getView", function (oOptions) {
+					return that.oView;
+				});
+
+			//Act
+			return this.oTarget.display().then(function(oOptions) {
+				//Assert
+				strictEqual(oStub.callCount, 1, "Did inform the view creation");
+				strictEqual(oOptions.view, that.oView);
+				strictEqual(oOptions.control, that.oShell);
+			});
+		});
+
+		QUnit.test("Should pass the correct values to the view creation", function () {
+			// Arrange
+			var that = this,
+				oStub = this.stub(this.oViews, "_getView", function (oOptions) {
+					strictEqual(oOptions.viewName, "bar.foo");
+					strictEqual(oOptions.type, "XML");
+					strictEqual(oOptions.id, "baz");
+					return that.oView;
+				});
+
+			//Act
+			this.oTarget.display();
+
+			// Assert
+			strictEqual(oStub.callCount, 1, "Did inform the view creation");
+		});
+
+		QUnit.test("Should use the _getView to create a unprefixed id if _bUseRawViewId is set", function () {
+			// Arrange
+			var that = this,
+				oSpy = this.spy(this.oViews, "_getView"),
+				oStub = this.stub(this.oViews, "_getViewWithGlobalId", function (oOptions) {
+					strictEqual(oOptions.viewName, "bar.foo");
+					strictEqual(oOptions.type, "XML");
+					strictEqual(oOptions.id, "baz");
+					return that.oView;
+				});
+
+			//Act
+			this.oTarget._bUseRawViewId = true;
+			this.oTarget.display();
+
+			// Assert
+			strictEqual(oStub.callCount, 1, "Did inform the view creation");
+			strictEqual(oSpy.callCount, 0, "Did not use the prefix version");
+		});
+
+		QUnit.test("Should clear a target aggregation", function () {
+			// Arrange
+			var oExistingView = this.oView,
+				oView = createView(['<View xmlns="sap.ui.core">', '</View>']);
+
+			var oStub = this.stub(this.oViews, "_getView", function () {
+				return oView;
+			});
+
+			this.oTarget._oOptions.clearControlAggregation = true;
+			this.oShell.addContent(oExistingView);
+
+			// Act
+			var oDisplayed = this.oTarget.display();
+
+			return oDisplayed.then(function() {
+				// Assert
+				strictEqual(this.oShell.getContent().length, 1, "only one button is inside of the the Shell");
+				strictEqual(this.oShell.getContent()[0], oView, "it is the displayed button");
+				//TODO: Should we destroy in this case? Is it a regression if we do so?
+				//ok(oExistingButton.bIsDestroyed, "the button got destroyed");
+
+				// Cleanup
+				oView.destroy();
+			}.bind(this));
+
+		});
+
+		QUnit.test("Should log an error if the target view can't be loaded", function (assert) {
+			// Arrange
+			var oView = this.oView;
+
+			var oGetViewStub = this.stub(this.oViews, "_getView", function () {
+				return {
+					loaded: function() {
+						return Promise.reject("View with name bar.foo could not be loaded");
+					}
+				};
+			});
+
+			//Act
+			var oDisplayed = this.oTarget.display();
+			return oDisplayed.then(function(oViewInfo) {
+				assert.strictEqual(oViewInfo.name, "myTarget", "oViewInfo.name is correct");
+				assert.equal(oViewInfo.error, "View with name bar.foo could not be loaded", "oViewInfo.error error message is provided");
+			}.bind(this));
+		});
+
+		QUnit.test("Should log an error if the target parent is not found", function (assert) {
+			// Arrange
+			var oView = this.oView;
+			this.oTarget._oParent = new sap.ui.core.routing.Target(
+				{
+					name: "myParent",
+					viewPath: "parent",
+					viewName: "foo",
+					controlAggregation: "content",
+					controlId: this.oShell.getId(),
+					viewType: "XML",
+					viewId: "bar",
+					_async: true
+				},
+				this.oViews
+			);
+
+			var oGetViewStub = this.stub(this.oViews, "_getView", function (oOptions) {
+				if (oOptions.name === "myTarget") {
+					return oView;
+				} else {
+					return {
+						loaded: function() {
+							return Promise.reject("View with name parent.foo could not be loaded");
+						}
+					};
+				}
+			});
+
+			//Act
+			var oDisplayed = this.oTarget.display();
+			return oDisplayed.then(function(oViewInfo) {
+				// Assert
+				assert.strictEqual(oViewInfo.name, "myParent", "oViewInfo.name is correct");
+				assert.equal(oViewInfo.error, "View with name parent.foo could not be loaded", "oViewInfo.error error message is provided");
+			}.bind(this));
+		});
+
+		QUnit.test("Should log an error if the root view is not found", function (assert) {
+			// Arrange
+
+			// sinon.spy instead of this.spy has to be used because the stubbed version is used async and this.spy is restored syncly.
+			var oSpy = sinon.spy(jQuery.sap.log, "error");
+			var oView = this.oView;
+			var oGetViewStub = this.stub(this.oViews, "_getView", function () {
+				return oView;
+			});
+
+			this.oTarget._oOptions.rootView = "foo";
+
+			//Act
+			var oDisplayed = this.oTarget.display();
+			return oDisplayed.then(function(oViewInfo) {
+				// Assert
+				assert.strictEqual(oViewInfo.name, "myTarget", "oViewInfo.name is correct");
+				ok(oViewInfo.error.indexOf("root view") !== -1, "oViewInfo.error error message is provided");
+				sinon.assert.calledWith(oSpy, sinon.match(/root view/), sinon.match(this.oTarget));
+				oSpy.restore();
+			}.bind(this));
+		});
+
+		QUnit.test("Should log an error if the target control does not have an existing aggregation specified", function () {
+			// Arrange
+
+			// sinon.spy instead of this.spy has to be used because the stubbed version is used async and this.spy is restored syncly.
+			var oSpy = sinon.spy(jQuery.sap.log, "error");
+			var oView = this.oView;
+			var oGetViewStub = this.stub(this.oViews, "_getView", function () {
+				return oView;
+			});
+
+			this.oTarget._oOptions.controlAggregation = "foo";
+
+			//Act
+			var oDisplayed = this.oTarget.display();
+
+			return oDisplayed.then(function(oViewInfo) {
+				// Assert
+				assert.strictEqual(oViewInfo.name, "myTarget", "oViewInfo.name is correct");
+				ok(oViewInfo.error.indexOf("aggregation") !== -1, "oViewInfo.error error message is provided");
+				sinon.assert.calledWith(oSpy, sinon.match(/aggregation/), sinon.match(this.oTarget));
+				oSpy.restore();
+			}.bind(this));
+		});
+
+		QUnit.test("Should log an error if the target control does not have an aggregation specified", function () {
+			// Arrange
+
+			// sinon.spy instead of this.spy has to be used because the stubbed version is used async and this.spy is restored syncly.
+			var oSpy = sinon.spy(jQuery.sap.log, "error");
+			var oView = this.oView;
+			var oGetViewStub = this.stub(this.oViews, "_getView", function () {
+				return oView;
+			});
+			this.oTarget._oOptions.controlAggregation = undefined;
+
+			//Act
+			var oDisplayed = this.oTarget.display();
+
+			return oDisplayed.then(function(oViewInfo) {
+				// Assert
+				assert.strictEqual(oViewInfo.name, "myTarget", "oViewInfo.name is correct");
+				ok(oViewInfo.error.indexOf("no 'controlAggregation' was set") !== -1, "oViewInfo.error error message is provided");
+				sinon.assert.calledWith(oSpy, sinon.match(/no 'controlAggregation' was set/), sinon.match(this.oTarget));
+				oSpy.restore();
+			}.bind(this));
+		});
+
+		QUnit.test("Should log an error if the target control could not be found", function () {
+			// Arrange
+
+			// sinon.spy instead of this.spy has to be used because the stubbed version is used async and this.spy is restored syncly.
+			var oSpy = sinon.spy(jQuery.sap.log, "error");
+			var oView = this.oView;
+			var oGetViewStub = this.stub(this.oViews, "_getView", function () {
+				return oView;
+			});
+			this.oTarget._oOptions.controlId = "foo";
+
+			//Act
+			var oDisplayed = this.oTarget.display();
+
+			return oDisplayed.then(function(oViewInfo) {
+				// Assert
+				assert.strictEqual(oViewInfo.name, "myTarget", "oViewInfo.name is correct");
+				ok(oViewInfo.error.indexOf("Control with ID") !== -1, "oViewInfo.error error message is provided");
+				sinon.assert.calledWith(oSpy, sinon.match(/Control with ID/), sinon.match(this.oTarget));
+				oSpy.restore();
+			}.bind(this));
+		});
+
+
+		QUnit.module("target parent and children", {
+			setup: function () {
+				this.oParentView = createView(
+						['<View xmlns="sap.ui.core" xmlns:ux3="sap.ui.ux3">',
+							'<ux3:Shell id="myShell">',
+							'</ux3:Shell>',
+						'</View>'], "parent");
+
+				this.oChildView = createView(
+						['<View xmlns="sap.ui.core">',
+						'</View>']);
+
+				this.oViews = new sap.ui.core.routing.Views();
+				this.oViews.setView("child", this.oChildView);
+
+				// System under test + Arrange
+				this.oTarget = new sap.ui.core.routing.Target(
+					{
+						controlId: "myShell",
+						controlAggregation: "content",
+						viewName: "child",
+						viewType: "XML",
+						_async: true
+					},
+					this.oViews
+				);
+			},
+			teardown: function () {
+				this.oParentView.destroy();
+				this.oChildView.destroy();
+				this.oTarget.destroy();
+				this.oViews.destroy();
+			}
+		});
+
+		QUnit.test("Should use a different root view", function () {
+			// Arrange
+			this.oTarget._oOptions.rootView = "parent";
+			this.oViews.setView("parent", this.oParentView);
+
+			// Act
+			var oDisplayed = this.oTarget.display();
+
+			return oDisplayed.then(function() {
+				// Assert
+				var oShell = this.oParentView.byId("myShell");
+				strictEqual(oShell.getContent().length, 1, "something was placed inside the shell");
+				strictEqual(oShell.getContent()[0], this.oChildView, "it is the child view");
+			}.bind(this));
+		});
+
+		QUnit.test("Should display a child target", function () {
+			// Arrange
+			var oRootShell = new sap.ui.ux3.Shell(),
+				oParentTarget = new sap.ui.core.routing.Target({
+					controlId : oRootShell.getId(),
+					controlAggregation: "content",
+					viewName: "parent",
+					viewType: "XML",
+					_async: true
+				},
+				this.oViews);
+
+			this.oViews.setView("parent", this.oParentView);
+
+			this.oTarget._oParent = oParentTarget;
+
+			// Act
+			var oDisplayed = this.oTarget.display();
+
+			return oDisplayed.then(function() {
+				// Assert
+				var oShell = this.oParentView.byId("myShell");
+				strictEqual(oShell.getContent().length, 1, "something was placed inside the shell");
+				strictEqual(oShell.getContent()[0], this.oChildView, "it is the child view");
+
+				// Cleanup
+				oParentTarget.destroy();
+			}.bind(this));
+		});
+
+		QUnit.module("display event", {
+			setup: function () {
+				this.oShell = new sap.ui.ux3.Shell();
+				this.oView =  createView(
+						['<View xmlns="sap.ui.core">',
+							'</View>']);
+
+				this.oConfig = {
+					key: "myTarget",
+					viewPath: "bar",
+					viewName: "foo",
+					controlAggregation: "content",
+					controlId: this.oShell.getId(),
+					viewType: "XML",
+					viewId: "baz",
+					_async: true
+				};
+
+				this.oViews = new sap.ui.core.routing.Views();
+				// System under test + Arrange
+				this.oTarget = new sap.ui.core.routing.Target(
+						this.oConfig,
+						this.oViews
+				);
+			},
+			teardown: function () {
+				this.oShell.destroy();
+				this.oTarget.destroy();
+				this.oViews.destroy();
+				this.oView.destroy();
+			}
+		});
+
+		QUnit.test("should be able to fire/attach/detach the display event", function() {
+			// Arrange
+			var oParameters = { foo : "bar" },
+				fnEventSpy = this.spy(function(oEvent, oActualData) {
+					strictEqual(oActualData, oData, "the data is correct");
+					strictEqual(oEvent.getParameters(), oParameters, "the parameters are correct");
+					strictEqual(this, oListener, "the this pointer is correct");
+				}),
+				oListener = {},
+				oData = { some : "data" },
+				oFireReturnValue,
+				oDetachReturnValue,
+				oAttachReturnValue = this.oTarget.attachDisplay(oData, fnEventSpy, oListener);
+
+			// Act
+			oFireReturnValue = this.oTarget.fireDisplay(oParameters);
+			oDetachReturnValue = this.oTarget.detachDisplay(fnEventSpy, oListener);
+			this.oTarget.fireDisplay();
+
+			// Assert
+			strictEqual(fnEventSpy.callCount, 1, "did call the attach spy only once");
+			strictEqual(oAttachReturnValue, this.oTarget, "did return this for chaining for attach");
+			strictEqual(oDetachReturnValue, this.oTarget, "did return this for chaining for detach");
+			strictEqual(oFireReturnValue, this.oTarget, "did return this for chaining for fire");
+		});
+
+		QUnit.test("Should fire the display event", function (assert) {
+			// Arrange
+			var oData = { any: "object" },
+				that = this,
+				oParameters = null,
+				fnEventSpy = this.spy(function (oEvent) {
+					oParameters = oEvent.getParameters();
+				});
+
+			var oStub = this.stub(this.oViews, "_getView", function () {
+				return that.oView;
+			});
+
+			this.oTarget.attachDisplay(fnEventSpy);
+
+			// Act
+			var oDisplayed = this.oTarget.display(oData);
+			return oDisplayed.then(function(oView) {
+				// Assert
+				assert.strictEqual(fnEventSpy.callCount, 1, "the event got fired");
+				assert.strictEqual(oParameters.view, this.oView, "view got passed to the event");
+				assert.strictEqual(oParameters.control, this.oShell, "control got passed to the event");
+				assert.strictEqual(oParameters.config, this.oConfig, "config got passed to the event");
+				assert.strictEqual(oParameters.data, oData, "data got passed to the event");
+			}.bind(this));
+
+		});
+
+		QUnit.module("destruction");
+
+		QUnit.test("Should destroy all dependencies", function () {
+			// Arrange
+			var oParentTarget = new sap.ui.core.routing.Target({_async: true}),
+					oViews = new sap.ui.core.routing.Views();
+
+			// System under test
+			var oTarget = new sap.ui.core.routing.Target(
+					{
+						_async: true
+					},
+					oViews,
+					oParentTarget
+			);
+
+			// Act
+			oTarget.destroy();
+
+			// Assert
+			ok(oTarget.bIsDestroyed, "Did flag the target as destroyed");
+			strictEqual(oTarget._oParent, null, "Did free the parent reference");
+			strictEqual(oTarget._oViews, null, "Did free the views reference");
+			ok(!oViews.bIsDestroyed, "Did not destroy the views instance");
+			strictEqual(oTarget._oOptions, null, "Did free the options reference");
+
+			// Cleanup
+			oParentTarget.destroy();
+			oViews.destroy();
+		});
+	})();
+</script>
+</head>
+<body>
+	<h1 id="qunit-header">qUnit Page for sap.ui.core.routing.Target</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture"></div>
+
+</body>
+</html>

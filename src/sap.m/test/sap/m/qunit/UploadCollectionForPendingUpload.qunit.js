@@ -75,7 +75,6 @@ QUnit.test("Test for method '_getFileUploader' for instantUpload = false", funct
 	oUploadCollection._aFileUploadersForPendingUpload.push(oFileUploader2);
 	oUploadCollection.exit();
 	assert.ok(!oUploadCollection._aFileUploadersForPendingUpload, "Array oUploadCollection._aFileUploadersForPendingUpload should not exist any longer after exit");
-	assert.ok(!oFileUploader1.getMultiple(), "FileUploader should be initialized for the time being with multiple = false even if UploadCollection.multiple = true");
 });
 
 QUnit.test("Test for method _onChange for instantUpload = false", function(assert) {
@@ -500,6 +499,144 @@ QUnit.test("Check file list", function(assert) {
 	//check the deleted item by comparison of the number of list items before and after the deletion
 	var iLengthAfterDeletion = this.oUploadCollection.getItems().length;
 	assert.notEqual(iLengthBeforeDeletion, iLengthAfterDeletion, "Item was deleted, checked by different number of items!");
+});
+
+QUnit.module("Delete PendingUpload Item, multiple FileUploaderInstances", {
+	setup : function() {
+		this.oUploadCollection = new sap.m.UploadCollection("pendingUploads", {
+			instantUpload : false
+		});
+		this.oUploadCollection.placeAt("uiArea");
+		sap.ui.getCore().applyChanges();
+		this.oFile0 = {
+			name : "file0",
+		};
+		this.oFile1 = {
+			name : "file1",
+		};
+		this.oFile2 = {
+			name : "file2",
+		};
+		this.oFile3 = {
+			name : "file3",
+		};
+		this.oFile4 = {
+			name : "file4",
+		};
+		this.simulateDeleteLastAddedItem = function (){
+			this.oUploadCollection._oItemForDelete = this.oUploadCollection.getItems()[0];
+			this.oUploadCollection._oItemForDelete._iLineNumber = 0;
+			this.oUploadCollection._onCloseMessageBoxDeleteItem(sap.m.MessageBox.Action.OK);
+			sap.ui.getCore().applyChanges();
+		};
+		this.simulateFilePreselection = function (aFiles){
+			var oFileUploader = this.oUploadCollection._oFileUploader;
+			oFileUploader.fireChange({
+				files : aFiles,
+				newValue : "irrelevantForThisTest"
+			});
+			sap.ui.getCore().applyChanges();
+		};
+		this.simulateXhrPreuploadProcessing = function (fileUploader, fileName, callOrder){
+			this.oUploadCollection._iUploadStartCallCounter = callOrder;
+			fileUploader.fireUploadStart({
+				"fileName" : fileName,
+				"requestHeaders" : fileUploader.getHeaderParameters()
+			});
+		};
+		this.abortStub = sinon.stub(sap.ui.unified.FileUploader.prototype, "abort");
+	},
+	teardown : function() {
+		this.oUploadCollection.destroy();
+		this.oUploadCollection = null;
+		this.abortStub.restore();
+	}
+});
+
+QUnit.test("Check if the item is properly saved to prevent further upload", function(assert) {
+	this.simulateFilePreselection.bind(this)([this.oFile0]);
+
+	this.simulateDeleteLastAddedItem.bind(this)();
+
+	sap.ui.getCore().applyChanges();
+	var itemSavedInCancellationArray = false;
+	jQuery.each(this.oUploadCollection._aDeletedItemForPendingUpload, function (iIndex, item) {
+		if (item.getAssociation("fileUploader") === this.oUploadCollection._aFileUploadersForPendingUpload[0].sId && item.getFileName() === this.oFile0.name){
+			properCancellationHeaderParameterExists = true;
+		}
+	}.bind(this));
+	assert.equal(properCancellationHeaderParameterExists, true, "File is registered for cancellation of upload");
+});
+
+QUnit.test("Checking if abort is properly called. 1 file, 1 instance of File Uploader", function(assert) {
+	this.simulateFilePreselection.bind(this)([this.oFile0]);
+	this.simulateDeleteLastAddedItem.bind(this)();
+
+	this.simulateXhrPreuploadProcessing(this.oUploadCollection._aFileUploadersForPendingUpload[0], this.oFile0.name, 0);
+
+	assert.equal(this.abortStub.callCount, 1, "Function 'FileUploader.prototype.abort' was called " + this.abortStub.callCount + " time(s)");
+	assert.equal(this.abortStub.getCall(0).calledOn(this.oUploadCollection._aFileUploadersForPendingUpload[0]), true, "Function 'FileUploader.prototype.abort' was called on proper instance of FileUploader");
+	assert.equal(this.abortStub.getCall(0).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.oFile0.name + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
+});
+
+QUnit.test("Checking if abort is properly called. 2 files, 1 instance of File Uploader", function(assert) {
+	this.simulateFilePreselection.bind(this)([this.oFile0, this.oFile1]);
+	this.simulateDeleteLastAddedItem.bind(this)();
+
+	this.simulateXhrPreuploadProcessing(this.oUploadCollection._aFileUploadersForPendingUpload[0], this.oFile0.name, 0);
+	this.simulateXhrPreuploadProcessing(this.oUploadCollection._aFileUploadersForPendingUpload[0], this.oFile1.name, 1);
+
+	assert.equal(this.abortStub.callCount, 1, "Function 'FileUploader.prototype.abort' was called " + this.abortStub.callCount + " time(s)");
+	assert.equal(this.abortStub.getCall(0).calledOn(this.oUploadCollection._aFileUploadersForPendingUpload[0]), true, "Function 'FileUploader.prototype.abort' was called on proper instance of FileUploader");
+	assert.equal(this.abortStub.getCall(0).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.oFile1.name + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
+});
+
+QUnit.test("Checking if abort is properly called. 2 files, 2 instances of File Uploader, ", function(assert) {
+	this.simulateFilePreselection.bind(this)([this.oFile0]);
+	this.simulateFilePreselection.bind(this)([this.oFile1]);
+	this.simulateDeleteLastAddedItem.bind(this)();
+
+	this.simulateXhrPreuploadProcessing(this.oUploadCollection._aFileUploadersForPendingUpload[0], this.oFile0.name, 0);
+	this.simulateXhrPreuploadProcessing(this.oUploadCollection._aFileUploadersForPendingUpload[1], this.oFile1.name, 0);
+
+	assert.equal(this.abortStub.callCount, 1, "Function 'FileUploader.prototype.abort' was called " + this.abortStub.callCount + " time(s)");
+	assert.equal(this.abortStub.getCall(0).calledOn(this.oUploadCollection._aFileUploadersForPendingUpload[1]), true, "Function 'FileUploader.prototype.abort' was called on proper instance of FileUploader");
+	assert.equal(this.abortStub.getCall(0).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.oFile1.name + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
+});
+
+QUnit.test("Checking if abort is properly called. 5 files, 2 instances of File Uploader, 2 deletions ", function(assert) {
+	this.simulateFilePreselection.bind(this)([this.oFile0, this.oFile1, this.oFile2]);
+	this.simulateDeleteLastAddedItem.bind(this)();
+	this.simulateFilePreselection.bind(this)([this.oFile3, this.oFile4]);
+	this.simulateDeleteLastAddedItem.bind(this)();
+
+	this.simulateXhrPreuploadProcessing(this.oUploadCollection._aFileUploadersForPendingUpload[0], this.oFile0.name, 0);
+	this.simulateXhrPreuploadProcessing(this.oUploadCollection._aFileUploadersForPendingUpload[0], this.oFile1.name, 1);
+	this.simulateXhrPreuploadProcessing(this.oUploadCollection._aFileUploadersForPendingUpload[0], this.oFile2.name, 2);
+	this.simulateXhrPreuploadProcessing(this.oUploadCollection._aFileUploadersForPendingUpload[1], this.oFile3.name, 0);
+	this.simulateXhrPreuploadProcessing(this.oUploadCollection._aFileUploadersForPendingUpload[1], this.oFile4.name, 1);
+
+	assert.equal(this.abortStub.callCount, 2, "Function 'FileUploader.prototype.abort' was called " + this.abortStub.callCount + " time(s)");
+	assert.equal(this.abortStub.getCall(0).calledOn(this.oUploadCollection._aFileUploadersForPendingUpload[0]), true, "Function 'FileUploader.prototype.abort' was called on proper instance of FileUploader");
+	assert.equal(this.abortStub.getCall(0).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.oFile2.name + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
+	assert.equal(this.abortStub.getCall(1).calledOn(this.oUploadCollection._aFileUploadersForPendingUpload[1]), true, "Function 'FileUploader.prototype.abort' was called on proper instance of FileUploader");
+	assert.equal(this.abortStub.getCall(1).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.oFile4.name + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
+});
+
+QUnit.test("Checking if abort is properly called. 3 files with same names, 1 instance of File Uploader, 2 deletions ", function(assert) {
+	this.simulateFilePreselection.bind(this)([this.oFile0, this.oFile0, this.oFile0]);
+	this.simulateDeleteLastAddedItem.bind(this)();
+	this.simulateDeleteLastAddedItem.bind(this)();
+
+	this.simulateXhrPreuploadProcessing(this.oUploadCollection._aFileUploadersForPendingUpload[0], this.oFile0.name, 0);
+	this.simulateXhrPreuploadProcessing(this.oUploadCollection._aFileUploadersForPendingUpload[0], this.oFile0.name, 1);
+	this.simulateXhrPreuploadProcessing(this.oUploadCollection._aFileUploadersForPendingUpload[0], this.oFile0.name, 2);
+
+	assert.equal(this.abortStub.callCount, 2, "Function 'FileUploader.prototype.abort' was called " + this.abortStub.callCount + " time(s)");
+	assert.equal(this.abortStub.getCall(0).calledOn(this.oUploadCollection._aFileUploadersForPendingUpload[0]), true, "Function 'FileUploader.prototype.abort' was called on proper instance of FileUploader");
+	assert.equal(this.abortStub.getCall(0).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.oFile0.name + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
+	assert.equal(this.abortStub.getCall(1).calledOn(this.oUploadCollection._aFileUploadersForPendingUpload[0]), true, "Function 'FileUploader.prototype.abort' was called on proper instance of FileUploader");
+	assert.equal(this.abortStub.getCall(1).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.oFile0.name + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
 });
 
 QUnit.module("PendingUpload uploadProgress Event", {

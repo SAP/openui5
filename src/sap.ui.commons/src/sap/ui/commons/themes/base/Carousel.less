@@ -2,31 +2,47 @@
 /* CSS for control sap.ui.commons/Carousel.control */
 /* =============================================== */
 
-.sapUiCrslHorizontal .sapUiCrslPrevBtn,
-.sapUiCrslHorizontal .sapUiCrslNextBtn {
-	width: 22px;
-}
-
-.sapUiCrslVertical .sapUiCrslPrevBtn,
 .sapUiCrslVertical .sapUiCrslNextBtn {
-	height: 22px;
-	line-height: 22px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  position: absolute;
+  bottom: 0;
 }
 
-.sapUiCrslPrevBtn, .sapUiCrslNextBtn {
-	cursor: pointer;
+.sapUiCrslVertical .sapUiCrslPrevBtn {
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  position: absolute;
+  top: 0;
 }
 
 .sapUiCrslHorizontal .sapUiCrslPrevBtn {
+	width: 22px;
 	position: absolute;
 	left: 0;
 	text-align: center;
 }
 
 .sapUiCrslHorizontal .sapUiCrslNextBtn {
+	width: 22px;
 	position: absolute;
 	right: 0;
 	text-align: center;
+}
+
+
+.sapUiCrslNextBtn:hover {
+  text-align: center;
+}
+
+.sapUiCrslPrevBtn:hover {
+  text-align: center;
+}
+
+.sapUiCrslPrevBtn, .sapUiCrslNextBtn {
+  cursor: pointer;
 }
 
 .sapUiCrsl {
@@ -68,32 +84,4 @@
 	position: absolute;
 	clip: rect(auto auto auto auto);
 	overflow: hidden;
-}
-
-.sapUiCrslVertical .sapUiCrslNextBtn {
-	text-align: center;
-	position: absolute;
-	bottom: 0;
-}
-
-.sapUiCrslVertical .sapUiCrslPrevBtn {
-	text-align: center;
-	position: absolute;
-	top: 0;
-}
-
-.sapUiCrslVertical .sapUiCrslNextBtn:hover {
-	text-align: center;
-}
-
-.sapUiCrslVertical .sapUiCrslPrevBtn:hover {
-	text-align: center;
-}
-
-.sapUiCrslHorizontal .sapUiCrslNextBtn:hover {
-	text-align: center;
-}
-
-.sapUiCrslHorizontal .sapUiCrslPrevBtn:hover {
-	text-align: center;
 }

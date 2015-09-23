@@ -15,13 +15,6 @@
 	background-color: @sapUiWhiteBG;
 }
 
-html[data-sap-ui-browser="ie8"] .sapUiCltBase{ 
-	/* IE8 does not support border shadow */
-	padding: 0px;
-	border: 1.5px solid @sapUiDarkBorder;
-	outline-style: none;
-}
-
 .sapUiCltBaseArr{
 	display: block;
 	width: 20px;
@@ -35,9 +28,4 @@ html[data-sap-ui-browser="ie8"] .sapUiCltBase{
 	-ms-transform: rotate(45deg);
 	transform: rotate(45deg);
 	z-index: -1;
-}
-
-html[data-sap-ui-browser="ie8"] .sapUiCltBaseArr{
-	border: 1px solid @sapUiDarkBorder;
-	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.7071067811865476, M12=-0.7071067811865475, M21=0.7071067811865475, M22=0.7071067811865476, sizingMethod='auto expand');
 }

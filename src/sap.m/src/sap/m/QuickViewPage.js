@@ -212,7 +212,7 @@ sap.ui.define([
 				oCustomHeader.addContentMiddle(
 					new Title({
 						text : this.getHeader()
-					})
+					}).addStyleClass("sapMQuickViewTitle")
 				);
 
 				if (mNavContext.hasBackButton) {

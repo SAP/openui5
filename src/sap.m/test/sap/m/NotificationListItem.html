@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<title>Notification List item - sap.m</title>
+
+		<style>
+			#body {
+				margin: 30px;
+			}
+		</style>
+
+		<script src="../../../resources/sap-ui-core.js"
+				type="text/javascript"
+				id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+		<script type="text/javascript">
+
+			var listItem = new sap.m.NotificationListItem({
+				title: "Notification List Title",
+				description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor. ",
+				showCloseButton: false,
+				datetime: '5 minutes',
+				priority: sap.ui.core.Priority.High
+			});
+
+			var listItem2 = new sap.m.NotificationListItem({
+				title: "Notification List Title",
+				description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.",
+				datetime: '2 hours',
+				buttons: [
+					new sap.m.Button({
+						text: "Accept",
+						tap: function () {
+							alert('Accept button pressed');
+						}
+					}),
+					new sap.m.Button({
+						text: "Cancel",
+						tap: function () {
+							listItem2.close();
+						}
+					})
+				]
+			});
+
+			var list = new sap.m.List({
+				items: [
+					listItem,
+					listItem2
+				]
+			});
+
+			list.setWidth("700px").placeAt("content");
+		</script>
+	</head>
+
+	<body id="body" class="sapUiBody">
+		<div id="content"></div>
+	</body>
+
+</html>

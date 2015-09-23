@@ -1002,7 +1002,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes'],
 					oNewEvent.altKey = oMappedEvent.altKey;
 					oNewEvent.shiftKey = oMappedEvent.shiftKey;
 					// The simulated mouse event should always be clicked by the left key of the mouse
-					oNewEvent.button = (Device.browser.msie && Device.browser.version <= 8 ? 1 : 0);
+					oNewEvent.button = 0;
 					
 					return oNewEvent;
 				};
