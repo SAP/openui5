@@ -357,6 +357,14 @@
 
 		&.sapMDialogWithSubHeader {
 			padding-top: @SapBarCompactHeight + @SapBarCompactHeight;
+
+		  	&.sapMDialog-NoHeader {
+				padding-top: @SapBarCompactHeight;
+
+				& > .sapMDialogSubHeader {
+			  		top: 0;
+				}
+		  	}
 		}
 
 		&.sapMMessageDialog {
@@ -455,6 +463,14 @@
 
 	&.sapMDialogWithSubHeader {
 		padding-top: @SapBarHeight + @SapBarHeight;
+
+	  	&.sapMDialog-NoHeader {
+			padding-top: @SapBarHeight;
+
+		  	& > .sapMDialogSubHeader {
+				top: 0;
+		  	}
+		}
 	}
 
 	&.sapMMessageDialog {
