@@ -1605,6 +1605,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				var iArrowOffset = this._getArrowOffsetCss(sCalculatedPlacement, oPosParams),
 					sArrowPositionClass = this._getArrowPositionCssClass(sCalculatedPlacement);
 
+				// Remove old position of the arrow and add the new one
+				$arrow.removeAttr("style");
 				$arrow.css(iArrowOffset);
 
 				// Add position class to the arrow
