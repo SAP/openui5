@@ -1,0 +1,62 @@
+<mvc:View
+	controllerName="sap.ui.demo.bulletinboard.controller.Worklist"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:semantic="sap.m.semantic">
+	<semantic:FullscreenPage
+		id="page"
+		title="{i18n>worklistViewTitle}">
+		<semantic:content>
+			<Table
+				id="table"
+				width="auto"
+				class="sapUiResponsiveMargin"
+				items="{
+					path: '/Posts',
+					sorter: {
+						path: 'Title',
+						descending: false
+						}
+					}"
+				busyIndicatorDelay="{worklistView>/tableBusyDelay}"
+				updateFinished="onUpdateFinished">
+				<headerToolbar>
+					<Toolbar>
+						<Label id="tableHeader" text="{worklistView>/worklistTableTitle}"/>
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<Column width="33%" id="nameColumn">
+						<Text text="{i18n>TableNameColumnTitle}" id="nameColumnTitle"/>
+					</Column>
+					<Column width="33%" id="categoryColumn">
+						<Text text="{i18n>TableCategoryColumnTitle}" id="categoryColumnTitle"/>
+					</Column>
+					<Column width="33%" id="unitNumberColumn" hAlign="End">
+						<Text text="{i18n>TableUnitNumberColumnTitle}" id="unitNumberColumnTitle"/>
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<ObjectIdentifier
+								title="{Title}"/>
+							<Text
+								text="{Category}"/>
+							<ObjectNumber
+								number="{
+									path: 'Price',
+									formatter: '.formatter.numberUnit'
+								}"
+								unit="{Currency}"
+								/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</semantic:content>
+		<semantic:sendEmailAction>
+			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+		</semantic:sendEmailAction>
+	</semantic:FullscreenPage>
+</mvc:View>

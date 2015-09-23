@@ -914,6 +914,31 @@
 			"Custom Controls",
 			"Responsiveness and Device Adaptation"
 		  ]
+		},
+		{
+			"id": "sap.m.tutorial.testing",
+			"name": "Testing",
+			"category": "Tutorial",
+			"since": "1.30",
+			"formFactors": "-",
+			"description": "In this tutorial we will test application functionality with QUnit, OPA5, and the mock server",
+			"docuLink": "#docs/guide/291c9121e6044ab381e0b51716f97f52.html",
+			"samplesAsSteps": [
+				"Handover and Testing Strategy",
+				"A first Unit Test",
+				"Adding a price formatter",
+				"Testing a new type module",
+				"Adding a flagged button",
+				"A first OPA Test",
+				"Canging the table to grow",
+				"Testing Navigation",
+				"Adding the Post Page",
+				"Testsuite and Automated Testing",
+				"Testing Interactions",
+				"Adding Tabs",
+				"Writing a Short Date Formatter TDD style",
+				"Adding the date formatter"
+			]
 		}
 	  ],
 	  "samples": [
