@@ -803,7 +803,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 
 			_refresh : function(){
 				var $Container = this._$Container;
-				if (!$Container || !$Container.height()) {
+
+				if (!($Container && $Container.length)) {
 					return;
 				}
 
@@ -1064,6 +1065,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 			onAfterRendering: function() {
 				var $Container = this._$Container = this._sContainerId ? $.sap.byId(this._sContainerId) : $.sap.byId(this._sContentId).parent();
 				var _fnRefresh = jQuery.proxy(this._refresh, this);
+				var bElementVisible = $Container.is(":visible");
 
 				this._setOverflow();
 
@@ -1074,16 +1076,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object'],
 
 				this._refresh();
 
-				if (!$Container.is(":visible")
+				if (!bElementVisible
 					|| !!Device.browser.internet_explorer
 					|| this._oPullDown
 					|| this._fnScrollLoadCallback) {
+
 					// element may be hidden and have height 0
 					this._sResizeListenerId = sap.ui.core.ResizeHandler.register($Container[0], _fnRefresh);
 				}
 
 				// Set event listeners
 				$Container.scroll(jQuery.proxy(this._onScroll, this));
+
 				if (Device.support.touch) {
 					$Container
 						.on("touchcancel touchend", jQuery.proxy(this._onEnd, this))
