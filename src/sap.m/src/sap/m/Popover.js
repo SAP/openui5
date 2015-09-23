@@ -1444,20 +1444,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		};
 
 		/**
-		 * Checks if there is need from a scrollbar or not.
+		 * Determines whether the horizontal scrollbar is needed.
 		 *
-		 * @param {object} oPosParams Parameters used from the method to calculate the right values
+		 * @param {object} oPosParams Parameters used from the method to calculate the right values.
 		 *
-		 * @returns {boolean} Wheather scrollbar is needed or not
+		 * @returns {boolean} Whether the horizontal scrollbar is needed.
 		 * @private
 		 */
-		Popover.prototype._isScrollbarNeeded = function (oPosParams) {
-			// disable the horizontal scrolling when content inside can fit the container.
-			if (oPosParams._$scrollArea.outerWidth(true) <= oPosParams._$content.width()) {
-				return true;
-			}
+		Popover.prototype._isHorizontalScrollbarNeeded = function (oPosParams) {
 
-			return false;
+			// disable the horizontal scrolling when content inside can fit the container
+			return this.getHorizontalScrolling() && (oPosParams._$scrollArea.outerWidth(true) <= oPosParams._$content.width());
 		};
 
 		/**
@@ -1587,7 +1584,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 			var oPopoverPosition = this._getPopoverPositionCss(oPosParams),
 				oContentSize = this._getContentDimensionsCss(oPosParams),
-				bIsScrollbarNeeded = this._isScrollbarNeeded(oPosParams);
+				bHorizontalScrollbarNeeded = this._isHorizontalScrollbarNeeded(oPosParams);
 
 			// Reposition popover
 			$popover.css(oPopoverPosition);
@@ -1596,7 +1593,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			$content.css(oContentSize);
 
 			// Enable the scrollbar, if necessary
-			if (bIsScrollbarNeeded) {
+			if (bHorizontalScrollbarNeeded) {
 				$scrollArea.css("display", "block");
 			}
 
