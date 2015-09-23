@@ -1134,6 +1134,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			var $this = this.$();
 			var iHeight = $this.outerHeight();
 			var iWidth = $this.outerWidth();
+			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
 
 			var $parent = jQuery(this._getOpenByDomRef());
 			var iOffsetX = this._getOffsetX();
@@ -1173,9 +1174,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 			if (fMaxCoverageHorizontal > fMaxCoverageVertical) {
 				if (fMaxCoverageHorizontal === fLeftCoverage) {
-					this._oCalcedPos = sap.m.PlacementType.Left;
+					this._oCalcedPos = bRtl ? sap.m.PlacementType.Right : sap.m.PlacementType.Left;
 				} else if (fMaxCoverageHorizontal === fRightCoverage) {
-					this._oCalcedPos = sap.m.PlacementType.Right;
+					this._oCalcedPos = bRtl ? sap.m.PlacementType.Left : sap.m.PlacementType.Right;
 				}
 			} else if (fMaxCoverageVertical > fMaxCoverageHorizontal) {
 				if (fMaxCoverageVertical === fTopCoverage) {
@@ -1194,9 +1195,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				} else {
 					// in landscape horizontal is preferred
 					if (fMaxCoverageHorizontal === fLeftCoverage) {
-						this._oCalcedPos = sap.m.PlacementType.Left;
+						this._oCalcedPos = bRtl ? sap.m.PlacementType.Right : sap.m.PlacementType.Left;
 					} else if (fMaxCoverageHorizontal === fRightCoverage) {
-						this._oCalcedPos = sap.m.PlacementType.Right;
+						this._oCalcedPos = bRtl ? sap.m.PlacementType.Left : sap.m.PlacementType.Right;
 					}
 				}
 			}
