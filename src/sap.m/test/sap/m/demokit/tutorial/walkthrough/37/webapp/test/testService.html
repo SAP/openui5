@@ -3,7 +3,7 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 	<meta charset="UTF-8">
-	<title>SAPUI5 Walkthrough</title>
+	<title>SAPUI5 Walkthrough - Test page</title>
 	<script
 		id="sap-ui-bootstrap"
 		src="https://openui5beta.hana.ondemand.com/resources/sap-ui-core.js"
@@ -13,17 +13,24 @@
 		data-sap-ui-compatVersion="edge"
 		data-sap-ui-preload="async"
 		data-sap-ui-resourceroots='{
-				"sap.ui.demo.wt": "./"
-			}'>
+			"sap.ui.demo.wt": "../"
+		}'>
 	</script>
 	<script>
 		sap.ui.getCore().attachInit(function () {
-			new sap.m.Shell({
-				app: new sap.ui.core.ComponentContainer({
-					name: "sap.ui.demo.wt",
-					height: "100%"
-				})
-			}).placeAt("content");
+			sap.ui.require([
+				"sap/ui/demo/wt/test/service/server",
+				"sap/m/Shell",
+				"sap/ui/core/ComponentContainer"
+			], function (server, Shell, ComponentContainer) {
+				server.init();
+				new Shell({
+					app: new ComponentContainer({
+						height: "100%",
+						name: "sap.ui.demo.wt"
+					})
+				}).placeAt("content");
+			});
 		});
 	</script>
 </head>
