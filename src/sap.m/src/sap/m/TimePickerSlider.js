@@ -995,7 +995,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 				return;
 			}
 
-			this._removeSelectionStyle();
 			this._stopAnimation();
 			this._startDrag(oEvent.touches[0].pageY);
 
@@ -1062,8 +1061,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 				return;
 			}
 
-
-			this._removeSelectionStyle();
 			this._stopAnimation();
 			this._startDrag(oEvent.pageY);
 

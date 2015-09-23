@@ -80,6 +80,9 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeClasses();
 			oRm.write(">");
 
+			//render selection frame, same height - border height
+			oRm.write("<div class=\"sapMTPPickerSelectionFrame\"></div>");
+
 			oRm.write("<ul");
 			oRm.writeAttribute("id", oControl.getId() + "-content");
 			oRm.writeAttribute("unselectable", "on");
@@ -100,9 +103,6 @@ sap.ui.define(['jquery.sap.global'],
 				}
 			}
 			oRm.write("</ul>");
-
-			//render selection frame, same height - border height
-			oRm.write("<div class=\"sapMTPPickerSelectionFrame\"></div>");
 
 			oRm.write("</div>");
 
