@@ -1630,6 +1630,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					fileName: sFileName
 				});
 				oItem._status = sStatus;
+				oItem._internalFileIndexWithinFileUploader = 1;
 				if (!this.getInstantUpload()) {
 					oItem.setAssociation("fileUploader",this._oFileUploader, true);
 					this.insertItem(oItem);
