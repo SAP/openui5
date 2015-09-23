@@ -1,0 +1,154 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="utf-8" />
+	<title>qUnit Page for sap.ui.test.actions.Press</title>
+
+	<script
+			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-libs="sap.m">
+	</script>
+
+
+	<script>
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		jQuery.sap.require("sap.ui.thirdparty.sinon");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+		sap.ui.require([
+			"sap/ui/test/actions/Press",
+			"sap/m/Button",
+			"sap/m/List",
+			"sap/m/StandardListItem",
+			"sap/m/ListMode"], function(Press, Button, List, StandardListItem, ListMode){
+			// stack contains controls to be destroyed
+			// and emptied after each test
+			var aControlsToClean = [];
+
+			QUnit.module("positive tests",{
+				afterEach: function() {
+					while(aControlsToClean.length) {
+						//Clean up controls after eayh test
+						aControlsToClean.pop().destroy();
+					}
+				}
+			});
+
+			QUnit.test("Should request focus and trigger a 'press' event on a sap.m.Button control", function(assert) {
+				var done = assert.async();
+
+				// Arrange
+				var oButton = new Button({text: "Button Press Event"});
+				aControlsToClean.push(oButton);
+				oButton.placeAt("qunit-fixture");
+
+				//Make sure that button is rendered
+				sap.ui.getCore().applyChanges();
+
+				// System under Test
+				var oPressAction = new Press();
+
+				oButton.attachPress( function () {
+					assert.ok(true, "Press Event has been triggered");
+					assert.ok(jQuery(document.activeElement).is(oButton.$()), "Button has focus");
+					//Call 'done' to resume qunit processing
+					done();
+				}, this);
+
+				// Act
+				oPressAction.executeOn(oButton);
+
+			});
+
+			QUnit.test("Should request focus and trigger a 'press' event on an sap.m.StandardListItem of type 'active'", function(assert) {
+				var done = assert.async();
+
+				// Arrange
+				var oFirstListItem = new StandardListItem({
+						title: "List Item Press",
+						type: "Active"
+					}),
+					oList = new List({
+						headerText: "Press Test",
+						items: [oFirstListItem]
+					});
+				oList.placeAt("qunit-fixture");
+				//No need to add oFirstListItem as it will be
+				//cleaned up by its list
+				aControlsToClean.push(oList);
+
+				//Make sure that button is rendered
+				sap.ui.getCore().applyChanges();
+
+				// System under Test
+				var oPressAction = new Press();
+
+				oFirstListItem.attachPress(function () {
+					assert.ok(true, "Press Event has been triggered");
+					assert.ok(jQuery(document.activeElement).is(oFirstListItem.$()), "List Item has focus");
+					//Call 'done' to resume qunit processing
+					done();
+				}, this);
+
+				// Act
+				oPressAction.executeOn(oFirstListItem);
+			});
+
+			QUnit.test("List should fire selection change event", function(assert) {
+				var done = assert.async();
+
+				// Arrange
+				var oFirstListItem = new StandardListItem({
+						title: "Initially selected item",
+						type: "Active"
+					}),
+					oSecondListItem = new StandardListItem({
+						title: "Pressed upon during test",
+						type: "Active"
+					}),
+					oList = new  List({
+						headerText: "Selection Change Test",
+						mode: ListMode.SingleSelectMaster,
+						items : [oFirstListItem, oSecondListItem]
+					});
+				oList.setSelectedItem(oFirstListItem);
+				oList.placeAt("qunit-fixture");
+
+				//No need to add the list items as they will be
+				//cleaned up by its list
+				aControlsToClean.push(oList);
+
+				//Make sure that button is rendered
+				sap.ui.getCore().applyChanges();
+
+				// System under Test
+				var oPressAction = new Press();
+
+				oList.attachSelectionChange(function () {
+					assert.ok(true, "Selection change has been triggered");
+					assert.ok(jQuery(document.activeElement).is(oSecondListItem.$()), "Pressed List Item has focus");
+					assert.ok(oSecondListItem.getSelected(), "Pressed List Item is selected");
+					//Call 'done' to resume qunit processing
+					done();
+				}, this);
+
+				// Act
+				oPressAction.executeOn(oSecondListItem);
+			});
+
+		});
+	</script>
+</head>
+
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+</body>
+
+</html>
