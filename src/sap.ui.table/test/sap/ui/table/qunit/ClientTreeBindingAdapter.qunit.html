@@ -1,0 +1,766 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="utf-8" />
+
+	<!-- Initialization -->
+	<script id="sap-ui-bootstrap" type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"></script>
+
+	<script type="text/javascript">
+		jQuery.sap.require("sap.ui.core.util.MockServer");
+	</script>
+	<link rel="stylesheet"
+		  href="../../../../../resources/sap/ui/thirdparty/qunit.css"
+		  type="text/css" media="screen" />
+	<script type="text/javascript"
+			src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript"
+			src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript"
+			src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript"
+			src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<!-- Test functions -->
+	<script language="javascript">
+
+		jQuery.sap.require("sap.ui.model.ClientTreeBindingAdapter");
+
+		// create a dummy AMD fdefine to check if shim works for datajs
+		window.define = function() {
+			throw Error("define should not be called");
+		}
+		window.define.amd = { vendor : "SAPUI5 QUnit Test" } ;
+
+		var oModel, oBinding;
+
+		function createTreeBindingAdapter(sPath, oContext, aFilters, mParameters){
+			// create binding
+			oBinding = oModel.bindTree(sPath, oContext, aFilters, mParameters).initialize();
+			//applying the odata tree binding adapter to the binding
+			sap.ui.model.ClientTreeBindingAdapter.apply(oBinding);
+		}
+
+		// Test Data
+		var oData = {
+			bing: {
+				name: "chandler",
+				root:{
+					name: "root",
+					description: "moep moep",
+					checked: false,
+					0: {
+						name: "Rock",
+						description: "Rockmusik",
+						checked: true,
+						0: { //children as object references
+							name: "Rock'n'Roll",
+							description: "late 1940s",
+							checked: true,
+							children: [ // Children inside an array
+								{
+									name: "Elvis Presley",
+									description: "*1935 - +1977",
+									checked: true
+								},
+								{
+									name: "Chuck Berry",
+									description: "*1926",
+									checked: true
+								}
+							],
+							"flup": { // mixed with arrays and objects
+								name: "Keith Richards",
+								description: "*1943",
+								checked: true
+							}
+						},
+						1: {
+							name: "Heavy Metal",
+							description: "late 1960s",
+							checked: true,
+							0: {
+								name: "Black Sabbath",
+								description: "founded 1968",
+								checked: true
+							},
+							1: {
+								name: "Judas Priest",
+								description: "founded 1969",
+								checked: true
+							}
+						},
+						2: {
+							name: "Grunge",
+							description: "Mid-1980s",
+							checked: true,
+							0: {
+								name: "Nirvana",
+								description: "1987",
+								checked: true
+							},
+							1: {
+								name: "Soundgarden",
+								description: "1984",
+								checked: true
+							},
+							2: {
+								name: "Alice in Chains",
+								description: "1987",
+								checked: true
+							}
+						}
+					},
+					1:{
+						name: "Hip-Hop",
+						description: "Hip-Hop",
+						checked: true,
+						0: {
+							name: "Old-School",
+							description: "Mid 1970s",
+							checked: true,
+							0: {
+								name: "The Sugarhill Gang",
+								description: "1973",
+								checked: true
+							},
+							1: {
+								name: "Grandmaster Flash and the Furious Five",
+								description: "1978",
+								checked: true
+							}
+						},
+						1: {
+							name: "Rap-Rock",
+							description: "early 1980s",
+							checked: true,
+							0: {
+								name: "Run-D.M.C.",
+								description: "1981 - 2002",
+								checked: true
+							},
+							1: {
+								name: "Beastie Boys",
+								description: "1981 - 2012",
+								checked: true
+							}
+						},
+						2: {
+							name: "Gangsta rap",
+							description: "mid 1980s",
+							checked: true,
+							0: {
+								name: "2Pac",
+								description: "1971 - 1996",
+								checked: true
+							},
+							1: {
+								name: "N.W.A",
+								description: "1986 - 1991, 1998 - 2002",
+								checked: true
+							}
+						}
+					},
+					2: {
+						name: "Swing/Big Band",
+						description: "1930s",
+						checked: true,
+						0: {
+							name: "Frank Sinatra",
+							description: "1915 - 1998",
+							checked: true
+						},
+						1: {
+							name: "Count Basie",
+							description: "1904 - 1984",
+							checked: true
+						}
+					},
+					3: {
+						name: "ZZZ",
+						description: "None",
+						checked: true
+					}
+				}
+			}
+		};
+
+		module("ODataTreeBindingAdapter with navigation properties", {
+			setup: function() {
+				oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData(jQuery.extend({}, oData));
+			},
+			teardown: function() {
+				oModel = undefined;
+			}
+		});
+
+		test("Properties", function(){
+			createTreeBindingAdapter("/bing/root", null, [], {});
+			equal(oBinding.getPath(), "/bing/root", "TreeBinding path");
+			equal(oBinding.getModel(), oModel, "TreeBinding model");
+			ok(oBinding instanceof sap.ui.model.ClientTreeBinding, "treeBinding class check");
+		});
+
+		test("getRootContexts getNodeContexts", function(){
+			createTreeBindingAdapter("/bing/root", null, [], {
+				displayRootNode: false
+			});
+
+			var oContext;
+
+				// contexts should be now loaded
+			var aContexts = oBinding.getContexts(0, 5);
+
+			equal(aContexts.length, 4, "TreeBinding rootContexts length");
+
+			oContext = aContexts[0];
+			equal(oModel.getProperty("name", oContext), "Rock", "TreeBinding root content");
+
+			oContext = aContexts[1];
+			equal(oModel.getProperty("name", oContext), "Hip-Hop", "TreeBinding root content");
+
+			oContext = aContexts[2];
+			equal(oModel.getProperty("name", oContext), "Swing/Big Band", "TreeBinding root content");
+
+			oContext = aContexts[3];
+			equal(oModel.getProperty("name", oContext), "ZZZ", "TreeBinding root content");
+
+			var fnChangeHandler = function() {
+				// contexts should be now loaded
+				var aContexts = oBinding.getContexts(0, 10);
+
+				var oContext = oBinding.getContextByIndex(3);
+				equal(aContexts.length, 7, "TreeBinding nodeContexts length is 7");
+				equal(oBinding.getChildCount(oContext), 2, "TreeBinding childcount");
+
+				oContext = oBinding.getContextByIndex(4);
+				equal(oModel.getProperty("name", oContext), "Gangsta rap", "TreeBinding node content");
+
+				oContext = oBinding.getContextByIndex(5);
+				equal(oModel.getProperty("name", oContext), "Swing/Big Band", "TreeBinding node content");
+
+				oContext = oBinding.getContextByIndex(6);
+				equal(oModel.getProperty("name", oContext), "ZZZ", "TreeBinding node content");
+			};
+
+			oBinding.attachChange(fnChangeHandler);
+
+			oBinding.expand(1);
+		});
+
+		test("Display root node", function(){
+			createTreeBindingAdapter("/bing/root", null, [], {
+				displayRootNode: true
+			});
+
+			var oContext;
+
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts(0, 10);
+
+			equal(aContexts.length, 1, "# of root contexts = 1");
+
+			oContext = aContexts[0];
+			equal(oModel.getProperty("name", oContext), "root", "Root context values are correct");
+
+			var fnExpandHandler = function () {
+				aContexts = oBinding.getContexts(0, 10);
+
+				equal(aContexts.length, 5, "Length of returned contexts should be 6");
+
+				oContext = aContexts[0];
+				equal(oContext.getProperty("name"), "root", "Root context values are correct");
+
+				oContext = aContexts[1];
+				equal(oContext.getProperty("name"), "Rock", "[1] context values are correct");
+
+				oContext = aContexts[2];
+				equal(oContext.getProperty("name"), "Hip-Hop", "[2] is correct");
+
+				oContext = aContexts[3];
+				equal(oContext.getProperty("name"), "Swing/Big Band", "[3] is correct");
+
+				oContext = aContexts[4];
+				equal(oContext.getProperty("name"), "ZZZ", "[4] is correct");
+			};
+
+			oBinding.attachChange(fnExpandHandler);
+			oBinding.expand(0);
+
+		});
+
+		test("Number of expanded levels", function(){
+			createTreeBindingAdapter("/bing/root", null, [], {
+				displayRootNode: true,
+				numberOfExpandedLevels: 2
+			});
+
+			var aContexts = oBinding.getContexts(0, 20);
+
+			var oContext;
+
+			equal(aContexts.length, 13, "# of contexts after autoExpand = 2 should be 13");
+
+			oContext = aContexts[0];
+			equal(oContext.getProperty("name"), "root", "First node is correct");
+
+			//Grunge should not be expanded
+			oContext = oBinding.getContextByIndex(4);
+			equal(oContext.getProperty("name"), "Grunge", "Woohooo Grunge");
+			equal(oBinding.isExpanded(4), false, "Grunge is not expanded");
+			equal(oBinding.getChildCount(oContext), 3, "Grunge has 3 children");
+
+			oContext = oBinding.getContextByIndex(5);
+			equal(oContext.getProperty("name"), "Hip-Hop", "Woohooo Hip-Hop");
+			equal(oBinding.isExpanded(5), true, "Hip-Hop is expanded");
+			equal(oBinding.getChildCount(oContext), 3, "Hip-Hop has 3 children");
+
+			oContext = oBinding.getContextByIndex(6);
+			var oNode = oBinding.findNode(6);
+			equal(oContext.getProperty("name"), "Old-School", "Woohoo Old-School");
+			equal(oNode.level, 2, "Old-School sits on level 2");
+		});
+
+
+
+		test("Pagesize increasing", function(){
+			createTreeBindingAdapter("/bing/root", [], null, {
+				displayRootNode: true
+			});
+
+			var oContext;
+			var aContexts = oBinding.getContexts(0, 10);
+			equal(aContexts.length, 1, "TreeBinding rootContexts length, 10 requested, only 1 node present");
+			equal(oBinding._iPageSize, 10, "PageSize must be 10, since 10 requested by getContexts");
+			oContext = aContexts[0];
+			equal(oContext.getProperty("name"), "root", "Root Node OK");
+			oBinding.expand(0);
+
+			aContexts = oBinding.getContexts(1, 3);
+			equal(oBinding._iPageSize, 10, "PageSize must still be 10, since 10 was requested by getContexts earlier");
+
+			equal(aContexts.length, 3, "Check if getContexts returned the expected length for expanded 1st node");
+			equal(oBinding.getChildCount(oContext), 4, "ChildCount of expanded 1st node");
+
+			// row index 4 must be present due to higher page size (10) although not requested by latest getContexts call
+			oContext = oBinding.getContextByIndex(4);
+			equal(oContext.getProperty("name"), "ZZZ", "ZZZ Node OK");
+		});
+
+		test("Pagesize not decreasing", function(){
+				createTreeBindingAdapter("/bing/root", [], null, {
+					displayRootNode: true
+				});
+
+				var oContext;
+				var aContexts = oBinding.getContexts(0, 1);
+
+				equal(aContexts.length, 1, "TreeBinding rootContexts length, 10 requested, only 1 node present");
+				equal(oBinding._iPageSize, 1, "PageSize must be 1, since 1 requested by getContexts");
+
+				oContext = aContexts[0];
+				equal(oContext.getProperty("name"), "root", "1st root child HierarchyNode check");
+
+				oBinding.expand(0);
+
+				aContexts = oBinding.getContexts(1, 5);
+				equal(oBinding._iPageSize, 5, "PageSize must now be 5, since 5 was requested by latest getContexts call and is higher than the first getContexts call");
+
+				equal(aContexts.length, 4, "Check if getContexts returned the expected length for expanded 1st node");
+				equal(oBinding.getChildCount(oContext), 4, "ChildCount of expanded 1st node");
+
+				oContext = oBinding.getContextByIndex(4);
+				equal(oContext.getProperty("name"), "ZZZ", "Node ZZZ is OK");
+
+				oContext = oBinding.getContextByIndex(5);
+				equal(oContext, null, "Context at row index 5 still missing.");
+		});
+
+
+		asyncTest("Manual expand", function(){
+			var oContext;
+			createTreeBindingAdapter("/bing/root", [], null, {
+				collapseRecursive: false,
+				displayRootNode: true
+			});
+
+			oBinding.getContexts(0, 100);
+			//expand root node
+			oBinding.expand(0);
+
+			oBinding.getContexts(0, 100);
+			oContext = oBinding.getContextByIndex(4);
+			equal(oContext.getProperty("name"), "ZZZ", "Node ZZZ OK");
+			oBinding.expand(1);
+
+			//expanded 0.3
+			oBinding.getContexts(0, 100);
+			oContext = oBinding.getContextByIndex(4);
+			equal(oContext.getProperty("name"), "Grunge", "Grunge Node OK");
+			oBinding.expand(4);
+
+			oBinding.getContexts(0, 100);
+			oContext = oBinding.getContextByIndex(6);
+			equal(oContext.getProperty("name"), "Soundgarden", "Soundgarden Node OK");
+
+			ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should be expanded");
+			ok(oBinding._mTreeState.expanded["/bing_root/"], "Artificial Root node should be expanded");
+			ok(oBinding._mTreeState.expanded["/bing_root/0/"], "1st Level node should be expanded");
+			ok(oBinding._mTreeState.expanded["/bing_root/0/0_2/"], "2nd Level node should be expanded");
+
+			deepEqual(oBinding._mTreeState.collapsed, {}, "No nodes should be collapsed");
+
+
+			//collapsing to level 2
+			oBinding.collapseToLevel(2);
+			oBinding.getContexts(0, 100); //rebuild the tree, as usual
+
+			ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should be expanded");
+			ok(oBinding._mTreeState.expanded["/bing_root/"], "Artificial Root node should be expanded");
+			ok(oBinding._mTreeState.expanded["/bing_root/0/"], "1st Level node should be expanded");
+
+			ok(oBinding._mTreeState.collapsed["/bing_root/0/0_2/"], "3rd Level node is now in the collapsed map");
+
+			//finally collapse the whole tree
+			oBinding.collapseToLevel(0);
+			oBinding.getContexts(0, 100); //rebuild the tree, as usual
+
+			oContext = oBinding.getContextByIndex(0);
+			equal(oContext.getProperty("name"), "root", "HierarchyNode check for root node, everything is still there");
+			equal(oBinding.isExpanded(0), false, "Root node is also collapsed now");
+
+			ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should still be expanded");
+			ok(!oBinding._mTreeState.expanded["/bing_root/"], "1st Level node should NOT be expanded");
+			//this node is still expanded, because collapseRecursive is set to false
+			ok(oBinding._mTreeState.expanded["/bing_root/0/"], "2nd Level node should still be expanded (collapseRecursive = false)");
+
+			ok(oBinding._mTreeState.collapsed["/bing_root/"], "Root node is now in the collapsed map");
+			ok(oBinding._mTreeState.collapsed["/bing_root/0/0_2/"], "3rd Level node is still in the collapsed map");
+
+			// switch on collapseRecursive mode
+			oBinding.setCollapseRecursive(true);
+
+			// re-expand the root node and check if the expanded states are still correct
+			oBinding.expandToLevel(1);
+			deepEqual(oBinding._mTreeState.collapsed, {}, "No nodes should be collapsed now, just before expanding to level X");
+			oBinding.getContexts(0, 100); //rebuild the tree, as usual
+
+			equal(oBinding.isExpanded(0), true, "root is expanded again");
+			equal(oBinding.isExpanded(1), true, "Rock is still expanded");
+			oBinding.expand(3);
+			oBinding.expand(2);
+
+			//collapse all again, this time recursive
+			oBinding.collapseToLevel(0);
+
+			//expand again
+			oBinding.expandToLevel(1);
+
+			oBinding.getContexts(0, 100); //rebuild the tree, as usual
+
+			ok(oBinding._mTreeState.expanded["/"], "Artificial Root node should still be expanded");
+			ok(oBinding._mTreeState.expanded["/bing_root/"], "1st Level node should be expanded again");
+			//this node is still expanded, because collapseRecursive is set to false
+			ok(!oBinding._mTreeState.expanded["/bing_root/0/"], "2nd Level node should NOT be expanded (collapseRecursive = true)");
+
+			// check for correct change reasons in event
+			var fnChangeHandler5 = function(oEvent) {
+				oBinding.detachChange(fnChangeHandler5);
+				equal(oEvent.getParameter("reason"), "expand", "Change Reason expand is set");
+				oBinding.attachChange(fnChangeHandler6);
+				oBinding.collapse(1);
+			};
+
+			var fnChangeHandler6 = function(oEvent) {
+				oBinding.detachChange(fnChangeHandler6);
+				equal(oEvent.getParameter("reason"), "collapse", "Change Reason expand is set");
+				start();
+			};
+
+			oBinding.attachChange(fnChangeHandler5);
+			oBinding.expand(1);
+		});
+
+		/**
+		 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
+		 * Data should already be present, since prebuildTree already requested a big set
+		 */
+		asyncTest("SelectAll, Deselect All", function(){
+			createTreeBindingAdapter("/bing/root", [], null, {
+				collapseRecursive: false,
+				displayRootNode: true,
+				numberOfExpandedLevels: 2
+			});
+
+			oBinding.getContexts(0, 100);
+
+			var fnSelectionChangeHandler1 = function(oEvent) {
+				oBinding.detachSelectionChanged(fnSelectionChangeHandler1);
+				equal(oEvent.mParameters.leadIndex, oBinding.getLength() - 1, "Event: leadIndex should be Binding length - 1");
+				equal(oEvent.mParameters.oldIndex, -1, "Event: oldIndex should be -1");
+				equal(oEvent.mParameters.rowIndices.length, 13, "Event: length of changedIndices should be 13");
+			};
+
+			var fnSelectionChangeHandler2 = function(oEvent) {
+				oBinding.detachSelectionChanged(fnSelectionChangeHandler2);
+				equal(oEvent.mParameters.leadIndex, - 1, "Event: leadIndex should be - 1");
+				equal(oEvent.mParameters.oldIndex, oBinding.getLength() - 1, "Event: oldIndex should be Binding length -1");
+				equal(oEvent.mParameters.rowIndices.length, 5, "Event: length of changedIndices should be 5");
+			};
+
+
+			oBinding.attachSelectionChanged(fnSelectionChangeHandler1);
+			oBinding.selectAll();
+
+			oBinding.collapseToLevel(1);
+			oBinding.getContexts(0, 100); // rebuild tree after collapse
+			var aSelectedIndices = oBinding.getSelectedIndices();
+			equal(aSelectedIndices.length, 5, "Number of selected Nodes after collapsing to level 1 must be 5");
+
+			// check that selectAllMode is removed
+			equal(oBinding._oRootNode.nodeState.selectAllMode, true, "After selectAll, selectAllMode of root node is true");
+
+			var aSelectedContexts = oBinding.getSelectedContexts();
+			equal(aSelectedIndices.length, aSelectedContexts.length, "Number of selected contexts and indeces must be the same");
+
+			var oContext = aSelectedContexts[1];
+			equal(oContext.getProperty("name"), "Rock", "Number of selected contexts and indeces must be the same");
+
+			var iLeadIndex = oBinding.getSelectedIndex();
+			equal(iLeadIndex, oBinding.getLength() - 1, "LeadIndex must be last node/context of the known/paged tree in SelectAll case");
+
+			oBinding.attachSelectionChanged(fnSelectionChangeHandler2);
+			oBinding.clearSelection();
+			aSelectedIndices = oBinding.getSelectedIndices();
+			equal(aSelectedIndices.length, 0, "There should be no selection after clearSelection");
+
+			// check that selectAllMode is removed
+			equal(oBinding._oRootNode.nodeState.selectAllMode, false, "After clearSelection, selectAllMode of root node is false");
+
+			iLeadIndex = oBinding.getSelectedIndex();
+			equal(iLeadIndex, - 1, "LeadIndex must be -1 if there is no selection");
+
+			start();
+		});
+
+		/**
+		 * To keep this test simple, we omit the change handler called after each collapse() or expand() call
+		 * Data should already be present, since prebuildTree already requested a big set
+		 */
+		asyncTest("Select single nodes", function(){
+			createTreeBindingAdapter("/bing/root", [], null, {
+				collapseRecursive: false,
+				displayRootNode: true,
+				numberOfExpandedLevels: 1
+			});
+
+			oBinding.getContexts(0, 100);
+
+			var fnSelectionChangeHandler1 = function(oEvent) {
+				oBinding.detachSelectionChanged(fnSelectionChangeHandler1);
+				equal(oEvent.mParameters.leadIndex, 1, "Event: leadIndex should be 1");
+				equal(oEvent.mParameters.oldIndex, -1, "Event: oldIndex should be -1");
+				equal(oEvent.mParameters.rowIndices.length, 1, "Event: length of changedIndices should be 1");
+				equal(oEvent.mParameters.rowIndices[0], 1, "Event: changedIndices[0] should be 1");
+			};
+
+			var fnSelectionChangeHandler2 = function(oEvent) {
+				oBinding.detachSelectionChanged(fnSelectionChangeHandler2);
+				equal(oEvent.mParameters.leadIndex, 4, "Event: leadIndex should be 4");
+				equal(oEvent.mParameters.oldIndex, 1, "Event: oldIndex should be 1");
+				equal(oEvent.mParameters.rowIndices.length, 2, "Event: changedIndices should be 2");
+				equal(oEvent.mParameters.rowIndices[0], 1, "Event: changedIndices[0] should be 1");
+				equal(oEvent.mParameters.rowIndices[0], 1, "Event: changedIndices[1] should be 4");
+			};
+
+			var fnSelectionChangeHandler3 = function(oEvent) {
+				oBinding.detachSelectionChanged(fnSelectionChangeHandler3);
+				equal(oEvent.mParameters.leadIndex, 4, "Event: leadIndex should be 4");
+				equal(oEvent.mParameters.oldIndex, 4, "Event: oldIndex should be 4");
+				equal(oEvent.mParameters.rowIndices.length, 0, "Event: changedIndices should be undefined");
+			};
+
+			oBinding.attachSelectionChanged(fnSelectionChangeHandler1);
+			oBinding.setSelectedIndex(1);
+			var oContext = oBinding.getContextByIndex(oBinding.getSelectedIndex());
+			var aSelectedContexts = oBinding.getSelectedContexts();
+			equal(aSelectedContexts.length, 1, "One node should be selected");
+			deepEqual(oContext, aSelectedContexts[0], "Contexts should equal");
+			equal(oContext.getProperty("name"), "Rock", "Second Node should be selected");
+
+			oBinding.attachSelectionChanged(fnSelectionChangeHandler2);
+			oBinding.setSelectedIndex(4);
+			oContext = oBinding.getContextByIndex(oBinding.getSelectedIndex());
+			aSelectedContexts = oBinding.getSelectedContexts();
+			equal(aSelectedContexts.length, 1, "Still only one node should be selected");
+			deepEqual(oContext, aSelectedContexts[0], "Contexts should still equal");
+			equal(oContext.getProperty("name"), "ZZZ", "Last Node should be selected");
+
+			oBinding.attachSelectionChanged(fnSelectionChangeHandler3);
+			oBinding.setSelectedIndex(4);
+			oContext = oBinding.getContextByIndex(oBinding.getSelectedIndex());
+			aSelectedContexts = oBinding.getSelectedContexts();
+			equal(aSelectedContexts.length, 1, "Still only one node should be selected");
+			deepEqual(oContext, aSelectedContexts[0], "Contexts should still equal");
+			equal(oContext.getProperty("name"), "ZZZ", "Last Node should be selected");
+
+			//select index out of range
+			oBinding.setSelectedIndex(300);
+			equal(oBinding.getSelectedIndex(), 4, "Selected index is still 9.");
+
+			equal(oBinding._isNodeSelectable(0), false, "Illegal nodes are not selectable.");
+			equal(oBinding._isNodeSelectable(null), false, "Illegal nodes are not selectable.");
+			equal(oBinding._isNodeSelectable(undefined), false, "Illegal nodes are not selectable.");
+			equal(oBinding._isNodeSelectable(""), false, "Illegal nodes are not selectable.");
+
+			start();
+		});
+
+		asyncTest("Add Selection Interval", function(){
+			createTreeBindingAdapter("/bing/root", [], null, {
+				collapseRecursive: false,
+				displayRootNode: true,
+				numberOfExpandedLevels: 2
+			});
+
+			oBinding.getContexts(0, 100);
+
+			var fnSelectionChangeHandler1 = function(oEvent) {
+				oBinding.detachSelectionChanged(fnSelectionChangeHandler1);
+				equal(oEvent.mParameters.leadIndex, 7, "Event: leadIndex should be 7");
+				equal(oEvent.mParameters.oldIndex, -1, "Event: oldIndex should be -1");
+				equal(oEvent.mParameters.rowIndices.length, 5, "Event: length of changedIndices should be 5");
+				equal(oEvent.mParameters.rowIndices[0], 3, "Event: first changedIndices[0] should be 3");
+				equal(oEvent.mParameters.rowIndices[4], 7, "Event: last changedIndices[4] should be 7");
+			};
+
+			var fnSelectionChangeHandler2 = function(oEvent) {
+				oBinding.detachSelectionChanged(fnSelectionChangeHandler2);
+				equal(oEvent.mParameters.leadIndex, 11, "Event: leadIndex should be 11");
+				equal(oEvent.mParameters.oldIndex, 7, "Event: oldIndex should be 7");
+				equal(oEvent.mParameters.rowIndices.length, 3, "Event: length of changedIndices should be 3");
+				equal(oEvent.mParameters.rowIndices[0], 9, "Event: first changedIndices[0] should be 9");
+				equal(oEvent.mParameters.rowIndices[2], 11, "Event: last changedIndices[2] should be 11");
+			};
+
+			var fnSelectionChangeHandler3 = function(oEvent) {
+				oBinding.detachSelectionChanged(fnSelectionChangeHandler3);
+				equal(oEvent.mParameters.leadIndex, 12, "Event: leadIndex should be 12");
+				equal(oEvent.mParameters.oldIndex, 11, "Event: oldIndex should be 11");
+				equal(oEvent.mParameters.rowIndices.length, 2, "Event: length of changedIndices should be 2");
+				equal(oEvent.mParameters.rowIndices[0], 8, "Event: first changedIndices[0] should be 7");
+				equal(oEvent.mParameters.rowIndices[1], 12, "Event: last changedIndices[1] should be 12");
+			};
+
+			oBinding.attachSelectionChanged(fnSelectionChangeHandler1);
+			oBinding.addSelectionInterval(3, 7);
+
+			oBinding.attachSelectionChanged(fnSelectionChangeHandler2);
+			oBinding.addSelectionInterval(9, 11);
+
+			var aSelectedIndices = oBinding.getSelectedIndices();
+			deepEqual(aSelectedIndices, [3, 4, 5, 6, 7, 9, 10, 11], "Selected indices array is correct");
+
+			oBinding.attachSelectionChanged(fnSelectionChangeHandler3);
+			oBinding.addSelectionInterval(7, 12);
+
+			aSelectedIndices = oBinding.getSelectedIndices();
+			deepEqual(aSelectedIndices, [3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "Selected indices array is correct, after selecting additional indices");
+
+			start();
+		});
+
+		asyncTest("Set Selection Interval", function(){
+			createTreeBindingAdapter("/bing/root", [], null, {
+				collapseRecursive: false,
+				displayRootNode: true,
+				numberOfExpandedLevels: 2
+			});
+
+			oBinding.getContexts(0, 100);
+
+			var fnSelectionChangeHandler1 = function(oEvent) {
+				oBinding.detachSelectionChanged(fnSelectionChangeHandler1);
+				equal(oEvent.mParameters.leadIndex, 8, "Event: leadIndex should be 8");
+				equal(oEvent.mParameters.oldIndex, 11, "Event: oldIndex should be 11");
+				equal(oEvent.mParameters.rowIndices.length, 6, "Event: length of changedIndices should be 6");
+
+				deepEqual(oEvent.mParameters.rowIndices, [3, 4, 8, 9, 10, 11], "Changed indices after setSelectionInterval is correct");
+			};
+
+			var fnSelectionChangeHandler2 = function(oEvent) {
+				oBinding.detachSelectionChanged(fnSelectionChangeHandler2);
+				equal(oEvent.mParameters.leadIndex, 0, "Event: leadIndex should be 0");
+				equal(oEvent.mParameters.oldIndex, 8, "Event: oldIndex should be 8");
+				equal(oEvent.mParameters.rowIndices.length, 5, "Event: length of changedIndices should be 5");
+
+				deepEqual(oEvent.mParameters.rowIndices, [0, 5, 6, 7, 8], "Changed indices after setSelectedIndex is correct");
+			};
+
+			oBinding.addSelectionInterval(3, 7);
+			oBinding.addSelectionInterval(9, 11);
+
+			var aSelectedIndices = oBinding.getSelectedIndices();
+			deepEqual(aSelectedIndices,  [3, 4, 5, 6, 7, 9, 10, 11], "Selected indices array is correct, after selecting additional indices");
+
+			oBinding.attachSelectionChanged(fnSelectionChangeHandler1);
+			oBinding.setSelectionInterval(5, 8);
+
+			aSelectedIndices = oBinding.getSelectedIndices();
+			deepEqual(aSelectedIndices, [5, 6, 7, 8], "Selected indices array is correct, after setting the selection");
+
+			oBinding.attachSelectionChanged(fnSelectionChangeHandler2);
+			oBinding.setSelectedIndex(0);
+
+			equal(oBinding.getSelectedIndex(), 0, "Lead Index is 0");
+			aSelectedIndices = oBinding.getSelectedIndices();
+			deepEqual(aSelectedIndices, [0], "Selected indices array is correct, only one entry (0)");
+
+			equal(oBinding.findNode(5).selected, undefined, "Index 1 should not be selected anymore.");
+
+			start();
+		});
+
+		asyncTest("Sorting with stable expand states", function(){
+
+			createTreeBindingAdapter("/bing/root", null,null, {
+				numberOfExpandedLevels: 1,
+				displayRootNode: true
+			});
+
+			oBinding.getContexts(0, 100);
+			oBinding.expand(3);
+			oBinding.expand(1);
+
+			//refresh after sort()
+			function fnRefreshHandler() {
+				oBinding.detachRefresh(fnRefreshHandler);
+
+				ok(oBinding._mTreeState.expanded["/bing_root/0/"], "NodeState for Rock still there.");
+				ok(oBinding._mTreeState.expanded["/bing_root/2/"], "NodeState for Swing/Big Band still there.");
+				equal(oBinding._mTreeState.expanded["/bing_root/0/"].expanded, true, "Node Rock is still expanded after sorting.");
+				equal(oBinding._mTreeState.expanded["/bing_root/2/"].expanded, true, "Node Swing/BigBand is still expanded after sorting.");
+
+				start();
+			}
+
+			oBinding.attachChange(fnRefreshHandler);
+			//sort descending
+			oBinding.sort(new sap.ui.model.Sorter("name", true));
+		});
+
+	</script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: ODataTreeBindingAdapter</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+</body>
+</html>
