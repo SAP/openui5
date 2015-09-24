@@ -34,6 +34,18 @@
 				"config": "test-resources/sap/m/demokit/worklist/demoapp.json",
 				"icon": "task",
 				"desc": "Best-practice starting point for a worklist-style app"
+			},
+			{
+				"text": "Manage Products",
+				"ref": "test-resources/sap/m/demokit/tutorial/worklist/06/webapp/test/testService.html",
+				"icon": "task",
+				"desc": "This app is the final result of the 'Worklist App Tutorial'"
+			},
+			{
+				"text": "Bulletin Board",
+				"ref": "test-resources/sap/m/demokit/tutorial/testing/14/webapp/test/testService.html",
+				"icon": "task",
+				"desc": "This worklist-style app is the final result of the 'Testing Tutorial'"
 			}
 		]
 	},
