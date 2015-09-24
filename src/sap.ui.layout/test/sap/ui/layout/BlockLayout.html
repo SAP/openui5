@@ -1,0 +1,282 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>sap.ui.layout.BlockLayout</title>
+	<style>
+
+		.brightText {
+			color: white;
+		}
+
+	</style>
+	<script id='sap-ui-bootstrap' type='text/javascript'
+			src='../../../../resources/sap-ui-core.js'
+			data-sap-ui-theme='sap_bluecrystal'
+			data-sap-ui-libs='sap.ui.layout, sap.m'>
+	</script>
+	<script>
+
+		var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr.";
+
+		var areaDefault,
+			areaLight,
+			app = new sap.m.SplitApp();
+
+		(function () {
+			var createForm = function () {
+				return new sap.ui.layout.form.SimpleForm({
+					minWidth : 1024,
+					maxContainerCols : 2,
+					editable: true,
+					content : [
+						new sap.ui.core.Title({ // this starts a new group
+							text: "Editable Form"
+						}),
+						new sap.m.Label({
+							text: 'sap.m.Input'
+						}),
+						new sap.m.Input({
+							type: sap.m.InputType.Text,
+							placeholder: 'Enter Name ...'
+						}),
+						new sap.m.Label({
+							text: 'sap.m.CheckBox'
+						}),
+						new sap.m.CheckBox({
+							selected: true
+						}),
+						new sap.m.Label({
+							text: 'sap.m.Select'
+						}),
+						new sap.m.Select({
+							name: "select-name0",
+							items: [
+								oItem20 = new sap.ui.core.Item({
+									key: "0",
+									text: "item 0"
+								}),
+
+								oItem21 = new sap.ui.core.Item({
+									key: "1",
+									text: "item 1"
+								}),
+
+								oItem22 = new sap.ui.core.Item({
+									key: "2",
+									text: "item 2 is a little long"
+								}),
+
+								oItem23 = new sap.ui.core.Item({
+									key: "3",
+									text: "item 3"
+								})
+							]
+						}),
+						new sap.m.Label({
+							text: 'sap.m.Link'
+						}),
+						new sap.m.Link({
+							text: 'SAP Germany',
+							target: 'http://www.sap.com'
+						}),
+						new sap.m.Label({
+							text: 'sap.m.TextArea'
+						}),
+						new sap.m.TextArea({
+							placeholder : "Please add your comment",
+							rows : 6,
+							maxLength: 255,
+							width: "100%"
+						}),
+						new sap.m.Label({
+							text: 'Short sap.m.Text'
+						}),
+						new sap.m.Text({
+							text: '69190 Walldorf'
+						}),
+						new sap.m.Label({
+							text: 'Long sap.m.Text'
+						}),
+						new sap.m.Text({
+							text: '69190 Walldorf, Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt' +
+							' eu felis. In hac habitasse platea dictumst. 69190 Walldorf, Lorem ipsum dolor sit amet, consectetur adipiscing elit.' +
+							' Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst.'
+						})
+					]
+				});
+			};
+
+			var createCell = function (width, title, content, alignment) {
+				content = content || new sap.m.Text({
+					text: lorem
+				});
+				width = width || 0;
+				return new sap.ui.layout.BlockLayoutCell({
+					content: content,
+					width: width,
+					title: title,
+					titleAlignment: alignment
+				});
+			};
+
+			areaDefault = new sap.ui.layout.BlockLayout({
+				background: "Default",
+				content: [
+					new sap.ui.layout.BlockLayoutRow({
+						content: [
+							createCell(1),
+							createCell(2),
+							createCell(1, "Custom", null, "Right")
+						]
+					}),
+					new sap.ui.layout.BlockLayoutRow({
+						content: [
+							createCell(1, null, new sap.m.Text({text: lorem + lorem })),
+							createCell(1, "Tomato Heading", [
+								new sap.m.Text({text: lorem.substr(0, 20)})
+							], "Center" ),
+							createCell(1),
+							createCell(1, "<Escaped?>")
+						]
+					}),
+					new sap.ui.layout.BlockLayoutRow({
+						content: [
+							createCell(3, null, createForm()),
+							createCell(1, "Green is good for u")
+						]
+					}),
+					new sap.ui.layout.BlockLayoutRow({
+						scrollable: true,
+						content: [
+							createCell(null, null, new sap.m.Text({text: lorem + lorem })),
+							createCell(null, "Scrolling Row Heading"),
+							createCell(),
+							createCell(),
+							createCell(),
+							createCell()
+						]
+					}),
+					new sap.ui.layout.BlockLayoutRow({
+						content: createCell(1)
+					}),
+					new sap.ui.layout.BlockLayoutRow({
+						content: createCell(1)
+					}),
+					new sap.ui.layout.BlockLayoutRow({
+						content: createCell(1)
+					}),
+					new sap.ui.layout.BlockLayoutRow({
+						content: createCell(1)
+					})
+				]
+			});
+
+			areaLight =new sap.ui.layout.BlockLayout({
+				background: "Light",
+				content: [
+					new sap.ui.layout.BlockLayoutRow({
+						content: [
+							createCell(1),
+							createCell(2),
+							createCell(1, "Custom", null, "Right")
+						]
+					}),
+					new sap.ui.layout.BlockLayoutRow({
+						content: [
+							createCell(1, null, new sap.m.Text({text: lorem + lorem })),
+							createCell(1, "Tomato Heading", [
+								new sap.m.Text({text: lorem.substr(0, 20)})
+							], "Center" ),
+							createCell(1),
+							createCell(1, "<Escaped?>")
+						]
+					}),
+					new sap.ui.layout.BlockLayoutRow({
+						content: [
+							createCell(3, null, createForm()),
+							createCell(1, "Green is good for u")
+						]
+					}),
+					new sap.ui.layout.BlockLayoutRow({
+						scrollable: true,
+						content: [
+							createCell(null, null, new sap.m.Text({text: lorem + lorem })),
+							createCell(null, "Scrolling Row Heading"),
+							createCell(),
+							createCell(),
+							createCell(),
+							createCell()
+						]
+					}),
+					new sap.ui.layout.BlockLayoutRow({
+						content: createCell(1)
+					}),
+					new sap.ui.layout.BlockLayoutRow({
+						content: createCell(1)
+					}),
+					new sap.ui.layout.BlockLayoutRow({
+						content: createCell(1)
+					}),
+					new sap.ui.layout.BlockLayoutRow({
+						content: createCell(1)
+					})
+				]
+			});
+
+		})();
+
+		var masterPage = new sap.m.Page({
+			title: "Navigation",
+			content: [
+				new sap.m.List({
+					items: [
+						new sap.m.StandardListItem({
+							title: "Default BlockLayout",
+							type: "Active",
+							press: function () {
+								app.toDetail("area-default");
+							}
+						}),
+						new sap.m.StandardListItem({
+							title: "Light BlockLayout",
+							type: "Active",
+							press: function () {
+								app.toDetail("area-light");
+							}
+						})
+					]
+				})
+			]
+		});
+
+		app.addMasterPage(masterPage);
+
+		app.addDetailPage(new sap.m.Page("area-default", {
+			title: "Default BlockLayout",
+			showNavButton: jQuery.device.is.phone,
+			navButtonText: "Back",
+			navButtonPress: function() {
+				app.backDetail();
+			},
+			content: [areaDefault]
+		}));
+
+		app.addDetailPage(new sap.m.Page("area-light", {
+			title: "Light BlockLayout",
+			showNavButton: jQuery.device.is.phone,
+			navButtonText: "Back",
+			navButtonPress: function() {
+				app.backDetail();
+			},
+			content: [areaLight]
+		}));
+
+		app.placeAt("content");
+
+	</script>
+</head>
+<body id="body" class="sapUiBody" role="application">
+<div id="content"></div>
+</body>
+</html>

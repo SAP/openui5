@@ -1,0 +1,122 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>QUnit Page for Block Layout</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+	<script src="../../../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.ui.core,sap.ui.layout,sap.ui.commons"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script type="text/javascript">
+
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+		QUnit.module("Block Layout Public and Private API", {
+			blockId: "block-layout-id",
+			blockRowId: "block-row-id",
+			setup: function () {
+				var that = this;
+
+				this.cells = [
+					new sap.ui.layout.BlockLayoutCell(),
+					new sap.ui.layout.BlockLayoutCell(),
+					new sap.ui.layout.BlockLayoutCell(),
+					new sap.ui.layout.BlockLayoutCell()];
+				this.BlockLayoutRow = new sap.ui.layout.BlockLayoutRow(this.blockRowId, {
+					content: this.cells
+				});
+				this.BlockLayout = new sap.ui.layout.BlockLayout(this.blockId, {
+					content: this.BlockLayoutRow
+				});
+				this.logSpy = sinon.spy(jQuery.sap.log, "error");
+
+				this.BlockLayoutConstants = sap.ui.layout.BlockLayout.CONSTANTS;
+				this.BlockLayoutRowConstants =  sap.ui.layout.BlockLayoutRow.CONSTANTS;
+
+				this.BlockLayout.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			teardown: function () {
+				this.BlockLayout.destroy();
+				this.BlockLayoutRow.destroy();
+				this.logSpy.restore();
+				this.cells = null;
+				this.logSpy = null;
+				this.BlockLayoutConstants = null;
+				this.BlockLayoutRowConstants = null;
+				this.BlockLayoutRow = null;
+				this.BlockLayout = null;
+			}
+		});
+
+		QUnit.test("BlockLayout Default values", function (assert) {
+			assert.strictEqual(this.BlockLayout.getBackground(), "Default", "Background's default value should be equal to Default");
+			assert.strictEqual(this.BlockLayoutConstants.breakPointM, 600, "Break point M should be equal to 600");
+			assert.strictEqual(this.BlockLayoutConstants.breakPointL, 1024, "Break point M should be equal to 1024");
+		});
+
+		QUnit.test("BlockLayoutRow Default values", function (assert) {
+			assert.strictEqual(this.BlockLayoutRow.getScrollable(), false, "Default rendering should be horizontal.");
+			assert.strictEqual(this.BlockLayoutRowConstants.maxScrollableCellsPerRow, 10, "Max scrollable cells should be 10");
+			assert.strictEqual(this.BlockLayoutRowConstants.minScrollableCellsPerRow, 3, "Min scrollable cells should be 3");
+		});
+
+		QUnit.test("BlockLayoutCell Default values", function (assert) {
+			var newCell = new sap.ui.layout.BlockLayoutCell();
+			assert.strictEqual(newCell.getTitleAlignment(), "Begin", "Title Alignment should be Begin by default");
+			assert.strictEqual(newCell.getWidth(), 0, "Should be equal to 0 by default");
+		});
+
+		QUnit.test("Error logging", function (assert) {
+			this.BlockLayoutRow.addContent(new sap.ui.layout.BlockLayoutCell());
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(this.logSpy.calledOnce, true, "The log spy should be called");
+		});
+
+		QUnit.test("SBreakpoint case", function (assert) {
+			this.cells.forEach(function (cell) {
+				assert.strictEqual(cell._getDifferentSBreakpointSize(), true, "The cell should have different representation in S breakpoint");
+				assert.strictEqual(cell._getWidthToRowWidthRatio(), 0.25, "The cell ratio should be 0.25");
+			});
+		});
+
+		QUnit.test("Adding new cell should invalidate the guidelines", function (assert) {
+			this.BlockLayoutRow.addContent(new sap.ui.layout.BlockLayoutCell());
+			sap.ui.getCore().applyChanges();
+			 this.cells.forEach(function (cell) {
+			 	assert.strictEqual(cell._getDifferentSBreakpointSize(), false, "The cell should have different representation in S breakpoint");
+			 });
+		});
+
+		QUnit.test("Width property change invaldiates the guidelines", function (assert) {
+			this.cells[1].setWidth(3);
+			this.cells.forEach(function (cell) {
+				assert.strictEqual(cell._getDifferentSBreakpointSize(), false, "The cell should use the 100% width fallback.");
+			});
+		});
+
+		QUnit.test("Scrollable behaviour", function (assert) {
+			this.BlockLayoutRow.setScrollable(true);
+			assert.strictEqual(this.logSpy.called, false, "Error should not be logged with 4 cells in scrollable row");
+			this.BlockLayoutRow.removeContent(0);
+			this.BlockLayoutRow.removeContent(0);
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(this.logSpy.called, true, "Error should be logged called with 2 cells in scrollable row");
+		});
+
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+</body>
+</html>
