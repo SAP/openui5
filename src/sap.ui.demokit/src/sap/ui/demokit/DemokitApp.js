@@ -524,9 +524,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 oDialogInitialPageContentOnlyForUI5.setContent(sAboutDialogContentHtmlOnlyForUI5, [oLinkToCredits]);
                 oDialogInitialPageContentOnlyForUI5.addStyleClass("extraLeftPadding");
 
-              //check if it is on http://veui5infra.dhcp.wdf.sap.corp:8080/sapui5-sdk-dist/ or http://veui5infra.dhcp.wdf.sap.corp:8080/demokit/ or openui5.hana.ondemand.com
-                var sVersionInfoGav = sap.ui.getVersionInfo().gav.slice(0,24);
-                if (sVersionInfoGav == "com.sap.openui5.dist:sdk") {
+              //check if it is internal or external version of Demokit and set the dialog content according to it
+                var oVersionInfo = sap.ui.getVersionInfo();
+                if ( oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav) ) {
                     var oLayout = new sap.ui.layout.VerticalLayout({
                         content : [oSAPUI5Logo, oDialogInitialPageContent]
                     });
