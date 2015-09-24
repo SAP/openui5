@@ -8,68 +8,68 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * FacetFilter renderer. 
+	 * FacetFilter renderer.
 	 * @namespace
 	 */
 	var FacetFilterRenderer = {
 	};
-	// create ARIA announcements 
+	// create ARIA announcements
 	var mAriaAnnouncements = {};
-	
-	
+
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * 
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	FacetFilterRenderer.render = function(oRm, oControl){
 		switch (oControl.getType()) {
-	
+
 		case sap.m.FacetFilterType.Simple:
 			FacetFilterRenderer.renderSimpleFlow(oRm, oControl);
 			break;
-	
+
 		case sap.m.FacetFilterType.Light:
 			FacetFilterRenderer.renderSummaryBar(oRm, oControl);
 			break;
 		}
 	};
-	
+
 	/**
-	 * 
-	 * 
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 *
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	FacetFilterRenderer.renderSimpleFlow = function(oRm, oControl) {
-		
+
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMFF");
-		
+
 		if (oControl.getShowSummaryBar()) {
-			
+
 			oRm.write(">");
 			FacetFilterRenderer.renderSummaryBar(oRm, oControl);
 		} else {
-			
+
 			if (oControl._lastScrolling) {
-				
+
 				oRm.addClass("sapMFFScrolling");
 			} else {
-				
+
 				oRm.addClass("sapMFFNoScrolling");
 			}
-			
+
 			if (oControl.getShowReset()) {
-				
+
 				oRm.addClass("sapMFFResetSpacer");
 			}
 			oRm.writeClasses();
 			oRm.write(">");
-			
-			
+
+
 			if (sap.ui.Device.system.desktop) {
 				oRm.renderControl(oControl._getScrollingArrow("left"));
 			}
@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addClass("sapMFFHead");
 			oRm.writeClasses();
 			oRm.write(">");
-			
+
 			var aLists = oControl._getSequencedLists();
 			for (var i = 0; i < aLists.length; i++) {
 						var button = oControl._getButtonForList(aLists[i]);
@@ -95,11 +95,11 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.renderControl(button);
 			//	oRm.writeAccessibilityState(oControl, this.getAccessibilityState(oControl));
 				if (oControl.getShowPersonalization()) {
-					
+
 					oRm.renderControl(oControl._getFacetRemoveIcon(aLists[i]));
 				}
 			}
-			
+
 			if (oControl.getShowPersonalization()) {
 				oRm.renderControl(oControl.getAggregation("addFacetButton"));
 			}
@@ -107,9 +107,9 @@ sap.ui.define(['jquery.sap.global'],
 			if (sap.ui.Device.system.desktop) {
 				oRm.renderControl(oControl._getScrollingArrow("right"));
 			}
-			
+
 			if (oControl.getShowReset()) {
-				
+
 				oRm.write("<div");
 				oRm.addClass("sapMFFResetDiv");
 				oRm.writeClasses();
@@ -120,16 +120,16 @@ sap.ui.define(['jquery.sap.global'],
 		}
 		oRm.write("</div>");
 	};
-	
-	
+
+
 	/**
-	 * 
-	 * 
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+	 *
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	FacetFilterRenderer.renderSummaryBar = function(oRm, oControl) {
-	
+
 		// We cannot just render the toolbar without the parent div.  Otherwise it is
 		// not possible to switch type from light to simple.
 		oRm.write("<div");
@@ -141,55 +141,55 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.renderControl(oSummaryBar);
 		oRm.write("</div>");
 	};
-	
-	
+
+
 	/**
-	 * Creates an invisible aria node for the given message bundle text  
-	 * in the static UIArea and returns its id for ARIA announcements
-	 * 
+	 * Creates an invisible aria node for the given message bundle text
+	 * in the static UIArea and returns its id for ARIA announcements.
+	 *
 	 * This method should be used when text is reached frequently.
-	 * 
-	 * @param {String} sKey key of the announcement
-	 * @param {String} [sBundleText] key of the announcement
-	 * @returns {String} id of the generated invisible aria node
+	 *
+	 * @param {String} sKey Key of the announcement
+	 * @param {String} sBundleText Key of the announcement
+	 * @returns {String} Id of the generated invisible aria node
 	 * @protected
 	 */
 	FacetFilterRenderer.getAriaAnnouncement = function(sKey, sBundleText) {
 		if (mAriaAnnouncements[sKey]) {
 			return mAriaAnnouncements[sKey];
 		}
-		
+
 		sBundleText = sBundleText || "FACETFILTER_" + sKey.toUpperCase();
 		mAriaAnnouncements[sKey] = new sap.ui.core.InvisibleText({
 			text : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText(sBundleText)
 		}).toStatic().getId();
-		
+
 		return mAriaAnnouncements[sKey];
 	};
-	
 
-	
+
+
 	/**
-	 * Returns the inner aria describedby ids for the accessibility
+	 * Returns the inner aria describedby IDs for the accessibility.
 	 *
 	 * @param {sap.ui.core.Control} oLI an object representation of the control
-	 * @returns {String|undefined} 
+	 * @returns {String|undefined}
 	 * @protected
 	 */
 	FacetFilterRenderer.getAriaDescribedBy = function(oControl) {
 		var aDescribedBy = [];
-	
+
 		if (oControl.getShowPersonalization()) {
 			aDescribedBy.push(this.getAriaAnnouncement("ARIA_REMOVE"));
 		}
-		
-		
+
+
 		return aDescribedBy.join(" ");
 	};
-	
-	
+
+
 	/**
-	 * Returns the accessibility state of the control
+	 * Returns the accessibility state of the control.
 	 *
 	 * @param {sap.ui.core.Control} oLI an object representation of the control
 	 * @protected
@@ -202,8 +202,8 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		};
 	};
-	
-	
+
+
 
 	return FacetFilterRenderer;
 
