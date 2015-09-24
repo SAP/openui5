@@ -11,7 +11,7 @@
 	<Panel expandable="true" expanded="false" width="auto" class="sapUiResponsiveMargin">
 		<headerToolbar>
 			<Toolbar height="3rem">
-				<Text text="Custom Toolbar with a header text" />
+				<Title text="Custom Toolbar with a header text" />
 				<ToolbarSpacer />
 				<Button icon="sap-icon://settings" />
 				<Button icon="sap-icon://drop-down-list" />
