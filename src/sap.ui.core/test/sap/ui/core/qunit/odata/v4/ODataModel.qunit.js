@@ -86,10 +86,10 @@ sap.ui.require([
 	QUnit.test("basics", function (assert) {
 		assert.throws(function () {
 			return new ODataModel();
-		}, new Error("Missing service URL"));
+		}, new Error("Missing service root URL"));
 		assert.throws(function () {
 			return new ODataModel("/foo");
-		}, new Error("Service URL must end with '/'"));
+		}, new Error("Service root URL must end with '/'"));
 
 		assert.ok(new ODataModel("/foo/") instanceof Model);
 		assert.strictEqual(new ODataModel("/foo/").sServiceUrl, "/foo", "remove trailing /");
@@ -240,7 +240,7 @@ sap.ui.require([
 		});
 	});
 	// TODO constructor: sDefaultBindingMode, mSupportedBindingModes
-	// TODO constructor: test that the service URL is absolute?
+	// TODO constructor: test that the service root URL is absolute?
 	// TODO read: support the mParameters context, urlParameters, filters, sorters, batchGroupId
 	// TODO read: abort
 });

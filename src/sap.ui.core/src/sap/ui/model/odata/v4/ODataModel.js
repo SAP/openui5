@@ -52,13 +52,15 @@ sap.ui.define([
 	 * Constructor for a new ODataModel.
 	 *
 	 * @param {string} [sServiceUrl]
-	 *   base URL of the service to request data from; it is required, but may also be given via
-	 *   <code>mParameters.serviceUrl</code>
+	 *   root URL of the service to request data from; it is required, but may also be given via
+	 *   <code>mParameters.serviceUrl</code>. Must end with a forward slash according to OData V4
+	 *   specification ABNF, rule "serviceRoot".
 	 * @param {object} [mParameters]
 	 *   the parameters
 	 * @param {string} [mParameters.serviceUrl]
-	 *   base URL of the service to request data from; only used if the parameter
+	 *   root URL of the service to request data from; only used if the parameter
 	 *   <code>sServiceUrl</code> has not been given
+	 * @throws Error if the given service root URL does not end with a forward slash
 	 *
 	 * @class Model implementation for OData v4.
 	 *
@@ -80,10 +82,10 @@ sap.ui.define([
 						sServiceUrl = mParameters.serviceUrl;
 					}
 					if (!sServiceUrl) {
-						throw new Error("Missing service URL");
+						throw new Error("Missing service root URL");
 					}
 					if (sServiceUrl.charAt(sServiceUrl.length - 1) !== "/") {
-						throw new Error("Service URL must end with '/'");
+						throw new Error("Service root URL must end with '/'");
 					}
 					this.sServiceUrl = sServiceUrl.slice(0, -1);
 					this.oMetaModel = new ODataMetaModel(
