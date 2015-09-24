@@ -467,41 +467,50 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("transformEntityType", function (assert) {
-		var sQualifiedName = "com.sap.gateway.iwbep.tea_busi.v0001.TEAM",
-			oEntityType = {
-				"QualifiedName" : sQualifiedName,
-				"Key" : [{
-					"PropertyPath" : "Team_Id"
-				}],
-				"NavigationProperties" : [{
-					"Name" : "TEAM_2_EMPLOYEES",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM/TEAM_2_EMPLOYEES",
-					"Nullable" : true,
-					"ContainsTarget" : false,
-					"IsCollection" : true,
-					"Type@odata.navigationLink" :
-						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.Worker')"
-				}, {
-					"Name" : "TEAM_2_MANAGER",
-					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM/TEAM_2_MANAGER",
-					"Nullable" : false,
-					"ContainsTarget" : false,
-					"IsCollection" : false,
-					"Type@odata.navigationLink" :
-						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.MANAGER')"
-				}]
-			},
-			that = this;
+	[{
+		"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM",
+		"Key" : [{
+			"PropertyPath" : "Team_Id"
+		}],
+		"NavigationProperties" : [{
+			"Name" : "TEAM_2_EMPLOYEES",
+			"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM/TEAM_2_EMPLOYEES",
+			"Nullable" : true,
+			"ContainsTarget" : false,
+			"IsCollection" : true,
+			"Type@odata.navigationLink" :
+				"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.Worker')"
+		}, {
+			"Name" : "TEAM_2_MANAGER",
+			"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM/TEAM_2_MANAGER",
+			"Nullable" : false,
+			"ContainsTarget" : false,
+			"IsCollection" : false,
+			"Type@odata.navigationLink" :
+				"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.MANAGER')"
+		}]
+	}, {
+		"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.Department",
+		"Key" : [{
+			"PropertyPath" : "Sector"
+		}, {
+			"PropertyPath" : "ID"
+		}],
+		"NavigationProperties" : []
+	}].forEach(function (oEntityType, i) {
+		QUnit.test("transformEntityType: " + oEntityType.QualifiedName, function (assert) {
+			var that = this;
 
-		return this.withMetamodel(function (oDocument) {
-			that.oSandbox.mock(OlingoDocument).expects("transformStructuredType")
-				.withExactArgs(oDocument,
-						sQualifiedName, oDocument.dataServices.schema[0].entityType[3])
-				.returns({"QualifiedName": sQualifiedName});
+			return this.withMetamodel(function (oDocument) {
+				that.oSandbox.mock(OlingoDocument).expects("transformStructuredType")
+					.withExactArgs(oDocument, oEntityType.QualifiedName,
+						oDocument.dataServices.schema[0].entityType[i > 0 ? 0 : 3])
+					.returns({"QualifiedName" : oEntityType.QualifiedName});
 
-			assert.deepEqual(OlingoDocument.transformEntityType(oDocument,
-				sQualifiedName), oEntityType);
+				assert.deepEqual(
+					OlingoDocument.transformEntityType(oDocument, oEntityType.QualifiedName),
+					oEntityType);
+			});
 		});
 	});
 

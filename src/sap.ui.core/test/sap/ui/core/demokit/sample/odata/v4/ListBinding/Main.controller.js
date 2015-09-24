@@ -6,10 +6,19 @@ sap.ui.define([
 		'sap/m/MessageBox',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel',
+		'sap/ui/model/odata/ODataUtils',
 		'sap/ui/model/odata/v4/_ODataHelper',
 		"sap/ui/thirdparty/odatajs-4.0.0"
-	], function(Dialog, MessageBox, Controller, JSONModel, ODataHelper, Olingo) {
+	], function(Dialog, MessageBox, Controller, JSONModel, ODataUtils, _ODataHelper, Olingo) {
 	"use strict";
+//	/*global odatajs */
+
+	function onRejected(oError) {
+		jQuery.sap.log.error(oError.message, oError.stack);
+		MessageBox.alert(oError.message, {
+			icon: sap.m.MessageBox.Icon.ERROR,
+			title: "Error"});
+	}
 
 	var MainController = Controller.extend("sap.ui.core.sample.odata.v4.ListBinding.Main", {
 		onBeforeRendering : function () {
@@ -51,6 +60,47 @@ sap.ui.define([
 			oCreateEmployeeDialog.open();
 		},
 
+		onDeleteEmployee : function (oEvent) {
+			var oEmployeeContext = oEvent.getSource().getBindingContext(),
+				oModel = oEmployeeContext.getModel(),
+				sPath = oEmployeeContext.getPath();
+
+			//TODO make .remove(oEmployeeContext) possible
+			//TODO maybe it should only be allowed to delete data via a Context because you need
+			// to read it first, display it, and use the right etag...
+
+			oModel.remove(sPath).then(function () {
+				MessageBox.alert(sPath, {
+					icon: sap.m.MessageBox.Icon.SUCCESS,
+					title: "Success"});
+			}, onRejected);
+
+//			oModel.refreshSecurityToken().then(function () {
+//				oModel.read(oEmployeeContext.getPath() + "/@odata.etag").then(function (oData) {
+//					var sEtag = oData.value;
+//					oModel.read(oEmployeeContext.getPath() + "/ID").then(function (oData) {
+//						var sId = oData.value,
+//							sCsrfToken = oModel.mHeaders['X-CSRF-Token'],
+//							sPath = "EMPLOYEES(" + ODataUtils.formatValue(sId, "Edm.String") + ")";
+//
+//						odatajs.oData.request({
+//							requestUri: sServiceUrl + sPath,
+//							method: "DELETE",
+//							headers : {
+//								'If-Match' : sEtag || '*',
+//								'X-CSRF-Token' : sCsrfToken
+//							}
+//						},
+//						function () {
+//							MessageBox.alert(sPath, {
+//								icon: sap.m.MessageBox.Icon.SUCCESS,
+//								title: "Success"});
+//						}, onRejected);
+//					});
+//				});
+//			});
+		},
+
 		onEmployeeSelect : function (oEvent) {
 			var oContext = oEvent.getParameters().listItem.getBindingContext();
 			this.getView().byId("EmployeeEquipments").setBindingContext(oContext);
@@ -69,12 +119,7 @@ sap.ui.define([
 					icon: sap.m.MessageBox.Icon.SUCCESS,
 					title: "Success"});
 				that.onCancelEmployee();
-			}, function (oError) {
-				jQuery.sap.log.error(oError.message, oError.stack);
-				MessageBox.alert(oError.message, {
-					icon: sap.m.MessageBox.Icon.ERROR,
-					title: "Error"});
-			});
+			}, onRejected);
 		},
 
 		onTeamSelect : function (oEvent) {

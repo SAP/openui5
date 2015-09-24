@@ -6,8 +6,9 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/ODataDocumentModel",
 	"sap/ui/model/odata/v4/ODataMetaModel",
-	"sap/ui/model/odata/v4/ODataModel"
-], function (MetaModel, Helper, ODataDocumentModel, ODataMetaModel, ODataModel) {
+	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/test/TestUtils"
+], function (MetaModel, Helper, ODataDocumentModel, ODataMetaModel, ODataModel, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -80,11 +81,15 @@ sap.ui.require([
 				"Type@odata.navigationLink" : "Types(QualifiedName='foo.bar.Worker')"
 			}]
 		},
+		mFixture = {
+			"/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata": {source: "metadata.xml"}
+		},
 		sMetaEmployees = "/EntitySets(Name='Employees')",
 		sMetaMe = "/Singletons(Name='Me')",
 		sMetaCityname = sMetaEmployees + "/EntityType/Properties(Name='LOCATION')/Type/"
 			+ "Properties(Name='City')/Type/Properties(Name='CITYNAME')",
-		sMetaTeam = sMetaEmployees + "/EntityType/NavigationProperties(Name='EMPLOYEE_2_TEAM')";
+		sMetaTeam = sMetaEmployees + "/EntityType/NavigationProperties(Name='EMPLOYEE_2_TEAM')",
+		bRealOData = jQuery.sap.getUriParameters().get("realOData") === "true";
 
 	/**
 	 * Returns a clone of the object.
@@ -96,6 +101,23 @@ sap.ui.require([
 	 */
 	function clone(o) {
 		return o && JSON.parse(JSON.stringify(o));
+	}
+
+	/**
+	 * Returns a URL within the service that (in case of <code>bRealOData</code>), is passed
+	 * through a proxy.
+	 *
+	 * @param {string} [sPath]
+	 *   relative path (with initial /) within service
+	 * @returns {string}
+	 *   a URL within the service
+	 */
+	function getServiceUrl(sPath) {
+		var sAbsolutePath = "/sap/opu/local_v4/IWBEP/TEA_BUSI/" + (sPath && sPath.slice(1) || "");
+
+		return bRealOData
+			? "/" + window.location.pathname.split("/")[1] + "/proxy" + sAbsolutePath
+			: sAbsolutePath;
 	}
 
 	/**
@@ -114,11 +136,15 @@ sap.ui.require([
 	QUnit.module("sap.ui.model.odata.v4.ODataMetaModel", {
 		beforeEach : function () {
 			this.oSandbox = sinon.sandbox.create();
+			if (!bRealOData) {
+				TestUtils.useFakeServer(this.oSandbox, "sap/ui/core/qunit/odata/v4/data",
+					mFixture);
+			}
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
-			this.oMetaModel = new ODataModel("/Foo/").getMetaModel();
+			this.oMetaModel = new ODataModel(getServiceUrl()).getMetaModel();
 		},
 
 		afterEach : function () {
@@ -535,4 +561,71 @@ sap.ui.require([
 			});
 		});
 	});
+
+	//*********************************************************************************************
+	[{
+		sMetaPath : "/EntitySets(Name='EMPLOYEES')",
+		sPath : "/EMPLOYEES[0];list=0"
+	}, {
+		sMetaPath : "/EntitySets(Name='TEAMS')/EntityType"
+			+ "/NavigationProperties(Name='TEAM_2_EMPLOYEES')",
+		sPath : "/TEAMS[0];list=0/TEAM_2_EMPLOYEES/0"
+	}].forEach(function (oFixture) {
+		QUnit.test("requestCanonicalUrl: " + oFixture.sPath, function (assert) {
+			var oInstance = {};
+
+			function read(sPath, bAllowObjectAccess) {
+				assert.strictEqual(sPath, oFixture.sPath);
+				assert.strictEqual(bAllowObjectAccess, true);
+				return Promise.resolve(oInstance);
+			}
+
+			this.oSandbox.stub(Helper, "getKeyPredicate", function (oEntityType, oInstance0) {
+				assert.strictEqual(oEntityType.Name, "Worker",
+					"looks like entity type meta data");
+				assert.strictEqual(oInstance0, oInstance);
+				return "(~)";
+			});
+			this.oSandbox.stub(Helper, "requestEntitySetName", function (oMetaContext) {
+				assert.strictEqual(oMetaContext.getPath(), oFixture.sMetaPath);
+				return Promise.resolve("€MPLOY€€$"); // strange characters to check encoding
+			});
+
+			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.sPath, read)
+				.then(function (sCanonicalUrl) {
+					assert.strictEqual(sCanonicalUrl, "/~/%E2%82%ACMPLOY%E2%82%AC%E2%82%AC%24(~)");
+				})["catch"](function (oError) {
+					assert.ok(false, oError.message + "@" + oError.stack);
+				});
+		});
+	});
+	//TODO "4.3.2 Canonical URL for Contained Entities"
+	//TODO prefer instance annotation at payload for "odata.editLink"?!
+	//TODO target URLs like "com.sap.gateway.iwbep.tea_busi_product.v0001.Container/Products(...)"?
+
+	//*********************************************************************************************
+	[{
+		sPath : "/TEAMS[0];list=0/TEAM_2_EMPLOYEES/0/ID"
+	}].forEach(function (oFixture) {
+		QUnit.test("requestCanonicalUrl: error for " + oFixture.sPath, function (assert) {
+			function read(sPath, bAllowObjectAccess) {
+				assert.strictEqual(sPath, oFixture.sPath);
+				assert.strictEqual(bAllowObjectAccess, true);
+				return Promise.resolve({});
+			}
+
+			this.oSandbox.mock(Helper).expects("getKeyPredicate").never();
+
+			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.sPath, read)
+				.then(function (sCanonicalUrl) {
+					assert.ok(false, sCanonicalUrl);
+				})["catch"](function (oError) {
+					assert.strictEqual(oError.message, "No target entity set found for source"
+						+ " entity type 'com.sap.gateway.iwbep.tea_busi.v0001.Worker' and"
+						+ " navigation property 'ID'");
+				});
+		});
+	});
 });
+//TODO what is the idea behind oMetaContext = {metaContextFor: sPath}, why not use a real context?
+//     Note: requestMetaContext() does not return clones but singletons, normally!

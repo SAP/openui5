@@ -79,6 +79,9 @@
 			<Column>
 				<Text text="Entry Date"/>
 			</Column>
+			<Column>
+				<Text text="Delete"/>
+			</Column>
 		</columns>
 		<items>
 			<ColumnListItem>
@@ -96,6 +99,9 @@
 				</cells>
 				<cells>
 					<Text text="{ENTRYDATE}"/>
+				</cells>
+				<cells>
+					<Button text="Delete" press="onDeleteEmployee"/>
 				</cells>
 			</ColumnListItem>
 		</items>
