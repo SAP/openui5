@@ -1367,6 +1367,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			$scrollArea.css("display", "block");
 		}
 
+		$arrow.removeAttr("style");
 		//set arrow offset
 		if (sPlacement === sap.m.PlacementType.Left || sPlacement === sap.m.PlacementType.Right) {
 			iPosArrow = $parent.offset().top - $this.offset().top - fPopoverBorderTop + iOffsetY + 0.5 * ($parent.outerHeight(false) - $arrow.outerHeight(false));
