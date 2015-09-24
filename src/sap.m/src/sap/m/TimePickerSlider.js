@@ -623,8 +623,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 					this._dragSession.positions.splice(0, 10);
 				}
 
-				//while dragging update the list position inside its container
-				this._getSliderContainerDomRef().scrollTop(this._dragSession.startTop - this._dragSession.offsetY);
+				if (this._bIsDrag) {
+					//while dragging update the list position inside its container
+					this._getSliderContainerDomRef().scrollTop(this._dragSession.startTop - this._dragSession.offsetY);
+				}
 			}
 		};
 
