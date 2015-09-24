@@ -23,7 +23,8 @@
 			},
 			{
 				"text": "Hello World",
-				"ref": "test-resources/sap/m/demokit/sample/HelloWorld/index.html",
+				"ref": "test-resources/sap/m/demokit/helloworld/index.html",
+				"config": "test-resources/sap/m/demokit/helloworld/demoapp.json",
 				"icon": "sapmdemo/helloworld",
 				"desc": "This is where it all starts when developing with UI5"
 			},
@@ -33,12 +34,6 @@
 				"config": "test-resources/sap/m/demokit/worklist/demoapp.json",
 				"icon": "task",
 				"desc": "Best-practice starting point for a worklist-style app"
-			},
-			{
-				"text": "Downloads",
-				"ref": "explored.html#/entity/sap.m.demo.Apps/samples",
-				"icon": "task",
-				"desc": "Download our Demo Apps here"
 			}
 		]
 	},
@@ -1016,15 +1011,6 @@
 			"Adjusting the object view",
 			"Adding a comments section"
 		  ]
-		},
-		{
-			"id" : "sap.m.demo.Apps",
-			"name" : "Demo Apps",
-			"category" : "Application",
-			"since" : "1.11",
-			"samples" : [
-				"sap.m.sample.HelloWorld"
-			]
 		}
 	  ],
 	  "samples": [
