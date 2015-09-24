@@ -255,7 +255,7 @@ sap.ui.define([
 						return true;
 					});
 				}
-				if (!bAllowObjectAccess && typeof oResult === "object") {
+				if (!bAllowObjectAccess && oResult && typeof oResult === "object") {
 					reject(new Error("Accessed value is not primitive"));
 					return;
 				}

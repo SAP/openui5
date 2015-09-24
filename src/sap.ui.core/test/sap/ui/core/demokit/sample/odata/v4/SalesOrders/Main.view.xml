@@ -1,0 +1,93 @@
+<mvc:View
+	controllerName="sap.ui.core.sample.odata.v4.SalesOrders.Main"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc"
+	>
+	<VBox>
+		<Table id="SalesOrders" growing="true" growingThreshold="5" headerText="Sales Orders"
+			items="{path: '/SalesOrderList', parameters: {'$expand':
+			'SO_2_SOITEM($expand=SOITEM_2_PRODUCT($expand=PRODUCT_2_BP($expand=BP_2_CONTACT)))'}}"
+			mode="SingleSelectMaster" selectionChange="onSalesOrdersSelect">
+			<columns>
+				<Column>
+					<Text text="Sales Order ID"/>
+				</Column>
+				<Column>
+					<Text text="Buyer Name"/>
+				</Column>
+				<Column>
+					<Text text="Gross Amount"/>
+				</Column>
+				<Column>
+					<Text text="Currency"/>
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem>
+					<cells>
+						<Text text="{SalesOrderID}"/>
+					</cells>
+					<cells>
+						<Text text="{BuyerName}"/>
+					</cells>
+					<cells>
+						<Text text="{GrossAmount}"/>
+					</cells>
+					<cells>
+						<Text text="{CurrencyCode}"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+		<Table id="SalesOrderLineItems" headerText="Sales Order Line Items"
+			items="{SO_2_SOITEM}" mode="SingleSelectMaster"
+			selectionChange="onSalesOrderLineItemSelect">
+			<columns>
+				<Column>
+					<Text text="Sales Order ID"/>
+				</Column>
+				<Column>
+					<Text text="Product"/>
+				</Column>
+				<Column>
+					<Text text="Supplier"/>
+				</Column>
+				<Column>
+					<Text text="Gross Amount"/>
+				</Column>
+				<Column>
+					<Text text="Delivery Date"/>
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem>
+					<cells>
+						<Text text="{SalesOrderID}"/>
+					</cells>
+					<cells>
+						<Text text="{Product/ProductName}"/>
+					</cells>
+					<cells>
+						<Text text="{SOITEM_2_PRODUCT/SupplierName}"/>
+					</cells>
+					<cells>
+						<Text text="{GrossAmount}"/>
+					</cells>
+					<cells>
+						<Text text="{DeliveryDate}"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+	<List id="SupplierContactData"
+		headerText="Supplier Contact Information"
+		items="{SOITEM_2_PRODUCT/PRODUCT_2_BP/BP_2_CONTACT}">
+		<StandardListItem
+			title="{FirstName} {LastName} {DateOfBirth}"
+			description="{PhoneNumber}"
+			info="{EmailAddress}"/>
+	</List>
+  </VBox>
+</mvc:View>

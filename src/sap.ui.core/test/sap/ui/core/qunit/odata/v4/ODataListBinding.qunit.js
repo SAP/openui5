@@ -54,7 +54,8 @@ sap.ui.require([
 					Name : "Name " + (iStart + i),
 					LOCATION : {
 						COUNTRY : "COUNTRY " + (iStart + i)
-					}
+					},
+					NullValue : null
 				};
 			}
 			oDeferred.resolve(oData);
@@ -410,7 +411,7 @@ sap.ui.require([
 			.returns(createDeferredResult(10));
 		this.oDataCacheMock.expects("readRange")
 			.withExactArgs(iIndex, 1)
-			.thrice()
+			.exactly(4)
 			.returns(createDeferredResult(1, iIndex));
 		this.oLogMock.expects("warning")
 			.withExactArgs("Invalid segment Bar",
@@ -426,6 +427,9 @@ sap.ui.require([
 			}),
 			oListBinding.readValue(iIndex, "Foo1/Bar").then(function (oValue) {
 				assert.strictEqual(oValue, undefined, "Foo1/Bar");
+			}),
+			oListBinding.readValue(iIndex, "NullValue").then(function (oValue) {
+				assert.strictEqual(oValue, null, "NullValue");
 			})
 		]);
 	});
@@ -688,7 +692,8 @@ sap.ui.require([
 					Name : "Name " + iIndex,
 					LOCATION : {
 						COUNTRY : "COUNTRY " + iIndex
-					}
+					},
+					NullValue : null
 				});
 			});
 	});

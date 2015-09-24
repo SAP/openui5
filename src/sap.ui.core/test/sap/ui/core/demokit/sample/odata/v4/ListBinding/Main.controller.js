@@ -24,6 +24,8 @@ sap.ui.define([
 		onBeforeRendering : function () {
 			var oView = this.getView();
 
+			oView.setBusy(true);
+
 			function setTeamContext() {
 				var oEmployees = oView.byId("Employees"),
 					oTeamContext = oView.byId("TeamSelect").getBinding("items").getContexts()[0];
@@ -34,11 +36,12 @@ sap.ui.define([
 			}
 
 			function setEmployeeContext() {
-				var oEmployeeContext = oView.byId("Employees").getBinding("items").getContexts()[0],
-					oEmployeesControl = oView.byId("Employees");
+				var oEmployeesControl = oView.byId("Employees"),
+					oEmployeeContext = oEmployeesControl.getBinding("items").getContexts()[0];
 
 				oView.byId("EmployeeEquipments").setBindingContext(oEmployeeContext);
 				oEmployeesControl.setSelectedItem(oEmployeesControl.getItems()[0]);
+				oView.setBusy(false);
 			}
 
 			//TODO: as long as there is no dataReceived event in V4 we attach to "change"

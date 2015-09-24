@@ -29,9 +29,6 @@ sap.ui.define([
 				viewName : "sap.ui.core.sample.odata.v4.ListBinding.Main",
 				models : oModel
 			});
-			// TODO: enhance sample application after features are supported
-			// - Error Handling; not yet implemented in model
-			// - ComplexType resolution; service is not yet able to resolve complex types
 		}
 	});
 

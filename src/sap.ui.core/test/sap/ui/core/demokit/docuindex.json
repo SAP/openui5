@@ -136,7 +136,8 @@
 				"since" : "1.32",
 				"samples" : [
 					"sap.ui.core.sample.odata.v4.PropertyBinding",
-					"sap.ui.core.sample.odata.v4.ListBinding"
+					"sap.ui.core.sample.odata.v4.ListBinding",
+					"sap.ui.core.sample.odata.v4.SalesOrders"
 				]
 			},
 			{
@@ -377,6 +378,11 @@
 				"id": "sap.ui.core.sample.odata.v4.ListBinding",
 				"name": "List Binding",
 				"description": "Example for list binding with an OData v4 model"
+			},
+			{
+				"id": "sap.ui.core.sample.odata.v4.SalesOrders",
+				"name": "Sales Orders",
+				"description": "Example for OData v4 EPM Sales Orders"
 			},
 			{
 				"id": "sap.ui.core.sample.ViewTemplate.scenario",
