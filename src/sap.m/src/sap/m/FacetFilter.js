@@ -449,7 +449,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	    this.oItemNavigation.setCycling(false);
 
 	    //set the selected index
-	    //this.oItemNavigation.setSelectedIndex(0);
 		this.oItemNavigation.setPageSize(this._pageSize);
 
 	};
@@ -750,7 +749,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
-			//oEvent.hover();
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
@@ -780,7 +778,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
-			//oEvent.hover();
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
@@ -830,14 +827,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 						this.setSubHeader(that._createSelectAllCheckboxBar(that._displayedList));
 					}
 				},
-				//keyboard acc - the 1st binding category (list) can't use initialfocus, so focus on 1st item from here
-/*				afterOpen: function(oEvent) {
-					if (this.getInitialFocus() == null && that._displayedList.getItems().length > 0) {
-						jQuery.sap.delayedCall(1000, this, function() {
-							jQuery.sap.focus(that._displayedList.getItemNavigation().getItemDomRefs()[0]);
-						});
-					}
-				},*/
 				afterClose: function(oEvent) {
 
 					that._addDelegateFlag = true;
@@ -848,13 +837,11 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 					// The facet button will not be removed when the remove icon is pressed if we don't delay hiding the icon in ie 9.
 					//
 					// CSS 0120061532 0004101226 2013 "sap.m.FacetFilterList - getActive inconsistent result"
-					// Moved "fireListCloseEvent" into the setTimeout function for IE9
 					//
 					// TODO: Remove when ie 9 is no longer supported
 					if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
 						jQuery.sap.delayedCall(100, that, that._handlePopoverAfterClose, [oList]);
 					} else {
-					//that._handlePopoverAfterClose(oList);
 //fix remove icon press issue. click remove icon and can't remove facet, so delay the popover close
 						jQuery.sap.delayedCall(120, that, that._handlePopoverAfterClose, [oList]);
 						oPopover.destroySubHeader();
