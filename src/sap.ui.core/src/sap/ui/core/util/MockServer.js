@@ -947,8 +947,8 @@ sap.ui
 				// helper function to find the entity set and property reference
 				// for the given role name
 				var fnResolveNavProp = function(sRole, aAssociation, aAssociationSet, bFrom) {
-					var sEntitySet = jQuery(aAssociationSet).find("End[Role=" + sRole + "]").attr("EntitySet");
-					var sMultiplicity = jQuery(aAssociation).find("End[Role=" + sRole + "]").attr("Multiplicity");
+					var sEntitySet = jQuery(aAssociationSet).find("End[Role='" + sRole + "']").attr("EntitySet");
+					var sMultiplicity = jQuery(aAssociation).find("End[Role='" + sRole + "']").attr("Multiplicity");
 
 					var aPropRef = [];
 					var aConstraint = jQuery(aAssociation).find("ReferentialConstraint > [Role=" + sRole + "]");
