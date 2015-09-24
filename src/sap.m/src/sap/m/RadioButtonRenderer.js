@@ -120,7 +120,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		oRm.write("</div>");
 		oRm.renderControl(oRadioButton._oLabel);
 
-		if (sTooltipWithStateMessage) {
+		if (sTooltipWithStateMessage && sap.ui.getCore().getConfiguration().getAccessibility()) {
 			// for ARIA, the tooltip must be in a separate SPAN and assigned via aria-describedby.
 			// otherwise, JAWS does not read it.
 			oRm.write("<span id=\"" + sId + "-Descr\" style=\"display: none;\">");
