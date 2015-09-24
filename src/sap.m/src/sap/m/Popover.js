@@ -387,6 +387,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					return;
 				}
 
+				var oScrollDomRef = that.getDomRef("scroll");
+
 				// some mobile browser changes the scrollLeft of window after firing resize event
 				// which caused the popover to be positioned at the wrong place.
 				if (!sap.ui.Device.system.desktop) {
@@ -400,7 +402,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				that._restoreScrollPosition();
 
 				//register the content resize handler
-				that._registerContentResizeHandler();
+				that._registerContentResizeHandler(oScrollDomRef);
 			};
 
 			// when popup's close method is called by autoclose handler, the beforeClose event also needs to be fired.
@@ -1805,9 +1807,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			}
 		};
 
-		Popover.prototype._registerContentResizeHandler = function () {
+		Popover.prototype._registerContentResizeHandler = function(oScrollDomRef) {
 			if (!this._sResizeListenerId) {
-				this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef("scroll"), this._fnOrientationChange);
+				this._sResizeListenerId = sap.ui.core.ResizeHandler.register(oScrollDomRef || this.getDomRef("scroll"), this._fnOrientationChange);
 			}
 		};
 
