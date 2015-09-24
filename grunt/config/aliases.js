@@ -251,7 +251,7 @@ module.exports = function(grunt, config) {
 		    'cldr-generate'
 		],
 		'cldr-download': [
-		    'npm-install:cldr-core:cldr-dates-full:cldr-numbers-full:cldr-misc-full:cldr-localenames-full:cldr-cal-islamic-full:cldr-cal-japanese-full'
+		    'npm-install:cldr-core:cldr-dates-modern:cldr-numbers-modern:cldr-misc-modern:cldr-localenames-modern:cldr-cal-islamic-modern:cldr-cal-japanese-modern'
 		],
 		'cldr-generate': function() {
 			var done = this.async();
@@ -259,7 +259,11 @@ module.exports = function(grunt, config) {
 			var baseFolder = path.join(__dirname, "../../");
 
 			var outputFolder = grunt.option("output"),
-				prettyPrint = grunt.option("prettyPrint") || grunt.option("prettyprint");
+				prettyPrint = grunt.option("prettyPrint");
+
+			if (typeof prettyPrint !== "boolean") {
+				prettyPrint = true;
+			}
 
 			if (!outputFolder) {
 				outputFolder = path.join(baseFolder, "src/sap.ui.core/src/sap/ui/core/cldr");
