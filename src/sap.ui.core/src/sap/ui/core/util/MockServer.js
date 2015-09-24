@@ -938,7 +938,7 @@ sap.ui
 				// helper function to find the entity set and property reference
 				// for the given role name
 				var fnResolveNavProp = function(sRole, bFrom) {
-					var aRoleEnd = jQuery(oMetadata).find("End[Role=" + sRole + "]");
+					var aRoleEnd = jQuery(oMetadata).find("End[Role='" + sRole + "']");
 					var sEntitySet;
 					var sMultiplicity;
 					jQuery.each(aRoleEnd, function(i, oValue) {
@@ -969,7 +969,7 @@ sap.ui
 				// find the keys and the navigation properties of the entity types
 				jQuery.each(mEntitySets, function(sEntitySetName, oEntitySet) {
 					// find the keys
-					var $EntityType = jQuery(oMetadata).find("EntityType[Name=" + oEntitySet.type + "]");
+					var $EntityType = jQuery(oMetadata).find("EntityType[Name='" + oEntitySet.type + "']");
 					var aKeys = jQuery($EntityType).find("PropertyRef");
 					jQuery.each(aKeys, function(iIndex, oPropRef) {
 						var sKeyName = jQuery(oPropRef).attr("Name");
