@@ -108,10 +108,16 @@
 					.sapMTPPickerSelectionFrame {
 						border: 2px solid @sapUiHighlight;
 						&:hover {
-							//border: 2px solid darken(@sapUiHighlight,10);
+							border: 2px solid darken(@sapUiHighlight,10);
+							& + ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
+								background: darken(@sapUiExtraLightBG, 10);
+							}
 						}
-					}
+						&:active {
+							border: 2px solid @sapUiHighlight;
 					& > ul {
+							}
+						}
 					}
 				}
 			}
