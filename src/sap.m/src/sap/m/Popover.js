@@ -1597,7 +1597,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			}
 
 			if (this.getShowArrow()) {
+				// Remove old position of the arrow and add the new one
 				// Set the arrow next to the opener
+				$arrow.removeAttr("style");
 				$arrow.css(this._getArrowOffsetCss(sCalculatedPlacement, oPosParams));
 
 				// Add position class to the arrow
