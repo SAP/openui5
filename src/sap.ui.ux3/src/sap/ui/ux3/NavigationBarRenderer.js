@@ -111,9 +111,6 @@ sap.ui.define(['jquery.sap.global'],
 			arrowPos = "left:" + oControl._iLastArrowPos;
 		}
 		oRm.write("<span id='" + oControl.getId() + "-arrow' style='" + arrowPos + "px;");
-		if ((aItems.length == 1) && !oControl.getToplevelVariant() && !!sap.ui.Device.browser.internet_explorer && (sap.ui.Device.browser.version == 8 || sap.ui.Device.browser.version == 7)) { // IE8 workaround; other browsers understand nth-child, see Base-CSS
-			oRm.write("display:none;"); // hide arrow when there is only one item
-		}
 		oRm.write("' class='sapUiUx3NavBarArrow'></span>");
 	};
 	

@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 			var aCtrls = null;
 			try {
 				var $Act = jQuery(document.activeElement);
-				if ($Act.is(":focus") || (Device.browser.internet_explorer && Device.browser.version == 8 && document.hasFocus())) {
+				if ($Act.is(":focus")) {
 					aCtrls = $Act.control();
 				}
 			} catch (err) {

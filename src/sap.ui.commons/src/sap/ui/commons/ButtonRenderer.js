@@ -291,11 +291,7 @@ sap.ui.define(['jquery.sap.global'],
 		if (sap.ui.core.IconPool.isIconURI(oButton.getIcon())) {
 			var oIconInfo = sap.ui.core.IconPool.getIconInfo(oButton.getIcon());
 			var oIcon = oButton.$("icon");
-			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 9) {
-				oIcon.text(oIconInfo.content);
-			} else {
-				oIcon.attr("data-sap-ui-icon-content", oIconInfo.content);
-			}
+			oIcon.attr("data-sap-ui-icon-content", oIconInfo.content);
 			if (!oIconInfo.skipMirroring) {
 				oIcon.addClass("sapUiIconMirrorInRTL");
 			} else {

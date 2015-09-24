@@ -3278,25 +3278,15 @@
 		if (sId) {
 			oScript.id = sId;
 		}
-		if (!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 9) {
-			// in case if IE8 the error callback is not supported!
-			// we can only check the loading via the readystatechange event
-			if (fnLoadCallback) {
-				oScript.onreadystatechange = function() {
-					if (oScript.readyState === "loaded" || oScript.readyState === "complete") {
-						fnLoadCallback();
-						oScript.onreadystatechange = null;
-					}
-				};
-			}
-		} else {
-			if (fnLoadCallback) {
-				jQuery(oScript).load(fnLoadCallback);
-			}
-			if (fnErrorCallback) {
-				jQuery(oScript).error(fnErrorCallback);
-			}
+
+		if (fnLoadCallback) {
+			jQuery(oScript).load(fnLoadCallback);
 		}
+
+		if (fnErrorCallback) {
+			jQuery(oScript).error(fnErrorCallback);
+		}
+
 		// jQuery("head").append(oScript) doesn't work because they filter for the script
 		// and execute them directly instead adding the SCRIPT tag to the head
 		var oOld;
