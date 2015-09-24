@@ -541,9 +541,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 				//calculate the new scroll offset by subtracting the distance
 				iPreviousScrollTop = iPreviousScrollTop - iSpeed * frameFrequencyMs;
 				if (bCycle) {
-					if (this._bIsDrag) {
-						iPreviousScrollTop = that._getUpdatedCycleScrollTop($ContainerHeight, $ContentHeight, iPreviousScrollTop, iDragMargin, iContentRepeat);
-					}
+					iPreviousScrollTop = that._getUpdatedCycleScrollTop($ContainerHeight, $ContentHeight, iPreviousScrollTop, iDragMargin, iContentRepeat);
 				} else {
 					if (iPreviousScrollTop > that._maxScrollTop) {
 						iPreviousScrollTop = that._maxScrollTop;
@@ -905,9 +903,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 				//calculate the new scroll offset by subtracting the distance
 				iScrollTop = iScrollTop - iOffsetNumberOfItems * iItemHeight;
 				if (bCycle) {
-					if (this._bIsDrag) {
-						iScrollTop = that._getUpdatedCycleScrollTop($ContainerHeight, $ContentHeight, iScrollTop, iDragMargin, iContentRepeat);
-					}
+					iScrollTop = that._getUpdatedCycleScrollTop($ContainerHeight, $ContentHeight, iScrollTop, iDragMargin, iContentRepeat);
 				} else {
 					if (iScrollTop > that._maxScrollTop) {
 						iScrollTop = that._maxScrollTop;
