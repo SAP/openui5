@@ -1899,7 +1899,7 @@
 		{
 		  "id": "sap.m.sample.UploadCollectionForPendingUpload",
 		  "name": "Upload Collection - Upload Pending",
-		  "description": "With this UploadCollection scenario, you can select an attachment and add it to the upload list first. You can select another one if required. In a second step, you can upload the selected files. The application triggers the upload with an event."
+		  "description": "With this UploadCollection scenario, you can select single or multiple files and add them to the upload list first. In a second step, the application can upload the selected files by calling the upload() function."
 		},
 		{
 		  "id": "sap.m.sample.StandardMarginsAll",
