@@ -14,7 +14,7 @@ sap.ui.define([
 
 			/**
 			 * The component is initialized by UI5 automatically during the startup of the app and calls the init method once.
-			 * In this function, the FLP and device models are set and the router is initialized.
+			 * In this function, the device models are set and the router is initialized.
 			 * @public
 			 * @override
 			 */
@@ -34,7 +34,7 @@ sap.ui.define([
 
 			/**
 			 * The component is destroyed by UI5 automatically.
-			 * In this method, the ErrorHandler are destroyed.
+			 * In this method, the ErrorHandler is destroyed.
 			 * @public
 			 * @override
 			 */

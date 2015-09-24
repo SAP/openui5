@@ -223,16 +223,27 @@ sap.ui.define([
 					},
 
 					theTableShouldHaveAllEntries : function () {
+						var aAllEntities,
+							iExpectedNumberOfItems;
+
+						// retrieve all Objects to be able to check for the total amount
+						this.waitFor(this.createAWaitForAnEntitySet({
+							entitySet: "Objects",
+							success: function (aEntityData) {
+								aAllEntities = aEntityData;
+							}
+						}));
+
 						return this.waitFor({
 							id : sTableId,
 							viewName : sViewName,
 							matchers : function (oTable) {
-								var iThreshold = oTable.getGrowingThreshold();
-								return new AggregationLengthEquals({name : "items", length : iThreshold}).isMatching(oTable);
+								// If there are less items in the list than the growingThreshold, only check for this number.
+								iExpectedNumberOfItems = Math.min(oTable.getGrowingThreshold(), aAllEntities.length);
+								return new AggregationLengthEquals({name : "items", length : iExpectedNumberOfItems}).isMatching(oTable);
 							},
 							success : function (oTable) {
-								var iGrowingThreshold = oTable.getGrowingThreshold();
-								Opa5.assert.strictEqual(oTable.getItems().length, iGrowingThreshold, "The growing Table has " + iGrowingThreshold + " items");
+								Opa5.assert.strictEqual(oTable.getItems().length, iExpectedNumberOfItems, "The growing Table has " + iExpectedNumberOfItems + " items");
 							},
 							errorMessage : "Table does not have all entries."
 						});
