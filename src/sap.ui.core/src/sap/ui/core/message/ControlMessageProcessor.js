@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	 * @protected
 	 */
 	ControlMessageProcessor.prototype.setMessages = function(vMessages) {
-		this.mOldMessages = jQuery.isEmptyObject(this.mMessages) ? vMessages : this.mMessages;
+		this.mOldMessages = this.mMessages === null ? {} : this.mMessages;
 		this.mMessages = vMessages || {};
 		this.checkMessages();
 		delete this.mOldMessages;
@@ -59,12 +59,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	 */
 	ControlMessageProcessor.prototype.checkMessages = function() {
 		var aMessages,
-			that = this;
+			that = this,
+			mMessages = jQuery.extend(this.mMessages, {});
 		
-		jQuery.each(this.mOldMessages, function(sTarget, aOldMessages) {
-			var oBinding;
-			var aParts = sTarget.split('/');
-			var oControl = sap.ui.getCore().byId(aParts[0]);
+		//add targets to clear from mOldMessages to the mMessages to check
+		jQuery.each(this.mOldMessages, function(sTarget) {
+			if (!(sTarget in mMessages)) {
+				mMessages[sTarget] = [];
+			}
+		});
+		
+		//check messages
+		jQuery.each(mMessages, function(sTarget) {
+			var oBinding,
+				aParts = sTarget.split('/'),
+				oControl = sap.ui.getCore().byId(aParts[0]);
 			
 			//if control does not exist: nothing to do
 			if  (!oControl) {
@@ -72,7 +81,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 			}
 			
 			oBinding = oControl.getBinding(aParts[1]);
-			
 			aMessages = that.mMessages[sTarget] ? that.mMessages[sTarget] : [];
 			if (oBinding) {
 				var oDataState = oBinding.getDataState();
