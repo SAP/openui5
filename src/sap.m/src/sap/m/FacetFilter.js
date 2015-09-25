@@ -519,9 +519,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 */
 	sap.m.FacetFilter.prototype.onsaptabnext = function(oEvent) {
 
-//		if (oEvent.target.parentNode.className != "sapMFFResetDiv" ) {
-			this._previousTarget = oEvent.target;
-//		}
+		this._previousTarget = oEvent.target;
 
 		if (oEvent.target.parentNode.className == "sapMFFHead" ) { //if focus on category, and then press tab, then focus on reset
 			for ( var i = 0; i < this.$().find(":sapTabbable").length; i++) {
@@ -565,7 +563,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			return;
 		}
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv" && this._previousTarget != null && this._previousTarget.id != oEvent.target.id) {
-//			this._previousTarget = oEvent.target;
 			jQuery(this._previousTarget).focus();
 			oEvent.preventDefault();
 			oEvent.setMarked();
@@ -603,14 +600,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		oEvent.preventDefault();
 		oEvent.setMarked();
 		this._previousTarget = oEvent.target;
-	};
-
-	// Handle F6
-	sap.m.FacetFilter.prototype.onsapskipforward = function(oEvent) {
-	};
-
-	// Handle SHIFT+F6
-	sap.m.FacetFilter.prototype.onsapskipback = function(oEvent) {
 	};
 
 	/**
@@ -733,7 +722,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
-			//oEvent.hover();
 			oEvent.preventDefault();
 			oEvent.setMarked();
 			return;
@@ -763,7 +751,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
-			//oEvent.hover();
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
@@ -911,7 +898,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 	              this._moveListToDisplayContainer(oList, oPopover);
 	              //keyboard acc - focus on 1st item of 1st page
-//	              oPopover.setInitialFocus(oList.getItems()[0]);
 	              oList.fireListOpen({});
 	              oPopover.openBy(oControl);
 	              //Display remove facet icon only if ShowRemoveFacetIcon property is set to true
@@ -994,7 +980,6 @@ oPopover.setContentWidth("30%");
 						that._oOpenPopoverDeferred.promise().done(fnOpenPopover);
 						});
 					} else {
-						//that._openPopover(oPopover, this);
 						jQuery.sap.delayedCall(100, this, fnOpenPopover);
 					}
 				}
