@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 	"use strict";
 
 
-	
+
 	/**
 	 * Constructor for a new FlexBox.
 	 *
@@ -31,47 +31,47 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FlexBox = Control.extend("sap.m.FlexBox", /** @lends sap.m.FlexBox.prototype */ { metadata : {
-	
+
 		library : "sap.m",
 		properties : {
-	
+
 			/**
 			 * The height of the FlexBox. Note that when a percentage is given, for the height to work as expected, the height of the surrounding container must be defined.
 			 * @since 1.9.1
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
-	
+
 			/**
 			 * The width of the FlexBox. Note that when a percentage is given, for the width to work as expected, the width of the surrounding container must be defined.
 			 * @since 1.9.1
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : ''},
-	
+
 			/**
 			 * Determines whether the flexbox is in block or inline mode
 			 */
 			displayInline : {type : "boolean", group : "Appearance", defaultValue : false},
-	
+
 			/**
 			 * Determines the direction of the layout of child elements
 			 */
 			direction : {type : "sap.m.FlexDirection", group : "Appearance", defaultValue : sap.m.FlexDirection.Row},
-	
+
 			/**
 			 * Determines whether the flexbox will be sized to completely fill its container. If the FlexBox is inserted into a Page, the property 'enableScrolling' of the Page needs to be set to 'false' for the FlexBox to fit the entire viewport.
 			 */
 			fitContainer : {type : "boolean", group : "Appearance", defaultValue : false},
-	
+
 			/**
 			 * Determines whether the layout is rendered as a series of divs or as an unordered list (ul)
 			 */
 			renderType : {type : "sap.m.FlexRendertype", group : "Misc", defaultValue : sap.m.FlexRendertype.Div},
-	
+
 			/**
 			 * Determines the layout behavior along the main axis. "SpaceAround" is currently not supported in most non-Webkit browsers.
 			 */
 			justifyContent : {type : "sap.m.FlexJustifyContent", group : "Appearance", defaultValue : sap.m.FlexJustifyContent.Start},
-	
+
 			/**
 			 * Determines the layout behavior of items along the cross-axis. "Baseline" is not supported in Internet Explorer <10.
 			 */
@@ -97,10 +97,72 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 			this.setDirection('Column');
 		}
 	};
+
+	FlexBox.prototype.addItem = function(oItem) {
+		this.addAggregation("items", oItem);
+
+		if (oItem) {
+			oItem.attachEvent("_change", this.onItemChange, this);
+		}
+
+		return this;
+	};
+
+	FlexBox.prototype.insertItem = function(oItem, iIndex) {
+		this.insertAggregation("items", oItem, iIndex);
+
+		if (oItem) {
+			oItem.attachEvent("_change", this.onItemChange, this);
+		}
+
+		return this;
+	};
 	
+	FlexBox.prototype.removeItem = function(vItem) {
+		var oItem = this.removeAggregation("items", vItem);
+
+		if (oItem) {
+			oItem.detachEvent("_change", this.onItemChange, this);
+		}
+
+		return oItem;
+	};
+
+	FlexBox.prototype.removeAllItems = function() {
+		var aItems = this.getItems();
+
+		for (var i = 0; i < aItems.length; i++) {
+			aItems[i].detachEvent("_change", this.onItemChange, this);
+		}
+
+		return this.removeAllAggregation("items");
+	};
+
+	FlexBox.prototype.onItemChange = function(oControlEvent) {
+		// Early return condition
+		if (oControlEvent.getParameter("name") !== "visible") {
+			return;
+		}
+
+		// Render or remove flex item if visibility changes
+		var sId = oControlEvent.getParameter("id"),
+			sNewValue = oControlEvent.getParameter("newValue"),
+			oLayoutData = sap.ui.getCore().byId(sId).getLayoutData();
+
+		if (!(oLayoutData instanceof sap.m.FlexItemData)) {
+			return;
+		}
+
+		if (sNewValue) {
+			oLayoutData.$().removeClass("sapUiHiddenPlaceholder").removeAttr("aria-hidden");
+		} else {
+			oLayoutData.$().addClass("sapUiHiddenPlaceholder").attr("aria-hidden", "true");
+		}
+	};
+
 	FlexBox.prototype.setDisplayInline = function(bInline) {
 		var sDisplay = "";
-	
+
 		this.setProperty("displayInline", bInline, false);
 		if (bInline) {
 			sDisplay = "inline-flex";
@@ -110,7 +172,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 		FlexBoxStylingHelper.setStyle(null, this, "display", sDisplay);
 		return this;
 	};
-	
+
 	FlexBox.prototype.setDirection = function(sValue) {
 		this.setProperty("direction", sValue, false);
 		FlexBoxStylingHelper.setStyle(null, this, "flex-direction", sValue);
@@ -173,15 +235,15 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 				parent = currentElement.getParent();
 			}
 	
-			this.sanitizeChildren(this);
-			this.renderFlexBoxPolyFill();
+			this._sanitizeChildren(this);
+			this._renderFlexBoxPolyFill();
 		}
 	};
 	
 	/*
 	 * @private
 	 */
-	FlexBox.prototype.sanitizeChildren = function(oControl) {
+	FlexBox.prototype._sanitizeChildren = function(oControl) {
 		// Check the flex items
 		var aChildren = oControl.getItems();
 		for (var i = 0; i < aChildren.length; i++) {
@@ -195,7 +257,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 				$child.width("auto");
 				//$child.height("100%");
 				if (aChildren[i] instanceof FlexBox) {
-					this.sanitizeChildren(aChildren[i]);
+					this._sanitizeChildren(aChildren[i]);
 				}
 			}
 		}
@@ -204,7 +266,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxStylingHelper', './library', 'sap/
 	/*
 	 * @private
 	 */
-	FlexBox.prototype.renderFlexBoxPolyFill = function() {
+	FlexBox.prototype._renderFlexBoxPolyFill = function() {
 		var flexMatrix = [];
 		var ordinalMatrix = [];
 	
