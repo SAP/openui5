@@ -414,17 +414,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	/**
-	 * Determines whether item should be clickable or not
+	 * Determines whether item has any action or not.
 	 * @private
 	 */
-	ListItemBase.prototype.isClickable = function() {
+	ListItemBase.prototype.isActionable = function() {
 		return	this.getListProperty("includeItemInSelection") ||
 				this.getMode() == sap.m.ListMode.SingleSelectMaster || (
 					this.getType() != sap.m.ListType.Inactive &&
 					this.getType() != sap.m.ListType.Detail
 				);
 	};
-	
 	
 	ListItemBase.prototype.exit = function() {
 		this._oLastFocused = null;
@@ -496,9 +495,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 	
 	// Updates the selected state of the DOM
-	ListItemBase.prototype.updateSelectedDOM = function(bSelected, $LI) {
-		$LI.toggleClass("sapMLIBSelected", bSelected);
-		$LI.attr("aria-selected", bSelected);
+	ListItemBase.prototype.updateSelectedDOM = function(bSelected, $This) {
+		$This.toggleClass("sapMLIBSelected", bSelected);
+		$This.attr("aria-selected", bSelected);
 	};
 	
 	ListItemBase.prototype.setParent = function(oParent) {
@@ -551,17 +550,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	ListItemBase.prototype.setActive = function(bActive) {
 		if (bActive != this._active) {
+			var $This = this.$();
 			this._active = bActive;
-			this._activeHandling();
+			this._activeHandling($This);
 	
 			if (this.getType() == sap.m.ListType.Navigation) {
-				this._activeHandlingNav();
+				this._activeHandlingNav($This);
 			}
 	
 			if (bActive) {
-				this._activeHandlingInheritor();
+				this._activeHandlingInheritor($This);
 			} else {
-				this._inactiveHandlingInheritor();
+				this._inactiveHandlingInheritor($This);
 			}
 		}
 	
@@ -669,8 +669,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	ListItemBase.prototype._inactiveHandlingInheritor = function() {};
 	
 	// switch background style... toggle active feedback
-	ListItemBase.prototype._activeHandling = function() {
-		this.$().toggleClass("sapMLIBActive", this._active);
+	ListItemBase.prototype._activeHandling = function($This) {
+		$This.toggleClass("sapMLIBActive", this._active);
+		
+		if (this.isActionable()) {
+			$This.toggleClass("sapMLIBHoverable", !this._active);
+		}
 	};
 	
 	/* Keyboard Handling */
