@@ -283,7 +283,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/Global', 'sap
 				if (bindingContextModel) {
 					model.mode = bindingContextModel.getDefaultBindingMode();
 					model.type = bindingContextModel.getMetadata().getName();
-					model.data = bindingContextModel.getData ? bindingContextModel.getData() : undefined;
+					model.data = bindingContextModel.getData ? bindingContextModel.getData('/') : undefined;
 				}
 
 				return model;
