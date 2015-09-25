@@ -11,12 +11,17 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapMListTblRow:focus{
 	background: @sapHCStandardBG;
 }
 
-.sapMLIBSelected.sapMLIB + .sapMListTblSubRow {
-	background: @sapHCStandardBG;
+.sapMLIBSelected + .sapMListTblSubRow {
+	background: @sapHCHighlightAltBG;
 }
 
-.sapMLIBActive.sapMLIB + .sapMListTblSubRow {
-	background: @sapHCStandardBG;
+.sapMLIBActive + .sapMListTblSubRow {
+	color: @sapHCStandardFG;
+	background: @sapHCHighlightBG;
+}
+
+.sapMLIBHoverable:hover + .sapMListTblSubRow {
+	background: @sapHCHighlightBG;
 }
 
 /* table popin */

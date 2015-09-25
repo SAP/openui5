@@ -3,16 +3,33 @@
 	outline-offset: -1px;
 }
 
-.sapMListTblSubRow {
-	background: @sapUiListTblPopinBG;
+.sapMListBGTransparent .sapMListTblSubRow {
+	background: fade(@sapUiListBG, 0%);
 }
 
-.sapMLIBSelected.sapMLIB + .sapMListTblSubRow {
-	background: @sapUiListTblPopinSelectedBG;
+.sapMListBGTranslucent .sapMListTblSubRow {
+	background: fade(@sapUiListBG, @sapUiTranslucentBGOpacity);
 }
 
-.sapMLIBActive.sapMLIB + .sapMListTblSubRow {
-	background: @sapUiListTblPopinActiveBG;
+.sapMListBGSolid .sapMListTblSubRow{
+	background: @sapUiListBG;
+}
+
+.sapMLIBHoverable:hover + .sapMListTblSubRow {
+	background : @sapUiLightestBGHover;
+}
+
+.sapMLIBSelected + .sapMListTblSubRow {
+	background: @sapUiLISelected;
+}
+
+.sapMLIBHoverable.sapMLIBSelected:hover + .sapMListTblSubRow {
+	background : @sapUiActiveBGHover;
+}
+
+.sapMLIB.sapMLIBActive + .sapMListTblSubRow {
+	color: @sapUiLITextInverted;
+	background: @sapUiLIActive;
 }
 
 /* table popin */

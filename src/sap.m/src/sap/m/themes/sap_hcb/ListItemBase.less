@@ -38,18 +38,6 @@
 	padding-right: 0;
 }
 
-.sapMListBGTransparent .sapMLIB {
-	background-color:  @sapHCStandardBG;
-}
-
-.sapMListBGTranslucent .sapMLIB {
-	background-color:  @sapHCStandardBG;
-}
-
-.sapMListBGSolid .sapMLIB{
-	background-color: @sapHCStandardBG;
-}
-
 .sapMListShowSeparatorsNone .sapMLIBShowSeparator{
 	border-bottom: 1px solid transparent;
 }
@@ -184,11 +172,8 @@
 
 .sapMLIBTypeDetailAndActive .sapMLIBIconDet:active,
 .sapMLIBTypeDetail .sapMLIBIconDet:active,
-.sapMListModeDelete .sapMLIBSelectD:active,
-/* in IE9 the SelectD does not get the active state so we have to put it on the icon*/
-.sapMListModeDelete .sapMLIBSelectD > .sapUiIcon:active,
-.sapMLIBActive:not(.sapMLIBTypeDetailAndActive):not(.sapMLIBTypeNavigation):not(.sapMLIBTypeActive) .sapMLIBImgNav {
-	background-color : @sapHCHighlightBG;
+.sapMLIBSelectD > .sapUiIcon:active {
+	background : @sapHCHighlightBG;
 }
 
 .sap-desktop .sapMLIBImgNav:focus,
@@ -203,57 +188,21 @@
 	width: 3rem;
 }
 
-.sapMLIB.sapMLIBSelected,
-.sapMLIB.sapMLIBSelected > td {
+.sapMLIB {
+	background: @sapHCStandardBG;
+}
+
+.sapMLIBSelected {
 	background: @sapHCHighlightAltBG;
 }
 
-.sapMLIBSelectD:hover {
-	box-sizing: border-box;
-}
-
-/* deleteIcon */
-.sap-desktop .sapMLIBSelectD:hover:not(:active),
-
-/* active state is always stronger than the selected state
-* List item hover : does not apply to column list item*/
-.sap-desktop .sapMLIB:not(.sapMLIBActive):not(.sapMLIBTypeInactive):not(.sapMLIBTypeDetail):not(.sapMALI):hover ,
-
-/* all selectable items should get the hover */
-.sap-desktop .sapMListUl:not(.sapMListModeDelete):not(.sapMListModeNone) .sapMLIB:not(.sapMLIBActive):not(.sapMALI):hover,
-
-/* column list item hover: since the dom is different to the list we need td */
-.sap-desktop .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(.sapMLIBTypeInactive):not(.sapMLIBTypeDetail):not(.sapMALI):hover > td,
-
-/* popin also gets hovered, when hovering over the listitem */
-.sap-desktop .sapMLIB:not(.sapMLIBActive):not(.sapMLIBTypeInactive):not(.sapMLIBTypeDetail):not(.sapMALI):not(.sapMLIBSelected):hover + .sapMListTblSubRow,
-
-/* popin hover - issue does not hover the list item, only the popin */
-.sap-desktop .sapMListTblSubRow:not(.sapMLIBActive):not(.sapMLIBTypeInactive):not(.sapMLIBTypeDetail):not(.sapMALI):hover {
-	background : @sapHCHighlightBG;
-}
-
-/* same as the 4 selectors above just for selected */
-.sap-desktop .sapMLIBSelected:not(.sapMLIBActive):not(.sapMALI):hover ,
-.sap-desktop .sapMListUl:not(.sapMListModeDelete):not(.sapMListModeNone) .sapMLIBSelected:not(.sapMLIBActive):not(.sapMALI):hover,
-.sap-desktop .sapMLIBSelected:not(.sapMLIBActive):not(.sapMALI):hover > td,
-.sap-desktop .sapMLIBSelected:not(.sapMLIBActive):not(.sapMALI):hover + .sapMListTblSubRow,
-.sap-desktop .sapMLIBSelected:not(.sapMLIBActive):not(.sapMALI)  + .sapMListTblSubRow:hover {
-	background : @sapHCHighlightBG;
-}
-
-/* HCB Additional Styles */
-/* active state is always stronger than the selected state
-* List item hover : does not apply to column list item
-*adding color white to hovered warning messages*/
-.sap-desktop .sapMLIB:not(.sapMLIBActive):not(.sapMLIBTypeInactive):not(.sapMLIBTypeDetail):not(.sapMALI):hover div {
-	color : @sapHCStandardFG;
-}
-
-.sapMLIBActive.sapMLIB,
-.sapMLIBActive.sapMLIB > td {
+.sapMLIBActive {
 	color: @sapHCStandardFG;
 	background: @sapHCHighlightBG;
+}
+
+.sapMLIBHoverable:hover {
+	background : @sapHCHighlightBG;
 }
 
 .sapMLIBActive div,
