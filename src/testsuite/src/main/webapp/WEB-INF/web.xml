@@ -78,24 +78,4 @@
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 
-<!--SimpleProxyServlet  NOT WORKING SO FAR
-	because of missing SimpleProxyServlet library in openUI5 testsuite
-	<servlet>
-		<servlet-name>SimpleProxyServlet</servlet-name>
-		<servlet-class>com.sap.ui5.proxy.SimpleProxyServlet</servlet-class>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>SimpleProxyServlet</servlet-name>
-		<url-pattern>/proxy/*</url-pattern>
-	</servlet-mapping>
-
-	<context-param>
-		this configuration will done in the tomcat server configuration
-		e.g. -Dcom.sap.ui5.proxy.REMOTE_LOCATION="..."
-		<param-name>com.sap.ui5.proxy.REMOTE_LOCATION</param-name>
-		<param-value>http://dewdflhanaui5.emea.global.corp.sap:8001</param-value>
-	</context-param>
--->
-
 </web-app>
