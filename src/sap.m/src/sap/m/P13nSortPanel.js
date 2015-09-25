@@ -229,40 +229,10 @@ sap.ui.define([
 			tooltip: oItem.getTooltip()
 		};
 
-		if (!this._bKeyFieldsChanged) {
-			setTimeout(jQuery.proxy( function() { 
-				this._bKeyFieldsChanged = false;
-				if (this._oSortPanel) {
-					this._oSortPanel.setKeyFields(this._aKeyFields);
-				}
-			}, this), 0);			
-		}
-		this._bKeyFieldsChanged = true;
 		this._aKeyFields.push(oKeyField);
-	};
 
-	P13nSortPanel.prototype.removeItem = function(oItem) {
-		P13nPanel.prototype.removeItem.apply(this, arguments);
-
-		var foundIndex = -1;
-		this._aKeyFields.some(function(item, index) {
-			if (item.key === oItem.getColumnKey()) {
-				foundIndex = index;
-				return true;
-			}
-		});
-		
-		if (foundIndex != -1) {
-			if (!this._bKeyFieldsChanged) {
-				setTimeout(jQuery.proxy( function() { 
-					this._bKeyFieldsChanged = false;
-					if (this._oSortPanel) {
-						this._oSortPanel.setKeyFields(this._aKeyFields);
-					}
-				}, this), 0);			
-			}
-			this._bKeyFieldsChanged = true;
-			this._aKeyFields.splice(foundIndex, 1);
+		if (this._oSortPanel) {
+			this._oSortPanel.addKeyField(oKeyField);
 		}
 	};
 
@@ -304,17 +274,18 @@ sap.ui.define([
 		}
 		if (!this._bIgnoreBindCalls) {
 			var aConditions = [];
+			var sModelName = this.getBindingInfo("sortItems").model;
 			this.getSortItems().forEach(function(oSortItem_) {
 				// Note: current implementation assumes that the length of sortItems aggregation is equal
 				// to the number of corresponding model items.
 				// Currently the model data is up-to-date so we need to resort to the Binding Context;
 				// the "sortItems" aggregation data - obtained via getSortItems() - has the old state !
-				var oContext = oSortItem_.getBindingContext();
+				var oContext = oSortItem_.getBindingContext(sModelName);
 				var oModelItem = oContext.getObject();
 				aConditions.push({
 					key: oSortItem_.getKey(),
-					keyField: oModelItem.columnKey,
-					operation: oModelItem.operation
+					keyField: oModelItem[oSortItem_.getBinding("columnKey").getPath()],
+					operation: oModelItem[oSortItem_.getBinding("operation").getPath()]
 				});
 			});
 			this._oSortPanel.setConditions(aConditions);

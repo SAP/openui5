@@ -17,5 +17,11 @@
 		{"text" : "Height", "path" : "height"},
 		{"text" : "DimUnit", "path" : "dimUnit"},
 		{"text" : "ProductPicUrl", "path" : "productPicUrl"}
+	],
+	"SortItems":[
+		{"columnKeyModel" : "name", "operationModel" : "Descending"}
+	],
+	"FilterItems":[
+		{"columnKeyModel" : "name", "operationModel" : "Contains", "value1Model" : "a"}
 	]
 }

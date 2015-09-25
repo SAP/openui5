@@ -338,12 +338,11 @@ sap.ui.define([
 		this._updateAllOperations();
 	};
 
-
 	P13nConditionPanel.prototype.setValues = function(aValues, sType) {
 		sType = sType || "default";
 		this._oTypeValues[sType] = aValues;
 
-		//this._updateAllOperations();
+		// this._updateAllOperations();
 	};
 
 	/**
@@ -557,7 +556,7 @@ sap.ui.define([
 		};
 
 		this._oTypeValues = {
-		     "default": []
+			"default": []
 		};
 
 		this._aKeyFields = [];
@@ -861,7 +860,7 @@ sap.ui.define([
 							that._changeField(oConditionGrid);
 						});
 
-						if (typeof oConditionGridData !== "undefined") {
+						if (oConditionGridData) {
 							oControl.setSelected(oConditionGridData.showIfGrouped);
 						} else {
 							if (this.getUsePrevConditionSetting()) {
@@ -874,7 +873,7 @@ sap.ui.define([
 						}
 
 					} else {
-						if (typeof oConditionGridData !== "undefined") {
+						if (oConditionGridData) {
 							oControl.setSelected(true);
 							oControl.setEnabled(true);
 						}
@@ -883,7 +882,7 @@ sap.ui.define([
 
 				case "ComboBox":
 					if (field["ID"] === "keyField") {
-						oControl = new sap.m.ComboBox({  // before we used the new sap.m.Select control 
+						oControl = new sap.m.ComboBox({ // before we used the new sap.m.Select control
 							selectedKey: field["SelectedKey"],
 							width: "100%"
 						});
@@ -932,7 +931,7 @@ sap.ui.define([
 						}
 
 						if (oControl.setSelectedItem) {
-							if (typeof oConditionGridData !== "undefined") {
+							if (oConditionGridData) {
 								oControl.setSelectedKey(oConditionGridData.keyField);
 								this._aKeyFields.forEach(function(oKeyField, index) {
 									var key = oKeyField.key;
@@ -989,7 +988,7 @@ sap.ui.define([
 						oConditionGrid[field["ID"]] = oControl;
 						this._updateOperationItems(oTargetGrid, oConditionGrid);
 
-						if (typeof oConditionGridData !== "undefined") {
+						if (oConditionGridData) {
 							var oKeyField = this._getCurrentKeyFieldItem(oConditionGrid.keyField);
 							var aOperations = this._oTypeOperations["default"];
 							if (oKeyField) {
@@ -1026,35 +1025,37 @@ sap.ui.define([
 					oControl = this._createValueField(oCurrentKeyField, field, oConditionGrid);
 					oControl.oTargetGrid = oTargetGrid;
 
-					if (typeof oConditionGridData !== "undefined") {
-						if (typeof oConditionGridData[field["ID"]] !== "undefined") {
-							var sValue = oConditionGridData[field["ID"]];
-							var oValue;
+					if (oConditionGridData && oConditionGridData[field["ID"]]) {
+						var sValue = oConditionGridData[field["ID"]];
+						var oValue;
 
-							if (typeof sValue === "string" && oConditionGrid.oFormatter) {
-								oValue = oConditionGrid.oFormatter.parse(sValue);
+						if (typeof sValue === "string" && oConditionGrid.oFormatter) {
+							oValue = oConditionGrid.oFormatter.parse(sValue);
+						} else {
+							oValue = sValue;
+						}
+
+						if (oControl instanceof sap.m.Select) {
+							if (typeof sValue === "boolean") {
+								oControl.setSelectedIndex(sValue ? 1 : 0);
 							} else {
-								oValue = sValue;
+								oControl.setSelectedItem(oControl.getItemByKey(sValue.toString()));
 							}
-
-							if (oControl instanceof sap.m.Select) {
-								oControl.setSelectedItem( oControl.getItemByKey(sValue.toString()));
+						} else {
+							if (!isNaN(oValue) && oValue !== null && oConditionGrid.oFormatter) {
+								sValue = oConditionGrid.oFormatter.format(oValue);
+								oControl.setValue(sValue);
+								// oCtrl.setValueState(sap.ui.core.ValueState.None);
 							} else {
-								if (!isNaN(oValue) && oValue !== null && oConditionGrid.oFormatter) {
+
+								if (!oValue && sValue && oConditionGrid.oFormatter instanceof sap.ui.core.format.DateFormat) {
+									oValue = new Date(sValue);
 									sValue = oConditionGrid.oFormatter.format(oValue);
 									oControl.setValue(sValue);
-									// oCtrl.setValueState(sap.ui.core.ValueState.None);
 								} else {
-
-									if (!oValue && sValue && oConditionGrid.oFormatter instanceof sap.ui.core.format.DateFormat) {
-										oValue = new Date(sValue);
-										sValue = oConditionGrid.oFormatter.format(oValue);
-										oControl.setValue(sValue);
-									} else {									
-										oControl.setValue(oValue);
-										// oCtrl.setValueState(sap.ui.core.ValueState.Warning);
-										// oCtrl.setValueStateText(this._sValidationDialogFieldMessage);
-									}
+									oControl.setValue(oValue);
+									// oCtrl.setValueState(sap.ui.core.ValueState.Warning);
+									// oCtrl.setValueStateText(this._sValidationDialogFieldMessage);
 								}
 							}
 						}
@@ -1148,7 +1149,7 @@ sap.ui.define([
 			});
 		}
 
-		if (typeof oConditionGridData !== "undefined") {
+		if (oConditionGridData) {
 			var sConditionText = this._getFormatedConditionText(oConditionGridData.operation, oConditionGridData.value1, oConditionGridData.value2, oConditionGridData.exclude, oConditionGridData.keyField, oConditionGridData.showIfGrouped);
 
 			oConditionGridData._oGrid = oConditionGrid;
@@ -1241,7 +1242,7 @@ sap.ui.define([
 		var that = this;
 
 		var params = {
-		    value: oFieldInfo["Value"],
+			value: oFieldInfo["Value"],
 			width: "100%",
 			placeholder: oFieldInfo["Label"],
 			change: function() {
@@ -1256,17 +1257,19 @@ sap.ui.define([
 			case "boolean":
 			case "enum":
 				var aItems = [];
-				var aValues = oCurrentKeyField.values || this._oTypeValues[sCtrlType] || [false, true];
+				var aValues = oCurrentKeyField.values || this._oTypeValues[sCtrlType] || [
+					false, true
+				];
 				aValues.forEach(function(oValue, index) {
 					aItems.push(new sap.ui.core.Item({
-						key: oValue.toString(), //index.toString(),
+						key: oValue.toString(), // index.toString(),
 						text: oValue.toString()
 					}));
 				});
-				
+
 				params = {
 					width: "100%",
-					items: aItems, 
+					items: aItems,
 					change: function() {
 						that._changeField(oConditionGrid);
 					},
@@ -1334,7 +1337,7 @@ sap.ui.define([
 		oCtrl.removeAllItems();
 		for ( var iOperation in aOperations) {
 			var sText = this._oRb.getText("CONDITIONPANEL_OPTION" + sType + aOperations[iOperation]);
-			if (jQuery.sap.startsWith(sText, "CONDITIONPANEL_OPTION") ) {
+			if (jQuery.sap.startsWith(sText, "CONDITIONPANEL_OPTION")) {
 				// when for the speified type the resource does not exist use the normal string resource text
 				sText = this._oRb.getText("CONDITIONPANEL_OPTION" + aOperations[iOperation]);
 			}
@@ -1363,9 +1366,9 @@ sap.ui.define([
 				tooltip: oItem.tooltip ? oItem.tooltip : oItem.text
 			}));
 		}
-		
-		// if we only have a single Keyfield we set the ComboBox control to editable = false   
-		// TODO only for testing oCtrl.setEditable(aItems.length !== 1);		
+
+		// if we only have a single Keyfield we set the ComboBox control to editable = false
+		// TODO only for testing oCtrl.setEditable(aItems.length !== 1);
 	};
 
 	/**
@@ -1501,7 +1504,6 @@ sap.ui.define([
 			oOperation.setSelectedItem(oOperation.getItems()[0]);
 		}
 
-		
 		this._sConditionType = "Filter";
 		if (aOperations[0] === sap.m.P13nConditionOperation.Ascending || aOperations[0] === sap.m.P13nConditionOperation.Descending) {
 			this._sConditionType = "Sort";
@@ -1619,7 +1621,7 @@ sap.ui.define([
 			}
 			oValue2.setVisible(true);
 
-			// workaround: 
+			// workaround:
 			oConditionGrid.insertContent(oValue1, oConditionGrid.getContent().length - 1);
 			oConditionGrid.insertContent(oValue2, oConditionGrid.getContent().length - 1);
 		} else {
@@ -1655,7 +1657,7 @@ sap.ui.define([
 					oValue1.setVisible(true);
 					oValue2.setVisible(false);
 
-					// workaround: 
+					// workaround:
 					oConditionGrid.insertContent(oValue1, oConditionGrid.getContent().length - 1);
 				}
 			}
@@ -1714,12 +1716,14 @@ sap.ui.define([
 		var sCtrlType;
 		if (oCurrentKeyField) {
 			sCtrlType = oCurrentKeyField.type;
-			var aValues = oCurrentKeyField.values || this._oTypeValues[sCtrlType] || [false, true];
+			var aValues = oCurrentKeyField.values || this._oTypeValues[sCtrlType] || [
+				false, true
+			];
 		}
-		
+
 		// update Value1 field control
 		jQuery.proxy(fnFormatFieldValue, this)(oConditionGrid.value1);
-		var oValue1 = this._getValueTextFromField( oConditionGrid.value1); 
+		var oValue1 = this._getValueTextFromField(oConditionGrid.value1);
 		var sValue1 = oValue1;
 		if (oConditionGrid.oFormatter && sValue1) {
 			oValue1 = oConditionGrid.oFormatter.parse(sValue1);
@@ -1728,12 +1732,12 @@ sap.ui.define([
 			}
 		}
 		if (sCtrlType === "boolean") {
-			oValue1 = sValue1 === aValues[1].toString(); 
+			oValue1 = sValue1 === aValues[1].toString();
 		}
 
 		// update Value2 field control
 		jQuery.proxy(fnFormatFieldValue, this)(oConditionGrid.value2);
-		var oValue2 = this._getValueTextFromField( oConditionGrid.value2);
+		var oValue2 = this._getValueTextFromField(oConditionGrid.value2);
 		var sValue2 = oValue2;
 		if (oConditionGrid.oFormatter && sValue2) {
 			oValue2 = oConditionGrid.oFormatter.parse(sValue2);
@@ -1742,7 +1746,7 @@ sap.ui.define([
 			}
 		}
 		if (sCtrlType === "boolean") {
-			oValue2 = sValue2 === aValues[1].toString(); 
+			oValue2 = sValue2 === aValues[1].toString();
 		}
 
 		var bShowIfGrouped = oConditionGrid.showIfGrouped.getSelected();
@@ -1778,7 +1782,7 @@ sap.ui.define([
 		this._enableCondition(oConditionGrid, true);
 
 		sValue = this._getFormatedConditionText(sOperation, sValue1, sValue2, bExclude, sKeyField, bShowIfGrouped);
-		
+
 		var oConditionData = {
 			"value": sValue,
 			"exclude": bExclude,
@@ -1833,8 +1837,7 @@ sap.ui.define([
 			return oControl.getValue();
 		}
 	};
-	
-	
+
 	/**
 	 * update the enabled state for all conditions
 	 * 
@@ -2007,8 +2010,8 @@ sap.ui.define([
 		var value1 = oConditionGrid.value1;
 		var value2 = oConditionGrid.value2;
 
-		var bValue1Empty = value1 && (value1.getVisible() && !this._getValueTextFromField( value1));
-		var bValue2Empty = value2 && (value2.getVisible() && !this._getValueTextFromField( value2));
+		var bValue1Empty = value1 && (value1.getVisible() && !this._getValueTextFromField(value1));
+		var bValue2Empty = value2 && (value2.getVisible() && !this._getValueTextFromField(value2));
 
 		var sOperation = oConditionGrid.operation.getSelectedKey();
 

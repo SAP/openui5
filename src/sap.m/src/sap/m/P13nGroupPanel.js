@@ -235,22 +235,6 @@ sap.ui.define([
 		this._aOperations = null;
 	};
 
-//	P13nGroupPanel.prototype.addItem = function(oItem) {
-//		P13nPanel.prototype.addItem.apply(this, arguments);
-//
-//		var oKeyField = {
-//			key: oItem.getColumnKey(),
-//			text: oItem.getText(),
-//			tooltip: oItem.getTooltip()
-//		};
-//
-//		this._aKeyFields.push(oKeyField);
-//
-//		if (this._oGroupPanel) {
-//			this._oGroupPanel.addKeyField(oKeyField);
-//		}
-//	};
-
 	P13nGroupPanel.prototype.addItem = function(oItem) {
 		P13nPanel.prototype.addItem.apply(this, arguments);
 
@@ -260,43 +244,13 @@ sap.ui.define([
 			tooltip: oItem.getTooltip()
 		};
 
-		if (!this._bKeyFieldsChanged) {
-			setTimeout(jQuery.proxy( function() { 
-				this._bKeyFieldsChanged = false;
-				if (this._oGroupPanel) {
-					this._oGroupPanel.setKeyFields(this._aKeyFields);
-				}
-			}, this), 0);			
-		}
-		this._bKeyFieldsChanged = true;
 		this._aKeyFields.push(oKeyField);
-	};
 
-	P13nGroupPanel.prototype.removeItem = function(oItem) {
-		P13nPanel.prototype.removeItem.apply(this, arguments);
-
-		var foundIndex = -1;
-		this._aKeyFields.some(function(item, index) {
-			if (item.key === oItem.getColumnKey()) {
-				foundIndex = index;
-				return true;
-			}
-		});
-		
-		if (foundIndex != -1) {
-			if (!this._bKeyFieldsChanged) {
-				setTimeout(jQuery.proxy( function() { 
-					this._bKeyFieldsChanged = false;
-					if (this._oGroupPanel) {
-						this._oGroupPanel.setKeyFields(this._aKeyFields);
-					}
-				}, this), 0);			
-			}
-			this._bKeyFieldsChanged = true;
-			this._aKeyFields.splice(foundIndex, 1);
+		if (this._oGroupPanel) {
+			this._oGroupPanel.addKeyField(oKeyField);
 		}
 	};
-	
+
 	P13nGroupPanel.prototype.destroyItems = function() {
 		this.destroyAggregation("items");
 		if (this._oGroupPanel) {
@@ -338,18 +292,19 @@ sap.ui.define([
 		}
 		if (!this._bIgnoreBindCalls) {
 			var aConditions = [];
+			var sModelName = this.getBindingInfo("groupItems").model;
 			this.getGroupItems().forEach(function(oGroupItem_) {
 				// Note: current implementation assumes that the length of sortItems aggregation is equal
 				// to the number of corresponding model items.
 				// Currently the model data is up-to-date so we need to resort to the Binding Context;
 				// the "groupItems" aggregation data - obtained via getGroupItems() - has the old state !
-				var oContext = oGroupItem_.getBindingContext();
+				var oContext = oGroupItem_.getBindingContext(sModelName);
 				var oModelItem = oContext.getObject();
 				aConditions.push({
 					key: oGroupItem_.getKey(),
-					keyField: oModelItem.columnKey,
-					operation: oModelItem.operation,
-					showIfGrouped: oModelItem.showIfGrouped
+					keyField: oModelItem[oGroupItem_.getBinding("columnKey").getPath()],
+					operation: oModelItem[oGroupItem_.getBinding("operation").getPath()],
+					showIfGrouped: oModelItem[oGroupItem_.getBinding("showIfGrouped").getPath()]
 				});
 			});
 			this._oGroupPanel.setConditions(aConditions);
