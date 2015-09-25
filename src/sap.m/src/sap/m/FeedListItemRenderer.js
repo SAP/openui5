@@ -45,7 +45,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		var sMyId = oFeedListItem.getId(), bIsPhone = sap.ui.Device.system.phone;
 	
 		rm.write('<article');
-		rm.writeControlData(oFeedListItem);
 		rm.addClass('sapMFeedListItem');
 	
 		rm.writeClasses();
