@@ -49,12 +49,12 @@
 				</fb:FilterBar>
 				<t:AnalyticalTable visibleRowCountMode="Auto" selectionMode="MultiToggle" rowHeight="32">
 					<t:toolbar>
-						<Toolbar>
+						<OverflowToolbar>
 							<Title text="Title Bar Here"/>
 							<ToolbarSeparator />
 							<var:VariantManagement>
-							  <var:items>
-								<c:Item text="My Better Variant" key="MBV"/>
+								<var:items>
+									<c:Item text="My Better Variant" key="MBV"/>
 								</var:items>
 							</var:VariantManagement>
 							<ToolbarSpacer />
@@ -67,7 +67,7 @@
 							</SegmentedButton>
 							<Button icon="sap-icon://group-2" type="Transparent" />
 							<Button icon="sap-icon://action-settings" type="Transparent" />
-						</Toolbar>
+						</OverflowToolbar>
 					</t:toolbar>
 					<t:columns>
 						<t:AnalyticalColumn />
