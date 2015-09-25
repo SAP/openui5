@@ -13,6 +13,7 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.demo.cart.Component", {
 
 		metadata: {
+			includes : ["css/style.css"],
 			routing: {
 				config: {
 					routerClass: Router,

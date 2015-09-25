@@ -1,6 +1,9 @@
 /*!
  * ${copyright}
  */
+/*
+ global QUnit
+ */
 sap.ui.define([
 		'sap/ui/test/opaQunit',
 		'sap/ui/test/Opa5',
@@ -12,8 +15,8 @@ sap.ui.define([
 	], function (opaTest) {
 		"use strict";
 
-		return {
-			start : function (startup, teardown) {
+	return {
+			start: function (startup, teardown) {
 
 				QUnit.module("Delete Product Journey");
 
@@ -81,7 +84,6 @@ sap.ui.define([
 
 					// Assertions
 					Then.onTheCart.theEditButtonShouldBeDisabled();
-
 					teardown.call(this, Then);
 				});
 

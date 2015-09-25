@@ -5,6 +5,7 @@ sap.ui.define([
 		'sap/ui/demo/cart/test/action/BuyProductJourneyAction',
 		'sap/ui/demo/cart/test/assertion/BuyProductJourneyAssertion'
 	], function (Opa5, DeleteProductJourneyArrangement, BuyProductJourneyArrangement, BuyProductJourneyAction, BuyProductJourneyAssertion) {
+		"use strict";
 
 		return {
 
