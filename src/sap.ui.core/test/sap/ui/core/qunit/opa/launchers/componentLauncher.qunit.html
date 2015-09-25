@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<meta charset="utf-8"/>
+		<title>qUnit Page for sap.ui.test.launchers.componentLauncher</title>
+
+		<script
+			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-resourceroots='{
+			"samples" : "../../../samples"
+			}'>
+		</script>
+
+		<script>
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+			jQuery.sap.require("samples.components.button.Component");
+
+			QUnit.config.autostart = false;
+
+			sap.ui.require([
+					'sap/ui/test/launchers/componentLauncher'
+				], function (componentLauncher) {
+					QUnit.module("Component-Launcher");
+
+					QUnit.test("Should start and teardown the component", function (assert) {
+						var done = assert.async();
+
+						var  oPromise = componentLauncher.start({
+							name: "samples.components.button"
+						});
+
+						oPromise.then(function() {
+							QUnit.assert.ok(document.getElementsByClassName("sapUiOpaComponent").length, "Created component");
+
+							componentLauncher.teardown();
+							QUnit.assert.ok(!document.getElementsByClassName("sapUiOpaComponent").length, "Removed component");
+
+							done();
+						});
+
+					});
+
+					QUnit.test("Should throw an exception after the start was called twice", function (assert) {
+						var done = assert.async();
+
+						var  oPromise =componentLauncher.start({
+							name: "samples.components.button"
+						});
+
+						assert.throws(
+							function() {
+								componentLauncher.start({
+									name: "samples.components.button"
+								});
+							},
+							function(sError) {
+								return sError.toString() === "sap.ui.test.launchers.componentLauncher: Start was called twice without teardown";
+							},
+							"Exception was thrown"
+						);
+
+						oPromise.then(function() {
+							componentLauncher.teardown();
+							QUnit.assert.ok(!document.getElementsByClassName("sapUiOpaComponent").length, "Removed component");
+
+							done();
+						});
+
+					});
+
+					QUnit.test("Should throw an exception after the teardown was called without the start before", function (assert) {
+						assert.throws(
+							function() {
+								componentLauncher.teardown();
+							},
+							function(sError) {
+								return sError.toString() === "sap.ui.test.launchers.componentLauncher: Teardown has been called but there was no start";
+							},
+							"Exception was thrown"
+						);
+
+					});
+
+					QUnit.start();
+
+				});
+		</script>
+	</head>
+
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+
+</html>
