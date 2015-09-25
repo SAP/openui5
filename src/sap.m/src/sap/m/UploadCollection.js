@@ -558,7 +558,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 */
 	UploadCollection.prototype.onBeforeRendering = function() {
 		this._RenderManager = this._RenderManager || sap.ui.getCore().createRenderManager();
-		var i, bItemToBeDeleted, cAitems;
+		var i, cAitems;
 
 		if (!this.getInstantUpload()) {//
 			this._getListHeader(this.aItems.length);
@@ -577,13 +577,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				} else if (this.aItems[i] && this.aItems[i]._status !== UploadCollection._uploadingStatus && this.aItems[i]._percentUploaded === 100 && this.getItems().length === 0) {
 					// Skip this rendering because of model refresh only
 					aUploadingItems.push(this.aItems[i]);
-				} else if (this.aItems[i] && this.aItems[i]._status === UploadCollection._toBeDeletedStatus && this.getItems().length === 0) {
-					// Skip this rendering because of model refresh only
-					bItemToBeDeleted = true;
-					this.aItems.splice(i, 1);
 				}
 			}
-			if (aUploadingItems.length === 0 && !bItemToBeDeleted) {
+			if (aUploadingItems.length === 0) {
+				this.aItems = [];
 				this.aItems = this.getItems();
 			}
 		} else {
