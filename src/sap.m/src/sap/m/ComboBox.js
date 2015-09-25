@@ -210,23 +210,29 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 		ComboBox.prototype._decoratePopover = function(oPopover) {
 			var that = this;
 
+			oPopover._setMinWidth = function(sWidth) {
+				var oPickerDomRef = this.getDomRef();
+
+				if (oPickerDomRef) {
+					oPickerDomRef.style.minWidth = sWidth;
+				}
+			};
+
 			oPopover.open = function() {
 				return this.openBy(that);
 			};
 		};
 
 		/**
-		 * Synchronizes the width of the picker popup with the width of the input field.
+		 * Required adaptations after rendering of the Popover.
 		 *
 		 * @private
-		 * @since 1.30
 		 */
-		ComboBox.prototype._synchronizePickerWidth = function() {
-			var oDomRef = this.getDomRef();
+		ComboBox.prototype.onAfterRenderingPopover = function() {
+			var oPopover = this.getPicker(),
+				sWidth = (this.$().outerWidth() / parseFloat(sap.m.BaseFontSize)) + "rem";
 
-			if (oDomRef) {
-				this.getPicker().setContentWidth((oDomRef.offsetWidth / parseFloat(sap.m.BaseFontSize)) + "rem");
-			}
+			oPopover._setMinWidth(sWidth);
 		};
 
 		/* ----------------------------------------------------------- */
@@ -872,7 +878,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 			// call the hook to add additional content to the list
 			this.addContent();
 
-			sap.ui.Device.resize.attachHandler(this._synchronizePickerWidth, this);
 			fnPickerTypeBeforeOpen && fnPickerTypeBeforeOpen.call(this);
 		};
 
@@ -880,9 +885,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 		 * This event handler is called before the picker popover is opened.
 		 *
 		 */
-		ComboBox.prototype.onBeforeOpenPopover = function() {
-			this._synchronizePickerWidth();
-		};
+		ComboBox.prototype.onBeforeOpenPopover = function() {};
 
 		/**
 		 * This event handler is called after the picker popup is opened.
@@ -918,7 +921,6 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 
 			// remove the active state of the control's field
 			this.removeStyleClass(sap.m.ComboBoxBaseRenderer.CSS_CLASS + "Pressed");
-			sap.ui.Device.resize.detachHandler(this._synchronizePickerWidth, this);
 		};
 
 		/**
