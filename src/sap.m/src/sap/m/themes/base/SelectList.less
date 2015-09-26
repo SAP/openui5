@@ -3,23 +3,23 @@
 /* ============================================= */
 
 /* ------------------------------ */
-/* SelectList commons styles      */
+/* commons styles                 */
 /* ------------------------------ */
 
 .sapMSelectList,
-.sapMSelectListItem {
+.sapMSelectListItemBase {
 	box-sizing: border-box;
 }
 
 /* disabled */
 
 .sapMSelectListDisabled,
-.sapMSelectListItemDisabled {
+.sapMSelectListItemBaseDisabled {
 	pointer-events: none;
 }
 
 /* ------------------------------ */
-/* SelectList                     */
+/* list                           */
 /* ------------------------------ */
 
 .sapMSelectList {
@@ -29,21 +29,50 @@
 	list-style-type: none;
 }
 
+.sapMSelectListTableLayout {
+	display: table;
+	border-collapse: collapse;
+}
+
 /* ------------------------------ */
-/* SelectList Item                */
+/* item                           */
 /* ------------------------------ */
 
-.sapMSelectListItem {
+.sapMSelectListItemBase {
 	outline: none;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
 }
 
-li.sapMSelectListItemInvisible {
+.sapMSelectListItem {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+li.sapMSelectListItemBaseInvisible {
 	display: none;
+}
+
+/* ------------------------------ */
+/* row                            */
+/* ------------------------------ */
+
+.sapMSelectListRow {
+	display: table-row;
+}
+
+/* ------------------------------ */
+/* cell                           */
+/* ------------------------------ */
+
+.sapMSelectListCell {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.sapMSelectListLastCell {
+	text-align: right;
 }
