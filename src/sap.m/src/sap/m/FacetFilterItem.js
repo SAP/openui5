@@ -36,12 +36,12 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			key : {type : "string", group : "Data", defaultValue : null},
 
 			/**
-			 * The text to be displayed for the item.
+			 * Determines the text to be displayed for the item.
 			 */
 			text : {type : "string", group : "Misc", defaultValue : null},
 
 			/**
-			 * Number of objects that match this item in the target data set.
+			 * Defines the number of objects that match this item in the target data set.
 			 * @deprecated Since version 7.20.0.
 			 * Use setCounter instead.
 			 */

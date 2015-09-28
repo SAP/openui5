@@ -31,11 +31,11 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		properties : {
 
 			/**
-			 * The title of the facet. The facet title is displayed on the facet button when the FacetFilter type is set to Simple. It is also displayed as a list item in the facet page of the dialog.
+			 * Defines the title of the facet. The facet title is displayed on the facet button when the FacetFilter type is set to <code>Simple</code>. It is also displayed as a list item in the facet page of the dialog.
 			 */
 			title : {type : "string", group : "Appearance", defaultValue : null},
 			/**
-             * If true, item text wraps when it is too long.
+             * If set to <code>true</code>, the item text wraps when it is too long.
              */
              wordWrap: {type : "boolean", group : "Appearance", defaultValue : false},
 
@@ -47,17 +47,17 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 			multiSelect : {type : "boolean", group : "Behavior", defaultValue : true, deprecated: true},
 
 			/**
-			 * Indicates that the list is displayed as a button when the FacetFilter type is set to Simple.
+			 * Indicates that the list is displayed as a button when the FacetFilter type is set to <code>Simple</code>.
 			 */
 			active : {type : "boolean", group : "Behavior", defaultValue : true},
 
             /**
-             * If true, enable case-insensitive search for OData.
+             * If set to <code>true</code>, enables case-insensitive search for OData.
              */
 			enableCaseInsensitiveSearch: {type : "boolean", group : "Behavior", defaultValue : false, deprecated: false},
 
 			/**
-			 * Number of objects that match this item in the target data set when all filter items are selected.
+			 * Determines the number of objects that match this item in the target data set when all filter items are selected.
 			 */
 			allCount : {type : "int", group : "Appearance", defaultValue : null},
 
@@ -78,7 +78,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 			showRemoveFacetIcon : {type : "boolean", group : "Misc", defaultValue : true},
 
 			/**
-			 * Property to retain the list sequence if it is inactive and made active again.
+			 * Retains the list sequence if it is inactive and made active again.
 			 * @since 1.22.1
 			 */
 			retainListSequence : {type : "boolean", group : "Misc", defaultValue : false},
@@ -107,7 +107,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 					selectedItems : {type : "sap.m.FacetFilterItem[]"},
 
 					/**
-					 * True if the select All checkbox is selected. This will be false if all items are actually selected (every FacetFilterItem.selected == true). In that case selectedItems will contain all selected items.
+					 *  <code>True</code> if the select All checkbox is selected. This will be <code>false</code> if all items are actually selected (every FacetFilterItem.selected == true). In that case selectedItems will contain all selected items.
 					 */
 					allSelected : {type : "boolean"},
 
@@ -134,7 +134,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	};
 
 	/**
-	 * Sets the multiSelect property. Default value is true.
+	 * Sets the multiSelect property (default value is <code>true</code>).
 	 * @param {boolean}	bMultiSelect New value for property multiSelect
 	 * @returns {sap.m.FacetFilterList}	this to allow method chaining
 	 */
@@ -147,8 +147,8 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	};
 
 	/**
-	 * Override to allow only MultiSelect and SingleSelectMaster list modes. If an invalid mode is given
-	 * then the mode will not be changed.
+	 * Overrides to allow only MultiSelect and SingleSelectMaster list modes.
+	 * If an invalid mode is given then the mode will not be changed.
 	 * @param {sap.m.ListMode} mode The list mode
 	 * @public
 	 */
@@ -215,8 +215,8 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 
 	/**
 	 * Returns selected list item.
-	 * When no item is selected, "null" is returned.
-	 * When "multi-selection" is enabled and multiple items
+	 * When no item is selected, <code>null</code> is returned.
+	 * When multi-selection is enabled and multiple items
 	 * are selected, only the up-most selected item is returned.
 	 */
 	FacetFilterList.prototype.getSelectedItem = function() {
@@ -235,7 +235,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 
 	/**
 	 * Removes visible selections of the current selection mode.
-	 * @param {boolean} bAll Set to true to remove all selections
+	 * @param {boolean} bAll Set to <code>true</code> to remove all selections
 	 * @returns {sap.m.ListBase} this pointer for chaining
 	 */
 	FacetFilterList.prototype.removeSelections = function(bAll) {
@@ -250,9 +250,10 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 
 
 	/**
-	 * Returns the keys of the selected elements as an associative array. An empty object is returned if no items are selected.
+	 * Returns the keys of the selected elements as an associative array.
+	 * An empty object is returned if no items are selected.
 	 *
-	 * @returns {object} object with the selected keys
+	 * @returns {object} Object with the selected keys
 
 	 * @public
 	 * @since 1.20.3
@@ -267,7 +268,10 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 
 
 	/**
-	 * Use this method to pre-select FacetFilterItems, such as when restoring FacetFilterList selections from a variant. Keys are cached separately from the actual FacetFilterItems so that they remain even when the physical items are removed by filtering or sorting. If aKeys is undefined, null, or {} (empty object) then all keys are deleted. After this method completes only those items with matching keys will be selected. All other items in the list will be deselected.
+	 * Used to pre-select FacetFilterItems, such as when restoring FacetFilterList selections from a variant.
+	 * Keys are cached separately from the actual FacetFilterItems so that they remain even when the physical items are removed by filtering or sorting.
+	 * If aKeys is <code>undefined</code>, <code>null</code>, or {} (empty object) then all keys are deleted.
+	 * After this method completes, only those items with matching keys will be selected. All other items in the list will be deselected.
 	 *
 	 * @param {object} oAKeys
 	 *         Associative array indicating which FacetFilterItems should be selected in the list. Each property must be set to the value of a FacetFilterItem.key property. Each property value should be set to the FacetFilterItem.text property value. The text value is used to display the FacetFilterItem text when the FacetFilterList button or FacetFilter summary bar is displayed. If no property value is set then the property key is used for the text.
@@ -294,12 +298,12 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 
 
 	/**
-	 * Remove the specified key from the selected keys cache and deselect the item.
+	 * Removes the specified key from the selected keys cache and deselects the item.
 	 *
 	 * @param {string} sKey
-	 *         The key of the selected item to be removed from the cache. If null then the text parameter will be used as the key.
+	 *         The key of the selected item to be removed from the cache. If <code>null</code> then the text parameter will be used as the key.
 	 * @param {string} sText
-	 *         The text of the selected item to be removed from the cache. If the key parameter is null then text will be used as the key.
+	 *         The text of the selected item to be removed from the cache. If the key parameter is <code>null</code> then text will be used as the key.
 	 * @type void
 	 * @public
 	 * @since 1.20.4
@@ -317,7 +321,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 
 
 	/**
-	 * Remove all selected keys from the selected keys cache and deselect all items.
+	 * Removes all selected keys from the selected keys cache and deselects all items.
 	 *
 	 * @type void
 	 * @public
@@ -390,9 +394,9 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	 * the 'items' binding is reset.
 	 *
 	 * ListBase._resetItemsBinding calls removeSelections(), which is also overridden
-	 * by FacetFilterList so that selected keys (i.e. cached selected items) are removed if bAll is true. If this
+	 * by FacetFilterList so that selected keys (for example, cached selected items) are removed if bAll is <code>true</code>. If this
 	 * method was not overridden then selected keys will be removed when items is bound or when the model is set.
-	 * This presents a dilemma for applications that want to load items from a listOpen event handler by setting the model. In
+	 * This presents a dilemma for applications that load items from a listOpen event handler by setting the model. In
 	 * that scenario it would be impossible to restore selections from a variant since selected keys must be set outside
 	 * of the listOpen handler (otherwise the facet button or summary bar would not display pre-selected items until after
 	 * the list was opened and then closed).
@@ -433,7 +437,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 
 
 	/**
-	 * Set this list active if at least one list item is selected, or the all checkbox is selected.
+	 * Sets this list active if at least one list item is selected, or the all checkbox is selected.
 	 *
 	 * @private
 	 */
@@ -447,7 +451,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 
 
 	/**
-	 * Handle both liveChange and search events.
+	 * Handles both liveChange and search events.
 	 *
 	 * @private
 	 */
@@ -465,8 +469,8 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	};
 
 	/**
-	 * Filter list items with the given search value. If an item's text value does not contain the search
-	 * value then it is filtered out of the list.
+	 * Filters list items with the given search value.
+	 * If an item's text value does not contain the search value then it is filtered out of the list.
 	 *
 	 * No search is done if the list is not bound to a model.
 	 *
@@ -540,8 +544,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	};
 
 	/**
-	 * Updates the select all checkbox according to the state of selections in the list and the list active state. This has
-	 * no effect for lists not in MultiSelect mode.
+	 * Updates the select all checkbox according to the state of selections in the list and the list active state(this has no effect for lists not in MultiSelect mode).
 	 *
 	 * @param bItemSelected
 	 *          The selection state of the item currently being selected or deselected
@@ -563,7 +566,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	};
 
 	/**
-	 * Add a key to the selected keys cache.
+	 * Adds a key to the selected keys cache.
 	 *
 	 * @param sKey
 	 * @param sText
@@ -584,12 +587,12 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	};
 
 	/**
-	 * Remove the given key from the selected keys cache. This does not deselect the associated item and therefore does
-	 * not cause onItemSelectedChange to be called.
+	 * Removes the given key from the selected keys cache.
+	 * This does not deselect the associated item and therefore does not cause onItemSelectedChange to be called.
 	 *
-	 * @param sKey The key to remove. If null, then the value of sText will be used as the key.
-	 * @param sText If key is null then this parameter will be used as the key.
-	 * @returns {Boolean} true if the key was removed
+	 * @param sKey The key to remove. If <code>null</code>, then the value of sText will be used as the key
+	 * @param sText If key is <code>null</code> then this parameter will be used as the key
+	 * @returns {Boolean} <code>true</code> if the key was removed
 	 */
 	FacetFilterList.prototype._removeSelectedKey = function(sKey, sText) {
 
@@ -607,13 +610,12 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	};
 
 	/**
-	 * Determine the selected state of the given item. The item's text value will
-	 * be used as the lookup key if the item does not have a key set. This is done
-	 * for convenience to allow applications to only set the item text and have it
-	 * used also as the key.
+	 * Determines the selected state of the given item.
+	 * The item's text value will be used as the lookup key if the item does not have a key set.
+	 * This is done for convenience to allow applications to only set the item text and have it used also as the key.
 	 *
 	 * @param {object} oItem The item to determine if it is selected
-	 * @returns true if the item is selected, false otherwise
+	 * @returns <code>true</code> if the item is selected, <code>false</code> otherwise
 	 * @private
 	 */
 	FacetFilterList.prototype._isItemSelected = function(oItem){
@@ -621,8 +623,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	};
 
 	/**
-	 * For each item key in the selected keys cache, select the matching FacetFilterItem
-	 * present in the items aggregation.
+	 * For each item key in the selected keys cache, selects the matching FacetFilterItem, present in the items aggregation.
 	 *
 	 * @private
 	 */
@@ -633,12 +634,12 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	};
 
 	/**
-	 * This method override runs when setSelected is called from ListItemBase. Here we update
-	 * the selected keys cache based on whether the item is being selected or not. We also
-	 * update the select all checkbox state and list active state based on the selected
-	 * state of all items taken as a whole.
+	 * This method overrides runs when setSelected is called from ListItemBase.
+	 * Here we update the selected keys cache based on whether the item is being selected or not.
+	 * We also update the select all checkbox state and list active state based on the selected state of all items taken as a whole.
+	 *
 	 * @param {object } oItem item that needs to be selected
-	 * @param {boolean} bSelect True if selected
+	 * @param {boolean} bSelect <code>true</code> if selected
 	 */
 	FacetFilterList.prototype.onItemSelectedChange = function(oItem, bSelect) {
 
@@ -656,8 +657,8 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 
 
 	/**
-	 * This method override runs when the list updates its items.
-	 * The reason for the update is given by sReason, which for example can be when the
+	 * This method overrides runs when the list updates its items.
+	 * The reason for the update is given by sReason, which for example, can be when the
 	 * list is filtered or when it grows.
 	 * @param {String} sReason reason for update
 	 */
