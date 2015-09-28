@@ -11,12 +11,12 @@
           "src/testsuite-utils/pom.xml": "1",
           "src/sap.ui.layout/pom.xml": "1",
           "src/testsuite/pom.xml": "1",
-          "src/themelib_sap_goldreflection/pom.xml": "1",
           "src/sap.ui.core/pom.xml": "1",
+          "src/themelib_sap_goldreflection/pom.xml": "1",
           "src/sap.ui.table/pom.xml": "1",
           "pom.xml": "2",
-          "src/themelib_sap_bluecrystal/pom.xml": "1",
           "src/sap.m/pom.xml": "1",
+          "src/themelib_sap_bluecrystal/pom.xml": "1",
           "src/sap.ui.ux3/pom.xml": "1",
           "src/sap.ui.commons/pom.xml": "1"
         }
@@ -45,6 +45,29 @@
         }
       },
       "lastCommitId": "50c1e00828467c17b1f365329e70c191e0e6af0f"
+    },
+    "rel-1.32": {
+      "changes": {
+        "default": {
+          "src/sap.ui.suite/pom.xml": "1",
+          "package.json": "1",
+          "src/sap.ui.unified/pom.xml": "1",
+          "src/sap.ui.demokit/pom.xml": "1",
+          "src/sap.ui.dt/pom.xml": "1",
+          "src/testsuite-utils/pom.xml": "1",
+          "src/sap.ui.layout/pom.xml": "1",
+          "src/testsuite/pom.xml": "1",
+          "src/sap.ui.core/pom.xml": "1",
+          "src/themelib_sap_goldreflection/pom.xml": "1",
+          "src/sap.ui.table/pom.xml": "1",
+          "pom.xml": "2",
+          "src/sap.m/pom.xml": "1",
+          "src/themelib_sap_bluecrystal/pom.xml": "1",
+          "src/sap.ui.ux3/pom.xml": "1",
+          "src/sap.ui.commons/pom.xml": "1"
+        }
+      },
+      "lastCommitId": "3b79891027ff94779d66aa15466c3675069934e0"
     }
   }
 }
