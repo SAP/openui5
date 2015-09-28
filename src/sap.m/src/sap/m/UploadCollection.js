@@ -669,6 +669,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			this._oList.destroy();
 			this._oList = null;
 		}
+		if (this._oFileUploader) {
+			this._oFileUploader.destroy();
+			this._oFileUploader = null;
+		}
 		if (this.oFileName) {
 			this.oFileName.destroy();
 			this.oFileName = null;
