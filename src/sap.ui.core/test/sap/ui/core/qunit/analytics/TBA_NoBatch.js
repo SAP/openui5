@@ -8,7 +8,7 @@ o4aFakeService.addResponse({
 });
 
 o4aFakeService.addResponse({
-	uri: "ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=CostCenter,CostElement,Currency&$top=1&$inlinecount=allpages",
+	uri: "ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=CostCenter,CostElement,Currency&$top=0&$inlinecount=allpages",
 	header: o4aFakeService.headers.JSON,
 	content: "{\"d\":{\"results\":[{\"__metadata\": {\"uri\":\"http://o4aFakeService:8080/ActualPlannedCostsResults(\'23629630858235641\')\",\"type\":\"fake.ActualPlannedCostsResultsType\"},\"CostCenter\":\"100-1000\",\"CostElement\":\"400020\",\"Currency\":\"USD\"}],\"__count\":\"106\"}}"
 });
@@ -26,7 +26,7 @@ o4aFakeService.addResponse({
 });
 
 o4aFakeService.addResponse({
-	uri: "ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=CostCenter,CostElement,Currency&$top=1&$inlinecount=allpages",
+	uri: "ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=CostCenter,CostElement,Currency&$top=0&$inlinecount=allpages",
 	header: o4aFakeService.headers.JSON,
 	content: "{\"d\":{\"results\":[{\"__metadata\": {\"uri\":\"http://o4aFakeService:8080/ActualPlannedCostsResults(\'23629632737276461\')\",\"type\":\"fake.ActualPlannedCostsResultsType\"},\"CostCenter\":\"100-1000\",\"CostElement\":\"400020\",\"Currency\":\"USD\"}],\"__count\":\"106\"}}"
 });
@@ -56,7 +56,7 @@ o4aFakeService.addResponse({
 });
 
 o4aFakeService.addResponse({
-	uri: "ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=CostCenter,CostElement,Currency&$top=1&$inlinecount=allpages",
+	uri: "ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=CostCenter,CostElement,Currency&$top=0&$inlinecount=allpages",
 	header: o4aFakeService.headers.JSON,
 	content: "{\"d\":{\"results\":[{\"__metadata\": {\"uri\":\"http://o4aFakeService:8080/ActualPlannedCostsResults(\'23629639592633061\')\",\"type\":\"fake.ActualPlannedCostsResultsType\"},\"CostCenter\":\"100-1000\",\"CostElement\":\"400020\",\"Currency\":\"USD\"}],\"__count\":\"106\"}}"
 });
@@ -74,7 +74,7 @@ o4aFakeService.addResponse({
 });
 
 o4aFakeService.addResponse({
-	uri: "ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=CostCenter,CostElement,Currency&$filter=(substringof(%27100-%27,CostCenter))&$top=1&$inlinecount=allpages",
+	uri: "ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=CostCenter,CostElement,Currency&$filter=(substringof(%27100-%27,CostCenter))&$top=0&$inlinecount=allpages",
 	header: o4aFakeService.headers.JSON,
 	content: "{\"d\":{\"results\":[{\"__metadata\": {\"uri\":\"http://o4aFakeService:8080/ActualPlannedCostsResults(\'23629641432138051\')\",\"type\":\"fake.ActualPlannedCostsResultsType\"},\"CostCenter\":\"100-1000\",\"CostElement\":\"400020\",\"Currency\":\"USD\"}],\"__count\":\"24\"}}"
 });
@@ -86,7 +86,7 @@ o4aFakeService.addResponse({
 });
 
 o4aFakeService.addResponse({
-	uri: "ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=CostCenter,CostElement,Currency&$top=1&$inlinecount=allpages",
+	uri: "ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=CostCenter,CostElement,Currency&$top=0&$inlinecount=allpages",
 	header: o4aFakeService.headers.JSON,
 	content: "{\"d\":{\"results\":[{\"__metadata\": {\"uri\":\"http://o4aFakeService:8080/ActualPlannedCostsResults(\'23629643925923041\')\",\"type\":\"fake.ActualPlannedCostsResultsType\"},\"CostCenter\":\"100-1000\",\"CostElement\":\"400020\",\"Currency\":\"USD\"}],\"__count\":\"106\"}}"
 });

@@ -5815,26 +5815,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 */
 	Table.prototype.calculateUsedHeight = function($element, $targetElement) {
 		var iUsedLevelHeight = 0;
+		if (!$element || $element.length == 0 || !$targetElement || $element.is($targetElement)) {
+			return iUsedLevelHeight;
+		}
+
 		var elementTop = $element[0].offsetTop;
 		var elementHeight = $element[0].clientHeight;
+
 		// top used space
 		iUsedLevelHeight += elementTop;
 
 		var iUsedHeight = 0;
 		$element.siblings().each( function() {
 			if (this.offsetTop > elementTop) {
-				iUsedHeight = Math.max(this.offsetTop - elementHeight,iUsedHeight);
+				iUsedHeight = Math.max(this.offsetTop - elementHeight, iUsedHeight);
 			}
 		});
 
 		// bottom used space
 		iUsedLevelHeight += iUsedHeight;
-
-		if ($element.is($targetElement)) {
-			return iUsedLevelHeight;
-		} else {
-			return iUsedLevelHeight + this.calculateUsedHeight($element.parent(), $targetElement);
-		}
+		return iUsedLevelHeight + this.calculateUsedHeight($element.parent(), $targetElement);
 	};
 
 	/*

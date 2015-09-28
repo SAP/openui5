@@ -1,0 +1,80 @@
+<mvc:View
+	controllerName="sap.ui.demo.worklist.controller.Worklist"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:semantic="sap.m.semantic">
+
+	<semantic:FullscreenPage
+		id="page"
+		navButtonPress="onNavBack"
+		showNavButton="true"
+		title="{i18n>worklistViewTitle}">
+		<semantic:content>
+			<Table
+				id="table"
+				width="auto"
+				class="sapUiResponsiveMargin"
+				items="{
+					path: '/Objects',
+					sorter: {
+						path: 'Name',
+						descending: false
+						}
+					}"
+				noDataText="{worklistView>/tableNoDataText}"
+				busyIndicatorDelay="{worklistView>/tableBusyDelay}"
+				growing="true"
+				growingScrollToLoad="true"
+				updateFinished="onUpdateFinished">
+
+				<headerToolbar>
+					<Toolbar>
+						<Title id="tableHeader" text="{worklistView>/worklistTableTitle}"/>
+						<ToolbarSpacer />
+						<SearchField
+							id="searchField"
+							tooltip="{i18n>worklistSearchTooltip}"
+							search="onSearch"
+							width="auto">
+						</SearchField>
+					</Toolbar>
+				</headerToolbar>
+
+				<columns>
+					<Column id="nameColumn">
+						<Text text="{i18n>TableNameColumnTitle}" id="nameColumnTitle"/>
+					</Column>
+					<Column id="unitNumberColumn">
+						<Text text="{i18n>TableUnitNumberColumnTitle}" id="unitNumberColumnTitle"/>
+					</Column>
+				</columns>
+
+				<items>
+					<ColumnListItem
+						type="Navigation"
+						press="onPress">
+						<cells>
+							<ObjectIdentifier
+								title="{Name}"/>
+							<ObjectNumber
+								number="{
+									path: 'UnitNumber',
+									formatter: '.formatter.numberUnit'
+								}"
+								unit="{UnitOfMeasure}"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+
+			</Table>
+
+		</semantic:content>
+
+		<semantic:sendEmailAction>
+			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+		</semantic:sendEmailAction>
+
+
+	</semantic:FullscreenPage>
+
+</mvc:View>

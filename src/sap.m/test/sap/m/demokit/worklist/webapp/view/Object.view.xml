@@ -1,0 +1,34 @@
+<mvc:View
+	controllerName="sap.ui.demo.worklist.controller.Object"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:semantic="sap.m.semantic">
+
+	<semantic:FullscreenPage
+		id="page"
+		navButtonPress="onNavBack"
+		showNavButton="true"
+		title="{i18n>objectTitle}"
+		busy="{objectView>/busy}"
+		busyIndicatorDelay="{objectView>/delay}">
+
+		<semantic:content>
+			<ObjectHeader
+				id="objectHeader"
+				title="{Name}"
+				number="{
+							path: 'UnitNumber',
+							formatter: '.formatter.numberUnit'
+				}"
+				numberUnit="{UnitOfMeasure}">
+			</ObjectHeader>
+ 		</semantic:content>
+
+		<semantic:sendEmailAction>
+			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+		</semantic:sendEmailAction>
+
+
+	</semantic:FullscreenPage>
+
+</mvc:View>

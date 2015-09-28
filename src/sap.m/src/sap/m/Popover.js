@@ -387,6 +387,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 					return;
 				}
 
+				var oScrollDomRef = that.getDomRef("scroll");
+
 				// some mobile browser changes the scrollLeft of window after firing resize event
 				// which caused the popover to be positioned at the wrong place.
 				if (!sap.ui.Device.system.desktop) {
@@ -400,7 +402,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				that._restoreScrollPosition();
 
 				//register the content resize handler
-				that._registerContentResizeHandler();
+				that._registerContentResizeHandler(oScrollDomRef);
 			};
 
 			// when popup's close method is called by autoclose handler, the beforeClose event also needs to be fired.
@@ -1134,6 +1136,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			var $this = this.$();
 			var iHeight = $this.outerHeight();
 			var iWidth = $this.outerWidth();
+			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
 
 			var $parent = jQuery(this._getOpenByDomRef());
 			var iOffsetX = this._getOffsetX();
@@ -1173,9 +1176,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 			if (fMaxCoverageHorizontal > fMaxCoverageVertical) {
 				if (fMaxCoverageHorizontal === fLeftCoverage) {
-					this._oCalcedPos = sap.m.PlacementType.Left;
+					this._oCalcedPos = bRtl ? sap.m.PlacementType.Right : sap.m.PlacementType.Left;
 				} else if (fMaxCoverageHorizontal === fRightCoverage) {
-					this._oCalcedPos = sap.m.PlacementType.Right;
+					this._oCalcedPos = bRtl ? sap.m.PlacementType.Left : sap.m.PlacementType.Right;
 				}
 			} else if (fMaxCoverageVertical > fMaxCoverageHorizontal) {
 				if (fMaxCoverageVertical === fTopCoverage) {
@@ -1194,9 +1197,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				} else {
 					// in landscape horizontal is preferred
 					if (fMaxCoverageHorizontal === fLeftCoverage) {
-						this._oCalcedPos = sap.m.PlacementType.Left;
+						this._oCalcedPos = bRtl ? sap.m.PlacementType.Right : sap.m.PlacementType.Left;
 					} else if (fMaxCoverageHorizontal === fRightCoverage) {
-						this._oCalcedPos = sap.m.PlacementType.Right;
+						this._oCalcedPos = bRtl ? sap.m.PlacementType.Left : sap.m.PlacementType.Right;
 					}
 				}
 			}
@@ -1444,20 +1447,17 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		};
 
 		/**
-		 * Checks if there is need from a scrollbar or not.
+		 * Determines whether the horizontal scrollbar is needed.
 		 *
-		 * @param {object} oPosParams Parameters used from the method to calculate the right values
+		 * @param {object} oPosParams Parameters used from the method to calculate the right values.
 		 *
-		 * @returns {boolean} Wheather scrollbar is needed or not
+		 * @returns {boolean} Whether the horizontal scrollbar is needed.
 		 * @private
 		 */
-		Popover.prototype._isScrollbarNeeded = function (oPosParams) {
-			// disable the horizontal scrolling when content inside can fit the container.
-			if (oPosParams._$scrollArea.outerWidth(true) <= oPosParams._$content.width()) {
-				return true;
-			}
+		Popover.prototype._isHorizontalScrollbarNeeded = function (oPosParams) {
 
-			return false;
+			// disable the horizontal scrolling when content inside can fit the container
+			return this.getHorizontalScrolling() && (oPosParams._$scrollArea.outerWidth(true) <= oPosParams._$content.width());
 		};
 
 		/**
@@ -1587,7 +1587,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 			var oPopoverPosition = this._getPopoverPositionCss(oPosParams),
 				oContentSize = this._getContentDimensionsCss(oPosParams),
-				bIsScrollbarNeeded = this._isScrollbarNeeded(oPosParams);
+				bHorizontalScrollbarNeeded = this._isHorizontalScrollbarNeeded(oPosParams);
 
 			// Reposition popover
 			$popover.css(oPopoverPosition);
@@ -1596,7 +1596,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			$content.css(oContentSize);
 
 			// Enable the scrollbar, if necessary
-			if (bIsScrollbarNeeded) {
+			if (bHorizontalScrollbarNeeded) {
 				$scrollArea.css("display", "block");
 			}
 
@@ -1605,6 +1605,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				var iArrowOffset = this._getArrowOffsetCss(sCalculatedPlacement, oPosParams),
 					sArrowPositionClass = this._getArrowPositionCssClass(sCalculatedPlacement);
 
+				// Remove old position of the arrow and add the new one
+				$arrow.removeAttr("style");
 				$arrow.css(iArrowOffset);
 
 				// Add position class to the arrow
@@ -1805,9 +1807,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			}
 		};
 
-		Popover.prototype._registerContentResizeHandler = function () {
+		Popover.prototype._registerContentResizeHandler = function(oScrollDomRef) {
 			if (!this._sResizeListenerId) {
-				this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef("scroll"), this._fnOrientationChange);
+				this._sResizeListenerId = sap.ui.core.ResizeHandler.register(oScrollDomRef || this.getDomRef("scroll"), this._fnOrientationChange);
 			}
 		};
 

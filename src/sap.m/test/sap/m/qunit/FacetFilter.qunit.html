@@ -128,63 +128,69 @@
 		oPopover = oFF._getPopover();
 		ok(oPopover.getFooter(), "Popover should contain the OK button in the footer");
 		
-		sap.ui.Device.browser.internet_explorer < 10
+//		sap.ui.Device.browser.internet_explorer < 10
 		ok(oPopover.getContentWidth("30%"),"Popover width set to 30% for IE");
 		
 		oFF.destroy();
 	});
-	
-	asyncTest("FacetFilter._openPopover", function() {
-		
-		var oFF = new sap.m.FacetFilter();
-		var oFFL = new sap.m.FacetFilterList();
-		
-		oFFL.setWordWrap(true);
-		
-		oFF.addList(oFFL);
-		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
-		
-		var oPopover = oFF._getPopover();
-		oPopover.attachEventOnce("afterOpen", function() {
-			
-			start();
-			ok(oPopover.isOpen(), "Popover should be open");
-			ok(oPopover.getContentWidth("30%"),"Popover width should be 30% if wordwrap is set to true");
-			
-			destroyFF(oFF);
-		});
-		
-		var oButton = oFF._getButtonForList(oFFL);
-		oFF._openPopover(oPopover, oButton);
-		
-			
-				              
-	});
-	
-	asyncTest("FacetFilter._closePopover", function() {
-		
-		var oFF = new sap.m.FacetFilter();
-		var oFFL = new sap.m.FacetFilterList();
-		oFF.addList(oFFL);
-		oFF.placeAt("content");
-		sap.ui.getCore().applyChanges();
-		
-		var oPopover = oFF._getPopover();
-		oPopover.attachEventOnce("afterOpen", function() {
-			
-			oPopover.attachEventOnce("afterClose", function() {
 
+	if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
+		asyncTest("FacetFilter._openPopover", function() {
+			
+			var oFF = new sap.m.FacetFilter();
+			var oFFL = new sap.m.FacetFilterList();
+			
+			oFFL.setWordWrap(true);
+			
+			oFF.addList(oFFL);
+			oFF.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			
+			var oPopover = oFF._getPopover();
+			oPopover.attachEventOnce("afterOpen", function() {
+				
 				start();
-				ok(!oPopover.isOpen(), "Popover should be closed");		
-				ok(!oPopover.getSubHeader(), "Popover subheader should be destroyed");
-				equal(oPopover.getContent().length, 0, "Popover content should be destroyed");
-				destroyFF(oFF);				
+				ok(oPopover.isOpen(), "Popover should be open");
+				ok(oPopover.getContentWidth("30%"),"Popover width should be 30% if wordwrap is set to true");
+				
+				destroyFF(oFF);
 			});
-			oFF._closePopover();
+			
+			var oButton = oFF._getButtonForList(oFFL);
+			oFF._openPopover(oPopover, oButton);
+			
+				
+					              
 		});
-		openPopover(oFF, 0);
-	});	
+	}
+	
+	if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
+		asyncTest("FacetFilter._closePopover", function() {
+			
+			var oFF = new sap.m.FacetFilter();
+			var oFFL = new sap.m.FacetFilterList();
+			oFF.addList(oFFL);
+			oFF.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			
+			var oPopover = oFF._getPopover();
+			oPopover.attachEventOnce("afterOpen", function() {
+				
+				oPopover.attachEventOnce("afterClose", function() {
+	
+					start();
+					ok(!oPopover.isOpen(), "Popover should be closed");	
+					if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
+						ok(!oPopover.getSubHeader(), "Popover subheader should be destroyed");
+					}
+					equal(oPopover.getContent().length, 0, "Popover content should be destroyed");
+					destroyFF(oFF);				
+				});
+				oFF._closePopover();
+			});
+			openPopover(oFF, 0);
+		});
+	}
 	
 	test("FacetFilter._moveListToDisplayContainer, _restoreListFromDisplayContainer", function() {
 		
@@ -1113,7 +1119,7 @@
 				oCheckBox.setSelected(false);
 				
 				// Verify the select all checkbox state is set correctly after search
-				if (!sap.ui.Device.browser.internet_explorer) {
+				if (!sap.ui.Device.browser.msie) {
 	 				oFFL._search("c");
 					oFFL.getItems()[0].setSelected(true);
 					strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected"); 
@@ -1123,7 +1129,7 @@
 				strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
 
 				// Verify the select all checkbox state remains unchanged after search
-				if (!sap.ui.Device.browser.internet_explorer) { 
+				if (!sap.ui.Device.browser.msie) { 
 	 				oFFL._search("a");
 					oFFL.getItems()[0].setSelected(false);
 					strictEqual(oCheckBox.getSelected(), false, "Select all checkbox should not be selected");
@@ -1779,60 +1785,62 @@
 			oResetButton.firePress();
 		});
 		
-		asyncTest("FacetFilter click another button when popover is opened", function() {
-			var oFFL1ListCloseEvent = null, oFFL2ListOpenEvent=null;
-			var oFF = new sap.m.FacetFilter();
-			var oFFL1 = new sap.m.FacetFilterList({
-				title : "List1"
-			});
-			var oFFL2 = new sap.m.FacetFilterList({
-				title : "List2"
-			});
-			oFF.addList(oFFL1);
-			oFF.addList(oFFL2);
-			
-			oFF.placeAt("content");
-			sap.ui.getCore().applyChanges();
-
-			var oPopover = oFF._getPopover();
-			// click another button after the first popover is opened
-			oPopover.attachEventOnce("afterOpen", function(oEvent) {
+		if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
+			asyncTest("FacetFilter click another button when popover is opened", function() {
+				var oFFL1ListCloseEvent = null, oFFL2ListOpenEvent=null;
+				var oFF = new sap.m.FacetFilter();
+				var oFFL1 = new sap.m.FacetFilterList({
+					title : "List1"
+				});
+				var oFFL2 = new sap.m.FacetFilterList({
+					title : "List2"
+				});
+				oFF.addList(oFFL1);
+				oFF.addList(oFFL2);
 				
-				openPopover(oFF, 1);
-				oFF._closePopover();
-			});
-			
-			// timeout error will appear if oFFL2.listOpen is not called 
-			
-			// mark the listClose event is called
-			oFFL1.attachEventOnce("listClose", function(oEvent) {
-				// fail if the oFFL2.listOpen was called before
-				ok(!oFFL2ListOpenEvent, 'oFFL2.listOpen should not be called before oFFL1.listClose');
-				if (oFFL2ListOpenEvent) {
-					start();
-					destroyFF(oFF);
-				} else {
-					oFFL1ListCloseEvent = oEvent;
-				}
-			});
-			
-			// check that the prevoius list was closed before
-			oFFL2.attachEventOnce("listOpen", function(oEvent) {
-				// fail if the oFFL1.listClose wasn't called
-				ok(oFFL1ListCloseEvent, "oFFL1.listClose should be called before oFFL2.listOpen");
-				if (oFFL1ListCloseEvent) {					
-					var oPopover = oFF._getPopover();
-					oPopover.attachEventOnce("afterOpen", function(oEvent) {
+				oFF.placeAt("content");
+				sap.ui.getCore().applyChanges();
+	
+				var oPopover = oFF._getPopover();
+				// click another button after the first popover is opened
+				oPopover.attachEventOnce("afterOpen", function(oEvent) {
+					
+					openPopover(oFF, 1);
+					oFF._closePopover();
+				});
+				
+				// timeout error will appear if oFFL2.listOpen is not called 
+				
+				// mark the listClose event is called
+				oFFL1.attachEventOnce("listClose", function(oEvent) {
+					// fail if the oFFL2.listOpen was called before
+					ok(!oFFL2ListOpenEvent, 'oFFL2.listOpen should not be called before oFFL1.listClose');
+					if (oFFL2ListOpenEvent) {
 						start();
 						destroyFF(oFF);
-					});
-				} else {
-					oFFL2ListOpenEvent = oEvent;
-				}
+					} else {
+						oFFL1ListCloseEvent = oEvent;
+					}
+				});
+				
+				// check that the prevoius list was closed before
+				oFFL2.attachEventOnce("listOpen", function(oEvent) {
+					// fail if the oFFL1.listClose wasn't called
+					ok(oFFL1ListCloseEvent, "oFFL1.listClose should be called before oFFL2.listOpen");
+					if (oFFL1ListCloseEvent) {					
+						var oPopover = oFF._getPopover();
+						oPopover.attachEventOnce("afterOpen", function(oEvent) {
+							start();
+							destroyFF(oFF);
+						});
+					} else {
+						oFFL2ListOpenEvent = oEvent;
+					}
+				});
+				
+				openPopover(oFF, 0);
 			});
-			
-			openPopover(oFF, 0);
-		});
+		}
 
 		module("List Container Rendering");
 
@@ -2889,8 +2897,10 @@
 
 			oFFL.setMode(sap.m.ListMode.SingleSelectMaster);
 
-			oFFL._addSelectedKey();
-			strictEqual(Object.getOwnPropertyNames(oFFL._oSelectedKeys).length, 0, "Undefined item is not added");
+			if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 9)) {
+				oFFL._addSelectedKey();
+				strictEqual(Object.getOwnPropertyNames(oFFL._oSelectedKeys).length, 0, "Undefined item is not added");
+			}
 
 			oFFL._addSelectedKey(undefined, "test");
 			strictEqual(Object.getOwnPropertyNames(oFFL._oSelectedKeys).length, 1, "Items without the keys are added");

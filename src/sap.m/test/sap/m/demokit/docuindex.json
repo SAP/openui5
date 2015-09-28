@@ -16,27 +16,36 @@
 		"links": [
 			{
 				"text": "Shopping Cart",
-				"ref": "test-resources/sap/m/demokit/sample/ShoppingCart/webapp/index.html",
+				"ref": "test-resources/sap/m/demokit/cart/index.html",
+				"config": "test-resources/sap/m/demokit/cart/demoapp.json",
 				"icon": "sapmdemo/cart",
 				"desc": "The classic business process of finding & ordering products"
 			},
 			{
 				"text": "Hello World",
-				"ref": "test-resources/sap/m/demokit/sample/HelloWorld/index.html",
+				"ref": "test-resources/sap/m/demokit/helloworld/index.html",
+				"config": "test-resources/sap/m/demokit/helloworld/demoapp.json",
 				"icon": "sapmdemo/helloworld",
 				"desc": "This is where it all starts when developing with UI5"
 			},
 			{
 				"text": "Worklist",
-				"ref": "test-resources/sap/m/demokit/sample/Worklist/webapp/test/testOpenUI5Service.html",
+				"ref": "test-resources/sap/m/demokit/worklist/webapp/test/testOpenUI5Service.html",
+				"config": "test-resources/sap/m/demokit/worklist/demoapp.json",
 				"icon": "task",
 				"desc": "Best-practice starting point for a worklist-style app"
 			},
 			{
-				"text": "Downloads",
-				"ref": "explored.html#/entity/sap.m.demo.Apps/samples",
+				"text": "Manage Products",
+				"ref": "test-resources/sap/m/demokit/tutorial/worklist/06/webapp/test/testService.html",
 				"icon": "task",
-				"desc": "Download our Demo Apps here"
+				"desc": "This app is the final result of the 'Worklist App Tutorial'"
+			},
+			{
+				"text": "Bulletin Board",
+				"ref": "test-resources/sap/m/demokit/tutorial/testing/14/webapp/test/testService.html",
+				"icon": "task",
+				"desc": "This worklist-style app is the final result of the 'Testing Tutorial'"
 			}
 		]
 	},
@@ -969,7 +978,9 @@
 			"Routing with Params",
 			"Routing Back and History",
 			"Custom Controls",
-			"Responsiveness and Device Adaptation"
+			"Responsiveness",
+			"Device Adaptation",
+			"Content Density"
 		  ]
 		},
 		{
@@ -1012,17 +1023,6 @@
 			"Adjusting the object view",
 			"Adding a comments section"
 		  ]
-		},
-		{
-			"id" : "sap.m.demo.Apps",
-			"name" : "Demo Apps",
-			"category" : "Application",
-			"since" : "1.11",
-			"samples" : [
-				"sap.m.sample.HelloWorld",
-				"sap.m.sample.ShoppingCart",
-				"sap.m.sample.Worklist"
-			]
 		}
 	  ],
 	  "samples": [
@@ -1899,7 +1899,7 @@
 		{
 		  "id": "sap.m.sample.UploadCollectionForPendingUpload",
 		  "name": "Upload Collection - Upload Pending",
-		  "description": "With this UploadCollection scenario, you can select an attachment and add it to the upload list first. You can select another one if required. In a second step, you can upload the selected files. The application triggers the upload with an event."
+		  "description": "With this UploadCollection scenario, you can select single or multiple files and add them to the upload list first. In a second step, the application can upload the selected files by calling the upload() function."
 		},
 		{
 		  "id": "sap.m.sample.StandardMarginsAll",
@@ -1990,21 +1990,6 @@
 		  "id": "sap.m.sample.DraftIndicator",
 		  "name": "Draft Indicator",
 		  "description": "The Draft Indicator shows that eighter currently a draft is saving or that it is already saved. It does not block the current UI screen so other operations could be triggered in parallel."
-		},
-		{
-		  "id": "sap.m.sample.ShoppingCart",
-		  "name": "Shopping Cart",
-		  "description": "The classic business process of finding & ordering products"
-		},
-		{
-			"id": "sap.m.sample.HelloWorld",
-			"name": "Hello World",
-			"description": "This is where it all starts when developing with UI5"
-		},
-		{
-			"id": "sap.m.sample.Worklist",
-			"name": "Worklist",
-			"description": "Simple starting point for a worklist-style app according to the best practices"
 		}
 	  ]
 	}

@@ -1389,13 +1389,13 @@
 			oPopover.destroy();
 		});
 
-		test("_isScrollbarNeeded returns false if scrollbar is not needed", function () {
+		test("_isHorizontalScrollbarNeeded returns false if scrollbar is not needed", function () {
 			var bNeededScrollbar,
 					oPopover = new sap.m.Popover(),
 					stubOuterWidth = sinon.stub(jQuery.fn, "outerWidth").returns(500),
 					stubWidth = sinon.stub(jQuery.fn, "width").returns(400);
 
-			bNeededScrollbar = oPopover._isScrollbarNeeded({
+			bNeededScrollbar = oPopover._isHorizontalScrollbarNeeded({
 				_$scrollArea: jQuery(),
 				_$content: jQuery()
 			});
@@ -1407,13 +1407,13 @@
 			oPopover.destroy();
 		});
 
-		test("_isScrollbarNeeded returns true if scrollbar is needed", function () {
+		test("_isHorizontalScrollbarNeeded returns true if scrollbar is needed", function () {
 			var bNeededScrollbar,
 					oPopover = new sap.m.Popover(),
 					stubOuterWidth = sinon.stub(jQuery.fn, "outerWidth").returns(400),
 					stubWidth = sinon.stub(jQuery.fn, "width").returns(500);
 
-			bNeededScrollbar = oPopover._isScrollbarNeeded({
+			bNeededScrollbar = oPopover._isHorizontalScrollbarNeeded({
 				_$scrollArea: jQuery(),
 				_$content: jQuery()
 			});

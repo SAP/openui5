@@ -820,6 +820,101 @@
 		});
 	});
 	
+	asyncTest("test setProperty on complex Types (internal)",function(){
+		var oModel = initModel(sURI, {useBatch : true});
+		oModel.attachMetadataLoaded(function(){
+			// create dummy testdata
+			oModel.oData = { "Suppliers(0)" : {
+					Name : "xy",
+					Address : {
+						City: "Boston",
+						Street: "140th",
+						Plz : {
+							code: 1,
+							number: 22234
+						}
+					},
+					Products : {
+						__deferred: "Uri"
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Suppliers(0)",
+						type : "ODataDemo.Supplier"	
+					}
+				},
+				"Products(0)" : {
+					Name :"Beef",
+					Supplier : {
+						__ref: "Suppliers(0)"
+					},
+					"__metadata":{
+						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Products(0)",
+						type : "ODataDemo.Product"	
+					}
+				}
+			};
+			oModel.setProperty("/Suppliers(0)/Name", "blabla");
+			equal(oModel.getProperty("/Suppliers(0)/Name"), "blabla", "set Property name check");
+			oModel.setProperty("/Suppliers(0)/temp", "temp");
+			equal(oModel.getProperty("/Suppliers(0)/temp"), "temp", "set Property create non existent property");
+			oModel.setProperty("/Suppliers(0)/Address/Street", "150th");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "150th", "set Property modify complex type property check");
+			oModel.setProperty("/Suppliers(0)/Address/notExist", "1337");
+			equal(oModel.getProperty("/Suppliers(0)/Address/notExist"), "1337", "set Property create new property in complex type");
+			oModel.setProperty("/Suppliers(0)/Address/Plz/code", 3);
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/code"), 3, "set Property modify complex type in complex type property check");
+			oModel.setProperty("/Suppliers(0)/Address/Plz/notExist2", "337");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/notExist2"), "337", "set Property create new property in complex type");
+			oModel.setProperty("/Suppliers(0)/Address/", {
+				City: "Berlin",
+				Street: "Dorfgasse",
+				Plz : {
+					code: 4,
+					number: 12345
+				}
+			});
+			equal(oModel.getProperty("/Suppliers(0)/Address/City"), "Berlin", "set Property with complete complex type data structure");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "Dorfgasse", "set Property with complete complex type data structure");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/code"), 4, "set Property with complete complex type data structure");
+			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/number"), 12345, "set Property with complete complex type data structure");
+			var iCount = 0;
+			jQuery.each(oModel.getProperty("/Suppliers(0)/Address"), function(i, oValue){
+				iCount++;
+			});
+			equal(iCount, 3, "number of properties in complex type");
+			iCount = 0;
+			jQuery.each(oModel.getProperty("/Suppliers(0)/Address/Plz"), function(i, oValue){
+				iCount++;
+			});
+			equal(iCount, 2, "number of properties in sub complex type");
+			
+			oModel.setProperty("/Products(0)/Supplier/Name", "Juergen");
+			equal(oModel.getProperty("/Products(0)/Supplier/Name"), "Juergen", "set Property on expanded nav property");
+			oModel.setProperty("/Products(0)/Supplier/Address/Street", "GatterStreet");
+			equal(oModel.getProperty("/Products(0)/Supplier/Address/Street"), "GatterStreet", "set Property on expanded nav property with complex type");
+			
+			start();
+		});
+	});
+	
+	asyncTest("createEntry with complex types wich have namespace with . characters", function() {
+		var oModel = initModel(sURI, {metadataUrlParams : {test: "complex"}});
+		oModel.metadataLoaded().then(function() {
+			var oContext = oModel.createEntry("BusinessPartnerSet");
+			ok(oContext, "context should be created");
+			var oData = oContext.getObject();
+			ok(oData, " check context data");
+			ok(oData.Address, " check context data");
+			ok(oData.Address.hasOwnProperty('AddressType'), " check context data");
+			ok(oData.Address.hasOwnProperty('Building'), " check context data");
+			ok(oData.Address.hasOwnProperty('City'), " check context data");
+			ok(oData.Address.hasOwnProperty('Country'), " check context data");
+			ok(oData.Address.hasOwnProperty('Street'), " check context data");
+			oModel.destroy();
+			start();
+		}.bind(this))
+	});
+	
 	asyncTest("metadata check", function(){
 		
 		var oModel = initModel(sURI, {json:false});
@@ -967,6 +1062,83 @@
 			equal(aHeaders['myCustomHeader1'], "666", "model check custom header");
 			equal(aHeaders['MyCustomHeader2'], "blubb", "model check custom header");
 			equal(aHeaders['TesT'], "new Header", "model check custom header");
+		});
+	});
+	
+	QUnit.test("header content-type test for GET JSON", function(){
+		var done = assert.async();
+		cleanServiceDataCache();
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		var oModel = initModel(sURI);
+		
+		oModel.metadataLoaded().then(function() {
+
+			oModel.read("/Categories", {
+				success: function() {
+					equal(spy.args[1][0].headers['Accept'], "application/json", "spy check header");
+					equal(spy.args[1][0].headers['Content-Type'], undefined, "there should be no content type header for GET requests");
+					OData.defaultHttpClient.request.restore();
+					done();
+				}
+			});
+		});
+	});
+	
+	QUnit.test("header content-type test for POST JSON", function(){
+		var done = assert.async();
+		cleanServiceDataCache();
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		var oModel = initModel(sURI, {tokenHandling: false});
+		
+		oModel.metadataLoaded().then(function() {
+
+			oModel.create("/Categories", {}, {
+				success: function() {
+					equal(spy.args[1][0].headers['Accept'], "application/json", "spy check header");
+					equal(spy.args[1][0].headers['Content-Type'], "application/json", "there should be a content type header for POST requests");
+					OData.defaultHttpClient.request.restore();
+					done();
+				}
+			});
+		});
+	});
+
+	
+	QUnit.test("header content-type test for GET xml", function(){
+		var done = assert.async();
+		cleanServiceDataCache();
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		var oModel = initModel(sURI, {json :false});
+		
+		oModel.metadataLoaded().then(function() {
+
+			oModel.read("/Categories", {
+				success: function() {
+					equal(spy.args[1][0].headers['Accept'], "application/atom+xml,application/atomsvc+xml,application/xml", "spy check header");
+					equal(spy.args[1][0].headers['Content-Type'], undefined, "there should be no content type header for GET requests");
+					OData.defaultHttpClient.request.restore();
+					done();
+				}
+			});
+		});
+	});
+	
+	QUnit.test("header content-type test for POST xml", function(){
+		var done = assert.async();
+		cleanServiceDataCache();
+		var spy = sinon.spy(OData.defaultHttpClient, "request");
+		var oModel = initModel(sURI, {json :false, tokenHandling: false});
+		
+		oModel.metadataLoaded().then(function() {
+
+			oModel.create("/Categories", {}, {
+				success: function() {
+					equal(spy.args[1][0].headers['Accept'], "application/atom+xml,application/atomsvc+xml,application/xml", "spy check header");
+					equal(spy.args[1][0].headers['Content-Type'], "application/atom+xml", "there should be a content type header for POST requests");
+					OData.defaultHttpClient.request.restore();
+					done();
+				}
+			});
 		});
 	});
 
@@ -2307,7 +2479,7 @@
 
 	module("Metamodel binding", {
 		setup: function() {
-			this.oModel = initModel(sURI);
+			this.oModel = initModel(sURI, {json: false});
 		},
 		teardown: function() {
 			this.oModel.destroy();
@@ -2338,99 +2510,47 @@
 		}.bind(this))
 	});
 	
-	asyncTest("createEntry with complex types wich have namespace with . characters", function() {
-		var oModel = initModel(sURI, {metadataUrlParams : {test: "complex"}});
-		oModel.metadataLoaded().then(function() {
-			var oContext = oModel.createEntry("BusinessPartnerSet");
-			ok(oContext, "context should be created");
-			var oData = oContext.getObject();
-			ok(oData, " check context data");
-			ok(oData.Address, " check context data");
-			ok(oData.Address.hasOwnProperty('AddressType'), " check context data");
-			ok(oData.Address.hasOwnProperty('Building'), " check context data");
-			ok(oData.Address.hasOwnProperty('City'), " check context data");
-			ok(oData.Address.hasOwnProperty('Country'), " check context data");
-			ok(oData.Address.hasOwnProperty('Street'), " check context data");
-			oModel.destroy();
-			start();
-		}.bind(this))
-	});
-	
-	asyncTest("test setProperty on complex Types (internal)",function(){
-		var oModel = initModel(sURI, {useBatch : true});
-		oModel.attachMetadataLoaded(function(){
-			// create dummy testdata
-			oModel.oData = { "Suppliers(0)" : {
-					Name : "xy",
-					Address : {
-						City: "Boston",
-						Street: "140th",
-						Plz : {
-							code: 1,
-							number: 22234
-						}
-					},
-					Products : {
-						__deferred: "Uri"
-					},
-					"__metadata":{
-						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Suppliers(0)",
-						type : "ODataDemo.Supplier"	
-					}
-				},
-				"Products(0)" : {
-					Name :"Beef",
-					Supplier : {
-						__ref: "Suppliers(0)"
-					},
-					"__metadata":{
-						uri : "http://test:8080/services.odata.org/V3/OData/OData.svc/Products(0)",
-						type : "ODataDemo.Product"	
-					}
-				}
-			};
-			oModel.setProperty("/Suppliers(0)/Name", "blabla");
-			equal(oModel.getProperty("/Suppliers(0)/Name"), "blabla", "set Property name check");
-			oModel.setProperty("/Suppliers(0)/temp", "temp");
-			equal(oModel.getProperty("/Suppliers(0)/temp"), "temp", "set Property create non existent property");
-			oModel.setProperty("/Suppliers(0)/Address/Street", "150th");
-			equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "150th", "set Property modify complex type property check");
-			oModel.setProperty("/Suppliers(0)/Address/notExist", "1337");
-			equal(oModel.getProperty("/Suppliers(0)/Address/notExist"), "1337", "set Property create new property in complex type");
-			oModel.setProperty("/Suppliers(0)/Address/Plz/code", 3);
-			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/code"), 3, "set Property modify complex type in complex type property check");
-			oModel.setProperty("/Suppliers(0)/Address/Plz/notExist2", "337");
-			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/notExist2"), "337", "set Property create new property in complex type");
-			oModel.setProperty("/Suppliers(0)/Address/", {
-				City: "Berlin",
-				Street: "Dorfgasse",
-				Plz : {
-					code: 4,
-					number: 12345
-				}
-			});
-			equal(oModel.getProperty("/Suppliers(0)/Address/City"), "Berlin", "set Property with complete complex type data structure");
-			equal(oModel.getProperty("/Suppliers(0)/Address/Street"), "Dorfgasse", "set Property with complete complex type data structure");
-			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/code"), 4, "set Property with complete complex type data structure");
-			equal(oModel.getProperty("/Suppliers(0)/Address/Plz/number"), 12345, "set Property with complete complex type data structure");
-			var iCount = 0;
-			jQuery.each(oModel.getProperty("/Suppliers(0)/Address"), function(i, oValue){
-				iCount++;
-			});
-			equal(iCount, 3, "number of properties in complex type");
-			iCount = 0;
-			jQuery.each(oModel.getProperty("/Suppliers(0)/Address/Plz"), function(i, oValue){
-				iCount++;
-			});
-			equal(iCount, 2, "number of properties in sub complex type");
+	asyncTest("Metamodel binding refresh after metamodel load", function() {
+		var oPropertyBinding, oListBinding, oMetaBindingRelative, oMetaBindingAbsolute,
+			propertySpy, listSpy, metaRelativeSpy, metaAbsoluteSpy;
+		
+		this.oModel.createBindingContext("/Categories(7)", null, {expand: "Products"}, function(oContext) {
+			oPropertyBinding = this.oModel.bindProperty("CategoryName", oContext);
+			oPropertyBinding.attachChange(function(){});
+			oPropertyBinding.initialize();
+			oListBinding = this.oModel.bindList("Products", oContext);
+			oListBinding.attachChange(function(){});
+			oListBinding.initialize();
 			
-			oModel.setProperty("/Products(0)/Supplier/Name", "Juergen");
-			equal(oModel.getProperty("/Products(0)/Supplier/Name"), "Juergen", "set Property on expanded nav property");
-			oModel.setProperty("/Products(0)/Supplier/Address/Street", "GatterStreet");
-			equal(oModel.getProperty("/Products(0)/Supplier/Address/Street"), "GatterStreet", "set Property on expanded nav property with complex type");
-			
-			start();
-		});
+			// createBindingContext callback is executed before checkUpdate, so wait for RequestCompleted
+			this.oModel.attachRequestCompleted(function() {
+				propertySpy = sinon.spy(oPropertyBinding, "checkUpdate");
+				listSpy = sinon.spy(oListBinding, "checkUpdate");
+				
+				oMetaBindingRelative = this.oModel.bindProperty("##name", oContext);
+				oMetaBindingRelative.attachChange(function(){});
+				oMetaBindingRelative.initialize();
+				metaRelativeSpy = sinon.spy(oMetaBindingRelative, "checkUpdate");
+
+				oMetaBindingAbsolute = this.oModel.bindProperty("/Categories(7)/##name");
+				oMetaBindingAbsolute.attachChange(function(){});
+				oMetaBindingAbsolute.initialize();
+				metaAbsoluteSpy = sinon.spy(oMetaBindingAbsolute, "checkUpdate");
+				
+				// Metamodel bindings trigger the creation of the metamodel, so we can wait for loaded() here
+				this.oModel.getMetaModel().loaded().then(function() {
+					ok(!propertySpy.called, "Property binding checkUpdate not called");
+					equal(oPropertyBinding.getValue(), "Produce", "Property value returns correct value");
+					ok(!listSpy.called, "List binding checkUpdate not called");
+					equal(oListBinding.getContexts().length, 5, "List binding returns right amount of contexts");
+					ok(metaRelativeSpy.calledOnce, "Relative metamodel binding checkUpdate called once");
+					equal(oMetaBindingRelative.getValue(), "Category", "Relative metamodel binding returns correct value");
+					ok(metaAbsoluteSpy.calledOnce, "Absolute metamodel binding checkUpdate called once");
+					equal(oMetaBindingAbsolute.getValue(), "Category", "Absolute metamodel binding returns correct value");
+					start();
+				});
+			}.bind(this));
+		}.bind(this));
 	});
 	</script>
 

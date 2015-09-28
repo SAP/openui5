@@ -51,6 +51,17 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 		jQuery.sap.assert(null, "Composite Binding has no context!");
 		return null;
 	};
+	
+	CompositeBinding.prototype.isResolved = function() {
+		var bResolved = false;
+		jQuery.each(this.aBindings, function(i, oBinding) {
+			bResolved = oBinding.isResolved();
+			if (!bResolved) {
+				return false;
+			}
+		});
+		return bResolved;
+	};
 
 	/**
 	 * Sets the optional type and internal type for the binding. The type and internal type are used to do the parsing/formatting correctly.

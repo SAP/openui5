@@ -521,8 +521,22 @@
 
 	jQuery.sap.Version = Version;
 
+	// -------------------------- PERFORMANCE NOW -------------------------------------
+	/**
+	 * Returns a high resolution timestamp for measurements.
+	 * The timestamp is based on 01/01/1970 00:00:00 as float with microsecond precision or
+	 * with millisecond precision, if high resolution timestamps are not available.
+	 * The fractional part of the timestamp represents microseconds.
+	 * Converting to a <code>Date</code> is possible using <code>new Date(jQuery.sap.now())</code>
+	 * 
+	 * @public
+	 * @returns {float} high resolution timestamp for measurements
+	 */
+	jQuery.sap.now = !(window.performance && window.performance.now && window.performance.timing) ? Date.now : function() {
+		return window.performance.timing.navigationStart + window.performance.now();
+	};
+	
 	// -------------------------- DEBUG LOCAL STORAGE -------------------------------------
-
 	jQuery.sap.debug = function(bEnable) {
 		if (!window.localStorage) {
 			return null;
@@ -683,11 +697,13 @@
 		 */
 		function log(iLevel, sMessage, sDetails, sComponent) {
 			if (iLevel <= level(sComponent) ) {
-				var oNow = new Date(),
+				var fNow =  jQuery.sap.now(),
+					oNow = new Date(fNow),
+					iMicroSeconds = Math.floor((fNow - Math.floor(fNow)) * 1000),
 					oLogEntry = {
-						time     : pad0(oNow.getHours(),2) + ":" + pad0(oNow.getMinutes(),2) + ":" + pad0(oNow.getSeconds(),2),
+						time     : pad0(oNow.getHours(),2) + ":" + pad0(oNow.getMinutes(),2) + ":" + pad0(oNow.getSeconds(),2) + "." + pad0(oNow.getMilliseconds(),3) + pad0(iMicroSeconds,3),
 						date     : pad0(oNow.getFullYear(),4) + "-" + pad0(oNow.getMonth() + 1,2) + "-" + pad0(oNow.getDate(),2),
-						timestamp: oNow.getTime(),
+						timestamp: fNow,
 						level    : iLevel,
 						message  : String(sMessage || ""),
 						details  : String(sDetails || ""),
@@ -1780,6 +1796,34 @@
 			// return undefined;
 		}
 
+		function extractStacktrace(oError) {
+			if (!oError.stack) {
+				try {
+					throw oError;
+				} catch (ex) {
+					return ex.stack;
+				}
+			}
+			return oError.stack;
+		}
+
+		function enhanceStacktrace(oError, oCausedByStack) {
+			// concat the error stack for better traceability of loading issues
+			// (ignore for PhantomJS since Error.stack is readonly property!)
+			if (!sap.ui.Device.browser.phantomJS) {
+				var oErrorStack = extractStacktrace(oError);
+				if (oErrorStack && oCausedByStack) {
+					oError.stack = oErrorStack + "\nCaused by: " + oCausedByStack;
+				}
+			}
+			// for non Chrome browsers we log the caused by stack manually in the console
+			if (window.console && !sap.ui.Device.browser.chrome) {
+				/*eslint-disable no-console */
+				console.error(oError.message + "\nCaused by: " + oCausedByStack);
+				/*eslint-enable no-console */
+			}
+		}
+
 		var rDotsAnywhere = /(?:^|\/)\.+/;
 		var rDotSegment = /^\.*$/;
 
@@ -1927,7 +1971,9 @@
 					}
 					return this;
 				} else if ( oModule.state === FAILED ) {
-					throw new Error("found in negative cache: '" + sModuleName +  "' from " + oModule.url + ": " + oModule.error);
+					var oError = new Error("found in negative cache: '" + sModuleName +  "' from " + oModule.url + ": " + oModule.errorMessage);
+					enhanceStacktrace(oError, oModule.errorStack);
+					throw oError;
 				} else {
 					// currently loading
 					return this;
@@ -1956,7 +2002,8 @@
 					},
 					error : function(xhr, textStatus, error) {
 						oModule.state = FAILED;
-						oModule.error = xhr ? xhr.status + " - " + xhr.statusText : textStatus;
+						oModule.errorMessage = xhr ? xhr.status + " - " + xhr.statusText : textStatus;
+						oModule.errorStack = error && error.stack;
 					}
 				});
 				/*eslint-enable no-loop-func */
@@ -1968,7 +2015,9 @@
 			}
 
 			if ( oModule.state !== READY ) {
-				throw new Error("failed to load '" + sModuleName +  "' from " + oModule.url + ": " + oModule.error);
+				var oError = new Error("failed to load '" + sModuleName +  "' from " + oModule.url + ": " + oModule.errorMessage);
+				enhanceStacktrace(oError, oModule.errorStack);
+				throw oError;
 			}
 
 		}
@@ -2049,7 +2098,8 @@
 
 				} catch (err) {
 					oModule.state = FAILED;
-					oModule.error = ((err.toString && err.toString()) || err.message) + (err.line ? "(line " + err.line + ")" : "" );
+					oModule.errorStack = err && err.stack;
+					oModule.errorMessage = ((err.toString && err.toString()) || err.message) + (err.line ? "(line " + err.line + ")" : "" );
 					oModule.data = undefined;
 					if ( window["sap-ui-debug"] && (/sap-ui-xx-show(L|-l)oad(E|-e)rrors=(true|x|X)/.test(location.search) || oCfgData["xx-showloaderrors"]) ) {
 						log.error("error while evaluating " + sModuleName + ", embedding again via script tag to enforce a stack trace (see below)");
@@ -3668,12 +3718,27 @@
 			bActive = bOn;
 
 			if (bActive) {
-				// redefine AJAX call
-				jQuery.ajax = function( url, options ){
-					jQuery.sap.measure.start(url.url, "Request for " + url.url);
-					var oXhr = fnAjax.apply(this,arguments);
-					jQuery.sap.measure.end(url.url);
-					return oXhr;
+				// wrap and instrument jQuery.ajax
+				jQuery.ajax = function(url, options) {
+
+					if ( typeof url === 'object' ) {
+						options = url;
+						url = undefined;
+					}
+					options = options || {};
+
+					var sMeasureId = new URI(url || options.url).absoluteTo(document.location.origin + document.location.pathname).href();
+					jQuery.sap.measure.start(sMeasureId, "Request for " + sMeasureId, "xmlhttprequest");
+					var fnComplete = options.complete;
+					options.complete = function() {
+						jQuery.sap.measure.end(sMeasureId);
+						if (fnComplete) {
+							fnComplete.call(this, arguments);
+						}
+					};
+
+					// strict mode: we potentially modified 'options', so we must not use 'arguments'
+					return fnAjax.call(this, url, options); 
 				};
 			} else if (fnAjax) {
 				jQuery.ajax = fnAjax;
@@ -3702,7 +3767,7 @@
 				return;
 			}
 
-			var iTime = new Date().getTime();
+			var iTime = jQuery.sap.now();
 			var oMeasurement = new Measurement( sId, sInfo, iTime, 0);
 //			jQuery.sap.log.info("Performance measurement start: "+ sId + " on "+ iTime);
 
@@ -3728,7 +3793,7 @@
 				return;
 			}
 
-			var iTime = new Date().getTime();
+			var iTime = jQuery.sap.now();
 			var oMeasurement = this.mMeasurements[sId];
 			if (oMeasurement && oMeasurement.end > 0) {
 				// already ended -> no pause possible
@@ -3768,7 +3833,7 @@
 				return;
 			}
 
-			var iTime = new Date().getTime();
+			var iTime = jQuery.sap.now();
 			var oMeasurement = this.mMeasurements[sId];
 //			jQuery.sap.log.info("Performance measurement resume: "+ sId + " on "+ iTime + " duration: "+ oMeasurement.duration);
 
@@ -3799,7 +3864,7 @@
 				return;
 			}
 
-			var iTime = new Date().getTime();
+			var iTime = jQuery.sap.now();
 			var oMeasurement = this.mMeasurements[sId];
 //			jQuery.sap.log.info("Performance measurement end: "+ sId + " on "+ iTime);
 
@@ -3820,12 +3885,7 @@
 			}
 
 			if (oMeasurement) {
-				return ({id: oMeasurement.id,
-						info: oMeasurement.info,
-						start: oMeasurement.start,
-						end: oMeasurement.end,
-						time: oMeasurement.time,
-						duration: oMeasurement.duration});
+				return this.getMeasurement(sId);
 			} else {
 				return false;
 			}
@@ -3903,15 +3963,11 @@
 				return;
 			}
 
-			var aMeasurements = [];
+			var aMeasurements = [],
+				that = this;
 
-			jQuery.each(this.mMeasurements, function(sId, oMeasurement){
-				aMeasurements.push({id: oMeasurement.id,
-									info: oMeasurement.info,
-									start: oMeasurement.start,
-									end: oMeasurement.end,
-									duration: oMeasurement.duration,
-									time: oMeasurement.time});
+			jQuery.each(this.mMeasurements, function(sId){
+				aMeasurements.push(that.getMeasurement(sId));
 			});
 			return aMeasurements;
 		};

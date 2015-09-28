@@ -422,48 +422,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		};
 
 		/**
-		 * Calculates the index of the border frame based on its slider items.
-		 *
-		 * @returns {number} The index of the frameBorder
-		 * @private
-		 */
-		TimePickerSlider.prototype._getSelectionFrameIndex = function() {
-			//zero based
-			var iSliderHeight = this._getSliderContainerDomRef().height(),
-				iItemHeight = this._getItemHeightInPx(),
-				iCellsInSlider,
-				iFrameIndex,
-				bAdjustFrameIndex,
-				bCompactMode = this.$().parents().hasClass("sapUiSizeCompact");
-
-			//Android 4.1 - 4.3, native browser snap fix - the height should be 100% - 2rem, but it's 100%
-			if (iSliderHeight === this.$().height()) {
-				iSliderHeight -= jQuery(".sapMTimePickerLabel").height();
-			}
-
-			iCellsInSlider = iSliderHeight / iItemHeight;
-			iFrameIndex = Math.floor(iSliderHeight / (2 * iItemHeight));
-
-			/*  The bAdjustFrameIndex bellow is a dirty fix for a wrong DOM element height, resulting in wrong
-			    calculations - consider fixing the root cause (and all the problems deriving from such a fix)
-			    and removing the hack in the future */
-
-			/*  If the slider is that big so that it can hold an exact even number or just a bit more than an exact
-				even number of cells, the iFrameIndex needs adjustment. The magic number 0.20 is limiting exactly how much the slider should be bigger to produce wrong result - It is caused by the way the layout is build. */
-			bAdjustFrameIndex = (!(Math.floor(iCellsInSlider) % 2)) && ((iCellsInSlider - Math.floor(iCellsInSlider)) < 0.20);
-
-			if (bAdjustFrameIndex && !bCompactMode) {
-				/*  Adjusting the index is necessary, as the slider has a variable height ratio on different
-					viewports (it's not visible as it goes into a hidden overflow *sigh*), thus sometimes
-					resulting in a slightly bigger slider than visually perceived - which produces wrong calculation
-					about where the target frame is located */
-				iFrameIndex -= 1;
-			}
-
-			return iFrameIndex;
-		};
-
-		/**
 		 * Gets the CSS height of a list item.
 		 *
 		 * @returns {number} CSS height in pixels
@@ -541,9 +499,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 				//calculate the new scroll offset by subtracting the distance
 				iPreviousScrollTop = iPreviousScrollTop - iSpeed * frameFrequencyMs;
 				if (bCycle) {
-					if (this._bIsDrag) {
-						iPreviousScrollTop = that._getUpdatedCycleScrollTop($ContainerHeight, $ContentHeight, iPreviousScrollTop, iDragMargin, iContentRepeat);
-					}
+					iPreviousScrollTop = that._getUpdatedCycleScrollTop($ContainerHeight, $ContentHeight, iPreviousScrollTop, iDragMargin, iContentRepeat);
 				} else {
 					if (iPreviousScrollTop > that._maxScrollTop) {
 						iPreviousScrollTop = that._maxScrollTop;
@@ -562,11 +518,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 					//snapping
 					var iItemHeight = that._getItemHeightInPx();
 					var iOffset = that._selectionOffset ? (that._selectionOffset % iItemHeight) : 0;
-					var iSnapScrollTop = Math.ceil(iPreviousScrollTop / iItemHeight) * iItemHeight - iOffset;
+					var iSnapScrollTop = Math.round((iPreviousScrollTop  + iOffset) / iItemHeight) * iItemHeight - iOffset;
 
 					clearInterval(that._intervalId);
 					that._animating = null; //not animating
-					that._iSelectedIndex = Math.floor(iPreviousScrollTop / iItemHeight);
+					that._iSelectedIndex = Math.round((iPreviousScrollTop  + that._selectionOffset) / iItemHeight);
 
 					that._animatingSnap = true;
 					that._getSliderContainerDomRef().animate({ scrollTop: iSnapScrollTop}, iSnapDuration, 'linear', function() {
@@ -625,8 +581,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 					this._dragSession.positions.splice(0, 10);
 				}
 
-				//while dragging update the list position inside its container
-				this._getSliderContainerDomRef().scrollTop(this._dragSession.startTop - this._dragSession.offsetY);
+				if (this._bIsDrag) {
+					//while dragging update the list position inside its container
+					this._getSliderContainerDomRef().scrollTop(this._dragSession.startTop - this._dragSession.offsetY);
+				}
 			}
 		};
 
@@ -744,7 +702,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		 * @private
 		 */
 		TimePickerSlider.prototype._scrollerSnapped = function(iCurrentItem) {
-			var iSelectedItemIndex = iCurrentItem + this._getSelectionFrameIndex(),
+			var iSelectedItemIndex = iCurrentItem,
 				sNewValue;
 
 			while (iSelectedItemIndex >= this.getItems().length) {
@@ -867,7 +825,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 				}
 			}
 
-			iSelIndex = this._iSelectedItemIndex + iIndexOffset - this._getSelectionFrameIndex();
+			iSelIndex = this._iSelectedItemIndex + iIndexOffset;
 
 			if (!this.getIsCyclic()) {
 				iSelIndex = this._iSelectedItemIndex + iIndexOffset;
@@ -905,9 +863,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 				//calculate the new scroll offset by subtracting the distance
 				iScrollTop = iScrollTop - iOffsetNumberOfItems * iItemHeight;
 				if (bCycle) {
-					if (this._bIsDrag) {
-						iScrollTop = that._getUpdatedCycleScrollTop($ContainerHeight, $ContentHeight, iScrollTop, iDragMargin, iContentRepeat);
-					}
+					iScrollTop = that._getUpdatedCycleScrollTop($ContainerHeight, $ContentHeight, iScrollTop, iDragMargin, iContentRepeat);
 				} else {
 					if (iScrollTop > that._maxScrollTop) {
 						iScrollTop = that._maxScrollTop;
@@ -919,7 +875,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 				}
 
 				that._getSliderContainerDomRef().scrollTop(iScrollTop);
-				that._iSelectedIndex = Math.floor(iScrollTop / iItemHeight);
+				that._iSelectedIndex = Math.round((iScrollTop + that._selectionOffset) / iItemHeight);
 				that._scrollerSnapped(that._iSelectedIndex);
 		};
 
@@ -999,7 +955,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 				return;
 			}
 
-			this._removeSelectionStyle();
 			this._stopAnimation();
 			this._startDrag(oEvent.touches[0].pageY);
 
@@ -1066,8 +1021,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 				return;
 			}
 
-
-			this._removeSelectionStyle();
 			this._stopAnimation();
 			this._startDrag(oEvent.pageY);
 

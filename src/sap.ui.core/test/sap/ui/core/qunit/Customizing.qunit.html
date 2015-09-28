@@ -59,7 +59,8 @@
 
  
 	// TESTS
-
+	module("CustomizingConfiguration");
+	
 	test("sap.ui.core.CustomizingConfiguration available", function() {
 		expect(1);
 		
@@ -181,7 +182,106 @@
 		ok(sap.ui.getCore().byId("__jsview0--defaultContentTextView"), "JS extension point 1 should contain default content");
 		ok(sap.ui.getCore().byId("iHaveCausedDestruction"), "JS Extension Point 45 Content has been correctly replaced");
 	});
+	
+	module("Controller Customizing via Hook");
+	
+	asyncTest("Register ExtensionProvider", 20, function() {
+		
+		//First, destroy component, reset call collector array...
+		oComp.destroy();
+		iStandardSub2ControllerCalled = 0;
+		iCustomSub2ControllerCalled = 0;
+		aLifeCycleCalls = [];
+		
+		var bOriginalSAPActionCalled = false;
+		var bCustomerActionCalled = false;
+		
+		// Extension Provider module - used for sap.ui.mvc.Controller ExtensionProvider Tests
+		sap.ui.define("sap/my/ExtensionProvider", ['jquery.sap.global'], function(jQuery) {
+			
+			var ExtensionProvider = function() {};
+			ExtensionProvider.prototype.getControllerExtensions = function(sControllerName, sComponentId) {
+				
+				// we want to extend an original Controller...
+				if ( !(sControllerName == "testdata.customizing.sap.Sub2") ){
+					return [];
+				} else {
+					return [{
+						onInit: function() {
+							equal(aLifeCycleCalls[0], "Sub2 Controller onInit()", "1st lifecycle method to be called should be: Sub2 Controller onInit()");
+							equal(aLifeCycleCalls[1], "Sub2ControllerExtension Controller onInit()", "2nd lifecycle method to be called should be: Sub2ControllerExtension Controller onInit()");
+							aLifeCycleCalls.push("ControllerExtension onInit()");
+						},
+						onBeforeRendering: function() {
+							equal(aLifeCycleCalls.length, 3, "ControllerExtension lifecycle method execution count is correct!");
+							equal(aLifeCycleCalls[2], "ControllerExtension onInit()", "3nd lifecycle method to be called should be: ControllerExtension onInit()");
+							aLifeCycleCalls.push("ControllerExtension onBeforeRendering()");
+						},
+						onAfterRendering: function() {
+							equal(aLifeCycleCalls.length, 8, "ControllerExtension lifecycle method execution count is correct!");
+							equal(aLifeCycleCalls[3], "ControllerExtension onBeforeRendering()", "4th lifecycle method to be called should be: ControllerExtension onBeforeRendering()");
+							equal(aLifeCycleCalls[4], "Sub2ControllerExtension Controller onBeforeRendering()", "5th lifecycle method to be called should be: Sub2ControllerExtension Controller onBeforeRendering()");
+							equal(aLifeCycleCalls[5], "Sub2 Controller onBeforeRendering()", "6th lifecycle method to be called should be: Sub2 Controller onBeforeRendering()");
+							equal(aLifeCycleCalls[6], "Sub2 Controller onAfterRendering()", "7th lifecycle method to be called should be: Sub2 Controller onAfterRendering()");
+							equal(aLifeCycleCalls[7], "Sub2ControllerExtension Controller onAfterRendering()", "8th lifecycle method to be called should be: Sub2ControllerExtension Controller onAfterRendering()");
+							aLifeCycleCalls.push("ControllerExtension onAfterRendering()");
 
+							// trigger original action
+							qutils.triggerEvent("click", "mainView--sub2View--standardBtnWithStandardAction");
+							ok(bOriginalSAPActionCalled, "ControllerExtension custom event handler 'originalSAPAction' called!");
+							equal(iStandardSub2ControllerCalled, 0, "Original event handler 'originalSAPAction' is not called!");
+
+							// trigger custom action
+							qutils.triggerEvent("click", "mainView--sub2View--customFrag1BtnWithCustAction");
+							ok(bCustomerActionCalled, "ControllerExtension custom event handler 'customerAction' called!");
+							equal(iCustomSub2ControllerCalled, 0, "Original event handler 'customerAction' is not called!");
+
+							setTimeout(function() {
+								oComp.destroy();
+							}, 100);
+						},
+						onExit: function() {
+							equal(aLifeCycleCalls.length, 9, "ControllerExtension lifecycle method execution count is correct!");
+							equal(aLifeCycleCalls[8], "ControllerExtension onAfterRendering()", "9th lifecycle method to be called should be: ControllerExtension onAfterRendering()");
+							aLifeCycleCalls.push("ControllerExtension onExit()");
+							setTimeout(function() {
+								equal(aLifeCycleCalls.length, 12, "ControllerExtension lifecycle method execution count is correct!");
+								equal(aLifeCycleCalls[9], "ControllerExtension onExit()", "9th lifecycle method to be called should be: ControllerExtension onExit()");
+								equal(aLifeCycleCalls[10], "Sub2ControllerExtension Controller onExit()", "10th lifecycle method to be called should be: Sub2ControllerExtension Controller onExit()");
+								equal(aLifeCycleCalls[11], "Sub2 Controller onExit()", "11th lifecycle method to be called should be: Sub2 Controller onExit()");
+								QUnit.start();
+							}, 100);
+						},
+						originalSAPAction: function() {
+							bOriginalSAPActionCalled = true;
+						},
+						customerAction: function() {
+							bCustomerActionCalled = true;
+						}
+					}]
+				}
+			};
+			return ExtensionProvider;
+			
+		}, true);
+
+		//...and reinitialize - with registered ExtensionProvider 
+		jQuery.sap.require("sap.ui.core.mvc.Controller");
+		var Controller = sap.ui.require("sap/ui/core/mvc/Controller");
+		Controller.registerExtensionProvider("sap.my.ExtensionProvider");
+		
+		oComp = sap.ui.component({
+			name: "testdata.customizing.customer"
+		});
+		
+		oCompCont = new sap.ui.core.ComponentContainer({
+			component: oComp
+		});
+		oCompCont.placeAt("content");
+		
+	});
+	
+	
 
 	</script>
 </head>

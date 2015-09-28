@@ -56,6 +56,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 			/**
 			 * When the aggregation is set, it replaces the text, active and textDirection properties. This also ignores the press event. The provided control is displayed as an active link.
+			 * <b>Note:</b> It will only allow sap.m.Text and sap.m.Link controls.
 			 */
 			customContent : {type : "sap.ui.core.Control", multiple : false},
 

@@ -415,8 +415,8 @@
 		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 			pattern: "www"
 		}, /* need to use xx-XX locale because only the pattern in default bundle is known*/ new sap.ui.core.Locale("xx-XX"));
-		equal(oDateFormat.format(new Date(2015, 0, 1)), "CW01", "week format with pattern 'www'");
-		ok(oDateFormat.parse("CW01") instanceof Date, "Date can be correctly parsed");
+		equal(oDateFormat.format(new Date(2015, 0, 1)), "CW 01", "week format with pattern 'www'");
+		ok(oDateFormat.parse("CW 01") instanceof Date, "Date can be correctly parsed");
 
 		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
 			pattern: "wwww"

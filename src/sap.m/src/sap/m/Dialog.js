@@ -705,7 +705,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				this.$('cont').css({'max-height': iMaxHeight + "px"});
 			}
 
-			if ((bStretch && !bMessageType) || (bStretchOnPhone && jQuery.device.is.iphone)) {
+			if ((bStretch && !bMessageType) || (bStretchOnPhone && sap.ui.Device.system.phone)) {
 				this.$().addClass('sapMDialogStretched');
 			}
 

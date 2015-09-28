@@ -327,6 +327,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 		this.refresh();
 	};
 
+	/**
+	 * Check if the binding can be resolved. This is true if the path is absolute or the path is relative and a context is specified. 
+	 * @private
+	 */
+	Binding.prototype.isResolved = function() {
+		if (this.bRelative && !this.oContext) {
+			return false;
+		}
+		return true;
+	};
 
 	/**
 	 * Returns whether the binding is initial, which means it did not get an initial value yet

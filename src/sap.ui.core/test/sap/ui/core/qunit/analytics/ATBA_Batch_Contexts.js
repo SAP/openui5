@@ -69,7 +69,7 @@ o4aFakeService.addResponse({
 o4aFakeService.addResponse({
 	batch: true,
 	uri: [
-			"ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=CostCenter,CostElement,Currency&$top=1&$inlinecount=allpages",
+			"ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=CostCenter,CostElement,Currency&$top=0&$inlinecount=allpages",
 			"ActualPlannedCosts(P_ControllingArea=\'US01\',P_CostCenter=\'100-1000\',P_CostCenterTo=\'999-9999\')/Results?$select=CostCenter,CostCenterText,ActualCosts,Currency,PlannedCosts&$orderby=CostCenter%20asc&$top=120&$inlinecount=allpages"
 		],
 	header: o4aFakeService.headers.BATCH,

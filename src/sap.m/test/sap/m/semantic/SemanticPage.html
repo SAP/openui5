@@ -1108,6 +1108,18 @@
 				oClearDraftButton
 			]
 		});
+		
+		var oModifyFooter = new sap.m.HBox({
+			items: [
+				new sap.m.Button({text: "Show / Hide Footer",
+					press: function() {
+						var bShow = page1.getShowFooter();
+						var bShow2 = page2.getShowFooter();
+							page1.setShowFooter(!bShow);
+							page2.setShowFooter(!bShow2);
+					}})
+			]
+		});
 
 		var oStatusBox = new sap.ui.layout.form.SimpleForm ({
 			maxContainerCols : 2,
@@ -1129,6 +1141,7 @@
 						oModifyMessagesBox,
 						oModifyDraftBox,
 						oModifyDraftBox2,
+						oModifyFooter,
 						oModifyCustomFooterContentBox,
 						oModifyCustomShareMenuContentBox,
 						oStatusBox

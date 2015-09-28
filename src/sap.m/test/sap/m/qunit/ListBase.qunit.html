@@ -1007,7 +1007,7 @@
 			strictEqual(oList.setIncludeItemInSelection(bIncludeItemInSelection).getIncludeItemInSelection(), bIncludeItemInSelection, 'The control property "includeItemInSelection" is "' + bIncludeItemInSelection + '" on ' + oList);
 			sap.ui.getCore().applyChanges();
 			oList.getItems().forEach(function (oItem) {
-				strictEqual(oItem.$().hasClass("sapMLIBCursor"), true, 'Each item has css class "sapMLIBCursor" on ' + oList);
+				strictEqual(oItem.$().hasClass("sapMLIBActionable"), true, 'Each item has css class "sapMLIBCursor" on ' + oList);
 			});
 
 			// simulate tap & check result
@@ -1019,7 +1019,7 @@
 			strictEqual(oList.setIncludeItemInSelection(bIncludeItemInSelection).getIncludeItemInSelection(), bIncludeItemInSelection, 'The control property "includeItemInSelection" is "' + bIncludeItemInSelection + '" on ' + oList);
 			sap.ui.getCore().applyChanges();
 			oList.getItems().forEach(function (oItem) {
-				strictEqual(oItem.$().hasClass("sapMLIBCursor"), false, 'Each item does not have has css class "sapMLIBCursor" on ' + oList);;
+				strictEqual(oItem.$().hasClass("sapMLIBActionable"), false, 'Each item does not have has css class "sapMLIBCursor" on ' + oList);;
 			});
 
 			// simulate tap & check result

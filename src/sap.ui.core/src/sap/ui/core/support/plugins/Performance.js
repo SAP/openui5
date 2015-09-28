@@ -35,8 +35,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 					this._aEventIds = [this.getId() + "SetMeasurements",
 									   this.getId() + "SetActive"];
 					jQuery.sap.require("sap.ui.core.format.DateFormat");
-					this._oDateFormat = sap.ui.core.format.DateFormat.getTimeInstance({pattern: "HH:mm:ss '+' SSS"});
-	
+					var pad0 = function(i, w) {
+						return ("000" + String(i)).slice(-w);
+					};
+					this._fnFormatTime = function(fNow) {
+						var oNow = new Date(fNow),
+							iMicroSeconds = Math.floor((fNow - Math.floor(fNow)) * 1000);
+						return pad0(oNow.getHours(),2) + ":" + pad0(oNow.getMinutes(),2) + ":" + pad0(oNow.getSeconds(),2) + "." + pad0(oNow.getMilliseconds(),3) + pad0(iMicroSeconds,3);
+					};
 				} else {
 	
 					this._aEventIds = [this.getId() + "Refresh",
@@ -145,8 +151,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				rm.write("<tr>");
 				rm.write("<td>" + oMeasurement.id + "</td>");
 				rm.write("<td>" + oMeasurement.info + "</td>");
-				rm.write("<td>" + this._oDateFormat.format(new Date(oMeasurement.start)) + "</td>");
-				rm.write("<td>" + this._oDateFormat.format(new Date(oMeasurement.end)) + "</td>");
+				rm.write("<td>" + this._fnFormatTime(oMeasurement.start) + "</td>");
+				rm.write("<td>" + this._fnFormatTime(oMeasurement.end) + "</td>");
 				rm.write("<td>" + oMeasurement.time + "</td>");
 				rm.write("<td>" + oMeasurement.duration + "</td>");
 				rm.write("</tr>");

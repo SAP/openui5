@@ -313,6 +313,40 @@
 				jQuery("html").css("overflow", ""); // restore scrollbar after test
 			});
 
+			test("Dialog: set stretchOnPhone to true should not stretch on desktop", function () {
+				var oDialog = new sap.m.Dialog({
+					stretchOnPhone: true
+				});
+
+				oDialog.open();
+				ok(oDialog.isOpen(), "Dialog is already open");
+				this.clock.tick(500);
+				ok(!oDialog.$().hasClass("sapMDialogStretched"), "Dilog should not has sapMDialogStretched class");
+
+				oDialog.destroy();
+			});
+
+			test("Dialog: set stretchOnPhone to true should stretch on phone", function () {
+				var oSystem = {
+					desktop: false,
+					tablet: false,
+					phone: true
+				};
+
+				this.stub(sap.ui.Device, "system", oSystem);
+
+				var oDialog = new sap.m.Dialog({
+					stretchOnPhone: true
+				});
+
+				oDialog.open();
+				ok(oDialog.isOpen(), "Dialog is already open");
+				this.clock.tick(500);
+				ok(oDialog.$().hasClass("sapMDialogStretched"), "Dilog should has sapMDialogStretched class");
+
+				oDialog.destroy();
+			});
+
 			test("Dialog: set contentWidth when stretch set to true", function () {
 				jQuery("html").css("overflow", "hidden"); // hide scrollbar during test
 				var oDialog = new sap.m.Dialog({
@@ -332,6 +366,8 @@
 				oDialog.destroy();
 				jQuery("html").css("overflow", ""); // restore scrollbar after test
 			});
+
+
 
 			test("Set contentWidth to a fixed value on desktop", function () {
 				var oSystem = {
