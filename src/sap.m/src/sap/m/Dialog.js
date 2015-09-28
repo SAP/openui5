@@ -1394,11 +1394,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		function isHeaderClicked(eventTarget) {
 			var $target = jQuery(eventTarget);
 			var isHeader = $target.hasClass('sapMDialogTitle');
-			var isChildOfHeader = $target.parents('header').length;
+			var isChildOfDialogHeader = $target.parents('header').hasClass('sapMDialogTitle');
 			var isHeaderTag = $target.parents('h1').length;
 			var isIcon = $target.hasClass('.sapUiIcon');
 			var isChildOfSubHeader = $target.parents('.sapMDialogSubHeader').length;
-			return ((isHeader || isChildOfHeader) && !isHeaderTag && !isIcon && !isChildOfSubHeader);
+			return ((isHeader || isChildOfDialogHeader) && !isHeaderTag && !isIcon && !isChildOfSubHeader);
 		}
 
 		if (sap.ui.Device.system.desktop) {
