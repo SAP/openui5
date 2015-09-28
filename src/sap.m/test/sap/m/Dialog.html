@@ -880,7 +880,7 @@
 			});
 
 			var dialogWithHidingFooter = new sap.m.Dialog('dialogWithHidingFooter', {
-				title: 'Toggle toobar',
+				title: 'Toggle toolbar',
 				content: [
 					new sap.m.Button({
 						text: 'Add EndButton',
@@ -895,6 +895,45 @@
 						}
 					})
 				]
+			});
+
+			var dragDialogWithMultipleHeaders = new sap.m.Dialog('dragDialogWithMultipleHeaders', {
+				title: 'dragDialog With Multiple Headers',
+				draggable: true,
+				subHeader: new sap.m.Bar({
+					contentMiddle: [
+						new sap.m.Label({
+							text: 'SubHeader Label text"'
+						})
+					]
+				}),
+				content: [
+						new sap.m.Bar({
+							contentMiddle: [
+								new sap.m.Title({
+									text: 'Second Title'
+								})
+							]
+						}),
+					new sap.m.Bar({
+						contentMiddle: [
+							new sap.m.Label({
+								text: 'Second Label'
+							})
+						]
+					}),
+					new sap.m.Panel({
+						headerText: 'Panel Header Text',
+						expandable: true,
+						height: '100%'
+					})
+				],
+				beginButton: new sap.m.Button({
+					press: function () {
+						dragDialogWithMultipleHeaders.close();
+					},
+					text: "Close"
+				})
 			});
 
 			var allButtons = [
@@ -1293,6 +1332,14 @@
 						width: _buttonWidth,
 						press: function () {
 							dialogWithWidthButton.open();
+						}
+					}),
+
+					new sap.m.Button({
+						text: "Drag with more than one header",
+						width: _buttonWidth,
+						press: function () {
+							dragDialogWithMultipleHeaders.open();
 						}
 					})
 				]
