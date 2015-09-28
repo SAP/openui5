@@ -85,6 +85,8 @@ sap.ui.define(['jquery.sap.global'],
 			// only the button properties enabled, width, icon, text, and tooltip are evaluated here
 			oRM.write("<li");
 			oRM.writeControlData(oButton);
+			oRM.writeAttribute("aria-posinset", i + 1);
+			oRM.writeAttribute("aria-setsize", aButtons.length);
 			oRM.addClass("sapMSegBBtn");
 			if (oButton.aCustomStyleClasses !== undefined && oButton.aCustomStyleClasses instanceof Array) {
 				for (var j = 0; j < oButton.aCustomStyleClasses.length; j++) {
