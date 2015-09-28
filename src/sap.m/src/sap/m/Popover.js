@@ -1036,9 +1036,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 		Popover.prototype._calcVertical = function () {
 			var $parent = jQuery(this._getOpenByDomRef());
+			var iParentTop = $parent[0] !== undefined ? $parent[0].getBoundingClientRect().top : 0;
 			var iOffsetY = this._getOffsetY();
-			var iTopSpace = $parent[0].getBoundingClientRect().top - this._marginTop + iOffsetY;
-			var iParentBottom = $parent[0].getBoundingClientRect().top + $parent.outerHeight();
+			var iTopSpace = iParentTop - this._marginTop + iOffsetY;
+			var iParentBottom = iParentTop + $parent.outerHeight();
 			var iBottomSpace = this._$window.height() - iParentBottom - this._marginBottom - iOffsetY;
 			var iPopoverHeight = this.$().outerHeight();
 
@@ -1055,9 +1056,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 		Popover.prototype._calcHorizontal = function () {
 			var $parent = jQuery(this._getOpenByDomRef());
+			var iParentLeft = $parent[0] !== undefined ? $parent[0].getBoundingClientRect().left : 0;
 			var iOffsetX = this._getOffsetX();
-			var iLeftSpace = $parent[0].getBoundingClientRect().left - this._marginLeft + iOffsetX;
-			var iParentRight = $parent[0].getBoundingClientRect().left + $parent.outerWidth();
+			var iLeftSpace = iParentLeft - this._marginLeft + iOffsetX;
+			var iParentRight = iParentLeft + $parent.outerWidth();
 			var iRightSpace = this._$window.width() - iParentRight - this._marginRight - iOffsetX;
 			var iPopoverWidth = this.$().outerWidth();
 
@@ -1100,9 +1102,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		Popover.prototype._checkHorizontal = function () {
 			//check if there is enough space
 			var $parent = jQuery(this._getOpenByDomRef());
+			var iParentLeft = $parent[0] !== undefined ? $parent[0].getBoundingClientRect().left : 0;
 			var iOffsetX = this._getOffsetX();
-			var iLeftSpace = $parent[0].getBoundingClientRect().left - this._marginLeft + iOffsetX;
-			var iParentRight = $parent[0].getBoundingClientRect().left + $parent.outerWidth();
+			var iLeftSpace = iParentLeft - this._marginLeft + iOffsetX;
+			var iParentRight = iParentLeft + $parent.outerWidth();
 			var iRightSpace = this._$window.width() - iParentRight - this._marginRight - iOffsetX;
 
 			var $this = this.$();
@@ -1116,9 +1119,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		Popover.prototype._checkVertical = function () {
 			//check if there is enough space
 			var $parent = jQuery(this._getOpenByDomRef());
+			var iParentTop = $parent[0] !== undefined ? $parent[0].getBoundingClientRect().top : 0;
 			var iOffsetY = this._getOffsetY();
-			var iTopSpace = $parent[0].getBoundingClientRect().top - this._marginTop + iOffsetY;
-			var iParentBottom = $parent[0].getBoundingClientRect().top + $parent.outerHeight();
+			var iTopSpace = iParentTop - this._marginTop + iOffsetY;
+			var iParentBottom = iParentTop + $parent.outerHeight();
 			var iBottomSpace = this._$window.height() - iParentBottom - this._marginBottom - iOffsetY;
 
 			var $this = this.$();
@@ -1137,13 +1141,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
 
 			var $parent = jQuery(this._getOpenByDomRef());
+			var iParentLeft = $parent[0] !== undefined ? $parent[0].getBoundingClientRect().left : 0;
+			var iParentTop = $parent[0] !== undefined ? $parent[0].getBoundingClientRect().top : 0;
 			var iOffsetX = this._getOffsetX();
 			var iOffsetY = this._getOffsetY();
-			var iTopSpace = $parent[0].getBoundingClientRect().top - this._marginTop + iOffsetY;
-			var iParentBottom = $parent[0].getBoundingClientRect().top + $parent.outerHeight();
+			var iTopSpace = iParentTop - this._marginTop + iOffsetY;
+			var iParentBottom = iParentTop + $parent.outerHeight();
 			var iBottomSpace = this._$window.height() - iParentBottom - this._marginBottom - iOffsetY;
-			var iLeftSpace = $parent[0].getBoundingClientRect().left - this._marginLeft + iOffsetX;
-			var iParentRight = $parent[0].getBoundingClientRect().left + $parent.outerWidth();
+			var iLeftSpace = iParentLeft - this._marginLeft + iOffsetX;
+			var iParentRight = iParentLeft + $parent.outerWidth();
 			var iRightSpace = this._$window.width() - iParentRight - this._marginRight - iOffsetX;
 
 			//calculation for every possible position how many percent of the popover can be covered
