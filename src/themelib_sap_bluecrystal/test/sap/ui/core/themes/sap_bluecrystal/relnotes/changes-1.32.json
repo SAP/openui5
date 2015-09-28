@@ -218,5 +218,45 @@
         "references": []
       }
     ]
+  },
+  "1.32.2": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "0dd8e6d201d37fb66868382821e087db37af3782",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: Screen size limits should be included.",
+        "references": []
+      },
+      {
+        "id": "d0d1f21063a0242f4ef1cef8f1dbdf19086c4f50",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.TreeTable: node label alignment issue",
+        "references": []
+      },
+      {
+        "id": "486250e38a637acf6e51fe7f7b7bf463d18ace5c",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Touch Menu could overlay text",
+        "references": []
+      },
+      {
+        "id": "9d7bb9f61ea7006d885bfa6393127222031734ff",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Cleanup cell paddings",
+        "references": []
+      },
+      {
+        "id": "bd4472418db8981e53cedeecea1f7f86171e156c",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: wrong font-size on \u003ctr\u003e",
+        "references": []
+      }
+    ]
   }
 }

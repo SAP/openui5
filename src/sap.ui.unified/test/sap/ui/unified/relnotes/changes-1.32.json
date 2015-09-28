@@ -115,5 +115,24 @@
         "references": []
       }
     ]
+  },
+  "1.32.2": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "b1e61f1d56bae7b1c4fb87591fb14eff6f605099",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: change event fixed",
+        "references": []
+      },
+      {
+        "id": "252a6d6d787ef1792a7b28149322b4a639901439",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: clear() function fixed.",
+        "references": []
+      }
+    ]
   }
 }

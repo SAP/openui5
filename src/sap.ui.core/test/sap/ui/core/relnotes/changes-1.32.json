@@ -1023,5 +1023,171 @@
         "references": []
       }
     ]
+  },
+  "1.32.2": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "862db923652bbb8d1d6f625f56cde991a7de96bd",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalTable.js - Fixed Blocking BusyIndicator",
+        "references": []
+      },
+      {
+        "id": "b286651fb3dfc0c86cc6bb12e038fdbabf2d3103",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "CLDR: Remove 1000-other for asian languages",
+        "references": []
+      },
+      {
+        "id": "3632f49a8f8da59ecf782eea4ebfe3394ae6218d",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "Component: removed the extends.component detection for manifest",
+        "references": []
+      },
+      {
+        "id": "72e64b872a2a7f726aa95c6fe7aabcd748c58c96",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Core: Start Theme check before onInit hook is processed",
+        "references": []
+      },
+      {
+        "id": "7f347aea06a3a5d301b04466711a6d4a7cc9bc2e",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "ItemNavigation: adapt dokumentation",
+        "references": []
+      },
+      {
+        "id": "7b0a5ec0a9a4ba7c24c53619a3cfe52be175f007",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "LocalBusyIndicator - Adapted HCB to match BC",
+        "references": []
+      },
+      {
+        "id": "aedae5d64224c1cb0d843a3c2a284639ebd39d2c",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "MessageListBinding: filtering does not work",
+        "references": []
+      },
+      {
+        "id": "2b3a596334e97ec2dbaf480eedd774e43d3c07a2",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Overwrite Annotations on Term Level",
+        "references": []
+      },
+      {
+        "id": "245ba6ad4bdc6699af7145fe70f04ea1b502c603",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: Parse Annotation URLs After Metadata Was Loaded",
+        "references": []
+      },
+      {
+        "id": "699867e569fd8c52182ac8a704276d1287aeb9c2",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: createEntry works with complex types which have multi level namespaces",
+        "references": []
+      },
+      {
+        "id": "0b1f815fda1c5c5ca1aa904ab7e5c3cb2f5ea964",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModelV2: changed entities are now removed correctly",
+        "references": []
+      },
+      {
+        "id": "63066432f7a7fd244b7982cf72ecd4ebbd861a0f",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataTreeBinding V1 is deprecated",
+        "references": []
+      },
+      {
+        "id": "a94e4b030b9818e6dc17e0e3a9f7304821500a3a",
+        "author": "Martin Schaus \u003cmartin.schaus@sap.com\u003e",
+        "type": "FIX",
+        "text": "Parse/Validation messages not added/cleared correcly.",
+        "references": []
+      },
+      {
+        "id": "6f7ab61869f34653bdf0c589f003864ed6966010",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: Using FocusInfo Fixed",
+        "references": []
+      },
+      {
+        "id": "39da08b14726a3b7d239520e68cc49d2ef92dc01",
+        "author": "Martin Schaus \u003cmartin.schaus@sap.com\u003e",
+        "type": "FIX",
+        "text": "Removed regression for error state handling without MessageManager - DataState implementation returns null for messages if no MessageManager",
+        "references": []
+      },
+      {
+        "id": "389d55e39d92a14c25520a61184bb475e5f23635",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "ResourceModel.qunit.html: Not stable in firefox",
+        "references": []
+      },
+      {
+        "id": "84f132ce1609d49db9dd40c2a7b8c4368300013c",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ResourceModel: React to Global Language Change",
+        "references": []
+      },
+      {
+        "id": "bc56eff7c88407b31b4fde25e15a97b35f8c3f23",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "XMLView: ensure that content is preserved during rendering",
+        "references": []
+      },
+      {
+        "id": "7106e880e68f6e8e32455381363f0f3d6bb0c82e",
+        "author": "Alexander Schmalzhaf \u003calexander.schmalzhaf@sap.com\u003e",
+        "type": "FIX",
+        "text": "getComputedStyle returns null when used in non-displayed iFrames in Firefox",
+        "references": []
+      },
+      {
+        "id": "09947ec6225ae1ccc75aacb894c562f13bf14a34",
+        "author": "SAP GitHub \u003cmartin.schaus@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.global: jQuery.sap.measure.setActive",
+        "references": []
+      },
+      {
+        "id": "09900a538fd37d94f04d9f56bb9a5b7a7353243f",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.Device: Recognition for WebView in iOS added",
+        "references": []
+      },
+      {
+        "id": "aba593d885e21a052b698888ee313f1d5ca9b2ed",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Core: getMessageManager JSDOC",
+        "references": []
+      },
+      {
+        "id": "40fc4b2bb94df65aa3ee165bda6754e40edf2137",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataListBinding.js - broken setContext function",
+        "references": []
+      }
+    ]
   }
 }
