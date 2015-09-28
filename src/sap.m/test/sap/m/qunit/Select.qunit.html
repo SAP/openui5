@@ -3722,6 +3722,39 @@
 				oSelect.destroy();
 			});
 
+			test("open() the picker popup (dropdown list) should automatically size itself to fit its content", function() {
+
+				this.stub(sap.ui.Device, "system", {
+					desktop: true,
+					phone: false,
+					tablet: false
+				});
+
+				// system under test
+				var oSelect = new sap.m.Select({
+					width: "100px",
+					items: [
+						new sap.ui.core.Item({
+							text: "Lorem ipsum dolor sit amet, duo ut soleat insolens, commodo vidisse intellegam ne usu"
+						})
+					]
+				});
+
+				// arrange
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oSelect.open();
+				this.clock.tick(500);
+
+				// assert
+				ok(oSelect.getPicker().getDomRef().offsetWidth > 100);
+
+				// cleanup
+				oSelect.destroy();
+			});
+
 			/* ------------------------------ */
 			/* findFirstEnabledItem()         */
 			/* ------------------------------ */
