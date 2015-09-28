@@ -513,6 +513,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			this._oList.destroy();
 			this._oList = null;
 		}
+		if (this._oFileUploader) {
+			this._oFileUploader.destroy();
+			this._oFileUploader = null;
+		}
 	};
 
 	/* =========================================================== */
@@ -1407,7 +1411,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			var sRequestId = this._getRequestId(oEvent);
 			var sFileName = oEvent.getParameter("fileName");
 			var cItems = this.aItems.length;
-			for (i = 0; i < cItems ; i++) {
+			for (i = 0; i < cItems; i++) {
 				if (this.aItems[i] === sFileName && this.aItems[i]._requestIdName === sRequestId && this.aItems[i]._status === UploadCollection._uploadingStatus) {
 					this.aItems.splice(i, 1);
 					this.removeItem(i);
