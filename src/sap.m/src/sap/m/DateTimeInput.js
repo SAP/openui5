@@ -644,8 +644,26 @@ sap.ui.define(['jquery.sap.global', './InputBase', './InstanceManager', './libra
 								// an analogous procedure
 								var $scrollerCont = $dialog.find('.dwcc'),
 									$buttonBar = $dialog.find('.dwbc'),
-									aFocusables = $scrollerCont.find(":focusable.dwww");
-	
+									aFocusables = $scrollerCont.find(":focusable.dwww"),
+                                   
+                                    // to determine whether the input is inside a UI5 popup or not
+									sOpenerPopupID = that._$input.closest("[data-sap-ui-popup]").attr("data-sap-ui-popup");
+									
+								if (sOpenerPopupID) {
+									// let the inner popup know that a popup will be open
+									var sPickerID = that.getId() + "-picker";
+                                  
+									// set a fix id for the picker so it can be set as focusable for the UI5 popup
+									$dialog.attr("id", sPickerID);
+                                  
+									// every popup registers itself to the eventbus so it can be accesses since a popup is not a control that is listed in the control tree. 
+									// via using the eventbus and providing the id of the picker it can be focused without that the UI5 popup reclaims the focus
+									var sEventId = "sap.ui.core.Popup.addFocusableContent-" + sOpenerPopupID;
+									sap.ui.getCore().getEventBus().publish("sap.ui", sEventId, {
+										id : sPickerID
+									});
+								}
+								
 								$focusLeft.insertBefore($scrollerCont);
 								fnFocusInLast = $.proxy(that._getFocusInHandler($buttonBar, false), that);
 								$focusLeft.focusin(fnFocusInLast);
