@@ -936,5 +936,24 @@
         "references": []
       }
     ]
+  },
+  "1.28.19": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "c70b9f18a85ce0f8f9ad425336974db7e42691c1",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: Using FocusInfo Fixed",
+        "references": []
+      },
+      {
+        "id": "83ddd6703b57dc31e7f73648e1a6b585a3a7bfa5",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Toolbar: Overflowing inside sap.ui.layout.Splitter is now possible.",
+        "references": []
+      }
+    ]
   }
 }

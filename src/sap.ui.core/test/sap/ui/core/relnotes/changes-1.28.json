@@ -2453,5 +2453,66 @@
         "references": []
       }
     ]
+  },
+  "1.28.19": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "c8a95b9a300a6362c9d2c0a55f66126d8a02b83c",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "CLDR: Remove 1000-other for asian languages",
+        "references": []
+      },
+      {
+        "id": "a95446cdb85a48f1d6d4b01300e38b9c1b4e2787",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "Component: removed the extends.component detection for manifest",
+        "references": []
+      },
+      {
+        "id": "9eb96b98df93bb3ff093fe435d131330ca124703",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Core: Start Theme check before onInit hook is processed",
+        "references": []
+      },
+      {
+        "id": "63618f23784bb2ed3e018a821365ba3741ee8d0e",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "ItemNavigation: adapt dokumentation",
+        "references": []
+      },
+      {
+        "id": "115ab80c7bfd2d961d420c59981e1c488fefd7af",
+        "author": "Gal Roter \u003cgal.roter@sap.com\u003e",
+        "type": "FIX",
+        "text": "MockServer: handle case where a single key in post is represented only by value",
+        "references": []
+      },
+      {
+        "id": "c70b9f18a85ce0f8f9ad425336974db7e42691c1",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: Using FocusInfo Fixed",
+        "references": []
+      },
+      {
+        "id": "325fe6b440c148a1ff0821db24b2f2a6d4ea510d",
+        "author": "Alexander Schmalzhaf \u003calexander.schmalzhaf@sap.com\u003e",
+        "type": "FIX",
+        "text": "getComputedStyle returns null when used in non-displayed iFrames in Firefox",
+        "references": []
+      },
+      {
+        "id": "132744b0023dba99126b030945501f4ad65f8845",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: no content-type header for GET requests",
+        "references": []
+      }
+    ]
   }
 }

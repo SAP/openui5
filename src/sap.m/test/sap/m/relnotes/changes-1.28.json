@@ -3898,5 +3898,73 @@
         "references": []
       }
     ]
+  },
+  "1.28.19": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "362052e25eaeb86b6ebf81fe2da4eb8851601f34",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "FlexBox - Fixed properties not being set in Internet Explorer 10",
+        "references": []
+      },
+      {
+        "id": "9ee9af6ca451c5550303ba4b39e095a89f77890b",
+        "author": "Vladislav Tasev \u003cvladislav.tasev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.App - rerendering issue fixed",
+        "references": []
+      },
+      {
+        "id": "ce418cbd1e832260f1564a25ec9d129d064b1b9c",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: should correctly restore the selection of the text after re-rendering",
+        "references": []
+      },
+      {
+        "id": "2794e59e88b12a9ae6518f00cb85ee935f34175b",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DateTimeInput: Backspace should not trigger browsers back navigation.",
+        "references": []
+      },
+      {
+        "id": "51e6754597b59402b38fa19be3edbfeca12312d2",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PullToRefresh on combi devices",
+        "references": []
+      },
+      {
+        "id": "c64b44fb80e572e879ff79383e6dbc1b2cc58244",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.QuickView: Add stable IDs support",
+        "references": []
+      },
+      {
+        "id": "7ff3b6e868feb62c6c9c76a08085477bc6b5ff9f",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: cannot filter binding in change event handler",
+        "references": []
+      },
+      {
+        "id": "6c40c904a95f8d7c6de5ba92f1d55719601f8002",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: disable item can be selected in IE10",
+        "references": []
+      },
+      {
+        "id": "3a15234474514a9f9cae85683eab2f344139aeb2",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: improved delete function in case of JSON MOdel is used",
+        "references": []
+      }
+    ]
   }
 }
