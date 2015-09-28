@@ -19,38 +19,9 @@
 		}' >
 	</script>
 
-	<style type="text/css">
-		.sapUiBody#content {
-			padding-left: 0; /* overrides the padding of demokit */
-		}
-
-		#busyIndicator {
-			margin-top: 8em;
-			text-align: center;
-			color: #555555;
-		}
-
-		#CompactModeLabel, #RTLLabel {
-			padding-top: 1rem;
-		}
-
-		.sapUiSizeCompact #CompactModeLabel, .sapUiSizeCompact #RTLLabel {
-			padding-top: 0.5rem;
-		}
-
-		html[dir="rtl"] #CompactModeButtons, html[dir="rtl"] #RTLButtons {
-			float: left;
-			left: 0.125rem;
-		}
-
-		#CompactModeButtons, #RTLButtons {
-			float: right;
-			left: -0.125rem;
-		}
-	</style>
-
 	<script>
-		sap.ui.getCore().attachInitEvent( function () {
+		<!-- do not add code or style here the html is replicated in multiple projects -->
+		sap.ui.getCore().attachInit( function () {
 			jQuery.sap.require("sap.ui.demokit.explored.Bootstrap");
 			sap.ui.demokit.explored.Bootstrap.run();
 		});
