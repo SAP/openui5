@@ -2364,5 +2364,155 @@
         "references": []
       }
     ]
+  },
+  "1.28.18": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "031bf646ec5f9377bc4e1047d5412ec5b5265866",
+        "author": "Alexander Schmalzhaf \u003calexander.schmalzhaf@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.Device detection for MS Edge",
+        "references": []
+      },
+      {
+        "id": "97796289af7e6136035d55b29ede0f590a26d7c6",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBinding.js - Missing null check",
+        "references": []
+      },
+      {
+        "id": "d8dee67f25d7c0b484113a1d5f89d0e15255af08",
+        "author": "Alexander Schmalzhaf \u003calexander.schmalzhaf@sap.com\u003e",
+        "type": "FIX",
+        "text": "Deletion of obsolete and misplaced Device API Unit Test",
+        "references": []
+      },
+      {
+        "id": "53788fa3480e196df19206fbb6b6db11c002883c",
+        "author": "Frank Weigel \u003cfrank.weigel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject: proper cleanup of bindings",
+        "references": []
+      },
+      {
+        "id": "2387ddf898d000acf7811319c01778d44893d6da",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: createEntry works with complex types which have multi level namespaces",
+        "references": []
+      },
+      {
+        "id": "a390f13b5f0162cff68af61bfbc82aae97367a2b",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataTreeBinding V1 is deprecated",
+        "references": []
+      },
+      {
+        "id": "1240f52dfcda7dde08a09f460dc874d4e33319e7",
+        "author": "Alexander Schmalzhaf \u003calexander.schmalzhaf@sap.com\u003e",
+        "type": "FIX",
+        "text": "On Windows 10 Mobile Browser (Edge) mouse and click events must be suppressed.",
+        "references": []
+      },
+      {
+        "id": "b88d9ad308bcd1f8647e3ef38ce508437e8e0d76",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ResourceModel: React to Global Language Change",
+        "references": []
+      },
+      {
+        "id": "0e4dbbb8ba97d0354d76283bc2fb874bcf71bd28",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "Respect \"themeroots\" when resolving img URLs in Controls",
+        "references": []
+      },
+      {
+        "id": "778817acf8267cba6798d0672b9c75a8a773b84b",
+        "author": "SAP GitHub \u003cmartin.schaus@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.global: jQuery.sap.measure.setActive",
+        "references": []
+      },
+      {
+        "id": "9a005e1042ed51da104a3eb8610949a517e75965",
+        "author": "Irina Goetzenberger \u003cirina.goetzenberger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Scrollbar: Scrolling in the table with millions of steps.",
+        "references": []
+      },
+      {
+        "id": "d5665b6b1692cbd18cb69ad3342e60db95dc0d6a",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataTreeBinding - ApplicationFilters were not attached",
+        "references": []
+      }
+    ]
+  },
+  "1.28.19": {
+    "date": "September 2015",
+    "notes": [
+      {
+        "id": "c8a95b9a300a6362c9d2c0a55f66126d8a02b83c",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "CLDR: Remove 1000-other for asian languages",
+        "references": []
+      },
+      {
+        "id": "a95446cdb85a48f1d6d4b01300e38b9c1b4e2787",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "Component: removed the extends.component detection for manifest",
+        "references": []
+      },
+      {
+        "id": "9eb96b98df93bb3ff093fe435d131330ca124703",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Core: Start Theme check before onInit hook is processed",
+        "references": []
+      },
+      {
+        "id": "63618f23784bb2ed3e018a821365ba3741ee8d0e",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "ItemNavigation: adapt dokumentation",
+        "references": []
+      },
+      {
+        "id": "115ab80c7bfd2d961d420c59981e1c488fefd7af",
+        "author": "Gal Roter \u003cgal.roter@sap.com\u003e",
+        "type": "FIX",
+        "text": "MockServer: handle case where a single key in post is represented only by value",
+        "references": []
+      },
+      {
+        "id": "c70b9f18a85ce0f8f9ad425336974db7e42691c1",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: Using FocusInfo Fixed",
+        "references": []
+      },
+      {
+        "id": "325fe6b440c148a1ff0821db24b2f2a6d4ea510d",
+        "author": "Alexander Schmalzhaf \u003calexander.schmalzhaf@sap.com\u003e",
+        "type": "FIX",
+        "text": "getComputedStyle returns null when used in non-displayed iFrames in Firefox",
+        "references": []
+      },
+      {
+        "id": "132744b0023dba99126b030945501f4ad65f8845",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: no content-type header for GET requests",
+        "references": []
+      }
+    ]
   }
 }
