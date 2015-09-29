@@ -1353,7 +1353,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			}
 			// call FileUploader if abort is possible. Otherwise fireDelete should be called.
 			if (bAbort) {
-				this._getFileUploader().abort(this._headerParamConst.requestIdName, this.aItems[i]._requestIdName);
+				this._getFileUploader().abort(this._headerParamConst.fileNameRequestIdName, this._encodeToAscii(oItem.getFileName()) + this.aItems[i]._requestIdName);
 			}
 			oDialog.close();
 			this.invalidate();
@@ -2015,7 +2015,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		sFileName = oEvent.getParameter("fileName");
 		oRequestHeaders = {
 			name: this._headerParamConst.fileNameRequestIdName,
-			value: sFileName + sRequestIdValue
+			value: this._encodeToAscii(sFileName) + sRequestIdValue
 		};
 		oEvent.getParameter("requestHeaders").push(oRequestHeaders);
 
@@ -2024,7 +2024,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			if (this._aDeletedItemForPendingUpload[i].getAssociation("fileUploader") === oEvent.oSource.sId
 					&& this._aDeletedItemForPendingUpload[i].getFileName() === sFileName
 					&& this._aDeletedItemForPendingUpload[i]._internalFileIndexWithinFileUploader === this._iUploadStartCallCounter){
-				oEvent.getSource().abort(this._headerParamConst.fileNameRequestIdName, sFileName + sRequestIdValue);
+				oEvent.getSource().abort(this._headerParamConst.fileNameRequestIdName, this._encodeToAscii(sFileName) + sRequestIdValue);
 				return;
 			}
 		}
@@ -2432,6 +2432,20 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			}
 			return aUcpRequestHeaders;
 		}
+	};
+
+	/**
+	 * @description Helper function for ascii encoding within header paramters
+	 * @param {string}
+	 * @returns {string}
+	 * @private
+	 */
+	UploadCollection.prototype._encodeToAscii = function (value) {
+		var sEncodedValue = "";
+		for (var i = 0; i < value.length; i++) {
+			sEncodedValue = sEncodedValue + value.charCodeAt(i);
+		}
+		return sEncodedValue;
 	};
 
 	return UploadCollection;
