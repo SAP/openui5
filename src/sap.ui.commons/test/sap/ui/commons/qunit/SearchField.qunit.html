@@ -129,7 +129,7 @@
 			checkFocus(oSearchField.getFocusDomRef().id, "SearchField has "+(bReadOnly ? "no " : "")+"focus after user action", !bReadOnly);
 			
 			// focus is removed for the next test
-			document.activeElement.blur();
+			document.activeElement && document.activeElement.blur();
 		}, 10);
 	};
 	
