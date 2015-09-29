@@ -920,6 +920,12 @@ sap.ui.define([
 									fValidate();
 								}
 
+								that._handleSelectionChangeOnKeyField(oTargetGrid, oConditionGrid);
+							});
+						}
+
+						if (oControl.attachChange) {
+							oControl.attachChange(function(oEvent) {
 								that._handleChangeOnKeyField(oTargetGrid, oConditionGrid);
 							});
 						}
@@ -1378,13 +1384,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * change handler for the KeyField field
+	 * SelectionChange handler for the KeyField field
 	 * 
 	 * @private
 	 * @param {grid} oTargetGrid the main grid
 	 * @param {grid} oConditionGrid Grid which contains the KeyField control which has been changed
 	 */
-	P13nConditionPanel.prototype._handleChangeOnKeyField = function(oTargetGrid, oConditionGrid) {
+	P13nConditionPanel.prototype._handleSelectionChangeOnKeyField = function(oTargetGrid, oConditionGrid) {
 
 		if (this._sConditionType === "Filter") {
 			this._updateOperationItems(oTargetGrid, oConditionGrid);
@@ -1396,6 +1402,16 @@ sap.ui.define([
 		}
 
 		this._changeField(oConditionGrid);
+	};
+
+	/**
+	 * change handler for the KeyField field
+	 * 
+	 * @private
+	 * @param {grid} oTargetGrid the main grid
+	 * @param {grid} oConditionGrid Grid which contains the KeyField control which has been changed
+	 */
+	P13nConditionPanel.prototype._handleChangeOnKeyField = function(oTargetGrid, oConditionGrid) {
 
 		if (this.getAutoReduceKeyFieldItems()) {
 			this._updateKeyFieldItems(oTargetGrid, false);
