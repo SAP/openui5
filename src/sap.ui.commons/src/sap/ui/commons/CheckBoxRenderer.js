@@ -23,14 +23,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 	 */
 	CheckBoxRenderer.render = function(rm, oCheckBox) {
 		rm.addClass("sapUiCb");
-	
+
 		// Open the containing <span> tag
 		rm.write("<span");
 		rm.writeControlData(oCheckBox);
-	
+
 		// ARIA
 		rm.writeAccessibilityState(oCheckBox, {"role" : sap.ui.core.AccessibleRole.Checkbox.toLowerCase()});
-	
+		rm.writeAttributeEscaped("aria-labelledby", oCheckBox.getId() + "-label");
+
 		// Collect state information
 		var enabled = oCheckBox.getEnabled() != null && oCheckBox.getEnabled();
 		var editable = oCheckBox.getEditable() != null && oCheckBox.getEditable();
@@ -41,14 +42,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 			inWarningState = sap.ui.core.ValueState.Warning == oCheckBox.getValueState();
 		}
 	
-	
 		// Add classes and properties depending on the state
 		if (oCheckBox.getChecked()) {
 			rm.addClass("sapUiCbChk");
 		}
-	
+
 		var myTabIndex = 0;
-	
+
 		if (!editable) {
 			rm.addClass("sapUiCbRo");
 			// According to CSN 2581852 2012 a readonly CB should be in the tabchain
@@ -80,21 +80,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		if (oCheckBox.getWidth() && oCheckBox.getWidth() != '') {
 			rm.writeAttribute("style", "width:" + oCheckBox.getWidth() + ";");
 		}
-	
+
 		rm.writeAttribute("tabIndex", myTabIndex);
-	
+
 		rm.write(">"); // close the containing <span> tag
-	
-	
+
+
 		// Write the (potentially hidden) HTML checkbox element
 		rm.write("<input type='CheckBox' tabindex='-1' id='");
 		rm.write(oCheckBox.getId());
 		rm.write("-CB'");
-	
+
 		if (oCheckBox.getName()) {
 			rm.writeAttributeEscaped('name', oCheckBox.getName());
 		}
-	
+
 		if (oCheckBox.getChecked()) {
 			rm.write(" checked='checked'");
 		}
@@ -111,10 +111,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 			rm.write(" disabled='disabled'");
 		}
 		rm.write(" />"); // close checkbox-input-element
-	
-	
+
+
 		// Write the checkbox label which also holds the background image
 		rm.write("<label");
+		rm.writeAttributeEscaped("id", oCheckBox.getId() + "-label");
+
 		if (tooltip) {
 			rm.writeAttributeEscaped("title", tooltip);
 		}
@@ -131,9 +133,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 		// close the surrounding <span> element
 		rm.write("</span>");
 	};
-	
-	
-	
+
+
+
 	/**
 	 * Write the CheckBox label either flat or - in case the text direction is different from the environment - within a span tag with an explicit "dir".
 	 */
