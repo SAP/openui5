@@ -27,7 +27,8 @@ sap.ui.define([
 	 * @param {object} [mParameters]
 	 *   map of parameters
 	 * @param {string} [mParameters.$expand]
-	 *   the expand parameter used in the url to read data
+	 *   the "$expand" system query option used in each data service request for this
+	 *   list binding
 	 *
 	 * @class List binding for an OData v4 model.
 	 * @alias sap.ui.model.odata.v4.ODataListBinding
@@ -92,7 +93,7 @@ sap.ui.define([
 		}
 
 		/**
-		 * Checks, whether the contexts exist for the requested range
+		 * Checks, whether the contexts exist for the requested range.
 		 * @return {boolean}
 		 *   <code>true</code> if the contexts in the range exist
 		 */
@@ -110,8 +111,8 @@ sap.ui.define([
 
 		/**
 		 * Creates entries in aContexts for each value in oResult.
-		 * Uses fnGetPath to create the context path
-		 * Fires "change" event if new contexts are created
+		 * Uses fnGetPath to create the context path.
+		 * Fires "change" event if new contexts are created.
 		 * @param {function} fnGetPath function calculating base or dependent path
 		 * @param {object} oResult resolved OData result
 		 */
@@ -260,7 +261,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the context and resets the cached contexts of the list items
+	 * Sets the context and resets the cached contexts of the list items.
 	 *
 	 * @param {sap.ui.model.Context} oContext
 	 *   the context object

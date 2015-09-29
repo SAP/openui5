@@ -150,7 +150,8 @@ sap.ui.define([
 	 * @param {object} [mParameters]
 	 *   map of parameters
 	 * @param {string} [mParameters.$expand]
-	 *   the expand parameter used in the url to read list binding data
+	 *   the "$expand" system query option used in each data service request for returned
+	 *   list binding
 	 * @return {sap.ui.model.odata.v4.ODataListBinding}
 	 *   the list binding
 	 * @public
