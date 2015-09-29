@@ -127,20 +127,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 	ListItemBaseRenderer.renderType = function(rm, oLI) {
 		var oTypeControl = oLI.getTypeControl();
 		if (oTypeControl) {
-			this.renderTypeContent(rm, oLI, oTypeControl);
-		}
-	};
-
-	ListItemBaseRenderer.renderTypeContent = function(rm, oLI, oTypeControl) {
-		var bDetail = oLI.getType().indexOf("Detail") != -1;
-		if (bDetail) {
-			rm.write("<div class='sapMLIBCursor'>");
-		}
-
-		rm.renderControl(oTypeControl);
-
-		if (bDetail) {
-			rm.write("</div>");
+			rm.renderControl(oTypeControl);
 		}
 	};
 
@@ -368,8 +355,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'sap/ui/core/theming
 		rm.addClass("sapMLIBShowSeparator");
 		rm.addClass("sapMLIBType" + oLI.getType());
 
-		if (oLI.isClickable()) {
-			rm.addClass("sapMLIBCursor");
+		if (sap.ui.Device.system.desktop && oLI.isActionable()) {
+			rm.addClass("sapMLIBActionable");
+			rm.addClass("sapMLIBHoverable");
 		}
 
 		if (oLI.getSelected()) {
