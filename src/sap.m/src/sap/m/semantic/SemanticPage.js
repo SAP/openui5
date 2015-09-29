@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SegmentedContainer', 'sap/m/semantic/SemanticConfiguration','sap/m/Button', 'sap/m/Title', 'sap/m/ActionSheet', 'sap/m/Page', 'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarButton', 'sap/m/OverflowToolbarLayoutData', 'sap/m/ToolbarSpacer', 'sap/m/Bar', 'sap/ui/core/CustomData', 'sap/ui/base/ManagedObject'],
-function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, ActionSheet, Page, OverflowToolbar, OverflowToolbarButton, OverflowToolbarLayoutData, ToolbarSpacer, Bar, CustomData, ManagedObject) {
+sap.ui.define(['jquery.sap.global', 'sap/m/semantic/SegmentedContainer', 'sap/m/semantic/SemanticConfiguration','sap/m/Button', 'sap/m/Title', 'sap/m/ActionSheet', 'sap/m/Page', 'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarButton', 'sap/m/OverflowToolbarLayoutData', 'sap/m/ToolbarSpacer', 'sap/m/Bar', 'sap/ui/core/CustomData', 'sap/ui/base/ManagedObject', 'sap/ui/core/AccessibleLandmarkRole', 'sap/m/PageAccessibleLandmarkInfo'],
+function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, ActionSheet, Page, OverflowToolbar, OverflowToolbarButton, OverflowToolbarLayoutData, ToolbarSpacer, Bar, CustomData, ManagedObject, AccessibleLandmarkRole, PageAccessibleLandmarkInfo) {
 	"use strict";
 
 	/**
@@ -162,6 +162,7 @@ function (jQuery, SegmentedContainer, SemanticConfiguration, Button, Title, Acti
 		this._currentMode = SemanticConfiguration._PageMode.display;
 		this._getPage().setCustomHeader(this._getInternalHeader());
 		this._getPage().setFooter(new OverflowToolbar(this.getId() + "-footer"));
+		this._getPage().setLandmarkInfo(new PageAccessibleLandmarkInfo());
 	};
 
 	/**
