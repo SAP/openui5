@@ -127,6 +127,13 @@
 			});
 			this.oUploadCollection.placeAt("uiArea");
 			sap.ui.getCore().applyChanges();
+			this.encodeToAscii = function (value) {
+				var sEncodedValue = "";
+				for (var i = 0; i < value.length; i++) {
+					sEncodedValue = sEncodedValue + value.charCodeAt(i);
+				}
+				return sEncodedValue;
+			};
 		},
 		teardown : function() {
 			this.oUploadCollection.destroy();
@@ -210,7 +217,7 @@
 				sFileNameRequestIdValue = aRequestHeaders[i].value;
 			}
 		}
-		assert.equal(sFileNameRequestIdValue, sFileName + sRequestId, "Unique key for a File is set correctly into requestHeaders");
+		assert.equal(sFileNameRequestIdValue, this.encodeToAscii(sFileName) + sRequestId, "Unique key for a File is set correctly into requestHeaders");
 	});
 
 	QUnit.test("handleTerminate opens a dialog which could be cancelled.", function(assert) {
