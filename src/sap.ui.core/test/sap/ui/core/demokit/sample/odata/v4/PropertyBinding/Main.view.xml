@@ -39,6 +39,9 @@
 			<Label text="Entry date"/>
 			<Text id="ENTRYDATE" text="{ENTRYDATE}"/>
 
+			<Label text="Last Modified"/>
+			<Text id="LAST_MODIFIED_AT" text="{LAST_MODIFIED_AT}"/>
+
 			<Label text="Location"/>
 			<Text text="{LOCATION/City/POSTALCODE} {LOCATION/City/CITYNAME} {LOCATION/COUNTRY}"/>
 

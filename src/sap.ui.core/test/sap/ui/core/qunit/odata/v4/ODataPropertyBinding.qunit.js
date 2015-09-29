@@ -163,7 +163,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("automaticTypes", function (assert) {
-		var oModel = new ODataModel("/service/"),
+		var oBinding,
+			oModel = new ODataModel("/service/"),
 			oControl = new TestControl({models: oModel}),
 			sPath = "/EntitySet('foo')/property",
 			oType = new TypeString(),
@@ -177,7 +178,32 @@ sap.ui.require([
 		this.oSandbox.mock(oType).expects("formatValue").withExactArgs("foo", "string");
 
 		oControl.bindProperty("text", sPath);
-		var oBinding = oControl.getBinding("text");
+		oBinding = oControl.getBinding("text");
+		oBinding.attachChange(function () {
+			assert.strictEqual(oBinding.getType(), oType);
+			done();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("automaticTypes - bindObject", function (assert) {
+		var oBinding,
+			oModel = new ODataModel("/service/"),
+			oControl = new TestControl({models: oModel}),
+			sPath = "property",
+			oType = new TypeString(),
+			done = assert.async();
+
+		this.oSandbox.mock(oModel).expects("read").withExactArgs("/EntitySet('foo')/property")
+			.returns(Promise.resolve({value: "foo"}));
+		this.oSandbox.mock(oModel.getMetaModel()).expects("requestUI5Type")
+			.withExactArgs("/EntitySet('foo')/property")
+			.returns(Promise.resolve(oType));
+		this.oSandbox.mock(oType).expects("formatValue").withExactArgs("foo", "string");
+
+		oControl.bindProperty("text", sPath);
+		oControl.bindObject("/EntitySet('foo')/")
+		oBinding = oControl.getBinding("text");
 		oBinding.attachChange(function () {
 			assert.strictEqual(oBinding.getType(), oType);
 			done();
