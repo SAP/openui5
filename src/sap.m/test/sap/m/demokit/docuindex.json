@@ -979,6 +979,22 @@
 			"Writing a Short Date Formatter TDD style",
 			"Adding the date formatter"
 		  ]
+		},
+		{
+			"id": "sap.m.tutorial.worklist",
+			"name": "Worklist App",
+			"category": "Tutorial",
+			"since": "1.32",
+			"formFactors": "-",
+			"description": "In this tutorial we implement typical features of a full-screen worklist app, a typical SAP Fiori design pattern",
+			"samplesAsSteps": [
+				"Getting started with the worklist template",
+				"Extending the worklist table",
+				"Adding quick filters",
+				"Reorder or unlist products",
+				"Adjusting the object view",
+				"Adding a comments section"
+			]
 		}
 	  ],
 	  "samples": [
