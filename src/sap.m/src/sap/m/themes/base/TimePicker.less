@@ -6,9 +6,6 @@
 /* TimePicker Input Field                   */
 /* ======================================== */
 .sapMTimePicker {
-	.sapMInputBaseInner {
-		padding-right: 2.5rem;
-	}
 	.sapUiIcon {
 		cursor: pointer;
 	}
@@ -17,7 +14,7 @@
 /* TimePicker Dropdown                      */
 /* ======================================== */
 .sapMTimePickerDropDown {
-  overflow: hidden !important;
+	overflow: hidden !important;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
@@ -60,6 +57,7 @@
 			}
 			.sapMTimePickerItemArrows {
 				display: none;
+				box-sizing: border-box;
 			}
 			.sapMTimePickerSlider {
 				overflow: hidden;
@@ -71,6 +69,7 @@
 					line-height: 3rem;
 					width: 4.5rem;
 					box-sizing: border-box;
+					-moz-box-sizing: border-box;
 				}
 				.sapMTPPickerSelectionFrame {
 					width: 4.5rem;
@@ -98,13 +97,8 @@
 				}
 				.sapMTimePickerSlider {
 					height: calc(100% - 2rem);
-					.sapMTimePickerItem {
-					}
 					.sapMTPPickerSelectionFrame {
 						display: block;
-					}
-					& > ul {
-						box-sizing: border-box;
 					}
 				}
 			}
@@ -116,53 +110,19 @@
 /* ======================================== */
 .sapUiSizeCompact {
 	/* ======================================== */
-	/* TimePicker Input Field                   */
-	/* ======================================== */
-	.sapMTimePicker {
-		.sapMInputBaseInner {
-			padding-right: 1.625rem;
-		}
-		.sapUiIcon {
-			cursor: pointer;
-		}
-	}
-	/* ======================================== */
 	/* TimePicker Dropdown                      */
 	/* ======================================== */
 	.sapMTimePickerDropDown {
 		.sapMTimePickerContainer {
-			height: 100%;
 			min-width: 17rem;
 			padding: 0.5rem;
-			box-sizing: border-box;
 			margin: auto;
 			.sapMTPColumn {
 				height: 2rem;
-				margin: 0 1px;
-				overflow: hidden;
-				text-align: center;
-				cursor: pointer;
 				.sapMTimePickerLabel {
-					height: 2rem;
 					width: 4rem;
-					text-align: center;
-					vertical-align: middle;
-					display: none;
-				}
-				.sapMTimePickerItemArrows {
-					border: 0.0625rem;
-					border-radius: 0.125rem;
-					box-sizing: border-box;
-					height: 2rem;
-					width: 4rem;
-					font-size: 1.375rem;
-					vertical-align: middle;
-					display: none;
-					padding: 0 0.5rem;
 				}
 				.sapMTimePickerSlider {
-					height: 100%;
-					overflow: hidden;
 					.sapMTimePickerItem {
 						height: 2rem;
 						line-height: 2rem;
@@ -171,57 +131,27 @@
 						-moz-box-sizing: border-box;
 					}
 					.sapMTPPickerSelectionFrame {
-						position:absolute;
 						width: 4rem;
 						height: 2rem;
-						box-sizing: border-box;
-						-moz-box-sizing: border-box;
-						display: none;
-					}
-					& > ul {
-						list-style: none;
-						margin: 0;
-						padding: 0;
 					}
 				}
 				&.sapMTPSliderExpanded {
 					height: 100%;
 					cursor: default;
-					.sapMTimePickerLabel {
-						display: block;
-					}
+					margin: 0;
 					.sapMTimePickerItemArrows {
 						display: block;
 					}
 					.sapMTimePickerSlider {
 						height: ~"calc(100% - 6rem)";
-						overflow: hidden;
-						.sapMTimePickerItem {
-							height: 2rem;
-							width: 4rem;
-							box-sizing: border-box;
-						}
-						.sapMTPPickerSelectionFrame {
-							display: block;
-						}
 					}
 				}
 			}
 		}
 	}
 }
-
 /* PHONE STYLES */
-
 .sap-phone {
-	/* ======================================== */
-	/* TimePicker Input Field                   */
-	/* ======================================== */
-	.sapMTimePicker {
-		.sapMInputBaseInner {
-			padding-right: 2.5rem;
-		}
-	}
 	/* ======================================== */
 	/* TimePicker Dropdown                      */
 	/* ======================================== */
@@ -290,11 +220,6 @@
 						display: none;
 						box-sizing: border-box;
 					}
-					& > ul {
-						list-style: none;
-						margin: 0;
-						padding: 0;
-					}
 				}
 				&.sapMTPSliderExpanded {
 					height: 100%;
@@ -318,8 +243,6 @@
 						}
 						.sapMTPPickerSelectionFrame {
 							display: block;
-						}
-						& > ul {
 						}
 					}
 				}

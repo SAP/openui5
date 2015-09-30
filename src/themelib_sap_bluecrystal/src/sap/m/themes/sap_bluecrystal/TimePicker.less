@@ -22,7 +22,6 @@
 			outline: 1px dotted @sapUiInvertedFocus;
 		}
 	}
-
 	&.sapMTPInputActive {
 		.sapMInputBaseInner {
 			border: 1px solid @sapUiInputBaseFocus;
@@ -48,15 +47,12 @@
 /* ======================================== */
 .sapMTimePickerDropDown {
 	.sapMTimePickerContainer {
-
 		.sapMTPColumn {
 			.sapMTimePickerLabel {
 				font-size: @sapMFontSmallSize;
 				color: @sapUiLightText;
 				text-align: center;
 				vertical-align: middle;
-			}
-			.sapMTimePickerItemArrows {
 			}
 			.sapMTimePickerSlider {
 				.sapMTimePickerItem {
@@ -78,16 +74,8 @@
 						outline-offset: -3px;
 					}
 				}
-				.sapMTPPickerSelectionFrame {
-				}
-				& > ul {
-				}
 			}
 			&.sapMTPSliderExpanded {
-				.sapMTimePickerLabel {
-				}
-				.sapMTimePickerItemArrows {
-				}
 				.sapMTimePickerSlider {
 					.sapMTimePickerItem {
 						background: @sapUiExtraLightBG;
@@ -102,8 +90,6 @@
 							outline: 1px dotted @sapUiFocus;
 							outline-offset: -3px;
 						}
-						&.sapMTimePickerItemSelected {
-						}
 					}
 					.sapMTPPickerSelectionFrame {
 						border: 2px solid @sapUiHighlight;
@@ -111,11 +97,6 @@
 							border: 2px solid darken(@sapUiHighlight,10);
 							& + ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
 								background: darken(@sapUiExtraLightBG, 10);
-							}
-						}
-						&:active {
-							border: 2px solid @sapUiHighlight;
-					& > ul {
 							}
 						}
 					}
@@ -133,9 +114,6 @@
 	/* TimePicker Input Field                   */
 	/* ======================================== */
 	.sapMTimePicker {
-		.sapMInputBaseInner {
-
-		}
 		.sapUiIcon {
 			color: @sapUiElement;
 			&:focus {
@@ -178,8 +156,6 @@
 					text-align: center;
 					vertical-align: middle;
 				}
-				.sapMTimePickerItemArrows {
-				}
 				.sapMTimePickerSlider {
 					.sapMTimePickerItem {
 						background: @sapUiHighlight;
@@ -196,16 +172,8 @@
 							outline-offset: -3px;
 						}
 					}
-					.sapMTPPickerSelectionFrame {
-					}
-					& > ul {
-					}
 				}
 				&.sapMTPSliderExpanded {
-					.sapMTimePickerLabel {
-					}
-					.sapMTimePickerItemArrows {
-					}
 					.sapMTimePickerSlider {
 						.sapMTimePickerItem {
 							background: @sapUiExtraLightBG;
@@ -219,8 +187,6 @@
 						}
 						.sapMTPPickerSelectionFrame {
 							border: 2px solid @sapUiHighlight;
-						}
-						& > ul {
 						}
 					}
 				}

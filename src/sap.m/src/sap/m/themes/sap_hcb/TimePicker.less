@@ -117,16 +117,6 @@ html[data-sap-ui-browser^="ie9"] {
 				outline: 2px solid @sapHCStandardFG;
 				outline-offset: -5px;
 				font-weight: bold;
-				&:hover {
-					+ ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
-						background: @sapHCHighlightBG;
-					}
-				}
-				&:active {
-					+ ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
-						background: @sapHCHighlightAltBG;
-					}
-				}
 			}
 		}
 	  }
@@ -180,6 +170,9 @@ html[data-sap-ui-browser^="ie"] .sapUiSizeCompact {
   /* TimePicker Input Field                   */
   /* ======================================== */
   .sapMTimePicker {
+	.sapMInputBaseInner {
+
+	}
 	.sapUiIcon {
 	  &:active {
 		background-color: @sapHCHighlightAltBG !important;
