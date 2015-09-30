@@ -31,6 +31,12 @@
 				"ref": "test-resources/sap/m/demokit/worklist/webapp/test/testOpenUI5Service.html",
 				"icon": "task",
 				"desc": "Best-practice starting point for a worklist-style app"
+			},
+			{
+				"text": "Manage Products",
+				"ref": "test-resources/sap/m/demokit/tutorial/worklist/06/webapp/test/testService.html",
+				"icon": "task",
+				"desc": "An example for a simple worklist-style app"
 			}
 		]
 	},
