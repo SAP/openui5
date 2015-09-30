@@ -328,7 +328,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 			/**
 			 * The event is triggered as soon as the upload request was terminated by the user.
-			 * @experimental since 1.26.2
 			 */
 			uploadTerminated : {
 				parameters: {
@@ -352,7 +351,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 			/**
 			 * The event is triggered before the actual upload starts. An event is fired per file. All the necessary header parameters should be set here.
-			 * @experimental since 1.30.2
 			 */
 			beforeUploadStarts : {
 				parameters: {
