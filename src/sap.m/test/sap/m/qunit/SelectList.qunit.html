@@ -3245,7 +3245,7 @@
 
 				// assert
 				ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "none");
-				ok(oItem.$().hasClass(oSelectList.getRenderer().CSS_CLASS + "ItemInvisible"));
+				ok(oItem.$().hasClass(oSelectList.getRenderer().CSS_CLASS + "ItemBaseInvisible"));
 				strictEqual(oSelectList.getVisibleItems().length, 0);
 
 				// cleanup
@@ -3275,7 +3275,7 @@
 				});
 
 				// arrange
-				var CSS_CLASS = sap.m.SelectListRenderer.CSS_CLASS + "ItemPressed";
+				var CSS_CLASS = sap.m.SelectListRenderer.CSS_CLASS + "ItemBasePressed";
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
