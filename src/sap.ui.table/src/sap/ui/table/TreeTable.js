@@ -465,12 +465,14 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 	};
 
 	/**
-	 * Collapses all nodes on level 'iLevel' (and lower if collapseRecursive is activated)
-	 * If no parameter is given, all nodes will be collapsed to the topmost level.
+	 * Expands all nodes starting from the root level to the given level 'iLevel'.
 	 * 
-	 * Only supported with ODataModel v2.
+	 * Only supported with ODataModel v2, when running in OperationMode.Client or OperationMode.Auto.
+	 * Fully supported for <code>sap.ui.model.ClientTreeBinding</code>, e.g. if you are using a <code>sap.ui.model.json.JSONModel</code>.
 	 * 
-	 * @param {int} iLevel the level to which all nodes shall be collapsed
+	 * Please also see <code>sap.ui.model.odata.OperationMode</code>.
+	 * 
+	 * @param {int} iLevel the level to which the trees shall be expanded
 	 * @return {sap.ui.table.TreeTable} a reference on the TreeTable control, can be used for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
