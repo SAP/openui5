@@ -41,7 +41,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 				/**
 				 * ID of the selected item.
 				 */
-				selectedItemId: { type: "string", group: "Misc", defaultValue: "" }
+				selectedItemId: { type: "string", group: "Misc", defaultValue: "" },
+
+				/**
+				 * Indicates whether the text values of the <code>additionalText</code> property of a {@link sap.ui.core.ListItem} is shown.
+				 * @since 1.32.3
+				 */
+				showSecondaryValues: { type: "boolean", group: "Misc", defaultValue: false }
 			},
 			associations: {
 
@@ -143,7 +149,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 
 		ComboBox.prototype._setItemVisibility = function(oItem, bVisible) {
 			var $OItem = oItem && oItem.$(),
-				CSS_CLASS = "sapMSelectListItemInvisible";
+				CSS_CLASS = "sapMSelectListItemBaseInvisible";
 
 			if (bVisible) {
 				oItem.bVisible = true;
@@ -828,7 +834,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 
 			this._oList = new SelectList({
 				width: "100%"
-			}).addEventDelegate({
+			}).addStyleClass(this.getRenderer().CSS_CLASS + "List")
+			.addEventDelegate({
 				ontap: function(oEvent) {
 					this.close();
 				}
@@ -1117,6 +1124,18 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 			}
 
 			return [];
+		};
+
+		ComboBox.prototype.setShowSecondaryValues = function(bAdditionalText) {
+			this.setProperty("showSecondaryValues", bAdditionalText, true);
+
+			var oList = this.getList();
+
+			if (oList) {
+				oList.setShowSecondaryValues(bAdditionalText);
+			}
+
+			return this;
 		};
 
 		/**
