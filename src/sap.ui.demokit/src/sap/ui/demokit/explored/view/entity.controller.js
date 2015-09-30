@@ -251,7 +251,7 @@ sap.ui.define([
 								typeText: this._formatTypeText(oEvent.parameters[p].type),
 								typeNav: this._formatTypeNav(oEvent.parameters[p].type),
 								type: this._formatType(oEvent.parameters[p].type),
-								doc: oEvent.parameters[p].doc,
+								doc: this._wrapInSpanTag(oEvent.parameters[p].doc),
 								deprecatedDescription: this._formatDeprecatedDescription(oEvent.parameters[p].deprecation),
 								deprecated: this._formatDeprecated(oEvent.parameters[p].deprecation)
 							});
