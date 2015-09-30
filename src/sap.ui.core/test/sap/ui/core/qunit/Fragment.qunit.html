@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
 <html>
 
-	<!-- 
+	<!--
 	  Tested classes: sap.ui.core.Fragment
 	-->
-	
+
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<title>qUnit Page for sap.ui.core.Fragment</title>
-		
+
 		<script id="sap-ui-bootstrap"
 			type="text/javascript"
 			src="../../../../../resources/sap-ui-core.js"
@@ -17,28 +17,28 @@
 			data-sap-ui-libs="sap.ui.commons"
 			data-sap-ui-resourceroots='{"testdata.fragments": "testdata/fragments/"}'>
 		</script>
-		
+
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 		<script>
-		
+
 			var DATABOUND_TEXT = "Text from Databinding";
 			var DATABOUND_GLOBAL_TEXT_IN_DIALOG = "Text from global Model";
-			
+
 			var data = {
 				someText: DATABOUND_TEXT,
 				dialogText: DATABOUND_GLOBAL_TEXT_IN_DIALOG
 			};
-			
+
 			var oModel = new sap.ui.model.json.JSONModel();
 			oModel.setData(data);
 			sap.ui.getCore().setModel(oModel);
 
 			// inline JS Fragment definition
-			
+
 			sap.ui.jsfragment("example.fragment.jstest", {
 				createContent: function(oController) {
 					var oJSFragBtn = new sap.ui.commons.Button("jsfragbtn", {
@@ -48,580 +48,611 @@
 					return oJSFragBtn;
 				}
 			});
-			
-			
-			
-			
+
+
+
+
 			// View definition
 			sap.ui.jsview("example.fragment.test", {
-			
+
 				getControllerName: function() {
 					return "example.fragment.test";
 				},
 
 				createContent: function(oController) {
 					var oPanel = new sap.ui.commons.Panel(this.createId("myPanel"));
-					
+
 					var oJsFragment = sap.ui.fragment("example.fragment.jstest", "JS", oController);
 					oPanel.addContent(oJsFragment);
-					
+
 					var myXml = '<Button xmlns="sap.ui.commons" id="xmlfragbtn" text="This is an XML Fragment" press="doSomething"></Button>';
 					var oXmlFragment = sap.ui.xmlfragment({fragmentContent:myXml}, oController);
 					oPanel.addContent(oXmlFragment);
-					
+
 					var myHtml = '<div id="htmlfragbtn" data-sap-ui-type="sap.ui.commons.Button" data-text="This is an HTML Fragment" data-press="doSomething"></div>';
 					var oHtmlFragment = sap.ui.htmlfragment({fragmentContent:myHtml}, oController);
 					oPanel.addContent(oHtmlFragment);
-				
+
 					return [oPanel];
 				}
 			});
-			
+
 			// Controller definition
 			sap.ui.controller("example.fragment.test", {
-				
+
 				onInit: function() {
 				},
-				
+
 				doSomething: function(oEvent) {
 					ok(true, "Controller method 'doSomething' called");
 				}
-			
+
 			});
 
-			
 
-			
-			
-			
-			
+
+
+
+
+
 
 			// TESTS
-			
-			
+
+
 			module("External Fragments");
-			
+
 			var oDummyController = {
 				doSomething: function(){
 					ok(true, "Dummy Controller method 'doSomething' called");
 				}
 			};
-			
-			
+
+
 			test("XML Fragment loaded from file", function() {
 				var oFragment = sap.ui.xmlfragment("testdata.fragments.XMLTestFragment", oDummyController);
 				oFragment.placeAt("content1");
 				sap.ui.getCore().applyChanges();
-				
+
 				var id = oFragment.getId();
-				
+
 				equal(id.substr(0,8), "__layout", "Fragment ID should be generated");
 				ok(jQuery.sap.domById(id), "XML Fragment should be rendered");
-				
+
 				var aContent = oFragment.getContent();
 				var btn1 = aContent[0];
 				var btn2 = aContent[1];
 				equal(btn1.getId(), "btnInXmlFragment", "Button with given ID should have exactly this ID");
 				equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
-				
+
 				// Data binding
 				equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
-				
+
 				// find controls by ID
 				var btn = sap.ui.getCore().byId("btnInXmlFragment");
 				ok(btn, "Button should be found by ID");
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
-			
+
 			test("XML Fragment loaded from file with given Fragment ID", function() {
 				var oFragment = sap.ui.xmlfragment("myXmlFrag", "testdata.fragments.XMLTestFragment", oDummyController);
 				oFragment.placeAt("content1");
 				sap.ui.getCore().applyChanges();
-				
+
 				var id = oFragment.getId();
-				
+
 				equal(id.substr(0,8), "__layout", "Fragment ID should be generated");
 				ok(jQuery.sap.domById(id), "XML Fragment should be rendered");
-				
+
 				var aContent = oFragment.getContent();
 				var btn1 = aContent[0];
 				var btn2 = aContent[1];
 				equal(btn1.getId(), "myXmlFrag--btnInXmlFragment", "Button with given ID should have this ID with Fragment ID prefix");
 				equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
-				
+
 				// Data binding
 				equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
-				
+
 				// find controls by ID
 				var btn = sap.ui.core.Fragment.byId("myXmlFrag", "btnInXmlFragment");
 				ok(btn, "Button should be found by ID");
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
-			
-			
-			
+
+
+
 			test("HTML Fragment loaded from file", function() {
 				var oFragment = sap.ui.htmlfragment("testdata.fragments.HTMLTestFragment", oDummyController);
 				oFragment.placeAt("content1");
 				sap.ui.getCore().applyChanges();
-				
+
 				var id = oFragment.getId();
-				
+
 				equal(id.substr(0,8), "__layout", "Fragment ID should be generated");
 				ok(jQuery.sap.domById(id), "HTML Fragment should be rendered");
-				
+
 				var aContent = oFragment.getContent();
 				var btn1 = aContent[0];
 				var btn2 = aContent[1];
 				equal(btn1.getId(), "btnInHtmlFragment", "Button with given ID should have exactly this ID");
 				equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
-				
+
 				// Data binding
 				equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
-				
+
 				// find controls by ID
 				var btn = sap.ui.getCore().byId("btnInHtmlFragment");
 				ok(btn, "Button should be found by ID");
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
-			
+
 			test("HTML Fragment loaded from file with given Fragment ID", function() {
 				var oFragment = sap.ui.htmlfragment("myHtmlFrag", "testdata.fragments.HTMLTestFragment", oDummyController);
 				oFragment.placeAt("content1");
 				sap.ui.getCore().applyChanges();
-				
+
 				var id = oFragment.getId();
-				
+
 				equal(id.substr(0,8), "__layout", "Fragment ID should be generated");
 				ok(jQuery.sap.domById(id), "HTML Fragment should be rendered");
-				
+
 				var aContent = oFragment.getContent();
 				var btn1 = aContent[0];
 				var btn2 = aContent[1];
 				equal(btn1.getId(), "myHtmlFrag--btnInHtmlFragment", "Button with given ID should have this ID with Fragment ID prefix");
 				equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
-				
+
 				// Data binding
 				equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
-				
+
 				// find controls by ID
 				var btn = sap.ui.core.Fragment.byId("myHtmlFrag", "btnInHtmlFragment");
 				ok(btn, "Button should be found by ID");
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
-			
-			
-			
+
+
+
 			test("JS Fragment loaded from file", function() {
 				var oFragment = sap.ui.jsfragment("testdata.fragments.JSTestFragment", oDummyController);
 				oFragment.placeAt("content1");
 				sap.ui.getCore().applyChanges();
-				
+
 				var id = oFragment.getId();
-				
+
 				equal(id.substr(0,8), "__layout", "Fragment ID should be generated");
 				ok(jQuery.sap.domById(id), "JS Fragment should be rendered");
-				
+
 				var aContent = oFragment.getContent();
 				var btn1 = aContent[0];
 				var btn2 = aContent[1];
 				equal(btn1.getId(), "btnInJsFragment", "Button with given ID should have exactly this ID");
 				equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
-				
+
 				// Data binding
 				equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
-				
+
 				// find controls by ID
 				var btn = sap.ui.getCore().byId("btnInJsFragment");
 				ok(btn, "Button should be found by ID");
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
-			
+
 			test("JS Fragment loaded from file with given Fragment ID", function() {
 				var oFragment = sap.ui.jsfragment("myJsFrag", "testdata.fragments.JSTestFragment", oDummyController);
 				oFragment.placeAt("content1");
 				sap.ui.getCore().applyChanges();
-				
+
 				var id = oFragment.getId();
-				
+
 				equal(id.substr(0,8), "__layout", "Fragment ID should be generated");
 				ok(jQuery.sap.domById(id), "JS Fragment should be rendered");
-				
+
 				var aContent = oFragment.getContent();
 				var btn1 = aContent[0];
 				var btn2 = aContent[1];
 				equal(btn1.getId(), "myJsFrag--btnInJsFragment", "Button with given ID should have this ID with Fragment ID prefix");
 				equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
-				
+
 				// Data binding
 				equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
-				
+
 				// find controls by ID
 				var btn = sap.ui.core.Fragment.byId("myJsFrag", "btnInJsFragment");
 				ok(btn, "Button should be found by ID");
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
-			
-			
-			
-			
+
+
+
+
 			module("Inline Fragments");
-			
+
 			var oViewWithFragments;
-			
+
 			test("Inline Fragments preconditions", function(){
 				ok(!jQuery.sap.domById("jsfragbtn"), "Fragment should not be rendered");
 				ok(!jQuery.sap.domById("xmlfragbtn"), "Fragment should not be rendered");
 				ok(!jQuery.sap.domById("htmlfragbtn"), "Fragment should not be rendered");
 			});
-			
+
 			test("JSView creation with Fragments used inside", function() {
 				oViewWithFragments = sap.ui.jsview("myView", "example.fragment.test");
 				oViewWithFragments.placeAt("content2");
 				sap.ui.getCore().applyChanges();
-				
+
 				ok(jQuery.sap.domById("myView"), "JSView should be rendered");
 			});
-			
+
 			test("Inline JS Fragment", function() {
 				expect(2); // incl. Button click handler
-				
+
 				ok(jQuery.sap.domById("jsfragbtn"), "Fragment should be rendered");
-				
+
 				// Fragment knows Controller, Fragment calling Controller methods
 				qutils.triggerEvent("click", "jsfragbtn");
 			});
-			
+
 			test("Inline XML Fragment", function() {
 				expect(2); // incl. Button click handler
-				
+
 				ok(jQuery.sap.domById("xmlfragbtn"), "Fragment should be rendered");
-				
+
 				// Fragment knows Controller, Fragment calling Controller methods
 				qutils.triggerEvent("click", "xmlfragbtn");
 			});
-			
+
 			test("Inline HTML Fragment", function() {
 				expect(2); // incl. Button click handler
-				
+
 				ok(jQuery.sap.domById("htmlfragbtn"), "Fragment should be rendered");
-				
+
 				// Fragment knows Controller, Fragment calling Controller methods
 				qutils.triggerEvent("click", "htmlfragbtn");
 			});
 
 
-			
+
 			module("Fragments referenced from XMLViews");
-			
-			var oXmlView, oXmlFragmentInXmlView, oXmlFragmentWithIdInXmlView, oHtmlFragmentInXmlView, 
+
+			var oXmlView, oXmlFragmentInXmlView, oXmlFragmentWithIdInXmlView, oHtmlFragmentInXmlView,
 				oHtmlFragmentWithIdInXmlView, oJsFragmentInXmlView, oJsFragmentWithIdInXmlView;
-			
+
 			var DATABOUND_TEXT_IN_VIEW = "Text from Databinding in View";
-			
+
 			test("XMLView Rendering", function() {
 				oXmlView = sap.ui.xmlview("testdata.fragments.XMLViewWithFragments");
 				oXmlView.placeAt("content3");
 				sap.ui.getCore().applyChanges();
-				
+
 				var data = {
 					someText: DATABOUND_TEXT_IN_VIEW
 				};
-				
+
 				var oModel = new sap.ui.model.json.JSONModel();
 				oModel.setData(data);
 				oXmlView.setModel(oModel);
-				
+
 				sap.ui.getCore().applyChanges(); // update data binding in DOM
-				
+
 				var aContent = oXmlView.getContent();
 				oXmlFragmentInXmlView = aContent[1];
 				oXmlFragmentWithIdInXmlView = aContent[2];
-				
+
 				oJsFragmentInXmlView = aContent[4];
 				oJsFragmentWithIdInXmlView = aContent[5];
-				
+
 				oHtmlFragmentInXmlView = aContent[7];
 				oHtmlFragmentWithIdInXmlView = aContent[8];
 
-				
+
 				ok(jQuery.sap.domById(oXmlView.getId()), "XMLView should be rendered");
 			});
-			
-			
+
+
 			test("XML Fragment in XMLView", function() {
 				expect(8); // incl. Controller function on press
-				
+
 				var id = oXmlFragmentInXmlView.getId();
 				ok(jQuery.sap.domById(id), "XML Fragment should be rendered");
 				equal(id.substr(0,8), "__layout", "Fragment ID should be generated, with no View prefix");
-				
+
 				var btn1id = oXmlFragmentInXmlView.getContent()[0].getId();
 				equal(btn1id, "__xmlview0--btnInXmlFragment", "static Control ID inside Fragment should be prefixed by View ID");
 				qutils.triggerEvent("click", btn1id);
-				
+
 				var btn2 = oXmlFragmentInXmlView.getContent()[1];
 				equal(btn2.getId().substr(0,8), "__button", "Second Button ID should be generated, with no View prefix");
 				equal(btn2.$().text(), DATABOUND_TEXT_IN_VIEW, "Second Button should have text from data binding");
-				
+
 				// find controls by ID
 				var btn = oXmlView.byId("btnInXmlFragment");
 				ok(btn, "Button should be found by ID");
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
-			
+
 			test("XML Fragment in XMLView with given Fragment ID", function() {
 				expect(8); // incl. Controller function on press
-				
+
 				var id = oXmlFragmentWithIdInXmlView.getId();
 				ok(jQuery.sap.domById(id), "Fragment should be rendered");
 				equal(id.substr(0,8), "__layout", "Fragment ID should be generated, with no View prefix");
-				
+
 				var btn1id = oXmlFragmentWithIdInXmlView.getContent()[0].getId();
 				equal(btn1id, "__xmlview0--xmlInXml--btnInXmlFragment", "static Control ID inside Fragment should be prefixed by View ID and Fragment ID");
 				qutils.triggerEvent("click", btn1id);
-				
+
 				var btn2 = oXmlFragmentWithIdInXmlView.getContent()[1];
 				equal(btn2.getId().substr(0,8), "__button", "Second Button ID should be generated, with no View prefix");
 				equal(btn2.$().text(), DATABOUND_TEXT_IN_VIEW, "Second Button should have text from data binding");
-				
+
 				// find controls by ID
 				var btn = oXmlView.byId(sap.ui.core.Fragment.createId("xmlInXml", "btnInXmlFragment"));
 				ok(btn, "Button should be found by ID");
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
-			
-			
-			
+
+
+
 			test("JS Fragment in XMLView", function() {
 				expect(8); // incl. Controller function on press
-				
+
 				var id = oJsFragmentInXmlView.getId();
 				ok(jQuery.sap.domById(id), "Fragment should be rendered");
 				equal(id.substr(0,8), "__layout", "Fragment ID should be generated, with no View prefix");
-				
+
 				var btn1id = oJsFragmentInXmlView.getContent()[0].getId();
 				equal(btn1id, "__xmlview0--btnInJsFragment", "static Control ID inside Fragment should be prefixed by View ID");
 				qutils.triggerEvent("click", btn1id);
-				
+
 				var btn2 = oJsFragmentInXmlView.getContent()[1];
 				equal(btn2.getId().substr(0,8), "__button", "Second Button ID should be generated, with no View prefix");
 				equal(btn2.$().text(), DATABOUND_TEXT_IN_VIEW, "Second Button should have text from data binding");
-				
+
 				// find controls by ID
 				var btn = oXmlView.byId("btnInJsFragment");
 				ok(btn, "Button should be found by ID");
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
-			
+
 			test("JS Fragment in XMLView with given Fragment ID", function() {
 				expect(8); // incl. Controller function on press
-				
+
 				var id = oJsFragmentWithIdInXmlView.getId();
 				ok(jQuery.sap.domById(id), "Fragment should be rendered");
 				equal(id.substr(0,8), "__layout", "Fragment ID should be generated, with no View prefix");
-				
+
 				var btn1id = oJsFragmentWithIdInXmlView.getContent()[0].getId();
 				equal(btn1id, "__xmlview0--jsInXml--btnInJsFragment", "static Control ID inside Fragment should be prefixed by View ID and Fragment ID");
 				qutils.triggerEvent("click", btn1id);
-				
+
 				var btn2 = oJsFragmentWithIdInXmlView.getContent()[1];
 				equal(btn2.getId().substr(0,8), "__button", "Second Button ID should be generated, with no View prefix");
 				equal(btn2.$().text(), DATABOUND_TEXT_IN_VIEW, "Second Button should have text from data binding");
-				
+
 				// find controls by ID
 				var btn = oXmlView.byId(sap.ui.core.Fragment.createId("jsInXml", "btnInJsFragment"));
 				ok(btn, "Button should be found by ID");
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
-			
-			
-			
+
+
+
 			test("HTML Fragment in XMLView", function() {
 				expect(8); // incl. Controller function on press
-				
+
 				var id = oHtmlFragmentInXmlView.getId();
 				ok(jQuery.sap.domById(id), "Fragment should be rendered");
 				equal(id.substr(0,8), "__layout", "Fragment ID should be generated, with no View prefix");
-				
+
 				var btn1id = oHtmlFragmentInXmlView.getContent()[0].getId();
 				equal(btn1id, "__xmlview0--btnInHtmlFragment", "static Control ID inside Fragment should be prefixed by View ID");
 				qutils.triggerEvent("click", btn1id);
-				
+
 				var btn2 = oHtmlFragmentInXmlView.getContent()[1];
 				equal(btn2.getId().substr(0,8), "__button", "Second Button ID should be generated, with no View prefix");
 				equal(btn2.$().text(), DATABOUND_TEXT_IN_VIEW, "Second Button should have text from data binding");
-				
+
 				// find controls by ID
 				var btn = oXmlView.byId("btnInHtmlFragment");
 				ok(btn, "Button should be found by ID");
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
-			
+
 			test("HTML Fragment in XMLView with given Fragment ID", function() {
 				expect(8); // incl. Controller function on press
-				
+
 				var id = oHtmlFragmentWithIdInXmlView.getId();
 				ok(jQuery.sap.domById(id), "Fragment should be rendered");
 				equal(id.substr(0,8), "__layout", "Fragment ID should be generated, with no View prefix");
-				
+
 				var btn1id = oHtmlFragmentWithIdInXmlView.getContent()[0].getId();
 				equal(btn1id, "__xmlview0--htmlInXml--btnInHtmlFragment", "static Control ID inside Fragment should be prefixed by View ID and Fragment ID");
 				qutils.triggerEvent("click", btn1id);
-				
+
 				var btn2 = oHtmlFragmentWithIdInXmlView.getContent()[1];
 				equal(btn2.getId().substr(0,8), "__button", "Second Button ID should be generated, with no View prefix");
 				equal(btn2.$().text(), DATABOUND_TEXT_IN_VIEW, "Second Button should have text from data binding");
-				
+
 				// find controls by ID
 				var btn = oXmlView.byId(sap.ui.core.Fragment.createId("htmlInXml", "btnInHtmlFragment"));
 				ok(btn, "Button should be found by ID");
 				ok(btn instanceof sap.ui.commons.Button, "Button should be found by ID");
 			});
-			
-			
-			
+
+
+
 			module("Dialog Fragments");
-			
+
 			var DATABOUND_TEXT_IN_DIALOG = "Text from Databinding in Dialog";
-			
+
 			var data = {
 				dialogText: DATABOUND_TEXT_IN_DIALOG
 			};
-			
+
 			var oDialogModel = new sap.ui.model.json.JSONModel();
-			oDialogModel.setData(data);		
-			
-			
+			oDialogModel.setData(data);
+
+
 			asyncTest("JS Fragment as Dialog", function() {
 				var oDialog = sap.ui.jsfragment("testdata.fragments.JSFragmentDialog", {closeDialog: function(){oDialog.close();}});
-				
+
 				ok(!jQuery.sap.domById("jsDialog"), "Fragment should not yet be rendered");
 				oDialog.open();
 				ok(jQuery.sap.domById("jsDialog"), "Fragment should be rendered now");
-				
+
 				window.setTimeout(function(){
 					ok(oDialog.isOpen(), "Dialog should be open now");
-					
+
 					equal(jQuery("#jsDialogTxt").text(), DATABOUND_GLOBAL_TEXT_IN_DIALOG, "TextView should have text from global data binding");
 					oDialog.setModel(oDialogModel);
 					sap.ui.getCore().applyChanges();
 					equal(jQuery("#jsDialogTxt").text(), DATABOUND_TEXT_IN_DIALOG, "TextView should have text from Dialog data binding");
-					
+
 					qutils.triggerEvent("click", "jsDialogBtn"); // close it
-					
+
 					window.setTimeout(function(){
 						ok(!oDialog.isOpen(), "Dialog should be closed now");
 						oDialog.destroy();
-						
+
 						start();
 					}, 600);
 				}, 600);
-				
+
 			});
-			
-			
+
+
 			asyncTest("XML Fragment as Dialog", function() {
 				var oDialog = sap.ui.xmlfragment("testdata.fragments.XMLFragmentDialog", {closeDialog: function(){oDialog.close();}});
-				
+
 				ok(!jQuery.sap.domById("xmlDialog"), "Fragment should not yet be rendered");
 				oDialog.open();
 				ok(jQuery.sap.domById("xmlDialog"), "Fragment should be rendered now");
-				
+
 				window.setTimeout(function(){
 					ok(oDialog.isOpen(), "Dialog should be open now");
-					
+
 					equal(jQuery("#xmlDialogTxt").text(), DATABOUND_GLOBAL_TEXT_IN_DIALOG, "TextView should have text from global data binding");
 					oDialog.setModel(oDialogModel);
 					sap.ui.getCore().applyChanges();
 					equal(jQuery("#xmlDialogTxt").text(), DATABOUND_TEXT_IN_DIALOG, "TextView should have text from Dialog data binding");
-					
+
 					qutils.triggerEvent("click", "xmlDialogBtn"); // close it
-					
+
 					window.setTimeout(function(){
 						ok(!oDialog.isOpen(), "Dialog should be closed now");
 						oDialog.destroy();
-						
+
 						start();
 					}, 600);
 				}, 600);
-				
+
 			});
-			
-			
+
+
 			asyncTest("HTML Fragment as Dialog", function() {
 				var oDialog = sap.ui.htmlfragment("testdata.fragments.HTMLFragmentDialog", {closeDialog: function(){oDialog.close();}});
-				
+
 				ok(!jQuery.sap.domById("htmlDialog"), "Fragment should not yet be rendered");
 				oDialog.open();
 				ok(jQuery.sap.domById("htmlDialog"), "Fragment should be rendered now");
-				
+
 				window.setTimeout(function(){
 					ok(oDialog.isOpen(), "Dialog should be open now");
-					
+
 					equal(jQuery("#htmlDialogTxt").text(), DATABOUND_GLOBAL_TEXT_IN_DIALOG, "TextView should have text from global data binding");
 					oDialog.setModel(oDialogModel);
 					sap.ui.getCore().applyChanges();
 					equal(jQuery("#htmlDialogTxt").text(), DATABOUND_TEXT_IN_DIALOG, "TextView should have text from Dialog data binding");
-					
+
 					qutils.triggerEvent("click", "htmlDialogBtn"); // close it
-					
+
 					window.setTimeout(function(){
 						ok(!oDialog.isOpen(), "Dialog should be closed now");
 						oDialog.destroy();
-						
+
 						start();
 					}, 600);
 				}, 600);
-				
+
 			});
-			
-			
-			
+
+
+
 			module("Fragments with no Controller");
-			
+
 			test("XML Fragment loaded from file", function() {
 				expect(2);
 				var oFragment = sap.ui.xmlfragment("testdata.fragments.XMLTestFragmentNoController");
 				oFragment.placeAt("content4");
 				sap.ui.getCore().applyChanges();
-				
+
 				var id = oFragment.getId();
 				ok(jQuery.sap.domById(id), "Fragment should be rendered");
-				
+
 				var aContent = oFragment.getContent();
 				var btn1 = aContent[0];
 				equal(btn1.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
 			});
-			
+
 			test("JS Fragment loaded from file", function() {
 				expect(3); // including one check in the View' createContent method
 				var oFragment = sap.ui.jsfragment("testdata.fragments.JSTestFragmentNoController");
 				oFragment.placeAt("content4");
 				sap.ui.getCore().applyChanges();
-				
+
 				var id = oFragment.getId();
 				ok(jQuery.sap.domById(id), "Fragment should be rendered");
-				
+
 				var aContent = oFragment.getContent();
 				var btn1 = aContent[0];
 				equal(btn1.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
 			});
-			
+
 			test("HTML Fragment loaded from file", function() {
 				expect(2);
 				var oFragment = sap.ui.htmlfragment("testdata.fragments.HTMLTestFragmentNoController");
 				oFragment.placeAt("content4");
 				sap.ui.getCore().applyChanges();
-				
+
 				var id = oFragment.getId();
 				ok(jQuery.sap.domById(id), "Fragment should be rendered");
-				
+
 				var aContent = oFragment.getContent();
 				var btn1 = aContent[0];
 				equal(btn1.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
 			});
-			
+
+			module("DataBinding", {
+				setup : function() {
+					jQuery.sap.registerModulePath("my", "./fragment");
+				},
+
+				teardown : function() {
+					jQuery("#binding").empty();
+				}
+			});
+
+			test("Unnamed Model", function() {
+				var oXMLView = sap.ui.xmlview("unnamedView", "my.UnnamedView").placeAt("binding");
+				sap.ui.getCore().applyChanges();
+
+				var oLabel = sap.ui.getCore().byId("unnamedView--unnamedName");
+				ok(oLabel.getText().indexOf("<Named>") == -1, "Binding of unnamed model set for 'name'");
+				oLabel = sap.ui.getCore().byId("unnamedView--unnamedPhone");
+				ok(oLabel.getText().indexOf("<Named>") == -1, "Binding of unnamed model set for 'phone'");
+
+			});
+
+			test("Named Model", function() {
+				var oXMLView = sap.ui.xmlview("namedView", "my.View").placeAt("binding");
+				sap.ui.getCore().applyChanges();
+
+				var oLabel = sap.ui.getCore().byId("namedView--namedName");
+				ok(oLabel.getText().indexOf("<Named>") > -1, "Binding of named model set for 'name'");
+				oLabel = sap.ui.getCore().byId("namedView--namedPhone");
+				ok(oLabel.getText().indexOf("<Named>") > -1, "Binding of named model set for 'phone'");
+			});
+
 		</script>
 	</head>
 	<body>
@@ -629,17 +660,20 @@
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<ol id="qunit-tests"></ol>
-		
+
 		<h3>External Fragments</h3>
 		<div id="content1"></div>
-		
+
 		<h3>Inline Fragments</h3>
 		<div id="content2"></div>
-		
+
 		<h3>Fragments within XMLView</h3>
 		<div id="content3"></div>
-		
+
 		<h3>Fragments with no Controllers</h3>
 		<div id="content4"></div>
+
+		<h3>DataBinding</h3>
+		<div id="binding"></div>
 	</body>
 </html>
