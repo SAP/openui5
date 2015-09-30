@@ -62,7 +62,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			titleActive : {type : "boolean", group : "Misc", defaultValue : null},
 
 			/**
-			 * Object header icon
+			 * Object header icon.
+			 * 
+			 * <b>Note:</b> Recursive resolution of binding expressions is not supported by the framework.
+			 * It works only in ObjectHeader, since it is a composite control and creates an Image control internally.
 			 */
 			icon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
 
