@@ -1221,7 +1221,6 @@
 					}),
 					expDateValue = getDate(17, 27, 43);
 
-
 			//arrange
 			tp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -1264,21 +1263,17 @@
 			_clearInput: function(timePicker) {
 				jQuery("#" + timePicker.getId() + "-inner").val("");
 			},
-			typeAndCheckValueForDisplayFormat: function(sDisplayFormat, sInput, sExpectedValue, sPrefilledValue) {
+			typeAndCheckValueForDisplayFormat: function(sDisplayFormat, sInput, sExpectedValue) {
 				//system under test
 				var tp = new sap.m.TimePicker({
 					displayFormat: sDisplayFormat
 				});
-
-//				sPrefilledValue || (sPrefilledValue = "");
-
 
 				//arrange
 				tp.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
 				//act
-//				this._triggerMultipleKeypress(tp, sPrefilledValue + sInput);
 				this._triggerMultipleKeypress(tp, sInput);
 
 				//assert
@@ -1459,6 +1454,67 @@
 
 		test("pm autocompletes the value on first different letter", function() {
 			this.typeAndCheckValueForDisplayFormat("hh a", "01P", "01 PM");
+		});
+
+		test("on enter '15:--:--', autocomplete to '15:00:00'", function() {
+			//system under test
+			var oTp = new sap.m.TimePicker({
+				displayFormat: "HH:mm:ss"
+			});
+
+			//arrange
+			oTp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//act
+			this._triggerMultipleKeypress(oTp, "15");
+			qutils.triggerKeydown(jQuery(oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
+
+			//assert
+			equals(jQuery("#" + oTp.getId() + "-inner").val(), "15:00:00", "$input.val() ok");
+
+			//cleanup
+			oTp.destroy();
+		});
+
+		test("on enter '15:1-:--', autocomplete to '15:01:00'", function() {
+			//system under test
+			var oTp = new sap.m.TimePicker({
+				displayFormat: "HH:mm:ss"
+			});
+
+			//arrange
+			oTp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//act
+			this._triggerMultipleKeypress(oTp, "151");
+			qutils.triggerKeydown(jQuery(oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
+			//assert
+			equals(jQuery("#" + oTp.getId() + "-inner").val(), "15:01:00", "$input.val() ok");
+
+			//cleanup
+			oTp.destroy();
+		});
+
+		test("on enter '07:-- --', autocomplete to '07:00 AM'", function() {
+			//system under test
+			var oTp = new sap.m.TimePicker({
+				displayFormat: "HH:mm a"
+			});
+
+			//arrange
+			oTp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			//act
+			this._triggerMultipleKeypress(oTp, "7");
+			qutils.triggerKeydown(jQuery(oTp.getFocusDomRef()), jQuery.sap.KeyCodes.ENTER);
+			//assert
+			equals(jQuery("#" + oTp.getId() + "-inner").val(), "07:00 AM", "$input.val() ok");
+
+			//cleanup
+			oTp.destroy();
 		});
 
 		test("am match start - then autocomplete on any letter", function() {
