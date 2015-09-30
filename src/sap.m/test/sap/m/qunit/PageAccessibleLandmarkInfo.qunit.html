@@ -26,28 +26,25 @@
 			teardown: function () {
 				this.oPageAccessibleLandmarkInfo.destroy();
 				this.oPageAccessibleLandmarkInfo = null;
+			},
+			getDefaultLandmarks: function (assert, sRole, sRoleValue, sRoleLabel) {
+				var rootInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(this.oPageAccessibleLandmarkInfo, sRole);
+
+				assert.equal(rootInfo[0], sRoleValue, "should return '" + sRoleValue +  "' as the first element in the array");
+				assert.equal(rootInfo[1], sRoleLabel, "should return empty string as the second element in the array");
 			}
 		});
 
 		QUnit.test("Call _getLandmarkInfo with default values for root", function (assert) {
-			var rootInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(this.oPageAccessibleLandmarkInfo, "root");
-
-			assert.equal(rootInfo[0], "region", "should return 'region' as the first element in the array");
-			assert.equal(rootInfo[1], "", "should return empty string as the second element in the array");
+			this.getDefaultLandmarks(assert, "root", "region", "");
 		});
 
 		QUnit.test("Call _getLandmarkInfo with default values for content", function (assert) {
-			var contentInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(this.oPageAccessibleLandmarkInfo, "content");
-
-			assert.equal(contentInfo[0], "main", "should return 'main' as the first element in the array");
-			assert.equal(contentInfo[1], "", "should return empty string as the second element in the array");
+			this.getDefaultLandmarks(assert, "content", "main", "");
 		});
 
 		QUnit.test("Call _getLandmarkInfo with default values for header", function (assert) {
-			var headerInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(this.oPageAccessibleLandmarkInfo, "header");
-
-			assert.equal(headerInfo[0], "region", "should return 'region' as the first element in the array");
-			assert.equal(headerInfo[1], "", "should return empty string as the second element in the array");
+			this.getDefaultLandmarks(assert, "header", "region", "");
 		});
 
 		QUnit.test("Call _getLandmarkInfo with default values for sub header", function (assert) {
@@ -57,47 +54,42 @@
 		});
 
 		QUnit.test("Call _getLandmarkInfo with default values for footer", function (assert) {
-			var footerInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(this.oPageAccessibleLandmarkInfo, "footer");
-
-			assert.equal(footerInfo[0], "region", "should return 'region' as the first element in the array");
-			assert.equal(footerInfo[1], "", "should return empty string as the second element in the array");
+			this.getDefaultLandmarks(assert, "footer", "region", "");
 		});
 
 
 		QUnit.module("Get landmarks from not defined landmarks instance", {
 			teardown: function () {
 				this.oPageAccessibleLandmarkInfo = null;
+			},
+
+			getLandmsrksWithNoInstance: function (assert, sRole) {
+				var rootInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(undefined, sRole);
+
+				assert.equal(rootInfo, null, "should return null");
 			}
 		});
 
-		QUnit.test("Call _getLandmarkInfo with no instance for root", function (assert) {
-			var rootInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(undefined, "root");
 
-			assert.equal(rootInfo, null, "should return null");
+
+		QUnit.test("Call _getLandmarkInfo with no instance for root", function (assert) {
+			this.getLandmsrksWithNoInstance(assert, "root");
 		});
 
 		QUnit.test("Call _getLandmarkInfo with no instance for content", function (assert) {
-			var contentInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(undefined, "content");
-
-			assert.equal(contentInfo, null, "should return null");
+			this.getLandmsrksWithNoInstance(assert, "content");
 		});
 
 		QUnit.test("Call _getLandmarkInfo with no instance for header", function (assert) {
-			var headerInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(undefined, "header");
-
-			assert.equal(headerInfo, null, "should return null");
+			this.getLandmsrksWithNoInstance(assert, "header");
 		});
 
 		QUnit.test("Call _getLandmarkInfo with no instance for sub header", function (assert) {
-			var subHeaderInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(undefined, "subheader");
-
-			assert.equal(subHeaderInfo, null, "should return null");
+			this.getLandmsrksWithNoInstance(assert, "subHeader");
 		});
 
 		QUnit.test("Call _getLandmarkInfo with no instance for footer", function (assert) {
-			var footerInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(undefined, "footer");
-
-			assert.equal(footerInfo, null, "should return null");
+			this.getLandmsrksWithNoInstance(assert, "footer");
 		});
 
 
@@ -120,137 +112,75 @@
 			teardown: function () {
 				this.oPageAccessibleLandmarkInfo.destroy();
 				this.oPageAccessibleLandmarkInfo = null;
+			},
+
+			getCustomLandmarksWithNoLabel: function (assert, sRole) {
+				var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
+				var oConfig = {};
+
+				oConfig[sRole + "Role"] = sCustomRole;
+
+				this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo(oConfig);
+				var rootInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(this.oPageAccessibleLandmarkInfo, sRole);
+
+				assert.equal(rootInfo[0], sCustomRole.toLowerCase(), "should return '" + sCustomRole + "' as the first element in the array");
+				assert.equal(rootInfo[1], "", "should return empty string as the second element in the array");
+			},
+
+			getCustomLandmarksWithLabel: function (assert, sRole) {
+				var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
+				var sCustomLabel = "Label";
+				var oConfig = {};
+
+				oConfig[sRole + "Role"] = sCustomRole;
+				oConfig[sRole + "Label"] = sCustomLabel;
+
+				this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo(oConfig);
+				var rootInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(this.oPageAccessibleLandmarkInfo, sRole);
+
+				assert.equal(rootInfo[0], sCustomRole.toLowerCase(), "should return '" + sCustomRole + "' as the first element in the array");
+				assert.equal(rootInfo[1], sCustomLabel, "should return '" + sCustomLabel + "' as the second element in the array");
 			}
 		});
 
 		QUnit.test("Call _getLandmarkInfo with custom role and no label for root", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				rootRole: sCustomRole
-			});
-			var rootInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(this.oPageAccessibleLandmarkInfo, "root");
-
-			assert.equal(rootInfo[0], sCustomRole.toLowerCase(), "should return '" + sCustomRole + "' as the first element in the array");
-			assert.equal(rootInfo[1], "", "should return empty string as the second element in the array");
+			this.getCustomLandmarksWithNoLabel(assert, "root");
 		});
 
 		QUnit.test("Call _getLandmarkInfo with custom role and label for root", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-			var sCustomLabel = "Label";
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				rootRole: sCustomRole,
-				rootLabel: sCustomLabel
-			});
-			var rootInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(this.oPageAccessibleLandmarkInfo, "root");
-
-			assert.equal(rootInfo[0], sCustomRole.toLowerCase(), "should return '" + sCustomRole + "' as the first element in the array");
-			assert.equal(rootInfo[1], sCustomLabel, "should return '" + sCustomLabel + "' as the second element in the array");
+			this.getCustomLandmarksWithLabel(assert, "root")
 		});
 
 		QUnit.test("Call _getLandmarkInfo with custom role and no label for content", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				contentRole: sCustomRole
-			});
-			var contentInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(this.oPageAccessibleLandmarkInfo, "content");
-
-			assert.equal(contentInfo[0], sCustomRole.toLowerCase(), "should return '" + sCustomRole + "' as the first element in the array");
-			assert.equal(contentInfo[1], "", "should return empty string as the second element in the array");
+			this.getCustomLandmarksWithNoLabel(assert, "content");
 		});
 
 		QUnit.test("Call _getLandmarkInfo with custom role and label for content", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-			var sCustomLabel = "Label";
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				contentRole: sCustomRole,
-				contentLabel: sCustomLabel
-			});
-			var contentInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(this.oPageAccessibleLandmarkInfo, "content");
-
-			assert.equal(contentInfo[0], sCustomRole.toLowerCase(), "should return '" + sCustomRole + "' as the first element in the array");
-			assert.equal(contentInfo[1], sCustomLabel, "should return '" + sCustomLabel + "' as the second element in the array");
+			this.getCustomLandmarksWithLabel(assert, "content");
 		});
 
 		QUnit.test("Call _getLandmarkInfo with custom role and no label for header", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				headerRole: sCustomRole
-			});
-			var headerInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(this.oPageAccessibleLandmarkInfo, "header");
-
-			assert.equal(headerInfo[0], sCustomRole.toLowerCase(), "should return '" + sCustomRole + "' as the first element in the array");
-			assert.equal(headerInfo[1], "", "should return empty string as the second element in the array");
+			this.getCustomLandmarksWithNoLabel(assert, "header");
 		});
 
 		QUnit.test("Call _getLandmarkInfo with custom role and label for header", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-			var sCustomLabel = "Label";
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				headerRole: sCustomRole,
-				headerLabel: sCustomLabel
-			});
-			var headerInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(this.oPageAccessibleLandmarkInfo, "header");
-
-			assert.equal(headerInfo[0], sCustomRole.toLowerCase(), "should return '" + sCustomRole + "' as the first element in the array");
-			assert.equal(headerInfo[1], sCustomLabel, "should return '" + sCustomLabel + "' as the second element in the array");
+			this.getCustomLandmarksWithLabel(assert, "header");
 		});
 
 		QUnit.test("Call _getLandmarkInfo with custom role and no label for sub header", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				subHeaderRole: sCustomRole
-			});
-			var subHeaderInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(this.oPageAccessibleLandmarkInfo, "subHeader");
-
-			assert.equal(subHeaderInfo[0], sCustomRole.toLowerCase(), "should return '" + sCustomRole + "' as the first element in the array");
-			assert.equal(subHeaderInfo[1], "", "should return empty string as the second element in the array");
+			this.getCustomLandmarksWithNoLabel(assert, "subHeader");
 		});
 
 		QUnit.test("Call _getLandmarkInfo with custom role and label for sub header", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-			var sCustomLabel = "Label";
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				subHeaderRole: sCustomRole,
-				subHeaderLabel: sCustomLabel
-			});
-			var subHeaderInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(this.oPageAccessibleLandmarkInfo, "subHeader");
-
-			assert.equal(subHeaderInfo[0], sCustomRole.toLowerCase(), "should return '" + sCustomRole + "' as the first element in the array");
-			assert.equal(subHeaderInfo[1], sCustomLabel, "should return '" + sCustomLabel + "' as the second element in the array");
+			this.getCustomLandmarksWithNoLabel(assert, "subHeader");
 		});
 
 		QUnit.test("Call _getLandmarkInfo with custom role and no label for footer", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				footerRole: sCustomRole
-			});
-			var footerInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(this.oPageAccessibleLandmarkInfo, "footer");
-
-			assert.equal(footerInfo[0], sCustomRole.toLowerCase(), "should return '" + sCustomRole + "' as the first element in the array");
-			assert.equal(footerInfo[1], "", "should return empty string as the second element in the array");
+			this.getCustomLandmarksWithNoLabel(assert, "footer");
 		});
 
 		QUnit.test("Call _getLandmarkInfo with custom role and label for footer", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-			var sCustomLabel = "Label";
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				footerRole: sCustomRole,
-				footerLabel: sCustomLabel
-			});
-			var footerInfo = sap.m.PageAccessibleLandmarkInfo._getLandmarkInfo(this.oPageAccessibleLandmarkInfo, "footer");
-
-			assert.equal(footerInfo[0], sCustomRole.toLowerCase(), "should return '" + sCustomRole + "' as the first element in the array");
-			assert.equal(footerInfo[1], sCustomLabel, "should return '" + sCustomLabel + "' as the second element in the array");
+			this.getCustomLandmarksWithLabel(assert, "footer");
 		});
 
 
@@ -265,97 +195,45 @@
 				this.oPage.destroy();
 				this.oPageAccessibleLandmarkInfo = null;
 				this.oPage = null;
+			},
+
+			writeDefaultLandmarks: function (assert, sRole, sRoleValue) {
+				var oRm = {
+					writeAccessibilityState: function () {}
+				};
+				var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
+				var getLandmarkSpy = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
+
+				sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, sRole);
+
+				assert.ok(getLandmarkSpy.calledOnce, "should call _getLandmarkInfo once");
+				assert.ok(getLandmarkSpy.calledWith(this.oPage.getLandmarkInfo(), sRole), "should call _getLandmarkInfo with page landmarks and '" + sRole + "' as parameters");
+				assert.ok(oRmStub.calledOnce, "should call oRm writeAccessibilityState once");
+				assert.ok(oRmStub.args[0][0] instanceof sap.m.Page, "should call writeAccessibilityState with page as first argument");
+				assert.equal(oRmStub.args[0][1].role, sRoleValue, "should call writeAccessibilityState with object as second parameter and role equal to " + sRoleValue);
+
+				getLandmarkSpy.restore();
 			}
 		});
 
 		QUnit.test("Call _writeLandmarkInfo with default values for root", function (assert) {
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "root");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "root"), "should call _getLandmarkInfo with page landmarks and 'root' as parameters");
-			assert.ok(oRmStub.calledOnce, "should call oRm writeAccessibilityState once");
-			assert.ok(oRmStub.args[0][0] instanceof sap.m.Page, "should call writeAccessibilityState with page as first argument");
-			assert.equal(oRmStub.args[0][1].role, "region", "should call writeAccessibilityState with object as second parameter and role equal to region");
-
-			getLandmarkStub.restore();
+			this.writeDefaultLandmarks(assert, "root", "region");
 		});
 
 		QUnit.test("Call _writeLandmarkInfo with default values for content", function (assert) {
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "content");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "content"), "should call _getLandmarkInfo with page landmarks and 'content' as parameters");
-			assert.ok(oRmStub.calledOnce, "should call oRm writeAccessibilityState once");
-			assert.ok(oRmStub.args[0][0] instanceof sap.m.Page, "should call writeAccessibilityState with page as first argument");
-			assert.equal(oRmStub.args[0][1].role, "main", "should call writeAccessibilityState with object as second parameter and role equal to region");
-
-			getLandmarkStub.restore();
+			this.writeDefaultLandmarks(assert, "content", "main");
 		});
 
 		QUnit.test("Call _writeLandmarkInfo with default values for header", function (assert) {
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "header");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "header"), "should call _getLandmarkInfo with page landmarks and 'header' as parameters");
-			assert.ok(oRmStub.calledOnce, "should call oRm writeAccessibilityState once");
-			assert.ok(oRmStub.args[0][0] instanceof sap.m.Page, "should call writeAccessibilityState with page as first argument");
-			assert.equal(oRmStub.args[0][1].role, "region", "should call writeAccessibilityState with object as second parameter and role equal to region");
-
-			getLandmarkStub.restore();
+			this.writeDefaultLandmarks(assert, "header", "region");
 		});
 
 		QUnit.test("Call _writeLandmarkInfo with default values for sub header", function (assert) {
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "subHeader");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "subHeader"), "should call _getLandmarkInfo with page landmarks and 'subHeader' as parameters");
-			assert.ok(oRmStub.calledOnce, "should call oRm writeAccessibilityState once");
-			assert.ok(oRmStub.args[0][0] instanceof sap.m.Page, "should call writeAccessibilityState with page as first argument");
-			assert.equal(oRmStub.args[0][1].role, "none", "should call writeAccessibilityState with object as second parameter and role equal to region");
-
-			getLandmarkStub.restore();
+			this.writeDefaultLandmarks(assert, "subHeader", "none");
 		});
 
 		QUnit.test("Call _writeLandmarkInfo with default values for footer", function (assert) {
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "footer");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "footer"), "should call _getLandmarkInfo with page landmarks and 'footer' as parameters");
-			assert.ok(oRmStub.calledOnce, "should call oRm writeAccessibilityState once");
-			assert.ok(oRmStub.args[0][0] instanceof sap.m.Page, "should call writeAccessibilityState with page as first argument");
-			assert.equal(oRmStub.args[0][1].role, "region", "should call writeAccessibilityState with object as second parameter and role equal to region");
-
-			getLandmarkStub.restore();
+			this.writeDefaultLandmarks(assert, "footer", "region");
 		});
 
 
@@ -368,87 +246,43 @@
 				this.oPage.destroy();
 				this.oPageAccessibleLandmarkInfo = null;
 				this.oPage = null;
+			},
+
+			writeLandmarksWhenPageHaveNoLandmarksInfo: function (assert, sRole) {
+				var oRm = {
+					writeAccessibilityState: function () {}
+				};
+				var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
+				var getLandmarkSpy = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
+
+				sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, sRole);
+
+				assert.ok(getLandmarkSpy.calledOnce, "should call _getLandmarkInfo once");
+				assert.ok(getLandmarkSpy.calledWith(this.oPage.getLandmarkInfo(), sRole), "should call _getLandmarkInfo with page landmarks and '" + sRole +  "' as parameters");
+				assert.equal(oRmStub.callCount, 0, "should not call oRm writeAccessibilityState");
+
+				getLandmarkSpy.restore();
 			}
 		});
 
 		QUnit.test("Call _writeLandmarkInfo on a page which do not have landmarks for root", function (assert) {
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "root");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "root"), "should call _getLandmarkInfo with page landmarks and 'root' as parameters");
-			assert.equal(oRmStub.callCount, 0, "should not call oRm writeAccessibilityState");
-
-			getLandmarkStub.restore();
+			this.writeLandmarksWhenPageHaveNoLandmarksInfo(assert, "root");
 		});
 
 		QUnit.test("Call _writeLandmarkInfo on a page which do not have landmarks for content", function (assert) {
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "content");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "content"), "should call _getLandmarkInfo with page landmarks and 'content' as parameters");
-			assert.equal(oRmStub.callCount, 0, "should not call oRm writeAccessibilityState");
-
-			getLandmarkStub.restore();
+			this.writeLandmarksWhenPageHaveNoLandmarksInfo(assert, "content");
 		});
 
 		QUnit.test("Call _writeLandmarkInfo on a page which do not have landmarks for header", function (assert) {
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "header");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "header"), "should call _getLandmarkInfo with page landmarks and 'header' as parameters");
-			assert.equal(oRmStub.callCount, 0, "should not call oRm writeAccessibilityState");
-
-			getLandmarkStub.restore();
+			this.writeLandmarksWhenPageHaveNoLandmarksInfo(assert, "header");
 		});
 
 		QUnit.test("Call _writeLandmarkInfo on a page which do not have landmarks for sub header", function (assert) {
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "subHeader");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "subHeader"), "should call _getLandmarkInfo with page landmarks and 'subHeader' as parameters");
-			assert.equal(oRmStub.callCount, 0, "should not call oRm writeAccessibilityState");
-
-			getLandmarkStub.restore();
+			this.writeLandmarksWhenPageHaveNoLandmarksInfo(assert, "subHeader");
 		});
 
 		QUnit.test("Call _writeLandmarkInfo on a page which do not have landmarks for footer", function (assert) {
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "footer");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "footer"), "should call _getLandmarkInfo with page landmarks and 'footer' as parameters");
-			assert.equal(oRmStub.callCount, 0, "should not call oRm writeAccessibilityState");
-
-			getLandmarkStub.restore();
+			this.writeLandmarksWhenPageHaveNoLandmarksInfo(assert, "footer");
 		});
 
 
@@ -471,15 +305,15 @@
 				writeAccessibilityState: function () {}
 			};
 			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
+			var getLandmarkSpy = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
 
 			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "dummy");
 
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "dummy"), "should call _getLandmarkInfo with page landmarks and 'dummy' as parameters");
+			assert.ok(getLandmarkSpy.calledOnce, "should call _getLandmarkInfo once");
+			assert.ok(getLandmarkSpy.calledWith(this.oPage.getLandmarkInfo(), "dummy"), "should call _getLandmarkInfo with page landmarks and 'dummy' as parameters");
 			assert.equal(oRmStub.callCount, 0, "should not call oRm writeAccessibilityState");
 
-			getLandmarkStub.restore();
+			getLandmarkSpy.restore();
 		});
 
 
@@ -488,292 +322,106 @@
 				this.oPage.destroy();
 				this.oPageAccessibleLandmarkInfo = null;
 				this.oPage = null;
+			},
+
+			writeCustomLandmarksWithNoLabel: function (assert, sRole) {
+				var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
+				var oConfig = {};
+
+				oConfig[sRole + "Role"] = sCustomRole;
+
+				this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo(oConfig);
+				this.oPage = new sap.m.Page({
+					landmarkInfo: this.oPageAccessibleLandmarkInfo
+				});
+
+				var oRm = {
+					writeAccessibilityState: function () {}
+				};
+				var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
+				var getLandmarkSpy = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
+
+				sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, sRole);
+
+				assert.ok(getLandmarkSpy.calledOnce, "should call _getLandmarkInfo once");
+				assert.ok(getLandmarkSpy.calledWith(this.oPage.getLandmarkInfo(), sRole), "should call _getLandmarkInfo with page landmarks and '" + sRole + "' as parameters");
+				assert.ok(oRmStub.calledOnce, "should call oRm writeAccessibilityState once");
+				assert.ok(oRmStub.args[0][0] instanceof sap.m.Page, "should call writeAccessibilityState with page as first argument");
+				assert.equal(oRmStub.args[0][1].role, sCustomRole.toLowerCase(), "should call writeAccessibilityState with object as second parameter and role equal to " + sCustomRole);
+
+				getLandmarkSpy.restore();
+			},
+
+			writeCustomLandmarksWithLabel: function (assert, sRole) {
+				var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
+				var sCustomLabel = "Label";
+				var oConfig = {};
+
+				oConfig[sRole + "Role"] = sCustomRole;
+				oConfig[sRole + "Label"] = sCustomLabel;
+
+				this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo(oConfig);
+				this.oPage = new sap.m.Page({
+					landmarkInfo: this.oPageAccessibleLandmarkInfo
+				});
+
+				var oRm = {
+					writeAccessibilityState: function () {}
+				};
+				var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
+				var getLandmarkSpy = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
+
+				sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, sRole);
+
+				assert.ok(getLandmarkSpy.calledOnce, "should call _getLandmarkInfo once");
+				assert.ok(getLandmarkSpy.calledWith(this.oPage.getLandmarkInfo(), sRole), "should call _getLandmarkInfo with page landmarks and '" + sRole + "' as parameters");
+				assert.ok(oRmStub.calledOnce, "should call oRm writeAccessibilityState once");
+				assert.ok(oRmStub.args[0][0] instanceof sap.m.Page, "should call writeAccessibilityState with page as first argument");
+				assert.equal(oRmStub.args[0][1].role, sCustomRole.toLowerCase(), "should call writeAccessibilityState with object as second parameter and role equal to " + sCustomRole);
+				assert.equal(oRmStub.args[0][1].label, sCustomLabel, "should call writeAccessibilityState with object as second parameter and label equal to " + sCustomLabel);
+
+				getLandmarkSpy.restore();
 			}
 		});
 
 		QUnit.test("Call _writeLandmarkInfo with custom role and no label for root", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				rootRole: sCustomRole
-			});
-			this.oPage = new sap.m.Page({
-				landmarkInfo: this.oPageAccessibleLandmarkInfo
-			});
-
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "root");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "root"), "should call _getLandmarkInfo with page landmarks and 'root' as parameters");
-			assert.ok(oRmStub.calledOnce, "should call oRm writeAccessibilityState once");
-			assert.ok(oRmStub.args[0][0] instanceof sap.m.Page, "should call writeAccessibilityState with page as first argument");
-			assert.equal(oRmStub.args[0][1].role, sCustomRole.toLowerCase(), "should call writeAccessibilityState with object as second parameter and role equal to " + sCustomRole);
-
-			getLandmarkStub.restore();
+			this.writeCustomLandmarksWithNoLabel(assert, "root");
 		});
 
 		QUnit.test("Call _writeLandmarkInfo with custom role and custom label for root", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-			var sCustomLabel = "Label";
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				rootRole: sCustomRole,
-				rootLabel: sCustomLabel
-			});
-			this.oPage = new sap.m.Page({
-				landmarkInfo: this.oPageAccessibleLandmarkInfo
-			});
-
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "root");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "root"), "should call _getLandmarkInfo with page landmarks and 'root' as parameters");
-			assert.ok(oRmStub.calledOnce, "should call oRm writeAccessibilityState once");
-			assert.ok(oRmStub.args[0][0] instanceof sap.m.Page, "should call writeAccessibilityState with page as first argument");
-			assert.equal(oRmStub.args[0][1].role, sCustomRole.toLowerCase(), "should call writeAccessibilityState with object as second parameter and role equal to " + sCustomRole);
-			assert.equal(oRmStub.args[0][1].label, sCustomLabel, "should call writeAccessibilityState with object as second parameter and label equal to " + sCustomLabel);
-
-			getLandmarkStub.restore();
+			this.writeCustomLandmarksWithLabel(assert, "root");
 		});
 
 		QUnit.test("Call _writeLandmarkInfo with custom role and no label for content", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				contentRole: sCustomRole
-			});
-			this.oPage = new sap.m.Page({
-				landmarkInfo: this.oPageAccessibleLandmarkInfo
-			});
-
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "content");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "content"), "should call _getLandmarkInfo with page landmarks and 'content' as parameters");
-			assert.ok(oRmStub.calledOnce, "should call oRm writeAccessibilityState once");
-			assert.ok(oRmStub.args[0][0] instanceof sap.m.Page, "should call writeAccessibilityState with page as first argument");
-			assert.equal(oRmStub.args[0][1].role, sCustomRole.toLowerCase(), "should call writeAccessibilityState with object as second parameter and role equal to " + sCustomRole);
-
-			getLandmarkStub.restore();
+			this.writeCustomLandmarksWithNoLabel(assert, "content");
 		});
 
 		QUnit.test("Call _writeLandmarkInfo with custom role and custom label for content", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-			var sCustomLabel = "Label";
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				contentRole: sCustomRole,
-				contentLabel: sCustomLabel
-			});
-			this.oPage = new sap.m.Page({
-				landmarkInfo: this.oPageAccessibleLandmarkInfo
-			});
-
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "content");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "content"), "should call _getLandmarkInfo with page landmarks and 'content' as parameters");
-			assert.ok(oRmStub.calledOnce, "should call oRm writeAccessibilityState once");
-			assert.ok(oRmStub.args[0][0] instanceof sap.m.Page, "should call writeAccessibilityState with page as first argument");
-			assert.equal(oRmStub.args[0][1].role, sCustomRole.toLowerCase(), "should call writeAccessibilityState with object as second parameter and role equal to " + sCustomRole);
-			assert.equal(oRmStub.args[0][1].label, sCustomLabel, "should call writeAccessibilityState with object as second parameter and label equal to " + sCustomLabel);
-
-			getLandmarkStub.restore();
+			this.writeCustomLandmarksWithLabel(assert, "content");
 		});
 
 		QUnit.test("Call _writeLandmarkInfo with custom role and no label for header", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				headerRole: sCustomRole
-			});
-			this.oPage = new sap.m.Page({
-				landmarkInfo: this.oPageAccessibleLandmarkInfo
-			});
-
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "header");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "header"), "should call _getLandmarkInfo with page landmarks and 'header' as parameters");
-			assert.ok(oRmStub.calledOnce, "should call oRm writeAccessibilityState once");
-			assert.ok(oRmStub.args[0][0] instanceof sap.m.Page, "should call writeAccessibilityState with page as first argument");
-			assert.equal(oRmStub.args[0][1].role, sCustomRole.toLowerCase(), "should call writeAccessibilityState with object as second parameter and role equal to " + sCustomRole);
-
-			getLandmarkStub.restore();
+			this.writeCustomLandmarksWithNoLabel(assert, "header");
 		});
 
 		QUnit.test("Call _writeLandmarkInfo with custom role and custom label for header", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-			var sCustomLabel = "Label";
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				headerRole: sCustomRole,
-				headerLabel: sCustomLabel
-			});
-			this.oPage = new sap.m.Page({
-				landmarkInfo: this.oPageAccessibleLandmarkInfo
-			});
-
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "header");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "header"), "should call _getLandmarkInfo with page landmarks and 'header' as parameters");
-			assert.ok(oRmStub.calledOnce, "should call oRm writeAccessibilityState once");
-			assert.ok(oRmStub.args[0][0] instanceof sap.m.Page, "should call writeAccessibilityState with page as first argument");
-			assert.equal(oRmStub.args[0][1].role, sCustomRole.toLowerCase(), "should call writeAccessibilityState with object as second parameter and role equal to " + sCustomRole);
-			assert.equal(oRmStub.args[0][1].label, sCustomLabel, "should call writeAccessibilityState with object as second parameter and label equal to " + sCustomLabel);
-
-			getLandmarkStub.restore();
+			this.writeCustomLandmarksWithLabel(assert, "header");
 		});
 
 		QUnit.test("Call _writeLandmarkInfo with custom role and no label for sub header", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				subHeaderRole: sCustomRole
-			});
-			this.oPage = new sap.m.Page({
-				landmarkInfo: this.oPageAccessibleLandmarkInfo
-			});
-
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "subHeader");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "subHeader"), "should call _getLandmarkInfo with page landmarks and 'subHeader' as parameters");
-			assert.ok(oRmStub.calledOnce, "should call oRm writeAccessibilityState once");
-			assert.ok(oRmStub.args[0][0] instanceof sap.m.Page, "should call writeAccessibilityState with page as first argument");
-			assert.equal(oRmStub.args[0][1].role, sCustomRole.toLowerCase(), "should call writeAccessibilityState with object as second parameter and role equal to " + sCustomRole);
-
-			getLandmarkStub.restore();
+			this.writeCustomLandmarksWithNoLabel(assert, "subHeader");
 		});
 
 		QUnit.test("Call _writeLandmarkInfo with custom role and custom label for sub header", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-			var sCustomLabel = "Label";
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				subHeaderRole: sCustomRole,
-				subHeaderLabel: sCustomLabel
-			});
-			this.oPage = new sap.m.Page({
-				landmarkInfo: this.oPageAccessibleLandmarkInfo
-			});
-
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "subHeader");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "subHeader"), "should call _getLandmarkInfo with page landmarks and 'subHeader' as parameters");
-			assert.ok(oRmStub.calledOnce, "should call oRm writeAccessibilityState once");
-			assert.ok(oRmStub.args[0][0] instanceof sap.m.Page, "should call writeAccessibilityState with page as first argument");
-			assert.equal(oRmStub.args[0][1].role, sCustomRole.toLowerCase(), "should call writeAccessibilityState with object as second parameter and role equal to " + sCustomRole);
-			assert.equal(oRmStub.args[0][1].label, sCustomLabel, "should call writeAccessibilityState with object as second parameter and label equal to " + sCustomLabel);
-
-			getLandmarkStub.restore();
+			this.writeCustomLandmarksWithLabel(assert, "subHeader");
 		});
 
 		QUnit.test("Call _writeLandmarkInfo with custom role and no label for footer", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				footerRole: sCustomRole
-			});
-			this.oPage = new sap.m.Page({
-				landmarkInfo: this.oPageAccessibleLandmarkInfo
-			});
-
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "footer");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "footer"), "should call _getLandmarkInfo with page landmarks and 'footer' as parameters");
-			assert.ok(oRmStub.calledOnce, "should call oRm writeAccessibilityState once");
-			assert.ok(oRmStub.args[0][0] instanceof sap.m.Page, "should call writeAccessibilityState with page as first argument");
-			assert.equal(oRmStub.args[0][1].role, sCustomRole.toLowerCase(), "should call writeAccessibilityState with object as second parameter and role equal to " + sCustomRole);
-
-			getLandmarkStub.restore();
+			this.writeCustomLandmarksWithNoLabel(assert, "footer");
 		});
 
 		QUnit.test("Call _writeLandmarkInfo with custom role and custom label for footer", function (assert) {
-			var sCustomRole = sap.ui.core.AccessibleLandmarkRole.Complementary;
-			var sCustomLabel = "Label";
-
-			this.oPageAccessibleLandmarkInfo = new sap.m.PageAccessibleLandmarkInfo({
-				footerRole: sCustomRole,
-				footerLabel: sCustomLabel
-			});
-			this.oPage = new sap.m.Page({
-				landmarkInfo: this.oPageAccessibleLandmarkInfo
-			});
-
-			var oRm = {
-				writeAccessibilityState: function () {}
-			};
-			var oRmStub = sinon.stub(oRm, "writeAccessibilityState");
-			var getLandmarkStub = sinon.spy(sap.m.PageAccessibleLandmarkInfo, "_getLandmarkInfo");
-
-			sap.m.PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, this.oPage, "footer");
-
-			assert.ok(getLandmarkStub.calledOnce, "should call _getLandmarkInfo once");
-			assert.ok(getLandmarkStub.calledWith(this.oPage.getLandmarkInfo(), "footer"), "should call _getLandmarkInfo with page landmarks and 'footer' as parameters");
-			assert.ok(oRmStub.calledOnce, "should call oRm writeAccessibilityState once");
-			assert.ok(oRmStub.args[0][0] instanceof sap.m.Page, "should call writeAccessibilityState with page as first argument");
-			assert.equal(oRmStub.args[0][1].role, sCustomRole.toLowerCase(), "should call writeAccessibilityState with object as second parameter and role equal to " + sCustomRole);
-			assert.equal(oRmStub.args[0][1].label, sCustomLabel, "should call writeAccessibilityState with object as second parameter and label equal to " + sCustomLabel);
-
-			getLandmarkStub.restore();
+			this.writeCustomLandmarksWithLabel(assert, "footer");
 		});
 
 	</script>
