@@ -204,7 +204,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	 */
 	JSONModel.prototype.setProperty = function(sPath, oValue, oContext, bAsyncUpdate) {
 		var sResolvedPath = this.resolve(sPath, oContext),
-			iLastSlash, sObjectPath, sProperty;
+			iLastSlash, iFirstSlash, sObjectPath, sProperty, bMultiSlashes;
 
 		// return if path / context is invalid
 		if (!sResolvedPath) {
@@ -217,10 +217,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 			return true;
 		}
 
+		bMultiSlashes = (sResolvedPath.match(/\//g) || []).length > 1;
+
 		iLastSlash = sResolvedPath.lastIndexOf("/");
-		// In case there is only one slash at the beginning, sObjectPath must contain this slash
-		sObjectPath = sResolvedPath.substring(0, iLastSlash || 1);
-		sProperty = sResolvedPath.substr(iLastSlash + 1);
+		iFirstSlash = sResolvedPath.indexOf("/");
+		
+		if (!bMultiSlashes) {
+			// In case there is only one slash at the beginning, sObjectPath must contain this slash
+			sObjectPath = sResolvedPath.substring(0, iLastSlash || 1);
+			sProperty = sResolvedPath.substr(iLastSlash + 1);
+		} else {
+			// In case there is more than one slash
+			sObjectPath = sResolvedPath.substring(0, iFirstSlash || 1);
+			sProperty = sResolvedPath.substr(iFirstSlash + 1);
+		}
 
 		var oObject = this._getObject(sObjectPath);
 		if (oObject) {
