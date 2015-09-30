@@ -22,15 +22,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/SimpleType', 'sap/ui/model/For
 	 * @constructor
 	 * @public
 	 * @param {object} [oFormatOptions] formatting options. String doesn't support any formatting options
-	 * @param {object} [oConstraints] value constraints. All given constraints must be fulfilled by a value to be valid  
-	 * @param {int} [oConstraints.maxLength] maximum length (in characters) that a string of this value may have  
-	 * @param {string} [oConstraints.startsWith] a prefix that any valid value must start with  
-	 * @param {string} [oConstraints.startsWithIgnoreCase] a prefix that any valid value must start with, ignoring case  
-	 * @param {string} [oConstraints.endsWith] a suffix that any valid value must end with  
-	 * @param {string} [oConstraints.endsWithIgnoreCase] a suffix that any valid value must end with, ignoring case  
-	 * @param {string} [oConstraints.contains] an infix that must be contained in any valid value  
-	 * @param {string} [oConstraints.equals] only value that is allowed  
-	 * @param {RegExp} [oConstraints.search] a regular expression that the value must match  
+	 * @param {object} [oConstraints] value constraints. All given constraints must be fulfilled by a value to be valid
+	 * @param {int} [oConstraints.maxLength] maximum length (in characters) that a string of this value may have
+	 * @param {int} [oConstraints.minLength] minimum length (in characters) that a string of this value may have
+	 * @param {string} [oConstraints.startsWith] a prefix that any valid value must start with
+	 * @param {string} [oConstraints.startsWithIgnoreCase] a prefix that any valid value must start with, ignoring case
+	 * @param {string} [oConstraints.endsWith] a suffix that any valid value must end with
+	 * @param {string} [oConstraints.endsWithIgnoreCase] a suffix that any valid value must end with, ignoring case
+	 * @param {string} [oConstraints.contains] an infix that must be contained in any valid value
+	 * @param {string} [oConstraints.equals] only value that is allowed
+	 * @param {RegExp} [oConstraints.search] a regular expression that the value must match
 	 * @alias sap.ui.model.type.String
 	 */
 	var StringType = SimpleType.extend("sap.ui.model.type.String", /** @lends sap.ui.model.type.String.prototype */ {
