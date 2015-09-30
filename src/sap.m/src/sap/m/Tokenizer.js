@@ -804,7 +804,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			sap.m.Token.prototype.setEditable.apply(oToken, arguments);
 		};
 		
-		this.scrollToEnd();
+		this._bScrollToEndIsActive = true; //Ensure scroll to end is active after rendering
 	
 		this.fireTokenChange({
 			token : oToken,
@@ -819,7 +819,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oToken.detachPress(this._onTokenPress, this);
 		}
 		
-		this.scrollToEnd();
+		this._bScrollToEndIsActive = true; //Ensure scroll to end is active after rendering
 	
 		this.fireTokenChange({
 			token : oToken,
@@ -839,9 +839,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	
 		this.invalidate();
-		this.rerender();
-	
-		this.scrollToEnd();
+		this._bScrollToEndIsActive = true; //Ensure scroll to end is active after rendering
 		
 		this.fireTokenChange({
 			addedTokens : aTokens,
