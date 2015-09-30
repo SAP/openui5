@@ -107,7 +107,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 				Hour: "hour",
 				Minute: "minute",
 				Second: "second"
-			};
+			},
+			PLACEHOLDER_SYMBOL = '-';
 
 		/**
 		 * Initializes the control.
@@ -142,6 +143,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 			// Indicates if the picker is currently in a process of opening
 			this._bPickerOpening = false;
+
+			this._rPlaceholderRegEx = new RegExp(PLACEHOLDER_SYMBOL, 'g');
 		};
 
 		/**
@@ -923,6 +926,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			//because of the leading space in formats without a leading zero
 			if (bDisplayFormat) {
 				sValue = sValue.replace(/^\s+/gm, ''); //trim start
+				sValue = sValue.replace(this._rPlaceholderRegEx,'');
 			}
 
 			// convert to date object
@@ -1110,7 +1114,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			this.sAlternativeLeadingChar = this.bLeadingZero ? " " : "0";
 			this.sLeadingRegexChar = this.bLeadingZero ? "0" : "\\s";
 
-			oTimePicker.setPlaceholderSymbol("-");
+			oTimePicker.setPlaceholderSymbol(PLACEHOLDER_SYMBOL);
 
 			//set hours allowed chars in the mask
 			sMask = sMask.replace(/hh/ig, "h").replace(/h/ig, "h9");
@@ -1347,9 +1351,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @name sap.m.TimePicker#fireChange
 		 * @function
 		 */
-
-
-
 
 		TimePicker._PICKER_CONTENT_HEIGHT = "25rem";
 
