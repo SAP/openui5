@@ -51,9 +51,10 @@ sap.ui.define([
 			
 			// Create an object of filters
 			this._mFilters = {
-                "inStock": new sap.ui.model.Filter("UnitsInStock", "GT", 10),
-                "outOfStock": new sap.ui.model.Filter("UnitsInStock", "LE", 0),
-                "shortage": new sap.ui.model.Filter("UnitsInStock", "BT", 1, 10)
+				"inStock": [new sap.ui.model.Filter("UnitsInStock", "GT", 10)],
+				"outOfStock": [new sap.ui.model.Filter("UnitsInStock", "LE", 0)],
+				"shortage": [new sap.ui.model.Filter("UnitsInStock", "BT", 1, 10)],
+				"all": []
 			};
 
 			// Make sure, busy indication is showing immediately so there is no
@@ -215,10 +216,9 @@ sap.ui.define([
 		 */
 		onQuickFilter: function(oEvent) {
 			var oBinding = this._oTable.getBinding("items"),
-				sKey = oEvent.getParameter("selectedKey"),
-				aFilters = [this._mFilters[sKey]];
+				sKey = oEvent.getParameter("selectedKey");
 
-			oBinding.filter(aFilters);
+			oBinding.filter(this._mFilters[sKey]);
 		},
 		
 		/**
