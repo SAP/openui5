@@ -1680,7 +1680,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates the key from the given collection name and property map
+	 * Creates the key from the given collection name and property map. Please make sure that the metadata document is loaded before using this function.
 	 *
 	 * @param {string} sCollection The name of the collection
 	 * @param {object} oKeyProperties The object containing at least all the key properties of the entity type
