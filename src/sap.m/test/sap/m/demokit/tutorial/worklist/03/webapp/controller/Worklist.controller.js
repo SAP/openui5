@@ -101,7 +101,7 @@ sap.ui.define([
 					success: function (oData) {
 						oViewModel.setProperty("/inStock", oData);
 					},
-					filters: [this._mFilters.inStock]
+					filters: this._mFilters.inStock
 				});
 
 				// read the count for the outOfStock filter
@@ -109,7 +109,7 @@ sap.ui.define([
 					success: function(oData){
 						oViewModel.setProperty("/outOfStock", oData);
 					},
-					filters: [this._mFilters.outOfStock]
+					filters: this._mFilters.outOfStock
 				});
 			
 				// read the count for the shortage filter
@@ -117,7 +117,7 @@ sap.ui.define([
 					success: function(oData){
 						oViewModel.setProperty("/shortage", oData);
 					},
-					filters: [this._mFilters.shortage]
+					filters: this._mFilters.shortage
 				});
 				
 			} else {
