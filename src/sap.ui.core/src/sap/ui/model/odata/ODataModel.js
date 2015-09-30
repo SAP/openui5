@@ -931,10 +931,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	 * @param {boolean} bForceUpdate
 	 * @param {boolean} bAsync
 	 * @param {object} mChangedEntities
+	 * @param {boolean} bMetaModelOnly update metamodel bindings only
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.checkUpdate = function(bForceUpdate, bAsync, mChangedEntities) {
+	ODataModel.prototype.checkUpdate = function(bForceUpdate, bAsync, mChangedEntities, bMetaModelOnly) {
 		if (bAsync) {
 			if (!this.sUpdateTimer) {
 				this.sUpdateTimer = jQuery.sap.delayedCall(0, this, function() {
@@ -949,10 +950,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 		}
 		var aBindings = this.aBindings.slice(0);
 		jQuery.each(aBindings, function(iIndex, oBinding) {
-			oBinding.checkUpdate(bForceUpdate, mChangedEntities);
-		});
+			if (!bMetaModelOnly || this.isMetaModelPath(oBinding.getPath())) {
+				oBinding.checkUpdate(bForceUpdate, mChangedEntities);
+			}
+		}.bind(this));
 	};
-
 
 	/**
 	 * @see sap.ui.model.Model.prototype.bindProperty
@@ -1392,9 +1394,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 
 		//check for metadata path
 		if (this.oMetadata && sResolvedPath && sResolvedPath.indexOf('/#') > -1)  {
-			iSeparator = sResolvedPath.indexOf('/##');
-			if (iSeparator >= 0) {
+			if (this.isMetaModelPath(sResolvedPath)) {
 				// Metadata binding resolved by ODataMetaModel
+				iSeparator = sResolvedPath.indexOf('/##');
 				oMetaModel = this.getMetaModel();
 				if (!this.bMetaModelLoaded) {
 					return null;
@@ -3150,6 +3152,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	};
 
 	/**
+	 * Checks if path points to a metamodel property
+	 * @param {string} sPath The binding path
+	 * @returns {boolean}
+	 * @private
+	 */
+	ODataModel.prototype.isMetaModelPath = function(sPath) {
+		return sPath.indexOf("##") == 0 || sPath.indexOf("/##") > -1;
+	};
+
+	/**
 	 * Wraps the OData.request method and keeps track of pending requests
 	 *
 	 * @private
@@ -3255,7 +3267,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 			// Call checkUpdate when metamodel has been loaded to update metamodel bindings
 			this.oMetaModel.loaded().then(function() {
 				that.bMetaModelLoaded = true;
-				that.checkUpdate();
+				that.checkUpdate(false, false, null, true);
 			});
 		}
 		return this.oMetaModel;
