@@ -267,7 +267,7 @@ sap.ui.require([
 				oLogMock.expects("warning").never();
 				aViewContent.forEach(function (sLine) {
 					if (/if test="(false|true|\{= false \})"/.test(sLine)) {
-						warn(oLogMock, sinon.match(/\[ \d\] Constant test condition/), sLine);
+						warn(oLogMock, sinon.match(/\[[ \d]\d\] Constant test condition/), sLine);
 					}
 				});
 			}
@@ -1034,6 +1034,7 @@ sap.ui.require([
 
 		check.call(this, assert, [
 			mvcView().replace(">", ' xmlns:html="http://www.w3.org/1999/xhtml">'),
+			'<!-- some comment node -->', // to test skipping of none ELEMENT_NODES while visiting
 			'<Label text="{formatter: \'foo.Helper.help\','
 				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label\'}"/>',
 			'<Text maxLines="{formatter: \'foo.Helper.nil\','
@@ -1064,6 +1065,7 @@ sap.ui.require([
 				}
 			})
 		}, [ // Note: XML serializer outputs &gt; encoding...
+			'<!-- some comment node -->',
 			'<Label text="Customer"/>',
 			'<Text text="{CustomerName}"/>', // "maxLines" has been removed
 			'<Label text="A \\{ is a special character"/>',
@@ -1928,12 +1930,7 @@ sap.ui.require([
 		var oXMLTemplateProcessorMock = this.mock(XMLTemplateProcessor);
 
 		// BEWARE: use fresh XML document for each call because liftChildNodes() makes it empty!
-		oXMLTemplateProcessorMock.expects("loadTemplate")
-			.withExactArgs("myFragment", "fragment")
-			.returns(xml(assert, ['<In xmlns="sap.ui.core" src="{src}" />']));
-		oXMLTemplateProcessorMock.expects("loadTemplate")
-			.withExactArgs("myFragment", "fragment")
-			.returns(xml(assert, ['<In xmlns="sap.ui.core" src="{src}" />']));
+		// load template is called only once, because it is cached
 		oXMLTemplateProcessorMock.expects("loadTemplate")
 			.withExactArgs("myFragment", "fragment")
 			.returns(xml(assert, ['<In xmlns="sap.ui.core" src="{src}" />']));
@@ -2012,9 +2009,6 @@ sap.ui.require([
 		oXMLTemplateProcessorMock.expects("loadTemplate")
 			.withExactArgs("B", "fragment")
 			.returns(xml(assert, ['<Fragment xmlns="sap.ui.core" fragmentName="A" type="XML"/>']));
-		oXMLTemplateProcessorMock.expects("loadTemplate")
-			.withExactArgs("A", "fragment")
-			.returns(xml(assert, aFragmentContent));
 
 		checkError.call(oLogMock, assert, [
 				mvcView(),
@@ -2396,6 +2390,35 @@ sap.ui.require([
 				'</mvc:View>'
 			], "Invalid value in {0}");
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Test console log for two digit nesting level", function (assert) {
+		check.call(this, assert, [
+			mvcView(),
+			'<template:if test="true">',
+			'<template:if test="true">',
+			'<template:if test="true">',
+			'<template:if test="true">',
+			'<template:if test="true">',
+			'<template:if test="true">',
+			'<template:if test="true">',
+			'<template:if test="true">',
+			'<template:if test="true">',
+			'<template:if test="true">',
+			'<In id="true"/>',
+			'</template:if>',
+			'</template:if>',
+			'</template:if>',
+			'</template:if>',
+			'</template:if>',
+			'</template:if>',
+			'</template:if>',
+			'</template:if>',
+			'</template:if>',
+			'</template:if>',
+			'</mvc:View>'
+		]);
 	});
 });
 //TODO we have completely missed support for unique IDs in fragments via the "id" property!
