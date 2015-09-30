@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.format.DateFormat
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleData', 'jquery.sap.strings', 'sap/ui/core/date/IslamicDate'],
-	function(jQuery, Locale, LocaleData, jQuerySapStrings, IslamicDate) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleData', 'jquery.sap.strings', 'sap/ui/core/date/UniversalDate'],
+	function(jQuery, Locale, LocaleData, jQuerySapStrings, UniversalDate) {
 	"use strict";
 
 
@@ -253,6 +253,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 		this.aQuartersWide = this.oLocaleData.getQuarters("wide", sCalendarType);
 		this.aQuartersAbbrevSt = this.oLocaleData.getQuartersStandAlone("abbreviated", sCalendarType);
 		this.aQuartersWideSt = this.oLocaleData.getQuartersStandAlone("wide", sCalendarType);
+		this.aErasNarrow = this.oLocaleData.getEras("narrow", sCalendarType);
+		this.aErasAbbrev = this.oLocaleData.getEras("abbreviated", sCalendarType);
+		this.aErasWide = this.oLocaleData.getEras("wide", sCalendarType);
 		this.aDayPeriods = this.oLocaleData.getDayPeriods("abbreviated", sCalendarType);
 		this.aFormatArray = this.parseJavaDateFormat(this.oFormatOptions.pattern);
 		this.sAllowedCharacters = this.getAllowedCharacters(this.aFormatArray);
@@ -298,34 +301,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 	 * @return {string} the formatted output value. If an invalid date is given, an empty string is returned.
 	 * @public
 	 */
-	DateFormat.prototype.format = function(oDate, bUTC) {
+	DateFormat.prototype.format = function(oJSDate, bUTC) {
 		if (bUTC === undefined) {
 			bUTC = this.oFormatOptions.UTC;
 		}
 
-		if (isNaN(oDate.getTime())) {
+		if (isNaN(oJSDate.getTime())) {
 			return "";
 		}
 
-		var sCalendarType = this.oFormatOptions.calendarType;
-
-		if ((sCalendarType === sap.ui.core.CalendarType.Islamic) && oDate instanceof Date) {
-			oDate = new IslamicDate(oDate.getTime());
-		}
-
 		if (this.oFormatOptions.relative) {
-			var sRes = this.formatRelative(oDate, bUTC, this.oFormatOptions.relativeRange || [-6, 6]);
+			var sRes = this.formatRelative(oJSDate, bUTC, this.oFormatOptions.relativeRange || [-6, 6]);
 			if (sRes) { //Stop when relative formatting possible, else go on with standard formatting
 				return sRes;
 			}
 		}
 
+		var sCalendarType = this.oFormatOptions.calendarType;
+		var oDate = UniversalDate.getInstance(oJSDate, sCalendarType);
+
 		var aBuffer = [],
 			oPart,
+			sCalendarType = this.oFormatOptions.calendarType,
 			iDay = bUTC ? oDate.getUTCDay() : oDate.getDay(),
 			iDate = bUTC ? oDate.getUTCDate() : oDate.getDate(),
 			iMonth = bUTC ? oDate.getUTCMonth() : oDate.getMonth(),
 			iYear = bUTC ? oDate.getUTCFullYear() : oDate.getFullYear(),
+			iEra = bUTC ? oDate.getUTCEra() : oDate.getEra(),
+			iWeek = bUTC ? oDate.getUTCWeek() : oDate.getWeek(),
 			iMilliseconds = bUTC ? oDate.getUTCMilliseconds() : oDate.getMilliseconds(),
 			iSeconds = bUTC ? oDate.getUTCSeconds() : oDate.getSeconds(),
 			iMinutes = bUTC ? oDate.getUTCMinutes() : oDate.getMinutes(),
@@ -404,11 +407,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 					break;
 				case "era":
 					if (oPart.iDigits <= 3) {
-						aBuffer.push(this.oLocaleData.getEra("abbreviated", sCalendarType));
+						aBuffer.push(this.aErasAbbrev[iEra]);
 					} else if (oPart.iDigits === 4) {
-						aBuffer.push(this.oLocaleData.getEra("wide", sCalendarType));
+						aBuffer.push(this.aErasWide[iEra]);
 					} else {
-						aBuffer.push(this.oLocaleData.getEra("narrow", sCalendarType));
+						aBuffer.push(this.aErasNarrow[iEra]);
 					}
 					break;
 				case "year":
@@ -419,29 +422,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 					}
 					// When parsing we assume dates less than 100 to be in the current/last century,
 					// so when formatting we have to make sure they are differentiable by prefixing with zeros
-					if (oPart.iDigits == 1 && iYear < 100) {
+					if (sCalendarType != sap.ui.core.CalendarType.Japanese && oPart.iDigits == 1 && iYear < 100) {
 						sYear = jQuery.sap.padLeft(sYear, "0", 4);
 					}
 					aBuffer.push(jQuery.sap.padLeft(sYear, "0", oPart.iDigits));
 					break;
 				case "weekInYear":
-					// "weekInYear" is only supported by Gregorian calendar
-					if (sCalendarType === sap.ui.core.CalendarType.Gregorian) {
-						sWeek = "" + DateFormat.calculateWeekNumber(oDate, {
-							UTC: bUTC,
-							baseYear: iYear,
-							locale: this.oLocale.toString()
-						});
-
-						if (oPart.iDigits < 3) {
-							sWeek = jQuery.sap.padLeft(sWeek, "0", oPart.iDigits);
-						} else {
-							sWeek = this.oLocaleData.getCalendarWeek(oPart.iDigits === 3 ? "narrow" : "wide", jQuery.sap.padLeft(sWeek, "0", 2));
-						}
-
-						aBuffer.push(sWeek);
+					if (iWeek == undefined) {
+						//Date object doesn't support week calculation
+						break;
 					}
-
+					sWeek = "" + iWeek;
+					if (oPart.iDigits < 3) {
+						sWeek = jQuery.sap.padLeft(sWeek, "0", oPart.iDigits);
+					} else {
+						sWeek = this.oLocaleData.getCalendarWeek(oPart.iDigits === 3 ? "narrow" : "wide", jQuery.sap.padLeft(sWeek, "0", 2));
+					}
+					aBuffer.push(sWeek);
 					break;
 				case "hour0_23":
 					aBuffer.push(jQuery.sap.padLeft(String(iHours), "0", oPart.iDigits));
@@ -488,10 +485,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 				case "timezoneGeneral":
 					//TODO getTimezoneLong and getTimezoneShort does not exist on Date object
 					//-> this is a preparation for a future full timezone support (only used by unit test so far)
-					if (oPart.iDigits > 3 && oDate.getTimezoneLong) {
+					if (oPart.iDigits > 3 && oDate.getTimezoneLong()) {
 						aBuffer.push(oDate.getTimezoneLong());
 						break;
-					} else if (oDate.getTimezoneShort) {
+					} else if (oDate.getTimezoneShort()) {
 						aBuffer.push(oDate.getTimezoneShort());
 						break;
 					}
@@ -555,6 +552,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 			iDay = null,
 			iMonth = null,
 			iYear = null,
+			iEra = null,
 			iHours = null,
 			iMinutes = null,
 			iSeconds = null,
@@ -567,11 +565,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 			bValid = true,
 			oFound,
 			bFound,
+			iCurrentEra = this.aErasWide.length - 1,
 			oRequiredParts = this.oRequiredParts,
 			sCalendarType = this.oFormatOptions.calendarType,
 			aDaysVariants = [this.aDaysWide, this.aDaysWideSt, this.aDaysAbbrev, this.aDaysAbbrevSt],
 			aMonthsVariants = [this.aMonthsWide, this.aMonthsWideSt, this.aMonthsAbbrev, this.aMonthsAbbrevSt],
-			aQuartersVariants = [this.aQuartersWide, this.aQuartersWideSt, this.aQuartersAbbrev, this.aQuartersAbbrevSt];
+			aQuartersVariants = [this.aQuartersWide, this.aQuartersWideSt, this.aQuartersAbbrev, this.aQuartersAbbrevSt],
+			aErasVariants = [this.aErasWide, this.aErasAbbrev, this.aErasNarrow];
 
 		function isNumber(iCharCode) {
 			return iCharCode >= 48 && iCharCode <= 57;
@@ -590,7 +590,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 				iMatchedLength = 0;
 
 			for (var j = 0; j < aList.length; j++) {
-				if (aList[j].length > iMatchedLength && oValue.indexOf(aList[j], iIndex) == iIndex) {
+				if (aList[j] && aList[j].length > iMatchedLength && oValue.indexOf(aList[j], iIndex) == iIndex) {
 					iFoundIndex = j;
 					iMatchedLength = aList[j].length;
 				}
@@ -632,9 +632,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 
 		oValue = jQuery.trim(oValue);
 
-		var oDate = this.parseRelative(oValue, bUTC);
-		if (oDate) { //Stop when relative parsing possible, else go on with standard parsing
-			return oDate;
+		var oJSDate = this.parseRelative(oValue, bUTC);
+		if (oJSDate) { //Stop when relative parsing possible, else go on with standard parsing
+			return oJSDate;
 		}
 
 		for (var i = 0; i < this.aFormatArray.length; i++) {
@@ -704,14 +704,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 					}
 					break;
 				case "era":
-					if (oPart.iDigits <= 3) {
-						sPart = "abbreviated";
-					} else if (oPart.iDigits === 4) {
-						sPart = "wide";
+					bFound = aErasVariants.some(matchInArray);
+					if (bFound) {
+						iEra = oFound.index;
 					} else {
-						sPart = "narrow";
+						checkValid(oPart.sType, true);
+						iEra = iCurrentEra;
 					}
-					iIndex += (this.oLocaleData.getEra(sPart).length);
 					break;
 				case "year":
 				case "weekYear":
@@ -726,8 +725,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 					checkValid(oPart.sType, sPart === "");
 					iYear = parseInt(sPart, 10);
 					// Find the right century for two-digit years
-					if (sPart.length <= 2) {
-						var iCurrentYear = this._now(bUTC).getFullYear(),
+					if (sCalendarType != sap.ui.core.CalendarType.Japanese && sPart.length <= 2) {
+						var oCurrentDate = UniversalDate.getInstance(new Date(), sCalendarType),
+							iCurrentYear = oCurrentDate.getFullYear(),
 							iCurrentCentury = Math.floor(iCurrentYear / 100),
 							iYearDiff = iCurrentCentury * 100 + iYear - iCurrentYear;
 						if (iYearDiff < -70) {
@@ -879,7 +879,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 
 		if (bValid) {
 			if (bUTC || iTZDiff != null) {
-				oDate = DateFormat.createDate(sCalendarType, 0);
+				oDate = UniversalDate.getInstance(new Date(0), sCalendarType);
+				if (iEra != null) {
+					oDate.setUTCEra(iEra);
+				}
 				oDate.setUTCFullYear(iYear || 1970);
 				oDate.setUTCMonth(iMonth || 0);
 				oDate.setUTCDate(iDay || 1);
@@ -896,7 +899,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 					oDate.setUTCMinutes((iMinutes || 0) + iTZDiff);
 				}
 			} else {
-				oDate = DateFormat.createDate(sCalendarType, 1970, 0, 1, 0, 0, 0);
+				oDate = UniversalDate.getInstance(new Date(1970, 0, 1, 0, 0, 0), sCalendarType);
+				if (iEra != null) {
+					oDate.setEra(iEra);
+				}
 				oDate.setFullYear(iYear || 1970);
 				oDate.setMonth(iMonth || 0);
 				oDate.setDate(iDay || 1);
@@ -912,9 +918,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 			}
 
 			if (bValid) {
-				if (oDate instanceof IslamicDate) {
-					oDate = new Date(oDate.getTime());
-				}
+				oDate = oDate.getJSDate();
 				return oDate;
 			}
 		}
@@ -1014,30 +1018,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 		return aFormatArray;
 	};
 
-	DateFormat.prototype._now = function(bUTC) {
-		return bUTC ? new Date(DateFormat.createUTCDate(this.oFormatOptions.calendarType)) : DateFormat.createDate(this.oFormatOptions.calendarType);
-	};
-
-	DateFormat.createDate = function(sCalendarType) {
-		switch (sCalendarType) {
-			case sap.ui.core.CalendarType.Islamic:
-				return new (Function.prototype.bind.apply(IslamicDate, arguments));
-			default:
-				return new (Function.prototype.bind.apply(Date, arguments));
-		}
-	};
-
-	DateFormat.createUTCDate = function(sCalendarType) {
-		// Save the sCalendarType because after shift it out the sCalendarType points to the second parameter
-		var sType = Array.prototype.shift.apply(arguments);
-		switch (sType) {
-			case sap.ui.core.CalendarType.Islamic:
-				return IslamicDate.UTC.apply(IslamicDate, arguments);
-			default:
-				return Date.UTC.apply(Date, arguments);
-		}
-	};
-
 	/**
 	 * Parse a date string relative to the current date.
 	 *
@@ -1049,8 +1029,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 	 */
 	DateFormat.prototype.parseRelative = function(sValue, bUTC) {
 		var that = this,
-		sCalendarType = this.oFormatOptions.calendarType,
-		sPattern, _oPattern, _sValue, i, iSign, sTestScale, sMethodName, z;
+			sPattern, _oPattern, _sValue, i, iSign, sTestScale, sMethodName, z;
 
 		if (!sValue) {
 			return null;
@@ -1102,29 +1081,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 
 		function computeRelativeDate(iDiff, sScale){
 			var iDate, iToday,
-			oToday = that._now(bUTC),
-			oDate,
-			iDiffMillis = iDiff * that._mScales[sScale] * 1000;
+				oToday = new Date(),
+				oJSDate,
+				iDiffMillis = iDiff * that._mScales[sScale] * 1000;
 
 			if (that.oFormatOptions.relativeScale == "auto" & that.aRelativeScales[that.aRelativeScales.length - 1] === "second") {
 				if (bUTC) {
-					iToday = DateFormat.createUTCDate(sCalendarType, oToday.getUTCFullYear(), oToday.getUTCMonth(), oToday.getUTCDate(), oToday.getUTCHours(), oToday.getUTCMinutes(), oToday.getUTCSeconds());
+					iToday = Date.UTC(oToday.getUTCFullYear(), oToday.getUTCMonth(), oToday.getUTCDate(), oToday.getUTCHours(), oToday.getUTCMinutes(), oToday.getUTCSeconds());
 				} else {
-					iToday = DateFormat.createDate(sCalendarType, oToday.getFullYear(), oToday.getMonth(), oToday.getDate(), oToday.getHours(), oToday.getMinutes(), oToday.getSeconds()).getTime();
+					iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate(), oToday.getHours(), oToday.getMinutes(), oToday.getSeconds());
 				}
-				var iDate = iToday + iDiffMillis;
-				oDate = DateFormat.createDate(sCalendarType, iDate);
-				return oDate;
 			} else {
 				if (bUTC) {
-					iToday = DateFormat.createUTCDate(sCalendarType, oToday.getUTCFullYear(), oToday.getUTCMonth(), oToday.getUTCDate());
+					iToday = Date.UTC(oToday.getUTCFullYear(), oToday.getUTCMonth(), oToday.getUTCDate());
 				} else {
-					iToday = DateFormat.createDate(sCalendarType, oToday.getFullYear(), oToday.getMonth(), oToday.getDate()).getTime();
+					iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate());
 				}
-				var iDate = iToday + iDiffMillis;
-				oDate = DateFormat.createDate(sCalendarType, iDate);
-				return oDate;
 			}
+			iDate = iToday + iDiffMillis;
+			oJSDate = new Date(iDate);
+			return oJSDate;
 		}
 	};
 
@@ -1136,26 +1112,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 	 * @return {string} the formatted output value or null if relative formatting not possible
 	 * @private
 	 */
-	DateFormat.prototype.formatRelative = function(oDate, bUTC, aRange) {
+	DateFormat.prototype.formatRelative = function(oJSDate, bUTC, aRange) {
 
-		var oToday = this._now(bUTC),
-			sCalendarType = this.oFormatOptions.calendarType,
+		var oToday = new Date(),
 			sScale = this.oFormatOptions.relativeScale || "day",
 			iDate, iDiff, sPattern, iDiffSeconds, sMethodName;
 
 		if (this.oFormatOptions.relativeScale == "auto" & this.aRelativeScales[this.aRelativeScales.length - 1] === "second") {
-			var iToday = DateFormat.createUTCDate(sCalendarType, oToday.getFullYear(), oToday.getMonth(), oToday.getDate(), oToday.getHours(), oToday.getMinutes(), oToday.getSeconds());
+			var iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate(), oToday.getHours(), oToday.getMinutes(), oToday.getSeconds());
 			if (bUTC) {
-				iDate = DateFormat.createUTCDate(sCalendarType, oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate(), oDate.getUTCHours(), oDate.getUTCMinutes(), oDate.getUTCSeconds());
+				iDate = Date.UTC(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate(), oJSDate.getUTCHours(), oJSDate.getUTCMinutes(), oJSDate.getUTCSeconds());
 			} else {
-				iDate = DateFormat.createUTCDate(sCalendarType, oDate.getFullYear(), oDate.getMonth(), oDate.getDate(), oDate.getHours(), oDate.getMinutes(), oDate.getSeconds());
+				iDate = Date.UTC(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate(), oJSDate.getHours(), oJSDate.getMinutes(), oJSDate.getSeconds());
 			}
 		} else {
-			var iToday = DateFormat.createUTCDate(sCalendarType, oToday.getFullYear(), oToday.getMonth(), oToday.getDate());
+			var iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate());
 			if (bUTC) {
-				iDate = DateFormat.createUTCDate(sCalendarType, oDate.getUTCFullYear(), oDate.getUTCMonth(), oDate.getUTCDate());
+				iDate = Date.UTC(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate());
 			} else {
-				iDate = DateFormat.createUTCDate(sCalendarType, oDate.getFullYear(), oDate.getMonth(), oDate.getDate());
+				iDate = Date.UTC(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate());
 			}
 		}
 
@@ -1278,100 +1253,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 
 		return sAllowedCharacters;
 
-	};
-
-	/**
-	 * Calculates the week number in year of the given date.
-	 *
-	 * The first week of a year is calculated differently depending on the locale:
-	 *  1. en-US: The first week of a year starts with 1st, January. Therefore the week beginning in December and ending in January has 2 week numbers.
-	 *  In order to get the different calendar week number, set the baseYear option in oParams.
-	 *  2. The rest locales: The first week of a year is the week with the year's first Thursday in it. This means 1st January is in either the first week of this year or the last week of previous year.
-	 *
-	 * @param {Date} oDate the date which the week number is calculated base on
-	 * @param {Object} [oParams] the addtional parameters
-	 * @param {boolean} [oParams.UTC=false] whether the calculation is done based on the UTC date
-	 * @param {string} [oParams.locale] the locale which affects the calculation algorithm
-	 * @param {number} [oParams.baseYear] the year for deciding the week number of the week which starts from December and ends in January. This option has effect only when locale is set to "en-US".
-	 *
-	 * @return {number} the week number of the given date
-	 * @private
-	 * @since 1.32.0
-	 */
-	DateFormat.calculateWeekNumber = function(oDate, oParams) {
-		// this function is marked private because it may be moved to the date object later
-		var oDefaultParams = {
-			UTC: false,
-			locale: sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString()
-		};
-
-		jQuery.extend(oDefaultParams, oParams);
-
-		if (oDefaultParams.baseYear === undefined) {
-			oDefaultParams.baseYear = oDefaultParams.UTC ? oDate.getUTCFullYear() : oDate.getFullYear();
-		}
-
-		var bUTC = oDefaultParams.UTC,
-			iYear = oDefaultParams.baseYear,
-			sLocale = oDefaultParams.locale;
-
-		var iWeekNum = 0,
-			iWeekDay = 0,
-			oLocale = new Locale(sLocale),
-			oLocaleData = LocaleData.getInstance(oLocale),
-			iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek(),
-			oProto = oDate.constructor.prototype;
-
-		var fnSetFullYear = bUTC ? oProto.setUTCFullYear : oProto.setFullYear,
-			fnSetDate = bUTC ? oProto.setUTCDate : oProto.setDate,
-			fnGetDate = bUTC ? oProto.getUTCDate : oProto.getDate,
-			fnGetDay = bUTC ? oProto.getUTCDay : oProto.getDay,
-			fnSetMonth = bUTC ? oProto.setUTCMonth : oProto.setMonth;
-
-		var cloneDate = function(oDate) {
-			return new oDate.constructor(oDate.getTime());
-		};
-
-		if (oLocale.getLanguage() === "en" && oLocale.getRegion() === "US") {
-			/*
-			 * in US the week starts with Sunday
-			 * The first week of the year starts with January 1st. But Dec. 31 is still in the last year
-			 * So the week beginning in December and ending in January has 2 week numbers
-			 */
-			var oJanFirst = cloneDate(oDate);
-			fnSetFullYear.apply(oJanFirst, [iYear, 0, 1]);
-			iWeekDay = fnGetDay.apply(oJanFirst);
-
-			//get the date for the same weekday like jan 1.
-			var oCheckDate = cloneDate(oDate);
-			fnSetDate.apply(oCheckDate, [fnGetDate.apply(oCheckDate) - fnGetDay.apply(oCheckDate) + iWeekDay]);
-			iWeekNum = Math.round((oCheckDate.getTime() - oJanFirst.getTime()) / 86400000 / 7) + 1;
-		} else {
-			// normally the first week of the year is the one where the first Thursday of the year is
-			// find Thursday of this week
-			// if the checked day is before the 1. day of the week use a day of the previous week to check
-			var oThursday = cloneDate(oDate);
-			fnSetDate.apply(oThursday, [fnGetDate.apply(oThursday) - iFirstDayOfWeek]);
-
-			iWeekDay = fnGetDay.apply(oThursday);
-			fnSetDate.apply(oThursday, [fnGetDate.apply(oThursday) - iWeekDay + 4]);
-
-			var oFirstDayOfYear = cloneDate(oThursday);
-			fnSetMonth.apply(oFirstDayOfYear, [0, 1]);
-
-			iWeekDay = fnGetDay.apply(oFirstDayOfYear);
-
-			var iAddDays = 0;
-			if (iWeekDay > 4) {
-				iAddDays = 7; // first day of year is after Thursday, so first Thursday is in the next week
-			}
-			var oFirstThursday = cloneDate(oFirstDayOfYear);
-			fnSetDate.apply(oFirstThursday, [1 - iWeekDay + 4 + iAddDays]);
-
-			iWeekNum = Math.round((oThursday.getTime() - oFirstThursday.getTime()) / 86400000 / 7) + 1;
-		}
-
-		return iWeekNum;
 	};
 
 	return DateFormat;

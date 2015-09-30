@@ -11,8 +11,8 @@
  */
 
 // Provides class sap.ui.unified.caledar.CalendarUtils
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/core/date/UniversalDate'],
-	function(jQuery, DateFormat, UniversalDate) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
+	function(jQuery, UniversalDate) {
 	"use strict";
 
 	// Static class
@@ -123,11 +123,50 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/cor
 	 */
 	CalendarUtils.calculateWeekNumber = function(oDate, iYear, sLocale, oLocaleData){
 
-		return DateFormat.calculateWeekNumber(oDate, {
-			UTC: true,
-			baseYear: iYear,
-			locale: sLocale
-		});
+		var iWeekNum = 0;
+		var iWeekDay = 0;
+		var iFirstDayOfWeek = oLocaleData.getFirstDayOfWeek();
+
+		if (sLocale == "en-US") {
+			/*
+			 * in US the week starts with Sunday
+			 * The first week of the year starts with January 1st. But Dec. 31 is still in the last year
+			 * So the week beginning in December and ending in January has 2 week numbers
+			 */
+			var oJanFirst = new UniversalDate(oDate.getTime());
+			oJanFirst.setUTCFullYear(iYear, 0, 1);
+			iWeekDay = oJanFirst.getUTCDay();
+
+			//get the date for the same weekday like jan 1.
+			var oCheckDate = new UniversalDate(oDate.getTime());
+			oCheckDate.setUTCDate(oCheckDate.getUTCDate() - oCheckDate.getUTCDay() + iWeekDay);
+
+			iWeekNum = Math.round((oCheckDate.getTime() - oJanFirst.getTime()) / 86400000 / 7) + 1;
+
+		}else {
+			// normally the first week of the year is the one where the first Thursday of the year is
+			// find Thursday of this week
+			// if the checked day is before the 1. day of the week use a day of the previous week to check
+			var oThursday = new UniversalDate(oDate.getTime());
+			oThursday.setUTCDate(oThursday.getUTCDate() - iFirstDayOfWeek);
+			iWeekDay = oThursday.getUTCDay();
+			oThursday.setUTCDate(oThursday.getUTCDate() - iWeekDay + 4);
+
+			var oFirstDayOfYear = new UniversalDate(oThursday.getTime());
+			oFirstDayOfYear.setUTCMonth(0, 1);
+			iWeekDay = oFirstDayOfYear.getUTCDay();
+			var iAddDays = 0;
+			if (iWeekDay > 4) {
+				iAddDays = 7; // first day of year is after Thursday, so first Thursday is in the next week
+			}
+			var oFirstThursday = new UniversalDate(oFirstDayOfYear.getTime());
+			oFirstThursday.setUTCDate(1 - iWeekDay + 4 + iAddDays);
+
+			iWeekNum = Math.round((oThursday.getTime() - oFirstThursday.getTime()) / 86400000 / 7) + 1;
+
+		}
+
+		return iWeekNum;
 
 	};
 

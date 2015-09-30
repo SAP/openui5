@@ -1721,6 +1721,302 @@
 			"0": "AH"
 		}
 	},
+	"ca-japanese": {
+		"dateFormat-full": "EEEE, d MMMM y 'г'. G",
+		"dateFormat-long": "d MMMM y 'г'. G",
+		"dateFormat-medium": "d MMM y 'г'. G",
+		"dateFormat-short": "dd.MM.y G",
+		"timeFormat-full": "H:mm:ss zzzz",
+		"timeFormat-long": "H:mm:ss z",
+		"timeFormat-medium": "H:mm:ss",
+		"timeFormat-short": "H:mm",
+		"dateTimeFormat-full": "{1}, {0}",
+		"dateTimeFormat-long": "{1}, {0}",
+		"dateTimeFormat-medium": "{1}, {0}",
+		"dateTimeFormat-short": "{1}, {0}",
+		"intervalFormatFallback": "{0} - {1}",
+		"intervalFormat-d-d": "d–d",
+		"intervalFormat-h-a": "h a – h a",
+		"intervalFormat-h-h": "h–h a",
+		"intervalFormat-H-H": "H–H",
+		"intervalFormat-hm-a": "h:mm a – h:mm a",
+		"intervalFormat-hm-h": "h:mm–h:mm a",
+		"intervalFormat-hm-m": "h:mm–h:mm a",
+		"intervalFormat-Hm-H": "H:mm–H:mm",
+		"intervalFormat-Hm-m": "H:mm–H:mm",
+		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
+		"intervalFormat-hmv-h": "h:mm–h:mm a v",
+		"intervalFormat-hmv-m": "h:mm–h:mm a v",
+		"intervalFormat-Hmv-H": "H:mm–H:mm v",
+		"intervalFormat-Hmv-m": "H:mm–H:mm v",
+		"intervalFormat-hv-a": "h a – h a v",
+		"intervalFormat-hv-h": "h–h a v",
+		"intervalFormat-Hv-H": "H–H v",
+		"intervalFormat-M-M": "M–M",
+		"intervalFormat-Md-d": "dd.MM – dd.MM",
+		"intervalFormat-Md-M": "dd.MM – dd.MM",
+		"intervalFormat-MEd-d": "E, dd.MM – E, dd.MM",
+		"intervalFormat-MEd-M": "E, dd.MM – E, dd.MM",
+		"intervalFormat-MMM-M": "LLL–LLL",
+		"intervalFormat-MMMd-d": "d–d MMM",
+		"intervalFormat-MMMd-M": "d MMM – d MMM",
+		"intervalFormat-MMMEd-d": "ccc, d - E, d MMM",
+		"intervalFormat-MMMEd-M": "ccc, d MMM – ccc, d MMM",
+		"intervalFormat-MMMM-M": "LLLL–LLLL",
+		"intervalFormat-y-y": "y–y G",
+		"intervalFormat-yM-M": "MM.y – MM.y G",
+		"intervalFormat-yM-y": "MM.y – MM.y G",
+		"intervalFormat-yMd-d": "dd.MM.y – dd.MM.y G",
+		"intervalFormat-yMd-M": "dd.MM.y – dd.MM.y G",
+		"intervalFormat-yMd-y": "dd.MM.y – dd.MM.y G",
+		"intervalFormat-yMEd-d": "ccc, dd.MM.y – ccc, dd.MM.y G",
+		"intervalFormat-yMEd-M": "ccc, dd.MM.y – ccc, dd.MM.y G",
+		"intervalFormat-yMEd-y": "ccc, dd.MM.y – ccc, dd.MM.y G",
+		"intervalFormat-yMMM-M": "LLL–LLL y 'г'. G",
+		"intervalFormat-yMMM-y": "LLL y – LLL y 'г'. G",
+		"intervalFormat-yMMMd-d": "d–d MMM y 'г'. G",
+		"intervalFormat-yMMMd-M": "d MMM – d MMM y 'г'. G",
+		"intervalFormat-yMMMd-y": "d MMM y – d MMM y 'г'. G",
+		"intervalFormat-yMMMEd-d": "ccc, d – ccc, d MMM y 'г'. G",
+		"intervalFormat-yMMMEd-M": "ccc, d MMM – ccc, d MMM y 'г'. G",
+		"intervalFormat-yMMMEd-y": "ccc, d MMM y – ccc, d MMM y 'г'. G",
+		"intervalFormat-yMMMM-M": "LLLL–LLLL y 'г'. G",
+		"intervalFormat-yMMMM-y": "LLLL y – LLLL y 'г'. G",
+		"months-format-abbreviated": [
+			"янв.",
+			"февр.",
+			"мар.",
+			"апр.",
+			"мая",
+			"июн.",
+			"июл.",
+			"авг.",
+			"сент.",
+			"окт.",
+			"нояб.",
+			"дек."
+		],
+		"months-format-narrow": [
+			"Я",
+			"Ф",
+			"М",
+			"А",
+			"М",
+			"И",
+			"И",
+			"А",
+			"С",
+			"О",
+			"Н",
+			"Д"
+		],
+		"months-format-wide": [
+			"января",
+			"февраля",
+			"марта",
+			"апреля",
+			"мая",
+			"июня",
+			"июля",
+			"августа",
+			"сентября",
+			"октября",
+			"ноября",
+			"декабря"
+		],
+		"months-standAlone-abbreviated": [
+			"янв.",
+			"февр.",
+			"март",
+			"апр.",
+			"май",
+			"июнь",
+			"июль",
+			"авг.",
+			"сент.",
+			"окт.",
+			"нояб.",
+			"дек."
+		],
+		"months-standAlone-narrow": [
+			"Я",
+			"Ф",
+			"М",
+			"А",
+			"М",
+			"И",
+			"И",
+			"А",
+			"С",
+			"О",
+			"Н",
+			"Д"
+		],
+		"months-standAlone-wide": [
+			"январь",
+			"февраль",
+			"март",
+			"апрель",
+			"май",
+			"июнь",
+			"июль",
+			"август",
+			"сентябрь",
+			"октябрь",
+			"ноябрь",
+			"декабрь"
+		],
+		"days-format-abbreviated": [
+			"вс",
+			"пн",
+			"вт",
+			"ср",
+			"чт",
+			"пт",
+			"сб"
+		],
+		"days-format-narrow": [
+			"вс",
+			"пн",
+			"вт",
+			"ср",
+			"чт",
+			"пт",
+			"сб"
+		],
+		"days-format-short": [
+			"вс",
+			"пн",
+			"вт",
+			"ср",
+			"чт",
+			"пт",
+			"сб"
+		],
+		"days-format-wide": [
+			"воскресенье",
+			"понедельник",
+			"вторник",
+			"среда",
+			"четверг",
+			"пятница",
+			"суббота"
+		],
+		"days-standAlone-abbreviated": [
+			"вс",
+			"пн",
+			"вт",
+			"ср",
+			"чт",
+			"пт",
+			"сб"
+		],
+		"days-standAlone-narrow": [
+			"В",
+			"П",
+			"В",
+			"С",
+			"Ч",
+			"П",
+			"С"
+		],
+		"days-standAlone-short": [
+			"вс",
+			"пн",
+			"вт",
+			"ср",
+			"чт",
+			"пт",
+			"сб"
+		],
+		"days-standAlone-wide": [
+			"воскресенье",
+			"понедельник",
+			"вторник",
+			"среда",
+			"четверг",
+			"пятница",
+			"суббота"
+		],
+		"quarters-format-abbreviated": [
+			"1-й кв.",
+			"2-й кв.",
+			"3-й кв.",
+			"4-й кв."
+		],
+		"quarters-format-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-format-wide": [
+			"1-й квартал",
+			"2-й квартал",
+			"3-й квартал",
+			"4-й квартал"
+		],
+		"quarters-standAlone-abbreviated": [
+			"1-й кв.",
+			"2-й кв.",
+			"3-й кв.",
+			"4-й кв."
+		],
+		"quarters-standAlone-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-standAlone-wide": [
+			"1-й квартал",
+			"2-й квартал",
+			"3-й квартал",
+			"4-й квартал"
+		],
+		"dayPeriods-format-abbreviated": [
+			"ДП",
+			"ПП"
+		],
+		"dayPeriods-format-narrow": [
+			"ДП",
+			"ПП"
+		],
+		"dayPeriods-format-wide": [
+			"ДП",
+			"ПП"
+		],
+		"dayPeriods-standAlone-abbreviated": [
+			"ДП",
+			"ПП"
+		],
+		"dayPeriods-standAlone-narrow": [
+			"ДП",
+			"ПП"
+		],
+		"dayPeriods-standAlone-wide": [
+			"ДП",
+			"ПП"
+		],
+		"era-wide": {
+			"232": "Эпоха Мэйдзи",
+			"233": "Эпоха Тайсьо",
+			"234": "Сьова",
+			"235": "Эпоха Хэйсэй"
+		},
+		"era-abbreviated": {
+			"232": "Эпоха Мэйдзи",
+			"233": "Эпоха Тайсьо",
+			"234": "Сьова",
+			"235": "Эпоха Хэйсэй"
+		},
+		"era-narrow": {
+			"232": "M",
+			"233": "T",
+			"234": "S",
+			"235": "H"
+		}
+	},
 	"dateField-year-displayName": "год",
 	"dateField-year-relative--1": "в прошлом году",
 	"dateField-year-relative-0": "в этом году",
@@ -1993,5 +2289,32 @@
 	"weekData-minDays": 1,
 	"weekData-firstDay": 1,
 	"weekData-weekendStart": 6,
-	"weekData-weekendEnd": 0
+	"weekData-weekendEnd": 0,
+	"eras-gregorian": {
+		"0": {
+			"_end": "0-12-31"
+		},
+		"1": {
+			"_start": "1-01-01"
+		}
+	},
+	"eras-islamic": {
+		"0": {
+			"_start": "622-7-15"
+		}
+	},
+	"eras-japanese": {
+		"232": {
+			"_start": "1868-9-8"
+		},
+		"233": {
+			"_start": "1912-7-30"
+		},
+		"234": {
+			"_start": "1926-12-25"
+		},
+		"235": {
+			"_start": "1989-1-8"
+		}
+	}
 }

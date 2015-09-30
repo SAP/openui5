@@ -531,38 +531,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		},
 
 		/**
-		 * Returns the era name.
+		 * Returns array of eras
 		 *
-		 * @param {string} sStyle the style of the era name. It can be 'wide', 'abbreviated' or 'narrow'
-		 * @param {int} [iIndex] the index of the era name in era name set. If this isn't set, the last element in era name set is returned
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
-		 * @return {string} the era name
+		 * @param {string} sWidth the style of the era name. It can be 'wide', 'abbreviated' or 'narrow'
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar
+		 * @return {array} the array of eras
 		 * @public
-		 * @since 1.28.6
+		 * @since 1.32.0
 		 */
-		getEra : function(sStyle, iIndex, sCalendarType) {
-			jQuery.sap.assert(sStyle == "wide" || sStyle == "abbreviated" || sStyle == "narrow" , "sStyle must be wide, abbreviate or narrow");
-
-			if (typeof iIndex === "string") {
-				sCalendarType = iIndex;
-				iIndex = undefined;
+		getEras : function(sWidth, sCalendarType) {
+			jQuery.sap.assert(sWidth == "wide" || sWidth == "abbreviated" || sWidth == "narrow" , "sWidth must be wide, abbreviate or narrow");
+			
+			//TODO Adapt generation so that eras are an array instead of object
+			var oEras = this._getCalendarData("era-" + sWidth, sCalendarType),
+				aEras = [];
+			for (var i in oEras) {
+				aEras[parseInt(i, 10)] = oEras[i];
 			}
-
-			var oEras = this._getCalendarData("era-" + sStyle, sCalendarType),
-				sName, iMax = 0, iName;
-			if (iIndex !== undefined && iIndex !== null) {
-				return oEras["" + iIndex];
-			} else {
-				for (sName in oEras) {
-					iName = parseInt(sName, 10);
-					if (iName > iMax) {
-						iMax = iName;
-					}
-				}
-				return oEras["" + iMax];
-			}
+			return aEras;
 		},
-
+		
+		/**
+		 * Returns the map of era ids to era dates
+		 *
+		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar
+		 * @return {array} the array of eras containing objects with either an _end or _start property with a date
+		 * @public
+		 * @since 1.32.0
+		 */
+		getEraDates : function(sCalendarType) {
+			//TODO Adapt generation so that eradates are an array instead of object
+			var oEraDates = this._get("eras-" + sCalendarType.toLowerCase()),
+				aEraDates = [];
+			for (var i in oEraDates) {
+				aEraDates[parseInt(i, 10)] = oEraDates[i];
+			}
+			return aEraDates;
+		},
+		
 		/**
 		 * Returns the defined pattern for representing the calendar week number.
 		 *
@@ -668,9 +674,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				"dayPeriods-format-narrow":["AM","PM"],
 				"dayPeriods-format-wide":["AM","PM"],
 				"dayPeriods-format-abbreviated":["AM","PM"],
-				"era-wide":"Anno Domini",
-				"era-abbreviated":"AD",
-				"era-narrow":"A"
+				"era-wide":{"0":"Before Christ","1":"Anno Domini"},
+				"era-abbreviated":{"0":"BC","1":"AD"},
+				"era-narrow":{"0":"B","1":"A"}
+			},
+			"eras-gregorian": {
+				"0":{"_end":"0-12-31"},
+				"1":{"_start":"1-01-01"}
 			},
 			"dateField-year-displayName":"Year",
 			"dateField-year-relative--1":"last year",

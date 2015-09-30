@@ -1723,6 +1723,302 @@
 			"0": "AH"
 		}
 	},
+	"ca-japanese": {
+		"dateFormat-full": "Gy年M月d日EEEE",
+		"dateFormat-long": "Gy年M月d日",
+		"dateFormat-medium": "Gy年M月d日",
+		"dateFormat-short": "GGGGGy/M/d",
+		"timeFormat-full": "H時mm分ss秒 zzzz",
+		"timeFormat-long": "H:mm:ss z",
+		"timeFormat-medium": "H:mm:ss",
+		"timeFormat-short": "H:mm",
+		"dateTimeFormat-full": "{1} {0}",
+		"dateTimeFormat-long": "{1} {0}",
+		"dateTimeFormat-medium": "{1} {0}",
+		"dateTimeFormat-short": "{1} {0}",
+		"intervalFormatFallback": "{0}～{1}",
+		"intervalFormat-d-d": "d日～d日",
+		"intervalFormat-h-a": "aK時～aK時",
+		"intervalFormat-h-h": "aK時～K時",
+		"intervalFormat-H-H": "H時～H時",
+		"intervalFormat-hm-a": "aK時mm分～aK時mm分",
+		"intervalFormat-hm-h": "aK時mm分～K時mm分",
+		"intervalFormat-hm-m": "aK時mm分～K時mm分",
+		"intervalFormat-Hm-H": "H時mm分～H時mm分",
+		"intervalFormat-Hm-m": "H時mm分～H時mm分",
+		"intervalFormat-hmv-a": "aK時mm分～aK時mm分(v)",
+		"intervalFormat-hmv-h": "aK時mm分～K時mm分(v)",
+		"intervalFormat-hmv-m": "aK時mm分～K時mm分(v)",
+		"intervalFormat-Hmv-H": "H時mm分～H時mm分(v)",
+		"intervalFormat-Hmv-m": "H時mm分～H時mm分(v)",
+		"intervalFormat-hv-a": "aK時～aK時(v)",
+		"intervalFormat-hv-h": "aK時～K時(v)",
+		"intervalFormat-Hv-H": "H時～H時(v)",
+		"intervalFormat-M-M": "M月～M月",
+		"intervalFormat-Md-d": "MM/dd～MM/dd",
+		"intervalFormat-Md-M": "MM/dd～MM/dd",
+		"intervalFormat-MEd-d": "MM/dd(E)～MM/dd(E)",
+		"intervalFormat-MEd-M": "MM/dd(E)～MM/dd(E)",
+		"intervalFormat-MMM-M": "M月～M月",
+		"intervalFormat-MMMd-d": "M月d日～d日",
+		"intervalFormat-MMMd-M": "M月d日～M月d日",
+		"intervalFormat-MMMEd-d": "M月d日(E)～d日(E)",
+		"intervalFormat-MMMEd-M": "M月d日(E)～M月d日(E)",
+		"intervalFormat-MMMM-M": "M月～M月",
+		"intervalFormat-y-y": "Gy年～y年",
+		"intervalFormat-yM-M": "Gy/MM～y/MM",
+		"intervalFormat-yM-y": "Gy/MM～y/MM",
+		"intervalFormat-yMd-d": "Gy/MM/dd～y/MM/dd",
+		"intervalFormat-yMd-M": "Gy/MM/dd～y/MM/dd",
+		"intervalFormat-yMd-y": "Gy/MM/dd～y/MM/dd",
+		"intervalFormat-yMEd-d": "Gy/MM/dd(E)～y/MM/dd(E)",
+		"intervalFormat-yMEd-M": "Gy/MM/dd(E)～y/MM/dd(E)",
+		"intervalFormat-yMEd-y": "Gy/MM/dd(E)～y/MM/dd(E)",
+		"intervalFormat-yMMM-M": "Gy年M月～M月",
+		"intervalFormat-yMMM-y": "Gy年M月～y年M月",
+		"intervalFormat-yMMMd-d": "Gy年M月d日～d日",
+		"intervalFormat-yMMMd-M": "Gy年M月d日～M月d日",
+		"intervalFormat-yMMMd-y": "Gy年M月d日～y年M月d日",
+		"intervalFormat-yMMMEd-d": "Gy年M月d日(E)～d日(E)",
+		"intervalFormat-yMMMEd-M": "Gy年M月d日(E)～M月d日(E)",
+		"intervalFormat-yMMMEd-y": "Gy年M月d日(E)～y年M月d日(E)",
+		"intervalFormat-yMMMM-M": "Gy年M月～M月",
+		"intervalFormat-yMMMM-y": "Gy年M月～y年M月",
+		"months-format-abbreviated": [
+			"1月",
+			"2月",
+			"3月",
+			"4月",
+			"5月",
+			"6月",
+			"7月",
+			"8月",
+			"9月",
+			"10月",
+			"11月",
+			"12月"
+		],
+		"months-format-narrow": [
+			"1",
+			"2",
+			"3",
+			"4",
+			"5",
+			"6",
+			"7",
+			"8",
+			"9",
+			"10",
+			"11",
+			"12"
+		],
+		"months-format-wide": [
+			"1月",
+			"2月",
+			"3月",
+			"4月",
+			"5月",
+			"6月",
+			"7月",
+			"8月",
+			"9月",
+			"10月",
+			"11月",
+			"12月"
+		],
+		"months-standAlone-abbreviated": [
+			"1月",
+			"2月",
+			"3月",
+			"4月",
+			"5月",
+			"6月",
+			"7月",
+			"8月",
+			"9月",
+			"10月",
+			"11月",
+			"12月"
+		],
+		"months-standAlone-narrow": [
+			"1",
+			"2",
+			"3",
+			"4",
+			"5",
+			"6",
+			"7",
+			"8",
+			"9",
+			"10",
+			"11",
+			"12"
+		],
+		"months-standAlone-wide": [
+			"1月",
+			"2月",
+			"3月",
+			"4月",
+			"5月",
+			"6月",
+			"7月",
+			"8月",
+			"9月",
+			"10月",
+			"11月",
+			"12月"
+		],
+		"days-format-abbreviated": [
+			"日",
+			"月",
+			"火",
+			"水",
+			"木",
+			"金",
+			"土"
+		],
+		"days-format-narrow": [
+			"日",
+			"月",
+			"火",
+			"水",
+			"木",
+			"金",
+			"土"
+		],
+		"days-format-short": [
+			"日",
+			"月",
+			"火",
+			"水",
+			"木",
+			"金",
+			"土"
+		],
+		"days-format-wide": [
+			"日曜日",
+			"月曜日",
+			"火曜日",
+			"水曜日",
+			"木曜日",
+			"金曜日",
+			"土曜日"
+		],
+		"days-standAlone-abbreviated": [
+			"日",
+			"月",
+			"火",
+			"水",
+			"木",
+			"金",
+			"土"
+		],
+		"days-standAlone-narrow": [
+			"日",
+			"月",
+			"火",
+			"水",
+			"木",
+			"金",
+			"土"
+		],
+		"days-standAlone-short": [
+			"日",
+			"月",
+			"火",
+			"水",
+			"木",
+			"金",
+			"土"
+		],
+		"days-standAlone-wide": [
+			"日曜日",
+			"月曜日",
+			"火曜日",
+			"水曜日",
+			"木曜日",
+			"金曜日",
+			"土曜日"
+		],
+		"quarters-format-abbreviated": [
+			"Q1",
+			"Q2",
+			"Q3",
+			"Q4"
+		],
+		"quarters-format-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-format-wide": [
+			"第1四半期",
+			"第2四半期",
+			"第3四半期",
+			"第4四半期"
+		],
+		"quarters-standAlone-abbreviated": [
+			"Q1",
+			"Q2",
+			"Q3",
+			"Q4"
+		],
+		"quarters-standAlone-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-standAlone-wide": [
+			"第1四半期",
+			"第2四半期",
+			"第3四半期",
+			"第4四半期"
+		],
+		"dayPeriods-format-abbreviated": [
+			"午前",
+			"午後"
+		],
+		"dayPeriods-format-narrow": [
+			"午前",
+			"午後"
+		],
+		"dayPeriods-format-wide": [
+			"午前",
+			"午後"
+		],
+		"dayPeriods-standAlone-abbreviated": [
+			"午前",
+			"午後"
+		],
+		"dayPeriods-standAlone-narrow": [
+			"午前",
+			"午後"
+		],
+		"dayPeriods-standAlone-wide": [
+			"午前",
+			"午後"
+		],
+		"era-wide": {
+			"232": "明治",
+			"233": "大正",
+			"234": "昭和",
+			"235": "平成"
+		},
+		"era-abbreviated": {
+			"232": "明治",
+			"233": "大正",
+			"234": "昭和",
+			"235": "平成"
+		},
+		"era-narrow": {
+			"232": "M",
+			"233": "T",
+			"234": "S",
+			"235": "H"
+		}
+	},
 	"dateField-year-displayName": "年",
 	"dateField-year-relative--1": "昨年",
 	"dateField-year-relative-0": "今年",
@@ -1905,5 +2201,32 @@
 	"weekData-firstDay": 0,
 	"weekData-weekendStart": 6,
 	"weekData-weekendEnd": 0,
+	"eras-gregorian": {
+		"0": {
+			"_end": "0-12-31"
+		},
+		"1": {
+			"_start": "1-01-01"
+		}
+	},
+	"eras-islamic": {
+		"0": {
+			"_start": "622-7-15"
+		}
+	},
+	"eras-japanese": {
+		"232": {
+			"_start": "1868-9-8"
+		},
+		"233": {
+			"_start": "1912-7-30"
+		},
+		"234": {
+			"_start": "1926-12-25"
+		},
+		"235": {
+			"_start": "1989-1-8"
+		}
+	},
 	"calendarPreference": "gregorian japanese"
 }
