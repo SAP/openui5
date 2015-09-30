@@ -253,7 +253,7 @@ sap.ui.require([
 	QUnit.test("listbinding with immutable expand, encoded URLs", function (assert) {
 		var sExpand = "TEAM_2_EMPLOYEES($expand=EMPLOYEES_2_EQUIPMENTS)",
 			mParameters = { "$expand": sExpand },
-			sEncodedUrl = "/service/TEAMS?$expand=" + jQuery.sap.encodeURL(sExpand),
+			sEncodedUrl = "/service/TEAMS?$expand=" + encodeURIComponent(sExpand),
 			oListBinding = this.oModel.bindList("/TEAMS",  undefined, undefined, undefined,
 					mParameters);
 
@@ -592,8 +592,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("paging: lower boundary reset", function (assert) {
 		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
-			done = assert.async(),
-			oSandbox = this.oSandbox;
+			done = assert.async();
 
 		// 1. read [20..50) and get [20..35) -> final length 35
 		this.oDataCacheMock.expects("readRange").withExactArgs(20, 30)
