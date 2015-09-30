@@ -74,6 +74,48 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 		}
 	};
 
+	/**
+	 * Calculates a group id for the given node.
+	 * The actual group ID differs between hierarchy-annotations and navigation properties
+	 * @override
+	 */
+	ODataTreeBindingAdapter.prototype._calculateGroupID = function (oNode) {
+
+		var sGroupIDBase = "";
+		var sGroupIDSuffix = "";
+
+		//artificial root has always "/" as groupID
+		if (oNode.context === null) {
+			return "/";
+		}
+
+		if (oNode.parent) {
+			//case 1: nested node, group id is the path along the parents
+			sGroupIDBase = oNode.parent.groupID;
+			sGroupIDBase = sGroupIDBase[sGroupIDBase.length - 1] !== "/" ? sGroupIDBase + "/" : sGroupIDBase;
+			if (this.bHasTreeAnnotations) {
+				sGroupIDSuffix = oNode.context.getProperty(this.oTreeProperties["hierarchy-node-for"]) + "/";
+			} else {
+				//odata navigation properties
+				sGroupIDSuffix = oNode.context.sPath.substring(1) + "/";
+			}
+		} else {
+			//case 2: node sits on root level
+			if (this.bHasTreeAnnotations) {
+				sGroupIDBase = "/";
+				sGroupIDSuffix = oNode.context.getProperty(this.oTreeProperties["hierarchy-node-for"]) + "/";
+			} else {
+				//odata nav properties case
+				sGroupIDBase = "/";
+				sGroupIDSuffix = oNode.context.sPath[0] === "/" ? oNode.context.sPath.substring(1) : oNode.context.sPath;
+			}
+		}
+
+		var sGroupID = sGroupIDBase + sGroupIDSuffix;
+
+		return sGroupID;
+	};
+	
 	ODataTreeBindingAdapter.prototype.resetData = function(oContext, mParameters) {
 		var vReturn = ODataTreeBinding.prototype.resetData.call(this, oContext, mParameters);
 

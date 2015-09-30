@@ -8,12 +8,12 @@ sap.ui.define([
 		onInit: function () {
 			var oFormData = {
 				serviceURL: "",
-				collection: "orgHierarchyRoot",
+				collection: "orgHierarchy",
 				selectProperties: "HIERARCHY_NODE,DESCRIPTION,LEVEL,DRILLDOWN_STATE",
 				countMode: "Inline",
-				operationMode: "Server",
+				operationMode: "Auto",
 				tableThreshold: 10,
-				bindingThreshold: 200,
+				bindingThreshold: 20000,
 				rootLevel: 0,
 				filterProperty: "DESCRIPTION",
 				filterOperator: "Contains",
@@ -92,13 +92,13 @@ sap.ui.define([
 					threshold: sBindingThreshold,
 					countMode: sCountMode,
 					operationMode: sOperationMode,
-					navigation: {orgHierarchyRoot: "toChildren", orgHierarchy: "toChildren"}
-					/*treeAnnotationProperties: {
+					//navigation: {orgHierarchyRoot: "toChildren", orgHierarchy: "toChildren"}
+					treeAnnotationProperties: {
 						hierarchyLevelFor: "LEVEL",
 						hierarchyParentNodeFor: "PARENT_NODE",
 						hierarchyNodeFor: "HIERARCHY_NODE",
 						hierarchyDrillStateFor: "DRILLDOWN_STATE"
-					}*/
+					}
 				}
 			});
 			
