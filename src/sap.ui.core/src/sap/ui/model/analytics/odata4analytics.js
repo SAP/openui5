@@ -4403,16 +4403,26 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		 *            bIncludeCount Indicates whether or not the result shall
 		 *            include a count for the returned entities. Default is not to
 		 *            include it. Pass null to keep current setting.
+		 * @param {Boolean}
+		 *            bReturnNoEntities Indicates whether or not the result shall
+		 *            be empty. This will translate to $top=0 in the OData request and override
+		 *            any setting done with setResultPageBoundaries. The default is not to
+		 *            suppress entities in the result. Pass null to keep current setting. 
+		 *            The main use case for this option is to create a request
+		 *            with $inlinecount returning an entity count.
 		 * @public
 		 * @function
 		 * @name sap.ui.model.analytics.odata4analytics.QueryResultRequest#setRequestOptions
 		 */
-		setRequestOptions : function(bIncludeEntityKey, bIncludeCount) {
+		setRequestOptions : function(bIncludeEntityKey, bIncludeCount, bReturnNoEntities) {
 			if (bIncludeEntityKey != null) {
 				this._bIncludeEntityKey = bIncludeEntityKey;
 			}
 			if (bIncludeCount != null) {
 				this._bIncludeCount = bIncludeCount;
+			}
+			if (bReturnNoEntities != null) {
+				this._bReturnNoEntities = bReturnNoEntities;
 			}
 		},
 
@@ -4612,13 +4622,19 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 				break;
 			}
 			case "$top": {
-				if (this._iTopRequestOption !== null) {
+				sQueryOptionValue = null;
+				if (this._bReturnNoEntities) {
+					sQueryOptionValue = 0;
+				} else if (this._iTopRequestOption !== null) {
 					sQueryOptionValue = this._iTopRequestOption;
 				}
 				break;
 			}
 			case "$skip": {
-				sQueryOptionValue = this._iSkipRequestOption;
+				sQueryOptionValue = null;
+				if (!this._bReturnNoEntities) {
+					sQueryOptionValue = this._iSkipRequestOption;
+				}
 				break;
 			}
 			case "$inlinecount": {
@@ -4671,11 +4687,11 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 			var sURI = sResourcePath;
 			var bQuestionmark = false;
 
-			if (sSelectOption) {
+			if (sSelectOption !== null) {
 				sURI += "?$select=" + sSelectOption;
 				bQuestionmark = true;
 			}
-			if (this._oFilterExpression && sFilterOption) {
+			if (this._oFilterExpression && sFilterOption !== null) {
 				if (!bQuestionmark) {
 					sURI += "?";
 					bQuestionmark = true;
@@ -4684,7 +4700,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 				}
 				sURI += "$filter=" + sFilterOption;
 			}
-			if (this._oSortExpression && sSortOption) {
+			if (this._oSortExpression && sSortOption !== null) {
 				if (!bQuestionmark) {
 					sURI += "?";
 					bQuestionmark = true;
@@ -4694,7 +4710,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 				sURI += "$orderby=" + sSortOption;
 			}
 
-			if (this._iTopRequestOption && sTopOption) {
+			if ((this._iTopRequestOption || this._bReturnNoEntities) && sTopOption !== null) {
 				if (!bQuestionmark) {
 					sURI += "?";
 					bQuestionmark = true;
@@ -4703,7 +4719,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 				}
 				sURI += "$top=" + sTopOption;
 			}
-			if (this._iSkipRequestOption && sSkipOption) {
+			if (this._iSkipRequestOption && sSkipOption !== null) {
 				if (!bQuestionmark) {
 					sURI += "?";
 					bQuestionmark = true;
@@ -4712,7 +4728,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 				}
 				sURI += "$skip=" + sSkipOption;
 			}
-			if (this._bIncludeCount && sInlineCountOption) {
+			if (this._bIncludeCount && sInlineCountOption !== null) {
 				if (!bQuestionmark) {
 					sURI += "?";
 					bQuestionmark = true;
@@ -4734,9 +4750,10 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 		_oMeasures : null,
 		_bIncludeEntityKey : null,
 		_bIncludeCount : null,
+		_bReturnNoEntities : null,
 		_oFilterExpression : null,
 		_oSortExpression : null,
-		_iSkipRequestOption : 0,
+		_iSkipRequestOption : null,
 		_iTopRequestOption : null
 	};
 
