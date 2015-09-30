@@ -1630,8 +1630,8 @@
 	test("error on fragment with simple cyclic reference", function () {
 		this.mock(jQuery.sap.log).expects("error")
 			.once()
-			.withExactArgs('Stopped due to cyclic reference in fragment: cycle',
-				sinon.match(/Error: Stopped due to cyclic fragment reference/),
+			.withExactArgs("Cyclic reference to fragment 'cycle' ",
+				matchArg('<Fragment xmlns="sap.ui.core" fragmentName="cycle" type="XML"/>'),
 				"sap.ui.core.util.XMLPreprocessor");
 
 		this.stub(sap.ui.core.XMLTemplateProcessor, "loadTemplate", function () {
@@ -1641,10 +1641,9 @@
 				mvcView(),
 				'<Fragment fragmentName="cycle" type="XML"/>',
 				'</mvc:View>'
-			],
-			{},
-			/Error: Stopped due to cyclic fragment reference/
-			);
+			], {}, [
+				'<Fragment fragmentName="cycle" type="XML"/>'
+			]);
 	});
 
 	//*********************************************************************************************
@@ -1663,8 +1662,8 @@
 
 		oLogMock.expects("error")
 			.once()
-			.withExactArgs('Stopped due to cyclic reference in fragment: B',
-				sinon.match(/Error: Stopped due to cyclic fragment reference/),
+			.withExactArgs("Cyclic reference to fragment 'B' ",
+				matchArg('<Fragment xmlns="sap.ui.core" fragmentName="B" type="XML"/>'),
 				"sap.ui.core.util.XMLPreprocessor");
 		warn(oLogMock, "qux: Set unchanged path '/foo' in " + aFragmentContent[1]);
 		warn(oLogMock, "qux: Set unchanged path '/bar' in " + aFragmentContent[2]);
@@ -1679,10 +1678,11 @@
 				mvcView(),
 				'<Fragment fragmentName="A" type="XML"/>',
 				'</mvc:View>'
-			],
-			{ models: new sap.ui.model.json.JSONModel() },
-			/Error: Stopped due to cyclic fragment reference/
-			);
+			], {
+				models: new sap.ui.model.json.JSONModel()
+			}, [
+				'<Fragment fragmentName="B" type="XML"/>' // Note: this is where the error occurs
+			]);
 	});
 
 	//*********************************************************************************************
