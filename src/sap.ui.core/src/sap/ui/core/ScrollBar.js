@@ -413,14 +413,46 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './Control', './library'],
 		}
 	
 		// Proceed scroll
-		this._doScroll(eAction, bForward);
+		if (this._bLargeDataScrolling && eAction === sap.ui.core.ScrollBarAction.Drag) {
+			this._eAction = eAction;
+			this._bForward = bForward;
+			if (sap.ui.Device.browser.internet_explorer) {
+				if (this._scrollTimeout) {
+					window.clearTimeout(this._scrollTimeout);
+				}
+				this._scrollTimeout = window.setTimeout(
+					this._onScrollTimeout.bind(this),
+					300
+				);
+			}
+		} else {
+			this._doScroll(eAction, bForward);
+		}
 	
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
 		return false;
 	};
 	
-	
+	ScrollBar.prototype._onScrollTimeout = function(){
+		this._scrollTimeout = undefined;
+		this._doScroll(this._eAction, this._bForward);
+		this._eAction = undefined;
+		this._bForward = undefined;
+		this._bTouchScroll = undefined;
+	};
+
+	ScrollBar.prototype.onmouseup = function() {
+		if (this._bLargeDataScrolling && (this._eAction || this._bForward || this._bTouchScroll) && !sap.ui.Device.browser.internet_explorer) {
+			this._doScroll(this._eAction, this._bForward);
+			this._eAction = undefined;
+			this._bForward = undefined;
+			this._bTouchScroll = undefined;
+		}
+	};
+
+	ScrollBar.prototype.ontouchend = ScrollBar.prototype.onmouseup;
+
 	/**
 	 * Handler for the touch scroller instance. Called only when touch mode is enabled.
 	 *
@@ -444,7 +476,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './Control', './library'],
 		if (this._iLastTouchScrollerPosition !== iPos) {
 			this._iLastTouchScrollerPosition = iPos;
 			this.setCheckedScrollPosition(iPos, true);
-			this.fireScroll();
+			if (this._bLargeDataScrolling) {
+				this._bTouchScroll = true;
+			} else {
+				this.fireScroll();
+			}
 		}
 	};
 	
@@ -672,7 +708,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './Control', './library'],
 			jQuery.sap.log.debug("-----PIXELMODE-----: New ScrollPos: " + iScrollPos + " --- Old ScrollPos: " +  this._iOldScrollPos + " --- Action: " + eAction + " --- Direction is forward: " + bForward);
 			this.fireScroll({ action: eAction, forward: bForward, newScrollPos: iScrollPos, oldScrollPos: this._iOldScrollPos});
 		}
-		this._bSuppressScroll = false;
+		// rounding errors in IE lead to infinite scrolling
+		if (Math.round(this._iFactor) == this._iFactor || !sap.ui.Device.browser.internet_explorer) {
+			this._bSuppressScroll = false;
+		}
 		this._iOldScrollPos = iScrollPos;
 		this._bMouseWheel = false;
 	
