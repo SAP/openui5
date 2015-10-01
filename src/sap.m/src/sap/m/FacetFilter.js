@@ -483,9 +483,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	//[TAB]
 	sap.m.FacetFilter.prototype.onsaptabnext = function(oEvent) {
 
-//		if (oEvent.target.parentNode.className != "sapMFFResetDiv" ) {
-			this._previousTarget = oEvent.target;
-//		}
+		this._previousTarget = oEvent.target;
 
 		if (oEvent.target.parentNode.className == "sapMFFHead" ) { //if focus on category, and then press tab, then focus on reset
 			for ( var i = 0; i < this.$().find(":sapTabbable").length; i++) {
@@ -557,13 +555,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = oEvent.target;
 	};
 
-	// Handle F6
-	sap.m.FacetFilter.prototype.onsapskipforward = function(oEvent) {
-	};
-
-	// Handle SHIFT+F6
-	sap.m.FacetFilter.prototype.onsapskipback = function(oEvent) {
-	};
 
 	sap.m.FacetFilter.prototype.onsappageup = function(oEvent) {
 		this._previousTarget = oEvent.target;
@@ -646,7 +637,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
-			oEvent.hover();
 			oEvent.preventDefault();
 			oEvent.setMarked();
 			return;
@@ -657,7 +647,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
-			oEvent.hover();
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
@@ -667,7 +656,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
-			oEvent.hover();
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
@@ -676,7 +664,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		this._previousTarget = oEvent.target;
 		if (oEvent.target.parentNode.className == "sapMFFResetDiv") {
 			jQuery(oEvent.target).focus();
-			oEvent.hover();
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
@@ -692,40 +679,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 		jQuery(oEvent.target).blur();
 		this.oItemNavigation.setFocusedIndex(nextFocusIndex);
 		this.focus();
-	};
-
-	// move focus to the next/prev tabbable element after or before the list
-	// TODO: This implementation search parent which means we are out of our sandbox!
-	sap.m.FacetFilter.prototype._navToTabChain = function(bForward) {
-		var $Current = this.$();
-		var $Tabbables = $Current.find(":sapTabbable");
-		var $Reference = $Tabbables.eq(bForward ? -1 : 0).add($Current).eq(-1);
-		var oStaticUIArea = sap.ui.getCore().getStaticAreaRef();
-		var sTabIndex = $Reference.attr("tabindex");
-		var iStep = bForward ? 1 : -1;
-
-		// make the dummy tabbable
-		$Reference.attr("tabindex", "0");
-
-		// search all dom parents to find next/prev tabbable item
-		while (($Current = $Current.parent()) && $Current[0] && $Current[0] !== oStaticUIArea) {
-			$Tabbables = $Current.find(":sapTabbable");
-			var iLimit = bForward ? $Tabbables.length - 1 : 0;
-			var iIndex = $Tabbables.index($Reference);
-
-			// should have more tabbables element then before or after reference
-			// should keep searching if the $Reference is the first or last one
-			if ($Tabbables.length > 1 && iIndex != iLimit) {
-				break;
-			}
-		}
-
-		// find next/prev tabbable item and reset tabindex
-		iIndex = $Tabbables.index($Reference) + iStep;
-		$Reference.attr("tabindex", sTabIndex);
-
-		// focus and return the found tabbable if possible
-		return $Tabbables[iIndex] && $Tabbables.eq(iIndex).focus();
 	};
 
 	/**
@@ -755,13 +708,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 					}
 				},
 				//keyboard acc - the 1st binding category (list) can't use initialfocus, so focus on 1st item from here
-/*				afterOpen: function(oEvent) {
-					if (this.getInitialFocus() == null && that._displayedList.getItems().length > 0) {
-						jQuery.sap.delayedCall(1000, this, function() {
-							jQuery.sap.focus(that._displayedList.getItemNavigation().getItemDomRefs()[0]);
-						});
-					}
-				},*/
 				afterClose: function(oEvent) {
 
 					that._addDelegateFlag = true;
@@ -848,7 +794,6 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 
 	              this._moveListToDisplayContainer(oList, oPopover);
 	              //keyboard acc - focus on 1st item of 1st page
-//	              oPopover.setInitialFocus(oList.getItems()[0]);
 	              oList.fireListOpen({});
 	              oPopover.openBy(oControl);
 	              //Display remove facet icon only if ShowRemoveFacetIcon property is set to true
@@ -931,7 +876,6 @@ oPopover.setContentWidth("30%");
 						that._oOpenPopoverDeferred.promise().done(fnOpenPopover);
 						});
 					} else {
-						//that._openPopover(oPopover, this);
 						jQuery.sap.delayedCall(100, this, fnOpenPopover);
 					}
 				}
@@ -1720,7 +1664,7 @@ oPopover.setContentWidth("30%");
 
 	/**
 	 * Add the reset button to the given summary bar, positioned to the end of the bar.
-	 *
+	 * 
 	 * @param oSummaryBar
 	 * @private
 	 */
@@ -2010,10 +1954,7 @@ FacetFilter.prototype._addResetToSummary = function(oSummaryBar) {
 			} else if (that._bTouchNotMoved === true) { // touchstart and touchend without move is a click; trigger it directly to avoid the usual delay
 				that.onclick(evt);
 				evt.preventDefault();
-			} //else {
-				// touchend without corresponding start
-				// do nothing special
-			//}
+			}
 			that._bTouchNotMoved = undefined;
 			that._lastMoveTime = undefined;
 		};
