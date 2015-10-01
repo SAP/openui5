@@ -25,6 +25,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		oRm.write("<div tabindex=\"-1\"");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMTokenizer");
+		
+		var aTokens = oControl.getTokens();
+		if (!aTokens.length) {
+			oRm.addClass("sapMTokenizerEmpty");
+		}
+		
 		oRm.writeClasses();
 		
 		oRm.writeAttribute("role", "list");		
