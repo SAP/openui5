@@ -40,7 +40,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			try {
 				Control.apply(this, arguments);
 				if (bInstantUpload === false) {
-					this.setProperty("instantUpload", bInstantUpload, true);
+					this.bInstantUpload = bInstantUpload;
 					this._oFormatDecimal = FileSizeFormat.getInstance({binaryFilesize: false, maxFractionDigits: 1, maxIntegerDigits: 3});
 				}
 			} catch (e) {
@@ -554,6 +554,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	UploadCollection.prototype.onBeforeRendering = function() {
 		this._RenderManager = this._RenderManager || sap.ui.getCore().createRenderManager();
 		var i, cAitems;
+		checkInstantUpload.bind(this)();
 
 		if (!this.getInstantUpload()) {//
 			this._getListHeader(this.aItems.length);
@@ -600,6 +601,16 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				}
 			} else {
 				this._oFileUploader.setEnabled(false);
+			}
+		}
+
+		// This function checks if instantUpload needs to be set. In case properties like fileType are set by the
+		// model instead of constructor the setting happens later and is still valid. To support this as well, we
+		// need to wait for modification until the first rendering.
+		function checkInstantUpload () {
+			if (this.bInstantUpload === false) {
+				this.setProperty("instantUpload", this.bInstantUpload, true);
+				delete this.bInstantUpload;
 			}
 		}
 	};
