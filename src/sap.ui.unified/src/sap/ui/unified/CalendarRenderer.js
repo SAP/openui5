@@ -66,6 +66,13 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.renderControl(oMonth);
 		}
 		oRm.write("<div id=\"" + sId + "-contentOver\" class=\"sapUiCalContentOver\" style=\"display:none;\"></div>");
+
+		if (!oCal._bNamesLengthChecked) {
+			// render MonthPicker to check month names length
+			var oMonthPicker = oCal.getAggregation("monthPicker");
+			oRm.renderControl(oMonthPicker);
+		}
+
 		oRm.write("</div>");
 
 		oRm.write("<button id=\"" + sId + "-cancel\" class=\"sapUiCalCancel\" tabindex=\"-1\">");
