@@ -733,6 +733,53 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	}
 
 	/**
+	 * Handle cut event.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @private
+	 */
+	MaskInput.prototype.oncut = function(oEvent) {
+		var  oSelection = getTextSelection.call(this),
+				iBegin = oSelection.iFrom,
+				iEnd = oSelection.iTo;
+
+		InputBase.prototype.oncut.call(this, oEvent);
+
+		if (!oSelection.bHasSelection) {
+			return;
+		}
+
+		iEnd = iEnd - 1;
+		resetTempValue.call(this, iBegin, iEnd);
+
+		//oncut happens before the input event fires (before oninput)
+		//we want to use the values from this point of time
+		//but set them after the input event is handled (after oninput)
+
+		// give a chance the normal browser cut and oninput handler to finish its work with the current selection,
+		// before messing up the dom value (updateDomValue) or the selection (by setting a new cursor position)
+		jQuery.sap.delayedCall(0, this,
+			function updateDomAndCursor(sValue, iPos, aOldTempValueContent) {
+				//update the temp value back
+				//because oninput breaks it
+				this._oTempValue._aContent = aOldTempValueContent;
+				this.updateDomValue(sValue);
+
+				//we want that shortly after updateDomValue
+				//but positionCaret sets the cursor, also with a delayedCall
+				//so we must put our update in the queue
+				jQuery.sap.delayedCall(0, this, setCursorPosition, [iPos]);
+			},
+			[
+				this._oTempValue.toString(),
+				Math.max(this._iUserInputStartPosition, iBegin),
+				this._oTempValue._aContent.slice(0)
+			]
+		);
+	};
+
+
+	/**
 	 * Handles <code>onKeyDown</code> event.
 	 * @param {jQuery.event} oEvent The jQuery event object
 	 * @private
@@ -763,12 +810,10 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 		} else if (oKey.bEnter) {
 			inputCompletedHandler.call(this, oEvent);
 
-		} else if ((oKey.bShift && oKey.bDelete) ||
-			(oKey.bCtrlKey && oKey.bInsert) ||
+		} else if ((oKey.bCtrlKey && oKey.bInsert) ||
 			(oKey.bShift && oKey.bInsert)) {
 			InputBase.prototype.onkeydown.apply(this, arguments);
-
-		} else if (oKey.bDelete || oKey.bBackspace) {
+		} else if ((!oKey.bShift && oKey.bDelete) || oKey.bBackspace) {
 			oSelection = getTextSelection.call(this);
 			iBegin = oSelection.iFrom;
 			iEnd = oSelection.iTo;
