@@ -1011,6 +1011,7 @@
 
 		check.call(this, [
 			mvcView().replace(">", ' xmlns:html="http://www.w3.org/1999/xhtml">'),
+			'<!-- some comment node -->', // to test skipping of none ELEMENT_NODES while visiting
 			'<Label text="{formatter: \'foo.Helper.help\','
 				+ ' path: \'/com.sap.vocabularies.UI.v1.HeaderInfo/Title/Label\'}"/>',
 			'<Text maxLines="{formatter: \'foo.Helper.nil\','
@@ -1041,6 +1042,7 @@
 				}
 			})
 		}, [ // Note: XML serializer outputs &gt; encoding...
+			'<!-- some comment node -->',
 			'<Label text="Customer"/>',
 			'<Text text="{CustomerName}"/>', // "maxLines" has been removed
 			'<Label text="A \\{ is a special character"/>',
@@ -1890,12 +1892,7 @@
 		var oXMLTemplateProcessorMock = this.mock(sap.ui.core.XMLTemplateProcessor);
 
 		// BEWARE: use fresh XML document for each call because liftChildNodes() makes it empty!
-		oXMLTemplateProcessorMock.expects("loadTemplate")
-			.withExactArgs("myFragment", "fragment")
-			.returns(xml(['<In xmlns="sap.ui.core" src="{src}" />']));
-		oXMLTemplateProcessorMock.expects("loadTemplate")
-			.withExactArgs("myFragment", "fragment")
-			.returns(xml(['<In xmlns="sap.ui.core" src="{src}" />']));
+		// load template is called only once, because it is cached
 		oXMLTemplateProcessorMock.expects("loadTemplate")
 			.withExactArgs("myFragment", "fragment")
 			.returns(xml(['<In xmlns="sap.ui.core" src="{src}" />']));
@@ -1973,9 +1970,6 @@
 		oXMLTemplateProcessorMock.expects("loadTemplate")
 			.withExactArgs("B", "fragment")
 			.returns(xml(['<Fragment xmlns="sap.ui.core" fragmentName="A" type="XML"/>']));
-		oXMLTemplateProcessorMock.expects("loadTemplate")
-			.withExactArgs("A", "fragment")
-			.returns(xml(aFragmentContent));
 
 		checkError.call(oLogMock, [
 				mvcView(),
