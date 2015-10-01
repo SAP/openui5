@@ -107,10 +107,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 				sIntroDir = oLI.getIntroTextDirection(),
 				sNumberDir = oLI.getNumberTextDirection();
 
-			rm.write("<div"); // Start Main container
-			rm.writeControlData(oLI);
-			rm.write(">");
-
 			// Introductory text at the top of the item, like "On behalf of Julie..."
 			if (oLI.getIntro()) {
 				rm.write("<div");
@@ -260,7 +256,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 			// ARIA description node
 			this.renderAriaNode(rm, oLI, this.getAriaNodeText(oLI));
 
-			rm.write("</div>"); // End Main container
 		};
 
 		/**
