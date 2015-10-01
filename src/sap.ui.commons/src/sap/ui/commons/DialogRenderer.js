@@ -22,8 +22,8 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 	 */
 	DialogRenderer.render = function(rm, oControl) {
-		var heightSet = sap.ui.commons.Dialog._isSizeSet(oControl.getHeight());
-		var widthSet = sap.ui.commons.Dialog._isSizeSet(oControl.getWidth());
+		var heightSet = oControl._isSizeSet(oControl.getHeight());
+		var widthSet = oControl._isSizeSet(oControl.getWidth());
 
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.commons");
 
@@ -123,19 +123,19 @@ sap.ui.define(['jquery.sap.global'],
 		// Footer separator
 		if (iButtonCount > 0) {
 			rm.write('<div class="sapUiDlgFooterSep"></div>');
-		}
 
-		// Footer
-		rm.write("<div id='");
-		rm.write(oControl.getId());
-		rm.write("-footer' class='sapUiDlgFooter'>");
+			// Footer
+			rm.write("<div id='");
+			rm.write(oControl.getId());
+			rm.write("-footer' class='sapUiDlgFooter'>");
 
-		// Wave and Buttons
-		rm.write("<div class='sapUiDlgBtns'>");
-		for (var i = 0; i < iButtonCount; i++) {
-			rm.renderControl(aButtons[i]);
+			// Wave and Buttons
+			rm.write("<div class='sapUiDlgBtns'>");
+			for (var i = 0; i < iButtonCount; i++) {
+				rm.renderControl(aButtons[i]);
+			}
+			rm.write("</div><div class='sapUiDlgWave'></div></div>");
 		}
-		rm.write("</div><div class='sapUiDlgWave'></div></div>");
 
 		// Grip
 		if (oControl.getResizable()) {
