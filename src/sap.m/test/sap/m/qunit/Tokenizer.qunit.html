@@ -285,6 +285,8 @@
 		var oToken3 = new sap.m.Token({text:"Mann", editable: true});
 
 		tokenizer1.setTokens([oToken1, oToken2, oToken3]);
+		
+		sap.ui.getCore().applyChanges();
 
 		equals(oToken1.$().hasClass("sapMTokenReadOnly"), true, "token1 is not editable");
 		equals(oToken2.$().hasClass("sapMTokenReadOnly"), true, "token2 is not editable");
