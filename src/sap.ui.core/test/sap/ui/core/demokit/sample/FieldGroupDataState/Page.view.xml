@@ -1,0 +1,140 @@
+<mvc:View controllerName="sap.ui.core.sample.FieldGroupDataState.Page"
+	height="100%" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:html="http://www.w3.org/1999/xhtml">
+	<html:script src='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.js'></html:script>
+	<html:link href='https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.css' rel='stylesheet' />
+	<Page class="sapUiFioriObjectPage" showHeader="false">
+		<content>
+				<f:SimpleForm id="FieldGroupView" minWidth="1024"
+				maxContainerCols="2" editable="true" layout="ResponsiveGridLayout"
+				title="Edit Business Partner" labelSpanL="4" labelSpanM="4"
+				emptySpanL="0" emptySpanM="0" columnsL="2" columnsM="2"
+				validateFieldGroup="onValidateFieldGroup">
+				<f:content>
+
+					<!-- Billing Information -->
+					<core:Title text="Business Partner" />
+					<Label text="Company Name" />
+					<Input fieldGroupIds="BusinessPartner" value="{CompanyName}"
+						id="CompanyName" />
+					<core:Title text="Address" />
+					<Label text="Street/No." />
+					<Input fieldGroupIds="BusinessPartner,BusinessPartnerAddress" value="{Address/Street}"
+						id="Street">
+					</Input>
+					<Input fieldGroupIds="BusinessPartner,BusinessPartnerAddress" value="{Address/Building}"
+						id="Building">
+						<layoutData>
+							<l:GridData span="L3 M3 S4" />
+						</layoutData>
+					</Input>
+					<Label text="ZIP Code/City" />
+					<Input fieldGroupIds="BusinessPartner,BusinessPartnerAddress" value="{Address/PostalCode}"
+						id="PostalCode">
+						<layoutData>
+							<l:GridData span="L3 M3 S4" />
+						</layoutData>
+					</Input>
+					<Input fieldGroupIds="BusinessPartner,BusinessPartnerAddress" value="{Address/City}"
+						id="City" />
+					<Label text="Country" />
+					<Select fieldGroupIds="BusinessPartner,BusinessPartnerAddress" width="100%"
+						selectedKey="{Address/Country}" id="Country">
+						<items>
+							<core:Item text="Germany" key="DE" />
+							<core:Item text="United States" key="US" />
+							<core:Item text="Great Britain" key="GB" />
+						</items>
+					</Select>
+				</f:content>
+			</f:SimpleForm>
+			<html:div id="mapcontainer" style="padding:0px 20px">
+				<html:div id="map" style="height:200px">
+				
+				</html:div>
+			</html:div>
+			<Table id="idProductsTable"
+				inset="false">
+				<headerToolbar>
+					<Toolbar>
+						<Title text="Data States of Product Name (Value Property)" level="H2"/>
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<Column
+						width="12em">
+						<Text text="Property" />
+					</Column>
+					<Column
+						width="12em">
+						<Text text="Value" />
+					</Column>
+					<Column
+						width="12em">
+						<Text text="OldValue" />
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<Text text="invalidValue" id="property_invalidValue" tooltip="The invalid value that did not pass the type validation"/>
+							<Text text="{DataState>/invalidValue/value}" id="property_invalidValue_new"/>
+							<Text text="{DataState>/invalidValue/oldValue}" id="property_invalidValue_old"/>
+						</cells>
+					</ColumnListItem>
+					<ColumnListItem>
+						<cells>
+							<Text text="value" id="property_value" tooltip="The value that is stored in the model"/>
+							<Text text="{DataState>/value/value}" id="property_value_new"/>
+							<Text text="{DataState>/value/oldValue}" id="property_value_old"/>
+						</cells>
+					</ColumnListItem>
+					<ColumnListItem>
+						<cells>
+							<Text text="originalValue" id="property_originalValue" tooltip="The original value that is stored in the model which was last delivered (accepted) by the server"/>
+							<Text text="{DataState>/originalValue/value}" id="property_originalValue_new"/>
+							<Text text="{DataState>/originalValue/oldValue}" id="property_originalValue_old"/>
+						</cells>
+					</ColumnListItem>
+					<ColumnListItem>
+						<cells>
+							<Text text="laundering" id="property_laundering" tooltip="True if the data was send to the server, but was not yet accepted (responded)"/>
+							<Text text="{DataState>/laundering/value}"  id="property_laundering_new"/>
+							<Text text="{DataState>/laundering/oldValue}"  id="property_laundering_old"/>
+						</cells>
+					</ColumnListItem>
+					<ColumnListItem>
+						<cells>
+							<Text text="dirty" id="property_dirty" tooltip="True if the value or invalidValue differs from the original value"/>
+							<Text text="{DataState>/dirty/value}" id="property_dirty_new"/>
+							<Text text="{DataState>/dirty/oldValue}" id="property_dirty_old"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+			<html:div id="annotation" style="padding:0px 20px">
+				<html:pre style="height:250px">
+Annotation
+	FieldGroup BusinessPartnerAddress
+		Containing Fields
+			Address/Street
+			Address/Buidling
+			Address/PostalCode
+			Address/City
+			Address/Country
+		onLeaving
+			Update Map, Enable Map
+	SideEffect 
+		onFieldGroupChange BusinessPartnerAddress
+			Disable Map
+				</html:pre>
+			</html:div>
+		</content>
+		<footer>
+			<Toolbar>
+				<content>
+				</content>
+			</Toolbar>
+		</footer>
+	</Page>
+</mvc:View>
