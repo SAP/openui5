@@ -98,7 +98,7 @@
 					template : oItemTemplate
 				}
 			});
-			this.oUploadCollection.placeAt("uiArea");
+			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		teardown : function() {
@@ -125,7 +125,7 @@
 					template : oItemTemplate
 				}
 			});
-			this.oUploadCollection.placeAt("uiArea");
+			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			this.encodeToAscii = function (value) {
 				var sEncodedValue = "";
@@ -300,7 +300,7 @@
 				}
 			});
 			this.oDataCopy = jQuery.extend(true, {}, oData);
-			this.oUploadCollection.placeAt("uiArea");
+			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		teardown : function() {
@@ -605,7 +605,7 @@
 					template : oItemTemplate
 				},
 			});
-			this.oUploadCollection.placeAt("uiArea");
+			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		teardown : function() {
@@ -614,7 +614,7 @@
 	});
 
 	QUnit.test("Edit", function(assert) {
-		//trigger edit button of line 2 and check the status of the line 
+		//trigger edit button of line 2 and check the status of the line
 		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
 		sap.ui.getCore().byId(sEditButtonId).firePress();
 		sap.ui.getCore().applyChanges();
@@ -750,7 +750,7 @@
 					template : oItemTemplate
 				},
 			});
-			this.oUploadCollection.placeAt("uiArea");
+			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		teardown : function() {
@@ -787,7 +787,7 @@
 	QUnit.module("Properties", {
 		setup : function() {
 			this.oUploadCollection = new sap.m.UploadCollection();
-			this.oUploadCollection.placeAt("uiArea");
+			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		teardown : function() {
@@ -954,7 +954,7 @@
 					template : oItemTemplate
 				}
 			}).setModel(this.oModel);
-			this.oUploadCollection.placeAt("uiArea");
+			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		teardown : function() {
@@ -1022,7 +1022,7 @@
 					template : oItemTemplate
 				}
 			});
-			this.oUploadCollection.placeAt("uiArea");
+			this.oUploadCollection.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		teardown : function() {
@@ -1058,6 +1058,6 @@
 </head>
 <body class="sapUiBody">
 	<div id="qunit"></div>
-	<div id="uiArea"></div>
+	<div id="qunit-fixture"></div>
 </body>
 </html>
