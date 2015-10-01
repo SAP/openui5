@@ -69,9 +69,9 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 					defaultValue : false
 				},
 				/** 
-				 * Whether the ElementOverlay is draggable
+				 * Whether the ElementOverlay is movable
 				 */
-				draggable : {
+				movable : {
 					type : "boolean",
 					defaultValue : false
 				},
@@ -109,11 +109,11 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 					}
 				},
 				/**
-				 * Event fired when the property "Draggable" is changed
+				 * Event fired when the property "Movable" is changed
 				 */
-				draggableChange : {
+				movableChange : {
 					parameters : {
-						draggable : { type : "boolean" }
+						movable : { type : "boolean" }
 					}
 				},
 				/**				
@@ -301,17 +301,17 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/** 
-	 * Sets whether the ElementOverlay is draggable and toggles corresponding css class
-	 * @param {boolean} bDraggable if the ElementOverlay is draggable
+	 * Sets whether the ElementOverlay is movable and toggles corresponding css class
+	 * @param {boolean} bMovable if the ElementOverlay is movable
 	 * @returns {sap.ui.dt.ElementOverlay} returns this	 	 
 	 * @public
 	 */
-	ElementOverlay.prototype.setDraggable = function(bDraggable) {
-		if (this.getDraggable() !== bDraggable) {
-			this.toggleStyleClass("sapUiDtOverlayDraggable", bDraggable);
+	ElementOverlay.prototype.setMovable = function(bMovable) {
+		if (this.getMovable() !== bMovable) {
+			this.toggleStyleClass("sapUiDtOverlayMovable", bMovable);
 			
-			this.setProperty("draggable", bDraggable);
-			this.fireDraggableChange({draggable : bDraggable});
+			this.setProperty("movable", bMovable);
+			this.fireMovableChange({movable : bMovable});
 		}
 
 		return this;
@@ -536,12 +536,12 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/** 
-	 * Returns if the ElementOverlay is draggable
+	 * Returns if the ElementOverlay is movable
 	 * @public
-	 * @return {boolean} if the ElementOverlay is draggable
+	 * @return {boolean} if the ElementOverlay is movable
 	 */
-	ElementOverlay.prototype.isDraggable = function() {
-		return this.getDraggable();
+	ElementOverlay.prototype.isMovable = function() {
+		return this.getMovable();
 	};
 
 	/** 

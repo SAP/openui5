@@ -53,7 +53,7 @@ function(Plugin, DOMUtil) {
 		Plugin.prototype.init.apply(this, arguments);
 
 		this._oOverlayDelegate = {
-			"onAfterRendering" : this._checkDraggable
+			"onAfterRendering" : this._checkMovable
 		};
 	};
 
@@ -64,9 +64,9 @@ function(Plugin, DOMUtil) {
 	DragDrop.prototype.registerOverlay = function(oOverlay) {
 		oOverlay.addEventDelegate(this._oOverlayDelegate, this);
 
-		oOverlay.attachEvent("draggableChange", this._onDraggableChange, this);
+		oOverlay.attachEvent("movableChange", this._onMovableChange, this);
 
-		if (oOverlay.isDraggable()) {		
+		if (oOverlay.isMovable()) {		
 			this._attachDragEvents(oOverlay);
 		}
 
@@ -79,7 +79,7 @@ function(Plugin, DOMUtil) {
 	 * @override
 	 */
 	DragDrop.prototype.registerAggregationOverlay = function(oAggregationOverlay) {
-		oAggregationOverlay.attachDroppableChange(this._onAggregationDroppableChange, this);
+		oAggregationOverlay.attachTargetZoneChange(this._onAggregationTargetZoneChange, this);
 	};
 
 	/**
@@ -88,7 +88,7 @@ function(Plugin, DOMUtil) {
 	DragDrop.prototype.deregisterOverlay = function(oOverlay) {
 		oOverlay.removeEventDelegate(this._oOverlayDelegate, this);
 
-		oOverlay.detachEvent("draggableChange", this._onDraggableChange, this);
+		oOverlay.detachEvent("movableChange", this._onMovableChange, this);
 
 		this._detachDragEvents(oOverlay);
 
@@ -101,7 +101,7 @@ function(Plugin, DOMUtil) {
 	 * @override
 	 */
 	DragDrop.prototype.deregisterAggregationOverlay = function(oAggregationOverlay) {
-		oAggregationOverlay.detachDroppableChange(this._onAggregationDroppableChange, this);
+		oAggregationOverlay.detachTargetZoneChange(this._onAggregationTargetZoneChange, this);
 	};
 
 
@@ -128,7 +128,7 @@ function(Plugin, DOMUtil) {
 	/**
 	 * @protected
 	 */
-	DragDrop.prototype.onDraggableChange = function(oEvent) { };
+	DragDrop.prototype.onMovableChange = function(oEvent) { };
 
 	/**
 	 * @protected
@@ -180,9 +180,9 @@ function(Plugin, DOMUtil) {
 	/**
 	 * @private
 	 */
-	DragDrop.prototype._checkDraggable = function(oEvent) {
+	DragDrop.prototype._checkMovable = function(oEvent) {
 		var oOverlay = oEvent.srcControl;
-		if (oOverlay.isDraggable()) {
+		if (oOverlay.isMovable()) {
 			DOMUtil.setDraggable(oOverlay.$(), true);
 		}
 	};
@@ -190,22 +190,21 @@ function(Plugin, DOMUtil) {
 	/**
 	 * @private
 	 */
-	DragDrop.prototype._onDraggableChange = function(oEvent) {
+	DragDrop.prototype._onMovableChange = function(oEvent) {
 		var oOverlay = oEvent.getSource();
-		if (oOverlay.isDraggable()) {
+		if (oOverlay.isMovable()) {
 			this._attachDragEvents(oOverlay);
 		} else {
 			this._detachDragEvents(oOverlay);
 		}
 
-		this.onDraggableChange(oOverlay, oEvent);
+		this.onMovableChange(oOverlay, oEvent);
 	};
 	/**
 	 * @private
 	 */
 	DragDrop.prototype._onDragStart = function(oEvent) {
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-		this._oDraggedOverlay = oOverlay;
 
 		oEvent.stopPropagation();
 
@@ -236,8 +235,8 @@ function(Plugin, DOMUtil) {
 			}, 0);
 			oEvent.originalEvent.dataTransfer.setDragImage(
 				this._$ghost.get(0),
-				oEvent.originalEvent.pageX - this.getDraggedOverlay().$().offset().left,
-				oEvent.originalEvent.pageY - this.getDraggedOverlay().$().offset().top
+				oEvent.originalEvent.pageX - oOverlay.$().offset().left,
+				oEvent.originalEvent.pageY - oOverlay.$().offset().top
 			);
 		}
 	};
@@ -308,15 +307,6 @@ function(Plugin, DOMUtil) {
 		return this._$ghost;
 	};
 
-	/**
-	 * returns the dragged overlay (only during drag&drop)
-	 * @public
-	 * @return {sap.ui.dt.Overlay} overlays which is dragged
-	 */
-	DragDrop.prototype.getDraggedOverlay = function() {
-		return this._oDraggedOverlay;
-	};
-
 
 	/**
 	 * @private
@@ -327,7 +317,6 @@ function(Plugin, DOMUtil) {
 
 		this.onDragEnd(oOverlay, oEvent);
 
-		delete this._oDraggedOverlay;
 		oEvent.stopPropagation();
 	};
 
@@ -348,8 +337,8 @@ function(Plugin, DOMUtil) {
 	DragDrop.prototype._onDragEnter = function(oEvent) {
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 		var oAggregationOverlay = oOverlay.getParent();
-		var bInDroppableAggregation = oAggregationOverlay && oAggregationOverlay.isDroppable && oAggregationOverlay.isDroppable();
-		if (bInDroppableAggregation) {
+		var bInTargetZoneAggregation = oAggregationOverlay && oAggregationOverlay.isTargetZone && oAggregationOverlay.isTargetZone();
+		if (bInTargetZoneAggregation) {
 			//if "true" returned, propagation won't be canceled
 			if (!this.onDragEnter(oOverlay, oEvent)) {
 				oEvent.stopPropagation();
@@ -365,8 +354,8 @@ function(Plugin, DOMUtil) {
 	DragDrop.prototype._onDragOver = function(oEvent) {
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 		var oAggregationOverlay = oOverlay.getParent();
-		var bInDroppableAggregation = oAggregationOverlay && oAggregationOverlay.isDroppable && oAggregationOverlay.isDroppable();
-		if (bInDroppableAggregation) {
+		var bInTargetZoneAggregation = oAggregationOverlay && oAggregationOverlay.isTargetZone && oAggregationOverlay.isTargetZone();
+		if (bInTargetZoneAggregation) {
 			//if "true" returned, propagation won't be canceled
 			if (!this.onDragOver(oOverlay, oEvent)) {
 				oEvent.stopPropagation();
@@ -379,11 +368,11 @@ function(Plugin, DOMUtil) {
 	/**
 	 * @private
 	 */
-	DragDrop.prototype._onAggregationDroppableChange = function(oEvent) {
+	DragDrop.prototype._onAggregationTargetZoneChange = function(oEvent) {
 		var oAggregationOverlay = oEvent.getSource();
-		var bDroppable = oEvent.getParameter("droppable");
+		var bTargetZone = oEvent.getParameter("targetZone");
 
-		if (bDroppable) {
+		if (bTargetZone) {
 			this._attachAggregationOverlayEvents(oAggregationOverlay);
 		} else {
 			this._detachAggregationOverlayEvents(oAggregationOverlay);
