@@ -166,7 +166,7 @@ sap.ui.define([
 				sUrl = oModel.sServiceUrl + sResolvedPath.slice(1);
 				if (!this.oCache) {
 					if (this.sExpand) {
-						sUrl += "?$expand=" + jQuery.sap.encodeURL(this.sExpand);
+						sUrl += "?$expand=" + encodeURIComponent(this.sExpand);
 					}
 					this.oCache = odatajs.cache.createDataCache({
 						mechanism : "memory",
