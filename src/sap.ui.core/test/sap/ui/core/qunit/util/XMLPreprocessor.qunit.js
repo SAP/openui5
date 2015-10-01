@@ -58,8 +58,8 @@ sap.ui.require([
 			.replace(/ \/>/g, '/>');
 		if (Device.browser.msie || Device.browser.edge) {
 			// Microsoft shuffles attribute order
-			// remove helper, type and var, then no tag should have more that one attribute
-			sXml = sXml.replace(/ (helper|type|var)=".*?"/g, "");
+			// remove helper, type, value and var, then no tag should have more that one attribute
+			sXml = sXml.replace(/ (helper|type|value|var)=".*?"/g, "");
 		}
 		return sXml;
 	}
