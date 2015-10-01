@@ -594,7 +594,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		var oToPage = this.getPage(pageId);
 
-		if (oToPage) {
+		if (oToPage && oFromPage) {
 
 			// remember the focused object in "from page"
 			this._mFocusObject[oFromPage.getId()] = document.activeElement;
