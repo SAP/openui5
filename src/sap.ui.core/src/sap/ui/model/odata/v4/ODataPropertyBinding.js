@@ -52,6 +52,7 @@ sap.ui.define([
 			{
 				constructor : function () {
 					PropertyBinding.apply(this, arguments);
+					this.bRequestTypeFailed = false;
 					this.oValue = undefined;
 				},
 				metadata : {
@@ -83,12 +84,13 @@ sap.ui.define([
 
 		if (!sResolvedPath) {
 			return Promise.resolve();
-		} else if (!this.getType() && bForceUpdate) {
-			// request type only initially
+		} else if ((bForceUpdate || !this.bRequestTypeFailed) && !this.getType()) {
+			// request type only once
 			aPromises.push(this.getModel().getMetaModel().requestUI5Type(sResolvedPath)
 				.then(function (oType) {
 					that.setType(oType, that.sInternalType);
 				})["catch"](function (oError) {
+					that.bRequestTypeFailed = true;
 					jQuery.sap.log.warning(oError.message, sResolvedPath, sClassName);
 				})
 			);

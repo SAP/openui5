@@ -223,7 +223,7 @@ sap.ui.define([
 			"Edm.Boolean" : {type : "sap.ui.model.odata.type.Boolean"},
 			"Edm.Byte" : {type : "sap.ui.model.odata.type.Byte"},
 			"Edm.Date" : {type: "sap.ui.model.odata.type.Date"},
-			"Edm.DateTimeOffset" : {type : "sap.ui.model.odata.type.DateTimeOffset"},
+//			"Edm.DateTimeOffset" : {type : "sap.ui.model.odata.type.DateTimeOffset"},
 			"Edm.Decimal" : {
 				type : "sap.ui.model.odata.type.Decimal",
 				facets : {"Precision": "precision", "Scale" : "scale"}
@@ -279,7 +279,7 @@ sap.ui.define([
 			}
 			for (i = 0; i < oProperty.Facets.length; i++) {
 				oFacet = oProperty.Facets[i];
-				if (oFacet.Name in oUi5Type.facets) {
+				if (oUi5Type.facets && oFacet.Name in oUi5Type.facets) {
 					setConstraint(oUi5Type.facets[oFacet.Name], oFacet.Value);
 				}
 			}

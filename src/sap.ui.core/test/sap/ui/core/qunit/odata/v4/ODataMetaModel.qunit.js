@@ -411,12 +411,19 @@ sap.ui.require([
 	//*********************************************************************************************
 	[{
 		type: "Boolean"
+	},{
+		type: "Boolean",
+		facets: [{Name: "foo", Value: "bar"}]
 	}, {
 		type: "Byte"
 	}, {
 		type: "Date"
-	}, {
-		type: "DateTimeOffset"
+//	}, {
+//		type: "DateTimeOffset"
+//	},{
+//		type: "DateTimeOffset",
+//		facets: [{Name: "Precision", Value: "7"}]
+//		constraints: {precision: 7} //TODO implement
 	}, {
 		type: "Decimal"
 	}, {
@@ -501,28 +508,31 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestUI5Types: unsupported type", function (assert) {
-		var oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
-			sPath = "/Employees[0];list=1/foo",
-			oMetaContext = {metaContextFor: sPath},
-			oProperty =  {
-				"Type" : {
-					"QualifiedName" : "Edm.Duration"
-				},
-				"Facets" : [],
-				"Nullable" : true
-			};
+	//TODO make these types work with odata v4
+	["Edm.DateTimeOffset", "Edm.Duration", "Edm.TimeOfDay"].forEach(function (sQualifiedName) {
+		QUnit.test("requestUI5Types: unsupported type " + sQualifiedName, function (assert) {
+			var oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
+				sPath = "/Employees[0];list=1/foo",
+				oMetaContext = {metaContextFor: sPath},
+				oProperty =  {
+					"Type" : {
+						"QualifiedName" : sQualifiedName
+					},
+					"Facets" : [],
+					"Nullable" : true
+				};
 
-		oMetaModelMock.expects("requestMetaContext").withExactArgs(sPath)
-			.returns(promiseFor(oMetaContext));
-		oMetaModelMock.expects("requestObject").withExactArgs("", oMetaContext)
-			.returns(promiseFor(oProperty));
+			oMetaModelMock.expects("requestMetaContext").withExactArgs(sPath)
+				.returns(promiseFor(oMetaContext));
+			oMetaModelMock.expects("requestObject").withExactArgs("", oMetaContext)
+				.returns(promiseFor(oProperty));
 
-		return this.oMetaModel.requestUI5Type(sPath).then(function(oType) {
-			assert.ok(false);
-		})["catch"](function (oError) {
-			assert.strictEqual(oError.message, "Unsupported EDM type: Edm.Duration: " + sPath);
+			return this.oMetaModel.requestUI5Type(sPath).then(function(oType) {
+				assert.ok(false);
+			})["catch"](function (oError) {
+				assert.strictEqual(oError.message,
+					"Unsupported EDM type: " + sQualifiedName + ": " + sPath);
+			});
 		});
 	});
-
 });
