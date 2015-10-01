@@ -277,6 +277,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 			process : function(oRootElement, oViewInfo, mSettings) {
 				var sCaller,
 					bDebug = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG),
+					mFragmentCache = {},
 					iNestingLevel = 0,
 					sName;
 
@@ -543,19 +544,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					 *   the fragment's resolved name
 					 */
 					function insertFragment(sFragmentName) {
-						var oFragmentElement
-							= XMLTemplateProcessor.loadTemplate(sFragmentName, "fragment");
+						// take fragment from cache and clone it
+						var oFragmentElement = mFragmentCache[sFragmentName];
+
+						if (!oFragmentElement) {
+							oFragmentElement
+								= XMLTemplateProcessor.loadTemplate(sFragmentName, "fragment");
+							mFragmentCache[sFragmentName] = oFragmentElement;
+						}
+						oFragmentElement = oFragmentElement.cloneNode(true);
 
 						// Note: It is perfectly valid to include the very same fragment again, as long
 						// as the context is changed. So we check for cycles at the current "with"
 						// control. A context change will create a new one.
 						oWithControl.$mFragmentContexts = oWithControl.$mFragmentContexts || {};
 						if (oWithControl.$mFragmentContexts[sFragmentName]) {
-							oElement.appendChild(oElement.ownerDocument.createTextNode(
-								"Error: Stopped due to cyclic fragment reference"));
 							jQuery.sap.log.error(
-								'Stopped due to cyclic reference in fragment: ' + sFragmentName,
-								jQuery.sap.serializeXML(oElement.ownerDocument.documentElement),
+								"Cyclic reference to fragment '" + sFragmentName + "' ",
+								jQuery.sap.serializeXML(oElement),
 								"sap.ui.core.util.XMLPreprocessor");
 							return;
 						}
@@ -818,6 +824,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				 * @param {sap.ui.core.template._with} oWithControl the "with" control
 				 */
 				function visitNode(oNode, oWithControl) {
+					// process only ELEMENT_NODEs
+					if (oNode.nodeType !== 1 /* Node.ELEMENT_NODE */) {
+						return;
+					}
 					if (oNode.namespaceURI === sNAMESPACE) {
 						switch (localName(oNode)) {
 						case "if":
