@@ -399,7 +399,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 	 */
 	Column.prototype._createMenu = function() {
 		jQuery.sap.require("sap.ui.table.ColumnMenu");
-		return new sap.ui.table.ColumnMenu(this.getId() + "-menu", {ariaLabelledBy: this});
+
+		if (!this._defaultMenu) {
+			this._defaultMenu =  new sap.ui.table.ColumnMenu(this.getId() + "-menu", {ariaLabelledBy: this});
+		}
+
+		return this._defaultMenu;
 	};
 
 
