@@ -62,8 +62,8 @@ function(Element) {
 	};
 
 	/**
-	 * Returns wether any overlay is registered in registry
-	 * @return {boolean} wether any overlay is registered in registry
+	 * Returns whether any overlay is registered in registry
+	 * @return {boolean} whether any overlay is registered in registry
 	 * @public
 	 */
 	OverlayRegistry.hasOverlays = function() {

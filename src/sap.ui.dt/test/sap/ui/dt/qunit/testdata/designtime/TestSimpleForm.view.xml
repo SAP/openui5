@@ -1,0 +1,36 @@
+<sap.ui.core.mvc:View controllerName="dt.view.Test"
+    height="100%"
+    xmlns="sap.m"
+    xmlns:sap.ui.layout="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core"
+    xmlns:sap.ui.core.mvc="sap.ui.core.mvc" >
+    <Page title="Title">
+        <content>
+            <f:SimpleForm editable="false" layout="ResponsiveGridLayout" id="SimpleForm">
+                <f:content id="FormContent">
+                    <core:Title text="Title of Group 1"/>
+                    <Label text="Label 1" id="Label1"/>
+                    <Input width="100%" id="Input1" value="Input 1" enabled="false"/>
+                    <Input width="100%"  id="Input2" value="Input 2" enabled="false"/>
+                    <Label text="Label 2" id="Label2"/>
+                    <Input width="100%"  id="Input3" value="Input 3" enabled="false"/>
+
+                    <core:Title text="Title of Group 2"/>
+                    <Label text="Label 3" id="Label3"/>
+                    <Input width="100%" id="Input4" value="Input 4" enabled="false"/>
+                    <Input width="100%"  id="Input5" value="Input 5" enabled="false"/>
+                    <Label text="Label 4" id="Label4"/>
+                    <Input width="100%"  id="Input6" value="Input 6" enabled="false"/>
+
+                    <core:Title text="Title of Group 3"/>
+                    <Label text="Label 5" id="Label5"/>
+                    <Input width="100%" id="Input7" value="Input 7" enabled="false"/>
+                    <Input width="100%"  id="Input8" value="Input 8" enabled="false"/>
+                    <Label text="Label 6" id="Label6"/>
+                    <Input width="100%"  id="Input9" value="Input 9" enabled="false"/>
+                </f:content>
+            </f:SimpleForm>
+        </content>
+    </Page>
+</sap.ui.core.mvc:View>

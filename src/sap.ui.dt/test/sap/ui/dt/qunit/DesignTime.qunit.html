@@ -45,7 +45,7 @@
 			});
 
 			QUnit.test("when the DesignTime is initialized ", function(assert) {
-				var aOverlays = this.oDesignTime.getOverlays();
+				var aOverlays = this.oDesignTime.getElementOverlays();
 
 				assert.strictEqual(aOverlays.length, 4, "Overlays for 4 elements created");
 
@@ -65,9 +65,9 @@
 
 				var aOverlay = [];
 
-				this.oDesignTime.attachEvent("overlayCreated", function(oEvent) {
+				this.oDesignTime.attachEvent("elementOverlayCreated", function(oEvent) {
 
-					aOverlay.push(oEvent.getParameter("overlay"));
+					aOverlay.push(oEvent.getParameter("elementOverlay"));
 
 					if (aOverlay.length >= 2) {
 						ok(sap.ui.dt.OverlayRegistry.getOverlay(oButton), "overlay for the button exists");
@@ -114,7 +114,7 @@
 			QUnit.test("when the element inside of the DesignTime is destroyed", function(assert) {
 				var done = assert.async();
 
-				this.oDesignTime.attachEventOnce("overlayDestroyed", function(oEvent) {
+				this.oDesignTime.attachEventOnce("elementOverlayDestroyed", function(oEvent) {
 						assert.strictEqual(isOverlayForElementInDesignTime(this.oButton1, this.oDesignTime), false, "overlay for button1 destroyed");
 
 						done();
@@ -252,7 +252,7 @@
 			var isOverlayForElementInDesignTime = function(oElement, oDesignTime) {
 				var bResult = false;
 
-				var aOverlays = oDesignTime.getOverlays();
+				var aOverlays = oDesignTime.getElementOverlays();
 				var aFoundOverlay = jQuery.each(aOverlays, function(iIndex, oOverlay) {
 					if (oOverlay.getElementInstance() === oElement) {
 						bResult = true;

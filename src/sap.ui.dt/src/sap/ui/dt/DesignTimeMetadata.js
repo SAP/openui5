@@ -65,38 +65,11 @@ function(jQuery, ManagedObject) {
 	 */
 	DesignTimeMetadata.prototype._ensureProperties = function(oData) {
 		return jQuery.extend(true, {
-			defaultSettings : {},
 			aggregations : {
 				layout : {
-					visible : false
+					ignore : true
 				}
-			},
-			properties : {},
-			associations : {},
-			events : {},
-			behavior : {
-				constructor : null,
-				resize : {
-					stop : null,
-					grid : null,
-					start : null,
-					minWidth : null,
-					minHeight : null,
-					maxWidth : null,
-					maxHeight : null
-				}
-			},
-			renderer : null,
-			css : null,
-			name : null,
-			description : "",
-			keywords : [],
-			draggable : true,
-			selectable : true,
-			removable : true,
-			resizable : true,
-			visible : true,
-			needDelegateFromParent : false
+			}
 		}, oData);
 	};	
 
@@ -139,22 +112,22 @@ function(jQuery, ManagedObject) {
 	};
 
 	/**
-	 * Returns property "visible" of the DT metadata
-	 * @return {boolean} if is visible
+	 * Returns property "ignore" of the DT metadata
+	 * @return {boolean} if overlay should be visible
 	 * @public
 	 */
 	DesignTimeMetadata.prototype.isVisible = function() {
-		return this.getData().visible !== false;
+		return this.getData().ignore !== true;
 	};
 
 	/**
-	 * Returns property "visible" of the aggregation DT metadata for the given aggregation name
+	 * Returns property "ignore" of the aggregation DT metadata for the given aggregation name
 	 * @param {string} sAggregationName an aggregation name
-	 * @return {boolean} if an aggregation is visible
+	 * @return {boolean} if aggregation overlay should be visible
 	 * @public
 	 */
 	DesignTimeMetadata.prototype.isAggregationVisible = function(sAggregationName) {
-		return this.getAggregation(sAggregationName).visible !== false;
+		return this.getAggregation(sAggregationName).ignore !== true;
 	};
 
 	/**

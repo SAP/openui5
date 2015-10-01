@@ -36,14 +36,16 @@
 			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
 			var OverlayRegistry = sap.ui.dt.OverlayRegistry;
 
-			QUnit.module("Given that overlays are created for a SimpleForm", {
+			QUnit.module("Given that a DesignTime is created for a SimpleForm and designTimeMetadata for SimpleForm hidden form is provided", {
 				beforeEach : function() {
-					this.oForm = new sap.ui.layout.form.SimpleForm("Form1", {
+					this.oLabel = new sap.ui.commons.Label({text:"Name"});
+
+					this.oSimpleForm = new sap.ui.layout.form.SimpleForm("Form1", {
 						maxContainerCols: 2,
 						editable: true,
 						content:[
 							new sap.ui.core.Title({text:"Person"}),
-							new sap.ui.commons.Label({text:"Name"}),
+							this.oLabel,
 							new sap.ui.commons.TextField({value:"Max"}),
 							new sap.ui.commons.TextField({value:"Mustermann"}),
 							new sap.ui.commons.Label({text:"Date of birth"}),
@@ -53,18 +55,45 @@
 					}).placeAt("content");
 
 					this.oFormDesignTime = new sap.ui.dt.DesignTime({
-						rootElements : [this.oForm]
+						designTimeMetadata : {
+							"sap.ui.layout.form.SimpleForm" : {
+								aggregations: {
+									content : {
+										ignore : true
+									},
+									form: {
+										ignore : false
+									}
+								}
+							}
+						},
+						rootElements : [this.oSimpleForm]
 					});
 				},
 				afterEach : function() {
-					this.oForm.destroy();
+					this.oSimpleForm.destroy();
 					this.oFormDesignTime.destroy();
 				}
 			});
 
 			QUnit.test("when the content is added to a SimpleForm ...", function(assert) {
+				var oSimpleFormOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oSimpleForm);
+				var oHiddenFormAggregationOverlay = oSimpleFormOverlay.getAggregationOverlay("form");
+				ok(oHiddenFormAggregationOverlay, "aggregation overlay for not ignored hidden aggregation is created");
+
+				var bChildrenAreInHiddenTree = true;
+				oHiddenFormAggregationOverlay.getChildren().forEach(function(oElementOverlay) {
+					bChildrenAreInHiddenTree = bChildrenAreInHiddenTree && oElementOverlay.isInHiddenTree();
+				});
+				strictEqual(bChildrenAreInHiddenTree, true, "all children of hidden aggregation are flaggen as inHiddenTree");
+
+				var oLabelOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLabel);
+				strictEqual(oLabelOverlay.isInHiddenTree(), false, "Public controls from content aggregation are not flagged as inHiddenTree");
+			});			
+
+			QUnit.test("when the content is added to a SimpleForm ...", function(assert) {
 				this.oButton = new sap.m.Button("button1", {text : "Button"});
-				this.oForm.addContent(this.oButton);
+				this.oSimpleForm.addContent(this.oButton);
 				var oOverlayForButton = OverlayRegistry.getOverlay(this.oButton);
 				assert.ok(oOverlayForButton, "overlay for button exists");
 			});
