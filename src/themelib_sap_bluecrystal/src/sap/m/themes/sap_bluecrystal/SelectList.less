@@ -7,7 +7,7 @@
 /* ====================================================== */
 
 /* ------------------------------ */
-/* List                           */
+/* list                           */
 /* ------------------------------ */
 
 .sapMSelectList {
@@ -15,63 +15,81 @@
 }
 
 /* ------------------------------ */
-/* Item                           */
+/* item                           */
 /* ------------------------------ */
 
-.sapMSelectListItem {
+.sapMSelectListItemBase {
 	font-size: @sapMFontMediumSize;
-	padding: 0 1rem 0 1rem;
 	height: 2.5rem;
-	line-height: 2.5rem;
 	cursor: pointer;
+}
+
+.sapMSelectListItem {
+	padding: 0 1rem 0 1rem;
+	line-height: 2.5rem;
 }
 
 /* selected */
 
-.sapMSelectListItemSelected {
+.sapMSelectListItemBaseSelected {
 	background: @sapUiListSelectionBackgroundColor;
 }
 
 /* hover */
 
-.sapMSelectListItemHoverable:hover {
+.sapMSelectListItemBaseHoverable:hover {
 	background: @sapUiListHoverBackground;
 }
 
 /* pressed */
 
-.sapMSelectListItem.sapMSelectListItemPressed {
+.sapMSelectListItemBase.sapMSelectListItemBasePressed {
 	color: @sapUiListActiveTextColor;
 	background: @sapUiListActiveBackground;
 }
 
 /* disabled */
 
-.sapMSelectListItemDisabled {
+.sapMSelectListItemBaseDisabled {
 	opacity: 0.5;
 }
 
 /* focus */
 
-.sap-desktop .sapMSelectListItem:focus {
+.sap-desktop .sapMSelectListItemBase:focus {
 	outline: 1px dotted @sapUiFocus;
 }
 
 /* ------------------------------ */
-/* SeparatorItem                  */
+/* cell                           */
+/* ------------------------------ */
+
+.sapMSelectListCell {
+	padding-left: 1rem;
+}
+
+.sapMSelectListLastCell {
+	padding-right: 1rem;
+}
+
+/* ------------------------------ */
+/* separator                      */
 /* ------------------------------ */
 
 .sapMSelectListSeparatorItem {
 	border: 1px solid @sapUiToolbarSeparatorColor;
 }
 
-/* Compact size  */
+/* compact size  */
 
 /* ------------------------------ */
 /* commons styles                 */
 /* ------------------------------ */
 
-.sapUiSizeCompact .sapMSelectListItem {
+.sapUiSizeCompact .sapMSelectListItemBase {
 	height: 2rem;
+}
+
+.sapUiSizeCompact .sapMSelectListItem {
 	line-height: 2rem;
 }
