@@ -71,5 +71,17 @@
         "references": []
       }
     ]
+  },
+  "1.32.3": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "361b08f7707fa14e17fe231a614df10cb26fed60",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Explored App IconTabBar should ignore hover event",
+        "references": []
+      }
+    ]
   }
 }

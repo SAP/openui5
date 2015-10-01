@@ -1728,5 +1728,85 @@
         "references": []
       }
     ]
+  },
+  "1.32.3": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "c27abb9a9d5ee887a81a6840b645c3d8add6cbbb",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Add worklist template app to demo apps in demokit",
+        "references": []
+      },
+      {
+        "id": "157a55eeeca70eef4810f7fd8064bb3356d2ef6b",
+        "author": "Aditya Sreekanteswar \u003caditya.sreekanteswar@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.m.tutorial.worklist: Initial commit of worklist app tutorial",
+        "references": []
+      },
+      {
+        "id": "e9d4c1d42888da4fe419c925067e0b0340bb1886",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FIX",
+        "text": "IconTabHeader should ignore right click",
+        "references": []
+      },
+      {
+        "id": "17869da67421e469354d4d5efc81328a09338da6",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "Worklist tutorial app: Fix filters",
+        "references": []
+      },
+      {
+        "id": "ec432899598e174d2d7130ce8a0e633a0598aded",
+        "author": "Andreas Kunz \u003candreas.kunz@sap.com\u003e",
+        "type": "FIX",
+        "text": "Worklist tutorial app: Fix resetting the quick filter to \"all\"",
+        "references": []
+      },
+      {
+        "id": "326bd589165ff93e3ce0752d64a6cb6cd1cf2c4c",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DateTimeInput: Picker popup should inform opener popup.",
+        "references": []
+      },
+      {
+        "id": "a2bca059860f2f2802996eb69d6530d2097cc6f6",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput/sap.m.Tokenizer: Adapt visual appearence in MultiInput multi-line mode, avoid unnecessary renderings",
+        "references": []
+      },
+      {
+        "id": "39f5cbaef1a06ca49ab5bc60dccfbeab9695ed5c",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Return 0 if openByDomRef is undefined",
+        "references": []
+      },
+      {
+        "id": "c9399f88532c1158759c7e190d30250bcb86f095",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: Fix unnecessary wrapping behavior of content",
+        "references": []
+      },
+      {
+        "id": "e36980db8098151a9af1962b5ccda3d35a81aef9",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Problem with duplicated Id fixed.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "783526"
+          }
+        ]
+      }
+    ]
   }
 }

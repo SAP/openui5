@@ -461,5 +461,17 @@
         "references": []
       }
     ]
+  },
+  "1.32.3": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "3c64021c5a0655a55cc322fe6ba886cb04e76d5f",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Scrolling performance in large tables",
+        "references": []
+      }
+    ]
   }
 }

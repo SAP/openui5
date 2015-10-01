@@ -1189,5 +1189,38 @@
         "references": []
       }
     ]
+  },
+  "1.32.3": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "5cda0c49d4f0d09531dbfc2c4fa5d1b424cdc35f",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: Only update metamodel bindings when metamodel is loaded",
+        "references": []
+      },
+      {
+        "id": "1c19d2daacec32e056303818ed0d3058ca66d62b",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.events: Avoid doubled events in Touch-to-Mouse handling",
+        "references": []
+      },
+      {
+        "id": "3c700ea8db5f8636cab3ae355393a916f1331e4a",
+        "author": "Sven Bernhard \u003csven.bernhard@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.XMLPreprocessor: Performance improvements",
+        "references": []
+      },
+      {
+        "id": "3c64021c5a0655a55cc322fe6ba886cb04e76d5f",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Scrolling performance in large tables",
+        "references": []
+      }
+    ]
   }
 }
