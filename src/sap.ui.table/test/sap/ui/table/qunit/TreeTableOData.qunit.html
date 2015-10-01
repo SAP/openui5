@@ -597,45 +597,6 @@
 		}, this);
 	});
 
-	// test experimental API of providing rootNodeID
-	asyncTest("Experimental Test with rootNodeID", function () {
-		this.oModel.attachMetadataLoaded(function() {
-			this.oTable = createTable.call(this, {rootLevel: 2, expandFirstLevel: false});
-			var oBinding;
-
-			var fnHandler1 = function() {
-				oBinding = this.oTable.getBinding("rows");
-				var oContext = this.oTable.getContextByIndex(0);
-				equal(oContext.getProperty("HierarchyNode"), "000001", "Index 0 is 000001");
-				oContext = this.oTable.getContextByIndex(1);
-				equal(oContext, undefined, "Index 1 is undefined");
-				start();
-			};
-
-			attachRowsUpdated(this.oTable, fnHandler1, this);
-			this.oTable.bindRows({path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", parameters: {rootNodeID: "000000", displayRootNode: false}});
-		}, this);
-	});
-
-	// test experimental API of providing rootNodeID
-	asyncTest("Experimental Test with rootNodeID, displayRootNode = true", function () {
-		this.oModel.attachMetadataLoaded(function() {
-			this.oTable = createTable.call(this, {rootLevel: 2, expandFirstLevel: false});
-
-			var fnHandler1 = function() {
-				var oContext = this.oTable.getContextByIndex(0);
-				equal(oContext.getProperty("HierarchyNode"), "000002", "Index 0 is 000002");
-				oContext = this.oTable.getContextByIndex(1);
-				equal(oContext, undefined, "Index 1 is undefined");
-				start();
-			};
-
-			attachRowsUpdated(this.oTable, fnHandler1, this);
-			this.oTable.bindRows({path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", parameters: {rootNodeID: "000002", displayRootNode: true}});
-
-		}, this);
-	});
-
 </script>
 
 </head>
