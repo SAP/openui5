@@ -1789,26 +1789,24 @@ sap.ui.define([
 		var sKey;
 
 		if (sKeyField === "" || sKeyField == null) {
-			// handling of "(none)" value
+			// handling of "(none)" or wrong entered keyField value
 			sKeyField = null;
 			sKey = this._getKeyFromConditionGrid(oConditionGrid);
-			if (this._oConditionsMap[sKey] !== undefined) {
-				delete this._oConditionsMap[sKey];
+			delete this._oConditionsMap[sKey];
 
-				this._enableCondition(oConditionGrid, false);
+			this._enableCondition(oConditionGrid, false);
 
-				oSelectCheckbox.setSelected(false);
-				oSelectCheckbox.setEnabled(false);
+			oSelectCheckbox.setSelected(false);
+			oSelectCheckbox.setEnabled(false);
 
-				this._bIgnoreSetConditions = true;
-				this.fireDataChange({
-					key: sKey,
-					index: oConditionGrid.getParent().getContent().indexOf(oConditionGrid),
-					operation: "remove",
-					newData: null
-				});
-				this._bIgnoreSetConditions = false;
-			}
+			this._bIgnoreSetConditions = true;
+			this.fireDataChange({
+				key: sKey,
+				index: oConditionGrid.getParent().getContent().indexOf(oConditionGrid),
+				operation: "remove",
+				newData: null
+			});
+			this._bIgnoreSetConditions = false;
 			return;
 		}
 
