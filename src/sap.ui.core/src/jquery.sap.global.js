@@ -2062,8 +2062,12 @@
 						// Note: IE11 supports sourceURL even when running in IE9 or IE10 mode
 						// Note: make URL absolute so Chrome displays the file tree correctly
 						// Note: do not append if there is already a sourceURL / sourceMappingURL
+						// Note: Safari fails, if sourceURL is the same as an existing XHR URL
 						if (sScript && !sScript.match(/\/\/[#@] source(Mapping)?URL=.*$/)) {
 							sScript += "\n//# sourceURL=" + URI(oModule.url).absoluteTo(sDocumentLocation);
+							if (sap.ui.Device.browser.safari) {
+								sScript += "?";
+							}
 						}
 
 						// framework internal hook to intercept the loaded script and modify
