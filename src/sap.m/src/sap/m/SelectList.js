@@ -101,6 +101,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 						 */
 						selectedItem: { type: "sap.ui.core.Item" }
 					}
+				},
+
+				/**
+				 * This event is fired when an item is pressed.
+				 * @since 1.32.4
+				 */
+				itemPress: {
+					parameters: {
+
+						/**
+						 * The pressed item.
+						 */
+						item: { type: "sap.ui.core.Item" }
+					}
 				}
 			}
 		}});
@@ -164,12 +178,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 */
 		SelectList.prototype._activateItem = function(oItem) {
 
-			if (oItem instanceof sap.ui.core.Item && (this.getSelectedItem() !== oItem) && oItem && oItem.getEnabled()) {
+			if (oItem instanceof sap.ui.core.Item && oItem && oItem.getEnabled()) {
 
-				this.setSelection(oItem);
-				this.fireSelectionChange({
-					selectedItem: this.getSelectedItem()
+				this.fireItemPress({
+					item: oItem
 				});
+
+				if (this.getSelectedItem() !== oItem) {
+
+					this.setSelection(oItem);
+					this.fireSelectionChange({
+						selectedItem: oItem
+					});
+				}
 			}
 		};
 
