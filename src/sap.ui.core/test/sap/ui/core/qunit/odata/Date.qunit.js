@@ -22,7 +22,7 @@ sap.ui.require([
 			try {
 				if (sAction === "parseValue") {
 					fnExpectedException = sap.ui.model.ParseException;
-					oType[sAction](oValue, "string")
+					oType[sAction](oValue, "string");
 				} else if (sAction === "validateValue") {
 					fnExpectedException = sap.ui.model.ValidateException;
 					oType[sAction](oValue);
