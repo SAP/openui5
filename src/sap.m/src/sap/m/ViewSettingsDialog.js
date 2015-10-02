@@ -1684,10 +1684,19 @@ function(jQuery, library, Control, IconPool) {
 		    oSubHeader      = this._getSubHeader(),
 		    oListItem;
 
-
+		// nothing to do if we are already on the requested page (except for filter detail page)
 		if (this._vContentPage === vWhich && vWhich !== 3) {
-					// nothing to do if we are already on the requested page (except for filter
-			// detail page)
+
+			// On switching to different pages, the content (Reset Button) of the header and sub-header is removed and added again
+			// only if vWhich is not 3(filter detail page). So when opening the dialog and navigating to
+			// filter detail page the Reset Button is only removed from page1. On clicking Ok and opening the dialog again vWhich is 2 and
+			// is equal to this._vContentPage so we skip all the following logic that should add the reset button again.
+			// Added logic for adding the Reset Button explicitly when we going into this state and there is no Reset Button.
+			// BCP 0020079747 0000728077 2015
+			if (oHeader.getContentRight().length === 0 && oSubHeader.getContentRight().length === 0) {
+				this._addResetButtonToPage1();
+			}
+
 			return false;
 		}
 
@@ -1706,19 +1715,7 @@ function(jQuery, library, Control, IconPool) {
 			// purge page contents
 			this._getPage1().removeAllAggregation("content", true);
 			// set subheader when there are multiple tabs active
-			if (this._showSubHeader) {
-				if (!this._getPage1().getSubHeader()) {
-					this._getPage1().setSubHeader(oSubHeader);
-				}
-				// show reset button in subheader
-				oSubHeader.addContentRight(oResetButton);
-			} else {
-				if (this._getPage1().getSubHeader()) {
-					this._getPage1().setSubHeader();
-				}
-				// show reset button in header
-				oHeader.addContentRight(oResetButton);
-			}
+			this._addResetButtonToPage1();
 		} else if (vWhich === 3) {
 			this._getPage2().removeAllAggregation("content", true);
 		}
@@ -2121,6 +2118,30 @@ function(jQuery, library, Control, IconPool) {
 			this.getSelectedPresetFilterItem()));
 	};
 
+	/**
+	 * Adds the Reset Button to the header/subheader of page1.
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._addResetButtonToPage1 = function() {
+		var oHeader         = this._getHeader(),
+			oSubHeader      = this._getSubHeader(),
+			oResetButton    = this._getResetButton();
+
+		// set subheader when there are multiple tabs active
+		if (this._showSubHeader) {
+			if (!this._getPage1().getSubHeader()) {
+				this._getPage1().setSubHeader(oSubHeader);
+			}
+			// show reset button in subheader
+			oSubHeader.addContentRight(oResetButton);
+		} else {
+			if (this._getPage1().getSubHeader()) {
+				this._getPage1().setSubHeader();
+			}
+			// show reset button in header
+			oHeader.addContentRight(oResetButton);
+		}
+	};
 	/* =========================================================== */
 	/* end: event handlers */
 	/* =========================================================== */
