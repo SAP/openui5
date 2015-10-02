@@ -545,6 +545,13 @@ QUnit.module("Delete PendingUpload Item, multiple FileUploaderInstances", {
 			});
 		};
 		this.abortStub = sinon.stub(sap.ui.unified.FileUploader.prototype, "abort");
+		this.encodeToAscii = function (value) {
+			var sEncodedValue = "";
+			for (var i = 0; i < value.length; i++) {
+				sEncodedValue = sEncodedValue + value.charCodeAt(i);
+			}
+			return sEncodedValue;
+		};
 	},
 	teardown : function() {
 		this.oUploadCollection.destroy();
@@ -576,7 +583,7 @@ QUnit.test("Checking if abort is properly called. 1 file, 1 instance of File Upl
 
 	assert.equal(this.abortStub.callCount, 1, "Function 'FileUploader.prototype.abort' was called " + this.abortStub.callCount + " time(s)");
 	assert.equal(this.abortStub.getCall(0).calledOn(this.oUploadCollection._aFileUploadersForPendingUpload[0]), true, "Function 'FileUploader.prototype.abort' was called on proper instance of FileUploader");
-	assert.equal(this.abortStub.getCall(0).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.oFile0.name + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
+	assert.equal(this.abortStub.getCall(0).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.encodeToAscii(this.oFile0.name) + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
 });
 
 QUnit.test("Checking if abort is properly called. 2 files, 1 instance of File Uploader", function(assert) {
@@ -593,7 +600,7 @@ QUnit.test("Checking if abort is properly called. 2 files, 1 instance of File Up
 
 	assert.equal(this.abortStub.callCount, 1, "Function 'FileUploader.prototype.abort' was called " + this.abortStub.callCount + " time(s)");
 	assert.equal(this.abortStub.getCall(0).calledOn(this.oUploadCollection._aFileUploadersForPendingUpload[0]), true, "Function 'FileUploader.prototype.abort' was called on proper instance of FileUploader");
-	assert.equal(this.abortStub.getCall(0).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.oFile1.name + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
+	assert.equal(this.abortStub.getCall(0).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.encodeToAscii(this.oFile1.name) + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
 });
 
 QUnit.test("Checking if abort is properly called. 2 files, 2 instances of File Uploader, ", function(assert) {
@@ -606,7 +613,7 @@ QUnit.test("Checking if abort is properly called. 2 files, 2 instances of File U
 
 	assert.equal(this.abortStub.callCount, 1, "Function 'FileUploader.prototype.abort' was called " + this.abortStub.callCount + " time(s)");
 	assert.equal(this.abortStub.getCall(0).calledOn(this.oUploadCollection._aFileUploadersForPendingUpload[1]), true, "Function 'FileUploader.prototype.abort' was called on proper instance of FileUploader");
-	assert.equal(this.abortStub.getCall(0).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.oFile1.name + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
+	assert.equal(this.abortStub.getCall(0).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.encodeToAscii(this.oFile1.name) + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
 });
 
 QUnit.test("Checking if abort is properly called. 5 files, 2 instances of File Uploader, 2 deletions ", function(assert) {
@@ -628,9 +635,9 @@ QUnit.test("Checking if abort is properly called. 5 files, 2 instances of File U
 
 	assert.equal(this.abortStub.callCount, 2, "Function 'FileUploader.prototype.abort' was called " + this.abortStub.callCount + " time(s)");
 	assert.equal(this.abortStub.getCall(0).calledOn(this.oUploadCollection._aFileUploadersForPendingUpload[0]), true, "Function 'FileUploader.prototype.abort' was called on proper instance of FileUploader");
-	assert.equal(this.abortStub.getCall(0).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.oFile2.name + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
+	assert.equal(this.abortStub.getCall(0).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.encodeToAscii(this.oFile2.name) + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
 	assert.equal(this.abortStub.getCall(1).calledOn(this.oUploadCollection._aFileUploadersForPendingUpload[1]), true, "Function 'FileUploader.prototype.abort' was called on proper instance of FileUploader");
-	assert.equal(this.abortStub.getCall(1).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.oFile4.name + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
+	assert.equal(this.abortStub.getCall(1).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.encodeToAscii(this.oFile4.name) + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
 });
 
 QUnit.test("Checking if abort is properly called. 3 files with same names, 1 instance of File Uploader, 2 deletions ", function(assert) {
@@ -649,9 +656,9 @@ QUnit.test("Checking if abort is properly called. 3 files with same names, 1 ins
 
 	assert.equal(this.abortStub.callCount, 2, "Function 'FileUploader.prototype.abort' was called " + this.abortStub.callCount + " time(s)");
 	assert.equal(this.abortStub.getCall(0).calledOn(this.oUploadCollection._aFileUploadersForPendingUpload[0]), true, "Function 'FileUploader.prototype.abort' was called on proper instance of FileUploader");
-	assert.equal(this.abortStub.getCall(0).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.oFile0.name + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
+	assert.equal(this.abortStub.getCall(0).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.encodeToAscii(this.oFile0.name) + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
 	assert.equal(this.abortStub.getCall(1).calledOn(this.oUploadCollection._aFileUploadersForPendingUpload[0]), true, "Function 'FileUploader.prototype.abort' was called on proper instance of FileUploader");
-	assert.equal(this.abortStub.getCall(1).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.oFile0.name + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
+	assert.equal(this.abortStub.getCall(1).calledWithMatch(new RegExp(this.oUploadCollection._headerParamConst.fileNameRequestIdName),new RegExp("^" + this.encodeToAscii(this.oFile0.name) + ".*")), true, "Function 'FileUploader.prototype.abort' was called with proper arguments");
 });
 
 QUnit.module("PendingUpload uploadProgress Event", {
