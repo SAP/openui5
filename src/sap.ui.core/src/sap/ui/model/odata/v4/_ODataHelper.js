@@ -242,14 +242,10 @@ sap.ui.define([
 		 * @private
 		 */
 		requestEntityContainer : function (oMetaModel) {
-			if (oMetaModel._oEntityContainer) {
-				return Promise.resolve(oMetaModel._oEntityContainer);
+			if (!oMetaModel._oEntityContainerPromise) {
+				oMetaModel._oEntityContainerPromise = oMetaModel.oModel.read("/EntityContainer");
 			}
-
-			return oMetaModel.oModel.read("/EntityContainer").then(function (oResult) {
-				oMetaModel._oEntityContainer = oResult;
-				return oResult;
-			});
+			return oMetaModel._oEntityContainerPromise;
 		},
 
 		/**

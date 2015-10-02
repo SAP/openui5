@@ -162,36 +162,24 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("requestEntityContainer", function (assert) {
-		var oEntityContainer = {
-				"Name" : "Container",
-				"QualifiedName" : "foo.bar.Container",
-				"EntitySets" : [{
-					"Name" : "Departments",
-					"Fullname" : "foo.bar.Container/Departments"
-				}, {
-					"Name" : "EMPLOYEES",
-					"Fullname" : "foo.bar.Container/EMPLOYEES"
-				}],
-				"Singletons" : [{
-					"Name" : "Me",
-					"Fullname" : "foo.bar.Container/Me"
-				}]
-			},
+		var oEntityContainer = {},
 			oMetaModel = {
 				oModel: {
 					read: function () {}
 				}
-			};
+			},
+			oPromise;
 
 		this.oSandbox.mock(oMetaModel.oModel).expects("read")
 			.withExactArgs("/EntityContainer")
-			.returns(Promise.resolve(JSON.parse(JSON.stringify(oEntityContainer))));
+			.returns(Promise.resolve(oEntityContainer));
 
-		return Helper.requestEntityContainer(oMetaModel).then(function (oResult) {
-			assert.deepEqual(oResult, oEntityContainer);
-			return Helper.requestEntityContainer(oMetaModel);
-		}).then(function (oResult) {
-			assert.deepEqual(oResult, oEntityContainer);
+		oPromise = Helper.requestEntityContainer(oMetaModel);
+		assert.strictEqual(Helper.requestEntityContainer(oMetaModel), oPromise);
+
+		return oPromise.then(function (oResult) {
+			assert.strictEqual(oResult, oEntityContainer);
+			assert.strictEqual(Helper.requestEntityContainer(oMetaModel), oPromise);
 		});
 	});
 
