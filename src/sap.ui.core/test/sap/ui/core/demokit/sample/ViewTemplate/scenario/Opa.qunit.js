@@ -1,11 +1,18 @@
 /*!
  * ${copyright}
  */
-sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function (Opa5) {
+sap.ui.require([
+	"sap/ui/test/Opa5",
+	"sap/ui/test/opaQunit",
+	"sap/ui/test/matchers/Properties",
+	"sap/ui/Device"
+], function (Opa5, opaTest, Properties, Device) {
+	/*global QUnit */
 	"use strict";
-	module("sap.ui.core.sample.ViewTemplate.scenario");
 
-	if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9) {
+	QUnit.module("sap.ui.core.sample.ViewTemplate.scenario");
+
+	if (Device.browser.msie && Device.browser.version === 9) {
 		// Bug Fix: IE9 >>> http://bugs.jquery.com/ticket/13378
 		return;
 	}
@@ -14,7 +21,7 @@ sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function (Opa5) {
 		function onLoad() {
 			Then.waitFor({
 				controlType: "sap.m.CheckBox",
-				matchers : new sap.ui.test.matchers.Properties({text : "bindTexts"}),
+				matchers : new Properties({text : "bindTexts"}),
 				success : function (aControls) {
 					// tap on the "bindTexts" check box and trigger a reload w/ bindTexts
 					aControls[0].ontap();
@@ -42,7 +49,7 @@ sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function (Opa5) {
 			].forEach(function (oFixture) {
 				Then.waitFor({
 					controlType: oFixture.controlType,
-					matchers : new sap.ui.test.matchers.Properties({ text: oFixture.text}),
+					matchers : new Properties({ text: oFixture.text}),
 					success : function () {
 						Opa5.assert.ok(true, "found: " + oFixture.controlType + " with text: " +
 							oFixture.text);
@@ -55,9 +62,9 @@ sap.ui.require(["sap/ui/test/Opa5", "sap/ui/test/opaQunit"], function (Opa5) {
 			// check for console log errors/warnings
 			Then.waitFor({
 				id: /selectInstance/,
-				success : function (oControl) {
+				success : function () {
 					// check no warnings and errors
-					Opa5.getWindow().jQuery.sap.log.getLog().forEach(function (oLog) {
+					Opa5.getWindow().jQuery.sap.log.getLogEntries().forEach(function (oLog) {
 						var sComponent = oLog.component || "";
 
 						if (( sComponent === "sap.ui.core.util.XMLPreprocessor"
