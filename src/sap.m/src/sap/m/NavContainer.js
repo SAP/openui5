@@ -594,7 +594,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		var oToPage = this.getPage(pageId);
 
-		if (oToPage && oFromPage) {
+		if (oToPage) {
+			if (!oFromPage){
+				jQuery.sap.log.warning("Navigation triggered to page with ID '" + pageId + "', but the current page is not known/aggregated by " + this);
+				return this;
+			}
 
 			// remember the focused object in "from page"
 			this._mFocusObject[oFromPage.getId()] = document.activeElement;
