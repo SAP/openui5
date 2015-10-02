@@ -400,7 +400,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './S
 
 			if (sap.ui.Device.system.desktop) {
 
-				// deselect the text and move the text cursor at the endmost position (only ie)
+				// deselect the text and move the text cursor at the endmost position
 				jQuery.sap.delayedCall(0, this, "selectText", [sValue.length, sValue.length]);
 			}
 		};
