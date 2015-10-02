@@ -9,11 +9,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/
 		
 		
 			// create some dummy JSON data
-			var data = {names:[
-				{name: "Anton"},
-				{name: "Karl"},
-				{name: "Hermann"}
-			]};
+			var data = {
+				number: 43,
+				names:[
+					{name: "Anton"},
+					{name: "Karl"},
+					{name: "Hermann"}
+				]
+			};
 		
 			// create a Model and assign it to the View
 			var oModel = new JSONModel();

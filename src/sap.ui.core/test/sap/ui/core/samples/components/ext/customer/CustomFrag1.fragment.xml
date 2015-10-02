@@ -1,1 +1,4 @@
-<Button xmlns="sap.ui.commons" text="This Button is in an Extension Fragment" />
+<core:FragmentDefinition xmlns="sap.ui.commons" xmlns:core="sap.ui.core">
+	<Button text="This Button is in an Extension Fragment" />
+	<TextView text="{path:'/number', formatter:'.formatNumber'}" tooltip="formatted number in extension Fragment CustomFrag1"></TextView>
+</core:FragmentDefinition>
