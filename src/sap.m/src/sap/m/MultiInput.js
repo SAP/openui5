@@ -351,13 +351,13 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		    iToken = aTokens.length;
 		
 		this._tokenizer.setVisible(true);
-		
-		// no value is allowed to show in the input when multiline is closed
-		if (this.getValue() !== "") {
-			this.setValue() === "";
-		}
-		
+
 		if (iToken > 1) {
+			
+			// no value is allowed to show in the input when multiline is closed. Rollback to 1.30 temporarily for sFIN demo
+			if (this.getValue() !== "") {
+				this.setValue() === "";
+			}
 			var i = 0;
 			for ( i = 0; i < iToken - 1; i++ ) {
 				aTokens[i].setVisible(false);
