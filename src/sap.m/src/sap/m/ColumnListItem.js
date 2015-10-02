@@ -3,11 +3,9 @@
  */
 
 // Provides control sap.m.ColumnListItem.
-sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
-	function(jQuery, ListItemBase, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './ListItemBase', './library'],
+	function(jQuery, Element, ListItemBase, library) {
 	"use strict";
-
-
 
 	/**
 	 * Constructor for a new ColumnListItem.
@@ -55,45 +53,50 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			cells : {type : "sap.ui.core.Control", multiple : true, singularName : "cell", bindable : "bindable"}
 		}
 	}});
+	
+	/**
+	 * TablePopin element that handles own events.
+	 */
+	var TablePopin = Element.extend("sap.m.TablePopin", {
+		onfocusin: function(oEvent) {
+			// focus to the main row if there is nothing to focus in the popin
+			if (oEvent.srcControl === this || !jQuery(oEvent.target).is(":sapFocusable")) {	
+				this.getParent().focus();
+			}
+		}
+	});
 
-
-	// prototype lookup for pop-in id
-	ColumnListItem.prototype._popinId = "";
-
-	// initialization hook
 	ColumnListItem.prototype.init = function() {
-		sap.m.ListItemBase.prototype.init.call(this);
+		ListItemBase.prototype.init.call(this);
 		this._bNeedsTypeColumn = false;
 		this._aClonedHeaders = [];
 	};
 
 	ColumnListItem.prototype.onAfterRendering = function() {
-		sap.m.ListItemBase.prototype.onAfterRendering.call(this);
+		ListItemBase.prototype.onAfterRendering.call(this);
 		this._checkTypeColumn();
 	};
+	
+	ColumnListItem.prototype.exit = function() {
+		ListItemBase.prototype.exit.call(this);
+		this._checkTypeColumn(false);
+		this._destroyClonedHeaders();
 
-	// informs the table when item's type column requirement is changed
-	ColumnListItem.prototype._checkTypeColumn = function(bNeedsTypeColumn) {
-		if (bNeedsTypeColumn == undefined) {
-			bNeedsTypeColumn = this.needsTypeColumn();
-		}
-
-		if (this._bNeedsTypeColumn != bNeedsTypeColumn) {
-			this._bNeedsTypeColumn = bNeedsTypeColumn;
-			this.informList("TypeColumnChange", bNeedsTypeColumn);
+		if (this._oPopin) {
+			this._oPopin.destroy(true);
+			this._oPopin = null;
+			this.removePopin();
 		}
 	};
 	
-	// determines whether type column for this item is necessary or not
-	ColumnListItem.prototype.needsTypeColumn = function() {
-		var sType = this.getType(),
-			mType = sap.m.ListType;
-			
-		return	this.getVisible() && (
-					sType == mType.Detail ||
-					sType == mType.Navigation ||
-					sType == mType.DetailAndActive
-				);
+	// remove pop-in from DOM when setVisible false is called
+	ColumnListItem.prototype.setVisible = function(bVisible) {
+		ListItemBase.prototype.setVisible.call(this, bVisible);
+		if (!bVisible && this.hasPopin()) {
+			this.removePopin();
+		}
+		
+		return this;
 	};
 	
 	// returns responsible table control for the item
@@ -110,13 +113,46 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	};
 	
 	/**
+	 * Returns the pop-in element.
+	 *
+	 * @protected
+	 * @since 1.30.9
+	 */
+	ColumnListItem.prototype.getPopin = function() {
+		if (!this._oPopin) {
+			this._oPopin = new TablePopin({
+				id: this.getId() + "-sub"
+			}).addEventDelegate({
+				// handle the events of pop-in
+				ontouchstart: this.ontouchstart,
+				ontouchmove: this.ontouchmove,
+				ontap: this.ontap,
+				ontouchend: this.ontouchend,
+				ontouchcancel: this.ontouchcancel,
+				onsaptabnext: this.onsaptabnext,
+				onsaptabprevious: this.onsaptabprevious
+			}, this).setParent(this, null, true);
+		}
+		
+		return this._oPopin;
+	};
+	
+	/**
 	 * Returns pop-in DOMRef as a jQuery Object
 	 *
 	 * @protected
 	 * @since 1.26
 	 */
 	ColumnListItem.prototype.$Popin = function() {
-		return jQuery.sap.byId(this._popinId);
+		return this.$("sub");
+	};
+	
+	/**
+	 * Determines whether control has pop-in or not.
+	 * @protected
+	 */
+	ColumnListItem.prototype.hasPopin = function() {
+		return !!(this._oPopin && this.getTable().hasPopin());
 	};
 	
 	/**
@@ -125,137 +161,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 */
 	ColumnListItem.prototype.removePopin = function() {
 		this.$Popin().remove();
-		this._popinId = "";
-	};
-	
-	/**
-	 * Determines whether control has pop-in or not
-	 * @protected
-	 */
-	ColumnListItem.prototype.hasPopin = function() {
-		return !!(this._popinId);
-	};
-	
-	// Adds cloned header to the local collection
-	sap.m.ColumnListItem.prototype.addClonedHeader = function(oHeader) {
-		return this._aClonedHeaders.push(oHeader);
-	};
-
-	// Destroys cloned headers that are generated for popin
-	sap.m.ColumnListItem.prototype.destroyClonedHeaders = function() {
-		this._aClonedHeaders.forEach(function(oClone) {
-			oClone.destroy(true);
-		});
-
-		this._aClonedHeaders.length = 0;
-	};
-	
-	/*
-	 * Remove pop-in from DOM when setVisible false is called
-	 * @overwite
-	 */
-	ColumnListItem.prototype.setVisible = function(bVisible) {
-		ListItemBase.prototype.setVisible.call(this, bVisible);
-		if (!bVisible) {
-			this.removePopin();
-		}
-		
-		return this;
-	};
-	
-	// update the aria-selected for the cells
-	ColumnListItem.prototype.updateSelectedDOM = function(bSelected, $LI) {
-		ListItemBase.prototype.updateSelectedDOM.apply(this, arguments);
-		$LI.children().attr("aria-selected", bSelected);
-		
-		// update popin selected and cell as well
-		var $Popin = $LI.next(".sapMListTblSubRow");
-		$Popin.add("td", $Popin).attr("aria-selected", bSelected);
-	};
-	
-	// remove pop-in on destroy
-	ColumnListItem.prototype.exit = function() {
-		ListItemBase.prototype.exit.call(this);
-		this._checkTypeColumn(false);
-		this.destroyClonedHeaders();
-		this.removePopin();
-	};
-	
-	// active feedback for pop-in
-	ColumnListItem.prototype._activeHandlingInheritor = function() {
-		this._toggleActiveClass(true);
-	};
-	
-	// inactive feedback for pop-in
-	ColumnListItem.prototype._inactiveHandlingInheritor = function() {
-		this._toggleActiveClass(false);
-	};
-	
-	/*
-	 * Common code for the two methods _inactiveHandlingInheritor,_activeHandlingInheritor
-	 *
-	 * @param {boolean} bSwitch Determine whether the class should be added or removed.
-	 */
-	ColumnListItem.prototype._toggleActiveClass = function(bSwitch){
-		this.$Popin().toggleClass("sapMLIBActive", bSwitch);
-	};
-	
-	/**
-	 * Handles event delegation for pop-ins
-	 *
-	 * @static
-	 * @protected
-	 *
-	 * @param {jQuery.Event} oEvent jQuery event object
-	 * @param {HTMLElement} oContainerDomRef max parent element to search in DOM to find pop-in
-	 * @returns {sap.m.ColumnListItem|undefined} returns related list item when event handler is called
-	 */
-	ColumnListItem.handleEvents = function(oEvent, oContainerDomRef) {
-		var oColumnLI = this.getItemByPopinEvent(oEvent, oContainerDomRef);
-		if (oColumnLI) {
-			// try to find scrControl from event
-			oEvent.srcControl = jQuery(oEvent.target).control(0) || oColumnLI;
-	
-			// call the related event handler
-			if (oColumnLI["on" + oEvent.type]) {
-	
-				// 2nd parameter is introduced to inform popin event
-				oColumnLI["on" + oEvent.type](oEvent, true);
-	
-				// return ListItem
-				return oColumnLI;
-			}
-		}
-	};
-	
-	/**
-	 * Returns related list item from event which is coming from pop-in
-	 *
-	 * @static
-	 * @protected
-	 * @since 1.26
-	 *
-	 * @param {jQuery.Event} oEvent jQuery event object
-	 * @param {HTMLElement} oContainerDomRef max parent element to search in DOM to find pop-in
-	 * @returns {sap.m.ColumnListItem|undefined}
-	 */
-	ColumnListItem.getItemByPopinEvent = function(oEvent, oContainerDomRef) {
-		var $Popin = jQuery(oEvent.target).closest(".sapMListTblSubRow", oContainerDomRef);
-		if ($Popin.length) {
-			return sap.ui.getCore().byId($Popin.prev().attr("id"));
-		}
-	};
-	
-	/**
-	 * Checks whether popin is focused or not
-	 *
-	 * @static
-	 * @protected
-	 *
-	 * @param {jQuery.Event} oEvent jQuery event object
-	 */
-	ColumnListItem.isPopinFocused = function(oEvent) {
-		return jQuery(document.activeElement).hasClass("sapMListTblSubRow");
 	};
 	
 	/**
@@ -268,6 +173,73 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 */
 	ColumnListItem.prototype.getTabbables = function() {
 		return this.$().add(this.$Popin()).find(":sapTabbable");
+	};
+	
+	// update the aria-selected for the cells
+	ColumnListItem.prototype.updateSelectedDOM = function(bSelected, $This) {
+		ListItemBase.prototype.updateSelectedDOM.apply(this, arguments);
+		$This.children().attr("aria-selected", bSelected);
+		
+		// update popin as well
+		if (this.hasPopin()) {
+			this.$Popin().attr("aria-selected", bSelected);
+			this.$("subcell").attr("aria-selected", bSelected);
+		}
+	};
+
+	// informs the table when item's type column requirement is changed
+	ColumnListItem.prototype._checkTypeColumn = function(bNeedsTypeColumn) {
+		if (bNeedsTypeColumn == undefined) {
+			bNeedsTypeColumn = this._needsTypeColumn();
+		}
+
+		if (this._bNeedsTypeColumn != bNeedsTypeColumn) {
+			this._bNeedsTypeColumn = bNeedsTypeColumn;
+			this.informList("TypeColumnChange", bNeedsTypeColumn);
+		}
+	};
+	
+	// determines whether type column for this item is necessary or not
+	ColumnListItem.prototype._needsTypeColumn = function() {
+		var sType = this.getType(),
+			mType = sap.m.ListType;
+
+		return	this.getVisible() && (
+					sType == mType.Detail ||
+					sType == mType.Navigation ||
+					sType == mType.DetailAndActive
+				);
+	};
+	
+	// Adds cloned header to the local collection
+	sap.m.ColumnListItem.prototype._addClonedHeader = function(oHeader) {
+		return this._aClonedHeaders.push(oHeader);
+	};
+
+	// Destroys cloned headers that are generated for popin
+	sap.m.ColumnListItem.prototype._destroyClonedHeaders = function() {
+		this._aClonedHeaders.forEach(function(oClone) {
+			oClone.destroy(true);
+		});
+
+		this._aClonedHeaders = [];
+	};
+	
+	// active feedback for pop-in
+	ColumnListItem.prototype._activeHandlingInheritor = function() {
+		this._toggleActiveClass(true);
+	};
+	
+	// inactive feedback for pop-in
+	ColumnListItem.prototype._inactiveHandlingInheritor = function() {
+		this._toggleActiveClass(false);
+	};
+	
+	// toggles the active class of the pop-in.
+	ColumnListItem.prototype._toggleActiveClass = function(bSwitch) {
+		if (this.hasPopin()) {
+			this.$Popin().toggleClass("sapMLIBActive", bSwitch);
+		}
 	};
 
 	return ColumnListItem;
