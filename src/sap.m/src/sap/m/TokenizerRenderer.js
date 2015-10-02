@@ -47,13 +47,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		
 		oRm.write(">"); // div element
 
-		if (Device.system.desktop || Device.system.combi) {
+		oControl._bCopyToClipboardSupport = false;
+		
+		if ((Device.system.desktop || Device.system.combi) && aTokens.length) {
 			oRm.write("<div id='" + oControl.getId() + "-clip' class='sapMTokenizerClip'");
 			if (window.clipboardData) { //IE
 				oRm.writeAttribute("contenteditable", "true");
 				oRm.writeAttribute("tabindex", "-1");
 			}
 			oRm.write(">&nbsp;</div>");
+			oControl._bCopyToClipboardSupport = true;
 		}
 	
 		var sClass = "class=\"sapMTokenizerScrollContainer\">";
