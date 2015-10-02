@@ -2,10 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/ToolsAPI'],
-	function (jQuery, ToolsAPI) {
+sap.ui.define(['jquery.sap.global'],
+	function (jQuery) {
 		"use strict";
-
 
 		/**
 		 * <pre>
@@ -101,21 +100,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/ToolsAPI'],
 			}
 
 			// copied from core
-			function getTechnicalContent() {
-				var oCfg = ToolsAPI.getFrameworkInformation();
+			function getTechnicalContent(oFrameworkInformation) {
 				oData = {
-					version: oCfg.commonInformation.version,
-					build: oCfg.commonInformation.buildTime,
-					change: oCfg.commonInformation.lastChange,
-					useragent: oCfg.commonInformation.userAgent,
-					docmode: oCfg.commonInformation.documentMode,
-					debug: oCfg.commonInformation.debugMode,
-					bootconfig: oCfg.configurationBootstrap,
-					config: oCfg.configurationComputed,
-					loadedlibs: oCfg.loadedLibraries,
-					modules: oCfg.loadedModules,
-					uriparams: oCfg.URLParameters,
-					appurl: oCfg.commonInformation.applicationHREF
+					version: oFrameworkInformation.commonInformation.version,
+					build: oFrameworkInformation.commonInformation.buildTime,
+					change: oFrameworkInformation.commonInformation.lastChange,
+					useragent: oFrameworkInformation.commonInformation.userAgent,
+					docmode: oFrameworkInformation.commonInformation.documentMode,
+					debug: oFrameworkInformation.commonInformation.debugMode,
+					bootconfig: oFrameworkInformation.configurationBootstrap,
+					config: oFrameworkInformation.configurationComputed,
+					loadedlibs: oFrameworkInformation.loadedLibraries,
+					modules: oFrameworkInformation.loadedModules,
+					uriparams: oFrameworkInformation.URLParameters,
+					appurl: oFrameworkInformation.commonInformation.applicationHREF
 				};
 
 				var html = ["<table class='sapUiSelectable' border='0' cellspacing='5' cellpadding='5' width='100%'><tbody class='sapUiSelectable'>"];
@@ -314,11 +312,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/ToolsAPI'],
 			}
 
 			function show() {
-				var container = getDialog();
-				container.removeAllAggregation("content");
-				container.addAggregation("content", getTechnicalContent());
-				dialog.open();
-				setupDialog();
+				sap.ui.require(['sap/ui/core/support/ToolsAPI'], function (ToolsAPI) {
+					var container = getDialog();
+					container.removeAllAggregation("content");
+					container.addAggregation("content", getTechnicalContent(ToolsAPI.getFrameworkInformation()));
+
+					dialog.open();
+					setupDialog();
+				});
 			}
 
 			return ({
