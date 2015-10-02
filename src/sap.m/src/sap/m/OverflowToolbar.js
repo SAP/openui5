@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.OverflowToolbar.
-sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/core/InvisibleText', 'sap/m/Toolbar', 'sap/m/ToolbarSpacer', 'sap/m/OverflowToolbarLayoutData', 'sap/m/OverflowToolbarAssociativePopover', 'sap/m/OverflowToolbarAssociativePopoverControls', 'sap/m/OverflowToolbarPriority','sap/ui/core/IconPool'],
-	function(jQuery, library, ToggleButton, InvisibleText, Toolbar, ToolbarSpacer, OverflowToolbarLayoutData, OverflowToolbarAssociativePopover, OverflowToolbarAssociativePopoverControls, OverflowToolbarPriority,IconPool) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/core/InvisibleText', 'sap/m/Toolbar', 'sap/m/ToolbarSpacer', 'sap/m/OverflowToolbarLayoutData', 'sap/m/OverflowToolbarAssociativePopover', 'sap/m/OverflowToolbarAssociativePopoverControls', 'sap/m/OverflowToolbarPriority','sap/ui/core/IconPool','sap/m/SearchField'],
+	function(jQuery, library, ToggleButton, InvisibleText, Toolbar, ToolbarSpacer, OverflowToolbarLayoutData, OverflowToolbarAssociativePopover, OverflowToolbarAssociativePopoverControls, OverflowToolbarPriority, IconPool, SearchField) {
 		"use strict";
 
 
@@ -616,6 +616,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 
 		OverflowToolbar.prototype.addContent = function(oControl) {
 			this._registerControlListener(oControl);
+			this._preProcessControl(oControl);
 			this._resetAndInvalidateToolbar(false);
 			return this._callToolbarMethod("addContent", arguments);
 		};
@@ -623,6 +624,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 
 		OverflowToolbar.prototype.insertContent = function(oControl, iIndex) {
 			this._registerControlListener(oControl);
+			this._preProcessControl(oControl);
 			this._resetAndInvalidateToolbar(false);
 			return this._callToolbarMethod("insertContent", arguments);
 		};
@@ -631,15 +633,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 		OverflowToolbar.prototype.removeContent = function(oControl) {
 			var vContent = this._callToolbarMethod("removeContent", arguments);
 			this._resetAndInvalidateToolbar(false);
+
+			this._postProcessControl(vContent);
 			this._deregisterControlListener(vContent);
+
 			return vContent;
 		};
 
 
 		OverflowToolbar.prototype.removeAllContent = function() {
 			var aContents = this._callToolbarMethod("removeAllContent", arguments);
-			aContents.forEach(this._deregisterControlListener, this);
+
+			aContents.forEach(function (oControl) {
+				this._deregisterControlListener(oControl);
+				this._postProcessControl(oControl);
+			}, this);
 			this._resetAndInvalidateToolbar(false);
+
 			return aContents;
 		};
 
@@ -747,6 +757,39 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 			});
 		};
 
+
+		/**
+		 * Make changes to certain controls before entering the overflow toolbar
+		 * SearchField - always keep selectOnFocus to false while inside the toolbar
+		 * @param oControl
+		 * @private
+		 */
+		OverflowToolbar.prototype._preProcessControl = function (oControl) {
+			if (!(oControl instanceof SearchField)) {
+				return;
+			}
+
+			if (oControl.getSelectOnFocus()) {
+				oControl.setProperty("selectOnFocus", false, true);
+				oControl._origSelectOnFocus = true;
+			}
+		};
+
+		/**
+		 * Restore changes to controls when removing them from the overflow toolbar
+		 * @param oControl
+		 * @private
+		 */
+		OverflowToolbar.prototype._postProcessControl = function (oControl) {
+			if (!(oControl instanceof SearchField)) {
+				return;
+			}
+
+			if (typeof oControl._origSelectOnFocus !== "undefined") {
+				oControl.setProperty("selectOnFocus", oControl._origSelectOnFocus, true);
+				delete oControl._origSelectOnFocus;
+			}
+		};
 
 		/************************************************** STATIC ***************************************************/
 
