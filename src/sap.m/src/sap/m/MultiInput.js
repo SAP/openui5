@@ -418,9 +418,11 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			this._showIndicator();
 			this._isMultiLineMode = true;
 			
-			setTimeout(function() {
-				that._setContainerSizes();
-			}, 0);
+			if (this.getDomRef()) {
+				setTimeout(function() {
+					that._setContainerSizes();
+				}, 0);
+			}
 			
 		} else {
 			this._isMultiLineMode = false;
@@ -428,10 +430,12 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			this._showAllTokens(this._tokenizer);
 			this.setValue("");
 			
-			setTimeout(function() {
-				that._setContainerSizes();
-				that._scrollAndFocus();
-			}, 0);			
+			if (this.getDomRef()) {
+				setTimeout(function() {
+					that._setContainerSizes();
+					that._scrollAndFocus();
+				}, 0);
+			}
 		}
 		
 		return this;
