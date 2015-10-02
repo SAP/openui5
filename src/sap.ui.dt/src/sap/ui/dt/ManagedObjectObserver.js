@@ -121,36 +121,46 @@ function(ManagedObject, ElementUtil) {
 				return;
 			}
 			that.unobserve(oTarget);
-			fnOriginalDestroy.apply(this, arguments);
+			var vOriginalReturn = fnOriginalDestroy.apply(this, arguments);
 			that.fireDestroyed();
+
+			return vOriginalReturn;
 		};
 
 		// Wrapper for the bindProperty method to recognize changes
 		this._fnOriginalBindProperty = oTarget.bindProperty;
 		oTarget.bindProperty = function() {
-			that._fnOriginalBindProperty.apply(this, arguments);
+			var vOriginalReturn = that._fnOriginalBindProperty.apply(this, arguments);
 			that.fireModified();
+
+			return vOriginalReturn;
 		};
 
 		// Wrapper for the unbindProperty method to recognize changes
 		this._fnOriginalUnBindProperty = oTarget.unbindProperty;
 		oTarget.unbindProperty = function() {
-			that._fnOriginalUnBindProperty.apply(this, arguments);
+			var vOriginalReturn = that._fnOriginalUnBindProperty.apply(this, arguments);
 			that.fireModified();
+
+			return vOriginalReturn;
 		};
 
 		// Wrapper for the bindAggregation method to recognize changes
 		this._fnOriginalBindAggregation = oTarget.bindAggregation;
 		oTarget.bindAggregation = function(sAggregationName) {
-			that._fnOriginalBindAggregation.apply(this, arguments);
+			var vOriginalReturn = that._fnOriginalBindAggregation.apply(this, arguments);
 			that.fireModified();
+
+			return vOriginalReturn;
 		};
 
 		// Wrapper for the unbindAggregation method to recognize changes
 		this._fnOriginalUnBindAggregation = oTarget.unbindAggregation;
 		oTarget.unbindAggregation = function(sAggregationName) {
-			that._fnOriginalUnBindAggregation.apply(this, arguments);
+			var vOriginalReturn = that._fnOriginalUnBindAggregation.apply(this, arguments);
 			that.fireModified();
+
+			return vOriginalReturn;
 		};
 
 		// We wrap the native setParent method of the control with our logic
@@ -163,7 +173,7 @@ function(ManagedObject, ElementUtil) {
 			}
 
 			var oCurrentParent = this.getParent();
-			that._fnOriginalSetParent.apply(this, arguments);
+			var vOriginalReturn = that._fnOriginalSetParent.apply(this, arguments);
 			if (bFireModified && !this.__bSapUiDtSupressParentChangeEvent) {
 				this._bInSetParent = false;
 				if (oCurrentParent !== oParent) {
@@ -176,71 +186,71 @@ function(ManagedObject, ElementUtil) {
 				}
 			}
 
-			return this;
+			return vOriginalReturn;
 		};
 
 		// We wrap the native addAggregation method of the control with our logic
 		this._fnOriginalAddAggregation = oTarget.addAggregation;
 		oTarget.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
-			that._fnOriginalAddAggregation.apply(this, arguments);
 			that._bAddAggregationCall = true;
+			var vOriginalReturn = that._fnOriginalAddAggregation.apply(this, arguments);
 			that.fireModified({
 				type : "addAggregation",
 				value : oObject,
 				target : this
 			});
-			return this;
+			return vOriginalReturn;
 		};
 
 		// We wrap the native removeAggregation method of the control with our logic
 		this._fnOriginalRemoveAggregation = oTarget.removeAggregation;
 		oTarget.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
-			that._fnOriginalRemoveAggregation.apply(this, arguments);
+			var vOriginalReturn = that._fnOriginalRemoveAggregation.apply(this, arguments);
 			that.fireModified({
 				type : "removeAggregation",
 				value : vObject,
 				target : this
 			});
-			return this;
+			return vOriginalReturn;
 		};
 
 		// We wrap the native insertAggregation method of the control with our logic
 		this._fnOriginalInsertAggregation = oTarget.insertAggregation;
 		oTarget.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
-			that._fnOriginalInsertAggregation.apply(this, arguments);
 			that._bInsertAggregationCall = true;
+			var vOriginalReturn = that._fnOriginalInsertAggregation.apply(this, arguments);
 			that.fireModified({
 				type : "insertAggregation",
 				value : oObject,
 				target : this
 			});
-			return this;
+			return vOriginalReturn;
 		};
 
 		// We wrap the native removeAllAggregations method of the control with our logic
 		this._fnOriginalRemoveAllAggregations = oTarget.removeAllAggregations;
 		oTarget.removeAllAggregations = function(sAggregationName, bSuppressInvalidate) {
 			var aRemovedObjects = this.getAggregation(sAggregationName);
-			that._fnOriginalRemoveAllAggregations.apply(this, arguments);
+			var vOriginalReturn = that._fnOriginalRemoveAllAggregations.apply(this, arguments);
 			that.fireModified({
 				type : "removeAllAggregations",
 				value : aRemovedObjects,
 				target : this
 			});
-			return this;
+			return vOriginalReturn;
 		};
 
 		// We wrap the native destroyAggregation method of the control with our logic
 		this._fnOriginalDestroyAggregation = oTarget.destroyAggregation;
 		oTarget.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
 			var aRemovedObjects = this.getAggregation(sAggregationName);
-			that._fnOriginalDestroyAggregation.apply(this, arguments);
+			var vOriginalReturn = that._fnOriginalDestroyAggregation.apply(this, arguments);
 			that.fireModified({
 				type : "destroyAggregation",
 				value : aRemovedObjects,
 				target : this
 			});
-			return this;
+			return vOriginalReturn;
 		};		
 
 		that._aOriginalAddMutators = {};
@@ -253,7 +263,7 @@ function(ManagedObject, ElementUtil) {
 			oTarget[oAggregation._sMutator] = function(oObject) {
 				that._bAddAggregationCall = false;
 				// if addAggregation method wasn't called directly
-				_fnOriginalAddMutator.apply(this, arguments);
+				var vOriginalReturn = _fnOriginalAddMutator.apply(this, arguments);
 				if (!that._bAddAggregationCall) {
 					that.fireModified({
 						type : "addAggregation",
@@ -261,14 +271,14 @@ function(ManagedObject, ElementUtil) {
 						target : this
 					});
 				}
-				return this;
+				return vOriginalReturn;
 			};		
 
 			var _fnOriginalInsertMutator = oTarget[oAggregation._sInsertMutator];
 			that._aOriginalInsertMutators[oAggregation.name] = _fnOriginalInsertMutator;
 			oTarget[oAggregation._sInsertMutator] = function(oObject, iIndex) {
 				that._bInsertAggregationCall = false;
-				_fnOriginalInsertMutator.apply(this, arguments);
+				var vOriginalReturn = _fnOriginalInsertMutator.apply(this, arguments);
 				// if insertAggregation method wasn't called directly
 				if (!that._bInsertAggregationCall) {
 					that.fireModified({
@@ -277,7 +287,7 @@ function(ManagedObject, ElementUtil) {
 						target : this
 					});
 				}
-				return this;
+				return vOriginalReturn;
 			};	
 		});
 
