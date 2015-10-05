@@ -926,6 +926,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			//because of the leading space in formats without a leading zero
 			if (bDisplayFormat) {
 				sValue = sValue.replace(/^\s+/gm, ''); //trim start
+			//if the user input is not full and there are placeholder symbols left, they need to be removed in order
+			//the value to be parsed to a valid fallback format
 				sValue = sValue.replace(this._rPlaceholderRegEx,'');
 			}
 
