@@ -12,6 +12,7 @@ sap.ui.define([
 		oFramePlugin = null,
 		oFrameUtils = null,
 		oFrameJQuery = null,
+		bRegiesteredToUI5Init = false,
 		bUi5Loaded = false;
 
 	/*
@@ -51,14 +52,19 @@ sap.ui.define([
 		}
 
 		if (oFrameWindow && oFrameWindow.sap && oFrameWindow.sap.ui && oFrameWindow.sap.ui.getCore) {
-			bUi5Loaded = true;
-			handleUi5Loaded();
+			if (!bRegiesteredToUI5Init) {
+				oFrameWindow.sap.ui.getCore().attachInit(handleUi5Loaded);
+			}
+
+			bRegiesteredToUI5Init = true;
 		}
-		return false;
+
+		return bUi5Loaded;
 	}
 
 
 	function handleUi5Loaded () {
+		bUi5Loaded = true;
 		setFrameVariables();
 		modifyIFrameNavigation();
 	}
@@ -185,6 +191,7 @@ sap.ui.define([
 		oFrameUtils = null;
 		oFrameWindow = null;
 		bUi5Loaded = false;
+		bRegiesteredToUI5Init = false;
 	}
 
 	/**
