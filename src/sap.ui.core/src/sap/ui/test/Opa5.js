@@ -26,6 +26,7 @@ sap.ui.define(['jquery.sap.global',
 			oFrameUtils = null,
 			$Frame = null,
 			bFrameLoaded = false,
+			bRegiesteredToUI5Init = false,
 			bUi5Loaded = false;
 
 		/**
@@ -118,9 +119,6 @@ sap.ui.define(['jquery.sap.global',
 				success : function () {
 
 					destroyFrame();
-					bFrameLoaded = false;
-					bUi5Loaded = false;
-
 				}
 			});
 
@@ -593,13 +591,18 @@ sap.ui.define(['jquery.sap.global',
 			}
 
 			if (oFrameWindow && oFrameWindow.sap && oFrameWindow.sap.ui && oFrameWindow.sap.ui.getCore) {
-				bUi5Loaded = true;
-				handleUi5Loaded();
+				if (!bRegiesteredToUI5Init) {
+					oFrameWindow.sap.ui.getCore().attachInit(handleUi5Loaded);
+				}
+
+				bRegiesteredToUI5Init = true;
 			}
-			return false;
+
+			return bUi5Loaded;
 		}
 
 		function handleUi5Loaded () {
+			bUi5Loaded = true;
 			setFrameVariables();
 			modifyIFrameNavigation();
 		}
@@ -704,6 +707,9 @@ sap.ui.define(['jquery.sap.global',
 			oFrameJQuery = null;
 			oFramePlugin = null;
 			oFrameUtils = null;
+			bRegiesteredToUI5Init = false;
+			bFrameLoaded = false;
+			bUi5Loaded = false;
 		}
 
 		$(function () {
