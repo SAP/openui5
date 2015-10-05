@@ -202,7 +202,7 @@ sap.ui.require([
 		this.oSandbox.mock(oType).expects("formatValue").withExactArgs("foo", "string");
 
 		oControl.bindProperty("text", sPath);
-		oControl.bindObject("/EntitySet('foo')/")
+		oControl.bindObject("/EntitySet('foo')/");
 		oBinding = oControl.getBinding("text");
 		oBinding.attachChange(function () {
 			assert.strictEqual(oBinding.getType(), oType);
