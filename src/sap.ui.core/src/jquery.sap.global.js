@@ -1982,7 +1982,6 @@
 
 			// set marker for loading modules (to break cycles)
 			oModule.state = LOADING;
-
 			// if debug is enabled, try to load debug module first
 			aExtensions = window["sap-ui-loaddbg"] ? ["-dbg", ""] : [""];
 			for (i = 0; i < aExtensions.length && oModule.state !== LOADED; i++) {
@@ -2466,8 +2465,10 @@
 			} else {
 				vModuleName = ui5ToRJS(vModuleName) + ".js";
 			}
-
+			
+			jQuery.sap.measure.start(vModuleName,"Require module " + vModuleName, ["require"]);
 			requireModule(vModuleName);
+			jQuery.sap.measure.end(vModuleName);
 
 			return this; // TODO
 		};
@@ -3668,7 +3669,7 @@
 	// *** Performance measure ***
 	function PerfMeasurement(){
 
-		function Measurement( sId, sInfo, iStart, iEnd ){
+		function Measurement( sId, sInfo, iStart, iEnd, aCategories){
 			this.id = sId;
 			this.info = sInfo;
 			this.start = iStart;
@@ -3677,10 +3678,45 @@
 			this.resume = 0;
 			this.duration = 0; // used time
 			this.time = 0; // time from start to end
+			this.categories = aCategories;
+			this.average = false; //average duration enabled
+			this.count = 0; //average count
+			this.completeDuration = 0; //complete duration
 		}
 
-		var bActive = false;
-		var fnAjax = jQuery.ajax;
+		function matchCategories(aCategories) {
+			if (!aRestrictedCategories) {
+				return true;
+			}
+			if (!aCategories) {
+				return aRestrictedCategories === null;
+			}
+			//check whether active categories and current categories match
+			for (var i = 0; i < aRestrictedCategories.length; i++) {
+				if (aCategories.indexOf(aRestrictedCategories[i]) > -1) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		function checkCategories(aCategories) {
+			if (!aCategories) {
+				aCategories = ["javascript"];
+			}
+			aCategories = typeof aCategories === "string" ? aCategories.split(",") : aCategories;
+			if (!matchCategories(aCategories)) {
+				return null;
+			}
+			return aCategories;
+		}
+
+		var bActive = false,
+			fnAjax = jQuery.ajax,
+			aRestrictedCategories = null,
+			aAverageMethods = [],
+			aOriginalMethods = [],
+			aMethods = ["start", "end", "pause", "resume", "add", "remove", "clear", "average"];
 
 		/**
 		 * Gets the current state of the perfomance measurement functionality
@@ -3696,22 +3732,37 @@
 
 		/**
 		 * Activates or deactivates the performance measure functionality
-		 *
+		 * Optionally a category or list of categories can be passed to restrict measurements to certain categories
+		 * like "javascript", "require", "xmlhttprequest", "render"
 		 * @param {boolean} bOn state of the perfomance measurement functionality to set
+		 * @param {string | string[]}  An optional list of categories that should be measured
+		 * 
 		 * @return {boolean} current state of the perfomance measurement functionality
 		 * @name jQuery.sap.measure#setActive
 		 * @function
 		 * @public
 		 */
-		this.setActive = function( bOn ){
-
-			if (bActive == bOn) {
-				return bActive;
+		this.setActive = function(bOn, aCategories){
+			//set restricted categories
+			if (!aCategories) {
+				aCategories = null;
+			} else if (typeof aCategories === "string") {
+				aCategories = aCategories.split(",");
 			}
+			aRestrictedCategories = aCategories;
 
+			if (bActive === bOn) {
+				return;
+			}
 			bActive = bOn;
-
 			if (bActive) {
+				
+				//activate method implementations once
+				for (var i = 0; i < aMethods.length; i++) {
+					this[aMethods[i]] = this["_" + aMethods[i]];
+					
+				}
+				aMethods = [];
 				// wrap and instrument jQuery.ajax
 				jQuery.ajax = function(url, options) {
 
@@ -3737,37 +3788,43 @@
 			} else if (fnAjax) {
 				jQuery.ajax = fnAjax;
 			}
-
+			
 			return bActive;
-
 		};
-
-		this.setActive(/sap-ui-measure=(true|x|X)/.test(location.search));
-
+		
 		this.mMeasurements = {};
-
+		
+		
 		/**
-		 * Starts a performance measure
+		 * Starts a performance measure. 
+		 * Optionally a category or list of categories can be passed to allow filtering of measurements.
 		 *
 		 * @param {string} sId ID of the measurement
 		 * @param {string} sInfo Info for the measurement
+		 * @param {string | string[]} [aCategories = "javascript"] An optional list of categories for the measure
+		 * 
 		 * @return {object} current measurement containing id, info and start-timestamp (false if error)
 		 * @name jQuery.sap.measure#start
 		 * @function
 		 * @public
 		 */
-		this.start = function( sId, sInfo ){
+		this._start = function( sId, sInfo, aCategories){
 			if (!bActive) {
 				return;
 			}
 
-			var iTime = jQuery.sap.now();
-			var oMeasurement = new Measurement( sId, sInfo, iTime, 0);
+			aCategories = checkCategories(aCategories);
+			if (!aCategories) {
+				return;
+			}
+
+			var iTime = jQuery.sap.now(),
+				oMeasurement = new Measurement( sId, sInfo, iTime, 0, aCategories);
 //			jQuery.sap.log.info("Performance measurement start: "+ sId + " on "+ iTime);
 
 			if (oMeasurement) {
 				this.mMeasurements[sId] = oMeasurement;
-				return ({id: oMeasurement.id, info: oMeasurement.info, start: oMeasurement.start });
+				return this.getMeasurement(oMeasurement.id);
 			} else {
 				return false;
 			}
@@ -3782,7 +3839,7 @@
 		 * @function
 		 * @public
 		 */
-		this.pause = function( sId ){
+		this._pause = function( sId ){
 			if (!bActive) {
 				return;
 			}
@@ -3807,7 +3864,7 @@
 //			jQuery.sap.log.info("Performance measurement pause: "+ sId + " on "+ iTime + " duration: "+ oMeasurement.duration);
 
 			if (oMeasurement) {
-				return ({id: oMeasurement.id, info: oMeasurement.info, start: oMeasurement.start, pause: oMeasurement.pause });
+				return this.getMeasurement(oMeasurement.id);
 			} else {
 				return false;
 			}
@@ -3822,7 +3879,7 @@
 		 * @function
 		 * @public
 		 */
-		this.resume = function( sId ){
+		this._resume = function( sId ){
 			if (!bActive) {
 				return;
 			}
@@ -3838,7 +3895,7 @@
 			}
 
 			if (oMeasurement) {
-				return ({id: oMeasurement.id, info: oMeasurement.info, start: oMeasurement.start, resume: oMeasurement.resume });
+				return this.getMeasurement(oMeasurement.id);
 			} else {
 				return false;
 			}
@@ -3853,7 +3910,7 @@
 		 * @function
 		 * @public
 		 */
-		this.end = function( sId ){
+		this._end = function( sId ){
 			if (!bActive) {
 				return;
 			}
@@ -3871,7 +3928,14 @@
 					// duration already calculated
 					oMeasurement.pause = 0;
 				} else if (oMeasurement.end >= oMeasurement.start) {
-					oMeasurement.duration = oMeasurement.end - oMeasurement.start;
+					if (oMeasurement.average) {
+						oMeasurement.completeDuration += (oMeasurement.end - oMeasurement.start);
+						oMeasurement.count++;
+						oMeasurement.duration = oMeasurement.completeDuration / oMeasurement.count;
+						oMeasurement.start = iTime;
+					} else {
+						oMeasurement.duration = oMeasurement.end - oMeasurement.start;
+					}
 				}
 				if (oMeasurement.end >= oMeasurement.start) {
 					oMeasurement.time = oMeasurement.end - oMeasurement.start;
@@ -3885,33 +3949,7 @@
 			}
 		};
 
-		/**
-		 * Gets a performance measure
-		 *
-		 * @param {string} sId ID of the measurement
-		 * @return {object} current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
-		 * @name jQuery.sap.measure#getMeasurement
-		 * @function
-		 * @public
-		 */
-		this.getMeasurement = function( sId ){
-			if (!bActive) {
-				return;
-			}
-
-			var oMeasurement = this.mMeasurements[sId];
-
-			if (oMeasurement) {
-				return ({id: oMeasurement.id,
-						info: oMeasurement.info,
-						start: oMeasurement.start,
-						end: oMeasurement.end,
-						time: oMeasurement.time,
-						duration: oMeasurement.duration});
-			} else {
-				return false;
-			}
-		};
+		
 
 		/**
 		 * Clears all performance measurements
@@ -3920,11 +3958,7 @@
 		 * @function
 		 * @public
 		 */
-		this.clear = function( ){
-			if (!bActive) {
-				return;
-			}
-
+		this._clear = function( ){
 			this.mMeasurements = {};
 		};
 
@@ -3936,36 +3970,9 @@
 		 * @function
 		 * @public
 		 */
-		this.remove = function( sId ){
-			if (!bActive) {
-				return;
-			}
-
+		this._remove = function( sId ){
 			delete this.mMeasurements[sId];
 		};
-
-		/**
-		 * Gets all performance measurements
-		 *
-		 * @return {object} [] current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
-		 * @name jQuery.sap.measure#getAllMeasurements
-		 * @function
-		 * @public
-		 */
-		this.getAllMeasurements = function( ){
-			if (!bActive) {
-				return;
-			}
-
-			var aMeasurements = [],
-				that = this;
-
-			jQuery.each(this.mMeasurements, function(sId){
-				aMeasurements.push(that.getMeasurement(sId));
-			});
-			return aMeasurements;
-		};
-
 		/**
 		 * Adds a performance measurement with all data
 		 * This is usefull to add external measurements (e.g. from a backend) to the common measurement UI
@@ -3976,32 +3983,242 @@
 		 * @param {int} iEnd end timestamp
 		 * @param {int} iTime time in milliseconds
 		 * @param {int} iDuration effective time in milliseconds
-		 * @return {object} [] current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
+		 * @param {string | string[]} [aCategories = "javascript"] An optional list of categories for the measure
+		 * @return {object} [] current measurement containing id, info and start-timestamp, end-timestamp, time, duration, categories (false if error)
 		 * @name jQuery.sap.measure#add
 		 * @function
 		 * @public
 		 */
-		this.add = function( sId, sInfo, iStart, iEnd, iTime, iDuration ){
+		this._add = function( sId, sInfo, iStart, iEnd, iTime, iDuration, aCategories ){
 			if (!bActive) {
 				return;
 			}
-
-			var oMeasurement = new Measurement( sId, sInfo, iStart, iEnd);
+			aCategories = checkCategories(aCategories);
+			if (!aCategories) {
+				return false;
+			}
+			var oMeasurement = new Measurement( sId, sInfo, iStart, iEnd, aCategories);
 			oMeasurement.time = iTime;
 			oMeasurement.duration = iDuration;
 
 			if (oMeasurement) {
 				this.mMeasurements[sId] = oMeasurement;
-				return ({id: oMeasurement.id,
-						info: oMeasurement.info,
-						start: oMeasurement.start,
-						end: oMeasurement.end,
-						time: oMeasurement.time,
-						duration: oMeasurement.duration});
+				return this.getMeasurement(oMeasurement.id);
 			} else {
 				return false;
 			}
 		};
+		
+		/**
+		 * Starts an average performance measure.
+		 * The duration of this measure is an avarage of durations measured for each call.
+		 * Optionally a category or list of categories can be passed to allow filtering of measurements.
+		 *
+		 * @param {string} sId ID of the measurement
+		 * @param {string} sInfo Info for the measurement
+		 * @param {string | string[]} [aCategories = "javascript"] An optional list of categories for the measure
+		 * @return {object} current measurement containing id, info and start-timestamp (false if error)
+		 * @name jQuery.sap.measure#average
+		 * @function
+		 * @public
+		 */
+		this._average = function( sId, sInfo, aCategories){
+			if (!bActive) {
+				return;
+			}
+			aCategories = checkCategories(aCategories);
+			if (!aCategories) {
+				return;
+			}
+			
+			var oMeasurement = this.mMeasurements[sId],
+				iTime = jQuery.sap.now();
+			if (!oMeasurement || !oMeasurement.average) {
+				this.start(sId, sInfo, aCategories);
+				oMeasurement = this.mMeasurements[sId];
+				oMeasurement.average = true;
+			} else {
+				if (!oMeasurement.end) {
+					oMeasurement.completeDuration += (iTime - oMeasurement.start);
+					oMeasurement.count++;
+				}
+				oMeasurement.start = iTime;
+				oMeasurement.end = 0;
+			}
+			return this.getMeasurement(oMeasurement.id);
+		};
+		
+		/**
+		 * Gets a performance measure
+		 *
+		 * @param {string} sId ID of the measurement
+		 * @return {object} current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
+		 * @name jQuery.sap.measure#getMeasurement
+		 * @function
+		 * @public
+		 */
+		this.getMeasurement = function( sId ){
+			
+			var oMeasurement = this.mMeasurements[sId];
+
+			if (oMeasurement) {
+				return {id: oMeasurement.id,
+						info: oMeasurement.info,
+						start: oMeasurement.start,
+						end: oMeasurement.end,
+						pause: oMeasurement.pause,
+						resume: oMeasurement.resume,
+						time: oMeasurement.time,
+						duration: oMeasurement.duration,
+						completeDuration: oMeasurement.completeDuration,
+						count: oMeasurement.count,
+						average: oMeasurement.average,
+						categories: oMeasurement.categories};
+			} else {
+				return false;
+			}
+		};
+		
+		/**
+		 * Gets all performance measurements
+		 * 
+		 * @param {boolean} [bCompleted] Whether only completed measurements should be returned, if explicitly set to false only incomplete measurements are returned
+		 * @return {object} [] current measurement containing id, info and start-timestamp, end-timestamp, time, duration, categories
+		 * @name jQuery.sap.measure#getAllMeasurements
+		 * @function
+		 * @public
+		 */
+		this.getAllMeasurements = function(bCompleted){
+			return this.filterMeasurements(function(oMeasurement) {
+				return oMeasurement;
+			}, bCompleted);
+		};
+
+		/**
+		 * Gets all performance measurements where a provided filter function returns true.
+		 * The filter function is called for every measurement and should return the measurement to be added.
+		 * If no filter function is provided an empty array is returned.
+		 * To filter for certain categories of measurements a fnFilter can be implemented like this
+		 * <code>
+		 * function(oMeasurement) {
+		 *     return oMeasurement.categories.indexOf("rendering") > -1 ? oMeasurement : null
+		 * }</code>
+		 * 
+		 * @param {function} fnFilter a filter function that returns true if the passed measurement should be added to the result
+		 * @param {boolean} [bCompleted] Whether only completed measurements should be returned, if explicitly set to false only incomplete measurements are returned 
+		 * 
+		 * @return {object} [] current measurements containing id, info and start-timestamp, end-timestamp, time, duration, categories (false if error)
+		 * @name jQuery.sap.measure#filterMeasurements
+		 * @function
+		 * @public
+		 * @since 1.34.0
+	 	 */
+		this.filterMeasurements = function(fnFilter, bCompleted) {
+			var aMeasurements = [],
+				that = this;
+			jQuery.each(this.mMeasurements, function(sId){
+				var oMeasurement = that.getMeasurement(sId);
+				if (fnFilter) {
+					var oResult = fnFilter(oMeasurement);
+					if (oResult && ((bCompleted === false && oResult.end === 0) || (bCompleted !== false && (!bCompleted || oResult.end)))) {
+						aMeasurements.push(oResult);
+					}
+				}
+			});
+			return aMeasurements;
+		};
+
+		/**
+		 * Registers an average measurement for a given objects method
+		 * 
+		 * @param {string} sId the id of the measurement
+		 * @param {object} oObject the object of the method
+		 * @param {string} sMethod the name of the method
+		 * @param {string[]} [aCategories = ["javascript"]] An optional categories list for the measurement
+		 * 
+		 * @returns {boolean} true if the registration was successful
+		 * @name jQuery.sap.measure#registerMethod
+		 * @function
+		 * @public
+		 * @since 1.34.0
+		 */
+		this.registerMethod = function(sId, oObject, sMethod, aCategories) {
+			var fnMethod = oObject[sMethod];
+			if (fnMethod && typeof fnMethod === "function") {
+				var bFound = aAverageMethods.indexOf(fnMethod) > -1;
+				if (!bFound) {
+					aOriginalMethods.push({func : fnMethod, obj: oObject, method: sMethod, id: sId});
+					oObject[sMethod] = function() {
+						jQuery.sap.measure.average(sId, sId + " method average", aCategories);
+						var result = fnMethod.apply(this, arguments);
+						jQuery.sap.measure.end(sId);
+						return result;
+					};
+					aAverageMethods.push(oObject[sMethod]);
+					return true;
+				}
+			} else {
+				jQuery.sap.log.debug(sMethod + " in not a function. jQuery.sap.measure.register failed");
+			}
+			return false;
+		};
+
+		/**
+		 * Unregisters an average measurement for a given objects method
+		 * 
+		 * @param {string} sId the id of the measurement
+		 * @param {object} oObject the object of the method
+		 * @param {string} sMethod the name of the method
+		 * 
+		 * @returns {boolean} true if the unregistration was successful
+		 * @name jQuery.sap.measure#unregisterMethod
+		 * @function
+		 * @public
+		 * @since 1.34.0
+		 */
+		this.unregisterMethod = function(sId, oObject, sMethod) {
+			var fnFunction = oObject[sMethod],
+				iIndex = aAverageMethods.indexOf(fnFunction);
+			if (fnFunction && iIndex > -1) {
+				oObject[sMethod] = aOriginalMethods[iIndex].func;
+				aAverageMethods.splice(iIndex, 1);
+				aOriginalMethods.splice(iIndex, 1);
+				return true;
+			}
+			return false;
+		};
+
+		/**
+		 * Unregisters all average measurements
+		 * @name jQuery.sap.measure#unregisterAllMethods
+		 * @function
+		 * @public
+		 * @since 1.34.0
+		 */
+		this.unregisterAllMethods = function() {
+			while (aOriginalMethods.length > 0) {
+				var oOrig = aOriginalMethods[0];
+				this.unregisterMethod(oOrig.id, oOrig.obj, oOrig.method);
+			}
+		};
+		
+		var aMatch = location.search.match(/sap-ui-measure=([^\&]*)/);
+		if (aMatch && aMatch[1]) {
+			if (aMatch[1] === "true" || aMatch[1] === "x" || aMatch[1] === "X") {
+				this.setActive(true);
+			} else {
+				this.setActive(true, aMatch[1]);
+			}
+		} else {
+			var fnInactive = function() {
+				//measure not active
+				return null;
+			};
+			//deactivate methods implementations
+			for (var i = 0; i < aMethods.length; i++) {
+				this[aMethods[i]] = fnInactive;
+			}
+		}
 	}
 
 	/**
