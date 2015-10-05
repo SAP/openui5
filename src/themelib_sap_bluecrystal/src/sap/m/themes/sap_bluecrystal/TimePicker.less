@@ -84,7 +84,8 @@
 							background: darken(@sapUiExtraLightBG, 10);
 						}
 						&:active {
-							background: @sapUiExtraLightBG;
+							background: @sapUiHighlight;
+							color: @sapUiTextInverted;
 						}
 						&:focus {
 							outline: 1px dotted @sapUiFocus;
@@ -97,6 +98,13 @@
 							border: 2px solid darken(@sapUiHighlight,10);
 							& + ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
 								background: darken(@sapUiExtraLightBG, 10);
+							}
+						}
+						&:active {
+							border: 2px solid @sapUiHighlight;
+							& + ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
+								background: @sapUiHighlight;
+								color: @sapUiTextInverted;
 							}
 						}
 					}

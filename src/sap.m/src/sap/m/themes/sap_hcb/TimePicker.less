@@ -3,128 +3,111 @@
 /* High Contrast Black theme                */
 /* ======================================== */
 
+/* ======================================== */
+/* TimePicker Input Field                   */
+/* ======================================== */
+
 .sapMTimePicker {
-  .sapUiIcon {
-	color: @sapHCStandardFG;
-	&:hover {
-	  background: @sapHCHighlightBG;
-	}
-	&:active {
-	  background: @sapHCHighlightAltBG;
-	}
-	&:focus {
-	  	outline: 1px dotted @sapUiFocus;
-	  	outline-offset: -1px;
-	}
-  }
-  &.sapMTPInputActive {
-
 	.sapUiIcon {
-
-	  background-color: @sapHCHighlightAltBG;
-	  border-left: 0.0625rem solid @sapHCStandardFG;
-	  margin-left: -0.0625rem;
-	}
-	.sapMInputIE9.sapUiIcon {
-	  .sapUiIcon;
-	}
-  }
-}
-
-/* Compact size */
-
-.sapUiSizeCompact .sapMDP > .sapUiIcon {
-  top : 0.25rem;
-}
-
-/* fix for IE9 icon border missing */
-html[data-sap-ui-browser^="ie9"] {
-  .sapMDP > .sapUiIcon {
-	border: 1px solid transparent;
-  }
-  .sapMDP > .sapUiIcon:hover {
-	border: 1px solid @sapHCStandardFG;
-  }
-  .sapUiSizeCompact .sapMDP > .sapUiIcon,
-  .sapUiSizeCompact .sapMDP > .sapUiIcon:hover {
-	border-top: 0 none;
-	border-bottom: 0 none;
-  }
-}
-
-
-.sapMTimePickerDropDown {
-  .sapMTimePickerContainer {
-
-	.sapMTPColumn {
-	  .sapMTimePickerLabel {
-		  font-size: @sapMFontSmallSize;
-	  }
-	  .sapMTimePickerSlider {
-		.sapMTimePickerItem {
-		  background: @sapHCStandardBG;
-		  border: 1px solid @sapHCReducedAltFG;
-		  font-size: @sapMFontMediumSize;
-		  color: @sapHCStandardFG;
-		  text-align: center;
-
-		  &:hover {
+		color: @sapHCStandardFG;
+		&:hover {
 			background: @sapHCHighlightBG;
-			font-weight: bold;
-		  }
-		  &:active {
+		}
+		&:active {
 			background: @sapHCHighlightAltBG;
-			font-weight: bold;
-		  }
-		  &:focus {
-			outline: 2px dotted @sapHCStandardFG;
-		  }
-		  &.sapMTimePickerItemSelected {
-			//	background: @sapHCHighlightAltBG;
-			font-weight: bold;
-			&:active {
-			  border: 2px solid @sapHCStandardFG;
-			}
-		  }
 		}
-		.sapMTPPickerSelectionFrame {
+		&:focus {
+			outline: 1px dotted @sapUiFocus;
+			outline-offset: -1px;
 		}
-		& > ul {
-		}
-
-	  }
-	  &.sapMTPSliderExpanded {
-		font-weight: normal;
-		.sapMTimePickerSlider {
-			.sapMTimePickerItem {
-				background: @sapHCStandardBG;
-
-				&:hover {
-					background: @sapHCHighlightBG;
-				}
-				&:active {
-					background: @sapHCHighlightAltBG;
-				}
-				&:focus {
-					outline: 2px dotted @sapHCStandardFG;
-				}
-				&.sapMTimePickerItemSelected {
-					background: @sapHCHighlightAltBG;
-					font-weight: bold;
-				}
-			}
-			.sapMTPPickerSelectionFrame {
-				outline: 2px solid @sapHCStandardFG;
-				outline-offset: -5px;
-				font-weight: bold;
-			}
-		}
-	  }
-	  &:focus {
-		outline: none;
-	  }
 	}
-  }
+	&.sapMTPInputActive {
+		.sapUiIcon {
+			background-color: @sapHCHighlightAltBG;
+			border-left: 0.0625rem solid @sapHCStandardFG;
+			margin-left: -0.0625rem;
+		}
+		.sapMInputIE9.sapUiIcon {
+			.sapUiIcon;
+		}
+	}
+}
+/* ======================================== */
+/* TimePicker Dropdown                      */
+/* ======================================== */
+.sapMTimePickerDropDown {
+	.sapMTimePickerContainer {
+		.sapMTPColumn {
+			.sapMTimePickerLabel {
+				font-size: @sapMFontSmallSize;
+			}
+			.sapMTimePickerSlider {
+				.sapMTimePickerItem {
+					background: @sapHCStandardBG;
+					border: 1px solid @sapHCReducedAltFG;
+					font-size: @sapMFontMediumSize;
+					color: @sapHCStandardFG;
+					text-align: center;
+					&:hover {
+						background: @sapHCHighlightBG;
+						font-weight: bold;
+					}
+					&:active {
+						background: @sapHCHighlightAltBG;
+						font-weight: bold;
+					}
+					&:focus {
+						outline: 2px dotted @sapHCStandardFG;
+					}
+					&.sapMTimePickerItemSelected {
+						font-weight: bold;
+						&:active {
+							border: 2px solid @sapHCStandardFG;
+						}
+					}
+				}
+			}
+			&.sapMTPSliderExpanded {
+				font-weight: normal;
+				.sapMTimePickerSlider {
+					.sapMTimePickerItem {
+						background: @sapHCStandardBG;
+						&:hover {
+							background: @sapHCHighlightBG;
+						}
+						&:active {
+							background: @sapHCHighlightAltBG;
+						}
+						&:focus {
+							outline: 2px dotted @sapHCStandardFG;
+						}
+						&.sapMTimePickerItemSelected {
+							background: @sapHCHighlightAltBG;
+							font-weight: bold;
+						}
+					}
+					.sapMTPPickerSelectionFrame {
+						outline: 2px solid @sapHCStandardFG;
+						outline-offset: -5px;
+						font-weight: bold;
+						&:hover {
+							+ ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
+								background: @sapHCHighlightBG;
+							}
+						}
+						&:active {
+							+ ul > li.sapMTimePickerItem.sapMTimePickerItemSelected {
+								background: @sapHCHighlightAltBG;
+							}
+						}
+					}
+				}
+			}
+			&:focus {
+				outline: none;
+			}
+		}
+	}
 }
 
 /* IE mobile and desktop ignores outline-offset. Use an overlay: */
@@ -166,28 +149,25 @@ html[data-sap-ui-browser^="ie"] .sapUiSizeCompact {
 }
 
 .sap-phone {
-  /* ======================================== */
-  /* TimePicker Input Field                   */
-  /* ======================================== */
-  .sapMTimePicker {
-	.sapMInputBaseInner {
-
+	/* ======================================== */
+	/* TimePicker Input Field                   */
+	/* ======================================== */
+	.sapMTimePicker {
+		.sapUiIcon {
+			&:active {
+				background-color: @sapHCHighlightAltBG !important;
+			}
+			&:focus {
+				outline: 1px dotted @sapUiFocus;
+				outline-offset: -1px;
+			}
+		}
 	}
-	.sapUiIcon {
-	  &:active {
-		background-color: @sapHCHighlightAltBG !important;
-	  }
-	  &:focus {
-		outline: 1px dotted @sapUiFocus;
-		outline-offset: -1px;
-	  }
+	//in order to not be displayed hover in mobile
+	//is there a better way?
+	.sapMTimePickerItem{
+		&:hover {
+			background-color: transparent !important;
+		}
 	}
-  }
-  //in order to not be displayed hover in mobile
-  //is there a better way?
-  .sapMTimePickerItem{
-	&:hover {
-	  background-color: transparent !important;
-	}
-  }
 }
