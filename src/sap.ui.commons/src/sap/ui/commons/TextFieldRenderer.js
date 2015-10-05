@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	 * @since 0.9.0
 	 */
 	var TextFieldRenderer = {};
-	
+
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
@@ -27,11 +27,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	TextFieldRenderer.render = function(oRenderManager, oTextField) {
 		var rm = oRenderManager,
 			r  = TextFieldRenderer;
-	
+
 		var sWidth = oTextField.getWidth();
 		var tooltip = ValueStateSupport.enrichTooltip(oTextField, oTextField.getTooltip_AsString());
 		var bRenderOuter = oTextField._getRenderOuter();
-	
+
 	// In case of Combobox, F4-help, DatePicker: Render outer element.
 	// The details of the outer element are rendered in the hook implemented in the corresponding control.
 		if (bRenderOuter) {
@@ -39,33 +39,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			rm.writeControlData(oTextField);
 			rm.addClass("sapUiTfBack");
 			this.renderStyles(rm, oTextField);
-	
+
 			if (tooltip) {
 				rm.writeAttributeEscaped('title', tooltip);
 			}
-	
+
 			var sSpanStyle;
 			if (sWidth && sWidth != '') {
 				sSpanStyle = 'width: ' + sWidth + ';';
 			}
-	
+
 			if (this.renderOuterAttributes) {
 				this.renderOuterAttributes(rm, oTextField);
 			}
-	
+
 			if (sSpanStyle) {
 				rm.writeAttribute('style', sSpanStyle);
 			}
 			rm.writeStyles();
 			rm.writeClasses();
 			rm.write(">");
-	
+
 			// Outer hook
 			if (this.renderOuterContentBefore) {
 				this.renderOuterContentBefore(rm, oTextField);
 			}
 		}
-	
+
 	// Inner tag / pure TextField
 		if (this.getInnerTagName) {
 			rm.write('<' + this.getInnerTagName());
@@ -73,13 +73,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			rm.write("<input");
 		}
 		rm.addClass("sapUiTf");
-	
+
 		if (!bRenderOuter) {
 			// Stand-alone TextField
 			rm.writeControlData(oTextField);
 			rm.addClass("sapUiTfBack");
 			this.renderStyles(rm, oTextField);
-	
+
 			if (sWidth && sWidth != '') {
 				rm.addStyle("width", sWidth);
 			}
@@ -88,18 +88,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			rm.addClass("sapUiTfInner");
 			rm.addStyle("width", '100%');
 		}
-	
+
 		if (tooltip) {
 			// render title always on INPUT tag (even it's in outer DIV too)
 			// because screenreader ignores it on outer DIV 
 			rm.writeAttributeEscaped('title', tooltip);
 		}
-	
+
 		if (oTextField.getName()) {
 			rm.writeAttributeEscaped('name', oTextField.getName());
 		}
-	
-		if (!oTextField.getEditable()) {
+
+		if (!oTextField.getEditable() && oTextField.getEnabled()) {
 			rm.writeAttribute('readonly', 'readonly');
 		}
 		if (this.renderTextFieldEnabled) {
@@ -112,18 +112,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		} else {
 			rm.writeAttribute('tabindex', '0');
 		}
-	
+
 		// Appearance
 		var sTextDir = oTextField.getTextDirection();
 		if (sTextDir) {
 			rm.addStyle("direction", sTextDir.toLowerCase());
 		}
-	
+
 		var sTextAlign = r.getTextAlign(oTextField.getTextAlign(), sTextDir);
 		if (sTextAlign) {
 			rm.addStyle("text-align", sTextAlign);
 		}
-	
+
 		switch (oTextField.getImeMode()) {
 		case sap.ui.core.ImeMode.Inactive:
 			rm.addStyle('ime-mode','inactive');
@@ -136,25 +136,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			break;
 		// no default
 		}
-	
+
 		if (oTextField.getDesign() == sap.ui.core.Design.Monospace) {
 			rm.addClass('sapUiTfMono');
 		}
-	
+
 		if (oTextField.getMaxLength()) {
 			rm.writeAttribute("maxLength", oTextField.getMaxLength());
 		}
-	
+
 		// Add additional attributes, styles and so on (TextArea)
 		if (this.renderInnerAttributes) {
 			this.renderInnerAttributes(rm, oTextField);
 		}
-	
+
 		// ARIA
 		if (this.renderARIAInfo) {
 			this.renderARIAInfo(rm, oTextField);
 		}
-	
+
 		var sPlaceholder = oTextField.getPlaceholder();
 		if (sPlaceholder) {
 			if (this.convertPlaceholder) {
@@ -164,10 +164,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 				rm.writeAttributeEscaped('placeholder', sPlaceholder);
 			}
 		}
-	
+
 		rm.writeStyles();
 		rm.writeClasses();
-	
+
 		if (this.getInnerTagName) {
 			rm.write(">");
 		} else {
@@ -180,31 +180,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			rm.write("\"");
 			rm.write("/>");
 		}
-	
+
 		if (this.getInnerTagName) {
 			// Inner hook
 			if (this.renderInnerContent) {
 				this.renderInnerContent(rm, oTextField);
 			}
-	
+
 			rm.write('</' + this.getInnerTagName() + '>');
 		}
-	
+
 		if (bRenderOuter) {
 			// Outer hook
 			if (this.renderOuterContent) {
 				this.renderOuterContent(rm, oTextField);
 			}
-	
+
 			rm.write("</div>");
 		}
-	
+
 	};
-	
+
 	TextFieldRenderer.renderStyles = function(rm, oTextField) {
-	
+
 		rm.addClass('sapUiTfBrd');
-	
+
 		if (oTextField.getEnabled()) {
 			if (!oTextField.getEditable()) {
 				rm.addClass("sapUiTfRo");
@@ -214,7 +214,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		} else {
 			rm.addClass("sapUiTfDsbl");
 		}
-	
+
 		switch (oTextField.getValueState()) {
 		case (sap.ui.core.ValueState.Error) :
 			rm.addClass('sapUiTfErr');
@@ -227,39 +227,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		break;
 		// no default
 		}
-	
+
 		if (oTextField.getRequired()) {
 			rm.addClass('sapUiTfReq');
 		}
-	
+
 		if (oTextField.getPlaceholder() && !sap.ui.Device.support.input.placeholder) {
 			rm.addClass('sapUiTfPlace');
 		}
-	
+
 	};
-	
+
 	TextFieldRenderer.onfocus = function(oTextField) {
 		var oTfRef = oTextField.$();
 		var oTfRefInput;
 		oTfRef.addClass("sapUiTfFoc");
-	
+
 		if (!sap.ui.Device.support.input.placeholder && !oTextField.getValue() && oTextField.getPlaceholder()) {
 			if (oTextField._getRenderOuter()) {
 				oTfRefInput = oTextField.$("input");
 			} else {
 				oTfRefInput = oTfRef;
 			}
-	
+
 			oTfRef.removeClass("sapUiTfPlace");
 			oTfRefInput.val("");
 		}
 	};
-	
+
 	TextFieldRenderer.onblur = function(oTextField) {
 		var oTfRef = oTextField.$();
 		var oTfRefInput;
 		oTfRef.removeClass("sapUiTfFoc");
-	
+
 		var sPlaceholder = oTextField.getPlaceholder();
 		if (!sap.ui.Device.support.input.placeholder) {
 			if (oTextField._getRenderOuter()) {
@@ -267,7 +267,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			} else {
 				oTfRefInput = oTfRef;
 			}
-	
+
 			if (!oTfRefInput.val() && sPlaceholder) {
 				oTfRef.addClass("sapUiTfPlace");
 				if (this.convertPlaceholder) {
@@ -277,19 +277,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			}
 		}
 	};
-	
+
 	TextFieldRenderer.setValueState = function(oTextField, oldValueState, newValueState) {
 		var oTfRef = oTextField.$();
 		var oTfRefInput;
 		var bRenderOuter = oTextField._getRenderOuter();
-	
+
 		if (bRenderOuter) {
 		// aria attribute must be on inner tag
 			oTfRefInput = oTextField.$("input");
 		} else {
 			oTfRefInput = oTfRef;
 		}
-	
+
 		// Remove old value state
 		switch (oldValueState) {
 		case (sap.ui.core.ValueState.Error) :
@@ -304,7 +304,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			break;
 		// no default
 		}
-	
+
 		// Set new value state
 		switch (newValueState) {
 		case (sap.ui.core.ValueState.Error) :
@@ -319,7 +319,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			break;
 		// no default
 		}
-	
+
 		var tooltip = ValueStateSupport.enrichTooltip(oTextField, oTextField.getTooltip_AsString());
 		if (tooltip) {
 			oTfRef.attr('title', tooltip);
@@ -332,56 +332,56 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 				oTextField.$("input").removeAttr('title');
 			}
 		}
-	
+
 	};
-	
+
 	TextFieldRenderer.setEditable = function(oTextField, bEditable) {
-	
+
 		if (!oTextField.getEnabled()) {
 			// if disabled -> nothing to do
 			return;
 		}
-	
+
 		var oTfRef = oTextField.$();
 		var oTfRefInput;
-	
+
 		if (oTextField._getRenderOuter()) {
 		// Readonly attribute must be on inner tag
 			oTfRefInput = oTextField.$("input");
 		} else {
 			oTfRefInput = oTfRef;
 		}
-	
-	
+
 		if (bEditable) {
 			oTfRef.removeClass('sapUiTfRo').addClass('sapUiTfStd');
 			oTfRefInput.removeAttr('readonly');
+			oTfRefInput.removeAttr('aria-readonly');
 		} else {
 			oTfRef.removeClass('sapUiTfStd').addClass('sapUiTfRo');
 			oTfRefInput.attr('readonly', 'readonly');
+			oTfRefInput.attr('aria-readonly', true);
 		}
-	
-		oTfRefInput.attr('aria-readonly', !bEditable);
+
 	};
-	
+
 	TextFieldRenderer.setEnabled = function(oTextField, bEnabled) {
 		var oTfRef = oTextField.$();
 		var oTfRefInput;
-	
+
 		if (oTextField._getRenderOuter()) {
 		// Disabled attribute must be on inner tag
 			oTfRefInput = oTextField.$("input");
 		} else {
 			oTfRefInput = oTfRef;
 		}
-	
+
 		if (bEnabled) {
 			if (oTextField.getEditable()) {
 				oTfRef.removeClass('sapUiTfDsbl').addClass('sapUiTfStd').removeAttr('aria-disabled');
 				oTfRefInput.removeAttr('disabled').removeAttr('aria-disabled').attr( 'tabindex', '0');
 			} else {
 				oTfRef.removeClass('sapUiTfDsbl').addClass('sapUiTfRo').removeAttr('aria-disabled');
-				oTfRefInput.removeAttr('disabled').removeAttr('aria-disabled').attr( 'tabindex', '0').attr( 'readonly', 'readonly');
+				oTfRefInput.removeAttr('disabled').removeAttr('aria-disabled').attr( 'tabindex', '0').attr( 'readonly', 'readonly').attr('aria-readonly', true);
 			}
 		} else {
 			if (oTextField.getEditable()) {
@@ -389,12 +389,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 				oTfRefInput.attr( 'disabled', 'disabled').attr('aria-disabled', 'true').attr( 'tabindex', '-1');
 			} else {
 				oTfRef.removeClass('sapUiTfRo').addClass('sapUiTfDsbl').attr('aria-disabled', 'true');
-				oTfRefInput.removeAttr('readonly').attr( 'disabled', 'disabled').attr('aria-disabled', 'true').attr( 'tabindex', '-1');
+				oTfRefInput.removeAttr('readonly').removeAttr('aria-readonly').attr( 'disabled', 'disabled').attr('aria-disabled', 'true').attr( 'tabindex', '-1');
 			}
 		}
-	
+
 	};
-	
+
 	TextFieldRenderer.removeValidVisualization = function(oTextField) {
 		var oTfRef = oTextField.$();
 		if (oTfRef) {
@@ -403,54 +403,54 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			jQuery.sap.delayedCall(1000, TextFieldRenderer, "removeValidVisualization", [oTextField]);
 		}
 	};
-	
+
 	TextFieldRenderer.setDesign = function(oTextField, sDesign) {
-	
+
 		oTextField.$().toggleClass('sapUiTfMono', (sDesign == sap.ui.core.Design.Monospace));
 	};
-	
+
 	TextFieldRenderer.setRequired = function(oTextField, bRequired) {
-	
+
 		var oTfRefInput;
-	
+
 		if (oTextField._getRenderOuter()) {
 		// aria attribute must be on inner tag
 			oTfRefInput = oTextField.$("input");
 		} else {
 			oTfRefInput = oTextField.$();
 		}
-	
+
 		oTextField.$().toggleClass('sapUiTfReq', bRequired);
 		if (bRequired) {
 			oTfRefInput.attr("aria-required", true);
 		} else {
 			oTfRefInput.removeAttr("aria-required");
 		}
-	
+
 	};
-	
+
 	TextFieldRenderer.renderARIAInfo = function(rm, oTextField) {
-	
+
 		var mProps = {
 			role: oTextField.getAccessibleRole().toLowerCase(),
 			multiline: false,
 			autocomplete: 'none'};
-	
+
 		if (oTextField.getValueState() == sap.ui.core.ValueState.Error) {
 			mProps["invalid"] = true;
 		}
-	
+
 		rm.writeAccessibilityState(oTextField, mProps);
-	
+
 	};
-	
+
 	/**
 	 * Dummy inheritance of static methods/functions.
 	 * @see sap.ui.core.Renderer.getTextAlign
 	 * @private
 	 */
 	TextFieldRenderer.getTextAlign = Renderer.getTextAlign;
-	
+
 
 	return TextFieldRenderer;
 
