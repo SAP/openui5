@@ -391,19 +391,28 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 		 * @param {sap.ui.base.Event} oControlEvent
 		 */
 		ComboBox.prototype.onSelectionChange = function(oControlEvent) {
-			var oItem = oControlEvent.getParameter("selectedItem"),
-				sValue;
+			var oItem = oControlEvent.getParameter("selectedItem");
+			this.setSelection(oItem);
+			this.fireSelectionChange({
+				selectedItem: this.getSelectedItem()
+			});
+		};
 
+		/**
+		 * Handles the <code>ItemPress</code> event on the list.
+		 *
+		 * @param {sap.ui.base.Event} oControlEvent
+		 * @since 1.32.4
+		 */
+		ComboBox.prototype.onItemPress = function(oControlEvent) {
+			var oItem = oControlEvent.getParameter("item");
 			this.close();
 			this.updateDomValue(oItem.getText());
-			this.setSelection(oItem);
-			this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
-			sValue = this.getValue();
 
 			if (sap.ui.Device.system.desktop) {
 
-				// deselect the text and move the text cursor at the endmost position (only ie)
-				jQuery.sap.delayedCall(0, this, "selectText", [sValue.length, sValue.length]);
+				// deselect the text and move the text cursor at the endmost position
+				setTimeout(this.selectText.bind(this, this.getValue().length, this.getValue().length), 0);
 			}
 		};
 
@@ -840,7 +849,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 					this.close();
 				}
 			}, this)
-			.attachSelectionChange(this.onSelectionChange, this);
+			.attachSelectionChange(this.onSelectionChange, this)
+			.attachItemPress(this.onItemPress, this);
 
 			return this._oList;
 		};
