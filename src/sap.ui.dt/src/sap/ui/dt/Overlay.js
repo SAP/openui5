@@ -230,11 +230,10 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 			}
 			var oOverflows = DOMUtil.getOverflows(oGeometry.domRef);
 			if (oOverflows) {
-				// overflow hidden isn't copied because of IconTabFilter control, where the content of filter is outside of the IconTabBar header but still should be reachable
-				if (oOverflows.overflowX && oOverflows.overflowX !== "hidden") {
+				if (oOverflows.overflowX) {
 					$overlay.css("overflow-x", oOverflows.overflowX);
 				}
-				if (oOverflows.overflowY && oOverflows.overflowY !== "hidden") {
+				if (oOverflows.overflowY) {
 					$overlay.css("overflow-y", oOverflows.overflowY);
 				}
 				var iScrollHeight = oGeometry.domRef.scrollHeight;
@@ -255,13 +254,6 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 				this._oDummyScrollContainer.remove();
 				delete this._oDummyScrollContainer;
 			}
-
-			// To remove unnecessary scrollbars!
-			// when content of a div is bigger then the div, the scrollbars appears, then even after the content is returned to normal size,
-			// scrollbars aren't removed, because of a place they use to render themselfs (inside of content as well)
-			// To prevent this we make the div big enought to remove vertical scrlobar, if there's no need for the horizontal scrollbar, it also disapears
-			$overlay.height(mSize.height + 32); // 32 is 2 times Chrome scrollbar
-			$overlay.height(mSize.height);
 		}
 	};
 
@@ -305,10 +297,19 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 			} else {
 				// instead of adding the created DOM into the UIArea's DOM, we are adding it to overlay-container to avoid clearing of the DOM
 				var oOverlayContainer = Overlay.getOverlayContainer();
-				if (oOverlayContainer !== this.$().parent().get(0)) {
+				var $parent = this.$().parent();
+				var oParentElement = $parent.length ? $parent.get(0) : null;
+				if (oOverlayContainer !== oParentElement) {
 					this.$().appendTo(oOverlayContainer);
 				}
 				this.applyStyles();
+
+				// fix for webkit browsers unnecessary scrollbars
+				// see following link for a demo of a problem (in webkit browser)
+				// https://jsbin.com/ruxusanoxe/edit?html,css,js,output
+				if (sap.ui.Device.browser.webkit) {
+					this._removeUnnecessaryScrollBar();
+				}
 			}
 		}
 		if (oGeometry && this.isVisible()) {
@@ -317,6 +318,20 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 			// we should always be in DOM to make sure, that drop events (dragend) will be fired even if the overlay isn't visible anymore
 			this.$().hide();
 		}
+	};
+
+	/** 
+	 * @private
+	 */
+	Overlay.prototype._removeUnnecessaryScrollBar = function() {
+		var mOverlayDisplay = {};
+		OverlayUtil.iterateOverlayTree(this, function(oOverlay) {
+			mOverlayDisplay[oOverlay.getId()] = oOverlay.$().css("display");
+			oOverlay.$().hide();
+		});
+		OverlayUtil.iterateOverlayTree(this, function(oOverlay) {
+			oOverlay.$().css("display", mOverlayDisplay[oOverlay.getId()]);
+		});
 	};
 
 	/** 
