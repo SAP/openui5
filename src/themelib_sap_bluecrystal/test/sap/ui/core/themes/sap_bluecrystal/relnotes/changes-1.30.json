@@ -586,5 +586,24 @@
         "references": []
       }
     ]
+  },
+  "1.30.9": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "a2d2ab57a6e05ccbd8b7ddb5439d5769157b0474",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Table: Screen size limits should be included.",
+        "references": []
+      },
+      {
+        "id": "dcc67e398003606e88e1c9fb2561e8ab3b3086f0",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Touch Menu could overlay text",
+        "references": []
+      }
+    ]
   }
 }

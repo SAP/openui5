@@ -512,5 +512,31 @@
         "references": []
       }
     ]
+  },
+  "1.30.9": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "4d5435eaa0cb176949a406494901634a19f9c17c",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: Using FocusInfo Fixed",
+        "references": []
+      },
+      {
+        "id": "d800e135a1d5eb4d4eaed8eeb254a8ff868415c4",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ComboBox: error if sap.ui.core.Item is used",
+        "references": []
+      },
+      {
+        "id": "33698b032a5107ba7dcbe9b91678cee48a69bd79",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Toolbar: Overflowing inside sap.ui.layout.Splitter is now possible.",
+        "references": []
+      }
+    ]
   }
 }

@@ -2087,5 +2087,185 @@
         "references": []
       }
     ]
+  },
+  "1.30.9": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "4646bd84bf6d7533d5d18c11eca15e8830e44963",
+        "author": "Michael Graf \u003cmi.graf@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.core.tutorial.navigation - new navigation tutorial",
+        "references": []
+      },
+      {
+        "id": "07be91faa563cb953cbddafa18332ca6af09f31c",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalTable.js - Fixed Blocking BusyIndicator",
+        "references": []
+      },
+      {
+        "id": "d5df64869f24b3b985429a19db69f42be5288028",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "CLDR: Remove 1000-other for asian languages",
+        "references": []
+      },
+      {
+        "id": "f5a2b0caaaa9a9e4621afefc18da6a58e71013ca",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "Component: removed the extends.component detection for manifest",
+        "references": []
+      },
+      {
+        "id": "a6b94cceacc0bb13830b0d6b7f8dd8c7c908bacb",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Core: Start Theme check before onInit hook is processed",
+        "references": []
+      },
+      {
+        "id": "52267fc643dbbeda0d26844c316efb5bc398ed66",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "ItemNavigation: adapt dokumentation",
+        "references": []
+      },
+      {
+        "id": "9fa02718288f8228f2cece78ef7cf8c31bd93a1f",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "MessageListBinding: filtering does not work",
+        "references": []
+      },
+      {
+        "id": "ee122423352d39978a604f264e9809d58a74fe2a",
+        "author": "Gal Roter \u003cgal.roter@sap.com\u003e",
+        "type": "FIX",
+        "text": "MockServer: add missing quotes for jQuery.find",
+        "references": []
+      },
+      {
+        "id": "05c79cfbcc4f0cfaa51474d95572fa44d62f2bd2",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataAnnotations: Overwrite Annotations on Term Level",
+        "references": []
+      },
+      {
+        "id": "48f7a6c65855248679c13fca1fc3ec7e612e7d30",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: Only update metamodel bindings when metamodel is loaded",
+        "references": []
+      },
+      {
+        "id": "c6d88d0b9df3815d53bc71ab4669b604ad1bb295",
+        "author": "Uwe Reeder \u003cuwe.reeder@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: Parse Annotation URLs After Metadata Was Loaded",
+        "references": []
+      },
+      {
+        "id": "84021d5835419d396de6b98a5b6417888d6f9405",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: createEntry works with complex types which have multi level namespaces",
+        "references": []
+      },
+      {
+        "id": "40a2baf1a97f1d0e10486bc0fd074b981799b559",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataTreeBinding V1 is deprecated",
+        "references": []
+      },
+      {
+        "id": "4d5435eaa0cb176949a406494901634a19f9c17c",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: Using FocusInfo Fixed",
+        "references": []
+      },
+      {
+        "id": "501be7188f76536d8d6310d519575b49cd891990",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "RenderManager#writeIcon: Add \"title\" attr, option to prevent",
+        "references": []
+      },
+      {
+        "id": "d116a13abd79151a8e0cc4b540bf19061189b590",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "ResourceModel.qunit.html: Not stable in firefox",
+        "references": []
+      },
+      {
+        "id": "7f77ce5dfbd2c219e247788023ed438357ffa986",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ResourceModel: React to Global Language Change",
+        "references": []
+      },
+      {
+        "id": "e0d9d16e986fa210d3cff4f73a6268a771eab344",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "XMLView: ensure that content is preserved during rendering",
+        "references": []
+      },
+      {
+        "id": "e00d8611da5b113722589cbd0df8eda4c1672fe2",
+        "author": "Alexander Schmalzhaf \u003calexander.schmalzhaf@sap.com\u003e",
+        "type": "FIX",
+        "text": "getComputedStyle returns null when used in non-displayed iFrames in Firefox",
+        "references": []
+      },
+      {
+        "id": "2de1575e72452532af5b7e28aebf7fb2d3d73027",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.events: Avoid doubled events in Touch-to-Mouse handling",
+        "references": []
+      },
+      {
+        "id": "c770dcb5ead9cc7bbe090fcaa8fbaf300707f455",
+        "author": "SAP GitHub \u003cmartin.schaus@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.global: jQuery.sap.measure.setActive",
+        "references": []
+      },
+      {
+        "id": "1649982a0e4ca0566fc3f18951fbcf1e4504bdf5",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Core: getMessageManager JSDOC",
+        "references": []
+      },
+      {
+        "id": "aa890771bf3ea48710e58c075d5916691ef86617",
+        "author": "Sven Bernhard \u003csven.bernhard@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.XMLPreprocessor: performance improvements",
+        "references": []
+      },
+      {
+        "id": "494ce4eab94f4b6df4c282baec6bf66f75dc88b9",
+        "author": "Dr. Thomas Chadzelek \u003cthomas.chadzelek@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.AnnotationHelper: Avoid \"Expected object - undefined\"",
+        "references": []
+      },
+      {
+        "id": "052b5c83e1ebd45d2593f62c6366022f04ae07a4",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: no content-type header for GET requests",
+        "references": []
+      }
+    ]
   }
 }

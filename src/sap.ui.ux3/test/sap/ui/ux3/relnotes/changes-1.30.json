@@ -147,5 +147,17 @@
         "references": []
       }
     ]
+  },
+  "1.30.9": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "51356babf75848674c0a9842946113a0282d05cc",
+        "author": "Borislav Yovchev \u003cborislav.yovchev@sap.com\u003e",
+        "type": "FIX",
+        "text": "ux3.NavigationBar: Explicitly define focus outline in HCB theme",
+        "references": []
+      }
+    ]
   }
 }

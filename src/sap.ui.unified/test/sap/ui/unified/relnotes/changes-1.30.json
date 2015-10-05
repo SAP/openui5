@@ -331,5 +331,17 @@
         "references": []
       }
     ]
+  },
+  "1.30.9": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "5c2330c93ec7a28b2ad5c626feff9997dfddac2d",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar Focus changes while rendering",
+        "references": []
+      }
+    ]
   }
 }

@@ -628,5 +628,87 @@
         "references": []
       }
     ]
+  },
+  "1.30.9": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "07be91faa563cb953cbddafa18332ca6af09f31c",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalTable.js - Fixed Blocking BusyIndicator",
+        "references": []
+      },
+      {
+        "id": "100904585f4984630d5c6d7f4f112b2351e8f7be",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.Table: fix duplicated id issue when custom menu is deleted",
+        "references": []
+      },
+      {
+        "id": "dcc67e398003606e88e1c9fb2561e8ab3b3086f0",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: Touch Menu could overlay text",
+        "references": []
+      },
+      {
+        "id": "61cacd1b8ad77c93746f29f612a5aa1352e21a98",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: fixes exception when table is not bound but rows have context",
+        "references": []
+      },
+      {
+        "id": "3a2853f03928602ba25cf43cf7d169aea19f87d4",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.AnalyticalTable: fixes that column move changes grouping order",
+        "references": []
+      },
+      {
+        "id": "cd94734845733e41fbb07c9fb00aac5f1257f91c",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Column Resizing went wrong when using em",
+        "references": []
+      },
+      {
+        "id": "7c0bfab1945038e602ba30497d1dd7093ca87fc1",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Determination of row height can fail",
+        "references": []
+      },
+      {
+        "id": "2098f508bd839917e124cc03039da2369a2855ed",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes issue with delayed call of scrollbar timer",
+        "references": []
+      },
+      {
+        "id": "0ccd0192d1fb05a12193568b38a7e013ac8aa96f",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: fixes that the firstVisibleRow can be set",
+        "references": []
+      },
+      {
+        "id": "8d34f0342167ba4132682cf1eb3aa4f60a134327",
+        "author": "Christopher Zuendorf \u003cchristopher.zuendorf@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: problem with column header scroll",
+        "references": []
+      },
+      {
+        "id": "0ff6db3279b36f2abc24bf5971b950bb237c9aaa",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: tables w/o columns and selectionMode \"None\"",
+        "references": []
+      }
+    ]
   }
 }
