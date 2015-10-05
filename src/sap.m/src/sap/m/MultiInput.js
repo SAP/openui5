@@ -239,6 +239,11 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		});
 	
 		sap.ui.Device.orientation.attachHandler(this._onOrientationChange, this);
+		
+		this._sResizeHandlerId = sap.ui.core.ResizeHandler.register(this, function() {
+			// we could have more or less space to our disposal, thus calculate size of input again
+			that._setContainerSizes();
+		});
 	
 		if (!(this._bUseDialog && this._oSuggestionPopup)) {
 			// attach SuggestionItemSelected event to set value after item selected, not after popup is closed.
@@ -526,13 +531,12 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 * @private
 	 */
 	MultiInput.prototype.exit = function() {
-	
-		Input.prototype.exit.apply(this, arguments);
-	
 		if (this._sResizeHandlerId) {
 			sap.ui.core.ResizeHandler.deregister(this._sResizeHandlerId);
 			delete this._sResizeHandlerId;
 		}
+	
+		Input.prototype.exit.apply(this, arguments);
 	};
 	
 	/**
@@ -659,20 +663,12 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 * @private
 	 */
 	MultiInput.prototype.onAfterRendering = function() {
-		var that = this;
 	
 		Input.prototype.onAfterRendering.apply(this, arguments);
 	
 		if (!(this._bUseDialog && this._isMultiLineMode)) {
 			this._setContainerSizes();
 		}
-		
-	
-		this._sResizeHandlerId = sap.ui.core.ResizeHandler.register(this.getDomRef(), function() {
-			// we could have more or less space to our disposal, thus calculate size of input again
-			that._setContainerSizes();
-		});
-	
 	};
 	
 	/**
