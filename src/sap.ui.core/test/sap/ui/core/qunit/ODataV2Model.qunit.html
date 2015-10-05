@@ -2552,6 +2552,211 @@
 			}.bind(this));
 		}.bind(this));
 	});
+	
+	module("Model: createEntry", {
+		setup: function() {
+			this.oModel = initModel(sURI);
+		},
+		teardown: function() {
+			this.oModel.destroy();
+			delete this.oModel;
+		}
+	});
+	asyncTest("submit again after error", function() {
+		var that = this;
+		this.oModel.metadataLoaded().then(function() {
+			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test'}, urlParameters: {'Fail500': true}});
+			var oProduct = this.oModel.getProperty('', oContext); 
+			ok(oProduct, "Product created");
+			ok(oProduct.__metadata.created, "Product flagged as created");
+			var fnCompl = function(oInfo) {
+				that.oModel.detachRequestCompleted(fnCompl);
+				ok(!oInfo.getParameter('success'), "request should fail");
+				ok(oInfo.getParameter('method') == 'POST', 'method should be POST');
+			};
+			var fnFailed = function(oInfo) {
+				that.oModel.detachRequestFailed(fnFailed);
+				ok(true, "request failed");
+				var oProduct = that.oModel.getProperty('', oContext); 
+				ok(oProduct, "Product still exists");
+				ok(oProduct.__metadata.created, "Product still flagged as created");
+				ok(oInfo.getParameter('method') == 'POST', 'method should be POST');
+				that.oModel.attachRequestFailed(function(oInfo) {
+					that.oModel.detachRequestFailed(fnFailed);
+					ok(true, "request failed");
+					var oProduct = that.oModel.getProperty('', oContext); 
+					ok(oProduct, "Product still exists");
+					ok(oProduct.__metadata.created, "Product still flagged as created");
+					ok(oInfo.getParameter('method') == 'POST', 'method should be POST');
+					start();
+				});
+				that.oModel.attachRequestCompleted(function(oInfo) {
+					that.oModel.detachRequestCompleted(fnCompl);
+					ok(!oInfo.getParameter('success'), "request should fail");
+					ok(oInfo.getParameter('method') == 'POST', 'method should be POST');
+				});
+				
+				that.oModel.submitChanges();
+			};
+			this.oModel.attachRequestFailed(fnFailed);
+			this.oModel.attachRequestCompleted(fnCompl);
+			this.oModel.submitChanges();
+		}.bind(this))
+	});
+	asyncTest("submit:check header & url params", function() {
+		var that = this;
+		this.oModel.metadataLoaded().then(function() {
+			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test'}, headers: {'test-header': 'test-header-value'}, urlParameters: {'Fail500': true, 'test-param':'test-param-value'}});
+			var oProduct = this.oModel.getProperty('', oContext); 
+			ok(oProduct, "Product created");
+			ok(oProduct.__metadata.created, "Product flagged as created");
+			var fnCompl = function(oInfo) {
+				that.oModel.detachRequestCompleted(fnCompl);
+				ok(!oInfo.getParameter('success'), "request should fail");
+				ok(oInfo.getParameter('headers')['test-header'], 'header set correctly');
+				ok(oInfo.getParameter('headers')['test-header'] === 'test-header-value', 'header value set correctly');
+				ok(oInfo.getParameter('url').indexOf('&test-param=test-param-value') > -1, 'url param set correctly');
+			};
+			var fnFailed = function(oInfo) {
+				that.oModel.detachRequestFailed(fnFailed);
+				ok(true, "request failed");
+				var oProduct = that.oModel.getProperty('', oContext); 
+				ok(oProduct, "Product still exists");
+				ok(oProduct.__metadata.created, "Product still flagged as created");
+				ok(oInfo.getParameter('headers')['test-header'], 'header set correctly');
+				ok(oInfo.getParameter('headers')['test-header'] === 'test-header-value', 'header value set correctly');
+				ok(oInfo.getParameter('url').indexOf('&test-param=test-param-value') > -1, 'url param set correctly');
+				that.oModel.attachRequestFailed(function(oInfo) {
+					that.oModel.detachRequestFailed(fnFailed);
+					ok(true, "request failed");
+					var oProduct = that.oModel.getProperty('', oContext); 
+					ok(oProduct, "Product still exists");
+					ok(oProduct.__metadata.created, "Product still flagged as created");
+						ok(oInfo.getParameter('headers')['test-header'], 'header set correctly');
+					ok(oInfo.getParameter('headers')['test-header'] === 'test-header-value', 'header value set correctly');
+					ok(oInfo.getParameter('url').indexOf('&test-param=test-param-value') > -1, 'url param set correctly');
+					start();
+				});
+				that.oModel.attachRequestCompleted(function(oInfo) {
+					that.oModel.detachRequestCompleted(fnCompl);
+					ok(!oInfo.getParameter('success'), "request should fail");
+					ok(oInfo.getParameter('headers')['test-header'], 'header set correctly');
+					ok(oInfo.getParameter('headers')['test-header'] === 'test-header-value', 'header value set correctly');
+					ok(oInfo.getParameter('url').indexOf('&test-param=test-param-value') > -1, 'url param set correctly');
+				});
+				
+				that.oModel.submitChanges();
+			};
+			this.oModel.attachRequestFailed(fnFailed);
+			this.oModel.attachRequestCompleted(fnCompl);
+			this.oModel.submitChanges();
+		}.bind(this))
+	});
+	asyncTest("submit:check eTag", function() {
+		var that = this;
+		this.oModel.metadataLoaded().then(function() {
+			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test'}, eTag: 'testEtag', urlParameters: {'Fail500': true, 'test-param':'test-param-value'}});
+			var oProduct = this.oModel.getProperty('', oContext); 
+			ok(oProduct, "Product created");
+			ok(oProduct.__metadata.created, "Product flagged as created");
+			var fnCompl = function(oInfo) {
+				that.oModel.detachRequestCompleted(fnCompl);
+				ok(!oInfo.getParameter('success'), "request should fail");
+				ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');
+			};
+			var fnFailed = function(oInfo) {
+				that.oModel.detachRequestFailed(fnFailed);
+				ok(true, "request failed");
+				var oProduct = that.oModel.getProperty('', oContext); 
+				ok(oProduct, "Product still exists");
+				ok(oProduct.__metadata.created, "Product still flagged as created");
+				ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');
+				that.oModel.attachRequestFailed(function(oInfo) {
+					that.oModel.detachRequestFailed(fnFailed);
+					ok(true, "request failed");
+					var oProduct = that.oModel.getProperty('', oContext); 
+					ok(oProduct, "Product still exists");
+					ok(oProduct.__metadata.created, "Product still flagged as created");
+					ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');
+					start();
+				});
+				that.oModel.attachRequestCompleted(function(oInfo) {
+					that.oModel.detachRequestCompleted(fnCompl);
+					ok(!oInfo.getParameter('success'), "request should fail");
+					ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');
+				});
+				
+				that.oModel.submitChanges();
+			};
+			this.oModel.attachRequestFailed(fnFailed);
+			this.oModel.attachRequestCompleted(fnCompl);
+			this.oModel.submitChanges();
+		}.bind(this))
+	});
+	asyncTest("submit:check success", function() {
+		assert.expect( 6 );
+		var that = this;
+		this.oModel.metadataLoaded().then(function() {
+			var fnSuccess = function() {
+				ok(true, "success handler called");
+			}
+			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test'}, success: fnSuccess});
+			var oProduct = this.oModel.getProperty('', oContext); 
+			ok(oProduct, "Product created");
+			ok(oProduct.__metadata.created, "Product flagged as created");
+			var fnCompl = function(oInfo) {
+				that.oModel.detachRequestCompleted(fnCompl);
+				ok(oInfo.getParameter('success'), "request should fail");
+				var oProduct = that.oModel.getProperty('', oContext); 
+				ok(oProduct, "Product still exists");
+				ok(!oProduct.__metadata.created, "Product not flagged as created");
+				start();
+			};
+			this.oModel.attachRequestCompleted(fnCompl);
+			this.oModel.submitChanges();
+		}.bind(this))
+	});
+	asyncTest("submit:check erro handler", function() {
+		assert.expect( 12 );
+		var that = this;
+		this.oModel.metadataLoaded().then(function() {
+			var fnError = function() {
+				ok(true, "error handler called");
+			}
+			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test'}, error: fnError, urlParameters: {'Fail500': true, 'test-param':'test-param-value'}});
+			var oProduct = this.oModel.getProperty('', oContext); 
+			ok(oProduct, "Product created");
+			ok(oProduct.__metadata.created, "Product flagged as created");
+			var fnCompl = function(oInfo) {
+				that.oModel.detachRequestCompleted(fnCompl);
+				ok(!oInfo.getParameter('success'), "request should fail");
+			};
+			var fnFailed = function(oInfo) {
+				that.oModel.detachRequestFailed(fnFailed);
+				ok(true, "request failed");
+				var oProduct = that.oModel.getProperty('', oContext); 
+				ok(oProduct, "Product still exists");
+				ok(oProduct.__metadata.created, "Product still flagged as created");
+				that.oModel.attachRequestFailed(function(oInfo) {
+					that.oModel.detachRequestFailed(fnFailed);
+					ok(true, "request failed");
+					var oProduct = that.oModel.getProperty('', oContext); 
+					ok(oProduct, "Product still exists");
+					ok(oProduct.__metadata.created, "Product still flagged as created");
+					start();
+				});
+				that.oModel.attachRequestCompleted(function(oInfo) {
+					that.oModel.detachRequestCompleted(fnCompl);
+					ok(!oInfo.getParameter('success'), "request should fail");
+				});
+				
+				that.oModel.submitChanges();
+			};
+			this.oModel.attachRequestFailed(fnFailed);
+			this.oModel.attachRequestCompleted(fnCompl);
+			this.oModel.submitChanges();
+		}.bind(this))
+	});
 	</script>
 
 </head>
