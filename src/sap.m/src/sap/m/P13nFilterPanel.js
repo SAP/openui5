@@ -155,23 +155,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Adds a new condition object.
-	 * 
-	 * @private
-	 * @param {object} oCondition the new condition
-	 */
-	P13nFilterPanel.prototype._addCondition = function(oCondition) {
-		if (!oCondition.exclude) {
-			this._oIncludeFilterPanel.addCondition(oCondition);
-		} else {
-			this._oExcludeFilterPanel.addCondition(oCondition);
-		}
-
-		if (this._oExcludeFilterPanel.getConditions().length > 0) {
-			this._oExcludePanel.setExpanded(true);
-		}
-	};
 
 	/**
 	 * Returns the array of conditions.
@@ -485,76 +468,37 @@ sap.ui.define([
 		this._oRb = destroyHelper(this._oRb);
 	};
 
-	P13nFilterPanel.prototype.addItem = function(oItem) {
-		P13nPanel.prototype.addItem.apply(this, arguments);
+	P13nFilterPanel.prototype.onBeforeRendering = function() {
+		//P13nPanel.prototype.onBeforeRendering.apply(this, arguments);  does not exist!!!!
+		
+		if (this._bUpdateRequired) {
+			this._bUpdateRequired = false;
 
-		var oKeyField = {
-			key: oItem.getColumnKey(),
-			text: oItem.getText(),
-			tooltip: oItem.getTooltip(),
-			maxLength: oItem.getMaxLength(),
-			type: oItem.getType(),
-			precision: oItem.getPrecision(),
-			scale: oItem.getScale(),
-			isDefault: oItem.getIsDefault()
-		};
-
-		this._aKeyFields.push(oKeyField);
-		if (this._oIncludeFilterPanel) {
-			this._oIncludeFilterPanel.addKeyField(oKeyField);
-		}
-		if (this._oExcludeFilterPanel) {
-			this._oExcludeFilterPanel.addKeyField(oKeyField);
-		}
-	};
-
-	P13nFilterPanel.prototype.destroyItems = function() {
-		this.destroyAggregation("items");
-		if (this._oIncludeFilterPanel) {
-			this._oIncludeFilterPanel.removeAllKeyFields();
-		}
-		if (this._oExcludeFilterPanel) {
-			this._oExcludeFilterPanel.removeAllKeyFields();
-		}
-		return this;
-	};
-
-	P13nFilterPanel.prototype.addFilterItem = function(oFilterItem) {
-		this.addAggregation("filterItems", oFilterItem);
-
-		if (!this._bIgnoreBindCalls) {
-			var oCondition = {
-				exclude: oFilterItem.getExclude(),
-				key: oFilterItem.getKey(),
-				keyField: oFilterItem.getColumnKey(),
-				operation: oFilterItem.getOperation(),
-				value1: oFilterItem.getValue1(),
-				value2: oFilterItem.getValue2()
-			};
-
-			this._addCondition(oCondition);
-
-			if (!oFilterItem.getKey()) {
-				oFilterItem.setKey(oCondition.key);
-			}
-		}
-	};
-
-	P13nFilterPanel.prototype.insertFilterItem = function(oFilterItem) {
-		this.insertAggregation("filterItems", oFilterItem);
-		// TODO: implement this
-		return this;
-	};
-
-	P13nFilterPanel.prototype.updateFilterItems = function(sReason) {
-		this.updateAggregation("filterItems");
-
-		if (sReason !== "change") {
-			return;
-		}
-		if (!this._bIgnoreBindCalls) {
+			var aKeyFields = [];
+			var sModelName = this.getBindingInfo("items").model;
+			this.getItems().forEach(function(oItem_) {
+				var oContext = oItem_.getBindingContext(sModelName);
+				var oModelItem = oContext.getObject();
+				// Update key of model (in case of 'restore' the key in model gets lost because it is overwritten by Restore Snapshot)
+				if (oItem_.getBinding("key")) {
+					oModelItem[oItem_.getBinding("key").getPath()] = oItem_.getKey();
+				}
+				var binding;
+				aKeyFields.push({
+					key: oItem_.getColumnKey(),
+					text: (binding = oItem_.getBinding("text")) ? oModelItem[binding.getPath()] : undefined,
+					tooltip: (binding = oItem_.getBinding("tooltip")) ? oModelItem[binding.getPath()] : undefined,
+					maxLength: (binding = oItem_.getBinding("maxLength")) ? oModelItem[binding.getPath()] : undefined,
+					type: (binding = oItem_.getBinding("type")) ? oModelItem[binding.getPath()] : undefined,
+					precision: (binding = oItem_.getBinding("precision")) ? oModelItem[binding.getPath()] : undefined,
+					scale: (binding = oItem_.getBinding("scale")) ? oModelItem[binding.getPath()] : undefined,
+					isDefault: (binding = oItem_.getBinding("isDefault")) ? oModelItem[binding.getPath()] : undefined
+				});
+			});
+			this.setKeyFields(aKeyFields);
+		
 			var aConditions = [];
-			var sModelName = this.getBindingInfo("filterItems").model;
+			sModelName = this.getBindingInfo("filterItems").model;
 			this.getFilterItems().forEach(function(oFilterItem_) {
 				// Note: current implementation assumes that the length of filterItems aggregation is equal
 				// to the number of corresponding model items.
@@ -566,21 +510,67 @@ sap.ui.define([
 				if (oFilterItem_.getBinding("key")) {
 					oModelItem[oFilterItem_.getBinding("key").getPath()] = oFilterItem_.getKey();
 				}
+				var binding;
 				aConditions.push({
 					key: oFilterItem_.getKey(),
-					keyField: oFilterItem_.getBinding("columnKey") ? oModelItem[oFilterItem_.getBinding("columnKey").getPath()] : undefined,
-					operation: oFilterItem_.getBinding("operation") ? oModelItem[oFilterItem_.getBinding("operation").getPath()] : undefined,
-					value1: oFilterItem_.getBinding("value1") ? oModelItem[oFilterItem_.getBinding("value1").getPath()] : undefined,
-					value2: oFilterItem_.getBinding("value2") ? oModelItem[oFilterItem_.getBinding("value2").getPath()] : undefined,
-					exclude: oFilterItem_.getBinding("exclude") ? oModelItem[oFilterItem_.getBinding("exclude").getPath()] : undefined
+					keyField: (binding = oFilterItem_.getBinding("columnKey")) ? oModelItem[binding.getPath()] : undefined,
+					operation: (binding = oFilterItem_.getBinding("operation")) ? oModelItem[binding.getPath()] : undefined,
+					value1: (binding = oFilterItem_.getBinding("value1")) ? oModelItem[binding.getPath()] : undefined,
+					value2: (binding = oFilterItem_.getBinding("value2")) ? oModelItem[binding.getPath()] : undefined,
+					exclude: (binding = oFilterItem_.getBinding("exclude")) ? oModelItem[binding.getPath()] : undefined
 				});
 			});
 			this.setConditions(aConditions);
 		}
 	};
+		
+	P13nFilterPanel.prototype.addItem = function(oItem) {
+		P13nPanel.prototype.addItem.apply(this, arguments);
+
+		this._bUpdateRequired = true;
+	};
+
+	P13nFilterPanel.prototype.removeItem = function(oItem) {
+		P13nPanel.prototype.removeItem.apply(this, arguments);
+
+		this._bUpdateRequired = true;
+	};
+
+	P13nFilterPanel.prototype.destroyItems = function() {
+		this.destroyAggregation("items");
+		
+		this._bUpdateRequired = true;
+		return this;
+	};
+
+	P13nFilterPanel.prototype.addFilterItem = function(oFilterItem) {
+		this.addAggregation("filterItems", oFilterItem);
+
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
+	};
+
+	P13nFilterPanel.prototype.insertFilterItem = function(oFilterItem) {
+		this.insertAggregation("filterItems", oFilterItem);
+
+		this._bUpdateRequired = true;
+		
+		return this;
+	};
+
+	P13nFilterPanel.prototype.updateFilterItems = function(sReason) {
+		this.updateAggregation("filterItems");
+
+		if (sReason == "change" && !this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
+	};
 
 	P13nFilterPanel.prototype.removeFilterItem = function(oFilterItem) {
 		oFilterItem = this.removeAggregation("filterItems", oFilterItem);
+
+		this._bUpdateRequired = true;
 
 		return oFilterItem;
 	};
@@ -589,7 +579,7 @@ sap.ui.define([
 		var aFilterItems = this.removeAllAggregation("filterItems");
 
 		if (!this._bIgnoreBindCalls) {
-			this.setConditions([]);
+			this._bUpdateRequired = true;
 		}
 
 		return aFilterItems;
@@ -599,7 +589,7 @@ sap.ui.define([
 		this.destroyAggregation("filterItems");
 
 		if (!this._bIgnoreBindCalls) {
-			this.setConditions([]);
+			this._bUpdateRequired = true;
 		}
 
 		return this;
