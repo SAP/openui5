@@ -1,8 +1,8 @@
-jQuery.sap.require("util.Formatter");
+jQuery.sap.require("sap.ui.demo.cart.util.Formatter");
 jQuery.sap.require("sap.m.MessageToast");
 jQuery.sap.require("sap.m.MessageBox");
 
-sap.ui.controller("view.Product", {
+sap.ui.controller("sap.ui.demo.cart.view.Product", {
 
 	onInit : function () {
 		this._router = sap.ui.core.UIComponent.getRouterFor(this);

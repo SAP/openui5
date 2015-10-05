@@ -1,7 +1,7 @@
-jQuery.sap.require("util.Formatter");
-jQuery.sap.require("model.Config");
+jQuery.sap.require("sap.ui.demo.cart.util.Formatter");
+jQuery.sap.require("sap.ui.demo.cart.model.Config");
 
-sap.ui.controller("view.Home", {
+sap.ui.controller("sap.ui.demo.cart.view.Home", {
 
 	onInit : function () {
 		this._router = sap.ui.core.UIComponent.getRouterFor(this);

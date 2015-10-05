@@ -1,4 +1,4 @@
-sap.ui.controller("view.Welcome", {
+sap.ui.controller("sap.ui.demo.cart.view.Welcome", {
 
 	ICON_NUMBER: 9,
 
