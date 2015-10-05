@@ -394,12 +394,26 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 			});
 			aRequests.push({
 				method: "POST",
-				path: new RegExp(that._oDraftMetadata.draftRootEditName),
-				response: function(oXhr) {
-					var oRequestBody = JSON.parse(oXhr.requestBody);
+				path: new RegExp(that._oDraftMetadata.draftRootEditName + "(\\?(.*))?"),
+				response: function(oXhr, sUrlParams) {
 					var aFilter = [];
-					for (var property in oRequestBody) {
-						aFilter.push(property + " eq " + oRequestBody[property]);
+					var oRequestBody = JSON.parse(oXhr.requestBody);
+					if (oRequestBody && !jQuery.isEmptyObject(oRequestBody)) {
+						for (var property in oRequestBody) {
+							aFilter.push(property + " eq " + oRequestBody[property]);
+						}
+					} else {
+						var aUrlParams = decodeURIComponent(sUrlParams).replace("?", "&").split("&");
+						
+						for (var param in aUrlParams) {
+							var sParamValue = aUrlParams[param];
+							var rKeyValue = new RegExp("(.*)=(.*)");
+							var aRes;
+							if (sParamValue) {
+								aRes = rKeyValue.exec(sParamValue);
+								aFilter.push(aRes[1] + " eq " + aRes[2]);
+							}
+						}
 					}
 					var oResponse = jQuery.sap.sjax({
 						url: that.getRootUri() + that._oDraftMetadata.draftRootName + "?$filter=" + aFilter.join(" and "),
@@ -538,6 +552,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 		_generateMockdata: function(mEntitySets, sBaseUrl) {
 
 			MockServer.prototype._generateMockdata.apply(this, [mEntitySets, sBaseUrl]);
+
+			this._handleDraftArtifacts(mEntitySets);
+		},
+		
+		_loadMockdata: function(mEntitySets, sBaseUrl) {
+
+			MockServer.prototype._loadMockdata.apply(this, [mEntitySets, sBaseUrl]);
 
 			this._handleDraftArtifacts(mEntitySets);
 		},

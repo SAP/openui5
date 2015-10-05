@@ -267,6 +267,36 @@
 		
 		oMockServer.destroy();
 	});
+	
+	test("remainder", function() {
+		var oMockServer = new sap.ui.core.util.MockServer({
+			rootUri : "/myservice/"
+		});
+		var sMetadataUrl = "testdata/draft/metadata.xml";
+		oMockServer.simulate(sMetadataUrl, {
+					sMockdataBaseUrl : "testdata/draft",
+					bGenerateMissingMockData : true
+				});
+		oMockServer.start();
+		
+		ok(oMockServer.isStarted(), "Mock server is started");
+		
+		var oResponse = jQuery.sap.sjax({
+			url : "/myservice/SalesOrder",
+			dataType : "json"
+		});
+		ok(oResponse.success);
+		equal(oResponse.data.d.results.length, 100);
+		
+		var oActiveEntity = oResponse.data.d.results[0];
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/SalesOrderEdit?ActiveSalesOrderID=%27ActiveSalesOrderID%201%27&SalesOrderDraftUUID=guid%2700000000-0000-0000-0000-000000000000%27",
+			type : "POST"
+		});
+		ok(oResponse.success, "edit draft created");
+	
+		oMockServer.destroy();
+	});
 
 </script>
 </head>
