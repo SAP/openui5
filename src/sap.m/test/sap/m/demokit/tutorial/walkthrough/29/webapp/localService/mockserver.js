@@ -12,15 +12,17 @@ sap.ui.define([
 				rootUri: "../../../../../../../../../../uilib-sample/proxy/http/services.odata.org/V2/Northwind/Northwind.svc/"
 			});
 
-			// configure
+			var oUriParameters = jQuery.sap.getUriParameters();
+
+			// configure mock server with a delay
 			MockServer.config({
 				autoRespond: true,
-				autoRespondAfter: 1000
+				autoRespondAfter: oUriParameters.get("serverDelay") || 1000
 			});
 
 			// simulate
-			var sPath = jQuery.sap.getModulePath("sap.ui.demo.wt.test.service");
-			oMockServer.simulate(sPath + "/metadata.xml", sPath);
+			var sPath = jQuery.sap.getModulePath("sap.ui.demo.wt.localService");
+			oMockServer.simulate(sPath + "/metadata.xml", sPath + "/mockdata");
 
 			// start
 			oMockServer.start();
