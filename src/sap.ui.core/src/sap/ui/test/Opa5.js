@@ -74,7 +74,7 @@ sap.ui.define([
 		/**
 		 * Starts an app in a component.
 		 * @param {object} options An Object that contains the configuration for starting up a component
-		 * @param {object} options.componentConfig will be passed to {@link sap.ui#.component}, please read the respective documentation
+		 * @param {object} options.componentConfig will be passed to {@link sap.ui.component component}, please read the respective documentation
 		 * @param {string} [options.hash] sets the hash {@link sap.ui.core.routing.HashChanger.setHash} to the given value.
 		 * If this parameter is omitted, the hash will always be reset to the empty hash - ""
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
