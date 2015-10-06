@@ -142,7 +142,7 @@
 			<semantic:PositiveAction text="{i18n>TableProductsReorder}" press="onUpdateStockObjects"/>
 		</semantic:positiveAction>
 		<semantic:negativeAction>
-			<semantic:NegativeAction text="{i18n>TablePorductsUnlist}" press="onUnlistObjects"/>
+			<semantic:NegativeAction text="{i18n>TableProductsUnlist}" press="onUnlistObjects"/>
 		</semantic:negativeAction>
 	</semantic:FullscreenPage>
 </mvc:View>
