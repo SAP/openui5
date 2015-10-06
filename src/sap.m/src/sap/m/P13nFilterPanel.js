@@ -155,7 +155,6 @@ sap.ui.define([
 		}
 	};
 
-
 	/**
 	 * Returns the array of conditions.
 	 * 
@@ -469,8 +468,8 @@ sap.ui.define([
 	};
 
 	P13nFilterPanel.prototype.onBeforeRendering = function() {
-		//P13nPanel.prototype.onBeforeRendering.apply(this, arguments);  does not exist!!!!
-		
+		// P13nPanel.prototype.onBeforeRendering.apply(this, arguments); does not exist!!!!
+
 		if (this._bUpdateRequired) {
 			this._bUpdateRequired = false;
 
@@ -496,7 +495,7 @@ sap.ui.define([
 				});
 			});
 			this.setKeyFields(aKeyFields);
-		
+
 			var aConditions = [];
 			sModelName = this.getBindingInfo("filterItems").model;
 			this.getFilterItems().forEach(function(oFilterItem_) {
@@ -523,7 +522,7 @@ sap.ui.define([
 			this.setConditions(aConditions);
 		}
 	};
-		
+
 	P13nFilterPanel.prototype.addItem = function(oItem) {
 		P13nPanel.prototype.addItem.apply(this, arguments);
 
@@ -538,7 +537,7 @@ sap.ui.define([
 
 	P13nFilterPanel.prototype.destroyItems = function() {
 		this.destroyAggregation("items");
-		
+
 		this._bUpdateRequired = true;
 		return this;
 	};
@@ -555,7 +554,7 @@ sap.ui.define([
 		this.insertAggregation("filterItems", oFilterItem);
 
 		this._bUpdateRequired = true;
-		
+
 		return this;
 	};
 
@@ -603,20 +602,10 @@ sap.ui.define([
 			var sOperation = oEvent.getParameter("operation");
 			var sKey = oEvent.getParameter("key");
 			var iIndex = oEvent.getParameter("index");
+			var oFilterItem;
 
-			var oFilterItemData = null;
-			if (oNewData) {
-				oFilterItemData = {
-					key: sKey,
-					exclude: oNewData.exclude,
-					columnKey: oNewData.keyField,
-					operation: oNewData.operation,
-					value1: oNewData.value1,
-					value2: oNewData.value2
-				};
-			}
 			if (sOperation === "update") {
-				var oFilterItem = that.getFilterItems()[iIndex];
+				oFilterItem = that.getFilterItems()[iIndex];
 				if (oFilterItem) {
 					oFilterItem.setExclude(oNewData.exclude);
 					oFilterItem.setColumnKey(oNewData.keyField);
@@ -627,15 +616,23 @@ sap.ui.define([
 				that.fireUpdateFilterItem({
 					key: sKey,
 					index: iIndex,
-					filterItemData: oFilterItemData
+					filterItemData: oFilterItem
 				});
 			}
 			if (sOperation === "add") {
+				oFilterItem = new sap.m.P13nFilterItem({
+					key: sKey,
+					columnKey: oNewData.keyField,
+					exclude: oNewData.exclude,
+					operation: oNewData.operation,
+					value1: oNewData.value1,
+					value2: oNewData.value2
+				});
 				that._bIgnoreBindCalls = true;
 				that.fireAddFilterItem({
 					key: sKey,
 					index: iIndex,
-					filterItemData: oFilterItemData
+					filterItemData: oFilterItem
 				});
 				that._bIgnoreBindCalls = false;
 			}

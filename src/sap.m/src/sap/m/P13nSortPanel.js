@@ -220,10 +220,9 @@ sap.ui.define([
 		this._aOperations = destroyHelper(this._aOperations);
 	};
 
-	
 	P13nSortPanel.prototype.onBeforeRendering = function() {
-		//P13nPanel.prototype.onBeforeRendering.apply(this, arguments);  does not exist!!!!
-		
+		// P13nPanel.prototype.onBeforeRendering.apply(this, arguments); does not exist!!!!
+
 		if (this._bUpdateRequired) {
 			this._bUpdateRequired = false;
 
@@ -244,7 +243,7 @@ sap.ui.define([
 				});
 			});
 			this._oSortPanel.setKeyFields(aKeyFields);
-			
+
 			var aConditions = [];
 			sModelName = this.getBindingInfo("sortItems").model;
 			this.getSortItems().forEach(function(oSortItem_) {
@@ -268,7 +267,7 @@ sap.ui.define([
 			this._oSortPanel.setConditions(aConditions);
 		}
 	};
-	
+
 	P13nSortPanel.prototype.addItem = function(oItem) {
 		P13nPanel.prototype.addItem.apply(this, arguments);
 
@@ -344,18 +343,10 @@ sap.ui.define([
 			var sOperation = oEvent.getParameter("operation");
 			var sKey = oEvent.getParameter("key");
 			var iIndex = oEvent.getParameter("index");
-
-			var oSortItemData = null;
-			if (oNewData) {
-				var oSortItemData = new sap.m.P13nSortItem({
-					key: sKey,
-					columnKey: oNewData.keyField,
-					operation: oNewData.operation
-				});
-			}
+			var oSortItem;
 
 			if (sOperation === "update") {
-				var oSortItem = that.getSortItems()[iIndex];
+				oSortItem = that.getSortItems()[iIndex];
 				if (oSortItem) {
 					oSortItem.setColumnKey(oNewData.keyField);
 					oSortItem.setOperation(oNewData.operation);
@@ -363,15 +354,20 @@ sap.ui.define([
 				that.fireUpdateSortItem({
 					key: sKey,
 					index: iIndex,
-					sortItemData: oSortItemData
+					sortItemData: oSortItem
 				});
 			}
 			if (sOperation === "add") {
+				oSortItem = new sap.m.P13nSortItem({
+					key: sKey,
+					columnKey: oNewData.keyField,
+					operation: oNewData.operation
+				});
 				that._bIgnoreBindCalls = true;
 				that.fireAddSortItem({
 					key: sKey,
 					index: iIndex,
-					sortItemData: oSortItemData
+					sortItemData: oSortItem
 				});
 				that._bIgnoreBindCalls = false;
 			}
