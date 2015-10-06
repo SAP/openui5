@@ -12,6 +12,11 @@
 
 .sapMTeamCalHead{
 	width: 20%;
+	height: 7.25rem;
+}
+
+.sapMTeamCalHead > .sapMSF{
+	margin-top: 1.2rem;
 }
 
 .sapMTeamCal > .sapMList .sapMTeamCalRowHead .sapMLIB,
@@ -38,9 +43,26 @@
 	margin-bottom: 0;
 }
 
+/* put weekday names into days */
+/*.sapMTeamCal > .sapMList > .sapMListInfoTBar > .sapUiCalDateInt > .sapUiCalContent > .sapUiCalDatesRow > div:nth-child(2){
+	position: absolute;
+	width: 100%;
+	padding-right: 0.5rem;
+	box-sizing: border-box;
+}
+
+.sapMTeamCal > .sapMList > .sapMListInfoTBar > .sapUiCalDateInt > .sapUiCalContent > .sapUiCalDatesRow > div:nth-child(2) > .sapUiCalWH{
+	border-color: transparent;
+}
+*/
 .sapMListTblCell.sapMTeamCalRowHead,
 .sapMListTblCell.sapMTeamCalAppRow{
 	padding: 0;
+}
+
+.sapMListTblCell.sapMTeamCalRowHead > .sapMLIB{
+	display: block;
+	border: none;
 }
 
 .sapMTeamCal > .sapMList .sapUiCalendarRow{
