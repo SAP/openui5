@@ -243,10 +243,9 @@ sap.ui.define([
 		this._aOperations = destroyHelper(this._aOperations);
 	};
 
-	
 	P13nGroupPanel.prototype.onBeforeRendering = function() {
-		//P13nPanel.prototype.onBeforeRendering.apply(this, arguments);  does not exist!!!!
-		
+		// P13nPanel.prototype.onBeforeRendering.apply(this, arguments); does not exist!!!!
+
 		if (this._bUpdateRequired) {
 			this._bUpdateRequired = false;
 
@@ -267,7 +266,7 @@ sap.ui.define([
 				});
 			});
 			this._oGroupPanel.setKeyFields(aKeyFields);
-			
+
 			var aConditions = [];
 			sModelName = this.getBindingInfo("groupItems").model;
 			this.getGroupItems().forEach(function(oGroupItem_) {
@@ -286,14 +285,13 @@ sap.ui.define([
 					key: oGroupItem_.getKey(),
 					keyField: (binding = oGroupItem_.getBinding("columnKey")) ? oModelItem[binding.getPath()] : undefined,
 					operation: (binding = oGroupItem_.getBinding("operation")) ? oModelItem[binding.getPath()] : undefined,
-					showIfGrouped: (binding = oGroupItem_.getBinding("showIfGrouped")) ? oModelItem[binding.getPath()] : undefined 
+					showIfGrouped: (binding = oGroupItem_.getBinding("showIfGrouped")) ? oModelItem[binding.getPath()] : undefined
 				});
 			});
 			this._oGroupPanel.setConditions(aConditions);
 		}
-	};	
-	
-	
+	};
+
 	P13nGroupPanel.prototype.addItem = function(oItem) {
 		P13nPanel.prototype.addItem.apply(this, arguments);
 		this._bUpdateRequired = true;
@@ -305,7 +303,6 @@ sap.ui.define([
 		this._bUpdateRequired = true;
 	};
 
-	
 	P13nGroupPanel.prototype.destroyItems = function() {
 		this.destroyAggregation("items");
 		this._bUpdateRequired = true;
@@ -366,19 +363,10 @@ sap.ui.define([
 			var sOperation = oEvent.getParameter("operation");
 			var sKey = oEvent.getParameter("key");
 			var iIndex = oEvent.getParameter("index");
-
-			var oGroupItemData = null;
-			if (oNewData) {
-				oGroupItemData = new sap.m.P13nGroupItem({
-					key: sKey,
-					columnKey: oNewData.keyField,
-					operation: oNewData.operation,
-					showIfGrouped: oNewData.showIfGrouped
-				});
-			}
+			var oGroupItem;
 
 			if (sOperation === "update") {
-				var oGroupItem = that.getGroupItems()[iIndex];
+				oGroupItem = that.getGroupItems()[iIndex];
 				if (oGroupItem) {
 					oGroupItem.setColumnKey(oNewData.keyField);
 					oGroupItem.setOperation(oNewData.operation);
@@ -387,15 +375,21 @@ sap.ui.define([
 				that.fireUpdateGroupItem({
 					key: sKey,
 					index: iIndex,
-					groupItemData: oGroupItemData
+					groupItemData: oGroupItem
 				});
 			}
 			if (sOperation === "add") {
+				oGroupItem = new sap.m.P13nGroupItem({
+					key: sKey,
+					columnKey: oNewData.keyField,
+					operation: oNewData.operation,
+					showIfGrouped: oNewData.showIfGrouped
+				});
 				that._bIgnoreBindCalls = true;
 				that.fireAddGroupItem({
 					key: sKey,
 					index: iIndex,
-					groupItemData: oGroupItemData
+					groupItemData: oGroupItem
 				});
 				that._bIgnoreBindCalls = false;
 			}
