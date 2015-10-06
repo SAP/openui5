@@ -109,8 +109,7 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 	 */
 	Japanese.prototype._setJapanese = function(oJapanese) {
 		var oGregorian = toGregorian(oJapanese);
-		this.oDate.setFullYear(oGregorian.year, oGregorian.month, oGregorian.day);
-		return this;
+		return this.oDate.setFullYear(oGregorian.year, oGregorian.month, oGregorian.day);
 	};
 	
 	/**
@@ -132,8 +131,7 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 	 */
 	Japanese.prototype._setUTCJapanese = function(oJapanese) {
 		var oGregorian = toGregorian(oJapanese);
-		this.oDate.setUTCFullYear(oGregorian.year, oGregorian.month, oGregorian.day);
-		return this;
+		return this.oDate.setUTCFullYear(oGregorian.year, oGregorian.month, oGregorian.day);
 	};
 	
 	/*

@@ -264,8 +264,7 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 	 */
 	Islamic.prototype._setIslamic = function(oIslamic) {
 		var oGregorian = toGregorian(oIslamic);
-		this.oDate.setFullYear(oGregorian.year, oGregorian.month, oGregorian.day);
-		return this;
+		return this.oDate.setFullYear(oGregorian.year, oGregorian.month, oGregorian.day);
 	};
 	
 	/**
@@ -285,8 +284,7 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 	 */
 	Islamic.prototype._setUTCIslamic = function(oIslamic) {
 		var oGregorian = toGregorian(oIslamic);
-		this.oDate.setUTCFullYear(oGregorian.year, oGregorian.month, oGregorian.day);
-		return this;
+		return this.oDate.setUTCFullYear(oGregorian.year, oGregorian.month, oGregorian.day);
 	};
 	
 	/*

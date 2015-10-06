@@ -745,46 +745,32 @@
 				cleanup.call(this);
 			}
 		});
+		
 		test("Setters have to return the time since 1.1.1970", function () {
-			var id = new sap.ui.core.date.Islamic(1354, 0, 1, 8, 10, 15, 119);
+			var oDate = new sap.ui.core.date.Islamic(1354, 0, 1, 8, 10, 15, 119);
 
-			function check(sTestedMethod, iExpectedTimestamp) {
-				equal(id.getTime(), iExpectedTimestamp, "[" + sTestedMethod + "] must return the time since 1.1.1970");
+			function check(iTimestamp, sSetter) {
+				equal(typeof iTimestamp, "number", sSetter + " did return a numeric value");
+				equal(iTimestamp, oDate.getTime(), sSetter + " return value matches date timestamp");
 			}
+			
+			check(oDate.setFullYear(1435), "setFullYear");
+			check(oDate.setYear(35), "setYear");
+			check(oDate.setMonth(5), "setMonth");
+			check(oDate.setDate(11), "setDate");
+			check(oDate.setHours(23), "setHours");
+			check(oDate.setMinutes(16), "setMinutes");
+			check(oDate.setSeconds(10), "setSeconds");
+			check(oDate.setMilliseconds(118), "setMilliseconds");
 
-			id.setFullYear(1435);
-			check("setFullYear", id.getTime());
-			id.setYear(35);
-			check("setYear", id.getTime());
-			id.setMonth(5);
-			check("setMonth", id.getTime());
-			id.setDate(11);
-			check("setDate", id.getTime());
-			id.setHours(23);
-			check("setHours", id.getTime());
-			id.setMinutes(16);
-			check("setMinutes", id.getTime());
-			id.setSeconds(10);
-			check("setSeconds", id.getTime());
-			id.setMilliseconds(118);
-			check("setMilliseconds", id.getTime());
-
-			id.setUTCFullYear(35);
-			check("setUTCFullYear", id.getTime());
-			id.setUTCMonth(5);
-			check("setUTCMonth", id.getTime());
-			id.setUTCDate(11);
-			check("setUTCDate", id.getTime());
-			id.setUTCHours(23);
-			check("setUTCHours", id.getTime());
-			id.setUTCMinutes(16);
-			check("setUTCMinutes", id.getTime());
-			id.setUTCSeconds(10);
-			check("setUTCSeconds", id.getTime());
-			id.setUTCMilliseconds(118);
-			check("setUTCMilliseconds", id.getTime());
+			check(oDate.setUTCFullYear(35), "setUTCFullYear");
+			check(oDate.setUTCMonth(5), "setUTCMonth");
+			check(oDate.setUTCDate(11), "setUTCDate");
+			check(oDate.setUTCHours(23), "setUTCHours");
+			check(oDate.setUTCMinutes(16), "setUTCMinutes");
+			check(oDate.setUTCSeconds(10), "setUTCSeconds");
+			check(oDate.setUTCMilliseconds(118), "setUTCMilliseconds");
 		});
-
 
 		test(".Now()", function () {
 			var clock = sinon.useFakeTimers(0); // 1, January 1970 = 22 Shawwal 1389(22.10.1389)
