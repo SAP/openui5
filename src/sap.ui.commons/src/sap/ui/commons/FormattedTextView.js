@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 					/**
 					 * Array of controls that should be replaced within htmlText.
 					 */
-					controls: {type: "sap.ui.commons.FormattedTextViewControl", multiple: true, singularName: "control"}
+					controls: {type: "sap.ui.core.Control", multiple: true, singularName: "control"}
 				}
 			}
 		});
@@ -58,16 +58,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		 * Initialization hook for the FormattedTextView, which creates a list of rules with allowed tags and attributes.
 		 */
 		FormattedTextView.prototype.init = function () {
-			this._aAllowedInterfaces = [];
-			this._aAllowedInterfaces[0] = "sap.ui.commons.FormattedTextViewControl";
 
 			/*
 			 * these are the rules for the FormattedTextView
 			 */
-			this._ftv = {};
+			this._renderingRules = {};
 
 			// rules for the allowed attributes
-			this._ftv.ATTRIBS = {
+			this._renderingRules.ATTRIBS = {
 				'span::class': 1,
 				'div::class': 1,
 				'div::id': 1,
@@ -76,7 +74,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			};
 
 			// rules for the allowed tags
-			this._ftv.ELEMENTS = {
+			this._renderingRules.ELEMENTS = {
 				// Text Module Tags
 				'abbr': 1,
 				'acronym': 1,
@@ -125,8 +123,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		 * Called by Element#destroy().
 		 */
 		FormattedTextView.prototype.exit = function () {
-			delete this._aAllowedInterfaces;
-			delete this._ftv;
+			delete this._renderingRules;
 		};
 
 		/**
@@ -151,6 +148,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		 * @private
 		 */
 		var fnSanitizeAttribs = function (tagName, attribs) {
+
+			var intPattern = /^[0-9]*$/;
 			for (var i = 0; i < attribs.length; i += 2) {
 				// attribs[i] is the name of the tag's attribute.
 				// attribs[i+1] is its corresponding value.
@@ -159,14 +158,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 				var sAttribKey = tagName + "::" + attribs[i];
 
-				if (this._ftv.ATTRIBS[sAttribKey]) {
+				if (this._renderingRules.ATTRIBS[sAttribKey]) {
 					// keep the value of this class
-					if (tagName === "embed") {
-						var intPattern = /^[0-9]*$/;
-						if (!attribs[i + 1].match(intPattern)) {
-							// attribs[i + 1] = null;
-							return null;
-						}
+					if (tagName === "embed" && !(attribs[i + 1].match(intPattern))) {
+						return null;
 					}
 				} else {
 					var sWarning = '<' + tagName + '> with attribute [' + attribs[i] + '="' + attribs[i + 1] + '"] is not allowed and cut';
@@ -192,11 +187,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		 * @private
 		 */
 		var fnPolicy = function (tagName, attribs) {
-			if (this._ftv.ELEMENTS[tagName]) {
+			if (this._renderingRules.ELEMENTS[tagName]) {
 				var proxiedSanatizedAttribs = jQuery.proxy(fnSanitizeAttribs, this);
 				return proxiedSanatizedAttribs(tagName, attribs);
 			} else {
-				var sWarning = '<' + tagName + '> is not allowed and cut (and its content)';
+				var sWarning = '<' + tagName + '> is not allowed';
 				jQuery.sap.log.warning(sWarning, this);
 			}
 		};
@@ -226,18 +221,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		 * @param {sap.ui.commons.FormattedTextView} oThis An execution context will be passed
 		 * @private
 		 */
-		var fnSetControls = function (aControls, oThis) {
-			if (oThis.hasControls()) {
-				oThis.removeAllAggregation("controls");
+		var fnSetControls = function (aControls) {
+			if (this.hasControls()) {
+				this.removeAllAggregation("controls");
 			}
 
 			var bIsArray = jQuery.isArray(aControls);
 			if (bIsArray && aControls.length > 0) {
 				// iterate through the given array but suppress invalidate
 				for (var i = 0; i < aControls.length; i++) {
-					oThis.addAggregation("controls", aControls[i], true);
+					this.addAggregation("controls", aControls[i], true);
 				}
-				oThis.invalidate();
+				this.invalidate();
 			}
 		};
 
@@ -256,7 +251,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 			// validate and set content of controls corresponding to given HTML-text
 			// with place holders
-			fnSetControls(aControls, this);
+			fnSetControls.call(this, aControls);
 		};
 
 		return FormattedTextView;
