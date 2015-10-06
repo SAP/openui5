@@ -31,16 +31,17 @@ function(jQuery) {
 	 * 
 	 */
 	ElementUtil.iterateOverAllPublicAggregations = function(oElement, fnCallback) {
+		var that = this;
+		
 		var mAggregations = oElement.getMetadata().getAllAggregations();
-		if (!mAggregations) {
-			fnCallback();
-		}
-		for ( var sName in mAggregations) {
-			var oAggregation = mAggregations[sName];
-			var oValue = this.getAggregation(oElement, sName);
+		var aAggregationNames = Object.keys(mAggregations);
+
+		aAggregationNames.forEach(function(sAggregationName) {
+			var oAggregation = mAggregations[sAggregationName];
+			var oValue = that.getAggregation(oElement, sAggregationName);
 
 			fnCallback(oAggregation, oValue);
-		}
+		});
 	};
 
 	/**
@@ -69,23 +70,32 @@ function(jQuery) {
 	/**
 	 * 
 	 */
-	ElementUtil.findAllPublicElements = function(oElement) {
-		var aFoundElements = [];
-		var that = this;
-		var oCore = sap.ui.core;
+	ElementUtil.ensureRootElement = function(oElement) {
+		if (!(oElement instanceof sap.ui.core.Element)) {
+			return;
+		}
 
-		function internalFind(oElement) {
-			if (!(oElement instanceof oCore.Element)) {
+		if (oElement.getMetadata().getClass() === sap.ui.core.ComponentContainer) {
+			//This happens when the compontentContainer has not been rendered yet
+			if (!oElement.getComponentInstance()) {
 				return;
 			}
+			return oElement.getComponentInstance().getAggregation("rootControl");
+		} else {
+			return oElement;
+		}
+	};
 
-			if (oElement.getMetadata().getClass() === oCore.ComponentContainer) {
-				//This happens when the compontentConainer has not been rendered yet
-				if (!oElement.getComponentInstance()) {
-					return;
-				}
-				internalFind(oElement.getComponentInstance().getAggregation("rootControl"));
-			} else {
+	/**
+	 * 
+	 */
+	ElementUtil.findAllPublicElements = function(oElement) {
+		var that = this;
+		var aFoundElements = [];
+
+		function internalFind(oElement) {
+			oElement = that.ensureRootElement(oElement);
+			if (oElement) {
 				aFoundElements.push(oElement);
 				that.iterateOverAllPublicAggregations(oElement, function(oAggregation, vElements) {
 					if (vElements && vElements.length) {
@@ -93,7 +103,7 @@ function(jQuery) {
 							var oObj = vElements[i];
 							internalFind(oObj);
 						}
-					} else if (vElements instanceof oCore.Element) {
+					} else if (vElements instanceof sap.ui.core.Element) {
 						internalFind(vElements);
 					}
 				});
@@ -171,24 +181,34 @@ function(jQuery) {
 	/**
 	 * 
 	 */
-	ElementUtil.getAggregationMutators = function(oElement, sAggregationName) {
+	ElementUtil.getAggregationAccessors = function(oElement, sAggregationName) {
 		var oMetadata = oElement.getMetadata();
 		oMetadata.getJSONKeys();
 		var oAggregationMetadata = oMetadata.getAggregation(sAggregationName);
-		return {
-			get : oAggregationMetadata._sGetter,
-			add : oAggregationMetadata._sMutator,
-			remove : oAggregationMetadata._sRemoveMutator,
-			insert : oAggregationMetadata._sInsertMutator
-		};
+		if (oAggregationMetadata) {
+			return {
+				get : oAggregationMetadata._sGetter,
+				add : oAggregationMetadata._sMutator,
+				remove : oAggregationMetadata._sRemoveMutator,
+				insert : oAggregationMetadata._sInsertMutator
+			};
+		} else {
+			return {};
+		}
 	};
 
 	/**
 	 * 
 	 */
 	ElementUtil.getAggregation = function(oElement, sAggregationName) {
-		var sGetMutator = this.getAggregationMutators(oElement, sAggregationName).get;
-		var oValue = oElement[sGetMutator]();
+		var oValue;
+
+		var sGetter = this.getAggregationAccessors(oElement, sAggregationName).get;
+		if (sGetter) {
+			oValue = oElement[sGetter]();
+		} else {
+			oValue = oElement.getAggregation(sAggregationName);
+		}
 		//ATTENTION:
 		//under some unknown circumstances the return oValue looks like an Array but jQuery.isArray() returned undefined => false
 		//that is why we use array ducktyping with a null check!
@@ -204,16 +224,25 @@ function(jQuery) {
 	 * 
 	 */
 	ElementUtil.addAggregation = function(oParent, sAggregationName, oElement) {
-		var sAggregationAddMutator = this.getAggregationMutators(oParent, sAggregationName).add;
-		oParent[sAggregationAddMutator](oElement);
+		var sAggregationAddMutator = this.getAggregationAccessors(oParent, sAggregationName).add;
+		if (sAggregationAddMutator) {
+			oParent[sAggregationAddMutator](oElement);
+		} else {
+			oParent.addAggregation("sAggregationName", oElement);
+		}
+		
 	};
 	
 	/**
 	 * 
 	 */
 	ElementUtil.removeAggregation = function(oParent, sAggregationName, oElement) {
-		var sAggregationRemoveMutator = this.getAggregationMutators(oParent, sAggregationName).remove;
-		oParent[sAggregationRemoveMutator](oElement);
+		var sAggregationRemoveMutator = this.getAggregationAccessors(oParent, sAggregationName).remove;
+		if (sAggregationRemoveMutator) {
+			oParent[sAggregationRemoveMutator](oElement);
+		} else {
+			oParent.removeAggregation(sAggregationName, oElement);
+		}
 	};
 
 	/**
@@ -231,8 +260,12 @@ function(jQuery) {
 				delete oElement.__bSapUiDtSupressParentChangeEvent;
 			}
 		}
-		var sAggregationInsertMutator = this.getAggregationMutators(oParent, sAggregationName).insert;
-		oParent[sAggregationInsertMutator](oElement, iIndex);
+		var sAggregationInsertMutator = this.getAggregationAccessors(oParent, sAggregationName).insert;
+		if (sAggregationInsertMutator) {
+			oParent[sAggregationInsertMutator](oElement, iIndex);
+		} else {
+			oParent.insertAggregation(sAggregationName, oElement, iIndex);
+		}
 	};
 
 	/**
@@ -241,8 +274,12 @@ function(jQuery) {
 	ElementUtil.isValidForAggregation = function(oParent, sAggregationName, oElement) {
 		var oAggregationMetadata = oParent.getMetadata().getAggregation(sAggregationName);
 
-		// TODO : test altTypes
-		return this.isInstanceOf(oElement, oAggregationMetadata.type);
+		// only for public aggregations
+		if (oAggregationMetadata) {
+			// TODO : test altTypes
+			return this.isInstanceOf(oElement, oAggregationMetadata.type);
+		}
+
 	};
 
 	/**

@@ -56,7 +56,7 @@ function(Plugin) {
 	/*
 	 * @override
 	 */
-	MouseSelection.prototype.registerOverlay = function(oOverlay) {
+	MouseSelection.prototype.registerElementOverlay = function(oOverlay) {
 		oOverlay.setSelectable(true);
 		oOverlay.addEventDelegate(this._mEventDelegate, oOverlay);
 	};
@@ -64,7 +64,7 @@ function(Plugin) {
 	
 	//  * @override
 	 
-	MouseSelection.prototype.deregisterOverlay = function(oOverlay) {
+	MouseSelection.prototype.deregisterElementOverlay = function(oOverlay) {
 		oOverlay.removeEventDelegate(this._mEventDelegate, oOverlay);
 	};
 

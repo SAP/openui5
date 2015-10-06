@@ -157,7 +157,7 @@ function(ManagedObject, ElementUtil, DOMUtil) {
 	ElementMover.prototype._iterateAllAggregations = function(oDesignTime, fnStep) {	
 		var that = this;
 
-		var aOverlays = oDesignTime.getOverlays();
+		var aOverlays = oDesignTime.getElementOverlays();
 		aOverlays.forEach(function(oOverlay) {
 			that._iterateOverlayAggregations(oOverlay, fnStep);
 		});

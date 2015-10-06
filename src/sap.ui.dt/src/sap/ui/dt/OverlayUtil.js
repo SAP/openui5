@@ -280,5 +280,20 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 		return oOverlay;
 	};
 
+	/**
+	 * 
+	 */
+	OverlayUtil.iterateOverlayElementTree = function(oOverlay, fnCallback) {
+		var that = this;
+
+		fnCallback(oOverlay);
+
+		oOverlay.getAggregationOverlays().forEach(function(oAggregationOverlay) {
+			oAggregationOverlay.getChildren().forEach(function(oChildOverlay) {
+				that.iterateOverlayElementTree(oChildOverlay, fnCallback);
+			});
+		});
+	};
+
 	return OverlayUtil;
 }, /* bExport= */ true);

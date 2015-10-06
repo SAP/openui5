@@ -65,8 +65,8 @@ function(DragDrop, ElementMover, ElementUtil, DOMUtil) {
 	/**
 	 * @override
 	 */
-	ControlDragDrop.prototype.registerOverlay = function(oOverlay) {
-		DragDrop.prototype.registerOverlay.apply(this, arguments);
+	ControlDragDrop.prototype.registerElementOverlay = function(oOverlay) {
+		DragDrop.prototype.registerElementOverlay.apply(this, arguments);
 		var oElement = oOverlay.getElementInstance();
 		if (this.getElementMover().isMovableType(oElement) && this.getElementMover().checkMovable(oOverlay)) {
 			oOverlay.setMovable(true);
@@ -80,8 +80,8 @@ function(DragDrop, ElementMover, ElementUtil, DOMUtil) {
 	/**
 	 * @override
 	 */
-	ControlDragDrop.prototype.deregisterOverlay = function(oOverlay) {
-		DragDrop.prototype.deregisterOverlay.apply(this, arguments);
+	ControlDragDrop.prototype.deregisterElementOverlay = function(oOverlay) {
+		DragDrop.prototype.deregisterElementOverlay.apply(this, arguments);
 		oOverlay.setMovable(false);
 
 		if (this.oDraggedElement) {

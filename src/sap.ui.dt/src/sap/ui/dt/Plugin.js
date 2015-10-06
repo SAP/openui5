@@ -71,21 +71,21 @@ function(ManagedObject) {
 	 * Function is called initially for every overlay in the DesignTime and then when any new overlay is created inside of the DesignTime
 	 * This function should be overriden by the plugins to handle the overlays (attach events and etc.)
 	 * @function
-	 * @name sap.ui.dt.Plugin.prototype.registerOverlay
-	 * @param {sap.ui.dt.Overlay} an Overlay which should be registered
+	 * @name sap.ui.dt.Plugin.prototype.registerElementOverlay
+	 * @param {sap.ui.dt.ElementOverlay} an oElementOverlay which should be registered
 	 * @protected
 	 */
-	//Plugin.prototype.registerOverlay = function(oOverlay) {};
+	// Plugin.prototype.registerElementOverlay = function(oElementOverlay) {};
 
 	/**
 	 * Function is called for every overlay in the DesignTime when the Plugin is deactivated.
 	 * This function should be overriden by the plugins to rollback the registration and cleanup attached event etc.
 	 * @function
-	 * @name sap.ui.dt.Plugin.prototype.deregisterOverlay
-	 * @param {sap.ui.dt.Overlay} an Overlay which should be deregistered
+	 * @name sap.ui.dt.Plugin.prototype.deregisterElementOverlay
+	 * @param {sap.ui.dt.ElementOverlay} an oElementOverlay which should be deregistered
 	 * @protected
 	 */
-	//Plugin.prototype.deregisterOverlay = function(oOverlay) {};
+	// Plugin.prototype.deregisterElementOverlay = function(oElementOverlay) {};
 
 	/**
 	 * Function is called initially for every aggregation overlay in the DesignTime and then when any new aggregation overlay is created inside of the DesignTime
@@ -95,7 +95,7 @@ function(ManagedObject) {
 	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay which should be registered
 	 * @protected
 	 */
-	//Plugin.prototype.registerAggregationOverlay = function(oAggregationOverlay) {};
+	// Plugin.prototype.registerAggregationOverlay = function(oAggregationOverlay) {};
 
 	/**
 	 * Function is called for every aggregation overlay in the DesignTime when the Plugin is deactivated.
@@ -105,7 +105,7 @@ function(ManagedObject) {
 	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay which should be deregistered
 	 * @protected
 	 */
-	//Plugin.prototype.deregisterAggregationOverlay = function(oAggregationOverlay) {};
+	// Plugin.prototype.deregisterAggregationOverlay = function(oAggregationOverlay) {};
 
 	/**
 	 * Sets a DesignTime, where the plugin should be used. Automatically called by "addPlugin" into DesignTime
@@ -117,13 +117,13 @@ function(ManagedObject) {
 		var oOldDesignTime = this.getDesignTime();
 		if (oOldDesignTime) {
 			this._deregisterOverlays(oOldDesignTime);
-			oOldDesignTime.detachEvent("overlayCreated", this._onOverlayCreated, this);
+			oOldDesignTime.detachEvent("elementOverlayCreated", this._onElementOverlayCreated, this);
 		}
 		
 		if (oDesignTime) {
 			this._registerOverlays(oDesignTime);
 
-			oDesignTime.attachEvent("overlayCreated", this._onOverlayCreated, this);
+			oDesignTime.attachEvent("elementOverlayCreated", this._onElementOverlayCreated, this);
 		}
 
 		this.setProperty("designTime", oDesignTime);
@@ -136,9 +136,9 @@ function(ManagedObject) {
 	 * @private
 	 */
 	Plugin.prototype._registerOverlays = function(oDesignTime) {
-		if (this.registerOverlay || this.registerAggregationOverlay) {
-			var aOverlays = oDesignTime.getOverlays();
-			aOverlays.forEach(this._callOverlayRegistrationMethods.bind(this));
+		if (this.registerElementOverlay || this.registerAggregationOverlay) {
+			var aElementOverlays = oDesignTime.getElementOverlays();
+			aElementOverlays.forEach(this._callElementOverlayRegistrationMethods.bind(this));
 		}
 	};
 
@@ -147,23 +147,23 @@ function(ManagedObject) {
 	 * @private
 	 */
 	Plugin.prototype._deregisterOverlays = function(oDesignTime) {
-		if (this.deregisterOverlay || this.deregisterAggregationOverlay) {
-			var aOverlays = oDesignTime.getOverlays();
+		if (this.deregisterElementOverlay || this.deregisterAggregationOverlay) {
+			var aOverlays = oDesignTime.getElementOverlays();
 			aOverlays.forEach(this._callOverlayDeregestrationMethods.bind(this));
 		}
 	};
 
 	/** 
-	 * @param {sap.ui.dt.Overlay} oOverlay to call registration methods for
+	 * @param {sap.ui.dt.Overlay} oElementOverlay to call registration methods for
 	 * @private
 	 */
-	Plugin.prototype._callOverlayRegistrationMethods = function(oOverlay) {
-		if (this.registerOverlay) {
-			this.registerOverlay(oOverlay);
+	Plugin.prototype._callElementOverlayRegistrationMethods = function(oElementOverlay) {
+		if (this.registerElementOverlay) {
+			this.registerElementOverlay(oElementOverlay);
 		}
 
 		if (this.registerAggregationOverlay) {
-			var aAggregationOverlays = oOverlay.getAggregationOverlays();
+			var aAggregationOverlays = oElementOverlay.getAggregationOverlays();
 			aAggregationOverlays.forEach(this.registerAggregationOverlay.bind(this));
 		}
 	};
@@ -173,8 +173,8 @@ function(ManagedObject) {
 	 * @private
 	 */
 	Plugin.prototype._callOverlayDeregestrationMethods = function(oOverlay) {
-		if (this.deregisterOverlay) {
-			this.deregisterOverlay(oOverlay);
+		if (this.deregisterElementOverlay) {
+			this.deregisterElementOverlay(oOverlay);
 		}
 
 		if (this.deregisterAggregationOverlay) {
@@ -187,10 +187,10 @@ function(ManagedObject) {
 	 * @param {sap.ui.baseEvent} oEvent event object
 	 * @private
 	 */
-	Plugin.prototype._onOverlayCreated = function(oEvent) {
-		var oOverlay = oEvent.getParameter("overlay");
+	Plugin.prototype._onElementOverlayCreated = function(oEvent) {
+		var oOverlay = oEvent.getParameter("elementOverlay");
 
-		this._callOverlayRegistrationMethods(oOverlay);
+		this._callElementOverlayRegistrationMethods(oOverlay);
 	};
 
 	return Plugin;

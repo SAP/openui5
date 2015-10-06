@@ -61,7 +61,7 @@ function(Plugin, DOMUtil) {
 	 * @override
 	 * @param {sap.ui.dt.Overlay} an Overlay which should be registered
 	 */
-	DragDrop.prototype.registerOverlay = function(oOverlay) {
+	DragDrop.prototype.registerElementOverlay = function(oOverlay) {
 		oOverlay.addEventDelegate(this._oOverlayDelegate, this);
 
 		oOverlay.attachEvent("movableChange", this._onMovableChange, this);
@@ -85,7 +85,7 @@ function(Plugin, DOMUtil) {
 	/**
 	 * @override
 	 */
-	DragDrop.prototype.deregisterOverlay = function(oOverlay) {
+	DragDrop.prototype.deregisterElementOverlay = function(oOverlay) {
 		oOverlay.removeEventDelegate(this._oOverlayDelegate, this);
 
 		oOverlay.detachEvent("movableChange", this._onMovableChange, this);

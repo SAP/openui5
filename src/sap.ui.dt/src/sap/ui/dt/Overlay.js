@@ -44,6 +44,13 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 			// ---- control specific ----
 			library : "sap.ui.dt",
 			properties : {
+				/** 
+				 * Whether the overlay is created for an element or aggregation, which is not accessible via the public tree
+				 */	
+				inHiddenTree : {
+					type : "boolean",
+					defaultValue : false
+				}
 			},
 			associations : {
 				/** 
@@ -321,6 +328,32 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 		if (oDomRef) {
 			DOMUtil.syncScroll(this.$(), oDomRef);
 		}
+	};
+
+
+	/**
+	 * Sets whether the Overlay is for an element/aggregation in a hidden tree (not accessible via public aggregations)
+	 * @param {boolean} bInHiddenTree if the Overlay is inHiddenTree
+	 * @returns {sap.ui.dt.Overlay} returns this	 
+	 * @public
+	 */
+	Overlay.prototype.setInHiddenTree = function(bInHiddenTree) {
+		if (bInHiddenTree !== this.isInHiddenTree()) {
+
+			this.toggleStyleClass("sapUiDtOverlayInHiddenTree", bInHiddenTree);		
+			this.setProperty("inHiddenTree", bInHiddenTree);
+		}
+
+		return this;
+	};
+
+	/** 
+	 * Returns if the Overlay is for an element/aggregation in a hidden tree (not accessible via public aggregations)
+	 * @public
+	 * @return {boolean} if the Overlay is in hidden tree
+	 */
+	Overlay.prototype.isInHiddenTree = function() {
+		return this.getInHiddenTree();
 	};
 
 	return Overlay;

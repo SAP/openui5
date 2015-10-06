@@ -83,7 +83,7 @@ function(Plugin, ElementUtil) {
 	/*
 	 * @override
 	 */
-	Rename.prototype.registerOverlay = function(oOverlay) {
+	Rename.prototype.registerElementOverlay = function(oOverlay) {
 		var oElement = oOverlay.getElementInstance();
 		if (this.isEditableType(oElement) && this.checkEditable(oOverlay)) {
 			oOverlay.setEditable(true);

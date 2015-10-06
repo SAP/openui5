@@ -48,7 +48,7 @@
 				
 				sap.ui.getCore().applyChanges();
 				this.oDragDrop = new sap.ui.dt.plugin.DragDrop();
-				this.oDragDrop.registerOverlay(this.oButtonOverlay);				
+				this.oDragDrop.registerElementOverlay(this.oButtonOverlay);				
 				this.oDragDrop.registerAggregationOverlay(this.oAggregationOverlay);				
 				this.oAggregationOverlay.setTargetZone(true);
 			},
