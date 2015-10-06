@@ -951,7 +951,7 @@ sap.ui
 					var sMultiplicity = jQuery(aAssociation).find("End[Role='" + sRole + "']").attr("Multiplicity");
 
 					var aPropRef = [];
-					var aConstraint = jQuery(aAssociation).find("ReferentialConstraint > [Role=" + sRole + "]");
+					var aConstraint = jQuery(aAssociation).find("ReferentialConstraint > [Role='" + sRole + "']");
 					if (aConstraint && aConstraint.length > 0) {
 						jQuery(aConstraint[0]).children("PropertyRef").each(function(iIndex, oPropRef) {
 							aPropRef.push(jQuery(oPropRef).attr("Name"));
