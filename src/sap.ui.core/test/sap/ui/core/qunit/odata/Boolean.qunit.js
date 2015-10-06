@@ -16,7 +16,7 @@ sap.ui.require([
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
 
 	//*********************************************************************************************
-	QUnit.module("Boolean", {
+	QUnit.module("sap.ui.model.odata.type.Boolean", {
 		beforeEach: function () {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},

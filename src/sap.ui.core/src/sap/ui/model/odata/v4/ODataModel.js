@@ -24,26 +24,12 @@ sap.ui.define([
 	"./ODataPropertyBinding",
 	"sap/ui/thirdparty/odatajs-4.0.0"
 ], function(jQuery, Model, Helper, ODataContextBinding, ODataDocumentModel, ODataListBinding,
-		ODataMetaModel, ODataPropertyBinding, Olingo) {
+	ODataMetaModel, ODataPropertyBinding, Olingo) {
 	"use strict";
 
 	/*global odatajs */
 
-	var rListBindingPath = /^\/.+\[(\d+)\];list=(\d+)\/(.+)/;
-
-	/**
-	 * Returns an <code>Error</code> instance from an Olingo error response.
-	 *
-	 * @param {object} oError
-	 *   an Olingo error response
-	 * @returns {Error}
-	 *   an <code>Error</code> instance
-	 */
-	function createError(oError) {
-		return new Error(oError.message
-			+ " - " + oError.response.statusCode + " " + oError.response.statusText
-			+ ": " + oError.response.body);
-	}
+	var rListBindingPath = /^\/.+\[(\d+)\];list=(\d+)(?:\/(.+))?$/;
 
 	/**
 	 * Throws an error for a not yet implemented method with the given name called by the SAPUI5
@@ -75,7 +61,7 @@ sap.ui.define([
 	 * @param {string} [mParameters.serviceUrl]
 	 *   root URL of the service to request data from; only used if the parameter
 	 *   <code>sServiceUrl</code> has not been given
-	 * @throws Error if the given service root URL does not end with a forward slash
+	 * @throws {Error} if the given service root URL does not end with a forward slash
 	 *
 	 * @class Model implementation for OData v4.
 	 *
@@ -195,44 +181,18 @@ sap.ui.define([
 	 * @param {object} oEntityData
 	 *   the new entity's properties, e.g.
 	 *   <code>{"ID" : "1", "AGE" : 52, "ENTRYDATE" : "1977-07-24", "Is_Manager" : false}</code>
-	 * @param {boolean} [bIsFreshToken=false]
-	 *   whether the CSRF has already been refreshed and thus should not be refreshed again
 	 * @returns {Promise}
-	 *   a promise which is resolved with the server's response data in case of success, or an
-	 *   instance of <code>Error</code> in case of failure
+	 *   a promise which is resolved with the server's response data in case of success, or
+	 *   rejected with an instance of <code>Error</code> in case of failure
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.create = function (sPath, oEntityData, bIsFreshToken) {
-		var that = this;
-
-		if (sPath.charAt(0) !== "/") {
-			throw new Error("Not an absolute data binding path: " + sPath);
-		}
-
-		return new Promise(function (fnResolve, fnReject) {
-			odatajs.oData.request({
-				data : oEntityData,
-				headers : that.mHeaders,
-				method : "POST",
-				requestUri : that.sServiceUrl + sPath.slice(1)
-			},
-			function (oData, oResponse) {
-				fnResolve(oData);
-			},
-			function (oError) {
-				var sCsrfToken = Helper.headerValue("X-CSRF-Token", oError.response.headers);
-
-				if (!bIsFreshToken && oError.response.statusCode === 403
-					&& sCsrfToken && sCsrfToken.toLowerCase() === "required") {
-					// refresh CSRF token and repeat original request
-					that.refreshSecurityToken().then(function() {
-						fnResolve(that.create(sPath, oEntityData, true));
-					}, fnReject);
-				} else {
-					fnReject(createError(oError));
-				}
-			});
+	ODataModel.prototype.create = function (sPath, oEntityData) {
+		return Helper.request(this, {
+			data : oEntityData,
+			headers : this.mHeaders,
+			method : "POST",
+			requestUri : this.sServiceUrl + sPath.slice(1)
 		});
 	};
 
@@ -267,7 +227,10 @@ sap.ui.define([
 	 * @param {boolean} [bAllowObjectAccess=false]
 	 *   whether access to whole objects is allowed
 	 * @returns {Promise}
-	 *   A promise to be resolved when the OData request is finished
+	 *   A promise to be resolved when the OData request is finished, providing a data object
+	 *   just like Olingo when reading from the OData service, e.g. <code>{"value" : "foo"}</code>
+	 *   for simple properties, <code>{"value" : [...]}</code> for collections and
+	 *   <code>{"foo" : "bar", ...}</code> for objects
 	 *
 	 * @protected
 	 */
@@ -285,11 +248,13 @@ sap.ui.define([
 			if (aMatches) { // use list binding to retrieve the value
 				that.aLists[Number(aMatches[2])]
 					.readValue(Number(aMatches[1]), aMatches[3], bAllowObjectAccess)
-					.then( function (oValue) {
-							fnResolve({value : oValue});
-						},
-						function (oError) {
-							fnReject(oError);
+					.then(function (oValue) {
+						// property access: wrap property value just like OData does
+						fnResolve(typeof oValue === "object" && !Array.isArray(oValue)
+							? oValue
+							: {value : oValue});
+					}, function (oError) {
+						fnReject(oError);
 					});
 				return;
 			}
@@ -299,7 +264,6 @@ sap.ui.define([
 				requestUri: sRequestUri,
 				headers: that.mHeaders
 			}, function (oData, oResponse) {
-				//TODO Olingo: oResponse.headers is actually an empty array misused as a map!
 				that.mHeaders["X-CSRF-Token"]
 					= Helper.headerValue("X-CSRF-Token", oResponse.headers)
 					|| that.mHeaders["X-CSRF-Token"];
@@ -346,13 +310,42 @@ sap.ui.define([
 						fnResolve();
 					}, function (oError) {
 						that.oSecurityTokenPromise = null;
-						fnReject(createError(oError));
+						fnReject(Helper.createError(oError));
 					}).abort;
 			});
 			this.oSecurityTokenPromise.abort = fnAbort;
 		}
 
 		return this.oSecurityTokenPromise;
+	};
+
+	/**
+	 * Removes the entity with the given path.
+	 *
+	 * @param {string} sPath
+	 *   an absolute data binding path pointing to an entity, it MUST begin with some list
+	 *   binding's context because you can only remove data from the model which has been read
+	 *   into the model before
+	 * @returns {Promise}
+	 *   a promise which is resolved in case of success, or rejected with an instance of
+	 *   <code>Error</code> in case of failure
+	 *
+	 * @public
+	 */
+	ODataModel.prototype.remove = function (sPath) {
+		var that = this;
+
+		return this.getMetaModel()
+			.requestCanonicalUrl(this.sServiceUrl, sPath, this.read.bind(this))
+			.then(function (sCanonicalUrl) {
+				return Helper.request(that, {
+					requestUri: sCanonicalUrl,
+					method: "DELETE",
+					headers : {
+						"If-Match" : "*"
+					}
+				});
+			});
 	};
 
 	/**
@@ -380,7 +373,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.requestObject = function (sPath, oContext) {
-		var iMeta = sPath.indexOf('/#'),
+		var iMeta = sPath.indexOf("/#"),
 			sMetaModelPath,
 			sModelPath,
 			that = this;

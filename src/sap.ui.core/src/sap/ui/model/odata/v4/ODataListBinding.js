@@ -222,7 +222,9 @@ sap.ui.define([
 	 * @param {boolean} [bAllowObjectAccess=false]
 	 *   whether access to whole objects is allowed
 	 * @return {Promise}
-	 *   the promise which is resolved with the value
+	 *   the promise which is resolved with the value, e.g. <code>"foo"</code> for simple
+	 *   properties, <code>[...]</code> for collections and <code>{"foo" : "bar", ...}</code> for
+	 *   objects
 	 * @private
 	 */
 	ODataListBinding.prototype.readValue = function (iIndex, sPath, bAllowObjectAccess) {
@@ -242,15 +244,17 @@ sap.ui.define([
 			that.oCache.readRange(iIndex, 1).then(function (oData) {
 				var oResult = oData.value[0];
 
-				sPath.split("/").every(function (sSegment) {
-					if (!oResult){
-						jQuery.sap.log.warning("Invalid segment " + sSegment, "path: " + sPath,
-							"sap.ui.model.odata.v4.ODataListBinding");
-						return false;
-					}
-					oResult = oResult[sSegment];
-					return true;
-				});
+				if (sPath) {
+					sPath.split("/").every(function (sSegment) {
+						if (!oResult){
+							jQuery.sap.log.warning("Invalid segment " + sSegment, "path: " + sPath,
+								"sap.ui.model.odata.v4.ODataListBinding");
+							return false;
+						}
+						oResult = oResult[sSegment];
+						return true;
+					});
+				}
 				if (!bAllowObjectAccess && typeof oResult === "object") {
 					reject(new Error("Accessed value is not primitive"));
 					return;

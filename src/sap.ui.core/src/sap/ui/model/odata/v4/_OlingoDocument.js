@@ -27,7 +27,7 @@ sap.ui.define([
 		 *   the qualified name of the complex type
 		 * @return {object}
 		 *   the complex type
-		 * @throws Error if no complex type with this name could be found
+		 * @throws {Error} if no complex type with this name could be found
 		 * @private
 		 */
 		findComplexType: function (oDocument, sQualifiedName) {
@@ -55,7 +55,7 @@ sap.ui.define([
 		 *   the qualified name of the entity type
 		 * @return {object}
 		 *   the entity type
-		 * @throws Error if no entity type can be found
+		 * @throws {Error} if no entity type can be found
 		 *
 		 * @private
 		 */
@@ -83,7 +83,7 @@ sap.ui.define([
 		 *   the Olingo metadata document
 		 * @return {object}
 		 *   the schema containing entity container
-		 * @throws Error if the entity container cannot be found
+		 * @throws {Error} if the entity container cannot be found
 		 * @private
 		 */
 		findSchemaWithEntityContainer : function (oDocument) {
@@ -235,7 +235,7 @@ sap.ui.define([
 				aNavigationPropertyBindings.forEach(function(oNavigationPropertyBinding) {
 					var sTargetName = oNavigationPropertyBinding.target;
 
-					if (sTargetName.indexOf("/") < 0) {
+					if (sTargetName.indexOf("/") < 0) { //TODO 100% code coverage!
 						sTargetName = sContainerName + "/" + sTargetName;
 					}
 					aResult.push({
@@ -274,19 +274,21 @@ sap.ui.define([
 			for (i = 0; i < oEntityType.key[0].propertyRef.length; i++) {
 				oResult.Key.push({"PropertyPath" : oEntityType.key[0].propertyRef[i].name});
 			}
-			for (i = 0; i < oEntityType.navigationProperty.length; i++) {
-				oSourceProperty = oEntityType.navigationProperty[i];
-				oTypeRef = OlingoDocument.parseTypeRef(oSourceProperty.type);
-				oTargetProperty = {
-					"Name" : oSourceProperty.name,
-					"Fullname" : sQualifiedName + "/" + oSourceProperty.name,
-					"Nullable" : oSourceProperty.nullable === "true",
-					"ContainsTarget" : false,
-					"IsCollection" : oTypeRef.collection,
-					"Type@odata.navigationLink" :
-						"Types(QualifiedName='" + oTypeRef.qualifiedName + "')"
-				};
-				oResult.NavigationProperties.push(oTargetProperty);
+			if (oEntityType.navigationProperty) {
+				for (i = 0; i < oEntityType.navigationProperty.length; i++) {
+					oSourceProperty = oEntityType.navigationProperty[i];
+					oTypeRef = OlingoDocument.parseTypeRef(oSourceProperty.type);
+					oTargetProperty = {
+						"Name" : oSourceProperty.name,
+						"Fullname" : sQualifiedName + "/" + oSourceProperty.name,
+						"Nullable" : oSourceProperty.nullable === "true",
+						"ContainsTarget" : false,
+						"IsCollection" : oTypeRef.collection,
+						"Type@odata.navigationLink" :
+							"Types(QualifiedName='" + oTypeRef.qualifiedName + "')"
+					};
+					oResult.NavigationProperties.push(oTargetProperty);
+				}
 			}
 
 			return oResult;

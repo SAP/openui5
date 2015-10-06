@@ -11,7 +11,7 @@ sap.ui.require([
 	"sap/ui/thirdparty/odatajs-4.0.0"
 ], function (ManagedObject, ChangeReason, Context, Model, ODataListBinding, ODataModel, Olingo) {
 	/*global odatajs, QUnit, sinon */
-	/*eslint no-warning-comments: 0 */
+	/*eslint max-nested-callbacks: 4, no-warning-comments: 0 */
 	"use strict";
 
 	var TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataListBinding", {
@@ -400,7 +400,6 @@ sap.ui.require([
 		setTimeout(done, 10); //TODO Is there a better way to finalize the test after console log?
 	});
 
-
 	//*********************************************************************************************
 	QUnit.test("readValue accesses path with one segment on cached record", function (assert) {
 		var iIndex = Math.floor(Math.random() * 10), // some index
@@ -433,9 +432,12 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("readValue rejects when accessing cached record", function (assert) {
+		//TODO the test's title is misleading, this is not "readValue() should reject when..."
+		// but it's about how readValue() behaves if readRange() fails
 		var oError = new Error(),
 			oListBinding = this.oModel.bindList("/EMPLOYEES");
 
+		//TODO it is hard to understand why we succeed for (0, 10) 1st and then fail for (0, 1)
 		this.oDataCacheMock.expects("readRange")
 			.withExactArgs(0, 10)
 			.returns(createDeferredResult(10));
@@ -667,22 +669,45 @@ sap.ui.require([
 			}, 10);
 		}, 10);
 	});
-	//TODO to avoid complete re-rendering of lists implement bUseExtendedChangeDetection support
-	//The implementation of getContexts needs to provide next to the resulting context array a diff
-	//array with information which entry has been inserted or deleted (see jQuery.sap.arrayDiff and
-	//sap.m.GrowingEnablement)
-	//TODO refresh, reset the list binding
-	//TODO jsdoc: {@link sap.ui.model.odata.v4.ODataModel#bindList bindList} generates no link as
-	//  there is no jsdoc for v4.ODataModel
-	//TODO lists within lists for deferred navigation or structural properties
-	//TODO (how to) get rid of global cache objects when model is garbage collected
-	//TODO integration test for cache eviction if size exceeds cacheSize (1MB per default)
-	//TODO (how to) set pageSize, prefetchSize, cacheSize of cache?
-	//TODO setContext() must delete this.oCache when it has its own cache (e.g. scenario
-	//  where listbinding is not nested but has a context. This is currently not possible but
-	//  if you think on a relative binding "TEAMS" which becomes context "/" -> here the relative
-	//  binding must create the it's own cache which has to be deleted with setContext()
-	//TODO custom headers for readRange(), e.g. "X-CSRF-Token": "Fetch"
 
-	//TODO integration: 2 entity sets with same $expand, but different $select
+	//*********************************************************************************************
+	QUnit.test("readValue: bAllowObjectAccess", function (assert) {
+		var iIndex = Math.floor(Math.random() * 10), // some index
+			oListBinding = this.oModel.bindList("/EMPLOYEES");
+
+		this.oDataCacheMock.expects("readRange")
+			.withExactArgs(0, 10)
+			.returns(createDeferredResult(10));
+		this.oDataCacheMock.expects("readRange")
+			.withExactArgs(iIndex, 1)
+			.returns(createDeferredResult(1, iIndex));
+		oListBinding.getContexts(0, 10); // creates cache
+
+		return oListBinding.readValue(iIndex, undefined, true).then(function (oValue) {
+				assert.deepEqual(oValue, {
+					Name : "Name " + iIndex,
+					LOCATION : {
+						COUNTRY : "COUNTRY " + iIndex
+					}
+				});
+			});
+	});
 });
+//TODO to avoid complete re-rendering of lists implement bUseExtendedChangeDetection support
+//The implementation of getContexts needs to provide next to the resulting context array a diff
+//array with information which entry has been inserted or deleted (see jQuery.sap.arrayDiff and
+//sap.m.GrowingEnablement)
+//TODO refresh, reset the list binding
+//TODO jsdoc: {@link sap.ui.model.odata.v4.ODataModel#bindList bindList} generates no link as
+//  there is no jsdoc for v4.ODataModel
+//TODO lists within lists for deferred navigation or structural properties
+//TODO (how to) get rid of global cache objects when model is garbage collected
+//TODO integration test for cache eviction if size exceeds cacheSize (1MB per default)
+//TODO (how to) set pageSize, prefetchSize, cacheSize of cache?
+//TODO setContext() must delete this.oCache when it has its own cache (e.g. scenario
+//  where listbinding is not nested but has a context. This is currently not possible but
+//  if you think on a relative binding "TEAMS" which becomes context "/" -> here the relative
+//  binding must create the it's own cache which has to be deleted with setContext()
+//TODO custom headers for readRange(), e.g. "X-CSRF-Token": "Fetch"
+
+//TODO integration: 2 entity sets with same $expand, but different $select

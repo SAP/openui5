@@ -5,8 +5,9 @@
 //Provides class sap.ui.model.odata.v4.ODataMetaModel
 sap.ui.define([
 	'sap/ui/model/MetaModel',
+	"sap/ui/model/odata/ODataUtils",
 	'sap/ui/model/odata/v4/_ODataHelper'
-], function (MetaModel, Helper) {
+], function (MetaModel, ODataUtils, Helper) {
 	"use strict";
 
 	var rEntitySetName = /^(\w+)(\[|\(|$)/, // identifier followed by [,( or at end of string
@@ -34,11 +35,51 @@ sap.ui.define([
 					throw new Error("Missing metadata model");
 				}
 				this.oModel = oModel;
-				// this entity container cache is managed from ODataDocumentModel in
-				// _ODataHelper.requestEntityContainer
-				this._oEntityContainer = undefined;
+				// @see sap.ui.model.odata.v4._ODataHelper.requestEntityContainer
+				this._oEntityContainerPromise = null;
 			}
 		});
+
+	/**
+	 * Returns a promise for the "4.3.1 Canonical URL" corresponding to the given service root URL
+	 * and absolute data binding path which must point to an entity.
+	 *
+	 * @param {string} sServiceUrl
+	 *   root URL of the service
+	 * @param {string} sPath
+	 *   an absolute data binding path pointing to an entity, e.g.
+	 *   "/TEAMS[0];list=0/TEAM_2_EMPLOYEES/0"
+	 * @param {function} fnRead
+	 *   function like {@link sap.ui.model.odata.v4.ODataModel#read} which provides access to data
+	 * @returns {Promise}
+	 *   a promise which is resolved with the canonical URL (e.g.
+	 *   "/<service root URL>/EMPLOYEES(ID='1')") in case of success, or rejected with an instance
+	 *   of <code>Error</code> in case of failure
+	 * @private
+	 */
+	ODataMetaModel.prototype.requestCanonicalUrl = function (sServiceUrl, sPath, fnRead) {
+		var that = this;
+
+		return fnRead(sPath, true).then(function (oEntityInstance) {
+			return that.requestMetaContext(sPath).then(function (oContext) {
+				// e.g. "/EntitySets(Name='foo')"
+				// or   "/EntitySets(Name='foo')/EntityType/NavigationProperties(Name='bar')"
+				var iLastSlash = oContext.getPath().lastIndexOf("/"),
+					sTypePath = iLastSlash > 0 ? "Type" : "EntityType";
+
+				return Promise.all([
+					that.requestObject(sTypePath, oContext), // --> oEntityType
+					Helper.requestEntitySetName(oContext) // --> sEntitySetName
+				]).then(function (aValues) {
+					var oEntityType = aValues[0],
+						sEntitySetName = aValues[1];
+
+					return sServiceUrl + encodeURIComponent(sEntitySetName)
+						+ Helper.getKeyPredicate(oEntityType, oEntityInstance);
+				});
+			});
+		});
+	};
 
 	/**
 	 * Requests the meta data object for the given path relative to the given context.
