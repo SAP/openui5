@@ -2316,17 +2316,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 					}
 				}
 			}
-
-			var oColRsz = document.getElementById(oVisibleColumn.getId() + "-rsz");
 			
-			mHeaders[iHeadColIndex] = {
-			   domRefColumnTh: oElement,
-			   domRefColumnDivs: [],
-			   domRefColumnResizer: oColRsz,
-			   domRefColumnResizerPosition: undefined,
-			   rect: oRect,
-			   aHeaderData: aHeaderData
-			};
+			if (oVisibleColumn) {
+				var oColRsz = document.getElementById(oVisibleColumn.getId() + "-rsz");
+				mHeaders[iHeadColIndex] = {
+					domRefColumnTh: oElement,
+					domRefColumnDivs: [],
+					domRefColumnResizer: oColRsz,
+					domRefColumnResizerPosition: undefined,
+					rect: oRect,
+					aHeaderData: aHeaderData
+				};
+			}
 		});
 		
 		// Map target column header divs to corresponding source table header.
