@@ -1046,9 +1046,9 @@
 			"JSON Model",
 			"Translatable Texts",
 			"Component Configuration",
-			"App Descriptor",
+			"Descriptor for Applications",
 			"Pages and Panels",
-			"Shell Container",
+			"Shell Control as Container",
 			"Margins and Paddings",
 			"Custom CSS and Theme Colors",
 			"Nested Views",
@@ -1068,7 +1068,7 @@
 			"Integration Test with OPA",
 			"Debugging Tools",
 			"Routing and Navigation",
-			"Routing with Params",
+			"Routing with Parameters",
 			"Routing Back and History",
 			"Custom Controls",
 			"Responsiveness",
@@ -1085,20 +1085,20 @@
 		  "description": "In this tutorial we will test application functionality with QUnit, OPA5, and the mock server",
 		  "docuLink": "#docs/guide/291c9121e6044ab381e0b51716f97f52.html",
 		  "samplesAsSteps": [
-			"Handover and Testing Strategy",
-			"A first Unit Test",
-			"Adding a price formatter",
-			"Testing a new type module",
-			"Adding a flagged button",
-			"A first OPA Test",
-			"Changing the table to grow",
+			"Overview and Testing Strategy",
+			"A First Unit Test",
+			"Adding the Price Formatter",
+			"Testing a New Module",
+			"Adding a Flag Button",
+			"A First OPA Test",
+			"Changing the table to a Growing Table",
 			"Testing Navigation",
 			"Adding the Post Page",
 			"Test Suite and Automated Testing",
-			"Testing Interactions",
+			"Testing User Interactions",
 			"Adding Tabs",
-			"Writing a Short Date Formatter TDD style",
-			"Adding the date formatter"
+			"Writing a Short Date Formatter Using TDD ",
+			"Adding the Date Formatter"
 		  ]
 		},
 		{
@@ -1108,13 +1108,15 @@
 		  "since": "1.32",
 		  "formFactors": "-",
 		  "description": "In this tutorial we implement typical features of a full-screen worklist app, a typical SAP Fiori design pattern",
+		  "docuLink": "#docs/guide/6a6a621c978145ad9eef2b221d2cf21d.html",
 		  "samplesAsSteps": [
-			"Getting started with the worklist template",
-			"Extending the worklist table",
-			"Adding quick filters",
-			"Reorder or unlist products",
-			"Adjusting the object view",
-			"Adding a comments section"
+			"Creating the Initial App",
+			"Custom Mock Data",
+			"Extending the Worklist Table",
+			"Quick Filter for the Worklist",
+			"Adding Actions to the Worklist",
+			"Extending the Detail Page",
+			"Adding a Comments Section"
 		  ]
 		}
 	  ],
