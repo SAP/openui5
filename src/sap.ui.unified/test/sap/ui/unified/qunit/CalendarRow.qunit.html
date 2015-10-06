@@ -51,7 +51,8 @@
 													type: sap.ui.unified.CalendarDayType.None,
 													title: "Appointment 0",
 													tooltip: "Tooltip 0",
-													text: "Appointment of 1 hours, 2 hour in past"
+													text: "Appointment of 1 hours, 2 hour in past",
+													key: "A0"
 												}),
 											 new sap.ui.unified.CalendarAppointment("App1", {
 													startDate: new Date("2015", "01", "01", "11", "15"),
@@ -60,7 +61,8 @@
 													title: "Appointment 1",
 													tooltip: "Tooltip 1",
 													text: "Appointment of 2 hours, 1 hour in future",
-													icon: "sap-icon://call"
+													icon: "sap-icon://call",
+													key: "A1"
 												}),
 											 new sap.ui.unified.CalendarAppointment("App2", {
 													startDate: new Date("2015", "01", "01", "09", "45"),
@@ -69,7 +71,8 @@
 													tentative: true,
 													title: "Appointment 2",
 													tooltip: "Tooltip 2",
-													text: "Appointment of 2 hour, 30 minutes in past"
+													text: "Appointment of 2 hour, 30 minutes in past",
+													key: "A2"
 												}),
 											 new sap.ui.unified.CalendarAppointment("App3", {
 													startDate: new Date("2015", "01", "01", "15", "00"),
@@ -77,7 +80,8 @@
 													type: sap.ui.unified.CalendarDayType.Type02,
 													title: "Appointment 3",
 													tooltip: "Tooltip 3",
-													text: "Appointment of 30 minutes"
+													text: "Appointment of 30 minutes",
+													key: "A3"
 												}),
 											 new sap.ui.unified.CalendarAppointment("App4", {
 													startDate: new Date("2015", "01", "01", "15", "30"),
@@ -85,7 +89,8 @@
 													type: sap.ui.unified.CalendarDayType.Type03,
 													title: "Appointment 4",
 													tooltip: "Tooltip 4",
-													text: "Appointment of 30 minutes, starts at end of App3"
+													text: "Appointment of 30 minutes, starts at end of App3",
+													key: "A4"
 												}),
 											 new sap.ui.unified.CalendarAppointment("App5", {
 													startDate: new Date("2015", "01", "02", "10", "30"),
@@ -93,7 +98,8 @@
 													type: sap.ui.unified.CalendarDayType.Type04,
 													title: "Appointment 5",
 													tooltip: "Tooltip 5",
-													text: "Appointment of 30 minutes, next day"
+													text: "Appointment of 30 minutes, next day",
+													key: "A5"
 												}),
 											 new sap.ui.unified.CalendarAppointment("App6", {
 													startDate: new Date("2015", "01", "02", "0", "0"),
@@ -101,7 +107,8 @@
 													type: sap.ui.unified.CalendarDayType.Type05,
 													title: "Appointment 6",
 													tooltip: "Tooltip 6",
-													text: "Appointment of full next day"
+													text: "Appointment of full next day",
+													key: "A6"
 												}),
 											 new sap.ui.unified.CalendarAppointment("App7", {
 													startDate: new Date("2015", "02", "01", "0", "0"),
@@ -109,7 +116,8 @@
 													type: sap.ui.unified.CalendarDayType.Type06,
 													title: "Appointment 7",
 													tooltip: "Tooltip 7",
-													text: "Appointment of full next 2 months"
+													text: "Appointment of full next 2 months",
+													key: "A7"
 												}),
 											],
 				intervalHeaders: [new sap.ui.unified.CalendarAppointment("IHead1", {
@@ -119,7 +127,8 @@
 														title: "Head 1",
 														tooltip: "Tooltip 1",
 														text: "Head of one hour",
-														icon: "sap-icon://sap-ui5"
+														icon: "sap-icon://sap-ui5",
+														key: "I1"
 													}),
 													new sap.ui.unified.CalendarAppointment("IHead2", {
 														startDate: new Date("2015", "01", "03", "00", "00"),
@@ -127,7 +136,8 @@
 														type: sap.ui.unified.CalendarDayType.Type01,
 														title: "Head 2",
 														tooltip: "Tooltip 2",
-														text: "Head of 2 days"
+														text: "Head of 2 days",
+														key: "I2"
 													}),
 													new sap.ui.unified.CalendarAppointment("IHead3", {
 														startDate: new Date("2015", "02", "01", "00", "00"),
@@ -135,7 +145,8 @@
 														type: sap.ui.unified.CalendarDayType.Type02,
 														title: "Head 3",
 														tooltip: "Tooltip 3",
-														text: "Head of 1 month"
+														text: "Head of 1 month",
+														key: "I3"
 													})
 												]
 				}).placeAt("uiArea1");
@@ -159,6 +170,18 @@
 
 			qutils.delayTestStart();
 
+			module("Properties");
+
+			test("Appointment", function() {
+				var oAppointment = sap.ui.getCore().byId("App0");
+				equal(oAppointment.getKey(), "A0", "Appointment: key set");
+				equal(oAppointment.getTitle(), "Appointment 0", "Appointment: Title set");
+				equal(oAppointment.getText(), "Appointment of 1 hours, 2 hour in past", "Appointment: text set");
+				equal(oAppointment.getIcon(), "", "Appointment: no icon set");
+				equal(oAppointment.getTentative(), false, "Appointment: tentative not set");
+				equal(oAppointment.getSelected(), false, "Appointment: selected not set");
+			});
+
 			module("Rendering");
 
 			test("Row", function() {
@@ -175,15 +198,15 @@
 				equal(aIntervals.length, 12, "Row1: per default 12 intervals rendered");
 				var sStyle = jQuery(aIntervals[0]).attr("style");
 				var aTest = sStyle.match(/width:(\s?)(\d+(.?)(\d+))/);
-				var iWidth = aTest[2];
-				equal(iWidth, 100 / 12 + "", "Row1: interval width");
+				var iWidth = Math.floor(aTest[2] * 100) / 100;
+				equal(iWidth, Math.floor(10000 / 12) / 100 + "", "Row1: interval width");
 
 				aIntervals = jQuery("#Row2-Apps").children(".sapUiCalendarRowAppsInt");
 				equal(aIntervals.length, 5, "Row2: 5 intervals rendered");
 				sStyle = jQuery(aIntervals[0]).attr("style");
 				aTest = sStyle.match(/width:(\s?)(\d+(.?)(\d+))/);
-				iWidth = aTest[2];
-				equal(iWidth, 100 / 5 + "", "Row2: interval width");
+				iWidth = Math.floor(aTest[2] * 100) / 100;
+				equal(iWidth, Math.floor(10000 / 5) / 100 + "", "Row2: interval width");
 
 				ok(jQuery("#Row1-Now").get(0), "Now indicatior is rendered");
 				ok(!jQuery("#Row1-Now").is(":visible"), "Now indicatior is not visible");
@@ -339,6 +362,8 @@
 				var $Appointment7 = jQuery("#App7");
 
 				ok($Appointment0.get(0), "Appointment0 rendered");
+				ok(!$Appointment0.hasClass("sapUiCalendarAppTent"), "Appointment0: not rendered as tentative");
+				ok(!$Appointment0.hasClass("sapUiCalendarAppSel"), "Appointment0: not rendered as selected");
 				ok(!$Appointment1.get(0), "Appointment1 not rendered");
 				ok($Appointment2.get(0), "Appointment2 rendered");
 				equal($Appointment2.attr("data-sap-level"), sLevel, "Appointment2 has same level like before")
@@ -348,6 +373,32 @@
 				ok(!$Appointment5.get(0), "Appointment5 not rendered");
 				ok(!$Appointment6.get(0), "Appointment6 not rendered");
 				ok(!$Appointment7.get(0), "Appointment7 not rendered");
+			});
+
+			test("Appointments - change properties", function() {
+				var oAppointment = sap.ui.getCore().byId("App0");
+				oAppointment.setKey("Ap0");
+				oAppointment.setTitle("App 0");
+				oAppointment.setText("App 0");
+				oAppointment.setIcon("sap-icon://sap-ui5");
+				oAppointment.setTentative(true);
+				oAppointment.setSelected(true);
+				sap.ui.getCore().applyChanges();
+
+				var $Appointment0 = jQuery("#App0");
+				equal(oAppointment.getKey(), "Ap0", "Appointment: key set");
+				equal(oAppointment.getTitle(), "App 0", "Appointment: Title set");
+				equal(oAppointment.getText(), "App 0", "Appointment: text set");
+				equal(oAppointment.getIcon(), "sap-icon://sap-ui5", "Appointment: icon set");
+				equal(oAppointment.getTentative(), true, "Appointment: tentative set");
+				equal(oAppointment.getSelected(), true, "Appointment: selected set");
+
+				equal(jQuery("#App0-Title").text(), "App 0", "Appointment0: title rendered");
+				equal(jQuery("#App0-Text").text(), "App 0", "Appointment0: text rendered");
+				ok(jQuery("#App0-Icon").get(0), "Appointment0: icon rendered");
+				ok($Appointment0.hasClass("sapUiCalendarAppTent"), "Appointment0: rendered as tentative");
+				ok($Appointment0.hasClass("sapUiCalendarAppSel"), "Appointment0: rendered as selected");
+
 			});
 
 			test("Appointments - days view", function() {
@@ -472,8 +523,8 @@
 				var aIntervals = jQuery("#Row1-Apps").children(".sapUiCalendarRowAppsInt");
 				equal(aIntervals.length, 2, "Row1: 3 intervals rendered");
 				var sStyle = jQuery(aIntervals[0]).attr("style");
-				var aTest = sStyle.match(/width:(\d+(.?)(\d+))/);
-				var iWidth = aTest[1];
+				var aTest = sStyle.match(/width:(\s?)(\d+(.?)(\d+))/);
+				var iWidth = aTest[2];
 				equal(iWidth, 100 / 2 + "", "Row1: interval width");
 
 				ok(!jQuery("#App0").get(0), "Appointment0 not rendered");

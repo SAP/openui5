@@ -71,7 +71,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 			 * Defines the selected state of the <code>TeamCalendarRow</code>.
 			 * <b>Note:</b> Binding the <code>selected</code> property in single selection modes may cause unwanted results if you have more than one selected row in your binding.
 			 */
-			selected : {type : "boolean", group : "Data", defaultValue : false}
+			selected : {type : "boolean", group : "Data", defaultValue : false},
+
+			/**
+			 * Can be used as identifier of the row
+			 */
+			key : {type : "string", group : "Data", defaultValue : null}
 
 		},
 		aggregations : {

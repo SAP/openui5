@@ -57,7 +57,13 @@ sap.ui.define(['jquery.sap.global', './DateTypeRange', './library'],
 			/**
 			 * Indicates if the icon is selected.
 			 */
-			selected : {type : "boolean", group : "Data", defaultValue : false}
+			selected : {type : "boolean", group : "Data", defaultValue : false},
+
+			/**
+			 * Can be used as identifier of the appointment
+			 */
+			key : {type : "string", group : "Data", defaultValue : null}
+
 		}
 	}});
 

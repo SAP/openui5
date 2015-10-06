@@ -14,7 +14,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * This is...
+	 * The <code>TeamCalendar</code> can display rows with appointments for different persons.
+	 * It is possible to define different views and switch between the views.
+	 * Own buttons or other controls could be added to the toolbar.
 	 *
 	 * @extends sap.m.InputBase
 	 * @version ${version}
@@ -35,15 +37,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 */
 			startDate : {type : "object", group : "Data"},
 
-//			/**
-//			 * Number of displayed intervals. The size of the intervals defined with <code>intervalType</code>
-//			 */
-//			intervals : {type : "int", group : "Appearance", defaultValue : 12},
-
 			/**
-			 * Type of the intervals of the row. The default is one hour.
+			 * Key of the <code>TeamCalendarView</code> used for the output. The default value uses a default view.
+			 * If own views are used the keys of this views must be used.
 			 */
-			intervalType : {type : "sap.ui.unified.CalendarIntervalType", group : "Appearance", defaultValue : sap.ui.unified.CalendarIntervalType.Hour},
+			viewKey : {type : "string", group : "Appearance", defaultValue : sap.ui.unified.CalendarIntervalType.Hour},
 
 			/**
 			 * If set, only a single row can be selected
@@ -82,6 +80,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * rows of the <code>TeamCalendar</code>
 			 */
 			rows : {type : "sap.m.TeamCalendarRow", multiple : true, singularName : "row"},
+
+			/**
+			 * views of the <code>TeamCalendar</code>.
+			 *
+			 * If not set 3 default views are used to allow to switch between hour, day and month granularity.
+			 * The default views have the keys defined in </code>sap.ui.unified.CalendarIntervalType</code>
+			 */
+			views : {type : "sap.m.TeamCalendarView", multiple : true, singularName : "view"},
 
 			/**
 			 * <code>SearchField</code> displayed in the <code>TeamCalendar</code>.
@@ -196,27 +202,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		TeamCalendar.prototype.init = function(){
 
-			this._oIntervals = {};
-			this._oIntervals[sap.ui.unified.CalendarIntervalType.Hour] = 12;
-			this._oIntervals[sap.ui.unified.CalendarIntervalType.Day] = 7;
-			this._oIntervals[sap.ui.unified.CalendarIntervalType.Month] = 12;
+			this._iBreakPointTablet = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0];
+			this._iBreakPointDesktop = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1];
+			this._iBreakPointLargeDesktop = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[2];
+			this._iSize = 2; // make desktop as default
 
 			var sLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
 			var oLocale = new sap.ui.core.Locale(sLocale);
 			this._oLocaleData = LocaleData.getInstance(oLocale);
 
-			this._oIntervalTypeSelect = new sap.m.Select(this.getId() + "-IntType", {
-				items: [ new sap.ui.core.Item(this.getId() + "-IntTypeHour", {
-									key: sap.ui.unified.CalendarIntervalType.Hour,
-									text: this._oLocaleData.getDisplayName("hour")}),
-								new sap.ui.core.Item(this.getId() + "-IntTypeDay", {
-									key: sap.ui.unified.CalendarIntervalType.Day,
-									text: this._oLocaleData.getDisplayName("day")}),
-								new sap.ui.core.Item(this.getId() + "-IntTypemonth", {
-									key: sap.ui.unified.CalendarIntervalType.Month,
-									text: this._oLocaleData.getDisplayName("month")})
-								]
-			});
+			this._oIntervalTypeSelect = new sap.m.Select(this.getId() + "-IntType");
 			this._oIntervalTypeSelect.attachEvent("change", _changeIntervalType, this);
 
 			this._oTodayButton = new sap.m.Button(this.getId() + "-Today", {
@@ -258,10 +253,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				infoToolbar: this._oInfoToolbar,
 				mode: sap.m.ListMode.SingleSelectMaster,
 				columns: [ new sap.m.Column({
-										width: "20%",
 										styleClass: "sapMTeamCalRowHead"
 										}),
 									new sap.m.Column({
+										width: "80%",
 										styleClass: "sapMTeamCalAppRow",
 										minScreenWidth: sap.m.ScreenSize.Tablet,
 										demandPopin: true
@@ -320,14 +315,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				this._oAddAppointmentButton = undefined;
 			}
 
+			if (this._aViews) {
+				for (var i = 0; i < this._aViews.length; i++) {
+					this._aViews[i].destroy();
+				}
+			}
+
 		};
 
 		TeamCalendar.prototype.onBeforeRendering = function(){
 
-			if (!this._oTimeInterval && !this._oMonthInterval && !this._oMonthInterval) {
+			this._bBeforeRendering = true;
+
+			if ((!this._oTimeInterval && !this._oMonthInterval && !this._oMonthInterval) || this._bCheckView) {
 				// init intervalType settings if default is used
-				this.setIntervalType(this.getIntervalType());
+				this.setViewKey(this.getViewKey());
+				this._bCheckView = undefined;
 			}
+
+			_updateSelectItems.call(this);
 
 			if (this._sUpdateCurrentTime) {
 				jQuery.sap.clearDelayedCall(this._sUpdateCurrentTime);
@@ -336,9 +342,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			_addToolbarButtons.call(this);
 
+			this._bBeforeRendering = undefined;
+
 		};
 
 		TeamCalendar.prototype.onAfterRendering = function(){
+
+			_determineSize.call(this, this.getDomRef().offsetWidth);
 
 			if (!this._sResizeListener) {
 				this._sResizeListener = sap.ui.core.ResizeHandler.register(this, this._resizeProxy);
@@ -393,66 +403,85 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.setIntervalType = function(sIntervalType){
+		TeamCalendar.prototype.setViewKey = function(sKey){
 
-			this.setProperty("intervalType", sIntervalType, true);
+			this.setProperty("viewKey", sKey, true);
 
-			this._oIntervalTypeSelect.setSelectedKey(sIntervalType);
+			this._oIntervalTypeSelect.setSelectedKey(sKey);
 
-			this._oInfoToolbar.removeContent(1);
+			if (this._oInfoToolbar.getContent().length > 1) {
+				this._oInfoToolbar.removeContent(1);
+			}
 
 			var oStartDate = this.getStartDate();
+			var oView = _getView.call(this, sKey, !this._bBeforeRendering);
 
-			switch (sIntervalType) {
-			case sap.ui.unified.CalendarIntervalType.Hour:
-				if (!this._oTimeInterval) {
-					this._oTimeInterval = new sap.ui.unified.CalendarTimeInterval(this.getId() + "-TimeInt", {
-						startDate: new Date(oStartDate.getTime()), // use new date object
-						items: this._oIntervals[sIntervalType]
-					});
-					this._oTimeInterval.setStartDate(new Date(oStartDate.getTime())); // use new date object
-					this._oTimeInterval.attachEvent("startDateChange", _handleStartDateChange, this);
+			if (!oView) {
+				this._bCheckView = true;
+				this.invalidate(); // view not exist now, maybe added later, so rerender
+			} else {
+				var sIntervalType = oView.getIntervalType();
+				var iIntervals = _getIntervals.call(this, oView);
+
+				switch (sIntervalType) {
+				case sap.ui.unified.CalendarIntervalType.Hour:
+					if (!this._oTimeInterval) {
+						this._oTimeInterval = new sap.ui.unified.CalendarTimeInterval(this.getId() + "-TimeInt", {
+							startDate: new Date(oStartDate.getTime()), // use new date object
+							items: iIntervals
+						});
+						this._oTimeInterval.attachEvent("startDateChange", _handleStartDateChange, this);
+						this._oTimeInterval.attachEvent("select", _handleIntervalSelect, this);
+					}else if (this._oTimeInterval.getItems() != iIntervals) {
+						this._oTimeInterval.setItems(iIntervals);
+					}
+					this._oInfoToolbar.addContent(this._oTimeInterval);
+					break;
+
+				case sap.ui.unified.CalendarIntervalType.Day:
+					if (!this._oDateInterval) {
+						this._oDateInterval = new sap.ui.unified.CalendarDateInterval(this.getId() + "-DateInt", {
+							startDate: new Date(oStartDate.getTime()), // use new date object
+							days: iIntervals
+						});
+						this._oDateInterval.attachEvent("startDateChange", _handleStartDateChange, this);
+						this._oDateInterval.attachEvent("select", _handleIntervalSelect, this);
+					}else if (this._oDateInterval.getDays() != iIntervals) {
+						this._oDateInterval.setDays(iIntervals);
+					}
+					this._oInfoToolbar.addContent(this._oDateInterval);
+					break;
+
+				case sap.ui.unified.CalendarIntervalType.Month:
+					if (!this._oMonthInterval) {
+						this._oMonthInterval = new sap.ui.unified.CalendarMonthInterval(this.getId() + "-MonthInt", {
+							startDate: new Date(oStartDate.getTime()), // use new date object
+							months: iIntervals
+						});
+						this._oMonthInterval.attachEvent("startDateChange", _handleStartDateChange, this);
+						this._oMonthInterval.attachEvent("select", _handleIntervalSelect, this);
+					}else if (this._oMonthInterval.setMonths() != iIntervals) {
+						this._oMonthInterval.getMonths(iIntervals);
+					}
+					this._oInfoToolbar.addContent(this._oMonthInterval);
+					break;
+
+				default:
+					throw new Error("Unknown IntervalType: " + sIntervalType + "; " + this);
 				}
-				this._oInfoToolbar.addContent(this._oTimeInterval);
-				break;
 
-			case sap.ui.unified.CalendarIntervalType.Day:
-				if (!this._oDateInterval) {
-					this._oDateInterval = new sap.ui.unified.CalendarDateInterval(this.getId() + "-DateInt", {
-						startDate: new Date(oStartDate.getTime()), // use new date object
-						days: this._oIntervals[sIntervalType]
-					});
-					this._oDateInterval.attachEvent("startDateChange", _handleStartDateChange, this);
+				var aRows = this.getRows();
+				for (var i = 0; i < aRows.length; i++) {
+					var oRow = aRows[i];
+					var oCalendarRow = oRow.getCalendarRow();
+					oCalendarRow.setIntervalType(sIntervalType);
+					oCalendarRow.setIntervals(iIntervals);
 				}
-				this._oInfoToolbar.addContent(this._oDateInterval);
-				break;
 
-			case sap.ui.unified.CalendarIntervalType.Month:
-				if (!this._oMonthInterval) {
-					this._oMonthInterval = new sap.ui.unified.CalendarMonthInterval(this.getId() + "-MonthInt", {
-						startDate: new Date(oStartDate.getTime()), // use new date object
-						months: this._oIntervals[sIntervalType]
-					});
-					this._oMonthInterval.attachEvent("startDateChange", _handleStartDateChange, this);
+				if (this.getDomRef()) {
+					// only set timer, CalendarRow will be rerendered, so no update needed here
+					_updateCurrentTimeVisualization.call(this, false);
 				}
-				this._oInfoToolbar.addContent(this._oMonthInterval);
-				break;
-
-			default:
-				throw new Error("Unknown IntervalType: " + sIntervalType + "; " + this);
-			}
-
-			var aRows = this.getRows();
-			for (var i = 0; i < aRows.length; i++) {
-				var oRow = aRows[i];
-				var oCalendarRow = oRow.getCalendarRow();
-				oCalendarRow.setIntervalType(sIntervalType);
-				oCalendarRow.setIntervals(this._oIntervals[sIntervalType]);
-			}
-
-			if (this.getDomRef()) {
-				// only set timer, CalendarRow will be rerendered, so no update needed here
-				_updateCurrentTimeVisualization.call(this, false);
 			}
 
 			return this;
@@ -468,10 +497,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var oCalendarRow = oRow.getCalendarRow();
 			oCalendarRow.setStartDate(this.getStartDate());
-			var sTntervalType = this.getIntervalType();
-			oCalendarRow.setIntervalType(sTntervalType);
-			oCalendarRow.setIntervals(this._oIntervals[sTntervalType]);
 			oCalendarRow.attachEvent("select", _handleAppointmentSelect, this);
+
+			if (this.getDomRef()) {
+				var sKey = this.getViewKey();
+				var oView = _getView.call(this, sKey);
+				var sIntervalType = oView.getIntervalType();
+				var iIntervals = _getIntervals.call(this, oView);
+				oCalendarRow.setIntervalType(sIntervalType);
+				oCalendarRow.setIntervals(iIntervals);
+			}
 
 			return this;
 
@@ -486,10 +521,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var oCalendarRow = oRow.getCalendarRow();
 			oCalendarRow.setStartDate(this.getStartDate());
-			var sTntervalType = this.getIntervalType();
-			oCalendarRow.setIntervalType(sTntervalType);
-			oCalendarRow.setIntervals(this._oIntervals[sTntervalType]);
 			oCalendarRow.attachEvent("select", _handleAppointmentSelect, this);
+
+			if (this.getDomRef()) {
+				var sKey = this.getViewKey();
+				var oView = _getView.call(this, sKey);
+				var sIntervalType = oView.getIntervalType();
+				var iIntervals = _getIntervals.call(this, oView);
+				oCalendarRow.setIntervalType(sIntervalType);
+				oCalendarRow.setIntervals(iIntervals);
+			}
 
 			return this;
 
@@ -618,7 +659,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		function _changeIntervalType(oEvent) {
 
-			this.setIntervalType(oEvent.getParameter("selectedItem").getKey());
+			this.setViewKey(oEvent.getParameter("selectedItem").getKey());
 
 		}
 
@@ -640,12 +681,77 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		}
 
-		function _handleResize(){
+		function _handleIntervalSelect(oEvent){
+
+			var aSelectedDates = oEvent.oSource.getSelectedDates();
+			var oSelectedDate = aSelectedDates[0].getStartDate();
+			var sKey = this.getViewKey();
+			var aViews = _getViews.call(this);
+			var oView;
+			var i = 0;
+
+			for (i = 0; i < aViews.length; i++) {
+				oView = aViews[i];
+				if (oView.getKey() == sKey) {
+					break;
+				}
+			}
+
+			if (i > 0) {
+				this.setStartDate(oSelectedDate);
+				this.setViewKey(aViews[i - 1].getKey());
+			}
+
+			// remove old selection
+			aSelectedDates[0].setStartDate();
+
+		}
+
+		function _handleResize(oEvent){
 
 			var aRows = this.getRows();
-			for (var i = 0; i < aRows.length; i++) {
-				var oRow = aRows[i];
+			var oRow;
+			var i = 0;
+			for (i = 0; i < aRows.length; i++) {
+				oRow = aRows[i];
 				oRow.getCalendarRow().handleResize();
+			}
+
+			var iOldSize = this._iSize;
+			_determineSize.call(this, oEvent.size.width);
+			if (iOldSize != this._iSize) {
+				var sKey = this.getViewKey();
+				var oView = _getView.call(this, sKey);
+				var sIntervalType = oView.getIntervalType();
+				var iIntervals = _getIntervals.call(this, oView);
+				for (i = 0; i < aRows.length; i++) {
+					oRow = aRows[i];
+					var oCalendarRow = oRow.getCalendarRow();
+					oCalendarRow.setIntervals(iIntervals);
+				}
+
+				switch (sIntervalType) {
+				case sap.ui.unified.CalendarIntervalType.Hour:
+					if (this._oTimeInterval && this._oTimeInterval.getItems() != iIntervals) {
+						this._oTimeInterval.setItems(iIntervals);
+					}
+					break;
+
+				case sap.ui.unified.CalendarIntervalType.Day:
+					if (this._oDateInterval && this._oDateInterval.getDays() != iIntervals) {
+						this._oDateInterval.setDays(iIntervals);
+					}
+					break;
+
+				case sap.ui.unified.CalendarIntervalType.Month:
+					if (this._oMonthInterval && this._oMonthInterval.getMonths() != iIntervals) {
+						this._oMonthInterval.setMonths(iIntervals);
+					}
+					break;
+
+				default:
+					throw new Error("Unknown IntervalType: " + sIntervalType + "; " + this);
+				}
 			}
 
 		}
@@ -668,7 +774,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			// set timer only if date is in visible area or one hour before
 			var oNowDate = new Date();
 			var oStartDate = this.getStartDate();
-			var sIntervalType = this.getIntervalType();
+			var sKey = this.getViewKey();
+			var oView = _getView.call(this, sKey);
+			var sIntervalType = oView.getIntervalType();
+			var iIntervals = _getIntervals.call(this, oView);
 			var iTime = 0;
 			var iStartTime = 0;
 			var iEndTime = 0;
@@ -677,13 +786,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			case sap.ui.unified.CalendarIntervalType.Hour:
 				iTime = 60000;
 				iStartTime = oStartDate.getTime() - 3600000;
-				iEndTime = oStartDate.getTime() + this._oIntervals[sIntervalType] * 3600000;
+				iEndTime = oStartDate.getTime() + iIntervals * 3600000;
 				break;
 
 			case sap.ui.unified.CalendarIntervalType.Day:
 				iTime = 1800000;
 				iStartTime = oStartDate.getTime() - 3600000;
-				iEndTime = oStartDate.getTime() + this._oIntervals[sIntervalType] * 86400000;
+				iEndTime = oStartDate.getTime() + iIntervals * 86400000;
 				break;
 
 			default:
@@ -769,6 +878,144 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		function _handleAddAppointmentPress(oEvent) {
 
 			this.fireAddAppointment();
+
+		}
+
+		function _determineSize(iWidth) {
+
+			if (iWidth < this._iBreakPointTablet) {
+				this._iSize = 0; // phone
+			} else if (iWidth < this._iBreakPointDesktop){
+				this._iSize = 1; // tablet
+			} else {
+				this._iSize = 2; // desktop
+			}
+
+		}
+
+		function _getViews() {
+
+			var aViews = this.getViews();
+
+			if (aViews.length == 0) {
+				if (!this._aViews) {
+					this._aViews = [];
+
+					var oViewHour = new sap.m.TeamCalendarView(this.getId() + "-HourView", {
+						key: sap.ui.unified.CalendarIntervalType.Hour,
+						intervalType: sap.ui.unified.CalendarIntervalType.Hour,
+						description: this._oLocaleData.getDisplayName("hour"),
+						intervalsS: 6,
+						intervalsM: 6,
+						intervalsL: 12
+					});
+					this._aViews.push(oViewHour);
+
+					var oViewDay = new sap.m.TeamCalendarView(this.getId() + "-DayView", {
+						key: sap.ui.unified.CalendarIntervalType.Day,
+						intervalType: sap.ui.unified.CalendarIntervalType.Day,
+						description: this._oLocaleData.getDisplayName("day"),
+						intervalsS: 7,
+						intervalsM: 7,
+						intervalsL: 14
+					});
+					this._aViews.push(oViewDay);
+
+					var oViewMonth = new sap.m.TeamCalendarView(this.getId() + "-MonthView", {
+						key: sap.ui.unified.CalendarIntervalType.Month,
+						intervalType: sap.ui.unified.CalendarIntervalType.Month,
+						description: this._oLocaleData.getDisplayName("month"),
+						intervalsS: 3,
+						intervalsM: 6,
+						intervalsL: 12
+					});
+					this._aViews.push(oViewMonth);
+				}
+
+				aViews = this._aViews;
+			}
+
+			return aViews;
+
+		}
+
+		function _getView(sKey, bNoError) {
+
+			var aViews = _getViews.call(this);
+			var oView;
+
+			for (var i = 0; i < aViews.length; i++) {
+				oView = aViews[i];
+				if (oView.getKey() != sKey) {
+					oView = undefined;
+				}else {
+					break;
+				}
+			}
+
+			if (!oView && !bNoError) {
+				throw new Error("TeamCalendarView with key " + sKey + "not assigned " + this);
+			}
+
+			return oView;
+
+		}
+
+		function _updateSelectItems() {
+
+			var aViews = _getViews.call(this);
+			var aItems = this._oIntervalTypeSelect.getItems();
+			var i = 0;
+			var oItem;
+
+			if (aViews.length < aItems.length) {
+				for (i = aViews.length; i < aItems.length; i++) {
+					oItem = aItems[i];
+					this._oIntervalTypeSelect.removeItem(oItem);
+					oItem.destroy();
+				}
+			}
+
+			for (i = 0; i < aViews.length; i++) {
+				var oView = aViews[i];
+				oItem = aItems[i];
+				if (oItem) {
+					if (oItem.getKey() != oView.getKey() || oItem.getText() != oView.getDescription()) {
+						oItem.setKey(oView.getKey());
+						oItem.setText(oView.getDescription());
+						oItem.setTooltip(oView.getTooltip());
+					}
+				} else {
+					oItem = new sap.ui.core.Item(this.getId() + "-" + i, {
+						key: oView.getKey(),
+						text: oView.getDescription(),
+						tooltip: oView.getTooltip()
+					});
+					this._oIntervalTypeSelect.addItem(oItem);
+				}
+			}
+
+		}
+
+		function _getIntervals(oView) {
+
+			var iIntervals = 0;
+
+			switch (this._iSize) {
+			case 0:
+				iIntervals = oView.getIntervalsS();
+				break;
+
+			case 1:
+				iIntervals = oView.getIntervalsM();
+				break;
+
+			default:
+				iIntervals = oView.getIntervalsL();
+			break;
+			}
+
+			return iIntervals;
 
 		}
 

@@ -305,44 +305,33 @@
 				ok(jQuery("#TC1-R1A1").get(0), "Row1: Appointment1 still rendered");
 				ok(jQuery("#TC1-R1A2").get(0), "Row1: Appointment2 now rendered");
 			});
-/*
-			test("intervals", function() {
-				var iIntervals = oTC1.getIntervals();
-				equal(iIntervals, 12, "Intervals")
-				equal(sap.ui.getCore().byId("TC1-TimeInt").getItems(), iIntervals, "CalendarTimeInterval items");
-				equal(sap.ui.getCore().byId("TC1-Row1-CalRow").getIntervals(), iIntervals, "CalendarRow1 intervals");
-				equal(sap.ui.getCore().byId("TC1-Row2-CalRow").getIntervals(), iIntervals, "CalendarRow2 intervals");
 
-				oTC1.setIntervals(6);
-				sap.ui.getCore().applyChanges();
-			});
-*/
-			test("intervalType", function() {
-				var sIntervalType = oTC1.getIntervalType();
-				equal(sIntervalType, sap.ui.unified.CalendarIntervalType.Hour, "Default IntervalType")
-				equal(sap.ui.getCore().byId("TC1-Row1-CalRow").getIntervalType(), sIntervalType, "CalendarRow1 intervalType");
-				equal(sap.ui.getCore().byId("TC1-Row2-CalRow").getIntervalType(), sIntervalType, "CalendarRow2 intervalType");
+			test("viewKey", function() {
+				var sViewKey = oTC1.getViewKey();
+				equal(sViewKey, sap.ui.unified.CalendarIntervalType.Hour, "Default ViewKey")
+				equal(sap.ui.getCore().byId("TC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Hour, "CalendarRow1 intervalType");
+				equal(sap.ui.getCore().byId("TC1-Row2-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Hour, "CalendarRow2 intervalType");
 				ok(!sap.ui.getCore().byId("TC1-DateInt"), "CalendarDateInterval control not exist");
 				ok(!sap.ui.getCore().byId("TC1-MonthInt"), "CalendarMonthInterval control not exist");
 
-				oTC1.setIntervalType(sap.ui.unified.CalendarIntervalType.Day);
+				oTC1.setViewKey(sap.ui.unified.CalendarIntervalType.Day);
 				sap.ui.getCore().applyChanges();
-				sIntervalType = oTC1.getIntervalType();
-				equal(sIntervalType, sap.ui.unified.CalendarIntervalType.Day, "Default IntervalType");
-				equal(sap.ui.getCore().byId("TC1-Row1-CalRow").getIntervalType(), sIntervalType, "CalendarRow1 intervalType");
-				equal(sap.ui.getCore().byId("TC1-Row2-CalRow").getIntervalType(), sIntervalType, "CalendarRow2 intervalType");
+				sViewKey = oTC1.getViewKey();
+				equal(sViewKey, sap.ui.unified.CalendarIntervalType.Day, "Default ViewKey");
+				equal(sap.ui.getCore().byId("TC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Day, "CalendarRow1 intervalType");
+				equal(sap.ui.getCore().byId("TC1-Row2-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Day, "CalendarRow2 intervalType");
 				ok(sap.ui.getCore().byId("TC1-TimeInt"), "CalendarTimeInterval control still exist");
 				ok(sap.ui.getCore().byId("TC1-DateInt"), "CalendarDateInterval control now exist");
 				ok(!sap.ui.getCore().byId("TC1-MonthInt"), "CalendarMonthInterval control not exist");
 				ok(!jQuery("#TC1-TimeInt").get(0), "CalendarTimeInterval not rendered");
 				ok(jQuery("#TC1-DateInt").get(0), "CalendarDateInterval rendered");
 
-				oTC1.setIntervalType(sap.ui.unified.CalendarIntervalType.Month);
+				oTC1.setViewKey(sap.ui.unified.CalendarIntervalType.Month);
 				sap.ui.getCore().applyChanges();
-				sIntervalType = oTC1.getIntervalType();
-				equal(sIntervalType, sap.ui.unified.CalendarIntervalType.Month, "Default IntervalType");
-				equal(sap.ui.getCore().byId("TC1-Row1-CalRow").getIntervalType(), sIntervalType, "CalendarRow1 intervalType");
-				equal(sap.ui.getCore().byId("TC1-Row2-CalRow").getIntervalType(), sIntervalType, "CalendarRow2 intervalType");
+				sViewKey = oTC1.getViewKey();
+				equal(sViewKey, sap.ui.unified.CalendarIntervalType.Month, "Default ViewKey");
+				equal(sap.ui.getCore().byId("TC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Month, "CalendarRow1 intervalType");
+				equal(sap.ui.getCore().byId("TC1-Row2-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Month, "CalendarRow2 intervalType");
 				ok(sap.ui.getCore().byId("TC1-TimeInt"), "CalendarTimeInterval control still exist");
 				ok(sap.ui.getCore().byId("TC1-DateInt"), "CalendarDateInterval control now exist");
 				ok(sap.ui.getCore().byId("TC1-MonthInt"), "CalendarMonthInterval control not exist");
@@ -435,7 +424,7 @@
 				ok(jQuery("#NewRow-Head").get(0), "new row Header rendered");
 				ok(jQuery("#NewRow-CalRow").get(0), "new row CalendarRow rendered");
 				equal(oRow.getCalendarRow().getStartDate().getTime(), oTC1.getStartDate().getTime(), "Start date of CalendarRow");
-				equal(oRow.getCalendarRow().getIntervalType(), oTC1.getIntervalType(), "IntervalType of CalendarRow");
+				equal(oRow.getCalendarRow().getIntervalType(), sap.ui.unified.CalendarIntervalType.Month, "IntervalType of CalendarRow");
 				equal(oRow.getCalendarRow().getIntervals(), 12, "Intervals of CalendarRow");
 
 				oTC1.removeRow(oRow);
@@ -454,7 +443,7 @@
 				ok(jQuery("#NewRow-Head").get(0), "new row Header rendered");
 				ok(jQuery("#NewRow-CalRow").get(0), "new row CalendarRow rendered");
 				equal(oRow.getCalendarRow().getStartDate().getTime(), oTC1.getStartDate().getTime(), "Start date of CalendarRow");
-				equal(oRow.getCalendarRow().getIntervalType(), oTC1.getIntervalType(), "IntervalType of CalendarRow");
+				equal(oRow.getCalendarRow().getIntervalType(), sap.ui.unified.CalendarIntervalType.Month, "IntervalType of CalendarRow");
 				equal(oRow.getCalendarRow().getIntervals(), 12, "Intervals of CalendarRow");
 
 				var aRemoved = oTC1.removeAllRows();
@@ -513,6 +502,42 @@
 				equal(oTable.getHeaderToolbar().getContent().length, 6, "HeaderToolbar items");
 				equal(oTable.getHeaderToolbar().getContent()[3].getId(), "BX", "HeaderToolbar: new button exist");
 				ok(jQuery("#BX").get(0), "new button rendered");
+			});
+
+			test("views", function() {
+				equal(oTC1.getViews().length, 0, "no views set in aggregation per default");
+
+				oTC1.setViewKey("D");
+				oTC1.addView(new sap.m.TeamCalendarView("View-H", {
+					key: "H",
+					intervalType: sap.ui.unified.CalendarIntervalType.Hour,
+					description: "View1",
+					intervalsS: 1,
+					intervalsM: 2,
+					intervalsL: 3
+				}));
+				oTC1.addView(new sap.m.TeamCalendarView("View-D", {
+					key: "D",
+					intervalType: sap.ui.unified.CalendarIntervalType.Day,
+					description: "View2",
+					intervalsS: 2,
+					intervalsM: 4,
+					intervalsL: 6
+				}));
+				sap.ui.getCore().applyChanges();
+				equal(oTC1.getViews().length, 2, "2 views set");
+				equal(sap.ui.getCore().byId("TC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Day, "CalendarRow1 intervalType");
+				if(jQuery("#TC1").outerWidth() > 1100) {
+					equal(sap.ui.getCore().byId("TC1-Row1-CalRow").getIntervals(), 6, "CalendarRow1 intervals");
+				}
+				ok(!jQuery("#TC1-TimeInt").get(0), "CalendarTimeInterval not rendered");
+				ok(jQuery("#TC1-DateInt").get(0), "CalendarDateInterval rendered");
+
+				oTC1.destroyViews();
+				oTC1.setViewKey(sap.ui.unified.CalendarIntervalType.Hour);
+				sap.ui.getCore().applyChanges();
+				equal(oTC1.getViews().length, 0, "no views set in aggregation");
+				equal(sap.ui.getCore().byId("TC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Hour, "CalendarRow1 intervalType");
 			});
 
 			test("Row header", function() {
@@ -715,17 +740,17 @@
 
 				bStartDateChange = false;
 				// via navigation on CalendarDateInterval
-				oTC1.setIntervalType(sap.ui.unified.CalendarIntervalType.Day);
+				oTC1.setViewKey(sap.ui.unified.CalendarIntervalType.Day);
 				sap.ui.getCore().applyChanges();
 				qutils.triggerEvent("click", "TC1-DateInt--Head-prev");
 				ok(bStartDateChange, "startDateChange fired");
 				var oStartDate = oTC1.getStartDate();
-				var oExpectedDate = new Date("2014", "11", "24", "00", "00");
+				var oExpectedDate = new Date("2014", "11", "17", "00", "00");
 				equal(oExpectedDate.getTime(), oStartDate.getTime(), "Start date is OK");
 
 				bStartDateChange = false;
 				// via navigation on CalendarMonthInterval
-				oTC1.setIntervalType(sap.ui.unified.CalendarIntervalType.Month);
+				oTC1.setViewKey(sap.ui.unified.CalendarIntervalType.Month);
 				sap.ui.getCore().applyChanges();
 				qutils.triggerEvent("click", "TC1-MonthInt--Head-prev");
 				ok(bStartDateChange, "startDateChange fired");
