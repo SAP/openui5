@@ -8,11 +8,11 @@
  * @version @version@
  */
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/ui/core/mvc/View',
-		'sap/ui/core/sample/common/Component',
-		'sap/ui/model/odata/v4/ODataModel'
-	], function (jQuery, View, BaseComponent, ODataModel) {
+	"jquery.sap.global",
+	"sap/ui/core/mvc/View",
+	"sap/ui/core/sample/common/Component",
+	"sap/ui/model/odata/v4/ODataModel"
+], function (jQuery, View, BaseComponent, ODataModel) {
 	"use strict";
 
 	return BaseComponent.extend("sap.ui.core.sample.odata.v4.SalesOrders.Component", {
@@ -26,6 +26,7 @@ sap.ui.define([
 
 			return sap.ui.view({
 				type : sap.ui.core.mvc.ViewType.XML,
+				id : "MainView",
 				viewName : "sap.ui.core.sample.odata.v4.SalesOrders.Main",
 				models : oModel
 			});
