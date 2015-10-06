@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListItemBase'],
-	function (jQuery, library, Control, ListItemBase) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListItemBase', './Title', './Text', './Button', 'sap/ui/core/InvisibleText'],
+	function (jQuery, library, Control, ListItemBase, Title, Text, Button, InvisibleText) {
 
 		'use strict';
 
@@ -70,7 +70,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 					/**
 					 * Action buttons
 					 */
-					buttons: {type: 'sap.m.Button', multiple: true}
+					buttons: {type: 'sap.m.Button', multiple: true},
+
+					_headerTitle: {type: 'sap.m.Title', multiple: false, visibility: "hidden"},
+
+					_bodyText: {type: 'sap.m.Text', multiple: false, visibility: "hidden"},
+
+					_dateTime: {type: 'sap.m.Text', multiple: false, visibility: "hidden"}
 				},
 				events: {
 					/**
@@ -88,7 +94,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			this.setType('Active');
 
 			/**
-			 *
 			 * @type {sap.m.Button}
 			 * @private
 			 */
@@ -99,6 +104,47 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 					this.close();
 				}.bind(this)
 			});
+
+			/**
+			 * @type {sap.ui.core.InvisibleText}
+			 * @private
+			 */
+			this._ariaDetailsText = new InvisibleText({
+				id: this.getId() + '--info'
+			}).toStatic();
+		};
+
+		NotificationListItem.prototype.setTitle = function (title) {
+			var result = this.setProperty('title', title, true);
+
+			this._getHeaderTitle().setText(title);
+
+			return result;
+		};
+
+		NotificationListItem.prototype.setDescription = function (description) {
+			var result = this.setProperty('description', description, true);
+
+			this._getDescriptionText().setText(description);
+
+			return result;
+		};
+
+		NotificationListItem.prototype.setDatetime = function (dateTime) {
+			var result = this.setProperty('datetime', dateTime, true);
+
+			this._getDateTimeText().setText(dateTime);
+			this._updateAriaAdditionalInfo();
+
+			return result;
+		};
+
+		NotificationListItem.prototype.setPriority = function(priority, suppressInvalidation) {
+			var result = this.setProperty('priority', priority, suppressInvalidation);
+
+			this._updateAriaAdditionalInfo();
+
+			return result;
 		};
 
 		NotificationListItem.prototype.close = function () {
@@ -106,9 +152,102 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			this.destroy();
 		};
 
-		// override the ListItemBase class toggling
+		/**
+		 * Called when the control is destroyed
+		 *
+		 * @private
+		 */
+		NotificationListItem.prototype.exit = function () {
+			if (this._closeButton) {
+				this._closeButton.destroy();
+				this._closeButton = null;
+			}
+			if (this._ariaDetailsText) {
+				this._ariaDetailsText.destroy();
+				this._ariaDetailsText = null;
+			}
+		};
+
+		/**
+		 * Returns the sap.m.Title control used in the Notification List Item's header title
+		 * @returns {sap.m.Title}
+		 * @private
+		 */
+		NotificationListItem.prototype._getHeaderTitle = function () {
+			var title = this.getAggregation("_headerTitle");
+
+			if (!title) {
+				title = new Title({
+					id: this.getId() + '--title',
+					text: this.getTitle()
+				});
+
+				this.setAggregation("_headerTitle", title, true);
+			}
+
+			return title;
+		};
+
+		/**
+		 * Returns the sap.m.Text control used in the Notification List Item's description
+		 * @returns {sap.m.Text}
+		 * @private
+		 */
+		NotificationListItem.prototype._getDescriptionText = function () {
+			var bodyText = this.getAggregation('_bodyText');
+
+			if (!bodyText) {
+				bodyText = new sap.m.Text({
+					id: this.getId() + '--body',
+					text: this.getDescription()
+				}).addStyleClass('sapMNLI-Text');
+
+				this.setAggregation("_bodyText", bodyText, true);
+			}
+
+			return bodyText;
+		};
+
+		/**
+		 * Returns the sap.m.Text control used in the Notification List Item's datetime
+		 * @returns {sap.m.Text}
+		 * @private
+		 */
+		NotificationListItem.prototype._getDateTimeText = function () {
+			var dateTime = this.getAggregation('_dateTime');
+
+			if (!dateTime) {
+				dateTime = new sap.m.Text({
+					text: this.getDatetime(),
+					textAlign: 'End'
+				}).addStyleClass('sapMNLI-Datetime');
+
+				this.setAggregation('_dateTime', dateTime, true);
+			}
+
+			return dateTime;
+		};
+
+		/**
+		 * Override the ListItemBase class toggling
+		 * @private
+		 */
 		NotificationListItem.prototype._activeHandling = function () {
 			this.$().toggleClass("sapMNLIActive", this._active);
+		};
+
+		/**
+		 * Updates the hidden text, used for ARIA support
+		 * @private
+		 */
+		NotificationListItem.prototype._updateAriaAdditionalInfo = function () {
+			var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+			var readUnreadText = this.getUnread() ?
+				resourceBundle.getText('NOTIFICATION_LIST_ITEM_UNREAD') : resourceBundle.getText('NOTIFICATION_LIST_ITEM_READ');
+			var dueAndPriorityString = resourceBundle.getText('NOTIFICATION_LIST_ITEM_DATETIME_PRIORITY',
+				[this.getDatetime(), this.getPriority()]);
+
+			this._ariaDetailsText.setText(readUnreadText + ' ' + dueAndPriorityString);
 		};
 
 		return NotificationListItem;
