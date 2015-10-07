@@ -10,7 +10,7 @@ sap.ui.define(['sap/ui/test/Opa5', "jquery.sap.storage"], function (Opa5, jQuery
 				oStorage.put("UI5_EXPLORED_VIEW_SETTINGS", undefined);
 			}
 
-			return this.iStartMyAppInAFrame("../../../../../../../explored.html");
+			return this.iStartMyAppInAFrame("../../../../../../../explored.html?sap-ui-language=en");
 		},
 
 		iLookAtTheScreen : function () {
