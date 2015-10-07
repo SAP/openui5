@@ -19,10 +19,8 @@ sap.ui.require([
 	"use strict";
 
 	/*
-	 * You can run various tests in this module against a real OData v4 service. Set the system
-	 * property "com.sap.ui5.proxy.REMOTE_LOCATION" to a server containing the Gateway test
-	 * service "/sap/opu/local_v4/IWBEP/TEA_BUSI" and load the page with the request property
-	 * "realOData=true".
+	 * You can run various tests in this module against a real OData v4 service using the request
+	 * property "realOData". See src/sap/ui/test/TestUtils.js for details.
 	 */
 
 	var mFixture = {
@@ -30,7 +28,6 @@ sap.ui.require([
 			"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS('UNKNOWN')":
 				{code: 404, source: "TEAMS('UNKNOWN').json"}
 		},
-		bRealOData = jQuery.sap.getUriParameters().get("realOData") === "true",
 		TestControl = sap.ui.core.Element.extend("test.sap.ui.model.odata.v4.ODataModel", {
 			metadata: {
 				properties: {
@@ -61,9 +58,7 @@ sap.ui.require([
 	function getServiceUrl(sPath) {
 		var sAbsolutePath = "/sap/opu/local_v4/IWBEP/TEA_BUSI/" + (sPath && sPath.slice(1) || "");
 
-		return bRealOData
-			? "/" + window.location.pathname.split("/")[1] + "/proxy" + sAbsolutePath
-			: sAbsolutePath;
+		return TestUtils.proxy(sAbsolutePath);
 	}
 
 	/**
@@ -102,10 +97,7 @@ sap.ui.require([
 		beforeEach : function () {
 			sap.ui.getCore().getConfiguration().setLanguage("ab-CD");
 			this.oSandbox = sinon.sandbox.create();
-			if (!bRealOData) {
-				TestUtils.useFakeServer(this.oSandbox, "sap/ui/core/qunit/odata/v4/data",
-					mFixture);
-			}
+			TestUtils.setupODataV4Server(this.oSandbox, mFixture);
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();

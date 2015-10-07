@@ -88,8 +88,7 @@ sap.ui.require([
 		sMetaMe = "/Singletons(Name='Me')",
 		sMetaCityname = sMetaEmployees + "/EntityType/Properties(Name='LOCATION')/Type/"
 			+ "Properties(Name='City')/Type/Properties(Name='CITYNAME')",
-		sMetaTeam = sMetaEmployees + "/EntityType/NavigationProperties(Name='EMPLOYEE_2_TEAM')",
-		bRealOData = jQuery.sap.getUriParameters().get("realOData") === "true";
+		sMetaTeam = sMetaEmployees + "/EntityType/NavigationProperties(Name='EMPLOYEE_2_TEAM')";
 
 	/**
 	 * Returns a clone of the object.
@@ -113,11 +112,8 @@ sap.ui.require([
 	 *   a URL within the service
 	 */
 	function getServiceUrl(sPath) {
-		var sAbsolutePath = "/sap/opu/local_v4/IWBEP/TEA_BUSI/" + (sPath && sPath.slice(1) || "");
-
-		return bRealOData
-			? "/" + window.location.pathname.split("/")[1] + "/proxy" + sAbsolutePath
-			: sAbsolutePath;
+		return TestUtils.proxy(
+			"/sap/opu/local_v4/IWBEP/TEA_BUSI/" + (sPath && sPath.slice(1) || ""));
 	}
 
 	/**
@@ -136,10 +132,7 @@ sap.ui.require([
 	QUnit.module("sap.ui.model.odata.v4.ODataMetaModel", {
 		beforeEach : function () {
 			this.oSandbox = sinon.sandbox.create();
-			if (!bRealOData) {
-				TestUtils.useFakeServer(this.oSandbox, "sap/ui/core/qunit/odata/v4/data",
-					mFixture);
-			}
+			TestUtils.setupODataV4Server(this.oSandbox, mFixture);
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();

@@ -11,17 +11,14 @@ sap.ui.require([
 	"use strict";
 
 	/*
-	 * You can run various tests in this module against a real OData v4 service. Set the system
-	 * property "com.sap.ui5.proxy.REMOTE_LOCATION" to a server containing the Gateway test
-	 * service "/sap/opu/local_v4/IWBEP/TEA_BUSI" and load the page with the request property
-	 * "realOData=true".
+	 * You can run various tests in this module against a real OData v4 service using the request
+	 * property "realOData". See src/sap/ui/test/TestUtils.js for details.
 	 */
 
 	var mFixture = {
 			"/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata": {source: "metadata.xml"},
 			"/foo/$metadata": {code: 404} //TODO does not simulate an Olingo error
 		},
-		bRealOData = jQuery.sap.getUriParameters().get("realOData") === "true",
 		sDocumentUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata";
 
 	/**
@@ -34,33 +31,15 @@ sap.ui.require([
 	 */
 	function createModel(sUrl) {
 		return {
-			sDocumentUrl : proxy(sUrl || sDocumentUrl)
+			sDocumentUrl : TestUtils.proxy(sUrl || sDocumentUrl)
 		};
-	}
-
-	/**
-	 * Adjusts the given absolute path so that (in case of <code>bRealOData</code>), is passed
-	 * through a proxy.
-	 *
-	 * @param {string} sAbsolutePath
-	 *   some absolute path
-	 * @returns {string}
-	 *   the absolute path transformed in a way that invokes a proxy
-	 */
-	function proxy(sAbsolutePath) {
-		return bRealOData
-			? "/" + window.location.pathname.split("/")[1] + "/proxy" + sAbsolutePath
-			: sAbsolutePath;
 	}
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4._OlingoDocument", {
 		beforeEach : function () {
 			this.oSandbox = sinon.sandbox.create();
-			if (!bRealOData) {
-				TestUtils.useFakeServer(this.oSandbox, "sap/ui/core/qunit/odata/v4/data",
-					mFixture);
-			}
+			TestUtils.setupODataV4Server(this.oSandbox, mFixture);
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
@@ -132,7 +111,8 @@ sap.ui.require([
 			oModel = createModel("/foo/$metadata");
 
 		this.oSandbox.mock(Helper).expects("createError").returns(oError);
-		this.oLogMock.expects("error").withExactArgs("foo", "GET " + proxy("/foo/$metadata"),
+		this.oLogMock.expects("error").withExactArgs("foo",
+			"GET " + TestUtils.proxy("/foo/$metadata"),
 			"sap.ui.model.odata.v4.ODataDocumentModel");
 
 		return OlingoDocument.requestDocument(oModel).then(function () {
@@ -293,7 +273,7 @@ sap.ui.require([
 			oMock.expects("transformNavigationPropertyBindings")
 				.withExactArgs(oContainer.entitySet[4].navigationPropertyBinding,
 					oEntityContainer.QualifiedName).returns(5);
-			if (bRealOData) { //TODO enhance backend service
+			if (TestUtils.isRealOData()) { //TODO enhance backend service
 				oEntityContainer.Singletons = [];
 			} else {
 				oMock.expects("transformNavigationPropertyBindings")

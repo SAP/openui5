@@ -31,7 +31,6 @@ sap.ui.require([
 		},
 
 		afterEach : function () {
-			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
 			this.oSandbox.verifyAndRestore();
 		},
 

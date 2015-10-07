@@ -11,17 +11,14 @@ sap.ui.require([
 	/*eslint no-warning-comments: 0 */
 
 	/*
-	 * You can run various tests in this module against a real OData v4 service. Set the system
-	 * property "com.sap.ui5.proxy.REMOTE_LOCATION" to a server containing the Gateway test
-	 * service "/sap/opu/local_v4/IWBEP/TEA_BUSI" and load the page with the request property
-	 * "realOData=true".
+	 * You can run various tests in this module against a real OData v4 service using the request
+	 * property "realOData". See src/sap/ui/test/TestUtils.js for details.
 	 */
 
 	var mFixture = {
 			"/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata": {source: "metadata.xml"},
 			"/foo/$metadata": {code: 404}
 		},
-		bRealOData = jQuery.sap.getUriParameters().get("realOData") === "true",
 		sDocumentUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata";
 
 	/**
@@ -36,34 +33,16 @@ sap.ui.require([
 		return Promise.resolve(JSON.parse(JSON.stringify(o)));
 	}
 
-	/**
-	 * Adjusts the given absolute path so that (in case of <code>bRealOData</code>), is passed
-	 * through a proxy.
-	 *
-	 * @param {string} sAbsolutePath
-	 *   some absolute path
-	 * @returns {string}
-	 *   the absolute path transformed in a way that invokes a proxy
-	 */
-	function proxy(sAbsolutePath) {
-		return bRealOData
-			? "/" + window.location.pathname.split("/")[1] + "/proxy" + sAbsolutePath
-			: sAbsolutePath;
-	}
-
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataDocumentModel", {
 		beforeEach : function () {
 			this.oSandbox = sinon.sandbox.create();
-			if (!bRealOData) {
-				TestUtils.useFakeServer(this.oSandbox, "sap/ui/core/qunit/odata/v4/data",
-					mFixture);
-			}
+			TestUtils.setupODataV4Server(this.oSandbox, mFixture);
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
-			this.oDocumentModel = new ODataDocumentModel(proxy(sDocumentUrl));
+			this.oDocumentModel = new ODataDocumentModel(TestUtils.proxy(sDocumentUrl));
 		},
 
 		afterEach : function () {

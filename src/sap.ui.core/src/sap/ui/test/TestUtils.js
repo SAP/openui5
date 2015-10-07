@@ -9,7 +9,11 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 	// Note: The dependency to Sinon.js has been omitted deliberately. Most test files load it via
 	// <script> anyway and declaring the dependency would cause it to be loaded twice.
 
-	var mMessageForPath = {}; // a cache for files, see useFakeServer
+	var mMessageForPath = {}, // a cache for files, see useFakeServer
+		sRealOData = jQuery.sap.getUriParameters().get("realOData"),
+		bProxy = sRealOData === "true" || sRealOData === "proxy",
+		bRealOData = bProxy || sRealOData === "direct",
+		TestUtils;
 
 	/**
 	 * Checks that the actual value deeply contains the expected value, ignoring additional
@@ -86,7 +90,7 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 	 * @public
 	 * @since 1.27.1
 	 */
-	return /** @lends sap.ui.test.TestUtils */ {
+	TestUtils = /** @lends sap.ui.test.TestUtils */ {
 		/**
 		 * Companion to <code>QUnit.deepEqual</code> which only tests for the existence of expected
 		 * properties, not the absence of others.
@@ -287,6 +291,56 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 				fnCodeUnderTest.apply(this);
 
 			}).apply({}); // give Sinon a "this" to enrich
+		},
+
+		/**
+		 * @returns {boolean}
+		 *   <code>true</code> if the the real OData service is used.
+		 */
+		isRealOData : function () {
+			return bRealOData;
+		},
+
+		/**
+		 * Adjusts the given absolute path so that (in case of "?realOData=proxy") the request is
+		 * passed through the SimpleProxyServlet.
+		 *
+		 * @param {string} sAbsolutePath
+		 *   some absolute path
+		 * @returns {string}
+		 *   the absolute path transformed in a way that invokes a proxy
+		 */
+		proxy : function (sAbsolutePath) {
+			return bProxy
+				? "/" + window.location.pathname.split("/")[1] + "/proxy" + sAbsolutePath
+				: sAbsolutePath;
+		},
+
+		/**
+		 * Sets up the fake server for OData v4 responses unless real OData responses are requested.
+		 * The base path for the responses is "sap/ui/core/qunit/odata/v4/data".
+		 *
+		 * The behavior is controlled by the request property "realOData". There are two options:
+		 * <ul>
+		 * <li>"realOData=proxy" (or "realOData=true"): The test must be part of the UI5 Java
+		 *   Servlet. Set the system property "com.sap.ui5.proxy.REMOTE_LOCATION" to a server
+		 *   containing the Gateway test service "/sap/opu/local_v4/IWBEP/TEA_BUSI".
+		 * <li>"realOData=direct": The test and the Gateway service must be reachable via the same
+		 *   host. This can be reached either by deploying the test code to the Gateway host or by
+		 *   using a reverse proxy like the SAP Web Dispatcher.
+		 * </ul>
+		 *
+		 * @param {object} oSandbox
+		 *   a Sinon sandbox as created using <code>sinon.sandbox.create()</code>
+		 * @param {map} mFixture
+		 *   the fixture for {@link sap.ui.test.TestUtils#.useFakeServer}
+		 */
+		setupODataV4Server : function (oSandbox, mFixture) {
+			if (!bRealOData) {
+				TestUtils.useFakeServer(oSandbox, "sap/ui/core/qunit/odata/v4/data", mFixture);
+			}
 		}
 	};
+
+	return TestUtils;
 }, /* bExport= */ true);
