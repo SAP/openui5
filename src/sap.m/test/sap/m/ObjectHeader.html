@@ -5,7 +5,7 @@
 <meta charset="UTF-8" />
 <title>Object Header - sap.m</title>
 
-<script src="../../../resources/sap-ui-core.js" type="text/javascript" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal">
+<script src="../../../resources/sap-ui-core.js" type="text/javascript" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m, sap.ui.commons" data-sap-ui-theme="sap_bluecrystal">
 
 </script>
 
@@ -411,6 +411,7 @@
 		title : "Object Header for testing title arrow icon",
 		showTitleSelector : true,
 		titleSelectorPress : oh16EventHandler,
+		titleSelectorTooltip: "custom tooltip",
 		number : "1.000",
 		numberUnit : "EUR",
 		numberState : sap.ui.core.ValueState.Error,
@@ -424,7 +425,7 @@
 
 	var oh15StatusesId = "oh15Statuses";
 	var oh17 = new sap.m.ObjectHeader(oh15StatusesId, {
-		title : "Object Header with 15 Statuses",
+		title : "Header with 15 Statuses",
 		showTitleSelector : true,
 		titleSelectorPress : oh16EventHandler,
 		number : "100.00",
