@@ -1,4 +1,4 @@
-sap.ui.controller("view.Order", {
+sap.ui.controller("sap.ui.demo.cart.view.Order", {
 
 	onInit : function () {
 		var oModel = new sap.ui.model.json.JSONModel({});

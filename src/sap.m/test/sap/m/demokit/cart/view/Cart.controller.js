@@ -1,7 +1,7 @@
-jQuery.sap.require("util.Formatter");
+jQuery.sap.require("sap.ui.demo.cart.util.Formatter");
 jQuery.sap.require("sap.m.MessageBox");
 
-sap.ui.controller("view.Cart", {
+sap.ui.controller("sap.ui.demo.cart.view.Cart", {
 
 	onInit : function () {
 		this._router = sap.ui.core.UIComponent.getRouterFor(this);
@@ -121,7 +121,7 @@ sap.ui.controller("view.Cart", {
 			// create order dialog
 			var oInputView = sap.ui.view({
 				id : "Order",
-				viewName : "view.Order",
+				viewName : "sap.ui.demo.cart.view.Order",
 				type : "XML"
 			});
 			this._orderDialog = new sap.m.Dialog({

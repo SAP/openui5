@@ -1,4 +1,4 @@
-sap.ui.controller("view.NotFound", {
+sap.ui.controller("sap.ui.demo.cart.view.NotFound", {
 
 	onInit : function () {
 		this._router = sap.ui.core.UIComponent.getRouterFor(this);

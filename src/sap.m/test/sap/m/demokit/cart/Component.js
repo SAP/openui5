@@ -17,7 +17,7 @@ sap.ui.define([
 				config: {
 					routerClass: Router,
 					viewType: "XML",
-					viewPath: "view",
+					viewPath: "sap.ui.demo.cart.view",
 					controlId: "splitApp",
 					transition: "slide",
 					bypassed: {
@@ -122,13 +122,13 @@ sap.ui.define([
 
 			// create root view
 			var oView = sap.ui.view({
-				viewName: "view.App",
+				viewName: "sap.ui.demo.cart.view.App",
 				type: "XML"
 			});
 
 			oView.setModel(oI18nModel, "i18n");
 
-			jQuery.sap.require("model.Config");
+			jQuery.sap.require("sap.ui.demo.cart.model.Config");
 			// set data model
 			var sUrl = model.Config.getServiceUrl();
 
@@ -137,7 +137,7 @@ sap.ui.define([
 			var oMockServer = new sap.ui.core.util.MockServer({
 				rootUri: sUrl
 			});
-			oMockServer.simulate(jQuery.sap.getModulePath("model/metadata", ".xml"), jQuery.sap.getModulePath("model",""));
+			oMockServer.simulate(jQuery.sap.getModulePath("sap/ui/demo/cart/model/metadata", ".xml"), jQuery.sap.getModulePath("sap/ui/demo/cart/model",""));
 			oMockServer.start();
 			var sMsg = "Running in demo mode with mock data.";
 			sap.m.MessageToast.show(sMsg, {

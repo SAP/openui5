@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="view.Product"
+	controllerName="sap.ui.demo.cart.view.Product"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
