@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		"use strict";
 
 		/**
-		 * Constructor for a new SelectList.
+		 * Constructor for a new <code>sap.m.SelectList</code>.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given.
 		 * @param {object} [mSettings] Initial settings for the new control.

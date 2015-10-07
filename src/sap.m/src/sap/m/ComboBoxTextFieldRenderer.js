@@ -105,6 +105,10 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 			if (!oControl.getEditable()) {
 				oRm.addClass(CSS_CLASS + "InnerReadonly");
 			}
+
+			if (oControl.getShowButton()) {
+				oRm.addClass(CSS_CLASS + "InnerWidthExtraPadding");
+			}
 		};
 
 		/**
@@ -127,7 +131,9 @@ sap.ui.define(['jquery.sap.global', './InputBaseRenderer', 'sap/ui/core/Renderer
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
 		ComboBoxTextFieldRenderer.writeInnerContent = function(oRm, oControl) {
-			this.renderButton(oRm, oControl);
+			if (oControl.getShowButton()) {
+				this.renderButton(oRm, oControl);
+			}
 		};
 
 		/**

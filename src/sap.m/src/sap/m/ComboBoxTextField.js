@@ -37,6 +37,16 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 						type: "sap.ui.core.CSSSize",
 						group: "Dimension",
 						defaultValue: "100%"
+					},
+
+					/**
+					 * Indicates whether the dropdown arrow button is shown.
+					 * @since 1.38
+					 */
+					showButton: {
+						type: "boolean",
+						group: "Appearance",
+						defaultValue: true
 					}
 				}
 			}
@@ -112,8 +122,53 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 		ComboBoxTextField.prototype.bShowLabelAsPlaceholder = sap.ui.Device.browser.msie;
 
 		/* =========================================================== */
-		/* Public API methods                                          */
+		/* API methods                                                 */
 		/* =========================================================== */
+
+		/**
+		 * Gets the <code>value</code>.
+		 *
+		 * Default value is an empty string.
+		 *
+		 * @return {string} The value of property <code>value</code>.
+		 * @public
+		 */
+		ComboBoxTextField.prototype.getValue = function() {
+			var oDomRef = this.getFocusDomRef();
+
+			// if the input field is rendered
+			if (oDomRef) {
+
+				// return the live value
+				return oDomRef.value;
+			}
+
+			// else return the value from the model
+			return this.getProperty("value");
+		};
+
+		/**
+		 * Gets the labels referencing this control.
+		 *
+		 * @returns {sap.m.Label[]} Array of objects which are the current targets of the <code>ariaLabelledBy</code>
+		 * association and the labels referencing this control.
+		 * @since 1.38
+		 */
+		ComboBoxTextField.prototype.getLabels = function() {
+			var aLabelIDs = this.getAriaLabelledBy().map(function(sLabelID) {
+				return sap.ui.getCore().byId(sLabelID);
+			});
+
+			var oLabelEnablement = sap.ui.require("sap/ui/core/LabelEnablement");
+
+			if (oLabelEnablement) {
+				aLabelIDs = aLabelIDs.concat(oLabelEnablement.getReferencingLabels(this).map(function(sLabelID) {
+					return sap.ui.getCore().byId(sLabelID);
+				}));
+			}
+
+			return aLabelIDs;
+		};
 
 		/**
 		 * Gets the DOM reference the message popup should be docked.
