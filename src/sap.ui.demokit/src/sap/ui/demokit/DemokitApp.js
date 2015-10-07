@@ -317,7 +317,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                         var aNodeCustomData = aTreeNodes[i].getCustomData();
                         for (var p = 0; p < aNodeCustomData.length; p++) {
                             // "95d113be50ae40d5b0b562b84d715227" is the guide id of "SAPUI5: UI Development Toolkit for HTML5" root node which should be expanded.
-                            if (aNodeCustomData[p].getKey() === "_ref_" && aNodeCustomData[p].getValue().indexOf("95d113be50ae40d5b0b562b84d715227") !== -1) {
+                            if (aNodeCustomData[p].getKey() === "_ref_" && aNodeCustomData[p].getValue() && aNodeCustomData[p].getValue().indexOf("95d113be50ae40d5b0b562b84d715227") !== -1) {
                                 aTreeNodes[i].expand();
                             }
                         }
