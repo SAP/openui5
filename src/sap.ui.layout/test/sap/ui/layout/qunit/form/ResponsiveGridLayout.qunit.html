@@ -163,6 +163,36 @@
 					})]
 			}).placeAt("uiArea4");
 
+		// test label span without adjusting
+		var oLayout5 = new sap.ui.layout.form.ResponsiveGridLayout("Layout5", {
+			labelSpanL: 4,
+			columnsM: 2,
+			labelSpanM: 12,
+			adjustLabelSpan: false
+		});
+		var oForm5 = new sap.ui.layout.form.Form("F5",{
+			title: "Form5",
+			layout: oLayout5,
+			width: "800px",
+			formContainers: [
+				new sap.ui.layout.form.FormContainer("F5C1",{
+						title: "container 1",
+						formElements: [
+							new sap.ui.layout.form.FormElement("F5C1E1",{
+									label: "Label",
+									fields: [new sap.ui.commons.TextField("F5C1E1_T1")]
+								})]
+					}),
+				new sap.ui.layout.form.FormContainer("F5C2",{
+						title: "container 2",
+						formElements: [
+							new sap.ui.layout.form.FormElement("F5C2E1",{
+									label: "Label",
+									fields: [new sap.ui.commons.TextField("F5C2E1_T1")]
+								})]
+					})]
+			}).placeAt("uiArea5");
+
 		// test functions
 		qutils.delayTestStart();
 
@@ -276,6 +306,14 @@
 			oField = sap.ui.getCore().byId("F3C2E2_T2");
 			oLayoutData = oGrid._getLayoutDataForControl(oField);
 			equal(oLayoutData.getId(), "F3C2E2_T2LD", "Form3: Container2 Field3 must use given LayoutData");
+
+			oElement = sap.ui.getCore().byId("F5C1E1");
+			oLabel = oElement.getLabelControl();
+			oGrid = sap.ui.getCore().byId("F5C1--Grid");
+			oLayoutData = oGrid._getLayoutDataForControl(oLabel);
+			equal(oLayoutData.getId(), "Layout5--Dummy", "Form5: Label1 must use calculated LayoutData");
+			equal(oLayoutData.getSpan(), "L4 M12 S12", "Form5: Label1 calculated LayoutData span correct");
+			equal(oLayoutData.getLinebreak(), true, "Form5: Label1 calculated LayoutData linebreak correct");
 		});
 
 		test("DOM representation", function() {
@@ -520,6 +558,8 @@
 	<div id="uiArea3"></div>
 	<br>
 	<div id="uiArea4"></div>
+	<br>
+	<div id="uiArea5"></div>
 
 </body>
 </html>
