@@ -230,6 +230,7 @@
 		var vsd5 = vsd2.clone(); // this one will be used for focus on previously clicked filter element
 		var vsd6 = vsd2.clone(); // this one will be used for initial focus in filter view
 		var vsd8 = vsd2.clone(); // this one will be used for initial focus in filter view
+		var vsd9 = vsd2.clone(); // this one will be used for initial focus in filter view
 
 		var oButton = new sap.m.Button({
 			text : "Open ViewSettingsDialog",
@@ -1261,6 +1262,37 @@
 					}, delay);
 				}, delay);
 			}, delay);
+		});
+
+		test("Reset Button is availabe on second open of the ViewSettinsDialog", function () {
+
+			var modelData = this.getFirstModelData();
+			var modelData2 = this.getSecondModelData();
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData(modelData);
+			var model2 = new sap.ui.model.json.JSONModel();
+			model2.setData(modelData2);
+			vsd9.setModel(oModel);
+
+			this.bindAggregations(vsd9);
+
+			vsd9.open();
+			vsd9._switchToPage(2);
+			jQuery.sap.delayedCall(0, vsd9._navContainer, "to", [vsd9.getId() + '-page2', "show"]);
+			vsd9._switchToPage(3,vsd9.getFilterItems()[0]);
+
+			strictEqual(vsd9._getSubHeader().getContentRight().length, 0, "Reset Button should be removed from page1 on going to filter details view");
+
+			vsd9._dialog.getBeginButton().firePress();
+
+			vsd9.setModel(model2);
+
+			vsd9.open();
+
+			strictEqual(vsd9._getSubHeader().getContentRight().length, 1, "Reset Button should be available on page1 when the dialog is opened again");
+
+
+			vsd9.destroy();
 		});
 	</script>
 </head>
