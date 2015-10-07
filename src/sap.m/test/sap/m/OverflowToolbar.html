@@ -117,6 +117,7 @@
 			text: "About"
 		}),
 		new sap.m.Label({
+			id: "hotelsLabel",
 			text : "Find hotels"
 		}),
 		new sap.m.ToolbarSpacer(),
@@ -459,6 +460,10 @@
 				width: "100px"
 			})
 		]
+	});
+
+	sap.ui.getCore().byId("sf1").attachSearch(function (oParams) {
+		sap.ui.getCore().byId("hotelsLabel").setText(oParams.getParameter("query"));
 	});
 
 //	oWorkExample.placeAt("body");
