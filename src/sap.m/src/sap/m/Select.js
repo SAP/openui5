@@ -1438,7 +1438,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 						break;
 
 					case "key":
-						this.setSelectedKey(sNewValue);
+
+						if (!this.isBound("selectedKey")) {
+							this.setSelectedKey(sNewValue);
+						}
+
 						break;
 
 					// no default
