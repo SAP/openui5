@@ -16,6 +16,7 @@
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
@@ -23,9 +24,6 @@
 
 			jQuery.sap.require("sap.ui.model.FilterOperator");
 			sinon.config.useFakeTimers = false;
-
-			var core = sap.ui.getCore();
-			var rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 			/* definition of a custom control */
 
@@ -84,8 +82,6 @@
 				}
 				return result;
 			};
-
-
 
 			var model = new sap.ui.model.json.JSONModel();
 			model.setData({
@@ -222,7 +218,9 @@
 						text: "Price",
 						customControl: customPriceFilter.clone()
 					}));
+				},
 
+				addPresetFilterItems: function(oVsdInst) {
 					// preset filters
 					oVsdInst.addPresetFilterItem(new sap.m.ViewSettingsItem({
 						key: "myPresetFilter1",
@@ -260,341 +258,462 @@
 				}
 			};
 
-
-			var vsd2 = new sap.m.ViewSettingsDialog("vsd2");
-
-			oVsdConfig.addSortItems(vsd2);
-			oVsdConfig.addFilterItems(vsd2);
-			oVsdConfig.addGroupItems(vsd2);
-
-			var vsd3 = vsd2.clone(); // this one will never be rendered and then destroyed
-		//	var vsd4 = vsd2.clone();
-			var vsd5 = vsd2.clone(); // this one will be used for focus on previously clicked filter element
-			var vsd6 = vsd2.clone(); // this one will be used for initial focus in filter view
-			var vsd8 = vsd2.clone(); // this one will be used for initial focus in filter view
-			var vsd9 = vsd2.clone();
-
-
-			var oButton = new sap.m.Button({
-				text : "Open ViewSettingsDialog",
-				press : function () {
-					vsd2.open("filter");
-					//vsd4.open("invalidPage");
+			module("Initial Check", {
+				setup : function () {
+					this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+					this.oVSD = new sap.m.ViewSettingsDialog();
+					this.oVSD.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.oVSD.destroy();
+					this.oVSD = null;
 				}
 			});
 
-			var page = new sap.m.Page("myFirstPage", {
-				title : "ViewSettingsDialog Test",
-				content : oButton
-			});
-
-			var app = new sap.m.App("myApp", {
-				initPage: "myFirstPage"
-			});
-
-			app.addPage(page).placeAt("content");
-
-			/* test state for the dialog */
-			var filterState = {
-				"name1": true,
-				"name2": true,
-				"name5": true,
-				"name6": true,
-				"status1": true,
-				"status2": true,
-				"status3": true,
-				"value3": true
-			};
-			var selectedSortItem = vsd2.getSortItems()[0];
-			var selectedGroupItem = vsd2.getGroupItems()[1];
-			var selectedPresetFilterItem = vsd2.getPresetFilterItems()[1];
-
-			module("Initial Check");
-
 			test("Initialization", function () {
-				ok(!jQuery.sap.domById("vsd1"), "Dialog is not rendered before it's ever opened.");
-				strictEqual(vsd2.getTitle(), "", 'The default title is empty and will be filled by "' + rb.getText("VIEWSETTINGS_TITLE") + '" later');
-				strictEqual(vsd2.getSortDescending(), false, 'The default value for sortDescending should be "false"');
-				strictEqual(vsd2.getGroupDescending(), false, 'The default value for groupDescending should be "false"');
-				strictEqual(vsd2.getSelectedSortItem(), null, 'The default value for selectedSortItem should be "null"');
-				strictEqual(vsd2.getSelectedGroupItem(), null, 'The default value for selectedGroupItem should be "null"');
-				strictEqual(vsd2.getSelectedPresetFilterItem(), null, 'The default value for selectedPresetFilterItem should be "null"');
+				ok(!jQuery.sap.domById(this.oVSD.getId()), "Dialog is not rendered before it's ever opened.");
+				strictEqual(this.oVSD.getTitle(), "", 'The default title is empty and will be filled by "' + this.oResourceBundle.getText("VIEWSETTINGS_TITLE") + '" later');
+				strictEqual(this.oVSD.getSortDescending(), false, 'The default value for sortDescending should be "false"');
+				strictEqual(this.oVSD.getGroupDescending(), false, 'The default value for groupDescending should be "false"');
+				strictEqual(this.oVSD.getSelectedSortItem(), null, 'The default value for selectedSortItem should be "null"');
+				strictEqual(this.oVSD.getSelectedGroupItem(), null, 'The default value for selectedGroupItem should be "null"');
+				strictEqual(this.oVSD.getSelectedPresetFilterItem(), null, 'The default value for selectedPresetFilterItem should be "null"');
 			});
 
-			module ("getter/setter");
+			module ("getter/setter", {
+				setup : function () {
+					this.oVSD = new sap.m.ViewSettingsDialog();
+					this.oFilterState = {
+						"name1": true,
+						"name2": true,
+						"name5": true,
+						"name6": true,
+						"status1": true,
+						"status2": true,
+						"status3": true,
+						"value3": true
+					};
+
+					oVsdConfig.addSortItems(this.oVSD);
+					oVsdConfig.addFilterItems(this.oVSD);
+					oVsdConfig.addPresetFilterItems(this.oVSD);
+					oVsdConfig.addGroupItems(this.oVSD);
+
+					this.oSelectedSortItem = this.oVSD.getSortItems()[0];
+					this.oSelectedGroupItem = this.oVSD.getGroupItems()[1];
+					this.oSelectedPresetFilterItem = this.oVSD.getPresetFilterItems()[1];
+
+					this.oVSD.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.oVSD.destroy();
+					this.oVSD = null;
+				}
+			});
 
 			test("set dialog state via API", function () {
+				var oCore = sap.ui.getCore();
+
 				/* set dialog state (solely by API instead of selected flag) */
-				vsd2.setTitle("TestTitle");
-				vsd2.setSelectedSortItem(selectedSortItem);
-				vsd2.setSortDescending(true);
-				vsd2.setSelectedGroupItem(vsd2.getGroupItems()[1]);
-				vsd2.setGroupDescending(true);
-				vsd2.setSelectedPresetFilterItem(selectedPresetFilterItem);
+				this.oVSD.setTitle("TestTitle");
+				this.oVSD.setSelectedSortItem(this.oSelectedSortItem);
+				this.oVSD.setSortDescending(true);
+				this.oVSD.setSelectedGroupItem(this.oSelectedGroupItem);
+				this.oVSD.setGroupDescending(true);
+				this.oVSD.setSelectedPresetFilterItem(this.oSelectedPresetFilterItem);
 
 				// title
-				strictEqual(vsd2.getTitle(), "TestTitle", "The title should be 'TestTitle'");
+				strictEqual(this.oVSD.getTitle(), "TestTitle", "The title should be 'TestTitle'");
 
 				// sort / group / preset filter
-				strictEqual(vsd2.getSelectedSortItem(), selectedSortItem.getId(), "The selected sort item should be '"+ selectedSortItem.getId() +"'");
-				strictEqual(core.byId(vsd2.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
-				strictEqual(vsd2.getSortDescending(), true, "sort descending should now be true");
-				strictEqual(vsd2.getSelectedGroupItem(), selectedGroupItem.getId(), "The selected group item should be '"+ selectedGroupItem.getId() +"'");
-				strictEqual(core.byId(vsd2.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
-				strictEqual(vsd2.getGroupDescending(), true, "group descending should now be true");
-				strictEqual(vsd2.getSelectedPresetFilterItem(), selectedPresetFilterItem.getId(), "The selected preset filter item should be '"+ selectedPresetFilterItem.getId() +"'");
-				strictEqual(core.byId(vsd2.getSelectedPresetFilterItem()).getSelected(), true, "The selected preset filter item should have the selected flag set to true");
+				strictEqual(this.oVSD.getSelectedSortItem(), this.oSelectedSortItem.getId(), "The selected sort item should be '"+ this.oSelectedSortItem.getId() +"'");
+				strictEqual(oCore.byId(this.oVSD.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
+				strictEqual(this.oVSD.getSortDescending(), true, "sort descending should now be true");
+				strictEqual(this.oVSD.getSelectedGroupItem(), this.oSelectedGroupItem.getId(), "The selected group item should be '"+ this.oSelectedGroupItem.getId() +"'");
+				strictEqual(oCore.byId(this.oVSD.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
+				strictEqual(this.oVSD.getGroupDescending(), true, "group descending should now be true");
+				strictEqual(this.oVSD.getSelectedPresetFilterItem(), this.oSelectedPresetFilterItem.getId(), "The selected preset filter item should be '"+ this.oSelectedPresetFilterItem.getId() +"'");
+				strictEqual(oCore.byId(this.oVSD.getSelectedPresetFilterItem()).getSelected(), true, "The selected preset filter item should have the selected flag set to true");
 
 				// filters
-				vsd2.setSelectedFilterKeys(filterState);
-				ok(compareFilterKeys(filterState, vsd2.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
+				this.oVSD.setSelectedFilterKeys(this.oFilterState);
+				ok(compareFilterKeys(this.oFilterState, this.oVSD.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
 			});
 
-			module("Performance");
+			module("Performance", {
+				setup : function () {
+					this.oVSD = new sap.m.ViewSettingsDialog();
+					this.oFilterState = {
+						"name1": true,
+						"name2": true,
+						"name5": true,
+						"name6": true,
+						"status1": true,
+						"status2": true,
+						"status3": true,
+						"value3": true
+					};
+
+					oVsdConfig.addSortItems(this.oVSD);
+					oVsdConfig.addFilterItems(this.oVSD);
+					oVsdConfig.addPresetFilterItems(this.oVSD);
+					oVsdConfig.addGroupItems(this.oVSD);
+
+					this.oSelectedSortItem = this.oVSD.getSortItems()[0];
+					this.oSelectedGroupItem = this.oVSD.getGroupItems()[1];
+					this.oSelectedPresetFilterItem = this.oVSD.getPresetFilterItems()[1];
+
+					this.oVSD.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.oVSD.destroy();
+					this.oVSD = null;
+				}
+			});
 
 			test("The control is not invalidated on setting sort, group or filter Items", function () {
 
-				sinon.spy(vsd2, "invalidate");
+				sinon.spy(this.oVSD, "invalidate");
 
-				vsd2.setSelectedSortItem(selectedSortItem);
+				this.oVSD.setSelectedSortItem(this.oSelectedSortItem);
 
+				assert.ok(!this.oVSD.invalidate.called, "The control is not invalidated on setting selected Sort Item");
 
-				assert.ok(!vsd2.invalidate.called, "The control is not invalidated on setting selected Sort Item");
+				this.oVSD.setSelectedGroupItem(this.oSelectedGroupItem);
+				assert.ok(!this.oVSD.invalidate.called, "The control is not invalidated on setting selected Group Item");
 
-				vsd2.setSelectedGroupItem(vsd2.getGroupItems()[1]);
-				assert.ok(!vsd2.invalidate.called, "The control is not invalidated on setting selected Group Item");
+				this.oVSD.setSelectedPresetFilterItem(this.oSelectedPresetFilterItem);
+				assert.ok(!this.oVSD.invalidate.called, "The control is not invalidated on setting preset Filter Item");
 
-				vsd2.setSelectedPresetFilterItem(selectedPresetFilterItem);
-				assert.ok(!vsd2.invalidate.called, "The control is not invalidated on setting preset Filter Item");
+				this.oVSD.setSelectedFilterKeys(this.oFilterState);
+				assert.ok(!this.oVSD.invalidate.called, "The control is not invalidated on setting Filter keys");
 
-				vsd2.setSelectedFilterKeys(filterState);
-				assert.ok(!vsd2.invalidate.called, "The control is not invalidated on setting Filter keys");
-
-				vsd2.invalidate.restore();
+				this.oVSD.invalidate.restore();
 			});
 
-			module("Open and Close");
+			module("Open and Close", {
+				setup : function () {
+					this.oVSD = new sap.m.ViewSettingsDialog();
+
+					oVsdConfig.addSortItems(this.oVSD);
+					oVsdConfig.addFilterItems(this.oVSD);
+					oVsdConfig.addPresetFilterItems(this.oVSD);
+
+					this.oVSD.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.oVSD.destroy();
+					this.oVSD = null;
+				}
+			});
 
 			test("Open ViewSettingsDialog", function (){
-				oButton.firePress();
-				ok(jQuery.sap.domById("vsd2-dialog"), "Dialog should be rendered");
-				ok(jQuery.sap.domById("vsd2-navcontainer"), "Nav container should be rendered");
-				ok(jQuery.sap.domById("vsd2-page1-cont"), "Page 1 (sort/group/filter content) should be rendered");
-				ok(!jQuery.sap.domById("vsd2-page2-cont"), "Page 2 (filter detail content) should not be rendered");
-				ok(jQuery.sap.byId("vsd2-filterbutton").hasClass("sapMSegBBtnSel"), "Segmented 'filter' button should be selected");
-			//	ok(jQuery.sap.byId("vsd2-__clone2-sortbutton").hasClass("sapMSegBBtnSel"), "Segmented 'sort' default button should be selected when invalid page passed");
-			//	vsd4._dialog.close();
+				var sId = this.oVSD.getId();
+				this.oVSD.open();
+
+				ok(jQuery.sap.domById(sId + "-dialog"), "Dialog should be rendered");
+				ok(jQuery.sap.domById(sId + "-navcontainer"), "Nav container should be rendered");
+				ok(jQuery.sap.domById(sId + "-page1-cont"), "Page 1 (sort/group/filter content) should be rendered");
+				ok(!jQuery.sap.domById(sId + "-page2-cont"), "Page 2 (filter detail content) should not be rendered");
+				ok(jQuery.sap.byId(sId + "-sortbutton").hasClass("sapMSegBBtnSel"), "Segmented 'sort' button should be selected");
 			});
 
-			if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
-				//do not run this tests on IE9 because of a timeout issue which need to be fixed
-			} else {
-				asyncTest("Close ViewSettingsDialog", function (){
-						vsd2._dialog.getEndButton().firePress();
+			test("Open predefined tab", function() {
+				this.oVSD.open("filter");
 
-					// execute after rendering
-					setTimeout(function () {
-						ok(!vsd2._dialog.isOpen(), "Dialog should be in closed state");
-						start();
-					}, 1000);
+				ok(jQuery.sap.byId(this.oVSD.getId() + "-filterbutton").hasClass("sapMSegBBtnSel"), "Segmented 'filter' button should be selected");
+			});
 
-				});
-			}
+			test("Close ViewSettingsDialog", function (assert){
+				var done = assert.async(),
+					that = this;
+
+				this.oVSD.open();
+				this.oVSD._dialog.close();
+				setTimeout(function() {
+					ok(!that.oVSD._dialog.isOpen(), "Dialog should be in closed state");
+					done();
+				}, 1000);
+			});
 
 			test("Last Opened Page is correct on Cancel on second opening of the filter detail view", function () {
+				this.oVSD.open();
 
-				vsd8.open();
+				this.oVSD._switchToPage(2);
+				jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+				this.oVSD._switchToPage(3,this.oVSD.getFilterItems()[0]); // name details page
 
-				vsd8._switchToPage(2);
-				jQuery.sap.delayedCall(0, vsd8._navContainer, "to", [vsd8.getId() + '-page2', "show"]);
-				vsd8._switchToPage(3,vsd8.getFilterItems()[0]); // name details page
+				this.oVSD._dialog.getBeginButton().firePress();
 
+				this.oVSD.open();
 
-				vsd8._dialog.getBeginButton().firePress();
+				jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+				this.oVSD._switchToPage(3,this.oVSD.getFilterItems()[0]); // name details page
 
-				vsd8.open();
+				this.oVSD._dialog.getEndButton().firePress();
 
-				jQuery.sap.delayedCall(0, vsd8._navContainer, "to", [vsd8.getId() + '-page2', "show"]);
-				vsd8._switchToPage(3,vsd8.getFilterItems()[0]); // name details page
+				equal(this.oVSD._navContainer.getCurrentPage(), this.oVSD._getPage1(), "NavContainer should be on the first page");
 
-				vsd8._dialog.getEndButton().firePress();
-
-				equal(vsd8._navContainer.getCurrentPage(), vsd8._getPage1(), "NavContainer should be on the first page");
-
-				vsd8.destroy();
+				this.oVSD.destroy();
 			});
 
-			module ("Events");
+			module ("Events", {
+				setup : function () {
+					this.oVSD = new sap.m.ViewSettingsDialog();
+					this.oFilterState = {
+						"name1": true,
+						"name2": true,
+						"name5": true,
+						"name6": true,
+						"status1": true,
+						"status2": true,
+						"status3": true,
+						"value3": true
+					};
+
+					oVsdConfig.addSortItems(this.oVSD);
+					oVsdConfig.addFilterItems(this.oVSD);
+					oVsdConfig.addPresetFilterItems(this.oVSD);
+					oVsdConfig.addGroupItems(this.oVSD);
+
+					this.oSelectedSortItem = this.oVSD.getSortItems()[0];
+					this.oSelectedGroupItem = this.oVSD.getGroupItems()[1];
+					this.oSelectedPresetFilterItem = this.oVSD.getPresetFilterItems()[1];
+
+					this.oVSD.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.oVSD.destroy();
+					this.oVSD = null;
+				}
+			});
 
 			if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
 				//do not run this tests on IE9 because of a timeout issue which need to be fixed
 			} else {
-				asyncTest("Cancel on cancel button press event", function () {
-					var fnChecks = function () {
-							// check if dialog is still in the previous state
-							ok(true, "Event cancel was fired");
-							strictEqual(vsd2.getSelectedSortItem(), selectedSortItem.getId(), "The selected sort item should be '"+ selectedSortItem.getId() +"'");
-							strictEqual(core.byId(vsd2.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
-							strictEqual(vsd2.getSortDescending(), true, "sort descending should now be true");
-							strictEqual(vsd2.getSelectedGroupItem(), selectedGroupItem.getId(), "The selected group item should be '"+ selectedGroupItem.getId() +"'");
-							strictEqual(core.byId(vsd2.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
-							strictEqual(vsd2.getGroupDescending(), true, "group descending should now be true");
-							ok(compareFilterKeys(filterState, vsd2.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
-							vsd2.detachCancel(fnChecks);
-							start();
-						};
+				test("Cancel on cancel button press event", function (assert) {
+					var core = sap.ui.getCore(),
+							done = assert.async(),
+							that = this,
+							fnChecks = function () {
+								// check if dialog is still in the previous state
+								ok(true, "Event cancel was fired");
+								strictEqual(this.getSelectedSortItem(), that.oSelectedSortItem.getId(), "The selected sort item should be '" + that.oSelectedSortItem.getId() + "'");
+								strictEqual(core.byId(this.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
+								strictEqual(this.getSortDescending(), true, "sort descending should now be true");
+								strictEqual(this.getSelectedGroupItem(), that.oSelectedGroupItem.getId(), "The selected group item should be '" + that.oSelectedGroupItem.getId() + "'");
+								strictEqual(core.byId(this.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
+								strictEqual(this.getGroupDescending(), true, "group descending should now be true");
+								ok(compareFilterKeys(that.oFilterState, this.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
+								this.detachCancel(fnChecks);
+								done();
+							};
 
-					expect(8);
+					this.oVSD.setSelectedSortItem(this.oSelectedSortItem);
+					this.oVSD.setSelectedGroupItem(this.oSelectedGroupItem);
+					this.oVSD.setSortDescending(true);
+					this.oVSD.setGroupDescending(true);
+					this.oVSD.setSelectedFilterKeys(this.oFilterState);
 
 					// open dialog to store previous state
-					vsd2.open();
-					vsd2.attachCancel(fnChecks);
+					this.oVSD.open();
+					this.oVSD.attachCancel(fnChecks);
 
 					// set everything to unselected / false and fire cancel request
-					vsd2.setSelectedSortItem();
-					vsd2.setSortDescending(false);
-					vsd2.setSelectedGroupItem();
-					vsd2.setGroupDescending(false);
-					vsd2.setSelectedFilterKeys([]);
-					vsd2._dialog.getEndButton().firePress();
+					this.oVSD.setSelectedSortItem();
+					this.oVSD.setSortDescending(false);
+					this.oVSD.setSelectedGroupItem();
+					this.oVSD.setGroupDescending(false);
+					this.oVSD.setSelectedFilterKeys([]);
+					//press cancel
+					this.oVSD._dialog.getEndButton().firePress();
 				});
 			}
 
-
 			if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
 				//do not run this tests on IE9 because of a timeout issue which need to be fixed
 			} else {
-				asyncTest("Cancel on key ESCAPE event", function () {
-					var fnChecks = function () {
-						// check if dialog is still in the previous state
-						ok(true, "Event cancel was fired");
-						strictEqual(vsd2.getSelectedSortItem(), selectedSortItem.getId(), "The selected sort item should be '"+ selectedSortItem.getId() +"'");
-						strictEqual(core.byId(vsd2.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
-						strictEqual(vsd2.getSortDescending(), true, "sort descending should now be true");
-						strictEqual(vsd2.getSelectedGroupItem(), selectedGroupItem.getId(), "The selected group item should be '"+ selectedGroupItem.getId() +"'");
-						strictEqual(core.byId(vsd2.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
-						strictEqual(vsd2.getGroupDescending(), true, "group descending should now be true");
-						ok(compareFilterKeys(filterState, vsd2.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
-						vsd2.detachCancel(fnChecks);
-						start();
-					};
+				test("Cancel on key ESCAPE event", function (assert) {
+					var core = sap.ui.getCore(),
+						that = this,
+						done = assert.async(),
+						fnChecks = function () {
+							// check if dialog is still in the previous state
+							ok(true, "Event cancel was fired");
+							strictEqual(this.getSelectedSortItem(), that.oSelectedSortItem.getId(), "The selected sort item should be '"+ that.oSelectedSortItem.getId() +"'");
+							strictEqual(core.byId(this.getSelectedSortItem()).getSelected(), true, "The selected sort item should have the selected flag set to true");
+							strictEqual(this.getSortDescending(), true, "sort descending should now be true");
+							strictEqual(this.getSelectedGroupItem(), that.oSelectedGroupItem.getId(), "The selected group item should be '"+ that.oSelectedGroupItem.getId() +"'");
+							strictEqual(core.byId(this.getSelectedGroupItem()).getSelected(), true, "The selected group item should have the selected flag set to true");
+							strictEqual(this.getGroupDescending(), true, "group descending should now be true");
+							ok(compareFilterKeys(that.oFilterState, this.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
+							this.detachCancel(fnChecks);
+							done();
+						};
 
-					expect(8);
+					this.oVSD.setSelectedSortItem(this.oSelectedSortItem);
+					this.oVSD.setSelectedGroupItem(this.oSelectedGroupItem);
+					this.oVSD.setSortDescending(true);
+					this.oVSD.setGroupDescending(true);
+					this.oVSD.setSelectedFilterKeys(this.oFilterState);
 
 					// open dialog to store previous state
-					vsd2.open();
-					vsd2.attachCancel(fnChecks);
+					this.oVSD.open();
+					this.oVSD.attachCancel(fnChecks);
 
 					// set everything to unselected / false and fire ESC key
-					vsd2.open();
-					vsd2.setSelectedSortItem();
-					vsd2.setSortDescending(false);
-					vsd2.setSelectedGroupItem();
-					vsd2.setGroupDescending(false);
-					vsd2.setSelectedFilterKeys([]);
-					sap.ui.test.qunit.triggerKeydown(vsd2._getDialog().getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+					this.oVSD.setSelectedSortItem();
+					this.oVSD.setSortDescending(false);
+					this.oVSD.setSelectedGroupItem();
+					this.oVSD.setGroupDescending(false);
+					this.oVSD.setSelectedFilterKeys([]);
+					sap.ui.test.qunit.triggerKeydown(this.oVSD._getDialog().getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
 				});
 			}
 
 			test("Back on key [SHIFT]+[ENTER] event", function () {
-				expect(2);
+				this.oVSD.open();
 
-				vsd6.open();
+				this.oVSD._switchToPage(0);
+				this.oVSD._switchToPage(1);
+				this.oVSD._switchToPage(2);
+				jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+				this.oVSD._switchToPage(3,this.oVSD.getFilterItems()[0]); // name details page
 
-				vsd6._switchToPage(0);
-				vsd6._switchToPage(1);
-				vsd6._switchToPage(2);
-				jQuery.sap.delayedCall(0, vsd6._navContainer, "to", [vsd6.getId() + '-page6', "show"]);
-				vsd6._switchToPage(3,vsd6.getFilterItems()[0]); // name details page
-
-				sap.ui.test.qunit.triggerKeyboardEvent(vsd6._getDialog().getDomRef(), jQuery.sap.KeyCodes.ENTER, true, false, false);
-				equal(vsd6._vContentPage, 2, "Internal page state should be on the second page");
-				equal(vsd6._navContainer.getCurrentPage(), vsd6._getPage1(), "NavContainer should be on the first page");
-
-				vsd6._dialog.getEndButton().firePress();
-				vsd6.destroy();
+				sap.ui.test.qunit.triggerKeyboardEvent(this.oVSD._getDialog().getDomRef(), jQuery.sap.KeyCodes.ENTER, true, false, false);
+				equal(this.oVSD._vContentPage, 2, "Internal page state should be on the second page");
+				equal(this.oVSD._navContainer.getCurrentPage(), this.oVSD._getPage1(), "NavContainer should be on the first page");
 			});
 
 			if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
 				//do not run this tests on IE9 because of a timeout issue which need to be fixed
 			} else {
+				test("Confirm event", function (assert) {
+					var done = assert.async(),
+						that = this;
 
-				asyncTest("Confirm event", function () {
-					expect(12);
+					this.oVSD.setSelectedSortItem(this.oSelectedSortItem);
+					this.oVSD.setSelectedGroupItem(this.oSelectedGroupItem);
+					this.oVSD.setSortDescending(true);
+					this.oVSD.setGroupDescending(true);
+					this.oVSD.setSelectedFilterKeys(this.oFilterState);
+
 					// open dialog to store previous state
-					vsd2.open();
-					vsd2.attachConfirm(function(oEvent) {
-						var p = oEvent.getParameters();
-						ok(p, "Event applySettings was fired and has event parameters");
-						ok(p.sortItem, "Event has a sort item");
-						ok(p.groupItem, "Event has a group item");
-						ok(p.sortDescending, "Event has sort order tru)");
-						strictEqual(p.sortItem.getId(), selectedSortItem.getId(), "The selected sort item should be '"+ selectedSortItem.getId() +"'");
-						strictEqual(p.sortDescending, true, "Sort descending should be true");
-						strictEqual(p.groupItem.getId(), selectedGroupItem.getId(), "The selected group item should be '"+ selectedGroupItem.getId() +"'");
-						strictEqual(p.groupDescending, true, "group descending should be true");
-						strictEqual(p.selectedPresetFilterItem, undefined, "The selected preset filter item should be 'undefined'");
-						ok(compareFilterKeys(filterState, p.filterKeys), "The event filter keys should have the same structure as the passed one");
-						ok(p.filterString.length > 0, "The filter string is not empty");
-						strictEqual(p.filterItems.length, 8, "There are 8 selected filters");
-						start();
+					this.oVSD.open();
+					this.oVSD.attachConfirm(function(oEvent) {
+						var oParams = oEvent.getParameters();
+						ok(oParams, "Event applySettings was fired and has event parameters");
+						ok(oParams.sortItem, "Event has a sort item");
+						ok(oParams.groupItem, "Event has a group item");
+						ok(oParams.sortDescending, "Event has sort order true");
+						strictEqual(oParams.sortItem.getId(), that.oSelectedSortItem.getId(), "The selected sort item should be '"+ that.oSelectedSortItem.getId() +"'");
+						strictEqual(oParams.sortDescending, true, "Sort descending should be true");
+						strictEqual(oParams.groupItem.getId(), that.oSelectedGroupItem.getId(), "The selected group item should be '"+ that.oSelectedGroupItem.getId() +"'");
+						strictEqual(oParams.groupDescending, true, "group descending should be true");
+						strictEqual(oParams.selectedPresetFilterItem, undefined, "The selected preset filter item should be 'undefined'");
+						ok(compareFilterKeys(that.oFilterState, oParams.filterKeys), "The event filter keys should have the same structure as the passed one");
+						ok(oParams.filterString.length > 0, "The filter string is not empty");
+						strictEqual(oParams.filterItems.length, 8, "There are 8 selected filters");
+						done();
 					});
-					vsd2._dialog.getBeginButton().firePress();
+
+					//Act
+					this.oVSD._dialog.getBeginButton().firePress();
 				});
 			}
 
 			test("Reset event", function () {
-				expect(2);
-				vsd2.attachResetFilters(function(oEvent) {
-					strictEqual(vsd2.getSelectedFilterItems().length, 0, "Selected filters are empty after reset event");
-					strictEqual(vsd2.getSelectedPresetFilterItem(), null, "Preset filter item is null after reset event");
+				this.oVSD.setSelectedFilterKeys(this.oFilterState);
+
+				strictEqual(this.oVSD.getSelectedFilterItems().length, 8, "Selected filters are 8 before reset event");
+
+				this.oVSD.open();
+				this.oVSD.attachResetFilters(function(oEvent) {
+					strictEqual(this.getSelectedFilterItems().length, 0, "Selected filters are empty after reset event");
+					strictEqual(this.getSelectedPresetFilterItem(), null, "Preset filter item is null after reset event");
 				});
-				vsd2._resetButton.firePress();
+
+				this.oVSD._resetButton.firePress();
 			});
 
+			module ("Construction/Destruction", {
+				setup : function () {
+					this.oVSD = new sap.m.ViewSettingsDialog();
+					this.oFilterState = {
+						"name1": true,
+						"name2": true,
+						"name5": true,
+						"name6": true,
+						"status1": true,
+						"status2": true,
+						"status3": true,
+						"value3": true
+					};
 
-			module ("Construction/Destruction");
+					oVsdConfig.addSortItems(this.oVSD);
+					oVsdConfig.addFilterItems(this.oVSD);
+					oVsdConfig.addPresetFilterItems(this.oVSD);
+					oVsdConfig.addGroupItems(this.oVSD);
 
-			asyncTest("Destroy ViewSettingsDialog after all pages have been visited", function (){
-				expect(41);
+					this.oSelectedSortItem = this.oVSD.getSortItems()[0];
+					this.oSelectedGroupItem = this.oVSD.getGroupItems()[1];
+					this.oSelectedPresetFilterItem = this.oVSD.getPresetFilterItems()[1];
+
+					this.oVSD.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.oVSD.destroy();
+					this.oVSD = null;
+				}
+			});
+
+			test("Destroy ViewSettingsDialog after all pages have been visited", function (assert) {
+				var done = assert.async(),
+					that = this;
 
 				// open
-				vsd2.open();
+				this.oVSD.open();
 
 				// go to all pages again to init controls
-				vsd2._switchToPage(0);
-				vsd2._switchToPage(1);
-				vsd2._switchToPage(2);
-				jQuery.sap.delayedCall(0, vsd2._navContainer, "to", [vsd2.getId() + '-page2', "show"]);
-				vsd2._switchToPage(3,vsd2.getFilterItems()[0]); // name details page
+				this.oVSD._switchToPage(0);
+				this.oVSD._switchToPage(1);
+				this.oVSD._switchToPage(2);
+				jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+				this.oVSD._switchToPage(3,this.oVSD.getFilterItems()[0]); // name details page
 
 				setTimeout(function () {
 					// store poiners to internal controls
-					var sortList = vsd2._sortList,
-						sortOrderList = vsd2._sortOrderList,
-						groupList = vsd2._groupList,
-						groupOrderList = vsd2._groupOrderList,
-						presetFilterList = vsd2._presetFilterList,
-						filterList = vsd2._filterList,
-						filterDetailList = vsd2._filterDetailList,
-						titleLabel = vsd2._titleLabel,
-						detailTitleLabel = vsd2._detailTitleLabel,
-						resetButton = vsd2._resetButton,
-						header = vsd2._header,
-						sortButton = vsd2._sortButton,
-						groupButton = vsd2._groupButton,
-						filterButton = vsd2._filterButton,
-						segmentedButton = vsd2._segmentedButton,
-						page1 = vsd2._page1,
-						page2 = vsd2._page2,
-						navContainer = vsd2._navContainer,
-						dialog = vsd2._dialog,
-						subHeader = vsd2._subHeader;
+					var sortList = that.oVSD._sortList,
+						sortOrderList = that.oVSD._sortOrderList,
+						groupList = that.oVSD._groupList,
+						groupOrderList = that.oVSD._groupOrderList,
+						presetFilterList = that.oVSD._presetFilterList,
+						filterList = that.oVSD._filterList,
+						filterDetailList = that.oVSD._filterDetailList,
+						titleLabel = that.oVSD._titleLabel,
+						detailTitleLabel = that.oVSD._detailTitleLabel,
+						resetButton = that.oVSD._resetButton,
+						header = that.oVSD._header,
+						sortButton = that.oVSD._sortButton,
+						groupButton = that.oVSD._groupButton,
+						filterButton = that.oVSD._filterButton,
+						segmentedButton = that.oVSD._segmentedButton,
+						page1 = that.oVSD._page1,
+						page2 = that.oVSD._page2,
+						navContainer = that.oVSD._navContainer,
+						dialog = that.oVSD._dialog,
+						subHeader = that.oVSD._subHeader;
 
-					vsd2.destroy();
+					that.oVSD.destroy();
 
 					// check if internal controls are destroyed correctly (when initialized they must be destroyed)
-					strictEqual(vsd2.$().length, 0, "There is no Domref for ViewSettingsDialog");
+					strictEqual(that.oVSD.$().length, 0, "There is no Domref for ViewSettingsDialog");
 
 					// check if all internal controls are destroyed successfully
 					strictEqual(sortList.bIsDestroyed, true, "sort list is destroyed successfully");
@@ -619,55 +738,52 @@
 					strictEqual(subHeader.bIsDestroyed, true, "subHeader is destroyed successfully");
 
 					// check if all controls are set to null correctly
-					strictEqual(vsd2._sortList, null, "sort list is null");
-					strictEqual(vsd2._sortOrderList, null, "sort order list is null");
-					strictEqual(vsd2._groupList, null, "group list is null");
-					strictEqual(vsd2._groupOrderList, null, "group order list is null");
-					strictEqual(vsd2._presetFilterList, null, "preset filter list is null");
-					strictEqual(vsd2._filterList, null, "filter list is null");
-					strictEqual(vsd2._filterDetailList, null, "filter detail list is null");
-					strictEqual(vsd2._titleLabel, null, "title label is null");
-					strictEqual(vsd2._detailTitleLabel, null, "detail title label is null");
-					strictEqual(vsd2._resetButton, null, "reset button is null");
-					strictEqual(vsd2._header, null, "header is null");
-					strictEqual(vsd2._sortButton, null, "sortButton is null");
-					strictEqual(vsd2._groupButton, null, "groupButton is null");
-					strictEqual(vsd2._filterButton, null, "filterButton is null");
-					strictEqual(vsd2._segmentedButton, null, "segmentedButton is null");
-					strictEqual(vsd2._page1, null, "page1 is null");
-					strictEqual(vsd2._page2, null, "page2 is null");
-					strictEqual(vsd2._navContainer, null, "navContainer is null");
-					strictEqual(vsd2._dialog, null, "dialog is null");
-					strictEqual(vsd2._subHeader, null, "subHeader is null");
-					start();
+					strictEqual(that.oVSD._sortList, null, "sort list is null");
+					strictEqual(that.oVSD._sortOrderList, null, "sort order list is null");
+					strictEqual(that.oVSD._groupList, null, "group list is null");
+					strictEqual(that.oVSD._groupOrderList, null, "group order list is null");
+					strictEqual(that.oVSD._presetFilterList, null, "preset filter list is null");
+					strictEqual(that.oVSD._filterList, null, "filter list is null");
+					strictEqual(that.oVSD._filterDetailList, null, "filter detail list is null");
+					strictEqual(that.oVSD._titleLabel, null, "title label is null");
+					strictEqual(that.oVSD._detailTitleLabel, null, "detail title label is null");
+					strictEqual(that.oVSD._resetButton, null, "reset button is null");
+					strictEqual(that.oVSD._header, null, "header is null");
+					strictEqual(that.oVSD._sortButton, null, "sortButton is null");
+					strictEqual(that.oVSD._groupButton, null, "groupButton is null");
+					strictEqual(that.oVSD._filterButton, null, "filterButton is null");
+					strictEqual(that.oVSD._segmentedButton, null, "segmentedButton is null");
+					strictEqual(that.oVSD._page1, null, "page1 is null");
+					strictEqual(that.oVSD._page2, null, "page2 is null");
+					strictEqual(that.oVSD._navContainer, null, "navContainer is null");
+					strictEqual(that.oVSD._dialog, null, "dialog is null");
+					strictEqual(that.oVSD._subHeader, null, "subHeader is null");
+					done();
 				}, 1000);
-
 			});
 
-			test("Destroy ViewSettingsDialog that has never been opened/rendered", function (){
-				expect(21);
-
+			test("Destroy ViewSettingsDialog that has never been opened/rendered", function () {
 				// store poiners to internal controls
-				var sortList = vsd3._sortList,
-					sortOrderList = vsd3._sortOrderList,
-					groupList = vsd3._groupList,
-					groupOrderList = vsd3._groupOrderList,
-					presetFilterList = vsd3._presetFilterList,
-					filterList = vsd3._filterList,
-					filterDetailList = vsd3._filterDetailList
-					titleLabel = vsd3._titleLabel,
-					detailTitleLabel = vsd3._detailTitleLabel,
-					resetButton = vsd3._resetButton,
-					header = vsd3._header,
-					sortButton = vsd3._sortButton,
-					groupButton = vsd3._groupButton
-					filterButton = vsd3._filterButton,
-					segmentedButton = vsd3._segmentedButton,
-					page1 = vsd3._page1,
-					page2 = vsd3._page2,
-					navContainer = vsd3._navContainer,
-					dialog = vsd3._dialog,
-					subHeader = vsd3._subHeader;
+				var sortList = this.oVSD._sortList,
+					sortOrderList = this.oVSD._sortOrderList,
+					groupList = this.oVSD._groupList,
+					groupOrderList = this.oVSD._groupOrderList,
+					presetFilterList = this.oVSD._presetFilterList,
+					filterList = this.oVSD._filterList,
+					filterDetailList = this.oVSD._filterDetailList
+					titleLabel = this.oVSD._titleLabel,
+					detailTitleLabel = this.oVSD._detailTitleLabel,
+					resetButton = this.oVSD._resetButton,
+					header = this.oVSD._header,
+					sortButton = this.oVSD._sortButton,
+					groupButton = this.oVSD._groupButton
+					filterButton = this.oVSD._filterButton,
+					segmentedButton = this.oVSD._segmentedButton,
+					page1 = this.oVSD._page1,
+					page2 = this.oVSD._page2,
+					navContainer = this.oVSD._navContainer,
+					dialog = this.oVSD._dialog,
+					subHeader = this.oVSD._subHeader;
 
 				// check if all internal controls are not initialized yet
 				strictEqual(sortList, undefined, "sort list is not initialized yet");
@@ -691,1164 +807,1056 @@
 				strictEqual(dialog, undefined, "dialog is not initialized yet");
 				strictEqual(subHeader, undefined, "subHeader is not initialized yet");
 
-				vsd3.destroy();
+				this.oVSD.destroy();
 
 				// check if internal controls are destroyed correctly (when initialized they must be destroyed)
-				strictEqual(vsd3.$().length, 0, "There is no Domref for ViewSettingsDialog");
-
+				strictEqual(this.oVSD.$().length, 0, "There is no Domref for ViewSettingsDialog");
 			});
 
-			module ("Sort tab only checks")
+			module ("Sort tab only checks", {
+				setup : function () {
+					this.oVSD = new sap.m.ViewSettingsDialog({
+						sortItems: [
+							new sap.m.ViewSettingsItem({
+								key: "myNameSorter",
+								text: "Name",
+								selected: true
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "myStatusSorter",
+								text: "Status",
+								selected: true
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "myValueSorter",
+								text: "Value",
+								selected: false
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "myPriceSorter",
+								text: "Price",
+								selected: false
+							})
+						]
+					});
+					this.oVSD.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.oVSD.destroy();
+					this.oVSD = null;
+				}
+			});
 
 			test("Check sort tab only mode", function  () {
-				var vsd = new sap.m.ViewSettingsDialog("vsd-sort", {
-					sortItems: [
-						new sap.m.ViewSettingsItem({
-							key: "myNameSorter",
-							text: "Name",
-							selected: true
-						}),
-						new sap.m.ViewSettingsItem({
-							key: "myStatusSorter",
-							text: "Status",
-							selected: true
-						}),
-						new sap.m.ViewSettingsItem({
-							key: "myValueSorter",
-							text: "Value",
-							selected: false
-						}),
-						new sap.m.ViewSettingsItem({
-							key: "myPriceSorter",
-							text: "Price",
-							selected: false
-						})
-					]
-				});
-
-				vsd.open();
-				strictEqual(vsd.getSelectedSortItem(), vsd.getSortItems()[1].getId(), "Second selected sort item is set successfully by selected flag");
-				strictEqual(vsd.getSelectedGroupItem(), null, "Selected group item is null");
-				strictEqual(vsd.getSelectedPresetFilterItem(), null, "Selected preset filter item is null");
-				strictEqual(vsd._sortContent.length, 2, "Sort content is initialized and has two items");
-				strictEqual(vsd._groupContent, undefined, "Group content is not initialized");
-				strictEqual(vsd._filterContent, undefined, "Filter content is not initialized");
-				strictEqual(vsd._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
-				ok(!jQuery.sap.domById(vsd.getId() + "-resetbutton"), "Filter reset button should not be rendered");
-				vsd._dialog.close();
+				this.oVSD.open();
+				strictEqual(this.oVSD.getSelectedSortItem(), this.oVSD.getSortItems()[1].getId(), "Second selected sort item is set successfully by selected flag");
+				strictEqual(this.oVSD.getSelectedGroupItem(), null, "Selected group item is null");
+				strictEqual(this.oVSD.getSelectedPresetFilterItem(), null, "Selected preset filter item is null");
+				strictEqual(this.oVSD._sortContent.length, 2, "Sort content is initialized and has two items");
+				strictEqual(this.oVSD._groupContent, undefined, "Group content is not initialized");
+				strictEqual(this.oVSD._filterContent, undefined, "Filter content is not initialized");
+				strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
+				ok(!jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should not be rendered");
 		});
 
-		module ("Group tab only checks");
+		module ("Group tab only checks", {
+				setup : function () {
+					this.oVSD = new sap.m.ViewSettingsDialog({
+						groupItems: [
+							new sap.m.ViewSettingsItem({
+								key: "myNameGrouper",
+								text: "Name",
+								selected: true
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "myStatusGrouper",
+								text: "Status",
+								selected: true
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "myValueGrouper",
+								text: "Value",
+								selected: false
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "myPriceGrouper",
+								text: "Price",
+								selected: false
+							})
+						]
+					});
+					this.oVSD.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.oVSD.destroy();
+					this.oVSD = null;
+				}
+			});
 
 		test("Check group tab only mode", function  () {
-			var vsd = new sap.m.ViewSettingsDialog("vsd-group", {
-				groupItems: [
-					new sap.m.ViewSettingsItem({
-						key: "myNameGrouper",
-						text: "Name",
-						selected: true
-					}),
-					new sap.m.ViewSettingsItem({
-						key: "myStatusGrouper",
-						text: "Status",
-						selected: true
-					}),
-					new sap.m.ViewSettingsItem({
-						key: "myValueGrouper",
-						text: "Value",
-						selected: false
-					}),
-					new sap.m.ViewSettingsItem({
-						key: "myPriceGrouper",
-						text: "Price",
-						selected: false
-					})
-				]
-			});
-
-			vsd.open();
-			strictEqual(vsd.getSelectedSortItem(), null, "Selected sort item is null");
-			strictEqual(vsd.getSelectedGroupItem(), vsd.getGroupItems()[1].getId(), "Second selected group item is set successfully by selected flag");
-			strictEqual(vsd.getSelectedPresetFilterItem(), null, "Selected preset filter item is null");
-			strictEqual(vsd._sortContent, undefined, "Group content is not initialized");
-			strictEqual(vsd._groupContent.length, 2, "Group content is initialized and has two items");
-			strictEqual(vsd._filterContent, undefined, "Filter content is not initialized");
-			strictEqual(vsd._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
-			ok(!jQuery.sap.domById(vsd.getId() + "-resetbutton"), "Filter reset button should not be rendered");
-			vsd._dialog.close();
+			this.oVSD.open();
+			strictEqual(this.oVSD.getSelectedSortItem(), null, "Selected sort item is null");
+			strictEqual(this.oVSD.getSelectedGroupItem(), this.oVSD.getGroupItems()[1].getId(), "Second selected group item is set successfully by selected flag");
+			strictEqual(this.oVSD.getSelectedPresetFilterItem(), null, "Selected preset filter item is null");
+			strictEqual(this.oVSD._sortContent, undefined, "Group content is not initialized");
+			strictEqual(this.oVSD._groupContent.length, 2, "Group content is initialized and has two items");
+			strictEqual(this.oVSD._filterContent, undefined, "Filter content is not initialized");
+			strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
+			ok(!jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should not be rendered");
 		});
 
-		module ("Preset Filter only checks")
-
-		test("Check preset filter only mode", function  () {
-			var vsd = new sap.m.ViewSettingsDialog("vsd-presetfilter", {
-				presetFilterItems: [
-					new sap.m.ViewSettingsItem({
-						key: "myPresetFilter1",
-						text: "A very complex filter",
-						selected: true
-					}),
-					new sap.m.ViewSettingsItem({
-						key: "myPresetFilter2",
-						text: "Ridiculously complex filter",
-						selected: true
-					}),
-					new sap.m.ViewSettingsItem({
-						key: "myPresetFilter3",
-						text: "Expensive stuff",
-						selected: false
-					})
-				]
-			});
-
-			vsd.open();
-			strictEqual(vsd.getSelectedSortItem(), null, "Selected sort item is null");
-			strictEqual(vsd.getSelectedGroupItem(), null, "Selected group item is null");
-			strictEqual(vsd.getSelectedPresetFilterItem(), vsd.getPresetFilterItems()[1].getId(), "Second preset filter item is set successfully by selected flag");
-			strictEqual(vsd._sortContent, undefined, "Group content is not initialized");
-			strictEqual(vsd._groupContent, undefined, "Group content is not initialized");
-			strictEqual(vsd._filterContent.length, 2, "Filter content is initalized and has two items");
-			strictEqual(vsd._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
-			strictEqual(vsd.getSelectedFilterItems().length, 0, "There are no selected filter items");
-			ok(!jQuery.sap.domById(vsd.getId() + "-resetbutton"), "Filter reset button should not be rendered");
-			vsd._dialog.close();
-		});
-
-		module ("Filter only checks")
-
-		asyncTest("Check filter only mode", function  () {
-			var vsd = new sap.m.ViewSettingsDialog("vsd-filter", {
-				filterItems: [
-					new sap.m.ViewSettingsFilterItem({
-						key: "myNameFilter",
-						text: "Name",
-						items: [
-							new sap.m.ViewSettingsItem({
-								key: "name1",
-								text: "Headphone",
-								selected: true
-							}),
-							new sap.m.ViewSettingsItem({
-								key: "name2",
-								text: "Mousepad",
-								selected: true
-							}),
-							new sap.m.ViewSettingsItem({
-								key: "name3",
-								text: "Monitor"
-							}),
-							new sap.m.ViewSettingsItem({
-								key: "name4",
-								text: "Backpack"
-							}),
-							new sap.m.ViewSettingsItem({
-								key: "name5",
-								text: "Printer",
-								selected: true
-							}),
-							new sap.m.ViewSettingsItem({
-								key: "name6",
-								text: "Optic Mouse",
-								selected: true
-							}),
-							new sap.m.ViewSettingsItem({
-								key: "name7",
-								text: "Dock Station"
-							})
-						]
-					}),
-					new sap.m.ViewSettingsFilterItem({
-						key: "myStatusFilter",
-						text: "Status",
-						items: [
-							new sap.m.ViewSettingsItem({
-								key: "status1",
-								text: "Approved",
-								selected: true
-							}),
-							new sap.m.ViewSettingsItem({
-								key: "status2",
-								text: "Open",
-								selected: true
-							}),
-							new sap.m.ViewSettingsItem({
-								key: "status3",
-								text: "Denied",
-								selected: true
-							})
-						]
-					}),
-					new sap.m.ViewSettingsFilterItem({
-						key: "myValueFilter",
-						text: "Value",
-						multiSelect: false,
-						items: [
-							new sap.m.ViewSettingsItem({
-								key: "value1",
-								text: "< 10 EUR"
-							}),
-							new sap.m.ViewSettingsItem({
-								key: "value2",
-								text: "10 - 30 EUR"
-							}),
-							new sap.m.ViewSettingsItem({
-								key: "value3",
-								text: "30 - 50 EUR",
-								selected: true
-							}),
-							new sap.m.ViewSettingsItem({
-								key: "value4",
-								text: "50 - 70 EUR"
-							}),
-							new sap.m.ViewSettingsItem({
-								key: "value5",
-								text: "> 70 EUR"
-							})
-						]
-					}),
-					new sap.m.ViewSettingsCustomItem({
-						key: "myPriceFilter",
-						text: "Price",
-						customControl: customPriceFilter.clone()
-					})
-				]
-			});
-
-			vsd.open();
-
-			// overview page
-			strictEqual(vsd.getSelectedSortItem(), null, "Selected sort item is null");
-			strictEqual(vsd.getSelectedGroupItem(), null, "Selected group item is null");
-			strictEqual(vsd.getSelectedPresetFilterItem(), null, "Selected preset filter item is null");
-			strictEqual(vsd._sortContent, undefined, "Group content is not initialized");
-			strictEqual(vsd._groupContent, undefined, "Group content is not initialized");
-			strictEqual(vsd._filterContent.length, 2, "Filter content is initalized and has two items");
-			strictEqual(vsd._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
-			ok(compareFilterKeys(filterState, vsd.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
-			ok(jQuery.sap.domById("vsd-filter-resetbutton"), "Filter reset button should be rendered");
-			strictEqual(vsd._filterList.getItems()[0].getCounter(), 4, "Filter counter for name is 4");
-
-			// go to detail page
-			jQuery.sap.delayedCall(0, vsd._navContainer, "to", [vsd.getId() + '-page2', "show"]);
-
-			vsd._switchToPage(3,vsd.getFilterItems()[0]); // name details page
-			setTimeout(function () {
-				ok(jQuery.sap.domById(vsd.getId() + "-page2"), "Page 2 is rendered");
-				ok(jQuery.sap.domById(vsd.getId() + "-detailresetbutton"), "Filter detail reset button should be rendered");
-				ok(jQuery.sap.domById(vsd.getId() + "-backbutton"), "Back button should be rendered");
-				vsd._dialog.close();
-				start();
-			}, 1000);
-
-			vsd._switchToPage(3,vsd.getFilterItems()[2]); // value details page
-			strictEqual(vsd._filterDetailList.getMode(), sap.m.ListMode.SingleSelectLeft, "The value detail list is in single select left mode");
-			strictEqual(vsd._filterDetailList.getSelectedItem().data("item"), vsd.getFilterItems()[2].getItems()[2], "The item 'value3' is selected");
-		});
-
-		if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
-		} else {
-
-			asyncTest("Check add/remove/toggle/hasStyleClass methods", function () {
-				var oVSD = new sap.m.ViewSettingsDialog("ViewSettingsDialog"),
-					sCustomStyleClass = "myStyleClass";
-
-				// add + has
-				oVSD.addStyleClass(sCustomStyleClass);
-				oVSD.open();
-				ok(oVSD._dialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog now has style class "' + sCustomStyleClass + '"');
-				ok(oVSD.hasStyleClass(sCustomStyleClass), 'The ViewSettingsDialog now has style class "' + sCustomStyleClass + '"');
-
-				// remove
-				oVSD.removeStyleClass(sCustomStyleClass);
-				ok(!oVSD._dialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog does not have style class "' + sCustomStyleClass + '" after remove');
-				ok(!oVSD.hasStyleClass(sCustomStyleClass), 'The ViewSettingsDialog does not have style class "' + sCustomStyleClass + '" after remove');
-
-				// toggle
-				oVSD.toggleStyleClass(sCustomStyleClass);
-				ok(oVSD._dialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog has style class "' + sCustomStyleClass + '" after toggle');
-				ok(oVSD.hasStyleClass(sCustomStyleClass), 'The ViewSettingsDialog has style class "' + sCustomStyleClass + '" after toggle');
-
-				// cleanup
-				oVSD._dialog.attachAfterClose(function (oEvent) {
-					oVSD.destroy();
-					start();
-				});
-				oVSD._dialog.close();
-			});
-		}
-
-		if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
-		} else {
-			asyncTest("Check $ and getDomRef methods", function () {
-				var oVSD = new sap.m.ViewSettingsDialog("ViewSettingsDialog123");
-
-				oVSD.open();
-
-				// $ method
-				ok(oVSD.$() instanceof jQuery && oVSD.$().length === 1, "The inner dialogs jQuery object is returned");
-
-				// getDomRef
-				ok(oVSD.getDomRef() instanceof Element && oVSD.getDomRef().id === oVSD.getId() + "-dialog", "The inner dialogs DOM reference is returned");
-
-				// cleanup
-				oVSD._dialog.attachAfterClose(function (oEvent) {
-					oVSD.destroy();
-					start();
-				});
-				oVSD._dialog.close();
-			});
-		}
-
-
-
-			module("Custom tabs");
-
-			asyncTest("Buttons for all custom tabs should be rendered", function () {
-				var oVsdInst = new sap.m.ViewSettingsDialog("vsdCustomTabs");
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory('taxi-settings'));
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory('other-tab'));
-				oVsdInst.open();
-				setTimeout(function () {
-					ok(jQuery.sap.domById(oVsdInst.getId() + "-custom-button-taxi-settings"), "Button is rendered custom tab.");
-					ok(jQuery.sap.domById(oVsdInst.getId() + "-custom-button-other-tab"), "Button is rendered custom tab.");
-					start();
-					oVsdInst.exit();
-					oVsdInst.destroy();
-					delete oVsdInst;
-				}, 1000);
-			});
-
-
-			asyncTest("Check if all tabs contents are rendered when tab is focused.", function () {
-				var oVsdInst = new sap.m.ViewSettingsDialog("vsdCustomTabs");
-				oVsdInst.insertAggregation('customTabs', new sap.m.ViewSettingsCustomTab({
-					id	 	: 'taxi-settings',
-					content : [
-						new sap.m.Button({
-							id	: 'taxi-settings-button-content2',
-							text: 'test'
+		module ("Preset Filter only checks", {
+			setup : function () {
+				this.oVSD = new sap.m.ViewSettingsDialog({
+					presetFilterItems: [
+						new sap.m.ViewSettingsItem({
+							key: "myPresetFilter1",
+							text: "A very complex filter",
+							selected: true
 						}),
-						new sap.m.CheckBox({
-							name: 'test',
-							text: 'test4'
+						new sap.m.ViewSettingsItem({
+							key: "myPresetFilter2",
+							text: "Ridiculously complex filter",
+							selected: true
+						}),
+						new sap.m.ViewSettingsItem({
+							key: "myPresetFilter3",
+							text: "Expensive stuff",
+							selected: false
 						})
 					]
+				});
+				this.oVSD.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			teardown : function () {
+				this.oVSD.destroy();
+				this.oVSD = null;
+			}
+		});
 
-				}));
+		test("Check preset filter only mode", function  () {
+			this.oVSD.open();
+			strictEqual(this.oVSD.getSelectedSortItem(), null, "Selected sort item is null");
+			strictEqual(this.oVSD.getSelectedGroupItem(), null, "Selected group item is null");
+			strictEqual(this.oVSD.getSelectedPresetFilterItem(), this.oVSD.getPresetFilterItems()[1].getId(), "Second preset filter item is set successfully by selected flag");
+			strictEqual(this.oVSD._sortContent, undefined, "Group content is not initialized");
+			strictEqual(this.oVSD._groupContent, undefined, "Group content is not initialized");
+			strictEqual(this.oVSD._filterContent.length, 2, "Filter content is initalized and has two items");
+			strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
+			strictEqual(this.oVSD.getSelectedFilterItems().length, 0, "There are no selected filter items");
+			ok(!jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should not be rendered");
+		});
 
-				oVsdInst.open();
+		module ("Filter details rendering", {
+			setup : function () {
+				this.oVSD = new sap.m.ViewSettingsDialog();
+
+				this.oFilterState = {
+					"name1": true,
+					"name2": true,
+					"name5": true,
+					"name6": true,
+					"status1": true,
+					"status2": true,
+					"status3": true,
+					"value3": true
+				};
+
+				oVsdConfig.addFilterItems(this.oVSD);
+
+				this.oVSD.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			teardown : function () {
+				this.oVSD.destroy();
+				this.oVSD = null;
+			}
+		});
+
+		test("Check filter detail page and buttons render correctly", function  (assert) {
+			var done = assert.async(),
+					that = this;
+
+			this.oVSD.setSelectedFilterKeys(this.oFilterState);
+
+			this.oVSD.open();
+
+			jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+			this.oVSD._switchToPage(3, this.oVSD.getFilterItems()[0]); // name details page
+
+			setTimeout(function() {
+				ok(jQuery.sap.domById(that.oVSD.getId() + "-page2"), "Page 2 is rendered");
+				ok(jQuery.sap.domById(that.oVSD.getId() + "-detailresetbutton"), "Filter detail reset button should be rendered");
+				ok(jQuery.sap.domById(that.oVSD.getId() + "-backbutton"), "Back button should be rendered");
+				done();
+			}, 1000);
+
+		});
+
+		module ("Filter only checks", {
+			setup : function () {
+				this.oVSD = new sap.m.ViewSettingsDialog();
+
+				this.oFilterState = {
+					"name1": true,
+					"name2": true,
+					"name5": true,
+					"name6": true,
+					"status1": true,
+					"status2": true,
+					"status3": true,
+					"value3": true
+				};
+
+				this.oVSD.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			teardown : function () {
+				this.oVSD.destroy();
+				this.oVSD = null;
+			}
+		});
+
+		test("Check filter only mode", function  () {
+			var	sId = this.oVSD.getId();
+
+			oVsdConfig.addFilterItems(this.oVSD);
+			oVsdConfig.addPresetFilterItems(this.oVSD);
+			this.oVSD.getFilterItems()[2].setMultiSelect(false);
+			this.oVSD.setSelectedFilterKeys(this.oFilterState);
+
+			this.oVSD.open();
+
+			// overview page
+			strictEqual(this.oVSD.getSelectedSortItem(), null, "Selected sort item is null");
+			strictEqual(this.oVSD.getSelectedGroupItem(), null, "Selected group item is null");
+			strictEqual(this.oVSD.getSelectedPresetFilterItem(), null, "Selected preset filter item is null");
+			strictEqual(this.oVSD._sortContent, undefined, "Group content is not initialized");
+			strictEqual(this.oVSD._groupContent, undefined, "Group content is not initialized");
+			strictEqual(this.oVSD._filterContent.length, 2, "Filter content is initialized and has two items");
+			strictEqual(this.oVSD._page1.getSubHeader(), null, "Sub-header with segmented button is not set on first page");
+			ok(compareFilterKeys(this.oFilterState, this.oVSD.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
+			ok(jQuery.sap.domById(sId + "-resetbutton"), "Filter reset button should be rendered");
+			strictEqual(this.oVSD._filterList.getItems()[0].getCounter(), 4, "Filter counter for name is 4");
+
+			this.oVSD._switchToPage(3,this.oVSD.getFilterItems()[2]); // value details page
+			strictEqual(this.oVSD._filterDetailList.getMode(), sap.m.ListMode.SingleSelectLeft, "The value detail list is in single select left mode");
+			strictEqual(this.oVSD._filterDetailList.getSelectedItem().data("item"), this.oVSD.getFilterItems()[2].getItems()[2], "The item 'value3' is selected");
+		});
+
+		test("Check add/remove/toggle/hasStyleClass methods", function () {
+			var	sCustomStyleClass = "myStyleClass";
+
+			// add + has
+			this.oVSD.addStyleClass(sCustomStyleClass);
+			this.oVSD.open();
+			ok(this.oVSD._dialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog now has style class "' + sCustomStyleClass + '"');
+			ok(this.oVSD.hasStyleClass(sCustomStyleClass), 'The ViewSettingsDialog now has style class "' + sCustomStyleClass + '"');
+
+			// remove
+			this.oVSD.removeStyleClass(sCustomStyleClass);
+			ok(!this.oVSD._dialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog does not have style class "' + sCustomStyleClass + '" after remove');
+			ok(!this.oVSD.hasStyleClass(sCustomStyleClass), 'The ViewSettingsDialog does not have style class "' + sCustomStyleClass + '" after remove');
+
+			// toggle
+			this.oVSD.toggleStyleClass(sCustomStyleClass);
+			ok(this.oVSD._dialog.hasStyleClass(sCustomStyleClass), 'The internal Dialog has style class "' + sCustomStyleClass + '" after toggle');
+			ok(this.oVSD.hasStyleClass(sCustomStyleClass), 'The ViewSettingsDialog has style class "' + sCustomStyleClass + '" after toggle');
+		});
+
+		test("Check $ and getDomRef methods", function () {
+			this.oVSD.open();
+			ok(this.oVSD.$().length === 1, "The inner dialogs jQuery object is returned");
+			ok(this.oVSD.getDomRef().id === this.oVSD.getId() + "-dialog", "The inner dialogs DOM reference is returned");
+		});
+
+		module("Custom tabs", {
+			setup : function () {
+				this.oVSD = new sap.m.ViewSettingsDialog();
+				this.oVSD.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			teardown : function () {
+				this.oVSD.destroy();
+				this.oVSD = null;
+			}
+		});
+
+		test("Buttons for all custom tabs should be rendered", function () {
+			var sId = this.oVSD.getId();
+
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory('taxi-settings'));
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory('other-tab'));
+			this.oVSD.open();
+			ok(jQuery.sap.domById(sId + "-custom-button-taxi-settings"), "Button is rendered custom tab.");
+			ok(jQuery.sap.domById(sId + "-custom-button-other-tab"), "Button is rendered custom tab.");
+		});
+
+		test("Check if all tabs contents are rendered when tab is focused.", function () {
+			this.oVSD.insertAggregation('customTabs', new sap.m.ViewSettingsCustomTab({
+				id	 	: 'taxi-settings',
+				content : [
+					new sap.m.Button({
+						id	: 'taxi-settings-button-content2',
+						text: 'test'
+					}),
+					new sap.m.CheckBox({
+						name: 'test',
+						text: 'test4'
+					})
+				]
+
+			}));
+
+			this.oVSD.open();
+			ok(jQuery.sap.domById('taxi-settings-button-content2'), "Custom page contents are rendered.");
+		});
+
+		test("Make sure 'reset' and 'back' buttons is not rendered when on custom page.", function () {
+			var sId = this.oVSD.getId();
+
+			oVsdConfig.addSortItems(this.oVSD);
+			oVsdConfig.addFilterItems(this.oVSD);
+			oVsdConfig.addPresetFilterItems(this.oVSD);
+			oVsdConfig.addGroupItems(this.oVSD);
+
+			this.oVSD.open();
+			ok(!jQuery.sap.domById(sId + "-resetbutton"), "Filter reset button should not be rendered");
+		});
+
+		/* [start]  Actual unit tests of custom tabs */
+		test("Check the _isValidPredefinedPageId method for correctly invalidating page ids.", function () {
+			var	sFirstCustomTabId	= 'taxi-settings5',
+				sSecondCustomTabId 	= 'other-tab5',
+				sSuccessMsg,
+				sPageId,
+				sSuccessMsgPrefix;
+
+			var bEmptyContent = true;
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId, bEmptyContent));
+
+			sPageId 			= 'sort';
+			sSuccessMsgPrefix 	= '"' + sPageId + '"';
+			sSuccessMsg 		= ' is NOT a valid predefined page id when no ' + sPageId + ' items are added.';
+			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
+
+			sPageId 			= 'filter';
+			sSuccessMsgPrefix 	= '"' + sPageId + '"';
+			sSuccessMsg 		= ' is NOT a valid predefined page id when no ' + sPageId + ' items are added.';
+			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
+
+			sPageId 			= 'group';
+			sSuccessMsgPrefix 	= '"' + sPageId + '"';
+			sSuccessMsg 		= ' is NOT a valid predefined page id when no custom tabs are added.';
+			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
+
+			sPageId 			= sFirstCustomTabId;
+			sSuccessMsgPrefix 	= '"' + sPageId + '"';
+			sSuccessMsg 		= ' is NOT a valid predefined page id when no custom tabs are added.';
+			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
+
+			sPageId 			= sSecondCustomTabId;
+			sSuccessMsgPrefix 	= '"' + sPageId + '"';
+			sSuccessMsg 		= ' is NOT a valid predefined page id.';
+			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
+		});
+
+		test("Check the _isValidPredefinedPageId method for correctly validating page ids.", function () {
+			var sFirstCustomTabId	= 'taxi-settings5',
+				sSuccessMsg,
+				sPageId,
+				sSuccessMsgPrefix;
+
+			oVsdConfig.addSortItems(this.oVSD);
+			sPageId 			= 'sort';
+			sSuccessMsgPrefix 	= '"' + sPageId + '"';
+			sSuccessMsg 		= ' is a valid predefined page id after ' + sPageId + ' items are added.';
+			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , true, sSuccessMsgPrefix + sSuccessMsg);
+
+			oVsdConfig.addFilterItems(this.oVSD);
+			sPageId 			= 'filter';
+			sSuccessMsgPrefix 	= '"' + sPageId + '"';
+			sSuccessMsg 		= ' is a valid predefined page id after ' + sPageId + ' items are added.';
+			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , true, sSuccessMsgPrefix + sSuccessMsg);
+
+
+			oVsdConfig.addGroupItems(this.oVSD);
+			sPageId 			= 'group';
+			sSuccessMsgPrefix 	= '"' + sPageId + '"';
+			sSuccessMsg 		= ' is a valid predefined page id after ' + sPageId + ' items are added.';
+			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , true, sSuccessMsgPrefix + sSuccessMsg);
+
+
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+
+			sPageId 			= sFirstCustomTabId;
+			sSuccessMsgPrefix 	= '"' + sPageId + '"';
+			sSuccessMsg 		= ' is a valid predefined page id after it was added.';
+			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
+		});
+
+		test("Check the _fetchValidPagesIds method for correctness.", function () {
+			var	sFirstCustomTabId	= 'taxi-settings6',
+				sSecondCustomTabId 	= 'other-tab6',
+				bEmptyContent 		= true,
+				sSuccessMsg;
+
+			var aVsd10ValidPageIds 	= [];
+			sSuccessMsg 			= 'No valid page ids correctly determined.';
+			deepEqual(this.oVSD._fetchValidPagesIds(), aVsd10ValidPageIds, sSuccessMsg);
+
+
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId, bEmptyContent));
+			aVsd10ValidPageIds 	= [sFirstCustomTabId].sort();
+			sSuccessMsg 		= 'Only one custom tab valid page id correctly determined.';
+			deepEqual(this.oVSD._fetchValidPagesIds().sort(), aVsd10ValidPageIds, sSuccessMsg);
+			this.oVSD.destroyAggregation('customTabs');
+
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
+			aVsd10ValidPageIds 	= [sFirstCustomTabId, sSecondCustomTabId].sort();
+			sSuccessMsg			= 'All custom tabs valid page ids correctly determined.';
+			deepEqual(this.oVSD._fetchValidPagesIds().sort(), aVsd10ValidPageIds, sSuccessMsg);
+			this.oVSD.destroyAggregation('customTabs');
+
+			oVsdConfig.addSortItems(this.oVSD);
+			oVsdConfig.addFilterItems(this.oVSD);
+			oVsdConfig.addPresetFilterItems(this.oVSD);
+			oVsdConfig.addGroupItems(this.oVSD);
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
+			aVsd10ValidPageIds 	= ['sort', 'group', 'filter', sFirstCustomTabId, sSecondCustomTabId].sort();
+			sSuccessMsg			= 'All valid page ids are correctly determined.';
+			deepEqual(this.oVSD._fetchValidPagesIds().sort(), aVsd10ValidPageIds, sSuccessMsg);
+		});
+
+		test("Check the _determineValidPageId method for correctness.", function () {
+			var	sFirstCustomTabId	= 'taxi-settings6',
+				sSecondCustomTabId 	= 'other-tab6',
+				bEmptyContent 		= true,
+				sSuccessMsg,
+				sPageId,
+				sSuccessMsgPrefix,
+				sExpectedPageId;
+
+			// give nothing, expect sort
+			sExpectedPageId 	= 'sort';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+
+
+			// give filter, expect sort (no filter items yet)
+			sExpectedPageId 	= 'sort';
+			sPageId				= 'filter';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+
+
+			// give random string, expect sort
+			sExpectedPageId 	= 'sort';
+			sPageId				= 'invalidstring';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+
+
+			// add custom tab, give nothing, expect custom tab
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+			sExpectedPageId 	=
+			sPageId				= sFirstCustomTabId;
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when nothing given.';
+			equal(this.oVSD._determineValidPageId(), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+			this.oVSD.destroyAggregation('customTabs');
+
+			// add custom tab, give custom tab id, expect custom tab id
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+			sExpectedPageId 	=
+			sPageId				= sFirstCustomTabId;
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+			this.oVSD.destroyAggregation('customTabs');
+
+
+
+			// 6
+			oVsdConfig.addSortItems(this.oVSD);
+			sExpectedPageId 	=
+			sPageId 			= 'sort';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+			this.oVSD.destroyAggregation('sortItems');
+
+			//7
+			sExpectedPageId 	= 'sort';
+			sPageId 			= 'filter';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+
+
+			//8
+			oVsdConfig.addFilterItems(this.oVSD);
+			sExpectedPageId 	=
+			sPageId 			= 'filter';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+
+			// 9
+			sExpectedPageId 	= 'filter';
+			sPageId 			= 'sort';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+			this.oVSD.destroyAggregation('filterItems');
+
+
+			// 10
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+			sExpectedPageId 	=
+			sPageId 			= sFirstCustomTabId;
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+			this.oVSD.destroyAggregation('customTabs');
+
+
+			// 11 first custom tab has empty content
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId, bEmptyContent));
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
+			sExpectedPageId 	= sSecondCustomTabId;
+			sPageId 			= sSecondCustomTabId;
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+			this.oVSD.destroyAggregation('customTabs');
+
+
+			// 12
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
+			sExpectedPageId 	= sSecondCustomTabId;
+			sPageId 			= sSecondCustomTabId;
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+			this.oVSD.destroyAggregation('customTabs');
+
+
+
+			// 13
+			oVsdConfig.addSortItems(this.oVSD);
+			oVsdConfig.addFilterItems(this.oVSD);
+			oVsdConfig.addGroupItems(this.oVSD);
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
+			sExpectedPageId 	= sSecondCustomTabId;
+			sPageId 			= sSecondCustomTabId;
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+
+
+			// 14
+			sExpectedPageId 	=
+			sPageId 			= 'taxi-settings6';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+
+
+			// 15
+			this.oVSD.destroyAggregation('sortItems');
+			sExpectedPageId 	= 'filter';
+			sPageId 			= 'sort';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+
+
+			// 16
+			this.oVSD.destroy();
+			this.oVSD 			= new sap.m.ViewSettingsDialog("vsdCustomTabs");
+			oVsdConfig.addGroupItems(this.oVSD);
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
+			sExpectedPageId 	= 'group';
+			sPageId 			= 'sort';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+		});
+
+		test("Check if reserved tab ids are properly handled.", function () {
+			var oTab = new sap.m.ViewSettingsCustomTab('sort');
+			var hasError = false;
+			try {
+				this.oVSD.addCustomTab(oTab);
+			} catch (e) {
+				hasError = true;
+			}
+
+			equal(hasError, true, 'Error is properly thrown when reserved tab id is used.');
+		});
+
+		test("Back button on filter detail should work after reopen.", function (assert) {
+			var delay = 1000,
+				done = assert.async(),
+				sId = this.oVSD.getId(),
+				that = this;
+
+			oVsdConfig.addSortItems(this.oVSD);
+			oVsdConfig.addFilterItems(this.oVSD);
+			oVsdConfig.addPresetFilterItems(this.oVSD);
+			oVsdConfig.addGroupItems(this.oVSD);
+
+			setTimeout(function () {
+				that.oVSD.open();
+				that.oVSD._switchToPage(3, that.oVSD.getFilterItems()[0]); // name details page
+				jQuery.sap.delayedCall(0, that.oVSD._navContainer, "to", [sId + '-page2', "show"]);
+				that.oVSD._onConfirm();
+			}, 0);
+
+			setTimeout(function () {
+				that.oVSD.open();
+				ok(jQuery.sap.domById(sId + "-page2-cont"), "Page 2 (filter detail content) should be rendered");
+
 				setTimeout(function () {
-					ok(jQuery.sap.domById('taxi-settings-button-content2'), "Custom page contents are rendered.");
-					start();
-					oVsdInst.exit();
-					oVsdInst.destroy();
-					delete oVsdInst;
-				}, 1000);
-			});
+					that.oVSD._pressBackButton();
 
-			asyncTest("Make sure 'reset' and 'back' buttons is not rendered when on custom page.", function () {
-				var oVsdInst = new sap.m.ViewSettingsDialog("vsdCustomTabs");
-				oVsdConfig.addSortItems(oVsdInst);
-				oVsdConfig.addFilterItems(oVsdInst);
-				oVsdConfig.addGroupItems(oVsdInst);
+					setTimeout(function () {
+						ok(jQuery.sap.byId(sId + "-filterbutton").hasClass("sapMSegBBtnSel"), "Segmented 'filter' button should be selected after 'back' is pressed.");
+						done();
+					}, delay);
+				}, delay);
+			}, delay);
+		});
+
+		// this test is important because the 'content' aggregation of custom tabs is
+		// being set to the vsd page instance and then back to the custom tab
+		test("Make sure right content is loaded upon reopening a dialog with single custom tab.", function (assert) {
+			var delay = 1000,
+				done = assert.async(),
+				sTitle = 'taxi-settings',
+				that = this;
+
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sTitle));
+
+			setTimeout(function () {
+				that.oVSD.open();
+
 				setTimeout(function () {
-					ok(!jQuery.sap.domById(oVsdInst.getId() + "-resetbutton"), "Filter reset button should not be rendered");
-					start();
-				}, 1000);
-				oVsdInst.exit();
-				oVsdInst.destroy();
-				delete oVsdInst;
+					that.oVSD._dialog.getEndButton().firePress();
+
+					setTimeout(function () {
+						that.oVSD.open();
+						strictEqual(jQuery('#' + that.oVSD.getId() + '-title').text(), sTitle, "The title should be " + sTitle);
+						done();
+					}, delay);
+				}, delay);
+			}, delay);
+		});
+
+		test("Test model data binding", function (assert) {
+			var delay = 1000,
+				done = assert.async(),
+				that = this;
+
+			var oCheckboxTemplate = new sap.m.CheckBox({
+				name : "test",
+				text : "{/customTabData/checkbox_label}"
 			});
 
-
-
-
-			/* [start]  Actual unit tests of custom tabs */
-
-			test("Check the _isValidPredefinedPageId method for correctly invalidating page ids.", function () {
-				var oVsdInst 			= new sap.m.ViewSettingsDialog("vsdCustomTabs"),
-					sSuccessMsg			= null,
-					sFirstCustomTabId	= 'taxi-settings5',
-					sSecondCustomTabId 	= 'other-tab5',
-					sPageId,
-					sSuccessMsgPrefix;
-
-				var bEmptyContent = true;
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId, bEmptyContent));
-
-				sPageId 			= 'sort';
-				sSuccessMsgPrefix 	= '"' + sPageId + '"';
-				sSuccessMsg 		= ' is NOT a valid predefined page id when no ' + sPageId + ' items are added.';
-				strictEqual(oVsdInst._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
-
-				sPageId 			= 'filter';
-				sSuccessMsgPrefix 	= '"' + sPageId + '"';
-				sSuccessMsg 		= ' is NOT a valid predefined page id when no ' + sPageId + ' items are added.';
-				strictEqual(oVsdInst._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
-
-				sPageId 			= 'group';
-				sSuccessMsgPrefix 	= '"' + sPageId + '"';
-				sSuccessMsg 		= ' is NOT a valid predefined page id when no custom tabs are added.';
-				strictEqual(oVsdInst._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
-
-				sPageId 			= sFirstCustomTabId;
-				sSuccessMsgPrefix 	= '"' + sPageId + '"';
-				sSuccessMsg 		= ' is NOT a valid predefined page id when no custom tabs are added.';
-				strictEqual(oVsdInst._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
-
-				sPageId 			= sSecondCustomTabId;
-				sSuccessMsgPrefix 	= '"' + sPageId + '"';
-				sSuccessMsg 		= ' is NOT a valid predefined page id.';
-				strictEqual(oVsdInst._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
-
-				oVsdInst.destroy();
-				delete oVsdInst, sSuccessMsg, sPageId, sSuccessMsgPrefix;
-			});
-
-
-
-			test("Check the _isValidPredefinedPageId method for correctly validating page ids.", function () {
-				var oVsdInst 			= new sap.m.ViewSettingsDialog("vsdCustomTabs"),
-					sSuccessMsg			= null,
-					sFirstCustomTabId	= 'taxi-settings5',
-					sPageId,
-					sSuccessMsgPrefix;
-
-				oVsdConfig.addSortItems(oVsdInst);
-				sPageId 			= 'sort';
-				sSuccessMsgPrefix 	= '"' + sPageId + '"';
-				sSuccessMsg 		= ' is a valid predefined page id after ' + sPageId + ' items are added.';
-				strictEqual(oVsdInst._isValidPredefinedPageId(sPageId) , true, sSuccessMsgPrefix + sSuccessMsg);
-
-				oVsdConfig.addFilterItems(oVsdInst);
-				sPageId 			= 'filter';
-				sSuccessMsgPrefix 	= '"' + sPageId + '"';
-				sSuccessMsg 		= ' is a valid predefined page id after ' + sPageId + ' items are added.';
-				strictEqual(oVsdInst._isValidPredefinedPageId(sPageId) , true, sSuccessMsgPrefix + sSuccessMsg);
-
-
-				oVsdConfig.addGroupItems(oVsdInst);
-				sPageId 			= 'group';
-				sSuccessMsgPrefix 	= '"' + sPageId + '"';
-				sSuccessMsg 		= ' is a valid predefined page id after ' + sPageId + ' items are added.';
-				strictEqual(oVsdInst._isValidPredefinedPageId(sPageId) , true, sSuccessMsgPrefix + sSuccessMsg);
-
-
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
-
-				sPageId 			= sFirstCustomTabId;
-				sSuccessMsgPrefix 	= '"' + sPageId + '"';
-				sSuccessMsg 		= ' is a valid predefined page id after it was added.';
-				strictEqual(oVsdInst._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
-
-				oVsdInst.destroy();
-				delete oVsdInst, sSuccessMsg, sPageId, sSuccessMsgPrefix;
-			});
-
-
-
-
-			test("Check the _fetchValidPagesIds method for correctness.", function () {
-				var oVsdInst 			= new sap.m.ViewSettingsDialog("vsdCustomTabs"),
-					sSuccessMsg			= null,
-					sFirstCustomTabId	= 'taxi-settings6',
-					sSecondCustomTabId 	= 'other-tab6',
-					bEmptyContent 		= true,
-					sPageId,
-					sSuccessMsgPrefix;
-
-				var aVsd10ValidPageIds 	= [];
-				sSuccessMsg 			= 'No valid page ids correctly determined.';
-				deepEqual(oVsdInst._fetchValidPagesIds(), aVsd10ValidPageIds, sSuccessMsg);
-
-
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId, bEmptyContent));
-				aVsd10ValidPageIds 	= [sFirstCustomTabId].sort();
-				sSuccessMsg 		= 'Only one custom tab valid page id correctly determined.';
-				deepEqual(oVsdInst._fetchValidPagesIds().sort(), aVsd10ValidPageIds, sSuccessMsg);
-				oVsdInst.destroyAggregation('customTabs');
-
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
-				aVsd10ValidPageIds 	= [sFirstCustomTabId, sSecondCustomTabId].sort();
-				sSuccessMsg			= 'All custom tabs valid page ids correctly determined.';
-				deepEqual(oVsdInst._fetchValidPagesIds().sort(), aVsd10ValidPageIds, sSuccessMsg);
-				oVsdInst.destroyAggregation('customTabs');
-
-				oVsdConfig.addSortItems(oVsdInst);
-				oVsdConfig.addFilterItems(oVsdInst);
-				oVsdConfig.addGroupItems(oVsdInst);
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
-				aVsd10ValidPageIds 	= ['sort', 'group', 'filter', sFirstCustomTabId, sSecondCustomTabId].sort();
-				sSuccessMsg			= 'All valid page ids are correctly determined.';
-				deepEqual(oVsdInst._fetchValidPagesIds().sort(), aVsd10ValidPageIds, sSuccessMsg);
-
-				oVsdInst.destroy();
-				delete oVsdInst, sSuccessMsg, sPageId, sSuccessMsgPrefix;
-			});
-
-			test("Check the _determineValidPageId method for correctness.", function () {
-				var oVsdInst 			= new sap.m.ViewSettingsDialog("vsdCustomTabs"),
-					sSuccessMsg			= null,
-					sFirstCustomTabId	= 'taxi-settings6',
-					sSecondCustomTabId 	= 'other-tab6',
-					bEmptyContent 		= true,
-					sPageId,
-					sSuccessMsgPrefix,
-					sExpectedPageId;
-
-				// give nothing, expect sort
-				sExpectedPageId 	= 'sort';
-				sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
-				sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
-				equal(oVsdInst._determineValidPageId(), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
-
-
-				// give filter, expect sort (no filter items yet)
-				sExpectedPageId 	= 'sort';
-				sPageId				= 'filter';
-				sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
-				sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
-				equal(oVsdInst._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
-
-
-				// give random string, expect sort
-				sExpectedPageId 	= 'sort';
-				sPageId				= 'invalidstring';
-				sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
-				sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
-				equal(oVsdInst._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
-
-
-				// add custom tab, give nothing, expect custom tab
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
-				sExpectedPageId 	=
-				sPageId				= sFirstCustomTabId;
-				sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
-				sSuccessMsg			= '" is correctly resolved as the valid page id when nothing given.';
-				equal(oVsdInst._determineValidPageId(), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
-				oVsdInst.destroyAggregation('customTabs');
-
-				// add custom tab, give custom tab id, expect custom tab id
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
-				sExpectedPageId 	=
-				sPageId				= sFirstCustomTabId;
-				sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
-				sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
-				equal(oVsdInst._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
-				oVsdInst.destroyAggregation('customTabs');
-
-
-
-				// 6
-				oVsdConfig.addSortItems(oVsdInst);
-				sExpectedPageId 	=
-				sPageId 			= 'sort';
-				sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
-				sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
-				equal(oVsdInst._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
-				oVsdInst.destroyAggregation('sortItems');
-
-				//7
-				sExpectedPageId 	= 'sort';
-				sPageId 			= 'filter';
-				sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
-				sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
-				equal(oVsdInst._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
-
-
-				//8
-				oVsdConfig.addFilterItems(oVsdInst);
-				sExpectedPageId 	=
-				sPageId 			= 'filter';
-				sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
-				equal(oVsdInst._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
-
-				// 9
-				sExpectedPageId 	= 'filter';
-				sPageId 			= 'sort';
-				sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
-				sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
-				equal(oVsdInst._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
-				oVsdInst.destroyAggregation('filterItems');
-
-
-				// 10
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
-				sExpectedPageId 	=
-				sPageId 			= sFirstCustomTabId;
-				sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
-				sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
-				equal(oVsdInst._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
-				oVsdInst.destroyAggregation('customTabs');
-
-
-				// 11 first custom tab has empty content
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId, bEmptyContent));
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
-				sExpectedPageId 	= sSecondCustomTabId;
-				sPageId 			= sSecondCustomTabId;
-				sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
-				sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
-				equal(oVsdInst._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
-				oVsdInst.destroyAggregation('customTabs');
-
-
-				// 12
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
-				sExpectedPageId 	= sSecondCustomTabId;
-				sPageId 			= sSecondCustomTabId;
-				sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
-				sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
-				equal(oVsdInst._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
-				oVsdInst.destroyAggregation('customTabs');
-
-
-
-				// 13
-				oVsdConfig.addSortItems(oVsdInst);
-				oVsdConfig.addFilterItems(oVsdInst);
-				oVsdConfig.addGroupItems(oVsdInst);
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
-				sExpectedPageId 	= sSecondCustomTabId;
-				sPageId 			= sSecondCustomTabId;
-				sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
-				sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
-				equal(oVsdInst._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
-
-
-				// 14
-				sExpectedPageId 	=
-				sPageId 			= 'taxi-settings6';
-				sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
-				sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
-				equal(oVsdInst._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
-
-
-				// 15
-				oVsdInst.destroyAggregation('sortItems');
-				sExpectedPageId 	= 'filter';
-				sPageId 			= 'sort';
-				sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
-				sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
-				equal(oVsdInst._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
-
-
-				// 16
-				oVsdInst.destroy();
-				var oVsdInst 		= new sap.m.ViewSettingsDialog("vsdCustomTabs");
-				oVsdConfig.addGroupItems(oVsdInst);
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
-				sExpectedPageId 	= 'group';
-				sPageId 			= 'sort';
-				sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
-				sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
-				equal(oVsdInst._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
-
-				oVsdInst.destroy();
-				delete oVsdInst, sSuccessMsg, sPageId, sSuccessMsgPrefix;
-			});
-
-			test("Check if reserved tab ids are properly handled.", function () {
-				var oVsdInst = new sap.m.ViewSettingsDialog("vsdCustomTabs");
-				var oTab = new sap.m.ViewSettingsCustomTab('sort');
-				var hasError = false;
-				try {
-					oVsdInst.addCustomTab(oTab);
-				} catch (e) {
-					hasError = true;
+			var oCustomTab = new sap.m.ViewSettingsCustomTab({
+				id: "taxi-settings",
+				content: {
+					path: '/customTabData',
+					template: oCheckboxTemplate
 				}
-
-				equal(hasError, true, 'Error is properly thrown when reserved tab id is used.');
-				oVsdInst.destroy();
-				delete oVsdInst;
 			});
 
-
-			asyncTest("Back button on filter detail should work after reopen.", function () {
-				var oVsdInst = new sap.m.ViewSettingsDialog("vsdCustomTabs");
-				var delay = 1000;
-				oVsdConfig.addSortItems(oVsdInst);
-				oVsdConfig.addFilterItems(oVsdInst);
-				oVsdConfig.addGroupItems(oVsdInst);
-
-				setTimeout(function () {
-					oVsdInst.open();
-					oVsdInst._switchToPage(3, oVsdInst.getFilterItems()[0]); // name details page
-					jQuery.sap.delayedCall(0, oVsdInst._navContainer, "to", [oVsdInst.getId() + '-page2', "show"]);
-					oVsdInst._onConfirm();
-				}, 0);
-
-				setTimeout(function () {
-					oVsdInst.open();
-					setTimeout(function () {
-						oVsdInst.open();
-						ok(jQuery.sap.domById(oVsdInst.getId() + "-page2-cont"), "Page 2 (filter detail content) should be rendered");
-
-						setTimeout(function () {
-							oVsdInst._pressBackButton();
-
-							setTimeout(function () {
-								ok(jQuery.sap.byId(oVsdInst.getId() + "-filterbutton").hasClass("sapMSegBBtnSel"), "Segmented 'filter' button should be selected after 'back' is pressed.");
-								start();
-								oVsdInst.destroy();
-								delete oVsdInst;
-							}, delay);
-						}, delay);
-					}, delay);
-				}, delay);
+			var oCustomTab2 = new sap.m.ViewSettingsCustomTab({
+				id: "taxi-settings2",
+				content: {
+					path: '/customTabData',
+					template: oCheckboxTemplate
+				}
 			});
 
+			this.oVSD.addAggregation("customTabs", oCustomTab);
+			this.oVSD.addAggregation("customTabs", oCustomTab2);
 
-			// this test is important because the 'content' aggregation of custom tabs is
-			// being set to the vsd page instance and then back to the custom tab
-			asyncTest("Make sure right content is loaded upon reopening a dialog with single custom tab.", function () {
-				var oVsdInst = new sap.m.ViewSettingsDialog("vsdCustomTabs");
-				var delay = 1000;
-				var sTitle = 'taxi-settings';
-				oVsdInst.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sTitle));
+			setTimeout(function () {
+				that.oVSD.open();
+				that.oVSD._switchToPage('taxi-settings2');
+				// the text of the second control on the page is binded to a model
+				strictEqual(that.oVSD._getPage1().getContent()[0].getText(), 'lorem ipsum checkbox label');
 				setTimeout(function () {
-					oVsdInst.open();
-					setTimeout(function () {
-						oVsdInst._dialog.getEndButton().firePress();
-						setTimeout(function () {
-							oVsdInst.open();
-							strictEqual(jQuery('#'+oVsdInst.getId()+'-title').text(), sTitle, "The title should be "+sTitle);
-							start();
-							oVsdInst.destroy();
-							delete oVsdInst;
-						}, delay);
-					}, delay);
-				}, delay);
-			});
-
-
-			asyncTest("Test model data binding", function () {
-				var oVsdInst = new sap.m.ViewSettingsDialog("vsdCustomTabs");
-				var delay = 1000;
-
-				var oCheckboxTemplate = new sap.m.CheckBox({
-					name : "test",
-					text : "{/customTabData/checkbox_label}"
-				});
-
-				var oCustomTab = new sap.m.ViewSettingsCustomTab({
-					id: "taxi-settings",
-					content: {
-						path: '/customTabData',
-						template: oCheckboxTemplate
-					}
-				});
-
-
-				var oCustomTab2 = new sap.m.ViewSettingsCustomTab({
-					id: "taxi-settings2",
-					content: {
-						path: '/customTabData',
-						template: oCheckboxTemplate
-					}
-				});
-
-				oVsdInst.addAggregation("customTabs", oCustomTab);
-				oVsdInst.addAggregation("customTabs", oCustomTab2);
-
-				setTimeout(function () {
-					oVsdInst.open();
-					oVsdInst._switchToPage('taxi-settings2');
+					that.oVSD._switchToPage('taxi-settings');
 					// the text of the second control on the page is binded to a model
-					strictEqual(oVsdInst._getPage1().getContent()[0].getText(), 'lorem ipsum checkbox label');
-					setTimeout(function () {
-						oVsdInst._switchToPage('taxi-settings');
-						// the text of the second control on the page is binded to a model
-						strictEqual(oVsdInst._getPage1().getContent()[0].getText(), 'lorem ipsum checkbox label');
-						start();
-						oVsdInst.destroy();
-						delete oVsdInst;
-					}, delay);
+					strictEqual(that.oVSD._getPage1().getContent()[0].getText(), 'lorem ipsum checkbox label');
+					done();
 				}, delay);
-			});
+			}, delay);
+		});
 
-			asyncTest("Test for rerendering after changing selections", function () {
-				var oVsdInst = new sap.m.ViewSettingsDialog("vsdCustomTabs");
-				var delay = 1000;
-				oVsdInst.addSortItem(new sap.m.ViewSettingsItem({
+		module("Re-rendering after changing selections", {
+			setup : function () {
+				this.oVSD = new sap.m.ViewSettingsDialog();
+
+				this.oVSD.addSortItem(new sap.m.ViewSettingsItem({
 					key: "myStatusSorter",
 					text: "Status"
 				}));
 
-				oVsdInst.addSortItem(new sap.m.ViewSettingsItem({
+				this.oVSD.addSortItem(new sap.m.ViewSettingsItem({
 					key: "myOtherSorter",
 					text: "Other"
 				}));
 
-				oVsdInst.addGroupItem(new sap.m.ViewSettingsItem({
+				this.oVSD.addGroupItem(new sap.m.ViewSettingsItem({
 					key: "myGrouper",
 					text: "Grouping"
 				}));
 
-				oVsdInst.addGroupItem(new sap.m.ViewSettingsItem({
+				this.oVSD.addGroupItem(new sap.m.ViewSettingsItem({
 					key: "myOtherGrouper",
 					text: "Other"
 				}));
 
-				oVsdInst.open();
+				this.oVSD.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			}
+		});
+
+		test("Test for re-rendering after changing selections", function (assert) {
+			var delay = 1000,
+					done1 = assert.async(),
+					that = this;
+
+			this.oVSD.open();
+			setTimeout(function () {
+				var list 						= that.oVSD._getPage1().getContent()[1];
+				var listOfSortItems 			= list.getItems()[1];
+				var listOfSortDirectionItems	= that.oVSD._getPage1().getContent()[0];
+
+				var vsdSortItem 				= that.oVSD.getSortItems()[1];
+				var vsdSortDirectionDesc 		= listOfSortDirectionItems.getItems()[1];
+				var spySortItem 				= sinon.spy(vsdSortItem, "setProperty");
+				var spyVsd 					    = sinon.spy(that.oVSD, "setProperty");
+
+				listOfSortItems._oSingleSelectControl.fireSelect({selected : true});
+				vsdSortDirectionDesc._oSingleSelectControl.fireSelect({selected : true});
+
+				ok(spySortItem.calledWithExactly('selected', true, true), "Set sort item as selected should be called with suppress Invalidation flag=true");
+				ok(spySortItem.calledOnce, "setSelected should be called only once");
+
+				ok(spyVsd.calledWithExactly('sortDescending', true, true), "Set sort item as as selected should be called with suppress Invalidation flag=true");
+
+				ok(spyVsd.calledOnce, "setSelected should be called only once");
+
+				that.oVSD._switchToPage(1);
 				setTimeout(function () {
-					var list 						= oVsdInst._getPage1().getContent()[1];
-					var listOfSortItems 			= list.getItems()[1];
-					var listOfSortDirectionItems	= oVsdInst._getPage1().getContent()[0];
+					var list 						= that.oVSD._getPage1().getContent()[1];
+					var listOfGroupItems 			= list.getItems()[1];
+					var listOfGroupDirectionItems	= that.oVSD._getPage1().getContent()[0];
+					var vsdGroupDirectionDesc 		= listOfGroupDirectionItems.getItems()[1];
+					var vsdGroupItem 				= that.oVSD.getGroupItems()[1];
+					var spyGroupItem 				= sinon.spy(vsdGroupItem, "setProperty");
 
-					var vsdSortItem 				= oVsdInst.getSortItems()[1];
-					var vsdSortDirectionDesc 		= listOfSortDirectionItems.getItems()[1];
-					var spySortItem 				= sinon.spy(vsdSortItem, "setProperty");
-					var spyVsd 						= sinon.spy(oVsdInst, "setProperty");
+					listOfGroupItems._oSingleSelectControl.fireSelect({selected : true});
+					vsdGroupDirectionDesc._oSingleSelectControl.fireSelect({selected : true});
 
-					listOfSortItems._oSingleSelectControl.fireSelect({selected : true});
-					vsdSortDirectionDesc._oSingleSelectControl.fireSelect({selected : true});
+					ok(spyGroupItem.calledWithExactly('selected', true, true), "Set group item as selected should be called with suppress Invalidation flag=true");
+					ok(spyGroupItem.calledOnce, "setSelected should be called only once");
 
-					ok(spySortItem.calledWithExactly('selected', true, true), "Set sort item as selected should be called with suppress Invalidation flag=true");
-					ok(spySortItem.calledOnce, "setSelected should be called only once");
+					ok(spyVsd.calledWithExactly('groupDescending', true, true), "Set group item as as selected should be called with suppress Invalidation flag=true");
 
-					ok(spyVsd.calledWithExactly('sortDescending', true, true), "Set sort item as as selected should be called with suppress Invalidation flag=true");
+					ok(spyVsd.calledTwice, "setSelected should be called twice");
 
-					ok(spyVsd.calledOnce, "setSelected should be called only once");
+					done1();
 
-					oVsdInst._switchToPage(1);
+					that.oVSD.destroy();
+					delete that.oVSD;
 
-					setTimeout(function () {
-						var list 						= oVsdInst._getPage1().getContent()[1];
-						var listOfGroupItems 			= list.getItems()[1];
-						var listOfGroupDirectionItems	= oVsdInst._getPage1().getContent()[0];
-						var vsdGroupDirectionDesc 		= listOfGroupDirectionItems.getItems()[1];
-						var vsdGroupItem 				= oVsdInst.getGroupItems()[1];
-						var spyGroupItem 				= sinon.spy(vsdGroupItem, "setProperty");
-
-						listOfGroupItems._oSingleSelectControl.fireSelect({selected : true});
-						vsdGroupDirectionDesc._oSingleSelectControl.fireSelect({selected : true});
-
-						ok(spyGroupItem.calledWithExactly('selected', true, true), "Set group item as selected should be called with suppress Invalidation flag=true");
-						ok(spyGroupItem.calledOnce, "setSelected should be called only once");
-
-						ok(spyVsd.calledWithExactly('groupDescending', true, true), "Set group item as as selected should be called with suppress Invalidation flag=true");
-
-						ok(spyVsd.calledTwice, "setSelected should be called twice");
-
-						start();
-						oVsdInst.destroy();
-						delete oVsdInst;
-					}, delay);
 				}, delay);
-			});
+			}, delay);
+		});
 
+		module("Changing items after open", {
+			setup : function () {
+				this.oVSD = new sap.m.ViewSettingsDialog();
 
-
-			module("Changing items after open", {
-				getFirstModelData: function() {
-					return {
-						sortData: [
-							{
-								myKey: "key1",
-								myText: "Sort text 1"
-							}],
-						groupData: [
-							{
-								myKey: "groupKey1",
-								myText: "Group text 1"
-							}],
-						filterData: [
-							{
-								myKey: "filterKey1",
-								myText: "Filter text 1",
-								myItems: [
-									{
-										myKey: 'item1',
-										myText: 'item2'
-									}
-								]
-							},
-							{
-								myKey: "filterKey2",
-								myText: "Filter text 2"
-							},
-							{
-								myKey: "filterKey3",
-								myText: "Filter text 3"
-							}]
-					};
-				},
-				getSecondModelData: function() {
-					return{
-						sortData: [
-							{
-								myKey: "key1",
-								myText: "2 Sort text 1"
-							}],
-						groupData: [
-							{
-								myKey: "groupKey1",
-								myText: "2 Group text 1"
-							}],
-						filterData: [
-							{
-								myKey: "filterKey22",
-								myText: "2 Filter text 2"
-							}]
-					}
-				},
-				bindAggregations: function(oVsdInst) {
-					var template1 = new sap.m.ViewSettingsItem({
-						key: "{myKey}",
-						text: "{myText}"
-					});
-					var template2 = new sap.m.ViewSettingsItem({
-						key: "{myKey}",
-						text: "{myText}"
-					});
-					var template3 = new sap.m.ViewSettingsFilterItem({
-						key: "{myKey}",
-						text: "{myText}",
-						items: [
-							new sap.m.ViewSettingsItem({
-								key: "{myItems/0/myKey}",
-								text: "{myItems/0/myText}"
-							})
-						]
-					});
-					oVsdInst.bindAggregation("sortItems", "/sortData", template1);
-					oVsdInst.bindAggregation("groupItems", "/groupData", template2);
-					oVsdInst.bindAggregation("filterItems", "/filterData", template3);
+				this.oVSD.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			teardown : function () {
+				this.oVSD.destroy();
+				this.oVSD = null;
+			},
+			getFirstModelData: function() {
+				return {
+					sortData: [
+						{
+							myKey: "key1",
+							myText: "Sort text 1"
+						}],
+					groupData: [
+						{
+							myKey: "groupKey1",
+							myText: "Group text 1"
+						}],
+					filterData: [
+						{
+							myKey: "filterKey1",
+							myText: "Filter text 1",
+							myItems: [
+								{
+									myKey: 'item1',
+									myText: 'item2'
+								}
+							]
+						},
+						{
+							myKey: "filterKey2",
+							myText: "Filter text 2"
+						},
+						{
+							myKey: "filterKey3",
+							myText: "Filter text 3"
+						}]
+				};
+			},
+			getSecondModelData: function() {
+				return{
+					sortData: [
+						{
+							myKey: "key1",
+							myText: "2 Sort text 1"
+						}],
+					groupData: [
+						{
+							myKey: "groupKey1",
+							myText: "2 Group text 1"
+						}],
+					filterData: [
+						{
+							myKey: "filterKey22",
+							myText: "2 Filter text 2"
+						}]
 				}
-			});
-
-			asyncTest("Reopening filter detail page of a removed detail", function () {
-				var oVsdInst = new sap.m.ViewSettingsDialog("vsdCustomTabs");
-				var delay = 1000;
-
-				var filter = new sap.m.ViewSettingsFilterItem({
-					key: "myGFilter",
-					text: "Filtering",
+			},
+			bindAggregations: function(oVsdInst) {
+				var template1 = new sap.m.ViewSettingsItem({
+					key: "{myKey}",
+					text: "{myText}"
+				});
+				var template2 = new sap.m.ViewSettingsItem({
+					key: "{myKey}",
+					text: "{myText}"
+				});
+				var template3 = new sap.m.ViewSettingsFilterItem({
+					key: "{myKey}",
+					text: "{myText}",
 					items: [
 						new sap.m.ViewSettingsItem({
-							key: "test",
-							text: "2"
+							key: "{myItems/0/myKey}",
+							text: "{myItems/0/myText}"
 						})
 					]
 				});
-				oVsdInst.addFilterItem(filter);
+				oVsdInst.bindAggregation("sortItems", "/sortData", template1);
+				oVsdInst.bindAggregation("groupItems", "/groupData", template2);
+				oVsdInst.bindAggregation("filterItems", "/filterData", template3);
+			}
+		});
 
-				oVsdInst.addFilterItem(new sap.m.ViewSettingsFilterItem({
-					key: "myOtherFilter",
-					text: "Other"
-				}));
-				oVsdInst.open();
+		test("Reopening filter detail page of a removed detail", function (assert) {
+			var delay = 1000,
+				done = assert.async(),
+				that = this;
 
+			var filter = new sap.m.ViewSettingsFilterItem({
+				key: "myGFilter",
+				text: "Filtering",
+				items: [
+					new sap.m.ViewSettingsItem({
+						key: "test",
+						text: "2"
+					})
+				]
+			});
+			this.oVSD.addFilterItem(filter);
+
+			this.oVSD.addFilterItem(new sap.m.ViewSettingsFilterItem({
+				key: "myOtherFilter",
+				text: "Other"
+			}));
+			this.oVSD.open();
+
+			setTimeout(function () {
+				var vsdFilterItem = that.oVSD.getFilterItems()[0];
+				that.oVSD._switchToPage(3, vsdFilterItem);
+				jQuery.sap.delayedCall(0, that.oVSD._getNavContainer(), "to", [ that.oVSD.getId() + '-page2', "slide" ]);
 				setTimeout(function () {
-					var vsdFilterItem = oVsdInst.getFilterItems()[0];
-					oVsdInst._switchToPage(3, vsdFilterItem);
-					jQuery.sap.delayedCall(0, oVsdInst._getNavContainer(), "to", [ oVsdInst.getId() + '-page2', "slide" ]);
+					that.oVSD._dialog.getBeginButton().firePress();
+					that.oVSD.removeFilterItem(vsdFilterItem);
+					that.oVSD.open();
 					setTimeout(function () {
-						oVsdInst._dialog.getBeginButton().firePress();
-						oVsdInst.removeFilterItem(vsdFilterItem);
-						oVsdInst.open();
-						setTimeout(function () {
-							strictEqual(oVsdInst._vContentPage, 2, "Once filter details item is removed, " +
-								"the filter parent page should be the current page");
-						start();
-						oVsdInst.destroy();
-						delete oVsdInst;
-						}, delay);
+						strictEqual(that.oVSD._vContentPage, 2, "Once filter details item is removed, " +
+							"the filter parent page should be the current page");
+						done();
 					}, delay);
 				}, delay);
+			}, delay);
+		});
+
+		test("Reopening filter detail page after all filters are removed", function (assert) {
+			var delay = 1000,
+				done = assert.async(),
+				that = this;
+
+			var filter = new sap.m.ViewSettingsFilterItem({
+				key: "myGFilter",
+				text: "Filtering",
+				items: [
+					new sap.m.ViewSettingsItem({
+						key: "test",
+						text: "2"
+					})
+				]
 			});
+			this.oVSD.addFilterItem(filter);
 
-			asyncTest("Reopening filter detail page after all filters are removed", function () {
-				var oVsdInst = new sap.m.ViewSettingsDialog("vsdCustomTabs");
-				var delay = 1000;
+			this.oVSD.addFilterItem(new sap.m.ViewSettingsFilterItem({
+				key: "myOtherFilter",
+				text: "Other"
+			}));
+			this.oVSD.open();
 
-				var filter = new sap.m.ViewSettingsFilterItem({
-					key: "myGFilter",
-					text: "Filtering",
-					items: [
-						new sap.m.ViewSettingsItem({
-							key: "test",
-							text: "2"
-						})
-					]
-				});
-				oVsdInst.addFilterItem(filter);
-
-				oVsdInst.addFilterItem(new sap.m.ViewSettingsFilterItem({
-					key: "myOtherFilter",
-					text: "Other"
-				}));
-				oVsdInst.open();
-
+			setTimeout(function () {
+				var vsdFilterItem = that.oVSD.getFilterItems()[0];
+				that.oVSD._switchToPage(3, vsdFilterItem);
+				jQuery.sap.delayedCall(0, that.oVSD._getNavContainer(), "to", [ that.oVSD.getId() + '-page2', "slide" ]);
 				setTimeout(function () {
-					var vsdFilterItem = oVsdInst.getFilterItems()[0];
-					oVsdInst._switchToPage(3, vsdFilterItem);
-					jQuery.sap.delayedCall(0, oVsdInst._getNavContainer(), "to", [ oVsdInst.getId() + '-page2', "slide" ]);
+					that.oVSD._dialog.getBeginButton().firePress();
+					that.oVSD.removeAllFilterItems();
+					that.oVSD.open();
 					setTimeout(function () {
-						oVsdInst._dialog.getBeginButton().firePress();
-						oVsdInst.removeAllFilterItems();
-						oVsdInst.open();
-						setTimeout(function () {
-							strictEqual(oVsdInst._vContentPage, 0, "If all filter items are removed, the first available" +
-							" page should be current(in this case 'Sort/0')");
-						start();
-						oVsdInst.destroy();
-						delete oVsdInst;
-						}, delay);
+						strictEqual(that.oVSD._vContentPage, 0, "If all filter items are removed, the first available" +
+						" page should be current(in that case 'Sort/0')");
+						done();
 					}, delay);
 				}, delay);
-			});
+			}, delay);
+		});
 
 
 
-			asyncTest("Reopening filter detail page of a removed detail with model change - remove single filter", function () {
+		test("Reopening filter detail page of a removed detail with model change - remove single filter", function (assert) {
+			var delay = 1000,
+				done = assert.async(),
+				that = this;
 
-				var delay = 1000;
-				var oVsdInst = new sap.m.ViewSettingsDialog("vsd0");
-				oVsdInst.setSortDescending(false);
-				oVsdInst.setGroupDescending(true);
-				var modelData = this.getFirstModelData();
-				var modelData2 = this.getSecondModelData();
-				var oModel = new sap.ui.model.json.JSONModel();
-				oModel.setData(modelData);
-				var model2 = new sap.ui.model.json.JSONModel();
-				model2.setData(modelData2);
-				oVsdInst.setModel(oModel);
+			this.oVSD.setSortDescending(false);
+			this.oVSD.setGroupDescending(true);
+			var modelData = this.getFirstModelData();
+			var modelData2 = this.getSecondModelData();
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData(modelData);
+			var model2 = new sap.ui.model.json.JSONModel();
+			model2.setData(modelData2);
+			this.oVSD.setModel(oModel);
 
-				this.bindAggregations(oVsdInst);
-				oVsdInst.open();
+			this.bindAggregations(this.oVSD);
+			this.oVSD.open();
 
+			setTimeout(function () {
+				var vsdFilterItem = that.oVSD.getFilterItems()[0];
+				that.oVSD._switchToPage(3, vsdFilterItem);
+				jQuery.sap.delayedCall(0, that.oVSD._getNavContainer(), "to", [ that.oVSD.getId() + '-page2', "slide" ]);
 				setTimeout(function () {
-					var vsdFilterItem = oVsdInst.getFilterItems()[0];
-					oVsdInst._switchToPage(3, vsdFilterItem);
-					jQuery.sap.delayedCall(0, oVsdInst._getNavContainer(), "to", [ oVsdInst.getId() + '-page2', "slide" ]);
+					that.oVSD._dialog.getBeginButton().firePress();
+					that.oVSD.setModel(model2);
+					that.oVSD.open();
 					setTimeout(function () {
-						oVsdInst._dialog.getBeginButton().firePress();
-						oVsdInst.setModel(model2);
-						oVsdInst.open();
-						setTimeout(function () {
-							strictEqual(oVsdInst._vContentPage, 2, "If no given 'filter details item' exists in a model, " +
-								"the current page should be the parent filters page.");
-							start();
-							oVsdInst.destroy();
-							delete oVsdInst;
-						}, delay);
+						strictEqual(that.oVSD._vContentPage, 2, "If no given 'filter details item' exists in a model, " +
+							"the current page should be the parent filters page.");
+						done();
 					}, delay);
 				}, delay);
-			});
+			}, delay);
+		});
 
 
-			asyncTest("Reopening filter detail page of a removed detail with model change - remove all filters", function () {
+		test("Reopening filter detail page of a removed detail with model change - remove all filters", function (assert) {
+			var delay = 1000,
+				done = assert.async(),
+				that = this;
 
-				var delay = 1000;
-				var oVsdInst = new sap.m.ViewSettingsDialog("vsd0");
-				oVsdInst.setSortDescending(false);
-				oVsdInst.setGroupDescending(true);
-				var modelData = this.getFirstModelData();
-				var modelData2 = this.getSecondModelData();
-				delete modelData2.filterData
-				var oModel = new sap.ui.model.json.JSONModel();
-				oModel.setData(modelData);
-				var model2 = new sap.ui.model.json.JSONModel();
-				model2.setData(modelData2);
-				oVsdInst.setModel(oModel);
+			this.oVSD.setSortDescending(false);
+			this.oVSD.setGroupDescending(true);
+			var modelData = this.getFirstModelData();
+			var modelData2 = this.getSecondModelData();
+			delete modelData2.filterData
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData(modelData);
+			var model2 = new sap.ui.model.json.JSONModel();
+			model2.setData(modelData2);
+			this.oVSD.setModel(oModel);
 
-				this.bindAggregations(oVsdInst);
-				oVsdInst.open();
+			this.bindAggregations(this.oVSD);
+			this.oVSD.open();
 
+			setTimeout(function () {
+				var vsdFilterItem = that.oVSD.getFilterItems()[0];
+				that.oVSD._switchToPage(3, vsdFilterItem);
+				jQuery.sap.delayedCall(0, that.oVSD._getNavContainer(), "to", [ that.oVSD.getId() + '-page2', "slide" ]);
 				setTimeout(function () {
-					var vsdFilterItem = oVsdInst.getFilterItems()[0];
-					oVsdInst._switchToPage(3, vsdFilterItem);
-					jQuery.sap.delayedCall(0, oVsdInst._getNavContainer(), "to", [ oVsdInst.getId() + '-page2', "slide" ]);
+					that.oVSD._dialog.getBeginButton().firePress();
+					that.oVSD.setModel(model2);
+					that.oVSD.open();
 					setTimeout(function () {
-						oVsdInst._dialog.getBeginButton().firePress();
-						oVsdInst.setModel(model2);
-						oVsdInst.open();
-						setTimeout(function () {
-							strictEqual(oVsdInst._vContentPage, 0, "If no filters item inside the new model, the first" +
-								" available page should be current(in this case 'Sort/0')");
-							start();
-							oVsdInst.destroy();
-							delete oVsdInst;
-						}, delay);
+						strictEqual(that.oVSD._vContentPage, 0, "If no filters item inside the new model, the first" +
+							" available page should be current(in that case 'Sort/0')");
+						done();
 					}, delay);
 				}, delay);
-			});
+			}, delay);
+		});
 
-			test("Reset Button is availabe on second open of the ViewSettinsDialog", function () {
+		test("Reset Button is availabe on second open of the ViewSettinsDialog", function () {
+			var modelData = this.getFirstModelData();
+			var modelData2 = this.getSecondModelData();
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData(modelData);
+			var model2 = new sap.ui.model.json.JSONModel();
+			model2.setData(modelData2);
+			this.oVSD.setModel(oModel);
 
-				var modelData = this.getFirstModelData();
-				var modelData2 = this.getSecondModelData();
-				var oModel = new sap.ui.model.json.JSONModel();
-				oModel.setData(modelData);
-				var model2 = new sap.ui.model.json.JSONModel();
-				model2.setData(modelData2);
-				vsd9.setModel(oModel);
+			this.bindAggregations(this.oVSD);
 
-				this.bindAggregations(vsd9);
+			this.oVSD.open();
+			this.oVSD._switchToPage(2);
+			jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
+			this.oVSD._switchToPage(3,this.oVSD.getFilterItems()[0]);
 
-				vsd9.open();
-				vsd9._switchToPage(2);
-				jQuery.sap.delayedCall(0, vsd9._navContainer, "to", [vsd9.getId() + '-page2', "show"]);
-				vsd9._switchToPage(3,vsd9.getFilterItems()[0]);
+			strictEqual(this.oVSD._getSubHeader().getContentRight().length, 0, "Reset Button should be removed from page1 on going to filter details view");
 
-				strictEqual(vsd9._getSubHeader().getContentRight().length, 0, "Reset Button should be removed from page1 on going to filter details view");
+			this.oVSD._dialog.getBeginButton().firePress();
 
-				vsd9._dialog.getBeginButton().firePress();
-
-				vsd9.setModel(model2);
-				vsd9.open();
-				strictEqual(vsd9._getSubHeader().getContentRight().length, 1, "Reset Button should be available on page1 when the dialog is opened again");
-
-
-				vsd9.destroy();
-			});
-
-			module("Test");
-
-//			module("Focus", {
-//				setup: function() {
-//					this.clock = sinon.useFakeTimers();
-//				},
-//				teardown: function() {
-//					this.clock.restore();
-//				}
-//			});
-
-			// TODO check this test on refactoring unit tests. It just freezes on IE.
-			/*if (sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.versionStr == "9") {
-				//do not run this tests on IE9 because of a timeout issue which need to be fixed
-			} else {
-				//Templorary disabled as it fails on phantom.js.
-				test("Focus on first item in filter by section ", function () {
-
-					expect(1);
-					vsd5.open();
-
-					this.clock.tick(1000);
-
-					jQuery.sap.delayedCall(0, vsd5._navContainer, "to", [vsd5.getId() + '-page5', "show"]);
-					vsd5._filterList.getItems()[0].firePress();
-
-					this.clock.tick(1000);
-
-					if (!sap.ui.Device.system.phone && vsd5._filterDetailList) {
-						strictEqual(document.activeElement, vsd5._filterDetailList.getItems()[0].getFocusDomRef(), "The first item should get the focus");
-					}
-					vsd5._dialog.getEndButton().firePress();
-					vsd5.destroy();
-				});
-			}*/
-
-			/* [end]  Actual unit tests of custom tabs */
-
+			this.oVSD.setModel(model2);
+			this.oVSD.open();
+			strictEqual(this.oVSD._getSubHeader().getContentRight().length, 1, "Reset Button should be available on page1 when the dialog is opened again");
+		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
