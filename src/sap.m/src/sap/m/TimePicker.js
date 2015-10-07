@@ -201,7 +201,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 			if (!bPickerOpened && (bIconClicked || !sap.ui.Device.system.desktop)) {
 				this._openPicker();
-			} else if (bIconClicked) {
+			} else if (bIconClicked && !sap.ui.Device.system.phone) {
+				//phone check: it wont be possible to click the icon while the dialog is opened
+				//but there is a bug that the event is triggered twice on Nokia Lumia 520 emulated in Chrome
+				//which closes the picker immediately after opening
+				//so check for phone just in case
 				this._closePicker();
 			}
 		};
