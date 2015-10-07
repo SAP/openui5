@@ -46,7 +46,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 								url: oEntry[navprop].__deferred.uri,
 								dataType: "json"
 							});
-							if (oResponse.data) {
+							if (oResponse.data && oResponse.data.d && oResponse.data.d.results) {
 								var oNode;
 								for (var j = 0; j < oResponse.data.d.results.length; j++) {
 									oNode = oResponse.data.d.results[j];
@@ -307,7 +307,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 							url: oEntry[navprop].__deferred.uri,
 							dataType: "json"
 						});
-						if (oResponse.success) {
+						if (oResponse.success && oResponse.data && oResponse.data.d && oResponse.data.d.results) {
 							var oNode;
 							for (var j = 0; i < oResponse.data.d.results.length; j++) {
 								oNode = oResponse.data.d.results[j];
@@ -375,7 +375,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 							url: oSiblingEntityUri,
 							dataType: "json"
 						});
-						if (oResponse.success) {
+						if (oResponse.success && oResponse.data) {
 							var oSibling = oResponse.data.d;
 							oResponse = jQuery.sap.sjax({
 								url: oSibling.__metadata.uri,
