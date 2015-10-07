@@ -129,6 +129,21 @@
 				stop();
 			});
 
+			test("includeScript (Promise)", function() {
+				var iBefore = sap.jsunittestvalue;
+				var iScriptCnt = document.getElementsByTagName("SCRIPT").length;
+				jQuery.sap.includeScript({
+					url: "testdata/sapjsunittestvalueincrementor.js", 
+					id: "jsunitIncludeScriptTestScript",
+					promisify: true
+				}).then(function() {
+					strictEqual(iBefore + 1, sap.jsunittestvalue, "testvalue should have been incremented");
+					strictEqual(iScriptCnt, document.getElementsByTagName("SCRIPT").length, "no new script element should have been created");
+					start();
+				});
+				stop();
+			});
+
 			//****************************************************
 			// includeStylesheet tests
 			//****************************************************
@@ -138,10 +153,26 @@
 			test("basic", function(){
 				var oTestArea = jQuery.sap.domById("includeStyleSheetTest");
 				var sBefore = jQuery(oTestArea).css("backgroundColor");
-				var iScriptCnt = document.getElementsByTagName("LINK").length;
+				var iLinkCnt = document.getElementsByTagName("LINK").length;
 				jQuery.sap.includeStyleSheet("testdata/testB.css", "jsunitIncludeStyleSheetTest", function() {
 					notStrictEqual(jQuery(oTestArea).css("backgroundColor"), sBefore, "background-color should have changed");
-					strictEqual(document.getElementsByTagName("LINK").length, iScriptCnt, "no new link element should have been created");
+					strictEqual(document.getElementsByTagName("LINK").length, iLinkCnt, "no new link element should have been created");
+					start();
+				});
+				stop();
+			});
+
+			test("basic (Promise)", function(){
+				var oTestArea = jQuery.sap.domById("includeStyleSheetTest");
+				var sBefore = jQuery(oTestArea).css("backgroundColor");
+				var iLinkCnt = document.getElementsByTagName("LINK").length;
+				jQuery.sap.includeStyleSheet({
+					url: "testdata/testC.css", 
+					id: "jsunitIncludeStyleSheetTest", 
+					promisify: true
+				}).then(function() {
+					notStrictEqual(jQuery(oTestArea).css("backgroundColor"), sBefore, "background-color should have changed");
+					strictEqual(document.getElementsByTagName("LINK").length, iLinkCnt, "no new link element should have been created");
 					start();
 				});
 				stop();
