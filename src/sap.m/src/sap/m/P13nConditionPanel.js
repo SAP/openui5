@@ -926,6 +926,7 @@ sap.ui.define([
 
 						if (oControl.attachChange) {
 							oControl.attachChange(function(oEvent) {
+								oConditionGrid.keyField.close();
 								that._handleChangeOnKeyField(oTargetGrid, oConditionGrid);
 							});
 						}
@@ -1467,16 +1468,11 @@ sap.ui.define([
 			}
 		};
 
-		var sNewType = oCurrentKeyField ? oCurrentKeyField.type : "";
-		if (sNewType !== oConditionGrid.valueType) {
-			// update Value1 field control
-			jQuery.proxy(fnCreateAndUpdateField, this)(oConditionGrid.value1, 5);
-	
-			// update Value2 field control
-			jQuery.proxy(fnCreateAndUpdateField, this)(oConditionGrid.value2, 6);
-			
-			oConditionGrid.valueType = sNewType;
-		}
+		// update Value1 field control
+		jQuery.proxy(fnCreateAndUpdateField, this)(oConditionGrid.value1, 5);
+
+		// update Value2 field control
+		jQuery.proxy(fnCreateAndUpdateField, this)(oConditionGrid.value2, 6);
 	};
 
 	P13nConditionPanel.prototype._updateAllOperations = function() {
