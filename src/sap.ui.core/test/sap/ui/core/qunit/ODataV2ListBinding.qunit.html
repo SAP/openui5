@@ -493,6 +493,46 @@
 		oModel.attachRequestSent(fnSent);
 		oBinding.filter([oFilter]);
 	});
+	
+	asyncTest("ListBinding filter multiple times", function(){
+		var count = 0;
+		var handler = function(oEvent){
+			// contexts should be now loaded
+			var aContexts = oEvent.oSource.getContexts();
+			equal(aContexts.length, 1, "filtered content length 1");
+			equal(oModel.getProperty("CategoryName", aContexts[0]), "Beverages", "EQ unfiltered content");
+			equal(oBinding.getLength(), 1, "Binding length should be 1");
+			oBinding.detachChange(handler);
+			start();
+		};
+		
+		var oBinding = oModel.bindList("/Categories", null, null, null, {countMode: "None"});
+		//check EQ
+		var oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages");
+		var oFilter2 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Condiments");
+		var oFilter3 = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.Contains, "ons");
+		
+		oModel.metadataLoaded().then(function() {
+			oBinding.bUseExtendedChangeDetection = true;
+			oBinding.initialize();
+			oBinding.attachChange(handler);
+			responseDelay = 250;
+			setTimeout(function() {
+				oBinding.getContexts();
+				oBinding.filter([oFilter2,oFilter3]);
+				oBinding.getContexts();
+			},150);
+			setTimeout(function() {
+				oBinding.filter([oFilter2,oFilter3]);
+				oBinding.getContexts();
+				oBinding.getContexts();
+			},250);
+			setTimeout(function() {
+				oBinding.filter([oFilter]);
+				oBinding.getContexts();
+			},450);
+		});
+	});
 
 	asyncTest("ListBinding clientside filter", function(){
 		var oBinding = oModel.bindList("/Categories", null, null, null, {
