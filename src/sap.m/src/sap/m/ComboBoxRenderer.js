@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBaseRenderer', 'sap/ui/core/Rende
 		 * @readonly
 		 * @const {string}
 		 */
-		ComboBoxRenderer.CSS_CLASS = "sapMComboBox";
+		ComboBoxRenderer.CSS_CLASS_COMBOBOX = "sapMComboBox";
 
 		/**
 		 * Add classes to the ComboBox.
@@ -28,9 +28,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBaseRenderer', 'sap/ui/core/Rende
 		 */
 		ComboBoxRenderer.addOuterClasses = function(oRm, oControl) {
 			ComboBoxBaseRenderer.addOuterClasses.apply(this, arguments);
-			var CSS_CLASS = ComboBoxRenderer.CSS_CLASS;
-			oRm.addClass(CSS_CLASS);
-			oRm.addClass(CSS_CLASS + "Input");
+			oRm.addClass(ComboBoxRenderer.CSS_CLASS_COMBOBOX);
 		};
 
 		/**
@@ -41,7 +39,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBaseRenderer', 'sap/ui/core/Rende
 		 */
 		ComboBoxRenderer.addInnerClasses = function(oRm, oControl) {
 			ComboBoxBaseRenderer.addInnerClasses.apply(this, arguments);
-			oRm.addClass(ComboBoxRenderer.CSS_CLASS + "InputInner");
+			oRm.addClass(ComboBoxRenderer.CSS_CLASS_COMBOBOX + "Inner");
 		};
 
 		/**
@@ -53,12 +51,12 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBaseRenderer', 'sap/ui/core/Rende
 		 */
 		ComboBoxRenderer.addButtonClasses = function(oRm, oControl) {
 			ComboBoxBaseRenderer.addButtonClasses.apply(this, arguments);
-			oRm.addClass(ComboBoxRenderer.CSS_CLASS + "Arrow");
+			oRm.addClass(ComboBoxRenderer.CSS_CLASS_COMBOBOX + "Arrow");
 		};
 
 		ComboBoxRenderer.addPlaceholderClasses = function(oRm, oControl) {
 			ComboBoxBaseRenderer.addPlaceholderClasses.apply(this, arguments);
-			oRm.addClass(ComboBoxRenderer.CSS_CLASS + "Placeholder");
+			oRm.addClass(ComboBoxRenderer.CSS_CLASS_COMBOBOX + "Placeholder");
 		};
 
 		return ComboBoxRenderer;

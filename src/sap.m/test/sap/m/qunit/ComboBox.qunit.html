@@ -4652,12 +4652,12 @@
 					ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE), 'The combo box element has the CSS class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + '"');
 					ok(oComboBox.$("arrow").length, "The HTML span element for the arrow exists");
 					ok(oComboBox.$("arrow").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Arrow"), 'The arrow button has the CSS class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + 'Arrow"');
-					ok(oComboBox.$("arrow").hasClass(sap.m.ComboBoxRenderer.CSS_CLASS + "Arrow"), 'The arrow button has the CSS class "' + sap.m.ComboBoxRenderer.CSS_CLASS + 'Arrow"');
+					ok(oComboBox.$("arrow").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOX + "Arrow"), 'The arrow button has the CSS class "' + sap.m.ComboBoxRenderer.CSS_CLASS + 'Arrow"');
 					strictEqual(oComboBox.getDomRef("arrow").getAttribute("tabindex"), "-1", "The arrow button is focusable, but it is not reachable via sequential keyboard navigation");
 					strictEqual(oComboBox.getDomRef("arrow").getAttribute("aria-labelledby"), oComboBox.getDomRef("buttonlabel").id);
 					ok(oComboBox.getDomRef("buttonlabel"), "The button label exists");
 					ok(oComboBox.$("buttonlabel").hasClass("sapUiInvisibleText"));
-					ok(oComboBox.$("buttonlabel").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "ButtonLabel"));
+					ok(oComboBox.$("buttonlabel").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXTEXTFIELD + "ButtonLabel"));
 					strictEqual(getComputedStyle(oComboBox.getDomRef("buttonlabel")).getPropertyValue("display"), "none");
 
 					// cleanup

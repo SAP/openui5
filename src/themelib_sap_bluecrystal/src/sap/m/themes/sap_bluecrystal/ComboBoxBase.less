@@ -3,46 +3,8 @@
 /* ============================================================ */
 
 /* ------------------------------ */
-/* ComboBox                       */
+/* arrow                          */
 /* ------------------------------ */
-
-input.sapMComboBoxBaseInputInner:not(.sapMComboBoxBaseInputInnerReadonly) {
-	padding-right: 3rem;
-}
-
-/* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
-.sapMComboBoxBasePressed .sapMComboBoxBaseInputInner:not(.sapMInputBaseStateInner) {
-	border-color: @sapUiFieldFocusBorderColor;
-}
-
-/* ------------------------------ */
-/* ComboBox's Arrow               */
-/* ------------------------------ */
-
-.sapMComboBoxBaseArrow {
-	position: absolute;
-	text-align: center;
-	color: @sapUiElement;
-	width: 2.5rem;
-	height: 2.375rem;
-	line-height: 2.375rem;
-	right: 0.0625rem;
-
-	/* note: add a non-transparent background because the input field text overflows arrow button in IE10 */
-	background: @sapUiFieldBackground;
-}
-
-.sapMComboBoxBaseArrow::before {
-	font-family: "SAP-icons";
-	speak: none;
-	content: "\e1ef";
-}
-
-.sapMComboBoxBaseState .sapMComboBoxBaseArrow {
-	height: 2.25rem;
-	line-height: 2.25rem;
-	right: 0.125rem;
-}
 
 /* hover */
 
@@ -58,7 +20,7 @@ input.sapMComboBoxBaseInputInner:not(.sapMComboBoxBaseInputInnerReadonly) {
 	background: @sapUiFieldActiveBackground;
 }
 
- /* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
+/* note: do not optimize this selector, the sap.m.MulticomboBox DOM structure differ from sap.m.ComboBox */
 .sapMComboBoxBasePressed .sapMComboBoxBaseArrow::before {
 	color: @sapUiInvertedElement;
 }
@@ -87,10 +49,6 @@ div.sapMComboBoxBasePicker .sapMDialogScrollCont {
 /* ===================================================================== */
 /* CSS for control sap.m/ComboBox.control BlueCrystal theme compact size */
 /* ===================================================================== */
-
-.sapUiSizeCompact input.sapMComboBoxBaseInputInner:not(.sapMComboBoxBaseInputInnerReadonly) {
-	padding-right: 2.5rem;
-}
 
 /* ------------------------------ */
 /* ComboBox Arrow                 */

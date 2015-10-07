@@ -1,0 +1,67 @@
+/* ================================================================= */
+/* CSS for control sap.m/ComboBoxTextField.control BlueCrystal theme */
+/* ================================================================= */
+
+/* ------------------------------ */
+/* ComboBoxTextField              */
+/* ------------------------------ */
+
+input.sapMComboBoxTextFieldInner:not(.sapMComboBoxTextFieldInnerReadonly) {
+	padding-right: 3rem;
+}
+
+/* ------------------------------ */
+/* arrow                          */
+/* ------------------------------ */
+
+.sapMComboBoxTextFieldArrow::before {
+	font-family: "SAP-icons";
+	speak: none;
+	content: "\e1ef";
+}
+
+.sapMComboBoxTextFieldArrow {
+	position: absolute;
+	text-align: center;
+	color: @sapUiElement;
+	width: 2.5rem;
+	height: 2.375rem;
+	line-height: 2.375rem;
+	right: 0.0625rem;
+
+	/* note: add a non-transparent background because the input field text overflows arrow button in IE10 */
+	background: @sapUiFieldBackground;
+}
+
+.sapMComboBoxTextFieldState .sapMComboBoxTextFieldArrow {
+	height: 2.25rem;
+	line-height: 2.25rem;
+	right: 0.125rem;
+}
+
+/* ===================================================================== */
+/* CSS for control sap.m/ComboBox.control BlueCrystal theme compact size */
+/* ===================================================================== */
+
+.sapUiSizeCompact input.sapMComboBoxTextFieldInner:not(.sapMComboBoxTextFieldInnerReadonly) {
+	padding-right: 2.5rem;
+}
+
+/* ------------------------------ */
+/* arrow                          */
+/* ------------------------------ */
+
+.sapUiSizeCompact .sapMComboBoxTextFieldArrow {
+	width: 2rem;
+	height: 1.5rem;
+	line-height: 1.5rem;
+}
+
+.sapUiSizeCompact .sapMComboBoxTextFieldState .sapMComboBoxTextFieldArrow {
+	height: 1.375rem;
+	line-height: 1.375rem;
+}
+
+.sapUiSizeCondensed .sapMComboBoxTextFieldArrow {
+	right: 0;
+}

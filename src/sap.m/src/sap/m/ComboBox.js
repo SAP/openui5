@@ -252,7 +252,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './S
 		 * @private
 		 */
 		ComboBox.prototype._createDialog = function() {
-			var CSS_CLASS = this.getRenderer().CSS_CLASS_COMBOBOXBASE;
+
 			var oDialog = new sap.m.Dialog({
 				stretch: true,
 				customHeader: new sap.m.Bar({
@@ -260,8 +260,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './S
 						value: this.getSelectedItem().getText(),
 						width: "100%",
 						editable: false
-					}).addStyleClass(CSS_CLASS + "Input")
-				}).addStyleClass(CSS_CLASS + "Bar")
+					})
+				})
 			});
 
 			oDialog.getAggregation("customHeader").attachBrowserEvent("tap", function() {
