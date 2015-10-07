@@ -209,8 +209,7 @@
 				"category" : "Data Binding",
 				"since" : "1.32",
 				"samples" : [
-					"sap.ui.core.sample.DataStateOData",
-					"sap.ui.core.sample.FieldGroupDataState"
+					"sap.ui.core.sample.DataStateOData"
 				]
 			},
 			{
@@ -308,11 +307,6 @@
 				"id": "sap.ui.core.sample.DataStateOData",
 				"name": "OData Data State",
 				"description": "A control can react on data state changes of a Binding and update it's states accordingly."
-			},
-			{
-				"id": "sap.ui.core.sample.FieldGroupDataState",
-				"name": "Field Group and Data State",
-				"description": "Usage sample for FieldGroup and DataState with ODataModel"
 			},
 			{
 				"id": "sap.ui.core.sample.ControlBusyIndicator",
