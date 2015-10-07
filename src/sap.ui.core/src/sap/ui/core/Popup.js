@@ -1320,18 +1320,14 @@ sap.ui.define([
 			if ( Popup._bNewOffset == null ) {
 				// check whether the jQuery UI version is new (no more offset parameter) or not
 				Popup._bNewOffset = true;
-				if (!(Device.browser.internet_explorer && Device.browser.version == 8 && jQuery.sap.Version(jQuery().jquery).compareTo("1.8.1") < 0)) {
-					// In IE8 and jQuery 1.7.1 this check crashes. So it is not supported to use a older jQueryUi version without the core in this case.
-					var $Div = jQuery(document.createElement("div"));
-					$Div.position({
-						of: window,
-						using: function(position, data) {
-							// the data parameter to the using callback was introduced together with the replacement for 'offset'
-							Popup._bNewOffset = (data !== undefined);
-						}
-					});
-				}
-
+				var $Div = jQuery(document.createElement("div"));
+				$Div.position({
+					of: window,
+					using: function(position, data) {
+						// the data parameter to the using callback was introduced together with the replacement for 'offset'
+						Popup._bNewOffset = (data !== undefined);
+					}
+				});
 			}
 		}
 

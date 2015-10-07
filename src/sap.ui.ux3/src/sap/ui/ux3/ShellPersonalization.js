@@ -104,7 +104,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 			if (!!sap.ui.Device.browser.firefox) {
 				ShellPersonalization.ORIGINAL_SETTINGS.sBgCssImg = "-moz-linear-gradient(top, " + gradientTop + " 0, " + gradientBottom + " 108px, " + gradientBottom + ")";
 			} else if (!!sap.ui.Device.browser.internet_explorer) {
-				if (sap.ui.Device.browser.version == 7 || sap.ui.Device.browser.version == 8 || sap.ui.Device.browser.version == 9) {
+				if (sap.ui.Device.browser.version == 9) {
 					ShellPersonalization.ORIGINAL_SETTINGS.sBgCssImg = "url("
 						+ ShellPersonalization.IMAGE_FOLDER_PATH
 						+ "Workset_bg.png)";

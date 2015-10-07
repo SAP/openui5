@@ -231,9 +231,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 				vPos = (Math.max(tRect.t, pRect.t) + Math.min(tRect.b, pRect.b)) / 2 - tRect.t -  arrowWidth / 2;
 			}
 
-			if (!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 8 && dock.x == "left") {
-				tipOffset = tipOffset - 8;
-			}
 			$arrow.css(dock.x, tipOffset + "px");
 			$arrow.css("top", vPos);
 
@@ -265,9 +262,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 				hPos = (Math.max(tRect.l, pRect.l) + Math.min(tRect.r, pRect.r)) / 2 - tRect.l - arrowWidth / 2;
 			}
 
-			if (!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 8 && dock.y == "top") {
-				tipOffset = tipOffset - 8;
-			}
 			$arrow.css(dock.y, tipOffset + "px");
 			$arrow.css("left", hPos + "px");
 

@@ -8,45 +8,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	"use strict";
 
 	/**
-	 * Shortcut for document.getElementById() with additionally an IE6/7 bug fixed.
-	 * Used to replace the jQuery.sap.domById when running in IE < v8.
-	 *
-	 * @param {string} sId the id of the DOM element to return
-	 * @param {Window} oWindow the window (optional)
-	 * @return {Element} the DOMNode identified by the given sId
-	 * @private
-	 */
-	var domByIdInternal = function(sId, oWindow) {
-
-		if (!oWindow) {
-			oWindow = window;
-		}
-		if (!sId || sId == "") {
-			return null;
-		}
-
-		var oDomRef = oWindow.document.getElementById(sId);
-
-		// IE also returns the element with the name or id whatever is first
-		// => the following line makes sure that this was the id
-		if (oDomRef && oDomRef.id == sId) {
-			return oDomRef;
-		}
-
-		// otherwise try to lookup the name
-		var oRefs = oWindow.document.getElementsByName(sId);
-		for (var i = 0;i < oRefs.length;i++) {
-			oDomRef = oRefs[i];
-			if (oDomRef && oDomRef.id == sId) {
-				return oDomRef;
-			}
-		}
-
-		return null;
-
-	};
-
-	/**
 	 * Shortcut for document.getElementById(), including a bug fix for older IE versions.
 	 *
 	 * @param {string} sId The id of the DOM element to return
@@ -56,10 +17,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 * @function
 	 * @since 0.9.0
 	 */
-	jQuery.sap.domById = !!Device.browser.internet_explorer && Device.browser.version < 8 ? domByIdInternal : function domById(sId, oWindow) {
+	jQuery.sap.domById = function domById(sId, oWindow) {
 		return sId ? (oWindow || window).document.getElementById(sId) : null;
 	};
-
 
 	/**
 	 * Shortcut for jQuery("#" + id) with additionally the id being escaped properly.
