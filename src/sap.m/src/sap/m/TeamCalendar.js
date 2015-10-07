@@ -205,7 +205,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this._iBreakPointTablet = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0];
 			this._iBreakPointDesktop = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1];
 			this._iBreakPointLargeDesktop = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[2];
-			this._iSize = 2; // make desktop as default
+
+			if (sap.ui.Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
+				this._iSize = 0;
+			}else if (sap.ui.Device.system.tablet || jQuery('html').hasClass("sapUiMedia-Std-Tablet")) {
+				this._iSize = 1;
+			}else {
+				this._iSize = 2;
+			}
 
 			var sLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
 			var oLocale = new sap.ui.core.Locale(sLocale);
@@ -346,9 +353,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.onAfterRendering = function(){
+		TeamCalendar.prototype.onAfterRendering = function(oEvent){
 
-			_determineSize.call(this, this.getDomRef().offsetWidth);
+			// check if size is right and adopt it if necessary
+			oEvent.size = {width: this.getDomRef().offsetWidth};
+			_handleResize.call(this, oEvent, true);
 
 			if (!this._sResizeListener) {
 				this._sResizeListener = sap.ui.core.ResizeHandler.register(this, this._resizeProxy);
@@ -461,7 +470,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						this._oMonthInterval.attachEvent("startDateChange", _handleStartDateChange, this);
 						this._oMonthInterval.attachEvent("select", _handleIntervalSelect, this);
 					}else if (this._oMonthInterval.setMonths() != iIntervals) {
-						this._oMonthInterval.getMonths(iIntervals);
+						this._oMonthInterval.setMonths(iIntervals);
 					}
 					this._oInfoToolbar.addContent(this._oMonthInterval);
 					break;
@@ -707,15 +716,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		}
 
-		function _handleResize(oEvent){
+		function _handleResize(oEvent, bNoRowResize){
 
 			var aRows = this.getRows();
 			var oRow;
 			var i = 0;
-			for (i = 0; i < aRows.length; i++) {
-				oRow = aRows[i];
-				oRow.getCalendarRow().handleResize();
-			}
 
 			var iOldSize = this._iSize;
 			_determineSize.call(this, oEvent.size.width);
@@ -727,7 +732,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				for (i = 0; i < aRows.length; i++) {
 					oRow = aRows[i];
 					var oCalendarRow = oRow.getCalendarRow();
-					oCalendarRow.setIntervals(iIntervals);
+					if (iIntervals != oCalendarRow.getIntervals()) {
+						oCalendarRow.setIntervals(iIntervals);
+					} else {
+						oCalendarRow.handleResize();
+					}
 				}
 
 				switch (sIntervalType) {
@@ -752,8 +761,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				default:
 					throw new Error("Unknown IntervalType: " + sIntervalType + "; " + this);
 				}
+			}else if (!bNoRowResize) {
+				for (i = 0; i < aRows.length; i++) {
+					oRow = aRows[i];
+					oRow.getCalendarRow().handleResize();
+				}
 			}
-
 		}
 
 		function _updateCurrentTimeVisualization(bUpdateRows){

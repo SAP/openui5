@@ -412,6 +412,12 @@
 			test("rows", function() {
 				var oTable = sap.ui.getCore().byId("TC1-Table");
 				equal(oTC1.getRows().length, 2, "TeamCalendarRows assigned");
+				var iIntervals = 12;
+				if(jQuery("#TC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0]) {
+					iIntervals = 3;
+				}else if(jQuery("#TC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1]) {
+					iIntervals = 6;
+				}
 
 				var oRow = new sap.m.TeamCalendarRow("NewRow", {
 					icon: "sap-icon://employee",
@@ -425,7 +431,7 @@
 				ok(jQuery("#NewRow-CalRow").get(0), "new row CalendarRow rendered");
 				equal(oRow.getCalendarRow().getStartDate().getTime(), oTC1.getStartDate().getTime(), "Start date of CalendarRow");
 				equal(oRow.getCalendarRow().getIntervalType(), sap.ui.unified.CalendarIntervalType.Month, "IntervalType of CalendarRow");
-				equal(oRow.getCalendarRow().getIntervals(), 12, "Intervals of CalendarRow");
+				equal(oRow.getCalendarRow().getIntervals(), iIntervals, "Intervals of CalendarRow");
 
 				oTC1.removeRow(oRow);
 				sap.ui.getCore().applyChanges();
@@ -444,7 +450,7 @@
 				ok(jQuery("#NewRow-CalRow").get(0), "new row CalendarRow rendered");
 				equal(oRow.getCalendarRow().getStartDate().getTime(), oTC1.getStartDate().getTime(), "Start date of CalendarRow");
 				equal(oRow.getCalendarRow().getIntervalType(), sap.ui.unified.CalendarIntervalType.Month, "IntervalType of CalendarRow");
-				equal(oRow.getCalendarRow().getIntervals(), 12, "Intervals of CalendarRow");
+				equal(oRow.getCalendarRow().getIntervals(), iIntervals, "Intervals of CalendarRow");
 
 				var aRemoved = oTC1.removeAllRows();
 				sap.ui.getCore().applyChanges();
@@ -736,6 +742,11 @@
 				ok(bStartDateChange, "startDateChange fired");
 				var oStartDate = oTC1.getStartDate();
 				var oExpectedDate = new Date("2014", "11", "31", "20", "00");
+				if(jQuery("#TC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0]) {
+					oExpectedDate = new Date("2015", "0", "1", "02", "00");
+				}else if(jQuery("#TC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1]) {
+					oExpectedDate = new Date("2015", "0", "1", "02", "00");
+				}
 				equal(oExpectedDate.getTime(), oStartDate.getTime(), "Start date is OK");
 
 				bStartDateChange = false;
@@ -744,8 +755,13 @@
 				sap.ui.getCore().applyChanges();
 				qutils.triggerEvent("click", "TC1-DateInt--Head-prev");
 				ok(bStartDateChange, "startDateChange fired");
-				var oStartDate = oTC1.getStartDate();
-				var oExpectedDate = new Date("2014", "11", "17", "00", "00");
+				oStartDate = oTC1.getStartDate();
+				oExpectedDate = new Date("2014", "11", "17", "00", "00");
+				if(jQuery("#TC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0]) {
+					oExpectedDate = new Date("2014", "11", "25", "00", "00");
+				}else if(jQuery("#TC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1]) {
+					oExpectedDate = new Date("2014", "11", "25", "00", "00");
+				}
 				equal(oExpectedDate.getTime(), oStartDate.getTime(), "Start date is OK");
 
 				bStartDateChange = false;
@@ -754,8 +770,13 @@
 				sap.ui.getCore().applyChanges();
 				qutils.triggerEvent("click", "TC1-MonthInt--Head-prev");
 				ok(bStartDateChange, "startDateChange fired");
-				var oStartDate = oTC1.getStartDate();
-				var oExpectedDate = new Date("2013", "11", "01", "00", "00");
+				oStartDate = oTC1.getStartDate();
+				oExpectedDate = new Date("2013", "11", "01", "00", "00");
+				if(jQuery("#TC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0]) {
+					oExpectedDate = new Date("2014", "08", "01", "00", "00");
+				}else if(jQuery("#TC1").outerWidth() < sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1]) {
+					oExpectedDate = new Date("2014", "05", "01", "00", "00");
+				}
 				equal(oExpectedDate.getTime(), oStartDate.getTime(), "Start date is OK");
 
 				bStartDateChange = false;
