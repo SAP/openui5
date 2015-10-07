@@ -1,16 +1,21 @@
-.sapUiDemoWT .myCustomButton.sapMBtn {
-	margin-right: 0.125rem;
+html[dir="ltr"] .myAppDemoWT .myCustomButton.sapMBtn {
+ 	margin-right: 0.125rem
 }
 
-.sapUiDemoWT .myCustomText {
+html[dir="rtl"] .myAppDemoWT .myCustomButton.sapMBtn {
+ 	margin-left: 0.125rem
+}
+
+
+.myAppDemoWT .myCustomText {
 	font-weight: bold;
 }
 
 /*  ProductRating */
-.sapUiDemoWTProductRating {
+.myAppDemoWTProductRating {
 	padding: 0.75rem;
 }
 
-.sapUiDemoWTProductRating .sapMRI {
+.myAppDemoWTProductRating .sapMRI {
 	vertical-align: initial;
 }

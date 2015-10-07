@@ -71,7 +71,7 @@ sap.ui.define([
 		renderer: function (oRM, oControl) {
 			oRM.write("<div");
 			oRM.writeControlData(oControl);
-			oRM.addClass("sapUiDemoWTProductRating");
+			oRM.addClass("myAppDemoWTProductRating");
 			oRM.writeClasses();
 			oRM.write(">");
 			oRM.renderControl(oControl.getAggregation("_rating"));

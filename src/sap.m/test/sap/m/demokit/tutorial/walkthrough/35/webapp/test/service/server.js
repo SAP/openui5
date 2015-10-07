@@ -9,7 +9,7 @@ sap.ui.define([
 
 			// create
 			var oMockServer = new MockServer({
-				rootUri: "../../../../../../../../../../uilib-sample/proxy/http/services.odata.org/V2/Northwind/Northwind.svc/"
+				rootUri: "../../../../../../../../../../uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/"
 			});
 
 			// configure
