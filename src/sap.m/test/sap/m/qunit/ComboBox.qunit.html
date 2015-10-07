@@ -5079,6 +5079,57 @@
 				oComboBox.destroy();
 			});
 
+			test("it should update update the value of the input field when the selected item is pressed", function() {
+
+				// system under test
+				var oItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						oItem = new sap.ui.core.Item({
+							key: "li",
+							text: "lorem ipsum"
+						})
+					],
+					selectedKey: "li"
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+				oComboBox.open();
+				this.clock.tick(1000);	// wait 1s after the open animation is completed
+				var oItemDomRef = oItem.getDomRef();
+				oComboBox.getFocusDomRef().value = "foo";
+
+				// act
+				sap.ui.test.qunit.triggerTouchEvent("tap", oComboBox.getList().getDomRef(), {
+					srcControl: oItem,
+					changedTouches: {
+						0: {
+							pageX: 1,
+							pageY: 1,
+							identifier: 0,
+							target: oItemDomRef
+						},
+
+						length: 1
+					},
+
+					touches: {
+						length: 0
+					}
+				});
+
+				this.clock.tick(0);
+
+				// assert
+				strictEqual(oComboBox.getValue(), "lorem ipsum");
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
 			/* ------------------------------ */
 			/* onsapshow                      */
 			/* ------------------------------ */
