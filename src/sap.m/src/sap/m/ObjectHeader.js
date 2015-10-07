@@ -346,7 +346,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._fNumberWidth = undefined;
 		this._titleText = new sap.m.Text(this.getId() + "-titleText");
 		this._titleText.setMaxLines(3);
-
 	};
 
 	/**
@@ -732,11 +731,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var oObjectNumber = this.getAggregation("_objectNumber");
 		var bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
 		var $titleArrow = this.$("titleArrow");
-		
-		$titleArrow.attr("aria-haspopup", "true");
-		$titleArrow.attr("role", "link");
-		$titleArrow.attr("aria-label", sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OH_ARIA_SELECT_ARROW_VALUE")); // set label from resource translation bundle
-		
+
+		$titleArrow.attr("role", "button");
+
 		if (this.getResponsive()) {
 			this._adjustIntroDiv();
 
