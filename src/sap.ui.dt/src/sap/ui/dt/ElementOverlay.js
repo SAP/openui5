@@ -61,9 +61,16 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 					defaultValue : false
 				},
 				/** 
-				 * Whether the ElementOverlay is selectable
+				 * Whether the ElementOverlay is selectable, per default this implicitly makes the overlay focusable (TODO discuss)
 				 */
 				selectable : {
+					type : "boolean",
+					defaultValue : false
+				},
+				/** 
+				 * Whether the ElementOverlay can get the browser focus (tabindex)
+				 */
+				focusable : {
 					type : "boolean",
 					defaultValue : false
 				},
@@ -121,6 +128,14 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 				selectableChange : {
 					parameters : {
 						selectable : { type : "boolean" }
+					}
+				},
+				/**				
+				 * Event fired when the property "Focusable" is changed
+				 */
+				focusableChange : {
+					parameters : {
+						focusable : { type : "boolean" }
 					}
 				},
 				/**
@@ -272,7 +287,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 			this.setProperty("selectable", bSelectable);
 			this.fireSelectableChange({selectable : bSelectable});
 		}
-
+		this.setFocusable(bSelectable);
 		return this;
 	};
 	
@@ -297,7 +312,21 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 
 		return this;
 	};
+	/** 
+	 * Sets whether the ElementOverlay can get the browser focus (tabindex)
+	 * @param {boolean} bFocusable if the ElementOverlay is focusable
+	 * @returns {sap.ui.dt.ElementOverlay} returns this
+	 * @public
+	 */
+	ElementOverlay.prototype.setFocusable = function(bFocusable) {
+		if (this.isFocusable() !== bFocusable) {
+			this.setProperty("focusable", bFocusable);
+			this.fireFocusableChange({focusable : bFocusable});
+		}
 
+		return this;
+	};
+	
 	/** 
 	 * Sets whether the ElementOverlay is movable and toggles corresponding css class
 	 * @param {boolean} bMovable if the ElementOverlay is movable
@@ -538,6 +567,15 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 		return oParentAggregationOverlay instanceof sap.ui.dt.AggregationOverlay ? oParentAggregationOverlay : null;
 	};
 
+	ElementOverlay.prototype.onAfterRendering = function() {
+		Overlay.prototype.onAfterRendering.apply(this, arguments);
+		var bFocusable = this.isFocusable();
+		if (bFocusable) {
+			this.$().attr("tabindex", 0);
+		} else {
+			this.$().attr("tabindex", null);
+		}
+	};
 	/** 
 	 * Returns if the ElementOverlay is selected
 	 * @public
@@ -554,6 +592,15 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 	 */
 	ElementOverlay.prototype.isSelectable = function() {
 		return this.getSelectable();
+	};
+	
+	/** 
+	 * Returns if the ElementOverlay is can get the focus
+	 * @public
+	 * @return {boolean} if the ElementOverlay is focusable
+	 */
+	ElementOverlay.prototype.isFocusable = function() {
+		return this.getFocusable();
 	};
 
 	/** 

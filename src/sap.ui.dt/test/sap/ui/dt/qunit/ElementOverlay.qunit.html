@@ -27,6 +27,9 @@
 		<script type="text/javascript">
 
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 			
 			jQuery.sap.require("sap.ui.dt.Preloader");
 			jQuery.sap.require("sap.ui.dt.ElementOverlay");
@@ -131,9 +134,20 @@
 				assert.ok(!this.oOverlay.isSelected(), 'and the state of the overlay is "not selected"');
 				assert.ok(!bFired, 'and no "selection change" event is fired');
 			});
-
+			
+			QUnit.test("when the overlay is selectable or not selectable", function(assert) {
+				this.oOverlay.setSelectable(true);
+				assert.ok(this.oOverlay.isFocusable(), "then the control is focusable");
+				
+				this.oOverlay.setSelectable(false);
+				assert.ok(!this.oOverlay.isFocusable(), "then the control is not focusable");		
+			});
+			
 			QUnit.test("when the overlay is focusable and is focused", function(assert) {
-				this.oOverlay.$().attr("tabindex", 0);
+				this.oOverlay.setFocusable(true);
+				assert.ok(this.oOverlay.isFocusable(), "then the control knows it is focusable");
+				sap.ui.getCore().applyChanges();
+				
 				this.oOverlay.focus();
 				var that = this;
 				var done = assert.async();
@@ -142,7 +156,16 @@
 					done();
 				},0);
 			});
+			
+			QUnit.test("when the overlay is changed to focusable", function(assert) {
 
+				var fnHandler = this.spy();
+				this.oOverlay.attachFocusableChange(fnHandler);
+				
+				this.oOverlay.setFocusable(true);
+				assert.equal(fnHandler.callCount, 1, 'then the event handler is called');
+			});
+			
 			QUnit.module("Given that an Overlay is created for a layout with child controls", {
 				beforeEach : function() {
 					this.oButton1 = new sap.m.Button({

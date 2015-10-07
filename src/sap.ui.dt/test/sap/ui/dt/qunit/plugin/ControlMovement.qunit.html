@@ -1,143 +1,287 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<title>Test Page for sap.ui.dt.plugin.DragDrop</title>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Test Page for sap.ui.dt Drag & Drop and Cut & Paste</title>
 
-		<style>
-			#content {
-				position: absolute;
-				bottom: 0px;
-				z-index: 1000;
-				width: 700px;
-				height: 300px;
-			}
-		</style>
+<style>
+#content {
+	position: absolute;
+	bottom: 0px;
+	z-index: 1000;
+	width: 700px;
+	height: 300px;
+}
+</style>
 
-		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="sap_bluecrystal"
-				type="text/javascript"
-				data-sap-ui-noConflict="true"
-				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
-				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
-				src="../../../../../../resources/sap-ui-core.js">
-		</script>
-		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script type="text/javascript">
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+	type="text/javascript" data-sap-ui-noConflict="true"
+	data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+	data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+	src="../../../../../../resources/sap-ui-core.js">
+	
+</script>
+<link rel="stylesheet"
+	href="../../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript">
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
-		jQuery.sap.require("sap.ui.dt.ElementOverlay");
-		jQuery.sap.require("sap.ui.dt.plugin.ControlDragDrop");
-		jQuery.sap.require("sap.ui.dt.OverlayRegistry");
-		jQuery.sap.require("sap.ui.dt.DesignTime");
-		
-		function stubEventFor(oOverlay){
-			return {
-				currentTarget : { 
-					id : oOverlay.getId()
-				},
-				preventDefault  : function(){},
-				stopPropagation : function(){}
+	jQuery.sap.require("sap.ui.dt.ElementOverlay");
+	jQuery.sap.require("sap.ui.dt.plugin.ControlDragDrop");
+	jQuery.sap.require("sap.ui.dt.plugin.CutPaste");
+	jQuery.sap.require("sap.ui.dt.plugin.ElementMover");
+	jQuery.sap.require("sap.ui.dt.OverlayRegistry");
+	jQuery.sap.require("sap.ui.dt.DesignTime");
+
+	function stubEventFor(oOverlay) {
+		return {
+			currentTarget: {
+				id: oOverlay.getId()
+			},
+			preventDefault: function() {
+			},
+			stopPropagation: function() {
 			}
 		}
+	}
 
-		QUnit.module("Given overlays are created for controls that fit into aggregations of each other and don't fit to the other control", {
-			beforeEach : function() {
-				
-				//Test Setup:
-				//VerticalLayout
-				//	content
-				//		ObjectHeader
-				//			attributes
-				//				ObjectAttribute
-				//		Button
-				
-				
-				this.oButton = new sap.m.Button();
-				this.oObjectAttribute = new sap.m.ObjectAttribute();
-				this.oObjectHeader = new sap.m.ObjectHeader({attributes:[this.oObjectAttribute]});
-				this.oLayout = new sap.ui.layout.VerticalLayout({content : [this.oObjectHeader,this.oButton]});
+	QUnit.module("Given overlays are created for controls that fit into aggregations of each other and don't fit to the other control", {
+		beforeEach: function() {
 
-				this.oLayout.placeAt("content");				
-				sap.ui.getCore().applyChanges();
-				
-				this.oControlDragDrop = new sap.ui.dt.plugin.ControlDragDrop({
-					draggableTypes : ["sap.m.Button" , "sap.m.ObjectAttribute" , "sap.m.ObjectHeader", "sap.ui.layout.VerticalLayout"]
-				});
-				
-				this.oDesignTime = new sap.ui.dt.DesignTime({
-					rootElements : [this.oLayout],
-					plugins : [
-						this.oControlDragDrop
-					]
-				});
-				
-				this.oLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLayout);
-				this.oLayoutAggregationOverlay = this.oLayoutOverlay.getAggregationOverlay("content");
-				this.oButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton);
-				this.oObjectAttributeOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oObjectAttribute);
-				this.oObjectHeaderOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oObjectHeader);
-				this.oObjectHeaderAggregationOverlay = this.oObjectHeaderOverlay.getAggregationOverlay("attributes");
-				
-				sap.ui.getCore().applyChanges();
-				
-				
-			},
-			afterEach : function() {
-				this.oLayout.destroy();
-				this.oControlDragDrop.destroy();
-			}
-		});
+			//Test Setup:
+			//VerticalLayout
+			//	content
+			//		ObjectHeader
+			//			attributes
+			//				ObjectAttribute
+			//		Button
 
-		QUnit.test("when the dragstart is triggered on a button overlay, that doesn't fit to ObjectHeader", function(assert) {
-			this.oControlDragDrop._onDragStart(stubEventFor(this.oButtonOverlay));
-			
-			assert.ok(this.oLayoutAggregationOverlay.isTargetZone(),"the valid aggregation is marked as target zone");
-			assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(),"the invalid aggregation is not marked as target zone");
-			assert.equal(this.oControlDragDrop.getDraggedOverlay(), this.oButtonOverlay, "Dragged Overlay is remembered");
-		});
+			var aALL_MOVABLE_TYPES = [
+				"sap.m.Button", "sap.m.ObjectAttribute"
+			];
+
+			this.oButton = new sap.m.Button();
+			this.oObjectAttribute = new sap.m.ObjectAttribute({text:"Some attribute"});
+			this.oObjectHeader = new sap.m.ObjectHeader({
+				//title : "header",
+				attributes: [
+					this.oObjectAttribute
+				]
+			});
+			this.oLayout = new sap.ui.layout.VerticalLayout({
+				content: [
+					this.oObjectHeader, this.oButton
+				]
+			});
+
+			this.oLayout.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			this.oControlDragDrop = new sap.ui.dt.plugin.ControlDragDrop({
+				draggableTypes: aALL_MOVABLE_TYPES
+			});
+
+			this.oCutPaste = new sap.ui.dt.plugin.CutPaste({
+				movableTypes: aALL_MOVABLE_TYPES
+			});
+
+			this.oDesignTime = new sap.ui.dt.DesignTime({
+				rootElements: [
+					this.oLayout
+				],
+				plugins: [
+					this.oControlDragDrop, this.oCutPaste
+				]
+			});
+
+			this.oLayoutOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLayout);
+			this.oLayoutAggregationOverlay = this.oLayoutOverlay.getAggregationOverlay("content");
+			this.oButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton);
+			this.oObjectAttributeOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oObjectAttribute);
+			this.oObjectHeaderOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oObjectHeader);
+			this.oObjectHeaderAggregationOverlay = this.oObjectHeaderOverlay.getAggregationOverlay("attributes");
+
+			sap.ui.getCore().applyChanges();
+
+		},
+		afterEach: function() {
+			this.oLayout.destroy();
+			this.oControlDragDrop.destroy();
+		}
+	});
+
+	QUnit.test("when the dragstart is triggered on a button overlay, that doesn't fit to ObjectHeader", function(assert) {
+		this.oControlDragDrop._onDragStart(stubEventFor(this.oButtonOverlay));
+
+		assert.ok(this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation is marked as target zone");
+		assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the invalid aggregation is not marked as target zone");
+
+		assert.ok(this.oLayoutAggregationOverlay.hasStyleClass("sapUiDtOverlayDropZone"), "the valid aggregation overlay has the additional drop zone style");
+		assert.ok(!this.oObjectHeaderAggregationOverlay.hasStyleClass("sapUiDtOverlayDropZone"), "the invalid aggregation overlay has not the additional drop zone style");
+		assert.equal(this.oControlDragDrop.getDraggedOverlay(), this.oButtonOverlay, "Dragged Overlay is remembered");
+	});
+
+	QUnit.test("when the dragstart is triggered on the objectAttribute overlay, that fit into both aggregations", function(assert) {
+		this.oControlDragDrop._onDragStart(stubEventFor(this.oObjectAttributeOverlay));
+
+		assert.ok(this.oLayoutAggregationOverlay.isTargetZone(), "both aggregations are marked as target zone");
+		assert.ok(this.oObjectHeaderAggregationOverlay.isTargetZone(), "both aggregations are marked as target zone");
+		assert.equal(this.oControlDragDrop.getDraggedOverlay(), this.oObjectAttributeOverlay, "Dragged Overlay is remembered");
+	});
+
+	QUnit.test("when the cut is triggered on a button overlay, that doesn't fit to ObjectHeader", function(assert) {
+		sap.ui.test.qunit.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+
+		assert.ok(this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation is marked as target zone");
+		assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the invalid aggregation is not marked as target zone");
+
+		assert.ok(!this.oLayoutAggregationOverlay.hasStyleClass("sapUiDtOverlayDropZone"), "the valid aggregation overlay has not the additional drop zone style (we cutted!)");
 
 
-		QUnit.test("when the dragstart is triggered on the objectAttribute overlay, that fit into both aggregations", function(assert) {
-			this.oControlDragDrop._onDragStart(stubEventFor(this.oObjectAttributeOverlay));
-			
-			assert.ok(this.oLayoutAggregationOverlay.isTargetZone(),"both aggregations are marked as target zone");
-			assert.ok(this.oObjectHeaderAggregationOverlay.isTargetZone(),"both aggregations are marked as target zone");
-			assert.equal(this.oControlDragDrop.getDraggedOverlay(), this.oObjectAttributeOverlay, "Dragged Overlay is remembered");
-		});
+		assert.ok(this.oButtonOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the button overlay is marked with the correct style");
+		assert.equal(this.oCutPaste.getCuttedOverlay(), this.oButtonOverlay, "then the button overlay is remembered as to be cutted");
+	});
+
+	QUnit.test("when the cut is triggered on a non movable overlay (ObjectHeader)", function(assert) {
+		sap.ui.test.qunit.triggerKeydown(this.oObjectHeaderOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+
+		assert.ok(!this.oObjectHeaderOverlay.hasStyleClass("sapUiDtOverlayCutted"), "then the object header overlay is not marked with the cut style");
+		assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation is not marked as target zone");
+
+	});
+
+	QUnit.test("and cut was triggered, when ESCAPE is triggered", function(assert) {
+		sap.ui.test.qunit.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+
+		sap.ui.test.qunit.triggerKeydown(this.oObjectHeaderAggregationOverlay.getDomRef(), jQuery.sap.KeyCodes.ESCAPE, false, false, false);
+
+		assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation is not marked as target zone");
+		assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the invalid aggregation is not marked as target zone");
+
+		assert.ok(!this.oButtonOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the overlay cut style class is removed");
+	});
+
+	QUnit.test("and cut was triggered, when another cut is triggered, then", function(assert) {
+		sap.ui.test.qunit.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+
+		sap.ui.test.qunit.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+
+		assert.ok(this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation (layout) is marked as target zone");
+		assert.ok(this.oObjectHeaderAggregationOverlay.isTargetZone(), "the valid aggregation (objectHeader) is marked as target zone");
+
+		assert.ok(!this.oButtonOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the overlay cut style class is removed from previously cutted overlay");
+		assert.ok(this.oObjectAttributeOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the overlay cut style class is added to the newly cutted overlay");
+	});
+
+	QUnit.test("while dragging the button when dragenter is triggered on the ObjectHeader overlay,", function(assert) {
+		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "before ObjectHeader is at first position");
+		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "before Button is at second position");
+
+		this.oControlDragDrop._onDragStart(stubEventFor(this.oButtonOverlay));
+
+		this.oControlDragDrop._onDragEnter(stubEventFor(this.oObjectHeaderOverlay));
+
+		assert.equal(this.oLayout.getContent()[0].getId(), this.oButton.getId(), "Button is at position of the ObjectHeader");
+		assert.equal(this.oLayout.getContent()[1].getId(), this.oObjectHeader.getId(), "ObjectHeader is at position below");
+	});
+
+	QUnit.test("while dragging the button when dragenter is triggered on the ObjectAttribute overlay,", function(assert) {
+		this.oControlDragDrop._onDragStart(stubEventFor(this.oButtonOverlay));
+
+		this.oControlDragDrop._onDragEnter(stubEventFor(this.oObjectAttributeOverlay));
+
+		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "ObjectHeader is still at first position");
+		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "Button is still at second position");
+	});
+	
+	QUnit.test("while dragging the object attribute when dragenter is triggered on the layout content aggregation overlay,", function(assert) {
+		this.oControlDragDrop._onDragStart(stubEventFor(this.oObjectAttributeOverlay));
+
+		this.oControlDragDrop._onAggregationDragEnter(stubEventFor(this.oLayoutAggregationOverlay));
+
+		assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
+		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
+		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
+		assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position");
+	});
+
+	QUnit.test("when the dragend is triggered on previously dragged button overlay,", function(assert) {
+		this.oControlDragDrop._onDragStart(stubEventFor(this.oButtonOverlay));
+
+		this.oControlDragDrop._onDragEnd(stubEventFor(this.oButtonOverlay));
+
+		assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation is no longer target zone");
+		assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the invalid aggregation is not marked as target zone");
+
+		assert.ok(!this.oLayoutAggregationOverlay.hasStyleClass("sapUiDtOverlayDropZone"), "the valid aggregation overlay has the additional drop zone style removed after drop");
+
+	});
+
+	QUnit.test("when paste is triggered without cut before, then", function(assert) {
+		sap.ui.test.qunit.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.V, false, false, true);
+
+		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "nothing happened, button is still at second position");
+	});
+
+	QUnit.test("and object attribute was cutted, when paste is triggered on the layout (control with target zone aggregation), then", function(assert) {
+		sap.ui.test.qunit.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+
+		sap.ui.test.qunit.triggerKeydown(this.oLayoutOverlay.getDomRef(), jQuery.sap.KeyCodes.V, false, false, true);
+
+		assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
+		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
+		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
+		assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position");
 		
-		QUnit.test("while dragging the button when dragenter is triggered on the ObjectHeader overlay,", function(assert) {
-			assert.equal(this.oLayout.getContent()[0], this.oObjectHeader, "before ObjectHeader is at first position");
-			assert.equal(this.oLayout.getContent()[1], this.oButton, "before Button is at second position");
-			
-			this.oControlDragDrop._onDragStart(stubEventFor(this.oButtonOverlay));
-			
-			this.oControlDragDrop._onDragEnter(stubEventFor(this.oObjectHeaderOverlay));
+		assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation (layout) is not marked as target zone");
+		assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the valid aggregation (objectHeader) is not marked as target zone");
+		assert.ok(!this.oObjectAttributeOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the overlay cut style class is removed");
+	});
+	
+	QUnit.test("and object attribute was cutted, when paste is triggered on the button (control in a target zone aggregation), then", function(assert) {
+		sap.ui.test.qunit.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
 
-			assert.equal(this.oLayout.getContent()[0], this.oButton, "Button is at position of the ObjectHeader");
-			assert.equal(this.oLayout.getContent()[1], this.oObjectHeader, "ObjectHeader is at position below");
-		});
-		
-		QUnit.test("when the dragend is triggered on previously dragged button overlay,", function(assert) {
-			this.oControlDragDrop._onDragStart(stubEventFor(this.oButtonOverlay));
-			
-			this.oControlDragDrop._onDragEnd(stubEventFor(this.oButtonOverlay));
-			
-			assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(),"the valid aggregation is no longer target zone");
-			assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(),"the invalid aggregation is not marked as target zone");
-		});
+		sap.ui.test.qunit.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.V, false, false, true);
 
-		</script>
-	</head>
-	<body>
-		<h1 id="qunit-header">QUnit page for sap.ui.dt.plugin.DragDrop</h1>
-		<h2 id="qunit-banner"></h2>
-	 	<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<div id="content"></div>
-	</body>
+		assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
+		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header stays at 1. position");
+		assert.equal(this.oLayout.getContent()[1].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 2. position before the button");
+		assert.equal(this.oLayout.getContent()[2].getId(), this.oButton.getId(), "button is now at 3. position");
+
+		assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation (layout) is not marked as target zone");
+		assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the valid aggregation (objectHeader) is not marked as target zone");
+		assert.ok(!this.oObjectAttributeOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the overlay cut style class is removed");
+	});
+	
+	QUnit.test("and button was cutted, when paste is triggered on the object attribute (control in an invalid aggregation), then", function(assert) {
+		sap.ui.test.qunit.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+
+		sap.ui.test.qunit.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), jQuery.sap.KeyCodes.V, false, false, true);
+
+		assert.equal(this.oObjectHeader.getAttributes().length, 1, "object attribute is removed from the header");
+		assert.equal(this.oObjectHeader.getAttributes()[0].getId(), this.oObjectAttribute.getId(), "object attribute stays in header at 1. position");
+		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header stays at 1. position");
+		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "the button stays at the 2. position");
+
+		assert.ok(this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation (layout) is marked as target zone");
+		assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the invalid aggregation (objectHeader) is not marked as target zone");
+		assert.ok(this.oButtonOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the overlay cut style class is still there");
+	});
+</script>
+</head>
+<body>
+	<h1 id="qunit-header">Test Page for sap.ui.dt Drag & Drop and Cut & Paste</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<div id="content"></div>
+</body>
 </html>
