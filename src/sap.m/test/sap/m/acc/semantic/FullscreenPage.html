@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Semantic FullscreenPage ACC Test - sap.m</title>
+
+		<script src="../../../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.m.semantic.EditAction");
+			jQuery.sap.require("sap.m.semantic.AddAction");
+			jQuery.sap.require("sap.m.semantic.FlagAction");
+			jQuery.sap.require("sap.m.semantic.FavoriteAction");
+			jQuery.sap.require("sap.m.semantic.SendEmailAction");
+			jQuery.sap.require("sap.m.semantic.SendMessageAction");
+			jQuery.sap.require("sap.m.semantic.DiscussInJamAction");
+			jQuery.sap.require("sap.m.semantic.ShareInJamAction");
+			jQuery.sap.require("sap.m.semantic.PrintAction");
+
+			var app = new sap.m.App("myApp");
+
+			var oPage = new sap.m.semantic.FullscreenPage("testPage", {
+				title:"Fullscreen Test page",
+				showNavButton: true,
+				editAction: new sap.m.semantic.EditAction(),
+				addAction: new sap.m.semantic.AddAction(),
+				flagAction: new sap.m.semantic.FlagAction(),
+				favoriteAction: new sap.m.semantic.FavoriteAction(),
+				sendEmailAction: new sap.m.semantic.SendEmailAction(),
+				sendMessageAction: new sap.m.semantic.SendMessageAction(),
+				discussInJamAction: new sap.m.semantic.DiscussInJamAction(),
+				shareInJamAction: new sap.m.semantic.ShareInJamAction(),
+				printAction: new sap.m.semantic.PrintAction()
+			});
+
+			app.addPage(oPage);
+
+			app.placeAt("body");
+
+	</script>
+	<style>
+		body {
+			margin: 0;
+		}
+		.sapMPageScroll {
+			padding: 1rem;
+		}
+	</style>
+
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>
