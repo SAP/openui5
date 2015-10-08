@@ -14,7 +14,7 @@
 					<Toolbar>
 						<Title text="Products" level="H2"/>
 						<ToolbarSpacer></ToolbarSpacer>
-						<Button icon="sap-icon://drop-down-list" press="handleViewSettingsDialogButtonPressed" />
+						<Button tooltip="View Settings" icon="sap-icon://drop-down-list" press="handleViewSettingsDialogButtonPressed" />
 					</Toolbar>
 				</headerToolbar>
 				<infoToolbar>
