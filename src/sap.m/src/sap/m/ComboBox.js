@@ -998,11 +998,19 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 
 				switch (sProperty) {
 					case "text":
-						this.setValue(sNewValue);
+
+						if (!this.isBound("value")) {
+							this.setValue(sNewValue);
+						}
+
 						break;
 
 					case "key":
-						this.setSelectedKey(sNewValue);
+
+						if (!this.isBound("selectedKey")) {
+							this.setSelectedKey(sNewValue);
+						}
+
 						break;
 
 					// no default
