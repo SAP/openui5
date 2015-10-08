@@ -1,12 +1,9 @@
 /*!
  * ${copyright}
  */
-/*global opaTest:true, QUnit */
+/*global QUnit */
 
-// Eslint thinks window.opaTest is unused
-/*eslint-disable no-unused-vars */
 sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
-/*eslint-enable no-unused-vars */
 	"use strict";
 
 	/**

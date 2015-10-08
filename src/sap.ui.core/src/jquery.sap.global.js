@@ -4079,7 +4079,7 @@
 					if (bOk) {
 						this._applyState(true, true);
 					}
-				} catch(e) {
+				} catch (e) {
 					// access to the top window is not possible
 					this._sendRequireMessage();
 				}
