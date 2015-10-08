@@ -1065,7 +1065,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/date/
 					}
 				}
 			}
-		}catch(e){
+		} catch (e) {
 			jQuery.sap.log.warning("Relative Date parsing not possible: " + e);
 		}
 
