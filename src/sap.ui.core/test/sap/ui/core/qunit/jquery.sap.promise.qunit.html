@@ -43,7 +43,7 @@
 	}
 
 	sap.ui.getCore().attachInit(function() {
-		var bNativePromise = window.Promise !== window.ES6Promise.Promise;
+		var bNativePromise = window.Promise.toString().indexOf("[native code]") > -1;
 		if (bNativePromise) {
 			testPromise(window.Promise, "Native: ");
 		}
@@ -118,7 +118,7 @@
 
 		module(sTestPrefix + "Basics");
 
-		var bNative = P !== window.ES6Promise.Promise;
+		var bNative = P.toString().indexOf("[native code]") > -1;
 
 		test((bNative ? "Native" : "Custom") +" API tested", function() {
 			var p = new P(function(res, rej) {
@@ -129,9 +129,9 @@
 
 		test(sTestPrefix + "Native Support", function() {
 			doOnNativeSupport(function(){
-				ok(window.Promise != window.ES6Promise.Promise, "Firefox, Chrome and Safari support Promises natively.");
+				ok(window.Promise.toString().indexOf("[native code]") > -1, "Firefox, Chrome and Safari support Promises natively.");
 			}, function(){
-				ok(window.Promise == window.ES6Promise.Promise, "Browsers other than Firefox, Chrome and Safari does not support Promises natively.");
+				ok(window.Promise.toString().indexOf("[native code]") == -1, "Browsers other than Firefox, Chrome and Safari does not support Promises natively.");
 			});
 		});
 
