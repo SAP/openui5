@@ -336,6 +336,43 @@
 		oBinding.attachChange(handler);
 	});
 
+	asyncTest("ListBinding clientside sort before data is available", function(){
+		var oBinding = oModel.bindList("/Categories", null, null, null, {
+			operationMode: sap.ui.model.odata.OperationMode.Client
+		});
+		
+		var handler = function(oEvent){
+			oBinding.detachChange(handler);
+
+			var aContexts = oBinding.getContexts();
+			equal(aContexts.length, 8);
+			
+			equal(oModel.getProperty("CategoryName", aContexts[7]), "Beverages", "ListBinding after sort");
+			equal(oModel.getProperty("CategoryName", aContexts[6]), "Condiments", "ListBinding after sort");
+			equal(oModel.getProperty("CategoryName", aContexts[5]), "Confections", "ListBinding after sort");
+			equal(oModel.getProperty("CategoryName", aContexts[4]), "Dairy Products", "ListBinding after sort");
+			equal(oModel.getProperty("CategoryName", aContexts[3]), "Grains/Cereals", "ListBinding after sort");
+			equal(oModel.getProperty("CategoryName", aContexts[2]), "Meat/Poultry", "ListBinding after sort");
+			equal(oModel.getProperty("CategoryName", aContexts[1]), "Produce", "ListBinding after sort");
+			equal(oModel.getProperty("CategoryName", aContexts[0]), "Seafood", "ListBinding after sort");
+
+			equal(oEvent.getParameter("reason"), "sort", "Change reason is 'sort'.");
+			
+			start();
+		};
+		
+		oModel.metadataLoaded().then(function () {
+			oBinding.initialize();
+			
+			// sort in client mode, before data is available
+			var oSorter = new sap.ui.model.Sorter("CategoryName", true);
+			oBinding.sort(oSorter);
+			
+			oBinding.attachChange(handler);
+			oBinding.getContexts();
+		});
+		
+	});
 
 	asyncTest("ListBinding expand", function(){
 		var oBinding = oModel.bindList("/Categories", null, null, null, {expand: "Products"});
@@ -585,6 +622,36 @@
 		oBinding.attachRefresh(function() {
 			oBinding.getContexts();
 		});
+	});
+	
+	asyncTest("ListBinding clientside filter before data is available", function(){
+		var oBinding = oModel.bindList("/Categories", null, null, null, {
+			operationMode: sap.ui.model.odata.OperationMode.Client
+		});
+
+		var handler = function (oEvent) {
+			oBinding.detachChange(handler);
+			
+			// contexts should be now loaded
+			var aFilteredContexts = oBinding.getContexts();
+			equal(aFilteredContexts.length, 1, "EQ filtered content length");
+			equal(oModel.getProperty("CategoryName",aFilteredContexts[0]), "Beverages", "EQ filtered content");
+			
+			equal(oEvent.getParameter("reason"), "filter", "Change reason is 'filter'.");
+			
+			start();
+		};
+
+		oModel.metadataLoaded().then(function () {
+			oBinding.initialize();
+			//check EQ
+			var oFilter = new sap.ui.model.Filter("CategoryName", sap.ui.model.FilterOperator.EQ, "Beverages");
+			oBinding.filter([oFilter]);
+			
+			oBinding.attachChange(handler);
+			oBinding.getContexts();
+		});
+
 	});
 
 	asyncTest("ListBinding Diff", function(){
