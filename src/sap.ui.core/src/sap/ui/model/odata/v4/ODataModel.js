@@ -320,10 +320,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes the entity with the given path.
+	 * Removes the entity with the given context.
 	 *
-	 * @param {string} sPath
-	 *   an absolute data binding path pointing to an entity, it MUST begin with some list
+	 * @param {sap.ui.model.Context} oContext
+	 *   a context in the data model pointing to an entity, it MUST be related to some list
 	 *   binding's context because you can only remove data from the model which has been read
 	 *   into the model before
 	 * @returns {Promise}
@@ -332,11 +332,11 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	ODataModel.prototype.remove = function (sPath) {
+	ODataModel.prototype.remove = function (oContext) {
 		var that = this;
 
 		return this.getMetaModel()
-			.requestCanonicalUrl(this.sServiceUrl, sPath, this.read.bind(this))
+			.requestCanonicalUrl(this.sServiceUrl, oContext.getPath(), this.read.bind(this))
 			.then(function (sCanonicalUrl) {
 				return Helper.request(that, {
 					requestUri: sCanonicalUrl,
