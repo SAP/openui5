@@ -7,6 +7,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 	function(jQuery, InputBase, MaskInput, MaskInputRule, ResponsivePopover, EnabledPropagator, IconPool, TimeModel, TimePickerSliders) {
 		"use strict";
 
+		jQuery.sap.require("sap.m.MaskInputRule");
+		jQuery.sap.require("sap.m.MaskInput");
 
 		/**
 		 * Constructor for a new TimePicker.
@@ -30,10 +32,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @public
 		 * @since 1.32
 		 * @alias sap.m.TimePicker
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		jQuery.sap.require("sap.m.MaskInputRule");
-		jQuery.sap.require("sap.m.MaskInput");
 		var TimePicker = MaskInput.extend("sap.m.TimePicker", /** @lends sap.m.TimePicker.prototype */ {
 			metadata : {
 				library : "sap.m",
