@@ -1138,281 +1138,414 @@
 	},
 	"orientation": "left-to-right",
 	"ca-gregorian": {
-		"dateFormat-full": "EEEE, d MMMM y",
-		"dateFormat-long": "d MMMM y",
-		"dateFormat-medium": "d MMM y",
-		"dateFormat-short": "d/M/yy",
-		"timeFormat-full": "h:mm:ss a zzzz",
-		"timeFormat-long": "h:mm:ss a z",
-		"timeFormat-medium": "h:mm:ss a",
-		"timeFormat-short": "h:mm a",
-		"dateTimeFormat-full": "{1} - {0}",
-		"dateTimeFormat-long": "{1} - {0}",
-		"dateTimeFormat-medium": "{1}, {0}",
-		"dateTimeFormat-short": "{1}, {0}",
-		"intervalFormatFallback": "{0} - {1}",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "M–M",
-		"intervalFormat-Md-d": "dd/MM – dd/MM",
-		"intervalFormat-Md-M": "dd/MM – dd/MM",
-		"intervalFormat-MEd-d": "E, dd/MM – E, dd/MM",
-		"intervalFormat-MEd-M": "E, dd/MM – E, dd/MM",
-		"intervalFormat-MMM-M": "MMM–MMM",
-		"intervalFormat-MMMd-d": "dd–dd MMM",
-		"intervalFormat-MMMd-M": "dd MMM – dd MMM",
-		"intervalFormat-MMMEd-d": "E, dd – E, dd MMM",
-		"intervalFormat-MMMEd-M": "E, dd MMM – E, dd MMM",
-		"intervalFormat-y-y": "y–y",
-		"intervalFormat-yM-M": "MM/y – MM/y",
-		"intervalFormat-yM-y": "MM/y – MM/y",
-		"intervalFormat-yMd-d": "dd/MM/y – dd/MM/y",
-		"intervalFormat-yMd-M": "dd/MM/y – dd/MM/y",
-		"intervalFormat-yMd-y": "dd/MM/y – dd/MM/y",
-		"intervalFormat-yMEd-d": "E, dd/MM/y – E, dd/MM/y",
-		"intervalFormat-yMEd-M": "E, dd/MM/y – E, dd/MM/y",
-		"intervalFormat-yMEd-y": "E, dd/MM/y – E, dd/MM/y",
-		"intervalFormat-yMMM-M": "MMM–MMM y",
-		"intervalFormat-yMMM-y": "MMM y – MMM y",
-		"intervalFormat-yMMMd-d": "dd–dd MMM y",
-		"intervalFormat-yMMMd-M": "dd MMM – dd MMM y",
-		"intervalFormat-yMMMd-y": "dd MMM y – dd MMM y",
-		"intervalFormat-yMMMEd-d": "E, dd MMM – E, dd MMM y",
-		"intervalFormat-yMMMEd-M": "E, dd MMM – E, dd MMM y",
-		"intervalFormat-yMMMEd-y": "E, dd MMM y – E, dd MMM y",
-		"intervalFormat-yMMMM-M": "LLLL–LLLL y",
-		"intervalFormat-yMMMM-y": "LLLL y – LLLL y",
-		"months-format-abbreviated": [
-			"Ιαν",
-			"Φεβ",
-			"Μαρ",
-			"Απρ",
-			"Μαΐ",
-			"Ιουν",
-			"Ιουλ",
-			"Αυγ",
-			"Σεπ",
-			"Οκτ",
-			"Νοε",
-			"Δεκ"
-		],
-		"months-format-narrow": [
-			"Ι",
-			"Φ",
-			"Μ",
-			"Α",
-			"Μ",
-			"Ι",
-			"Ι",
-			"Α",
-			"Σ",
-			"Ο",
-			"Ν",
-			"Δ"
-		],
-		"months-format-wide": [
-			"Ιανουαρίου",
-			"Φεβρουαρίου",
-			"Μαρτίου",
-			"Απριλίου",
-			"Μαΐου",
-			"Ιουνίου",
-			"Ιουλίου",
-			"Αυγούστου",
-			"Σεπτεμβρίου",
-			"Οκτωβρίου",
-			"Νοεμβρίου",
-			"Δεκεμβρίου"
-		],
-		"months-standAlone-abbreviated": [
-			"Ιαν",
-			"Φεβ",
-			"Μάρ",
-			"Απρ",
-			"Μάι",
-			"Ιούν",
-			"Ιούλ",
-			"Αύγ",
-			"Σεπ",
-			"Οκτ",
-			"Νοέ",
-			"Δεκ"
-		],
-		"months-standAlone-narrow": [
-			"Ι",
-			"Φ",
-			"Μ",
-			"Α",
-			"Μ",
-			"Ι",
-			"Ι",
-			"Α",
-			"Σ",
-			"Ο",
-			"Ν",
-			"Δ"
-		],
-		"months-standAlone-wide": [
-			"Ιανουάριος",
-			"Φεβρουάριος",
-			"Μάρτιος",
-			"Απρίλιος",
-			"Μάιος",
-			"Ιούνιος",
-			"Ιούλιος",
-			"Αύγουστος",
-			"Σεπτέμβριος",
-			"Οκτώβριος",
-			"Νοέμβριος",
-			"Δεκέμβριος"
-		],
-		"days-format-abbreviated": [
-			"Κυρ",
-			"Δευ",
-			"Τρί",
-			"Τετ",
-			"Πέμ",
-			"Παρ",
-			"Σάβ"
-		],
-		"days-format-narrow": [
-			"Κ",
-			"Δ",
-			"Τ",
-			"Τ",
-			"Π",
-			"Π",
-			"Σ"
-		],
-		"days-format-short": [
-			"Κυ",
-			"Δε",
-			"Τρ",
-			"Τε",
-			"Πέ",
-			"Πα",
-			"Σά"
-		],
-		"days-format-wide": [
-			"Κυριακή",
-			"Δευτέρα",
-			"Τρίτη",
-			"Τετάρτη",
-			"Πέμπτη",
-			"Παρασκευή",
-			"Σάββατο"
-		],
-		"days-standAlone-abbreviated": [
-			"Κυρ",
-			"Δευ",
-			"Τρί",
-			"Τετ",
-			"Πέμ",
-			"Παρ",
-			"Σάβ"
-		],
-		"days-standAlone-narrow": [
-			"Κ",
-			"Δ",
-			"Τ",
-			"Τ",
-			"Π",
-			"Π",
-			"Σ"
-		],
-		"days-standAlone-short": [
-			"Κυ",
-			"Δε",
-			"Τρ",
-			"Τε",
-			"Πέ",
-			"Πα",
-			"Σά"
-		],
-		"days-standAlone-wide": [
-			"Κυριακή",
-			"Δευτέρα",
-			"Τρίτη",
-			"Τετάρτη",
-			"Πέμπτη",
-			"Παρασκευή",
-			"Σάββατο"
-		],
-		"quarters-format-abbreviated": [
-			"Τ1",
-			"Τ2",
-			"Τ3",
-			"Τ4"
-		],
-		"quarters-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-format-wide": [
-			"1ο τρίμηνο",
-			"2ο τρίμηνο",
-			"3ο τρίμηνο",
-			"4ο τρίμηνο"
-		],
-		"quarters-standAlone-abbreviated": [
-			"Τ1",
-			"Τ2",
-			"Τ3",
-			"Τ4"
-		],
-		"quarters-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-standAlone-wide": [
-			"1ο τρίμηνο",
-			"2ο τρίμηνο",
-			"3ο τρίμηνο",
-			"4ο τρίμηνο"
-		],
-		"dayPeriods-format-abbreviated": [
-			"π.μ.",
-			"μ.μ."
-		],
-		"dayPeriods-format-narrow": [
-			"πμ",
-			"μμ"
-		],
-		"dayPeriods-format-wide": [
-			"π.μ.",
-			"μ.μ."
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"π.μ.",
-			"μ.μ."
-		],
-		"dayPeriods-standAlone-narrow": [
-			"π.μ.",
-			"μ.μ."
-		],
-		"dayPeriods-standAlone-wide": [
-			"π.μ.",
-			"μ.μ."
-		],
+		"dateFormats": {
+			"full": "EEEE, d MMMM y",
+			"long": "d MMMM y",
+			"medium": "d MMM y",
+			"short": "d/M/yy"
+		},
+		"timeFormats": {
+			"full": "h:mm:ss a zzzz",
+			"long": "h:mm:ss a z",
+			"medium": "h:mm:ss a",
+			"short": "h:mm a"
+		},
+		"dateTimeFormats": {
+			"full": "{1} - {0}",
+			"long": "{1} - {0}",
+			"medium": "{1}, {0}",
+			"short": "{1}, {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E d",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y G",
+				"GyMMM": "LLL y G",
+				"GyMMMd": "d MMM y G",
+				"GyMMMEd": "E, d MMM y G",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"hmsv": "h:mm:ss a v",
+				"Hmsv": "HH:mm:ss v",
+				"hmv": "h:mm a v",
+				"Hmv": "HH:mm v",
+				"M": "L",
+				"Md": "d/M",
+				"MEd": "E, d/M",
+				"MMM": "LLL",
+				"MMMd": "d MMM",
+				"MMMEd": "E, d MMM",
+				"MMMMd": "d MMMM",
+				"MMMMEd": "E, d MMMM",
+				"ms": "mm:ss",
+				"y": "y",
+				"yM": "M/y",
+				"yMd": "d/M/y",
+				"yMEd": "E, d/M/y",
+				"yMMM": "MMM y",
+				"yMMMd": "d MMM y",
+				"yMMMEd": "E, d MMM y",
+				"yMMMM": "MMMM y",
+				"yQQQ": "y QQQ",
+				"yQQQQ": "y QQQQ"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} - {1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "M–M"
+				},
+				"Md": {
+					"d": "dd/MM – dd/MM",
+					"M": "dd/MM – dd/MM"
+				},
+				"MEd": {
+					"d": "E, dd/MM – E, dd/MM",
+					"M": "E, dd/MM – E, dd/MM"
+				},
+				"MMM": {
+					"M": "MMM–MMM"
+				},
+				"MMMd": {
+					"d": "dd–dd MMM",
+					"M": "dd MMM – dd MMM"
+				},
+				"MMMEd": {
+					"d": "E, dd – E, dd MMM",
+					"M": "E, dd MMM – E, dd MMM"
+				},
+				"y": {
+					"y": "y–y"
+				},
+				"yM": {
+					"M": "MM/y – MM/y",
+					"y": "MM/y – MM/y"
+				},
+				"yMd": {
+					"d": "dd/MM/y – dd/MM/y",
+					"M": "dd/MM/y – dd/MM/y",
+					"y": "dd/MM/y – dd/MM/y"
+				},
+				"yMEd": {
+					"d": "E, dd/MM/y – E, dd/MM/y",
+					"M": "E, dd/MM/y – E, dd/MM/y",
+					"y": "E, dd/MM/y – E, dd/MM/y"
+				},
+				"yMMM": {
+					"M": "MMM–MMM y",
+					"y": "MMM y – MMM y"
+				},
+				"yMMMd": {
+					"d": "dd–dd MMM y",
+					"M": "dd MMM – dd MMM y",
+					"y": "dd MMM y – dd MMM y"
+				},
+				"yMMMEd": {
+					"d": "E, dd MMM – E, dd MMM y",
+					"M": "E, dd MMM – E, dd MMM y",
+					"y": "E, dd MMM y – E, dd MMM y"
+				},
+				"yMMMM": {
+					"M": "LLLL–LLLL y",
+					"y": "LLLL y – LLLL y"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"Ιαν",
+					"Φεβ",
+					"Μαρ",
+					"Απρ",
+					"Μαΐ",
+					"Ιουν",
+					"Ιουλ",
+					"Αυγ",
+					"Σεπ",
+					"Οκτ",
+					"Νοε",
+					"Δεκ"
+				],
+				"narrow": [
+					"Ι",
+					"Φ",
+					"Μ",
+					"Α",
+					"Μ",
+					"Ι",
+					"Ι",
+					"Α",
+					"Σ",
+					"Ο",
+					"Ν",
+					"Δ"
+				],
+				"wide": [
+					"Ιανουαρίου",
+					"Φεβρουαρίου",
+					"Μαρτίου",
+					"Απριλίου",
+					"Μαΐου",
+					"Ιουνίου",
+					"Ιουλίου",
+					"Αυγούστου",
+					"Σεπτεμβρίου",
+					"Οκτωβρίου",
+					"Νοεμβρίου",
+					"Δεκεμβρίου"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Ιαν",
+					"Φεβ",
+					"Μάρ",
+					"Απρ",
+					"Μάι",
+					"Ιούν",
+					"Ιούλ",
+					"Αύγ",
+					"Σεπ",
+					"Οκτ",
+					"Νοέ",
+					"Δεκ"
+				],
+				"narrow": [
+					"Ι",
+					"Φ",
+					"Μ",
+					"Α",
+					"Μ",
+					"Ι",
+					"Ι",
+					"Α",
+					"Σ",
+					"Ο",
+					"Ν",
+					"Δ"
+				],
+				"wide": [
+					"Ιανουάριος",
+					"Φεβρουάριος",
+					"Μάρτιος",
+					"Απρίλιος",
+					"Μάιος",
+					"Ιούνιος",
+					"Ιούλιος",
+					"Αύγουστος",
+					"Σεπτέμβριος",
+					"Οκτώβριος",
+					"Νοέμβριος",
+					"Δεκέμβριος"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"Κυρ",
+					"Δευ",
+					"Τρί",
+					"Τετ",
+					"Πέμ",
+					"Παρ",
+					"Σάβ"
+				],
+				"narrow": [
+					"Κ",
+					"Δ",
+					"Τ",
+					"Τ",
+					"Π",
+					"Π",
+					"Σ"
+				],
+				"short": [
+					"Κυ",
+					"Δε",
+					"Τρ",
+					"Τε",
+					"Πέ",
+					"Πα",
+					"Σά"
+				],
+				"wide": [
+					"Κυριακή",
+					"Δευτέρα",
+					"Τρίτη",
+					"Τετάρτη",
+					"Πέμπτη",
+					"Παρασκευή",
+					"Σάββατο"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Κυρ",
+					"Δευ",
+					"Τρί",
+					"Τετ",
+					"Πέμ",
+					"Παρ",
+					"Σάβ"
+				],
+				"narrow": [
+					"Κ",
+					"Δ",
+					"Τ",
+					"Τ",
+					"Π",
+					"Π",
+					"Σ"
+				],
+				"short": [
+					"Κυ",
+					"Δε",
+					"Τρ",
+					"Τε",
+					"Πέ",
+					"Πα",
+					"Σά"
+				],
+				"wide": [
+					"Κυριακή",
+					"Δευτέρα",
+					"Τρίτη",
+					"Τετάρτη",
+					"Πέμπτη",
+					"Παρασκευή",
+					"Σάββατο"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"Τ1",
+					"Τ2",
+					"Τ3",
+					"Τ4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1ο τρίμηνο",
+					"2ο τρίμηνο",
+					"3ο τρίμηνο",
+					"4ο τρίμηνο"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Τ1",
+					"Τ2",
+					"Τ3",
+					"Τ4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1ο τρίμηνο",
+					"2ο τρίμηνο",
+					"3ο τρίμηνο",
+					"4ο τρίμηνο"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"π.μ.",
+					"μ.μ."
+				],
+				"narrow": [
+					"πμ",
+					"μμ"
+				],
+				"wide": [
+					"π.μ.",
+					"μ.μ."
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"π.μ.",
+					"μ.μ."
+				],
+				"narrow": [
+					"π.μ.",
+					"μ.μ."
+				],
+				"wide": [
+					"π.μ.",
+					"μ.μ."
+				]
+			}
+		},
 		"era-wide": {
 			"0": "προ Χριστού",
 			"1": "μετά Χριστόν"
@@ -1427,281 +1560,411 @@
 		}
 	},
 	"ca-islamic": {
-		"dateFormat-full": "EEEE, d MMMM y G",
-		"dateFormat-long": "d MMMM y G",
-		"dateFormat-medium": "d MMM y G",
-		"dateFormat-short": "d/M/y GGGGG",
-		"timeFormat-full": "h:mm:ss a zzzz",
-		"timeFormat-long": "h:mm:ss a z",
-		"timeFormat-medium": "h:mm:ss a",
-		"timeFormat-short": "h:mm a",
-		"dateTimeFormat-full": "{1} - {0}",
-		"dateTimeFormat-long": "{1} - {0}",
-		"dateTimeFormat-medium": "{1}, {0}",
-		"dateTimeFormat-short": "{1}, {0}",
-		"intervalFormatFallback": "{0} - {1}",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "M–M",
-		"intervalFormat-Md-d": "dd/MM – dd/MM",
-		"intervalFormat-Md-M": "dd/MM – dd/MM",
-		"intervalFormat-MEd-d": "E, dd/MM – E, dd/MM",
-		"intervalFormat-MEd-M": "E, dd/MM – E, dd/MM",
-		"intervalFormat-MMM-M": "MMM–MMM",
-		"intervalFormat-MMMd-d": "dd–dd MMM",
-		"intervalFormat-MMMd-M": "dd MMM – dd MMM",
-		"intervalFormat-MMMEd-d": "E, dd – E, dd MMM",
-		"intervalFormat-MMMEd-M": "E, dd MMM – E, dd MMM",
-		"intervalFormat-y-y": "y–y G",
-		"intervalFormat-yM-M": "MM/y – MM/y GGGGG",
-		"intervalFormat-yM-y": "MM/y – MM/y GGGGG",
-		"intervalFormat-yMd-d": "dd/MM/y – dd/MM/y GGGGG",
-		"intervalFormat-yMd-M": "dd/MM/y – dd/MM/y GGGGG",
-		"intervalFormat-yMd-y": "dd/MM/y – dd/MM/y GGGGG",
-		"intervalFormat-yMEd-d": "E, dd/MM/y – E, dd/MM/y GGGGG",
-		"intervalFormat-yMEd-M": "E, dd/MM/y – E, dd/MM/y GGGGG",
-		"intervalFormat-yMEd-y": "E, dd/MM/y – E, dd/MM/y GGGGG",
-		"intervalFormat-yMMM-M": "MMM–MMM y G",
-		"intervalFormat-yMMM-y": "MMM y – MMM y G",
-		"intervalFormat-yMMMd-d": "dd–dd MMM y G",
-		"intervalFormat-yMMMd-M": "dd MMM – dd MMM y G",
-		"intervalFormat-yMMMd-y": "dd MMM y – dd MMM y G",
-		"intervalFormat-yMMMEd-d": "E, dd – E, dd MMM y G",
-		"intervalFormat-yMMMEd-M": "E, dd MMM – E, dd MMM y G",
-		"intervalFormat-yMMMEd-y": "E, dd MMM y – E, dd MMM y G",
-		"intervalFormat-yMMMM-M": "MMMM–MMMM y G",
-		"intervalFormat-yMMMM-y": "MMMM y – MMMM y G",
-		"months-format-abbreviated": [
-			"Muh.",
-			"Saf.",
-			"Rab. I",
-			"Rab. II",
-			"Jum. I",
-			"Jum. II",
-			"Raj.",
-			"Sha.",
-			"Ram.",
-			"Shaw.",
-			"Dhuʻl-Q.",
-			"Dhuʻl-H."
-		],
-		"months-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-format-wide": [
-			"Muharram",
-			"Safar",
-			"Rabiʻ I",
-			"Rabiʻ II",
-			"Jumada I",
-			"Jumada II",
-			"Rajab",
-			"Shaʻban",
-			"Ramadan",
-			"Shawwal",
-			"Dhuʻl-Qiʻdah",
-			"Dhuʻl-Hijjah"
-		],
-		"months-standAlone-abbreviated": [
-			"Muh.",
-			"Saf.",
-			"Rab. I",
-			"Rab. II",
-			"Jum. I",
-			"Jum. II",
-			"Raj.",
-			"Sha.",
-			"Ram.",
-			"Shaw.",
-			"Dhuʻl-Q.",
-			"Dhuʻl-H."
-		],
-		"months-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-standAlone-wide": [
-			"Muharram",
-			"Safar",
-			"Rabiʻ I",
-			"Rabiʻ II",
-			"Jumada I",
-			"Jumada II",
-			"Rajab",
-			"Shaʻban",
-			"Ramadan",
-			"Shawwal",
-			"Dhuʻl-Qiʻdah",
-			"Dhuʻl-Hijjah"
-		],
-		"days-format-abbreviated": [
-			"Κυρ",
-			"Δευ",
-			"Τρί",
-			"Τετ",
-			"Πέμ",
-			"Παρ",
-			"Σάβ"
-		],
-		"days-format-narrow": [
-			"Κ",
-			"Δ",
-			"Τ",
-			"Τ",
-			"Π",
-			"Π",
-			"Σ"
-		],
-		"days-format-short": [
-			"Κυ",
-			"Δε",
-			"Τρ",
-			"Τε",
-			"Πέ",
-			"Πα",
-			"Σά"
-		],
-		"days-format-wide": [
-			"Κυριακή",
-			"Δευτέρα",
-			"Τρίτη",
-			"Τετάρτη",
-			"Πέμπτη",
-			"Παρασκευή",
-			"Σάββατο"
-		],
-		"days-standAlone-abbreviated": [
-			"Κυρ",
-			"Δευ",
-			"Τρί",
-			"Τετ",
-			"Πέμ",
-			"Παρ",
-			"Σάβ"
-		],
-		"days-standAlone-narrow": [
-			"Κ",
-			"Δ",
-			"Τ",
-			"Τ",
-			"Π",
-			"Π",
-			"Σ"
-		],
-		"days-standAlone-short": [
-			"Κυ",
-			"Δε",
-			"Τρ",
-			"Τε",
-			"Πέ",
-			"Πα",
-			"Σά"
-		],
-		"days-standAlone-wide": [
-			"Κυριακή",
-			"Δευτέρα",
-			"Τρίτη",
-			"Τετάρτη",
-			"Πέμπτη",
-			"Παρασκευή",
-			"Σάββατο"
-		],
-		"quarters-format-abbreviated": [
-			"Τ1",
-			"Τ2",
-			"Τ3",
-			"Τ4"
-		],
-		"quarters-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-format-wide": [
-			"1ο τρίμηνο",
-			"2ο τρίμηνο",
-			"3ο τρίμηνο",
-			"4ο τρίμηνο"
-		],
-		"quarters-standAlone-abbreviated": [
-			"Τ1",
-			"Τ2",
-			"Τ3",
-			"Τ4"
-		],
-		"quarters-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-standAlone-wide": [
-			"1ο τρίμηνο",
-			"2ο τρίμηνο",
-			"3ο τρίμηνο",
-			"4ο τρίμηνο"
-		],
-		"dayPeriods-format-abbreviated": [
-			"π.μ.",
-			"μ.μ."
-		],
-		"dayPeriods-format-narrow": [
-			"πμ",
-			"μμ"
-		],
-		"dayPeriods-format-wide": [
-			"π.μ.",
-			"μ.μ."
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"π.μ.",
-			"μ.μ."
-		],
-		"dayPeriods-standAlone-narrow": [
-			"π.μ.",
-			"μ.μ."
-		],
-		"dayPeriods-standAlone-wide": [
-			"π.μ.",
-			"μ.μ."
-		],
+		"dateFormats": {
+			"full": "EEEE, d MMMM y G",
+			"long": "d MMMM y G",
+			"medium": "d MMM y G",
+			"short": "d/M/y GGGGG"
+		},
+		"timeFormats": {
+			"full": "h:mm:ss a zzzz",
+			"long": "h:mm:ss a z",
+			"medium": "h:mm:ss a",
+			"short": "h:mm a"
+		},
+		"dateTimeFormats": {
+			"full": "{1} - {0}",
+			"long": "{1} - {0}",
+			"medium": "{1}, {0}",
+			"short": "{1}, {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E d",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y G",
+				"GyMMM": "MMM y G",
+				"GyMMMd": "d MMM y G",
+				"GyMMMEd": "E, d MMM y G",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "L",
+				"Md": "d/M",
+				"MEd": "E, d/M",
+				"MMM": "LLL",
+				"MMMd": "d MMM",
+				"MMMEd": "E, d MMM",
+				"MMMMd": "d MMMM",
+				"MMMMEd": "E, d MMMM",
+				"ms": "mm:ss",
+				"y": "y G",
+				"yyyy": "y G",
+				"yyyyM": "M/y GGGGG",
+				"yyyyMd": "d/M/y GGGGG",
+				"yyyyMEd": "E, d/M/y GGGGG",
+				"yyyyMMM": "MMM y G",
+				"yyyyMMMd": "d MMM y G",
+				"yyyyMMMEd": "E, d MMM y G",
+				"yyyyMMMM": "MMMM y G",
+				"yyyyQQQ": "G y QQQ",
+				"yyyyQQQQ": "G y QQQQ"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} - {1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "M–M"
+				},
+				"Md": {
+					"d": "dd/MM – dd/MM",
+					"M": "dd/MM – dd/MM"
+				},
+				"MEd": {
+					"d": "E, dd/MM – E, dd/MM",
+					"M": "E, dd/MM – E, dd/MM"
+				},
+				"MMM": {
+					"M": "MMM–MMM"
+				},
+				"MMMd": {
+					"d": "dd–dd MMM",
+					"M": "dd MMM – dd MMM"
+				},
+				"MMMEd": {
+					"d": "E, dd – E, dd MMM",
+					"M": "E, dd MMM – E, dd MMM"
+				},
+				"y": {
+					"y": "y–y G"
+				},
+				"yM": {
+					"M": "MM/y – MM/y GGGGG",
+					"y": "MM/y – MM/y GGGGG"
+				},
+				"yMd": {
+					"d": "dd/MM/y – dd/MM/y GGGGG",
+					"M": "dd/MM/y – dd/MM/y GGGGG",
+					"y": "dd/MM/y – dd/MM/y GGGGG"
+				},
+				"yMEd": {
+					"d": "E, dd/MM/y – E, dd/MM/y GGGGG",
+					"M": "E, dd/MM/y – E, dd/MM/y GGGGG",
+					"y": "E, dd/MM/y – E, dd/MM/y GGGGG"
+				},
+				"yMMM": {
+					"M": "MMM–MMM y G",
+					"y": "MMM y – MMM y G"
+				},
+				"yMMMd": {
+					"d": "dd–dd MMM y G",
+					"M": "dd MMM – dd MMM y G",
+					"y": "dd MMM y – dd MMM y G"
+				},
+				"yMMMEd": {
+					"d": "E, dd – E, dd MMM y G",
+					"M": "E, dd MMM – E, dd MMM y G",
+					"y": "E, dd MMM y – E, dd MMM y G"
+				},
+				"yMMMM": {
+					"M": "MMMM–MMMM y G",
+					"y": "MMMM y – MMMM y G"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"Muh.",
+					"Saf.",
+					"Rab. I",
+					"Rab. II",
+					"Jum. I",
+					"Jum. II",
+					"Raj.",
+					"Sha.",
+					"Ram.",
+					"Shaw.",
+					"Dhuʻl-Q.",
+					"Dhuʻl-H."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"Muharram",
+					"Safar",
+					"Rabiʻ I",
+					"Rabiʻ II",
+					"Jumada I",
+					"Jumada II",
+					"Rajab",
+					"Shaʻban",
+					"Ramadan",
+					"Shawwal",
+					"Dhuʻl-Qiʻdah",
+					"Dhuʻl-Hijjah"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Muh.",
+					"Saf.",
+					"Rab. I",
+					"Rab. II",
+					"Jum. I",
+					"Jum. II",
+					"Raj.",
+					"Sha.",
+					"Ram.",
+					"Shaw.",
+					"Dhuʻl-Q.",
+					"Dhuʻl-H."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"Muharram",
+					"Safar",
+					"Rabiʻ I",
+					"Rabiʻ II",
+					"Jumada I",
+					"Jumada II",
+					"Rajab",
+					"Shaʻban",
+					"Ramadan",
+					"Shawwal",
+					"Dhuʻl-Qiʻdah",
+					"Dhuʻl-Hijjah"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"Κυρ",
+					"Δευ",
+					"Τρί",
+					"Τετ",
+					"Πέμ",
+					"Παρ",
+					"Σάβ"
+				],
+				"narrow": [
+					"Κ",
+					"Δ",
+					"Τ",
+					"Τ",
+					"Π",
+					"Π",
+					"Σ"
+				],
+				"short": [
+					"Κυ",
+					"Δε",
+					"Τρ",
+					"Τε",
+					"Πέ",
+					"Πα",
+					"Σά"
+				],
+				"wide": [
+					"Κυριακή",
+					"Δευτέρα",
+					"Τρίτη",
+					"Τετάρτη",
+					"Πέμπτη",
+					"Παρασκευή",
+					"Σάββατο"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Κυρ",
+					"Δευ",
+					"Τρί",
+					"Τετ",
+					"Πέμ",
+					"Παρ",
+					"Σάβ"
+				],
+				"narrow": [
+					"Κ",
+					"Δ",
+					"Τ",
+					"Τ",
+					"Π",
+					"Π",
+					"Σ"
+				],
+				"short": [
+					"Κυ",
+					"Δε",
+					"Τρ",
+					"Τε",
+					"Πέ",
+					"Πα",
+					"Σά"
+				],
+				"wide": [
+					"Κυριακή",
+					"Δευτέρα",
+					"Τρίτη",
+					"Τετάρτη",
+					"Πέμπτη",
+					"Παρασκευή",
+					"Σάββατο"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"Τ1",
+					"Τ2",
+					"Τ3",
+					"Τ4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1ο τρίμηνο",
+					"2ο τρίμηνο",
+					"3ο τρίμηνο",
+					"4ο τρίμηνο"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Τ1",
+					"Τ2",
+					"Τ3",
+					"Τ4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1ο τρίμηνο",
+					"2ο τρίμηνο",
+					"3ο τρίμηνο",
+					"4ο τρίμηνο"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"π.μ.",
+					"μ.μ."
+				],
+				"narrow": [
+					"πμ",
+					"μμ"
+				],
+				"wide": [
+					"π.μ.",
+					"μ.μ."
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"π.μ.",
+					"μ.μ."
+				],
+				"narrow": [
+					"π.μ.",
+					"μ.μ."
+				],
+				"wide": [
+					"π.μ.",
+					"μ.μ."
+				]
+			}
+		},
 		"era-wide": {
 			"0": "AH"
 		},
@@ -1713,281 +1976,418 @@
 		}
 	},
 	"ca-japanese": {
-		"dateFormat-full": "EEEE, d MMMM, y G",
-		"dateFormat-long": "d MMMM, y G",
-		"dateFormat-medium": "d MMM, y G",
-		"dateFormat-short": "d/M/yy",
-		"timeFormat-full": "h:mm:ss a zzzz",
-		"timeFormat-long": "h:mm:ss a z",
-		"timeFormat-medium": "h:mm:ss a",
-		"timeFormat-short": "h:mm a",
-		"dateTimeFormat-full": "{1} - {0}",
-		"dateTimeFormat-long": "{1} - {0}",
-		"dateTimeFormat-medium": "{1}, {0}",
-		"dateTimeFormat-short": "{1}, {0}",
-		"intervalFormatFallback": "{0} - {1}",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "M–M",
-		"intervalFormat-Md-d": "dd/MM – dd/MM",
-		"intervalFormat-Md-M": "dd/MM – dd/MM",
-		"intervalFormat-MEd-d": "E, dd/MM – E, dd/MM",
-		"intervalFormat-MEd-M": "E, dd/MM – E, dd/MM",
-		"intervalFormat-MMM-M": "MMM–MMM",
-		"intervalFormat-MMMd-d": "dd–dd MMM",
-		"intervalFormat-MMMd-M": "dd MMM – dd MMM",
-		"intervalFormat-MMMEd-d": "E, dd – E, dd MMM",
-		"intervalFormat-MMMEd-M": "E, dd MMM – E, dd MMM",
-		"intervalFormat-y-y": "y–y G",
-		"intervalFormat-yM-M": "MM/y – MM/y GGGGG",
-		"intervalFormat-yM-y": "MM/y – MM/y GGGGG",
-		"intervalFormat-yMd-d": "dd/MM/y – dd/MM/y GGGGG",
-		"intervalFormat-yMd-M": "dd/MM/y – dd/MM/y GGGGG",
-		"intervalFormat-yMd-y": "dd/MM/y – dd/MM/y GGGGG",
-		"intervalFormat-yMEd-d": "E, dd/MM/y – E, dd/MM/y GGGGG",
-		"intervalFormat-yMEd-M": "E, dd/MM/y – E, dd/MM/y GGGGG",
-		"intervalFormat-yMEd-y": "E, dd/MM/y – E, dd/MM/y GGGGG",
-		"intervalFormat-yMMM-M": "MMM–MMM y G",
-		"intervalFormat-yMMM-y": "MMM y – MMM y G",
-		"intervalFormat-yMMMd-d": "dd–dd MMM y G",
-		"intervalFormat-yMMMd-M": "dd MMM – dd MMM y G",
-		"intervalFormat-yMMMd-y": "dd MMM y – dd MMM y G",
-		"intervalFormat-yMMMEd-d": "E, dd – E, dd MMM y G",
-		"intervalFormat-yMMMEd-M": "E, dd MMM – E, dd MMM y G",
-		"intervalFormat-yMMMEd-y": "E, dd MMM y – E, dd MMM y G",
-		"intervalFormat-yMMMM-M": "MMMM–MMMM y G",
-		"intervalFormat-yMMMM-y": "MMMM y – MMMM y G",
-		"months-format-abbreviated": [
-			"Ιαν",
-			"Φεβ",
-			"Μαρ",
-			"Απρ",
-			"Μαΐ",
-			"Ιουν",
-			"Ιουλ",
-			"Αυγ",
-			"Σεπ",
-			"Οκτ",
-			"Νοε",
-			"Δεκ"
-		],
-		"months-format-narrow": [
-			"Ι",
-			"Φ",
-			"Μ",
-			"Α",
-			"Μ",
-			"Ι",
-			"Ι",
-			"Α",
-			"Σ",
-			"Ο",
-			"Ν",
-			"Δ"
-		],
-		"months-format-wide": [
-			"Ιανουαρίου",
-			"Φεβρουαρίου",
-			"Μαρτίου",
-			"Απριλίου",
-			"Μαΐου",
-			"Ιουνίου",
-			"Ιουλίου",
-			"Αυγούστου",
-			"Σεπτεμβρίου",
-			"Οκτωβρίου",
-			"Νοεμβρίου",
-			"Δεκεμβρίου"
-		],
-		"months-standAlone-abbreviated": [
-			"Ιαν",
-			"Φεβ",
-			"Μάρ",
-			"Απρ",
-			"Μάι",
-			"Ιούν",
-			"Ιούλ",
-			"Αύγ",
-			"Σεπ",
-			"Οκτ",
-			"Νοέ",
-			"Δεκ"
-		],
-		"months-standAlone-narrow": [
-			"Ι",
-			"Φ",
-			"Μ",
-			"Α",
-			"Μ",
-			"Ι",
-			"Ι",
-			"Α",
-			"Σ",
-			"Ο",
-			"Ν",
-			"Δ"
-		],
-		"months-standAlone-wide": [
-			"Ιανουάριος",
-			"Φεβρουάριος",
-			"Μάρτιος",
-			"Απρίλιος",
-			"Μάιος",
-			"Ιούνιος",
-			"Ιούλιος",
-			"Αύγουστος",
-			"Σεπτέμβριος",
-			"Οκτώβριος",
-			"Νοέμβριος",
-			"Δεκέμβριος"
-		],
-		"days-format-abbreviated": [
-			"Κυρ",
-			"Δευ",
-			"Τρί",
-			"Τετ",
-			"Πέμ",
-			"Παρ",
-			"Σάβ"
-		],
-		"days-format-narrow": [
-			"Κ",
-			"Δ",
-			"Τ",
-			"Τ",
-			"Π",
-			"Π",
-			"Σ"
-		],
-		"days-format-short": [
-			"Κυ",
-			"Δε",
-			"Τρ",
-			"Τε",
-			"Πέ",
-			"Πα",
-			"Σά"
-		],
-		"days-format-wide": [
-			"Κυριακή",
-			"Δευτέρα",
-			"Τρίτη",
-			"Τετάρτη",
-			"Πέμπτη",
-			"Παρασκευή",
-			"Σάββατο"
-		],
-		"days-standAlone-abbreviated": [
-			"Κυρ",
-			"Δευ",
-			"Τρί",
-			"Τετ",
-			"Πέμ",
-			"Παρ",
-			"Σάβ"
-		],
-		"days-standAlone-narrow": [
-			"Κ",
-			"Δ",
-			"Τ",
-			"Τ",
-			"Π",
-			"Π",
-			"Σ"
-		],
-		"days-standAlone-short": [
-			"Κυ",
-			"Δε",
-			"Τρ",
-			"Τε",
-			"Πέ",
-			"Πα",
-			"Σά"
-		],
-		"days-standAlone-wide": [
-			"Κυριακή",
-			"Δευτέρα",
-			"Τρίτη",
-			"Τετάρτη",
-			"Πέμπτη",
-			"Παρασκευή",
-			"Σάββατο"
-		],
-		"quarters-format-abbreviated": [
-			"Τ1",
-			"Τ2",
-			"Τ3",
-			"Τ4"
-		],
-		"quarters-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-format-wide": [
-			"1ο τρίμηνο",
-			"2ο τρίμηνο",
-			"3ο τρίμηνο",
-			"4ο τρίμηνο"
-		],
-		"quarters-standAlone-abbreviated": [
-			"Τ1",
-			"Τ2",
-			"Τ3",
-			"Τ4"
-		],
-		"quarters-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-standAlone-wide": [
-			"1ο τρίμηνο",
-			"2ο τρίμηνο",
-			"3ο τρίμηνο",
-			"4ο τρίμηνο"
-		],
-		"dayPeriods-format-abbreviated": [
-			"π.μ.",
-			"μ.μ."
-		],
-		"dayPeriods-format-narrow": [
-			"πμ",
-			"μμ"
-		],
-		"dayPeriods-format-wide": [
-			"π.μ.",
-			"μ.μ."
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"π.μ.",
-			"μ.μ."
-		],
-		"dayPeriods-standAlone-narrow": [
-			"π.μ.",
-			"μ.μ."
-		],
-		"dayPeriods-standAlone-wide": [
-			"π.μ.",
-			"μ.μ."
-		],
+		"dateFormats": {
+			"full": "EEEE, d MMMM, y G",
+			"long": "d MMMM, y G",
+			"medium": "d MMM, y G",
+			"short": "d/M/yy"
+		},
+		"timeFormats": {
+			"full": "h:mm:ss a zzzz",
+			"long": "h:mm:ss a z",
+			"medium": "h:mm:ss a",
+			"short": "h:mm a"
+		},
+		"dateTimeFormats": {
+			"full": "{1} - {0}",
+			"long": "{1} - {0}",
+			"medium": "{1}, {0}",
+			"short": "{1}, {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E d",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y G",
+				"GyMMM": "MMM y G",
+				"GyMMMd": "d MMM y G",
+				"GyMMMEd": "E, d MMM y G",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "L",
+				"Md": "d/M",
+				"MEd": "E, d/M",
+				"MMM": "LLL",
+				"MMMd": "d MMM",
+				"MMMEd": "E, d MMM",
+				"MMMMd": "d MMMM",
+				"MMMMEd": "E, d MMMM",
+				"ms": "mm:ss",
+				"y": "y G",
+				"yM": "MM/y GGGGG",
+				"yMd": "dd/MM/y GGGGG",
+				"yMEd": "E, dd/MM/y GGGGG",
+				"yMMM": "LLL y GGGGG",
+				"yMMMd": "d MMM, y G",
+				"yMMMEd": "E, d MMM, y G",
+				"yQQQ": "y GGGGG QQQ",
+				"yyyy": "y G",
+				"yyyyM": "M/y GGGGG",
+				"yyyyMd": "d/M/y GGGGG",
+				"yyyyMEd": "E, d/M/y GGGGG",
+				"yyyyMMM": "MMM y G",
+				"yyyyMMMd": "d MMM y G",
+				"yyyyMMMEd": "E, d MMM y G",
+				"yyyyMMMM": "MMMM y G",
+				"yyyyQQQ": "G y QQQ",
+				"yyyyQQQQ": "G y QQQQ"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} - {1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "M–M"
+				},
+				"Md": {
+					"d": "dd/MM – dd/MM",
+					"M": "dd/MM – dd/MM"
+				},
+				"MEd": {
+					"d": "E, dd/MM – E, dd/MM",
+					"M": "E, dd/MM – E, dd/MM"
+				},
+				"MMM": {
+					"M": "MMM–MMM"
+				},
+				"MMMd": {
+					"d": "dd–dd MMM",
+					"M": "dd MMM – dd MMM"
+				},
+				"MMMEd": {
+					"d": "E, dd – E, dd MMM",
+					"M": "E, dd MMM – E, dd MMM"
+				},
+				"y": {
+					"y": "y–y G"
+				},
+				"yM": {
+					"M": "MM/y – MM/y GGGGG",
+					"y": "MM/y – MM/y GGGGG"
+				},
+				"yMd": {
+					"d": "dd/MM/y – dd/MM/y GGGGG",
+					"M": "dd/MM/y – dd/MM/y GGGGG",
+					"y": "dd/MM/y – dd/MM/y GGGGG"
+				},
+				"yMEd": {
+					"d": "E, dd/MM/y – E, dd/MM/y GGGGG",
+					"M": "E, dd/MM/y – E, dd/MM/y GGGGG",
+					"y": "E, dd/MM/y – E, dd/MM/y GGGGG"
+				},
+				"yMMM": {
+					"M": "MMM–MMM y G",
+					"y": "MMM y – MMM y G"
+				},
+				"yMMMd": {
+					"d": "dd–dd MMM y G",
+					"M": "dd MMM – dd MMM y G",
+					"y": "dd MMM y – dd MMM y G"
+				},
+				"yMMMEd": {
+					"d": "E, dd – E, dd MMM y G",
+					"M": "E, dd MMM – E, dd MMM y G",
+					"y": "E, dd MMM y – E, dd MMM y G"
+				},
+				"yMMMM": {
+					"M": "MMMM–MMMM y G",
+					"y": "MMMM y – MMMM y G"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"Ιαν",
+					"Φεβ",
+					"Μαρ",
+					"Απρ",
+					"Μαΐ",
+					"Ιουν",
+					"Ιουλ",
+					"Αυγ",
+					"Σεπ",
+					"Οκτ",
+					"Νοε",
+					"Δεκ"
+				],
+				"narrow": [
+					"Ι",
+					"Φ",
+					"Μ",
+					"Α",
+					"Μ",
+					"Ι",
+					"Ι",
+					"Α",
+					"Σ",
+					"Ο",
+					"Ν",
+					"Δ"
+				],
+				"wide": [
+					"Ιανουαρίου",
+					"Φεβρουαρίου",
+					"Μαρτίου",
+					"Απριλίου",
+					"Μαΐου",
+					"Ιουνίου",
+					"Ιουλίου",
+					"Αυγούστου",
+					"Σεπτεμβρίου",
+					"Οκτωβρίου",
+					"Νοεμβρίου",
+					"Δεκεμβρίου"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Ιαν",
+					"Φεβ",
+					"Μάρ",
+					"Απρ",
+					"Μάι",
+					"Ιούν",
+					"Ιούλ",
+					"Αύγ",
+					"Σεπ",
+					"Οκτ",
+					"Νοέ",
+					"Δεκ"
+				],
+				"narrow": [
+					"Ι",
+					"Φ",
+					"Μ",
+					"Α",
+					"Μ",
+					"Ι",
+					"Ι",
+					"Α",
+					"Σ",
+					"Ο",
+					"Ν",
+					"Δ"
+				],
+				"wide": [
+					"Ιανουάριος",
+					"Φεβρουάριος",
+					"Μάρτιος",
+					"Απρίλιος",
+					"Μάιος",
+					"Ιούνιος",
+					"Ιούλιος",
+					"Αύγουστος",
+					"Σεπτέμβριος",
+					"Οκτώβριος",
+					"Νοέμβριος",
+					"Δεκέμβριος"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"Κυρ",
+					"Δευ",
+					"Τρί",
+					"Τετ",
+					"Πέμ",
+					"Παρ",
+					"Σάβ"
+				],
+				"narrow": [
+					"Κ",
+					"Δ",
+					"Τ",
+					"Τ",
+					"Π",
+					"Π",
+					"Σ"
+				],
+				"short": [
+					"Κυ",
+					"Δε",
+					"Τρ",
+					"Τε",
+					"Πέ",
+					"Πα",
+					"Σά"
+				],
+				"wide": [
+					"Κυριακή",
+					"Δευτέρα",
+					"Τρίτη",
+					"Τετάρτη",
+					"Πέμπτη",
+					"Παρασκευή",
+					"Σάββατο"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Κυρ",
+					"Δευ",
+					"Τρί",
+					"Τετ",
+					"Πέμ",
+					"Παρ",
+					"Σάβ"
+				],
+				"narrow": [
+					"Κ",
+					"Δ",
+					"Τ",
+					"Τ",
+					"Π",
+					"Π",
+					"Σ"
+				],
+				"short": [
+					"Κυ",
+					"Δε",
+					"Τρ",
+					"Τε",
+					"Πέ",
+					"Πα",
+					"Σά"
+				],
+				"wide": [
+					"Κυριακή",
+					"Δευτέρα",
+					"Τρίτη",
+					"Τετάρτη",
+					"Πέμπτη",
+					"Παρασκευή",
+					"Σάββατο"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"Τ1",
+					"Τ2",
+					"Τ3",
+					"Τ4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1ο τρίμηνο",
+					"2ο τρίμηνο",
+					"3ο τρίμηνο",
+					"4ο τρίμηνο"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Τ1",
+					"Τ2",
+					"Τ3",
+					"Τ4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1ο τρίμηνο",
+					"2ο τρίμηνο",
+					"3ο τρίμηνο",
+					"4ο τρίμηνο"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"π.μ.",
+					"μ.μ."
+				],
+				"narrow": [
+					"πμ",
+					"μμ"
+				],
+				"wide": [
+					"π.μ.",
+					"μ.μ."
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"π.μ.",
+					"μ.μ."
+				],
+				"narrow": [
+					"π.μ.",
+					"μ.μ."
+				],
+				"wide": [
+					"π.μ.",
+					"μ.μ."
+				]
+			}
+		},
 		"era-wide": {
 			"232": "Meiji",
 			"233": "Taishō",
@@ -2007,54 +2407,109 @@
 			"235": "H"
 		}
 	},
-	"dateField-year-displayName": "έτος",
-	"dateField-year-relative--1": "πέρσι",
-	"dateField-year-relative-0": "φέτος",
-	"dateField-year-relative-1": "επόμενο έτος",
-	"dateField-year-relative-future-one": "σε {0} έτος",
-	"dateField-year-relative-future-other": "σε {0} έτη",
-	"dateField-year-relative-past-one": "πριν από {0} έτος",
-	"dateField-year-relative-past-other": "πριν από {0} έτη",
-	"dateField-month-displayName": "μήνας",
-	"dateField-month-relative--1": "προηγούμενος μήνας",
-	"dateField-month-relative-0": "τρέχων μήνας",
-	"dateField-month-relative-1": "επόμενος μήνας",
-	"dateField-month-relative-future-one": "σε {0} μήνα",
-	"dateField-month-relative-future-other": "σε {0} μήνες",
-	"dateField-month-relative-past-one": "πριν από {0} μήνα",
-	"dateField-month-relative-past-other": "πριν από {0} μήνες",
-	"dateField-week-displayName": "εβδομάδα",
-	"dateField-week-relative--1": "προηγούμενη εβδομάδα",
-	"dateField-week-relative-0": "αυτήν την εβδομάδα",
-	"dateField-week-relative-1": "επόμενη εβδομάδα",
-	"dateField-week-relative-future-one": "σε {0} εβδομάδα",
-	"dateField-week-relative-future-other": "σε {0} εβδομάδες",
-	"dateField-week-relative-past-one": "πριν από {0} εβδομάδα",
-	"dateField-week-relative-past-other": "πριν από {0} εβδομάδες",
-	"dateField-day-displayName": "ημέρα",
-	"dateField-day-relative--1": "χθες",
-	"dateField-day-relative-0": "σήμερα",
-	"dateField-day-relative-1": "αύριο",
-	"dateField-day-relative-future-one": "σε {0} ημέρα",
-	"dateField-day-relative-future-other": "σε {0} ημέρες",
-	"dateField-day-relative-past-one": "πριν από {0} ημέρα",
-	"dateField-day-relative-past-other": "πριν από {0} ημέρες",
-	"dateField-hour-displayName": "ώρα",
-	"dateField-hour-relative-future-one": "σε {0} ώρα",
-	"dateField-hour-relative-future-other": "σε {0} ώρες",
-	"dateField-hour-relative-past-one": "πριν από {0} ώρα",
-	"dateField-hour-relative-past-other": "πριν από {0} ώρες",
-	"dateField-minute-displayName": "λεπτό",
-	"dateField-minute-relative-future-one": "σε {0} λεπτό",
-	"dateField-minute-relative-future-other": "σε {0} λεπτά",
-	"dateField-minute-relative-past-one": "πριν από {0} λεπτό",
-	"dateField-minute-relative-past-other": "πριν από {0} λεπτά",
-	"dateField-second-displayName": "δευτερόλεπτο",
-	"dateField-second-relative-0": "τώρα",
-	"dateField-second-relative-future-one": "σε {0} δευτερόλεπτο",
-	"dateField-second-relative-future-other": "σε {0} δευτερόλεπτα",
-	"dateField-second-relative-past-one": "πριν από {0} δευτερόλεπτο",
-	"dateField-second-relative-past-other": "πριν από {0} δευτερόλεπτα",
+	"dateFields": {
+		"era": {
+			"displayName": "περίοδος"
+		},
+		"year": {
+			"displayName": "έτος",
+			"relative-type--1": "πέρσι",
+			"relative-type-0": "φέτος",
+			"relative-type-1": "επόμενο έτος",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "σε {0} έτος",
+				"relativeTimePattern-count-other": "σε {0} έτη"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "πριν από {0} έτος",
+				"relativeTimePattern-count-other": "πριν από {0} έτη"
+			}
+		},
+		"month": {
+			"displayName": "μήνας",
+			"relative-type--1": "προηγούμενος μήνας",
+			"relative-type-0": "τρέχων μήνας",
+			"relative-type-1": "επόμενος μήνας",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "σε {0} μήνα",
+				"relativeTimePattern-count-other": "σε {0} μήνες"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "πριν από {0} μήνα",
+				"relativeTimePattern-count-other": "πριν από {0} μήνες"
+			}
+		},
+		"week": {
+			"displayName": "εβδομάδα",
+			"relative-type--1": "προηγούμενη εβδομάδα",
+			"relative-type-0": "αυτήν την εβδομάδα",
+			"relative-type-1": "επόμενη εβδομάδα",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "σε {0} εβδομάδα",
+				"relativeTimePattern-count-other": "σε {0} εβδομάδες"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "πριν από {0} εβδομάδα",
+				"relativeTimePattern-count-other": "πριν από {0} εβδομάδες"
+			}
+		},
+		"day": {
+			"displayName": "ημέρα",
+			"relative-type--2": "προχθές",
+			"relative-type--1": "χθες",
+			"relative-type-0": "σήμερα",
+			"relative-type-1": "αύριο",
+			"relative-type-2": "μεθαύριο",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "σε {0} ημέρα",
+				"relativeTimePattern-count-other": "σε {0} ημέρες"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "πριν από {0} ημέρα",
+				"relativeTimePattern-count-other": "πριν από {0} ημέρες"
+			}
+		},
+		"weekday": {
+			"displayName": "καθημερινή"
+		},
+		"hour": {
+			"displayName": "ώρα",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "σε {0} ώρα",
+				"relativeTimePattern-count-other": "σε {0} ώρες"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "πριν από {0} ώρα",
+				"relativeTimePattern-count-other": "πριν από {0} ώρες"
+			}
+		},
+		"minute": {
+			"displayName": "λεπτό",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "σε {0} λεπτό",
+				"relativeTimePattern-count-other": "σε {0} λεπτά"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "πριν από {0} λεπτό",
+				"relativeTimePattern-count-other": "πριν από {0} λεπτά"
+			}
+		},
+		"second": {
+			"displayName": "δευτερόλεπτο",
+			"relative-type-0": "τώρα",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "σε {0} δευτερόλεπτο",
+				"relativeTimePattern-count-other": "σε {0} δευτερόλεπτα"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "πριν από {0} δευτερόλεπτο",
+				"relativeTimePattern-count-other": "πριν από {0} δευτερόλεπτα"
+			}
+		},
+		"zone": {
+			"displayName": "ζώνη ώρας"
+		}
+	},
 	"decimalFormat": {
 		"standard": "#,##0.###"
 	},

@@ -564,7 +564,9 @@
  				});
 
  		equal(oDateTime.parse("now").getDate(), date().getDate(), "now")
-		equal(oDateTime.parse("in 3 hours").getDate(), date("hour", 3).getDate(), "Today + 3 hours");
+ 		for (var i = 1; i < 23; i++) {
+			equal(oDateTime.parse("in " + i + " hours").getDate(), date("hour", i).getDate(), "Today + " + i + " hours");
+ 		}
 		equal(oDateTime.parse("in 72 hours").getDate(), date("hour", 72).getDate(), "Today + 3 Days");
  	});
 

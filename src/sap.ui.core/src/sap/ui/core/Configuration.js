@@ -1140,7 +1140,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		getDatePattern : function(sStyle) {
 			jQuery.sap.assert(sStyle == "short" || sStyle == "medium" || sStyle == "long" || sStyle == "full", "sStyle must be short, medium, long or full");
-			return this.mSettings["dateFormat-" + sStyle];
+			return this.mSettings["dateFormats-" + sStyle];
 		},
 
 		/**
@@ -1162,7 +1162,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		setDatePattern : function(sStyle, sPattern) {
 			check(sStyle == "short" || sStyle == "medium" || sStyle == "long" || sStyle == "full", "sStyle must be short, medium, long or full");
-			this._set("dateFormat-" + sStyle, sPattern);
+			this._set("dateFormats-" + sStyle, sPattern);
 			return this;
 		},
 
@@ -1172,7 +1172,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		getTimePattern : function(sStyle) {
 			jQuery.sap.assert(sStyle == "short" || sStyle == "medium" || sStyle == "long" || sStyle == "full", "sStyle must be short, medium, long or full");
-			return this.mSettings["timeFormat-" + sStyle];
+			return this.mSettings["timeFormats-" + sStyle];
 		},
 
 		/**
@@ -1194,7 +1194,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		setTimePattern : function(sStyle, sPattern) {
 			check(sStyle == "short" || sStyle == "medium" || sStyle == "long" || sStyle == "full", "sStyle must be short, medium, long or full");
-			this._set("timeFormat-" + sStyle, sPattern);
+			this._set("timeFormats-" + sStyle, sPattern);
 			return this;
 		},
 

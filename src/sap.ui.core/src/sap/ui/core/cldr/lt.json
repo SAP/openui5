@@ -1145,292 +1145,442 @@
 	},
 	"orientation": "left-to-right",
 	"ca-gregorian": {
-		"dateFormat-full": "y 'm'. MMMM d 'd'., EEEE",
-		"dateFormat-long": "y 'm'. MMMM d 'd'.",
-		"dateFormat-medium": "y-MM-dd",
-		"dateFormat-short": "y-MM-dd",
-		"timeFormat-full": "HH:mm:ss zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} – {1}",
-		"intervalFormat-d-d": "dd–dd",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "hh–hh a",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-hm-a": "hh:mm a–hh:mm a",
-		"intervalFormat-hm-h": "hh:mm–hh:mm a",
-		"intervalFormat-hm-m": "hh:mm–hh:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "hh:mm a–hh:mm a v",
-		"intervalFormat-hmv-h": "hh:mm–hh:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "hh–hh a v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "MM–MM",
-		"intervalFormat-Md-d": "MM-dd – MM-dd",
-		"intervalFormat-Md-M": "MM-dd – MM-dd",
-		"intervalFormat-MEd-d": "MM-dd, E – MM-dd, E",
-		"intervalFormat-MEd-M": "MM-dd, E – MM-dd, E",
-		"intervalFormat-MMM-M": "LLL–LLL",
-		"intervalFormat-MMMd-d": "MMM d–d",
-		"intervalFormat-MMMd-M": "MMM d – MMM d",
-		"intervalFormat-MMMEd-d": "MMM d, E – MMM d, E",
-		"intervalFormat-MMMEd-M": "MMM d, E – MMM d, E",
-		"intervalFormat-MMMM-M": "LLLL–LLLL",
-		"intervalFormat-MMMMd-d": "MMMM d–d",
-		"intervalFormat-MMMMd-M": "MMMM d – MMMM d",
-		"intervalFormat-MMMMEd-d": "MMMM d, E – MMMM d, E",
-		"intervalFormat-MMMMEd-M": "MMMM d, E – MMMM d, E",
-		"intervalFormat-y-y": "y–y",
-		"intervalFormat-yM-M": "y-MM – y-MM",
-		"intervalFormat-yM-y": "y-MM – y-MM",
-		"intervalFormat-yMd-d": "y-MM-dd – y-MM-dd",
-		"intervalFormat-yMd-M": "y-MM-dd – y-MM-dd",
-		"intervalFormat-yMd-y": "y-MM-dd – y-MM-dd",
-		"intervalFormat-yMEd-d": "y-MM-dd, E – y-MM-dd, E",
-		"intervalFormat-yMEd-M": "y-MM-dd, E – y-MM-dd, E",
-		"intervalFormat-yMEd-y": "y-MM-dd, E – y-MM-dd, E",
-		"intervalFormat-yMMM-M": "y MMM–MMM",
-		"intervalFormat-yMMM-y": "y MMM – y MMM",
-		"intervalFormat-yMMMd-d": "y MMM d–d",
-		"intervalFormat-yMMMd-M": "y MMM d – MMM d",
-		"intervalFormat-yMMMd-y": "y MMM d – y MMM d",
-		"intervalFormat-yMMMEd-d": "y MMM d, E – MMM d, E",
-		"intervalFormat-yMMMEd-M": "y MMM d, E – MMM d, E",
-		"intervalFormat-yMMMEd-y": "y MMM d, E – y MMM d, E",
-		"intervalFormat-yMMMM-M": "y LLLL–LLLL",
-		"intervalFormat-yMMMM-y": "y LLLL – y LLLL",
-		"intervalFormat-yMMMMd-d": "y MMMM d–d",
-		"intervalFormat-yMMMMd-M": "y MMMM d – MMMM d",
-		"intervalFormat-yMMMMd-y": "y MMMM d – y MMMM d",
-		"intervalFormat-yMMMMEd-d": "y MMMM d, E – MMMM d, E",
-		"intervalFormat-yMMMMEd-M": "y MMMM d, E. – MMMM d, E.",
-		"intervalFormat-yMMMMEd-y": "y MMMM d, E. – y MMMM d, E.",
-		"months-format-abbreviated": [
-			"saus.",
-			"vas.",
-			"kov.",
-			"bal.",
-			"geg.",
-			"birž.",
-			"liep.",
-			"rugp.",
-			"rugs.",
-			"spal.",
-			"lapkr.",
-			"gruod."
-		],
-		"months-format-narrow": [
-			"S",
-			"V",
-			"K",
-			"B",
-			"G",
-			"B",
-			"L",
-			"R",
-			"R",
-			"S",
-			"L",
-			"G"
-		],
-		"months-format-wide": [
-			"sausio",
-			"vasario",
-			"kovo",
-			"balandžio",
-			"gegužės",
-			"birželio",
-			"liepos",
-			"rugpjūčio",
-			"rugsėjo",
-			"spalio",
-			"lapkričio",
-			"gruodžio"
-		],
-		"months-standAlone-abbreviated": [
-			"saus.",
-			"vas.",
-			"kov.",
-			"bal.",
-			"geg.",
-			"birž.",
-			"liep.",
-			"rugp.",
-			"rugs.",
-			"spal.",
-			"lapkr.",
-			"gruod."
-		],
-		"months-standAlone-narrow": [
-			"S",
-			"V",
-			"K",
-			"B",
-			"G",
-			"B",
-			"L",
-			"R",
-			"R",
-			"S",
-			"L",
-			"G"
-		],
-		"months-standAlone-wide": [
-			"sausis",
-			"vasaris",
-			"kovas",
-			"balandis",
-			"gegužė",
-			"birželis",
-			"liepa",
-			"rugpjūtis",
-			"rugsėjis",
-			"spalis",
-			"lapkritis",
-			"gruodis"
-		],
-		"days-format-abbreviated": [
-			"sk",
-			"pr",
-			"an",
-			"tr",
-			"kt",
-			"pn",
-			"št"
-		],
-		"days-format-narrow": [
-			"S",
-			"P",
-			"A",
-			"T",
-			"K",
-			"P",
-			"Š"
-		],
-		"days-format-short": [
-			"Sk",
-			"Pr",
-			"An",
-			"Tr",
-			"Kt",
-			"Pn",
-			"Št"
-		],
-		"days-format-wide": [
-			"sekmadienis",
-			"pirmadienis",
-			"antradienis",
-			"trečiadienis",
-			"ketvirtadienis",
-			"penktadienis",
-			"šeštadienis"
-		],
-		"days-standAlone-abbreviated": [
-			"sk",
-			"pr",
-			"an",
-			"tr",
-			"kt",
-			"pn",
-			"št"
-		],
-		"days-standAlone-narrow": [
-			"S",
-			"P",
-			"A",
-			"T",
-			"K",
-			"P",
-			"Š"
-		],
-		"days-standAlone-short": [
-			"Sk",
-			"Pr",
-			"An",
-			"Tr",
-			"Kt",
-			"Pn",
-			"Št"
-		],
-		"days-standAlone-wide": [
-			"sekmadienis",
-			"pirmadienis",
-			"antradienis",
-			"trečiadienis",
-			"ketvirtadienis",
-			"penktadienis",
-			"šeštadienis"
-		],
-		"quarters-format-abbreviated": [
-			"I k.",
-			"II k.",
-			"III k.",
-			"IV k."
-		],
-		"quarters-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-format-wide": [
-			"I ketvirtis",
-			"II ketvirtis",
-			"III ketvirtis",
-			"IV ketvirtis"
-		],
-		"quarters-standAlone-abbreviated": [
-			"I ketv.",
-			"II ketv.",
-			"III ketv.",
-			"IV ketv."
-		],
-		"quarters-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-standAlone-wide": [
-			"I ketvirtis",
-			"II ketvirtis",
-			"III ketvirtis",
-			"IV ketvirtis"
-		],
-		"dayPeriods-format-abbreviated": [
-			"priešpiet",
-			"popiet"
-		],
-		"dayPeriods-format-narrow": [
-			"pr. p.",
-			"pop."
-		],
-		"dayPeriods-format-wide": [
-			"priešpiet",
-			"popiet"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"priešpiet",
-			"popiet"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"pr. p.",
-			"pop."
-		],
-		"dayPeriods-standAlone-wide": [
-			"priešpiet",
-			"popiet"
-		],
+		"dateFormats": {
+			"full": "y 'm'. MMMM d 'd'., EEEE",
+			"long": "y 'm'. MMMM d 'd'.",
+			"medium": "y-MM-dd",
+			"short": "y-MM-dd"
+		},
+		"timeFormats": {
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1} {0}",
+			"long": "{1} {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "dd",
+				"E": "ccc",
+				"Ed": "d, E",
+				"Ehm": "hh:mm a, E",
+				"EHm": "HH:mm, E",
+				"Ehms": "hh:mm:ss a, E",
+				"EHms": "HH:mm:ss, E",
+				"Gy": "y 'm'. G",
+				"GyMMM": "y-MM G",
+				"GyMMMd": "y-MM-dd G",
+				"GyMMMEd": "y-MM-dd G, E",
+				"GyMMMM": "y 'm'. G, LLLL",
+				"GyMMMMd": "y 'm'. G MMMM d 'd'.",
+				"GyMMMMEd": "y 'm'. G MMMM d 'd'., E",
+				"h": "hh a",
+				"H": "HH",
+				"hm": "hh:mm a",
+				"Hm": "HH:mm",
+				"hms": "hh:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"hmsv": "hh:mm:ss a; v",
+				"Hmsv": "HH:mm:ss; v",
+				"hmv": "hh:mm a; v",
+				"Hmv": "HH:mm; v",
+				"M": "MM",
+				"Md": "MM-d",
+				"MEd": "MM-dd, E",
+				"MMdd": "MM-dd",
+				"MMM": "MM",
+				"MMMd": "MM-dd",
+				"MMMEd": "MM-dd, E",
+				"MMMM": "LLLL",
+				"MMMMd": "MMMM d 'd'.",
+				"MMMMEd": "MMMM d 'd'., E",
+				"ms": "mm:ss",
+				"y": "y",
+				"yM": "y-MM",
+				"yMd": "y-MM-dd",
+				"yMEd": "y-MM-dd, E",
+				"yMMM": "y-MM",
+				"yMMMd": "y-MM-dd",
+				"yMMMEd": "y-MM-dd, E",
+				"yMMMM": "y 'm'. LLLL",
+				"yMMMMd": "y 'm'. MMMM d 'd'.",
+				"yMMMMEd": "y 'm'. MMMM d 'd'., E",
+				"yQQQ": "y QQQ",
+				"yQQQQ": "y QQQQ"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} – {1}",
+				"d": {
+					"d": "dd–dd"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "hh–hh a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "hh:mm a–hh:mm a",
+					"h": "hh:mm–hh:mm a",
+					"m": "hh:mm–hh:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "hh:mm a–hh:mm a v",
+					"h": "hh:mm–hh:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "hh–hh a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "MM–MM"
+				},
+				"Md": {
+					"d": "MM-dd – MM-dd",
+					"M": "MM-dd – MM-dd"
+				},
+				"MEd": {
+					"d": "MM-dd, E – MM-dd, E",
+					"M": "MM-dd, E – MM-dd, E"
+				},
+				"MMM": {
+					"M": "LLL–LLL"
+				},
+				"MMMd": {
+					"d": "MMM d–d",
+					"M": "MMM d – MMM d"
+				},
+				"MMMEd": {
+					"d": "MMM d, E – MMM d, E",
+					"M": "MMM d, E – MMM d, E"
+				},
+				"MMMM": {
+					"M": "LLLL–LLLL"
+				},
+				"MMMMd": {
+					"d": "MMMM d–d",
+					"M": "MMMM d – MMMM d"
+				},
+				"MMMMEd": {
+					"d": "MMMM d, E – MMMM d, E",
+					"M": "MMMM d, E – MMMM d, E"
+				},
+				"y": {
+					"y": "y–y"
+				},
+				"yM": {
+					"M": "y-MM – y-MM",
+					"y": "y-MM – y-MM"
+				},
+				"yMd": {
+					"d": "y-MM-dd – y-MM-dd",
+					"M": "y-MM-dd – y-MM-dd",
+					"y": "y-MM-dd – y-MM-dd"
+				},
+				"yMEd": {
+					"d": "y-MM-dd, E – y-MM-dd, E",
+					"M": "y-MM-dd, E – y-MM-dd, E",
+					"y": "y-MM-dd, E – y-MM-dd, E"
+				},
+				"yMMM": {
+					"M": "y MMM–MMM",
+					"y": "y MMM – y MMM"
+				},
+				"yMMMd": {
+					"d": "y MMM d–d",
+					"M": "y MMM d – MMM d",
+					"y": "y MMM d – y MMM d"
+				},
+				"yMMMEd": {
+					"d": "y MMM d, E – MMM d, E",
+					"M": "y MMM d, E – MMM d, E",
+					"y": "y MMM d, E – y MMM d, E"
+				},
+				"yMMMM": {
+					"M": "y LLLL–LLLL",
+					"y": "y LLLL – y LLLL"
+				},
+				"yMMMMd": {
+					"d": "y MMMM d–d",
+					"M": "y MMMM d – MMMM d",
+					"y": "y MMMM d – y MMMM d"
+				},
+				"yMMMMEd": {
+					"d": "y MMMM d, E – MMMM d, E",
+					"M": "y MMMM d, E. – MMMM d, E.",
+					"y": "y MMMM d, E. – y MMMM d, E."
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"saus.",
+					"vas.",
+					"kov.",
+					"bal.",
+					"geg.",
+					"birž.",
+					"liep.",
+					"rugp.",
+					"rugs.",
+					"spal.",
+					"lapkr.",
+					"gruod."
+				],
+				"narrow": [
+					"S",
+					"V",
+					"K",
+					"B",
+					"G",
+					"B",
+					"L",
+					"R",
+					"R",
+					"S",
+					"L",
+					"G"
+				],
+				"wide": [
+					"sausio",
+					"vasario",
+					"kovo",
+					"balandžio",
+					"gegužės",
+					"birželio",
+					"liepos",
+					"rugpjūčio",
+					"rugsėjo",
+					"spalio",
+					"lapkričio",
+					"gruodžio"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"saus.",
+					"vas.",
+					"kov.",
+					"bal.",
+					"geg.",
+					"birž.",
+					"liep.",
+					"rugp.",
+					"rugs.",
+					"spal.",
+					"lapkr.",
+					"gruod."
+				],
+				"narrow": [
+					"S",
+					"V",
+					"K",
+					"B",
+					"G",
+					"B",
+					"L",
+					"R",
+					"R",
+					"S",
+					"L",
+					"G"
+				],
+				"wide": [
+					"sausis",
+					"vasaris",
+					"kovas",
+					"balandis",
+					"gegužė",
+					"birželis",
+					"liepa",
+					"rugpjūtis",
+					"rugsėjis",
+					"spalis",
+					"lapkritis",
+					"gruodis"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"sk",
+					"pr",
+					"an",
+					"tr",
+					"kt",
+					"pn",
+					"št"
+				],
+				"narrow": [
+					"S",
+					"P",
+					"A",
+					"T",
+					"K",
+					"P",
+					"Š"
+				],
+				"short": [
+					"Sk",
+					"Pr",
+					"An",
+					"Tr",
+					"Kt",
+					"Pn",
+					"Št"
+				],
+				"wide": [
+					"sekmadienis",
+					"pirmadienis",
+					"antradienis",
+					"trečiadienis",
+					"ketvirtadienis",
+					"penktadienis",
+					"šeštadienis"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"sk",
+					"pr",
+					"an",
+					"tr",
+					"kt",
+					"pn",
+					"št"
+				],
+				"narrow": [
+					"S",
+					"P",
+					"A",
+					"T",
+					"K",
+					"P",
+					"Š"
+				],
+				"short": [
+					"Sk",
+					"Pr",
+					"An",
+					"Tr",
+					"Kt",
+					"Pn",
+					"Št"
+				],
+				"wide": [
+					"sekmadienis",
+					"pirmadienis",
+					"antradienis",
+					"trečiadienis",
+					"ketvirtadienis",
+					"penktadienis",
+					"šeštadienis"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"I k.",
+					"II k.",
+					"III k.",
+					"IV k."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"I ketvirtis",
+					"II ketvirtis",
+					"III ketvirtis",
+					"IV ketvirtis"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"I ketv.",
+					"II ketv.",
+					"III ketv.",
+					"IV ketv."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"I ketvirtis",
+					"II ketvirtis",
+					"III ketvirtis",
+					"IV ketvirtis"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"priešpiet",
+					"popiet"
+				],
+				"narrow": [
+					"pr. p.",
+					"pop."
+				],
+				"wide": [
+					"priešpiet",
+					"popiet"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"priešpiet",
+					"popiet"
+				],
+				"narrow": [
+					"pr. p.",
+					"pop."
+				],
+				"wide": [
+					"priešpiet",
+					"popiet"
+				]
+			}
+		},
 		"era-wide": {
 			"0": "prieš Kristų",
 			"1": "po Kristaus"
@@ -1445,281 +1595,411 @@
 		}
 	},
 	"ca-islamic": {
-		"dateFormat-full": "y MMMM d G, EEEE",
-		"dateFormat-long": "y MMMM d G",
-		"dateFormat-medium": "y MMM d G",
-		"dateFormat-short": "y-MM-dd G",
-		"timeFormat-full": "HH:mm:ss zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} – {1}",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a–h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-hm-a": "hh:mm a–hh:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "hh:mm a–hh:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-hv-a": "h a–h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "M–M",
-		"intervalFormat-Md-d": "MM-dd–MM-dd",
-		"intervalFormat-Md-M": "MM-dd–MM-dd",
-		"intervalFormat-MEd-d": "MM-dd, E – MM-dd, E",
-		"intervalFormat-MEd-M": "MM-dd, E – MM-dd, E",
-		"intervalFormat-MMM-M": "MMM–MMM",
-		"intervalFormat-MMMd-d": "MMM d–d",
-		"intervalFormat-MMMd-M": "MMM d–MMM d",
-		"intervalFormat-MMMEd-d": "MMM d, E – MMM d, E",
-		"intervalFormat-MMMEd-M": "MMM d, E – MMM d, E",
-		"intervalFormat-y-y": "y–y G",
-		"intervalFormat-yM-M": "y-MM – y-MM G",
-		"intervalFormat-yM-y": "y-MM – y-MM G",
-		"intervalFormat-yMd-d": "y-MM-dd–y-MM-dd G",
-		"intervalFormat-yMd-M": "y-MM-dd– y-MM-dd G",
-		"intervalFormat-yMd-y": "y-MM-dd – y-MM-dd G",
-		"intervalFormat-yMEd-d": "y-MM-dd G, E – y-MM-dd G, E",
-		"intervalFormat-yMEd-M": "y-MM-dd G, E – y-MM-dd G, E",
-		"intervalFormat-yMEd-y": "y-MM-dd G, E – y-MM-dd G, E",
-		"intervalFormat-yMMM-M": "y MMM–MMM G",
-		"intervalFormat-yMMM-y": "y-MM – y-MM G",
-		"intervalFormat-yMMMd-d": "y 'm'. MMM d 'd'.–d 'd'. G",
-		"intervalFormat-yMMMd-M": "y-MM-dd – MM-d G",
-		"intervalFormat-yMMMd-y": "y-MM-dd – y-MM-dd G",
-		"intervalFormat-yMMMEd-d": "y-MM-dd G, E – y-MM-dd G, E",
-		"intervalFormat-yMMMEd-M": "y-MM-dd G, E – y-MM-dd G, E",
-		"intervalFormat-yMMMEd-y": "y-MM-dd G, E – y-MM-dd G, E",
-		"intervalFormat-yMMMM-M": "y LLLL – y LLLL G",
-		"intervalFormat-yMMMM-y": "y LLLL – y LLLL G",
-		"months-format-abbreviated": [
-			"Muh.",
-			"Saf.",
-			"Rab. I",
-			"Rab. II",
-			"Jum. I",
-			"Jum. II",
-			"Raj.",
-			"Sha.",
-			"Ram.",
-			"Shaw.",
-			"Dhuʻl-Q.",
-			"Dhuʻl-H."
-		],
-		"months-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-format-wide": [
-			"Muharram",
-			"Safar",
-			"Rabiʻ I",
-			"Rabiʻ II",
-			"Jumada I",
-			"Jumada II",
-			"Rajab",
-			"Shaʻban",
-			"Ramadan",
-			"Shawwal",
-			"Dhuʻl-Qiʻdah",
-			"Dhuʻl-Hijjah"
-		],
-		"months-standAlone-abbreviated": [
-			"Muh.",
-			"Saf.",
-			"Rab. I",
-			"Rab. II",
-			"Jum. I",
-			"Jum. II",
-			"Raj.",
-			"Sha.",
-			"Ram.",
-			"Shaw.",
-			"Dhuʻl-Q.",
-			"Dhuʻl-H."
-		],
-		"months-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-standAlone-wide": [
-			"Muharram",
-			"Safar",
-			"Rabiʻ I",
-			"Rabiʻ II",
-			"Jumada I",
-			"Jumada II",
-			"Rajab",
-			"Shaʻban",
-			"Ramadan",
-			"Shawwal",
-			"Dhuʻl-Qiʻdah",
-			"Dhuʻl-Hijjah"
-		],
-		"days-format-abbreviated": [
-			"sk",
-			"pr",
-			"an",
-			"tr",
-			"kt",
-			"pn",
-			"št"
-		],
-		"days-format-narrow": [
-			"S",
-			"P",
-			"A",
-			"T",
-			"K",
-			"P",
-			"Š"
-		],
-		"days-format-short": [
-			"Sk",
-			"Pr",
-			"An",
-			"Tr",
-			"Kt",
-			"Pn",
-			"Št"
-		],
-		"days-format-wide": [
-			"sekmadienis",
-			"pirmadienis",
-			"antradienis",
-			"trečiadienis",
-			"ketvirtadienis",
-			"penktadienis",
-			"šeštadienis"
-		],
-		"days-standAlone-abbreviated": [
-			"sk",
-			"pr",
-			"an",
-			"tr",
-			"kt",
-			"pn",
-			"št"
-		],
-		"days-standAlone-narrow": [
-			"S",
-			"P",
-			"A",
-			"T",
-			"K",
-			"P",
-			"Š"
-		],
-		"days-standAlone-short": [
-			"Sk",
-			"Pr",
-			"An",
-			"Tr",
-			"Kt",
-			"Pn",
-			"Št"
-		],
-		"days-standAlone-wide": [
-			"sekmadienis",
-			"pirmadienis",
-			"antradienis",
-			"trečiadienis",
-			"ketvirtadienis",
-			"penktadienis",
-			"šeštadienis"
-		],
-		"quarters-format-abbreviated": [
-			"I k.",
-			"II k.",
-			"III k.",
-			"IV k."
-		],
-		"quarters-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-format-wide": [
-			"I ketvirtis",
-			"II ketvirtis",
-			"III ketvirtis",
-			"IV ketvirtis"
-		],
-		"quarters-standAlone-abbreviated": [
-			"I ketv.",
-			"II ketv.",
-			"III ketv.",
-			"IV ketv."
-		],
-		"quarters-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-standAlone-wide": [
-			"I ketvirtis",
-			"II ketvirtis",
-			"III ketvirtis",
-			"IV ketvirtis"
-		],
-		"dayPeriods-format-abbreviated": [
-			"priešpiet",
-			"popiet"
-		],
-		"dayPeriods-format-narrow": [
-			"pr. p.",
-			"pop."
-		],
-		"dayPeriods-format-wide": [
-			"priešpiet",
-			"popiet"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"priešpiet",
-			"popiet"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"pr. p.",
-			"pop."
-		],
-		"dayPeriods-standAlone-wide": [
-			"priešpiet",
-			"popiet"
-		],
+		"dateFormats": {
+			"full": "y MMMM d G, EEEE",
+			"long": "y MMMM d G",
+			"medium": "y MMM d G",
+			"short": "y-MM-dd G"
+		},
+		"timeFormats": {
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1} {0}",
+			"long": "{1} {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "d, E",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y G",
+				"GyMMM": "y MMM G",
+				"GyMMMd": "y MMM d G",
+				"GyMMMEd": "y MMM d G, E",
+				"h": "hh a",
+				"H": "HH",
+				"hm": "hh:mm a",
+				"Hm": "HH:mm",
+				"hms": "hh:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "LL",
+				"Md": "MM-dd",
+				"MEd": "MM-dd, E",
+				"MMdd": "MM.dd",
+				"MMM": "LLL",
+				"MMMd": "MMM-d",
+				"MMMEd": "MMM-d, E",
+				"MMMMd": "MMMM d",
+				"ms": "mm:ss",
+				"y": "y G",
+				"yyyy": "y G",
+				"yyyyM": "y MM G",
+				"yyyyMd": "y-MM-dd G",
+				"yyyyMEd": "y-MM-dd G, E",
+				"yyyyMMM": "y MMM G",
+				"yyyyMMMd": "y MMM d G",
+				"yyyyMMMEd": "y MMM d G, E",
+				"yyyyMMMM": "G y MMMM",
+				"yyyyQQQ": "y G QQQ",
+				"yyyyQQQQ": "y G QQQQ"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} – {1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h a–h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "hh:mm a–hh:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "hh:mm a–hh:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a–h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "M–M"
+				},
+				"Md": {
+					"d": "MM-dd–MM-dd",
+					"M": "MM-dd–MM-dd"
+				},
+				"MEd": {
+					"d": "MM-dd, E – MM-dd, E",
+					"M": "MM-dd, E – MM-dd, E"
+				},
+				"MMM": {
+					"M": "MMM–MMM"
+				},
+				"MMMd": {
+					"d": "MMM d–d",
+					"M": "MMM d–MMM d"
+				},
+				"MMMEd": {
+					"d": "MMM d, E – MMM d, E",
+					"M": "MMM d, E – MMM d, E"
+				},
+				"y": {
+					"y": "y–y G"
+				},
+				"yM": {
+					"M": "y-MM – y-MM G",
+					"y": "y-MM – y-MM G"
+				},
+				"yMd": {
+					"d": "y-MM-dd–y-MM-dd G",
+					"M": "y-MM-dd– y-MM-dd G",
+					"y": "y-MM-dd – y-MM-dd G"
+				},
+				"yMEd": {
+					"d": "y-MM-dd G, E – y-MM-dd G, E",
+					"M": "y-MM-dd G, E – y-MM-dd G, E",
+					"y": "y-MM-dd G, E – y-MM-dd G, E"
+				},
+				"yMMM": {
+					"M": "y MMM–MMM G",
+					"y": "y-MM – y-MM G"
+				},
+				"yMMMd": {
+					"d": "y 'm'. MMM d 'd'.–d 'd'. G",
+					"M": "y-MM-dd – MM-d G",
+					"y": "y-MM-dd – y-MM-dd G"
+				},
+				"yMMMEd": {
+					"d": "y-MM-dd G, E – y-MM-dd G, E",
+					"M": "y-MM-dd G, E – y-MM-dd G, E",
+					"y": "y-MM-dd G, E – y-MM-dd G, E"
+				},
+				"yMMMM": {
+					"M": "y LLLL – y LLLL G",
+					"y": "y LLLL – y LLLL G"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"Muh.",
+					"Saf.",
+					"Rab. I",
+					"Rab. II",
+					"Jum. I",
+					"Jum. II",
+					"Raj.",
+					"Sha.",
+					"Ram.",
+					"Shaw.",
+					"Dhuʻl-Q.",
+					"Dhuʻl-H."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"Muharram",
+					"Safar",
+					"Rabiʻ I",
+					"Rabiʻ II",
+					"Jumada I",
+					"Jumada II",
+					"Rajab",
+					"Shaʻban",
+					"Ramadan",
+					"Shawwal",
+					"Dhuʻl-Qiʻdah",
+					"Dhuʻl-Hijjah"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Muh.",
+					"Saf.",
+					"Rab. I",
+					"Rab. II",
+					"Jum. I",
+					"Jum. II",
+					"Raj.",
+					"Sha.",
+					"Ram.",
+					"Shaw.",
+					"Dhuʻl-Q.",
+					"Dhuʻl-H."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"Muharram",
+					"Safar",
+					"Rabiʻ I",
+					"Rabiʻ II",
+					"Jumada I",
+					"Jumada II",
+					"Rajab",
+					"Shaʻban",
+					"Ramadan",
+					"Shawwal",
+					"Dhuʻl-Qiʻdah",
+					"Dhuʻl-Hijjah"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"sk",
+					"pr",
+					"an",
+					"tr",
+					"kt",
+					"pn",
+					"št"
+				],
+				"narrow": [
+					"S",
+					"P",
+					"A",
+					"T",
+					"K",
+					"P",
+					"Š"
+				],
+				"short": [
+					"Sk",
+					"Pr",
+					"An",
+					"Tr",
+					"Kt",
+					"Pn",
+					"Št"
+				],
+				"wide": [
+					"sekmadienis",
+					"pirmadienis",
+					"antradienis",
+					"trečiadienis",
+					"ketvirtadienis",
+					"penktadienis",
+					"šeštadienis"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"sk",
+					"pr",
+					"an",
+					"tr",
+					"kt",
+					"pn",
+					"št"
+				],
+				"narrow": [
+					"S",
+					"P",
+					"A",
+					"T",
+					"K",
+					"P",
+					"Š"
+				],
+				"short": [
+					"Sk",
+					"Pr",
+					"An",
+					"Tr",
+					"Kt",
+					"Pn",
+					"Št"
+				],
+				"wide": [
+					"sekmadienis",
+					"pirmadienis",
+					"antradienis",
+					"trečiadienis",
+					"ketvirtadienis",
+					"penktadienis",
+					"šeštadienis"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"I k.",
+					"II k.",
+					"III k.",
+					"IV k."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"I ketvirtis",
+					"II ketvirtis",
+					"III ketvirtis",
+					"IV ketvirtis"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"I ketv.",
+					"II ketv.",
+					"III ketv.",
+					"IV ketv."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"I ketvirtis",
+					"II ketvirtis",
+					"III ketvirtis",
+					"IV ketvirtis"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"priešpiet",
+					"popiet"
+				],
+				"narrow": [
+					"pr. p.",
+					"pop."
+				],
+				"wide": [
+					"priešpiet",
+					"popiet"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"priešpiet",
+					"popiet"
+				],
+				"narrow": [
+					"pr. p.",
+					"pop."
+				],
+				"wide": [
+					"priešpiet",
+					"popiet"
+				]
+			}
+		},
 		"era-wide": {
 			"0": "AH"
 		},
@@ -1731,281 +2011,411 @@
 		}
 	},
 	"ca-japanese": {
-		"dateFormat-full": "y MMMM d G, EEEE",
-		"dateFormat-long": "y MMMM d G",
-		"dateFormat-medium": "y MMM d G",
-		"dateFormat-short": "y-MM-dd G",
-		"timeFormat-full": "HH:mm:ss zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} – {1}",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a–h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-hm-a": "hh:mm a–hh:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "hh:mm a–hh:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-hv-a": "h a–h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "M–M",
-		"intervalFormat-Md-d": "MM-dd–MM-dd",
-		"intervalFormat-Md-M": "MM-dd–MM-dd",
-		"intervalFormat-MEd-d": "MM-dd, E – MM-dd, E",
-		"intervalFormat-MEd-M": "MM-dd, E – MM-dd, E",
-		"intervalFormat-MMM-M": "MMM–MMM",
-		"intervalFormat-MMMd-d": "MMM d–d",
-		"intervalFormat-MMMd-M": "MMM d–MMM d",
-		"intervalFormat-MMMEd-d": "MMM d, E – MMM d, E",
-		"intervalFormat-MMMEd-M": "MMM d, E – MMM d, E",
-		"intervalFormat-y-y": "y–y G",
-		"intervalFormat-yM-M": "y-MM – y-MM G",
-		"intervalFormat-yM-y": "y-MM – y-MM G",
-		"intervalFormat-yMd-d": "y-MM-dd–y-MM-dd G",
-		"intervalFormat-yMd-M": "y-MM-dd– y-MM-dd G",
-		"intervalFormat-yMd-y": "y-MM-dd – y-MM-dd G",
-		"intervalFormat-yMEd-d": "y-MM-dd G, E – y-MM-dd G, E",
-		"intervalFormat-yMEd-M": "y-MM-dd G, E – y-MM-dd G, E",
-		"intervalFormat-yMEd-y": "y-MM-dd G, E – y-MM-dd G, E",
-		"intervalFormat-yMMM-M": "y MMM–MMM G",
-		"intervalFormat-yMMM-y": "y-MM – y-MM G",
-		"intervalFormat-yMMMd-d": "y 'm'. MMM d 'd'.–d 'd'. G",
-		"intervalFormat-yMMMd-M": "y-MM-dd – MM-d G",
-		"intervalFormat-yMMMd-y": "y-MM-dd – y-MM-dd G",
-		"intervalFormat-yMMMEd-d": "y-MM-dd G, E – y-MM-dd G, E",
-		"intervalFormat-yMMMEd-M": "y-MM-dd G, E – y-MM-dd G, E",
-		"intervalFormat-yMMMEd-y": "y-MM-dd G, E – y-MM-dd G, E",
-		"intervalFormat-yMMMM-M": "y LLLL – y LLLL G",
-		"intervalFormat-yMMMM-y": "y LLLL – y LLLL G",
-		"months-format-abbreviated": [
-			"saus.",
-			"vas.",
-			"kov.",
-			"bal.",
-			"geg.",
-			"birž.",
-			"liep.",
-			"rugp.",
-			"rugs.",
-			"spal.",
-			"lapkr.",
-			"gruod."
-		],
-		"months-format-narrow": [
-			"S",
-			"V",
-			"K",
-			"B",
-			"G",
-			"B",
-			"L",
-			"R",
-			"R",
-			"S",
-			"L",
-			"G"
-		],
-		"months-format-wide": [
-			"sausio",
-			"vasario",
-			"kovo",
-			"balandžio",
-			"gegužės",
-			"birželio",
-			"liepos",
-			"rugpjūčio",
-			"rugsėjo",
-			"spalio",
-			"lapkričio",
-			"gruodžio"
-		],
-		"months-standAlone-abbreviated": [
-			"saus.",
-			"vas.",
-			"kov.",
-			"bal.",
-			"geg.",
-			"birž.",
-			"liep.",
-			"rugp.",
-			"rugs.",
-			"spal.",
-			"lapkr.",
-			"gruod."
-		],
-		"months-standAlone-narrow": [
-			"S",
-			"V",
-			"K",
-			"B",
-			"G",
-			"B",
-			"L",
-			"R",
-			"R",
-			"S",
-			"L",
-			"G"
-		],
-		"months-standAlone-wide": [
-			"sausis",
-			"vasaris",
-			"kovas",
-			"balandis",
-			"gegužė",
-			"birželis",
-			"liepa",
-			"rugpjūtis",
-			"rugsėjis",
-			"spalis",
-			"lapkritis",
-			"gruodis"
-		],
-		"days-format-abbreviated": [
-			"sk",
-			"pr",
-			"an",
-			"tr",
-			"kt",
-			"pn",
-			"št"
-		],
-		"days-format-narrow": [
-			"S",
-			"P",
-			"A",
-			"T",
-			"K",
-			"P",
-			"Š"
-		],
-		"days-format-short": [
-			"Sk",
-			"Pr",
-			"An",
-			"Tr",
-			"Kt",
-			"Pn",
-			"Št"
-		],
-		"days-format-wide": [
-			"sekmadienis",
-			"pirmadienis",
-			"antradienis",
-			"trečiadienis",
-			"ketvirtadienis",
-			"penktadienis",
-			"šeštadienis"
-		],
-		"days-standAlone-abbreviated": [
-			"sk",
-			"pr",
-			"an",
-			"tr",
-			"kt",
-			"pn",
-			"št"
-		],
-		"days-standAlone-narrow": [
-			"S",
-			"P",
-			"A",
-			"T",
-			"K",
-			"P",
-			"Š"
-		],
-		"days-standAlone-short": [
-			"Sk",
-			"Pr",
-			"An",
-			"Tr",
-			"Kt",
-			"Pn",
-			"Št"
-		],
-		"days-standAlone-wide": [
-			"sekmadienis",
-			"pirmadienis",
-			"antradienis",
-			"trečiadienis",
-			"ketvirtadienis",
-			"penktadienis",
-			"šeštadienis"
-		],
-		"quarters-format-abbreviated": [
-			"I k.",
-			"II k.",
-			"III k.",
-			"IV k."
-		],
-		"quarters-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-format-wide": [
-			"I ketvirtis",
-			"II ketvirtis",
-			"III ketvirtis",
-			"IV ketvirtis"
-		],
-		"quarters-standAlone-abbreviated": [
-			"I ketv.",
-			"II ketv.",
-			"III ketv.",
-			"IV ketv."
-		],
-		"quarters-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-standAlone-wide": [
-			"I ketvirtis",
-			"II ketvirtis",
-			"III ketvirtis",
-			"IV ketvirtis"
-		],
-		"dayPeriods-format-abbreviated": [
-			"priešpiet",
-			"popiet"
-		],
-		"dayPeriods-format-narrow": [
-			"pr. p.",
-			"pop."
-		],
-		"dayPeriods-format-wide": [
-			"priešpiet",
-			"popiet"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"priešpiet",
-			"popiet"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"pr. p.",
-			"pop."
-		],
-		"dayPeriods-standAlone-wide": [
-			"priešpiet",
-			"popiet"
-		],
+		"dateFormats": {
+			"full": "y MMMM d G, EEEE",
+			"long": "y MMMM d G",
+			"medium": "y MMM d G",
+			"short": "y-MM-dd G"
+		},
+		"timeFormats": {
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1} {0}",
+			"long": "{1} {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "d, E",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y G",
+				"GyMMM": "y MMM G",
+				"GyMMMd": "y MMM d G",
+				"GyMMMEd": "y MMM d G, E",
+				"h": "hh a",
+				"H": "HH",
+				"hm": "hh:mm a",
+				"Hm": "HH:mm",
+				"hms": "hh:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "LL",
+				"Md": "MM-dd",
+				"MEd": "MM-dd, E",
+				"MMdd": "MM.dd",
+				"MMM": "LLL",
+				"MMMd": "MMM-d",
+				"MMMEd": "MMM-d, E",
+				"MMMMd": "MMMM d",
+				"ms": "mm:ss",
+				"y": "y G",
+				"yyyy": "y G",
+				"yyyyM": "y MM G",
+				"yyyyMd": "y-MM-dd G",
+				"yyyyMEd": "y-MM-dd G, E",
+				"yyyyMMM": "y MMM G",
+				"yyyyMMMd": "y MMM d G",
+				"yyyyMMMEd": "y MMM d G, E",
+				"yyyyMMMM": "G y MMMM",
+				"yyyyQQQ": "y G QQQ",
+				"yyyyQQQQ": "y G QQQQ"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} – {1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h a–h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "hh:mm a–hh:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "hh:mm a–hh:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a–h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "M–M"
+				},
+				"Md": {
+					"d": "MM-dd–MM-dd",
+					"M": "MM-dd–MM-dd"
+				},
+				"MEd": {
+					"d": "MM-dd, E – MM-dd, E",
+					"M": "MM-dd, E – MM-dd, E"
+				},
+				"MMM": {
+					"M": "MMM–MMM"
+				},
+				"MMMd": {
+					"d": "MMM d–d",
+					"M": "MMM d–MMM d"
+				},
+				"MMMEd": {
+					"d": "MMM d, E – MMM d, E",
+					"M": "MMM d, E – MMM d, E"
+				},
+				"y": {
+					"y": "y–y G"
+				},
+				"yM": {
+					"M": "y-MM – y-MM G",
+					"y": "y-MM – y-MM G"
+				},
+				"yMd": {
+					"d": "y-MM-dd–y-MM-dd G",
+					"M": "y-MM-dd– y-MM-dd G",
+					"y": "y-MM-dd – y-MM-dd G"
+				},
+				"yMEd": {
+					"d": "y-MM-dd G, E – y-MM-dd G, E",
+					"M": "y-MM-dd G, E – y-MM-dd G, E",
+					"y": "y-MM-dd G, E – y-MM-dd G, E"
+				},
+				"yMMM": {
+					"M": "y MMM–MMM G",
+					"y": "y-MM – y-MM G"
+				},
+				"yMMMd": {
+					"d": "y 'm'. MMM d 'd'.–d 'd'. G",
+					"M": "y-MM-dd – MM-d G",
+					"y": "y-MM-dd – y-MM-dd G"
+				},
+				"yMMMEd": {
+					"d": "y-MM-dd G, E – y-MM-dd G, E",
+					"M": "y-MM-dd G, E – y-MM-dd G, E",
+					"y": "y-MM-dd G, E – y-MM-dd G, E"
+				},
+				"yMMMM": {
+					"M": "y LLLL – y LLLL G",
+					"y": "y LLLL – y LLLL G"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"saus.",
+					"vas.",
+					"kov.",
+					"bal.",
+					"geg.",
+					"birž.",
+					"liep.",
+					"rugp.",
+					"rugs.",
+					"spal.",
+					"lapkr.",
+					"gruod."
+				],
+				"narrow": [
+					"S",
+					"V",
+					"K",
+					"B",
+					"G",
+					"B",
+					"L",
+					"R",
+					"R",
+					"S",
+					"L",
+					"G"
+				],
+				"wide": [
+					"sausio",
+					"vasario",
+					"kovo",
+					"balandžio",
+					"gegužės",
+					"birželio",
+					"liepos",
+					"rugpjūčio",
+					"rugsėjo",
+					"spalio",
+					"lapkričio",
+					"gruodžio"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"saus.",
+					"vas.",
+					"kov.",
+					"bal.",
+					"geg.",
+					"birž.",
+					"liep.",
+					"rugp.",
+					"rugs.",
+					"spal.",
+					"lapkr.",
+					"gruod."
+				],
+				"narrow": [
+					"S",
+					"V",
+					"K",
+					"B",
+					"G",
+					"B",
+					"L",
+					"R",
+					"R",
+					"S",
+					"L",
+					"G"
+				],
+				"wide": [
+					"sausis",
+					"vasaris",
+					"kovas",
+					"balandis",
+					"gegužė",
+					"birželis",
+					"liepa",
+					"rugpjūtis",
+					"rugsėjis",
+					"spalis",
+					"lapkritis",
+					"gruodis"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"sk",
+					"pr",
+					"an",
+					"tr",
+					"kt",
+					"pn",
+					"št"
+				],
+				"narrow": [
+					"S",
+					"P",
+					"A",
+					"T",
+					"K",
+					"P",
+					"Š"
+				],
+				"short": [
+					"Sk",
+					"Pr",
+					"An",
+					"Tr",
+					"Kt",
+					"Pn",
+					"Št"
+				],
+				"wide": [
+					"sekmadienis",
+					"pirmadienis",
+					"antradienis",
+					"trečiadienis",
+					"ketvirtadienis",
+					"penktadienis",
+					"šeštadienis"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"sk",
+					"pr",
+					"an",
+					"tr",
+					"kt",
+					"pn",
+					"št"
+				],
+				"narrow": [
+					"S",
+					"P",
+					"A",
+					"T",
+					"K",
+					"P",
+					"Š"
+				],
+				"short": [
+					"Sk",
+					"Pr",
+					"An",
+					"Tr",
+					"Kt",
+					"Pn",
+					"Št"
+				],
+				"wide": [
+					"sekmadienis",
+					"pirmadienis",
+					"antradienis",
+					"trečiadienis",
+					"ketvirtadienis",
+					"penktadienis",
+					"šeštadienis"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"I k.",
+					"II k.",
+					"III k.",
+					"IV k."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"I ketvirtis",
+					"II ketvirtis",
+					"III ketvirtis",
+					"IV ketvirtis"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"I ketv.",
+					"II ketv.",
+					"III ketv.",
+					"IV ketv."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"I ketvirtis",
+					"II ketvirtis",
+					"III ketvirtis",
+					"IV ketvirtis"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"priešpiet",
+					"popiet"
+				],
+				"narrow": [
+					"pr. p.",
+					"pop."
+				],
+				"wide": [
+					"priešpiet",
+					"popiet"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"priešpiet",
+					"popiet"
+				],
+				"narrow": [
+					"pr. p.",
+					"pop."
+				],
+				"wide": [
+					"priešpiet",
+					"popiet"
+				]
+			}
+		},
 		"era-wide": {
 			"232": "Meidži",
 			"233": "Taišo",
@@ -2025,54 +2435,137 @@
 			"235": "H"
 		}
 	},
-	"dateField-year-displayName": "metai",
-	"dateField-year-relative--1": "praėjusiais metais",
-	"dateField-year-relative-0": "šiais metais",
-	"dateField-year-relative-1": "kitais metais",
-	"dateField-year-relative-future-one": "po {0} metų",
-	"dateField-year-relative-future-other": "po {0} metų",
-	"dateField-year-relative-past-one": "prieš {0} metus",
-	"dateField-year-relative-past-other": "prieš {0} metų",
-	"dateField-month-displayName": "mėnuo",
-	"dateField-month-relative--1": "praėjusį mėnesį",
-	"dateField-month-relative-0": "šį mėnesį",
-	"dateField-month-relative-1": "kitą mėnesį",
-	"dateField-month-relative-future-one": "po {0} mėnesio",
-	"dateField-month-relative-future-other": "po {0} mėnesių",
-	"dateField-month-relative-past-one": "prieš {0} mėnesį",
-	"dateField-month-relative-past-other": "prieš {0} mėnesių",
-	"dateField-week-displayName": "savaitė",
-	"dateField-week-relative--1": "praėjusią savaitę",
-	"dateField-week-relative-0": "šią savaitę",
-	"dateField-week-relative-1": "kitą savaitę",
-	"dateField-week-relative-future-one": "po {0} savaitės",
-	"dateField-week-relative-future-other": "po {0} savaičių",
-	"dateField-week-relative-past-one": "prieš {0} savaitę",
-	"dateField-week-relative-past-other": "prieš {0} savaičių",
-	"dateField-day-displayName": "diena",
-	"dateField-day-relative--1": "vakar",
-	"dateField-day-relative-0": "šiandien",
-	"dateField-day-relative-1": "rytoj",
-	"dateField-day-relative-future-one": "po {0} dienos",
-	"dateField-day-relative-future-other": "po {0} dienų",
-	"dateField-day-relative-past-one": "prieš {0} dieną",
-	"dateField-day-relative-past-other": "prieš {0} dienų",
-	"dateField-hour-displayName": "valanda",
-	"dateField-hour-relative-future-one": "po {0} valandos",
-	"dateField-hour-relative-future-other": "po {0} valandų",
-	"dateField-hour-relative-past-one": "prieš {0} valandą",
-	"dateField-hour-relative-past-other": "prieš {0} valandų",
-	"dateField-minute-displayName": "minutė",
-	"dateField-minute-relative-future-one": "po {0} minutės",
-	"dateField-minute-relative-future-other": "po {0} minučių",
-	"dateField-minute-relative-past-one": "prieš {0} minutę",
-	"dateField-minute-relative-past-other": "prieš {0} minučių",
-	"dateField-second-displayName": "sekundė",
-	"dateField-second-relative-0": "dabar",
-	"dateField-second-relative-future-one": "po {0} sekundės",
-	"dateField-second-relative-future-other": "po {0} sekundžių",
-	"dateField-second-relative-past-one": "prieš {0} sekundę",
-	"dateField-second-relative-past-other": "prieš {0} sekundžių",
+	"dateFields": {
+		"era": {
+			"displayName": "era"
+		},
+		"year": {
+			"displayName": "metai",
+			"relative-type--1": "praėjusiais metais",
+			"relative-type-0": "šiais metais",
+			"relative-type-1": "kitais metais",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} metų",
+				"relativeTimePattern-count-few": "po {0} metų",
+				"relativeTimePattern-count-many": "po {0} metų",
+				"relativeTimePattern-count-other": "po {0} metų"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} metus",
+				"relativeTimePattern-count-few": "prieš {0} metus",
+				"relativeTimePattern-count-many": "prieš {0} metų",
+				"relativeTimePattern-count-other": "prieš {0} metų"
+			}
+		},
+		"month": {
+			"displayName": "mėnuo",
+			"relative-type--1": "praėjusį mėnesį",
+			"relative-type-0": "šį mėnesį",
+			"relative-type-1": "kitą mėnesį",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} mėnesio",
+				"relativeTimePattern-count-few": "po {0} mėnesių",
+				"relativeTimePattern-count-many": "po {0} mėnesio",
+				"relativeTimePattern-count-other": "po {0} mėnesių"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} mėnesį",
+				"relativeTimePattern-count-few": "prieš {0} mėnesius",
+				"relativeTimePattern-count-many": "prieš {0} mėnesio",
+				"relativeTimePattern-count-other": "prieš {0} mėnesių"
+			}
+		},
+		"week": {
+			"displayName": "savaitė",
+			"relative-type--1": "praėjusią savaitę",
+			"relative-type-0": "šią savaitę",
+			"relative-type-1": "kitą savaitę",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} savaitės",
+				"relativeTimePattern-count-few": "po {0} savaičių",
+				"relativeTimePattern-count-many": "po {0} savaitės",
+				"relativeTimePattern-count-other": "po {0} savaičių"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} savaitę",
+				"relativeTimePattern-count-few": "prieš {0} savaites",
+				"relativeTimePattern-count-many": "prieš {0} savaitės",
+				"relativeTimePattern-count-other": "prieš {0} savaičių"
+			}
+		},
+		"day": {
+			"displayName": "diena",
+			"relative-type--2": "užvakar",
+			"relative-type--1": "vakar",
+			"relative-type-0": "šiandien",
+			"relative-type-1": "rytoj",
+			"relative-type-2": "poryt",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} dienos",
+				"relativeTimePattern-count-few": "po {0} dienų",
+				"relativeTimePattern-count-many": "po {0} dienos",
+				"relativeTimePattern-count-other": "po {0} dienų"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} dieną",
+				"relativeTimePattern-count-few": "prieš {0} dienas",
+				"relativeTimePattern-count-many": "prieš {0} dienos",
+				"relativeTimePattern-count-other": "prieš {0} dienų"
+			}
+		},
+		"weekday": {
+			"displayName": "savaitės diena"
+		},
+		"hour": {
+			"displayName": "valanda",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} valandos",
+				"relativeTimePattern-count-few": "po {0} valandų",
+				"relativeTimePattern-count-many": "po {0} valandos",
+				"relativeTimePattern-count-other": "po {0} valandų"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} valandą",
+				"relativeTimePattern-count-few": "prieš {0} valandas",
+				"relativeTimePattern-count-many": "prieš {0} valandos",
+				"relativeTimePattern-count-other": "prieš {0} valandų"
+			}
+		},
+		"minute": {
+			"displayName": "minutė",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} minutės",
+				"relativeTimePattern-count-few": "po {0} minučių",
+				"relativeTimePattern-count-many": "po {0} minutės",
+				"relativeTimePattern-count-other": "po {0} minučių"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} minutę",
+				"relativeTimePattern-count-few": "prieš {0} minutes",
+				"relativeTimePattern-count-many": "prieš {0} minutės",
+				"relativeTimePattern-count-other": "prieš {0} minučių"
+			}
+		},
+		"second": {
+			"displayName": "sekundė",
+			"relative-type-0": "dabar",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} sekundės",
+				"relativeTimePattern-count-few": "po {0} sekundžių",
+				"relativeTimePattern-count-many": "po {0} sekundės",
+				"relativeTimePattern-count-other": "po {0} sekundžių"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} sekundę",
+				"relativeTimePattern-count-few": "prieš {0} sekundes",
+				"relativeTimePattern-count-many": "prieš {0} sekundės",
+				"relativeTimePattern-count-other": "prieš {0} sekundžių"
+			}
+		},
+		"zone": {
+			"displayName": "laiko juosta"
+		}
+	},
 	"decimalFormat": {
 		"standard": "#,##0.###"
 	},

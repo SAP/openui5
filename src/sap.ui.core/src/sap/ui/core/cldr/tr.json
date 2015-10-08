@@ -1146,281 +1146,416 @@
 	},
 	"orientation": "left-to-right",
 	"ca-gregorian": {
-		"dateFormat-full": "d MMMM y EEEE",
-		"dateFormat-long": "d MMMM y",
-		"dateFormat-medium": "d MMM y",
-		"dateFormat-short": "d.MM.y",
-		"timeFormat-full": "HH:mm:ss zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} – {1}",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "a h – a h",
-		"intervalFormat-h-h": "a h–h",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-hm-a": "a h:mm – a h:mm",
-		"intervalFormat-hm-h": "a h:mm–h:mm",
-		"intervalFormat-hm-m": "a h:mm–h:mm",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "a h:mm – a h:mm v",
-		"intervalFormat-hmv-h": "a h:mm–h:mm v",
-		"intervalFormat-hmv-m": "a h:mm–h:mm v",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-hv-a": "a h – a h v",
-		"intervalFormat-hv-h": "a h–h v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "MM–MM",
-		"intervalFormat-Md-d": "dd/MM – dd/MM",
-		"intervalFormat-Md-M": "dd/MM – dd/MM",
-		"intervalFormat-MEd-d": "dd/MM E – dd/MM E",
-		"intervalFormat-MEd-M": "dd/MM E – dd/MM E",
-		"intervalFormat-MMM-M": "MMM–MMM",
-		"intervalFormat-MMMd-d": "d – d MMM",
-		"intervalFormat-MMMd-M": "d MMM – d MMM",
-		"intervalFormat-MMMEd-d": "d MMM E – d MMM E",
-		"intervalFormat-MMMEd-M": "d MMM E – d MMM E",
-		"intervalFormat-y-y": "y–y",
-		"intervalFormat-yM-M": "MM/y – MM/y",
-		"intervalFormat-yM-y": "MM/y – MM/y",
-		"intervalFormat-yMd-d": "dd.MM.y – dd.MM.y",
-		"intervalFormat-yMd-M": "dd.MM.y – dd.MM.y",
-		"intervalFormat-yMd-y": "dd.MM.y – dd.MM.y",
-		"intervalFormat-yMEd-d": "dd.MM.y E – dd.MM.y E",
-		"intervalFormat-yMEd-M": "dd.MM.y E – dd.MM.y E",
-		"intervalFormat-yMEd-y": "dd.MM.y E – dd.MM.y E",
-		"intervalFormat-yMMM-M": "MMM–MMM y",
-		"intervalFormat-yMMM-y": "MMM y – MMM y",
-		"intervalFormat-yMMMd-d": "d–d MMM y",
-		"intervalFormat-yMMMd-M": "d MMM – d MMM y",
-		"intervalFormat-yMMMd-y": "d MMM y – d MMM y",
-		"intervalFormat-yMMMEd-d": "d MMM y E – d MMM y E",
-		"intervalFormat-yMMMEd-M": "d MMM y E – d MMM y E",
-		"intervalFormat-yMMMEd-y": "d MMM y E – d MMM y E",
-		"intervalFormat-yMMMM-M": "MMMM – MMMM y",
-		"intervalFormat-yMMMM-y": "MMMM y – MMMM y",
-		"months-format-abbreviated": [
-			"Oca",
-			"Şub",
-			"Mar",
-			"Nis",
-			"May",
-			"Haz",
-			"Tem",
-			"Ağu",
-			"Eyl",
-			"Eki",
-			"Kas",
-			"Ara"
-		],
-		"months-format-narrow": [
-			"O",
-			"Ş",
-			"M",
-			"N",
-			"M",
-			"H",
-			"T",
-			"A",
-			"E",
-			"E",
-			"K",
-			"A"
-		],
-		"months-format-wide": [
-			"Ocak",
-			"Şubat",
-			"Mart",
-			"Nisan",
-			"Mayıs",
-			"Haziran",
-			"Temmuz",
-			"Ağustos",
-			"Eylül",
-			"Ekim",
-			"Kasım",
-			"Aralık"
-		],
-		"months-standAlone-abbreviated": [
-			"Oca",
-			"Şub",
-			"Mar",
-			"Nis",
-			"May",
-			"Haz",
-			"Tem",
-			"Ağu",
-			"Eyl",
-			"Eki",
-			"Kas",
-			"Ara"
-		],
-		"months-standAlone-narrow": [
-			"O",
-			"Ş",
-			"M",
-			"N",
-			"M",
-			"H",
-			"T",
-			"A",
-			"E",
-			"E",
-			"K",
-			"A"
-		],
-		"months-standAlone-wide": [
-			"Ocak",
-			"Şubat",
-			"Mart",
-			"Nisan",
-			"Mayıs",
-			"Haziran",
-			"Temmuz",
-			"Ağustos",
-			"Eylül",
-			"Ekim",
-			"Kasım",
-			"Aralık"
-		],
-		"days-format-abbreviated": [
-			"Paz",
-			"Pzt",
-			"Sal",
-			"Çar",
-			"Per",
-			"Cum",
-			"Cmt"
-		],
-		"days-format-narrow": [
-			"P",
-			"P",
-			"S",
-			"Ç",
-			"P",
-			"C",
-			"C"
-		],
-		"days-format-short": [
-			"Pa",
-			"Pt",
-			"Sa",
-			"Ça",
-			"Pe",
-			"Cu",
-			"Ct"
-		],
-		"days-format-wide": [
-			"Pazar",
-			"Pazartesi",
-			"Salı",
-			"Çarşamba",
-			"Perşembe",
-			"Cuma",
-			"Cumartesi"
-		],
-		"days-standAlone-abbreviated": [
-			"Paz",
-			"Pzt",
-			"Sal",
-			"Çar",
-			"Per",
-			"Cum",
-			"Cmt"
-		],
-		"days-standAlone-narrow": [
-			"P",
-			"P",
-			"S",
-			"Ç",
-			"P",
-			"C",
-			"C"
-		],
-		"days-standAlone-short": [
-			"Pa",
-			"Pt",
-			"Sa",
-			"Ça",
-			"Pe",
-			"Cu",
-			"Ct"
-		],
-		"days-standAlone-wide": [
-			"Pazar",
-			"Pazartesi",
-			"Salı",
-			"Çarşamba",
-			"Perşembe",
-			"Cuma",
-			"Cumartesi"
-		],
-		"quarters-format-abbreviated": [
-			"Ç1",
-			"Ç2",
-			"Ç3",
-			"Ç4"
-		],
-		"quarters-format-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-format-wide": [
-			"1. çeyrek",
-			"2. çeyrek",
-			"3. çeyrek",
-			"4. çeyrek"
-		],
-		"quarters-standAlone-abbreviated": [
-			"Ç1",
-			"Ç2",
-			"Ç3",
-			"Ç4"
-		],
-		"quarters-standAlone-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-standAlone-wide": [
-			"1. çeyrek",
-			"2. çeyrek",
-			"3. çeyrek",
-			"4. çeyrek"
-		],
-		"dayPeriods-format-abbreviated": [
-			"ÖÖ",
-			"ÖS"
-		],
-		"dayPeriods-format-narrow": [
-			"öö",
-			"ös"
-		],
-		"dayPeriods-format-wide": [
-			"ÖÖ",
-			"ÖS"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"ÖÖ",
-			"ÖS"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"ÖÖ",
-			"ÖS"
-		],
-		"dayPeriods-standAlone-wide": [
-			"ÖÖ",
-			"ÖS"
-		],
+		"dateFormats": {
+			"full": "d MMMM y EEEE",
+			"long": "d MMMM y",
+			"medium": "d MMM y",
+			"short": "d.MM.y"
+		},
+		"timeFormats": {
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1} {0}",
+			"long": "{1} {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "d E",
+				"Ehm": "E a h:mm",
+				"EHm": "E HH:mm",
+				"Ehms": "E a h:mm:ss",
+				"EHms": "E HH:mm:ss",
+				"Gy": "G y",
+				"GyMMM": "G MMM y",
+				"GyMMMd": "G dd MMM y",
+				"GyMMMEd": "G d MMM y E",
+				"h": "a h",
+				"H": "HH",
+				"hm": "a h:mm",
+				"Hm": "HH:mm",
+				"hms": "a h:mm:ss",
+				"Hms": "HH:mm:ss",
+				"hmsv": "a h:mm:ss v",
+				"Hmsv": "HH:mm:ss v",
+				"hmv": "a h:mm v",
+				"Hmv": "HH:mm v",
+				"M": "L",
+				"Md": "dd/MM",
+				"MEd": "dd/MM E",
+				"MMM": "LLL",
+				"MMMd": "d MMM",
+				"MMMEd": "d MMMM E",
+				"MMMMd": "dd MMMM",
+				"MMMMEd": "dd MMMM E",
+				"mmss": "mm:ss",
+				"ms": "mm:ss",
+				"y": "y",
+				"yM": "MM/y",
+				"yMd": "dd.MM.y",
+				"yMEd": "dd.MM.y E",
+				"yMM": "MM.y",
+				"yMMM": "MMM y",
+				"yMMMd": "dd MMM y",
+				"yMMMEd": "d MMM y E",
+				"yMMMM": "MMMM y",
+				"yQQQ": "y/QQQ",
+				"yQQQQ": "y/QQQQ"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} – {1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "a h – a h",
+					"h": "a h–h"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "a h:mm – a h:mm",
+					"h": "a h:mm–h:mm",
+					"m": "a h:mm–h:mm"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "a h:mm – a h:mm v",
+					"h": "a h:mm–h:mm v",
+					"m": "a h:mm–h:mm v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "a h – a h v",
+					"h": "a h–h v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "MM–MM"
+				},
+				"Md": {
+					"d": "dd/MM – dd/MM",
+					"M": "dd/MM – dd/MM"
+				},
+				"MEd": {
+					"d": "dd/MM E – dd/MM E",
+					"M": "dd/MM E – dd/MM E"
+				},
+				"MMM": {
+					"M": "MMM–MMM"
+				},
+				"MMMd": {
+					"d": "d – d MMM",
+					"M": "d MMM – d MMM"
+				},
+				"MMMEd": {
+					"d": "d MMM E – d MMM E",
+					"M": "d MMM E – d MMM E"
+				},
+				"y": {
+					"y": "y–y"
+				},
+				"yM": {
+					"M": "MM/y – MM/y",
+					"y": "MM/y – MM/y"
+				},
+				"yMd": {
+					"d": "dd.MM.y – dd.MM.y",
+					"M": "dd.MM.y – dd.MM.y",
+					"y": "dd.MM.y – dd.MM.y"
+				},
+				"yMEd": {
+					"d": "dd.MM.y E – dd.MM.y E",
+					"M": "dd.MM.y E – dd.MM.y E",
+					"y": "dd.MM.y E – dd.MM.y E"
+				},
+				"yMMM": {
+					"M": "MMM–MMM y",
+					"y": "MMM y – MMM y"
+				},
+				"yMMMd": {
+					"d": "d–d MMM y",
+					"M": "d MMM – d MMM y",
+					"y": "d MMM y – d MMM y"
+				},
+				"yMMMEd": {
+					"d": "d MMM y E – d MMM y E",
+					"M": "d MMM y E – d MMM y E",
+					"y": "d MMM y E – d MMM y E"
+				},
+				"yMMMM": {
+					"M": "MMMM – MMMM y",
+					"y": "MMMM y – MMMM y"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"Oca",
+					"Şub",
+					"Mar",
+					"Nis",
+					"May",
+					"Haz",
+					"Tem",
+					"Ağu",
+					"Eyl",
+					"Eki",
+					"Kas",
+					"Ara"
+				],
+				"narrow": [
+					"O",
+					"Ş",
+					"M",
+					"N",
+					"M",
+					"H",
+					"T",
+					"A",
+					"E",
+					"E",
+					"K",
+					"A"
+				],
+				"wide": [
+					"Ocak",
+					"Şubat",
+					"Mart",
+					"Nisan",
+					"Mayıs",
+					"Haziran",
+					"Temmuz",
+					"Ağustos",
+					"Eylül",
+					"Ekim",
+					"Kasım",
+					"Aralık"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Oca",
+					"Şub",
+					"Mar",
+					"Nis",
+					"May",
+					"Haz",
+					"Tem",
+					"Ağu",
+					"Eyl",
+					"Eki",
+					"Kas",
+					"Ara"
+				],
+				"narrow": [
+					"O",
+					"Ş",
+					"M",
+					"N",
+					"M",
+					"H",
+					"T",
+					"A",
+					"E",
+					"E",
+					"K",
+					"A"
+				],
+				"wide": [
+					"Ocak",
+					"Şubat",
+					"Mart",
+					"Nisan",
+					"Mayıs",
+					"Haziran",
+					"Temmuz",
+					"Ağustos",
+					"Eylül",
+					"Ekim",
+					"Kasım",
+					"Aralık"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"Paz",
+					"Pzt",
+					"Sal",
+					"Çar",
+					"Per",
+					"Cum",
+					"Cmt"
+				],
+				"narrow": [
+					"P",
+					"P",
+					"S",
+					"Ç",
+					"P",
+					"C",
+					"C"
+				],
+				"short": [
+					"Pa",
+					"Pt",
+					"Sa",
+					"Ça",
+					"Pe",
+					"Cu",
+					"Ct"
+				],
+				"wide": [
+					"Pazar",
+					"Pazartesi",
+					"Salı",
+					"Çarşamba",
+					"Perşembe",
+					"Cuma",
+					"Cumartesi"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Paz",
+					"Pzt",
+					"Sal",
+					"Çar",
+					"Per",
+					"Cum",
+					"Cmt"
+				],
+				"narrow": [
+					"P",
+					"P",
+					"S",
+					"Ç",
+					"P",
+					"C",
+					"C"
+				],
+				"short": [
+					"Pa",
+					"Pt",
+					"Sa",
+					"Ça",
+					"Pe",
+					"Cu",
+					"Ct"
+				],
+				"wide": [
+					"Pazar",
+					"Pazartesi",
+					"Salı",
+					"Çarşamba",
+					"Perşembe",
+					"Cuma",
+					"Cumartesi"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"Ç1",
+					"Ç2",
+					"Ç3",
+					"Ç4"
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4."
+				],
+				"wide": [
+					"1. çeyrek",
+					"2. çeyrek",
+					"3. çeyrek",
+					"4. çeyrek"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Ç1",
+					"Ç2",
+					"Ç3",
+					"Ç4"
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4."
+				],
+				"wide": [
+					"1. çeyrek",
+					"2. çeyrek",
+					"3. çeyrek",
+					"4. çeyrek"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"ÖÖ",
+					"ÖS"
+				],
+				"narrow": [
+					"öö",
+					"ös"
+				],
+				"wide": [
+					"ÖÖ",
+					"ÖS"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ÖÖ",
+					"ÖS"
+				],
+				"narrow": [
+					"ÖÖ",
+					"ÖS"
+				],
+				"wide": [
+					"ÖÖ",
+					"ÖS"
+				]
+			}
+		},
 		"era-wide": {
 			"0": "Milattan Önce",
 			"1": "Milattan Sonra"
@@ -1435,281 +1570,413 @@
 		}
 	},
 	"ca-islamic": {
-		"dateFormat-full": "G d MMMM y EEEE",
-		"dateFormat-long": "G d MMMM y",
-		"dateFormat-medium": "G d MMM y",
-		"dateFormat-short": "GGGGG d.MM.y",
-		"timeFormat-full": "HH:mm:ss zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} – {1}",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "MM–MM",
-		"intervalFormat-Md-d": "dd/MM – dd/MM",
-		"intervalFormat-Md-M": "dd/MM – dd/MM",
-		"intervalFormat-MEd-d": "dd/MM E – dd/MM E",
-		"intervalFormat-MEd-M": "dd/MM E – dd/MM E",
-		"intervalFormat-MMM-M": "MMM–MMM",
-		"intervalFormat-MMMd-d": "d – d MMM",
-		"intervalFormat-MMMd-M": "d MMM – d MMM",
-		"intervalFormat-MMMEd-d": "d MMM E – d MMM E",
-		"intervalFormat-MMMEd-M": "d MMM E – d MMM E",
-		"intervalFormat-y-y": "G y–y",
-		"intervalFormat-yM-M": "GGGGG M/y – M/y",
-		"intervalFormat-yM-y": "GGGGG M/y – M/y",
-		"intervalFormat-yMd-d": "GGGGG dd.MM.y – dd.MM.y",
-		"intervalFormat-yMd-M": "GGGGG dd.MM.y – dd.MM.y",
-		"intervalFormat-yMd-y": "GGGGG dd.MM.y – dd.MM.y",
-		"intervalFormat-yMEd-d": "GGGGG dd.MM.y E – dd.MM.y E",
-		"intervalFormat-yMEd-M": "GGGGG dd.MM.y E – dd.MM.y E",
-		"intervalFormat-yMEd-y": "GGGGG dd.MM.y E – dd.MM.y E",
-		"intervalFormat-yMMM-M": "G MMM–MMM y",
-		"intervalFormat-yMMM-y": "G MMM y – MMM y",
-		"intervalFormat-yMMMd-d": "G d–d MMM y",
-		"intervalFormat-yMMMd-M": "G d MMM – d MMM y",
-		"intervalFormat-yMMMd-y": "G d MMM y – d MMM y",
-		"intervalFormat-yMMMEd-d": "G d MMM y E – d MMM y E",
-		"intervalFormat-yMMMEd-M": "G d MMM y E – d MMM y E",
-		"intervalFormat-yMMMEd-y": "G d MMM y E – d MMM y E",
-		"intervalFormat-yMMMM-M": "G MMMM – MMMM y",
-		"intervalFormat-yMMMM-y": "G MMMM y – MMMM y",
-		"months-format-abbreviated": [
-			"Muharrem",
-			"Safer",
-			"Rebiülevvel",
-			"Rebiülahir",
-			"Cemaziyelevvel",
-			"Cemaziyelahir",
-			"Recep",
-			"Şaban",
-			"Ramazan",
-			"Şevval",
-			"Zilkade",
-			"Zilhicce"
-		],
-		"months-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-format-wide": [
-			"Muharrem",
-			"Safer",
-			"Rebiülevvel",
-			"Rebiülahir",
-			"Cemaziyelevvel",
-			"Cemaziyelahir",
-			"Recep",
-			"Şaban",
-			"Ramazan",
-			"Şevval",
-			"Zilkade",
-			"Zilhicce"
-		],
-		"months-standAlone-abbreviated": [
-			"Muharrem",
-			"Safer",
-			"Rebiülevvel",
-			"Rebiülahir",
-			"Cemaziyelevvel",
-			"Cemaziyelahir",
-			"Recep",
-			"Şaban",
-			"Ramazan",
-			"Şevval",
-			"Zilkade",
-			"Zilhicce"
-		],
-		"months-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-standAlone-wide": [
-			"Muharrem",
-			"Safer",
-			"Rebiülevvel",
-			"Rebiülahir",
-			"Cemaziyelevvel",
-			"Cemaziyelahir",
-			"Recep",
-			"Şaban",
-			"Ramazan",
-			"Şevval",
-			"Zilkade",
-			"Zilhicce"
-		],
-		"days-format-abbreviated": [
-			"Paz",
-			"Pzt",
-			"Sal",
-			"Çar",
-			"Per",
-			"Cum",
-			"Cmt"
-		],
-		"days-format-narrow": [
-			"P",
-			"P",
-			"S",
-			"Ç",
-			"P",
-			"C",
-			"C"
-		],
-		"days-format-short": [
-			"Pa",
-			"Pt",
-			"Sa",
-			"Ça",
-			"Pe",
-			"Cu",
-			"Ct"
-		],
-		"days-format-wide": [
-			"Pazar",
-			"Pazartesi",
-			"Salı",
-			"Çarşamba",
-			"Perşembe",
-			"Cuma",
-			"Cumartesi"
-		],
-		"days-standAlone-abbreviated": [
-			"Paz",
-			"Pzt",
-			"Sal",
-			"Çar",
-			"Per",
-			"Cum",
-			"Cmt"
-		],
-		"days-standAlone-narrow": [
-			"P",
-			"P",
-			"S",
-			"Ç",
-			"P",
-			"C",
-			"C"
-		],
-		"days-standAlone-short": [
-			"Pa",
-			"Pt",
-			"Sa",
-			"Ça",
-			"Pe",
-			"Cu",
-			"Ct"
-		],
-		"days-standAlone-wide": [
-			"Pazar",
-			"Pazartesi",
-			"Salı",
-			"Çarşamba",
-			"Perşembe",
-			"Cuma",
-			"Cumartesi"
-		],
-		"quarters-format-abbreviated": [
-			"Ç1",
-			"Ç2",
-			"Ç3",
-			"Ç4"
-		],
-		"quarters-format-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-format-wide": [
-			"1. çeyrek",
-			"2. çeyrek",
-			"3. çeyrek",
-			"4. çeyrek"
-		],
-		"quarters-standAlone-abbreviated": [
-			"Ç1",
-			"Ç2",
-			"Ç3",
-			"Ç4"
-		],
-		"quarters-standAlone-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-standAlone-wide": [
-			"1. çeyrek",
-			"2. çeyrek",
-			"3. çeyrek",
-			"4. çeyrek"
-		],
-		"dayPeriods-format-abbreviated": [
-			"ÖÖ",
-			"ÖS"
-		],
-		"dayPeriods-format-narrow": [
-			"öö",
-			"ös"
-		],
-		"dayPeriods-format-wide": [
-			"ÖÖ",
-			"ÖS"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"ÖÖ",
-			"ÖS"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"ÖÖ",
-			"ÖS"
-		],
-		"dayPeriods-standAlone-wide": [
-			"ÖÖ",
-			"ÖS"
-		],
+		"dateFormats": {
+			"full": "G d MMMM y EEEE",
+			"long": "G d MMMM y",
+			"medium": "G d MMM y",
+			"short": "GGGGG d.MM.y"
+		},
+		"timeFormats": {
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1} {0}",
+			"long": "{1} {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "d E",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "G y",
+				"GyMMM": "G MMM y",
+				"GyMMMd": "G d MMM y",
+				"GyMMMEd": "G d MMM y E",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "L",
+				"Md": "dd/MM",
+				"MEd": "dd/MM E",
+				"MMM": "LLL",
+				"MMMd": "d MMM",
+				"MMMEd": "d MMM E",
+				"MMMMd": "dd MMMM",
+				"MMMMEd": "dd MMMM E",
+				"mmss": "mm:ss",
+				"ms": "mm:ss",
+				"y": "G y",
+				"yyyy": "G y",
+				"yyyyM": "GGGGG M/y",
+				"yyyyMd": "GGGGG dd.MM.y",
+				"yyyyMEd": "GGGGG dd.MM.y E",
+				"yyyyMM": "MM.y G",
+				"yyyyMMM": "G MMM y",
+				"yyyyMMMd": "G dd MMM y",
+				"yyyyMMMEd": "G d MMM y E",
+				"yyyyMMMM": "G MMMM y",
+				"yyyyQQQ": "G y/QQQ",
+				"yyyyQQQQ": "G y/QQQQ"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} – {1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "MM–MM"
+				},
+				"Md": {
+					"d": "dd/MM – dd/MM",
+					"M": "dd/MM – dd/MM"
+				},
+				"MEd": {
+					"d": "dd/MM E – dd/MM E",
+					"M": "dd/MM E – dd/MM E"
+				},
+				"MMM": {
+					"M": "MMM–MMM"
+				},
+				"MMMd": {
+					"d": "d – d MMM",
+					"M": "d MMM – d MMM"
+				},
+				"MMMEd": {
+					"d": "d MMM E – d MMM E",
+					"M": "d MMM E – d MMM E"
+				},
+				"y": {
+					"y": "G y–y"
+				},
+				"yM": {
+					"M": "GGGGG M/y – M/y",
+					"y": "GGGGG M/y – M/y"
+				},
+				"yMd": {
+					"d": "GGGGG dd.MM.y – dd.MM.y",
+					"M": "GGGGG dd.MM.y – dd.MM.y",
+					"y": "GGGGG dd.MM.y – dd.MM.y"
+				},
+				"yMEd": {
+					"d": "GGGGG dd.MM.y E – dd.MM.y E",
+					"M": "GGGGG dd.MM.y E – dd.MM.y E",
+					"y": "GGGGG dd.MM.y E – dd.MM.y E"
+				},
+				"yMMM": {
+					"M": "G MMM–MMM y",
+					"y": "G MMM y – MMM y"
+				},
+				"yMMMd": {
+					"d": "G d–d MMM y",
+					"M": "G d MMM – d MMM y",
+					"y": "G d MMM y – d MMM y"
+				},
+				"yMMMEd": {
+					"d": "G d MMM y E – d MMM y E",
+					"M": "G d MMM y E – d MMM y E",
+					"y": "G d MMM y E – d MMM y E"
+				},
+				"yMMMM": {
+					"M": "G MMMM – MMMM y",
+					"y": "G MMMM y – MMMM y"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"Muharrem",
+					"Safer",
+					"Rebiülevvel",
+					"Rebiülahir",
+					"Cemaziyelevvel",
+					"Cemaziyelahir",
+					"Recep",
+					"Şaban",
+					"Ramazan",
+					"Şevval",
+					"Zilkade",
+					"Zilhicce"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"Muharrem",
+					"Safer",
+					"Rebiülevvel",
+					"Rebiülahir",
+					"Cemaziyelevvel",
+					"Cemaziyelahir",
+					"Recep",
+					"Şaban",
+					"Ramazan",
+					"Şevval",
+					"Zilkade",
+					"Zilhicce"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Muharrem",
+					"Safer",
+					"Rebiülevvel",
+					"Rebiülahir",
+					"Cemaziyelevvel",
+					"Cemaziyelahir",
+					"Recep",
+					"Şaban",
+					"Ramazan",
+					"Şevval",
+					"Zilkade",
+					"Zilhicce"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"Muharrem",
+					"Safer",
+					"Rebiülevvel",
+					"Rebiülahir",
+					"Cemaziyelevvel",
+					"Cemaziyelahir",
+					"Recep",
+					"Şaban",
+					"Ramazan",
+					"Şevval",
+					"Zilkade",
+					"Zilhicce"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"Paz",
+					"Pzt",
+					"Sal",
+					"Çar",
+					"Per",
+					"Cum",
+					"Cmt"
+				],
+				"narrow": [
+					"P",
+					"P",
+					"S",
+					"Ç",
+					"P",
+					"C",
+					"C"
+				],
+				"short": [
+					"Pa",
+					"Pt",
+					"Sa",
+					"Ça",
+					"Pe",
+					"Cu",
+					"Ct"
+				],
+				"wide": [
+					"Pazar",
+					"Pazartesi",
+					"Salı",
+					"Çarşamba",
+					"Perşembe",
+					"Cuma",
+					"Cumartesi"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Paz",
+					"Pzt",
+					"Sal",
+					"Çar",
+					"Per",
+					"Cum",
+					"Cmt"
+				],
+				"narrow": [
+					"P",
+					"P",
+					"S",
+					"Ç",
+					"P",
+					"C",
+					"C"
+				],
+				"short": [
+					"Pa",
+					"Pt",
+					"Sa",
+					"Ça",
+					"Pe",
+					"Cu",
+					"Ct"
+				],
+				"wide": [
+					"Pazar",
+					"Pazartesi",
+					"Salı",
+					"Çarşamba",
+					"Perşembe",
+					"Cuma",
+					"Cumartesi"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"Ç1",
+					"Ç2",
+					"Ç3",
+					"Ç4"
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4."
+				],
+				"wide": [
+					"1. çeyrek",
+					"2. çeyrek",
+					"3. çeyrek",
+					"4. çeyrek"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Ç1",
+					"Ç2",
+					"Ç3",
+					"Ç4"
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4."
+				],
+				"wide": [
+					"1. çeyrek",
+					"2. çeyrek",
+					"3. çeyrek",
+					"4. çeyrek"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"ÖÖ",
+					"ÖS"
+				],
+				"narrow": [
+					"öö",
+					"ös"
+				],
+				"wide": [
+					"ÖÖ",
+					"ÖS"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ÖÖ",
+					"ÖS"
+				],
+				"narrow": [
+					"ÖÖ",
+					"ÖS"
+				],
+				"wide": [
+					"ÖÖ",
+					"ÖS"
+				]
+			}
+		},
 		"era-wide": {
 			"0": "Hicri"
 		},
@@ -1721,281 +1988,413 @@
 		}
 	},
 	"ca-japanese": {
-		"dateFormat-full": "d MMMM y G EEEE",
-		"dateFormat-long": "d MMMM y G",
-		"dateFormat-medium": "d MMM y G",
-		"dateFormat-short": "d.MM.y G",
-		"timeFormat-full": "HH:mm:ss zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} – {1}",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "MM–MM",
-		"intervalFormat-Md-d": "dd/MM – dd/MM",
-		"intervalFormat-Md-M": "dd/MM – dd/MM",
-		"intervalFormat-MEd-d": "dd/MM E – dd/MM E",
-		"intervalFormat-MEd-M": "dd/MM E – dd/MM E",
-		"intervalFormat-MMM-M": "MMM–MMM",
-		"intervalFormat-MMMd-d": "d – d MMM",
-		"intervalFormat-MMMd-M": "d MMM – d MMM",
-		"intervalFormat-MMMEd-d": "d MMM E – d MMM E",
-		"intervalFormat-MMMEd-M": "d MMM E – d MMM E",
-		"intervalFormat-y-y": "G y–y",
-		"intervalFormat-yM-M": "GGGGG M/y – M/y",
-		"intervalFormat-yM-y": "GGGGG M/y – M/y",
-		"intervalFormat-yMd-d": "GGGGG dd.MM.y – dd.MM.y",
-		"intervalFormat-yMd-M": "GGGGG dd.MM.y – dd.MM.y",
-		"intervalFormat-yMd-y": "GGGGG dd.MM.y – dd.MM.y",
-		"intervalFormat-yMEd-d": "GGGGG dd.MM.y E – dd.MM.y E",
-		"intervalFormat-yMEd-M": "GGGGG dd.MM.y E – dd.MM.y E",
-		"intervalFormat-yMEd-y": "GGGGG dd.MM.y E – dd.MM.y E",
-		"intervalFormat-yMMM-M": "G MMM–MMM y",
-		"intervalFormat-yMMM-y": "G MMM y – MMM y",
-		"intervalFormat-yMMMd-d": "G d–d MMM y",
-		"intervalFormat-yMMMd-M": "G d MMM – d MMM y",
-		"intervalFormat-yMMMd-y": "G d MMM y – d MMM y",
-		"intervalFormat-yMMMEd-d": "G d MMM y E – d MMM y E",
-		"intervalFormat-yMMMEd-M": "G d MMM y E – d MMM y E",
-		"intervalFormat-yMMMEd-y": "G d MMM y E – d MMM y E",
-		"intervalFormat-yMMMM-M": "G MMMM – MMMM y",
-		"intervalFormat-yMMMM-y": "G MMMM y – MMMM y",
-		"months-format-abbreviated": [
-			"Oca",
-			"Şub",
-			"Mar",
-			"Nis",
-			"May",
-			"Haz",
-			"Tem",
-			"Ağu",
-			"Eyl",
-			"Eki",
-			"Kas",
-			"Ara"
-		],
-		"months-format-narrow": [
-			"O",
-			"Ş",
-			"M",
-			"N",
-			"M",
-			"H",
-			"T",
-			"A",
-			"E",
-			"E",
-			"K",
-			"A"
-		],
-		"months-format-wide": [
-			"Ocak",
-			"Şubat",
-			"Mart",
-			"Nisan",
-			"Mayıs",
-			"Haziran",
-			"Temmuz",
-			"Ağustos",
-			"Eylül",
-			"Ekim",
-			"Kasım",
-			"Aralık"
-		],
-		"months-standAlone-abbreviated": [
-			"Oca",
-			"Şub",
-			"Mar",
-			"Nis",
-			"May",
-			"Haz",
-			"Tem",
-			"Ağu",
-			"Eyl",
-			"Eki",
-			"Kas",
-			"Ara"
-		],
-		"months-standAlone-narrow": [
-			"O",
-			"Ş",
-			"M",
-			"N",
-			"M",
-			"H",
-			"T",
-			"A",
-			"E",
-			"E",
-			"K",
-			"A"
-		],
-		"months-standAlone-wide": [
-			"Ocak",
-			"Şubat",
-			"Mart",
-			"Nisan",
-			"Mayıs",
-			"Haziran",
-			"Temmuz",
-			"Ağustos",
-			"Eylül",
-			"Ekim",
-			"Kasım",
-			"Aralık"
-		],
-		"days-format-abbreviated": [
-			"Paz",
-			"Pzt",
-			"Sal",
-			"Çar",
-			"Per",
-			"Cum",
-			"Cmt"
-		],
-		"days-format-narrow": [
-			"P",
-			"P",
-			"S",
-			"Ç",
-			"P",
-			"C",
-			"C"
-		],
-		"days-format-short": [
-			"Pa",
-			"Pt",
-			"Sa",
-			"Ça",
-			"Pe",
-			"Cu",
-			"Ct"
-		],
-		"days-format-wide": [
-			"Pazar",
-			"Pazartesi",
-			"Salı",
-			"Çarşamba",
-			"Perşembe",
-			"Cuma",
-			"Cumartesi"
-		],
-		"days-standAlone-abbreviated": [
-			"Paz",
-			"Pzt",
-			"Sal",
-			"Çar",
-			"Per",
-			"Cum",
-			"Cmt"
-		],
-		"days-standAlone-narrow": [
-			"P",
-			"P",
-			"S",
-			"Ç",
-			"P",
-			"C",
-			"C"
-		],
-		"days-standAlone-short": [
-			"Pa",
-			"Pt",
-			"Sa",
-			"Ça",
-			"Pe",
-			"Cu",
-			"Ct"
-		],
-		"days-standAlone-wide": [
-			"Pazar",
-			"Pazartesi",
-			"Salı",
-			"Çarşamba",
-			"Perşembe",
-			"Cuma",
-			"Cumartesi"
-		],
-		"quarters-format-abbreviated": [
-			"Ç1",
-			"Ç2",
-			"Ç3",
-			"Ç4"
-		],
-		"quarters-format-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-format-wide": [
-			"1. çeyrek",
-			"2. çeyrek",
-			"3. çeyrek",
-			"4. çeyrek"
-		],
-		"quarters-standAlone-abbreviated": [
-			"Ç1",
-			"Ç2",
-			"Ç3",
-			"Ç4"
-		],
-		"quarters-standAlone-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-standAlone-wide": [
-			"1. çeyrek",
-			"2. çeyrek",
-			"3. çeyrek",
-			"4. çeyrek"
-		],
-		"dayPeriods-format-abbreviated": [
-			"ÖÖ",
-			"ÖS"
-		],
-		"dayPeriods-format-narrow": [
-			"öö",
-			"ös"
-		],
-		"dayPeriods-format-wide": [
-			"ÖÖ",
-			"ÖS"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"ÖÖ",
-			"ÖS"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"ÖÖ",
-			"ÖS"
-		],
-		"dayPeriods-standAlone-wide": [
-			"ÖÖ",
-			"ÖS"
-		],
+		"dateFormats": {
+			"full": "d MMMM y G EEEE",
+			"long": "d MMMM y G",
+			"medium": "d MMM y G",
+			"short": "d.MM.y G"
+		},
+		"timeFormats": {
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1} {0}",
+			"long": "{1} {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "d E",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "G y",
+				"GyMMM": "G MMM y",
+				"GyMMMd": "G d MMM y",
+				"GyMMMEd": "G d MMM y E",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "L",
+				"Md": "dd/MM",
+				"MEd": "dd/MM E",
+				"MMM": "LLL",
+				"MMMd": "d MMM",
+				"MMMEd": "d MMM E",
+				"MMMMd": "dd MMMM",
+				"MMMMEd": "dd MMMM E",
+				"mmss": "mm:ss",
+				"ms": "mm:ss",
+				"y": "G y",
+				"yyyy": "G y",
+				"yyyyM": "GGGGG M/y",
+				"yyyyMd": "GGGGG dd.MM.y",
+				"yyyyMEd": "GGGGG dd.MM.y E",
+				"yyyyMM": "MM.y G",
+				"yyyyMMM": "G MMM y",
+				"yyyyMMMd": "G dd MMM y",
+				"yyyyMMMEd": "G d MMM y E",
+				"yyyyMMMM": "G MMMM y",
+				"yyyyQQQ": "G y/QQQ",
+				"yyyyQQQQ": "G y/QQQQ"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} – {1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "MM–MM"
+				},
+				"Md": {
+					"d": "dd/MM – dd/MM",
+					"M": "dd/MM – dd/MM"
+				},
+				"MEd": {
+					"d": "dd/MM E – dd/MM E",
+					"M": "dd/MM E – dd/MM E"
+				},
+				"MMM": {
+					"M": "MMM–MMM"
+				},
+				"MMMd": {
+					"d": "d – d MMM",
+					"M": "d MMM – d MMM"
+				},
+				"MMMEd": {
+					"d": "d MMM E – d MMM E",
+					"M": "d MMM E – d MMM E"
+				},
+				"y": {
+					"y": "G y–y"
+				},
+				"yM": {
+					"M": "GGGGG M/y – M/y",
+					"y": "GGGGG M/y – M/y"
+				},
+				"yMd": {
+					"d": "GGGGG dd.MM.y – dd.MM.y",
+					"M": "GGGGG dd.MM.y – dd.MM.y",
+					"y": "GGGGG dd.MM.y – dd.MM.y"
+				},
+				"yMEd": {
+					"d": "GGGGG dd.MM.y E – dd.MM.y E",
+					"M": "GGGGG dd.MM.y E – dd.MM.y E",
+					"y": "GGGGG dd.MM.y E – dd.MM.y E"
+				},
+				"yMMM": {
+					"M": "G MMM–MMM y",
+					"y": "G MMM y – MMM y"
+				},
+				"yMMMd": {
+					"d": "G d–d MMM y",
+					"M": "G d MMM – d MMM y",
+					"y": "G d MMM y – d MMM y"
+				},
+				"yMMMEd": {
+					"d": "G d MMM y E – d MMM y E",
+					"M": "G d MMM y E – d MMM y E",
+					"y": "G d MMM y E – d MMM y E"
+				},
+				"yMMMM": {
+					"M": "G MMMM – MMMM y",
+					"y": "G MMMM y – MMMM y"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"Oca",
+					"Şub",
+					"Mar",
+					"Nis",
+					"May",
+					"Haz",
+					"Tem",
+					"Ağu",
+					"Eyl",
+					"Eki",
+					"Kas",
+					"Ara"
+				],
+				"narrow": [
+					"O",
+					"Ş",
+					"M",
+					"N",
+					"M",
+					"H",
+					"T",
+					"A",
+					"E",
+					"E",
+					"K",
+					"A"
+				],
+				"wide": [
+					"Ocak",
+					"Şubat",
+					"Mart",
+					"Nisan",
+					"Mayıs",
+					"Haziran",
+					"Temmuz",
+					"Ağustos",
+					"Eylül",
+					"Ekim",
+					"Kasım",
+					"Aralık"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Oca",
+					"Şub",
+					"Mar",
+					"Nis",
+					"May",
+					"Haz",
+					"Tem",
+					"Ağu",
+					"Eyl",
+					"Eki",
+					"Kas",
+					"Ara"
+				],
+				"narrow": [
+					"O",
+					"Ş",
+					"M",
+					"N",
+					"M",
+					"H",
+					"T",
+					"A",
+					"E",
+					"E",
+					"K",
+					"A"
+				],
+				"wide": [
+					"Ocak",
+					"Şubat",
+					"Mart",
+					"Nisan",
+					"Mayıs",
+					"Haziran",
+					"Temmuz",
+					"Ağustos",
+					"Eylül",
+					"Ekim",
+					"Kasım",
+					"Aralık"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"Paz",
+					"Pzt",
+					"Sal",
+					"Çar",
+					"Per",
+					"Cum",
+					"Cmt"
+				],
+				"narrow": [
+					"P",
+					"P",
+					"S",
+					"Ç",
+					"P",
+					"C",
+					"C"
+				],
+				"short": [
+					"Pa",
+					"Pt",
+					"Sa",
+					"Ça",
+					"Pe",
+					"Cu",
+					"Ct"
+				],
+				"wide": [
+					"Pazar",
+					"Pazartesi",
+					"Salı",
+					"Çarşamba",
+					"Perşembe",
+					"Cuma",
+					"Cumartesi"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Paz",
+					"Pzt",
+					"Sal",
+					"Çar",
+					"Per",
+					"Cum",
+					"Cmt"
+				],
+				"narrow": [
+					"P",
+					"P",
+					"S",
+					"Ç",
+					"P",
+					"C",
+					"C"
+				],
+				"short": [
+					"Pa",
+					"Pt",
+					"Sa",
+					"Ça",
+					"Pe",
+					"Cu",
+					"Ct"
+				],
+				"wide": [
+					"Pazar",
+					"Pazartesi",
+					"Salı",
+					"Çarşamba",
+					"Perşembe",
+					"Cuma",
+					"Cumartesi"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"Ç1",
+					"Ç2",
+					"Ç3",
+					"Ç4"
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4."
+				],
+				"wide": [
+					"1. çeyrek",
+					"2. çeyrek",
+					"3. çeyrek",
+					"4. çeyrek"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Ç1",
+					"Ç2",
+					"Ç3",
+					"Ç4"
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4."
+				],
+				"wide": [
+					"1. çeyrek",
+					"2. çeyrek",
+					"3. çeyrek",
+					"4. çeyrek"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"ÖÖ",
+					"ÖS"
+				],
+				"narrow": [
+					"öö",
+					"ös"
+				],
+				"wide": [
+					"ÖÖ",
+					"ÖS"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ÖÖ",
+					"ÖS"
+				],
+				"narrow": [
+					"ÖÖ",
+					"ÖS"
+				],
+				"wide": [
+					"ÖÖ",
+					"ÖS"
+				]
+			}
+		},
 		"era-wide": {
 			"232": "Meiji",
 			"233": "Taishō",
@@ -2015,54 +2414,109 @@
 			"235": "H"
 		}
 	},
-	"dateField-year-displayName": "Yıl",
-	"dateField-year-relative--1": "geçen yıl",
-	"dateField-year-relative-0": "bu yıl",
-	"dateField-year-relative-1": "gelecek yıl",
-	"dateField-year-relative-future-one": "{0} yıl sonra",
-	"dateField-year-relative-future-other": "{0} yıl sonra",
-	"dateField-year-relative-past-one": "{0} yıl önce",
-	"dateField-year-relative-past-other": "{0} yıl önce",
-	"dateField-month-displayName": "Ay",
-	"dateField-month-relative--1": "geçen ay",
-	"dateField-month-relative-0": "bu ay",
-	"dateField-month-relative-1": "gelecek ay",
-	"dateField-month-relative-future-one": "{0} ay sonra",
-	"dateField-month-relative-future-other": "{0} ay sonra",
-	"dateField-month-relative-past-one": "{0} ay önce",
-	"dateField-month-relative-past-other": "{0} ay önce",
-	"dateField-week-displayName": "Hafta",
-	"dateField-week-relative--1": "geçen hafta",
-	"dateField-week-relative-0": "bu hafta",
-	"dateField-week-relative-1": "gelecek hafta",
-	"dateField-week-relative-future-one": "{0} hafta sonra",
-	"dateField-week-relative-future-other": "{0} hafta sonra",
-	"dateField-week-relative-past-one": "{0} hafta önce",
-	"dateField-week-relative-past-other": "{0} hafta önce",
-	"dateField-day-displayName": "Gün",
-	"dateField-day-relative--1": "dün",
-	"dateField-day-relative-0": "bugün",
-	"dateField-day-relative-1": "yarın",
-	"dateField-day-relative-future-one": "{0} gün sonra",
-	"dateField-day-relative-future-other": "{0} gün sonra",
-	"dateField-day-relative-past-one": "{0} gün önce",
-	"dateField-day-relative-past-other": "{0} gün önce",
-	"dateField-hour-displayName": "Saat",
-	"dateField-hour-relative-future-one": "{0} saat sonra",
-	"dateField-hour-relative-future-other": "{0} saat sonra",
-	"dateField-hour-relative-past-one": "{0} saat önce",
-	"dateField-hour-relative-past-other": "{0} saat önce",
-	"dateField-minute-displayName": "Dakika",
-	"dateField-minute-relative-future-one": "{0} dakika sonra",
-	"dateField-minute-relative-future-other": "{0} dakika sonra",
-	"dateField-minute-relative-past-one": "{0} dakika önce",
-	"dateField-minute-relative-past-other": "{0} dakika önce",
-	"dateField-second-displayName": "Saniye",
-	"dateField-second-relative-0": "şimdi",
-	"dateField-second-relative-future-one": "{0} saniye sonra",
-	"dateField-second-relative-future-other": "{0} saniye sonra",
-	"dateField-second-relative-past-one": "{0} saniye önce",
-	"dateField-second-relative-past-other": "{0} saniye önce",
+	"dateFields": {
+		"era": {
+			"displayName": "Miladi Dönem"
+		},
+		"year": {
+			"displayName": "Yıl",
+			"relative-type--1": "geçen yıl",
+			"relative-type-0": "bu yıl",
+			"relative-type-1": "gelecek yıl",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} yıl sonra",
+				"relativeTimePattern-count-other": "{0} yıl sonra"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} yıl önce",
+				"relativeTimePattern-count-other": "{0} yıl önce"
+			}
+		},
+		"month": {
+			"displayName": "Ay",
+			"relative-type--1": "geçen ay",
+			"relative-type-0": "bu ay",
+			"relative-type-1": "gelecek ay",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} ay sonra",
+				"relativeTimePattern-count-other": "{0} ay sonra"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} ay önce",
+				"relativeTimePattern-count-other": "{0} ay önce"
+			}
+		},
+		"week": {
+			"displayName": "Hafta",
+			"relative-type--1": "geçen hafta",
+			"relative-type-0": "bu hafta",
+			"relative-type-1": "gelecek hafta",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} hafta sonra",
+				"relativeTimePattern-count-other": "{0} hafta sonra"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} hafta önce",
+				"relativeTimePattern-count-other": "{0} hafta önce"
+			}
+		},
+		"day": {
+			"displayName": "Gün",
+			"relative-type--2": "evvelsi gün",
+			"relative-type--1": "dün",
+			"relative-type-0": "bugün",
+			"relative-type-1": "yarın",
+			"relative-type-2": "öbür gün",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} gün sonra",
+				"relativeTimePattern-count-other": "{0} gün sonra"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} gün önce",
+				"relativeTimePattern-count-other": "{0} gün önce"
+			}
+		},
+		"weekday": {
+			"displayName": "Haftanın Günü"
+		},
+		"hour": {
+			"displayName": "Saat",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} saat sonra",
+				"relativeTimePattern-count-other": "{0} saat sonra"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} saat önce",
+				"relativeTimePattern-count-other": "{0} saat önce"
+			}
+		},
+		"minute": {
+			"displayName": "Dakika",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} dakika sonra",
+				"relativeTimePattern-count-other": "{0} dakika sonra"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} dakika önce",
+				"relativeTimePattern-count-other": "{0} dakika önce"
+			}
+		},
+		"second": {
+			"displayName": "Saniye",
+			"relative-type-0": "şimdi",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} saniye sonra",
+				"relativeTimePattern-count-other": "{0} saniye sonra"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} saniye önce",
+				"relativeTimePattern-count-other": "{0} saniye önce"
+			}
+		},
+		"zone": {
+			"displayName": "Saat Dilimi"
+		}
+	},
 	"decimalFormat": {
 		"standard": "#,##0.###"
 	},
