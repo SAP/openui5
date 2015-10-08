@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="UTF-8"/>
+		<title>Opa sample for starting an app with a frame</title>
+
+		<script id="sap-ui-bootstrap"
+		        src="../../../../../../../../resources/sap-ui-core.js"
+		        data-sap-ui-theme='sap_bluecrystal'
+		        data-sap-ui-libs="sap.m">
+		</script>
+
+		<script>
+
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.qunit.QUnitUtils");
+
+			QUnit.config.autostart = false;
+
+			sap.ui.require([
+				'sap/ui/test/opaQunit',
+				'sap/ui/test/Opa5'
+			], function (opaTest, Opa5) {
+
+				QUnit.module("iStartMyAppInAFrame");
+
+				opaTest("Should start and teardown an app in a frame", function (Given, When, Then) {
+					var done = assert.async();
+
+					// Arrangements
+					Given.iStartMyAppInAFrame("applicationUnderTest/index.html").done(function(){
+						assert.ok(document.getElementById("OpaFrame"), "The frame was loaded");
+					});
+
+					// Assertions
+					Then.iTeardownMyAppFrame().done(function(){
+						assert.ok(!document.getElementById("OpaFrame"), "The frame was removed");
+						Opa5.emptyQueue();
+						done();
+					});
+
+				});
+
+				QUnit.start();
+
+			});
+
+		</script>
+
+		<script src="README.js"></script>
+
+	</head>
+
+	<body>
+
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+		<div id="readme"></div>
+
+	</body>
+</html>

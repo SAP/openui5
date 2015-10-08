@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" charset="UTF-8"/>
+		<title>OPA sample for starting an app with a component</title>
+
+		<script id="sap-ui-bootstrap"
+		        src="../../../../../../../../resources/sap-ui-core.js"
+		        data-sap-ui-libs="sap.m"
+		        data-sap-ui-theme='sap_bluecrystal'
+		        data-sap-ui-resourceroots='{
+				"sap.ui.sample.appUnderTest" : "./applicationUnderTest",
+				"sap.ui.sample.appUnderTest.view" : "./applicationUnderTest/view",
+				"sap.ui.demo.mock" : "../../../../../../../sap/ui/demokit/explored/"
+			}'>
+		</script>
+
+		<script>
+
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.qunit.QUnitUtils");
+
+			QUnit.config.autostart = false;
+
+			sap.ui.require([
+				'sap/ui/test/opaQunit',
+				'sap/ui/test/Opa5'
+			], function (opaTest, Opa5) {
+
+				QUnit.module("iStartMyUIComponent");
+
+				opaTest("Should start and teardown a component", function (Given, When, Then) {
+
+					// Arrangements
+					Given.iStartMyAppInAComponent({
+						componentConfig: {
+							name: "sap.ui.sample.appUnderTest"
+						},
+						hash: ""
+
+					}).done(
+						function(){
+						assert.ok(jQuery(".sapUiOpaComponent").length, "The component was loaded");
+
+					}).done(
+						function() {
+							// Assertions
+							Then.iTeardownMyComponent().done(function () {
+								assert.ok(!jQuery(".sapUiOpaComponent").length,
+									"The component was removed");
+							});
+					});
+
+					Opa5.emptyQueue();
+
+				});
+				QUnit.start();
+
+			});
+
+		</script>
+
+	</head>
+
+	<script src="README.js"></script>
+
+	<body>
+
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+		<div id="readme"></div>
+
+	</body>
+</html>

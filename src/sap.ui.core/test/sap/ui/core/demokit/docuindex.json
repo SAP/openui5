@@ -79,7 +79,9 @@
 					"sap.ui.core.sample.OpaMatchers",
 					"sap.ui.core.sample.OpaById",
 					"sap.ui.core.sample.OpaDynamicWait",
-					"sap.ui.core.sample.OpaPageObject"
+					"sap.ui.core.sample.OpaPageObject",
+					"sap.ui.core.sample.OpaStartup.iStartMyUIComponent",
+					"sap.ui.core.sample.OpaStartup.iStartMyAppInAFrame"
 				]
 			},
 			{
@@ -447,6 +449,16 @@
 				"id": "sap.ui.core.sample.matcher.BindingPath",
 				"name": "Binding Path",
 				"description": "Checks if a control has a binding context with the exact same binding path"
+			},
+			{
+				"id": "sap.ui.core.sample.OpaStartup.iStartMyUIComponent",
+				"name": "Starting a UIComponent",
+				"description": "Use this function if you would like to run OPA tests for a single UIComponent (a component which creates entries in the DOM tree)"
+			},
+			{
+				"id": "sap.ui.core.sample.OpaStartup.iStartMyAppInAFrame",
+				"name": "Starting an app in an iFrame",
+				"description": "Use this function if you would like to run your app isolated from the other tests and your app starts with a html file you should use this function for testing with OPA."
 			}
 		]
 	}
