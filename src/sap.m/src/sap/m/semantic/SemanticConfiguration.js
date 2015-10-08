@@ -90,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 		var _mInvisibleTexts = {};
 
 		/**
-		 * Creates (if not already created) and returns an invisible text element for screan reader support
+		 * Creates (if not already created) and returns an invisible text element for screen reader support
 		 * @param sType - the type of the control we want to get a label for
 		 * @param sText - the text to be used
 		 * @private
