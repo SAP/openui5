@@ -221,22 +221,20 @@
 
 		module("Screen reader support");
 
-		test("Basic rendering", function() {
+		test("Basic rendering - state: None", function() {
+			ariaLabelSetCorrectly(sap.ui.core.ValueState.None);
+		});
 
-			// System under test
-			var oObjectNumber = new sap.m.ObjectNumber({
-				number: 256,
-				unit: "EUR"
-			});
+		test("Basic rendering - state: Success", function() {
+			ariaLabelSetCorrectly(sap.ui.core.ValueState.Success);
+		});
 
-			oObjectNumber.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+		test("Basic rendering - state: Warning", function() {
+			ariaLabelSetCorrectly(sap.ui.core.ValueState.Warning);
+		});
 
-			// Assert
-			equal(oObjectNumber.$().attr("aria-labelledby"), oObjectNumber.getId() + "-state", "aria-labelledby is set correctly.");
-
-			// Clean up
-			oObjectNumber.destroy();
+		test("Basic rendering - state: Error", function() {
+			ariaLabelSetCorrectly(sap.ui.core.ValueState.Error);
 		});
 
 		test("Value state None (default)", function() {
@@ -333,6 +331,28 @@
 			// Clean up
 			oObjectNumber.destroy();
 		});
+
+		function ariaLabelSetCorrectly(labelState){
+			// System under test
+			var oObjectNumber = new sap.m.ObjectNumber({
+				number: 256,
+				unit: "EUR",
+				state: labelState
+			});
+
+			oObjectNumber.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			if (oObjectNumber.getState() !== sap.ui.core.ValueState.None) {
+				equal(oObjectNumber.$().attr("aria-labelledby"), oObjectNumber.getId() + "-state", "aria-labelledby is set correctly.");
+			} else {
+				equal(oObjectNumber.$().attr("aria-labelledby"), undefined, "aria-labelledby is set correctly.");
+			}
+
+			// Clean up
+			oObjectNumber.destroy();
+		}
 
 	</script>
 </head>

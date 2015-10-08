@@ -57,9 +57,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		oRm.writeStyles();
 
 		// ARIA
-		oRm.writeAccessibilityState({
+		// when the status is "None" there is nothing for reading
+		if (oON.getState() !== sap.ui.core.ValueState.None) {
+			oRm.writeAccessibilityState({
 			labelledby: oON.getId() + "-state"
-		});
+			});
+		}
+
 
 		oRm.write(">");
 
