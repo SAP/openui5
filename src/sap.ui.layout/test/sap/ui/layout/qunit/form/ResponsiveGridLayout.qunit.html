@@ -40,7 +40,9 @@
 				]
 			}).placeAt("uiArea1");
 
-		var oLayout2 = new sap.ui.layout.form.ResponsiveGridLayout("Layout2");
+		var oLayout2 = new sap.ui.layout.form.ResponsiveGridLayout("Layout2",  {
+			singleContainerFullSize: false
+		});
 		var oForm2 = new sap.ui.layout.form.Form("F2",{
 			title: "Form2",
 			editable: true,
@@ -333,10 +335,12 @@
 		test("Container rendering", function() {
 			ok(jQuery.sap.domById("F1"), "Form1 is rendered");
 			ok(jQuery.sap.domById("Layout1"), "Layout1 is rendered");
+			ok(!jQuery.sap.domById("F1--Grid"), "Form1: no Main-Grid rendered as only one container");
 			ok(!jQuery.sap.domById("F1C1---Panel"), "Form1: Container1 no Panel rendered (because no title and expander)");
 			ok(jQuery.sap.domById("F1C1--Grid"), "Form1: Container1 Grid rendered");
 
 			// panel
+			ok(jQuery.sap.domById("F2--Grid"), "Form2: Main-Grid rendered as singleContainerFullSize disabled");
 			ok(jQuery.sap.domById("F2C1---Panel"), "Form2: Container1 Panel rendered (because title)");
 			ok(jQuery.sap.domById("F2C1--Grid"), "Form2: Container1 Grid rendered");
 			// title as text
@@ -355,6 +359,7 @@
 			ok(!jQuery.sap.domById("F3C5---Panel"), "Form3: invisible Container5 - Panel not rendered");
 			ok(!jQuery.sap.domById("F3C5--Grid"), "Form3: invisible Container5 - Grid not rendered");
 
+			ok(!jQuery.sap.domById("F4--Grid"), "Form4: no Main-Grid rendered as only one container visible");
 			ok(!jQuery.sap.domById("F4C1---Panel"), "Form4: invisible Container1 - Panel not rendered");
 			ok(!jQuery.sap.domById("F4C1--Grid"), "Form4: invisible Container1 - Grid not rendered");
 			ok(jQuery.sap.domById("F4C2---Panel"), "Form4: Container2 Panel rendered");

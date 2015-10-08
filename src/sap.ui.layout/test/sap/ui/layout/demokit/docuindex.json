@@ -148,7 +148,7 @@
 			{
 				"id": "sap.ui.layout.sample.SimpleForm480_12120",
 				"name": "Simple Form - Dual 4:8:0 / 12:12:0",
-				"description": "This is an example of a dual-column layout using the SimpleForm control. On large screens a dual-column 4:8:0 layout (label:input:emptyspace) is used, on medium screens a dual-column 12:12:0 layout is used and on small screens a one-column 12:12:0 layout is used."
+				"description": "This is an example of a dual-column layout using the SimpleForm control. On large screens a dual-column 4:8:0 layout (label:input:emptyspace) is used, on medium screens a dual-column 12:12:0 layout is used and on small screens a one-column 12:12:0 layout is used. In the second SimpleForm only one Container is used, but an empty column is displayed beside to be aligned with the first SimpleForm."
 			},
 			{
 				"id": "sap.ui.layout.sample.FormToolbar",

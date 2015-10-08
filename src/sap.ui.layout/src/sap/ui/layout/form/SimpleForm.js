@@ -120,6 +120,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 
 			/**
 			 * Number of grid cells that are empty at the end of each line on large size.
+			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
@@ -127,6 +128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 
 			/**
 			 * Number of grid cells that are empty at the end of each line on medium size.
+			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
@@ -134,6 +136,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 
 			/**
 			 * Number of grid cells that are empty at the end of each line on small size.
+			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
@@ -142,6 +145,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 			/**
 			 * Form columns for large size.
 			 * The number of columns for large size must not be smaller that the number of columns for medium size.
+			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
@@ -149,13 +153,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 
 			/**
 			 * Form columns for medium size.
+			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
 			columnsM : {type : "int", group : "Misc", defaultValue : 1},
 
 			/**
+			 * If the <code>Form</code> contains only one single <code>FormContainer</code> and this property is set,
+			 * the <code>FormContainer</code> is displayed using the full size of the <code>Form</code>.
+			 * In this case the properties <code>columnsL</code> and <code>columnsM</code> are ignored.
+			 *
+			 * In all other cases the <code>FormContainer</code> is displayed in the size of one column.
+			 *
+			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
+			 * @since 1.34.0
+			 */
+			singleContainerFullSize : {type : "boolean", group : "Misc", defaultValue : true},
+
+			/**
 			 * Breakpoint between Medium size and Large size.
+			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
@@ -163,6 +181,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 
 			/**
 			 * Breakpoint between Small size and Medium size.
+			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
@@ -946,6 +965,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 				oLayout.setEmptySpanS(oThis.getEmptySpanS());
 				oLayout.setColumnsL(oThis.getColumnsL());
 				oLayout.setColumnsM(oThis.getColumnsM());
+				oLayout.setSingleContainerFullSize(oThis.getSingleContainerFullSize());
 				oLayout.setBreakpointL(oThis.getBreakpointL());
 				oLayout.setBreakpointM(oThis.getBreakpointM());
 				break;

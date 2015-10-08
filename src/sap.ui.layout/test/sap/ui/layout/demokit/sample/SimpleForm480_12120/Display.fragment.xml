@@ -32,5 +32,27 @@
 				<Text text="{Twitter}" />
 			</f:content>
 		</f:SimpleForm>
+		<f:SimpleForm id="SimpleFormDisplay480_12120-2"
+			editable="false"
+			layout="ResponsiveGridLayout"
+			title="More"
+			labelSpanL="4"
+			labelSpanM="12"
+			adjustLabelSpan="false"
+			emptySpanL="0"
+			emptySpanM="0"
+			columnsL="2"
+			columnsM="2"
+			singleContainerFullSize="false">
+			<f:content>
+				<core:Title text="Contact data" />
+				<Label text="Email" />
+				<Text text="{EMail}" />
+				<Label text="Tel." />
+				<Text text="{Tel}" />
+				<Label text="SMS" />
+				<Text text="{Sms}" />
+			</f:content>
+		</f:SimpleForm>
 	</VBox>
 </core:FragmentDefinition>

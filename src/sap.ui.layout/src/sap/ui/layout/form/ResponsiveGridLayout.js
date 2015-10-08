@@ -96,6 +96,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 			/**
 			 * Number of columns for large size.
+			 *
 			 * The number of columns for large size must not be smaller than the number of columns for medium size
 			 * @since 1.16.3
 			 */
@@ -106,6 +107,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			 * @since 1.16.3
 			 */
 			columnsM : {type : "int", group : "Misc", defaultValue : 1},
+
+			/**
+			 * If the <code>Form</code> contains only one single <code>FormContainer</code> and this property is set,
+			 * the <code>FormContainer</code> is displayed using the full size of the <code>Form</code>.
+			 * In this case the properties <code>columnsL</code> and <code>columnsM</code> are ignored.
+			 *
+			 * In all other cases the <code>FormContainer</code> is displayed in the size of one column.
+			 * @since 1.34.0
+			 */
+			singleContainerFullSize : {type : "boolean", group : "Misc", defaultValue : true},
 
 			/**
 			 * Breakpoint (in pixel) between Medium size and Large size.
@@ -892,7 +903,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			}
 
 			// special case: only one container -> do not render an outer ResponsiveFlowLayout
-			if (iLength > 1) {
+			if (iLength > 1 || !oLayout.getSingleContainerFullSize()) {
 				var iSpanL = Math.floor(12 / oLayout.getColumnsL());
 				var iSpanM = Math.floor(12 / oLayout.getColumnsM());
 				if (!oLayout._mainGrid) {
