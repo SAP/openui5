@@ -306,6 +306,24 @@ sap.ui.define([
 		}
 	};
 
+	QuickView.prototype.setProperty = function (sPropertyName, oValue, bSuppressInvalidate) {
+		switch (sPropertyName) {
+			case "busy":
+			case "busyIndicatorDelay":
+			case "visible":
+			case "fieldGroupIds":
+				if (this._oPopover) {
+					this._oPopover.setProperty(sPropertyName, oValue, bSuppressInvalidate);
+					return sap.ui.core.Control.prototype.setProperty.call(this, sPropertyName, oValue, true);
+				}
+				break;
+			default:
+				break;
+		}
+
+		return sap.ui.core.Control.prototype.setProperty.apply(this, arguments);
+	};
+
 	/**
 	 * Returns the button, which closes the QuickView.
 	 * On desktop or tablet, this method returns undefined.
