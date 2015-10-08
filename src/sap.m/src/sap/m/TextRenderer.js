@@ -85,7 +85,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	TextRenderer.renderMaxLines = function(oRm, oText) {
 		oRm.write("<span");
 		oRm.writeAttribute("id", oText.getId() + "-inner");
-		oRm.addClass("sapUiSelectable");
 		oRm.addClass("sapMTextMaxLine");
 
 		// check native line clamp support
