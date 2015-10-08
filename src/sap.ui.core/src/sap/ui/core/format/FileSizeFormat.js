@@ -115,7 +115,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 				} else {
 					fValue = parseFloat(oValue, 10);
 				}
-			}catch(e){
+			} catch (e) {
 				// Incompatible String is handled as NaN
 			}
 		} else if (typeof oValue == "number") {

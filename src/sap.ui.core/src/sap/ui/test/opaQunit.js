@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-/*global opaTest:true, QUnit */
+/*global QUnit */
 /**
  * QUnit test adapter for opa.js has the same signature as a test of QUnit.
  * Suggested usage:
@@ -46,10 +46,7 @@
 //// The only dependency is jQuery. As i plan to get this into a separate repository, i did not use the UI5 naming conventions
 /////////////////////
 
-// Eslint thinks window.opaTest is unused
-/*eslint-disable no-unused-vars */
 sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
-/*eslint-enable no-unused-vars */
 	"use strict";
 	var opaTest = function (testName, expected, callback, async) {
 		var config = Opa.config;

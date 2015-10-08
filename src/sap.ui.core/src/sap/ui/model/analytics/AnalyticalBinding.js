@@ -1921,7 +1921,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 
 		try {
 			oAnalyticalQueryRequest.getFilterExpression().checkValidity(); // fails if false
-		} catch(e){
+		} catch (e) {
 			jQuery.sap.log.fatal("filter expression is not valid", e.toString());
 			return undefined;
 		}
