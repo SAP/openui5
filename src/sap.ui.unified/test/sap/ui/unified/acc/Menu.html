@@ -47,7 +47,7 @@
 					}
 				};
 	
-				var oMenu = new sap.ui.unified.Menu({ariaDescription: "Settings Menu"});
+				var oMenu = new sap.ui.unified.Menu({ariaDescription: "Settings"});
 				fillMenu(aItems, oMenu);
 				oMenu.addItem(new sap.ui.unified.MenuTextFieldItem({label: "Filter:", enabled: true, startsSection: true, icon: "sap-icon://filter", select: function(oEvent){
 					alert("Filter: "+oEvent.getParameter("item").getValue());

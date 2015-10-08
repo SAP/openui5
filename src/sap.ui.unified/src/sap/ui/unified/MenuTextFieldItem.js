@@ -113,12 +113,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 			rm.writeAttribute("disabled", "disabled");
 		}
 		if (oInfo.bAccessible) {
-			rm.writeAccessibilityState(oMenu, { //Pass the Menu here to write aria-labelledby
+			rm.writeAccessibilityState(oItem, {
 				role: "textbox",
 				disabled: !bIsEnabled,
 				multiline: false,
 				autocomplete: "none",
-				labelledby: {value: oMenu.getId() + "-label " + itemId + "-lbl", append: true}
+				labelledby: {value: /*oMenu.getId() + "-label " + */itemId + "-lbl", append: true}
 			});
 		}
 		rm.write("></input></div></div>");
