@@ -19,2177 +19,359 @@
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script>
-			sinon.config.useFakeTimers = true;
-			QUnit.config.autostart = false;
-			sap.ui.test.qunit.delayTestStart();
-
-			var fnTestControlProperty = function(mOptions) {
-				var sProperty = mOptions.property.charAt(0).toUpperCase() + mOptions.property.slice(1);
-
-				test("get" + sProperty + "()", function() {
-					strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
-				});
-			};
-
-			/* --------------------------------- */
-			/* tests for default property values */
-			/* --------------------------------- */
-
-			test("default property values", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							id: "item-id",
-							key: "0",
-							text: "item 0",
-							tooltip: "first item"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1",
-							enabled: false
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						}),
-						new sap.ui.core.SeparatorItem()
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				strictEqual(oSelectList.getVisible(), true, "By default the Select control is visible");
-				strictEqual(oSelectList.getEnabled(), true, "By default the SelectList control is enabled");
-				strictEqual(oSelectList.getWidth(), "auto", 'By default the "width" of the SelectList control is "auto"');
-				strictEqual(oSelectList.getMaxWidth(), "100%", 'By default the "max-width" of the SelectList control is "100%"');
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "", "By default the selected items id of the SelectList control is the id of the first item");
-				strictEqual(oSelectList.getSelectedKey(), "", "By default the selected key of the SelectList control is the key property of the first item");
-				strictEqual(oSelectList.getFirstItem().getDomRef().getAttribute("title"), "first item", "The tooltip is shown");
-				strictEqual(oSelectList.getDomRef().getAttribute("role"), "listbox");
-				strictEqual(oSelectList.getFirstItem().getDomRef().getAttribute("role"), "option");
-				strictEqual(oSelectList.getLastItem().getDomRef().getAttribute("role"), "separator");
-				strictEqual(oSelectList.getFirstItem().getDomRef().getAttribute("aria-selected"), "false");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* =========================================================== */
-			/* HTML module                                                 */
-			/* =========================================================== */
-
-			module("HTML");
-
-			/* ------------------------------ */
-			/* rendering                      */
-			/* ------------------------------ */
-
-			test("rendering", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							key: "DZ",
-							text: "Algeria",
-						}),
-
-						new sap.ui.core.Item({
-							key: "AR",
-							text: "Argentina"
-						}),
-
-						new sap.ui.core.Item({
-							key: "AU",
-							text: "Australia"
-						})
-					],
-					selectedKey: "AU"
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				strictEqual(oSelectList.getItems()[0].getDomRef().getAttribute("aria-setsize"), "3");
-				strictEqual(oSelectList.getItems()[1].getDomRef().getAttribute("aria-setsize"), "3");
-				strictEqual(oSelectList.getItems()[2].getDomRef().getAttribute("aria-setsize"), "3");
-
-				strictEqual(oSelectList.getItems()[0].getDomRef().getAttribute("aria-posinset"), "1");
-				strictEqual(oSelectList.getItems()[1].getDomRef().getAttribute("aria-posinset"), "2");
-				strictEqual(oSelectList.getItems()[2].getDomRef().getAttribute("aria-posinset"), "3");
-
-				strictEqual(oSelectList.getItems()[0].getDomRef().getAttribute("aria-selected"), "false");
-				strictEqual(oSelectList.getItems()[1].getDomRef().getAttribute("aria-selected"), "false");
-				strictEqual(oSelectList.getItems()[2].getDomRef().getAttribute("aria-selected"), "true");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* =========================================================== */
-			/* Methods module                                              */
-			/* =========================================================== */
-
-			module("methods");
-
-			/* ------------------------------ */
-			/* getVisible()                   */
-			/* ------------------------------ */
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						})
-					],
-					visible: false
-				}),
-				property: "visible",
-				output: false,
-				description: "The control is not visible"
-			});
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList(),
-				property: "visible",
-				output: true,
-				description: "The control is visible"
-			});
-
-			/* ------------------------------ */
-			/* getEnabled()                   */
-			/* ------------------------------ */
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList(),
-				property: "enabled",
-				output: true,
-				description: "The control is enable"
-			});
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList({
-					enabled: false
-				}),
-				property: "enabled",
-				output: false,
-				description: "The control is disabled"
-			});
-
-			/* ------------------------------ */
-			/* getWidth()                     */
-			/* ------------------------------ */
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList({
-					width: "50%"
-				}),
-				property: "width",
-				output: "50%",
-				description: 'The "width" is "50%"'
-			});
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList({
-					width: "13rem"
-				}),
-				property: "width",
-				output: "13rem",
-				description: 'The "width" is "13rem"'
-			});
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList({
-					width: "200px"
-				}),
-				property: "width",
-				output: "200px",
-				description: 'The "width" is "200px"'
-			});
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList({
-					width: "4em"
-				}),
-				property: "width",
-				output: "4em",
-				description: 'The "width" is "4em"'
-			});
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList(),
-				property: "width",
-				output: "auto",
-				description: 'The "width" is "auto"'
-			});
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList({
-					width: "2in"
-				}),
-				property: "width",
-				output: "2in",
-				description: 'The "width" is "2in"'
-			});
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList({
-					width: "3cm"
-				}),
-				property: "width",
-				output: "3cm",
-				description: 'The "width" is "3cm"'
-			});
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList({
-					width: "125pt"
-				}),
-				property: "width",
-				output: "125pt",
-				description: 'The "width" is "125pt"'
-			});
-
-			/* ------------------------------ */
-			/* getMaxWidth()                  */
-			/* ------------------------------ */
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList({
-					maxWidth: "50%"
-				}),
-				property: "maxWidth",
-				output: "50%",
-				description: 'The "maxWidth" is "50%"'
-			});
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList({
-					maxWidth: "13rem"
-				}),
-				property: "maxWidth",
-				output: "13rem",
-				description: 'The "maxWidth" is "13rem"'
-			});
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList({
-					maxWidth: "200px"
-				}),
-				property: "maxWidth",
-				output: "200px",
-				description: 'The "maxWidth" is "200px"'
-			});
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList({
-					maxWidth: "4em"
-				}),
-				property: "maxWidth",
-				output: "4em",
-				description: 'The "maxWidth" is "4em"'
-			});
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList(),
-				property: "maxWidth",
-				output: "100%",
-				description: 'The "maxWidth" is "100%"'
-			});
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList({
-					maxWidth: "2in"
-				}),
-				property: "maxWidth",
-				output: "2in",
-				description: 'The "maxWidth" is "2in"'
-			});
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList({
-					maxWidth: "3cm"
-				}),
-				property: "maxWidth",
-				output: "3cm",
-				description: 'The "maxWidth" is "3cm"'
-			});
-
-			fnTestControlProperty({
-				control: new sap.m.SelectList({
-					maxWidth: "125pt"
-				}),
-				property: "maxWidth",
-				output: "125pt",
-				description: 'The "maxWidth" is "125pt"'
-			});
-
-			/* ------------------------------ */
-			/* getSelectedItem()              */
-			/* ------------------------------ */
-
-			test("getSelectedItem()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id1",
-							key: "0",
-							text: "item 0"
-						})
-					],
-
-					selectedItem: oExpectedItem
-				});
-
-				// assert
-				ok(oSelectList.getSelectedItem() === oExpectedItem);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id1");
-				strictEqual(oSelectList.getSelectedKey(), "0");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedItem()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id1",
-							key: "2",
-							text: "item 2"
-						}),
-
-						new sap.ui.core.Item({
-							key: "3",
-							text: "item 3"
-						})
-					],
-
-					selectedItem: "item-id1"
-				});
-
-				// assert
-				ok(oSelectList.getSelectedItem() === oExpectedItem);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id1");
-				strictEqual(oSelectList.getSelectedKey(), "2");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedItem()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					selectedItem: "item-id",
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "2",
-							text: "item 2"
-						}),
-
-						new sap.ui.core.Item({
-							key: "3",
-							text: "item 3"
-						})
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === oExpectedItem);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id");
-				strictEqual(oSelectList.getSelectedKey(), "2");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedItem()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					selectedKey: "1",
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === oExpectedItem);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id");
-				strictEqual(oSelectList.getSelectedKey(), "1");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedItem()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: []
-				});
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedItem()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					],
-
-					selectedItem: null
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedItem()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							id: "item-id",
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					],
-
-					selectedKey: ""
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* getSelectedKey()               */
-			/* ------------------------------ */
-
-			test("getSelectedKey()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							id: "item-id",
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					],
-
-					selectedKey: undefined
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedKey()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "0",
-							text: "item 0"
-						})
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedKey()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "2",
-							text: "item 2"
-						}),
-
-						new sap.ui.core.Item({
-							key: "3",
-							text: "item 3"
-						})
-					],
-
-					selectedItem: "item-id"
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === oExpectedItem);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id");
-				strictEqual(oSelectList.getSelectedKey(), "2");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedKey()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					selectedItem: "item-id",
-
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						}),
-
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "3",
-							text: "item 3"
-						})
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === oExpectedItem);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id");
-				strictEqual(oSelectList.getSelectedKey(), "3");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedKey()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					selectedKey: "1",
-
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === oExpectedItem);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id");
-				strictEqual(oSelectList.getSelectedKey(), "1");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedKey()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: []
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedKey()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					],
-
-					selectedItem: null
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedKey()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							id: "item-id",
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					],
-
-					selectedItemId: undefined
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedKey()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							id: "item-id",
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					],
-
-					selectedItemId: ""
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedKey()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					],
-
-					selectedKey: "0"
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === oExpectedItem);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id");
-				strictEqual(oSelectList.getSelectedKey(), "0");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* getSelectedItemId()            */
-			/* ------------------------------ */
-
-			test("getSelectedItemId()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							id: "item-id",
-							key: "0",
-							text: "item 0"
-						})
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedItemId()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "2",
-							text: "item 2"
-						}),
-
-						new sap.ui.core.Item({
-							key: "3",
-							text: "item 3"
-						})
-					],
-
-					selectedItem: "item-id"
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === oExpectedItem);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id");
-				strictEqual(oSelectList.getSelectedKey(), "2");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedItemId()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					selectedItem: "item-id",
-
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						}),
-
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "3",
-							text: "item 3"
-						})
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === oExpectedItem);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id");
-				strictEqual(oSelectList.getSelectedKey(), "3");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedItemId()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					selectedKey: "1",
-
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === oExpectedItem);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id");
-				strictEqual(oSelectList.getSelectedKey(), "1");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedItemId()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: []
-				});
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedItemId()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							id: "item-id",
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					],
-
-					selectedItem: null
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedItemId()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							id: "item-id",
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					],
-
-					selectedItemId: undefined
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedItemId()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							id: "item-id",
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					],
-
-					selectedItemId: ""
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedItemId()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							id: "item-id",
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					],
-
-					selectedKey: undefined
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getSelectedItemId()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							id: "item-id",
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					],
-
-					selectedKey: ""
-				});
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* setWidth()                     */
-			/* ------------------------------ */
-
-			test("setWidth()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						})
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				oSelectList.setWidth("400px");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				strictEqual(oSelectList.$().outerWidth() + "px", "400px");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* setEnabled()                   */
-			/* ------------------------------ */
-
-			test("setEnabled()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						})
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				oSelectList.setEnabled(false);
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Disabled"), 'If the sap.m.SelectList control is disabled, it should have the CSS class "' + sap.m.SelectListRenderer.CSS_CLASS + "Disabled");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* addItem                        */
-			/* ------------------------------ */
-
-			test("addItem()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList();
-
-				// arrange
-				var fnAddItemSpy = this.spy(oSelectList, "addItem");
-				var oItem = new sap.ui.core.Item({
-					key: "0",
-					text: "item 0"
-				});
-
-				// act
-				oSelectList.addItem(oItem);
-
-				// assert
-				ok(oSelectList.getFirstItem() === oItem);
-				ok(fnAddItemSpy.returned(oSelectList));
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* insertItem                     */
-			/* ------------------------------ */
-
-			test("insertItem()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList();
-
-				// arrange
-				var fnInsertAggregation = this.spy(oSelectList, "insertAggregation");
-				var fnInsertItem = this.spy(oSelectList, "insertItem");
-				var oItem = new sap.ui.core.Item({
-					key: "0",
-					text: "item 0"
-				});
-
-				// act
-				oSelectList.insertItem(oItem, 0);
-
-				// assert
-				ok(oSelectList.getFirstItem() === oItem);
-				ok(fnInsertAggregation.calledWith("items", oItem, 0), "insertAggregation() method was called with the expected arguments");
-				ok(fnInsertItem.returned(oSelectList), 'oSelectList.insertAggregation() method return the "this" reference');
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* setSelectedItem()              */
-			/* ------------------------------ */
-
-			test("setSelectedItem() should give a warning when called with faulty parameter", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList();
-
-				// arrange
-				var fnSetPropertySpy = this.spy(oSelectList, "setProperty"),
-					fnSetAssociationSpy = this.spy(oSelectList, "setAssociation"),
-					fnWarningSpy = this.spy(jQuery.sap.log, "warning"),
-					fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange"),
-					fnSetSelectedItemSpy = this.spy(oSelectList, "setSelectedItem");
-
-				// act
-				oSelectList.setSelectedItem({});
-
-				// assert
-				strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.SelectList.prototype.setProperty() method was not called");
-				strictEqual(fnSetAssociationSpy.callCount, 0, "sap.m.SelectList.prototype.setAssociation() method was not called");
-				strictEqual(fnWarningSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
-				strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
-				ok(fnSetSelectedItemSpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedItem() method return the "this" reference');
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("setSelectedItem()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2",
-							enabled: false
-						})
-					]
-				});
-
-				// arrange
-				var fnSetPropertySpy = this.spy(oSelectList, "setProperty"),
-					fnSetAssociationSpy = this.spy(oSelectList, "setAssociation"),
-					fnSetSelectedItemSpy = this.spy(oSelectList, "setSelectedItem"),
-					fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange");
-
-				// act
-				oSelectList.setSelectedItem(oExpectedItem);
-
-				// assert
-				strictEqual(fnSetPropertySpy.callCount, 2, 'setProperty() method was called twice, once for the "id" and once for the "key"');
-				strictEqual(fnSetAssociationSpy.callCount, 1, "setAssociation() method was called");
-				ok(fnSetAssociationSpy.calledWith("selectedItem", oExpectedItem));
-				ok(fnSetPropertySpy.calledWith("selectedItemId", "item-id"));
-				ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
-				ok(oSelectList.getSelectedItem() === oExpectedItem);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id");
-				strictEqual(oSelectList.getSelectedKey(), "1");
-				ok(fnSetSelectedItemSpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedItem() method return the "this" reference');
-				strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("setSelectedItem()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2",
-							enabled: false
-						})
-					]
-				});
-
-				// arrange
-				var fnSetPropertySpy = this.spy(oSelectList, "setProperty"),
-					fnSetAssociationSpy = this.spy(oSelectList, "setAssociation"),
-					fnSetSelectedItemSpy = this.spy(oSelectList, "setSelectedItem"),
-					fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange");
-
-				// act
-				oSelectList.setSelectedItem("item-id");
-
-				// assert
-				strictEqual(fnSetPropertySpy.callCount, 2, 'setProperty() method was called twice, once for the "id" and once for the "key"');
-				strictEqual(fnSetAssociationSpy.callCount, 1, "setAssociation() method was called");
-				ok(fnSetAssociationSpy.calledWith("selectedItem", oExpectedItem));
-				ok(fnSetPropertySpy.calledWith("selectedItemId", "item-id"));
-				ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
-				ok(oSelectList.getSelectedItem() === oExpectedItem);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id");
-				strictEqual(oSelectList.getSelectedKey(), "1");
-				ok(fnSetSelectedItemSpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedItem() method return the "this" reference');
-				strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("setSelectedItem()", function() {
-
-				//system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "2",
-							text: "item 2"
-						})
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				oSelectList.setSelectedItem(oExpectedItem);
-
-				// assert
-				ok(oSelectList.getSelectedItem() === oExpectedItem);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id");
-				strictEqual(oSelectList.getSelectedKey(), "2");
-				strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("setSelectedItem()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					],
-
-					selectedKey: "2"
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				oSelectList.setSelectedItem(null);
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-				strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "false");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* setSelectedItemId()            */
-			/* ------------------------------ */
-
-			test("setSelectedItemId()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2",
-							enabled: false
-						})
-					]
-				});
-
-				// arrange
-				var fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange"),
-					fnSetSelectedItemIdSpy = this.spy(oSelectList, "setSelectedItemId");
-
-				// act
-				oSelectList.setSelectedItemId("item-id");
-
-				// assert
-				strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
-				ok(fnSetSelectedItemIdSpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedItemId() method return the "this" reference');
-				ok(oSelectList.getSelectedItem() === oExpectedItem);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id");
-				strictEqual(oSelectList.getSelectedKey(), "1");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("setSelectedItemId()", function() {
-
-				//system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "2",
-							text: "item 2"
-						})
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				oSelectList.setSelectedItemId("item-id");
-
-				// assert
-				ok(oSelectList.getSelectedItem() === oExpectedItem);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id");
-				strictEqual(oSelectList.getSelectedKey(), "2");
-				strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("setSelectedItemId()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							id: "item-id",
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						oExpectedItem = new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					],
-
-					selectedKey: "2"
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				oSelectList.setSelectedItemId("")
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-				strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "false");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("setSelectedItemId() should set the value even if the corresponding item doesn't exist on the list", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					selectedItemId: "item-id"
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id");
-				strictEqual(oSelectList.getSelectedKey(), "");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* setSelectedKey()               */
-			/* ------------------------------ */
-
-			test("setSelectedKey() first rendering", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					selectedKey: "2",
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "2",
-							text: "item 2"
-						})
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === oExpectedItem);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id");
-				strictEqual(oSelectList.getSelectedKey(), "2");
-				strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("setSelectedKey() no rendering", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					],
-
-					selectedKey: "1"
-				});
-
-				// assert
-				ok(oSelectList.getSelectedItem() === oExpectedItem);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id");
-				strictEqual(oSelectList.getSelectedKey(), "1");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("setSelectedKey() after the initial rendering", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				var fnSetPropertySpy = this.spy(oSelectList, "setProperty"),
-					fnSetAssociationSpy = this.spy(oSelectList, "setAssociation"),
-					fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange"),
-					fnSetSelectedKeySpy = this.spy(oSelectList, "setSelectedKey");
-
-				// act
-				oSelectList.setSelectedKey("1");
-
-				// assert
-				strictEqual(fnSetPropertySpy.callCount, 2, 'setProperty() method was called twice, once for the "id" and once for the "key"');
-				strictEqual(fnSetAssociationSpy.callCount, 1, "setAssociation() method was called");
-				strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
-				ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
-				ok(fnSetPropertySpy.calledWith("selectedItemId", "item-id"));
-				ok(fnSetAssociationSpy.calledWith("selectedItem", oExpectedItem));
-				ok(fnSetSelectedKeySpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedKey() method return the "this" reference');
-				ok(oSelectList.getSelectedItem() === oExpectedItem);
-				strictEqual(oSelectList.getSelectedItemId(), "item-id");
-				strictEqual(oSelectList.getSelectedKey(), "1");
-				strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("setSelectedKey()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oExpectedItem = new sap.ui.core.Item({
-							id: "item-id",
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					],
-
-					selectedKey: "2"
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				oSelectList.setSelectedKey("");
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-				strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "false");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* removeItem()                   */
-			/* ------------------------------ */
-
-			test("removeItem() should give a warning when called with faulty parameter", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList();
-
-				// arrange
-				var fnRemoveAggregationSpy = this.spy(oSelectList, "removeAggregation");
-				var fnRemoveItemSpy = this.spy(oSelectList, "removeItem");
-				var fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange");
-
-				// act
-				oSelectList.removeItem(undefined);
-
-				// assert
-				strictEqual(fnRemoveAggregationSpy.callCount, 1, "sap.m.SelectList.prototype.removeAggregation() method was called");
-				ok(fnRemoveAggregationSpy.calledWith("items", undefined), "sap.m.SelectList.prototype.removeAggregation() method was called with the expected argument");
-				strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event is not fired");
-				ok(fnRemoveItemSpy.returned(null), "sap.m.SelectList.prototype.removeItem() method returns null");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("removeItem() remove the selected item", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: {
-						path: "/items",
-						template: new sap.ui.core.Item({
-							key: "{value}",
-							text: "{text}"
-						})
-					},
-
-					selectedKey: {
-						path: "/selected",
-						template: "{selected}"
-					}
-				});
-
-				// arrange
-				var oModel = new sap.ui.model.json.JSONModel();
-				var fnRemoveAggregationSpy = this.spy(oSelectList, "removeAggregation");
-				var mData = {
-					"items": [
-						{
-							"value": "0",
-							"text": "item 0"
-						},
-
-						{
-							"value": "1",
-							"text": "item 1"
-						},
-
-						{
-							"value": "2",
-							"text": "item 2"
-						},
-
-						{
-							"value": "3",
-							"text": "item 3"
-						},
-
-						{
-							"value": "4",
-							"text": "item 4"
-						},
-
-						{
-							"value": "5",
-							"text": "item 5"
-						},
-
-						{
-							"value": "6",
-							"text": "item 6"
-						},
-
-						{
-							"value": "7",
-							"text": "item 7"
-						},
-
-						{
-							"value": "8",
-							"text": "item 8"
-						},
-					],
-
-					"selected": "8"
-				};
-
-				oModel.setData(mData);
-				sap.ui.getCore().setModel(oModel);
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				oSelectList.removeItem(8);
-
-				// assert
-				strictEqual(fnRemoveAggregationSpy.callCount, 1, "sap.m.SelectList.prototype.removeAggregation() method was called");
-				ok(fnRemoveAggregationSpy.calledWith("items", 8), "sap.m.SelectList.prototype.removeAggregation() method was called with the expected argument");
-				strictEqual(oSelectList.getSelectedKey(), "");
-				ok(oSelectList.getSelectedItem() === null);
-
-				// cleanup
-				oSelectList.destroy();
-				oModel.destroy();
-			});
-
-			test("removeItem() remove the selected item", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-
-					items: {
-						path: "/items",
-						template: new sap.ui.core.Item({
-							key: "{value}",
-							text: "{text}"
-						})
-					},
-
-					selectedKey: {
-						path: "/selected",
-						template: "{selected}"
-					}
-				});
-
-				// arrange
-				var oModel = new sap.ui.model.json.JSONModel();
-
-				var mData = {
-					"items": [
-						{
-							"value": "0",
-							"text": "item 0"
-						},
-
-						{
-							"value": "1",
-							"text": "item 1"
-						},
-
-						{
-							"value": "2",
-							"text": "item 2"
-						},
-
-						{
-							"value": "3",
-							"text": "item 3"
-						}
-					],
-
-					"selected": "0"
-				};
-
-				oModel.setData(mData);
-				sap.ui.getCore().setModel(oModel);
-
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				oSelectList.removeItem(0);
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedKey(), "");
-				strictEqual(oSelectList.getSelectedItemId(), "");
-
-				// cleanup
-				oSelectList.destroy();
-				oModel.destroy();
-			});
-
-			test("removeItem()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oExpectedItem = new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						})
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				oSelectList.removeItem(0);
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				strictEqual(oSelectList.getSelectedKey(), "");
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				ok(oExpectedItem.getDomRef() === null);
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* removeAllItems()               */
-			/* ------------------------------ */
-
-			test("removeAllItems()", function() {
-
-				// system under test
-				var aItems = [
+		sinon.config.useFakeTimers = true;
+		QUnit.config.autostart = false;
+		sap.ui.test.qunit.delayTestStart();
+
+		var fnTestControlProperty = function(mOptions) {
+			var sProperty = mOptions.property.charAt(0).toUpperCase() + mOptions.property.slice(1);
+
+			test("get" + sProperty + "()", function() {
+				strictEqual(mOptions.control["get" + sProperty](), mOptions.output, mOptions.description);
+			});
+		};
+
+		/* --------------------------------- */
+		/* tests for default property values */
+		/* --------------------------------- */
+
+		test("default property values", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						id: "item-id",
+						key: "0",
+						text: "item 0",
+						tooltip: "first item"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1",
+						enabled: false
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					}),
+					new sap.ui.core.SeparatorItem()
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			strictEqual(oSelectList.getVisible(), true, "By default the Select control is visible");
+			strictEqual(oSelectList.getEnabled(), true, "By default the SelectList control is enabled");
+			strictEqual(oSelectList.getWidth(), "auto", 'By default the "width" of the SelectList control is "auto"');
+			strictEqual(oSelectList.getMaxWidth(), "100%", 'By default the "max-width" of the SelectList control is "100%"');
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "", "By default the selected items id of the SelectList control is the id of the first item");
+			strictEqual(oSelectList.getSelectedKey(), "", "By default the selected key of the SelectList control is the key property of the first item");
+			strictEqual(oSelectList.getFirstItem().getDomRef().getAttribute("title"), "first item", "The tooltip is shown");
+			strictEqual(oSelectList.getDomRef().getAttribute("role"), "listbox");
+			strictEqual(oSelectList.getFirstItem().getDomRef().getAttribute("role"), "option");
+			strictEqual(oSelectList.getLastItem().getDomRef().getAttribute("role"), "separator");
+			strictEqual(oSelectList.getFirstItem().getDomRef().getAttribute("aria-selected"), "false");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* =========================================================== */
+		/* HTML module                                                 */
+		/* =========================================================== */
+
+		module("HTML");
+
+		/* ------------------------------ */
+		/* rendering                      */
+		/* ------------------------------ */
+
+		test("rendering", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						key: "DZ",
+						text: "Algeria",
+					}),
+
+					new sap.ui.core.Item({
+						key: "AR",
+						text: "Argentina"
+					}),
+
+					new sap.ui.core.Item({
+						key: "AU",
+						text: "Australia"
+					})
+				],
+				selectedKey: "AU"
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			strictEqual(oSelectList.getItems()[0].getDomRef().getAttribute("aria-setsize"), "3");
+			strictEqual(oSelectList.getItems()[1].getDomRef().getAttribute("aria-setsize"), "3");
+			strictEqual(oSelectList.getItems()[2].getDomRef().getAttribute("aria-setsize"), "3");
+
+			strictEqual(oSelectList.getItems()[0].getDomRef().getAttribute("aria-posinset"), "1");
+			strictEqual(oSelectList.getItems()[1].getDomRef().getAttribute("aria-posinset"), "2");
+			strictEqual(oSelectList.getItems()[2].getDomRef().getAttribute("aria-posinset"), "3");
+
+			strictEqual(oSelectList.getItems()[0].getDomRef().getAttribute("aria-selected"), "false");
+			strictEqual(oSelectList.getItems()[1].getDomRef().getAttribute("aria-selected"), "false");
+			strictEqual(oSelectList.getItems()[2].getDomRef().getAttribute("aria-selected"), "true");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* =========================================================== */
+		/* Methods module                                              */
+		/* =========================================================== */
+
+		module("methods");
+
+		/* ------------------------------ */
+		/* getVisible()                   */
+		/* ------------------------------ */
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					})
+				],
+				visible: false
+			}),
+			property: "visible",
+			output: false,
+			description: "The control is not visible"
+		});
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList(),
+			property: "visible",
+			output: true,
+			description: "The control is visible"
+		});
+
+		/* ------------------------------ */
+		/* getEnabled()                   */
+		/* ------------------------------ */
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList(),
+			property: "enabled",
+			output: true,
+			description: "The control is enable"
+		});
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList({
+				enabled: false
+			}),
+			property: "enabled",
+			output: false,
+			description: "The control is disabled"
+		});
+
+		/* ------------------------------ */
+		/* getWidth()                     */
+		/* ------------------------------ */
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList({
+				width: "50%"
+			}),
+			property: "width",
+			output: "50%",
+			description: 'The "width" is "50%"'
+		});
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList({
+				width: "13rem"
+			}),
+			property: "width",
+			output: "13rem",
+			description: 'The "width" is "13rem"'
+		});
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList({
+				width: "200px"
+			}),
+			property: "width",
+			output: "200px",
+			description: 'The "width" is "200px"'
+		});
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList({
+				width: "4em"
+			}),
+			property: "width",
+			output: "4em",
+			description: 'The "width" is "4em"'
+		});
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList(),
+			property: "width",
+			output: "auto",
+			description: 'The "width" is "auto"'
+		});
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList({
+				width: "2in"
+			}),
+			property: "width",
+			output: "2in",
+			description: 'The "width" is "2in"'
+		});
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList({
+				width: "3cm"
+			}),
+			property: "width",
+			output: "3cm",
+			description: 'The "width" is "3cm"'
+		});
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList({
+				width: "125pt"
+			}),
+			property: "width",
+			output: "125pt",
+			description: 'The "width" is "125pt"'
+		});
+
+		/* ------------------------------ */
+		/* getMaxWidth()                  */
+		/* ------------------------------ */
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList({
+				maxWidth: "50%"
+			}),
+			property: "maxWidth",
+			output: "50%",
+			description: 'The "maxWidth" is "50%"'
+		});
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList({
+				maxWidth: "13rem"
+			}),
+			property: "maxWidth",
+			output: "13rem",
+			description: 'The "maxWidth" is "13rem"'
+		});
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList({
+				maxWidth: "200px"
+			}),
+			property: "maxWidth",
+			output: "200px",
+			description: 'The "maxWidth" is "200px"'
+		});
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList({
+				maxWidth: "4em"
+			}),
+			property: "maxWidth",
+			output: "4em",
+			description: 'The "maxWidth" is "4em"'
+		});
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList(),
+			property: "maxWidth",
+			output: "100%",
+			description: 'The "maxWidth" is "100%"'
+		});
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList({
+				maxWidth: "2in"
+			}),
+			property: "maxWidth",
+			output: "2in",
+			description: 'The "maxWidth" is "2in"'
+		});
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList({
+				maxWidth: "3cm"
+			}),
+			property: "maxWidth",
+			output: "3cm",
+			description: 'The "maxWidth" is "3cm"'
+		});
+
+		fnTestControlProperty({
+			control: new sap.m.SelectList({
+				maxWidth: "125pt"
+			}),
+			property: "maxWidth",
+			output: "125pt",
+			description: 'The "maxWidth" is "125pt"'
+		});
+
+		/* ------------------------------ */
+		/* getSelectedItem()              */
+		/* ------------------------------ */
+
+		test("getSelectedItem()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id1",
+						key: "0",
+						text: "item 0"
+					})
+				],
+
+				selectedItem: oExpectedItem
+			});
+
+			// assert
+			ok(oSelectList.getSelectedItem() === oExpectedItem);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id1");
+			strictEqual(oSelectList.getSelectedKey(), "0");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedItem()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
 					new sap.ui.core.Item({
 						key: "0",
 						text: "item 0"
@@ -2200,1458 +382,3276 @@
 						text: "item 1"
 					}),
 
-					new sap.ui.core.Item({
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id1",
 						key: "2",
 						text: "item 2"
-					})
-				];
-
-				var oSelectList = new sap.m.SelectList({
-					items: aItems
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-				var fnRemoveAllItemsSpy = this.spy(oSelectList, "removeAllItems");
-				var fnRemoveAllAggregationSpy = this.spy(oSelectList, "removeAllAggregation");
-
-				// act
-				oSelectList.removeAllItems();
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(fnRemoveAllAggregationSpy.calledWith("items"), "sap.m.SelectList.prototype.removeAllAggregation() method was called with the expected argument");
-				ok(fnRemoveAllItemsSpy.returned(aItems), "sap.m.SelectList.prototype.removeAllItems() method returns an array of the removed items");
-				ok(oSelectList.getSelectedItem() === null);
-				strictEqual(oSelectList.getSelectedItemId(), "");
-				strictEqual(oSelectList.getSelectedKey(), "");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* destroyItems()                 */
-			/* ------------------------------ */
-
-			test("destroyItems()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						})
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-				var fnDestroyItemsSpy = this.spy(oSelectList, "destroyItems");
-
-				// act
-				oSelectList.destroyItems();
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(fnDestroyItemsSpy.returned(oSelectList), "sap.m.SelectList.prototype.destroyItems() method returns the Select instance");
-				ok(oSelectList.getSelectedItem() === null);
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* findFirstEnabledItem()         */
-			/* ------------------------------ */
-
-			test("findFirstEnabledItem()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var aItems = [
-					oExpectedItem = new sap.ui.core.Item({
-						key: "0",
-						text: "item 0"
 					}),
 
 					new sap.ui.core.Item({
-						key: "1",
-						text: "item 1"
-					}),
-
-					new sap.ui.core.Item({
-						key: "2",
-						text: "item 2",
-						enabled: false
-					})
-				];
-
-				var oSelectList = new sap.m.SelectList({
-					items: aItems
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				var oFirstEnabledItem = oSelectList.findFirstEnabledItem(aItems);
-
-				// assert
-				ok(oFirstEnabledItem === oExpectedItem);
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("findFirstEnabledItem()", function() {
-
-				// system under test
-				var aItems = [
-					new sap.ui.core.Item({
-						key: "0",
-						text: "item 0",
-						enabled: false
-					}),
-
-					new sap.ui.core.Item({
-						key: "1",
-						text: "item 1",
-						enabled: false
-					}),
-
-					new sap.ui.core.Item({
-						key: "2",
-						text: "item 2",
-						enabled: false
-					})
-				];
-
-				var oSelectList = new sap.m.SelectList({
-					items: aItems
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				var oFirstEnabledItem = oSelectList.findFirstEnabledItem(aItems);
-
-				// assert
-				ok(oFirstEnabledItem === null, 'The first enabled item is "null"');
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("findFirstEnabledItem()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList();
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				var oFirstEnabledItem = oSelectList.findFirstEnabledItem([]);
-
-				// assert
-				ok(oFirstEnabledItem === null, 'The first enabled item is "null"');
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* findLastEnabledItem()         */
-			/* ------------------------------ */
-
-			test("findLastEnabledItem()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var aItems = [
-					new sap.ui.core.Item({
-						key: "0",
-						text: "item 0",
-						enabled: false
-					}),
-
-					new sap.ui.core.Item({
-						key: "1",
-						text: "item 1",
-						enabled: false
-					}),
-
-					oExpectedItem = new sap.ui.core.Item({
-						key: "2",
-						text: "item 2"
-					})
-				];
-
-				var oSelectList = new sap.m.SelectList({
-					items: aItems
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				var oLastEnabledItem = oSelectList.findLastEnabledItem(aItems);
-
-				// assert
-				ok(oLastEnabledItem === oExpectedItem);
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("findLastEnabledItem()", function() {
-
-				// system under test
-				var aItems = [
-					new sap.ui.core.Item({
-						key: "0",
-						text: "item 0",
-						enabled: false
-					}),
-
-					new sap.ui.core.Item({
-						key: "1",
-						text: "item 1",
-						enabled: false
-					}),
-
-					new sap.ui.core.Item({
-						key: "2",
-						text: "item 2",
-						enabled: false
-					})
-				];
-
-				var oSelectList = new sap.m.SelectList({
-					items: aItems
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				var oLastEnabledItem = oSelectList.findLastEnabledItem(aItems);
-
-				// assert
-				ok(oLastEnabledItem === null, 'The last enabled item is "null"');
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("findLastEnabledItem()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList();
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				var oLastEnabledItem = oSelectList.findLastEnabledItem([]);
-
-				// assert
-				ok(oLastEnabledItem === null, 'The last enabled item is "null"');
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* setSelectedIndex()             */
-			/* ------------------------------ */
-
-			var setSelectedIndexTestCase = function(sTestName, mOptions) {
-				test("setSelectedIndex()", function() {
-
-					// system under test
-					var oSelectList = mOptions.control;
-
-					// act
-					oSelectList._setSelectedIndex(mOptions.input);
-
-					// assert
-					ok(oSelectList.getSelectedItem() === mOptions.output, sTestName);
-
-					// cleanup
-					oSelectList.destroy();
-				});
-			};
-
-			(function() {
-				var oExpectedItem;
-				var aItems = [
-					new sap.ui.core.Item({
-						key: "0",
-						text: "item 0",
-						enabled: false
-					}),
-
-					new sap.ui.core.Item({
-						key: "1",
-						text: "item 1"
-					}),
-
-					oExpectedItem = new sap.ui.core.Item({
 						key: "3",
 						text: "item 3"
+					})
+				],
+
+				selectedItem: "item-id1"
+			});
+
+			// assert
+			ok(oSelectList.getSelectedItem() === oExpectedItem);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id1");
+			strictEqual(oSelectList.getSelectedKey(), "2");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedItem()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				selectedItem: "item-id",
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "2",
+						text: "item 2"
+					}),
+
+					new sap.ui.core.Item({
+						key: "3",
+						text: "item 3"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === oExpectedItem);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			strictEqual(oSelectList.getSelectedKey(), "2");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedItem()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				selectedKey: "1",
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "1",
+						text: "item 1"
 					}),
 
 					new sap.ui.core.Item({
 						key: "2",
 						text: "item 2"
 					})
-				];
+				]
+			});
 
-				setSelectedIndexTestCase("", {
-					control: new sap.m.SelectList({
-						items: aItems
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === oExpectedItem);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			strictEqual(oSelectList.getSelectedKey(), "1");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedItem()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: []
+			});
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedItem()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "0",
+						text: "item 0"
 					}),
-					input: 2,
-					output: oExpectedItem
-				});
-			}());
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				],
+
+				selectedItem: null
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedItem()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						id: "item-id",
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				],
+
+				selectedKey: ""
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* getSelectedKey()               */
+		/* ------------------------------ */
+
+		test("getSelectedKey()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						id: "item-id",
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				],
+
+				selectedKey: undefined
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedKey()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "0",
+						text: "item 0"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedKey()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "2",
+						text: "item 2"
+					}),
+
+					new sap.ui.core.Item({
+						key: "3",
+						text: "item 3"
+					})
+				],
+
+				selectedItem: "item-id"
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === oExpectedItem);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			strictEqual(oSelectList.getSelectedKey(), "2");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedKey()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				selectedItem: "item-id",
+
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "3",
+						text: "item 3"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === oExpectedItem);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			strictEqual(oSelectList.getSelectedKey(), "3");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedKey()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				selectedKey: "1",
+
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === oExpectedItem);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			strictEqual(oSelectList.getSelectedKey(), "1");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedKey()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: []
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedKey()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				],
+
+				selectedItem: null
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedKey()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						id: "item-id",
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				],
+
+				selectedItemId: undefined
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedKey()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						id: "item-id",
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				],
+
+				selectedItemId: ""
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedKey()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				],
+
+				selectedKey: "0"
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === oExpectedItem);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			strictEqual(oSelectList.getSelectedKey(), "0");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* getSelectedItemId()            */
+		/* ------------------------------ */
+
+		test("getSelectedItemId()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						id: "item-id",
+						key: "0",
+						text: "item 0"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedItemId()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "2",
+						text: "item 2"
+					}),
+
+					new sap.ui.core.Item({
+						key: "3",
+						text: "item 3"
+					})
+				],
+
+				selectedItem: "item-id"
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === oExpectedItem);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			strictEqual(oSelectList.getSelectedKey(), "2");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedItemId()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				selectedItem: "item-id",
+
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "3",
+						text: "item 3"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === oExpectedItem);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			strictEqual(oSelectList.getSelectedKey(), "3");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedItemId()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				selectedKey: "1",
+
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === oExpectedItem);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			strictEqual(oSelectList.getSelectedKey(), "1");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedItemId()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: []
+			});
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedItemId()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						id: "item-id",
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				],
+
+				selectedItem: null
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedItemId()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						id: "item-id",
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				],
+
+				selectedItemId: undefined
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedItemId()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						id: "item-id",
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				],
+
+				selectedItemId: ""
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedItemId()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						id: "item-id",
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				],
+
+				selectedKey: undefined
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("getSelectedItemId()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						id: "item-id",
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				],
+
+				selectedKey: ""
+			});
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* setWidth()                     */
+		/* ------------------------------ */
+
+		test("setWidth()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oSelectList.setWidth("400px");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			strictEqual(oSelectList.$().outerWidth() + "px", "400px");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* setEnabled()                   */
+		/* ------------------------------ */
+
+		test("setEnabled()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oSelectList.setEnabled(false);
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Disabled"), 'If the sap.m.SelectList control is disabled, it should have the CSS class "' + sap.m.SelectListRenderer.CSS_CLASS + "Disabled");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* addItem                        */
+		/* ------------------------------ */
+
+		test("addItem()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList();
+
+			// arrange
+			var fnAddItemSpy = this.spy(oSelectList, "addItem");
+			var oItem = new sap.ui.core.Item({
+				key: "0",
+				text: "item 0"
+			});
+
+			// act
+			oSelectList.addItem(oItem);
+
+			// assert
+			ok(oSelectList.getFirstItem() === oItem);
+			ok(fnAddItemSpy.returned(oSelectList));
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* insertItem                     */
+		/* ------------------------------ */
+
+		test("insertItem()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList();
+
+			// arrange
+			var fnInsertAggregation = this.spy(oSelectList, "insertAggregation");
+			var fnInsertItem = this.spy(oSelectList, "insertItem");
+			var oItem = new sap.ui.core.Item({
+				key: "0",
+				text: "item 0"
+			});
+
+			// act
+			oSelectList.insertItem(oItem, 0);
+
+			// assert
+			ok(oSelectList.getFirstItem() === oItem);
+			ok(fnInsertAggregation.calledWith("items", oItem, 0), "insertAggregation() method was called with the expected arguments");
+			ok(fnInsertItem.returned(oSelectList), 'oSelectList.insertAggregation() method return the "this" reference');
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* setSelectedItem()              */
+		/* ------------------------------ */
+
+		test("setSelectedItem() should give a warning when called with faulty parameter", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList();
+
+			// arrange
+			var fnSetPropertySpy = this.spy(oSelectList, "setProperty"),
+				fnSetAssociationSpy = this.spy(oSelectList, "setAssociation"),
+				fnWarningSpy = this.spy(jQuery.sap.log, "warning"),
+				fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange"),
+				fnSetSelectedItemSpy = this.spy(oSelectList, "setSelectedItem");
+
+			// act
+			oSelectList.setSelectedItem({});
+
+			// assert
+			strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.SelectList.prototype.setProperty() method was not called");
+			strictEqual(fnSetAssociationSpy.callCount, 0, "sap.m.SelectList.prototype.setAssociation() method was not called");
+			strictEqual(fnWarningSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
+			strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
+			ok(fnSetSelectedItemSpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedItem() method return the "this" reference');
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("setSelectedItem()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2",
+						enabled: false
+					})
+				]
+			});
+
+			// arrange
+			var fnSetPropertySpy = this.spy(oSelectList, "setProperty"),
+				fnSetAssociationSpy = this.spy(oSelectList, "setAssociation"),
+				fnSetSelectedItemSpy = this.spy(oSelectList, "setSelectedItem"),
+				fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange");
+
+			// act
+			oSelectList.setSelectedItem(oExpectedItem);
+
+			// assert
+			strictEqual(fnSetPropertySpy.callCount, 2, 'setProperty() method was called twice, once for the "id" and once for the "key"');
+			strictEqual(fnSetAssociationSpy.callCount, 1, "setAssociation() method was called");
+			ok(fnSetAssociationSpy.calledWith("selectedItem", oExpectedItem));
+			ok(fnSetPropertySpy.calledWith("selectedItemId", "item-id"));
+			ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
+			ok(oSelectList.getSelectedItem() === oExpectedItem);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			strictEqual(oSelectList.getSelectedKey(), "1");
+			ok(fnSetSelectedItemSpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedItem() method return the "this" reference');
+			strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("setSelectedItem()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2",
+						enabled: false
+					})
+				]
+			});
+
+			// arrange
+			var fnSetPropertySpy = this.spy(oSelectList, "setProperty"),
+				fnSetAssociationSpy = this.spy(oSelectList, "setAssociation"),
+				fnSetSelectedItemSpy = this.spy(oSelectList, "setSelectedItem"),
+				fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange");
+
+			// act
+			oSelectList.setSelectedItem("item-id");
+
+			// assert
+			strictEqual(fnSetPropertySpy.callCount, 2, 'setProperty() method was called twice, once for the "id" and once for the "key"');
+			strictEqual(fnSetAssociationSpy.callCount, 1, "setAssociation() method was called");
+			ok(fnSetAssociationSpy.calledWith("selectedItem", oExpectedItem));
+			ok(fnSetPropertySpy.calledWith("selectedItemId", "item-id"));
+			ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
+			ok(oSelectList.getSelectedItem() === oExpectedItem);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			strictEqual(oSelectList.getSelectedKey(), "1");
+			ok(fnSetSelectedItemSpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedItem() method return the "this" reference');
+			strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("setSelectedItem()", function() {
+
+			//system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "2",
+						text: "item 2"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oSelectList.setSelectedItem(oExpectedItem);
+
+			// assert
+			ok(oSelectList.getSelectedItem() === oExpectedItem);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			strictEqual(oSelectList.getSelectedKey(), "2");
+			strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("setSelectedItem()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				],
+
+				selectedKey: "2"
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oSelectList.setSelectedItem(null);
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+			strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "false");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* setSelectedItemId()            */
+		/* ------------------------------ */
+
+		test("setSelectedItemId()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2",
+						enabled: false
+					})
+				]
+			});
+
+			// arrange
+			var fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange"),
+				fnSetSelectedItemIdSpy = this.spy(oSelectList, "setSelectedItemId");
+
+			// act
+			oSelectList.setSelectedItemId("item-id");
+
+			// assert
+			strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
+			ok(fnSetSelectedItemIdSpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedItemId() method return the "this" reference');
+			ok(oSelectList.getSelectedItem() === oExpectedItem);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			strictEqual(oSelectList.getSelectedKey(), "1");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("setSelectedItemId()", function() {
+
+			//system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "2",
+						text: "item 2"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oSelectList.setSelectedItemId("item-id");
+
+			// assert
+			ok(oSelectList.getSelectedItem() === oExpectedItem);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			strictEqual(oSelectList.getSelectedKey(), "2");
+			strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("setSelectedItemId()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						id: "item-id",
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				],
+
+				selectedKey: "2"
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oSelectList.setSelectedItemId("")
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+			strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "false");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("setSelectedItemId() should set the value even if the corresponding item doesn't exist on the list", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				selectedItemId: "item-id"
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			strictEqual(oSelectList.getSelectedKey(), "");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* setSelectedKey()               */
+		/* ------------------------------ */
+
+		test("setSelectedKey() first rendering", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				selectedKey: "2",
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "2",
+						text: "item 2"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === oExpectedItem);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			strictEqual(oSelectList.getSelectedKey(), "2");
+			strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("setSelectedKey() no rendering", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				],
+
+				selectedKey: "1"
+			});
+
+			// assert
+			ok(oSelectList.getSelectedItem() === oExpectedItem);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			strictEqual(oSelectList.getSelectedKey(), "1");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("setSelectedKey() after the initial rendering", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var fnSetPropertySpy = this.spy(oSelectList, "setProperty"),
+				fnSetAssociationSpy = this.spy(oSelectList, "setAssociation"),
+				fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange"),
+				fnSetSelectedKeySpy = this.spy(oSelectList, "setSelectedKey");
+
+			// act
+			oSelectList.setSelectedKey("1");
+
+			// assert
+			strictEqual(fnSetPropertySpy.callCount, 2, 'setProperty() method was called twice, once for the "id" and once for the "key"');
+			strictEqual(fnSetAssociationSpy.callCount, 1, "setAssociation() method was called");
+			strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
+			ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
+			ok(fnSetPropertySpy.calledWith("selectedItemId", "item-id"));
+			ok(fnSetAssociationSpy.calledWith("selectedItem", oExpectedItem));
+			ok(fnSetSelectedKeySpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedKey() method return the "this" reference');
+			ok(oSelectList.getSelectedItem() === oExpectedItem);
+			strictEqual(oSelectList.getSelectedItemId(), "item-id");
+			strictEqual(oSelectList.getSelectedKey(), "1");
+			strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "true");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("setSelectedKey()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oExpectedItem = new sap.ui.core.Item({
+						id: "item-id",
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				],
+
+				selectedKey: "2"
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oSelectList.setSelectedKey("");
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+			strictEqual(oExpectedItem.getDomRef().getAttribute("aria-selected"), "false");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* removeItem()                   */
+		/* ------------------------------ */
+
+		test("removeItem() should give a warning when called with faulty parameter", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList();
+
+			// arrange
+			var fnRemoveAggregationSpy = this.spy(oSelectList, "removeAggregation");
+			var fnRemoveItemSpy = this.spy(oSelectList, "removeItem");
+			var fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange");
+
+			// act
+			oSelectList.removeItem(undefined);
+
+			// assert
+			strictEqual(fnRemoveAggregationSpy.callCount, 1, "sap.m.SelectList.prototype.removeAggregation() method was called");
+			ok(fnRemoveAggregationSpy.calledWith("items", undefined), "sap.m.SelectList.prototype.removeAggregation() method was called with the expected argument");
+			strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event is not fired");
+			ok(fnRemoveItemSpy.returned(null), "sap.m.SelectList.prototype.removeItem() method returns null");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("removeItem() remove the selected item", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: {
+					path: "/items",
+					template: new sap.ui.core.Item({
+						key: "{value}",
+						text: "{text}"
+					})
+				},
+
+				selectedKey: {
+					path: "/selected",
+					template: "{selected}"
+				}
+			});
+
+			// arrange
+			var oModel = new sap.ui.model.json.JSONModel();
+			var fnRemoveAggregationSpy = this.spy(oSelectList, "removeAggregation");
+			var mData = {
+				"items": [
+					{
+						"value": "0",
+						"text": "item 0"
+					},
+
+					{
+						"value": "1",
+						"text": "item 1"
+					},
+
+					{
+						"value": "2",
+						"text": "item 2"
+					},
+
+					{
+						"value": "3",
+						"text": "item 3"
+					},
+
+					{
+						"value": "4",
+						"text": "item 4"
+					},
+
+					{
+						"value": "5",
+						"text": "item 5"
+					},
+
+					{
+						"value": "6",
+						"text": "item 6"
+					},
+
+					{
+						"value": "7",
+						"text": "item 7"
+					},
+
+					{
+						"value": "8",
+						"text": "item 8"
+					},
+				],
+
+				"selected": "8"
+			};
+
+			oModel.setData(mData);
+			sap.ui.getCore().setModel(oModel);
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oSelectList.removeItem(8);
+
+			// assert
+			strictEqual(fnRemoveAggregationSpy.callCount, 1, "sap.m.SelectList.prototype.removeAggregation() method was called");
+			ok(fnRemoveAggregationSpy.calledWith("items", 8), "sap.m.SelectList.prototype.removeAggregation() method was called with the expected argument");
+			strictEqual(oSelectList.getSelectedKey(), "");
+			ok(oSelectList.getSelectedItem() === null);
+
+			// cleanup
+			oSelectList.destroy();
+			oModel.destroy();
+		});
+
+		test("removeItem() remove the selected item", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+
+				items: {
+					path: "/items",
+					template: new sap.ui.core.Item({
+						key: "{value}",
+						text: "{text}"
+					})
+				},
+
+				selectedKey: {
+					path: "/selected",
+					template: "{selected}"
+				}
+			});
+
+			// arrange
+			var oModel = new sap.ui.model.json.JSONModel();
+
+			var mData = {
+				"items": [
+					{
+						"value": "0",
+						"text": "item 0"
+					},
+
+					{
+						"value": "1",
+						"text": "item 1"
+					},
+
+					{
+						"value": "2",
+						"text": "item 2"
+					},
+
+					{
+						"value": "3",
+						"text": "item 3"
+					}
+				],
+
+				"selected": "0"
+			};
+
+			oModel.setData(mData);
+			sap.ui.getCore().setModel(oModel);
+
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oSelectList.removeItem(0);
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedKey(), "");
+			strictEqual(oSelectList.getSelectedItemId(), "");
+
+			// cleanup
+			oSelectList.destroy();
+			oModel.destroy();
+		});
+
+		test("removeItem()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oExpectedItem = new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oSelectList.removeItem(0);
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			strictEqual(oSelectList.getSelectedKey(), "");
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			ok(oExpectedItem.getDomRef() === null);
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* removeAllItems()               */
+		/* ------------------------------ */
+
+		test("removeAllItems()", function() {
+
+			// system under test
+			var aItems = [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1"
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2"
+				})
+			];
+
+			var oSelectList = new sap.m.SelectList({
+				items: aItems
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			var fnRemoveAllItemsSpy = this.spy(oSelectList, "removeAllItems");
+			var fnRemoveAllAggregationSpy = this.spy(oSelectList, "removeAllAggregation");
+
+			// act
+			oSelectList.removeAllItems();
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(fnRemoveAllAggregationSpy.calledWith("items"), "sap.m.SelectList.prototype.removeAllAggregation() method was called with the expected argument");
+			ok(fnRemoveAllItemsSpy.returned(aItems), "sap.m.SelectList.prototype.removeAllItems() method returns an array of the removed items");
+			ok(oSelectList.getSelectedItem() === null);
+			strictEqual(oSelectList.getSelectedItemId(), "");
+			strictEqual(oSelectList.getSelectedKey(), "");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* destroyItems()                 */
+		/* ------------------------------ */
+
+		test("destroyItems()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			var fnDestroyItemsSpy = this.spy(oSelectList, "destroyItems");
+
+			// act
+			oSelectList.destroyItems();
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(fnDestroyItemsSpy.returned(oSelectList), "sap.m.SelectList.prototype.destroyItems() method returns the Select instance");
+			ok(oSelectList.getSelectedItem() === null);
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* findFirstEnabledItem()         */
+		/* ------------------------------ */
+
+		test("findFirstEnabledItem()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var aItems = [
+				oExpectedItem = new sap.ui.core.Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1"
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2",
+					enabled: false
+				})
+			];
+
+			var oSelectList = new sap.m.SelectList({
+				items: aItems
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			var oFirstEnabledItem = oSelectList.findFirstEnabledItem(aItems);
+
+			// assert
+			ok(oFirstEnabledItem === oExpectedItem);
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("findFirstEnabledItem()", function() {
+
+			// system under test
+			var aItems = [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0",
+					enabled: false
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1",
+					enabled: false
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2",
+					enabled: false
+				})
+			];
+
+			var oSelectList = new sap.m.SelectList({
+				items: aItems
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			var oFirstEnabledItem = oSelectList.findFirstEnabledItem(aItems);
+
+			// assert
+			ok(oFirstEnabledItem === null, 'The first enabled item is "null"');
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("findFirstEnabledItem()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList();
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			var oFirstEnabledItem = oSelectList.findFirstEnabledItem([]);
+
+			// assert
+			ok(oFirstEnabledItem === null, 'The first enabled item is "null"');
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* findLastEnabledItem()         */
+		/* ------------------------------ */
+
+		test("findLastEnabledItem()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var aItems = [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0",
+					enabled: false
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1",
+					enabled: false
+				}),
+
+				oExpectedItem = new sap.ui.core.Item({
+					key: "2",
+					text: "item 2"
+				})
+			];
+
+			var oSelectList = new sap.m.SelectList({
+				items: aItems
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			var oLastEnabledItem = oSelectList.findLastEnabledItem(aItems);
+
+			// assert
+			ok(oLastEnabledItem === oExpectedItem);
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("findLastEnabledItem()", function() {
+
+			// system under test
+			var aItems = [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0",
+					enabled: false
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1",
+					enabled: false
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2",
+					enabled: false
+				})
+			];
+
+			var oSelectList = new sap.m.SelectList({
+				items: aItems
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			var oLastEnabledItem = oSelectList.findLastEnabledItem(aItems);
+
+			// assert
+			ok(oLastEnabledItem === null, 'The last enabled item is "null"');
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("findLastEnabledItem()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList();
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			var oLastEnabledItem = oSelectList.findLastEnabledItem([]);
+
+			// assert
+			ok(oLastEnabledItem === null, 'The last enabled item is "null"');
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* setSelectedIndex()             */
+		/* ------------------------------ */
+
+		var setSelectedIndexTestCase = function(sTestName, mOptions) {
+			test("setSelectedIndex()", function() {
+
+				// system under test
+				var oSelectList = mOptions.control;
+
+				// act
+				oSelectList._setSelectedIndex(mOptions.input);
+
+				// assert
+				ok(oSelectList.getSelectedItem() === mOptions.output, sTestName);
+
+				// cleanup
+				oSelectList.destroy();
+			});
+		};
+
+		(function() {
+			var oExpectedItem;
+			var aItems = [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0",
+					enabled: false
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1"
+				}),
+
+				oExpectedItem = new sap.ui.core.Item({
+					key: "3",
+					text: "item 3"
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2"
+				})
+			];
 
 			setSelectedIndexTestCase("", {
-				control: new sap.m.SelectList(),
+				control: new sap.m.SelectList({
+					items: aItems
+				}),
 				input: 2,
-				output: null
+				output: oExpectedItem
 			});
-
-			(function() {
-				var oExpectedItem;
-				var aItems = [
-					new sap.ui.core.Item({
-						key: "0",
-						text: "item 0",
-						enabled: false
-					}),
-
-					new sap.ui.core.Item({
-						key: "1",
-						text: "item 1"
-					}),
-
-					new sap.ui.core.Item({
-						key: "3",
-						text: "item 3"
-					}),
-
-					oExpectedItem = new sap.ui.core.Item({
-						key: "2",
-						text: "item 2"
-					})
-				];
-
-				setSelectedIndexTestCase("The provided index is bigger than the last item's index", {
-					control: new sap.m.SelectList({
-						items: aItems
-					}),
-					input: 10,
-					output: oExpectedItem
-				});
-			}());
-
-			/* ------------------------------ */
-			/* getItemAt()                    */
-			/* ------------------------------ */
-
-			test("getItemAt()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var aItems = [
-					new sap.ui.core.Item({
-						key: "0",
-						text: "item 0",
-						enabled: false
-					}),
-
-					new sap.ui.core.Item({
-						key: "1",
-						text: "item 1",
-						enabled: false
-					}),
-
-					oExpectedItem = new sap.ui.core.Item({
-						key: "2",
-						text: "item 2"
-					})
-				];
-
-				var oSelectList = new sap.m.SelectList({
-					items: aItems
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				var oItem = oSelectList.getItemAt(2),
-					oItem1 = oSelectList.getItemAt(6);
-
-				// assert
-				ok(oItem === oExpectedItem);
-				ok(oItem1 === null);
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* getFirstItem()                 */
-			/* ------------------------------ */
-
-			test("getFirstItem()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var aItems = [
-					oExpectedItem = new sap.ui.core.Item({
-						key: "0",
-						text: "item 0"
-					}),
-
-					new sap.ui.core.Item({
-						key: "1",
-						text: "item 1"
-					}),
-
-					new sap.ui.core.Item({
-						key: "2",
-						text: "item 2"
-					})
-				];
-
-				var oSelectList = new sap.m.SelectList({
-					items: aItems
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				var oItem = oSelectList.getFirstItem();
-
-				// assert
-				ok(oItem === oExpectedItem);
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getFirstItem()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList();
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				var oExpectedItem = oSelectList.getFirstItem();
-
-				// assert
-				ok(oExpectedItem === null, "There are no items");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* getLastItem()                  */
-			/* ------------------------------ */
-
-			test("getLastItem()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var aItems = [
-					new sap.ui.core.Item({
-						key: "0",
-						text: "item 0"
-					}),
-
-					new sap.ui.core.Item({
-						key: "1",
-						text: "item 1"
-					}),
-
-					oExpectedItem = new sap.ui.core.Item({
-						key: "2",
-						text: "item 2"
-					})
-				];
-
-				var oSelectList = new sap.m.SelectList({
-					items: aItems
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				var oItem = oSelectList.getLastItem();
-
-				// assert
-				ok(oItem === oExpectedItem);
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("getLastItem()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList();
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				var oItem = oSelectList.getLastItem();
-
-				// assert
-				ok(oItem === null, "There are no items");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* getItemByKey()                 */
-			/* ------------------------------ */
-
-			test("getItemByKey()", function() {
-
-				// system under test
-				var oExpectedItem0;
-				var oExpectedItem1;
-				var oExpectedItem2;
-				var aItems = [
-					oExpectedItem0 = new sap.ui.core.Item({
-						key: "0",
-						text: "item 0"
-					}),
-
-					oExpectedItem1 = new sap.ui.core.Item({
-						key: "1",
-						text: "item 1"
-					}),
-
-					oExpectedItem2 = new sap.ui.core.Item({
-						key: "2",
-						text: "item 2"
-					})
-				];
-
-				var oSelectList = new sap.m.SelectList({
-					items: aItems
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				var oItem0 = oSelectList.getItemByKey("0"),
-					oItem1 = oSelectList.getItemByKey("1"),
-					oItem2 = oSelectList.getItemByKey("2"),
-					oItem3 = oSelectList.getItemByKey("3");
-
-				// assert
-				ok(oItem0 === oExpectedItem0);
-				ok(oItem1 === oExpectedItem1);
-				ok(oItem2 === oExpectedItem2);
-				ok(oItem3 === null);
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* getEnabledItems()              */
-			/* ------------------------------ */
-
-			test("getEnabledItems()", function() {
-
-				// system under test
-				var oExpectedItem;
-				var aItems = [
-					oExpectedItem = new sap.ui.core.Item({
-						key: "0",
-						text: "item 0"
-					}),
-
-					new sap.ui.core.Item({
-						key: "1",
-						text: "item 1",
-						enabled: false
-					})
-				];
-
-				var oSelectList = new sap.m.SelectList({
-					items: aItems
-				});
-
-				// assert + act
-				ok(oSelectList.getEnabledItems()[0] === oExpectedItem);
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------------ */
-			/* updateAggregation()                  */
-			/* ------------------------------------ */
-
-			// unit test for CSN 0120061532 0001266189 2014
-			//
-			// Do not clear the selection when items are destroyed.
-			// When using Two-Way Data Binding and the binding are refreshed,
-			// the items will be destroyed and the aggregation items is filled again.
-			test("updateAggregation() do not clear the selection when items are destroyed", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: {
-						path: "/contries",
-						template: new sap.ui.core.Item({
-							key: "{code}",
-							text: "{name}"
-						})
-					},
-					selectedKey: {
-						path: "/selected"
-					}
-				});
-
-				// arrange
-				var oModel = new sap.ui.model.json.JSONModel();
-				var mData = {
-					"contries": [
-						{
-							"code": "GER",
-							"name": "Germany"
-						}, {
-							"code": "CU",
-							"name": "Cuba"
-						}
-					],
-
-					// path : selectedKey
-					"selected": "CU"
-				};
-
-				oModel.setData(mData);
-				oSelectList.setModel(oModel);
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				oSelectList.updateAggregation("items");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				strictEqual(oSelectList.getSelectedKey(), "CU");
-
-				// cleanup
-				oSelectList.destroy();
-				oModel.destroy();
-			});
-
-			// BCP 1570825099
-			test("it should synchronize the selection (synchronous) after the items are filtered", function() {
-
-				// system under test
-				var oSelectList = new sap.m.Select({
-					items: {
-						path: "/items",
-						template: new sap.ui.core.Item({
-							key: "{key}",
-							text: "{text}"
-						})
-					},
-					selectedKey: "BH"
-				});
-
-				// arrange
-				var oModel = new sap.ui.model.json.JSONModel();
-				var mData = {
-					"items": [
-						{
-							"key": "DZ",
-							"text": "Algeria"
-						},
-
-						{
-							"key": "AR",
-							"text": "Argentina"
-						},
-
-						{
-							"key": "AU",
-							"text": "Australia"
-						},
-
-						{
-							"key": "AT",
-							"text": "Austria"
-						},
-
-						{
-							"key": "BH",
-							"text": "Bahrain"
-						},
-
-						{
-							"key": "BE",
-							"text": "Belgium"
-						},
-
-						{
-							"key": "BA",
-							"text": "Bosnia and Herzegovina"
-						},
-
-						{
-							"key": "BR",
-							"text": "Brazil"
-						},
-
-						{
-							"key": "BG",
-							"text": "Bulgaria"
-						}
-					]
-				};
-
-				oModel.setData(mData);
-				oSelectList.setModel(oModel);
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				oSelectList.getBinding("items").filter(new sap.ui.model.Filter("text", "Contains", "b"));
-
-				// assert
-				ok(oSelectList.isSelectionSynchronized());
-
-				// cleanup
-				oSelectList.destroy();
-				oModel.destroy();
-			});
-
-			/* ------------------------------ */
-			/* destroy()                      */
-			/* ------------------------------ */
-
-			test("destroy()", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						}),
-
-						new sap.ui.core.Item({
-							key: "1",
-							text: "item 1"
-						}),
-
-						new sap.ui.core.Item({
-							key: "2",
-							text: "item 2"
-						}),
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				oSelectList.destroy();
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				strictEqual(oSelectList.getItems().length, 0);
-				ok(oSelectList.getDomRef() === null);
-				ok(oSelectList._oItemNavigation === null);
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* _queryEnabledItemsDomRefs()    */
-			/* ------------------------------ */
-
-			test("_queryEnabledItemsDomRefs()", function() {
-
-				// system under test
-				var oEnabledItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oEnabledItem = new sap.ui.core.Item({
-							key: "GER",
-							text: "Germany"
-						}),
-
-						new sap.ui.core.SeparatorItem(),
-
-						new sap.ui.core.Item({
-							key: "CU",
-							text: "Cuba",
-							enabled: false
-						})
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				var aDomRefs = oSelectList._queryEnabledItemsDomRefs();
-
-				// assert
-				strictEqual(aDomRefs.length, 1);
-				ok(oEnabledItem === sap.ui.getCore().byId(aDomRefs[0].id));
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* =========================================================== */
-			/* Rendering                                                   */
-			/* =========================================================== */
-
-			module("Rendering");
-
-			test("List", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList();
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				ok(oSelectList.$().length, "The list is rendered");
-				strictEqual(oSelectList.$().attr("tabindex"), "0", "The tabindex attribute is rendered with the correct value");
-				ok(oSelectList.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS), "The list css class is rendered");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("List disabled", function() {
-
-				// system under test
-				var oSelectList = new sap.m.SelectList({
+		}());
+
+		setSelectedIndexTestCase("", {
+			control: new sap.m.SelectList(),
+			input: 2,
+			output: null
+		});
+
+		(function() {
+			var oExpectedItem;
+			var aItems = [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0",
 					enabled: false
-				});
+				}),
 
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1"
+				}),
 
-				// assert
-				ok(oSelectList.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Disabled"), "The disabled css class is rendered");
+				new sap.ui.core.Item({
+					key: "3",
+					text: "item 3"
+				}),
 
-				// cleanup
-				oSelectList.destroy();
+				oExpectedItem = new sap.ui.core.Item({
+					key: "2",
+					text: "item 2"
+				})
+			];
+
+			setSelectedIndexTestCase("The provided index is bigger than the last item's index", {
+				control: new sap.m.SelectList({
+					items: aItems
+				}),
+				input: 10,
+				output: oExpectedItem
+			});
+		}());
+
+		/* ------------------------------ */
+		/* getItemAt()                    */
+		/* ------------------------------ */
+
+		test("getItemAt()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var aItems = [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0",
+					enabled: false
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1",
+					enabled: false
+				}),
+
+				oExpectedItem = new sap.ui.core.Item({
+					key: "2",
+					text: "item 2"
+				})
+			];
+
+			var oSelectList = new sap.m.SelectList({
+				items: aItems
 			});
 
-			test("List item", function() {
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
-				// system under test
-				var oItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oItem = new sap.ui.core.Item({
-							key: "GER",
-							text: "Germany"
-						})
-					]
-				});
+			// act
+			var oItem = oSelectList.getItemAt(2),
+				oItem1 = oSelectList.getItemAt(6);
 
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
+			// assert
+			ok(oItem === oExpectedItem);
+			ok(oItem1 === null);
 
-				// assert
-				ok(oItem.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Item"), "The list item css class is rendered");
+			// cleanup
+			oSelectList.destroy();
+		});
 
-				// cleanup
-				oSelectList.destroy();
+		/* ------------------------------ */
+		/* getFirstItem()                 */
+		/* ------------------------------ */
+
+		test("getFirstItem()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var aItems = [
+				oExpectedItem = new sap.ui.core.Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1"
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2"
+				})
+			];
+
+			var oSelectList = new sap.m.SelectList({
+				items: aItems
 			});
 
-			test("List item disabled", function() {
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
-				// system under test
-				var oItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oItem = new sap.ui.core.Item({
-							key: "GER",
-							text: "Germany",
-							enabled: false
-						})
-					]
-				});
+			// act
+			var oItem = oSelectList.getFirstItem();
 
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
+			// assert
+			ok(oItem === oExpectedItem);
 
-				// assert
-				strictEqual(oItem.$().attr("tabindex"), undefined, "The tabindex attribute is rendered");
+			// cleanup
+			oSelectList.destroy();
+		});
 
-				// cleanup
-				oSelectList.destroy();
+		test("getFirstItem()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList();
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			var oExpectedItem = oSelectList.getFirstItem();
+
+			// assert
+			ok(oExpectedItem === null, "There are no items");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* getLastItem()                  */
+		/* ------------------------------ */
+
+		test("getLastItem()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var aItems = [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1"
+				}),
+
+				oExpectedItem = new sap.ui.core.Item({
+					key: "2",
+					text: "item 2"
+				})
+			];
+
+			var oSelectList = new sap.m.SelectList({
+				items: aItems
 			});
 
-			test("List item separator", function() {
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
-				// system under test
-				var oItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oItem = new sap.ui.core.SeparatorItem({
-							key: "GER",
-							text: "Germany"
-						})
-					]
-				});
+			// act
+			var oItem = oSelectList.getLastItem();
 
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
+			// assert
+			ok(oItem === oExpectedItem);
 
-				// assert
-				ok(!(oItem.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Item")), "The list item css class is rendered");
-				ok(oItem.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "SeparatorItem"), "The list item separator css class is rendered");
-				strictEqual(oItem.$().attr("tabindex"), undefined, "The tabindex attribute is rendered");
+			// cleanup
+			oSelectList.destroy();
+		});
 
-				// cleanup
-				oSelectList.destroy();
+		test("getLastItem()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList();
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			var oItem = oSelectList.getLastItem();
+
+			// assert
+			ok(oItem === null, "There are no items");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* getItemByKey()                 */
+		/* ------------------------------ */
+
+		test("getItemByKey()", function() {
+
+			// system under test
+			var oExpectedItem0;
+			var oExpectedItem1;
+			var oExpectedItem2;
+			var aItems = [
+				oExpectedItem0 = new sap.ui.core.Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				oExpectedItem1 = new sap.ui.core.Item({
+					key: "1",
+					text: "item 1"
+				}),
+
+				oExpectedItem2 = new sap.ui.core.Item({
+					key: "2",
+					text: "item 2"
+				})
+			];
+
+			var oSelectList = new sap.m.SelectList({
+				items: aItems
 			});
 
-			test("it should display the item", function() {
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
-				// system under test
-				var oItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oItem = new sap.ui.core.Item({
-							text: "lorem ipsum"
-						})
-					]
-				});
+			// act
+			var oItem0 = oSelectList.getItemByKey("0"),
+				oItem1 = oSelectList.getItemByKey("1"),
+				oItem2 = oSelectList.getItemByKey("2"),
+				oItem3 = oSelectList.getItemByKey("3");
 
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
+			// assert
+			ok(oItem0 === oExpectedItem0);
+			ok(oItem1 === oExpectedItem1);
+			ok(oItem2 === oExpectedItem2);
+			ok(oItem3 === null);
 
-				// assert
-				ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "list-item");
-				strictEqual(oSelectList.getVisibleItems().length, 1);
+			// cleanup
+			oSelectList.destroy();
+		});
 
-				// cleanup
-				oSelectList.destroy();
+		/* ------------------------------ */
+		/* getEnabledItems()              */
+		/* ------------------------------ */
+
+		test("getEnabledItems()", function() {
+
+			// system under test
+			var oExpectedItem;
+			var aItems = [
+				oExpectedItem = new sap.ui.core.Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1",
+					enabled: false
+				})
+			];
+
+			var oSelectList = new sap.m.SelectList({
+				items: aItems
 			});
 
-			test("it should display the item", function() {
+			// assert + act
+			ok(oSelectList.getEnabledItems()[0] === oExpectedItem);
 
-				// system under test
-				var oItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oItem = new sap.ui.core.Item({
-							text: "lorem ipsum"
-						})
-					]
-				});
+			// cleanup
+			oSelectList.destroy();
+		});
 
-				// act
-				oItem.bVisible = true;
+		/* ------------------------------------ */
+		/* updateAggregation()                  */
+		/* ------------------------------------ */
 
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
+		// unit test for CSN 0120061532 0001266189 2014
+		//
+		// Do not clear the selection when items are destroyed.
+		// When using Two-Way Data Binding and the binding are refreshed,
+		// the items will be destroyed and the aggregation items is filled again.
+		test("updateAggregation() do not clear the selection when items are destroyed", function() {
 
-				// assert
-				ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "list-item");
-				strictEqual(oSelectList.getVisibleItems().length, 1);
-
-				// cleanup
-				oSelectList.destroy();
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: {
+					path: "/contries",
+					template: new sap.ui.core.Item({
+						key: "{code}",
+						text: "{name}"
+					})
+				},
+				selectedKey: {
+					path: "/selected"
+				}
 			});
 
-			test("it should not display the item", function() {
+			// arrange
+			var oModel = new sap.ui.model.json.JSONModel();
+			var mData = {
+				"contries": [
+					{
+						"code": "GER",
+						"name": "Germany"
+					}, {
+						"code": "CU",
+						"name": "Cuba"
+					}
+				],
 
-				// system under test
-				var oItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oItem = new sap.ui.core.Item({
-							text: "lorem ipsum"
-						})
-					]
-				});
+				// path : selectedKey
+				"selected": "CU"
+			};
 
-				// act
-				oItem.bVisible = false;
+			oModel.setData(mData);
+			oSelectList.setModel(oModel);
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
+			// act
+			oSelectList.updateAggregation("items");
+			sap.ui.getCore().applyChanges();
 
-				// assert
-				ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "none");
-				ok(oItem.$().hasClass(oSelectList.getRenderer().CSS_CLASS + "ItemBaseInvisible"));
-				strictEqual(oSelectList.getVisibleItems().length, 0);
+			// assert
+			strictEqual(oSelectList.getSelectedKey(), "CU");
 
-				// cleanup
-				oSelectList.destroy();
+			// cleanup
+			oSelectList.destroy();
+			oModel.destroy();
+		});
+
+		// BCP 1570825099
+		test("it should synchronize the selection (synchronous) after the items are filtered", function() {
+
+			// system under test
+			var oSelectList = new sap.m.Select({
+				items: {
+					path: "/items",
+					template: new sap.ui.core.Item({
+						key: "{key}",
+						text: "{text}"
+					})
+				},
+				selectedKey: "BH"
 			});
 
-			/* =========================================================== */
-			/* Events module                                               */
-			/* =========================================================== */
-
-			module("Events");
-
-			/* ------------------------------ */
-			/* touchstart                     */
-			/* ------------------------------ */
-
-			test("it should set the active state", function() {
-
-				// system under test
-				var oItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oItem = new sap.ui.core.Item({
-							text: ""
-						})
-					]
-				});
-
-				// arrange
-				var CSS_CLASS = sap.m.SelectListRenderer.CSS_CLASS + "ItemBasePressed";
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSelectList.getDomRef(), {
-					srcControl: oItem,
-					touches: {
-						0: {
-							pageX: 1,
-							pageY: 1,
-							identifier: 0,
-							target: oItem.getDomRef()
-						},
-
-						length: 1
+			// arrange
+			var oModel = new sap.ui.model.json.JSONModel();
+			var mData = {
+				"items": [
+					{
+						"key": "DZ",
+						"text": "Algeria"
 					},
 
-					targetTouches: {
-						0: {
-							pageX: 1,
-							pageY: 1,
-							identifier: 0,
-							target: oItem.getDomRef()
-						},
-
-						length: 1
-					}
-				});
-
-				this.clock.tick(101);
-
-				// assert
-				ok(oItem.$().hasClass(CSS_CLASS), "The CSS class " + CSS_CLASS + " should be added");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("it should not set the active state", function() {
-
-				// system under test
-				var oItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oItem = new sap.ui.core.Item({
-							text: ""
-						})
-					]
-				});
-
-				// arrange
-				var CSS_CLASS = sap.m.SelectListRenderer.CSS_CLASS + "ItemPressed";
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSelectList.getDomRef(), {
-					srcControl: oItem,
-					touches: {
-						0: {
-							pageX: 1,
-							pageY: 1,
-							identifier: 0,
-							target: oItem.getDomRef()
-						},
-
-						length: 1
+					{
+						"key": "AR",
+						"text": "Argentina"
 					},
 
-					targetTouches: {
-						0: {
-							pageX: 1,
-							pageY: 1,
-							identifier: 0,
-							target: oItem.getDomRef()
-						},
-
-						length: 1
-					}
-				});
-
-				// assert
-				ok(!oItem.$().hasClass(CSS_CLASS), "The CSS class " + CSS_CLASS + " should not be added");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("it should set and remove the active state (there is a movement)", function() {
-
-				// system under test
-				var oItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oItem = new sap.ui.core.Item({
-							text: ""
-						})
-					]
-				});
-
-				// arrange
-				var CSS_CLASS = sap.m.SelectListRenderer.CSS_CLASS + "ItemPressed";
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// act
-				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSelectList.getDomRef(), {
-					srcControl: oItem,
-					touches: {
-						0: {
-							pageX: 1,
-							pageY: 1,
-							identifier: 0,
-							target: oItem.getDomRef()
-						},
-
-						length: 1
+					{
+						"key": "AU",
+						"text": "Australia"
 					},
 
-					targetTouches: {
-						0: {
-							pageX: 1,
-							pageY: 1,
-							identifier: 0,
-							target: oItem.getDomRef()
-						},
-
-						length: 1
-					}
-				});
-
-				this.clock.tick(101);
-
-				sap.ui.test.qunit.triggerTouchEvent("touchmove", oSelectList.getDomRef(), {
-					srcControl: oItem,
-					touches: {
-						0: {
-							pageX: 1,
-							pageY: 19,	// vertical movement
-							identifier: 0,
-							target: oItem.getDomRef()
-						},
-
-						length: 1
+					{
+						"key": "AT",
+						"text": "Austria"
 					},
 
-					changedTouches: {
-						0: {
-							pageX: 1,
-							pageY: 19,	// vertical movement
-							identifier: 0,
-							target: oItem.getDomRef()
-						},
-
-						length: 1
-					}
-				});
-
-				// assert
-				ok(!oItem.$().hasClass(CSS_CLASS), "The CSS class " + CSS_CLASS + " should not be added");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* touchend                       */
-			/* ------------------------------ */
-
-			test("it should set and remove the active state (no movement)", function() {
-
-				// system under test
-				var oItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oItem = new sap.ui.core.Item({
-							key: "0",
-							text: "item 0"
-						})
-					]
-				});
-
-				// arrange
-				var CSS_CLASS = sap.m.SelectListRenderer.CSS_CLASS + "ItemPressed";
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-				oSelectList.focus();
-
-				// act
-				sap.ui.test.qunit.triggerTouchEvent("touchstart", oSelectList.getDomRef(), {
-					srcControl: oItem,
-					touches: {
-						0: {
-							pageX: 1,
-							pageY: 1,
-							identifier: 0,
-							target: oItem.getDomRef()
-						},
-
-						length: 1
+					{
+						"key": "BH",
+						"text": "Bahrain"
 					},
 
-					targetTouches: {
-						0: {
-							pageX: 1,
-							pageY: 1,
-							identifier: 0,
-							target: oItem.getDomRef()
-						},
-
-						length: 1
-					}
-				});
-
-				sap.ui.test.qunit.triggerTouchEvent("touchend", oSelectList.getDomRef(), {
-					srcControl: oItem,
-					changedTouches: {
-						0: {
-							pageX: 1,
-							pageY: 1,
-							identifier: 0,
-							target: oItem.getDomRef()
-						},
-
-						length: 1
+					{
+						"key": "BE",
+						"text": "Belgium"
 					},
 
-					touches: {
-						length: 0
-					}
-				});
-
-				this.clock.tick(101);
-
-				// assert
-				ok(!oItem.$().hasClass(CSS_CLASS), "The CSS class " + CSS_CLASS + " should not be added");
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			/* ------------------------------ */
-			/* tap                            */
-			/* ------------------------------ */
-
-			test("it should fire the press and selectionChange events", function() {
-
-				// system under test
-				var oItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oItem = new sap.ui.core.Item({
-							text: "lorem ipsum"
-						})
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-				var fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange");
-				var fnFireItemPressSpy = this.spy(oSelectList, "fireItemPress");
-
-				// act
-				sap.ui.test.qunit.triggerTouchEvent("tap", oSelectList.getDomRef(), {
-					srcControl: oItem,
-					changedTouches: {
-						0: {
-							pageX: 1,
-							pageY: 1,
-							identifier: 0,
-							target: oItem.getDomRef()
-						},
-
-						length: 1
+					{
+						"key": "BA",
+						"text": "Bosnia and Herzegovina"
 					},
 
-					touches: {
-						length: 0
-					}
-				});
-
-				// assert
-				strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
-				strictEqual(fnFireItemPressSpy.callCount, 1, 'The "press" event is fired');
-				ok(oSelectList.getSelectedItem() === oItem);
-
-				// cleanup
-				oSelectList.destroy();
-			});
-
-			test("it should not fire the press and selectionChange events", function() {
-
-				// system under test
-				var oItem;
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						oItem = new sap.ui.core.Item({
-							enabled: false,
-							text: "lorem ipsum"
-						})
-					]
-				});
-
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-				var fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange");
-				var fnFireItemPressSpy = this.spy(oSelectList, "fireItemPress");
-
-				// act
-				sap.ui.test.qunit.triggerTouchEvent("tap", oSelectList.getDomRef(), {
-					srcControl: oItem,
-					changedTouches: {
-						0: {
-							pageX: 1,
-							pageY: 1,
-							identifier: 0,
-							target: oItem.getDomRef()
-						},
-
-						length: 1
+					{
+						"key": "BR",
+						"text": "Brazil"
 					},
 
-					touches: {
-						length: 0
+					{
+						"key": "BG",
+						"text": "Bulgaria"
 					}
-				});
+				]
+			};
 
-				// assert
-				strictEqual(fnFireSelectionChangeSpy.callCount, 0);
-				strictEqual(fnFireItemPressSpy.callCount, 0);
-				ok(oSelectList.getSelectedItem() === null);
+			oModel.setData(mData);
+			oSelectList.setModel(oModel);
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
-				// cleanup
-				oSelectList.destroy();
+			// act
+			oSelectList.getBinding("items").filter(new sap.ui.model.Filter("text", "Contains", "b"));
+
+			// assert
+			ok(oSelectList.isSelectionSynchronized());
+
+			// cleanup
+			oSelectList.destroy();
+			oModel.destroy();
+		});
+
+		/* ------------------------------ */
+		/* destroy()                      */
+		/* ------------------------------ */
+
+		test("destroy()", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					}),
+				]
 			});
 
-			/* ------------------------------ */
-			/* onsapselect                    */
-			/* ------------------------------ */
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
-			test("onsapselect activates a item", function() {
+			// act
+			oSelectList.destroy();
+			sap.ui.getCore().applyChanges();
 
-				// system under test
-				var oSelectList = new sap.m.SelectList({
-					items: [
-						new sap.ui.core.Item({
-							key: "GER",
-							text: "Germany"
-						}),
-						new sap.ui.core.Item({
-							key: "CU",
-							text: "Cuba"
-						})
-					]
-				});
+			// assert
+			strictEqual(oSelectList.getItems().length, 0);
+			ok(oSelectList.getDomRef() === null);
+			ok(oSelectList._oItemNavigation === null);
 
-				// arrange
-				oSelectList.placeAt("content");
-				sap.ui.getCore().applyChanges();
-				var fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange");
+			// cleanup
+			oSelectList.destroy();
+		});
 
-				// act
-				oSelectList.onsapselect(jQuery.Event("sapselect", {
-					srcControl: oSelectList.getLastItem()
-				}));
+		/* ------------------------------ */
+		/* _queryEnabledItemsDomRefs()    */
+		/* ------------------------------ */
 
-				// assert
-				ok(oSelectList.getSelectedItem() === oSelectList.getLastItem());
-				strictEqual(oSelectList.getSelectedKey(), "CU");
-				strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
+		test("_queryEnabledItemsDomRefs()", function() {
 
-				// cleanup
-				oSelectList.destroy();
+			// system under test
+			var oEnabledItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oEnabledItem = new sap.ui.core.Item({
+						key: "GER",
+						text: "Germany"
+					}),
+
+					new sap.ui.core.SeparatorItem(),
+
+					new sap.ui.core.Item({
+						key: "CU",
+						text: "Cuba",
+						enabled: false
+					})
+				]
 			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			var aDomRefs = oSelectList._queryEnabledItemsDomRefs();
+
+			// assert
+			strictEqual(aDomRefs.length, 1);
+			ok(oEnabledItem === sap.ui.getCore().byId(aDomRefs[0].id));
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* =========================================================== */
+		/* Rendering                                                   */
+		/* =========================================================== */
+
+		module("Rendering");
+
+		test("List", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList();
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.$().length, "The list is rendered");
+			strictEqual(oSelectList.$().attr("tabindex"), "0", "The tabindex attribute is rendered with the correct value");
+			ok(oSelectList.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS), "The list css class is rendered");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("List disabled", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				enabled: false
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oSelectList.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Disabled"), "The disabled css class is rendered");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("List item", function() {
+
+			// system under test
+			var oItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oItem = new sap.ui.core.Item({
+						key: "GER",
+						text: "Germany"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(oItem.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Item"), "The list item css class is rendered");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("List item disabled", function() {
+
+			// system under test
+			var oItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oItem = new sap.ui.core.Item({
+						key: "GER",
+						text: "Germany",
+						enabled: false
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			strictEqual(oItem.$().attr("tabindex"), undefined, "The tabindex attribute is rendered");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("List item separator", function() {
+
+			// system under test
+			var oItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oItem = new sap.ui.core.SeparatorItem({
+						key: "GER",
+						text: "Germany"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(!(oItem.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "Item")), "The list item css class is rendered");
+			ok(oItem.$().hasClass(sap.m.SelectListRenderer.CSS_CLASS + "SeparatorItem"), "The list item separator css class is rendered");
+			strictEqual(oItem.$().attr("tabindex"), undefined, "The tabindex attribute is rendered");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("it should display the item", function() {
+
+			// system under test
+			var oItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oItem = new sap.ui.core.Item({
+						text: "lorem ipsum"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "list-item");
+			strictEqual(oSelectList.getVisibleItems().length, 1);
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("it should display the item", function() {
+
+			// system under test
+			var oItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oItem = new sap.ui.core.Item({
+						text: "lorem ipsum"
+					})
+				]
+			});
+
+			// act
+			oItem.bVisible = true;
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "list-item");
+			strictEqual(oSelectList.getVisibleItems().length, 1);
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("it should not display the item", function() {
+
+			// system under test
+			var oItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oItem = new sap.ui.core.Item({
+						text: "lorem ipsum"
+					})
+				]
+			});
+
+			// act
+			oItem.bVisible = false;
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "none");
+			ok(oItem.$().hasClass(oSelectList.getRenderer().CSS_CLASS + "ItemBaseInvisible"));
+			strictEqual(oSelectList.getVisibleItems().length, 0);
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* =========================================================== */
+		/* Events module                                               */
+		/* =========================================================== */
+
+		module("Events");
+
+		/* ------------------------------ */
+		/* touchstart                     */
+		/* ------------------------------ */
+
+		test("it should set the active state", function() {
+
+			// system under test
+			var oItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oItem = new sap.ui.core.Item({
+						text: ""
+					})
+				]
+			});
+
+			// arrange
+			var CSS_CLASS = sap.m.SelectListRenderer.CSS_CLASS + "ItemBasePressed";
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			sap.ui.test.qunit.triggerTouchEvent("touchstart", oSelectList.getDomRef(), {
+				srcControl: oItem,
+				touches: {
+					0: {
+						pageX: 1,
+						pageY: 1,
+						identifier: 0,
+						target: oItem.getDomRef()
+					},
+
+					length: 1
+				},
+
+				targetTouches: {
+					0: {
+						pageX: 1,
+						pageY: 1,
+						identifier: 0,
+						target: oItem.getDomRef()
+					},
+
+					length: 1
+				}
+			});
+
+			this.clock.tick(101);
+
+			// assert
+			ok(oItem.$().hasClass(CSS_CLASS), "The CSS class " + CSS_CLASS + " should be added");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("it should not set the active state", function() {
+
+			// system under test
+			var oItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oItem = new sap.ui.core.Item({
+						text: ""
+					})
+				]
+			});
+
+			// arrange
+			var CSS_CLASS = sap.m.SelectListRenderer.CSS_CLASS + "ItemPressed";
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			sap.ui.test.qunit.triggerTouchEvent("touchstart", oSelectList.getDomRef(), {
+				srcControl: oItem,
+				touches: {
+					0: {
+						pageX: 1,
+						pageY: 1,
+						identifier: 0,
+						target: oItem.getDomRef()
+					},
+
+					length: 1
+				},
+
+				targetTouches: {
+					0: {
+						pageX: 1,
+						pageY: 1,
+						identifier: 0,
+						target: oItem.getDomRef()
+					},
+
+					length: 1
+				}
+			});
+
+			// assert
+			ok(!oItem.$().hasClass(CSS_CLASS), "The CSS class " + CSS_CLASS + " should not be added");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("it should set and remove the active state (there is a movement)", function() {
+
+			// system under test
+			var oItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oItem = new sap.ui.core.Item({
+						text: ""
+					})
+				]
+			});
+
+			// arrange
+			var CSS_CLASS = sap.m.SelectListRenderer.CSS_CLASS + "ItemPressed";
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// act
+			sap.ui.test.qunit.triggerTouchEvent("touchstart", oSelectList.getDomRef(), {
+				srcControl: oItem,
+				touches: {
+					0: {
+						pageX: 1,
+						pageY: 1,
+						identifier: 0,
+						target: oItem.getDomRef()
+					},
+
+					length: 1
+				},
+
+				targetTouches: {
+					0: {
+						pageX: 1,
+						pageY: 1,
+						identifier: 0,
+						target: oItem.getDomRef()
+					},
+
+					length: 1
+				}
+			});
+
+			this.clock.tick(101);
+
+			sap.ui.test.qunit.triggerTouchEvent("touchmove", oSelectList.getDomRef(), {
+				srcControl: oItem,
+				touches: {
+					0: {
+						pageX: 1,
+						pageY: 19,	// vertical movement
+						identifier: 0,
+						target: oItem.getDomRef()
+					},
+
+					length: 1
+				},
+
+				changedTouches: {
+					0: {
+						pageX: 1,
+						pageY: 19,	// vertical movement
+						identifier: 0,
+						target: oItem.getDomRef()
+					},
+
+					length: 1
+				}
+			});
+
+			// assert
+			ok(!oItem.$().hasClass(CSS_CLASS), "The CSS class " + CSS_CLASS + " should not be added");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* touchend                       */
+		/* ------------------------------ */
+
+		test("it should set and remove the active state (no movement)", function() {
+
+			// system under test
+			var oItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oItem = new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					})
+				]
+			});
+
+			// arrange
+			var CSS_CLASS = sap.m.SelectListRenderer.CSS_CLASS + "ItemPressed";
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			oSelectList.focus();
+
+			// act
+			sap.ui.test.qunit.triggerTouchEvent("touchstart", oSelectList.getDomRef(), {
+				srcControl: oItem,
+				touches: {
+					0: {
+						pageX: 1,
+						pageY: 1,
+						identifier: 0,
+						target: oItem.getDomRef()
+					},
+
+					length: 1
+				},
+
+				targetTouches: {
+					0: {
+						pageX: 1,
+						pageY: 1,
+						identifier: 0,
+						target: oItem.getDomRef()
+					},
+
+					length: 1
+				}
+			});
+
+			sap.ui.test.qunit.triggerTouchEvent("touchend", oSelectList.getDomRef(), {
+				srcControl: oItem,
+				changedTouches: {
+					0: {
+						pageX: 1,
+						pageY: 1,
+						identifier: 0,
+						target: oItem.getDomRef()
+					},
+
+					length: 1
+				},
+
+				touches: {
+					length: 0
+				}
+			});
+
+			this.clock.tick(101);
+
+			// assert
+			ok(!oItem.$().hasClass(CSS_CLASS), "The CSS class " + CSS_CLASS + " should not be added");
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* tap                            */
+		/* ------------------------------ */
+
+		test("it should fire the press and selectionChange events", function() {
+
+			// system under test
+			var oItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oItem = new sap.ui.core.Item({
+						text: "lorem ipsum"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			var fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange");
+			var fnFireItemPressSpy = this.spy(oSelectList, "fireItemPress");
+
+			// act
+			sap.ui.test.qunit.triggerTouchEvent("tap", oSelectList.getDomRef(), {
+				srcControl: oItem,
+				changedTouches: {
+					0: {
+						pageX: 1,
+						pageY: 1,
+						identifier: 0,
+						target: oItem.getDomRef()
+					},
+
+					length: 1
+				},
+
+				touches: {
+					length: 0
+				}
+			});
+
+			// assert
+			strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
+			strictEqual(fnFireItemPressSpy.callCount, 1, 'The "press" event is fired');
+			ok(oSelectList.getSelectedItem() === oItem);
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		test("it should not fire the press and selectionChange events", function() {
+
+			// system under test
+			var oItem;
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					oItem = new sap.ui.core.Item({
+						enabled: false,
+						text: "lorem ipsum"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			var fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange");
+			var fnFireItemPressSpy = this.spy(oSelectList, "fireItemPress");
+
+			// act
+			sap.ui.test.qunit.triggerTouchEvent("tap", oSelectList.getDomRef(), {
+				srcControl: oItem,
+				changedTouches: {
+					0: {
+						pageX: 1,
+						pageY: 1,
+						identifier: 0,
+						target: oItem.getDomRef()
+					},
+
+					length: 1
+				},
+
+				touches: {
+					length: 0
+				}
+			});
+
+			// assert
+			strictEqual(fnFireSelectionChangeSpy.callCount, 0);
+			strictEqual(fnFireItemPressSpy.callCount, 0);
+			ok(oSelectList.getSelectedItem() === null);
+
+			// cleanup
+			oSelectList.destroy();
+		});
+
+		/* ------------------------------ */
+		/* onsapselect                    */
+		/* ------------------------------ */
+
+		test("onsapselect activates a item", function() {
+
+			// system under test
+			var oSelectList = new sap.m.SelectList({
+				items: [
+					new sap.ui.core.Item({
+						key: "GER",
+						text: "Germany"
+					}),
+					new sap.ui.core.Item({
+						key: "CU",
+						text: "Cuba"
+					})
+				]
+			});
+
+			// arrange
+			oSelectList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			var fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange");
+
+			// act
+			oSelectList.onsapselect(jQuery.Event("sapselect", {
+				srcControl: oSelectList.getLastItem()
+			}));
+
+			// assert
+			ok(oSelectList.getSelectedItem() === oSelectList.getLastItem());
+			strictEqual(oSelectList.getSelectedKey(), "CU");
+			strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
+
+			// cleanup
+			oSelectList.destroy();
+		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
