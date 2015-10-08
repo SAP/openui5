@@ -33,7 +33,6 @@
 		"test/AllJourneysConfig.js",
 		"test/AllJourneysWithIFrame.js",
 		"test/BuyProductJourney.js",
-		"test/BuyProductJourneyJQueryOnly.html",
 		"test/DeleteProductJourney.js",
 		"test/action/BuyProductJourneyAction.js",
 		"test/arrangement/BuyProductJourneyArrangement.js",

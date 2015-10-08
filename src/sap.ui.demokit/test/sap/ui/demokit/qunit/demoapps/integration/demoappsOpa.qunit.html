@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Opa test for the demo apps</title>
+
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-resourceroots='{"test": "./"}'
+			></script>
+
+	<script>
+		(function () {
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+			QUnit.config.autostart = false;
+
+			sap.ui.require([
+						'sap/ui/test/opaQunit',
+						'sap/ui/test/Opa5'
+					],
+					function (opaTest, Opa5) {
+						"use strict";
+
+						Opa5.extendConfig({
+							viewNamespace: "sap.ui.demokit.demoapps.view."
+						});
+
+						opaTest("Should see at least 4 tiles", function (Given, When) {
+							Given.iStartMyAppInAFrame("../../../../../../../demoapps.html");
+
+							When.waitFor({
+								viewName: "Root",
+								id: "tileContainer",
+								matchers: function (oTileContainer) {
+									return oTileContainer.getTiles().length > 3;
+								},
+								success: function () {
+									Opa5.assert.ok(true, "Displayed more than 3 tiles");
+								}
+							});
+						});
+
+						QUnit.start();
+
+					});
+		}());
+	</script>
+
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+</body>
+</html>
