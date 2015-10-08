@@ -680,9 +680,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					case "textDirection":
 						oRB.setTextDirection(sNewValue);
 						break;
-					case "textDirection":
-						oRB.setTextDirection(sNewValue);
-						break;
 					case "width":
 						oRB.setWidth(sNewValue);
 						break;
