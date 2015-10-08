@@ -1732,6 +1732,312 @@
 			"0": "AH"
 		}
 	},
+	"ca-japanese": {
+		"dateFormat-full": "EEEE, d MMMM y 'г'. G",
+		"dateFormat-long": "d MMMM y 'г'. G",
+		"dateFormat-medium": "d.MM.y 'г'. G",
+		"dateFormat-short": "d.MM.yy G",
+		"timeFormat-full": "H:mm:ss zzzz",
+		"timeFormat-long": "H:mm:ss z",
+		"timeFormat-medium": "H:mm:ss",
+		"timeFormat-short": "H:mm",
+		"dateTimeFormat-full": "{1}, {0}",
+		"dateTimeFormat-long": "{1}, {0}",
+		"dateTimeFormat-medium": "{1}, {0}",
+		"dateTimeFormat-short": "{1}, {0}",
+		"intervalFormatFallback": "{0} – {1}",
+		"intervalFormat-d-d": "d – d",
+		"intervalFormat-h-a": "h a – h a",
+		"intervalFormat-h-h": "h–h a",
+		"intervalFormat-H-H": "HH–HH",
+		"intervalFormat-hm-a": "h:mm a – h:mm a",
+		"intervalFormat-hm-h": "h:mm–h:mm a",
+		"intervalFormat-hm-m": "h:mm–h:mm a",
+		"intervalFormat-Hm-H": "HH:mm–HH:mm",
+		"intervalFormat-Hm-m": "HH:mm–HH:mm",
+		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
+		"intervalFormat-hmv-h": "h:mm–h:mm a v",
+		"intervalFormat-hmv-m": "h:mm–h:mm a v",
+		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
+		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
+		"intervalFormat-hv-a": "h a – h a v",
+		"intervalFormat-hv-h": "h–h a v",
+		"intervalFormat-Hv-H": "HH–HH v",
+		"intervalFormat-M-M": "M – M",
+		"intervalFormat-Md-d": "d.MM – d.MM",
+		"intervalFormat-Md-M": "d.MM – d.MM",
+		"intervalFormat-MEd-d": "E, d.MM – E, d.MM",
+		"intervalFormat-MEd-M": "E, d.MM – E, d.MM",
+		"intervalFormat-MMM-M": "MM – MM",
+		"intervalFormat-MMMd-d": "d.MM – d.MM",
+		"intervalFormat-MMMd-M": "d.MM – d.MM",
+		"intervalFormat-MMMEd-d": "E, d.MM – E, d.MM",
+		"intervalFormat-MMMEd-M": "E, d.MM – E, d.MM",
+		"intervalFormat-MMMM-M": "LLLL – LLLL",
+		"intervalFormat-MMMMd-d": "d – d MMMM",
+		"intervalFormat-MMMMd-M": "d MMMM – d MMMM",
+		"intervalFormat-MMMMEd-d": "E, d MMMM – E, d MMMM",
+		"intervalFormat-MMMMEd-M": "E, d MMMM – E, d MMMM",
+		"intervalFormat-y-y": "y – y 'г'.G",
+		"intervalFormat-yM-M": "MM – MM.y 'г'. G",
+		"intervalFormat-yM-y": "MM.y 'г'. – MM.y 'г'. G",
+		"intervalFormat-yMd-d": "d.MM – d.MM.y 'г'. G",
+		"intervalFormat-yMd-M": "d.MM – d.MM.y 'г'. G",
+		"intervalFormat-yMd-y": "d.MM.y 'г'. – d.MM.y 'г'. G",
+		"intervalFormat-yMEd-d": "E, d.MM – E, d.MM.y 'г'. G",
+		"intervalFormat-yMEd-M": "E, d.MM – E, d.MM.y 'г'. G",
+		"intervalFormat-yMEd-y": "E, d.MM.y 'г'. – E, d.MM.y 'г'. G",
+		"intervalFormat-yMMM-M": "MM – MM.y 'г'. G",
+		"intervalFormat-yMMM-y": "MM.y 'г'. – MM.y 'г'. G",
+		"intervalFormat-yMMMd-d": "d.MM – d.MM.y 'г'. G",
+		"intervalFormat-yMMMd-M": "d.MM – d.MM.y 'г'. G",
+		"intervalFormat-yMMMd-y": "d.MM.y 'г'. – d.MM.y 'г'. G",
+		"intervalFormat-yMMMEd-d": "E, d.MM – E, d.MM.y 'г'. G",
+		"intervalFormat-yMMMEd-M": "E, d.MM – E, d.MM.y 'г'. G",
+		"intervalFormat-yMMMEd-y": "E, d.MM.y 'г'. – E, d.MM.y 'г'. G",
+		"intervalFormat-yMMMM-M": "MMMM – MMMM y 'г'. G",
+		"intervalFormat-yMMMM-y": "MMMM y 'г'. – MMMM y 'г'. G",
+		"intervalFormat-yMMMMd-d": "d – d MMMM y 'г'. G",
+		"intervalFormat-yMMMMd-M": "d MMMM – d MMMM y 'г'. G",
+		"intervalFormat-yMMMMd-y": "d MMMM y 'г'. – d MMMM y 'г'. G",
+		"intervalFormat-yMMMMEd-d": "E, d MMMM – E, d MMMM y 'г'. G",
+		"intervalFormat-yMMMMEd-M": "E, d MMMM – E, d MMMM y 'г'. G",
+		"intervalFormat-yMMMMEd-y": "E, d MMMM y 'г'. – E, d MMMM y 'г'. G",
+		"months-format-abbreviated": [
+			"яну",
+			"фев",
+			"март",
+			"апр",
+			"май",
+			"юни",
+			"юли",
+			"авг",
+			"сеп",
+			"окт",
+			"ное",
+			"дек"
+		],
+		"months-format-narrow": [
+			"я",
+			"ф",
+			"м",
+			"а",
+			"м",
+			"ю",
+			"ю",
+			"а",
+			"с",
+			"о",
+			"н",
+			"д"
+		],
+		"months-format-wide": [
+			"януари",
+			"февруари",
+			"март",
+			"април",
+			"май",
+			"юни",
+			"юли",
+			"август",
+			"септември",
+			"октомври",
+			"ноември",
+			"декември"
+		],
+		"months-standAlone-abbreviated": [
+			"яну",
+			"фев",
+			"март",
+			"апр",
+			"май",
+			"юни",
+			"юли",
+			"авг",
+			"сеп",
+			"окт",
+			"ное",
+			"дек"
+		],
+		"months-standAlone-narrow": [
+			"я",
+			"ф",
+			"м",
+			"а",
+			"м",
+			"ю",
+			"ю",
+			"а",
+			"с",
+			"о",
+			"н",
+			"д"
+		],
+		"months-standAlone-wide": [
+			"януари",
+			"февруари",
+			"март",
+			"април",
+			"май",
+			"юни",
+			"юли",
+			"август",
+			"септември",
+			"октомври",
+			"ноември",
+			"декември"
+		],
+		"days-format-abbreviated": [
+			"нд",
+			"пн",
+			"вт",
+			"ср",
+			"чт",
+			"пт",
+			"сб"
+		],
+		"days-format-narrow": [
+			"н",
+			"п",
+			"в",
+			"с",
+			"ч",
+			"п",
+			"с"
+		],
+		"days-format-short": [
+			"нд",
+			"пн",
+			"вт",
+			"ср",
+			"чт",
+			"пт",
+			"сб"
+		],
+		"days-format-wide": [
+			"неделя",
+			"понеделник",
+			"вторник",
+			"сряда",
+			"четвъртък",
+			"петък",
+			"събота"
+		],
+		"days-standAlone-abbreviated": [
+			"нд",
+			"пн",
+			"вт",
+			"ср",
+			"чт",
+			"пт",
+			"сб"
+		],
+		"days-standAlone-narrow": [
+			"н",
+			"п",
+			"в",
+			"с",
+			"ч",
+			"п",
+			"с"
+		],
+		"days-standAlone-short": [
+			"нд",
+			"пн",
+			"вт",
+			"ср",
+			"чт",
+			"пт",
+			"сб"
+		],
+		"days-standAlone-wide": [
+			"неделя",
+			"понеделник",
+			"вторник",
+			"сряда",
+			"четвъртък",
+			"петък",
+			"събота"
+		],
+		"quarters-format-abbreviated": [
+			"1. трим.",
+			"2. трим.",
+			"3. трим.",
+			"4. трим."
+		],
+		"quarters-format-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-format-wide": [
+			"1. тримесечие",
+			"2. тримесечие",
+			"3. тримесечие",
+			"4. тримесечие"
+		],
+		"quarters-standAlone-abbreviated": [
+			"1. трим.",
+			"2. трим.",
+			"3. трим.",
+			"4. трим."
+		],
+		"quarters-standAlone-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-standAlone-wide": [
+			"1. тримесечие",
+			"2. тримесечие",
+			"3. тримесечие",
+			"4. тримесечие"
+		],
+		"dayPeriods-format-abbreviated": [
+			"AM",
+			"PM"
+		],
+		"dayPeriods-format-narrow": [
+			"пр.об.",
+			"сл.об."
+		],
+		"dayPeriods-format-wide": [
+			"пр.об.",
+			"сл.об."
+		],
+		"dayPeriods-standAlone-abbreviated": [
+			"пр.об.",
+			"сл.об."
+		],
+		"dayPeriods-standAlone-narrow": [
+			"пр.об.",
+			"сл.об."
+		],
+		"dayPeriods-standAlone-wide": [
+			"пр.об.",
+			"сл.об."
+		],
+		"era-wide": {
+			"232": "Meiji",
+			"233": "Taishō",
+			"234": "Shōwa",
+			"235": "Heisei"
+		},
+		"era-abbreviated": {
+			"232": "Meiji",
+			"233": "Taishō",
+			"234": "Shōwa",
+			"235": "Heisei"
+		},
+		"era-narrow": {
+			"232": "M",
+			"233": "T",
+			"234": "S",
+			"235": "H"
+		}
+	},
 	"dateField-year-displayName": "година",
 	"dateField-year-relative--1": "миналата година",
 	"dateField-year-relative-0": "тази година",
@@ -1936,5 +2242,32 @@
 	"weekData-minDays": 4,
 	"weekData-firstDay": 1,
 	"weekData-weekendStart": 6,
-	"weekData-weekendEnd": 0
+	"weekData-weekendEnd": 0,
+	"eras-gregorian": {
+		"0": {
+			"_end": "0-12-31"
+		},
+		"1": {
+			"_start": "1-01-01"
+		}
+	},
+	"eras-islamic": {
+		"0": {
+			"_start": "622-7-15"
+		}
+	},
+	"eras-japanese": {
+		"232": {
+			"_start": "1868-9-8"
+		},
+		"233": {
+			"_start": "1912-7-30"
+		},
+		"234": {
+			"_start": "1926-12-25"
+		},
+		"235": {
+			"_start": "1989-1-8"
+		}
+	}
 }

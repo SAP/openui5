@@ -1,0 +1,75 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+	<VBox class="sapUiSmallMargin">
+		<f:SimpleForm id="SimpleFormChange480_12120"
+			editable="true"
+			layout="ResponsiveGridLayout"
+			title="Address"
+			labelSpanL="4"
+			labelSpanM="12"
+			adjustLabelSpan="false"
+			emptySpanL="0"
+			emptySpanM="0"
+			columnsL="2"
+			columnsM="2">
+			<f:content>
+				<core:Title text="Office" />
+				<Label text="Name" />
+				<Input value="{SupplierName}" />
+				<Label text="Street/No." />
+				<Input value="{Street}">
+				</Input>
+				<Input value="{HouseNumber}">
+					<layoutData>
+						<l:GridData span="L3 M4 S4" />
+					</layoutData>
+				</Input>
+				<Label text="ZIP Code/City" />
+				<Input value="{ZIPCode}">
+					<layoutData>
+						<l:GridData span="L3 M4 S4" />
+					</layoutData>
+				</Input>
+				<Input value="{City}" />
+				<Label text="Country" />
+				<Select width="100%">
+					<items>
+						<core:Item text="Germany" />
+						<core:Item text="USA" />
+						<core:Item text="England" />
+					</items>
+				</Select>
+				<core:Title text="Online" />
+				<Label text="Web" />
+				<Input value="{Url}" type="Url" />
+				<Label text="Twitter" />
+				<Input value="{Twitter}" />
+			</f:content>
+		</f:SimpleForm>
+		<f:SimpleForm id="SimpleFormChange480_12120-2"
+			editable="true"
+			layout="ResponsiveGridLayout"
+			title="More"
+			labelSpanL="4"
+			labelSpanM="12"
+			adjustLabelSpan="false"
+			emptySpanL="0"
+			emptySpanM="0"
+			columnsL="2"
+			columnsM="2"
+			singleContainerFullSize="false">
+			<f:content>
+				<core:Title text="Contact data" />
+				<Label text="Email" />
+				<Input value="{EMail}" type="Email" />
+				<Label text="Tel." />
+				<Input value="{Tel}" type="Tel" />
+				<Label text="SMS" />
+				<Input value="{Sms}" type="Tel" />
+			</f:content>
+		</f:SimpleForm>
+	</VBox>
+</core:FragmentDefinition>

@@ -84,6 +84,10 @@ public class SimpleProxyServlet extends HttpServlet {
           this.baseUriQueryString = uri.getQuery();
           this.baseUri = this.baseUri.substring(0, this.baseUri.indexOf("?"));
         }
+        // remove the trailing slash if there are
+        while (this.baseUri.endsWith("/")) {
+          this.baseUri = this.baseUri.substring(0, this.baseUri.length() - 1);
+        }
       }
     } catch (IllegalArgumentException ex) {
       this.log("URI in context parameter com.sap.ui5.proxy.REMOTE_LOCATION is not valid!", ex);
@@ -125,9 +129,15 @@ public class SimpleProxyServlet extends HttpServlet {
         targetUriString = this.baseUri;
         targetUriString += pathInfo;
       } else {
-        targetUriString = pathInfo.substring(1, pathInfo.indexOf("/", 1));
-        targetUriString += "://";
-        targetUriString += pathInfo.substring(pathInfo.indexOf("/", 1) + 1);
+        int indexOfSlash = pathInfo.indexOf("/", 1);
+        if (indexOfSlash > 0) {
+          targetUriString = pathInfo.substring(1, indexOfSlash);
+          targetUriString += "://";
+          targetUriString += pathInfo.substring(indexOfSlash + 1);
+        } else {
+          response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The proxy request doesn't match the structure \"protocol/domain/path\"!");
+          return;
+        }
       }
       // make sure to replace spaces with %20 in the path
       targetUriString = targetUriString.replace(" ", "%20");

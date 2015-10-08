@@ -26,11 +26,15 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript">
 
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			
 			jQuery.sap.require("sap.ui.dt.Preloader");
 			jQuery.sap.require("sap.ui.dt.ElementOverlay");
 			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
 			jQuery.sap.require("sap.ui.dt.DOMUtil");
 			jQuery.sap.require("sap.m.Button");
+			jQuery.sap.require("sap.m.Page");
+			jQuery.sap.require("sap.ui.layout.form.SimpleForm");
 			jQuery.sap.require("sap.ui.dt.DesignTimeMetadata");
 
 
@@ -222,7 +226,7 @@
 				assert.equal(oDesignTimeMetadata.getName(), "My Custom Metadata", "then the right custom data is set");
 			});
 
-			QUnit.module("Given that an Overlay for a control marked as invisible in designtime", {
+			QUnit.module("Given that an Overlay is created for a control marked as ignored in the designtime Metadata", {
 				beforeEach : function() {
 					this.oButton = new sap.m.Button({
 						text : "Button"
@@ -231,7 +235,7 @@
 						element : this.oButton,
 						designTimeMetadata : new sap.ui.dt.DesignTimeMetadata({
 							data : {
-								visible : false
+								ignore : true
 							}
 						})
 					});
@@ -245,12 +249,12 @@
 				}
 			});
 
-			QUnit.test("when the design time metadata is retrieved", function(assert) {
+			QUnit.test("then...", function(assert) {
 				strictEqual(this.oOverlay.isVisible(), false, "the overlay is marked as invisible");
 				strictEqual(this.oOverlay.$().is(":visible"), false, "the overlay is hidden in DOM");
 			});
 
-			QUnit.module("Given that an Overlay for a control with an aggregation marked as invisible in designtime", {
+			QUnit.module("Given that an Overlay is created for a control with an aggregation marked as ignored in designtime", {
 				beforeEach : function() {
 					this.oPage = new sap.m.Page();
 					this.oOverlay = new sap.ui.dt.ElementOverlay({
@@ -259,7 +263,7 @@
 								aggregations: {
 									content: {
 										domRef : ":sap-domref > section",
-										visible : false
+										ignore : true
 									}
 								}
 							}
@@ -276,10 +280,41 @@
 				}
 			});
 
-			QUnit.test("when the design time metadata is retrieved", function(assert) {
+			QUnit.test("then...", function(assert) {
 				var oAggregationOverlay = this.oOverlay.getAggregationOverlay("content");
 				strictEqual(oAggregationOverlay.isVisible(), false, "the aggregation overlay is marked as invisible");
 				strictEqual(oAggregationOverlay.$().is(":visible"), false, "the aggregation overlay is hidden in DOM");
+			});
+
+			QUnit.module("Given that an Overlay is created for a SimpleForm with a hidden aggregation marked as not ignored", {
+				beforeEach : function() {
+					this.oSimpleForm = new sap.ui.layout.form.SimpleForm();
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						designTimeMetadata : new sap.ui.dt.DesignTimeMetadata({
+							data : {
+								aggregations: {
+									form: {
+										ignore : false
+									}
+								}
+							}
+						})
+					});
+					this.oOverlay.setElement(this.oSimpleForm);
+					this.oSimpleForm.placeAt("content");
+					// Render Controls
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oSimpleForm.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("then...", function(assert) {
+				var oAggregationOverlay = this.oOverlay.getAggregationOverlay("form");
+				strictEqual(oAggregationOverlay.isVisible(), true, "the aggregation overlay is marked as invisible");
+				strictEqual(oAggregationOverlay.isInHiddenTree(), true, "the aggregation overlay is marked as inHiddenTree");
 			});
 
 			QUnit.module("Given that an Overlay is created for a control", {

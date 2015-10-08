@@ -2828,7 +2828,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		 */
 		DataTable.prototype.onmousedown = function(oEvent) {
 			// only move on left click!
-			var bLeftButton = oEvent.button === (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8 ? 1 : 0);
+			var bLeftButton = oEvent.button === 0;
 			var bIsTouchMode = this._isTouchMode(oEvent);
 
 			if (bLeftButton) {
@@ -3715,7 +3715,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			}
 
 			// only resize on left click!
-			var bLeftButton = oEvent.button === (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8 ? 1 : 0);
+			var bLeftButton = oEvent.button === 0;
 			if (bLeftButton) {
 				this._iColumnResizeStart = oEvent.pageX;
 

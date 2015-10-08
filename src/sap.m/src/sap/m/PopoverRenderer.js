@@ -127,8 +127,17 @@ sap.ui.define(['jquery.sap.global'],
 			rm.writeClasses();
 			rm.write(">");
 
-			//scroll area
-			rm.write("<div id='" + oControl.getId() + "-scroll" + "' class='sapMPopoverScroll " + "'>");
+			// scroll area
+			rm.write('<div class="sapMPopoverScroll"');
+			rm.writeAttribute("id", oControl.getId() + "-scroll");
+
+			if (!oControl.getHorizontalScrolling()) {
+				rm.addStyle(sap.ui.getCore().getConfiguration().getRTL() ? "margin-left" : "margin-right", jQuery.sap.scrollbarSize().width + "px");
+			}
+
+			rm.writeStyles();
+			rm.write(">");
+
 			for (i = 0; i < contents.length; i++) {
 				rm.renderControl(contents[i]);
 			}

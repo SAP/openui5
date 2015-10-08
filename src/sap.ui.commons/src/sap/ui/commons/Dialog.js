@@ -282,13 +282,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @private
 		 */
 		Dialog.prototype.init = function () {
-			// do something for initialization...
+
 			this.oPopup = new Popup(this, true, true);
 			var eDock = Popup.Dock;
 			this.oPopup.setPosition(eDock.CenterCenter, eDock.CenterCenter, window);
 
-			this._minWidth = 64; // the technical minWidth, not the one set via API; will be calculated after rendering
-			this._minHeight = 48; // the technical minHeight, not the one set via API; will be calculated after rendering
+			// the technical minWidth, not the one set via API; will be calculated after rendering
+			this._minWidth = 64;
+			// the technical minHeight, not the one set via API; will be calculated after rendering
+			this._minHeight = 48;
 
 			this.allowTextSelection(false);
 
@@ -299,7 +301,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		Dialog.prototype.setInitialFocus = function (sId) {
-			if (sId != null && typeof sId != "string") {
+			if (sId !== null && typeof sId != "string") {
 				sId = sId.getId();
 			}
 			this.oPopup.setInitialFocusId(sId);
@@ -312,10 +314,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @private
 		 */
 		Dialog.prototype.onAfterRendering = function () {
+
 			var $content = this.$("cont");
+			var bIsIE9Or10 = !!sap.ui.Device.browser.internet_explorer &&
+				(sap.ui.Device.browser.version == 9 || sap.ui.Device.browser.version == 10);
+			var bIsRTLOn = sap.ui.getCore().getConfiguration().getRTL();
+
+			this._calculateMinSize();
 
 			// if content has 100% width, but Dialog has no width, set content width to auto
-			if (!Dialog._isSizeSet(this.getWidth()) && !Dialog._isSizeSet(this.getMaxWidth())) {
+			if (!this._isSizeSet(this.getWidth()) && !this._isSizeSet(this.getMaxWidth())) {
 				$content.children().each(function (index, element) {
 					if (jQuery.trim(this.style.width) == "100%") {
 						this.style.width = "auto";
@@ -323,29 +331,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				});
 			}
 
-			// IE9+10 fix where subpixel font rendering may lead to rounding errors in RTL mode when the content has a width of "xyz.5px"
-			if (!!sap.ui.Device.browser.internet_explorer && (sap.ui.Device.browser.version == 9 || sap.ui.Device.browser
-					.version == 10) && ($content.length > 0)) {
-				var elm = $content[0];
-				if (sap.ui.getCore().getConfiguration().getRTL() && !Dialog._isSizeSet(this.getWidth())) {
-					if (elm.ownerDocument && elm.ownerDocument.defaultView && elm.ownerDocument.defaultView.getComputedStyle) {
-						var width = elm.ownerDocument.defaultView.getComputedStyle(elm).getPropertyValue("width");
-						if (width) {
-							var fWidth = parseFloat(width, 10);
-							if (fWidth % 1 == 0.5) {
-								$content[0].style.width = (fWidth + 0.01) + "px"; // if aaaalll these conditions are fulfilled, the Dialog must be a LITTLE bit wider to avoid rounding errors
-							}
-						}
-					}
-				}
-			}
-
 			// if height is not set, but min-height is set, the Dialog is in a mixed mode between fixed height and flexible height
 			// (denoted by sapUiDlgFlexHeight), where sometimes the content pushes the height (when it is tall enough) and sometimes
 			// the Dialog needs to take care to push the button row to the bottom (when there is less content than what would fit into a Dialog
 			// with min-height size).
 			// Therefore we need to check which one of both cases is currently active.
-			if (!Dialog._isSizeSet(this.getHeight()) && Dialog._isSizeSet(this.getMinHeight())) {
+			if (!this._isSizeSet(this.getHeight()) && this._isSizeSet(this.getMinHeight())) {
 				// height is not set, so the content height should push the height - denoted by the CSS class "sapUiDlgFlexHeight" which applies a simple layout
 				// where header, content, and footer are stacked on top of each other
 
@@ -359,17 +350,47 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				} // else normal case: Dialog content pushes its height to or beyond its minimum height - this works fine with "sapUiDlgFlexHeight"
 			}
 
-			// Calculate min size and we need to do a delayedCall here because we do not have the size of the header and footer of the Dialog
-			if (!this._sDelayedCall) {
-				this._sDelayedCall = jQuery.sap.delayedCall(0, this, function () {
-					var _minSize = this.getMinSize();
-					this._minWidth = _minSize.width;
-					this._minHeight = _minSize.height;
-					this._sDelayedCall = null;
-				});
-			} else {
-				jQuery.sap.clearDelayedCall(this._sDelayedCall);
+			// IE9+10 fix where subpixel font rendering may lead to rounding errors in RTL mode when the content has a width of "xyz.5px"
+			if (bIsIE9Or10 && $content.length > 0 && bIsRTLOn && !this._isSizeSet(this.getWidth())) {
+				var element = $content[0];
+				var hasGetComputedStyle = element.ownerDocument &&
+					element.ownerDocument.defaultView &&
+					element.ownerDocument.defaultView.getComputedStyle;
+
+				if (!hasGetComputedStyle) {
+					return;
+				}
+
+				var width = element.ownerDocument.defaultView.getComputedStyle(element).getPropertyValue("width");
+				if (width) {
+					var fWidth = parseFloat(width, 10);
+					if (fWidth % 1 == 0.5) {
+						// if all these conditions are fulfilled, the Dialog must be a LITTLE bit wider to avoid rounding errors
+						element.style.width = (fWidth + 0.01) + "px";
+					}
+				}
 			}
+
+		};
+
+		/**
+		 * Calcuates the minimum size of the dialog after rendering
+		 */
+		Dialog.prototype._calculateMinSize = function () {
+
+			if (this._sDelayedCall) {
+				jQuery.sap.clearDelayedCall(this._sDelayedCall);
+				return;
+			}
+
+			// Calculate min size and we need to do a delayedCall here because we do not have the size of the header and footer of the Dialog
+			this._sDelayedCall = jQuery.sap.delayedCall(0, this, function () {
+				var _minSize = this.getMinSize();
+				this._minWidth = _minSize.width;
+				this._minHeight = _minSize.height;
+				this._sDelayedCall = null;
+			});
+
 		};
 
 		/**
@@ -425,33 +446,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// Make sure the dom content is shown (in the static area)
 			this.$().show();
 
-			var sInitFocus = this.getInitialFocus(),
-				oFocusCtrl;
-			if (sInitFocus && (oFocusCtrl = sap.ui.getCore().byId(sInitFocus))) { // an additional previous check was  oFocusCtrl.getParent() === this  which prevented nested children from being focused
-				oFocusCtrl.focus();
-				this._bInitialFocusSet = true;
+			var sInitFocus = this.getInitialFocus();
+			var aTabbables;
+			this._bInitialFocusSet = true;
+
+			//an additional previous check was  oFocusCtrl.getParent() === this  which prevented nested children from being focused
+			if (sInitFocus) {
+				sap.ui.getCore().byId(sInitFocus).focus();
+				return;
+			}
+
+			sInitFocus = this.getDefaultButton();
+			aTabbables = jQuery(":sapTabbable", this.$("cont"));
+
+			if (sInitFocus) {
+				sap.ui.getCore().byId(sInitFocus).focus();
+			} else if (this.getButtons().length) {
+				this.getButtons()[0].focus();
+			} else if (this.getContent().length && aTabbables.length) {
+				// let's at least focus something in the Dialog that is TABBABLE
+				aTabbables[0].focus();
 			} else {
-				sInitFocus = this.getDefaultButton();
-				if (sInitFocus && (oFocusCtrl = sap.ui.getCore().byId(sInitFocus)) && oFocusCtrl.getParent() === this) {
-					oFocusCtrl.focus();
-					this._bInitialFocusSet = true;
-				} else if (this.getButtons().length > 0) {
-					this.getButtons()[0].focus();
-					this._bInitialFocusSet = true;
-				} else if (this.getContent().length > 0) {
-					// let's at least focus something in the Dialog that is TABBABLE
-					var aTabbables = jQuery(":sapTabbable", this.$("cont"));
-					if (aTabbables.length) {
-						aTabbables[0].focus();
-						this._bInitialFocusSet = true;
-					} else {
-						// if there is something in the content but isn't tabbable then
-						// use the first fake element to focus
-						var oFakeDomRef = jQuery.sap.domById(this._mParameters.firstFocusable);
-						jQuery.sap.focus(oFakeDomRef);
-						this._bInitialFocusSet = true;
-					}
-				}
+				// if there is something in the content but isn't tabbable then
+				// use the first fake element to focus
+				var oFakeDomRef = jQuery.sap.domById(this._mParameters.firstFocusable);
+				jQuery.sap.focus(oFakeDomRef);
 			}
 		};
 
@@ -462,17 +481,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 */
 		Dialog.prototype.handleOpened = function () {
 			this.oPopup.detachEvent("opened", this.handleOpened, this);
-
-			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version === 11) {
-				// a delayed call is needed for IE11. Since it fires the opened event before all stuff
-				// is visible. All stuff is added to the DOM though and all operations can be done
-				// but a focus seems to work (there is no error) but the focus can't be set to something
-				// that isn't really visible
-				jQuery.sap.clearDelayedCall(this._delayedCallId);
-				this._delayedCallId = jQuery.sap.delayedCall(0, this, this._handleOpened);
-			} else {
-				this._handleOpened();
-			}
+			this._handleOpened();
 		};
 
 		/**
@@ -577,8 +586,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @returns {boolean} whether The given sCssSize is an explicit value, or not (e.g. auto, inherit).
 		 * @private
 		 */
-		Dialog._isSizeSet = function (sCssSize) {
-			return (sCssSize && !(sCssSize == "auto") && !(sCssSize == "inherit"));
+		Dialog.prototype._isSizeSet = function (sCssSize) {
+			return !!(sCssSize && sCssSize !== "auto" && sCssSize !== "inherit");
 		};
 
 		/**
@@ -676,21 +685,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 */
 		Dialog.prototype.getMinSize = function () {
 
-			var oDialog = jQuery.sap.domById(this.sId),
-				oTitle = jQuery.sap.domById(this.sId + "-hdr"),
-				oFooter = jQuery.sap.domById(this.sId + "-footer"),
-				heightTitle = 0,
-				widthFooter = 0,
-				heightFooter = 0;
+			var $oDialog = jQuery.sap.byId(this.sId);
+			var	$oTitle = jQuery.sap.byId(this.sId + "-hdr");
+			var $oFooter = jQuery.sap.byId(this.sId + "-footer");
+			var oFooterBtns = $oFooter.children("DIV").get(0);
+			var widthFooter = oFooterBtns ? oFooterBtns.offsetWidth : 0;
+			var	addValue = 0;
+			var heightTitle,
+				heightFooter;
 
-			var oFooterBtns = jQuery(oFooter).children("DIV").get(0);
-			widthFooter = oFooterBtns.offsetWidth;
-
-			var addValue = 0;
 			// add border and padding of footer...not margin
-			addValue += jQuery(oFooter).outerWidth(false) - jQuery(oFooter).width();
+			addValue += $oFooter.outerWidth(false) - $oFooter.width();
 			// add border and padding of footer...not margin
-			addValue += jQuery(oDialog).outerWidth(false) - jQuery(oDialog).width();
+			addValue += $oDialog.outerWidth(false) - $oDialog.width();
 
 			// if there is a too small specific border value add +20 for certainty to avoid wrapping
 			if (addValue <= 20) {
@@ -699,12 +706,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			widthFooter += addValue;
 
-			if (isNaN(widthFooter) || widthFooter < 100) {
+			if (widthFooter < 100) {
 				widthFooter = 100;
 			}
 
-			heightTitle = oTitle.offsetHeight;
-			heightFooter = oFooter.offsetHeight;
+			heightTitle = $oTitle.outerHeight(false);
+			heightFooter = $oFooter.outerHeight(false);
+
 			return {
 				width: widthFooter,
 				height: heightTitle + heightFooter + 36 /* min. height content */
@@ -813,21 +821,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				sId = this.getId();
 
 			this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL(); // remember the RTL mode for the starting resize operation
-
+			var oDomRef = this.getDomRef();
 			if (jQuery.sap.containsOrEquals(this.getDomRef("hdr"), oSource)) {
 				if (oSource.id != (sId + "-close")) {
 					this.sDragMode = "move";
-					this._RootWidth = this.getDomRef().offsetWidth;
-					this._RootHeight = this.getDomRef().offsetHeight;
+					this._RootWidth = oDomRef.offsetWidth;
+					this._RootHeight = oDomRef.offsetHeight;
 				}
 			} else if (oSource.id == sId + "-grip") {
 				this.sDragMode = "resize";
 
 				// Now the dialog is fixed-width and fixed-height; write them to the element and adapt its classes to switch positioning
-				var oDomRef = this.getDomRef();
 				var sWidth = oDomRef.offsetWidth + "px";
-				oDomRef.style.width = sWidth;
 				var sHeight = oDomRef.offsetHeight + "px";
+				oDomRef.style.width = sWidth;
 				oDomRef.style.height = sHeight;
 				jQuery(oDomRef).removeClass("sapUiDlgFlexHeight sapUiDlgFlexWidth");
 				// ...also remember the dimensions for the future (e.g. for after rerendering) - but do not cause rerendering now
@@ -835,7 +842,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this.setProperty("height", sHeight, true);
 			}
 
-			if (this.sDragMode == null) {
+			if (this.sDragMode === null) {
 				return;
 			}
 
@@ -857,15 +864,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			this.originalRectangle = this.$().rect();
 
-			jQuery(window.document).bind("selectstart", jQuery.proxy(this.ondragstart, this));
-			jQuery(window.document).bind("mousemove", jQuery.proxy(this.handleMove, this));
-			jQuery(window.document).bind("mouseup", jQuery.proxy(this.handleMouseUp, this));
+			jQuery(window.document).on("selectstart", jQuery.proxy(this.ondragstart, this));
+			jQuery(window.document).on("mousemove", jQuery.proxy(this.handleMove, this));
+			jQuery(window.document).on("mouseup", jQuery.proxy(this.handleMouseUp, this));
 
-			var outerDoc = Dialog._findSameDomainParentWinDoc();
+			var outerDoc = this._findSameDomainParentWinDoc();
 			if (outerDoc) {
-				jQuery(outerDoc).bind("selectstart", jQuery.proxy(this.ondragstart, this));
-				jQuery(outerDoc).bind("mousemove", jQuery.proxy(this.handleMove, this));
-				jQuery(outerDoc).bind("mouseup", jQuery.proxy(this.handleMouseUp, this));
+				jQuery(outerDoc).on("selectstart", jQuery.proxy(this.ondragstart, this));
+				jQuery(outerDoc).on("mousemove", jQuery.proxy(this.handleMove, this));
+				jQuery(outerDoc).on("mouseup", jQuery.proxy(this.handleMouseUp, this));
 			}
 
 		};
@@ -878,7 +885,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @returns {Object} outerDoc
 		 * @private
 		 */
-		Dialog._findSameDomainParentWinDoc = function () {
+		Dialog.prototype._findSameDomainParentWinDoc = function () {
 			var outerDoc = null;
 			try {
 				var win = window;
@@ -914,11 +921,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			if (this.sDragMode == "resize") {
 
-				var deltaX = event.screenX - this.startDragX;
-				var deltaY = event.screenY - this.startDragY;
+				var deltaX = event.screenX - this.startDragX || 0;
+				var deltaY = event.screenY - this.startDragY || 0;
 
-				var w = (this._bRtlMode ? this.originalRectangle.width - deltaX : this.originalRectangle.width + deltaX);
-				var h = this.originalRectangle.height + deltaY;
+				var w = (this._bRtlMode ? this.originalRectangle.width - deltaX : this.originalRectangle.width + deltaX) || 0;
+				var h = this.originalRectangle.height + deltaY || 0;
 
 				w = Math.max(w, this._minWidth);
 				h = Math.max(h, this._minHeight);
@@ -930,14 +937,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				oDomRef.style.height = h + "px";
 
 				// Now use the actual size of the dialog, which might have been constrained by min-*/max-* for resizing the popup and the shadow
-				w = this.getDomRef().offsetWidth;
-				h = this.getDomRef().offsetHeight;
-
-				// In IE8, style.width/height will still have the old values - possibly outside this Dialog's size constraints.
-				// The Dialog box itself will stay correctly constrained, but its child elements will be positioned as if the style.width/height
-				// values were the actual size, so for this browser - and to be cleaner - explicitly set these sizes. This is an IE8 bug.
-				oDomRef.style.width = w + "px";
-				oDomRef.style.height = h + "px";
+				w = oDomRef.offsetWidth;
+				h = oDomRef.offsetHeight;
 
 				// Also remember the dimensions for the future (e.g. for after rerendering) - but do not cause rerendering now
 				this.setProperty("width", w + "px", true);
@@ -948,12 +949,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				var iLeft = this.originalRectangle.left + event.screenX - this.startDragX;
 				var iTop = this.originalRectangle.top + event.screenY - this.startDragY;
 
-				iTop = Math.max(iTop, window.pageYOffset); // should not move the Dialog beyond the top border - otherwise it cannot be moved back
+				// should not move the Dialog beyond the top border - otherwise it cannot be moved back
+				iTop = Math.max(iTop, window.pageYOffset);
 				if (this._bRtlMode || this._keepInWindow()) {
-					iLeft = Math.min(iLeft, document.documentElement.clientWidth + window.pageXOffset - this._RootWidth); // in RTL mode, do not move beyond the right window border
+					// in RTL mode, do not move beyond the right window border
+					iLeft = Math.min(iLeft, document.documentElement.clientWidth + window.pageXOffset - this._RootWidth);
 				}
 				if (!this._bRtlMode || this._keepInWindow()) {
-					iLeft = Math.max(iLeft, 0); // in LTR mode do not move the Dialog beyond the left border
+					// in LTR mode do not move the Dialog beyond the left border
+					iLeft = Math.max(iLeft, 0);
 				}
 				if (this._keepInWindow()) {
 					iTop = Math.min(iTop, document.documentElement.clientHeight + window.pageYOffset - this._RootHeight);
@@ -989,24 +993,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 */
 		Dialog.prototype.handleMouseUp = function (oEvent) {
 
-			if (this.sDragMode == null) {
+			if (this.sDragMode === null) {
 				return;
 			}
 
-			jQuery(window.document).unbind("selectstart", this.ondragstart);
-			jQuery(window.document).unbind("mousemove", this.handleMove);
-			jQuery(window.document).unbind("mouseup", this.handleMouseUp);
+			jQuery(window.document).off("selectstart", this.ondragstart);
+			jQuery(window.document).off("mousemove", this.handleMove);
+			jQuery(window.document).off("mouseup", this.handleMouseUp);
 
-			var outerDoc = Dialog._findSameDomainParentWinDoc();
+			var outerDoc = this._findSameDomainParentWinDoc();
 			if (outerDoc) {
-				jQuery(outerDoc).unbind("selectstart", this.ondragstart);
-				jQuery(outerDoc).unbind("mousemove", this.handleMove);
-				jQuery(outerDoc).unbind("mouseup", this.handleMouseUp);
-			}
-
-			if (!!sap.ui.Device.browser.webkit) {
-				//Force Webkit Browsers to do a repaint
-				sap.ui.core.RenderManager.forceRepaint(this.getId());
+				jQuery(outerDoc).off("selectstart", this.ondragstart);
+				jQuery(outerDoc).off("mousemove", this.handleMove);
+				jQuery(outerDoc).off("mouseup", this.handleMouseUp);
 			}
 
 			// Set back focus to previously focused element

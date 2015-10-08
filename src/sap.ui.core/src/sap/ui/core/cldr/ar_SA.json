@@ -1714,6 +1714,302 @@
 			"0": "هـ"
 		}
 	},
+	"ca-japanese": {
+		"dateFormat-full": "EEEE، d MMMM، y G",
+		"dateFormat-long": "d MMMM، y G",
+		"dateFormat-medium": "dd‏/MM‏/y G",
+		"dateFormat-short": "d‏/M‏/y GGGGG",
+		"timeFormat-full": "h:mm:ss a zzzz",
+		"timeFormat-long": "h:mm:ss a z",
+		"timeFormat-medium": "h:mm:ss a",
+		"timeFormat-short": "h:mm a",
+		"dateTimeFormat-full": "{1} {0}",
+		"dateTimeFormat-long": "{1} {0}",
+		"dateTimeFormat-medium": "{1} {0}",
+		"dateTimeFormat-short": "{1} {0}",
+		"intervalFormatFallback": "{0} – {1}",
+		"intervalFormat-d-d": "d–d",
+		"intervalFormat-h-a": "h a – h a",
+		"intervalFormat-h-h": "h–h a",
+		"intervalFormat-H-H": "HH–HH",
+		"intervalFormat-hm-a": "h:mm a – h:mm a",
+		"intervalFormat-hm-h": "h:mm–h:mm a",
+		"intervalFormat-hm-m": "h:mm–h:mm a",
+		"intervalFormat-Hm-H": "HH:mm–HH:mm",
+		"intervalFormat-Hm-m": "HH:mm–HH:mm",
+		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
+		"intervalFormat-hmv-h": "h:mm–h:mm a v",
+		"intervalFormat-hmv-m": "h:mm–h:mm a v",
+		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
+		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
+		"intervalFormat-hv-a": "h a – h a v",
+		"intervalFormat-hv-h": "h–h a v",
+		"intervalFormat-Hv-H": "HH–HH v",
+		"intervalFormat-M-M": "M–M",
+		"intervalFormat-Md-d": "M/d – M/d",
+		"intervalFormat-Md-M": "M/d – M/d",
+		"intervalFormat-MEd-d": "E، d/‏M –‏ E، d/‏M",
+		"intervalFormat-MEd-M": "E، d/‏M – E، d/‏M",
+		"intervalFormat-MMM-M": "MMM–MMM",
+		"intervalFormat-MMMd-d": "MMM d–d",
+		"intervalFormat-MMMd-M": "d MMM – d MMM",
+		"intervalFormat-MMMEd-d": "E، d – E، d MMM",
+		"intervalFormat-MMMEd-M": "E، d MMM – E، d MMM",
+		"intervalFormat-MMMM-M": "LLLL–LLLL",
+		"intervalFormat-y-y": "y–y G",
+		"intervalFormat-yM-M": "M‏/y – M‏/y G",
+		"intervalFormat-yM-y": "M‏/y – M‏/y G",
+		"intervalFormat-yMd-d": "d‏/M‏/y – d‏/M‏/y G",
+		"intervalFormat-yMd-M": "d‏/M‏/y – d‏/M‏/y G",
+		"intervalFormat-yMd-y": "d‏/M‏/y – d‏/M‏/y G",
+		"intervalFormat-yMEd-d": "E، dd‏/MM‏/y – E، dd‏/MM‏/y G",
+		"intervalFormat-yMEd-M": "E، d‏/M‏/y – E، d‏/M‏/y G",
+		"intervalFormat-yMEd-y": "E، d‏/M‏/y – E، d‏/M‏/y G",
+		"intervalFormat-yMMM-M": "MMM – MMM، y G",
+		"intervalFormat-yMMM-y": "MMM، y – MMM، y G",
+		"intervalFormat-yMMMd-d": "d–d MMM، y G",
+		"intervalFormat-yMMMd-M": "d MMM – d MMM، y G",
+		"intervalFormat-yMMMd-y": "d MMM، y – d MMM، y G",
+		"intervalFormat-yMMMEd-d": "E، d – E، d MMM، y G",
+		"intervalFormat-yMMMEd-M": "E، d MMM – E، d MMM، y G",
+		"intervalFormat-yMMMEd-y": "E، d MMM، y – E، d MMM، y G",
+		"intervalFormat-yMMMM-M": "MMMM – MMMM، y G",
+		"intervalFormat-yMMMM-y": "MMMM، y – MMMM، y G",
+		"months-format-abbreviated": [
+			"يناير",
+			"فبراير",
+			"مارس",
+			"أبريل",
+			"مايو",
+			"يونيو",
+			"يوليو",
+			"أغسطس",
+			"سبتمبر",
+			"أكتوبر",
+			"نوفمبر",
+			"ديسمبر"
+		],
+		"months-format-narrow": [
+			"ي",
+			"ف",
+			"م",
+			"أ",
+			"و",
+			"ن",
+			"ل",
+			"غ",
+			"س",
+			"ك",
+			"ب",
+			"د"
+		],
+		"months-format-wide": [
+			"يناير",
+			"فبراير",
+			"مارس",
+			"أبريل",
+			"مايو",
+			"يونيو",
+			"يوليو",
+			"أغسطس",
+			"سبتمبر",
+			"أكتوبر",
+			"نوفمبر",
+			"ديسمبر"
+		],
+		"months-standAlone-abbreviated": [
+			"يناير",
+			"فبراير",
+			"مارس",
+			"أبريل",
+			"مايو",
+			"يونيو",
+			"يوليو",
+			"أغسطس",
+			"سبتمبر",
+			"أكتوبر",
+			"نوفمبر",
+			"ديسمبر"
+		],
+		"months-standAlone-narrow": [
+			"ي",
+			"ف",
+			"م",
+			"أ",
+			"و",
+			"ن",
+			"ل",
+			"غ",
+			"س",
+			"ك",
+			"ب",
+			"د"
+		],
+		"months-standAlone-wide": [
+			"يناير",
+			"فبراير",
+			"مارس",
+			"أبريل",
+			"مايو",
+			"يونيو",
+			"يوليو",
+			"أغسطس",
+			"سبتمبر",
+			"أكتوبر",
+			"نوفمبر",
+			"ديسمبر"
+		],
+		"days-format-abbreviated": [
+			"الأحد",
+			"الاثنين",
+			"الثلاثاء",
+			"الأربعاء",
+			"الخميس",
+			"الجمعة",
+			"السبت"
+		],
+		"days-format-narrow": [
+			"ح",
+			"ن",
+			"ث",
+			"ر",
+			"خ",
+			"ج",
+			"س"
+		],
+		"days-format-short": [
+			"الأحد",
+			"الاثنين",
+			"الثلاثاء",
+			"الأربعاء",
+			"الخميس",
+			"الجمعة",
+			"السبت"
+		],
+		"days-format-wide": [
+			"الأحد",
+			"الاثنين",
+			"الثلاثاء",
+			"الأربعاء",
+			"الخميس",
+			"الجمعة",
+			"السبت"
+		],
+		"days-standAlone-abbreviated": [
+			"الأحد",
+			"الاثنين",
+			"الثلاثاء",
+			"الأربعاء",
+			"الخميس",
+			"الجمعة",
+			"السبت"
+		],
+		"days-standAlone-narrow": [
+			"ح",
+			"ن",
+			"ث",
+			"ر",
+			"خ",
+			"ج",
+			"س"
+		],
+		"days-standAlone-short": [
+			"الأحد",
+			"الاثنين",
+			"الثلاثاء",
+			"الأربعاء",
+			"الخميس",
+			"الجمعة",
+			"السبت"
+		],
+		"days-standAlone-wide": [
+			"الأحد",
+			"الاثنين",
+			"الثلاثاء",
+			"الأربعاء",
+			"الخميس",
+			"الجمعة",
+			"السبت"
+		],
+		"quarters-format-abbreviated": [
+			"الربع الأول",
+			"الربع الثاني",
+			"الربع الثالث",
+			"الربع الرابع"
+		],
+		"quarters-format-narrow": [
+			"١",
+			"٢",
+			"٣",
+			"٤"
+		],
+		"quarters-format-wide": [
+			"الربع الأول",
+			"الربع الثاني",
+			"الربع الثالث",
+			"الربع الرابع"
+		],
+		"quarters-standAlone-abbreviated": [
+			"الربع الأول",
+			"الربع الثاني",
+			"الربع الثالث",
+			"الربع الرابع"
+		],
+		"quarters-standAlone-narrow": [
+			"١",
+			"٢",
+			"٣",
+			"٤"
+		],
+		"quarters-standAlone-wide": [
+			"الربع الأول",
+			"الربع الثاني",
+			"الربع الثالث",
+			"الربع الرابع"
+		],
+		"dayPeriods-format-abbreviated": [
+			"ص",
+			"م"
+		],
+		"dayPeriods-format-narrow": [
+			"ص",
+			"م"
+		],
+		"dayPeriods-format-wide": [
+			"ص",
+			"م"
+		],
+		"dayPeriods-standAlone-abbreviated": [
+			"ص",
+			"م"
+		],
+		"dayPeriods-standAlone-narrow": [
+			"ص",
+			"م"
+		],
+		"dayPeriods-standAlone-wide": [
+			"صباحًا",
+			"مساءً"
+		],
+		"era-wide": {
+			"232": "ميجي",
+			"233": "تيشو",
+			"234": "شووا",
+			"235": "هيسي"
+		},
+		"era-abbreviated": {
+			"232": "ميجي",
+			"233": "تيشو",
+			"234": "شووا",
+			"235": "هيسي"
+		},
+		"era-narrow": {
+			"232": "M",
+			"233": "T",
+			"234": "S",
+			"235": "H"
+		}
+	},
 	"dateField-year-displayName": "السنة",
 	"dateField-year-relative--1": "السنة الماضية",
 	"dateField-year-relative-0": "السنة الحالية",
@@ -2056,5 +2352,32 @@
 	"weekData-firstDay": 0,
 	"weekData-weekendStart": 5,
 	"weekData-weekendEnd": 6,
+	"eras-gregorian": {
+		"0": {
+			"_end": "0-12-31"
+		},
+		"1": {
+			"_start": "1-01-01"
+		}
+	},
+	"eras-islamic": {
+		"0": {
+			"_start": "622-7-15"
+		}
+	},
+	"eras-japanese": {
+		"232": {
+			"_start": "1868-9-8"
+		},
+		"233": {
+			"_start": "1912-7-30"
+		},
+		"234": {
+			"_start": "1926-12-25"
+		},
+		"235": {
+			"_start": "1989-1-8"
+		}
+	},
 	"calendarPreference": "islamic-umalqura gregorian islamic islamic-rgsa"
 }

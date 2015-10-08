@@ -1,4 +1,4 @@
-<mvc:View controllerName="view.Cart"
+<mvc:View controllerName="sap.ui.demo.cart.view.Cart"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc" 

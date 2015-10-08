@@ -29,7 +29,7 @@ sap.ui.define([
 							success : function (aBtn) {
 								aBtn[0].$().trigger("tap");
 							},
-							errorMessage : "The press action could not be executed"
+							errorMessage : "The cart button was not found and could not be pressed"
 						});
 					}
 				},

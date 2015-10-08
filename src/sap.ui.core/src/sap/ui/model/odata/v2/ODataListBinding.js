@@ -964,18 +964,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 
 		if (!this.bInitial) {
 			if (this.bClientOperation) {
-				this.applySort();
-				this._fireChange({reason: ChangeReason.Sort});
+				// apply clientside sorters only if data is available
+				if (this.aAllKeys) {
+					this.applySort();
+					this._fireChange({reason: ChangeReason.Sort});
+				} else {
+					this.sChangeReason = ChangeReason.Sort;
+				}
 			} else {
 				// Only reset the keys, length usually doesn't change when sorting
 				this.aKeys = [];
 				this.abortPendingRequest();
 				this.sChangeReason = ChangeReason.Sort;
 				this._fireRefresh({reason : this.sChangeReason});
-				// TODO remove this if the sort event gets removed which is now deprecated
-				this._fireSort({sorter: aSorters});
-				bSuccess = true;
 			}
+			// TODO remove this if the sort event gets removed which is now deprecated
+			this._fireSort({sorter: aSorters});
+			bSuccess = true;
 		}
 
 		if (bReturnSuccess) {
@@ -1048,23 +1053,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		if (!this.bInitial) {
 			
 			if (this.bClientOperation) {
-				this.applyFilter();
-				this.applySort();
-				this._fireChange({reason: ChangeReason.Filter});
+				// apply clientside filters/sorters only if data is available
+				if (this.aAllKeys) {
+					this.applyFilter();
+					this.applySort();
+					this._fireChange({reason: ChangeReason.Filter});
+				} else {
+					this.sChangeReason = ChangeReason.Filter;
+				}
 			} else {
 				this.resetData();
 				this.abortPendingRequest();
 				this.sChangeReason = ChangeReason.Filter;
 				this._fireRefresh({reason: this.sChangeReason});
-				// TODO remove this if the filter event gets removed which is now deprecated
-				if (sFilterType === FilterType.Application) {
-					this._fireFilter({filters: this.aApplicationFilters});
-				} else {
-					this._fireFilter({filters: this.aFilters});
-				}
-				bSuccess = true;
 			}
-			
+			// TODO remove this if the filter event gets removed which is now deprecated
+			if (sFilterType === FilterType.Application) {
+				this._fireFilter({filters: this.aApplicationFilters});
+			} else {
+				this._fireFilter({filters: this.aFilters});
+			}
+			bSuccess = true;
 		}
 
 		if (bReturnSuccess) {

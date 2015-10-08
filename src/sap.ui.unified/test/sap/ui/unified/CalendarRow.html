@@ -24,7 +24,7 @@
 				var oTV = sap.ui.getCore().byId("EventTV");
 				var oAppointment = oEvent.getParameter("appointment");
 				if (oAppointment) {
-					oTV.setText("Appointment selected: " + oAppointment.getId());
+					oTV.setText("Appointment selected - ID:" + oAppointment.getId() + " , key:" + oAppointment.getKey());
 				}else {
 					var aAppointments = oEvent.getParameter("appointments");
 					oTV.setText(aAppointments.length + " Appointments selected");
@@ -44,8 +44,9 @@
 				endDate: oEndDate,
 				type: sap.ui.unified.CalendarDayType.None,
 				title: "Ñagçyfox 1",
-				tooltip: "Tooltip 1"/*,
-				text: "Appointment of 2 hours, 1 hour in future"*/
+				tooltip: "Tooltip 1",
+				/*text: "Appointment of 2 hours, 1 hour in future",*/
+				key: "A1"
 			});
 			oRow1.addAppointment(oApp);
 
@@ -60,7 +61,8 @@
 				title: "Ñagçyfox 2",
 				icon: "sap-icon://call",
 				tooltip: "Tooltip 2",
-				text: "Ñagçyfox 2.5 hours, 1 hour in past"
+				text: "Ñagçyfox 2.5 hours, 1 hour in past",
+				key: "A2"
 			});
 			oRow1.addAppointment(oApp);
 
@@ -74,7 +76,8 @@
 				type: sap.ui.unified.CalendarDayType.Type02,
 				title: "Appointment 3",
 				tooltip: "Tooltip 3",
-				text: "Appointment of 1 hour, 3 hour in past"
+				text: "Appointment of 1 hour, 3 hour in past",
+				key: "A3"
 			});
 			oRow1.addAppointment(oApp);
 
@@ -88,7 +91,8 @@
 				type: sap.ui.unified.CalendarDayType.Type03,
 				title: "Appointment 4",
 				tooltip: "Tooltip 4",
-				text: "Appointment of 3 days, 1 day in past"
+				text: "Appointment of 3 days, 1 day in past",
+				key: "A4"
 			});
 			oRow1.addAppointment(oApp);
 
@@ -107,8 +111,9 @@
 				type: sap.ui.unified.CalendarDayType.Type04,
 				title: "Ñagçyfox 5",
 				icon: "images/m_01.png",
-				tooltip: "Tooltip 5"/*,
-				text: "Appointment of 1 complete day, 2 days in future"*/
+				tooltip: "Tooltip 5",
+				/*text: "Appointment of 1 complete day, 2 days in future",*/
+				key: "A5"
 			});
 			oRow1.addAppointment(oApp);
 
@@ -128,7 +133,8 @@
 				type: sap.ui.unified.CalendarDayType.Type05,
 				title: "Appointment 6",
 				tooltip: "Tooltip 6",
-				text: "Appointment of 3 complete months, 2 months in future"
+				text: "Appointment of 3 complete months, 2 months in future",
+				key: "A6"
 			});
 			oRow1.addAppointment(oApp);
 
@@ -146,7 +152,8 @@
 				tentative: true,
 				title: "Appointment 7",
 				tooltip: "Tooltip 7",
-				text: "Appointment of 30 minutes, 6 hour in future"
+				text: "Appointment of 30 minutes, 6 hour in future",
+				key: "A7"
 			});
 			oRow1.addAppointment(oApp);
 
@@ -161,7 +168,8 @@
 				tentative: true,
 				title: "Appointment 8",
 				tooltip: "Tooltip 8",
-				text: "Appointment of 30 minutes, 6.5 hour in future"
+				text: "Appointment of 30 minutes, 6.5 hour in future",
+				key: "A8"
 			});
 			oRow1.addAppointment(oApp);
 
@@ -179,7 +187,8 @@
 				type: sap.ui.unified.CalendarDayType.None,
 				title: "Interval Header 0",
 				tooltip: "Test",
-				text: "IntervalHeader of 2 hours, 1 hour in future"
+				text: "IntervalHeader of 2 hours, 1 hour in future",
+				key: "I0"
 			});
 			oRow1.addIntervalHeader(oApp);
 
@@ -197,7 +206,8 @@
 				type: sap.ui.unified.CalendarDayType.Type01,
 				title: "Ñagçyfox 1",
 				tooltip: "Test",
-				text: "IntervalHeader of 1 day, 2 days in future"
+				text: "IntervalHeader of 1 day, 2 days in future",
+				key: "I1"
 			});
 			oRow1.addIntervalHeader(oApp);
 
@@ -216,7 +226,8 @@
 				title: "Ñagçyfox 2",
 				tooltip: "Test",
 				text: "IntervalHeader of 1 day, 3 days in future",
-				icon: "sap-icon://sap-ui5"
+				icon: "sap-icon://sap-ui5",
+				key: "I2"
 			});
 			oRow1.addIntervalHeader(oApp);
 

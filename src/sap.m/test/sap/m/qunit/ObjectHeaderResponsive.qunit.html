@@ -731,21 +731,6 @@
 					equal($sTitle.attr("role"), "link", "ActiveTitle has role=link");
 				});
 				
-				
-				test("Title arrow has aria-haspopup", function(){ 
-					// Arrange
-					var oObjectHeader = createObjectHeader({
-						showTitleSelector: true
-					});
-
-					// System under test
-					oObjectHeader.placeAt("qunit-fixture");
-					oCore.applyChanges();
-					
-					// Assert
-					ok(oObjectHeader.$("titleArrow").attr("aria-haspopup"), "Title arrow has attribute aria-haspopup");
-				});
-				
 				test("Active icon has aria attributes", function(){ 
 					// Arrange
 					var oObjectHeader = createObjectHeader({

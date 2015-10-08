@@ -219,7 +219,7 @@ xhr.onCreate = function(request) {
 
 		if (request.async === true) {
 			_setTimeout(function() {
-				console.log("[FakeService] Responding to: " + request.url);
+				jQuery.sap.log.info("[FakeService] Responding to: " + request.url);
 				request.respond(iStatus, mHeaders, sAnswer);
 			}, bRandomizeResponseDelay ? Math.round(Math.random() * maxResponseDelay) : 50);
 		} else {

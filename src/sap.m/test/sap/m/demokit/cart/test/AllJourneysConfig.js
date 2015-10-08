@@ -13,14 +13,14 @@ sap.ui.define([
 					arrangements : new BuyProductJourneyArrangement(),
 					actions : new BuyProductJourneyAction(),
 					assertions : new BuyProductJourneyAssertion(),
-					viewNamespace : "view."
+					viewNamespace : "sap.ui.demo.cart.view."
 				});
 			},
 
 			deleteProductConfig : function(){
 				Opa5.extendConfig({
 					arrangements : new DeleteProductJourneyArrangement(),
-					viewNamespace : "view."
+					viewNamespace : "sap.ui.demo.cart.view."
 				});
 			}
 

@@ -701,19 +701,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @protected
 	 */
 	TextField.prototype.applyFocusInfo = function (oFocusInfo) {
-
-		if (!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 8) {
-			var oPos = this.getValue().length;
-			var that = this;
-			setTimeout(function(){
-				that.focus();
-				that._restoreUnsavedUserInput(oFocusInfo.userinput);
-				jQuery(that.getFocusDomRef()).cursorPos(oPos);
-			}, 0);
-		} else {
-			this.focus();
-			this._restoreUnsavedUserInput(oFocusInfo.userinput);
-		}
+		this.focus();
+		this._restoreUnsavedUserInput(oFocusInfo.userinput);
 		return this;
 	};
 

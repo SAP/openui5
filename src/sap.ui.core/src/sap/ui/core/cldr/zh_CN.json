@@ -1720,6 +1720,301 @@
 			"0": "伊斯兰历"
 		}
 	},
+	"ca-japanese": {
+		"dateFormat-full": "Gy年M月d日EEEE",
+		"dateFormat-long": "Gy年M月d日",
+		"dateFormat-medium": "Gy年M月d日",
+		"dateFormat-short": "Gyy-MM-dd",
+		"timeFormat-full": "zzzz ah:mm:ss",
+		"timeFormat-long": "z ah:mm:ss",
+		"timeFormat-medium": "ah:mm:ss",
+		"timeFormat-short": "ah:mm",
+		"dateTimeFormat-full": "{1} {0}",
+		"dateTimeFormat-long": "{1} {0}",
+		"dateTimeFormat-medium": "{1} {0}",
+		"dateTimeFormat-short": "{1} {0}",
+		"intervalFormatFallback": "{0} – {1}",
+		"intervalFormat-d-d": "d日至d日",
+		"intervalFormat-h-a": "ah时至ah时",
+		"intervalFormat-h-h": "ah时至h时",
+		"intervalFormat-H-H": "HH–HH",
+		"intervalFormat-hm-a": "ah:mm至ah:mm",
+		"intervalFormat-hm-h": "ah:mm至h:mm",
+		"intervalFormat-hm-m": "ah:mm至h:mm",
+		"intervalFormat-Hm-H": "HH:mm–HH:mm",
+		"intervalFormat-Hm-m": "HH:mm–HH:mm",
+		"intervalFormat-hmv-a": "vah:mm至ah:mm",
+		"intervalFormat-hmv-h": "vah:mm至h:mm",
+		"intervalFormat-hmv-m": "vah:mm至h:mm",
+		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
+		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
+		"intervalFormat-hv-a": "vah时至ah时",
+		"intervalFormat-hv-h": "vah时至h时",
+		"intervalFormat-Hv-H": "HH–HH v",
+		"intervalFormat-M-M": "M–M月",
+		"intervalFormat-Md-d": "M/d – M/d",
+		"intervalFormat-Md-M": "M/d – M/d",
+		"intervalFormat-MEd-d": "M/dE至M/dE",
+		"intervalFormat-MEd-M": "M/dE至M/dE",
+		"intervalFormat-MMM-M": "LLL至LLL",
+		"intervalFormat-MMMd-d": "M月d日至d日",
+		"intervalFormat-MMMd-M": "M月d日至M月d日",
+		"intervalFormat-MMMEd-d": "M月d日E至d日E",
+		"intervalFormat-MMMEd-M": "M月d日E至M月d日E",
+		"intervalFormat-y-y": "Gy–y年",
+		"intervalFormat-yM-M": "Gy年M月至M月",
+		"intervalFormat-yM-y": "Gy年M月至y年M月",
+		"intervalFormat-yMd-d": "Gy/M/d – y/M/d",
+		"intervalFormat-yMd-M": "Gy/M/d – y/M/d",
+		"intervalFormat-yMd-y": "Gy/M/d – y/M/d",
+		"intervalFormat-yMEd-d": "Gy/M/dE至y/M/dE",
+		"intervalFormat-yMEd-M": "Gy/M/dE至y/M/dE",
+		"intervalFormat-yMEd-y": "Gy/M/dE至y/M/dE",
+		"intervalFormat-yMMM-M": "Gy年M月至M月",
+		"intervalFormat-yMMM-y": "Gy年M月至y年M月",
+		"intervalFormat-yMMMd-d": "Gy年M月d日至d日",
+		"intervalFormat-yMMMd-M": "Gy年M月d日至M月d日",
+		"intervalFormat-yMMMd-y": "Gy年M月d日至y年M月d日",
+		"intervalFormat-yMMMEd-d": "Gy年M月d日E至d日E",
+		"intervalFormat-yMMMEd-M": "Gy年M月d日E至M月d日E",
+		"intervalFormat-yMMMEd-y": "Gy年M月d日E至y年M月d日E",
+		"intervalFormat-yMMMM-M": "Gy年M月至M月",
+		"intervalFormat-yMMMM-y": "Gy年M月至y年M月",
+		"months-format-abbreviated": [
+			"1月",
+			"2月",
+			"3月",
+			"4月",
+			"5月",
+			"6月",
+			"7月",
+			"8月",
+			"9月",
+			"10月",
+			"11月",
+			"12月"
+		],
+		"months-format-narrow": [
+			"1",
+			"2",
+			"3",
+			"4",
+			"5",
+			"6",
+			"7",
+			"8",
+			"9",
+			"10",
+			"11",
+			"12"
+		],
+		"months-format-wide": [
+			"一月",
+			"二月",
+			"三月",
+			"四月",
+			"五月",
+			"六月",
+			"七月",
+			"八月",
+			"九月",
+			"十月",
+			"十一月",
+			"十二月"
+		],
+		"months-standAlone-abbreviated": [
+			"1月",
+			"2月",
+			"3月",
+			"4月",
+			"5月",
+			"6月",
+			"7月",
+			"8月",
+			"9月",
+			"10月",
+			"11月",
+			"12月"
+		],
+		"months-standAlone-narrow": [
+			"1",
+			"2",
+			"3",
+			"4",
+			"5",
+			"6",
+			"7",
+			"8",
+			"9",
+			"10",
+			"11",
+			"12"
+		],
+		"months-standAlone-wide": [
+			"一月",
+			"二月",
+			"三月",
+			"四月",
+			"五月",
+			"六月",
+			"七月",
+			"八月",
+			"九月",
+			"十月",
+			"十一月",
+			"十二月"
+		],
+		"days-format-abbreviated": [
+			"周日",
+			"周一",
+			"周二",
+			"周三",
+			"周四",
+			"周五",
+			"周六"
+		],
+		"days-format-narrow": [
+			"日",
+			"一",
+			"二",
+			"三",
+			"四",
+			"五",
+			"六"
+		],
+		"days-format-short": [
+			"周日",
+			"周一",
+			"周二",
+			"周三",
+			"周四",
+			"周五",
+			"周六"
+		],
+		"days-format-wide": [
+			"星期日",
+			"星期一",
+			"星期二",
+			"星期三",
+			"星期四",
+			"星期五",
+			"星期六"
+		],
+		"days-standAlone-abbreviated": [
+			"周日",
+			"周一",
+			"周二",
+			"周三",
+			"周四",
+			"周五",
+			"周六"
+		],
+		"days-standAlone-narrow": [
+			"日",
+			"一",
+			"二",
+			"三",
+			"四",
+			"五",
+			"六"
+		],
+		"days-standAlone-short": [
+			"周日",
+			"周一",
+			"周二",
+			"周三",
+			"周四",
+			"周五",
+			"周六"
+		],
+		"days-standAlone-wide": [
+			"星期日",
+			"星期一",
+			"星期二",
+			"星期三",
+			"星期四",
+			"星期五",
+			"星期六"
+		],
+		"quarters-format-abbreviated": [
+			"1季度",
+			"2季度",
+			"3季度",
+			"4季度"
+		],
+		"quarters-format-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-format-wide": [
+			"第一季度",
+			"第二季度",
+			"第三季度",
+			"第四季度"
+		],
+		"quarters-standAlone-abbreviated": [
+			"1季度",
+			"2季度",
+			"3季度",
+			"4季度"
+		],
+		"quarters-standAlone-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-standAlone-wide": [
+			"第一季度",
+			"第二季度",
+			"第三季度",
+			"第四季度"
+		],
+		"dayPeriods-format-abbreviated": [
+			"上午",
+			"下午"
+		],
+		"dayPeriods-format-narrow": [
+			"上午",
+			"下午"
+		],
+		"dayPeriods-format-wide": [
+			"上午",
+			"下午"
+		],
+		"dayPeriods-standAlone-abbreviated": [
+			"上午",
+			"下午"
+		],
+		"dayPeriods-standAlone-narrow": [
+			"上午",
+			"下午"
+		],
+		"dayPeriods-standAlone-wide": [
+			"上午",
+			"下午"
+		],
+		"era-wide": {
+			"232": "明治",
+			"233": "大正",
+			"234": "昭和",
+			"235": "平成"
+		},
+		"era-abbreviated": {
+			"232": "明治",
+			"233": "大正",
+			"234": "昭和",
+			"235": "平成"
+		},
+		"era-narrow": {
+			"232": "M",
+			"233": "T",
+			"234": "S",
+			"235": "H"
+		}
+	},
 	"dateField-year-displayName": "年",
 	"dateField-year-relative--1": "去年",
 	"dateField-year-relative-0": "今年",
@@ -1902,5 +2197,32 @@
 	"weekData-firstDay": 0,
 	"weekData-weekendStart": 6,
 	"weekData-weekendEnd": 0,
+	"eras-gregorian": {
+		"0": {
+			"_end": "0-12-31"
+		},
+		"1": {
+			"_start": "1-01-01"
+		}
+	},
+	"eras-islamic": {
+		"0": {
+			"_start": "622-7-15"
+		}
+	},
+	"eras-japanese": {
+		"232": {
+			"_start": "1868-9-8"
+		},
+		"233": {
+			"_start": "1912-7-30"
+		},
+		"234": {
+			"_start": "1926-12-25"
+		},
+		"235": {
+			"_start": "1989-1-8"
+		}
+	},
 	"calendarPreference": "gregorian chinese"
 }

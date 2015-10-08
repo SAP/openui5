@@ -316,18 +316,11 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 
 	Icon.prototype.setSrc = function(sSrc) {
 		var oIconInfo = IconPool.getIconInfo(sSrc),
-			bTextNeeded = Device.browser.internet_explorer && Device.browser.version < 9,
 			$Icon = this.$();
 
 		if (oIconInfo) {
 			$Icon.css("font-family", oIconInfo.fontFamily);
-
-			if (bTextNeeded) {
-				$Icon.text(oIconInfo.content);
-			} else {
-				$Icon.attr("data-sap-ui-icon-content", oIconInfo.content);
-			}
-
+			$Icon.attr("data-sap-ui-icon-content", oIconInfo.content);
 			$Icon.toggleClass("sapUiIconMirrorInRTL", !oIconInfo.suppressMirroring);
 		}
 

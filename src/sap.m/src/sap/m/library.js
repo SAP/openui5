@@ -35,6 +35,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.ButtonType",
 			"sap.m.DateTimeInputType",
 			"sap.m.DialogType",
+			"sap.m.DeviationIndicator",
 			"sap.m.DraftIndicatorState",
 			"sap.m.FacetFilterListDataType",
 			"sap.m.FacetFilterType",
@@ -43,6 +44,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.FlexDirection",
 			"sap.m.FlexJustifyContent",
 			"sap.m.FlexRendertype",
+			"sap.m.FrameType",
 			"sap.m.HeaderLevel",
 			"sap.m.IBarHTMLTag",
 			"sap.m.IconTabFilterDesign",
@@ -94,6 +96,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.CheckBox",
 			"sap.m.ColumnListItem",
 			"sap.m.ComboBox",
+			"sap.m.ComboBoxTextField",
 			"sap.m.ComboBoxBase",
 			"sap.m.CustomListItem",
 			"sap.m.CustomTile",
@@ -212,6 +215,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.P13nSortItem",
 			"sap.m.SegmentedButtonItem",
 			"sap.m.TeamCalendarRow",
+			"sap.m.TeamCalendarView",
 			"sap.m.ToolbarLayoutData",
 			"sap.m.UploadCollectionItem",
 			"sap.m.UploadCollectionParameter",
@@ -406,6 +410,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		Message : "Message"
 
 	};
+
+
+	/**
+	 * Enum for the trend of the deviation marker within sap.m.NumericContent control.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.34
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.DeviationIndicator = {
+
+		/**
+		 * The actual value is more than the target value.
+		 * @public
+		 */
+		Up : "Up",
+
+		/**
+		 * The actual value is less than the target value.
+		 * @public
+		 */
+		Down : "Down",
+
+		/**
+		 * No value.
+		 * @public
+		 */
+		None : "None"
+
+	};
+
 
 	/**
 	 * Enum for the state of sap.m.DraftIndicator control.
@@ -733,9 +769,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 
+		/**
+		 * Enum for possible frame size types for sap.m.DynamicContent and sap.m.GenricTile control.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.34
+		 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+		 */
+	sap.m.FrameType = {
+
+		/**
+		 * The 1x1 frame type.
+		 */
+		OneByOne : "OneByOne",
+
+		/**
+		 * The 2x1 frame type.
+		 */
+		TwoByOne : "TwoByOne",
+
+		/**
+		 * The 2/3 frame type.
+		 */
+		TwoThirds : "TwoThirds",
+
+		/**
+		 * The Auto frame type that adjusts the size of the control to the content.
+		 */
+		Auto : "Auto"
+
+	};
+
+
 	/**
 	 * Different levels for headers
-	 *
+	 * 
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel

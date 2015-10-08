@@ -7,6 +7,11 @@ sap.ui.define(['jquery.sap.global'],
 	function(jQuery) {
 	"use strict";
 
+	jQuery("#busyIndicator").css({
+		"margin-top": "8em",
+		"text-align": "center",
+		color: "#555555"
+	});
 
 	var Bootstrap = {
 

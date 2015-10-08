@@ -28,6 +28,8 @@
 		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript">
 
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
 		jQuery.sap.require("sap.ui.dt.DesignTime");
 		jQuery.sap.require("sap.ui.dt.Plugin");
 
@@ -45,17 +47,17 @@
 				});
 
 				this.oPlugin = new sap.ui.dt.Plugin();
-				this.iRegisterOverlayCalls = 0;
+				this.iregisterElementOverlayCalls = 0;
 				this.iRegisterAggregationOverlayCalls = 0;
 				var that = this;
-				this.oPlugin.registerOverlay = function() {
-					that.iRegisterOverlayCalls += 1;
+				this.oPlugin.registerElementOverlay = function() {
+					that.iregisterElementOverlayCalls += 1;
 				};
 				this.oPlugin.registerAggregationOverlay = function() {
 					that.iRegisterAggregationOverlayCalls += 1;
 				};
-				this.oPlugin.deregisterOverlay = function() {
-					that.iRegisterOverlayCalls -= 1;
+				this.oPlugin.deregisterElementOverlay = function() {
+					that.iregisterElementOverlayCalls -= 1;
 				};
 				this.oPlugin.deregisterAggregationOverlay = function() {
 					that.iRegisterAggregationOverlayCalls -= 1;
@@ -71,7 +73,7 @@
 
 		QUnit.test("when the plugin is added to designTime with two controls", function(assert) {
 			this.oDesignTime.addPlugin(this.oPlugin);
-			assert.strictEqual(this.iRegisterOverlayCalls, 2, "register was called for two overlays");
+			assert.strictEqual(this.iregisterElementOverlayCalls, 2, "register was called for two overlays");
 			var iAggregationCount = Object.keys(this.oLayout.getMetadata().getAllAggregations()).length + Object.keys(this.oButton.getMetadata().getAllAggregations()).length;
 			assert.strictEqual(this.iRegisterAggregationOverlayCalls, iAggregationCount, "register was called for all aggregation overlays");
 		});
@@ -80,11 +82,11 @@
 			var oLayout = new sap.ui.layout.VerticalLayout();
 
 			this.oDesignTime.addPlugin(this.oPlugin);
-			this.iRegisterOverlayCalls = 0;
+			this.iregisterElementOverlayCalls = 0;
 			this.iRegisterAggregationOverlayCalls = 0;
 
 			this.oDesignTime.addRootElement(oLayout);
-			assert.strictEqual(this.iRegisterOverlayCalls, 1, "register was called for a new control");
+			assert.strictEqual(this.iregisterElementOverlayCalls, 1, "register was called for a new control");
 			assert.strictEqual(this.iRegisterAggregationOverlayCalls, Object.keys(oLayout.getMetadata().getAllAggregations()).length , "register was called for all new aggregations");
 		});
 
@@ -93,7 +95,7 @@
 
 			this.oDesignTime.addPlugin(this.oPlugin);
 			this.oDesignTime.removePlugin(this.oPlugin);
-			assert.strictEqual(this.iRegisterOverlayCalls, 0, "registered overlays are deregistered");
+			assert.strictEqual(this.iregisterElementOverlayCalls, 0, "registered overlays are deregistered");
 			assert.strictEqual(this.iRegisterAggregationOverlayCalls, 0, "registered aggregations are deregistered");
 		});
 

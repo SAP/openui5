@@ -107,7 +107,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 				Hour: "hour",
 				Minute: "minute",
 				Second: "second"
-			};
+			},
+			PLACEHOLDER_SYMBOL = '-';
 
 		/**
 		 * Initializes the control.
@@ -142,6 +143,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 			// Indicates if the picker is currently in a process of opening
 			this._bPickerOpening = false;
+
+			this._rPlaceholderRegEx = new RegExp(PLACEHOLDER_SYMBOL, 'g');
 		};
 
 		/**
@@ -198,7 +201,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 
 			if (!bPickerOpened && (bIconClicked || !sap.ui.Device.system.desktop)) {
 				this._openPicker();
-			} else if (bIconClicked) {
+			} else if (bIconClicked && !sap.ui.Device.system.phone) {
+				//phone check: it wont be possible to click the icon while the dialog is opened
+				//but there is a bug that the event is triggered twice on Nokia Lumia 520 emulated in Chrome
+				//which closes the picker immediately after opening
+				//so check for phone just in case
 				this._closePicker();
 			}
 		};
@@ -923,6 +930,9 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			//because of the leading space in formats without a leading zero
 			if (bDisplayFormat) {
 				sValue = sValue.replace(/^\s+/gm, ''); //trim start
+			//if the user input is not full and there are placeholder symbols left, they need to be removed in order
+			//the value to be parsed to a valid fallback format
+				sValue = sValue.replace(this._rPlaceholderRegEx,'');
 			}
 
 			// convert to date object
@@ -1110,7 +1120,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			this.sAlternativeLeadingChar = this.bLeadingZero ? " " : "0";
 			this.sLeadingRegexChar = this.bLeadingZero ? "0" : "\\s";
 
-			oTimePicker.setPlaceholderSymbol("-");
+			oTimePicker.setPlaceholderSymbol(PLACEHOLDER_SYMBOL);
 
 			//set hours allowed chars in the mask
 			sMask = sMask.replace(/hh/ig, "h").replace(/h/ig, "h9");
@@ -1347,9 +1357,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @name sap.m.TimePicker#fireChange
 		 * @function
 		 */
-
-
-
 
 		TimePicker._PICKER_CONTENT_HEIGHT = "25rem";
 

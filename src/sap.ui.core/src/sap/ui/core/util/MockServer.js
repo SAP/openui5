@@ -947,11 +947,11 @@ sap.ui
 				// helper function to find the entity set and property reference
 				// for the given role name
 				var fnResolveNavProp = function(sRole, aAssociation, aAssociationSet, bFrom) {
-					var sEntitySet = jQuery(aAssociationSet).find("End[Role=" + sRole + "]").attr("EntitySet");
-					var sMultiplicity = jQuery(aAssociation).find("End[Role=" + sRole + "]").attr("Multiplicity");
+					var sEntitySet = jQuery(aAssociationSet).find("End[Role='" + sRole + "']").attr("EntitySet");
+					var sMultiplicity = jQuery(aAssociation).find("End[Role='" + sRole + "']").attr("Multiplicity");
 
 					var aPropRef = [];
-					var aConstraint = jQuery(aAssociation).find("ReferentialConstraint > [Role=" + sRole + "]");
+					var aConstraint = jQuery(aAssociation).find("ReferentialConstraint > [Role='" + sRole + "']");
 					if (aConstraint && aConstraint.length > 0) {
 						jQuery(aConstraint[0]).children("PropertyRef").each(function(iIndex, oPropRef) {
 							aPropRef.push(jQuery(oPropRef).attr("Name"));
@@ -1388,7 +1388,8 @@ sap.ui
 					case "SByte":
 						return Math.floor(Math.random() * 10);
 					case "Time":
-						return Math.floor(Math.random() * 23) + ":" + Math.floor(Math.random() * 59) + ":" + Math.floor(Math.random() * 59);
+						// ODataModel expects ISO8601 duration format
+						return "PT" +  Math.floor(Math.random() * 23) + "H" + Math.floor(Math.random() * 59) + "M" + Math.floor(Math.random() * 59) + "S";
 					case "Guid":
 						return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 							var r = Math.random() * 16 | 0,

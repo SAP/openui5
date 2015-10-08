@@ -5,10 +5,11 @@
 // Provides class sap.ui.dt.plugin.ControlDragDrop.
 sap.ui.define([
 	'sap/ui/dt/plugin/DragDrop',
+	'sap/ui/dt/plugin/ElementMover',
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/dt/DOMUtil'
 ],
-function(DragDrop, ElementUtil, DOMUtil) {
+function(DragDrop, ElementMover, ElementUtil, DOMUtil) {
 	"use strict";
 
 	/**
@@ -40,6 +41,10 @@ function(DragDrop, ElementUtil, DOMUtil) {
 				draggableTypes : {
 					type : "string[]",
 					defaultValue : ["sap.ui.core.Element"]
+				},
+				elementMover : {
+					type : "sap.ui.dt.plugin.ElementMover",
+					defaultValue : sap.ui.dt.plugin.ElementMover.Default
 				}
 			},
 			associations : {
@@ -52,60 +57,55 @@ function(DragDrop, ElementUtil, DOMUtil) {
 	/**
 	 * @override
 	 */
-	ControlDragDrop.prototype.registerOverlay = function(oOverlay) {
-		DragDrop.prototype.registerOverlay.apply(this, arguments);
+	ControlDragDrop.prototype.setDraggableTypes = function(aDraggableTypes) {
+		this.getElementMover().setMovableTypes(aDraggableTypes);
+		return this.setProperty("draggableTypes", aDraggableTypes);
+	};
+	
+	/**
+	 * @override
+	 */
+	ControlDragDrop.prototype.registerElementOverlay = function(oOverlay) {
+		DragDrop.prototype.registerElementOverlay.apply(this, arguments);
 		var oElement = oOverlay.getElementInstance();
-		if (this.isDraggableType(oElement) && this.checkDraggable(oOverlay)) {
-			oOverlay.setDraggable(true);
+		if (this.getElementMover().isMovableType(oElement) && this.getElementMover().checkMovable(oOverlay)) {
+			oOverlay.setMovable(true);
 		}
 
 		if (this.oDraggedElement) {
-			this._activateValidDroppablesFor(oOverlay);
+			this.getElementMover().activateTargetZonesFor(oOverlay);
 		}
 	};
 	
 	/**
-	 * @private
-	 */
-	ControlDragDrop.prototype._getDraggableTypes = function() {
-		return this.getProperty("draggableTypes") || [];
-	};
-
-	/**
-	 * @public
-	 */
-	ControlDragDrop.prototype.isDraggableType = function(oElement) {
-		var aDraggableTypes = this._getDraggableTypes();
-
-		return aDraggableTypes.some(function(sType) {
-			return  ElementUtil.isInstanceOf(oElement, sType);
-		});
-	};
-
-	/**
-	 * @protected
-	 */
-	ControlDragDrop.prototype.checkDraggable = function(oOverlay) {
-		return true;
-	};
-
-	/**
 	 * @override
 	 */
-	ControlDragDrop.prototype.deregisterOverlay = function(oOverlay) {
-		DragDrop.prototype.deregisterOverlay.apply(this, arguments);
-		oOverlay.setDraggable(false);
+	ControlDragDrop.prototype.deregisterElementOverlay = function(oOverlay) {
+		DragDrop.prototype.deregisterElementOverlay.apply(this, arguments);
+		oOverlay.setMovable(false);
 
 		if (this.oDraggedElement) {
-			this._deactivateDroppablesFor(oOverlay);
+			this.getElementMover().deactivateTargetZonesFor(oOverlay);
 		}
 	};
-
+	
+	/**
+	 * returns the dragged overlay (only during drag&drop)
+	 * @public
+	 * @return {sap.ui.dt.Overlay} overlays which is dragged
+	 */
+	ControlDragDrop.prototype.getDraggedOverlay = function() {
+		return this._oDraggedOverlay;
+	};
+	
 	/**
 	 * @override
 	 */
 	ControlDragDrop.prototype.onDragStart = function(oOverlay, oEvent) {
-		this._activateAllValidDroppables();
+		this._oDraggedOverlay = oOverlay;
+		this.getElementMover().setMovedOverlay(oOverlay);
+		
+		this.getElementMover().activateAllValidTargetZones(this.getDesignTime());
 	};
 
 	/**
@@ -114,15 +114,19 @@ function(DragDrop, ElementUtil, DOMUtil) {
 	ControlDragDrop.prototype.onDragEnd = function(oOverlay) {
 		delete this._oPreviousTarget;
 
-		this._deactivateAllDroppables();
+		this.getElementMover().deactivateAllTargetZones(this.getDesignTime());
+		
+		delete this._oDraggedOverlay;
+		this.getElementMover().setMovedOverlay(null);
 	};
 
 	/**
 	 * @override
 	 */
 	ControlDragDrop.prototype.onDragEnter = function(oTargetOverlay, oEvent) {
-		if (oTargetOverlay.getElementInstance() !== this.getDraggedOverlay().getElementInstance() && oTargetOverlay !== this._oPreviousTarget) {
-			this._repositionOn(oTargetOverlay);
+		var oDraggedOverlay = this.getDraggedOverlay();
+		if (oTargetOverlay.getElementInstance() !== oDraggedOverlay.getElementInstance() && oTargetOverlay !== this._oPreviousTarget) {
+			this.getElementMover().repositionOn(oDraggedOverlay, oTargetOverlay);
 		}
 		this._oPreviousTarget = oTargetOverlay;
 	};
@@ -145,106 +149,6 @@ function(DragDrop, ElementUtil, DOMUtil) {
 		if (oTargetParentElement !== oSourceParentElement) {
 			var sAggregationName = oAggregationOverlay.getAggregationName();
 			ElementUtil.addAggregation(oTargetParentElement, sAggregationName, oDraggedElement);
-		}
-	};
-
-	/*
-	 * @private
-	 */
-	ControlDragDrop.prototype._activateAllValidDroppables = function() {
-		this._iterateAllAggregations(this._activateValidDroppable.bind(this));
-	};
-
-	/**
-	 * @private
-	 */
-	ControlDragDrop.prototype._activateValidDroppable = function(oAggregationOverlay) {
-		if (this.checkDroppable(oAggregationOverlay)) {
-			oAggregationOverlay.setDroppable(true);
-		}
-	};
-
-	/**
-	 * @protected
-	 */
-	ControlDragDrop.prototype.checkDroppable = function(oAggregationOverlay) {
-		var oParentElement = oAggregationOverlay.getElementInstance();
-		var oDraggedElement = this.getDraggedOverlay().getElementInstance();
-		var sAggregationName = oAggregationOverlay.getAggregationName();
-
-		if (ElementUtil.isValidForAggregation(oParentElement, sAggregationName, oDraggedElement)) {
-			return true;
-		}
-	};
-
-	/**
-	 * @private
-	 */
-	ControlDragDrop.prototype._deactivateDroppable = function(oAggregationOverlay) {
-		oAggregationOverlay.setDroppable(false);
-	};
-
-	/**
-	 * @private
-	 */
-	ControlDragDrop.prototype._activateValidDroppablesFor = function(oOverlay) {
-		this._iterateOverlayAggregations(oOverlay, this._activateValidDroppable.bind(this));
-	};
-
-	/**
-	 * @private
-	 */
-	ControlDragDrop.prototype._deactivateDroppablesFor = function(oOverlay) {
-		this._iterateOverlayAggregations(oOverlay, this._deactivateDroppable.bind(this));
-	};
-
-	/**
-	 * @private
-	 */
-	ControlDragDrop.prototype._deactivateAllDroppables = function() {
-		this._iterateAllAggregations(function(oAggregationOverlay) {
-				oAggregationOverlay.setDroppable(false);
-		});
-	};
-	
-	/**
-	 * @private
-	 */
-	ControlDragDrop.prototype._iterateAllAggregations = function(fnStep) {	
-		var that = this;
-
-		var oDesignTime = ElementUtil.getElementInstance(this.getDesignTime());
-		var aOverlays = oDesignTime.getOverlays();
-		aOverlays.forEach(function(oOverlay) {
-			that._iterateOverlayAggregations(oOverlay, fnStep);
-		});
-	};
-	
-	/**
-	 * @private
-	 */
-	ControlDragDrop.prototype._iterateOverlayAggregations = function(oOverlay, fnStep) {	
-		var aAggregationOverlays = oOverlay.getAggregationOverlays();
-		aAggregationOverlays.forEach(function(oAggregationOverlay) {
-			fnStep(oAggregationOverlay);
-		});
-	};
-
-	/**
-	 * @private
-	 */
-	ControlDragDrop.prototype._repositionOn = function(oTargetOverlay) {
-		var oDraggedElement = this.getDraggedOverlay().getElementInstance();
-
-		var oTargetElement = oTargetOverlay.getElementInstance();
-		var oPublicParent = oTargetOverlay.getParentElementOverlay().getElementInstance();
-		var sPublicParentAggregationName = oTargetOverlay.getParentAggregationOverlay().getAggregationName();
-
-		var aChildren = ElementUtil.getAggregation(oPublicParent, sPublicParentAggregationName);
-		var iIndex = aChildren.indexOf(oTargetElement);
-
-		if (iIndex !== -1) {
-			ElementUtil.insertAggregation(oPublicParent, sPublicParentAggregationName, oDraggedElement, iIndex);
 		}
 	};
 

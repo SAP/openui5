@@ -220,61 +220,32 @@ sap.ui.define([
 		this._aOperations = destroyHelper(this._aOperations);
 	};
 
-	P13nSortPanel.prototype.addItem = function(oItem) {
-		P13nPanel.prototype.addItem.apply(this, arguments);
+	P13nSortPanel.prototype.onBeforeRendering = function() {
+		// P13nPanel.prototype.onBeforeRendering.apply(this, arguments); does not exist!!!!
 
-		var oKeyField = {
-			key: oItem.getColumnKey(),
-			text: oItem.getText(),
-			tooltip: oItem.getTooltip()
-		};
+		if (this._bUpdateRequired) {
+			this._bUpdateRequired = false;
 
-		this._aKeyFields.push(oKeyField);
-
-		if (this._oSortPanel) {
-			this._oSortPanel.addKeyField(oKeyField);
-		}
-	};
-
-	P13nSortPanel.prototype.destroyItems = function() {
-		this.destroyAggregation("items");
-		if (this._oSortPanel) {
-			this._oSortPanel.removeAllKeyFields();
-		}
-		return this;
-	};
-
-	P13nSortPanel.prototype.addSortItem = function(oSortItem) {
-		this.addAggregation("sortItems", oSortItem);
-
-		if (!this._bIgnoreBindCalls) {
-			var aConditions = [];
-			this.getSortItems().forEach(function(oSortItem_) {
-				aConditions.push({
-					key: oSortItem_.getKey(),
-					keyField: oSortItem_.getColumnKey(),
-					operation: oSortItem_.getOperation()
+			var aKeyFields = [];
+			var sModelName = this.getBindingInfo("items").model;
+			this.getItems().forEach(function(oItem_) {
+				var oContext = oItem_.getBindingContext(sModelName);
+				var oModelItem = oContext.getObject();
+				// Update key of model (in case of 'restore' the key in model gets lost because it is overwritten by Restore Snapshot)
+				if (oItem_.getBinding("key")) {
+					oModelItem[oItem_.getBinding("key").getPath()] = oItem_.getKey();
+				}
+				var binding;
+				aKeyFields.push({
+					key: oItem_.getColumnKey(),
+					text: (binding = oItem_.getBinding("text")) ? oModelItem[binding.getPath()] : undefined,
+					tooltip: (binding = oItem_.getBinding("tooltip")) ? oModelItem[binding.getPath()] : undefined
 				});
 			});
-			this._oSortPanel.setConditions(aConditions);
-		}
-	};
+			this._oSortPanel.setKeyFields(aKeyFields);
 
-	P13nSortPanel.prototype.insertSortItem = function(oSortItem) {
-		this.insertAggregation("sortItems", oSortItem);
-		// TODO: implement this
-		return this;
-	};
-
-	P13nSortPanel.prototype.updateSortItems = function(sReason) {
-		this.updateAggregation("sortItems");
-
-		if (sReason !== "change") {
-			return;
-		}
-		if (!this._bIgnoreBindCalls) {
 			var aConditions = [];
-			var sModelName = this.getBindingInfo("sortItems").model;
+			sModelName = this.getBindingInfo("sortItems").model;
 			this.getSortItems().forEach(function(oSortItem_) {
 				// Note: current implementation assumes that the length of sortItems aggregation is equal
 				// to the number of corresponding model items.
@@ -282,18 +253,66 @@ sap.ui.define([
 				// the "sortItems" aggregation data - obtained via getSortItems() - has the old state !
 				var oContext = oSortItem_.getBindingContext(sModelName);
 				var oModelItem = oContext.getObject();
+				// Update key of model (in case of 'restore' the key in model gets lost because it is overwritten by Restore Snapshot)
+				if (oSortItem_.getBinding("key")) {
+					oModelItem[oSortItem_.getBinding("key").getPath()] = oSortItem_.getKey();
+				}
+				var binding;
 				aConditions.push({
 					key: oSortItem_.getKey(),
-					keyField: oModelItem[oSortItem_.getBinding("columnKey").getPath()],
-					operation: oModelItem[oSortItem_.getBinding("operation").getPath()]
+					keyField: (binding = oSortItem_.getBinding("columnKey")) ? oModelItem[binding.getPath()] : undefined,
+					operation: (binding = oSortItem_.getBinding("operation")) ? oModelItem[binding.getPath()] : undefined
 				});
 			});
 			this._oSortPanel.setConditions(aConditions);
 		}
 	};
 
+	P13nSortPanel.prototype.addItem = function(oItem) {
+		P13nPanel.prototype.addItem.apply(this, arguments);
+
+		this._bUpdateRequired = true;
+	};
+
+	P13nSortPanel.prototype.removeItem = function(oItem) {
+		P13nPanel.prototype.removeItem.apply(this, arguments);
+
+		this._bUpdateRequired = true;
+	};
+
+	P13nSortPanel.prototype.destroyItems = function() {
+		this.destroyAggregation("items");
+		this._bUpdateRequired = true;
+
+		return this;
+	};
+
+	P13nSortPanel.prototype.addSortItem = function(oSortItem) {
+		this.addAggregation("sortItems", oSortItem);
+
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
+	};
+
+	P13nSortPanel.prototype.insertSortItem = function(oSortItem) {
+		this.insertAggregation("sortItems", oSortItem);
+		this._bUpdateRequired = true;
+		return this;
+	};
+
+	P13nSortPanel.prototype.updateSortItems = function(sReason) {
+		this.updateAggregation("sortItems");
+
+		if (sReason == "change" && !this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
+	};
+
 	P13nSortPanel.prototype.removeSortItem = function(oSortItem) {
 		oSortItem = this.removeAggregation("sortItems", oSortItem);
+
+		this._bUpdateRequired = true;
 
 		return oSortItem;
 	};
@@ -301,7 +320,7 @@ sap.ui.define([
 	P13nSortPanel.prototype.removeAllSortItems = function() {
 		var aSortItems = this.removeAllAggregation("sortItems");
 
-		this._oSortPanel.setConditions([]);
+		this._bUpdateRequired = true;
 
 		return aSortItems;
 	};
@@ -310,7 +329,7 @@ sap.ui.define([
 		this.destroyAggregation("sortItems");
 
 		if (!this._bIgnoreBindCalls) {
-			this._oSortPanel.setConditions([]);
+			this._bUpdateRequired = true;
 		}
 
 		return this;
@@ -324,18 +343,10 @@ sap.ui.define([
 			var sOperation = oEvent.getParameter("operation");
 			var sKey = oEvent.getParameter("key");
 			var iIndex = oEvent.getParameter("index");
-
-			var oSortItemData = null;
-			if (oNewData) {
-				var oSortItemData = new sap.m.P13nSortItem({
-					key: sKey,
-					columnKey: oNewData.keyField,
-					operation: oNewData.operation
-				});
-			}
+			var oSortItem;
 
 			if (sOperation === "update") {
-				var oSortItem = that.getSortItems()[iIndex];
+				oSortItem = that.getSortItems()[iIndex];
 				if (oSortItem) {
 					oSortItem.setColumnKey(oNewData.keyField);
 					oSortItem.setOperation(oNewData.operation);
@@ -343,23 +354,30 @@ sap.ui.define([
 				that.fireUpdateSortItem({
 					key: sKey,
 					index: iIndex,
-					sortItemData: oSortItemData
+					sortItemData: oSortItem
 				});
 			}
 			if (sOperation === "add") {
+				oSortItem = new sap.m.P13nSortItem({
+					key: sKey,
+					columnKey: oNewData.keyField,
+					operation: oNewData.operation
+				});
 				that._bIgnoreBindCalls = true;
 				that.fireAddSortItem({
 					key: sKey,
 					index: iIndex,
-					sortItemData: oSortItemData
+					sortItemData: oSortItem
 				});
 				that._bIgnoreBindCalls = false;
 			}
 			if (sOperation === "remove") {
+				that._bIgnoreBindCalls = true;
 				that.fireRemoveSortItem({
 					key: sKey,
 					index: iIndex
 				});
+				that._bIgnoreBindCalls = false;
 			}
 		};
 	};

@@ -90,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 		var _mInvisibleTexts = {};
 
 		/**
-		 * Creates (if not already created) and returns an invisible text element for screan reader support
+		 * Creates (if not already created) and returns an invisible text element for screen reader support
 		 * @param sType - the type of the control we want to get a label for
 		 * @param sText - the text to be used
 		 * @private
@@ -376,6 +376,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			constraints: "IconOnly"
 		};
 
+		// sap.m.Select has no property for tooltip of the icon, so the default tooltip icon will be used
+		// this might lead to a different translation of the tooltip when the "Group-2" button is used inside sap.m.Select or used as a standard button
 		oTypeConfigs["sap.m.semantic.GroupSelect"] = {
 			position: SemanticConfiguration.prototype._PositionInPage.footerRight_IconOnly,
 			getSettings: function() {
@@ -383,7 +385,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					icon: IconPool.getIconURI("group-2"),
 					type: "IconOnly",
 					autoAdjustWidth: true,
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_GROUP"),
 					ariaLabelledBy: _ensureInvisibleText("GroupAction", oBundle.getText("SEMANTIC_CONTROL_GROUP")),
 					layoutData: new OverflowToolbarLayoutData({
 						moveToOverflow: true,

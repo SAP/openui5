@@ -1,6 +1,6 @@
-jQuery.sap.require("util.Formatter");
+jQuery.sap.require("sap.ui.demo.cart.util.Formatter");
 
-sap.ui.controller("view.Category", {
+sap.ui.controller("sap.ui.demo.cart.view.Category", {
 
 	onInit : function () {
 		this._router = sap.ui.core.UIComponent.getRouterFor(this);

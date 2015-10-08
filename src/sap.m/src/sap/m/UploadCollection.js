@@ -40,7 +40,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			try {
 				Control.apply(this, arguments);
 				if (bInstantUpload === false) {
-					this.setProperty("instantUpload", bInstantUpload, true);
+					this.bInstantUpload = bInstantUpload;
 					this._oFormatDecimal = FileSizeFormat.getInstance({binaryFilesize: false, maxFractionDigits: 1, maxIntegerDigits: 3});
 				}
 			} catch (e) {
@@ -328,7 +328,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 			/**
 			 * The event is triggered as soon as the upload request was terminated by the user.
-			 * @experimental since 1.26.2
 			 */
 			uploadTerminated : {
 				parameters: {
@@ -352,7 +351,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 			/**
 			 * The event is triggered before the actual upload starts. An event is fired per file. All the necessary header parameters should be set here.
-			 * @experimental since 1.30.2
 			 */
 			beforeUploadStarts : {
 				parameters: {
@@ -559,6 +557,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	UploadCollection.prototype.onBeforeRendering = function() {
 		this._RenderManager = this._RenderManager || sap.ui.getCore().createRenderManager();
 		var i, cAitems;
+		checkInstantUpload.bind(this)();
 
 		if (!this.getInstantUpload()) {//
 			this._getListHeader(this.aItems.length);
@@ -605,6 +604,16 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				}
 			} else {
 				this._oFileUploader.setEnabled(false);
+			}
+		}
+
+		// This function checks if instantUpload needs to be set. In case properties like fileType are set by the
+		// model instead of constructor the setting happens later and is still valid. To support this as well, we
+		// need to wait for modification until the first rendering.
+		function checkInstantUpload () {
+			if (this.bInstantUpload === false) {
+				this.setProperty("instantUpload", this.bInstantUpload, true);
+				delete this.bInstantUpload;
 			}
 		}
 	};
@@ -671,6 +680,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		if (this._oList) {
 			this._oList.destroy();
 			this._oList = null;
+		}
+		if (this._oFileUploader) {
+			this._oFileUploader.destroy();
+			this._oFileUploader = null;
 		}
 		if (this.oFileName) {
 			this.oFileName.destroy();
@@ -1349,7 +1362,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			}
 			// call FileUploader if abort is possible. Otherwise fireDelete should be called.
 			if (bAbort) {
-				this._getFileUploader().abort(this._headerParamConst.requestIdName, this.aItems[i]._requestIdName);
+				this._getFileUploader().abort(this._headerParamConst.fileNameRequestIdName, this._encodeToAscii(oItem.getFileName()) + this.aItems[i]._requestIdName);
 			}
 			oDialog.close();
 			this.invalidate();
@@ -2011,7 +2024,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		sFileName = oEvent.getParameter("fileName");
 		oRequestHeaders = {
 			name: this._headerParamConst.fileNameRequestIdName,
-			value: sFileName + sRequestIdValue
+			value: this._encodeToAscii(sFileName) + sRequestIdValue
 		};
 		oEvent.getParameter("requestHeaders").push(oRequestHeaders);
 
@@ -2020,7 +2033,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			if (this._aDeletedItemForPendingUpload[i].getAssociation("fileUploader") === oEvent.oSource.sId
 					&& this._aDeletedItemForPendingUpload[i].getFileName() === sFileName
 					&& this._aDeletedItemForPendingUpload[i]._internalFileIndexWithinFileUploader === this._iUploadStartCallCounter){
-				oEvent.getSource().abort(this._headerParamConst.fileNameRequestIdName, sFileName + sRequestIdValue);
+				oEvent.getSource().abort(this._headerParamConst.fileNameRequestIdName, this._encodeToAscii(sFileName) + sRequestIdValue);
 				return;
 			}
 		}
@@ -2428,6 +2441,20 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			}
 			return aUcpRequestHeaders;
 		}
+	};
+
+	/**
+	 * @description Helper function for ascii encoding within header paramters
+	 * @param {string}
+	 * @returns {string}
+	 * @private
+	 */
+	UploadCollection.prototype._encodeToAscii = function (value) {
+		var sEncodedValue = "";
+		for (var i = 0; i < value.length; i++) {
+			sEncodedValue = sEncodedValue + value.charCodeAt(i);
+		}
+		return sEncodedValue;
 	};
 
 	return UploadCollection;

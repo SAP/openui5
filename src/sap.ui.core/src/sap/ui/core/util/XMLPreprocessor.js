@@ -449,6 +449,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					bDebug = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG),
 					bCallerLoggedForWarnings = bDebug, // debug output already contains caller
 					sCurrentName = oViewInfo.name, // current view or fragment name
+					mFragmentCache = {},
 					iNestingLevel = 0,
 					sName,
 					oScope = {}, // for BindingParser.complexParser()
@@ -653,8 +654,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					oWithControl.$mFragmentContexts[sFragmentName] = true;
 					sCurrentName = sFragmentName;
 
-					oFragmentElement
-						= XMLTemplateProcessor.loadTemplate(sFragmentName, "fragment");
+					// take fragment from cache and clone it
+					oFragmentElement = mFragmentCache[sFragmentName];
+					if (!oFragmentElement) {
+						oFragmentElement
+							= XMLTemplateProcessor.loadTemplate(sFragmentName, "fragment");
+						mFragmentCache[sFragmentName] = oFragmentElement;
+					}
+					oFragmentElement = oFragmentElement.cloneNode(true);
+
 					requireFor(oFragmentElement);
 					if (oFragmentElement.namespaceURI === "sap.ui.core"
 							&& localName(oFragmentElement) === "FragmentDefinition") {
@@ -1100,6 +1108,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				 * @param {sap.ui.core.template._with} oWithControl the "with" control
 				 */
 				function visitNode(oNode, oWithControl) {
+					// process only ELEMENT_NODEs
+					if (oNode.nodeType !== 1 /* Node.ELEMENT_NODE */) {
+						return;
+					}
 					if (oNode.namespaceURI === sNAMESPACE) {
 						switch (localName(oNode)) {
 						case "alias":

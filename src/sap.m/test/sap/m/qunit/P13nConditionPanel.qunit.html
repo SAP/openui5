@@ -272,7 +272,7 @@
 		// assertions
 		var oConditionGrid = oP13nConditionPanel._oConditionsGrid.getContent()[0];
 		oConditionGrid.keyField.setSelectedKey("CompanyName");
-		oP13nConditionPanel._handleChangeOnKeyField(oP13nConditionPanel._oConditionsGrid, oConditionGrid);		
+		oP13nConditionPanel._handleSelectionChangeOnKeyField(oP13nConditionPanel._oConditionsGrid, oConditionGrid);		
 		
 		var sKeyField= "CompanyName";
 		strictEqual(oP13nConditionPanel.getConditions()[0].keyField, sKeyField, "KeyFields of first condition must be '" + sKeyField + "'.");

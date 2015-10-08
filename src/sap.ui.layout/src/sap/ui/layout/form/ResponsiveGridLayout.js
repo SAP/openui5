@@ -8,9 +8,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	"use strict";
 
 	/**
-	 * Constructor for a new sap.ui.layout.form.ResponsiveGridLayout.
+	 * Constructor for a new <code>sap.ui.layout.form.ResponsiveGridLayout</code>.
 	 *
-	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -43,14 +43,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 			/**
 			 * Default span for labels in large size.
-			 * This span is only used if more than 1 <code>FormContainer</code> is in one line. If only 1 <code>FormContainer</code> is in the line, then the <code>labelSpanM</code> value is used.
+			 *
+			 * <b>Note:</b> If <code>adjustLabelSpanThis</code> is set this property is only used if more than 1 <code>FormContainer</code> is in one line. If only 1 <code>FormContainer</code> is in the line, then the <code>labelSpanM</code> value is used.
 			 * @since 1.16.3
 			 */
 			labelSpanL : {type : "int", group : "Misc", defaultValue : 4},
 
 			/**
 			 * Default span for labels in medium size.
-			 * This property is used for full-size <code>FormContainers</code>. If more than one <code>FormContainer</code> is in one line, <code>labelSpanL</code> is used.
+			 *
+			 * <b>Note:</b> If <code>adjustLabelSpanThis</code> is set this property is used for full-size <code>FormContainers</code>. If more than one <code>FormContainer</code> is in one line, <code>labelSpanL</code> is used.
 			 * @since 1.16.3
 			 */
 			labelSpanM : {type : "int", group : "Misc", defaultValue : 2},
@@ -60,6 +62,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			 * @since 1.16.3
 			 */
 			labelSpanS : {type : "int", group : "Misc", defaultValue : 12},
+
+			/**
+			 * If set the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent of the number of <code>FormContainer</code> in one row.
+			 * If only one <code>FormContainer</code> is displayed in one row <code>labelSpanM</code> is used to define the size of the label.
+			 * This is the same for medium and large <code>Forms</code>.
+			 * This is done to align the labels on forms where full-size <code>FormContainers</code> and more-column rows are used in the same <code>Form</code>.
+			 * (Because every <code>FormContainer</code> has it's own grid inside.)
+			 *
+			 * If not set the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the <code>Form</code> size.
+			 * The number of <code>FormContainers</code> doesn't matter in this case.
+			 * @since 1.34.0
+			 */
+			adjustLabelSpan : {type : "boolean", group : "Misc", defaultValue : true},
 
 			/**
 			 * Number of grid cells that are empty at the end of each line on large size.
@@ -81,6 +96,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 			/**
 			 * Number of columns for large size.
+			 *
 			 * The number of columns for large size must not be smaller than the number of columns for medium size
 			 * @since 1.16.3
 			 */
@@ -91,6 +107,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			 * @since 1.16.3
 			 */
 			columnsM : {type : "int", group : "Misc", defaultValue : 1},
+
+			/**
+			 * If the <code>Form</code> contains only one single <code>FormContainer</code> and this property is set,
+			 * the <code>FormContainer</code> is displayed using the full size of the <code>Form</code>.
+			 * In this case the properties <code>columnsL</code> and <code>columnsM</code> are ignored.
+			 *
+			 * In all other cases the <code>FormContainer</code> is displayed in the size of one column.
+			 * @since 1.34.0
+			 */
+			singleContainerFullSize : {type : "boolean", group : "Misc", defaultValue : true},
 
 			/**
 			 * Breakpoint (in pixel) between Medium size and Large size.
@@ -539,22 +565,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 					var iLabelMSpan = oLayout.getLabelSpanM();
 					var iLabelSSpan = oLayout.getLabelSpanS();
 
-					if (oForm.getFormContainers().length >= 1 && oLayout.getColumnsM() > 1) {
-						// More than one Container in line
-						iLabelMSpan = oLayout.getLabelSpanL();
-					}
-					if (oContainerLD) {
-						if (oContainerLD._getEffectiveSpanLarge() == 12) {
-							// If Container has the Full width in large Screen, use 2 as Label Span to be in line
+					if (oLayout.getAdjustLabelSpan()) {
+						if (oForm.getFormContainers().length >= 1 && oLayout.getColumnsM() > 1) {
+							// More than one Container in line
+							iLabelMSpan = oLayout.getLabelSpanL();
+						}
+						if (oContainerLD) {
+							if (oContainerLD._getEffectiveSpanLarge() == 12) {
+								// If Container has the Full width in large Screen, use 2 as Label Span to be in line
+								iLabelLSpan = oLayout.getLabelSpanM();
+								iLabelMSpan = oLayout.getLabelSpanM();
+							}
+						}
+						if (oForm.getFormContainers().length == 1 || oLayout.getColumnsL() == 1) {
+							// only one container -> it's full size
 							iLabelLSpan = oLayout.getLabelSpanM();
 							iLabelMSpan = oLayout.getLabelSpanM();
 						}
 					}
-					if (oForm.getFormContainers().length == 1 || oLayout.getColumnsL() == 1) {
-						// only one container -> it's full size
-						iLabelLSpan = oLayout.getLabelSpanM();
-						iLabelMSpan = oLayout.getLabelSpanM();
-					}
+
 					if (oLabel == oControl) {
 						oLayout.oDummyLayoutData.setSpan("L" + iLabelLSpan + " M" + iLabelMSpan + " S" + iLabelSSpan);
 						oLayout.oDummyLayoutData.setLinebreak(true);
@@ -874,7 +903,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			}
 
 			// special case: only one container -> do not render an outer ResponsiveFlowLayout
-			if (iLength > 1) {
+			if (iLength > 1 || !oLayout.getSingleContainerFullSize()) {
 				var iSpanL = Math.floor(12 / oLayout.getColumnsL());
 				var iSpanM = Math.floor(12 / oLayout.getColumnsM());
 				if (!oLayout._mainGrid) {

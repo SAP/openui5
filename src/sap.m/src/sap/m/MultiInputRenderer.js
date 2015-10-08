@@ -43,9 +43,6 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 				
 				//render the single line
 				oRm.write("<div id=\"" + oControl.getId() + "-border\" class=\"sapMMultiInputBorder\">");
-				setTimeout(function() {
-					oControl._setContainerSizes();
-				}, 0);
 			}
 
 		} else {

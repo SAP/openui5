@@ -1572,12 +1572,8 @@
 		});
 	});
 
-	/*
-	// This test will not run, until the MockServer supports filtering on properties of type Edm.Guid!
-	// Related Changes: 
-	//    https://git.wdf.sap.corp/#/c/973006/
-	//    https://git.wdf.sap.corp/#/c/973224/
-
+	// Test if MockServer supports filtering on properties of type Edm.Guid!
+	// Was broken previously.
 	module("ODataTreeBinding with annotations - Edm Type support", {
 		setup: function() {
 			oAnnotationMockServerGUID.start();
@@ -1670,7 +1666,7 @@
 			oBinding.getRootContexts(1, 4);
 		});
 	});
-	*/
+	
 	</script>
 
 </head>

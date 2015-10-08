@@ -1720,6 +1720,301 @@
 			"0": "Hicri"
 		}
 	},
+	"ca-japanese": {
+		"dateFormat-full": "d MMMM y G EEEE",
+		"dateFormat-long": "d MMMM y G",
+		"dateFormat-medium": "d MMM y G",
+		"dateFormat-short": "d.MM.y G",
+		"timeFormat-full": "HH:mm:ss zzzz",
+		"timeFormat-long": "HH:mm:ss z",
+		"timeFormat-medium": "HH:mm:ss",
+		"timeFormat-short": "HH:mm",
+		"dateTimeFormat-full": "{1} {0}",
+		"dateTimeFormat-long": "{1} {0}",
+		"dateTimeFormat-medium": "{1} {0}",
+		"dateTimeFormat-short": "{1} {0}",
+		"intervalFormatFallback": "{0} – {1}",
+		"intervalFormat-d-d": "d–d",
+		"intervalFormat-h-a": "h a – h a",
+		"intervalFormat-h-h": "h–h a",
+		"intervalFormat-H-H": "HH–HH",
+		"intervalFormat-hm-a": "h:mm a – h:mm a",
+		"intervalFormat-hm-h": "h:mm–h:mm a",
+		"intervalFormat-hm-m": "h:mm–h:mm a",
+		"intervalFormat-Hm-H": "HH:mm–HH:mm",
+		"intervalFormat-Hm-m": "HH:mm–HH:mm",
+		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
+		"intervalFormat-hmv-h": "h:mm–h:mm a v",
+		"intervalFormat-hmv-m": "h:mm–h:mm a v",
+		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
+		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
+		"intervalFormat-hv-a": "h a – h a v",
+		"intervalFormat-hv-h": "h–h a v",
+		"intervalFormat-Hv-H": "HH–HH v",
+		"intervalFormat-M-M": "MM–MM",
+		"intervalFormat-Md-d": "dd/MM – dd/MM",
+		"intervalFormat-Md-M": "dd/MM – dd/MM",
+		"intervalFormat-MEd-d": "dd/MM E – dd/MM E",
+		"intervalFormat-MEd-M": "dd/MM E – dd/MM E",
+		"intervalFormat-MMM-M": "MMM–MMM",
+		"intervalFormat-MMMd-d": "d – d MMM",
+		"intervalFormat-MMMd-M": "d MMM – d MMM",
+		"intervalFormat-MMMEd-d": "d MMM E – d MMM E",
+		"intervalFormat-MMMEd-M": "d MMM E – d MMM E",
+		"intervalFormat-y-y": "G y–y",
+		"intervalFormat-yM-M": "GGGGG M/y – M/y",
+		"intervalFormat-yM-y": "GGGGG M/y – M/y",
+		"intervalFormat-yMd-d": "GGGGG dd.MM.y – dd.MM.y",
+		"intervalFormat-yMd-M": "GGGGG dd.MM.y – dd.MM.y",
+		"intervalFormat-yMd-y": "GGGGG dd.MM.y – dd.MM.y",
+		"intervalFormat-yMEd-d": "GGGGG dd.MM.y E – dd.MM.y E",
+		"intervalFormat-yMEd-M": "GGGGG dd.MM.y E – dd.MM.y E",
+		"intervalFormat-yMEd-y": "GGGGG dd.MM.y E – dd.MM.y E",
+		"intervalFormat-yMMM-M": "G MMM–MMM y",
+		"intervalFormat-yMMM-y": "G MMM y – MMM y",
+		"intervalFormat-yMMMd-d": "G d–d MMM y",
+		"intervalFormat-yMMMd-M": "G d MMM – d MMM y",
+		"intervalFormat-yMMMd-y": "G d MMM y – d MMM y",
+		"intervalFormat-yMMMEd-d": "G d MMM y E – d MMM y E",
+		"intervalFormat-yMMMEd-M": "G d MMM y E – d MMM y E",
+		"intervalFormat-yMMMEd-y": "G d MMM y E – d MMM y E",
+		"intervalFormat-yMMMM-M": "G MMMM – MMMM y",
+		"intervalFormat-yMMMM-y": "G MMMM y – MMMM y",
+		"months-format-abbreviated": [
+			"Oca",
+			"Şub",
+			"Mar",
+			"Nis",
+			"May",
+			"Haz",
+			"Tem",
+			"Ağu",
+			"Eyl",
+			"Eki",
+			"Kas",
+			"Ara"
+		],
+		"months-format-narrow": [
+			"O",
+			"Ş",
+			"M",
+			"N",
+			"M",
+			"H",
+			"T",
+			"A",
+			"E",
+			"E",
+			"K",
+			"A"
+		],
+		"months-format-wide": [
+			"Ocak",
+			"Şubat",
+			"Mart",
+			"Nisan",
+			"Mayıs",
+			"Haziran",
+			"Temmuz",
+			"Ağustos",
+			"Eylül",
+			"Ekim",
+			"Kasım",
+			"Aralık"
+		],
+		"months-standAlone-abbreviated": [
+			"Oca",
+			"Şub",
+			"Mar",
+			"Nis",
+			"May",
+			"Haz",
+			"Tem",
+			"Ağu",
+			"Eyl",
+			"Eki",
+			"Kas",
+			"Ara"
+		],
+		"months-standAlone-narrow": [
+			"O",
+			"Ş",
+			"M",
+			"N",
+			"M",
+			"H",
+			"T",
+			"A",
+			"E",
+			"E",
+			"K",
+			"A"
+		],
+		"months-standAlone-wide": [
+			"Ocak",
+			"Şubat",
+			"Mart",
+			"Nisan",
+			"Mayıs",
+			"Haziran",
+			"Temmuz",
+			"Ağustos",
+			"Eylül",
+			"Ekim",
+			"Kasım",
+			"Aralık"
+		],
+		"days-format-abbreviated": [
+			"Paz",
+			"Pzt",
+			"Sal",
+			"Çar",
+			"Per",
+			"Cum",
+			"Cmt"
+		],
+		"days-format-narrow": [
+			"P",
+			"P",
+			"S",
+			"Ç",
+			"P",
+			"C",
+			"C"
+		],
+		"days-format-short": [
+			"Pa",
+			"Pt",
+			"Sa",
+			"Ça",
+			"Pe",
+			"Cu",
+			"Ct"
+		],
+		"days-format-wide": [
+			"Pazar",
+			"Pazartesi",
+			"Salı",
+			"Çarşamba",
+			"Perşembe",
+			"Cuma",
+			"Cumartesi"
+		],
+		"days-standAlone-abbreviated": [
+			"Paz",
+			"Pzt",
+			"Sal",
+			"Çar",
+			"Per",
+			"Cum",
+			"Cmt"
+		],
+		"days-standAlone-narrow": [
+			"P",
+			"P",
+			"S",
+			"Ç",
+			"P",
+			"C",
+			"C"
+		],
+		"days-standAlone-short": [
+			"Pa",
+			"Pt",
+			"Sa",
+			"Ça",
+			"Pe",
+			"Cu",
+			"Ct"
+		],
+		"days-standAlone-wide": [
+			"Pazar",
+			"Pazartesi",
+			"Salı",
+			"Çarşamba",
+			"Perşembe",
+			"Cuma",
+			"Cumartesi"
+		],
+		"quarters-format-abbreviated": [
+			"Ç1",
+			"Ç2",
+			"Ç3",
+			"Ç4"
+		],
+		"quarters-format-narrow": [
+			"1.",
+			"2.",
+			"3.",
+			"4."
+		],
+		"quarters-format-wide": [
+			"1. çeyrek",
+			"2. çeyrek",
+			"3. çeyrek",
+			"4. çeyrek"
+		],
+		"quarters-standAlone-abbreviated": [
+			"Ç1",
+			"Ç2",
+			"Ç3",
+			"Ç4"
+		],
+		"quarters-standAlone-narrow": [
+			"1.",
+			"2.",
+			"3.",
+			"4."
+		],
+		"quarters-standAlone-wide": [
+			"1. çeyrek",
+			"2. çeyrek",
+			"3. çeyrek",
+			"4. çeyrek"
+		],
+		"dayPeriods-format-abbreviated": [
+			"ÖÖ",
+			"ÖS"
+		],
+		"dayPeriods-format-narrow": [
+			"öö",
+			"ös"
+		],
+		"dayPeriods-format-wide": [
+			"ÖÖ",
+			"ÖS"
+		],
+		"dayPeriods-standAlone-abbreviated": [
+			"ÖÖ",
+			"ÖS"
+		],
+		"dayPeriods-standAlone-narrow": [
+			"ÖÖ",
+			"ÖS"
+		],
+		"dayPeriods-standAlone-wide": [
+			"ÖÖ",
+			"ÖS"
+		],
+		"era-wide": {
+			"232": "Meiji",
+			"233": "Taishō",
+			"234": "Shōwa",
+			"235": "Heisei"
+		},
+		"era-abbreviated": {
+			"232": "Meiji",
+			"233": "Taishō",
+			"234": "Shōwa",
+			"235": "Heisei"
+		},
+		"era-narrow": {
+			"232": "M",
+			"233": "T",
+			"234": "S",
+			"235": "H"
+		}
+	},
 	"dateField-year-displayName": "Yıl",
 	"dateField-year-relative--1": "geçen yıl",
 	"dateField-year-relative-0": "bu yıl",
@@ -1940,5 +2235,32 @@
 	"weekData-minDays": 1,
 	"weekData-firstDay": 1,
 	"weekData-weekendStart": 6,
-	"weekData-weekendEnd": 0
+	"weekData-weekendEnd": 0,
+	"eras-gregorian": {
+		"0": {
+			"_end": "0-12-31"
+		},
+		"1": {
+			"_start": "1-01-01"
+		}
+	},
+	"eras-islamic": {
+		"0": {
+			"_start": "622-7-15"
+		}
+	},
+	"eras-japanese": {
+		"232": {
+			"_start": "1868-9-8"
+		},
+		"233": {
+			"_start": "1912-7-30"
+		},
+		"234": {
+			"_start": "1926-12-25"
+		},
+		"235": {
+			"_start": "1989-1-8"
+		}
+	}
 }

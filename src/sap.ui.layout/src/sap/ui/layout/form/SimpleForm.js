@@ -78,7 +78,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 
 			/**
 			 * Default span for labels in large size.
-			 * This span is only used if more than 1 group (<code>FormContainer</code>) is in one row. If only 1 group (<code>FormContainer</code>) is in the row the <code>labelSpanM</code> value is used.
+			 *
+			 * <b>Note:</b> If <code>adjustLabelSpanThis</code> is set this property is only used if more than 1 <code>FormContainer</code> is in one line. If only 1 <code>FormContainer</code> is in the line, then the <code>labelSpanM</code> value is used.
+			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
@@ -86,7 +88,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 
 			/**
 			 * Default span for labels in medium size.
-			 * This property is used for full-size groups (<code>FormContainers</code>). If more than one group (<code>FormContainer</code>) is in one line, <code>labelSpanL</code> is used.
+			 *
+			 * <b>Note:</b> If <code>adjustLabelSpanThis</code> is set this property is used for full-size <code>FormContainers</code>. If more than one <code>FormContainer</code> is in one line, <code>labelSpanL</code> is used.
+			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
@@ -100,7 +104,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 			labelSpanS : {type : "int", group : "Misc", defaultValue : 12},
 
 			/**
+			 * If set the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent of the number of <code>FormContainer</code> in one row.
+			 * If only one <code>FormContainer</code> is displayed in one row <code>labelSpanM</code> is used to define the size of the label.
+			 * This is the same for medium and large <code>Forms</code>.
+			 * This is done to align the labels on forms where full-size <code>FormContainers</code> and more-column rows are used in the same <code>Form</code>.
+			 * (Because every <code>FormContainer</code> has it's own grid inside.)
+			 *
+			 * If not set the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the <code>Form</code> size.
+			 * The number of <code>FormContainers</code> doesn't matter in this case.
+			 *
+			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
+			 * @since 1.34.0
+			 */
+			adjustLabelSpan : {type : "boolean", group : "Misc", defaultValue : true},
+
+			/**
 			 * Number of grid cells that are empty at the end of each line on large size.
+			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
@@ -108,6 +128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 
 			/**
 			 * Number of grid cells that are empty at the end of each line on medium size.
+			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
@@ -115,6 +136,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 
 			/**
 			 * Number of grid cells that are empty at the end of each line on small size.
+			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
@@ -123,6 +145,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 			/**
 			 * Form columns for large size.
 			 * The number of columns for large size must not be smaller that the number of columns for medium size.
+			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
@@ -130,13 +153,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 
 			/**
 			 * Form columns for medium size.
+			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
 			columnsM : {type : "int", group : "Misc", defaultValue : 1},
 
 			/**
+			 * If the <code>Form</code> contains only one single <code>FormContainer</code> and this property is set,
+			 * the <code>FormContainer</code> is displayed using the full size of the <code>Form</code>.
+			 * In this case the properties <code>columnsL</code> and <code>columnsM</code> are ignored.
+			 *
+			 * In all other cases the <code>FormContainer</code> is displayed in the size of one column.
+			 *
+			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
+			 * @since 1.34.0
+			 */
+			singleContainerFullSize : {type : "boolean", group : "Misc", defaultValue : true},
+
+			/**
 			 * Breakpoint between Medium size and Large size.
+			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
@@ -144,6 +181,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 
 			/**
 			 * Breakpoint between Small size and Medium size.
+			 *
 			 * <b>Note:</b> This property is only used if a <code>ResponsiveGridLayout</code> is used as a layout.
 			 * @since 1.16.3
 			 */
@@ -921,11 +959,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/Respon
 				oLayout.setLabelSpanL(oThis.getLabelSpanL());
 				oLayout.setLabelSpanM(oThis.getLabelSpanM());
 				oLayout.setLabelSpanS(oThis.getLabelSpanS());
+				oLayout.setAdjustLabelSpan(oThis.getAdjustLabelSpan());
 				oLayout.setEmptySpanL(oThis.getEmptySpanL());
 				oLayout.setEmptySpanM(oThis.getEmptySpanM());
 				oLayout.setEmptySpanS(oThis.getEmptySpanS());
 				oLayout.setColumnsL(oThis.getColumnsL());
 				oLayout.setColumnsM(oThis.getColumnsM());
+				oLayout.setSingleContainerFullSize(oThis.getSingleContainerFullSize());
 				oLayout.setBreakpointL(oThis.getBreakpointL());
 				oLayout.setBreakpointM(oThis.getBreakpointM());
 				break;

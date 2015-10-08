@@ -3245,7 +3245,7 @@
 
 				// assert
 				ok(getComputedStyle(oItem.getDomRef()).getPropertyValue("display"), "none");
-				ok(oItem.$().hasClass(oSelectList.getRenderer().CSS_CLASS + "ItemInvisible"));
+				ok(oItem.$().hasClass(oSelectList.getRenderer().CSS_CLASS + "ItemBaseInvisible"));
 				strictEqual(oSelectList.getVisibleItems().length, 0);
 
 				// cleanup
@@ -3275,7 +3275,7 @@
 				});
 
 				// arrange
-				var CSS_CLASS = sap.m.SelectListRenderer.CSS_CLASS + "ItemPressed";
+				var CSS_CLASS = sap.m.SelectListRenderer.CSS_CLASS + "ItemBasePressed";
 				oSelectList.placeAt("content");
 				sap.ui.getCore().applyChanges();
 
@@ -3512,6 +3512,103 @@
 
 				// assert
 				ok(!oItem.$().hasClass(CSS_CLASS), "The CSS class " + CSS_CLASS + " should not be added");
+
+				// cleanup
+				oSelectList.destroy();
+			});
+
+			/* ------------------------------ */
+			/* tap                            */
+			/* ------------------------------ */
+
+			test("it should fire the press and selectionChange events", function() {
+
+				// system under test
+				var oItem;
+				var oSelectList = new sap.m.SelectList({
+					items: [
+						oItem = new sap.ui.core.Item({
+							text: "lorem ipsum"
+						})
+					]
+				});
+
+				// arrange
+				oSelectList.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange");
+				var fnFireItemPressSpy = this.spy(oSelectList, "fireItemPress");
+
+				// act
+				sap.ui.test.qunit.triggerTouchEvent("tap", oSelectList.getDomRef(), {
+					srcControl: oItem,
+					changedTouches: {
+						0: {
+							pageX: 1,
+							pageY: 1,
+							identifier: 0,
+							target: oItem.getDomRef()
+						},
+
+						length: 1
+					},
+
+					touches: {
+						length: 0
+					}
+				});
+
+				// assert
+				strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
+				strictEqual(fnFireItemPressSpy.callCount, 1, 'The "press" event is fired');
+				ok(oSelectList.getSelectedItem() === oItem);
+
+				// cleanup
+				oSelectList.destroy();
+			});
+
+			test("it should not fire the press and selectionChange events", function() {
+
+				// system under test
+				var oItem;
+				var oSelectList = new sap.m.SelectList({
+					items: [
+						oItem = new sap.ui.core.Item({
+							enabled: false,
+							text: "lorem ipsum"
+						})
+					]
+				});
+
+				// arrange
+				oSelectList.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange");
+				var fnFireItemPressSpy = this.spy(oSelectList, "fireItemPress");
+
+				// act
+				sap.ui.test.qunit.triggerTouchEvent("tap", oSelectList.getDomRef(), {
+					srcControl: oItem,
+					changedTouches: {
+						0: {
+							pageX: 1,
+							pageY: 1,
+							identifier: 0,
+							target: oItem.getDomRef()
+						},
+
+						length: 1
+					},
+
+					touches: {
+						length: 0
+					}
+				});
+
+				// assert
+				strictEqual(fnFireSelectionChangeSpy.callCount, 0);
+				strictEqual(fnFireItemPressSpy.callCount, 0);
+				ok(oSelectList.getSelectedItem() === null);
 
 				// cleanup
 				oSelectList.destroy();

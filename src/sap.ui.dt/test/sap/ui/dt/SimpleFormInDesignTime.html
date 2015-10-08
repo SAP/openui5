@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html style="height: 100%">
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>SimpleFormInDesignTime</title>
+
+		<style>
+			html, body, #content, #view {
+				height : 100%;
+			}
+			#content {
+				width: 100%;
+				height : 100%;
+				float: left;
+				overflow-y: scroll;
+			}
+			.sapUiView {
+				height: 100%;	
+			}
+		</style>
+
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				data-sap-ui-resourceroots='{"dt.view": "qunit/testdata/designtime/"}'
+				>
+		</script>
+
+		<script>
+			jQuery.sap.require("sap.ui.dt.Preloader");
+			jQuery.sap.require("sap.ui.dt.ElementUtil");
+			jQuery.sap.require("sap.ui.dt.DesignTime");
+			jQuery.sap.require("sap.ui.dt.plugin.ControlDragDrop");
+			jQuery.sap.require("sap.ui.dt.plugin.MouseSelection");
+			var oView = sap.ui.xmlview("testView", "dt.view.TestSimpleForm");
+			oView.placeAt("content");
+
+
+			jQuery(function() {
+				var oSelectionPlugin = new sap.ui.dt.plugin.MouseSelection();
+				var oDragPlugin = new sap.ui.dt.plugin.ControlDragDrop();
+
+				var aElements = sap.ui.dt.ElementUtil.findAllPublicElements(oView);
+				sap.ui.dt.Preloader.load(aElements).then(function() {
+					var oDesignTime = new sap.ui.dt.DesignTime({
+						plugins : [
+							oSelectionPlugin,
+							oDragPlugin
+						],
+						designTimeMetadata : {
+							"sap.ui.layout.form.SimpleForm" : {
+								aggregations: {
+									content : {
+										ignore : true
+									},
+									form: {
+										ignore : false
+									}
+								}
+							}
+						},
+						rootElements : [oView]
+					});
+				});
+			});
+			
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<div id="content"></div>
+	</body>
+</html>

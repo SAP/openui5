@@ -33,6 +33,10 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeControlData(oList);
 			oRm.addClass(CSS_CLASS);
 
+			if (oList.getShowSecondaryValues()) {
+				oRm.addClass(CSS_CLASS + "TableLayout");
+			}
+
 			if (!oList.getEnabled()) {
 				oRm.addClass(CSS_CLASS + "Disabled");
 			}
@@ -75,53 +79,85 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {object} mStates
 		 */
 		SelectListRenderer.renderItem = function(oRm, oList, oItem, mStates) {
+
+			if (!(oItem instanceof sap.ui.core.Element)) {
+				return;
+			}
+
 			var bEnabled = oItem.getEnabled(),
 				oSelectedItem = oList.getSelectedItem(),
 				CSS_CLASS = SelectListRenderer.CSS_CLASS,
-				sTooltip = oItem.getTooltip_AsString();
+				sTooltip = oItem.getTooltip_AsString(),
+				bShowSecondaryValues = oList.getShowSecondaryValues();
 
-			if (oItem instanceof sap.ui.core.Element) {
-				oRm.write("<li");
-				oRm.writeElementData(oItem);
+			oRm.write("<li");
+			oRm.writeElementData(oItem);
 
-				if (oItem instanceof sap.ui.core.SeparatorItem) {
-					oRm.addClass(CSS_CLASS + "SeparatorItem");
+			if (oItem instanceof sap.ui.core.SeparatorItem) {
+				oRm.addClass(CSS_CLASS + "SeparatorItem");
+			} else {
+
+				oRm.addClass(CSS_CLASS + "ItemBase");
+
+				if (bShowSecondaryValues) {
+					oRm.addClass(CSS_CLASS + "Row");
 				} else {
 					oRm.addClass(CSS_CLASS + "Item");
-
-					if (oItem.bVisible === false) {
-						oRm.addClass(CSS_CLASS + "ItemInvisible");
-					}
-
-					if (!bEnabled) {
-						oRm.addClass(CSS_CLASS + "ItemDisabled");
-					}
-
-					if (bEnabled && sap.ui.Device.system.desktop) {
-						oRm.addClass(CSS_CLASS + "ItemHoverable");
-					}
-
-					if (oItem === oSelectedItem) {
-						oRm.addClass(CSS_CLASS + "ItemSelected");
-					}
-
-					if (bEnabled) {
-						oRm.writeAttribute("tabindex", "0");
-					}
 				}
 
+				if (oItem.bVisible === false) {
+					oRm.addClass(CSS_CLASS + "ItemBaseInvisible");
+				}
+
+				if (!bEnabled) {
+					oRm.addClass(CSS_CLASS + "ItemBaseDisabled");
+				}
+
+				if (bEnabled && sap.ui.Device.system.desktop) {
+					oRm.addClass(CSS_CLASS + "ItemBaseHoverable");
+				}
+
+				if (oItem === oSelectedItem) {
+					oRm.addClass(CSS_CLASS + "ItemBaseSelected");
+				}
+
+				if (bEnabled) {
+					oRm.writeAttribute("tabindex", "0");
+				}
+			}
+
+			oRm.writeClasses();
+
+			if (sTooltip) {
+				oRm.writeAttributeEscaped("title", sTooltip);
+			}
+
+			this.writeItemAccessibilityState.apply(this, arguments);
+
+			oRm.write(">");
+
+			if (bShowSecondaryValues) {
+
+				oRm.write("<span");
+				oRm.addClass(CSS_CLASS + "Cell");
+				oRm.addClass(CSS_CLASS + "FirstCell");
 				oRm.writeClasses();
-
-				if (sTooltip) {
-					oRm.writeAttributeEscaped("title", sTooltip);
-				}
-
-				this.writeItemAccessibilityState.apply(this, arguments);
-
 				oRm.write(">");
 				oRm.writeEscaped(oItem.getText());
-				oRm.write("</li>");
+				oRm.write("</span>");
+
+				oRm.write("<span");
+				oRm.addClass(CSS_CLASS + "Cell");
+				oRm.addClass(CSS_CLASS + "LastCell");
+				oRm.writeClasses();
+				oRm.write(">");
+				oRm.writeEscaped(oItem.getAdditionalText());
+				oRm.write("</span>");
+			} else {
+				oRm.writeEscaped(oItem.getText());
 			}
+
+			oRm.write("</li>");
 		};
 
 		/**

@@ -2664,6 +2664,39 @@
 				oComboBox.destroy();
 			});
 
+			test("open() the picker popup (dropdown list) should automatically size itself to fit its content", function() {
+
+				this.stub(sap.ui.Device, "system", {
+					desktop: true,
+					phone: false,
+					tablet: false
+				});
+
+				// system under test
+				var oComboBox = new sap.m.ComboBox({
+					width: "100px",
+					items: [
+						new sap.ui.core.Item({
+							text: "Lorem ipsum dolor sit amet, duo ut soleat insolens, commodo vidisse intellegam ne usu"
+						})
+					]
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oComboBox.open();
+				this.clock.tick(500);
+
+				// assert
+				ok(oComboBox.getPicker().getDomRef().offsetWidth > 100);
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
 			/* ------------------------------ */
 			/* findFirstEnabledItem()         */
 			/* ------------------------------ */
@@ -4619,12 +4652,12 @@
 					ok(oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE), 'The combo box element has the CSS class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + '"');
 					ok(oComboBox.$("arrow").length, "The HTML span element for the arrow exists");
 					ok(oComboBox.$("arrow").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Arrow"), 'The arrow button has the CSS class "' + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + 'Arrow"');
-					ok(oComboBox.$("arrow").hasClass(sap.m.ComboBoxRenderer.CSS_CLASS + "Arrow"), 'The arrow button has the CSS class "' + sap.m.ComboBoxRenderer.CSS_CLASS + 'Arrow"');
+					ok(oComboBox.$("arrow").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOX + "Arrow"), 'The arrow button has the CSS class "' + sap.m.ComboBoxRenderer.CSS_CLASS + 'Arrow"');
 					strictEqual(oComboBox.getDomRef("arrow").getAttribute("tabindex"), "-1", "The arrow button is focusable, but it is not reachable via sequential keyboard navigation");
 					strictEqual(oComboBox.getDomRef("arrow").getAttribute("aria-labelledby"), oComboBox.getDomRef("buttonlabel").id);
 					ok(oComboBox.getDomRef("buttonlabel"), "The button label exists");
 					ok(oComboBox.$("buttonlabel").hasClass("sapUiInvisibleText"));
-					ok(oComboBox.$("buttonlabel").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "ButtonLabel"));
+					ok(oComboBox.$("buttonlabel").hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXTEXTFIELD + "ButtonLabel"));
 					strictEqual(getComputedStyle(oComboBox.getDomRef("buttonlabel")).getPropertyValue("display"), "none");
 
 					// cleanup
@@ -5041,6 +5074,57 @@
 				// assert
 				strictEqual(oComboBox.isOpen(), false, "Control picker pop-up is closed");
 				ok(!oComboBox.$().hasClass(oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed"), "The ComboBox's input field must not have the css class '" + oComboBox.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed'");
+
+				// cleanup
+				oComboBox.destroy();
+			});
+
+			test("it should update update the value of the input field when the selected item is pressed", function() {
+
+				// system under test
+				var oItem;
+				var oComboBox = new sap.m.ComboBox({
+					items: [
+						oItem = new sap.ui.core.Item({
+							key: "li",
+							text: "lorem ipsum"
+						})
+					],
+					selectedKey: "li"
+				});
+
+				// arrange
+				oComboBox.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oComboBox.focus();
+				oComboBox.open();
+				this.clock.tick(1000);	// wait 1s after the open animation is completed
+				var oItemDomRef = oItem.getDomRef();
+				oComboBox.getFocusDomRef().value = "foo";
+
+				// act
+				sap.ui.test.qunit.triggerTouchEvent("tap", oComboBox.getList().getDomRef(), {
+					srcControl: oItem,
+					changedTouches: {
+						0: {
+							pageX: 1,
+							pageY: 1,
+							identifier: 0,
+							target: oItemDomRef
+						},
+
+						length: 1
+					},
+
+					touches: {
+						length: 0
+					}
+				});
+
+				this.clock.tick(0);
+
+				// assert
+				strictEqual(oComboBox.getValue(), "lorem ipsum");
 
 				// cleanup
 				oComboBox.destroy();

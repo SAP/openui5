@@ -56,9 +56,9 @@ function(jQuery, Overlay, DOMUtil, ElementUtil, OverlayUtil) {
 					defaultValue : true
 				},
 				/** 
-				 * Whether the AggregationOverlay is a drop target
+				 * Whether the AggregationOverlay is e.g. a drop target
 				 */
-				droppable : {
+				targetZone : {
 					type : "boolean",
 					defaultValue : false
 				}
@@ -74,11 +74,11 @@ function(jQuery, Overlay, DOMUtil, ElementUtil, OverlayUtil) {
 			},
 			events : {
 				/**
-				 * Event fired when the property "droppable" was changed
+				 * Event fired when the property "targetZone" was changed
 				 */
-				droppableChange : {
+				targetZoneChange : {
 					parameters : {
-						droppable : { type : "boolean" }
+						targetZone : { type : "boolean" }
 					}
 				}
 			}
@@ -109,29 +109,29 @@ function(jQuery, Overlay, DOMUtil, ElementUtil, OverlayUtil) {
 	};	
 
 	/** 
-	 * Sets a property "droppable", toggles a CSS class for the DomRef based on a property's value and fires "droppableChange" event
-	 * @param {boolean} bDroppable state to set
+	 * Sets a property "targetZone", toggles a CSS class for the DomRef based on a property's value and fires "targetZoneChange" event
+	 * @param {boolean} bTargetZone state to set
 	 * @returns {sap.ui.dt.AggregationOverlay} returns this	 	 
 	 * @public
 	 */
-	AggregationOverlay.prototype.setDroppable = function(bDroppable) {
-		if (this.getDroppable() !== bDroppable) {
-			this.setProperty("droppable", bDroppable);
-			this.toggleStyleClass("sapUiDtOverlayDroppable", bDroppable);
+	AggregationOverlay.prototype.setTargetZone = function(bTargetZone) {
+		if (this.getTargetZone() !== bTargetZone) {
+			this.setProperty("targetZone", bTargetZone);
+			this.toggleStyleClass("sapUiDtOverlayTargetZone", bTargetZone);
 
-			this.fireDroppableChange({droppable : bDroppable});
+			this.fireTargetZoneChange({targetZone : bTargetZone});
 		}
 
 		return this;
 	};		
 	
 	/** 
-	 * Returns if the AggregationOverlay is droppable
+	 * Returns if the AggregationOverlay is a target zone
 	 * @public
-	 * @return {boolean} if the AggregationOverlay is droppable
+	 * @return {boolean} if the AggregationOverlay is a target zone
 	 */
-	AggregationOverlay.prototype.isDroppable = function() {
-		return this.getDroppable();
+	AggregationOverlay.prototype.isTargetZone = function() {
+		return this.getTargetZone();
 	};	
 
 	/** 

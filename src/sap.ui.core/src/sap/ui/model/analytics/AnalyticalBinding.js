@@ -4017,7 +4017,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @public
 	 */
 	AnalyticalBinding.prototype.refresh = function(bForceUpdate) {
-		this._refresh(bForceUpdate);
+		// apply is used here to be compatible to ODataModel v1, where the signature is like the private _refresh()
+		AnalyticalBinding.prototype._refresh.apply(this, arguments);
 	};
 	
 	/**

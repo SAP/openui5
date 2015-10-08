@@ -1714,6 +1714,301 @@
 			"0": "ه‍.ق."
 		}
 	},
+	"ca-japanese": {
+		"dateFormat-full": "G y MMMM d, EEEE",
+		"dateFormat-long": "d MMMM y G",
+		"dateFormat-medium": "d MMM y G",
+		"dateFormat-short": "y/M/d G",
+		"timeFormat-full": "H:mm:ss (zzzz)",
+		"timeFormat-long": "H:mm:ss (z)",
+		"timeFormat-medium": "H:mm:ss",
+		"timeFormat-short": "H:mm",
+		"dateTimeFormat-full": "{1}، ساعت {0}",
+		"dateTimeFormat-long": "{1}، ساعت {0}",
+		"dateTimeFormat-medium": "{1}،‏ {0}",
+		"dateTimeFormat-short": "{1}،‏ {0}",
+		"intervalFormatFallback": "{0} تا {1}",
+		"intervalFormat-d-d": "d تا d",
+		"intervalFormat-h-a": "h a تا h a",
+		"intervalFormat-h-h": "h تا h a",
+		"intervalFormat-H-H": "H تا H",
+		"intervalFormat-hm-a": "h:mm a تا h:mm a",
+		"intervalFormat-hm-h": "h:mm تا h:mm a",
+		"intervalFormat-hm-m": "h:mm تا h:mm a",
+		"intervalFormat-Hm-H": "H:mm تا H:mm",
+		"intervalFormat-Hm-m": "H:mm تا H:mm",
+		"intervalFormat-hmv-a": "h:mm a تا h:mm a (v)",
+		"intervalFormat-hmv-h": "h:mm تا h:mm a (v)",
+		"intervalFormat-hmv-m": "h:mm تا h:mm a (v)",
+		"intervalFormat-Hmv-H": "H:mm تا H:mm (v)",
+		"intervalFormat-Hmv-m": "H:mm تا H:mm (v)",
+		"intervalFormat-hv-a": "h a تا h a (v)",
+		"intervalFormat-hv-h": "h تا h a (v)",
+		"intervalFormat-Hv-H": "H تا H (v)",
+		"intervalFormat-M-M": "M تا M",
+		"intervalFormat-Md-d": "M/d تا M/d",
+		"intervalFormat-Md-M": "M/d تا M/d",
+		"intervalFormat-MEd-d": "E M/d تا E M/d",
+		"intervalFormat-MEd-M": "E M/d تا E M/d",
+		"intervalFormat-MMM-M": "MMM تا MMM",
+		"intervalFormat-MMMd-d": "d تا d LLL",
+		"intervalFormat-MMMd-M": "d LLL تا d LLL",
+		"intervalFormat-MMMEd-d": "E d LLL تا E d LLL",
+		"intervalFormat-MMMEd-M": "E d LLL تا E d LLL",
+		"intervalFormat-y-y": "y تا y G",
+		"intervalFormat-yM-M": "y/M تا y/M G",
+		"intervalFormat-yM-y": "y/M تا y/M G",
+		"intervalFormat-yMd-d": "y/M/d تا y/M/d G",
+		"intervalFormat-yMd-M": "y/M/d تا y/M/d G",
+		"intervalFormat-yMd-y": "y/M/d تا y/M/d G",
+		"intervalFormat-yMEd-d": "E y/M/d تا E y/M/d G",
+		"intervalFormat-yMEd-M": "E y/M/d تا E y/M/d G",
+		"intervalFormat-yMEd-y": "E y/M/d تا E y/M/d G",
+		"intervalFormat-yMMM-M": "LLL تا MMM y G",
+		"intervalFormat-yMMM-y": "MMM y تا MMM y G",
+		"intervalFormat-yMMMd-d": "d تا d MMM y G",
+		"intervalFormat-yMMMd-M": "d LLL تا d MMM y G",
+		"intervalFormat-yMMMd-y": "d MMM y تا d MMM y G",
+		"intervalFormat-yMMMEd-d": "E d LLL تا E d MMM y G",
+		"intervalFormat-yMMMEd-M": "E d LLL تا E d MMM y G",
+		"intervalFormat-yMMMEd-y": "E d MMM y تا E d MMM y G",
+		"intervalFormat-yMMMM-M": "LLLL تا MMMM y G",
+		"intervalFormat-yMMMM-y": "MMMM y تا MMMM y G",
+		"months-format-abbreviated": [
+			"ژانویهٔ",
+			"فوریهٔ",
+			"مارس",
+			"آوریل",
+			"مهٔ",
+			"ژوئن",
+			"ژوئیهٔ",
+			"اوت",
+			"سپتامبر",
+			"اکتبر",
+			"نوامبر",
+			"دسامبر"
+		],
+		"months-format-narrow": [
+			"ژ",
+			"ف",
+			"م",
+			"آ",
+			"م",
+			"ژ",
+			"ژ",
+			"ا",
+			"س",
+			"ا",
+			"ن",
+			"د"
+		],
+		"months-format-wide": [
+			"ژانویهٔ",
+			"فوریهٔ",
+			"مارس",
+			"آوریل",
+			"مهٔ",
+			"ژوئن",
+			"ژوئیهٔ",
+			"اوت",
+			"سپتامبر",
+			"اکتبر",
+			"نوامبر",
+			"دسامبر"
+		],
+		"months-standAlone-abbreviated": [
+			"ژانویه",
+			"فوریه",
+			"مارس",
+			"آوریل",
+			"مه",
+			"ژوئن",
+			"ژوئیه",
+			"اوت",
+			"سپتامبر",
+			"اکتبر",
+			"نوامبر",
+			"دسامبر"
+		],
+		"months-standAlone-narrow": [
+			"ژ",
+			"ف",
+			"م",
+			"آ",
+			"م",
+			"ژ",
+			"ژ",
+			"ا",
+			"س",
+			"ا",
+			"ن",
+			"د"
+		],
+		"months-standAlone-wide": [
+			"ژانویه",
+			"فوریه",
+			"مارس",
+			"آوریل",
+			"مه",
+			"ژوئن",
+			"ژوئیه",
+			"اوت",
+			"سپتامبر",
+			"اکتبر",
+			"نوامبر",
+			"دسامبر"
+		],
+		"days-format-abbreviated": [
+			"یکشنبه",
+			"دوشنبه",
+			"سه‌شنبه",
+			"چهارشنبه",
+			"پنجشنبه",
+			"جمعه",
+			"شنبه"
+		],
+		"days-format-narrow": [
+			"ی",
+			"د",
+			"س",
+			"چ",
+			"پ",
+			"ج",
+			"ش"
+		],
+		"days-format-short": [
+			"۱ش",
+			"۲ش",
+			"۳ش",
+			"۴ش",
+			"۵ش",
+			"ج",
+			"ش"
+		],
+		"days-format-wide": [
+			"یکشنبه",
+			"دوشنبه",
+			"سه‌شنبه",
+			"چهارشنبه",
+			"پنجشنبه",
+			"جمعه",
+			"شنبه"
+		],
+		"days-standAlone-abbreviated": [
+			"یکشنبه",
+			"دوشنبه",
+			"سه‌شنبه",
+			"چهارشنبه",
+			"پنجشنبه",
+			"جمعه",
+			"شنبه"
+		],
+		"days-standAlone-narrow": [
+			"ی",
+			"د",
+			"س",
+			"چ",
+			"پ",
+			"ج",
+			"ش"
+		],
+		"days-standAlone-short": [
+			"۱ش",
+			"۲ش",
+			"۳ش",
+			"۴ش",
+			"۵ش",
+			"ج",
+			"ش"
+		],
+		"days-standAlone-wide": [
+			"یکشنبه",
+			"دوشنبه",
+			"سه‌شنبه",
+			"چهارشنبه",
+			"پنجشنبه",
+			"جمعه",
+			"شنبه"
+		],
+		"quarters-format-abbreviated": [
+			"س‌م۱",
+			"س‌م۲",
+			"س‌م۳",
+			"س‌م۴"
+		],
+		"quarters-format-narrow": [
+			"۱",
+			"۲",
+			"۳",
+			"۴"
+		],
+		"quarters-format-wide": [
+			"سه‌ماههٔ اول",
+			"سه‌ماههٔ دوم",
+			"سه‌ماههٔ سوم",
+			"سه‌ماههٔ چهارم"
+		],
+		"quarters-standAlone-abbreviated": [
+			"س‌م۱",
+			"س‌م۲",
+			"س‌م۳",
+			"س‌م۴"
+		],
+		"quarters-standAlone-narrow": [
+			"۱",
+			"۲",
+			"۳",
+			"۴"
+		],
+		"quarters-standAlone-wide": [
+			"سه‌ماههٔ اول",
+			"سه‌ماههٔ دوم",
+			"سه‌ماههٔ سوم",
+			"سه‌ماههٔ چهارم"
+		],
+		"dayPeriods-format-abbreviated": [
+			"ق.ظ.",
+			"ب.ظ."
+		],
+		"dayPeriods-format-narrow": [
+			"ق",
+			"ب"
+		],
+		"dayPeriods-format-wide": [
+			"قبل‌ازظهر",
+			"بعدازظهر"
+		],
+		"dayPeriods-standAlone-abbreviated": [
+			"ق.ظ.",
+			"ب.ظ."
+		],
+		"dayPeriods-standAlone-narrow": [
+			"ق.ظ.",
+			"ب.ظ."
+		],
+		"dayPeriods-standAlone-wide": [
+			"قبل‌ازظهر",
+			"بعدازظهر"
+		],
+		"era-wide": {
+			"232": "Meiji",
+			"233": "Taishō",
+			"234": "Shōwa",
+			"235": "Heisei"
+		},
+		"era-abbreviated": {
+			"232": "Meiji",
+			"233": "Taishō",
+			"234": "Shōwa",
+			"235": "Heisei"
+		},
+		"era-narrow": {
+			"232": "M",
+			"233": "T",
+			"234": "S",
+			"235": "H"
+		}
+	},
 	"dateField-year-displayName": "سال",
 	"dateField-year-relative--1": "سال گذشته",
 	"dateField-year-relative-0": "امسال",
@@ -1936,5 +2231,32 @@
 	"weekData-firstDay": 6,
 	"weekData-weekendStart": 5,
 	"weekData-weekendEnd": 5,
+	"eras-gregorian": {
+		"0": {
+			"_end": "0-12-31"
+		},
+		"1": {
+			"_start": "1-01-01"
+		}
+	},
+	"eras-islamic": {
+		"0": {
+			"_start": "622-7-15"
+		}
+	},
+	"eras-japanese": {
+		"232": {
+			"_start": "1868-9-8"
+		},
+		"233": {
+			"_start": "1912-7-30"
+		},
+		"234": {
+			"_start": "1926-12-25"
+		},
+		"235": {
+			"_start": "1989-1-8"
+		}
+	},
 	"calendarPreference": "persian gregorian islamic islamic-civil islamic-tbla"
 }

@@ -12,7 +12,7 @@ sap.ui.define([], function () {
 						}
 					});
 
-				return bHasItemWithTheName && oMatchingListItem;
+				return bHasItemWithTheName && oMatchingListItem.$().is(":visible") && oMatchingListItem;
 			};
 		},
 

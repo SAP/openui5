@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 				bVerticalScrolling = oControl.getVerticalScrolling(),
 				sState = oControl.getState(),
 				bStretch = oControl.getStretch(),
-				bStretchOnPhone = oControl.getStretchOnPhone(),
+				bStretchOnPhone = oControl.getStretchOnPhone() && sap.ui.Device.system.phone,
 				bResizable = oControl.getResizable(),
 				bDraggable = oControl.getDraggable();
 
@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			oRm.addClass("sapMDialog-CTX");
 			oRm.addClass("sapMPopup-CTX");
 
-			if (bStretch || (bStretchOnPhone && sap.ui.Device.system.phone)) {
+			if (bStretch || (bStretchOnPhone)) {
 				oRm.addClass("sapMDialogStretched");
 			}
 

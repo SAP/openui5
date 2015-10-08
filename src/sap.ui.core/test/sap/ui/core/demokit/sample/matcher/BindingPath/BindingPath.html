@@ -23,9 +23,10 @@
 
 			sap.ui.require([
 				'sap/ui/test/matchers/BindingPath',
+				'sap/ui/test/matchers/AggregationFilled',
 				'sap/ui/test/opaQunit',
 				'sap/ui/test/Opa5'
-			], function (BindingPath, opaTest, Opa5) {
+			], function (BindingPath, AggregationFilled, opaTest, Opa5) {
 
 				QUnit.module("Binding Path");
 
@@ -37,6 +38,7 @@
 					When.waitFor({
 						id: "productList",
 						viewName: "view.Main",
+						matchers: new AggregationFilled({ name : "items" }),
 						success: function (oList) {
 							oList.setSelectedItem(oList.getItems()[0]);
 						},

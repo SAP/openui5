@@ -679,7 +679,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				iWindowHeight = (Dialog._bIOS7Tablet && sap.ui.Device.orientation.landscape && window.innerHeight) ? window.innerHeight : this._$Window.height(),
 				$this = this.$(),
 				bStretch = this.getStretch(),
-				bStretchOnPhone = this.getStretchOnPhone(),
+				bStretchOnPhone = this.getStretchOnPhone() && sap.ui.Device.system.phone,
 				bMessageType = this._bMessageType,
 				iHPaddingToScreen = this._getDialogOffset(iWindowWidth).left,
 				iVPaddingToScreen = this._getDialogOffset(iWindowWidth).top,
@@ -705,7 +705,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				this.$('cont').css({'max-height': iMaxHeight + "px"});
 			}
 
-			if ((bStretch && !bMessageType) || (bStretchOnPhone && sap.ui.Device.system.phone)) {
+			if ((bStretch && !bMessageType) || (bStretchOnPhone)) {
 				this.$().addClass('sapMDialogStretched');
 			}
 
@@ -1394,11 +1394,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		function isHeaderClicked(eventTarget) {
 			var $target = jQuery(eventTarget);
 			var isHeader = $target.hasClass('sapMDialogTitle');
-			var isChildOfHeader = $target.parents('header').length;
+			var isChildOfDialogHeader = $target.parents('header').hasClass('sapMDialogTitle');
 			var isHeaderTag = $target.parents('h1').length;
 			var isIcon = $target.hasClass('.sapUiIcon');
 			var isChildOfSubHeader = $target.parents('.sapMDialogSubHeader').length;
-			return ((isHeader || isChildOfHeader) && !isHeaderTag && !isIcon && !isChildOfSubHeader);
+			return ((isHeader || isChildOfDialogHeader) && !isHeaderTag && !isIcon && !isChildOfSubHeader);
 		}
 
 		if (sap.ui.Device.system.desktop) {

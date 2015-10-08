@@ -59,6 +59,23 @@
 
 			});
 
+			QUnit.test("Should increase timeout to 40 seconds", function(assert) {
+				// System under Test
+				var oOpa5 = new Opa5();
+				var stub = this.stub(oOpa5, "waitFor", function(){});
+
+
+				oOpa5.iStartMyAppInAComponent({
+					componentConfig: {
+						name: "samples.components.button"
+					},
+					hash: "",
+					timeout: 40
+				});
+
+				assert.equal(stub.lastCall.args[0].timeout, 40, "Timeout was increased to 40 seconds")
+			});
+
 			function componentHashTestCase (oOptions){
 				// System under Test
 				var oOpa5 = new Opa5();
@@ -131,7 +148,7 @@
 				});
 			});
 
-			module("IFrame");
+			QUnit.module("IFrame");
 
 			asyncTest("Should find an IFrame in the dom instead of creating it", function() {
 				// System under Test
@@ -222,28 +239,27 @@
 					oOpa5.emptyQueue();
 				});
 			}
-
-			asyncTest("Should always load opaPlugin of the same OPA version running the test and not from the version running in the app (it might not have OPA available)", function() {
+			
+			QUnit.test("Should always load opaPlugin of the same OPA version running the test and not from the version running in the app (it might not have OPA available)", function(assert) {
+				var done = assert.async();
 				// System under Test
 				var oOpa5 = new Opa5();
-				var oPluginWithoutIframe = Opa5.getPlugin();
+				var oPluginWithoutIFrame = Opa5.getPlugin();
+
 				// Act
 				oOpa5.iStartMyAppInAFrame("../testdata/noOPA.html").done(function() {
 					// Act + Assert
 					var oOpaPlugin = Opa5.getPlugin();
 
-					ok(oOpaPlugin, "could load Opa Plugin, even if not available in app");
-					notDeepEqual(oOpaPlugin,oPluginWithoutIframe, "Opa Plugin should come from the IFrame now");
+					assert.ok(oOpaPlugin, "could load Opa Plugin, even if not available in app");
+					assert.notDeepEqual(oOpaPlugin, oPluginWithoutIFrame, "Opa Plugin should come from the IFrame now");
 
 				});
 
 				oOpa5.iTeardownMyAppFrame();
 
-				oOpa5.emptyQueue().done(function () {
-					start();
-				});
+				oOpa5.emptyQueue().done(done);
 			});
-
 
 			// For IE 9 errors in frame are disabled see comment in OPA5.js
 			if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version === 9)) {

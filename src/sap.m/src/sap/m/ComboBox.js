@@ -41,7 +41,13 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './S
 				/**
 				 * ID of the selected item.
 				 */
-				selectedItemId: { type: "string", group: "Misc", defaultValue: "" }
+				selectedItemId: { type: "string", group: "Misc", defaultValue: "" },
+
+				/**
+				 * Indicates whether the text values of the <code>additionalText</code> property of a {@link sap.ui.core.ListItem} is shown.
+				 * @since 1.32.3
+				 */
+				showSecondaryValues: { type: "boolean", group: "Misc", defaultValue: false }
 			},
 			associations: {
 
@@ -143,7 +149,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './S
 
 		ComboBox.prototype._setItemVisibility = function(oItem, bVisible) {
 			var $OItem = oItem && oItem.$(),
-				CSS_CLASS = "sapMSelectListItemInvisible";
+				CSS_CLASS = "sapMSelectListItemBaseInvisible";
 
 			if (bVisible) {
 				oItem.bVisible = true;
@@ -246,7 +252,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './S
 		 * @private
 		 */
 		ComboBox.prototype._createDialog = function() {
-			var CSS_CLASS = this.getRenderer().CSS_CLASS_COMBOBOXBASE;
+
 			var oDialog = new sap.m.Dialog({
 				stretch: true,
 				customHeader: new sap.m.Bar({
@@ -254,8 +260,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './S
 						value: this.getSelectedItem().getText(),
 						width: "100%",
 						editable: false
-					}).addStyleClass(CSS_CLASS + "Input")
-				}).addStyleClass(CSS_CLASS + "Bar")
+					})
+				})
 			});
 
 			oDialog.getAggregation("customHeader").attachBrowserEvent("tap", function() {
@@ -383,19 +389,28 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './S
 		 * @param {sap.ui.base.Event} oControlEvent
 		 */
 		ComboBox.prototype.onSelectionChange = function(oControlEvent) {
-			var oItem = oControlEvent.getParameter("selectedItem"),
-				sValue;
+			var oItem = oControlEvent.getParameter("selectedItem");
+			this.setSelection(oItem);
+			this.fireSelectionChange({
+				selectedItem: this.getSelectedItem()
+			});
+		};
 
+		/**
+		 * Handles the <code>ItemPress</code> event on the list.
+		 *
+		 * @param {sap.ui.base.Event} oControlEvent
+		 * @since 1.32.4
+		 */
+		ComboBox.prototype.onItemPress = function(oControlEvent) {
+			var oItem = oControlEvent.getParameter("item");
 			this.close();
 			this.updateDomValue(oItem.getText());
-			this.setSelection(oItem);
-			this.fireSelectionChange({ selectedItem: this.getSelectedItem() });
-			sValue = this.getValue();
 
 			if (sap.ui.Device.system.desktop) {
 
-				// deselect the text and move the text cursor at the endmost position (only ie)
-				jQuery.sap.delayedCall(0, this, "selectText", [sValue.length, sValue.length]);
+				// deselect the text and move the text cursor at the endmost position
+				setTimeout(this.selectText.bind(this, this.getValue().length, this.getValue().length), 0);
 			}
 		};
 
@@ -826,12 +841,14 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './S
 
 			this._oList = new SelectList({
 				width: "100%"
-			}).addEventDelegate({
+			}).addStyleClass(this.getRenderer().CSS_CLASS + "List")
+			.addEventDelegate({
 				ontap: function(oEvent) {
 					this.close();
 				}
 			}, this)
-			.attachSelectionChange(this.onSelectionChange, this);
+			.attachSelectionChange(this.onSelectionChange, this)
+			.attachItemPress(this.onItemPress, this);
 
 			return this._oList;
 		};
@@ -988,11 +1005,19 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './S
 
 				switch (sProperty) {
 					case "text":
-						this.setValue(sNewValue);
+
+						if (!this.isBound("value")) {
+							this.setValue(sNewValue);
+						}
+
 						break;
 
 					case "key":
-						this.setSelectedKey(sNewValue);
+
+						if (!this.isBound("selectedKey")) {
+							this.setSelectedKey(sNewValue);
+						}
+
 						break;
 
 					// no default
@@ -1114,6 +1139,18 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './S
 			}
 
 			return [];
+		};
+
+		ComboBox.prototype.setShowSecondaryValues = function(bAdditionalText) {
+			this.setProperty("showSecondaryValues", bAdditionalText, true);
+
+			var oList = this.getList();
+
+			if (oList) {
+				oList.setShowSecondaryValues(bAdditionalText);
+			}
+
+			return this;
 		};
 
 		/**

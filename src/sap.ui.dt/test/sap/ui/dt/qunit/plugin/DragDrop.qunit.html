@@ -28,9 +28,22 @@
 		<script type="text/javascript" src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script type="text/javascript">
 
+
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		
 		jQuery.sap.require("sap.ui.dt.ElementOverlay");
 		jQuery.sap.require("sap.ui.dt.plugin.DragDrop");
 
+		function testDragAndDropEventHandlerTriggering(sHandlerFunctionName, oOverlay, sDomDragEvent, assert){
+			done = assert.async();
+			this.oDragDrop[sHandlerFunctionName] = function(oOverlayInHandler) {
+				assert.ok(true, "handler was called");
+				assert.equal(oOverlay, oOverlayInHandler, "correct overlay passed to the handler");
+				done();
+			};
+			oOverlay.$().trigger(sDomDragEvent);
+		}
+		
 		QUnit.module("Given that an DragDrop is initialized ", {
 			beforeEach : function() {
 				this.oButton = new sap.m.Button();
@@ -41,13 +54,13 @@
 				this.oLayoutOverlay = new sap.ui.dt.ElementOverlay({element : this.oLayout});
 				this.oAggregationOverlay = this.oLayoutOverlay.getAggregationOverlay("content");
 				this.oButtonOverlay = new sap.ui.dt.ElementOverlay({element : this.oButton});
-				this.oButtonOverlay.setDraggable(true);
+				this.oButtonOverlay.setMovable(true);
 				
 				sap.ui.getCore().applyChanges();
 				this.oDragDrop = new sap.ui.dt.plugin.DragDrop();
-				this.oDragDrop.registerOverlay(this.oButtonOverlay);				
+				this.oDragDrop.registerElementOverlay(this.oButtonOverlay);				
 				this.oDragDrop.registerAggregationOverlay(this.oAggregationOverlay);				
-				this.oAggregationOverlay.setDroppable(true);
+				this.oAggregationOverlay.setTargetZone(true);
 			},
 			afterEach : function() {
 				this.oLayout.destroy();
@@ -56,86 +69,41 @@
 		});
 
 		QUnit.test("when the dragstart triggered on overlay", function(assert) {
-			done = assert.async();
-			this.oDragDrop.onDragStart = function() {
-				ok(true, "handler was called");
-				done();
-			};
-			this.oButtonOverlay.$().trigger("dragstart");
+			testDragAndDropEventHandlerTriggering.call(this, "onDragStart", this.oButtonOverlay, "dragstart", assert);
 		});
 
 		QUnit.test("when the dragend triggered on overlay", function(assert) {
-			done = assert.async();
-			this.oDragDrop.onDragEnd = function() {
-				ok(true, "handler was called");
-				done();
-			};
-			this.oButtonOverlay.$().trigger("dragend");
+			testDragAndDropEventHandlerTriggering.call(this, "onDragEnd", this.oButtonOverlay, "dragend", assert);
 		});
 
 		QUnit.test("when the drag triggered on overlay", function(assert) {
-			done = assert.async();
-			this.oDragDrop.onDrag = function() {
-				ok(true, "handler was called");
-				done();
-			};
-			this.oButtonOverlay.$().trigger("drag");
+			testDragAndDropEventHandlerTriggering.call(this, "onDrag", this.oButtonOverlay, "drag", assert);
 		});
 
 		QUnit.test("when the dragenter triggered on overlay in droppable aggregation", function(assert) {
-			done = assert.async();
-			this.oAggregationOverlay.setDroppable(true);
-			this.oDragDrop.onDragEnter = function() {
-				ok(true, "handler was called");
-				done();
-			};
-			this.oButtonOverlay.$().trigger("dragenter");
+			this.oAggregationOverlay.setTargetZone(true);
+			testDragAndDropEventHandlerTriggering.call(this, "onDragEnter", this.oButtonOverlay, "dragenter", assert);
 		});
 
 		QUnit.test("when the dragover triggered on overlay in droppable aggregation", function(assert) {
-			done = assert.async();
-			this.oAggregationOverlay.setDroppable(true);
-			this.oDragDrop.onDragOver = function() {
-				ok(true, "handler was called");
-				done();
-			};
-			this.oButtonOverlay.$().trigger("dragover");
+			this.oAggregationOverlay.setTargetZone(true);
+			testDragAndDropEventHandlerTriggering.call(this, "onDragOver", this.oButtonOverlay, "dragover", assert);
 		});
 
 		QUnit.test("when the dragenter triggered on aggregation overlay", function(assert) {
-			done = assert.async();
-			this.oDragDrop.onAggregationDragEnter = function() {
-				ok(true, "handler was called");
-				done();
-			};
-			this.oAggregationOverlay.$().trigger("dragenter");
+			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDragEnter", this.oAggregationOverlay, "dragenter", assert);
 		});
 
 		QUnit.test("when the dragover triggered on aggregation overlay", function(assert) {
-			done = assert.async();
-			this.oDragDrop.onAggregationDragOver = function() {
-				ok(true, "handler was called");
-				done();
-			};
-			this.oAggregationOverlay.$().trigger("dragover");
+			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDragOver", this.oAggregationOverlay, "dragover", assert);
 		});
 
 		QUnit.test("when the dragleave triggered on aggregation overlay", function(assert) {
-			done = assert.async();
-			this.oDragDrop.onAggregationDragLeave = function() {
-				ok(true, "handler was called");
-				done();
-			};
-			this.oAggregationOverlay.$().trigger("dragleave");
+			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDragLeave", this.oAggregationOverlay, "dragleave", assert);
 		});
 
 		QUnit.test("when the drop triggered on aggregation overlay", function(assert) {
-			done = assert.async();
-			this.oDragDrop.onAggregationDrop = function() {
-				ok(true, "handler was called");
-				done();
-			};
-			this.oAggregationOverlay.$().trigger("drop");
+			testDragAndDropEventHandlerTriggering.call(this, "onAggregationDrop", this.oAggregationOverlay, "drop", assert);
 		});
 
 		</script>

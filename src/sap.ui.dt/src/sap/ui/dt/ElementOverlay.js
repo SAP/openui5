@@ -4,7 +4,6 @@
 
 // Provides class sap.ui.dt.ElementOverlay.
 sap.ui.define([
-	'jquery.sap.global',
 	'sap/ui/dt/Overlay',
 	'sap/ui/dt/ControlObserver',
 	'sap/ui/dt/ManagedObjectObserver',
@@ -15,7 +14,7 @@ sap.ui.define([
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/DOMUtil'
 ],
-function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, AggregationOverlay, OverlayRegistry, ElementUtil, OverlayUtil, DOMUtil) {
+function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, AggregationOverlay, OverlayRegistry, ElementUtil, OverlayUtil, DOMUtil) {
 	"use strict";
 
 	/**
@@ -69,9 +68,9 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 					defaultValue : false
 				},
 				/** 
-				 * Whether the ElementOverlay is draggable
+				 * Whether the ElementOverlay is movable
 				 */
-				draggable : {
+				movable : {
 					type : "boolean",
 					defaultValue : false
 				},
@@ -109,11 +108,11 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 					}
 				},
 				/**
-				 * Event fired when the property "Draggable" is changed
+				 * Event fired when the property "Movable" is changed
 				 */
-				draggableChange : {
+				movableChange : {
 					parameters : {
-						draggable : { type : "boolean" }
+						movable : { type : "boolean" }
 					}
 				},
 				/**				
@@ -205,7 +204,6 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 		delete this._elementId;
 		
 		this.setAssociation("element", vElement);
-		// TODO: designTimeMetadata aggregation is NOT ready in this moment... how we can make it consistent?
 		this._createAggregationOverlays();
 
 		var oElement = this.getElementInstance();
@@ -232,7 +230,7 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/**
-	 * Returns wether the ElementOverlay is visible
+	 * Returns whether the ElementOverlay is visible
 	 * @return {boolean} if the ElementOverlay is visible
 	 * @public
 	 */
@@ -245,7 +243,7 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/**
-	 * Sets wether the ElementOverlay is visible
+	 * Sets whether the ElementOverlay is visible
 	 * @param {boolean} bVisible if the ElementOverlay is visible
 	 * @returns {sap.ui.dt.ElementOverlay} returns this	 
 	 * @public
@@ -258,7 +256,7 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};	
 
 	/**
-	 * Sets wether the ElementOverlay is selectable
+	 * Sets whether the ElementOverlay is selectable
 	 * @param {boolean} bSelectable if the ElementOverlay is selectable
 	 * @returns {sap.ui.dt.ElementOverlay} returns this	 
 	 * @public
@@ -279,7 +277,7 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 	
 	/**
-	 * Sets wether the ElementOverlay is selected and toggles corresponding css class
+	 * Sets whether the ElementOverlay is selected and toggles corresponding css class
 	 * @param {boolean} bSelected if the ElementOverlay is selected
 	 * @param {boolean} bSuppressEvent (internal use only) supress firing "selectionChange" event
 	 * @returns {sap.ui.dt.ElementOverlay} returns this	 	 
@@ -301,17 +299,17 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/** 
-	 * Sets whether the ElementOverlay is draggable and toggles corresponding css class
-	 * @param {boolean} bDraggable if the ElementOverlay is draggable
+	 * Sets whether the ElementOverlay is movable and toggles corresponding css class
+	 * @param {boolean} bMovable if the ElementOverlay is movable
 	 * @returns {sap.ui.dt.ElementOverlay} returns this	 	 
 	 * @public
 	 */
-	ElementOverlay.prototype.setDraggable = function(bDraggable) {
-		if (this.getDraggable() !== bDraggable) {
-			this.toggleStyleClass("sapUiDtOverlayDraggable", bDraggable);
+	ElementOverlay.prototype.setMovable = function(bMovable) {
+		if (this.getMovable() !== bMovable) {
+			this.toggleStyleClass("sapUiDtOverlayMovable", bMovable);
 			
-			this.setProperty("draggable", bDraggable);
-			this.fireDraggableChange({draggable : bDraggable});
+			this.setProperty("movable", bMovable);
+			this.fireMovableChange({movable : bMovable});
 		}
 
 		return this;
@@ -366,23 +364,46 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	/** 
 	 * @private
 	 */
+	ElementOverlay.prototype._createAggregationOverlay = function(sAggregationName, bInHiddenTree) {
+		var oDesignTimeMetadata = this.getDesignTimeMetadata();
+
+		var oAggregationOverlay = new AggregationOverlay({
+			aggregationName : sAggregationName,
+			element : this.getElementInstance(),
+			visible : oDesignTimeMetadata.isAggregationVisible(sAggregationName),
+			inHiddenTree : bInHiddenTree
+		});
+
+		this._syncAggregationOverlay(oAggregationOverlay);
+
+		this.addAggregation("aggregationOverlays", oAggregationOverlay);
+	};
+
+	/** 
+	 * @private
+	 */
 	ElementOverlay.prototype._createAggregationOverlays = function() {
 		var oElement = this.getElementInstance();
 		var oDesignTimeMetadata = this.getDesignTimeMetadata();
 
 		if (oElement) {
 			var that = this;
+			var mAggregationsWithOverlay = {};
+
 			ElementUtil.iterateOverAllPublicAggregations(oElement, function(oAggregation, aAggregationElements) {
 				var sAggregationName = oAggregation.name;
-				var oAggregationOverlay = new AggregationOverlay({
-					aggregationName : sAggregationName,
-					element : oElement,
-					visible : oDesignTimeMetadata.isAggregationVisible(sAggregationName)
-				});
+				mAggregationsWithOverlay[sAggregationName] = true;
+				that._createAggregationOverlay(sAggregationName, that.isInHiddenTree());
+			});
 
-				that._syncAggregationOverlay(oAggregationOverlay);
-
-				that.addAggregation("aggregationOverlays", oAggregationOverlay);
+			// create aggregation overlays also for a hidden aggregations which are not ignored in the DT Metadata
+			var mAggregationsMetadata = oDesignTimeMetadata.getAggregations();
+			var aAggregationNames = Object.keys(mAggregationsMetadata);
+			aAggregationNames.forEach(function (sAggregationName) {
+				var oAggregationMetadata = mAggregationsMetadata[sAggregationName];
+				if (oAggregationMetadata.ignore === false && !mAggregationsWithOverlay[sAggregationName]) {
+					that._createAggregationOverlay(sAggregationName, true);
+				}
 			});
 		}
 	};
@@ -536,12 +557,12 @@ function(jQuery, Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMeta
 	};
 
 	/** 
-	 * Returns if the ElementOverlay is draggable
+	 * Returns if the ElementOverlay is movable
 	 * @public
-	 * @return {boolean} if the ElementOverlay is draggable
+	 * @return {boolean} if the ElementOverlay is movable
 	 */
-	ElementOverlay.prototype.isDraggable = function() {
-		return this.getDraggable();
+	ElementOverlay.prototype.isMovable = function() {
+		return this.getMovable();
 	};
 
 	/** 

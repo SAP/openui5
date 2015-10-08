@@ -1740,6 +1740,306 @@
 			"0": "ฮ.ศ."
 		}
 	},
+	"ca-japanese": {
+		"dateFormat-full": "EEEEที่ d MMMM ปีGที่ y",
+		"dateFormat-long": "d MMMM ปีG y",
+		"dateFormat-medium": "d MMM G y",
+		"dateFormat-short": "d/M/yy G",
+		"timeFormat-full": "H นาฬิกา mm นาที ss วินาที zzzz",
+		"timeFormat-long": "H นาฬิกา mm นาที ss วินาที z",
+		"timeFormat-medium": "HH:mm:ss",
+		"timeFormat-short": "HH:mm",
+		"dateTimeFormat-full": "{1} {0}",
+		"dateTimeFormat-long": "{1} {0}",
+		"dateTimeFormat-medium": "{1} {0}",
+		"dateTimeFormat-short": "{1} {0}",
+		"intervalFormatFallback": "{0} - {1}",
+		"intervalFormat-d-d": "d–d",
+		"intervalFormat-h-a": "h a – h a",
+		"intervalFormat-h-h": "h–h a",
+		"intervalFormat-H-H": "H–H",
+		"intervalFormat-hm-a": "h:mm a – h:mm a",
+		"intervalFormat-hm-h": "h:mm–h:mm a",
+		"intervalFormat-hm-m": "h:mm–h:mm a",
+		"intervalFormat-Hm-H": "HH:mm–HH:mm",
+		"intervalFormat-Hm-m": "HH:mm–HH:mm",
+		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
+		"intervalFormat-hmv-h": "h:mm–h:mm a v",
+		"intervalFormat-hmv-m": "h:mm–h:mm a v",
+		"intervalFormat-Hmv-H": "H:mm–H:mm v",
+		"intervalFormat-Hmv-m": "H:mm–H:mm v",
+		"intervalFormat-hv-a": "h a – h a v",
+		"intervalFormat-hv-h": "h–h a v",
+		"intervalFormat-Hv-H": "H–H v",
+		"intervalFormat-M-M": "M–M",
+		"intervalFormat-Md-d": "d/M – d/M",
+		"intervalFormat-Md-M": "d/M – d/M",
+		"intervalFormat-MEd-d": "E d – E d/M",
+		"intervalFormat-MEd-M": "E d/M – E d/M",
+		"intervalFormat-MMM-M": "LLL–LLL",
+		"intervalFormat-MMMd-d": "d – d MMM",
+		"intervalFormat-MMMd-M": "d MMM – d MMM",
+		"intervalFormat-MMMEd-d": "E d – E d MMM",
+		"intervalFormat-MMMEd-M": "E d MMM – E d MMM",
+		"intervalFormat-MMMEEEEd-d": "EEEEที่ d – EEEEที่ d MMM",
+		"intervalFormat-MMMEEEEd-M": "EEEEที่ d MMM – EEEEที่ d MMM",
+		"intervalFormat-y-y": "G y–y",
+		"intervalFormat-yM-M": "M/y – M/y G",
+		"intervalFormat-yM-y": "M/y – M/y G",
+		"intervalFormat-yMd-d": "d–d/M/y G",
+		"intervalFormat-yMd-M": "d/M/y – d/M/y G",
+		"intervalFormat-yMd-y": "d/M/y – d/M/y G",
+		"intervalFormat-yMEd-d": "E d – E d/M/y G",
+		"intervalFormat-yMEd-M": "E d/M/y – E d/M/y G",
+		"intervalFormat-yMEd-y": "E d/M/y – E d/M/y G",
+		"intervalFormat-yMMM-M": "MMM–MMM G y",
+		"intervalFormat-yMMM-y": "MMM G y – MMM y",
+		"intervalFormat-yMMMd-d": "d–d MMM G y",
+		"intervalFormat-yMMMd-M": "d MMM – d MMM G y",
+		"intervalFormat-yMMMd-y": "d MMM G y – d MMM y",
+		"intervalFormat-yMMMEd-d": "E d – E d MMM G y",
+		"intervalFormat-yMMMEd-M": "E d MMM – E d MMM G y",
+		"intervalFormat-yMMMEd-y": "E d MMM G y – E d MMM y",
+		"intervalFormat-yMMMEEEEd-d": "EEEEที่ d – EEEEที่ d MMM G y",
+		"intervalFormat-yMMMEEEEd-M": "EEEEที่ d MMM – EEEEที่ d MMM G y",
+		"intervalFormat-yMMMEEEEd-y": "EEEEที่ d MMM G y – EEEEที่ d MMM y",
+		"intervalFormat-yMMMM-M": "MMMM – MMMM G y",
+		"intervalFormat-yMMMM-y": "MMMM G y – MMMM y",
+		"months-format-abbreviated": [
+			"ม.ค.",
+			"ก.พ.",
+			"มี.ค.",
+			"เม.ย.",
+			"พ.ค.",
+			"มิ.ย.",
+			"ก.ค.",
+			"ส.ค.",
+			"ก.ย.",
+			"ต.ค.",
+			"พ.ย.",
+			"ธ.ค."
+		],
+		"months-format-narrow": [
+			"ม.ค.",
+			"ก.พ.",
+			"มี.ค.",
+			"เม.ย.",
+			"พ.ค.",
+			"มิ.ย.",
+			"ก.ค.",
+			"ส.ค.",
+			"ก.ย.",
+			"ต.ค.",
+			"พ.ย.",
+			"ธ.ค."
+		],
+		"months-format-wide": [
+			"มกราคม",
+			"กุมภาพันธ์",
+			"มีนาคม",
+			"เมษายน",
+			"พฤษภาคม",
+			"มิถุนายน",
+			"กรกฎาคม",
+			"สิงหาคม",
+			"กันยายน",
+			"ตุลาคม",
+			"พฤศจิกายน",
+			"ธันวาคม"
+		],
+		"months-standAlone-abbreviated": [
+			"ม.ค.",
+			"ก.พ.",
+			"มี.ค.",
+			"เม.ย.",
+			"พ.ค.",
+			"มิ.ย.",
+			"ก.ค.",
+			"ส.ค.",
+			"ก.ย.",
+			"ต.ค.",
+			"พ.ย.",
+			"ธ.ค."
+		],
+		"months-standAlone-narrow": [
+			"ม.ค.",
+			"ก.พ.",
+			"มี.ค.",
+			"เม.ย.",
+			"พ.ค.",
+			"มิ.ย.",
+			"ก.ค.",
+			"ส.ค.",
+			"ก.ย.",
+			"ต.ค.",
+			"พ.ย.",
+			"ธ.ค."
+		],
+		"months-standAlone-wide": [
+			"มกราคม",
+			"กุมภาพันธ์",
+			"มีนาคม",
+			"เมษายน",
+			"พฤษภาคม",
+			"มิถุนายน",
+			"กรกฎาคม",
+			"สิงหาคม",
+			"กันยายน",
+			"ตุลาคม",
+			"พฤศจิกายน",
+			"ธันวาคม"
+		],
+		"days-format-abbreviated": [
+			"อา.",
+			"จ.",
+			"อ.",
+			"พ.",
+			"พฤ.",
+			"ศ.",
+			"ส."
+		],
+		"days-format-narrow": [
+			"อา",
+			"จ",
+			"อ",
+			"พ",
+			"พฤ",
+			"ศ",
+			"ส"
+		],
+		"days-format-short": [
+			"อา.",
+			"จ.",
+			"อ.",
+			"พ.",
+			"พฤ.",
+			"ศ.",
+			"ส."
+		],
+		"days-format-wide": [
+			"วันอาทิตย์",
+			"วันจันทร์",
+			"วันอังคาร",
+			"วันพุธ",
+			"วันพฤหัสบดี",
+			"วันศุกร์",
+			"วันเสาร์"
+		],
+		"days-standAlone-abbreviated": [
+			"อา.",
+			"จ.",
+			"อ.",
+			"พ.",
+			"พฤ.",
+			"ศ.",
+			"ส."
+		],
+		"days-standAlone-narrow": [
+			"อา",
+			"จ",
+			"อ",
+			"พ",
+			"พฤ",
+			"ศ",
+			"ส"
+		],
+		"days-standAlone-short": [
+			"อา.",
+			"จ.",
+			"อ.",
+			"พ.",
+			"พฤ.",
+			"ศ.",
+			"ส."
+		],
+		"days-standAlone-wide": [
+			"วันอาทิตย์",
+			"วันจันทร์",
+			"วันอังคาร",
+			"วันพุธ",
+			"วันพฤหัสบดี",
+			"วันศุกร์",
+			"วันเสาร์"
+		],
+		"quarters-format-abbreviated": [
+			"ไตรมาส 1",
+			"ไตรมาส 2",
+			"ไตรมาส 3",
+			"ไตรมาส 4"
+		],
+		"quarters-format-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-format-wide": [
+			"ไตรมาส 1",
+			"ไตรมาส 2",
+			"ไตรมาส 3",
+			"ไตรมาส 4"
+		],
+		"quarters-standAlone-abbreviated": [
+			"ไตรมาส 1",
+			"ไตรมาส 2",
+			"ไตรมาส 3",
+			"ไตรมาส 4"
+		],
+		"quarters-standAlone-narrow": [
+			"1",
+			"2",
+			"3",
+			"4"
+		],
+		"quarters-standAlone-wide": [
+			"ไตรมาส 1",
+			"ไตรมาส 2",
+			"ไตรมาส 3",
+			"ไตรมาส 4"
+		],
+		"dayPeriods-format-abbreviated": [
+			"ก่อนเที่ยง",
+			"หลังเที่ยง"
+		],
+		"dayPeriods-format-narrow": [
+			"a",
+			"p"
+		],
+		"dayPeriods-format-wide": [
+			"ก่อนเที่ยง",
+			"หลังเที่ยง"
+		],
+		"dayPeriods-standAlone-abbreviated": [
+			"ก่อนเที่ยง",
+			"หลังเที่ยง"
+		],
+		"dayPeriods-standAlone-narrow": [
+			"ก่อนเที่ยง",
+			"หลังเที่ยง"
+		],
+		"dayPeriods-standAlone-wide": [
+			"ก่อนเที่ยง",
+			"หลังเที่ยง"
+		],
+		"era-wide": {
+			"232": "เมจิ",
+			"233": "ทะอิโช",
+			"234": "โชวะ",
+			"235": "เฮเซ"
+		},
+		"era-abbreviated": {
+			"232": "เมจิ",
+			"233": "ทะอิโช",
+			"234": "โชวะ",
+			"235": "เฮเซ"
+		},
+		"era-narrow": {
+			"232": "M",
+			"233": "T",
+			"234": "S",
+			"235": "H"
+		}
+	},
 	"dateField-year-displayName": "ปี",
 	"dateField-year-relative--1": "ปีที่แล้ว",
 	"dateField-year-relative-0": "ปีนี้",
@@ -1921,5 +2221,32 @@
 	"weekData-firstDay": 0,
 	"weekData-weekendStart": 6,
 	"weekData-weekendEnd": 0,
+	"eras-gregorian": {
+		"0": {
+			"_end": "0-12-31"
+		},
+		"1": {
+			"_start": "1-01-01"
+		}
+	},
+	"eras-islamic": {
+		"0": {
+			"_start": "622-7-15"
+		}
+	},
+	"eras-japanese": {
+		"232": {
+			"_start": "1868-9-8"
+		},
+		"233": {
+			"_start": "1912-7-30"
+		},
+		"234": {
+			"_start": "1926-12-25"
+		},
+		"235": {
+			"_start": "1989-1-8"
+		}
+	},
 	"calendarPreference": "buddhist gregorian"
 }

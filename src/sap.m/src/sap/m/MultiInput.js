@@ -239,6 +239,11 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		});
 	
 		sap.ui.Device.orientation.attachHandler(this._onOrientationChange, this);
+		
+		this._sResizeHandlerId = sap.ui.core.ResizeHandler.register(this, function() {
+			// we could have more or less space to our disposal, thus calculate size of input again
+			that._setContainerSizes();
+		});
 	
 		if (!(this._bUseDialog && this._oSuggestionPopup)) {
 			// attach SuggestionItemSelected event to set value after item selected, not after popup is closed.
@@ -351,13 +356,13 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		    iToken = aTokens.length;
 		
 		this._tokenizer.setVisible(true);
-		
-		// no value is allowed to show in the input when multiline is closed
-		if (this.getValue() !== "") {
-			this.setValue() === "";
-		}
-		
+
 		if (iToken > 1) {
+			
+			// no value is allowed to show in the input when multiline is closed. Rollback to 1.30 temporarily for sFIN demo
+			if (this.getValue() !== "") {
+				this.setValue() === "";
+			}
 			var i = 0;
 			for ( i = 0; i < iToken - 1; i++ ) {
 				aTokens[i].setVisible(false);
@@ -418,9 +423,11 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			this._showIndicator();
 			this._isMultiLineMode = true;
 			
-			setTimeout(function() {
-				that._setContainerSizes();
-			}, 0);
+			if (this.getDomRef()) {
+				setTimeout(function() {
+					that._setContainerSizes();
+				}, 0);
+			}
 			
 		} else {
 			this._isMultiLineMode = false;
@@ -428,10 +435,12 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			this._showAllTokens(this._tokenizer);
 			this.setValue("");
 			
-			setTimeout(function() {
-				that._setContainerSizes();
-				that._scrollAndFocus();
-			}, 0);			
+			if (this.getDomRef()) {
+				setTimeout(function() {
+					that._setContainerSizes();
+					that._scrollAndFocus();
+				}, 0);
+			}
 		}
 		
 		return this;
@@ -522,13 +531,12 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 * @private
 	 */
 	MultiInput.prototype.exit = function() {
-	
-		Input.prototype.exit.apply(this, arguments);
-	
 		if (this._sResizeHandlerId) {
 			sap.ui.core.ResizeHandler.deregister(this._sResizeHandlerId);
 			delete this._sResizeHandlerId;
 		}
+	
+		Input.prototype.exit.apply(this, arguments);
 	};
 	
 	/**
@@ -655,20 +663,12 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 * @private
 	 */
 	MultiInput.prototype.onAfterRendering = function() {
-		var that = this;
 	
 		Input.prototype.onAfterRendering.apply(this, arguments);
 	
 		if (!(this._bUseDialog && this._isMultiLineMode)) {
 			this._setContainerSizes();
 		}
-		
-	
-		this._sResizeHandlerId = sap.ui.core.ResizeHandler.register(this.getDomRef(), function() {
-			// we could have more or less space to our disposal, thus calculate size of input again
-			that._setContainerSizes();
-		});
-	
 	};
 	
 	/**
