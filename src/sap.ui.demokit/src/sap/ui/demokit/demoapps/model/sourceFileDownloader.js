@@ -8,17 +8,16 @@ sap.ui.define([], function () {
 
 	var codeCache = {};
 	return function (sUrl) {
-		return new Promise(function (fnResolve, fnReject) {
+		return new Promise(function (fnResolve) {
 			var fnSuccess = function (result) {
 				codeCache[sUrl] = result;
 				fnResolve(result);
 			};
 			var fnError = function () {
-				fnReject("not found: '" + sUrl + "'");
+				fnResolve({ errorMessage: "not found: '" + sUrl + "'" });
 			};
 
 			if (!(sUrl in codeCache)) {
-				codeCache[sUrl] = "";
 				jQuery.ajax(sUrl, {
 					dataType: "text",
 					success: fnSuccess,
