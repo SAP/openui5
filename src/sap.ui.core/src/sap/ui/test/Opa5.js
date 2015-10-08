@@ -76,6 +76,7 @@ sap.ui.define([
 		 * @param {object} options An Object that contains the configuration for starting up a component
 		 * @param {object} options.componentConfig will be passed to {@link sap.ui.component component}, please read the respective documentation
 		 * @param {string} [options.hash] sets the hash {@link sap.ui.core.routing.HashChanger.setHash} to the given value.
+		 * @param {number} [options.timeout=15] The timeout for loading the Component in seconds - {@link sap.ui.test.Opa5#waitFor}
 		 * If this parameter is omitted, the hash will always be reset to the empty hash - ""
 		 * @returns {jQuery.promise} a promise that gets resolved on success.
 		 * @public
@@ -103,7 +104,7 @@ sap.ui.define([
 				}
 			});
 
-			return this.waitFor({
+			var oPropertiesForWaitFor = {
 				// make sure no controls are searched by the defaults
 				viewName: null,
 				controlType: null,
@@ -113,7 +114,14 @@ sap.ui.define([
 					return bComponentLoaded;
 				},
 				errorMessage: "Unable to load the component with the name: " + options.name
-			});
+			};
+
+			// add timeout to object for waitFor when timeout is specified
+			if (options.timeout) {
+				oPropertiesForWaitFor.timeout = options.timeout;
+			}
+
+			return this.waitFor(oPropertiesForWaitFor);
 		};
 
 
@@ -223,6 +231,7 @@ sap.ui.define([
 		 * @param {boolean} [oOptions.searchOpenDialogs=false] If set to true, Opa5 will only look in open dialogs. All the other values except control type will be ignored
 		 * @param {boolean} [oOptions.visible=true] If set to false, Opa5 will also look for unrendered and invisible controls.
 		 * @param {integer} [oOptions.timeout=15] (seconds) Specifies how long the waitFor function polls before it fails.
+		 * Timeout will increased to 5 minutes if running in debug mode e.g. with URL parameter sap-ui-debug=true.
 		 * @param {integer} [oOptions.pollingInterval=400] (milliseconds) Specifies how often the waitFor function polls.
 		 * @param {function} [oOptions.check] Will get invoked in every polling interval. If it returns true, the check is successful and the polling will stop.
 		 * The first parameter passed into the function is the same value that gets passed to the success function.

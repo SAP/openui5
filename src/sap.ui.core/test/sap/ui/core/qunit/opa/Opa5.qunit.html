@@ -59,6 +59,23 @@
 
 			});
 
+			QUnit.test("Should increase timeout to 40 seconds", function(assert) {
+				// System under Test
+				var oOpa5 = new Opa5();
+				var stub = this.stub(oOpa5, "waitFor", function(){});
+
+
+				oOpa5.iStartMyAppInAComponent({
+					componentConfig: {
+						name: "samples.components.button"
+					},
+					hash: "",
+					timeout: 40
+				});
+
+				assert.equal(stub.lastCall.args[0].timeout, 40, "Timeout was increased to 40 seconds")
+			});
+
 			function componentHashTestCase (oOptions){
 				// System under Test
 				var oOpa5 = new Opa5();
