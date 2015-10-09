@@ -89,6 +89,7 @@ sap.ui.define([
 			aPromises.push(this.getModel().getMetaModel().requestUI5Type(sResolvedPath)
 				.then(function (oType) {
 					that.setType(oType, that.sInternalType);
+					bFire = true;
 				})["catch"](function (oError) {
 					that.bRequestTypeFailed = true;
 					jQuery.sap.log.warning(oError.message, sResolvedPath, sClassName);
