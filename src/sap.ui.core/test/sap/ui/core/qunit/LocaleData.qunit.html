@@ -140,6 +140,15 @@
 			raises(function(){oLocaleData.getCustomDateTimePattern("My", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"My\", \"" + aCalendarTypes[i] + "\")")
 			raises(function(){oLocaleData.getCustomDateTimePattern("yMLd", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"yMLd\", \"" + aCalendarTypes[i] + "\")")
 			raises(function(){oLocaleData.getCustomDateTimePattern("yMdp", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"yMdp\", \"" + aCalendarTypes[i] + "\")")
+			equal(typeof oLocaleData.getDisplayName("era"), "string", "getDisplayName(\"era\")");
+			equal(typeof oLocaleData.getDisplayName("year"), "string", "getDisplayName(\"year\")");
+			equal(typeof oLocaleData.getDisplayName("month"), "string", "getDisplayName(\"month\")");
+			equal(typeof oLocaleData.getDisplayName("day"), "string", "getDisplayName(\"day\")");
+			equal(typeof oLocaleData.getDisplayName("weekday"), "string", "getDisplayName(\"weekday\")");
+			equal(typeof oLocaleData.getDisplayName("hour"), "string", "getDisplayName(\"hour\")");
+			equal(typeof oLocaleData.getDisplayName("minute"), "string", "getDisplayName(\"minute\")");
+			equal(typeof oLocaleData.getDisplayName("second"), "string", "getDisplayName(\"second\")");
+			equal(typeof oLocaleData.getDisplayName("zone"), "string", "getDisplayName(\"zone\")");
 			for (j = -2 ; j <= 2 ; j++) {
 				equal(typeof oLocaleData.getRelativeSecond(j), "string", "getRelativeSecond(" + j + ")");
 				if (j === 0) {

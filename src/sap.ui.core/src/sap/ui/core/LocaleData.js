@@ -423,7 +423,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				sAppendField;
 			aMissingTokens.forEach(function(oToken) {
 				sAppendPattern = oAppendItems[oToken.groupName];
-				sDisplayName = "'" + this._get("dateFields", oToken.group.fieldName, "displayName") + "'";
+				sDisplayName = "'" + this.getDisplayName(oToken.group.fieldName) + "'";
 				sAppendField = "";
 				for (var i = 0; i < oToken.length; i++) {
 					sAppendField += oToken.symbol;
@@ -816,6 +816,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		getRelativeMonth : function(iDiff) {
 			return this.getRelativePattern("month", iDiff);
 		},
+		
+		/**
+		 * Returns the display name for a time unit (second, minute, hour, day, week, month, year)
+		 *
+		 * @param {string} sType Type (second, minute, hour, day, week, month, year)
+		 * returns {string} display name
+		 * @public
+		 * @since 1.34.0
+		 */
+		getDisplayName: function(sType) {
+
+			jQuery.sap.assert(sType == "second" || sType == "minute" || sType == "hour" || sType == "day" || sType == "week" || sType == "month" || sType == "year", "sType must be second, minute, hour, day, week, month, year");
+			return this._get("dateFields", sType, "displayName");
+
+		},
 
 		/**
 		 * Returns the relative year resource pattern (like "This year", "Last year", "{0} year ago") based on the given
@@ -948,21 +963,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			}
 
 			return sap.ui.core.CalendarType.Gregorian;
-		},
-
-		/**
-		 * Returns the display name for a time unit (second, minute, hour, day, week, month, year)
-		 *
-		 * @param {string} sType Type (second, minute, hour, day, week, month, year)
-		 * returns {string} display name
-		 * @public
-		 * @since 1.34.0
-		 */
-		getDisplayName: function(sType) {
-
-			jQuery.sap.assert(sType == "second" || sType == "minute" || sType == "hour" || sType == "day" || sType == "week" || sType == "month" || sType == "year", "sType must be second, minute, hour, day, week, month, year");
-			return this._get("dateField-" + sType + "-displayName");
-
 		}
 
 	});
@@ -1166,6 +1166,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				"1":{"_start":"1-01-01"}
 			},
 			"dateFields": {
+				"era": {
+					"displayName": "era"
+				},
 				"year": {
 					"displayName": "year",
 					"relative-type--1": "last year",
@@ -1222,6 +1225,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						"relativeTimePattern-count-other": "{0} days ago"
 					}
 				},
+				"weekday": {
+					"displayName": "day of the week"
+				},
 				"hour": {
 					"displayName": "hour",
 					"relativeTime-type-future": {
@@ -1255,6 +1261,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						"relativeTimePattern-count-one": "{0} second ago",
 						"relativeTimePattern-count-other": "{0} seconds ago"
 					}
+				},
+				"zone": {
+					"displayName": "time zone"
 				}
 			},
 			"decimalFormat": { "standard": "#,##0.###" },
