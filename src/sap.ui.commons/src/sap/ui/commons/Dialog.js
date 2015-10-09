@@ -842,7 +842,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this.setProperty("height", sHeight, true);
 			}
 
-			if (this.sDragMode === null) {
+			if (!this.sDragMode) {
 				return;
 			}
 
