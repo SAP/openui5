@@ -157,10 +157,12 @@ sap.ui.define([
 						requestUri: oModel.sDocumentUrl
 					}, function (oDocument) {
 						fnResolve(oDocument);
-					}, function (oError) {
-						var sMessage = Helper.handleODataError(oError, "Could not read metadata",
-								"sap.ui.model.odata.v4.ODataDocumentModel");
-						fnReject(new Error(sMessage));
+					}, function (oOlingoError) {
+						var oError = Helper.createError(oOlingoError);
+
+						jQuery.sap.log.error(oError.message, "GET " + oModel.sDocumentUrl,
+							"sap.ui.model.odata.v4.ODataDocumentModel");
+						fnReject(oError);
 					},  odatajs.oData.metadataHandler);
 				});
 			}

@@ -29,7 +29,8 @@ sap.ui.define([
 
 	/*global odatajs */
 
-	var rListBindingPath = /^\/.+\[(\d+)\];list=(\d+)(?:\/(.+))?$/;
+	var sClassName = "sap.ui.model.odata.v4.ODataModel",
+		rListBindingPath = /^\/.+\[(\d+)\];list=(\d+)(?:\/(.+))?$/;
 
 	/**
 	 * Throws an error for a not yet implemented method with the given name called by the SAPUI5
@@ -72,7 +73,7 @@ sap.ui.define([
 	 * @since 1.31.0
 	 * @version ${version}
 	 */
-	var ODataModel = Model.extend("sap.ui.model.odata.v4.ODataModel",
+	var ODataModel = Model.extend(sClassName,
 			/** @lends sap.ui.model.odata.v4.ODataModel.prototype */
 			{
 				constructor : function (sServiceUrl, mParameters) {
@@ -268,12 +269,10 @@ sap.ui.define([
 					= Helper.headerValue("X-CSRF-Token", oResponse.headers)
 					|| that.mHeaders["X-CSRF-Token"];
 				fnResolve(oData);
-			}, function (oError) {
-				var oParsedError = JSON.parse(oError.response.body).error;
-				jQuery.sap.log.error(oParsedError.message, "read(" + sRequestUri + ")",
-					"sap.ui.model.odata.v4.ODataModel");
-				oError = new Error(oParsedError.message);
-				oError.error = oParsedError;
+			}, function (oOlingoError) {
+				var oError = Helper.createError(oOlingoError);
+
+				jQuery.sap.log.error(oError.message, "GET " + sRequestUri, sClassName);
 				fnReject(oError);
 			});
 		});
@@ -329,8 +328,10 @@ sap.ui.define([
 	 *   into the model before
 	 * @returns {Promise}
 	 *   a promise which is resolved in case of success, or rejected with an instance of
-	 *   <code>Error</code> in case of failure
-	 *
+	 *   <code>Error</code> in case of failure. The error instance is flagged with
+	 *   <code>isConcurrentModification</code> in case a concurrent modification (e.g. by another
+	 *   user) of the entity between loading and removal has been detected; this should be shown
+	 *   to the user who needs to decide whether to try removal again.
 	 * @public
 	 */
 	ODataModel.prototype.remove = function (oContext) {

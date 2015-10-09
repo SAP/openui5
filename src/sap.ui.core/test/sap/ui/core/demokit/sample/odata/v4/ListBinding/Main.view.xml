@@ -35,27 +35,39 @@
 		<headerToolbar>
 			<Toolbar>
 				<content>
-					<Button text="Create" press="onCreateEmployee"/>
+					<Button icon="sap-icon://add" text="Create" press="onCreateEmployee"/>
 				</content>
 				<dependents>
 					<Dialog id="createEmployeeDialog" title="Create New Employee">
 						<buttons>
-							<Button text="Cancel" press="onCancelEmployee"/>
-							<Button text="Save" press="onSaveEmployee"/>
+							<Button icon="sap-icon://sys-cancel-2" text="Cancel"
+								press="onCancelEmployee" type="Reject"/>
+							<Button icon="sap-icon://save" text="Save"
+								press="onSaveEmployee" type="Accept"/>
 						</buttons>
 						<content>
 							<form:SimpleForm layout="ResponsiveGridLayout">
 								<form:content>
-									<!-- TODO types should be determined automatically from OData $metadata -->
+									<!-- TODO types should be determined automatically from OData
+										$metadata -->
 									<Label text="Name"/>
-									<!-- TODO Q: derive maxLength from type's constraints?! A: SmartField?! -->
-									<Input maxLength="16" value="{path: 'new>/Name', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 16, nullable: false}}"/>
+									<!-- TODO Q: derive maxLength from type's constraints?!
+									          A: SmartField?! -->
+									<Input maxLength="16" value="{path: 'new>/Name',
+										type: 'sap.ui.model.odata.type.String',
+										constraints: {maxLength: 16, nullable: false}}"/>
 									<Label text="Age"/>
-									<Input value="{path: 'new>/AGE', type: 'sap.ui.model.odata.type.Int16', constraints: {nullable: false}}"/>
+									<Input value="{path: 'new>/AGE',
+										type: 'sap.ui.model.odata.type.Int16',
+										constraints: {nullable: false}}"/>
 									<Label text="Entry Date"/>
-									<Input value="{path: 'new>/ENTRYDATE', type: 'sap.ui.model.odata.type.Date', constraints: {nullable: false}}"/>
+									<Input value="{path: 'new>/ENTRYDATE',
+										type: 'sap.ui.model.odata.type.Date',
+										constraints: {nullable: false}}"/>
 									<Label text="Is Manager"/>
-									<CheckBox selected="{path: 'new>/Is_Manager', type: 'sap.ui.model.odata.type.Boolean', constraints: {nullable: false}}"/>
+									<CheckBox selected="{path: 'new>/Is_Manager',
+										type: 'sap.ui.model.odata.type.Boolean',
+										constraints: {nullable: false}}"/>
 								</form:content>
 							</form:SimpleForm>
 						</content>
@@ -80,7 +92,13 @@
 				<Text text="Entry Date"/>
 			</Column>
 			<Column>
+				<Text text="ETag"/>
+			</Column>
+			<Column>
 				<Text text="Delete"/>
+			</Column>
+			<Column>
+				<Text text="Update" tooltip="Make ETag look outdated"/>
 			</Column>
 		</columns>
 		<items>
@@ -101,7 +119,16 @@
 					<Text text="{ENTRYDATE}"/>
 				</cells>
 				<cells>
-					<Button text="Delete" press="onDeleteEmployee"/>
+					<!-- Note: automatic type determination cannot work here and triggers a warning
+					  -->
+					<Text text="{path: '@odata.etag', type: 'sap.ui.model.odata.type.String'}"/>
+				</cells>
+				<cells>
+					<Button icon="sap-icon://delete" text="Delete" press="onDeleteEmployee"/>
+				</cells>
+				<cells>
+					<Button icon="sap-icon://edit" text="Update" press="onUpdateEmployee"
+						tooltip="Make ETag look outdated"/>
 				</cells>
 			</ColumnListItem>
 		</items>

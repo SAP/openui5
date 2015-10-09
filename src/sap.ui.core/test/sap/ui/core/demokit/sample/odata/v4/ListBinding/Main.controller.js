@@ -14,10 +14,12 @@ sap.ui.define([
 //	/*global odatajs */
 
 	function onRejected(oError) {
-		jQuery.sap.log.error(oError.message, oError.stack);
 		MessageBox.alert(oError.message, {
 			icon: sap.m.MessageBox.Icon.ERROR,
-			title: "Error"});
+			title: oError.isConcurrentModification
+				? "Concurrent Modification"
+				: "Unknown Error"
+		});
 	}
 
 	var MainController = Controller.extend("sap.ui.core.sample.odata.v4.ListBinding.Main", {
@@ -64,39 +66,13 @@ sap.ui.define([
 		},
 
 		onDeleteEmployee : function (oEvent) {
-			var oEmployeeContext = oEvent.getSource().getBindingContext(),
-				oModel = oEmployeeContext.getModel();
+			var oEmployeeContext = oEvent.getSource().getBindingContext();
 
-			oModel.remove(oEmployeeContext).then(function () {
+			oEmployeeContext.getModel().remove(oEmployeeContext).then(function () {
 				MessageBox.alert(oEmployeeContext.getPath(), {
 					icon: sap.m.MessageBox.Icon.SUCCESS,
 					title: "Success"});
 			}, onRejected);
-
-//			oModel.refreshSecurityToken().then(function () {
-//				oModel.read(oEmployeeContext.getPath() + "/@odata.etag").then(function (oData) {
-//					var sEtag = oData.value;
-//					oModel.read(oEmployeeContext.getPath() + "/ID").then(function (oData) {
-//						var sId = oData.value,
-//							sCsrfToken = oModel.mHeaders['X-CSRF-Token'],
-//							sPath = "EMPLOYEES(" + ODataUtils.formatValue(sId, "Edm.String") + ")";
-//
-//						odatajs.oData.request({
-//							requestUri: sServiceUrl + sPath,
-//							method: "DELETE",
-//							headers : {
-//								'If-Match' : sEtag || '*',
-//								'X-CSRF-Token' : sCsrfToken
-//							}
-//						},
-//						function () {
-//							MessageBox.alert(sPath, {
-//								icon: sap.m.MessageBox.Icon.SUCCESS,
-//								title: "Success"});
-//						}, onRejected);
-//					});
-//				});
-//			});
 		},
 
 		onEmployeeSelect : function (oEvent) {
@@ -135,6 +111,21 @@ sap.ui.define([
 			oEmployeesControl.setBindingContext(oTeamContext);
 			oEmployeesBinding.attachEventOnce("change", setEquipmentContext);
 			oView.byId("TeamDetails").setBindingContext(oTeamContext);
+		},
+
+		onUpdateEmployee : function (oEvent) {
+			var oEmployeeContext = oEvent.getSource().getBindingContext(),
+				aItems = this.getView().byId("Employees").getItems();
+
+			oEmployeeContext.getModel().read(oEmployeeContext.getPath(), true)
+				.then(function (oEntityInstance) {
+					oEntityInstance["@odata.etag"] = "W/\"19700000000000.0000000\"";
+
+					// have "ETag" column check for updates
+					aItems.forEach(function (oItem) {
+						oItem.getCells()[5].getBinding("text").checkUpdate();
+					});
+				});
 		}
 	});
 

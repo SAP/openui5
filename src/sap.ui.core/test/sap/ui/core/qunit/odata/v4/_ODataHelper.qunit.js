@@ -136,29 +136,126 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		body: JSON.stringify({error: {message: "foo"}}),
-		message: "foo"
-	}, {
-		body: JSON.stringify({error: "foo"}),
-		message: "default"
-	}, {
-		body: "HTTP request failed",
-		message: "default"
-	}].forEach(function (oFixture) {
-		var sComponent = "sap.ui.model.odata.v4._ODataHelper",
-			sUrl = "/url";
-
-		QUnit.test("handleODataError: " + oFixture.body, function (assert) {
-			this.oLogMock.expects("error").withExactArgs(oFixture.message, sUrl, sComponent);
-
-			assert.strictEqual(Helper.handleODataError({
-				request: {
-					requestUri: sUrl
+		message : "HTTP request failed - 403 Forbidden: CSRF token validation failed",
+		olingoError : {
+			"message" : "HTTP request failed",
+//			"request" : {
+//				"method" : "GET",
+//			},
+			"response" : {
+				"body" : "CSRF token validation failed",
+				"headers" : {
+					"Content-Type" : "text/plain;charset=utf-8",
+					"x-csrf-token" : "Required"
 				},
-				response: {
-					body: oFixture.body
+				"statusCode" : 403,
+				"statusText" : "Forbidden"
+			}
+		}
+	}, {
+		message : "HTTP request failed - 401 Unauthorized",
+		olingoError : {
+			"message" : "HTTP request failed",
+//			"request" : {
+//				"method" : "GET",
+//			},
+			"response" : {
+				"requestUri" : "/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS",
+				"statusCode" : 401,
+				"statusText" : "Unauthorized",
+				"headers" : {
+					"Content-Type" : "text/html;charset=utf-8"
+				},
+				"body" : "<html>...</html>"
+			}
+		}
+	}, {
+		body : {
+			"error" : {
+				"code" : "/IWBEP/CM_V4_RUNTIME/021",
+				"message" :
+					// Note: "a human-readable, language-dependent representation of the error"
+					"The state of the resource (entity) was already changed (If-Match)",
+				"@Common.ExceptionCategory" : "Client_Error",
+				"@Common.Application" : {
+					"ComponentId" : "OPU-BSE-BEP",
+					"ServiceRepository" : "DEFAULT",
+					"ServiceId" : "/IWBEP/TEA_BUSI",
+					"ServiceVersion" : "0001"
+				},
+				"@Common.TransactionId" : "5617D1F235DE73F0E10000000A60180C",
+				"@Common.Timestamp" : "20151009142600.103179",
+				"@Common.ErrorResolution" : {
+					"Analysis" : "Run transaction /IWFND/ERROR_LOG [...]",
+					"Note" : "See SAP Note 1797736 for error analysis "
+						+ "(https://service.sap.com/sap/support/notes/1797736)"
 				}
-			}, "default", sComponent), oFixture.message);
+			}
+		},
+		isConcurrentModification : true,
+		message : "The state of the resource (entity) was already changed (If-Match)"
+			+ " (HTTP request failed - 412 Precondition Failed)",
+		olingoError : {
+			"message" : "HTTP request failed",
+//			"request" : {
+//				"method" : "DELETE",
+//			},
+			"response" : {
+				"requestUri" : "/sap/opu/local_v4/IWBEP/TEA_BUSI/EMPLOYEES(ID='1')",
+				"statusCode" : 412,
+				"statusText" : "Precondition Failed",
+				"headers" : {
+					"Content-Type" : "application/json; odata.metadata=minimal;charset=utf-8"
+				}
+//				"body" : JSON.stringify(this.body)
+			}
+		}
+	}, {
+		message : "HTTP request failed - 999 Invalid JSON",
+		olingoError : {
+			"message" : "HTTP request failed",
+			"response" : {
+				"requestUri" : "/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS",
+				"statusCode" : 999,
+				"statusText" : "Invalid JSON",
+				"headers" : {
+					"Content-Type" : "application/json"
+				},
+				"body" : "<html>...</html>"
+			}
+		},
+		warning : sinon.match(/SyntaxError/)
+	}, {
+		message : "HTTP request failed - 403 Forbidden",
+		olingoError : {
+			"message" : "HTTP request failed",
+			"response" : {
+				"body" : "ignore this!",
+				"headers" : {
+					"Content-Type" : "text/plain-not-quite-right"
+				},
+				"statusCode" : 403,
+				"statusText" : "Forbidden"
+			}
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("createError: " + oFixture.message, function (assert) {
+			var oError;
+
+			oFixture.olingoError.response.body = oFixture.olingoError.response.body
+				|| JSON.stringify(oFixture.body);
+			if (oFixture.warning) {
+				this.oLogMock.expects("warning").withExactArgs(oFixture.warning,
+					oFixture.olingoError.response.body, "sap.ui.model.odata.v4._ODataHelper");
+			}
+
+			oError = Helper.createError(oFixture.olingoError);
+
+			assert.ok(oError instanceof Error);
+			assert.strictEqual(oError.cause, oFixture.olingoError);
+			assert.deepEqual(oError.error, oFixture.body && oFixture.body.error);
+			assert.strictEqual(oError.isConcurrentModification, oFixture.isConcurrentModification);
+			assert.strictEqual(oError.message, oFixture.message);
 		});
 	});
 
@@ -373,6 +470,7 @@ sap.ui.require([
 					"response" : {
 						"body" : "CSRF token validation failed",
 						"headers" : {
+							"Content-Type" : "text/plain;charset=utf-8",
 							"x-csrf-token" : o.sRequired || "Required"
 						},
 						"statusCode" : 403,

@@ -212,15 +212,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("ODataModel.read: failure", function (assert) {
-		var oModel = createModel();
+		var sMessage = "The requested entity of type 'TEAM' cannot be accessed. It does not exist."
+				+ " (HTTP request failed - 404 Not Found)",
+			oModel = createModel();
 
-		this.oLogMock.expects("error")
-			.withExactArgs(
-				"The requested entity of type 'TEAM' cannot be accessed. It does not exist.",
-				"read(" + getServiceUrl("/TEAMS('UNKNOWN')") + ")",
-				"sap.ui.model.odata.v4.ODataModel");
+		this.oLogMock.expects("error").withExactArgs(sMessage,
+			"GET " + getServiceUrl("/TEAMS('UNKNOWN')"),
+			"sap.ui.model.odata.v4.ODataModel");
 		this.oSandbox.spy(odatajs.oData, "read");
-		//TODO how can we implement v4 failure handling based on the v2 mock server's response?
+		//TODO really implement v4 OData failure handling based on Sinon fake server's response?
 
 		return oModel.read("/TEAMS('UNKNOWN')").then(function (oData) {
 			assert.ok(false, "Unexpected success");
@@ -229,8 +229,7 @@ sap.ui.require([
 			assert.strictEqual(odatajs.oData.read.args[0][0].headers["Accept-Language"], "ab-CD");
 			assert.strictEqual(odatajs.oData.read.args[0][0].headers["X-CSRF-Token"], "Fetch");
 			assert.strictEqual(oError.error.code, "/IWBEP/CM_V4_APPS/002");
-			assert.strictEqual(oError.message,
-			"The requested entity of type 'TEAM' cannot be accessed. It does not exist.");
+			assert.strictEqual(oError.message, sMessage);
 		});
 	});
 
@@ -356,7 +355,7 @@ sap.ui.require([
 	[false, true].forEach(function (bSuccess) {
 		QUnit.test("refreshSecurityToken: success = " + bSuccess, function (assert) {
 			var fnAbort = function () {},
-				sErrorMessage = "HTTP request failed - 400 Bad Request: ",
+				sErrorMessage = "HTTP request failed - 400 Bad Request",
 				oModel = createModel(),
 				oPromise;
 
@@ -380,7 +379,10 @@ sap.ui.require([
 					setTimeout(fnFailure.bind(null, {
 						"message" : "HTTP request failed",
 						"response" : {
-							"body" : "",
+							"headers" : {
+								"Content-Type" : "text/html;charset=utf-8"
+							},
+							"body" : "<html>...</html>",
 							"requestUri" : "/sap/opu/local_v4/IWBEP/TEA_BUSI/",
 							"statusCode" : 400,
 							"statusText" : "Bad Request"
@@ -479,6 +481,10 @@ sap.ui.require([
 			assert.ok(false);
 		});
 	});
+	//TODO trigger update in case of isConcurrentModification?!
+	//TODO do it anyway? what and when to return, result of remove vs. re-read?
+	//TODO map 404 to 200?
+	//TODO make sure Context objects are deleted from this.mContexts
 });
 // TODO constructor: sDefaultBindingMode, mSupportedBindingModes
 // TODO constructor: test that the service root URL is absolute?
@@ -488,7 +494,7 @@ sap.ui.require([
 // oResponse.headers look like this:
 //Content-Type:application/json; odata.metadata=minimal;charset=utf-8
 //etag:W/"20150915102433.7994750"
-//location:https://ldai1ui3.wdf.sap.corp:44332/sap/opu/local_v4/IWBEP/TEA_BUSI/EMPLOYEES('7')
+//location:.../sap/opu/local_v4/IWBEP/TEA_BUSI/EMPLOYEES('7')
 //TODO can we make use of "location" header? relation to canonical URL?
 // oData looks like this:
 //{
