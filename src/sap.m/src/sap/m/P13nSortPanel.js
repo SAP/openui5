@@ -271,18 +271,25 @@ sap.ui.define([
 	P13nSortPanel.prototype.addItem = function(oItem) {
 		P13nPanel.prototype.addItem.apply(this, arguments);
 
-		this._bUpdateRequired = true;
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 	};
 
 	P13nSortPanel.prototype.removeItem = function(oItem) {
 		P13nPanel.prototype.removeItem.apply(this, arguments);
 
-		this._bUpdateRequired = true;
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 	};
 
 	P13nSortPanel.prototype.destroyItems = function() {
 		this.destroyAggregation("items");
-		this._bUpdateRequired = true;
+		
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 
 		return this;
 	};
@@ -297,7 +304,11 @@ sap.ui.define([
 
 	P13nSortPanel.prototype.insertSortItem = function(oSortItem) {
 		this.insertAggregation("sortItems", oSortItem);
-		this._bUpdateRequired = true;
+
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
+		
 		return this;
 	};
 
@@ -312,7 +323,9 @@ sap.ui.define([
 	P13nSortPanel.prototype.removeSortItem = function(oSortItem) {
 		oSortItem = this.removeAggregation("sortItems", oSortItem);
 
-		this._bUpdateRequired = true;
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 
 		return oSortItem;
 	};
@@ -320,7 +333,9 @@ sap.ui.define([
 	P13nSortPanel.prototype.removeAllSortItems = function() {
 		var aSortItems = this.removeAllAggregation("sortItems");
 
-		this._bUpdateRequired = true;
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 
 		return aSortItems;
 	};

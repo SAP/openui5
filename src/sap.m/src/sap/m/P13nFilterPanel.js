@@ -292,8 +292,9 @@ sap.ui.define([
 	/**
 	 * Setter for a KeyFields array.
 	 * 
-	 * @public
+	 * @private
 	 * @since 1.26
+	 * @deprecated Since 1.34. This method does not work anymore - you should use the Items aggregation
 	 * @param {array} array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text : "Name"}]
 	 */
 	P13nFilterPanel.prototype.setKeyFields = function(aKeyFields) {
@@ -474,6 +475,7 @@ sap.ui.define([
 			this._bUpdateRequired = false;
 
 			var aKeyFields = [];
+			if (this.getBindingInfo("items")) { 
 			var sModelName = this.getBindingInfo("items").model;
 			this.getItems().forEach(function(oItem_) {
 				var oContext = oItem_.getBindingContext(sModelName);
@@ -494,9 +496,28 @@ sap.ui.define([
 					isDefault: (binding = oItem_.getBinding("isDefault")) ? oModelItem[binding.getPath()] : undefined
 				});
 			});
+			} else {
+				this.getItems().forEach(function(oItem_) {
+					// Update key of model (in case of 'restore' the key in model gets lost because it is overwritten by Restore Snapshot)
+//					if (oItem_.getBinding("key")) {
+//						oModelItem[oItem_.getBinding("key").getPath()] = oItem_.getKey();
+//					}
+					aKeyFields.push({
+						key: oItem_.getColumnKey(),
+						text: oItem_.getText(),
+						tooltip: oItem_.getTooltip(),
+						maxLength: oItem_.getMaxLength(),
+						type: oItem_.getType(),
+						precision: oItem_.getPrecision(),
+						scale: oItem_.getScale(),
+						isDefault: oItem_.getIsDefault()
+					});
+				});
+			}
 			this.setKeyFields(aKeyFields);
 
 			var aConditions = [];
+			if (this.getBindingInfo("filterItems")) {
 			sModelName = this.getBindingInfo("filterItems").model;
 			this.getFilterItems().forEach(function(oFilterItem_) {
 				// Note: current implementation assumes that the length of filterItems aggregation is equal
@@ -519,6 +540,18 @@ sap.ui.define([
 					exclude: (binding = oFilterItem_.getBinding("exclude")) ? oModelItem[binding.getPath()] : undefined
 				});
 			});
+			} else {
+				this.getFilterItems().forEach(function(oFilterItem_) {
+					aConditions.push({
+						key: oFilterItem_.getKey(),
+						keyField: oFilterItem_.getColumnKey(),
+						operation: oFilterItem_.getOperation(),
+						value1: oFilterItem_.getValue1(),
+						value2: oFilterItem_.getValue2(),
+						exclude: oFilterItem_.getExclude()
+					});
+				});				
+			}
 			this.setConditions(aConditions);
 		}
 	};
@@ -526,7 +559,9 @@ sap.ui.define([
 	P13nFilterPanel.prototype.addItem = function(oItem) {
 		P13nPanel.prototype.addItem.apply(this, arguments);
 
-		this._bUpdateRequired = true;
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 	};
 
 	P13nFilterPanel.prototype.removeItem = function(oItem) {
@@ -538,7 +573,9 @@ sap.ui.define([
 	P13nFilterPanel.prototype.destroyItems = function() {
 		this.destroyAggregation("items");
 
-		this._bUpdateRequired = true;
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 		return this;
 	};
 
@@ -553,7 +590,9 @@ sap.ui.define([
 	P13nFilterPanel.prototype.insertFilterItem = function(oFilterItem) {
 		this.insertAggregation("filterItems", oFilterItem);
 
-		this._bUpdateRequired = true;
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 
 		return this;
 	};
@@ -569,7 +608,9 @@ sap.ui.define([
 	P13nFilterPanel.prototype.removeFilterItem = function(oFilterItem) {
 		oFilterItem = this.removeAggregation("filterItems", oFilterItem);
 
-		this._bUpdateRequired = true;
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 
 		return oFilterItem;
 	};
@@ -601,9 +642,31 @@ sap.ui.define([
 			var oNewData = oEvent.getParameter("newData");
 			var sOperation = oEvent.getParameter("operation");
 			var sKey = oEvent.getParameter("key");
-			var iIndex = oEvent.getParameter("index");
+			var iConditionIndex = oEvent.getParameter("index");
 			var oFilterItem;
 
+			// map the iConditionIndex to the index in the FilterItems
+			var iIndex = -1;
+			var bExclude = oEvent.getSource() === that._oExcludeFilterPanel;
+			that.getFilterItems().some(function(oItem, i) {
+				//window.console.log(i+ " " + oItem.getValue1());
+				if ((!oItem.getExclude() && !bExclude) || (oItem.getExclude() && bExclude)) {
+					iConditionIndex--;
+				}
+				iIndex = i;
+				return iConditionIndex < 0;
+			}, this);
+
+//			that.getFilterItems().forEach(function(oItem, i) {
+//				window.console.log(i+ " Items: " + oItem.getValue1());
+//			}, this);
+//			
+//			var oData = that.getModel().getData();
+//			oData.persistentData.filter.filterItems.forEach(function(oItem, i) {
+//				window.console.log(i+ " model: " + oItem.value1);
+//			});
+			
+			
 			if (sOperation === "update") {
 				oFilterItem = that.getFilterItems()[iIndex];
 				if (oFilterItem) {
@@ -620,6 +683,10 @@ sap.ui.define([
 				});
 			}
 			if (sOperation === "add") {
+				if (iConditionIndex >= 0) {
+					iIndex++;
+				}
+				
 				oFilterItem = new sap.m.P13nFilterItem({
 					key: sKey,
 					columnKey: oNewData.keyField,
@@ -644,6 +711,17 @@ sap.ui.define([
 				});
 				that._bIgnoreBindCalls = false;
 			}
+			
+
+//			that.getFilterItems().forEach(function(oItem, i) {
+//				window.console.log(i+ " Items: " + oItem.getValue1());
+//			}, this);
+//			
+//			var oData = that.getModel().getData();
+//			oData.persistentData.filter.filterItems.forEach(function(oItem, i) {
+//				window.console.log(i+ " model: " + oItem.value1);
+//			});
+			
 		};
 	};
 

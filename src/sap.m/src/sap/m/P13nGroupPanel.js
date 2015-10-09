@@ -294,18 +294,27 @@ sap.ui.define([
 
 	P13nGroupPanel.prototype.addItem = function(oItem) {
 		P13nPanel.prototype.addItem.apply(this, arguments);
-		this._bUpdateRequired = true;
+		
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 	};
 
 	P13nGroupPanel.prototype.removeItem = function(oItem) {
 		P13nPanel.prototype.removeItem.apply(this, arguments);
 
-		this._bUpdateRequired = true;
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 	};
 
 	P13nGroupPanel.prototype.destroyItems = function() {
 		this.destroyAggregation("items");
-		this._bUpdateRequired = true;
+		
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
+		
 		return this;
 	};
 
@@ -319,7 +328,11 @@ sap.ui.define([
 
 	P13nGroupPanel.prototype.insertGroupItem = function(oGroupItem) {
 		this.insertAggregation("groupItems", oGroupItem);
-		this._bUpdateRequired = true;
+
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
+		
 		return this;
 	};
 
@@ -333,14 +346,20 @@ sap.ui.define([
 
 	P13nGroupPanel.prototype.removeGroupItem = function(oGroupItem) {
 		oGroupItem = this.removeAggregation("groupItems", oGroupItem);
-		this._bUpdateRequired = true;
+		
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
+		
 		return oGroupItem;
 	};
 
 	P13nGroupPanel.prototype.removeAllGroupItems = function() {
 		var aGroupItems = this.removeAllAggregation("groupItems");
 
-		this._bUpdateRequired = true;
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 
 		return aGroupItems;
 	};

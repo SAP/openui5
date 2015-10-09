@@ -131,11 +131,11 @@
 					var oData = oModel.getData();
  					var oFilterItem = {
 						key : params.key,
-						columnKey : params.filterItemData.columnKey,
-						operation : params.filterItemData.operation,
-						exclude : params.filterItemData.exclude,
-						value1 : params.filterItemData.value1,
-						value2 : params.filterItemData.value2
+						columnKey : params.filterItemData.getColumnKey(),
+						operation : params.filterItemData.getOperation(),
+						exclude : params.filterItemData.getExclude(),
+						value1 : params.filterItemData.getValue1(),
+						value2 : params.filterItemData.getValue2()
 					};
 					if (params.index) {
 						oData.filterItems.splice(params.index, 0, oFilterItem);
