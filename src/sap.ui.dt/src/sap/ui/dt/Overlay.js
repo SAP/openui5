@@ -117,6 +117,15 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	};
 
 	/** 
+	 * this is needed to prevent UI5 renderManager from removing overlay's node from DOM in a rendering phase
+	 * see RenderManager.js "this._fPutIntoDom" function
+	 * @private
+	 */
+	Overlay.prototype._onChildRerenderedEmpty = function() {
+		return true;
+	};
+
+	/** 
 	 * Called when the Overlay is destroyed	
 	 * @protected
 	 */
