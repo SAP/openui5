@@ -93,8 +93,6 @@ sap.ui.define([
 			var oI18nModel = new ResourceModel({
 				bundleName: "sap.ui.demo.cart.i18n.appTexts"
 			});
-			sap.ui.getCore().setModel(oI18nModel, "i18n");
-
 			this.setModel(oI18nModel, "i18n");
 
 			var oModel = new ODataModel("/sap/opu/odata/IWBEP/EPM_DEVELOPER_SCENARIO_SRV/", true);

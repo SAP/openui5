@@ -24,10 +24,10 @@ sap.ui.define([
 					rootUri : "/sap/opu/odata/IWBEP/EPM_DEVELOPER_SCENARIO_SRV/"
 				});
 
-				// configure mock server with a delay of 1s
+				// configure mock server with a delay of 100ms
 				MockServer.config({
 					autoRespond : true,
-					autoRespondAfter : (oUriParameters.get("serverDelay") || 1000)
+					autoRespondAfter : (oUriParameters.get("serverDelay") || 100)
 				});
 
 				oMockServer.simulate(sMetadataUrl, {

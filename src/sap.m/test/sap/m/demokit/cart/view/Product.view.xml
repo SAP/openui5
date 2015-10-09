@@ -32,7 +32,7 @@
 				title="{Name}"
 				number="{
 					path : 'Price',
-					formatter : 'util.Formatter.price'
+					formatter : '.formatter.price'
 				}"
 				numberUnit="EUR">
 				<attributes>
@@ -47,19 +47,17 @@
 					<ObjectStatus
 						text="{
 							path : 'status',
-							formatter : 'util.Formatter.statusText'
+							formatter : '.formatter.statusText'
 						}"
 						state="{
 							path : 'status',
-							formatter : 'util.Formatter.statusState'
+							formatter : '.formatter.statusState'
 						}" />
 				</firstStatus>
 			</ObjectHeader>
 			<VBox alignItems="Center">
 				<Image
-					src= "{
-						path : 'PictureUrl',
-						formatter: 'util.Formatter.pictureUrl'}"
+					src= "{PictureUrl}"
 					decorative="true"
 					densityAware="false" />
 			</VBox>
