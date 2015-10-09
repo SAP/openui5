@@ -519,6 +519,14 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			this._oFileUploader.destroy();
 			this._oFileUploader = null;
 		}
+		if (this.oHeaderToolbar) {
+			this.oHeaderToolbar.destroy();
+			this.oHeaderToolbar = null;
+		}
+		if (this.oNumberOfAttachmentsLabel) {
+			this.oNumberOfAttachmentsLabel.destroy();
+			this.oNumberOfAttachmentsLabel = null;
+		}
 	};
 
 	/* =========================================================== */
