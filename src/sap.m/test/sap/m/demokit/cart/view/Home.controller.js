@@ -1,6 +1,4 @@
 jQuery.sap.require("sap.ui.demo.cart.util.Formatter");
-jQuery.sap.require("sap.ui.demo.cart.model.Config");
-
 sap.ui.controller("sap.ui.demo.cart.view.Home", {
 
 	onInit : function () {
@@ -9,28 +7,22 @@ sap.ui.controller("sap.ui.demo.cart.view.Home", {
 		this._search();
 	},
 
-	handleSearch : function (oEvent) {
+	handleSearch : function () {
 		this._search();
 	},
 
-	handleRefresh : function (oEvent) {
+	handleRefresh : function () {
 		var that = this;
-		if (model.Config.isMock) {
-			// just wait if we do not have oData services
-			setTimeout(function () {
-				that.getView().byId("pullToRefresh").hide();
-			}, 2000);
-		} else {
-			// trigger search again and hide pullToRefresh when data ready
-			var oProductList = this.getView().byId("productList");
-			var oBinding = oProductList.getBinding("items");
-			var fnHandler = function() {
-				that.getView().byId("pullToRefresh").hide();
-				oBinding.detachDataReceived(fnHandler);
-			};
-			oBinding.attachDataReceived(fnHandler);
-			that._search();
-		}
+
+		// trigger search again and hide pullToRefresh when data ready
+		var oProductList = this.getView().byId("productList");
+		var oBinding = oProductList.getBinding("items");
+		var fnHandler = function() {
+			that.getView().byId("pullToRefresh").hide();
+			oBinding.detachDataReceived(fnHandler);
+		};
+		oBinding.attachDataReceived(fnHandler);
+		that._search();
 	},
 
 	_search : function () {
@@ -90,7 +82,7 @@ sap.ui.controller("sap.ui.demo.cart.view.Home", {
 		this._router.navTo("cartProduct", {productId: sId}, !sap.ui.Device.system.phone);
 	},
 	
-	handleCartButtonPress :  function (oEvent) {
+	handleCartButtonPress :  function () {
 		this._router.navTo("cart");
 	}
 });

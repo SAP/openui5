@@ -89,7 +89,40 @@ sap.ui.define([
 			// call overwritten init (calls createContent)
 			UIComponent.prototype.init.apply(this, arguments);
 
-			//extend the router
+			// set i18n model
+			var oI18nModel = new ResourceModel({
+				bundleName: "sap.ui.demo.cart.i18n.appTexts"
+			});
+			sap.ui.getCore().setModel(oI18nModel, "i18n");
+
+			this.setModel(oI18nModel, "i18n");
+
+			var oModel = new ODataModel("/sap/opu/odata/IWBEP/EPM_DEVELOPER_SCENARIO_SRV/", true);
+			oModel.setDefaultCountMode("None");
+
+			this.setModel(oModel);
+
+			//create and set cart model
+			var oCartModel = new JSONModel({
+				entries: [],
+				totalPrice: "0",
+				showEditAndProceedButton: false
+			});
+			this.setModel(oCartModel, "cartProducts");
+
+
+			// set device model
+			var oDeviceModel = new JSONModel({
+				isTouch: sap.ui.Device.support.touch,
+				isNoTouch: !sap.ui.Device.support.touch,
+				isPhone: sap.ui.Device.system.phone,
+				isNoPhone: !sap.ui.Device.system.phone,
+				listMode: (sap.ui.Device.system.phone) ? "None" : "SingleSelectMaster",
+				listItemType: (sap.ui.Device.system.phone) ? "Active" : "Inactive"
+			});
+			oDeviceModel.setDefaultBindingMode("OneWay");
+			this.setModel(oDeviceModel, "device");
+
 			this._router = this.getRouter();
 
 			//navigate to initial page for !phone
@@ -113,67 +146,11 @@ sap.ui.define([
 		},
 
 		createContent: function () {
-
-			// set i18n model
-			var oI18nModel = new ResourceModel({
-				bundleName: "sap.ui.demo.cart.i18n.appTexts"
-			});
-			sap.ui.getCore().setModel(oI18nModel, "i18n");
-
 			// create root view
-			var oView = sap.ui.view({
+			return sap.ui.view({
 				viewName: "sap.ui.demo.cart.view.App",
 				type: "XML"
 			});
-
-			oView.setModel(oI18nModel, "i18n");
-
-			jQuery.sap.require("sap.ui.demo.cart.model.Config");
-			// set data model
-			var sUrl = model.Config.getServiceUrl();
-
-			// start mock server
-			jQuery.sap.require("sap.ui.core.util.MockServer");
-			var oMockServer = new sap.ui.core.util.MockServer({
-				rootUri: sUrl
-			});
-			oMockServer.simulate(jQuery.sap.getModulePath("sap/ui/demo/cart/model/metadata", ".xml"), jQuery.sap.getModulePath("sap/ui/demo/cart/model",""));
-			oMockServer.start();
-			var sMsg = "Running in demo mode with mock data.";
-			sap.m.MessageToast.show(sMsg, {
-				duration: 2000
-			});
-
-			var oModel = new ODataModel(sUrl, true, model.Config.getUser(), model.Config.getPwd());
-			//if we do not set this property to false, this would lead to a synchronized request which blocks the ui
-			oModel.setCountSupported(false);
-
-			oView.setModel(oModel);
-
-			//create and set cart model
-			var oCartModel = new JSONModel({
-				entries: [],
-				totalPrice: "0",
-				showEditAndProceedButton: false
-			});
-			oView.setModel(oCartModel, "cartProducts");
-
-
-			// set device model
-			var oDeviceModel = new JSONModel({
-				isTouch: sap.ui.Device.support.touch,
-				isNoTouch: !sap.ui.Device.support.touch,
-				isPhone: sap.ui.Device.system.phone,
-				isNoPhone: !sap.ui.Device.system.phone,
-				listMode: (sap.ui.Device.system.phone) ? "None" : "SingleSelectMaster",
-				listItemType: (sap.ui.Device.system.phone) ? "Active" : "Inactive"
-			});
-			oDeviceModel.setDefaultBindingMode("OneWay");
-			oView.setModel(oDeviceModel, "device");
-
-
-			// done
-			return oView;
 		}
 	});
 

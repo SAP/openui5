@@ -28,10 +28,23 @@ sap.ui.controller("sap.ui.demo.cart.view.Product", {
 		var that = this;
 		var oModel = oView.getModel();
 		var oData = oModel.getData(sPath);
-		oView.bindElement(sPath);
+		oView.bindElement({
+			path: sPath,
+			events: {
+				dataRequested: function () {
+					oView.setBusy(true);
+				},
+				dataReceived: function () {
+					oView.setBusy(false);
+				}
+			}
+		});
 		//if there is no data the model has to request new data
 		if (!oData) {
+			oView.setBusyIndicatorDelay(0);
 			oView.getElementBinding().attachEventOnce("dataReceived", function() {
+				// reset to default
+				oView.setBusyIndicatorDelay(null);
 				that._checkIfProductAvailable(sPath, sId);
 			});
 		}
