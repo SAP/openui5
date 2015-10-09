@@ -215,11 +215,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 		}
 
 		var fnInitController = function() {
-			createAndConnectController(that, mSettings);
-
-			// the controller is connected now => notify the view implementations
-			if (that.onControllerConnected) {
-				that.onControllerConnected(that.oController);
+			var oPromise = createAndConnectController(that, mSettings);
+			if (oPromise instanceof Promise) {
+				return oPromise.then(function() {
+					// the controller is connected now => notify the view implementations
+					if (that.onControllerConnected) {
+						that.onControllerConnected(that.oController);
+					}
+				});
+			} else {
+				// the controller is connected now => notify the view implementations
+				if (that.onControllerConnected) {
+					that.onControllerConnected(that.oController);
+				}
 			}
 		};
 
@@ -331,10 +339,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 			}
 
 			if ( oController ) {
-				oThis.oController = oController;
-				// connect controller
-				oController.connectToView(oThis);
+				if (oController instanceof Promise) {
+					if (!oThis._oAsyncState) {
+						throw new Error("The view " + oThis.sViewName + " runs in sync mode and therefore cannot use async controller extensions!");
+					}
+					return oController.then(function(oController) {
+						oThis.oController = oController;
+						// connect controller
+						oController.connectToView(oThis);
+					});
+				} else {
+					oThis.oController = oController;
+					// connect controller
+					oController.connectToView(oThis);
+				}
 			}
+			
 		} else {
 			oThis.oController = {};
 		}

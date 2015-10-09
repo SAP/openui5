@@ -183,24 +183,21 @@
 		ok(sap.ui.getCore().byId("iHaveCausedDestruction"), "JS Extension Point 45 Content has been correctly replaced");
 	});
 	
-	module("Controller Customizing via Hook");
-	
-	asyncTest("Register ExtensionProvider", 20, function() {
+	module("Controller Customizing via Hook", {
 		
-		//First, destroy component, reset call collector array...
-		oComp.destroy();
-		iStandardSub2ControllerCalled = 0;
-		iCustomSub2ControllerCalled = 0;
-		aLifeCycleCalls = [];
-		
-		var bOriginalSAPActionCalled = false;
-		var bCustomerActionCalled = false;
-		
-		// Extension Provider module - used for sap.ui.mvc.Controller ExtensionProvider Tests
-		sap.ui.define("sap/my/ExtensionProvider", ['jquery.sap.global'], function(jQuery) {
+		setup: function() {
 			
-			var ExtensionProvider = function() {};
-			ExtensionProvider.prototype.getControllerExtensions = function(sControllerName, sComponentId) {
+			//First, destroy component, reset call collector array...
+			oComp.destroy();
+			oCompCont.destroy();
+			iStandardSub2ControllerCalled = 0;
+			iCustomSub2ControllerCalled = 0;
+			aLifeCycleCalls = [];
+			
+			var bOriginalSAPActionCalled = false;
+			var bCustomerActionCalled = false;
+			
+			this.getControllerExtensions = function(sControllerName, sComponentId) {
 				
 				// we want to extend an original Controller...
 				if ( !(sControllerName == "testdata.customizing.sap.Sub2") ){
@@ -259,16 +256,30 @@
 							bCustomerActionCalled = true;
 						}
 					}]
+					
 				}
-			};
-			return ExtensionProvider;
 			
+			};
+		
+		}
+		
+		
+	});
+
+	asyncTest("Register ExtensionProvider (sync)", 20, function() {
+		
+		// Extension Provider module - used for sap.ui.mvc.Controller ExtensionProvider Tests
+		var that = this;
+		sap.ui.define("sap/my/sync/ExtensionProvider", ['jquery.sap.global'], function(jQuery) {
+			var ExtensionProvider = function() {};
+			ExtensionProvider.prototype.getControllerExtensions = that.getControllerExtensions;
+			return ExtensionProvider;
 		}, true);
 
 		//...and reinitialize - with registered ExtensionProvider 
 		jQuery.sap.require("sap.ui.core.mvc.Controller");
 		var Controller = sap.ui.require("sap/ui/core/mvc/Controller");
-		Controller.registerExtensionProvider("sap.my.ExtensionProvider");
+		Controller.registerExtensionProvider("sap.my.sync.ExtensionProvider");
 		
 		oComp = sap.ui.component({
 			name: "testdata.customizing.customer"
@@ -280,8 +291,52 @@
 		oCompCont.placeAt("content");
 		
 	});
-	
-	
+
+	asyncTest("Register ExtensionProvider (async)", 20, function() {
+		
+		// make all views async
+		var fnOrg = sap.ui.core.mvc.View.prototype._initCompositeSupport;
+
+		sap.ui.core.mvc.View.prototype._initCompositeSupport = function(mSettings) {
+			if (mSettings.viewName == "testdata.customizing.sap.Sub2") {
+				mSettings.async = true;
+			}
+			return fnOrg.call(this, mSettings);
+		}
+
+		// Extension Provider module - used for sap.ui.mvc.Controller ExtensionProvider Tests
+		var that = this;
+		sap.ui.define("sap/my/async/ExtensionProvider", ['jquery.sap.global'], function(jQuery) {
+			var ExtensionProvider = function() {};
+			ExtensionProvider.prototype.getControllerExtensions = function(sControllerName, sComponentId) {
+				if ( !(sControllerName == "testdata.customizing.sap.Sub2") ){
+					return;
+				} else {
+					return new Promise(function(fnResolve, fnReject) {
+						setTimeout(function() {
+							fnResolve(that.getControllerExtensions(sControllerName, sComponentId));
+						}, 500);
+					});
+				}
+			}
+			return ExtensionProvider;
+		}, true);
+
+		//...and reinitialize - with registered ExtensionProvider 
+		jQuery.sap.require("sap.ui.core.mvc.Controller");
+		var Controller = sap.ui.require("sap/ui/core/mvc/Controller");
+		Controller.registerExtensionProvider("sap.my.async.ExtensionProvider");
+		
+		oComp = sap.ui.component({
+			name: "testdata.customizing.customer"
+		});
+		
+		oCompCont = new sap.ui.core.ComponentContainer({
+			component: oComp
+		});
+		oCompCont.placeAt("content");
+		
+	});
 
 	</script>
 </head>
