@@ -172,6 +172,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 			oEra;
 		for (var i = aEras.length - 1; i >= 0; i--) {
 			oEra = aEras[i];
+			if (!oEra) {
+				continue;
+			}
 			if (oEra._start && iTimestamp >= oEra._startInfo.timestamp) {
 				return i;
 			}
@@ -183,10 +186,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 	
 	UniversalDate.getEraStartDate = function(sCalendarType, iEra) {
 		var aEras = getEras(sCalendarType),
-			oEra = aEras[iEra];
+			oEra = aEras[iEra] || aEras[0];
 		if (oEra._start) {
 			return oEra._startInfo;
-		} 
+		}
 	};
 
 	function getEras(sCalendarType) {
@@ -196,15 +199,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 			var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale(),
 				oLocaleData = LocaleData.getInstance(oLocale),
 				aEras = oLocaleData.getEraDates(sCalendarType);
+			if (!aEras[0]) {
+				aEras[0] = {_start: "0-1-1"};
+			}
 			for (var i = 0; i < aEras.length; i++) {
 				var oEra = aEras[i];
-				if (oEra) {
-					if (oEra._start) {
-						oEra._startInfo = parseDateString(oEra._start);
-					}
-					if (oEra._end) {
-						oEra._endInfo = parseDateString(oEra._end);
-					}
+				if (!oEra) {
+					continue;
+				}
+				if (oEra._start) {
+					oEra._startInfo = parseDateString(oEra._start);
+				}
+				if (oEra._end) {
+					oEra._endInfo = parseDateString(oEra._end);
 				}
 			}
 			mEras[sCalendarType] = aEras;
@@ -226,7 +233,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 			iDay = parseInt(aParts[2], 10);
 		}
 		return {
-			timestamp: Date.UTC(iYear, iMonth, iDay),
+			timestamp: new Date(0).setUTCFullYear(iYear, iMonth, iDay),
 			year: iYear,
 			month: iMonth,
 			day: iDay
