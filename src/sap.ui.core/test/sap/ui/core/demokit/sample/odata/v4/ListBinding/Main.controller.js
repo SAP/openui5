@@ -65,15 +65,10 @@ sap.ui.define([
 
 		onDeleteEmployee : function (oEvent) {
 			var oEmployeeContext = oEvent.getSource().getBindingContext(),
-				oModel = oEmployeeContext.getModel(),
-				sPath = oEmployeeContext.getPath();
+				oModel = oEmployeeContext.getModel();
 
-			//TODO make .remove(oEmployeeContext) possible
-			//TODO maybe it should only be allowed to delete data via a Context because you need
-			// to read it first, display it, and use the right etag...
-
-			oModel.remove(sPath).then(function () {
-				MessageBox.alert(sPath, {
+			oModel.remove(oEmployeeContext).then(function () {
+				MessageBox.alert(oEmployeeContext.getPath(), {
 					icon: sap.m.MessageBox.Icon.SUCCESS,
 					title: "Success"});
 			}, onRejected);

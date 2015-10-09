@@ -432,6 +432,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("remove", function (assert) {
 		var oModel = createModel(),
+			sPath = "/EMPLOYEES[0];list=0",
 			oResult = {};
 
 		this.oSandbox.stub(Helper, "request", function (oModel0, oRequest, bDoNotRefreshToken) {
@@ -448,9 +449,9 @@ sap.ui.require([
 		});
 		this.oSandbox.stub(oModel, "read");
 		this.oSandbox.stub(oModel.getMetaModel(), "requestCanonicalUrl",
-			function (sServiceUrl, sPath, fnRead) {
+			function (sServiceUrl, sPath0, fnRead) {
 				assert.strictEqual(sServiceUrl, getServiceUrl());
-				assert.strictEqual(sPath, "/EMPLOYEES[0];list=0");
+				assert.strictEqual(sPath0, sPath);
 				// make sure that fnRead === oModel.read.bind(oModel)
 				assert.ok(!oModel.read.called);
 				fnRead(sPath, true);
@@ -461,7 +462,7 @@ sap.ui.require([
 				return Promise.resolve(getServiceUrl("/EMPLOYEES(ID='1')"));
 			});
 
-		return oModel.remove("/EMPLOYEES[0];list=0").then(function (oResult0) {
+		return oModel.remove(oModel.getContext(sPath)).then(function (oResult0) {
 			assert.strictEqual(oResult0, oResult);
 		}, function (oError) {
 			assert.ok(false);
