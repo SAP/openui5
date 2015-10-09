@@ -654,6 +654,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			} else {
 				oInput.value =  newValue;
 			}
+			this._sRenderedValue = newValue;
 		}
 
 		return this;
