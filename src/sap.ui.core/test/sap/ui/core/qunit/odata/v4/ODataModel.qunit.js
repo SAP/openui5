@@ -431,7 +431,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("remove", function (assert) {
-		var oModel = createModel(),
+		var sEtag = 'W/"19770724000000.0000000"',
+			oModel = createModel(),
 			sPath = "/EMPLOYEES[0];list=0",
 			oResult = {};
 
@@ -439,7 +440,7 @@ sap.ui.require([
 			assert.strictEqual(oModel0, oModel);
 			assert.deepEqual(oRequest, {
 				headers : {
-					"If-Match" : "*" //TODO etag support!
+					"If-Match" : sEtag
 				},
 				method : "DELETE",
 				requestUri : getServiceUrl("/EMPLOYEES(ID='1')")
@@ -447,18 +448,28 @@ sap.ui.require([
 			assert.strictEqual(bDoNotRefreshToken, undefined);
 			return Promise.resolve(oResult);
 		});
-		this.oSandbox.stub(oModel, "read");
+		//TODO make such basic APIs like sap.ui.model.Context#getProperty work?!
+		//     they could be used instead of async read()...
+		//TODO use requestObject() instead of read()?
+		this.oSandbox.stub(oModel, "read", function (sPath0, bAllowObjectAccess) {
+			if (bAllowObjectAccess) {
+				// ignore "probe call" by requestCanonicalUrl's stub
+			} else {
+				assert.strictEqual(sPath0, sPath + "/@odata.etag");
+				assert.strictEqual(bAllowObjectAccess, undefined);
+			}
+			return Promise.resolve({value : sEtag});
+		});
 		this.oSandbox.stub(oModel.getMetaModel(), "requestCanonicalUrl",
 			function (sServiceUrl, sPath0, fnRead) {
 				assert.strictEqual(sServiceUrl, getServiceUrl());
 				assert.strictEqual(sPath0, sPath);
 				// make sure that fnRead === oModel.read.bind(oModel)
-				assert.ok(!oModel.read.called);
+				oModel.read.reset();
 				fnRead(sPath, true);
 				assert.ok(oModel.read.calledOnce);
 				assert.ok(oModel.read.calledWithExactly(sPath, true), "fnRead passes arguments");
 				assert.ok(oModel.read.calledOn(oModel), "fnRead bound to 'this'");
-
 				return Promise.resolve(getServiceUrl("/EMPLOYEES(ID='1')"));
 			});
 
@@ -487,3 +498,4 @@ sap.ui.require([
 //TODO can we make use of @odata.context in response data?
 //TODO etag handling
 //TODO use 'sap/ui/thirdparty/URI' for URL handling?
+

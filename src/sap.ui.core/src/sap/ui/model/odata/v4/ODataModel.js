@@ -320,7 +320,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes the entity with the given context.
+	 * Removes the entity with the given context from the service, using the currently known
+	 * entity tag ("ETag") value.
 	 *
 	 * @param {sap.ui.model.Context} oContext
 	 *   a context in the data model pointing to an entity, it MUST be related to some list
@@ -333,19 +334,24 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.remove = function (oContext) {
-		var that = this;
+		var sPath = oContext.getPath(),
+			that = this;
 
-		return this.getMetaModel()
-			.requestCanonicalUrl(this.sServiceUrl, oContext.getPath(), this.read.bind(this))
-			.then(function (sCanonicalUrl) {
-				return Helper.request(that, {
-					requestUri: sCanonicalUrl,
-					method: "DELETE",
-					headers : {
-						"If-Match" : "*"
-					}
-				});
+		return Promise.all([
+			this.read(sPath + "/@odata.etag"),
+			this.getMetaModel().requestCanonicalUrl(this.sServiceUrl, sPath, this.read.bind(this))
+		]).then(function (aValues) {
+			var sEtag = aValues[0].value,
+				sCanonicalUrl = aValues[1];
+
+			return Helper.request(that, {
+				requestUri: sCanonicalUrl,
+				method: "DELETE",
+				headers : {
+					"If-Match" : sEtag
+				}
 			});
+		});
 	};
 
 	/**
