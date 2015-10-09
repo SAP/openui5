@@ -22,46 +22,48 @@ pre.sapUiCodeViewer.editable {
 
 /* make code changes appear yellow in the demokit (tutorials), they are marked with the emphasis tag in dita */
 pre.codeblock .emphasis {
-  background-color: #ffff00;
+	background-color: #ffff00;
 }
 
 .sapUiCodeViewerRO ol {
-  position: relative;
-  z-index: 0;
-  counter-reset: item;
-  padding: 0 0;
+	position: relative;
+	z-index: 0;
+	counter-reset: item;
+	padding: 0 0;
 }
 
 .sapUiCodeViewerRO ol li {
-  color: #999999;
-  display: block;
+	color: #999999;
+	display: block;
+	position: relative;
+	left: 30px;
 }
 
 .sapUiCodeViewerRO ol li:before {
-  content: counter(item, decimal-leading-zero);
-  counter-increment: item;
-  color: #999999;
-  // not select line numbers when copy the code
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -o-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  margin-right: 40px;
+	content: counter(item, decimal-leading-zero);
+	counter-increment: item;
+	color: #999999;
+	// not select line numbers when copy the code
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-o-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	margin: 0 40px 0 -30px;
 }
 
 .sapUiCodeViewerRO ol:before {
-  content: '';
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0px;
-  bottom: 0;
-  width: 28px;
-  z-index: -1;
-  background: lightgoldenrodyellow;
+	content: '';
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	width: 28px;
+	z-index: -1;
+	background: lightgoldenrodyellow;
 }
 
 li.L0,li.L1,li.L2,li.L3,li.L5,li.L6,li.L7,li.L8 {

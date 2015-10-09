@@ -63,6 +63,7 @@ html[dir="rtl"] #CompactModeButtons, html[dir="rtl"] #RTLButtons {
 pre.sapUiCodeViewer.sapUiExploredCodeViewer {
 	background-color: white;
 	word-wrap: break-word;
+	white-space: pre-wrap; /*for firefox*/
 }
 
 /* explored entity view */
