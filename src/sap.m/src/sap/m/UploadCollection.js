@@ -458,6 +458,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		this._clearList();
 		this._fillList(this.aItems);
 		this._oList.setAggregation("headerToolbar", this.oHeaderToolbar, true); // note: suppress re-rendering;
+		if (this.sDeletedItemId){
+			jQuery(document.activeElement).blur();
+		}
 	};
 
 	/**
@@ -498,7 +501,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				} else if (this.sDeletedItemId) {
 					//set focus on line item after an item was deleted
 					sap.m.UploadCollection.prototype._setFocusAfterDeletion(this.sDeletedItemId, that);
-					this.sDeletedItemId = null;
 				}
 			}
 		}
@@ -1730,6 +1732,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				sLineId = oContext.aItems.pop().sId + "-cli";
 			}
 			sap.m.UploadCollection.prototype._setFocus2LineItem(sLineId);
+			this.sDeletedItemId = null;
 		}
 	};
 
