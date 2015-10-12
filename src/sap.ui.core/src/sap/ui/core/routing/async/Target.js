@@ -140,7 +140,7 @@ sap.ui.define([], function() {
 					var oAggregationInfo = oControl.getMetadata().getJSONKeys()[oOptions.controlAggregation];
 
 					if (!oAggregationInfo) {
-						sErrorMessage = "Control " + oOptions.controlId + " does not has an aggregation called " + oOptions.controlAggregation;
+						sErrorMessage = "Control " + oOptions.controlId + " does not have an aggregation called " + oOptions.controlAggregation;
 						return this._refuseInvalidTarget(oOptions.name, sErrorMessage);
 					}
 
