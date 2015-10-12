@@ -32,7 +32,7 @@ function(ManagedObject, ElementUtil) {
 	 */
 	var ManagedObjectObserver = ManagedObject.extend("sap.ui.dt.ManagedObjectObserver", /** @lends sap.ui.dt.ManagedObjectObserver.prototype */ {
 		metadata : {
-			abstract : true,
+			"abstract" : true,
 			// ---- object ----
 
 			// ---- control specific ----

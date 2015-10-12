@@ -458,7 +458,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 					var oResizeEvent = document.createEvent("UIEvents");
 					oResizeEvent.initUIEvent("resize", true, false, window, 0);
 					window.dispatchEvent(oResizeEvent);
-				} catch(e) {
+				} catch (e) {
 					jQuery.sap.log.error(e);
 				}
 			});

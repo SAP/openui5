@@ -32,7 +32,7 @@ function(Plugin, DOMUtil) {
 	 */
 	var DragDrop = Plugin.extend("sap.ui.dt.plugin.DragDrop", /** @lends sap.ui.dt.plugin.DragDrop.prototype */ {		
 		metadata : {
-			abstract : true,
+			"abstract" : true,
 			// ---- object ----
 
 			// ---- control specific ----
