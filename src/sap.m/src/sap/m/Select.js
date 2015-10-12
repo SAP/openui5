@@ -600,7 +600,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 			// initialize Dialog
 			var oDialog = new Dialog({
-				stretchOnPhone: true,
+				stretch: true,
 				customHeader: new Bar({
 					contentLeft: new InputBase({
 						width: "100%",
