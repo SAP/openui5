@@ -2514,5 +2514,45 @@
         "references": []
       }
     ]
+  },
+  "1.28.20": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "2d944d54d09e0f9973ea5e0572193fafe6370d11",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "ComponentMetadata: customizing lifecycle issue with instance count",
+        "references": []
+      },
+      {
+        "id": "95b8ff5570067c92e6f25b0ce47b545ae09178b5",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: Only update metamodel bindings when metamodel is loaded",
+        "references": []
+      },
+      {
+        "id": "7de81e1793a826c305eafb3c106c03cd2dc74350",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.events: Avoid doubled events in Touch-to-Mouse handling",
+        "references": []
+      },
+      {
+        "id": "812fdcd70c4e79e1c70389916e6dacb56aabdb93",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.test.Opa5 - fixed a timing issue in IE when the sap.ui.Core was loaded but jQuery.sap was not",
+        "references": []
+      },
+      {
+        "id": "ed2f18569618f4b58731efb9cf409e4e5d1fee53",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: createEntry - wrong request method after failing",
+        "references": []
+      }
+    ]
   }
 }
