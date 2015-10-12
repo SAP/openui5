@@ -31,10 +31,32 @@
 				"sap/m/routing/TargetHandler",
 				"sap/m/InstanceManager",
 				"qunit/routing/commonIntegrationTests",
-				"sap/m/Page"
+				"sap/m/Page",
+				"sap/m/routing/Router",
 			],
-			function (RouteMatchedHandler, NavContainer, SplitContainer, HashChanger, Router, History, TargetHandler, InstanceManager, integrationTests, Page) {
+			function (RouteMatchedHandler,
+					  NavContainer,
+					  SplitContainer,
+					  HashChanger,
+					  Router,
+					  History,
+					  TargetHandler,
+					  InstanceManager,
+					  integrationTests,
+					  Page,
+					  MobileRouter) {
 				"use strict";
+
+				QUnit.module("Mobile router");
+
+				QUnit.test("Should not register on events when a mobile router is used", function (assert) {
+					var oRouter = new MobileRouter();
+
+					new RouteMatchedHandler(oRouter);
+
+					assert.strictEqual(oRouter.mEventRegistry.routeMatched, undefined);
+					assert.strictEqual(oRouter.mEventRegistry.routePatternMatched, undefined);
+				});
 
 				HashChanger.getInstance().init();
 
