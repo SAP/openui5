@@ -182,7 +182,11 @@ xhr.onCreate = function(request) {
 		
 		"Regions/$count":
 			[200, oJSONHeaders, "4"],
-		
+		//create Entry
+		"Products?Fail500=true":
+			[500, oJSONHeaders, ""],
+		"Products?Fail500=false":
+			[200, oJSONHeaders, sProduct2JSON],
 		// Multi-Origin Fault Tolerance
 		// Fake filter on ShipCity in Orders collection
 		"Orders?$skip=0&$top=2&$filter=ShipCity%20eq%20%27TEST_FAULT_TOLERANCE%27&$inlinecount=allpages":
@@ -201,7 +205,7 @@ xhr.onCreate = function(request) {
 			case "PUT":
 				return [204, oJSONHeaders, ""];
 			case "POST":
-				return [201, oJSONHeaders, ""];
+				return [201, oJSONHeaders, sCategory1JSON];
 			case "DELETE":
 				return [204, oJSONHeaders, ""];
 			default:

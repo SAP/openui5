@@ -1652,6 +1652,7 @@
 			equal(oModel.getProperty("Name",oContext), "TestEntry", "check virtual entry name");
 			ok(oModel.setProperty("Name","newName", oContext), "modify entry");
 			equal(oModel.getProperty("Name",oContext), "newName", "check virtual entry name");
+			oModel.submitChanges();
 		};
 		oModel.attachBatchRequestCompleted(this, function(test) {
 			iCount++;
