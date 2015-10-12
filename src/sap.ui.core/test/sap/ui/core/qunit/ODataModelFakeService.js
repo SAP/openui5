@@ -213,10 +213,14 @@ xhr.onCreate = function(request) {
 			[200, oXMLHeaders, sProductsForFilterANDing3],
 				"Regions?$skip=0&$top=100&$expand=Territories&$inlinecount=allpages":
 			[200, oJSONHeaders, sRegionsJSON],
-		
 		"Regions/$count":
 			[200, oJSONHeaders, "4"],
 		
+		//create Entry
+		"Products?Fail500=true":
+			[500, oJSONHeaders, ""],
+		"Products?Fail500=false":
+			[200, oJSONHeaders, sProduct2JSON],
 		// Multi-Origin Fault Tolerance
 		// Fake filter on ShipCity in Orders collection
 		"Orders?$skip=0&$top=2&$filter=ShipCity%20eq%20%27TEST_FAULT_TOLERANCE%27&$inlinecount=allpages":
