@@ -892,9 +892,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 	};
 
 	Menu.prototype.focus = function(){
-		var res = sap.ui.core.Control.prototype.focus.apply(this, arguments);
-		this._setActiveDescendant(this.oHoveredItem);
-		return res;
+		if (this.bOpen) {
+			Control.prototype.focus.apply(this, arguments);
+			this._setActiveDescendant(this.oHoveredItem);
+		}
 	};
 	
 	/**
