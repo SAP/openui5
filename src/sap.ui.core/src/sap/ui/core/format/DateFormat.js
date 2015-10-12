@@ -1172,6 +1172,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 
 		sMethodName = "getRelative" + sScale[0].toUpperCase() + sScale.substr(1);
 		sPattern = this.oLocaleData[sMethodName](iDiff);
+		if (!sPattern) {
+			return null;
+		}
 		return jQuery.sap.formatMessage(sPattern, [Math.abs(iDiff)]);
 
 	};
