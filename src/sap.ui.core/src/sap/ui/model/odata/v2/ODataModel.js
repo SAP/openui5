@@ -1788,11 +1788,12 @@ sap.ui.define([
 					oNode = this.oData;
 				}
 			}
+			
 			while (oNode && aParts[iIndex]) {
 				oNode = oNode[aParts[iIndex]];
 				if (oNode) {
 					if (oNode.__ref) {
-						oNode = this.oData[oNode.__ref];
+						oNode = this.mChangedEntities[oNode.__ref] ? this.mChangedEntities[oNode.__ref] : this.oData[oNode.__ref];
 					} else if (oNode.__list) {
 						oNode = oNode.__list;
 					} else if (oNode.__deferred) {
@@ -3674,7 +3675,18 @@ sap.ui.define([
 			oChangeObject = oChangeObject[aParts[i]];
 		}
 		oChangeObject[sProperty] = oValue;
+		
 
+		if (jQuery.sap.equal(oEntry, this.oData[sKey])) {
+			delete this.mChangedEntities[sKey];
+			mChangedEntities[sKey] = true;
+			if (this.mChangeHandles[sKey]) {
+				this.mChangeHandles[sKey].abort();
+			}
+			this.checkUpdate(false, bAsyncUpdate, mChangedEntities);
+			return true;
+		}
+		
 		oGroupInfo = this._resolveGroup(sKey);
 
 		mRequests = this.mRequests;
