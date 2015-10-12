@@ -17,8 +17,6 @@ sap.ui.define([], function () {
 	var classNameRead = 'sapMNLI-ReadStatus';
 	var classNameHeader = 'sapMNLI-Header';
 	var classNameBody = 'sapMNLI-Body';
-	var classNameText = 'sapMNLI-Text';
-	var classNameDatetime = 'sapMNLI-Datetime';
 	var classNameFooter = 'sapMNLI-Footer';
 	var classNameCloseButton = 'sapMNLI-CloseButton';
 
@@ -29,10 +27,20 @@ sap.ui.define([], function () {
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	NotificationListItemRenderer.render = function (oRm, oControl) {
+		var id = oControl.getId();
+
 		oRm.write('<li');
 		oRm.addClass(classNameItem);
-
 		oRm.writeControlData(oControl);
+		oRm.writeAttribute('tabindex', '0');
+
+		// ARIA
+		oRm.writeAccessibilityState(oControl, {
+			role: "listitem",
+			labelledby: id + '--title',
+			describedby: (id + '--body') + ' ' + (id + '--info')
+		});
+
 		oRm.writeClasses();
 		oRm.write('>');
 
@@ -75,14 +83,22 @@ sap.ui.define([], function () {
 			this.renderButtons(oRm, oControl, aButtons);
 			oRm.write('</div>');
 		}
-
 	};
 
+	//================================================================================
+	// Icon rendering methods
+	//================================================================================
+
 	NotificationListItemRenderer.renderUnreadStatus = function (oRm, oControl) {
+		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
 		var unreadStatus = oControl.getUnread();
 		var statusClass = unreadStatus ? classNameUnread : classNameRead;
+		var statusTitle = unreadStatus ? resourceBundle.getText('NOTIFICATION_LIST_ITEM_UNREAD') : resourceBundle.getText('NOTIFICATION_LIST_ITEM_READ');
 
-		oRm.write('<div class=' + statusClass + '></div>');
+		oRm.write('<div');
+		oRm.writeAttribute('class', statusClass);
+		oRm.writeAttribute('title', statusTitle);
+		oRm.write('></div>');
 	};
 
 	NotificationListItemRenderer.renderPriority = function (oRm, oControl) {
@@ -94,12 +110,12 @@ sap.ui.define([], function () {
 		}
 	};
 
-	NotificationListItemRenderer.renderTitle = function (oRm, oControl) {
-		var title = new sap.m.Title({
-			text: oControl.getTitle()
-		});
+	//================================================================================
+	// Header rendering methods
+	//================================================================================
 
-		oRm.renderControl(title);
+	NotificationListItemRenderer.renderTitle = function (oRm, oControl) {
+		oRm.renderControl(oControl._getHeaderTitle());
 	};
 
 	NotificationListItemRenderer.renderCloseButton = function (oRm, oControl) {
@@ -108,22 +124,33 @@ sap.ui.define([], function () {
 		}
 	};
 
-	NotificationListItemRenderer.renderDescription = function (oRm, oControl) {
-		var text = new sap.m.Text({
-			text: oControl.getDescription(),
-			maxLines: 2
-		}).addStyleClass(classNameText);
+	//================================================================================
+	// Body rendering methods
+	//================================================================================
 
-		oRm.renderControl(text);
+	NotificationListItemRenderer.renderDescription = function (oRm, oControl) {
+		oRm.renderControl(oControl._getDescriptionText());
 	};
 
 	NotificationListItemRenderer.renderDatetime = function (oRm, oControl) {
-		var datetimeTextControl = new sap.m.Text({
-			text: oControl.getDatetime(),
-			textAlign: 'End'
-		}).addStyleClass(classNameDatetime);
-		oRm.renderControl(datetimeTextControl);
+		this.renderAriaText(oRm, oControl);
+
+		oRm.renderControl(oControl._getDateTimeText());
 	};
+
+	/**
+	 * Provides aria support for the additional control information such as: read status, due date and priority
+	 *
+	 * @param {Object} oRm - The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.m.NotificationListItem} oControl - An object representation of the Notification List Item that should be rendered
+	 */
+	NotificationListItemRenderer.renderAriaText = function (oRm, oControl) {
+		oRm.renderControl(oControl._ariaDetailsText);
+	};
+
+	//================================================================================
+	// Footer rendering methods
+	//================================================================================
 
 	NotificationListItemRenderer.renderButtons = function (oRm, oControl, aButtons) {
 		aButtons.forEach(function (button) {
