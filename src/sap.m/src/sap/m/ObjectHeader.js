@@ -698,8 +698,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var bPageRTL = sap.ui.getCore().getConfiguration().getRTL();
 		var $titleArrow = this.$("titleArrow");
 
-		$titleArrow.attr("aria-haspopup", "true");
-		$titleArrow.attr("role", "link");
+		$titleArrow.attr("role", "button");
 		$titleArrow.attr("aria-label", sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("OH_ARIA_SELECT_ARROW_VALUE")); // set label from resource translation bundle
 		
 		if (this.getResponsive()) {
