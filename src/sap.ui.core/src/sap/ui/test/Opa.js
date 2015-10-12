@@ -97,7 +97,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
 			//In IE an error has to be thrown first to get a stack
 			try {
 				throw oError();
-			} catch(oError2){
+			} catch (oError2) {
 				stack = oError2.stack;
 			}
 		}
