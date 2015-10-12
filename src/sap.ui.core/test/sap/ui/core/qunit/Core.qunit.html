@@ -227,7 +227,99 @@
 			equal($html.attr("lang"), sLocale, "lang attribute matches locale");
 
 		});
+		
+		// Author: Yateen Shaha, SAS Institute Inc., USA
+		// now check the locale configuration to be applied as lang attribute
+		test("Accept Language enable ajax filter disabled", function() {
+			
+			// mock configurations.
+			var oldgetLangFn = sap.ui.getCore().getConfiguration().getLanguage,
+				oldgetSupportedLangFn = sap.ui.getCore().getConfiguration().getSupportedLanguages,
+				oldgetEnableAcceptLangFilterFn = sap.ui.getCore().getConfiguration().getEnableAcceptLanguageAjaxFilter;
+			
+			sap.ui.getCore().getConfiguration().getEnableAcceptLanguageAjaxFilter = function(){
+				return true;
+			}
+			
+			sap.ui.getCore().getConfiguration().getSupportedLanguages = function(){
+				return ["en_US","ar","ar_XX","cs","da","de","el","en","es","fr","he","hr","hu","it","iw","ja","ko","nb","nl","no","pl","pl_XX","pt","pt_BR","ru","sh","sk","sl","sr","sv","th","tr","zh_CN","zh_TW"];
+			}
 
+			sap.ui.getCore().getConfiguration().getLanguage = function(){
+				return "en";
+			}
+			
+			function getExpectedAcceptLanguage(){
+				return undefined;
+				/*
+				var sapConf = sap.ui.getCore().getConfiguration();
+				return jQuery.sap.resources._getPreferredLocales(sapConf.getLanguage(),sapConf.getSupportedLanguages()).toString();
+				*/
+			}
+			
+			function getActualAcceptLang(settings){
+				return settings.headers['Accept-Language'];
+			}
+			
+			// check accept-language header in jquery.ajax
+			jQuery.ajax({
+				url:'/some/foo/bar',
+				beforeSend:function(jqXHR, settings){
+					equal(undefined,getExpectedAcceptLanguage(),"Verify Accept-Language in jQuery.ajax");
+					return false;
+				}
+			});
+			
+			// check accept-language header in jquery.ajax with custom value
+			jQuery.ajax({
+				url:'/some/foo/bar',
+				headers:{
+					'Accept-Language': 'fr_FR'
+				},
+				beforeSend:function(jqXHR, settings){
+					equal(getActualAcceptLang(settings),"fr_FR","Verify Accept-Language overrwite in jQuery.ajax");
+					return false;
+				}
+			});
+
+			// check accept-language header in jquery.ajax with custom value
+			jQuery.ajax({
+				url:'/some/foo/bar',
+				headers:{
+					'accept-language': 'fr_FR'
+				},
+				beforeSend:function(jqXHR, settings){
+					equal(getActualAcceptLang(settings),undefined,"Verify Accept-Language case insesitive overrwite in jQuery.ajax");    			
+					equal(settings.headers['accept-language'],"fr_FR","Verify accept-language case insesitive overrwite in jQuery.ajax");
+					return false;
+				}
+			});
+
+			// check accept-language header in jquery.ajax with custom value
+			jQuery.ajax({
+				url:'/some/foo/bar',
+				headers:{
+					'accePt-langUage': 'fr_FR'
+				},
+				beforeSend:function(jqXHR, settings){
+					equal(getActualAcceptLang(settings),undefined,"Verify Accept-Language case insesitive overrwite in jQuery.ajax");
+					equal(settings.headers['accePt-langUage'],"fr_FR","Verify accePt-langUage case insesitive overrwite in jQuery.ajax");
+					return false;
+				}
+			});
+			
+			
+			// invalid header type
+			jQuery.ajax({
+				url:'/some/foo/bar',
+				headers:"Accept-Language:'fr_FR'",
+				beforeSend:function(jqXHR, settings){
+					equal(getActualAcceptLang(settings),undefined,"Verify invalid headers type in jQuery.ajax");
+					return false;
+				}
+			});
+
+		});
 
 		</script>
 	</head>

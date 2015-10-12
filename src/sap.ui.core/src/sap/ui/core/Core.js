@@ -269,6 +269,51 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				log.trace("document is ready");
 				oSyncPoint1.finishTask(iDocumentReadyTask);
 			});
+			
+			// check for ajax accept-header activation before starting sync point 2 as 
+			// it also handles custom boot task which can send ajax calls.
+			// support an opt in configuration in case consumers does not want this pre-filter for some reason.
+			var enableAccepLangFilter = this.oConfiguration.getEnableAcceptLanguageAjaxFilter();
+			if ( typeof enableAccepLangFilter === 'boolean' && enableAccepLangFilter ) {
+				// activate the filter.
+				// set app configured language on possibly each ajax call.
+				// http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4
+				// Using private API from jQuery.sap.resources to get appropriate configured locale and fall back locale if 
+				// configured locale happens to be not among supported languages if any.
+				var appPrefLangs = jQuery.sap.resources._getPreferredLocales(this.oConfiguration.getLanguage(),this.oConfiguration.getSupportedLanguages());
+				if ( Array.isArray(appPrefLangs) ) {
+					appPrefLangs = appPrefLangs.toString();
+					if ( appPrefLangs.charAt( appPrefLangs.length - 1 ) === ',' ) {
+						// get rid of the last comma.
+						appPrefLangs = appPrefLangs.substr(0, appPrefLangs.length - 1);
+					}
+				}
+				// defer 'Accept-Language' header value to browser if condition not met.
+				if ( typeof appPrefLangs === 'string' && appPrefLangs !== '' ) {
+					jQuery.ajaxPrefilter(function ( options, originalOptions, jqXHR ) {
+						if ( typeof options !== 'object' || options === null ) {
+							// should never reach here. Someone trying to be innovative.
+							return;
+						}
+						options.headers = options.headers || {};
+						if ( typeof options.headers === 'object' ) {
+							for ( var prop in options.headers ) {
+								// better to do nothing if headers already has
+								// accept-language value be it in different case.
+								// jQuery.ajax#setRequestHeaders function normalizes header names.
+								if ( prop.toLowerCase() === 'accept-language' ) {
+									return;
+								}
+							}
+							options.headers["Accept-Language"] = appPrefLangs;
+						}
+					});
+					
+				} else {
+					jQuery.sap.log.error('Could not activate acceptLanguageAjaxFilter.');
+				}
+			}
+			
 
 			// sync point 2 synchronizes all library preloads and the end of the bootstrap script
 			var oSyncPoint2 = jQuery.sap.syncPoint("UI5 Core Preloads and Bootstrap Script", function(iOpenTasks, iFailures) {

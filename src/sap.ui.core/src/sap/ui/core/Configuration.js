@@ -120,7 +120,8 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"xx-suppressDeactivationOfControllerCode" : { type : "boolean",  defaultValue : false }, //temporarily to suppress the deactivation of controller code in design mode
 					"xx-lesssupport"        : { type : "boolean",  defaultValue : false },
 					"xx-handleValidation"   : { type : "boolean",  defaultValue : false },
-					"statistics"            : { type : "boolean",  defaultValue : false }
+					"statistics"            : { type : "boolean",  defaultValue : false },
+					"xx-enableAcceptLanguageAjaxFilter": { type : "boolean", defaultValue: false, noUrl:true } // enable accept language header filter to be set for ajax calls
 			};
 
 			var M_COMPAT_FEATURES = {
@@ -1020,7 +1021,21 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		getHandleValidation : function() {
 			return this["xx-handleValidation"];
+		},
+
+		/**
+		 * Return whether the accept header ajax filter should be activated by core.
+		 *
+		 * @returns {boolean} whether the activation of the accept header ajax filter is enabled or not
+		 * @since 1.32.x
+		 * @experimental Since 1.32.x
+		 * @Author Yateen Shaha, SAS Institute Inc., USA.
+		 * @private
+		 */
+		getEnableAcceptLanguageAjaxFilter : function() {
+			return this["xx-enableAcceptLanguageAjaxFilter"];
 		}
+
 	});
 
 	var M_ABAP_LANGUAGE_TO_LOCALE = {

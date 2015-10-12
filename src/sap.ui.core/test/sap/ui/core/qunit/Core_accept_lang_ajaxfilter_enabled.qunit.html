@@ -1,0 +1,161 @@
+<!DOCTYPE HTML>
+<!--
+  Tested class: sap.ui.core.Core
+  Author: Yateen Shaha, SAS Institute Inc., USA
+-->
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+		<title>Test Page for the SAPUI5 Core Object [sap.ui.core.Core]</title>
+
+		<script type="text/javascript">
+		window["sap-ui-config"] = {
+			themeRoots : {
+				"my_preconfigured_theme" : "http://preconfig.com/ui5-themes",
+
+				"my_second_preconfigured_theme" : {
+					"sap.ui.commons" : "http://commons.preconfig.com/ui5-themes",
+					"" : "http://preconfig.com/ui5-themes",
+					"sap.ui.core" : "http://core.preconfig.com/ui5-themes"
+				}
+			},
+			"xx-enableAcceptLanguageAjaxFilter": true,
+			"xx-supportedLanguages": ["en_US","ar","ar_XX","cs","da","de","el","en","es","fr","he","hr","hu","it","iw","ja","ko","nb","nl","no",
+	         "pl","pl_XX","pt","pt_BR","ru","sh","sk","sl","sr","sv","th","tr","zh_CN","zh_TW"],
+	         "language":"ja"
+		}
+		</script>
+
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="test_theme"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-theme-roots='{"my_third_preconfigured_theme" : "http://third.preconfig.com/ui5-themes"}'>
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script type="text/javascript">
+
+			function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
+				var aMethodNames=fnClass.getMetadata().getAllPublicMethods(),
+				  result = true,
+					sMethod;
+				for(var i in aMethodNames) {
+					sMethod = aMethodNames[i];
+					result = result && oObject[sMethod] != undefined;
+					if(result) continue;
+					if(bFailEarly && !result) break;
+				}
+				return result;
+			}
+
+			function equalControls(actual, expected, message) {
+				ok(actual === expected, message);
+			}
+
+		qutils.delayTestStart();
+
+
+		// used to get access to the non-public core parts
+		var oRealCore;
+		var TestCorePlugin = function() {};
+		TestCorePlugin.prototype.startPlugin = function(oCore, bOnInit) {
+			oRealCore = oCore;
+		};
+		sap.ui.getCore().registerPlugin(new TestCorePlugin());
+
+
+		module("AcceptLanugageFilter");
+
+		
+		// now check the locale configuration to be applied as lang attribute
+		test("Ajax filter enabled and Configured locale ja", function() {
+			
+			function getExpectedAcceptLanguage(){
+				var sapConf = sap.ui.getCore().getConfiguration();
+				return jQuery.sap.resources._getPreferredLocales(sapConf.getLanguage(),sapConf.getSupportedLanguages()).toString();
+			}
+			
+			function getActualAcceptLang(settings){
+				return settings.headers['Accept-Language'];
+			}
+			
+			// check accept-language header in jquery.ajax
+			jQuery.ajax({
+				url:'/some/foo/bar',
+				beforeSend:function(jqXHR, settings){
+					equal(getActualAcceptLang(settings),getExpectedAcceptLanguage(),"Verify Accept-Language in jQuery.ajax");
+					return false;
+				}
+			});
+			
+			// check accept-language header in jquery.ajax with custom value
+			jQuery.ajax({
+				url:'/some/foo/bar',
+				headers:{
+					'Accept-Language': 'fr-FR'
+				},
+				beforeSend:function(jqXHR, settings){
+					equal(getActualAcceptLang(settings),"fr-FR","Verify Accept-Language overrwite in jQuery.ajax");
+					return false;
+				}
+			});
+
+			// check accept-language header in jquery.ajax with custom value
+			jQuery.ajax({
+				url:'/some/foo/bar',
+				headers:{
+					'accept-language': 'fr-FR'
+				},
+				beforeSend:function(jqXHR, settings){
+					equal(getActualAcceptLang(settings),undefined,"Verify Accept-Language case insesitive overrwite in jQuery.ajax");
+					equal(settings.headers['accept-language'],"fr-FR","Verify accept-language case insesitive overrwite in jQuery.ajax");
+					return false;
+				}
+			});
+
+			// check accept-language header in jquery.ajax with custom value
+			jQuery.ajax({
+				url:'/some/foo/bar',
+				headers:{
+					'accePt-langUage': 'fr-FR'
+				},
+				beforeSend:function(jqXHR, settings){
+					equal(getActualAcceptLang(settings),undefined,"Verify Accept-Language case insesitive overrwite in jQuery.ajax");
+					equal(settings.headers['accePt-langUage'],"fr-FR","Verify accePt-langUage case insesitive overrwite in jQuery.ajax");
+					return false;
+				}
+			});
+			
+			// invalid header type
+			jQuery.ajax({
+				url:'/some/foo/bar',
+				headers:"Accept-Language:'fr-FR'",
+				beforeSend:function(jqXHR, settings){
+					equal(getActualAcceptLang(settings),undefined,"Verify invalid headers type in jQuery.ajax");
+					return false;
+				}
+			});
+
+		});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit tests: sap.ui.core.Core</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<br>
+		<div id="uiArea1"></div>
+		<div id="uiArea2"></div>
+		<div id="uiArea3"></div>
+		<div id="uiArea4"></div>
+	</body>
+</html>

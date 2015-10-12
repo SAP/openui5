@@ -508,6 +508,32 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 		return aLocales;
 	};
 
+	/**
+	 * Returns a string array of preferred locales depending upon input arguments. 
+	 * Determines fall back locales in case input 'sLocale' is not part of the array of supported locales 'aSupportedLocales'.
+	 * Retun locales in BCP47 format.
+	 * @param {string} sLocale locale. See {sap.ui.core.Configuration.getLanguage()}
+	 * @param {Array} string array of supported locales. See {sap.ui.core.Configuration.getSupportedLanguages()}
+	 * @return {Array} string array of preferred locales.All locale string in the array are of BCP47 format.
+	 * @private Not sure if should be public.
+	 */
+	jQuery.sap.resources._getPreferredLocales = function(sLocale,aSupportedLocales){
+		var appPrefLangs = jQuery.sap.resources._getFallbackLocales(sLocale,aSupportedLocales),
+			retLocales, 
+			convertedVal;
+		if ( Array.isArray(appPrefLangs) ) {
+			retLocales = [];
+			// API returns locales in non BCP-47 syntax. Convert them.
+			for ( var i = 0 ; i < appPrefLangs.length; i++ ) {
+				convertedVal = convertLocaleToBCP47(appPrefLangs[i]);
+				if ( typeof convertedVal === 'string' ) {
+					retLocales.push(convertedVal);
+				}
+			}
+			return retLocales;
+		}
+	};
+
 	return jQuery;
 
 });
