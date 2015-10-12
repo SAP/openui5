@@ -2,52 +2,52 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/ToolsAPI'],
-	function(jQuery, ToolsAPI) {
-	"use strict";
+sap.ui.define(['jquery.sap.global'],
+	function (jQuery) {
+		"use strict";
 
 
-	/**
-	 * <pre>
-	 * <code>sap.m.Support</code> shows the technical information for SAPUI5 Mobile Applications.
-	 * This technical information includes
-	 * 	* SAPUI5 Version
-	 * 	* User Agent
-	 * 	* Configurations (Bootstrap and Computed)
-	 * 	* URI parameters
-	 * 	* All loaded module names
-	 *
-	 * In order to show the device information, the user must follow the following gestures.
-	 * 	1 - Hold two finger for 3 seconds minimum.
-	 * 	2 - Tab with a third finger while holding the first two fingers.
-	 *
-	 * NOTE: This class is internal and all its functions must not be used by an application
-	 *
-	 * As <code>sap.m.Support</code> is a static class, a <code>jQuery.sap.require("sap.m.Support");</code>
-	 * statement must be implicitly executed before the class is used.
-	 *
-	 *
-	 * Enable Support:
-	 * --------------------------------------------------
-	 * //import library
-	 * jQuery.sap.require("sap.m.Support");
-	 *
-	 * //By default after require, support is enabled but implicitly we can call
-	 * sap.m.Support.on();
-	 *
-	 * Disable Support:
-	 * --------------------------------------------------
-	 * sap.m.Support.off();
-	 * </pre>
-	 *
-	 * @author SAP SE
-	 * @since 1.11.0
-	 *
-	 * @static
-	 * @protected
-	 * @name sap.m.Support
-	 */
-	var Support = (function($, document) {
+		/**
+		 * <pre>
+		 * <code>sap.m.Support</code> shows the technical information for SAPUI5 Mobile Applications.
+		 * This technical information includes
+		 *    * SAPUI5 Version
+		 *    * User Agent
+		 *    * Configurations (Bootstrap and Computed)
+		 *    * URI parameters
+		 *    * All loaded module names
+		 *
+		 * In order to show the device information, the user must follow the following gestures.
+		 *    1 - Hold two finger for 3 seconds minimum.
+		 *    2 - Tab with a third finger while holding the first two fingers.
+		 *
+		 * NOTE: This class is internal and all its functions must not be used by an application
+		 *
+		 * As <code>sap.m.Support</code> is a static class, a <code>jQuery.sap.require("sap.m.Support");</code>
+		 * statement must be implicitly executed before the class is used.
+		 *
+		 *
+		 * Enable Support:
+		 * --------------------------------------------------
+		 * //import library
+		 * jQuery.sap.require("sap.m.Support");
+		 *
+		 * //By default after require, support is enabled but implicitly we can call
+		 * sap.m.Support.on();
+		 *
+		 * Disable Support:
+		 * --------------------------------------------------
+		 * sap.m.Support.off();
+		 * </pre>
+		 *
+		 * @author SAP SE
+		 * @since 1.11.0
+		 *
+		 * @static
+		 * @protected
+		 * @name sap.m.Support
+		 */
+		var Support = (function ($, document) {
 
 		var dialog, startTime, isEventRegistered, lastTouchUID;
 		var timeDiff = 0;
@@ -100,23 +100,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/ToolsAPI'],
 			});
 		}
 
-		// copied from core
-		function getTechnicalContent() {
-			var oCfg = ToolsAPI.getFrameworkInformation();
-			oData = {
-				version: oCfg.commonInformation.version,
-				build: oCfg.commonInformation.buildTime,
-				change: oCfg.commonInformation.lastChange,
-				useragent: oCfg.commonInformation.userAgent,
-				docmode: oCfg.commonInformation.documentMode,
-				debug: oCfg.commonInformation.debugMode,
-				bootconfig: oCfg.configurationBootstrap,
-				config:  oCfg.configurationComputed,
-				loadedlibs: oCfg.loadedLibraries,
-				modules: oCfg.loadedModules,
-				uriparams: oCfg.URLParameters,
-				appurl: oCfg.commonInformation.applicationHREF
-			};
+			// copied from core
+			function getTechnicalContent(oFrameworkInformation) {
+				oData = {
+					version: oFrameworkInformation.commonInformation.version,
+					build: oFrameworkInformation.commonInformation.buildTime,
+					change: oFrameworkInformation.commonInformation.lastChange,
+					useragent: oFrameworkInformation.commonInformation.userAgent,
+					docmode: oFrameworkInformation.commonInformation.documentMode,
+					debug: oFrameworkInformation.commonInformation.debugMode,
+					bootconfig: oFrameworkInformation.configurationBootstrap,
+					config: oFrameworkInformation.configurationComputed,
+					loadedlibs: oFrameworkInformation.loadedLibraries,
+					modules: oFrameworkInformation.loadedModules,
+					uriparams: oFrameworkInformation.URLParameters,
+					appurl: oFrameworkInformation.commonInformation.applicationHREF
+				};
 
 			var html = ["<table class='sapUiSelectable' border='0' cellspacing='5' cellpadding='5' width='100%'><tbody class='sapUiSelectable'>"];
 			line(html, true, true, "SAPUI5 Version", function(buffer) {
@@ -312,13 +311,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/ToolsAPI'],
 			}
 		}
 
-		function show() {
-			var container = getDialog();
-			container.removeAllAggregation("content");
-			container.addAggregation("content", getTechnicalContent());
-			dialog.open();
-			setupDialog();
-		}
+			function show() {
+				sap.ui.require(['sap/ui/core/support/ToolsAPI'], function (ToolsAPI) {
+					var container = getDialog();
+					container.removeAllAggregation("content");
+					container.addAggregation("content", getTechnicalContent(ToolsAPI.getFrameworkInformation()));
+
+					dialog.open();
+					setupDialog();
+				});
+			}
 
 		return ({
 			/**
