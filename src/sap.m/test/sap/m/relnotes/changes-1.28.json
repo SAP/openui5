@@ -3966,5 +3966,132 @@
         "references": []
       }
     ]
+  },
+  "1.28.20": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "879e819b39b38080fe6b0e8abae0436090e368cd",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FIX",
+        "text": "IconTabHeader should ignore right click",
+        "references": []
+      },
+      {
+        "id": "ca8fdcf3dc392ff2e972d3b68579e9133d73a0f4",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet: ActionSheet not flicker on Windows Phone 8.1",
+        "references": []
+      },
+      {
+        "id": "efe475abba6ddd023e6247403427c7cc9e6e919b",
+        "author": "Krasimir Chariyski \u003ckrasimir.chariyski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel - Fixed rendering issue with sap.zen.commons.layout.PositionContainer",
+        "references": []
+      },
+      {
+        "id": "c1ce0bc04be2f399a3ce1b1a24ccc8a78ddf198f",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: binding for property selectedKey doesn\u0027t work",
+        "references": []
+      },
+      {
+        "id": "52954600f2859126ea9b8dd1ce3d8af38f92865f",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DateTimeInput: Picker popup should inform opener popup.",
+        "references": []
+      },
+      {
+        "id": "a2ff19fb956380f1937e7960de065da1feab6921",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: should expand to content width if used in Popover",
+        "references": []
+      },
+      {
+        "id": "947889cb378a895bd889f2f3da7f8b26635e2ea5",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: When .setSelectedKey(\u0027\u0027) is used, the first filter is now selected.",
+        "references": []
+      },
+      {
+        "id": "f5de6f5e93679634976c830479dec59f0167c1b5",
+        "author": "I306504 \u003cdiana.mihaylova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectListItem: Identical DOM element IDs",
+        "references": []
+      },
+      {
+        "id": "c69335f3bac81e682d95663cfe46a08b780407b0",
+        "author": "I306504 \u003cdiana.mihaylova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectNumber: ARIA attribute refers to elements which are not in the DOM",
+        "references": []
+      },
+      {
+        "id": "ef4f1bbbca71b689e6f6c6a0290bd720e47f9502",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: binding for property selectedKey doesn\u0027t work",
+        "references": []
+      },
+      {
+        "id": "313b1139f7607e1cb989c25b85c37ae98fd4a4b3",
+        "author": "D064730 \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Focus setting improved",
+        "references": []
+      },
+      {
+        "id": "0c1dee3b1f313985ff393f1ba2a81f582c5318a7",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Problem with duplicated Id fixed.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "783526"
+          }
+        ]
+      },
+      {
+        "id": "0821b328e6e3a02cc39c870b3e38c7e530e3bbbc",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Problem with duplicated toolbar fixed.",
+        "references": []
+      },
+      {
+        "id": "057958fc2bbf02e6536c7e277eb257b0cb7b47d9",
+        "author": "Martin Daskalov \u003cm.daskalov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog - fixed button tooltip in example.",
+        "references": []
+      },
+      {
+        "id": "3d9e97d39926ad11b76134a625a68f19c30fd565",
+        "author": "Martin Daskalov \u003cm.daskalov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog - fixed problem with Reset Button not showing.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "728077"
+          }
+        ]
+      },
+      {
+        "id": "15c191dce35b8107debfb853db8b9d336118a5c4",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.routing.RouteMatchedHandler - now works with sap.m.routing.Router",
+        "references": []
+      }
+    ]
   }
 }

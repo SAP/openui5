@@ -350,5 +350,24 @@
         "references": []
       }
     ]
+  },
+  "1.28.20": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "45555ea71edde7de9a95a4bc71896eac7cf27c36",
+        "author": "Dimo Petrov \u003cdimo.petrov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.NavigationBar - late style application would cause a bug in the ux3.Shell",
+        "references": []
+      },
+      {
+        "id": "3beb7e004156c2adf700bf5cf8fed9a035102715",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.ux3.ToolPopup: Control is now properly sized in sap_goldreflection theme",
+        "references": []
+      }
+    ]
   }
 }
