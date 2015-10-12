@@ -13,7 +13,7 @@
 	"ach": "CA-UI5-DOC",
 	"dataSources": {
 	  "invoiceRemote": {
-		"uri": "../../../../../../../../../uilib-sample/proxy/http/services.odata.org/V2/Northwind/Northwind.svc/",
+		"uri": "../../../../../../../../../uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/",
 		"type": "OData",
 		"settings": {
 		  "odataVersion": "2.0"
