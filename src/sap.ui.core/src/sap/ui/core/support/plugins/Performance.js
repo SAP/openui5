@@ -127,9 +127,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			var bActive = jQuery.sap.measure.getActive();
 			var aMeasurements = [];
 	
-			if (bActive) {
-				aMeasurements = jQuery.sap.measure.getAllMeasurements();
-			}
+			aMeasurements = jQuery.sap.measure.getAllMeasurements();
+			
 			this._oStub.sendEvent(this.getId() + "SetMeasurements", {"measurements": aMeasurements});
 			this._oStub.sendEvent(this.getId() + "SetActive", {"active": bActive});
 		}
@@ -145,7 +144,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			var aMeasurements = oEvent.getParameter("measurements");
 			var oTableBody = this.$("tabBody");
 			var rm = sap.ui.getCore().createRenderManager();
-	
+			if (!aMeasurements) {
+				return;
+			}
 			for ( var i = 0; i < aMeasurements.length; i++) {
 				var oMeasurement = aMeasurements[i];
 				rm.write("<tr>");
@@ -238,11 +239,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 */
 		Performance.prototype.onsapUiSupportPerfActivate = function(oEvent) {
 	
-			var bActive = oEvent.getParameter("active");
-	
-			if (jQuery.sap.measure.getActive() != bActive) {
-				jQuery.sap.measure.setActive(bActive);
-			}
+			jQuery.sap.measure.setActive(oEvent.getParameter("active"));
 	
 		};
 	

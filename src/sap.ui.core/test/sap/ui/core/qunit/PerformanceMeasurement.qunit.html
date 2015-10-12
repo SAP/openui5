@@ -187,6 +187,135 @@
 			ok(oMeasurement, "Measurement for request for ButtonRenderer.js found");
 
 		});
+		
+		test("Test Average", function() {
+			jQuery.sap.measure.setActive(true);
+			jQuery.sap.measure.clear();
+			for (var i=0;i<1000;i++) {
+			    jQuery.sap.measure.average("myId","Average of myId");
+			    jQuery.sap.measure.average("myId2","Average of myId");
+			    jQuery.sap.log.info("Foo " + i);
+			    jQuery.sap.measure.end("myId");
+			}
+			jQuery.sap.measure.end("myId2");
+			ok(jQuery.sap.measure.getMeasurement("myId").count === 1000, "1000 count processed for myId");
+			ok(jQuery.sap.measure.getMeasurement("myId2").count === 1000, "1000 count processed for myId2");
+		});
+		
+		test("Test registerMethod", function() {
+			jQuery.sap.measure.setActive(true);
+			jQuery.sap.measure.clear();
+			var f = function() {
+				for (var i=0;i<100;i++) {
+					var j=i;
+				}
+			};
+			var oObject = {func: f, func2: f};
+			
+			//register functions
+			jQuery.sap.measure.registerMethod("oObject.func", oObject, "func");
+			for (var i=0;i<1000;i++) {
+				oObject.func(); //execute
+			}
+			//check
+			ok(jQuery.sap.measure.getMeasurement("oObject.func").count === 1000, "1000 count processed for oObject.func");
+			ok(oObject.func !== f , "function is overwritten");
+			
+			//unregister func
+			jQuery.sap.measure.unregisterMethod("oObject.func", oObject, "func");
+			ok(oObject.func === f , "function is reset");
+			
+			//register 2 functions
+			jQuery.sap.measure.registerMethod("oObject.func", oObject, "func");
+			jQuery.sap.measure.registerMethod("oObject.func2", oObject, "func2");
+			
+			//check
+			ok(oObject.func !== f , "function is overwritten");
+			ok(oObject.func2 !== f , "function2 is overwritten");
+			
+			//unregister 2 functions
+			jQuery.sap.measure.unregisterAllMethods();
+			ok(oObject.func === f , "function is reset");
+			ok(oObject.func2 === f , "function2 is reset");
+		});
+		
+		test("Test Categories/Filtering/Completed measuremtents", function() {
+			jQuery.sap.measure.setActive(true,"test1");
+			jQuery.sap.measure.clear();
+			jQuery.sap.measure.start("test1string_1", "", "test1");
+			jQuery.sap.measure.start("test1string_2", "", "test1,test2");
+			jQuery.sap.measure.start("test1string_3", "", ["test1"]);
+			jQuery.sap.measure.start("test1string_4", "", ["test1","test2"]);
+			jQuery.sap.measure.start("test1string_5", "", "test2");
+			jQuery.sap.measure.start("test1string_6", "", "test2,test3");
+			jQuery.sap.measure.start("test1string_7", "", ["test2"]);
+			jQuery.sap.measure.start("test1string_8", "", ["test2","test3"]);
+			
+			equal(jQuery.sap.measure.getAllMeasurements().length, 4, "4 measurement");
+			equal(jQuery.sap.measure.getAllMeasurements(true).length, 0, "0 completed measurements");
+			equal(jQuery.sap.measure.getAllMeasurements(false).length, 4, "4 incompleted measurements");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test1")>-1 ? o : null}).length,4, "4 test1 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test2")>-1 ? o : null}).length,2, "2 test1, test2 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test3")>-1 ? o : null}).length,0, "0 test3 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test4")>-1 ? o : null}).length,0, "0 test4 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test1")>-1 ? o : null},true).length,0, "0 complete test1 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test2")>-1 ? o : null},true).length,0, "0 complete test1, test2 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test3")>-1 ? o : null},true).length,0, "0 complete test3 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test4")>-1 ? o : null},true).length,0, "0 complete test4 measurement filtered");
+			
+			jQuery.sap.measure.end("test1string_1");
+			jQuery.sap.measure.end("test1string_2");
+			jQuery.sap.measure.end("test1string_3");
+			jQuery.sap.measure.end("test1string_4");
+			jQuery.sap.measure.end("test1string_5");
+			jQuery.sap.measure.end("test1string_6");
+			jQuery.sap.measure.end("test1string_7");
+			jQuery.sap.measure.end("test1string_8");
+			
+			equal(jQuery.sap.measure.getAllMeasurements().length, 4, "4 measurement");
+			equal(jQuery.sap.measure.getAllMeasurements(true).length, 4, "4 completed measurements");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test1")>-1 ? o : null}).length,4, "4 test1 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test2")>-1 ? o : null}).length,2, "2 test1, test2 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test3")>-1 ? o : null}).length,0, "0 test3 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test4")>-1 ? o : null}).length,0, "0 test4 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test1")>-1 ? o : null},true).length,4, "4 test1 completed measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test2")>-1 ? o : null},true).length,2, "2 test1, test2 completed measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test3")>-1 ? o : null},true).length,0, "0 test3 completed measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test4")>-1 ? o : null},true).length,0, "0 test4 completed measurement filtered");
+			
+			
+			jQuery.sap.measure.setActive(true,"test1,test2");
+			jQuery.sap.measure.clear();
+			jQuery.sap.measure.start("test1string_1", "", "test1");
+			jQuery.sap.measure.start("test1string_2", "", "test1,test2");
+			jQuery.sap.measure.start("test1string_3", "", ["test1"]);
+			jQuery.sap.measure.start("test1string_4", "", ["test1","test2"]);
+			jQuery.sap.measure.start("test1string_5", "", "test2");
+			jQuery.sap.measure.start("test1string_6", "", "test2,test3");
+			jQuery.sap.measure.start("test1string_7", "", ["test2"]);
+			jQuery.sap.measure.start("test1string_8", "", ["test2","test3"]);
+			jQuery.sap.measure.start("test1string_9", "", ["test1"]);
+			jQuery.sap.measure.end("test1string_1");
+			jQuery.sap.measure.end("test1string_2");
+			jQuery.sap.measure.end("test1string_3");
+			jQuery.sap.measure.end("test1string_4");
+			jQuery.sap.measure.end("test1string_5");
+			jQuery.sap.measure.end("test1string_6");
+			jQuery.sap.measure.end("test1string_7");
+			jQuery.sap.measure.end("test1string_8");
+			
+			equal(jQuery.sap.measure.getAllMeasurements().length,9, "9 started measurement");
+			equal(jQuery.sap.measure.getAllMeasurements(true).length,8, "8 completed measurement");
+			equal(jQuery.sap.measure.getAllMeasurements(false).length,1, "1 incompleted measurement");
+			
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test1")>-1 ? o : null},true).length,4, "4 completed test1 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test2")>-1 ? o : null},true).length,6, "6 completed test2 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test3")>-1 ? o : null},true).length,2, "2 completed test3 measurement filtered");
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test4")>-1 ? o : null},true).length,0, "0 completed test4 measurement filtered");
+			
+			equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test1")>-1 ? o : null}).length,5, "5 test1 measurement filtered");
+			
+		});
 
 		</script>
 
