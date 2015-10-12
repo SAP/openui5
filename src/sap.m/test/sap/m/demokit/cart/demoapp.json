@@ -46,7 +46,7 @@
 		"test/pageobjects/Dialog.js",
 		"test/pageobjects/Home.js",
 		"test/pageobjects/Product.js",
-		"util/Formatter.js",
+		"model/formatter.js",
 		"view/App.view.xml",
 		"view/Cart.controller.js",
 		"view/Cart.view.xml",

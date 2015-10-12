@@ -43,7 +43,7 @@
 				id="entryList"
 				footerText="{
 					path : 'cartProducts>/totalPrice',
-					formatter : 'util.Formatter.totalPrice'
+					formatter : '.formatter.totalPrice'
 				} EUR"
 				mode="{cfg>/listMode}"
 				delete="handleEntryListDelete"
@@ -60,14 +60,11 @@
 					<ObjectListItem
 						intro="{cartProducts>Quantity} x"
 						type="{cfg>/listItemType}"
-						icon="{
-							path : 'cartProducts>PictureUrl',
-							formatter: 'util.Formatter.pictureUrl'
-						}"
+						icon="{cartProducts>PictureUrl}"
 						title="{cartProducts>Name}"
 						number="{
 							path : 'cartProducts>Price',
-							formatter : 'util.Formatter.price'
+							formatter : '.formatter.price'
 						}"
 						numberUnit="EUR"
 						press="handleEntryListPress"
@@ -80,11 +77,11 @@
 							<ObjectStatus
 								text="{
 									path : 'cartProducts>Status',
-									formatter : 'util.Formatter.statusText'
+									formatter : '.formatter.statusText'
 								}"
 								state="{
 									path : 'cartProducts>Status',
-									formatter : 'util.Formatter.statusState'
+									formatter : '.formatter.statusState'
 								}" />
 						</firstStatus>
 						<customData>
