@@ -137,7 +137,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		TimesRow.prototype.init = function(){
 
-			this._oFormatYyyyMMddHHmm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMddHHmm"});
+			this._oFormatYyyyMMddHHmm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMddHHmm", calendarType: sap.ui.core.CalendarType.Gregorian});
 			this._oFormatLong = sap.ui.core.format.DateFormat.getDateTimeInstance({style: "long"});
 			this._oFormatTime = sap.ui.core.format.DateFormat.getTimeInstance({style: "short"});
 			this._oFormatDate = sap.ui.core.format.DateFormat.getDateInstance({style: "medium"});
@@ -665,7 +665,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 				for ( var i = 0; i < aDomRefs.length; i++) {
 					var $DomRef = jQuery(aDomRefs[i]);
-					if ($DomRef.attr("data-sap-time") == this._oFormatYyyyMMddHHmm.format(oFocusedDate, true)) {
+					if ($DomRef.attr("data-sap-time") == this._oFormatYyyyMMddHHmm.format(oFocusedDate.getJSDate(), true)) {
 						$DomRef.focus();
 						break;
 					}
@@ -813,7 +813,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		function _initItemNavigation(){
 
 			var oDate = this._getDate();
-			var sYyyyMMddHHmm = this._oFormatYyyyMMddHHmm.format(oDate, true);
+			var sYyyyMMddHHmm = this._oFormatYyyyMMddHHmm.format(oDate.getJSDate(), true);
 			var iIndex = 0;
 
 			var oRootDomRef = this.$("times").get(0);
@@ -996,7 +996,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				this.setDate(new Date(oDate.getTime()));
 			}
 
-			var sYyyyMMddHHmm = this._oFormatYyyyMMddHHmm.format(oDate, true);
+			var sYyyyMMddHHmm = this._oFormatYyyyMMddHHmm.format(oDate.getJSDate(), true);
 			var aDomRefs = this._oItemNavigation.getItemDomRefs();
 			var $DomRefTime;
 			for ( var i = 0; i < aDomRefs.length; i++) {
@@ -1131,7 +1131,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						oDateRange = new sap.ui.unified.DateRange({startDate: CalendarUtils._createLocalDate(new Date(oDate.getTime()), true)});
 						oAggOwner.addAggregation("selectedDates", oDateRange, true); // no re-rendering
 					}
-					sYyyyMMddHHmm = this._oFormatYyyyMMddHHmm.format(oDate, true);
+					sYyyyMMddHHmm = this._oFormatYyyyMMddHHmm.format(oDate.getJSDate(), true);
 					for ( i = 0; i < aDomRefs.length; i++) {
 						$DomRef = jQuery(aDomRefs[i]);
 						if ($DomRef.attr("data-sap-time") == sYyyyMMddHHmm) {
@@ -1159,7 +1159,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			if (!oEndDate) {
 				// start of interval or single date
-				var sYyyyMMddHHmm = this._oFormatYyyyMMddHHmm.format(oStartDate, true);
+				var sYyyyMMddHHmm = this._oFormatYyyyMMddHHmm.format(oStartDate.getJSDate(), true);
 				for ( i = 0; i < aDomRefs.length; i++) {
 					$DomRef = jQuery(aDomRefs[i]);
 					bStart = false;

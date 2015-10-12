@@ -259,7 +259,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 				describedby: ""
 			};
 
-		var sYyyymmdd = oMonth._oFormatYyyymmdd.format(oDay, true);
+		var sYyyymmdd = oMonth._oFormatYyyymmdd.format(oDay.getJSDate(), true);
 		var iWeekDay = oDay.getUTCDay();
 		var iSelected = oMonth._checkDateSelected(oDay);
 		var oType = oMonth._getDateType(oDay);

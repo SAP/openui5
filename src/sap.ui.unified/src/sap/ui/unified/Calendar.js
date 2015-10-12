@@ -126,13 +126,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this._iMode = 0; // days are shown
 
-			this._oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
+			// to format year with era in Japanese
+			this._oYearFormat = sap.ui.core.format.DateFormat.getDateInstance({format: "y"});
 
 			this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 
-			this._oMinDate = new UniversalDate(UniversalDate.UTC(1, 0, 1));
-			this._oMinDate.setUTCFullYear(1); // otherwise year 1 will be converted to year 1901
-			this._oMaxDate = new UniversalDate(UniversalDate.UTC(9999, 11, 31));
+			this._oMinDate = new UniversalDate(new Date(Date.UTC(1, 0, 1)));
+			this._oMinDate.getJSDate().setUTCFullYear(1); // otherwise year 1 will be converted to year 1901
+			this._oMaxDate = new UniversalDate(new Date(Date.UTC(9999, 11, 31)));
 
 			var oHeader = new Header(this.getId() + "--Head");
 			oHeader.attachEvent("pressPrevious", this._handlePrevious, this);
@@ -715,7 +716,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			case 1: // month picker
 				oFocusedDate.setUTCFullYear(oFocusedDate.getUTCFullYear() - 1);
-				oHeader.setTextButton2((oFocusedDate.getUTCFullYear()).toString());
+				oHeader.setTextButton2(this._oYearFormat.format(oFocusedDate, true));
 				_togglePrevNext(that, oFocusedDate);
 				break;
 
@@ -749,7 +750,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			case 1: // month picker
 				oFocusedDate.setUTCFullYear(oFocusedDate.getUTCFullYear() + 1);
-				oHeader.setTextButton2((oFocusedDate.getUTCFullYear()).toString());
+				oHeader.setTextButton2(this._oYearFormat.format(oFocusedDate, true));
 				_togglePrevNext(that, oFocusedDate);
 				break;
 
@@ -926,9 +927,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			var oDate = oThis._getFocusedDate();
-			var iYear = oDate.getUTCFullYear();
-			var iYearMax = oThis._oMaxDate.getUTCFullYear();
-			var iYearMin = oThis._oMinDate.getUTCFullYear();
+			var iYear = oDate.getJSDate().getUTCFullYear();
+			var iYearMax = oThis._oMaxDate.getJSDate().getUTCFullYear();
+			var iYearMin = oThis._oMinDate.getJSDate().getUTCFullYear();
 
 			if (iYearMax - iYearMin <= 20) {
 				return;
@@ -962,7 +963,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 			oThis.$("contentOver").css("display", "");
 
-			oYearPicker.setYear(iYear);
+			oYearPicker.setDate(oDate.getJSDate());
 
 			// check special case if only 4 weeks are displayed (e.g. February 2021) -> top padding must be removed
 			// can only happen if only one month is displayed -> otherwise at least one month has more than 28 days.
@@ -1039,19 +1040,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		function _togglePrevNext (oThis, oDate, bCheckMonth){
 
-			var iYear = oDate.getUTCFullYear();
-			var iYearMax = oThis._oMaxDate.getUTCFullYear();
-			var iYearMin = oThis._oMinDate.getUTCFullYear();
-			var iMonth = oDate.getUTCMonth();
-			var iMonthMax = oThis._oMaxDate.getUTCMonth();
-			var iMonthMin = oThis._oMinDate.getUTCMonth();
+			var iYearMax = oThis._oMaxDate.getJSDate().getUTCFullYear();
+			var iYearMin = oThis._oMinDate.getJSDate().getUTCFullYear();
+			var iMonthMax = oThis._oMaxDate.getJSDate().getUTCMonth();
+			var iMonthMin = oThis._oMinDate.getJSDate().getUTCMonth();
 			var oHeader = oThis.getAggregation("header");
+
+			var oCheckDate = new UniversalDate(oDate);
+			oCheckDate.setUTCMonth(oCheckDate.getUTCMonth() + 1, 0); // check the last day of the month for next (needed for islamic date)
+			var iYear = oCheckDate.getJSDate().getUTCFullYear();
+			var iMonth = oCheckDate.getJSDate().getUTCMonth();
 
 			if (iYear > iYearMax || (iYear == iYearMax && ( !bCheckMonth || iMonth >= iMonthMax ))) {
 				oHeader.setEnabledNext(false);
 			}else {
 				oHeader.setEnabledNext(true);
 			}
+
+			oCheckDate.setUTCDate(1); // check the first day of the month for previous (needed for islamic date)
+			iYear = oCheckDate.getJSDate().getUTCFullYear();
+			iMonth = oCheckDate.getJSDate().getUTCMonth();
 
 			if (iYear < iYearMin || (iYear == iYearMin && ( !bCheckMonth || iMonth <= iMonthMin ))) {
 				oHeader.setEnabledPrevious(false);
@@ -1128,7 +1136,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			if (bShort) {
 				oHeader.setAriaLabelButton1(sAriaLabel);
 			}
-			oHeader.setTextButton2((oDate.getUTCFullYear()).toString());
+
+			var oFirstDate = new UniversalDate(oDate);
+			oFirstDate.setUTCDate(1); // always use the first of the month to have stabel year in Japanese calendar
+			oHeader.setTextButton2(oThis._oYearFormat.format(oFirstDate, true));
 
 		}
 
@@ -1282,10 +1293,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var oFocusedDate = new UniversalDate(this._getFocusedDate().getTime());
 			var oYearPicker = this.getAggregation("yearPicker");
-			var iYear = oYearPicker.getYear();
+			var oDate = CalendarUtils._createUniversalUTCDate(oYearPicker.getDate());
 			var that = this;
 
-			oFocusedDate.setUTCFullYear(iYear);
+			oDate.setUTCMonth(oFocusedDate.getUTCMonth(), oFocusedDate.getUTCDate()); // to keep day and month stable also for islamic date
+			oFocusedDate = oDate;
 
 			_focusDate(that, oFocusedDate, true);
 
