@@ -168,7 +168,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 	
 	UniversalDate.getEraByDate = function(sCalendarType, iYear, iMonth, iDay) {
 		var aEras = getEras(sCalendarType),
-			iTimestamp = Date.UTC(iYear, iMonth, iDay),
+			iTimestamp = new Date(0).setUTCFullYear(iYear, iMonth, iDay),
 			oEra;
 		for (var i = aEras.length - 1; i >= 0; i--) {
 			oEra = aEras[i];
@@ -200,7 +200,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 				oLocaleData = LocaleData.getInstance(oLocale),
 				aEras = oLocaleData.getEraDates(sCalendarType);
 			if (!aEras[0]) {
-				aEras[0] = {_start: "0-1-1"};
+				aEras[0] = {_start: "1-1-1"};
 			}
 			for (var i = 0; i < aEras.length; i++) {
 				var oEra = aEras[i];
