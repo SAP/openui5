@@ -77,7 +77,7 @@ sap.ui.define([], function() {
 			var oAggregationInfo = oControl.getMetadata().getJSONKeys()[oOptions.controlAggregation];
 
 			if (!oAggregationInfo) {
-				jQuery.sap.log.error("Control " + oOptions.controlId + " does not has an aggregation called " + oOptions.controlAggregation, this);
+				jQuery.sap.log.error("Control " + oOptions.controlId + " does not have an aggregation called " + oOptions.controlAggregation, this);
 				return;
 			}
 
