@@ -2365,8 +2365,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype._syncColumnHeaders = function(bUpdateResizeHandlers) {
+		var oDomRef = this.getDomRef();
+		if (!oDomRef) {
+			// _syncColumnHeaders gets called async, there might be no DomRef anymore
+			return;
+		}
 		var $this = this.$();
-		var oRectTable = this.getDomRef().getBoundingClientRect();
+		var oRectTable = oDomRef.getBoundingClientRect();
 		var iTableWidth = oRectTable.right - oRectTable.left;
 		var aVisibleColumns = this._getVisibleColumns();
 		if (aVisibleColumns.length == 0) {
