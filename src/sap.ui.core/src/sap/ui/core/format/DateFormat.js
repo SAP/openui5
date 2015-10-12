@@ -315,7 +315,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 		}
 
 		if (this.oFormatOptions.relative) {
-			var sRes = this.formatRelative(oJSDate, bUTC, this.oFormatOptions.relativeRange || [-6, 6]);
+			var sRes = this.formatRelative(oJSDate, bUTC, this.oFormatOptions.relativeRange);
 			if (sRes) { //Stop when relative formatting possible, else go on with standard formatting
 				return sRes;
 			}
@@ -1090,29 +1090,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 	DateFormat.prototype.formatRelative = function(oJSDate, bUTC, aRange) {
 
 		var oToday = new Date(),
-			sScale = this.oFormatOptions.relativeScale || "day",
-			iDate, iDiff, sPattern, iDiffSeconds;
+			sScale = this.oFormatOptions.relativeScale || "day",			
+			iToday, iDate, iDiff, sPattern, iDiffSeconds;
 
-		if (this.oFormatOptions.relativeScale == "auto" & this.aRelativeScales[this.aRelativeScales.length - 1] === "second") {
-			var iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate(), oToday.getHours(), oToday.getMinutes(), oToday.getSeconds());
-			if (bUTC) {
-				iDate = Date.UTC(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate(), oJSDate.getUTCHours(), oJSDate.getUTCMinutes(), oJSDate.getUTCSeconds());
-			} else {
-				iDate = Date.UTC(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate(), oJSDate.getHours(), oJSDate.getMinutes(), oJSDate.getSeconds());
-			}
-		} else {
-			var iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate());
+		iDiffSeconds = (oJSDate.getTime() - oToday.getTime()) / 1000;
+		if (this.oFormatOptions.relativeScale == "auto") {
+			sScale = this._getScale(iDiffSeconds, this.aRelativeScales);
+		}
+
+		if (!aRange) {
+			aRange = this._mRanges[sScale];
+		}
+		
+		// For dates normalize to UTC to avoid issues with summer-/wintertime  
+		if (sScale == "year" || sScale == "month" || sScale == "day") {
+			iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate());
 			if (bUTC) {
 				iDate = Date.UTC(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate());
 			} else {
 				iDate = Date.UTC(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate());
 			}
+			iDiffSeconds = (iDate - iToday) / 1000;
 		}
 
-		iDiffSeconds = (iDate - iToday) / 1000;
-		if (this.oFormatOptions.relativeScale == "auto") {
-			sScale = this._getScale(iDiffSeconds, this.aRelativeScales);
-		}
 		iDiff = this._getDifference(sScale, iDiffSeconds);
 
 		if (this.oFormatOptions.relativeScale != "auto" && (iDiff < aRange[0] || iDiff > aRange[1])) {
@@ -1120,9 +1120,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 			return null;
 		}
 
-		sPattern = this.oLocaleData.getRelativePattern(sScale, iDiff);
+		sPattern = this.oLocaleData.getRelativePattern(sScale, iDiff, iDiffSeconds > 0);
 		return jQuery.sap.formatMessage(sPattern, [Math.abs(iDiff)]);
 
+	};
+
+	DateFormat.prototype._mRanges = {
+		second: [-60, 60],
+		minute: [-60, 60],
+		hour: [-24, 24],
+		day: [-6, 6],
+		week: [-4, 4],
+		month: [-12, 12],
+		year: [-10, 10]
 	};
 
 	DateFormat.prototype._mScales = {

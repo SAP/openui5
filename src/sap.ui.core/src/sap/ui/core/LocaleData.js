@@ -703,23 +703,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * Returns the relative format pattern with given scale (year, month, week, ...) and difference value
 		 *
 		 * @param {string} sScale the scale the relative pattern is needed for
-		 * @param {int} iDiff the difference in seconds
+		 * @param {int} iDiff the difference in the given scale unit
+		 * @param {boolean} [bFuture] whether a future or past pattern should be used
 		 * @returns {string} the relative format pattern
 		 * @public
 		 * @since 1.33.1
 		 */
-		getRelativePattern : function(sScale, iDiff) {
+		getRelativePattern : function(sScale, iDiff, bFuture) {
 			var sPattern, oTypes;
+			
+			if (bFuture === undefined) {
+				bFuture = iDiff > 0;
+			}
 
 			sPattern = this._get("dateFields", sScale, "relative-type-" + iDiff);
 			
 			if (!sPattern) {
-				if (iDiff === 0) {
-					jQuery.sap.log.warning("sap.ui.core.LocaleData: there's no pattern defined for '" + sScale + "' with 0 difference, please adjust the scale.");
-					return null;
-				}
-				
-				oTypes = this._get("dateFields", sScale, "relativeTime-type-" + (iDiff < 0 ? "past" : "future"));
+				oTypes = this._get("dateFields", sScale, "relativeTime-type-" + (bFuture ? "future" : "past"));
 				
 				if (Math.abs(iDiff) === 1) {
 					sPattern = oTypes["relativeTimePattern-count-one"];
@@ -759,6 +759,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * @since 1.31.0
 		 */
 		getRelativeMinute : function(iDiff) {
+			if (iDiff == 0) {
+				return null;
+			}
 			return this.getRelativePattern("minute", iDiff);
 		},
 
@@ -775,6 +778,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * @since 1.31.0
 		 */
 		getRelativeHour : function(iDiff) {
+			if (iDiff == 0) {
+				return null;
+			}
 			return this.getRelativePattern("hour", iDiff);
 		},
 
