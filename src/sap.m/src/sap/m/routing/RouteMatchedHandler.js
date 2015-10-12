@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer', 'sap/m/SplitContainer', 'sap/ui/base/Object', 'sap/ui/core/routing/History', 'sap/ui/core/routing/Router', './TargetHandler'],
-	function(jQuery, InstanceManager, NavContainer, SplitContainer, BaseObject, History, Router, TargetHandler) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/routing/History', 'sap/ui/core/routing/Router', './TargetHandler', './Router'],
+	function(jQuery, BaseObject, History, Router, TargetHandler, MobileRouter) {
 	"use strict";
 
 
@@ -43,6 +43,12 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 	 */
 	var RouteMatchedHandler = BaseObject.extend("sap.m.routing.RouteMatchedHandler", {
 		constructor : function (oRouter, bCloseDialogs) {
+			if (oRouter instanceof MobileRouter) {
+				jQuery.sap.log.warning("A sap.m.routing.Router is used together with a sap.m.routing.RouteMatchedHandler (deprecated)." +
+					"The RoutematchedHandler is not taking over triggering the navigations, the Router will do it.", this);
+				return;
+			}
+
 			this._oTargetHandler = new TargetHandler(bCloseDialogs);
 
 			// Route matched is thrown for each container in the route hierarchy
@@ -71,10 +77,11 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 	 * @returns {sap.m.routing.RouteMatchedHandler} for chaining
 	 */
 	RouteMatchedHandler.prototype.destroy = function () {
-		this._oRouter.detachRouteMatched(this._onHandleRouteMatched, this);
-		this._oRouter.detachRoutePatternMatched(this._handleRoutePatternMatched, this);
-
-		this._oRouter = null;
+		if (this._oRouter) {
+			this._oRouter.detachRouteMatched(this._onHandleRouteMatched, this);
+			this._oRouter.detachRoutePatternMatched(this._handleRoutePatternMatched, this);
+			this._oRouter = null;
+		}
 
 		if (this._oTargets) {
 			this._oTargets.detachDisplay(this._onHandleRouteMatched, this);
@@ -176,29 +183,6 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 			preservePageInSplitContainer: oConfig.preservePageInSplitContainer
 		});
 	};
-
-	/**
-	 * Closes all dialogs if the closeDialogs property is set to true.
-	 *
-	 * @private
-	 */
-	RouteMatchedHandler.prototype._closeDialogs = function() {
-		if (!this._bCloseDialogs) {
-			return;
-		}
-
-		// close open popovers
-		if (InstanceManager.hasOpenPopover()) {
-			InstanceManager.closeAllPopovers();
-		}
-
-		// close open dialogs
-		if (InstanceManager.hasOpenDialog()) {
-			InstanceManager.closeAllDialogs();
-		}
-	};
-
-
 
 	return RouteMatchedHandler;
 
