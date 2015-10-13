@@ -156,6 +156,59 @@
 				oIcon.destroy();
 			});
 
+			test("set src should also change the tooltip", function() {
+				var oIcon = new sap.ui.core.Icon({
+					src: sap.ui.core.IconPool.getIconURI("add")
+				});
+
+				oIcon.placeAt("uiAreaA");
+				sap.ui.getCore().applyChanges();
+
+				var sTitle = oIcon.$().attr("title");
+				var sLabel = oIcon.$().attr("aria-label");
+				var sLabelledBy = oIcon.$().attr("aria-labelledby");
+
+				ok(!!sTitle, "tooltip has been set");
+				ok(!!sLabel, "aria-label has been set");
+				ok(!sLabelledBy, "No aria-labelledby has been set");
+
+				oIcon.setSrc(sap.ui.core.IconPool.getIconURI("delete"));
+				sap.ui.getCore().applyChanges();
+
+				notEqual(oIcon.$().attr("title"), sTitle, "Tooltip should have changed when changing the icon src.");
+				notEqual(oIcon.$().attr("aria-label"), sLabel, "ARIA label should have changed when changing the icon src.");
+				equal(oIcon.$().attr("aria-labelledby"), undefined, "ARIA labelledby should still not be set when changing the icon src.");
+
+				oIcon.destroy();
+			});
+
+			test("set src should not change aria-label when 'labelledby' is set", function() {
+				var oIcon = new sap.ui.core.Icon({
+					src: sap.ui.core.IconPool.getIconURI("add"),
+					ariaLabelledBy: "foo"
+				});
+
+				oIcon.placeAt("uiAreaA");
+				sap.ui.getCore().applyChanges();
+
+				var sTitle = oIcon.$().attr("title");
+				var sLabel = oIcon.$().attr("aria-label");
+				var sLabelledBy = oIcon.$().attr("aria-labelledby");
+
+				ok(!!sTitle, "A tooltip has been set");
+				ok(!sLabel, "No aria-label has been set");
+				ok(!!sLabelledBy, "aria-labelledby has been set");
+
+				oIcon.setSrc(sap.ui.core.IconPool.getIconURI("delete"));
+				sap.ui.getCore().applyChanges();
+
+				notEqual(oIcon.$().attr("title"), sTitle, "Tooltip should have changed when changing the icon src.");
+				equal(oIcon.$().attr("aria-label"), undefined, "ARIA label should still not be set when changing the icon src.");
+				equal(oIcon.$().attr("aria-labelledby"), sLabelledBy, "ARIA labelledby should still be the same when changing the icon src.");
+
+				oIcon.destroy();
+			});
+
 			QUnit.module("ARIA Support", {
 				setup: function () {
 					this.sIconName = "add";
