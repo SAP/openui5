@@ -880,6 +880,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 		if (bPM) {
 			iHours += 12;
 		}
+		
+		if (iQuarter !== null && iMonth === null && iDay === null) {
+			iMonth = 3 * iQuarter;
+			iDay = 1;
+		}
 
 		if (bValid) {
 			if (bUTC || iTZDiff != null) {

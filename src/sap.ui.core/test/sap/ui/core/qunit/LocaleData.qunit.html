@@ -137,6 +137,8 @@
 			equal(typeof oLocaleData.getCustomDateTimePattern("yMMMw", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"yMMMw\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getCustomDateTimePattern("yMdHms", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"yMdHms\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getCustomDateTimePattern("yMMMMEEEEdHms", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"yMMMMEEEEdHms\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getCustomDateTimePattern("Q", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"Q\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getCustomDateTimePattern("w", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"w\", \"" + aCalendarTypes[i] + "\")");
 			raises(function(){oLocaleData.getCustomDateTimePattern("My", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"My\", \"" + aCalendarTypes[i] + "\")")
 			raises(function(){oLocaleData.getCustomDateTimePattern("yMLd", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"yMLd\", \"" + aCalendarTypes[i] + "\")")
 			raises(function(){oLocaleData.getCustomDateTimePattern("yMdp", aCalendarTypes[i])}, Error, "getCustomDateTimePattern(\"yMdp\", \"" + aCalendarTypes[i] + "\")")
