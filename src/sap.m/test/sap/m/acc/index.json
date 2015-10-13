@@ -56,6 +56,11 @@
 			"appComponent": "CA-UI5-BS-FCW"
 		},
 		{
+			"control": "sap.m.semantic.FullscreenPage",
+			"url": "./semantic/FullscreenPage.html",
+			"appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
 			"control": "sap.m.IconTabBar",
 			"url": "../IconTabBar.html",
 			"appComponent": "CA-UI5-CTR-SOF"
@@ -85,6 +90,11 @@
 			"url": "../List.html",
 			"desc" : "Including StandardListItem, DisplayListItem, InputListItem, CustomListItem",
 			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.semantic.MasterPage",
+			"url": "./semantic/MasterDetailPages.html",
+			"appComponent": "CA-UI5-CTR-SOF"
 		},
 		{
 			"control": "sap.m.MessageBox",
