@@ -832,7 +832,7 @@ sap.ui.require([
 			assert.strictEqual(oBinding.getModel(), oMetaModel);
 			assert.strictEqual(oBinding.getPath(), sPath);
 			assert.strictEqual(oBinding.getContext(), oContext);
-			assert.strictEqual(oBinding.aFilters, aFilters);
+			assert.strictEqual(oBinding.aApplicationFilters, aFilters);
 			assert.strictEqual(oBinding.mParameters, mParameters);
 		});
 	});

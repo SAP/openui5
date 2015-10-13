@@ -1,0 +1,105 @@
+<mvc:View xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:table="sap.ui.table"
+	controllerName="sap.ui.table.testApps.TreeTableFilterDemo"
+	>
+	
+	<Panel 
+		expandable="true"
+		expanded="true"
+		width="auto" 
+		class="sapUiResponsiveMargin sapUiNoContentPadding">
+		<headerToolbar>
+			<Toolbar>
+				<Title text="TreeTable/Binding settings" level="H2"/>
+				<ToolbarSpacer />
+				<Button icon="sap-icon://restart" press="onActivateServicePress"/>
+			</Toolbar>
+		</headerToolbar>
+		<content>
+			<f:Form id="testForm"
+				editable="true">
+				<f:layout>
+					<f:ResponsiveGridLayout
+						labelSpanL="3"
+						labelSpanM="3"
+						emptySpanL="4"
+						emptySpanM="4"
+						columnsL="1"
+						columnsM="1" />
+				</f:layout>
+				<f:formContainers>
+					<f:FormContainer>
+						<f:formElements>
+							<f:FormElement label="Service URL">
+								<f:fields>
+									<Input value="?" id="serviceURL"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement label="Threshold">
+								<f:fields>
+									<Input value="100" id="bindingThreshold"/>
+								</f:fields>
+							</f:FormElement>
+						</f:formElements>
+					</f:FormContainer>
+				</f:formContainers>
+			</f:Form>
+		</content>
+	</Panel>
+	<Panel 
+		expandable="true"
+		expanded="true"
+		width="auto" 
+		class="sapUiResponsiveMargin sapUiNoContentPadding">
+		<headerToolbar>
+			<Toolbar>
+				<Title text="Filter" level="H2"/>
+			</Toolbar>
+		</headerToolbar>
+		<content>
+			<f:Form id="filterForm"
+				editable="true">
+				<f:layout>
+					<f:ResponsiveGridLayout
+						labelSpanL="3"
+						labelSpanM="3"
+						emptySpanL="4"
+						emptySpanM="4"
+						columnsL="1"
+						columnsM="1" />
+				</f:layout>
+				<f:formContainers>
+					<f:FormContainer>
+						<f:formElements>
+							<f:FormElement label="Filter Description">
+								<f:fields>
+									<Input value="Cloud" id="filterDescription"/>
+									<Button icon="sap-icon://search" id="filterButton" press="filterButtonPress"></Button>
+								</f:fields>
+							</f:FormElement>
+						</f:formElements>
+					</f:FormContainer>
+				</f:formContainers>
+			</f:Form>
+		</content>
+	</Panel>
+	<Panel 
+		expandable="true"
+		expanded="true"
+		width="auto" 
+		class="sapUiResponsiveMargin sapUiNoContentPadding"
+		id="tableContainerPanel">
+		<headerToolbar>
+			<Toolbar>
+				<Title text="TreeTable Container" level="H2" id="tableContainerTitle"/>
+			</Toolbar>
+		</headerToolbar>
+		<content>
+			<table:TreeTable id="tableOData" rootLevel="0"></table:TreeTable>
+		</content>
+	</Panel>
+</mvc:View>
