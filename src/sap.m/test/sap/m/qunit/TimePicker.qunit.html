@@ -1099,18 +1099,18 @@
 			tp.destroy();
 		});
 
-		test("mouse down on the input icon open/closes the picker", function() {
+		test("tap on the input icon open/closes the picker", function() {
 			var tp = new sap.m.TimePicker();
 			tp.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			var icon = tp.$().find(".sapUiIcon");
-			icon.click();
+			icon.tap();
 			this.clock.tick(1000);
 
 			strictEqual(jQuery(".sapMPopover").is(":visible"), true, "the picker is opened");
 
-			icon.click();
+			icon.tap();
 			this.clock.tick(1000);
 
 			strictEqual(jQuery(".sapMPopover").is(":visible"), false, "the picker is closed");
