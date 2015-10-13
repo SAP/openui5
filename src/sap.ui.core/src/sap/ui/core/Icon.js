@@ -339,20 +339,34 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './l
 	/* =========================================================== */
 
 	Icon.prototype.setSrc = function(sSrc) {
-		var oIconInfo = IconPool.getIconInfo(sSrc),
-			bTextNeeded = Device.browser.internet_explorer && Device.browser.version < 9,
-			$Icon = this.$();
+		var oIconInfo = IconPool.getIconInfo(sSrc);
 
 		if (oIconInfo) {
+			var $Icon = this.$();
 			$Icon.css("font-family", oIconInfo.fontFamily);
+			$Icon.attr("data-sap-ui-icon-content", oIconInfo.content);
+			$Icon.toggleClass("sapUiIconMirrorInRTL", !oIconInfo.suppressMirroring);
 
-			if (bTextNeeded) {
-				$Icon.text(oIconInfo.content);
+			var sTooltip = this.getTooltip_AsString(),
+				alabelledBy = this.getAriaLabelledBy(),
+				sAlt = this.getAlt(),
+				bUseIconTooltip = this.getUseIconTooltip();
+
+			if (sTooltip || (bUseIconTooltip && oIconInfo.text)) {
+				$Icon.attr("title", sTooltip || oIconInfo.text);
 			} else {
-				$Icon.attr("data-sap-ui-icon-content", oIconInfo.content);
+				$Icon.attr("title", null);
 			}
 
-			$Icon.toggleClass("sapUiIconMirrorInRTL", !oIconInfo.suppressMirroring);
+			// Only adopt "aria-label" if there is no "labelledby" as this is managed separately
+			if (alabelledBy.length === 0) {
+				if (sAlt || sTooltip || bUseIconTooltip) {
+					$Icon.attr("aria-label", sAlt || sTooltip || oIconInfo.text || oIconInfo.name);
+				} else {
+					$Icon.attr("aria-label", null);
+				}
+			}
+
 		}
 
 		// when the given sSrc can't be found in IconPool, rerender the icon is needed.
