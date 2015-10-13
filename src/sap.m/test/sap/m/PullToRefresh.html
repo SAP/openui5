@@ -112,6 +112,7 @@ function createSelect(oPullDown, iSelectedItem){
 	addItems(standardList, 5);
 	var pullToRefreshStd = new sap.m.PullToRefresh({
 		description: getLastUpdated(),
+		tooltip: "Standard Pull to Refresh",
 		refresh: function(){
 			setTimeout(function(){
 				pullToRefreshStd.hide();
