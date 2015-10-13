@@ -30,14 +30,19 @@
 			jQuery.sap.require("sap.ui.dt.DesignTime");
 			jQuery.sap.require("sap.ui.dt.plugin.ControlDragDrop");
 			jQuery.sap.require("sap.ui.dt.plugin.MouseSelection");
+			jQuery.sap.require("sap.ui.dt.plugin.CutPaste");
 			var oView = sap.ui.xmlview("testView", "dt.view.Test2");
 			oView.placeAt("content");
 
+			var aMOVABLE_TYPES = ["sap.m.Button", "sap.m.Label", "sap.m.StandardListItem", "sap.ui.layout.form.FormElement", "sap.ui.layout.form.FormContainer", "sap.m.ObjectHeader", "sap.m.ObjectAttribute"]
 
 			jQuery(function() {
 				var oSelectionPlugin = new sap.ui.dt.plugin.MouseSelection();
 				var oDragPlugin = new sap.ui.dt.plugin.ControlDragDrop({
-					draggableTypes : ["sap.m.Button", "sap.m.Label", "sap.m.StandardListItem", "sap.ui.layout.form.FormElement", "sap.ui.layout.form.FormContainer"]
+					draggableTypes : aMOVABLE_TYPES
+				});
+				var oCutPastePlugin = new sap.ui.dt.plugin.CutPaste({
+					movableTypes : aMOVABLE_TYPES
 				});
 
 				var aElements = sap.ui.dt.ElementUtil.findAllPublicElements(oView);
@@ -46,6 +51,7 @@
 						rootElements : [oView],
 						plugins : [
 							oSelectionPlugin,
+							oCutPastePlugin,
 							oDragPlugin
 						]
 					});

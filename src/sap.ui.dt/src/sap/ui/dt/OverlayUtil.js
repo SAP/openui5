@@ -32,6 +32,14 @@ function(jQuery, OverlayRegistry, ElementUtil) {
 	/**
 	 * 
 	 */
+	OverlayUtil.isInTargetZoneAggregation = function(oElementOverlay){
+		var oAggregationOverlay = oElementOverlay.getParent();
+		return oAggregationOverlay && oAggregationOverlay.isTargetZone && oAggregationOverlay.isTargetZone();
+	};
+	
+	/**
+	 * 
+	 */
 	OverlayUtil.getClosestOverlayFor = function(oElement) {
 		if (!oElement || !oElement.getParent) {
 			return null;

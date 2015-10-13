@@ -6,10 +6,9 @@
 sap.ui.define([
 	'sap/ui/dt/plugin/DragDrop',
 	'sap/ui/dt/plugin/ElementMover',
-	'sap/ui/dt/ElementUtil',
-	'sap/ui/dt/DOMUtil'
+	'sap/ui/dt/ElementUtil'
 ],
-function(DragDrop, ElementMover, ElementUtil, DOMUtil) {
+function(DragDrop, ElementMover, ElementUtil) {
 	"use strict";
 
 	/**
@@ -19,7 +18,7 @@ function(DragDrop, ElementMover, ElementUtil, DOMUtil) {
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
 	 * @class
-	 * The ControlDragDrop enables D&D functionallity for the overlays based on aggregation types
+	 * The ControlDragDrop enables D&D functionality for the overlays based on aggregation types
 	 * @extends sap.ui.dt.plugin.DragDrop"
 	 *
 	 * @author SAP SE
@@ -43,8 +42,7 @@ function(DragDrop, ElementMover, ElementUtil, DOMUtil) {
 					defaultValue : ["sap.ui.core.Element"]
 				},
 				elementMover : {
-					type : "sap.ui.dt.plugin.ElementMover",
-					defaultValue : sap.ui.dt.plugin.ElementMover.Default
+					type : "sap.ui.dt.plugin.ElementMover"
 				}
 			},
 			associations : {
@@ -53,6 +51,13 @@ function(DragDrop, ElementMover, ElementUtil, DOMUtil) {
 			}
 		}
 	});
+
+	var sDROP_ZONE_STYLE = "sapUiDtOverlayDropZone";
+	
+	ControlDragDrop.prototype.init = function() {
+		DragDrop.prototype.init.apply(this, arguments);
+		this.setElementMover(new ElementMover());
+	};
 
 	/**
 	 * @override
@@ -73,7 +78,7 @@ function(DragDrop, ElementMover, ElementUtil, DOMUtil) {
 		}
 
 		if (this.oDraggedElement) {
-			this.getElementMover().activateTargetZonesFor(oOverlay);
+			this.getElementMover().activateTargetZonesFor(oOverlay, sDROP_ZONE_STYLE);
 		}
 	};
 	
@@ -85,7 +90,7 @@ function(DragDrop, ElementMover, ElementUtil, DOMUtil) {
 		oOverlay.setMovable(false);
 
 		if (this.oDraggedElement) {
-			this.getElementMover().deactivateTargetZonesFor(oOverlay);
+			this.getElementMover().deactivateTargetZonesFor(oOverlay, sDROP_ZONE_STYLE);
 		}
 	};
 	
@@ -105,7 +110,7 @@ function(DragDrop, ElementMover, ElementUtil, DOMUtil) {
 		this._oDraggedOverlay = oOverlay;
 		this.getElementMover().setMovedOverlay(oOverlay);
 		
-		this.getElementMover().activateAllValidTargetZones(this.getDesignTime());
+		this.getElementMover().activateAllValidTargetZones(this.getDesignTime(), sDROP_ZONE_STYLE);
 	};
 
 	/**
@@ -114,7 +119,7 @@ function(DragDrop, ElementMover, ElementUtil, DOMUtil) {
 	ControlDragDrop.prototype.onDragEnd = function(oOverlay) {
 		delete this._oPreviousTarget;
 
-		this.getElementMover().deactivateAllTargetZones(this.getDesignTime());
+		this.getElementMover().deactivateAllTargetZones(this.getDesignTime(), sDROP_ZONE_STYLE);
 		
 		delete this._oDraggedOverlay;
 		this.getElementMover().setMovedOverlay(null);
@@ -136,20 +141,9 @@ function(DragDrop, ElementMover, ElementUtil, DOMUtil) {
 	 */
 	ControlDragDrop.prototype.onAggregationDragEnter = function(oAggregationOverlay) {
 		delete this._oPreviousTarget;
-
-		var oTargetParentElement = oAggregationOverlay.getElementInstance();
-
-		var oDraggedElement = this.getDraggedOverlay().getElementInstance();
-		var oSourceParentOverlay = this.getDraggedOverlay().getParentElementOverlay();
-		var oSourceParentElement;
-		if (oSourceParentOverlay) {
-			oSourceParentElement = oSourceParentOverlay.getElementInstance();
-		}
-
-		if (oTargetParentElement !== oSourceParentElement) {
-			var sAggregationName = oAggregationOverlay.getAggregationName();
-			ElementUtil.addAggregation(oTargetParentElement, sAggregationName, oDraggedElement);
-		}
+		
+		var oDraggedOverlay = this.getDraggedOverlay();
+		this.getElementMover().insertInto(oDraggedOverlay, oAggregationOverlay);
 	};
 
 	return ControlDragDrop;

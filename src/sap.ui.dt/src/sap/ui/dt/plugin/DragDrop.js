@@ -5,9 +5,10 @@
 // Provides class sap.ui.dt.plugin.DragDrop.
 sap.ui.define([
 	'sap/ui/dt/Plugin',
-	'sap/ui/dt/DOMUtil'
+	'sap/ui/dt/DOMUtil',
+	'sap/ui/dt/OverlayUtil'
 ],
-function(Plugin, DOMUtil) {
+function(Plugin, DOMUtil, OverlayUtil) {
 	"use strict";
 
 	/**
@@ -17,8 +18,8 @@ function(Plugin, DOMUtil) {
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
 	 * @class
-	 * The DragDrop plugin is an abstract plugin to enable drag and drop functionallity of the Overlays
-	 * This Plugin should be overriden by the D&D plugin implementations, the abstract functions should be ussed to performe actions
+	 * The DragDrop plugin is an abstract plugin to enable drag and drop functionality of the Overlays
+	 * This Plugin should be overwritten by the D&D plugin implementations, the abstract functions should be used to perform actions
 	 * @extends sap.ui.dt.plugin.Plugin
 	 *
 	 * @author SAP SE
@@ -335,10 +336,8 @@ function(Plugin, DOMUtil) {
 	 * @private
 	 */
 	DragDrop.prototype._onDragEnter = function(oEvent) {
-		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-		var oAggregationOverlay = oOverlay.getParent();
-		var bInTargetZoneAggregation = oAggregationOverlay && oAggregationOverlay.isTargetZone && oAggregationOverlay.isTargetZone();
-		if (bInTargetZoneAggregation) {
+		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);		
+		if (OverlayUtil.isInTargetZoneAggregation(oOverlay)) {
 			//if "true" returned, propagation won't be canceled
 			if (!this.onDragEnter(oOverlay, oEvent)) {
 				oEvent.stopPropagation();
@@ -353,9 +352,7 @@ function(Plugin, DOMUtil) {
 	 */
 	DragDrop.prototype._onDragOver = function(oEvent) {
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
-		var oAggregationOverlay = oOverlay.getParent();
-		var bInTargetZoneAggregation = oAggregationOverlay && oAggregationOverlay.isTargetZone && oAggregationOverlay.isTargetZone();
-		if (bInTargetZoneAggregation) {
+		if (OverlayUtil.isInTargetZoneAggregation(oOverlay)) {
 			//if "true" returned, propagation won't be canceled
 			if (!this.onDragOver(oOverlay, oEvent)) {
 				oEvent.stopPropagation();
