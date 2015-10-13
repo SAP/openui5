@@ -955,5 +955,24 @@
         "references": []
       }
     ]
+  },
+  "1.28.20": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "244a86b2e03a483241ec50480e7126dd83d8e8fd",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField in IE onInput called",
+        "references": []
+      },
+      {
+        "id": "57cbcf0e346f3ff9de89b7087cd3d9421eda6b2d",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField: after enabling still readonly",
+        "references": []
+      }
+    ]
   }
 }
