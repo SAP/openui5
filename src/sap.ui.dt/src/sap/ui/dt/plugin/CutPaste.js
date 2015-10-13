@@ -42,7 +42,9 @@ sap.ui.define([
 				}
 			},
 			associations: {},
-			events: {}
+			events: {
+				elementMoved: {}
+			}
 		}
 	});
 
@@ -138,6 +140,11 @@ sap.ui.define([
 					return;
 				}
 			}
+
+			var oMoveEvent = this.getElementMover().buildMoveEvent();
+			this.fireElementMoved({
+				data: oMoveEvent
+			});
 			oCutOverlay.focus();
 			this._stopCutAndPaste();
 		}

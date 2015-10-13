@@ -4,8 +4,8 @@
 
 // Provides class sap.ui.dt.plugin.ElementMover.
 sap.ui.define([
-	'sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/DOMUtil'
-], function(ManagedObject, ElementUtil, DOMUtil) {
+	'sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/OverlayUtil'
+], function(ManagedObject, ElementUtil, OverlayUtil) {
 	"use strict";
 
 	/**
@@ -85,7 +85,16 @@ sap.ui.define([
 	 * @public
 	 */
 	ElementMover.prototype.setMovedOverlay = function(oMovedOverlay) {
+		if (oMovedOverlay) {
+			this._source = OverlayUtil.getParentInformation(oMovedOverlay);
+		} else {
+			delete this._source;
+		}
 		this._oMovedOverlay = oMovedOverlay;
+	};
+
+	ElementMover.prototype._getSource = function() {
+		return this._source;
 	};
 
 	/**
@@ -128,7 +137,9 @@ sap.ui.define([
 	 */
 	ElementMover.prototype._deactivateTargetZone = function(oAggregationOverlay, sAdditionalStyleClass) {
 		oAggregationOverlay.setTargetZone(false);
-		oAggregationOverlay.removeStyleClass(sAdditionalStyleClass);
+		if (sAdditionalStyleClass) {
+			oAggregationOverlay.removeStyleClass(sAdditionalStyleClass);
+		}
 	};
 
 	/**
@@ -178,18 +189,12 @@ sap.ui.define([
 	 * @private
 	 */
 	ElementMover.prototype.repositionOn = function(oMovedOverlay, oTargetOverlay) {
-		var oMovedOverlay = this.getMovedOverlay();
 		var oMovedElement = oMovedOverlay.getElementInstance();
 
-		var oTargetElement = oTargetOverlay.getElementInstance();
-		var oPublicParent = oTargetOverlay.getParentElementOverlay().getElementInstance();
-		var sPublicParentAggregationName = oTargetOverlay.getParentAggregationOverlay().getAggregationName();
+		var oTargetParent = OverlayUtil.getParentInformation(oTargetOverlay);
 
-		var aChildren = ElementUtil.getAggregation(oPublicParent, sPublicParentAggregationName);
-		var iIndex = aChildren.indexOf(oTargetElement);
-
-		if (iIndex !== -1) {
-			ElementUtil.insertAggregation(oPublicParent, sPublicParentAggregationName, oMovedElement, iIndex);
+		if (oTargetParent.index !== -1) {
+			ElementUtil.insertAggregation(oTargetParent.parent, oTargetParent.aggregation, oMovedElement, oTargetParent.index);
 		}
 	};
 
@@ -211,6 +216,19 @@ sap.ui.define([
 			var sAggregationName = oTargetOverlay.getAggregationName();
 			ElementUtil.addAggregation(oTargetParentElement, sAggregationName, oMovedElement);
 		}
+	};
+
+	/**
+	 * @private
+	 */
+	ElementMover.prototype.buildMoveEvent = function() {
+		var oMovedOverlay = this.getMovedOverlay();
+		var oMovedElement = oMovedOverlay.getElementInstance();
+		return {
+			element: oMovedElement,
+			source: this._getSource(),
+			target: OverlayUtil.getParentInformation(oMovedOverlay)
+		};
 	};
 
 	return ElementMover;
