@@ -445,17 +445,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		TimePickerSlider.prototype._updateSelectionFrameLayout = function() {
 			var $Frame,
 				iFrameTopPosition,
-				topPadding;
+				topPadding,
+				iSliderOffsetTop;
 
 			if (this.getDomRef()) {
 				$Frame = this.$().find(".sapMTPPickerSelectionFrame");
-				topPadding = this.$().parents(".sapUiSizeCompact").length > 0 ? 8 : 16; //depends if we are in compact mode
 
 				//the frame is absolutly positioned in the middle of its container
 				//its height is the same as the list items' height
 				//so the top of the middle === container.height/2 - item.height/2
-				//corrected with the top padding
-				iFrameTopPosition = (this.$().height() - this._getItemHeightInPx()) / 2 + topPadding;
+				//corrected with the top of the container
+				if (sap.ui.Device.system.phone) {
+					iSliderOffsetTop = this.$().offset().top;
+					iFrameTopPosition = (this.$().height() - this._getItemHeightInPx()) / 2 + iSliderOffsetTop;
+				} else {
+					topPadding = this.$().parents(".sapUiSizeCompact").length > 0 ? 8 : 16; //depends if we are in compact mode
+					iFrameTopPosition = (this.$().height() - this._getItemHeightInPx()) / 2 + topPadding;
+				}
 
 				$Frame.css("top", iFrameTopPosition);
 
