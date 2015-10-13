@@ -2567,7 +2567,8 @@
                 if (request.async || (!request.async && request.async !== false)) {
                     xhr.onreadystatechange = requestCallback;
                 } 
-                xhr.send(request.body);
+                // modified by SAP: typeof request.body !== 'undefined' ? request.body : null. Check added to make it work in IE 11.
+                xhr.send(typeof request.body !== 'undefined' ? request.body : null);
                 if (!request.async) {
                 	requestCallback();
                 }
