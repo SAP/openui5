@@ -1,6 +1,7 @@
 /*!
  * ${copyright}
  */
+/*eslint-disable no-extend-native */
 
 // Provides ECMA Script 6 Polyfill
 (function(jQuery) {

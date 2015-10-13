@@ -130,7 +130,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.string
 			var oRM = oCore.createRenderManager();
 			oRM.render(this, oStatic);
 			oRM.destroy();
-		} catch(e) {
+		} catch (e) {
 			this.placeAt("sap-ui-static");
 		}
 		

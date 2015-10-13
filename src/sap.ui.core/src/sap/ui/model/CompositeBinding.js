@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 	 */
 	CompositeBinding.prototype.setType = function(oType, sInternalType) {
 		if (oType && !(oType instanceof CompositeType)) {
-			throw new Error("Only CompositeType can be used as type for composite bindings!")
+			throw new Error("Only CompositeType can be used as type for composite bindings!");
 		}
 		PropertyBinding.prototype.setType.apply(this, arguments);
 		

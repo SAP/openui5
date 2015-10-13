@@ -3,7 +3,7 @@
  */
 
 //Polyfill for Array.map see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map
-/*eslint no-extend-native:0 */
+/*eslint no-extend-native:0, no-void:0 */
 if (!Array.prototype.map) {
 	Array.prototype.map = function(fun /*, thisArg */) {
 		"use strict";
