@@ -35,7 +35,7 @@
 	},
 	"config": {
 	  "invoiceLocal": "/Invoices.json",
-	  "invoiceRemote": "../../../../../../../../../uilib-sample/proxy/http/services.odata.org/V3/Northwind/Northwind.svc/"
+	  "invoiceRemote": "../../../../../../../../../uilib-sample/proxy/http/services.odata.org/V2/Northwind/Northwind.svc/"
 	},
 	"models": {
 	  "i18n": {
