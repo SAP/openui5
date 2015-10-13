@@ -138,10 +138,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			min          : this._onKeyboardResize.bind(this, "min")
 		};
 		this._enableKeyboardListeners();
-		
+
+		// Flag tracking the preserved state of this control. In case the control is preserved, no resizing attempts should be made.
+		this._isPreserved = false;
+		sap.ui.getCore().getEventBus().subscribe("sap.ui","__preserveContent", this._preserveHandler, this);
 	};
 	
 	Splitter.prototype.exit = function() {
+		sap.ui.getCore().getEventBus().unsubscribe("sap.ui","__preserveContent", this._preserveHandler);
 		this.disableAutoResize();
 		delete this._resizeCallback;
 	
@@ -296,7 +300,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 		this._$SplitterOverlay = this.$("overlay");
 		this._$SplitterOverlayBar = this.$("overlayBar");
 		this._$SplitterOverlay.detach();
-		
+
+		// Upon new rendering, the DOM cannot be preserved any more
+		this._isPreserved = false;
+
 		// Calculate and apply correct sizes to the Splitter contents 
 		this._resize();
 	};
@@ -580,6 +587,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	
 	////////////////////////////////////////// Private Methods /////////////////////////////////////////
 	
+	Splitter.prototype._preserveHandler = function(sChannelId, sEventId, oData) {
+		var oDom = this.getDomRef();
+		if (oDom && oData.domNode.contains(oDom)) {
+			// Our HTML has been preserved...
+			this._isPreserved = true;
+		}
+	};
+
+	
 	/**
 	 * Resizes as soon as the current stack is done. Can be used in cases where several resize-relevant
 	 * actions are done in a loop to make sure only one resize calculation is done at the end.
@@ -633,6 +649,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @private
 	 */
 	Splitter.prototype._resize = function() {
+		if (this._isPreserved) {
+			// Do not attempt to resize the content areas in case we are in the preserved area
+			return;
+		}
+
 		var i = 0, $Bar;
 		var aContentAreas = this.getContentAreas();
 
