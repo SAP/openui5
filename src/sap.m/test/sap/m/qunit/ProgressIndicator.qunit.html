@@ -76,6 +76,23 @@
 		equal(oDomRefPIBar.style.width, "30%", "width should be the same");
 	});
 
+	test("tooltip", function() {
+		var sTooltipText = "Some tooltip";
+		var oProgressIndicator = new sap.m.ProgressIndicator({
+			percentValue: 50,
+			width: "100%",
+			tooltip: sTooltipText
+		});
+
+		oProgressIndicator.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		strictEqual(oProgressIndicator.$().attr("title"), sTooltipText, "Tooltip is in the DOM");
+
+		sTooltipText = undefined;
+		oProgressIndicator.destroy();
+	});
+
 	test("percentValue greater half", function() {
 		equal(jQuery.sap.byId("pi1").hasClass("sapMPIValueGreaterHalf"), false, "css-class sapMPIValueGreaterHalf should not be set");
 		equal(jQuery.sap.byId("pi2").hasClass("sapMPIValueGreaterHalf"), true, "css-class sapMPIValueGreaterHalf should be set");
