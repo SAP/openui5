@@ -3809,7 +3809,10 @@ sap.ui.define([
 			delete this.mChangedEntities[sKey].__metadata;
 			if (jQuery.isEmptyObject(this.mChangedEntities[sKey])) {
 				that.metadataLoaded().then(function() {
-					that.mChangeHandles[sKey].abort();
+					//setProperty with no change does not create a request the first time so no handle exists
+					if (that.mChangeHandles[sKey]) {
+						that.mChangeHandles[sKey].abort();
+					}
 				});
 				delete this.mChangedEntities[sKey];
 				mChangedEntities[sKey] = true;
