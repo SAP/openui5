@@ -36,6 +36,13 @@
 				"desc": "Best-practice starting point for a worklist-style app"
 			},
 			{
+				"text": "Master-Detail",
+				"ref": "test-resources/sap/m/demokit/master-detail/webapp/test/testService.html",
+				"config": "test-resources/sap/m/demokit/master-detail/demoapp.json",
+				"icon": "task",
+				"desc": "Best-practice starting point for a master-detail app"
+			},
+			{
 				"text": "Manage Products",
 				"ref": "test-resources/sap/m/demokit/tutorial/worklist/06/webapp/test/testService.html",
 				"icon": "task",
