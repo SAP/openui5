@@ -1088,6 +1088,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	IconTabHeader.prototype.ontouchmove = function(oEvent) {
+
+		if (this._iActiveTouch === undefined) {
+			return;
+		}
+
 		var oTouch = sap.m.touch.find(oEvent.changedTouches, this._iActiveTouch);
 
 		// check for valid changes
@@ -1107,16 +1112,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	IconTabHeader.prototype.ontouchend = function(oEvent) {
-		var MOBILE_TAP = 0;
-		var LEFT_MOUSE_CLICK = 1;
-		
+
+		if (this._iActiveTouch === undefined) {
+			return;
+		}
+
 		// suppress selection if there ware a drag (moved more than 5px on desktop or 20px on others)
 		if (this._scrollable && this._iTouchDragX > (sap.ui.Device.system.desktop ? 5 : 15)) {
 			return;
 		}
-		if (oEvent.which === MOBILE_TAP || oEvent.which === LEFT_MOUSE_CLICK) {
+
+		var MOBILE_TAP = 0;
+		var LEFT_MOUSE_CLICK = 1;
+		var LUMIA_TOUCH; // undefined on Lumia phone
+
+		if (oEvent.which === LUMIA_TOUCH || oEvent.which === MOBILE_TAP || oEvent.which === LEFT_MOUSE_CLICK) {
 			this._handleActivation(oEvent);
-		}	
+		}
+
+		this._iActiveTouch = undefined;
 	};
 
 
