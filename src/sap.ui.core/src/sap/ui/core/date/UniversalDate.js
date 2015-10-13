@@ -183,7 +183,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/LocaleDat
 			}
 		}
 	};
-	
+
+	UniversalDate.getCurrentEra = function(sCalendarType) {
+		var oNow = new Date();
+		return this.getEraByDate(sCalendarType, oNow.getFullYear(), oNow.getMonth(), oNow.getDate());
+	};
+
 	UniversalDate.getEraStartDate = function(sCalendarType, iEra) {
 		var aEras = getEras(sCalendarType),
 			oEra = aEras[iEra] || aEras[0];
