@@ -56,6 +56,16 @@
                 <module>sap/m/tutorial/Worklist-ManageProductStock</module>
             </modules>
         </component>
+         <component>
+            <name>CA-UI5-CMP</name>
+            <modules>
+                <module>sap/m/P13nDialog</module>
+                <module>sap/m/P13nColumnsPanel</module>
+                <module>sap/m/P13nFilterPanel</module>
+                <module>sap/m/P13nGroupPanel</module>
+                <module>sap/m/P13nSortPanel</module>
+            </modules>
+        </component>
     </ownership>
   </appData>
 
