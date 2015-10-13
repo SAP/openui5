@@ -286,11 +286,105 @@
 			// assertions
 			strictEqual(oP13nGroupPanel.getItems().length, 4, "length of getItems should be 4'");
 			strictEqual(oP13nGroupPanel.getGroupItems().length, 2, "length of getGroupItems should be 2'");
-			
+
 			// cleanup
 			oP13nGroupPanel.destroy();
 		});
 
+		test("create with aggregations", function() {
+
+			// system under test
+			var oP13nGroupPanel = new sap.m.P13nGroupPanel({
+				items: [
+					new sap.m.P13nItem({
+						key: null,
+						text: "(none)",
+						tooltip: "nix"
+					}), new sap.m.P13nItem({
+						key: "c0",
+						text: "Name"
+					}), new sap.m.P13nItem({
+						key: "c1",
+						text: "Color"
+					}), new sap.m.P13nItem({
+						key: "c2",
+						text: "Number"
+					})
+				],
+				groupItems: [
+					new sap.m.P13nGroupItem({
+						key: "s0",
+						columnKey: "c1",
+						operation: "Ascending",
+						showIfGrouped: true
+					}), new sap.m.P13nGroupItem({
+						key: "s1",
+						columnKey: "c0",
+						operation: "Descending",
+						showIfGrouped: false
+					})
+				]
+			});
+			// arrange
+			oP13nGroupPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assertions			
+			strictEqual(oP13nGroupPanel.getItems().length, 4, "length of getItems should be 4'");
+			strictEqual(oP13nGroupPanel.getGroupItems().length, 2, "length of getGroupItems should be 2'");
+
+			// cleanup
+			oP13nGroupPanel.destroy();
+		});
+
+		test("create with addXXX", function() {
+
+			// system under test
+			var oP13nGroupPanel = new sap.m.P13nGroupPanel();
+
+			// arrange
+			oP13nGroupPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oP13nGroupPanel.addItem(new sap.m.P13nItem({
+				key: null,
+				text: "(none)",
+				tooltip: "nix"
+			}));
+			oP13nGroupPanel.addItem(new sap.m.P13nItem({
+				key: "c0",
+				text: "Name"
+			}));
+			oP13nGroupPanel.addItem(new sap.m.P13nItem({
+				key: "c1",
+				text: "Color"
+			}));
+			oP13nGroupPanel.addItem(new sap.m.P13nItem({
+				key: "c2",
+				text: "Number"
+			}));
+
+			oP13nGroupPanel.addGroupItem(new sap.m.P13nGroupItem({
+				key: "s0",
+				columnKey: "c1",
+				operation: "Ascending",
+				showIfGrouped: true
+			}));
+			oP13nGroupPanel.addGroupItem(new sap.m.P13nGroupItem({
+				key: "s1",
+				columnKey: "c0",
+				operation: "Descending",
+				showIfGrouped: false
+			}));
+			sap.ui.getCore().applyChanges();
+			
+			// assertions			
+			strictEqual(oP13nGroupPanel.getItems().length, 4, "length of getItems should be 4'");
+			strictEqual(oP13nGroupPanel.getGroupItems().length, 2, "length of getGroupItems should be 2'");
+
+			// cleanup
+			oP13nGroupPanel.destroy();
+		});
 	}());
 </script>
 
