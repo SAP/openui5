@@ -3812,6 +3812,8 @@ sap.ui.define([
 					that.mChangeHandles[sKey].abort();
 				});
 				delete this.mChangedEntities[sKey];
+				mChangedEntities[sKey] = true;
+				this.checkUpdate(false, bAsyncUpdate, mChangedEntities);
 				return true;
 			}
 			this.mChangedEntities[sKey].__metadata = oEntityMetadata;
