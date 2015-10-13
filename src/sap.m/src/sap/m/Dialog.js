@@ -1177,6 +1177,20 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		/*                         begin: setters                      */
 		/* =========================================================== */
 
+		//Manage "sapMDialogWithSubHeader" class depending on the visibility of the subHeader
+		//This is because the dialog has content height and width and the box-sizing have to be content-box in
+		//order to not recalculate the size with js
+		Dialog.prototype.setSubHeader = function(oControl) {
+			this.setAggregation("subHeader", oControl);
+
+			oControl.setVisible = function(isVisible) {
+				this.$().toggleClass('sapMDialogWithSubHeader', isVisible);
+				oControl.setProperty("visible", isVisible);
+			}.bind(this);
+
+			return oControl;
+		};
+
 		//The public setters and getters should not be documented via JSDoc because they will appear in the explored app
 
 		Dialog.prototype.setLeftButton = function (vButton) {
