@@ -117,6 +117,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'], functio
 					type : "boolean",
 					group : "Misc",
 					defaultValue : false					
+				},
+
+				/**
+				 * the array of values for type bool. e.g. ["", "Off", "On"]. The first entry can be empty (used to blank the value field). Next value represent the false value, last entry the true value. 
+				 * @since 1.34.0 
+				 */
+				values : {
+					type : "string[]",
+					group : "Misc",
+					defaultValue : null					
 				}
 			}
 		}

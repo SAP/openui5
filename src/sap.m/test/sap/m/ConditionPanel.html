@@ -97,8 +97,8 @@
 			                              {key: "default", text: "default"}, 
 			                              {key: "date", text: "Date", type: "date"},
             							  {key: "boolean", text: "Boolean", type: "boolean", operations: [sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.Empty]},
-            							  {key: "boolean1", text: "Boolean1", type: "boolean", operations: [sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.Empty], values: ["Off", "On"] },
-            							  {key: "boolean2", text: "Boolean2", type: "boolean", operations: [sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.Empty], values: [".", "x"] },
+            							  {key: "boolean1", text: "Boolean1", type: "boolean", operations: [sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.Empty], values: ["", "Off", "On"] },
+            							  {key: "boolean2", text: "Boolean2", type: "boolean", operations: [sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.Empty], values: ["", ".", "x"] },
             							  {key: "enum", text: "Enum", type: "enum", operations: [sap.m.P13nConditionOperation.EQ]}, 
             							  {key: "enum2", text: "Enum2", type: "enum", operations: [sap.m.P13nConditionOperation.EQ], values: ["enum2 Val1", "enum2 Val2","enum2 Val3", "enum2 Val4"]}
 			                              ]);
@@ -124,8 +124,8 @@
  			                               sap.m.P13nConditionOperation.Empty,
 		                             	   sap.m.P13nConditionOperation.NotEmpty], "boolean");
 
- 			//oConditionPanel.setValues([false, true], "boolean");
- 			oConditionPanel.setValues(["Closed", "Open"], "boolean");
+ 			//oConditionPanel.setValues(["", false, true], "boolean");
+ 			//oConditionPanel.setValues(["", "Closed", "Open"], "boolean");
  			oConditionPanel.setValues(["enumVal1", "enumVal2","enumVal3"], "enum");
 			
  			aConditions.forEach(function(oCondition){

@@ -393,6 +393,12 @@ sap.ui.define([
 				sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
 			], "numeric");
 		}
+		if (!this._aIncludeOperations["boolean"]) {
+			this.setIncludeOperations([
+			    sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.Empty, sap.m.P13nConditionOperation.NotEmpty
+			], "boolean");
+		}
+		
 
 		this._aExcludeOperations = {};
 
@@ -497,7 +503,8 @@ sap.ui.define([
 					type: fGetValueOfProperty("type", oContext, oItem_),
 					precision: fGetValueOfProperty("precision", oContext, oItem_),
 					scale: fGetValueOfProperty("scale", oContext, oItem_),
-					isDefault: fGetValueOfProperty("isDefault", oContext, oItem_)
+					isDefault: fGetValueOfProperty("isDefault", oContext, oItem_),
+					values: fGetValueOfProperty("values", oContext, oItem_) //oItem_.getValues()  
 				});
 			});
 			this.setKeyFields(aKeyFields);
