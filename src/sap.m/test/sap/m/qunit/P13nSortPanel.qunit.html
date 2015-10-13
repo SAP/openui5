@@ -228,6 +228,96 @@
 			oP13nSortPanel.destroy();
 		});
 
+		test("create with aggregations", function() {
+
+			// system under test
+			var oP13nSortPanel = new sap.m.P13nSortPanel({
+				items: [
+					new sap.m.P13nItem({
+						key: null,
+						text: "(none)",
+						tooltip: "nix"
+					}), new sap.m.P13nItem({
+						key: "c0",
+						text: "Name"
+					}), new sap.m.P13nItem({
+						key: "c1",
+						text: "Color"
+					}), new sap.m.P13nItem({
+						key: "c2",
+						text: "Number"
+					})
+				],
+				sortItems: [
+					new sap.m.P13nSortItem({
+						key: "s0",
+						columnKey: "c1",
+						operation: "Ascending"
+					}), new sap.m.P13nSortItem({
+						key: "s1",
+						columnKey: "c0",
+						operation: "Descending"
+					})
+				]
+			});
+			// arrange
+			oP13nSortPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assertions			
+			strictEqual(oP13nSortPanel.getItems().length, 4, "length of getItems should be 4'");
+			strictEqual(oP13nSortPanel.getSortItems().length, 2, "length of getSortItems should be 2'");
+
+			// cleanup
+			oP13nSortPanel.destroy();
+		});
+
+		test("create with addXXX", function() {
+
+			// system under test
+			var oP13nSortPanel = new sap.m.P13nSortPanel();
+
+			// arrange
+			oP13nSortPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oP13nSortPanel.addItem(new sap.m.P13nItem({
+				key: null,
+				text: "(none)",
+				tooltip: "nix"
+			}));
+			oP13nSortPanel.addItem(new sap.m.P13nItem({
+				key: "c0",
+				text: "Name"
+			}));
+			oP13nSortPanel.addItem(new sap.m.P13nItem({
+				key: "c1",
+				text: "Color"
+			}));
+			oP13nSortPanel.addItem(new sap.m.P13nItem({
+				key: "c2",
+				text: "Number"
+			}));
+
+			oP13nSortPanel.addSortItem(new sap.m.P13nSortItem({
+				key: "s0",
+				columnKey: "c1",
+				operation: "Ascending"
+			}));
+			oP13nSortPanel.addSortItem(new sap.m.P13nSortItem({
+				key: "s1",
+				columnKey: "c0",
+				operation: "Descending"
+			}));
+			sap.ui.getCore().applyChanges();
+
+			// assertions			
+			strictEqual(oP13nSortPanel.getItems().length, 4, "length of getItems should be 4'");
+			strictEqual(oP13nSortPanel.getSortItems().length, 2, "length of getSortItems should be 2'");
+
+			// cleanup
+			oP13nSortPanel.destroy();
+		});
 	}());
 </script>
 
