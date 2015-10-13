@@ -346,7 +346,7 @@
 					}.bind(this)).then(done);
 
 				});
-				QUnit.test("async: all - file not found (failOnError = true)", function(assert) {
+				QUnit.test("async: all - file not found", function(assert) {
 					var done = assert.async();
 					this.initFakeServer(404); // Make sure the request fails as 404 - Not found
 
@@ -372,7 +372,7 @@
 					}.bind(this)).then(done);
 
 				});
-				QUnit.test("async: single library - file not found (failOnError = true)", function(assert) {
+				QUnit.test("async: single library - file not found", function(assert) {
 					var done = assert.async();
 					this.initFakeServer(404); // Make sure the request fails as 404 - Not found
 
@@ -396,52 +396,6 @@
 							"Request should be async.");
 
 					}.bind(this)).then(done);
-
-				});
-				QUnit.test("async: all - file not found (failOnError = false)", function(assert) {
-					var done = assert.async();
-					this.initFakeServer(404); // Make sure the request fails as 404 - Not found
-
-					assert.strictEqual(sap.ui.versioninfo, undefined,
-						"'sap.ui.versioninfo' should be undefined before calling the function.");
-
-						sap.ui.getVersionInfo({ async: true, failOnError: false }).then(function(oVersionInfo) {
-							assert.strictEqual(oVersionInfo, undefined,
-								"'sap.ui.getVersionInfo({ async: true, failOnError: false })' should resolve with 'undefined' in case of an error with 'failOnError' set to 'false'.");
-						}).then(function() {
-
-							assert.strictEqual(sap.ui.versioninfo, undefined,
-								"'sap.ui.versioninfo' should still be undefined after calling the function.");
-
-							assert.strictEqual(this.oServer.requests.length, 1,
-								"Server should have received one request.");
-							assert.ok(this.oServer.requests[0].async,
-								"Request should be async.");
-
-						}.bind(this)).then(done);
-
-				});
-				QUnit.test("async: single library - file not found (failOnError = false)", function(assert) {
-					var done = assert.async();
-					this.initFakeServer(404); // Make sure the request fails as 404 - Not found
-
-					assert.strictEqual(sap.ui.versioninfo, undefined,
-						"'sap.ui.versioninfo' should be undefined before calling the function.");
-
-						sap.ui.getVersionInfo({ library: "sap.ui.core", async: true, failOnError: false }).then(function(oVersionInfo) {
-							assert.strictEqual(oVersionInfo, undefined,
-								"'sap.ui.getVersionInfo({ library: \"sap.ui.core\", async: true, failOnError: false })' should resolve with 'undefined' in case of an error with 'failOnError' set to 'false'.");
-						}).then(function() {
-
-							assert.strictEqual(sap.ui.versioninfo, undefined,
-								"'sap.ui.versioninfo' should still be undefined after calling the function.");
-
-							assert.strictEqual(this.oServer.requests.length, 1,
-								"Server should have received one request.");
-							assert.ok(this.oServer.requests[0].async,
-								"Request should be async.");
-
-						}.bind(this)).then(done);
 
 				});
 				QUnit.test("library (async) + all (sync)", function(assert) {
