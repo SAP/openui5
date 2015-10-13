@@ -26,6 +26,7 @@
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript"
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 
 <!-- Test functions -->
 <script language="javascript">
@@ -441,7 +442,14 @@
 		equal(oInfo.pattern, "MMM d, y", "Origin Info: pattern")
 	});
 
-	module("Scaling: Relative Time Formater")
+	module("Scaling: Relative Time Formater", {
+		setup: function() {
+			this.clock = sinon.useFakeTimers(1444724476175);
+		},
+		teardown: function() {
+			this.clock.restore();
+		}
+	})
 
 	function date(scale, diff) {
 		var oResult = new Date();
@@ -476,16 +484,58 @@
 		equal(oTime.format(date("minute", 95)), "in 1 hour", "Now + 95 Minutes --> in 1 hour");
 		equal(oTime.format(date("hour", 1)), "in 1 hour", "Now + 1 Hour --> in 1 hour");
 		equal(oTime.format(date("day", -5)), "120 hours ago", "Now - 5 Days --> 120 hours ago");
+		
+		
+		oTime = sap.ui.core.format.DateFormat.getTimeInstance({
+			relative: true,
+			relativeScale: "hour"
+		});
+
+		equal(oTime.format(date()), "0 hours ago", "Now --> 0 hours ago");
+		equal(oTime.format(date("second", 1)), "in 0 hours", "Now + 1 Second --> in 0 hours");
+		equal(oTime.format(date("second", -1)), "0 hours ago", "Now - 1 Second --> 0 hours ago");
+		equal(oTime.format(date("minute", 30)), "in 0 hours", "Now + 30 Minutes --> in 0 hours");
+		equal(oTime.format(date("minute", -30)), "0 hours ago", "Now - 30 Minutes --> 0 hours ago");
+		equal(oTime.format(date("hour", 4)), "in 4 hours", "Now + 4 Hours --> in 4 hours");
+		equal(oTime.format(date("hour", -10)), "10 hours ago", "Now - 10 Hours --> 10 hours ago");
+
+		oTime = sap.ui.core.format.DateFormat.getTimeInstance({
+			relative: true,
+			relativeScale: "minute"
+		});
+
+		equal(oTime.format(date()), "0 minutes ago", "Now --> 0 minutes ago");
+		equal(oTime.format(date("second", 1)), "in 0 minutes", "Now + 1 Second --> in 0 minute");
+		equal(oTime.format(date("second", -1)), "0 minutes ago", "Now - 1 Second --> 0 minutes ago");
+		equal(oTime.format(date("minute", 30)), "in 30 minutes", "Now + 30 Minutes --> in 30 minutes");
+		equal(oTime.format(date("minute", -30)), "30 minutes ago", "Now - 30 Minutes --> 30 minutes ago");
+		equal(oTime.format(date("hour", 1)), "in 60 minutes", "Now + 1 Hours --> in 60 minutes");
+
+		oTime = sap.ui.core.format.DateFormat.getTimeInstance({
+			relative: true,
+			relativeScale: "second"
+		});
+
+		equal(oTime.format(date()), "now", "Now --> now");
+		equal(oTime.format(date("second", 1)), "in 1 second", "Now + 1 Second --> in 1 second");
+		equal(oTime.format(date("second", -1)), "1 second ago", "Now - 1 Second --> 1 second ago");
+		equal(oTime.format(date("minute", 1)), "in 60 seconds", "Now + 1 Minute --> in 60 seconds");
+		equal(oTime.format(date("minute", -1)), "60 seconds ago", "Now - 1 Minute --> 60 seconds ago");
+
 	});
 
-/*	test("parse Time relative", function(){
+	test("parse Time relative", function(){
 		var oTime = sap.ui.core.format.DateFormat.getTimeInstance({
 					relative: true,
 					relativeScale: "auto"
 				});
 
-		equal(oTime.parse("now").getTime(), date().getTime(), "now")
-	});*/
+		equal(oTime.parse("now").getTime(), date().getTime(), "now");
+		equal(oTime.parse("in 1 second").getTime(), date("second", 1).getTime(), "in 1 second");
+		equal(oTime.parse("45 seconds ago").getTime(), date("second", -45).getTime(), "45 seconds ago");
+		equal(oTime.parse("in 5 minutes").getTime(), date("minute", 5).getTime(), "in 5 minutes");
+		equal(oTime.parse("in 3 hours").getTime(), date("hour", 3).getTime(), "in 3 hours");
+	});
 
 	test("format Date relative", function(){
 		var oDate = sap.ui.core.format.DateFormat.getDateInstance({
@@ -526,35 +576,35 @@
 
 	test("format DateTime relative", function(){
 		var oDateTime = sap.ui.core.format.DateFormat.getDateTimeInstance({
-					relative: true,
-					relativeScale: "auto"
-				});
+				relative: true,
+				relativeScale: "auto"
+			});
 
-			equal(oDateTime.format(date()), "now", "now");
-			equal(oDateTime.format(date("second", 1)), "in 1 second", "Now + 1 Second --> in 1 second");
-			equal(oDateTime.format(date("second", -1)), "1 second ago", "Now - 1 Second --> 1 second ago");
-			equal(oDateTime.format(date("second", 2)), "in 2 seconds", "Now + 2 Seconds --> in 2 seconds");
-			equal(oDateTime.format(date("second", -7)), "7 seconds ago", "Now - 7 Seconds --> 7 seconds ago");
-			equal(oDateTime.format(date("second", 61)), "in 1 minute", "Now + 61 Seconds --> in 1 minute");
-			equal(oDateTime.format(date("second", 3601)), "in 1 hour", "Now + 3601 Seconds --> in 1 hour");
-			equal(oDateTime.format(date("second", -86401)), "yesterday", "Today - 86401 Seconds --> yesterday");
-			equal(oDateTime.format(date("minute", 1)), "in 1 minute", "Now + 1 Minute --> in 1 minute");
-			equal(oDateTime.format(date("minute", -1)), "1 minute ago", "Now - 1 Minute --> 1 minute ago");
-			equal(oDateTime.format(date("minute", 13)), "in 13 minutes", "Now + 13 Mintues --> in 13 minutes");
-			equal(oDateTime.format(date("minute", -54)), "54 minutes ago", "Now - 54 Minutes --> 54 minutes ago");
-			equal(oDateTime.format(date("minute", 95)), "in 1 hour", "Now + 95 Minutes --> in 1 hour");
-			equal(oDateTime.format(date("minute", 1440)), "tomorrow", "Today + 1440 Minutes --> todmorrow");
-			equal(oDateTime.format(date("hour", 1)), "in 1 hour", "Now + 1 Hour --> in 1 hour");
-			equal(oDateTime.format(date("day", 5)), "in 5 days", "Today + 5 Days --> in 5 days");
-			equal(oDateTime.format(date("day", -5)), "5 days ago", "Today - 5 Days --> 5 days ago");
-			equal(oDateTime.format(date("day", 8)), "next week", "Today + 8 Days --> next week");
-			equal(oDateTime.format(date("day", -8)), "last week", "Today - 8 Days --> last week");
-			equal(oDateTime.format(date("day", -32)), "last month", "Today - 32 Days --> last month");
-			equal(oDateTime.format(date("month", 1)), "next month", "Today + 1 Month --> next month");
-			equal(oDateTime.format(date("month", -1)), "last month", "Today - 1 Month --> last month");
-			equal(oDateTime.format(date("month", 15)), "next year", "Today + 15 Months --> next year");
-			equal(oDateTime.format(date("month", 28)), "in 2 years", "Today + 28 Months --> in 2 years");
-			equal(oDateTime.format(date("year", 1)), "next year", "Today + 1 year --> next year");
+		equal(oDateTime.format(date()), "now", "now");
+		equal(oDateTime.format(date("second", 1)), "in 1 second", "Now + 1 Second --> in 1 second");
+		equal(oDateTime.format(date("second", -1)), "1 second ago", "Now - 1 Second --> 1 second ago");
+		equal(oDateTime.format(date("second", 2)), "in 2 seconds", "Now + 2 Seconds --> in 2 seconds");
+		equal(oDateTime.format(date("second", -7)), "7 seconds ago", "Now - 7 Seconds --> 7 seconds ago");
+		equal(oDateTime.format(date("second", 61)), "in 1 minute", "Now + 61 Seconds --> in 1 minute");
+		equal(oDateTime.format(date("second", 3601)), "in 1 hour", "Now + 3601 Seconds --> in 1 hour");
+		equal(oDateTime.format(date("second", -86401)), "yesterday", "Today - 86401 Seconds --> yesterday");
+		equal(oDateTime.format(date("minute", 1)), "in 1 minute", "Now + 1 Minute --> in 1 minute");
+		equal(oDateTime.format(date("minute", -1)), "1 minute ago", "Now - 1 Minute --> 1 minute ago");
+		equal(oDateTime.format(date("minute", 13)), "in 13 minutes", "Now + 13 Mintues --> in 13 minutes");
+		equal(oDateTime.format(date("minute", -54)), "54 minutes ago", "Now - 54 Minutes --> 54 minutes ago");
+		equal(oDateTime.format(date("minute", 95)), "in 1 hour", "Now + 95 Minutes --> in 1 hour");
+		equal(oDateTime.format(date("minute", 1440)), "tomorrow", "Today + 1440 Minutes --> todmorrow");
+		equal(oDateTime.format(date("hour", 1)), "in 1 hour", "Now + 1 Hour --> in 1 hour");
+		equal(oDateTime.format(date("day", 5)), "in 5 days", "Today + 5 Days --> in 5 days");
+		equal(oDateTime.format(date("day", -5)), "5 days ago", "Today - 5 Days --> 5 days ago");
+		equal(oDateTime.format(date("day", 8)), "next week", "Today + 8 Days --> next week");
+		equal(oDateTime.format(date("day", -8)), "last week", "Today - 8 Days --> last week");
+		equal(oDateTime.format(date("day", -32)), "last month", "Today - 32 Days --> last month");
+		equal(oDateTime.format(date("month", 1)), "next month", "Today + 1 Month --> next month");
+		equal(oDateTime.format(date("month", -1)), "last month", "Today - 1 Month --> last month");
+		equal(oDateTime.format(date("month", 15)), "next year", "Today + 15 Months --> next year");
+		equal(oDateTime.format(date("month", 28)), "in 2 years", "Today + 28 Months --> in 2 years");
+		equal(oDateTime.format(date("year", 1)), "next year", "Today + 1 year --> next year");
 	 });
 
 	 test("parse DateTime relative", function(){
