@@ -718,20 +718,25 @@
 			})
 		});
 
+		var subHeader = new sap.m.Bar({
+			contentMiddle: [
+				new sap.m.SearchField({
+					placeholder: "Search ...",
+					width: "100%"
+				})
+			],
+			visible: false
+		});
 
 		var oDialogWithSubheader = new sap.m.Dialog({
 			title: "Dialog with SubHeader",
-			content: new sap.ui.core.HTML({
-				content: '<div>Lipsum limple text</div>'
+			content: new sap.m.Button({
+				text: 'trigger',
+				tap: function() {
+					subHeader.setVisible(!subHeader.getVisible());
+				}
 			}),
-			subHeader: new sap.m.Bar({
-				contentMiddle: [
-					new sap.m.SearchField({
-						placeholder: "Search ...",
-						width: "100%"
-					})
-				]
-			}),
+			subHeader: subHeader,
 			beginButton: new sap.m.Button({
 				text: "Accept", press: function() {
 					oDialogWithSubheader.close();
