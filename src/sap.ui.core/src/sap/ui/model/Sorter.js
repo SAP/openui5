@@ -71,7 +71,11 @@ sap.ui.define(['sap/ui/base/Object'],
 				oGroup = {
 					key: oGroup
 				};
-			} 
+			} else if (typeof oGroup === "object") {
+				oGroup = {
+					key: oGroup.toString()
+				};
+			}
 			return oGroup;
 		}
 	
