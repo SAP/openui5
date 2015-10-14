@@ -2862,6 +2862,10 @@
 	"weekData-firstDay": 6,
 	"weekData-weekendStart": 5,
 	"weekData-weekendEnd": 6,
+	"timeData": {
+		"_allowed": "H h",
+		"_preferred": "h"
+	},
 	"eras-gregorian": {
 		"0": {
 			"_end": "0-12-31"
