@@ -266,7 +266,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './ComponentMet
 	 * @return {any} result of function <code>fn</code>
 	 * @since 1.25.1
 	 * @public
-	 * @experimental
 	 */
 	Component.prototype.runAsOwner = function(fn) {
 		jQuery.sap.assert(typeof fn === "function", "fn must be a function");
