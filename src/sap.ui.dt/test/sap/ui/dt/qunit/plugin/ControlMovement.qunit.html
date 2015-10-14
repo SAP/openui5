@@ -68,7 +68,9 @@
 			];
 
 			this.oButton = new sap.m.Button();
-			this.oObjectAttribute = new sap.m.ObjectAttribute({text:"Some attribute"});
+			this.oObjectAttribute = new sap.m.ObjectAttribute({
+				text: "Some attribute"
+			});
 			this.oObjectHeader = new sap.m.ObjectHeader({
 				//title : "header",
 				attributes: [
@@ -144,7 +146,6 @@
 
 		assert.ok(!this.oLayoutAggregationOverlay.hasStyleClass("sapUiDtOverlayDropZone"), "the valid aggregation overlay has not the additional drop zone style (we cutted!)");
 
-
 		assert.ok(this.oButtonOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the button overlay is marked with the correct style");
 		assert.equal(this.oCutPaste.getCuttedOverlay(), this.oButtonOverlay, "then the button overlay is remembered as to be cutted");
 	});
@@ -200,7 +201,7 @@
 		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "ObjectHeader is still at first position");
 		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "Button is still at second position");
 	});
-	
+
 	QUnit.test("while dragging the object attribute when dragenter is triggered on the layout content aggregation overlay,", function(assert) {
 		this.oControlDragDrop._onDragStart(stubEventFor(this.oObjectAttributeOverlay));
 
@@ -210,6 +211,38 @@
 		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
 		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
 		assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position");
+	});
+
+	QUnit.test("while dragging the object attribute on the layout content aggregation overlay  when dragend is triggered ,", function(assert) {
+		this.oControlDragDrop._onDragStart(stubEventFor(this.oObjectAttributeOverlay));
+
+		this.oControlDragDrop._onAggregationDragEnter(stubEventFor(this.oLayoutAggregationOverlay));
+
+		var that = this;
+		this.oControlDragDrop.attachElementMoved(function(oEvent) {
+			assert.deepEqual(oEvent.getParameter("data"), {
+				element: that.oObjectAttribute,
+				source: {
+					parent: that.oObjectHeader,
+					aggregation: "attributes",
+					index: 0
+				},
+				target: {
+					parent: that.oLayout,
+					aggregation: "content",
+					index: 2
+				}
+			}, "element moved event is fired with the correct data");
+		});
+
+		this.oControlDragDrop._onDragEnd(stubEventFor(this.oLayoutAggregationOverlay));
+
+		assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
+		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
+		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
+		assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position");
+		
+		assert.ok(!this.oControlDragDrop.getElementMover()._getSource(), "source information should be deleted after move has finished");
 	});
 
 	QUnit.test("when the dragend is triggered on previously dragged button overlay,", function(assert) {
@@ -239,15 +272,32 @@
 		assert.equal(this.oLayout.getContent()[0].getId(), this.oObjectHeader.getId(), "object header is still at 1. position");
 		assert.equal(this.oLayout.getContent()[1].getId(), this.oButton.getId(), "button is still at 2. position");
 		assert.equal(this.oLayout.getContent()[2].getId(), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position");
-		
+
 		assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation (layout) is not marked as target zone");
 		assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the valid aggregation (objectHeader) is not marked as target zone");
 		assert.ok(!this.oObjectAttributeOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the overlay cut style class is removed");
 	});
-	
+
 	QUnit.test("and object attribute was cutted, when paste is triggered on the button (control in a target zone aggregation), then", function(assert) {
 		sap.ui.test.qunit.triggerKeydown(this.oObjectAttributeOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
-
+		
+		var that = this;
+		this.oCutPaste.attachElementMoved(function(oEvent) {
+			assert.deepEqual(oEvent.getParameter("data"), {
+				element: that.oObjectAttribute,
+				source: {
+					parent: that.oObjectHeader,
+					aggregation: "attributes",
+					index: 0
+				},
+				target: {
+					parent: that.oLayout,
+					aggregation: "content",
+					index: 1
+				}
+			}, "element moved event is fired with the correct data");
+		});
+		
 		sap.ui.test.qunit.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.V, false, false, true);
 
 		assert.equal(this.oObjectHeader.getAttributes().length, 0, "object attribute is removed from the header");
@@ -258,8 +308,10 @@
 		assert.ok(!this.oLayoutAggregationOverlay.isTargetZone(), "the valid aggregation (layout) is not marked as target zone");
 		assert.ok(!this.oObjectHeaderAggregationOverlay.isTargetZone(), "the valid aggregation (objectHeader) is not marked as target zone");
 		assert.ok(!this.oObjectAttributeOverlay.hasStyleClass("sapUiDtOverlayCutted"), "the overlay cut style class is removed");
+		
+		assert.ok(!this.oCutPaste.getElementMover()._getSource(), "source information should be deleted after move has finished");
 	});
-	
+
 	QUnit.test("and button was cutted, when paste is triggered on the object attribute (control in an invalid aggregation), then", function(assert) {
 		sap.ui.test.qunit.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
 
@@ -277,7 +329,8 @@
 </script>
 </head>
 <body>
-	<h1 id="qunit-header">Test Page for sap.ui.dt Drag & Drop and Cut & Paste</h1>
+	<h1 id="qunit-header">Test Page for sap.ui.dt Drag & Drop and Cut
+		& Paste</h1>
 	<h2 id="qunit-banner"></h2>
 	<h2 id="qunit-userAgent"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
