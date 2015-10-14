@@ -497,16 +497,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		var iNewIndex = this.getSelectedIndex();
 		var $panel = this.getTabs()[iOldIndex].$("panel");
-		if ($panel.length > 0) {
-			var rm = sap.ui.getCore().createRenderManager();
-			this.getRenderer().renderTabContents(rm, this.getTabs()[iNewIndex]);
-			rm.flush($panel[0]);
-			rm.destroy();
-		}
-
 		var sNewId = this.getTabs()[iNewIndex].getId();
-		//change the ID and Label of the panel to the current tab
-		$panel.attr("id",sNewId + "-panel").attr("aria-labelledby", sNewId);
+		var oTab = this.getTabs()[iNewIndex];
+
+		// ensure that events from the controls in the panel are fired
+		jQuery.sap.delayedCall(0, this, function() {
+
+			if ($panel.length > 0) {
+				var rm = sap.ui.getCore().createRenderManager();
+				this.getRenderer().renderTabContents(rm, oTab);
+				rm.flush($panel[0]);
+				rm.destroy();
+			}
+
+			// change the ID and Label of the panel to the current tab
+			$panel.attr("id",sNewId + "-panel").attr("aria-labelledby", sNewId);
+		});
 
 		// call after rendering method of tab to set scroll functions
 		this.getTabs()[iNewIndex].onAfterRendering();
