@@ -176,6 +176,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './library'],
 		});
 	};
 	
+	TextArea.prototype._getInputValue = function(sValue) {
+		sValue = InputBase.prototype._getInputValue.call(this, sValue);
+		return sValue.replace(/\r\n/g, "\n");
+	};
+	
 	/**
 	 * Some browsers let us to scroll inside of the textarea without focusing.
 	 * Android is very buggy and no touch event is publishing after focus.

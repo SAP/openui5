@@ -782,7 +782,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	InputBase.prototype.closeValueStateMessage = function (){
 		if (this._popup) {
-			this._popup.close();
+			this._popup.close(0);
 		}
 
 		var $Input = jQuery(this.getFocusDomRef());
@@ -876,10 +876,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		);
 
 		// Check whether popup is below or above the input
-		if ($Input.offset().top < this._popup._$().offset().top) {
-			this._popup._$().addClass("sapMInputBaseMessageBottom");
+		if ($Input.offset().top < $Content.offset().top) {
+			$Content.addClass("sapMInputBaseMessageBottom");
 		} else {
-			this._popup._$().addClass("sapMInputBaseMessageTop");
+			$Content.addClass("sapMInputBaseMessageTop");
 		}
 
 		$Input.addAriaDescribedBy(sMessageId);
