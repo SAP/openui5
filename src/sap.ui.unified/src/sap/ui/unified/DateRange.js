@@ -62,6 +62,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 
 		this.setProperty("startDate", oDate);
 
+		return this;
+
 	};
 
 	DateRange.prototype.setEndDate = function(oDate){
@@ -78,6 +80,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 		}
 
 		this.setProperty("endDate", oDate);
+
+		return this;
 
 	};
 
