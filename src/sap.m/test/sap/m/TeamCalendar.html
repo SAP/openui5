@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
 		<title>TeamCalendar - sap.m</title>
@@ -223,6 +224,24 @@
 			        	]
 			        	})
 			       ],
+			specialDates: [ new sap.ui.unified.DateTypeRange({
+			                	startDate: new Date(2015, 0, 1, 12, 00),
+			                	endDate: new Date(2015, 0, 1, 14, 00),
+			                	type: sap.ui.unified.CalendarDayType.Type01,
+			                	tooltip: "Lunch"
+			                }),
+			                new sap.ui.unified.DateTypeRange({
+			                	startDate: new Date(2015, 0, 6),
+			                	type: sap.ui.unified.CalendarDayType.Type02,
+			                	tooltip: "Heilige 3 Könige"
+			                }),
+			                new sap.ui.unified.DateTypeRange({
+			                	startDate: new Date(2015, 1, 1),
+			                	endDate: new Date(2015, 1, 3),
+			                	type: sap.ui.unified.CalendarDayType.Type03,
+			                	tooltip: "Test"
+			                })
+			              ],
 			toolbarContent: [oButton1, oButton2],
 			appointmentSelect: handleAppointmentSelect,
 			addRow: handleAddRow,
