@@ -32,7 +32,7 @@
 			{Gregorian: {year: 1970, month: 0, day: 1}, Japanese: {era: 234, year: 45, month: 0, day: 1}},
 			{Gregorian: {year: 2011, month: 0, day: 1}, Japanese: {era: 235, year: 23, month: 0, day: 1}},
 			{Gregorian: {year: 1989, month: 0, day: 8}, Japanese: {era: 235, year: 1, month:0, day: 8}},
-			{Gregorian: {year: 1989, month: 0, day: 7}, Japanese: {era: 235, year: 1, month:0, day: 7}},
+			{Gregorian: {year: 1989, month: 0, day: 7}, Japanese: {era: 234, year: 64, month:0, day: 7}},
 			{Gregorian: {year: 1902, month: 7, day: 13}, Japanese: {era: 232, year: 35, month:7, day: 13}},
 			{Gregorian: {year: 1921, month: 3, day: 30}, Japanese: {era: 233, year: 10, month:3, day: 30}},
 			{Gregorian: {year: 1945, month: 2, day: 9}, Japanese: {era: 234, year: 20, month:2, day: 9}},
@@ -87,66 +87,96 @@
 			// ------------- object -----------------------------
 			var oJapaneseDate = null;
 		
-			oJapaneseDate = new sap.ui.core.date.Japanese(235, 23, 0, "alabala");
+			oJapaneseDate = new sap.ui.core.date.Japanese("blabla", 0, 23);
+			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as year must return invalid date");
+
+			oJapaneseDate = new sap.ui.core.date.Japanese(null, 0, 23);
+			ok(isInvalid(oJapaneseDate), "Constructor with null as year must return invalid date");
+
+			oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, "alabala");
 			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as day must return invalid date");
 
-			oJapaneseDate = new sap.ui.core.date.Japanese(235, new Object(), 0)
+			oJapaneseDate = new sap.ui.core.date.Japanese([235, new Object()], 0)
 			ok(isInvalid(oJapaneseDate), "Constructor with object as year must return invalid date");
 
-			oJapaneseDate = new sap.ui.core.date.Japanese(235, 23, new Object());
+			oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], new Object());
 			ok(isInvalid(oJapaneseDate), "Constructor with object as month must return invalid date");
 
-			oJapaneseDate = new sap.ui.core.date.Japanese(235, 23, 0, new Object());
+			oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, new Object());
 			ok(isInvalid(oJapaneseDate), "Constructor with object as day must return invalid date");
 
-			oJapaneseDate = new sap.ui.core.date.Japanese(235, 23, 0, 1, new Object());
+			oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, new Object());
 			ok(isInvalid(oJapaneseDate), "Constructor with object as hours must return invalid date");
 
-			oJapaneseDate = new sap.ui.core.date.Japanese(235, 23, 0, 1, 0, new Object());
+			oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, 0, new Object());
 			ok(isInvalid(oJapaneseDate), "Constructor with object as minutes must return invalid date");
 
-			oJapaneseDate = new sap.ui.core.date.Japanese(235, 23, 0, 1, 0, 0, new Object());
+			oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, 0, 0, new Object());
 			ok(isInvalid(oJapaneseDate), "Constructor with object as seconds must return invalid date");
 
-			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese(235, 23, 0, 1, 0, 0, 0, new Object());
+			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, 0, 0, 0, new Object());
 			ok(isInvalid(oJapaneseDate), "Constructor with object as milliseconds must return invalid date");
 
 			// ------------- string -----------------------------
-			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese(235, "a", 0);
+			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese([235, "a"], 0);
 			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as year must return invalid date");
 
-			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese(235, "1430", "a");
+			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese([235, "1430"], "a");
 			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as month must return invalid date");
 
-			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese(235, 23, 0, "a");
+			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, "a");
 			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as month must return invalid date");
 
-			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese(235, 23, 0, 1, "a");
+			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, "a");
 			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as hours must return invalid date");
 
-			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese(235, 23, 0, 1, 0, "a");
+			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, 0, "a");
 			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as minutes must return invalid date");
 
-			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese(235, 23, 0, 1, 0, 0, "a");
+			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, 0, 0, "a");
 			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as seconds must return invalid date");
 
-			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese(235, 23, 0, 1, 0, 0, 0, "a");
+			oJapaneseDate = oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, 0, 0, 0, "a");
 			ok(isInvalid(oJapaneseDate), "Constructor with invalid string as milliseconds must return invalid date");
 		});
 
 		test("with era, year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: valid values)", function () {
 			var oJapaneseDate = null;
-			var oTestDate = aTestData[0];
-			oJapaneseDate = createJapaneseDateFromTestEntry(oTestDate);
-			verifyDateWithTestDate("Constructor with valid values", oJapaneseDate, oTestDate.Japanese);
+			aTestData.forEach(function(oTestDate) {
+				oJapaneseDate = createJapaneseDateFromTestEntry(oTestDate);
+				verifyDateWithTestDate("Constructor with valid values", oJapaneseDate, oTestDate.Japanese);
+			})
+		});
+
+		test("with gregorian year, month[, day[, hour[, minutes[, seconds[, milliseconds]]]]] parameters: valid values)", function () {
+			var oJapaneseDate = null;
+			aTestData.forEach(function(oTestDate) {
+				oJapaneseDate = createDateFromTestEntry(oTestDate, sap.ui.core.date.Japanese);
+				verifyDateWithTestDate("Constructor with valid values", oJapaneseDate, oTestDate.Japanese);
+			})
+		});
+
+		test("with year without era, when year is in current era and less than 100", function () {
+			var oJapaneseDate = null, oJapanese;
+			aTestData.forEach(function(oTestDate) {
+				if (oTestDate.Japanese.era == 235) {
+					oJapanese = oTestDate.Japanese;
+					oTestDate = {
+						Gregorian: oJapanese,
+						Japanese: oJapanese
+					};
+					oJapaneseDate = createDateFromTestEntry(oTestDate, sap.ui.core.date.Japanese);
+					verifyDateWithTestDate("Constructor with valid values", oJapaneseDate, oTestDate.Japanese);
+				}
+			})
 		});
 
 		test("with optional parameters", function () {
-			var oJapaneseDate = new sap.ui.core.date.Japanese(235, 23, 10);
-			verifyDate("new Japanese(235, 23, 10) must be equal to 01.11.23H", oJapaneseDate, 235, 23, 10, 1);
+			var oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 10);
+			verifyDate("new Japanese([235, 23], 10) must be equal to 01.11.23H", oJapaneseDate, 235, 23, 10, 1);
 
-			oJapaneseDate = new sap.ui.core.date.Japanese(235, 23, 10, 2);
-			verifyDate("new Japanese(235, 23, 10, 2) msut be equal to 02.11.23H", oJapaneseDate, 235, 23, 10, 2)
+			oJapaneseDate = new sap.ui.core.date.Japanese([235, 23], 10, 2);
+			verifyDate("new Japanese([235, 23], 10, 2) msut be equal to 02.11.23H", oJapaneseDate, 235, 23, 10, 2)
 		});
 		
 		module("Overflow/underflow");
@@ -159,14 +189,14 @@
 			oJapaneseDate.setMonth(12); //11 is max allowed value
 			verifyDate("setMonth(12) must overflow to next year", oJapaneseDate, 235, 24, 0, 1);
 
-			oJapaneseDate = new sap.ui.core.date.Japanese(oTestDate.Japanese.era, oTestDate.Japanese.year, 12, oTestDate.Japanese.day);
+			oJapaneseDate = new sap.ui.core.date.Japanese([oTestDate.Japanese.era, oTestDate.Japanese.year], 12, oTestDate.Japanese.day);
 			verifyDate("month 12 in the constructor must overflow to next year", oJapaneseDate, 235, 24, 0, 1);
 
 			oJapaneseDate = createJapaneseDateFromTestEntry(oTestDate);
 			oJapaneseDate.setDate(32);
 			verifyDate("setDate(32) must overflow to next month", oJapaneseDate, 235, 23, 1, 1);
 
-			oJapaneseDate = new sap.ui.core.date.Japanese(oTestDate.Japanese.era, oTestDate.Japanese.year, oTestDate.Japanese.month, 32);
+			oJapaneseDate = new sap.ui.core.date.Japanese([oTestDate.Japanese.era, oTestDate.Japanese.year], oTestDate.Japanese.month, 32);
 			verifyDate("date 32 in the constructor must overflow to next month", oJapaneseDate, 235, 23, 1, 1);
 
 			oJapaneseDate = createJapaneseDateFromTestEntry(oTestDate);
@@ -177,7 +207,7 @@
 			oJapaneseDate.setUTCMonth(-1);
 			verifyDate("setUTCMonth(-1) must underflow to previous year", oJapaneseDate, 235, 22, 11, 1, true);
 
-			oJapaneseDate = new sap.ui.core.date.Japanese(oTestDate.Japanese.era, oTestDate.Japanese.year, -1, oTestDate.Japanese.day);
+			oJapaneseDate = new sap.ui.core.date.Japanese([oTestDate.Japanese.era, oTestDate.Japanese.year], -1, oTestDate.Japanese.day);
 			verifyDate("month -1 in the constructor must underflow to previous year", oJapaneseDate, 235, 22, 11, 1);
 
 			oJapaneseDate = createJapaneseDateFromTestEntry(oTestDate);
@@ -188,7 +218,7 @@
 			oJapaneseDate.setUTCDate(0);
 			verifyDate("setUTCDate(0) must underflow to previous month", oJapaneseDate, 235, 22, 11, 31, true);
 
-			oJapaneseDate = new sap.ui.core.date.Japanese(oTestDate.Japanese.era, oTestDate.Japanese.year, oTestDate.Japanese.month, 0);
+			oJapaneseDate = new sap.ui.core.date.Japanese([oTestDate.Japanese.era, oTestDate.Japanese.year], oTestDate.Japanese.month, 0);
 			verifyDate("day 0 in the constructor must underflow to previous month", oJapaneseDate, 235, 22, 11, 31);
 		});
 
@@ -201,14 +231,14 @@
 			oJapaneseDate.setMonth(1); //11 is max allowed value
 			verifyDate("setMonth(1) must overflow to next era", oJapaneseDate, 235, 1, 1, 7);
 
-			oJapaneseDate = new sap.ui.core.date.Japanese(oTestDate.Japanese.era, oTestDate.Japanese.year, 1, oTestDate.Japanese.day);
+			oJapaneseDate = new sap.ui.core.date.Japanese([oTestDate.Japanese.era, oTestDate.Japanese.year], 1, oTestDate.Japanese.day);
 			verifyDate("month 1 in the constructor must overflow to next era", oJapaneseDate, 235, 1, 1, 7);
 
 			oJapaneseDate = createJapaneseDateFromTestEntry(oTestDate);
 			oJapaneseDate.setDate(8);
 			verifyDate("setDate(8) must overflow to next era", oJapaneseDate, 235, 1, 0, 8);
 
-			oJapaneseDate = new sap.ui.core.date.Japanese(oTestDate.Japanese.era, oTestDate.Japanese.year, oTestDate.Japanese.month, 8);
+			oJapaneseDate = new sap.ui.core.date.Japanese([oTestDate.Japanese.era, oTestDate.Japanese.year], oTestDate.Japanese.month, 8);
 			verifyDate("date 8 in the constructor must overflow to next era", oJapaneseDate, 235, 1, 0, 8);
 
 			oTestDate = aTestData[2]; // start of Heisei
@@ -217,14 +247,14 @@
 			oJapaneseDate.setMonth(-1);
 			verifyDate("setMonth(-1) must underflow to previous era", oJapaneseDate, 234, 63, 11, 8);
 
-			oJapaneseDate = new sap.ui.core.date.Japanese(oTestDate.Japanese.era, oTestDate.Japanese.year, -1, oTestDate.Japanese.day);
+			oJapaneseDate = new sap.ui.core.date.Japanese([oTestDate.Japanese.era, oTestDate.Japanese.year], -1, oTestDate.Japanese.day);
 			verifyDate("month -1 in the constructor must underflow to previous era", oJapaneseDate, 234, 63, 11, 8);
 
 			oJapaneseDate = createJapaneseDateFromTestEntry(oTestDate);
 			oJapaneseDate.setDate(7);
 			verifyDate("setDate(7) must underflow to previous era", oJapaneseDate, 234, 64, 0, 7);
 
-			oJapaneseDate = new sap.ui.core.date.Japanese(oTestDate.Japanese.era, oTestDate.Japanese.year, oTestDate.Japanese.month, 7);
+			oJapaneseDate = new sap.ui.core.date.Japanese([oTestDate.Japanese.era, oTestDate.Japanese.year], oTestDate.Japanese.month, 7);
 			verifyDate("day 7 in the constructor must underflow to previous era", oJapaneseDate, 234, 64, 0, 7);
 		});
 
@@ -272,7 +302,7 @@
 		module("Others");
 		
 		test("Setters have to return the time since 1.1.1970", function () {
-			var oDate = new sap.ui.core.date.Japanese(235, 23, 0, 1, 8, 10, 15, 119);
+			var oDate = new sap.ui.core.date.Japanese([235, 23], 0, 1, 8, 10, 15, 119);
 
 			function check(iTimestamp, sSetter) {
 				equal(typeof iTimestamp, "number", sSetter + " did return a numeric value");
@@ -380,18 +410,22 @@
 		function createJapaneseDateFromTestEntry(oEntry, bUTC) {
 			var oDateEntry = oEntry.Japanese;
 			if (bUTC) {
-				return new sap.ui.core.date.Japanese(sap.ui.core.date.Japanese.UTC(oDateEntry.era, oDateEntry.year, oDateEntry.month, oDateEntry.day));
+				return new sap.ui.core.date.Japanese(sap.ui.core.date.Japanese.UTC([oDateEntry.era, oDateEntry.year], oDateEntry.month, oDateEntry.day));
 			} else {
-				return new sap.ui.core.date.Japanese(oDateEntry.era, oDateEntry.year, oDateEntry.month, oDateEntry.day);
+				return new sap.ui.core.date.Japanese([oDateEntry.era, oDateEntry.year], oDateEntry.month, oDateEntry.day);
 			}
 		}
 
 		function createGregorianDateFromTestEntry(oEntry, bUTC) {
+			return createDateFromTestEntry(oEntry, Date, bUTC);
+		}
+
+		function createDateFromTestEntry(oEntry, clType, bUTC) {
 			var oDateEntry = oEntry.Gregorian;
 			if (bUTC) {
-				return new Date(Date.UTC(oDateEntry.year, oDateEntry.month, oDateEntry.day));
+				return new clType(clType.UTC(oDateEntry.year, oDateEntry.month, oDateEntry.day));
 			} else {
-				return new Date(oDateEntry.year, oDateEntry.month, oDateEntry.day);
+				return new clType(oDateEntry.year, oDateEntry.month, oDateEntry.day);
 			}
 		}
 
