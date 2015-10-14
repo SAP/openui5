@@ -1,0 +1,240 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>sap.m.DynamicContainer</title>
+
+<script src="../../../resources/sap-ui-core.js" type="text/javascript"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m, sap.ui.layout"
+	data-sap-ui-theme="sap_bluecrystal">
+</script>
+
+<script type="text/javascript">
+	function setBackgroundColor(oAnyObject) {
+		var oColors = {
+			white : "#FFFFFF",
+			black : "#000000",
+			blue : "#6666FF",
+			red : "#FF6666",
+			green : "#66FF66"
+		};
+		var sParam = jQuery.sap.getUriParameters().get("sap-ui-suite-background-color");
+		if (sParam) {
+			var sColor = oColors[sParam.toLowerCase()];
+			if (sColor) {
+				oAnyObject.addDelegate({
+					onAfterRendering : function() {
+						oAnyObject.$().css("background-color", sColor);
+					}
+				});
+			}
+		}
+	}
+</script>
+
+<script type="text/javascript">
+	jQuery.sap.initMobile();
+
+	var oDynamicContainerData = {
+		displayTime : 5000,
+		transitionTime : 500,
+		jamTiles : [{
+			headerImage : "images/headerImg2.jpg",
+			imageDescription : "portrait of the unknown person",
+			header : "Lorem ipsum dolor sit amet, consectetuer adipiscing elit",
+			frameType : "TwoByOne",
+			message : "Jam Tile 1",
+			tileContent : [{
+				contentText : "@@notify Great outcome of the Presentation today.",
+				footer : "New Notifications",
+				subheader : "about 1 minute ago in Computer Market",
+				value : "9"
+			}]
+		}, {
+			header : "Guy Incognito mentioned you in Sales Pitch March Lorem ipsum dolores.",
+			frameType : "TwoByOne",
+			state : "Loading",
+			tileContent : [{
+				contentText : "@@notify Great outcome of the Presentation today.",
+				footer : "New Notifications",
+				subheader : "about 1 minute ago in Computer Cluster",
+				value : "9999"
+			}]
+		}],
+		newsTiles : [{
+			frameType : "TwoByOne",
+			message : "News Tile 1",
+			backgroundImage : "images/NewsImage1.png",
+			tileContent : [{
+				footer : "August 21, 2013",
+				contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
+				subheader : "SAP News"
+			}]
+		}, {
+			frameType : "TwoByOne",
+			backgroundImage : "images/NewsImage3.png",
+			state : "Failed",
+			tileContent : [{
+				footer : "August 21, 2013",
+				contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
+				subheader : "SAP News"
+			}]
+		}],
+		oneTile : [{
+			frameType : "TwoByOne",
+			backgroundImage : "images/NewsImage5.png",
+			message : "News Tile",
+			tileContent : [{
+				footer : "August 21, 2013",
+				contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
+				subheader : "SAP News"
+			}]
+		}]
+	};
+
+	var oDynamicContainerModel = new sap.ui.model.json.JSONModel(oDynamicContainerData);
+
+	var oJamTileContent = new sap.m.TileContent({
+		footer : "{footer}",
+		content : new sap.m.JamContent({
+			contentText : "{contentText}",
+			subheader : "{subheader}",
+			value : "{value}"
+		})
+	});
+
+	var fnGetGTFactory = function(oTileContent) {
+		var fnGenericTileFactory = function(sId, oContext) {
+			var oGenericTile = new sap.m.GenericTile({
+				headerImage : "{headerImage}",
+				frameType : "{frameType}",
+				header : "{header}",
+				size : "{size}",
+				state : "{state}",
+				backgroundImage : "{backgroundImage}",
+				tileContent : {
+					template : oTileContent,
+					path : "tileContent"
+				}
+			});
+
+			var sMsg = oContext.getProperty("message");
+			if (sMsg) {
+				oGenericTile.attachPress(function() {
+					sap.m.MessageToast.show(sMsg + " was pressed.");
+				});
+			}
+			return oGenericTile;
+		};
+		return fnGenericTileFactory;
+	}
+
+	var oJamDynamicContainer = new sap.m.DynamicContainer("dc-jam", {
+		displayTime : "{/displayTime}",
+		transitionTime : "{/transitionTime}",
+		tiles : {
+			factory : fnGetGTFactory(oJamTileContent),
+			path : "/jamTiles"
+		}
+	});
+
+	var oNewsTileContent = new sap.m.TileContent({
+		footer : "{footer}",
+		content : new sap.m.NewsContent({
+			contentText : "{contentText}",
+			subheader : "{subheader}"
+		})
+	});
+
+	var oNewsDynamicContainer = new sap.m.DynamicContainer("dc-news", {
+		displayTime : "{/displayTime}",
+		transitionTime : "{/transitionTime}",
+		tiles : {
+			factory : fnGetGTFactory(oNewsTileContent),
+			path : "/newsTiles"
+		}
+	});
+
+	var oOneDynamicContainer = new sap.m.DynamicContainer("dc-one", {
+		displayTime : "{/displayTime}",
+		transitionTime : "{/transitionTime}",
+		tiles : {
+			factory : fnGetGTFactory(oNewsTileContent),
+			path : "/oneTile"
+		}
+	});
+
+	var oNewsDCLbl = new sap.m.Label({
+		text : "Example with news content",
+		labelFor : "dc-news"
+	});
+
+	var oJamDCLbl = new sap.m.Label({
+		text : "Example with jam content",
+		labelFor : "dc-jam"
+	});
+
+	var oOneDCLbl = new sap.m.Label({
+		text : "Example with one tile",
+		labelFor : "dc-one"
+	});
+	var oDcContentForm = new sap.ui.layout.form.SimpleForm("dc-content-form", {
+		maxContainerCols : 2,
+		content : [oNewsDCLbl, oNewsDynamicContainer, oOneDCLbl, oOneDynamicContainer, oJamDCLbl, oJamDynamicContainer]
+	});
+
+	var oPage = new sap.m.Page("initial-page", {
+		showHeader : false,
+		content : [oDcContentForm]
+	}).setModel(oDynamicContainerModel);
+
+	var oDTLbl = new sap.m.Label({
+		text : "Display Time",
+		labelFor : "display-time-value"
+	});
+
+	var oDTInput = new sap.m.Input("display-time-value", {
+		value : {
+			path : "/displayTime",
+			type : new sap.ui.model.type.Integer
+		},
+		placeholder : 'Enter value ...'
+	});
+
+	var oTTLbl = new sap.m.Label({
+		text : "Transition Time",
+		labelFor : "transition-time-value"
+	});
+
+	var oTTInput = new sap.m.Input("transition-time-value", {
+		value : {
+			path : "/transitionTime",
+			type : new sap.ui.model.type.Integer
+		},
+		placeholder : 'Enter value ...'
+	});
+
+	var editableSimpleForm = new sap.ui.layout.form.SimpleForm("controls", {
+		maxContainerCols : 2,
+		editable : true,
+		content : [new sap.ui.core.Title({
+			text : "Modify Tiles Appearing"
+		}), oDTLbl, oDTInput, oTTLbl, oTTInput]
+	});
+
+	oPage.addContent(editableSimpleForm);
+	var oApp = new sap.m.App("myApp", {
+		initialPage : "initial-page"
+	});
+	oApp.addPage(oPage).placeAt("content");
+
+	setBackgroundColor(oDcContentForm);
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+	<div id="content"></div>
+</body>
+</html>

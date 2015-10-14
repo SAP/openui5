@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>sap.m.NewsContent</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"
+	data-sap-ui-language="en">
+</script>
+
+<!-- QUnit libraries -->
+<link rel="stylesheet"
+	href="../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script type="text/javascript">
+	if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	}
+
+	QUnit.module("Rendering test - sap.m.NewsContent", {
+		beforeEach : function() {
+			this.oNwC = new sap.m.NewsContent("news-cnt", {
+				size : sap.m.InfoTileSize.M,
+				contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
+				subheader : "August 21, 2013",
+				tooltip : "Test tooltip",
+				press : function(oEvent) {
+					sap.m.MessageToast.show("The news content is pressed.");
+				}
+			});
+			this.oNwC.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oNwC.destroy();
+		}
+	});
+
+	QUnit.test("News Content rendered.", function(assert) {
+		assert.ok(jQuery.sap.domById("news-cnt"), "NewsContent was rendered successfully");
+		assert.ok(jQuery.sap.domById("news-cnt-content-text"), "Content text was rendered successfully");
+		assert.ok(jQuery.sap.domById("news-cnt-subheader"), "Subheader was rendered successfully");
+	});
+</script>
+</head>
+
+<body id="body" class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

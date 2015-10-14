@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Test Page for sap.m.JamContent</title>
+
+<!-- UI5 Bootstrap -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.ui.core,sap.m" data-sap-ui-language="en">
+</script>
+
+<!-- QUnit libraries -->
+<link rel="stylesheet"
+	href="../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script type="text/javascript">
+	if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	}
+
+	QUnit.module("Rendering test - sap.m.JamContent", {
+		beforeEach : function() {
+			this.oJC = new sap.m.JamContent("jam-cnt", {
+				size : sap.m.InfoTileSize.M,
+				contentText : "@@notify Great outcome of the Presentation today. The new functionality and the new design was well received.",
+				subheader : "about 1 minute ago in Computer Market",
+				valueColor : sap.m.InfoTileValueColor.Neutral,
+				truncateValueTo : 4,
+				value : "-888"
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oJC.destroy();
+			this.oJC = null;
+		}
+	});
+
+	QUnit.test("Jam Content rendered.", function(assert) {
+		assert.ok(jQuery.sap.domById("jam-cnt"),"JamContent was rendered successfully");
+		assert.ok(jQuery.sap.domById("jam-cnt-content-text"),"Content text was rendered successfully");
+		assert.ok(jQuery.sap.domById("jam-cnt-subheader"),"Subheader was rendered successfully");
+		assert.ok(jQuery.sap.domById("jam-cnt-value"),"Value was rendered successfully");
+	});
+</script>
+</head>
+
+<body id="body" class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

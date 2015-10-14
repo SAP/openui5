@@ -218,6 +218,15 @@
 		  ]
 		},
 		{
+			"id" : "sap.m.DynamicContainer",
+			"name" : "Dynamic Container",
+			"category" : "Container",
+			"since" : "1.34",
+			"samples" : [
+				"sap.m.sample.DynamicContainer"
+			]
+		},
+		{
 		  "id": "sap.m.NotificationListItem",
 		  "name": "Notification List Item",
 		  "category": "List",
@@ -302,6 +311,19 @@
 		  ]
 		},
 		{
+			"id": "sap.m.GenericTile",
+			"name": "Generic Tile",
+			"category": "Tile",
+			"since": "1.34",
+			"samples": [
+				"sap.m.sample.GenericTile1x1",
+				"sap.m.sample.GenericTile2x1SingleCont",
+				"sap.m.sample.GenericTile2x1TwoCont",
+				"sap.m.sample.GenericTileStates",
+				"sap.m.sample.DynamicContainer"
+			]
+		},
+		{
 		  "id": "sap.m.IconTabBar",
 		  "name": "Icon Tab Bar",
 		  "category": "Container",
@@ -351,6 +373,13 @@
 		  "since": "1.10",
 		  "formFactors": "L",
 		  "samples": ["sap.m.sample.InputListItem"]
+		},
+		{
+			"id" : "sap.m.JamContent",
+			"name" : "Jam Content",
+			"category" : "Display",
+			"since" : "1.34",
+			"samples" : [ "sap.m.sample.JamContent" ]
 		},
 		{
 		  "id": "sap.m.Label",
@@ -425,6 +454,17 @@
 		  "samples": ["sap.m.sample.MessagePopover"]
 		},
 		{
+			"id" : "sap.m.NumericContent",
+			"name" : "Numeric Content",
+			"category" : "Chart",
+			"since" : "1.34",
+			"samples" : [
+				"sap.m.sample.NumericContentDifSizes",
+				"sap.m.sample.NumericContentIcon",
+				"sap.m.sample.NumericContentWithoutMargin"
+			]
+		},
+		{
 		  "id": "sap.m.QuickView",
 		  "name": "Quick View",
 		  "category": "Popup",
@@ -449,6 +489,13 @@
 		  "category": "Popup",
 		  "since": "1.10",
 		  "samples": ["sap.m.sample.MessageToast"]
+		},
+		{
+		  "id" : "sap.m.NewsContent",
+		  "name" : "News Content",
+		  "category" : "Display",
+		  "since" : "1.34",
+		  "samples" : [ "sap.m.sample.NewsContent" ]
 		},
 		{
 		  "id": "sap.m.NavContainer",
@@ -812,6 +859,13 @@
 		  "samples": ["sap.m.sample.TileContainer"]
 		},
 		{
+		  "id" : "sap.m.TileContent",
+		  "name" : "Tile Content",
+		  "category" : "Tile",
+		  "since" : "1.34",
+		  "samples" : ["sap.m.sample.TileContent"]
+		},
+		{
 		"id": "sap.m.TimePicker",
 		"name": "Time Picker",
 		"category": "User Input",
@@ -1033,6 +1087,11 @@
 		}
 	  ],
 	  "samples": [
+		{
+		  "id": "sap.m.sample.NewsContent",
+		  "name": "News Content",
+		  "description": "This control is used to display the news content text and subheader in a tile."
+		},
 		{
 		  "id": "sap.m.sample.MessagePage",
 		  "name": "Message Page",
@@ -1284,6 +1343,11 @@
 		  "description": "Images are faster than words and attract people's attention. Images can also have an active state like the last image in this example."
 		},
 		{
+			"id": "sap.m.sample.JamContent",
+			"name": "Jam Content",
+			"description": "This control is used display the jam content text, subheader, and numeric value in a tile."
+		},
+		{
 		  "id": "sap.m.sample.Label",
 		  "name": "Label",
 		  "description": "Labels are helpful when you need to describe some other UI control."
@@ -1497,6 +1561,21 @@
 			"id": "sap.m.sample.MultiInputDatabinding",
 			"name": "MultiInput Databinding",
 			"description": "MultiInput Databinding allows data to be binded to tokens in MultiInput."
+		},
+		{
+			"id": "sap.m.sample.NumericContentDifSizes",
+			"name": "Numeric Content Different Sizes",
+			"description": "NumericContent contains numbers, number units, an icon, and state arrows. The numbers can be displayed in semantic colors. You can set up the size of the NumericContent. By default, the size property is set to Auto. It means that the size of the control changes automatically according to the device. You can also set a fixed control size: small (S), medium (M), or large (L)."
+		},
+		{
+			"id": "sap.m.sample.NumericContentIcon",
+			"name": "Numeric Content With Icon",
+			"description": "This is an example of the NumericContent that contains an icon."
+		},
+		{
+			"id": "sap.m.sample.NumericContentWithoutMargin",
+			"name": "Numeric Content Without Margins",
+			"description": "This is an example of the NumericContent that contains no margins, so the control fits to the whole size."
 		},
 		{
 		  "id": "sap.m.sample.Token",
@@ -1997,6 +2076,36 @@
 		  "id": "sap.m.sample.DraftIndicator",
 		  "name": "Draft Indicator",
 		  "description": "The Draft Indicator shows that eighter currently a draft is saving or that it is already saved. It does not block the current UI screen so other operations could be triggered in parallel."
+		},
+		{
+		  "id": "sap.m.sample.GenericTile1x1",
+		  "name": "Generic Tile 1x1",
+		  "description": "The Generic Tile control with the 1x1 frame type that displays the title, description, and customizable main area."
+		},
+		{
+		  "id": "sap.m.sample.GenericTile2x1SingleCont",
+		  "name": "Generic Tile 2x1 Single Content",
+		  "description": "The Generic Tile control with the 2x1 frame type that displays a title, description, and one content."
+		},
+		{
+		  "id": "sap.m.sample.GenericTile2x1TwoCont",
+		  "name": "Generic Tile 2x1 Two Contents",
+		  "description": "The Generic Tile control with the 2x1 frame type that displays a title, description, and two contents."
+		},
+		{
+		  "id": "sap.m.sample.DynamicContainer",
+		  "name": "Generic Tiles in Dynamic Container",
+		  "description": "Generic Tile controls with the 2x1 frame type are displayed. Each Generic Tile contains a title, description, and one content."
+		},
+		{
+		  "id": "sap.m.sample.GenericTileStates",
+		  "name": "Generic Tile States",
+		  "description": "These examples show the Generic Tile controls in the loading, failed, or disabled states."
+		},
+		{
+		  "id": "sap.m.sample.TileContent",
+		  "name": "Tile Content",
+		  "description": "This control serves as a universal container for different types of content and footer."
 		}
 	  ]
 	}

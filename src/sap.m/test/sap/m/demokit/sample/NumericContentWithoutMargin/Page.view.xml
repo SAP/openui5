@@ -1,0 +1,36 @@
+<core:View xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Label text="Numeric content with margins" />
+	<NumericContent size="S" value="65.5" scale="MM"
+		valueColor="Good" indicator="Up" state="Loaded" class="sapUiSmallMargin"
+		withMargin="true" />
+	<NumericContent size="M" value="65.5" scale="MM"
+		valueColor="Neutral" indicator="None" state="Loaded" class="sapUiSmallMargin"
+		withMargin="true" />
+	<NumericContent size="L" value="6666" scale="MM"
+		valueColor="Critical" indicator="Up" state="Loaded" class="sapUiSmallMargin"
+		withMargin="true" />
+	<NumericContent size="S" value="65.5" scale="MM"
+		valueColor="Error" indicator="Down" state="Loaded" class="sapUiSmallMargin"
+		withMargin="true" />
+	<NumericContent size="M" value="65.5" valueColor="Good"
+		state="Loaded" class="sapUiSmallMargin" withMargin="true" />
+	<NumericContent size="L" value="65.5" valueColor="Error"
+		state="Loaded" class="sapUiSmallMargin" withMargin="true" />
+	<Label text="Numeric content without margins" />
+	<NumericContent size="S" value="65.5" scale="MM"
+		valueColor="Good" indicator="Up" state="Loaded" class="sapUiSmallMargin"
+		withMargin="false" />
+	<NumericContent size="M" value="65.5" scale="MM"
+		valueColor="Neutral" indicator="None" state="Loaded" class="sapUiSmallMargin"
+		withMargin="false" />
+	<NumericContent size="L" value="6666" scale="MM"
+		valueColor="Critical" indicator="Up" state="Loaded" class="sapUiSmallMargin"
+		withMargin="false" />
+	<NumericContent size="S" value="65.5" scale="MM"
+		valueColor="Error" indicator="Down" state="Loaded" class="sapUiSmallMargin"
+		withMargin="false" />
+	<NumericContent size="M" value="65.5" valueColor="Good"
+		state="Loaded" class="sapUiSmallMargin" withMargin="false" />
+	<NumericContent size="L" value="65.5" valueColor="Error"
+		state="Loaded" class="sapUiSmallMargin" withMargin="false" />
+</core:View>

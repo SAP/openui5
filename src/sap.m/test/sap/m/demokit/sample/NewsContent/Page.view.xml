@@ -1,0 +1,11 @@
+<core:View controllerName="sap.m.sample.NewsContent.Page"
+	xmlns="sap.m" xmlns:core="sap.ui.core">
+	<NewsContent
+		contentText="SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com"
+		subheader="August 21, 2013" size="M" class="sapUiSmallMargin" press="press">
+	</NewsContent>
+	<NewsContent
+		contentText="SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com"
+		subheader="August 21, 2013" size="S" class="sapUiSmallMargin" press="press">
+	</NewsContent>
+</core:View>

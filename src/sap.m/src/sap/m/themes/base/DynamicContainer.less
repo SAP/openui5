@@ -1,0 +1,58 @@
+/* ============================================== */
+/* CSS for control sap.m/DynamicContainer.control */
+/* ============================================== */
+.sapMDC {
+	background: transparent;
+	position: relative;
+	overflow: hidden;
+	display: inline-block;
+	font-size: 0;
+	box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.5);
+	border-radius: 4px;
+	outline: none;
+	border: 0.0625rem transparent dotted;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+}
+
+.sapMDCWrapper {
+	position: absolute;
+	left: 100%;
+}
+
+.sapMDCWrapper>.sapMGT,
+.sapMDCWrapper>.sapMGT:hover {
+	box-shadow: none;
+}
+
+.sapUiMedia-Std-Phone .sapMDC.Auto.OneByOne,
+.sapMDC.S.OneByOne {
+	width: 9.25rem;
+	height: 9rem;
+}
+
+.sapUiMedia-Std-Phone .sapMDC.Auto.TwoByOne,
+.sapMDC.S.TwoByOne {
+	width: 19rem;
+	height: 9rem;
+}
+
+.sapUiMedia-Std-Desktop .sapMDC.Auto.OneByOne,
+.sapMDC.L.OneByOne,
+.sapUiMedia-Std-Tablet .sapMDC.Auto.OneByOne,
+.sapMDC.M.OneByOne {
+	width: 11.5rem;
+	height: 11rem;
+}
+
+.sapUiMedia-Std-Desktop .sapMDC.Auto.TwoByOne,
+.sapMDC.L.TwoByOne,
+.sapUiMedia-Std-Tablet .sapMDC.Auto.TwoByOne,
+.sapMDC.M.TwoByOne {
+	width: 23.5rem;
+	height: 11rem;
+}
+
+.sapMDC .sapMGT {
+	border: 0px;
+}

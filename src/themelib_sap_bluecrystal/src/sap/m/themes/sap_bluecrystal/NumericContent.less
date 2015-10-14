@@ -1,0 +1,86 @@
+/* ==================================== */
+/* CSS for sap.m/NumericContent.control */
+/* ==================================== */
+.sapMNCIconImage {
+	font-family: @sapUiFontHeaderFamily;
+	font-weight: @sapUiFontHeaderWeight;
+	color: @sapUiHighlight;
+}
+
+.sapMNCScale {
+	font-family: @sapUiFontHeaderFamily;
+	font-weight: @sapUiFontHeaderWeight;
+	font-size: @sapMFontMediumSize;
+	display: block;
+}
+
+.sapUiMedia-Std-Phone .sapMNCScale.Auto, .sapMNCScale.S, .sapMNCScale.XS {
+	font-size: 0.75rem;
+}
+
+.sapMNCValue {
+	font-family: @sapUiFontHeaderFamily;
+	font-weight: @sapUiFontHeaderWeight;
+}
+
+.sapMNCScale.L {
+	font-size: @sapMFontHeader5Size;
+}
+
+.sapMNCValue.Neutral,
+.sapMNCIndicator.Neutral {
+	color: @sapUiChartNeutral;
+}
+
+.sapMNCValue.Good,
+.sapMNCIndicator.Good {
+	color: @sapUiPositiveText;
+}
+
+.sapMNCValue.Critical,
+.sapMNCIndicator.Critical {
+	color: @sapUiCriticalText;
+}
+
+.sapMNCValue.Error,
+.sapMNCIndicator.Error {
+	color: @sapUiNegativeText;
+}
+
+.sapMNCScale.Neutral {
+	color: @sapUiLightText;
+}
+
+.sapMNCScale.Good {
+	color: @sapUiPositiveText;
+}
+
+.sapMNCScale.Critical {
+	color: @sapUiCriticalText;
+}
+
+.sapMNCScale.Error {
+	color: @sapUiNegativeText;
+}
+
+.sapMNCIndicator.Loading,
+.sapMNCValue.Loading,
+.sapMNCScale.Loading,
+.sapMNCIconImage.Loading,
+.sapMNCIndicator.Failed,
+.sapMNCValue.Failed,
+.sapMNCScale.Failed,
+.sapMNCIconImage.Failed {
+	color: @sapUiLightText;
+	opacity: 0.25;
+}
+
+.sap-desktop .sapMNC:focus {
+	outline-color: @sapUiFocus;
+	outline-style: dotted;
+	outline-width: 1px;
+}
+
+.sapMNC:focus:not([tabindex]) {
+	outline: none;
+}

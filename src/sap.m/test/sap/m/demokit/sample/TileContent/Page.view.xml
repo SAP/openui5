@@ -1,0 +1,45 @@
+<core:View xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout">
+<l:Grid containerQuery="true" class="sapUiSmallMarginTop">
+	<l:content>
+	<TileContent footer="Current Quarter" unit="EUR" size="S"
+		class="sapUiSmallMargin">
+		<content>
+			<NumericContent size="S" scale="M" value="1.96"
+				valueColor="Error" indicator="Up" />
+		</content>
+	</TileContent>
+
+	<TileContent size="M" footer="Leave Requests" class="sapUiSmallMargin">
+		<content>
+			<NumericContent size="M" value="3"
+				icon="sap-icon://travel-expense" />
+		</content>
+	</TileContent>
+
+	<TileContent size="M" footer="Hours since last Activity"
+		class="sapUiSmallMargin">
+		<content>
+			<NumericContent size="M" value="9" icon="sap-icon://locked" />
+		</content>
+	</TileContent>
+
+	<TileContent footer="New Notifications" size="M"
+		class="sapUiSmallMargin">
+		<content>
+			<JamContent size="M"
+				contentText="@@notify Great outcome of the Presentation today. The new functionality and the new design was well received."
+				subheader="about 1 minute ago in Computer Market" value="132" />
+		</content>
+	</TileContent>
+
+	<TileContent footer="August 21, 2013" size="M"
+		class="sapUiSmallMargin">
+		<content>
+			<NewsContent size="M"
+				contentText="SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com"
+				subheader="SAP News" />
+		</content>
+	</TileContent>
+	</l:content>
+</l:Grid>
+</core:View>

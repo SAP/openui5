@@ -1,0 +1,78 @@
+<core:View controllerName="sap.m.sample.GenericTileStates.Page"
+	xmlns="sap.m" xmlns:core="sap.ui.core">
+	<GenericTile class="sapUiSmallMargin" header="Cumulative Totals"
+		subheader="Expenses" size="M" frameType="OneByOne" state="Loading">
+		<tileContent>
+			<TileContent footer="Actual and Target" unit="EUR" size="M">
+				<content>
+					<NumericContent size="S" scale="M" value="1.96"
+						valueColor="Error" indicator="Down" />
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+	<GenericTile class="sapUiSmallMargin" header="Comparative Annual Totals"
+		subheader="Expenses By Region" size="M" frameType="TwoByOne" state="Failed">
+		<tileContent>
+			<TileContent footer="Actual and Target" unit="EUR" size="M">
+				<content>
+					<NumericContent size="M" scale="M" value="1.96"
+						valueColor="Error" indicator="Up" />
+				</content>
+			</TileContent>
+			<TileContent size="M">
+				<content>
+					<NumericContent size="M" value="3"
+						icon="sap-icon://travel-expense" />
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+	<DynamicContainer class="sapUiSmallMargin">
+		<tiles>
+			<GenericTile
+				header="Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat."
+				frameType="TwoByOne"
+				headerImage="test-resources/sap/m/demokit/GenericTileStates/images/headerImg2.jpg"
+				state="Loading">
+				<tileContent>
+					<TileContent footer="New Notifications">
+						<content>
+							<JamContent
+								contentText="@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London"
+								subheader="about 1 minute ago in Computer Market" value="9">
+							</JamContent>
+						</content>
+					</TileContent>
+				</tileContent>
+			</GenericTile>
+			<GenericTile
+				header="Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat."
+				frameType="TwoByOne"
+				headerImage="test-resources/sap/m/demokit/GenericTileStates/images/headerImg2.jpg"
+				state="Loaded">
+				<tileContent>
+					<TileContent footer="New Notifications">
+						<content>
+							<JamContent
+								contentText="@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest."
+								subheader="about 1 minute ago in Computer Cluster" value="9999">
+							</JamContent>
+						</content>
+					</TileContent>
+				</tileContent>
+			</GenericTile>
+		</tiles>
+	</DynamicContainer>
+	<GenericTile class="sapUiSmallMargin" header="Cumulative Totals"
+		subheader="Expenses" size="M" frameType="OneByOne" state="Disabled">
+		<tileContent>
+			<TileContent footer="Actual and Target" unit="EUR" size="M">
+				<content>
+					<NumericContent size="M" value="3" 
+						icon="sap-icon://travel-expense" />
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+</core:View>

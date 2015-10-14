@@ -1,0 +1,66 @@
+<core:View xmlns="sap.m" xmlns:core="sap.ui.core">
+	<DynamicContainer class="sapUiSmallMargin">
+		<tiles>
+			<GenericTile
+				header="Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat."
+				frameType="TwoByOne">
+				<tileContent>
+					<TileContent footer="New Notifications">
+						<content>
+							<JamContent
+								contentText="@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London"
+								subheader="about 1 minute ago in Computer Market" value="9">
+							</JamContent>
+						</content>
+					</TileContent>
+				</tileContent>
+			</GenericTile>
+			<GenericTile
+				header="Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat."
+				frameType="TwoByOne">
+				<tileContent>
+					<TileContent footer="New Notifications">
+						<content>
+							<JamContent
+								contentText="@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest."
+								subheader="about 1 minute ago in Computer Cluster" value="9999">
+							</JamContent>
+						</content>
+					</TileContent>
+				</tileContent>
+			</GenericTile>
+		</tiles>
+	</DynamicContainer>
+	<DynamicContainer class="sapUiSmallMargin">
+		<tiles>
+			<GenericTile
+				backgroundImage="test-resources/sap/m/demokit/sample/DynamicContainer/images/NewsImage1.png"
+				frameType="TwoByOne">
+				<tileContent>
+					<TileContent footer="August 21, 2013">
+						<content>
+							<NewsContent
+								contentText="SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com"
+								subheader="SAP News">
+							</NewsContent>
+						</content>
+					</TileContent>
+				</tileContent>
+			</GenericTile>
+			<GenericTile
+				backgroundImage="test-resources/sap/m/demokit/sample/DynamicContainer/images/NewsImage3.png"
+				state="Failed" frameType="TwoByOne">
+				<tileContent>
+					<TileContent footer="August 21, 2013">
+						<content>
+							<NewsContent
+								contentText="SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com"
+								subheader="SAP News">
+							</NewsContent>
+						</content>
+					</TileContent>
+				</tileContent>
+			</GenericTile>
+		</tiles>
+	</DynamicContainer>
+</core:View>

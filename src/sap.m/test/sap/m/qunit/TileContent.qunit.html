@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Test Page for sap.m.TileContent</title>
+
+<!-- UI5 Bootstrap -->
+<script src="../../../../resources/sap-ui-core.js"
+	type="text/javascript" id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.m"
+	data-sap-ui-theme="sap_bluecrystal"></script>
+
+<!-- QUnit libraries -->
+<link rel="stylesheet"
+	href="../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script type="text/javascript">
+	if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	}
+
+	QUnit.module("sap.m.TileContent", {
+		beforeEach : function() {
+			this.oNewsTileContent = new sap.m.TileContent("tc1", {
+				footer : "Current Quarter",
+				unit : "EUR",
+				size : "Auto",
+				content : new sap.m.NewsContent("news", {
+					size : "Auto",
+					contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
+					subheader : "SAP News"
+				})
+			});
+			this.oNewsTileContent.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oNewsTileContent.destroy();
+		}
+	});
+
+	QUnit.test("Rendering", function(assert) {
+		assert.equal(this.oNewsTileContent._getContentType(), "News", "Type was get successfully");
+		assert.ok(jQuery.sap.domById("tc1"), "TileContent1 was rendered successfully");
+		assert.ok(jQuery.sap.domById("news"), "News content was rendered successfully");
+		assert.ok(jQuery.sap.domById("tc1-footer-text"), "TileContent1 footer was rendered successfully");
+	});
+
+	QUnit.module("Functional test", {
+		beforeEach : function() {
+			this.oJamTileContent = new sap.m.TileContent("tc2", {
+				footer : "Current Quarter",
+				unit : "EUR",
+				size : "Auto",
+				content : new sap.m.JamContent("jam", {
+					size : "Auto",
+					contentText : "@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London",
+					subheader : "about 1 minute ago in Computer Market",
+					value : "7"
+				})
+			});
+			this.oJamTileContent.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oJamTileContent.destroy();
+		}
+	});
+
+	QUnit.test("Getting content type.", function(assert) {
+		assert.ok(jQuery.sap.domById("tc2"), "TileContent2 was rendered successfully");
+		assert.ok(jQuery.sap.domById("jam"), "Jam content was rendered successfully");
+		assert.ok(jQuery.sap.domById("tc2-footer-text"), "TileContent2 footer was rendered successfully");
+		assert.equal(this.oJamTileContent._getContentType(), undefined, "Type was get successfully");
+	});
+</script>
+</head>
+
+<body class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

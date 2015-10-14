@@ -1,0 +1,55 @@
+<core:View controllerName="sap.m.sample.GenericTile2x1TwoCont.Page"
+	xmlns="sap.m" xmlns:core="sap.ui.core">
+
+	<GenericTile header="Comparative Annual Totals" subheader="Expenses By Region"
+		size="S" frameType="TwoByOne" press="press">
+		<tileContent>
+			<TileContent footer="Actual" unit="EUR" size="S">
+				<content>
+					<NumericContent size="S" scale="M" value="1.96"
+						valueColor="Error" indicator="Up" />
+				</content>
+			</TileContent>
+			<TileContent footer="Target" unit="EUR" size="S">
+				<content>
+					<NumericContent size="S" scale="M" value="2.34"
+						valueColor="Neutral" indicator="None" />
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+	<GenericTile header="Comparative Annual Totals" subheader="Expenses By Region"
+		size="M" frameType="TwoByOne" press="press">
+		<tileContent>
+			<TileContent footer="Actual and Target" unit="EUR" size="M">
+				<content>
+					<NumericContent size="M" scale="M" value="1.96"
+						valueColor="Error" indicator="Down" />
+				</content>
+			</TileContent>
+			<TileContent footer="Actual and Target" unit="EUR" size="M">
+				<content>
+					<NumericContent size="M" scale="M" value="2.55"
+						valueColor="Good" indicator="Up" />
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+
+	<GenericTile header="Leave Requests" subheader="EMEA"
+	size="M" frameType="TwoByOne" press="press">
+		<tileContent>
+			<TileContent footer="New Requests" size="M">
+				<content>
+					<NumericContent size="M" value="3"
+						icon="sap-icon://employee" />
+				</content>
+			</TileContent>
+			<TileContent footer="Approved Requests" size="M">
+				<content>
+					<NumericContent size="M" value="9" icon="sap-icon://locked" />
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+</core:View>

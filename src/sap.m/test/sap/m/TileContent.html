@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>sap.m.TileContent</title>
+
+<!-- UI5 Bootstrap -->
+<script src="../../../resources/sap-ui-core.js"
+	type="text/javascript" id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.ui.layout, sap.m"
+	data-sap-ui-theme="sap_bluecrystal"></script>
+
+<script type="text/javascript">
+	jQuery.sap.initMobile();
+	var oConfData = {
+		scale : "MM",
+		unit : "EUR",
+		state : sap.m.LoadState.Loaded,
+		valueColor : sap.m.InfoTileValueColor.Error,
+		indicator : sap.m.DeviationIndicator.None,
+		value : "2435",
+		size : "Auto",
+		footer : "Current Quarter",
+		jc : {
+			contentText : "@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London",
+			subheader : "about 1 minute ago in Computer Market",
+			value : "9"
+		},
+		nc : {
+			contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
+			subheader : "SAP News"
+		}
+	};
+
+	var oNewsTileContent = new sap.m.TileContent({
+		footer : "{/footer}",
+		unit : "{/unit}",
+		size : "{/size}",
+		content : new sap.m.NewsContent({
+			size : "{/size}",
+			contentText : "{/nc/contentText}",
+			subheader : "{/nc/subheader}"
+		})
+	});
+
+	var oJamTileContent = new sap.m.TileContent({
+		footer : "{/footer}",
+		unit : "{/unit}",
+		size : "{/size}",
+		content : new sap.m.JamContent({
+			size : "{/size}",
+			contentText : "{/jc/contentText}",
+			subheader : "{/jc/subheader}",
+			value : "{/jc/value}"
+		})
+	});
+
+	var oNVConfContS = new sap.m.NumericContent("configurable-tile-cont-S", {
+		value : "{/value}",
+		scale : "{/scale}",
+		indicator : "{/indicator}",
+		size : "{/size}",
+		formatterValue : "{/isFormatterValue}",
+		truncateValueTo : "{/truncateValueTo}"
+	});
+
+	var oConfModel = new sap.ui.model.json.JSONModel();
+	oConfModel.setData(oConfData);
+	sap.ui.getCore().setModel(oConfModel);
+
+	var oNVConfS = new sap.m.TileContent("configurable-tile-num-cont-S", {
+		unit : "{/unit}",
+		size : "{/size}",
+		footer : "{/footer}",
+		content : oNVConfContS
+	});
+
+	var oFlexBox = new sap.m.FlexBox("flexbox", {
+		items : [oNVConfS, oJamTileContent, oNewsTileContent],
+		alignItems: "Start",
+		justifyContent: "SpaceAround"
+	});
+
+	var oPage = new sap.m.Page("initial-page", {
+		showHeader : false,
+		content : [oFlexBox]
+	});
+
+	var oSizeInput = new sap.m.Input("size-value", {
+		type : sap.m.InputType.Text,
+		placeholder : 'Enter Size ...'
+	});
+	oSizeInput.bindValue("/size");
+
+	var oUnitLbl = new sap.m.Label({
+		text : "Unit",
+		labelFor : "unit-value"
+	});
+	var oUnitInput = new sap.m.Input("unit-value", {
+		type : sap.m.InputType.Text,
+		placeholder : 'Enter unit ...'
+	});
+	oUnitInput.bindValue("/unit");
+
+	var oFooterLbl = new sap.m.Label({
+		text : "Footer",
+		labelFor : "footer-value"
+	});
+
+	var oFooterInput = new sap.m.Input("footer-value", {
+		type : sap.m.InputType.Text,
+		placeholder : 'Enter footer ...'
+	});
+	oFooterInput.bindValue("/footer");
+
+	var oSizeChangeLbl = new sap.m.Label({
+		text : "Size",
+		labelFor : "size-change"
+	});
+
+	var oSizeChangeSlct = new sap.m.Select("size-change", {
+		change : function(oE) {
+			var selectedItem = oE.getParameter("selectedItem");
+			oConfData.size = selectedItem.getKey();
+			oConfModel.checkUpdate();
+		},
+		items : [new sap.ui.core.Item({
+			key : "Auto",
+			text : "Auto"
+		}), new sap.ui.core.Item({
+			key : "M",
+			text : "Middle"
+		}), new sap.ui.core.Item({
+			key : "S",
+			text : "Small"
+		})]
+	});
+
+	var editableSimpleForm = new sap.ui.layout.form.SimpleForm("controls", {
+		maxContainerCols : 2,
+		editable : true,
+		content : [new sap.ui.core.Title({ // this starts a new group
+			text : "Modify Tiles"
+		}), oSizeChangeLbl, oSizeChangeSlct, oUnitLbl, oUnitInput, oFooterLbl, oFooterInput]
+	});
+	oPage.addContent(editableSimpleForm);
+	//create a mobile App embedding the page and place the App into the HTML document
+	var app = new sap.m.App("myApp", {
+		pages : [oPage]
+	}).placeAt("content");
+</script>
+</head>
+
+<body id="body" class="sapUiBody">
+	<div id="content"></div>
+</body>
+</html>
