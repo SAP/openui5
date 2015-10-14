@@ -192,27 +192,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LocaleData', 'sap/ui/core/date/
 		}
 
 		// If fallback DateFormats have not been created yet, do it now
-		if (!oInfo.aFallbackFormats) {
+		if (!oInfo.oFallbackFormats) {
+			oInfo.oFallbackFormats = {};
+		}
+		// Store fallback formats per locale and calendar type
+		var sLocale = oLocale.toString(),
+			sCalendarType = oFormat.oFormatOptions.calendarType,
+			sKey = sLocale + "-" + sCalendarType,
+			aFallbackFormats = oInfo.oFallbackFormats[sKey];
+		if (!aFallbackFormats) {
+			aFallbackFormats = [];
+			oInfo.oFallbackFormats[sKey] = aFallbackFormats;
+			var aFallbackFormatOptions = oInfo.aFallbackFormatOptions.slice(0);
 			// Add two fallback patterns for locale-dependent short format without delimiters
-			if (oInfo.bShortFallbackFormatOptions && oInfo.aFallbackFormatOptions) {
-				var sPattern = oInfo.getPattern(oFormat.oLocaleData, "short").replace(/[^dMyU]/g, ""); // U for chinese year
+			if (oInfo.bShortFallbackFormatOptions) {
+				var sPattern = oInfo.getPattern(oFormat.oLocaleData, "short").replace(/[^dMyGU]/g, ""); // U for chinese year
 				sPattern = sPattern.replace(/d+/g, "dd"); // disallow 1 digit day entries
 				sPattern = sPattern.replace(/M+/g, "MM"); // disallow 1 digit month entries
-				oInfo.aFallbackFormatOptions.push({
+				aFallbackFormatOptions.push({
 					pattern: sPattern.replace(/[yU]+/g, "yyyy"), strictParsing: true // e.g. ddMMyyyy
 				});
-				oInfo.aFallbackFormatOptions.push({
+				aFallbackFormatOptions.push({
 					pattern: sPattern.replace(/[yU]+/g, "yy"), strictParsing: true // e.g. ddMMyy
 				});
 			}
-			oInfo.aFallbackFormats = [];
-			jQuery.each(oInfo.aFallbackFormatOptions, function(i, oFormatOptions) {
+			jQuery.each(aFallbackFormatOptions, function(i, oFormatOptions) {
+				oFormatOptions.calendarType = sCalendarType;
 				var oFallbackFormat = DateFormat.createInstance(oFormatOptions, oLocale, oInfo);
 				oFallbackFormat.bIsFallback = true;
-				oInfo.aFallbackFormats.push(oFallbackFormat);
+				aFallbackFormats.push(oFallbackFormat);
 			});
 		}
-		oFormat.aFallbackFormats = oInfo.aFallbackFormats;
+		oFormat.aFallbackFormats = aFallbackFormats;
+
 		oFormat.oRequiredParts = oInfo.oRequiredParts;
 		oFormat.bSupportRelative = !!oInfo.bSupportRelative;
 
