@@ -26,10 +26,10 @@
 	<script>
 		module("getComponent");
 
-		test("Should not overwrite getComponent function", function() {
+		test("Should not overwrite getOwnerComponent function", function() {
 			// System under Test
 			sap.ui.controller("getComponentController", {
-				getComponent : function () {
+				getOwnerComponent : function () {
 					return "foo";
 				}
 			});
@@ -86,7 +86,7 @@
 			//Arrange
 			var oComponent = new sap.ui.core.Component("foo");
 
-			var oView = sap.ui.base.ManagedObject.runWithOwner(function() {
+			var oView = oComponent.runAsOwner(function() {
 						sap.ui.jsview("myView", {
 							createContent : function() {
 								return null;
@@ -97,7 +97,7 @@
 						});
 
 						return sap.ui.jsview("bar", "myView");
-			}, oComponent);
+			});
 
 			// System under Test
 			sap.ui.controller("someController", {});

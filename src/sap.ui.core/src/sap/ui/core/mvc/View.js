@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.mvc.View.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Control', 'sap/ui/core/library'],
-	function(jQuery, ManagedObject, Control, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Control', 'sap/ui/core/mvc/Controller', 'sap/ui/core/library'],
+	function(jQuery, ManagedObject, Control, Controller, library) {
 	"use strict";
 
 
@@ -327,7 +327,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 
 		if (!sap.ui.getCore().getConfiguration().getControllerCodeDeactivated()) {
 			// only set when used internally
-			var oController = mSettings.controller;
+			var oController = mSettings.controller,
+			    sName = oController && typeof oController.getMetadata === "function" && oController.getMetadata().getName();
 
 			if (!oController && oThis.getControllerName) {
 				// get optional default controller name
@@ -335,10 +336,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/Co
 				if (defaultController) {
 					// create controller
 					oController = sap.ui.controller(defaultController);
+					sName = defaultController;
 				}
 			}
 
 			if ( oController ) {
+				oController = Controller.extendIfRequired(oController, sName, oThis._oAsyncState);
 				if (oController instanceof Promise) {
 					if (!oThis._oAsyncState) {
 						throw new Error("The view " + oThis.sViewName + " runs in sync mode and therefore cannot use async controller extensions!");

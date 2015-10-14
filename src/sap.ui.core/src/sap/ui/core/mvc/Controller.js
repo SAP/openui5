@@ -95,7 +95,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 			/*eslint-enable no-loop-func */
 		}
 		
-		function extendIfRequired(oController, sName) {
+		/**
+		 * This function can be used to extend a controller with controller 
+		 * extensions defined in the customizing configuration or with the 
+		 * controller extensions returned by controller extension provider.
+		 * 
+		 * @param {object|sap.ui.core.mvc.Controller} the controller to extend
+		 * @param {string} the name of the controller
+		 * @param {boolean} flag whether to run in async mode or not
+		 * @return {sap.ui.core.mvc.Controller|Promise} will be a <code>Promise</code> in case of async extend 
+		 *           or the <code>Controller</code> in case of sync extend
+		 * 
+		 * @since 1.33.0
+		 * @private
+		 */
+		sap.ui.core.mvc.Controller.extendIfRequired = function(oController, sName, bAsync) {
 			var oCustomControllerDef;
 			
 			if (sap.ui.core.CustomizingConfiguration) {
@@ -152,7 +166,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 					jQuery.sap.log.info("Customizing: Controller '" + sName + "' is now extended by Controller Extension Provider '" + Controller._sExtensionProvider + "'");
 
 					var oExtensionProvider = new ExtensionProvider();
-					var oExtensions = oExtensionProvider.getControllerExtensions(sName /* controller name */, ManagedObject._sOwnerId /* component ID / clarfiy if this is needed? */);
+					var oExtensions = oExtensionProvider.getControllerExtensions(sName /* controller name */, ManagedObject._sOwnerId /* component ID / clarfiy if this is needed? */, bAsync);
 					if (oExtensions instanceof Promise) {
 						// in async mode, oExtensions has to be resolved before the controller extensions are mixed in 
 						return oExtensions.then(function(aControllerExtensions) {
@@ -180,7 +194,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 			}
 
 			return oController;
-		}
+		};
 
 		/**
 		 * Defines a controller class or creates an instance of an already defined controller class.
@@ -214,19 +228,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 
 				if ( mRegistry[sName] ) {
 					// anonymous controller
-					var oController = new Controller(sName);
-					// in async mode, the extendIfRequired returns a Promise
-					oController = extendIfRequired(oController, sName);
-					return oController;
-
+					return new Controller(sName);
 				} else {
 					var CTypedController = jQuery.sap.getObject(sName);
 					if ( typeof CTypedController === "function" && CTypedController.prototype instanceof Controller ) {
 						// typed controller
-						var oController = new CTypedController();
-						// in async mode, the extendIfRequired returns a Promise
-						oController = extendIfRequired(oController, sName);
-						return oController;
+						return new CTypedController();
 					}
 				}
 				throw new Error("Controller " + sName + " couldn't be instantiated");
@@ -339,8 +346,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * <pre>
 		 * sap.ui.define("my/custom/sync/ExtensionProvider", ['jquery.sap.global'], function(jQuery) {
 		 *   var ExtensionProvider = function() {};
-		 *   ExtensionProvider.prototype.getControllerExtensions = function(sControllerName, sComponentId) {
-		 *     if (sControllerName == "my.own.Controller") {
+		 *   ExtensionProvider.prototype.getControllerExtensions = function(sControllerName, sComponentId, bAsync) {
+		 *     if (!bAsync && sControllerName == "my.own.Controller") {
 		 *       // IMPORTANT: only return extensions for a specific controller
 		 *       return [{
 		 *         onInit: function() {
@@ -364,8 +371,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * <pre>
 		 * sap.ui.define("my/custom/async/ExtensionProvider", ['jquery.sap.global'], function(jQuery) {
 		 *   var ExtensionProvider = function() {};
-		 *   ExtensionProvider.prototype.getControllerExtensions = function(sControllerName, sComponentId) {
-		 *     if (sControllerName == "my.own.Controller") {
+		 *   ExtensionProvider.prototype.getControllerExtensions = function(sControllerName, sComponentId, bAsync) {
+		 *     if (bAsync && sControllerName == "my.own.Controller") {
 		 *       // IMPORTANT:
 		 *       // only return a Promise for a specific controller since it
 		 *       // requires the View/Controller and its parents to run in async 
