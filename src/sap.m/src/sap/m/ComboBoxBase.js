@@ -39,7 +39,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 				/**
 				 * Internal aggregation to hold the inner picker popup.
 				 */
-				picker: { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" }
+				picker: { type: "sap.ui.core.PopupInterface", multiple: false, visibility: "hidden" }
 			}
 		}});
 
