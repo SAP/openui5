@@ -547,6 +547,32 @@
 			// Clean up
 			oSemanticPage.destroy();
 		});
+		
+		test("MultiSelectAction enabled property", function() {
+
+			var oStatusModel = new sap.ui.model.json.JSONModel({ master: { multiSelectEnabled: false } });
+			var oMultiSelectAction = new sap.m.semantic.MultiSelectAction("multiAction", {enabled: "{status>/master/multiSelectEnabled}"});
+
+			var oSemanticPage = new sap.m.semantic.MasterPage({
+				multiSelectAction: oMultiSelectAction,
+			});
+			oSemanticPage.setModel(oStatusModel, "status");
+
+			oSemanticPage.placeAt("qunit-fixture-visible");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			strictEqual(oMultiSelectAction.getEnabled(), false, "baound value initialized correctly");
+			
+			// Act
+			oStatusModel.setData({master: {multiSelectEnabled: true}}, true);
+			
+			// Assert
+			strictEqual(oMultiSelectAction.getEnabled(), true, "baound value changed correctly");
+
+			// Clean up
+			oSemanticPage.destroy();
+		});
 
 
 	</script>
