@@ -1,0 +1,95 @@
+<mvc:View
+		controllerName="sap.ui.demo.masterdetail.controller.Detail"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:semantic="sap.m.semantic"
+		xmlns:footerbar="sap.ushell.ui.footerbar">
+
+	<semantic:DetailPage
+			id="page"
+			navButtonPress="onNavBack"
+			showNavButton="{device>/system/phone}"
+			title="{i18n>detailTitle}"
+			busy="{detailView>/busy}"
+			busyIndicatorDelay="{detailView>/delay}">
+
+		<semantic:content>
+			<ObjectHeader
+					id="objectHeader"
+					title="{Name}"
+					number="{
+								path: 'UnitNumber',
+								formatter: '.formatter.currencyValue'
+					}"
+					numberUnit="{UnitOfMeasure}">
+			</ObjectHeader>
+			<IconTabBar
+					id="iconTabBar"
+					class="sapUiResponsiveContentPadding">
+				<items>
+					<IconTabFilter
+							id="iconTabBarFilter1"
+							icon="sap-icon://hint"
+							tooltip="{i18n>detailIconTabBarInfo}">
+					</IconTabFilter>
+					<IconTabFilter
+							id="iconTabBarFilter2"
+							icon="sap-icon://attachment"
+							tooltip="{i18n>detailIconTabBarAttachments}">
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+			<Table
+					id="lineItemsList"
+					width="auto"
+					items="{LineItems}"
+					updateFinished="onListUpdateFinished"
+					noDataText="{i18n>detailLineItemTableNoDataText}"
+					busyIndicatorDelay="{detailView>/lineItemTableDelay}"
+					class="sapUiResponsiveMargin">
+				<headerToolbar>
+					<Toolbar id="lineItemsToolbar">
+						<Title
+								id="lineItemsHeader"
+								text="{detailView>/lineItemListTitle}"/>
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<Column>
+						<Text text="{i18n>detailLineItemTableIDColumn}"/>
+					</Column>
+					<Column
+							minScreenWidth="Tablet"
+							demandPopin="true"
+							hAlign="Right">
+						<Text text="{i18n>detailLineItemTableUnitNumberColumn}"/>
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<ObjectIdentifier
+									title="{Name}"
+									text="{LineItemID}"/>
+							<ObjectNumber
+								number="{
+									path: 'UnitNumber',
+									formatter: '.formatter.currencyValue'
+								}"
+								unit="{UnitOfMeasure}"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+		</semantic:content>
+
+		<semantic:sendEmailAction>
+			<semantic:SendEmailAction
+					id="shareEmail"
+					press="onShareEmailPress"/>
+		</semantic:sendEmailAction>
+
+
+	</semantic:DetailPage>
+
+</mvc:View>

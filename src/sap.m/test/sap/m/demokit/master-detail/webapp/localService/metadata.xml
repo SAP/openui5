@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0"
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+	<edmx:DataServices m:DataServiceVersion="2.0"
+		xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+		<Schema Namespace="Master_Detail" xml:lang="en"
+			xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+
+			<EntityType Name="Object" sap:content-version="1"
+				xmlns:sap="http://www.sap.com/Protocols/SAPData">
+				<Key>
+					<PropertyRef Name="ObjectID" />
+				</Key>
+				<Property Name="ObjectID" Type="Edm.String" Nullable="false"
+					MaxLength="40" sap:label="Object ID" sap:creatable="false"
+					sap:updatable="false" />
+				<Property Name="Name" Type="Edm.String" Nullable="false"
+					MaxLength="255" sap:label="Name" sap:creatable="false"
+					sap:updatable="false" />
+				<Property Name="Attribute1" Type="Edm.String" Nullable="false"
+					MaxLength="40" sap:label="Attribute1" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+				<Property Name="Attribute2" Type="Edm.String" Nullable="false"
+					MaxLength="40" sap:label="Attribute2" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+				<Property Name="UnitOfMeasure" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:label="Unit of Measure" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="UnitNumber" Type="Edm.Decimal" Nullable="false"
+					Precision="23" Scale="4" sap:label="Unit Number" sap:creatable="false"
+					sap:updatable="false" sap:filterable="false" />
+				<NavigationProperty Name="LineItems" Relationship="Master_Detail.FK_Object_LineItems" FromRole="Objects" ToRole="LineItems" />
+			</EntityType>
+
+			<EntityType Name="LineItem" sap:content-version="1"
+				xmlns:sap="http://www.sap.com/Protocols/SAPData">
+				<Key>
+					<PropertyRef Name="LineItemID" />
+				</Key>
+				<Property Name="LineItemID" Type="Edm.String" Nullable="false"
+					MaxLength="40" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="ObjectID" Type="Edm.String" Nullable="false"
+					MaxLength="40" sap:label="Object ID" sap:creatable="false"
+					sap:updatable="false" />
+				<Property Name="Name" Type="Edm.String" Nullable="false"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false" />
+				<Property Name="Attribute" Type="Edm.String"  Nullable="false"
+					MaxLength="40" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false" />
+				<Property Name="UnitOfMeasure" Type="Edm.String" Nullable="false"
+					MaxLength="3" sap:label="Unit of Measure" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="UnitNumber" Type="Edm.Decimal" Nullable="false"
+					Precision="23" Scale="4" sap:label="Unit Number" sap:creatable="false"
+					sap:updatable="false" sap:filterable="false" />
+				<NavigationProperty Name="Objects" Relationship="Master_Detail.FK_Object_LineItems" FromRole="LineItems" ToRole="Objects" />
+			</EntityType>
+
+			 <Association Name="FK_Object_LineItems">
+		        <End Role="LineItems" Type="Master_Detail.LineItem" Multiplicity="*" />
+		        <End Role="Objects" Type="Master_Detail.Object" Multiplicity="1" />
+		        <ReferentialConstraint>
+		          <Principal Role="Objects">
+		            <PropertyRef Name="ObjectID" />
+		          </Principal>
+		          <Dependent Role="LineItems">
+		            <PropertyRef Name="ObjectID" />
+		          </Dependent>
+		        </ReferentialConstraint>
+		     </Association>
+
+			<EntityContainer Name="Master_Detail_ENTITIES"
+				m:IsDefaultEntityContainer="true">
+				<EntitySet Name="Objects" EntityType="Master_Detail.Object"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:pageable="false" sap:content-version="1"
+					xmlns:sap="http://www.sap.com/Protocols/SAPData" />
+				<EntitySet Name="LineItems"
+					EntityType="Master_Detail.LineItem"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:pageable="false" sap:content-version="1"
+					xmlns:sap="http://www.sap.com/Protocols/SAPData" />
+				 <AssociationSet Name="Master_Detail.FK_Object_LineItems" Association="Master_Detail.FK_Object_LineItems">
+		          <End Role="LineItems" EntitySet="LineItems" />
+		          <End Role="Objects" EntitySet="Objects" />
+		         </AssociationSet>
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
