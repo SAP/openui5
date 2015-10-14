@@ -254,6 +254,26 @@
 		}
 	});
 
+	test("parse custom format", function(){
+
+		var oCustomDateFormats = {
+			"y": ["2001", 978307200000],
+			"yM": ["3/2001", 983404800000],
+			"yq": ["Q1 2001", 978307200000],
+			"yqq": ["2nd quarter 2001", 986083200000],
+			"yqqq": ["Q3 2001", 993945600000],
+			"yqqqq": ["4th quarter 2001", 1001894400000],
+			"Q": ["4", 23587200000],
+			"Md": ["3/7", 5616000000]
+		};
+
+		for (sCustomFormat in oCustomDateFormats) {
+			var oCustomDate = sap.ui.core.format.DateFormat.getDateTimeInstance({format: sCustomFormat, UTC: true});
+			equal(oCustomDate.parse(oCustomDateFormats[sCustomFormat][0]).getTime(), oCustomDateFormats[sCustomFormat][1], sCustomFormat);
+
+		}
+	});
+	
 	test("parse with strict check", function(){
 
 		var oFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "yyyy-MM-dd", strictParsing: true}),

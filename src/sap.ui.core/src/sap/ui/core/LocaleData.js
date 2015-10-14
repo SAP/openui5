@@ -352,8 +352,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			if (iBestDistance == 0) {
 				sPattern = sBestPattern;
 			} else {
-				// if tokens are missing create a pattern containing all, otherwise just adjust pattern
-				if (aBestMissingTokens.length > 0) {
+				if (!sBestPattern) {
+					// if no best match could been found, just take the skeleton as pattern
+					sPattern = sSkeleton;
+				} else if (aBestMissingTokens.length > 0) {
+					// if tokens are missing create a pattern containing all, otherwise just adjust pattern
 					if (rMixedSkeleton.test(sSkeleton)) {
 						sPattern = this._getMixedFormatPattern(sSkeleton, oAvailableFormats, sCalendarType);
 					} else {
