@@ -735,7 +735,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				}
 	
 				// Let container scroll into the configured directions
-				if (sap.ui.Device.os.ios) {
+				if (sap.ui.Device.os.ios || sap.ui.Device.os.blackberry) {
 					$Container
 						.css("overflow-x", this._bHorizontal ? "scroll" : "hidden")
 						.css("overflow-y", this._bVertical ? "scroll" : "hidden")
