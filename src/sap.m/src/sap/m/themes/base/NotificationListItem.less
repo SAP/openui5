@@ -81,7 +81,13 @@
 	width: @closeButtonSize;
 }
 
-// Body styles =========================================================================================================
+.sapUiSizeCompact .sapMNLI-CloseButton .sapMBtnIcon {
+  font-size: 0.75rem;
+  line-height: @closeButtonSize;
+  width: @closeButtonSize;
+}
+
+  // Body styles =========================================================================================================
 
 .sapMNLI-Body {
 	position: relative;
@@ -134,4 +140,14 @@ html[data-sap-ui-browser*='ie'] .sapMNLI-Footer .sapMBtnInner {
 	box-sizing: content-box;
 	height: 1.875rem;
 	line-height: 1.875rem;
+}
+
+.sapUiSizeCompact .sapMNLI-Footer {
+  height: 2rem;
+  line-height: 2rem;
+}
+
+.sapUiSizeCompact .sapMNLI-Footer > .sapMBtn {
+  margin-left: 0.25rem;
+  padding: 0;
 }
