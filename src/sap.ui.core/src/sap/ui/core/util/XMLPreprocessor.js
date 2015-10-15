@@ -4,9 +4,9 @@
 
 // Provides object sap.ui.core.util.XMLPreprocessor
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/ManagedObject',
-	'sap/ui/core/XMLTemplateProcessor', 'sap/ui/model/BindingMode',
+	'sap/ui/core/XMLTemplateProcessor', 'sap/ui/Device', 'sap/ui/model/BindingMode',
 	'sap/ui/model/CompositeBinding', 'sap/ui/model/Context'],
-	function(jQuery, BindingParser, ManagedObject, XMLTemplateProcessor, BindingMode,
+	function (jQuery, BindingParser, ManagedObject, XMLTemplateProcessor, Device, BindingMode,
 		CompositeBinding, Context) {
 		'use strict';
 
@@ -884,7 +884,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				mSettings = mSettings || {};
 				if (bDebug) {
 					debug(undefined, "Start processing", sCaller);
-					if (mSettings.bindingContexts instanceof Context)  {
+					if (mSettings.bindingContexts instanceof Context) {
 						debug(undefined, "undefined =", mSettings.bindingContexts);
 					} else {
 						for (sName in mSettings.bindingContexts) {
@@ -897,7 +897,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					bindingContexts : mSettings.bindingContexts
 				}));
 				debug(undefined, "Finished processing", sCaller);
-				return oRootElement;
+
+				return Device.browser.edge || Device.browser.msie && Device.os.version >= 10
+					//TODO remove this workaround for Edge/IE on Win10 as soon as possible
+					? oRootElement.cloneNode(true)
+					: oRootElement;
 			}
 		};
 	}, /* bExport= */ true);
