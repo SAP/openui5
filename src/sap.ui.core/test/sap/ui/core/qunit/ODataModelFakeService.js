@@ -153,6 +153,8 @@ xhr.onCreate = function(request) {
 			[200, oCountHeaders, "5"],
 		"Categories(1)":
 			[200, oJSONHeaders, sCategory1JSON],
+			"ZeroTest(1)":
+				[200, oJSONHeaders, sZeroTest],
 		"Categories(3)":
 			[200, oJSONHeaders, sCategory3JSON],
 		"Categories(4)":
@@ -7081,3 +7083,7 @@ var sCategories7ExpandXML = "<entry xml:base=\"http://services.odata.org/V3/Nort
 		"</m:properties>\n" + 
 		"</content>\n" + 
 		"</entry>";
+
+var sZeroTest = "{\n" + 
+		"	\"d\" : 0\n" + 
+		"}"; 
