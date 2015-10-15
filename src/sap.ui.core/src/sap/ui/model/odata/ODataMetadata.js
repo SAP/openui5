@@ -1010,11 +1010,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 		var aSchema = this.oMetadata.dataServices.schema;
 		for (var i = 0; i < aSchema.length; ++i) {
 			var aContainers = aSchema[i].entityContainer;
-			for (var n = 0; n < aContainers.length; ++n) {
-				var aSets = aContainers[n].entitySet;
-				for (var m = 0; m < aSets.length; ++m) {
-					if (aSets[m].entityType === sEntityType) {
-						return aSets[m];
+			if (aContainers) {
+				for (var n = 0; n < aContainers.length; ++n) {
+					var aSets = aContainers[n].entitySet;
+					if (aSets) {
+						for (var m = 0; m < aSets.length; ++m) {
+							if (aSets[m].entityType === sEntityType) {
+								return aSets[m];
+							}
+						}
 					}
 				}
 			}
