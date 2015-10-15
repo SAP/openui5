@@ -54,10 +54,8 @@ sap.ui.define([
 		},
 
 		_onBindingChange : function (oEvent) {
-			var oElementBinding = this.getView().getElementBinding();
-
 			// No data for the binding
-			if (oElementBinding && !oElementBinding.getBoundContext()) {
+			if (!this.getView().getBindingContext()) {
 				this.getRouter().getTargets().display("notFound");
 			}
 		},
@@ -67,7 +65,7 @@ sap.ui.define([
 		 * @param oEvent
 		 */
 		onTabSelect : function (oEvent){
-			var oCtx = this.getView().getElementBinding().getBoundContext();
+			var oCtx = this.getView().getBindingContext();
 
 			this.getRouter().navTo("employeeResume", {
 				employeeId : oCtx.getProperty("EmployeeID"),
