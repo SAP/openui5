@@ -809,11 +809,6 @@
 		equal(jQuery("#" + oheId+"-title").attr("role"), "link", "ActiveTitle has role=link");
 	});
 	
-	test("Title arrow has aria-haspopup", function(){ 
-		// Assert
-		ok(jQuery("#" + ohBasicId+"-titleArrow").attr("aria-haspopup"), "Title arrow has attribute aria-haspopup");
-	});
-	
 	test("Active icon has aria attributes", function(){ 
 		ok(jQuery(".sapMOHIcon.sapMPointer").attr("aria-haspopup"), "ActiveIcon has attribute aria-haspopup");
 		equal(jQuery(".sapMOHIcon.sapMPointer").attr("role"), "link", "ActiveIcon has role=link");
