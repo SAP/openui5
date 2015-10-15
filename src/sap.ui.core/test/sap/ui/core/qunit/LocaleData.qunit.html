@@ -131,11 +131,14 @@
 			equal(typeof oLocaleData.getCustomDateTimePattern("y", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"y\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getCustomDateTimePattern("yMd", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"yMd\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getCustomDateTimePattern("Hms", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"Hms\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getCustomDateTimePattern("jms", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"jms\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getCustomDateTimePattern("Jms", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"jms\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getCustomDateTimePattern("yMdd", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"yMdd\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getCustomDateTimePattern("Hmss", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"Hmss\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getCustomDateTimePattern("yMMd", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"yMMd\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getCustomDateTimePattern("yMMMw", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"yMMMw\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getCustomDateTimePattern("yMdHms", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"yMdHms\", \"" + aCalendarTypes[i] + "\")");
+			equal(typeof oLocaleData.getCustomDateTimePattern("yMdjms", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"yMdjms\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getCustomDateTimePattern("yMMMMEEEEdHms", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"yMMMMEEEEdHms\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getCustomDateTimePattern("Q", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"Q\", \"" + aCalendarTypes[i] + "\")");
 			equal(typeof oLocaleData.getCustomDateTimePattern("w", aCalendarTypes[i]), "string", "getCustomDateTimePattern(\"w\", \"" + aCalendarTypes[i] + "\")");
@@ -210,7 +213,12 @@
 		equal(oLocaleData.getCustomDateTimePattern("yMMMw"), "MMM y ('Woche': w)", "datetime format \"yMMMw\"");
 		equal(oLocaleData.getCustomDateTimePattern("yMdHms"), "d.M.y, HH:mm:ss", "datetime format \"yMdHms\"");
 		equal(oLocaleData.getCustomDateTimePattern("yMMMMEEEEdHms"), "EEEE, d. MMMM y 'um' HH:mm:ss", "datetime format \"yMMMMdEEEEHms\"");
+		equal(oLocaleData.getCustomDateTimePattern("yMMMMEEEEdJms"), "EEEE, d. MMMM y 'um' HH:mm:ss", "datetime format \"yMMMMdEEEEJms\"");
 		equal(oLocaleData.getCustomDateTimePattern("ydHs"), "y ('Tag': d), HH 'Uhr' ('Sekunde': s)", "datetime format \"ydHs\"");
+		equal(oLocaleData.getCustomDateTimePattern("km"), "HH:mm", "datetime format \"km\"");
+		equal(oLocaleData.getCustomDateTimePattern("Km"), "h:mm a", "datetime format \"Km\"");
+		equal(oLocaleData.getCustomDateTimePattern("jms"), "HH:mm:ss", "datetime format \"jms\"");
+		equal(oLocaleData.getCustomDateTimePattern("Jms"), "HH:mm:ss", "datetime format \"Jms\"");
 		equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 		equal(oLocaleData.getNumberSymbol("group"), ".", "group separator");
 		equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week");
@@ -253,7 +261,12 @@
 		equal(oLocaleData.getCustomDateTimePattern("yMMMw"), "MMM y ('week': w)", "datetime format \"yMMMw\"");
 		equal(oLocaleData.getCustomDateTimePattern("yMdHms"), "dd/MM/y, HH:mm:ss", "datetime format \"yMdHms\"");
 		equal(oLocaleData.getCustomDateTimePattern("yMMMMEEEEdHms"), "EEEE, d MMMM y 'at' HH:mm:ss", "datetime format \"yMMMMdEEEEHms\"");
+		equal(oLocaleData.getCustomDateTimePattern("yMMMMEEEEdJms"), "EEEE, d MMMM y 'at' HH:mm:ss", "datetime format \"yMMMMdEEEEJms\"");
 		equal(oLocaleData.getCustomDateTimePattern("ydHs"), "y ('day': d), HH ('second': s)", "datetime format \"ydHs\"");
+		equal(oLocaleData.getCustomDateTimePattern("km"), "HH:mm", "datetime format \"km\"");
+		equal(oLocaleData.getCustomDateTimePattern("Km"), "h:mm a", "datetime format \"Km\"");
+		equal(oLocaleData.getCustomDateTimePattern("jms"), "HH:mm:ss", "datetime format \"jms\"");
+		equal(oLocaleData.getCustomDateTimePattern("Jms"), "HH:mm:ss", "datetime format \"Jms\"");
 		equal(oLocaleData.getNumberSymbol("decimal"), ".", "decimal separator");
 		equal(oLocaleData.getNumberSymbol("group"), ",", "group separator");
 		equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week"); // TODO decide 0 or 1
@@ -271,6 +284,10 @@
 	
 	function customTests_en_US(oLocaleData) {
 		equal(oLocaleData.getDayPeriods("abbreviated")[0], "AM", "day periods \"abbreviated\"");
+		equal(oLocaleData.getCustomDateTimePattern("jms"), "h:mm:ss a", "datetime format \"jms\"");
+		equal(oLocaleData.getCustomDateTimePattern("Jms"), "h:mm:ss", "datetime format \"Jms\"");
+		equal(oLocaleData.getCustomDateTimePattern("yMMMMEEEEdjms"), "EEEE, MMMM d, y 'at' h:mm:ss a", "datetime format \"yMMMMdEEEEjms\"");
+		equal(oLocaleData.getCustomDateTimePattern("yMMMMEEEEdJms"), "EEEE, MMMM d, y 'at' h:mm:ss", "datetime format \"yMMMMdEEEEJms\"");
 	}
 
 	function customTests_he_IL(oLocaleData) {

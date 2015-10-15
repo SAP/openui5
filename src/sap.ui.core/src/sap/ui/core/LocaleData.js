@@ -239,7 +239,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * @param {string} sSkeleton the wanted skeleton format for the datetime pattern
 		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
 		 * @returns {string} the best matching datetime pattern
-		 * @since 1.33.1
+		 * @since 1.34
 		 * @public
 		 */
 		getCustomDateTimePattern : function(sSkeleton, sCalendarType) {
@@ -251,20 +251,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			var aTokens = [], 
 				oToken = {index: -1},
 				sSymbol,
-				sGroup,
+				oSymbol,
 				oGroup;
 			for (var i = 0; i < sSkeleton.length; i++) {
 				sSymbol = sSkeleton.charAt(i);
+				// Handle special input symbols
+				if (sSymbol == "j" || sSymbol == "J") {
+					sSymbol = this.getPreferredHourSymbol();
+				}
 				// if the symbol is the same as current token, increase the length
 				if (sSymbol == oToken.symbol) {
 					oToken.length++;
 					continue;
 				}
 				// get symbol group
-				sGroup = mCLDRSymbols[sSymbol];
-				oGroup = mCLDRSymbolGroups[sGroup];
+				oSymbol = mCLDRSymbols[sSymbol];
+				oGroup = mCLDRSymbolGroups[oSymbol.group];
 				// if group is other, the symbol is not allowed in skeleton tokens
-				if (sGroup == "Other") {
+				if (oSymbol.group == "Other") {
 					throw new Error("Symbol '" + sSymbol + "' is not allowed in skeleton format '" + sSkeleton + "'");
 				}
 				// if group index the same or lower, format is invalid
@@ -274,9 +278,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				// create token and add it the token array
 				oToken = {
 					symbol: sSymbol,
-					groupName: sGroup,
-					group: oGroup,
+					group: oSymbol.group,
+					match: oSymbol.match,
 					index: oGroup.index,
+					field: oGroup.field,
 					length: 1
 				};
 				aTokens.push(oToken);
@@ -305,7 +310,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				aBestMissingTokens,
 				iBestDistance = 10000,
 				sPattern,
-				rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKmszZvVOXx]+)$/;
+				rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/;
 			// Loop through all available tokens, find matches and calculate distance
 			for (var sTestSkeleton in oAvailableFormats) {
 				aTestTokens = this._parseSkeletonFormat(sTestSkeleton);
@@ -327,7 +332,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						continue;
 					} 
 					// if only the group matches, add some more distance in addition to length difference
-					if (oTestToken && oToken.group == oTestToken.group) {
+					if (oTestToken && oToken.match == oTestToken.match) {
 						iDistance += Math.abs(oToken.length - oTestToken.length) + 10;
 						iTest++;
 						continue;
@@ -367,6 +372,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 					sPattern = this._expandFields(sBestPattern, aTokens);
 				}
 			}
+			// If special input token "J" was used, remove dayperiod from pattern
+			if (sSkeleton.indexOf("J") >= 0) {
+				sPattern = sPattern.replace(/ ?[abB](?=([^']*'[^']*')*[^']*)$/, "");
+			}
 				
 			return sPattern;	
 		},
@@ -379,11 +388,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				iSkeletonLength,
 				iOldLength,
 				iNewLength,
-				sGroup,
+				oSymbol,
 				sChar;
 			// Create a map of group names to length
 			aTokens.forEach(function(oToken) {
-				mGroups[oToken.groupName] = oToken.length;
+				mGroups[oToken.group] = oToken.length;
 			});
 			// Loop through pattern and adjust symbol length
 			while (i < sPattern.length) {
@@ -394,10 +403,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						bQuoted = false;
 					}
 				} else {
-					sGroup = mCLDRSymbols[sChar];
+					oSymbol = mCLDRSymbols[sChar];
 					// If symbol is a CLDR symbol and is contained in the group, expand length
-					if (sGroup && mGroups[sGroup]) {
-						iSkeletonLength = mGroups[sGroup];
+					if (oSymbol && mGroups[oSymbol.group]) {
+						iSkeletonLength = mGroups[oSymbol.group];
 						iOldLength = 1;	
 						while (sPattern.charAt(i + 1) == sChar) {
 							i++;
@@ -425,8 +434,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				sAppendPattern,
 				sAppendField;
 			aMissingTokens.forEach(function(oToken) {
-				sAppendPattern = oAppendItems[oToken.groupName];
-				sDisplayName = "'" + this.getDisplayName(oToken.group.fieldName) + "'";
+				sAppendPattern = oAppendItems[oToken.group];
+				sDisplayName = "'" + this.getDisplayName(oToken.field) + "'";
 				sAppendField = "";
 				for (var i = 0; i < oToken.length; i++) {
 					sAppendField += oToken.symbol;
@@ -437,7 +446,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		},
 		
 		_getMixedFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType) {
-			var rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKmszZvVOXx]+)$/,
+			var rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/,
 				rWideMonth = /MMMM|LLLL/,
 				rAbbrevMonth = /MMM|LLL/,
 				rWeekDay = /E|e|c/,
@@ -657,7 +666,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * @param {string[]} aScales The scales for which the available patterns should be returned
 		 * @returns {object[]} An array of all relative time patterns
 		 * @public
-		 * @since 1.33.1
+		 * @since 1.34
 		 */
 		getRelativePatterns : function(aScales) {
 			var aPatterns = [],
@@ -710,7 +719,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * @param {boolean} [bFuture] whether a future or past pattern should be used
 		 * @returns {string} the relative format pattern
 		 * @public
-		 * @since 1.33.1
+		 * @since 1.34
 		 */
 		getRelativePattern : function(sScale, iDiff, bFuture) {
 			var sPattern, oTypes;
@@ -835,10 +844,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * @since 1.34.0
 		 */
 		getDisplayName: function(sType) {
-
-			jQuery.sap.assert(sType == "second" || sType == "minute" || sType == "hour" || sType == "day" || sType == "week" || sType == "month" || sType == "year", "sType must be second, minute, hour, day, week, month, year");
+			jQuery.sap.assert(sType == "second" || sType == "minute" || sType == "hour" || sType == "zone" || sType == "day" 
+				|| sType == "weekday" || sType == "week" || sType == "month" || sType == "year" || sType == "era", 
+				"sType must be second, minute, hour, zone, day, weekday, week, month, year, era");
 			return this._get("dateFields", sType, "displayName");
-
 		},
 
 		/**
@@ -972,62 +981,73 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			}
 
 			return sap.ui.core.CalendarType.Gregorian;
+		},
+
+		/**
+		 * Returns the preferred hour pattern symbol (h for 12, H for 24 hours) for the current locale
+		 *
+		 * returns {string} the preferred hour symbol
+		 * @public
+		 * @since 1.34
+		 */
+		getPreferredHourSymbol: function() {
+			return this._get("timeData", "_preferred");
 		}
 
 	});
 	
 	var mCLDRSymbolGroups = {
-		"Era": { fieldName: "era", index: 0 },
-		"Year": { fieldName: "year", index: 1 },
-		"Quarter": { fieldName: "quarter", index: 2 },
-		"Month": { fieldName: "month", index: 3 },
-		"Week": { fieldName: "week", index: 4 },
-		"Day-Of-Week": { fieldName: "weekday", index: 5 },
-		"Day": { fieldName: "day", index: 6 },
-		"Hour": { fieldName: "hour", index: 7 },
-		"Minute": { fieldName: "minute", index: 8 },
-		"Second": { fieldName: "second", index: 9 },
-		"Timezone": { fieldName: "zone", index: 10 }
+		"Era": { field: "era", index: 0 },
+		"Year": { field: "year", index: 1 },
+		"Quarter": { field: "quarter", index: 2 },
+		"Month": { field: "month", index: 3 },
+		"Week": { field: "week", index: 4 },
+		"Day-Of-Week": { field: "weekday", index: 5 },
+		"Day": { field: "day", index: 6 },
+		"Hour": { field: "hour", index: 7 },
+		"Minute": { field: "minute", index: 8 },
+		"Second": { field: "second", index: 9 },
+		"Timezone": { field: "zone", index: 10 }
 	};
 	
 	var mCLDRSymbols = {
-		"G": "Era",
-		"y": "Year",
-		"Y": "Year",
-		"Q": "Quarter",
-		"q": "Quarter",
-		"M": "Month",
-		"L": "Month",
-		"w": "Week",
-		"W": "Week",
-		"d": "Day",
-		"D": "Day",
-		"E": "Day-Of-Week",
-		"e": "Day-Of-Week",
-		"c": "Day-Of-Week",
-		"h": "Hour",
-		"H": "Hour",
-		"k": "Hour",
-		"K": "Hour",
-		"m": "Minute",
-		"s": "Second",
-		"z": "Timezone",
-		"Z": "Timezone",
-		"O": "Timezone",
-		"v": "Timezone",
-		"V": "Timezone",
-		"X": "Timezone",
-		"x": "Timezone",
-		"S": "Other",
-		"u": "Other",
-		"U": "Other",
-		"r": "Other",
-		"F": "Other",
-		"g": "Other",
-		"a": "Other",
-		"b": "Other",
-		"B": "Other",
-		"A": "Other"
+		"G": { group: "Era", match: "Era" },
+		"y": { group: "Year", match: "Year" },
+		"Y": { group: "Year", match: "Year" },
+		"Q": { group: "Quarter", match: "Quarter" },
+		"q": { group: "Quarter", match: "Quarter" },
+		"M": { group: "Month", match: "Month" },
+		"L": { group: "Month", match: "Month" },
+		"w": { group: "Week", match: "Week" },
+		"W": { group: "Week", match: "Week" },
+		"d": { group: "Day", match: "Day" },
+		"D": { group: "Day", match: "Day" },
+		"E": { group: "Day-Of-Week", match: "Day-Of-Week" },
+		"e": { group: "Day-Of-Week", match: "Day-Of-Week" },
+		"c": { group: "Day-Of-Week", match: "Day-Of-Week" },
+		"h": { group: "Hour", match: "Hour12" },
+		"H": { group: "Hour", match: "Hour24" },
+		"k": { group: "Hour", match: "Hour24" },
+		"K": { group: "Hour", match: "Hour12" },
+		"m": { group: "Minute", match: "Minute" },
+		"s": { group: "Second", match: "Second" },
+		"z": { group: "Timezone", match: "Timezone" },
+		"Z": { group: "Timezone", match: "Timezone" },
+		"O": { group: "Timezone", match: "Timezone" },
+		"v": { group: "Timezone", match: "Timezone" },
+		"V": { group: "Timezone", match: "Timezone" },
+		"X": { group: "Timezone", match: "Timezone" },
+		"x": { group: "Timezone", match: "Timezone" },
+		"S": { group: "Other" },
+		"u": { group: "Other" },
+		"U": { group: "Other" },
+		"r": { group: "Other" },
+		"F": { group: "Other" },
+		"g": { group: "Other" },
+		"a": { group: "Other" },
+		"b": { group: "Other" },
+		"B": { group: "Other" },
+		"A": { group: "Other" }
 	};
 
 	/**
@@ -1286,7 +1306,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			"weekData-minDays":4,
 			"weekData-firstDay":1,
 			"weekData-weekendStart":6,
-			"weekData-weekendEnd":0
+			"weekData-weekendEnd":0,
+			"timeData": {
+				_allowed: "H h",
+				_preferred: "H"
+			}
 	};
 
 	var M_ISO639_OLD_TO_NEW = {

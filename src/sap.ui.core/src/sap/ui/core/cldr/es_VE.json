@@ -2698,6 +2698,10 @@
 	"weekData-firstDay": 0,
 	"weekData-weekendStart": 6,
 	"weekData-weekendEnd": 0,
+	"timeData": {
+		"_allowed": "H h",
+		"_preferred": "h"
+	},
 	"eras-gregorian": {
 		"0": {
 			"_end": "0-12-31"
