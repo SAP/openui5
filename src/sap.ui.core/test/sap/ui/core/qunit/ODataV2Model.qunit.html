@@ -1849,6 +1849,17 @@
 		});
 	});	
 	
+	asyncTest("read with zero Response", function(){
+		cleanServiceDataCache();
+		var oModel = initModel(sURI);
+		var fnSuccess = function(oData) {
+			ok(true, "zero data loaded");
+			ok(oData === 0, "zero data loaded");
+			start();
+		}
+		oModel.read("/ZeroTest(1)", { success: fnSuccess});
+	});
+	
 	asyncTest("async test request events - auto refresh list binding", function(){
 
 		removeSharedMetadata(sURI);
