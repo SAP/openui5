@@ -670,22 +670,34 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			return margins;
 		};
 
+		Dialog.prototype._getSizes = function() {
+			var $this = this.$();
+			var windowWidth = this._$Window.width();
+			var windowHeight = (Dialog._bIOS7Tablet && sap.ui.Device.orientation.landscape && window.innerHeight) ? window.innerHeight : this._$Window.height();
+			var iContentOffset = parseInt($this.css('padding-top'), 10) + parseInt($this.css('padding-bottom'), 10);
+			var iHPaddingToScreen = this._getDialogOffset(windowWidth).left;
+			var iVPaddingToScreen = this._getDialogOffset(windowHeight).top;
+			var maxWidth = windowWidth - iHPaddingToScreen;
+			var maxHeight = windowHeight - iVPaddingToScreen - iContentOffset;
+
+			return {
+				maxWidth: maxWidth,
+				maxHeight: maxHeight
+			};
+		};
+
 		/**
 		 *
 		 * @private
 		 */
 		Dialog.prototype._setDimensions = function () {
-			var iWindowWidth = this._$Window.width(),
-				iWindowHeight = (Dialog._bIOS7Tablet && sap.ui.Device.orientation.landscape && window.innerHeight) ? window.innerHeight : this._$Window.height(),
+			var oSizes = this._getSizes(),
 				$this = this.$(),
 				bStretch = this.getStretch(),
 				bStretchOnPhone = this.getStretchOnPhone() && sap.ui.Device.system.phone,
 				bMessageType = this._bMessageType,
-				iHPaddingToScreen = this._getDialogOffset(iWindowWidth).left,
-				iVPaddingToScreen = this._getDialogOffset(iWindowWidth).top,
-				iContentOffset = parseInt($this.css('padding-top'), 10) + parseInt($this.css('padding-bottom'), 10),
-				iMaxWidth = iWindowWidth - iHPaddingToScreen,
-				iMaxHeight = iWindowHeight - iVPaddingToScreen - iContentOffset,
+				iMaxWidth = oSizes.maxWidth,
+				iMaxHeight = oSizes.maxHeight,
 				oStyles = {};
 
 			//the initial size is set in the renderer when the dom is created
