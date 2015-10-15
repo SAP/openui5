@@ -707,11 +707,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 
 			if (jQuery.sap.containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef)) {
 
-				if (sap.ui.Device.system.desktop) {
-
-					// force the focus to stay in the input field
-					this.focus();
-				}
+				// force the focus to stay in the input field
+				this.focus();
 			}
 		};
 
