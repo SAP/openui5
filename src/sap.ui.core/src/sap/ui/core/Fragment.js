@@ -2,29 +2,29 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeSupport', './XMLTemplateProcessor'],
-	function(jQuery, ManagedObject, DeclarativeSupport1, XMLTemplateProcessor) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', './DeclarativeSupport', './XMLTemplateProcessor'],
+	function(jQuery, ManagedObject, Element, DeclarativeSupport, XMLTemplateProcessor) {
 	"use strict";
 
 
 	var mRegistry = {}, // the Fragment registry
 	mTypes = {}; // the Fragment types registry, holding their implementations
-	
+
 	/**
 	 * @classdesc Fragments support the definition of light-weight stand-alone UI control trees.
 	 * This class acts as factory which returns the UI control tree defined inside the Fragments. When used within declarative Views,
 	 * the Fragment content is imported and seamlessly integrated into the View.
-	 * 
+	 *
 	 * Fragments are used similar as sap.ui.core.mvc.Views, but Fragments do not have a Controller on their own (they may know one, though),
 	 * they are not a Control, they are not part of the UI tree and they have no representation in HTML.
 	 * By default, in contrast to declarative Views, they do not do anything to guarantee ID uniqueness.
-	 * 
+	 *
 	 * But like Views they can be defined in several Formats (XML, declarative HTML, JavaScript; support for other types can be plugged in),
-	 * the declaration syntax is the same as in declarative Views and the name and location of the Fragment files is similar to Views. 
-	 * Controller methods can also be referenced in the declarations, but as Fragments do not have their own controllers, 
+	 * the declaration syntax is the same as in declarative Views and the name and location of the Fragment files is similar to Views.
+	 * Controller methods can also be referenced in the declarations, but as Fragments do not have their own controllers,
 	 * this requires the Fragments to be used within a View which does have a controller.
 	 * That controller is used, then.
-	 * 
+	 *
 	 * Do not call the Fragment constructor directly!
 	 *
 	 *
@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 			},
 			specialSettings: {
 				/*
-				 * Name of the fragment to load 
+				 * Name of the fragment to load
 				 */
 				fragmentName : true,
 				/*
@@ -68,10 +68,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 				sId : true
 			}
 		},
-		
+
 		constructor: function(sId, mSettings) {
 			ManagedObject.apply(this, arguments);
-			
+
 			// in case of only one control, return it directly
 			if (this._aContent && this._aContent.length == 1) {
 				return this._aContent[0];
@@ -80,11 +80,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 			}
 		}
 	});
-	
-	
+
+
 	/**
 	 * Registers a new Fragment type
-	 * 
+	 *
 	 * @param {string} sType the Fragment type. Types "XML", "HTML" and JS" are built-in and always available.
 	 * @param {object} oFragmentImpl an object having a property "init" of type "function" which is called on Fragment instantiation with the settings map as argument
 	 * @public
@@ -94,14 +94,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 			jQuery.sap.log.error("Ignoring non-string Fragment type: " + sType);
 			return;
 		}
-		
+
 		if (mTypes[sType]) {
 			jQuery.sap.log.warning("sap.ui.core.Fragment.registerType(): Fragment type '" + sType + "' is already defined. Overriding this type now!");
 		}
-		
+
 		mTypes[sType] = oFragmentImpl;
 	};
-	
+
 	Fragment.prototype._initCompositeSupport = function(mSettings) {
 		if (!mSettings) {
 			throw new Error("Settings must be set");
@@ -112,26 +112,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 		if (mSettings.oController) {
 			this.oController = mSettings.oController;
 		}
-		
+
 		// remember the ID which has been explicitly given in the factory function
 		this._sExplicitId = mSettings.sId || mSettings.id;
-		
+
 		// remember the name of this Fragment
 		this._sFragmentName = mSettings.fragmentName;
 
 		var oFragmentImpl = mTypes[mSettings.type];
 		if (oFragmentImpl) {
 			oFragmentImpl.init.apply(this, [mSettings]);
-			
+
 		} else { // Fragment type not found
 			throw new Error("No type for the fragment has been specified: " + mSettings.type);
 		}
 	};
-	
-	
+
+
 	/**
 	 * Returns the name of the fragment.
-	 *  
+	 *
 	 * @returns {String} the fragment name
 	 * @private
 	 */
@@ -139,9 +139,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 		return this._sFragmentName;
 	};
 
-	
+
 	/**
-	 * 
+	 *
 	 * @returns {sap.ui.core.mvc.Controller} the Controller connected to this Fragment, or null
 	 * @private
 	 */
@@ -149,13 +149,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 		return this.oController;
 	};
 
-	
+
 	/**
 	 * Returns an Element/Control by its ID in the context of the Fragment with the given ID
 	 *
-	 * @param {string} sFragmentId 
+	 * @param {string} sFragmentId
 	 * @param {string} sId
-	 * 
+	 *
 	 * @return Element by its ID and Fragment ID
 	 * @public
 	 * @static
@@ -167,13 +167,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 		}
 		return sap.ui.getCore().byId(sFragmentId + "--" + sId);
 	};
-	
+
 	/**
 	 * Returns the ID which a Control with the given ID in the context of the Fragment with the given ID would have
 	 *
-	 * @param {string} sFragmentId 
-	 * @param {string} sId 
-	 * 
+	 * @param {string} sFragmentId
+	 * @param {string} sId
+	 *
 	 * @return the prefixed ID
 	 * @public
 	 * @static
@@ -186,7 +186,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 		return sFragmentId + "--" + sId;
 	};
 
-	
+
 	/**
 	 * Creates an id for an Element prefixed with the Fragment id.
 	 * This method only adds a prefix when an ID was explicitly given when instantiating this Fragment.
@@ -197,17 +197,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 	 */
 	Fragment.prototype.createId = function(sId) {
 		var id = this._sExplicitId ? this._sExplicitId + "--" + sId : sId; // no ID Prefixing by Fragments! This is called by the template parsers, but only if there is not a View which defines the prefix.
-		
+
 		if (this._oContainingView && this._oContainingView != this) {
 			// if Fragment ID is added to the control ID and Fragment ID already contains the View prefix, the View prefix does not need to be added again
 			// (this will now be checked inside the createId function already!)
 			id = this._oContainingView.createId(id);
 		}
-		
+
 		return id;
 	};
 
-	
+
 	/**
 	 * Always return true in case of fragment
 	 *
@@ -217,23 +217,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 	Fragment.prototype.isSubView = function(){
 		return true;
 	};
-	
-	
-	
+
+
+
 	// ###   Factory functions   ###
 
 	/**
 	 * Instantiate a Fragment - this method loads the Fragment content, instantiates it, and returns this content.
 	 * The Fragment object itself is not an entity which has further significance beyond this constructor.
-	 * 
+	 *
 	 * To instantiate an existing Fragment, call this method as:
 	 *    sap.ui.fragment(sName, sType, [oController]);
 	 * The sName must correspond to an XML Fragment which can be loaded
 	 * via the module system (fragmentName + suffix ".fragment.[typeextension]") and which defines the Fragment content.
 	 * If oController is given, the (event handler) methods referenced in the Fragment will be called on this controller.
 	 * Note that Fragments may require a Controller to be given and certain methods to be available.
-	 * 
-	 * The Fragment types "XML", "JS" and "HTML" are available by default; additional Fragment types can be implemented 
+	 *
+	 * The Fragment types "XML", "JS" and "HTML" are available by default; additional Fragment types can be implemented
 	 * and added using the sap.ui.core.Fragment.registerType() function.
 	 *
 	 *
@@ -246,14 +246,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 	 *         The type of this property depends on the Fragment type, e.g. it could be a string for XML Fragments.
 	 * - "type": the type of the Fragment, as above (mandatory)
 	 * - "id": the ID of the Fragment (optional)
-	 * Further properties may be supported by future or custom Fragment types. Any given properties 
+	 * Further properties may be supported by future or custom Fragment types. Any given properties
 	 * will be forwarded to the Fragment implementation.
 	 *
-	 * If you want to give a fixed ID for the Fragment, please use the advanced version of this method call with the 
-	 * configuration object or use the typed factories like sap.ui.xmlfragment(...) or sap.ui.jsfragment(...). 
-	 * Otherwise the Fragment ID is generated. In any case, the Fragment ID will be used as prefix for the ID of 
+	 * If you want to give a fixed ID for the Fragment, please use the advanced version of this method call with the
+	 * configuration object or use the typed factories like sap.ui.xmlfragment(...) or sap.ui.jsfragment(...).
+	 * Otherwise the Fragment ID is generated. In any case, the Fragment ID will be used as prefix for the ID of
 	 * all contained controls.
-	 * 
+	 *
 	 * @param {string} sName the Fragment name
 	 * @param {string} sType the Fragment type, e.g. "XML", "JS", or "HTML"
 	 * @param {sap.ui.core.Controller} [oController] the Controller which should be used by the controls in the Fragment. Note that some Fragments may not need a Controller and other may need one - and even rely on certain methods implemented in the Controller.
@@ -268,7 +268,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 			mSettings.fragmentName = sName;
 			mSettings.oController = oController;
 			mSettings.type = sType;
-			
+
 		} else if (typeof (sName) === "object") { // advanced call with config object
 			mSettings = sName; // pass all config parameters to the implementation
 			if (sType) { // second parameter "sType" is in this case the optional Controller
@@ -293,13 +293,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 	 * via the module system (fragmentName + ".fragment.xml") and which defines the Fragment.
 	 * If oController is given, the methods referenced in the Fragment will be called on this controller.
 	 * Note that Fragments may require a Controller to be given and certain methods to be available.
-	 * 
-	 * 
+	 *
+	 *
 	 * Advanced usage:
 	 * To instantiate a Fragment and optionally directly give the XML definition instead of loading it from a file,
 	 * call this method as:
 	 *     sap.ui.xmlfragment(oFragmentConfig, [oController]);
-	 * The oFragmentConfig object can have a either a "fragmentName" or a "fragmentContent" property. 
+	 * The oFragmentConfig object can have a either a "fragmentName" or a "fragmentContent" property.
 	 * fragmentContent is optional and can hold the Fragment definition as XML string; if not
 	 * given, fragmentName must be given and the Fragment content definition is loaded by the module system.
 	 * Again, if oController is given, the methods referenced in the Fragment will be called on this controller.
@@ -316,7 +316,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 		if (typeof (sId) === "string") { // basic call
 			if (typeof (vFragment) === "string") { // with ID
 				return sap.ui.fragment({fragmentName: vFragment, sId: sId, type: "XML"}, oController);
-				
+
 			} else { // no ID, sId is actually the name and vFragment the optional Controller
 				return sap.ui.fragment(sId, "XML", vFragment);
 			}
@@ -326,33 +326,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 		}
 	};
 
-	
+
 	/**
 	 * Defines OR instantiates an HTML-based Fragment.
-	 * 
+	 *
 	 * To define a JS Fragment, call this method as:
 	 *    sap.ui.jsfragment(sName, oFragmentDefinition)
 	 * Where:
 	 * - "sName" is the name by which this fragment can be found and instantiated. If defined in its own file,
-	 *    in order to be found by the module loading system, the file location and name must correspond to sName 
+	 *    in order to be found by the module loading system, the file location and name must correspond to sName
 	 *    (path + file name must be: fragmentName + ".fragment.js").
 	 * - "oFragmentDefinition" is an object at least holding the "createContent(oController)" method which defines
 	 *    the Fragment content. If given during instantiation, the createContent method receives a Controller
 	 *    instance (otherwise oController is undefined) and the return value must be one sap.ui.core.Control
 	 *    (which could have any number of children).
-	 * 
-	 * 
+	 *
+	 *
 	 * To instantiate a JS Fragment, call this method as:
 	 *    sap.ui.jsfragment([sId], sFragmentName, [oController]);
 	 * The Fragment ID is optional (generated if not given) and the Fragment implementation CAN use it
-	 * to make contained controls unique (this depends on the implementation: some JS Fragments may choose 
+	 * to make contained controls unique (this depends on the implementation: some JS Fragments may choose
 	 * not to support multiple instances within one application and not use the ID prefixing).
 	 * The sFragmentName must correspond to a JS Fragment which can be loaded
 	 * via the module system (fragmentName + ".fragment.js") and which defines the Fragment.
 	 * If oController is given, the methods referenced in the Fragment will be called on this controller.
 	 * Note that Fragments may require a Controller to be given and certain methods to be available.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param {string} [sId] id of the newly created Fragment
 	 * @param {string | object} sFragmentName name of the Fragment (or Fragment configuration as described above, in this case no sId may be given. Instead give the id inside the config object, if desired)
 	 * @param {sap.ui.core.mvc.Controller} [oController] a Controller to be used for event handlers in the Fragment
@@ -368,22 +368,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 				mRegistry[sName] = oFragmentDefinition;
 				jQuery.sap.declare({modName: sName, type:"fragment"}, false);
 				// TODO: return value?
-				
+
 			} else {
 				// plain instantiation: name[+oController]
 				return sap.ui.fragment(sName, "JS", oFragmentDefinition);
 			}
-			
+
 		} else if (typeof (sName) === "string" && oFragmentDefinition === undefined) {
 			// plain instantiation: name only
 			return sap.ui.fragment(sName, "JS");
-			
+
 		} else { // ID+name[+Controller]  or  oConfig+[oController]
 			if (typeof (sName) === "object") {
 				// advanced mode: oConfig+[oController]
 				sName.type = "JS";
 				return sap.ui.fragment(sName, oFragmentDefinition);
-				
+
 			} else if (arguments && arguments.length >= 3) {
 				// must be plain instantiation mode: ID+Name[+Controller]
 				return sap.ui.fragment({id: sName, fragmentName: oFragmentDefinition, type: "JS"}, arguments[2]);
@@ -404,13 +404,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 	 * via the module system (fragmentName + ".fragment.html") and which defines the Fragment.
 	 * If oController is given, the methods referenced in the Fragment will be called on this controller.
 	 * Note that Fragments may require a Controller to be given and certain methods to be available.
-	 * 
-	 * 
+	 *
+	 *
 	 * Advanced usage:
-	 * To instantiate a Fragment and optionally directly give the HTML definition instead of loading it from a file, 
+	 * To instantiate a Fragment and optionally directly give the HTML definition instead of loading it from a file,
 	 * call this method as:
 	 *     sap.ui.htmlfragment(oFragmentConfig, [oController]);
-	 * The oFragmentConfig object can have a either a "fragmentName" or a "fragmentContent" property. 
+	 * The oFragmentConfig object can have a either a "fragmentName" or a "fragmentContent" property.
 	 * fragmentContent is optional and can hold the Fragment definition as XML string; if not
 	 * given, fragmentName must be given and the Fragment content definition is loaded by the module system.
 	 * Again, if oController is given, the methods referenced in the Fragment will be called on this controller.
@@ -427,7 +427,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 		if (typeof (sId) === "string") { // basic call
 			if (typeof (vFragment) === "string") { // with ID
 				return sap.ui.fragment({fragmentName: vFragment, sId: sId, type: "HTML"}, oController);
-				
+
 			} else { // no ID, sId is actually the name and vFragment the optional Controller
 				return sap.ui.fragment(sId, "HTML", vFragment);
 			}
@@ -441,10 +441,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 
 
 	// ###   FRAGMENT TYPES   ###
-	
-	
+
+
 	// ###   XML Fragments   ###
-	
+
 	Fragment.registerType("XML" , {
 		init: function(mSettings) {
 			// use specified content or load the content definition
@@ -457,7 +457,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 			} else {
 				this._xContent = XMLTemplateProcessor.loadTemplate(mSettings.fragmentName, "fragment");
 			}
-					
+
 			this._oContainingView = this._sExplicitId ? this : (mSettings.containingView || this);
 			if ((this._oContainingView === this) ) {
 				this._oContainingView.oController = (mSettings.containingView && mSettings.containingView.oController) || mSettings.oController;
@@ -467,21 +467,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 			// unset any preprocessors (e.g. from an enclosing JSON view)
 			ManagedObject.runWithPreprocessors(function() {
 				// parse the XML tree
-				
+
 				//var xmlNode = that._xContent;
 				// if sub ID is given, find the node and parse it
 				// TODO: for sub-fragments   if () {
 				//	xmlNode = jQuery(that._xContent).find("# ")
 				//}
 				that._aContent = XMLTemplateProcessor.parseTemplate(that._xContent, that);
+
+				/*
+				 * If content was parsed and an objectBinding at the fragment was defined
+				 * the objectBinding must be forwarded to the created controls
+				 */
+				if (that._aContent && that._aContent.length && mSettings.objectBindings) {
+					that._aContent.forEach(function(oContent, iIndex) {
+						if (oContent instanceof Element) {
+							for (var sModelName in mSettings.objectBindings) {
+								oContent.bindObject(mSettings.objectBindings[sModelName]);
+							}
+						}
+					});
+				}
 			});
 		}
 	});
-	
-	
-	
+
+
+
 	// ###   JS Fragments   ###
-	
+
 	Fragment.registerType("JS", {
 		init: function(mSettings) {
 			/*** require fragment definition if not yet done... ***/
@@ -490,7 +504,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 			}
 			/*** Step 2: extend() ***/
 			jQuery.extend(this, mRegistry[mSettings.fragmentName]);
-			
+
 			this._oContainingView = mSettings.containingView || this;
 
 			var that = this;
@@ -504,24 +518,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 			});
 		}
 	});
-	
-	
-	
+
+
+
 	// ###   HTML Fragments   ###
-	
+
 	(function() {
-		
+
 		/**
 		 * The template cache. Templates are only loaded once.
-		 * 
+		 *
 		 * @private
 		 * @static
 		 */
 		var _mHTMLTemplates = {};
-		
+
 		/**
 		 * Loads and returns a template for the given template name. Templates are only loaded once.
-		 * 
+		 *
 		 * @param {string} sTemplateName The name of the template
 		 * @return {string} the template data
 		 * @private
@@ -530,22 +544,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 			var sUrl = jQuery.sap.getModulePath(sTemplateName, ".fragment.html");
 			var sHTML = _mHTMLTemplates[sUrl];
 			var sResourceName;
-			
+
 			if (!sHTML) {
 				sResourceName = jQuery.sap.getResourceName(sTemplateName, ".fragment.html");
 				sHTML = jQuery.sap.loadResource(sResourceName);
-				// TODO discuss 
+				// TODO discuss
 				// a) why caching at all (more precise: why for HTML fragment although we refused to do it for other view/fragment types - risk of a memory leak!)
 				// b) why cached via URL instead of via name? Any special scenario in mind?
 				_mHTMLTemplates[sUrl] = sHTML;
 			}
 			return sHTML;
 		};
-	
+
 		Fragment.registerType("HTML", {
 			init: function(mSettings) {
 				// DeclarativeSupport automatically uses set/getContent, but Fragment should not have such an aggregation and should not be parent of any control
-				// FIXME: the other aggregation methods are not implemented. They are currently not used, but who knows... 
+				// FIXME: the other aggregation methods are not implemented. They are currently not used, but who knows...
 				this._aContent = [];
 				this.getContent = function() {
 					return this._aContent;
@@ -553,12 +567,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 				this.addContent = function(oControl) {
 					this._aContent.push(oControl);
 				};
-				
+
 				this._oContainingView = mSettings.containingView || this;
-				
+
 				var vHTML = mSettings.fragmentContent || _getHTMLTemplate(mSettings.fragmentName);
 				this._oTemplate = document.createElement("div");
-	
+
 				if (typeof vHTML === "string") {
 					this._oTemplate.innerHTML = vHTML;
 				} else {
@@ -569,13 +583,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 					}
 					this._oTemplate.appendChild(oFragment);
 				}
-	
+
 				var oMetaElement = this._oTemplate.getElementsByTagName("template")[0];
 				var oProperties = this.getMetadata().getAllProperties();
-	
+
 				if (oMetaElement) {
 					var that = this;
-					var DeclarativeSupport = DeclarativeSupport1;
 					jQuery.each(oMetaElement.attributes, function(iIndex, oAttr) {
 						var sName = DeclarativeSupport.convertAttributeToSettingName(oAttr.name, that.getId());
 						var sValue = oAttr.value;
@@ -598,12 +611,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './DeclarativeS
 					// Make the shadow DOM available in the DOM
 					this._oTemplate.appendChild(oFragment);
 				}
-	
+
 				// unset any preprocessors (e.g. from an enclosing HTML view)
 				var that = this;
 				ManagedObject.runWithPreprocessors(function() {
-					DeclarativeSupport1.compile(that._oTemplate, that);
-	
+					DeclarativeSupport.compile(that._oTemplate, that);
+
 					// FIXME declarative support automatically inject the content into that through "that.addContent()"
 					var content = that.getContent();
 					if (content && content.length === 1) {
