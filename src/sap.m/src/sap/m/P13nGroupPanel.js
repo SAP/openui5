@@ -231,88 +231,128 @@ sap.ui.define([
 	};
 
 	P13nGroupPanel.prototype.exit = function() {
-		this._aKeyFields = null;
-		this._aOperations = null;
-	};
 
-	P13nGroupPanel.prototype.addItem = function(oItem) {
-		P13nPanel.prototype.addItem.apply(this, arguments);
-
-		var oKeyField = {
-			key: oItem.getColumnKey(),
-			text: oItem.getText(),
-			tooltip: oItem.getTooltip()
+		var destroyHelper = function(o) {
+			if (o && o.destroy) {
+				o.destroy();
+			}
+			return null;
 		};
 
-		this._aKeyFields.push(oKeyField);
-
-		if (this._oGroupPanel) {
-			this._oGroupPanel.addKeyField(oKeyField);
-		}
+		this._aKeyFields = destroyHelper(this._aKeyFields);
+		this._aOperations = destroyHelper(this._aOperations);
 	};
 
-	// TODO ER:fast implementation, please check!
-	P13nGroupPanel.prototype.destroyItems = function() {
-		this.destroyAggregation("items");
-		if (this._oGroupPanel) {
-			this._oGroupPanel.removeAllKeyFields();
-		}
-		return this;
-	};
+	P13nGroupPanel.prototype.onBeforeRendering = function() {
+		// P13nPanel.prototype.onBeforeRendering.apply(this, arguments); does not exist!!!!
 
-	P13nGroupPanel.prototype.addGroupItem = function(oGroupItem) {
-		this.addAggregation("groupItems", oGroupItem);
+		if (this._bUpdateRequired) {
+			this._bUpdateRequired = false;
 
-		var aConditions = [];
-
-		this.getGroupItems().forEach(function(oGroupItem_) {
-			aConditions.push({
-				key: oGroupItem_.getKey(),
-				keyField: oGroupItem_.getColumnKey(),
-				operation: oGroupItem_.getOperation(),
-				showIfGrouped: oGroupItem_.getShowIfGrouped()
+			var aKeyFields = [];
+			var sModelName = (this.getBindingInfo("items") || {}).model;
+			var fGetValueOfProperty = function(sName, oContext, oItem) {
+				var oBinding = oItem.getBinding(sName);
+				if (oBinding && oContext) {
+					return oContext.getObject()[oBinding.getPath()];
+				}
+				return oItem.getMetadata().getProperty(sName) ? oItem.getProperty(sName) : oItem.getAggregation(sName);
+			};
+			this.getItems().forEach(function(oItem_) {
+				var oContext = oItem_.getBindingContext(sModelName);
+				// Update key of model (in case of 'restore' the key in model gets lost because it is overwritten by Restore Snapshot)
+				if (oItem_.getBinding("key")) {
+					oContext.getObject()[oItem_.getBinding("key").getPath()] = oItem_.getKey();
+				}
+				aKeyFields.push({
+					key: oItem_.getColumnKey(),
+					text: fGetValueOfProperty("text", oContext, oItem_),
+					tooltip: fGetValueOfProperty("tooltip", oContext, oItem_)
+				});
 			});
-		});
+			this._oGroupPanel.setKeyFields(aKeyFields);
 
-		if (!this._bIgnoreBindCalls) {
-			this._oGroupPanel.setConditions(aConditions);
-		}
-	};
-
-	P13nGroupPanel.prototype.insertGroupItem = function(oGroupItem) {
-		this.insertAggregation("groupItems", oGroupItem);
-		// TODO: implement this
-		return this;
-	};
-
-	P13nGroupPanel.prototype.updateGroupItems = function(sReason) {
-		this.updateAggregation("groupItems");
-
-		if (sReason !== "change") {
-			return;
-		}
-		if (!this._bIgnoreBindCalls) {
 			var aConditions = [];
+			sModelName = (this.getBindingInfo("groupItems") || {}).model;
 			this.getGroupItems().forEach(function(oGroupItem_) {
-				// Note: current implementation assumes that the length of sortItems aggregation is equal
+				// Note: current implementation assumes that the length of groupItems aggregation is equal
 				// to the number of corresponding model items.
 				// Currently the model data is up-to-date so we need to resort to the Binding Context;
 				// the "groupItems" aggregation data - obtained via getGroupItems() - has the old state !
-				var oContext = oGroupItem_.getBindingContext();
-				var oModelItem = oContext.getObject();
+				var oContext = oGroupItem_.getBindingContext(sModelName);
+				// Update key of model (in case of 'restore' the key in model gets lost because it is overwritten by Restore Snapshot)
+				if (oGroupItem_.getBinding("key")) {
+					oContext.getObject()[oGroupItem_.getBinding("key").getPath()] = oGroupItem_.getKey();
+				}
 				aConditions.push({
 					key: oGroupItem_.getKey(),
-					keyField: oModelItem.columnKey,
-					operation: oModelItem.operation,
-					showIfGrouped: oModelItem.showIfGrouped
+					keyField: fGetValueOfProperty("columnKey", oContext, oGroupItem_),
+					operation: fGetValueOfProperty("operation", oContext, oGroupItem_),
+					showIfGrouped: fGetValueOfProperty("showIfGrouped", oContext, oGroupItem_)
 				});
 			});
 			this._oGroupPanel.setConditions(aConditions);
 		}
 	};
 
+	P13nGroupPanel.prototype.addItem = function(oItem) {
+		P13nPanel.prototype.addItem.apply(this, arguments);
+
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
+	};
+
+	P13nGroupPanel.prototype.removeItem = function(oItem) {
+		P13nPanel.prototype.removeItem.apply(this, arguments);
+
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
+	};
+
+	P13nGroupPanel.prototype.destroyItems = function() {
+		this.destroyAggregation("items");
+
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
+
+		return this;
+	};
+
+	P13nGroupPanel.prototype.addGroupItem = function(oGroupItem) {
+		this.addAggregation("groupItems", oGroupItem);
+
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
+	};
+
+	P13nGroupPanel.prototype.insertGroupItem = function(oGroupItem) {
+		this.insertAggregation("groupItems", oGroupItem);
+
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
+
+		return this;
+	};
+
+	P13nGroupPanel.prototype.updateGroupItems = function(sReason) {
+		this.updateAggregation("groupItems");
+
+		if (sReason == "change" && !this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
+	};
+
 	P13nGroupPanel.prototype.removeGroupItem = function(oGroupItem) {
 		oGroupItem = this.removeAggregation("groupItems", oGroupItem);
+
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 
 		return oGroupItem;
 	};
@@ -320,7 +360,9 @@ sap.ui.define([
 	P13nGroupPanel.prototype.removeAllGroupItems = function() {
 		var aGroupItems = this.removeAllAggregation("groupItems");
 
-		this._oGroupPanel.setConditions([]);
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 
 		return aGroupItems;
 	};
@@ -329,7 +371,7 @@ sap.ui.define([
 		this.destroyAggregation("groupItems");
 
 		if (!this._bIgnoreBindCalls) {
-			this._oGroupPanel.setConditions([]);
+			this._bUpdateRequired = true;
 		}
 
 		return this;
@@ -343,19 +385,10 @@ sap.ui.define([
 			var sOperation = oEvent.getParameter("operation");
 			var sKey = oEvent.getParameter("key");
 			var iIndex = oEvent.getParameter("index");
-
-			var oGroupItemData = null;
-			if (oNewData) {
-				oGroupItemData = new sap.m.P13nGroupItem({
-					key: sKey,
-					columnKey: oNewData.keyField,
-					operation: oNewData.operation,
-					showIfGrouped: oNewData.showIfGrouped
-				});
-			}
+			var oGroupItem;
 
 			if (sOperation === "update") {
-				var oGroupItem = that.getGroupItems()[iIndex];
+				oGroupItem = that.getGroupItems()[iIndex];
 				if (oGroupItem) {
 					oGroupItem.setColumnKey(oNewData.keyField);
 					oGroupItem.setOperation(oNewData.operation);
@@ -364,23 +397,31 @@ sap.ui.define([
 				that.fireUpdateGroupItem({
 					key: sKey,
 					index: iIndex,
-					groupItemData: oGroupItemData
+					groupItemData: oGroupItem
 				});
 			}
 			if (sOperation === "add") {
+				oGroupItem = new sap.m.P13nGroupItem({
+					key: sKey,
+					columnKey: oNewData.keyField,
+					operation: oNewData.operation,
+					showIfGrouped: oNewData.showIfGrouped
+				});
 				that._bIgnoreBindCalls = true;
 				that.fireAddGroupItem({
 					key: sKey,
 					index: iIndex,
-					groupItemData: oGroupItemData
+					groupItemData: oGroupItem
 				});
 				that._bIgnoreBindCalls = false;
 			}
 			if (sOperation === "remove") {
+				that._bIgnoreBindCalls = true;
 				that.fireRemoveGroupItem({
 					key: sKey,
 					index: iIndex
 				});
+				that._bIgnoreBindCalls = false;
 			}
 		};
 	};

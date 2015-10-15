@@ -156,24 +156,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds a new condition object.
-	 * 
-	 * @private
-	 * @param {object} oCondition the new condition
-	 */
-	P13nFilterPanel.prototype._addCondition = function(oCondition) {
-		if (!oCondition.exclude) {
-			this._oIncludeFilterPanel.addCondition(oCondition);
-		} else {
-			this._oExcludeFilterPanel.addCondition(oCondition);
-		}
-
-		if (this._oExcludeFilterPanel.getConditions().length > 0) {
-			this._oExcludePanel.setExpanded(true);
-		}
-	};
-
-	/**
 	 * Returns the array of conditions.
 	 * 
 	 * @public
@@ -246,13 +228,16 @@ sap.ui.define([
 	 * 
 	 * @public
 	 * @since 1.26
-	 * @param {array} array of operations [<code>sap.m.P13nConditionOperation.BT</code>, <code>sap.m.P13nConditionOperation.EQ</code>]
+	 * @param {sap.m.P13nConditionOperation[]} array of operations [<code>sap.m.P13nConditionOperation.BT</code>,
+	 *        <code>sap.m.P13nConditionOperation.EQ</code>]
+	 * @param {string} the type for which the operations are defined
 	 */
-	P13nFilterPanel.prototype.setIncludeOperations = function(aOperation) {
-		this._aIncludeOperations = aOperation;
+	P13nFilterPanel.prototype.setIncludeOperations = function(aOperation, sType) {
+		sType = sType || "default";
+		this._aIncludeOperations[sType] = aOperation;
 
 		if (this._oIncludeFilterPanel) {
-			this._oIncludeFilterPanel.setOperations(this._aIncludeOperations);
+			this._oIncludeFilterPanel.setOperations(this._aIncludeOperations[sType], sType);
 		}
 	};
 
@@ -261,11 +246,13 @@ sap.ui.define([
 	 * 
 	 * @public
 	 * @since 1.26
-	 * @returns {array} array of operations [<code>sap.m.P13nConditionOperation.BT</code>, <code>sap.m.P13nConditionOperation.EQ</code>]
+	 * @param {string} the type for which the operations are defined
+	 * @returns {sap.m.P13nConditionOperation} array of operations [<code>sap.m.P13nConditionOperation.BT</code>,
+	 *          <code>sap.m.P13nConditionOperation.EQ</code>]
 	 */
-	P13nFilterPanel.prototype.getIncludeOperations = function() {
+	P13nFilterPanel.prototype.getIncludeOperations = function(sType) {
 		if (this._oIncludeFilterPanel) {
-			return this._oIncludeFilterPanel.getOperations();
+			return this._oIncludeFilterPanel.getOperations(sType);
 		}
 	};
 
@@ -274,13 +261,16 @@ sap.ui.define([
 	 * 
 	 * @public
 	 * @since 1.26
-	 * @param {array} array of operations [<code>sap.m.P13nConditionOperation.BT</code>, <code>sap.m.P13nConditionOperation.EQ</code>]
+	 * @param {sap.m.P13nConditionOperation[]} array of operations [<code>sap.m.P13nConditionOperation.BT</code>,
+	 *        <code>sap.m.P13nConditionOperation.EQ</code>]
+	 * @param {string} the type for which the operations are defined
 	 */
-	P13nFilterPanel.prototype.setExcludeOperations = function(aOperation) {
-		this._aExcludeOperations = aOperation;
+	P13nFilterPanel.prototype.setExcludeOperations = function(aOperation, sType) {
+		sType = sType || "default";
+		this._aExcludeOperations[sType] = aOperation;
 
 		if (this._oExcludeFilterPanel) {
-			this._oExcludeFilterPanel.setOperations(this._aExcludeOperations);
+			this._oExcludeFilterPanel.setOperations(this._aExcludeOperations[sType], sType);
 		}
 	};
 
@@ -289,19 +279,22 @@ sap.ui.define([
 	 * 
 	 * @public
 	 * @since 1.26
-	 * @returns {array} array of operations [<code>sap.m.P13nConditionOperation.BT</code>, <code>sap.m.P13nConditionOperation.EQ</code>]
+	 * @param {string} the type for which the operations are defined
+	 * @returns {sap.m.P13nConditionOperation[]} array of operations [<code>sap.m.P13nConditionOperation.BT</code>,
+	 *          <code>sap.m.P13nConditionOperation.EQ</code>]
 	 */
-	P13nFilterPanel.prototype.getExcludeOperations = function() {
+	P13nFilterPanel.prototype.getExcludeOperations = function(sType) {
 		if (this._oExcludeFilterPanel) {
-			return this._oExcludeFilterPanel.getOperations();
+			return this._oExcludeFilterPanel.getOperations(sType);
 		}
 	};
 
 	/**
 	 * Setter for a KeyFields array.
 	 * 
-	 * @public
+	 * @private
 	 * @since 1.26
+	 * @deprecated Since 1.34. This method does not work anymore - you should use the Items aggregation
 	 * @param {array} array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text : "Name"}]
 	 */
 	P13nFilterPanel.prototype.setKeyFields = function(aKeyFields) {
@@ -377,13 +370,33 @@ sap.ui.define([
 		// init some resources
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-		if (!this._aIncludeOperations) {
+		this._aIncludeOperations = {};
+
+		if (!this._aIncludeOperations["default"]) {
 			this.setIncludeOperations([
 				sap.m.P13nConditionOperation.Contains, sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.StartsWith, sap.m.P13nConditionOperation.EndsWith, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
 			]);
 		}
 
-		if (!this._aExcludeOperations) {
+		if (!this._aIncludeOperations["string"]) {
+			this.setIncludeOperations([
+				sap.m.P13nConditionOperation.Contains, sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.StartsWith, sap.m.P13nConditionOperation.EndsWith, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
+			], "string");
+		}
+		if (!this._aIncludeOperations["date"]) {
+			this.setIncludeOperations([
+				sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
+			], "date");
+		}
+		if (!this._aIncludeOperations["numeric"]) {
+			this.setIncludeOperations([
+				sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
+			], "numeric");
+		}
+
+		this._aExcludeOperations = {};
+
+		if (!this._aExcludeOperations["default"]) {
 			this.setExcludeOperations([
 				sap.m.P13nConditionOperation.EQ
 			]);
@@ -403,16 +416,10 @@ sap.ui.define([
 			layoutMode: this.getLayoutMode(),
 			dataChange: this._handleDataChange()
 		});
-		this._oIncludeFilterPanel.setOperations(this._aIncludeOperations);
-		this._oIncludeFilterPanel.setOperations([
-			sap.m.P13nConditionOperation.Contains, sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.StartsWith, sap.m.P13nConditionOperation.EndsWith, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
-		], "string");
-		this._oIncludeFilterPanel.setOperations([
-			sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
-		], "date");
-		this._oIncludeFilterPanel.setOperations([
-			sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
-		], "numeric");
+
+		for ( var sType in this._aIncludeOperations) {
+			this._oIncludeFilterPanel.setOperations(this._aIncludeOperations[sType], sType);
+		}
 
 		this._oIncludePanel.addContent(this._oIncludeFilterPanel);
 
@@ -433,7 +440,10 @@ sap.ui.define([
 			layoutMode: this.getLayoutMode(),
 			dataChange: this._handleDataChange()
 		});
-		this._oExcludeFilterPanel.setOperations(this._aExcludeOperations);
+
+		for ( var sType in this._aExcludeOperations) {
+			this._oExcludeFilterPanel.setOperations(this._aExcludeOperations[sType], sType);
+		}
 
 		this._oExcludePanel.addContent(this._oExcludeFilterPanel);
 
@@ -458,37 +468,84 @@ sap.ui.define([
 		this._oRb = destroyHelper(this._oRb);
 	};
 
+	P13nFilterPanel.prototype.onBeforeRendering = function() {
+		// P13nPanel.prototype.onBeforeRendering.apply(this, arguments); does not exist!!!!
+
+		if (this._bUpdateRequired) {
+			this._bUpdateRequired = false;
+
+			var aKeyFields = [];
+			var sModelName = (this.getBindingInfo("items") || {}).model;
+			var fGetValueOfProperty = function(sName, oContext, oItem) {
+				var oBinding = oItem.getBinding(sName);
+				if (oBinding && oContext) {
+					return oContext.getObject()[oBinding.getPath()];
+				}
+				return oItem.getMetadata().getProperty(sName) ? oItem.getProperty(sName) : oItem.getAggregation(sName);
+			};
+			this.getItems().forEach(function(oItem_) {
+				var oContext = oItem_.getBindingContext(sModelName);
+				// Update key of model (in case of 'restore' the key in model gets lost because it is overwritten by Restore Snapshot)
+				if (oItem_.getBinding("key")) {
+					oContext.getObject()[oItem_.getBinding("key").getPath()] = oItem_.getKey();
+				}
+				aKeyFields.push({
+					key: oItem_.getColumnKey(),
+					text: fGetValueOfProperty("text", oContext, oItem_),
+					tooltip: fGetValueOfProperty("tooltip", oContext, oItem_),
+					maxLength: fGetValueOfProperty("maxLength", oContext, oItem_),
+					type: fGetValueOfProperty("type", oContext, oItem_),
+					precision: fGetValueOfProperty("precision", oContext, oItem_),
+					scale: fGetValueOfProperty("scale", oContext, oItem_),
+					isDefault: fGetValueOfProperty("isDefault", oContext, oItem_)
+				});
+			});
+			this.setKeyFields(aKeyFields);
+
+			var aConditions = [];
+			sModelName = (this.getBindingInfo("filterItems") || {}).model;
+			this.getFilterItems().forEach(function(oFilterItem_) {
+				// Note: current implementation assumes that the length of filterItems aggregation is equal
+				// to the number of corresponding model items.
+				// Currently the model data is up-to-date so we need to resort to the Binding Context;
+				// the "filterItems" aggregation data - obtained via getFilterItems() - has the old state !
+				var oContext = oFilterItem_.getBindingContext(sModelName);
+				// Update key of model (in case of 'restore' the key in model gets lost because it is overwritten by Restore Snapshot)
+				if (oFilterItem_.getBinding("key") && oContext) {
+					oContext.getObject()[oFilterItem_.getBinding("key").getPath()] = oFilterItem_.getKey();
+				}
+				aConditions.push({
+					key: oFilterItem_.getKey(),
+					keyField: fGetValueOfProperty("columnKey", oContext, oFilterItem_),
+					operation: fGetValueOfProperty("operation", oContext, oFilterItem_),
+					value1: fGetValueOfProperty("value1", oContext, oFilterItem_),
+					value2: fGetValueOfProperty("value2", oContext, oFilterItem_),
+					exclude: fGetValueOfProperty("exclude", oContext, oFilterItem_)
+				});
+			});
+			this.setConditions(aConditions);
+		}
+	};
+
 	P13nFilterPanel.prototype.addItem = function(oItem) {
 		P13nPanel.prototype.addItem.apply(this, arguments);
 
-		var oKeyField = {
-			key: oItem.getColumnKey(),
-			text: oItem.getText(),
-			tooltip: oItem.getTooltip(),
-			maxLength: oItem.getMaxLength(),
-			type: oItem.getType(),
-			precision: oItem.getPrecision(),
-			scale: oItem.getScale(),
-			isDefault: oItem.getIsDefault()
-		};
-
-		this._aKeyFields.push(oKeyField);
-
-		if (this._oIncludeFilterPanel) {
-			this._oIncludeFilterPanel.addKeyField(oKeyField);
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
 		}
-		if (this._oExcludeFilterPanel) {
-			this._oExcludeFilterPanel.addKeyField(oKeyField);
-		}
+	};
+
+	P13nFilterPanel.prototype.removeItem = function(oItem) {
+		P13nPanel.prototype.removeItem.apply(this, arguments);
+
+		this._bUpdateRequired = true;
 	};
 
 	P13nFilterPanel.prototype.destroyItems = function() {
 		this.destroyAggregation("items");
-		if (this._oIncludeFilterPanel) {
-			this._oIncludeFilterPanel.removeAllKeyFields();
-		}
-		if (this._oExcludeFilterPanel) {
-			this._oExcludeFilterPanel.removeAllKeyFields();
+
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
 		}
 		return this;
 	};
@@ -497,59 +554,34 @@ sap.ui.define([
 		this.addAggregation("filterItems", oFilterItem);
 
 		if (!this._bIgnoreBindCalls) {
-			var oCondition = {
-				exclude: oFilterItem.getExclude(),
-				key: oFilterItem.getKey(),
-				keyField: oFilterItem.getColumnKey(),
-				operation: oFilterItem.getOperation(),
-				value1: oFilterItem.getValue1(),
-				value2: oFilterItem.getValue2()
-			};
-
-			this._addCondition(oCondition);
-
-			if (!oFilterItem.getKey()) {
-				oFilterItem.setKey(oCondition.key);
-			}
+			this._bUpdateRequired = true;
 		}
 	};
 
 	P13nFilterPanel.prototype.insertFilterItem = function(oFilterItem) {
 		this.insertAggregation("filterItems", oFilterItem);
-		// TODO: implement this
+
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
+
 		return this;
 	};
 
 	P13nFilterPanel.prototype.updateFilterItems = function(sReason) {
 		this.updateAggregation("filterItems");
 
-		if (sReason !== "change") {
-			return;
-		}
-		if (!this._bIgnoreBindCalls) {
-			var aConditions = [];
-			this.getFilterItems().forEach(function(oFilterItem_) {
-				// Note: current implementation assumes that the length of filterItems aggregation is equal
-				// to the number of corresponding model items.
-				// Currently the model data is up-to-date so we need to resort to the Binding Context;
-				// the "filterItems" aggregation data - obtained via getFilterItems() - has the old state !
-				var oContext = oFilterItem_.getBindingContext();
-				var oModelItem = oContext.getObject();
-				aConditions.push({
-					key: oFilterItem_.getKey(),
-					exclude: oModelItem.exclude,
-					keyField: oModelItem.columnKey,
-					operation: oModelItem.operation,
-					value1: oModelItem.value1,
-					value2: oModelItem.value2
-				});
-			});
-			this.setConditions(aConditions);
+		if (sReason == "change" && !this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
 		}
 	};
 
 	P13nFilterPanel.prototype.removeFilterItem = function(oFilterItem) {
 		oFilterItem = this.removeAggregation("filterItems", oFilterItem);
+
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 
 		return oFilterItem;
 	};
@@ -558,7 +590,7 @@ sap.ui.define([
 		var aFilterItems = this.removeAllAggregation("filterItems");
 
 		if (!this._bIgnoreBindCalls) {
-			this.setConditions([]);
+			this._bUpdateRequired = true;
 		}
 
 		return aFilterItems;
@@ -568,7 +600,7 @@ sap.ui.define([
 		this.destroyAggregation("filterItems");
 
 		if (!this._bIgnoreBindCalls) {
-			this.setConditions([]);
+			this._bUpdateRequired = true;
 		}
 
 		return this;
@@ -581,21 +613,32 @@ sap.ui.define([
 			var oNewData = oEvent.getParameter("newData");
 			var sOperation = oEvent.getParameter("operation");
 			var sKey = oEvent.getParameter("key");
-			var iIndex = oEvent.getParameter("index");
+			var iConditionIndex = oEvent.getParameter("index");
+			var oFilterItem;
 
-			var oFilterItemData = null;
-			if (oNewData) {
-				oFilterItemData = {
-					key: sKey,
-					exclude: oNewData.exclude,
-					columnKey: oNewData.keyField,
-					operation: oNewData.operation,
-					value1: oNewData.value1,
-					value2: oNewData.value2
-				};
-			}
+			// map the iConditionIndex to the index in the FilterItems
+			var iIndex = -1;
+			var bExclude = oEvent.getSource() === that._oExcludeFilterPanel;
+			that.getFilterItems().some(function(oItem, i) {
+				// window.console.log(i+ " " + oItem.getValue1());
+				if ((!oItem.getExclude() && !bExclude) || (oItem.getExclude() && bExclude)) {
+					iConditionIndex--;
+				}
+				iIndex = i;
+				return iConditionIndex < 0;
+			}, this);
+
+// that.getFilterItems().forEach(function(oItem, i) {
+// window.console.log(i+ " Items: " + oItem.getValue1());
+// }, this);
+//			
+// var oData = that.getModel().getData();
+// oData.persistentData.filter.filterItems.forEach(function(oItem, i) {
+// window.console.log(i+ " model: " + oItem.value1);
+// });
+
 			if (sOperation === "update") {
-				var oFilterItem = that.getFilterItems()[iIndex];
+				oFilterItem = that.getFilterItems()[iIndex];
 				if (oFilterItem) {
 					oFilterItem.setExclude(oNewData.exclude);
 					oFilterItem.setColumnKey(oNewData.keyField);
@@ -606,15 +649,27 @@ sap.ui.define([
 				that.fireUpdateFilterItem({
 					key: sKey,
 					index: iIndex,
-					filterItemData: oFilterItemData
+					filterItemData: oFilterItem
 				});
 			}
 			if (sOperation === "add") {
+				if (iConditionIndex >= 0) {
+					iIndex++;
+				}
+
+				oFilterItem = new sap.m.P13nFilterItem({
+					key: sKey,
+					columnKey: oNewData.keyField,
+					exclude: oNewData.exclude,
+					operation: oNewData.operation,
+					value1: oNewData.value1,
+					value2: oNewData.value2
+				});
 				that._bIgnoreBindCalls = true;
 				that.fireAddFilterItem({
 					key: sKey,
 					index: iIndex,
-					filterItemData: oFilterItemData
+					filterItemData: oFilterItem
 				});
 				that._bIgnoreBindCalls = false;
 			}
@@ -626,6 +681,16 @@ sap.ui.define([
 				});
 				that._bIgnoreBindCalls = false;
 			}
+
+// that.getFilterItems().forEach(function(oItem, i) {
+// window.console.log(i+ " Items: " + oItem.getValue1());
+// }, this);
+//			
+// var oData = that.getModel().getData();
+// oData.persistentData.filter.filterItems.forEach(function(oItem, i) {
+// window.console.log(i+ " model: " + oItem.value1);
+// });
+
 		};
 	};
 

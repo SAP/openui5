@@ -4,206 +4,331 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
 <title>Test Page for sap.m.P13nSortPanel</title>
-<script id="sap-ui-bootstrap" 
-	data-sap-ui-theme="sap_bluecrystal"
-	type="text/javascript" 
-	data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.m" 
-	src="../../../../resources/sap-ui-core.js">
+<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+	type="text/javascript" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+	
 </script>
 
-<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<link rel="stylesheet"
+	href="../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script type="text/javascript">
-(function() {
-	jQuery.sap.require("sap.m.P13nSortPanel");
+	(function() {
+		jQuery.sap.require("sap.m.P13nSortPanel");
 
-	module("Properties", {
-		setup: function() {
-		},
-		teardown: function() {
-		}
-	});
-
-	var bindSortPanel = function(oP13nSortPanel) {
-		var oData = {
-			"items" : [ {
-				"key" : null,
-				"text" : "(none)",
-				"tooltip" : "nix"
-			},  {
-				"key" : "c0",
-				"text" : "Name"
-			}, {
-				"key" : "c1",
-				"text" : "Color"
-			}, {
-				"key" : "c2",
-				"text" : "Number"
-			}],
-			"sortItems" : [ {
-				"key" : "s0",
-				"columnKey" : "c1",
-				"operation" : "Ascending"
-			}, {
-				"key" : "s1",
-				"columnKey" : "c0",
-				"operation" : "Descending"
-			} ]
-		};		
-
-		var oModel = new sap.ui.model.json.JSONModel(oData);
-		
-		oP13nSortPanel.setModel(oModel);
-		oP13nSortPanel.bindItems("/items", new sap.m.P13nItem({
-			columnKey : "{key}",
-			text : "{text}",
-			tooltip : "{tooltip}"
-		}));
-		oP13nSortPanel.bindSortItems("/sortItems", new sap.m.P13nSortItem({
-			key : "{key}",
-			operation : "{operation}",
-			columnKey : "{columnKey}"
-		}));
-				
-	};
-	
-	test("Default Values", function(){
-		
-		// system under test
-		var oP13nSortPanel = new sap.m.P13nSortPanel({
-			layoutMode : "Desktop"
-		});
-
-		// arrange
-		oP13nSortPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// assertions
-		strictEqual(oP13nSortPanel.getLayoutMode(), "Desktop", "getLayoutMode should be 'Desktop'");
-
-		// cleanup
-		oP13nSortPanel.destroy();
-	});
-
-	test("bind Items test", function(){
-		
-		// system under test
-		var oP13nSortPanel = new sap.m.P13nSortPanel();
-
-		bindSortPanel(oP13nSortPanel);
-
-		// arrange
-		oP13nSortPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// assertions
-		var nItems= 4;
-		strictEqual(oP13nSortPanel.getItems().length, nItems, "length of getItems should be '" + nItems + "'");
-
-		// cleanup
-		oP13nSortPanel.destroy();
-	});
-	
-	test("bind SortItems test", function(){
-		
-		// system under test
-		var oP13nSortPanel = new sap.m.P13nSortPanel();
-
-		bindSortPanel(oP13nSortPanel);
-
-		// arrange
-		oP13nSortPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// assertions
-		var nItems= 2;
-		strictEqual(oP13nSortPanel.getSortItems().length, nItems, "length of getSortItems should be '" + nItems + "'");
-
-		// cleanup
-		oP13nSortPanel.destroy();
-	});
-	
-	test("test model update events", function(){
-		
-		// system under test
-		var oP13nSortPanel = new sap.m.P13nSortPanel({
-			removeSortItem: function(oEvent) {
-				var params = oEvent.getParameters();
-				var oModel = oP13nSortPanel.getModel(); 
-				var oData = oModel.getData();
-				oData.sortItems.forEach(function(oItem, iIndex) {
-					if (oItem.key === params.key) {
-						oData.sortItems.splice(iIndex, 1);
-						oModel.setData(oData, true);
-						return;
-					}
-				});					
+		module("Properties", {
+			setup: function() {
 			},
-			addSortItem: function(oEvent) {
-				var params = oEvent.getParameters();
-				var oModel = oP13nSortPanel.getModel(); 
-				var oData = oModel.getData();
-				var oSortItem = {
-					key : params.key,
-					columnKey : params.sortItemData.getColumnKey(),
-					operation : params.sortItemData.getOperation()
-				};
-				if (params.index) {
-					oData.sortItems.splice(params.index, 0, oSortItem);
-				} else {
-					oData.sortItems.push(oSortItem);
-				}
-				oModel.setData(oData, true);
+			teardown: function() {
 			}
 		});
+		var gData = {
+			"items": [
+				{
+					"key": null,
+					"text": "(none)",
+					"tooltip": "nix"
+				}, {
+					"key": "c0",
+					"text": "Name"
+				}, {
+					"key": "c1",
+					"text": "Color"
+				}, {
+					"key": "c2",
+					"text": "Number"
+				}
+			],
+			"sortItems": [
+				{
+					"key": "s0",
+					"columnKey": "c1",
+					"operation": "Ascending"
+				}, {
+					"key": "s1",
+					"columnKey": "c0",
+					"operation": "Descending"
+				}
+			]
+		};
 
-		bindSortPanel(oP13nSortPanel);
+		var bindSortPanel = function(oP13nSortPanel) {
+			var oModel = new sap.ui.model.json.JSONModel(jQuery.extend(true, {}, gData));
 
-		// arrange
-		oP13nSortPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+			oP13nSortPanel.setModel(oModel);
+			oP13nSortPanel.bindItems("/items", new sap.m.P13nItem({
+				columnKey: "{key}",
+				text: "{text}",
+				tooltip: "{tooltip}"
+			}));
+			oP13nSortPanel.bindSortItems("/sortItems", new sap.m.P13nSortItem({
+				key: "{key}",
+				operation: "{operation}",
+				columnKey: "{columnKey}"
+			}));
+		};
 
-		// assertions
-		// Remove item
- 		var nItems= 1;
-		var oConditionPanel= oP13nSortPanel._oSortPanel;
-		oConditionPanel._handleRemoveCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
-		strictEqual(oP13nSortPanel.getSortItems().length, nItems, "length of getSortItems should be '" + nItems + "'");
-		
-		// Add item
-		nItems= 2;
- 		oConditionPanel._handleAddCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
-		
- 		// Change item
-		var oConditionGrid = oConditionPanel._oConditionsGrid.getContent()[1];
-		oConditionGrid.keyField.setSelectedKey("c0");
-		oConditionPanel._changeField(oConditionGrid);		
-		
-		strictEqual(oP13nSortPanel.getSortItems().length, nItems, "length of getSortItems should be '" + nItems + "'");
+		test("Default Values", function() {
 
-		// cleanup
-		oP13nSortPanel.destroy();
-	});
+			// system under test
+			var oP13nSortPanel = new sap.m.P13nSortPanel({
+				layoutMode: "Desktop"
+			});
 
+			// arrange
+			oP13nSortPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
-}());
+			// assertions
+			strictEqual(oP13nSortPanel.getLayoutMode(), "Desktop", "getLayoutMode should be 'Desktop'");
 
+			// cleanup
+			oP13nSortPanel.destroy();
+		});
+
+		test("bind Items test", function() {
+
+			// system under test
+			var oP13nSortPanel = new sap.m.P13nSortPanel();
+
+			bindSortPanel(oP13nSortPanel);
+
+			// arrange
+			oP13nSortPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			var nItems = 4;
+			strictEqual(oP13nSortPanel.getItems().length, nItems, "length of getItems should be '" + nItems + "'");
+
+			// cleanup
+			oP13nSortPanel.destroy();
+		});
+
+		test("bind SortItems test", function() {
+
+			// system under test
+			var oP13nSortPanel = new sap.m.P13nSortPanel();
+
+			bindSortPanel(oP13nSortPanel);
+
+			// arrange
+			oP13nSortPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			var nItems = 2;
+			strictEqual(oP13nSortPanel.getSortItems().length, nItems, "length of getSortItems should be '" + nItems + "'");
+
+			// cleanup
+			oP13nSortPanel.destroy();
+		});
+
+		test("test model update events", function() {
+
+			// system under test
+			var oP13nSortPanel = new sap.m.P13nSortPanel({
+				removeSortItem: function(oEvent) {
+					var params = oEvent.getParameters();
+					var oModel = oP13nSortPanel.getModel();
+					var oData = oModel.getData();
+					oData.sortItems.forEach(function(oItem, iIndex) {
+						if (oItem.key === params.key) {
+							oData.sortItems.splice(iIndex, 1);
+							oModel.setData(oData, true);
+							return;
+						}
+					});
+				},
+				addSortItem: function(oEvent) {
+					var params = oEvent.getParameters();
+					var oModel = oP13nSortPanel.getModel();
+					var oData = oModel.getData();
+					var oSortItem = {
+						key: params.key,
+						columnKey: params.sortItemData.getColumnKey(),
+						operation: params.sortItemData.getOperation()
+					};
+					if (params.index) {
+						oData.sortItems.splice(params.index, 0, oSortItem);
+					} else {
+						oData.sortItems.push(oSortItem);
+					}
+					oModel.setData(oData, true);
+				}
+			});
+
+			bindSortPanel(oP13nSortPanel);
+
+			// arrange
+			oP13nSortPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			// Remove item
+			var nItems = 1;
+			var oConditionPanel = oP13nSortPanel._oSortPanel;
+			oConditionPanel._handleRemoveCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
+			strictEqual(oP13nSortPanel.getSortItems().length, nItems, "length of getSortItems should be '" + nItems + "'");
+
+			// Add item
+			nItems = 2;
+			oConditionPanel._handleAddCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
+
+			// Change item
+			var oConditionGrid = oConditionPanel._oConditionsGrid.getContent()[1];
+			oConditionGrid.keyField.setSelectedKey("c0");
+			oConditionPanel._changeField(oConditionGrid);
+
+			strictEqual(oP13nSortPanel.getSortItems().length, nItems, "length of getSortItems should be '" + nItems + "'");
+
+			// cleanup
+			oP13nSortPanel.destroy();
+		});
+
+		test("bind named model", function() {
+
+			// system under test
+			var oP13nSortPanel = new sap.m.P13nSortPanel();
+
+			var oModel = new sap.ui.model.json.JSONModel(jQuery.extend(true, {}, gData));
+			oP13nSortPanel.setModel(oModel, "myModel");
+			oP13nSortPanel.bindItems("myModel>/items", new sap.m.P13nItem({
+				columnKey: "{myModel>key}",
+				text: "{myModel>text}",
+				tooltip: "{myModel>tooltip}"
+			}));
+			oP13nSortPanel.bindSortItems("myModel>/sortItems", new sap.m.P13nSortItem({
+				key: "{myModel>key}",
+				operation: "{myModel>operation}",
+				columnKey: "{myModel>columnKey}"
+			}));
+
+			// arrange
+			oP13nSortPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			strictEqual(oP13nSortPanel.getSortItems().length, 2, "length of getSortItems should be 2'");
+			strictEqual(oP13nSortPanel.getSortItems().length, 2, "length of getSortItems should be 2'");
+
+			// cleanup
+			oP13nSortPanel.destroy();
+		});
+
+		test("create with aggregations", function() {
+
+			// system under test
+			var oP13nSortPanel = new sap.m.P13nSortPanel({
+				items: [
+					new sap.m.P13nItem({
+						key: null,
+						text: "(none)",
+						tooltip: "nix"
+					}), new sap.m.P13nItem({
+						key: "c0",
+						text: "Name"
+					}), new sap.m.P13nItem({
+						key: "c1",
+						text: "Color"
+					}), new sap.m.P13nItem({
+						key: "c2",
+						text: "Number"
+					})
+				],
+				sortItems: [
+					new sap.m.P13nSortItem({
+						key: "s0",
+						columnKey: "c1",
+						operation: "Ascending"
+					}), new sap.m.P13nSortItem({
+						key: "s1",
+						columnKey: "c0",
+						operation: "Descending"
+					})
+				]
+			});
+			// arrange
+			oP13nSortPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assertions			
+			strictEqual(oP13nSortPanel.getItems().length, 4, "length of getItems should be 4'");
+			strictEqual(oP13nSortPanel.getSortItems().length, 2, "length of getSortItems should be 2'");
+
+			// cleanup
+			oP13nSortPanel.destroy();
+		});
+
+		test("create with addXXX", function() {
+
+			// system under test
+			var oP13nSortPanel = new sap.m.P13nSortPanel();
+
+			// arrange
+			oP13nSortPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oP13nSortPanel.addItem(new sap.m.P13nItem({
+				key: null,
+				text: "(none)",
+				tooltip: "nix"
+			}));
+			oP13nSortPanel.addItem(new sap.m.P13nItem({
+				key: "c0",
+				text: "Name"
+			}));
+			oP13nSortPanel.addItem(new sap.m.P13nItem({
+				key: "c1",
+				text: "Color"
+			}));
+			oP13nSortPanel.addItem(new sap.m.P13nItem({
+				key: "c2",
+				text: "Number"
+			}));
+
+			oP13nSortPanel.addSortItem(new sap.m.P13nSortItem({
+				key: "s0",
+				columnKey: "c1",
+				operation: "Ascending"
+			}));
+			oP13nSortPanel.addSortItem(new sap.m.P13nSortItem({
+				key: "s1",
+				columnKey: "c0",
+				operation: "Descending"
+			}));
+			sap.ui.getCore().applyChanges();
+
+			// assertions			
+			strictEqual(oP13nSortPanel.getItems().length, 4, "length of getItems should be 4'");
+			strictEqual(oP13nSortPanel.getSortItems().length, 2, "length of getSortItems should be 2'");
+
+			// cleanup
+			oP13nSortPanel.destroy();
+		});
+	}());
 </script>
 
 
 </head>
-	<body id="body" class="sapUiBody">
-		<h1 id="qunit-header">qUnit Page for sap.m.P13nSortPanel</h1>
-		<h2 id="qunit-banner"></h2>
-		<h2 id="qunit-userAgent"></h2>
-		<ol id="qunit-tests"></ol>
-				
-		<div id="content"></div>
-	</body>
+<body id="body" class="sapUiBody">
+	<h1 id="qunit-header">qUnit Page for sap.m.P13nSortPanel</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+
+	<div id="content"></div>
+</body>
 </html>
