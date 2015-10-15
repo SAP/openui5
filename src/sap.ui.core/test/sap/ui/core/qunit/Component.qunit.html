@@ -23,9 +23,18 @@
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript"
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 	<!-- Initialization -->
 	<script language="javascript">
+	sinon.config.useFakeTimers = true;
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
 	QUnit.config.autostart = false;
 	jQuery(document).ready(function() {
 		QUnit.start();
@@ -79,7 +88,7 @@
 	});
 	//******************************************************
 
-
+	
  	module("Basic Components");
 
 	test("Simple Component Instance", function(){
@@ -162,7 +171,7 @@
 	test("Basic Test", function(){
 		// check that the layout has the reference to the component
 		var oLayout = oComp.byId("myLayout");
-		var sRefComponentId = oLayout._sOwnerId /* INTERNAL ONLY! */;
+		var sRefComponentId = oLayout._sOwnerId; // INTERNAL ONLY!
 		equal(oComp.getId(), sRefComponentId, "The nested control has the correct component context");
 		// check the nested component having the ID of the parent component
 		var oNestedComponentContainer = oComp.byId("ContButton");
@@ -171,7 +180,7 @@
 		equal(sRefComponentId, sap.ui.core.Component.getOwnerIdFor(oNestedComponent), "The nested component has the correct component context");
 		// check the control in the nested component to have the correct component context
 		var oNestedControl = oNestedComponent.byId("mybutn");
-		equal(sNestedComponentId, oNestedControl._sOwnerId /* INTERNAL ONLY! */, "The nested control has the correct component context");
+		equal(sNestedComponentId, oNestedControl._sOwnerId, "The nested control has the correct component context"); // INTERNAL ONLY!
 	});
 
 	QUnit.module("Routing", {
@@ -263,6 +272,51 @@
 		assert.ok(oRootControl.bIsDestroyed, "Root control got destroyed when the component is destroyed");
 	});
 
+	
+	QUnit.module("Manifest First", {
+		beforeEach : function() {},
+		afterEach : function() {}
+	});
+
+	
+	QUnit.test("Manifest from component instance (sync)", function(assert) {
+		
+		//setup fake server
+		var oManifest = {
+			"sap.app" : {
+				"id" : "samples.components.button"
+			}
+		};
+		
+		var oServer = this.sandbox.useFakeServer();
+		
+		oServer.xhr.useFilters = true;
+		oServer.xhr.addFilter(function(method, url) {
+			return ("/anylocation/manifest.json" !== url && "/anylocation/manifest1.json" !== url);
+		});
+		
+		oServer.autoRespond = true;
+		oServer.respondWith("GET", "/anylocation/manifest.json", [
+			200, 
+			{
+				"Content-Type": "application/json"
+			},
+			JSON.stringify(oManifest)
+		]);
+		
+		
+		//start test
+		var oComponent = sap.ui.component({
+			manifestUrl : "/anylocation/manifest.json"
+		});
+		
+		assert.ok(oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
+		assert.ok(oComponent.getManifest(), "Manifest is available");
+		assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+	});
+
+
+	
 	</script>
 	</head>
 	<body><h1 id="qunit-header">QUnit tests: Components</h1>

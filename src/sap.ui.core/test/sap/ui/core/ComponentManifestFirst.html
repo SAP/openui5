@@ -1,0 +1,232 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Component Manifest First - sap.ui.core</title>
+
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.ui.commons,sap.m"
+	data-sap-ui-xx-componentPreload="async"></script>
+
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+
+
+<style type="text/css">
+	.ManifestArea textarea {
+		font-family: Consolas, monaco, monospace;
+	}
+</style>
+
+<script type="text/javascript">
+
+
+	sap.ui.localResources("samples");
+
+	// the data model for different manifest entries
+	var mManifest = {
+		"manifests": {
+			"m1": {
+				"key": "m1",
+				"name": "Manifest (Resource Roots + Dependencies)",
+				"content": {
+					"_version": "0.1.0",
+					"sap.app": {
+						"_version": "1.2.0",
+						"id": "samples.components.button",
+						"text": "Taken from Dynamic Manifest 1"
+					},
+					"sap.ui5": {
+						"resourceRoots": {
+							"foo": "foo",
+							"bar": "/../bar"
+						},
+						"dependencies": {
+							"libs": {
+								"sap.ui.ux3": {}
+							}
+						}
+					}
+				}
+			}, 
+			"m2": {
+				"key": "m2",
+				"name": "Manifest (Extensibility)",
+				"content": {
+					"_version": "0.1.0",
+					"sap.app": {
+						"_version": "1.2.0",
+						"id": "samples.manifestfirst.sap",
+						"text": "Taken from Manifest 3"
+					},
+					"sap.ui5": {
+						"dependencies": {
+							"libs": {
+								"sap.m": {}
+							}
+						},
+						"extends": {
+							"extensions": {
+								"sap.ui.viewReplacements": {
+									"samples.manifestfirst.sap.view.Main": {
+										"viewName": "samples.manifestfirst.customer.view.Main",
+										"type": "XML"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"selectedManifest": "m1",
+		"async": false
+	};
+
+	// create the manifest model for the combo box
+	var oManifestModel = new sap.ui.model.json.JSONModel(mManifest);
+	
+	// use the fake server to load manifest from the model above
+	var oServer = sinon.fakeServer.create();
+	
+	oServer.xhr.useFilters = true;
+	oServer.xhr.addFilter(function(method, url) {
+		return ("anylocation/manifest.json" !== url );
+	});
+		
+	oServer.autoRespond = true;
+	
+	//************* Config UI & LOGIC *******************************************
+	//create textarea for dynamic manifest
+	
+	var oItemTemplate = new sap.ui.core.Item({
+		key: "{key}",
+		text: "{name}"
+	});
+	
+	var oManiSelectorTitle = new sap.m.Label({
+		text: "Text"
+	});
+	var oManiSelector = new sap.m.ComboBox({
+		items: {
+			path: "/manifests", 
+			template: oItemTemplate
+		},
+		selectedKey: "{/selectedManifest}",
+		selectionChange: function(oEvent) {
+			selectManifest(this.getSelectedKey());
+		}
+	}); //.placeAt("manifestArea");
+	oManiSelector.setModel(oManifestModel);
+	
+	
+	var oManiAreaTitle = new sap.m.Label({
+		text: "Area"
+	});
+	var oManiArea = new sap.m.TextArea({
+		cols: 80,
+		rows: 15
+	});//.placeAt("manifestArea");
+	oManiArea.addStyleClass("ManifestArea");
+	
+	var oAsyncTitle = new sap.m.Label({
+		text: "Load async?"
+	});
+	var oAsyncCheckBox = new sap.m.CheckBox({
+		selected: "{/async}"
+	});//.placeAt("manifestArea");
+	
+	var oLoadCompTitle = new sap.m.Label({
+		text: " "
+	});
+	var oLoadComponent = new sap.m.Button({
+		text: "Load Component",
+		press: onLoadComponent
+	});//.placeAt("manifestArea");
+	
+	
+	// order ui elements...
+	var aEO = [
+	           oManiSelectorTitle,
+	           oManiSelector,
+	           oManiAreaTitle,
+	           oManiArea,
+	           oAsyncTitle,
+	           oAsyncCheckBox,
+	           oLoadCompTitle,
+	           oLoadComponent
+	          ]; 
+	
+	var oForm = new sap.ui.layout.form.SimpleForm({
+		title: "Configurable Manifest",
+		content: aEO,
+		labelSpanL: 2
+	}).placeAt("manifestArea");
+	
+	
+	// result panel for loaded component
+	oResultPanel = new sap.m.Panel({
+		headerText: "Loaded Component"
+	}).placeAt("componentArea");
+	
+	//***************************************************************************
+	
+	var oComp; 
+	var oCompCont;
+	
+	function onLoadComponent() {
+		if (oComp) {
+			oComp.destroy();
+			oCompCont.destroy();
+		};
+		initComponents();
+	};
+	
+	function initComponents(){
+
+		oServer.respondWith("GET", "anylocation/manifest.json", [
+			200, 
+			{
+				"Content-Type": "application/json"
+			},
+			oManiArea.getValue()
+		]);
+
+		oComp = sap.ui.component({
+			manifestUrl: "anylocation/manifest.json",
+			async: mManifest.async
+		});
+
+		oCompCont = new sap.ui.core.ComponentContainer({
+			component: oComp
+		});
+		oResultPanel.addContent(oCompCont);
+	};
+	
+	//***************************************************************************
+	
+	function selectManifest(sManifestId) {
+		var oManifest = mManifest.manifests[sManifestId].content;
+		var sManifest = JSON.stringify(oManifest, null, 2);
+		oManiArea.setValue(sManifest);
+	}
+	selectManifest(mManifest.selectedManifest);
+	
+</script>
+
+</head>
+<body class="sapUiBody" role="application">
+	<h1>
+		Test Page for
+		<code>sap.ui.core.Component</code> - usage of Manifest First Concept
+	</h1>
+	<br>
+	<div id="manifestArea"></div>
+	<div id="componentArea"></div>
+	
+</body>
+</html>

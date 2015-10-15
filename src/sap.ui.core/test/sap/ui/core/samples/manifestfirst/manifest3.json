@@ -1,0 +1,25 @@
+{
+  "_version": "0.1.0",
+  "sap.app": {
+    "_version": "1.2.0",
+    "id": "samples.manifestfirst.sap",
+    "text": "Taken from Manifest 3"
+  },
+  "sap.ui5": {
+    "dependencies": {
+      "libs": {
+        "sap.m": {}
+      }
+    },
+    "extends": {
+      "extensions": {
+        "sap.ui.viewReplacements": {
+          "samples.manifestfirst.sap.view.Main": {
+            "viewName": "samples.manifestfirst.customer.view.Main",
+            "type": "XML"
+          }
+        }
+      }
+    }
+  }
+}

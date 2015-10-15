@@ -47,11 +47,17 @@
 	 * SHARED TEST CODE
 	 */
 
-	function moduleSetup(sComponentName, iMetadataVersion) {
+	function moduleSetup(sComponentName, iMetadataVersion, bManifestFirst) {
 
-		this.oComponent = sap.ui.getCore().createComponent({
-			name: "sap.ui.test." + sComponentName
-		});
+		if (bManifestFirst) {
+			this.oComponent = sap.ui.getCore().createComponent({
+				manifestUrl: jQuery.sap.getModulePath("sap.ui.test." + sComponentName) + "/manifest.json"
+			});
+		} else {
+			this.oComponent = sap.ui.getCore().createComponent({
+				name: "sap.ui.test." + sComponentName
+			});
+		}
 
 		this.oMetadata = this.oComponent.getMetadata();
 
@@ -398,6 +404,27 @@
 
 
 	/*
+	 * TEST CODE: Component Metadata v2
+	 */
+
+	module("Component Metadata v2 (manifest first)", {
+		setup: function() {
+			moduleSetup.call(this, "v2", 2, true);
+			// fix the specials in the metadata for the v2 manifest first
+			this.oExpectedManifest["sap.app"]["description"] = this.oExpectedRawManifest["sap.app"]["description"];
+			this.oExpectedManifest["sap.app"]["title"] = this.oExpectedRawManifest["sap.app"]["title"];
+			this.oExpectedManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"] = this.oExpectedRawManifest["sap.ui5"]["extends"]["extensions"]["sap.ui.viewModification"]["sap.ui.test.view.Main"]["myControlId"]["text"];
+			this.oExpectedManifest["sap.ui5"]["rootView"] = this.oExpectedRawManifest["sap.ui5"]["rootView"]["viewName"];
+		},
+		teardown: function() {
+			moduleTeardown.call(this);
+		}
+	});
+
+	defineGenericTests();
+
+
+	/*
 	 * TEST CODE: Component Metadata v1 (inline)
 	 */
 
@@ -519,6 +546,7 @@
 		equal(this.oMetadata.getMetadataVersion(), this.iExpectedMetadataVersion, "MetadataVersion is correct!");
 
 	});
+
 
 	/*
 	 * TEST CODE: Component Metadata v1 & v2 (mixed)
@@ -667,7 +695,7 @@
 
 	module("Component Metadata: Resolve URI", {
 		assertResolvedUri: function(sInput, sBase, sExpected) {
-			var sActual = sap.ui.core.ComponentMetadata._resolveUriRelativeTo(new URI(sInput), new URI(sBase)).toString();
+			var sActual = sap.ui.core.Manifest._resolveUriRelativeTo(new URI(sInput), new URI(sBase)).toString();
 			assert.equal(sActual, sExpected, "Resolved URI is correct!");
 		}
 	});
@@ -718,7 +746,12 @@
 					version: sap.ui.version
 				};
 			}
-			sap.ui.getVersionInfo = function() {
+			sap.ui.getVersionInfo = function(mConfig) {
+				if (mConfig && mConfig.async) {
+					return new Promise(function(fnResolve, fnReject) {
+						fnResolve(this.oVersionInfo);
+					}.bind(this));
+				}
 				return this.oVersionInfo;
 			}.bind(this);
 			sinon.spy(jQuery.sap.log, "warning");
@@ -732,52 +765,64 @@
 	test("MinVersion gt Version", function(assert) {
 		this.oVersionInfo.version = "1.20.0";
 		moduleSetup.call(this, "v2version", 2);
-		var aCalls = jQuery.sap.log.warning.getCalls();
-		var bFound = false;
-		for (var i = 0, l = aCalls.length; i < l; i++) {
-			if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.20.0\"!") {
-				bFound = true;
+		var oDone = assert.async(), that = this;
+		setTimeout(function() {
+			var aCalls = jQuery.sap.log.warning.getCalls();
+			var bFound = false;
+			for (var i = 0, l = aCalls.length; i < l; i++) {
+				if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.20.0\"!") {
+					bFound = true;
+				}
 			}
-		}
-		// in case of debug mode is on the warning should be reported
-		// when it is turned off => no warning!
-		if (sap.ui.getCore().getConfiguration().getDebug()) {
-			ok(bFound, "Warning has been reported!");
-		} else {
-			ok(!bFound, "Warning has not been reported!");
-		}
-		moduleTeardown.call(this);
-		sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
+			// in case of debug mode is on the warning should be reported
+			// when it is turned off => no warning!
+			if (sap.ui.getCore().getConfiguration().getDebug()) {
+				ok(bFound, "Warning has been reported!");
+			} else {
+				ok(!bFound, "Warning has not been reported!");
+			}
+			moduleTeardown.call(that);
+			sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
+			oDone();
+		}, 200);
 	});
 
 	test("MinVersion eq Version", function(assert) {
 		this.oVersionInfo.version = "1.22.5";
 		moduleSetup.call(this, "v2version", 2);
-		var aCalls = jQuery.sap.log.warning.getCalls();
-		var bFound = false;
-		for (var i = 0, l = aCalls.length; i < l; i++) {
-			if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.22.5\"!") {
-				bFound = true;
+		var oDone = assert.async(), that = this;
+		setTimeout(function() {
+			var aCalls = jQuery.sap.log.warning.getCalls();
+			var bFound = false;
+			for (var i = 0, l = aCalls.length; i < l; i++) {
+				if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.22.5\"!") {
+					bFound = true;
+				}
 			}
-		}
-		ok(!bFound, "Warning has not been reported!");
-		moduleTeardown.call(this);
-		sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
+			ok(!bFound, "Warning has not been reported!");
+			moduleTeardown.call(that);
+			sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
+			oDone();
+		}, 200);
 	});
 
 	test("MinVersion lt Version", function(assert) {
 		this.oVersionInfo.version = "1.31.0";
 		moduleSetup.call(this, "v2version", 2);
-		var aCalls = jQuery.sap.log.warning.getCalls();
-		var bFound = false;
-		for (var i = 0, l = aCalls.length; i < l; i++) {
-			if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.31.0\"!") {
-				bFound = true;
+		var oDone = assert.async(), that = this;
+		setTimeout(function() {
+			var aCalls = jQuery.sap.log.warning.getCalls();
+			var bFound = false;
+			for (var i = 0, l = aCalls.length; i < l; i++) {
+				if (aCalls[i].args[0] == "Component \"sap.ui.test.v2version\" requires at least version \"1.22.5\" but running on \"1.31.0\"!") {
+					bFound = true;
+				}
 			}
-		}
-		ok(!bFound, "Warning has not been reported!");
-		moduleTeardown.call(this);
-		sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
+			ok(!bFound, "Warning has not been reported!");
+			moduleTeardown.call(that);
+			sap.ui.test.v2version.Component.getMetadata()._bInitialized = false;
+			oDone();
+		}, 200);
 	});
 
 	</script>
