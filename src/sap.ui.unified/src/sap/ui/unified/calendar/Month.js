@@ -1045,9 +1045,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			if (oThis.getDomRef()) {
 				if (bFocusable) {
-					if (!bNoFocus) {
-					_focusDate(oThis, oThis._oUTCDate, true);
-					}
+					_focusDate(oThis, oThis._oUTCDate, true, bNoFocus);
 				} else {
 					_renderMonth(oThis, bNoFocus);
 				}
@@ -1055,7 +1053,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		}
 
-		function _focusDate (oThis, oDate, bNoSetDate){
+		function _focusDate (oThis, oDate, bNoSetDate, bNoFocus){
 
 			if (!bNoSetDate) {
 				// use JS date as public function is called
@@ -1068,7 +1066,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			for ( var i = 0; i < aDomRefs.length; i++) {
 				$DomRefDay = jQuery(aDomRefs[i]);
 				if ($DomRefDay.attr("data-sap-day") == sYyyymmdd) {
-					oThis._oItemNavigation.focusItem(i);
+					if (bNoFocus) {
+						oThis._oItemNavigation.setFocusedIndex(i);
+					} else {
+						oThis._oItemNavigation.focusItem(i);
+					}
 					break;
 				}
 			}

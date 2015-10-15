@@ -29,7 +29,11 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.addClass("sapUiCalendarRow");
 
 		// This makes the row focusable
-		oRm.writeAttribute("tabindex", "-1");
+		if (oRow._sFocusedAppointmentId) {
+			oRm.writeAttribute("tabindex", "-1");
+		} else {
+			oRm.writeAttribute("tabindex", "0");
+		}
 
 		if (sTooltip) {
 			oRm.writeAttributeEscaped('title', sTooltip);
@@ -255,7 +259,11 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeAttribute("data-sap-level", oAppointmentInfo.level);
 
 		// This makes the appointment focusable
-		oRm.writeAttribute("tabindex", "-1");
+		if (oRow._sFocusedAppointmentId == sId) {
+			oRm.writeAttribute("tabindex", "0");
+		} else {
+			oRm.writeAttribute("tabindex", "-1");
+		}
 
 		if (sTooltip) {
 			oRm.writeAttributeEscaped('title', sTooltip);
@@ -306,19 +314,8 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write("</span>");
 		}
 
-		this.renderAppointmentAddFields(oRm, oRow, oAppointment);
-
 		oRm.write("</div>");
 		oRm.write("</div>");
-	};
-
-	/**
-	 * To overwritten by inheriting controls to render additional fields
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.unified.CalendarRow} oRow CalendarRow object that is currently rendered
-	 * @param {sap.ui.unified.CalendarAppointment} oAppointment CalendarAppointment object that is currently rendered
-	 */
-	CalendarRowRenderer.renderAppointmentAddFields = function(oRm, oRow, oAppointment){
 	};
 
 	return CalendarRowRenderer;

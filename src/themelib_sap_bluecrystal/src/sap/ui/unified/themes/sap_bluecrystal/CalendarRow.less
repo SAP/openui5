@@ -32,6 +32,13 @@
 	border-color: @sapUiListBorderColor;
 }
 
+.sap-desktop .sapUiCalendarApp:focus > .sapUiCalendarAppCont,
+.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSmall:focus{
+	border-top: 0.0625rem dotted @sapUiKeyboardFocus;
+	border-right: 0.0625rem dotted @sapUiKeyboardFocus;
+	border-bottom: 0.0625rem dotted @sapUiKeyboardFocus;
+}
+
 .sapUiCalendarApp.sapUiCalendarAppSel,
 .sapUiCalendarApp.sapUiCalendarAppSel.sapUiCalendarAppSmall,
 .sapUiCalendarApp:active,
@@ -40,7 +47,8 @@
 	background-color: @sapUiListActiveBackground;
 }
 
-.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active){
+.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active),
+.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus{
 	background-color: darken(@sapUiListActiveBackground, 10);
 }
 
@@ -53,7 +61,8 @@
 }
 
 
-.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active)  > .sapUiCalendarAppCont{
+.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active)  > .sapUiCalendarAppCont,
+.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus > .sapUiCalendarAppCont{
 	border-color: darken(@sapUiListActiveBackground, 10);
 	border-left-color: @sapUiListBackground;
 }

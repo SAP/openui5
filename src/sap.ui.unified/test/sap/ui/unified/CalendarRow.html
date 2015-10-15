@@ -31,8 +31,18 @@
 				}
 			};
 
+			var handleStartDateChange = function(oEvent){
+
+				var oRow = oEvent.oSource;
+				var oStartDate = oRow.getStartDate();
+				var oTF = sap.ui.getCore().byId("TF1");
+				oTF.setValue(oFormatYyyyMMddHHmm.format(oStartDate));
+
+			};
+
 			var oRow1 = new sap.ui.unified.CalendarRow("Row1",  {
-					select: handleSelect
+					select: handleSelect,
+					startDateChange: handleStartDateChange
 				}).placeAt("sample1");
 
 			var oStartDate = new Date();
