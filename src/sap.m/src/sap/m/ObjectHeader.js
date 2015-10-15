@@ -182,7 +182,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			numberTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
 
 			/**
-			 * Sets the custom text of the tooltip of the select title arrow. If not set, a default text of the tooltip will be displayed.
+			 * Sets custom text for the tooltip of the select title arrow. If not set, a default text of the tooltip will be displayed.
+			 * @since 1.30.0
 			 */
 			titleSelectorTooltip : {type : "string", group : "Misc", defaultValue : "Options"}
 
