@@ -4,267 +4,398 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
 <title>Test Page for sap.m.P13nGroupPanel</title>
-<script id="sap-ui-bootstrap" 
-	data-sap-ui-theme="sap_bluecrystal"
-	type="text/javascript" 
-	data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.m" 
-	src="../../../../resources/sap-ui-core.js">
+<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+	type="text/javascript" data-sap-ui-noConflict="true"
+	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+	
 </script>
 
-<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<link rel="stylesheet"
+	href="../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script type="text/javascript">
-(function() {
-	jQuery.sap.require("sap.m.P13nGroupPanel");
-	jQuery.sap.require("sap.m.P13nGroupItem");
+	(function() {
+		jQuery.sap.require("sap.m.P13nGroupPanel");
+		jQuery.sap.require("sap.m.P13nGroupItem");
 
-	module("Properties", {
-		setup: function() {
-		},
-		teardown: function() {
-		}
-	});
-
-	var bindGroupPanel = function(oP13nGroupPanel) {
-		var oData = {
-			"items" : [ {
-				"key" : null,
-				"text" : "(none)",
-				"tooltip" : "nix"
-			},  {
-				"key" : "c0",
-				"text" : "Name"
-			}, {
-				"key" : "c1",
-				"text" : "Color"
-			}, {
-				"key" : "c2",
-				"text" : "Number"
-			}],
-			"groupItems" : [ {
-				"key" : "s0",
-				"columnKey" : "c1",
-				"operation" : "Ascending",
-				"showIfGrouped" : true 
-			}, {
-				"key" : "s1",
-				"columnKey" : "c0",
-				"operation" : "Descending",
-				"showIfGrouped" : false 
-			} ]
-		};		
-
-		var oModel = new sap.ui.model.json.JSONModel(oData);
-		
-		oP13nGroupPanel.setModel(oModel);
-		oP13nGroupPanel.bindItems("/items", new sap.m.P13nItem({
-			columnKey : "{key}",
-			text : "{text}",
-			tooltip : "{tooltip}"
-		}));
-		oP13nGroupPanel.bindGroupItems("/groupItems", new sap.m.P13nGroupItem({
-			key : "{key}",
-			operation : "{operation}",
-			columnKey : "{columnKey}",
-			showIfGrouped : "{showIfGrouped}"
-		}));
-				
-	};
-	
-	test("Default Values", function(){
-		
-		// system under test
-		var oP13nGroupPanel = new sap.m.P13nGroupPanel({
-			layoutMode : "Desktop"
-		});
-
-		// arrange
-		oP13nGroupPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// assertions
-		strictEqual(oP13nGroupPanel.getLayoutMode(), "Desktop", "getLayoutMode should be 'Desktop'");
-
-		oP13nGroupPanel.setContainerQuery(true);
-		strictEqual(oP13nGroupPanel.getContainerQuery(), true, "getContainerQuery should return true");
-
-		oP13nGroupPanel.setMaxGroups(5);
-		strictEqual(oP13nGroupPanel.getMaxGroups(), "5", "getMaxGroups should return 5");
-
-		// cleanup
-		oP13nGroupPanel.destroy();
-	});
-
-	test("Validation Tests", function(){
-		
-		// system under test
-		var oP13nGroupPanel = new sap.m.P13nGroupPanel({
-			layoutMode : "Desktop"
-		});
-
-		// arrange
-		oP13nGroupPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// assertions
-		strictEqual(oP13nGroupPanel.validateConditions(), true, "validateConditions should return true");
-
-		oP13nGroupPanel.removeInvalidConditions();
-		oP13nGroupPanel.removeValidationErrors();
-
-		// cleanup
-		oP13nGroupPanel.destroy();
-	});
-
-	test("bind Items test", function(){
-		
-		// system under test
-		var oP13nGroupPanel = new sap.m.P13nGroupPanel();
-
-		bindGroupPanel(oP13nGroupPanel);
-
-		// arrange
-		oP13nGroupPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// assertions
-		var nItems= 4;
-		strictEqual(oP13nGroupPanel.getItems().length, nItems, "length of getItems should be '" + nItems + "'");
-
-		// cleanup
-		oP13nGroupPanel.destroy();
-	});
-	
-	test("bind GroupItems test", function(){
-		
-		// system under test
-		var oP13nGroupPanel = new sap.m.P13nGroupPanel();
-
-		bindGroupPanel(oP13nGroupPanel);
-
-		// arrange
-		oP13nGroupPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// assertions
-		var nItems= 2;
-		strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
-
-		// cleanup
-		oP13nGroupPanel.destroy();
-	});
-	
-	test("Insert Remove GroupItems test", function(){
-		
-		// system under test
-		var oP13nGroupPanel = new sap.m.P13nGroupPanel();
-
-		bindGroupPanel(oP13nGroupPanel);
-
-		// arrange
-		oP13nGroupPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
-		
-		oP13nGroupPanel.insertGroupItem( new sap.m.P13nGroupItem({
-			columnKey : "c1",
-			operation : "Ascending",
-			showIfGrouped : true 
-		}));
-		
-		// assertions
-		var nItems= 3;
-		strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
-
-		oP13nGroupPanel.removeAllGroupItems();
-		nItems= 0;
-		strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
-
-		// cleanup
-		oP13nGroupPanel.destroy();
-	});
-	
-	test("test model update events", function(){
-		
-		// system under test
-		var oP13nGroupPanel = new sap.m.P13nGroupPanel({
-			removeGroupItem: function(oEvent) {
-				var params = oEvent.getParameters();
-				var oModel = oP13nGroupPanel.getModel(); 
-				var oData = oModel.getData();
-				oData.groupItems.forEach(function(oItem, iIndex) {
-					if (oItem.key === params.key) {
-						oData.groupItems.splice(iIndex, 1);
-						oModel.setData(oData, true);
-						return;
-					}
-				});					
+		module("Properties", {
+			setup: function() {
 			},
-			addGroupItem: function(oEvent) {
-				var params = oEvent.getParameters();
-				var oModel = oP13nGroupPanel.getModel(); 
-				var oData = oModel.getData();
-				var oGroupItem = {
-					key : params.key,
-					columnKey : params.groupItemData.getColumnKey(),
-					operation : params.groupItemData.getOperation(),
-					showIfGrouped : params.groupItemData.getShowIfGrouped()
-				};
-				if (params.index) {
-					oData.groupItems.splice(params.index, 0, oGroupItem);
-				} else {
-					oData.groupItems.push(oGroupItem);
-				}
-				oModel.setData(oData, true);
+			teardown: function() {
 			}
 		});
+		var gData = {
+			"items": [
+				{
+					"key": null,
+					"text": "(none)",
+					"tooltip": "nix"
+				}, {
+					"key": "c0",
+					"text": "Name"
+				}, {
+					"key": "c1",
+					"text": "Color"
+				}, {
+					"key": "c2",
+					"text": "Number"
+				}
+			],
+			"groupItems": [
+				{
+					"key": "s0",
+					"columnKey": "c1",
+					"operation": "Ascending",
+					"showIfGrouped": true
+				}, {
+					"key": "s1",
+					"columnKey": "c0",
+					"operation": "Descending",
+					"showIfGrouped": false
+				}
+			]
+		};
 
-		bindGroupPanel(oP13nGroupPanel);
+		var bindGroupPanel = function(oP13nGroupPanel) {
+			var oModel = new sap.ui.model.json.JSONModel(jQuery.extend(true, {}, gData));
 
-		// arrange
-		oP13nGroupPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
+			oP13nGroupPanel.setModel(oModel);
+			oP13nGroupPanel.bindItems("/items", new sap.m.P13nItem({
+				columnKey: "{key}",
+				text: "{text}",
+				tooltip: "{tooltip}"
+			}));
+			oP13nGroupPanel.bindGroupItems("/groupItems", new sap.m.P13nGroupItem({
+				key: "{key}",
+				operation: "{operation}",
+				columnKey: "{columnKey}",
+				showIfGrouped: "{showIfGrouped}"
+			}));
+		};
 
-		// assertions
-		// Remove item
- 		var nItems= 1;
-		var oConditionPanel= oP13nGroupPanel._oGroupPanel;
-		oConditionPanel._handleRemoveCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
-		strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
-		
-		// Add item
-		nItems= 2;
- 		oConditionPanel._handleAddCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
-		
- 		// Change item
-		var oConditionGrid = oConditionPanel._oConditionsGrid.getContent()[1];
-		oConditionGrid.keyField.setSelectedKey("c0");
-		oConditionPanel._changeField(oConditionGrid);		
-		
-		strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
+		test("Default Values", function() {
 
-		// cleanup
-		oP13nGroupPanel.destroy();
-	});
+			// system under test
+			var oP13nGroupPanel = new sap.m.P13nGroupPanel({
+				layoutMode: "Desktop"
+			});
 
+			// arrange
+			oP13nGroupPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
 
-}());
+			// assertions
+			strictEqual(oP13nGroupPanel.getLayoutMode(), "Desktop", "getLayoutMode should be 'Desktop'");
 
+			oP13nGroupPanel.setContainerQuery(true);
+			strictEqual(oP13nGroupPanel.getContainerQuery(), true, "getContainerQuery should return true");
+
+			oP13nGroupPanel.setMaxGroups(5);
+			strictEqual(oP13nGroupPanel.getMaxGroups(), "5", "getMaxGroups should return 5");
+
+			// cleanup
+			oP13nGroupPanel.destroy();
+		});
+
+		test("Validation Tests", function() {
+
+			// system under test
+			var oP13nGroupPanel = new sap.m.P13nGroupPanel({
+				layoutMode: "Desktop"
+			});
+
+			// arrange
+			oP13nGroupPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			strictEqual(oP13nGroupPanel.validateConditions(), true, "validateConditions should return true");
+
+			oP13nGroupPanel.removeInvalidConditions();
+			oP13nGroupPanel.removeValidationErrors();
+
+			// cleanup
+			oP13nGroupPanel.destroy();
+		});
+
+		test("bind Items test", function() {
+
+			// system under test
+			var oP13nGroupPanel = new sap.m.P13nGroupPanel();
+
+			bindGroupPanel(oP13nGroupPanel);
+
+			// arrange
+			oP13nGroupPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			var nItems = 4;
+			strictEqual(oP13nGroupPanel.getItems().length, nItems, "length of getItems should be '" + nItems + "'");
+
+			// cleanup
+			oP13nGroupPanel.destroy();
+		});
+
+		test("bind GroupItems test", function() {
+
+			// system under test
+			var oP13nGroupPanel = new sap.m.P13nGroupPanel();
+
+			bindGroupPanel(oP13nGroupPanel);
+
+			// arrange
+			oP13nGroupPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			var nItems = 2;
+			strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
+
+			// cleanup
+			oP13nGroupPanel.destroy();
+		});
+
+		test("Insert Remove GroupItems test", function() {
+
+			// system under test
+			var oP13nGroupPanel = new sap.m.P13nGroupPanel();
+
+			bindGroupPanel(oP13nGroupPanel);
+
+			// arrange
+			oP13nGroupPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oP13nGroupPanel.insertGroupItem(new sap.m.P13nGroupItem({
+				columnKey: "c1",
+				operation: "Ascending",
+				showIfGrouped: true
+			}));
+
+			// assertions
+			var nItems = 3;
+			strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
+
+			oP13nGroupPanel.removeAllGroupItems();
+			nItems = 0;
+			strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
+
+			// cleanup
+			oP13nGroupPanel.destroy();
+		});
+
+		test("test model update events", function() {
+
+			// system under test
+			var oP13nGroupPanel = new sap.m.P13nGroupPanel({
+				removeGroupItem: function(oEvent) {
+					var params = oEvent.getParameters();
+					var oModel = oP13nGroupPanel.getModel();
+					var oData = oModel.getData();
+					oData.groupItems.forEach(function(oItem, iIndex) {
+						if (oItem.key === params.key) {
+							oData.groupItems.splice(iIndex, 1);
+							oModel.setData(oData, true);
+							return;
+						}
+					});
+				},
+				addGroupItem: function(oEvent) {
+					var params = oEvent.getParameters();
+					var oModel = oP13nGroupPanel.getModel();
+					var oData = oModel.getData();
+					var oGroupItem = {
+						key: params.key,
+						columnKey: params.groupItemData.getColumnKey(),
+						operation: params.groupItemData.getOperation(),
+						showIfGrouped: params.groupItemData.getShowIfGrouped()
+					};
+					if (params.index) {
+						oData.groupItems.splice(params.index, 0, oGroupItem);
+					} else {
+						oData.groupItems.push(oGroupItem);
+					}
+					oModel.setData(oData, true);
+				}
+			});
+
+			bindGroupPanel(oP13nGroupPanel);
+
+			// arrange
+			oP13nGroupPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			// Remove item
+			var nItems = 1;
+			var oConditionPanel = oP13nGroupPanel._oGroupPanel;
+			oConditionPanel._handleRemoveCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
+			strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
+
+			// Add item
+			nItems = 2;
+			oConditionPanel._handleAddCondition(oConditionPanel._oConditionsGrid, oConditionPanel._oConditionsGrid.getContent()[0]);
+
+			// Change item
+			var oConditionGrid = oConditionPanel._oConditionsGrid.getContent()[1];
+			oConditionGrid.keyField.setSelectedKey("c0");
+			oConditionPanel._changeField(oConditionGrid);
+
+			strictEqual(oP13nGroupPanel.getGroupItems().length, nItems, "length of getGroupItems should be '" + nItems + "'");
+
+			// cleanup
+			oP13nGroupPanel.destroy();
+		});
+
+		test("bind named model", function() {
+
+			// system under test
+			var oP13nGroupPanel = new sap.m.P13nGroupPanel();
+
+			var oModel = new sap.ui.model.json.JSONModel(jQuery.extend(true, {}, gData));
+
+			oP13nGroupPanel.setModel(oModel, "myModel");
+			oP13nGroupPanel.bindItems("myModel>/items", new sap.m.P13nItem({
+				columnKey: "{myModel>key}",
+				text: "{myModel>text}",
+				tooltip: "{myModel>tooltip}"
+			}));
+			oP13nGroupPanel.bindGroupItems("myModel>/groupItems", new sap.m.P13nGroupItem({
+				key: "{myModel>key}",
+				operation: "{myModel>operation}",
+				columnKey: "{myModel>columnKey}",
+				showIfGrouped: "{myModel>showIfGrouped}"
+			}));
+
+			// arrange
+			oP13nGroupPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			strictEqual(oP13nGroupPanel.getItems().length, 4, "length of getItems should be 4'");
+			strictEqual(oP13nGroupPanel.getGroupItems().length, 2, "length of getGroupItems should be 2'");
+
+			// cleanup
+			oP13nGroupPanel.destroy();
+		});
+
+		test("create with aggregations", function() {
+
+			// system under test
+			var oP13nGroupPanel = new sap.m.P13nGroupPanel({
+				items: [
+					new sap.m.P13nItem({
+						key: null,
+						text: "(none)",
+						tooltip: "nix"
+					}), new sap.m.P13nItem({
+						key: "c0",
+						text: "Name"
+					}), new sap.m.P13nItem({
+						key: "c1",
+						text: "Color"
+					}), new sap.m.P13nItem({
+						key: "c2",
+						text: "Number"
+					})
+				],
+				groupItems: [
+					new sap.m.P13nGroupItem({
+						key: "s0",
+						columnKey: "c1",
+						operation: "Ascending",
+						showIfGrouped: true
+					}), new sap.m.P13nGroupItem({
+						key: "s1",
+						columnKey: "c0",
+						operation: "Descending",
+						showIfGrouped: false
+					})
+				]
+			});
+			// arrange
+			oP13nGroupPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assertions			
+			strictEqual(oP13nGroupPanel.getItems().length, 4, "length of getItems should be 4'");
+			strictEqual(oP13nGroupPanel.getGroupItems().length, 2, "length of getGroupItems should be 2'");
+
+			// cleanup
+			oP13nGroupPanel.destroy();
+		});
+
+		test("create with addXXX", function() {
+
+			// system under test
+			var oP13nGroupPanel = new sap.m.P13nGroupPanel();
+
+			// arrange
+			oP13nGroupPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oP13nGroupPanel.addItem(new sap.m.P13nItem({
+				key: null,
+				text: "(none)",
+				tooltip: "nix"
+			}));
+			oP13nGroupPanel.addItem(new sap.m.P13nItem({
+				key: "c0",
+				text: "Name"
+			}));
+			oP13nGroupPanel.addItem(new sap.m.P13nItem({
+				key: "c1",
+				text: "Color"
+			}));
+			oP13nGroupPanel.addItem(new sap.m.P13nItem({
+				key: "c2",
+				text: "Number"
+			}));
+
+			oP13nGroupPanel.addGroupItem(new sap.m.P13nGroupItem({
+				key: "s0",
+				columnKey: "c1",
+				operation: "Ascending",
+				showIfGrouped: true
+			}));
+			oP13nGroupPanel.addGroupItem(new sap.m.P13nGroupItem({
+				key: "s1",
+				columnKey: "c0",
+				operation: "Descending",
+				showIfGrouped: false
+			}));
+			sap.ui.getCore().applyChanges();
+			
+			// assertions			
+			strictEqual(oP13nGroupPanel.getItems().length, 4, "length of getItems should be 4'");
+			strictEqual(oP13nGroupPanel.getGroupItems().length, 2, "length of getGroupItems should be 2'");
+
+			// cleanup
+			oP13nGroupPanel.destroy();
+		});
+	}());
 </script>
 
 
 </head>
-	<body id="body" class="sapUiBody">
-		<h1 id="qunit-header">qUnit Page for sap.m.P13nGroupPanel</h1>
-		<h2 id="qunit-banner"></h2>
-		<h2 id="qunit-userAgent"></h2>
-		<ol id="qunit-tests"></ol>
-				
-		<div id="content"></div>
-	</body>
+<body id="body" class="sapUiBody">
+	<h1 id="qunit-header">qUnit Page for sap.m.P13nGroupPanel</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+
+	<div id="content"></div>
+</body>
 </html>

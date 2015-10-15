@@ -329,6 +329,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Escapes special characters
+	 * 
+	 * @private
+	 * @param {string} sToEscape contains the content that shall be escaped
+	 */
+	P13nColumnsPanel.prototype._escapeRegExp = function(sToEscape) {
+		if (sToEscape) {
+			return sToEscape.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+		}
+	};
+
+	/**
 	 * Filters items by its selection status
 	 * 
 	 * @private
@@ -356,8 +368,10 @@ sap.ui.define([
 				sSearchText = sSearchText.replace(/(^\s+)|(\s+$)/g, '');
 			}
 			// create RegEx for search only if a searchText exist!!
-			if (sSearchText !== null && sSearchText !== undefined) { // " " is a VALID value!!!
-				regExp = new RegExp(sSearchText, 'igm'); // i = ignore case; g = global; m = multiline
+			if (sSearchText !== null && sSearchText !== undefined) {// " " is a VALID value!!!
+				sSearchText = this._escapeRegExp(sSearchText); // escape user input
+				sSearchText = regExp = new RegExp(sSearchText, 'igm'); // i = ignore case; g = global; m = multiline
+
 			}
 		}
 
@@ -1032,13 +1046,7 @@ sap.ui.define([
 				sLanguage = sap.ui.getCore().getConfiguration().getLocale().toString();
 			} catch (exception) {
 				// this exception can happen if the configured language is not convertible to BCP47 -> getLocale will deliver an exception
-				if (window.console && window.console.log) {
-					if (!!exception.stack) {
-						window.console.log(exception.stack);
-					} else {
-						window.console.log(exception.toString());
-					}
-				}
+				jQuery.sap.log.error("sap.m.P13nColumnsPanel : no available Language/Locale to sort table items");
 				sLanguage = null;
 			}
 
