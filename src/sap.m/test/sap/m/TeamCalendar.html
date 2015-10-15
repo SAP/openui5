@@ -41,7 +41,7 @@
 		};
 
 		var handleAddRow = function(oEvent){
-			var oTC = oEvent.oSource;
+			var oTC = sap.ui.getCore().byId("TC1");
 			var oRow = new sap.m.TeamCalendarRow({
 				icon: "sap-icon://employee",
 				title: "new Row"
@@ -50,9 +50,9 @@
 		};
 
 		var handleAddAppointment = function(oEvent){
-			var oTC = oEvent.oSource;
+			var oTC = sap.ui.getCore().byId("TC1");
 			var oStartDate = oTC.getStartDate();
-			var sIntervalType = oTC.getIntervalType();
+			var sViewKey = oTC.getViewKey();
 			var oStartDate = oTC.getStartDate();
 			var aSelectedRows = oTC.getSelectedRows();
 
@@ -60,7 +60,7 @@
 				var oAppointmentStartDate = new Date(oStartDate.getTime());
 				var oAppointmentEndDate = new Date(oStartDate.getTime());
 
-				switch (sIntervalType) {
+				switch (sViewKey) {
 				case sap.ui.unified.CalendarIntervalType.Hour:
 					oAppointmentStartDate.setHours(oAppointmentStartDate.getHours() + 3);
 					oAppointmentEndDate.setHours(oAppointmentStartDate.getHours() + 3);
@@ -81,7 +81,7 @@
 					endDate: oAppointmentEndDate,
 					type: sap.ui.unified.CalendarDayType.Type01,
 					title: "New Appointment",
-					text: sIntervalType,
+					text: sViewKey,
 					icon: "sap-icon://sap-ui5"
 				});
 				aSelectedRows[0].addAppointment(oAppointment);
@@ -92,6 +92,7 @@
 		};
 
 		var oSearchField = new sap.m.SearchField("SF1", {
+			width: "10rem",
 			search: function(oEvent) {
 									alert("Search!");
 							}
@@ -118,10 +119,24 @@
 							}
 		});
 
+		var oButtonAddAppointment = new sap.m.Button("B_AddAppointment", {
+			icon: "sap-icon://add",
+			type: sap.m.ButtonType.Transparent,
+			press: handleAddAppointment
+		});
+
+		var oButtonAddRow = new sap.m.Button("B_AddRow", {
+			icon: "sap-icon://add-contact",
+			type: sap.m.ButtonType.Transparent,
+			press: handleAddRow
+		});
+
+		var oTitle = new sap.m.Title("Title1", {
+			text: "Title"
+		});
+
 		var oTC1 = sap.m.TeamCalendar("TC1", {
 			startDate: new Date("2015", "0", "1", "08", "00"),
-			title: "Title",
-			searchField: oSearchField,
 			rows: [ new sap.m.TeamCalendarRow("Row1", {
 			        	icon: "sap-icon://employee",
 			        	title: "Max Mustermann",
@@ -242,10 +257,8 @@
 			                	tooltip: "Test"
 			                })
 			              ],
-			toolbarContent: [oButton1, oButton2],
-			appointmentSelect: handleAppointmentSelect,
-			addRow: handleAddRow,
-			addAppointment: handleAddAppointment
+			toolbarContent: [oTitle, new sap.m.ToolbarSpacer(), oSearchField, oButton1, oButton2, oButtonAddAppointment, oButtonAddRow],
+			appointmentSelect: handleAppointmentSelect
 		});
 
 		var oInput = new sap.m.Input("I1", {
