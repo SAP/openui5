@@ -3754,10 +3754,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 					jQuery.sap.assert(vProperties.length === 0, "No metadata for the following properties found: " + vProperties.join(","));
 				}
 			}
-			// remove starting / for key only
-			sKey = sPath.substring(1) + "('" + jQuery.sap.uid() + "')";
+			var oEntitySetMetadata = that.oMetadata._getEntitySetByPath(sPath);
+			sKey = oEntitySetMetadata.name + "('" + jQuery.sap.uid() + "')";
 	
 			oEntity.__metadata = {type: "" + oEntityMetadata.entityType, uri: that.sServiceUrl + '/' + sKey, created: {
+				//store path for later POST
 				key: sPath.substring(1),
 				success: fnSuccess, 
 				error: fnError, 

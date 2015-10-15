@@ -2455,6 +2455,31 @@
 			this.oModel.submitChanges();
 		}.bind(this))
 	});
+	asyncTest("create on NavProp", function() {
+		expect( 8 );
+		var that = this;
+		this.oModel.attachMetadataLoaded(function() {
+			var fnSuccess = function() {
+				ok(true, "success handler called");
+			}
+			var oContext = this.oModel.createEntry("/Products(0)/Supplier", {properties: {Name: 'test'}, success: fnSuccess});
+			var oSupplier = this.oModel.getProperty('', oContext); 
+			ok(oSupplier, "Supplier created");
+			ok(oSupplier.__metadata.created, "Supplier flagged as created");
+			ok(oSupplier.__metadata.created.key == "Products(0)/Supplier", "POST key ok");
+			ok(jQuery.sap.startsWith(oContext.getPath(),"/Suppliers("), "Data cache ok");
+			var fnCompl = function(oInfo) {
+				that.oModel.detachRequestCompleted(fnCompl);
+				ok(oInfo.getParameter('success'), "request success");
+				var oSupplier = oContext.getObject(); 
+				ok(oSupplier, "Supplier still exists");
+				ok(!oSupplier.__metadata.created, "Supplier not flagged as created");
+				start();
+			};
+			this.oModel.attachRequestCompleted(fnCompl);
+			this.oModel.submitChanges();
+		}.bind(this))
+	});
 	</script>
 
 </head>
