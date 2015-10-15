@@ -1,0 +1,23 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+	<!-- Note: the field's ID is computed from the mandatory 'field>' and optional 'fieldGroup>' -->
+	<template:if test="{field>Label}"><!--DataFieldAbstract Label is Nullable -->
+		<template:then>
+			<Label labelFor="{parts: [{path: 'field>'}, {path: 'fieldGroup>'}], formatter: '.id'}"
+				text="{path: 'field>Label', formatter: '.AH.format'}"/>
+			<template:if test="{:= !${field>Value} }">
+				<HBox/><!-- needed in case label is shown, but no field -->
+			</template:if>
+		</template:then>
+		<template:elseif test="{field>Value}">
+			<template:with path="field>Value" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
+				<!-- Note: ID is derived from 'field>', not 'target>'! -->
+				<Label labelFor="{parts: [{path: 'field>'}, {path: 'fieldGroup>'}], formatter: '.id'}"
+					text="{path: 'target>com.sap.vocabularies.Common.v1.Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+			</template:with>
+		</template:elseif>
+	</template:if>
+	<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Field" type="XML"/>
+</core:FragmentDefinition>

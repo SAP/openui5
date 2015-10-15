@@ -25,8 +25,9 @@
 					<form:title>
 						<core:Title text="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
 					</form:title>
-					<Label text="Unsupported Facet Type"/>
-					<Text text="{facet>RecordType}"/>
+					<Label labelFor="{path: 'facet>', formatter: '.id'}"
+						text="Unsupported Facet Type"/>
+					<Text id="{path: 'facet>', formatter: '.id'}" text="{facet>RecordType}"/>
 				</form:SimpleForm>
 			</template:else>
 		</template:if>

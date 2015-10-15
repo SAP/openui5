@@ -11,20 +11,16 @@
 		<core:ExtensionPoint name="afterTitle"/>
 
 		<template:with path="facet>Target" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="target">
-			<template:if test="{target>Data}"><!-- TODO isArray?! -->
+			<template:if test="{:= Array.isArray(${target>Data}) }">
 				<template:then><!-- e.g. com.sap.vocabularies.UI.v1.FieldGroup -->
 					<!-- ignore target>Label in favor of facet>Label -->
 					<template:repeat list="{target>Data}" var="field">
-						<Label text="{path: 'field>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-						<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Field" type="XML"/>
+						<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.LabeledField" type="XML"/>
 					</template:repeat>
 				</template:then>
-				<template:else><!-- e.g. com.sap.vocabularies.UI.v1.StatusInfo -->
+				<template:else><!-- e.g. com.sap.vocabularies.UI.v1.StatusInfo or com.sap.vocabularies.UI.v1.Badge -->
 					<template:repeat list="{target>}" var="field">
-						<template:if test="{field>Label}">
-							<Label text="{path: 'field>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-						</template:if>
-						<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Field" type="XML"/>
+						<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.LabeledField" type="XML"/>
 					</template:repeat>
 				</template:else>
 			</template:if>
