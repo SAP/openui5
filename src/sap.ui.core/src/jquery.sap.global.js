@@ -3829,26 +3829,7 @@
 		}
 	}
 
-	/**
-	 * Includes the script (via &lt;script&gt;-tag) into the head for the
-	 * specified <code>sUrl</code> and optional <code>sId</code>.
-	 * <br>
-	 * <i>In case of IE8 only the load callback will work ignoring in case of success and error.</i>
-	 *
-	 * @param {string}
-	 *            sUrl the URL of the script to load
-	 * @param {string}
-	 *            [sId] id that should be used for the script include tag
-	 * @param {function}
-	 *            [fnLoadCallback] callback function to get notified once the script has been loaded
-	 * @param {function}
-	 *            [fnErrorCallback] callback function to get notified once the script loading failed (not supported by IE8)
-	 *
-	 * @public
-	 * @static
-	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
-	 */
-	jQuery.sap.includeScript = function includeScript(sUrl, sId, fnLoadCallback, fnErrorCallback){
+	function _includeScript(sUrl, sId, fnLoadCallback, fnErrorCallback) {
 		var oScript = window.document.createElement("script");
 		oScript.src = sUrl;
 		oScript.type = "text/javascript";
@@ -3857,11 +3838,17 @@
 		}
 
 		if (fnLoadCallback) {
-			jQuery(oScript).load(fnLoadCallback);
+			jQuery(oScript).load(function() {
+				fnLoadCallback();
+				jQuery(oScript).off("load");
+			});
 		}
 
 		if (fnErrorCallback) {
-			jQuery(oScript).error(fnErrorCallback);
+			jQuery(oScript).error(function() {
+				fnErrorCallback();
+				jQuery(oScript).off("error");
+			});
 		}
 
 		// jQuery("head").append(oScript) doesn't work because they filter for the script
@@ -3871,34 +3858,53 @@
 			jQuery(oOld).remove(); // replacing scripts will not trigger the load event
 		}
 		appendHead(oScript);
+	}
+
+	/**
+	 * Includes the script (via &lt;script&gt;-tag) into the head for the
+	 * specified <code>sUrl</code> and optional <code>sId</code>.
+	 *
+	 * @param {string|object}
+	 *            vUrl the URL of the script to load or a configuration object
+	 * @param {string}
+	 *            vUrl.url the URL of the script to load
+	 * @param {string}
+	 *            [vUrl.id] id that should be used for the script tag
+	 * @param {string}
+	 *            [sId] id that should be used for the script tag
+	 * @param {function}
+	 *            [fnLoadCallback] callback function to get notified once the script has been loaded
+	 * @param {function}
+	 *            [fnErrorCallback] callback function to get notified once the script loading failed
+	 * @return {void|Promise}
+	 *            When using the configuration object a <code>Promise</code> will be returned. The
+	 *            documentation for the <code>fnLoadCallback</code> applies to the <code>resolve</code>
+	 *            handler of the <code>Promise</code> and the one for the <code>fnErrorCallback</code>
+	 *            applies to the <code>reject</code> handler of the <code>Promise</code>.
+	 * 
+	 * @public
+	 * @static
+	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
+	 */
+	jQuery.sap.includeScript = function includeScript(vUrl, sId, fnLoadCallback, fnErrorCallback) {
+		var oConfig = typeof vUrl === "string" ? {
+			url: vUrl,
+			id: sId
+		} : vUrl;
+
+		if (typeof vUrl === "string") {
+			_includeScript(oConfig.url, oConfig.id, fnLoadCallback, fnErrorCallback);
+		} else {
+			return new Promise(function(fnResolve, fnReject) {
+				_includeScript(oConfig.url, oConfig.id, fnResolve, fnReject);
+			});
+		}
 	};
 
 	var oIEStyleSheetNode;
 	var mIEStyleSheets = jQuery.sap._mIEStyleSheets = {};
 
-	/**
-	 * Includes the specified stylesheet via a &lt;link&gt;-tag in the head of the current document. If there is call to
-	 * <code>includeStylesheet</code> providing the sId of an already included stylesheet, the existing element will be
-	 * replaced.
-	 *
-	 * @param {string}
-	 *          sUrl the URL of the script to load
-	 * @param {string}
-	 *          [sId] id that should be used for the script include tag
-	 * @param {function}
-	 *          [fnLoadCallback] callback function to get notified once the link has been loaded
-	 * @param {function}
-	 *          [fnErrorCallback] callback function to get notified once the link loading failed.
-	 *          In case of usage in IE the error callback will also be executed if an empty stylesheet
-	 *          is loaded. This is the only option how to determine in IE if the load was successful
-	 *          or not since the native onerror callback for link elements doesn't work in IE. The IE
-	 *          always calls the onload callback of the link element.
-	 *
-	 * @public
-	 * @static
-	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
-	 */
-	jQuery.sap.includeStyleSheet = function includeStyleSheet(sUrl, sId, fnLoadCallback, fnErrorCallback) {
+	function _includeStyleSheet(sUrl, sId, fnLoadCallback, fnErrorCallback) {
 
 		var _createLink = function(sUrl, sId, fnLoadCallback, fnErrorCallback){
 
@@ -3912,14 +3918,14 @@
 			}
 
 			var fnError = function() {
-				jQuery(oLink).attr("sap-ui-ready", "false");
+				jQuery(oLink).attr("sap-ui-ready", "false").off("error");
 				if (fnErrorCallback) {
 					fnErrorCallback();
 				}
 			};
 
 			var fnLoad = function() {
-				jQuery(oLink).attr("sap-ui-ready", "true");
+				jQuery(oLink).attr("sap-ui-ready", "true").off("load");
 				if (fnLoadCallback) {
 					fnLoadCallback();
 				}
@@ -4029,6 +4035,54 @@
 			_appendStyle(sUrl, sId, fnLoadCallback, fnErrorCallback);
 		}
 
+	}
+
+	/**
+	 * Includes the specified stylesheet via a &lt;link&gt;-tag in the head of the current document. If there is call to
+	 * <code>includeStylesheet</code> providing the sId of an already included stylesheet, the existing element will be
+	 * replaced.
+	 *
+	 * @param {string|object}
+	 *          vUrl the URL of the stylesheet to load or a configuration object
+	 * @param {string}
+	 *            vUrl.url the URL of the stylesheet to load
+	 * @param {string}
+	 *            [vUrl.id] id that should be used for the link tag
+	 * @param {string}
+	 *          [sId] id that should be used for the link tag
+	 * @param {function}
+	 *          [fnLoadCallback] callback function to get notified once the stylesheet has been loaded
+	 * @param {function}
+	 *          [fnErrorCallback] callback function to get notified once the stylesheet loading failed.
+	 *            In case of usage in IE the error callback will also be executed if an empty stylesheet
+	 *            is loaded. This is the only option how to determine in IE if the load was successful
+	 *            or not since the native onerror callback for link elements doesn't work in IE. The IE
+	 *            always calls the onload callback of the link element.
+	 *            Another issue of the IE9 is that in case of loading too many stylesheets the eventing
+	 *            is not working and therefore the error or load callback will not be triggered anymore.
+	 * @return {void|Promise}
+	 *            When using the configuration object a <code>Promise</code> will be returned. The
+	 *            documentation for the <code>fnLoadCallback</code> applies to the <code>resolve</code>
+	 *            handler of the <code>Promise</code> and the one for the <code>fnErrorCallback</code>
+	 *            applies to the <code>reject</code> handler of the <code>Promise</code>.
+	 *
+	 * @public
+	 * @static
+	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
+	 */
+	jQuery.sap.includeStyleSheet = function includeStyleSheet(vUrl, sId, fnLoadCallback, fnErrorCallback) {
+		var oConfig = typeof vUrl === "string" ? {
+			url: vUrl,
+			id: sId
+		} : vUrl;
+
+		if (typeof vUrl === "string") {
+			_includeStyleSheet(oConfig.url, oConfig.id, fnLoadCallback, fnErrorCallback);
+		} else {
+			return new Promise(function(fnResolve, fnReject) {
+				_includeStyleSheet(oConfig.url, oConfig.id, fnResolve, fnReject);
+			});
+		}
 	};
 
 	// TODO should be in core, but then the 'callback' could not be implemented
