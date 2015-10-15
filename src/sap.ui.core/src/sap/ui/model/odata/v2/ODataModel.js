@@ -2370,7 +2370,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 
 
 		// no data available
-		if (bContent && !oResultData && oResponse) {
+		if (bContent && oResultData === undefined && oResponse) {
 			// Parse error messages from the back-end
 			this._parseResponse(oResponse, oRequest, mGetEntities, mChangeEntities);
 
