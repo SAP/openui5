@@ -81,6 +81,15 @@ sap.ui.define([
 		}
 	});
 
+
+//	P13nFilterItem.prototype.setOperation = function(sOperation) {
+//		return this.setProperty("operation", sOperation, true);
+//	};
+//
+//	P13nFilterItem.prototype.setColumnKey = function(sKey) {
+//		return this.setProperty("columnKey", sKey, true);
+//	};
+	
 	return P13nFilterItem;
 
 }, /* bExport= */true);
