@@ -90,6 +90,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			views : {type : "sap.m.TeamCalendarView", multiple : true, singularName : "view"},
 
 			/**
+			 * Date Range with type to visualize special days in the header calendar.
+			 * If one day is assigned to more than one Type, only the first one will be used.
+			 */
+			specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"},
+
+			/**
 			 * <code>SearchField</code> displayed in the <code>TeamCalendar</code>.
 			 * The search must be implemented by the calling application because the <code>TeamCalendar</code> might not have access
 			 * to all of the data and the backend.
@@ -298,16 +304,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			// destroy also currently not used controls
 			if (this._oTimeInterval) {
+				this._oTimeInterval._oTeamCalendar = undefined;
 				this._oTimeInterval.destroy();
 				this._oTimeInterval = undefined;
 			}
 
 			if (this._oDateInterval) {
+				this._oDateInterval._oTeamCalendar = undefined;
 				this._oDateInterval.destroy();
 				this._oDateInterval = undefined;
 			}
 
 			if (this._oMonthInterval) {
+				this._oMonthInterval._oTeamCalendar = undefined;
 				this._oMonthInterval.destroy();
 				this._oMonthInterval = undefined;
 			}
@@ -441,6 +450,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						});
 						this._oTimeInterval.attachEvent("startDateChange", _handleStartDateChange, this);
 						this._oTimeInterval.attachEvent("select", _handleIntervalSelect, this);
+						this._oTimeInterval._oTeamCalendar = this;
+						this._oTimeInterval.getSpecialDates = function(){
+							return this._oTeamCalendar.getSpecialDates();
+						};
 					}else if (this._oTimeInterval.getItems() != iIntervals) {
 						this._oTimeInterval.setItems(iIntervals);
 					}
@@ -455,6 +468,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						});
 						this._oDateInterval.attachEvent("startDateChange", _handleStartDateChange, this);
 						this._oDateInterval.attachEvent("select", _handleIntervalSelect, this);
+						this._oDateInterval._oTeamCalendar = this;
+						this._oDateInterval.getSpecialDates = function(){
+							return this._oTeamCalendar.getSpecialDates();
+						};
 					}else if (this._oDateInterval.getDays() != iIntervals) {
 						this._oDateInterval.setDays(iIntervals);
 					}
@@ -469,6 +486,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						});
 						this._oMonthInterval.attachEvent("startDateChange", _handleStartDateChange, this);
 						this._oMonthInterval.attachEvent("select", _handleIntervalSelect, this);
+						this._oMonthInterval._oTeamCalendar = this;
+						this._oMonthInterval.getSpecialDates = function(){
+							return this._oTeamCalendar.getSpecialDates();
+						};
 					}else if (this._oMonthInterval.setMonths() != iIntervals) {
 						this._oMonthInterval.setMonths(iIntervals);
 					}
@@ -613,6 +634,60 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this.setAggregation("searchField", oSearchField, true);
 			this._oCalendarHeader.setSearchField(oSearchField);
 			return this;
+
+		};
+
+		TeamCalendar.prototype.invalidate = function(oOrigin) {
+
+			if (!this._bDateRangeChanged && (!oOrigin || !(oOrigin instanceof sap.ui.unified.DateRange))) {
+				Control.prototype.invalidate.apply(this, arguments);
+			} else if (this.getDomRef()) {
+				// DateRange changed -> only invalidate calendar control
+				var sKey = this.getViewKey();
+				var oView = _getView.call(this, sKey);
+				var sIntervalType = oView.getIntervalType();
+
+				switch (sIntervalType) {
+				case sap.ui.unified.CalendarIntervalType.Hour:
+					if (this._oTimeInterval) {
+						this._oTimeInterval.invalidate(arguments);
+					}
+					break;
+
+				case sap.ui.unified.CalendarIntervalType.Day:
+					if (this._oDateInterval) {
+						this._oDateInterval.invalidate(arguments);
+					}
+					break;
+
+				case sap.ui.unified.CalendarIntervalType.Month:
+					if (this._oMonthInterval) {
+						this._oMonthInterval.invalidate(arguments);
+					}
+					break;
+
+				default:
+					throw new Error("Unknown IntervalType: " + sIntervalType + "; " + this);
+				}
+
+				this._bDateRangeChanged = undefined;
+			}
+
+		};
+
+		TeamCalendar.prototype.removeAllSpecialDates = function() {
+
+			this._bDateRangeChanged = true;
+			var aRemoved = this.removeAllAggregation("specialDates");
+			return aRemoved;
+
+		};
+
+		TeamCalendar.prototype.destroySpecialDates = function() {
+
+			this._bDateRangeChanged = true;
+			var oDestroyed = this.destroyAggregation("specialDates");
+			return oDestroyed;
 
 		};
 

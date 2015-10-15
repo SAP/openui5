@@ -149,6 +149,18 @@
 					        	]
 					        	})
 					       ],
+					specialDates: [ new sap.ui.unified.DateTypeRange(sID + "SD1", {
+					                	startDate: new Date(2015, 0, 6),
+					                	type: sap.ui.unified.CalendarDayType.Type01,
+					                	tooltip: "Heilige 3 Könige"
+					                }),
+					                new sap.ui.unified.DateTypeRange(sID + "SD2", {
+					                	startDate: new Date(2015, 0, 1, 12, 00),
+					                	endDate: new Date(2015, 0, 1, 14, 00),
+					                	type: sap.ui.unified.CalendarDayType.Type02,
+					                	tooltip: "Lunch"
+					                })
+					              ],
 					toolbarContent: [oButton],
 					appointmentSelect: handleAppointmentSelect,
 					addRow: handleAddRow,
@@ -544,6 +556,50 @@
 				sap.ui.getCore().applyChanges();
 				equal(oTC1.getViews().length, 0, "no views set in aggregation");
 				equal(sap.ui.getCore().byId("TC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Hour, "CalendarRow1 intervalType");
+			});
+
+			test("specialDates", function() {
+				var oTimeInterval = sap.ui.getCore().byId("TC1-TimeInt");
+				equal(oTimeInterval.getSpecialDates().length, 2, "TimeInterval gets SpecialDates from TeamCalendar");
+				ok(jQuery("#TC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemType02"), "SpecialDate rendered");
+
+				oTC1.addSpecialDate(new sap.ui.unified.DateTypeRange("SD1", {
+					startDate: new Date(2015, 0, 1, 15, 30),
+					type: sap.ui.unified.CalendarDayType.Type01,
+					tooltip: "Test"
+				}));
+				sap.ui.getCore().applyChanges();
+				ok(jQuery("#TC1-TimeInt--TimesRow-201501011500").hasClass("sapUiCalItemType01"), "new SpecialDate rendered");
+
+				oTC1.insertSpecialDate(new sap.ui.unified.DateTypeRange("SD2", {
+					startDate: new Date(2015, 0, 1, 16, 30),
+					type: sap.ui.unified.CalendarDayType.Type01,
+					tooltip: "Test"
+				}), 1);
+				sap.ui.getCore().applyChanges();
+				ok(jQuery("#TC1-TimeInt--TimesRow-201501011600").hasClass("sapUiCalItemType01"), "new SpecialDate rendered");
+
+				var oSD = oTC1.removeSpecialDate("SD1");
+				sap.ui.getCore().applyChanges();
+				ok(!jQuery("#TC1-TimeInt--TimesRow-201501011500").hasClass("sapUiCalItemType01"), "new SpecialDate not longer rendered");
+				oSD.destroy();
+
+				var aRemoved = oTC1.removeAllSpecialDates();
+				sap.ui.getCore().applyChanges();
+				equal(aRemoved.length, 3, "3 specialDates removed");
+				ok(!jQuery("#TC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemType02"), "SpecialDate not longer rendered");
+				ok(!jQuery("#TC1-TimeInt--TimesRow-201501011600").hasClass("sapUiCalItemType01"), "new SpecialDate not longer rendered");
+
+				for(var i = 0; i < aRemoved.length; i++) {
+					aRemoved[i].destroy();
+				}
+
+				oTC1 = initTeamCalendar("TC1", oSearchField1, oButton1);
+				ok(jQuery("#TC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemType02"), "SpecialDate rendered again");
+
+				oTC1.destroySpecialDates();
+				sap.ui.getCore().applyChanges();
+				ok(!jQuery("#TC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemType02"), "SpecialDate not longer rendered");
 			});
 
 			test("Row header", function() {
