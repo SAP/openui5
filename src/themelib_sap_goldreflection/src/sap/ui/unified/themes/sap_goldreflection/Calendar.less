@@ -231,3 +231,26 @@
 	-moz-box-shadow: inset 1px 1px 0 0 @sapUiButtonHoverBackground, inset -1px -1px 0 0 @sapUiButtonHoverBackground;
 	-webkit-box-shadow: inset 1px 1px 0 0 @sapUiButtonHoverBackground, inset -1px -1px 0 0 @sapUiButtonHoverBackground;
 }
+
+/* Day names inside day */
+.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalItemText{
+	padding-left: 50%;
+	text-align: left;
+}
+
+.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
+	left: 0;
+	height: 100%;
+	width: 50%;
+	line-height: inherit;
+	padding-right: 0.5rem;
+	padding-top: 1px;
+	padding-bottom: 1px;
+	text-align: right;
+	box-sizing: border-box;
+}
+
+.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem:focus > .sapUiCalDayName,
+.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem:hover > .sapUiCalDayName{
+	color: @sapUiTextInverted;
+}

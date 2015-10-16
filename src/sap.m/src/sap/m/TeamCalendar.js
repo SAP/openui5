@@ -415,7 +415,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					if (!this._oDateInterval) {
 						this._oDateInterval = new sap.ui.unified.CalendarDateInterval(this.getId() + "-DateInt", {
 							startDate: new Date(oStartDate.getTime()), // use new date object
-							days: iIntervals
+							days: iIntervals,
+							showDayNamesLine: false
 						});
 						this._oDateInterval.attachEvent("startDateChange", _handleStartDateChange, this);
 						this._oDateInterval.attachEvent("select", _handleIntervalSelect, this);
