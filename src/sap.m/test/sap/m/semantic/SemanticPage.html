@@ -114,7 +114,8 @@
 			master: {
 				showNavButton: false,
 				title: "Master Title",
-				multiSelectPressed: false
+				multiSelectPressed: false,
+				multiSelectEnabled: true
 			},
 			detail: {
 				showNavButton: false,
@@ -156,7 +157,7 @@
 				sap.ui.getCore().getMessageManager().removeAllMessages();
 			}
 		});
-		
+
 		var oSavingDraftButton = new sap.m.Button({
 			text: "show Saving Draft",
 			press: function () {
@@ -177,7 +178,24 @@
 				draftInd.clearDraftState();
 			}
 		});
-		
+
+		var oToggleMultiselectPressed = new sap.m.Button({
+			text: "Toggle Multiselect Pressed",
+			press: function () {
+				var bToggle = !oStatusModel.getData().master.multiSelectPressed;
+				oStatusModel.setData({master: {multiSelectPressed: bToggle}}, true);
+			}
+		});
+
+		var oToggleMultiselectEnabled= new sap.m.Button({
+			text: "Toggle Multiselect Enabled",
+			press: function () {
+				var bToggle = !oStatusModel.getData().master.multiSelectEnabled;
+				oStatusModel.setData({master: {multiSelectEnabled: bToggle}}, true);
+			}
+		});
+
+
 		function createPageSelect() {
 			return new sap.m.Select({
 				selectedKey: "{status>/selectedPageId}",
@@ -1096,7 +1114,7 @@
 				oClearWarningsButton
 			]
 		});
-		
+
 		var oModifyDraftBox = new sap.m.HBox({
 			items: [
 				oSavingDraftButton,
@@ -1108,7 +1126,7 @@
 				oClearDraftButton
 			]
 		});
-		
+
 		var oModifyFooter = new sap.m.HBox({
 			items: [
 				new sap.m.Button({text: "Show / Hide Footer",
@@ -1142,6 +1160,8 @@
 						oModifyDraftBox,
 						oModifyDraftBox2,
 						oModifyFooter,
+						oToggleMultiselectPressed,
+						oToggleMultiselectEnabled,
 						oModifyCustomFooterContentBox,
 						oModifyCustomShareMenuContentBox,
 						oStatusBox
@@ -1154,7 +1174,9 @@
 			title: "{status>/master/title}",
 			showNavButton: "{status>/master/showNavButton}",
 			subHeader: new sap.m.Bar({contentMiddle: [new sap.m.SearchField()]}),
-			multiSelectAction: new sap.m.semantic.MultiSelectAction({press: onMultiSelectPress, pressed: "{status>/master/multiSelectPressed}"}),
+			multiSelectAction: new sap.m.semantic.MultiSelectAction({press: onMultiSelectPress,
+																	pressed: "{status>/master/multiSelectPressed}",
+																	enabled: "{status>/master/multiSelectEnabled}"}),
 			addAction: new sap.m.semantic.AddAction({press: onSemanticBtnPress}),
 			group: new sap.m.semantic.GroupAction("groupButton", {press: onSemanticBtnPress}),
 			sort: new sap.m.semantic.SortSelect({
