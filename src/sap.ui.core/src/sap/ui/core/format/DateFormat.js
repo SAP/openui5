@@ -727,7 +727,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 					iYear = parseInt(sPart, 10);
 					// Find the right century for two-digit years
 					if (sPart.length <= 2) {
-						var iCurrentYear = this._now(bUTC).getFullYear(),
+						var iCurrentYear = this._now().getFullYear(),
 							iCurrentCentury = Math.floor(iCurrentYear / 100),
 							iYearDiff = iCurrentCentury * 100 + iYear - iCurrentYear;
 						if (iYearDiff < -70) {
@@ -1014,8 +1014,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 		return aFormatArray;
 	};
 
-	DateFormat.prototype._now = function(bUTC) {
-		return bUTC ? new Date(DateFormat.createUTCDate(this.oFormatOptions.calendarType)) : DateFormat.createDate(this.oFormatOptions.calendarType);
+	DateFormat.prototype._now = function() {
+		return DateFormat.createDate(this.oFormatOptions.calendarType);
 	};
 
 	DateFormat.createDate = function(sCalendarType) {
@@ -1102,7 +1102,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 
 		function computeRelativeDate(iDiff, sScale){
 			var iDate, iToday,
-			oToday = that._now(bUTC),
+			oToday = that._now(),
 			oDate,
 			iDiffMillis = iDiff * that._mScales[sScale] * 1000;
 
@@ -1138,7 +1138,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 	 */
 	DateFormat.prototype.formatRelative = function(oDate, bUTC, aRange) {
 
-		var oToday = this._now(bUTC),
+		var oToday = this._now(),
 			sCalendarType = this.oFormatOptions.calendarType,
 			sScale = this.oFormatOptions.relativeScale || "day",
 			iDate, iDiff, sPattern, iDiffSeconds, sMethodName;
