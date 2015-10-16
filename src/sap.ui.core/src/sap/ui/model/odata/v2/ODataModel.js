@@ -2544,6 +2544,7 @@ sap.ui.define([
 			if (oRequest.method === "DELETE") {
 				delete that.oData[aParts[1]];
 				delete that.mContexts["/" + aParts[1]]; // contexts are stored starting with /
+				delete that.mChangedEntities[aParts[1]];
 			}
 		}
 		//get entityType for creates
