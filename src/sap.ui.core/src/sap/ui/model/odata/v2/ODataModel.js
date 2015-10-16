@@ -3974,12 +3974,13 @@ sap.ui.define([
 					jQuery.sap.assert(vProperties.length === 0, "No metadata for the following properties found: " + vProperties.join(","));
 				}
 			}
-			// remove starting / for key only
-			sKey = sPath.substring(1) + "('" + jQuery.sap.uid() + "')";
+			var oEntitySetMetadata = that.oMetadata._getEntitySetByType(oEntityMetadata);
+			sKey = oEntitySetMetadata.name + "('" + jQuery.sap.uid() + "')";
 
 			that.oData[sKey] = oEntity;
 
 			oEntity.__metadata = {type: "" + oEntityMetadata.entityType, uri: that.sServiceUrl + '/' + sKey, created: {
+				//store path for later POST
 				key: sPath.substring(1),
 				success: fnSuccess, 
 				error: fnError, 
