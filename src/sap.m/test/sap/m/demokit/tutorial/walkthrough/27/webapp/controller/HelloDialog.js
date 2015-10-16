@@ -5,7 +5,7 @@ sap.ui.define([
 
 	return Object.extend("sap.ui.demo.wt.controller.HelloDialog", {
 
-		_getDialog: function () {
+		_getDialog : function () {
 			// create dialog lazily
 			if (!this._oDialog) {
 				// create dialog via fragment factory
@@ -14,8 +14,7 @@ sap.ui.define([
 			return this._oDialog;
 		},
 
-		open: function (oView) {
-
+		open : function (oView) {
 			var oDialog = this._getDialog();
 
 			// connect dialog to view (models, lifecycle)
@@ -25,7 +24,7 @@ sap.ui.define([
 			oDialog.open();
 		},
 
-		onCloseDialog: function () {
+		onCloseDialog : function () {
 			this._getDialog().close();
 		}
 	});
