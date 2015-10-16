@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global JSZip *///declare unusual global vars for JSLint/SAPUI5 validation
+/*global JSZip, URI *///declare unusual global vars for JSLint/SAPUI5 validation
 sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/Device', 'sap/m/MessageToast'], function (Controller, Device, MessageToast) {
 	"use strict";
 
@@ -131,7 +131,8 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/Device', 'sap/m/MessageToas
 				var oFile = oData.files[i],
 					sRawFileContent = oFile.raw;
 
-				if (oFile.name === oData.iframe) {
+				// change the bootstrap URL to the current server for all HTML files of the sample
+				if (oFile.name && (oFile.name === oData.iframe || oFile.name.split(".").pop() === "html")) {
 					sRawFileContent = this._changeIframeBootstrapToCloud(sRawFileContent);
 				}
 
@@ -149,9 +150,10 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/Device', 'sap/m/MessageToas
 			var sRef = jQuery.sap.getModulePath(this._sId),
 				aExtraFiles = oData.includeInDownload || [],
 				that = this;
-			oZipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));
 
+			// iframe examples have a separate index file and a component file to describe it
 			if (!oData.iframe) {
+				oZipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));
 				oZipFile.file("index.html", this.createIndexFile(oData));
 			}
 
@@ -235,8 +237,13 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/Device', 'sap/m/MessageToas
 		},
 
 		_changeIframeBootstrapToCloud : function (sRawIndexFileHtml) {
-			var rReplaceIndex = /src=["|']([^"|^']*sap-ui-core\.js)["|']/;
-			return sRawIndexFileHtml.replace(rReplaceIndex, 'src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"');
+			var rReplaceIndex = /src=(?:"[^"]*\/sap-ui-core\.js"|'[^']*\/sap-ui-core\.js')/;
+			var oCurrentURI = new URI(window.location.href).search("");
+			var oRelativeBootstrapURI = new URI(jQuery.sap.getResourcePath("", "/sap-ui-core.js"));
+			var sBootstrapURI = oRelativeBootstrapURI.absoluteTo(oCurrentURI).toString();
+
+			// replace the bootstrap path of the sample with the current to the core
+			return sRawIndexFileHtml.replace(rReplaceIndex, 'src="' + sBootstrapURI + '"');
 		},
 
 		handleTabSelectEvent: function(oEvent) {
