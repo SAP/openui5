@@ -4090,6 +4090,7 @@ sap.ui.define([
 			}
 			var oEntityMetadata = that.oMetadata._getEntityTypeByPath(sPath);
 			if (!oEntityMetadata) {
+				
 				jQuery.sap.assert(oEntityMetadata, "No Metadata for collection " + sPath + " found");
 				return undefined;
 			}
@@ -4111,10 +4112,12 @@ sap.ui.define([
 					jQuery.sap.assert(vProperties.length === 0, "No metadata for the following properties found: " + vProperties.join(","));
 				}
 			}
-			// remove starting / for key only
-			sKey = sPath.substring(1) + "('" + jQuery.sap.uid() + "')";
+			//get EntitySet metadata for data storage
+			var oEntitySetMetadata = that.oMetadata._getEntitySetByType(oEntityMetadata);
+			sKey = oEntitySetMetadata.name + "('" + jQuery.sap.uid() + "')";
 			
 			oEntity.__metadata = {type: "" + oEntityMetadata.entityType, uri: that.sServiceUrl + '/' + sKey, created: {
+				//store path for later POST
 				key: sPath.substring(1), 
 				success: fnSuccess, 
 				error: fnError, 
