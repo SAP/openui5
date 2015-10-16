@@ -1,6 +1,6 @@
 // Copyright (c) 2013 SAP SE, All Rights Reserved
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
-	function($, EventProvider, Target) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target', './async/Targets', './sync/Targets'],
+	function($, EventProvider, Target, asyncTargets, syncTargets) {
 		"use strict";
 
 		/**
@@ -279,14 +279,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
 				}
 
 				// branch by abstraction
-				var TargetsStub;
-				if (this._oConfig._async) {
-					jQuery.sap.require("sap.ui.core.routing.async.Targets");
-					TargetsStub = sap.ui.require("sap/ui/core/routing/async/Targets");
-				} else {
-					jQuery.sap.require("sap.ui.core.routing.sync.Targets");
-					TargetsStub = sap.ui.require("sap/ui/core/routing/sync/Targets");
-				}
+				var TargetsStub = this._oConfig._async ?  asyncTargets : syncTargets;
 				for (var fn in TargetsStub) {
 					this[fn] = TargetsStub[fn];
 				}
