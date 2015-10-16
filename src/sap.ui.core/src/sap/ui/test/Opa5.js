@@ -559,7 +559,7 @@ sap.ui.define([
 				addFrame();
 			}
 
-			$("body").height("100%");
+			$("body").addClass("sapUiBody");
 			$("html").height("100%");
 		});
 
