@@ -19,12 +19,43 @@ sap.ui.require([
 			"EntitySets" : [{
 				"Name" : "Employees",
 				"Fullname" : "foo.bar.Container/Employees",
-				"EntityType@odata.navigationLink" : "Types(QualifiedName='foo.bar.Worker')"
+				"EntityType" : {
+					"QualifiedName" : "foo.bar.Worker"
+				},
+				"NavigationPropertyBindings" : [{
+					"Name" : "EMPLOYEE_2_TEAM",
+					"Path" : "EMPLOYEE_2_TEAM",
+					"Target" : {
+						"Fullname" : "foo.bar.Container/Teams"
+					}
+				}, {
+					"Name" : "cross_service",
+					"Path" : "cross_service",
+					"Target" : {
+						"Fullname" : "bar.baz.Container/ForeignEntitySet"
+					}
+				}]
+			}, {
+				"Name" : "Teams",
+				"Fullname" : "foo.bar.Container/Teams",
+				"EntityType" : {
+					"QualifiedName" : "foo.bar.TEAM"
+				},
+				"NavigationPropertyBindings" : [{
+					"Name" : "TEAM_2_EMPLOYEES",
+					"Path" : "TEAM_2_EMPLOYEES",
+					"Target" : {
+						"Fullname" : "foo.bar.Container/Employees"
+					}
+				}]
 			}],
 			"Singletons" : [{
 				"Name" : "Me",
 				"Fullname" : "foo.bar.Container/Me",
-				"Type@odata.navigationLink" : "Types(QualifiedName='foo.bar.Worker')"
+				"Type" : {
+					"QualifiedName" : "foo.bar.Worker"
+				},
+				"NavigationPropertyBindings" : []
 			}]
 		},
 		oEntityTypeWorker = {
@@ -65,7 +96,9 @@ sap.ui.require([
 			"NavigationProperties" : [{
 				"Name" : "EMPLOYEE_2_TEAM",
 				"Fullname" : "foo.bar.Worker/EMPLOYEE_2_TEAM",
-				"Type@odata.navigationLink" : "Types(QualifiedName='foo.bar.Team')"
+				"Type" : {
+					"QualifiedName" : "foo.bar.Team"
+				}
 			}]
 		},
 		oEntityTypeTeam = {
@@ -78,17 +111,21 @@ sap.ui.require([
 			"NavigationProperties" : [{
 				"Name" : "TEAM_2_EMPLOYEES",
 				"Fullname" : "foo.bar.TEAM/TEAM_2_EMPLOYEES",
-				"Type@odata.navigationLink" : "Types(QualifiedName='foo.bar.Worker')"
+				"Type" : {
+					"QualifiedName" : "foo.bar.Worker"
+				}
 			}]
 		},
 		mFixture = {
 			"/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata": {source: "metadata.xml"}
 		},
-		sMetaEmployees = "/EntitySets(Name='Employees')",
-		sMetaMe = "/Singletons(Name='Me')",
-		sMetaCityname = sMetaEmployees + "/EntityType/Properties(Name='LOCATION')/Type/"
-			+ "Properties(Name='City')/Type/Properties(Name='CITYNAME')",
-		sMetaTeam = sMetaEmployees + "/EntityType/NavigationProperties(Name='EMPLOYEE_2_TEAM')";
+		sMetaEmployees = "/EntitySets('Employees')",
+		sMetaMe = "/Singletons('Me')",
+		sMetaCityname = sMetaEmployees + "/EntityType/Properties('LOCATION')/Type/"
+			+ "Properties('City')/Type/Properties('CITYNAME')",
+		// TODO This is the metapath to TEAM only when navigating from Employees
+		//      With this implementation an EntityType can be reached via multiple paths
+		sMetaTeam = sMetaEmployees + "/NavigationPropertyBindings('EMPLOYEE_2_TEAM')/Target";
 
 	/**
 	 * Returns a clone of the object.
@@ -117,15 +154,41 @@ sap.ui.require([
 	}
 
 	/**
-	 * Returns a resolved promised for the given object. Clones the object.
+	 * Returns a resolved promise for the given object. Clones the object.
 	 *
 	 * @param {object} o
 	 *   the object
 	 * @return {Promise}
-	 *   the promised to be resolved with a clone of the object
+	 *   the promise to be resolved with a clone of the object
 	 */
 	function promiseFor(o) {
 		return Promise.resolve(clone(o));
+	}
+
+	/**
+	 * Returns a resolved promise for the entity container with the navigation property bindings
+	 * resolved.
+	 * @return {Promise}
+	 *   the promise to be resolved with a clone of the entity container
+	 */
+	function promiseForEntityContainer() {
+		return promiseFor(oEntityContainer).then(function (oEntityContainer) {
+			Helper.resolveNavigationPropertyBindings(oEntityContainer);
+			return oEntityContainer;
+		});
+	}
+
+	/**
+	 * Creates a matcher that checks that the given object has the expected name.
+	 * @param {string} sExpectedName
+	 *   the expected name
+	 * @returns {object}
+	 *   a sinon matcher
+	 */
+	function nameMatcher(sExpectedName) {
+		return sinon.match(function (o) {
+			return o.Name === sExpectedName;
+		});
 	}
 
 	//*********************************************************************************************
@@ -171,7 +234,7 @@ sap.ui.require([
 			object: oEntityContainer.EntitySets[0],
 			property: "EntityType"
 		}],
-		expected: sMetaEmployees + "/EntityType/Properties(Name='ENTRYDATE')"
+		expected: sMetaEmployees + "/EntityType/Properties('ENTRYDATE')"
 	}, {
 		path: "/Employees(ID='1')/LOCATION/City/CITYNAME",
 		nav: [{
@@ -188,52 +251,37 @@ sap.ui.require([
 			object: oEntityContainer.Singletons[0],
 			property: "Type"
 		}],
-		expected: sMetaMe + "/Type/Properties(Name='ENTRYDATE')"
+		expected: sMetaMe + "/Type/Properties('ENTRYDATE')"
 	}, {
-		path: "/Employees(ID='1')/EMPLOYEE_2_TEAM",
-		nav: [{
-			object: oEntityContainer.EntitySets[0],
-			property: "EntityType"
-		}],
-		expected: sMetaEmployees + "/EntityType/NavigationProperties(Name='EMPLOYEE_2_TEAM')"
+		path: "/Employees(ID='1')/EMPLOYEE_2_TEAM/0",
+		expected: sMetaTeam
 	}, {
 		path: "/Employees(ID='1')/EMPLOYEE_2_TEAM/Team_Id",
 		nav: [{
-			object: oEntityContainer.EntitySets[0],
-			property: "EntityType"
-		}, {
-			object: oEntityTypeWorker.NavigationProperties[0],
-			property: "Type",
+			object: oEntityContainer.EntitySets[1],
+			property: "EntityType",
 			result: oEntityTypeTeam
 		}],
-		expected: sMetaTeam + "/Type/Properties(Name='Team_Id')"
+		expected: sMetaTeam + "/EntityType/Properties('Team_Id')"
 	}, {
-		path: "/Employees[1];list=0/EMPLOYEE_2_TEAM/TEAM_2_EMPLOYEES/0/ID",
+		path: "/Employees[1];list=0/EMPLOYEE_2_TEAM/0/TEAM_2_EMPLOYEES/0/ID",
 		nav: [{
 			object: oEntityContainer.EntitySets[0],
 			property: "EntityType"
-		}, {
-			object: oEntityTypeWorker.NavigationProperties[0],
-			property: "Type",
-			result: oEntityTypeTeam
-		}, {
-			object: oEntityTypeTeam.NavigationProperties[0],
-			property: "Type"
 		}],
-		expected: sMetaTeam + "/Type/NavigationProperties(Name='TEAM_2_EMPLOYEES')/Type/"
-			+ "Properties(Name='ID')"
+		expected: sMetaTeam + "/NavigationPropertyBindings('TEAM_2_EMPLOYEES')/Target/EntityType/"
+			+ "Properties('ID')"
 	}].forEach(function (oFixture) {
 		QUnit.test("requestMetaContext: " + oFixture.path, function (assert) {
 			var oMetaModel = this.oMetaModel,
 				oHelperMock = this.oSandbox.mock(Helper);
 
 			oHelperMock.expects("requestEntityContainer").withExactArgs(oMetaModel)
-				.returns(promiseFor(oEntityContainer));
+				.returns(promiseForEntityContainer());
 			if (oFixture.nav) {
 				oFixture.nav.forEach(function (oNav) {
-					oHelperMock.expects("requestProperty")
-						.withExactArgs(oMetaModel, oNav.object, oNav.property,
-							sinon.match.string)
+					oHelperMock.expects("requestTypeForNavigationProperty")
+						.withExactArgs(oMetaModel, nameMatcher(oNav.object.Name), oNav.property)
 						.returns(promiseFor(oNav.result || oEntityTypeWorker));
 				});
 			}
@@ -254,7 +302,8 @@ sap.ui.require([
 		return this.oMetaModel.requestMetaContext("/Unknown").then(function () {
 			assert.ok(false, "Unexpected success");
 		})["catch"](function (oError) {
-			assert.strictEqual(oError.message, "Type Unknown not found");
+			assert.strictEqual(oError.message,
+				"No EntitySet or Singleton with name 'Unknown' found: /Unknown");
 		});
 	});
 
@@ -272,22 +321,23 @@ sap.ui.require([
 		path: "/Me/Unknown",
 		type: "Singleton",
 		error: "Unknown property: foo.bar.Worker/Unknown: /Me/Unknown"
-	}
-	].forEach(function (oFixture) {
+	}, {
+		path: "/Employees(ID='1')/cross_service",
+		error: "Unsupported cross-service reference: /Employees(ID='1')/cross_service"
+	}].forEach(function (oFixture) {
 		QUnit.test("requestMetaContext: " + oFixture.type + " " + oFixture.path, function (assert) {
 			var oHelperMock = this.oSandbox.mock(Helper);
 
 			oHelperMock.expects("requestEntityContainer").withExactArgs(this.oMetaModel)
-				.returns(promiseFor(oEntityContainer));
+				.returns(promiseForEntityContainer());
 			if (oFixture.type === "EntitySet") {
-				oHelperMock.expects("requestProperty")
-					.withExactArgs(this.oMetaModel, oEntityContainer.EntitySets[0],
-						"EntityType", sinon.match.string)
+				oHelperMock.expects("requestTypeForNavigationProperty")
+					.withExactArgs(this.oMetaModel, nameMatcher("Employees"),
+						"EntityType")
 					.returns(promiseFor(oEntityTypeWorker));
-			} else {
-				oHelperMock.expects("requestProperty")
-					.withExactArgs(this.oMetaModel, oEntityContainer.Singletons[0], "Type",
-						sinon.match.string)
+			} else if (oFixture.type === "Singleton") {
+				oHelperMock.expects("requestTypeForNavigationProperty")
+					.withExactArgs(this.oMetaModel, nameMatcher("Me"), "Type")
 					.returns(promiseFor(oEntityTypeWorker));
 			}
 
@@ -313,8 +363,9 @@ sap.ui.require([
 			}, new Error(oFixture.error));
 		});
 	});
-
-	// TODO requestMetaContext: (navigation) property with key predicate
+	// TODO requestMetaContext: type casts
+	// TODO requestMetaContext: cross-service NavigationPropertyBinding
+	// TODO requestMetaContext: NavigationProperty in a complex-type structural property
 	// TODO requestMetaContext: use @odata.context to get the name of the initial set/singleton
 
 	//*********************************************************************************************
@@ -326,16 +377,16 @@ sap.ui.require([
 		error: "Not an absolute path"
 	}, {
 		path: "/UnknownPart",
-		reject: "Unknown: UnknownPart"
+		reject: "Unknown UnknownPart"
 	}, {
 		path: "/Name(Foo='Bar')",
-		reject: '"Name" is not an array'
+		reject: "Unknown Name(Foo='Bar')"
 	}, {
 		path: sMetaEmployees,
 		result: oEntityContainer.EntitySets[0]
 	}, {
-		path: "/EntitySets(Name='Teams')",
-		reject: "Unknown: EntitySets(Name='Teams')"
+		path: "/EntitySets('Foo')",
+		reject: "Unknown EntitySets('Foo')"
 	}, {
 		path: sMetaMe,
 		result: oEntityContainer.Singletons[0]
@@ -349,6 +400,9 @@ sap.ui.require([
 			property: "Type"
 		}],
 		result: oEntityTypeWorker
+	}, {
+		path: sMetaMe + "/Type('foo')",
+		reject: '"Type" is not an array'
 	}, {
 		path: sMetaMe + "/Type/Name",
 		nav: [{
@@ -365,6 +419,13 @@ sap.ui.require([
 		}],
 		result: oEntityTypeWorker.Abstract
 	}, {
+		path: sMetaMe + "/Type/Properties('ENTRYDATE')",
+		nav: [{
+			object: oEntityContainer.Singletons[0],
+			property: "Type"
+		}],
+		result: oEntityTypeWorker.Properties[1]
+	}, {
 		path: sMetaCityname,
 		nav: [{
 			object: oEntityContainer.EntitySets[0],
@@ -372,17 +433,10 @@ sap.ui.require([
 		}],
 		result: oEntityTypeWorker.Properties[2].Type.Properties[0].Type.Properties[0]
 	}, {
-		path: sMetaTeam + "/Type/NavigationProperties(Name='TEAM_2_EMPLOYEES')/Type",
+		path: sMetaTeam + "/NavigationPropertyBindings('TEAM_2_EMPLOYEES')/Target/EntityType",
 		nav: [{
 			object: oEntityContainer.EntitySets[0],
 			property: "EntityType"
-		}, {
-			object: oEntityTypeWorker.NavigationProperties[0],
-			property: "Type",
-			result: oEntityTypeTeam
-		}, {
-			object: oEntityTypeTeam.NavigationProperties[0],
-			property: "Type"
 		}],
 		result: oEntityTypeWorker
 	}].forEach(function (oFixture) {
@@ -400,19 +454,18 @@ sap.ui.require([
 			}
 			oHelperMock.expects("requestEntityContainer")
 				.withExactArgs(this.oMetaModel)
-				.returns(promiseFor(oEntityContainer));
+				.returns(promiseForEntityContainer());
 			if (oFixture.nav) {
 				oFixture.nav.forEach(function (oNav) {
-					oHelperMock.expects("requestProperty")
-						.withExactArgs(oMetaModel, oNav.object, oNav.property,
-							sinon.match.string)
+					oHelperMock.expects("requestTypeForNavigationProperty")
+						.withExactArgs(oMetaModel, nameMatcher(oNav.object.Name), oNav.property)
 						.returns(promiseFor(oNav.result || oEntityTypeWorker));
 				});
 			}
 
 			return this.oMetaModel.requestObject(oFixture.path, oContext).then(function (oResult) {
 				if ("result" in oFixture) {
-					assert.deepEqual(oResult, oFixture.result);
+					TestUtils.deepContains(oResult, oFixture.result);
 				} else {
 					assert.ok(false, "unexpected success");
 				}
@@ -522,7 +575,7 @@ sap.ui.require([
 		return this.oMetaModel.requestUI5Type(sPath).then(function(oType) {
 			assert.ok(false);
 		})["catch"](function (oError) {
-			assert.strictEqual(oError.message, "No property found at " + sPath);
+			assert.strictEqual(oError.message, "No property: " + sPath);
 		});
 	});
 
@@ -557,11 +610,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		sMetaPath : "/EntitySets(Name='EMPLOYEES')",
+		sMetaPath : "/EntitySets('EMPLOYEES')",
 		sPath : "/EMPLOYEES[0];list=0"
 	}, {
-		sMetaPath : "/EntitySets(Name='TEAMS')/EntityType"
-			+ "/NavigationProperties(Name='TEAM_2_EMPLOYEES')",
+		sMetaPath : "/EntitySets('TEAMS')/NavigationPropertyBindings('TEAM_2_EMPLOYEES')/Target",
 		sPath : "/TEAMS[0];list=0/TEAM_2_EMPLOYEES/0"
 	}].forEach(function (oFixture) {
 		QUnit.test("requestCanonicalUrl: " + oFixture.sPath, function (assert) {
@@ -579,14 +631,10 @@ sap.ui.require([
 				assert.strictEqual(oInstance0, oInstance);
 				return "(~)";
 			});
-			this.oSandbox.stub(Helper, "requestEntitySetName", function (oMetaContext) {
-				assert.strictEqual(oMetaContext.getPath(), oFixture.sMetaPath);
-				return Promise.resolve("€MPLOY€€$"); // strange characters to check encoding
-			});
 
 			return this.oMetaModel.requestCanonicalUrl("/~/", oFixture.sPath, read)
 				.then(function (sCanonicalUrl) {
-					assert.strictEqual(sCanonicalUrl, "/~/%E2%82%ACMPLOY%E2%82%AC%E2%82%AC%24(~)");
+					assert.strictEqual(sCanonicalUrl, "/~/EMPLOYEES(~)");
 				})["catch"](function (oError) {
 					assert.ok(false, oError.message + "@" + oError.stack);
 				});
@@ -613,12 +661,13 @@ sap.ui.require([
 				.then(function (sCanonicalUrl) {
 					assert.ok(false, sCanonicalUrl);
 				})["catch"](function (oError) {
-					assert.strictEqual(oError.message, "No target entity set found for source"
-						+ " entity type 'com.sap.gateway.iwbep.tea_busi.v0001.Worker' and"
-						+ " navigation property 'ID'");
+					assert.strictEqual(oError.message, "Not an entity: " + oFixture.sPath);
 				});
 		});
 	});
 });
+//TODO Join the two followPath functions from requestMetaContext and requestObject?
+//TODO "placeholder" is recognized using Object.keys(o) === 1. But the spec says $select SHOULD
+//     restrict to the named properties
 //TODO what is the idea behind oMetaContext = {metaContextFor: sPath}, why not use a real context?
 //     Note: requestMetaContext() does not return clones but singletons, normally!

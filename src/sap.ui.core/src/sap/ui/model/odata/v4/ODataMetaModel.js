@@ -17,6 +17,10 @@ sap.ui.define([
 	 * Do <strong>NOT</strong> call this private constructor for a new <code>ODataMetaModel</code>,
 	 * but rather use {@link sap.ui.model.odata.v4.ODataModel#getMetaModel getMetaModel} instead.
 	 *
+	 * @param {object} oModel
+	 *   an interface to the meta model having the two methods <code>requestEntityContainer</code>
+	 *   and <code>requestEntityType</code>.
+	 *
 	 * @class Implementation of an OData meta model which offers access to OData v4 meta data.
 	 *
 	 * This model is read-only.
@@ -41,6 +45,17 @@ sap.ui.define([
 		});
 
 	/**
+	 * Throws an error with the given text and the given path.
+	 * @param {string} sError
+	 *   the error text
+	 * @param {string} sPath
+	 *   the path
+	 */
+	function error(sError, sPath) {
+		throw new Error(sError + ": " + sPath);
+	}
+
+	/**
 	 * Returns a promise for the "4.3.1 Canonical URL" corresponding to the given service root URL
 	 * and absolute data binding path which must point to an entity.
 	 *
@@ -60,21 +75,20 @@ sap.ui.define([
 	ODataMetaModel.prototype.requestCanonicalUrl = function (sServiceUrl, sPath, fnRead) {
 		var that = this;
 
-		return fnRead(sPath, true).then(function (oEntityInstance) {
-			return that.requestMetaContext(sPath).then(function (oContext) {
-				// e.g. "/EntitySets(Name='foo')"
-				// or   "/EntitySets(Name='foo')/EntityType/NavigationProperties(Name='bar')"
-				var iLastSlash = oContext.getPath().lastIndexOf("/"),
-					sTypePath = iLastSlash > 0 ? "Type" : "EntityType";
+		return Promise.all([
+			fnRead(sPath, true),
+			this.requestMetaContext(sPath)
+		]).then(function (aValues) {
+			var oEntityInstance = aValues[0],
+				oMetaContext = aValues[1];
 
-				return Promise.all([
-					that.requestObject(sTypePath, oContext), // --> oEntityType
-					Helper.requestEntitySetName(oContext) // --> sEntitySetName
-				]).then(function (aValues) {
-					var oEntityType = aValues[0],
-						sEntitySetName = aValues[1];
-
-					return sServiceUrl + encodeURIComponent(sEntitySetName)
+			return that.requestObject("", oMetaContext).then(function (oEntitySet) {
+				// check that this really is an EntitySet
+				if (!oEntitySet.EntityType) {
+					error("Not an entity", sPath);
+				}
+				return that.requestObject("EntityType", oMetaContext).then(function (oEntityType) {
+					return sServiceUrl + encodeURIComponent(oEntitySet.Name)
 						+ Helper.getKeyPredicate(oEntityType, oEntityInstance);
 				});
 			});
@@ -104,18 +118,19 @@ sap.ui.define([
 		/**
 		 * Fetches and parses the next part of the path. Modifies aSegments
 		 * @returns {object}
-		 *   an object describing the part with name and key
+		 *   an object describing the part with property and name
 		 */
 		function nextPart() {
-			return Helper.parsePathSegment(aSegments.shift());
+			return Helper.parseSegment(aSegments.shift());
 		}
 
-		function unsupported(sError) {
-			throw new Error(sError + ": " + sPath);
-		}
-
-		function unknown(sError) {
-			unsupported("Unknown: " + sError);
+		/**
+		 * Throws an error that the segment is unknown.
+		 * @param {string} sSegment
+		 *   the segment
+		 */
+		function unknown(sSegment) {
+			error("Unknown " + sSegment, sPath);
 		}
 
 		function followPath(oObject) {
@@ -123,20 +138,28 @@ sap.ui.define([
 
 			while (aSegments.length) {
 				oPart = nextPart();
-				if (!(oPart.name in oObject)) {
-					return Helper.requestProperty(that, oObject, oPart.name, sResolvedPath)
-						.then(followPath);
+				if (!(oPart.property in oObject)) { // property does not exist
+					unknown(oPart.segment);
 				}
-				oNextObject = oObject[oPart.name];
-				if (oPart.key) {
+				oNextObject = oObject[oPart.property];
+				if (oPart.name) {
+					// a segment like "EntitySets('Employees')"
 					if (!Array.isArray(oNextObject)) {
-						unsupported('"' + oPart.name + '" is not an array');
+						error('"' + oPart.property + '" is not an array', sPath);
 					}
-					oObject = Helper.findKeyInArray(oNextObject, oPart.key);
+					oObject = Helper.findInArray(oNextObject, "Name", oPart.name);
 					if (!oObject) {
-						unknown(oPart.all);
+						unknown(oPart.segment);
 					}
 				} else {
+					// a segment like "EntityType" or an index
+					if (typeof oNextObject === "object" && !Array.isArray(oNextObject)
+							&& Object.keys(oNextObject).length === 1) {
+						// type navigation property not resolved yet
+						return Helper.requestTypeForNavigationProperty(that, oObject,
+								oPart.property)
+							.then(followPath);
+					}
 					oObject = oNextObject;
 				}
 			}
@@ -144,7 +167,7 @@ sap.ui.define([
 		}
 
 		if (!sResolvedPath) {
-			unsupported("Not an absolute path");
+			error("Not an absolute path", sPath);
 		}
 		aSegments = Helper.splitPath(sResolvedPath);
 		return Helper.requestEntityContainer(this).then(followPath);
@@ -155,6 +178,10 @@ sap.ui.define([
 	 *
 	 * Returns a <code>Promise</code> which is resolved with the requested OData meta data context
 	 * or rejected with an error.
+	 *
+	 * The resulting meta data context will either point to an EntitySet, to a Singleton or to a
+	 * Property. The meta data path will follow the NavigationPropertyBindings as long as they lead
+	 * to an EntitySet from the same container with a simple path, then it will switch to the type.
 	 *
 	 * @param {string} sPath
 	 *   An absolute path within the OData data model for which the OData meta data context is
@@ -167,13 +194,28 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataMetaModel.prototype.requestMetaContext = function (sPath) {
-		var i = 1,
+		var i = 0,
 			sMetaPath = "",
 			aSegments = Helper.splitPath(sPath),
 			aMatches,
 			that = this;
 
-		function findChild(oObject, aProperties, sName) {
+		/**
+		 * Finds a child of the given object having the given name. Searches within all the given
+		 * properties. Extends sMetaPath correspondingly.
+		 *
+		 * @param {object} oObject
+		 *   the object to search in
+		 * @param {string[]} aProperties
+		 *   the names of the properties to search in (they must all be arrays)
+		 * @param {string} sName
+		 *   the value of the property "Name" in the searched child
+		 * @param {boolean} [bHidden=false]
+		 *   if true, sMetaPath is _not_ extended
+		 * @returns {object}
+		 *   the requested child or undefined if not found
+		 */
+		function findChild(oObject, aProperties, sName, bHidden) {
 			var oChild,
 				i,
 				sProperty;
@@ -183,13 +225,35 @@ sap.ui.define([
 				if (sProperty in oObject) {
 					oChild = Helper.findInArray(oObject[sProperty], "Name", sName);
 					if (oChild) {
-						sMetaPath += "/" + sProperty + "(Name='"
-							+ encodeURIComponent(oChild.Name) + "')";
+						if (!bHidden) {
+							sMetaPath += "/" + sProperty + "('" + oChild.Name + "')";
+						}
 						return {object: oChild, property: sProperty};
 					}
 				}
 			}
 			return undefined;
+		}
+
+		/**
+		 * Finds an EntitySet or a Singleton with the given name.
+		 * @param {object} oEntityContainer
+		 *   the entity container
+		 * @param {string} sName
+		 *   the name
+		 * @param {boolean} [bHidden=false]
+		 *   if true, sMetaPath is _not_ extended
+		 * @returns {object}
+		 *   the EntitySet or the Singleton
+		 * @throws {Error}
+		 *   if not found
+		 */
+		function findSetOrSingleton(oEntityContainer, sName, bHidden) {
+			var oResult = findChild(oEntityContainer, ["EntitySets", "Singletons"], sName, bHidden);
+			if (!oResult) {
+				error("No EntitySet or Singleton with name '" + sName + "' found", sPath);
+			}
+			return oResult;
 		}
 
 		/**
@@ -211,22 +275,21 @@ sap.ui.define([
 			for (;;) {
 				oResult = findChild(oType, ["Properties", "NavigationProperties"], aSegments[i]);
 				if (!oResult) {
-					throw new Error("Unknown property: " + oType.QualifiedName + "/"
-						+ aSegments[i] + ": " + sPath);
+					error("Unknown property: " + oType.QualifiedName + "/" + aSegments[i], sPath);
 				}
 				oProperty = oResult.object;
 				i += 1;
 				if (rNumber.test(aSegments[i])) {
-					// skip index in data path e.g. .../TEAM_2_EMPLOYEES/2/Name
-					i += 1;
+					i += 1;  // skip index in data path e.g. .../TEAM_2_EMPLOYEES/2/Name
 				}
 
 				if (!aSegments[i]) {
 					return sMetaPath;
 				}
 				sMetaPath = sMetaPath + "/Type";
-				if (!("Type" in oProperty)) {
-					return Helper.requestProperty(that, oProperty, "Type", sMetaPath)
+				if (Object.keys(oProperty.Type).length === 1) {
+					// type navigation property not resolved yet
+					return Helper.requestTypeForNavigationProperty(that, oProperty, "Type")
 						.then(followPath);
 				}
 				oType = oProperty.Type;
@@ -234,26 +297,48 @@ sap.ui.define([
 		}
 
 		if (aSegments.length === 0) {
-			throw new Error("Unsupported: " + sPath);
+			error("Unsupported", sPath);
 		}
 		aMatches = rEntitySetName.exec(aSegments[0]);
 		if (!aMatches) {
-			throw new Error("Unsupported: " + sPath);
+			error("Unsupported", sPath);
 		}
 		return Helper.requestEntityContainer(this).then(function (oEntityContainer) {
-			var sProperty,
+			var sName = aMatches[1],
+				oNavigationResult,
+				sProperty,
 				oResult;
 
-			oResult = findChild(oEntityContainer, ["EntitySets", "Singletons"], aMatches[1]);
-			if (!oResult) {
-				throw new Error("Type " + aMatches[1] + " not found");
+			oResult = findSetOrSingleton(oEntityContainer, sName);
+			// follow the NavigationPropertyBindings in EntitySets/Singletons until a stuctural
+			// property
+			for (;;) {
+				sProperty = oResult.property === "EntitySets" ? "EntityType" : "Type";
+				i += 1;
+				if (rNumber.test(aSegments[i])) {
+					// skip index in data path e.g. .../TEAM_2_EMPLOYEES/2/Name
+					i += 1;
+				}
+				if (!aSegments[i]) {
+					return sMetaPath;
+				}
+				oNavigationResult = findChild(oResult.object, ["NavigationPropertyBindings"],
+					aSegments[i]);
+				if (!oNavigationResult) {
+					break;
+				}
+				sName = oNavigationResult.object.Target.Name;
+				if (!sName) {
+					// if it is local, Helper.resolveNavigationPropertyBindings has inserted the
+					// entity set or singleton here
+					error("Unsupported cross-service reference", sPath);
+				}
+				// This search is only used to check whether it is entity set or singleton
+				oResult = findSetOrSingleton(oEntityContainer, sName, true);
+				sMetaPath += "/Target";
 			}
-			if (!aSegments[i]) {
-				return sMetaPath;
-			}
-			sProperty = oResult.property === "EntitySets" ? "EntityType" : "Type";
 			sMetaPath += "/" + sProperty;
-			return Helper.requestProperty(that, oResult.object, sProperty, sMetaPath)
+			return Helper.requestTypeForNavigationProperty(that, oResult.object, sProperty)
 				.then(followPath);
 		}).then(function (sMetaPath) {
 			return that.getContext(sMetaPath);
@@ -311,12 +396,11 @@ sap.ui.define([
 			}
 
 			if (!("Type" in oProperty) || !("Facets" in oProperty) || !("Nullable" in oProperty)) {
-				throw new Error("No property found at " + sPath);
+				error("No property", sPath);
 			}
 			oUi5Type = mUi5TypeForEdmType[oProperty.Type.QualifiedName];
 			if (!oUi5Type) {
-				throw new Error("Unsupported EDM type: " + oProperty.Type.QualifiedName + ": "
-					+ sPath);
+				error("Unsupported EDM type: " + oProperty.Type.QualifiedName, sPath);
 			}
 			for (i = 0; i < oProperty.Facets.length; i++) {
 				oFacet = oProperty.Facets[i];

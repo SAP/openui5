@@ -59,79 +59,22 @@ sap.ui.require([
 		assert.deepEqual(Helper.splitPath("/EntityContainer/EntitySet/Link"),
 			["EntityContainer", "EntitySet", "Link"]);
 		assert.deepEqual(Helper.splitPath(
-			"/EntityContainer/EntitySet(Fullname='foo.Container%2FBars')/Link"),
-			["EntityContainer", "EntitySet(Fullname='foo.Container/Bars')", "Link"]);
+			"/EntityContainer/EntitySet('foo.Container%2FBars')/Link"),
+			["EntityContainer", "EntitySet('foo.Container%2FBars')", "Link"]);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("parsePathSegment", function (assert) {
-		assert.deepEqual(Helper.parsePathSegment(undefined), undefined);
-		assert.deepEqual(Helper.parsePathSegment("Employees"), {
-			all: "Employees",
+	QUnit.test("parseSegment", function (assert) {
+		assert.deepEqual(Helper.parseSegment(undefined), undefined);
+		assert.deepEqual(Helper.parseSegment("Types"), {
+			segment: "Types",
+			property: "Types"
+		});
+		assert.deepEqual(Helper.parseSegment("EntitySets('Employees')"), {
+			segment: "EntitySets('Employees')",
+			property: "EntitySets",
 			name: "Employees"
 		});
-		assert.deepEqual(Helper.parsePathSegment("Employees(ID='1')"), {
-			all: "Employees(ID='1')",
-			name: "Employees",
-			key: {ID: '1'}
-		});
-		assert.deepEqual(Helper.parsePathSegment("SalesOrderItems(OrderID='1''2',Index=5)"), {
-			all: "SalesOrderItems(OrderID='1''2',Index=5)",
-			name: "SalesOrderItems",
-			key: {OrderID: "1'2", Index: 5}
-		});
-		assert.deepEqual(Helper.parsePathSegment("SalesOrderItems(Index=05,OrderID='1')"), {
-			all: "SalesOrderItems(Index=05,OrderID='1')",
-			name: "SalesOrderItems",
-			key: {OrderID: '1', Index: 5}
-		});
-		assert.deepEqual(Helper.parsePathSegment("Foo(Key='bar''')"), {
-			all: "Foo(Key='bar''')",
-			name: "Foo",
-			key: {Key: "bar'"}
-		});
-	});
-	// TODO error handling
-	// TODO other types but string and number
-
-	//*********************************************************************************************
-	QUnit.test("findKeyInArray", function (assert) {
-		var aArray = [{
-				"name" : "foo",
-				"index" : 1
-			}, {
-				"name" : "foo",
-				"index" : 2
-			}, {
-				"name" : "bar",
-				"index" : 1
-			}, {
-				"name" : "bar",
-				"index" : 2
-			}];
-
-		assert.strictEqual(Helper.findKeyInArray(aArray, {"name": "foo", "index": 1}), aArray[0]);
-		assert.strictEqual(Helper.findKeyInArray(aArray, {"name": "foo", "index": 2}), aArray[1]);
-		assert.strictEqual(Helper.findKeyInArray(aArray, {"name": "foo", "index": 3}), undefined);
-		assert.strictEqual(Helper.findKeyInArray(aArray, {"name": "bar", "index": 1}), aArray[2]);
-		assert.strictEqual(Helper.findKeyInArray(aArray, {"name": "bar", "index": 2}), aArray[3]);
-		assert.strictEqual(Helper.findKeyInArray(aArray, {"name": "bar", "index": 3}), undefined);
-		assert.strictEqual(Helper.findKeyInArray(aArray, {"name": "baz", "index": 1}), undefined);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("hasProperties", function (assert) {
-		assert.strictEqual(Helper.hasProperties({"foo": "bar"}, ["foo"]), true);
-		assert.strictEqual(Helper.hasProperties({"foo": "bar"}, ["baz"]), false);
-		assert.strictEqual(Helper.hasProperties({"foo": "bar"}, []), false);
-		assert.strictEqual(Helper.hasProperties({"foo": "bar", "baz": "qux"}, ["foo", "baz"]),
-			true);
-		assert.strictEqual(Helper.hasProperties({"foo": "bar", "baz": "qux"}, ["foo"]), false);
-		assert.strictEqual(Helper.hasProperties({"foo": "bar", "baz": "qux"}, ["foo", "qux"]),
-			false);
-		assert.strictEqual(Helper.hasProperties({"foo": "bar"}, ["foo", "baz"]), false);
-		assert.strictEqual(Helper.hasProperties(undefined, ["foo"]), false);
-		assert.strictEqual(Helper.hasProperties(undefined, []), false);
 	});
 
 	//*********************************************************************************************
@@ -260,18 +203,77 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("resolveNavigationPropertyBindings", function (assert) {
+		var oEntityContainer = {
+				"EntitySets" : [{
+					"Name" : "Set1",
+					"Fullname" : "foo.bar.Container/Set1",
+					"NavigationPropertyBindings" : [{
+						"Path" : "ToSet2",
+						"Target" : {
+							"Fullname" : "foo.bar.Container/Set2"
+						}
+					}, {
+						"Path" : "ToForeignSet",
+						"Target" : {
+							"Fullname" : "bar.baz.Container/Set3"
+						}
+					}, {
+						"Path" : "ToSingleton",
+						"Target" : {
+							"Fullname" : "foo.bar.Container/Singleton"
+						}
+					}]
+				}, {
+					"Fullname" : "foo.bar.Container/Set2",
+					"NavigationPropertyBindings" : []
+				}],
+				"Singletons" : [{
+					"Name" : "Singleton",
+					"Fullname" : "foo.bar.Container/Singleton",
+					"NavigationPropertyBindings" : [{
+						"Path" : "ToSet1",
+						"Target" : {
+							"Fullname" : "foo.bar.Container/Set1"
+						}
+					}]
+				}]
+			};
+
+		Helper.resolveNavigationPropertyBindings(oEntityContainer);
+		assert.strictEqual(oEntityContainer.EntitySets[0].NavigationPropertyBindings[0].Target,
+			oEntityContainer.EntitySets[1]);
+		assert.ok(oEntityContainer.EntitySets[0].NavigationPropertyBindings[1].Target);
+		assert.strictEqual(oEntityContainer.EntitySets[0].NavigationPropertyBindings[2].Target,
+			oEntityContainer.Singletons[0]);
+		assert.strictEqual(oEntityContainer.Singletons[0].NavigationPropertyBindings[0].Target,
+			oEntityContainer.EntitySets[0]);
+		[
+			oEntityContainer.EntitySets[0].NavigationPropertyBindings[0],
+			oEntityContainer.EntitySets[0].NavigationPropertyBindings[2],
+			oEntityContainer.Singletons[0].NavigationPropertyBindings[0]
+		].forEach(function (oBinding) {
+			if (oBinding.Target.Name) {
+				assert.strictEqual(oBinding.Name, oBinding.Path);
+			}
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("requestEntityContainer", function (assert) {
 		var oEntityContainer = {},
 			oMetaModel = {
 				oModel: {
-					read: function () {}
+					requestEntityContainer: function () {}
 				}
 			},
 			oPromise;
 
-		this.oSandbox.mock(oMetaModel.oModel).expects("read")
-			.withExactArgs("/EntityContainer")
+		this.oSandbox.mock(oMetaModel.oModel).expects("requestEntityContainer")
+			.withExactArgs()
 			.returns(Promise.resolve(oEntityContainer));
+		this.oSandbox.mock(Helper).expects("resolveNavigationPropertyBindings")
+			.withExactArgs(oEntityContainer);
 
 		oPromise = Helper.requestEntityContainer(oMetaModel);
 		assert.strictEqual(Helper.requestEntityContainer(oMetaModel), oPromise);
@@ -283,64 +285,54 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestProperty: successful read, empty cache", function (assert) {
-		var sPath = "Anything(Fullname='foo.bar.Container%2FBar')",
-			oSource = {
-				"Foo@odata.navigationLink" : sPath
+	QUnit.test("requestTypeForNavigationProperty: successful read incl. cache", function (assert) {
+		var oSource1 = {
+				"Type" : {
+					"QualifiedName" : "foo.Bar"
+				}
 			},
-			oAnything = {/*"Fullname" : "foo.bar.Container/Bar"*/},
+			oSource2 = {
+				"EntityType" : {
+					"QualifiedName" : "foo.Bar"
+				}
+			},
+			oResolvedType = {
+				"Name" : "Bar",
+				"QualifiedName" : "foo.Bar"
+			},
 			oEntityContainer = {},
 			oMetaModel = {
 				_oEntityContainerPromise : Promise.resolve(oEntityContainer),
 				oModel : {
-					read: function () {}
+					requestEntityType: function () {}
 				}
 			};
 
-		this.oSandbox.mock(oMetaModel.oModel).expects("read").withExactArgs("/" + sPath)
-			.returns(Promise.resolve(oAnything));
+		this.oSandbox.mock(oMetaModel.oModel).expects("requestEntityType")
+			.withExactArgs("foo.Bar")
+			.returns(Promise.resolve(oResolvedType));
 
-		return Helper.requestProperty(oMetaModel, oSource, "Foo").then(function (oResult) {
-			assert.strictEqual(oResult, oAnything);
-			assert.strictEqual(oSource.Foo, oAnything);
-			assert.strictEqual(oEntityContainer.Anything[0], oAnything);
-		});
+		return Helper.requestTypeForNavigationProperty(oMetaModel, oSource1, "Type")
+			.then(function (oResult1) {
+				assert.strictEqual(oResult1, oResolvedType);
+				assert.strictEqual(oSource1.Type, oResolvedType);
+				assert.strictEqual(oEntityContainer.Types[0], oResolvedType);
+
+				return Helper.requestTypeForNavigationProperty(oMetaModel, oSource2, "EntityType")
+					.then(function (oResult2) {
+						assert.strictEqual(oResult2, oResolvedType);
+					});
+			});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestProperty: successful read, non-empty cache", function (assert) {
-		var sPath = "Anything(Fullname='foo.bar.Container%2FBar')",
-			oSource = {
-				"Foo@odata.navigationLink" : sPath
-			},
-			oAnything = {/*"Fullname" : "foo.bar.Container/Bar"*/},
-			oEntityContainer = {
-				"Anything" : [{}]
-			},
-			oMetaModel = {
-				_oEntityContainerPromise : Promise.resolve(oEntityContainer),
-				oModel : {
-					read: function () {}
+	QUnit.test("requestTypeForNavigationProperty: property already resolved", function (assert) {
+		var oSource = {
+				"Type" : {
+					"Name" : "Bar",
+					"QualifiedName" : "foo.Bar",
+					"Properties" : []
 				}
-			};
-
-		this.oSandbox.mock(oMetaModel.oModel).expects("read").withExactArgs("/" + sPath)
-			.returns(Promise.resolve(oAnything));
-
-		return Helper.requestProperty(oMetaModel, oSource, "Foo").then(function (oResult) {
-			assert.strictEqual(oResult, oAnything);
-			assert.strictEqual(oSource.Foo, oAnything);
-			assert.strictEqual(oEntityContainer.Anything[1], oAnything);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("requestProperty: from source", function (assert) {
-		var sPath = "---ignored---",
-			oAnything = {/*"Fullname" : "foo.bar.Container/Bar"*/},
-			oSource = {
-				"Foo" : oAnything,
-				"Foo@odata.navigationLink" : sPath
 			},
 			oMetaModel = {
 				oModel : {
@@ -350,92 +342,10 @@ sap.ui.require([
 
 		this.oSandbox.mock(oMetaModel.oModel).expects("read").never();
 
-		return Helper.requestProperty(oMetaModel, oSource, "Foo").then(function (oResult) {
-			assert.strictEqual(oResult, oAnything);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("requestProperty: from cache", function (assert) {
-		var sPath = "Anything(Fullname='foo.bar.Container%2FBar')",
-			oSource = {
-				"Foo@odata.navigationLink" : sPath
-			},
-			oAnything = {
-				"Fullname" : "foo.bar.Container/Bar"
-			},
-			oEntityContainer = {
-				"Anything" : [oAnything]
-			},
-			oMetaModel = {
-				_oEntityContainerPromise : Promise.resolve(oEntityContainer),
-				oModel : {
-					read: function () {}
-				}
-			};
-
-		this.oSandbox.mock(oMetaModel.oModel).expects("read").never();
-
-		return Helper.requestProperty(oMetaModel, oSource, "Foo").then(function (oResult) {
-			assert.strictEqual(oResult, oAnything);
-		});
-	});
-
-	//*********************************************************************************************
-	//TODO is "@param {string} sRequestPath the request path (only used for the error message)"
-	//     really such a good idea?
-	QUnit.test("requestProperty: no @odata.navigationLink", function (assert) {
-		var sPath = "Anything(Fullname='foo.bar.Container%2FBar')",
-			oModel = {
-				read: function () {}
-			};
-
-		this.oSandbox.mock(oModel).expects("read").never();
-
-		assert.throws(function () {
-			Helper.requestProperty(oModel, {}, "Foo", sPath);
-		}, new Error("Unknown: Foo: " + sPath));
-	});
-
-	//*********************************************************************************************
-	["", "Anything", "Foo(Bar='Baz')/Qux"].forEach(function (sPath) {
-		QUnit.test("requestProperty: invalid path: " + sPath, function (assert) {
-			var oModel = {
-					read: function () {}
-				},
-				oSource = {
-					"Foo@odata.navigationLink" : sPath
-				};
-
-			this.oSandbox.mock(oModel).expects("read").never();
-
-			assert.throws(function () {
-				Helper.requestProperty(oModel, oSource, "Foo", sPath);
-			}, new Error("Invalid path: " + sPath));
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("extractSingleKey", function (assert) {
-		var sPath = "/EntitySets(Name='foo')/EntityType/NavigationProperties(Name='bar')";
-
-		assert.strictEqual(Helper.extractSingleKey(
-			"/EntitySets(Name='foo')", "EntitySets", "Name"),
-			'foo');
-		assert.strictEqual(Helper.extractSingleKey(
-			"/Types(QualifiedName='§.TEAM')", "Types", "QualifiedName"),
-			'§.TEAM');
-		assert.strictEqual(Helper.extractSingleKey(
-			"/EntitySets(Fullname='§.Container%2FEMPLOYEES')", "EntitySets", "Fullname"),
-			'§.Container/EMPLOYEES');
-
-		assert.throws(function () {
-			Helper.extractSingleKey("/EntityTypes(Name='foo')", "EntitySets", "Name");
-		}, new Error(
-			"Expected 'EntitySets', but instead saw 'EntityTypes': /EntityTypes(Name='foo')"));
-		assert.throws(function () {
-			Helper.extractSingleKey(sPath, "EntitySets", "Name");
-		}, new Error("Expected a single selector, but instead saw: " + sPath));
+		return Helper.requestTypeForNavigationProperty(oMetaModel, oSource, "Type")
+			.then(function (oResult) {
+				assert.strictEqual(oResult, oSource.Type);
+			});
 	});
 
 	//*********************************************************************************************
@@ -541,112 +451,6 @@ sap.ui.require([
 			});
 		});
 	});
-
-	//*********************************************************************************************
-	QUnit.test("getEntitySetName", function (assert) {
-		var oEntityContainer = { // § = com.sap.gateway.iwbep.tea_busi.v0001
-				"Name" : "Container",
-				"QualifiedName" : "§.Container",
-				"EntitySets" : [{
-					"Name" : "Departments",
-					"Fullname" : "§.Container/Departments",
-					"NavigationPropertyBindings" : [],
-					"EntityType@odata.navigationLink" : "Types(QualifiedName='§.Department')"
-				}, {
-					"Name" : "EMPLOYEES",
-					"Fullname" : "§.Container/EMPLOYEES",
-					"NavigationPropertyBindings" : [{
-						"Path" : "EMPLOYEE_2_TEAM",
-						"Target@odata.navigationLink"
-							: "EntitySets(Fullname='§.Container%2FTEAMS')"
-					}, {
-						"Path" : "EMPLOYEE_2_EQUIPMENTS",
-						"Target@odata.navigationLink"
-							: "EntitySets(Fullname='§.Container%2FEquipments')"
-					}],
-					"EntityType@odata.navigationLink" : "Types(QualifiedName='§.Worker')"
-				}, {
-					"Name" : "MANAGERS",
-					"Fullname" : "§.Container/MANAGERS",
-					"NavigationPropertyBindings" : [{
-						"Path" : "_2_EMPLOYEES",
-						"Target@odata.navigationLink"
-							: "EntitySets(Fullname='§.Container%2FTEAMS')"
-					}],
-					"EntityType@odata.navigationLink" : "Types(QualifiedName='§.MANAGER')"
-				}, {
-					"Name" : "TEAMS",
-					"Fullname" : "§.Container/TEAMS",
-					"NavigationPropertyBindings" : [{
-						"Path" : "_2_EMPLOYEES",
-						"Target@odata.navigationLink"
-							: "EntitySets(Fullname='§.Container%2FEMPLOYEES')"
-					}, {
-						"Path" : "TEAM_2_MANAGER",
-						"Target@odata.navigationLink"
-							: "EntitySets(Fullname='§.Container%2FMANAGERS')"
-					}],
-					"EntityType@odata.navigationLink" : "Types(QualifiedName='§.TEAM')"
-				}]
-			};
-
-		assert.strictEqual(
-			Helper.getEntitySetName(oEntityContainer, "§.TEAM", "_2_EMPLOYEES"),
-			"EMPLOYEES");
-		assert.strictEqual(
-			Helper.getEntitySetName(oEntityContainer, "§.MANAGER", "_2_EMPLOYEES"),
-			"TEAMS");
-
-		assert.throws(function () {
-			Helper.getEntitySetName(oEntityContainer, "§.MANAGER", "n/a");
-		}, new Error("No target entity set found for source entity type '§.MANAGER'"
-			+ " and navigation property 'n/a'"));
-		assert.throws(function () {
-			Helper.getEntitySetName(oEntityContainer, undefined, "_2_EMPLOYEES");
-		}, new Error("No target entity set found for source entity type 'undefined'"
-			+ " and navigation property '_2_EMPLOYEES'"));
-	});
-	//TODO case where "13.4.1 Attribute Path" contains slashes
-	//TODO case where <NavigationPropertyBinding Target="..."> is not a SimpleIdentifier
-	//TODO what about targets in other entity containers?
-
-	//*********************************************************************************************
-	[{
-		sEntitySetName : "EMPLOYEES",
-		sMetaPath : "/EntitySets(Name='EMPLOYEES')"
-	}, {
-		sEntitySetName : "Departments",
-		sMetaPath : "/EntitySets(Name='Departments')"
-	}, {
-		sEntitySetName : "Foo",
-		sMetaPath : "/EntitySets(Name='TEAMS')/EntityType"
-			+ "/NavigationProperties(Name='TEAM_2_EMPLOYEES')"
-	}].forEach(function (oFixture) {
-		QUnit.test("requestEntitySetName: " + oFixture.sMetaPath, function (assert) {
-			var oEntityContainer = {},
-				oMetaModel = {
-					// @see Helper.requestEntityContainer
-					_oEntityContainerPromise : Promise.resolve(oEntityContainer),
-					requestObject : function () {}
-				},
-				oMetaContext = new Context(oMetaModel, oFixture.sMetaPath);
-
-			this.oSandbox.mock(oMetaModel).expects("requestObject").atLeast(0)
-				.withExactArgs("/EntitySets(Name='TEAMS')/EntityType")
-				.returns(Promise.resolve({"QualifiedName" : "§.TEAM"}));
-			this.oSandbox.mock(Helper).expects("getEntitySetName").atLeast(0)
-				.withExactArgs(oEntityContainer, "§.TEAM", "TEAM_2_EMPLOYEES")
-				.returns("Foo");
-
-			return Helper.requestEntitySetName(oMetaContext).then(function (sEntitySetName) {
-				assert.strictEqual(sEntitySetName, oFixture.sEntitySetName);
-			})["catch"](function (oError) {
-				assert.ok(false, oError.message + "@" + oError.stack);
-			});
-		});
-	});
-	//TODO "/EntitySets(Fullname='...tea_busi_product.v0001.Container/Products')"
-	//     Fullname vs. Name, is this really conformant to spec, how to use within URL, ...
 
 	//*********************************************************************************************
 	[{

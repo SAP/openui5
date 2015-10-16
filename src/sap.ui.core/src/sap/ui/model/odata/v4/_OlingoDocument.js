@@ -197,8 +197,9 @@ sap.ui.define([
 						"NavigationPropertyBindings" :
 							OlingoDocument.transformNavigationPropertyBindings(
 								oEntitySet.navigationPropertyBinding, oResult.QualifiedName),
-						"EntityType@odata.navigationLink" :
-							"Types(QualifiedName='" + oEntitySet.entityType + "')"
+						"EntityType" : {
+							"QualifiedName" : oEntitySet.entityType
+						}
 					});
 				});
 			}
@@ -210,8 +211,9 @@ sap.ui.define([
 						"NavigationPropertyBindings" :
 							OlingoDocument.transformNavigationPropertyBindings(
 								oSingleton.navigationPropertyBinding, oResult.QualifiedName),
-						"Type@odata.navigationLink" :
-							"Types(QualifiedName='" + oSingleton.type + "')"
+						"Type" : {
+							"QualifiedName" : oSingleton.type
+						}
 					});
 				});
 			}
@@ -242,8 +244,9 @@ sap.ui.define([
 					}
 					aResult.push({
 						"Path" : oNavigationPropertyBinding.path,
-						"Target@odata.navigationLink" : "EntitySets(Fullname='"
-							+ encodeURIComponent(sTargetName) + "')"
+						"Target" : {
+							"Fullname" : sTargetName
+						}
 					});
 				});
 			}
@@ -286,8 +289,9 @@ sap.ui.define([
 						"Nullable" : oSourceProperty.nullable === "true",
 						"ContainsTarget" : false,
 						"IsCollection" : oTypeRef.collection,
-						"Type@odata.navigationLink" :
-							"Types(QualifiedName='" + oTypeRef.qualifiedName + "')"
+						"Type" : {
+							"QualifiedName" : oTypeRef.qualifiedName
+						}
 					};
 					oResult.NavigationProperties.push(oTargetProperty);
 				}

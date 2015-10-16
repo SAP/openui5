@@ -218,39 +218,45 @@ sap.ui.require([
 					"Name" : "Departments",
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Departments",
 					"NavigationPropertyBindings" : 1,
-					"EntityType@odata.navigationLink" :
-						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.Department')"
+					"EntityType" : {
+						"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.Department"
+					}
 				}, {
 					"Name" : "EMPLOYEES",
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/EMPLOYEES",
 					"NavigationPropertyBindings" : 2,
-					"EntityType@odata.navigationLink" :
-						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.Worker')"
+					"EntityType" : {
+						"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.Worker"
+					}
 				},{
 					"Name" : "Equipments",
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Equipments",
 					"NavigationPropertyBindings" : 3,
-					"EntityType@odata.navigationLink" :
-						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.EQUIPMENT')"
+					"EntityType" : {
+						"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.EQUIPMENT"
+					}
 				}, {
 					"Name" : "MANAGERS",
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/MANAGERS",
 					"NavigationPropertyBindings" : 4,
-					"EntityType@odata.navigationLink" :
-						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.MANAGER')"
+					"EntityType" : {
+						"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.MANAGER"
+					}
 				}, {
 					"Name" : "TEAMS",
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/TEAMS",
 					"NavigationPropertyBindings" : 5,
-					"EntityType@odata.navigationLink" :
-						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.TEAM')"
+					"EntityType" : {
+						"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM"
+					}
 				}],
 				"Singletons" : [{
 					"Name" : "Me",
 					"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Me",
 					"NavigationPropertyBindings" : 6,
-					"Type@odata.navigationLink" :
-						"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.Worker')"
+					"Type" : {
+						"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.Worker"
+					}
 				}]
 			},
 			oMock = this.oSandbox.mock(OlingoDocument);
@@ -316,12 +322,14 @@ sap.ui.require([
 				sContainerName = "com.sap.gateway.iwbep.tea_busi.v0001.Container",
 				aResult = [{
 					"Path" : "EMPLOYEE_2_TEAM",
-					"Target@odata.navigationLink" : "EntitySets(Fullname='" + sContainerName +
-						"%2FTEAMS')"
+					"Target" : {
+						"Fullname" : sContainerName + "/TEAMS"
+					}
 				}, {
 					"Path" : "EMPLOYEE_2_EQUIPMENTS",
-					"Target@odata.navigationLink" : "EntitySets(Fullname='" + sContainerName +
-						"%2FEquipments')"
+					"Target" : {
+						"Fullname" : sContainerName + "/Equipments"
+					}
 				}];
 			assert.deepEqual(OlingoDocument.transformNavigationPropertyBindings(aBindings,
 				sContainerName), aResult);
@@ -408,6 +416,8 @@ sap.ui.require([
 				oComplexType), oType);
 		});
 	});
+	// TODO Read all property types immediately or asynchronously like with navigation properties?
+	//   Is it possible to read all primitive types of the document schema(s) with the first req?
 
 	//*********************************************************************************************
 	QUnit.test("transformType: structured type", function (assert) {
@@ -457,16 +467,18 @@ sap.ui.require([
 			"Nullable" : true,
 			"ContainsTarget" : false,
 			"IsCollection" : true,
-			"Type@odata.navigationLink" :
-				"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.Worker')"
+			"Type" : {
+				"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.Worker"
+			}
 		}, {
 			"Name" : "TEAM_2_MANAGER",
 			"Fullname" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM/TEAM_2_MANAGER",
 			"Nullable" : false,
 			"ContainsTarget" : false,
 			"IsCollection" : false,
-			"Type@odata.navigationLink" :
-				"Types(QualifiedName='com.sap.gateway.iwbep.tea_busi.v0001.MANAGER')"
+			"Type" : {
+				"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.MANAGER"
+			}
 		}]
 	}, {
 		"QualifiedName" : "com.sap.gateway.iwbep.tea_busi.v0001.Department",

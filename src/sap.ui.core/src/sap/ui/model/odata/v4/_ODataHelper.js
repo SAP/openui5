@@ -11,7 +11,7 @@ sap.ui.define([
 	/*global odatajs */
 
 	var Helper,
-		rNameWithPredicate = /^(\w+)\((.*)\)$/;
+		rNamedSegment = /^(.+)\('(.*)'\)$/; // e.g. "EntitySets('Employees')"
 
 	Helper = {
 		/**
@@ -66,36 +66,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Assumes that the given path consists of a single selector only and extracts the value
-		 * for the key with given name from that selector.
-		 *
-		 * @param {string} sPath
-		 *   the path
-		 * @param {string} sName
-		 *   the expected name of the selector
-		 * @param {string} sKey
-		 *   the name of the selector's key
-		 * @returns {string}
-		 *   the value of the selector's key
-		 * @throws {Error}
-		 *   if expectations are not met
-		 */
-		extractSingleKey : function (sPath, sName, sKey) {
-			var aSegments = Helper.splitPath(sPath),
-				oSelector;
-
-			if (aSegments.length !== 1) {
-				throw new Error("Expected a single selector, but instead saw: " + sPath);
-			}
-			oSelector = Helper.parsePathSegment(aSegments[0]);
-			if (oSelector.name !== sName) {
-				throw new Error("Expected '" + sName + "', but instead saw '" + oSelector.name
-					+ "': " + sPath);
-			}
-			return oSelector.key[sKey];
-		},
-
-		/**
 		 * Finds an object which has a property <code>sProperty</code> with value
 		 * <code>sValue</code> in the given array.
 		 *
@@ -117,85 +87,6 @@ sap.ui.define([
 				}
 			}
 			return undefined;
-		},
-
-		/**
-		 * Finds an object in the given array having all properties of the key with the same
-		 * values.
-		 *
-		 * @param {object[]} aObjects
-		 *   the array to search in
-		 * @param {object} oKey
-		 *   the key
-		 * @returns {object}
-		 *   the matching object or <code>undefined</code> if not found
-		 */
-		findKeyInArray : function (aObjects, oKey) {
-			var i;
-
-			function matches(oObject) {
-				var sProperty;
-
-				for (sProperty in oKey) {
-					if (oKey[sProperty] !== oObject[sProperty]) {
-						return false;
-					}
-				}
-				return true;
-			}
-
-			for (i = 0; i < aObjects.length; i++) {
-				if (matches(aObjects[i])) {
-					return aObjects[i];
-				}
-			}
-			return undefined;
-		},
-
-		/**
-		 * Returns the name of the entity set corresponding to the indicated navigation property.
-		 *
-		 * @param {object} oEntityContainer
-		 *   the entity container as returned by {@link requestEntityContainer}
-		 * @param {string} sSourceTypeName
-		 *   the source entity type's qualified name, e.g.
-		 *   "com.sap.gateway.iwbep.tea_busi.v0001.TEAM"
-		 * @param {string} sNavigationPropertyName
-		 *   the navigation property's name, e.g. "TEAM_2_EMPLOYEES"
-		 * @returns {string}
-		 *   the entity set's name, e.g. "EMPLOYEES"
-		 * @throws {Error}
-		 *   if no such entity set can be found
-		 * @private
-		 */
-		getEntitySetName : function (oEntityContainer, sSourceTypeName, sNavigationPropertyName) {
-			var sEntitySetName;
-
-			oEntityContainer.EntitySets.some(function (oEntitySet) {
-				var sQualifiedName = Helper.extractSingleKey(
-						"/" + oEntitySet["EntityType@odata.navigationLink"],
-						"Types", "QualifiedName"); // e.g. '§.TEAM'
-
-				if (sQualifiedName === sSourceTypeName) {
-					return oEntitySet.NavigationPropertyBindings.some(function (oBinding) {
-						if (oBinding.Path === sNavigationPropertyName) {
-							sEntitySetName = Helper.extractSingleKey(
-									"/" + oBinding["Target@odata.navigationLink"],
-									"EntitySets", "Fullname") // e.g. '§.Container/EMPLOYEES'
-								.split("/")[1];
-							return true;
-						}
-					});
-				}
-			});
-
-			if (!sEntitySetName) {
-				throw new Error("No target entity set found for source entity type '"
-					+ sSourceTypeName + "' and navigation property '" + sNavigationPropertyName
-					+ "'");
-			}
-
-			return sEntitySetName;
 		},
 
 		/**
@@ -226,30 +117,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks whether the given object has exactly the requested properties.
-		 *
-		 * @param {object} oObject
-		 *   the object to check, may be <code>undefined</code> (which returns <code>false</code>)
-		 * @param {string[]} aProperties
-		 *   a list of expected properties
-		 * @returns {boolean}
-		 *   <code>true</code>, if the object has exactly the properties from the list
-		 */
-		hasProperties : function (oObject, aProperties) {
-			var i;
-
-			if (!oObject || Object.keys(oObject).length !== aProperties.length) {
-				return false;
-			}
-			for (i = 0; i < aProperties.length; i++) {
-				if (!(aProperties[i] in oObject)) {
-					return false;
-				}
-			}
-			return true;
-		},
-
-		/**
 		 * Iterates over the given headers map and returns the first value for the requested key
 		 * (case insensitive). If no such key is found, <code>undefined</code> is returned.
 		 *
@@ -273,88 +140,38 @@ sap.ui.define([
 		},
 
 		/**
-		 * Decodes a segment of an OData v4 path. Recognizes the key predicate. No URI decoding
-		 * takes place, use {@link #splitPath} before!
+		 * Parses a segment of a path in the OData v4 meta model in the simplified syntax where the
+		 * name of the single key property is not provided.
 		 *
-		 * @param {string} sPathSegment
-		 *   the path segment
+		 * @param {string} sSegment
+		 *   the segment like "Type" or "EntitySets('Employees')"
 		 * @returns {object}
-		 *   the result with the name in <code>name</code> and the key predicate in
-		 *   <code>key</code> or <code>undefined</code> if <code>sPathSegment</code> is
-		 *   <code>undefined</code>.
+		 *   the result with property, name and segment or <code>undefined</code> if
+		 *   <code>sSegment</code> is falsy
+		 *   Example:
+		 *   {
+		 *     name: "€mployees"
+		 *     property: "EntitySets",
+		 *     segment: "EntitySets('%E2%82%ACmployees')",
+		 *   }
 		 */
-		parsePathSegment : function (sPathSegment) {
+		parseSegment : function (sSegment) {
 			var aMatches,
-				iNext = 0,
-				sPredicate,
-				oResult = {all: sPathSegment};
+				oPart;
 
-			/**
-			 * Parses and removes a key from <code>sPredicate</code>.
-			 *
-			 * @returns {string}
-			 *   the key
-			 */
-			function parseNextKey() {
-				var iEnd = sPredicate.indexOf('=', iNext),
-					sKey = sPredicate.slice(iNext, iEnd);
-				iNext = iEnd + 1;
-				return sKey;
-			}
-
-			/**
-			 * Parses and removes a value from <code>sPredicate</code>. Recognizes a string in
-			 * single quotes and a number.
-			 *
-			 * @returns {any}
-			 *   the value
-			 */
-			function parseNextValue() {
-				var i, vValue;
-
-				if (sPredicate.charAt(iNext) === "'") {
-					vValue = "";
-					i = iNext = iNext + 1;
-					for (;;) {
-						i = i + 1;
-						if (sPredicate.charAt(i) === "'") {
-							vValue = vValue + sPredicate.slice(iNext, i);
-							iNext = i = i + 1;
-							if (sPredicate.charAt(i) !== "'") {
-								break;
-							}
-						}
-					}
-				} else {
-					i = iNext;
-					while (sPredicate.charAt(i) >= '0' && sPredicate.charAt(i) <= '9') {
-						i = i + 1;
-					}
-					vValue = parseInt(sPredicate.slice(iNext, i), 10);
-					iNext = i;
-				}
-				return vValue;
-			}
-
-			if (!sPathSegment) {
+			if (!sSegment) {
 				return undefined;
 			}
-			aMatches = rNameWithPredicate.exec(sPathSegment);
+			oPart = {
+				property: sSegment,
+				segment: sSegment
+			};
+			aMatches = rNamedSegment.exec(sSegment);
 			if (aMatches) {
-				oResult.name = aMatches[1];
-				oResult.key = {};
-				sPredicate = aMatches[2];
-				for (;;) {
-					oResult.key[parseNextKey()] = parseNextValue();
-					if (sPredicate.charAt(iNext) !== ',') {
-						break;
-					}
-					sPredicate = sPredicate.substring(1);
-				}
-			} else {
-				oResult.name = sPathSegment;
+				oPart.property = aMatches[1];
+				oPart.name = aMatches[2];
 			}
-			return oResult;
+			return oPart;
 		},
 
 		/**
@@ -408,113 +225,99 @@ sap.ui.define([
 		 */
 		requestEntityContainer : function (oMetaModel) {
 			if (!oMetaModel._oEntityContainerPromise) {
-				oMetaModel._oEntityContainerPromise = oMetaModel.oModel.read("/EntityContainer");
+				oMetaModel._oEntityContainerPromise = oMetaModel.oModel.requestEntityContainer()
+					.then(function (oEntityContainer) {
+						Helper.resolveNavigationPropertyBindings(oEntityContainer);
+						return oEntityContainer;
+					});
 			}
 			return oMetaModel._oEntityContainerPromise;
 		},
 
 		/**
-		 * Requests the name of the entity set corresponding to the given meta context.
+		 * Requests the type for the given navigation property at the given object if it is not
+		 * available yet. It is stored at the property, cached in the meta model and then given to
+		 * the promise.
 		 *
-		 * @param {sap.ui.model.Context} oMetaContext
-		 *   a context within a v4 OData meta model pointing to either an entity set or a
-		 *   navigation property
-		 * @returns {Promise}
-		 *   a promise which is resolved with the entity set's name (e.g. "EMPLOYEES") in case of
-		 *   success, or rejected with an instance of <code>Error</code> in case of failure
-		 * @private
-		 */
-		requestEntitySetName : function (oMetaContext) {
-			var sEntitySetName,
-				oMetaModel = oMetaContext.getModel(),
-				// e.g. "/EntitySets(Name='foo')"
-				// or   "/EntitySets(Name='foo')/EntityType/NavigationProperties(Name='bar')"
-				sMetaPath = oMetaContext.getPath(),
-				iLastSlash = sMetaPath.lastIndexOf("/");
-
-			if (iLastSlash === 0) {
-				sEntitySetName = Helper.extractSingleKey(sMetaPath, "EntitySets", "Name");
-				return Promise.resolve(sEntitySetName);
-			}
-
-			return Helper.requestEntityContainer(oMetaModel)
-				.then(function (oEntityContainer) {
-					var sNavigationPropertyName = sMetaPath.slice(iLastSlash).split("'")[1],
-						// path to entity type which is source of navigation property in question
-						sSourceTypePath = sMetaPath.slice(0, iLastSlash);
-
-					return oMetaContext.getModel().requestObject(sSourceTypePath)
-						.then(function (oSourceType) {
-							return Helper.getEntitySetName(oEntityContainer,
-								oSourceType.QualifiedName, sNavigationPropertyName);
-						});
-				});
-		},
-
-		/**
-		 * Requests the value of the given property at the given object if it is not available
-		 * yet. This requires that the object has a property with the name of the requested
-		 * property plus "@odata.navigationLink" appended. If the given property is undefined yet,
-		 * the value is read from the model via the given navigation link, stored at the property
-		 * and then given to the promise. If the property already has a value, it is returned
-		 * asynchronously without any read.
+		 * Example:
+		 * <code>
+		 * requestTypeForNavigationProperty(oMetaModel, oEntitySet, "EntityType")
+		 * </code>
+		 * This requests and sets the entity type at the given entity set. The entity set is
+		 * expected to already have a "placeholder" object with the QualifiedName, as it is
+		 * returned from the metadata model.
 		 *
 		 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel
 		 *   the meta model
 		 * @param {object} oObject
-		 *   the object having a navigation link
+		 *   the object having a navigation link to a type
 		 * @param {string} sProperty
-		 *   the name of the property
-		 * @param {string} sRequestPath
-		 *   the request path (only used for the error message)
+		 *   the name of the type property
 		 * @returns {Promise}
-		 *   a promise that will be resolved with the requested property value
-		 * @throws {Error} if the property or its navigation link are unsupported
+		 *   a promise that will be resolved with the requested type
 		 * @private
 		 */
-		requestProperty : function (oMetaModel, oObject, sProperty, sRequestPath) {
-			var sNavigationLink,
-				sPath,
-				aSegments,
-				oSelector;
+		requestTypeForNavigationProperty : function (oMetaModel, oObject, sProperty) {
+			var sQualifiedName = oObject[sProperty].QualifiedName;
 
-			if (sProperty in oObject) {
+			if (Object.keys(oObject[sProperty]).length > 1) {
+				//navigation property already resolved
 				return Promise.resolve(oObject[sProperty]);
 			}
 
-			sNavigationLink = sProperty + "@odata.navigationLink";
-			if (!(sNavigationLink in oObject)) {
-				throw new Error("Unknown: " + sProperty + ": " + sRequestPath);
-			}
-			sPath = oObject[sNavigationLink];
-			aSegments = Helper.splitPath("/" + sPath);
-			if (aSegments.length !== 1) {
-				throw new Error("Invalid path: " + sPath);
-			}
-			oSelector = Helper.parsePathSegment(aSegments[0]);
-			if (!oSelector.key) {
-				throw new Error("Invalid path: " + aSegments[0]);
-			}
-
 			return Helper.requestEntityContainer(oMetaModel).then(function (oEntityContainer) {
-				var oArray = oEntityContainer[oSelector.name],
+				var oArray = oEntityContainer.Types,
 					oResult;
 
 				if (oArray) {
-					oResult = Helper.findKeyInArray(oArray, oSelector.key);
+					oResult = Helper.findInArray(oArray, "QualifiedName", sQualifiedName);
 					if (oResult) {
 						return Promise.resolve(oResult);
 					}
 				} else {
-					oEntityContainer[oSelector.name] = [];
+					oEntityContainer.Types = [];
 				}
 
-				return oMetaModel.oModel.read("/" + sPath).then(function (oResult) {
-					oEntityContainer[oSelector.name].push(oResult); //TODO JsDoc
-					oObject[sProperty] = oResult;
-					return oResult;
-				});
+				return oMetaModel.oModel.requestEntityType(sQualifiedName)
+					.then(function (oResult) {
+						oEntityContainer.Types.push(oResult);
+						oObject[sProperty] = oResult;
+						return oResult;
+					});
 			});
+		},
+
+		/**
+		 * Resolves all navigation property bindings in the entity container unless they are
+		 * leading into another container.
+		 *
+		 * @param {object} oEntityContainer
+		 *   the entity container
+		 */
+		resolveNavigationPropertyBindings : function (oEntityContainer) {
+
+			// finds the entity set or singleton with the given fullname
+			function findTarget(sFullname) {
+				return Helper.findInArray(oEntityContainer.EntitySets, "Fullname", sFullname)
+					|| Helper.findInArray(oEntityContainer.Singletons, "Fullname", sFullname);
+			}
+
+			// resolves all navigation property bindings for the given entity set or singleton
+			function resolve(oSetOrSingleton) {
+				oSetOrSingleton.NavigationPropertyBindings.forEach(function (oBinding) {
+					var oTarget = findTarget(oBinding.Target.Fullname);
+					if (oTarget) {
+						// TODO Here we modify the object, so that ODataMetaModel.requestObject
+						// can follow the path because it always uses "Name"; this is not compliant
+						// to the metadata service (use @sapui.name annotation?)
+						oBinding.Name = oBinding.Path;
+						oBinding.Target = oTarget;
+					}
+				});
+			}
+
+			oEntityContainer.EntitySets.forEach(resolve);
+			oEntityContainer.Singletons.forEach(resolve);
 		},
 
 		/**
@@ -528,20 +331,13 @@ sap.ui.define([
 		 * @throws {Error} if the path is not absolute
 		 */
 		splitPath : function (sPath) {
-			var i, aSegments;
-
 			if (sPath === '/') {
 				return [];
 			}
 			if (sPath.charAt(0) !== '/') {
 				throw new Error("Not an absolute path: " + sPath);
 			}
-			aSegments = sPath.substring(1).split('/');
-			for (i = 0; i < aSegments.length; i++) {
-				//TODO this does not fit to the way we partially encode key predicates!
-				aSegments[i] = decodeURIComponent(aSegments[i]);
-			}
-			return aSegments;
+			return sPath.substring(1).split('/');
 		}
 	};
 
