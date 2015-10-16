@@ -98,21 +98,21 @@ sap.ui.define([
 
 		if ((oEvent.keyCode === jQuery.sap.KeyCodes.X) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (oEvent.ctrlKey === true)) {
 			// CTRL+X
-			this._onCut(oOverlay);
+			this.cut(oOverlay);
 			oEvent.stopPropagation();
 		} else if ((oEvent.keyCode === jQuery.sap.KeyCodes.V) && (oEvent.shiftKey === false) && (oEvent.altKey === false) && (oEvent.ctrlKey === true)) {
 			// CTRL+V
-			this._onPaste(oOverlay);
+			this.paste(oOverlay);
 			oEvent.stopPropagation();
 		} else if (oEvent.keyCode === jQuery.sap.KeyCodes.ESCAPE) {
 			// ESC
-			this._stopCutAndPaste();
+			this.stopCutAndPaste();
 			oEvent.stopPropagation();
 		}
 	};
 
-	CutPaste.prototype._onCut = function(oOverlay) {
-		this._stopCutAndPaste();
+	CutPaste.prototype.cut = function(oOverlay) {
+		this.stopCutAndPaste();
 
 		var bMovable = this.getElementMover().isMovableType(oOverlay.getElementInstance());
 		if (bMovable) {
@@ -123,7 +123,7 @@ sap.ui.define([
 		}
 	};
 
-	CutPaste.prototype._onPaste = function(oTargetOverlay) {
+	CutPaste.prototype.paste = function(oTargetOverlay) {
 		var oCutOverlay = this.getElementMover().getMovedOverlay();
 		if (!oCutOverlay) {
 			return;
@@ -146,11 +146,11 @@ sap.ui.define([
 				data: oMoveEvent
 			});
 			oCutOverlay.focus();
-			this._stopCutAndPaste();
+			this.stopCutAndPaste();
 		}
 	};
 
-	CutPaste.prototype._stopCutAndPaste = function() {
+	CutPaste.prototype.stopCutAndPaste = function() {
 		var oCutOverlay = this.getElementMover().getMovedOverlay();
 		if (oCutOverlay) {
 			oCutOverlay.removeStyleClass("sapUiDtOverlayCutted");
