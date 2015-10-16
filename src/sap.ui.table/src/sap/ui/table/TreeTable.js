@@ -235,30 +235,32 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/odata/ODataTreeBind
 
 	TreeTable.prototype._updateTableContent = function() {
 		Table.prototype._updateTableContent.apply(this, arguments);
-		
-		//If group mode is enabled nodes which have children are visualized as if they were group header
+
 		var oBinding = this.getBinding("rows"),
 			iFirstRow = this.getFirstVisibleRow(),
-			iCount = this.getVisibleRowCount(),
+			aRows = this.getRows(),
+			iCount = aRows.length,
 			iFixedBottomRowCount = this.getFixedBottomRowCount(),
 			iFirstFixedBottomRowIndex = iCount - iFixedBottomRowCount;
 
 		var iIndex = iFirstRow;
 		if (oBinding) {
+			var iBindingLength = oBinding.getLength();
 			for (var iRow = 0; iRow < iCount; iRow++) {
 				if (iFixedBottomRowCount > 0 && iRow >= iFirstFixedBottomRowIndex) {
-					iIndex = oBinding.getLength() - iCount + iRow;
+					iIndex = iBindingLength - iCount + iRow;
 				} else {
 					iIndex = iFirstRow + iRow;
 				}
 
 				var oContext = this.getContextByIndex(iIndex),
-					$DomRefs = this.getRows()[iRow].getDomRefs(true),
+					$DomRefs = aRows[iRow].getDomRefs(true),
 					$row = $DomRefs.rowFixedPart || $DomRefs.rowScrollPart;
 
 				this._updateExpandIcon($row, oContext, iIndex);
 
 				if (this.getUseGroupMode()) {
+					//If group mode is enabled nodes which have children are visualized as if they were group header
 					var $rowHdr = this.$().find("div[data-sap-ui-rowindex='" + $row.attr("data-sap-ui-rowindex") + "']");
 					if (oBinding.hasChildren && oBinding.hasChildren(oContext)) {
 						// modify the rows
