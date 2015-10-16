@@ -163,7 +163,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 				describedby: ""
 			};
 
-		var sYyyyMMddHHmm = oTimesRow._oFormatYyyyMMddHHmm.format(oDate, true);
+		var sYyyyMMddHHmm = oTimesRow._oFormatYyyyMMddHHmm.format(oDate.getJSDate(), true);
 		var iSelected = oTimesRow._checkDateSelected(oDate);
 		var oType = oTimesRow._getDateType(oDate);
 

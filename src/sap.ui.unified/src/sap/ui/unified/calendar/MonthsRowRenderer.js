@@ -170,7 +170,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			mAccProps["label"] = oHelper.aMonthNamesWide[oDate.getUTCMonth()];
 		}
 
-		var sYyyymm = oMonthsRow._oFormatYyyymm.format(oDate, true);
+		var sYyyymm = oMonthsRow._oFormatYyyymm.format(oDate.getJSDate(), true);
 		var iSelected = oMonthsRow._checkDateSelected(oDate);
 		var oType = oMonthsRow._getDateType(oDate);
 

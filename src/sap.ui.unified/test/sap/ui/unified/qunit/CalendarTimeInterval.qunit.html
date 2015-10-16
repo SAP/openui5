@@ -415,7 +415,7 @@
 
 			test("select year", function() {
 				bStartDateChanged = false;
-				var $NewYear = jQuery("#Cal2--YP-y2022"); // use keybord to select month to prevent event processing from ItemNavigation
+				var $NewYear = jQuery("#Cal2--YP-y20220101"); // use keybord to select month to prevent event processing from ItemNavigation
 				$NewYear.focus();
 				qutils.triggerKeyboardEvent($NewYear.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 				ok(!jQuery(jQuery("#Cal2--YP").get(0)).is(":visible"), "Calendar2: Year picker not visible after selecting year");
@@ -424,6 +424,35 @@
 				var aItems = $TimesRow.find(".sapUiCalItem");
 				equal(jQuery(aItems[0]).attr("data-sap-time"), "202202040800", "Calendar2: new start item");
 				ok(bStartDateChanged, "Calendar2: startDateChangeEvent fired");
+			});
+
+			module("other");
+			test("Min/Max", function() {
+				oCal2.setStartDate(new Date(9999, 11, 29));
+				ok(!jQuery("#Cal2--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled");
+				ok(!jQuery("#Cal2--Head-next").hasClass("sapUiCalDsbl"), "Next Button enabled");
+				qutils.triggerEvent("click", "Cal2--Head-next");
+				ok(!jQuery("#Cal2--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled on max month");
+				ok(jQuery("#Cal2--Head-next").hasClass("sapUiCalDsbl"), "Next Button disabled on max month");
+				qutils.triggerEvent("click", "Cal2--Head-B2");
+				var aYears = jQuery("#Cal2--YP").find(".sapUiCalItem");
+				equal(jQuery(aYears[aYears.length-1]).text(), "9999", "Max Year is last rendered year");
+				qutils.triggerEvent("click", "Cal2--Head-B2");
+
+				var oDate = new Date(1, 0, 2);
+				oDate.setFullYear(1);
+				oCal2.setStartDate(oDate);
+				ok(!jQuery("#Cal2--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled");
+				ok(!jQuery("#Cal2--Head-next").hasClass("sapUiCalDsbl"), "Next Button enabled");
+				qutils.triggerEvent("click", "Cal2--Head-prev");
+				ok(jQuery("#Cal2--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button disabled on min month");
+				ok(!jQuery("#Cal2--Head-next").hasClass("sapUiCalDsbl"), "Next Button enabled on min month");
+				qutils.triggerEvent("click", "Cal2--Head-B2");
+				aYears = jQuery("#Cal2--YP").find(".sapUiCalItem");
+				equal(jQuery(aYears[0]).text(), "0001", "Min Year is first rendered year");
+				qutils.triggerEvent("click", "Cal2--Head-B2");
+
+				oCal2.setStartDate(new Date(2022, 1, 4, 8, 0));
 			});
 
 			module("select time");
