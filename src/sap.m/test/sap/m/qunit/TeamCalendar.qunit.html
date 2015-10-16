@@ -24,33 +24,26 @@
 
 		<!-- Test functions -->
 		<script language="javascript">
-			var oSearchField1 = new sap.m.SearchField("SF1", {
-				search: function(oEvent) {
-										alert("Search!");
-								}
-			});
 
-			var oButton1 = new sap.m.Button("B1", {
-				icon: "sap-icon://sap-ui5",
-				type: sap.m.ButtonType.Transparent,
-				press: function(oEvent) {
-									alert("UI5 Button pressed");
-								}
-			});
+			var createToolbarContent = function(sSearchFieldId, sButtonId) {
+				oSearchField1 = new sap.m.SearchField(sSearchFieldId, {
+					search: function(oEvent) {
+											alert("Search!");
+									}
+				});
+
+				oButton1 = new sap.m.Button(sButtonId, {
+					icon: "sap-icon://sap-ui5",
+					type: sap.m.ButtonType.Transparent,
+					press: function(oEvent) {
+										alert("UI5 Button pressed");
+									}
+				});
+			};
 
 			var oSelectedAppointment;
 			var handleAppointmentSelect = function(oEvent){
 				oSelectedAppointment = oEvent.getParameter("appointment");
-			};
-
-			var bAddRow = false;
-			var handleAddRow = function(oEvent){
-				bAddRow = true;
-			};
-
-			var bAddAppointment = false;
-			var handleAddAppointment = function(oEvent){
-				bAddAppointment = true;
 			};
 
 			var bRowSelectionChange = false;
@@ -69,8 +62,6 @@
 			var createTeamCalendar = function(sID, oSearchField, oButton) {
 				var oTC = new sap.m.TeamCalendar(sID, {
 					startDate: new Date("2015", "0", "1", "08", "00"),
-					title: "Title",
-					searchField: oSearchField,
 					rows: [ new sap.m.TeamCalendarRow(sID + "-Row1", {
 					        	icon: "sap-icon://employee",
 					        	title: "Max Mustermann",
@@ -161,10 +152,8 @@
 					                	tooltip: "Lunch"
 					                })
 					              ],
-					toolbarContent: [oButton],
+					toolbarContent: [oSearchField, oButton],
 					appointmentSelect: handleAppointmentSelect,
-					addRow: handleAddRow,
-					addAppointment: handleAddAppointment,
 					startDateChange: handleStartDateChange,
 					rowSelectionChange: handleRowSelectionChange
 				});
@@ -172,17 +161,20 @@
 				return oTC;
 			};
 
-			var initTeamCalendar = function(sID, oSearchField, oButton) {
+			var initTeamCalendar = function(sID, sSearchFieldId, sButtonId) {
 				var oTC = sap.ui.getCore().byId(sID);
 				var oUIArea;
 				if(oTC) {
-					oTC.setSearchField();
 					oTC.removeAllToolbarContent();
 					oUIArea = oTC.getUIArea();
 					oTC.destroy();
 				}
 
-				oTC = createTeamCalendar(sID, oSearchField, oButton);
+				if(!sap.ui.getCore().byId(sSearchFieldId)) {
+					createToolbarContent(sSearchFieldId, sButtonId);
+				}
+
+				oTC = createTeamCalendar(sID, oSearchField1, oButton1);
 
 				if(oUIArea) {
 					oTC.placeAt(oUIArea.getId());
@@ -194,6 +186,8 @@
 
 			};
 
+			var oSearchField1, oButton1;
+			createToolbarContent("SF1", "B1");
 			var oTC1 = createTeamCalendar("TC1", oSearchField1, oButton1);
 			oTC1.placeAt("uiArea1");
 
@@ -225,7 +219,7 @@
 				ok(jQuery.sap.equal(oCalendarRow.getNonWorkingHours(), [11, 12]), "Row2: CalendarRow - nonWorkingHours");
 			});
 
-			test("TeamCalendar", function() {
+			test("Table", function() {
 				var oTable = sap.ui.getCore().byId("TC1-Table");
 
 				equal(oTable.getColumns().length, 2, "Table columns");
@@ -233,12 +227,9 @@
 				equal(oTable.getItems()[0].getId(), "TC1-Row1-CLI", "Table row1 is first row");
 
 				ok(oTable.getHeaderToolbar(), "HeaderToolbar exist");
-				equal(oTable.getHeaderToolbar().getContent().length, 5, "HeaderToolbar items");
-				equal(oTable.getHeaderToolbar().getContent()[0].getId(), "TC1-IntType", "HeaderToolbar: IntervalType-select exist");
-				equal(oTable.getHeaderToolbar().getContent()[1].getId(), "TC1-Today", "HeaderToolbar: today button exist");
-				equal(oTable.getHeaderToolbar().getContent()[2].getId(), "TC1-ToolbarSpacer", "HeaderToolbar: spacer exist");
-				equal(oTable.getHeaderToolbar().getContent()[3].getId(), "B1", "HeaderToolbar: application button exist");
-				equal(oTable.getHeaderToolbar().getContent()[4].getId(), "TC1-AddAppointment", "HeaderToolbar: add appointment button exist");
+				equal(oTable.getHeaderToolbar().getContent().length, 2, "HeaderToolbar items");
+				equal(oTable.getHeaderToolbar().getContent()[0].getId(), "SF1", "HeaderToolbar: searchField exist");
+				equal(oTable.getHeaderToolbar().getContent()[1].getId(), "B1", "HeaderToolbar: application button exist");
 
 				ok(oTable.getInfoToolbar(), "InfoToolbar exist");
 				equal(oTable.getInfoToolbar().getContent().length, 2, "InfoToolbar items");
@@ -247,14 +238,11 @@
 
 				var oCalHead = sap.ui.getCore().byId("TC1-CalHead");
 				equal(oCalHead.getToolbar().getId(), "TC1-HeaderToolbar", "Calendar head: Toolbar exist");
-				equal(oCalHead.getSearchField(), "SF1", "Calendar head: SearchField exist");
 
 				var oHeaderToolbar = sap.ui.getCore().byId("TC1-HeaderToolbar");
-				equal(oHeaderToolbar.getContent().length, 3, "HeaderToolbar items");
-				equal(oHeaderToolbar.getContent()[0].getId(), "TC1-Title", "HeaderToolbar: title exist");
-				equal(oHeaderToolbar.getContent()[0].getText(), "Title", "HeaderToolbar: title text");
-				equal(oHeaderToolbar.getContent()[1].getId(), "TC1-HeadToolbarSpacer", "HeaderToolbar: spacer exist");
-				equal(oHeaderToolbar.getContent()[2].getId(), "TC1-AddRow", "HeaderToolbar: add row button exist");
+				equal(oHeaderToolbar.getContent().length, 2, "HeaderToolbar items");
+				equal(oHeaderToolbar.getContent()[0].getId(), "TC1-IntType", "Calendar head Toolbar: IntervalType-select exist");
+				equal(oHeaderToolbar.getContent()[1].getId(), "TC1-Today", "Calendar head Toolbar: today button exist");
 			});
 
 			module("rendering");
@@ -269,19 +257,14 @@
 				ok(jQuery("#TC1-Row2-CalRow").get(0), "Row2 CalendarRow rendered");
 
 				ok(jQuery("#TC1-Toolbar").get(0), "Table header toolbar rendered");
-				ok(jQuery("#TC1-IntType").get(0), "IntervalType select rendered");
-				ok(jQuery("#TC1-Today").get(0), "Today button rendered");
-				ok(jQuery("#TC1-ToolbarSpacer").get(0), "Table header toolbar spacer rendered");
+				ok(jQuery("#SF1").get(0), "SearchField rendered");
 				ok(jQuery("#B1").get(0), "application button rendered");
-				ok(jQuery("#TC1-AddAppointment").get(0), "Add appointment button rendered");
 
 				ok(jQuery("#TC1-InfoToolbar").get(0), "Table info toolbar rendered");
 				ok(jQuery("#TC1-CalHead").get(0), "Calendar header rendered");
 				ok(jQuery("#TC1-HeaderToolbar").get(0), "Calendar header toolbar rendered");
-				ok(jQuery("#TC1-Title").get(0), "Calendar header title rendered");
-				ok(jQuery("#TC1-HeadToolbarSpacer").get(0), "Calendar header toolbar spacer rendered");
-				ok(jQuery("#TC1-AddRow").get(0), "AddRow button rendered");
-				ok(jQuery("#SF1").get(0), "SearchField rendered");
+				ok(jQuery("#TC1-IntType").get(0), "IntervalType select rendered");
+				ok(jQuery("#TC1-Today").get(0), "Today button rendered");
 				ok(jQuery("#TC1-TimeInt").get(0), "CalendarTimeInterval rendered");
 			});
 
@@ -363,38 +346,6 @@
 				equal(oTable.getMode(), sap.m.ListMode.MultiSelect, "Table selection mode");
 			});
 
-			test("title", function() {
-				// initila setting already checked
-				oTC1.setTitle("Test");
-				sap.ui.getCore().applyChanges();
-				equal(sap.ui.getCore().byId("TC1-Title").getText(), "Test", "Title control text");
-				equal(jQuery("#TC1-Title").text(), "Test", "displayed title");
-			});
-
-			test("showAddRowButton", function() {
-				ok(oTC1.getShowAddRowButton(), "showAddRowButton enabled by default");
-
-				oTC1.setShowAddRowButton(false);
-				sap.ui.getCore().applyChanges();
-				ok(!oTC1.getShowAddRowButton(), "showAddRowButton disabled");
-				ok(sap.ui.getCore().byId("TC1-AddRow"), "Button still exist");
-				var oHeaderToolbar = sap.ui.getCore().byId("TC1-HeaderToolbar");
-				equal(oHeaderToolbar.getContent().length, 2, "HeaderToolbar items");
-				ok(!jQuery("#TC1-AddRow").get(0), "AddRow button not rendered");
-			});
-
-			test("showAddAppointmentButton", function() {
-				ok(oTC1.getShowAddAppointmentButton(), "showAddAppointmentButton enabled by default");
-
-				oTC1.setShowAddAppointmentButton(false);
-				sap.ui.getCore().applyChanges();
-				ok(!oTC1.getShowAddAppointmentButton(), "showAddAppointmentButton disabled");
-				ok(sap.ui.getCore().byId("TC1-AddAppointment"), "Button still exist");
-				var oToolbar = sap.ui.getCore().byId("TC1-Toolbar");
-				equal(oToolbar.getContent().length, 4, "Toolbar items");
-				ok(!jQuery("#TC1-AddAppointment").get(0), "AddRow button not rendered");
-			});
-
 			test("width", function() {
 				ok(!oTC1.getWidth(), "no width set ad default");
 				var sStyle = oTC1.$().attr("style") || "";
@@ -473,27 +424,15 @@
 					aRemoved[i].destroy();
 				}
 
-				oTC1 = initTeamCalendar("TC1", oSearchField1, oButton1);
+				oTC1 = initTeamCalendar("TC1", "SF1", "B1");
+				oTable = sap.ui.getCore().byId("TC1-Table");
 
 				oTC1.destroyRows();
 				sap.ui.getCore().applyChanges();
 				equal(oTable.getItems().length, 0, "Table rows destroyed");
 				ok(!sap.ui.getCore().byId("TC1-Row1"), "Row1 destroyed");
 
-				oTC1 = initTeamCalendar("TC1", oSearchField1, oButton1);
-			});
-
-			test("searchField", function() {
-				oTC1.setSearchField();
-				sap.ui.getCore().applyChanges();
-				var oCalHead = sap.ui.getCore().byId("TC1-CalHead");
-				ok(!oCalHead.getSearchField(), "Calendar head: no SearchField exist");
-				ok(!jQuery("#SF1").get(0), "SearchField not rendered");
-
-				oTC1.setSearchField(oSearchField1);
-				sap.ui.getCore().applyChanges();
-				equal(oCalHead.getSearchField(), "SF1", "Calendar head: SearchField exist");
-				ok(jQuery("#SF1").get(0), "SearchField rendered again");
+				oTC1 = initTeamCalendar("TC1", "SF1", "B1");
 			});
 
 			test("toolbarContent", function() {
@@ -506,20 +445,40 @@
 
 				oTC1.addToolbarContent(oButton);
 				sap.ui.getCore().applyChanges();
-				equal(oTable.getHeaderToolbar().getContent().length, 6, "HeaderToolbar items");
-				equal(oTable.getHeaderToolbar().getContent()[4].getId(), "BX", "HeaderToolbar: new button exist");
+				equal(oTable.getHeaderToolbar().getContent().length, 3, "HeaderToolbar items");
+				equal(oTable.getHeaderToolbar().getContent()[2].getId(), "BX", "HeaderToolbar: new button exist");
 				ok(jQuery("#BX").get(0), "new button rendered");
 
 				oTC1.removeToolbarContent(oButton);
 				sap.ui.getCore().applyChanges();
-				equal(oTable.getHeaderToolbar().getContent().length, 5, "HeaderToolbar items");
+				equal(oTable.getHeaderToolbar().getContent().length, 2, "HeaderToolbar items");
 				ok(!jQuery("#BX").get(0), "new button not rendered");
 
 				oTC1.insertToolbarContent(oButton, 0);
 				sap.ui.getCore().applyChanges();
-				equal(oTable.getHeaderToolbar().getContent().length, 6, "HeaderToolbar items");
-				equal(oTable.getHeaderToolbar().getContent()[3].getId(), "BX", "HeaderToolbar: new button exist");
+				equal(oTable.getHeaderToolbar().getContent().length, 3, "HeaderToolbar items");
+				equal(oTable.getHeaderToolbar().getContent()[0].getId(), "BX", "HeaderToolbar: new button exist");
 				ok(jQuery("#BX").get(0), "new button rendered");
+
+				var aRemoved = oTC1.removeAllToolbarContent();
+				sap.ui.getCore().applyChanges();
+				equal(oTable.getHeaderToolbar().getContent().length, 0, "HeaderToolbar items");
+				ok(!jQuery("#BX").get(0), "new button not rendered");
+				equal(aRemoved.length, 3, "3 controls removed");
+
+				for(var i = 0; i < aRemoved.length; i++) {
+					aRemoved[i].destroy();
+				}
+
+				oTC1 = initTeamCalendar("TC1", "SF1", "B1");
+				oTable = sap.ui.getCore().byId("TC1-Table");
+
+				oTC1.destroyToolbarContent();
+				sap.ui.getCore().applyChanges();
+				equal(oTable.getHeaderToolbar().getContent().length, 0, "HeaderToolbar items");
+				ok(!sap.ui.getCore().byId("SF1"), "SearchField destroyed");
+
+				oTC1 = initTeamCalendar("TC1", "SF1", "B1");
 			});
 
 			test("views", function() {
@@ -594,7 +553,7 @@
 					aRemoved[i].destroy();
 				}
 
-				oTC1 = initTeamCalendar("TC1", oSearchField1, oButton1);
+				oTC1 = initTeamCalendar("TC1", "SF1", "B1");
 				ok(jQuery("#TC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemType02"), "SpecialDate rendered again");
 
 				oTC1.destroySpecialDates();
@@ -688,7 +647,7 @@
 				equal(oRow.getAppointments().length, 0, "number of appointments after destroy");
 				ok(!sap.ui.getCore().byId("TC1-R2A1"), "Appointment destroyed");
 
-				oTC1 = initTeamCalendar("TC1", oSearchField1, oButton1);
+				oTC1 = initTeamCalendar("TC1", "SF1", "B1");
 			});
 
 			test("Row intervalHeaders", function() {
@@ -740,24 +699,10 @@
 				equal(oRow.getIntervalHeaders().length, 0, "number of IntervalHeaders after destroy");
 				ok(!sap.ui.getCore().byId("TC1-R2H1"), "IntervalHeader destroyed");
 
-				oTC1 = initTeamCalendar("TC1", oSearchField1, oButton1);
+				oTC1 = initTeamCalendar("TC1", "SF1", "B1");
 			});
 
 			module("events");
-
-			test("addRow", function() {
-				bAddRow = false;
-				qutils.triggerEvent("tap", "TC1-AddRow");
-				ok(bAddRow, "addRow event fired");
-				bAddRow = false;
-			});
-
-			test("addAppointment", function() {
-				bAddAppointment = false;
-				qutils.triggerEvent("tap", "TC1-AddAppointment");
-				ok(bAddAppointment, "addAppointment event fired");
-				bAddAppointment = false;
-			});
 
 			test("appointmentSelect", function() {
 				oSelectedAppointment = undefined;
@@ -847,7 +792,7 @@
 
 				bStartDateChange = false;
 
-				oTC1 = initTeamCalendar("TC1", oSearchField1, oButton1);
+				oTC1 = initTeamCalendar("TC1", "SF1", "B1");
 			});
 
 		</script>

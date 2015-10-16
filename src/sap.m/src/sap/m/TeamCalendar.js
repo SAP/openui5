@@ -49,21 +49,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			singleSelection : {type : "boolean", group : "Misc", defaultValue : true},
 
 			/**
-			 * Title of the <code>TeamCalendar</code>
-			 */
-			title : {type : "string", group : "Data"},
-
-			/**
-			 * If set, a button to add a row will be shown. If the button is pressed the <code>addRow</code> event is fired
-			 */
-			showAddRowButton : {type : "boolean", group : "Misc", defaultValue : true},
-
-			/**
-			 * If set, a button to add an appointment will be shown. If the button is pressed the <code>addAppointment</code> event is fired
-			 */
-			showAddAppointmentButton : {type : "boolean", group : "Misc", defaultValue : true},
-
-			/**
 			 * Width of the <code>TeamCalendar</code>
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
@@ -96,15 +81,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"},
 
 			/**
-			 * <code>SearchField</code> displayed in the <code>TeamCalendar</code>.
-			 * The search must be implemented by the calling application because the <code>TeamCalendar</code> might not have access
-			 * to all of the data and the backend.
-			 * <b>Note:</b> From interaction design purpose this <code>SearchField</code> should only search for displayed <code>TeamCalendarRows</code>,
-			 * not for appointments or any other things.
-			 */
-			searchField : {type : "sap.m.SearchField", multiple : false},
-
-			/**
 			 * The content of the toolbar.
 			 */
 			toolbarContent : {type : "sap.ui.core.Control", multiple : true, singularName : "toolbarContent"},
@@ -116,16 +92,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		},
 		events : {
-
-			/**
-			 * Fired if the button to add a row is pressed
-			 */
-			addRow : {},
-
-			/**
-			 * Fired if the button to add an appointment is pressed
-			 */
-			addAppointment : {},
 
 			/**
 			 * Fired if an appointment was selected
@@ -177,9 +143,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			metadata : {
 				aggregations: {
 					"toolbar"   : {type: "sap.m.Toolbar", multiple: false}
-				},
-				associations: {
-					"searchField" : {type: "sap.m.SearchField", multiple: false}
 				}
 			},
 
@@ -194,11 +157,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				var oToolbar = oHeader.getToolbar();
 				if (oToolbar) {
 					oRm.renderControl(oToolbar);
-				}
-
-				var oSearchField = sap.ui.getCore().byId(oHeader.getSearchField());
-				if (oSearchField) {
-					oRm.renderControl(oSearchField);
 				}
 
 				oRm.write("</div>");
@@ -233,22 +191,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			});
 			this._oTodayButton.attachEvent("press", _handleTodayPress, this);
 
-			this._oToolbarSpacer = new sap.m.ToolbarSpacer(this.getId() + "-ToolbarSpacer");
-
 			this._oToolbar = new sap.m.Toolbar(this.getId() + "-Toolbar", {
-				design: sap.m.ToolbarDesign.Transpaent,
-				content: [this._oIntervalTypeSelect, this._oTodayButton, this._oToolbarSpacer] // add as toolbar content even getContent is overwritten to have correct parent relation
+				design: sap.m.ToolbarDesign.Transpaent
 			});
 			this._oToolbar._oTeamCalendar = this;
 			this._oToolbar.getContent = function() {
 				return this._oTeamCalendar._getToolbarContent();
 			};
 
-			this._oTitle = new sap.m.Title(this.getId() + "-Title");
-
 			this._oHeaderToolbar = new sap.m.Toolbar(this.getId() + "-HeaderToolbar", {
 				design: sap.m.ToolbarDesign.Transpaent,
-				content: [this._oTitle, new sap.m.ToolbarSpacer(this.getId() + "-HeadToolbarSpacer")]
+				content: [this._oIntervalTypeSelect, this._oTodayButton]
 			});
 
 			this._oCalendarHeader = new CalendarHeader(this.getId() + "-CalHead", {
@@ -321,16 +274,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				this._oMonthInterval = undefined;
 			}
 
-			if (!this.getShowAddRowButton() && this._oAddRowButton) {
-				this._oAddRowButton.destroy();
-				this._oAddRowButton = undefined;
-			}
-
-			if (!this.getShowAddAppointmentButton() && this._oAddAppointmentButton) {
-				this._oAddAppointmentButton.destroy();
-				this._oAddAppointmentButton = undefined;
-			}
-
 			if (this._aViews) {
 				for (var i = 0; i < this._aViews.length; i++) {
 					this._aViews[i].destroy();
@@ -355,8 +298,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				jQuery.sap.clearDelayedCall(this._sUpdateCurrentTime);
 				this._sUpdateCurrentTime = undefined;
 			}
-
-			_addToolbarButtons.call(this);
 
 			this._bBeforeRendering = undefined;
 
@@ -608,6 +549,56 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
+		TeamCalendar.prototype.addToolbarContent = function(oContent) {
+
+			this.addAggregation("toolbarContent", oContent, true);
+
+			this._oToolbar.invalidate();
+
+			return this;
+
+		};
+
+		TeamCalendar.prototype.insertToolbarContent = function(oContent, iIndex) {
+
+			this.insertAggregation("toolbarContent", oContent, iIndex);
+
+			this._oToolbar.invalidate();
+
+			return this;
+
+		};
+
+		TeamCalendar.prototype.removeToolbarContent = function(vObject) {
+
+			var oRemoved = this.removeAggregation("toolbarContent", vObject, true);
+
+			this._oToolbar.invalidate();
+
+			return oRemoved;
+
+		};
+
+		TeamCalendar.prototype.removeAllToolbarContent = function() {
+
+			var aRemoved = this.removeAllAggregation("toolbarContent", true);
+
+			this._oToolbar.invalidate();
+
+			return aRemoved;
+
+		};
+
+		TeamCalendar.prototype.destroyToolbarContent = function() {
+
+			var destroyed = this.destroyAggregation("toolbarContent", true);
+
+			this._oToolbar.invalidate();
+
+			return destroyed;
+
+		};
+
 		TeamCalendar.prototype.setSingleSelection = function(bSingleSelection) {
 
 			this.setProperty("singleSelection", bSingleSelection, true);
@@ -618,22 +609,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			} else {
 				oTable.setMode(sap.m.ListMode.MultiSelect);
 			}
-
-		};
-
-		TeamCalendar.prototype.setTitle = function(sTitle){
-
-			this.setProperty("title", sTitle, true);
-			this._oTitle.setText(sTitle);
-			return this;
-
-		};
-
-		TeamCalendar.prototype.setSearchField = function(oSearchField){
-
-			this.setAggregation("searchField", oSearchField, true);
-			this._oCalendarHeader.setSearchField(oSearchField);
-			return this;
 
 		};
 
@@ -699,30 +674,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		 */
 		TeamCalendar.prototype._getToolbarContent = function(){
 
-			var aContent = [];
-			aContent.push(this._oIntervalTypeSelect);
-			aContent.push(this._oTodayButton);
-			aContent.push(this._oToolbarSpacer);
-
-			jQuery.merge(aContent, this.getToolbarContent());
-
-			if (this.getShowAddAppointmentButton()) {
-				if (!this._oAddAppointmentButton) {
-					this._oAddAppointmentButton = new sap.m.Button(this.getId() + "-AddAppointment", {
-						icon: "sap-icon://add",
-						type: sap.m.ButtonType.Transparent
-					});
-					this._oAddAppointmentButton.attachEvent("press", _handleAddAppointmentPress, this);
-				}
-				aContent.push(this._oAddAppointmentButton);
-				if (this._oToolbar.indexOfContent(this._oAddAppointmentButton) < 0) {
-					this._oToolbar.addContent(this._oAddAppointmentButton); // add as toolbar content even getContent is overwritten to have correct parent relation
-				}
-			}else if (this._oToolbar.indexOfContent(this._oAddAppointmentButton) >= 0) {
-				this._oToolbar.removeContent(this._oAddAppointmentButton);
-			}
-
-			return aContent;
+			return this.getToolbarContent();
 
 		};
 
@@ -920,23 +872,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		}
 
-		function _addToolbarButtons() {
-
-			if (this.getShowAddRowButton()) {
-				if (!this._oAddRowButton) {
-					this._oAddRowButton = new sap.m.Button(this.getId() + "-AddRow", {
-						icon: "sap-icon://add",
-						type: sap.m.ButtonType.Transparent
-					});
-					this._oAddRowButton.attachEvent("press", _handleAddRowPress, this);
-				}
-				this._oHeaderToolbar.addContent(this._oAddRowButton);
-			}else if (this._oAddRowButton) {
-				this._oHeaderToolbar.removeContent(this._oAddRowButton);
-			}
-
-		}
-
 		function _handleTableSelectionChange(oEvent) {
 
 			var aChangedRows = [];
@@ -954,18 +889,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			this.fireRowSelectionChange({rows: aChangedRows});
-
-		}
-
-		function _handleAddRowPress(oEvent) {
-
-			this.fireAddRow();
-
-		}
-
-		function _handleAddAppointmentPress(oEvent) {
-
-			this.fireAddAppointment();
 
 		}
 
