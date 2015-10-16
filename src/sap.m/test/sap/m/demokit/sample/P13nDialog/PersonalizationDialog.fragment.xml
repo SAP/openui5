@@ -5,7 +5,7 @@
 		reset="handleReset" initialVisiblePanelType="sort">
 		<panels>
 			<P13nColumnsPanel title="Columns" visible="true"
-				addColumnsItem="onAddColumnsItem" type="columns"
+				addColumnsItem="onAddColumnsItem" changeColumnsItems="onChangeColumnsItem" type="columns"
 				items="{
                     path: '/ColumnCollection'
                 }">
