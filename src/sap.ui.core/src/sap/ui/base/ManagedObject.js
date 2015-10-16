@@ -3168,7 +3168,7 @@ sap.ui.define([
 			if (aParts && aParts.length > 1) {
 				// composite binding: invalid when for any part the model has the same name (or updateall) and when the model instance for that part differs
 				for (i = 0; i < aParts.length; i++) {
-					if ( (bUpdateAll || aParts[i].model == sModelName) && !oBindingInfo.binding.aBindings[i].updateRequired(that.getModel(aParts[i].model)) ) {
+					if ( (bUpdateAll || aParts[i].model == sModelName) && !oBindingInfo.binding.updateRequired(that.getModel(aParts[i].model), i) ) {
 						return true;
 					}
 				}
@@ -3380,18 +3380,14 @@ sap.ui.define([
 				// update context in existing bindings
 				jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
 					var oBinding = oBindingInfo.binding;
-					var aParts = oBindingInfo.parts,
-						i;
+					var aParts = oBindingInfo.parts;
 					if (!oBinding) {
 						return;
 					}
 					if (aParts && aParts.length > 1) {
 						// composite binding: update required  when a part use the model with the same name
-						for (i = 0; i < aParts.length; i++) {
-							if ( aParts[i].model == sModelName ) {
-								oBinding.aBindings[i].setContext(that.getBindingContext(aParts[i].model));
-							}
-						}
+						// provide the model for the context to update only the relevant parts
+						oBinding.setContext(that.getBindingContext(sModelName), oModel);
 					} else if (oBindingInfo.factory) {
 						// list binding: update required when the model has the same name (or updateall)
 						if ( oBindingInfo.model == sModelName) {

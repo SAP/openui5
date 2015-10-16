@@ -23,10 +23,14 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	
 		constructor : function (aBindings, bRawValues) {
 			PropertyBinding.apply(this, [null,""]);
-			this.aBindings = aBindings;
+			this.aBindings = aBindings || [];
 			this.aValues = null;
 			this.bRawValues = bRawValues;
 			this.bPreventUpdate = false;
+			// bindings that needs ongoing checks for updates - resolved OneTime-bindings will get updated once via initialize()
+			this.aUpdatableBindings = this.aBindings.filter(function (oBinding) {
+				return oBinding.getBindingMode() !== BindingMode.OneTime || !oBinding.isResolved();
+			});
 		},
 		metadata : {
 			
@@ -51,13 +55,13 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 		jQuery.sap.assert(null, "Composite Binding has no context!");
 		return null;
 	};
-	
+
 	CompositeBinding.prototype.isResolved = function() {
-		var bResolved = false;
-		jQuery.each(this.aBindings, function(i, oBinding) {
-			bResolved = oBinding.isResolved();
-			if (!bResolved) {
-				return false;
+		var bResolved = true;
+		jQuery.each(this.aUpdatableBindings, function(i, oBinding) {
+			if (!oBinding.isResolved()) {
+				bResolved = false;
+				return;
 			}
 		});
 		return bResolved;
@@ -85,16 +89,42 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	};
 	
 	/**
-	 * sets the context for each property binding in this composite binding
+	 * Sets the context for each property binding in this composite binding.
+	 * 
+	 * By setting the context, relative bindings can be resolved. In case they are in mode OneTime
+	 * they are no longer updatable.
+	 * 
 	 * @param {object} oContext the new context for the bindings
+	 * @param {object|undefined} [oModel] the model related to the context (in case the context is empty)
 	 */
-	CompositeBinding.prototype.setContext = function(oContext) {
-		jQuery.each(this.aBindings, function(i, oBinding){
-			// null context could also be set
-			if (!oContext || oBinding.updateRequired(oContext.getModel())) {
+	CompositeBinding.prototype.setContext = function(oContext, oModel) {
+		var bCheckUpdate = false,
+			bDetachFromModel = !!oModel;
+
+		for (var i = 0; i < this.aUpdatableBindings.length; ++i) {
+			var oBinding = this.aUpdatableBindings[i];
+			
+			if (oBinding.updateRequired(oContext && oContext.getModel() || oModel)) {
 				oBinding.setContext(oContext);
+				bCheckUpdate = bCheckUpdate || oBinding.isRelative();
+
+				// setting the context for an unresolved binding resolves it - OneTime bindings don't get further updates
+				if (oBinding.getBindingMode() === BindingMode.OneTime && oBinding.isResolved()) {
+					this.aUpdatableBindings.splice(i--, 1);
+				} else {
+					// current binding was affected and is no OneTime binding, therefore we cannot detach from model
+					bDetachFromModel = false;
+				}
 			}
-		});
+		}
+		
+		if (bDetachFromModel) {
+			oModel.removeBinding(this);
+		}
+		
+		if (bCheckUpdate) {
+			this.checkUpdate();
+		}
 	};
 	
 	/**
@@ -244,22 +274,17 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	*/
 	CompositeBinding.prototype.attachChange = function(fnFunction, oListener) {
 		var that = this;
-		this.fChangeHandler = function(oEvent) {
-			var oBinding = oEvent.getSource();
-			if (oBinding.getBindingMode() == BindingMode.OneTime) {
-				oBinding.detachChange(that.fChangeHandler);
-			}
-			/*bForceUpdate true gets lost (e.g. checkupdate(true) on model); But if a embedded binding fires a change we could
-			 * call checkupdate(true) so we handle both cases: a value change of the binding and a checkupdate(true)
-			 */
-			that.checkUpdate(true);
-		};
-		this.attachEvent("change", fnFunction, oListener);
-		if (this.aBindings) {
-			jQuery.each(this.aBindings, function(i,oBinding) {
-				oBinding.attachChange(that.fChangeHandler);
+		if (!this.hasListeners("change")) {
+			var aModels = [];
+			jQuery.each(this.aUpdatableBindings, function(i, oBinding) {
+				if (aModels.indexOf(oBinding.oModel) === -1) {
+					oBinding.oModel.addBinding(that);
+					aModels.push(oBinding.oModel);
+				}
 			});
 		}
+		this.attachEvent("change", fnFunction, oListener);
+
 	};
 	
 	/**
@@ -271,9 +296,14 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	CompositeBinding.prototype.detachChange = function(fnFunction, oListener) {
 		var that = this;
 		this.detachEvent("change", fnFunction, oListener);
-		if (this.aBindings) {
-			jQuery.each(this.aBindings, function(i,oBinding) {
-				oBinding.detachChange(that.fChangeHandler);
+		if (!this.hasListeners("change")) {
+			var aModels = [];
+			// for detach we have to iterate over all bindings (not only updatable bindings) 
+			jQuery.each(this.aBindings, function(i, oBinding) {
+				if (aModels.indexOf(oBinding.oModel) === -1) {
+					oBinding.oModel.removeBinding(that);
+					aModels.push(oBinding.oModel);
+				}
 			});
 		}
 	};
@@ -286,19 +316,12 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	*/
 	CompositeBinding.prototype.attachDataStateChange = function(fnFunction, oListener) {
 		var that = this;
-		this.fDataStateChangeHandler = function(oEvent) {
-			var oBinding = oEvent.getSource();
-			if (oBinding.getBindingMode() == BindingMode.OneTime) {
-				oBinding.detachDataStateChange(that.fChangeHandler);
-			}
-			that.checkDataState();
-		};
-		this.attachEvent("DataStateChange", fnFunction, oListener);
-		if (this.aBindings) {
-			jQuery.each(this.aBindings, function(i,oBinding) {
-				oBinding.attachDataStateChange(that.fDataStateChangeHandler);
+		if (!this.hasListeners("DataStateChange")) {
+			jQuery.each(this.aBindings, function(i, oBinding) {
+				oBinding.attachDataStateChange(that.checkDataState, that);
 			});
 		}
+		this.attachEvent("DataStateChange", fnFunction, oListener);
 	};
 
 	/**
@@ -310,22 +333,32 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	CompositeBinding.prototype.detachDataStateChange = function(fnFunction, oListener) {
 		var that = this;
 		this.detachEvent("DataStateChange", fnFunction, oListener);
-		if (this.aBindings) {
-			jQuery.each(this.aBindings, function(i,oBinding) {
-				oBinding.detachDataStateChange(that.fDataStateChangeHandler);
+		if (!this.hasListeners("DataStateChange")) {
+			jQuery.each(this.aBindings, function(i, oBinding) {
+				oBinding.detachDataStateChange(that.checkDataState, that);
 			});
 		}
 	};
+
 	/**
-	 * Determines if the property bindings in the composite binding should be updated by calling updateRequired on all property bindings with the specified model.
+	 * Determines if the property bindings in the composite binding should be updated by calling
+	 * updateRequired on all property bindings with the specified model.
+	 *
 	 * @param {object} oModel The model instance to compare against
+	 * @param {int|undefined} [iPartIndex] If set only part at provided index will be checked.
 	 * @returns {boolean} true if this binding should be updated
 	 * @protected
 	 */
-	CompositeBinding.prototype.updateRequired = function(oModel) {
+	CompositeBinding.prototype.updateRequired = function(oModel, iPartIndex) {
+		if (iPartIndex !== undefined && iPartIndex !== null) {
+			return this.aBindings[iPartIndex].updateRequired(oModel);
+		}
 		var bUpdateRequired = false;
-		jQuery.each(this.aBindings, function(i, oBinding){
-			bUpdateRequired = bUpdateRequired || oBinding.updateRequired(oModel);
+		jQuery.each(this.aUpdatableBindings, function(i, oBinding) {
+			if (oBinding.updateRequired(oModel)) {
+				bUpdateRequired = true;
+				return;
+			}
 		});
 		return bUpdateRequired;
 	};
@@ -340,11 +373,9 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	 */
 	CompositeBinding.prototype.initialize = function() {
 		this.bPreventUpdate = true;
-		if (this.aBindings) {
-			jQuery.each(this.aBindings, function(i,oBinding) {
-				oBinding.initialize();
-			});
-		}
+		jQuery.each(this.aBindings, function(i,oBinding) {
+			oBinding.initialize();
+		});
 		this.bPreventUpdate = false;
 		this.checkUpdate(true);
 		return this;
@@ -361,6 +392,9 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 		if (this.bPreventUpdate) {
 			return;
 		}
+		jQuery.each(this.aUpdatableBindings, function(i, oBinding) {
+			oBinding.checkUpdate(bForceupdate);
+		});
 		var aValues = this.getValue();
 		if (!jQuery.sap.equal(aValues, this.aValues) || bForceupdate) {// optimize for not firing the events when unneeded
 			this.aValues = aValues;

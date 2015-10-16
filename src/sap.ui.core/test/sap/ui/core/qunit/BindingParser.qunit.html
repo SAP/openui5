@@ -659,6 +659,51 @@
 		oModel.setProperty("/blue", true);
 		strictEqual(oIcon.getColor(), "*red*", "one time binding -> value unchanged");
 	});
+	
+	test("Expression binding: two one time bindings inside composite binding", function () {
+		var oModel = new sap.ui.model.json.JSONModel({color1: 'blue', color2: 'red'}),
+			oIcon = new sap.ui.core.Icon({models : oModel});
+		
+		oIcon.bindProperty("color", parse("*{:= ${/color1}}{:= ${/color2}}*"));
+		strictEqual(oIcon.getColor(), "*bluered*");
+		
+		oModel.setData({color1: 'black', color2: 'green'});
+		strictEqual(oIcon.getColor(), "*bluered*");
+	});
+	
+	test("Expression binding: one time binding inside composite binding with two models", function () {
+		var oModel1 = new sap.ui.model.json.JSONModel({color1: 'red'}),
+			oModel2 = new sap.ui.model.json.JSONModel({color2: 'blue'});
+			oIcon = new sap.ui.core.Icon();
+			
+		oIcon.setModel(oModel1, "model1");
+		
+		oIcon.bindProperty("color", parse("*{:= ${model1>/color1}}{= ${model2>/color2}}*"));
+		strictEqual(oIcon.getColor(), "");
+		
+		oModel1.setProperty("/color1", 'green');
+		strictEqual(oIcon.getColor(), "", "model2 not set yet");
+		
+		oIcon.setModel(oModel2, "model2");
+		strictEqual(oIcon.getColor(), "*greenblue*", "binding resolved for the first time");
+		
+		oModel1.setProperty("/color1", 'black');
+		strictEqual(oIcon.getColor(), "*greenblue*", "one time binding => value unchanged");
+		
+		oModel2.setProperty("/color2", 'white');
+		strictEqual(oIcon.getColor(), "*greenwhite*", "one time binding => only second binding resolved");
+	});
+	
+	test("Expression binding: binding order dependent expression", function () {
+		var oModel = new sap.ui.model.json.JSONModel(),
+			oIcon = new sap.ui.core.Icon({models : oModel});
+
+		oIcon.bindProperty("color", parse("{= ${/colors} ? ${/colors/color1} : 'none' }"));
+		strictEqual(oIcon.getColor(), "none");
+		
+		oModel.setData({colors: { color1: 'blue', color2: 'red'}});
+		strictEqual(oIcon.getColor(), "blue");
+	});
 
 	test("jQuery.proxy(..., oEnv.oContext)", function () {
 		var sBinding = "{path : '/', formatter : '.foo'}",

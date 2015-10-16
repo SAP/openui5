@@ -180,6 +180,35 @@
 		
 	});
 	
+	test("Composite Binding tests with formatter", function(){
+		setup();
+	
+		var fnFormatter = function(bDataIsAvailable, sName, sValue) {
+			if(bDataIsAvailable) {
+				return sName.length + ' (' + sValue + ')';
+			}
+			return 'Not available';
+		}
+	
+		oTxt.bindValue({
+			formatter: fnFormatter,
+			parts: [
+				{path: '/data'},
+				{path: '/data/text'},
+				{path: "/data/value", type: new sap.ui.model.type.Float()}
+			]
+		});
+		
+		var sValue = oTxt.getValue();
+		ok(sValue);
+		equals(sValue, "Not available");
+		
+		var oModel = sap.ui.getCore().getModel();
+		oModel.setData({ data: { text: "hello", value: 5 }});
+		sValue = oTxt.getValue();
+		equals(sValue, "5 (5)");
+	});
+	
 	test("Calculated fields model tests wrong path", function(){
 		setup();
 		oTxt.bindValue({

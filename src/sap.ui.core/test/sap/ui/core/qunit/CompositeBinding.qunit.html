@@ -1,0 +1,344 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<!-- Initialization -->
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script id="sap-ui-bootstrap" 
+		type="text/javascript"
+		src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-noConflict="true"
+		data-sap-ui-libs="sap.ui.commons"	
+		>
+	</script>
+	<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	
+    <script language="javascript">
+
+	var oModel,
+		oModel2,
+		bindingInfo,
+		oTxt,
+		parse = sap.ui.base.ManagedObject.bindingParser;
+
+	function setup(){
+		
+		if (oTxt) {
+			oTxt.destroy();
+		}
+		
+		var testData = {
+	  		"data": {
+				"text": "Hello",
+				"value": 7
+			},
+			"data2": {
+				"text": "World!",
+				"value": 42
+			}
+		};
+		
+		var testData2 = {
+				"values":
+					[
+					 {"value" : 10},
+					 {"value" : 20},
+					 {"value" : 30}
+				]	
+		}
+		
+		bindingInfo = {
+			formatter: function(text, value) { return text + ': ' + value},
+			parts: ['/data/text', '/data/value']
+		};
+		
+		oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(testData);
+		oModel2 = new sap.ui.model.json.JSONModel();
+		oModel2.setData(testData2);
+
+		oTxt = new sap.ui.commons.TextField();
+		oTxt.placeAt("txt");
+	};
+
+	test("Test missing model", function(){
+		setup();
+		
+		oTxt.bindValue(bindingInfo);
+		
+		sValue = oTxt.getValue();
+		equals(sValue, '', 'no model set');
+		
+		oTxt.setModel(oModel);
+		sValue = oTxt.getValue();
+		equals(sValue, 'Hello: 7');
+	});
+	
+	test("Test missing context", function(){
+		setup();
+		
+		bindingInfo = {
+			formatter: function(text, value) { return text + ': ' + value},
+			parts: ['text', 'value']
+		};
+		
+		oTxt.bindValue(bindingInfo);
+		
+		sValue = oTxt.getValue();
+		equals(sValue, '', 'no context set');
+		
+		oTxt.bindElement('/data');
+		sValue = oTxt.getValue();
+		equals(sValue, '', 'no model set');
+		
+		oTxt.setModel(oModel);
+		sValue = oTxt.getValue();
+		equals(sValue, 'Hello: 7');
+	});
+	
+	test("Test adding/removing context with two models", function(){
+		setup();
+		
+		bindingInfo = {
+			formatter: function(text, value) { return text + ': ' + value},
+			parts: ['text', 'model2>value']
+		};
+		
+		oTxt.bindValue(bindingInfo);
+		
+		sValue = oTxt.getValue();
+		equals(sValue, '', 'no context set');
+		
+		oTxt.bindElement('/data');
+		sValue = oTxt.getValue();
+		equals(sValue, '', 'no model set');
+		
+		oTxt.setModel(oModel);
+		sValue = oTxt.getValue();
+		equals(sValue, '', 'second context and model missing');
+		
+		oTxt.bindElement('model2>/values/0');
+		sValue = oTxt.getValue();
+		equals(sValue, '', 'second model not set');
+		
+		oTxt.setModel(oModel2, 'model2')
+		sValue = oTxt.getValue();
+		equals(sValue, 'Hello: 10');
+		
+		oTxt.unbindElement();
+		sValue = oTxt.getValue();
+		equals(sValue, 'null: 10', 'unbound first model');
+		
+		oTxt.bindElement('/data2');
+		sValue = oTxt.getValue();
+		equals(sValue, 'World!: 10');
+	});
+	
+	test("Test changing models", function(){
+		setup();
+		
+		var oModel3 = new sap.ui.model.json.JSONModel();
+		oModel3.setData({ data: { text: 'new', value: 77 }});
+		
+		oTxt.setModel(oModel);
+		oTxt.setModel(oModel2, 'model2');
+		
+		bindingInfo = {
+			formatter: function(text, value) { return text + ': ' + value},
+			parts: ['text', 'model2>value']
+		};
+		
+		oTxt.bindValue(bindingInfo);
+		sValue = oTxt.getValue();
+		equals(sValue, 'null: null', 'no context set');
+		
+		oTxt.bindElement('/data');
+		oTxt.bindElement('model2>/values/1');
+		sValue = oTxt.getValue();
+		equals(sValue, 'Hello: 20');
+		
+		oTxt.setModel(null);
+		sValue = oTxt.getValue();
+		equals(sValue, 'Hello: 20');
+		
+		oTxt.setModel(oModel3);
+		sValue = oTxt.getValue();
+		equals(sValue, 'new: 20');
+	});
+	
+	test("Test changing models and contexts (bind/unbind)", function(){
+		setup();
+		
+		var oModel3 = new sap.ui.model.json.JSONModel();
+		oModel3.setData({ data: { text: 'new', value: 77 }});
+		
+		oTxt.setModel(oModel);
+		oTxt.setModel(oModel2, 'model2');
+		
+		bindingInfo = {
+			formatter: function(text, value) { return text + ': ' + value},
+			parts: ['text', 'model2>value']
+		};
+		
+		oTxt.bindValue(bindingInfo);
+		oTxt.bindElement('/data');
+		oTxt.bindElement('model2>/values/1');
+		sValue = oTxt.getValue();
+		equals(sValue, 'Hello: 20');
+		
+		oTxt.setModel(null);
+		oTxt.setModel(null, 'model2');
+		sValue = oTxt.getValue();
+		equals(sValue, 'Hello: 20', 'missing models: binding cannot be resolved');
+		
+		oTxt.unbindElement('model2');
+		sValue = oTxt.getValue();
+		equals(sValue, 'Hello: 20', 'missing models: binding cannot be resolved');
+		
+		oTxt.bindElement('model3>/fake');
+		oTxt.bindElement('model2>/values/0');
+		sValue = oTxt.getValue();
+		equals(sValue, 'Hello: 20', 'missing models: binding cannot be resolved');
+		
+		oModel2.setProperty('/values/0/value', 22);
+		
+		oTxt.setModel(oModel3);
+		oTxt.setModel(oModel2, 'model2');
+		sValue = oTxt.getValue();
+		equals(sValue, 'new: 22');
+	});
+
+	test("Continuos OneTime Binding test with several model and binding updates", function() {
+		setup();
+
+		var fnFormatter = function(bDataIsAvailable, sName, sValue) {
+			if(bDataIsAvailable) {
+				return sName + ' (' + sName.length + '): ' + sValue;
+			}
+			return 'Not available';
+		}
+
+		oTxt.setModel(oModel);
+		oTxt.setModel(oModel2, "model2");
+
+		oTxt.bindValue({
+			formatter: fnFormatter,
+			parts: [
+				{path: '/data'},
+				{path: '/data/text', mode: sap.ui.model.BindingMode.OneTime},
+				{path: '/data/value', type: new sap.ui.model.type.Float()}
+			]
+		});
+		
+		var sValue = oTxt.getValue();
+		equals(sValue, 'Hello (5): 7');
+		
+		oModel.setProperty('/data/text', 'ab');
+		sValue = oTxt.getValue();
+		equals(sValue, 'Hello (5): 7', 'OneTime binding is not updated');
+		
+		oModel.setData({ data: { text: 'abc', value: 0 }});
+		sValue = oTxt.getValue();
+		equals(sValue, 'Hello (5): 0', 'OneTime binding is still not updated');
+		
+		oTxt.bindValue({
+			formatter: fnFormatter,
+			parts: [
+				{path: 'text'},
+				{path: 'text', mode: sap.ui.model.BindingMode.OneTime},
+				{path: 'value', type: new sap.ui.model.type.Float()}
+			]
+		});
+		
+		sValue = oTxt.getValue();
+		equals(sValue, 'Not available', 'binding cannot be resolved without context');
+		
+		oTxt.bindElement('/data');
+		sValue = oTxt.getValue();
+		equals(sValue, 'abc (3): 0', 'initial values applied');
+		
+		oModel.setProperty('/data2', { text: 'abcd', value: 11 });
+		oTxt.bindElement('/data2');
+		sValue = oTxt.getValue();
+		equals(sValue, 'abc (3): 11', 'One Time binding is not updated on context change');
+		
+		oTxt.bindValue({
+			formatter: fnFormatter,
+			parts: [
+				{path: 'text'},
+				{path: 'text', mode: sap.ui.model.BindingMode.OneTime},
+				{path: 'model2>value', type: new sap.ui.model.type.Float(), mode: sap.ui.model.BindingMode.OneTime}
+			]
+		});
+		
+		sValue = oTxt.getValue();
+		equals(sValue, 'abcd (4): null', 'relative binding on model2 cannot be resolved yet');
+		
+		oTxt.bindElement('model2>/values/0');
+		sValue = oTxt.getValue();
+		equals(sValue, 'abcd (4): 10');
+		
+		oModel.setProperty('/data2/text', 'abcde')
+		oModel2.setProperty('/values/0/value', 8)
+		sValue = oTxt.getValue();
+		equals(sValue, 'abcd (4): 10', 'no value change due OneTime bindings');
+		
+		oTxt.bindValue({
+			formatter: fnFormatter,
+			parts: [
+				{path: '/data2'},
+				{path: '/data2/text'},
+				{path: 'model2>/values/0/value', type: new sap.ui.model.type.Float(), mode: sap.ui.model.BindingMode.OneTime}
+			]
+		});
+		
+		sValue = oTxt.getValue();
+		equals(sValue, 'abcde (5): 8');
+		
+		oModel2.setProperty('/values/0/value', 9);
+		sValue = oTxt.getValue();
+		equals(sValue, 'abcde (5): 8', 'One time binding for second value');
+		
+		oModel.setProperty('/data2/text', 'abcdef');
+		sValue = oTxt.getValue();
+		equals(sValue, 'abcdef (6): 8');
+		
+		oTxt.bindValue({
+			formatter: fnFormatter,
+			parts: [
+				{path: '/data2'},
+				{path: 'model3>/value'},
+				{path: 'model2>/values/0/value', type: new sap.ui.model.type.Float(), mode: sap.ui.model.BindingMode.OneTime}
+			]
+		});
+		
+		sValue = oTxt.getValue();
+		equals(sValue, 'abcdef (6): 8', 'binding cannot be resolved yet, the old value remains');
+		
+		var oModel3 = new sap.ui.model.json.JSONModel();
+		oModel3.setData({ value: '1234567890' });
+		oTxt.setModel(oModel3, 'model3');
+		sValue = oTxt.getValue();
+		equals(sValue, '1234567890 (10): 9', 'initial values applied');
+	});
+			
+	</script>
+  
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: Composite Bindings</h1>
+	<h2 id="qunit-banner"></h2>
+ 	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="uiArea1"></div>
+	<div id="txt"></div>
+	<br/>
+	
+	<!-- For details see Trac Ticket 1238 -->
+</body>
+</html>
