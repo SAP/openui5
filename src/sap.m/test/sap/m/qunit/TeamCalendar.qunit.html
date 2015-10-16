@@ -339,11 +339,19 @@
 				var oTable = sap.ui.getCore().byId("TC1-Table");
 				ok(oTC1.getSingleSelection(), "Single selection is default");
 				equal(oTable.getMode(), sap.m.ListMode.SingleSelectMaster, "Table selection mode");
+				ok(!sap.ui.getCore().byId("TC1-All"), "Select All CheckBox not exits")
 
 				oTC1.setSingleSelection(false);
 				sap.ui.getCore().applyChanges();
 				ok(!oTC1.getSingleSelection(), "Single selection not set");
 				equal(oTable.getMode(), sap.m.ListMode.MultiSelect, "Table selection mode");
+				ok(sap.ui.getCore().byId("TC1-All"), "Select All CheckBox exits")
+				ok(jQuery("#TC1-All").get(0), "Select All CheckBox rendered");
+
+				oTC1.setSingleSelection(true);
+				sap.ui.getCore().applyChanges();
+				ok(sap.ui.getCore().byId("TC1-All"), "Select All CheckBox stillexits")
+				ok(!jQuery("#TC1-All").get(0), "Select All CheckBox not rendered");
 			});
 
 			test("width", function() {
@@ -713,6 +721,8 @@
 			});
 
 			test("rowSelectionChange", function() {
+				equal(oTC1.getSelectedRows().length, 0, "No rows selected")
+
 				bRowSelectionChange = false;
 				aChangedRows = undefined;
 				qutils.triggerEvent("tap", "TC1-Row1-CLI_cell0");
@@ -720,6 +730,7 @@
 				equal(aChangedRows.length, 1, "one row changed");
 				equal(aChangedRows[0].getId(), "TC1-Row1", "Row1 changed");
 				ok(sap.ui.getCore().byId("TC1-Row1").getSelected(), "Row1 is selected");
+				equal(oTC1.getSelectedRows().length, 1, "one row selected")
 
 				bRowSelectionChange = false;
 				aChangedRows = undefined;
@@ -731,9 +742,32 @@
 				equal(aChangedRows[1].getId(), "TC1-Row2", "Row2 changed");
 				ok(!sap.ui.getCore().byId("TC1-Row1").getSelected(), "Row1 is not selected");
 				ok(sap.ui.getCore().byId("TC1-Row2").getSelected(), "Row2 is selected");
+				equal(oTC1.getSelectedRows().length, 1, "one row selected")
 
 				bRowSelectionChange = false;
 				aChangedRows = undefined;
+				oTC1.setSingleSelection(false);
+				sap.ui.getCore().applyChanges();
+				qutils.triggerEvent("tap", "TC1-All");
+				ok(bRowSelectionChange, "rowSelectionChange fired");
+				equal(aChangedRows.length, 1, "one row changed");
+				equal(aChangedRows[0].getId(), "TC1-Row1", "Row1 changed");
+				ok(sap.ui.getCore().byId("TC1-Row1").getSelected(), "Row1 is selected");
+				ok(sap.ui.getCore().byId("TC1-Row2").getSelected(), "Row2 is selected");
+				equal(oTC1.getSelectedRows().length, 2, "2 row selected")
+
+				bRowSelectionChange = false;
+				aChangedRows = undefined;
+				oTC1.setSingleSelection(true);
+				sap.ui.getCore().applyChanges();
+				ok(!bRowSelectionChange, "rowSelectionChange not fired");
+				ok(!sap.ui.getCore().byId("TC1-Row1").getSelected(), "Row1 is not selected");
+				ok(!sap.ui.getCore().byId("TC1-Row2").getSelected(), "Row2 is not selected");
+				equal(oTC1.getSelectedRows().length, 0, "No row selected")
+
+				bRowSelectionChange = false;
+				aChangedRows = undefined;
+
 			});
 
 			test("startDateChange", function() {
