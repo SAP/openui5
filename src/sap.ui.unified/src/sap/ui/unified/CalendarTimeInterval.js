@@ -143,11 +143,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this._iMode = 0; // months are shown
 
+			// to format year with era in Japanese
+			this._oYearFormat = sap.ui.core.format.DateFormat.getDateInstance({format: "y"});
+
 			this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 
-			this._oMinDate = new UniversalDate(UniversalDate.UTC(1, 0, 1));
-			this._oMinDate.setUTCFullYear(1); // otherwise year 1 will be converted to year 1901
-			this._oMaxDate = new UniversalDate(UniversalDate.UTC(9999, 11, 31));
+			this._oMinDate = new UniversalDate(new Date(Date.UTC(1, 0, 1)));
+			this._oMinDate.getJSDate().setUTCFullYear(1); // otherwise year 1 will be converted to year 1901
+			this._oMaxDate = new UniversalDate(new Date(Date.UTC(9999, 11, 31, 23, 59)));
 
 			var oHeader = new Header(this.getId() + "--Head", {
 				visibleButton0: true,
@@ -808,7 +811,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		function _setStartDate(oStartDate, bSetFocusDate){
 
 			var oMaxDate = new UniversalDate(this._oMaxDate.getTime());
-			oMaxDate.setUTCMonth(oMaxDate.getUTCDate() - this._getItems());
+			oMaxDate.setUTCMinutes(oMaxDate.getUTCMinutes() - this.getIntervalMinutes() * this._getItems() + 1);
 			if (oStartDate.getTime() < this._oMinDate.getTime()) {
 				oStartDate = this._oMinDate;
 			}else if (oStartDate.getTime() > oMaxDate.getTime()){
@@ -1022,9 +1025,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			var oDate = this._getFocusedDate();
-			var iYear = oDate.getUTCFullYear();
-			var iYearMax = this._oMaxDate.getUTCFullYear();
-			var iYearMin = this._oMinDate.getUTCFullYear();
+			var iYear = oDate.getJSDate().getUTCFullYear();
+			var iYearMax = this._oMaxDate.getJSDate().getUTCFullYear();
+			var iYearMin = this._oMinDate.getJSDate().getUTCFullYear();
 
 			if (iYearMax - iYearMin <= 20) {
 				return;
@@ -1058,7 +1061,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 			this.$("contentOver").css("display", "");
 
-			oYearPicker.setYear(iYear);
+			oYearPicker.setDate(oDate.getJSDate());
 
 			if (this._iMode == 0) {
 				// remove tabindex from item
@@ -1092,7 +1095,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		function _updateHeader(){
 
 			_setHeaderText.call(this);
-			_togglePrevNext.call(this);
+			_togglePrevNext.call(this, true);
 
 		}
 
@@ -1100,15 +1103,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var oDate = new UniversalDate(_getStartDate.call(this).getTime());
 			var iItems = this._getItems();
-			var iYear = oDate.getUTCFullYear();
-			var iYearMax = this._oMaxDate.getUTCFullYear();
-			var iYearMin = this._oMinDate.getUTCFullYear();
-			var iMonth = oDate.getUTCMonth();
-			var iMonthMax = this._oMaxDate.getUTCMonth();
-			var iMonthMin = this._oMinDate.getUTCMonth();
-			var iDate = oDate.getUTCDate();
-			var iDateMax = this._oMaxDate.getUTCDate();
-			var iDateMin = this._oMinDate.getUTCDate();
+			var iYear = oDate.getJSDate().getUTCFullYear();
+			var iYearMax = this._oMaxDate.getJSDate().getUTCFullYear();
+			var iYearMin = this._oMinDate.getJSDate().getUTCFullYear();
+			var iMonth = oDate.getJSDate().getUTCMonth();
+			var iMonthMax = this._oMaxDate.getJSDate().getUTCMonth();
+			var iMonthMin = this._oMinDate.getJSDate().getUTCMonth();
+			var iDate = oDate.getJSDate().getUTCDate();
+			var iDateMax = this._oMaxDate.getJSDate().getUTCDate();
+			var iDateMin = this._oMinDate.getJSDate().getUTCDate();
 			var oHeader = this.getAggregation("header");
 
 			if (iYear < iYearMin || (iYear == iYearMin && ( !bCheckMonth || ( iMonth < iMonthMin || (iMonth == iMonthMin && iDate <= iDateMin ))))) {
@@ -1117,9 +1120,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oHeader.setEnabledPrevious(true);
 			}
 
-			oDate.setUTCMinutes(oDate.getUTCMinutes() + iItems * this.getIntervalMinutes() - 1);
-			iYear = oDate.getUTCFullYear();
-			iMonth = oDate.getUTCMonth();
+			oDate.setUTCMinutes(oDate.getUTCMinutes() + (iItems) * this.getIntervalMinutes() - 1);
+			iYear = oDate.getJSDate().getUTCFullYear();
+			iMonth = oDate.getJSDate().getUTCMonth();
+			iDate = oDate.getJSDate().getUTCDate();
 			if (iYear > iYearMax || (iYear == iYearMax && ( !bCheckMonth || ( iMonth > iMonthMax || (iMonth == iMonthMax && iDate >= iDateMax ))))) {
 				oHeader.setEnabledNext(false);
 			}else {
@@ -1161,7 +1165,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oHeader.setAriaLabelButton1(sAriaLabel);
 			}
 
-			oHeader.setTextButton2((oStartDate.getUTCFullYear()).toString());
+			oHeader.setTextButton2(this._oYearFormat.format(oStartDate, true));
 		}
 
 		function _focusDate(oDate, bNotVisible){
@@ -1312,10 +1316,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var oFocusedDate = new UniversalDate(this._getFocusedDate().getTime());
 			var oYearPicker = this.getAggregation("yearPicker");
-			var iYear = oYearPicker.getYear();
+			var oDate = CalendarUtils._createUniversalUTCDate(oYearPicker.getDate());
 			var iMonth = oFocusedDate.getUTCMonth();
 
-			oFocusedDate.setUTCFullYear(iYear);
+			oDate.setUTCMonth(oFocusedDate.getUTCMonth(), oFocusedDate.getUTCDate()); // to keep day and month stable also for islamic date
+			oDate.setUTCHours(oFocusedDate.getUTCHours());
+			oDate.setUTCMinutes(oFocusedDate.getUTCMinutes());
+			oFocusedDate = oDate;
 
 			if (iMonth != oFocusedDate.getUTCMonth() ) {
 				// day did not exist in this year (29. Feb) -> go to last day of month

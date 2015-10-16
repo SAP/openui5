@@ -82,6 +82,15 @@
                 </f:formContainers>
                </f:Form>
             </sap.ui.layout:VerticalLayout>
+            <sap.ui.layout:VerticalLayout>
+               <ObjectHeader title="Object Header">
+                  <attributes>
+                     <ObjectAttribute text="attribute 1"></ObjectAttribute>
+                     <ObjectAttribute text="attribute 2"></ObjectAttribute>
+                  </attributes>
+               </ObjectHeader>
+               <Button id="button5" text="Button 5" ></Button>
+            </sap.ui.layout:VerticalLayout>
         </content>
     </Page>
 </sap.ui.core.mvc:View>

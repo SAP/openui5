@@ -194,6 +194,12 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 		},
 		renderer: SemanticPageRenderer.render
 	});
+	
+	DetailPage.prototype.init = function () {
+
+		ShareMenuPage.prototype.init.call(this);
+		this._getPage().getLandmarkInfo().setRootLabel("Details");
+	};
 
 	/*
 	Overwrite to proxy saveAsTile/pagingAction content into the respective child control aggregation

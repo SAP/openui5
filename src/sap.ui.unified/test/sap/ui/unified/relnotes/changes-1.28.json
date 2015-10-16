@@ -269,5 +269,154 @@
         "references": []
       }
     ]
+  },
+  "1.28.10": {
+    "date": "June 2015",
+    "notes": [
+      {
+        "id": "134e1c3de3ed779dcbc56a4843f8d890c68b5d94",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Calendar new properties to set weekend and first weekday",
+        "references": []
+      },
+      {
+        "id": "f38d0d8cf8d3bdc60f9d3773b554351adddad83d",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.Calendar: use all space in islamic case",
+        "references": []
+      },
+      {
+        "id": "d6e97d5b81a61061014b7668ee693cacef906481",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "sap.ui.unified.CalendarLegend: allow to specify tye of an item",
+        "references": []
+      },
+      {
+        "id": "2e167ab58531faa24548650944642ee4fc082dcb",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Focus issues after change of selectedDates",
+        "references": []
+      },
+      {
+        "id": "1462c46d841924d083bee7fe5d75d68a3eb9f615",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: focus lost on tab on year picker",
+        "references": []
+      },
+      {
+        "id": "1a466cb76ab303076e002410c0c4a18822815b12",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: specialDates can not be removed",
+        "references": []
+      },
+      {
+        "id": "683f468ae76ae0e78f822b0dbbb1cf1df3540e70",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Open Popup before Menu state is set to opened.",
+        "references": []
+      }
+    ]
+  },
+  "1.28.13": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "9c707cf5ea61b7058b15378d1e707e6db9da4c00",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: Wrong date selected if daylight saving",
+        "references": []
+      },
+      {
+        "id": "55b6d1f269e30205d3589019886e5aab3e5450a2",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: File is lost when pressing key fixed",
+        "references": []
+      },
+      {
+        "id": "5689d3d9ae88d05a055f2b7f339cac6e583abfe2",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: Keyboard navigation in toolbar fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.28.14": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "9de10f6d33e97b8c3be3b17980ed1976b15a8840",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "FileUploader: Internet Explorer focus behavior fixed",
+        "references": []
+      },
+      {
+        "id": "f5424043f00d0cf4960d43d68fae4c3ce4cc1b08",
+        "author": "Michael Sobczak \u003cmichael.sobczak@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
+        "references": []
+      },
+      {
+        "id": "a8895867911372546e78a23d99b9f2588583b371",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker, sap.ui.unified.Calendar: position issues",
+        "references": []
+      }
+    ]
+  },
+  "1.28.16": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "ce0cd9b0ee8b88f37619a58b26dc0ff9e5e6f441",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "Microsoft Edge Support: Fix CSS text-align statements",
+        "references": []
+      },
+      {
+        "id": "deba1dd4e7f0b2a36d3a6dce3ea833bff62674fa",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.DatePicker: error message shortly appears by closing",
+        "references": []
+      }
+    ]
+  },
+  "1.28.17": {
+    "date": "August 2015",
+    "notes": [
+      {
+        "id": "8d872f6c906a1c56ce837bae703ac60f0df0e9ce",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: don\u0027t select date on right click",
+        "references": []
+      }
+    ]
+  },
+  "1.28.20": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "d52986fd09779300a0bb3fa50620c17412b2719a",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar Focus changes while rendering",
+        "references": []
+      }
+    ]
   }
 }

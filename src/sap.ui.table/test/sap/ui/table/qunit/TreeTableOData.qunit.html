@@ -166,7 +166,10 @@
 
 	asyncTest("Expand and Collapse", function () {
 		this.oModel.attachMetadataLoaded(function() {
-			this.oTable = createTable.call(this, {rootLevel: 1});
+			this.oTable = createTable.call(this, {
+				rootLevel: 1,
+				threshold: 10
+			});
 			var oBinding;
 
 			// test expand root
@@ -316,22 +319,18 @@
 				ok(this.oTable.isExpanded(15), "Node 000682 expanded");
 				ok(!this.oTable.isExpanded(16), "Node 000683 NOT expanded");
 
-				ok(!this.oTable.isExpanded(219), "Node 001179 NOT expanded");
-				ok(this.oTable.isExpanded(220), "Node 001180 expanded");
-				ok(!this.oTable.isExpanded(221), "Node 001181 NOT expanded");
+				ok(!this.oTable.isExpanded(31), "Node 001114 NOT expanded");
+				ok(this.oTable.isExpanded(32), "Node 001131 expanded");
+				ok(!this.oTable.isExpanded(33), "Node 001132 NOT expanded");
 
-				// scroll the table, should trigger a request
-				attachEventHandler(this.oTable, 1, fnHandler12, this);
-				// do a delayed call of 400ms, the scrollbar updates with da delay of 250ms, the binding time has a delay of 50ms, plus some buffer
-				jQuery.sap.delayedCall(400, this, function() {this.oTable.setFirstVisibleRow(219)});
-			};
+				// scroll the table
+				this.oTable.setFirstVisibleRow(20);
 
-			var fnHandler12 = function() {
-				equal($("#table0").find(".sapUiTableTreeIconNodeOpen").length, 1, "After Scrolling: Test that only one node is expanded");
-				equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9, "After Scrolling: Test that 9 nodes are collapsed");
-				ok(!this.oTable.isExpanded(219), "Node 001179 NOT expanded");
-				ok(this.oTable.isExpanded(220), "Node 001180 expanded");
-				ok(!this.oTable.isExpanded(221), "Node 001181 NOT expanded");
+				equal($("#table0").find(".sapUiTableTreeIconNodeOpen").length, 3, "After Scrolling: Test that only one node is expanded");
+				equal($("#table0").find(".sapUiTableTreeIconNodeClosed").length, 7, "After Scrolling: Test that 9 nodes are collapsed");
+				ok(!this.oTable.isExpanded(31), "Node 001114 NOT expanded");
+				ok(this.oTable.isExpanded(32), "Node 001131 expanded");
+				ok(!this.oTable.isExpanded(33), "Node 001132 NOT expanded");
 				start();
 			};
 
@@ -549,15 +548,15 @@
 			var fnHandler1 = function() {
 				oBinding = this.oTable.getBinding("rows");
 				this.oTable.selectAll();
-				equal(this.oTable.getSelectedIndices().length, 65, "65 Nodes in Tree");
-				equal(oBinding.getLength(), 228, "Binding length should be 228");
+				equal(this.oTable.getSelectedIndices().length, 55, "55 Nodes in Tree");
+				equal(oBinding.getLength(), 55, "Binding length should be 55");
 
 				var i = 1;
 				var fnVisibleRowHandler = function() {
 					this.oTable.setFirstVisibleRow(i);
 					if(i >= oBinding.getLength() - 1) {
 						this.oTable.detachEvent("_rowsUpdated", fnVisibleRowHandler);
-						equal(this.oTable.getSelectedIndices().length, 228, "228 Nodes in Tree, all selected");
+						equal(this.oTable.getSelectedIndices().length, 55, "55 Nodes in Tree, all selected");
 						start();
 					}
 					// section length is visibleRowCount, make sure to scroll to all the sections/nodes

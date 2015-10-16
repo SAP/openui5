@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	<title>Semantic Master/Detail Page ACC Test - sap.m</title>
+
+	<script src="../../../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+
+	<script type="text/javascript">
+
+		jQuery.sap.require("sap.m.semantic.EditAction");
+		jQuery.sap.require("sap.m.semantic.AddAction");
+		jQuery.sap.require("sap.m.semantic.SortAction");
+		jQuery.sap.require("sap.m.semantic.FilterAction");
+		jQuery.sap.require("sap.m.semantic.GroupAction");
+		jQuery.sap.require("sap.m.semantic.FlagAction");
+		jQuery.sap.require("sap.m.semantic.FavoriteAction");
+		jQuery.sap.require("sap.m.semantic.SendEmailAction");
+		jQuery.sap.require("sap.m.semantic.SendMessageAction");
+		jQuery.sap.require("sap.m.semantic.DiscussInJamAction");
+		jQuery.sap.require("sap.m.semantic.ShareInJamAction");
+		jQuery.sap.require("sap.m.semantic.PrintAction");
+		jQuery.sap.require("sap.m.semantic.MultiSelectAction");
+
+		var oMaster = new sap.m.semantic.MasterPage("masterPage", {
+			title:"Master Test page",
+			showNavButton: true,
+			addAction: new sap.m.semantic.AddAction(),
+			sort: new sap.m.semantic.SortAction(),
+			filter: new sap.m.semantic.FilterAction(),
+			group: new sap.m.semantic.GroupAction(),
+			multiSelectAction: new sap.m.semantic.MultiSelectAction(),
+			content: [
+					new sap.m.List({
+						items: [new sap.m.StandardListItem({
+							title : "John Doe",
+							description : "Employee Record"
+						})]
+					})
+			]
+		});
+
+		var oDetail = new sap.m.semantic.DetailPage("detailPage", {
+			title:"Detail Test page",
+			editAction: new sap.m.semantic.EditAction(),
+			flagAction: new sap.m.semantic.FlagAction(),
+			favoriteAction: new sap.m.semantic.FavoriteAction(),
+			sendEmailAction: new sap.m.semantic.SendEmailAction(),
+			sendMessageAction: new sap.m.semantic.SendMessageAction(),
+			discussInJamAction: new sap.m.semantic.DiscussInJamAction(),
+			shareInJamAction: new sap.m.semantic.ShareInJamAction(),
+			printAction: new sap.m.semantic.PrintAction(),
+			content: [
+					new sap.ui.layout.form.SimpleForm({
+						maxContainerCols: 2,
+						content: [
+							new sap.ui.core.Title({text:"Detailed Info"}),
+							new sap.m.Label({text: "Name"}),
+							new sap.m.Text({text: "John Doe"}),
+							new sap.m.Label({text: "Job Title"}),
+							new sap.m.Text({text: "Developer"}),
+							new sap.m.Label({text: "Job Grade"}),
+							new sap.m.Text({text: "Senior"})
+						]
+					})
+			]
+		});
+
+		new sap.m.App("myApp", {
+			pages: [new sap.m.SplitContainer({
+				masterPages: [oMaster],
+				detailPages: [oDetail]
+			})]
+
+		}).placeAt("body");
+
+	</script>
+	<style>
+		body {
+			margin: 0;
+		}
+		.sapMPageScroll {
+			padding: 1rem;
+		}
+	</style>
+
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

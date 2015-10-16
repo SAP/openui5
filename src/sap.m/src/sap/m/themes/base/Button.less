@@ -8,7 +8,15 @@
 	padding:          0;
 	vertical-align:   top;
 	border:           none;
-	cursor:           pointer;
+}
+
+.sapMBtn:not(.sapMBtnDisabled) {
+	cursor: pointer;
+}
+
+/* override the default cursor of .sapUiIcon */
+.sapMBtn .sapMBtnIcon {
+	cursor: inherit;
 }
 
 .sapMBtnBase {
@@ -84,8 +92,4 @@ html[data-sap-ui-browser*='ie'] .sapMBtnInner {
 
 html[data-sap-ui-browser*='ie'] .sapMBtnContentWithIcon {
 	display: inline;
-}
-
-.sapMBtnDisabled {
-	cursor: default;
 }

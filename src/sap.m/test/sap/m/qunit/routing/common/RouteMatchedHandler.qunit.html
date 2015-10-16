@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>qUnit Page for RouteMatchedHandler</title>
+
+<script
+		src="../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_bluecrystal"
+		data-sap-ui-libs="sap.m">
+</script>
+
+<script>
+	jQuery.sap.require("sap.ui.qunit.qunit-css");
+	jQuery.sap.require("sap.ui.thirdparty.qunit");
+	jQuery.sap.require("sap.ui.qunit.qunit-junit");
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	jQuery.sap.require("sap.ui.thirdparty.sinon");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+	sap.ui.require([
+				"sap/m/routing/RouteMatchedHandler",
+				"sap/m/routing/Router"
+			],
+			function (RouteMatchedHandler, MobileRouter) {
+				"use strict";
+
+				QUnit.module("Mobile router");
+
+				QUnit.test("Should not register on events when a mobile router is used", function (assert) {
+					var oRouter = new MobileRouter();
+
+					new RouteMatchedHandler(oRouter);
+
+					assert.strictEqual(oRouter.mEventRegistry.routeMatched, undefined);
+					assert.strictEqual(oRouter.mEventRegistry.routePatternMatched, undefined);
+				});
+			}
+	);
+</script>
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+
+</body>
+</html>

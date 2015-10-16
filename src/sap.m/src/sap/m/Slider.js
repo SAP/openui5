@@ -133,17 +133,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/* ----------------------------------------------------------- */
 
 		/**
-		 * Cache DOM references.
-		 *
-		 * @private
-		 */
-		Slider.prototype._cacheDomRefs = function() {
-
-			// handle jQuery DOM reference
-			this._$Handle = this.$("handle");
-		};
-
-		/**
 		 * Convert <code>fValue</code> for RTL-Mode
 		 *
 		 * @param {float} fValue input value
@@ -160,20 +149,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @private
 		 */
 		Slider.prototype._recalculateStyles = function() {
-
 			var $Slider = this.$();
-
-			// slider width
 			this._fSliderWidth = $Slider.width();
-
-			// slider padding left
 			this._fSliderPaddingLeft = parseFloat($Slider.css("padding-left"));
-
-			// slider offset left
 			this._fSliderOffsetLeft = $Slider.offset().left;
-
-			// handle width
-			this._fHandleWidth = this._$Handle.width();
+			this._fHandleWidth = this.$("handle").width();
 		};
 
 		/**
@@ -296,13 +276,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			// update the value in DOM only when it has changed
 			if (fValue !== this.getValue()) {
-				this._setDomValue(fNewValue);
+				this.setDomValue(fNewValue);
 			}
 
 			return this;
 		};
 
-		Slider.prototype._setDomValue = function(fNewValue) {
+		Slider.prototype.setDomValue = function(fNewValue) {
 			var sIdSelector,
 				sPerValue,
 				oHandleDomRef,
@@ -343,13 +323,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Returns the closest handle to a touchstart/mousedown event.
 		 *
-		 * @returns {object} The nearest handle jQuery DOM reference.
-		 * @private
+		 * @returns {object} The nearest handle DOM reference.
 		 */
-		Slider.prototype._getClosestHandle = function() {
+		Slider.prototype.getClosestHandle = function() {
 
 			// there is only one handle, it is always the nearest
-			return this._$Handle;
+			return this.getDomRef("handle");
 		};
 
 		/**
@@ -439,24 +418,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		};
 
-		/**
-		 * Required adaptations after rendering.
-		 *
-		 * @private
-		 */
-		Slider.prototype.onAfterRendering = function() {
-			this._cacheDomRefs();
-		};
-
-		/**
-		 * Cleans up before destruction.
-		 *
-		 * @private
-		 */
-		Slider.prototype.exit = function() {
-			this._$Handle = null;
-		};
-
 		/* =========================================================== */
 		/* Event handlers                                              */
 		/* =========================================================== */
@@ -470,7 +431,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		Slider.prototype.ontouchstart = function(oEvent) {
 			var fMin = this.getMin(),
 				oTouch = oEvent.targetTouches[0],
-				oNearestHandleDomRef,
 				fNewValue,
 				CSS_CLASS = this.getRenderer().CSS_CLASS,
 				sEventNamespace = "." + CSS_CLASS;
@@ -494,7 +454,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			jQuery(document).on("touchend" + sEventNamespace + " touchcancel" + sEventNamespace + " mouseup" + sEventNamespace, this._ontouchend.bind(this))
 							.on(oEvent.originalEvent.type === "touchstart" ? "touchmove" + sEventNamespace : "touchmove" + sEventNamespace + " mousemove" + sEventNamespace, this._ontouchmove.bind(this));
 
-			oNearestHandleDomRef = this._getClosestHandle()[0];
+			var oNearestHandleDomRef = this.getClosestHandle();
 
 			if (oTouch.target !== oNearestHandleDomRef) {
 
@@ -517,7 +477,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			if (oTouch.target === this.getDomRef("handle")) {
 
-				this._fDiffX = (oTouch.pageX - this._$Handle.offset().left) + this._fSliderPaddingLeft - (this._fHandleWidth / 2);
+				this._fDiffX = (oTouch.pageX - jQuery(oNearestHandleDomRef).offset().left) + this._fSliderPaddingLeft - (this._fHandleWidth / 2);
 			} else {
 
 				fNewValue = (((oTouch.pageX - this._fSliderPaddingLeft - this._fSliderOffsetLeft) / this._fSliderWidth) * (this.getMax() - fMin)) +  fMin;

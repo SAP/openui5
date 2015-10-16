@@ -3,5 +3,5 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	displayBlock="true">
-	<App class="sapUiDemoWT" id="app"/>
+	<App class="myAppDemoWT" id="app"/>
 </mvc:View>

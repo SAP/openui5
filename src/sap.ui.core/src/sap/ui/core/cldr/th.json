@@ -1147,295 +1147,446 @@
 	},
 	"orientation": "left-to-right",
 	"ca-gregorian": {
-		"dateFormat-full": "EEEEที่ d MMMM G y",
-		"dateFormat-long": "d MMMM G y",
-		"dateFormat-medium": "d MMM y",
-		"dateFormat-short": "d/M/yy",
-		"timeFormat-full": "H นาฬิกา mm นาที ss วินาที zzzz",
-		"timeFormat-long": "H นาฬิกา mm นาที ss วินาที z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} – {1}",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm น. – HH:mm น.",
-		"intervalFormat-Hm-m": "HH:mm น. – HH:mm น.",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "H:mm น. – H:mm น. v",
-		"intervalFormat-Hmv-m": "H:mm น. – H:mm น. v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "M–M",
-		"intervalFormat-Md-d": "d/M – d/M",
-		"intervalFormat-Md-M": "d/M – d/M",
-		"intervalFormat-MEd-d": "E d – E d/M",
-		"intervalFormat-MEd-M": "E d/M – E d/M",
-		"intervalFormat-MMM-M": "LLL–LLL",
-		"intervalFormat-MMMd-d": "d – d MMM",
-		"intervalFormat-MMMd-M": "d MMM – d MMM",
-		"intervalFormat-MMMEd-d": "E d – E d MMM",
-		"intervalFormat-MMMEd-M": "E d MMM – E d MMM",
-		"intervalFormat-MMMEEEEd-d": "EEEEที่ d – EEEEที่ d MMM",
-		"intervalFormat-MMMEEEEd-M": "EEEEที่ d MMM – EEEEที่ d MMM",
-		"intervalFormat-y-y": "y–y",
-		"intervalFormat-yM-M": "M/y – M/y",
-		"intervalFormat-yM-y": "M/y – M/y",
-		"intervalFormat-yMd-d": "d–d/M/y",
-		"intervalFormat-yMd-M": "d/M/y – d/M/y",
-		"intervalFormat-yMd-y": "d/M/y – d/M/y",
-		"intervalFormat-yMEd-d": "E d – E d/M/y",
-		"intervalFormat-yMEd-M": "E d/M/y – E d/M/y",
-		"intervalFormat-yMEd-y": "E d/M/y – E d/M/y",
-		"intervalFormat-yMMM-M": "MMM–MMM y",
-		"intervalFormat-yMMM-y": "MMM y – MMM y",
-		"intervalFormat-yMMMd-d": "d–d MMM y",
-		"intervalFormat-yMMMd-M": "d MMM – d MMM y",
-		"intervalFormat-yMMMd-y": "d MMM y – d MMM y",
-		"intervalFormat-yMMMEd-d": "E d – E d MMM y",
-		"intervalFormat-yMMMEd-M": "E d MMM – E d MMM y",
-		"intervalFormat-yMMMEd-y": "E d MMM y – E d MMM y",
-		"intervalFormat-yMMMEEEEd-d": "EEEEที่ d – EEEEที่ d MMM y",
-		"intervalFormat-yMMMEEEEd-M": "EEEEที่ d MMM – EEEEที่ d MMM y",
-		"intervalFormat-yMMMEEEEd-y": "EEEEที่ d MMM y – EEEEที่ d MMM y",
-		"intervalFormat-yMMMM-M": "MMMM–MMMM G y",
-		"intervalFormat-yMMMM-y": "MMMM G y – MMMM y",
-		"intervalFormat-yMMMMd-d": "d–d MMMM G y",
-		"intervalFormat-yMMMMd-M": "d MMMM – d MMMM G y",
-		"intervalFormat-yMMMMd-y": "d MMMM G y – d MMMM y",
-		"intervalFormat-yMMMMEd-d": "E d – E d MMMM G y",
-		"intervalFormat-yMMMMEd-M": "E d MMMM – E d MMMM G y",
-		"intervalFormat-yMMMMEd-y": "E d MMMM G y – E d MMMM y",
-		"intervalFormat-yMMMMEEEEd-d": "EEEEที่ d – EEEEที่ d MMMM G y",
-		"intervalFormat-yMMMMEEEEd-M": "EEEEที่ d MMMM – EEEEที่ d MMMM G y",
-		"intervalFormat-yMMMMEEEEd-y": "EEEEที่ d MMMM G y – EEEEที่ d MMMM y",
-		"months-format-abbreviated": [
-			"ม.ค.",
-			"ก.พ.",
-			"มี.ค.",
-			"เม.ย.",
-			"พ.ค.",
-			"มิ.ย.",
-			"ก.ค.",
-			"ส.ค.",
-			"ก.ย.",
-			"ต.ค.",
-			"พ.ย.",
-			"ธ.ค."
-		],
-		"months-format-narrow": [
-			"ม.ค.",
-			"ก.พ.",
-			"มี.ค.",
-			"เม.ย.",
-			"พ.ค.",
-			"มิ.ย.",
-			"ก.ค.",
-			"ส.ค.",
-			"ก.ย.",
-			"ต.ค.",
-			"พ.ย.",
-			"ธ.ค."
-		],
-		"months-format-wide": [
-			"มกราคม",
-			"กุมภาพันธ์",
-			"มีนาคม",
-			"เมษายน",
-			"พฤษภาคม",
-			"มิถุนายน",
-			"กรกฎาคม",
-			"สิงหาคม",
-			"กันยายน",
-			"ตุลาคม",
-			"พฤศจิกายน",
-			"ธันวาคม"
-		],
-		"months-standAlone-abbreviated": [
-			"ม.ค.",
-			"ก.พ.",
-			"มี.ค.",
-			"เม.ย.",
-			"พ.ค.",
-			"มิ.ย.",
-			"ก.ค.",
-			"ส.ค.",
-			"ก.ย.",
-			"ต.ค.",
-			"พ.ย.",
-			"ธ.ค."
-		],
-		"months-standAlone-narrow": [
-			"ม.ค.",
-			"ก.พ.",
-			"มี.ค.",
-			"เม.ย.",
-			"พ.ค.",
-			"มิ.ย.",
-			"ก.ค.",
-			"ส.ค.",
-			"ก.ย.",
-			"ต.ค.",
-			"พ.ย.",
-			"ธ.ค."
-		],
-		"months-standAlone-wide": [
-			"มกราคม",
-			"กุมภาพันธ์",
-			"มีนาคม",
-			"เมษายน",
-			"พฤษภาคม",
-			"มิถุนายน",
-			"กรกฎาคม",
-			"สิงหาคม",
-			"กันยายน",
-			"ตุลาคม",
-			"พฤศจิกายน",
-			"ธันวาคม"
-		],
-		"days-format-abbreviated": [
-			"อา.",
-			"จ.",
-			"อ.",
-			"พ.",
-			"พฤ.",
-			"ศ.",
-			"ส."
-		],
-		"days-format-narrow": [
-			"อา",
-			"จ",
-			"อ",
-			"พ",
-			"พฤ",
-			"ศ",
-			"ส"
-		],
-		"days-format-short": [
-			"อา.",
-			"จ.",
-			"อ.",
-			"พ.",
-			"พฤ.",
-			"ศ.",
-			"ส."
-		],
-		"days-format-wide": [
-			"วันอาทิตย์",
-			"วันจันทร์",
-			"วันอังคาร",
-			"วันพุธ",
-			"วันพฤหัสบดี",
-			"วันศุกร์",
-			"วันเสาร์"
-		],
-		"days-standAlone-abbreviated": [
-			"อา.",
-			"จ.",
-			"อ.",
-			"พ.",
-			"พฤ.",
-			"ศ.",
-			"ส."
-		],
-		"days-standAlone-narrow": [
-			"อา",
-			"จ",
-			"อ",
-			"พ",
-			"พฤ",
-			"ศ",
-			"ส"
-		],
-		"days-standAlone-short": [
-			"อา.",
-			"จ.",
-			"อ.",
-			"พ.",
-			"พฤ.",
-			"ศ.",
-			"ส."
-		],
-		"days-standAlone-wide": [
-			"วันอาทิตย์",
-			"วันจันทร์",
-			"วันอังคาร",
-			"วันพุธ",
-			"วันพฤหัสบดี",
-			"วันศุกร์",
-			"วันเสาร์"
-		],
-		"quarters-format-abbreviated": [
-			"ไตรมาส 1",
-			"ไตรมาส 2",
-			"ไตรมาส 3",
-			"ไตรมาส 4"
-		],
-		"quarters-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-format-wide": [
-			"ไตรมาส 1",
-			"ไตรมาส 2",
-			"ไตรมาส 3",
-			"ไตรมาส 4"
-		],
-		"quarters-standAlone-abbreviated": [
-			"ไตรมาส 1",
-			"ไตรมาส 2",
-			"ไตรมาส 3",
-			"ไตรมาส 4"
-		],
-		"quarters-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-standAlone-wide": [
-			"ไตรมาส 1",
-			"ไตรมาส 2",
-			"ไตรมาส 3",
-			"ไตรมาส 4"
-		],
-		"dayPeriods-format-abbreviated": [
-			"ก่อนเที่ยง",
-			"หลังเที่ยง"
-		],
-		"dayPeriods-format-narrow": [
-			"a",
-			"p"
-		],
-		"dayPeriods-format-wide": [
-			"ก่อนเที่ยง",
-			"หลังเที่ยง"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"ก่อนเที่ยง",
-			"หลังเที่ยง"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"ก่อนเที่ยง",
-			"หลังเที่ยง"
-		],
-		"dayPeriods-standAlone-wide": [
-			"ก่อนเที่ยง",
-			"หลังเที่ยง"
-		],
+		"dateFormats": {
+			"full": "EEEEที่ d MMMM G y",
+			"long": "d MMMM G y",
+			"medium": "d MMM y",
+			"short": "d/M/yy"
+		},
+		"timeFormats": {
+			"full": "H นาฬิกา mm นาที ss วินาที zzzz",
+			"long": "H นาฬิกา mm นาที ss วินาที z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1} {0}",
+			"long": "{1} {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E d",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm น.",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "G y",
+				"GyMMM": "MMM G y",
+				"GyMMMd": "d MMM G y",
+				"GyMMMEd": "E d MMM G y",
+				"GyMMMEEEEd": "EEEEที่ d MMM G y",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm a",
+				"Hm": "HH:mm น.",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"hmsv": "h:mm:ss a v",
+				"Hmsv": "HH:mm:ss v",
+				"hmv": "h:mm a v",
+				"Hmv": "HH:mm v",
+				"M": "L",
+				"Md": "d/M",
+				"MEd": "E d/M",
+				"MMM": "LLL",
+				"MMMd": "d MMM",
+				"MMMEd": "E d MMM",
+				"MMMEEEEd": "EEEEที่ d MMM",
+				"MMMMd": "d MMMM",
+				"MMMMEd": "E d MMMM",
+				"MMMMEEEEd": "EEEEที่ d MMMM",
+				"mmss": "mm:ss",
+				"ms": "mm:ss",
+				"y": "y",
+				"yM": "M/y",
+				"yMd": "d/M/y",
+				"yMEd": "E d/M/y",
+				"yMMM": "MMM y",
+				"yMMMd": "d MMM y",
+				"yMMMEd": "E d MMM y",
+				"yMMMEEEEd": "EEEEที่ d MMM y",
+				"yMMMM": "MMMM G y",
+				"yMMMMd": "d MMMM G y",
+				"yMMMMEd": "E d MMMM G y",
+				"yMMMMEEEEd": "EEEEที่ d MMMM G y",
+				"yQQQ": "QQQ y",
+				"yQQQQ": "QQQQ G y"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} – {1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm น. – HH:mm น.",
+					"m": "HH:mm น. – HH:mm น."
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "H:mm น. – H:mm น. v",
+					"m": "H:mm น. – H:mm น. v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "M–M"
+				},
+				"Md": {
+					"d": "d/M – d/M",
+					"M": "d/M – d/M"
+				},
+				"MEd": {
+					"d": "E d – E d/M",
+					"M": "E d/M – E d/M"
+				},
+				"MMM": {
+					"M": "LLL–LLL"
+				},
+				"MMMd": {
+					"d": "d – d MMM",
+					"M": "d MMM – d MMM"
+				},
+				"MMMEd": {
+					"d": "E d – E d MMM",
+					"M": "E d MMM – E d MMM"
+				},
+				"MMMEEEEd": {
+					"d": "EEEEที่ d – EEEEที่ d MMM",
+					"M": "EEEEที่ d MMM – EEEEที่ d MMM"
+				},
+				"y": {
+					"y": "y–y"
+				},
+				"yM": {
+					"M": "M/y – M/y",
+					"y": "M/y – M/y"
+				},
+				"yMd": {
+					"d": "d–d/M/y",
+					"M": "d/M/y – d/M/y",
+					"y": "d/M/y – d/M/y"
+				},
+				"yMEd": {
+					"d": "E d – E d/M/y",
+					"M": "E d/M/y – E d/M/y",
+					"y": "E d/M/y – E d/M/y"
+				},
+				"yMMM": {
+					"M": "MMM–MMM y",
+					"y": "MMM y – MMM y"
+				},
+				"yMMMd": {
+					"d": "d–d MMM y",
+					"M": "d MMM – d MMM y",
+					"y": "d MMM y – d MMM y"
+				},
+				"yMMMEd": {
+					"d": "E d – E d MMM y",
+					"M": "E d MMM – E d MMM y",
+					"y": "E d MMM y – E d MMM y"
+				},
+				"yMMMEEEEd": {
+					"d": "EEEEที่ d – EEEEที่ d MMM y",
+					"M": "EEEEที่ d MMM – EEEEที่ d MMM y",
+					"y": "EEEEที่ d MMM y – EEEEที่ d MMM y"
+				},
+				"yMMMM": {
+					"M": "MMMM–MMMM G y",
+					"y": "MMMM G y – MMMM y"
+				},
+				"yMMMMd": {
+					"d": "d–d MMMM G y",
+					"M": "d MMMM – d MMMM G y",
+					"y": "d MMMM G y – d MMMM y"
+				},
+				"yMMMMEd": {
+					"d": "E d – E d MMMM G y",
+					"M": "E d MMMM – E d MMMM G y",
+					"y": "E d MMMM G y – E d MMMM y"
+				},
+				"yMMMMEEEEd": {
+					"d": "EEEEที่ d – EEEEที่ d MMMM G y",
+					"M": "EEEEที่ d MMMM – EEEEที่ d MMMM G y",
+					"y": "EEEEที่ d MMMM G y – EEEEที่ d MMMM y"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"ม.ค.",
+					"ก.พ.",
+					"มี.ค.",
+					"เม.ย.",
+					"พ.ค.",
+					"มิ.ย.",
+					"ก.ค.",
+					"ส.ค.",
+					"ก.ย.",
+					"ต.ค.",
+					"พ.ย.",
+					"ธ.ค."
+				],
+				"narrow": [
+					"ม.ค.",
+					"ก.พ.",
+					"มี.ค.",
+					"เม.ย.",
+					"พ.ค.",
+					"มิ.ย.",
+					"ก.ค.",
+					"ส.ค.",
+					"ก.ย.",
+					"ต.ค.",
+					"พ.ย.",
+					"ธ.ค."
+				],
+				"wide": [
+					"มกราคม",
+					"กุมภาพันธ์",
+					"มีนาคม",
+					"เมษายน",
+					"พฤษภาคม",
+					"มิถุนายน",
+					"กรกฎาคม",
+					"สิงหาคม",
+					"กันยายน",
+					"ตุลาคม",
+					"พฤศจิกายน",
+					"ธันวาคม"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ม.ค.",
+					"ก.พ.",
+					"มี.ค.",
+					"เม.ย.",
+					"พ.ค.",
+					"มิ.ย.",
+					"ก.ค.",
+					"ส.ค.",
+					"ก.ย.",
+					"ต.ค.",
+					"พ.ย.",
+					"ธ.ค."
+				],
+				"narrow": [
+					"ม.ค.",
+					"ก.พ.",
+					"มี.ค.",
+					"เม.ย.",
+					"พ.ค.",
+					"มิ.ย.",
+					"ก.ค.",
+					"ส.ค.",
+					"ก.ย.",
+					"ต.ค.",
+					"พ.ย.",
+					"ธ.ค."
+				],
+				"wide": [
+					"มกราคม",
+					"กุมภาพันธ์",
+					"มีนาคม",
+					"เมษายน",
+					"พฤษภาคม",
+					"มิถุนายน",
+					"กรกฎาคม",
+					"สิงหาคม",
+					"กันยายน",
+					"ตุลาคม",
+					"พฤศจิกายน",
+					"ธันวาคม"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"อา.",
+					"จ.",
+					"อ.",
+					"พ.",
+					"พฤ.",
+					"ศ.",
+					"ส."
+				],
+				"narrow": [
+					"อา",
+					"จ",
+					"อ",
+					"พ",
+					"พฤ",
+					"ศ",
+					"ส"
+				],
+				"short": [
+					"อา.",
+					"จ.",
+					"อ.",
+					"พ.",
+					"พฤ.",
+					"ศ.",
+					"ส."
+				],
+				"wide": [
+					"วันอาทิตย์",
+					"วันจันทร์",
+					"วันอังคาร",
+					"วันพุธ",
+					"วันพฤหัสบดี",
+					"วันศุกร์",
+					"วันเสาร์"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"อา.",
+					"จ.",
+					"อ.",
+					"พ.",
+					"พฤ.",
+					"ศ.",
+					"ส."
+				],
+				"narrow": [
+					"อา",
+					"จ",
+					"อ",
+					"พ",
+					"พฤ",
+					"ศ",
+					"ส"
+				],
+				"short": [
+					"อา.",
+					"จ.",
+					"อ.",
+					"พ.",
+					"พฤ.",
+					"ศ.",
+					"ส."
+				],
+				"wide": [
+					"วันอาทิตย์",
+					"วันจันทร์",
+					"วันอังคาร",
+					"วันพุธ",
+					"วันพฤหัสบดี",
+					"วันศุกร์",
+					"วันเสาร์"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"ไตรมาส 1",
+					"ไตรมาส 2",
+					"ไตรมาส 3",
+					"ไตรมาส 4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"ไตรมาส 1",
+					"ไตรมาส 2",
+					"ไตรมาส 3",
+					"ไตรมาส 4"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ไตรมาส 1",
+					"ไตรมาส 2",
+					"ไตรมาส 3",
+					"ไตรมาส 4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"ไตรมาส 1",
+					"ไตรมาส 2",
+					"ไตรมาส 3",
+					"ไตรมาส 4"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"ก่อนเที่ยง",
+					"หลังเที่ยง"
+				],
+				"narrow": [
+					"a",
+					"p"
+				],
+				"wide": [
+					"ก่อนเที่ยง",
+					"หลังเที่ยง"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ก่อนเที่ยง",
+					"หลังเที่ยง"
+				],
+				"narrow": [
+					"ก่อนเที่ยง",
+					"หลังเที่ยง"
+				],
+				"wide": [
+					"ก่อนเที่ยง",
+					"หลังเที่ยง"
+				]
+			}
+		},
 		"era-wide": {
 			"0": "ปีก่อนคริสต์ศักราช",
 			"1": "คริสต์ศักราช"
@@ -1450,286 +1601,422 @@
 		}
 	},
 	"ca-islamic": {
-		"dateFormat-full": "EEEEที่ d MMMM G y",
-		"dateFormat-long": "d MMMM G y",
-		"dateFormat-medium": "d MMM G y",
-		"dateFormat-short": "d/M/y G",
-		"timeFormat-full": "H นาฬิกา mm นาที ss วินาที zzzz",
-		"timeFormat-long": "H นาฬิกา mm นาที ss วินาที z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} - {1}",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-H-H": "H–H",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "H:mm–H:mm v",
-		"intervalFormat-Hmv-m": "H:mm–H:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-Hv-H": "H–H v",
-		"intervalFormat-M-M": "M–M",
-		"intervalFormat-Md-d": "d/M – d/M",
-		"intervalFormat-Md-M": "d/M – d/M",
-		"intervalFormat-MEd-d": "E d – E d/M",
-		"intervalFormat-MEd-M": "E d/M – E d/M",
-		"intervalFormat-MMM-M": "LLL–LLL",
-		"intervalFormat-MMMd-d": "d – d MMM",
-		"intervalFormat-MMMd-M": "d MMM – d MMM",
-		"intervalFormat-MMMEd-d": "E d – E d MMM",
-		"intervalFormat-MMMEd-M": "E d MMM – E d MMM",
-		"intervalFormat-MMMEEEEd-d": "EEEEที่ d – EEEEที่ d MMM",
-		"intervalFormat-MMMEEEEd-M": "EEEEที่ d MMM – EEEEที่ d MMM",
-		"intervalFormat-y-y": "G y–y",
-		"intervalFormat-yM-M": "M/y – M/y G",
-		"intervalFormat-yM-y": "M/y – M/y G",
-		"intervalFormat-yMd-d": "d–d/M/y G",
-		"intervalFormat-yMd-M": "d/M/y – d/M/y G",
-		"intervalFormat-yMd-y": "d/M/y – d/M/y G",
-		"intervalFormat-yMEd-d": "E d – E d/M/y G",
-		"intervalFormat-yMEd-M": "E d/M/y – E d/M/y G",
-		"intervalFormat-yMEd-y": "E d/M/y – E d/M/y G",
-		"intervalFormat-yMMM-M": "MMM–MMM G y",
-		"intervalFormat-yMMM-y": "MMM G y – MMM y",
-		"intervalFormat-yMMMd-d": "d–d MMM G y",
-		"intervalFormat-yMMMd-M": "d MMM – d MMM G y",
-		"intervalFormat-yMMMd-y": "d MMM G y – d MMM y",
-		"intervalFormat-yMMMEd-d": "E d – E d MMM G y",
-		"intervalFormat-yMMMEd-M": "E d MMM – E d MMM G y",
-		"intervalFormat-yMMMEd-y": "E d MMM G y – E d MMM y",
-		"intervalFormat-yMMMEEEEd-d": "EEEEที่ d – EEEEที่ d MMM G y",
-		"intervalFormat-yMMMEEEEd-M": "EEEEที่ d MMM – EEEEที่ d MMM G y",
-		"intervalFormat-yMMMEEEEd-y": "EEEEที่ d MMM G y – EEEEที่ d MMM y",
-		"intervalFormat-yMMMM-M": "MMMM – MMMM G y",
-		"intervalFormat-yMMMM-y": "MMMM G y – MMMM y",
-		"months-format-abbreviated": [
-			"มุฮัร.",
-			"เศาะ.",
-			"รอบี I",
-			"รอบี II",
-			"จุมาดา I",
-			"จุมาดา II",
-			"เราะ.",
-			"ชะอ์.",
-			"เราะมะ.",
-			"เชาว.",
-			"ซุลกิอฺ.",
-			"ซุลหิจ."
-		],
-		"months-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-format-wide": [
-			"มุฮะร์รอม",
-			"ซอฟาร์",
-			"รอบี I",
-			"รอบี II",
-			"จุมาดา I",
-			"จุมาดา II",
-			"รอจับ",
-			"ชะอะบาน",
-			"รอมะดอน",
-			"เชาวัล",
-			"ซุลกิอฺดะฮฺ",
-			"ซุลหิจญะฮฺ"
-		],
-		"months-standAlone-abbreviated": [
-			"มุฮัร.",
-			"เศาะ.",
-			"รอบี I",
-			"รอบี II",
-			"จุมาดา I",
-			"จุมาดา II",
-			"เราะ.",
-			"ชะอ์.",
-			"เราะมะ.",
-			"เชาว.",
-			"ซุลกิอฺ.",
-			"ซุลหิจ."
-		],
-		"months-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-standAlone-wide": [
-			"มุฮะร์รอม",
-			"ซอฟาร์",
-			"รอบี I",
-			"รอบี II",
-			"จุมาดา I",
-			"จุมาดา II",
-			"รอจับ",
-			"ชะอะบาน",
-			"รอมะดอน",
-			"เชาวัล",
-			"ซุลกิอฺดะฮฺ",
-			"ซุลหิจญะฮฺ"
-		],
-		"days-format-abbreviated": [
-			"อา.",
-			"จ.",
-			"อ.",
-			"พ.",
-			"พฤ.",
-			"ศ.",
-			"ส."
-		],
-		"days-format-narrow": [
-			"อา",
-			"จ",
-			"อ",
-			"พ",
-			"พฤ",
-			"ศ",
-			"ส"
-		],
-		"days-format-short": [
-			"อา.",
-			"จ.",
-			"อ.",
-			"พ.",
-			"พฤ.",
-			"ศ.",
-			"ส."
-		],
-		"days-format-wide": [
-			"วันอาทิตย์",
-			"วันจันทร์",
-			"วันอังคาร",
-			"วันพุธ",
-			"วันพฤหัสบดี",
-			"วันศุกร์",
-			"วันเสาร์"
-		],
-		"days-standAlone-abbreviated": [
-			"อา.",
-			"จ.",
-			"อ.",
-			"พ.",
-			"พฤ.",
-			"ศ.",
-			"ส."
-		],
-		"days-standAlone-narrow": [
-			"อา",
-			"จ",
-			"อ",
-			"พ",
-			"พฤ",
-			"ศ",
-			"ส"
-		],
-		"days-standAlone-short": [
-			"อา.",
-			"จ.",
-			"อ.",
-			"พ.",
-			"พฤ.",
-			"ศ.",
-			"ส."
-		],
-		"days-standAlone-wide": [
-			"วันอาทิตย์",
-			"วันจันทร์",
-			"วันอังคาร",
-			"วันพุธ",
-			"วันพฤหัสบดี",
-			"วันศุกร์",
-			"วันเสาร์"
-		],
-		"quarters-format-abbreviated": [
-			"ไตรมาส 1",
-			"ไตรมาส 2",
-			"ไตรมาส 3",
-			"ไตรมาส 4"
-		],
-		"quarters-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-format-wide": [
-			"ไตรมาส 1",
-			"ไตรมาส 2",
-			"ไตรมาส 3",
-			"ไตรมาส 4"
-		],
-		"quarters-standAlone-abbreviated": [
-			"ไตรมาส 1",
-			"ไตรมาส 2",
-			"ไตรมาส 3",
-			"ไตรมาส 4"
-		],
-		"quarters-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-standAlone-wide": [
-			"ไตรมาส 1",
-			"ไตรมาส 2",
-			"ไตรมาส 3",
-			"ไตรมาส 4"
-		],
-		"dayPeriods-format-abbreviated": [
-			"ก่อนเที่ยง",
-			"หลังเที่ยง"
-		],
-		"dayPeriods-format-narrow": [
-			"a",
-			"p"
-		],
-		"dayPeriods-format-wide": [
-			"ก่อนเที่ยง",
-			"หลังเที่ยง"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"ก่อนเที่ยง",
-			"หลังเที่ยง"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"ก่อนเที่ยง",
-			"หลังเที่ยง"
-		],
-		"dayPeriods-standAlone-wide": [
-			"ก่อนเที่ยง",
-			"หลังเที่ยง"
-		],
+		"dateFormats": {
+			"full": "EEEEที่ d MMMM G y",
+			"long": "d MMMM G y",
+			"medium": "d MMM G y",
+			"short": "d/M/y G"
+		},
+		"timeFormats": {
+			"full": "H นาฬิกา mm นาที ss วินาที zzzz",
+			"long": "H นาฬิกา mm นาที ss วินาที z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1} {0}",
+			"long": "{1} {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E d",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "G y",
+				"GyMMM": "MMM G y",
+				"GyMMMd": "d MMM G y",
+				"GyMMMEd": "E d MMM G y",
+				"GyMMMEEEEd": "EEEEที่ d MMM G y",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "L",
+				"Md": "d/M",
+				"MEd": "E, d/M",
+				"MMM": "LLL",
+				"MMMd": "d MMM",
+				"MMMEd": "E d MMM",
+				"MMMEEEEd": "EEEEที่ d MMM",
+				"MMMMd": "d MMMM",
+				"ms": "mm:ss",
+				"y": "G y",
+				"yyyy": "G y",
+				"yyyyM": "M/y G",
+				"yyyyMd": "d/M/y GGGGG",
+				"yyyyMEd": "E d/M/y GGGGG",
+				"yyyyMMM": "MMM G y",
+				"yyyyMMMd": "d MMM G y",
+				"yyyyMMMEd": "E d MMM G y",
+				"yyyyMMMEEEEd": "EEEEที่ d MMM G y",
+				"yyyyMMMM": "MMMM G y",
+				"yyyyQQQ": "QQQ G y",
+				"yyyyQQQQ": "QQQQ G y"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} - {1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "H–H"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "H:mm–H:mm v",
+					"m": "H:mm–H:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "H–H v"
+				},
+				"M": {
+					"M": "M–M"
+				},
+				"Md": {
+					"d": "d/M – d/M",
+					"M": "d/M – d/M"
+				},
+				"MEd": {
+					"d": "E d – E d/M",
+					"M": "E d/M – E d/M"
+				},
+				"MMM": {
+					"M": "LLL–LLL"
+				},
+				"MMMd": {
+					"d": "d – d MMM",
+					"M": "d MMM – d MMM"
+				},
+				"MMMEd": {
+					"d": "E d – E d MMM",
+					"M": "E d MMM – E d MMM"
+				},
+				"MMMEEEEd": {
+					"d": "EEEEที่ d – EEEEที่ d MMM",
+					"M": "EEEEที่ d MMM – EEEEที่ d MMM"
+				},
+				"y": {
+					"y": "G y–y"
+				},
+				"yM": {
+					"M": "M/y – M/y G",
+					"y": "M/y – M/y G"
+				},
+				"yMd": {
+					"d": "d–d/M/y G",
+					"M": "d/M/y – d/M/y G",
+					"y": "d/M/y – d/M/y G"
+				},
+				"yMEd": {
+					"d": "E d – E d/M/y G",
+					"M": "E d/M/y – E d/M/y G",
+					"y": "E d/M/y – E d/M/y G"
+				},
+				"yMMM": {
+					"M": "MMM–MMM G y",
+					"y": "MMM G y – MMM y"
+				},
+				"yMMMd": {
+					"d": "d–d MMM G y",
+					"M": "d MMM – d MMM G y",
+					"y": "d MMM G y – d MMM y"
+				},
+				"yMMMEd": {
+					"d": "E d – E d MMM G y",
+					"M": "E d MMM – E d MMM G y",
+					"y": "E d MMM G y – E d MMM y"
+				},
+				"yMMMEEEEd": {
+					"d": "EEEEที่ d – EEEEที่ d MMM G y",
+					"M": "EEEEที่ d MMM – EEEEที่ d MMM G y",
+					"y": "EEEEที่ d MMM G y – EEEEที่ d MMM y"
+				},
+				"yMMMM": {
+					"M": "MMMM – MMMM G y",
+					"y": "MMMM G y – MMMM y"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"มุฮัร.",
+					"เศาะ.",
+					"รอบี I",
+					"รอบี II",
+					"จุมาดา I",
+					"จุมาดา II",
+					"เราะ.",
+					"ชะอ์.",
+					"เราะมะ.",
+					"เชาว.",
+					"ซุลกิอฺ.",
+					"ซุลหิจ."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"มุฮะร์รอม",
+					"ซอฟาร์",
+					"รอบี I",
+					"รอบี II",
+					"จุมาดา I",
+					"จุมาดา II",
+					"รอจับ",
+					"ชะอะบาน",
+					"รอมะดอน",
+					"เชาวัล",
+					"ซุลกิอฺดะฮฺ",
+					"ซุลหิจญะฮฺ"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"มุฮัร.",
+					"เศาะ.",
+					"รอบี I",
+					"รอบี II",
+					"จุมาดา I",
+					"จุมาดา II",
+					"เราะ.",
+					"ชะอ์.",
+					"เราะมะ.",
+					"เชาว.",
+					"ซุลกิอฺ.",
+					"ซุลหิจ."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"มุฮะร์รอม",
+					"ซอฟาร์",
+					"รอบี I",
+					"รอบี II",
+					"จุมาดา I",
+					"จุมาดา II",
+					"รอจับ",
+					"ชะอะบาน",
+					"รอมะดอน",
+					"เชาวัล",
+					"ซุลกิอฺดะฮฺ",
+					"ซุลหิจญะฮฺ"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"อา.",
+					"จ.",
+					"อ.",
+					"พ.",
+					"พฤ.",
+					"ศ.",
+					"ส."
+				],
+				"narrow": [
+					"อา",
+					"จ",
+					"อ",
+					"พ",
+					"พฤ",
+					"ศ",
+					"ส"
+				],
+				"short": [
+					"อา.",
+					"จ.",
+					"อ.",
+					"พ.",
+					"พฤ.",
+					"ศ.",
+					"ส."
+				],
+				"wide": [
+					"วันอาทิตย์",
+					"วันจันทร์",
+					"วันอังคาร",
+					"วันพุธ",
+					"วันพฤหัสบดี",
+					"วันศุกร์",
+					"วันเสาร์"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"อา.",
+					"จ.",
+					"อ.",
+					"พ.",
+					"พฤ.",
+					"ศ.",
+					"ส."
+				],
+				"narrow": [
+					"อา",
+					"จ",
+					"อ",
+					"พ",
+					"พฤ",
+					"ศ",
+					"ส"
+				],
+				"short": [
+					"อา.",
+					"จ.",
+					"อ.",
+					"พ.",
+					"พฤ.",
+					"ศ.",
+					"ส."
+				],
+				"wide": [
+					"วันอาทิตย์",
+					"วันจันทร์",
+					"วันอังคาร",
+					"วันพุธ",
+					"วันพฤหัสบดี",
+					"วันศุกร์",
+					"วันเสาร์"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"ไตรมาส 1",
+					"ไตรมาส 2",
+					"ไตรมาส 3",
+					"ไตรมาส 4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"ไตรมาส 1",
+					"ไตรมาส 2",
+					"ไตรมาส 3",
+					"ไตรมาส 4"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ไตรมาส 1",
+					"ไตรมาส 2",
+					"ไตรมาส 3",
+					"ไตรมาส 4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"ไตรมาส 1",
+					"ไตรมาส 2",
+					"ไตรมาส 3",
+					"ไตรมาส 4"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"ก่อนเที่ยง",
+					"หลังเที่ยง"
+				],
+				"narrow": [
+					"a",
+					"p"
+				],
+				"wide": [
+					"ก่อนเที่ยง",
+					"หลังเที่ยง"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ก่อนเที่ยง",
+					"หลังเที่ยง"
+				],
+				"narrow": [
+					"ก่อนเที่ยง",
+					"หลังเที่ยง"
+				],
+				"wide": [
+					"ก่อนเที่ยง",
+					"หลังเที่ยง"
+				]
+			}
+		},
 		"era-wide": {
 			"0": "ฮิจเราะห์ศักราช"
 		},
@@ -1741,286 +2028,422 @@
 		}
 	},
 	"ca-japanese": {
-		"dateFormat-full": "EEEEที่ d MMMM ปีGที่ y",
-		"dateFormat-long": "d MMMM ปีG y",
-		"dateFormat-medium": "d MMM G y",
-		"dateFormat-short": "d/M/yy G",
-		"timeFormat-full": "H นาฬิกา mm นาที ss วินาที zzzz",
-		"timeFormat-long": "H นาฬิกา mm นาที ss วินาที z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} - {1}",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-H-H": "H–H",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "H:mm–H:mm v",
-		"intervalFormat-Hmv-m": "H:mm–H:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-Hv-H": "H–H v",
-		"intervalFormat-M-M": "M–M",
-		"intervalFormat-Md-d": "d/M – d/M",
-		"intervalFormat-Md-M": "d/M – d/M",
-		"intervalFormat-MEd-d": "E d – E d/M",
-		"intervalFormat-MEd-M": "E d/M – E d/M",
-		"intervalFormat-MMM-M": "LLL–LLL",
-		"intervalFormat-MMMd-d": "d – d MMM",
-		"intervalFormat-MMMd-M": "d MMM – d MMM",
-		"intervalFormat-MMMEd-d": "E d – E d MMM",
-		"intervalFormat-MMMEd-M": "E d MMM – E d MMM",
-		"intervalFormat-MMMEEEEd-d": "EEEEที่ d – EEEEที่ d MMM",
-		"intervalFormat-MMMEEEEd-M": "EEEEที่ d MMM – EEEEที่ d MMM",
-		"intervalFormat-y-y": "G y–y",
-		"intervalFormat-yM-M": "M/y – M/y G",
-		"intervalFormat-yM-y": "M/y – M/y G",
-		"intervalFormat-yMd-d": "d–d/M/y G",
-		"intervalFormat-yMd-M": "d/M/y – d/M/y G",
-		"intervalFormat-yMd-y": "d/M/y – d/M/y G",
-		"intervalFormat-yMEd-d": "E d – E d/M/y G",
-		"intervalFormat-yMEd-M": "E d/M/y – E d/M/y G",
-		"intervalFormat-yMEd-y": "E d/M/y – E d/M/y G",
-		"intervalFormat-yMMM-M": "MMM–MMM G y",
-		"intervalFormat-yMMM-y": "MMM G y – MMM y",
-		"intervalFormat-yMMMd-d": "d–d MMM G y",
-		"intervalFormat-yMMMd-M": "d MMM – d MMM G y",
-		"intervalFormat-yMMMd-y": "d MMM G y – d MMM y",
-		"intervalFormat-yMMMEd-d": "E d – E d MMM G y",
-		"intervalFormat-yMMMEd-M": "E d MMM – E d MMM G y",
-		"intervalFormat-yMMMEd-y": "E d MMM G y – E d MMM y",
-		"intervalFormat-yMMMEEEEd-d": "EEEEที่ d – EEEEที่ d MMM G y",
-		"intervalFormat-yMMMEEEEd-M": "EEEEที่ d MMM – EEEEที่ d MMM G y",
-		"intervalFormat-yMMMEEEEd-y": "EEEEที่ d MMM G y – EEEEที่ d MMM y",
-		"intervalFormat-yMMMM-M": "MMMM – MMMM G y",
-		"intervalFormat-yMMMM-y": "MMMM G y – MMMM y",
-		"months-format-abbreviated": [
-			"ม.ค.",
-			"ก.พ.",
-			"มี.ค.",
-			"เม.ย.",
-			"พ.ค.",
-			"มิ.ย.",
-			"ก.ค.",
-			"ส.ค.",
-			"ก.ย.",
-			"ต.ค.",
-			"พ.ย.",
-			"ธ.ค."
-		],
-		"months-format-narrow": [
-			"ม.ค.",
-			"ก.พ.",
-			"มี.ค.",
-			"เม.ย.",
-			"พ.ค.",
-			"มิ.ย.",
-			"ก.ค.",
-			"ส.ค.",
-			"ก.ย.",
-			"ต.ค.",
-			"พ.ย.",
-			"ธ.ค."
-		],
-		"months-format-wide": [
-			"มกราคม",
-			"กุมภาพันธ์",
-			"มีนาคม",
-			"เมษายน",
-			"พฤษภาคม",
-			"มิถุนายน",
-			"กรกฎาคม",
-			"สิงหาคม",
-			"กันยายน",
-			"ตุลาคม",
-			"พฤศจิกายน",
-			"ธันวาคม"
-		],
-		"months-standAlone-abbreviated": [
-			"ม.ค.",
-			"ก.พ.",
-			"มี.ค.",
-			"เม.ย.",
-			"พ.ค.",
-			"มิ.ย.",
-			"ก.ค.",
-			"ส.ค.",
-			"ก.ย.",
-			"ต.ค.",
-			"พ.ย.",
-			"ธ.ค."
-		],
-		"months-standAlone-narrow": [
-			"ม.ค.",
-			"ก.พ.",
-			"มี.ค.",
-			"เม.ย.",
-			"พ.ค.",
-			"มิ.ย.",
-			"ก.ค.",
-			"ส.ค.",
-			"ก.ย.",
-			"ต.ค.",
-			"พ.ย.",
-			"ธ.ค."
-		],
-		"months-standAlone-wide": [
-			"มกราคม",
-			"กุมภาพันธ์",
-			"มีนาคม",
-			"เมษายน",
-			"พฤษภาคม",
-			"มิถุนายน",
-			"กรกฎาคม",
-			"สิงหาคม",
-			"กันยายน",
-			"ตุลาคม",
-			"พฤศจิกายน",
-			"ธันวาคม"
-		],
-		"days-format-abbreviated": [
-			"อา.",
-			"จ.",
-			"อ.",
-			"พ.",
-			"พฤ.",
-			"ศ.",
-			"ส."
-		],
-		"days-format-narrow": [
-			"อา",
-			"จ",
-			"อ",
-			"พ",
-			"พฤ",
-			"ศ",
-			"ส"
-		],
-		"days-format-short": [
-			"อา.",
-			"จ.",
-			"อ.",
-			"พ.",
-			"พฤ.",
-			"ศ.",
-			"ส."
-		],
-		"days-format-wide": [
-			"วันอาทิตย์",
-			"วันจันทร์",
-			"วันอังคาร",
-			"วันพุธ",
-			"วันพฤหัสบดี",
-			"วันศุกร์",
-			"วันเสาร์"
-		],
-		"days-standAlone-abbreviated": [
-			"อา.",
-			"จ.",
-			"อ.",
-			"พ.",
-			"พฤ.",
-			"ศ.",
-			"ส."
-		],
-		"days-standAlone-narrow": [
-			"อา",
-			"จ",
-			"อ",
-			"พ",
-			"พฤ",
-			"ศ",
-			"ส"
-		],
-		"days-standAlone-short": [
-			"อา.",
-			"จ.",
-			"อ.",
-			"พ.",
-			"พฤ.",
-			"ศ.",
-			"ส."
-		],
-		"days-standAlone-wide": [
-			"วันอาทิตย์",
-			"วันจันทร์",
-			"วันอังคาร",
-			"วันพุธ",
-			"วันพฤหัสบดี",
-			"วันศุกร์",
-			"วันเสาร์"
-		],
-		"quarters-format-abbreviated": [
-			"ไตรมาส 1",
-			"ไตรมาส 2",
-			"ไตรมาส 3",
-			"ไตรมาส 4"
-		],
-		"quarters-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-format-wide": [
-			"ไตรมาส 1",
-			"ไตรมาส 2",
-			"ไตรมาส 3",
-			"ไตรมาส 4"
-		],
-		"quarters-standAlone-abbreviated": [
-			"ไตรมาส 1",
-			"ไตรมาส 2",
-			"ไตรมาส 3",
-			"ไตรมาส 4"
-		],
-		"quarters-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-standAlone-wide": [
-			"ไตรมาส 1",
-			"ไตรมาส 2",
-			"ไตรมาส 3",
-			"ไตรมาส 4"
-		],
-		"dayPeriods-format-abbreviated": [
-			"ก่อนเที่ยง",
-			"หลังเที่ยง"
-		],
-		"dayPeriods-format-narrow": [
-			"a",
-			"p"
-		],
-		"dayPeriods-format-wide": [
-			"ก่อนเที่ยง",
-			"หลังเที่ยง"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"ก่อนเที่ยง",
-			"หลังเที่ยง"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"ก่อนเที่ยง",
-			"หลังเที่ยง"
-		],
-		"dayPeriods-standAlone-wide": [
-			"ก่อนเที่ยง",
-			"หลังเที่ยง"
-		],
+		"dateFormats": {
+			"full": "EEEEที่ d MMMM ปีGที่ y",
+			"long": "d MMMM ปีG y",
+			"medium": "d MMM G y",
+			"short": "d/M/yy G"
+		},
+		"timeFormats": {
+			"full": "H นาฬิกา mm นาที ss วินาที zzzz",
+			"long": "H นาฬิกา mm นาที ss วินาที z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1} {0}",
+			"long": "{1} {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E d",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "G y",
+				"GyMMM": "MMM G y",
+				"GyMMMd": "d MMM G y",
+				"GyMMMEd": "E d MMM G y",
+				"GyMMMEEEEd": "EEEEที่ d MMM G y",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "L",
+				"Md": "d/M",
+				"MEd": "E, d/M",
+				"MMM": "LLL",
+				"MMMd": "d MMM",
+				"MMMEd": "E d MMM",
+				"MMMEEEEd": "EEEEที่ d MMM",
+				"MMMMd": "d MMMM",
+				"ms": "mm:ss",
+				"y": "G y",
+				"yyyy": "G y",
+				"yyyyM": "M/GGGGG y",
+				"yyyyMd": "d/M/GGGGG y",
+				"yyyyMEd": "E d/M/GGGGG y",
+				"yyyyMMM": "MMM G y",
+				"yyyyMMMd": "d MMM G y",
+				"yyyyMMMEd": "E d MMM G y",
+				"yyyyMMMEEEEd": "EEEEที่ d MMM G y",
+				"yyyyMMMM": "MMMM G y",
+				"yyyyQQQ": "QQQ G y",
+				"yyyyQQQQ": "QQQQ G y"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} - {1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "H–H"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "H:mm–H:mm v",
+					"m": "H:mm–H:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "H–H v"
+				},
+				"M": {
+					"M": "M–M"
+				},
+				"Md": {
+					"d": "d/M – d/M",
+					"M": "d/M – d/M"
+				},
+				"MEd": {
+					"d": "E d – E d/M",
+					"M": "E d/M – E d/M"
+				},
+				"MMM": {
+					"M": "LLL–LLL"
+				},
+				"MMMd": {
+					"d": "d – d MMM",
+					"M": "d MMM – d MMM"
+				},
+				"MMMEd": {
+					"d": "E d – E d MMM",
+					"M": "E d MMM – E d MMM"
+				},
+				"MMMEEEEd": {
+					"d": "EEEEที่ d – EEEEที่ d MMM",
+					"M": "EEEEที่ d MMM – EEEEที่ d MMM"
+				},
+				"y": {
+					"y": "G y–y"
+				},
+				"yM": {
+					"M": "M/y – M/y G",
+					"y": "M/y – M/y G"
+				},
+				"yMd": {
+					"d": "d–d/M/y G",
+					"M": "d/M/y – d/M/y G",
+					"y": "d/M/y – d/M/y G"
+				},
+				"yMEd": {
+					"d": "E d – E d/M/y G",
+					"M": "E d/M/y – E d/M/y G",
+					"y": "E d/M/y – E d/M/y G"
+				},
+				"yMMM": {
+					"M": "MMM–MMM G y",
+					"y": "MMM G y – MMM y"
+				},
+				"yMMMd": {
+					"d": "d–d MMM G y",
+					"M": "d MMM – d MMM G y",
+					"y": "d MMM G y – d MMM y"
+				},
+				"yMMMEd": {
+					"d": "E d – E d MMM G y",
+					"M": "E d MMM – E d MMM G y",
+					"y": "E d MMM G y – E d MMM y"
+				},
+				"yMMMEEEEd": {
+					"d": "EEEEที่ d – EEEEที่ d MMM G y",
+					"M": "EEEEที่ d MMM – EEEEที่ d MMM G y",
+					"y": "EEEEที่ d MMM G y – EEEEที่ d MMM y"
+				},
+				"yMMMM": {
+					"M": "MMMM – MMMM G y",
+					"y": "MMMM G y – MMMM y"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"ม.ค.",
+					"ก.พ.",
+					"มี.ค.",
+					"เม.ย.",
+					"พ.ค.",
+					"มิ.ย.",
+					"ก.ค.",
+					"ส.ค.",
+					"ก.ย.",
+					"ต.ค.",
+					"พ.ย.",
+					"ธ.ค."
+				],
+				"narrow": [
+					"ม.ค.",
+					"ก.พ.",
+					"มี.ค.",
+					"เม.ย.",
+					"พ.ค.",
+					"มิ.ย.",
+					"ก.ค.",
+					"ส.ค.",
+					"ก.ย.",
+					"ต.ค.",
+					"พ.ย.",
+					"ธ.ค."
+				],
+				"wide": [
+					"มกราคม",
+					"กุมภาพันธ์",
+					"มีนาคม",
+					"เมษายน",
+					"พฤษภาคม",
+					"มิถุนายน",
+					"กรกฎาคม",
+					"สิงหาคม",
+					"กันยายน",
+					"ตุลาคม",
+					"พฤศจิกายน",
+					"ธันวาคม"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ม.ค.",
+					"ก.พ.",
+					"มี.ค.",
+					"เม.ย.",
+					"พ.ค.",
+					"มิ.ย.",
+					"ก.ค.",
+					"ส.ค.",
+					"ก.ย.",
+					"ต.ค.",
+					"พ.ย.",
+					"ธ.ค."
+				],
+				"narrow": [
+					"ม.ค.",
+					"ก.พ.",
+					"มี.ค.",
+					"เม.ย.",
+					"พ.ค.",
+					"มิ.ย.",
+					"ก.ค.",
+					"ส.ค.",
+					"ก.ย.",
+					"ต.ค.",
+					"พ.ย.",
+					"ธ.ค."
+				],
+				"wide": [
+					"มกราคม",
+					"กุมภาพันธ์",
+					"มีนาคม",
+					"เมษายน",
+					"พฤษภาคม",
+					"มิถุนายน",
+					"กรกฎาคม",
+					"สิงหาคม",
+					"กันยายน",
+					"ตุลาคม",
+					"พฤศจิกายน",
+					"ธันวาคม"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"อา.",
+					"จ.",
+					"อ.",
+					"พ.",
+					"พฤ.",
+					"ศ.",
+					"ส."
+				],
+				"narrow": [
+					"อา",
+					"จ",
+					"อ",
+					"พ",
+					"พฤ",
+					"ศ",
+					"ส"
+				],
+				"short": [
+					"อา.",
+					"จ.",
+					"อ.",
+					"พ.",
+					"พฤ.",
+					"ศ.",
+					"ส."
+				],
+				"wide": [
+					"วันอาทิตย์",
+					"วันจันทร์",
+					"วันอังคาร",
+					"วันพุธ",
+					"วันพฤหัสบดี",
+					"วันศุกร์",
+					"วันเสาร์"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"อา.",
+					"จ.",
+					"อ.",
+					"พ.",
+					"พฤ.",
+					"ศ.",
+					"ส."
+				],
+				"narrow": [
+					"อา",
+					"จ",
+					"อ",
+					"พ",
+					"พฤ",
+					"ศ",
+					"ส"
+				],
+				"short": [
+					"อา.",
+					"จ.",
+					"อ.",
+					"พ.",
+					"พฤ.",
+					"ศ.",
+					"ส."
+				],
+				"wide": [
+					"วันอาทิตย์",
+					"วันจันทร์",
+					"วันอังคาร",
+					"วันพุธ",
+					"วันพฤหัสบดี",
+					"วันศุกร์",
+					"วันเสาร์"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"ไตรมาส 1",
+					"ไตรมาส 2",
+					"ไตรมาส 3",
+					"ไตรมาส 4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"ไตรมาส 1",
+					"ไตรมาส 2",
+					"ไตรมาส 3",
+					"ไตรมาส 4"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ไตรมาส 1",
+					"ไตรมาส 2",
+					"ไตรมาส 3",
+					"ไตรมาส 4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"ไตรมาส 1",
+					"ไตรมาส 2",
+					"ไตรมาส 3",
+					"ไตรมาส 4"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"ก่อนเที่ยง",
+					"หลังเที่ยง"
+				],
+				"narrow": [
+					"a",
+					"p"
+				],
+				"wide": [
+					"ก่อนเที่ยง",
+					"หลังเที่ยง"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ก่อนเที่ยง",
+					"หลังเที่ยง"
+				],
+				"narrow": [
+					"ก่อนเที่ยง",
+					"หลังเที่ยง"
+				],
+				"wide": [
+					"ก่อนเที่ยง",
+					"หลังเที่ยง"
+				]
+			}
+		},
 		"era-wide": {
 			"232": "เมจิ",
 			"233": "ทะอิโช",
@@ -2040,40 +2463,95 @@
 			"235": "H"
 		}
 	},
-	"dateField-year-displayName": "ปี",
-	"dateField-year-relative--1": "ปีที่แล้ว",
-	"dateField-year-relative-0": "ปีนี้",
-	"dateField-year-relative-1": "ปีหน้า",
-	"dateField-year-relative-future-other": "ในอีก {0} ปี",
-	"dateField-year-relative-past-other": "{0} ปีที่แล้ว",
-	"dateField-month-displayName": "เดือน",
-	"dateField-month-relative--1": "เดือนที่แล้ว",
-	"dateField-month-relative-0": "เดือนนี้",
-	"dateField-month-relative-1": "เดือนหน้า",
-	"dateField-month-relative-future-other": "ในอีก {0} เดือน",
-	"dateField-month-relative-past-other": "{0} เดือนที่ผ่านมา",
-	"dateField-week-displayName": "สัปดาห์",
-	"dateField-week-relative--1": "สัปดาห์ที่แล้ว",
-	"dateField-week-relative-0": "สัปดาห์นี้",
-	"dateField-week-relative-1": "สัปดาห์หน้า",
-	"dateField-week-relative-future-other": "ในอีก {0} สัปดาห์",
-	"dateField-week-relative-past-other": "{0} สัปดาห์ที่ผ่านมา",
-	"dateField-day-displayName": "วัน",
-	"dateField-day-relative--1": "เมื่อวาน",
-	"dateField-day-relative-0": "วันนี้",
-	"dateField-day-relative-1": "พรุ่งนี้",
-	"dateField-day-relative-future-other": "ในอีก {0} วัน",
-	"dateField-day-relative-past-other": "{0} วันที่ผ่านมา",
-	"dateField-hour-displayName": "ชั่วโมง",
-	"dateField-hour-relative-future-other": "ในอีก {0} ชั่วโมง",
-	"dateField-hour-relative-past-other": "{0} ชั่วโมงที่ผ่านมา",
-	"dateField-minute-displayName": "นาที",
-	"dateField-minute-relative-future-other": "ในอีก {0} นาที",
-	"dateField-minute-relative-past-other": "{0} นาทีที่ผ่านมา",
-	"dateField-second-displayName": "วินาที",
-	"dateField-second-relative-0": "ขณะนี้",
-	"dateField-second-relative-future-other": "ในอีก {0} วินาที",
-	"dateField-second-relative-past-other": "{0} วินาทีที่ผ่านมา",
+	"dateFields": {
+		"era": {
+			"displayName": "สมัย"
+		},
+		"year": {
+			"displayName": "ปี",
+			"relative-type--1": "ปีที่แล้ว",
+			"relative-type-0": "ปีนี้",
+			"relative-type-1": "ปีหน้า",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ในอีก {0} ปี"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} ปีที่แล้ว"
+			}
+		},
+		"month": {
+			"displayName": "เดือน",
+			"relative-type--1": "เดือนที่แล้ว",
+			"relative-type-0": "เดือนนี้",
+			"relative-type-1": "เดือนหน้า",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ในอีก {0} เดือน"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} เดือนที่ผ่านมา"
+			}
+		},
+		"week": {
+			"displayName": "สัปดาห์",
+			"relative-type--1": "สัปดาห์ที่แล้ว",
+			"relative-type-0": "สัปดาห์นี้",
+			"relative-type-1": "สัปดาห์หน้า",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ในอีก {0} สัปดาห์"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} สัปดาห์ที่ผ่านมา"
+			}
+		},
+		"day": {
+			"displayName": "วัน",
+			"relative-type--2": "เมื่อวานซืน",
+			"relative-type--1": "เมื่อวาน",
+			"relative-type-0": "วันนี้",
+			"relative-type-1": "พรุ่งนี้",
+			"relative-type-2": "มะรืนนี้",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ในอีก {0} วัน"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} วันที่ผ่านมา"
+			}
+		},
+		"weekday": {
+			"displayName": "วันในสัปดาห์"
+		},
+		"hour": {
+			"displayName": "ชั่วโมง",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ในอีก {0} ชั่วโมง"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} ชั่วโมงที่ผ่านมา"
+			}
+		},
+		"minute": {
+			"displayName": "นาที",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ในอีก {0} นาที"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} นาทีที่ผ่านมา"
+			}
+		},
+		"second": {
+			"displayName": "วินาที",
+			"relative-type-0": "ขณะนี้",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ในอีก {0} วินาที"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} วินาทีที่ผ่านมา"
+			}
+		},
+		"zone": {
+			"displayName": "เขตเวลา"
+		}
+	},
 	"decimalFormat": {
 		"standard": "#,##0.###"
 	},
@@ -2221,6 +2699,10 @@
 	"weekData-firstDay": 0,
 	"weekData-weekendStart": 6,
 	"weekData-weekendEnd": 0,
+	"timeData": {
+		"_allowed": "H h",
+		"_preferred": "H"
+	},
 	"eras-gregorian": {
 		"0": {
 			"_end": "0-12-31"

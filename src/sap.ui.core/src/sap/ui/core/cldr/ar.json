@@ -1138,282 +1138,419 @@
 	},
 	"orientation": "right-to-left",
 	"ca-gregorian": {
-		"dateFormat-full": "EEEE، d MMMM، y",
-		"dateFormat-long": "d MMMM، y",
-		"dateFormat-medium": "dd‏/MM‏/y",
-		"dateFormat-short": "d‏/M‏/y",
-		"timeFormat-full": "h:mm:ss a zzzz",
-		"timeFormat-long": "h:mm:ss a z",
-		"timeFormat-medium": "h:mm:ss a",
-		"timeFormat-short": "h:mm a",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} – {1}",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "M–M",
-		"intervalFormat-Md-d": "M/d – M/d",
-		"intervalFormat-Md-M": "M/d – M/d",
-		"intervalFormat-MEd-d": "E، d/‏M –‏ E، d/‏M",
-		"intervalFormat-MEd-M": "E، d/‏M – E، d/‏M",
-		"intervalFormat-MMM-M": "MMM–MMM",
-		"intervalFormat-MMMd-d": "d–d MMM",
-		"intervalFormat-MMMd-M": "d MMM – d MMM",
-		"intervalFormat-MMMEd-d": "E، d – E، d MMM",
-		"intervalFormat-MMMEd-M": "E، d MMM – E، d MMM",
-		"intervalFormat-MMMM-M": "LLLL–LLLL",
-		"intervalFormat-y-y": "y–y",
-		"intervalFormat-yM-M": "M‏/y – M‏/y",
-		"intervalFormat-yM-y": "M‏/y – M‏/y",
-		"intervalFormat-yMd-d": "d‏/M‏/y – d‏/M‏/y",
-		"intervalFormat-yMd-M": "d‏/M‏/y – d‏/M‏/y",
-		"intervalFormat-yMd-y": "d‏/M‏/y – d‏/M‏/y",
-		"intervalFormat-yMEd-d": "E، dd‏/MM‏/y – E، dd‏/MM‏/y",
-		"intervalFormat-yMEd-M": "E، d‏/M‏/y – E، d‏/M‏/y",
-		"intervalFormat-yMEd-y": "E، d‏/M‏/y – E، d‏/M‏/y",
-		"intervalFormat-yMMM-M": "MMM – MMM، y",
-		"intervalFormat-yMMM-y": "MMM، y – MMM، y",
-		"intervalFormat-yMMMd-d": "d–d MMM، y",
-		"intervalFormat-yMMMd-M": "d MMM – d MMM، y",
-		"intervalFormat-yMMMd-y": "d MMM، y – d MMM، y",
-		"intervalFormat-yMMMEd-d": "E، d – E، d MMM، y",
-		"intervalFormat-yMMMEd-M": "E، d MMM – E، d MMM، y",
-		"intervalFormat-yMMMEd-y": "E، d MMM، y – E، d MMM، y",
-		"intervalFormat-yMMMM-M": "MMMM – MMMM، y",
-		"intervalFormat-yMMMM-y": "MMMM، y – MMMM، y",
-		"months-format-abbreviated": [
-			"يناير",
-			"فبراير",
-			"مارس",
-			"أبريل",
-			"مايو",
-			"يونيو",
-			"يوليو",
-			"أغسطس",
-			"سبتمبر",
-			"أكتوبر",
-			"نوفمبر",
-			"ديسمبر"
-		],
-		"months-format-narrow": [
-			"ي",
-			"ف",
-			"م",
-			"أ",
-			"و",
-			"ن",
-			"ل",
-			"غ",
-			"س",
-			"ك",
-			"ب",
-			"د"
-		],
-		"months-format-wide": [
-			"يناير",
-			"فبراير",
-			"مارس",
-			"أبريل",
-			"مايو",
-			"يونيو",
-			"يوليو",
-			"أغسطس",
-			"سبتمبر",
-			"أكتوبر",
-			"نوفمبر",
-			"ديسمبر"
-		],
-		"months-standAlone-abbreviated": [
-			"يناير",
-			"فبراير",
-			"مارس",
-			"أبريل",
-			"مايو",
-			"يونيو",
-			"يوليو",
-			"أغسطس",
-			"سبتمبر",
-			"أكتوبر",
-			"نوفمبر",
-			"ديسمبر"
-		],
-		"months-standAlone-narrow": [
-			"ي",
-			"ف",
-			"م",
-			"أ",
-			"و",
-			"ن",
-			"ل",
-			"غ",
-			"س",
-			"ك",
-			"ب",
-			"د"
-		],
-		"months-standAlone-wide": [
-			"يناير",
-			"فبراير",
-			"مارس",
-			"أبريل",
-			"مايو",
-			"يونيو",
-			"يوليو",
-			"أغسطس",
-			"سبتمبر",
-			"أكتوبر",
-			"نوفمبر",
-			"ديسمبر"
-		],
-		"days-format-abbreviated": [
-			"الأحد",
-			"الاثنين",
-			"الثلاثاء",
-			"الأربعاء",
-			"الخميس",
-			"الجمعة",
-			"السبت"
-		],
-		"days-format-narrow": [
-			"ح",
-			"ن",
-			"ث",
-			"ر",
-			"خ",
-			"ج",
-			"س"
-		],
-		"days-format-short": [
-			"الأحد",
-			"الاثنين",
-			"الثلاثاء",
-			"الأربعاء",
-			"الخميس",
-			"الجمعة",
-			"السبت"
-		],
-		"days-format-wide": [
-			"الأحد",
-			"الاثنين",
-			"الثلاثاء",
-			"الأربعاء",
-			"الخميس",
-			"الجمعة",
-			"السبت"
-		],
-		"days-standAlone-abbreviated": [
-			"الأحد",
-			"الاثنين",
-			"الثلاثاء",
-			"الأربعاء",
-			"الخميس",
-			"الجمعة",
-			"السبت"
-		],
-		"days-standAlone-narrow": [
-			"ح",
-			"ن",
-			"ث",
-			"ر",
-			"خ",
-			"ج",
-			"س"
-		],
-		"days-standAlone-short": [
-			"الأحد",
-			"الاثنين",
-			"الثلاثاء",
-			"الأربعاء",
-			"الخميس",
-			"الجمعة",
-			"السبت"
-		],
-		"days-standAlone-wide": [
-			"الأحد",
-			"الاثنين",
-			"الثلاثاء",
-			"الأربعاء",
-			"الخميس",
-			"الجمعة",
-			"السبت"
-		],
-		"quarters-format-abbreviated": [
-			"الربع الأول",
-			"الربع الثاني",
-			"الربع الثالث",
-			"الربع الرابع"
-		],
-		"quarters-format-narrow": [
-			"١",
-			"٢",
-			"٣",
-			"٤"
-		],
-		"quarters-format-wide": [
-			"الربع الأول",
-			"الربع الثاني",
-			"الربع الثالث",
-			"الربع الرابع"
-		],
-		"quarters-standAlone-abbreviated": [
-			"الربع الأول",
-			"الربع الثاني",
-			"الربع الثالث",
-			"الربع الرابع"
-		],
-		"quarters-standAlone-narrow": [
-			"١",
-			"٢",
-			"٣",
-			"٤"
-		],
-		"quarters-standAlone-wide": [
-			"الربع الأول",
-			"الربع الثاني",
-			"الربع الثالث",
-			"الربع الرابع"
-		],
-		"dayPeriods-format-abbreviated": [
-			"ص",
-			"م"
-		],
-		"dayPeriods-format-narrow": [
-			"ص",
-			"م"
-		],
-		"dayPeriods-format-wide": [
-			"ص",
-			"م"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"ص",
-			"م"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"ص",
-			"م"
-		],
-		"dayPeriods-standAlone-wide": [
-			"صباحًا",
-			"مساءً"
-		],
+		"dateFormats": {
+			"full": "EEEE، d MMMM، y",
+			"long": "d MMMM، y",
+			"medium": "dd‏/MM‏/y",
+			"short": "d‏/M‏/y"
+		},
+		"timeFormats": {
+			"full": "h:mm:ss a zzzz",
+			"long": "h:mm:ss a z",
+			"medium": "h:mm:ss a",
+			"short": "h:mm a"
+		},
+		"dateTimeFormats": {
+			"full": "{1} {0}",
+			"long": "{1} {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E، d",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y G",
+				"GyMMM": "MMM y G",
+				"GyMMMd": "d MMM، y G",
+				"GyMMMEd": "E، d MMM، y G",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"hmsv": "h:mm:ss a v",
+				"Hmsv": "HH:mm:ss v",
+				"hmv": "h:mm a v",
+				"Hmv": "HH:mm v",
+				"M": "L",
+				"Md": "d/‏M",
+				"MEd": "E، d/M",
+				"MMdd": "dd‏/MM",
+				"MMM": "LLL",
+				"MMMd": "d MMM",
+				"MMMEd": "E، d MMM",
+				"MMMMd": "d MMMM",
+				"MMMMEd": "E، d MMMM",
+				"ms": "mm:ss",
+				"y": "y",
+				"yM": "M‏/y",
+				"yMd": "d‏/M‏/y",
+				"yMEd": "E، d/‏M/‏y",
+				"yMM": "MM‏/y",
+				"yMMM": "MMM y",
+				"yMMMd": "d MMM، y",
+				"yMMMEd": "E، d MMM، y",
+				"yMMMM": "MMMM y",
+				"yQQQ": "QQQ y",
+				"yQQQQ": "QQQQ y"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} – {1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "M–M"
+				},
+				"Md": {
+					"d": "M/d – M/d",
+					"M": "M/d – M/d"
+				},
+				"MEd": {
+					"d": "E، d/‏M –‏ E، d/‏M",
+					"M": "E، d/‏M – E، d/‏M"
+				},
+				"MMM": {
+					"M": "MMM–MMM"
+				},
+				"MMMd": {
+					"d": "d–d MMM",
+					"M": "d MMM – d MMM"
+				},
+				"MMMEd": {
+					"d": "E، d – E، d MMM",
+					"M": "E، d MMM – E، d MMM"
+				},
+				"MMMM": {
+					"M": "LLLL–LLLL"
+				},
+				"y": {
+					"y": "y–y"
+				},
+				"yM": {
+					"M": "M‏/y – M‏/y",
+					"y": "M‏/y – M‏/y"
+				},
+				"yMd": {
+					"d": "d‏/M‏/y – d‏/M‏/y",
+					"M": "d‏/M‏/y – d‏/M‏/y",
+					"y": "d‏/M‏/y – d‏/M‏/y"
+				},
+				"yMEd": {
+					"d": "E، dd‏/MM‏/y – E، dd‏/MM‏/y",
+					"M": "E، d‏/M‏/y – E، d‏/M‏/y",
+					"y": "E، d‏/M‏/y – E، d‏/M‏/y"
+				},
+				"yMMM": {
+					"M": "MMM – MMM، y",
+					"y": "MMM، y – MMM، y"
+				},
+				"yMMMd": {
+					"d": "d–d MMM، y",
+					"M": "d MMM – d MMM، y",
+					"y": "d MMM، y – d MMM، y"
+				},
+				"yMMMEd": {
+					"d": "E، d – E، d MMM، y",
+					"M": "E، d MMM – E، d MMM، y",
+					"y": "E، d MMM، y – E، d MMM، y"
+				},
+				"yMMMM": {
+					"M": "MMMM – MMMM، y",
+					"y": "MMMM، y – MMMM، y"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"يناير",
+					"فبراير",
+					"مارس",
+					"أبريل",
+					"مايو",
+					"يونيو",
+					"يوليو",
+					"أغسطس",
+					"سبتمبر",
+					"أكتوبر",
+					"نوفمبر",
+					"ديسمبر"
+				],
+				"narrow": [
+					"ي",
+					"ف",
+					"م",
+					"أ",
+					"و",
+					"ن",
+					"ل",
+					"غ",
+					"س",
+					"ك",
+					"ب",
+					"د"
+				],
+				"wide": [
+					"يناير",
+					"فبراير",
+					"مارس",
+					"أبريل",
+					"مايو",
+					"يونيو",
+					"يوليو",
+					"أغسطس",
+					"سبتمبر",
+					"أكتوبر",
+					"نوفمبر",
+					"ديسمبر"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"يناير",
+					"فبراير",
+					"مارس",
+					"أبريل",
+					"مايو",
+					"يونيو",
+					"يوليو",
+					"أغسطس",
+					"سبتمبر",
+					"أكتوبر",
+					"نوفمبر",
+					"ديسمبر"
+				],
+				"narrow": [
+					"ي",
+					"ف",
+					"م",
+					"أ",
+					"و",
+					"ن",
+					"ل",
+					"غ",
+					"س",
+					"ك",
+					"ب",
+					"د"
+				],
+				"wide": [
+					"يناير",
+					"فبراير",
+					"مارس",
+					"أبريل",
+					"مايو",
+					"يونيو",
+					"يوليو",
+					"أغسطس",
+					"سبتمبر",
+					"أكتوبر",
+					"نوفمبر",
+					"ديسمبر"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"الأحد",
+					"الاثنين",
+					"الثلاثاء",
+					"الأربعاء",
+					"الخميس",
+					"الجمعة",
+					"السبت"
+				],
+				"narrow": [
+					"ح",
+					"ن",
+					"ث",
+					"ر",
+					"خ",
+					"ج",
+					"س"
+				],
+				"short": [
+					"الأحد",
+					"الاثنين",
+					"الثلاثاء",
+					"الأربعاء",
+					"الخميس",
+					"الجمعة",
+					"السبت"
+				],
+				"wide": [
+					"الأحد",
+					"الاثنين",
+					"الثلاثاء",
+					"الأربعاء",
+					"الخميس",
+					"الجمعة",
+					"السبت"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"الأحد",
+					"الاثنين",
+					"الثلاثاء",
+					"الأربعاء",
+					"الخميس",
+					"الجمعة",
+					"السبت"
+				],
+				"narrow": [
+					"ح",
+					"ن",
+					"ث",
+					"ر",
+					"خ",
+					"ج",
+					"س"
+				],
+				"short": [
+					"الأحد",
+					"الاثنين",
+					"الثلاثاء",
+					"الأربعاء",
+					"الخميس",
+					"الجمعة",
+					"السبت"
+				],
+				"wide": [
+					"الأحد",
+					"الاثنين",
+					"الثلاثاء",
+					"الأربعاء",
+					"الخميس",
+					"الجمعة",
+					"السبت"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"الربع الأول",
+					"الربع الثاني",
+					"الربع الثالث",
+					"الربع الرابع"
+				],
+				"narrow": [
+					"١",
+					"٢",
+					"٣",
+					"٤"
+				],
+				"wide": [
+					"الربع الأول",
+					"الربع الثاني",
+					"الربع الثالث",
+					"الربع الرابع"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"الربع الأول",
+					"الربع الثاني",
+					"الربع الثالث",
+					"الربع الرابع"
+				],
+				"narrow": [
+					"١",
+					"٢",
+					"٣",
+					"٤"
+				],
+				"wide": [
+					"الربع الأول",
+					"الربع الثاني",
+					"الربع الثالث",
+					"الربع الرابع"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"ص",
+					"م"
+				],
+				"narrow": [
+					"ص",
+					"م"
+				],
+				"wide": [
+					"ص",
+					"م"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ص",
+					"م"
+				],
+				"narrow": [
+					"ص",
+					"م"
+				],
+				"wide": [
+					"صباحًا",
+					"مساءً"
+				]
+			}
+		},
 		"era-wide": {
 			"0": "قبل الميلاد",
 			"1": "ميلادي"
@@ -1428,282 +1565,413 @@
 		}
 	},
 	"ca-islamic": {
-		"dateFormat-full": "EEEE، d MMMM، y G",
-		"dateFormat-long": "d MMMM، y G",
-		"dateFormat-medium": "d MMM، y G",
-		"dateFormat-short": "d‏/M‏/y GGGGG",
-		"timeFormat-full": "h:mm:ss a zzzz",
-		"timeFormat-long": "h:mm:ss a z",
-		"timeFormat-medium": "h:mm:ss a",
-		"timeFormat-short": "h:mm a",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} – {1}",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "M–M",
-		"intervalFormat-Md-d": "M/d – M/d",
-		"intervalFormat-Md-M": "M/d – M/d",
-		"intervalFormat-MEd-d": "E، d/‏M –‏ E، d/‏M",
-		"intervalFormat-MEd-M": "E، d/‏M – E، d/‏M",
-		"intervalFormat-MMM-M": "MMM–MMM",
-		"intervalFormat-MMMd-d": "MMM d–d",
-		"intervalFormat-MMMd-M": "d MMM – d MMM",
-		"intervalFormat-MMMEd-d": "E، d – E، d MMM",
-		"intervalFormat-MMMEd-M": "E، d MMM – E، d MMM",
-		"intervalFormat-MMMM-M": "LLLL–LLLL",
-		"intervalFormat-y-y": "y–y G",
-		"intervalFormat-yM-M": "M‏/y – M‏/y G",
-		"intervalFormat-yM-y": "M‏/y – M‏/y G",
-		"intervalFormat-yMd-d": "d‏/M‏/y – d‏/M‏/y G",
-		"intervalFormat-yMd-M": "d‏/M‏/y – d‏/M‏/y G",
-		"intervalFormat-yMd-y": "d‏/M‏/y – d‏/M‏/y G",
-		"intervalFormat-yMEd-d": "E، dd‏/MM‏/y – E، dd‏/MM‏/y G",
-		"intervalFormat-yMEd-M": "E، d‏/M‏/y – E، d‏/M‏/y G",
-		"intervalFormat-yMEd-y": "E، d‏/M‏/y – E، d‏/M‏/y G",
-		"intervalFormat-yMMM-M": "MMM – MMM، y G",
-		"intervalFormat-yMMM-y": "MMM، y – MMM، y G",
-		"intervalFormat-yMMMd-d": "d–d MMM، y G",
-		"intervalFormat-yMMMd-M": "d MMM – d MMM، y G",
-		"intervalFormat-yMMMd-y": "d MMM، y – d MMM، y G",
-		"intervalFormat-yMMMEd-d": "E، d – E، d MMM، y G",
-		"intervalFormat-yMMMEd-M": "E، d MMM – E، d MMM، y G",
-		"intervalFormat-yMMMEd-y": "E، d MMM، y – E، d MMM، y G",
-		"intervalFormat-yMMMM-M": "MMMM – MMMM، y G",
-		"intervalFormat-yMMMM-y": "MMMM، y – MMMM، y G",
-		"months-format-abbreviated": [
-			"محرم",
-			"صفر",
-			"ربيع الأول",
-			"ربيع الآخر",
-			"جمادى الأولى",
-			"جمادى الآخرة",
-			"رجب",
-			"شعبان",
-			"رمضان",
-			"شوال",
-			"ذو القعدة",
-			"ذو الحجة"
-		],
-		"months-format-narrow": [
-			"١",
-			"٢",
-			"٣",
-			"٤",
-			"٥",
-			"٦",
-			"٧",
-			"٨",
-			"٩",
-			"١٠",
-			"١١",
-			"١٢"
-		],
-		"months-format-wide": [
-			"محرم",
-			"صفر",
-			"ربيع الأول",
-			"ربيع الآخر",
-			"جمادى الأولى",
-			"جمادى الآخرة",
-			"رجب",
-			"شعبان",
-			"رمضان",
-			"شوال",
-			"ذو القعدة",
-			"ذو الحجة"
-		],
-		"months-standAlone-abbreviated": [
-			"محرم",
-			"صفر",
-			"ربيع الأول",
-			"ربيع الآخر",
-			"جمادى الأولى",
-			"جمادى الآخرة",
-			"رجب",
-			"شعبان",
-			"رمضان",
-			"شوال",
-			"ذو القعدة",
-			"ذو الحجة"
-		],
-		"months-standAlone-narrow": [
-			"١",
-			"٢",
-			"٣",
-			"٤",
-			"٥",
-			"٦",
-			"٧",
-			"٨",
-			"٩",
-			"١٠",
-			"١١",
-			"١٢"
-		],
-		"months-standAlone-wide": [
-			"محرم",
-			"صفر",
-			"ربيع الأول",
-			"ربيع الآخر",
-			"جمادى الأولى",
-			"جمادى الآخرة",
-			"رجب",
-			"شعبان",
-			"رمضان",
-			"شوال",
-			"ذو القعدة",
-			"ذو الحجة"
-		],
-		"days-format-abbreviated": [
-			"الأحد",
-			"الاثنين",
-			"الثلاثاء",
-			"الأربعاء",
-			"الخميس",
-			"الجمعة",
-			"السبت"
-		],
-		"days-format-narrow": [
-			"ح",
-			"ن",
-			"ث",
-			"ر",
-			"خ",
-			"ج",
-			"س"
-		],
-		"days-format-short": [
-			"الأحد",
-			"الاثنين",
-			"الثلاثاء",
-			"الأربعاء",
-			"الخميس",
-			"الجمعة",
-			"السبت"
-		],
-		"days-format-wide": [
-			"الأحد",
-			"الاثنين",
-			"الثلاثاء",
-			"الأربعاء",
-			"الخميس",
-			"الجمعة",
-			"السبت"
-		],
-		"days-standAlone-abbreviated": [
-			"الأحد",
-			"الاثنين",
-			"الثلاثاء",
-			"الأربعاء",
-			"الخميس",
-			"الجمعة",
-			"السبت"
-		],
-		"days-standAlone-narrow": [
-			"ح",
-			"ن",
-			"ث",
-			"ر",
-			"خ",
-			"ج",
-			"س"
-		],
-		"days-standAlone-short": [
-			"الأحد",
-			"الاثنين",
-			"الثلاثاء",
-			"الأربعاء",
-			"الخميس",
-			"الجمعة",
-			"السبت"
-		],
-		"days-standAlone-wide": [
-			"الأحد",
-			"الاثنين",
-			"الثلاثاء",
-			"الأربعاء",
-			"الخميس",
-			"الجمعة",
-			"السبت"
-		],
-		"quarters-format-abbreviated": [
-			"الربع الأول",
-			"الربع الثاني",
-			"الربع الثالث",
-			"الربع الرابع"
-		],
-		"quarters-format-narrow": [
-			"١",
-			"٢",
-			"٣",
-			"٤"
-		],
-		"quarters-format-wide": [
-			"الربع الأول",
-			"الربع الثاني",
-			"الربع الثالث",
-			"الربع الرابع"
-		],
-		"quarters-standAlone-abbreviated": [
-			"الربع الأول",
-			"الربع الثاني",
-			"الربع الثالث",
-			"الربع الرابع"
-		],
-		"quarters-standAlone-narrow": [
-			"١",
-			"٢",
-			"٣",
-			"٤"
-		],
-		"quarters-standAlone-wide": [
-			"الربع الأول",
-			"الربع الثاني",
-			"الربع الثالث",
-			"الربع الرابع"
-		],
-		"dayPeriods-format-abbreviated": [
-			"ص",
-			"م"
-		],
-		"dayPeriods-format-narrow": [
-			"ص",
-			"م"
-		],
-		"dayPeriods-format-wide": [
-			"ص",
-			"م"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"ص",
-			"م"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"ص",
-			"م"
-		],
-		"dayPeriods-standAlone-wide": [
-			"صباحًا",
-			"مساءً"
-		],
+		"dateFormats": {
+			"full": "EEEE، d MMMM، y G",
+			"long": "d MMMM، y G",
+			"medium": "d MMM، y G",
+			"short": "d‏/M‏/y GGGGG"
+		},
+		"timeFormats": {
+			"full": "h:mm:ss a zzzz",
+			"long": "h:mm:ss a z",
+			"medium": "h:mm:ss a",
+			"short": "h:mm a"
+		},
+		"dateTimeFormats": {
+			"full": "{1} {0}",
+			"long": "{1} {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E، d",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y G",
+				"GyMMM": "MMM y G",
+				"GyMMMd": "d MMM، y G",
+				"GyMMMEd": "E، d MMM، y G",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "L",
+				"Md": "d/‏M",
+				"MEd": "E، d/M",
+				"MMM": "LLL",
+				"MMMd": "d MMM",
+				"MMMEd": "E، d MMM",
+				"MMMMd": "MMMM d",
+				"ms": "mm:ss",
+				"y": "y G",
+				"yyyy": "y G",
+				"yyyyM": "M‏/y G",
+				"yyyyMd": "d‏/M‏/y G",
+				"yyyyMEd": "E، d/‏M/‏y G",
+				"yyyyMMM": "MMM، y G",
+				"yyyyMMMd": "d MMM، y G",
+				"yyyyMMMEd": "E، d MMM، y G",
+				"yyyyMMMM": "MMMM، y G",
+				"yyyyQQQ": "QQQ y G",
+				"yyyyQQQQ": "QQQQ y G"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} – {1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "M–M"
+				},
+				"Md": {
+					"d": "M/d – M/d",
+					"M": "M/d – M/d"
+				},
+				"MEd": {
+					"d": "E، d/‏M –‏ E، d/‏M",
+					"M": "E، d/‏M – E، d/‏M"
+				},
+				"MMM": {
+					"M": "MMM–MMM"
+				},
+				"MMMd": {
+					"d": "MMM d–d",
+					"M": "d MMM – d MMM"
+				},
+				"MMMEd": {
+					"d": "E، d – E، d MMM",
+					"M": "E، d MMM – E، d MMM"
+				},
+				"MMMM": {
+					"M": "LLLL–LLLL"
+				},
+				"y": {
+					"y": "y–y G"
+				},
+				"yM": {
+					"M": "M‏/y – M‏/y G",
+					"y": "M‏/y – M‏/y G"
+				},
+				"yMd": {
+					"d": "d‏/M‏/y – d‏/M‏/y G",
+					"M": "d‏/M‏/y – d‏/M‏/y G",
+					"y": "d‏/M‏/y – d‏/M‏/y G"
+				},
+				"yMEd": {
+					"d": "E، dd‏/MM‏/y – E، dd‏/MM‏/y G",
+					"M": "E، d‏/M‏/y – E، d‏/M‏/y G",
+					"y": "E، d‏/M‏/y – E، d‏/M‏/y G"
+				},
+				"yMMM": {
+					"M": "MMM – MMM، y G",
+					"y": "MMM، y – MMM، y G"
+				},
+				"yMMMd": {
+					"d": "d–d MMM، y G",
+					"M": "d MMM – d MMM، y G",
+					"y": "d MMM، y – d MMM، y G"
+				},
+				"yMMMEd": {
+					"d": "E، d – E، d MMM، y G",
+					"M": "E، d MMM – E، d MMM، y G",
+					"y": "E، d MMM، y – E، d MMM، y G"
+				},
+				"yMMMM": {
+					"M": "MMMM – MMMM، y G",
+					"y": "MMMM، y – MMMM، y G"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"محرم",
+					"صفر",
+					"ربيع الأول",
+					"ربيع الآخر",
+					"جمادى الأولى",
+					"جمادى الآخرة",
+					"رجب",
+					"شعبان",
+					"رمضان",
+					"شوال",
+					"ذو القعدة",
+					"ذو الحجة"
+				],
+				"narrow": [
+					"١",
+					"٢",
+					"٣",
+					"٤",
+					"٥",
+					"٦",
+					"٧",
+					"٨",
+					"٩",
+					"١٠",
+					"١١",
+					"١٢"
+				],
+				"wide": [
+					"محرم",
+					"صفر",
+					"ربيع الأول",
+					"ربيع الآخر",
+					"جمادى الأولى",
+					"جمادى الآخرة",
+					"رجب",
+					"شعبان",
+					"رمضان",
+					"شوال",
+					"ذو القعدة",
+					"ذو الحجة"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"محرم",
+					"صفر",
+					"ربيع الأول",
+					"ربيع الآخر",
+					"جمادى الأولى",
+					"جمادى الآخرة",
+					"رجب",
+					"شعبان",
+					"رمضان",
+					"شوال",
+					"ذو القعدة",
+					"ذو الحجة"
+				],
+				"narrow": [
+					"١",
+					"٢",
+					"٣",
+					"٤",
+					"٥",
+					"٦",
+					"٧",
+					"٨",
+					"٩",
+					"١٠",
+					"١١",
+					"١٢"
+				],
+				"wide": [
+					"محرم",
+					"صفر",
+					"ربيع الأول",
+					"ربيع الآخر",
+					"جمادى الأولى",
+					"جمادى الآخرة",
+					"رجب",
+					"شعبان",
+					"رمضان",
+					"شوال",
+					"ذو القعدة",
+					"ذو الحجة"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"الأحد",
+					"الاثنين",
+					"الثلاثاء",
+					"الأربعاء",
+					"الخميس",
+					"الجمعة",
+					"السبت"
+				],
+				"narrow": [
+					"ح",
+					"ن",
+					"ث",
+					"ر",
+					"خ",
+					"ج",
+					"س"
+				],
+				"short": [
+					"الأحد",
+					"الاثنين",
+					"الثلاثاء",
+					"الأربعاء",
+					"الخميس",
+					"الجمعة",
+					"السبت"
+				],
+				"wide": [
+					"الأحد",
+					"الاثنين",
+					"الثلاثاء",
+					"الأربعاء",
+					"الخميس",
+					"الجمعة",
+					"السبت"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"الأحد",
+					"الاثنين",
+					"الثلاثاء",
+					"الأربعاء",
+					"الخميس",
+					"الجمعة",
+					"السبت"
+				],
+				"narrow": [
+					"ح",
+					"ن",
+					"ث",
+					"ر",
+					"خ",
+					"ج",
+					"س"
+				],
+				"short": [
+					"الأحد",
+					"الاثنين",
+					"الثلاثاء",
+					"الأربعاء",
+					"الخميس",
+					"الجمعة",
+					"السبت"
+				],
+				"wide": [
+					"الأحد",
+					"الاثنين",
+					"الثلاثاء",
+					"الأربعاء",
+					"الخميس",
+					"الجمعة",
+					"السبت"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"الربع الأول",
+					"الربع الثاني",
+					"الربع الثالث",
+					"الربع الرابع"
+				],
+				"narrow": [
+					"١",
+					"٢",
+					"٣",
+					"٤"
+				],
+				"wide": [
+					"الربع الأول",
+					"الربع الثاني",
+					"الربع الثالث",
+					"الربع الرابع"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"الربع الأول",
+					"الربع الثاني",
+					"الربع الثالث",
+					"الربع الرابع"
+				],
+				"narrow": [
+					"١",
+					"٢",
+					"٣",
+					"٤"
+				],
+				"wide": [
+					"الربع الأول",
+					"الربع الثاني",
+					"الربع الثالث",
+					"الربع الرابع"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"ص",
+					"م"
+				],
+				"narrow": [
+					"ص",
+					"م"
+				],
+				"wide": [
+					"ص",
+					"م"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ص",
+					"م"
+				],
+				"narrow": [
+					"ص",
+					"م"
+				],
+				"wide": [
+					"صباحًا",
+					"مساءً"
+				]
+			}
+		},
 		"era-wide": {
 			"0": "هـ"
 		},
@@ -1715,282 +1983,413 @@
 		}
 	},
 	"ca-japanese": {
-		"dateFormat-full": "EEEE، d MMMM، y G",
-		"dateFormat-long": "d MMMM، y G",
-		"dateFormat-medium": "dd‏/MM‏/y G",
-		"dateFormat-short": "d‏/M‏/y GGGGG",
-		"timeFormat-full": "h:mm:ss a zzzz",
-		"timeFormat-long": "h:mm:ss a z",
-		"timeFormat-medium": "h:mm:ss a",
-		"timeFormat-short": "h:mm a",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} – {1}",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "M–M",
-		"intervalFormat-Md-d": "M/d – M/d",
-		"intervalFormat-Md-M": "M/d – M/d",
-		"intervalFormat-MEd-d": "E، d/‏M –‏ E، d/‏M",
-		"intervalFormat-MEd-M": "E، d/‏M – E، d/‏M",
-		"intervalFormat-MMM-M": "MMM–MMM",
-		"intervalFormat-MMMd-d": "MMM d–d",
-		"intervalFormat-MMMd-M": "d MMM – d MMM",
-		"intervalFormat-MMMEd-d": "E، d – E، d MMM",
-		"intervalFormat-MMMEd-M": "E، d MMM – E، d MMM",
-		"intervalFormat-MMMM-M": "LLLL–LLLL",
-		"intervalFormat-y-y": "y–y G",
-		"intervalFormat-yM-M": "M‏/y – M‏/y G",
-		"intervalFormat-yM-y": "M‏/y – M‏/y G",
-		"intervalFormat-yMd-d": "d‏/M‏/y – d‏/M‏/y G",
-		"intervalFormat-yMd-M": "d‏/M‏/y – d‏/M‏/y G",
-		"intervalFormat-yMd-y": "d‏/M‏/y – d‏/M‏/y G",
-		"intervalFormat-yMEd-d": "E، dd‏/MM‏/y – E، dd‏/MM‏/y G",
-		"intervalFormat-yMEd-M": "E، d‏/M‏/y – E، d‏/M‏/y G",
-		"intervalFormat-yMEd-y": "E، d‏/M‏/y – E، d‏/M‏/y G",
-		"intervalFormat-yMMM-M": "MMM – MMM، y G",
-		"intervalFormat-yMMM-y": "MMM، y – MMM، y G",
-		"intervalFormat-yMMMd-d": "d–d MMM، y G",
-		"intervalFormat-yMMMd-M": "d MMM – d MMM، y G",
-		"intervalFormat-yMMMd-y": "d MMM، y – d MMM، y G",
-		"intervalFormat-yMMMEd-d": "E، d – E، d MMM، y G",
-		"intervalFormat-yMMMEd-M": "E، d MMM – E، d MMM، y G",
-		"intervalFormat-yMMMEd-y": "E، d MMM، y – E، d MMM، y G",
-		"intervalFormat-yMMMM-M": "MMMM – MMMM، y G",
-		"intervalFormat-yMMMM-y": "MMMM، y – MMMM، y G",
-		"months-format-abbreviated": [
-			"يناير",
-			"فبراير",
-			"مارس",
-			"أبريل",
-			"مايو",
-			"يونيو",
-			"يوليو",
-			"أغسطس",
-			"سبتمبر",
-			"أكتوبر",
-			"نوفمبر",
-			"ديسمبر"
-		],
-		"months-format-narrow": [
-			"ي",
-			"ف",
-			"م",
-			"أ",
-			"و",
-			"ن",
-			"ل",
-			"غ",
-			"س",
-			"ك",
-			"ب",
-			"د"
-		],
-		"months-format-wide": [
-			"يناير",
-			"فبراير",
-			"مارس",
-			"أبريل",
-			"مايو",
-			"يونيو",
-			"يوليو",
-			"أغسطس",
-			"سبتمبر",
-			"أكتوبر",
-			"نوفمبر",
-			"ديسمبر"
-		],
-		"months-standAlone-abbreviated": [
-			"يناير",
-			"فبراير",
-			"مارس",
-			"أبريل",
-			"مايو",
-			"يونيو",
-			"يوليو",
-			"أغسطس",
-			"سبتمبر",
-			"أكتوبر",
-			"نوفمبر",
-			"ديسمبر"
-		],
-		"months-standAlone-narrow": [
-			"ي",
-			"ف",
-			"م",
-			"أ",
-			"و",
-			"ن",
-			"ل",
-			"غ",
-			"س",
-			"ك",
-			"ب",
-			"د"
-		],
-		"months-standAlone-wide": [
-			"يناير",
-			"فبراير",
-			"مارس",
-			"أبريل",
-			"مايو",
-			"يونيو",
-			"يوليو",
-			"أغسطس",
-			"سبتمبر",
-			"أكتوبر",
-			"نوفمبر",
-			"ديسمبر"
-		],
-		"days-format-abbreviated": [
-			"الأحد",
-			"الاثنين",
-			"الثلاثاء",
-			"الأربعاء",
-			"الخميس",
-			"الجمعة",
-			"السبت"
-		],
-		"days-format-narrow": [
-			"ح",
-			"ن",
-			"ث",
-			"ر",
-			"خ",
-			"ج",
-			"س"
-		],
-		"days-format-short": [
-			"الأحد",
-			"الاثنين",
-			"الثلاثاء",
-			"الأربعاء",
-			"الخميس",
-			"الجمعة",
-			"السبت"
-		],
-		"days-format-wide": [
-			"الأحد",
-			"الاثنين",
-			"الثلاثاء",
-			"الأربعاء",
-			"الخميس",
-			"الجمعة",
-			"السبت"
-		],
-		"days-standAlone-abbreviated": [
-			"الأحد",
-			"الاثنين",
-			"الثلاثاء",
-			"الأربعاء",
-			"الخميس",
-			"الجمعة",
-			"السبت"
-		],
-		"days-standAlone-narrow": [
-			"ح",
-			"ن",
-			"ث",
-			"ر",
-			"خ",
-			"ج",
-			"س"
-		],
-		"days-standAlone-short": [
-			"الأحد",
-			"الاثنين",
-			"الثلاثاء",
-			"الأربعاء",
-			"الخميس",
-			"الجمعة",
-			"السبت"
-		],
-		"days-standAlone-wide": [
-			"الأحد",
-			"الاثنين",
-			"الثلاثاء",
-			"الأربعاء",
-			"الخميس",
-			"الجمعة",
-			"السبت"
-		],
-		"quarters-format-abbreviated": [
-			"الربع الأول",
-			"الربع الثاني",
-			"الربع الثالث",
-			"الربع الرابع"
-		],
-		"quarters-format-narrow": [
-			"١",
-			"٢",
-			"٣",
-			"٤"
-		],
-		"quarters-format-wide": [
-			"الربع الأول",
-			"الربع الثاني",
-			"الربع الثالث",
-			"الربع الرابع"
-		],
-		"quarters-standAlone-abbreviated": [
-			"الربع الأول",
-			"الربع الثاني",
-			"الربع الثالث",
-			"الربع الرابع"
-		],
-		"quarters-standAlone-narrow": [
-			"١",
-			"٢",
-			"٣",
-			"٤"
-		],
-		"quarters-standAlone-wide": [
-			"الربع الأول",
-			"الربع الثاني",
-			"الربع الثالث",
-			"الربع الرابع"
-		],
-		"dayPeriods-format-abbreviated": [
-			"ص",
-			"م"
-		],
-		"dayPeriods-format-narrow": [
-			"ص",
-			"م"
-		],
-		"dayPeriods-format-wide": [
-			"ص",
-			"م"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"ص",
-			"م"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"ص",
-			"م"
-		],
-		"dayPeriods-standAlone-wide": [
-			"صباحًا",
-			"مساءً"
-		],
+		"dateFormats": {
+			"full": "EEEE، d MMMM، y G",
+			"long": "d MMMM، y G",
+			"medium": "dd‏/MM‏/y G",
+			"short": "d‏/M‏/y GGGGG"
+		},
+		"timeFormats": {
+			"full": "h:mm:ss a zzzz",
+			"long": "h:mm:ss a z",
+			"medium": "h:mm:ss a",
+			"short": "h:mm a"
+		},
+		"dateTimeFormats": {
+			"full": "{1} {0}",
+			"long": "{1} {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E، d",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y G",
+				"GyMMM": "MMM y G",
+				"GyMMMd": "d MMM، y G",
+				"GyMMMEd": "E، d MMM، y G",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "L",
+				"Md": "d/‏M",
+				"MEd": "E، d/M",
+				"MMM": "LLL",
+				"MMMd": "d MMM",
+				"MMMEd": "E، d MMM",
+				"MMMMd": "MMMM d",
+				"ms": "mm:ss",
+				"y": "y G",
+				"yyyy": "y G",
+				"yyyyM": "M‏/y G",
+				"yyyyMd": "d‏/M‏/y G",
+				"yyyyMEd": "E، d/‏M/‏y G",
+				"yyyyMMM": "MMM، y G",
+				"yyyyMMMd": "d MMM، y G",
+				"yyyyMMMEd": "E، d MMM، y G",
+				"yyyyMMMM": "MMMM، y G",
+				"yyyyQQQ": "QQQ y G",
+				"yyyyQQQQ": "QQQQ y G"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} – {1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "M–M"
+				},
+				"Md": {
+					"d": "M/d – M/d",
+					"M": "M/d – M/d"
+				},
+				"MEd": {
+					"d": "E، d/‏M –‏ E، d/‏M",
+					"M": "E، d/‏M – E، d/‏M"
+				},
+				"MMM": {
+					"M": "MMM–MMM"
+				},
+				"MMMd": {
+					"d": "MMM d–d",
+					"M": "d MMM – d MMM"
+				},
+				"MMMEd": {
+					"d": "E، d – E، d MMM",
+					"M": "E، d MMM – E، d MMM"
+				},
+				"MMMM": {
+					"M": "LLLL–LLLL"
+				},
+				"y": {
+					"y": "y–y G"
+				},
+				"yM": {
+					"M": "M‏/y – M‏/y G",
+					"y": "M‏/y – M‏/y G"
+				},
+				"yMd": {
+					"d": "d‏/M‏/y – d‏/M‏/y G",
+					"M": "d‏/M‏/y – d‏/M‏/y G",
+					"y": "d‏/M‏/y – d‏/M‏/y G"
+				},
+				"yMEd": {
+					"d": "E، dd‏/MM‏/y – E، dd‏/MM‏/y G",
+					"M": "E، d‏/M‏/y – E، d‏/M‏/y G",
+					"y": "E، d‏/M‏/y – E، d‏/M‏/y G"
+				},
+				"yMMM": {
+					"M": "MMM – MMM، y G",
+					"y": "MMM، y – MMM، y G"
+				},
+				"yMMMd": {
+					"d": "d–d MMM، y G",
+					"M": "d MMM – d MMM، y G",
+					"y": "d MMM، y – d MMM، y G"
+				},
+				"yMMMEd": {
+					"d": "E، d – E، d MMM، y G",
+					"M": "E، d MMM – E، d MMM، y G",
+					"y": "E، d MMM، y – E، d MMM، y G"
+				},
+				"yMMMM": {
+					"M": "MMMM – MMMM، y G",
+					"y": "MMMM، y – MMMM، y G"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"يناير",
+					"فبراير",
+					"مارس",
+					"أبريل",
+					"مايو",
+					"يونيو",
+					"يوليو",
+					"أغسطس",
+					"سبتمبر",
+					"أكتوبر",
+					"نوفمبر",
+					"ديسمبر"
+				],
+				"narrow": [
+					"ي",
+					"ف",
+					"م",
+					"أ",
+					"و",
+					"ن",
+					"ل",
+					"غ",
+					"س",
+					"ك",
+					"ب",
+					"د"
+				],
+				"wide": [
+					"يناير",
+					"فبراير",
+					"مارس",
+					"أبريل",
+					"مايو",
+					"يونيو",
+					"يوليو",
+					"أغسطس",
+					"سبتمبر",
+					"أكتوبر",
+					"نوفمبر",
+					"ديسمبر"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"يناير",
+					"فبراير",
+					"مارس",
+					"أبريل",
+					"مايو",
+					"يونيو",
+					"يوليو",
+					"أغسطس",
+					"سبتمبر",
+					"أكتوبر",
+					"نوفمبر",
+					"ديسمبر"
+				],
+				"narrow": [
+					"ي",
+					"ف",
+					"م",
+					"أ",
+					"و",
+					"ن",
+					"ل",
+					"غ",
+					"س",
+					"ك",
+					"ب",
+					"د"
+				],
+				"wide": [
+					"يناير",
+					"فبراير",
+					"مارس",
+					"أبريل",
+					"مايو",
+					"يونيو",
+					"يوليو",
+					"أغسطس",
+					"سبتمبر",
+					"أكتوبر",
+					"نوفمبر",
+					"ديسمبر"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"الأحد",
+					"الاثنين",
+					"الثلاثاء",
+					"الأربعاء",
+					"الخميس",
+					"الجمعة",
+					"السبت"
+				],
+				"narrow": [
+					"ح",
+					"ن",
+					"ث",
+					"ر",
+					"خ",
+					"ج",
+					"س"
+				],
+				"short": [
+					"الأحد",
+					"الاثنين",
+					"الثلاثاء",
+					"الأربعاء",
+					"الخميس",
+					"الجمعة",
+					"السبت"
+				],
+				"wide": [
+					"الأحد",
+					"الاثنين",
+					"الثلاثاء",
+					"الأربعاء",
+					"الخميس",
+					"الجمعة",
+					"السبت"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"الأحد",
+					"الاثنين",
+					"الثلاثاء",
+					"الأربعاء",
+					"الخميس",
+					"الجمعة",
+					"السبت"
+				],
+				"narrow": [
+					"ح",
+					"ن",
+					"ث",
+					"ر",
+					"خ",
+					"ج",
+					"س"
+				],
+				"short": [
+					"الأحد",
+					"الاثنين",
+					"الثلاثاء",
+					"الأربعاء",
+					"الخميس",
+					"الجمعة",
+					"السبت"
+				],
+				"wide": [
+					"الأحد",
+					"الاثنين",
+					"الثلاثاء",
+					"الأربعاء",
+					"الخميس",
+					"الجمعة",
+					"السبت"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"الربع الأول",
+					"الربع الثاني",
+					"الربع الثالث",
+					"الربع الرابع"
+				],
+				"narrow": [
+					"١",
+					"٢",
+					"٣",
+					"٤"
+				],
+				"wide": [
+					"الربع الأول",
+					"الربع الثاني",
+					"الربع الثالث",
+					"الربع الرابع"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"الربع الأول",
+					"الربع الثاني",
+					"الربع الثالث",
+					"الربع الرابع"
+				],
+				"narrow": [
+					"١",
+					"٢",
+					"٣",
+					"٤"
+				],
+				"wide": [
+					"الربع الأول",
+					"الربع الثاني",
+					"الربع الثالث",
+					"الربع الرابع"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"ص",
+					"م"
+				],
+				"narrow": [
+					"ص",
+					"م"
+				],
+				"wide": [
+					"ص",
+					"م"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ص",
+					"م"
+				],
+				"narrow": [
+					"ص",
+					"م"
+				],
+				"wide": [
+					"صباحًا",
+					"مساءً"
+				]
+			}
+		},
 		"era-wide": {
 			"232": "ميجي",
 			"233": "تيشو",
@@ -2010,54 +2409,165 @@
 			"235": "H"
 		}
 	},
-	"dateField-year-displayName": "السنة",
-	"dateField-year-relative--1": "السنة الماضية",
-	"dateField-year-relative-0": "السنة الحالية",
-	"dateField-year-relative-1": "السنة التالية",
-	"dateField-year-relative-future-one": "خلال سنة واحدة",
-	"dateField-year-relative-future-other": "خلال {0} سنة",
-	"dateField-year-relative-past-one": "قبل سنة واحدة",
-	"dateField-year-relative-past-other": "قبل {0} سنة",
-	"dateField-month-displayName": "الشهر",
-	"dateField-month-relative--1": "الشهر الماضي",
-	"dateField-month-relative-0": "هذا الشهر",
-	"dateField-month-relative-1": "الشهر التالي",
-	"dateField-month-relative-future-one": "خلال شهر واحد",
-	"dateField-month-relative-future-other": "خلال {0} شهر",
-	"dateField-month-relative-past-one": "قبل شهر واحد",
-	"dateField-month-relative-past-other": "قبل {0} شهر",
-	"dateField-week-displayName": "الأسبوع",
-	"dateField-week-relative--1": "الأسبوع الماضي",
-	"dateField-week-relative-0": "هذا الأسبوع",
-	"dateField-week-relative-1": "الأسبوع التالي",
-	"dateField-week-relative-future-one": "خلال أسبوع واحد",
-	"dateField-week-relative-future-other": "خلال {0} أسبوع",
-	"dateField-week-relative-past-one": "قبل أسبوع واحد",
-	"dateField-week-relative-past-other": "قبل {0} أسبوع",
-	"dateField-day-displayName": "يوم",
-	"dateField-day-relative--1": "أمس",
-	"dateField-day-relative-0": "اليوم",
-	"dateField-day-relative-1": "غدًا",
-	"dateField-day-relative-future-one": "خلال يوم واحد",
-	"dateField-day-relative-future-other": "خلال {0} يوم",
-	"dateField-day-relative-past-one": "قبل يوم واحد",
-	"dateField-day-relative-past-other": "قبل {0} يوم",
-	"dateField-hour-displayName": "الساعات",
-	"dateField-hour-relative-future-one": "خلال ساعة واحدة",
-	"dateField-hour-relative-future-other": "خلال {0} ساعة",
-	"dateField-hour-relative-past-one": "قبل ساعة واحدة",
-	"dateField-hour-relative-past-other": "قبل {0} ساعة",
-	"dateField-minute-displayName": "الدقائق",
-	"dateField-minute-relative-future-one": "خلال دقيقة واحدة",
-	"dateField-minute-relative-future-other": "خلال {0} دقيقة",
-	"dateField-minute-relative-past-one": "قبل دقيقة واحدة",
-	"dateField-minute-relative-past-other": "قبل {0} دقيقة",
-	"dateField-second-displayName": "الثواني",
-	"dateField-second-relative-0": "الآن",
-	"dateField-second-relative-future-one": "خلال ثانية واحدة",
-	"dateField-second-relative-future-other": "خلال {0} ثانية",
-	"dateField-second-relative-past-one": "قبل ثانية واحدة",
-	"dateField-second-relative-past-other": "قبل {0} ثانية",
+	"dateFields": {
+		"era": {
+			"displayName": "العصر"
+		},
+		"year": {
+			"displayName": "السنة",
+			"relative-type--1": "السنة الماضية",
+			"relative-type-0": "السنة الحالية",
+			"relative-type-1": "السنة التالية",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} سنة",
+				"relativeTimePattern-count-one": "خلال سنة واحدة",
+				"relativeTimePattern-count-two": "خلال سنتين",
+				"relativeTimePattern-count-few": "خلال {0} سنوات",
+				"relativeTimePattern-count-many": "خلال {0} سنة",
+				"relativeTimePattern-count-other": "خلال {0} سنة"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} سنة",
+				"relativeTimePattern-count-one": "قبل سنة واحدة",
+				"relativeTimePattern-count-two": "قبل سنتين",
+				"relativeTimePattern-count-few": "قبل {0} سنوات",
+				"relativeTimePattern-count-many": "قبل {0} سنة",
+				"relativeTimePattern-count-other": "قبل {0} سنة"
+			}
+		},
+		"month": {
+			"displayName": "الشهر",
+			"relative-type--1": "الشهر الماضي",
+			"relative-type-0": "هذا الشهر",
+			"relative-type-1": "الشهر التالي",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} شهر",
+				"relativeTimePattern-count-one": "خلال شهر واحد",
+				"relativeTimePattern-count-two": "خلال شهرين",
+				"relativeTimePattern-count-few": "خلال {0} أشهر",
+				"relativeTimePattern-count-many": "خلال {0} شهرًا",
+				"relativeTimePattern-count-other": "خلال {0} شهر"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} شهر",
+				"relativeTimePattern-count-one": "قبل شهر واحد",
+				"relativeTimePattern-count-two": "قبل شهرين",
+				"relativeTimePattern-count-few": "قبل {0} أشهر",
+				"relativeTimePattern-count-many": "قبل {0} شهرًا",
+				"relativeTimePattern-count-other": "قبل {0} شهر"
+			}
+		},
+		"week": {
+			"displayName": "الأسبوع",
+			"relative-type--1": "الأسبوع الماضي",
+			"relative-type-0": "هذا الأسبوع",
+			"relative-type-1": "الأسبوع التالي",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} أسبوع",
+				"relativeTimePattern-count-one": "خلال أسبوع واحد",
+				"relativeTimePattern-count-two": "خلال أسبوعين",
+				"relativeTimePattern-count-few": "خلال {0} أسابيع",
+				"relativeTimePattern-count-many": "خلال {0} أسبوعًا",
+				"relativeTimePattern-count-other": "خلال {0} أسبوع"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} أسبوع",
+				"relativeTimePattern-count-one": "قبل أسبوع واحد",
+				"relativeTimePattern-count-two": "قبل أسبوعين",
+				"relativeTimePattern-count-few": "قبل {0} أسابيع",
+				"relativeTimePattern-count-many": "قبل {0} أسبوعًا",
+				"relativeTimePattern-count-other": "قبل {0} أسبوع"
+			}
+		},
+		"day": {
+			"displayName": "يوم",
+			"relative-type--2": "أول أمس",
+			"relative-type--1": "أمس",
+			"relative-type-0": "اليوم",
+			"relative-type-1": "غدًا",
+			"relative-type-2": "بعد الغد",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} يوم",
+				"relativeTimePattern-count-one": "خلال يوم واحد",
+				"relativeTimePattern-count-two": "خلال يومين",
+				"relativeTimePattern-count-few": "خلال {0} أيام",
+				"relativeTimePattern-count-many": "خلال {0} يومًا",
+				"relativeTimePattern-count-other": "خلال {0} يوم"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} يوم",
+				"relativeTimePattern-count-one": "قبل يوم واحد",
+				"relativeTimePattern-count-two": "قبل يومين",
+				"relativeTimePattern-count-few": "قبل {0} أيام",
+				"relativeTimePattern-count-many": "قبل {0} يومًا",
+				"relativeTimePattern-count-other": "قبل {0} يوم"
+			}
+		},
+		"weekday": {
+			"displayName": "اليوم"
+		},
+		"hour": {
+			"displayName": "الساعات",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} ساعة",
+				"relativeTimePattern-count-one": "خلال ساعة واحدة",
+				"relativeTimePattern-count-two": "خلال ساعتين",
+				"relativeTimePattern-count-few": "خلال {0} ساعات",
+				"relativeTimePattern-count-many": "خلال {0} ساعة",
+				"relativeTimePattern-count-other": "خلال {0} ساعة"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} ساعة",
+				"relativeTimePattern-count-one": "قبل ساعة واحدة",
+				"relativeTimePattern-count-two": "قبل ساعتين",
+				"relativeTimePattern-count-few": "قبل {0} ساعات",
+				"relativeTimePattern-count-many": "قبل {0} ساعة",
+				"relativeTimePattern-count-other": "قبل {0} ساعة"
+			}
+		},
+		"minute": {
+			"displayName": "الدقائق",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} دقيقة",
+				"relativeTimePattern-count-one": "خلال دقيقة واحدة",
+				"relativeTimePattern-count-two": "خلال دقيقتين",
+				"relativeTimePattern-count-few": "خلال {0} دقائق",
+				"relativeTimePattern-count-many": "خلال {0} دقيقة",
+				"relativeTimePattern-count-other": "خلال {0} دقيقة"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} دقيقة",
+				"relativeTimePattern-count-one": "قبل دقيقة واحدة",
+				"relativeTimePattern-count-two": "قبل دقيقتين",
+				"relativeTimePattern-count-few": "قبل {0} دقائق",
+				"relativeTimePattern-count-many": "قبل {0} دقيقة",
+				"relativeTimePattern-count-other": "قبل {0} دقيقة"
+			}
+		},
+		"second": {
+			"displayName": "الثواني",
+			"relative-type-0": "الآن",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} ثانية",
+				"relativeTimePattern-count-one": "خلال ثانية واحدة",
+				"relativeTimePattern-count-two": "خلال ثانيتين",
+				"relativeTimePattern-count-few": "خلال {0} ثوانِ",
+				"relativeTimePattern-count-many": "خلال {0} ثانية",
+				"relativeTimePattern-count-other": "خلال {0} ثانية"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} ثانية",
+				"relativeTimePattern-count-one": "قبل ثانية واحدة",
+				"relativeTimePattern-count-two": "قبل ثانيتين",
+				"relativeTimePattern-count-few": "قبل {0} ثوانِ",
+				"relativeTimePattern-count-many": "قبل {0} ثانية",
+				"relativeTimePattern-count-other": "قبل {0} ثانية"
+			}
+		},
+		"zone": {
+			"displayName": "التوقيت"
+		}
+	},
 	"decimalFormat": {
 		"standard": "#,##0.###"
 	},
@@ -2352,6 +2862,10 @@
 	"weekData-firstDay": 6,
 	"weekData-weekendStart": 5,
 	"weekData-weekendEnd": 6,
+	"timeData": {
+		"_allowed": "H h",
+		"_preferred": "h"
+	},
 	"eras-gregorian": {
 		"0": {
 			"_end": "0-12-31"

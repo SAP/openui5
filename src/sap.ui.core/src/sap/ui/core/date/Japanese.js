@@ -14,6 +14,11 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 	 * @class
 	 * The Japanese date adds support for era, by returning the CLDR era type in the getEra method and calculating
 	 * the year dependent on the current era.
+	 * 
+	 * For the constructor and the UTC method, for the year parameter the following rules apply:
+	 * - A year less than 100 will be treated as year of the current emperor era
+	 * - A year equal or more than 100 will be treated as a gregorian year
+	 * - An array with two entries will be treated as era and emperor year
 	 *
 	 * @private
 	 * @alias sap.ui.core.date.Japanese
@@ -77,17 +82,32 @@ sap.ui.define(['jquery.sap.global', './UniversalDate'],
 	 * @return {int}
 	 */
 	function toGregorianArguments(aArgs) {
-		var aGregorianArgs = Array.prototype.slice.call(aArgs, 1),
-			oJapanese, oGregorian;
+		var oJapanese, oGregorian,
+			iEra,
+			vYear = aArgs[0];
+		if (typeof vYear == "number") {
+			if (vYear >= 100) {
+				// Year greater than 100 will be treated as gregorian year
+				return aArgs;
+			} else {
+				// Year less than 100 is emperor year in the current era
+				iEra = UniversalDate.getCurrentEra(sap.ui.core.CalendarType.Japanese);
+				vYear = [iEra, vYear];
+			}
+		} else if (!jQuery.isArray(vYear)) {
+			// Invalid year
+			vYear = [];
+		}
+		
 		oJapanese = {
-			era: aArgs[0],
-			year: aArgs[1],
-			month: aArgs[2],
-			day: aArgs[3] !== undefined ? aArgs[3] : 1
+			era: vYear[0],
+			year: vYear[1],
+			month: aArgs[1],
+			day: aArgs[2] !== undefined ? aArgs[2] : 1
 		};
 		oGregorian = toGregorian(oJapanese);
-		aGregorianArgs[0] = oGregorian.year;
-		return aGregorianArgs;
+		aArgs[0] = oGregorian.year;
+		return aArgs;
 	}
 		
 	/**

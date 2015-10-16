@@ -119,7 +119,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				/**
 				 * Internal aggregation to hold the inner picker popup.
 				 */
-				picker: { type : "sap.ui.core.Control", multiple: false, visibility: "hidden" }
+				picker: { type : "sap.ui.core.PopupInterface", multiple: false, visibility: "hidden" }
 			},
 			associations: {
 
@@ -600,7 +600,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 
 			// initialize Dialog
 			var oDialog = new Dialog({
-				stretchOnPhone: true,
+				stretch: true,
 				customHeader: new Bar({
 					contentLeft: new InputBase({
 						width: "100%",

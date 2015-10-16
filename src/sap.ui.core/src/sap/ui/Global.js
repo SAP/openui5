@@ -86,7 +86,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	 * @param {string|object} [mOptions] name of the library (e.g. "sap.ui.core") or a object map (see below)
 	 * @param {boolean} [mOptions.library] name of the library (e.g. "sap.ui.core")
 	 * @param {boolean} [mOptions.async=false] whether "sap-ui-version.json" should be loaded asynchronously
-	 * @param {boolean} [mOptions.failOnError=true] whether to propagate load errors or not
+	 * @param {boolean} [mOptions.failOnError=true] whether to propagate load errors or not (not relevant for async loading)
 	 * @return {object|undefined|Promise} the full version info, the library specific one,
 	 *                                    undefined (if library is not listed or there was an error and "failOnError" is set to "false")
 	 *                                    or a Promise which resolves with one of them
@@ -154,7 +154,9 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 
 			var vReturn = jQuery.sap.loadResource("sap-ui-version.json", {
 				async: mOptions.async,
-				failOnError: mOptions.failOnError
+
+				// "failOnError" only applies for sync mode, async should always fail (reject)
+				failOnError: mOptions.async || mOptions.failOnError
 			});
 
 			if (vReturn instanceof Promise) {

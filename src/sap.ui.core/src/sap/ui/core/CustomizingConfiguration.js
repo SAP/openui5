@@ -34,9 +34,17 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 				// should be available properly
 				var oComponent = sap.ui.component(sComponentId);
 				var sComponentName = oComponent && oComponent.getMetadata().getComponentName();
-				var oConfig = mComponentConfigs[sComponentName];
+				// starting with manifest first we need to check the instance
+				// specific configuration first and fallback to the general 
+				// customizing configuration of the component
+				var oConfig = mComponentConfigs[sComponentName + "::" + sComponentId];
 				if (oConfig && oConfig[sType] && fnCheck(oConfig[sType])) {
 					return false;
+				} else {
+					oConfig = mComponentConfigs[sComponentName];
+					if (oConfig && oConfig[sType] && fnCheck(oConfig[sType])) {
+						return false;
+					}
 				}
 			} else {
 				// TODO: checking order of components?
@@ -100,7 +108,34 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 				jQuery.sap.log.info("CustomizingConfiguration: deactivateForComponent('" + sComponentName + "')");
 				delete mComponentConfigs[sComponentName];
 			},
-	
+			
+			/**
+			 * Activates the customizing of a component instance by registering the component
+			 * configuration in the central customizing configuration.
+			 * @param {sap.ui.core.Component} oComponent the component instance
+			 * @private
+			 */
+			activateForComponentInstance: function(oComponent) {
+				jQuery.sap.log.info("CustomizingConfiguration: activateForComponentInstance('" + oComponent.getId() + "')");
+				var sComponentName = oComponent.getMetadata().getComponentName();
+				var oCustomizingConfig = oComponent.getManifest()["sap.ui5"] && oComponent.getManifest()["sap.ui5"]["extends"] && oComponent.getManifest()["sap.ui5"]["extends"]["extensions"];
+				mComponentConfigs[sComponentName + "::" + oComponent.getId()] = oCustomizingConfig;
+				
+				jQuery.sap.log.debug("CustomizingConfiguration: customizing configuration for component '" + oComponent.getId() + "' loaded: " + JSON.stringify(oCustomizingConfig));
+			},
+			
+			/**
+			 * Deactivates the customizing of a component instance by removing the component
+			 * configuration in the central customizing configuration.
+			 * @param {sap.ui.core.Component} oComponent the component instance
+			 * @private
+			 */
+			deactivateForComponentInstance: function(oComponent) {
+				jQuery.sap.log.info("CustomizingConfiguration: deactivateForComponent('" + oComponent.getId() + "')");
+				var sComponentName = oComponent.getMetadata().getComponentName();
+				delete mComponentConfigs[sComponentName + "::" + oComponent.getId()];
+			},
+			
 			/**
 			 * returns the configuration of the replacement View or undefined
 			 * @private

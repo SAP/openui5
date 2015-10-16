@@ -410,7 +410,16 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './U
 	 */
 	UIComponent.prototype.createContent = function() {
 		var oRootView = this.getMetadata().getRootView();
-		if (oRootView) {
+		if (oRootView && typeof oRootView === "string") {
+			// This is a duplication of the logic in UIComponentMetadata#_convertLegacyMetadata
+			// to convert the string into a configuration object for the view factory in
+			// case of the manifest first approach.
+			// !This should be kept in sync with the UIComponentMetadata functionality!
+			return sap.ui.view({
+				viewName: oRootView,
+				type: sap.ui.core.mvc.ViewType.XML
+			});
+		} else if (oRootView) {
 			return sap.ui.view(oRootView);
 		}
 		return null;

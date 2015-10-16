@@ -2,7 +2,6 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:control="control"
 	xmlns:h="http://www.w3.org/1999/xhtml">
 	<Page
 		id="page"
@@ -52,14 +51,11 @@
 				<items>
 					<ObjectListItem
 						type="{device>/listItemType}"
-						icon="{
-							path : 'PictureUrl',
-							formatter: 'util.Formatter.pictureUrl'
-						}"
+						icon="{PictureUrl}"
 						title="{Name}"
 						number="{
 							path : 'Price',
-							formatter : 'util.Formatter.price'
+							formatter : '.formatter.price'
 						}"
 						numberUnit="EUR"
 						press="handleProductListItemPress"
@@ -71,11 +67,11 @@
 							<ObjectStatus
 								text="{
 									path : 'status', 
-									formatter : 'util.Formatter.statusText'
+									formatter : '.formatter.statusText'
 								}"
 								state="{
 									path : 'status',
-									formatter : 'util.Formatter.statusState'
+									formatter : '.formatter.statusState'
 								}" />
 						</firstStatus>
 					</ObjectListItem>

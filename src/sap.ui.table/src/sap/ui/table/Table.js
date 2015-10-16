@@ -577,7 +577,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype.init = function() {
-
+		this._iBaseFontSize = parseFloat(jQuery("body").css("font-size")) || 16;
 		// create an information object which contains always required infos
 		this._oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.table");
 		this._bAccMode = sap.ui.getCore().getConfiguration().getAccessibility();
@@ -704,7 +704,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype.onAfterRendering = function() {
-
 		this._bOnAfterRendering = true;
 
 		var $this = this.$();
@@ -2234,23 +2233,43 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			iEndColumn = aCols.length;
 		}
 
-		var iBaseFontSize = parseFloat(jQuery("body").css("font-size"));
 		for (var i = iStartColumn, l = iEndColumn; i < l; i++) {
 			if (aCols[i] && aCols[i].shouldRender()) {
-				var sWidth = aCols[i].getWidth();
-				if (jQuery.sap.endsWith(sWidth, "px")) {
-					iColsWidth += parseInt(sWidth, 10);
-				} else if (jQuery.sap.endsWith(sWidth, "em") || jQuery.sap.endsWith(sWidth, "rem")) {
-					iColsWidth += parseInt(sWidth, 10) * iBaseFontSize;
-				} else {
-					// for unknown width we use the min width
-					iColsWidth += this._iColMinWidth;
-				}
+				iColsWidth += this._CSSSizeToPixel(aCols[i].getWidth());
 			}
 		}
 
 		return iColsWidth;
 
+	};
+
+	/**
+	 * Calculates the pixel value from a given CSS size and returns it with or without unit.
+	 * @param sCSSSize
+	 * @param bReturnWithUnit
+	 * @returns {string|number} Converted CSS value in pixel
+	 * @private
+	 */
+	Table.prototype._CSSSizeToPixel = function(sCSSSize, bReturnWithUnit) {
+		var sPixelValue = this._iColMinWidth;
+
+		if (sCSSSize) {
+			if (jQuery.sap.endsWith(sCSSSize, "px")) {
+				sPixelValue = parseInt(sCSSSize, 10);
+			} else if (jQuery.sap.endsWith(sCSSSize, "em") || jQuery.sap.endsWith(sCSSSize, "rem")) {
+				sPixelValue = Math.ceil(parseFloat(sCSSSize) * this._getBaseFontSize());
+			}
+		}
+
+		if (bReturnWithUnit) {
+			return sPixelValue + "px";
+		} else {
+			return parseInt(sPixelValue, 10);
+		}
+	};
+
+	Table.prototype._getBaseFontSize = function() {
+		return this._iBaseFontSize;
 	};
 
 	/**
@@ -2365,8 +2384,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * @private
 	 */
 	Table.prototype._syncColumnHeaders = function(bUpdateResizeHandlers) {
+		var oDomRef = this.getDomRef();
+		if (!oDomRef) {
+			// _syncColumnHeaders gets called async, there might be no DomRef anymore
+			return;
+		}
 		var $this = this.$();
-		var oRectTable = this.getDomRef().getBoundingClientRect();
+		var oRectTable = oDomRef.getBoundingClientRect();
 		var iTableWidth = oRectTable.right - oRectTable.left;
 		var aVisibleColumns = this._getVisibleColumns();
 		if (aVisibleColumns.length == 0) {
@@ -3859,17 +3883,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				}
 				//if iColumnIndex is defined we already found our column and all other columns are right of that one
 				if (iColumnIndex != undefined) {
-					iRightWidth += parseInt(oCurrentColumn.getWidth(),10);
+					iRightWidth += this._CSSSizeToPixel(oCurrentColumn.getWidth());
 					iRightColumns++;
 				} else if (oColumn !== oCurrentColumn) {
-					iLeftWidth += parseInt(oCurrentColumn.getWidth(),10);
+					iLeftWidth += this._CSSSizeToPixel(oCurrentColumn.getWidth());
 				}
 				if (oColumn === oCurrentColumn) {
 					iColumnIndex = iIndex;
 					//Use new width of column
-					iLeftWidth += parseInt(sWidth,10);
+					iLeftWidth += this._CSSSizeToPixel(sWidth);
 				}
-			});
+			}.bind(this));
 			//If there are non fixed columns we don't do this
 			if (iNonFixedColumns > 0 || (iLeftWidth + iRightWidth > iAvailableSpace)) {
 				return;
@@ -3879,7 +3903,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			for (var i = iColumnIndex + 1; i < aVisibleColumns.length; i++) {
 				//Calculate new column width based on previous percentage width
 				var oColumn = aVisibleColumns[i],
-					iColWidth = parseInt(oColumn.getWidth(),10),
+					iColWidth = this._CSSSizeToPixel(oColumn.getWidth()),
 					iPercent = iColWidth / iRightWidth * 100,
 					iNewWidth = iAvailableSpace / 100 * iPercent;
 				this._updateColumnWidth(oColumn, Math.round(iNewWidth) + 'px');

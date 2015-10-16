@@ -606,9 +606,12 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				this._oFileUploader.setEnabled(false);
 			}
 		}
+		if (this.sDeletedItemId){
+			jQuery(document.activeElement).blur();
+		}
 
-		// This function checks if instantUpload needs to be set. In case properties like fileType are set by the
-		// model instead of constructor the setting happens later and is still valid. To support this as well, we
+		// This function checks if instantUpload needs to be set. In case of the properties like fileType are set by the
+		// model instead of the constructor, the setting happens later and is still valid. To support this as well, you
 		// need to wait for modification until the first rendering.
 		function checkInstantUpload () {
 			if (this.bInstantUpload === false) {
@@ -632,6 +635,11 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				for (i = 2; i < iToolbarElements - 1; i++) {
 					this.oHeaderToolbar.getContent()[i].$().hide();
 				}
+			}
+			if (this.sFocusId) {
+				//set focus after removal of file from upload list
+				sap.m.UploadCollection.prototype._setFocus2LineItem(this.sFocusId);
+				this.sFocusId = null;
 			}
 			return;
 		}
@@ -666,7 +674,6 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			} else if (this.sDeletedItemId) {
 				//set focus on line item after an item was deleted
 				sap.m.UploadCollection.prototype._setFocusAfterDeletion(this.sDeletedItemId, that);
-				this.sDeletedItemId = null;
 			}
 		}
 	};
@@ -685,9 +692,13 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			this._oFileUploader.destroy();
 			this._oFileUploader = null;
 		}
-		if (this.oFileName) {
-			this.oFileName.destroy();
-			this.oFileName = null;
+		if (this.oHeaderToolbar) {
+			this.oHeaderToolbar.destroy();
+			this.oHeaderToolbar = null;
+		}
+		if (this.oNumberOfAttachmentsLabel) {
+			this.oNumberOfAttachmentsLabel.destroy();
+			this.oNumberOfAttachmentsLabel = null;
 		}
 		if (this._RenderManager) {
 			this._RenderManager.destroy();
@@ -1260,7 +1271,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			}
 		}
 
-		if (!!aItems[index]) {
+		if (!!aItems[index] && aItems[index].getEnableDelete()) {
 			// popup delete file
 			sFileName =  aItems[index].getFileName();
 			if (!sFileName) {
@@ -1297,6 +1308,15 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 					item : this._oItemForDelete
 				});
 			} else {
+				if (this.aItems.length === 1) {
+					this.sFocusId = this._oFileUploader.$().find(":button")[0].id;
+				} else {
+					if (this._oItemForDelete._iLineNumber < this.aItems.length - 1) {
+						this.sFocusId = this.aItems[this._oItemForDelete._iLineNumber + 1].getId() + "-cli";
+					} else {
+						this.sFocusId = this.aItems[0].getId() + "-cli";
+					}
+				}
 				this._aDeletedItemForPendingUpload.push(this._oItemForDelete);
 				this.aItems.splice(this._oItemForDelete._iLineNumber, 1);
 				this.removeAggregation("items", this._oItemForDelete, false);
@@ -1447,7 +1467,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 		//prepare the Id of the UI element which will get the focus
 		var aSrcIdElements = oEvent.srcControl ? oEvent.srcControl.getId().split("-") : oEvent.oSource.getId().split("-");
-		aSrcIdElements = aSrcIdElements.slice(0, 3);
+		aSrcIdElements = aSrcIdElements.slice(0, 5);
 		oContext.sFocusId = aSrcIdElements.join("-") + "-cli";
 
 		if ( sNewFileName && (sNewFileName.length > 0)) {
@@ -2211,6 +2231,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 				sLineId = oContext.aItems.pop().sId + "-cli";
 			}
 			sap.m.UploadCollection.prototype._setFocus2LineItem(sLineId);
+			this.sDeletedItemId = null;
 		}
 	};
 
@@ -2221,12 +2242,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @private
 	 */
 	UploadCollection.prototype._setFocus2LineItem = function(sFocusId) {
-
-		if (!sFocusId) {
-			return;
-		}
-		var $oObj = jQuery.sap.byId(sFocusId);
-		jQuery.sap.focus($oObj);
+		jQuery.sap.byId(sFocusId).focus();
 	};
 
 	/**

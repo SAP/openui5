@@ -68,6 +68,9 @@ function(jQuery, ManagedObject) {
 			aggregations : {
 				layout : {
 					ignore : true
+				},
+				dependents : {
+					ignore : true
 				}
 			}
 		}, oData);

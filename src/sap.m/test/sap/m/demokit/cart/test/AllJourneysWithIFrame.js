@@ -5,6 +5,9 @@ jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 jQuery.sap.require("sap.ui.thirdparty.sinon");
 jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
+/*
+ global QUnit
+ */
 QUnit.config.autostart = false;
 
 sap.ui.require([
@@ -12,8 +15,10 @@ sap.ui.require([
 		'sap/ui/test/opaQunit',
 		'sap/ui/demo/cart/test/AllJourneysConfig'
 	], function (Opa5, opaTest, AllJourneysConfig) {
+		"use strict"
 
 		AllJourneysConfig.buyProductConfig();
+		AllJourneysConfig.deleteProductConfig();
 
 		sap.ui.require([
 				'sap/ui/demo/cart/test/BuyProductJourney',
@@ -21,9 +26,7 @@ sap.ui.require([
 			], function (BuyProductJourney, DeleteProductJourney) {
 
 
-
-				BuyProductJourney.start(
-					function (Given) {
+				BuyProductJourney.start(function (Given) {
 						Given.iStartMyAppInAFrame('../index.html?responderOn=true');
 					},
 					function (Then) {
@@ -47,3 +50,4 @@ sap.ui.require([
 
 	}
 );
+

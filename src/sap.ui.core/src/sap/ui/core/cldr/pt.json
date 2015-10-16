@@ -1139,281 +1139,418 @@
 	},
 	"orientation": "left-to-right",
 	"ca-gregorian": {
-		"dateFormat-full": "EEEE, d 'de' MMMM 'de' y",
-		"dateFormat-long": "d 'de' MMMM 'de' y",
-		"dateFormat-medium": "d 'de' MMM 'de' y",
-		"dateFormat-short": "dd/MM/yy",
-		"timeFormat-full": "HH:mm:ss zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} - {1}",
-		"intervalFormat-d-d": "d – d",
-		"intervalFormat-h-a": "h'h' a – h'h' a",
-		"intervalFormat-h-h": "h'h' - h'h' a",
-		"intervalFormat-H-H": "HH'h' - HH'h'",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm – h:mm a",
-		"intervalFormat-hm-m": "h:mm – h:mm a",
-		"intervalFormat-Hm-H": "HH:mm – HH:mm",
-		"intervalFormat-Hm-m": "HH:mm – HH:mm",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm – h:mm a v",
-		"intervalFormat-hmv-m": "h:mm – h:mm a v",
-		"intervalFormat-Hmv-H": "HH:mm – HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm – HH:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h – h a v",
-		"intervalFormat-Hv-H": "HH – HH v",
-		"intervalFormat-M-M": "M – M",
-		"intervalFormat-Md-d": "dd/MM – dd/MM",
-		"intervalFormat-Md-M": "dd/MM – dd/MM",
-		"intervalFormat-MEd-d": "E, dd/MM – E, dd/MM",
-		"intervalFormat-MEd-M": "E, dd/MM – E, dd/MM",
-		"intervalFormat-MMM-M": "MMM – MMM",
-		"intervalFormat-MMMd-d": "d – d 'de' MMM",
-		"intervalFormat-MMMd-M": "d 'de' MMM – d 'de' MMM",
-		"intervalFormat-MMMEd-d": "E, d – E, d 'de' MMM",
-		"intervalFormat-MMMEd-M": "E, d 'de' MMM – E, d 'de' MMM",
-		"intervalFormat-y-y": "y – y",
-		"intervalFormat-yM-M": "MM/y – MM/y",
-		"intervalFormat-yM-y": "MM/y – MM/y",
-		"intervalFormat-yMd-d": "dd/MM/y – dd/MM/y",
-		"intervalFormat-yMd-M": "dd/MM/y – dd/MM/y",
-		"intervalFormat-yMd-y": "dd/MM/y – dd/MM/y",
-		"intervalFormat-yMEd-d": "E, dd/MM/y – E, dd/MM/y",
-		"intervalFormat-yMEd-M": "E, dd/MM/y – E, dd/MM/y",
-		"intervalFormat-yMEd-y": "E, dd/MM/y – E, dd/MM/y",
-		"intervalFormat-yMMM-M": "MMM – MMM 'de' y",
-		"intervalFormat-yMMM-y": "MMM 'de' y – MMM 'de' y",
-		"intervalFormat-yMMMd-d": "d – d 'de' MMM 'de' y",
-		"intervalFormat-yMMMd-M": "d 'de' MMM – d 'de' MMM 'de' y",
-		"intervalFormat-yMMMd-y": "d 'de' MMM 'de' y – d 'de' MMM 'de' y",
-		"intervalFormat-yMMMEd-d": "E, d – E, d 'de' MMM 'de' y",
-		"intervalFormat-yMMMEd-M": "E, d 'de' MMM – E, d 'de' MMM 'de' y",
-		"intervalFormat-yMMMEd-y": "E, d 'de' MMM 'de' y – E, d 'de' MMM 'de' y",
-		"intervalFormat-yMMMM-M": "MMMM – MMMM 'de' y",
-		"intervalFormat-yMMMM-y": "MMMM 'de' y – MMMM 'de' y",
-		"months-format-abbreviated": [
-			"jan",
-			"fev",
-			"mar",
-			"abr",
-			"mai",
-			"jun",
-			"jul",
-			"ago",
-			"set",
-			"out",
-			"nov",
-			"dez"
-		],
-		"months-format-narrow": [
-			"J",
-			"F",
-			"M",
-			"A",
-			"M",
-			"J",
-			"J",
-			"A",
-			"S",
-			"O",
-			"N",
-			"D"
-		],
-		"months-format-wide": [
-			"janeiro",
-			"fevereiro",
-			"março",
-			"abril",
-			"maio",
-			"junho",
-			"julho",
-			"agosto",
-			"setembro",
-			"outubro",
-			"novembro",
-			"dezembro"
-		],
-		"months-standAlone-abbreviated": [
-			"jan",
-			"fev",
-			"mar",
-			"abr",
-			"mai",
-			"jun",
-			"jul",
-			"ago",
-			"set",
-			"out",
-			"nov",
-			"dez"
-		],
-		"months-standAlone-narrow": [
-			"J",
-			"F",
-			"M",
-			"A",
-			"M",
-			"J",
-			"J",
-			"A",
-			"S",
-			"O",
-			"N",
-			"D"
-		],
-		"months-standAlone-wide": [
-			"janeiro",
-			"fevereiro",
-			"março",
-			"abril",
-			"maio",
-			"junho",
-			"julho",
-			"agosto",
-			"setembro",
-			"outubro",
-			"novembro",
-			"dezembro"
-		],
-		"days-format-abbreviated": [
-			"dom",
-			"seg",
-			"ter",
-			"qua",
-			"qui",
-			"sex",
-			"sáb"
-		],
-		"days-format-narrow": [
-			"D",
-			"S",
-			"T",
-			"Q",
-			"Q",
-			"S",
-			"S"
-		],
-		"days-format-short": [
-			"dom",
-			"seg",
-			"ter",
-			"qua",
-			"qui",
-			"sex",
-			"sáb"
-		],
-		"days-format-wide": [
-			"domingo",
-			"segunda-feira",
-			"terça-feira",
-			"quarta-feira",
-			"quinta-feira",
-			"sexta-feira",
-			"sábado"
-		],
-		"days-standAlone-abbreviated": [
-			"dom",
-			"seg",
-			"ter",
-			"qua",
-			"qui",
-			"sex",
-			"sáb"
-		],
-		"days-standAlone-narrow": [
-			"D",
-			"S",
-			"T",
-			"Q",
-			"Q",
-			"S",
-			"S"
-		],
-		"days-standAlone-short": [
-			"dom",
-			"seg",
-			"ter",
-			"qua",
-			"qui",
-			"sex",
-			"sáb"
-		],
-		"days-standAlone-wide": [
-			"domingo",
-			"segunda-feira",
-			"terça-feira",
-			"quarta-feira",
-			"quinta-feira",
-			"sexta-feira",
-			"sábado"
-		],
-		"quarters-format-abbreviated": [
-			"T1",
-			"T2",
-			"T3",
-			"T4"
-		],
-		"quarters-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-format-wide": [
-			"1º trimestre",
-			"2º trimestre",
-			"3º trimestre",
-			"4º trimestre"
-		],
-		"quarters-standAlone-abbreviated": [
-			"T1",
-			"T2",
-			"T3",
-			"T4"
-		],
-		"quarters-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-standAlone-wide": [
-			"1º trimestre",
-			"2º trimestre",
-			"3º trimestre",
-			"4º trimestre"
-		],
-		"dayPeriods-format-abbreviated": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-format-narrow": [
-			"a",
-			"p"
-		],
-		"dayPeriods-format-wide": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-wide": [
-			"AM",
-			"PM"
-		],
+		"dateFormats": {
+			"full": "EEEE, d 'de' MMMM 'de' y",
+			"long": "d 'de' MMMM 'de' y",
+			"medium": "d 'de' MMM 'de' y",
+			"short": "dd/MM/yy"
+		},
+		"timeFormats": {
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1} {0}",
+			"long": "{1} {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E, d",
+				"Ehm": "E, h:mm a",
+				"EHm": "E, HH:mm",
+				"Ehms": "E, h:mm:ss a",
+				"EHms": "E, HH:mm:ss",
+				"Gy": "y G",
+				"GyMMM": "MMM 'de' y G",
+				"GyMMMd": "d 'de' MMM 'de' y G",
+				"GyMMMEd": "E, d 'de' MMM 'de' y G",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"hmsv": "h:mm:ss a v",
+				"Hmsv": "HH:mm:ss v",
+				"hmv": "h:mm a v",
+				"Hmv": "HH:mm v",
+				"M": "L",
+				"Md": "d/M",
+				"MEd": "E, dd/MM",
+				"MMdd": "dd/MM",
+				"MMM": "LLL",
+				"MMMd": "d 'de' MMM",
+				"MMMEd": "E, d 'de' MMM",
+				"MMMMd": "d 'de' MMMM",
+				"MMMMEd": "E, d 'de' MMMM",
+				"ms": "mm:ss",
+				"y": "y",
+				"yM": "MM/y",
+				"yMd": "dd/MM/y",
+				"yMEd": "E, dd/MM/y",
+				"yMM": "MM/y",
+				"yMMM": "MMM 'de' y",
+				"yMMMd": "d 'de' MMM 'de' y",
+				"yMMMEd": "E, d 'de' MMM 'de' y",
+				"yMMMM": "MMMM 'de' y",
+				"yMMMMd": "d 'de' MMMM 'de' y",
+				"yMMMMEd": "E, d 'de' MMMM 'de' y",
+				"yQQQ": "y QQQ",
+				"yQQQQ": "y QQQQ"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} - {1}",
+				"d": {
+					"d": "d – d"
+				},
+				"h": {
+					"a": "h'h' a – h'h' a",
+					"h": "h'h' - h'h' a"
+				},
+				"H": {
+					"H": "HH'h' - HH'h'"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm – h:mm a",
+					"m": "h:mm – h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm – HH:mm",
+					"m": "HH:mm – HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm – h:mm a v",
+					"m": "h:mm – h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm – HH:mm v",
+					"m": "HH:mm – HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h – h a v"
+				},
+				"Hv": {
+					"H": "HH – HH v"
+				},
+				"M": {
+					"M": "M – M"
+				},
+				"Md": {
+					"d": "dd/MM – dd/MM",
+					"M": "dd/MM – dd/MM"
+				},
+				"MEd": {
+					"d": "E, dd/MM – E, dd/MM",
+					"M": "E, dd/MM – E, dd/MM"
+				},
+				"MMM": {
+					"M": "MMM – MMM"
+				},
+				"MMMd": {
+					"d": "d – d 'de' MMM",
+					"M": "d 'de' MMM – d 'de' MMM"
+				},
+				"MMMEd": {
+					"d": "E, d – E, d 'de' MMM",
+					"M": "E, d 'de' MMM – E, d 'de' MMM"
+				},
+				"y": {
+					"y": "y – y"
+				},
+				"yM": {
+					"M": "MM/y – MM/y",
+					"y": "MM/y – MM/y"
+				},
+				"yMd": {
+					"d": "dd/MM/y – dd/MM/y",
+					"M": "dd/MM/y – dd/MM/y",
+					"y": "dd/MM/y – dd/MM/y"
+				},
+				"yMEd": {
+					"d": "E, dd/MM/y – E, dd/MM/y",
+					"M": "E, dd/MM/y – E, dd/MM/y",
+					"y": "E, dd/MM/y – E, dd/MM/y"
+				},
+				"yMMM": {
+					"M": "MMM – MMM 'de' y",
+					"y": "MMM 'de' y – MMM 'de' y"
+				},
+				"yMMMd": {
+					"d": "d – d 'de' MMM 'de' y",
+					"M": "d 'de' MMM – d 'de' MMM 'de' y",
+					"y": "d 'de' MMM 'de' y – d 'de' MMM 'de' y"
+				},
+				"yMMMEd": {
+					"d": "E, d – E, d 'de' MMM 'de' y",
+					"M": "E, d 'de' MMM – E, d 'de' MMM 'de' y",
+					"y": "E, d 'de' MMM 'de' y – E, d 'de' MMM 'de' y"
+				},
+				"yMMMM": {
+					"M": "MMMM – MMMM 'de' y",
+					"y": "MMMM 'de' y – MMMM 'de' y"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"jan",
+					"fev",
+					"mar",
+					"abr",
+					"mai",
+					"jun",
+					"jul",
+					"ago",
+					"set",
+					"out",
+					"nov",
+					"dez"
+				],
+				"narrow": [
+					"J",
+					"F",
+					"M",
+					"A",
+					"M",
+					"J",
+					"J",
+					"A",
+					"S",
+					"O",
+					"N",
+					"D"
+				],
+				"wide": [
+					"janeiro",
+					"fevereiro",
+					"março",
+					"abril",
+					"maio",
+					"junho",
+					"julho",
+					"agosto",
+					"setembro",
+					"outubro",
+					"novembro",
+					"dezembro"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"jan",
+					"fev",
+					"mar",
+					"abr",
+					"mai",
+					"jun",
+					"jul",
+					"ago",
+					"set",
+					"out",
+					"nov",
+					"dez"
+				],
+				"narrow": [
+					"J",
+					"F",
+					"M",
+					"A",
+					"M",
+					"J",
+					"J",
+					"A",
+					"S",
+					"O",
+					"N",
+					"D"
+				],
+				"wide": [
+					"janeiro",
+					"fevereiro",
+					"março",
+					"abril",
+					"maio",
+					"junho",
+					"julho",
+					"agosto",
+					"setembro",
+					"outubro",
+					"novembro",
+					"dezembro"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"dom",
+					"seg",
+					"ter",
+					"qua",
+					"qui",
+					"sex",
+					"sáb"
+				],
+				"narrow": [
+					"D",
+					"S",
+					"T",
+					"Q",
+					"Q",
+					"S",
+					"S"
+				],
+				"short": [
+					"dom",
+					"seg",
+					"ter",
+					"qua",
+					"qui",
+					"sex",
+					"sáb"
+				],
+				"wide": [
+					"domingo",
+					"segunda-feira",
+					"terça-feira",
+					"quarta-feira",
+					"quinta-feira",
+					"sexta-feira",
+					"sábado"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"dom",
+					"seg",
+					"ter",
+					"qua",
+					"qui",
+					"sex",
+					"sáb"
+				],
+				"narrow": [
+					"D",
+					"S",
+					"T",
+					"Q",
+					"Q",
+					"S",
+					"S"
+				],
+				"short": [
+					"dom",
+					"seg",
+					"ter",
+					"qua",
+					"qui",
+					"sex",
+					"sáb"
+				],
+				"wide": [
+					"domingo",
+					"segunda-feira",
+					"terça-feira",
+					"quarta-feira",
+					"quinta-feira",
+					"sexta-feira",
+					"sábado"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"T1",
+					"T2",
+					"T3",
+					"T4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1º trimestre",
+					"2º trimestre",
+					"3º trimestre",
+					"4º trimestre"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"T1",
+					"T2",
+					"T3",
+					"T4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1º trimestre",
+					"2º trimestre",
+					"3º trimestre",
+					"4º trimestre"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"AM",
+					"PM"
+				],
+				"narrow": [
+					"a",
+					"p"
+				],
+				"wide": [
+					"AM",
+					"PM"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"AM",
+					"PM"
+				],
+				"narrow": [
+					"AM",
+					"PM"
+				],
+				"wide": [
+					"AM",
+					"PM"
+				]
+			}
+		},
 		"era-wide": {
 			"0": "antes de Cristo",
 			"1": "depois de Cristo"
@@ -1428,281 +1565,413 @@
 		}
 	},
 	"ca-islamic": {
-		"dateFormat-full": "EEEE, d 'de' MMMM 'de' y G",
-		"dateFormat-long": "d 'de' MMMM 'de' y G",
-		"dateFormat-medium": "dd/MM/y G",
-		"dateFormat-short": "dd/MM/yy GGGGG",
-		"timeFormat-full": "HH:mm:ss zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} - {1}",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h'h' a – h'h' a",
-		"intervalFormat-h-h": "h'h' - h'h' a",
-		"intervalFormat-H-H": "HH'h' - HH'h'",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h – h a v",
-		"intervalFormat-Hv-H": "HH – HH v",
-		"intervalFormat-M-M": "M–M",
-		"intervalFormat-Md-d": "dd/MM – dd/MM",
-		"intervalFormat-Md-M": "dd/MM – dd/MM",
-		"intervalFormat-MEd-d": "E, dd/MM – E, dd/MM",
-		"intervalFormat-MEd-M": "E, dd/MM – E, dd/MM",
-		"intervalFormat-MMM-M": "MMM – MMM",
-		"intervalFormat-MMMd-d": "d–d 'de' MMM",
-		"intervalFormat-MMMd-M": "d 'de' MMM – d 'de' MMM",
-		"intervalFormat-MMMEd-d": "E, d – E, d 'de' MMM",
-		"intervalFormat-MMMEd-M": "E, d 'de' MMM – E, d 'de' MMM",
-		"intervalFormat-y-y": "y – y G",
-		"intervalFormat-yM-M": "MM/y – MM/y G",
-		"intervalFormat-yM-y": "MM/y – MM/y G",
-		"intervalFormat-yMd-d": "dd/MM/y – dd/MM/y G",
-		"intervalFormat-yMd-M": "dd/MM/y – dd/MM/y G",
-		"intervalFormat-yMd-y": "dd/MM/y – dd/MM/y G",
-		"intervalFormat-yMEd-d": "E, dd/MM/y – E, dd/MM/y G",
-		"intervalFormat-yMEd-M": "E, dd/MM/y – E, dd/MM/y G",
-		"intervalFormat-yMEd-y": "E, dd/MM/y – E, dd/MM/y G",
-		"intervalFormat-yMMM-M": "MMM–MMM 'de' y G",
-		"intervalFormat-yMMM-y": "MMM 'de' y – MMM 'de' y G",
-		"intervalFormat-yMMMd-d": "d–d 'de' MMM 'de' y",
-		"intervalFormat-yMMMd-M": "d 'de' MMM – d 'de' MMM 'de' y G",
-		"intervalFormat-yMMMd-y": "d 'de' MMM 'de' y – d 'de' MMM 'de' y G",
-		"intervalFormat-yMMMEd-d": "E, d – E, d 'de' MMM 'de' y G",
-		"intervalFormat-yMMMEd-M": "E, d 'de' MMM – E, d 'de' MMM 'de' y G",
-		"intervalFormat-yMMMEd-y": "E, d 'de' MMM 'de' y – E, d 'de' MMM 'de' y G",
-		"intervalFormat-yMMMM-M": "MMMM–MMMM 'de' y G",
-		"intervalFormat-yMMMM-y": "MMMM 'de' y – MMMM 'de' y G",
-		"months-format-abbreviated": [
-			"Muh.",
-			"Saf.",
-			"Rab. I",
-			"Rab. II",
-			"Jum. I",
-			"Jum. II",
-			"Raj.",
-			"Sha.",
-			"Ram.",
-			"Shaw.",
-			"Dhuʻl-Q.",
-			"Dhuʻl-H."
-		],
-		"months-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-format-wide": [
-			"Muharram",
-			"Safar",
-			"Rabiʻ I",
-			"Rabiʻ II",
-			"Jumada I",
-			"Jumada II",
-			"Rajab",
-			"Shaʻban",
-			"Ramadan",
-			"Shawwal",
-			"Dhuʻl-Qiʻdah",
-			"Dhuʻl-Hijjah"
-		],
-		"months-standAlone-abbreviated": [
-			"Muh.",
-			"Saf.",
-			"Rab. I",
-			"Rab. II",
-			"Jum. I",
-			"Jum. II",
-			"Raj.",
-			"Sha.",
-			"Ram.",
-			"Shaw.",
-			"Dhuʻl-Q.",
-			"Dhuʻl-H."
-		],
-		"months-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-standAlone-wide": [
-			"Muharram",
-			"Safar",
-			"Rabiʻ I",
-			"Rabiʻ II",
-			"Jumada I",
-			"Jumada II",
-			"Rajab",
-			"Shaʻban",
-			"Ramadan",
-			"Shawwal",
-			"Dhuʻl-Qiʻdah",
-			"Dhuʻl-Hijjah"
-		],
-		"days-format-abbreviated": [
-			"dom",
-			"seg",
-			"ter",
-			"qua",
-			"qui",
-			"sex",
-			"sáb"
-		],
-		"days-format-narrow": [
-			"D",
-			"S",
-			"T",
-			"Q",
-			"Q",
-			"S",
-			"S"
-		],
-		"days-format-short": [
-			"dom",
-			"seg",
-			"ter",
-			"qua",
-			"qui",
-			"sex",
-			"sáb"
-		],
-		"days-format-wide": [
-			"domingo",
-			"segunda-feira",
-			"terça-feira",
-			"quarta-feira",
-			"quinta-feira",
-			"sexta-feira",
-			"sábado"
-		],
-		"days-standAlone-abbreviated": [
-			"dom",
-			"seg",
-			"ter",
-			"qua",
-			"qui",
-			"sex",
-			"sáb"
-		],
-		"days-standAlone-narrow": [
-			"D",
-			"S",
-			"T",
-			"Q",
-			"Q",
-			"S",
-			"S"
-		],
-		"days-standAlone-short": [
-			"dom",
-			"seg",
-			"ter",
-			"qua",
-			"qui",
-			"sex",
-			"sáb"
-		],
-		"days-standAlone-wide": [
-			"domingo",
-			"segunda-feira",
-			"terça-feira",
-			"quarta-feira",
-			"quinta-feira",
-			"sexta-feira",
-			"sábado"
-		],
-		"quarters-format-abbreviated": [
-			"T1",
-			"T2",
-			"T3",
-			"T4"
-		],
-		"quarters-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-format-wide": [
-			"1º trimestre",
-			"2º trimestre",
-			"3º trimestre",
-			"4º trimestre"
-		],
-		"quarters-standAlone-abbreviated": [
-			"T1",
-			"T2",
-			"T3",
-			"T4"
-		],
-		"quarters-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-standAlone-wide": [
-			"1º trimestre",
-			"2º trimestre",
-			"3º trimestre",
-			"4º trimestre"
-		],
-		"dayPeriods-format-abbreviated": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-format-narrow": [
-			"a",
-			"p"
-		],
-		"dayPeriods-format-wide": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-wide": [
-			"AM",
-			"PM"
-		],
+		"dateFormats": {
+			"full": "EEEE, d 'de' MMMM 'de' y G",
+			"long": "d 'de' MMMM 'de' y G",
+			"medium": "dd/MM/y G",
+			"short": "dd/MM/yy GGGGG"
+		},
+		"timeFormats": {
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1} {0}",
+			"long": "{1} {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E, d",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y G",
+				"GyMMM": "MMM 'de' y G",
+				"GyMMMd": "d 'de' MMM 'de' y G",
+				"GyMMMEd": "E, d 'de' MMM 'de' y G",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "L",
+				"Md": "d/M",
+				"MEd": "E, dd/MM",
+				"MMM": "LLL",
+				"MMMd": "d 'de' MMM",
+				"MMMEd": "E, d 'de' MMM",
+				"MMMMd": "d 'de' MMMM",
+				"MMMMEd": "E, d 'de' MMMM",
+				"ms": "mm:ss",
+				"y": "y G",
+				"yyyy": "y G",
+				"yyyyM": "MM/y GGGGG",
+				"yyyyMd": "dd/MM/y GGGGG",
+				"yyyyMEd": "E, dd/MM/y GGGGG",
+				"yyyyMMM": "MMM 'de' y G",
+				"yyyyMMMd": "d 'de' MMM 'de' y G",
+				"yyyyMMMEd": "E, d 'de' MMM 'de' y G",
+				"yyyyMMMM": "MMMM 'de' y G",
+				"yyyyMMMMd": "d 'de' MMMM 'de' y G",
+				"yyyyMMMMEd": "E, d 'de' MMMM 'de' y G",
+				"yyyyQQQ": "G y QQQ",
+				"yyyyQQQQ": "G y QQQQ"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} - {1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h'h' a – h'h' a",
+					"h": "h'h' - h'h' a"
+				},
+				"H": {
+					"H": "HH'h' - HH'h'"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h – h a v"
+				},
+				"Hv": {
+					"H": "HH – HH v"
+				},
+				"M": {
+					"M": "M–M"
+				},
+				"Md": {
+					"d": "dd/MM – dd/MM",
+					"M": "dd/MM – dd/MM"
+				},
+				"MEd": {
+					"d": "E, dd/MM – E, dd/MM",
+					"M": "E, dd/MM – E, dd/MM"
+				},
+				"MMM": {
+					"M": "MMM – MMM"
+				},
+				"MMMd": {
+					"d": "d–d 'de' MMM",
+					"M": "d 'de' MMM – d 'de' MMM"
+				},
+				"MMMEd": {
+					"d": "E, d – E, d 'de' MMM",
+					"M": "E, d 'de' MMM – E, d 'de' MMM"
+				},
+				"y": {
+					"y": "y – y G"
+				},
+				"yM": {
+					"M": "MM/y – MM/y G",
+					"y": "MM/y – MM/y G"
+				},
+				"yMd": {
+					"d": "dd/MM/y – dd/MM/y G",
+					"M": "dd/MM/y – dd/MM/y G",
+					"y": "dd/MM/y – dd/MM/y G"
+				},
+				"yMEd": {
+					"d": "E, dd/MM/y – E, dd/MM/y G",
+					"M": "E, dd/MM/y – E, dd/MM/y G",
+					"y": "E, dd/MM/y – E, dd/MM/y G"
+				},
+				"yMMM": {
+					"M": "MMM–MMM 'de' y G",
+					"y": "MMM 'de' y – MMM 'de' y G"
+				},
+				"yMMMd": {
+					"d": "d–d 'de' MMM 'de' y",
+					"M": "d 'de' MMM – d 'de' MMM 'de' y G",
+					"y": "d 'de' MMM 'de' y – d 'de' MMM 'de' y G"
+				},
+				"yMMMEd": {
+					"d": "E, d – E, d 'de' MMM 'de' y G",
+					"M": "E, d 'de' MMM – E, d 'de' MMM 'de' y G",
+					"y": "E, d 'de' MMM 'de' y – E, d 'de' MMM 'de' y G"
+				},
+				"yMMMM": {
+					"M": "MMMM–MMMM 'de' y G",
+					"y": "MMMM 'de' y – MMMM 'de' y G"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"Muh.",
+					"Saf.",
+					"Rab. I",
+					"Rab. II",
+					"Jum. I",
+					"Jum. II",
+					"Raj.",
+					"Sha.",
+					"Ram.",
+					"Shaw.",
+					"Dhuʻl-Q.",
+					"Dhuʻl-H."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"Muharram",
+					"Safar",
+					"Rabiʻ I",
+					"Rabiʻ II",
+					"Jumada I",
+					"Jumada II",
+					"Rajab",
+					"Shaʻban",
+					"Ramadan",
+					"Shawwal",
+					"Dhuʻl-Qiʻdah",
+					"Dhuʻl-Hijjah"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Muh.",
+					"Saf.",
+					"Rab. I",
+					"Rab. II",
+					"Jum. I",
+					"Jum. II",
+					"Raj.",
+					"Sha.",
+					"Ram.",
+					"Shaw.",
+					"Dhuʻl-Q.",
+					"Dhuʻl-H."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"Muharram",
+					"Safar",
+					"Rabiʻ I",
+					"Rabiʻ II",
+					"Jumada I",
+					"Jumada II",
+					"Rajab",
+					"Shaʻban",
+					"Ramadan",
+					"Shawwal",
+					"Dhuʻl-Qiʻdah",
+					"Dhuʻl-Hijjah"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"dom",
+					"seg",
+					"ter",
+					"qua",
+					"qui",
+					"sex",
+					"sáb"
+				],
+				"narrow": [
+					"D",
+					"S",
+					"T",
+					"Q",
+					"Q",
+					"S",
+					"S"
+				],
+				"short": [
+					"dom",
+					"seg",
+					"ter",
+					"qua",
+					"qui",
+					"sex",
+					"sáb"
+				],
+				"wide": [
+					"domingo",
+					"segunda-feira",
+					"terça-feira",
+					"quarta-feira",
+					"quinta-feira",
+					"sexta-feira",
+					"sábado"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"dom",
+					"seg",
+					"ter",
+					"qua",
+					"qui",
+					"sex",
+					"sáb"
+				],
+				"narrow": [
+					"D",
+					"S",
+					"T",
+					"Q",
+					"Q",
+					"S",
+					"S"
+				],
+				"short": [
+					"dom",
+					"seg",
+					"ter",
+					"qua",
+					"qui",
+					"sex",
+					"sáb"
+				],
+				"wide": [
+					"domingo",
+					"segunda-feira",
+					"terça-feira",
+					"quarta-feira",
+					"quinta-feira",
+					"sexta-feira",
+					"sábado"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"T1",
+					"T2",
+					"T3",
+					"T4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1º trimestre",
+					"2º trimestre",
+					"3º trimestre",
+					"4º trimestre"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"T1",
+					"T2",
+					"T3",
+					"T4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1º trimestre",
+					"2º trimestre",
+					"3º trimestre",
+					"4º trimestre"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"AM",
+					"PM"
+				],
+				"narrow": [
+					"a",
+					"p"
+				],
+				"wide": [
+					"AM",
+					"PM"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"AM",
+					"PM"
+				],
+				"narrow": [
+					"AM",
+					"PM"
+				],
+				"wide": [
+					"AM",
+					"PM"
+				]
+			}
+		},
 		"era-wide": {
 			"0": "AH"
 		},
@@ -1714,281 +1983,413 @@
 		}
 	},
 	"ca-japanese": {
-		"dateFormat-full": "EEEE, d 'de' MMMM 'de' y G",
-		"dateFormat-long": "d 'de' MMMM 'de' y G",
-		"dateFormat-medium": "dd/MM/y G",
-		"dateFormat-short": "dd/MM/yy GGGGG",
-		"timeFormat-full": "HH:mm:ss zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} - {1}",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h'h' a – h'h' a",
-		"intervalFormat-h-h": "h'h' - h'h' a",
-		"intervalFormat-H-H": "HH'h' - HH'h'",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h – h a v",
-		"intervalFormat-Hv-H": "HH – HH v",
-		"intervalFormat-M-M": "M–M",
-		"intervalFormat-Md-d": "dd/MM – dd/MM",
-		"intervalFormat-Md-M": "dd/MM – dd/MM",
-		"intervalFormat-MEd-d": "E, dd/MM – E, dd/MM",
-		"intervalFormat-MEd-M": "E, dd/MM – E, dd/MM",
-		"intervalFormat-MMM-M": "MMM – MMM",
-		"intervalFormat-MMMd-d": "d–d 'de' MMM",
-		"intervalFormat-MMMd-M": "d 'de' MMM – d 'de' MMM",
-		"intervalFormat-MMMEd-d": "E, d – E, d 'de' MMM",
-		"intervalFormat-MMMEd-M": "E, d 'de' MMM – E, d 'de' MMM",
-		"intervalFormat-y-y": "y – y G",
-		"intervalFormat-yM-M": "MM/y – MM/y G",
-		"intervalFormat-yM-y": "MM/y – MM/y G",
-		"intervalFormat-yMd-d": "dd/MM/y – dd/MM/y G",
-		"intervalFormat-yMd-M": "dd/MM/y – dd/MM/y G",
-		"intervalFormat-yMd-y": "dd/MM/y – dd/MM/y G",
-		"intervalFormat-yMEd-d": "E, dd/MM/y – E, dd/MM/y G",
-		"intervalFormat-yMEd-M": "E, dd/MM/y – E, dd/MM/y G",
-		"intervalFormat-yMEd-y": "E, dd/MM/y – E, dd/MM/y G",
-		"intervalFormat-yMMM-M": "MMM–MMM 'de' y G",
-		"intervalFormat-yMMM-y": "MMM 'de' y – MMM 'de' y G",
-		"intervalFormat-yMMMd-d": "d–d 'de' MMM 'de' y",
-		"intervalFormat-yMMMd-M": "d 'de' MMM – d 'de' MMM 'de' y G",
-		"intervalFormat-yMMMd-y": "d 'de' MMM 'de' y – d 'de' MMM 'de' y G",
-		"intervalFormat-yMMMEd-d": "E, d – E, d 'de' MMM 'de' y G",
-		"intervalFormat-yMMMEd-M": "E, d 'de' MMM – E, d 'de' MMM 'de' y G",
-		"intervalFormat-yMMMEd-y": "E, d 'de' MMM 'de' y – E, d 'de' MMM 'de' y G",
-		"intervalFormat-yMMMM-M": "MMMM–MMMM 'de' y G",
-		"intervalFormat-yMMMM-y": "MMMM 'de' y – MMMM 'de' y G",
-		"months-format-abbreviated": [
-			"jan",
-			"fev",
-			"mar",
-			"abr",
-			"mai",
-			"jun",
-			"jul",
-			"ago",
-			"set",
-			"out",
-			"nov",
-			"dez"
-		],
-		"months-format-narrow": [
-			"J",
-			"F",
-			"M",
-			"A",
-			"M",
-			"J",
-			"J",
-			"A",
-			"S",
-			"O",
-			"N",
-			"D"
-		],
-		"months-format-wide": [
-			"janeiro",
-			"fevereiro",
-			"março",
-			"abril",
-			"maio",
-			"junho",
-			"julho",
-			"agosto",
-			"setembro",
-			"outubro",
-			"novembro",
-			"dezembro"
-		],
-		"months-standAlone-abbreviated": [
-			"jan",
-			"fev",
-			"mar",
-			"abr",
-			"mai",
-			"jun",
-			"jul",
-			"ago",
-			"set",
-			"out",
-			"nov",
-			"dez"
-		],
-		"months-standAlone-narrow": [
-			"J",
-			"F",
-			"M",
-			"A",
-			"M",
-			"J",
-			"J",
-			"A",
-			"S",
-			"O",
-			"N",
-			"D"
-		],
-		"months-standAlone-wide": [
-			"janeiro",
-			"fevereiro",
-			"março",
-			"abril",
-			"maio",
-			"junho",
-			"julho",
-			"agosto",
-			"setembro",
-			"outubro",
-			"novembro",
-			"dezembro"
-		],
-		"days-format-abbreviated": [
-			"dom",
-			"seg",
-			"ter",
-			"qua",
-			"qui",
-			"sex",
-			"sáb"
-		],
-		"days-format-narrow": [
-			"D",
-			"S",
-			"T",
-			"Q",
-			"Q",
-			"S",
-			"S"
-		],
-		"days-format-short": [
-			"dom",
-			"seg",
-			"ter",
-			"qua",
-			"qui",
-			"sex",
-			"sáb"
-		],
-		"days-format-wide": [
-			"domingo",
-			"segunda-feira",
-			"terça-feira",
-			"quarta-feira",
-			"quinta-feira",
-			"sexta-feira",
-			"sábado"
-		],
-		"days-standAlone-abbreviated": [
-			"dom",
-			"seg",
-			"ter",
-			"qua",
-			"qui",
-			"sex",
-			"sáb"
-		],
-		"days-standAlone-narrow": [
-			"D",
-			"S",
-			"T",
-			"Q",
-			"Q",
-			"S",
-			"S"
-		],
-		"days-standAlone-short": [
-			"dom",
-			"seg",
-			"ter",
-			"qua",
-			"qui",
-			"sex",
-			"sáb"
-		],
-		"days-standAlone-wide": [
-			"domingo",
-			"segunda-feira",
-			"terça-feira",
-			"quarta-feira",
-			"quinta-feira",
-			"sexta-feira",
-			"sábado"
-		],
-		"quarters-format-abbreviated": [
-			"T1",
-			"T2",
-			"T3",
-			"T4"
-		],
-		"quarters-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-format-wide": [
-			"1º trimestre",
-			"2º trimestre",
-			"3º trimestre",
-			"4º trimestre"
-		],
-		"quarters-standAlone-abbreviated": [
-			"T1",
-			"T2",
-			"T3",
-			"T4"
-		],
-		"quarters-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4"
-		],
-		"quarters-standAlone-wide": [
-			"1º trimestre",
-			"2º trimestre",
-			"3º trimestre",
-			"4º trimestre"
-		],
-		"dayPeriods-format-abbreviated": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-format-narrow": [
-			"a",
-			"p"
-		],
-		"dayPeriods-format-wide": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-wide": [
-			"AM",
-			"PM"
-		],
+		"dateFormats": {
+			"full": "EEEE, d 'de' MMMM 'de' y G",
+			"long": "d 'de' MMMM 'de' y G",
+			"medium": "dd/MM/y G",
+			"short": "dd/MM/yy GGGGG"
+		},
+		"timeFormats": {
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1} {0}",
+			"long": "{1} {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E, d",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y G",
+				"GyMMM": "MMM 'de' y G",
+				"GyMMMd": "d 'de' MMM 'de' y G",
+				"GyMMMEd": "E, d 'de' MMM 'de' y G",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "L",
+				"Md": "d/M",
+				"MEd": "E, dd/MM",
+				"MMM": "LLL",
+				"MMMd": "d 'de' MMM",
+				"MMMEd": "E, d 'de' MMM",
+				"MMMMd": "d 'de' MMMM",
+				"MMMMEd": "E, d 'de' MMMM",
+				"ms": "mm:ss",
+				"y": "y G",
+				"yyyy": "y G",
+				"yyyyM": "MM/y GGGGG",
+				"yyyyMd": "dd/MM/y GGGGG",
+				"yyyyMEd": "E, dd/MM/y GGGGG",
+				"yyyyMMM": "MMM 'de' y G",
+				"yyyyMMMd": "d 'de' MMM 'de' y G",
+				"yyyyMMMEd": "E, d 'de' MMM 'de' y G",
+				"yyyyMMMM": "MMMM 'de' y G",
+				"yyyyMMMMd": "d 'de' MMMM 'de' y G",
+				"yyyyMMMMEd": "E, d 'de' MMMM 'de' y G",
+				"yyyyQQQ": "G y QQQ",
+				"yyyyQQQQ": "G y QQQQ"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} - {1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h'h' a – h'h' a",
+					"h": "h'h' - h'h' a"
+				},
+				"H": {
+					"H": "HH'h' - HH'h'"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h – h a v"
+				},
+				"Hv": {
+					"H": "HH – HH v"
+				},
+				"M": {
+					"M": "M–M"
+				},
+				"Md": {
+					"d": "dd/MM – dd/MM",
+					"M": "dd/MM – dd/MM"
+				},
+				"MEd": {
+					"d": "E, dd/MM – E, dd/MM",
+					"M": "E, dd/MM – E, dd/MM"
+				},
+				"MMM": {
+					"M": "MMM – MMM"
+				},
+				"MMMd": {
+					"d": "d–d 'de' MMM",
+					"M": "d 'de' MMM – d 'de' MMM"
+				},
+				"MMMEd": {
+					"d": "E, d – E, d 'de' MMM",
+					"M": "E, d 'de' MMM – E, d 'de' MMM"
+				},
+				"y": {
+					"y": "y – y G"
+				},
+				"yM": {
+					"M": "MM/y – MM/y G",
+					"y": "MM/y – MM/y G"
+				},
+				"yMd": {
+					"d": "dd/MM/y – dd/MM/y G",
+					"M": "dd/MM/y – dd/MM/y G",
+					"y": "dd/MM/y – dd/MM/y G"
+				},
+				"yMEd": {
+					"d": "E, dd/MM/y – E, dd/MM/y G",
+					"M": "E, dd/MM/y – E, dd/MM/y G",
+					"y": "E, dd/MM/y – E, dd/MM/y G"
+				},
+				"yMMM": {
+					"M": "MMM–MMM 'de' y G",
+					"y": "MMM 'de' y – MMM 'de' y G"
+				},
+				"yMMMd": {
+					"d": "d–d 'de' MMM 'de' y",
+					"M": "d 'de' MMM – d 'de' MMM 'de' y G",
+					"y": "d 'de' MMM 'de' y – d 'de' MMM 'de' y G"
+				},
+				"yMMMEd": {
+					"d": "E, d – E, d 'de' MMM 'de' y G",
+					"M": "E, d 'de' MMM – E, d 'de' MMM 'de' y G",
+					"y": "E, d 'de' MMM 'de' y – E, d 'de' MMM 'de' y G"
+				},
+				"yMMMM": {
+					"M": "MMMM–MMMM 'de' y G",
+					"y": "MMMM 'de' y – MMMM 'de' y G"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"jan",
+					"fev",
+					"mar",
+					"abr",
+					"mai",
+					"jun",
+					"jul",
+					"ago",
+					"set",
+					"out",
+					"nov",
+					"dez"
+				],
+				"narrow": [
+					"J",
+					"F",
+					"M",
+					"A",
+					"M",
+					"J",
+					"J",
+					"A",
+					"S",
+					"O",
+					"N",
+					"D"
+				],
+				"wide": [
+					"janeiro",
+					"fevereiro",
+					"março",
+					"abril",
+					"maio",
+					"junho",
+					"julho",
+					"agosto",
+					"setembro",
+					"outubro",
+					"novembro",
+					"dezembro"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"jan",
+					"fev",
+					"mar",
+					"abr",
+					"mai",
+					"jun",
+					"jul",
+					"ago",
+					"set",
+					"out",
+					"nov",
+					"dez"
+				],
+				"narrow": [
+					"J",
+					"F",
+					"M",
+					"A",
+					"M",
+					"J",
+					"J",
+					"A",
+					"S",
+					"O",
+					"N",
+					"D"
+				],
+				"wide": [
+					"janeiro",
+					"fevereiro",
+					"março",
+					"abril",
+					"maio",
+					"junho",
+					"julho",
+					"agosto",
+					"setembro",
+					"outubro",
+					"novembro",
+					"dezembro"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"dom",
+					"seg",
+					"ter",
+					"qua",
+					"qui",
+					"sex",
+					"sáb"
+				],
+				"narrow": [
+					"D",
+					"S",
+					"T",
+					"Q",
+					"Q",
+					"S",
+					"S"
+				],
+				"short": [
+					"dom",
+					"seg",
+					"ter",
+					"qua",
+					"qui",
+					"sex",
+					"sáb"
+				],
+				"wide": [
+					"domingo",
+					"segunda-feira",
+					"terça-feira",
+					"quarta-feira",
+					"quinta-feira",
+					"sexta-feira",
+					"sábado"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"dom",
+					"seg",
+					"ter",
+					"qua",
+					"qui",
+					"sex",
+					"sáb"
+				],
+				"narrow": [
+					"D",
+					"S",
+					"T",
+					"Q",
+					"Q",
+					"S",
+					"S"
+				],
+				"short": [
+					"dom",
+					"seg",
+					"ter",
+					"qua",
+					"qui",
+					"sex",
+					"sáb"
+				],
+				"wide": [
+					"domingo",
+					"segunda-feira",
+					"terça-feira",
+					"quarta-feira",
+					"quinta-feira",
+					"sexta-feira",
+					"sábado"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"T1",
+					"T2",
+					"T3",
+					"T4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1º trimestre",
+					"2º trimestre",
+					"3º trimestre",
+					"4º trimestre"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"T1",
+					"T2",
+					"T3",
+					"T4"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4"
+				],
+				"wide": [
+					"1º trimestre",
+					"2º trimestre",
+					"3º trimestre",
+					"4º trimestre"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"AM",
+					"PM"
+				],
+				"narrow": [
+					"a",
+					"p"
+				],
+				"wide": [
+					"AM",
+					"PM"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"AM",
+					"PM"
+				],
+				"narrow": [
+					"AM",
+					"PM"
+				],
+				"wide": [
+					"AM",
+					"PM"
+				]
+			}
+		},
 		"era-wide": {
 			"232": "Meiji",
 			"233": "Taishō",
@@ -2008,54 +2409,109 @@
 			"235": "H"
 		}
 	},
-	"dateField-year-displayName": "ano",
-	"dateField-year-relative--1": "ano passado",
-	"dateField-year-relative-0": "este ano",
-	"dateField-year-relative-1": "próximo ano",
-	"dateField-year-relative-future-one": "em {0} ano",
-	"dateField-year-relative-future-other": "em {0} anos",
-	"dateField-year-relative-past-one": "há {0} ano",
-	"dateField-year-relative-past-other": "há {0} anos",
-	"dateField-month-displayName": "mês",
-	"dateField-month-relative--1": "mês passado",
-	"dateField-month-relative-0": "este mês",
-	"dateField-month-relative-1": "próximo mês",
-	"dateField-month-relative-future-one": "em {0} mês",
-	"dateField-month-relative-future-other": "em {0} meses",
-	"dateField-month-relative-past-one": "há {0} mês",
-	"dateField-month-relative-past-other": "há {0} meses",
-	"dateField-week-displayName": "semana",
-	"dateField-week-relative--1": "semana passada",
-	"dateField-week-relative-0": "esta semana",
-	"dateField-week-relative-1": "próxima semana",
-	"dateField-week-relative-future-one": "em {0} semana",
-	"dateField-week-relative-future-other": "em {0} semanas",
-	"dateField-week-relative-past-one": "há {0} semana",
-	"dateField-week-relative-past-other": "há {0} semanas",
-	"dateField-day-displayName": "dia",
-	"dateField-day-relative--1": "ontem",
-	"dateField-day-relative-0": "hoje",
-	"dateField-day-relative-1": "amanhã",
-	"dateField-day-relative-future-one": "em {0} dia",
-	"dateField-day-relative-future-other": "em {0} dias",
-	"dateField-day-relative-past-one": "há {0} dia",
-	"dateField-day-relative-past-other": "há {0} dias",
-	"dateField-hour-displayName": "hora",
-	"dateField-hour-relative-future-one": "em {0} hora",
-	"dateField-hour-relative-future-other": "em {0} horas",
-	"dateField-hour-relative-past-one": "há {0} hora",
-	"dateField-hour-relative-past-other": "há {0} horas",
-	"dateField-minute-displayName": "minuto",
-	"dateField-minute-relative-future-one": "em {0} minuto",
-	"dateField-minute-relative-future-other": "em {0} minutos",
-	"dateField-minute-relative-past-one": "há {0} minuto",
-	"dateField-minute-relative-past-other": "há {0} minutos",
-	"dateField-second-displayName": "segundo",
-	"dateField-second-relative-0": "agora",
-	"dateField-second-relative-future-one": "em {0} segundo",
-	"dateField-second-relative-future-other": "em {0} segundos",
-	"dateField-second-relative-past-one": "há {0} segundo",
-	"dateField-second-relative-past-other": "há {0} segundos",
+	"dateFields": {
+		"era": {
+			"displayName": "era"
+		},
+		"year": {
+			"displayName": "ano",
+			"relative-type--1": "ano passado",
+			"relative-type-0": "este ano",
+			"relative-type-1": "próximo ano",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "em {0} ano",
+				"relativeTimePattern-count-other": "em {0} anos"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "há {0} ano",
+				"relativeTimePattern-count-other": "há {0} anos"
+			}
+		},
+		"month": {
+			"displayName": "mês",
+			"relative-type--1": "mês passado",
+			"relative-type-0": "este mês",
+			"relative-type-1": "próximo mês",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "em {0} mês",
+				"relativeTimePattern-count-other": "em {0} meses"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "há {0} mês",
+				"relativeTimePattern-count-other": "há {0} meses"
+			}
+		},
+		"week": {
+			"displayName": "semana",
+			"relative-type--1": "semana passada",
+			"relative-type-0": "esta semana",
+			"relative-type-1": "próxima semana",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "em {0} semana",
+				"relativeTimePattern-count-other": "em {0} semanas"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "há {0} semana",
+				"relativeTimePattern-count-other": "há {0} semanas"
+			}
+		},
+		"day": {
+			"displayName": "dia",
+			"relative-type--2": "anteontem",
+			"relative-type--1": "ontem",
+			"relative-type-0": "hoje",
+			"relative-type-1": "amanhã",
+			"relative-type-2": "depois de amanhã",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "em {0} dia",
+				"relativeTimePattern-count-other": "em {0} dias"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "há {0} dia",
+				"relativeTimePattern-count-other": "há {0} dias"
+			}
+		},
+		"weekday": {
+			"displayName": "dia da semana"
+		},
+		"hour": {
+			"displayName": "hora",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "em {0} hora",
+				"relativeTimePattern-count-other": "em {0} horas"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "há {0} hora",
+				"relativeTimePattern-count-other": "há {0} horas"
+			}
+		},
+		"minute": {
+			"displayName": "minuto",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "em {0} minuto",
+				"relativeTimePattern-count-other": "em {0} minutos"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "há {0} minuto",
+				"relativeTimePattern-count-other": "há {0} minutos"
+			}
+		},
+		"second": {
+			"displayName": "segundo",
+			"relative-type-0": "agora",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "em {0} segundo",
+				"relativeTimePattern-count-other": "em {0} segundos"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "há {0} segundo",
+				"relativeTimePattern-count-other": "há {0} segundos"
+			}
+		},
+		"zone": {
+			"displayName": "fuso horário"
+		}
+	},
 	"decimalFormat": {
 		"standard": "#,##0.###"
 	},
@@ -2229,6 +2685,10 @@
 	"weekData-firstDay": 0,
 	"weekData-weekendStart": 6,
 	"weekData-weekendEnd": 0,
+	"timeData": {
+		"_allowed": "H",
+		"_preferred": "H"
+	},
 	"eras-gregorian": {
 		"0": {
 			"_end": "0-12-31"

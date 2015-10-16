@@ -1693,6 +1693,20 @@ sap.ui.define([
 		}
 	};
 
+	
+	P13nConditionPanel.prototype._getIndexOfCondition = function(oConditionGrid) {
+		var iIndex = -1; 
+		
+		oConditionGrid.getParent().getContent().some(function(oGrid){
+			if (oGrid.select.getSelected()) {
+				iIndex++;
+			}
+			return (oGrid === oConditionGrid);
+		}, this);
+		
+		return iIndex;
+	};
+	
 	/**
 	 * called when the user makes a change in one of the condition fields. The function will update, remove or add the conditions for this condition.
 	 * 
@@ -1783,7 +1797,7 @@ sap.ui.define([
 		var oSelectCheckbox = oConditionGrid.select;
 		var sValue = "";
 		var sKey;
-
+		
 		if (sKeyField === "" || sKeyField == null) {
 			// handling of "(none)" or wrong entered keyField value
 			sKeyField = null;
@@ -1791,18 +1805,21 @@ sap.ui.define([
 			delete this._oConditionsMap[sKey];
 
 			this._enableCondition(oConditionGrid, false);
+			var iIndex = this._getIndexOfCondition(oConditionGrid);
 
-			oSelectCheckbox.setSelected(false);
-			oSelectCheckbox.setEnabled(false);
-
-			this._bIgnoreSetConditions = true;
-			this.fireDataChange({
-				key: sKey,
-				index: oConditionGrid.getParent().getContent().indexOf(oConditionGrid),
-				operation: "remove",
-				newData: null
-			});
-			this._bIgnoreSetConditions = false;
+			if (oSelectCheckbox.getSelected()) {
+				oSelectCheckbox.setSelected(false);
+				oSelectCheckbox.setEnabled(false);
+	
+				this._bIgnoreSetConditions = true;
+				this.fireDataChange({
+					key: sKey,
+					index: iIndex,
+					operation: "remove",
+					newData: null
+				});
+				this._bIgnoreSetConditions = false;
+			}
 			return;
 		}
 
@@ -1834,25 +1851,28 @@ sap.ui.define([
 
 			this.fireDataChange({
 				key: sKey,
-				index: oConditionGrid.getParent().getContent().indexOf(oConditionGrid),
+				index: this._getIndexOfCondition(oConditionGrid),
 				operation: sOperation,
 				newData: oConditionData
 			});
 		} else if (this._oConditionsMap[sKey] !== undefined) {
 			delete this._oConditionsMap[sKey];
 			oConditionGrid.data("_key", null);
-
-			oSelectCheckbox.setSelected(false);
-			oSelectCheckbox.setEnabled(false);
-
-			this._bIgnoreSetConditions = true;
-			this.fireDataChange({
-				key: sKey,
-				index: oConditionGrid.getParent().getContent().indexOf(oConditionGrid),
-				operation: "remove",
-				newData: null
-			});
-			this._bIgnoreSetConditions = false;
+			var iIndex = this._getIndexOfCondition(oConditionGrid);
+			
+			if (oSelectCheckbox.getSelected()) {
+				oSelectCheckbox.setSelected(false);
+				oSelectCheckbox.setEnabled(false);
+	
+				this._bIgnoreSetConditions = true;
+				this.fireDataChange({
+					key: sKey,
+					index: iIndex,
+					operation: "remove",
+					newData: null
+				});
+				this._bIgnoreSetConditions = false;
+			}
 		}
 
 	};
@@ -1904,7 +1924,11 @@ sap.ui.define([
 	 */
 	P13nConditionPanel.prototype._removeCondition = function(oTargetGrid, oConditionGrid) {
 		var sKey = this._getKeyFromConditionGrid(oConditionGrid);
-		var iIndex = oConditionGrid.getParent().getContent().indexOf(oConditionGrid);
+		var iIndex = -1; 
+		if (oConditionGrid.select.getSelected()) {
+			iIndex = this._getIndexOfCondition(oConditionGrid);
+		}
+		
 		delete this._oConditionsMap[sKey];
 		oConditionGrid.destroy();
 
@@ -1914,12 +1938,14 @@ sap.ui.define([
 			this._updateConditionButtons(oTargetGrid);
 		}
 
-		this.fireDataChange({
-			key: sKey,
-			index: iIndex,
-			operation: "remove",
-			newData: null
-		});
+		if (iIndex >= 0) {
+			this.fireDataChange({
+				key: sKey,
+				index: iIndex,
+				operation: "remove",
+				newData: null
+			});
+		}
 	};
 
 	/**

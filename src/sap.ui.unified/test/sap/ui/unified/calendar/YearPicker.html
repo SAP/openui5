@@ -16,12 +16,15 @@
 		</script>
 		<script type="text/javascript">
 
+			jQuery.sap.require("sap.ui.core.date.UniversalDate");
+			var UniversalDate = sap.ui.core.date.UniversalDate;
+
 			var oYearPicker = new sap.ui.unified.calendar.YearPicker("YP1",{
 				select: function(oEvent){
 					var oTF = sap.ui.getCore().byId("TF1");
 					var oYP = oEvent.oSource;
-					var iYear = oYP.getYear();
-					oTF.setValue(iYear);
+					var oDate = new UniversalDate(oYP.getDate());
+					oTF.setValue(oDate.getFullYear());
 				}
 			}).placeAt("sample1");
 
@@ -34,19 +37,29 @@
 					var oYP = sap.ui.getCore().byId("YP1");
 					if(sValue && !isNaN(sValue)){
 						var iYear = parseInt(sValue);
-						oYP.setYear(iYear);
+//						var oDate = new UniversalDate(iYear, 0, 1);
+//						if(iYear < 100) {
+//							oDate.setFullYear(iYear);
+//						}
+						var oDate = new UniversalDate();
+						oDate.setFullYear(iYear);
+						oDate.setMonth(0);
+						oDate.setDate(1);
+						oYP.setDate(oDate.getJSDate());
 					}
 				}
 			}).placeAt("event1");
 
+			var oDate = new Date(2015,0,1);
 			oYearPicker = new sap.ui.unified.calendar.YearPicker("YP2",{
 				years: 5,
 				columns: 0,
+				date: oDate,
 				select: function(oEvent){
 					var oTF = sap.ui.getCore().byId("TF2");
 					var oYP = oEvent.oSource;
-					var iYear = oYP.getYear();
-					oTF.setValue(iYear);
+					var oDate = new UniversalDate(oYP.getDate());
+					oTF.setValue(oDate.getFullYear());
 				}
 			}).placeAt("sample2");
 
@@ -59,7 +72,15 @@
 					var oYP = sap.ui.getCore().byId("YP2");
 					if(sValue && !isNaN(sValue)){
 						var iYear = parseInt(sValue);
-						oYP.setYear(iYear);
+//					var oDate = new UniversalDate(iYear, 0, 1);
+//					if(iYear < 100) {
+//						oDate.setFullYear(iYear);
+//					}
+						var oDate = new UniversalDate();
+						oDate.setFullYear(iYear);
+						oDate.setMonth(0);
+						oDate.setDate(1);
+						oYP.setDate(oDate.getJSDate());
 					}
 				}
 			}).placeAt("event2");

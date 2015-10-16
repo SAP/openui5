@@ -337,7 +337,7 @@
 			/*eslint-disable no-debugger */
 			debugger;
 		}
-		
+
 		// Check local storage for booting a different core
 		var sRebootUrl;
 		try { // Necessary for FF when Cookies are disabled
@@ -361,13 +361,13 @@
 				});
 				sScript += "></script>";
 				oScript.parentNode.removeChild(oScript);
-	
+
 				// clean up cachebuster stuff
 				jQuery("#sap-ui-bootstrap-cachebusted").remove();
 				window["sap-ui-config"] && window["sap-ui-config"].resourceRoots && (window["sap-ui-config"].resourceRoots[""] = undefined);
-	
+
 				document.write(sScript);
-				
+
 				// now this core commits suicide to enable clean loading of the other core
 				var oRestart = new Error("This is not a real error. Aborting UI5 bootstrap and rebooting from: " + sRebootUrl);
 				oRestart.name = "Restart";
@@ -528,14 +528,14 @@
 	 * with millisecond precision, if high resolution timestamps are not available.
 	 * The fractional part of the timestamp represents microseconds.
 	 * Converting to a <code>Date</code> is possible using <code>new Date(jQuery.sap.now())</code>
-	 * 
+	 *
 	 * @public
 	 * @returns {float} high resolution timestamp for measurements
 	 */
 	jQuery.sap.now = !(window.performance && window.performance.now && window.performance.timing) ? Date.now : function() {
 		return window.performance.timing.navigationStart + window.performance.now();
 	};
-	
+
 	// -------------------------- DEBUG LOCAL STORAGE -------------------------------------
 	jQuery.sap.debug = function(bEnable) {
 		if (!window.localStorage) {
@@ -562,10 +562,10 @@
 	/**
 	 * Sets the URL to reboot this app from, the next time it is started. Only works with localStorage API available
 	 * (and depending on the browser, if cookies are enabled, even though cookies are not used).
-	 * 
+	 *
 	 * @param sRebootUrl the URL to sap-ui-core.js, from which the application should load UI5 on next restart; undefined clears the restart URL
-	 * @returns the current reboot URL or undefined in case of an error or when the reboot URL has been cleared 
-	 * 
+	 * @returns the current reboot URL or undefined in case of an error or when the reboot URL has been cleared
+	 *
 	 * @private
 	 */
 	jQuery.sap.setReboot = function(sRebootUrl) { // null-ish clears the reboot request
@@ -577,11 +577,11 @@
 		try {
 			if (sRebootUrl) {
 				window.localStorage.setItem("sap-ui-reboot-URL", sRebootUrl); // remember URL to reboot from
-				
+
 				/*eslint-disable no-alert */
 				alert("Next time this app is launched (only once), it will load UI5 from:\n" + sRebootUrl + ".\nPlease reload the application page now.");
 				/*eslint-enable no-alert */
-				
+
 			} else {
 				window.localStorage.removeItem("sap-ui-reboot-URL"); // clear reboot URL, so app will start normally
 			}
@@ -1123,6 +1123,569 @@
 		 */
 		jQuery.sap.log.getLog = jQuery.sap.log.getLogEntries;
 
+		// *** Performance measure ***
+		function PerfMeasurement(){
+
+			function Measurement( sId, sInfo, iStart, iEnd, aCategories){
+				this.id = sId;
+				this.info = sInfo;
+				this.start = iStart;
+				this.end = iEnd;
+				this.pause = 0;
+				this.resume = 0;
+				this.duration = 0; // used time
+				this.time = 0; // time from start to end
+				this.categories = aCategories;
+				this.average = false; //average duration enabled
+				this.count = 0; //average count
+				this.completeDuration = 0; //complete duration
+			}
+
+			function matchCategories(aCategories) {
+				if (!aRestrictedCategories) {
+					return true;
+				}
+				if (!aCategories) {
+					return aRestrictedCategories === null;
+				}
+				//check whether active categories and current categories match
+				for (var i = 0; i < aRestrictedCategories.length; i++) {
+					if (aCategories.indexOf(aRestrictedCategories[i]) > -1) {
+						return true;
+					}
+				}
+				return false;
+			}
+
+			function checkCategories(aCategories) {
+				if (!aCategories) {
+					aCategories = ["javascript"];
+				}
+				aCategories = typeof aCategories === "string" ? aCategories.split(",") : aCategories;
+				if (!matchCategories(aCategories)) {
+					return null;
+				}
+				return aCategories;
+			}
+
+			var bActive = false,
+				fnAjax = jQuery.ajax,
+				aRestrictedCategories = null,
+				aAverageMethods = [],
+				aOriginalMethods = [],
+				aMethods = ["start", "end", "pause", "resume", "add", "remove", "clear", "average"];
+
+			/**
+			 * Gets the current state of the perfomance measurement functionality
+			 *
+			 * @return {boolean} current state of the perfomance measurement functionality
+			 * @name jQuery.sap.measure#getActive
+			 * @function
+			 * @public
+			 */
+			this.getActive = function(){
+				return bActive;
+			};
+
+			/**
+			 * Activates or deactivates the performance measure functionality
+			 * Optionally a category or list of categories can be passed to restrict measurements to certain categories
+			 * like "javascript", "require", "xmlhttprequest", "render"
+			 * @param {boolean} bOn state of the perfomance measurement functionality to set
+			 * @param {string | string[]}  An optional list of categories that should be measured
+			 *
+			 * @return {boolean} current state of the perfomance measurement functionality
+			 * @name jQuery.sap.measure#setActive
+			 * @function
+			 * @public
+			 */
+			this.setActive = function(bOn, aCategories){
+				//set restricted categories
+				if (!aCategories) {
+					aCategories = null;
+				} else if (typeof aCategories === "string") {
+					aCategories = aCategories.split(",");
+				}
+				aRestrictedCategories = aCategories;
+
+				if (bActive === bOn) {
+					return;
+				}
+				bActive = bOn;
+				if (bActive) {
+
+					//activate method implementations once
+					for (var i = 0; i < aMethods.length; i++) {
+						this[aMethods[i]] = this["_" + aMethods[i]];
+
+					}
+					aMethods = [];
+					// wrap and instrument jQuery.ajax
+					jQuery.ajax = function(url, options) {
+
+						if ( typeof url === 'object' ) {
+							options = url;
+							url = undefined;
+						}
+						options = options || {};
+
+						var sMeasureId = new URI(url || options.url).absoluteTo(document.location.origin + document.location.pathname).href();
+						jQuery.sap.measure.start(sMeasureId, "Request for " + sMeasureId, "xmlhttprequest");
+						var fnComplete = options.complete;
+						options.complete = function() {
+							jQuery.sap.measure.end(sMeasureId);
+							if (fnComplete) {
+								fnComplete.call(this, arguments);
+							}
+						};
+
+						// strict mode: we potentially modified 'options', so we must not use 'arguments'
+						return fnAjax.call(this, url, options);
+					};
+				} else if (fnAjax) {
+					jQuery.ajax = fnAjax;
+				}
+
+				return bActive;
+			};
+
+			this.mMeasurements = {};
+
+
+			/**
+			 * Starts a performance measure.
+			 * Optionally a category or list of categories can be passed to allow filtering of measurements.
+			 *
+			 * @param {string} sId ID of the measurement
+			 * @param {string} sInfo Info for the measurement
+			 * @param {string | string[]} [aCategories = "javascript"] An optional list of categories for the measure
+			 *
+			 * @return {object} current measurement containing id, info and start-timestamp (false if error)
+			 * @name jQuery.sap.measure#start
+			 * @function
+			 * @public
+			 */
+			this._start = function( sId, sInfo, aCategories){
+				if (!bActive) {
+					return;
+				}
+
+				aCategories = checkCategories(aCategories);
+				if (!aCategories) {
+					return;
+				}
+
+				var iTime = jQuery.sap.now(),
+					oMeasurement = new Measurement( sId, sInfo, iTime, 0, aCategories);
+	//			jQuery.sap.log.info("Performance measurement start: "+ sId + " on "+ iTime);
+
+				if (oMeasurement) {
+					this.mMeasurements[sId] = oMeasurement;
+					return this.getMeasurement(oMeasurement.id);
+				} else {
+					return false;
+				}
+			};
+
+			/**
+			 * Pauses a performance measure
+			 *
+			 * @param {string} sId ID of the measurement
+			 * @return {object} current measurement containing id, info and start-timestamp, pause-timestamp (false if error)
+			 * @name jQuery.sap.measure#pause
+			 * @function
+			 * @public
+			 */
+			this._pause = function( sId ){
+				if (!bActive) {
+					return;
+				}
+
+				var iTime = jQuery.sap.now();
+				var oMeasurement = this.mMeasurements[sId];
+				if (oMeasurement && oMeasurement.end > 0) {
+					// already ended -> no pause possible
+					return false;
+				}
+
+				if (oMeasurement && oMeasurement.pause == 0) {
+					// not already paused
+					oMeasurement.pause = iTime;
+					if (oMeasurement.pause >= oMeasurement.resume && oMeasurement.resume > 0) {
+						oMeasurement.duration = oMeasurement.duration + oMeasurement.pause - oMeasurement.resume;
+						oMeasurement.resume = 0;
+					} else if (oMeasurement.pause >= oMeasurement.start) {
+						oMeasurement.duration = oMeasurement.pause - oMeasurement.start;
+					}
+				}
+	//			jQuery.sap.log.info("Performance measurement pause: "+ sId + " on "+ iTime + " duration: "+ oMeasurement.duration);
+
+				if (oMeasurement) {
+					return this.getMeasurement(oMeasurement.id);
+				} else {
+					return false;
+				}
+			};
+
+			/**
+			 * Resumes a performance measure
+			 *
+			 * @param {string} sId ID of the measurement
+			 * @return {object} current measurement containing id, info and start-timestamp, resume-timestamp (false if error)
+			 * @name jQuery.sap.measure#resume
+			 * @function
+			 * @public
+			 */
+			this._resume = function( sId ){
+				if (!bActive) {
+					return;
+				}
+
+				var iTime = jQuery.sap.now();
+				var oMeasurement = this.mMeasurements[sId];
+	//			jQuery.sap.log.info("Performance measurement resume: "+ sId + " on "+ iTime + " duration: "+ oMeasurement.duration);
+
+				if (oMeasurement && oMeasurement.pause > 0) {
+					// already paused
+					oMeasurement.pause = 0;
+					oMeasurement.resume = iTime;
+				}
+
+				if (oMeasurement) {
+					return this.getMeasurement(oMeasurement.id);
+				} else {
+					return false;
+				}
+			};
+
+			/**
+			 * Ends a performance measure
+			 *
+			 * @param {string} sId ID of the measurement
+			 * @return {object} current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
+			 * @name jQuery.sap.measure#end
+			 * @function
+			 * @public
+			 */
+			this._end = function( sId ){
+				if (!bActive) {
+					return;
+				}
+
+				var iTime = jQuery.sap.now();
+				var oMeasurement = this.mMeasurements[sId];
+	//			jQuery.sap.log.info("Performance measurement end: "+ sId + " on "+ iTime);
+
+				if (oMeasurement && !oMeasurement.end) {
+					oMeasurement.end = iTime;
+					if (oMeasurement.end >= oMeasurement.resume && oMeasurement.resume > 0) {
+						oMeasurement.duration = oMeasurement.duration + oMeasurement.end - oMeasurement.resume;
+						oMeasurement.resume = 0;
+					} else if (oMeasurement.pause > 0) {
+						// duration already calculated
+						oMeasurement.pause = 0;
+					} else if (oMeasurement.end >= oMeasurement.start) {
+						if (oMeasurement.average) {
+							oMeasurement.completeDuration += (oMeasurement.end - oMeasurement.start);
+							oMeasurement.count++;
+							oMeasurement.duration = oMeasurement.completeDuration / oMeasurement.count;
+							oMeasurement.start = iTime;
+						} else {
+							oMeasurement.duration = oMeasurement.end - oMeasurement.start;
+						}
+					}
+					if (oMeasurement.end >= oMeasurement.start) {
+						oMeasurement.time = oMeasurement.end - oMeasurement.start;
+					}
+				}
+
+				if (oMeasurement) {
+					return this.getMeasurement(sId);
+				} else {
+					return false;
+				}
+			};
+
+			/**
+			 * Clears all performance measurements
+			 *
+			 * @name jQuery.sap.measure#clear
+			 * @function
+			 * @public
+			 */
+			this._clear = function( ){
+				this.mMeasurements = {};
+			};
+
+			/**
+			 * Removes a performance measure
+			 *
+			 * @param {string} sId ID of the measurement
+			 * @name jQuery.sap.measure#remove
+			 * @function
+			 * @public
+			 */
+			this._remove = function( sId ){
+				delete this.mMeasurements[sId];
+			};
+			/**
+			 * Adds a performance measurement with all data
+			 * This is usefull to add external measurements (e.g. from a backend) to the common measurement UI
+			 *
+			 * @param {string} sId ID of the measurement
+			 * @param {string} sInfo Info for the measurement
+			 * @param {int} iStart start timestamp
+			 * @param {int} iEnd end timestamp
+			 * @param {int} iTime time in milliseconds
+			 * @param {int} iDuration effective time in milliseconds
+			 * @param {string | string[]} [aCategories = "javascript"] An optional list of categories for the measure
+			 * @return {object} [] current measurement containing id, info and start-timestamp, end-timestamp, time, duration, categories (false if error)
+			 * @name jQuery.sap.measure#add
+			 * @function
+			 * @public
+			 */
+			this._add = function( sId, sInfo, iStart, iEnd, iTime, iDuration, aCategories ){
+				if (!bActive) {
+					return;
+				}
+				aCategories = checkCategories(aCategories);
+				if (!aCategories) {
+					return false;
+				}
+				var oMeasurement = new Measurement( sId, sInfo, iStart, iEnd, aCategories);
+				oMeasurement.time = iTime;
+				oMeasurement.duration = iDuration;
+
+				if (oMeasurement) {
+					this.mMeasurements[sId] = oMeasurement;
+					return this.getMeasurement(oMeasurement.id);
+				} else {
+					return false;
+				}
+			};
+
+			/**
+			 * Starts an average performance measure.
+			 * The duration of this measure is an avarage of durations measured for each call.
+			 * Optionally a category or list of categories can be passed to allow filtering of measurements.
+			 *
+			 * @param {string} sId ID of the measurement
+			 * @param {string} sInfo Info for the measurement
+			 * @param {string | string[]} [aCategories = "javascript"] An optional list of categories for the measure
+			 * @return {object} current measurement containing id, info and start-timestamp (false if error)
+			 * @name jQuery.sap.measure#average
+			 * @function
+			 * @public
+			 */
+			this._average = function( sId, sInfo, aCategories){
+				if (!bActive) {
+					return;
+				}
+				aCategories = checkCategories(aCategories);
+				if (!aCategories) {
+					return;
+				}
+
+				var oMeasurement = this.mMeasurements[sId],
+					iTime = jQuery.sap.now();
+				if (!oMeasurement || !oMeasurement.average) {
+					this.start(sId, sInfo, aCategories);
+					oMeasurement = this.mMeasurements[sId];
+					oMeasurement.average = true;
+				} else {
+					if (!oMeasurement.end) {
+						oMeasurement.completeDuration += (iTime - oMeasurement.start);
+						oMeasurement.count++;
+					}
+					oMeasurement.start = iTime;
+					oMeasurement.end = 0;
+				}
+				return this.getMeasurement(oMeasurement.id);
+			};
+
+			/**
+			 * Gets a performance measure
+			 *
+			 * @param {string} sId ID of the measurement
+			 * @return {object} current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
+			 * @name jQuery.sap.measure#getMeasurement
+			 * @function
+			 * @public
+			 */
+			this.getMeasurement = function( sId ){
+
+				var oMeasurement = this.mMeasurements[sId];
+
+				if (oMeasurement) {
+					return {id: oMeasurement.id,
+							info: oMeasurement.info,
+							start: oMeasurement.start,
+							end: oMeasurement.end,
+							pause: oMeasurement.pause,
+							resume: oMeasurement.resume,
+							time: oMeasurement.time,
+							duration: oMeasurement.duration,
+							completeDuration: oMeasurement.completeDuration,
+							count: oMeasurement.count,
+							average: oMeasurement.average,
+							categories: oMeasurement.categories};
+				} else {
+					return false;
+				}
+			};
+
+			/**
+			 * Gets all performance measurements
+			 *
+			 * @param {boolean} [bCompleted] Whether only completed measurements should be returned, if explicitly set to false only incomplete measurements are returned
+			 * @return {object} [] current measurement containing id, info and start-timestamp, end-timestamp, time, duration, categories
+			 * @name jQuery.sap.measure#getAllMeasurements
+			 * @function
+			 * @public
+			 */
+			this.getAllMeasurements = function(bCompleted){
+				return this.filterMeasurements(function(oMeasurement) {
+					return oMeasurement;
+				}, bCompleted);
+			};
+
+			/**
+			 * Gets all performance measurements where a provided filter function returns true.
+			 * The filter function is called for every measurement and should return the measurement to be added.
+			 * If no filter function is provided an empty array is returned.
+			 * To filter for certain categories of measurements a fnFilter can be implemented like this
+			 * <code>
+			 * function(oMeasurement) {
+			 *     return oMeasurement.categories.indexOf("rendering") > -1 ? oMeasurement : null
+			 * }</code>
+			 *
+			 * @param {function} fnFilter a filter function that returns true if the passed measurement should be added to the result
+			 * @param {boolean} [bCompleted] Whether only completed measurements should be returned, if explicitly set to false only incomplete measurements are returned
+			 *
+			 * @return {object} [] current measurements containing id, info and start-timestamp, end-timestamp, time, duration, categories (false if error)
+			 * @name jQuery.sap.measure#filterMeasurements
+			 * @function
+			 * @public
+			 * @since 1.34.0
+		 	 */
+			this.filterMeasurements = function(fnFilter, bCompleted) {
+				var aMeasurements = [],
+					that = this;
+				jQuery.each(this.mMeasurements, function(sId){
+					var oMeasurement = that.getMeasurement(sId);
+					if (fnFilter) {
+						var oResult = fnFilter(oMeasurement);
+						if (oResult && ((bCompleted === false && oResult.end === 0) || (bCompleted !== false && (!bCompleted || oResult.end)))) {
+							aMeasurements.push(oResult);
+						}
+					}
+				});
+				return aMeasurements;
+			};
+
+			/**
+			 * Registers an average measurement for a given objects method
+			 *
+			 * @param {string} sId the id of the measurement
+			 * @param {object} oObject the object of the method
+			 * @param {string} sMethod the name of the method
+			 * @param {string[]} [aCategories = ["javascript"]] An optional categories list for the measurement
+			 *
+			 * @returns {boolean} true if the registration was successful
+			 * @name jQuery.sap.measure#registerMethod
+			 * @function
+			 * @public
+			 * @since 1.34.0
+			 */
+			this.registerMethod = function(sId, oObject, sMethod, aCategories) {
+				var fnMethod = oObject[sMethod];
+				if (fnMethod && typeof fnMethod === "function") {
+					var bFound = aAverageMethods.indexOf(fnMethod) > -1;
+					if (!bFound) {
+						aOriginalMethods.push({func : fnMethod, obj: oObject, method: sMethod, id: sId});
+						oObject[sMethod] = function() {
+							jQuery.sap.measure.average(sId, sId + " method average", aCategories);
+							var result = fnMethod.apply(this, arguments);
+							jQuery.sap.measure.end(sId);
+							return result;
+						};
+						aAverageMethods.push(oObject[sMethod]);
+						return true;
+					}
+				} else {
+					jQuery.sap.log.debug(sMethod + " in not a function. jQuery.sap.measure.register failed");
+				}
+				return false;
+			};
+
+			/**
+			 * Unregisters an average measurement for a given objects method
+			 *
+			 * @param {string} sId the id of the measurement
+			 * @param {object} oObject the object of the method
+			 * @param {string} sMethod the name of the method
+			 *
+			 * @returns {boolean} true if the unregistration was successful
+			 * @name jQuery.sap.measure#unregisterMethod
+			 * @function
+			 * @public
+			 * @since 1.34.0
+			 */
+			this.unregisterMethod = function(sId, oObject, sMethod) {
+				var fnFunction = oObject[sMethod],
+					iIndex = aAverageMethods.indexOf(fnFunction);
+				if (fnFunction && iIndex > -1) {
+					oObject[sMethod] = aOriginalMethods[iIndex].func;
+					aAverageMethods.splice(iIndex, 1);
+					aOriginalMethods.splice(iIndex, 1);
+					return true;
+				}
+				return false;
+			};
+
+			/**
+			 * Unregisters all average measurements
+			 * @name jQuery.sap.measure#unregisterAllMethods
+			 * @function
+			 * @public
+			 * @since 1.34.0
+			 */
+			this.unregisterAllMethods = function() {
+				while (aOriginalMethods.length > 0) {
+					var oOrig = aOriginalMethods[0];
+					this.unregisterMethod(oOrig.id, oOrig.obj, oOrig.method);
+				}
+			};
+
+			var aMatch = location.search.match(/sap-ui-measure=([^\&]*)/);
+			if (aMatch && aMatch[1]) {
+				if (aMatch[1] === "true" || aMatch[1] === "x" || aMatch[1] === "X") {
+					this.setActive(true);
+				} else {
+					this.setActive(true, aMatch[1]);
+				}
+			} else {
+				var fnInactive = function() {
+					//measure not active
+					return null;
+				};
+				//deactivate methods implementations
+				for (var i = 0; i < aMethods.length; i++) {
+					this[aMethods[i]] = fnInactive;
+				}
+			}
+		}
+
+		/**
+		 * Namespace for the jQuery performance measurement plug-in provided by SAP SE.
+		 *
+		 * @namespace
+		 * @name jQuery.sap.measure
+		 * @public
+		 * @static
+		 */
+		jQuery.sap.measure = new PerfMeasurement();
+
 		/**
 		 * A simple assertion mechanism that logs a message when a given condition is not met.
 		 *
@@ -1465,13 +2028,13 @@
 
 			mPreloadModules = {},
 
-		/* for future use 
+		/* for future use
 		/**
 		 * Mapping from default AMD names to UI5 AMD names.
-		 * 
-		 * For simpler usage in requireModule, the names are already converted to 
+		 *
+		 * For simpler usage in requireModule, the names are already converted to
 		 * normalized resource names.
-		 *     
+		 *
 		 * /
 			mAMDAliases = {
 				'blanket.js': 'sap/ui/thirdparty/blanket.js',
@@ -1496,14 +2059,14 @@
 
 		/**
 		 * Information about third party modules that are delivered with the sap.ui.core library.
-		 * 
-		 * The information maps the name of the module (including extension '.js') to an info object with the 
-		 * following properties: 
-		 * 
+		 *
+		 * The information maps the name of the module (including extension '.js') to an info object with the
+		 * following properties:
+		 *
 		 * <ul>
-		 * <li>amd:boolean : whether the module uses an AMD loader if present. UI5 will disable the AMD loader while loading 
+		 * <li>amd:boolean : whether the module uses an AMD loader if present. UI5 will disable the AMD loader while loading
 		 *              such modules to force the modules to expose their content via global names.</li>
-		 * <li>exports:string[]|string : global name (or names) that are exported by the module. If one ore multiple names are defined, 
+		 * <li>exports:string[]|string : global name (or names) that are exported by the module. If one ore multiple names are defined,
 		 *              the first one will be read from the global object and will be used as value of the module.</li>
 		 * <li>deps:string[] : list of modules that the module depends on. The modules will be loaded first before loading the module itself.</li>
 		 * </ul>
@@ -1535,7 +2098,7 @@
 					amd: true,
 					exports: 'OData' // 'datajs'
 				},
-				'sap/ui/thirdparty/es6-promise.js' : { 
+				'sap/ui/thirdparty/es6-promise.js' : {
 					amd: true,
 					exports: 'ES6Promise'
 				},
@@ -1624,7 +2187,7 @@
 					exports: 'UNorm', // really 'UNorm'! module extends UNorm
 					deps: ['sap/ui/thirdparty/unorm.js']
 				},
-				'sap/ui/thirdparty/URI.js' : { 
+				'sap/ui/thirdparty/URI.js' : {
 					amd: true,
 					exports: 'URI'
 				},
@@ -1640,7 +2203,7 @@
 					exports: 'Scroller' // 'requestAnimationFrame', 'cancelRequestAnimationFrame', 'core'
 				},
 				'sap/ui/demokit/js/esprima.js' : {
-					amd: true, 
+					amd: true,
 					exports: 'esprima'
 				}
 			},
@@ -1831,10 +2394,10 @@
 		 * Resolves relative module names that contain <code>./</code> or <code>../</code> segments to absolute names.
 		 * E.g.: A name <code>../common/validation.js</code> defined in <code>sap/myapp/controller/mycontroller.controller.js</code>
 		 * may resolve to <code>sap/myapp/common/validation.js</code>.
-		 * 
-		 * When sBaseName is <code>null</code>, relative names are not allowed (e.g. for a <code>sap.ui.require</code> call) 
+		 *
+		 * When sBaseName is <code>null</code>, relative names are not allowed (e.g. for a <code>sap.ui.require</code> call)
 		 * and their usage results in an error being thrown.
-		 * 
+		 *
 		 * @param {string|null} sBaseName name of a reference module
 		 * @param {string} sModuleName the name to resolve
 		 * @returns {string} resolved name
@@ -1846,23 +2409,23 @@
 				aSegments,
 				sSegment,
 				i,j,l;
-			
+
 			// check whether the name needs to be resolved at all - if not, just return the sModuleName as it is.
 			if ( !m ) {
 				return sModuleName;
 			}
-			
+
 			// if the name starts with a relative segments then there must be a base name (a global sap.ui.require doesn't support relative names)
 			if ( m.index === 0 && sBaseName == null ) {
 				throw new Error("relative name not supported ('" + sModuleName + "'");
 			}
-			
+
 			// if relative name starts with a dot segment, then prefix it with the base path
 			aSegments = (m.index === 0 ? sBaseName + sModuleName : sModuleName).split('/');
-			
+
 			// process path segments
 			for (i = 0, j = 0, l = aSegments.length; i < l; i++) {
-				
+
 				var sSegment = aSegments[i];
 
 				if ( rDotSegment.test(sSegment) ) {
@@ -1922,10 +2485,10 @@
 		}
 
 		function requireModule(sModuleName) {
-			
+
 			// TODO enable when preload has been adapted:
 			// sModuleName = mAMDAliases[sModuleName] || sModuleName;
-			
+
 			var m = rJSSubtypes.exec(sModuleName),
 				oShim = mAMDShim[sModuleName],
 				sBaseName, sType, oModule, aExtensions, i;
@@ -1947,7 +2510,7 @@
 					requireModule(oShim.deps[i]);
 				}
 			}
-			
+
 			// in case of having a type specified ignore the type for the module path creation and add it as file extension
 			sBaseName = sModuleName.slice(0, m.index);
 			sType = m[0]; // must be a normalized resource name of type .js sType can be empty or one of view|controller|fragment
@@ -1982,7 +2545,6 @@
 
 			// set marker for loading modules (to break cycles)
 			oModule.state = LOADING;
-
 			// if debug is enabled, try to load debug module first
 			aExtensions = window["sap-ui-loaddbg"] ? ["-dbg", ""] : [""];
 			for (i = 0; i < aExtensions.length && oModule.state !== LOADED; i++) {
@@ -2309,6 +2871,19 @@
 				log.info("registerResourcePath ('" + sResourceNamePrefix + "') (registration removed)");
 			} else {
 				vUrlPrefix.url = String(vUrlPrefix.url);
+
+				// remove query parameters
+				var iQueryIndex = vUrlPrefix.url.indexOf("?");
+				if (iQueryIndex !== -1) {
+					vUrlPrefix.url = vUrlPrefix.url.substr(0, iQueryIndex);
+				}
+
+				// remove hash
+				var iHashIndex = vUrlPrefix.url.indexOf("#");
+				if (iHashIndex !== -1) {
+					vUrlPrefix.url = vUrlPrefix.url.substr(0, iHashIndex);
+				}
+
 				// ensure that the prefix ends with a '/'
 				if ( vUrlPrefix.url.slice(-1) != '/' ) {
 					vUrlPrefix.url += '/';
@@ -2467,7 +3042,9 @@
 				vModuleName = ui5ToRJS(vModuleName) + ".js";
 			}
 
+			jQuery.sap.measure.start(vModuleName,"Require module " + vModuleName, ["require"]);
 			requireModule(vModuleName);
+			jQuery.sap.measure.end(vModuleName);
 
 			return this; // TODO
 		};
@@ -2531,16 +3108,16 @@
 		 *
 		 *   });
 		 * </pre>
-		 * 
+		 *
 		 * In another module or in an application HTML page, the {@link sap.ui.require} API can be used
 		 * to load the Something module and to work with it:
-		 * 
+		 *
 		 * <pre>
 		 * sap.ui.require(['sap/mylib/Something'], function(Something) {
-		 * 
-		 *   // instantiate a Something and call foo() on it 
+		 *
+		 *   // instantiate a Something and call foo() on it
 		 *   new Something().foo();
-		 *   
+		 *
 		 * });
 		 * </pre>
 		 *
@@ -2701,7 +3278,7 @@
 		 *     The exact details of how this works might be changed in future implementations and are not
 		 *     yet part of the API contract</li>
 		 * </ul>
-		 * @param {string} [sModuleName] name of the module in simplified resource name syntax. 
+		 * @param {string} [sModuleName] name of the module in simplified resource name syntax.
 		 *        When omitted, the loader determines the name from the request.
 		 * @param {string[]} [aDependencies] list of dependencies of the module
 		 * @param {function|any} vFactory the module value or a function that calculates the value
@@ -2725,13 +3302,13 @@
 				aDependencies = sModuleName;
 				sResourceName = _execStack[_execStack.length - 1];
 			}
-			
+
 			// convert module name to UI5 module name syntax (might fail!)
 			sModuleName = urnToUI5(sResourceName);
-			
-			// calculate the base name for relative module names 
+
+			// calculate the base name for relative module names
 			sBaseName = sResourceName.slice(0, sResourceName.lastIndexOf('/') + 1);
-			
+
 			// optional array of dependencies
 			if ( !jQuery.isArray(aDependencies) ) {
 				// shift parameters
@@ -2756,7 +3333,7 @@
 
 				if ( bExport ) {
 					// ensure parent namespace
-					var sPackage = sResourceName.split('/').slice(0,-1).join('.'); 
+					var sPackage = sResourceName.split('/').slice(0,-1).join('.');
 					if ( sPackage ) {
 						jQuery.sap.getObject(sPackage, 0);
 					}
@@ -3146,11 +3723,11 @@
 			if ( mOptions.async ) {
 				return Promise.resolve(oDeferred);
 			}
-			
+
 			if ( oError != null && mOptions.failOnError ) {
 				throw oError;
 			}
-			
+
 			return oData;
 		};
 
@@ -3252,26 +3829,7 @@
 		}
 	}
 
-	/**
-	 * Includes the script (via &lt;script&gt;-tag) into the head for the
-	 * specified <code>sUrl</code> and optional <code>sId</code>.
-	 * <br>
-	 * <i>In case of IE8 only the load callback will work ignoring in case of success and error.</i>
-	 *
-	 * @param {string}
-	 *            sUrl the URL of the script to load
-	 * @param {string}
-	 *            [sId] id that should be used for the script include tag
-	 * @param {function}
-	 *            [fnLoadCallback] callback function to get notified once the script has been loaded
-	 * @param {function}
-	 *            [fnErrorCallback] callback function to get notified once the script loading failed (not supported by IE8)
-	 *
-	 * @public
-	 * @static
-	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
-	 */
-	jQuery.sap.includeScript = function includeScript(sUrl, sId, fnLoadCallback, fnErrorCallback){
+	function _includeScript(sUrl, sId, fnLoadCallback, fnErrorCallback) {
 		var oScript = window.document.createElement("script");
 		oScript.src = sUrl;
 		oScript.type = "text/javascript";
@@ -3280,11 +3838,17 @@
 		}
 
 		if (fnLoadCallback) {
-			jQuery(oScript).load(fnLoadCallback);
+			jQuery(oScript).load(function() {
+				fnLoadCallback();
+				jQuery(oScript).off("load");
+			});
 		}
 
 		if (fnErrorCallback) {
-			jQuery(oScript).error(fnErrorCallback);
+			jQuery(oScript).error(function() {
+				fnErrorCallback();
+				jQuery(oScript).off("error");
+			});
 		}
 
 		// jQuery("head").append(oScript) doesn't work because they filter for the script
@@ -3294,34 +3858,53 @@
 			jQuery(oOld).remove(); // replacing scripts will not trigger the load event
 		}
 		appendHead(oScript);
+	}
+
+	/**
+	 * Includes the script (via &lt;script&gt;-tag) into the head for the
+	 * specified <code>sUrl</code> and optional <code>sId</code>.
+	 *
+	 * @param {string|object}
+	 *            vUrl the URL of the script to load or a configuration object
+	 * @param {string}
+	 *            vUrl.url the URL of the script to load
+	 * @param {string}
+	 *            [vUrl.id] id that should be used for the script tag
+	 * @param {string}
+	 *            [sId] id that should be used for the script tag
+	 * @param {function}
+	 *            [fnLoadCallback] callback function to get notified once the script has been loaded
+	 * @param {function}
+	 *            [fnErrorCallback] callback function to get notified once the script loading failed
+	 * @return {void|Promise}
+	 *            When using the configuration object a <code>Promise</code> will be returned. The
+	 *            documentation for the <code>fnLoadCallback</code> applies to the <code>resolve</code>
+	 *            handler of the <code>Promise</code> and the one for the <code>fnErrorCallback</code>
+	 *            applies to the <code>reject</code> handler of the <code>Promise</code>.
+	 * 
+	 * @public
+	 * @static
+	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
+	 */
+	jQuery.sap.includeScript = function includeScript(vUrl, sId, fnLoadCallback, fnErrorCallback) {
+		var oConfig = typeof vUrl === "string" ? {
+			url: vUrl,
+			id: sId
+		} : vUrl;
+
+		if (typeof vUrl === "string") {
+			_includeScript(oConfig.url, oConfig.id, fnLoadCallback, fnErrorCallback);
+		} else {
+			return new Promise(function(fnResolve, fnReject) {
+				_includeScript(oConfig.url, oConfig.id, fnResolve, fnReject);
+			});
+		}
 	};
 
 	var oIEStyleSheetNode;
 	var mIEStyleSheets = jQuery.sap._mIEStyleSheets = {};
 
-	/**
-	 * Includes the specified stylesheet via a &lt;link&gt;-tag in the head of the current document. If there is call to
-	 * <code>includeStylesheet</code> providing the sId of an already included stylesheet, the existing element will be
-	 * replaced.
-	 *
-	 * @param {string}
-	 *          sUrl the URL of the script to load
-	 * @param {string}
-	 *          [sId] id that should be used for the script include tag
-	 * @param {function}
-	 *          [fnLoadCallback] callback function to get notified once the link has been loaded
-	 * @param {function}
-	 *          [fnErrorCallback] callback function to get notified once the link loading failed.
-	 *          In case of usage in IE the error callback will also be executed if an empty stylesheet
-	 *          is loaded. This is the only option how to determine in IE if the load was successful
-	 *          or not since the native onerror callback for link elements doesn't work in IE. The IE
-	 *          always calls the onload callback of the link element.
-	 *
-	 * @public
-	 * @static
-	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
-	 */
-	jQuery.sap.includeStyleSheet = function includeStyleSheet(sUrl, sId, fnLoadCallback, fnErrorCallback) {
+	function _includeStyleSheet(sUrl, sId, fnLoadCallback, fnErrorCallback) {
 
 		var _createLink = function(sUrl, sId, fnLoadCallback, fnErrorCallback){
 
@@ -3335,14 +3918,14 @@
 			}
 
 			var fnError = function() {
-				jQuery(oLink).attr("sap-ui-ready", "false");
+				jQuery(oLink).attr("sap-ui-ready", "false").off("error");
 				if (fnErrorCallback) {
 					fnErrorCallback();
 				}
 			};
 
 			var fnLoad = function() {
-				jQuery(oLink).attr("sap-ui-ready", "true");
+				jQuery(oLink).attr("sap-ui-ready", "true").off("load");
 				if (fnLoadCallback) {
 					fnLoadCallback();
 				}
@@ -3452,6 +4035,54 @@
 			_appendStyle(sUrl, sId, fnLoadCallback, fnErrorCallback);
 		}
 
+	}
+
+	/**
+	 * Includes the specified stylesheet via a &lt;link&gt;-tag in the head of the current document. If there is call to
+	 * <code>includeStylesheet</code> providing the sId of an already included stylesheet, the existing element will be
+	 * replaced.
+	 *
+	 * @param {string|object}
+	 *          vUrl the URL of the stylesheet to load or a configuration object
+	 * @param {string}
+	 *            vUrl.url the URL of the stylesheet to load
+	 * @param {string}
+	 *            [vUrl.id] id that should be used for the link tag
+	 * @param {string}
+	 *          [sId] id that should be used for the link tag
+	 * @param {function}
+	 *          [fnLoadCallback] callback function to get notified once the stylesheet has been loaded
+	 * @param {function}
+	 *          [fnErrorCallback] callback function to get notified once the stylesheet loading failed.
+	 *            In case of usage in IE the error callback will also be executed if an empty stylesheet
+	 *            is loaded. This is the only option how to determine in IE if the load was successful
+	 *            or not since the native onerror callback for link elements doesn't work in IE. The IE
+	 *            always calls the onload callback of the link element.
+	 *            Another issue of the IE9 is that in case of loading too many stylesheets the eventing
+	 *            is not working and therefore the error or load callback will not be triggered anymore.
+	 * @return {void|Promise}
+	 *            When using the configuration object a <code>Promise</code> will be returned. The
+	 *            documentation for the <code>fnLoadCallback</code> applies to the <code>resolve</code>
+	 *            handler of the <code>Promise</code> and the one for the <code>fnErrorCallback</code>
+	 *            applies to the <code>reject</code> handler of the <code>Promise</code>.
+	 *
+	 * @public
+	 * @static
+	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
+	 */
+	jQuery.sap.includeStyleSheet = function includeStyleSheet(vUrl, sId, fnLoadCallback, fnErrorCallback) {
+		var oConfig = typeof vUrl === "string" ? {
+			url: vUrl,
+			id: sId
+		} : vUrl;
+
+		if (typeof vUrl === "string") {
+			_includeStyleSheet(oConfig.url, oConfig.id, fnLoadCallback, fnErrorCallback);
+		} else {
+			return new Promise(function(fnResolve, fnReject) {
+				_includeStyleSheet(oConfig.url, oConfig.id, fnResolve, fnReject);
+			});
+		}
 	};
 
 	// TODO should be in core, but then the 'callback' could not be implemented
@@ -3665,355 +4296,6 @@
 		}());
 	}
 
-	// *** Performance measure ***
-	function PerfMeasurement(){
-
-		function Measurement( sId, sInfo, iStart, iEnd ){
-			this.id = sId;
-			this.info = sInfo;
-			this.start = iStart;
-			this.end = iEnd;
-			this.pause = 0;
-			this.resume = 0;
-			this.duration = 0; // used time
-			this.time = 0; // time from start to end
-		}
-
-		var bActive = false;
-		var fnAjax = jQuery.ajax;
-
-		/**
-		 * Gets the current state of the perfomance measurement functionality
-		 *
-		 * @return {boolean} current state of the perfomance measurement functionality
-		 * @name jQuery.sap.measure#getActive
-		 * @function
-		 * @public
-		 */
-		this.getActive = function(){
-			return bActive;
-		};
-
-		/**
-		 * Activates or deactivates the performance measure functionality
-		 *
-		 * @param {boolean} bOn state of the perfomance measurement functionality to set
-		 * @return {boolean} current state of the perfomance measurement functionality
-		 * @name jQuery.sap.measure#setActive
-		 * @function
-		 * @public
-		 */
-		this.setActive = function( bOn ){
-
-			if (bActive == bOn) {
-				return bActive;
-			}
-
-			bActive = bOn;
-
-			if (bActive) {
-				// wrap and instrument jQuery.ajax
-				jQuery.ajax = function(url, options) {
-
-					if ( typeof url === 'object' ) {
-						options = url;
-						url = undefined;
-					}
-					options = options || {};
-
-					var sMeasureId = new URI(url || options.url).absoluteTo(document.location.origin + document.location.pathname).href();
-					jQuery.sap.measure.start(sMeasureId, "Request for " + sMeasureId, "xmlhttprequest");
-					var fnComplete = options.complete;
-					options.complete = function() {
-						jQuery.sap.measure.end(sMeasureId);
-						if (fnComplete) {
-							fnComplete.call(this, arguments);
-						}
-					};
-
-					// strict mode: we potentially modified 'options', so we must not use 'arguments'
-					return fnAjax.call(this, url, options); 
-				};
-			} else if (fnAjax) {
-				jQuery.ajax = fnAjax;
-			}
-
-			return bActive;
-
-		};
-
-		this.setActive(/sap-ui-measure=(true|x|X)/.test(location.search));
-
-		this.mMeasurements = {};
-
-		/**
-		 * Starts a performance measure
-		 *
-		 * @param {string} sId ID of the measurement
-		 * @param {string} sInfo Info for the measurement
-		 * @return {object} current measurement containing id, info and start-timestamp (false if error)
-		 * @name jQuery.sap.measure#start
-		 * @function
-		 * @public
-		 */
-		this.start = function( sId, sInfo ){
-			if (!bActive) {
-				return;
-			}
-
-			var iTime = jQuery.sap.now();
-			var oMeasurement = new Measurement( sId, sInfo, iTime, 0);
-//			jQuery.sap.log.info("Performance measurement start: "+ sId + " on "+ iTime);
-
-			if (oMeasurement) {
-				this.mMeasurements[sId] = oMeasurement;
-				return ({id: oMeasurement.id, info: oMeasurement.info, start: oMeasurement.start });
-			} else {
-				return false;
-			}
-		};
-
-		/**
-		 * Pauses a performance measure
-		 *
-		 * @param {string} sId ID of the measurement
-		 * @return {object} current measurement containing id, info and start-timestamp, pause-timestamp (false if error)
-		 * @name jQuery.sap.measure#pause
-		 * @function
-		 * @public
-		 */
-		this.pause = function( sId ){
-			if (!bActive) {
-				return;
-			}
-
-			var iTime = jQuery.sap.now();
-			var oMeasurement = this.mMeasurements[sId];
-			if (oMeasurement && oMeasurement.end > 0) {
-				// already ended -> no pause possible
-				return false;
-			}
-
-			if (oMeasurement && oMeasurement.pause == 0) {
-				// not already paused
-				oMeasurement.pause = iTime;
-				if (oMeasurement.pause >= oMeasurement.resume && oMeasurement.resume > 0) {
-					oMeasurement.duration = oMeasurement.duration + oMeasurement.pause - oMeasurement.resume;
-					oMeasurement.resume = 0;
-				} else if (oMeasurement.pause >= oMeasurement.start) {
-					oMeasurement.duration = oMeasurement.pause - oMeasurement.start;
-				}
-			}
-//			jQuery.sap.log.info("Performance measurement pause: "+ sId + " on "+ iTime + " duration: "+ oMeasurement.duration);
-
-			if (oMeasurement) {
-				return ({id: oMeasurement.id, info: oMeasurement.info, start: oMeasurement.start, pause: oMeasurement.pause });
-			} else {
-				return false;
-			}
-		};
-
-		/**
-		 * Resumes a performance measure
-		 *
-		 * @param {string} sId ID of the measurement
-		 * @return {object} current measurement containing id, info and start-timestamp, resume-timestamp (false if error)
-		 * @name jQuery.sap.measure#resume
-		 * @function
-		 * @public
-		 */
-		this.resume = function( sId ){
-			if (!bActive) {
-				return;
-			}
-
-			var iTime = jQuery.sap.now();
-			var oMeasurement = this.mMeasurements[sId];
-//			jQuery.sap.log.info("Performance measurement resume: "+ sId + " on "+ iTime + " duration: "+ oMeasurement.duration);
-
-			if (oMeasurement && oMeasurement.pause > 0) {
-				// already paused
-				oMeasurement.pause = 0;
-				oMeasurement.resume = iTime;
-			}
-
-			if (oMeasurement) {
-				return ({id: oMeasurement.id, info: oMeasurement.info, start: oMeasurement.start, resume: oMeasurement.resume });
-			} else {
-				return false;
-			}
-		};
-
-		/**
-		 * Ends a performance measure
-		 *
-		 * @param {string} sId ID of the measurement
-		 * @return {object} current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
-		 * @name jQuery.sap.measure#end
-		 * @function
-		 * @public
-		 */
-		this.end = function( sId ){
-			if (!bActive) {
-				return;
-			}
-
-			var iTime = jQuery.sap.now();
-			var oMeasurement = this.mMeasurements[sId];
-//			jQuery.sap.log.info("Performance measurement end: "+ sId + " on "+ iTime);
-
-			if (oMeasurement && !oMeasurement.end) {
-				oMeasurement.end = iTime;
-				if (oMeasurement.end >= oMeasurement.resume && oMeasurement.resume > 0) {
-					oMeasurement.duration = oMeasurement.duration + oMeasurement.end - oMeasurement.resume;
-					oMeasurement.resume = 0;
-				} else if (oMeasurement.pause > 0) {
-					// duration already calculated
-					oMeasurement.pause = 0;
-				} else if (oMeasurement.end >= oMeasurement.start) {
-					oMeasurement.duration = oMeasurement.end - oMeasurement.start;
-				}
-				if (oMeasurement.end >= oMeasurement.start) {
-					oMeasurement.time = oMeasurement.end - oMeasurement.start;
-				}
-			}
-
-			if (oMeasurement) {
-				return this.getMeasurement(sId);
-			} else {
-				return false;
-			}
-		};
-
-		/**
-		 * Gets a performance measure
-		 *
-		 * @param {string} sId ID of the measurement
-		 * @return {object} current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
-		 * @name jQuery.sap.measure#getMeasurement
-		 * @function
-		 * @public
-		 */
-		this.getMeasurement = function( sId ){
-			if (!bActive) {
-				return;
-			}
-
-			var oMeasurement = this.mMeasurements[sId];
-
-			if (oMeasurement) {
-				return ({id: oMeasurement.id,
-						info: oMeasurement.info,
-						start: oMeasurement.start,
-						end: oMeasurement.end,
-						time: oMeasurement.time,
-						duration: oMeasurement.duration});
-			} else {
-				return false;
-			}
-		};
-
-		/**
-		 * Clears all performance measurements
-		 *
-		 * @name jQuery.sap.measure#clear
-		 * @function
-		 * @public
-		 */
-		this.clear = function( ){
-			if (!bActive) {
-				return;
-			}
-
-			this.mMeasurements = {};
-		};
-
-		/**
-		 * Removes a performance measure
-		 *
-		 * @param {string} sId ID of the measurement
-		 * @name jQuery.sap.measure#remove
-		 * @function
-		 * @public
-		 */
-		this.remove = function( sId ){
-			if (!bActive) {
-				return;
-			}
-
-			delete this.mMeasurements[sId];
-		};
-
-		/**
-		 * Gets all performance measurements
-		 *
-		 * @return {object} [] current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
-		 * @name jQuery.sap.measure#getAllMeasurements
-		 * @function
-		 * @public
-		 */
-		this.getAllMeasurements = function( ){
-			if (!bActive) {
-				return;
-			}
-
-			var aMeasurements = [],
-				that = this;
-
-			jQuery.each(this.mMeasurements, function(sId){
-				aMeasurements.push(that.getMeasurement(sId));
-			});
-			return aMeasurements;
-		};
-
-		/**
-		 * Adds a performance measurement with all data
-		 * This is usefull to add external measurements (e.g. from a backend) to the common measurement UI
-		 *
-		 * @param {string} sId ID of the measurement
-		 * @param {string} sInfo Info for the measurement
-		 * @param {int} iStart start timestamp
-		 * @param {int} iEnd end timestamp
-		 * @param {int} iTime time in milliseconds
-		 * @param {int} iDuration effective time in milliseconds
-		 * @return {object} [] current measurement containing id, info and start-timestamp, end-timestamp, time, duration (false if error)
-		 * @name jQuery.sap.measure#add
-		 * @function
-		 * @public
-		 */
-		this.add = function( sId, sInfo, iStart, iEnd, iTime, iDuration ){
-			if (!bActive) {
-				return;
-			}
-
-			var oMeasurement = new Measurement( sId, sInfo, iStart, iEnd);
-			oMeasurement.time = iTime;
-			oMeasurement.duration = iDuration;
-
-			if (oMeasurement) {
-				this.mMeasurements[sId] = oMeasurement;
-				return ({id: oMeasurement.id,
-						info: oMeasurement.info,
-						start: oMeasurement.start,
-						end: oMeasurement.end,
-						time: oMeasurement.time,
-						duration: oMeasurement.duration});
-			} else {
-				return false;
-			}
-		};
-	}
-
-	/**
-	 * Namespace for the jQuery performance measurement plug-in provided by SAP SE.
-	 *
-	 * @namespace
-	 * @name jQuery.sap.measure
-	 * @public
-	 * @static
-	 */
-	jQuery.sap.measure = new PerfMeasurement();
-
 	/**
 	 * FrameOptions class
 	 */
@@ -4079,7 +4361,7 @@
 					if (bOk) {
 						this._applyState(true, true);
 					}
-				} catch(e) {
+				} catch (e) {
 					// access to the top window is not possible
 					this._sendRequireMessage();
 				}

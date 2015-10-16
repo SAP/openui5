@@ -29,6 +29,7 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 			if (!this.oContext) {
 				this.oContext = "";
 			}
+			this._mLengthsCache = {};
 			this.filterInfo = {};
 			this.filterInfo.aFilteredContexts = [];
 			this.filterInfo.oParentContext = {};
@@ -39,7 +40,6 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Context', './TreeBindin
 				}
 			}
 			
-			this._mLengthsCache = {};
 		}
 		
 	});

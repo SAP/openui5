@@ -123,19 +123,19 @@ sap.ui.define(['jquery.sap.global'],
 		// Footer separator
 		if (iButtonCount > 0) {
 			rm.write('<div class="sapUiDlgFooterSep"></div>');
-
-			// Footer
-			rm.write("<div id='");
-			rm.write(oControl.getId());
-			rm.write("-footer' class='sapUiDlgFooter'>");
-
-			// Wave and Buttons
-			rm.write("<div class='sapUiDlgBtns'>");
-			for (var i = 0; i < iButtonCount; i++) {
-				rm.renderControl(aButtons[i]);
-			}
-			rm.write("</div><div class='sapUiDlgWave'></div></div>");
 		}
+
+		// Footer
+		rm.write("<div id='");
+		rm.write(oControl.getId());
+		rm.write("-footer' class='sapUiDlgFooter'>");
+
+		// Wave and Buttons
+		rm.write("<div class='sapUiDlgBtns'>");
+		for (var i = 0; i < iButtonCount; i++) {
+			rm.renderControl(aButtons[i]);
+		}
+		rm.write("</div><div class='sapUiDlgWave'></div></div>");
 
 		// Grip
 		if (oControl.getResizable()) {

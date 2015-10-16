@@ -39,7 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 			var oMyDate;
 
 			if (oDate instanceof UniversalDate) {
-				oMyDate = new Date(oDate.getTime());
+				oMyDate = oDate.getJSDate();
 			}else {
 				oMyDate = oDate;
 			}
@@ -76,7 +76,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 			var oMyDate;
 
 			if (oDate instanceof UniversalDate) {
-				oMyDate = new Date(oDate.getTime());
+				oMyDate = oDate.getJSDate();
 			}else {
 				oMyDate = oDate;
 			}

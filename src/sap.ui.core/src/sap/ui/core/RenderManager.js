@@ -206,7 +206,7 @@ sap.ui.define([
 		}
 		this.aRenderStack.unshift(oControl.getId());
 		// start performance measurement
-		jQuery.sap.measure.start(oControl.getId() + "---renderControl","Rendering of " + oControl.getMetadata().getName());
+		jQuery.sap.measure.start(oControl.getId() + "---renderControl","Rendering of " + oControl.getMetadata().getName(), ["rendering","control"]);
 
 		//Remember the current buffer size to check later whether the control produced output
 		var iBufferLength = this.aBuffer.length;
@@ -340,7 +340,7 @@ sap.ui.define([
 						// store the element on the event (aligned with jQuery syntax)
 						oEvent.srcControl = oControl;
 						// start performance measurement
-						jQuery.sap.measure.start(oControl.getId() + "---AfterRendering","AfterRendering of " + oControl.getMetadata().getName());
+						jQuery.sap.measure.start(oControl.getId() + "---AfterRendering","AfterRendering of " + oControl.getMetadata().getName(), ["rendering","after"]);
 						oControl._handleEvent(oEvent);
 						// end performance measurement
 						jQuery.sap.measure.end(oControl.getId() + "---AfterRendering");
@@ -728,7 +728,7 @@ sap.ui.define([
 
 			}
 
-			jQuery.sap.measure.start(oRootNode.id + "---preserveContent","preserveContent for " + oRootNode.id);
+			jQuery.sap.measure.start(oRootNode.id + "---preserveContent","preserveContent for " + oRootNode.id, ["rendering","preserve"]);
 			if ( bPreserveRoot ) {
 				check(oRootNode);
 			} else {

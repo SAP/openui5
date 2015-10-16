@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		Month.prototype.init = function(){
 
-			this._oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
+			this._oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sap.ui.core.CalendarType.Gregorian});
 			this._oFormatLong = sap.ui.core.format.DateFormat.getInstance({style: "long"});
 
 			this._mouseMoveProxy = jQuery.proxy(this._handleMouseMove, this);
@@ -613,7 +613,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				for ( var i = 0; i < aDomRefs.length; i++) {
 					var $DomRef = jQuery(aDomRefs[i]);
 					if (!$DomRef.hasClass("sapUiCalItemOtherMonth")) {
-						if ($DomRef.attr("data-sap-day") == this._oFormatYyyymmdd.format(oFocusedDate, true)) {
+						if ($DomRef.attr("data-sap-day") == this._oFormatYyyymmdd.format(oFocusedDate.getJSDate(), true)) {
 							$DomRef.focus();
 							break;
 						}
@@ -884,7 +884,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		function _initItemNavigation(oThis){
 
 			var oDate = oThis._getDate();
-			var sYyyymmdd = oThis._oFormatYyyymmdd.format(oDate, true);
+			var sYyyymmdd = oThis._oFormatYyyymmdd.format(oDate.getJSDate(), true);
 			var iIndex = 0;
 
 			var oRootDomRef = oThis.$("days").get(0);
@@ -1062,7 +1062,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oThis.setDate(new Date(oDate.getTime()));
 			}
 
-			var sYyyymmdd = oThis._oFormatYyyymmdd.format(oDate, true);
+			var sYyyymmdd = oThis._oFormatYyyymmdd.format(oDate.getJSDate(), true);
 			var aDomRefs = oThis._oItemNavigation.getItemDomRefs();
 			var $DomRefDay;
 			for ( var i = 0; i < aDomRefs.length; i++) {
@@ -1177,7 +1177,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						oDateRange = new sap.ui.unified.DateRange({startDate: CalendarUtils._createLocalDate(new Date(oDate.getTime()))});
 						oAggOwner.addAggregation("selectedDates", oDateRange, true); // no re-rendering
 					}
-					sYyyymmdd = oThis._oFormatYyyymmdd.format(oDate, true);
+					sYyyymmdd = oThis._oFormatYyyymmdd.format(oDate.getJSDate(), true);
 					for ( i = 0; i < aDomRefs.length; i++) {
 						$DomRef = jQuery(aDomRefs[i]);
 						if (!$DomRef.hasClass("sapUiCalItemOtherMonth") && $DomRef.attr("data-sap-day") == sYyyymmdd) {
@@ -1205,7 +1205,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			if (!oEndDate) {
 				// start of interval or single date
-				var sYyyymmdd = oThis._oFormatYyyymmdd.format(oStartDate, true);
+				var sYyyymmdd = oThis._oFormatYyyymmdd.format(oStartDate.getJSDate(), true);
 				for ( i = 0; i < aDomRefs.length; i++) {
 					$DomRef = jQuery(aDomRefs[i]);
 					bStart = false;

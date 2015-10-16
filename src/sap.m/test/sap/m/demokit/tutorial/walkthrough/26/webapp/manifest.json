@@ -10,16 +10,7 @@
 	"applicationVersion": {
 	  "version": "1.0.0"
 	},
-	"ach": "CA-UI5-DOC",
-	"dataSources": {
-	  "invoiceRemote": {
-		"uri": "../../../../../../../../../uilib-sample/proxy/http/services.odata.org/V2/Northwind/Northwind.svc/",
-		"type": "OData",
-		"settings": {
-		  "odataVersion": "2.0"
-		}
-	  }
-	}
+	"ach": "CA-UI5-DOC"
   },
   "sap.ui": {
 	"_version": "1.1.0",
@@ -42,15 +33,16 @@
 		"sap.m": {}
 	  }
 	},
+	"config": {
+	  "invoiceLocal": "/Invoices.json",
+	  "invoiceRemote": "../../../../../../../../../uilib-sample/proxy/http/services.odata.org/V2/Northwind/Northwind.svc/"
+	},
 	"models": {
 	  "i18n": {
 		"type": "sap.ui.model.resource.ResourceModel",
 		"settings": {
 		  "bundleName": "sap.ui.demo.wt.i18n.i18n"
 		}
-	  },
-	  "invoice": {
-		"dataSource": "invoiceRemote"
 	  }
 	},
 	"resources": {

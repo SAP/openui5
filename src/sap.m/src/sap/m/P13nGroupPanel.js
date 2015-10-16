@@ -250,42 +250,45 @@ sap.ui.define([
 			this._bUpdateRequired = false;
 
 			var aKeyFields = [];
-			var sModelName = this.getBindingInfo("items").model;
+			var sModelName = (this.getBindingInfo("items") || {}).model;
+			var fGetValueOfProperty = function(sName, oContext, oItem) {
+				var oBinding = oItem.getBinding(sName);
+				if (oBinding && oContext) {
+					return oContext.getObject()[oBinding.getPath()];
+				}
+				return oItem.getMetadata().getProperty(sName) ? oItem.getProperty(sName) : oItem.getAggregation(sName);
+			};
 			this.getItems().forEach(function(oItem_) {
 				var oContext = oItem_.getBindingContext(sModelName);
-				var oModelItem = oContext.getObject();
 				// Update key of model (in case of 'restore' the key in model gets lost because it is overwritten by Restore Snapshot)
 				if (oItem_.getBinding("key")) {
-					oModelItem[oItem_.getBinding("key").getPath()] = oItem_.getKey();
+					oContext.getObject()[oItem_.getBinding("key").getPath()] = oItem_.getKey();
 				}
-				var binding;
 				aKeyFields.push({
 					key: oItem_.getColumnKey(),
-					text: (binding = oItem_.getBinding("text")) ? oModelItem[binding.getPath()] : undefined,
-					tooltip: (binding = oItem_.getBinding("tooltip")) ? oModelItem[binding.getPath()] : undefined
+					text: fGetValueOfProperty("text", oContext, oItem_),
+					tooltip: fGetValueOfProperty("tooltip", oContext, oItem_)
 				});
 			});
 			this._oGroupPanel.setKeyFields(aKeyFields);
 
 			var aConditions = [];
-			sModelName = this.getBindingInfo("groupItems").model;
+			sModelName = (this.getBindingInfo("groupItems") || {}).model;
 			this.getGroupItems().forEach(function(oGroupItem_) {
 				// Note: current implementation assumes that the length of groupItems aggregation is equal
 				// to the number of corresponding model items.
 				// Currently the model data is up-to-date so we need to resort to the Binding Context;
 				// the "groupItems" aggregation data - obtained via getGroupItems() - has the old state !
 				var oContext = oGroupItem_.getBindingContext(sModelName);
-				var oModelItem = oContext.getObject();
 				// Update key of model (in case of 'restore' the key in model gets lost because it is overwritten by Restore Snapshot)
 				if (oGroupItem_.getBinding("key")) {
-					oModelItem[oGroupItem_.getBinding("key").getPath()] = oGroupItem_.getKey();
+					oContext.getObject()[oGroupItem_.getBinding("key").getPath()] = oGroupItem_.getKey();
 				}
-				var binding;
 				aConditions.push({
 					key: oGroupItem_.getKey(),
-					keyField: (binding = oGroupItem_.getBinding("columnKey")) ? oModelItem[binding.getPath()] : undefined,
-					operation: (binding = oGroupItem_.getBinding("operation")) ? oModelItem[binding.getPath()] : undefined,
-					showIfGrouped: (binding = oGroupItem_.getBinding("showIfGrouped")) ? oModelItem[binding.getPath()] : undefined
+					keyField: fGetValueOfProperty("columnKey", oContext, oGroupItem_),
+					operation: fGetValueOfProperty("operation", oContext, oGroupItem_),
+					showIfGrouped: fGetValueOfProperty("showIfGrouped", oContext, oGroupItem_)
 				});
 			});
 			this._oGroupPanel.setConditions(aConditions);
@@ -294,18 +297,27 @@ sap.ui.define([
 
 	P13nGroupPanel.prototype.addItem = function(oItem) {
 		P13nPanel.prototype.addItem.apply(this, arguments);
-		this._bUpdateRequired = true;
+
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 	};
 
 	P13nGroupPanel.prototype.removeItem = function(oItem) {
 		P13nPanel.prototype.removeItem.apply(this, arguments);
 
-		this._bUpdateRequired = true;
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 	};
 
 	P13nGroupPanel.prototype.destroyItems = function() {
 		this.destroyAggregation("items");
-		this._bUpdateRequired = true;
+
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
+
 		return this;
 	};
 
@@ -319,7 +331,11 @@ sap.ui.define([
 
 	P13nGroupPanel.prototype.insertGroupItem = function(oGroupItem) {
 		this.insertAggregation("groupItems", oGroupItem);
-		this._bUpdateRequired = true;
+
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
+
 		return this;
 	};
 
@@ -333,14 +349,20 @@ sap.ui.define([
 
 	P13nGroupPanel.prototype.removeGroupItem = function(oGroupItem) {
 		oGroupItem = this.removeAggregation("groupItems", oGroupItem);
-		this._bUpdateRequired = true;
+
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
+
 		return oGroupItem;
 	};
 
 	P13nGroupPanel.prototype.removeAllGroupItems = function() {
 		var aGroupItems = this.removeAllAggregation("groupItems");
 
-		this._bUpdateRequired = true;
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 
 		return aGroupItems;
 	};

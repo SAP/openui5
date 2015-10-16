@@ -83,7 +83,7 @@
 				text: "{text}",
 				tooltip: "{tooltip}",
 				type: "{type}",
-				maxlength: "{maxlength}"
+				maxLength: "{maxlength}"
 			}));
 			oP13nFilterPanel.bindFilterItems("/filterItems", new sap.m.P13nFilterItem({
 				key: "{key}",
@@ -93,7 +93,7 @@
 				value1: "{value1}",
 				value2: "{value2}"
 			}));
-		};		
+		};
 
 		test("Default Values", function() {
 
@@ -260,8 +260,8 @@
 		test("bind named model", function() {
 
 			// system under test
-			var oP13nFilterPanel = new sap.m.P13nFilterPanel();	
-			
+			var oP13nFilterPanel = new sap.m.P13nFilterPanel();
+
 			var oModel = new sap.ui.model.json.JSONModel(jQuery.extend(true, {}, gData));
 			oP13nFilterPanel.setModel(oModel, "myModel");
 			oP13nFilterPanel.bindItems("myModel>/items", new sap.m.P13nItem({
@@ -269,7 +269,7 @@
 				text: "{myModel>text}",
 				tooltip: "{myModel>tooltip}",
 				type: "{myModel>type}",
-				maxlength: "{myModel>maxlength}"
+				maxLength: "{myModel>maxlength}"
 			}));
 			oP13nFilterPanel.bindFilterItems("myModel>/filterItems", new sap.m.P13nFilterItem({
 				key: "{myModel>key}",
@@ -284,6 +284,118 @@
 			oP13nFilterPanel.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
+			// assertions			
+			strictEqual(oP13nFilterPanel.getItems().length, 3, "length of getItems should be 3'");
+			strictEqual(oP13nFilterPanel.getFilterItems().length, 3, "length of getFilterItems should be 3'");
+
+			// cleanup
+			oP13nFilterPanel.destroy();
+		});
+
+		test("create with aggregations", function() {
+
+			// system under test
+			var oP13nFilterPanel = new sap.m.P13nFilterPanel({
+				items: [
+					new sap.m.P13nItem({
+						columnKey: "c0",
+						text: "Name"
+					}), new sap.m.P13nItem({
+						columnKey: "c1",
+						text: "Date",
+						type: "date"
+					}), new sap.m.P13nItem({
+						columnKey: "c2",
+						text: "Number",
+						tooltip: "My Tooltip",
+						maxLength: "10",
+						type: "numeric"
+					})
+				],
+				filterItems: [
+					new sap.m.P13nFilterItem({
+						key: "f0",
+						columnKey: "c2",
+						operation: "BT",
+						value1: "1",
+						value2: "100"
+					}), new sap.m.P13nFilterItem({
+						key: "f1",
+						columnKey: "c0",
+						operation: "GT",
+						value1: "A",
+						value2: ""
+					}), new sap.m.P13nFilterItem({
+						key: "f2",
+						exclude: true,
+						columnKey: "c1",
+						operation: "EQ",
+						value1: sap.ui.core.format.DateFormat.getDateInstance().format(new Date()),
+						value2: sap.ui.core.format.DateFormat.getDateInstance().format(new Date())
+					})
+				]
+			});
+
+			// arrange
+			oP13nFilterPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assertions			
+			strictEqual(oP13nFilterPanel.getItems().length, 3, "length of getItems should be 3'");
+			strictEqual(oP13nFilterPanel.getFilterItems().length, 3, "length of getFilterItems should be 3'");
+
+			// cleanup
+			oP13nFilterPanel.destroy();
+		});
+
+		test("create with addXXX", function() {
+
+			// system under test
+			var oP13nFilterPanel = new sap.m.P13nFilterPanel();
+
+			// arrange
+			oP13nFilterPanel.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oP13nFilterPanel.addItem(new sap.m.P13nItem({
+				columnKey: "c0",
+				text: "Name"
+			}));
+			oP13nFilterPanel.addItem(new sap.m.P13nItem({
+				columnKey: "c1",
+				text: "Date",
+				type: "date"
+			}));
+			oP13nFilterPanel.addItem(new sap.m.P13nItem({
+				columnKey: "c2",
+				text: "Number",
+				tooltip: "My Tooltip",
+				maxLength: "10",
+				type: "numeric"
+			}));
+			oP13nFilterPanel.addFilterItem(new sap.m.P13nFilterItem({
+				key: "f0",
+				columnKey: "c2",
+				operation: "BT",
+				value1: "1",
+				value2: "100"
+			}));
+			oP13nFilterPanel.addFilterItem(new sap.m.P13nFilterItem({
+				key: "f1",
+				columnKey: "c0",
+				operation: "GT",
+				value1: "A",
+				value2: ""
+			}));
+			oP13nFilterPanel.addFilterItem(new sap.m.P13nFilterItem({
+				key: "f2",
+				exclude: true,
+				columnKey: "c1",
+				operation: "EQ",
+				value1: sap.ui.core.format.DateFormat.getDateInstance().format(new Date()),
+				value2: sap.ui.core.format.DateFormat.getDateInstance().format(new Date())
+			}));
+			sap.ui.getCore().applyChanges();
 			// assertions			
 			strictEqual(oP13nFilterPanel.getItems().length, 3, "length of getItems should be 3'");
 			strictEqual(oP13nFilterPanel.getFilterItems().length, 3, "length of getFilterItems should be 3'");

@@ -29,7 +29,7 @@ sap.ui.define([
 			// set invoice model - remote
 			var oConfig = this.getMetadata().getConfig();
 			var oInvoiceModel = new ODataModel(oConfig.invoiceRemote);
-			oInvoiceModel.setUseBatch(false);
+
 			this.setModel(oInvoiceModel, "invoice");
 
 			// set dialog

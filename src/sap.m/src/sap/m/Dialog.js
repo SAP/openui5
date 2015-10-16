@@ -670,22 +670,34 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			return margins;
 		};
 
+		Dialog.prototype._getSizes = function() {
+			var $this = this.$();
+			var windowWidth = this._$Window.width();
+			var windowHeight = (Dialog._bIOS7Tablet && sap.ui.Device.orientation.landscape && window.innerHeight) ? window.innerHeight : this._$Window.height();
+			var iContentOffset = parseInt($this.css('padding-top'), 10) + parseInt($this.css('padding-bottom'), 10);
+			var iHPaddingToScreen = this._getDialogOffset(windowWidth).left;
+			var iVPaddingToScreen = this._getDialogOffset(windowHeight).top;
+			var maxWidth = windowWidth - iHPaddingToScreen;
+			var maxHeight = windowHeight - iVPaddingToScreen - iContentOffset;
+
+			return {
+				maxWidth: maxWidth,
+				maxHeight: maxHeight
+			};
+		};
+
 		/**
 		 *
 		 * @private
 		 */
 		Dialog.prototype._setDimensions = function () {
-			var iWindowWidth = this._$Window.width(),
-				iWindowHeight = (Dialog._bIOS7Tablet && sap.ui.Device.orientation.landscape && window.innerHeight) ? window.innerHeight : this._$Window.height(),
+			var oSizes = this._getSizes(),
 				$this = this.$(),
 				bStretch = this.getStretch(),
 				bStretchOnPhone = this.getStretchOnPhone() && sap.ui.Device.system.phone,
 				bMessageType = this._bMessageType,
-				iHPaddingToScreen = this._getDialogOffset(iWindowWidth).left,
-				iVPaddingToScreen = this._getDialogOffset(iWindowWidth).top,
-				iContentOffset = parseInt($this.css('padding-top'), 10) + parseInt($this.css('padding-bottom'), 10),
-				iMaxWidth = iWindowWidth - iHPaddingToScreen,
-				iMaxHeight = iWindowHeight - iVPaddingToScreen - iContentOffset,
+				iMaxWidth = oSizes.maxWidth,
+				iMaxHeight = oSizes.maxHeight,
 				oStyles = {};
 
 			//the initial size is set in the renderer when the dom is created
@@ -1176,6 +1188,20 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		/* =========================================================== */
 		/*                         begin: setters                      */
 		/* =========================================================== */
+
+		//Manage "sapMDialogWithSubHeader" class depending on the visibility of the subHeader
+		//This is because the dialog has content height and width and the box-sizing have to be content-box in
+		//order to not recalculate the size with js
+		Dialog.prototype.setSubHeader = function(oControl) {
+			this.setAggregation("subHeader", oControl);
+
+			oControl.setVisible = function(isVisible) {
+				this.$().toggleClass('sapMDialogWithSubHeader', isVisible);
+				oControl.setProperty("visible", isVisible);
+			}.bind(this);
+
+			return oControl;
+		};
 
 		//The public setters and getters should not be documented via JSDoc because they will appear in the explored app
 

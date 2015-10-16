@@ -5,8 +5,6 @@
 	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
 	<meta charset="UTF-8">
 
-	<link rel="stylesheet" type="text/css" href="css/style.css">
-
 	<script
 		id='sap-ui-bootstrap'
 		type='text/javascript'
@@ -20,21 +18,32 @@
 	</script>
 
 	<script>
-		new sap.m.Shell("Shell", {
-			title : "Shopping Cart",
-			showLogout : false,
-			app : new sap.ui.core.ComponentContainer({
-				name : 'sap.ui.demo.cart'
-			}),
-			homeIcon : {
-				'phone' : 'img/57_iPhone_Desktop_Launch.png',
-				'phone@2' : 'img/114_iPhone-Retina_Web_Clip.png',
-				'tablet' : 'img/72_iPad_Desktop_Launch.png',
-				'tablet@2' : 'img/144_iPad_Retina_Web_Clip.png',
-				'favicon' : 'img/favicon.ico',
-				'precomposed': false
+		sap.ui.getCore().attachInit(function () {
+				sap.ui.require([
+					"sap/m/Shell",
+					"sap/ui/core/ComponentContainer",
+					"sap/ui/demo/cart/localService/mockserver"
+				], function (Shell, ComponentContainer, mockserver) {
+					mockserver.init();
+
+					new Shell("Shell", {
+						title : "Shopping Cart",
+						showLogout : false,
+						app : new ComponentContainer({
+							name : 'sap.ui.demo.cart'
+						}),
+						homeIcon : {
+							'phone' : 'img/57_iPhone_Desktop_Launch.png',
+							'phone@2' : 'img/114_iPhone-Retina_Web_Clip.png',
+							'tablet' : 'img/72_iPad_Desktop_Launch.png',
+							'tablet@2' : 'img/144_iPad_Retina_Web_Clip.png',
+							'favicon' : 'img/favicon.ico',
+							'precomposed': false
+						}
+					}).placeAt('content');
+				})
 			}
-		}).placeAt('content');
+		);
 	</script>
 
 </head>

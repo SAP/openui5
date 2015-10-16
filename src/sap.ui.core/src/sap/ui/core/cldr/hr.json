@@ -1147,281 +1147,416 @@
 	},
 	"orientation": "left-to-right",
 	"ca-gregorian": {
-		"dateFormat-full": "EEEE, d. MMMM y.",
-		"dateFormat-long": "d. MMMM y.",
-		"dateFormat-medium": "d. MMM y.",
-		"dateFormat-short": "dd.MM.y.",
-		"timeFormat-full": "HH:mm:ss zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} 'u' {0}",
-		"dateTimeFormat-long": "{1} 'u' {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} – {1}",
-		"intervalFormat-d-d": "dd. – dd.",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h – h'h' a",
-		"intervalFormat-H-H": "HH – HH 'h'",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm – h:mm a",
-		"intervalFormat-hm-m": "h:mm – h:mm a",
-		"intervalFormat-Hm-H": "HH:mm – HH:mm",
-		"intervalFormat-Hm-m": "HH:mm – HH:mm",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm – h:mm a v",
-		"intervalFormat-hmv-m": "h:mm – h:mm a v",
-		"intervalFormat-Hmv-H": "HH:mm – HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm – HH:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h – h 'h' a v",
-		"intervalFormat-Hv-H": "HH – HH 'h' v",
-		"intervalFormat-M-M": "MM. – MM.",
-		"intervalFormat-Md-d": "dd.MM. – dd.MM.",
-		"intervalFormat-Md-M": "dd.MM. – dd.MM.",
-		"intervalFormat-MEd-d": "E, dd.MM. – E, dd.MM.",
-		"intervalFormat-MEd-M": "E, dd.MM. – E, dd.MM.",
-		"intervalFormat-MMM-M": "LLL – LLL",
-		"intervalFormat-MMMd-d": "dd. – dd. MMM",
-		"intervalFormat-MMMd-M": "dd. MMM – dd. MMM",
-		"intervalFormat-MMMEd-d": "E, dd. – E, dd. MMM",
-		"intervalFormat-MMMEd-M": "E, dd. MMM – E, dd. MMM",
-		"intervalFormat-y-y": "y. – y.",
-		"intervalFormat-yM-M": "MM.y. – MM.y.",
-		"intervalFormat-yM-y": "MM.y. – MM.y.",
-		"intervalFormat-yMd-d": "dd.MM.y. – dd.MM.y.",
-		"intervalFormat-yMd-M": "dd.MM.y. – dd.MM.y.",
-		"intervalFormat-yMd-y": "dd.MM.y. – dd.MM.y.",
-		"intervalFormat-yMEd-d": "E, dd.MM.y. – E, dd.MM.y.",
-		"intervalFormat-yMEd-M": "E, dd.MM.y. – E, dd.MM.y.",
-		"intervalFormat-yMEd-y": "E, dd.MM.y. – E, dd.MM.y.",
-		"intervalFormat-yMMM-M": "LLL – LLL y.",
-		"intervalFormat-yMMM-y": "LLL y. – LLL y.",
-		"intervalFormat-yMMMd-d": "dd. – dd. MMM y.",
-		"intervalFormat-yMMMd-M": "dd. MMM – dd. MMM y.",
-		"intervalFormat-yMMMd-y": "dd. MMM y. – dd. MMM y.",
-		"intervalFormat-yMMMEd-d": "E, dd. – E, dd. MMM y.",
-		"intervalFormat-yMMMEd-M": "E, dd. MMM – E, dd. MMM y.",
-		"intervalFormat-yMMMEd-y": "E, dd. MMM y. – E, dd. MMM y.",
-		"intervalFormat-yMMMM-M": "LLLL – LLLL y.",
-		"intervalFormat-yMMMM-y": "LLLL y. – LLLL y.",
-		"months-format-abbreviated": [
-			"sij",
-			"velj",
-			"ožu",
-			"tra",
-			"svi",
-			"lip",
-			"srp",
-			"kol",
-			"ruj",
-			"lis",
-			"stu",
-			"pro"
-		],
-		"months-format-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4.",
-			"5.",
-			"6.",
-			"7.",
-			"8.",
-			"9.",
-			"10.",
-			"11.",
-			"12."
-		],
-		"months-format-wide": [
-			"siječnja",
-			"veljače",
-			"ožujka",
-			"travnja",
-			"svibnja",
-			"lipnja",
-			"srpnja",
-			"kolovoza",
-			"rujna",
-			"listopada",
-			"studenoga",
-			"prosinca"
-		],
-		"months-standAlone-abbreviated": [
-			"sij",
-			"velj",
-			"ožu",
-			"tra",
-			"svi",
-			"lip",
-			"srp",
-			"kol",
-			"ruj",
-			"lis",
-			"stu",
-			"pro"
-		],
-		"months-standAlone-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4.",
-			"5.",
-			"6.",
-			"7.",
-			"8.",
-			"9.",
-			"10.",
-			"11.",
-			"12."
-		],
-		"months-standAlone-wide": [
-			"siječanj",
-			"veljača",
-			"ožujak",
-			"travanj",
-			"svibanj",
-			"lipanj",
-			"srpanj",
-			"kolovoz",
-			"rujan",
-			"listopad",
-			"studeni",
-			"prosinac"
-		],
-		"days-format-abbreviated": [
-			"ned",
-			"pon",
-			"uto",
-			"sri",
-			"čet",
-			"pet",
-			"sub"
-		],
-		"days-format-narrow": [
-			"N",
-			"P",
-			"U",
-			"S",
-			"Č",
-			"P",
-			"S"
-		],
-		"days-format-short": [
-			"ned",
-			"pon",
-			"uto",
-			"sri",
-			"čet",
-			"pet",
-			"sub"
-		],
-		"days-format-wide": [
-			"nedjelja",
-			"ponedjeljak",
-			"utorak",
-			"srijeda",
-			"četvrtak",
-			"petak",
-			"subota"
-		],
-		"days-standAlone-abbreviated": [
-			"ned",
-			"pon",
-			"uto",
-			"sri",
-			"čet",
-			"pet",
-			"sub"
-		],
-		"days-standAlone-narrow": [
-			"n",
-			"p",
-			"u",
-			"s",
-			"č",
-			"p",
-			"s"
-		],
-		"days-standAlone-short": [
-			"ned",
-			"pon",
-			"uto",
-			"sri",
-			"čet",
-			"pet",
-			"sub"
-		],
-		"days-standAlone-wide": [
-			"nedjelja",
-			"ponedjeljak",
-			"utorak",
-			"srijeda",
-			"četvrtak",
-			"petak",
-			"subota"
-		],
-		"quarters-format-abbreviated": [
-			"1kv",
-			"2kv",
-			"3kv",
-			"4kv"
-		],
-		"quarters-format-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-format-wide": [
-			"1. kvartal",
-			"2. kvartal",
-			"3. kvartal",
-			"4. kvartal"
-		],
-		"quarters-standAlone-abbreviated": [
-			"1kv",
-			"2kv",
-			"3kv",
-			"4kv"
-		],
-		"quarters-standAlone-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-standAlone-wide": [
-			"1. kvartal",
-			"2. kvartal",
-			"3. kvartal",
-			"4. kvartal"
-		],
-		"dayPeriods-format-abbreviated": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-format-narrow": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-format-wide": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-wide": [
-			"AM",
-			"PM"
-		],
+		"dateFormats": {
+			"full": "EEEE, d. MMMM y.",
+			"long": "d. MMMM y.",
+			"medium": "d. MMM y.",
+			"short": "dd.MM.y."
+		},
+		"timeFormats": {
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1} 'u' {0}",
+			"long": "{1} 'u' {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d.",
+				"E": "ccc",
+				"Ed": "E, d.",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y. G",
+				"GyMMM": "LLL y. G",
+				"GyMMMd": "d. MMM y. G",
+				"GyMMMEd": "E, d. MMM y. G",
+				"h": "h a",
+				"H": "HH",
+				"hm": "hh:mm a",
+				"Hm": "HH:mm",
+				"hms": "hh:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"hmsv": "h:mm:ss a v",
+				"Hmsv": "HH:mm:ss v",
+				"hmv": "h:mm a v",
+				"Hmv": "HH:mm v",
+				"M": "L.",
+				"Md": "dd.MM.",
+				"MEd": "E, dd.MM.",
+				"MMdd": "dd. MM.",
+				"MMM": "LLL",
+				"MMMd": "d. MMM",
+				"MMMEd": "E, d. MMM",
+				"MMMMd": "d. MMMM",
+				"MMMMEd": "E, d. MMMM",
+				"ms": "mm:ss",
+				"y": "y.",
+				"yM": "MM.y.",
+				"yMd": "dd.MM.y.",
+				"yMEd": "E, dd.MM.y.",
+				"yMM": "MM. y.",
+				"yMMM": "LLL y.",
+				"yMMMd": "d. MMM y.",
+				"yMMMEd": "E, d. MMM y.",
+				"yMMMM": "LLLL y.",
+				"yQQQ": "QQQ y.",
+				"yQQQQ": "QQQQ y."
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} – {1}",
+				"d": {
+					"d": "dd. – dd."
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h – h'h' a"
+				},
+				"H": {
+					"H": "HH – HH 'h'"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm – h:mm a",
+					"m": "h:mm – h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm – HH:mm",
+					"m": "HH:mm – HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm – h:mm a v",
+					"m": "h:mm – h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm – HH:mm v",
+					"m": "HH:mm – HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h – h 'h' a v"
+				},
+				"Hv": {
+					"H": "HH – HH 'h' v"
+				},
+				"M": {
+					"M": "MM. – MM."
+				},
+				"Md": {
+					"d": "dd.MM. – dd.MM.",
+					"M": "dd.MM. – dd.MM."
+				},
+				"MEd": {
+					"d": "E, dd.MM. – E, dd.MM.",
+					"M": "E, dd.MM. – E, dd.MM."
+				},
+				"MMM": {
+					"M": "LLL – LLL"
+				},
+				"MMMd": {
+					"d": "dd. – dd. MMM",
+					"M": "dd. MMM – dd. MMM"
+				},
+				"MMMEd": {
+					"d": "E, dd. – E, dd. MMM",
+					"M": "E, dd. MMM – E, dd. MMM"
+				},
+				"y": {
+					"y": "y. – y."
+				},
+				"yM": {
+					"M": "MM.y. – MM.y.",
+					"y": "MM.y. – MM.y."
+				},
+				"yMd": {
+					"d": "dd.MM.y. – dd.MM.y.",
+					"M": "dd.MM.y. – dd.MM.y.",
+					"y": "dd.MM.y. – dd.MM.y."
+				},
+				"yMEd": {
+					"d": "E, dd.MM.y. – E, dd.MM.y.",
+					"M": "E, dd.MM.y. – E, dd.MM.y.",
+					"y": "E, dd.MM.y. – E, dd.MM.y."
+				},
+				"yMMM": {
+					"M": "LLL – LLL y.",
+					"y": "LLL y. – LLL y."
+				},
+				"yMMMd": {
+					"d": "dd. – dd. MMM y.",
+					"M": "dd. MMM – dd. MMM y.",
+					"y": "dd. MMM y. – dd. MMM y."
+				},
+				"yMMMEd": {
+					"d": "E, dd. – E, dd. MMM y.",
+					"M": "E, dd. MMM – E, dd. MMM y.",
+					"y": "E, dd. MMM y. – E, dd. MMM y."
+				},
+				"yMMMM": {
+					"M": "LLLL – LLLL y.",
+					"y": "LLLL y. – LLLL y."
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"sij",
+					"velj",
+					"ožu",
+					"tra",
+					"svi",
+					"lip",
+					"srp",
+					"kol",
+					"ruj",
+					"lis",
+					"stu",
+					"pro"
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4.",
+					"5.",
+					"6.",
+					"7.",
+					"8.",
+					"9.",
+					"10.",
+					"11.",
+					"12."
+				],
+				"wide": [
+					"siječnja",
+					"veljače",
+					"ožujka",
+					"travnja",
+					"svibnja",
+					"lipnja",
+					"srpnja",
+					"kolovoza",
+					"rujna",
+					"listopada",
+					"studenoga",
+					"prosinca"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"sij",
+					"velj",
+					"ožu",
+					"tra",
+					"svi",
+					"lip",
+					"srp",
+					"kol",
+					"ruj",
+					"lis",
+					"stu",
+					"pro"
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4.",
+					"5.",
+					"6.",
+					"7.",
+					"8.",
+					"9.",
+					"10.",
+					"11.",
+					"12."
+				],
+				"wide": [
+					"siječanj",
+					"veljača",
+					"ožujak",
+					"travanj",
+					"svibanj",
+					"lipanj",
+					"srpanj",
+					"kolovoz",
+					"rujan",
+					"listopad",
+					"studeni",
+					"prosinac"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"ned",
+					"pon",
+					"uto",
+					"sri",
+					"čet",
+					"pet",
+					"sub"
+				],
+				"narrow": [
+					"N",
+					"P",
+					"U",
+					"S",
+					"Č",
+					"P",
+					"S"
+				],
+				"short": [
+					"ned",
+					"pon",
+					"uto",
+					"sri",
+					"čet",
+					"pet",
+					"sub"
+				],
+				"wide": [
+					"nedjelja",
+					"ponedjeljak",
+					"utorak",
+					"srijeda",
+					"četvrtak",
+					"petak",
+					"subota"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ned",
+					"pon",
+					"uto",
+					"sri",
+					"čet",
+					"pet",
+					"sub"
+				],
+				"narrow": [
+					"n",
+					"p",
+					"u",
+					"s",
+					"č",
+					"p",
+					"s"
+				],
+				"short": [
+					"ned",
+					"pon",
+					"uto",
+					"sri",
+					"čet",
+					"pet",
+					"sub"
+				],
+				"wide": [
+					"nedjelja",
+					"ponedjeljak",
+					"utorak",
+					"srijeda",
+					"četvrtak",
+					"petak",
+					"subota"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"1kv",
+					"2kv",
+					"3kv",
+					"4kv"
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4."
+				],
+				"wide": [
+					"1. kvartal",
+					"2. kvartal",
+					"3. kvartal",
+					"4. kvartal"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"1kv",
+					"2kv",
+					"3kv",
+					"4kv"
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4."
+				],
+				"wide": [
+					"1. kvartal",
+					"2. kvartal",
+					"3. kvartal",
+					"4. kvartal"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"AM",
+					"PM"
+				],
+				"narrow": [
+					"AM",
+					"PM"
+				],
+				"wide": [
+					"AM",
+					"PM"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"AM",
+					"PM"
+				],
+				"narrow": [
+					"AM",
+					"PM"
+				],
+				"wide": [
+					"AM",
+					"PM"
+				]
+			}
+		},
 		"era-wide": {
 			"0": "prije Krista",
 			"1": "poslije Krista"
@@ -1436,281 +1571,411 @@
 		}
 	},
 	"ca-islamic": {
-		"dateFormat-full": "EEEE, d. MMMM y. G",
-		"dateFormat-long": "d. MMMM y. G",
-		"dateFormat-medium": "d. M. y. G",
-		"dateFormat-short": "d.M.y. GGGGG",
-		"timeFormat-full": "HH:mm:ss zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} 'u' {0}",
-		"dateTimeFormat-long": "{1} 'u' {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} – {1}",
-		"intervalFormat-d-d": "dd. – dd.",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h – h'h' a",
-		"intervalFormat-H-H": "HH – HH'h'",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h – h 'h' a v",
-		"intervalFormat-Hv-H": "HH – HH 'h' v",
-		"intervalFormat-M-M": "MM. – MM.",
-		"intervalFormat-Md-d": "dd.MM. – dd.MM.",
-		"intervalFormat-Md-M": "dd.MM. – dd.MM.",
-		"intervalFormat-MEd-d": "E, dd.MM. – E, dd.MM.",
-		"intervalFormat-MEd-M": "E, dd.MM. – E, dd.MM.",
-		"intervalFormat-MMM-M": "LLL – LLL",
-		"intervalFormat-MMMd-d": "d. – d. MMM",
-		"intervalFormat-MMMd-M": "dd. MMM – dd. MMM",
-		"intervalFormat-MMMEd-d": "E, dd. – E, dd. MMM",
-		"intervalFormat-MMMEd-M": "E, dd. MMM – E, dd. MMM",
-		"intervalFormat-y-y": "y. – y. G",
-		"intervalFormat-yM-M": "MM.y. – MM.y. G",
-		"intervalFormat-yM-y": "MM.y. – MM.y. G",
-		"intervalFormat-yMd-d": "dd.MM.y. – dd.MM.y. G",
-		"intervalFormat-yMd-M": "dd.MM.y. – dd.MM.y. G",
-		"intervalFormat-yMd-y": "dd.MM.y. – dd.MM.y. G",
-		"intervalFormat-yMEd-d": "E, dd.MM.y. – E, dd.MM.y. G",
-		"intervalFormat-yMEd-M": "E, dd.MM.y. – E, dd.MM.y. G",
-		"intervalFormat-yMEd-y": "E, dd.MM.y. – E, dd.MM.y. G",
-		"intervalFormat-yMMM-M": "LLL – LLL y. G",
-		"intervalFormat-yMMM-y": "LLL y. – LLL y. G",
-		"intervalFormat-yMMMd-d": "dd. – dd. MMM y. G",
-		"intervalFormat-yMMMd-M": "dd. MMM – dd. MMM y. G",
-		"intervalFormat-yMMMd-y": "dd. MMM y. – dd. MMM y. G",
-		"intervalFormat-yMMMEd-d": "E, dd. – E, dd. MMM y. G",
-		"intervalFormat-yMMMEd-M": "E, dd. MMM – E, dd. MMM y. G",
-		"intervalFormat-yMMMEd-y": "E, dd. MMM y. – E, dd. MMM y. G",
-		"intervalFormat-yMMMM-M": "LLLL – LLLL y. G",
-		"intervalFormat-yMMMM-y": "LLLL y. – LLLL y. G",
-		"months-format-abbreviated": [
-			"Muh.",
-			"Saf.",
-			"Rab. I",
-			"Rab. II",
-			"Jum. I",
-			"Jum. II",
-			"Raj.",
-			"Sha.",
-			"Ram.",
-			"Shaw.",
-			"Dhuʻl-Q.",
-			"Dhuʻl-H."
-		],
-		"months-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-format-wide": [
-			"Muharram",
-			"Safar",
-			"Rabiʻ I",
-			"Rabiʻ II",
-			"Jumada I",
-			"Jumada II",
-			"Rajab",
-			"Shaʻban",
-			"Ramadan",
-			"Shawwal",
-			"Dhuʻl-Qiʻdah",
-			"Dhuʻl-Hijjah"
-		],
-		"months-standAlone-abbreviated": [
-			"Muh.",
-			"Saf.",
-			"Rab. I",
-			"Rab. II",
-			"Jum. I",
-			"Jum. II",
-			"Raj.",
-			"Sha.",
-			"Ram.",
-			"Shaw.",
-			"Dhuʻl-Q.",
-			"Dhuʻl-H."
-		],
-		"months-standAlone-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4.",
-			"5.",
-			"6.",
-			"7.",
-			"8.",
-			"9.",
-			"10.",
-			"11.",
-			"12."
-		],
-		"months-standAlone-wide": [
-			"Muharram",
-			"Safar",
-			"Rabiʻ I",
-			"Rabiʻ II",
-			"Jumada I",
-			"Jumada II",
-			"Rajab",
-			"Shaʻban",
-			"Ramadan",
-			"Shawwal",
-			"Dhuʻl-Qiʻdah",
-			"Dhuʻl-Hijjah"
-		],
-		"days-format-abbreviated": [
-			"ned",
-			"pon",
-			"uto",
-			"sri",
-			"čet",
-			"pet",
-			"sub"
-		],
-		"days-format-narrow": [
-			"N",
-			"P",
-			"U",
-			"S",
-			"Č",
-			"P",
-			"S"
-		],
-		"days-format-short": [
-			"ned",
-			"pon",
-			"uto",
-			"sri",
-			"čet",
-			"pet",
-			"sub"
-		],
-		"days-format-wide": [
-			"nedjelja",
-			"ponedjeljak",
-			"utorak",
-			"srijeda",
-			"četvrtak",
-			"petak",
-			"subota"
-		],
-		"days-standAlone-abbreviated": [
-			"ned",
-			"pon",
-			"uto",
-			"sri",
-			"čet",
-			"pet",
-			"sub"
-		],
-		"days-standAlone-narrow": [
-			"n",
-			"p",
-			"u",
-			"s",
-			"č",
-			"p",
-			"s"
-		],
-		"days-standAlone-short": [
-			"ned",
-			"pon",
-			"uto",
-			"sri",
-			"čet",
-			"pet",
-			"sub"
-		],
-		"days-standAlone-wide": [
-			"nedjelja",
-			"ponedjeljak",
-			"utorak",
-			"srijeda",
-			"četvrtak",
-			"petak",
-			"subota"
-		],
-		"quarters-format-abbreviated": [
-			"1kv",
-			"2kv",
-			"3kv",
-			"4kv"
-		],
-		"quarters-format-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-format-wide": [
-			"1. kvartal",
-			"2. kvartal",
-			"3. kvartal",
-			"4. kvartal"
-		],
-		"quarters-standAlone-abbreviated": [
-			"1kv",
-			"2kv",
-			"3kv",
-			"4kv"
-		],
-		"quarters-standAlone-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-standAlone-wide": [
-			"1. kvartal",
-			"2. kvartal",
-			"3. kvartal",
-			"4. kvartal"
-		],
-		"dayPeriods-format-abbreviated": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-format-narrow": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-format-wide": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-wide": [
-			"AM",
-			"PM"
-		],
+		"dateFormats": {
+			"full": "EEEE, d. MMMM y. G",
+			"long": "d. MMMM y. G",
+			"medium": "d. M. y. G",
+			"short": "d.M.y. GGGGG"
+		},
+		"timeFormats": {
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1} 'u' {0}",
+			"long": "{1} 'u' {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d.",
+				"E": "ccc",
+				"Ed": "E, d.",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y. G",
+				"GyMMM": "LLL y. G",
+				"GyMMMd": "d. MMM y. G",
+				"GyMMMEd": "E, d. MMM y. G",
+				"h": "hh a",
+				"H": "HH",
+				"hm": "hh:mm a",
+				"Hm": "HH:mm",
+				"hms": "hh:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "L.",
+				"Md": "d. M.",
+				"MEd": "E, d. M.",
+				"MMM": "LLL",
+				"MMMd": "d. MMM",
+				"MMMEd": "E, d. MMM",
+				"MMMMd": "d. MMMM",
+				"MMMMEd": "E, d. MMMM",
+				"ms": "mm:ss",
+				"y": "y. G",
+				"yyyy": "y. G",
+				"yyyyM": "MM.y. GGGGG",
+				"yyyyMd": "dd.MM.y. GGGGG",
+				"yyyyMEd": "E, dd.MM.y. GGGGG",
+				"yyyyMMM": "LLL y. G",
+				"yyyyMMMd": "d. MMM y. G",
+				"yyyyMMMEd": "E, d. MMM y. G",
+				"yyyyMMMM": "LLLL y. G",
+				"yyyyQQQ": "QQQ y. G",
+				"yyyyQQQQ": "QQQQ y. G"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} – {1}",
+				"d": {
+					"d": "dd. – dd."
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h – h'h' a"
+				},
+				"H": {
+					"H": "HH – HH'h'"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h – h 'h' a v"
+				},
+				"Hv": {
+					"H": "HH – HH 'h' v"
+				},
+				"M": {
+					"M": "MM. – MM."
+				},
+				"Md": {
+					"d": "dd.MM. – dd.MM.",
+					"M": "dd.MM. – dd.MM."
+				},
+				"MEd": {
+					"d": "E, dd.MM. – E, dd.MM.",
+					"M": "E, dd.MM. – E, dd.MM."
+				},
+				"MMM": {
+					"M": "LLL – LLL"
+				},
+				"MMMd": {
+					"d": "d. – d. MMM",
+					"M": "dd. MMM – dd. MMM"
+				},
+				"MMMEd": {
+					"d": "E, dd. – E, dd. MMM",
+					"M": "E, dd. MMM – E, dd. MMM"
+				},
+				"y": {
+					"y": "y. – y. G"
+				},
+				"yM": {
+					"M": "MM.y. – MM.y. G",
+					"y": "MM.y. – MM.y. G"
+				},
+				"yMd": {
+					"d": "dd.MM.y. – dd.MM.y. G",
+					"M": "dd.MM.y. – dd.MM.y. G",
+					"y": "dd.MM.y. – dd.MM.y. G"
+				},
+				"yMEd": {
+					"d": "E, dd.MM.y. – E, dd.MM.y. G",
+					"M": "E, dd.MM.y. – E, dd.MM.y. G",
+					"y": "E, dd.MM.y. – E, dd.MM.y. G"
+				},
+				"yMMM": {
+					"M": "LLL – LLL y. G",
+					"y": "LLL y. – LLL y. G"
+				},
+				"yMMMd": {
+					"d": "dd. – dd. MMM y. G",
+					"M": "dd. MMM – dd. MMM y. G",
+					"y": "dd. MMM y. – dd. MMM y. G"
+				},
+				"yMMMEd": {
+					"d": "E, dd. – E, dd. MMM y. G",
+					"M": "E, dd. MMM – E, dd. MMM y. G",
+					"y": "E, dd. MMM y. – E, dd. MMM y. G"
+				},
+				"yMMMM": {
+					"M": "LLLL – LLLL y. G",
+					"y": "LLLL y. – LLLL y. G"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"Muh.",
+					"Saf.",
+					"Rab. I",
+					"Rab. II",
+					"Jum. I",
+					"Jum. II",
+					"Raj.",
+					"Sha.",
+					"Ram.",
+					"Shaw.",
+					"Dhuʻl-Q.",
+					"Dhuʻl-H."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"Muharram",
+					"Safar",
+					"Rabiʻ I",
+					"Rabiʻ II",
+					"Jumada I",
+					"Jumada II",
+					"Rajab",
+					"Shaʻban",
+					"Ramadan",
+					"Shawwal",
+					"Dhuʻl-Qiʻdah",
+					"Dhuʻl-Hijjah"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Muh.",
+					"Saf.",
+					"Rab. I",
+					"Rab. II",
+					"Jum. I",
+					"Jum. II",
+					"Raj.",
+					"Sha.",
+					"Ram.",
+					"Shaw.",
+					"Dhuʻl-Q.",
+					"Dhuʻl-H."
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4.",
+					"5.",
+					"6.",
+					"7.",
+					"8.",
+					"9.",
+					"10.",
+					"11.",
+					"12."
+				],
+				"wide": [
+					"Muharram",
+					"Safar",
+					"Rabiʻ I",
+					"Rabiʻ II",
+					"Jumada I",
+					"Jumada II",
+					"Rajab",
+					"Shaʻban",
+					"Ramadan",
+					"Shawwal",
+					"Dhuʻl-Qiʻdah",
+					"Dhuʻl-Hijjah"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"ned",
+					"pon",
+					"uto",
+					"sri",
+					"čet",
+					"pet",
+					"sub"
+				],
+				"narrow": [
+					"N",
+					"P",
+					"U",
+					"S",
+					"Č",
+					"P",
+					"S"
+				],
+				"short": [
+					"ned",
+					"pon",
+					"uto",
+					"sri",
+					"čet",
+					"pet",
+					"sub"
+				],
+				"wide": [
+					"nedjelja",
+					"ponedjeljak",
+					"utorak",
+					"srijeda",
+					"četvrtak",
+					"petak",
+					"subota"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ned",
+					"pon",
+					"uto",
+					"sri",
+					"čet",
+					"pet",
+					"sub"
+				],
+				"narrow": [
+					"n",
+					"p",
+					"u",
+					"s",
+					"č",
+					"p",
+					"s"
+				],
+				"short": [
+					"ned",
+					"pon",
+					"uto",
+					"sri",
+					"čet",
+					"pet",
+					"sub"
+				],
+				"wide": [
+					"nedjelja",
+					"ponedjeljak",
+					"utorak",
+					"srijeda",
+					"četvrtak",
+					"petak",
+					"subota"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"1kv",
+					"2kv",
+					"3kv",
+					"4kv"
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4."
+				],
+				"wide": [
+					"1. kvartal",
+					"2. kvartal",
+					"3. kvartal",
+					"4. kvartal"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"1kv",
+					"2kv",
+					"3kv",
+					"4kv"
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4."
+				],
+				"wide": [
+					"1. kvartal",
+					"2. kvartal",
+					"3. kvartal",
+					"4. kvartal"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"AM",
+					"PM"
+				],
+				"narrow": [
+					"AM",
+					"PM"
+				],
+				"wide": [
+					"AM",
+					"PM"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"AM",
+					"PM"
+				],
+				"narrow": [
+					"AM",
+					"PM"
+				],
+				"wide": [
+					"AM",
+					"PM"
+				]
+			}
+		},
 		"era-wide": {
 			"0": "AH"
 		},
@@ -1722,281 +1987,418 @@
 		}
 	},
 	"ca-japanese": {
-		"dateFormat-full": "EEEE, d. MMMM y. G",
-		"dateFormat-long": "d. MMMM y. G",
-		"dateFormat-medium": "d. M. y. G",
-		"dateFormat-short": "d.M.y. GGGGG",
-		"timeFormat-full": "HH:mm:ss zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} – {1}",
-		"intervalFormat-d-d": "dd. – dd.",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h – h'h' a",
-		"intervalFormat-H-H": "HH – HH'h'",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h – h 'h' a v",
-		"intervalFormat-Hv-H": "HH – HH 'h' v",
-		"intervalFormat-M-M": "MM. – MM.",
-		"intervalFormat-Md-d": "dd.MM. – dd.MM.",
-		"intervalFormat-Md-M": "dd.MM. – dd.MM.",
-		"intervalFormat-MEd-d": "E, dd.MM. – E, dd.MM.",
-		"intervalFormat-MEd-M": "E, dd.MM. – E, dd.MM.",
-		"intervalFormat-MMM-M": "LLL – LLL",
-		"intervalFormat-MMMd-d": "d. – d. MMM",
-		"intervalFormat-MMMd-M": "dd. MMM – dd. MMM",
-		"intervalFormat-MMMEd-d": "E, dd. – E, dd. MMM",
-		"intervalFormat-MMMEd-M": "E, dd. MMM – E, dd. MMM",
-		"intervalFormat-y-y": "y. – y. G",
-		"intervalFormat-yM-M": "MM.y. – MM.y. G",
-		"intervalFormat-yM-y": "MM.y. – MM.y. G",
-		"intervalFormat-yMd-d": "dd.MM.y. – dd.MM.y. G",
-		"intervalFormat-yMd-M": "dd.MM.y. – dd.MM.y. G",
-		"intervalFormat-yMd-y": "dd.MM.y. – dd.MM.y. G",
-		"intervalFormat-yMEd-d": "E, dd.MM.y. – E, dd.MM.y. G",
-		"intervalFormat-yMEd-M": "E, dd.MM.y. – E, dd.MM.y. G",
-		"intervalFormat-yMEd-y": "E, dd.MM.y. – E, dd.MM.y. G",
-		"intervalFormat-yMMM-M": "LLL – LLL y. G",
-		"intervalFormat-yMMM-y": "LLL y. – LLL y. G",
-		"intervalFormat-yMMMd-d": "dd. – dd. MMM y. G",
-		"intervalFormat-yMMMd-M": "dd. MMM – dd. MMM y. G",
-		"intervalFormat-yMMMd-y": "dd. MMM y. – dd. MMM y. G",
-		"intervalFormat-yMMMEd-d": "E, dd. – E, dd. MMM y. G",
-		"intervalFormat-yMMMEd-M": "E, dd. MMM – E, dd. MMM y. G",
-		"intervalFormat-yMMMEd-y": "E, dd. MMM y. – E, dd. MMM y. G",
-		"intervalFormat-yMMMM-M": "LLLL – LLLL y. G",
-		"intervalFormat-yMMMM-y": "LLLL y. – LLLL y. G",
-		"months-format-abbreviated": [
-			"sij",
-			"velj",
-			"ožu",
-			"tra",
-			"svi",
-			"lip",
-			"srp",
-			"kol",
-			"ruj",
-			"lis",
-			"stu",
-			"pro"
-		],
-		"months-format-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4.",
-			"5.",
-			"6.",
-			"7.",
-			"8.",
-			"9.",
-			"10.",
-			"11.",
-			"12."
-		],
-		"months-format-wide": [
-			"siječnja",
-			"veljače",
-			"ožujka",
-			"travnja",
-			"svibnja",
-			"lipnja",
-			"srpnja",
-			"kolovoza",
-			"rujna",
-			"listopada",
-			"studenoga",
-			"prosinca"
-		],
-		"months-standAlone-abbreviated": [
-			"sij",
-			"velj",
-			"ožu",
-			"tra",
-			"svi",
-			"lip",
-			"srp",
-			"kol",
-			"ruj",
-			"lis",
-			"stu",
-			"pro"
-		],
-		"months-standAlone-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4.",
-			"5.",
-			"6.",
-			"7.",
-			"8.",
-			"9.",
-			"10.",
-			"11.",
-			"12."
-		],
-		"months-standAlone-wide": [
-			"siječanj",
-			"veljača",
-			"ožujak",
-			"travanj",
-			"svibanj",
-			"lipanj",
-			"srpanj",
-			"kolovoz",
-			"rujan",
-			"listopad",
-			"studeni",
-			"prosinac"
-		],
-		"days-format-abbreviated": [
-			"ned",
-			"pon",
-			"uto",
-			"sri",
-			"čet",
-			"pet",
-			"sub"
-		],
-		"days-format-narrow": [
-			"N",
-			"P",
-			"U",
-			"S",
-			"Č",
-			"P",
-			"S"
-		],
-		"days-format-short": [
-			"ned",
-			"pon",
-			"uto",
-			"sri",
-			"čet",
-			"pet",
-			"sub"
-		],
-		"days-format-wide": [
-			"nedjelja",
-			"ponedjeljak",
-			"utorak",
-			"srijeda",
-			"četvrtak",
-			"petak",
-			"subota"
-		],
-		"days-standAlone-abbreviated": [
-			"ned",
-			"pon",
-			"uto",
-			"sri",
-			"čet",
-			"pet",
-			"sub"
-		],
-		"days-standAlone-narrow": [
-			"n",
-			"p",
-			"u",
-			"s",
-			"č",
-			"p",
-			"s"
-		],
-		"days-standAlone-short": [
-			"ned",
-			"pon",
-			"uto",
-			"sri",
-			"čet",
-			"pet",
-			"sub"
-		],
-		"days-standAlone-wide": [
-			"nedjelja",
-			"ponedjeljak",
-			"utorak",
-			"srijeda",
-			"četvrtak",
-			"petak",
-			"subota"
-		],
-		"quarters-format-abbreviated": [
-			"1kv",
-			"2kv",
-			"3kv",
-			"4kv"
-		],
-		"quarters-format-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-format-wide": [
-			"1. kvartal",
-			"2. kvartal",
-			"3. kvartal",
-			"4. kvartal"
-		],
-		"quarters-standAlone-abbreviated": [
-			"1kv",
-			"2kv",
-			"3kv",
-			"4kv"
-		],
-		"quarters-standAlone-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-standAlone-wide": [
-			"1. kvartal",
-			"2. kvartal",
-			"3. kvartal",
-			"4. kvartal"
-		],
-		"dayPeriods-format-abbreviated": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-format-narrow": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-format-wide": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-narrow": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-standAlone-wide": [
-			"AM",
-			"PM"
-		],
+		"dateFormats": {
+			"full": "EEEE, d. MMMM y. G",
+			"long": "d. MMMM y. G",
+			"medium": "d. M. y. G",
+			"short": "d.M.y. GGGGG"
+		},
+		"timeFormats": {
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1} {0}",
+			"long": "{1} {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d.",
+				"E": "ccc",
+				"Ed": "E, d.",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y. GGG",
+				"GyMMM": "LLL y. G",
+				"GyMMMd": "d. MMM y. G",
+				"GyMMMEd": "E, d. MMM y. G",
+				"h": "hh a",
+				"H": "HH",
+				"hm": "hh:mm a",
+				"Hm": "HH:mm",
+				"hms": "hh:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "L.",
+				"Md": "d. M.",
+				"MEd": "E, d. M.",
+				"MMM": "LLL",
+				"MMMd": "d. MMM",
+				"MMMEd": "E, d. MMM",
+				"MMMMd": "d. MMMM",
+				"MMMMEd": "E, d. MMMM",
+				"ms": "mm:ss",
+				"y": "y. GGG",
+				"yM": "M. y. GGGGG",
+				"yMd": "d. M. y. GGGGG",
+				"yMEd": "E, d. M. y. GGGGG",
+				"yMMM": "LLL y. GGGGG",
+				"yMMMd": "d. MMM y. GGGGG",
+				"yMMMEd": "E, d. MMM y. GGGGG",
+				"yQQQ": "QQQ y. GGGGG",
+				"yyyy": "y. G",
+				"yyyyM": "M. y. G",
+				"yyyyMd": "d. M. y. G",
+				"yyyyMEd": "E, d. M. y. G",
+				"yyyyMMM": "LLL y. G",
+				"yyyyMMMd": "d. MMM y. G",
+				"yyyyMMMEd": "E, d. MMM y. G",
+				"yyyyMMMM": "LLLL y. G",
+				"yyyyQQQ": "QQQ y. G",
+				"yyyyQQQQ": "QQQQ y. G"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} – {1}",
+				"d": {
+					"d": "dd. – dd."
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h – h'h' a"
+				},
+				"H": {
+					"H": "HH – HH'h'"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h – h 'h' a v"
+				},
+				"Hv": {
+					"H": "HH – HH 'h' v"
+				},
+				"M": {
+					"M": "MM. – MM."
+				},
+				"Md": {
+					"d": "dd.MM. – dd.MM.",
+					"M": "dd.MM. – dd.MM."
+				},
+				"MEd": {
+					"d": "E, dd.MM. – E, dd.MM.",
+					"M": "E, dd.MM. – E, dd.MM."
+				},
+				"MMM": {
+					"M": "LLL – LLL"
+				},
+				"MMMd": {
+					"d": "d. – d. MMM",
+					"M": "dd. MMM – dd. MMM"
+				},
+				"MMMEd": {
+					"d": "E, dd. – E, dd. MMM",
+					"M": "E, dd. MMM – E, dd. MMM"
+				},
+				"y": {
+					"y": "y. – y. G"
+				},
+				"yM": {
+					"M": "MM.y. – MM.y. G",
+					"y": "MM.y. – MM.y. G"
+				},
+				"yMd": {
+					"d": "dd.MM.y. – dd.MM.y. G",
+					"M": "dd.MM.y. – dd.MM.y. G",
+					"y": "dd.MM.y. – dd.MM.y. G"
+				},
+				"yMEd": {
+					"d": "E, dd.MM.y. – E, dd.MM.y. G",
+					"M": "E, dd.MM.y. – E, dd.MM.y. G",
+					"y": "E, dd.MM.y. – E, dd.MM.y. G"
+				},
+				"yMMM": {
+					"M": "LLL – LLL y. G",
+					"y": "LLL y. – LLL y. G"
+				},
+				"yMMMd": {
+					"d": "dd. – dd. MMM y. G",
+					"M": "dd. MMM – dd. MMM y. G",
+					"y": "dd. MMM y. – dd. MMM y. G"
+				},
+				"yMMMEd": {
+					"d": "E, dd. – E, dd. MMM y. G",
+					"M": "E, dd. MMM – E, dd. MMM y. G",
+					"y": "E, dd. MMM y. – E, dd. MMM y. G"
+				},
+				"yMMMM": {
+					"M": "LLLL – LLLL y. G",
+					"y": "LLLL y. – LLLL y. G"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"sij",
+					"velj",
+					"ožu",
+					"tra",
+					"svi",
+					"lip",
+					"srp",
+					"kol",
+					"ruj",
+					"lis",
+					"stu",
+					"pro"
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4.",
+					"5.",
+					"6.",
+					"7.",
+					"8.",
+					"9.",
+					"10.",
+					"11.",
+					"12."
+				],
+				"wide": [
+					"siječnja",
+					"veljače",
+					"ožujka",
+					"travnja",
+					"svibnja",
+					"lipnja",
+					"srpnja",
+					"kolovoza",
+					"rujna",
+					"listopada",
+					"studenoga",
+					"prosinca"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"sij",
+					"velj",
+					"ožu",
+					"tra",
+					"svi",
+					"lip",
+					"srp",
+					"kol",
+					"ruj",
+					"lis",
+					"stu",
+					"pro"
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4.",
+					"5.",
+					"6.",
+					"7.",
+					"8.",
+					"9.",
+					"10.",
+					"11.",
+					"12."
+				],
+				"wide": [
+					"siječanj",
+					"veljača",
+					"ožujak",
+					"travanj",
+					"svibanj",
+					"lipanj",
+					"srpanj",
+					"kolovoz",
+					"rujan",
+					"listopad",
+					"studeni",
+					"prosinac"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"ned",
+					"pon",
+					"uto",
+					"sri",
+					"čet",
+					"pet",
+					"sub"
+				],
+				"narrow": [
+					"N",
+					"P",
+					"U",
+					"S",
+					"Č",
+					"P",
+					"S"
+				],
+				"short": [
+					"ned",
+					"pon",
+					"uto",
+					"sri",
+					"čet",
+					"pet",
+					"sub"
+				],
+				"wide": [
+					"nedjelja",
+					"ponedjeljak",
+					"utorak",
+					"srijeda",
+					"četvrtak",
+					"petak",
+					"subota"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ned",
+					"pon",
+					"uto",
+					"sri",
+					"čet",
+					"pet",
+					"sub"
+				],
+				"narrow": [
+					"n",
+					"p",
+					"u",
+					"s",
+					"č",
+					"p",
+					"s"
+				],
+				"short": [
+					"ned",
+					"pon",
+					"uto",
+					"sri",
+					"čet",
+					"pet",
+					"sub"
+				],
+				"wide": [
+					"nedjelja",
+					"ponedjeljak",
+					"utorak",
+					"srijeda",
+					"četvrtak",
+					"petak",
+					"subota"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"1kv",
+					"2kv",
+					"3kv",
+					"4kv"
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4."
+				],
+				"wide": [
+					"1. kvartal",
+					"2. kvartal",
+					"3. kvartal",
+					"4. kvartal"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"1kv",
+					"2kv",
+					"3kv",
+					"4kv"
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4."
+				],
+				"wide": [
+					"1. kvartal",
+					"2. kvartal",
+					"3. kvartal",
+					"4. kvartal"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"AM",
+					"PM"
+				],
+				"narrow": [
+					"AM",
+					"PM"
+				],
+				"wide": [
+					"AM",
+					"PM"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"AM",
+					"PM"
+				],
+				"narrow": [
+					"AM",
+					"PM"
+				],
+				"wide": [
+					"AM",
+					"PM"
+				]
+			}
+		},
 		"era-wide": {
 			"232": "Meiji",
 			"233": "Taishō",
@@ -2016,54 +2418,123 @@
 			"235": "H"
 		}
 	},
-	"dateField-year-displayName": "godina",
-	"dateField-year-relative--1": "prošle godine",
-	"dateField-year-relative-0": "ove godine",
-	"dateField-year-relative-1": "sljedeće godine",
-	"dateField-year-relative-future-one": "za {0} godinu",
-	"dateField-year-relative-future-other": "za {0} godina",
-	"dateField-year-relative-past-one": "prije {0} godinu",
-	"dateField-year-relative-past-other": "prije {0} godina",
-	"dateField-month-displayName": "mjesec",
-	"dateField-month-relative--1": "prošli mjesec",
-	"dateField-month-relative-0": "ovaj mjesec",
-	"dateField-month-relative-1": "sljedeći mjesec",
-	"dateField-month-relative-future-one": "za {0} mjesec",
-	"dateField-month-relative-future-other": "za {0} mjeseci",
-	"dateField-month-relative-past-one": "prije {0} mjesec",
-	"dateField-month-relative-past-other": "prije {0} mjeseci",
-	"dateField-week-displayName": "tjedan",
-	"dateField-week-relative--1": "prošli tjedan",
-	"dateField-week-relative-0": "ovaj tjedan",
-	"dateField-week-relative-1": "sljedeći tjedan",
-	"dateField-week-relative-future-one": "za {0} tjedan",
-	"dateField-week-relative-future-other": "za {0} tjedana",
-	"dateField-week-relative-past-one": "prije {0} tjedan",
-	"dateField-week-relative-past-other": "prije {0} tjedana",
-	"dateField-day-displayName": "dan",
-	"dateField-day-relative--1": "jučer",
-	"dateField-day-relative-0": "danas",
-	"dateField-day-relative-1": "sutra",
-	"dateField-day-relative-future-one": "za {0} dan",
-	"dateField-day-relative-future-other": "za {0} dana",
-	"dateField-day-relative-past-one": "prije {0} dan",
-	"dateField-day-relative-past-other": "prije {0} dana",
-	"dateField-hour-displayName": "sat",
-	"dateField-hour-relative-future-one": "za {0} sat",
-	"dateField-hour-relative-future-other": "za {0} sati",
-	"dateField-hour-relative-past-one": "prije {0} sat",
-	"dateField-hour-relative-past-other": "prije {0} sati",
-	"dateField-minute-displayName": "minuta",
-	"dateField-minute-relative-future-one": "za {0} minutu",
-	"dateField-minute-relative-future-other": "za {0} minuta",
-	"dateField-minute-relative-past-one": "prije {0} minutu",
-	"dateField-minute-relative-past-other": "prije {0} minuta",
-	"dateField-second-displayName": "sekunda",
-	"dateField-second-relative-0": "sada",
-	"dateField-second-relative-future-one": "za {0} sekundu",
-	"dateField-second-relative-future-other": "za {0} sekundi",
-	"dateField-second-relative-past-one": "prije {0} sekundu",
-	"dateField-second-relative-past-other": "prije {0} sekundi",
+	"dateFields": {
+		"era": {
+			"displayName": "era"
+		},
+		"year": {
+			"displayName": "godina",
+			"relative-type--1": "prošle godine",
+			"relative-type-0": "ove godine",
+			"relative-type-1": "sljedeće godine",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "za {0} godinu",
+				"relativeTimePattern-count-few": "za {0} godine",
+				"relativeTimePattern-count-other": "za {0} godina"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prije {0} godinu",
+				"relativeTimePattern-count-few": "prije {0} godine",
+				"relativeTimePattern-count-other": "prije {0} godina"
+			}
+		},
+		"month": {
+			"displayName": "mjesec",
+			"relative-type--1": "prošli mjesec",
+			"relative-type-0": "ovaj mjesec",
+			"relative-type-1": "sljedeći mjesec",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "za {0} mjesec",
+				"relativeTimePattern-count-few": "za {0} mjeseca",
+				"relativeTimePattern-count-other": "za {0} mjeseci"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prije {0} mjesec",
+				"relativeTimePattern-count-few": "prije {0} mjeseca",
+				"relativeTimePattern-count-other": "prije {0} mjeseci"
+			}
+		},
+		"week": {
+			"displayName": "tjedan",
+			"relative-type--1": "prošli tjedan",
+			"relative-type-0": "ovaj tjedan",
+			"relative-type-1": "sljedeći tjedan",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "za {0} tjedan",
+				"relativeTimePattern-count-few": "za {0} tjedna",
+				"relativeTimePattern-count-other": "za {0} tjedana"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prije {0} tjedan",
+				"relativeTimePattern-count-few": "prije {0} tjedna",
+				"relativeTimePattern-count-other": "prije {0} tjedana"
+			}
+		},
+		"day": {
+			"displayName": "dan",
+			"relative-type--2": "prekjučer",
+			"relative-type--1": "jučer",
+			"relative-type-0": "danas",
+			"relative-type-1": "sutra",
+			"relative-type-2": "prekosutra",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "za {0} dan",
+				"relativeTimePattern-count-few": "za {0} dana",
+				"relativeTimePattern-count-other": "za {0} dana"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prije {0} dan",
+				"relativeTimePattern-count-few": "prije {0} dana",
+				"relativeTimePattern-count-other": "prije {0} dana"
+			}
+		},
+		"weekday": {
+			"displayName": "dan u tjednu"
+		},
+		"hour": {
+			"displayName": "sat",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "za {0} sat",
+				"relativeTimePattern-count-few": "za {0} sata",
+				"relativeTimePattern-count-other": "za {0} sati"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prije {0} sat",
+				"relativeTimePattern-count-few": "prije {0} sata",
+				"relativeTimePattern-count-other": "prije {0} sati"
+			}
+		},
+		"minute": {
+			"displayName": "minuta",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "za {0} minutu",
+				"relativeTimePattern-count-few": "za {0} minute",
+				"relativeTimePattern-count-other": "za {0} minuta"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prije {0} minutu",
+				"relativeTimePattern-count-few": "prije {0} minute",
+				"relativeTimePattern-count-other": "prije {0} minuta"
+			}
+		},
+		"second": {
+			"displayName": "sekunda",
+			"relative-type-0": "sada",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "za {0} sekundu",
+				"relativeTimePattern-count-few": "za {0} sekunde",
+				"relativeTimePattern-count-other": "za {0} sekundi"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prije {0} sekundu",
+				"relativeTimePattern-count-few": "prije {0} sekunde",
+				"relativeTimePattern-count-other": "prije {0} sekundi"
+			}
+		},
+		"zone": {
+			"displayName": "vremenska zona"
+		}
+	},
 	"decimalFormat": {
 		"standard": "#,##0.###"
 	},
@@ -2241,6 +2712,10 @@
 	"weekData-firstDay": 1,
 	"weekData-weekendStart": 6,
 	"weekData-weekendEnd": 0,
+	"timeData": {
+		"_allowed": "H",
+		"_preferred": "H"
+	},
 	"eras-gregorian": {
 		"0": {
 			"_end": "0-12-31"

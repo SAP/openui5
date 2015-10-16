@@ -1140,281 +1140,417 @@
 	},
 	"orientation": "right-to-left",
 	"ca-gregorian": {
-		"dateFormat-full": "EEEE d MMMM y",
-		"dateFormat-long": "d MMMM y",
-		"dateFormat-medium": "d MMM y",
-		"dateFormat-short": "y/M/d",
-		"timeFormat-full": "H:mm:ss (zzzz)",
-		"timeFormat-long": "H:mm:ss (z)",
-		"timeFormat-medium": "H:mm:ss",
-		"timeFormat-short": "H:mm",
-		"dateTimeFormat-full": "{1}، ساعت {0}",
-		"dateTimeFormat-long": "{1}، ساعت {0}",
-		"dateTimeFormat-medium": "{1}،‏ {0}",
-		"dateTimeFormat-short": "{1}،‏ {0}",
-		"intervalFormatFallback": "{0} تا {1}",
-		"intervalFormat-d-d": "d تا d",
-		"intervalFormat-h-a": "h a تا h a",
-		"intervalFormat-h-h": "h تا h a",
-		"intervalFormat-H-H": "H تا H",
-		"intervalFormat-hm-a": "h:mm a تا h:mm a",
-		"intervalFormat-hm-h": "h:mm تا h:mm a",
-		"intervalFormat-hm-m": "h:mm تا h:mm a",
-		"intervalFormat-Hm-H": "H:mm تا H:mm",
-		"intervalFormat-Hm-m": "H:mm تا H:mm",
-		"intervalFormat-hmv-a": "h:mm a تا h:mm a v",
-		"intervalFormat-hmv-h": "h:mm تا h:mm a v",
-		"intervalFormat-hmv-m": "h:mm تا h:mm a v",
-		"intervalFormat-Hmv-H": "H:mm تا H:mm v",
-		"intervalFormat-Hmv-m": "H:mm تا H:mm v",
-		"intervalFormat-hv-a": "h a تا h a v",
-		"intervalFormat-hv-h": "h تا h a v",
-		"intervalFormat-Hv-H": "H تا H v",
-		"intervalFormat-M-M": "M تا M",
-		"intervalFormat-Md-d": "M/d تا M/d",
-		"intervalFormat-Md-M": "M/d تا M/d",
-		"intervalFormat-MEd-d": "E M/d تا E M/d",
-		"intervalFormat-MEd-M": "E M/d تا E M/d",
-		"intervalFormat-MMM-M": "LLL تا LLL",
-		"intervalFormat-MMMd-d": "d تا d LLL",
-		"intervalFormat-MMMd-M": "d LLL تا d LLL",
-		"intervalFormat-MMMEd-d": "E d LLL تا E d LLL",
-		"intervalFormat-MMMEd-M": "E d LLL تا E d LLL",
-		"intervalFormat-y-y": "y تا y",
-		"intervalFormat-yM-M": "y/M تا y/M",
-		"intervalFormat-yM-y": "y/M تا y/M",
-		"intervalFormat-yMd-d": "y/M/d تا y/M/d",
-		"intervalFormat-yMd-M": "y/M/d تا y/M/d",
-		"intervalFormat-yMd-y": "y/M/d تا y/M/d",
-		"intervalFormat-yMEd-d": "E y/M/d تا E y/M/d",
-		"intervalFormat-yMEd-M": "E y/M/d تا E y/M/d",
-		"intervalFormat-yMEd-y": "E y/M/d تا E y/M/d",
-		"intervalFormat-yMMM-M": "LLL تا MMM y",
-		"intervalFormat-yMMM-y": "MMM y تا MMM y",
-		"intervalFormat-yMMMd-d": "d تا d MMM y",
-		"intervalFormat-yMMMd-M": "d LLL تا d MMM y",
-		"intervalFormat-yMMMd-y": "d MMM y تا d MMM y",
-		"intervalFormat-yMMMEd-d": "E d LLL تا E d MMM y",
-		"intervalFormat-yMMMEd-M": "E d LLL تا E d MMM y",
-		"intervalFormat-yMMMEd-y": "E d MMM y تا E d MMM y",
-		"intervalFormat-yMMMM-M": "LLLL تا MMMM y",
-		"intervalFormat-yMMMM-y": "MMMM y تا MMMM y",
-		"months-format-abbreviated": [
-			"ژانویهٔ",
-			"فوریهٔ",
-			"مارس",
-			"آوریل",
-			"مهٔ",
-			"ژوئن",
-			"ژوئیهٔ",
-			"اوت",
-			"سپتامبر",
-			"اکتبر",
-			"نوامبر",
-			"دسامبر"
-		],
-		"months-format-narrow": [
-			"ژ",
-			"ف",
-			"م",
-			"آ",
-			"م",
-			"ژ",
-			"ژ",
-			"ا",
-			"س",
-			"ا",
-			"ن",
-			"د"
-		],
-		"months-format-wide": [
-			"ژانویهٔ",
-			"فوریهٔ",
-			"مارس",
-			"آوریل",
-			"مهٔ",
-			"ژوئن",
-			"ژوئیهٔ",
-			"اوت",
-			"سپتامبر",
-			"اکتبر",
-			"نوامبر",
-			"دسامبر"
-		],
-		"months-standAlone-abbreviated": [
-			"ژانویه",
-			"فوریه",
-			"مارس",
-			"آوریل",
-			"مه",
-			"ژوئن",
-			"ژوئیه",
-			"اوت",
-			"سپتامبر",
-			"اکتبر",
-			"نوامبر",
-			"دسامبر"
-		],
-		"months-standAlone-narrow": [
-			"ژ",
-			"ف",
-			"م",
-			"آ",
-			"م",
-			"ژ",
-			"ژ",
-			"ا",
-			"س",
-			"ا",
-			"ن",
-			"د"
-		],
-		"months-standAlone-wide": [
-			"ژانویه",
-			"فوریه",
-			"مارس",
-			"آوریل",
-			"مه",
-			"ژوئن",
-			"ژوئیه",
-			"اوت",
-			"سپتامبر",
-			"اکتبر",
-			"نوامبر",
-			"دسامبر"
-		],
-		"days-format-abbreviated": [
-			"یکشنبه",
-			"دوشنبه",
-			"سه‌شنبه",
-			"چهارشنبه",
-			"پنجشنبه",
-			"جمعه",
-			"شنبه"
-		],
-		"days-format-narrow": [
-			"ی",
-			"د",
-			"س",
-			"چ",
-			"پ",
-			"ج",
-			"ش"
-		],
-		"days-format-short": [
-			"۱ش",
-			"۲ش",
-			"۳ش",
-			"۴ش",
-			"۵ش",
-			"ج",
-			"ش"
-		],
-		"days-format-wide": [
-			"یکشنبه",
-			"دوشنبه",
-			"سه‌شنبه",
-			"چهارشنبه",
-			"پنجشنبه",
-			"جمعه",
-			"شنبه"
-		],
-		"days-standAlone-abbreviated": [
-			"یکشنبه",
-			"دوشنبه",
-			"سه‌شنبه",
-			"چهارشنبه",
-			"پنجشنبه",
-			"جمعه",
-			"شنبه"
-		],
-		"days-standAlone-narrow": [
-			"ی",
-			"د",
-			"س",
-			"چ",
-			"پ",
-			"ج",
-			"ش"
-		],
-		"days-standAlone-short": [
-			"۱ش",
-			"۲ش",
-			"۳ش",
-			"۴ش",
-			"۵ش",
-			"ج",
-			"ش"
-		],
-		"days-standAlone-wide": [
-			"یکشنبه",
-			"دوشنبه",
-			"سه‌شنبه",
-			"چهارشنبه",
-			"پنجشنبه",
-			"جمعه",
-			"شنبه"
-		],
-		"quarters-format-abbreviated": [
-			"س‌م۱",
-			"س‌م۲",
-			"س‌م۳",
-			"س‌م۴"
-		],
-		"quarters-format-narrow": [
-			"۱",
-			"۲",
-			"۳",
-			"۴"
-		],
-		"quarters-format-wide": [
-			"سه‌ماههٔ اول",
-			"سه‌ماههٔ دوم",
-			"سه‌ماههٔ سوم",
-			"سه‌ماههٔ چهارم"
-		],
-		"quarters-standAlone-abbreviated": [
-			"س‌م۱",
-			"س‌م۲",
-			"س‌م۳",
-			"س‌م۴"
-		],
-		"quarters-standAlone-narrow": [
-			"۱",
-			"۲",
-			"۳",
-			"۴"
-		],
-		"quarters-standAlone-wide": [
-			"سه‌ماههٔ اول",
-			"سه‌ماههٔ دوم",
-			"سه‌ماههٔ سوم",
-			"سه‌ماههٔ چهارم"
-		],
-		"dayPeriods-format-abbreviated": [
-			"ق.ظ.",
-			"ب.ظ."
-		],
-		"dayPeriods-format-narrow": [
-			"ق",
-			"ب"
-		],
-		"dayPeriods-format-wide": [
-			"قبل‌ازظهر",
-			"بعدازظهر"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"ق.ظ.",
-			"ب.ظ."
-		],
-		"dayPeriods-standAlone-narrow": [
-			"ق.ظ.",
-			"ب.ظ."
-		],
-		"dayPeriods-standAlone-wide": [
-			"قبل‌ازظهر",
-			"بعدازظهر"
-		],
+		"dateFormats": {
+			"full": "EEEE d MMMM y",
+			"long": "d MMMM y",
+			"medium": "d MMM y",
+			"short": "y/M/d"
+		},
+		"timeFormats": {
+			"full": "H:mm:ss (zzzz)",
+			"long": "H:mm:ss (z)",
+			"medium": "H:mm:ss",
+			"short": "H:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1}، ساعت {0}",
+			"long": "{1}، ساعت {0}",
+			"medium": "{1}،‏ {0}",
+			"short": "{1}،‏ {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E d",
+				"Ehm": "E h:mm a",
+				"EHm": "E H:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E H:mm:ss",
+				"Gy": "y G",
+				"GyMMM": "MMM y G",
+				"GyMMMd": "d MMM y G",
+				"GyMMMEd": "E d MMM y G",
+				"h": "h a",
+				"H": "H",
+				"HHmmZ": "HH:mm (Z)",
+				"hm": "h:mm a",
+				"Hm": "H:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "H:mm:ss",
+				"hmsv": "h:mm:ss a v",
+				"Hmsv": "HH:mm:ss v",
+				"hmv": "h:mm a v",
+				"Hmv": "HH:mm v",
+				"M": "L",
+				"Md": "M/d",
+				"MEd": "E M/d",
+				"MMM": "LLL",
+				"MMMd": "d LLL",
+				"MMMEd": "E d LLL",
+				"MMMMd": "d LLLL",
+				"MMMMEd": "E d LLLL",
+				"mmss": "mm:ss",
+				"ms": "mm:ss",
+				"y": "y",
+				"yM": "y/M",
+				"yMd": "y/M/d",
+				"yMEd": "E y/M/d",
+				"yMMM": "MMM y",
+				"yMMMd": "d MMM y",
+				"yMMMEd": "E d MMM y",
+				"yMMMM": "MMMM y",
+				"yMMMMEEEEd": "EEEE d MMMM y",
+				"yQQQ": "QQQQ y",
+				"yQQQQ": "QQQQ y"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{1} {0}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} ({1})",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} تا {1}",
+				"d": {
+					"d": "d تا d"
+				},
+				"h": {
+					"a": "h a تا h a",
+					"h": "h تا h a"
+				},
+				"H": {
+					"H": "H تا H"
+				},
+				"hm": {
+					"a": "h:mm a تا h:mm a",
+					"h": "h:mm تا h:mm a",
+					"m": "h:mm تا h:mm a"
+				},
+				"Hm": {
+					"H": "H:mm تا H:mm",
+					"m": "H:mm تا H:mm"
+				},
+				"hmv": {
+					"a": "h:mm a تا h:mm a v",
+					"h": "h:mm تا h:mm a v",
+					"m": "h:mm تا h:mm a v"
+				},
+				"Hmv": {
+					"H": "H:mm تا H:mm v",
+					"m": "H:mm تا H:mm v"
+				},
+				"hv": {
+					"a": "h a تا h a v",
+					"h": "h تا h a v"
+				},
+				"Hv": {
+					"H": "H تا H v"
+				},
+				"M": {
+					"M": "M تا M"
+				},
+				"Md": {
+					"d": "M/d تا M/d",
+					"M": "M/d تا M/d"
+				},
+				"MEd": {
+					"d": "E M/d تا E M/d",
+					"M": "E M/d تا E M/d"
+				},
+				"MMM": {
+					"M": "LLL تا LLL"
+				},
+				"MMMd": {
+					"d": "d تا d LLL",
+					"M": "d LLL تا d LLL"
+				},
+				"MMMEd": {
+					"d": "E d LLL تا E d LLL",
+					"M": "E d LLL تا E d LLL"
+				},
+				"y": {
+					"y": "y تا y"
+				},
+				"yM": {
+					"M": "y/M تا y/M",
+					"y": "y/M تا y/M"
+				},
+				"yMd": {
+					"d": "y/M/d تا y/M/d",
+					"M": "y/M/d تا y/M/d",
+					"y": "y/M/d تا y/M/d"
+				},
+				"yMEd": {
+					"d": "E y/M/d تا E y/M/d",
+					"M": "E y/M/d تا E y/M/d",
+					"y": "E y/M/d تا E y/M/d"
+				},
+				"yMMM": {
+					"M": "LLL تا MMM y",
+					"y": "MMM y تا MMM y"
+				},
+				"yMMMd": {
+					"d": "d تا d MMM y",
+					"M": "d LLL تا d MMM y",
+					"y": "d MMM y تا d MMM y"
+				},
+				"yMMMEd": {
+					"d": "E d LLL تا E d MMM y",
+					"M": "E d LLL تا E d MMM y",
+					"y": "E d MMM y تا E d MMM y"
+				},
+				"yMMMM": {
+					"M": "LLLL تا MMMM y",
+					"y": "MMMM y تا MMMM y"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"ژانویهٔ",
+					"فوریهٔ",
+					"مارس",
+					"آوریل",
+					"مهٔ",
+					"ژوئن",
+					"ژوئیهٔ",
+					"اوت",
+					"سپتامبر",
+					"اکتبر",
+					"نوامبر",
+					"دسامبر"
+				],
+				"narrow": [
+					"ژ",
+					"ف",
+					"م",
+					"آ",
+					"م",
+					"ژ",
+					"ژ",
+					"ا",
+					"س",
+					"ا",
+					"ن",
+					"د"
+				],
+				"wide": [
+					"ژانویهٔ",
+					"فوریهٔ",
+					"مارس",
+					"آوریل",
+					"مهٔ",
+					"ژوئن",
+					"ژوئیهٔ",
+					"اوت",
+					"سپتامبر",
+					"اکتبر",
+					"نوامبر",
+					"دسامبر"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ژانویه",
+					"فوریه",
+					"مارس",
+					"آوریل",
+					"مه",
+					"ژوئن",
+					"ژوئیه",
+					"اوت",
+					"سپتامبر",
+					"اکتبر",
+					"نوامبر",
+					"دسامبر"
+				],
+				"narrow": [
+					"ژ",
+					"ف",
+					"م",
+					"آ",
+					"م",
+					"ژ",
+					"ژ",
+					"ا",
+					"س",
+					"ا",
+					"ن",
+					"د"
+				],
+				"wide": [
+					"ژانویه",
+					"فوریه",
+					"مارس",
+					"آوریل",
+					"مه",
+					"ژوئن",
+					"ژوئیه",
+					"اوت",
+					"سپتامبر",
+					"اکتبر",
+					"نوامبر",
+					"دسامبر"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"یکشنبه",
+					"دوشنبه",
+					"سه‌شنبه",
+					"چهارشنبه",
+					"پنجشنبه",
+					"جمعه",
+					"شنبه"
+				],
+				"narrow": [
+					"ی",
+					"د",
+					"س",
+					"چ",
+					"پ",
+					"ج",
+					"ش"
+				],
+				"short": [
+					"۱ش",
+					"۲ش",
+					"۳ش",
+					"۴ش",
+					"۵ش",
+					"ج",
+					"ش"
+				],
+				"wide": [
+					"یکشنبه",
+					"دوشنبه",
+					"سه‌شنبه",
+					"چهارشنبه",
+					"پنجشنبه",
+					"جمعه",
+					"شنبه"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"یکشنبه",
+					"دوشنبه",
+					"سه‌شنبه",
+					"چهارشنبه",
+					"پنجشنبه",
+					"جمعه",
+					"شنبه"
+				],
+				"narrow": [
+					"ی",
+					"د",
+					"س",
+					"چ",
+					"پ",
+					"ج",
+					"ش"
+				],
+				"short": [
+					"۱ش",
+					"۲ش",
+					"۳ش",
+					"۴ش",
+					"۵ش",
+					"ج",
+					"ش"
+				],
+				"wide": [
+					"یکشنبه",
+					"دوشنبه",
+					"سه‌شنبه",
+					"چهارشنبه",
+					"پنجشنبه",
+					"جمعه",
+					"شنبه"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"س‌م۱",
+					"س‌م۲",
+					"س‌م۳",
+					"س‌م۴"
+				],
+				"narrow": [
+					"۱",
+					"۲",
+					"۳",
+					"۴"
+				],
+				"wide": [
+					"سه‌ماههٔ اول",
+					"سه‌ماههٔ دوم",
+					"سه‌ماههٔ سوم",
+					"سه‌ماههٔ چهارم"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"س‌م۱",
+					"س‌م۲",
+					"س‌م۳",
+					"س‌م۴"
+				],
+				"narrow": [
+					"۱",
+					"۲",
+					"۳",
+					"۴"
+				],
+				"wide": [
+					"سه‌ماههٔ اول",
+					"سه‌ماههٔ دوم",
+					"سه‌ماههٔ سوم",
+					"سه‌ماههٔ چهارم"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"ق.ظ.",
+					"ب.ظ."
+				],
+				"narrow": [
+					"ق",
+					"ب"
+				],
+				"wide": [
+					"قبل‌ازظهر",
+					"بعدازظهر"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ق.ظ.",
+					"ب.ظ."
+				],
+				"narrow": [
+					"ق.ظ.",
+					"ب.ظ."
+				],
+				"wide": [
+					"قبل‌ازظهر",
+					"بعدازظهر"
+				]
+			}
+		},
 		"era-wide": {
 			"0": "قبل از میلاد",
 			"1": "میلادی"
@@ -1429,281 +1565,420 @@
 		}
 	},
 	"ca-islamic": {
-		"dateFormat-full": "EEEE d MMMM y G",
-		"dateFormat-long": "d MMMM y G",
-		"dateFormat-medium": "d MMM y G",
-		"dateFormat-short": "y/M/d G",
-		"timeFormat-full": "H:mm:ss (zzzz)",
-		"timeFormat-long": "H:mm:ss (z)",
-		"timeFormat-medium": "H:mm:ss",
-		"timeFormat-short": "H:mm",
-		"dateTimeFormat-full": "{1}، ساعت {0}",
-		"dateTimeFormat-long": "{1}، ساعت {0}",
-		"dateTimeFormat-medium": "{1}،‏ {0}",
-		"dateTimeFormat-short": "{1}،‏ {0}",
-		"intervalFormatFallback": "{0} تا {1}",
-		"intervalFormat-d-d": "d تا d",
-		"intervalFormat-h-a": "h a تا h a",
-		"intervalFormat-h-h": "h تا h a",
-		"intervalFormat-H-H": "H تا H",
-		"intervalFormat-hm-a": "h:mm a تا h:mm a",
-		"intervalFormat-hm-h": "h:mm تا h:mm a",
-		"intervalFormat-hm-m": "h:mm تا h:mm a",
-		"intervalFormat-Hm-H": "H:mm تا H:mm",
-		"intervalFormat-Hm-m": "H:mm تا H:mm",
-		"intervalFormat-hmv-a": "h:mm a تا h:mm a (v)",
-		"intervalFormat-hmv-h": "h:mm تا h:mm a (v)",
-		"intervalFormat-hmv-m": "h:mm تا h:mm a (v)",
-		"intervalFormat-Hmv-H": "H:mm تا H:mm (v)",
-		"intervalFormat-Hmv-m": "H:mm تا H:mm (v)",
-		"intervalFormat-hv-a": "h a تا h a (v)",
-		"intervalFormat-hv-h": "h تا h a (v)",
-		"intervalFormat-Hv-H": "H تا H (v)",
-		"intervalFormat-M-M": "M تا M",
-		"intervalFormat-Md-d": "M/d تا M/d",
-		"intervalFormat-Md-M": "M/d تا M/d",
-		"intervalFormat-MEd-d": "E M/d تا E M/d",
-		"intervalFormat-MEd-M": "E M/d تا E M/d",
-		"intervalFormat-MMM-M": "MMM تا MMM",
-		"intervalFormat-MMMd-d": "d تا d LLL",
-		"intervalFormat-MMMd-M": "d LLL تا d LLL",
-		"intervalFormat-MMMEd-d": "E d LLL تا E d LLL",
-		"intervalFormat-MMMEd-M": "E d LLL تا E d LLL",
-		"intervalFormat-y-y": "y تا y G",
-		"intervalFormat-yM-M": "y/M تا y/M G",
-		"intervalFormat-yM-y": "y/M تا y/M G",
-		"intervalFormat-yMd-d": "y/M/d تا y/M/d G",
-		"intervalFormat-yMd-M": "y/M/d تا y/M/d G",
-		"intervalFormat-yMd-y": "y/M/d تا y/M/d G",
-		"intervalFormat-yMEd-d": "E y/M/d تا E y/M/d G",
-		"intervalFormat-yMEd-M": "E y/M/d تا E y/M/d G",
-		"intervalFormat-yMEd-y": "E y/M/d تا E y/M/d G",
-		"intervalFormat-yMMM-M": "LLL تا MMM y G",
-		"intervalFormat-yMMM-y": "MMM y تا MMM y G",
-		"intervalFormat-yMMMd-d": "d تا d MMM y G",
-		"intervalFormat-yMMMd-M": "d LLL تا d MMM y G",
-		"intervalFormat-yMMMd-y": "d MMM y تا d MMM y G",
-		"intervalFormat-yMMMEd-d": "E d LLL تا E d MMM y G",
-		"intervalFormat-yMMMEd-M": "E d LLL تا E d MMM y G",
-		"intervalFormat-yMMMEd-y": "E d MMM y تا E d MMM y G",
-		"intervalFormat-yMMMM-M": "LLLL تا MMMM y G",
-		"intervalFormat-yMMMM-y": "MMMM y تا MMMM y G",
-		"months-format-abbreviated": [
-			"محرم",
-			"صفر",
-			"ربیع الاول",
-			"ربیع الثانی",
-			"جمادی الاول",
-			"جمادی الثانی",
-			"رجب",
-			"شعبان",
-			"رمضان",
-			"شوال",
-			"ذیقعدهٔ",
-			"ذیحجهٔ"
-		],
-		"months-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-format-wide": [
-			"محرم",
-			"صفر",
-			"ربیع الاول",
-			"ربیع الثانی",
-			"جمادی الاول",
-			"جمادی الثانی",
-			"رجب",
-			"شعبان",
-			"رمضان",
-			"شوال",
-			"ذیقعدهٔ",
-			"ذیحجهٔ"
-		],
-		"months-standAlone-abbreviated": [
-			"محرم",
-			"صفر",
-			"ربیع الاول",
-			"ربیع الثانی",
-			"جمادی الاول",
-			"جمادی الثانی",
-			"رجب",
-			"شعبان",
-			"رمضان",
-			"شوال",
-			"ذیقعده",
-			"ذیحجه"
-		],
-		"months-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-standAlone-wide": [
-			"محرم",
-			"صفر",
-			"ربیع الاول",
-			"ربیع الثانی",
-			"جمادی الاول",
-			"جمادی الثانی",
-			"رجب",
-			"شعبان",
-			"رمضان",
-			"شوال",
-			"ذیقعده",
-			"ذیحجه"
-		],
-		"days-format-abbreviated": [
-			"یکشنبه",
-			"دوشنبه",
-			"سه‌شنبه",
-			"چهارشنبه",
-			"پنجشنبه",
-			"جمعه",
-			"شنبه"
-		],
-		"days-format-narrow": [
-			"ی",
-			"د",
-			"س",
-			"چ",
-			"پ",
-			"ج",
-			"ش"
-		],
-		"days-format-short": [
-			"۱ش",
-			"۲ش",
-			"۳ش",
-			"۴ش",
-			"۵ش",
-			"ج",
-			"ش"
-		],
-		"days-format-wide": [
-			"یکشنبه",
-			"دوشنبه",
-			"سه‌شنبه",
-			"چهارشنبه",
-			"پنجشنبه",
-			"جمعه",
-			"شنبه"
-		],
-		"days-standAlone-abbreviated": [
-			"یکشنبه",
-			"دوشنبه",
-			"سه‌شنبه",
-			"چهارشنبه",
-			"پنجشنبه",
-			"جمعه",
-			"شنبه"
-		],
-		"days-standAlone-narrow": [
-			"ی",
-			"د",
-			"س",
-			"چ",
-			"پ",
-			"ج",
-			"ش"
-		],
-		"days-standAlone-short": [
-			"۱ش",
-			"۲ش",
-			"۳ش",
-			"۴ش",
-			"۵ش",
-			"ج",
-			"ش"
-		],
-		"days-standAlone-wide": [
-			"یکشنبه",
-			"دوشنبه",
-			"سه‌شنبه",
-			"چهارشنبه",
-			"پنجشنبه",
-			"جمعه",
-			"شنبه"
-		],
-		"quarters-format-abbreviated": [
-			"س‌م۱",
-			"س‌م۲",
-			"س‌م۳",
-			"س‌م۴"
-		],
-		"quarters-format-narrow": [
-			"۱",
-			"۲",
-			"۳",
-			"۴"
-		],
-		"quarters-format-wide": [
-			"سه‌ماههٔ اول",
-			"سه‌ماههٔ دوم",
-			"سه‌ماههٔ سوم",
-			"سه‌ماههٔ چهارم"
-		],
-		"quarters-standAlone-abbreviated": [
-			"س‌م۱",
-			"س‌م۲",
-			"س‌م۳",
-			"س‌م۴"
-		],
-		"quarters-standAlone-narrow": [
-			"۱",
-			"۲",
-			"۳",
-			"۴"
-		],
-		"quarters-standAlone-wide": [
-			"سه‌ماههٔ اول",
-			"سه‌ماههٔ دوم",
-			"سه‌ماههٔ سوم",
-			"سه‌ماههٔ چهارم"
-		],
-		"dayPeriods-format-abbreviated": [
-			"ق.ظ.",
-			"ب.ظ."
-		],
-		"dayPeriods-format-narrow": [
-			"ق",
-			"ب"
-		],
-		"dayPeriods-format-wide": [
-			"قبل‌ازظهر",
-			"بعدازظهر"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"ق.ظ.",
-			"ب.ظ."
-		],
-		"dayPeriods-standAlone-narrow": [
-			"ق.ظ.",
-			"ب.ظ."
-		],
-		"dayPeriods-standAlone-wide": [
-			"قبل‌ازظهر",
-			"بعدازظهر"
-		],
+		"dateFormats": {
+			"full": "EEEE d MMMM y G",
+			"long": "d MMMM y G",
+			"medium": "d MMM y G",
+			"short": "y/M/d G"
+		},
+		"timeFormats": {
+			"full": "H:mm:ss (zzzz)",
+			"long": "H:mm:ss (z)",
+			"medium": "H:mm:ss",
+			"short": "H:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1}، ساعت {0}",
+			"long": "{1}، ساعت {0}",
+			"medium": "{1}،‏ {0}",
+			"short": "{1}،‏ {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E d",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y G",
+				"GyMMM": "MMM y G",
+				"GyMMMd": "d MMM y G",
+				"GyMMMEd": "E d MMM y G",
+				"h": "h a",
+				"H": "H",
+				"HHmmZ": "HH:mm (Z)",
+				"hm": "h:mm a",
+				"Hm": "H:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "H:mm:ss",
+				"HmZ": "HH:mm (Z)",
+				"M": "L",
+				"Md": "M/d",
+				"MEd": "E M/d",
+				"MMM": "LLL",
+				"MMMd": "d LLL",
+				"MMMEd": "E d LLL",
+				"MMMMd": "d LLLL",
+				"MMMMEd": "E d LLLL",
+				"ms": "mm:ss",
+				"y": "y G",
+				"yM": "y/M",
+				"yMEd": "E y/M/d",
+				"yMMM": "MMM y",
+				"yMMMEd": "E d MMM y",
+				"yMMMM": "MMMM y",
+				"yQQQ": "QQQ y",
+				"yQQQQ": "QQQQ y",
+				"yyyy": "y G",
+				"yyyyM": "y/M G",
+				"yyyyMd": "y/M/d G",
+				"yyyyMEd": "E y/M/d G",
+				"yyyyMMM": "MMM y G",
+				"yyyyMMMd": "d MMM y G",
+				"yyyyMMMEd": "E d MMM y G",
+				"yyyyMMMM": "G y MMMM",
+				"yyyyQQQ": "QQQ y G",
+				"yyyyQQQQ": "QQQQ y G"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{1} {0}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} ({1})",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} تا {1}",
+				"d": {
+					"d": "d تا d"
+				},
+				"h": {
+					"a": "h a تا h a",
+					"h": "h تا h a"
+				},
+				"H": {
+					"H": "H تا H"
+				},
+				"hm": {
+					"a": "h:mm a تا h:mm a",
+					"h": "h:mm تا h:mm a",
+					"m": "h:mm تا h:mm a"
+				},
+				"Hm": {
+					"H": "H:mm تا H:mm",
+					"m": "H:mm تا H:mm"
+				},
+				"hmv": {
+					"a": "h:mm a تا h:mm a (v)",
+					"h": "h:mm تا h:mm a (v)",
+					"m": "h:mm تا h:mm a (v)"
+				},
+				"Hmv": {
+					"H": "H:mm تا H:mm (v)",
+					"m": "H:mm تا H:mm (v)"
+				},
+				"hv": {
+					"a": "h a تا h a (v)",
+					"h": "h تا h a (v)"
+				},
+				"Hv": {
+					"H": "H تا H (v)"
+				},
+				"M": {
+					"M": "M تا M"
+				},
+				"Md": {
+					"d": "M/d تا M/d",
+					"M": "M/d تا M/d"
+				},
+				"MEd": {
+					"d": "E M/d تا E M/d",
+					"M": "E M/d تا E M/d"
+				},
+				"MMM": {
+					"M": "MMM تا MMM"
+				},
+				"MMMd": {
+					"d": "d تا d LLL",
+					"M": "d LLL تا d LLL"
+				},
+				"MMMEd": {
+					"d": "E d LLL تا E d LLL",
+					"M": "E d LLL تا E d LLL"
+				},
+				"y": {
+					"y": "y تا y G"
+				},
+				"yM": {
+					"M": "y/M تا y/M G",
+					"y": "y/M تا y/M G"
+				},
+				"yMd": {
+					"d": "y/M/d تا y/M/d G",
+					"M": "y/M/d تا y/M/d G",
+					"y": "y/M/d تا y/M/d G"
+				},
+				"yMEd": {
+					"d": "E y/M/d تا E y/M/d G",
+					"M": "E y/M/d تا E y/M/d G",
+					"y": "E y/M/d تا E y/M/d G"
+				},
+				"yMMM": {
+					"M": "LLL تا MMM y G",
+					"y": "MMM y تا MMM y G"
+				},
+				"yMMMd": {
+					"d": "d تا d MMM y G",
+					"M": "d LLL تا d MMM y G",
+					"y": "d MMM y تا d MMM y G"
+				},
+				"yMMMEd": {
+					"d": "E d LLL تا E d MMM y G",
+					"M": "E d LLL تا E d MMM y G",
+					"y": "E d MMM y تا E d MMM y G"
+				},
+				"yMMMM": {
+					"M": "LLLL تا MMMM y G",
+					"y": "MMMM y تا MMMM y G"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"محرم",
+					"صفر",
+					"ربیع الاول",
+					"ربیع الثانی",
+					"جمادی الاول",
+					"جمادی الثانی",
+					"رجب",
+					"شعبان",
+					"رمضان",
+					"شوال",
+					"ذیقعدهٔ",
+					"ذیحجهٔ"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"محرم",
+					"صفر",
+					"ربیع الاول",
+					"ربیع الثانی",
+					"جمادی الاول",
+					"جمادی الثانی",
+					"رجب",
+					"شعبان",
+					"رمضان",
+					"شوال",
+					"ذیقعدهٔ",
+					"ذیحجهٔ"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"محرم",
+					"صفر",
+					"ربیع الاول",
+					"ربیع الثانی",
+					"جمادی الاول",
+					"جمادی الثانی",
+					"رجب",
+					"شعبان",
+					"رمضان",
+					"شوال",
+					"ذیقعده",
+					"ذیحجه"
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"محرم",
+					"صفر",
+					"ربیع الاول",
+					"ربیع الثانی",
+					"جمادی الاول",
+					"جمادی الثانی",
+					"رجب",
+					"شعبان",
+					"رمضان",
+					"شوال",
+					"ذیقعده",
+					"ذیحجه"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"یکشنبه",
+					"دوشنبه",
+					"سه‌شنبه",
+					"چهارشنبه",
+					"پنجشنبه",
+					"جمعه",
+					"شنبه"
+				],
+				"narrow": [
+					"ی",
+					"د",
+					"س",
+					"چ",
+					"پ",
+					"ج",
+					"ش"
+				],
+				"short": [
+					"۱ش",
+					"۲ش",
+					"۳ش",
+					"۴ش",
+					"۵ش",
+					"ج",
+					"ش"
+				],
+				"wide": [
+					"یکشنبه",
+					"دوشنبه",
+					"سه‌شنبه",
+					"چهارشنبه",
+					"پنجشنبه",
+					"جمعه",
+					"شنبه"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"یکشنبه",
+					"دوشنبه",
+					"سه‌شنبه",
+					"چهارشنبه",
+					"پنجشنبه",
+					"جمعه",
+					"شنبه"
+				],
+				"narrow": [
+					"ی",
+					"د",
+					"س",
+					"چ",
+					"پ",
+					"ج",
+					"ش"
+				],
+				"short": [
+					"۱ش",
+					"۲ش",
+					"۳ش",
+					"۴ش",
+					"۵ش",
+					"ج",
+					"ش"
+				],
+				"wide": [
+					"یکشنبه",
+					"دوشنبه",
+					"سه‌شنبه",
+					"چهارشنبه",
+					"پنجشنبه",
+					"جمعه",
+					"شنبه"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"س‌م۱",
+					"س‌م۲",
+					"س‌م۳",
+					"س‌م۴"
+				],
+				"narrow": [
+					"۱",
+					"۲",
+					"۳",
+					"۴"
+				],
+				"wide": [
+					"سه‌ماههٔ اول",
+					"سه‌ماههٔ دوم",
+					"سه‌ماههٔ سوم",
+					"سه‌ماههٔ چهارم"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"س‌م۱",
+					"س‌م۲",
+					"س‌م۳",
+					"س‌م۴"
+				],
+				"narrow": [
+					"۱",
+					"۲",
+					"۳",
+					"۴"
+				],
+				"wide": [
+					"سه‌ماههٔ اول",
+					"سه‌ماههٔ دوم",
+					"سه‌ماههٔ سوم",
+					"سه‌ماههٔ چهارم"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"ق.ظ.",
+					"ب.ظ."
+				],
+				"narrow": [
+					"ق",
+					"ب"
+				],
+				"wide": [
+					"قبل‌ازظهر",
+					"بعدازظهر"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ق.ظ.",
+					"ب.ظ."
+				],
+				"narrow": [
+					"ق.ظ.",
+					"ب.ظ."
+				],
+				"wide": [
+					"قبل‌ازظهر",
+					"بعدازظهر"
+				]
+			}
+		},
 		"era-wide": {
 			"0": "هجری قمری"
 		},
@@ -1715,281 +1990,412 @@
 		}
 	},
 	"ca-japanese": {
-		"dateFormat-full": "G y MMMM d, EEEE",
-		"dateFormat-long": "d MMMM y G",
-		"dateFormat-medium": "d MMM y G",
-		"dateFormat-short": "y/M/d G",
-		"timeFormat-full": "H:mm:ss (zzzz)",
-		"timeFormat-long": "H:mm:ss (z)",
-		"timeFormat-medium": "H:mm:ss",
-		"timeFormat-short": "H:mm",
-		"dateTimeFormat-full": "{1}، ساعت {0}",
-		"dateTimeFormat-long": "{1}، ساعت {0}",
-		"dateTimeFormat-medium": "{1}،‏ {0}",
-		"dateTimeFormat-short": "{1}،‏ {0}",
-		"intervalFormatFallback": "{0} تا {1}",
-		"intervalFormat-d-d": "d تا d",
-		"intervalFormat-h-a": "h a تا h a",
-		"intervalFormat-h-h": "h تا h a",
-		"intervalFormat-H-H": "H تا H",
-		"intervalFormat-hm-a": "h:mm a تا h:mm a",
-		"intervalFormat-hm-h": "h:mm تا h:mm a",
-		"intervalFormat-hm-m": "h:mm تا h:mm a",
-		"intervalFormat-Hm-H": "H:mm تا H:mm",
-		"intervalFormat-Hm-m": "H:mm تا H:mm",
-		"intervalFormat-hmv-a": "h:mm a تا h:mm a (v)",
-		"intervalFormat-hmv-h": "h:mm تا h:mm a (v)",
-		"intervalFormat-hmv-m": "h:mm تا h:mm a (v)",
-		"intervalFormat-Hmv-H": "H:mm تا H:mm (v)",
-		"intervalFormat-Hmv-m": "H:mm تا H:mm (v)",
-		"intervalFormat-hv-a": "h a تا h a (v)",
-		"intervalFormat-hv-h": "h تا h a (v)",
-		"intervalFormat-Hv-H": "H تا H (v)",
-		"intervalFormat-M-M": "M تا M",
-		"intervalFormat-Md-d": "M/d تا M/d",
-		"intervalFormat-Md-M": "M/d تا M/d",
-		"intervalFormat-MEd-d": "E M/d تا E M/d",
-		"intervalFormat-MEd-M": "E M/d تا E M/d",
-		"intervalFormat-MMM-M": "MMM تا MMM",
-		"intervalFormat-MMMd-d": "d تا d LLL",
-		"intervalFormat-MMMd-M": "d LLL تا d LLL",
-		"intervalFormat-MMMEd-d": "E d LLL تا E d LLL",
-		"intervalFormat-MMMEd-M": "E d LLL تا E d LLL",
-		"intervalFormat-y-y": "y تا y G",
-		"intervalFormat-yM-M": "y/M تا y/M G",
-		"intervalFormat-yM-y": "y/M تا y/M G",
-		"intervalFormat-yMd-d": "y/M/d تا y/M/d G",
-		"intervalFormat-yMd-M": "y/M/d تا y/M/d G",
-		"intervalFormat-yMd-y": "y/M/d تا y/M/d G",
-		"intervalFormat-yMEd-d": "E y/M/d تا E y/M/d G",
-		"intervalFormat-yMEd-M": "E y/M/d تا E y/M/d G",
-		"intervalFormat-yMEd-y": "E y/M/d تا E y/M/d G",
-		"intervalFormat-yMMM-M": "LLL تا MMM y G",
-		"intervalFormat-yMMM-y": "MMM y تا MMM y G",
-		"intervalFormat-yMMMd-d": "d تا d MMM y G",
-		"intervalFormat-yMMMd-M": "d LLL تا d MMM y G",
-		"intervalFormat-yMMMd-y": "d MMM y تا d MMM y G",
-		"intervalFormat-yMMMEd-d": "E d LLL تا E d MMM y G",
-		"intervalFormat-yMMMEd-M": "E d LLL تا E d MMM y G",
-		"intervalFormat-yMMMEd-y": "E d MMM y تا E d MMM y G",
-		"intervalFormat-yMMMM-M": "LLLL تا MMMM y G",
-		"intervalFormat-yMMMM-y": "MMMM y تا MMMM y G",
-		"months-format-abbreviated": [
-			"ژانویهٔ",
-			"فوریهٔ",
-			"مارس",
-			"آوریل",
-			"مهٔ",
-			"ژوئن",
-			"ژوئیهٔ",
-			"اوت",
-			"سپتامبر",
-			"اکتبر",
-			"نوامبر",
-			"دسامبر"
-		],
-		"months-format-narrow": [
-			"ژ",
-			"ف",
-			"م",
-			"آ",
-			"م",
-			"ژ",
-			"ژ",
-			"ا",
-			"س",
-			"ا",
-			"ن",
-			"د"
-		],
-		"months-format-wide": [
-			"ژانویهٔ",
-			"فوریهٔ",
-			"مارس",
-			"آوریل",
-			"مهٔ",
-			"ژوئن",
-			"ژوئیهٔ",
-			"اوت",
-			"سپتامبر",
-			"اکتبر",
-			"نوامبر",
-			"دسامبر"
-		],
-		"months-standAlone-abbreviated": [
-			"ژانویه",
-			"فوریه",
-			"مارس",
-			"آوریل",
-			"مه",
-			"ژوئن",
-			"ژوئیه",
-			"اوت",
-			"سپتامبر",
-			"اکتبر",
-			"نوامبر",
-			"دسامبر"
-		],
-		"months-standAlone-narrow": [
-			"ژ",
-			"ف",
-			"م",
-			"آ",
-			"م",
-			"ژ",
-			"ژ",
-			"ا",
-			"س",
-			"ا",
-			"ن",
-			"د"
-		],
-		"months-standAlone-wide": [
-			"ژانویه",
-			"فوریه",
-			"مارس",
-			"آوریل",
-			"مه",
-			"ژوئن",
-			"ژوئیه",
-			"اوت",
-			"سپتامبر",
-			"اکتبر",
-			"نوامبر",
-			"دسامبر"
-		],
-		"days-format-abbreviated": [
-			"یکشنبه",
-			"دوشنبه",
-			"سه‌شنبه",
-			"چهارشنبه",
-			"پنجشنبه",
-			"جمعه",
-			"شنبه"
-		],
-		"days-format-narrow": [
-			"ی",
-			"د",
-			"س",
-			"چ",
-			"پ",
-			"ج",
-			"ش"
-		],
-		"days-format-short": [
-			"۱ش",
-			"۲ش",
-			"۳ش",
-			"۴ش",
-			"۵ش",
-			"ج",
-			"ش"
-		],
-		"days-format-wide": [
-			"یکشنبه",
-			"دوشنبه",
-			"سه‌شنبه",
-			"چهارشنبه",
-			"پنجشنبه",
-			"جمعه",
-			"شنبه"
-		],
-		"days-standAlone-abbreviated": [
-			"یکشنبه",
-			"دوشنبه",
-			"سه‌شنبه",
-			"چهارشنبه",
-			"پنجشنبه",
-			"جمعه",
-			"شنبه"
-		],
-		"days-standAlone-narrow": [
-			"ی",
-			"د",
-			"س",
-			"چ",
-			"پ",
-			"ج",
-			"ش"
-		],
-		"days-standAlone-short": [
-			"۱ش",
-			"۲ش",
-			"۳ش",
-			"۴ش",
-			"۵ش",
-			"ج",
-			"ش"
-		],
-		"days-standAlone-wide": [
-			"یکشنبه",
-			"دوشنبه",
-			"سه‌شنبه",
-			"چهارشنبه",
-			"پنجشنبه",
-			"جمعه",
-			"شنبه"
-		],
-		"quarters-format-abbreviated": [
-			"س‌م۱",
-			"س‌م۲",
-			"س‌م۳",
-			"س‌م۴"
-		],
-		"quarters-format-narrow": [
-			"۱",
-			"۲",
-			"۳",
-			"۴"
-		],
-		"quarters-format-wide": [
-			"سه‌ماههٔ اول",
-			"سه‌ماههٔ دوم",
-			"سه‌ماههٔ سوم",
-			"سه‌ماههٔ چهارم"
-		],
-		"quarters-standAlone-abbreviated": [
-			"س‌م۱",
-			"س‌م۲",
-			"س‌م۳",
-			"س‌م۴"
-		],
-		"quarters-standAlone-narrow": [
-			"۱",
-			"۲",
-			"۳",
-			"۴"
-		],
-		"quarters-standAlone-wide": [
-			"سه‌ماههٔ اول",
-			"سه‌ماههٔ دوم",
-			"سه‌ماههٔ سوم",
-			"سه‌ماههٔ چهارم"
-		],
-		"dayPeriods-format-abbreviated": [
-			"ق.ظ.",
-			"ب.ظ."
-		],
-		"dayPeriods-format-narrow": [
-			"ق",
-			"ب"
-		],
-		"dayPeriods-format-wide": [
-			"قبل‌ازظهر",
-			"بعدازظهر"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"ق.ظ.",
-			"ب.ظ."
-		],
-		"dayPeriods-standAlone-narrow": [
-			"ق.ظ.",
-			"ب.ظ."
-		],
-		"dayPeriods-standAlone-wide": [
-			"قبل‌ازظهر",
-			"بعدازظهر"
-		],
+		"dateFormats": {
+			"full": "G y MMMM d, EEEE",
+			"long": "d MMMM y G",
+			"medium": "d MMM y G",
+			"short": "y/M/d G"
+		},
+		"timeFormats": {
+			"full": "H:mm:ss (zzzz)",
+			"long": "H:mm:ss (z)",
+			"medium": "H:mm:ss",
+			"short": "H:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1}، ساعت {0}",
+			"long": "{1}، ساعت {0}",
+			"medium": "{1}،‏ {0}",
+			"short": "{1}،‏ {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E d",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y G",
+				"GyMMM": "MMM y G",
+				"GyMMMd": "d MMM y G",
+				"GyMMMEd": "E d MMM y G",
+				"h": "h a",
+				"H": "H",
+				"HHmmZ": "HH:mm (Z)",
+				"hm": "h:mm a",
+				"Hm": "H:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "H:mm:ss",
+				"M": "L",
+				"Md": "M/d",
+				"MEd": "E M/d",
+				"MMM": "LLL",
+				"MMMd": "d LLL",
+				"MMMEd": "E d LLL",
+				"MMMMd": "d LLLL",
+				"MMMMEd": "E d LLLL",
+				"ms": "mm:ss",
+				"y": "y G",
+				"yyyy": "y G",
+				"yyyyM": "y/M G",
+				"yyyyMd": "y/M/d G",
+				"yyyyMEd": "E y/M/d G",
+				"yyyyMMM": "MMM y G",
+				"yyyyMMMd": "d MMM y G",
+				"yyyyMMMEd": "E d MMM y G",
+				"yyyyMMMM": "G y MMMM",
+				"yyyyQQQ": "QQQQ y G",
+				"yyyyQQQQ": "QQQQ y G"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{1} {0}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} ({1})",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} تا {1}",
+				"d": {
+					"d": "d تا d"
+				},
+				"h": {
+					"a": "h a تا h a",
+					"h": "h تا h a"
+				},
+				"H": {
+					"H": "H تا H"
+				},
+				"hm": {
+					"a": "h:mm a تا h:mm a",
+					"h": "h:mm تا h:mm a",
+					"m": "h:mm تا h:mm a"
+				},
+				"Hm": {
+					"H": "H:mm تا H:mm",
+					"m": "H:mm تا H:mm"
+				},
+				"hmv": {
+					"a": "h:mm a تا h:mm a (v)",
+					"h": "h:mm تا h:mm a (v)",
+					"m": "h:mm تا h:mm a (v)"
+				},
+				"Hmv": {
+					"H": "H:mm تا H:mm (v)",
+					"m": "H:mm تا H:mm (v)"
+				},
+				"hv": {
+					"a": "h a تا h a (v)",
+					"h": "h تا h a (v)"
+				},
+				"Hv": {
+					"H": "H تا H (v)"
+				},
+				"M": {
+					"M": "M تا M"
+				},
+				"Md": {
+					"d": "M/d تا M/d",
+					"M": "M/d تا M/d"
+				},
+				"MEd": {
+					"d": "E M/d تا E M/d",
+					"M": "E M/d تا E M/d"
+				},
+				"MMM": {
+					"M": "MMM تا MMM"
+				},
+				"MMMd": {
+					"d": "d تا d LLL",
+					"M": "d LLL تا d LLL"
+				},
+				"MMMEd": {
+					"d": "E d LLL تا E d LLL",
+					"M": "E d LLL تا E d LLL"
+				},
+				"y": {
+					"y": "y تا y G"
+				},
+				"yM": {
+					"M": "y/M تا y/M G",
+					"y": "y/M تا y/M G"
+				},
+				"yMd": {
+					"d": "y/M/d تا y/M/d G",
+					"M": "y/M/d تا y/M/d G",
+					"y": "y/M/d تا y/M/d G"
+				},
+				"yMEd": {
+					"d": "E y/M/d تا E y/M/d G",
+					"M": "E y/M/d تا E y/M/d G",
+					"y": "E y/M/d تا E y/M/d G"
+				},
+				"yMMM": {
+					"M": "LLL تا MMM y G",
+					"y": "MMM y تا MMM y G"
+				},
+				"yMMMd": {
+					"d": "d تا d MMM y G",
+					"M": "d LLL تا d MMM y G",
+					"y": "d MMM y تا d MMM y G"
+				},
+				"yMMMEd": {
+					"d": "E d LLL تا E d MMM y G",
+					"M": "E d LLL تا E d MMM y G",
+					"y": "E d MMM y تا E d MMM y G"
+				},
+				"yMMMM": {
+					"M": "LLLL تا MMMM y G",
+					"y": "MMMM y تا MMMM y G"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"ژانویهٔ",
+					"فوریهٔ",
+					"مارس",
+					"آوریل",
+					"مهٔ",
+					"ژوئن",
+					"ژوئیهٔ",
+					"اوت",
+					"سپتامبر",
+					"اکتبر",
+					"نوامبر",
+					"دسامبر"
+				],
+				"narrow": [
+					"ژ",
+					"ف",
+					"م",
+					"آ",
+					"م",
+					"ژ",
+					"ژ",
+					"ا",
+					"س",
+					"ا",
+					"ن",
+					"د"
+				],
+				"wide": [
+					"ژانویهٔ",
+					"فوریهٔ",
+					"مارس",
+					"آوریل",
+					"مهٔ",
+					"ژوئن",
+					"ژوئیهٔ",
+					"اوت",
+					"سپتامبر",
+					"اکتبر",
+					"نوامبر",
+					"دسامبر"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ژانویه",
+					"فوریه",
+					"مارس",
+					"آوریل",
+					"مه",
+					"ژوئن",
+					"ژوئیه",
+					"اوت",
+					"سپتامبر",
+					"اکتبر",
+					"نوامبر",
+					"دسامبر"
+				],
+				"narrow": [
+					"ژ",
+					"ف",
+					"م",
+					"آ",
+					"م",
+					"ژ",
+					"ژ",
+					"ا",
+					"س",
+					"ا",
+					"ن",
+					"د"
+				],
+				"wide": [
+					"ژانویه",
+					"فوریه",
+					"مارس",
+					"آوریل",
+					"مه",
+					"ژوئن",
+					"ژوئیه",
+					"اوت",
+					"سپتامبر",
+					"اکتبر",
+					"نوامبر",
+					"دسامبر"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"یکشنبه",
+					"دوشنبه",
+					"سه‌شنبه",
+					"چهارشنبه",
+					"پنجشنبه",
+					"جمعه",
+					"شنبه"
+				],
+				"narrow": [
+					"ی",
+					"د",
+					"س",
+					"چ",
+					"پ",
+					"ج",
+					"ش"
+				],
+				"short": [
+					"۱ش",
+					"۲ش",
+					"۳ش",
+					"۴ش",
+					"۵ش",
+					"ج",
+					"ش"
+				],
+				"wide": [
+					"یکشنبه",
+					"دوشنبه",
+					"سه‌شنبه",
+					"چهارشنبه",
+					"پنجشنبه",
+					"جمعه",
+					"شنبه"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"یکشنبه",
+					"دوشنبه",
+					"سه‌شنبه",
+					"چهارشنبه",
+					"پنجشنبه",
+					"جمعه",
+					"شنبه"
+				],
+				"narrow": [
+					"ی",
+					"د",
+					"س",
+					"چ",
+					"پ",
+					"ج",
+					"ش"
+				],
+				"short": [
+					"۱ش",
+					"۲ش",
+					"۳ش",
+					"۴ش",
+					"۵ش",
+					"ج",
+					"ش"
+				],
+				"wide": [
+					"یکشنبه",
+					"دوشنبه",
+					"سه‌شنبه",
+					"چهارشنبه",
+					"پنجشنبه",
+					"جمعه",
+					"شنبه"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"س‌م۱",
+					"س‌م۲",
+					"س‌م۳",
+					"س‌م۴"
+				],
+				"narrow": [
+					"۱",
+					"۲",
+					"۳",
+					"۴"
+				],
+				"wide": [
+					"سه‌ماههٔ اول",
+					"سه‌ماههٔ دوم",
+					"سه‌ماههٔ سوم",
+					"سه‌ماههٔ چهارم"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"س‌م۱",
+					"س‌م۲",
+					"س‌م۳",
+					"س‌م۴"
+				],
+				"narrow": [
+					"۱",
+					"۲",
+					"۳",
+					"۴"
+				],
+				"wide": [
+					"سه‌ماههٔ اول",
+					"سه‌ماههٔ دوم",
+					"سه‌ماههٔ سوم",
+					"سه‌ماههٔ چهارم"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"ق.ظ.",
+					"ب.ظ."
+				],
+				"narrow": [
+					"ق",
+					"ب"
+				],
+				"wide": [
+					"قبل‌ازظهر",
+					"بعدازظهر"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"ق.ظ.",
+					"ب.ظ."
+				],
+				"narrow": [
+					"ق.ظ.",
+					"ب.ظ."
+				],
+				"wide": [
+					"قبل‌ازظهر",
+					"بعدازظهر"
+				]
+			}
+		},
 		"era-wide": {
 			"232": "Meiji",
 			"233": "Taishō",
@@ -2009,54 +2415,109 @@
 			"235": "H"
 		}
 	},
-	"dateField-year-displayName": "سال",
-	"dateField-year-relative--1": "سال گذشته",
-	"dateField-year-relative-0": "امسال",
-	"dateField-year-relative-1": "سال آینده",
-	"dateField-year-relative-future-one": "{0} سال بعد",
-	"dateField-year-relative-future-other": "{0} سال بعد",
-	"dateField-year-relative-past-one": "{0} سال پیش",
-	"dateField-year-relative-past-other": "{0} سال پیش",
-	"dateField-month-displayName": "ماه",
-	"dateField-month-relative--1": "ماه گذشته",
-	"dateField-month-relative-0": "این ماه",
-	"dateField-month-relative-1": "ماه آینده",
-	"dateField-month-relative-future-one": "{0} ماه بعد",
-	"dateField-month-relative-future-other": "{0} ماه بعد",
-	"dateField-month-relative-past-one": "{0} ماه پیش",
-	"dateField-month-relative-past-other": "{0} ماه پیش",
-	"dateField-week-displayName": "هفته",
-	"dateField-week-relative--1": "هفتهٔ گذشته",
-	"dateField-week-relative-0": "این هفته",
-	"dateField-week-relative-1": "هفتهٔ آینده",
-	"dateField-week-relative-future-one": "{0} هفته بعد",
-	"dateField-week-relative-future-other": "{0} هفته بعد",
-	"dateField-week-relative-past-one": "{0} هفته پیش",
-	"dateField-week-relative-past-other": "{0} هفته پیش",
-	"dateField-day-displayName": "روز",
-	"dateField-day-relative--1": "دیروز",
-	"dateField-day-relative-0": "امروز",
-	"dateField-day-relative-1": "فردا",
-	"dateField-day-relative-future-one": "{0} روز بعد",
-	"dateField-day-relative-future-other": "{0} روز بعد",
-	"dateField-day-relative-past-one": "{0} روز پیش",
-	"dateField-day-relative-past-other": "{0} روز پیش",
-	"dateField-hour-displayName": "ساعت",
-	"dateField-hour-relative-future-one": "{0} ساعت بعد",
-	"dateField-hour-relative-future-other": "{0} ساعت بعد",
-	"dateField-hour-relative-past-one": "{0} ساعت پیش",
-	"dateField-hour-relative-past-other": "{0} ساعت پیش",
-	"dateField-minute-displayName": "دقیقه",
-	"dateField-minute-relative-future-one": "{0} دقیقه بعد",
-	"dateField-minute-relative-future-other": "{0} دقیقه بعد",
-	"dateField-minute-relative-past-one": "{0} دقیقه پیش",
-	"dateField-minute-relative-past-other": "{0} دقیقه پیش",
-	"dateField-second-displayName": "ثانیه",
-	"dateField-second-relative-0": "اکنون",
-	"dateField-second-relative-future-one": "{0} ثانیه بعد",
-	"dateField-second-relative-future-other": "{0} ثانیه بعد",
-	"dateField-second-relative-past-one": "{0} ثانیه پیش",
-	"dateField-second-relative-past-other": "{0} ثانیه پیش",
+	"dateFields": {
+		"era": {
+			"displayName": "دوره"
+		},
+		"year": {
+			"displayName": "سال",
+			"relative-type--1": "سال گذشته",
+			"relative-type-0": "امسال",
+			"relative-type-1": "سال آینده",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} سال بعد",
+				"relativeTimePattern-count-other": "{0} سال بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} سال پیش",
+				"relativeTimePattern-count-other": "{0} سال پیش"
+			}
+		},
+		"month": {
+			"displayName": "ماه",
+			"relative-type--1": "ماه گذشته",
+			"relative-type-0": "این ماه",
+			"relative-type-1": "ماه آینده",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} ماه بعد",
+				"relativeTimePattern-count-other": "{0} ماه بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} ماه پیش",
+				"relativeTimePattern-count-other": "{0} ماه پیش"
+			}
+		},
+		"week": {
+			"displayName": "هفته",
+			"relative-type--1": "هفتهٔ گذشته",
+			"relative-type-0": "این هفته",
+			"relative-type-1": "هفتهٔ آینده",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} هفته بعد",
+				"relativeTimePattern-count-other": "{0} هفته بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} هفته پیش",
+				"relativeTimePattern-count-other": "{0} هفته پیش"
+			}
+		},
+		"day": {
+			"displayName": "روز",
+			"relative-type--2": "پریروز",
+			"relative-type--1": "دیروز",
+			"relative-type-0": "امروز",
+			"relative-type-1": "فردا",
+			"relative-type-2": "پس‌فردا",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} روز بعد",
+				"relativeTimePattern-count-other": "{0} روز بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} روز پیش",
+				"relativeTimePattern-count-other": "{0} روز پیش"
+			}
+		},
+		"weekday": {
+			"displayName": "روز هفته"
+		},
+		"hour": {
+			"displayName": "ساعت",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} ساعت بعد",
+				"relativeTimePattern-count-other": "{0} ساعت بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} ساعت پیش",
+				"relativeTimePattern-count-other": "{0} ساعت پیش"
+			}
+		},
+		"minute": {
+			"displayName": "دقیقه",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} دقیقه بعد",
+				"relativeTimePattern-count-other": "{0} دقیقه بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} دقیقه پیش",
+				"relativeTimePattern-count-other": "{0} دقیقه پیش"
+			}
+		},
+		"second": {
+			"displayName": "ثانیه",
+			"relative-type-0": "اکنون",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} ثانیه بعد",
+				"relativeTimePattern-count-other": "{0} ثانیه بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} ثانیه پیش",
+				"relativeTimePattern-count-other": "{0} ثانیه پیش"
+			}
+		},
+		"zone": {
+			"displayName": "منطقهٔ زمانی"
+		}
+	},
 	"decimalFormat": {
 		"standard": "#,##0.###"
 	},
@@ -2231,6 +2692,10 @@
 	"weekData-firstDay": 6,
 	"weekData-weekendStart": 5,
 	"weekData-weekendEnd": 5,
+	"timeData": {
+		"_allowed": "H h",
+		"_preferred": "H"
+	},
 	"eras-gregorian": {
 		"0": {
 			"_end": "0-12-31"

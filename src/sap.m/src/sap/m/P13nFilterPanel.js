@@ -292,8 +292,9 @@ sap.ui.define([
 	/**
 	 * Setter for a KeyFields array.
 	 * 
-	 * @public
+	 * @private
 	 * @since 1.26
+	 * @deprecated Since 1.34. This method does not work anymore - you should use the Items aggregation
 	 * @param {array} array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text : "Name"}]
 	 */
 	P13nFilterPanel.prototype.setKeyFields = function(aKeyFields) {
@@ -474,49 +475,52 @@ sap.ui.define([
 			this._bUpdateRequired = false;
 
 			var aKeyFields = [];
-			var sModelName = this.getBindingInfo("items").model;
+			var sModelName = (this.getBindingInfo("items") || {}).model;
+			var fGetValueOfProperty = function(sName, oContext, oItem) {
+				var oBinding = oItem.getBinding(sName);
+				if (oBinding && oContext) {
+					return oContext.getObject()[oBinding.getPath()];
+				}
+				return oItem.getMetadata().getProperty(sName) ? oItem.getProperty(sName) : oItem.getAggregation(sName);
+			};
 			this.getItems().forEach(function(oItem_) {
 				var oContext = oItem_.getBindingContext(sModelName);
-				var oModelItem = oContext.getObject();
 				// Update key of model (in case of 'restore' the key in model gets lost because it is overwritten by Restore Snapshot)
 				if (oItem_.getBinding("key")) {
-					oModelItem[oItem_.getBinding("key").getPath()] = oItem_.getKey();
+					oContext.getObject()[oItem_.getBinding("key").getPath()] = oItem_.getKey();
 				}
-				var binding;
 				aKeyFields.push({
 					key: oItem_.getColumnKey(),
-					text: (binding = oItem_.getBinding("text")) ? oModelItem[binding.getPath()] : undefined,
-					tooltip: (binding = oItem_.getBinding("tooltip")) ? oModelItem[binding.getPath()] : undefined,
-					maxLength: (binding = oItem_.getBinding("maxLength")) ? oModelItem[binding.getPath()] : undefined,
-					type: (binding = oItem_.getBinding("type")) ? oModelItem[binding.getPath()] : undefined,
-					precision: (binding = oItem_.getBinding("precision")) ? oModelItem[binding.getPath()] : undefined,
-					scale: (binding = oItem_.getBinding("scale")) ? oModelItem[binding.getPath()] : undefined,
-					isDefault: (binding = oItem_.getBinding("isDefault")) ? oModelItem[binding.getPath()] : undefined
+					text: fGetValueOfProperty("text", oContext, oItem_),
+					tooltip: fGetValueOfProperty("tooltip", oContext, oItem_),
+					maxLength: fGetValueOfProperty("maxLength", oContext, oItem_),
+					type: fGetValueOfProperty("type", oContext, oItem_),
+					precision: fGetValueOfProperty("precision", oContext, oItem_),
+					scale: fGetValueOfProperty("scale", oContext, oItem_),
+					isDefault: fGetValueOfProperty("isDefault", oContext, oItem_)
 				});
 			});
 			this.setKeyFields(aKeyFields);
 
 			var aConditions = [];
-			sModelName = this.getBindingInfo("filterItems").model;
+			sModelName = (this.getBindingInfo("filterItems") || {}).model;
 			this.getFilterItems().forEach(function(oFilterItem_) {
 				// Note: current implementation assumes that the length of filterItems aggregation is equal
 				// to the number of corresponding model items.
 				// Currently the model data is up-to-date so we need to resort to the Binding Context;
 				// the "filterItems" aggregation data - obtained via getFilterItems() - has the old state !
 				var oContext = oFilterItem_.getBindingContext(sModelName);
-				var oModelItem = oContext.getObject();
 				// Update key of model (in case of 'restore' the key in model gets lost because it is overwritten by Restore Snapshot)
-				if (oFilterItem_.getBinding("key")) {
-					oModelItem[oFilterItem_.getBinding("key").getPath()] = oFilterItem_.getKey();
+				if (oFilterItem_.getBinding("key") && oContext) {
+					oContext.getObject()[oFilterItem_.getBinding("key").getPath()] = oFilterItem_.getKey();
 				}
-				var binding;
 				aConditions.push({
 					key: oFilterItem_.getKey(),
-					keyField: (binding = oFilterItem_.getBinding("columnKey")) ? oModelItem[binding.getPath()] : undefined,
-					operation: (binding = oFilterItem_.getBinding("operation")) ? oModelItem[binding.getPath()] : undefined,
-					value1: (binding = oFilterItem_.getBinding("value1")) ? oModelItem[binding.getPath()] : undefined,
-					value2: (binding = oFilterItem_.getBinding("value2")) ? oModelItem[binding.getPath()] : undefined,
-					exclude: (binding = oFilterItem_.getBinding("exclude")) ? oModelItem[binding.getPath()] : undefined
+					keyField: fGetValueOfProperty("columnKey", oContext, oFilterItem_),
+					operation: fGetValueOfProperty("operation", oContext, oFilterItem_),
+					value1: fGetValueOfProperty("value1", oContext, oFilterItem_),
+					value2: fGetValueOfProperty("value2", oContext, oFilterItem_),
+					exclude: fGetValueOfProperty("exclude", oContext, oFilterItem_)
 				});
 			});
 			this.setConditions(aConditions);
@@ -526,7 +530,9 @@ sap.ui.define([
 	P13nFilterPanel.prototype.addItem = function(oItem) {
 		P13nPanel.prototype.addItem.apply(this, arguments);
 
-		this._bUpdateRequired = true;
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 	};
 
 	P13nFilterPanel.prototype.removeItem = function(oItem) {
@@ -538,7 +544,9 @@ sap.ui.define([
 	P13nFilterPanel.prototype.destroyItems = function() {
 		this.destroyAggregation("items");
 
-		this._bUpdateRequired = true;
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 		return this;
 	};
 
@@ -553,7 +561,9 @@ sap.ui.define([
 	P13nFilterPanel.prototype.insertFilterItem = function(oFilterItem) {
 		this.insertAggregation("filterItems", oFilterItem);
 
-		this._bUpdateRequired = true;
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 
 		return this;
 	};
@@ -569,7 +579,9 @@ sap.ui.define([
 	P13nFilterPanel.prototype.removeFilterItem = function(oFilterItem) {
 		oFilterItem = this.removeAggregation("filterItems", oFilterItem);
 
-		this._bUpdateRequired = true;
+		if (!this._bIgnoreBindCalls) {
+			this._bUpdateRequired = true;
+		}
 
 		return oFilterItem;
 	};
@@ -601,8 +613,29 @@ sap.ui.define([
 			var oNewData = oEvent.getParameter("newData");
 			var sOperation = oEvent.getParameter("operation");
 			var sKey = oEvent.getParameter("key");
-			var iIndex = oEvent.getParameter("index");
+			var iConditionIndex = oEvent.getParameter("index");
 			var oFilterItem;
+
+			// map the iConditionIndex to the index in the FilterItems
+			var iIndex = -1;
+			var bExclude = oEvent.getSource() === that._oExcludeFilterPanel;
+			that.getFilterItems().some(function(oItem, i) {
+				// window.console.log(i+ " " + oItem.getValue1());
+				if ((!oItem.getExclude() && !bExclude) || (oItem.getExclude() && bExclude)) {
+					iConditionIndex--;
+				}
+				iIndex = i;
+				return iConditionIndex < 0;
+			}, this);
+
+// that.getFilterItems().forEach(function(oItem, i) {
+// window.console.log(i+ " Items: " + oItem.getValue1());
+// }, this);
+//			
+// var oData = that.getModel().getData();
+// oData.persistentData.filter.filterItems.forEach(function(oItem, i) {
+// window.console.log(i+ " model: " + oItem.value1);
+// });
 
 			if (sOperation === "update") {
 				oFilterItem = that.getFilterItems()[iIndex];
@@ -620,6 +653,10 @@ sap.ui.define([
 				});
 			}
 			if (sOperation === "add") {
+				if (iConditionIndex >= 0) {
+					iIndex++;
+				}
+
 				oFilterItem = new sap.m.P13nFilterItem({
 					key: sKey,
 					columnKey: oNewData.keyField,
@@ -644,6 +681,16 @@ sap.ui.define([
 				});
 				that._bIgnoreBindCalls = false;
 			}
+
+// that.getFilterItems().forEach(function(oItem, i) {
+// window.console.log(i+ " Items: " + oItem.getValue1());
+// }, this);
+//			
+// var oData = that.getModel().getData();
+// oData.persistentData.filter.filterItems.forEach(function(oItem, i) {
+// window.console.log(i+ " model: " + oItem.value1);
+// });
+
 		};
 	};
 

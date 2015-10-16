@@ -19,7 +19,7 @@
 						  Unicode="true"/>
 			</EntityType>
 		</Schema>
-		<Schema Namespace="ODataWebV3.Northwind.Model" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+		<Schema Namespace="ODataWebV2.Northwind.Model" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
 			<EntityContainer Name="NorthwindEntities" m:IsDefaultEntityContainer="true" p6:LazyLoadingEnabled="true"
 							 xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
 				<EntitySet Name="Invoices" EntityType="NorthwindModel.Invoice"/>

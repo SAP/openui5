@@ -1,6 +1,9 @@
 /*!
  * ${copyright}
  */
+/*
+ global QUnit
+ */
 sap.ui.define([
 		'sap/ui/test/opaQunit',
 		'sap/ui/test/Opa5'
@@ -8,7 +11,7 @@ sap.ui.define([
 		"use strict";
 
 		return {
-			start : function (startup, teardown) {
+			start: function (startup, teardown) {
 
 				QUnit.module("Buy Product Journey");
 
@@ -38,7 +41,8 @@ sap.ui.define([
 				opaTest("Should add a product to the cart", function (Given, When, Then) {
 					// Actions
 					When.iPressOnTheFirstProduct().and.
-						iAddTheDisplayedProductToTheCart().and.iGoToTheCartPage();
+						iAddTheDisplayedProductToTheCart().and.
+						iGoToTheCartPage();
 
 					// Assertions
 					Then.iShouldSeeTheProductInMyCart().
@@ -56,7 +60,6 @@ sap.ui.define([
 					Then.iShouldSeeAnEmptyCart();
 					teardown.call(this, Then);
 				});
-
 			}
 		};
 

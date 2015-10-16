@@ -12,7 +12,25 @@ sap.ui.define([
 						return this.waitFor({
 							viewName: "Product",
 							controlType: "sap.m.Button",
-							matchers: new PropertyStrictEquals({name: "icon", value: "sap-icon://add"}),
+							matchers: [
+								new PropertyStrictEquals({name: "icon", value: "sap-icon://add"}),
+								// TODO: move me to sap.ui.test.matchers - no Busy parent
+								// TODO: add a second one - all parents fullfill condition
+								// Checks if a parent in the control tree is busy
+								function (oButton) {
+									var oParent = oButton.getParent();
+									while(oParent) {
+										// this condition can be generic
+										if (oParent.getBusy && oParent.getBusy() === true) {
+											return false;
+										}
+										oParent = oParent.getParent();
+									}
+
+									return true;
+								}
+
+							],
 							success: function (aBtn) {
 								aBtn[0].$().trigger("tap");
 							},

@@ -636,10 +636,11 @@
 	// create a mobile App embedding the page and place the App into the HTML document
 	var app = new sap.m.App("myApp", {
 		pages : [oPage]
-	}).placeAt("body");
+	}).placeAt("content");
 </script>
 
 </head>
 <body id="body" class="sapUiBody">
+	<div id="content"></div>
 </body>
 </html>

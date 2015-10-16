@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-// Provides control sap.m.ComboBoxBase.
 sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', './SelectList', './Popover', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool'],
 	function(jQuery, Bar, Dialog, ComboBoxTextField, SelectList, Popover, library, EnabledPropagator, IconPool) {
 		"use strict";
@@ -39,7 +38,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 				/**
 				 * Internal aggregation to hold the inner picker popup.
 				 */
-				picker: { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" }
+				picker: { type: "sap.ui.core.PopupInterface", multiple: false, visibility: "hidden" }
 			}
 		}});
 
@@ -52,7 +51,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 		/* ----------------------------------------------------------- */
 
 		/**
-		 * Called, whenever the binding of the aggregation items is changed.
+		 * Called whenever the binding of the aggregation items is changed.
 		 *
 		 */
 		ComboBoxBase.prototype.updateItems = function(sReason) {
@@ -63,7 +62,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 		};
 
 		/**
-		 * Called, when the items' aggregation needs to be refreshed.
+		 * Called when the items' aggregation needs to be refreshed.
 		 *
 		 * <b>Note:</b> This method has been overwritten to prevent <code>updateItems()</code>
 		 * from being called when the bindings are refreshed.
@@ -129,7 +128,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 		/* =========================================================== */
 
 		/**
-		 * Handle the touch start event on the control.
+		 * Handles the touch start event on the control.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
@@ -150,7 +149,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 		};
 
 		/**
-		 * Handle the touch end event on the control.
+		 * Handles the touch end event on the control.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
@@ -213,7 +212,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 		/* ----------------------------------------------------------- */
 
 		/**
-		 * Handles the <code>onsapshow</code> event when F4 or Alt and DOWN arrow are pressed.
+		 * Handles the <code>onsapshow</code> event when either F4 is pressed or Alt + Down arrow are pressed.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
@@ -249,8 +248,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 		/**
 		 * Handles when escape is pressed.
 		 *
-		 * If picker popup is closed, cancel changes and revert to the original value when the input field got its focus.
-		 * If list is open, close list.
+		 * If picker popup is closed, cancels changes and revert to the original value when the input field got its focus.
+		 * If list is open, closes list.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
@@ -274,7 +273,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 		};
 
 		/**
-		 * Handle when Alt + UP arrow are pressed.
+		 * Handles when Alt + Up arrow are pressed.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
@@ -315,7 +314,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 		/* =========================================================== */
 
 		/**
-		 * Overwrites use labels as placeholder configuration of the InputBase.
+		 * Indicates whether the custom placeholder is used.
 		 *
 		 * IE9 does not have a native placeholder support.
 		 * IE10+ fires the input event when an input field with a native placeholder is focused.
@@ -435,7 +434,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 		};
 
 		/*
-		 * Check whether an item is selected or not.
+		 * Checks whether an item is selected or not.
 		 * To be overwritten by subclasses.
 		 *
 		 * @param {sap.ui.core.Item} oItem
@@ -474,9 +473,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 		};
 
 		/**
-		 * Gets the control's picker popup's trigger element.
+		 * Gets the trigger element of the control's picker popup.
 		 *
-		 * @returns {Element | null} Returns the element that is used as trigger to open the control's picker popup.
+		 * @returns {Element | null} The element that is used as trigger to open the control's picker popup.
 		 */
 		ComboBoxBase.prototype.getOpenArea = function() {
 			return this.getDomRef("arrow");
@@ -499,7 +498,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 		 * <b>Note:</b> If duplicate values exist, the first item matching the value is returned.
 		 *
 		 * @param {string} sProperty An item property.
-		 * @param {string} sValue An item value that specifies the item to retrieve.
+		 * @param {string} sValue An item value that specifies the item to be retrieved.
 		 * @returns {sap.ui.core.Item | null} The matched item or null.
 		 */
 		ComboBoxBase.prototype.findItem = function(sProperty, sValue) {
@@ -510,9 +509,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 		/*
 		 * Gets the item with the given value from the aggregation named <code>items</code>.
 		 *
-		 * <b>Note: </b> If duplicate values exist, the first item matching the value is returned.
+		 * <b>Note:</b> If duplicate values exist, the first item matching the value is returned.
 		 *
-		 * @param {string} sText An item value that specifies the item to retrieve.
+		 * @param {string} sText An item value that specifies the item to be retrieved.
 		 * @returns {sap.ui.core.Item | null} The matched item or null.
 		 * @protected
 		 */
@@ -552,7 +551,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 		};
 
 		/**
-		 * Clear the filter
+		 * Clears the filter.
 		 *
 		 */
 		ComboBoxBase.prototype.clearFilter = function() {
@@ -572,7 +571,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 		ComboBoxBase.prototype.onItemChange = function() {};
 
 		/**
-		 * Clear the selection.
+		 * Clears the selection.
 		 * To be overwritten by subclasses.
 		 *
 		 * @protected
@@ -746,7 +745,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './ComboBoxTextField', 
 		/**
 		 * Removes an item from the aggregation named <code>items</code>.
 		 *
-		 * @param {int | string | sap.ui.core.Item} vItem The item to remove or its index or id.
+		 * @param {int | string | sap.ui.core.Item} vItem The item to remove or its index or ID.
 		 * @returns {sap.ui.core.Item} The removed item or null.
 		 * @public
 		 */

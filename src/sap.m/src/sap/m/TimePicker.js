@@ -184,11 +184,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		};
 
 		/**
-		 * Handles clicks inside the input.
+		 * Handles tap inside the input.
 		 *
 		 * @param {jQuery.Event} oEvent Event object
 		 */
-		TimePicker.prototype.onclick = function(oEvent) {
+		TimePicker.prototype.ontap = function(oEvent) {
 			var bIconClicked,
 				bPickerOpened;
 

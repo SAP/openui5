@@ -22,9 +22,18 @@
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript"
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 	<script>
 
+	// Initialization
+	sinon.config.useFakeTimers = true;
+	
 	QUnit.module("Async (Pre-)Loading", {
 		afterEach: function() {
 			// unload libs andcomponents
@@ -138,7 +147,59 @@
 
 		// TODO spy on requireModule, check that expected modules have been loaded
 	});
-	
+
+
+	QUnit.test("Manifest from component instance (async)", function(assert) {
+
+		jQuery.sap.registerModulePath("samples.components", "../../../../../test-resources/sap/ui/core/samples/components/");
+
+		//setup fake server and data
+		var oManifest = {
+			"sap.app" : {
+				"id" : "samples.components.button"
+			}
+		};
+
+
+		var oServer = this.sandbox.useFakeServer();
+		oServer.useFilters = true;
+		oServer.autoRespond = true;
+		oServer.xhr.addFilter(function(method, url) {
+			return ("/anylocation/manifest.json" !== url && "/anylocation/manifest1.json" !== url);
+		});
+
+		oServer.respondWith("GET", "/anylocation/manifest.json", [
+			200, 
+			{
+				"Content-Type": "application/json"
+			},
+			JSON.stringify(oManifest)
+		]);
+
+		// start test
+		var oCompPromise = sap.ui.component({
+			manifestUrl : "/anylocation/manifest.json",
+			async: true
+		});
+
+		this.clock.tick(1);
+		oServer.respond();
+
+		var oDone = assert.async();
+
+		oCompPromise.then(function(oComponent) {
+			assert.ok(true, "Promise of Component has been resolved correctly");
+			assert.ok(oComponent.getMetadata() instanceof sap.ui.core.UIComponentMetadata, "The metadata is instance of UIComponentMetadata");
+			assert.ok(oComponent.getManifest(), "Manifest is available");
+			assert.deepEqual(oComponent.getManifest(), oManifest, "Manifest matches the manifest behind manifestUrl");
+			oDone();
+		}, function(oError) {
+			assert.Ok(false,"Promise of Component hasn't been resolved correctly");
+			oDone();
+		});
+	});
+
+
 	</script>
 	</head>
 	<body><h1 id="qunit-header">QUnit tests: Components (async)</h1>

@@ -1507,10 +1507,10 @@ if (typeof window.sap.ui !== "object") {
 		var isWin7 = device.os.windows && device.os.version === 7;
 
 		var s = {};
-		s.tablet = ((device.support.touch && !isWin7) || isWin8Upwards || !!_simMobileOnDesktop) && t;
-		s.phone = device.os.windows_phone || ((device.support.touch && !isWin7) || !!_simMobileOnDesktop) && !t;
-		s.desktop = (!s.tablet && !s.phone) || isWin8Upwards || isWin7;
-		s.combi = (s.desktop && s.tablet);
+		s.tablet = !!(((device.support.touch && !isWin7) || isWin8Upwards || !!_simMobileOnDesktop) && t);
+		s.phone = !!(device.os.windows_phone || ((device.support.touch && !isWin7) || !!_simMobileOnDesktop) && !t);
+		s.desktop = !!((!s.tablet && !s.phone) || isWin8Upwards || isWin7);
+		s.combi = !!(s.desktop && s.tablet);
 		s.SYSTEMTYPE = SYSTEMTYPE;
 
 		for (var type in SYSTEMTYPE) {

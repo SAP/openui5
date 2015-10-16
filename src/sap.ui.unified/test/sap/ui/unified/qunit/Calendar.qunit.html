@@ -268,7 +268,7 @@
 				equal(jQuery(aYears[0]).text(), "1981", "first rendered year after prev clicked");
 				equal(jQuery(aYears[aYears.length-1]).text(), "2000", "last rendered year after prev clicked");
 
-				var $NewYear = jQuery("#Cal2--YP-y1999"); // use keybord to select month to prevent event processing from ItemNavigation
+				var $NewYear = jQuery("#Cal2--YP-y19990101"); // use keybord to select month to prevent event processing from ItemNavigation
 				$NewYear.focus();
 				qutils.triggerKeyboardEvent($NewYear.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 				ok(!jQuery(jQuery("#Cal2--YP").get(0)).is(":visible"), "Year picker not visible after selecting year");
@@ -292,12 +292,40 @@
 				equal(jQuery(aYears[0]).text(), "2009", "first rendered year after prev clicked");
 				equal(jQuery(aYears[aYears.length-1]).text(), "2028", "last rendered year after prev clicked");
 
-				$NewYear = jQuery("#Cal2--YP-y2011"); // use keybord to select month to prevent event processing from ItemNavigation
+				$NewYear = jQuery("#Cal2--YP-y20110101"); // use keybord to select month to prevent event processing from ItemNavigation
 				$NewYear.focus();
 				qutils.triggerKeyboardEvent($NewYear.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 				ok(!jQuery(jQuery("#Cal2--YP").get(0)).is(":visible"), "Year picker not visible after selecting year");
 				equal(jQuery("#Cal2--Head-B1").text(), "Januar", "January still shown");
 				equal(jQuery("#Cal2--Head-B2").text(), "2011", "year 2011 shown again");
+			});
+
+			test("Min/Max", function() {
+				oCal1.focusDate(new Date(9999, 10, 10));
+				ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled");
+				ok(!jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Next Button enabled");
+				qutils.triggerEvent("click", "Cal1--Head-next");
+				ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled on max month");
+				ok(jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Next Button disabled on max month");
+				qutils.triggerEvent("click", "Cal1--Head-B2");
+				var aYears = jQuery("#Cal1--YP").find(".sapUiCalItem");
+				equal(jQuery(aYears[aYears.length-1]).text(), "9999", "Max Year is last rendered year");
+				qutils.triggerEvent("click", "Cal1--Head-B2");
+
+				var oDate = new Date(1,1,1);
+				oDate.setFullYear(1);
+				oCal1.focusDate(oDate);
+				ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled");
+				ok(!jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Next Button enabled");
+				qutils.triggerEvent("click", "Cal1--Head-prev");
+				ok(jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button disabled on min month");
+				ok(!jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Next Button enabled on min month");
+				qutils.triggerEvent("click", "Cal1--Head-B2");
+				aYears = jQuery("#Cal1--YP").find(".sapUiCalItem");
+				equal(jQuery(aYears[0]).text(), "0001", "Min Year is first rendered year");
+				qutils.triggerEvent("click", "Cal1--Head-B2");
+
+				oCal1.focusDate(new Date());
 			});
 
 			test("select event", function() {

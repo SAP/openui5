@@ -44,6 +44,8 @@
 	left: 0;
 	height: auto !important; //this is for preventing inline size/width sizes set the width
 	width: auto !important; //this is for preventing inline size/height sizes set the height
+	min-width: 0 !important; //this is for preventing the dialog to hold it's width in small screens
+	min-height: 0 !important; //this is for preventing the dialog to hold it's width in small screens
 }
 
 .sap-phone .sapMDialog {
@@ -367,10 +369,6 @@
 		  	}
 		}
 
-		&.sapMMessageDialog {
-			min-height: @SapBarCompactHeight + 1rem;
-		}
-
 		& > .sapMDialogTitle {
 			height: @SapBarCompactHeight;
 		}
@@ -471,10 +469,6 @@
 				top: 0;
 		  	}
 		}
-	}
-
-	&.sapMMessageDialog {
-		min-height: @SapBarHeight;
 	}
 
 	& > .sapMDialogTitle {

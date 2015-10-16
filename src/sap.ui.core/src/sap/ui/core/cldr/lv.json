@@ -1127,281 +1127,415 @@
 	},
 	"orientation": "left-to-right",
 	"ca-gregorian": {
-		"dateFormat-full": "EEEE, y. 'gada' d. MMMM",
-		"dateFormat-long": "y. 'gada' d. MMMM",
-		"dateFormat-medium": "y. 'gada' d. MMM",
-		"dateFormat-short": "dd.MM.yy",
-		"timeFormat-full": "HH:mm:ss zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} {0}",
-		"dateTimeFormat-long": "{1} {0}",
-		"dateTimeFormat-medium": "{1} {0}",
-		"dateTimeFormat-short": "{1} {0}",
-		"intervalFormatFallback": "{0} - {1}",
-		"intervalFormat-d-d": "d.–d.",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a, v",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "MM.–MM.",
-		"intervalFormat-Md-d": "dd.MM.–dd.MM.",
-		"intervalFormat-Md-M": "dd.MM–dd.MM",
-		"intervalFormat-MEd-d": "E, dd.MM – E, dd.MM",
-		"intervalFormat-MEd-M": "E, dd.MM – E, dd.MM",
-		"intervalFormat-MMM-M": "LLL–LLL",
-		"intervalFormat-MMMd-d": "d.–d. MMM",
-		"intervalFormat-MMMd-M": "d. MMM – d. MMM",
-		"intervalFormat-MMMEd-d": "E, d. MMM – E, d. MMM",
-		"intervalFormat-MMMEd-M": "E, d. MMM – E, d. MMM",
-		"intervalFormat-y-y": "y.–y.",
-		"intervalFormat-yM-M": "MM.y.–MM.y.",
-		"intervalFormat-yM-y": "MM.y.–MM.y.",
-		"intervalFormat-yMd-d": "dd.MM.y.–dd.MM.y.",
-		"intervalFormat-yMd-M": "dd.MM.y.–dd.MM.y.",
-		"intervalFormat-yMd-y": "dd.MM.y.–dd.MM.y.",
-		"intervalFormat-yMEd-d": "E, dd.MM.y. – E, dd.MM.y.",
-		"intervalFormat-yMEd-M": "E, dd.MM.y. – E, dd.MM.y.",
-		"intervalFormat-yMEd-y": "E, dd.MM.y. – E, dd.MM.y.",
-		"intervalFormat-yMMM-M": "y. 'gada' MMM–MMM",
-		"intervalFormat-yMMM-y": "y. 'gada' MMM – y. 'gada' MMM",
-		"intervalFormat-yMMMd-d": "y. 'gada' d.–d. MMM",
-		"intervalFormat-yMMMd-M": "y. 'gada' d. MMM – d. MMM",
-		"intervalFormat-yMMMd-y": "y. 'gada' d. MMM – y. 'gada' d. MMM",
-		"intervalFormat-yMMMEd-d": "E, y. 'gada' d. MMM – E, y. 'gada' d. MMM",
-		"intervalFormat-yMMMEd-M": "E, y. 'gada' d. MMM – E, y. 'gada' d. MMM",
-		"intervalFormat-yMMMEd-y": "E, y. 'gada' d. MMM – E, y. 'gada' d. MMM",
-		"intervalFormat-yMMMM-M": "y. 'gada' MMMM–MMMM",
-		"intervalFormat-yMMMM-y": "y. 'gada' MMMM – y. 'gada' MMMM",
-		"months-format-abbreviated": [
-			"janv.",
-			"febr.",
-			"marts",
-			"apr.",
-			"maijs",
-			"jūn.",
-			"jūl.",
-			"aug.",
-			"sept.",
-			"okt.",
-			"nov.",
-			"dec."
-		],
-		"months-format-narrow": [
-			"J",
-			"F",
-			"M",
-			"A",
-			"M",
-			"J",
-			"J",
-			"A",
-			"S",
-			"O",
-			"N",
-			"D"
-		],
-		"months-format-wide": [
-			"janvāris",
-			"februāris",
-			"marts",
-			"aprīlis",
-			"maijs",
-			"jūnijs",
-			"jūlijs",
-			"augusts",
-			"septembris",
-			"oktobris",
-			"novembris",
-			"decembris"
-		],
-		"months-standAlone-abbreviated": [
-			"Janv.",
-			"Febr.",
-			"Marts",
-			"Apr.",
-			"Maijs",
-			"Jūn.",
-			"Jūl.",
-			"Aug.",
-			"Sept.",
-			"Okt.",
-			"Nov.",
-			"Dec."
-		],
-		"months-standAlone-narrow": [
-			"J",
-			"F",
-			"M",
-			"A",
-			"M",
-			"J",
-			"J",
-			"A",
-			"S",
-			"O",
-			"N",
-			"D"
-		],
-		"months-standAlone-wide": [
-			"Janvāris",
-			"Februāris",
-			"Marts",
-			"Aprīlis",
-			"Maijs",
-			"Jūnijs",
-			"Jūlijs",
-			"Augusts",
-			"Septembris",
-			"Oktobris",
-			"Novembris",
-			"Decembris"
-		],
-		"days-format-abbreviated": [
-			"Sv",
-			"Pr",
-			"Ot",
-			"Tr",
-			"Ce",
-			"Pk",
-			"Se"
-		],
-		"days-format-narrow": [
-			"S",
-			"P",
-			"O",
-			"T",
-			"C",
-			"P",
-			"S"
-		],
-		"days-format-short": [
-			"Sv",
-			"Pr",
-			"Ot",
-			"Tr",
-			"Ce",
-			"Pk",
-			"Se"
-		],
-		"days-format-wide": [
-			"svētdiena",
-			"pirmdiena",
-			"otrdiena",
-			"trešdiena",
-			"ceturtdiena",
-			"piektdiena",
-			"sestdiena"
-		],
-		"days-standAlone-abbreviated": [
-			"Sv",
-			"Pr",
-			"Ot",
-			"Tr",
-			"Ce",
-			"Pk",
-			"Se"
-		],
-		"days-standAlone-narrow": [
-			"S",
-			"P",
-			"O",
-			"T",
-			"C",
-			"P",
-			"S"
-		],
-		"days-standAlone-short": [
-			"Sv",
-			"Pr",
-			"Ot",
-			"Tr",
-			"Ce",
-			"Pk",
-			"Se"
-		],
-		"days-standAlone-wide": [
-			"Svētdiena",
-			"Pirmdiena",
-			"Otrdiena",
-			"Trešdiena",
-			"Ceturtdiena",
-			"Piektdiena",
-			"Sestdiena"
-		],
-		"quarters-format-abbreviated": [
-			"1. cet.",
-			"2. cet.",
-			"3. cet.",
-			"4. cet."
-		],
-		"quarters-format-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-format-wide": [
-			"1. ceturksnis",
-			"2. ceturksnis",
-			"3. ceturksnis",
-			"4. ceturksnis"
-		],
-		"quarters-standAlone-abbreviated": [
-			"1. cet.",
-			"2. cet.",
-			"3. cet.",
-			"4. cet."
-		],
-		"quarters-standAlone-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-standAlone-wide": [
-			"1. ceturksnis",
-			"2. ceturksnis",
-			"3. ceturksnis",
-			"4. ceturksnis"
-		],
-		"dayPeriods-format-abbreviated": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-format-narrow": [
-			"priekšp.",
-			"pēcp."
-		],
-		"dayPeriods-format-wide": [
-			"priekšpusdienā",
-			"pēcpusdienā"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"priekšp.",
-			"pēcpusd."
-		],
-		"dayPeriods-standAlone-narrow": [
-			"priekšp.",
-			"pēcp."
-		],
-		"dayPeriods-standAlone-wide": [
-			"priekšpusdienā",
-			"pēcpusdiena"
-		],
+		"dateFormats": {
+			"full": "EEEE, y. 'gada' d. MMMM",
+			"long": "y. 'gada' d. MMMM",
+			"medium": "y. 'gada' d. MMM",
+			"short": "dd.MM.yy"
+		},
+		"timeFormats": {
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1} {0}",
+			"long": "{1} {0}",
+			"medium": "{1} {0}",
+			"short": "{1} {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E, d.",
+				"Ehm": "E, h:mm a",
+				"EHm": "E, HH:mm",
+				"Ehms": "E, h:mm:ss a",
+				"EHms": "E, HH:mm:ss",
+				"Gy": "G y. 'g'.",
+				"GyMMM": "G y. 'g'. MMM",
+				"GyMMMd": "G y. 'g'. d. MMM",
+				"GyMMMEd": "E, G y. 'g'. d. MMM",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"hmsv": "h:mm:ss a v",
+				"Hmsv": "HH:mm:ss v",
+				"hmv": "h:mm a v",
+				"Hmv": "HH:mm v",
+				"M": "L",
+				"Md": "dd.MM.",
+				"MEd": "E, dd.MM.",
+				"MMM": "LLL",
+				"MMMd": "d. MMM",
+				"MMMEd": "E, d. MMM",
+				"MMMMd": "d. MMMM",
+				"MMMMEd": "E, d. MMMM",
+				"mmss": "mm:ss",
+				"ms": "mm:ss",
+				"y": "y. 'g'.",
+				"yM": "MM.y.",
+				"yMd": "d.M.y.",
+				"yMEd": "E, d.M.y.",
+				"yMMM": "y. 'g'. MMM",
+				"yMMMd": "y. 'g'. d. MMM",
+				"yMMMEd": "E, y. 'g'. d. MMM",
+				"yMMMM": "y. 'g'. MMMM",
+				"yQQQ": "y. 'g'. QQQ",
+				"yQQQQ": "y. 'g'. QQQQ"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0} - {1}",
+				"d": {
+					"d": "d.–d."
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a, v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "MM.–MM."
+				},
+				"Md": {
+					"d": "dd.MM.–dd.MM.",
+					"M": "dd.MM–dd.MM"
+				},
+				"MEd": {
+					"d": "E, dd.MM – E, dd.MM",
+					"M": "E, dd.MM – E, dd.MM"
+				},
+				"MMM": {
+					"M": "LLL–LLL"
+				},
+				"MMMd": {
+					"d": "d.–d. MMM",
+					"M": "d. MMM – d. MMM"
+				},
+				"MMMEd": {
+					"d": "E, d. MMM – E, d. MMM",
+					"M": "E, d. MMM – E, d. MMM"
+				},
+				"y": {
+					"y": "y.–y."
+				},
+				"yM": {
+					"M": "MM.y.–MM.y.",
+					"y": "MM.y.–MM.y."
+				},
+				"yMd": {
+					"d": "dd.MM.y.–dd.MM.y.",
+					"M": "dd.MM.y.–dd.MM.y.",
+					"y": "dd.MM.y.–dd.MM.y."
+				},
+				"yMEd": {
+					"d": "E, dd.MM.y. – E, dd.MM.y.",
+					"M": "E, dd.MM.y. – E, dd.MM.y.",
+					"y": "E, dd.MM.y. – E, dd.MM.y."
+				},
+				"yMMM": {
+					"M": "y. 'gada' MMM–MMM",
+					"y": "y. 'gada' MMM – y. 'gada' MMM"
+				},
+				"yMMMd": {
+					"d": "y. 'gada' d.–d. MMM",
+					"M": "y. 'gada' d. MMM – d. MMM",
+					"y": "y. 'gada' d. MMM – y. 'gada' d. MMM"
+				},
+				"yMMMEd": {
+					"d": "E, y. 'gada' d. MMM – E, y. 'gada' d. MMM",
+					"M": "E, y. 'gada' d. MMM – E, y. 'gada' d. MMM",
+					"y": "E, y. 'gada' d. MMM – E, y. 'gada' d. MMM"
+				},
+				"yMMMM": {
+					"M": "y. 'gada' MMMM–MMMM",
+					"y": "y. 'gada' MMMM – y. 'gada' MMMM"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"janv.",
+					"febr.",
+					"marts",
+					"apr.",
+					"maijs",
+					"jūn.",
+					"jūl.",
+					"aug.",
+					"sept.",
+					"okt.",
+					"nov.",
+					"dec."
+				],
+				"narrow": [
+					"J",
+					"F",
+					"M",
+					"A",
+					"M",
+					"J",
+					"J",
+					"A",
+					"S",
+					"O",
+					"N",
+					"D"
+				],
+				"wide": [
+					"janvāris",
+					"februāris",
+					"marts",
+					"aprīlis",
+					"maijs",
+					"jūnijs",
+					"jūlijs",
+					"augusts",
+					"septembris",
+					"oktobris",
+					"novembris",
+					"decembris"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Janv.",
+					"Febr.",
+					"Marts",
+					"Apr.",
+					"Maijs",
+					"Jūn.",
+					"Jūl.",
+					"Aug.",
+					"Sept.",
+					"Okt.",
+					"Nov.",
+					"Dec."
+				],
+				"narrow": [
+					"J",
+					"F",
+					"M",
+					"A",
+					"M",
+					"J",
+					"J",
+					"A",
+					"S",
+					"O",
+					"N",
+					"D"
+				],
+				"wide": [
+					"Janvāris",
+					"Februāris",
+					"Marts",
+					"Aprīlis",
+					"Maijs",
+					"Jūnijs",
+					"Jūlijs",
+					"Augusts",
+					"Septembris",
+					"Oktobris",
+					"Novembris",
+					"Decembris"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"Sv",
+					"Pr",
+					"Ot",
+					"Tr",
+					"Ce",
+					"Pk",
+					"Se"
+				],
+				"narrow": [
+					"S",
+					"P",
+					"O",
+					"T",
+					"C",
+					"P",
+					"S"
+				],
+				"short": [
+					"Sv",
+					"Pr",
+					"Ot",
+					"Tr",
+					"Ce",
+					"Pk",
+					"Se"
+				],
+				"wide": [
+					"svētdiena",
+					"pirmdiena",
+					"otrdiena",
+					"trešdiena",
+					"ceturtdiena",
+					"piektdiena",
+					"sestdiena"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Sv",
+					"Pr",
+					"Ot",
+					"Tr",
+					"Ce",
+					"Pk",
+					"Se"
+				],
+				"narrow": [
+					"S",
+					"P",
+					"O",
+					"T",
+					"C",
+					"P",
+					"S"
+				],
+				"short": [
+					"Sv",
+					"Pr",
+					"Ot",
+					"Tr",
+					"Ce",
+					"Pk",
+					"Se"
+				],
+				"wide": [
+					"Svētdiena",
+					"Pirmdiena",
+					"Otrdiena",
+					"Trešdiena",
+					"Ceturtdiena",
+					"Piektdiena",
+					"Sestdiena"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"1. cet.",
+					"2. cet.",
+					"3. cet.",
+					"4. cet."
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4."
+				],
+				"wide": [
+					"1. ceturksnis",
+					"2. ceturksnis",
+					"3. ceturksnis",
+					"4. ceturksnis"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"1. cet.",
+					"2. cet.",
+					"3. cet.",
+					"4. cet."
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4."
+				],
+				"wide": [
+					"1. ceturksnis",
+					"2. ceturksnis",
+					"3. ceturksnis",
+					"4. ceturksnis"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"AM",
+					"PM"
+				],
+				"narrow": [
+					"priekšp.",
+					"pēcp."
+				],
+				"wide": [
+					"priekšpusdienā",
+					"pēcpusdienā"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"priekšp.",
+					"pēcpusd."
+				],
+				"narrow": [
+					"priekšp.",
+					"pēcp."
+				],
+				"wide": [
+					"priekšpusdienā",
+					"pēcpusdiena"
+				]
+			}
+		},
 		"era-wide": {
 			"0": "pirms mūsu ēras",
 			"1": "mūsu ērā"
@@ -1416,281 +1550,411 @@
 		}
 	},
 	"ca-islamic": {
-		"dateFormat-full": "EEEE, y. 'gada' d. MMMM G",
-		"dateFormat-long": "y. 'gada' d. MMMM G",
-		"dateFormat-medium": "y. 'gada' d. MMM G",
-		"dateFormat-short": "dd.MM.y GGGGG",
-		"timeFormat-full": "HH:mm:ss zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} 'plkst'. {0}",
-		"dateTimeFormat-long": "{1} 'plkst'. {0}",
-		"dateTimeFormat-medium": "{1}, {0}",
-		"dateTimeFormat-short": "{1}, {0}",
-		"intervalFormatFallback": "{0}–{1}",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "MM–MM",
-		"intervalFormat-Md-d": "dd.MM.–dd.MM.",
-		"intervalFormat-Md-M": "dd.MM–dd.MM",
-		"intervalFormat-MEd-d": "E, dd.MM–E, dd.MM",
-		"intervalFormat-MEd-M": "E, dd.MM–E, dd.MM",
-		"intervalFormat-MMM-M": "MMM–MMM",
-		"intervalFormat-MMMd-d": "d.–d. MMM",
-		"intervalFormat-MMMd-M": "d. MMM–d. MMM",
-		"intervalFormat-MMMEd-d": "E, d. MMM–E, d. MMM",
-		"intervalFormat-MMMEd-M": "E, d. MMM–E, d. MMM",
-		"intervalFormat-y-y": "y.–y. G",
-		"intervalFormat-yM-M": "MM.y.–MM.y. GGGGG",
-		"intervalFormat-yM-y": "MM.y.–MM.y. GGGGG",
-		"intervalFormat-yMd-d": "dd.MM.y.–dd.MM.y. GGGGG",
-		"intervalFormat-yMd-M": "dd.MM.y.–dd.MM.y. GGGGG",
-		"intervalFormat-yMd-y": "dd.MM.y.–dd.MM.y. GGGGG",
-		"intervalFormat-yMEd-d": "E, dd.MM.y.–E, dd.MM.y. GGGGG",
-		"intervalFormat-yMEd-M": "E, dd.MM.y.–E, dd.MM.y. GGGGG",
-		"intervalFormat-yMEd-y": "E, dd.MM.y.–E, dd.MM.y. GGGGG",
-		"intervalFormat-yMMM-M": "y. 'gada' MMM–MMM G",
-		"intervalFormat-yMMM-y": "y. 'gada' MMM–y. 'gada' MMM G",
-		"intervalFormat-yMMMd-d": "y. 'gada' d.–d. MMM G",
-		"intervalFormat-yMMMd-M": "y. 'gada' d. MMM–d. MMM G",
-		"intervalFormat-yMMMd-y": "y. 'gada' d. MMM–y. 'gada' d. MMM G",
-		"intervalFormat-yMMMEd-d": "E, y. 'gada' d. MMM–E, y. 'gada' d. MMM G",
-		"intervalFormat-yMMMEd-M": "E, y. 'gada' d. MMM–E, y. 'gada' d. MMM G",
-		"intervalFormat-yMMMEd-y": "E, y. 'gada' d. MMM–E, y. 'gada' d. MMM G",
-		"intervalFormat-yMMMM-M": "y. 'gada' MMMM–MMMM G",
-		"intervalFormat-yMMMM-y": "y. 'gada' MMMM–y. 'gada' MMMM G",
-		"months-format-abbreviated": [
-			"Muh.",
-			"Saf.",
-			"Rab. I",
-			"Rab. II",
-			"Jum. I",
-			"Jum. II",
-			"Raj.",
-			"Sha.",
-			"Ram.",
-			"Shaw.",
-			"Dhuʻl-Q.",
-			"Dhuʻl-H."
-		],
-		"months-format-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-format-wide": [
-			"muharams",
-			"safars",
-			"1. rabī",
-			"2. rabī",
-			"1. džumādā",
-			"2. džumādā",
-			"radžabs",
-			"šabans",
-			"ramadāns",
-			"šauvals",
-			"du al-kidā",
-			"du al-hidžā"
-		],
-		"months-standAlone-abbreviated": [
-			"Muh.",
-			"Saf.",
-			"Rab. I",
-			"Rab. II",
-			"Jum. I",
-			"Jum. II",
-			"Raj.",
-			"Sha.",
-			"Ram.",
-			"Shaw.",
-			"Dhuʻl-Q.",
-			"Dhuʻl-H."
-		],
-		"months-standAlone-narrow": [
-			"1",
-			"2",
-			"3",
-			"4",
-			"5",
-			"6",
-			"7",
-			"8",
-			"9",
-			"10",
-			"11",
-			"12"
-		],
-		"months-standAlone-wide": [
-			"muharams",
-			"safars",
-			"1. rabī",
-			"2. rabī",
-			"1. džumādā",
-			"2. džumādā",
-			"radžabs",
-			"šabans",
-			"ramadāns",
-			"šauvals",
-			"du al-kidā",
-			"du al-hidžā"
-		],
-		"days-format-abbreviated": [
-			"Sv",
-			"Pr",
-			"Ot",
-			"Tr",
-			"Ce",
-			"Pk",
-			"Se"
-		],
-		"days-format-narrow": [
-			"S",
-			"P",
-			"O",
-			"T",
-			"C",
-			"P",
-			"S"
-		],
-		"days-format-short": [
-			"Sv",
-			"Pr",
-			"Ot",
-			"Tr",
-			"Ce",
-			"Pk",
-			"Se"
-		],
-		"days-format-wide": [
-			"svētdiena",
-			"pirmdiena",
-			"otrdiena",
-			"trešdiena",
-			"ceturtdiena",
-			"piektdiena",
-			"sestdiena"
-		],
-		"days-standAlone-abbreviated": [
-			"Sv",
-			"Pr",
-			"Ot",
-			"Tr",
-			"Ce",
-			"Pk",
-			"Se"
-		],
-		"days-standAlone-narrow": [
-			"S",
-			"P",
-			"O",
-			"T",
-			"C",
-			"P",
-			"S"
-		],
-		"days-standAlone-short": [
-			"Sv",
-			"Pr",
-			"Ot",
-			"Tr",
-			"Ce",
-			"Pk",
-			"Se"
-		],
-		"days-standAlone-wide": [
-			"Svētdiena",
-			"Pirmdiena",
-			"Otrdiena",
-			"Trešdiena",
-			"Ceturtdiena",
-			"Piektdiena",
-			"Sestdiena"
-		],
-		"quarters-format-abbreviated": [
-			"1. cet.",
-			"2. cet.",
-			"3. cet.",
-			"4. cet."
-		],
-		"quarters-format-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-format-wide": [
-			"1. ceturksnis",
-			"2. ceturksnis",
-			"3. ceturksnis",
-			"4. ceturksnis"
-		],
-		"quarters-standAlone-abbreviated": [
-			"1. cet.",
-			"2. cet.",
-			"3. cet.",
-			"4. cet."
-		],
-		"quarters-standAlone-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-standAlone-wide": [
-			"1. ceturksnis",
-			"2. ceturksnis",
-			"3. ceturksnis",
-			"4. ceturksnis"
-		],
-		"dayPeriods-format-abbreviated": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-format-narrow": [
-			"priekšp.",
-			"pēcp."
-		],
-		"dayPeriods-format-wide": [
-			"priekšpusdienā",
-			"pēcpusdienā"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"priekšp.",
-			"pēcpusd."
-		],
-		"dayPeriods-standAlone-narrow": [
-			"priekšp.",
-			"pēcp."
-		],
-		"dayPeriods-standAlone-wide": [
-			"priekšpusdienā",
-			"pēcpusdiena"
-		],
+		"dateFormats": {
+			"full": "EEEE, y. 'gada' d. MMMM G",
+			"long": "y. 'gada' d. MMMM G",
+			"medium": "y. 'gada' d. MMM G",
+			"short": "dd.MM.y GGGGG"
+		},
+		"timeFormats": {
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1} 'plkst'. {0}",
+			"long": "{1} 'plkst'. {0}",
+			"medium": "{1}, {0}",
+			"short": "{1}, {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E, d.",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y. 'g'. G",
+				"GyMMM": "y. 'g'. MMM G",
+				"GyMMMd": "y. 'g'. d. MMM G",
+				"GyMMMEd": "E, y. 'g'. d. MMM G",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "L",
+				"Md": "dd.MM.",
+				"MEd": "E, dd.MM.",
+				"MMM": "LLL",
+				"MMMd": "d. MMM",
+				"MMMEd": "E, d. MMM",
+				"MMMMd": "d. MMMM",
+				"MMMMEd": "E, d. MMMM",
+				"ms": "mm:ss",
+				"y": "y. 'g'. G",
+				"yyyy": "y. 'g'. G",
+				"yyyyM": "MM.y. G",
+				"yyyyMd": "d.MM.y. G",
+				"yyyyMEd": "E, d.M.y. G",
+				"yyyyMMM": "y. 'g'. MMM G",
+				"yyyyMMMd": "y. 'g'. d. MMM G",
+				"yyyyMMMEd": "E, y. 'g'. d. MMM G",
+				"yyyyMMMM": "y. 'g'. MMMM G",
+				"yyyyQQQ": "QQQ y G",
+				"yyyyQQQQ": "y. 'gada' QQQQ G"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0}–{1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "MM–MM"
+				},
+				"Md": {
+					"d": "dd.MM.–dd.MM.",
+					"M": "dd.MM–dd.MM"
+				},
+				"MEd": {
+					"d": "E, dd.MM–E, dd.MM",
+					"M": "E, dd.MM–E, dd.MM"
+				},
+				"MMM": {
+					"M": "MMM–MMM"
+				},
+				"MMMd": {
+					"d": "d.–d. MMM",
+					"M": "d. MMM–d. MMM"
+				},
+				"MMMEd": {
+					"d": "E, d. MMM–E, d. MMM",
+					"M": "E, d. MMM–E, d. MMM"
+				},
+				"y": {
+					"y": "y.–y. G"
+				},
+				"yM": {
+					"M": "MM.y.–MM.y. GGGGG",
+					"y": "MM.y.–MM.y. GGGGG"
+				},
+				"yMd": {
+					"d": "dd.MM.y.–dd.MM.y. GGGGG",
+					"M": "dd.MM.y.–dd.MM.y. GGGGG",
+					"y": "dd.MM.y.–dd.MM.y. GGGGG"
+				},
+				"yMEd": {
+					"d": "E, dd.MM.y.–E, dd.MM.y. GGGGG",
+					"M": "E, dd.MM.y.–E, dd.MM.y. GGGGG",
+					"y": "E, dd.MM.y.–E, dd.MM.y. GGGGG"
+				},
+				"yMMM": {
+					"M": "y. 'gada' MMM–MMM G",
+					"y": "y. 'gada' MMM–y. 'gada' MMM G"
+				},
+				"yMMMd": {
+					"d": "y. 'gada' d.–d. MMM G",
+					"M": "y. 'gada' d. MMM–d. MMM G",
+					"y": "y. 'gada' d. MMM–y. 'gada' d. MMM G"
+				},
+				"yMMMEd": {
+					"d": "E, y. 'gada' d. MMM–E, y. 'gada' d. MMM G",
+					"M": "E, y. 'gada' d. MMM–E, y. 'gada' d. MMM G",
+					"y": "E, y. 'gada' d. MMM–E, y. 'gada' d. MMM G"
+				},
+				"yMMMM": {
+					"M": "y. 'gada' MMMM–MMMM G",
+					"y": "y. 'gada' MMMM–y. 'gada' MMMM G"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"Muh.",
+					"Saf.",
+					"Rab. I",
+					"Rab. II",
+					"Jum. I",
+					"Jum. II",
+					"Raj.",
+					"Sha.",
+					"Ram.",
+					"Shaw.",
+					"Dhuʻl-Q.",
+					"Dhuʻl-H."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"muharams",
+					"safars",
+					"1. rabī",
+					"2. rabī",
+					"1. džumādā",
+					"2. džumādā",
+					"radžabs",
+					"šabans",
+					"ramadāns",
+					"šauvals",
+					"du al-kidā",
+					"du al-hidžā"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Muh.",
+					"Saf.",
+					"Rab. I",
+					"Rab. II",
+					"Jum. I",
+					"Jum. II",
+					"Raj.",
+					"Sha.",
+					"Ram.",
+					"Shaw.",
+					"Dhuʻl-Q.",
+					"Dhuʻl-H."
+				],
+				"narrow": [
+					"1",
+					"2",
+					"3",
+					"4",
+					"5",
+					"6",
+					"7",
+					"8",
+					"9",
+					"10",
+					"11",
+					"12"
+				],
+				"wide": [
+					"muharams",
+					"safars",
+					"1. rabī",
+					"2. rabī",
+					"1. džumādā",
+					"2. džumādā",
+					"radžabs",
+					"šabans",
+					"ramadāns",
+					"šauvals",
+					"du al-kidā",
+					"du al-hidžā"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"Sv",
+					"Pr",
+					"Ot",
+					"Tr",
+					"Ce",
+					"Pk",
+					"Se"
+				],
+				"narrow": [
+					"S",
+					"P",
+					"O",
+					"T",
+					"C",
+					"P",
+					"S"
+				],
+				"short": [
+					"Sv",
+					"Pr",
+					"Ot",
+					"Tr",
+					"Ce",
+					"Pk",
+					"Se"
+				],
+				"wide": [
+					"svētdiena",
+					"pirmdiena",
+					"otrdiena",
+					"trešdiena",
+					"ceturtdiena",
+					"piektdiena",
+					"sestdiena"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Sv",
+					"Pr",
+					"Ot",
+					"Tr",
+					"Ce",
+					"Pk",
+					"Se"
+				],
+				"narrow": [
+					"S",
+					"P",
+					"O",
+					"T",
+					"C",
+					"P",
+					"S"
+				],
+				"short": [
+					"Sv",
+					"Pr",
+					"Ot",
+					"Tr",
+					"Ce",
+					"Pk",
+					"Se"
+				],
+				"wide": [
+					"Svētdiena",
+					"Pirmdiena",
+					"Otrdiena",
+					"Trešdiena",
+					"Ceturtdiena",
+					"Piektdiena",
+					"Sestdiena"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"1. cet.",
+					"2. cet.",
+					"3. cet.",
+					"4. cet."
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4."
+				],
+				"wide": [
+					"1. ceturksnis",
+					"2. ceturksnis",
+					"3. ceturksnis",
+					"4. ceturksnis"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"1. cet.",
+					"2. cet.",
+					"3. cet.",
+					"4. cet."
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4."
+				],
+				"wide": [
+					"1. ceturksnis",
+					"2. ceturksnis",
+					"3. ceturksnis",
+					"4. ceturksnis"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"AM",
+					"PM"
+				],
+				"narrow": [
+					"priekšp.",
+					"pēcp."
+				],
+				"wide": [
+					"priekšpusdienā",
+					"pēcpusdienā"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"priekšp.",
+					"pēcpusd."
+				],
+				"narrow": [
+					"priekšp.",
+					"pēcp."
+				],
+				"wide": [
+					"priekšpusdienā",
+					"pēcpusdiena"
+				]
+			}
+		},
 		"era-wide": {
 			"0": "AH"
 		},
@@ -1702,281 +1966,411 @@
 		}
 	},
 	"ca-japanese": {
-		"dateFormat-full": "EEEE, y. 'gada' d. MMMM G",
-		"dateFormat-long": "y. 'gada' d. MMMM G",
-		"dateFormat-medium": "y. 'gada' d. MMM G",
-		"dateFormat-short": "dd.MM.y GGGGG",
-		"timeFormat-full": "HH:mm:ss zzzz",
-		"timeFormat-long": "HH:mm:ss z",
-		"timeFormat-medium": "HH:mm:ss",
-		"timeFormat-short": "HH:mm",
-		"dateTimeFormat-full": "{1} 'plkst'. {0}",
-		"dateTimeFormat-long": "{1} 'plkst'. {0}",
-		"dateTimeFormat-medium": "{1}, {0}",
-		"dateTimeFormat-short": "{1}, {0}",
-		"intervalFormatFallback": "{0}–{1}",
-		"intervalFormat-d-d": "d–d",
-		"intervalFormat-h-a": "h a – h a",
-		"intervalFormat-h-h": "h–h a",
-		"intervalFormat-H-H": "HH–HH",
-		"intervalFormat-hm-a": "h:mm a – h:mm a",
-		"intervalFormat-hm-h": "h:mm–h:mm a",
-		"intervalFormat-hm-m": "h:mm–h:mm a",
-		"intervalFormat-Hm-H": "HH:mm–HH:mm",
-		"intervalFormat-Hm-m": "HH:mm–HH:mm",
-		"intervalFormat-hmv-a": "h:mm a – h:mm a v",
-		"intervalFormat-hmv-h": "h:mm–h:mm a v",
-		"intervalFormat-hmv-m": "h:mm–h:mm a v",
-		"intervalFormat-Hmv-H": "HH:mm–HH:mm v",
-		"intervalFormat-Hmv-m": "HH:mm–HH:mm v",
-		"intervalFormat-hv-a": "h a – h a v",
-		"intervalFormat-hv-h": "h–h a v",
-		"intervalFormat-Hv-H": "HH–HH v",
-		"intervalFormat-M-M": "MM–MM",
-		"intervalFormat-Md-d": "dd.MM.–dd.MM.",
-		"intervalFormat-Md-M": "dd.MM–dd.MM",
-		"intervalFormat-MEd-d": "E, dd.MM–E, dd.MM",
-		"intervalFormat-MEd-M": "E, dd.MM–E, dd.MM",
-		"intervalFormat-MMM-M": "MMM–MMM",
-		"intervalFormat-MMMd-d": "d.–d. MMM",
-		"intervalFormat-MMMd-M": "d. MMM–d. MMM",
-		"intervalFormat-MMMEd-d": "E, d. MMM–E, d. MMM",
-		"intervalFormat-MMMEd-M": "E, d. MMM–E, d. MMM",
-		"intervalFormat-y-y": "y.–y. G",
-		"intervalFormat-yM-M": "MM.y.–MM.y. GGGGG",
-		"intervalFormat-yM-y": "MM.y.–MM.y. GGGGG",
-		"intervalFormat-yMd-d": "dd.MM.y.–dd.MM.y. GGGGG",
-		"intervalFormat-yMd-M": "dd.MM.y.–dd.MM.y. GGGGG",
-		"intervalFormat-yMd-y": "dd.MM.y.–dd.MM.y. GGGGG",
-		"intervalFormat-yMEd-d": "E, dd.MM.y.–E, dd.MM.y. GGGGG",
-		"intervalFormat-yMEd-M": "E, dd.MM.y.–E, dd.MM.y. GGGGG",
-		"intervalFormat-yMEd-y": "E, dd.MM.y.–E, dd.MM.y. GGGGG",
-		"intervalFormat-yMMM-M": "y. 'gada' MMM–MMM G",
-		"intervalFormat-yMMM-y": "y. 'gada' MMM–y. 'gada' MMM G",
-		"intervalFormat-yMMMd-d": "y. 'gada' d.–d. MMM G",
-		"intervalFormat-yMMMd-M": "y. 'gada' d. MMM–d. MMM G",
-		"intervalFormat-yMMMd-y": "y. 'gada' d. MMM–y. 'gada' d. MMM G",
-		"intervalFormat-yMMMEd-d": "E, y. 'gada' d. MMM–E, y. 'gada' d. MMM G",
-		"intervalFormat-yMMMEd-M": "E, y. 'gada' d. MMM–E, y. 'gada' d. MMM G",
-		"intervalFormat-yMMMEd-y": "E, y. 'gada' d. MMM–E, y. 'gada' d. MMM G",
-		"intervalFormat-yMMMM-M": "y. 'gada' MMMM–MMMM G",
-		"intervalFormat-yMMMM-y": "y. 'gada' MMMM–y. 'gada' MMMM G",
-		"months-format-abbreviated": [
-			"janv.",
-			"febr.",
-			"marts",
-			"apr.",
-			"maijs",
-			"jūn.",
-			"jūl.",
-			"aug.",
-			"sept.",
-			"okt.",
-			"nov.",
-			"dec."
-		],
-		"months-format-narrow": [
-			"J",
-			"F",
-			"M",
-			"A",
-			"M",
-			"J",
-			"J",
-			"A",
-			"S",
-			"O",
-			"N",
-			"D"
-		],
-		"months-format-wide": [
-			"janvāris",
-			"februāris",
-			"marts",
-			"aprīlis",
-			"maijs",
-			"jūnijs",
-			"jūlijs",
-			"augusts",
-			"septembris",
-			"oktobris",
-			"novembris",
-			"decembris"
-		],
-		"months-standAlone-abbreviated": [
-			"Janv.",
-			"Febr.",
-			"Marts",
-			"Apr.",
-			"Maijs",
-			"Jūn.",
-			"Jūl.",
-			"Aug.",
-			"Sept.",
-			"Okt.",
-			"Nov.",
-			"Dec."
-		],
-		"months-standAlone-narrow": [
-			"J",
-			"F",
-			"M",
-			"A",
-			"M",
-			"J",
-			"J",
-			"A",
-			"S",
-			"O",
-			"N",
-			"D"
-		],
-		"months-standAlone-wide": [
-			"Janvāris",
-			"Februāris",
-			"Marts",
-			"Aprīlis",
-			"Maijs",
-			"Jūnijs",
-			"Jūlijs",
-			"Augusts",
-			"Septembris",
-			"Oktobris",
-			"Novembris",
-			"Decembris"
-		],
-		"days-format-abbreviated": [
-			"Sv",
-			"Pr",
-			"Ot",
-			"Tr",
-			"Ce",
-			"Pk",
-			"Se"
-		],
-		"days-format-narrow": [
-			"S",
-			"P",
-			"O",
-			"T",
-			"C",
-			"P",
-			"S"
-		],
-		"days-format-short": [
-			"Sv",
-			"Pr",
-			"Ot",
-			"Tr",
-			"Ce",
-			"Pk",
-			"Se"
-		],
-		"days-format-wide": [
-			"svētdiena",
-			"pirmdiena",
-			"otrdiena",
-			"trešdiena",
-			"ceturtdiena",
-			"piektdiena",
-			"sestdiena"
-		],
-		"days-standAlone-abbreviated": [
-			"Sv",
-			"Pr",
-			"Ot",
-			"Tr",
-			"Ce",
-			"Pk",
-			"Se"
-		],
-		"days-standAlone-narrow": [
-			"S",
-			"P",
-			"O",
-			"T",
-			"C",
-			"P",
-			"S"
-		],
-		"days-standAlone-short": [
-			"Sv",
-			"Pr",
-			"Ot",
-			"Tr",
-			"Ce",
-			"Pk",
-			"Se"
-		],
-		"days-standAlone-wide": [
-			"Svētdiena",
-			"Pirmdiena",
-			"Otrdiena",
-			"Trešdiena",
-			"Ceturtdiena",
-			"Piektdiena",
-			"Sestdiena"
-		],
-		"quarters-format-abbreviated": [
-			"1. cet.",
-			"2. cet.",
-			"3. cet.",
-			"4. cet."
-		],
-		"quarters-format-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-format-wide": [
-			"1. ceturksnis",
-			"2. ceturksnis",
-			"3. ceturksnis",
-			"4. ceturksnis"
-		],
-		"quarters-standAlone-abbreviated": [
-			"1. cet.",
-			"2. cet.",
-			"3. cet.",
-			"4. cet."
-		],
-		"quarters-standAlone-narrow": [
-			"1.",
-			"2.",
-			"3.",
-			"4."
-		],
-		"quarters-standAlone-wide": [
-			"1. ceturksnis",
-			"2. ceturksnis",
-			"3. ceturksnis",
-			"4. ceturksnis"
-		],
-		"dayPeriods-format-abbreviated": [
-			"AM",
-			"PM"
-		],
-		"dayPeriods-format-narrow": [
-			"priekšp.",
-			"pēcp."
-		],
-		"dayPeriods-format-wide": [
-			"priekšpusdienā",
-			"pēcpusdienā"
-		],
-		"dayPeriods-standAlone-abbreviated": [
-			"priekšp.",
-			"pēcpusd."
-		],
-		"dayPeriods-standAlone-narrow": [
-			"priekšp.",
-			"pēcp."
-		],
-		"dayPeriods-standAlone-wide": [
-			"priekšpusdienā",
-			"pēcpusdiena"
-		],
+		"dateFormats": {
+			"full": "EEEE, y. 'gada' d. MMMM G",
+			"long": "y. 'gada' d. MMMM G",
+			"medium": "y. 'gada' d. MMM G",
+			"short": "dd.MM.y GGGGG"
+		},
+		"timeFormats": {
+			"full": "HH:mm:ss zzzz",
+			"long": "HH:mm:ss z",
+			"medium": "HH:mm:ss",
+			"short": "HH:mm"
+		},
+		"dateTimeFormats": {
+			"full": "{1} 'plkst'. {0}",
+			"long": "{1} 'plkst'. {0}",
+			"medium": "{1}, {0}",
+			"short": "{1}, {0}",
+			"availableFormats": {
+				"d": "d",
+				"E": "ccc",
+				"Ed": "E, d.",
+				"Ehm": "E h:mm a",
+				"EHm": "E HH:mm",
+				"Ehms": "E h:mm:ss a",
+				"EHms": "E HH:mm:ss",
+				"Gy": "y. 'g'. G",
+				"GyMMM": "y. 'g'. MMM G",
+				"GyMMMd": "y. 'g'. d. MMM G",
+				"GyMMMEd": "E, y. 'g'. d. MMM G",
+				"h": "h a",
+				"H": "HH",
+				"hm": "h:mm a",
+				"Hm": "HH:mm",
+				"hms": "h:mm:ss a",
+				"Hms": "HH:mm:ss",
+				"M": "L",
+				"Md": "dd.MM.",
+				"MEd": "E, dd.MM.",
+				"MMM": "LLL",
+				"MMMd": "d. MMM",
+				"MMMEd": "E, d. MMM",
+				"MMMMd": "d. MMMM",
+				"MMMMEd": "E, d. MMMM",
+				"ms": "mm:ss",
+				"y": "y. 'g'. G",
+				"yyyy": "y. 'g'. G",
+				"yyyyM": "MM.y. G",
+				"yyyyMd": "d.MM.y. G",
+				"yyyyMEd": "E, d.M.y. G",
+				"yyyyMMM": "y. 'g'. MMM G",
+				"yyyyMMMd": "y. 'g'. d. MMM G",
+				"yyyyMMMEd": "E, y. 'g'. d. MMM G",
+				"yyyyMMMM": "y. 'g'. MMMM G",
+				"yyyyQQQ": "QQQ y G",
+				"yyyyQQQQ": "y. 'gada' QQQQ G"
+			},
+			"appendItems": {
+				"Day": "{0} ({2}: {1})",
+				"Day-Of-Week": "{0} {1}",
+				"Era": "{1} {0}",
+				"Hour": "{0} ({2}: {1})",
+				"Minute": "{0} ({2}: {1})",
+				"Month": "{0} ({2}: {1})",
+				"Quarter": "{0} ({2}: {1})",
+				"Second": "{0} ({2}: {1})",
+				"Timezone": "{0} {1}",
+				"Week": "{0} ({2}: {1})",
+				"Year": "{1} {0}"
+			},
+			"intervalFormats": {
+				"intervalFormatFallback": "{0}–{1}",
+				"d": {
+					"d": "d–d"
+				},
+				"h": {
+					"a": "h a – h a",
+					"h": "h–h a"
+				},
+				"H": {
+					"H": "HH–HH"
+				},
+				"hm": {
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
+				},
+				"Hm": {
+					"H": "HH:mm–HH:mm",
+					"m": "HH:mm–HH:mm"
+				},
+				"hmv": {
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
+				},
+				"Hmv": {
+					"H": "HH:mm–HH:mm v",
+					"m": "HH:mm–HH:mm v"
+				},
+				"hv": {
+					"a": "h a – h a v",
+					"h": "h–h a v"
+				},
+				"Hv": {
+					"H": "HH–HH v"
+				},
+				"M": {
+					"M": "MM–MM"
+				},
+				"Md": {
+					"d": "dd.MM.–dd.MM.",
+					"M": "dd.MM–dd.MM"
+				},
+				"MEd": {
+					"d": "E, dd.MM–E, dd.MM",
+					"M": "E, dd.MM–E, dd.MM"
+				},
+				"MMM": {
+					"M": "MMM–MMM"
+				},
+				"MMMd": {
+					"d": "d.–d. MMM",
+					"M": "d. MMM–d. MMM"
+				},
+				"MMMEd": {
+					"d": "E, d. MMM–E, d. MMM",
+					"M": "E, d. MMM–E, d. MMM"
+				},
+				"y": {
+					"y": "y.–y. G"
+				},
+				"yM": {
+					"M": "MM.y.–MM.y. GGGGG",
+					"y": "MM.y.–MM.y. GGGGG"
+				},
+				"yMd": {
+					"d": "dd.MM.y.–dd.MM.y. GGGGG",
+					"M": "dd.MM.y.–dd.MM.y. GGGGG",
+					"y": "dd.MM.y.–dd.MM.y. GGGGG"
+				},
+				"yMEd": {
+					"d": "E, dd.MM.y.–E, dd.MM.y. GGGGG",
+					"M": "E, dd.MM.y.–E, dd.MM.y. GGGGG",
+					"y": "E, dd.MM.y.–E, dd.MM.y. GGGGG"
+				},
+				"yMMM": {
+					"M": "y. 'gada' MMM–MMM G",
+					"y": "y. 'gada' MMM–y. 'gada' MMM G"
+				},
+				"yMMMd": {
+					"d": "y. 'gada' d.–d. MMM G",
+					"M": "y. 'gada' d. MMM–d. MMM G",
+					"y": "y. 'gada' d. MMM–y. 'gada' d. MMM G"
+				},
+				"yMMMEd": {
+					"d": "E, y. 'gada' d. MMM–E, y. 'gada' d. MMM G",
+					"M": "E, y. 'gada' d. MMM–E, y. 'gada' d. MMM G",
+					"y": "E, y. 'gada' d. MMM–E, y. 'gada' d. MMM G"
+				},
+				"yMMMM": {
+					"M": "y. 'gada' MMMM–MMMM G",
+					"y": "y. 'gada' MMMM–y. 'gada' MMMM G"
+				}
+			}
+		},
+		"months": {
+			"format": {
+				"abbreviated": [
+					"janv.",
+					"febr.",
+					"marts",
+					"apr.",
+					"maijs",
+					"jūn.",
+					"jūl.",
+					"aug.",
+					"sept.",
+					"okt.",
+					"nov.",
+					"dec."
+				],
+				"narrow": [
+					"J",
+					"F",
+					"M",
+					"A",
+					"M",
+					"J",
+					"J",
+					"A",
+					"S",
+					"O",
+					"N",
+					"D"
+				],
+				"wide": [
+					"janvāris",
+					"februāris",
+					"marts",
+					"aprīlis",
+					"maijs",
+					"jūnijs",
+					"jūlijs",
+					"augusts",
+					"septembris",
+					"oktobris",
+					"novembris",
+					"decembris"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Janv.",
+					"Febr.",
+					"Marts",
+					"Apr.",
+					"Maijs",
+					"Jūn.",
+					"Jūl.",
+					"Aug.",
+					"Sept.",
+					"Okt.",
+					"Nov.",
+					"Dec."
+				],
+				"narrow": [
+					"J",
+					"F",
+					"M",
+					"A",
+					"M",
+					"J",
+					"J",
+					"A",
+					"S",
+					"O",
+					"N",
+					"D"
+				],
+				"wide": [
+					"Janvāris",
+					"Februāris",
+					"Marts",
+					"Aprīlis",
+					"Maijs",
+					"Jūnijs",
+					"Jūlijs",
+					"Augusts",
+					"Septembris",
+					"Oktobris",
+					"Novembris",
+					"Decembris"
+				]
+			}
+		},
+		"days": {
+			"format": {
+				"abbreviated": [
+					"Sv",
+					"Pr",
+					"Ot",
+					"Tr",
+					"Ce",
+					"Pk",
+					"Se"
+				],
+				"narrow": [
+					"S",
+					"P",
+					"O",
+					"T",
+					"C",
+					"P",
+					"S"
+				],
+				"short": [
+					"Sv",
+					"Pr",
+					"Ot",
+					"Tr",
+					"Ce",
+					"Pk",
+					"Se"
+				],
+				"wide": [
+					"svētdiena",
+					"pirmdiena",
+					"otrdiena",
+					"trešdiena",
+					"ceturtdiena",
+					"piektdiena",
+					"sestdiena"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"Sv",
+					"Pr",
+					"Ot",
+					"Tr",
+					"Ce",
+					"Pk",
+					"Se"
+				],
+				"narrow": [
+					"S",
+					"P",
+					"O",
+					"T",
+					"C",
+					"P",
+					"S"
+				],
+				"short": [
+					"Sv",
+					"Pr",
+					"Ot",
+					"Tr",
+					"Ce",
+					"Pk",
+					"Se"
+				],
+				"wide": [
+					"Svētdiena",
+					"Pirmdiena",
+					"Otrdiena",
+					"Trešdiena",
+					"Ceturtdiena",
+					"Piektdiena",
+					"Sestdiena"
+				]
+			}
+		},
+		"quarters": {
+			"format": {
+				"abbreviated": [
+					"1. cet.",
+					"2. cet.",
+					"3. cet.",
+					"4. cet."
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4."
+				],
+				"wide": [
+					"1. ceturksnis",
+					"2. ceturksnis",
+					"3. ceturksnis",
+					"4. ceturksnis"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"1. cet.",
+					"2. cet.",
+					"3. cet.",
+					"4. cet."
+				],
+				"narrow": [
+					"1.",
+					"2.",
+					"3.",
+					"4."
+				],
+				"wide": [
+					"1. ceturksnis",
+					"2. ceturksnis",
+					"3. ceturksnis",
+					"4. ceturksnis"
+				]
+			}
+		},
+		"dayPeriods": {
+			"format": {
+				"abbreviated": [
+					"AM",
+					"PM"
+				],
+				"narrow": [
+					"priekšp.",
+					"pēcp."
+				],
+				"wide": [
+					"priekšpusdienā",
+					"pēcpusdienā"
+				]
+			},
+			"stand-alone": {
+				"abbreviated": [
+					"priekšp.",
+					"pēcpusd."
+				],
+				"narrow": [
+					"priekšp.",
+					"pēcp."
+				],
+				"wide": [
+					"priekšpusdienā",
+					"pēcpusdiena"
+				]
+			}
+		},
 		"era-wide": {
 			"232": "Meiji",
 			"233": "Taishō",
@@ -1996,54 +2390,123 @@
 			"235": "H"
 		}
 	},
-	"dateField-year-displayName": "gads",
-	"dateField-year-relative--1": "pagājušajā gadā",
-	"dateField-year-relative-0": "šajā gadā",
-	"dateField-year-relative-1": "nākamajā gadā",
-	"dateField-year-relative-future-one": "pēc {0} gada",
-	"dateField-year-relative-future-other": "pēc {0} gadiem",
-	"dateField-year-relative-past-one": "pirms {0} gada",
-	"dateField-year-relative-past-other": "pirms {0} gadiem",
-	"dateField-month-displayName": "mēnesis",
-	"dateField-month-relative--1": "pagājušajā mēnesī",
-	"dateField-month-relative-0": "šajā mēnesī",
-	"dateField-month-relative-1": "nākamajā mēnesī",
-	"dateField-month-relative-future-one": "pēc {0} mēneša",
-	"dateField-month-relative-future-other": "pēc {0} mēnešiem",
-	"dateField-month-relative-past-one": "pirms {0} mēneša",
-	"dateField-month-relative-past-other": "pirms {0} mēnešiem",
-	"dateField-week-displayName": "nedēļa",
-	"dateField-week-relative--1": "pagājušajā nedēļā",
-	"dateField-week-relative-0": "šajā nedēļā",
-	"dateField-week-relative-1": "nākamajā nedēļā",
-	"dateField-week-relative-future-one": "pēc {0} nedēļas",
-	"dateField-week-relative-future-other": "pēc {0} nedēļām",
-	"dateField-week-relative-past-one": "pirms {0} nedēļas",
-	"dateField-week-relative-past-other": "pirms {0} nedēļām",
-	"dateField-day-displayName": "diena",
-	"dateField-day-relative--1": "vakar",
-	"dateField-day-relative-0": "šodien",
-	"dateField-day-relative-1": "rīt",
-	"dateField-day-relative-future-one": "pēc {0} dienas",
-	"dateField-day-relative-future-other": "pēc {0} dienām",
-	"dateField-day-relative-past-one": "pirms {0} dienas",
-	"dateField-day-relative-past-other": "pirms {0} dienām",
-	"dateField-hour-displayName": "stundas",
-	"dateField-hour-relative-future-one": "pēc {0} stundas",
-	"dateField-hour-relative-future-other": "pēc {0} stundām",
-	"dateField-hour-relative-past-one": "pirms {0} stundas",
-	"dateField-hour-relative-past-other": "pirms {0} stundām",
-	"dateField-minute-displayName": "minūtes",
-	"dateField-minute-relative-future-one": "pēc {0} minūtes",
-	"dateField-minute-relative-future-other": "pēc {0} minūtēm",
-	"dateField-minute-relative-past-one": "pirms {0} minūtes",
-	"dateField-minute-relative-past-other": "pirms {0} minūtēm",
-	"dateField-second-displayName": "sekundes",
-	"dateField-second-relative-0": "tagad",
-	"dateField-second-relative-future-one": "pēc {0} sekundes",
-	"dateField-second-relative-future-other": "pēc {0} sekundēm",
-	"dateField-second-relative-past-one": "pirms {0} sekundes",
-	"dateField-second-relative-past-other": "pirms {0} sekundēm",
+	"dateFields": {
+		"era": {
+			"displayName": "ēra"
+		},
+		"year": {
+			"displayName": "gads",
+			"relative-type--1": "pagājušajā gadā",
+			"relative-type-0": "šajā gadā",
+			"relative-type-1": "nākamajā gadā",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "pēc {0} gadiem",
+				"relativeTimePattern-count-one": "pēc {0} gada",
+				"relativeTimePattern-count-other": "pēc {0} gadiem"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "pirms {0} gadiem",
+				"relativeTimePattern-count-one": "pirms {0} gada",
+				"relativeTimePattern-count-other": "pirms {0} gadiem"
+			}
+		},
+		"month": {
+			"displayName": "mēnesis",
+			"relative-type--1": "pagājušajā mēnesī",
+			"relative-type-0": "šajā mēnesī",
+			"relative-type-1": "nākamajā mēnesī",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "pēc {0} mēnešiem",
+				"relativeTimePattern-count-one": "pēc {0} mēneša",
+				"relativeTimePattern-count-other": "pēc {0} mēnešiem"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "pirms {0} mēnešiem",
+				"relativeTimePattern-count-one": "pirms {0} mēneša",
+				"relativeTimePattern-count-other": "pirms {0} mēnešiem"
+			}
+		},
+		"week": {
+			"displayName": "nedēļa",
+			"relative-type--1": "pagājušajā nedēļā",
+			"relative-type-0": "šajā nedēļā",
+			"relative-type-1": "nākamajā nedēļā",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "pēc {0} nedēļām",
+				"relativeTimePattern-count-one": "pēc {0} nedēļas",
+				"relativeTimePattern-count-other": "pēc {0} nedēļām"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "pirms {0} nedēļām",
+				"relativeTimePattern-count-one": "pirms {0} nedēļas",
+				"relativeTimePattern-count-other": "pirms {0} nedēļām"
+			}
+		},
+		"day": {
+			"displayName": "diena",
+			"relative-type--2": "aizvakar",
+			"relative-type--1": "vakar",
+			"relative-type-0": "šodien",
+			"relative-type-1": "rīt",
+			"relative-type-2": "parīt",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "pēc {0} dienām",
+				"relativeTimePattern-count-one": "pēc {0} dienas",
+				"relativeTimePattern-count-other": "pēc {0} dienām"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "pirms {0} dienām",
+				"relativeTimePattern-count-one": "pirms {0} dienas",
+				"relativeTimePattern-count-other": "pirms {0} dienām"
+			}
+		},
+		"weekday": {
+			"displayName": "nedēļas diena"
+		},
+		"hour": {
+			"displayName": "stundas",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "pēc {0} stundām",
+				"relativeTimePattern-count-one": "pēc {0} stundas",
+				"relativeTimePattern-count-other": "pēc {0} stundām"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "pirms {0} stundām",
+				"relativeTimePattern-count-one": "pirms {0} stundas",
+				"relativeTimePattern-count-other": "pirms {0} stundām"
+			}
+		},
+		"minute": {
+			"displayName": "minūtes",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "pēc {0} minūtēm",
+				"relativeTimePattern-count-one": "pēc {0} minūtes",
+				"relativeTimePattern-count-other": "pēc {0} minūtēm"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "pirms {0} minūtēm",
+				"relativeTimePattern-count-one": "pirms {0} minūtes",
+				"relativeTimePattern-count-other": "pirms {0} minūtēm"
+			}
+		},
+		"second": {
+			"displayName": "sekundes",
+			"relative-type-0": "tagad",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "pēc {0} sekundēm",
+				"relativeTimePattern-count-one": "pēc {0} sekundes",
+				"relativeTimePattern-count-other": "pēc {0} sekundēm"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "pirms {0} sekundēm",
+				"relativeTimePattern-count-one": "pirms {0} sekundes",
+				"relativeTimePattern-count-other": "pirms {0} sekundēm"
+			}
+		},
+		"zone": {
+			"displayName": "laika josla"
+		}
+	},
 	"decimalFormat": {
 		"standard": "#,##0.###"
 	},
@@ -2241,6 +2704,10 @@
 	"weekData-firstDay": 1,
 	"weekData-weekendStart": 6,
 	"weekData-weekendEnd": 0,
+	"timeData": {
+		"_allowed": "H h",
+		"_preferred": "H"
+	},
 	"eras-gregorian": {
 		"0": {
 			"_end": "0-12-31"
