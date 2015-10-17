@@ -491,7 +491,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.setAggregation("_navPopover", this._oPopOver, true);
 		} else {
 			//master nav and detail nav are the same in phone
-			this._oMasterNav = this._oDetailNav =  new sap.m.NavContainer();
+			this._oMasterNav = this._oDetailNav =  new sap.m.NavContainer({
+				width: "",
+				navigate: function(oEvent){
+					that._handleNavigationEvent(oEvent, false, true);
+				},
+				afterNavigate: function(oEvent){
+					that._handleNavigationEvent(oEvent, true, true);
+				}
+			});
 			this.setAggregation("_navMaster", this._oMasterNav, true);
 		}
 
