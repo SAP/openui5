@@ -567,7 +567,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 		_resolveNavigation: function(sEntitySetName, oFromRecord, sNavProp, oEntry) {
 			var aEntries = MockServer.prototype._resolveNavigation.apply(this, [sEntitySetName, oFromRecord, sNavProp, oEntry]);
 			if (sNavProp === this._oConstants.SIBLINGENTITY_NAVIGATION) {
-				if (oEntry.IsActiveEntity) {
+				if (oEntry && oEntry.IsActiveEntity) {
 					aEntries.splice(0, 1);
 				} else {
 					aEntries.length > 1 ? aEntries.splice(1, 1) : aEntries.splice(0, 1);
