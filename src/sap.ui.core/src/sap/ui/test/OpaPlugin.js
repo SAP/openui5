@@ -34,13 +34,14 @@ sap.ui.define(['jquery.sap.global',
 			constructor : function() {
 				var that = this;
 
-				sap.ui.getCore().registerPlugin({startPlugin: function(oCore) {
-					that.oCore = oCore;
-				},
-
-				stopPlugin: function() {
-					that.oCore = undefined;
-				}});
+				sap.ui.getCore().registerPlugin({
+					startPlugin: function(oCore) {
+						that.oCore = oCore;
+					},
+					stopPlugin: function() {
+						that.oCore = undefined;
+					}
+				});
 			},
 
 			/**
