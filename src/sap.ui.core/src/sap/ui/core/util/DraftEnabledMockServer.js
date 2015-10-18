@@ -12,6 +12,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 			COM_SAP_VOCABULARIES_COMMON_V1_SEMANTICKEY: "com.sap.vocabularies.Common.v1.SemanticKey",
 			EMPTY_GUID: "00000000-0000-0000-0000-000000000000",
 			SIBLINGENTITY_NAVIGATION: "SiblingEntity",
+			DRAFT_ADMINISTRATIVE_DATA: "DraftAdministrativeData",
 			ACTIVATION_ACTION: "ActivationAction",
 			EDIT_ACTION: "EditAction",
 			VALIDATE_ACTION: "ValidationFunction",
@@ -404,7 +405,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 						}
 					} else {
 						var aUrlParams = decodeURIComponent(sUrlParams).replace("?", "&").split("&");
-						
+
 						for (var param in aUrlParams) {
 							var sParamValue = aUrlParams[param];
 							var rKeyValue = new RegExp("(.*)=(.*)");
@@ -555,7 +556,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 
 			this._handleDraftArtifacts(mEntitySets);
 		},
-		
+
 		_loadMockdata: function(mEntitySets, sBaseUrl) {
 
 			MockServer.prototype._loadMockdata.apply(this, [mEntitySets, sBaseUrl]);
@@ -570,6 +571,14 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 					aEntries.splice(0, 1);
 				} else {
 					aEntries.length > 1 ? aEntries.splice(1, 1) : aEntries.splice(0, 1);
+				}
+			} else if (sNavProp === this._oConstants.DRAFT_ADMINISTRATIVE_DATA) {
+				if (oEntry) {
+					if (oEntry.IsActiveEntity && !oEntry.HasDraftEntity) {
+						aEntries[0] = null;
+					}
+				} else {
+					aEntries[0] = null;
 				}
 			}
 			return aEntries;
