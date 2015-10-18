@@ -1,0 +1,21 @@
+[{
+	"MeetupID": 1,
+	"Title": "Toronto Tech Meet-Up",
+	"EventDate": "/Date(1278450000000)/",
+	"Description": "The best way to expand your knowledge and network of the Toronto technology community"
+}, {
+	"MeetupID": 2,
+	"Title": "Los Angeles redditors",
+	"EventDate": "/Date(1478171994000)/",
+	"Description": "This is a meet-up group specifically for redditors of r/LosAngeles. If you don't know what that is, this isn't the meet-up you're looking for"
+}, {
+	"MeetupID": 3,
+	"Title": "Designers + Geeks New York",
+	"EventDate": "/Date(1070968794000)/",
+	"Description": "Bringing designers + geeks together to talk shop, startups, and do some knowledge sharing. All types of designers + geeks welcome"
+}, {
+	"MeetupID": 4,
+	"Title": "New York City Geek Adventure Group",
+	"EventDate": "/Date(1034763594000)/",
+	"Description": "Are you looking to have fun and go on random adventures?"
+}]
