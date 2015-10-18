@@ -16,13 +16,29 @@ sap.ui.define([
 		'./matchers/Matcher',
 		'./matchers/AggregationFilled',
 		'./matchers/PropertyStrictEquals',
-		'./MatcherPipeline'
+		'./pipelines/MatcherPipeline',
+		'./pipelines/ActionPipeline'
 	],
-	function($, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Device, iFrameLauncher, componentLauncher, HashChanger, Matcher, AggregationFilled, PropertyStrictEquals, MatcherPipeline) {
+	function($,
+			 Opa,
+			 OpaPlugin,
+			 PageObjectFactory,
+			 Utils,
+			 Ui5Object,
+			 Device,
+			 iFrameLauncher,
+			 componentLauncher,
+			 HashChanger,
+			 Matcher,
+			 AggregationFilled,
+			 PropertyStrictEquals,
+			 MatcherPipeline,
+			 ActionPipeline) {
 		"use strict";
 		
 		var oPlugin = new OpaPlugin(),
 			oMatcherPipeline = new MatcherPipeline(),
+			oActionPipeline = new ActionPipeline(),
 			sFrameId = "OpaFrame",
 			bComponentLoaded = false;
 
@@ -257,6 +273,15 @@ sap.ui.define([
 		 * @param {string} [oOptions.errorMessage] Will be displayed as an errorMessage depending on your unit test framework.
 		 * Currently the only adapter for Opa5 is QUnit.
 		 * This message is displayed if Opa5 has reached its timeout before QUnit has reached it.
+		 * @param {function|function[]|sap.ui.test.actions.Action|sap.ui.test.actions.Action[]} oOptions.actions Available since 1.34.0. An array of functions or Actions or a mixture of both.
+		 * An action has an 'executeOn' function that will receive a single control as a parameter. If there are multiple actions defined all of them
+		 * will be executed (first in first out) on each control of, similar to the matchers.
+		 * But actions will only be executed once and only after the check function returned true.
+		 * If there are multiple controls in Opa5's result set the action will be executed on all of them.
+		 * The actions will be invoked directly before success is called.
+		 * In the documentation of the success parameter there is a list of conditions that have to be fullfilled.
+		 * They also apply for the actions.
+		 * There are some predefined actions in the @{link sap.ui.test.actions} namespace.
 		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 * @public
 		 */
@@ -337,11 +362,18 @@ sap.ui.define([
 				return true;
 			};
 
-			if (fnOriginalSuccess) {
-				oOptions.success = function () {
+			oOptions.success = function () {
+				if (oOptions.actions) {
+					oActionPipeline.process({
+						actions: oOptions.actions,
+						control: vControl
+					});
+				}
+
+				if (fnOriginalSuccess) {
 					fnOriginalSuccess.call(this, vResult);
-				};
-			}
+				}
+			};
 
 			return Opa.prototype.waitFor.call(this, oOptions);
 		};

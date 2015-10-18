@@ -5,10 +5,15 @@
 sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/base/Object',
-		'./matchers/Matcher'
+		'sap/ui/test/matchers/Matcher',
+		'./PipelineFactory'
 	],
-	function($, UI5Object, Matcher) {
+	function($, UI5Object, Matcher, PipelineFactory) {
 		"use strict";
+		var oPipelineFactory = new PipelineFactory({
+			name: "Matcher",
+			functionName: "isMatching"
+		});
 
 		/*
 		 * Internals
@@ -24,6 +29,7 @@ sap.ui.define([
 				var vMatch = oMatcher.isMatching(vValue);
 				if (vMatch) {
 					if (vMatch !== true) {
+						// Save truthy values, they will be the input for the next matcher
 						vValue = vMatch;
 					}
 					return true;
@@ -32,6 +38,7 @@ sap.ui.define([
 			});
 
 			if (bIsMatching) {
+				// Return the new value if it changed from the original value after processing all the matchers.
 				return (vOriginalValue === vValue) ? true : vValue;
 			}
 
@@ -39,46 +46,15 @@ sap.ui.define([
 		}
 
 		/**
-		 * Validates the matchers and makes sure to return them in an array
-		 * @private
-		 */
-		function checkMatchers (vMatchers) {
-			var aMatchers = [];
-
-			if ($.isArray(vMatchers)) {
-				aMatchers = vMatchers;
-			} else if (vMatchers) {
-				aMatchers = [vMatchers];
-			} else {
-				jQuery.sap.log.error("Matchers where defined, but they where neither an array nor a single matcher: " + vMatchers);
-			}
-
-			aMatchers = aMatchers.map(function(vMatcher) {
-				if (vMatcher instanceof Matcher) {
-					return vMatcher;
-				} else if (typeof vMatcher == "function") {
-					return {
-						isMatching : vMatcher
-					};
-				}
-				jQuery.sap.log.error("A matcher was defined, but it is no function and has no isMatching function: " + vMatcher);
-			}).filter(function(oMatcher) {
-				return !!oMatcher;
-			});
-
-			return aMatchers;
-		}
-
-		/**
 		 * Filters a set of controls or a single control by multiple conditions
 		 *
 		 * @class
-		 * @public
+		 * @private
 		 * @alias sap.ui.test.matcherPipeline
 		 * @author SAP SE
 		 * @since 1.34
 		 */
-		return UI5Object.extend("sap.ui.test.matcherPipeline",{
+		return UI5Object.extend("sap.ui.test.pipelines.MatcherPipeline",{
 
 			/**
 			 * Matches a set or a single control agains matchers that check conditions.
@@ -86,18 +62,19 @@ sap.ui.define([
 			 * If the previous output is a truthy value, the next matcher will receive this value as an input parameter.
 			 * If any matcher does not match an input (i.e. returns a falsy value), then the input is filtered out. Check will not be called if the matchers filtered out all controls/values.
 			 * Check/success will be called with all matching values as an input parameter. Matchers also can be define as an inline-functions.
-			 * @param {object} oOptions An Object containing the input for processing matchers
-			 * @param {function|sap.ui.test.matchers.Matcher|sap.ui.test.matchers.Matcher[]|function[]} oOptions.matchers A single matcher or an array of matchers {@link sap.ui.test.matchers}.
-			 * @param {sap.ui.core.Element|sap.ui.core.Element[]} oOptions.control The name of a view.
-			 * @protected
+			 * @param {object} options An Object containing the input for processing matchers
+			 * @param {function|sap.ui.test.matchers.Matcher|sap.ui.test.matchers.Matcher[]|function[]} options.matchers A single matcher or an array of matchers {@link sap.ui.test.matchers}.
+			 * @param {sap.ui.core.Element|sap.ui.core.Element[]} options.control The controls to filter.
+			 * @returns {false|sap.ui.core.Element|sap.ui.core.Element[]} The filtered input of options.control. If no control matched, false is returned.
+			 * @private
 			 * @function
 			 */
-			process: function (oOptions) {
+			process: function (options) {
 				var vResult,
 					aControls,
-					vControl = oOptions.control;
+					vControl = options.control;
 
-				var aMatchers = checkMatchers(oOptions.matchers);
+				var aMatchers = oPipelineFactory.create(options.matchers);
 
 				var iExpectedAmount;
 				if (!aMatchers || !aMatchers.length) {

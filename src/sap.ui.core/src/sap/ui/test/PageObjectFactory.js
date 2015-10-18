@@ -4,7 +4,7 @@
 
 sap.ui.define([
 		'jquery.sap.global',
-        './Opa',
+		'./Opa',
 		'sap/ui/base/Object'
 	],
 	function(jQuery, Opa, Ui5Object) {
