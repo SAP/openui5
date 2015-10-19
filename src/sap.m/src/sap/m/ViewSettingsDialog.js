@@ -566,7 +566,7 @@ function(jQuery, library, Control, IconPool) {
 	 * Opens the ViewSettingsDialog relative to the parent control.
 	 *
 	 * @public
-	 * @param {string} sPageId The ID of the initial page to be opened in the dialog.
+	 * @param {string} [sPageId] The ID of the initial page to be opened in the dialog.
 	 *	The available values are "sort", "group", "filter" or IDs of custom tabs.
 	 *
 	 * @return {sap.m.ViewSettingsDialog} this pointer for chaining
@@ -1227,7 +1227,7 @@ function(jQuery, library, Control, IconPool) {
 
 	/**
 	 * Fills the dialog with the aggregation data.
-	 * @param {string} sPageId The ID of the page to be opened in the dialog
+	 * @param {string} [sPageId] The ID of the page to be opened in the dialog
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._initDialogContent = function(sPageId) {
@@ -1350,7 +1350,7 @@ function(jQuery, library, Control, IconPool) {
 	 * Sets the state of the dialog when it is opened.
 	 * If content for only one tab is defined, then tabs are not displayed, otherwise,
 	 * a SegmentedButton is displayed and the button for the initially displayed page is focused.
-	 * @param {string} sPageId The ID of the page to be opened in the dialog
+	 * @param {string} [sPageId] The ID of the page to be opened in the dialog
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._updateDialogState = function(sPageId) {
@@ -1460,7 +1460,7 @@ function(jQuery, library, Control, IconPool) {
 
 	/**
 	 * Determines the page ID of a valid page to load.
-	 * @param {string} sPageId The ID of the page to be opened in the dialog
+	 * @param {string} [sPageId] The ID of the page to be opened in the dialog
 	 * @returns {string} sPageId
 	 * @private
 	 */
