@@ -355,7 +355,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 			 * Returns the URL for the route and replaces the placeholders with the values in oParameters
 			 *
 			 * @param {string} sName Name of the route
-			 * @param {object} oParameters Parameters for the route
+			 * @param {object} [oParameters] Parameters for the route
 			 * @return {string} the unencoded pattern with interpolated arguments
 			 * @public
 			 */
@@ -450,8 +450,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 			 * If you want to use special characters in your oParameters, you have to encode them (encodeURIComponent).
 			 *
 			 * @param {string} sName Name of the route
-			 * @param {object} oParameters Parameters for the route
-			 * @param {boolean} bReplace Defines if the hash should be replaced (no browser history entry) or set (browser history entry)
+			 * @param {object} [oParameters] Parameters for the route
+			 * @param {boolean} [bReplace] Defines if the hash should be replaced (no browser history entry) or set (browser history entry)
 			 * @public
 			 * @returns {sap.ui.core.routing.Router} this for chaining.
 			 */
