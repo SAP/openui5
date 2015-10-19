@@ -70,9 +70,11 @@ sap.ui.define(['sap/m/Column',
 			renderer : "sap.ui.commons.ValueHelpFieldRenderer",
 
 			_onValueHelp : function (oEvent) {
-				var oColumnListItem = new ColumnListItem(),
+				var oButton = new sap.m.Button({text : "Close"}),
+					oColumnListItem = new ColumnListItem(),
 					oControl = oEvent.getSource(),
-					oPopover = new Popover({placement : sap.m.PlacementType.Auto, modal : true}),
+					oPopover = new Popover({endButton: oButton,
+						placement : sap.m.PlacementType.Auto, modal : true}),
 					oTable = new Table(),
 					aVHTitle = [];
 
@@ -88,6 +90,10 @@ sap.ui.define(['sap/m/Column',
 							{value: "{" + sPropertyPath + "}"});
 				}
 
+				function onClose() {
+					oPopover.close();
+				}
+
 				oPopover.setTitle("Value Help: " + oControl._collectionLabel);
 				oTable.setModel(oControl.getModel());
 				oTable.bindItems({
@@ -100,6 +106,7 @@ sap.ui.define(['sap/m/Column',
 					));
 					oColumnListItem.addCell(createTextOrValueHelp(sParameterPath));
 				});
+				oButton.attachPress(onClose);
 				oPopover.addContent(oTable);
 				oPopover.openBy(oControl);
 			}
