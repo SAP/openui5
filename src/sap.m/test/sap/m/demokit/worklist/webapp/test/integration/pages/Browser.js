@@ -39,7 +39,7 @@ sap.ui.define([
 					iChangeTheHashToTheRememberedItem : function () {
 						return this.waitFor({
 							success : function () {
-								var sObjectId = this.getContext().currentItem.getBindingContext().getProperty("ObjectID");
+								var sObjectId = this.getContext().currentItem.id;
 								Opa5.getHashChanger().setHash("/Objects/" + sObjectId);
 							}
 						});
@@ -49,7 +49,7 @@ sap.ui.define([
 						var sObjectId;
 						this.waitFor({
 							success : function () {
-								sObjectId = this.getContext().currentItem.getBindingContext().getProperty("ObjectID");
+								sObjectId = this.getContext().currentItem.id;
 								this.iTeardownMyAppFrame();
 							}
 						});
