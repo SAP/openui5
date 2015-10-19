@@ -343,5 +343,31 @@
         "references": []
       }
     ]
+  },
+  "1.30.10": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "49bbd7c2e4a20fef487d3361688a0751a13b8bea",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.uinified.Calendar current day is wrong displayed",
+        "references": []
+      },
+      {
+        "id": "53f07f6dae343de82fa30b7f04858ef3eab6df4d",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.DateRange return instance to allow method chaining",
+        "references": []
+      },
+      {
+        "id": "b84f31f37ea6ce14e344b56dfbf84474190a33ef",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Menu: Avoid focusing when Menu is not open",
+        "references": []
+      }
+    ]
   }
 }

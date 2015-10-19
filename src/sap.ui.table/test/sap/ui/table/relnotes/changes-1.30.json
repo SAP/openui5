@@ -710,5 +710,31 @@
         "references": []
       }
     ]
+  },
+  "1.30.10": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "bd64c9eb6a653847e992076f88fda6b74a086502",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: fixes usages of em and px based column widths at the same time",
+        "references": []
+      },
+      {
+        "id": "e7e9be72285394dd9b5efd4b3101e0b79e4fc279",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: null-ref when _syncColumnHeaders is called w/o table DomRef",
+        "references": []
+      },
+      {
+        "id": "6cbd5447fa0403c67a6266100d6ef88a40036106",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: only visible column is resizable",
+        "references": []
+      }
+    ]
   }
 }

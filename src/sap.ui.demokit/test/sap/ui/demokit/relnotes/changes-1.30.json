@@ -102,5 +102,17 @@
         "references": []
       }
     ]
+  },
+  "1.30.10": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "9412d487c3a6c24205c904365206e3aa4e8a99d4",
+        "author": "Nikolay Stoichkov \u003cnikolay.stoichkov@sap.com\u003e",
+        "type": "FIX",
+        "text": "Demokit missing tree due to node without ref",
+        "references": []
+      }
+    ]
   }
 }

@@ -168,5 +168,17 @@
         "references": []
       }
     ]
+  },
+  "1.30.10": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "d3f25d2b4d5b93a86cd2a6d7dcc6c6988d5350be",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "layout.Splitter: Don\u0027t Attempt Resize on Preserved DOM",
+        "references": []
+      }
+    ]
   }
 }

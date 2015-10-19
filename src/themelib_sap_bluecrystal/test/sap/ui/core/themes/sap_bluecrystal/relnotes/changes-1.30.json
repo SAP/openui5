@@ -605,5 +605,24 @@
         "references": []
       }
     ]
+  },
+  "1.30.10": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "121134781057a4fe1327aaeb0dc40811d8f07346",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Page: SubHeader overlaps the content",
+        "references": []
+      },
+      {
+        "id": "e7c185c70fd319520432ec5d349d8a2f62a1a403",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Panel: Bottom border is no longer present on transparent Panel",
+        "references": []
+      }
+    ]
   }
 }

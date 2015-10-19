@@ -538,5 +538,31 @@
         "references": []
       }
     ]
+  },
+  "1.30.10": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "3b8416a6ff1951cbbb2fd7142f9b799e1fb167be",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: focusOut is triggered when switching tabs",
+        "references": []
+      },
+      {
+        "id": "61eb4debecd76679984c5c904e18aa79e1339530",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField in IE onInput called",
+        "references": []
+      },
+      {
+        "id": "663794326c7ef43859182a81a70418814b6e47e3",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextField: after enabling still readonly",
+        "references": []
+      }
+    ]
   }
 }

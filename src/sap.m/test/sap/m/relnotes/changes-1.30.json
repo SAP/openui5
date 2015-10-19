@@ -3028,5 +3028,150 @@
         "references": []
       }
     ]
+  },
+  "1.30.10": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "97ec0fd3855da0e269977c348c91d37bb909089e",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ActionSheet: ActionSheet not flicker on Windows Phone 8.1",
+        "references": []
+      },
+      {
+        "id": "7f0f921afbcd8174215d21ab00f9bb4109988eea",
+        "author": "Krasimir Chariyski \u003ckrasimir.chariyski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Carousel - Fixed rendering issue with sap.zen.commons.layout.PositionContainer",
+        "references": []
+      },
+      {
+        "id": "c6a8fc46fca5603c79be903c68603885c3b43318",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: binding for property selectedKey doesn\u0027t work",
+        "references": []
+      },
+      {
+        "id": "1abf2c09aa31dc00700ea88e86e4363e3110fca2",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: force the focus to stay in the input field after selecting an item on mobile",
+        "references": []
+      },
+      {
+        "id": "73f407ceb00516a970e9c848c9af692f76f2be09",
+        "author": "Nikolay Aleksandrenko \u003cnikolay.aleksandrenko@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: notVisible subheaders will no longer have reserved space",
+        "references": []
+      },
+      {
+        "id": "769410591e2abb804190902001cf44b203b56c49",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: prevent duplicate id",
+        "references": []
+      },
+      {
+        "id": "ac91882bc14f985461aec7e53cd3da5828f24ff2",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: should expand to content width if used in Popover",
+        "references": []
+      },
+      {
+        "id": "1d2e97aa8aa956514b3e6356915791f08e4dfbb0",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Tabs are not selected on mouse hover any more",
+        "references": []
+      },
+      {
+        "id": "5dc01c2847911ceda4e4cda74643cf86a12bdef2",
+        "author": "Andreas Frische \u003candreasfrische@gmail.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NavContainer: Mark optional params as optional in JsDoc",
+        "references": []
+      },
+      {
+        "id": "11bc160e436c5050d3f1a181a2b7cd3d0e1bd929",
+        "author": "I306504 \u003cdiana.mihaylova@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ObjectNumber: ARIA attribute refers to elements which are not in the DOM",
+        "references": []
+      },
+      {
+        "id": "36e3efa9af3e100aedc72fba7e7e63088d132b84",
+        "author": "Eugen Resch \u003ceugen.resch@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.P13nXXXPanel - support of Date type",
+        "references": []
+      },
+      {
+        "id": "121134781057a4fe1327aaeb0dc40811d8f07346",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Page: SubHeader overlaps the content",
+        "references": []
+      },
+      {
+        "id": "2fcfb7454772db63a16680afb0d746c02bd918de",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: beforeClose event is fired on touch devices",
+        "references": []
+      },
+      {
+        "id": "dc55346874c9ec5d3b4051993187638c99d9b885",
+        "author": "Borislav Yovchev \u003cborislav.yovchev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ProgressIndicator: tooltip is now rendered",
+        "references": []
+      },
+      {
+        "id": "27c2e390a9d5ad83b1eede5677d13643a1a21c94",
+        "author": "Siarhei Ulasenka \u003csiarhei.ulasenka@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.PullToRefresh: tooltip is not shown on desktop",
+        "references": []
+      },
+      {
+        "id": "e2cafbe253a614edaf6bd2115a94e9f093b43b46",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Select: binding for property selectedKey doesn\u0027t work",
+        "references": []
+      },
+      {
+        "id": "c62c98c0b9314dc37a2c0b524e0f87ad709137bb",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Problem with duplicated toolbar fixed.",
+        "references": []
+      },
+      {
+        "id": "aa355260965e59d944f5ced21d14dd5c6e05726d",
+        "author": "Martin Daskalov \u003cm.daskalov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog - fixed button tooltip in example.",
+        "references": []
+      },
+      {
+        "id": "0ccd398b391e6bee4810eb847b36f6b8a4b947f1",
+        "author": "Martin Daskalov \u003cm.daskalov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ViewSettingsDialog - fixed problem with Reset Button not showing.",
+        "references": []
+      },
+      {
+        "id": "2b4729b15eccc3dce2c508b8eb80ff9a43beb1f7",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.routing.RouteMatchedHandler - now works with sap.m.routing.Router",
+        "references": []
+      }
+    ]
   }
 }
