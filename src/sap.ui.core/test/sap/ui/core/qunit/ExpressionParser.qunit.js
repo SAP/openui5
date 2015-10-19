@@ -107,6 +107,7 @@ sap.ui.require([
 				function () { assert.ok(false, "unexpected call to fnResolveBinding"); },
 				oFixture.binding,
 				2);
+
 			assert.strictEqual(oExpression.result, undefined,
 					"no formatter for constant expression");
 			assert.strictEqual(oExpression.constant, oFixture.literal);
@@ -584,4 +585,24 @@ sap.ui.require([
 		// null") and raises a warning.
 		check(assert, "${mail} && ${mail}.indexOf('mail')", "0");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("parse: Performance measurement points", function (assert) {
+		var oAverageSpy = this.spy(jQuery.sap.measure, "average")
+				.withArgs("sap.ui.base.ExpressionParser#parse", "",
+					["sap.ui.base.ExpressionParser"]),
+			oEndSpy = this.spy(jQuery.sap.measure, "end")
+				.withArgs("sap.ui.base.ExpressionParser#parse");
+
+		ExpressionParser.parse(function () { assert.ok(false, "unexpected call"); }, "{='foo'}", 2);
+		assert.strictEqual(oAverageSpy.callCount, 1, "parse start measurement");
+		assert.strictEqual(oEndSpy.callCount, 1, "parse end measuerment");
+
+		assert.throws(function () {
+			BindingParser.complexParser("{=$invalid}}");
+		});
+		assert.strictEqual(oAverageSpy.callCount, 2, "parse start measurment");
+		assert.strictEqual(oEndSpy.callCount, 1, "parse end measurement - end not reached");
+	});
+
 });
