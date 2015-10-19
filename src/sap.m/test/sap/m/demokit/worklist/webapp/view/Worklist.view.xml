@@ -42,10 +42,10 @@
 
 				<columns>
 					<Column id="nameColumn">
-						<Text text="{i18n>TableNameColumnTitle}" id="nameColumnTitle"/>
+						<Text text="{i18n>tableNameColumnTitle}" id="nameColumnTitle"/>
 					</Column>
 					<Column id="unitNumberColumn">
-						<Text text="{i18n>TableUnitNumberColumnTitle}" id="unitNumberColumnTitle"/>
+						<Text text="{i18n>tableUnitNumberColumnTitle}" id="unitNumberColumnTitle"/>
 					</Column>
 				</columns>
 
