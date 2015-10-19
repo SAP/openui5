@@ -2661,6 +2661,9 @@ sap.ui.define([
 			sUpdateMethod = "MERGE";
 		}
 
+		// do a copy of the payload or the changes will be deleted in the model as well (reference)
+		oPayload = jQuery.sap.extend(true, {}, this._getObject('/' + sKey, true), oData);
+		
 		if (oData.__metadata && oData.__metadata.created){
 			sMethod = "POST";
 			sKey = oData.__metadata.created.key;
@@ -2673,8 +2676,6 @@ sap.ui.define([
 			sMethod = "PUT";
 		}
 
-		// do a copy of the payload or the changes will be deleted in the model as well (reference)
-		oPayload = jQuery.sap.extend(true, {}, oData);
 		// remove metadata, navigation properties to reduce payload
 		if (oPayload.__metadata) {
 			for (var n in oPayload.__metadata) {
@@ -3595,7 +3596,7 @@ sap.ui.define([
 	ODataModel.prototype.submitChanges = function(mParameters) {
 		var oRequest, sGroupId, oGroupInfo, fnSuccess, fnError,
 			oRequestHandle, vRequestHandleInternal,
-			bAborted = false, sMethod, 
+			bAborted = false, sMethod, mChangedEntities,
 			mParams,
 			that = this;
 
@@ -3612,12 +3613,13 @@ sap.ui.define([
 		if (sGroupId && !this.mDeferredGroups[sGroupId]) {
 			jQuery.sap.log.fatal(this + " submitChanges: \"" + sGroupId + "\" is not a deferred group!");
 		}
-
+		
+		mChangedEntities = jQuery.sap.extend(true, {}, that.mChangedEntities);
+			
 		this.oMetadata.loaded().then(function() {
-			jQuery.each(that.mChangedEntities, function(sKey) {
+			jQuery.each(mChangedEntities, function(sKey, oData) {
 				oGroupInfo = that._resolveGroup(sKey);
 				if (oGroupInfo.groupId === sGroupId || !sGroupId) {
-					var oData = that._getObject('/' + sKey);
 					oRequest = that._processChange(sKey, oData, sMethod || that.sDefaultUpdateMethod);
 					oRequest.key = sKey;
 					//get params for created entries: could contain success/error handler
