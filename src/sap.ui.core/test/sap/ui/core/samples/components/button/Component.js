@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/core/UIComp
 	//=============================================================================
 
 	/*
-	* Overrides setText method of the component to set this text in the button
+	* Overrides <code>setText</code> method of the component to set this text in the button
 	*/
 	Component.prototype.setText = function(sText) {
 		this.oButton.setText(sText);

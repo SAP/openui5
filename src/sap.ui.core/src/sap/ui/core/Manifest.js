@@ -15,8 +15,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 	/**
 	 * Removes the version suffix
 	 * 
-	 * @param {string} sVersion the version 
-	 * @return {string} the version without suffix
+	 * @param {string} sVersion Version 
+	 * @return {string} Version without suffix
 	 */
 	function getVersionWithoutSuffix(sVersion) {
 		var oVersion = jQuery.sap.Version(sVersion);
@@ -24,9 +24,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 	}
 
 	/**
-	 * Util function to process strings in an object/array recursively
+	 * Utility function to process strings in an object/array recursively
 	 *
-	 * @param {object/Array} oObject object/array to process
+	 * @param {object/Array} oObject Object or array that will be processed
 	 * @param {function} fnCallback function(oObject, sKey, sValue) to call for all strings. Use "oObject[sKey] = X" to change the value.
 	 */
 	function processObject(oObject, fnCallback) {
@@ -52,12 +52,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 	}
 
 	/**
-	 * Util function to access a child member by a given path
+	 * Utility function to access a child member by a given path
 	 * 
-	 * @param {object} the object
-	 * @param {string} the path starting with a slash
-	 * @return {any|null} returns the value of a member specified by its path; 
-	 *         if the path doesn't start with a slash we return the value for the given path of teh object
+	 * @param {object} Object
+	 * @param {string} Path starting with a slash (/)
+	 * @return {any|null} value of a member specified by its path; 
+	 *         if the path doesn't start with a slash it returns the value for the given path of the object
 	 */
 	function getObject(oObject, sPath) {
 		// if the incoming sPath is a path we do a nested lookup in the 
@@ -104,7 +104,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 	 * @param {object}
 	 *            oManifest the manifest object
 	 * @param {boolean}
-	 *            [bProcess=true] (optional) flag whether the manifest object should be processed or not
+	 *            [bProcess=true] (optional) Flag whether the manifest object should be processed or not
 	 *            which means that the placeholders will be replaced with resource bundle values
 	 *
 	 *
@@ -229,10 +229,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		 *
 		 * By section/namespace returns the configuration for the specified manifest
 		 * section and by path allows to specify a concrete path to a dedicated entry
-		 * inside the manifest. The path syntax always starts with a "/".
+		 * inside the manifest. The path syntax always starts with a slash (/).
 		 *
-		 * @param {string} sKey either the manifest section name (namespace) or a concrete path
-		 * @return {any|null} the value of the key (could be any kind of value)
+		 * @param {string} sKey Either the manifest section name (namespace) or a concrete path
+		 * @return {any|null} Value of the key (could be any kind of value)
 		 * @public
 		 */
 		getEntry: function(sPath) {
@@ -241,8 +241,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		},
 
 		/**
-		 * Validates the current UI5 version with the min version defined in the
-		 * manifest. If the min version is greater than the current version an
+		 * Validates the current UI5 version with the minimal version defined in the
+		 * manifest. If the minimal version is greater than the current version an
 		 * issue will be reported in the console if open.
 		 *
 		 * @private
@@ -360,10 +360,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		/**
 		 * Define the resource roots configured in the manifest.
 		 * <p>
-		 * In case of usage of "Manifest First" for Component loading the #
+		 * In case of usage of "Manifest First" for Component loading the
 		 * registration of the resource roots will be already done before loading
-		 * the component controller and thus can be used for the dependencies being
-		 * declared within the sap.ui.define. 
+		 * the Component controller and thus can be used for the dependencies being
+		 * declared within the sap.ui.define.
 		 *
 		 * @private
 		 */
@@ -374,7 +374,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 
 
 		/**
-		 * Returns the component name which is defined in the manifest as 
+		 * Returns the Component name which is defined in the manifest as 
 		 * <code>sap.ui5/componentName</code> or <code>sap.app/id</code>
 		 * 
 		 * @return {string} the component name
@@ -393,12 +393,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		 */
 		init: function() {
 
-			// version check => only if minVersion is available a warning 
-			// will be logged and the debug mode is turned on 
+			// version check => only if minVersion is available a warning
+			// will be logged and the debug mode is turned on
 			this.checkUI5Version();
 
 			// define the resource roots
-			// => if not loaded via manifest first approach the resource roots 
+			// => if not loaded via manifest first approach the resource roots
 			//    will be registered too late for the AMD modules of the Component
 			//    controller. This is a constraint for the resource roots config
 			//    in the manifest!
@@ -413,7 +413,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 		},
 
 		/**
-		 * Terminates the manifest and some final cleanup.
+		 * Terminates the manifest and does some final clean-up.
 		 * @private
 		 */
 		exit: function() {
@@ -428,7 +428,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 	 * Resolves the given URI relative to the component.
 	 *
 	 * @param {URI} oUri URI to resolve
-	 * @param {string} sComponentName component name
+	 * @param {string} sComponentName Component name
 	 * @return {URI} resolved URI
 	 * @static
 	 * @private
@@ -441,7 +441,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 	 * Resolves the given URI relative to the given base URI.
 	 *
 	 * @param {URI} oUri URI to resolve
-	 * @param {URI} oBase base URI
+	 * @param {URI} oBase Base URI
 	 * @return {URI} resolved URI
 	 * @static
 	 * @private
@@ -487,9 +487,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 	/**
 	 * Function to load the manifest by URL
 	 *
-	 * @param {string} sManifestUrl the URL of the manifest
-	 * @param {boolean} [bAsync] flag whether to load the manifest async or not
-	 * @return {sap.ui.core.Manifest|Promise} The manifest object or for asynchronous calls an ECMA Script 6 Promise object will be returned.
+	 * @param {string} sManifestUrl URL of the manifest
+	 * @param {boolean} [bAsync] Flag whether to load the manifest async or not
+	 * @return {sap.ui.core.Manifest|Promise} Manifest object or for asynchronous calls an ECMA Script 6 Promise object will be returned.
 	 * @protected
 	 */
 	Manifest.load = function fnLoadManifest(sManifestUrl, bAsync) {
