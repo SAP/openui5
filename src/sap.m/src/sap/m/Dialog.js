@@ -1195,10 +1195,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		Dialog.prototype.setSubHeader = function(oControl) {
 			this.setAggregation("subHeader", oControl);
 
-			oControl.setVisible = function(isVisible) {
-				this.$().toggleClass('sapMDialogWithSubHeader', isVisible);
-				oControl.setProperty("visible", isVisible);
-			}.bind(this);
+			if (oControl) {
+				oControl.setVisible = function(isVisible) {
+					this.$().toggleClass('sapMDialogWithSubHeader', isVisible);
+					oControl.setProperty("visible", isVisible);
+				}.bind(this);
+			}
 
 			return oControl;
 		};
