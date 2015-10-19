@@ -18,6 +18,12 @@
 	right: 0;
 }
 
+/* Make sure busy indicators are not "nested", and the animations do not overlay each other */
+.sapUiLocalBusy .sapUiLocalBusy .sapUiLocalBusyIndicator {
+	display: none;
+}
+
+
 /* Class for medium sized indicator in control overlay */
 .sapUiLocalBusyIndicatorSizeMedium {
 	font-size: @sapUiLocalBusyIndicatorSizeMedium;
