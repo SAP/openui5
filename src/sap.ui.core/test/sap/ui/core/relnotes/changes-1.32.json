@@ -1222,5 +1222,178 @@
         "references": []
       }
     ]
+  },
+  "1.32.4": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "bcd25b301cc06eca60e4b859f88592febeb9a759",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "NumberFormat: Introduce shortLimit and precision",
+        "references": []
+      },
+      {
+        "id": "8b0a3d893df6902fc7c5e8f67844b0aa37be81d8",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding - Missing dataReceived event",
+        "references": []
+      },
+      {
+        "id": "781a6e2b7892ea04d112b29b62e77b30876db8e2",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding.js - Broken public refresh() API",
+        "references": []
+      },
+      {
+        "id": "d244388947dbad2975d9cab8a5c75e35bee8c30d",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ClientTreeBinding: Create Length Cache Map Before Filtering",
+        "references": []
+      },
+      {
+        "id": "15eb0e6152fa9de5113b35468a38677a68e008a1",
+        "author": "Peter Muessig \u003cpeter.muessig@sap.com\u003e",
+        "type": "FIX",
+        "text": "ComponentMetadata: customizing lifecycle issue with instance count",
+        "references": []
+      },
+      {
+        "id": "6ab6d8228c9b50c81a5e83044427b47afba47a88",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "Datajs: fix xhr.send when request body is empty for IE 11",
+        "references": []
+      },
+      {
+        "id": "728570dadcd1e35c4dd7ca7b8ff0dfc7b7930431",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "DateFormat: Cache fallback formats per locale and calendarType",
+        "references": []
+      },
+      {
+        "id": "65a14492b301143a9eaccf363afa0e80f6e69196",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "DateFormat: Fixed two digit years with UTC",
+        "references": []
+      },
+      {
+        "id": "7771e269b13f45c6d1addad98f7927315618c6a5",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "Device API: Ensure boolean values for sap.ui.Device.system flags",
+        "references": []
+      },
+      {
+        "id": "5c90e86f50c080c2dc40f0aa8642458a2fda15ac",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "LocaleData: Warning for zero diff on relative pattern",
+        "references": []
+      },
+      {
+        "id": "5a1b92c93d3c53e68a8d034767ab0b789f67ff5c",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataMetadata: Catch Rejected Promise for Initial Metadata Load",
+        "references": []
+      },
+      {
+        "id": "ec26fc1ffc4209628b3431c8cf9fa5554c176115",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModelV2: fix setProperty with setting same value again",
+        "references": []
+      },
+      {
+        "id": "2eb89e9b0b7b54b6e8e30337ac10910490094aa7",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: Autoclose on Touch Enabled Devices",
+        "references": []
+      },
+      {
+        "id": "85338c61153480e022575cf55c3c3b6a168859c1",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "Promise Polyfill Tests - correcly identify polyfill in IE",
+        "references": []
+      },
+      {
+        "id": "486c4253f9d894bf6c138189831877963806058d",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "ScrollEnablement: Momentum scrolling for BlackBerry.",
+        "references": []
+      },
+      {
+        "id": "a5470321656a0baba8eb46e5980071a51b482613",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.registerResourcePath: strip URI params/hash",
+        "references": []
+      },
+      {
+        "id": "7306ec107b4a18fc0ad940b736e7dc01aeeb0776",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Fragment: \u0027objectBinding\u0027 enabled",
+        "references": []
+      },
+      {
+        "id": "fd0e175a7c9dd28a3e40f1df4dcbaec679e4a8f1",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.UIArea: Except Popup Controls from Rendering Optimization",
+        "references": []
+      },
+      {
+        "id": "997bee920331213c07d66b8787380200e1d50db1",
+        "author": "Peter Buchholz \u003cpeter.buchholz@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.XMLPreprocessor: work around for crash of MS Edge and MS Internet Explorer on Windows 10",
+        "references": []
+      },
+      {
+        "id": "7a9b46bd904d3d26376836abb4ab4ea8f6e47aa1",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.test.Opa5 - fixed a timing issue in IE when the sap.ui.Core was loaded but jQuery.sap was not",
+        "references": []
+      },
+      {
+        "id": "6c2c413b65c95c2268d6b7faa81a8f96de06ab5d",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataListBinding: Requests not aborted properly",
+        "references": []
+      },
+      {
+        "id": "a46036eb563f0e3323b7d2f8b6ae39ff9bd58fbd",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: When deleting a changed Entity the changes stays in the model and where not resetted.",
+        "references": []
+      },
+      {
+        "id": "ccf0b2947c52cab3c6bf0daa5c6a21bf196344cf",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: createEntry - wrong request method after failing",
+        "references": []
+      },
+      {
+        "id": "02f94ee248d58e3ca8c31c0e185a735f0fba2eb8",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: createEntry on Navigation Properties does not work",
+        "references": []
+      }
+    ]
   }
 }
