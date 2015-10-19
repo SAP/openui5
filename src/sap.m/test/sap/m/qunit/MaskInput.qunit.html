@@ -21,7 +21,6 @@
 
 	<script>
 		sinon.config.useFakeTimers = true;
-
 		module("API", {
 			beforeEach: function () {
 				this.oMaskInput = new sap.m.MaskInput();
@@ -37,8 +36,8 @@
 
 		test("Mask setter", function () {
 			var oControl = this.oMaskInput.setPlaceholderSymbol('#'),
-					sMask1 = '1a9a-aa4', /* 1 and 4 are immutable characters*/
-					sMask2 = 'aa9a-aa4';
+				sMask1 = '1a9a-aa4', /* 1 and 4 are immutable characters*/
+				sMask2 = 'aa9a-aa4';
 			oControl.setMask(sMask1);
 			strictEqual(oControl.getMask(), sMask1, "The mask has the same value as the last set one");
 
@@ -49,7 +48,7 @@
 		test("Setting empty mask should give a warning", function () {
 			var oControl = this.oMaskInput;
 			var oWarningSpy = this.sandbox.spy(jQuery.sap.log, 'warning'),
-					oSetterSpy = this.sandbox.spy(oControl, "setProperty");
+				oSetterSpy = this.sandbox.spy(oControl, "setProperty");
 
 			this.oMaskInput.setMask('');
 			ok(oSetterSpy.notCalled, "Invalid placeholder symbol is not accepted");
@@ -62,11 +61,11 @@
 
 		test("Setting (invalid) placeholder symbol that is part of mask's regex", function () {
 			var oControl = this.oMaskInput,
-					sPlaceholderSymbol = '+',
-					oDefinition = new sap.m.MaskInputRule({
-						maskFormatSymbol: '*',
-						regex: '[a-z+]'
-					});
+				sPlaceholderSymbol = '+',
+				oDefinition = new sap.m.MaskInputRule({
+					maskFormatSymbol: '*',
+					regex: '[a-z+]'
+				});
 
 			var oErrorSpy = this.sandbox.spy(jQuery.sap.log, 'error');
 			oControl.addRule(oDefinition);
@@ -82,11 +81,11 @@
 
 		test("Setting (invalid) regex that contains the placeholder symbol", function () {
 			var oControl = this.oMaskInput,
-					sPlaceholderSymbol = '+',
-					oDefinition = new sap.m.MaskInputRule({
-						maskFormatSymbol: '*',
-						regex: '[a-z+]'
-					});
+				sPlaceholderSymbol = '+',
+				oDefinition = new sap.m.MaskInputRule({
+					maskFormatSymbol: '*',
+					regex: '[a-z+]'
+				});
 
 			var oErrorSpy = this.sandbox.spy(jQuery.sap.log, 'error');
 			oControl.setPlaceholderSymbol(sPlaceholderSymbol);
@@ -118,8 +117,8 @@
 
 		test("Placeholder symbol setter", function () {
 			var oControl = this.oMaskInput,
-					sPlaceHolderSymbol1 = '#',
-					sPlaceHolderSymbol2 = '+';
+				sPlaceHolderSymbol1 = '#',
+				sPlaceHolderSymbol2 = '+';
 
 			oControl.setPlaceholderSymbol(sPlaceHolderSymbol1);
 			strictEqual(oControl.getPlaceholderSymbol(), sPlaceHolderSymbol1, "The placeholder symbol has the same value as the last set one");
@@ -130,17 +129,17 @@
 
 		test("Setting an invalid placeholder symbol is not accepted", function () {
 			var oControl = this.oMaskInput,
-					oErrorSpy = this.sandbox.spy(jQuery.sap.log, 'error'),
-					oSetterSpy = this.sandbox.spy(oControl, 'setProperty');
-
-			setAndValidate.call(this, "more_than_one_character");
-			setAndValidate.call(this, "");
-
-			function setAndValidate(sSymbol) {
-				oErrorSpy.restore();
-				oErrorSpy = this.sandbox.spy(jQuery.sap.log, 'error');
-				oSetterSpy.restore();
+				oErrorSpy = this.sandbox.spy(jQuery.sap.log, 'error'),
 				oSetterSpy = this.sandbox.spy(oControl, 'setProperty');
+
+			setAndValidate("more_than_one_character", this.sandbox);
+			setAndValidate("", this.sandbox);
+
+			function setAndValidate(sSymbol, oSandbox) {
+				oErrorSpy.restore();
+				oErrorSpy = oSandbox.spy(jQuery.sap.log, 'error');
+				oSetterSpy.restore();
+				oSetterSpy = oSandbox.spy(oControl, 'setProperty');
 				oControl.setPlaceholderSymbol(sSymbol);
 				ok(oSetterSpy.notCalled, "Invalid placeholder symbol [" + sSymbol + "] is not accepted");
 				ok(oErrorSpy.calledOnce, "When called with invalid parameter [" + sSymbol + "] setPlaceholderSymbol logs error.");
@@ -152,15 +151,15 @@
 
 		test("The mask default rules are: a:[A-Za-z] and 9:[0-9]", function () {
 			var oControl = this.oMaskInput,
-					aExpectedDefaultRules = [
-						new sap.m.MaskInputRule({
-							maskFormatSymbol: "a",
-							regex: "[A-Za-z]"
-						}), new sap.m.MaskInputRule({
-							maskFormatSymbol: "9",
-							regex: "[0-9]"
-						})],
-					i = 0;
+				aExpectedDefaultRules = [
+					new sap.m.MaskInputRule({
+						maskFormatSymbol: "a",
+						regex: "[A-Za-z]"
+					}), new sap.m.MaskInputRule({
+						maskFormatSymbol: "9",
+						regex: "[0-9]"
+					})],
+				i = 0;
 			equal(oControl.getRules().length, aExpectedDefaultRules.length, "2 default rules");
 			for (i = 0; i < 2; i++) {
 				equal(oControl.getRules()[i].getMaskFormatSymbol(), aExpectedDefaultRules[i].getMaskFormatSymbol(), "Mask symbol for rule [" + (i + 1) + "]");
@@ -291,7 +290,7 @@
 		});
 		test("Initial focusing on mask input", function () {
 			var oControl = this.oMaskInput.setPlaceholderSymbol('#'),
-					sMask = '1a9a-aa4';
+				sMask = '1a9a-aa4';
 
 			oControl.setMask(sMask);
 			jQuery(oControl).focus();
@@ -303,7 +302,7 @@
 
 		test("Focusout for input with deleted value restores an empty value", function () {
 			var oControl = this.oMaskInput.setPlaceholder("Enter number").setPlaceholderSymbol("#").setMask("999").setValue("123"),
-					oOtherControl = new sap.m.Input({value: "some other value"});
+				oOtherControl = new sap.m.Input({value: "some other value"});
 			oOtherControl.placeAt("content");
 			sap.ui.getCore().applyChanges();
 			this.clock.tick(1000);
@@ -436,6 +435,188 @@
 			ok(!this.oChangeListenerPassedEvent, "Change event must not be called");
 		});
 
+		// temporary disabling because keyboard handling does not work with phantomjs - uncomment when the issue is fixed
+//			module("RTL support", {
+//				beforeEach: function () {
+//					this.sTestLatinValue = "abcd";
+//					this.sTestHebrewValue = "אני רוצה";//"I want" in Hebrew
+//					this.sTestMixedValue = "1234אני רוצה";//"1234I want" in Hebrew
+//					this.oMaskInputLatin = new sap.m.MaskInput( {
+//						textDirection: sap.ui.core.TextDirection.RTL,
+//						value: this.sTestLatinValue,
+//						mask: "aaaa"
+//					});
+//					this.oMaskInputLatin.placeAt("content");
+//
+//					this.oMaskInputHebrew = new sap.m.MaskInput({
+//						textDirection: sap.ui.core.TextDirection.RTL,
+//						value: this.sTestHebrewValue,
+//						mask: "~~~s~~~~",
+//						rules: [
+//							new sap.m.MaskInputRule({
+//								maskFormatSymbol: "~",
+//								regex: "[\u0591-\u05F4]"
+//							}),
+//							new sap.m.MaskInputRule({
+//								maskFormatSymbol: "s",
+//								regex: "[ ]"
+//							})
+//						]
+//					});
+//					this.oMaskInputHebrew.placeAt("content");
+//
+//					sap.ui.getCore().applyChanges();
+//					this.sandbox = sinon.sandbox;
+//				},
+//
+//				afterEach: function () {
+//					this.oMaskInputLatin.destroy();
+//					this.oMaskInputHebrew.destroy();
+//					this.sandbox.restore();
+//				},
+//				testSelectedInputWithArrow: function(oControl, oClock, sArrowName, iExpectedPosition, sMessagePrefix) {
+//					jQuery(oControl).focus();
+//					oClock.tick(1000);
+//					oControl.selectText(0, oControl.getValue().length);
+//					qutils.triggerKeydown(oControl.getDomRef(), sArrowName.toLowerCase() === "left" ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
+//					oClock.tick(1000);
+//					checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
+//
+//					//consecutive presses should not move the carret
+//					qutils.triggerKeydown(oControl.getDomRef(), sArrowName.toLowerCase() === "left" ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
+//
+//					checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix + " Consecutive presses do nothing");
+//				},
+//				testCarretAtPositionAndMoveWithArrow: function(oControl, oClock, iStartPosition, sArrowName, iExpectedPosition, sMessagePrefix) {
+//					jQuery(oControl).focus();
+//					oClock.tick(1000);
+//					setCursorPosition(iStartPosition, oControl);
+//					qutils.triggerKeydown(oControl.getDomRef(),  sArrowName.toLowerCase() === "left"  ? jQuery.sap.KeyCodes.ARROW_LEFT : jQuery.sap.KeyCodes.ARROW_RIGHT);
+//
+//					checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
+//				},
+//				testTypeInEmptyField: function(oControl, oClock, sUserInput, iExpectedPosition, sMessagePrefix) {
+//					var i = 0;
+//					jQuery(oControl).focus();
+//					oClock.tick(1000);
+//
+//					for (i = 0; i < sUserInput.length; i++) {
+//						qutils.triggerKeypress(oControl.getDomRef(), sUserInput[i]);
+//					}
+//					checkCursorIsAtPosition(oControl, iExpectedPosition, sMessagePrefix);
+//				}
+//			});
+//
+//			test("Left arrow on selected string moves the carret to the most left position", function() {
+//				this.testSelectedInputWithArrow(this.oMaskInputLatin, this.clock, "left", 0, "Latin content");
+//				this.testSelectedInputWithArrow(this.oMaskInputHebrew, this.clock, "left", this.sTestHebrewValue.length, "Hebrew content");
+//				//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
+//			});
+//
+//			test("Right arrow on selected string moves the carret to the most right position", function() {
+//				this.testSelectedInputWithArrow(this.oMaskInputLatin, this.clock, "right", this.sTestLatinValue.length, "Latin content");
+//				this.testSelectedInputWithArrow(this.oMaskInputHebrew, this.clock, "right", 0, "Hebrew content");
+//			});
+//
+//			test("Left arrow when caret is at the middle moves to the left", function() {
+//				var iStartPositionHebrew = Math.floor(this.oMaskInputHebrew.getValue().length / 2),
+//					iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length / 2);
+//				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputHebrew, this.clock, iStartPositionHebrew, "left", iStartPositionHebrew + 1, "Hebrew content");
+//				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, iStartPositionLatin, "left", iStartPositionLatin - 1, "Latin content");
+//				//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
+//			});
+//
+//			test("Left arrow when caret is at the rightmost position moves to the left", function() {
+//				var iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length);
+//				for (var i = iStartPositionLatin; i > 0; i-- ) {
+//					this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, i, "left", i - 1, "Latin content. Start position: " + i);
+//				}
+//			});
+//
+//			test("Navigate the whole field with left arrow when caret is at the middle moves to the left between RTL and LTR characters", function() {
+//				// this test is needed because the native behavior of some browsers is different - we're mimicking IE11
+//				this.oMaskInputMixed = new sap.m.MaskInput({
+//					textDirection: sap.ui.core.TextDirection.RTL,
+//					value: this.sTestMixedValue,
+//					mask: "9999~~~s~~~~",
+//					rules: [
+//						new sap.m.MaskInputRule({
+//							maskFormatSymbol: "~",
+//							regex: "[\u0591-\u05F4]"
+//						}),
+//						new sap.m.MaskInputRule({
+//							maskFormatSymbol: "s",
+//							regex: "[ ]"
+//						})
+//					]
+//				});
+//				this.oMaskInputMixed.placeAt("content");
+//				var iStartPosition = 4;
+//				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputMixed, this.clock, iStartPosition, "left", iStartPosition + 1, "Mixed content");
+//				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputMixed, this.clock, iStartPosition, "right", iStartPosition - 1, "Mixed content");
+//				this.oMaskInputMixed.destroy();
+//
+//				//Note: When there is a hebrew content, selectionStarts & selectionEnd are mirrored.
+//			});
+//
+//			test("Right arrow when caret is at the middle moves to the right", function() {
+//				var iStartPositionHebrew = Math.floor(this.oMaskInputHebrew.getValue().length / 2),
+//					iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length / 2);
+//				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputHebrew, this.clock, iStartPositionHebrew, "right", iStartPositionHebrew - 1, "Hebrew content");
+//				this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, iStartPositionLatin, "right", iStartPositionLatin + 1, "Latin content");
+//				//Note: iStartPosition - 1 is correct, since when content is hebrew, selectionStarts & selectionEnd are mirrored.
+//			});
+//
+//			test("Navigate the whole field with right arrow when caret is at the leftmost moves to the right", function() {
+//				var iStartPositionLatin = Math.floor(this.oMaskInputLatin.getValue().length);
+//				for (var i = 0; i < iStartPositionLatin; i++ ) {
+//					this.testCarretAtPositionAndMoveWithArrow(this.oMaskInputLatin, this.clock, i, "right", i + 1, "Latin content. Start position: " + i);
+//				}
+//			});
+//
+//			test("Typing in a empty field (Latin content)", function() {
+//				this.oMaskInputLatin.destroy();
+//				this.oMaskInputLatin = new sap.m.MaskInput( {
+//					textDirection: sap.ui.core.TextDirection.RTL,
+//					mask: "aaaa"
+//				});
+//				this.oMaskInputLatin.placeAt("content");
+//				sap.ui.getCore().applyChanges();
+//				this.clock.tick(1000);
+//				sContent = "abc";
+//				this.testTypeInEmptyField(this.oMaskInputLatin, this.clock, sContent, 3, "Latin content");
+//				jQuery(this.oMaskInputHebrew).focus(); //make sure complete handler for latin mask worked-out
+//				equals(this.oMaskInputLatin.getValue(), sContent + "_", "Latin content check.");
+//			});
+//
+//			test("Typing in a empty field (Hebrew content)", function() {
+//				this.oMaskInputHebrew.destroy();
+//				this.oMaskInputHebrew = new sap.m.MaskInput({
+//					textDirection: sap.ui.core.TextDirection.RTL,
+//					value: this.sTestHebrewValue,
+//					mask: "~~~s~~~~",
+//					rules: [
+//						new sap.m.MaskInputRule({
+//							maskFormatSymbol: "~",
+//							regex: "[\u0591-\u05F4]"
+//						}),
+//						new sap.m.MaskInputRule({
+//							maskFormatSymbol: "s",
+//							regex: "[ ]"
+//						})
+//					]
+//				});
+//				this.oMaskInputHebrew.placeAt("content");
+//				sap.ui.getCore().applyChanges();
+//				this.clock.tick(1000);
+//				var sContent =  "וצה"; /*3 chars*/
+//				this.testTypeInEmptyField(this.oMaskInputHebrew, this.clock, sContent, 3, "Hebrew content");
+//				jQuery(this.oMaskInputLatin).focus(); //make sure complete handler for hebrew mask worked-out
+//				equals(this.oMaskInputHebrew.getValue(), sContent + "_____", "Hebrew content check.");
+//
+//			});
+
+
 		module("Others", {
 			beforeEach: function () {
 				this.oMaskInput = new sap.m.MaskInput();
@@ -457,21 +638,12 @@
 				qutils.triggerKeypress(oControl.getDomRef(), sChar);
 				equal(oControl._getInputValue(), sExpectedValue, "Typing '" + sChar + "' at position [" +
 				(iPos === -1 ? "current" : iPos) + "] should resolve to a certain value");
-			},
-			getSelection: function (oControl) {
-				var $oControl = jQuery(oControl.getFocusDomRef())[0];
-				return {iFrom: $oControl.selectionStart, iTo: $oControl.selectionEnd};
-			},
-			checkCursorIsAtPosition: function (oControl, iPosition) {
-				var oSelection = this.getSelection(oControl);
-				ok(oSelection.iFrom === oSelection.iTo, "There must not be any selection");
-				equal(oSelection.iFrom, iPosition, "Cursor position.");
 			}
 		});
 
 		test("DOM and 'value' should be updated according to the user input ", function (assert) {
 			var oControl = this.oMaskInput.setPlaceholderSymbol('_').setMask('aaaa'),
-					oOtherControl = new sap.m.Input({value: "some other value"});
+				oOtherControl = new sap.m.Input({value: "some other value"});
 			oOtherControl.placeAt("content");
 			sap.ui.getCore().applyChanges();
 			this.clock.tick(1000);
@@ -516,7 +688,7 @@
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
 			this.sendAndValidate(-1, "2", "2-#");
-			var oSelection = this.getSelection(oControl);
+			var oSelection = getCurrentSelection(oControl);
 
 			ok(oSelection.iFrom === oSelection.iTo, "There must not be any selection");
 			equal(oSelection.iFrom, 2, "Cursor position.");
@@ -530,7 +702,7 @@
 			qutils.triggerKeydown(oControl.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
 			this.clock.tick(1000);
 
-			var oSelection = this.getSelection(oControl);
+			var oSelection = getCurrentSelection(oControl);
 			ok(oSelection.iFrom === oSelection.iTo, "There must not be any selection");
 			equal(oSelection.iFrom, 0, "Cursor position.");
 		});
@@ -540,7 +712,7 @@
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
 
-			var oSelection = this.getSelection(oControl);
+			var oSelection = getCurrentSelection(oControl);
 			equal(oSelection.iFrom, 0);
 			equal(oSelection.iTo, 5);
 		});
@@ -550,7 +722,7 @@
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
 
-			this.checkCursorIsAtPosition(oControl, 5);
+			checkCursorIsAtPosition(oControl, 5);
 		});
 
 		test("Click on mask input with partially completed value should position the cursor at the first editable position", function () {
@@ -559,7 +731,7 @@
 			jQuery(oControl).focus();
 			this.clock.tick(1000);
 
-			this.checkCursorIsAtPosition(oControl, 7);
+			checkCursorIsAtPosition(oControl, 7);
 		});
 
 		test("Esc key does reset the value back to the original", function () {
@@ -574,9 +746,9 @@
 
 		test("OnBeforeRendering captures any validation errors.", function () {
 			var oControl = this.oMaskInput,
-					oDefinition1 = new sap.m.MaskInputRule({maskFormatSymbol: "-", regex: "[']"}),
-					oDefinition2 = new sap.m.MaskInputRule({maskFormatSymbol: "+", regex: "[()]"}),
-					oWarningSpy = this.sandbox.spy(jQuery.sap.log, "warning");
+				oDefinition1 = new sap.m.MaskInputRule({maskFormatSymbol: "-", regex: "[']"}),
+				oDefinition2 = new sap.m.MaskInputRule({maskFormatSymbol: "+", regex: "[()]"}),
+				oWarningSpy = this.sandbox.spy(jQuery.sap.log, "warning");
 			oControl.addRule(oDefinition1);
 			oControl.addRule(oDefinition2);
 			oDefinition1.setMaskFormatSymbol("+");
@@ -589,7 +761,7 @@
 
 		test("Once the user completed the input, the property 'value' is changed", function () {
 			var oControl = this.oMaskInput.setPlaceholder("Enter number").setPlaceholderSymbol("#").setMask("999").setValue("123"),
-					oOtherControl = new sap.m.Input({value: "some other value"});
+				oOtherControl = new sap.m.Input({value: "some other value"});
 			oOtherControl.placeAt("content");
 			sap.ui.getCore().applyChanges();
 			this.clock.tick(1000);
@@ -695,6 +867,10 @@
 
 		function setCursorPosition(iPosition, oControl) {
 			var _$oControl = jQuery(oControl.getFocusDomRef());
+			if (sap.ui.Device.browser.chrome) {
+				return setCursorPositionChrome(oControl, iPosition);
+			}
+
 			return _$oControl.cursorPos(iPosition);
 		}
 		function getMaskInputDomValue(oControl) {
@@ -704,6 +880,85 @@
 		function checkForEmptyValue(oControl) {
 			ok(typeof oControl.getValue() === "undefined" || oControl.getValue() == null || oControl.getValue().length === 0,
 					"The value [" + oControl.getValue() + "] should be empty ");
+		}
+
+		function setCursorPositionChrome(oControl, iPosition) {
+			var sValue = oControl.getValue(),
+				$oControl = jQuery(oControl.getFocusDomRef()),
+				iLength = sValue.length,
+				bModified = false,
+				bOnlyHebrewContent = new RegExp("[\u0591-\u05F4]").test(sValue),
+				bRTLMode = sap.ui.getCore().getConfiguration().getRTL() || oControl.getTextDirection() === "RTL";
+
+
+			if (bRTLMode && !bOnlyHebrewContent) {
+				if (iPosition === iLength) {
+					iPosition = 0;
+					bModified = true;
+				} else if (iPosition === 0) {
+					iPosition = iLength;
+					bModified = true;
+				}
+				if (bModified) {
+					jQuery.sap.log.warning("Chrome bug for selection API. Modifying cursor position");
+				}
+			}
+			return $oControl.cursorPos(iPosition);
+		}
+
+		/**
+		 *
+		 * @param oControl
+		 * @returns {iFrom | Number, iTo | Number}
+		 */
+		function getCurrentSelection (oControl) {
+			var $oControl = jQuery(oControl.getFocusDomRef())[0],
+				oSelection;
+
+			if (sap.ui.Device.browser.chrome) {
+				oSelection = getCursorSelectionChrome(oControl);
+			} else {
+				oSelection = {iFrom: $oControl.selectionStart, iTo: $oControl.selectionEnd};
+			}
+			return oSelection;
+		}
+
+		function checkCursorIsAtPosition (oControl, iExpectedPosition, sMessagePrefix) {
+			var oSelection = getCurrentSelection(oControl);
+			equal(oSelection.iFrom, oSelection.iTo, "Prerequisites: there must not be any selection(selectionStart & selectionEnd must be equal)");
+			equal(oSelection.iFrom, iExpectedPosition, sMessagePrefix +": Cursor position check");
+		}
+
+		function checkSelection(oControl, iExpectedStartPosition, iExpectedEndPosition, sMessagePrefix) {
+			var oSelection = getCurrentSelection(oControl);
+			deepEqual(oSelection, {iFrom: iExpectedStartPosition, iTo: iExpectedEndPosition}, sMessagePrefix +": selection start check");
+		}
+
+		function getCursorSelectionChrome(oControl) {
+			var sValue = oControl.getValue(),
+				$oControl = jQuery(oControl.getFocusDomRef())[0],
+				iLength = sValue.length,
+				oSelection = {iFrom: $oControl.selectionStart, iTo: $oControl.selectionEnd},
+				bModified = false,
+				bOnlyHebrewContent = new RegExp("[\u0591-\u05F4]").test(sValue),
+				bRTLMode = sap.ui.getCore().getConfiguration().getRTL() || oControl.getTextDirection() === "RTL";
+
+			if (!bRTLMode || bOnlyHebrewContent) {
+				return oSelection;
+			}
+			if (oSelection.iFrom === oSelection.iTo && oSelection.iFrom === iLength) {
+				oSelection.iFrom = 0;
+				oSelection.iTo = 0;
+				bModified = true;
+			} else if (oSelection.iFrom === 0) {
+				oSelection.iFrom = iLength;
+				oSelection.iTo = iLength;
+				bModified = true;
+			}
+			if (bModified) {
+				jQuery.sap.log.warning("Chrome bug for selection API. Modifying selectionStart & selectionEnd returned values");
+			}
+			return oSelection;
 		}
 	</script>
 </head>
