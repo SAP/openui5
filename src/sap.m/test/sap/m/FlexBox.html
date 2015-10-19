@@ -1,0 +1,153 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.m.FlexBox</title>
+		<style>
+			.sapMFlexItem {
+				border: 1px dashed red;
+				background-color: #aaaaaa;
+			}
+			#layout>div:nth-child(2) {
+				width: 200px;
+				height: 300px;
+				background-color: #ff99ff;
+			}
+			#flexbox1 {
+				background-color: #ffff99;
+			}
+		</style>
+		<script id="sap-ui-bootstrap"
+			src="../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m,sap.ui.layout">
+		</script>
+
+		<script>
+			var oButton1 = new sap.m.Button({
+				text: "Change Visibility",
+				press: function(){
+					var bIsVisible = oItem2.getVisible();
+					bIsVisible = !bIsVisible;
+					oItem2.setVisible(bIsVisible);
+				}
+			});
+
+			// Create items
+			var oItem1 = new sap.m.Image({
+				src: "images/mark1.png",
+				alt: "test image",
+				decorative: false,
+				densityAware: false,
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1})
+			});
+
+			var oItem2 = new sap.m.Image({
+				src: "images/mark2.png",
+				alt: "test image",
+				decorative: false,
+				densityAware: false,
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1}),
+				visible: false
+			});
+
+			var oItem3 = new sap.m.Image({
+				src: "images/mark3.png",
+				alt: "test image",
+				decorative: false,
+				densityAware: false,
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1})
+			});
+
+			var oItem4 = new sap.m.Image({
+				src: "images/mark1.png",
+				alt: "test image",
+				decorative: false,
+				densityAware: false,
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1})
+			});
+
+			var oItem5 = new sap.m.Image({
+				src: "images/mark2.png",
+				alt: "test image",
+				decorative: false,
+				densityAware: false,
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1}),
+				visible: true
+			});
+
+			var oItem6 = new sap.m.Image({
+				src: "images/mark3.png",
+				alt: "test image",
+				decorative: false,
+				densityAware: false,
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1})
+			});
+
+			var oItem7 = new sap.m.Image({
+				src: "images/mark1.png",
+				alt: "test image",
+				decorative: false,
+				densityAware: false,
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1})
+			});
+
+			var oItem8 = new sap.m.Image({
+				src: "images/mark2.png",
+				alt: "test image",
+				decorative: false,
+				densityAware: false,
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1}),
+				visible: true
+			});
+
+			var oItem9 = new sap.m.Image({
+				src: "images/mark3.png",
+				alt: "test image",
+				decorative: false,
+				densityAware: false,
+				layoutData: new sap.m.FlexItemData({growFactor: 1, shrinkFactor: 1})
+			});
+
+
+			// Create a vertical flexbox with items
+			var oFlexBox = new sap.m.FlexBox("flexbox1", {
+				fitContainer: true,
+				wrap: "Wrap",
+				alignContent: "Stretch",
+				justifyContent: "Start",
+				items:[
+					oItem1,
+					oItem2,
+					oItem3,
+					oItem4,
+					oItem5,
+					oItem6,
+					oItem7,
+					oItem8,
+					oItem9
+				]
+			});
+
+			var oLayout = new sap.ui.layout.VerticalLayout("layout", {
+				content: [
+							oButton1,
+							oFlexBox
+						]
+			});
+
+			var page1 = new sap.m.Page("page1", {
+				title:"FlexBox Test Page",
+				content:[
+					oLayout
+				]
+			});
+
+			var app = new sap.m.App("myApp", {initialPage:"page1"});
+			app.addPage(page1).placeAt("body");
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>
