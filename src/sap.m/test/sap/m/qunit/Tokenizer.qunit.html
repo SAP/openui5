@@ -379,8 +379,8 @@
 			try {
 				var oRange = window.getSelection().getRangeAt(0);
 				var oClipRef = tokenizer1.getDomRef("clip");
-				ok(oRange.startContainer === oClipRef, "Dummy Clip Element is start of selection");
-				ok(oRange.endContainer === oClipRef, "Dummy Clip Element is start of selection");
+				ok(oRange.startContainer === oClipRef || oRange.startContainer.parentNode === oClipRef, "Dummy Clip Element is start of selection");
+				ok(oRange.endContainer === oClipRef || oRange.startContainer.parentNode === oClipRef, "Dummy Clip Element is start of selection");
 			} catch (e) {
 				jQuery.sap.log.warning(e);
 				ok(false, "Problems with selection");
