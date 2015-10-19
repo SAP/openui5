@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for Theme Version Parameter - off - async</title>
+		<script src="../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<!--[if IE 9]>
+			<script>
+				// If this flag is set to `false` sinon will only fake `XDomainRequest` but not `XMLHttpRequest`
+				// GH Issues:
+				// - https://github.com/cjohansen/Sinon.JS/issues/715
+				// - https://github.com/cjohansen/Sinon.JS/issues/732
+				// TODO: remove once this has been fixed!!!
+				sinon.xhr.supportsCORS = true;
+			</script>
+		<![endif]-->
+		<!--[if IE]>
+			<script src="../../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<![endif]-->
+		<script src="ThemeVersion.qunit.js"></script>
+		<script>setupFakeServer({ async: true })</script>
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="base"
+
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.core"
+			data-sap-ui-preload="async">
+		</script>
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" />
+		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<!-- don't use the sinon faketimers for this test -->
+		<script>
+			sinon.config.useFakeTimers = false;
+		</script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script>setupQUnitTests({ async: true, versionedLibCss: false })</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+	</body>
+</html>
