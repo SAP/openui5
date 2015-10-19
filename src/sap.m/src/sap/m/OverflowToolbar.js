@@ -87,6 +87,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 
 			}
 
+			this._aControlSizes = {}; // A map of control id -> control *optimal* size in pixels; the optimal size is outerWidth for most controls and min-width for spacers
 		};
 
 		/**
@@ -135,7 +136,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 			this._polyfillFlexboxSupport();
 
 			// Cache controls widths and other info, if not done already
-			if (!this._bControlsInfoCached) {
+			if (!this._isControlsInfoCached()) {
 				this._cacheControlsInfo();
 			}
 
@@ -189,7 +190,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 			this._aMovableControls = []; // Controls that can be in the toolbar or action sheet
 			this._aToolbarOnlyControls = []; // Controls that can't go to the action sheet (inputs, labels, buttons with special layout, etc...)
 			this._aActionSheetOnlyControls = []; // Controls that are forced to stay in the action sheet (buttons with layout)
-			this._aControlSizes = {}; // A map of control id -> control *optimal* size in pixels; the optimal size is outerWidth for most controls and min-width for spacers
 			this._iContentSize = 0; // The total *optimal* size of all controls in the toolbar
 
 			this.getContent().forEach(function (oControl) {
@@ -199,7 +199,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 				bCanMoveToOverflow = sPriority !== OverflowToolbarPriority.NeverOverflow;
 				bAlwaysStaysInOverflow = sPriority === OverflowToolbarPriority.AlwaysOverflow;
 
-				var iControlSize = OverflowToolbar._getOptimalControlWidth(oControl);
+				var iControlSize = OverflowToolbar._getOptimalControlWidth(oControl, this._aControlSizes[oControl.getId()]);
 				this._aControlSizes[oControl.getId()] = iControlSize;
 
 				if (OverflowToolbarAssociativePopoverControls.supportsControl(oControl) && bAlwaysStaysInOverflow) {
@@ -217,6 +217,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 			}, this);
 
 			this._bControlsInfoCached = true;
+		};
+
+		/**
+		 * Getter for the _bControlsInfoCached - its purpose it to be able to override it for edge cases to disable control caching
+		 * @returns {boolean|*}
+		 * @private
+		 */
+		OverflowToolbar.prototype._isControlsInfoCached = function () {
+			return this._bControlsInfoCached;
 		};
 
 		/**
@@ -802,7 +811,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 		 * @returns {*}
 		 * @private
 		 */
-		OverflowToolbar._getOptimalControlWidth = function(oControl) {
+		OverflowToolbar._getOptimalControlWidth = function(oControl, iOldSize) {
 			var iOptimalWidth;
 
 			// For spacers, get the min-width + margins
@@ -811,6 +820,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 			// For other elements, get the outer width
 			} else {
 				iOptimalWidth = oControl.$().outerWidth(true);
+			}
+
+			if (iOptimalWidth === null) {
+				iOptimalWidth = typeof iOldSize !== "undefined" ? iOldSize : 0;
 			}
 
 			return iOptimalWidth;

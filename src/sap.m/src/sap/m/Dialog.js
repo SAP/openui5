@@ -1169,6 +1169,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		Dialog.prototype._getToolbar = function () {
 			if (!this._oToolbar) {
 				this._oToolbar = new AssociativeOverflowToolbar(this.getId() + "-footer").addStyleClass("sapMTBNoBorders").applyTagAndContextClassFor("footer");
+				this._oToolbar._isControlsInfoCached = function () { return false; };
 
 				this.setAggregation("_toolbar", this._oToolbar);
 			}
