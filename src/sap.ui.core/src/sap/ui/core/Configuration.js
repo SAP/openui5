@@ -94,7 +94,8 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', './Locale', '
 					"application"           : { type : "string",   defaultValue : "" },
 					"appCacheBuster"        : { type : "string[]", defaultValue : [] },
 					"bindingSyntax"         : { type : "string",   defaultValue : "default", noUrl:true }, // default|simple|complex
-					
+					"versionedLibCss"       : { type : "boolean",  defaultValue : false },
+
 					"whitelistService"      : { type : "string",   defaultValue : null,      noUrl: true }, // url/to/service
 					"frameOptions"          : { type : "string",   defaultValue : "allow",   noUrl: true }, // allow/deny/trusted
 					"frameOptionsConfig"    : { type : "object",   defaultValue : undefined, noUrl:true },  // advanced frame options configuration
