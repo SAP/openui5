@@ -351,6 +351,11 @@ sap.ui.define([
 				headers : {
 					"If-Match" : sEtag
 				}
+			})["catch"](function (oError) {
+				if (oError.cause && oError.cause.response.statusCode === 404) {
+					return; // map 404 to 200
+				}
+				throw oError;
 			});
 		});
 	};

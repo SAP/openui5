@@ -435,8 +435,7 @@ sap.ui.require([
 	QUnit.test("remove", function (assert) {
 		var sEtag = 'W/"19770724000000.0000000"',
 			oModel = createModel(),
-			sPath = "/EMPLOYEES[0];list=0",
-			oResult = {};
+			sPath = "/EMPLOYEES[0];list=0";
 
 		this.oSandbox.stub(Helper, "request", function (oModel0, oRequest, bDoNotRefreshToken) {
 			assert.strictEqual(oModel0, oModel);
@@ -448,7 +447,7 @@ sap.ui.require([
 				requestUri : getServiceUrl("/EMPLOYEES(ID='1')")
 			});
 			assert.strictEqual(bDoNotRefreshToken, undefined);
-			return Promise.resolve(oResult);
+			return Promise.resolve(undefined);
 		});
 		//TODO make such basic APIs like sap.ui.model.Context#getProperty work?!
 		//     they could be used instead of async read()...
@@ -475,16 +474,49 @@ sap.ui.require([
 				return Promise.resolve(getServiceUrl("/EMPLOYEES(ID='1')"));
 			});
 
-		return oModel.remove(oModel.getContext(sPath)).then(function (oResult0) {
-			assert.strictEqual(oResult0, oResult);
+		return oModel.remove(oModel.getContext(sPath)).then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
 		}, function (oError) {
 			assert.ok(false);
 		});
 	});
 	//TODO trigger update in case of isConcurrentModification?!
 	//TODO do it anyway? what and when to return, result of remove vs. re-read?
-	//TODO map 404 to 200?
 	//TODO make sure Context objects are deleted from this.mContexts
+
+	//*********************************************************************************************
+	[{
+		"response" : {
+			"statusCode" : 404
+		}
+	}, {
+		"response" : {
+			"statusCode" : 500
+		}
+	}, undefined].forEach(function (oCause) {
+		QUnit.test("remove: map 404 to 200, cause: " + JSON.stringify(oCause), function (assert) {
+			var oError = new Error(""),
+				oModel = createModel();
+
+			oError.cause = oCause;
+			this.oSandbox.stub(oModel, "read")
+				.returns(Promise.resolve({value : 'W/""'}));
+			this.oSandbox.stub(oModel.getMetaModel(), "requestCanonicalUrl")
+				.returns(Promise.resolve(getServiceUrl("/EMPLOYEES(ID='1')")));
+			this.oSandbox.stub(Helper, "request")
+				.returns(Promise.reject(oError));
+
+			return oModel.remove(oModel.getContext("/EMPLOYEES[0];list=0"))
+				.then(function (oResult) {
+					assert.strictEqual(oResult, undefined);
+					assert.ok(oCause && oCause.response.statusCode === 404, "unexpected success");
+				}, function (oError0) {
+					assert.strictEqual(oError0, oError);
+					assert.ok(!oCause || oCause.response.statusCode !== 404,
+						JSON.stringify(oError0));
+				});
+		});
+	});
 });
 // TODO constructor: sDefaultBindingMode, mSupportedBindingModes
 // TODO constructor: test that the service root URL is absolute?
