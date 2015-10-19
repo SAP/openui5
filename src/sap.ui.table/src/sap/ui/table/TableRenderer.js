@@ -845,7 +845,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 				}
 				rm.writeAttribute("data-sap-ui-headcolindex", col);
 				rm.write(">");
-				if (iStartRow == 0) {
+				if (iStartRow == 0 && oTable._getHeaderRowCount() == 0) {
 					if (oColumn.getMultiLabels().length > 0) {
 						rm.renderControl(oColumn.getMultiLabels()[0]);
 					} else {
@@ -993,13 +993,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		mAriaAttributes["role"] = {value: "gridcell"};
 
 		var sRowSelectorId = oTable.getId() + "-rownumberofrows";
-		var sLabelledBy = sRowSelectorId + " " + oTable.getId() + "-ariadesc " + oColumn.getId();
-		var iMultiLabels = oColumn.getMultiLabels().length;
-		if (iMultiLabels > 1) {
-			for (var i = 1; i < iMultiLabels; i++) {
-				sLabelledBy +=  " " + oColumn.getId() + "_" + i;
+
+
+		var aMultiLabels = oColumn.getMultiLabels();
+		var iMultiLabels = aMultiLabels.length;
+		var sLabels = "";
+
+		// get IDs of column labels
+		if (oTable.getColumnHeaderVisible()) {
+			var sColumnId = oColumn.getId();
+			// first column header has no suffix, just the column ID
+			sLabels = sColumnId;
+			if (iMultiLabels > 1) {
+				for (var i = 1; i < iMultiLabels; i++) {
+					// for all other column header rows we add the suffix
+					sLabels += " " + sColumnId + "_" + i;
+				}
+			}
+		} else {
+			// column header is not rendered therfore there is no <div> tag. Link aria description to label
+			var oLabel;
+			if (iMultiLabels == 0) {
+				oLabel = oColumn.getLabel();
+				if (oLabel) {
+					sLabels = oLabel.getId();
+				}
+			} else {
+				for (var i = 0; i < iMultiLabels; i++) {
+					// for all other column header rows we add the suffix
+					oLabel = aMultiLabels[i];
+					if (oLabel) {
+						sLabels += " " + oLabel.getId() + " ";
+					}
+				}
 			}
 		}
+
+
+		var sLabelledBy = sRowSelectorId + " " + oTable.getId() + "-ariadesc " + sLabels;
+
 		sLabelledBy +=  " " + oCell.getId();
 
 		var sDescribedBy = "";
