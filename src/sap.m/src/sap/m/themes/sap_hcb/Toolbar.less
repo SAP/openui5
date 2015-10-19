@@ -33,6 +33,25 @@
 	outline-offset: -0.1875rem;
 }
 
+/* IE ignores outline-offset. Use an overlay: */
+.sap-desktop[data-sap-ui-browser^="ie"] {
+	.sapMTBActive:focus {
+		outline: none;
+		position: relative;
+	}
+	.sapMTBActive:focus:before {
+		content: " ";
+		box-sizing: border-box;
+		width: calc(~'100% - 0.0625rem');
+		height: calc(~'100% - 0.0625rem');
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.125rem dotted @sapHCStandardFG;
+		pointer-events: none;
+	}
+}
+
 .sapMTB-Info-CTX.sapMTB > * {
 	margin: 0 .5rem;
 }
