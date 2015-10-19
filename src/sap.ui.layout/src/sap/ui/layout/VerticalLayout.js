@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 	/**
 	 * Constructor for a new VerticalLayout.
 	 *
-	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
+	 * @param {string} [sId] Id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
@@ -39,7 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * 
+			 *
 			 * If not enabled, all controls inside are not enabled automatically.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true}
@@ -54,6 +54,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledP
 		},
 		designTime : true
 	}});
+
+	/**
+	 * Sets the width of the Vertical Layout without rerendering of the whole control, and everything inside it.
+	 * @param {sap.ui.core.CSSSize} width
+	 * @returns {VerticalLayout}
+	 */
+	VerticalLayout.prototype.setWidth = function (width) {
+		this.setProperty("width", width, true);
+		if (this.getDomRef()) {
+			this.getDomRef().style.width = this.getWidth();
+		}
+		return this;
+	};
 
 	EnabledPropagator.call(VerticalLayout.prototype);
 
