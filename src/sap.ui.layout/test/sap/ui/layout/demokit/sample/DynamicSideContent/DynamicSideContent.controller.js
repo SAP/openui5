@@ -3,6 +3,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller'],
 	"use strict";
 
 	var DynamicSideContent = Controller.extend("sap.ui.layout.sample.DynamicSideContent.DynamicSideContent", {
+		onBeforeRendering: function() {
+			this.getView().byId("DSCWidthSlider").setVisible(!sap.ui.Device.system.phone);
+			this.getView().byId("DSCWidthHintText").setVisible(!sap.ui.Device.system.phone);
+		},
 		handleSliderChange: function (oEvent) {
 			var iValue = oEvent.getParameter("value");
 			this.updateControlWidth(iValue);
