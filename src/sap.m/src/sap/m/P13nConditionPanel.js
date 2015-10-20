@@ -1439,13 +1439,8 @@ sap.ui.define([
 		// update the value fields for the KeyField
 		var oCurrentKeyField = this._getCurrentKeyFieldItem(oConditionGrid.keyField);
 
-		var fnCreateAndUpdateField = function(oCtrl, index) {
-			var oConditionGrid = oCtrl.getParent();
+		var fnCreateAndUpdateField = function(oConditionGrid, oCtrl, index) {
 			var sOldValue = oCtrl.getValue ? oCtrl.getValue() : "";
-
-			if (!oConditionGrid) {
-				return;
-			}
 
 			var ctrlIndex = oConditionGrid.indexOfContent(oCtrl);
 			oConditionGrid.removeContent(oCtrl);
@@ -1469,12 +1464,12 @@ sap.ui.define([
 		};
 
 		// update Value1 field control
-		jQuery.proxy(fnCreateAndUpdateField, this)(oConditionGrid.value1, 5);
+		jQuery.proxy(fnCreateAndUpdateField, this)(oConditionGrid, oConditionGrid.value1, 5);
 
 		// update Value2 field control
-		jQuery.proxy(fnCreateAndUpdateField, this)(oConditionGrid.value2, 6);
+		jQuery.proxy(fnCreateAndUpdateField, this)(oConditionGrid, oConditionGrid.value2, 6);
 	};
-
+	
 	P13nConditionPanel.prototype._updateAllOperations = function() {
 		var aConditionGrids = this._oConditionsGrid.getContent();
 		aConditionGrids.forEach(function(oConditionGrid) {
