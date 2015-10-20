@@ -153,6 +153,8 @@ xhr.onCreate = function(request) {
 			[200, oCountHeaders, "5"],
 		"Categories(1)":
 			[200, oJSONHeaders, sCategory1JSON],
+		"ZeroTest(1)":
+			[200, oJSONHeaders, sZeroTest],
 		"Categories(3)":
 			[200, oJSONHeaders, sCategory3JSON],
 		"Categories(4)":
@@ -7080,3 +7082,7 @@ var sMetadataComplex = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
 		"		</Schema>\n" + 
 		"	</edmx:DataServices>\n" + 
 		"</edmx:Edmx>"
+		
+		var sZeroTest = "{\n" + 
+		"	\"d\" : 0\n" + 
+		"}"; 

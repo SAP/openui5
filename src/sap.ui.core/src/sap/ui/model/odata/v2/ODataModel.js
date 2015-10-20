@@ -2509,7 +2509,7 @@ sap.ui.define([
 		this.decreaseLaundering(sPath, oRequest.data);
 		
 		// no data available
-		if (bContent && !oResultData && oResponse) {
+		if (bContent && oResultData === undefined && oResponse) {
 			// Parse error messages from the back-end
 			this._parseResponse(oResponse, oRequest);
 
