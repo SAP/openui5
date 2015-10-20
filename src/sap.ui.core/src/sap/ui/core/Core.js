@@ -183,6 +183,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			log.info("Creating Core",null,METHOD);
 
+			jQuery.sap.measure.start("coreComplete", "Core.js - complete");
+			jQuery.sap.measure.start("coreBoot", "Core.js - boot");
+			jQuery.sap.measure.start("coreInit", "Core.js - init");
+
 			/**
 			 * Object holding the interpreted configuration
 			 * Initialized from the global "sap-ui-config" object and from Url parameters
@@ -190,7 +194,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			 */
 			this.oConfiguration = new Configuration(this);
 
-			// initialize frameOptions script (anti-clickjacking, ect.)
+			// initialize frameOptions script (anti-clickjacking, etc.)
 			var oFrameOptionsConfig = this.oConfiguration["frameOptionsConfig"] || {};
 			oFrameOptionsConfig.mode = this.oConfiguration["frameOptions"];
 			oFrameOptionsConfig.whitelistService = this.oConfiguration["whitelistService"];
@@ -288,6 +292,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				log.trace("Core loaded: open=" + iOpenTasks + ", failures=" + iFailures);
 				that._boot();
 				oSyncPoint1.finishTask(iCoreBootTask);
+				jQuery.sap.measure.end("coreBoot");
 			});
 
 			// a helper task to prevent the premature completion of oSyncPoint2
@@ -866,6 +871,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		this.oThemeCheck = new ThemeCheck(this);
 
 		log.info("Initialized",null,METHOD);
+		jQuery.sap.measure.end("coreInit");
 
 		this.bInitialized = true;
 
@@ -875,7 +881,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		log.info("Plugins started",null,METHOD);
 
 		this._createUIAreas();
-		
+
 		this.oThemeCheck.fireThemeChangedEvent(true);
 
 		this._executeOnInit();
@@ -887,6 +893,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		this._executeInitListeners();
 
 		this.renderPendingUIUpdates(); // directly render without setTimeout, so rendering is guaranteed to be finished when init() ends
+
+		jQuery.sap.measure.end("coreComplete");
 	};
 
 	Core.prototype._createUIAreas = function() {
