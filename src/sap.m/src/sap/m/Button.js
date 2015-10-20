@@ -333,6 +333,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// update or create image control
 		var oImage = this._image;
+		var bIconFirst = this.getIconFirst();
 
 		if (!!oImage) {
 			oImage.setSrc(sSrc);
@@ -356,29 +357,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// add style classes to the object
 		oImage.addStyleClass("sapMBtnIcon");
 
-		// remove previous set style classes
-		if (oImage.hasStyleClass("sapMBtnIconLeft")) {
-			oImage.removeStyleClass("sapMBtnIconLeft");
-		}
-		if (oImage.hasStyleClass("sapMBtnIconRight")) {
-			oImage.removeStyleClass("sapMBtnIconRight");
-		}
-		if (oImage.hasStyleClass("sapMBtnBackIconLeft")) {
-			oImage.removeStyleClass("sapMBtnBackIconLeft");
-		}
-
-		if (this._getText()) {
-			// check and set absolute position depending on icon and icon position
-			if (this.getIconFirst()) {
-				if (this.getType() === sap.m.ButtonType.Back || this.getType() === sap.m.ButtonType.Up) {
-					oImage.addStyleClass("sapMBtnBackIconLeft");
-				} else {
-					oImage.addStyleClass("sapMBtnIconLeft");
-				}
-			} else {
-				oImage.addStyleClass("sapMBtnIconRight");
-			}
-		}
+		// check and set absolute position depending on icon and icon position
+		oImage.toggleStyleClass("sapMBtnIconLeft", bIconFirst);
+		oImage.toggleStyleClass("sapMBtnIconRight", !bIconFirst);
 
 		this._image = oImage;
 		return this._image;
@@ -411,9 +392,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// add style classes to the object
 		oIcon.addStyleClass("sapMBtnIcon");
-		if (this._getText()) {
-			oIcon.addStyleClass("sapMBtnIconLeft");
-		}
+		oIcon.addStyleClass("sapMBtnIconLeft");
 
 		this._iconBtn = oIcon;
 		return this._iconBtn;
@@ -460,25 +439,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				// Get text to have the type conversation for non-string values done by the framework
 				sText = this.getText();
 				oDomRef.innerHTML = jQuery.sap.encodeHTML(sText);
-
-				// Check if an icon is set
-				if (this.getIcon()) {
-					// Remove all text padding classes
-					this._removeTextPadding();
-
-					// Add the text padding classes
-					if (sText.length > 0) {
-						this._addTextPadding(this.getIconFirst());
-					}
-
-					// extend  minimum button size if icon is set without text for button types back and up
-					if (this.$().hasClass("sapMBtnBack")) {
-						this.$().removeClass("sapMBtnBack");
-					}
-					if ((this.getType() === sap.m.ButtonType.Back || this.getType() === sap.m.ButtonType.Up) && this.getIcon() && !this.getText()) {
-						this.$().addClass("sapMBtnBack");
-					}
-				}
+				this.$("inner").toggleClass("sapMBtnText", !!sText);
 			}
 		}
 
@@ -504,144 +465,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 		return this;
-	};
-
-
-	/**
-	 * Property setter for the icon first
-	 *
-	 * @param {boolean} bIconFirst - true IFF the icon goes before the text
-	 * @return {sap.m.Button} this to allow method chaining
-	 * @public
-	 */
-	Button.prototype.setIconFirst = function(bIconFirst) {
-		var sValue = this.getIconFirst();
-
-		if (sValue !== bIconFirst) {
-			var oDomRef = this.getDomRef("img");
-			var bShouldSupressRendering = !!oDomRef;
-
-			// Render control if element is not available in the DOM
-			this.setProperty("iconFirst", bIconFirst, bShouldSupressRendering);
-
-			if (bShouldSupressRendering) {
-
-				// remove previous set style classes
-				if (this.$("img").hasClass("sapMBtnIconLeft")) {
-					this.$("img").removeClass("sapMBtnIconLeft");
-				}
-				if (this.$("img").hasClass("sapMBtnIconRight")) {
-					this.$("img").removeClass("sapMBtnIconRight");
-				}
-				if (this.$("img").hasClass("sapMBtnBackIconLeft")) {
-					this.$("img").removeClass("sapMBtnBackIconLeft");
-				}
-				if (this.$("content").hasClass("sapMBtnContentLeft")) {
-					this.$("content").removeClass("sapMBtnContentLeft");
-				}
-				if (this.$("content").hasClass("sapMBtnContentRight")) {
-					this.$("content").removeClass("sapMBtnContentRight");
-				}
-				if (this.$("content").hasClass("sapMBtnBackContentRight")) {
-					this.$("content").removeClass("sapMBtnBackContentRight");
-				}
-
-				if (this._getText()) {
-					// check and set absolute position depending on icon and icon position
-					if (bIconFirst) {
-						if (this.getType() === sap.m.ButtonType.Back || this.getType() === sap.m.ButtonType.Up) {
-							this.$("img").addClass("sapMBtnBackIconLeft");
-							this.$("content").addClass("sapMBtnBackContentRight");
-						} else {
-							this.$("img").addClass("sapMBtnIconLeft");
-							this.$("content").addClass("sapMBtnContentRight");
-						}
-					} else {
-						if (this.getType() === sap.m.ButtonType.Back || this.getType() === sap.m.ButtonType.Up) {
-							this.$("content").addClass("sapMBtnContentRight");
-						} else {
-							this.$("content").addClass("sapMBtnContentLeft");
-						}
-						this.$("img").addClass("sapMBtnIconRight");
-					}
-				}
-
-				// Remove all text padding classes
-				this._removeTextPadding();
-
-				// Add the text padding classes
-				if (this._getText().length > 0) {
-					this._addTextPadding(bIconFirst);
-				}
-			}
-		}
-
-		return this;
-	};
-
-	/**
-	 * Function is called to remove the padding classes for the text
-	 *
-	 * @private
-	 */
-	Button.prototype._removeTextPadding = function() {
-
-		// Search and remove padding classes
-		if (this.$("inner").hasClass("sapMBtnPaddingLeft")) {
-			this.$("inner").removeClass("sapMBtnPaddingLeft");
-		} else if (this.$("inner").hasClass("sapMBtnPaddingRight")) {
-			this.$("inner").removeClass("sapMBtnPaddingRight");
-		}
-
-		// Search and remove padding between icon and text
-		if (!this._getText()) {
-			if (this.$("content").hasClass("sapMBtnContentLeft")) {
-				this.$("content").removeClass("sapMBtnContentLeft");
-			}
-			if (this.$("content").hasClass("sapMBtnContentRight")) {
-				this.$("content").removeClass("sapMBtnContentRight");
-			}
-			if (this.$("content").hasClass("sapMBtnBackContentRight")) {
-				this.$("content").removeClass("sapMBtnBackContentRight");
-			}
-		}
-	};
-
-	/**
-	 * Function is called to add the padding classes for the text
-	 *
-	 * @param {boolean} bIconFirst - true IFF the icon goes before the text
-	 * @private
-	 */
-	Button.prototype._addTextPadding = function( bIconFirst) {
-		var sType = this.getType();
-
-		// Add text padding classes
-		if (bIconFirst) {
-			this.$("inner").addClass("sapMBtnPaddingRight");
-		} else if (sType != sap.m.ButtonType.Back && sType != sap.m.ButtonType.Up) {
-			this.$("inner").addClass("sapMBtnPaddingLeft");
-		}
-
-		// Add text padding classes between icon and text
-		if (this._getText()) {
-			if (this.getIcon()) {
-				if (this.getIconFirst()) {
-					if (this.getType() === sap.m.ButtonType.Back || this.getType() === sap.m.ButtonType.Up) {
-						this.$("content").addClass("sapMBtnBackContentRight");
-					} else {
-						this.$("content").addClass("sapMBtnContentRight");
-					}
-				} else {
-					if (this.getType() === sap.m.ButtonType.Back || this.getType() === sap.m.ButtonType.Up) {
-						this.$("content").addClass("sapMBtnContentRight");
-					}
-					this.$("content").addClass("sapMBtnContentLeft");
-				}
-			} else if (this.getType() === sap.m.ButtonType.Back || this.getType() === sap.m.ButtonType.Up) {
-				this.$("content").addClass("sapMBtnContentRight");
-			}
-		}
 	};
 
 	/**
