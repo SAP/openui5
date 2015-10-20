@@ -82,20 +82,25 @@
 	});
 
 	asyncTest("ListBinding getLength, getContexts", function(){
-		var oBinding = oModel.bindList("/Categories");
-		var handler = function() {
-			equal(oBinding.getPath(), "/Categories", "ListBinding path");
-			ok(oBinding.getModel() == oModel, "ListBinding model");
-			equal(oBinding.getLength(), 8, "length of items");
-			jQuery(oBinding.getContexts()).each(function(i, context){
-				equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
+		oModel.metadataLoaded().then(function(){
+			var oBinding = oModel.bindList("/Categories");
+			var handler = function() {
+				equal(oBinding.getPath(), "/Categories", "ListBinding path");
+				ok(oBinding.getModel() == oModel, "ListBinding model");
+				equal(oBinding.getLength(), 8, "length of items");
+				jQuery(oBinding.getContexts()).each(function(i, context){
+					equal(context.getPath(), "/Categories(" + (i + 1) + ")", "ListBinding context");
+				});
+				oBinding.detachChange(handler);
+				start(); // resume normal testing
+			}
+			oBinding.attachRefresh(function() {
+				oBinding.getContexts();
 			});
-			oBinding.detachChange(handler);
-			start(); // resume normal testing
-		}
-		oBinding.attachRefresh(function() {oBinding.getContexts();});
-		oBinding.attachChange(handler);
-		// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+			oBinding.attachChange(handler);
+			oBinding.initialize();
+			// fire first loading...getContexts might be empty the first time...then when data is loaded the handler will be called
+		});
 	});
 
 	// TODO: Find out why this fails in PhantomJS and rewrite test
