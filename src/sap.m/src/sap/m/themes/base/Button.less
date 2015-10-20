@@ -3,13 +3,19 @@
 /* ============================================= */
 
 .sapMBtn {
-	height:           2.750rem;
+	height:           3rem;
 	margin:           0;
-	padding:          0;
+	padding:          0.250rem 0;
 	vertical-align:   top;
 	border:           none;
 }
-
+.sapMBtn:focus {
+	outline:          none;
+}
+.sapMBtn::-moz-focus-inner {
+	padding: 0;
+	border: 0
+}
 .sapMBtn:not(.sapMBtnDisabled) {
 	cursor: pointer;
 }
@@ -23,13 +29,11 @@
 	position: relative;
 }
 
-/*Needed for firefox if you set 100px to a div inside a button the width will be 106px */
-.sapMBtn::-moz-focus-inner {
-	padding: 0;
-	border: 0
-}
-
+/* --------------------- */
+/* Inner area            */
+/* --------------------- */
 .sapMBtnInner {
+	vertical-align:   top;
 	-webkit-appearance: none;
 	-webkit-user-select: none;
 	-moz-user-select: none;
@@ -37,6 +41,10 @@
 	-webkit-background-clip: padding-box;
 	background-clip: padding-box;
 	box-sizing: border-box;
+
+	font-family: @sapUiFontFamily;
+	font-size: 0.875rem;
+
 	height: 2.500rem;
 	min-width: 2.500em;
 	margin: 0;
@@ -45,51 +53,193 @@
 	position: relative;
 }
 
-/* IE issue: buttons without inline content require more vertical space than needed */
 html[data-sap-ui-browser*='ie'] .sapMBtnInner {
+	/* Buttons without inline content require
+		more vertical space than needed in IE */
 	display: inline-block;
 	width: 100%;
 }
 
-.sapMBtnIconLeft {
-	position: absolute;
-	top: 0;
-	left: 0;
+.sapMBtnInner::-moz-focus-inner {
+	border: 0;
+}
+.sapMBtnInner:focus,
+.sapMBtnContent>span:focus {
+	outline: none;
 }
 
-.sapMBtnBackIconLeft {
-	position: absolute;
-	top: 0;
-	left: 2.375rem;
+/* paddings depends on the presence and placement of text and icons */
+.sapMBtnInner.sapMBtnText {
+	padding-left: 0.75rem;
+	padding-right: 0.75rem;
+}
+.sapMBtnInner.sapMBtnIconFirst,
+.sapMBtnInner.sapMBtnBack {
+	padding-left: 2.375rem;
+}
+.sapMBtnInner.sapMBtnBack.sapMBtnIconFirst {
+	padding-left: 4.750rem;
+}
+.sapMBtnInner.sapMBtnIconLast {
+	padding-right: 2.375rem;
 }
 
-.sapMBtnIconRight {
-	position: absolute;
-	top: 0;
-	right: 0;
-}
-
+/* ------------------- */
+/* Content area        */
+/* ------------------- */
 .sapMBtnContent {
 	display: block;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	vertical-align: top;
-	line-height: 2.5rem;
-}
-
-.sapMBtnContentLeft {
-	padding-right: 2.375rem;
-}
-
-.sapMBtnContentRight {
-	padding-left: 2.375rem;
-}
-
-.sapMBtnBackContentRight {
-	padding-left: 4.750rem;
+	line-height: 2.375rem;
 }
 
 html[data-sap-ui-browser*='ie'] .sapMBtnContentWithIcon {
 	display: inline;
+}
+
+/* ------------------- */
+/* Button Icon         */
+/* ------------------- */
+.sapMBtnIcon {
+	font-size:        1.375rem;
+	line-height:      2.375rem;
+	width:            2.375rem;
+	text-align:       center;
+	margin:           0;
+	padding:          0;
+	vertical-align:   top;
+	max-height:       2.375rem;
+	position:         absolute;
+	top:              0;
+	left:             0;
+}
+.sapMBtnIconLeft + .sapMBtnIconLeft {
+	left: 2.375rem;
+}
+.sapMBtnIconRight {
+	right: 0;
+	left: auto;
+}
+
+/* ------------------------------------------------ */
+/* Buttons in a Bar                                 */
+/* (add separators, remove top/bottom border)       */
+/* ------------------------------------------------ */
+
+.sapMIBar .sapMBtnInner {
+	vertical-align:   top;
+}
+
+.sapMIBar .sapMBtnInner.sapMIE {
+	/* This is for IE9 - if a button overflows inside of a bar,
+		ellipsis will be shown and it will hide completely
+		if there is no position relative set.*/
+	position: relative;
+}
+
+/* ------------------------------------------------ */
+/* Compact size                                     */
+/* ------------------------------------------------ */
+
+.sapUiSizeCompact{
+	.sapMBtn {
+		height:           2.000rem;
+		padding:          0.1875rem 0;
+	}
+
+	.sapMBtnInner {
+		height:           1.625rem;
+		min-width:        2.0rem;
+	}
+	.sapMBtnInner.sapMBtnText {
+		padding-left: 0.4375rem;
+		padding-right: 0.4375rem;
+	}
+	.sapMBtnInner.sapMBtnIconFirst,
+	.sapMBtnInner.sapMBtnBack {
+		padding-left: 1.875rem;
+	}
+	.sapMBtnInner.sapMBtnBack.sapMBtnIconFirst {
+		padding-left: 3.75rem;
+	}
+	.sapMBtnInner.sapMBtnIconLast {
+		padding-right: 1.875rem;
+	}
+
+	.sapMBtnContent {
+		line-height:      1.500rem;
+	}
+
+	.sapMBtnIcon {
+		line-height:      1.500rem;
+		width:            1.000rem;
+		font-size:        1.000rem;
+		max-height:       1.500rem;
+		margin-left:      0.4375rem;
+		margin-right:     0.4375rem;
+	}
+	.sapMBtnIconLeft + .sapMBtnIconLeft {
+		left: 1.875rem;
+	}
+	.sapMBtnInner > img {
+		height:           1.500rem;
+		width:            1.500rem;
+		margin-left:      0.250rem;
+		margin-right:     0.250rem;
+	}
+}
+
+/* ------------------------------------------------ */
+/* Condensed size                                   */
+/* ------------------------------------------------ */
+
+.sapUiSizeCondensed {
+	.sapMBtn {
+		height:           1.375rem;
+		padding:          0;
+	}
+	.sapMBtnInner {
+		height:           1.375rem;
+		min-width:        2.0rem;
+	}
+	.sapMBtnInner.sapMBtnText {
+		padding-left: 0.4375rem;
+		padding-right: 0.4375rem;
+	}
+	.sapMBtnInner.sapMBtnIconFirst,
+	.sapMBtnInner.sapMBtnBack {
+		padding-left: 1.75rem;
+	}
+	.sapMBtnInner.sapMBtnBack.sapMBtnIconFirst {
+		padding-left: 3.5rem;
+	}
+	.sapMBtnInner.sapMBtnIconLast {
+		padding-right: 1.75rem;
+	}
+	.sapMBtnInner > img {
+		height:           1.250rem;
+		width:            1.250rem;
+		margin-left:      0.250rem;
+		margin-right:     0.250rem;
+	}
+	.sapMIBar-CTX .sapMBtnInner {
+		margin:           0;
+	}
+	.sapMBtnIcon {
+		line-height:      1.250rem;
+		font-size:        1.000rem;
+		max-height:       1.250rem;
+		width:            1.000rem;
+		margin-left:      0.4375rem;
+		margin-right:     0.4375rem;
+	}
+	.sapMBtnIconLeft + .sapMBtnIconLeft {
+		left: 1.75rem;
+	}
+	.sapMBtnContent {
+		line-height:      1.250rem;
+	}
 }
