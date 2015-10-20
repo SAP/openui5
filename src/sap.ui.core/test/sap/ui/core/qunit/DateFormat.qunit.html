@@ -211,6 +211,27 @@
 		equal(oDate.getFullYear(), 1994, "Year 1994");
 	});
 
+	test("parse date two digit year UTC", function(){
+		var oFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "yyyy-MM-dd", UTC: true}),
+			oDate;
+		oDate = oFormat.parse("2014-03-12");
+		equal(oDate.getFullYear(), 2014, "Year 2014");
+		oDate = oFormat.parse("0014-03-12");
+		equal(oDate.getFullYear(), 14, "Year 14");
+		oDate = oFormat.parse("04-03-12");
+		equal(oDate.getFullYear(), 2004, "Year 2004");
+		oDate = oFormat.parse("14-03-12");
+		equal(oDate.getFullYear(), 2014, "Year 2014");
+		oDate = oFormat.parse("34-03-12");
+		equal(oDate.getFullYear(), 2034, "Year 2034");
+		oDate = oFormat.parse("54-03-12");
+		equal(oDate.getFullYear(), 1954, "Year 1954");
+		oDate = oFormat.parse("74-03-12");
+		equal(oDate.getFullYear(), 1974, "Year 1974");
+		oDate = oFormat.parse("94-03-12");
+		equal(oDate.getFullYear(), 1994, "Year 1994");
+	});
+
 	test("parse default date UTC", function(){
 		var oDate = oDefaultDate.parse("May 23, 2008", true);
 		equal(oDate.getUTCFullYear(), 2008, "Year 2008");
