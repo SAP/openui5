@@ -175,6 +175,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	};
 
 	/**
+	 * Returns the inner aria describedby announcement texts for the accessibility.
+	 * Hook for the subclasses.
+	 *
+	 * @param {sap.ui.core.Control} oControl an object representation of the control.
+	 * @returns {String}
+	 */
+	InputBaseRenderer.getDescribedByAnnouncement = function(oControl) {
+		return oControl.getTooltip_AsString() || "";
+	};
+
+	/**
 	 * This method is reserved for derived classes to add extra attributes to the Input.
 	 *
 	 * @deprecated sap.m.InputBaseRenderer#writeInnerAttributes should be called instead of this method.

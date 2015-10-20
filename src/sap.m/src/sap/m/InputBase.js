@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-// Provides control sap.m.InputBase.
 sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool', 'sap/ui/core/Popup'],
 	function(jQuery, library, Control, EnabledPropagator, IconPool, Popup) {
 	"use strict";
