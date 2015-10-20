@@ -3,7 +3,7 @@
  */
 
 /*global JSZip *///declare unusual global vars for JSLint/SAPUI5 validation
-sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
+sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/Device', 'sap/m/MessageToast'], function (Controller, Device, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.explored.view.code", {
@@ -113,6 +113,14 @@ sap.ui.define(['sap/ui/core/mvc/Controller'], function (Controller) {
 		},
 
 		onDownload : function (evt) {
+
+			if (Device.browser.internet_explorer && Device.browser.version < 10) {
+				MessageToast.show('Download action is not supported in Internet Explorer 9', {
+					autoClose: true,
+					duration: 3000
+				});
+				return;
+			}
 
 			jQuery.sap.require("sap.ui.thirdparty.jszip");
 			var oZipFile = new JSZip();
