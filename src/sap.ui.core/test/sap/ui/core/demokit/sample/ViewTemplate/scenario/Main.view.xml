@@ -1,13 +1,12 @@
 <mvc:View
 	controllerName="sap.ui.core.sample.ViewTemplate.scenario.Main"
 	xmlns="sap.m"
-	xmlns:commons="sap.ui.commons"
 	xmlns:core="sap.ui.core"
 	xmlns:layout="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	>
-	<layout:VerticalLayout>
-		<layout:HorizontalLayout>
+	<layout:VerticalLayout width="inherit">
+		<layout:HorizontalLayout allowWrapping="true">
 			<Select change="onChangeType" items="{ui>/entitySet}" selectedKey="{ui>/selectedEntitySet}">
 				<core:ListItem text="{ui>name}" key="{ui>name}"/>
 			</Select>
@@ -18,11 +17,12 @@
 			<ToggleButton id="toggleSourceCode" icon="sap-icon://syntax" press="onSourceCode" text="Design-Time Source Code"/>
 			<CheckBox selected="{ui>/bindTexts}" select="onChangeType" text="bindTexts"/><!-- triggers XML templating! -->
 		</layout:HorizontalLayout>
-		<layout:VerticalLayout visible="{ui>/codeVisible}">
-			<commons:HorizontalDivider/>
-			<core:HTML content="{ui>/code}" preferDOM="false"/>
-		</layout:VerticalLayout>
-		<commons:HorizontalDivider/>
+		<Panel expandable="false" visible="{ui>/codeVisible}" headerText="Design-Time Source Code"
+			width="inherit" class="sapUiResponsiveMargin">
+			<content>
+				<core:HTML content="{ui>/code}" preferDOM="false"/>
+			</content>
+		</Panel>
 		<layout:HorizontalLayout id="detailBox"/>
 	</layout:VerticalLayout>
 </mvc:View>

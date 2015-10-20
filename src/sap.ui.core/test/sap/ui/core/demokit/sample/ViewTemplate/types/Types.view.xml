@@ -1,7 +1,6 @@
 <mvc:View
 	controllerName="sap.ui.core.sample.ViewTemplate.types.Types"
 	xmlns="sap.m"
-	xmlns:commons="sap.ui.commons"
 	xmlns:core="sap.ui.core"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc"
@@ -13,124 +12,117 @@
 			<Button id="onResetID" text="Reset" press="onReset" visible="{ui>/realOData}" />
 			<ToggleButton id="toggleSourceCode" icon="sap-icon://syntax" press="onSourceCode" text="Design-Time Source Code"/>
 		</HBox>
-		<VBox visible="{ui>/codeVisible}">
-			<commons:HorizontalDivider/>
-			<core:HTML content="{ui>/code}" preferDOM="false"/>
-		</VBox>
-		<commons:HorizontalDivider/>
-		<HBox width="100%">
-			<form:SimpleForm>
-				<!--TODO: sap.ui.model.odata.type.Binary not yet available
-				<core:Title text="sap.ui.model.odata.type.Binary" />
-				<Image src="data:image/png;base64, {path: 'Binary'}" /> -->
-				<core:Title text="sap.ui.model.odata.type.Boolean" />
-				<Label text="sap.ui.model.odata.type.Boolean Input Field, true"/>
-				<Input value="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean'}"/>
-				<Label text="sap.ui.model.odata.type.Boolean Input Field, NOT nullable"/>
-				<Input value="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean',
-					constraints: {nullable: false}}"/>
-				<Label text="sap.ui.model.odata.type.Boolean CheckBox, true"/>
-				<CheckBox selected="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean'}"/>
+		<Panel expandable="false" visible="{ui>/codeVisible}" headerText="Design-Time Source Code" 
+			width="auto" class="sapUiResponsiveMargin">
+			<content>
+				<core:HTML content="{ui>/code}" preferDOM="false"/>
+			</content>
+		</Panel>
+		<form:SimpleForm layout="ResponsiveGridLayout" labelSpanL="12" labelSpanM="12" columnsM="2" columnsL="3">
+			<!--TODO: sap.ui.model.odata.type.Binary not yet available
+			<core:Title text="sap.ui.model.odata.type.Binary" />
+			<Image src="data:image/png;base64, {path: 'Binary'}" /> -->
+			<core:Title text="sap.ui.model.odata.type.Boolean" />
+			<Label text="sap.ui.model.odata.type.Boolean Input Field, true"/>
+			<Input value="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean'}"/>
+			<Label text="sap.ui.model.odata.type.Boolean Input Field, NOT nullable"/>
+			<Input value="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean',
+				constraints: {nullable: false}}"/>
+			<Label text="sap.ui.model.odata.type.Boolean CheckBox, true"/>
+			<CheckBox selected="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean'}"/>
 
-				<core:Title text="DateTime variants" />
-				<Label text="DateTime"/>
-				<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime'}"/>
-				<Label text="DateTime, nullable: false"/>
-				<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime', constraints: {nullable: false}}"/>
-				<Label text="DateTime, style:  &quot;short&quot;"/>
-				<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'short'}}"/>
-				<Label text="DateTime, displayFormat: &quot;Date&quot;"/>
-				<Input value="{path: 'Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date'}}"/>
-				<Label text="DateTime, displayFormat: &quot;Date&quot;, nullable: false"/>
-				<Input value="{path: 'Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date', nullable: false}}"/>
-				<Label text="DateTimeOffset"/>
-				<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset'}"/>
-				<Label text="DateTimeOffset, nullable: false"/>
-				<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {nullable: false}}"/>
-				<Label text="DateTimeOffset, style:  &quot;short&quot;"/>
-				<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', formatOptions: {style: 'short'}}"/>
-				<Label text="Time"/>
-				<Input value="{path: 'Time', type: 'sap.ui.model.odata.type.Time'}"/>
-				<Label text="Time, nullable: false"/>
-				<Input value="{path: 'Time', type: 'sap.ui.model.odata.type.Time', constraints: {nullable: false}}"/>
-				<Label text="Time, style: &quot;short&quot;"/>
-				<Input value="{path: 'Time', type: 'sap.ui.model.odata.type.Time', formatOptions: {style: 'short'}}"/>
+			<core:Title text="DateTime variants" />
+			<Label text="DateTime"/>
+			<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime'}"/>
+			<Label text="DateTime, nullable: false"/>
+			<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime', constraints: {nullable: false}}"/>
+			<Label text="DateTime, style:  &quot;short&quot;"/>
+			<Input value="{path: 'DateTime', type: 'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'short'}}"/>
+			<Label text="DateTime, displayFormat: &quot;Date&quot;"/>
+			<Input value="{path: 'Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date'}}"/>
+			<Label text="DateTime, displayFormat: &quot;Date&quot;, nullable: false"/>
+			<Input value="{path: 'Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date', nullable: false}}"/>
+			<Label text="DateTimeOffset"/>
+			<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset'}"/>
+			<Label text="DateTimeOffset, nullable: false"/>
+			<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {nullable: false}}"/>
+			<Label text="DateTimeOffset, style:  &quot;short&quot;"/>
+			<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', formatOptions: {style: 'short'}}"/>
+			<Label text="Time"/>
+			<Input value="{path: 'Time', type: 'sap.ui.model.odata.type.Time'}"/>
+			<Label text="Time, nullable: false"/>
+			<Input value="{path: 'Time', type: 'sap.ui.model.odata.type.Time', constraints: {nullable: false}}"/>
+			<Label text="Time, style: &quot;short&quot;"/>
+			<Input value="{path: 'Time', type: 'sap.ui.model.odata.type.Time', formatOptions: {style: 'short'}}"/>
 
-				<core:Title text="sap.ui.model.odata.type.Decimal" />
-				<Label text="scale: 3"/>
-				<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {scale: 3}}"/>
-				<Label text="precision: 10, scale: &quot;variable&quot;, nullable: false"/>
-				<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, precision: 10, scale: 'variable'}}"/>
-				<Label text="precision:10, scale: 3"/>
-				<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 10, scale: 3}}"/>
-				<Label text="scale: default (0), nullable: false"/>
-				<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false}}"/>
-				<Label text="scale: &quot;variable&quot;, style: &quot;short&quot;, shortDecimals: 3"/>
-				<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 'variable'}, formatOptions: {style: 'short', shortDecimals: 3}}"/>
+			<core:Title text="sap.ui.model.odata.type.Decimal" />
+			<Label text="scale: 3"/>
+			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {scale: 3}}"/>
+			<Label text="precision: 10, scale: &quot;variable&quot;, nullable: false"/>
+			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, precision: 10, scale: 'variable'}}"/>
+			<Label text="precision:10, scale: 3"/>
+			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 10, scale: 3}}"/>
+			<Label text="scale: default (0), nullable: false"/>
+			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false}}"/>
+			<Label text="scale: &quot;variable&quot;, style: &quot;short&quot;, shortDecimals: 3"/>
+			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 'variable'}, formatOptions: {style: 'short', shortDecimals: 3}}"/>
 
-				<core:Title text="sap.ui.model.odata.type.Double" />
-				<Label text="no constraints"/>
-				<Input value="{path: 'Double', type: 'sap.ui.model.odata.type.Double'}"/>
-				<Label text="nullable: false"/>
-				<Input value="{path: 'Double', type: 'sap.ui.model.odata.type.Double', constraints: {nullable: false}}"/>
+			<core:Title text="sap.ui.model.odata.type.Double" />
+			<Label text="no constraints"/>
+			<Input value="{path: 'Double', type: 'sap.ui.model.odata.type.Double'}"/>
+			<Label text="nullable: false"/>
+			<Input value="{path: 'Double', type: 'sap.ui.model.odata.type.Double', constraints: {nullable: false}}"/>
 
-				<core:Title text="sap.ui.model.odata.type.Single" />
-				<Label text="no constraints"/>
-				<Input value="{path: 'Single', type: 'sap.ui.model.odata.type.Single'}"/>
-				<Label text="nullable: false"/>
-				<Input value="{path: 'Single', type: 'sap.ui.model.odata.type.Single', constraints: {nullable: false}}"/>
+			<core:Title text="sap.ui.model.odata.type.Single" />
+			<Label text="no constraints"/>
+			<Input value="{path: 'Single', type: 'sap.ui.model.odata.type.Single'}"/>
+			<Label text="nullable: false"/>
+			<Input value="{path: 'Single', type: 'sap.ui.model.odata.type.Single', constraints: {nullable: false}}"/>
 
-				<core:Title text="sap.ui.model.odata.type.Guid" />
-				<Label text="no constraints"/>
-				<Input value="{path: 'GlobalUID', type: 'sap.ui.model.odata.type.Guid'}"/>
-				<Label text="nullable: false"/>
-				<Input value="{path: 'GlobalUID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}"/>
+			<core:Title text="sap.ui.model.odata.type.Guid" />
+			<Label text="no constraints"/>
+			<Input value="{path: 'GlobalUID', type: 'sap.ui.model.odata.type.Guid'}"/>
+			<Label text="nullable: false"/>
+			<Input value="{path: 'GlobalUID', type: 'sap.ui.model.odata.type.Guid', constraints: {nullable: false}}"/>
 
-				<core:Title text="Integer-Based Data Types" />
-				<Label text="sap.ui.model.odata.type.Byte"/>
-				<Input value="{path: 'Byte', type: 'sap.ui.model.odata.type.Byte'}"/>
-				<Label text="sap.ui.model.odata.type.Byte, nullable=false"/>
-				<Input value="{path: 'Byte', type: 'sap.ui.model.odata.type.Byte', constraints: {nullable: false}}"/>
-				<Label text="sap.ui.model.odata.type.Int16"/>
-				<Input value="{path: 'Int16', type: 'sap.ui.model.odata.type.Int16'}"/>
-				<Label text="sap.ui.model.odata.type.Int16, nullable=false"/>
-				<Input value="{path: 'Int16', type: 'sap.ui.model.odata.type.Int16', constraints: {nullable: false}}"/>
-				<Label text="sap.ui.model.odata.type.Int32"/>
-				<Input value="{path: 'Int32', type: 'sap.ui.model.odata.type.Int32'}"/>
-				<Label text="sap.ui.model.odata.type.Int32, nullable=false"/>
-				<Input value="{path: 'Int32', type: 'sap.ui.model.odata.type.Int32', constraints: {nullable: false}}"/>
-				<Label text="sap.ui.model.odata.type.Int32, style: &quot;short&quot;"/>
-				<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int32', constraints: {nullable: false}, formatOptions: {style: 'short'}}"/>
-				<Label text="sap.ui.model.odata.type.Int64"/>
-				<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int64'}"/>
-				<Label text="sap.ui.model.odata.type.Int64, nullable=false"/>
-				<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int64', constraints: {nullable: false}}"/>
-				<Label text="sap.ui.model.odata.type.Int64, style: &quot;short&quot;"/>
-				<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int64', constraints: {nullable: false}, formatOptions: {style: 'short'}}"/>
-				<Label text="sap.ui.model.odata.type.SByte"/>
-				<Input value="{path: 'SByte', type: 'sap.ui.model.odata.type.SByte'}"/>
-				<Label text="sap.ui.model.odata.type.SByte, nullable=false"/>
-				<Input value="{path: 'SByte', type: 'sap.ui.model.odata.type.SByte', constraints: {nullable: false}}"/>
+			<core:Title text="Integer-Based Data Types" />
+			<Label text="sap.ui.model.odata.type.Byte"/>
+			<Input value="{path: 'Byte', type: 'sap.ui.model.odata.type.Byte'}"/>
+			<Label text="sap.ui.model.odata.type.Byte, nullable=false"/>
+			<Input value="{path: 'Byte', type: 'sap.ui.model.odata.type.Byte', constraints: {nullable: false}}"/>
+			<Label text="sap.ui.model.odata.type.Int16"/>
+			<Input value="{path: 'Int16', type: 'sap.ui.model.odata.type.Int16'}"/>
+			<Label text="sap.ui.model.odata.type.Int16, nullable=false"/>
+			<Input value="{path: 'Int16', type: 'sap.ui.model.odata.type.Int16', constraints: {nullable: false}}"/>
+			<Label text="sap.ui.model.odata.type.Int32"/>
+			<Input value="{path: 'Int32', type: 'sap.ui.model.odata.type.Int32'}"/>
+			<Label text="sap.ui.model.odata.type.Int32, nullable=false"/>
+			<Input value="{path: 'Int32', type: 'sap.ui.model.odata.type.Int32', constraints: {nullable: false}}"/>
+			<Label text="sap.ui.model.odata.type.Int32, style: &quot;short&quot;"/>
+			<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int32', constraints: {nullable: false}, formatOptions: {style: 'short'}}"/>
+			<Label text="sap.ui.model.odata.type.Int64"/>
+			<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int64'}"/>
+			<Label text="sap.ui.model.odata.type.Int64, nullable=false"/>
+			<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int64', constraints: {nullable: false}}"/>
+			<Label text="sap.ui.model.odata.type.Int64, style: &quot;short&quot;"/>
+			<Input value="{path: 'Int64', type: 'sap.ui.model.odata.type.Int64', constraints: {nullable: false}, formatOptions: {style: 'short'}}"/>
+			<Label text="sap.ui.model.odata.type.SByte"/>
+			<Input value="{path: 'SByte', type: 'sap.ui.model.odata.type.SByte'}"/>
+			<Label text="sap.ui.model.odata.type.SByte, nullable=false"/>
+			<Input value="{path: 'SByte', type: 'sap.ui.model.odata.type.SByte', constraints: {nullable: false}}"/>
 
-				<core:Title text="sap.ui.model.odata.type.String" />
-				<Label text="maxLength: 10"/>
-				<Input value="{path: 'String', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10}}"/>
-				<Label text="nullable: false"/>
-				<Input value="{path: 'String', type: 'sap.ui.model.odata.type.String', constraints: {nullable: false}}"/>
-			</form:SimpleForm>
-			<form:SimpleForm>
-				<form:content>
-					<core:Title text="com.sap.vocabularies.UI.v1.Identification"/>
-					<template:repeat list="{meta>com.sap.vocabularies.UI.v1.Identification}">
-						<Label text="{path: 'meta>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-						<Input value="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-					</template:repeat>
-				</form:content>
-				<form:layoutData>
-					<FlexItemData growFactor="1.0"></FlexItemData>
-				</form:layoutData>
-			</form:SimpleForm>
-		</HBox>
+			<core:Title text="sap.ui.model.odata.type.String" />
+			<Label text="maxLength: 10"/>
+			<Input value="{path: 'String', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 10}}"/>
+			<Label text="nullable: false"/>
+			<Input value="{path: 'String', type: 'sap.ui.model.odata.type.String', constraints: {nullable: false}}"/>
+
+			<core:Title text="com.sap.vocabularies.UI.v1.Identification"/>
+			<template:repeat list="{meta>com.sap.vocabularies.UI.v1.Identification}">
+				<Label text="{path: 'meta>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+				<Input value="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+			</template:repeat>
+		</form:SimpleForm>
 	</VBox>
 </mvc:View>
 
