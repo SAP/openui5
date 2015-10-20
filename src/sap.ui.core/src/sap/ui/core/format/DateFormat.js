@@ -1079,20 +1079,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 
 			if (that.oFormatOptions.relativeScale == "auto" & that.aRelativeScales[that.aRelativeScales.length - 1] === "second") {
 				if (bUTC) {
-					iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate(), oToday.getHours(), oToday.getMinutes(), oToday.getSeconds());
-				} else {
 					iToday = oToday.getTime();
+				} else {
+					iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate(), oToday.getHours(), oToday.getMinutes(), oToday.getSeconds());
 				}
 			} else {
 				if (bUTC) {
-					iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate());
+					iToday = Date.UTC(oToday.getUTCFullYear(), oToday.getUTCMonth(), oToday.getUTCDate());
 				} else {
-					iToday = new Date(oToday.getFullYear(), oToday.getMonth(), oToday.getDate()).getTime();
+					iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate());
 				}
 			}
 			iDate = iToday + iDiffMillis;
 			oJSDate = new Date(iDate);
-			return oJSDate;
+			if (bUTC) {
+				return oJSDate;
+			} else {
+				return new Date(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate(), oJSDate.getUTCHours(), oJSDate.getUTCMinutes(), oJSDate.getUTCSeconds());
+			}
 		}
 	};
 
