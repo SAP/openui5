@@ -46,14 +46,12 @@
 			</Page>
 		</content>
 		<footer>
-			<Bar>
-				<contentLeft>
+			<Toolbar>
+				<content>
 					<Button text="Toggle" type="Accept" press="handleToggleClick" id="equalSplitToggleButton"></Button>
-				</contentLeft>
-				<contentMiddle>
-					<Slider value="100" width="300px" liveChange="handleSliderChange" />
-				</contentMiddle>
-			</Bar>
+					<Slider id='DSCWidthSlider' value="100" liveChange="handleSliderChange" />
+				</content>
+			</Toolbar>
 		</footer>
 	</Page>
 </mvc:View>
