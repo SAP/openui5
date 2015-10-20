@@ -1115,27 +1115,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 		function computeRelativeDate(iDiff, sScale){
 			var iDate, iToday,
 			oToday = that._now(),
-			oDate,
+			oUTCDate,
 			iDiffMillis = iDiff * that._mScales[sScale] * 1000;
 
 			if (that.oFormatOptions.relativeScale == "auto" & that.aRelativeScales[that.aRelativeScales.length - 1] === "second") {
 				if (bUTC) {
-					iToday = DateFormat.createUTCDate(sCalendarType, oToday.getUTCFullYear(), oToday.getUTCMonth(), oToday.getUTCDate(), oToday.getUTCHours(), oToday.getUTCMinutes(), oToday.getUTCSeconds());
+					iToday = oToday.getTime();
 				} else {
-					iToday = DateFormat.createDate(sCalendarType, oToday.getFullYear(), oToday.getMonth(), oToday.getDate(), oToday.getHours(), oToday.getMinutes(), oToday.getSeconds()).getTime();
+					iToday = DateFormat.createUTCDate(sCalendarType, oToday.getFullYear(), oToday.getMonth(), oToday.getDate(), oToday.getHours(), oToday.getMinutes(), oToday.getSeconds());
 				}
-				var iDate = iToday + iDiffMillis;
-				oDate = DateFormat.createDate(sCalendarType, iDate);
-				return oDate;
 			} else {
 				if (bUTC) {
 					iToday = DateFormat.createUTCDate(sCalendarType, oToday.getUTCFullYear(), oToday.getUTCMonth(), oToday.getUTCDate());
 				} else {
-					iToday = DateFormat.createDate(sCalendarType, oToday.getFullYear(), oToday.getMonth(), oToday.getDate()).getTime();
+					iToday = DateFormat.createUTCDate(sCalendarType, oToday.getFullYear(), oToday.getMonth(), oToday.getDate());
 				}
-				var iDate = iToday + iDiffMillis;
-				oDate = DateFormat.createDate(sCalendarType, iDate);
-				return oDate;
+			}
+			var iDate = iToday + iDiffMillis;
+			oUTCDate = DateFormat.createDate(sCalendarType, iDate);
+			if (bUTC) {
+				return oUTCDate;
+			} else {
+				return DateFormat.createDate(sCalendarType, oUTCDate.getUTCFullYear(), oUTCDate.getUTCMonth(), oUTCDate.getUTCDate(), oUTCDate.getUTCHours(), oUTCDate.getUTCMinutes(), oUTCDate.getUTCSeconds());
 			}
 		}
 	};
