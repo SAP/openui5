@@ -18,7 +18,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 	/**
 	 * Constructor for a new DesignTime.
 	 *
-	 * @param {string} [sId] id for the new object, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
 	 * @class
@@ -42,7 +42,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 			// ---- control specific ----
 			library : "sap.ui.dt",
 			properties : {
-				/** 
+				/**
 				 * Selection mode which should be used for overlays selection
 				 */
 				selectionMode : {
@@ -59,7 +59,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 				 }
 			},
 			associations : {
-				/** 
+				/**
 				 * Root elements to create overlays for
 				 */
 				rootElements : {
@@ -68,7 +68,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 				}
 			},
 			aggregations : {
-				/** 
+				/**
 				 * Plugins to use with a design time
 				 */
 				plugins : {
@@ -77,7 +77,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 				}
 			},
 			events : {
-				/** 
+				/**
 				 * Event fired when an ElementOverlay is created
 				 */
 				overlayCreated : {
@@ -85,7 +85,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 						ElementOverlay : { type : "sap.ui.dt.ElementOverlay" }
 					}
 				},
-				/** 
+				/**
 				 * Event fired when an ElementOverlay is destroyed
 				 */
 				overlayDestroyed : {
@@ -93,7 +93,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 						ElementOverlay : { type : "sap.ui.dt.ElementOverlay" }
 					}
 				},
-				/** 
+				/**
 				 * Event fired when an overlays selection is changed
 				 */
 				selectionChange : {
@@ -141,9 +141,9 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 	 */
 	DesignTime.prototype.getSelection = function() {
 		return this._oSelection.getSelection();
-	};		
+	};
 
-	/** 
+	/**
 	 * Sets selection mode to be used in the Selection inside of the DesignTime
 	 * @param {sap.ui.dt.SelectionMode} oMode a selection mode to be used with the Selection
 	 * @return {sap.ui.dt.DesignTime} this
@@ -154,7 +154,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 		this._oSelection.setMode(oMode);
 
 		return this;
-	};	
+	};
 
 	/**
 	 * Returns all plugins used with the DesignTime
@@ -165,7 +165,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 		return this.getAggregation("plugins") || [];
 	};
 
-	/** 
+	/**
 	 * Adds new plugin to use with the DesignTime
 	 * @param {sap.ui.dt.Plugin} oPlugin to add
 	 * @return {sap.ui.dt.DesignTime} this
@@ -176,10 +176,10 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 
 		this.addAggregation("plugins", oPlugin);
 
-		return this;		
+		return this;
 	};
 
-	/** 
+	/**
 	 * Inserts new plugin to use with the DesignTime at a defined position
 	 * @param {sap.ui.dt.Plugin} oPlugin to insert
 	 * @param {integer} iIndex a position to insert the plugin at
@@ -197,7 +197,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 	/**
 	 * Removes a plugin from the DesignTime
 	 * @param {sap.ui.dt.Plugin} oPlugin to remove
-	 * @return {sap.ui.dt.DesignTime} this	
+	 * @return {sap.ui.dt.DesignTime} this
 	 * @protected
 	 */
 	DesignTime.prototype.removePlugin = function(oPlugin) {
@@ -210,10 +210,10 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 
 		this.removeAggregation("plugins", oPlugin);
 
-		return this;		
+		return this;
 	};
 
-	/** 
+	/**
 	 * Removes all plugins from the DesignTime
 	 * @return {sap.ui.dt.DesignTime} this
 	 * @protected
@@ -272,7 +272,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 
 		this.createOverlayFor(ElementUtil.getElementInstance(vRootElement));
 
-		return this;		
+		return this;
 	};
 
 	/**
@@ -286,13 +286,13 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 
 		this._destroyOverlaysForElement(ElementUtil.getElementInstance(vRootElement));
 
-		return this;			
-	}; 	
+		return this;
+	};
 
 	/**
 	 * Removes all root elements from the DesignTime and destroys overlays for them and theire public descendants
 	 * @param {string|sap.ui.core.Element} element or elemet's id
-	 * @return {sap.ui.dt.DesignTime} this	 
+	 * @return {sap.ui.dt.DesignTime} this
 	 * @protected
 	 */
 	DesignTime.prototype.removeAllRootElement = function() {
@@ -300,8 +300,8 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 
 		this._destroyAllOverlays();
 
-		return this;			
-	}; 
+		return this;
+	};
 
 
 	/**
@@ -336,7 +336,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 		});
 
 		return aOverlays;
-	};	
+	};
 
 	/**
 	 * @param {sap.ui.core.Element} oElement element
@@ -377,7 +377,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 		this._iterateRootElementPublicChildren(oRootElement, function(oElement) {
 			var oOverlay = that._createOverlay(oElement);
 			oRootOverlay = oRootOverlay || oOverlay;
-		}); 
+		});
 
 		return oRootOverlay;
 	};
@@ -391,9 +391,9 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 			var oOverlay = OverlayRegistry.getOverlay(oElement);
 			if (oOverlay) {
 				oOverlay.destroy();
-			}			
+			}
 		});
-	};	
+	};
 
 	/**
 	 * @private
@@ -402,11 +402,11 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 		var that = this;
 
 		this._iterateRootElements(function(oRootElement) {
-			that._destroyOverlaysForElement(oRootElement);			
+			that._destroyOverlaysForElement(oRootElement);
 		});
 	};
 
-	/** 
+	/**
 	 * @param {sap.ui.baseEvent} oEvent event object
 	 * @private
 	*/
@@ -428,7 +428,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 		var bSelected = oEvent.getParameter("selected");
 
 		this._oSelection.set(oOverlay, bSelected);
-	};	
+	};
 
 	/**
 	 * @param {sap.ui.baseEvent} oEvent event object
@@ -461,10 +461,10 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 	 */
 	DesignTime.prototype._onOverlayElementSetParent = function(oElement, oParent) {
 		var oOverlay = OverlayRegistry.getOverlay(oElement);
-		if (oOverlay && !this._isElementInRootElements(oElement)) {
+		if (oOverlay && !this._isElementInRootElements(oElement) && !oElement.__bSapUiDtSupressOverlayDestroy) {
 			oOverlay.destroy();
 		}
-	};	
+	};
 
 	/**
 	 * @param {sap.ui.core.Element} oElement to check
@@ -518,7 +518,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 		this._iterateRootElements(function(oRootElement) {
 			that._iterateRootElementPublicChildren(oRootElement, fnStep);
 		});
-	};	
+	};
 
 	return DesignTime;
 }, /* bExport= */ true);
