@@ -2437,6 +2437,24 @@
 				"relativeTimePattern-count-other": "{0} года назад"
 			}
 		},
+		"quarter": {
+			"displayName": "квартал",
+			"relative-type--1": "последний квартал",
+			"relative-type-0": "текущий квартал",
+			"relative-type-1": "следующий квартал",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "через {0} квартал",
+				"relativeTimePattern-count-few": "через {0} квартала",
+				"relativeTimePattern-count-many": "через {0} кварталов",
+				"relativeTimePattern-count-other": "через {0} квартала"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} квартал назад",
+				"relativeTimePattern-count-few": "{0} квартала назад",
+				"relativeTimePattern-count-many": "{0} кварталов назад",
+				"relativeTimePattern-count-other": "{0} квартала назад"
+			}
+		},
 		"month": {
 			"displayName": "месяц",
 			"relative-type--1": "в прошлом месяце",

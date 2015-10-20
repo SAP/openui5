@@ -2436,6 +2436,20 @@
 				"relativeTimePattern-count-other": "vor {0} Jahren"
 			}
 		},
+		"quarter": {
+			"displayName": "Quartal",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "in {0} Quartal",
+				"relativeTimePattern-count-other": "in {0} Quartalen"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "vor {0} Quartal",
+				"relativeTimePattern-count-other": "vor {0} Quartalen"
+			}
+		},
 		"month": {
 			"displayName": "Monat",
 			"relative-type--1": "letzten Monat",

@@ -646,6 +646,7 @@
 		equal(oDate.parse("5 days ago").getDate(), date("day", -5).getDate(), "Today - 5 Days");
 		equal(oDate.parse("tomorrow").getDate(), date("day", 1).getDate(), "tomorrow");
 		equal(oDate.parse("in 5 days").getDate(), date("day", 5).getDate(), "Today + 5 Days");
+		equal(oDate.parse("next quarter").getDate(), date("day", 90).getDate(), "Today + 90 Days");
 		equal(oDate.parse("in 24 hours").getDate(), date("hour", 24).getDate(), "Today + 1 Days");
 		equal(oDate.parse("in 72 hours").getDate(), date("hour", 72).getDate(), "Today + 3 Days");
 		equal(oDate.parse("4320 minutes ago").getDate(), date("minute", -4320).getDate(), "Today - 3 Days");

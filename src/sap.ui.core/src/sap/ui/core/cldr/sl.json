@@ -2421,6 +2421,24 @@
 				"relativeTimePattern-count-other": "pred {0} leti"
 			}
 		},
+		"quarter": {
+			"displayName": "četrtletje",
+			"relative-type--1": "zadnje četrtletje",
+			"relative-type-0": "to četrtletje",
+			"relative-type-1": "naslednje četrtletje",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "čez {0} četrtletje",
+				"relativeTimePattern-count-two": "čez {0} četrtletji",
+				"relativeTimePattern-count-few": "čez {0} četrtletja",
+				"relativeTimePattern-count-other": "čez {0} četrtletij"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "pred {0} četrtletjem",
+				"relativeTimePattern-count-two": "pred {0} četrtletjema",
+				"relativeTimePattern-count-few": "pred {0} četrtletji",
+				"relativeTimePattern-count-other": "pred {0} četrtletji"
+			}
+		},
 		"month": {
 			"displayName": "mesec",
 			"relative-type--1": "prejšnji mesec",

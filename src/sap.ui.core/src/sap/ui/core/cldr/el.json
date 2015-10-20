@@ -2425,6 +2425,20 @@
 				"relativeTimePattern-count-other": "πριν από {0} έτη"
 			}
 		},
+		"quarter": {
+			"displayName": "τρίμηνο",
+			"relative-type--1": "προηγούμενο τρίμηνο",
+			"relative-type-0": "τρέχον τρίμηνο",
+			"relative-type-1": "επόμενο τρίμηνο",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "σε {0} τρίμηνο",
+				"relativeTimePattern-count-other": "σε {0} τρίμηνα"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "πριν από {0} τρίμηνο",
+				"relativeTimePattern-count-other": "πριν από {0} τρίμηνα"
+			}
+		},
 		"month": {
 			"displayName": "μήνας",
 			"relative-type--1": "προηγούμενος μήνας",

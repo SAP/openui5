@@ -2431,6 +2431,18 @@
 				"relativeTimePattern-count-other": "{0} 年前"
 			}
 		},
+		"quarter": {
+			"displayName": "季",
+			"relative-type--1": "上一季",
+			"relative-type-0": "這一季",
+			"relative-type-1": "下一季",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0} 季後"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} 季前"
+			}
+		},
 		"month": {
 			"displayName": "月",
 			"relative-type--1": "上個月",

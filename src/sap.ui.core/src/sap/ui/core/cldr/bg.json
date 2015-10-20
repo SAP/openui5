@@ -2498,6 +2498,20 @@
 				"relativeTimePattern-count-other": "преди {0} години"
 			}
 		},
+		"quarter": {
+			"displayName": "тримесечие",
+			"relative-type--1": "миналото тримесечие",
+			"relative-type-0": "това тримесечие",
+			"relative-type-1": "следващото тримесечие",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "след {0} тримесечие",
+				"relativeTimePattern-count-other": "след {0} тримесечия"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "преди {0} тримесечие",
+				"relativeTimePattern-count-other": "преди {0} тримесечия"
+			}
+		},
 		"month": {
 			"displayName": "месец",
 			"relative-type--1": "миналият месец",

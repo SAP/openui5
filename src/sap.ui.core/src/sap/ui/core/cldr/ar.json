@@ -2435,6 +2435,28 @@
 				"relativeTimePattern-count-other": "قبل {0} سنة"
 			}
 		},
+		"quarter": {
+			"displayName": "ربع السنة",
+			"relative-type--1": "الربع الأخير",
+			"relative-type-0": "هذا الربع",
+			"relative-type-1": "الربع القادم",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "خلال {0} ربع سنة",
+				"relativeTimePattern-count-one": "خلال ربع سنة واحد",
+				"relativeTimePattern-count-two": "خلال ربعي سنة",
+				"relativeTimePattern-count-few": "خلال {0} أرباع سنة",
+				"relativeTimePattern-count-many": "خلال {0} ربع سنة",
+				"relativeTimePattern-count-other": "خلال {0} ربع سنة"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "قبل {0} ربع سنة",
+				"relativeTimePattern-count-one": "قبل ربع سنة واحد",
+				"relativeTimePattern-count-two": "قبل ربعي سنة",
+				"relativeTimePattern-count-few": "قبل {0} أرباع سنة",
+				"relativeTimePattern-count-many": "قبل {0} ربع سنة",
+				"relativeTimePattern-count-other": "قبل {0} ربع سنة"
+			}
+		},
 		"month": {
 			"displayName": "الشهر",
 			"relative-type--1": "الشهر الماضي",

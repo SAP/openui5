@@ -2432,6 +2432,20 @@
 				"relativeTimePattern-count-other": "{0} yıl önce"
 			}
 		},
+		"quarter": {
+			"displayName": "Çeyrek",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} çeyrek sonra",
+				"relativeTimePattern-count-other": "{0} çeyrek sonra"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} çeyrek önce",
+				"relativeTimePattern-count-other": "{0} çeyrek önce"
+			}
+		},
 		"month": {
 			"displayName": "Ay",
 			"relative-type--1": "geçen ay",

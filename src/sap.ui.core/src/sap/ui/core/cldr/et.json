@@ -2428,6 +2428,20 @@
 				"relativeTimePattern-count-other": "{0} aasta eest"
 			}
 		},
+		"quarter": {
+			"displayName": "kvartal",
+			"relative-type--1": "eelmine kvartal",
+			"relative-type-0": "käesolev kvartal",
+			"relative-type-1": "järgmine kvartal",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} kvartali pärast",
+				"relativeTimePattern-count-other": "{0} kvartali pärast"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} kvartali eest",
+				"relativeTimePattern-count-other": "{0} kvartali eest"
+			}
+		},
 		"month": {
 			"displayName": "kuu",
 			"relative-type--1": "eelmine kuu",

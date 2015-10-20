@@ -2438,6 +2438,22 @@
 				"relativeTimePattern-count-other": "prije {0} godina"
 			}
 		},
+		"quarter": {
+			"displayName": "kvartal",
+			"relative-type--1": "prošli kvartal",
+			"relative-type-0": "ovaj kvartal",
+			"relative-type-1": "sljedeći kvartal",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "za {0} kvartal",
+				"relativeTimePattern-count-few": "za {0} kvartala",
+				"relativeTimePattern-count-other": "za {0} kvartala"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prije {0} kvartal",
+				"relativeTimePattern-count-few": "prije {0} kvartala",
+				"relativeTimePattern-count-other": "prije {0} kvartala"
+			}
+		},
 		"month": {
 			"displayName": "mjesec",
 			"relative-type--1": "prošli mjesec",

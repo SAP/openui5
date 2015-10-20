@@ -2432,6 +2432,22 @@
 				"relativeTimePattern-count-other": "пре {0} година"
 			}
 		},
+		"quarter": {
+			"displayName": "квартал",
+			"relative-type--1": "прошлог квартала",
+			"relative-type-0": "овог квартала",
+			"relative-type-1": "следећег квартала",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "за {0} квартал",
+				"relativeTimePattern-count-few": "за {0} квартала",
+				"relativeTimePattern-count-other": "за {0} квартала"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "пре {0} квартала",
+				"relativeTimePattern-count-few": "пре {0} квартала",
+				"relativeTimePattern-count-other": "пре {0} квартала"
+			}
+		},
 		"month": {
 			"displayName": "месец",
 			"relative-type--1": "прошлог месеца",

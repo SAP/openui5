@@ -2421,6 +2421,24 @@
 				"relativeTimePattern-count-other": "pred {0} rokmi"
 			}
 		},
+		"quarter": {
+			"displayName": "štvrťrok",
+			"relative-type--1": "minulý štvrťrok",
+			"relative-type-0": "tento štvrťrok",
+			"relative-type-1": "budúci štvrťrok",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "o {0} štvrťrok",
+				"relativeTimePattern-count-few": "o {0} štvrťroky",
+				"relativeTimePattern-count-many": "o {0} štvrťroka",
+				"relativeTimePattern-count-other": "o {0} štvrťrokov"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "pred {0} štvrťrokom",
+				"relativeTimePattern-count-few": "pred {0} štvrťrokmi",
+				"relativeTimePattern-count-many": "pred {0} štvrťroka",
+				"relativeTimePattern-count-other": "pred {0} štvrťrokmi"
+			}
+		},
 		"month": {
 			"displayName": "mesiac",
 			"relative-type--1": "minulý mesiac",

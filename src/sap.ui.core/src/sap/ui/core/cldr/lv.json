@@ -2410,6 +2410,22 @@
 				"relativeTimePattern-count-other": "pirms {0} gadiem"
 			}
 		},
+		"quarter": {
+			"displayName": "ceturksnis",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-zero": "pēc {0} ceturkšņiem",
+				"relativeTimePattern-count-one": "pēc {0} ceturkšņa",
+				"relativeTimePattern-count-other": "pēc {0} ceturkšņiem"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-zero": "pirms {0} ceturkšņiem",
+				"relativeTimePattern-count-one": "pirms {0} ceturkšņa",
+				"relativeTimePattern-count-other": "pirms {0} ceturkšņiem"
+			}
+		},
 		"month": {
 			"displayName": "mēnesis",
 			"relative-type--1": "pagājušajā mēnesī",

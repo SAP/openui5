@@ -2479,6 +2479,18 @@
 				"relativeTimePattern-count-other": "{0} ปีที่แล้ว"
 			}
 		},
+		"quarter": {
+			"displayName": "ไตรมาส",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "ในอีก {0} ไตรมาส"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} ไตรมาสที่แล้ว"
+			}
+		},
 		"month": {
 			"displayName": "เดือน",
 			"relative-type--1": "เดือนที่แล้ว",

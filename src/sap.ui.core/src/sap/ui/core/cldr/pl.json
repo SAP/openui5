@@ -2447,6 +2447,24 @@
 				"relativeTimePattern-count-other": "{0} roku temu"
 			}
 		},
+		"quarter": {
+			"displayName": "kwartał",
+			"relative-type--1": "w zeszłym kwartale",
+			"relative-type-0": "w tym kwartale",
+			"relative-type-1": "w przyszłym kwartale",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "za {0} kwartał",
+				"relativeTimePattern-count-few": "za {0} kwartały",
+				"relativeTimePattern-count-many": "za {0} kwartałów",
+				"relativeTimePattern-count-other": "za {0} kwartału"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} kwartał temu",
+				"relativeTimePattern-count-few": "{0} kwartały temu",
+				"relativeTimePattern-count-many": "{0} kwartałów temu",
+				"relativeTimePattern-count-other": "{0} kwartału temu"
+			}
+		},
 		"month": {
 			"displayName": "miesiąc",
 			"relative-type--1": "w zeszłym miesiącu",

@@ -2429,6 +2429,20 @@
 				"relativeTimePattern-count-other": "for {0} år siden"
 			}
 		},
+		"quarter": {
+			"displayName": "kvartal",
+			"relative-type--1": "forrige kvartal",
+			"relative-type-0": "dette kvartal",
+			"relative-type-1": "neste kvartal",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "om {0} kvartal",
+				"relativeTimePattern-count-other": "om {0} kvartaler"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "for {0} kvartal siden",
+				"relativeTimePattern-count-other": "for {0} kvartaler siden"
+			}
+		},
 		"month": {
 			"displayName": "måned",
 			"relative-type--1": "forrige måned",

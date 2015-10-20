@@ -2423,6 +2423,20 @@
 				"relativeTimePattern-count-other": "{0} वर्ष पहले"
 			}
 		},
+		"quarter": {
+			"displayName": "तिमाही",
+			"relative-type--1": "अंतिम तिमाही",
+			"relative-type-0": "इस तिमाही",
+			"relative-type-1": "अगली तिमाही",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} तिमाही में",
+				"relativeTimePattern-count-other": "{0} तिमाहियों में"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} तिमाही पहले",
+				"relativeTimePattern-count-other": "{0} तिमाही पहले"
+			}
+		},
 		"month": {
 			"displayName": "माह",
 			"relative-type--1": "पिछला माह",

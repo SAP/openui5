@@ -2459,6 +2459,20 @@
 				"relativeTimePattern-count-other": "hace {0} años"
 			}
 		},
+		"quarter": {
+			"displayName": "trimestre",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "en {0} trimestre",
+				"relativeTimePattern-count-other": "en {0} trimestres"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "hace {0} trimestre",
+				"relativeTimePattern-count-other": "hace {0} trimestres"
+			}
+		},
 		"month": {
 			"displayName": "mes",
 			"relative-type--1": "el mes pasado",

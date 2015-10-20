@@ -845,8 +845,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 */
 		getDisplayName: function(sType) {
 			jQuery.sap.assert(sType == "second" || sType == "minute" || sType == "hour" || sType == "zone" || sType == "day" 
-				|| sType == "weekday" || sType == "week" || sType == "month" || sType == "year" || sType == "era", 
-				"sType must be second, minute, hour, zone, day, weekday, week, month, year, era");
+				|| sType == "weekday" || sType == "week" || sType == "month" || sType == "quarter" || sType == "year" || sType == "era", 
+				"sType must be second, minute, hour, zone, day, weekday, week, month, quarter, year, era");
 			return this._get("dateFields", sType, "displayName");
 		},
 
@@ -1210,6 +1210,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 					"relativeTime-type-past": {
 						"relativeTimePattern-count-one": "{0} year ago",
 						"relativeTimePattern-count-other": "{0} years ago"
+					}
+				},
+				"quarter": {
+					"displayName": "quarter",
+					"relative-type--1": "last quarter",
+					"relative-type-0": "this quarter",
+					"relative-type-1": "next quarter",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} quarter",
+						"relativeTimePattern-count-other": "in {0} quarters"
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} quarter ago",
+						"relativeTimePattern-count-other": "{0} quarters ago"
 					}
 				},
 				"month": {

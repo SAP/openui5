@@ -2433,6 +2433,20 @@
 				"relativeTimePattern-count-other": "{0} سال پیش"
 			}
 		},
+		"quarter": {
+			"displayName": "سه‌ماهه",
+			"relative-type--1": "سه‌ماههٔ گذشته",
+			"relative-type-0": "سه‌ماههٔ کنونی",
+			"relative-type-1": "سه‌ماههٔ آینده",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} سه‌ماههٔ بعد",
+				"relativeTimePattern-count-other": "{0} سه‌ماههٔ بعد"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} سه‌ماههٔ پیش",
+				"relativeTimePattern-count-other": "{0} سه‌ماههٔ پیش"
+			}
+		},
 		"month": {
 			"displayName": "ماه",
 			"relative-type--1": "ماه گذشته",
