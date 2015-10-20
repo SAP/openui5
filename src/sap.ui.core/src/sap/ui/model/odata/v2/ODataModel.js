@@ -2554,11 +2554,12 @@ sap.ui.define([
 				mEntityTypes[oEntityMetadata.entityType] = true;
 			}
 			// for createEntry entities change context path to new one
-			if (oRequest.context) {
+			if (oRequest.key) {
 				var sKey = this._getKey(oResultData);
-				delete this.mChangedEntities[oRequest.context.sPath.substr(1)];
-				delete this.oData[oRequest.context.sPath.substr(1)];
-				oRequest.context.sPath = '/' + sKey;
+				delete this.mChangedEntities[oRequest.key];
+				delete this.oData[oRequest.key];
+				var oContext = this.getContext("/" + oRequest.key);
+				oContext.sPath = '/' + sKey;
 				//delete created flag after successfull creation
 				if (this.oData[sKey]) {
 					delete this.oData[sKey].__metadata.created;
@@ -4135,7 +4136,6 @@ sap.ui.define([
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, oEntity, sETag);
 
 			oCreatedContext = that.getContext("/" + sKey); // context wants a path
-			oRequest.context = oCreatedContext;
 			oRequest.key = sKey;
 			
 			mRequests = that.mRequests;
