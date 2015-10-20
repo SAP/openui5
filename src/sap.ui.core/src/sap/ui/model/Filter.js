@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator', 's
 	 * Using arguments:
 	 * new sap.ui.model.Filter(sPath, sOperator, oValue1, oValue2);
 	 * OR
-	 * new sap.uji.model.Filter(sPath, fnTest);
+	 * new sap.ui.model.Filter(sPath, fnTest);
 	 * OR
 	 * new sap.ui.model.Filter(aFilters, bAnd);
 	 * 
@@ -52,7 +52,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator', 's
 	 * @param {function} oFilterInfo.test function which is used to filter the items which should return a boolean value to indicate whether the current item is preserved
 	 * @param {sap.ui.model.FilterOperator} oFilterInfo.operator operator used for the filter
 	 * @param {object} oFilterInfo.value1 first value to use for filter
-	 * @param {object} [oFilterInfo.value2=null] fecond value to use for filter
+	 * @param {object} [oFilterInfo.value2=null] second value to use for filter
 	 * @param {array} oFilterInfo.filters array of filters on which logical conjunction is applied
 	 * @param {boolean} oFilterInfo.and indicates whether an "and" logical conjunction is applied on the filters. If it's set to false, an "or" conjunction is applied
 	 * @public
