@@ -1,0 +1,10 @@
+<mvc:View xmlns="sap.ui.commons"
+	xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core" controllerName="samples.manifestfirst.customer.view.Inner"
+	xmlns:l="sap.ui.layout">
+	<l:VerticalLayout class="sapUiSmallMargin" >
+		<TextView text="This component's view can be influenced by setting sap.app.text in the manifest."></TextView>
+		<TextView id="textInner1"></TextView>
+		<Button id="buttonInner1" text="Default Text"></Button>
+	</l:VerticalLayout>
+</mvc:View>

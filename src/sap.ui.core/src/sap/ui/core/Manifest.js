@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 	function getObject(oObject, sPath) {
 		// if the incoming sPath is a path we do a nested lookup in the 
 		// manifest object and return the concrete value, e.g. "/sap.ui5/extends"
-		if (sPath && typeof sPath === "string" && sPath.substring(0, 1) === "/") {
+		if (oObject && sPath && typeof sPath === "string" && sPath.substring(0, 1) === "/") {
 			var aPaths = sPath.substring(1).split("/");
 			for (var i = 0, l = aPaths.length; i < l; i++) {
 				oObject = oObject[aPaths[i]] || null;
@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 
 		// if no path starting with slash is specified we access and 
 		// return the value directly from the manifest
-		return oObject[sPath];
+		return oObject && oObject[sPath];
 	}
 
 
@@ -488,16 +488,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 	 * Function to load the manifest by URL
 	 *
 	 * @param {string} sManifestUrl URL of the manifest
-	 * @param {boolean} [bAsync] Flag whether to load the manifest async or not
+	 * @param {boolean} [bAsync] Flag whether to load the manifest async or not (defaults to false)
+	 * @param {boolean} [bFailOnError] Flag whether to fail if an error occurs or not (defaults to true)
 	 * @return {sap.ui.core.Manifest|Promise} Manifest object or for asynchronous calls an ECMA Script 6 Promise object will be returned.
 	 * @protected
 	 */
-	Manifest.load = function fnLoadManifest(sManifestUrl, bAsync) {
+	Manifest.load = function fnLoadManifest(sManifestUrl, bAsync, bFailOnError) {
 		jQuery.sap.log.info("Loading manifest via URL: " + sManifestUrl);
 		var oManifestJSON = jQuery.sap.loadResource({
 			url: sManifestUrl,
 			dataType: "json",
-			async: bAsync || false
+			async: typeof bAsync !== "undefined" ? bAsync : false,
+			failOnError: typeof bFailOnError !== "undefined" ? bFailOnError : true
 		});
 		if (bAsync) {
 			return oManifestJSON.then(function(oManifestJSON) {
