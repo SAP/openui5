@@ -1,7 +1,7 @@
 @sapBrandColor: #000;
 @sapHighlightColor: #cc8700;
 @sapBaseColor: #ddd;
-@sapShellColor: #000;
+@sapShellColor: #fff;
 @sapBackgroundColor: #fff;
 @sapTextColor: #000;
 @sapLinkColor: #000;
@@ -15,10 +15,10 @@
 @sapActiveColor: @sapHighlightColor;
 @sapHighlightTextColor: contrast(@sapHighlightColor, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapTitleColor: @sapTextColor;
-@sapNegativeColor: #d0001d;
-@sapCriticalColor: #fffcb5;
-@sapPositiveColor: #008a3b;
-@sapNeutralColor: #306898;
+@sapNegativeColor: #bb0000;
+@sapCriticalColor: #e78c07;
+@sapPositiveColor: #2b7d2b;
+@sapNeutralColor: #ffffff;
 
 @sapContent_LabelColor: @sapTextColor;
 @sapContent_DisabledTextColor: #666;
@@ -94,3 +94,19 @@
 @sapScrollBar_BorderColor: #4f4f4f;
 @sapScrollBar_SymbolColor: #000;
 @sapScrollBar_Hover_FaceColor: #000;
+
+@sapPageHeader_Background: #fff;
+@sapPageHeader_BorderColor: #000;
+@sapPageHeader_TextColor: contrast(@sapPageHeader_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapPageFooter_Background: #fff;
+@sapPageFooter_TextColor: contrast(@sapPageFooter_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+
+@sapInfobar_Background: #fff;
+
+@sapObjectHeader_Background: #fff;
+
+@sapBlockLayer_Background: #fff;
+
+@sapTile_Background: #fff;
+@sapTile_BorderColor: #000;
+@sapTile_TextColor: contrast(@sapTile_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
