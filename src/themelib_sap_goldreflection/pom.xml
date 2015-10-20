@@ -16,7 +16,7 @@
 	<parent>
 		<groupId>com.sap.openui5</groupId>
 		<artifactId>reactor</artifactId>
-		<version>1.30.10</version>
+		<version>1.30.11-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
