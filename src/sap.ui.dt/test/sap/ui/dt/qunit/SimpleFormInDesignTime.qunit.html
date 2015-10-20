@@ -52,7 +52,11 @@
 							new sap.ui.commons.DatePicker({yyyymmdd:"19990909"}),
 							new sap.ui.commons.Label({text:"Gender"})
 						]
-					}).placeAt("content");
+					});
+
+					this.oVerticalLayout = new sap.ui.layout.VerticalLayout({content: [this.oSimpleForm, this.oLabel]});
+
+					this.oVerticalLayout.placeAt("content");
 
 					this.oFormDesignTime = new sap.ui.dt.DesignTime({
 						designTimeMetadata : {
@@ -67,7 +71,7 @@
 								}
 							}
 						},
-						rootElements : [this.oSimpleForm]
+						rootElements : [this.oVerticalLayout]
 					});
 				},
 				afterEach : function() {
@@ -89,13 +93,20 @@
 
 				var oLabelOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oLabel);
 				strictEqual(oLabelOverlay.isInHiddenTree(), false, "Public controls from content aggregation are not flagged as inHiddenTree");
-			});			
+			});
 
 			QUnit.test("when the content is added to a SimpleForm ...", function(assert) {
 				this.oButton = new sap.m.Button("button1", {text : "Button"});
 				this.oSimpleForm.addContent(this.oButton);
 				var oOverlayForButton = OverlayRegistry.getOverlay(this.oButton);
 				assert.ok(oOverlayForButton, "overlay for button exists");
+			});
+
+			// __bSapUiDtSupressOverlayDestroy test
+			QUnit.test("when the label is inserted to a SimpleForm ...", function(assert) {
+				var oLabelOverlay = OverlayRegistry.getOverlay(this.oLabel);
+				this.oSimpleForm.insertContent(this.oLabel, 3);
+				assert.ok(!oLabelOverlay.bIsDestroyed, "overlay for label wasn't destroyed");
 			});
 
 		</script>
