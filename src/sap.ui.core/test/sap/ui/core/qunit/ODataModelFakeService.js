@@ -260,15 +260,19 @@ xhr.onCreate = function(request) {
 	};
 
 	request.onSend = function() {
+		if (window.fakeRequested) window.fakeRequested();
+		
 		function respond(code, headers, data) {
 			if (request.async) {
 				_setTimeout(function() {
 					if (!request.aborted) {
+						if (window.fakeResponded) window.fakeResponded();
 						request.respond(code, headers, data);
 					}
 				}, responseDelay);
 			} else {
 				if (!request.aborted) {
+					if (window.fakeResponded) window.fakeResponded();
 					request.respond(code, headers, data);
 				}
 			}
