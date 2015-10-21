@@ -66,6 +66,11 @@ sap.ui.define([
 			this._initPages();
 		};
 
+		QuickViewCard.prototype.onAfterRendering = function() {
+			//Sets the correct length of the links inside the QuickView. This is done to overwrite the styles set by the ResponsiveGridLayout
+			this.$().find(".sapMLnk").css("width", "auto");
+		};
+
 		QuickViewCard.prototype.exit = function() {
 			if (this._oNavContainer) {
 				this._oNavContainer.destroy();

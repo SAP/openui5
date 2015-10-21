@@ -293,6 +293,29 @@
 			});
 		});
 
+		QUnit.module("Rendering", {
+			setup: function () {
+				this.oQuickViewCard = getQuickViewCard();
+				oPage.addContent(this.oQuickViewCard);
+
+				sap.ui.getCore().applyChanges();
+			},
+			teardown: function () {
+				this.oQuickViewCard.destroy();
+				this.oQuickViewCard = null;
+			}
+		});
+
+		QUnit.test("Checking if all link have width of 'auto'", function(assert) {
+			// act
+			var aLinks = this.oQuickViewCard.$().find(".sapMLnk");
+
+			// assert
+			for (var index = 0; index < aLinks.length; index += 1) {
+				assert.strictEqual(aLinks[index].style.width, 'auto', "The Link should have width set to 'auto'");
+			}
+		});
+
 	</script>
 </head>
 <body class="sapUiBody">
