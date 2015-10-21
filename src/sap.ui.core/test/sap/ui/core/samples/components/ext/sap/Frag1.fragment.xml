@@ -4,4 +4,5 @@
 	
 	<core:ExtensionPoint name="extensionPointInFragment" />
 	
+	<TextView text="{path:'/number', formatter:'.formatNumber'}" tooltip="formatted number in SAP Fragment Frag1"></TextView>
 </Panel>

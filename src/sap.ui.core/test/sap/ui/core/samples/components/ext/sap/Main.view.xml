@@ -12,6 +12,7 @@
 		<mvc:HTMLView viewName="samples.components.ext.sap.Sub5" />
 		<core:Fragment fragmentName="samples.components.ext.sap.Frag1" type="XML" />
 		<Button text="Destroy Sub2 View (to check controller lifecycle method onExit)" press="destroySub2View" />
+		<TextView text="{path:'/number', formatter:'.formatNumber'}" tooltip="formatted number in SAP MainView"></TextView>
 	</l:VerticalLayout>
 
 </mvc:View>
