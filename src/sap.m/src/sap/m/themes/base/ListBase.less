@@ -117,25 +117,15 @@
 }
 
 /* Growing feature */
-.sapMGrowingListTrigger,
-.sapMGrowingListLoading {
+.sapMGrowingListTrigger {
 	display: block;
 	text-align: center;
 	overflow: hidden;
 }
-.sapMGrowingListBusyIndicator {
-	float: left;
-	overflow: hidden;
+
+.sapMGrowingListBusyIndicatorVisible .sapMGrowingListTriggerText,
+.sapMGrowingListBusyIndicatorVisible .sapMGrowingListDescription {
 	visibility: hidden;
-	width: 2.0em;
-	height: 2.0em;
-}
-.sapMGrowingListBusyIndicatorVisible {
-	visibility: visible;
-}
-.sapMGrowingListLoading > .sapMGrowingListBusyIndicator {
-	float: none;
-	visibility: visible;
 }
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
