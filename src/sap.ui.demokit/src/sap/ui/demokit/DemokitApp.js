@@ -450,13 +450,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
               });
 
             var fnCreateAboutDialogContent = function() {
+                 var oDialog;
+                 var renderedDialog = sap.ui.getCore().byId('aboutDlg');
+                 var oLayout;
+
+                 if (renderedDialog instanceof sap.ui.commons.Dialog) {
+                     oDialog = renderedDialog;
+                     oDialog.open();
+                     return;
+                 }
+
                 var oBtnBack = new sap.ui.commons.Button({
                     text : "Back",
                     visible : false,
                     press : function() {
-                        oDialog.removeAllContent();
-                        oDialog.addContent(oLayout);
-                        this.setVisible(false);
+                        fnShowMainContent();
                     }
                 });
 
@@ -467,19 +475,40 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                     }
                 });
 
+                var fnShowMainContent = function () {
+                    oDialog.removeAllContent();
+                    oDialog.addContent(oLayout);
+                    oBtnBack.setVisible(false);
+                };
+
                 var oSAPUI5Logo = new sap.ui.commons.Image();
-                oSAPUI5Logo.setSrc("resources/sap/ui/demokit/themes/base/images/logo-SAPUI5-blue-446x140.png");
+                var sAboutDialogContentHtml;
 
-                oSAPUI5Logo.setTooltip("SAPUI5 logo blue");
-                oSAPUI5Logo.addStyleClass("extraLeftPadding");
+                //check if it is internal or external version of Demokit and set the dialog content according to it
+                var oVersionInfo = sap.ui.getVersionInfo();
+                if (oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav) ) {
+                    oSAPUI5Logo.setSrc("resources/sap/ui/demokit/themes/base/images/OpenUI5_new_small_side.png");
+                    oSAPUI5Logo.setTooltip("OpenUI5 logo blue");
+                    oSAPUI5Logo.setWidth("446px");
+                    oSAPUI5Logo.addStyleClass("extraLeftPadding");
 
-                var sAboutDialogContentHtml  = '<h2>UI Development Toolkit for HTML5 - Demo Kit</h2>';
-                sAboutDialogContentHtml  += '<span>SAP SE 2015 All rights reserved</span><br><br><br>';
-                sAboutDialogContentHtml  += '<span>SAPUI5 Version <embed data-index="0"></span><br>';
+                    sAboutDialogContentHtml  = '<h2>OpenUI5 - Demo Kit</h2>';
+                    sAboutDialogContentHtml += '<span>&copy; 2009-2015 SAP SE or an SAP affiliate company.</span><br>';
+                    sAboutDialogContentHtml += '<span>Licensed under the Apache License, Version 2.0 – <embed data-index="3"><br><br><br></span>';
+                    sAboutDialogContentHtml += '<span>OpenUI5 Version <embed data-index="0"></span><br>';
+                } else {
+                    oSAPUI5Logo.setSrc("resources/sap/ui/demokit/themes/base/images/logo-SAPUI5-blue-446x140.png");
+                    oSAPUI5Logo.setTooltip("SAPUI5 logo blue");
+                    oSAPUI5Logo.addStyleClass("extraLeftPadding");
 
-                sAboutDialogContentHtml  += '<span>This software includes the following library versions</span><br>';
-                sAboutDialogContentHtml  += '<span>(a full change log for all libraries can be found <embed data-index="1">).</span><br>';
-                sAboutDialogContentHtml  += '<embed data-index="2"><br><br><br>';
+                    sAboutDialogContentHtml  = '<h2>SAP UI Development Toolkit for HTML5 (SAPUI5) - Demo Kit</h2>';
+                    sAboutDialogContentHtml += '<span>&copy; Copyright 2009-2015 SAP SE. All rights reserved.</span><br><br><br>';
+                    sAboutDialogContentHtml += '<span>SAPUI5 Version <embed data-index="0"></span><br>';
+                }
+
+                sAboutDialogContentHtml += '<span>This software includes the following library versions</span><br>';
+                sAboutDialogContentHtml += '<span>(a full change log for all libraries can be found <embed data-index="1">).</span><br>';
+                sAboutDialogContentHtml += '<embed data-index="2"><br><br><br>';
 
                 var sAboutDialogContentHtmlOnlyForUI5 = '<span>This software includes third-party open source software.</span><br>';
                 sAboutDialogContentHtmlOnlyForUI5 += '<embed data-index="0"><br>';
@@ -492,8 +521,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                     },
                     href: "releasenotes.html",
                     target: "content"
-
                 });
+
                 var oLinkToVersionInfo = new sap.ui.commons.Link({
                     text : "Version Details",
                     tooltip: "Go to Version Details",
@@ -516,8 +545,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                     }
                 });
 
+                var oLinkToLicenseTxt = new sap.ui.commons.Link({
+                    text : "see LICENSE.txt",
+                    tooltip: "Go to LICENSE.txt",
+                    press: function() {
+                        oDialog.close();
+                    },
+                    href: "LICENSE.txt",
+                    target: "content"
+                });
+
                 var oDialogInitialPageContent = new sap.ui.commons.FormattedTextView();
-                oDialogInitialPageContent.setContent(sAboutDialogContentHtml, [oVersionInfoDialog, oLinkToVersionChangeLog, oLinkToVersionInfo]);
+                oDialogInitialPageContent.setContent(sAboutDialogContentHtml, [oVersionInfoDialog, oLinkToVersionChangeLog, oLinkToVersionInfo, oLinkToLicenseTxt]);
                 oDialogInitialPageContent.addStyleClass("extraLeftPadding");
 
                 var oDialogInitialPageContentOnlyForUI5 = new sap.ui.commons.FormattedTextView();
@@ -525,18 +564,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 oDialogInitialPageContentOnlyForUI5.addStyleClass("extraLeftPadding");
 
               //check if it is internal or external version of Demokit and set the dialog content according to it
-                var oVersionInfo = sap.ui.getVersionInfo();
                 if ( oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav) ) {
-                    var oLayout = new sap.ui.layout.VerticalLayout({
+                    oLayout = new sap.ui.layout.VerticalLayout({
                         content : [oSAPUI5Logo, oDialogInitialPageContent]
                     });
                 } else {
-                    var oLayout = new sap.ui.layout.VerticalLayout({
+                    oLayout = new sap.ui.layout.VerticalLayout({
                         content : [oSAPUI5Logo, oDialogInitialPageContent, oDialogInitialPageContentOnlyForUI5]
                     });
                 }
 
-                var oDialog = new sap.ui.commons.Dialog('aboutDlg', {
+                oDialog = new sap.ui.commons.Dialog('aboutDlg', {
                     title: "About",
                     modal: true,
                     buttons : [oBtnBack, oBtnCancel],
@@ -546,6 +584,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                     height: "800px",
                     maxHeight: "100%"
                 });
+
+                oDialog.attachClosed(fnShowMainContent);
+
                 oDialog.open();
             };
 
@@ -569,48 +610,48 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 
                    var oNotesModel;
                    var oNotesView = sap.ui.getCore().byId("notesView");
-                   var oDialog = sap.ui.getCore().byId("notesDialog");
-                   if (!oDialog) {
+                   var oNotesDialog = sap.ui.getCore().byId("notesDialog");
+                   if (!oNotesDialog) {
                        var oText = new sap.ui.commons.TextView({text: "No changes for this library!", id: "noRelNote"});
                        oNotesView = sap.ui.view({id:"notesView", viewName:"versioninfo.notes", type:sap.ui.core.mvc.ViewType.Template});
                        oNotesModel = new JSONModel();
                        oNotesView.setModel(oNotesModel);
-                       oDialog = new sap.ui.commons.Dialog("notesDialog");
-                       oDialog.addButton(new sap.ui.commons.Button({
+                       oNotesDialog = new sap.ui.commons.Dialog("notesDialog");
+                       oNotesDialog.addButton(new sap.ui.commons.Button({
                            text: "OK",
                            press: function(){
-                               oDialog.close();
+                               oNotesDialog.close();
                            }
                        }));
-                       oDialog.setModal(true);
-                       oDialog.setHeight("40%");
-                       oDialog.setWidth("40%");
+                       oNotesDialog.setModal(true);
+                       oNotesDialog.setHeight("40%");
+                       oNotesDialog.setWidth("40%");
                        oNotesView.addStyleClass("myReleaseNotes");
-                       oDialog.setResizable(true);
+                       oNotesDialog.setResizable(true);
                    }
 
                    var oLibInfo = new sap.ui.core.util.LibraryInfo();
-                   oDialog.setTitle("Change log for: " + this.getBindingContext().getProperty("library"));
+                   oNotesDialog.setTitle("Change log for: " + this.getBindingContext().getProperty("library"));
 
                    var oVersion = jQuery.sap.Version(this.getBindingContext().getProperty("version"));
                    var sVersion = oVersion.getMajor() + "." + oVersion.getMinor() + "." + oVersion.getPatch() + oVersion.getSuffix() ;
 
                    oLibInfo._getReleaseNotes(this.getBindingContext().getProperty("library"), sVersion, function(oRelNotes, sVersion) {
-                       oDialog.removeAllContent();
+                       oNotesDialog.removeAllContent();
 
                        if (oRelNotes && oRelNotes[sVersion] && oRelNotes[sVersion].notes && oRelNotes[sVersion].notes.length > 0) {
-                           oDialog.addContent(oNotesView);
+                           oNotesDialog.addContent(oNotesView);
                            oNotesView.getModel().setData(oRelNotes);
                            oNotesView.bindObject("/" + sVersion);
-                           oDialog.open();
+                           oNotesDialog.open();
                        } else {
 
                        if (oText) {
-                           oDialog.addContent(oText);
+                           oNotesDialog.addContent(oText);
                        } else {
-                           oDialog.addContent(sap.ui.getCore().byId("noRelNote"));
+                           oNotesDialog.addContent(sap.ui.getCore().byId("noRelNote"));
                        }
-                           oDialog.open();
+                           oNotesDialog.open();
                        }
 
                    });
@@ -869,7 +910,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 
             jQuery(function () {
                 jQuery("body").append("<div id=\"logo\"><img id=\"logoico\"><img id=\"logotxt\"></div>");
-                jQuery("#logoico").attr("src", "resources/sap/ui/core/mimes/logo/icotxt_white_220x72_blue.png").addClass("sapUiImg");
+              //check if it is internal or external version of Demokit and set the dialog content according to it
+                var oVersionInfo = sap.ui.getVersionInfo();
+                if (oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav) ) {
+                    jQuery("#logoico").attr("src", "resources/sap/ui/core/mimes/logo/OpenUI5_new_small_side.png").addClass("sapUiImg");
+                } else {
+                    jQuery("#logoico").attr("src", "resources/sap/ui/core/mimes/logo/icotxt_white_220x72_blue.png").addClass("sapUiImg");
+                }
                 //jQuery("#logotxt").attr("src", "resources/sap/ui/core/mimes/logo/txtonly_32x32.png").addClass("sapUiImg");
             });
         };
