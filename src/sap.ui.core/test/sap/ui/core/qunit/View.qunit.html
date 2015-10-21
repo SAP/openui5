@@ -80,6 +80,34 @@
 		expectProcess.verify();
 	});
 
+	test("runPreprocessor w/ config and settings", 4, function () {
+		var oPreprocessors = {
+				// Note: the type does matter, as it is describing the phase of view initialization in which the preprocessor is executed.
+				// These types can be different for several view types.
+				foo: {
+					preprocessor: function(vSource, oViewInfo, oConfig) {
+							return vSource;
+						},
+					settings: {foo: undefined},
+					syncSupport: true
+				}
+			},
+			oView = new sap.ui.core.mvc.View({
+				preprocessors: oPreprocessors,
+				viewName: "foo"
+			}),
+			oSpy = this.spy(oPreprocessors.foo, "preprocessor");
+
+		oView.runPreprocessor("foo", {}, true);
+
+		oPreprocessors.foo.settings.foo = "bar";
+		sinon.assert.calledOnce(oSpy);
+		strictEqual(oSpy.args[0][2].settings.foo, oPreprocessors.foo.settings.foo, "Configured object instance gets passed to the preprocessor");
+		ok(oSpy.args[0][2].settings.foo === "bar", "Property got set correctly");
+		ok(Object.keys(oSpy.args[0][2]).length == 3, "Nothing has been added to the pp config");
+	});
+
+
 	test("runPreprocessor w/ default preprocessor for xml view", 2, function () {
 		var oConfig = {},
 			sViewContent = [
@@ -243,6 +271,34 @@
 
 	});
 
+	asyncTest("runPreprocessor w/ config and settings", 4, function () {
+		var oPreprocessors = {
+				// Note: the type does matter, as it is describing the phase of view initialization in which the preprocessor is executed.
+				// These types can be different for several view types.
+				foo: {
+					preprocessor: function(vSource, oViewInfo, oConfig) {
+							return Promise.resolve(vSource);
+						},
+					settings: {foo: undefined}
+				}
+			},
+			oView = new sap.ui.core.mvc.View({
+				preprocessors: oPreprocessors,
+				viewName: "foo",
+				async: true
+			}),
+			oSpy = this.spy(oPreprocessors.foo, "preprocessor");
+
+		oView.runPreprocessor("foo", {}).then(function() {
+			oPreprocessors.foo.settings.foo = "bar";
+			sinon.assert.calledOnce(oSpy);
+			strictEqual(oSpy.args[0][2].settings.foo, oPreprocessors.foo.settings.foo, "Configured object instance gets passed to the preprocessor");
+			ok(oSpy.args[0][2].settings.foo === "bar", "Property got set correctly");
+			ok(Object.keys(oSpy.args[0][2]).length == 2, "Nothing has been added to the pp config");
+			start();
+		});
+	});
+
 	asyncTest("runPreprocessor w/ default preprocessor for xml view", 3, function () {
 		var oConfig = {},
 			sViewContent = [
@@ -379,7 +435,7 @@
 		// now a preprocessor is set
 		deepEqual(
 			sap.ui.core.mvc.View._mPreprocessors["test"]["controls"],
-			{onDemand: false, preprocessor: this.oPreprocessor, message: this.mSettings.message, syncSupport: true},
+			{onDemand: false, preprocessor: this.oPreprocessor, syncSupport: true, settings: this.mSettings},
 			"preprocessor stored at view"
 		);
 	});
