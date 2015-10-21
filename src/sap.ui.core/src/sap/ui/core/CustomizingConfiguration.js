@@ -19,11 +19,11 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 		var mComponentConfigs = {};
 		
 		/**
-		 * finds the config in the given type and use the check function to validate
+		 * Finds the config in the given type and use the check function to validate
 		 * if the correct entry has been found!
-		 * @param {string} sType name of the config section
+		 * @param {string} sType Name of the config section
 		 * @param {string|sap.ui.base.ManagedObject} vObject Component ID or ManagedObject
-		 * @param {function} fnCheck check function
+		 * @param {function} fnCheck Check function
 		 */
 		function findConfig(sType, vObject, fnCheck) {
 			var sComponentId = vObject && typeof vObject === "string" ? vObject : (vObject && Component.getOwnerIdFor(vObject));
@@ -99,9 +99,9 @@ sap.ui.define(['jquery.sap.global', './Core', './Component'],
 			},
 			
 			/**
-			 * Deactivates the customizing of a component by removing the component
-			 * configuration in the central customizing configuration.
-			 * @param {string} sComponentName the name of the component
+			 * Deactivates the Customizing of a component by removing the component
+			 * configuration in the central Customizing configuration.
+			 * @param {string} sComponentName Name of the component
 			 * @private
 			 */
 			deactivateForComponent: function(sComponentName) {
