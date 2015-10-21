@@ -2441,6 +2441,24 @@
 				"relativeTimePattern-count-other": "před {0} lety"
 			}
 		},
+		"quarter": {
+			"displayName": "čtvrtletí",
+			"relative-type--1": "minulé čtvrtletí",
+			"relative-type-0": "toto čtvrtletí",
+			"relative-type-1": "příští čtvrtletí",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "za {0} čtvrtletí",
+				"relativeTimePattern-count-few": "za {0} čtvrtletí",
+				"relativeTimePattern-count-many": "za {0} čtvrtletí",
+				"relativeTimePattern-count-other": "za {0} čtvrtletí"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "před {0} čtvrtletím",
+				"relativeTimePattern-count-few": "před {0} čtvrtletími",
+				"relativeTimePattern-count-many": "před {0} čtvrtletím",
+				"relativeTimePattern-count-other": "před {0} čtvrtletími"
+			}
+		},
 		"month": {
 			"displayName": "měsíc",
 			"relative-type--1": "minulý měsíc",

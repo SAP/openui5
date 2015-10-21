@@ -2432,6 +2432,20 @@
 				"relativeTimePattern-count-other": "{0} jaar geleden"
 			}
 		},
+		"quarter": {
+			"displayName": "kwartaal",
+			"relative-type--1": "vorig kwartaal",
+			"relative-type-0": "dit kwartaal",
+			"relative-type-1": "volgend kwartaal",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "over {0} kwartaal",
+				"relativeTimePattern-count-other": "over {0} kwartalen"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} kwartaal geleden",
+				"relativeTimePattern-count-other": "{0} kwartalen geleden"
+			}
+		},
 		"month": {
 			"displayName": "maand",
 			"relative-type--1": "vorige maand",

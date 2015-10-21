@@ -294,7 +294,21 @@
 			type : "POST"
 		});
 		ok(oResponse.success, "edit draft created");
-	
+
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/SalesOrder(ActiveSalesOrderID='ActiveSalesOrderID 2',SalesOrderDraftUUID=guid'00000000-0000-0000-0000-000000000000')/DraftAdministrativeData",
+			dataType : "json"
+		});
+		ok(oResponse.success, "No DraftAdministrativeData for Active Entity");
+		ok(jQuery.isEmptyObject(oResponse.data.d));
+			
+		oResponse = jQuery.sap.sjax({
+			url : "/myservice/SalesOrder(ActiveSalesOrderID='ActiveSalesOrderID 2',SalesOrderDraftUUID=guid'00000000-0000-0000-0000-000000000000')?$expand=DraftAdministrativeData",
+			dataType : "json"
+		});
+		ok(oResponse.success, "No DraftAdministrativeData for Active Entity");
+		ok(jQuery.isEmptyObject(oResponse.data.d.DraftAdministrativeData));
+		
 		oMockServer.destroy();
 	});
 

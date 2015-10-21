@@ -153,6 +153,8 @@ xhr.onCreate = function(request) {
 			[200, oCountHeaders, "5"],
 		"Categories(1)":
 			[200, oJSONHeaders, sCategory1JSON],
+		"ZeroTest(1)":
+			[200, oJSONHeaders, sZeroTest],
 		"Categories(3)":
 			[200, oJSONHeaders, sCategory3JSON],
 		"Categories(4)":
@@ -258,15 +260,19 @@ xhr.onCreate = function(request) {
 	};
 
 	request.onSend = function() {
+		if (window.fakeRequested) window.fakeRequested();
+		
 		function respond(code, headers, data) {
 			if (request.async) {
 				_setTimeout(function() {
 					if (!request.aborted) {
+						if (window.fakeResponded) window.fakeResponded();
 						request.respond(code, headers, data);
 					}
 				}, responseDelay);
 			} else {
 				if (!request.aborted) {
+					if (window.fakeResponded) window.fakeResponded();
 					request.respond(code, headers, data);
 				}
 			}
@@ -7080,3 +7086,7 @@ var sMetadataComplex = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" +
 		"		</Schema>\n" + 
 		"	</edmx:DataServices>\n" + 
 		"</edmx:Edmx>"
+		
+		var sZeroTest = "{\n" + 
+		"	\"d\" : 0\n" + 
+		"}"; 

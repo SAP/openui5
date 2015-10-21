@@ -11,11 +11,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 	/**
 	 * Constructor for a new Column.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The column allows to define column specific properties that will be applied when rendering the table.
+	 * The column allows you to define column specific properties that will be applied when rendering the table.
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 *
@@ -30,53 +30,86 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 		properties : {
 
 			/**
-			 * Width of the column. Works only with px/em/rem values. Em will handled like rem values.
+			 * Width of the column. Works only with px/em/rem values. Em are handled like rem values.
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * Is the width of the column flexible (grows on resize)?
+			 * If the table is wider than the sum of widths of the visible columns, the columns will be
+			 * resized proportionally to their widths that were set originally. If set to false, the column will be displayed in the
+			 * original width. If all columns are set to not be flexible, an extra "dummy" column will be
+			 * created at the end of the table.
 			 */
 			flexible : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Is the column resizable or not?
+			 * If set to true, the column can be resized either using the resize-handle (by mouse) or using
+			 * the keyboard (SHIFT + Left/Right Arrow keys)
 			 */
 			resizable : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Horizontal alignment of the column content. Controls with a text align do not inherit the horizontal alignment. You have to set the text align directly on the template.
+			 * Horizontal alignment of the column content. Controls with a text align do not inherit
+			 * the horizontal alignment. You have to set the text align directly on the template.
 			 */
 			hAlign : {type : "sap.ui.core.HorizontalAlign", group : "Appearance", defaultValue : sap.ui.core.HorizontalAlign.Begin},
 
 			/**
-			 * flag, if the column is sorted or not (displays the sorting indicator, does not trigger the sort method!)
+			 * Indicates if the column is sorted. This property only controls if a sort indicator is displayed in the
+			 * column header - it does not trigger the sort function. The column has to be sorted by calling <code>Column.sort()</code>
 			 */
 			sorted : {type : "boolean", group : "Appearance", defaultValue : false},
 
 			/**
-			 * Sort order for this column.
+			 * This property indicates the sort direction (Ascending or Descending). The corresponding icon will be
+			 * rendered if the property <code>sorted</code> is <code>true</code>
 			 * @see sap.ui.table.SortOrder (default value: "Ascending")
 			 */
 			sortOrder : {type : "sap.ui.table.SortOrder", group : "Appearance", defaultValue : sap.ui.table.SortOrder.Ascending},
 
 			/**
 			 * Specifies the binding property on which the column will sort.
+			 * Since the column template may have composite bindings, it's not possible to figure out on which binding
+			 * property the sort shall be applied. Therefore the binding property for sorting must be specified.
+			 * For example, if the first name and last name are displayed in the same column, only one of the two can be defined as
+			 * <code>sortProperty</code>.
+			 *
+			 * A column menu entry for sorting can only be generated if the <code>sortProperty</code> is set.
 			 */
 			sortProperty : {type : "string", group : "Behavior", defaultValue : null},
 
 			/**
-			 * flag, if the column is filtered or not (displays the filter indicator, does not trigger the filter method!)
+			 * Indicates if the column is filtered. This property only controls if a filter indicator is displayed in the
+			 * column header - it does not trigger the filter function. The column has to be filtered by calling <code>Column.sort()</code>
 			 */
 			filtered : {type : "boolean", group : "Appearance", defaultValue : false},
 
 			/**
-			 * Specifies the binding property on which the column will filter.
+			 * Specifies the binding property on which the column shall be filtered.
+			 * Since the column template may have composite bindings, it's not possible to figure out on which binding
+			 * property the filter shall be applied. Therefore the binding property for filtering must be specified.
+			 * For example, if the first name and last name are displayed in the same column, only one of the two can be defined as
+			 * <code>filterProperty</code>.
+			 *
+			 * A column menu entry for filtering can only be generated if the <code>filterProperty</code> is set. The
+			 * default menu entry is a text input field.
 			 */
 			filterProperty : {type : "string", group : "Behavior", defaultValue : null},
 
 			/**
-			 * Specifies the value of the filter as string (will be converted into the propert data type).
+			 * Specifies the value of the filter as string (will be converted into the proper data type). It is possible
+			 * to provide a filterOperator as string, as shown here:
+			 * > 50
+			 * < 100
+			 * >= 150
+			 * <= 200
+			 * = 250
+			 * != 300
+			 * *something	ends with
+			 * something*	starts with
+			 * *something*	contains
+			 * some..thing	between
+			 * 50..100		between
 			 */
 			filterValue : {type : "string", group : "Behavior", defaultValue : null},
 
@@ -87,7 +120,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 			filterOperator : {type : "string", group : "Behavior", defaultValue : null},
 
 			/**
-			 * flag, if the column is grouped or not (hides the column!)
+			 * If this property is set, the default filter operator of the column is overridden.
+			 * By default <code>Contains</code> is used for string and <code>EQ</code> for other types. A valid <code>sap.ui.model.FilterOperator</code> needs to be passed.
+			 */
+			defaultFilterOperator : {type : "string", group : "Behavior", defaultValue : null},
+
+			/**
+			 * Type of Filter. This is used to transform the search term to the specified type,
+			 * to make sure that the right columns are displayed. This should be the same as defined
+			 * in binding for this column. As an alternative you can pass a function which does the conversion.
+			 * The function receives the entered filter value as parameter and returns the proper
+			 * value for the filter expression. Another option is to pass the class name of the type,
+			 * e.g.: <code>sap.ui.model.type.Date</code> or an expression similar to the binding syntax,
+			 * e.g.: <code>"\{type: 'sap.ui.model.type.Date', formatOptions: \{UTC: true\}, constraints: {} \}"</code>.
+			 * Here the escaping is mandatory to avoid handling by the binding parser.
+			 * By default the filter type is <code>sap.ui.model.type.String</code>.
+			 * @since 1.9.2
+			 */
+			filterType : {type : "any", group : "Misc", defaultValue : null},
+
+			/**
+			 * Indicates if the column is grouped.
 			 */
 			grouped : {type : "boolean", group : "Appearance", defaultValue : false},
 
@@ -97,67 +150,69 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 			visible : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * Type of Filter. This is used to transform the search term to the specified type, to make sure that the right columns are displayed. This should be the same as defined in binding for this column. As alternative you can pass a function which does the conversion. The function receives the entered filter value as parameter and returns the proper value for the filter expression. Another option is to pass the classname of the type, e.g.: sap.ui.model.type.Date or an expression similar to the binding syntax, e.g.: "\{type: 'sap.ui.model.type.Date', formatOptions: \{UTC: true\}, constraints: {} \}". Here the escaping is mandatory to avoid handling by the binding parser. By default the filter type is sap.ui.model.type.String.
-			 * @since 1.9.2
-			 */
-			filterType : {type : "any", group : "Misc", defaultValue : null},
-
-			/**
-			 * The name of the column which is used in the column visibility menu item as text. If not set as fallback the column menu tries to get the text from the nested Label.
+			 * The name of the column which is used in the column visibility menu item as text.
+			 * If not set as a fallback the column menu tries to get the text from the nested Label.
 			 * @since 1.11.1
 			 */
 			name : {type : "string", group : "Appearance", defaultValue : null},
 
 			/**
-			 * Define if the filter menu entry is displayed
+			 * Defines if the filter menu entry is displayed
 			 * @since 1.13.0
 			 */
 			showFilterMenuEntry : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * Define if the sort menu entries are displayed
+			 * Defines if the sort menu entries are displayed
 			 * @since 1.13.0
 			 */
 			showSortMenuEntry : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * If this property is set a span is applied for the header. When moving columns all columns which are part of the header will be moved. This can be either an integer or an array of integers (if you use the multi header feature of the table). If you only specify an integer this span is applied for all header rows, with multiple integers you can specify a seperate span for each header row.
+			 * If this property is set, a span is applied for the header. When moving columns, all columns
+			 * which are part of the header will be moved. The <code>headerSpan</code> can be either an integer or an array of
+			 * integers (if you use the multi header feature of the table). If you only specify an integer, this span is
+			 * applied for all header rows, with multiple integers you can specify a separate span for each header row.
 			 */
 			headerSpan : {type : "any", group : "Behavior", defaultValue : 1},
 
 			/**
-			 * Enables auto-resizing of the column on doubleclicking the resizer. Currently only implemented to work with the following controls: sap.m.Text, sap.m.Label, sap.m.Link , sap.m.Input, sap.ui.commons.TextView, sap.ui.commons.Label, sap.ui.commons.Link and sap.ui.commons.TextField, sap.ui.commons.Checkbox, sap.m.Checkbox
+			 * Enables auto-resizing of the column on double-clicking the resizer. The width is determined on the widest
+			 * currently displayed content. It does not consider rows which are currently not scrolled into view.
+			 * Currently only implemented to work with the following controls:
+			 * <code>sap.m.Text, sap.m.Label, sap.m.Link, sap.m.Input,
+			 * sap.ui.commons.TextView, sap.ui.commons.Label, sap.ui.commons.Link and sap.ui.commons.TextField,
+			 * sap.ui.commons.Checkbox, sap.m.Checkbox</code>
 			 * @since 1.21.1
 			 */
-			autoResizable : {type : "boolean", group : "Behavior", defaultValue : false},
-
-			/**
-			 * If this property is set the default filter operator of the column is overwritten.
-			 * By default "Contains" is used for string and "EQ" for other types. A valid sap.ui.model.FilterOperator needs to be passed.
-			 */
-			defaultFilterOperator : {type : "string", group : "Behavior", defaultValue : null}
+			autoResizable : {type : "boolean", group : "Behavior", defaultValue : false}
 		},
 		defaultAggregation : "label",
 		aggregations : {
 
 			/**
-			 * Label (header renderer) of the column which is displayed in the column header. Define a control for each header row in the table. This aggregation is for the standard behaviour, if you only want to display one single row header.
+			 * Label of the column which is displayed in the column header. This aggregation is for the standard behavior,
+			 * where you only want to display one single row header. If a string is supplied, a default label control will be
+			 * created. Which control this is depends on the loaded libraries.
 			 */
-			label : {type : "sap.ui.core.Control", multiple : false},
+			label : {type : "sap.ui.core.Control", altTypes : ["string"], multiple : false},
 
 			/**
-			 * Labels (header renderer) of the column which are displayed in the column header. Define a control for each header row in the table. Use this aggregation, if you want to use multiple headers per column.
+			 * Labels of the column which are displayed in the column header. Define a control for
+			 * each header row in the table. Use this aggregation if you want to use multiple headers per column.
 			 * @since 1.13.1
 			 */
 			multiLabels : {type : "sap.ui.core.Control", multiple : true, singularName : "multiLabel"},
 
 			/**
-			 * Template (cell renderer) of this column. A template is decoupled from the column which means after changing the templates' properties or aggregations an explicit invalidation of the column or table is required. The default is: sap.ui.commons.TextView.
+			 * Template (cell renderer) of this column. A template is decoupled from the column, which means after
+			 * changing the templates' properties or aggregations an explicit invalidation of the column or table is
+			 * required. The default depends on the loaded libraries.
 			 */
 			template : {type : "sap.ui.core.Control", multiple : false},
 
 			/**
-			 * The menu used by the column. By default the {@link sap.ui.table.ColumnMenu} is used.
+			 * The menu used by the column. By default the {@see sap.ui.table.ColumnMenu} is used.
 			 */
 			menu : {type : "sap.ui.unified.Menu", multiple : false}
 		},
@@ -178,12 +233,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 			}
 		}
 	}});
-
-
-	
-
-
-	
 
 
 	/** default filter type for the columns */
@@ -222,7 +271,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 	};
 
 	/**
-	 * called when the columns parent is set
+	 * called when the column's parent is set
 	 */
 	Column.prototype.setParent = function(oParent, sAggregationName, bSuppressRerendering) {
 		Element.prototype.setParent.apply(this, arguments);
@@ -308,7 +357,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 	};
 
 	/**
-	 * This function invalidates the columns menu. All items will be re-created the next time the menu opens. This only
+	 * This function invalidates the column's menu. All items will be re-created the next time the menu opens. This only
 	 * happens for generated menus.
 	 * @private
 	 */
@@ -320,8 +369,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 	};
 
 	/**
-	 * Checks whether or not the menu has items
+	 * Checks whether or not the menu has items. This function considers table and column
+	 * properties to determine whether the column menu would have items. If there is a menu set,
+	 * it will just check whether there are items in the item aggregation.
 	 * @return {Boolean} True if the menu has or could have items.
+	 * @private
 	 */
 	Column.prototype._menuHasItems = function() {
 		var oMenu = this.getAggregation("menu");
@@ -406,19 +458,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 
 		return this._defaultMenu;
 	};
-
-
-	/*
-	 * @see JSDoc generated by SAPUI5 control API generator
-	sap.ui.table.Column.prototype.setEditorTemplate = function(vTemplate) {
-		var oTemplate = vTemplate;
-		if (typeof (vTemplate) === "string") {
-			oTemplate = sap.ui.table.TableHelper.createTextField().bindProperty("value", vTemplate);
-		}
-		this.setAggregation("editorTemplate", oTemplate);
-		return this;
-	};
-	*/
 
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
@@ -512,7 +551,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 
 
 	/**
-	 * Function is called when mouse key is clicked down.
+	 * Function is called when mouse button is pressed.
 	 *
 	 * @param {jQuery.Event} oEvent
 	 * @private
@@ -535,7 +574,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 		}
 	};
 
-
+	/**
+	 * Open the column menu
+	 * @param [{Object}] oDomRef Optional DOM reference of the element to which the menu should be visually attached. Fallback is the focused DOM reference
+	 * @private
+	 */
 	Column.prototype._openMenu = function(oDomRef) {
 		if (this._bSkipOpen){
 			this._bSkipOpen = false;
@@ -560,7 +603,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 
 
 	/**
-	 * toggles the sort order of the column
+	 * Toggles the sort order of the column.
 	 *
 	 * @type sap.ui.table.Column
 	 * @public

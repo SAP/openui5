@@ -420,6 +420,7 @@
 						ok(fnCloseSpy.calledOn(sap.m.MessageToast), 'onClose callback was called with the correct context');
 						hasEventListeners(window, "resize", false);
 						hasEventListeners(document, "mousedown", false);
+						hasEventListeners(document, "touchstart", false);
 
 						// start the test
 						start();

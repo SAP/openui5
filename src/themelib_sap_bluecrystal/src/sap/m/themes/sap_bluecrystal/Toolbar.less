@@ -41,8 +41,27 @@
 }
 
 .sap-desktop .sapMTBActive:focus {
-	outline: 1px dotted @sapUiFocus;
+	outline: 1px dotted @sapUiInvertedFocus;
 	outline-offset: -0.125rem;
+}
+
+/* IE ignores outline-offset. Use an overlay: */
+.sap-desktop[data-sap-ui-browser^="ie"] {
+	.sapMTBActive:focus {
+		outline: none;
+		position: relative;
+	}
+	.sapMTBActive:focus:before {
+		content: " ";
+		box-sizing: border-box;
+		width: calc(~'100% - 0.0625rem');
+		height: calc(~'100% - 0.0625rem');
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.0625rem dotted @sapUiInvertedFocus;
+		pointer-events: none;
+	}
 }
 
 .sap-desktop .sapMTB-Info-CTX.sapMTBActive:focus {

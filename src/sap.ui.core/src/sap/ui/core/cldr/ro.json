@@ -2413,6 +2413,22 @@
 				"relativeTimePattern-count-other": "acum {0} de ani"
 			}
 		},
+		"quarter": {
+			"displayName": "Trimestru",
+			"relative-type--1": "trimestrul trecut",
+			"relative-type-0": "trimestrul acesta",
+			"relative-type-1": "trimestrul viitor",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "peste {0} trimestru",
+				"relativeTimePattern-count-few": "peste {0} trimestre",
+				"relativeTimePattern-count-other": "peste {0} de trimestre"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "acum {0} trimestru",
+				"relativeTimePattern-count-few": "acum {0} trimestre",
+				"relativeTimePattern-count-other": "acum {0} de trimestre"
+			}
+		},
 		"month": {
 			"displayName": "Lună",
 			"relative-type--1": "luna trecută",

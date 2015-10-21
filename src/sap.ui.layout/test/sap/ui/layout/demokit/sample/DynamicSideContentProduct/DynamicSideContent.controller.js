@@ -13,6 +13,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/
 			var oModel = new JSONModel(sPath);
 			this.getView().setModel(oModel);
 		},
+		onBeforeRendering: function() {
+			this.getView().byId("DSCWidthSlider").setVisible(!sap.ui.Device.system.phone);
+			this.getView().byId("DSCWidthHintText").setVisible(!sap.ui.Device.system.phone);
+		},
 		handleSliderChange: function (oEvent) {
 			var iValue = oEvent.getParameter("value");
 			this.updateControlWidth(iValue);

@@ -10,18 +10,18 @@
 		</form:title>
 		<template:with path="entityType>com.sap.vocabularies.UI.v1.HeaderInfo">
 			<!-- Note: separate labels instead of composite bindings for testing only! -->
-			<Label text="Type Name"/>
-			<Text text="{path: 'entityType>TypeName', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+			<Label labelFor="{path: 'entityType>TypeName', formatter: '.id'}"
+				text="Type Name"/>
+			<Text id="{path: 'entityType>TypeName', formatter: '.id'}"
+				text="{path: 'entityType>TypeName', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
 
-			<Label text="{path: 'entityType>Title/Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
 			<template:with path="entityType>Title" var="field">
-				<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Field" type="XML"/>
+				<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.LabeledField" type="XML"/>
 			</template:with>
 
 			<template:if test="{entityType>Description}"> <!-- HeaderInfo Description is Nullable -->
-				<Label text="{path: 'entityType>Description/Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
 				<template:with path="entityType>Description" var="field">
-					<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Field" type="XML"/>
+					<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.LabeledField" type="XML"/>
 				</template:with>
 			</template:if>
 		</template:with>

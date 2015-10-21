@@ -2431,6 +2431,18 @@
 				"relativeTimePattern-count-other": "{0} năm trước"
 			}
 		},
+		"quarter": {
+			"displayName": "Quý",
+			"relative-type--1": "quý trước",
+			"relative-type-0": "quý này",
+			"relative-type-1": "quý sau",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "sau {0} quý nữa"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} quý trước"
+			}
+		},
 		"month": {
 			"displayName": "Tháng",
 			"relative-type--1": "tháng trước",

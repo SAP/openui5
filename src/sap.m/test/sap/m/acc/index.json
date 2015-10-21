@@ -46,6 +46,11 @@
 			"appComponent": "CA-UI5-CTR-SOF"
 		},
 		{
+			"control": "sap.m.DynamicContainer",
+			"url": "../DynamicContainer.html",
+			"appComponent" : "CA-UI5-BS-FCW"
+		},
+		{
 			"control": "sap.m.FeedInput",
 			"url": "../FeedInput.html",
 			"appComponent": "CA-UI5-BS-FCW"
@@ -54,6 +59,11 @@
 			"control": "sap.m.FeedListItem",
 			"url": "../FeedListItem.html",
 			"appComponent": "CA-UI5-BS-FCW"
+		},
+		{
+			"control": "sap.m.GenericTile",
+			"url": "../GenericTile.html",
+			"appComponent" : "CA-UI5-BS-FCW"
 		},
 		{
 			"control": "sap.m.semantic.FullscreenPage",
@@ -74,6 +84,11 @@
 			"control": "sap.m.Input",
 			"url": "Input.html",
 			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.JamContent",
+			"url": "../JamContent.html",
+			"appComponent" : "CA-UI5-BS-FCW"
 		},
 		{
 			"control": "sap.m.Label",
@@ -115,6 +130,16 @@
 			"control": "sap.m.MultiComboBox",
 			"url": "../MultiComboBox.html",
 			"appComponent": "CA-UI5-CTR-WDF"
+		},
+		{
+			"control": "sap.m.NewsContent",
+			"url": "../NewsContent.html",
+			"appComponent" : "CA-UI5-BS-FCW"
+		},
+		{
+			"control": "sap.m.NumericContent",
+			"url": "../NumericContent.html",
+			"appComponent" : "CA-UI5-BS-FCW"
 		},
 		{
 			"control": "sap.m.ObjectAttribute",
@@ -240,6 +265,11 @@
 			"control": "sap.m.TileContainer",
 			"url": "../TileContainer.html",
 			"appComponent": "CA-UI5-CTR-SOF"
+		},
+		{
+			"control": "sap.m.TileContent",
+			"url": "../TileContent.html",
+			"appComponent" : "CA-UI5-BS-FCW"
 		},
 		{
 			"control": "sap.m.Title",

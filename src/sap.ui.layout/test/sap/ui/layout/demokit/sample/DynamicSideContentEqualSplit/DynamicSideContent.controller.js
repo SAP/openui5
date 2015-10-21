@@ -8,6 +8,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/
 			var oImgModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/img.json"));
 			this.getView().setModel(oImgModel, "img");
 		},
+		onBeforeRendering: function() {
+			this.getView().byId("DSCWidthSlider").setVisible(!sap.ui.Device.system.phone);
+		},
 		handleSliderChange: function (oEvent) {
 			var iValue = oEvent.getParameter("value");
 			this.updateControlWidth(iValue);

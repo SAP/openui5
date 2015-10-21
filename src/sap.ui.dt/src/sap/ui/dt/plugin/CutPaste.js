@@ -145,9 +145,9 @@ sap.ui.define([
 			this.fireElementMoved({
 				data: oMoveEvent
 			});
-			oCutOverlay.focus();
-			this.stopCutAndPaste();
 		}
+		oCutOverlay.focus();
+		this.stopCutAndPaste();
 	};
 
 	CutPaste.prototype.stopCutAndPaste = function() {

@@ -2426,6 +2426,24 @@
 				"relativeTimePattern-count-other": "{0} року тому"
 			}
 		},
+		"quarter": {
+			"displayName": "квартал",
+			"relative-type--1": "минулого кварталу",
+			"relative-type-0": "цього кварталу",
+			"relative-type-1": "наступного кварталу",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "через {0} квартал",
+				"relativeTimePattern-count-few": "через {0} квартали",
+				"relativeTimePattern-count-many": "через {0} кварталів",
+				"relativeTimePattern-count-other": "через {0} кварталу"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} квартал тому",
+				"relativeTimePattern-count-few": "{0} квартали тому",
+				"relativeTimePattern-count-many": "{0} кварталів тому",
+				"relativeTimePattern-count-other": "{0} кварталу тому"
+			}
+		},
 		"month": {
 			"displayName": "місяць",
 			"relative-type--1": "минулого місяця",

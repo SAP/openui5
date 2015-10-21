@@ -106,12 +106,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.Dialog",
 			"sap.m.DisplayListItem",
 			"sap.m.DraftIndicator",
+			"sap.m.DynamicContainer",
 			"sap.m.FacetFilter",
 			"sap.m.FacetFilterItem",
 			"sap.m.FacetFilterList",
 			"sap.m.FeedInput",
 			"sap.m.FeedListItem",
 			"sap.m.FlexBox",
+			"sap.m.GenericTile",
 			"sap.m.GroupHeaderListItem",
 			"sap.m.GrowingList",
 			"sap.m.HBox",
@@ -121,6 +123,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.Input",
 			"sap.m.InputBase",
 			"sap.m.InputListItem",
+			"sap.m.JamContent",
 			"sap.m.Label",
 			"sap.m.Link",
 			"sap.m.List",
@@ -133,6 +136,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.MultiComboBox",
 			"sap.m.MultiInput",
 			"sap.m.NavContainer",
+			"sap.m.NewsContent",
+			"sap.m.NumericContent",
 			"sap.m.NotificationListItem",
 			"sap.m.PagingButton",
 			"sap.m.ObjectAttribute",
@@ -184,6 +189,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.TextArea",
 			"sap.m.Tile",
 			"sap.m.TileContainer",
+			"sap.m.TileContent",
 			"sap.m.TimePicker",
 			"sap.m.Title",
 			"sap.m.ToggleButton",
@@ -996,6 +1002,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	*
 	* @enum {string}
 	* @public
+	* @since 1.34.0
+	* @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	*/
 	sap.m.InfoTileSize = {
 
@@ -1063,6 +1071,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 *
 	 * @enum {string}
 	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.m.InfoTileValueColor = {
 
@@ -1360,12 +1369,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		DetailAndActive : "DetailAndActive"
 
 	};
-	
+
 	/**
 	 * Enumeration of possible load statuses.
 	 *
 	 * @enum {string}
 	 * @public
+	 * @since 1.34.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.m.LoadState = {
 
@@ -1393,7 +1404,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		 */
 		Disabled : "Disabled"
 	};
-	
+
 	/**
 	 * Defines the priorities of the controls within sap.m.OverflowToolbar
 	 *

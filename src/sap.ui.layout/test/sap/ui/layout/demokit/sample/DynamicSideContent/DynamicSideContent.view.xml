@@ -40,17 +40,13 @@
 			</Page>
 		</content>
 		<footer>
-			<Bar>
-				<contentLeft>
+			<Toolbar>
+				<content>
 					<Button text="Toggle" type="Accept" press="handleToggleClick" id="toggleButton"></Button>
-				</contentLeft>
-				<contentMiddle>
-					<Slider value="100" width="300px" liveChange="handleSliderChange" />
-				</contentMiddle>
-				<contentRight>
-					<Text text="Best view in full screen mode"></Text>
-				</contentRight>
-			</Bar>
+					<Slider id='DSCWidthSlider' value="100" liveChange="handleSliderChange" />
+					<Text id='DSCWidthHintText' text="Best view in full screen mode" visible="getVisible()"></Text>
+				</content>
+			</Toolbar>
 		</footer>
 	</Page>
 </mvc:View>

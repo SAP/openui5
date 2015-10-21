@@ -1,0 +1,254 @@
+/* ==================================== */
+/* CSS for sap.m/NumericContent.control */
+/* ==================================== */
+.sapMNC {
+	position: relative;
+	box-sizing: border-box;
+	outline: none;
+}
+
+.sapMNC.L {
+	height: 5.625rem;
+	width: 12rem;
+}
+
+.sapUiMedia-Std-Desktop .sapMNC.Auto,
+.sapUiMedia-Std-Tablet .sapMNC.Auto,
+.sapMNC.M	{
+	height: 4.5rem;
+	width: 10.5rem;
+}
+
+.sapUiMedia-Std-Phone .sapMNC.Auto,
+.sapMNC.S,
+.sapMNC.XS {
+	height: 3.5rem;
+	width: 8.25rem;
+}
+
+.sapMNC.WithoutMargin,
+.sapMNC.WithoutMargin.Auto {
+	width: auto;
+	height: auto;
+}
+
+.sapMNCInner {
+	position: absolute;
+	left: 0;
+	right: 0;
+}
+
+.sapUiMedia-Std-Phone .sapMNCInner.Auto,
+.sapMNCInner.S,
+.sapMNCInner.XS {
+	top: 1.0625rem;
+	bottom: -.0625rem;
+}
+
+.sapUiMedia-Std-Desktop .sapMNCInner.Auto,
+.sapUiMedia-Std-Tablet .sapMNCInner.Auto,
+.sapMNCInner.M {
+	top: 1.25rem;
+	bottom: -.125rem;
+}
+
+.sapMNCInner.L {
+	top: 1.9rem;
+	bottom: 0;
+}
+
+.sapMNCInner.WithoutMargin,
+.sapMNCInner.WithoutMargin.Auto {
+	top: 0;
+	width: auto;
+	height: auto;
+	position: relative;
+	overflow: visible;
+	white-space: nowrap;
+	display: inline-block;
+}
+
+.sapMNCIconImage {
+	position: relative;
+	float: left;
+}
+
+.sapUiMedia-Std-Phone .sapMNCIconImage.Auto,
+.sapMNCIconImage.S,
+.sapMNCIconImage.XS {
+	font-size: 24px;
+	height: 24px;
+	width: 24px;
+	margin-top: .375rem;
+}
+
+.sapUiMedia-Std-Desktop .sapMNCIconImage.Auto,
+.sapUiMedia-Std-Tablet .sapMNCIconImage.Auto,
+.sapMNCIconImage.M {
+	font-size: 34px;
+	height: 34px;
+	width: 34px;
+	margin-top: .625rem;
+}
+
+.sapMNCIconImage.L {
+	font-size: 42px;
+	height: 44px;
+	width: 44px;
+	margin-top: .5rem;
+}
+
+.sapMNCIconImage.WithoutMargin,
+.sapMNCIconImage.WithoutMargin.Auto {
+	display: inline-block;
+}
+
+.sapMNCValueScr {
+	overflow: hidden;
+	left: 0;
+	width: 100%;
+}
+
+.sapUiMedia-Std-Phone .sapMNCValueScr.Auto,
+.sapMNCValueScr.S, 
+.sapMNCValueScr.XS {
+	margin-top: -.075rem;
+}
+
+.sapUiMedia-Std-Desktop .sapMNCValueScr.Auto,
+.sapUiMedia-Std-Tablet .sapMNCValueScr.Auto,
+.sapMNCValueScr.M {
+	margin-top: -.045rem;
+}
+
+.sapMNCValueScr.L {
+	margin-top: -.2rem;
+}
+
+.sapMNCValue {
+	position: relative;
+	text-align: right;
+	width: auto;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+html[dir=rtl] .sapMNCValue {
+	text-align: left;
+}
+
+.sapUiMedia-Std-Phone .sapMNCValue.Auto,
+.sapMNCValue.S,
+.sapMNCValue.XS {
+	font-size: 34px;
+	height: 2.5rem;
+	padding-right: .375rem;
+}
+
+.sapUiMedia-Std-Desktop .sapMNCValue.Auto,
+.sapUiMedia-Std-Tablet .sapMNCValue.Auto,
+.sapMNCValue.M {
+	font-size: 48px;
+	padding-right: .5rem;
+	line-height: 54px;
+}
+
+.sapMNCValue.L {
+	font-size: 56px;
+	height: 3.9rem;
+	padding-right: .5rem;
+}
+
+.sapMNCValue.WithoutMargin,
+.sapMNCValue.WithoutMargin.Auto {
+	float: left;
+	display: inline-block;
+}
+
+.sapMNCIndScale {
+	position: relative;
+	float: right;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	min-width: 14px;
+	text-align: center;
+}
+
+.sapUiMedia-Std-Phone .sapMNCIndScale.Auto,
+.sapMNCIndScale.S,
+.sapMNCIndScale.XS {
+	height: 2rem;
+	max-width: 8.25rem;
+	margin-top: .375rem;
+}
+
+.sapUiMedia-Std-Desktop .sapMNCIndScale.Auto,
+.sapUiMedia-Std-Tablet .sapMNCIndScale.Auto,
+.sapMNCIndScale.M {
+	height: 2.875rem;
+	max-width: 10.5rem;
+	margin-top: .5rem;
+}
+
+.sapMNCIndScale.L {
+	height: 2.75rem;
+	max-width: 12.75rem;
+	margin-top: .7rem;
+}
+
+.sapMNCIndicator {
+	position: absolute;
+	left: 0;
+	right: 0;
+	width: 0;
+	margin: 0 auto;
+	display: block;
+}
+
+.sapMNCIndicator.Up {
+	border-bottom: 7px solid;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+}
+
+.sapMNCIndicator.Down {
+	border-top: 7px solid;
+	border-left: 6px solid transparent;
+	border-right: 6px solid transparent;
+}
+
+.sapMNCScale {
+	display: block;
+}
+
+.sapMNCIndScale.WithoutMargin,
+.sapMNCIndScale.WithoutMargin.Auto {
+	float: left;
+	display: inline-block;
+}
+
+.sapUiMedia-Std-Phone .sapMNCScale.Auto,
+.sapMNCScale.S,
+.sapMNCScale.XS {
+	height: 17px;
+	margin-top: 0.8rem;
+}
+
+.sapUiMedia-Std-Desktop .sapMNCScale.Auto,
+.sapUiMedia-Std-Tablet .sapMNCScale.Auto,
+.sapMNCScale.M {
+	height: 18px;
+	margin-top: 1.3rem;
+}
+
+.sapMNCScale.L {
+	height: 19px;
+	margin-top: 1.45rem;
+}
+
+.sapUiMedia-Std-Phone .sapMNCScale.Auto,
+.sapMNCScale.S,
+.sapMNCScale.XS {
+	font-size: 0.75rem;
+}

@@ -1344,6 +1344,83 @@
 		});             
 	}
 	
+	asyncTest("async test sequentializeRequests - single", function(){
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: false,
+			sequentializeRequests: true
+		});
+		var iCount = 0,
+			iRequestCount = 0,
+			iParallelCount = 0;
+		window.fakeRequested = function() {
+			iRequestCount++;
+			iParallelCount++;
+			if (iParallelCount > 1) {
+				ok(false, "Must not send requests in parallel");
+			}
+		}
+		window.fakeResponded = function() {
+			iParallelCount--;
+		}
+		oModel.read("/Categories(1)");
+		oModel.read("/Categories(1)");
+		oModel.read("/Categories(9999)");
+		oModel.attachRequestCompleted(function() {
+			iCount++;
+			if (iCount == 3) {
+				_setTimeout(function() {
+					equal(iRequestCount, 3, "Three HTTP requests have been sent");
+					ok("Three requests have been completed successfully")
+					delete window.fakeRequested;
+					delete window.fakeResponsed;
+					start();
+				}, 0);
+			}
+		});
+	});	
+	
+	asyncTest("async test sequentializeRequests - batch", function(){
+		var oModel = initModel(sURI, {
+			json: true,
+			useBatch: true,
+			sequentializeRequests: true
+		});
+		var iCount = 0,
+			iRequestCount = 0,
+			iParallelCount = 0;
+		window.fakeRequested = function() {
+			iRequestCount++;
+			iParallelCount++;
+			if (iParallelCount > 1) {
+				ok(false, "Must not send requests in parallel");
+			}
+		}
+		window.fakeResponded = function() {
+			iParallelCount--;
+		}
+		oModel.setDeferredBatchGroups(["1", "2"]);
+		oModel.read("/Categories(1)", {groupId: "1"});
+		oModel.read("/Categories(9999)", {groupId: "1"});
+		oModel.read("/Categories(1)", {groupId: "2"});
+		oModel.read("/Categories(9999)", {groupId: "2"});
+		oModel.submitChanges({groupId: "1"});
+		oModel.submitChanges({groupId: "2"});
+		
+		oModel.attachRequestCompleted(function() {
+			iCount++;
+			if (iCount == 4) {
+				_setTimeout(function() {
+					equal(iRequestCount, 2, "Two HTTP requests have been sent");
+					ok("Four requests have been completed successfully")
+					delete window.fakeRequested;
+					delete window.fakeResponsed;
+					start();
+				}, 0);
+			}
+		});
+	});	
+	
 	asyncTest("async test request events - single", function(){
 		var oModel = initModel(sURI, {
 			json: true,
@@ -1966,6 +2043,17 @@
 		}
 		oLabel.setModel(oModel1);
 		oLabel.getElementBinding().attachDataReceived(handler);
+	});
+	
+	asyncTest("read with zero Response", function(){
+		cleanServiceDataCache();
+		var oModel = initModel(sURI);
+		var fnSuccess = function(oData) {
+			ok(true, "zero data loaded");
+			ok(oData === 0, "zero data loaded");
+			start();
+		}
+		oModel.read("/ZeroTest(1)", { success: fnSuccess});
 	});
 	
 	test("test ODataModel destroy cancel async metadata", function(){

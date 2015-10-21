@@ -211,6 +211,27 @@
 		equal(oDate.getFullYear(), 1994, "Year 1994");
 	});
 
+	test("parse date two digit year UTC", function(){
+		var oFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern: "yyyy-MM-dd", UTC: true}),
+			oDate;
+		oDate = oFormat.parse("2014-03-12");
+		equal(oDate.getFullYear(), 2014, "Year 2014");
+		oDate = oFormat.parse("0014-03-12");
+		equal(oDate.getFullYear(), 14, "Year 14");
+		oDate = oFormat.parse("04-03-12");
+		equal(oDate.getFullYear(), 2004, "Year 2004");
+		oDate = oFormat.parse("14-03-12");
+		equal(oDate.getFullYear(), 2014, "Year 2014");
+		oDate = oFormat.parse("34-03-12");
+		equal(oDate.getFullYear(), 2034, "Year 2034");
+		oDate = oFormat.parse("54-03-12");
+		equal(oDate.getFullYear(), 1954, "Year 1954");
+		oDate = oFormat.parse("74-03-12");
+		equal(oDate.getFullYear(), 1974, "Year 1974");
+		oDate = oFormat.parse("94-03-12");
+		equal(oDate.getFullYear(), 1994, "Year 1994");
+	});
+
 	test("parse default date UTC", function(){
 		var oDate = oDefaultDate.parse("May 23, 2008", true);
 		equal(oDate.getUTCFullYear(), 2008, "Year 2008");
@@ -500,7 +521,7 @@
 
 	module("Scaling: Relative Time Formater", {
 		setup: function() {
-			this.clock = sinon.useFakeTimers(1444724476175);
+			this.clock = sinon.useFakeTimers(1444724476000);
 		},
 		teardown: function() {
 			this.clock.restore();
@@ -625,6 +646,7 @@
 		equal(oDate.parse("5 days ago").getDate(), date("day", -5).getDate(), "Today - 5 Days");
 		equal(oDate.parse("tomorrow").getDate(), date("day", 1).getDate(), "tomorrow");
 		equal(oDate.parse("in 5 days").getDate(), date("day", 5).getDate(), "Today + 5 Days");
+		equal(oDate.parse("next quarter").getDate(), date("day", 90).getDate(), "Today + 90 Days");
 		equal(oDate.parse("in 24 hours").getDate(), date("hour", 24).getDate(), "Today + 1 Days");
 		equal(oDate.parse("in 72 hours").getDate(), date("hour", 72).getDate(), "Today + 3 Days");
 		equal(oDate.parse("4320 minutes ago").getDate(), date("minute", -4320).getDate(), "Today - 3 Days");

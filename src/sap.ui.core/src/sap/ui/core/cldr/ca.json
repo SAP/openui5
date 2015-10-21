@@ -2471,6 +2471,20 @@
 				"relativeTimePattern-count-other": "fa {0} anys"
 			}
 		},
+		"quarter": {
+			"displayName": "trimestre",
+			"relative-type--1": "el trimestre passat",
+			"relative-type-0": "aquest trimestre",
+			"relative-type-1": "el trimestre que ve",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "d’aquí a {0} trimestre",
+				"relativeTimePattern-count-other": "d’aquí a {0} trimestres"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "fa {0} trimestre",
+				"relativeTimePattern-count-other": "fa {0} trimestres"
+			}
+		},
 		"month": {
 			"displayName": "mes",
 			"relative-type--1": "el mes passat",

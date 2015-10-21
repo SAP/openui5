@@ -2425,6 +2425,20 @@
 				"relativeTimePattern-count-other": "Il y a {0} ans"
 			}
 		},
+		"quarter": {
+			"displayName": "trimestre",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "dans {0} trimestre",
+				"relativeTimePattern-count-other": "dans {0} trimestres"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "il y a {0} trimestre",
+				"relativeTimePattern-count-other": "il y a {0} trimestres"
+			}
+		},
 		"month": {
 			"displayName": "mois",
 			"relative-type--1": "le mois dernier",

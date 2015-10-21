@@ -2475,6 +2475,18 @@
 				"relativeTimePattern-count-other": "{0}년 전"
 			}
 		},
+		"quarter": {
+			"displayName": "분기",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0}분기 후"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0}분기 전"
+			}
+		},
 		"month": {
 			"displayName": "월",
 			"relative-type--1": "지난달",

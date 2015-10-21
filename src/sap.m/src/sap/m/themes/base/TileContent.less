@@ -1,0 +1,140 @@
+/* ========================================= */
+/* CSS for control sap.m/TileContent.control */
+/* ========================================= */
+.sapMTileCnt {
+	display: inline-block;
+	box-sizing: border-box;
+	position: relative;
+}
+
+.sapUiMedia-Std-Desktop .sapMTileCnt.Auto.ft-Auto,
+.sapUiMedia-Std-Tablet .sapMTileCnt.Auto.ft-Auto,
+.sapMTileCnt.L.ft-Auto,
+.sapMTileCnt.M.ft-Auto {
+	height: 7rem;
+	min-width: 11.5rem;
+	max-width: 23.5rem;
+}
+
+.sapUiMedia-Std-Phone .sapMTileCnt.Auto.ft-Auto,
+.sapMTileCnt.S.ft-Auto {
+	height: 5.375rem;
+	min-width: 9.25rem;
+	max-width: 19rem;
+}
+
+
+/* TwoByOne size */
+.sapUiMedia-Std-Desktop .sapMTileCnt.Auto.ft-TwoByOne,
+.sapUiMedia-Std-Tablet .sapMTileCnt.Auto.ft-TwoByOne,
+.sapMTileCnt.L.ft-TwoByOne,
+.sapMTileCnt.M.ft-TwoByOne {
+	height: 7rem;
+    /*min-width: 11.5rem; */
+	width: 23.5rem;
+}
+
+.sapUiMedia-Std-Phone .sapMTileCnt.Auto.ft-TwoByOne,
+.sapMTileCnt.S.ft-TwoByOne {
+	height: 5.375rem;
+	/*min-width: 9.25rem;*/
+	width: 19rem;
+}
+
+/* OneByOne size */
+.sapUiMedia-Std-Desktop .sapMTileCnt.Auto.ft-OneByOne,
+.sapUiMedia-Std-Tablet .sapMTileCnt.Auto.ft-OneByOne,
+.sapMTileCnt.L.ft-OneByOne,
+.sapMTileCnt.M.ft-OneByOne {
+	height: 7rem;
+	width: 11.5rem;
+	/*max-width: 23.5rem;*/
+}
+
+.sapUiMedia-Std-Phone .sapMTileCnt.Auto.ft-OneByOne,
+.sapMTileCnt.S.ft-OneByOne {
+	height: 5.375rem;
+	width: 9.25rem;
+	/*max-width: 19rem;*/
+}
+
+/* Footer CSS */
+.sapMTileCntFtrTxt {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	margin-left:0.5rem;
+	margin-right:0.5rem;
+	text-align: right;
+	position: absolute;
+	bottom: 0.5rem;
+	right:0px;
+	left:0px;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+html[dir=rtl] .sapMTileCntFtrTxt {
+	text-align: left;
+}
+
+.sapUiMedia-Std-Phone .sapMTileCntFtrTxt.Auto,
+.sapMTileCntFtrTxt.S {
+	font-size: 12px;
+	line-height: 12px;
+	height: 0.875rem;
+}
+
+.sapUiMedia-Std-Desktop .sapMTileCntFtrTxt.Auto,
+.sapMTileCntFtrTxt.L,
+.sapUiMedia-Std-Tablet .sapMTileCntFtrTxt.Auto,
+.sapMTileCntFtrTxt.M {
+	font-size: 14px;
+	line-height: 14px;
+	height: 1rem;
+}
+
+/* Content */
+.sapMTileCntContent {
+	overflow: hidden;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+	display: inline-block;
+	width: 100%;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+
+.sapMTileCntContent > .sapMTcInnerMarker{
+	display: inline-block;
+	vertical-align: bottom;
+	line-height: normal;
+}
+
+.sapUiMedia-Std-Desktop .sapMTileCntContent.Auto,
+.sapUiMedia-Std-Tablet .sapMTileCntContent.Auto,
+.sapMTileCntContent.L,
+.sapMTileCntContent.M {
+	height:4.5rem;
+	margin-bottom: 0.5rem;
+	margin-top: 0.5rem;
+	line-height: 4.5rem;
+}
+
+.sapUiMedia-Std-Phone .sapMTileCntContent.Auto,
+.sapMTileCntContent.S {
+	height:3.5rem;
+	margin-bottom: 0.25rem;
+	margin-top: 0.25rem;
+	line-height: 3.5rem;
+}
+
+.sapMTileCnt + .sapMTileCnt {
+	margin-left: 0.5rem;
+}
+
+.sapMTileCntContent > .sapMNwC {
+	background-color: inherit;
+}

@@ -33,10 +33,8 @@ sap.ui.define([
 		},
 
 		_onBindingChange : function (oEvent) {
-			var oElementBinding = this.getView().getElementBinding();
-
 			// No data for the binding
-			if (oElementBinding && !oElementBinding.getBoundContext()) {
+			if (!this.getView().getBindingContext()) {
 				this.getRouter().getTargets().display("notFound");
 			}
 		}

@@ -1,0 +1,149 @@
+/* ========================================= */
+/* CSS for control sap.m/GenericTile.control */
+/* ========================================= */
+.sapMGT {
+	display: inline-block;
+	overflow: hidden;
+	background: @sapUiWhite;
+	border-radius: 4px;
+	position: relative;
+	border: 0.0625rem transparent dotted;
+	outline : none;
+}
+
+.sapMGTHdrTxt>.sapMGTTitle,
+.sapMGTSubHdrTxt,
+.sapMGT .sapMGTContent {
+	-webkit-user-select: none;
+	-moz-user-select: -moz-none;
+	-ms-user-select: none;
+}
+
+.sapMGTHdrTxt>.sapMGTTitle,
+.sapMGenericTileFtrFldTxt>.sapMGTFailed {
+	cursor: inherit;
+}
+
+.sapMGTFailed {
+	width: 90%;
+}
+
+.sapMGTInnrCnt {
+	display: inline-block;
+}
+
+.sapMGTContent {
+	display: inline-block;
+	white-space: nowrap;
+	width: 100%;
+}
+
+.sapMGTHdrTxt {
+	overflow: hidden;
+}
+
+.sapMGTSubHdrTxt {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space:nowrap;
+	margin-top: -.1875rem;
+}
+
+.sapUiMedia-Std-Phone .sapMGT.Auto.OneByOne,
+.sapMGT.S.OneByOne {
+	width: 9.125rem;
+	height: 8.875rem;
+}
+
+.sapUiMedia-Std-Phone .sapMGT.Auto.TwoByOne,
+.sapMGT.S.TwoByOne {
+	width: 18.875rem;
+	height: 8.875rem;
+}
+
+.sapUiMedia-Std-Desktop .sapMGT.Auto.OneByOne,
+.sapMGT.L.OneByOne,
+.sapUiMedia-Std-Tablet .sapMGT.Auto.OneByOne,
+.sapMGT.M.OneByOne {
+	width: 11.375rem;
+	height: 10.875rem;
+}
+
+.sapUiMedia-Std-Desktop .sapMGT.Auto.TwoByOne,
+.sapMGT.L.TwoByOne,
+.sapUiMedia-Std-Tablet .sapMGT.Auto.TwoByOne,
+.sapMGT.M.TwoByOne {
+	width: 23.375rem;
+	height: 10.875rem;
+}
+
+.sapMGTHdrContent {
+	margin-right: 0.5rem;
+	margin-left: 0.5rem;
+	margin-top: 0.5rem;
+}
+
+.sapUiMedia-Std-Phone .sapMGTHdrContent.Auto,
+.sapMGTHdrContent.S {
+	height: 3.125rem;
+	margin-top: 0.5rem;
+}
+
+.sapMGTHdrContent.L.TwoByOne,
+.sapUiMedia-Std-Desktop .sapMGTHdrContent.Auto,
+.sapMGTHdrContent.L.OneByOne,
+.sapUiMedia-Std-Tablet .sapMGTHdrContent.Auto,
+.sapMGTHdrContent.M {
+	height: 3.5rem;
+	margin-top: 0.5rem;
+}
+
+.sapMGTHdrIconImage {
+	float: right;
+	width: 2.5rem;
+	min-height: 2.5rem;
+	font-size: 2.5rem;
+}
+
+.sapMGTOverlay {
+	position: absolute !important;
+	opacity: 0.8;
+	z-index: 1;
+	top: 0px;
+	right: 0px;
+	left: 0px;
+	bottom: 0px;
+}
+
+.sapMGenericTileLoading {
+	height: 100%;
+}
+
+.sapMGenericTileFtrFld {
+	left: 0.5rem;
+	bottom: 0.5rem;
+	display: table;
+	position: absolute;
+}
+
+.sapMGenericTileFtrFldTxt {
+	font-weight: normal;
+	display:table-cell;
+	padding-left: 0.5rem;
+	vertical-align: bottom;
+	width: 100%;
+}
+
+html[dir=rtl] .sapMGenericTileFtrFldTxt {
+	padding-right:0.5rem;
+}
+
+.sapMGenericTileFtrFldIcn {
+	margin-right: 0.5rem;
+	display: table-cell;
+	vertical-align: bottom;
+}
+
+.sapMGenericTileFtrFldIcn>.sapMGTFtrFldIcnMrk {
+	vertical-align: bottom;
+}

@@ -2446,6 +2446,20 @@
 				"relativeTimePattern-count-other": "{0} vuotta sitten"
 			}
 		},
+		"quarter": {
+			"displayName": "neljännesvuosi",
+			"relative-type--1": "viime neljännesvuonna",
+			"relative-type-0": "tänä neljännesvuonna",
+			"relative-type-1": "ensi neljännesvuonna",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} neljännesvuoden päästä",
+				"relativeTimePattern-count-other": "{0} neljännesvuoden päästä"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} neljännesvuosi sitten",
+				"relativeTimePattern-count-other": "{0} neljännesvuotta sitten"
+			}
+		},
 		"month": {
 			"displayName": "kuukausi",
 			"relative-type--1": "viime kuussa",

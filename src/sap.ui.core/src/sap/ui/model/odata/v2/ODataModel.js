@@ -51,7 +51,8 @@ sap.ui.define([
 	 * @param {string} [mParameters.defaultUpdateMethod] sets the default update method which is used for all update requests. If not set, sap.ui.model.odata.UpdateMethod.Merge is used.
 	 * @param {map} [mParameters.metadataNamespaces] a map of namespaces (name => URI) used for parsing the service metadata.
 	 * @param {boolean} [mParameters.skipMetadataAnnotationParsing] Whether to skip the automated loading of annotations from the metadata document. Loading annotations from metadata does not have any effects (except the lost performance by invoking the parser) if there are not annotations inside the metadata document
-	 * @param {bolean} [mParameters.disableHeadRequestForToken=false] Set this flag to true if your service does not support HEAD requests for fetching the service document (and thus the CSRF-token) to avoid sending a HEAD-request before falling back to GET
+	 * @param {boolean} [mParameters.disableHeadRequestForToken=false] Set this flag to true if your service does not support HEAD requests for fetching the service document (and thus the CSRF-token) to avoid sending a HEAD-request before falling back to GET
+	 * @param {boolean} [mParameters.sequentializeRequests=false] Whether to sequentialize all requests, needed in case the service cannot handle parallel requests
 	 *
 	 * @class
 	 * Model implementation for oData format
@@ -77,7 +78,7 @@ sap.ui.define([
 			sDefaultCountMode, sDefaultBindingMode, sDefaultOperationMode, mMetadataNamespaces,
 			mServiceUrlParams, mMetadataUrlParams, aMetadataUrlParams, bJSON, oMessageParser,
 			bSkipMetadataAnnotationParsing, sDefaultUpdateMethod, bDisableHeadRequestForToken,
-			that = this;
+			bSequentializeRequests, that = this;
 
 			if (typeof (sServiceUrl) === "object") {
 				mParameters = sServiceUrl;
@@ -106,6 +107,7 @@ sap.ui.define([
 				bSkipMetadataAnnotationParsing = mParameters.skipMetadataAnnotationParsing;
 				sDefaultUpdateMethod = mParameters.defaultUpdateMethod;
 				bDisableHeadRequestForToken = mParameters.disableHeadRequestForToken;
+				bSequentializeRequests = mParameters.sequentializeRequests;
 			}
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
 			this.sDefaultBindingMode = sDefaultBindingMode || BindingMode.OneWay;
@@ -137,6 +139,7 @@ sap.ui.define([
 			this.bIncludeInCurrentBatch = false;
 			this.bSkipMetadataAnnotationParsing = bSkipMetadataAnnotationParsing;
 			this.bDisableHeadRequestForToken = !!bDisableHeadRequestForToken;
+			this.bSequentializeRequests = !!bSequentializeRequests;
 
 			if (oMessageParser) {
 				oMessageParser.setProcessor(this);
@@ -152,6 +155,9 @@ sap.ui.define([
 			this.oMetadata = null;
 			this.oAnnotations = null;
 			this.aUrlParams = [];
+			
+			// for sequentialized requests, keep a promise of the last request
+			this.pSequentialRequestCompleted = Promise.resolve();
 
 			// determine the service base url and the url parameters
 			this.sServiceUrl = sServiceUrl;
@@ -1985,13 +1991,19 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._submitRequest = function(oRequest, fnSuccess, fnError){
-		var that = this, /* oResponseData, mChangedEntities = {}, */ oHandler, oRequestHandle, bAborted;
+		var that = this, oHandler, oRequestHandle, bAborted, pRequestCompleted, fnResolveCompleted;
 
+		//Create promise to track when this request is completed
+		pRequestCompleted = new Promise(function(resolve, reject) {
+			fnResolveCompleted = resolve;
+		});
+		
 		function _handleSuccess(oData, oResponse) {
 			//if batch the responses are handled by the batch success handler
 			if (fnSuccess) {
 				fnSuccess(oData, oResponse);
 			}
+			fnResolveCompleted();
 		}
 
 		function _handleError(oError) {
@@ -2002,7 +2014,7 @@ sap.ui.define([
 				if (!oRequest.bTokenReset && oError.response.statusCode == '403' && sToken && sToken.toLowerCase() === "required") {
 					that.resetSecurityToken();
 					oRequest.bTokenReset = true;
-					_submit();
+					_submitWithToken();
 					return;
 				}
 			}
@@ -2010,12 +2022,10 @@ sap.ui.define([
 			if (fnError) {
 				fnError(oError);
 			}
+			fnResolveCompleted();
 		}
 
-		function _submit() {
-			//handler only needed for $batch; datajs gets the handler from the accept header
-			oHandler = that._getODataHandler(oRequest.requestUri);
-			
+		function _submitWithToken() {
 			// request token only if we have change operations or batch requests
 			// token needs to be set directly on request headers, as request is already created
 			if (that.bTokenHandling && oRequest.method !== "GET") {
@@ -2024,25 +2034,43 @@ sap.ui.define([
 					if (that.bTokenHandling) {
 						oRequest.headers["x-csrf-token"] = sToken;
 					}
-					oRequestHandle = that._request(oRequest, _handleSuccess, _handleError, oHandler, undefined, that.getServiceMetadata());
-					if (bAborted) {
-						oRequestHandle.abort();
-					}
+					_submit();
+				})["catch"](function() {
+					_submit();
 				});
-				return {
-					abort: function() {
-						if (oRequestHandle) {
-							oRequestHandle.abort();
-						}
-						bAborted = true;
-					}
-				};
 			} else {
-				return that._request(oRequest, _handleSuccess, _handleError, oHandler, undefined, that.getServiceMetadata());
+				_submit();
 			}
 		}
+		
+		function _submit() {
+			oRequestHandle = that._request(oRequest, _handleSuccess, _handleError, oHandler, undefined, that.getServiceMetadata());
+			if (bAborted) {
+				oRequestHandle.abort();
+			}
+		}
+		
+		//handler only needed for $batch; datajs gets the handler from the accept header
+		oHandler = that._getODataHandler(oRequest.requestUri);
 
-		return _submit();
+		// If requests are serialized, chain it to the current request, otherwise just submit
+		if (this.bSequentializeRequests) {
+			this.pSequentialRequestCompleted.then(function() {
+				_submitWithToken();
+			});
+			this.pSequentialRequestCompleted = pRequestCompleted;
+		} else {
+			_submitWithToken();
+		}
+		
+		return {
+			abort: function() {
+				if (oRequestHandle) {
+					oRequestHandle.abort();
+				}
+				bAborted = true;
+			}
+		};
 	};
 
 	/**
@@ -2509,7 +2537,7 @@ sap.ui.define([
 		this.decreaseLaundering(sPath, oRequest.data);
 		
 		// no data available
-		if (bContent && !oResultData && oResponse) {
+		if (bContent && oResultData === undefined && oResponse) {
 			// Parse error messages from the back-end
 			this._parseResponse(oResponse, oRequest);
 
@@ -3954,6 +3982,15 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.hasPendingChanges = function() {
 		return !jQuery.isEmptyObject(this.mChangedEntities);
+	};
+
+	/**
+	 * Checks if there are pending requests, either ongoing or sequential
+	 * @return {boolean} true/false
+	 * @public
+	 */
+	ODataModel.prototype.hasPendingRequests = function() {
+		return this.aPendingRequestHandles.length > 0;
 	};
 
 	ODataModel.prototype.getPendingChanges = function() {

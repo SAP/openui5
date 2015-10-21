@@ -2414,6 +2414,20 @@
 				"relativeTimePattern-count-other": "{0} évvel ezelőtt"
 			}
 		},
+		"quarter": {
+			"displayName": "negyedév",
+			"relative-type--1": "előző negyedév",
+			"relative-type-0": "ez a negyedév",
+			"relative-type-1": "következő negyedév",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "{0} negyedév múlva",
+				"relativeTimePattern-count-other": "{0} negyedév múlva"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} negyedévvel ezelőtt",
+				"relativeTimePattern-count-other": "{0} negyedévvel ezelőtt"
+			}
+		},
 		"month": {
 			"displayName": "hónap",
 			"relative-type--1": "előző hónap",

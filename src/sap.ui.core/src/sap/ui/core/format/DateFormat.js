@@ -46,7 +46,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 			"text": true, "year": true, "weekYear": true, "month": true, "day": true
 		},
 		aRelativeScales: ["year", "month", "week", "day"],
-		aRelativeParseScales: ["year", "month", "week", "day", "hour", "minute", "second"]
+		aRelativeParseScales: ["year", "quarter", "month", "week", "day", "hour", "minute", "second"]
 	};
 
 	DateFormat.oDateTimeInfo = {
@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 			"hour1_24": true, "hour0_11": true, "hour1_12": true
 		},
 		aRelativeScales: ["year", "month", "week", "day", "hour", "minute", "second"],
-		aRelativeParseScales: ["year", "month", "week", "day", "hour", "minute", "second"]
+		aRelativeParseScales: ["year", "quarter", "month", "week", "day", "hour", "minute", "second"]
 	};
 
 	DateFormat.oTimeInfo = {
@@ -92,7 +92,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 			"text": true, "hour0_23": true, "hour1_24": true, "hour0_11": true, "hour1_12": true
 		},
 		aRelativeScales: ["hour", "minute", "second"],
-		aRelativeParseScales: ["year", "month", "week", "day", "hour", "minute", "second"]
+		aRelativeParseScales: ["year", "quarter", "month", "week", "day", "hour", "minute", "second"]
 	};
 
 
@@ -1079,20 +1079,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 
 			if (that.oFormatOptions.relativeScale == "auto" & that.aRelativeScales[that.aRelativeScales.length - 1] === "second") {
 				if (bUTC) {
-					iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate(), oToday.getHours(), oToday.getMinutes(), oToday.getSeconds());
-				} else {
 					iToday = oToday.getTime();
+				} else {
+					iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate(), oToday.getHours(), oToday.getMinutes(), oToday.getSeconds());
 				}
 			} else {
 				if (bUTC) {
-					iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate());
+					iToday = Date.UTC(oToday.getUTCFullYear(), oToday.getUTCMonth(), oToday.getUTCDate());
 				} else {
-					iToday = new Date(oToday.getFullYear(), oToday.getMonth(), oToday.getDate()).getTime();
+					iToday = Date.UTC(oToday.getFullYear(), oToday.getMonth(), oToday.getDate());
 				}
 			}
 			iDate = iToday + iDiffMillis;
 			oJSDate = new Date(iDate);
-			return oJSDate;
+			if (bUTC) {
+				return oJSDate;
+			} else {
+				return new Date(oJSDate.getUTCFullYear(), oJSDate.getUTCMonth(), oJSDate.getUTCDate(), oJSDate.getUTCHours(), oJSDate.getUTCMinutes(), oJSDate.getUTCSeconds());
+			}
 		}
 	};
 
@@ -1159,6 +1163,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Locale', 'sap/ui/core/LocaleDat
 		day: 86400,
 		week: 604800,
 		month: 2592000,
+		quarter: 7776000,
 		year: 31536000
 	};
 

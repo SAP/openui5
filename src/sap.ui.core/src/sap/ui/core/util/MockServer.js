@@ -838,7 +838,7 @@ sap.ui
 						//check if an expanded operation was already executed. for 1:* check results . otherwise, check if there is __deferred for clean start.
 						var aNavEntry = oRecord[sNavProp].results || oRecord[sNavProp];
 						if (!aNavEntry || !!aNavEntry.__deferred) {
-							aNavEntry = jQuery.extend(true, [], that._resolveNavigation(sEntitySetName, oRecord, sNavProp));
+							aNavEntry = jQuery.extend(true, [], that._resolveNavigation(sEntitySetName, oRecord, sNavProp, oRecord));
 						} else if (!jQuery.isArray(aNavEntry)) {
 							aNavEntry = [aNavEntry];
 						}

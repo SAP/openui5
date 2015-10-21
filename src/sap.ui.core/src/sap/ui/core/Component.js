@@ -558,12 +558,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	};
 
 	/**
-	 * Initializes the component models and services.
+	 * Initializes the component models and services with the configuration
+	 * as defined in the manifest.json.
 	 *
 	 * @private
 	 */
 	Component.prototype.initComponentModels = function() {
-
+		
 		// in case of having no parent metadata we simply skip that function
 		// since this would mean to init the models on the Component base class
 		var oMetadata = this.getMetadata();
@@ -577,15 +578,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 		var oAppManifest = jQuery.extend(true, {}, oParentMetadata.getManifestEntry("sap.app", true), this.getManifestEntry("sap.app"));
 		var oUI5Manifest = jQuery.extend(true, {}, oParentMetadata.getManifestEntry("sap.ui5", true), this.getManifestEntry("sap.ui5"));
 
+		// pass the models and data sources to the internal helper
+		this._initComponentModels(oUI5Manifest["models"], oAppManifest["dataSources"]);
+
+	};
+
+	/**
+	 * Initializes the component models and services which are passed as 
+	 * parameters to this function.
+	 *
+	 * @param {object} mModels models configuration from manifest.json
+	 * @param {object} mDataSources data sources configuration from manifest.json
+	 *
+	 * @private
+	 */
+	Component.prototype._initComponentModels = function(mModels, mDataSources) {
+
+		if (!mModels) {
+			// skipping model creation because of missing sap.ui5 models manifest entry
+			return;
+		}
+
 		var mConfig = {
 
 			// ui5 model definitions
-			models: oUI5Manifest["models"],
+			models: mModels,
 
 			// optional dataSources from "sap.app" manifest
-			dataSources: oAppManifest["dataSources"] || {},
+			dataSources: mDataSources || {},
 
-			// to identify where the dataSources/models have been orginally defined
+			// to identify where the dataSources/models have been originally defined
 			origin: {
 				dataSources: {},
 				models: {}
@@ -593,12 +615,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 		};
 
-		if (!mConfig.models) {
-			// skipping model creation because of missing sap.ui5 models manifest entry
-			return;
-		}
-
-		var oMeta = oMetadata;
+		// identify the configuration 
+		var oMeta = this.getMetadata();
 		while (oMeta && oMeta instanceof ComponentMetadata) {
 
 			var mCurrentDataSources = oMeta.getManifestEntry("sap.app")["dataSources"];
@@ -695,7 +713,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 							}
 
 							// resolve relative to component
-							var oAnnotationUri = Manifest._resolveUri(new URI(oAnnotation.uri), mConfig.origin.dataSources[aAnnotations[i]].getComponentName()).toString();
+							var oComponentMetadata = mConfig.origin.dataSources[aAnnotations[i]] || this.getMetadata();
+							var oAnnotationUri = Manifest._resolveUri(new URI(oAnnotation.uri), oComponentMetadata.getComponentName()).toString();
 
 							// add uri to annotationURI array in settings (this parameter applies for ODataModel v1 & v2)
 							oModelConfig.settings = oModelConfig.settings || {};
@@ -749,7 +768,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				var oUri = new URI(oModelConfig.uri);
 
 				// resolve URI relative to component which defined it
-				var oUriSourceComponent = (bIsDataSourceUri) ? mConfig.origin.dataSources[oModelConfig.dataSource] : mConfig.origin.models[sModelName];
+				var oUriSourceComponent = (bIsDataSourceUri ? mConfig.origin.dataSources[oModelConfig.dataSource] : mConfig.origin.models[sModelName]) || this.getMetadata();
 				oUri = Manifest._resolveUri(oUri, oUriSourceComponent.getComponentName());
 
 				// inherit sap-specific parameters from document (only if "sap.app/dataSources" reference is defined)

@@ -2431,6 +2431,20 @@
 				"relativeTimePattern-count-other": "{0} years ago"
 			}
 		},
+		"quarter": {
+			"displayName": "quarter",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "in {0} quarter",
+				"relativeTimePattern-count-other": "in {0} quarters"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "{0} quarter ago",
+				"relativeTimePattern-count-other": "{0} quarters ago"
+			}
+		},
 		"month": {
 			"displayName": "month",
 			"relative-type--1": "last month",

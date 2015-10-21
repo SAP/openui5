@@ -2451,6 +2451,18 @@
 				"relativeTimePattern-count-other": "{0} 年前"
 			}
 		},
+		"quarter": {
+			"displayName": "四半期",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "{0} 四半期後"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} 四半期前"
+			}
+		},
 		"month": {
 			"displayName": "月",
 			"relative-type--1": "先月",

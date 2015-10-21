@@ -2419,6 +2419,24 @@
 				"relativeTimePattern-count-other": "לפני {0} שנים"
 			}
 		},
+		"quarter": {
+			"displayName": "רבעון",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "ברבעון הבא",
+				"relativeTimePattern-count-two": "בעוד שני רבעונים",
+				"relativeTimePattern-count-many": "בעוד {0} רבעונים",
+				"relativeTimePattern-count-other": "בעוד {0} רבעונים"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "ברבעון הקודם",
+				"relativeTimePattern-count-two": "לפני שני רבעונים",
+				"relativeTimePattern-count-many": "לפני {0} רבעונים",
+				"relativeTimePattern-count-other": "לפני {0} רבעונים"
+			}
+		},
 		"month": {
 			"displayName": "חודש",
 			"relative-type--1": "החודש שעבר",

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<title>sap.m.JamContent</title>
+
+<!-- UI5 Bootstrap -->
+<script src="../../../resources/sap-ui-core.js"
+	type="text/javascript" id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.ui.commons, sap.m, sap.ui.ux3"
+	data-sap-ui-theme="sap_bluecrystal">
+</script>
+
+<script type="text/javascript">
+	function setBackgroundColor(oAnyObject) {
+		var oColors = {
+			white : "#FFFFFF",
+			black : "#000000",
+			blue : "#6666FF",
+			red : "#FF6666",
+			green : "#66FF66"
+		};
+		var sParam = jQuery.sap.getUriParameters().get("sap-ui-suite-background-color");
+		if (sParam) {
+			var sColor = oColors[sParam.toLowerCase()];
+			if (sColor) {
+				oAnyObject.addDelegate({
+					onAfterRendering : function() {
+						oAnyObject.$().css("background-color", sColor);
+					}
+				});
+			}
+		}
+	}
+</script>
+
+<script type="text/javascript">
+	jQuery.sap.initMobile();
+
+	var oConfData = {
+		contentText : "@@notify Great outcome of the Presentation today. The new functionality and the new design was well received.",
+		subheader : "about 1 minute ago in Computer Market",
+		valueColor : sap.m.InfoTileValueColor.Neutral,
+		truncateValueTo : 4,
+		tooltip : "New message:\n{AltText}\nClick to follow"
+	}
+
+	var oConfModel = new sap.ui.model.json.JSONModel(oConfData);
+	sap.ui.getCore().setModel(oConfModel);
+
+	var aJamConts = [];
+	var fnPress = function(oEvent) {
+		sap.m.MessageToast.show("The jam content is pressed.");
+	};
+
+	var buildJamContent = function(sSize, sText) {
+		var oJamContent = new sap.m.JamContent("configurable-jam-content-"
+				+ sSize, {
+			contentText : "{/contentText}",
+			subheader : "{/subheader}",
+			value : "{/value}",
+			size : sSize,
+			truncateValueTo : "{/truncateValueTo}",
+			valueColor : "{/valueColor}",
+			tooltip : "{/tooltip}",
+			press : fnPress
+		});
+		aJamConts.push(oJamContent);
+		return new sap.m.FlexBox("jc-fb" + sSize, {
+			items : [ oJamContent ],
+			layoutData : new sap.ui.commons.layout.ResponsiveFlowLayoutData({
+				minWidth : 370
+			}),
+			height : "80px"
+		});
+	};
+
+	var oJamContent = new sap.ui.layout.form.SimpleForm("jam-content-form",
+			{
+				content : [ buildJamContent("L", "large"),
+						buildJamContent("S", "small"),
+						buildJamContent("Auto", "auto") ]
+			});
+
+	var oCTLbl = new sap.m.Label({
+		text : "Content Text",
+		labelFor : "content-text-value"
+	});
+
+	var oCTInput = new sap.m.Input("content-text-value", {
+		type : sap.m.InputType.Text,
+		placeholder : 'Enter value ...'
+	});
+	oCTInput.bindValue("/contentText");
+
+	var oSbhLbl = new sap.m.Label({
+		text : "Subheader",
+		labelFor : "subheader-value"
+	});
+
+	var oSbhInput = new sap.m.Input("subheader-value", {
+		type : sap.m.InputType.Text,
+		placeholder : 'Enter value ...'
+	});
+	oSbhInput.bindValue("/subheader");
+
+	var oValueLbl = new sap.m.Label({
+		text : "Value",
+		labelFor : "value-value"
+	});
+
+	var oValueInput = new sap.m.Input("value-value", {
+		type : sap.m.InputType.Text,
+		placeholder : 'Enter value ...'
+	});
+	oValueInput.bindValue("/value");
+
+	var oTooltipLbl = new sap.m.Label({
+		text : "Tooltip",
+		labelFor : "tooltip"
+	});
+
+	var oTooltipInput = new sap.m.TextArea(
+			"tooltip",
+			{
+				rows : 3,
+				placeholder : 'Enter tooltip (use {AltText} for inserting the default text) ...',
+				value : "{/tooltip}"
+			});
+
+	var oTooltipSwtchLbl = new sap.m.Label({
+		text : "QuickView Tooltip",
+		labelFor : "tooltip-swtch"
+	});
+
+	var oTooltipSwtch = new sap.m.Switch({
+		id : "tooltip-swtch",
+		state : false,
+		name : "QuickView tooltip",
+		change : function(oE) {
+			var bState = oE.getParameter("state");
+			for (var i = 0; i < aJamConts.length; i++) {
+				aJamConts[i].setTooltip(bState ? new sap.ui.ux3.QuickView({
+					content : new sap.m.Text({
+						text : oTooltipInput.getValue().split("{AltText}")
+								.join(aJamConts[i].getAltText())
+					})
+				}) : oTooltipInput.getValue());
+			}
+		}
+	});
+
+	var oTruncateLbl = new sap.m.Label({
+		text : "Truncate value to",
+		labelFor : "truncate-value-to"
+	});
+
+	var oTruncateInput = new sap.m.Input("truncate-value-to", {
+		type : sap.m.InputType.Number,
+		value : {
+			path : "/truncateValueTo",
+			type : new sap.ui.model.type.Integer()
+		}
+	});
+
+	var oValueColorChangeLbl = new sap.m.Label({
+		text : "Value Color",
+		labelFor : "value-color-change"
+	});
+
+	var oValueColorChangeSlct = new sap.m.Select("value-color-change", {
+		change : function(oE) {
+			var oSelectedItem = oE.getParameter("selectedItem");
+			oConfData.valueColor = oSelectedItem.getKey();
+			oConfModel.checkUpdate();
+		},
+		items : [
+				new sap.ui.core.Item("actual-value-color-"
+						+ sap.m.InfoTileValueColor.Neutral, {
+					key : sap.m.InfoTileValueColor.Neutral,
+					text : sap.m.InfoTileValueColor.Neutral
+				}),
+				new sap.ui.core.Item("actual-value-color-"
+						+ sap.m.InfoTileValueColor.Good, {
+					key : sap.m.InfoTileValueColor.Good,
+					text : sap.m.InfoTileValueColor.Good
+				}),
+				new sap.ui.core.Item("actual-value-color-"
+						+ sap.m.InfoTileValueColor.Critical, {
+					key : sap.m.InfoTileValueColor.Critical,
+					text : sap.m.InfoTileValueColor.Critical
+				}),
+				new sap.ui.core.Item("actual-value-color-"
+						+ sap.m.InfoTileValueColor.Error, {
+					key : sap.m.InfoTileValueColor.Error,
+					text : sap.m.InfoTileValueColor.Error
+				}) ],
+		selectedItem : "actual-value-color-" + sap.m.InfoTileValueColor.Neutral
+	});
+
+	var oPressLbl = new sap.m.Label({
+		text : "Press Action",
+		labelFor : "press-action"
+	});
+
+	var oPressSwtch = new sap.m.Switch({
+		id : "press-action",
+		state : true,
+		change : function(oE) {
+			var bState = oE.getParameter("state");
+			for (var i = 0; i < aJamConts.length; i++) {
+				if (bState) {
+					aJamConts[i].attachPress(fnPress);
+				} else {
+					aJamConts[i].detachPress(fnPress);
+				}
+			}
+		}
+	});
+
+	var editableSimpleForm = new sap.ui.layout.form.SimpleForm("controls", {
+		maxContainerCols : 2,
+		editable : true,
+		content : [ new sap.ui.core.Title({
+			text : "Modify Jam Content"
+		}), oCTLbl, oCTInput, oSbhLbl, oSbhInput, oValueLbl, oValueInput,
+				oValueColorChangeLbl, oValueColorChangeSlct, oTruncateLbl,
+				oTruncateInput, oPressLbl, oPressSwtch, oTooltipLbl,
+				oTooltipInput, oTooltipSwtchLbl, oTooltipSwtch ]
+	});
+	var oPage = new sap.m.Page({
+		content : [ oJamContent, editableSimpleForm ]
+	});
+	//create a mobile App embedding the page and place the App into the HTML document
+	var app = new sap.m.App("myApp", {
+		pages : [oPage]
+	}).placeAt("content");
+	setBackgroundColor(oPage);
+
+</script>
+</head>
+
+<body id="body" class="sapUiBody">
+	<div id="content"></div>
+</body>
+</html>

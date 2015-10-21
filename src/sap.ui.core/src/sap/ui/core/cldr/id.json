@@ -2425,6 +2425,18 @@
 				"relativeTimePattern-count-other": "{0} tahun yang lalu"
 			}
 		},
+		"quarter": {
+			"displayName": "Triwulan",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-other": "dalam {0} triwulan"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-other": "{0} triwulan yang lalu"
+			}
+		},
 		"month": {
 			"displayName": "Bulan",
 			"relative-type--1": "bulan lalu",

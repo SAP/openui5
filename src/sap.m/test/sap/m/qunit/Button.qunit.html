@@ -389,32 +389,7 @@
 
 		// Cleanup
 		oButton.destroy();
-	}); 
-
-
-	test("Should not rerender the button if iconFirst property is changed", function() {
-		// Arrange
-		var oRenderSpy,
-			oResult
-			oConstructor = { text : "Rerender Check (iconFirst)", enabled : true, icon: sap.ui.core.IconPool.getIconURI("employee") , iconFirst : true};
-
-		// System under Test
-		var oButton = new sap.m.Button(oConstructor).placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		oRenderSpy = this.spy(oButton, "invalidate");
-
-		// Act
-		oResult = oButton.setIconFirst(false);
-		sap.ui.getCore().applyChanges();
-
-		// Assert
-		strictEqual(oRenderSpy.callCount, 0, "Did not rerender");
-
-		// Cleanup
-		oButton.destroy();
 	});
-
 
 </script>
 

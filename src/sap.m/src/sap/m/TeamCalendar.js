@@ -142,7 +142,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			metadata : {
 				aggregations: {
-					"toolbar"   : {type: "sap.m.Toolbar", multiple: false}
+					"toolbar"   : {type: "sap.m.Toolbar", multiple: false},
+					"allCheckBox" : {type: "sap.m.CheckBox", multiple: false}
 				}
 			},
 
@@ -157,6 +158,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				var oToolbar = oHeader.getToolbar();
 				if (oToolbar) {
 					oRm.renderControl(oToolbar);
+				}
+
+				var oAllCB = oHeader.getAllCheckBox();
+				if (oAllCB) {
+					oRm.renderControl(oAllCB);
 				}
 
 				oRm.write("</div>");
@@ -278,6 +284,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				for (var i = 0; i < this._aViews.length; i++) {
 					this._aViews[i].destroy();
 				}
+			}
+
+			if (this._oSelectAllCheckBox) {
+				this._oSelectAllCheckBox.destroy();
 			}
 
 		};
@@ -606,8 +616,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oTable = this.getAggregation("table");
 			if (bSingleSelection) {
 				oTable.setMode(sap.m.ListMode.SingleSelectMaster);
+				if (this._oCalendarHeader.getAllCheckBox()) {
+					this._oCalendarHeader.setAllCheckBox();
+				}
+				this.selectAllRows(false);
 			} else {
 				oTable.setMode(sap.m.ListMode.MultiSelect);
+				if (!this._oSelectAllCheckBox) {
+					this._oSelectAllCheckBox = new sap.m.CheckBox(this.getId() + "-All", {
+						text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("COLUMNSPANEL_SELECT_ALL")
+					});
+					this._oSelectAllCheckBox.attachEvent("select", _handleSelectAll, this);
+				}
+				this._oCalendarHeader.setAllCheckBox(this._oSelectAllCheckBox);
+				var aRows = this.getRows();
+				var aSelectedRows = this.getSelectedRows();
+				if (aRows.length == aSelectedRows.length) {
+					this._oSelectAllCheckBox.setSelected(true);
+				} else {
+					this._oSelectAllCheckBox.setSelected(false);
+				}
 			}
 
 		};
@@ -690,6 +718,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			return this.getRows().filter(function(oRow) {
 				return oRow.getSelected();
 			});
+
+		};
+
+
+		/**
+		 * Selects or deselects all <code>TeamCalendarRows</code>.
+		 *
+		 * <b>Note:</b> Selection only works if <code>singleSelection</code> is not set
+		 *
+		 * @param {boolean} bSelect Indicator if <code>TeamCalendarRows</code> should be selected or deselected
+		 * @returns {sap.m.TeamCalendar} <code>this</code> to allow method chaining
+		 * @public
+		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		TeamCalendar.prototype.selectAllRows = function(bSelect) {
+
+			var aRows = this.getRows();
+
+			if (!(bSelect && this.getSingleSelection())) {
+				for (var i = 0; i < aRows.length; i++) {
+					var oRow = aRows[i];
+					oRow.setSelected(bSelect);
+				}
+
+				if (this._oSelectAllCheckBox) {
+					this._oSelectAllCheckBox.setSelected(bSelect);
+				}
+			}
+
+			return this;
 
 		};
 
@@ -888,7 +946,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			}
 
-			this.fireRowSelectionChange({rows: aChangedRows});
+			if (!this.getSingleSelection()) {
+				var aSelectedRows = this.getSelectedRows();
+				if (aRows.length == aSelectedRows.length) {
+					this._oSelectAllCheckBox.setSelected(true);
+				} else {
+					this._oSelectAllCheckBox.setSelected(false);
+				}
+			}
+
+			if (aChangedRows.length > 0) {
+				this.fireRowSelectionChange({rows: aChangedRows});
+			}
 
 		}
 
@@ -1027,6 +1096,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			return iIntervals;
+
+		}
+
+		function _handleSelectAll(oEvent) {
+
+			var bAll = oEvent.getParameter("selected");
+			var aRows = this.getRows();
+
+			if (bAll) {
+				aRows = this.getRows().filter(function(oRow) {
+					return !oRow.getSelected();
+				});
+			}
+
+			this.selectAllRows(bAll);
+
+			this.fireRowSelectionChange({rows: aRows});
 
 		}
 

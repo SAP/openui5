@@ -1,0 +1,13 @@
+<core:View controllerName="sap.m.sample.JamContent.Page"
+	xmlns="sap.m" xmlns:core="sap.ui.core">
+	<JamContent
+		contentText="@@notify Great outcome of the Presentation today. The new functionality and the new design was well received."
+		subheader="about 1 minute ago in Computer Market" size="M"
+		class="sapUiSmallMargin" press="press">
+	</JamContent>
+	<JamContent
+		contentText="@@notify Great outcome of the Presentation today. The new functionality and the new design was well received."
+		subheader="about 1 minute ago in Computer Market" size="S"
+		class="sapUiSmallMargin" press="press">
+	</JamContent>
+</core:View>

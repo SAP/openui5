@@ -275,7 +275,22 @@
 					"Expression Binding",
 					"Aggregation Binding Using A Factory Function"
 				]
-			}
+			},
+		    {
+				"id": "sap.ui.core.tutorial.mockserver",
+				"name": "MockServer",
+				"category": "Tutorial",
+				"since": "1.34",
+				"formFactors": "-",
+				"description": "In this tutorial, we will explore some advanced features of the Mock Server.",
+				"docuLink": "",
+				"samplesAsSteps": [
+				  "The Initial App without Data",
+				  "Creating a Mock Server to Simulate Data",
+				  "Handling Custom URL Parameters",
+				  "Calling a Function Import"
+				]
+		    }
 		],
 		"samples" : [
 			{

@@ -1,0 +1,57 @@
+/* ========================================= */
+/* CSS for control sap.m/GenericTile.control */
+/* ========================================= */
+.sapUiMedia-Std-Desktop .sapMGTHdrTxt.Auto > .sapMText,
+.sapMGTHdrTxt.L > .sapMText,
+.sapUiMedia-Std-Tablet .sapMGTHdrTxt.Auto > .sapMText,
+.sapMGTHdrTxt.M > .sapMText  {
+	color: @sapUiDarkText;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontHeader5Size;
+	font-weight: normal;
+}
+
+.sapMGTSubHdrTxt {
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	color: @sapUiLightText;
+	line-height: @sapUiLineHeight;
+}
+
+.sapMGTHdrIconImage {
+	font-family: @sapUiFontHeaderFamily;
+	font-weight: @sapUiFontHeaderWeight;
+	color: @sapUiHighlight;
+}
+.sap-desktop .sapMGT:focus {
+	border-color: @sapUiFocus;
+}
+
+.sap-desktop .sapMGT:focus:not([tabindex]) {
+	border-color: transparent;
+}
+
+.sapMGT {
+	box-shadow: 0px 0px 0.25rem fade(@sapUiDarkShadowTint, 10);
+}
+
+.sapMGenericTileFtrFldTxt {
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontSmallSize;
+	color: @sapUiLightText;
+}
+
+.sap-desktop .sapMGT:hover,
+.sap-phone .sapMGTHvrOutln:hover,
+.sap-tablet .sapMGTHvrOutln:hover {
+	box-shadow: 0px 0px 0px 2px @sapUiLightShadowTint;
+}
+
+.sapMGenericTileFtrFldIcn {
+	color: @sapUiLightText;
+}
+
+.sapMGTOverlay {
+	background-color: @sapUiLightestBG;
+}

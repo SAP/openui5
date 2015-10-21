@@ -1,0 +1,149 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Test Page for sap.m.GenericTile</title>
+
+<!-- UI5 Bootstrap -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"
+	data-sap-ui-language="en">
+</script>
+
+<!-- QUnit libraries -->
+<link rel="stylesheet"
+	href="../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script type="text/javascript">
+	if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	}
+
+	QUnit.module("Rendering tests", {
+		beforeEach : function() {
+			this.oGenericTile = new sap.m.GenericTile("generic-tile", {
+				subheader : "Expenses By Region",
+				frameType : sap.m.FrameType.OneByOne,
+				size : "Auto",
+				header : "Comparative Annual Totals",
+				headerImage : "../images/female_BaySu.jpg",
+				tileContent : new sap.m.TileContent("tile-cont", {
+					unit : "EUR",
+					size : "Auto",
+					footer : "Current Quarter",
+					content : new sap.m.NumericContent("numeric-cnt", {
+						state : sap.m.LoadState.Loaded,
+						scale : "M",
+						indicator : sap.m.DeviationIndicator.Up,
+						truncateValueTo : 4,
+						value : 20,
+						nullifyValue : true,
+						formatterValue : false,
+						valueColor : sap.m.InfoTileValueColor.Good,
+						icon : "sap-icon://customer-financial-fact-sheet"
+					})
+				})
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("GenericTile rendered.", function(assert) {
+		assert.ok(jQuery.sap.domById("generic-tile"), "Generic tile was rendered successfully");
+		assert.ok(jQuery.sap.domById("generic-tile-hdr-text"), "Generic tile header was rendered successfully");
+		assert.ok(jQuery.sap.domById("generic-tile-subHdr-text"), "Generic tile subheader was rendered successfully");
+		assert.ok(jQuery.sap.domById("generic-tile-icon-image"), "Generic tile icon was rendered successfully");
+		assert.ok(jQuery.sap.domById("tile-cont"), "TileContent was rendered successfully");
+		assert.ok(jQuery.sap.domById("numeric-cnt"), "NumericContent was rendered successfully");
+		assert.ok(jQuery.sap.domById("numeric-cnt-indicator"), "Indicator was rendered successfully");
+		assert.ok(jQuery.sap.domById("numeric-cnt-value"), "Value was rendered successfully");
+		assert.ok(jQuery.sap.domById("numeric-cnt-scale"), "Scale was rendered successfully");
+		assert.ok(jQuery.sap.domById("numeric-cnt-icon-image"), "Icon was rendered successfully");
+	});
+
+	QUnit.module("Rendering tests for failing state", {
+		beforeEach : function() {
+			this.oGenericTile = new sap.m.GenericTile("generic-tile-failed", {
+				state : sap.m.LoadState.Failed,
+				subheader : "Expenses By Region",
+				frameType : sap.m.FrameType.OneByOne,
+				size : "Auto",
+				header : "Comparative Annual Totals",
+				headerImage : "../images/female_BaySu.jpg",
+				tileContent : new sap.m.TileContent("tile-cont-failed", {
+					unit : "EUR",
+					size : "Auto",
+					footer : "Current Quarter",
+					content : new sap.m.NumericContent("numeric-cnt-failed", {
+						state : sap.m.LoadState.Loading,
+						scale : "M",
+						indicator : sap.m.DeviationIndicator.Up,
+						truncateValueTo : 4,
+						value : 20,
+						nullifyValue : true,
+						formatterValue : false,
+						valueColor : sap.m.InfoTileValueColor.Good,
+						icon : "sap-icon://customer-financial-fact-sheet"
+					})
+				})
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("GenericTile in Failed state rendered.", function(assert) {
+		assert.ok(jQuery.sap.domById("generic-tile-failed"), "Generic tile was rendered successfully");
+		assert.ok(jQuery.sap.domById("generic-tile-failed-content"), "Generic tile content was rendered successfully");
+		assert.ok(jQuery.sap.domById("generic-tile-failed-failed-icon"), "Generic tile icone was rendered successfully");
+		assert.ok(jQuery.sap.domById("generic-tile-failed-failed-text"),
+				"Generic tile icone text was rendered successfully");
+		assert.ok(jQuery.sap.domById("generic-tile-failed-failed-txt"), "Generic tile text rendered successfully");
+		assert.ok(jQuery.sap.domById("generic-tile-failed-failed-txt-inner"),
+				"Generic tile text inner was rendered successfully");
+		assert.ok(jQuery.sap.domById("generic-tile-failed-failed-ftr"), "Generic tile footer was rendered successfully");
+		assert.ok(jQuery.sap.domById("generic-tile-failed-hdr-text"), "Generic tile header was rendered successfully");
+		assert
+				.ok(jQuery.sap.domById("generic-tile-failed-subHdr-text"), "Generic tile subheader was rendered successfully");
+		assert
+				.ok(jQuery.sap.domById("generic-tile-failed-title"), "Generic tile title subheader was rendered successfully");
+		assert.ok(jQuery.sap.domById("generic-tile-failed-title-inner"),
+				"Generic tile title inner subheader was rendered successfully");
+		assert.ok(jQuery.sap.domById("generic-tile-failed-warn-icon"),
+				"Generic tile warning icone subheader was rendered successfully");
+		assert.ok(jQuery.sap.domById("generic-tile-failed-icon-image"), "Generic tile icon was rendered successfully");
+		assert.ok(jQuery.sap.domById("generic-tile-failed-overlay"), "Generic tile icon was rendered successfully");
+		assert.ok(jQuery.sap.domById("tile-cont-failed"), "TileContent was rendered successfully");
+		assert.ok(jQuery.sap.domById("tile-cont-failed-content"), "TileContent content was rendered successfully");
+		assert.ok(jQuery.sap.domById("tile-cont-failed-footer-text"), "TileContent footer text was rendered successfully");
+		assert.ok(jQuery.sap.domById("tile-cont-failed-info"), "TileContent info was rendered successfully");
+		assert.ok(jQuery.sap.domById("numeric-cnt-failed"), "NumericContent was rendered successfully");
+		assert.ok(jQuery.sap.domById("numeric-cnt-failed-indicator"), "Indicator was rendered successfully");
+		assert.ok(jQuery.sap.domById("numeric-cnt-failed-value"), "Value was rendered successfully");
+		assert.ok(jQuery.sap.domById("numeric-cnt-failed-value-scr"), "Value was rendered successfully");
+		assert.ok(jQuery.sap.domById("numeric-cnt-failed-scale"), "Scale was rendered successfully");
+		assert.ok(jQuery.sap.domById("numeric-cnt-failed-icon-image"), "Icon was rendered successfully");
+	});
+</script>
+</head>
+
+<body id="body" class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

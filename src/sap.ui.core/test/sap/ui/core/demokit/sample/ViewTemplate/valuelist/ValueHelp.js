@@ -15,7 +15,8 @@ sap.ui.define(['sap/m/Column',
 		"sap.ui.core.sample.ViewTemplate.valuelist.ValueHelp", {
 			metadata : {
 				properties : {
-					qualifier : {type : "string", defaultValue : ""} //value list qualifier
+					qualifier : {type : "string", defaultValue : ""}, //value list qualifier
+					showDetails : {type : "boolean", defaultValue : false}
 				}
 			},
 
@@ -49,12 +50,14 @@ sap.ui.define(['sap/m/Column',
 									}
 								});
 								that._collectionPath = oValueList.CollectionPath.String;
-								that._collectionLabel = oValueList.Label ? oValueList.Label.String
-										: that._collectionPath;
-								that.setTooltip("ValueList"
-									+ (that.getQualifier() !== "" ? "#" + that.getQualifier(): "")
+								that._collectionLabel = oValueList.Label
+									? oValueList.Label.String
+									: that._collectionPath;
+								that._valueListDetails = "ValueList"
+									+ (that.getQualifier() !== "" ? "#" + that.getQualifier() : "")
 									+ "\n"
-									+ JSON.stringify(oValueList, undefined, 2));
+									+ JSON.stringify(oValueList, undefined, 2);
+								that.updateDetails();
 								that.setIconURL("sap-icon://value-help");
 								that.setEditable(true);
 							});
@@ -69,10 +72,21 @@ sap.ui.define(['sap/m/Column',
 
 			renderer : "sap.ui.commons.ValueHelpFieldRenderer",
 
+			setShowDetails : function (bShowDetails) {
+				this.setProperty("showDetails", bShowDetails);
+				this.updateDetails();
+			},
+
+			updateDetails : function () {
+				this.setTooltip(this.getShowDetails() ? this._valueListDetails : "");
+			},
+
 			_onValueHelp : function (oEvent) {
-				var oColumnListItem = new ColumnListItem(),
+				var oButton = new sap.m.Button({text : "Close"}),
+					oColumnListItem = new ColumnListItem(),
 					oControl = oEvent.getSource(),
-					oPopover = new Popover({placement : sap.m.PlacementType.Auto, modal : true}),
+					oPopover = new Popover({endButton: oButton,
+						placement : sap.m.PlacementType.Auto, modal : true}),
 					oTable = new Table(),
 					aVHTitle = [];
 
@@ -88,6 +102,10 @@ sap.ui.define(['sap/m/Column',
 							{value: "{" + sPropertyPath + "}"});
 				}
 
+				function onClose() {
+					oPopover.close();
+				}
+
 				oPopover.setTitle("Value Help: " + oControl._collectionLabel);
 				oTable.setModel(oControl.getModel());
 				oTable.bindItems({
@@ -100,6 +118,7 @@ sap.ui.define(['sap/m/Column',
 					));
 					oColumnListItem.addCell(createTextOrValueHelp(sParameterPath));
 				});
+				oButton.attachPress(onClose);
 				oPopover.addContent(oTable);
 				oPopover.openBy(oControl);
 			}

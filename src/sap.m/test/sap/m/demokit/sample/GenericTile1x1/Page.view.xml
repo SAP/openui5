@@ -1,0 +1,50 @@
+<core:View controllerName="sap.m.sample.GenericTile1x1.Page"
+	xmlns="sap.m" xmlns:core="sap.ui.core">
+
+	<GenericTile header="Global Margin" size="S" frameType="OneByOne"
+		press="press">
+		<tileContent>
+			<TileContent unit="EUR" size="S">
+				<content>
+					<NumericContent size="S" scale="B" value="3528"
+						valueColor="Good" indicator="Up" />
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+
+		<GenericTile header="US Profit Margin" size="S" frameType="OneByOne"
+		press="press">
+		<tileContent>
+			<TileContent footer="Current Quarter" unit="EUR" size="S">
+				<content>
+					<NumericContent size="S" scale="M" value="1.96"
+						valueColor="Error" indicator="Down" />
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+
+	<GenericTile header="Approve Travel Request" size="M"
+		frameType="OneByOne" press="press">
+		<tileContent>
+			<TileContent footer="Leave Requests" size="M">
+				<content>
+					<NumericContent size="M" value="3"
+						icon="sap-icon://travel-expense" />
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+
+	<GenericTile header="123 Demo Opportunity" subheader="SAP Jam Group"
+		size="M" frameType="OneByOne" press="press">
+		<tileContent>
+			<TileContent footer="Hours since last Activity" size="M">
+				<content>
+					<NumericContent size="M" value="9" icon="sap-icon://locked" />
+				</content>
+			</TileContent>
+		</tileContent>
+	</GenericTile>
+</core:View>

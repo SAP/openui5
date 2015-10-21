@@ -2457,6 +2457,24 @@
 				"relativeTimePattern-count-other": "prieš {0} metų"
 			}
 		},
+		"quarter": {
+			"displayName": "ketvirtis",
+			"relative-type--1": "last quarter",
+			"relative-type-0": "this quarter",
+			"relative-type-1": "next quarter",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "po {0} ketvirčio",
+				"relativeTimePattern-count-few": "po {0} ketvirčių",
+				"relativeTimePattern-count-many": "po {0} ketvirčio",
+				"relativeTimePattern-count-other": "po {0} ketvirčių"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "prieš {0} ketvirtį",
+				"relativeTimePattern-count-few": "prieš {0} ketvirčius",
+				"relativeTimePattern-count-many": "prieš {0} ketvirčio",
+				"relativeTimePattern-count-other": "prieš {0} ketvirčių"
+			}
+		},
 		"month": {
 			"displayName": "mėnuo",
 			"relative-type--1": "praėjusį mėnesį",

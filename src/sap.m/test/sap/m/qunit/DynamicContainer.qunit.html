@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" Content="IE=edge" />
+<title>Test Page for sap.m.DynamicContainer</title>
+
+<!-- UI5 Bootstrap -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"
+	data-sap-ui-language="en">
+</script>
+
+<!-- QUnit libraries -->
+<link rel="stylesheet"
+	href="../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+<script type="text/javascript">
+	if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+	}
+
+	var oDynamicContainerData = {
+		tiles : [{
+			header : "Tile 1",
+			frameType : "TwoByOne",
+			size : "M",
+			tileContent : [{
+				footer : "Footer 1",
+				value : 10
+			}, {
+				footer : "Footer 2",
+				value : 20
+			}]
+		}, {
+			header : "Tile 2",
+			frameType : "OneByOne",
+			size : "M",
+			tileContent : [{
+				footer : "Footer 3",
+				value : 30
+			}, {
+				footer : "Footer 4",
+				value : 40
+			}]
+		}]
+	};
+
+	var oTileContent = new sap.m.TileContent({
+		footer : "{footer}",
+		content : new sap.m.NumericContent({
+			value : "{value}"
+		})
+	});
+
+	var oGenericTile = new sap.m.GenericTile({
+		frameType : "{frameType}",
+		header : "{header}",
+		size : "{size}",
+		tileContent : {
+			template : oTileContent,
+			path : "tileContent"
+		}
+	});
+
+	var oDynamicContainer = new sap.m.DynamicContainer("dc", {
+		displayTime : 500,
+		transitionTime : 0,
+		tiles : {
+			template : oGenericTile,
+			path : "/tiles"
+		}
+	});
+
+	var oDynamicContainerModel = new sap.ui.model.json.JSONModel(oDynamicContainerData);
+	oDynamicContainer.setModel(oDynamicContainerModel);
+
+	oDynamicContainer.placeAt("qunit-fixture");
+	sap.ui.getCore().applyChanges();
+
+	QUnit.module("Rendering - sap.m.DynamicContainer");
+
+	QUnit.test("Test tiles displaying", function(assert) {
+		var done = assert.async();
+		assert.equal(jQuery.sap.byId("dc-wrapper-0").css("left"), "0px", "The first tile is shown");
+
+		setTimeout(function() {
+			assert.equal(jQuery.sap.byId("dc-wrapper-1").css("left"), "0px", "The second tile is shown");
+			done();
+		}, 500);
+	});
+</script>
+</head>
+<body id="body" class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

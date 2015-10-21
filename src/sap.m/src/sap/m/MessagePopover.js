@@ -6,10 +6,10 @@
 sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolbar", "./ToolbarSpacer", "./Bar", "./List",
 		"./StandardListItem", "./library", "sap/ui/core/Control", "./PlacementType", "sap/ui/core/IconPool",
 		"sap/ui/core/HTML", "./Text", "sap/ui/core/Icon", "./SegmentedButton", "./Page", "./NavContainer",
-		"./semantic/SemanticPage", "./Popover", "jquery.sap.dom"],
+		"./semantic/SemanticPage", "./Popover", "./MessagePopoverItem", "jquery.sap.dom"],
 	function (jQuery, ResponsivePopover, Button, Toolbar, ToolbarSpacer, Bar, List,
 			  StandardListItem, library, Control, PlacementType, IconPool,
-			  HTML, Text, Icon, SegmentedButton, Page, NavContainer, SemanticPage, Popover) {
+			  HTML, Text, Icon, SegmentedButton, Page, NavContainer, SemanticPage, Popover, MessagePopoverItem) {
 		"use strict";
 
 		/**
@@ -283,6 +283,12 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * @private
 		 */
 		MessagePopover.prototype.onBeforeRenderingPopover = function () {
+
+			// Bind automatically to the MessageModel if no items are bound
+			if (!this.getBindingInfo("items")) {
+				this._makeAutomaticBinding();
+			}
+
 			// Update lists only if 'items' aggregation is changed
 			if (this._bItemsChanged) {
 				this._clearLists();
@@ -293,6 +299,25 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			}
 
 			this._setInitialFocus();
+		};
+
+		/**
+		 * Makes automatic binding to the Message Model with default template
+		 *
+		 * @private
+		 */
+		MessagePopover.prototype._makeAutomaticBinding = function () {
+			this.setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "message");
+			this.bindAggregation("items",
+					{
+						path: "message>/",
+						template: new MessagePopoverItem({
+							type: "{message>type}",
+							title: "{message>message}",
+							description: "{message>description}"
+						})
+					}
+			);
 		};
 
 		/**

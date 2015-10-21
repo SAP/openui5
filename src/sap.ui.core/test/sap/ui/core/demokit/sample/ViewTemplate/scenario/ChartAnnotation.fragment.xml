@@ -7,7 +7,11 @@
 			<Table headerText="{path: 'chart>Title', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
 				items="{:= '{path:\'/' + ${meta>name} + '\', length: 3}' }">
 				<columns>
-					<Column> <!--  Empty cell in upper left corner --> </Column>
+					<Column>
+						<template:with path="chart>Dimensions/0" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="idcolumn">
+							<Text text="{path: 'idcolumn>com.sap.vocabularies.Common.v1.Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+						</template:with>
+					</Column>
 					<template:repeat list="{chart>Measures}" var="column">
 						<Column>
 							<template:with path="column>"

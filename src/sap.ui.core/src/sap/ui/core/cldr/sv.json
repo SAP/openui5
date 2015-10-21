@@ -2435,6 +2435,20 @@
 				"relativeTimePattern-count-other": "för {0} år sedan"
 			}
 		},
+		"quarter": {
+			"displayName": "kvartal",
+			"relative-type--1": "förra kvartalet",
+			"relative-type-0": "detta kvartal",
+			"relative-type-1": "nästa kvartal",
+			"relativeTime-type-future": {
+				"relativeTimePattern-count-one": "om {0} kvartal",
+				"relativeTimePattern-count-other": "om {0} kvartal"
+			},
+			"relativeTime-type-past": {
+				"relativeTimePattern-count-one": "för {0} kvartal sedan",
+				"relativeTimePattern-count-other": "för {0} kvartal sedan"
+			}
+		},
 		"month": {
 			"displayName": "månad",
 			"relative-type--1": "förra månaden",
