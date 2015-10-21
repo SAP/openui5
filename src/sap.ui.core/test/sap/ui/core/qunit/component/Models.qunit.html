@@ -831,6 +831,85 @@
 
 		});
 
+		QUnit.test("dynamic enhance of models and datasources", function(assert) {
+			this.mockModels();
+
+			jQuery.sap.declare("sap.ui.test.v2local.Component");
+			sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
+
+				var LocalComponent = UIComponent.extend("sap.ui.test.v2local.Component", {
+					metadata : {
+						manifest : {
+							"sap.app": {
+								"id": "sap.ui.test.v2local"
+							}
+						}
+					}
+				});
+
+				LocalComponent.prototype._initComponentModels = function(mModels, mDataSources) {
+
+					mModels = mModels || {};
+					mDataSources = mDataSources || {};
+
+					mModels["ODataModel"] = {
+						"type": "sap.ui.model.odata.ODataModel",
+						"dataSource": "OData",
+						"settings": {
+							"useBatch": false,
+							"refreshAfterChange": false
+						}
+					};
+
+					mDataSources["OData"] = {
+						"uri": "/path/to/odata/service",
+						"type": "OData",
+						"settings": {
+							"odataVersion": "2.0",
+							"annotations": [ "annotations" ],
+							"localMetaDataUri": "/path/to/local/metadata.xml"
+						}
+					};
+
+					mDataSources["annotations"] = {
+						"uri": "path/to/local/odata/annotations",
+						"type": "ODataAnnotation"
+					};
+
+					UIComponent.prototype._initComponentModels.call(this, mModels, mDataSources);
+
+				};
+
+				return LocalComponent;
+
+			});
+			
+			this.oComponent = sap.ui.component({
+				name: "sap.ui.test.v2local"
+			});
+
+			// sap.ui.model.odata.ODataModel
+			sinon.assert.callCount(this.modelSpy.odata, 1);
+
+			// model: "ODataModel"
+			sinon.assert.calledWithExactly(this.modelSpy.odata, {
+				serviceUrl: '/path/to/odata/service',
+				annotationURI: [ 'v2local/path/to/local/odata/annotations' ],
+				useBatch: false,
+				refreshAfterChange: false,
+				json: true
+			});
+
+			// check if models are set on component (and save them internally)
+			this.assertModelInstances({
+				"ODataModel": sap.ui.model.odata.ODataModel
+			});
+
+			// destroy the component
+			this.oComponent.destroy();
+
+		});
+
 	});
 
 	</script>
