@@ -98,7 +98,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'], functio
 	TileContent.prototype._getContentType = function() {
 		if (this.getContent()) {
 			var sContentType = this.getContent().getMetadata().getName();
-			if (sContentType == "sap.m.NewsContent") {
+			if (sContentType === "sap.m.NewsContent" || sContentType === "sap.suite.ui.commons.NewsContent") {
 				return "News";
 			}
 		}
