@@ -182,6 +182,34 @@
 				});
 			}, 40);
 		});
+		
+		asyncTest(sTestPrefix + "Promise then always asynchronous", function() {
+			expect(4);
+			
+			var iCounter = 0;
+
+			var pResolvedDirectly = P.resolve();
+			var fnResolveSecondPromise;
+			var pResolvedLater = new Promise(function(fnResolve /*, fnReject */) {
+				fnResolveSecondPromise = fnResolve;
+			});
+			
+			equal(iCounter++, 0, "Synchronous Before");
+
+			pResolvedDirectly.then(function() {
+				equal(iCounter++, 2, "First promise.then() - Resolved after synchronous code");
+			});
+
+			pResolvedLater.then(function() {
+				equal(iCounter++, 3, "Second promise.then() - Resolved after first promise.then()");
+				start();
+			});
+			
+			fnResolveSecondPromise();
+			
+			equal(iCounter++, 1, "Synchronous After - befor promise.then()");
+		});
+
 
 		module(sTestPrefix + "promise.catch");
 
