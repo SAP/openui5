@@ -128,6 +128,13 @@
 		  "samples": ["sap.m.sample.Button"]
 		},
 		{
+		  "id": "sap.m.Breadcrumbs",
+		  "name": "Breadcrumbs",
+		  "category": "Action",
+		  "since": "1.34",
+		  "samples": ["sap.m.sample.Breadcrumbs"]
+		},
+		{
 		  "id": "sap.m.Carousel",
 		  "name": "Carousel",
 		  "category": "Container",
@@ -2106,6 +2113,11 @@
 		  "id": "sap.m.sample.TileContent",
 		  "name": "Tile Content",
 		  "description": "This control serves as a universal container for different types of content and footer."
+        },
+        {
+		  "id": "sap.m.sample.Breadcrumbs",
+		  "name": "Breadcrumbs sample",
+		  "description": "Breadcrumbs is useful for displaying link hierarchy"
 		}
 	  ]
 	}

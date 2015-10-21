@@ -1,0 +1,15 @@
+<mvc:View controllerName="sap.m.sample.Breadcrumbs.Page"
+		  xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l="sap.ui.layout">
+	<l:VerticalLayout class="sapUiContentPadding" width="100%">
+		<l:content>
+			<Breadcrumbs currentLocationText="Laptop">
+				<Link press="onPress" text="Products"/>
+				<Link press="onPress" text="Suppliers"/>
+				<Link press="onPress" text="Titanium"/>
+				<Link press="onPress" text="Ultra portable"/>
+				<Link press="onPress" text="12 inch"/>
+				<Link press="onPress" text="Super portable deluxe"/>
+			</Breadcrumbs>
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

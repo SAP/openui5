@@ -1,0 +1,93 @@
+.sapMBreadcrumbs {
+	margin: 0 0 0.5rem 0;
+	padding: 0;
+	white-space: nowrap;
+	list-style-type: none;
+	display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+	display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
+	display: -ms-flexbox; /* TWEENER - IE 10 */
+	display: -webkit-flex; /* NEW - Chrome */
+	display: flex;
+	outline: none;
+
+	.sapMSlt {
+		border: 0;
+		margin: 0;
+		height: 1.2rem;
+		padding-right: 0.125rem;
+
+		.sapMSltIcon {
+			margin: 0 -0.4rem 0 -0.3rem;
+			vertical-align: top;
+			position: relative;
+			background-color: transparent;
+			line-height: inherit;
+			border: none;
+		}
+	}
+
+	.sapMSltIconOnly.sapMSltHoverable:hover, .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled),
+	.sapMSltPressed:not(.sapMSltDisabled), .sapMSltIconOnly.sapMSltPressed.sapMSltHoverable:hover {
+		background: transparent;
+		border: none;
+	}
+
+	.sapMSltIcon:before {
+		font-family: SAP-icons;
+		vertical-align: super;
+		color: @sapUiLink;
+		speak: none;
+		content: "...\e1ef";
+	}
+
+	.sapMLnk, .sapMBreadcrumbsCurrentLocation, .sapMSlt, .sapMBreadcrumbsSeparator {
+		vertical-align: middle;
+	}
+
+	.sapMBreadcrumbsItem  {
+		-webkit-flex-shrink: 0;
+		-ms-flex-negative: 0;
+		flex-shrink: 0;
+	}
+
+	/* set the flex to 1 for the breadcrumbsItem in order for the last item's text to truncate properly, but only if
+	there's two items (the select and the last item in the breadcrumbs) or if there's only one item in the breadcrumbs
+	and no select. In all other cases the texts should not truncate thus leaving the responsiveness to the breadcrumbs
+	mechanism (moving items from the breadcrumbs into the select)*/
+	.sapMBreadcrumbsSelectItem + .sapMBreadcrumbsItem:last-child:nth-child(2),
+	.sapMBreadcrumbsItem:last-child:nth-child(1) {
+		min-width: 1%;
+		-webkit-flex: 1;
+		-webkit-box-flex: 1;
+		-moz-flex: 1;
+		-moz-box-flex: 1;
+		-ms-flex: 1;
+		flex: 1 1 auto;
+	}
+
+	.sapMBreadcrumbsCurrentLocation {
+		font-weight: normal;
+		line-height: 1.4;
+	}
+
+	.sapMBreadcrumbsItem {
+		display: inline;
+		padding: 0;
+		margin: 0;
+		vertical-align: middle;
+		white-space: nowrap;
+	}
+
+	.sapMBreadcrumbsSeparator {
+		padding: 0 0.25rem;
+	}
+
+	.sapMBreadcrumbsItem, .sapMBreadcrumbsSeparator {
+		color: @sapUiLightText;
+	}
+}
+
+.sapUiSizeCompact .sapMBreadcrumbs .sapMSlt {
+	margin: 0;
+	height: 1.2rem;
+}
