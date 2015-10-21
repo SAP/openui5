@@ -358,6 +358,19 @@
 			assert.strictEqual(this.oQuickView._oPopover.$().is(':visible'), true, "Should not close the QuickView control.");
 		});
 
+		QUnit.test("Checking if all link have width of 'auto'", function(assert) {
+		    // act
+			this.oButton.firePress();
+			this.clock.tick(500);
+			assert.ok(this.oQuickView._oPopover.isOpen(), "QuickView is already open");
+
+		    // assert
+			var aLinks = this.oQuickView._oPopover.$().find(".sapMLnk");
+			for (var index = 0; index < aLinks.length; index += 1) {
+				assert.strictEqual(aLinks[index].style.width, 'auto', "The Link should have width set to 'auto'");
+			}
+		});
+
 		QUnit.module("Keyboard handling", {
 			setup: function () {
 				this.oQuickView = getQuickView();
