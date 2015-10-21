@@ -65,7 +65,7 @@
 		dti4 = new sap.m.DateTimeInput("errordti", {
 			displayFormat : "dd MMMM, yyyy",
 			valueState:"Error",
-			valueStateMessage:"Error Message"
+			valueStateText:"Error Message"
 		}).placeAt("content");
 
 
@@ -153,10 +153,9 @@
 	test("value state and value state message", function() {
 		dti4.focus();
 		ok(dti4._popup.isOpen(), "error message is open");
-
-		document.activeElement.blur();
 		this.clock.tick(500);
-
+		
+		document.activeElement.blur();
 		ok(!dti4._popup.isOpen(), "error message is closed");
 	});
 
