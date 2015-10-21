@@ -418,6 +418,29 @@
 			assert.strictEqual(shrinkSpy.callCount, 2, "_collapseMsgPopover() is called the second time");
 		});
 
+		QUnit.test("When initialized without items template should automatically perform binding to the Message Model", function (assert) {
+			var oModel = new sap.ui.model.json.JSONModel({
+				form: {
+					name: "Form Name"
+				}
+			});
+
+			sap.ui.getCore().getMessageManager().addMessages(
+					new sap.ui.core.message.Message({
+						message: "Invalid order of characters in this name!",
+						type: sap.ui.core.MessageType.Warning,
+						target: "/form/name",
+						processor: oModel
+					})
+			);
+
+			this.oButton.addDependent(this.oMessagePopover);
+			this.oMessagePopover.openBy(this.oButton);
+
+			this.clock.tick(500);
+			assert.equal(this.oMessagePopover.getItems().length, 1, "The message should be one");
+		});
+
 		QUnit.module("HTML representation", {
 			setup: function () {
 				this.oMessagePopover = new sap.m.MessagePopover();
