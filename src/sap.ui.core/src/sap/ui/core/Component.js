@@ -558,7 +558,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	};
 
 	/**
-	 * Initializes the component models and services.
+	 * Initializes the component models and services with the configuration
+	 * as defined in the manifest.json.
 	 *
 	 * @private
 	 */
@@ -583,7 +584,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	};
 
 	/**
-	 * Initializes the component models and services.
+	 * Initializes the component models and services which are passed as 
+	 * parameters to this function.
 	 *
 	 * @param {object} mModels models configuration from manifest.json
 	 * @param {object} mDataSources data sources configuration from manifest.json
@@ -711,7 +713,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 							}
 
 							// resolve relative to component
-							var oAnnotationUri = Manifest._resolveUri(new URI(oAnnotation.uri), mConfig.origin.dataSources[aAnnotations[i]].getComponentName()).toString();
+							var oComponentMetadata = mConfig.origin.dataSources[aAnnotations[i]] || this.getMetadata();
+							var oAnnotationUri = Manifest._resolveUri(new URI(oAnnotation.uri), oComponentMetadata.getComponentName()).toString();
 
 							// add uri to annotationURI array in settings (this parameter applies for ODataModel v1 & v2)
 							oModelConfig.settings = oModelConfig.settings || {};
@@ -765,7 +768,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				var oUri = new URI(oModelConfig.uri);
 
 				// resolve URI relative to component which defined it
-				var oUriSourceComponent = (bIsDataSourceUri) ? mConfig.origin.dataSources[oModelConfig.dataSource] : mConfig.origin.models[sModelName];
+				var oUriSourceComponent = (bIsDataSourceUri ? mConfig.origin.dataSources[oModelConfig.dataSource] : mConfig.origin.models[sModelName]) || this.getMetadata();
 				oUri = Manifest._resolveUri(oUri, oUriSourceComponent.getComponentName());
 
 				// inherit sap-specific parameters from document (only if "sap.app/dataSources" reference is defined)
