@@ -1,0 +1,181 @@
+<!DOCTYPE HTML>
+<!-- Tested control/class: sap.ui.unified.Currency -->
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<meta charset="UTF-8">
+		<title>Currency - sap.ui.unified</title>
+		<script id="sap-ui-bootstrap"
+				type="text/javascript"
+				src="../../../../../resources/sap-ui-core.js"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-libs="sap.m,sap.ui.unified"
+				data-sap-ui-language="en-US">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen"/>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<!-- Test functions -->
+		<script language="javascript">
+			module("Control API", {
+				beforeEach : function () {
+					//Currency with default values
+					this.sut = new sap.ui.unified.Currency();
+					this.sut.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.sut.destroy();
+				},
+				fnGetRenderedValue: function () {
+					return this.sut.$().find(".sapUiUfdCurrencyAlign .sapUiUfdCurrencyValue").text();
+				}
+			});
+
+			test("DOM", function () {
+				//assert
+				strictEqual(this.sut.$().length, 1, "Currency control was rendered successfully and is present in DOM");
+			});
+
+			test("Testing property defaults", function () {
+				//assert
+				strictEqual(this.sut.getValue(), 0, "Default value is correct");
+				strictEqual(this.sut.getCurrency(), "", "Default currency is correct");
+				strictEqual(this.sut.getMaxPrecision(), 3, "Default precision is correct");
+				strictEqual(this.sut.getUseSymbol(), true, "Default useSymbol is correct");
+			});
+
+			test("Testing setters", function () {
+				//act
+				this.sut.setValue(5);
+				this.sut.setCurrency("AUD");
+				this.sut.setMaxPrecision(8);
+				this.sut.setUseSymbol(false);
+
+				//assert
+				strictEqual(this.sut.getValue(), 5, "Value setter is correct");
+				strictEqual(this.sut.getCurrency(), "AUD", "Currency setter is correct");
+				strictEqual(this.sut.getMaxPrecision(), 8, "MaxPrecision setter is correct");
+				strictEqual(this.sut.getUseSymbol(), false, "UseSymbol setter is correct");
+			});
+
+			test("MaxPrecision changes the rendered value", function () {
+				//arrange
+				var iStringLength;
+				this.sut.setCurrency("USD");
+				this.sut.setValue(55.21);
+				iStringLength = this.sut.getValue().toString().length;
+				sap.ui.getCore().applyChanges();
+				//assert
+				strictEqual(this.fnGetRenderedValue(), "55.21\u2007", "The default maxPrecision value resulted in adding one figure space to the back of the value");
+				//arrange
+				this.sut.setMaxPrecision(5);
+				sap.ui.getCore().applyChanges();
+				//assert
+				strictEqual(this.fnGetRenderedValue(), "55.21\u2007\u2007\u2007", "New maxPrecision value added two more figure spaces to the back of the value");
+				this.sut.setMaxPrecision(1);
+				sap.ui.getCore().applyChanges();
+				//assert
+				strictEqual(this.fnGetRenderedValue(), "55.2", "New maxPrecision value subtracted the value with one");
+			});
+
+			test("Special * currency", function () {
+				//arrange
+				this.sut.setCurrency("*");
+				this.sut.setValue(123.23);
+				sap.ui.getCore().applyChanges();
+				//assert
+				strictEqual(this.fnGetRenderedValue(), "", "Nothing is rendered even when change value");
+				//arrange
+				this.sut.setCurrency("BGN");
+				sap.ui.getCore().applyChanges();
+				//assert
+				strictEqual(this.fnGetRenderedValue(), "123.23\u2007", "Value is rendered when currency is other than *");
+			});
+
+			module("Data binding", {
+				beforeEach: function () {
+					this.oData = {
+						currencyCollection: [{
+							value: 0.215,
+							currency: "EUR",
+							maxPrecision: 4,
+							useSymbol: true
+						}, {
+							value: 5.4,
+							currency: "USD",
+							maxPrecision: 2,
+							useSymbol: false
+						}, {
+							value: 1021,
+							currency: "GBP",
+							maxPrecision: 1,
+							useSymbol: true
+						}, {
+							currency: "JPY",
+							maxPrecision: 5,
+							useSymbol: true
+						}]
+					};
+					sap.ui.getCore().setModel(new sap.ui.model.json.JSONModel(this.oData));
+					this.sut = new sap.m.VBox({});
+					this.sut.bindAggregation("items", "/currencyCollection", new sap.ui.unified.Currency({
+						value: "{value}",
+						currency: "{currency}",
+						maxPrecision: "{maxPrecision}",
+						useSymbol: "{useSymbol}"
+					}));
+					this.sut.placeAt('content');
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach: function () {
+					this.sut.destroy();
+				}
+			});
+
+			test("Length of data binding", function () {
+				//assert
+				strictEqual(this.sut.getItems().length, Object.keys(this.oData.currencyCollection).length, "All currencies are rendered and present in the DOM");
+			});
+
+			test("Property data binding", function () {
+				//arrange
+				var aItems = this.sut.getItems(),
+					iIndex,
+					oCurrency;
+
+				//assert
+				for (iIndex = 0; iIndex < aItems.length; iIndex++) {
+					oCurrency = aItems[iIndex];
+					strictEqual(oCurrency.getCurrency(), this.oData.currencyCollection[iIndex].currency, "Control " + (iIndex + 1) + " currency is correctly bound");
+					strictEqual(oCurrency.getValue(), oCurrency.getValue() ? this.oData.currencyCollection[iIndex].value : 0, "Control " + (iIndex + 1) + " value is correctly bound");
+					strictEqual(oCurrency.getMaxPrecision(), this.oData.currencyCollection[iIndex].maxPrecision, "Control " + (iIndex + 1) + " maxPrecision is correctly bound");
+					strictEqual(oCurrency.getUseSymbol(), this.oData.currencyCollection[iIndex].useSymbol, "Control " + (iIndex + 1) + " useSymbol is correctly bound");
+				}
+			});
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1 id="qunit-header">QUnit tests: sap.ui.unified.Currency</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<div id="qunit-fixture"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+		<br>
+		<div id="uiArea1"></div>
+		<br>
+		<div id="uiArea2"></div>
+		<br>
+		<div id="uiArea3"></div>
+	</body>
+</html>
