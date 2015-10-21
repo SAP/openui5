@@ -11,16 +11,16 @@ sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/core/sample/common/Component',
 		'sap/ui/core/util/MockServer',
+		'sap/ui/model/json/JSONModel',
 		'sap/ui/model/odata/v2/ODataModel'
-	], function(jQuery, BaseComponent, MockServer, ODataModel) {
+	], function(jQuery, BaseComponent, MockServer, JSONModel, ODataModel) {
 	"use strict";
 
 	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.valuelist.Component", {
 		metadata : "json",
 
 		createContent : function () {
-			var sMetadataUri,
-				oMockServer,
+			var oMockServer,
 				sMockServerBaseUri
 					= "test-resources/sap/ui/core/demokit/sample/ViewTemplate/valuelist/data/",
 				oModel,
@@ -84,27 +84,27 @@ sap.ui.define([
 					// yet another mock server to handle value list data requests
 					new MockServer({
 						requests : [{
-							param : "VL_SH_H_T001/$count",
+							param : "VL_SH_H_T001/$count"
 						}, {
 							param : "VL_SH_H_T001?$skip=0&$top=100",
 							response : "VL_SH_H_T001.json"
 						}, {
-							param : "VL_SH_DEBIA/$count",
+							param : "VL_SH_DEBIA/$count"
 						}, {
 							param : "VL_SH_DEBIA?$skip=0&$top=100",
 							response : "VL_SH_DEBIA.json"
 						}, {
-							param : "VL_SH_DEBID/$count",
+							param : "VL_SH_DEBID/$count"
 						}, {
 							param : "VL_SH_DEBID?$skip=0&$top=100",
 							response : "VL_SH_DEBID.json"
 						}, {
-							param : "VL_CT_TCURC/$count",
+							param : "VL_CT_TCURC/$count"
 						}, {
 							param : "VL_CT_TCURC?$skip=0&$top=100",
 							response : "VL_CT_TCURC.json"
 						}, {
-							param : "VL_SH_FARP_T005/$count",
+							param : "VL_SH_FARP_T005/$count"
 						}, {
 							param : "VL_SH_FARP_T005?$skip=0&$top=100",
 							response : "VL_SH_FARP_T005.json"
@@ -134,7 +134,10 @@ sap.ui.define([
 			});
 			return sap.ui.view({
 				async : true,
-				models : oModel,
+				models : {
+					undefined: oModel,
+					ui: new JSONModel({valueHelpDetails: false})
+				},
 				type : sap.ui.core.mvc.ViewType.XML,
 				viewName : "sap.ui.core.sample.ViewTemplate.valuelist.Main"
 			});

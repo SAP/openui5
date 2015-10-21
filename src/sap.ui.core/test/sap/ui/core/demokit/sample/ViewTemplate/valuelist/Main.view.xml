@@ -4,7 +4,10 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	>
 	<VBox>
-		<Label text="Items"/>
+		<Toolbar>
+			<CheckBox selected="{ui>/valueHelpDetails}" text="Value Help Details"
+				tooltip="Show value help details as tooltip for value help input fields"/>
+		</Toolbar>
 		<Table items="{/Items}">
 			<columns>
 				<Column>
@@ -29,16 +32,21 @@
 			<items>
 				<ColumnListItem>
 					<cells>
-						<demo:ValueHelp value="{GeneratedID}" />
-						<demo:ValueHelp value="{CompanyCode}"/>
-						<demo:ValueHelp value="{Customer}"/>
-						<demo:ValueHelp value="{Customer}" qualifier="DEBID"/>
-						<demo:ValueHelp value="{AccountingDocument}" />
-						<demo:ValueHelp value="{AccountingDocumentItem}" />
+						<demo:ValueHelp value="{GeneratedID}"
+							showDetails="{ui>/valueHelpDetails}"/>
+						<demo:ValueHelp value="{CompanyCode}"
+							showDetails="{ui>/valueHelpDetails}"/>
+						<demo:ValueHelp value="{Customer}"
+							showDetails="{ui>/valueHelpDetails}"/>
+						<demo:ValueHelp value="{Customer}" qualifier="DEBID"
+							showDetails="{ui>/valueHelpDetails}"/>
+						<demo:ValueHelp value="{AccountingDocument}"
+							showDetails="{ui>/valueHelpDetails}"/>
+						<demo:ValueHelp value="{AccountingDocumentItem}"
+							showDetails="{ui>/valueHelpDetails}"/>
 					</cells>
 				</ColumnListItem>
 			</items>
-
 		</Table>
 	</VBox>
 </mvc:View>
