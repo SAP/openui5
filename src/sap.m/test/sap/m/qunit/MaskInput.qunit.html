@@ -626,6 +626,36 @@
 			});
 		}
 
+		module("ARIA", {
+			beforeEach: function () {
+				this.oMaskInput = new sap.m.MaskInput({
+					mask: "993-99-999",
+					placeholderSymbol: "_"
+				});
+				this.oRenderer = this.oMaskInput.getRenderer();
+				this.oMaskInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oMaskInput.destroy();
+			}
+		});
+
+		test("Testing aria label", function () {
+			var $AriaLabel = this.oMaskInput.$().find("#" + this.oMaskInput.getId() + "-labelledby");
+			//assert
+			ok($AriaLabel.length > 0, "The hidden aria description is present in the DOM");
+			strictEqual(this.oRenderer.getLabelledByAnnouncement(this.oMaskInput), $AriaLabel.text(), "The message is rendered correctly");
+		});
+
+		test("Testing aria description", function () {
+			//arrange
+			var $AriaDescripttion = this.oMaskInput.$().find("#" + this.oMaskInput.getId() + "-describedby");
+			//assert
+			ok($AriaDescripttion.length > 0, "The hidden aria description is present in the DOM");
+			strictEqual(this.oRenderer.getDescribedByAnnouncement(this.oMaskInput), $AriaDescripttion.text(), "The message is rendered correctly");
+		});
+
 		function checkForDeleteAndBackspace() {
 			var oRule = new sap.m.MaskInputRule();
 			oRule.setMaskFormatSymbol("h");
