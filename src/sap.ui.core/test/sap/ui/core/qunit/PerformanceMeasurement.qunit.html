@@ -347,7 +347,6 @@
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
-			equal(oMeasurement.control, this.oButton, "Control is set");
 			equal(oMeasurement.event, "click", "Event type is set");
 			equal(oMeasurement.trigger, this.oButton.getId(), " Id of control which triggered interaction is set");
 			equal(oMeasurement.component, "no_ui5_component", "No component could be found");

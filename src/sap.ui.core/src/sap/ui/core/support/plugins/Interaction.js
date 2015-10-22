@@ -128,7 +128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			var aMeasurements = [];
 
 			if (bActive) {
-				aMeasurements = jQuery.sap.measure.getInteractionMeasurements();
+				aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
 			}
 			this._oStub.sendEvent(this.getId() + "SetMeasurements", {"measurements": aMeasurements});
 			this._oStub.sendEvent(this.getId() + "SetActive", {"active": bActive});
@@ -153,7 +153,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				rm.write("<td>" + oMeasurement.trigger + "</td>");
 				rm.write("<td>" + this._fnFormatTime(oMeasurement.start) + "</td>");
 				rm.write("<td>" + this._fnFormatTime(oMeasurement.end) + "</td>");
-				rm.write("<td>" + oMeasurement.processing + "</td>");
+				rm.write("<td>" + oMeasurement.duration + "</td>");
 				rm.write("<td>" + oMeasurement.requests.length + "</td>");
 				rm.write("</tr>");
 			}
