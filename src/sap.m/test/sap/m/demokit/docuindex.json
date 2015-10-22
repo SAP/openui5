@@ -993,7 +993,7 @@
 		  "category" : "Container",
 		  "since" : "1.11",
 		  "samples" : [
-			"sap.m.sample.SplitApp"
+			"sap.m.sample.SplitContainer"
 		  ]
 		},
 		{
@@ -2070,7 +2070,12 @@
 		{
 		  "id": "sap.m.sample.SplitApp",
 		  "name": "SplitApp standard use case",
-		  "description": "The SplitApp is the base for each master detail application. It extends the sap.m.SplitContainer control. The display of master NavContainer depends on the portrait/landscape orientation of the device and the mode of SplitApp."
+		  "description": "The SplitApp is the base for each master detail application. It extends the sap.m.SplitContainer control."
+		},
+		{
+		  "id": "sap.m.sample.SplitContainer",
+		  "name": "SplitContainer standard use case",
+		  "description": "SplitContainer maintains two NavContainers if running on tablet or desktop and one NavContainer - on phone. The display of master NavContainer depends on the portrait/landscape orientation of the device and the mode of SplitContainer."
 		},
 		{
 		  "id": "sap.m.sample.DraftIndicator",
