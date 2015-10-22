@@ -4335,7 +4335,89 @@
 		oTxt.bindObject("/VH_CategorySet('Headsets')");
 		oModel.attachBatchRequestCompleted(this, fnCheck);
 	});
-
+	asyncTest("test oDataModel setProperty after submitChanges(): request/order", function() {
+		oModel.setUseBatch(true);
+		spy = sinon.spy(oModel, "_processChange");
+		var oRequest;
+		var requestCount = 0;
+		oModel.attachRequestCompleted(function(oInfo) {
+			requestCount++;
+			if (requestCount == 1) {
+				ok(oInfo.getParameter('success'), "request success");
+				ok(oInfo.getParameter('method') == 'GET', "GET");
+			} else if (requestCount == 2) {
+				ok(oInfo.getParameter('success'), "request success");
+				ok(oInfo.getParameter('method') == 'GET', "GET");
+			} else if (requestCount == 3) {
+				ok(oInfo.getParameter('success'), "request success");
+				ok(oInfo.getParameter('method') == 'MERGE', "MERGE");
+				oRequest = spy.returnValues[0];
+				ok(oRequest.data.Name == "emil", "data ok");
+			} else if (requestCount == 4) {
+				ok(oInfo.getParameter('success'), "request success");
+				ok(oInfo.getParameter('method') == 'MERGE', "MERGE");
+				oRequest = spy.returnValues[1];
+				ok(oRequest.data.Name == "hugo", "data ok");
+			}
+		});
+		var fnSuc = function() {
+			oModel.read("/ProductSet('HT-1000')",{groupId:"changes"});
+			oModel.submitChanges();
+			var oN = oModel.getProperty("/ProductSet('AD-1000')/Name");
+			oModel.setProperty("/ProductSet('AD-1000')/Name", "emil");
+			//oModel.setProperty("/Products(1)/Name", oN);
+			setTimeout(function() {
+				oModel.submitChanges();
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "hugo");
+				setTimeout(function() {
+					oModel.submitChanges({success: function() {
+						ok(requestCount == 4, '4 requests sent');
+						start();
+					}});
+				},300);
+			},300);
+		}
+		oModel.read("/ProductSet('AD-1000')",{success: fnSuc});
+	});
+	asyncTest("test oDataModel setProperty after submitChanges(): request/order", function() {
+		oModel.setUseBatch(true);
+		spy = sinon.spy(oModel, "_processChange");
+		var oRequest;
+		var requestCount = 0;
+		oModel.attachRequestCompleted(function(oInfo) {
+			requestCount++;
+			if (requestCount == 1) {
+				ok(oInfo.getParameter('success'), "request success");
+				ok(oInfo.getParameter('method') == 'GET', "GET");
+			} else if (requestCount == 2) {
+				ok(oInfo.getParameter('success'), "request success");
+				ok(oInfo.getParameter('method') == 'GET', "GET");
+			} else if (requestCount == 3) {
+				ok(oInfo.getParameter('success'), "request success");
+				ok(oInfo.getParameter('method') == 'MERGE', "MERGE");
+				oRequest = spy.returnValues[1];
+				ok(oRequest.data.Name == "hugo", "data ok");
+			}
+		});
+		var fnSuc = function() {
+			oModel.read("/ProductSet('HT-1000')",{groupId:"changes"});
+			oModel.submitChanges();
+			var oN = oModel.getProperty("/ProductSet('AD-1000')/Name");
+			oModel.setProperty("/ProductSet('AD-1000')/Name", "emil");
+			oModel.setProperty("/ProductSet('AD-1000')/Name", oN);
+			setTimeout(function() {
+				oModel.submitChanges();
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "hugo");
+				setTimeout(function() {
+					oModel.submitChanges({success: function() {
+						ok(requestCount == 3, '3 requests sent');
+						start();
+					}});
+				},300);
+			},300);
+		}
+		oModel.read("/ProductSet('AD-1000')",{success: fnSuc});
+	});
 	</script>
 
 </head>
