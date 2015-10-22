@@ -80,7 +80,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				this.displayDate(oStartDate); // don't set focus
 				this._bNoRangeCheck = false;
 				if (oOldDate && this.checkDateFocusable(oOldDate)) {
-					this.setDate(oOldDate);
+					this.displayDate(oOldDate);
 				}
 			}
 			return this;

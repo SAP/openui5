@@ -254,9 +254,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var oDate = CalendarUtils._createLocalDate(this._getFocusedDate(), true);
 			if (!oTimesRow.checkDateFocusable(oDate)) {
-				//focused date not longer visible -> focus start date
+				//focused date not longer visible -> focus start date (but don't set focus)
 				this._setFocusedDate(this._oUTCStartDate);
-				oTimesRow.setDate(oStartDate);
+				oTimesRow.displayDate(oStartDate);
 			}
 
 			return this;

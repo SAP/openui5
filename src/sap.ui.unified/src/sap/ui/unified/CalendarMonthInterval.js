@@ -218,7 +218,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			if (!oMonthsRow.checkDateFocusable(oDate)) {
 				//focused date not longer visible -> focus start date
 				this._setFocusedDate(this._oUTCStartDate);
-				oMonthsRow.setDate(oStartDate);
+				oMonthsRow.displayDate(oStartDate);
 			}
 
 			return this;
