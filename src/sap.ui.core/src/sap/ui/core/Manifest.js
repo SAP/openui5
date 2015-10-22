@@ -264,7 +264,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 					}
 				}.bind(this), function(e) {
 					jQuery.sap.log.warning("The validation of the version for Component \"" + this.getComponentName() + "\" failed! Reasion: " + e);
-				});
+				}.bind(this));
 			}
 
 		},
