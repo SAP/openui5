@@ -222,16 +222,16 @@
 		}
 	});
 
-	var oXMLView = new sap.ui.xmlview({
+	var oXMLView = sap.ui.xmlview({
 		viewContent : sXmlView,
 		controller : oController
 	}).placeAt("RFL3");
 
-	var oXMLViewSimpleForm = new sap.ui.xmlview("simpleFormView", {
+	var oXMLViewSimpleForm = sap.ui.xmlview("simpleFormView", {
 		viewContent : sXmlViewSimpleForm
 	}).placeAt("RFL3");
 
-	var oXMLViewTP = new sap.ui.xmlview("simpleFormTP", {
+	var oXMLViewTP = sap.ui.xmlview("simpleFormTP", {
 		viewContent : sXmlViewSimpleForm
 	});
 
