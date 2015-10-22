@@ -1,0 +1,67 @@
+<mvc:View
+
+	height="100%"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:form="sap.ui.layout.form">
+
+	<App>
+		<Page showHeader = "false">
+			<l:Grid vSpacing = "2" defaultSpan = "XL12 L12 M12 S12">
+				<VBox>
+					<form:SimpleForm title = "Generic Mask Input">
+
+							<Label text = "Any character" class = "sapUiSmallMarginTop sapUiTinyMarginBottom" tooltip = "Any character"/>
+							<MaskInput mask = "~~~~~~~~~~" placeholderSymbol = "_" placeholder = "Enter text" >
+								<rules>
+									<MaskInputRule maskFormatSymbol = "~" regex = "[^_]"/>
+								</rules>
+							</MaskInput>
+
+							<Label text = "Latin characters (case insensitive) and numbers" class = "sapUiSmallMarginTop sapUiTinyMarginBottom" tooltip = "Latin characters (case insensitive) and numbers"/>
+							<MaskInput mask = "**********" placeholderSymbol = "_" placeholder = "Enter text" >
+								<rules>
+									<MaskInputRule/>
+								</rules>
+							</MaskInput>
+
+							<Label text = "Latin characters (case sensitive) and numbers" class = "sapUiSmallMarginTop sapUiTinyMarginBottom" tooltip = "Latin characters (case sensitive) and numbers"/>
+							<MaskInput mask = "CCCCCCCC" placeholderSymbol = "_" placeholder = "Enter text" >
+								<rules>
+									<MaskInputRule maskFormatSymbol = "C" regex = "[A-Z0-9]"/>
+								</rules>
+							</MaskInput>
+
+							<Label text = "Numeric only" class = "sapUiSmallMarginTop sapUiTinyMarginBottom" tooltip = "Numeric only"/>
+							<MaskInput mask = "99999" placeholderSymbol = "_" placeholder = "Enter a six digit number"/>
+
+					</form:SimpleForm>
+				</VBox>
+
+				<VBox>
+					<form:SimpleForm title = "Possible usages (may require additional coding)">
+
+						<Label text = "Serial number" class = "sapUiSmallMarginTop sapUiTinyMarginBottom" tooltip = "Serial number. Digits and capital letters allowed"/>
+						<MaskInput mask = "CCCC-CCCC-CCCC-CCCC-CCCC" placeholderSymbol = "_" placeholder = "Enter serial number">
+							<rules>
+								<MaskInputRule maskFormatSymbol = "C" regex = "[A-Z0-9]"/>
+							</rules>
+						</MaskInput>
+
+						<Label text = "Product activation key" class = "sapUiSmallMarginTop sapUiTinyMarginBottom" tooltip = "Product activation key. Starts with 'SAP' followed by digits and capital letters" />
+						<MaskInput mask = "SAP-CCCCC-CCCCC" placeholderSymbol = "_" placeholder = "Enter activation key" >
+							<rules>
+								<MaskInputRule maskFormatSymbol = "C" regex = "[A-Z0-9]"/>
+							</rules>
+						</MaskInput>
+
+						<Label text = "ISBN" class = "sapUiSmallMarginTop sapUiTinyMarginBottom" tooltip = "ISBN" />
+						<MaskInput mask = "999-99-999-9999-9" placeholderSymbol = "_" placeholder = "Enter ISBN" />
+
+					</form:SimpleForm>
+				</VBox>
+			</l:Grid>
+		</Page>
+	</App>
+</mvc:View>
