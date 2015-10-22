@@ -42,7 +42,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'], functio
 				 * Updates the size of the tile. If not set then the default size is applied based on the device tile.
 				 */
 				"size" : {
-					type : "sap.m.InfoTileSize",
+					type : "sap.m.Size",
 					group : "Misc",
 					defaultValue : "Auto"
 				},
