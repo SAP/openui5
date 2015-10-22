@@ -1219,7 +1219,7 @@
 		oBinding.attachChange(handler);
 		oBinding.attachRefresh(handler);
 	});
-	
+
 	asyncTest("async test createEntity", function(){
 		var oSpy;
 		var oModel = initModel(sURI, {
@@ -1267,6 +1267,7 @@
 			jQuery.sap.delayedCall(0,this, function() {
 				ok(oSpy.callCount == 0, "No request sent");
 				oSpy.restore();
+				oModel.destroy();
 				start()
 			});
 		};
@@ -1374,6 +1375,7 @@
 					ok("Three requests have been completed successfully")
 					delete window.fakeRequested;
 					delete window.fakeResponsed;
+					oModel.destroy();
 					start();
 				}, 0);
 			}
@@ -1384,6 +1386,7 @@
 		var oModel = initModel(sURI, {
 			json: true,
 			useBatch: true,
+			tokenHandling: false,
 			sequentializeRequests: true
 		});
 		var iCount = 0,
@@ -1415,6 +1418,7 @@
 					ok("Four requests have been completed successfully")
 					delete window.fakeRequested;
 					delete window.fakeResponsed;
+					oModel.destroy();
 					start();
 				}, 0);
 			}
