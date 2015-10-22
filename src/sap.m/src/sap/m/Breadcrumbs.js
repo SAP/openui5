@@ -280,7 +280,7 @@ sap.ui.define([
 		if (!this._bControlDistributionCached || bInvalidateDistribution) {
 			oSelect.removeAllItems();
 			aControlsForSelect = Device.system.phone ? this.getLinks() : oControlsDistribution.aControlsForSelect;
-			aControlsForSelect.map(this._createSelectItem).forEach(oSelect.insertItem, oSelect);
+			aControlsForSelect.map(this._createSelectItem).reverse().forEach(oSelect.insertItem, oSelect);
 			this._bControlDistributionCached = true;
 			this.invalidate(this);
 		}
