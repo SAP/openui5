@@ -154,7 +154,17 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 							 */
 							messageTypeFilter: {type: "sap.ui.core.MessageType"}
 						}
-					}
+					},
+
+					/**
+					 * This event will be fired when the long text description data from a remote URL is loaded
+					 */
+					longtextLoaded: {},
+
+					/**
+					 * This event will be fired when a validation of a URL from long text description is ready
+					 */
+					urlValidated: {}
 				}
 			}
 		});
@@ -172,7 +182,26 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			// Property names array
 			ASYNC_HANDLER_NAMES = ["asyncDescriptionHandler", "asyncURLHandler"],
 			// Private class variable used for static method below that sets default async handlers
-			DEFAULT_ASYNC_HANDLERS = {};
+			DEFAULT_ASYNC_HANDLERS = {
+				asyncDescriptionHandler: function (config) {
+					var sLongTextUrl = config.item.getLongtextUrl();
+					if (sLongTextUrl) {
+						jQuery.ajax({
+							type: "GET",
+							url: sLongTextUrl,
+							success: function (data) {
+								config.item.setDescription(data);
+								config.promise.resolve();
+							},
+							error: function() {
+								var sError = "A request has failed for long text data. URL: " + sLongTextUrl;
+								jQuery.sap.log.error(sError);
+								config.promise.reject(sError);
+							}
+						});
+					}
+				}
+			};
 
 		/**
 		 * Setter for default description and URL validation callbacks across all instances of MessagePopover
@@ -313,8 +342,9 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 						path: "message>/",
 						template: new MessagePopoverItem({
 							type: "{message>type}",
-							title: "{message>message}",
-							description: "{message>description}"
+							title: "{message>title}",
+							description: "{message>description}",
+							longtextUrl: "{message>longtextUrl}"
 						})
 					}
 			);
@@ -805,6 +835,8 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 							// Adapt the link style
 							$link.removeClass('sapMMsgPopoverItemPendingLink');
 							$link.toggleClass('sapMMsgPopoverItemDisabledLink', !result.allowed);
+
+							that.fireUrlValidated();
 						})
 						.catch(function () {
 							jQuery.sap.log.warning("Async URL validation could not be performed.");
@@ -848,6 +880,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				this._setTitle(oMessagePopoverItem);
 				this._sanitizeDescription(oMessagePopoverItem);
 				this._setIcon(oMessagePopoverItem, oListItem);
+				this.fireLongtextLoaded();
 
 				if (!suppressNavigate) {
 					this._navContainer.to(this._detailsPage);
