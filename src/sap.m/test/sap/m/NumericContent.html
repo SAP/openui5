@@ -47,7 +47,7 @@
 		truncateValueTo : 5,
 		nullifyValue : true,
 		value : "-88.88",
-		valueColor : sap.m.InfoTileValueColor.Good,
+		valueColor : sap.m.ValueColor.Good,
 		tooltip : "EMEA income\n{AltText}\ncalculated in EURO",
 		iconDesc : "icon image",
 		withMargin : true
@@ -169,25 +169,21 @@
 					key : "NoColor",
 					text : "No color"
 				}),
-				new sap.ui.core.Item("actual-value-color-"
-						+ sap.m.InfoTileValueColor.Neutral, {
-					key : sap.m.InfoTileValueColor.Neutral,
-					text : sap.m.InfoTileValueColor.Neutral
+				new sap.ui.core.Item("actual-value-color-" + sap.m.ValueColor.Neutral, {
+					key : sap.m.ValueColor.Neutral,
+					text : sap.m.ValueColor.Neutral
 				}),
-				new sap.ui.core.Item("actual-value-color-"
-						+ sap.m.InfoTileValueColor.Good, {
-					key : sap.m.InfoTileValueColor.Good,
-					text : sap.m.InfoTileValueColor.Good
+				new sap.ui.core.Item("actual-value-color-" + sap.m.ValueColor.Good, {
+					key : sap.m.ValueColor.Good,
+					text : sap.m.ValueColor.Good
 				}),
-				new sap.ui.core.Item("actual-value-color-"
-						+ sap.m.InfoTileValueColor.Critical, {
-					key : sap.m.InfoTileValueColor.Critical,
-					text : sap.m.InfoTileValueColor.Critical
+				new sap.ui.core.Item("actual-value-color-" + sap.m.ValueColor.Critical, {
+					key : sap.m.ValueColor.Critical,
+					text : sap.m.ValueColor.Critical
 				}),
-				new sap.ui.core.Item("actual-value-color-"
-						+ sap.m.InfoTileValueColor.Error, {
-					key : sap.m.InfoTileValueColor.Error,
-					text : sap.m.InfoTileValueColor.Error
+				new sap.ui.core.Item("actual-value-color-" + sap.m.ValueColor.Error, {
+					key : sap.m.ValueColor.Error,
+					text : sap.m.ValueColor.Error
 				}) ],
 		selectedItem : "actual-value-color-Good"
 	});

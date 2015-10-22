@@ -49,8 +49,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.IBarHTMLTag",
 			"sap.m.IconTabFilterDesign",
 			"sap.m.ImageMode",
+			"sap.m.Size",
 			"sap.m.InfoTileSize",
-			"sap.m.InfoTileTextColor",
+			"sap.m.ValueColor",
 			"sap.m.InfoTileValueColor",
 			"sap.m.InputType",
 			"sap.m.LabelDesign",
@@ -997,7 +998,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		Background: "Background"
 
 	};
-
+	
 	/**
 	* Enumeration of possible size settings.
 	*
@@ -1040,30 +1041,78 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * Enumeration of possible text color settings.
+	* Enumeration of possible size settings.
+	*
+	* @enum {string}
+	* @public
+	* @since 1.34.0
+	* @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	*/
+	sap.m.Size = {
+
+		/**
+		 * Extra small size.
+		 * @public
+		 */
+		XS : "XS",
+
+		/**
+		 * Small size.
+		 * @public
+		 */
+		S : "S",
+
+		/**
+		 * Medium size.
+		 * @public
+		 */
+		M : "M",
+
+		/**
+		 * Large size.
+		 * @public
+		 */
+		L : "L",
+
+		/**
+		 * The size of the tile depends on the device it is running on. It is medium size for desktop and tablet and small size for phone.
+		 * @public
+		 */
+		Auto : "Auto"
+	};
+
+	/**
+	 * Enumeration of possible value color settings.
 	 *
 	 * @enum {string}
 	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.m.InfoTileTextColor = {
+	sap.m.ValueColor = {
 
 		/**
-		 * Positive text color.
+		 * Neutral value color.
 		 * @public
 		 */
-		Positive : "Positive",
+		Neutral : "Neutral",
 
 		/**
-		 * Critical text color.
+		 * Good value color.
+		 * @public
+		 */
+		Good : "Good",
+
+		/**
+		 * Critical value color.
 		 * @public
 		 */
 		Critical : "Critical",
 
 		/**
-		 * Negative text color.
+		 * Error value color.
 		 * @public
 		 */
-		Negative : "Negative"
+		Error : "Error"
 
 	};
 

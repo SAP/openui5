@@ -32,14 +32,14 @@
 	QUnit.module("Rendering test - sap.m.NumericContent", {
 		setup : function() {
 			this.oNC = new sap.m.NumericContent("numeric-cnt", {
-				size : sap.m.InfoTileSize.L,
+				size : sap.m.Size.L,
 				state : sap.m.LoadState.Loaded,
 				scale : "M",
 				indicator : sap.m.DeviationIndicator.Up,
 				truncateValueTo : 4,
 				nullifyValue : true,
 				formatterValue : false,
-				valueColor : sap.m.InfoTileValueColor.Good,
+				valueColor : sap.m.ValueColor.Good,
 				icon : "sap-icon://customer-financial-fact-sheet"
 			});
 			this.oNC.placeAt("qunit-fixture");
@@ -63,14 +63,14 @@
 	QUnit.module("Functional tests - sap.m.NumericContent", {
 		setup : function() {
 			this.oNC = new sap.m.NumericContent("numeric-cnt", {
-				size : sap.m.InfoTileSize.L,
+				size : sap.m.Size.L,
 				state : sap.m.LoadState.Loaded,
 				scale : "M",
 				indicator : sap.m.DeviationIndicator.Up,
 				truncateValueTo : 4,
 				nullifyValue : true,
 				formatterValue : false,
-				valueColor : sap.m.InfoTileValueColor.Good,
+				valueColor : sap.m.ValueColor.Good,
 				icon : "sap-icon://customer-financial-fact-sheet"
 			});
 			this.oNC.placeAt("qunit-fixture");
