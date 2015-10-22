@@ -17,6 +17,14 @@
 			jQuery.sap.require("sap.ui.thirdparty.sinon");
 			jQuery.sap.require("sap.ui.qunit.qunit-junit");
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.Device");
+
+			var	testedJourneys = ['test/journey/list'];
+
+			// The testing of the download should be done in all browsers except IE9 because of a limitation there. See BCP: 1570758439
+			if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10)) {
+				testedJourneys.push('test/journey/download');
+			}
 
 			QUnit.config.autostart = false;
 
@@ -38,7 +46,7 @@
 						});
 
 						// require all journeys
-						sap.ui.require(['test/journey/download', 'test/journey/list'], function () {
+						sap.ui.require(testedJourneys, function () {
 							QUnit.start();
 						});
 
