@@ -2847,7 +2847,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		if ($Header.length > 0) {
 			var oColumn = sap.ui.getCore().byId($Header.attr("data-sap-ui-colid"));
 			if (oColumn) {
-				oColumn._openMenu($Header[0]);
+				oColumn._openMenu($Header[0], false);
 			}
 			oEvent.preventDefault();
 		} else {
@@ -3085,10 +3085,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				});
 
 				if (bExecuteDefault) {
-					oColumn._openMenu($col[0]);
+					oColumn._openMenu($col[0], oEvent.type == "keyup");
 				}
 			} else {
-				this._onColumnSelect(oColumn, $col[0], this._isTouchMode(oEvent));
+				this._onColumnSelect(oColumn, $col[0], this._isTouchMode(oEvent), oEvent.type == "keyup");
 			}
 			
 			return;
@@ -3233,7 +3233,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * column select event => opens the column menu
 	 * @private
 	 */
-	Table.prototype._onColumnSelect = function(oColumn, oDomRef, bIsTouchMode) {
+	Table.prototype._onColumnSelect = function(oColumn, oDomRef, bIsTouchMode, bWithKeyboard) {
 		// On tablet open special column header menu
 		if (bIsTouchMode) {
 			var $ColumnHeader = jQuery(oDomRef);
@@ -3281,7 +3281,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		// if the default behavior should be prevented we suppress to open
 		// the column menu!
 		if (bExecuteDefault) {
-			oColumn._openMenu(oDomRef);
+			oColumn._openMenu(oDomRef, bWithKeyboard);
 		}
 
 	};
