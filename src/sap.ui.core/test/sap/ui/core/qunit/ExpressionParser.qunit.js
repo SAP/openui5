@@ -9,7 +9,7 @@ sap.ui.require([
 	"sap/ui/model/odata/ODataUtils"
 ], function (BindingParser, ExpressionParser, Icon, JSONModel, ODataUtils) {
 	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 4, no-warning-comments: 0 */
+	/*eslint no-warning-comments: 0 */
 	"use strict";
 
 	var oModel = new JSONModel(

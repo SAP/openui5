@@ -12,7 +12,7 @@ sap.ui.require([
 	JSONListBinding, JSONPropertyBinding, JSONTreeBinding, MetaModel, Model, Utils, ODataMetaModel,
 	ODataModel1, ODataModel, TestUtils) {
 	/*global QUnit, sinon */
-	/*eslint camelcase: 0, max-nested-callbacks: 4, no-multi-str: 0, no-warning-comments: 0*/
+	/*eslint camelcase: 0, max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
 	"use strict";
 
 	//TODO remove this workaround in IE9 for
