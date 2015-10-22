@@ -10,6 +10,20 @@ sap.ui.define([
 
 	var CController = Controller.extend("sap.m.sample.SplitApp.C", {
 
+		onInit: function(){
+			this.getSplitAppObj().setHomeIcon({
+				'phone':'phone-icon.png',
+				'tablet':'tablet-icon.png',
+				'icon':'desktop.ico'
+			});
+		},
+
+		onOrientationChange: function(oEvent) {
+			var bLandscapeOrientation = oEvent.getParameter("landscape"),
+				sMsg = "Orientation now is: " + (bLandscapeOrientation ? "Landscape" : "Portrait");
+			MessageToast.show(sMsg, {duration: 5000});
+		},
+
 		onPressNavToDetail : function(oEvent) {
 			this.getSplitAppObj().to(this.createId("detailDetail"));
 		},

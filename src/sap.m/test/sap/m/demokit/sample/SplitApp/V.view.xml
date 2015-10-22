@@ -3,7 +3,7 @@
 	xmlns:custom="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 	controllerName="sap.m.sample.SplitApp.C"
 	xmlns="sap.m">
-	<SplitApp id="SplitAppDemo" initialDetail="detail" initialMaster="master" >
+	<SplitApp id="SplitAppDemo" initialDetail="detail" initialMaster="master" orientationChange="onOrientationChange">
 		<detailPages>
 			<Page id="detail" title="Detail 1" class="sapUiStdPage">
 				<content>
