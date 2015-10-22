@@ -2413,7 +2413,7 @@ sap.ui.define([
 
 
 		// no data available
-		if (bContent && !oResultData && oResponse) {
+		if (bContent && oResultData === undefined && oResponse) {
 			// Parse error messages from the back-end
 			this._parseResponse(oResponse, oRequest);
 
