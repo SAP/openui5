@@ -2,19 +2,22 @@
  * ${copyright}
  */
 sap.ui.require([
+	"jquery.sap.global",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/Device"
-], function (Opa5, opaTest, Properties, Device) {
+], function (jQuery, Opa5, opaTest, Properties, Device) {
 	/*global QUnit */
 	"use strict";
 
 	QUnit.module("sap.ui.core.sample.odata.v4.SalesOrders");
 
 	opaTest("Find view elements", function (Given, When, Then) {
+		var sUrl = "../../../common/index.html?component=odata.v4.SalesOrders&realOData="
+				+ encodeURIComponent(jQuery.sap.getUriParameters().get("realOData"));
 
-		Given.iStartMyAppInAFrame("../../../common/index.html?component=odata.v4.SalesOrders");
+		Given.iStartMyAppInAFrame(sUrl);
 
 		Then.waitFor({
 			controlType: "sap.m.Button",
