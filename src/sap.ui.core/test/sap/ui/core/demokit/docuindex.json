@@ -130,6 +130,16 @@
 				]
 			},
 			{
+				"id" : "sap.ui.model.odata.v4.ODataModel",
+				"name" : "OData v4 Model",
+				"category" : "Data Binding",
+				"since" : "1.32",
+				"samples" : [
+					"sap.ui.core.sample.odata.v4.ListBinding",
+					"sap.ui.core.sample.odata.v4.SalesOrders"
+				]
+			},
+			{
 				"id" : "sap.ui.model.type.Date",
 				"name" : "Date Type",
 				"category" : "Data Binding",
@@ -374,9 +384,19 @@
 				"description": "A small example for View Preprocessor usage with XMLViews."
 			},
 			{
+				"id": "sap.ui.core.sample.odata.v4.ListBinding",
+				"name": "List Binding",
+				"description": "Example for list binding with an OData v4 model"
+			},
+			{
+				"id": "sap.ui.core.sample.odata.v4.SalesOrders",
+				"name": "Sales Orders",
+				"description": "Example for OData v4 EPM Sales Orders"
+			},
+			{
 				"id": "sap.ui.core.sample.ViewTemplate.scenario",
 				"name": "XML Templating: demo scenario",
-				"description": "Complete demo scenario for XML Templating based on OData V4 annotations"
+				"description": "Complete demo scenario for XML Templating based on OData v4 annotations"
 			},
 			{
 				"id": "sap.ui.core.sample.ViewTemplate.scenario.extension",

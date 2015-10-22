@@ -1,0 +1,325 @@
+{
+	"__info__" : "via odatajs.OData.request("/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata", function, function, odatajs.oData.metadataHandler)",
+	"version" : "4.0",
+	"dataServices" : {
+		"schema" : [{
+			"namespace" : "com.sap.gateway.iwbep.tea_busi.v0001",
+			"entityType" : [{
+				"name" : "Department",
+				"hasStream" : "false",
+				"key" : [{
+					"propertyRef" : [{
+						"name" : "Sector"
+					}, {
+						"name" : "ID"
+					}]
+				}],
+				"property" : [{
+					"name" : "Sector",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "10"
+				}, {
+					"name" : "ID",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "4"
+				}, {
+					"name" : "Name",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "40"
+				}, {
+					"name" : "MemberCount",
+					"type" : "Edm.Int32",
+					"nullable" : "false"
+				}, {
+					"name" : "ManagerID",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "4"
+				}]
+			}, {
+				"name" : "EQUIPMENT",
+				"hasStream" : "false",
+				"key" : [{
+					"propertyRef" : [{
+						"name" : "Category"
+					}, {
+						"name" : "ID"
+					}]
+				}],
+				"property" : [{
+					"name" : "Category",
+					"type" : "Edm.String",
+					"nullable" : "false"
+				}, {
+					"name" : "ID",
+					"type" : "Edm.Int32",
+					"nullable" : "false"
+				}, {
+					"name" : "Name",
+					"type" : "Edm.String",
+					"nullable" : "false"
+				}, {
+					"name" : "EmployeeId",
+					"type" : "Edm.String",
+					"nullable" : "false"
+				}],
+				"navigationProperty" : [{
+					"name" : "EQUIPMENT_2_EMPLOYEE",
+					"type" : "com.sap.gateway.iwbep.tea_busi.v0001.Worker",
+					"nullable" : "false"
+				}]
+			}, {
+				"name" : "MANAGER",
+				"hasStream" : "false",
+				"key" : [{
+					"propertyRef" : [{
+						"name" : "ID"
+					}]
+				}],
+				"property" : [{
+					"name" : "ID",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "4"
+				}, {
+					"name" : "TEAM_ID",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "10"
+				}],
+				"navigationProperty" : [{
+					"name" : "Manager_to_Team",
+					"type" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM",
+					"nullable" : "false"
+				}]
+			}, {
+				"name" : "TEAM",
+				"hasStream" : "false",
+				"key" : [{
+					"propertyRef" : [{
+						"name" : "Team_Id"
+					}]
+				}],
+				"property" : [{
+					"name" : "Team_Id",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "10"
+				}, {
+					"name" : "Name",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "40"
+				}, {
+					"name" : "MEMBER_COUNT",
+					"type" : "Edm.Int32",
+					"nullable" : "false"
+				}, {
+					"name" : "MANAGER_ID",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "4"
+				}, {
+					"name" : "BudgetCurrency",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "5"
+				}, {
+					"name" : "Budget",
+					"type" : "Edm.Decimal",
+					"nullable" : "false",
+					"precision" : "16",
+					"scale" : "variable"
+				}],
+				"navigationProperty" : [{
+					"name" : "TEAM_2_EMPLOYEES",
+					"type" : "Collection(com.sap.gateway.iwbep.tea_busi.v0001.Worker)",
+					"nullable" : "true"
+				}, {
+					"name" : "TEAM_2_MANAGER",
+					"type" : "com.sap.gateway.iwbep.tea_busi.v0001.MANAGER",
+					"nullable" : "false"
+				}]
+			}, {
+				"name" : "Worker",
+				"hasStream" : "false",
+				"key" : [{
+					"propertyRef" : [{
+						"name" : "ID"
+					}]
+				}],
+				"property" : [{
+					"name" : "ID",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "4"
+				}, {
+					"name" : "Name",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "16"
+				}, {
+					"name" : "AGE",
+					"type" : "Edm.Int16",
+					"nullable" : "false"
+				}, {
+					"name" : "ENTRYDATE",
+					"type" : "Edm.Date",
+					"nullable" : "false"
+				}, {
+					"name" : "MANAGER_ID",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "4"
+				}, {
+					"name" : "ROOM_ID",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "10"
+				}, {
+					"name" : "TEAM_ID",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "10"
+				}, {
+					"name" : "Is_Manager",
+					"type" : "Edm.Boolean",
+					"nullable" : "false"
+				}, {
+					"name" : "LAST_MODIFIED_AT",
+					"type" : "Edm.DateTimeOffset",
+					"nullable" : "false",
+					"precision" : "7"
+				}, {
+					"name" : "LOCATION",
+					"type" : "com.sap.gateway.iwbep.tea_busi.v0001.ComplexType_Location",
+					"nullable" : "false"
+				}, {
+					"name" : "SALARY",
+					"type" : "com.sap.gateway.iwbep.tea_busi.v0001.ComplexType_Salary",
+					"nullable" : "false"
+				}],
+				"navigationProperty" : [{
+					"name" : "EMPLOYEE_2_EQUIPMENTS",
+					"type" : "Collection(com.sap.gateway.iwbep.tea_busi.v0001.EQUIPMENT)",
+					"nullable" : "true"
+				}, {
+					"name" : "EMPLOYEE_2_TEAM",
+					"type" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM",
+					"nullable" : "false"
+				}]
+			}],
+			"complexType" : [{
+				"name" : "ComplexType_City",
+				"property" : [{
+					"name" : "POSTALCODE",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "16"
+				}, {
+					"name" : "CITYNAME",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "255"
+				}]
+			}, {
+				"name" : "ComplexType_Location",
+				"property" : [{
+					"name" : "COUNTRY",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "255"
+				}, {
+					"name" : "City",
+					"type" : "com.sap.gateway.iwbep.tea_busi.v0001.ComplexType_City",
+					"nullable" : "false"
+				}]
+			}, {
+				"name" : "ComplexType_Salary",
+				"property" : [{
+					"name" : "MONTHLY_BASIC_SALARY_AMOUNT",
+					"type" : "Edm.Decimal",
+					"nullable" : "false",
+					"precision" : "16",
+					"scale" : "variable"
+				}, {
+					"name" : "BASIC_SALARY_CURR",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "5"
+				}, {
+					"name" : "YEARLY_BONUS_AMOUNT",
+					"type" : "Edm.Decimal",
+					"nullable" : "false",
+					"precision" : "16",
+					"scale" : "variable"
+				}, {
+					"name" : "BONUS_CURR",
+					"type" : "Edm.String",
+					"nullable" : "false",
+					"maxLength" : "5"
+				}]
+			}],
+			"entityContainer" : {
+				"name" : "Container",
+				"entitySet" : [{
+					"name" : "Departments",
+					"entityType" : "com.sap.gateway.iwbep.tea_busi.v0001.Department",
+					"includeInServiceDocument" : "true"
+				}, {
+					"name" : "EMPLOYEES",
+					"entityType" : "com.sap.gateway.iwbep.tea_busi.v0001.Worker",
+					"includeInServiceDocument" : "true",
+					"navigationPropertyBinding" : [{
+						"path" : "EMPLOYEE_2_TEAM",
+						"target" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/TEAMS"
+					}, {
+						"path" : "EMPLOYEE_2_EQUIPMENTS",
+						"target" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Equipments"
+					}]
+				}, {
+					"name" : "Equipments",
+					"entityType" : "com.sap.gateway.iwbep.tea_busi.v0001.EQUIPMENT",
+					"includeInServiceDocument" : "true",
+					"navigationPropertyBinding" : [{
+						"path" : "EQUIPMENT_2_EMPLOYEE",
+						"target" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/EMPLOYEES"
+					}]
+				}, {
+					"name" : "MANAGERS",
+					"entityType" : "com.sap.gateway.iwbep.tea_busi.v0001.MANAGER",
+					"includeInServiceDocument" : "true",
+					"navigationPropertyBinding" : [{
+						"path" : "Manager_to_Team",
+						"target" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/TEAMS"
+					}]
+				}, {
+					"name" : "TEAMS",
+					"entityType" : "com.sap.gateway.iwbep.tea_busi.v0001.TEAM",
+					"includeInServiceDocument" : "true",
+					"navigationPropertyBinding" : [{
+						"path" : "TEAM_2_EMPLOYEES",
+						"target" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/EMPLOYEES"
+					}, {
+						"path" : "TEAM_2_MANAGER",
+						"target" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/MANAGERS"
+					}]
+				}],
+				"singleton" : [{
+					"name" : "Me",
+					"type" : "com.sap.gateway.iwbep.tea_busi.v0001.Worker",
+					"navigationPropertyBinding" : [{
+						"path" : "EMPLOYEE_2_TEAM",
+						"target" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/TEAMS"
+					}, {
+						"path" : "EMPLOYEE_2_EQUIPMENTS",
+						"target" : "com.sap.gateway.iwbep.tea_busi.v0001.Container/Equipments"
+					}]
+				}]
+			}
+		}]
+	}
+}
