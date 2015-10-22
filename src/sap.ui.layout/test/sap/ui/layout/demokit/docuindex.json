@@ -97,6 +97,16 @@
 					"sap.ui.layout.sample.Splitter4",
 					"sap.ui.layout.sample.SplitterNested1"
 				]
+			},
+			{
+				"id" : "sap.ui.layout.BlockLayout",
+				"name" : "Block Layout ",
+				"category" : "Layout",
+				"since" : "1.34",
+				"formFactors" : "-",
+				"samples" : [
+					"sap.ui.layout.sample.BlockLayoutDefault"
+				]
 			}
 		],
 		"samples" : [
@@ -214,6 +224,11 @@
 				"id": "sap.ui.layout.sample.SplitterNested1",
 				"name": "Nested Splitter Layouts - 7 Areas",
 				"description": "Nested Splitter example with 7 content areas"
+			},
+			{
+				"id": "sap.ui.layout.sample.BlockLayoutDefault",
+				"name": "Block Layout ",
+				"description": "The Block Layout  is intended to be used with rows and cells. The cells have predefined width, the rows have predefined rendering modes - scrollable/vertical/horizontal."
 			}
 		]
 	}

@@ -1,0 +1,109 @@
+.sapUiBlockScrollingRow {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-ms-flex-wrap: nowrap;
+	-webkit-flex-wrap: nowrap;
+	flex-wrap: nowrap;
+	overflow: auto;
+
+	.sapUiBlockScrollableCell {
+		-webkit-flex-shrink: 0;
+		flex-shrink: 0;
+		-ms-flex-negative: 0;
+		width: 40%;
+	}
+}
+
+.sapUiBlockLayoutBig,
+.sapUiBlockLayoutMedium {
+	.sapUiBlockHorizontalCellsRow {
+		display: -webkit-box;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		display: flex;
+	}
+
+	.sapUiBlockLayoutRow {
+		.sapUiBlockLayoutCell:first-child .sapUiBlockCellContent {
+			padding-left: 2rem;
+		}
+
+		.sapUiBlockLayoutCell:last-child .sapUiBlockCellContent {
+			padding-right: 2rem;
+		}
+	}
+
+	.sapUiBlockSmallCell {
+		-webkit-flex-shrink: 1;
+		-webkit-flex-grow: 1;
+		-webkit-flex-basis: 0%;
+		flex-grow: 1;
+		flex-shrink: 1;
+		flex-basis: 0%;
+		-ms-flex-positive: 1;
+		-ms-flex-negative: 1;
+	 	-ms-flex-preferred-size: 0;
+	}
+
+	.sapUiBlockMediumCell {
+		-webkit-flex-grow: 2;
+		-webkit-flex-shrink: 1;
+		-webkit-flex-basis: 0%;
+		flex-grow: 2;
+		flex-shrink: 1;
+		flex-basis: 0%;
+		-ms-flex-positive: 2;
+		-ms-flex-negative: 1;
+		-ms-flex-preferred-size: 0;
+	}
+}
+
+.sapUiBlockLayoutBig {
+	.sapUiBlockScrollingNarrowCells {
+		.sapUiBlockScrollableCell {
+			width: 20%;
+		}
+	}
+}
+
+.sapUiBlockLayoutSmall {
+	.sapUiBlockRowSCase {
+		display: -webkit-box;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		display: flex;
+		-ms-flex-wrap: wrap;
+		-webkit-flex-wrap: wrap;
+		flex-wrap: wrap;
+	}
+
+	.sapUiBlockLayoutCell:not(.sapUiBlockScrollableCell) {
+		.sapUiBlockCellContent {
+			padding: 1rem 2rem;
+		}
+	}
+
+	.sapUiBlockSmallCell {
+		width: 50%;
+	}
+
+	.sapUiBlockMediumCell {
+		width: 100%;
+	}
+
+	.sapUiBlockScrollingRow {
+		.sapUiBlockScrollableCell:first-child .sapUiBlockCellContent {
+			padding-left: 2rem;
+		}
+
+		.sapUiBlockScrollableCell:last-child .sapUiBlockCellContent {
+			padding-right: 2rem;
+		}
+
+		.sapUiBlockScrollableCell {
+			min-width: 90%;
+		}
+	}
+}

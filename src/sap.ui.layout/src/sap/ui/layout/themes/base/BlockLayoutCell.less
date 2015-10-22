@@ -1,0 +1,48 @@
+.sapUiBlockLayoutCell {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+}
+
+.sapUiBlockCellCenteredContent {
+	align-self: center;
+	text-align: center;
+	width: 100%;
+
+	.sapUiBlockCellTitle {
+		font-size: @sapUiFontHeader1Size;
+	}
+}
+
+.sapUiBlockCellLeft,
+.sapUiBlockCellBegin {
+	text-align: left;
+}
+
+.sapUiBlockCellRight,
+.sapUiBlockCellEnd {
+	text-align: right;
+}
+
+[dir=rtl] .sapUiBlockCellEnd {
+	text-align: left;
+}
+
+[dir=rtl] .sapUiBlockCellBegin {
+	text-align: right;
+}
+
+.sapUiBlockCellContent {
+	width: 100%;
+	padding: 1rem;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+.sapUiBlockCellTitle {
+	color: @sapUiDarkText;
+	font-size: @sapUiFontHeader2Size;
+	margin-bottom: 1rem;
+}
+

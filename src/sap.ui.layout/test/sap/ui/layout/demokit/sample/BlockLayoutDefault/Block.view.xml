@@ -1,0 +1,214 @@
+<mvc:View
+	controllerName="sap.ui.layout.sample.BlockLayoutDefault.Block"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
+	xmlns="sap.m">
+	<form:SimpleForm
+			editable="true">
+		<Label text="Parent width" />
+		<Slider id="widthSlider" value="100" liveChange="onSliderMoved" />
+		<Label id="backgroundLabel" text="Background"/>
+		<SegmentedButton
+				selectedKey="{/selectedBackground}"
+				ariaDescribedBy="backgroundLabel"
+				ariaLabelledBy="backgroundLabel">
+			<items>
+				<SegmentedButtonItem key="Default" text="Default" />
+				<SegmentedButtonItem key="Light" text="Light" />
+			</items>
+		</SegmentedButton>
+	</form:SimpleForm>
+	<l:VerticalLayout id="containerLayout" width="100%" >
+		<l:BlockLayout id="BlockLayout" background="{/selectedBackground}">
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						width="2"
+						title="Left aligned heading">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+					<RadioButtonGroup columns="2" selectedIndex="2" class="sapUiMediumMarginTop">
+						<buttons>
+							<RadioButton id="RB2-1" text="Option 1"/>
+							<RadioButton id="RB2-2" text="Option 2" editable="false"/>
+							<RadioButton id="RB2-3" text="Option 3"/>
+						</buttons>
+					</RadioButtonGroup>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						title="25% width cell">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						titleAlignment="End"
+						title="End aligned heading">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."/>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						title="50% width cell">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						title="50% width cell">
+					<FeedInput
+							showIcon="true" />
+					<FeedInput
+							showIcon="true" />
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow
+					scrollable="true">
+				<l:BlockLayoutCell
+						width="50"
+						title="Cell inside scrollable row">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						width="100"
+						title="Centered Heading"
+						titleAlignment="Center">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore"/>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell>
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						width="90">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell>
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell>
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						title="75% width cell"
+						width="3">
+					<form:SimpleForm
+							editable="true">
+						<Label text="Name on card" required="true" />
+						<Input value="{/CreditCard/Name}" liveChange="checkCreditCardStep" valueLiveUpdate="true" />
+						<Label text="Card number"/>
+						<Input value="{/CardNumber}" />
+						<Label text="Security code" />
+						<Input value="{/CreditCard/SecurityCode}" />
+						<Label text="Expiration date" />
+						<DatePicker value="{/CreditCard/Expire}" />
+					</form:SimpleForm>
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						title="25% width cell">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						title="25% width cell">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						title="25% width cell">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						title="25% width cell">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						title="25% width cell">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell>
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+					<l:BlockLayoutCell>
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell>
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell>
+					<MessageStrip text="You can use the cells with 100% width, if you set the vertical property of the row to true" />
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell>
+					<Table id="idProductsTable"
+						   inset="false"
+						   items="{
+				path: '/ProductCollection',
+				sorter: {
+					path: 'Name'
+				}
+			}">
+						<columns>
+							<Column
+									width="12em">
+								<Text text="Product" />
+							</Column>
+							<Column
+									minScreenWidth="Tablet"
+									demandPopin="true">
+								<Text text="Supplier" />
+							</Column>
+							<Column
+									minScreenWidth="Tablet"
+									demandPopin="true"
+									hAlign="Right">
+								<Text text="Dimensions" />
+							</Column>
+							<Column
+									minScreenWidth="Tablet"
+									demandPopin="true"
+									hAlign="Center">
+								<Text text="Weight" />
+							</Column>
+							<Column
+									hAlign="Right">
+								<Text text="Price" />
+							</Column>
+						</columns>
+						<items>
+							<ColumnListItem>
+								<cells>
+									<ObjectIdentifier
+											title="{Name}"
+											text="{ProductId}"/>
+									<Text
+											text="{SupplierName}" />
+									<Text
+											text="{Width} x {Depth} x {Height} {DimUnit}" />
+									<ObjectNumber
+											number="{WeightMeasure}"
+											unit="{WeightUnit}"
+											 />
+									<ObjectNumber
+											number="{
+									parts:[{path:'Price'},{path:'CurrencyCode'}],
+									type: 'sap.ui.model.type.Currency'
+								}"
+											unit="{CurrencyCode}" />
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+		</l:BlockLayout>
+	</l:VerticalLayout>
+</mvc:View>

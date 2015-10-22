@@ -1,0 +1,48 @@
+/* Predefined colors for the Light background type */
+@sapUiBlockColorA: rgb(255,255,255);
+@sapUiBlockColorB: rgb(250,250,250);
+@sapUiBlockColorC: rgb(239,244,249);
+@sapUiBlockColorD: rgb(232,239,246);
+
+.sapUiBlockLayoutLightBackground {
+
+	.sapUiBlockLayoutRow:nth-child(4n + 1) {
+		.sapUiBlockLayoutCell:nth-child(odd) {
+			background-color: @sapUiBlockColorA;
+		}
+
+		.sapUiBlockLayoutCell:nth-child(even) {
+			background-color: @sapUiBlockColorC;
+		}
+	}
+
+	.sapUiBlockLayoutRow:nth-child(4n + 2) {
+		.sapUiBlockLayoutCell:nth-child(odd) {
+			background-color: @sapUiBlockColorB;
+		}
+
+		.sapUiBlockLayoutCell:nth-child(even) {
+			background-color: @sapUiBlockColorD;
+		}
+	}
+
+	.sapUiBlockLayoutRow:nth-child(4n + 3) {
+		.sapUiBlockLayoutCell:nth-child(odd) {
+			background-color: @sapUiBlockColorC;
+		}
+
+		.sapUiBlockLayoutCell:nth-child(even) {
+			background-color: @sapUiBlockColorA;
+		}
+	}
+
+	.sapUiBlockLayoutRow:nth-child(4n + 4) {
+		.sapUiBlockLayoutCell:nth-child(odd) {
+			background-color: @sapUiBlockColorD;
+		}
+
+		.sapUiBlockLayoutCell:nth-child(even) {
+			background-color: @sapUiBlockColorB;
+		}
+	}
+}

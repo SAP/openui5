@@ -30,6 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 			"sap.ui.layout.GridIndent",
 			"sap.ui.layout.GridPosition",
 			"sap.ui.layout.GridSpan",
+			"sap.ui.layout.BlockBackgroundType",
 			"sap.ui.layout.form.GridElementCells",
 			"sap.ui.layout.form.SimpleFormLayout"
 		],
@@ -42,6 +43,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 			"sap.ui.layout.ResponsiveFlowLayout",
 			"sap.ui.layout.Splitter",
 			"sap.ui.layout.VerticalLayout",
+			"sap.ui.layout.BlockLayoutCell",
+			"sap.ui.layout.BlockLayoutRow",
+			"sap.ui.layout.BlockLayout",
 			"sap.ui.layout.form.Form",
 			"sap.ui.layout.form.FormLayout",
 			"sap.ui.layout.form.GridLayout",
@@ -78,9 +82,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	  DataType.getType('string')
 	);
 
-
 	/**
-	 * Position of the Grid. Can be "Left", "Center" or "Right". "Left" is default.
+	 * The position of the Grid. Can be "Left", "Center" or "Right". "Left" is default.
 	 *
 	 * @enum {string}
 	 * @public
@@ -126,6 +129,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	  DataType.getType('string')
 	);
 
+		/**
+		 * A string type that is used inside the BlockLayout to set predefined background color to the cells inside
+		 * the control.
+		 * @namespace
+		 * @public
+		 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+		 * @type {{Default: string, Light: string}}
+		 */
+	sap.ui.layout.BlockBackgroundType = {
+		/**
+		 * Background is transparent
+		 * @public
+		 */
+		Default: "Default",
+		/**
+		 * Background is with predefined light colors
+		 * @public
+		 */
+		Light: "Light"
+	};
 
 	sap.ui.layout.form = sap.ui.layout.form || {};
 
