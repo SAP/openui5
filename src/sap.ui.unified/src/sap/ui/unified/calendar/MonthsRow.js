@@ -904,6 +904,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
 			}
 
+			if (jQuery.sap.equal(this.getDate(), oDate)) {
+				return;
+			}
+
 			var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate);
 			oUTCDate.setUTCDate(1); // always use begin of month
 			var bFocusable = this.checkDateFocusable(oDate);
@@ -932,7 +936,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var $DomRefDay;
 			for ( var i = 0; i < aDomRefs.length; i++) {
 				$DomRefDay = jQuery(aDomRefs[i]);
-				if ($DomRefDay.attr("data-sap-month") == sYyyymm) {
+				if ($DomRefDay.attr("data-sap-month") == sYyyymm && document.activeElement != aDomRefs[i]) {
 					if (bNoFocus) {
 						this._oItemNavigation.setFocusedIndex(i);
 					} else {
