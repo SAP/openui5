@@ -1,0 +1,212 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Test Page for sap.ui.dt Context Menu</title>
+
+<style>
+#content {
+	position: absolute;
+	bottom: 0px;
+	z-index: 1000;
+	width: 700px;
+	height: 300px;
+}
+</style>
+
+<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+	type="text/javascript" data-sap-ui-noConflict="true"
+	data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+	data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+	src="../../../../../../resources/sap-ui-core.js">
+	
+</script>
+<link rel="stylesheet"
+	href="../../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript">
+	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+	jQuery.sap.require("sap.ui.thirdparty.sinon");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+	
+	jQuery.sap.require("sap.ui.dt.ElementOverlay");
+	jQuery.sap.require("sap.ui.dt.plugin.ContextMenu");
+	jQuery.sap.require("sap.ui.dt.OverlayRegistry");
+	jQuery.sap.require("sap.ui.dt.DesignTime");
+
+	QUnit.module("Given 2 buttons and designtime with context menu, tailored to these buttons...", {
+		beforeEach: function() {
+			var that = this;
+			this.oButton1 = new sap.m.Button();
+			this.oButton2 = new sap.m.Button();
+			this.oButtonUnselectable = new sap.m.Button();
+			
+			this.oLayout = new sap.ui.layout.VerticalLayout({
+				content: [
+					this.oButton1, this.oButton2, this.oButtonUnselectable
+				]
+			});
+
+			this.oLayout.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			this.oMenuEntries = {};
+			this.oMenuEntries.available = {
+				id : "CTX_ALWAYS_THERE",
+				text : "item that is always there",
+				handler : sinon.spy(),
+			};
+			this.oMenuEntries.enabledBtn1 = {
+				id : "CTX_ENABLED_BUTTON1",
+				text : "enabled for button 1",
+				handler : sinon.spy(),
+				enabled : function(oElement){
+					return oElement === that.oButton1;
+				}
+			};
+			this.oMenuEntries.disabledBtn1 = {
+				id : "CTX_DISABLED_BUTTON1",
+				text : "disabled for button 1",
+				handler : sinon.spy(),
+				available : function(oElement){
+					return oElement === that.oButton1 || oElement === that.oButton2;
+				},
+				enabled : function(oElement){
+					return oElement !== that.oButton1;
+				}
+			};
+			this.oMenuEntries.onlyBtn2 = {
+				id : "CTX_ONLY_BUTTON2",
+				text : "only shown for button 2",
+				handler : sinon.spy(),
+				available : function(oElement){
+					return oElement === that.oButton2;
+				}
+			};
+			this.oMenuEntries.alwaysStartSection = {
+				id : "CTX_START_SECTION",
+				text : "starts new section ",
+				handler : sinon.spy(),
+				startSection : true
+			};
+			this.oMenuEntries.startSectionButton1 = {
+				id : "CTX_START_SECTION_BTN1",
+				text : "starts new section for button1",
+				handler : sinon.spy(),
+				startSection : function(oElement){
+					return oElement === that.oButton1;
+				}
+			};
+			
+			this.oContextMenuPlugin = new sap.ui.dt.plugin.ContextMenu();
+			for(var key in this.oMenuEntries){
+				this.oContextMenuPlugin.addMenuItem(this.oMenuEntries[key]);
+			}
+
+			this.oDesignTime = new sap.ui.dt.DesignTime({
+				rootElements: [
+					this.oLayout
+				],
+				plugins: [
+					this.oContextMenuPlugin
+				]
+			});
+
+			this.oButton1Overlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1);
+			this.oButton1Overlay.setSelectable(true); 
+			this.oButton2Overlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton2);
+			this.oButton2Overlay.setSelectable(true); 
+			this.oUnselectableOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButtonUnselectable);
+
+			sap.ui.getCore().applyChanges();
+
+		},
+		afterEach: function() {
+			this.oDesignTime.destroy();
+			this.oLayout.destroy();
+		}
+	});
+
+	QUnit.test("when context menu is opend (via keyboard) for button 1, then ...", function(assert) {
+		this.oButton1Overlay.focus();
+		sap.ui.test.qunit.triggerKeydown(this.oButton1Overlay.getDomRef(), jQuery.sap.KeyCodes.F10, true, false, false);
+		var oContextMenu = this.oContextMenuPlugin._oContextMenuControl; 
+		assert.ok(oContextMenu.bOpen, "then Menu gets opened");
+		assert.equal(oContextMenu.getItems().length, 5, " and 5 Menu Items are available");
+		assert.equal(oContextMenu.getItems()[0].data().id, this.oMenuEntries.available.id, " 1. item id is there");
+		assert.equal(oContextMenu.getItems()[0].getEnabled(), true, " item without enabled handler is enabled");
+		assert.equal(oContextMenu.getItems()[0].getStartsSection(), false, " item without startSection handler doesn't start a new section");
+		assert.equal(oContextMenu.getItems()[1].data().id, this.oMenuEntries.enabledBtn1.id, " 2. item id is there");
+		assert.equal(oContextMenu.getItems()[1].getEnabled(), true, " item with truthy enabled handler is enabled");
+		assert.equal(oContextMenu.getItems()[2].data().id, this.oMenuEntries.disabledBtn1.id, " 3. item id is there");
+		assert.equal(oContextMenu.getItems()[2].getEnabled(), false, " item with falsy handler is disabled");
+		assert.equal(oContextMenu.getItems()[3].data().id, this.oMenuEntries.alwaysStartSection.id, " 4. item id is there");
+		assert.equal(oContextMenu.getItems()[3].getStartsSection(), true, " item with boolean startSection handler starts a new section");
+		assert.equal(oContextMenu.getItems()[4].data().id, this.oMenuEntries.startSectionButton1.id, " 5. item id is there");
+		assert.equal(oContextMenu.getItems()[4].getStartsSection(), true, " item with truthy startSection handler starts a new section");
+
+		
+	});
+	
+	QUnit.test("when context menu is opend (via mouse) for button 2 ...", function(assert) {
+		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+		var oContextMenu = this.oContextMenuPlugin._oContextMenuControl; 
+
+		assert.ok(oContextMenu.bOpen, "then Menu gets opened");
+		assert.equal(oContextMenu.getItems().length, 6, " and 6 Menu Items are available");
+		assert.equal(oContextMenu.getItems()[0].data().id, this.oMenuEntries.available.id, " 1. item id is there");
+		assert.equal(oContextMenu.getItems()[0].getEnabled(), true, " item without enabled handler is enabled");
+		assert.equal(oContextMenu.getItems()[0].getStartsSection(), false, " item without startSection handler doesn't start a new section");
+		assert.equal(oContextMenu.getItems()[1].data().id, this.oMenuEntries.enabledBtn1.id, " 2. item id is there");
+		assert.equal(oContextMenu.getItems()[1].getEnabled(), false, " item with falsy enabled handler is disabled");
+		assert.equal(oContextMenu.getItems()[2].data().id, this.oMenuEntries.disabledBtn1.id, " 3. item id is there");
+		assert.equal(oContextMenu.getItems()[2].getEnabled(), true, " item with truthy handler is enabled");
+		assert.equal(oContextMenu.getItems()[3].data().id, this.oMenuEntries.onlyBtn2.id, " 4. item id is there");
+		assert.equal(oContextMenu.getItems()[3].getEnabled(), true, " item with truthy handler is enabled");
+		assert.equal(oContextMenu.getItems()[4].data().id, this.oMenuEntries.alwaysStartSection.id, " 5. item id is there");
+		assert.equal(oContextMenu.getItems()[4].getStartsSection(), true, " item with boolean startSection handler starts a new section");
+		assert.equal(oContextMenu.getItems()[5].data().id, this.oMenuEntries.startSectionButton1.id, " 6. item id is there");
+		assert.equal(oContextMenu.getItems()[5].getStartsSection(), false, " item with falsy startSection handler doesn't starts a new section");
+		
+	});
+	
+	QUnit.test("when context menu is opend (via mouse) for unselectable overlay ...", function(assert) {
+		sap.ui.test.qunit.triggerMouseEvent(this.oUnselectableOverlay.getDomRef(), "contextmenu");
+		var oContextMenu = this.oContextMenuPlugin._oContextMenuControl; 
+
+		assert.ok(!oContextMenu, "then Menu will not be opened");
+
+	});
+
+	QUnit.test("when context menu entry is triggered for button 2...", function(assert) {
+		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+		
+		var oContextMenu = this.oContextMenuPlugin._oContextMenuControl; 
+		sap.ui.test.qunit.triggerMouseEvent(oContextMenu.getItems()[0].getDomRef(), "click");
+		
+		assert.equal(this.oMenuEntries.available.handler.callCount, 1, "then the corresponding handler function is called");
+		assert.equal(this.oMenuEntries.available.handler.getCall(0).args[0], this.oButton2, "then the correct element is passed to handler");
+		
+		assert.equal(this.oMenuEntries.disabledBtn1.handler.callCount, 0, "then other handler functions are not called");
+	});
+	
+	
+</script>
+</head>
+<body>
+	<h1 id="qunit-header">Test Page for sap.ui.dt context menu</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<div id="content"></div>
+</body>
+</html>
