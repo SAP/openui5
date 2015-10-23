@@ -171,7 +171,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			},
 
 			/**
-			 * The event is triggered when the Delete button is pressed.
+			 * The event is triggered when an uploaded attachment is selected and the Delete button is pressed.
 			 */
 			fileDeleted : {
 				parameters : {
