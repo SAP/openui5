@@ -55,6 +55,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			intervalType : {type : "sap.ui.unified.CalendarIntervalType", group : "Appearance", defaultValue : sap.ui.unified.CalendarIntervalType.Hour},
 
 			/**
+			 * If set subintervals are shown.
+			 *
+			 * If the interval type is <code>Hour</code> quarter hours are shown.
+			 *
+			 * If the interval type is <code>Day</code> hours are shown.
+			 *
+			 * If the interval type is <code>Month</code> days are shown.
+			 */
+			showSubIntervals : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
 			 * If set, the provided weekdays are displayed as non-working days.
 			 * Valid values inside the array are 0 to 6. (Other values will just be ignored.)
 			 *

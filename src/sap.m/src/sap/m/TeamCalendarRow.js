@@ -144,6 +144,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 			oRm.write("</div>");
 		};
 
+		CalenderRowHeaderRenderer.renderTabIndex = function(oRm, oLI) {
+		};
 
 		TeamCalendarRow.prototype.init = function(){
 
@@ -254,6 +256,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 		};
 
 		// overwrite removing of appointments because invalidate don't get information about it
+		TeamCalendarRow.prototype.removeAppointment = function(vObject) {
+
+			var oRemoved = this.removeAggregation("appointments", vObject, true);
+			this.getCalendarRow().invalidate();
+			return oRemoved;
+
+		};
+
 		TeamCalendarRow.prototype.removeAllAppointments = function() {
 
 			var aRemoved = this.removeAllAggregation("appointments", true);
@@ -267,6 +277,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 			var oDestroyed = this.destroyAggregation("appointments", true);
 			this.getCalendarRow().invalidate();
 			return oDestroyed;
+
+		};
+
+		TeamCalendarRow.prototype.removeIntervalHeader = function(vObject) {
+
+			var oRemoved = this.removeAggregation("intervalHeaders", vObject, true);
+			this.getCalendarRow().invalidate();
+			return oRemoved;
 
 		};
 
@@ -288,7 +306,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		TeamCalendarRow.prototype.setSelected = function(bSelected){
 
-			this.setProperty("selected", bSelected, true); // do not invalidate, only real rendered control must be invalidated
+			this.setProperty("selected", bSelected, true);
 			this._oColumnListItem.setSelected(bSelected);
 
 			return this;
