@@ -44,7 +44,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * number of days displayed
 			 */
-			days : {type : "int", group : "Misc", defaultValue : 7}
+			days : {type : "int", group : "Misc", defaultValue : 7},
+
+			/**
+			 * If set the day names are shown in a separate line.
+			 * If not set the day names are shown inside the single days.
+			 * @since 1.34.0
+			 */
+			showDayNamesLine : {type : "boolean", group : "Appearance", defaultValue : true}
 
 		}
 	}});

@@ -42,6 +42,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			days : {type : "int", group : "Misc", defaultValue : 7},
 
 			/**
+			 * If set the day names are shown in a separate line.
+			 * If not set the day names are shown inside the single days.
+			 * @since 1.34.0
+			 */
+			showDayNamesLine : {type : "boolean", group : "Appearance", defaultValue : true},
+
+			/**
 			 * Width of Calendar
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
@@ -156,6 +163,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				}
 			}
 
+			return this;
+
 		};
 
 		CalendarDateInterval.prototype._getDays = function(){
@@ -168,6 +177,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			} else {
 				return iDays;
 			}
+
+		};
+
+		CalendarDateInterval.prototype.setShowDayNamesLine = function(bShowDayNamesLine){
+
+			this.setProperty("showDayNamesLine", bShowDayNamesLine, true);
+
+			var oDatesRow = this.getAggregation("month")[0];
+			oDatesRow.setShowDayNamesLine(bShowDayNamesLine);
+
+			return this;
 
 		};
 

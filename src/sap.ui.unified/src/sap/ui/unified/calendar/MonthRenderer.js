@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 		oRm.write("<div");
 		oRm.writeControlData(oMonth);
-		oRm.addClass(this.getClass());
+		oRm.addClass(this.getClass(oMonth));
 		oRm.writeClasses();
 
 		if (sTooltip) {
@@ -69,7 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 	};
 
-	MonthRenderer.getClass = function(){
+	MonthRenderer.getClass = function(oMonth){
 
 		var sClasses = "sapUiCalMonthView";
 		var sCalendarType = sap.ui.getCore().getConfiguration().getCalendarType();
@@ -217,7 +217,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 				oRm.write(">"); // div
 			}
 
-			this.renderDay(oRm, oMonth, oDay, oHelper, true, bWeekNum, -1, undefined);
+			this.renderDay(oRm, oMonth, oDay, oHelper, true, bWeekNum, -1, undefined, false);
 
 			if (iWeekDay == (oHelper.iFirstDayOfWeek + 6) % 7) {
 				// end of row
@@ -250,7 +250,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 	};
 
-	MonthRenderer.renderDay = function(oRm, oMonth, oDay, oHelper, bOtherMonth, bWeekNum, iNumber, sWidth){
+	MonthRenderer.renderDay = function(oRm, oMonth, oDay, oHelper, bOtherMonth, bWeekNum, iNumber, sWidth, bDayName){
 
 		var mAccProps = {
 				role: "gridcell",
@@ -270,13 +270,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			mAccProps["describedby"] = oHelper.sId + "-CW" + " " + oHelper.sId + "-WNum-" +  iWeekNumber;
 		}
 
-		var sWHId = "";
-		if (iNumber < 0) {
-			sWHId = oHelper.sId + "-WH" + iWeekDay;
-		} else {
-			sWHId = oHelper.sId + "-WH" + iNumber;
+		if (!bDayName) {
+			var sWHId = "";
+			if (iNumber < 0) {
+				sWHId = oHelper.sId + "-WH" + iWeekDay;
+			} else {
+				sWHId = oHelper.sId + "-WH" + iNumber;
+			}
+			mAccProps["describedby"] = mAccProps["describedby"] + " " + sWHId;
 		}
-		mAccProps["describedby"] = mAccProps["describedby"] + " " + sWHId;
 
 		oRm.write("<div");
 		oRm.writeAttribute("id", oHelper.sId + "-" + sYyyymmdd);
@@ -358,6 +360,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			oRm.writeAccessibilityState(null, {role: "rowheader", desribedby: oHelper.sId + "-CW"});
 			oRm.write(">"); // span
 			oRm.write(iWeekNumber);
+			oRm.write("</span>");
+		}
+
+		if (bDayName) {
+			oRm.write("<span");
+			oRm.addClass("sapUiCalDayName");
+			oRm.writeClasses();
+			oRm.writeAccessibilityState(null, {label: oHelper.aWeekDaysWide[iWeekDay]});
+			oRm.write(">"); // span
+			oRm.write(oHelper.aWeekDays[iWeekDay]);
 			oRm.write("</span>");
 		}
 
