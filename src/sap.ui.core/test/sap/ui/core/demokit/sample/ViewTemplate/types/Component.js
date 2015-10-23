@@ -55,7 +55,7 @@ sap.ui.define([
 					oView = sap.ui.view({
 						models : {
 							undefined: oModel,
-							ui: new JSONModel({realOData: bRealOData})
+							ui: new JSONModel({realOData: bRealOData, codeVisible: false})
 						},
 						preprocessors: {
 							xml: {

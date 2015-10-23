@@ -8,7 +8,7 @@
 	<!-- "meta" model's binding context MUST point to an entity type -->
 	<template:alias name=".AH" value="sap.ui.model.odata.AnnotationHelper">
 		<template:with path="meta>com.sap.vocabularies.UI.v1.Badge" var="badge">
-			<form:SimpleForm>
+			<form:SimpleForm layout="ResponsiveGridLayout">
 				<form:title>
 					<core:Title text="{path: 'badge>HeadLine', formatter: '.AH.format'}"/>
 				</form:title>
