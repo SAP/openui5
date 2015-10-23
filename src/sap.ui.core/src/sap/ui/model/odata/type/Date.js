@@ -9,7 +9,7 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	"use strict";
 
 	var rDate = /\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])/,
-		oDemoDate = new Date(Date.UTC(2014, 10, 27)),
+		oDemoDate = "2014-11-27",
 		oModelFormatter;
 
 	/**
@@ -51,7 +51,11 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 */
 	function getModelFormatter() {
 		if (!oModelFormatter) {
-			oModelFormatter = DateFormat.getDateInstance({ pattern : 'yyyy-MM-dd', UTC : true });
+			oModelFormatter = DateFormat.getDateInstance({
+				pattern : 'yyyy-MM-dd',
+				strictParsing : true,
+				UTC : true
+			});
 		}
 		return oModelFormatter;
 	}
@@ -135,6 +139,8 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 	 * @public
 	 */
 	EdmDate.prototype.formatValue = function(sValue, sTargetType) {
+		var oDate;
+
 		if (sValue === undefined || sValue === null) {
 			return null;
 		}
@@ -142,7 +148,8 @@ sap.ui.define(['sap/ui/core/format/DateFormat', 'sap/ui/model/FormatException',
 			return sValue;
 		}
 		if (sTargetType === "string") {
-			return getFormatter(this).format(new Date(sValue));
+			oDate = getModelFormatter().parse(sValue);
+			return oDate ? getFormatter(this).format(oDate) : sValue;
 		}
 		throw new FormatException("Don't know how to format " + this.getName() + " to "
 			+ sTargetType);
