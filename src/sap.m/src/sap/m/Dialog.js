@@ -1416,12 +1416,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 */
 		function isHeaderClicked(eventTarget) {
 			var $target = jQuery(eventTarget);
-			var isHeader = $target.hasClass('sapMDialogTitle');
-			var isChildOfDialogHeader = $target.parents('header').hasClass('sapMDialogTitle');
-			var isHeaderTag = $target.parents('h1').length;
-			var isIcon = $target.hasClass('.sapUiIcon');
-			var isChildOfSubHeader = $target.parents('.sapMDialogSubHeader').length;
-			return ((isHeader || isChildOfDialogHeader) && !isHeaderTag && !isIcon && !isChildOfSubHeader);
+			var oControl = $target.control(0);
+			if (!oControl || oControl.getMetadata().getInterfaces().indexOf("sap.m.IBar") > -1) {
+				return true;
+			}
+
+			return $target.hasClass('sapMDialogTitle');
 		}
 
 		if (sap.ui.Device.system.desktop) {
@@ -1441,6 +1441,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			 * @param {Object} e
 			 */
 			Dialog.prototype.onmousedown = function (e) {
+				if (e.which === 3) {
+					return; // on right click don't reposition the dialog
+				}
 				if (this.getStretch() || (!this.getDraggable() && !this.getResizable())) {
 					return;
 				}
