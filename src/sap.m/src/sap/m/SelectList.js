@@ -62,7 +62,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				 * Indicates whether the text values of the <code>additionalText</code> property of a {@link sap.ui.core.ListItem} is shown.
 				 * @since 1.32.3
 				 */
-				showSecondaryValues: { type: "boolean", group: "Misc", defaultValue: false }
+				showSecondaryValues: { type: "boolean", group: "Misc", defaultValue: false },
+
+				/**
+				 * Indicates whether the item navigation feature is enabled.
+				 * @protected
+				 * @since 1.34
+				 */
+				itemNavigationEnabled: { type: "boolean", group: "Behavior", defaultValue: true }
 			},
 			defaultAggregation: "items",
 			aggregations: {
@@ -250,7 +257,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 *
 		 */
 		SelectList.prototype.onAfterRendering = function() {
-			this.createItemNavigation();
+			if (this.getItemNavigationEnabled()) {
+				this.createItemNavigation();
+			}
 		};
 
 		/**
