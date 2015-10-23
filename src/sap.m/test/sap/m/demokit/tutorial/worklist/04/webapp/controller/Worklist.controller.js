@@ -3,9 +3,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"myCompany/myApp/model/formatter",
 	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
-	"sap/m/MessageToast"
-], function(BaseController, JSONModel, formatter, Filter, FilterOperator, MessageToast) {
+	"sap/ui/model/FilterOperator"
+], function(BaseController, JSONModel, formatter, Filter, FilterOperator) {
 	"use strict";
 
 	return BaseController.extend("myCompany.myApp.controller.Worklist", {
@@ -219,42 +218,6 @@ sap.ui.define([
 				sKey = oEvent.getParameter("selectedKey");
 
 			oBinding.filter(this._mFilters[sKey]);
-		},
-		
-		/**
-		 * Event handler for the unlist button. Will delete the
-		 * product from the (local) model.
-		 * @public
-		 */
-		onUnlistObjects: function() {
-			var aSelectedProducts = this.byId("table").getSelectedItems();
-			
-			for (var i = 0; i < aSelectedProducts.length; i++) {
-				var sPath = aSelectedProducts[i].getBindingContextPath();
-				this.getModel().remove(sPath);
-			}
-			MessageToast.show(this.getModel("i18n").getResourceBundle().getText("StockRemovedSuccessMsg", [aSelectedProducts.length]));
-
-		},
-
-
-		/**
-		 * Event handler for the reorder button. Will reorder the
-		 * product by updating the (local) model
-		 * @public
-		*/
-		onUpdateStockObjects: function() {
-	
-			var aSelectedProducts = this.byId("table").getSelectedItems();
-
-			for (var i = 0; i < aSelectedProducts.length; i++) {
-				var sPath = aSelectedProducts[i].getBindingContextPath(),
-				oProductObject = aSelectedProducts[i].getBindingContext().getObject();
-				oProductObject.UnitsInStock += 10;
-				this.getModel().update(sPath, oProductObject);
-			}
-			MessageToast.show(this.getModel("i18n").getResourceBundle().getText("StockUpdatedSuccessMsg", [aSelectedProducts.length]));
-
 		}
 		
 	});
