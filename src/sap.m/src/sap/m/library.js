@@ -50,9 +50,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.IconTabFilterDesign",
 			"sap.m.ImageMode",
 			"sap.m.Size",
-			"sap.m.InfoTileSize",
 			"sap.m.ValueColor",
-			"sap.m.InfoTileValueColor",
 			"sap.m.InputType",
 			"sap.m.LabelDesign",
 			"sap.m.ListHeaderDesign",
@@ -998,47 +996,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		Background: "Background"
 
 	};
-	
-	/**
-	* Enumeration of possible size settings.
-	*
-	* @enum {string}
-	* @public
-	* @since 1.34.0
-	* @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
-	*/
-	sap.m.InfoTileSize = {
-
-		/**
-		 * Extra small size.
-		 * @public
-		 */
-		XS : "XS",
-
-		/**
-		 * Small size.
-		 * @public
-		 */
-		S : "S",
-
-		/**
-		 * Medium size.
-		 * @public
-		 */
-		M : "M",
-
-		/**
-		 * Large size.
-		 * @public
-		 */
-		L : "L",
-
-		/**
-		 * The size of the tile depends on the device it is running on. It is medium size for desktop and tablet and small size for phone.
-		 * @public
-		 */
-		Auto : "Auto"
-	};
 
 	/**
 	* Enumeration of possible size settings.
@@ -1116,42 +1073,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	};
 
-	/**
-	 * Enumeration of possible value color settings.
-	 *
-	 * @enum {string}
-	 * @public
-	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
-	 */
-	sap.m.InfoTileValueColor = {
-
 		/**
-		 * Neutral value color.
-		 * @public
-		 */
-		Neutral : "Neutral",
-
-		/**
-		 * Good value color.
-		 * @public
-		 */
-		Good : "Good",
-
-		/**
-		 * Critical value color.
-		 * @public
-		 */
-		Critical : "Critical",
-
-		/**
-		 * Error value color.
-		 * @public
-		 */
-		Error : "Error"
-
-	};
-
-	/**
 	 * A subset of input types that fits to a simple API returning one string.
 	 * Not available on purpose: button, checkbox, hidden, image, password, radio, range, reset, search, submit.
 	 *
