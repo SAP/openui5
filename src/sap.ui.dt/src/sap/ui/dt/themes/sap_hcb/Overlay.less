@@ -1,0 +1,21 @@
+@sapUiDtFocusColor : rgba(255, 255, 255, 0.5);
+@sapUiDtTargetZoneColor : lime;
+@sapUiDtSelectionColor : white;
+@sapUiDtCuttedColor : #555;
+
+.sapUiDtOverlay {
+	&:focus {
+		&:before {
+			outline-style: dashed;
+		}
+	}
+}
+
+.sapUiDtOverlaySelected {
+	&:focus {
+		outline-width: 1px;
+		&:before {
+			outline-style: solid;
+		}
+	}
+}

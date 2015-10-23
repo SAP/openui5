@@ -1,6 +1,24 @@
+@sapUiDtFocusColor : rgba(77, 144, 254, 0.5);
+@sapUiDtTargetZoneColor : green;
+@sapUiDtSelectionColor : #35F;
+@sapUiDtCuttedColor : white;
+
 .sapUiDtOverlay {
 	position : absolute;
-	box-sizing: border-box;
+	outline: none;
+
+	&:focus {
+		&:before {
+			content: " ";
+			pointer-events: none;
+			position: absolute;
+			top: 1px;
+			bottom: 1px;
+			left: 1px;
+			right: 1px;
+			outline: 2px solid @sapUiDtFocusColor;
+		}
+	}
 }
 
 .sapUiDtDummyScrollContainer {
@@ -10,11 +28,20 @@
 }
 
 .sapUiDtOverlayTargetZone {
-	border : 1px dashed green;
+	&:after {
+		content: " ";
+		pointer-events: none;
+		position: absolute;
+		top: 1px;
+		bottom: 1px;
+		left: 1px;
+		right: 1px;
+		outline: 1px dashed @sapUiDtTargetZoneColor;
+	}
 }
 
 .sapUiDtOverlaySelected {
-	border: 1px solid #35F;
+	outline: 1px solid @sapUiDtSelectionColor;
 }
 
 .sapUiDtOverlayMovable {
@@ -22,7 +49,7 @@
 }
 
 .sapUiDtOverlayCutted {
-	background-color: white !important;
+	background-color: @sapUiDtCuttedColor !important;
 	opacity: 0.5;
 }
 
