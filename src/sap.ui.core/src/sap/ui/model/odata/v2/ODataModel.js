@@ -1373,22 +1373,27 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.createBindingContext = function(sPath, oContext, mParameters, fnCallBack, bReload) {
-		var sFullPath = this.resolve(sPath, oContext);
-
-		bReload = !!bReload;
-
+		var sResolvedPath = this.resolve(sPath, oContext),
+			sCanonicalPath,
+			oNewContext,
+			sGroupId,
+			that = this;
+		
 		// optional parameter handling
 		if (typeof oContext == "function") {
+			bReload = mParameters;
 			fnCallBack = oContext;
-			oContext = null;
+			mParameters = undefined;
+			oContext = undefined;
 		}
 		if (typeof mParameters == "function") {
+			bReload = fnCallBack;
 			fnCallBack = mParameters;
-			mParameters = null;
+			mParameters = undefined;
 		}
-
+		
 		// if path cannot be resolved, call the callback function and return null
-		if (!sFullPath) {
+		if (!sResolvedPath) {
 			if (fnCallBack) {
 				fnCallBack(null);
 			}
@@ -1396,20 +1401,15 @@ sap.ui.define([
 		}
 
 		// try to resolve path, send a request to the server if data is not available yet
-		// if we have set forceUpdate in mParameters we send the request even if the data is available
-		var oData = this._getObject(sPath, oContext),
-		sKey,
-		oNewContext,
-		sGroupId,
-		that = this;
-
-		if (!bReload) {
-			bReload = this._isReloadNeeded(sFullPath, oData, mParameters);
+		// if we have set reload=true in mParameters we send the request even if the data is available
+		// if reload has explicitely been set to either true or false, we do not need to check again
+		if (bReload === undefined) {
+			bReload = this._isReloadNeeded(sResolvedPath, mParameters);
 		}
 
 		if (!bReload) {
-			sKey = this._getKey(oData);
-			oNewContext = this.getContext('/' + sKey);
+			sCanonicalPath = this.resolve(sPath, oContext, true);
+			oNewContext = this.getContext(sCanonicalPath);
 			if (fnCallBack) {
 				fnCallBack(oNewContext);
 			}
@@ -1418,7 +1418,7 @@ sap.ui.define([
 
 		if (fnCallBack) {
 			var bIsRelative = !jQuery.sap.startsWith(sPath, "/");
-			if (sFullPath) {
+			if (sResolvedPath) {
 				var aParams = [],
 				sCustomParams = this.createCustomParams(mParameters);
 				if (sCustomParams) {
@@ -1428,7 +1428,7 @@ sap.ui.define([
 					sGroupId = mParameters.groupId || mParameters.batchGroupId;
 				}
 				var handleSuccess = function(oData) {
-					sKey = oData ? that._getKey(oData) : undefined;
+					var sKey = oData ? that._getKey(oData) : undefined;
 					if (sKey && oContext && bIsRelative) {
 						var sContextPath = oContext.getPath();
 						// remove starting slash
@@ -1453,7 +1453,7 @@ sap.ui.define([
 					}
 					fnCallBack(null); // error - notify to recreate contexts
 				};
-				this.read(sFullPath, {groupId: sGroupId, urlParameters: aParams, success: handleSuccess, error: handleError});
+				this.read(sResolvedPath, {groupId: sGroupId, urlParameters: aParams, success: handleSuccess, error: handleError});
 			} else {
 				fnCallBack(null); // error - notify to recreate contexts
 			}
@@ -1464,126 +1464,115 @@ sap.ui.define([
 	 * checks if data based on select, expand parameters is already loaded or not.
 	 * In case it couldn't be found we should reload the data so we return true.
 	 *
-	 * @param {string} sFullPath resolved path
-	 * @param {object} oData entry object
+	 * @param {string} sPath the entity path
 	 * @param {map} [mParameters] map of parameters
 	 * @returns {boolean} bReload reload needed
 	 * @private
 	 */
-	ODataModel.prototype._isReloadNeeded = function(sFullPath, oData, mParameters) {
-		var sNavProps, aNavProps = [], //aChainedNavProp,
-		sSelectProps, aSelectProps = [], i;
+	ODataModel.prototype._isReloadNeeded = function(sPath, mParameters) {
 
-		// no valid path --> no reload
-		if (!sFullPath) {
-			return false;
+		var oMetadata = this.oMetadata,
+			oData = this.oData,
+			oEntityType = this.oMetadata._getEntityTypeByPath(sPath),
+			oEntity = this.getObject(sPath),
+			aExpand = [], aSelect = [];
+	
+		function filterOwn(aEntries) {
+			return aEntries.filter(function(sEntry) {
+				return sEntry.indexOf("/") === -1;
+			});
 		}
 
-		// no data --> reload needed
-		if (!oData) {
-			return true;
+		function filterNav(aEntries, sExpand) {
+			var sNavPath = sExpand + "/";
+			return aEntries.filter(function(sEntry) {
+				return sEntry.indexOf(sNavPath) === 0;
+			}).map(function(sEntry) {
+				return sEntry.substr(sNavPath.length);
+			});
 		}
+		
+		function checkReloadNeeded(oEntityType, oEntity, aSelect, aExpand) {
+			var aOwnSelect, aOwnExpand, 
+				vNavData, oNavEntityType, oNavEntity, aNavSelect, aNavExpand,
+				sExpand, sSelect;
 
-		//Split the Navigation-Properties (or multi-level chains) which should be expanded
-		if (mParameters && mParameters["expand"]) {
-			sNavProps = mParameters["expand"].replace(/\s/g, "");
-			aNavProps = sNavProps.split(',');
-		}
-
-		//Split the Navigation properties again, if there are multi-level properties chained together by "/"
-		//The resulting aNavProps array will look like this: ["a", ["b", "c/d/e"], ["f", "g/h"], "i"]
-		if (aNavProps) {
-			for (i = 0; i < aNavProps.length; i++) {
-				var chainedPropIndex = aNavProps[i].indexOf("/");
-				if (chainedPropIndex !== -1) {
-					//cut of the first nav property of the chain
-					var chainedPropFirst = aNavProps[i].slice(0, chainedPropIndex);
-					var chainedPropRest = aNavProps[i].slice(chainedPropIndex + 1);
-					//keep track of the newly splitted nav prop chain
-					aNavProps[i] = [chainedPropFirst, chainedPropRest];
-				}
+			// if no entity type could be found we decide not to reload
+			if (!oEntityType) {
+				return false;
 			}
-		}
-
-		//Iterate all nav props and follow the given expand-chain
-		for (i = 0; i < aNavProps.length; i++) {
-			var navProp = aNavProps[i];
-
-			//check if the navProp was split into multiple parts (meaning it's an array), e.g. ["Orders", "Products/Suppliers"]
-			if (jQuery.isArray(navProp)) {
-
-				var oFirstNavProp = oData[navProp[0]];
-				var sNavPropRest = navProp[1];
-
-				//first nav prop in the chain is either undefined or deferred -> reload needed
-				if (!oFirstNavProp || (oFirstNavProp && oFirstNavProp.__deferred)) {
-					return true;
-				} else {
-					//the first nav prop exists on the Data-Object
-					if (oFirstNavProp) {
-						var sPropKey, oDataObject, bReloadNeeded;
-						//the first nav prop contains a __list of entry-keys (and the __list is not empty)
-						if (oFirstNavProp.__list && oFirstNavProp.__list.length > 0) {
-							//Follow all keys in the __list collection by recursively calling
-							//this function to check if all linked properties are loaded.
-							//This is basically a depth-first search.
-							for (var iNavIndex = 0; iNavIndex < oFirstNavProp.__list.length; iNavIndex++) {
-								sPropKey = "/" + oFirstNavProp.__list[iNavIndex];
-								oDataObject = this.getObject(sPropKey);
-								bReloadNeeded = this._isReloadNeeded(sPropKey, oDataObject, {expand: sNavPropRest});
-								if (bReloadNeeded) { //if a single nav-prop path is not loaded -> reload needed
-									return true;
-								}
-							}
-						} else if (oFirstNavProp.__ref) {
-							//the first nav-prop is not a __list, but only a reference to a single entry (__ref)
-							sPropKey = "/" + oFirstNavProp.__ref;
-							oDataObject = this.getObject(sPropKey);
-							bReloadNeeded = this._isReloadNeeded(sPropKey, oDataObject, {expand: sNavPropRest});
-							if (bReloadNeeded) {
-								return true;
-							}
-						}
-					}
-				}
-
-			} else {
-				//only one single Part, e.g. "Orders"
-				//@TODO: why 'undefined'? Old compatibility issue?
-				if (oData[navProp] === undefined || (oData[navProp] && oData[navProp].__deferred)) {
-					return true;
-				}
+			// if entity is null, no reload is needed
+			if (oEntity === null) {
+				return false;
 			}
-		}
-
-		if (mParameters && mParameters["select"]) {
-			sSelectProps = mParameters["select"].replace(/\s/g, "");
-			aSelectProps = sSelectProps.split(',');
-		}
-
-		for (i = 0; i < aSelectProps.length; i++) {
-			// reload data if select property not available
-			if (oData[aSelectProps[i]] === undefined) {
+			// no data --> reload needed
+			if (!oEntity) {
 				return true;
 			}
-		}
-
-		if (aSelectProps.length === 0){
-			// check if all props exist and are already loaded...
-			// only a subset of props may already be loaded before and now we want to load all.
-			var oEntityType = this.oMetadata._getEntityTypeByPath(sFullPath);
-			if (!oEntityType) {
-				// if no entity type could be found we decide not to reload
-				return false;
-			} else {
-				for (i = 0; i < oEntityType.property.length; i++) {
-					if (oData[oEntityType.property[i].name] === undefined) {
+			
+			// check select properties
+			aOwnSelect = filterOwn(aSelect);
+			if (aOwnSelect.length === 0) {
+				// If no select options are defined, check all existing properties
+				aOwnSelect = oEntityType.property.map(function(oProperty) {
+					return oProperty.name;
+				});
+			}
+			for (var i = 0; i < aOwnSelect.length; i++) {
+				sSelect = aOwnSelect[i];
+				if (!oEntity.hasOwnProperty(sSelect)) {
+					return true;
+				}
+			}
+			
+			// check expanded entities
+			aOwnExpand = filterOwn(aExpand);
+			for (var i = 0; i < aOwnExpand.length; i++) {
+				var sExpand = aOwnExpand[i];
+				if (!oEntity.hasOwnProperty(sExpand)) {
+					return true;
+				}
+				vNavData = oEntity[sExpand];
+				if (vNavData.__deferred) {
+					return true;
+				} 
+				
+				// get entity type and filter expand/select for this expanded entity
+				oNavEntityType = oMetadata._getEntityTypeByNavProperty(oEntityType, sExpand);
+				aNavSelect = filterNav(aSelect, sExpand);
+				aNavExpand = filterNav(aExpand, sExpand);
+				
+				// expanded entities need to be checked recursively for nested expand/select
+				if (vNavData.__ref) {
+					oNavEntity = oData[vNavData.__ref];
+					if (checkReloadNeeded(oNavEntityType, oNavEntity, aNavSelect, aNavExpand)) {
 						return true;
 					}
 				}
+				if (vNavData.__list) {
+					for (var i = 0; i < vNavData.__list.length; i++) {
+						oNavEntity = oData[vNavData.__list[i]];
+						if (checkReloadNeeded(oNavEntityType, oNavEntity, aNavSelect, aNavExpand)) {
+							return true;
+						}
+					}
+				}
+			}
+			
+			return false;
+		}
+		
+		if (mParameters) {
+			if (mParameters.select) {
+				aSelect = mParameters.select.replace(/\s/g, "").split(',');				
+			}
+			if (mParameters.expand) {
+				aExpand = mParameters.expand.replace(/\s/g, "").split(',');
 			}
 		}
-		return false;
+		
+		return checkReloadNeeded(oEntityType, oEntity, aSelect, aExpand);
+		
 	};
 
 	/**
