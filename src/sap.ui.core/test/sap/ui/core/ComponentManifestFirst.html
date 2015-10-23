@@ -1,36 +1,65 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>Component Manifest First - sap.ui.core</title>
-
-<script id="sap-ui-bootstrap" type="text/javascript"
-	src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal"
-	data-sap-ui-libs="sap.ui.commons,sap.m"
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Component Manifest First - sap.ui.core</title>
+	<script id="sap-ui-bootstrap" 
+	type="text/javascript" src="../../../../resources/sap-ui-core.js" 
+	data-sap-ui-theme="sap_bluecrystal" 
+	data-sap-ui-bindingSyntax="complex" 
+	data-sap-ui-libs="sap.ui.commons,sap.m" 
 	data-sap-ui-xx-componentPreload="async"></script>
-
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
-
-
-<style type="text/css">
-	.ManifestArea textarea {
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<style type="text/css">
+	.CodingArea textarea {
 		font-family: Consolas, monaco, monospace;
 	}
-</style>
-
-<script type="text/javascript">
-
-
+	</style>
+	<script id="viewSoruce" type="xml/text">
+		<mvc:View xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:lf="sap.ui.layout.form" xmlns="sap.m" xmlns:c="sap.ui.commons">
+			<l:Splitter height="100%">
+				<Panel width="auto" height="100%" headerText="Configruation Area">
+					<content>
+						<l:VerticalLayout width="100%">
+							<RadioButtonGroup>
+							<buttons>
+								<RadioButton selected="{path: '/mode/maniFirstServer'}" text="Load manifest.json from server via parameter manifestFirst=true (Default Behavior)"></RadioButton>
+								<RadioButton selected="{path: '/mode/maniFirstDynamic'}" text="Redirect Request for manifest.json to Dynamic Codeing Box below"></RadioButton>
+								<RadioButton selected="{path: '/mode/maniUrl'}" text="Load manifest.json from server via parameter manifestUrl=..."></RadioButton>
+							</buttons>
+							</RadioButtonGroup>	
+							<Label text="Predefined Manifest"></Label>
+							<ComboBox width="100%" id="ManiSelector" items="{path: '/manifests'}" selectionChange="selectChange" selectedKey="{/selectedManifestKey}">
+								<core:Item key="{key}" text="{name}" />
+							</ComboBox>						
+							<TextArea id="ManifestArea" width="100%" rows="15"></TextArea>
+							<Label text="Load async?"></Label>
+							<CheckBox id="AsyncCheckBox" selected="{/async}"> </CheckBox>
+							<Button text="Load Component" press="onLoadComponent"></Button>
+						</l:VerticalLayout>
+					</content>
+				</Panel>
+				<l:VerticalLayout width="100%">
+					<Panel id="CodePanel" width="100%" headerText="Component Configuration">
+						<TextArea id="CodeArea" width="100%" rows="6" editable="false"></TextArea>
+					</Panel>
+					<Panel id="ResultPanel" width="100%" headerText="Result Area">
+					</Panel>
+				</l:VerticalLayout>
+			</l:Splitter>
+		</mvc:View>
+	</script>
+	<script type="text/javascript">
 	sap.ui.localResources("samples");
 
+
+	//***** Manifest **************************************
 	// the data model for different manifest entries
-	var mManifest = {
+	var mModel = {
 		"manifests": {
-			"m1": {
+			"m1":{
 				"key": "m1",
 				"name": "Manifest (Resource Roots + Dependencies)",
 				"content": {
@@ -53,7 +82,7 @@
 					}
 				}
 			}, 
-			"m2": {
+			"m2":{
 				"key": "m2",
 				"name": "Manifest (Extensibility)",
 				"content": {
@@ -81,152 +110,166 @@
 						}
 					}
 				}
+			},
+			"m3":{
+				"key": "m3",
+				"name": "Default Manifest for Manifest First", 
+				"content": {
+					"name": "samples.manifestfirst.customer.Component",
+					"sap.app": {
+						"id": "samples.manifestfirst.customer",
+						"applicationVersion": {
+							"version": "1.0.0"
+						},
+						"text":"Text taken from ManifestFirst"
+					},
+					"sap.ui5": {
+						"rootView": "samples.manifestfirst.customer.view.Main"
+					}
+				}
 			}
 		},
-		"selectedManifest": "m1",
-		"async": false
+		"selectedManifestKey": "m3",
+		"async": true
 	};
 
-	// create the manifest model for the combo box
-	var oManifestModel = new sap.ui.model.json.JSONModel(mManifest);
-	
-	// use the fake server to load manifest from the model above
-	var oServer = sinon.fakeServer.create();
-	
-	oServer.xhr.useFilters = true;
-	oServer.xhr.addFilter(function(method, url) {
-		return ("anylocation/manifest.json" !== url );
-	});
-		
-	oServer.autoRespond = true;
-	
+
+
 	//************* Config UI & LOGIC *******************************************
-	//create textarea for dynamic manifest
-	
-	var oItemTemplate = new sap.ui.core.Item({
-		key: "{key}",
-		text: "{name}"
+
+	// View Creation
+	var oManifestModel = new sap.ui.model.json.JSONModel(mModel);
+	var oMainView = new sap.ui.xmlview({
+		viewContent: jQuery("#viewSoruce").html()
 	});
-	
-	var oManiSelectorTitle = new sap.m.Label({
-		text: "Text"
-	});
-	var oManiSelector = new sap.m.ComboBox({
-		items: {
-			path: "/manifests", 
-			template: oItemTemplate
-		},
-		selectedKey: "{/selectedManifest}",
-		selectionChange: function(oEvent) {
-			selectManifest(this.getSelectedKey());
-		}
-	}); //.placeAt("manifestArea");
-	oManiSelector.setModel(oManifestModel);
-	
-	
-	var oManiAreaTitle = new sap.m.Label({
-		text: "Area"
-	});
-	var oManiArea = new sap.m.TextArea({
-		cols: 80,
-		rows: 15
-	});//.placeAt("manifestArea");
-	oManiArea.addStyleClass("ManifestArea");
-	
-	var oAsyncTitle = new sap.m.Label({
-		text: "Load async?"
-	});
-	var oAsyncCheckBox = new sap.m.CheckBox({
-		selected: "{/async}"
-	});//.placeAt("manifestArea");
-	
-	var oLoadCompTitle = new sap.m.Label({
-		text: " "
-	});
-	var oLoadComponent = new sap.m.Button({
-		text: "Load Component",
-		press: onLoadComponent
-	});//.placeAt("manifestArea");
-	
-	
-	// order ui elements...
-	var aEO = [
-	           oManiSelectorTitle,
-	           oManiSelector,
-	           oManiAreaTitle,
-	           oManiArea,
-	           oAsyncTitle,
-	           oAsyncCheckBox,
-	           oLoadCompTitle,
-	           oLoadComponent
-	          ]; 
-	
-	var oForm = new sap.ui.layout.form.SimpleForm({
-		title: "Configurable Manifest",
-		content: aEO,
-		labelSpanL: 2
-	}).placeAt("manifestArea");
-	
-	
-	// result panel for loaded component
-	oResultPanel = new sap.m.Panel({
-		headerText: "Loaded Component"
-	}).placeAt("componentArea");
-	
+	oMainView.setModel(oManifestModel);
+	oMainView.placeAt("Area");
+
+	// Add Code Style to Coding Areas
+	oMainView.byId("ManifestArea").addStyleClass("CodingArea");
+	oMainView.byId("CodeArea").addStyleClass("CodingArea");
+
+	var oForm = oMainView.byId("InputLayoutForm");
+
 	//***************************************************************************
-	
-	var oComp; 
+	var oComp;
 	var oCompCont;
-	
+	var oServer;
+	var oUrls = {};
+
 	function onLoadComponent() {
-		if (oComp) {
+		if (oComp && oComp instanceof sap.ui.core.Component) {
 			oComp.destroy();
 			oCompCont.destroy();
 		};
 		initComponents();
 	};
-	
-	function initComponents(){
 
-		oServer.respondWith("GET", "anylocation/manifest.json", [
-			200, 
-			{
-				"Content-Type": "application/json"
-			},
-			oManiArea.getValue()
-		]);
 
-		oComp = sap.ui.component({
-			manifestUrl: "anylocation/manifest.json",
-			async: mManifest.async
-		});
-
-		oCompCont = new sap.ui.core.ComponentContainer({
-			component: oComp
-		});
-		oResultPanel.addContent(oCompCont);
+	function selectChange(oEvent) {
+		selectManifest(this.getSelectedKey());
 	};
-	
-	//***************************************************************************
-	
-	function selectManifest(sManifestId) {
-		var oManifest = mManifest.manifests[sManifestId].content;
-		var sManifest = JSON.stringify(oManifest, null, 2);
-		oManiArea.setValue(sManifest);
-	}
-	selectManifest(mManifest.selectedManifest);
-	
-</script>
 
+	function initFakeServer(sUrl) {
+		// use the fake server to load manifest from the model above
+		oServer = sinon.fakeServer.create();
+
+		oServer.xhr.useFilters = sUrl == undefined ? false : true;
+		
+		if (sUrl == undefined) {
+			oServer.xhr.restore();
+		}
+		
+		oUrls[sUrl] = true;
+		oServer.xhr.addFilter(function(method, url) {
+			return oUrls[url] == true ? false : true; 
+		});
+		
+		oServer.autoRespond = sUrl == undefined ? false : true;
+		
+		
+		oServer.respondWith("GET", sUrl, //./samples/manifestfirst/customer/manifest.json
+			[ 
+				200, 
+				{
+					"Content-Type": "application/json"
+				},
+				oMainView.byId("ManifestArea").getValue()
+			]
+		);
+	} 
+
+	function initComponents() {
+		
+		var manifirst = true;
+		
+		if (sap.ui.getCore().byId("__group0-0").getSelected()){
+			initFakeServer();
+			manifirst = true;
+
+		} else if (sap.ui.getCore().byId("__group0-1").getSelected()){
+			initFakeServer("./samples/manifestfirst/customer/manifest.json");
+			manifirst = true;
+
+		} else if (sap.ui.getCore().byId("__group0-2").getSelected()){
+			initFakeServer("anylocation/manifest.json");
+			manifirst = false;
+		}
+
+		var oConfig = {
+			manifestUrl: manifirst ? undefined : "anylocation/manifest.json",
+			async: mModel.async,
+			manifestFirst: manifirst ? true : undefined,
+			name: manifirst ? "samples.manifestfirst.customer" : undefined
+		};
+		
+		// Show component config on UI
+		oMainView.byId("CodeArea").setValue(JSON.stringify(jQuery.extend(true, {}, oConfig), null, 2));
+
+		oComp = sap.ui.component(oConfig);
+
+		if (oComp instanceof Promise){
+			oComp.then(function(oComponent){
+				placeComponent(oComponent);
+				oComp = oComponent;
+			},
+			function(err){
+				throw Error(err);
+			});
+		} else {
+			placeComponent(oComp);
+		}
+	};
+
+	function placeComponent(oComponentForPlacement) {
+		oCompCont = new sap.ui.core.ComponentContainer({
+				component: oComponentForPlacement
+			});
+		oMainView.byId("ResultPanel").addContent(oCompCont);
+	}
+
+	//***************************************************************************
+
+	function selectManifest(sManifestId) {
+		var oManifest = mModel.manifests[sManifestId].content;
+		var sManifest = JSON.stringify(oManifest, null, 2);
+		oMainView.byId("ManifestArea").setValue(sManifest);
+	}
+	selectManifest(mModel.selectedManifestKey);
+
+
+	//***************************************************************************
+
+	</script>
 </head>
+
 <body class="sapUiBody" role="application">
 	<h1>
 		Test Page for
 		<code>sap.ui.core.Component</code> - usage of Manifest First Concept
 	</h1>
 	<br>
-	<div id="manifestArea"></div>
-	<div id="componentArea"></div>
-	
+	<div id="Area"></div>
 </body>
+
 </html>

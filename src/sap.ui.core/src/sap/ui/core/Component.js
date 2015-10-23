@@ -1004,6 +1004,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @param {string[]} [vConfig.asyncHints.components] Components that should be (pre-)loaded before the Component (experimental setting)
 	 * @param {string} [vConfig.manifestUrl] @since 1.33.0 Determines whether the component should be loaded and defined
 	 *                                       via the <code>manifest.json</code>
+	 * @param {string} [vConfig.manifestFirst] @since 1.33.0 defines whether the manifest is loaded before or after the
+	 *                                         Component controller. Defaults to <code>sap.ui.getCore().getConfiguration().getManifestFirst()</code>
 	 * @return {sap.ui.core.Component|Promise} the Component instance or a Promise in case of asynchronous loading
 	 *
 	 * @public
@@ -1129,7 +1131,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 		var sName = oConfig.name,
 			sUrl = oConfig.url,
-			bComponentPreload = /^(sync|async)$/.test(sap.ui.getCore().getConfiguration().getComponentPreload()),
+			oConfiguration = sap.ui.getCore().getConfiguration(),
+			bComponentPreload = /^(sync|async)$/.test(oConfiguration.getComponentPreload()),
+			bManifestFirst = typeof oConfig.manifestFirst !== "undefined" ? oConfig.manifestFirst : oConfiguration.getManifestFirst(),
 			oManifest;
 
 		// TODO: always use manifest first?!
@@ -1182,6 +1186,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				jQuery.sap.registerModulePath(sName, sUrl);
 			}
 
+		}
+
+		// in case of loading the manifest first by configuration we need to 
+		// wait until the registration of the module path is done if needed and
+		// then we can use the standard capabilities of the framework to resolve
+		// the Components' modules namespace
+		if (bManifestFirst && !oManifest) {
+			oManifest = Manifest.load(jQuery.sap.getModulePath(sName) + "/manifest.json", oConfig.async, false);
+			// the manifest is stored in the configuration to pass it
+			// into the concrete component instance
+			oConfig._manifest = oManifest;
 		}
 
 		function getControllerClass() {
