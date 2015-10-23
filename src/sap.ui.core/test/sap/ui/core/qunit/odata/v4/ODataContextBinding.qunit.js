@@ -7,7 +7,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel"
 ], function (ManagedObject, ChangeReason, ODataModel) {
 	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 4, no-warning-comments: 0 */
+	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
 	var TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataContextBinding", {

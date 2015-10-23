@@ -15,7 +15,7 @@ sap.ui.require([
 ], function (Model, TypeString, ODataUtils, Helper, ODataContextBinding, ODataListBinding,
 		ODataMetaModel, ODataModel, ODataPropertyBinding, TestUtils) {
 	/*global odatajs, QUnit, sinon */
-	/*eslint max-nested-callbacks: 4, no-warning-comments: 0 */
+	/*eslint no-warning-comments: 0 */
 	"use strict";
 
 	/*
