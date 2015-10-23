@@ -1140,6 +1140,26 @@
 		sap.ui.getCore().applyChanges();
 	});
 
+	module("Performance improvements", {
+		setup: function() {
+			createTable();
+		},
+		teardown: destroyTable
+	});
+
+	test("Prevent re-rendering on setEnableBusyIndicator", function() {
+		var spy = this.spy();
+		oTable.addEventDelegate({onAfterRendering: spy});
+		
+		// act
+		oTable.setEnableBusyIndicator(true);
+		sap.ui.getCore().applyChanges();
+		
+		// assertions
+		sinon.assert.notCalled(spy);
+		assert.ok(oTable.getEnableBusyIndicator(), "The overwritten function still works");
+	});
+
 	</script>
 </head>
 <body class="sapUiBody">
