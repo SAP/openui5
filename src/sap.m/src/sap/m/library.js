@@ -1460,7 +1460,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		 * Panel type for columns setting
 		 * @public
 		 */
-		columns : "columns"
+		columns : "columns",
+		
+		/**
+		 * Panel type for dimensions and measures setting
+		 * @public
+		 */
+		dimeasure: "dimeasure"
 
 	};
 
