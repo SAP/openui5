@@ -135,9 +135,7 @@ sap.ui.define([
 	 */
 	ContextMenu.prototype._onContextMenu = function(oEvent) {
 		// hide browser-context menu
-		if (oEvent.preventDefault) {
-			oEvent.preventDefault();
-		}
+		oEvent.preventDefault();
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 
 		if (oOverlay && oOverlay.isSelectable()) {
@@ -161,9 +159,8 @@ sap.ui.define([
 
 		if ((oEvent.keyCode === jQuery.sap.KeyCodes.F10) && (oEvent.shiftKey === true) && (oEvent.altKey === false) && (oEvent.ctrlKey === false)) {
 			// hide browser-context menu
-			if (oEvent.preventDefault) {
-				oEvent.preventDefault();
-			}
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
 			if (oOverlay && oOverlay.isSelectable()) {
 				if (!oOverlay.isSelected()) {
 					oOverlay.setSelected(true);
