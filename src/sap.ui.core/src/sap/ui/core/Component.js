@@ -78,6 +78,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	{
 		constructor : function(sId, mSettings) {
 
+			// create a copy of arguments for later handover to ManagedObject
+			var args = Array.prototype.slice.call(arguments);
+
 			// identify how the constructor has been used to extract the settings
 			if (typeof sId !== "string") {
 				mSettings = sId;
@@ -140,7 +143,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 			}
 
-			ManagedObject.apply(this, arguments);
+			ManagedObject.apply(this, args);
 
 		},
 
