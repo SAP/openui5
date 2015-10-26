@@ -386,32 +386,37 @@ sap.ui.define([
 			return that.requestObject("", oMetaContext);
 		}).then(function (oProperty) {
 			var oConstraints,
-				oFacet,
-				i,
-				oUi5Type;
+				oType = oProperty["@ui5.type"],
+				oTypeInfo;
 
 			function setConstraint(sKey, vValue) {
 				oConstraints = oConstraints || {};
 				oConstraints[sKey] = vValue;
 			}
 
+			if (oType) {
+				return oType;
+			}
 			if (!("Type" in oProperty) || !("Facets" in oProperty) || !("Nullable" in oProperty)) {
 				error("No property", sPath);
 			}
-			oUi5Type = mUi5TypeForEdmType[oProperty.Type.QualifiedName];
-			if (!oUi5Type) {
+			oTypeInfo = mUi5TypeForEdmType[oProperty.Type.QualifiedName];
+			if (!oTypeInfo) {
 				error("Unsupported EDM type: " + oProperty.Type.QualifiedName, sPath);
 			}
-			for (i = 0; i < oProperty.Facets.length; i++) {
-				oFacet = oProperty.Facets[i];
-				if (oUi5Type.facets && oFacet.Name in oUi5Type.facets) {
-					setConstraint(oUi5Type.facets[oFacet.Name], oFacet.Value);
-				}
+			if (oTypeInfo.facets) {
+				oProperty.Facets.forEach(function (oFacet) {
+					if (oFacet.Name in oTypeInfo.facets) {
+						setConstraint(oTypeInfo.facets[oFacet.Name], oFacet.Value);
+					}
+				});
 			}
 			if (!oProperty.Nullable) {
 				setConstraint("nullable", false);
 			}
-			return new (jQuery.sap.getObject(oUi5Type.type, 0))({}, oConstraints);
+			oType = new (jQuery.sap.getObject(oTypeInfo.type, 0))({}, oConstraints);
+			oProperty["@ui5.type"] = oType;
+			return oType;
 		});
 	};
 

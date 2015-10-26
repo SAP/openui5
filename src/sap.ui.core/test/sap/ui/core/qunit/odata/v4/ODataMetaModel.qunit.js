@@ -524,7 +524,7 @@ sap.ui.require([
 		constraints: {maxLength: 255}
 	}].forEach(function (oFixture) {
 		[false, true].forEach(function (bNullable) {
-			var aFacets = oFixture.facets || {},
+			var aFacets = oFixture.facets || [],
 				sTitle = "requestUI5Type: " + oFixture.type + ",nullable=" + bNullable
 					+ ", facets=" + JSON.stringify(aFacets);
 
@@ -561,7 +561,36 @@ sap.ui.require([
 	//TODO facet DefaultValue
 
 	//*********************************************************************************************
-	QUnit.test("requestUI5Types: not a property", function (assert) {
+	QUnit.test("requestUI5Type: caching", function (assert) {
+		var oMetaContext = {},
+			oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
+			sPath = "/Employees[0];list=1/ENTRYDATE",
+			oProperty = {
+				"Type" : {
+					"QualifiedName" : "Edm.String"
+				},
+				"Facets" : [],
+				"Nullable" : true
+			},
+			that = this;
+
+		oMetaModelMock.expects("requestMetaContext").withExactArgs(sPath).twice()
+			.returns(Promise.resolve(oMetaContext));
+		oMetaModelMock.expects("requestObject").withExactArgs("", oMetaContext).twice()
+			.returns(Promise.resolve(oProperty));
+
+		return this.oMetaModel.requestUI5Type(sPath).then(function (oType) {
+			assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.String");
+			assert.strictEqual(oProperty["@ui5.type"], oType, "cache filled");
+
+			return that.oMetaModel.requestUI5Type(sPath).then(function (oType0) {
+				assert.strictEqual(oType0, oType, "cache used");
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestUI5Type: not a property", function (assert) {
 		var oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
 			sPath = "/Employees[0];list=1/foo",
 			oMetaContext = {metaContextFor: sPath},
@@ -582,7 +611,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	//TODO make these types work with odata v4
 	["Edm.DateTimeOffset", "Edm.Duration", "Edm.TimeOfDay"].forEach(function (sQualifiedName) {
-		QUnit.test("requestUI5Types: unsupported type " + sQualifiedName, function (assert) {
+		QUnit.test("requestUI5Type: unsupported type " + sQualifiedName, function (assert) {
 			var oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
 				sPath = "/Employees[0];list=1/foo",
 				oMetaContext = {metaContextFor: sPath},
