@@ -4093,5 +4093,80 @@
         "references": []
       }
     ]
+  },
+  "1.28.21": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "be8f0c0023179ecab39dce0739315ee19ee10e13",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: force the focus to stay in the input field after selecting an item on mobile",
+        "references": []
+      },
+      {
+        "id": "1acdbe896b7eb41f55ee8445402a421ec74af43b",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FeedListItem: prevent duplicate id",
+        "references": []
+      },
+      {
+        "id": "a1b5a02e52676e2498c9af9c0fba2304e85b8d00",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Tabs are not selected on mouse hover any more",
+        "references": []
+      },
+      {
+        "id": "c8e1072bacc069636044b746aee52e5e8db1c372",
+        "author": "Arley Triana Morin \u003carley.triana.morin@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: raises error \"getDescribedByAnnouncement is not a function\" after UI5 upgrade",
+        "references": []
+      },
+      {
+        "id": "40ce0e5392c0ac5359a3b15fb0589ae4afb59474",
+        "author": "Andreas Frische \u003candreasfrische@gmail.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.NavContainer: Mark optional params as optional in JsDoc",
+        "references": []
+      },
+      {
+        "id": "b7633e7bee02f37c05767a72ef989ab0aa2c92ac",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Page: SubHeader overlaps the content",
+        "references": []
+      },
+      {
+        "id": "332797c8c18a1abfcc94ad19675889e7f503e968",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: beforeClose event is fired on touch devices",
+        "references": []
+      },
+      {
+        "id": "66632c3865f1e3480b229faa43a9227c93fb34dc",
+        "author": "Borislav Yovchev \u003cborislav.yovchev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.ProgressIndicator: tooltip is now rendered",
+        "references": []
+      },
+      {
+        "id": "64d2ca2a7fd8847a98d93321df400c39901ca858",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: Events processing on phones fixed",
+        "references": []
+      },
+      {
+        "id": "ae42cef70e2a51de32b4865a49e1d0cf35158b94",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Update JSDoc for event fileDeleted",
+        "references": []
+      }
+    ]
   }
 }

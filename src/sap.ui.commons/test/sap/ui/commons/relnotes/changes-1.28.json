@@ -974,5 +974,17 @@
         "references": []
       }
     ]
+  },
+  "1.28.21": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "9d673708e9010608bfc9f158b47bc28f923e8378",
+        "author": "I312031 \u003cteodor.taushanov@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TabStrip: focusOut is triggered when switching tabs",
+        "references": []
+      }
+    ]
   }
 }

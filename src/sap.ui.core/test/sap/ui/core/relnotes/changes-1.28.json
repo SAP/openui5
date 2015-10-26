@@ -2554,5 +2554,101 @@
         "references": []
       }
     ]
+  },
+  "1.28.21": {
+    "date": "October 2015",
+    "notes": [
+      {
+        "id": "e000514d21eae733001b0e4bff7cf1e396db360e",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: Autoclose on Touch Enabled Devices\"",
+        "references": []
+      },
+      {
+        "id": "836bfadafe99e5ac11d2a7ff441adff9d8c919c0",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "NumberFormat: Introduce shortLimit and precision",
+        "references": []
+      },
+      {
+        "id": "76ff17a0a1793bd2ab3bb09a96c3baee0cfc6404",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "AnalyticalBinding - Missing dataReceived event",
+        "references": []
+      },
+      {
+        "id": "d0a94a721a35fc8b047ad99d8d4f616b23671b0f",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "Datajs: fix xhr.send when request body is empty for IE 11",
+        "references": []
+      },
+      {
+        "id": "ba6e6544442fefab7184b1c30a8c0a0e082f3178",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "DateFormat: Cache fallback formats per locale and calendarType",
+        "references": []
+      },
+      {
+        "id": "b35b0252a5a634e88b9ef77a6ecf5b24161cd9e9",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: fix 0 as payload result",
+        "references": []
+      },
+      {
+        "id": "e464a4e037758c672a0d3fa9287320ef012adaed",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: Autoclose on Touch Enabled Devices",
+        "references": []
+      },
+      {
+        "id": "a2f84bc3c21541242f80c3fbc411bfc84aff1a7f",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "ScrollEnablement: Momentum scrolling for BlackBerry.",
+        "references": []
+      },
+      {
+        "id": "1ee7ae66a621d8a6e1cbd78fd51b41b05e2d33f1",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.registerResourcePath: strip URI params/hash",
+        "references": []
+      },
+      {
+        "id": "13f6fa249bb8799bbc4817f124909281aeb36ba9",
+        "author": "Ruben Tuider \u003cruben.tuider@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Fragment: \u0027objectBinding\u0027 enabled",
+        "references": []
+      },
+      {
+        "id": "2a050a172998ac8ebd0d0031e360c6b00414d999",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.UIArea: Except Popup Controls from Rendering Optimization",
+        "references": []
+      },
+      {
+        "id": "e31976e327031e930c85a110a13869f4c2a6a7e2",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.UIArea: Restore focus after full UIArea rendering",
+        "references": []
+      },
+      {
+        "id": "446b60af15d1fdaff4c28b7c12cc6e33781eef0d",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: createEntry on Navigation Properties does not work",
+        "references": []
+      }
+    ]
   }
 }
