@@ -139,6 +139,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.NewsContent",
 			"sap.m.NumericContent",
 			"sap.m.NotificationListItem",
+			"sap.m.NotificationListGroup",
 			"sap.m.PagingButton",
 			"sap.m.ObjectAttribute",
 			"sap.m.ObjectHeader",
@@ -811,7 +812,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	/**
 	 * Different levels for headers
-	 * 
+	 *
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
