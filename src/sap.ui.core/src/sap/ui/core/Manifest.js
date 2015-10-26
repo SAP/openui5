@@ -337,8 +337,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 				var mLibraries = oDep["libs"];
 				if (mLibraries) {
 					for (var sLib in mLibraries) {
-						jQuery.sap.log.info("Component \"" + sComponentName + "\" is loading library: \"" + sLib + "\"");
-						sap.ui.getCore().loadLibrary(sLib);
+						if (!mLibraries[sLib].lazy) {
+							jQuery.sap.log.info("Component \"" + sComponentName + "\" is loading library: \"" + sLib + "\"");
+							sap.ui.getCore().loadLibrary(sLib);
+						}
 					}
 				}
 
@@ -346,10 +348,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/thirdparty/URI
 				var mComponents = oDep["components"];
 				if (mComponents) {
 					for (var sName in mComponents) {
-						jQuery.sap.log.info("Component \"" + sComponentName + "\" is loading component: \"" + sName + ".Component\"");
-						sap.ui.component.load({
-							name: sName
-						});
+						if (!mComponents[sName].lazy) {
+							jQuery.sap.log.info("Component \"" + sComponentName + "\" is loading component: \"" + sName + ".Component\"");
+							sap.ui.component.load({
+								name: sName
+							});
+						}
 					}
 				}
 

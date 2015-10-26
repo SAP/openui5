@@ -1274,9 +1274,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			// lookup the required libraries
 			var mLibs = oManifest.getEntry("/sap.ui5/dependencies/libs");
 			if (mLibs) {
-				var aLibs = Object.keys(mLibs);
-				jQuery.sap.log.info("Component \"" + sComponentName + "\" is loading library: \"" + aLibs.join(", ") + "\"");
-				fnCollect(sap.ui.getCore().loadLibraries(aLibs));
+				var aLibs = [];
+				// filter the lazy libs
+				for (var sLibName in mLibs) {
+					if (!mLibs[sLibName].lazy) {
+						aLibs.push(sLibName);
+					}
+				}
+				if (aLibs.length > 0) {
+					jQuery.sap.log.info("Component \"" + sComponentName + "\" is loading libraries: \"" + aLibs.join(", ") + "\"");
+					fnCollect(sap.ui.getCore().loadLibraries(aLibs, {
+						async: bAsync
+					}));
+				}
 			}
 
 			// lookup the extended component and preload it
@@ -1289,7 +1299,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			var mComponents = oManifest.getEntry("/sap.ui5/dependencies/components");
 			if (mComponents) {
 				for (var sComponentName in mComponents) {
-					fnCollect(preload(sComponentName, bAsync));
+					// filter the lazy components
+					if (!mComponents[sComponentName].lazy) {
+						fnCollect(preload(sComponentName, bAsync));
+					}
 				}
 			}
 
