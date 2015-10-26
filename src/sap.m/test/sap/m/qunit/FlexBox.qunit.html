@@ -30,235 +30,242 @@
 				}
 			}
 
-			// Create items
-			var oItem1 = new sap.m.Image("item1", {
-				src: "../images/mark1.png",
-				layoutData: new sap.m.FlexItemData({
-					alignSelf: "Center",
-					order: 2,
-					growFactor: 3,
-					shrinkFactor: 2,
-					baseSize: "200px"
-				})
-			});
-
-			var oItem2 = new sap.m.Image("item2", {
-				src: "../images/mark2.png",
-				layoutData: new sap.m.FlexItemData({
-					alignSelf: "Baseline",
-					order: 3,
-					growFactor: 2,
-					shrinkFactor: 2,
-					baseSize: "2500px"
-				})
-			});
-
-			// Create a flexbox with items
-			var oFlexBox1 = new sap.m.FlexBox("flexbox1", {
-				items:[
-					oItem1,
-					oItem2
-				],
-				width: "654px",
-				height: "432px"
-			});
-			oFlexBox1.setDisplayInline(false);
-			oFlexBox1.setDirection('Row');
-// 			oFlexBox1.setWrap('Nowrap');
-			oFlexBox1.setJustifyContent('Start');
-			oFlexBox1.setAlignItems('Start');
-// 			oFlexBox1.setAlignContent('Start');
-			oFlexBox1.setRenderType('Div');
-			oFlexBox1.placeAt("content");
-
-
-			// Create items
-			var oItem3 = new sap.m.Image("item3", {
-				src: "../images/mark1.png",
-				layoutData: new sap.m.FlexItemData({
-					alignSelf: "Stretch",
-					order: 1,
-					growFactor: 1.47,
-					shrinkFactor: 0,
-					baseSize: "137px"
-				})
-			});
-
-			var oItem4 = new sap.m.Image("item4", {
-				src: "../images/mark2.png",
-				visible: false,
-				layoutData: new sap.m.FlexItemData({
-					order: 3,
-					growFactor: 1,
-					shrinkFactor: 3,
-					baseSize: "160pt"
-				})
-			});
-
-			var oItem4b = new sap.m.Image("item4b", {
-				src: "../images/mark3.png",
-				visible: true,
-				layoutData: new sap.m.FlexItemData({
-					order: 3,
-					growFactor: 1,
-					shrinkFactor: 3,
-					baseSize: "160pt"
-				})
-			});
-
-			// Create a flexbox with items
-			var oFlexBox2 = new sap.m.FlexBox("flexbox2", {
-				items:[
-					oItem3,
-					oItem4,
-					oItem4b
-				]
-			});
-			oFlexBox2.setDisplayInline(true);
-			oFlexBox2.setDirection('RowReverse');
-// 			oFlexBox2.setWrap('Wrap');
-			oFlexBox2.setJustifyContent('End');
-			oFlexBox2.setAlignItems('End');
-// 			oFlexBox2.setAlignContent('End');
-			oFlexBox2.setRenderType('List');
-			oFlexBox2.placeAt("content");
-
-			// Create items
-			var oItem5 = new sap.m.Image("item5", {
-				src: "../images/mark1.png",
-				layoutData: new sap.m.FlexItemData({
-					alignSelf: "Start",
-					order: 1,
-					growFactor: 1.4,
-					shrinkFactor: 2,
-					baseSize: "888px"
-				})
+			// Don't run on IE9
+			if(!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version === 9)) {
+				// Create items
+				var oItem1 = new sap.m.Image("item1", {
+					src: "../images/mark1.png",
+					layoutData: new sap.m.FlexItemData({
+						alignSelf: "Center",
+						order: 2,
+						growFactor: 3,
+						shrinkFactor: 2,
+						baseSize: "200px"
+					})
+				});
+	
+				var oItem2 = new sap.m.Image("item2", {
+					src: "../images/mark2.png",
+					layoutData: new sap.m.FlexItemData({
+						alignSelf: "Baseline",
+						order: 3,
+						growFactor: 2,
+						shrinkFactor: 2,
+						baseSize: "2500px"
+					})
+				});
+	
+				// Create a flexbox with items
+				var oFlexBox1 = new sap.m.FlexBox("flexbox1", {
+					items:[
+						oItem1,
+						oItem2
+					],
+					width: "654px",
+					height: "432px"
+				});
+				oFlexBox1.setDisplayInline(false);
+				oFlexBox1.setDirection('Row');
+	// 			oFlexBox1.setWrap('Nowrap');
+				oFlexBox1.setJustifyContent('Start');
+				oFlexBox1.setAlignItems('Start');
+	// 			oFlexBox1.setAlignContent('Start');
+				oFlexBox1.setRenderType('Div');
+				oFlexBox1.placeAt("content");
+	
+	
+				// Create items
+				var oItem3 = new sap.m.Image("item3", {
+					src: "../images/mark1.png",
+					layoutData: new sap.m.FlexItemData({
+						alignSelf: "Stretch",
+						order: 1,
+						growFactor: 1.47,
+						shrinkFactor: 0,
+						baseSize: "137px"
+					})
+				});
+	
+				var oItem4 = new sap.m.Image("item4", {
+					src: "../images/mark2.png",
+					visible: false,
+					layoutData: new sap.m.FlexItemData({
+						order: 3,
+						growFactor: 1,
+						shrinkFactor: 3,
+						baseSize: "160pt"
+					})
+				});
+	
+				var oItem4b = new sap.m.Image("item4b", {
+					src: "../images/mark3.png",
+					visible: true,
+					layoutData: new sap.m.FlexItemData({
+						order: 3,
+						growFactor: 1,
+						shrinkFactor: 3,
+						baseSize: "160pt"
+					})
+				});
+	
+				// Create a flexbox with items
+				var oFlexBox2 = new sap.m.FlexBox("flexbox2", {
+					items:[
+						oItem3,
+						oItem4,
+						oItem4b
+					]
+				});
+				oFlexBox2.setDisplayInline(true);
+				oFlexBox2.setDirection('RowReverse');
+	// 			oFlexBox2.setWrap('Wrap');
+				oFlexBox2.setJustifyContent('End');
+				oFlexBox2.setAlignItems('End');
+	// 			oFlexBox2.setAlignContent('End');
+				oFlexBox2.setRenderType('List');
+				oFlexBox2.placeAt("content");
+	
+				// Create items
+				var oItem5 = new sap.m.Image("item5", {
+					src: "../images/mark1.png",
+					layoutData: new sap.m.FlexItemData({
+						alignSelf: "Start",
+						order: 1,
+						growFactor: 1.4,
+						shrinkFactor: 2,
+						baseSize: "888px"
+					})
+					
+				});
+	
+				var oItem6 = new sap.m.Image("item6", {
+					src: "../images/mark2.png",
+					layoutData: new sap.m.FlexItemData({
+						alignSelf: "End",
+						order: 2,
+						growFactor: 4,
+						shrinkFactor: 8,
+						baseSize: "7em"
+					})
+				});
+	
+				// Create a flexbox with items
+				var oFlexBox3 = new sap.m.FlexBox("flexbox3", {
+					items:[
+						oItem5,
+						oItem6
+					]
+				});
+				oFlexBox3.setDirection('Column');
+	// 			oFlexBox3.setWrap('WrapReverse');
+				oFlexBox3.setJustifyContent('Center');
+				oFlexBox3.setAlignItems('Center');
+	// 			oFlexBox3.setAlignContent('Center');
+				oFlexBox3.placeAt("content");
 				
-			});
+				// Create items
+				var oItem7 = new sap.m.Image("item7", {
+							src: "../images/mark1.png",
+							alt: "test image",
+							decorative: false
+						});
+	
+				var oItem8 = new sap.m.Image("item8", {
+							src: "../images/mark2.png",
+							alt: "test image",
+							decorative: false
+						});
+	
+				// Create a flexbox with items
+				var oFlexBox4 = new sap.m.FlexBox("flexbox4", {
+					items:[
+						oItem7,
+						oItem8
+					],
+					displayInline: false,
+					direction: "ColumnReverse",
+	// 				wrap: "Wrap",
+					justifyContent: "SpaceBetween",
+					alignItems: "Baseline",
+	// 				alignContent: "SpaceBetween",
+					renderType: "List"
+				});
+				oFlexBox4.placeAt("content");
+				
+				// Create items
+				var oItem9 = new sap.m.Image("item9", {
+							src: "../images/mark1.png",
+							alt: "test image",
+							decorative: false
+						});
+	
+				var oItem10 = new sap.m.Image("item10", {
+							src: "../images/mark2.png",
+							alt: "test image",
+							decorative: false
+						});
+	
+				// Create a flexbox with items
+				var oFlexBox5 = new sap.m.FlexBox("flexbox5", {
+					items:[
+						oItem9,
+						oItem10
+					],
+					displayInline: true,
+					direction: "Row",
+	// 				wrap: "Nowrap",
+					justifyContent: "SpaceAround",
+					alignItems: "Stretch",
+	// 				alignContent: "SpaceAround",
+					renderType: "Div"
+				});
+				oFlexBox5.placeAt("content");
+	
+	
+				// Create items
+				var oItem11 = new sap.m.Image("item11", {
+							src: "../images/mark1.png",
+							alt: "test image",
+							decorative: false
+						});
+	
+				var oItem12 =new sap.m.Image("item12", {
+							src: "../images/mark2.png",
+							alt: "test image",
+							decorative: false
+						});
+	
+				// Create a flexbox with items
+				var oFlexBox6 = new sap.m.FlexBox("flexbox6", {
+					items:[
+						oItem11,
+						oItem12
+					],
+					direction: "RowReverse",
+	// 				wrap: "WrapReverse",
+	// 				alignContent: "Stretch",
+				});
+				oFlexBox6.placeAt("content");
+	
+				// Create a flexbox with items
+				var oFlexBox7 = new sap.m.FlexBox("flexbox7");
+				oFlexBox7.addItem(new sap.m.Image("item13", {src: "../images/mark1.png"}));
+				oFlexBox7.addItem(new sap.m.Image("item14", {src: "../images/mark2.png"}));
+				oFlexBox7.setVisible(false);
+				oFlexBox7.placeAt("content");
 
-			var oItem6 = new sap.m.Image("item6", {
-				src: "../images/mark2.png",
-				layoutData: new sap.m.FlexItemData({
-					alignSelf: "End",
-					order: 2,
-					growFactor: 4,
-					shrinkFactor: 8,
-					baseSize: "7em"
-				})
-			});
-
-			// Create a flexbox with items
-			var oFlexBox3 = new sap.m.FlexBox("flexbox3", {
-				items:[
-					oItem5,
-					oItem6
-				]
-			});
-			oFlexBox3.setDirection('Column');
-// 			oFlexBox3.setWrap('WrapReverse');
-			oFlexBox3.setJustifyContent('Center');
-			oFlexBox3.setAlignItems('Center');
-// 			oFlexBox3.setAlignContent('Center');
-			oFlexBox3.placeAt("content");
-			
-			// Create items
-			var oItem7 = new sap.m.Image("item7", {
-						src: "../images/mark1.png",
-						alt: "test image",
-						decorative: false
-					});
-
-			var oItem8 = new sap.m.Image("item8", {
-						src: "../images/mark2.png",
-						alt: "test image",
-						decorative: false
-					});
-
-			// Create a flexbox with items
-			var oFlexBox4 = new sap.m.FlexBox("flexbox4", {
-				items:[
-					oItem7,
-					oItem8
-				],
-				displayInline: false,
-				direction: "ColumnReverse",
-// 				wrap: "Wrap",
-				justifyContent: "SpaceBetween",
-				alignItems: "Baseline",
-// 				alignContent: "SpaceBetween",
-				renderType: "List"
-			});
-			oFlexBox4.placeAt("content");
-			
-			// Create items
-			var oItem9 = new sap.m.Image("item9", {
-						src: "../images/mark1.png",
-						alt: "test image",
-						decorative: false
-					});
-
-			var oItem10 = new sap.m.Image("item10", {
-						src: "../images/mark2.png",
-						alt: "test image",
-						decorative: false
-					});
-
-			// Create a flexbox with items
-			var oFlexBox5 = new sap.m.FlexBox("flexbox5", {
-				items:[
-					oItem9,
-					oItem10
-				],
-				displayInline: true,
-				direction: "Row",
-// 				wrap: "Nowrap",
-				justifyContent: "SpaceAround",
-				alignItems: "Stretch",
-// 				alignContent: "SpaceAround",
-				renderType: "Div"
-			});
-			oFlexBox5.placeAt("content");
-
-
-			// Create items
-			var oItem11 = new sap.m.Image("item11", {
-						src: "../images/mark1.png",
-						alt: "test image",
-						decorative: false
-					});
-
-			var oItem12 =new sap.m.Image("item12", {
-						src: "../images/mark2.png",
-						alt: "test image",
-						decorative: false
-					});
-
-			// Create a flexbox with items
-			var oFlexBox6 = new sap.m.FlexBox("flexbox6", {
-				items:[
-					oItem11,
-					oItem12
-				],
-				direction: "RowReverse",
-// 				wrap: "WrapReverse",
-// 				alignContent: "Stretch",
-			});
-			oFlexBox6.placeAt("content");
-
-			// Create a flexbox with items
-			var oFlexBox7 = new sap.m.FlexBox("flexbox7");
-			oFlexBox7.addItem(new sap.m.Image("item13", {src: "../images/mark1.png"}));
-			oFlexBox7.addItem(new sap.m.Image("item14", {src: "../images/mark2.png"}));
-			oFlexBox7.setVisible(false);
-			oFlexBox7.placeAt("content");
-
-			// Switch visibility of certain items
-			setTimeout(function(){oItem4.setVisible(true);oItem4b.setVisible(false);}, 0);
+				// Switch visibility of certain items before the tests begin
+				QUnit.begin(function(){
+					oItem4.setVisible(true);
+					oItem4b.setVisible(false);
+					sap.ui.getCore().applyChanges();
+				});
+			}
 
 			QUnit.config.autostart = false;
 			jQuery(document).ready(function() {
 				QUnit.start();
-				if (!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout) {
+				if (!jQuery.support.flexBoxLayout && !jQuery.support.newFlexBoxLayout && !jQuery.support.ie10FlexBoxLayout) {
 					test("Dummy Test", function() {
 						ok(true, "At least one test needs to run to avoid test timeouts!");
 					});
@@ -270,7 +277,7 @@
 				ok(!jQuery.sap.domById("flexbox7"), "Flex Box 7 should not be rendered");
 			});
 
-			if(jQuery.support.flexBoxLayout || jQuery.support.newFlexBoxLayout) {
+			if(jQuery.support.flexBoxLayout || jQuery.support.newFlexBoxLayout || jQuery.support.ie10FlexBoxLayout) {
 				test("Flex Boxes rendered", function() {
 					ok(jQuery.sap.domById("flexbox1"), "Flex Box 1 should be rendered");
 					equal(jQuery.sap.byId("flexbox1").get(0).tagName, "DIV", "Flex Box 1 should be rendered as DIV");
@@ -346,7 +353,7 @@
 						equal(jQuery("#flexbox4").css(sVendorPrefix + 'align-items'), "baseline", "Flex Box 4 " + sVendorPrefix + "align-items property should be set correctly");
 						equal(jQuery("#flexbox5").css(sVendorPrefix + 'align-items'), "stretch", "Flex Box 5 " + sVendorPrefix + "align-items property should be set correctly");
 						equal(jQuery("#flexbox6").css(sVendorPrefix + 'align-items'), "stretch", "Flex Box 6 " + sVendorPrefix + "align-items property should be set correctly");
-					})
+					});
 // 					test("align-content", function() {
 // 						equal(jQuery("#flexbox1").css(sVendorPrefix + 'align-content'), "flex-start", "Flex Box 1 " + sVendorPrefix + "align-content property should be set correctly");
 // 						equal(jQuery("#flexbox2").css(sVendorPrefix + 'align-content'), "flex-end", "Flex Box 2 " + sVendorPrefix + "align-content property should be set correctly");
@@ -400,6 +407,91 @@
 						equal(Math.round(parseFloat(jQuery("#item4").parent().css(sVendorPrefix + 'flex-basis'))*100)/100, 213.33, "Item 4 " + sVendorPrefix + "flex-basis property should be set correctly");
 						equal(jQuery("#item5").parent().css(sVendorPrefix + 'flex-basis'), "888px", "Item 5 " + sVendorPrefix + "flex-basis property should be set correctly");
 						equal(jQuery("#item6").parent().css(sVendorPrefix + 'flex-basis'), "112px", "Item 6 " + sVendorPrefix + "flex-basis property should be set correctly");
+					});
+				}
+
+				if(jQuery.support.ie10FlexBoxLayout) { // Internet Explorer 10 which supports most of the final spec, but with some strange naming
+					module('IE10 spec property tests');
+					test("display", function() {
+						equal(jQuery("#flexbox1").css('display'), sVendorPrefix + "flexbox", "Flex Box 1 display property should be set correctly");
+						equal(jQuery("#flexbox2").css('display'), sVendorPrefix + "inline-flexbox", "Flex Box 2 display property should be set correctly");
+						equal(jQuery("#flexbox3").css('display'), sVendorPrefix + "flexbox", "Flex Box 3 display property should be set correctly");
+						equal(jQuery("#flexbox4").css('display'), sVendorPrefix + "flexbox", "Flex Box 4 display property should be set correctly");
+						equal(jQuery("#flexbox5").css('display'), sVendorPrefix + "inline-flexbox", "Flex Box 5 display property should be set correctly");
+						equal(jQuery("#flexbox6").css('display'), sVendorPrefix + "flexbox", "Flex Box 6 display property should be set correctly");
+					});
+					test("flex-direction", function() {
+						equal(jQuery("#flexbox1").css(sVendorPrefix + 'flex-direction'), "row", "Flex Box 1 " + sVendorPrefix + "flex-direction property should be set correctly");
+						equal(jQuery("#flexbox2").css(sVendorPrefix + 'flex-direction'), "row-reverse", "Flex Box 2 " + sVendorPrefix + "flex-direction property should be set correctly");
+						equal(jQuery("#flexbox3").css(sVendorPrefix + 'flex-direction'), "column", "Flex Box 3 " + sVendorPrefix + "flex-direction property should be set correctly");
+						equal(jQuery("#flexbox4").css(sVendorPrefix + 'flex-direction'), "column-reverse", "Flex Box 4 " + sVendorPrefix + "flex-direction property should be set correctly");
+						equal(jQuery("#flexbox5").css(sVendorPrefix + 'flex-direction'), "row", "Flex Box 5 " + sVendorPrefix + "flex-direction property should be set correctly");
+						equal(jQuery("#flexbox6").css(sVendorPrefix + 'flex-direction'), "row-reverse", "Flex Box 6 " + sVendorPrefix + "flex-direction property should be set correctly");
+					});
+					test("flex-pack", function() {
+						equal(jQuery("#flexbox1").css(sVendorPrefix + 'flex-pack'), "start", "Flex Box 1 " + sVendorPrefix + "flex-pack property should be set correctly");
+						equal(jQuery("#flexbox2").css(sVendorPrefix + 'flex-pack'), "end", "Flex Box 2 " + sVendorPrefix + "flex-pack property should be set correctly");
+						equal(jQuery("#flexbox3").css(sVendorPrefix + 'flex-pack'), "center", "Flex Box 3 " + sVendorPrefix + "flex-pack property should be set correctly");
+						equal(jQuery("#flexbox4").css(sVendorPrefix + 'flex-pack'), "justify", "Flex Box 4 " + sVendorPrefix + "flex-pack property should be set correctly");
+						equal(jQuery("#flexbox5").css(sVendorPrefix + 'flex-pack'), "justify", "Flex Box 5 " + sVendorPrefix + "flex-pack property should be set correctly");
+						equal(jQuery("#flexbox6").css(sVendorPrefix + 'flex-pack'), "start", "Flex Box 6 " + sVendorPrefix + "flex-pack property should be set correctly");
+					});
+					test("flex-align", function() {
+						equal(jQuery("#flexbox1").css(sVendorPrefix + 'flex-align'), "start", "Flex Box 1 " + sVendorPrefix + "flex-align property should be set correctly");
+						equal(jQuery("#flexbox2").css(sVendorPrefix + 'flex-align'), "end", "Flex Box 2 " + sVendorPrefix + "flex-align property should be set correctly");
+						equal(jQuery("#flexbox3").css(sVendorPrefix + 'flex-align'), "center", "Flex Box 3 " + sVendorPrefix + "flex-align property should be set correctly");
+						equal(jQuery("#flexbox4").css(sVendorPrefix + 'flex-align'), "baseline", "Flex Box 4 " + sVendorPrefix + "flex-align property should be set correctly");
+						equal(jQuery("#flexbox5").css(sVendorPrefix + 'flex-align'), "stretch", "Flex Box 5 " + sVendorPrefix + "flex-align property should be set correctly");
+						equal(jQuery("#flexbox6").css(sVendorPrefix + 'flex-align'), "stretch", "Flex Box 6 " + sVendorPrefix + "flex-align property should be set correctly");
+					});
+// 					test("flex-line-pack", function() {
+//						equal(jQuery("#flexbox1").css(sVendorPrefix + 'flex-line-pack'), "start", "Flex Box 1 " + sVendorPrefix + "flex-line-pack property should be set correctly");
+//						equal(jQuery("#flexbox2").css(sVendorPrefix + 'flex-line-pack'), "end", "Flex Box 2 " + sVendorPrefix + "flex-line-pack property should be set correctly");
+//						equal(jQuery("#flexbox3").css(sVendorPrefix + 'flex-line-pack'), "center", "Flex Box 3 " + sVendorPrefix + "flex-line-pack property should be set correctly");
+//						equal(jQuery("#flexbox4").css(sVendorPrefix + 'flex-line-pack'), "space-between", "Flex Box 4 " + sVendorPrefix + "flex-line-pack property should be set correctly");
+//						equal(jQuery("#flexbox5").css(sVendorPrefix + 'flex-line-pack'), "space-around", "Flex Box 5 " + sVendorPrefix + "flex-line-pack property should be set correctly");
+//						equal(jQuery("#flexbox6").css(sVendorPrefix + 'flex-line-pack'), "stretch", "Flex Box 6 " + sVendorPrefix + "flex-line-pack property should be set correctly");
+//					});
+					test("flex-postive", function() {
+						equal(jQuery("#item1").parent().css(sVendorPrefix + 'flex-positive'), 3, "Item 1 " + sVendorPrefix + "flex-positive property should be set correctly");
+						equal(jQuery("#item2").parent().css(sVendorPrefix + 'flex-positive'), 2, "Item 2 " + sVendorPrefix + "flex-positive property should be set correctly");
+						equal(Math.round(jQuery("#item3").parent().css(sVendorPrefix + 'flex-positive')*100)/100, 1.47, "Item 3 " + sVendorPrefix + "flex-positive property should be set correctly");
+						equal(jQuery("#item4").parent().css(sVendorPrefix + 'flex-positive'), 1, "Item 4 " + sVendorPrefix + "flex-positive property should be set correctly");
+						equal(Math.round(jQuery("#item5").parent().css(sVendorPrefix + 'flex-positive')*100)/100, 1.4, "Item 5 " + sVendorPrefix + "flex-positive property should be set correctly");
+						equal(jQuery("#item6").parent().css(sVendorPrefix + 'flex-positive'), 4, "Item 6 " + sVendorPrefix + "flex-positive property should be set correctly");
+					});
+					test("flex-negative", function() {
+						equal(jQuery("#item1").parent().css(sVendorPrefix + 'flex-negative'), 2, "Item 1 " + sVendorPrefix + "flex-negative property should be set correctly");
+						equal(jQuery("#item2").parent().css(sVendorPrefix + 'flex-negative'), 2, "Item 2 " + sVendorPrefix + "flex-negative property should be set correctly");
+						equal(jQuery("#item3").parent().css(sVendorPrefix + 'flex-negative'), 0, "Item 3 " + sVendorPrefix + "flex-negative property should be set correctly");
+						equal(jQuery("#item4").parent().css(sVendorPrefix + 'flex-negative'), 3, "Item 4 " + sVendorPrefix + "flex-negative property should be set correctly");
+						equal(jQuery("#item5").parent().css(sVendorPrefix + 'flex-negative'), 2, "Item 5 " + sVendorPrefix + "flex-negative property should be set correctly");
+						equal(jQuery("#item6").parent().css(sVendorPrefix + 'flex-negative'), 8, "Item 6 " + sVendorPrefix + "flex-negative property should be set correctly");
+					});
+					test("flex-order", function() {
+						equal(jQuery("#item1").parent().css(sVendorPrefix + 'flex-order'), 2, "Item 1 " + sVendorPrefix + "flex-order property should be set correctly");
+						equal(jQuery("#item2").parent().css(sVendorPrefix + 'flex-order'), 3, "Item 2 " + sVendorPrefix + "flex-order property should be set correctly");
+						equal(jQuery("#item3").parent().css(sVendorPrefix + 'flex-order'), 1, "Item 3 " + sVendorPrefix + "flex-order property should be set correctly");
+						equal(jQuery("#item4").parent().css(sVendorPrefix + 'flex-order'), 3, "Item 4 " + sVendorPrefix + "flex-order property should be set correctly");
+						equal(jQuery("#item5").parent().css(sVendorPrefix + 'flex-order'), 1, "Item 5 " + sVendorPrefix + "flex-order property should be set correctly");
+						equal(jQuery("#item6").parent().css(sVendorPrefix + 'flex-order'), 2, "Item 6 " + sVendorPrefix + "flex-order property should be set correctly");
+					});
+					test("flex-item-align", function() {
+						equal(jQuery("#item1").parent().css(sVendorPrefix + 'flex-item-align'), "center", "Item 1 " + sVendorPrefix + "flex-item-align property should be set correctly");
+						equal(jQuery("#item2").parent().css(sVendorPrefix + 'flex-item-align'), "baseline", "Item 2 " + sVendorPrefix + "flex-item-align property should be set correctly");
+						equal(jQuery("#item3").parent().css(sVendorPrefix + 'flex-item-align'), "stretch", "Item 3 " + sVendorPrefix + "flex-item-align property should be set correctly");
+						// A bug in IE 10 let's it return 'auto' instead of the parent's align-items value when no value for align-self is set
+						equal(jQuery("#item4").parent().css(sVendorPrefix + 'flex-item-align'), "auto", "Item 4 " + sVendorPrefix + "flex-item-align property should be set correctly");
+						equal(jQuery("#item5").parent().css(sVendorPrefix + 'flex-item-align'), "start", "Item 5 " + sVendorPrefix + "flex-item-align property should be set correctly");
+						equal(jQuery("#item6").parent().css(sVendorPrefix + 'flex-item-align'), "end", "Item 6 " + sVendorPrefix + "flex-item-align property should be set correctly");
+					});
+					test("flex-preferred-size", function() {
+						equal(jQuery("#item1").parent().css(sVendorPrefix + 'flex-preferred-size'), "200px", "Item 1 " + sVendorPrefix + "flex-preferred-size property should be set correctly");
+						equal(jQuery("#item2").parent().css(sVendorPrefix + 'flex-preferred-size'), "2500px", "Item 2 " + sVendorPrefix + "flex-preferred-size property should be set correctly");
+						equal(jQuery("#item3").parent().css(sVendorPrefix + 'flex-preferred-size'), "137px", "Item 3 " + sVendorPrefix + "flex-preferred-size property should be set correctly");
+						equal(jQuery("#item4").parent().css(sVendorPrefix + 'flex-preferred-size'), "160pt", "Item 4 " + sVendorPrefix + "flex-preferred-size property should be set correctly");
+						equal(jQuery("#item5").parent().css(sVendorPrefix + 'flex-preferred-size'), "888px", "Item 5 " + sVendorPrefix + "flex-preferred-size property should be set correctly");
+						equal(jQuery("#item6").parent().css(sVendorPrefix + 'flex-preferred-size'), "7em", "Item 6 " + sVendorPrefix + "flex-preferred-size property should be set correctly");
 					});
 				}
 
