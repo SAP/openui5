@@ -318,7 +318,6 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 
 		/**
 		 * Sets up the fake server for OData v4 responses unless real OData responses are requested.
-		 * The base path for the responses is "sap/ui/core/qunit/odata/v4/data".
 		 *
 		 * The behavior is controlled by the request property "realOData". There are two options:
 		 * <ul>
@@ -334,10 +333,15 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		 *   a Sinon sandbox as created using <code>sinon.sandbox.create()</code>
 		 * @param {map} mFixture
 		 *   the fixture for {@link sap.ui.test.TestUtils#.useFakeServer}
+		 * @param {string} [sBase="sap/ui/core/qunit/odata/v4/data"]
+		 *   The base path for <code>source</code> values in the fixture. The path must be relative
+		 *   to the <code>test</code> folder of the <code>sap.ui.core</code> project, typically it
+		 *   should start with "sap". It must not end with '/'.
 		 */
-		setupODataV4Server : function (oSandbox, mFixture) {
+		setupODataV4Server : function (oSandbox, mFixture, sBase) {
 			if (!bRealOData) {
-				TestUtils.useFakeServer(oSandbox, "sap/ui/core/qunit/odata/v4/data", mFixture);
+				TestUtils.useFakeServer(oSandbox, sBase || "sap/ui/core/qunit/odata/v4/data",
+					mFixture);
 			}
 		}
 	};
