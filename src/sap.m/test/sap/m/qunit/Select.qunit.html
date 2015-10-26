@@ -5229,6 +5229,66 @@
 		/* unbindObject()                       */
 		/* ------------------------------------ */
 
+		module("clone()");
+
+		// BCP 1580183712
+		test('it should modify the cloned "selectedItem" association to point to the new item', function() {
+
+			// system under test
+			var oExpectedItem = new sap.ui.core.Item({
+				text: "lorem ipsum 2"
+			});
+
+			var oSelect = new sap.m.Select({
+				items: [
+					new sap.ui.core.Item({
+						text: "lorem ipsum 1"
+					}),
+
+					oExpectedItem
+				],
+				selectedItem: oExpectedItem
+			});
+
+			// act
+			var oSelectClone = oSelect.clone();
+
+			// assert
+			ok(oSelectClone.getSelectedItem().getText() === oExpectedItem.getText());
+
+			// cleanup
+			oSelect.destroy();
+			oSelectClone.destroy();
+		});
+
+		// BCP 1580183712
+		test("it should set the selection correctly after the control is cloned", function() {
+
+			// system under test
+			var oSelect = new sap.m.Select({
+				forceSelection: false,
+				items: [
+					new sap.ui.core.Item({
+						text: "lorem ipsum 1"
+					}),
+
+					new sap.ui.core.Item({
+						text: "lorem ipsum 2"
+					})
+				]
+			});
+
+			// act
+			var oSelectClone = oSelect.clone();
+
+			// assert
+			ok(oSelectClone.getSelectedItem() === null);
+
+			// cleanup
+			oSelect.destroy();
+			oSelectClone.destroy();
+		});
+
 		module("_isRequiredSelectElement()");
 
 		test("_isRequiredSelectElement() it should return true when the width property is set to auto", function() {
