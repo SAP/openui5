@@ -411,6 +411,7 @@
 		number : "3.628.000",
 		numberUnit : "EUR",
 		condensed : true,
+		backgroundDesign : sap.m.BackgroundDesign.Transparent,
 		attributes : [ new sap.m.ObjectAttribute({
 			text : "This is the only attribute in the object header"
 		}) ],
@@ -421,7 +422,6 @@
 		number : "3.628.000",
 		numberUnit : "EUR",
 		condensed : true,
-		backgroundDesign : sap.m.BackgroundDesign.Solid,
 		attributes : [ new sap.m.ObjectAttribute({
 			text : "This is the only attribute in the object header"
 		}) ],
@@ -459,15 +459,6 @@
 		equal(jQuery("#ohc2.sapMOHBgSolid").length, 1, "Solid background style should be set.");
 		equal(jQuery.sap.byId("ohc2").css("background-color"), "rgb(255, 255, 255)", "Background color is solid");
 	});
-
-	test("Background is transparent for Basic OH", function() {
-
-		var transparentCssString = sap.ui.Device.browser.firefox || sap.ui.Device.browser.internet_explorer ? "transparent" : "rgba(0, 0, 0, 0)";
-		
-		equal(jQuery("#" + ohBasicId + ".sapMOHBgSolid").length, 0, "Solid background style should not be set.");
-		equal(jQuery.sap.byId(ohBasicId).css("background-color"), transparentCssString, "Background color is transparent");
-	});
-	
 	
 	/******************************************************************/
 

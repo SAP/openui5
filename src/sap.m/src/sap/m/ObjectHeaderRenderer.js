@@ -137,6 +137,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		}
 		delete oOH.__controlsToBeRendered;
 	};
+
 	
 	/**
 	 * Renders hidden div with ARIA descriptions of the favorite and flag icons.
@@ -700,9 +701,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 		oRM.addClass("sapMOH");
 		if (bCondensed) {
 			oRM.addClass("sapMOHC");
-			oRM.addClass("sapMOHBg" + oOH.getBackgroundDesign());
 		}
 
+		oRM.addClass("sapMOHBg" + oOH._getBackground());
+		
 		oRM.writeClasses();
 		var sTooltip = oOH.getTooltip_AsString();
 		if (sTooltip) {
@@ -783,11 +785,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 
 		oRM.write("<div");
 		oRM.addClass("sapMOHR");
+
+		oRM.addClass("sapMOHRBg" + oOH._getBackground());
 		oRM.writeClasses();
 		oRM.write(">");
 		oRM.write("<div");
 
-		oRM.addClass("sapMOHRBg" + oOH.getBackgroundDesign());
 		if (sap.ui.Device.system.desktop && jQuery('html').hasClass("sapUiMedia-Std-Desktop") && oOH.getFullScreenOptimized() && oOH._iCountVisAttrStat >= 1 && oOH._iCountVisAttrStat <= 3) {
 			oRM.addClass("sapMOHRStatesOneOrThree");
 		}
