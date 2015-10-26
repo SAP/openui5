@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.Link.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator'],
-	function(jQuery, library, Control, EnabledPropagator) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/InvisibleText', 'sap/ui/core/EnabledPropagator'],
+	function(jQuery, library, Control, InvisibleText, EnabledPropagator) {
 	"use strict";
 
 
@@ -202,14 +202,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var $this = this.$();
 		if ($this.length) { // only when actually rendered
 			$this.toggleClass("sapMLnkSubtle", bSubtle);
+
 			if (bSubtle) {
-				if (!this.getDomRef("linkSubtle")) {
-					$this.append("<label id='" + this.getId() + "-linkSubtle" + "' class='sapUiHidden'>" + this._getLinkDescription("LINK_SUBTLE") + "</label>");
-				}
+				this._addToDescribedBy($this, this._sAriaLinkSubtleId);
 			} else {
-				this.$("linkSubtle").remove();
+				this._removeFromDescribedBy($this, this._sAriaLinkSubtleId);
 			}
 		}
+
+		if (bSubtle && !Link.prototype._sAriaLinkSubtleId) {
+			Link.prototype._sAriaLinkSubtleId = this._getARIAInvisibleTextId("LINK_SUBTLE");
+		}
+
 		return this;
 	};
 
@@ -219,14 +223,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var $this = this.$();
 		if ($this.length) { // only when actually rendered
 			$this.toggleClass("sapMLnkEmphasized", bEmphasized);
-			if (bEmphasized) { // strictly spoken this should only be done when accessibility mode is true. But it is true by default, so not sure it is worth checking...
-				if (!this.getDomRef("linkEmphasized")) {
-					$this.append("<label id='" + this.getId() + "-linkEmphasized" + "' class='sapUiHidden'>" + this._getLinkDescription("LINK_EMPHASIZED") + "</label>");
-				}
+
+			if (bEmphasized) {
+				this._addToDescribedBy($this, this._sAriaLinkEmphasizedId);
 			} else {
-				this.$("linkEmphasized").remove();
+				this._removeFromDescribedBy($this, this._sAriaLinkEmphasizedId);
 			}
 		}
+
+		if (bEmphasized && !Link.prototype._sAriaLinkEmphasizedId) {
+			Link.prototype._sAriaLinkEmphasizedId = this._getARIAInvisibleTextId("LINK_EMPHASIZED");
+		}
+
 		return this;
 	};
 
@@ -278,16 +286,53 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Translates a text from the resource bundle.
+	 * Creates ARIA sap.ui.core.InvisibleText for the given translation text
 	 *
-	 * @param {String} sKey the resource to be translated
-	 * @private
-	 * @returns {String} the translated text
+	 * @param {String} sResourceBundleKey the resource key in the translation bundle
+	 * @returns {String} the InvisibleText control ID
 	 */
-	Link.prototype._getLinkDescription = function(sKey) {
+	Link.prototype._getARIAInvisibleTextId = function (sResourceBundleKey) {
 		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		var sText = oRb.getText(sKey);
-		return sText;
+
+		return new InvisibleText({
+			text: oRb.getText(sResourceBundleKey)
+		}).toStatic().getId();
+	};
+
+	/**
+	 * Adds ARIA InvisibleText ID to aria-secribedby
+	 *
+	 * @param {Object} $oLink control DOM reference
+	 * @param {String} sInvisibleTextId  static Invisible Text ID to be added
+	 */
+	Link.prototype._addToDescribedBy = function ($oLink, sInvisibleTextId) {
+		var sAriaDescribedBy = $oLink.attr("aria-describedby");
+
+		if (sAriaDescribedBy) {
+			$oLink.attr("aria-describedby",  sAriaDescribedBy + " " +  sInvisibleTextId); // Add the ID at the end, separated with space
+		} else { 
+			$oLink.attr("aria-describedby",  sInvisibleTextId);
+		}
+	};
+
+	/**
+	 * Removes ARIA InvisibleText ID from aria-secribedby or the attribute itself
+	 *
+	 * @param {Object} $oLink control DOM reference
+	 * @param {String} sInvisibleTextId  static Invisible Text ID to be removed
+	 */
+	Link.prototype._removeFromDescribedBy = function ($oLink, sInvisibleTextId) {
+		var sAriaDescribedBy = $oLink.attr("aria-describedby");
+
+		if (sAriaDescribedBy.indexOf(sInvisibleTextId) !== -1) { // Remove only the static InvisibleText ID for Emphasized link
+			sAriaDescribedBy = sAriaDescribedBy.replace(sInvisibleTextId, '');
+
+			if (sAriaDescribedBy.length > 1) {
+				$oLink.attr("aria-describedby",  sAriaDescribedBy);
+			} else {
+				$oLink.removeAttr("aria-describedby"); //  Remove the aria-describedby attribute, as it`s not needed
+			}
+		}
 	};
 
 	return Link;

@@ -22,26 +22,38 @@
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	LinkRenderer.render = function(rm, oControl) {
-		var sTextDir = oControl.getTextDirection();
-		var sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir);
+		var sTextDir = oControl.getTextDirection(),
+			sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir),
+			oAccAttributes =  {
+				role: 'link',
+				haspopup: !oControl.getHref()
+			};
 
 		// Link is rendered as a "<a>" element
 		rm.write("<a");
 		rm.writeControlData(oControl);
 
-		// ARIA attributes
-		rm.writeAccessibilityState(oControl, {
-			role: 'link',
-			haspopup: !oControl.getHref()
-		});
-
 		rm.addClass("sapMLnk");
 		if (oControl.getSubtle()) {
 			rm.addClass("sapMLnkSubtle");
+
+			//Add aria-describedby for the SUBTLE announcement
+			if (oAccAttributes.describedby) {
+				oAccAttributes.describedby += " " + oControl._sAriaLinkSubtleId;
+			} else {
+				oAccAttributes.describedby = oControl._sAriaLinkSubtleId;
+			}
 		}
 
 		if (oControl.getEmphasized()) {
 			rm.addClass("sapMLnkEmphasized");
+
+			//Add aria-describedby for the EMPHASIZED announcement
+			if (oAccAttributes.describedby) {
+				oAccAttributes.describedby += " " + oControl._sAriaLinkEmphasizedId;
+			} else {
+				oAccAttributes.describedby = oControl._sAriaLinkEmphasizedId;
+			}
 		}
 
 		if (!oControl.getEnabled()) {
@@ -87,20 +99,13 @@
 			rm.writeAttribute("dir", sTextDir.toLowerCase());
 		}
 
+		rm.writeAccessibilityState(oControl, oAccAttributes);
 		rm.writeClasses();
 		rm.writeStyles();
 		rm.write(">"); // opening <a> tag
 
 		if (oControl.getText()) {
 			rm.writeEscaped(oControl.getText());
-		}
-
-		// ARIA write hidden element for emphasized or subtle link
-		if (oControl.getEmphasized()) {
-			rm.write("<label id='" + oControl.getId() + "-linkEmphasized" + "' class='sapUiHidden'>" + oControl._getLinkDescription("LINK_EMPHASIZED") + "</label>");
-		}
-		if (oControl.getSubtle()) {
-			rm.write("<label id='" + oControl.getId() + "-linkSubtle" + "' class='sapUiHidden'>" + oControl._getLinkDescription("LINK_SUBTLE") + "</label>");
 		}
 
 		rm.write("</a>");
