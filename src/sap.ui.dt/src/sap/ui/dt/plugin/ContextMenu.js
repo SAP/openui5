@@ -10,7 +10,7 @@ sap.ui.define([
 
 	/**
 	 * Constructor for a new ContextMenu.
-	 * 
+	 *
 	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 * @class The ContextMenu registers event handler to open the context menu. Menu entries can dynamically be added
@@ -42,7 +42,7 @@ sap.ui.define([
 
 	/**
 	 * Register an overlay
-	 * 
+	 *
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
@@ -53,7 +53,7 @@ sap.ui.define([
 
 	/**
 	 * Additionally to super->deregisterOverlay this method detaches the browser events
-	 * 
+	 *
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
@@ -77,7 +77,7 @@ sap.ui.define([
 
 	/**
 	 * Add menu items in the following format
-	 * 
+	 *
 	 * @param {object} mMenuItem json object with the menu item settings
 	 * @param {string} mMenuItem.id id, which corresponds to the text key
 	 * @param {string} aMenuItems.text menu item text (translated)
@@ -111,7 +111,7 @@ sap.ui.define([
 
 	/**
 	 * Called when an context menu item gets selected by user
-	 * 
+	 *
 	 * @param {sap.ui.base.Event} oEvent event object
 	 * @override
 	 * @private
@@ -129,7 +129,7 @@ sap.ui.define([
 
 	/**
 	 * Handle context menu event
-	 * 
+	 *
 	 * @param {sap.ui.base.Event} oEvent event object
 	 * @private
 	 */
@@ -152,18 +152,18 @@ sap.ui.define([
 
 	/**
 	 * Handle keydown event
-	 * 
+	 *
 	 * @param {sap.ui.base.Event} oEvent event object
 	 * @private
 	 */
 	ContextMenu.prototype._onKeyDown = function(oEvent) {
-		// hide browser-context menu
-		if (oEvent.preventDefault) {
-			oEvent.preventDefault();
-		}
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 
 		if ((oEvent.keyCode === jQuery.sap.KeyCodes.F10) && (oEvent.shiftKey === true) && (oEvent.altKey === false) && (oEvent.ctrlKey === false)) {
+			// hide browser-context menu
+			if (oEvent.preventDefault) {
+				oEvent.preventDefault();
+			}
 			if (oOverlay && oOverlay.isSelectable()) {
 				if (!oOverlay.isSelected()) {
 					oOverlay.setSelected(true);
