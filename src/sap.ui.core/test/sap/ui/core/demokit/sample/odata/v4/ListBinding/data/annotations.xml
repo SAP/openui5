@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<edmx:Reference Uri="[...]">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/local_V4/IWBEP/TEA_BUSI/$metadata">
+		<edmx:Include Namespace="com.sap.gateway.iwbep.tea_busi.v0001"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="foo" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			<Annotations Target="com.sap.gateway.iwbep.tea_busi.v0001.Worker">
+				<Annotation Term="com.sap.vocabularies.UI.v1.HeaderInfo">
+					<Record>
+						<PropertyValue Property="TypeName" String="Worker"/>
+						<PropertyValue Property="TypeNamePlural" String="Workers"/>
+						<PropertyValue Property="Title">
+							<Record Type="com.sap.vocabularies.UI.v1.DataField">
+								<PropertyValue Property="Label" String="Worker's ID"/>
+								<PropertyValue Property="Value" Path="ID"/>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="Description">
+							<Record Type="com.sap.vocabularies.UI.v1.DataField">
+								<PropertyValue Property="Label" String="Worker's Name"/>
+								<PropertyValue Property="Value" Path="Name"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
