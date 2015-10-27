@@ -1,5 +1,4 @@
 .sapMTB {
-	padding: 0;
 	height: 3rem;
 	background: @sapHCStandardBG;
 	border-bottom: 1px solid @sapHCStandardFG;
@@ -9,20 +8,10 @@
 	min-width: 2.5rem; /* default min-width value for the shrinkable items */
 }
 
-/* Transparent Toolbar Context */
-.sapMTB-Transparent-CTX.sapMTB {
-	padding-left: 1rem;
-}
-
-/* Overwrite the margin of the IBar for Transparent context*/
-.sapMIBar.sapMTB-Transparent-CTX.sapMTB > :first-child {
-	margin-left: 0;
-}
-
 /* Info Toolbar Context */
 .sapMTB-Info-CTX.sapMTB {
 	height: 1.75rem;
-	padding: 0 .5rem;
+	padding: 0 .25rem 0 .5rem;
 	margin: 0.125rem 0.1875rem;
 	border: 0.125rem solid @sapHCStandardFG;
 	border-radius: 0.3125rem;
@@ -50,15 +39,6 @@
 		border: 0.125rem dotted @sapHCStandardFG;
 		pointer-events: none;
 	}
-}
-
-.sapMTB-Info-CTX.sapMTB > * {
-	margin: 0 .5rem;
-}
-
-/* Overwrite the margin of the IBar for Info context */
-.sapMIBar.sapMTB-Info-CTX.sapMTB > :first-child {
-	margin: 0 .5rem;
 }
 
 /********** COMPACT DESIGN ************/

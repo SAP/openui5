@@ -771,23 +771,27 @@
 		}
 
 		assertButton(oFirstButton, {
-			left: 4,
-			right : 0
+			left: 2,
+			right : 2
 		});
 
 		assertButton(oMiddleButton, {
-			left: 4,
-			right : 0
+			left: 2,
+			right : 2
 		});
 
 		assertButton(oLastButton, {
-			left: 4,
-			right : 4
+			left: 2,
+			right : 2
 		});
+
+		strictEqual(oTB.$().css("padding-left"), "2px", "The toolbar had the correct left padding");
+		strictEqual(oTB.$().css("padding-right"), "2px", "The toolbar had the correct right padding");
 
 		// Cleanup
 		oTB.destroy();
 	});
+
 
 </script>
 </head>
