@@ -19,9 +19,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'], function(jQuery, Ele
 	 * @author SAP SE
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
-	 * @private
+	 * @public
 	 * @constructor
-	 * @since 1.32.0
+	 * @since 1.34.0
 	 * @alias sap.m.MaskInputRule
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -133,4 +133,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'], function(jQuery, Ele
 
 	return MaskInputRule;
 
-}, /* bExport= */ false);
+}, /* bExport= */ true);
