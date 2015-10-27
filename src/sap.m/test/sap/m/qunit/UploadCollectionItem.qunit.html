@@ -3,19 +3,14 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <title>Test Page for sap.m.UploadCollectionItem</title>
-<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
-	type="text/javascript" data-sap-ui-noConflict="true"
-	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
-</script>
-<link rel="stylesheet"
-	href="../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal" type="text/javascript" data-sap-ui-noConflict="true"
+data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js"></script>
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript">
 	if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
@@ -24,7 +19,7 @@
 	/* --------------------------------------- */
 	/* Test properties                         */
 	/* --------------------------------------- */
-	module("I. Initial Test deprecated properties", {
+	QUnit.module("I. Initial Test deprecated properties", {
 		setup : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
 				contributor : "Susan Baker",
@@ -45,14 +40,14 @@
 		}
 	});
 
-	test("Check if the deprecated properties were set with initial load", function(assert) {
+	QUnit.test("Check if the deprecated properties were set with initial load", function(assert) {
 		assert.ok(this.oUploadCollectionItem, "UploadCollectionItem instantiated");
 		assert.equal(this.oUploadCollectionItem.getContributor(), "Susan Baker", "Contributor property is set");
 		assert.equal(this.oUploadCollectionItem.getUploadedDate(), "2014-07-30", "UploadedDate property is set");
 		assert.equal(this.oUploadCollectionItem.getFileSize(), "20", "FileSize property is set");
 	});
 
-	test("Check the correct sequence and completeness of deprecated properties in the aggregation attributes", function(assert) {
+	QUnit.test("Check the correct sequence and completeness of deprecated properties in the aggregation attributes", function(assert) {
 		var aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
 		assert.equal(aAggregation.length, "3", "Empty aggregation filled with 3 attributes");
 		assert.equal(aAggregation[0].getText(), "2014-07-30", "1. attribute: uploadedDate");
@@ -60,7 +55,7 @@
 		assert.equal(aAggregation[2].getText(), "20", "3. attribute: fileSize");
 	});
 
-	test("Check deprecated properties before and after a change with the corresponding setter function", function(assert) {
+	QUnit.test("Check deprecated properties before and after a change with the corresponding setter function", function(assert) {
 		var aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
 		//before change
 		assert.equal(aAggregation.length, "3", "Empty aggregation filled with 3 attributes");
@@ -78,7 +73,7 @@
 		assert.equal(aAggregation[2].getText(), "45", "Attribute 'fileSize' updated");
 	});
 
-	module("II. Test deprecated properties with setter", {
+	QUnit.module("II. Test deprecated properties with setter", {
 		setup : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
 //				contributor : "Susan Baker",
@@ -99,7 +94,7 @@
 		}
 	});
 
-	test("Set deprecated properties in mixed sequence", function(assert) {
+	QUnit.test("Set deprecated properties in mixed sequence", function(assert) {
 		assert.ok(this.oUploadCollectionItem, "UploadCollectionItem instantiated");
 		//fileSize
 		this.oUploadCollectionItem.setFileSize(20);
@@ -119,7 +114,7 @@
 		assert.equal(aAggregation[2].getText(), "20", "3. attribute: fileSize");
 	});
 
-	module("III. Test deprecated properties with prefilled aggregation", {
+	QUnit.module("III. Test deprecated properties with prefilled aggregation", {
 		setup : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
 				attributes : [ new sap.m.ObjectAttribute({
@@ -134,7 +129,7 @@
 		}
 	});
 
-	test("Check of the removeAllAggregation/removeAllAttributes", function(assert) {
+	QUnit.test("Check of the removeAllAggregation/removeAllAttributes", function(assert) {
 		assert.ok(this.oUploadCollectionItem, "UploadCollectionItem instantiated");
 
 		//removeAllAggregation
@@ -151,7 +146,7 @@
 		assert.equal(aAggregation, null, "Original attributes with RemoveAllAggregation were deleted");
 	});
 
-	test("Check of the removeAllAggregation with deprecated Properties", function(assert) {
+	QUnit.test("Check of the removeAllAggregation with deprecated Properties", function(assert) {
 		this.oUploadCollectionItem.setFileSize(45);
 		this.oUploadCollectionItem.setUploadedDate("2015-08-31");
 		this.oUploadCollectionItem.setContributor("John Doe");
@@ -172,7 +167,7 @@
 		assert.equal(aAggregation[2].getText(), "45", "Attribute 'fileSize' set");
 	});
 
-	test("Set deprecated properties with prefilled attributes aggregation", function(assert) {
+	QUnit.test("Set deprecated properties with prefilled attributes aggregation", function(assert) {
 		var aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
 		assert.equal(aAggregation.length, 1, "1 attribute available");
 		this.oUploadCollectionItem.setFileSize(45);
@@ -197,12 +192,12 @@
 		this.oUploadCollectionItem.removeAllAggregation(dummyName);
 		aAggregation = this.oUploadCollectionItem.getAggregation("attributes");
 		assert.equal(aAggregation.length, 2, "2 attributes still available");
-		
+
 		aAggregation = this.oUploadCollectionItem.getAggregation("_propertyAttributes");
 		assert.equal(aAggregation.length, 3, "3 deprecated attributes still available");
 	});
 
-	module("IV. Test getter for all attributes", {
+	QUnit.module("IV. Test getter for all attributes", {
 		setup : function() {
 			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
 				attributes : [ new sap.m.ObjectAttribute({
@@ -217,12 +212,12 @@
 		}
 	});
 
-	test("Test getAllAttributes", function(assert) {
+	QUnit.test("Test getAllAttributes", function(assert) {
 		//set deprecated properties
 		this.oUploadCollectionItem.setContributor("deprecatedContributor");
 		this.oUploadCollectionItem.setUploadedDate("deprecatedDate");
 		this.oUploadCollectionItem.setFileSize(555);
-		
+
 		this.oUploadCollectionItem.addAggregation("attributes", new sap.m.ObjectAttribute({
 			active : false,
 			text : "someAttribute"
@@ -236,11 +231,40 @@
 		assert.equal(aAggregation[4].getText(), "someAttribute", "Attribute someAttribute at fifth position");
 	});
 
+	QUnit.module("UploadCollectionItem selected", {
+		setup : function() {
+			this.oUploadCollectionItem = new sap.m.UploadCollectionItem({
+				attributes : [ new sap.m.ObjectAttribute({
+					active : false,
+					text : "Test"
+				})]
+			});
+			sap.ui.getCore().applyChanges();
+		},
+		teardown : function() {
+			this.oUploadCollectionItem.destroy();
+			this.oUploadCollectionItem.fireEvent.restore();
+		}
+	});
+
+	QUnit.test("Test set and get selected", function(assert) {
+		//Arrange
+		var eventSpy = sinon.stub(this.oUploadCollectionItem, "fireEvent");
+
+		//Act
+		this.oUploadCollectionItem.setSelected(true);
+
+		//Assert
+		assert.ok(eventSpy.called, "Function 'fireEvent' was called");
+		assert.ok(eventSpy.calledOnce, "Function 'fireEvent' was called once");
+		assert.ok(eventSpy.calledWithExactly("selected"), "Function 'fireEvent' was called with parameter 'selected'")
+		assert.ok(this.oUploadCollectionItem.getSelected(), "Item has been selected");
+	});
 </script>
 
 </head>
 <body class="sapUiBody">
 	<div id="qunit"></div>
-	<div id="uiArea"></div>
+	<div id="qunit-fixture"></div>
 </body>
 </html>

@@ -17,6 +17,7 @@
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript" src="UploadCollectionForPendingUpload.qunit.js"></script>
+<script type="text/javascript" src="UploadCollectionToolbar.qunit.js"></script>
 
 <script type="text/javascript">
 	if(!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
@@ -103,6 +104,7 @@
 		},
 		teardown : function() {
 			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
 		}
 	});
 
@@ -137,20 +139,24 @@
 		},
 		teardown : function() {
 			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
 		}
 	});
 
-	QUnit.test("Get number of attachments titel (defaul text)", function(assert) {
+	QUnit.test("Set number of attachments title (defaul text)", function(assert) {
 		var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_ATTACHMENTS", [999]);
-		assert.strictEqual(this.oUploadCollection._getNumberOfAttachmentsTitle(999).getText(), sText, "Correct Title text for number of attachments.");
+		this.oUploadCollection._setNumberOfAttachmentsTitle(999);
+		assert.strictEqual(this.oUploadCollection._oNumberOfAttachmentsTitle.getText(), sText, "Correct Title text for number of attachments.");
 	});
 
-	QUnit.test("Get number of attachments title", function(assert) {
+	QUnit.test("Set number of attachments title", function(assert) {
 		var sText = this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_ATTACHMENTS", [999]);
-		assert.strictEqual(this.oUploadCollection._getNumberOfAttachmentsTitle(999).getText(), sText, "Correct Title text for number of attachments");
+		this.oUploadCollection._setNumberOfAttachmentsTitle(999);
+		assert.strictEqual(this.oUploadCollection._oNumberOfAttachmentsTitle.getText(), sText, "Correct Title text for number of attachments");
 		var sText = "My own text for attachments";
 		this.oUploadCollection.setNumberOfAttachmentsText("My own text for attachments");
-		assert.strictEqual(this.oUploadCollection._getNumberOfAttachmentsTitle().getText(), sText, "Correct Title text for number of attachments.");
+		this.oUploadCollection._setNumberOfAttachmentsTitle();
+		assert.strictEqual(this.oUploadCollection._oNumberOfAttachmentsTitle.getText(), sText, "Correct Title text for number of attachments.");
 		sap.ui.getCore().applyChanges();
 		assert.strictEqual(jQuery(jQuery.sap.domById("uploadCollection-numberOfAttachmentsTitle")).text(), sText);
 	});
@@ -287,6 +293,235 @@
 		sap.ui.getCore().applyChanges();
 	});
 
+	QUnit.module("List API Methods", {
+		setup : function() {
+			this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
+				items : {
+					path : "/items",
+					template : oItemTemplate
+				}
+			});
+			this.oUploadCollection.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown : function() {
+			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
+		}
+	});
+
+	QUnit.test("Set and get selected items in Multiple Mode", function(assert) {
+		//Arrange
+		var aAllItems = this.oUploadCollection.getItems();
+		this.oUploadCollection.setMode(sap.m.ListMode.MultiSelect);
+
+		//Act
+		var oReturnedUploadCollection = this.oUploadCollection.setSelectedItem(aAllItems[0], true);
+		oReturnedUploadCollection = this.oUploadCollection.setSelectedItem(aAllItems[1], true);
+		oReturnedUploadCollection = this.oUploadCollection.setSelectedItem(aAllItems[2], true);
+
+		//Assert
+		assert.ok(oReturnedUploadCollection instanceof sap.m.UploadCollection, "Returned value is UploadCollection");
+		assert.equal(this.oUploadCollection.getSelectedItems().length, 3, "3 items have been selected");
+		assert.deepEqual(this.oUploadCollection.getSelectedItems()[0], aAllItems[0], "Data of first selected item is correct");
+		assert.ok(this.oUploadCollection.getSelectedItems()[0] instanceof sap.m.UploadCollectionItem, "First item returned is UploadCollectionItem");
+		assert.deepEqual(this.oUploadCollection.getSelectedItems()[1], aAllItems[1], "Data of second selected item is correct");
+		assert.ok(this.oUploadCollection.getSelectedItems()[1] instanceof sap.m.UploadCollectionItem, "Second item returned is UploadCollectionItem");
+		assert.deepEqual(this.oUploadCollection.getSelectedItems()[2], aAllItems[2], "Data of third selected item is correct");
+		assert.ok(this.oUploadCollection.getSelectedItems()[2] instanceof sap.m.UploadCollectionItem, "Third item returned is UploadCollectionItem");
+	});
+
+	QUnit.test("Set and reset selected items in Multiple Mode", function(assert) {
+		//Arrange
+		var aAllItems = this.oUploadCollection.getItems();
+		this.oUploadCollection.setMode(sap.m.ListMode.MultiSelect);
+
+		//Act
+		this.oUploadCollection.setSelectedItem(aAllItems[0], true);
+		this.oUploadCollection.setSelectedItem(aAllItems[1], true);
+
+		//Assert
+		assert.equal(this.oUploadCollection.getSelectedItems().length, 2, "2 items have been selected before reset");
+		this.oUploadCollection.setSelectedItem(aAllItems[0], false);
+		assert.equal(this.oUploadCollection.getSelectedItems().length, 1, "1 item has been selected after reset");
+		assert.deepEqual(this.oUploadCollection.getSelectedItems()[0], aAllItems[1], "Data of first selected item is correct");
+		assert.ok(this.oUploadCollection.getSelectedItems()[0] instanceof sap.m.UploadCollectionItem, "First item returned is UploadCollectionItem");
+		assert.ok(this.oUploadCollection.getItems()[1].getSelected(), "The getSelected of UploadCollectionItem has been set correctly");
+	});
+
+	QUnit.test("Set and reset selected items in Single Mode", function(assert) {
+		//Arrange
+		var aAllItems = this.oUploadCollection.getItems();
+		this.oUploadCollection.setMode(sap.m.ListMode.SingleSelect);
+
+		//Act
+		this.oUploadCollection.setSelectedItem(aAllItems[0], true);
+		this.oUploadCollection.setSelectedItem(aAllItems[1], true);
+
+		//Assert
+		assert.equal(this.oUploadCollection.getSelectedItems().length, 1, "1 item has been selected after reset");
+		assert.deepEqual(this.oUploadCollection.getSelectedItems()[0], aAllItems[1], "Data of first selected item is correct");
+		assert.ok(this.oUploadCollection.getSelectedItems()[0] instanceof sap.m.UploadCollectionItem, "First item returned is UploadCollectionItem");
+		assert.ok(this.oUploadCollection.getItems()[1].getSelected(), "The getSelected of UploadCollectionItem has been set correctly");
+		assert.equal(this.oUploadCollection.getItems()[0].getSelected(), false, "The getSelected of UploadCollectionItem has been reset correctly");
+	});
+
+	QUnit.test("Set and get selected items by Id", function(assert) {
+		//Arrange
+		var aAllItems = this.oUploadCollection.getItems();
+		this.oUploadCollection.setMode(sap.m.ListMode.MultiSelect);
+
+		//Act
+		var oReturnedUploadCollection = this.oUploadCollection.setSelectedItemById(aAllItems[0].getId(), true);
+		oReturnedUploadCollection = this.oUploadCollection.setSelectedItemById(aAllItems[2].getId(), true);
+
+		//Assert
+		assert.ok(oReturnedUploadCollection instanceof sap.m.UploadCollection, "Returned value is UploadCollection");
+		assert.equal(this.oUploadCollection.getSelectedItems().length, 2, "2 items have been selected");
+		assert.deepEqual(this.oUploadCollection.getSelectedItems()[0], aAllItems[0], "Data of first selected item is correct");
+		assert.ok(this.oUploadCollection.getSelectedItems()[0] instanceof sap.m.UploadCollectionItem, "First item returned is UploadCollectionItem");
+		assert.deepEqual(this.oUploadCollection.getSelectedItems()[1], aAllItems[2], "Data of second selected item is correct");
+		assert.ok(this.oUploadCollection.getSelectedItems()[1] instanceof sap.m.UploadCollectionItem, "Second item returned is UploadCollectionItem");
+	});
+
+	QUnit.test("Get selected items without selection", function(assert) {
+		//Arrange
+
+		//Act
+
+		//Assert
+		assert.equal(this.oUploadCollection.getSelectedItems().length, 0, "0 items have been selected");
+	});
+
+	QUnit.test("Set and get selected item", function (assert) {
+		//Arrange
+		var aAllItems = this.oUploadCollection.getItems();
+		this.oUploadCollection.setMode(sap.m.ListMode.SingleSelect);
+
+		//Act
+		this.oUploadCollection.setSelectedItem(aAllItems[0], true);
+
+		//Assert
+		assert.deepEqual(this.oUploadCollection.getSelectedItem(), aAllItems[0], "Selected item is correct");
+		assert.ok(this.oUploadCollection.getSelectedItem() instanceof sap.m.UploadCollectionItem, "Item returned is UploadCollectionItem");
+	});
+
+	QUnit.test("Set and get selected item by Id", function(assert) {
+		//Arrange
+		var aAllItems = this.oUploadCollection.getItems();
+		this.oUploadCollection.setMode(sap.m.ListMode.SingleSelectLeft);
+
+		//Act
+		var oReturnedUploadCollection = this.oUploadCollection.setSelectedItemById(aAllItems[0].getId(), true);
+
+		//Assert
+		assert.deepEqual(oReturnedUploadCollection, this.oUploadCollection, "Local Uploadcollection and returned element are deepEqual")
+		assert.deepEqual(this.oUploadCollection.getSelectedItem(), aAllItems[0], "Selected item is correct");
+		assert.ok(oReturnedUploadCollection.getItems()[0].getSelected(), "The getSelected of UploadCollectionItem has been set correctly");
+		assert.ok(this.oUploadCollection.getSelectedItem() instanceof sap.m.UploadCollectionItem, "Item returned is UploadCollectionItem");
+	});
+
+	QUnit.test("Get selected item without selection", function(assert) {
+		//Arrange
+
+		//Act
+
+		//Assert
+		assert.equal(this.oUploadCollection.getSelectedItem(), null, "Selected item is correct");
+	});
+
+	QUnit.test("Set all and get selected items", function(assert) {
+		//Arrange
+		var aAllItems = this.oUploadCollection.getItems();
+		this.oUploadCollection.setMode(sap.m.ListMode.MultiSelect);
+
+		//Act
+		var oReturnedUploadCollection = this.oUploadCollection.selectAll();
+
+		//Assert
+		assert.ok(oReturnedUploadCollection instanceof sap.m.UploadCollection, "Returned value is UploadCollection");
+		assert.equal(this.oUploadCollection.getSelectedItems().length, aAllItems.length, "Input and Output amount of items are equal");
+		assert.equal(oReturnedUploadCollection.getSelectedItems().length, this.oUploadCollection.getSelectedItems().length, "Return value of selectAll is equal to getSelectedItems");
+		assert.deepEqual(oReturnedUploadCollection, this.oUploadCollection, "Local Uploadcollection and returned element are deepEqual")
+		assert.deepEqual(this.oUploadCollection.getSelectedItems()[0], aAllItems[0], "Data of first selected item is correct");
+		assert.ok(this.oUploadCollection.getSelectedItems()[0] instanceof sap.m.UploadCollectionItem, "First item returned is UploadCollectionItem");
+		assert.equal(this.oUploadCollection.getSelectedItem(), aAllItems[0], "getSelectedItem() returns first selected item for multiple selection");
+	});
+
+	QUnit.test("Set and reset all items manually to check sync state of UCIs and UC.", function(assert) {
+		//Arrange
+		var aAllItems = this.oUploadCollection.getItems();
+		this.oUploadCollection.setMode(sap.m.ListMode.MultiSelect);
+
+		//Act
+		for (var i = 0; i < aAllItems.length; i++) {
+			aAllItems[i].setSelected(true);
+		}
+		for (var i = 0; i < aAllItems.length; i++) {
+			aAllItems[i].setSelected(false);
+		}
+
+		//Assert
+		assert.equal(this.oUploadCollection.getSelectedItems().length, 0, "0 items are selected");
+	});
+
+	QUnit.test("Set and get mode", function(assert) {
+		//Arrange
+		assert.equal(this.oUploadCollection.getMode(), sap.m.ListMode.None, "Mode before setting value was 'None'");
+
+		//Act
+		this.oUploadCollection.setMode(sap.m.ListMode.SingleSelectMaster);
+
+		//Assert
+		assert.equal(this.oUploadCollection.getMode(), sap.m.ListMode.SingleSelectMaster, "Mode after setting value 'SingleSelectMaster'");
+	});
+
+	QUnit.test("Avoid setting sap.m.ListMode.Delete for UploadCollection using constructor", function(assert) {
+		//Arrange
+		this.oUploadCollection.destroy();
+
+		//Act
+		this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
+			items : {
+				path : "/items",
+				template : oItemTemplate
+			},
+			mode : sap.m.ListMode.Delete
+		});
+
+		//Assert
+		assert.equal(this.oUploadCollection.getMode(), sap.m.ListMode.None, "Mode after setting 'Delete' is 'None'");
+	});
+
+	QUnit.test("Avoid setting sap.m.ListMode.Delete for UploadCollection using setter", function(assert) {
+		//Arrange
+
+		//Act
+		this.oUploadCollection.setMode(sap.m.ListMode.Delete);
+
+		//Assert
+		assert.equal(this.oUploadCollection.getMode(), sap.m.ListMode.None, "Mode after setting 'Delete' is 'None'");
+	});
+
+	QUnit.test("Avoid setting sap.m.ListMode.Delete for UploadCollection on override existing value", function(assert) {
+		//Arrange
+		this.oUploadCollection.destroy();
+		this.oUploadCollection = new sap.m.UploadCollection("uploadCollection", {
+			items : {
+				path : "/items",
+				template : oItemTemplate
+			},
+			mode : sap.m.ListMode.MultiSelect
+		});
+		assert.equal(this.oUploadCollection.getMode(), sap.m.ListMode.MultiSelect, "Initial Mode before setting value is 'Multiple'");
+
+		//Act
+		this.oUploadCollection.setMode(sap.m.ListMode.Delete);
+
+		//Assert
+		assert.equal(this.oUploadCollection.getMode(), sap.m.ListMode.None, "Mode after setting 'Delete' is 'None'");
+	});
+
 	/* --------------------------------------- */
 	/* Test events                             */
 	/* --------------------------------------- */
@@ -305,6 +540,7 @@
 		},
 		teardown : function() {
 			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
 			oData = this.oDataCopy;
 		}
 	});
@@ -610,6 +846,7 @@
 		},
 		teardown : function() {
 			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
 		}
 	});
 
@@ -620,7 +857,7 @@
 		sap.ui.getCore().applyChanges();
 		assert.equal(this.oUploadCollection.aItems[1]._status, "Edit", "Item 2 has status 'Edit'");
 		assert.equal(this.oUploadCollection.aItems[1].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
-		
+
 		var oInputField1 = jQuery.sap.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName-inner");
 		oInputField1[0].value = "NewDocument_toCancel";
 		sap.ui.getCore().applyChanges();
@@ -755,6 +992,7 @@
 		},
 		teardown : function() {
 			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
 			sap.m.UploadCollection.prototype._triggerLink = this.fnTriggerLink;
 		}
 	});
@@ -792,6 +1030,7 @@
 		},
 		teardown : function() {
 			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
 		}
 	});
 
@@ -1027,6 +1266,7 @@
 		},
 		teardown : function() {
 			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
 		}
 	});
 

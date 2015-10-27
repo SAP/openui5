@@ -160,6 +160,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 				ariaLabelForPicture : {type : "string",
 					group : "Accessibility",
 					defaultValue : null
+				},
+
+				/**
+				 * Defines the selected state of the UploadCollectionItem.
+				 * Note: Binding the selected property in single selection modes may cause unwanted results if you have more than one selected item in your binding.
+				 * @since 1.34
+				 */
+				selected : {
+					type : "boolean",
+					group : "Behavior",
+					defaultValue : false
 				}
 			},
 			defaultAggregation : "attributes",
@@ -247,6 +258,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 		this.setProperty("fileSize", sFileSize, false);
 		this._updateDeprecatedProperties();
 		return this;
+	};
+
+	/**
+	 * @description Setter of the selected property.
+	 * @param {boolean} selected value to set on Selected property
+	 * @since 1.34
+	 * @public
+	 */
+	UploadCollectionItem.prototype.setSelected = function(selected) {
+		if (selected !== this.getSelected()) {
+			this.setProperty("selected", selected, true);
+			this.fireEvent("selected");
+		}
 	};
 
 	/**
