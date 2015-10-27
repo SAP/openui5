@@ -1,0 +1,753 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>qUnit Page for sap.m.ViewSettingsDialog</title>
+
+		<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script language="javascript">
+
+			jQuery.sap.require("sap.ui.model.FilterOperator");
+			sinon.config.useFakeTimers = false;
+
+			/* definition of a custom control */
+
+			var customPriceFilter = new sap.m.VBox({
+				items: [
+					new sap.m.Label("minLabel", {
+						design: sap.m.LabelDesign.Bold,
+						text: "Minimum price:"
+					}),
+					new sap.m.Slider("minSlider", {
+						value: 0,
+						min: 0,
+						max: 100,
+						step: 10,
+						progress: true,
+						liveChange: function (oEvent) {
+							oEvent.getSource().getParent().getItems()[0].setText("Minimum price >= " + oEvent.getParameter("value"));
+						}
+					}),
+					new sap.m.Label("maxLabel", {
+						design: sap.m.LabelDesign.Bold,
+						text: "Maximum price:"
+					}),
+					new sap.m.Slider("maxSlider", {
+						value: 100,
+						min: 0,
+						max: 100,
+						step: 10,
+						progress: true,
+						liveChange: function (oEvent) {
+							oEvent.getSource().getParent().getItems()[2].setText("Maximum price <= " + oEvent.getParameter("value"));
+						}
+					})
+				]
+			}).addStyleClass("customPriceFilter");
+
+			/* helper function to compare the filter state */
+
+			var compareFilterKeys = function(o1, o2) {
+				var sKey = "",
+					result = true;
+
+				for(sKey in o1) {
+					if (o1.hasOwnProperty(sKey)) {
+						if (!o2[sKey] || o2[sKey] !== o1[sKey]) {
+							result = false;
+						}
+					}
+				}
+				for(sKey in o2) {
+					if (o2.hasOwnProperty(sKey)) {
+						if (!o1[sKey] || o1[sKey] !== o2[sKey]) {
+							result = false;
+						}
+					}
+				}
+				return result;
+			};
+
+			var model = new sap.ui.model.json.JSONModel();
+			model.setData({
+				customTabData : {
+					checkbox_label : "lorem ipsum checkbox label"
+				}
+			});
+			sap.ui.getCore().setModel(model);
+
+			var oVsdConfig = {
+				// Factory for the 'content' aggregation for custom tabs - with or without items in it.
+				customTabsFactory: function (sId, bEmptyContent) {
+					var oInst = new sap.m.ViewSettingsCustomTab({
+						id	 	: sId,
+						title	: sId,
+						content : []
+					});
+					if (!bEmptyContent) {
+						oInst.addContent( new sap.m.Button({
+							text: 'test'
+						}));
+						oInst.addContent( new sap.m.CheckBox({
+							name: 'test',
+							text: '{/customTabData/checkbox_label}'
+						}));
+					}
+					return oInst;
+				},
+
+				addSortItems: function (oVsdInst) {
+					oVsdInst.addSortItem(new sap.m.ViewSettingsItem({
+						key: "myNameSorter",
+						text: "Name"
+					}));
+					oVsdInst.addSortItem(new sap.m.ViewSettingsItem({
+						key: "myStatusSorter",
+						text: "Status"
+					}));
+					oVsdInst.addSortItem(new sap.m.ViewSettingsItem({
+						key: "myValueSorter",
+						text: "Value"
+					}));
+					oVsdInst.addSortItem(new sap.m.ViewSettingsItem({
+						key: "myPriceSorter",
+						text: "Price"
+					}));
+				},
+
+				addFilterItems: function (oVsdInst) {
+					oVsdInst.addFilterItem(new sap.m.ViewSettingsFilterItem({
+						key: "myNameFilter",
+						text: "Name",
+						items: [
+							new sap.m.ViewSettingsItem({
+								key: "name1",
+								text: "Headphone"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name2",
+								text: "Mousepad"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name3",
+								text: "Monitor"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name4",
+								text: "Backpack"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name5",
+								text: "Printer"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name6",
+								text: "Optic Mouse"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "name7",
+								text: "Dock Station"
+							})
+						]
+					}));
+
+					oVsdInst.addFilterItem(new sap.m.ViewSettingsFilterItem({
+						key: "myStatusFilter",
+						text: "Status",
+						items: [
+							new sap.m.ViewSettingsItem({
+								key: "status1",
+								text: "Approved"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "status2",
+								text: "Open"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "status3",
+								text: "Denied"
+							})
+						]
+					}));
+
+					oVsdInst.addFilterItem(new sap.m.ViewSettingsFilterItem({
+						key: "myValueFilter",
+						text: "Value",
+						items: [
+							new sap.m.ViewSettingsItem({
+								key: "value1",
+								text: "< 10 EUR"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "value2",
+								text: "10 - 30 EUR"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "value3",
+								text: "30 - 50 EUR"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "value4",
+								text: "50 - 70 EUR"
+							}),
+							new sap.m.ViewSettingsItem({
+								key: "value5",
+								text: "> 70 EUR"
+							})
+						]
+					}));
+
+					// custom price control filter
+					oVsdInst.addFilterItem(new sap.m.ViewSettingsCustomItem({
+						key: "myPriceFilter",
+						text: "Price",
+						customControl: customPriceFilter.clone()
+					}));
+				},
+
+				addPresetFilterItems: function(oVsdInst) {
+					// preset filters
+					oVsdInst.addPresetFilterItem(new sap.m.ViewSettingsItem({
+						key: "myPresetFilter1",
+						text: "A very complex filter"
+					}));
+					oVsdInst.addPresetFilterItem(new sap.m.ViewSettingsItem({
+						key: "myPresetFilter2",
+						text: "Ridiculously complex filter"
+					}));
+					oVsdInst.addPresetFilterItem(new sap.m.ViewSettingsItem({
+						key: "myPresetFilter3",
+						text: "Expensive stuff"
+					}));
+				},
+
+				addGroupItems: function (oVsdInst) {
+					// init grouping (some simple sorters with default grouping and some with a custom grouping)
+					oVsdInst.addGroupItem(new sap.m.ViewSettingsItem({
+						key: "myNameGrouper",
+						text: "Name"
+					}));
+					oVsdInst.addGroupItem(new sap.m.ViewSettingsItem({
+						key: "myStatusGrouper",
+						text: "Status"
+					}));
+					oVsdInst.addGroupItem(new sap.m.ViewSettingsItem({
+						key: "myValueGrouper",
+						text: "Value"
+					}));
+					oVsdInst.addGroupItem(new sap.m.ViewSettingsItem({
+						key: "myPriceGrouper",
+						text: "Price"
+					}));
+
+				}
+			};
+
+		module("Custom tabs", {
+			setup : function () {
+				this.oVSD = new sap.m.ViewSettingsDialog();
+				this.oVSD.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			teardown : function () {
+				this.oVSD.destroy();
+				this.oVSD = null;
+			}
+		});
+
+		test("Buttons for all custom tabs should be rendered", function () {
+			var sId = this.oVSD.getId();
+
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory('taxi-settings'));
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory('other-tab'));
+			this.oVSD.open();
+			ok(jQuery.sap.domById(sId + "-custom-button-taxi-settings"), "Button is rendered custom tab.");
+			ok(jQuery.sap.domById(sId + "-custom-button-other-tab"), "Button is rendered custom tab.");
+		});
+
+		test("Check if all tabs contents are rendered when tab is focused.", function () {
+			this.oVSD.insertAggregation('customTabs', new sap.m.ViewSettingsCustomTab({
+				id	 	: 'taxi-settings',
+				content : [
+					new sap.m.Button({
+						id	: 'taxi-settings-button-content2',
+						text: 'test'
+					}),
+					new sap.m.CheckBox({
+						name: 'test',
+						text: 'test4'
+					})
+				]
+
+			}));
+
+			this.oVSD.open();
+			ok(jQuery.sap.domById('taxi-settings-button-content2'), "Custom page contents are rendered.");
+		});
+
+		test("Make sure 'reset' and 'back' buttons is not rendered when on custom page.", function () {
+			var sId = this.oVSD.getId();
+
+			oVsdConfig.addSortItems(this.oVSD);
+			oVsdConfig.addFilterItems(this.oVSD);
+			oVsdConfig.addPresetFilterItems(this.oVSD);
+			oVsdConfig.addGroupItems(this.oVSD);
+
+			this.oVSD.open();
+			ok(!jQuery.sap.domById(sId + "-resetbutton"), "Filter reset button should not be rendered");
+		});
+
+		/* [start]  Actual unit tests of custom tabs */
+		test("Check the _isValidPredefinedPageId method for correctly invalidating page ids.", function () {
+			var	sFirstCustomTabId	= 'taxi-settings5',
+				sSecondCustomTabId 	= 'other-tab5',
+				sSuccessMsg,
+				sPageId,
+				sSuccessMsgPrefix;
+
+			var bEmptyContent = true;
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId, bEmptyContent));
+
+			sPageId 			= 'sort';
+			sSuccessMsgPrefix 	= '"' + sPageId + '"';
+			sSuccessMsg 		= ' is NOT a valid predefined page id when no ' + sPageId + ' items are added.';
+			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
+
+			sPageId 			= 'filter';
+			sSuccessMsgPrefix 	= '"' + sPageId + '"';
+			sSuccessMsg 		= ' is NOT a valid predefined page id when no ' + sPageId + ' items are added.';
+			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
+
+			sPageId 			= 'group';
+			sSuccessMsgPrefix 	= '"' + sPageId + '"';
+			sSuccessMsg 		= ' is NOT a valid predefined page id when no custom tabs are added.';
+			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
+
+			sPageId 			= sFirstCustomTabId;
+			sSuccessMsgPrefix 	= '"' + sPageId + '"';
+			sSuccessMsg 		= ' is NOT a valid predefined page id when no custom tabs are added.';
+			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
+
+			sPageId 			= sSecondCustomTabId;
+			sSuccessMsgPrefix 	= '"' + sPageId + '"';
+			sSuccessMsg 		= ' is NOT a valid predefined page id.';
+			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
+		});
+
+		test("Check the _isValidPredefinedPageId method for correctly validating page ids.", function () {
+			var sFirstCustomTabId	= 'taxi-settings5',
+				sSuccessMsg,
+				sPageId,
+				sSuccessMsgPrefix;
+
+			oVsdConfig.addSortItems(this.oVSD);
+			sPageId 			= 'sort';
+			sSuccessMsgPrefix 	= '"' + sPageId + '"';
+			sSuccessMsg 		= ' is a valid predefined page id after ' + sPageId + ' items are added.';
+			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , true, sSuccessMsgPrefix + sSuccessMsg);
+
+			oVsdConfig.addFilterItems(this.oVSD);
+			sPageId 			= 'filter';
+			sSuccessMsgPrefix 	= '"' + sPageId + '"';
+			sSuccessMsg 		= ' is a valid predefined page id after ' + sPageId + ' items are added.';
+			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , true, sSuccessMsgPrefix + sSuccessMsg);
+
+
+			oVsdConfig.addGroupItems(this.oVSD);
+			sPageId 			= 'group';
+			sSuccessMsgPrefix 	= '"' + sPageId + '"';
+			sSuccessMsg 		= ' is a valid predefined page id after ' + sPageId + ' items are added.';
+			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , true, sSuccessMsgPrefix + sSuccessMsg);
+
+
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+
+			sPageId 			= sFirstCustomTabId;
+			sSuccessMsgPrefix 	= '"' + sPageId + '"';
+			sSuccessMsg 		= ' is a valid predefined page id after it was added.';
+			strictEqual(this.oVSD._isValidPredefinedPageId(sPageId) , false, sSuccessMsgPrefix + sSuccessMsg);
+		});
+
+		test("Check the _fetchValidPagesIds method for correctness.", function () {
+			var	sFirstCustomTabId	= 'taxi-settings6',
+				sSecondCustomTabId 	= 'other-tab6',
+				bEmptyContent 		= true,
+				sSuccessMsg;
+
+			var aVsd10ValidPageIds 	= [];
+			sSuccessMsg 			= 'No valid page ids correctly determined.';
+			deepEqual(this.oVSD._fetchValidPagesIds(), aVsd10ValidPageIds, sSuccessMsg);
+
+
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId, bEmptyContent));
+			aVsd10ValidPageIds 	= [sFirstCustomTabId].sort();
+			sSuccessMsg 		= 'Only one custom tab valid page id correctly determined.';
+			deepEqual(this.oVSD._fetchValidPagesIds().sort(), aVsd10ValidPageIds, sSuccessMsg);
+			this.oVSD.destroyAggregation('customTabs');
+
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
+			aVsd10ValidPageIds 	= [sFirstCustomTabId, sSecondCustomTabId].sort();
+			sSuccessMsg			= 'All custom tabs valid page ids correctly determined.';
+			deepEqual(this.oVSD._fetchValidPagesIds().sort(), aVsd10ValidPageIds, sSuccessMsg);
+			this.oVSD.destroyAggregation('customTabs');
+
+			oVsdConfig.addSortItems(this.oVSD);
+			oVsdConfig.addFilterItems(this.oVSD);
+			oVsdConfig.addPresetFilterItems(this.oVSD);
+			oVsdConfig.addGroupItems(this.oVSD);
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
+			aVsd10ValidPageIds 	= ['sort', 'group', 'filter', sFirstCustomTabId, sSecondCustomTabId].sort();
+			sSuccessMsg			= 'All valid page ids are correctly determined.';
+			deepEqual(this.oVSD._fetchValidPagesIds().sort(), aVsd10ValidPageIds, sSuccessMsg);
+		});
+
+		test("Check the _determineValidPageId method for correctness.", function () {
+			var	sFirstCustomTabId	= 'taxi-settings6',
+				sSecondCustomTabId 	= 'other-tab6',
+				bEmptyContent 		= true,
+				sSuccessMsg,
+				sPageId,
+				sSuccessMsgPrefix,
+				sExpectedPageId;
+
+			// give nothing, expect sort
+			sExpectedPageId 	= 'sort';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+
+
+			// give filter, expect sort (no filter items yet)
+			sExpectedPageId 	= 'sort';
+			sPageId				= 'filter';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+
+
+			// give random string, expect sort
+			sExpectedPageId 	= 'sort';
+			sPageId				= 'invalidstring';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+
+
+			// add custom tab, give nothing, expect custom tab
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+			sExpectedPageId 	=
+			sPageId				= sFirstCustomTabId;
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when nothing given.';
+			equal(this.oVSD._determineValidPageId(), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+			this.oVSD.destroyAggregation('customTabs');
+
+			// add custom tab, give custom tab id, expect custom tab id
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+			sExpectedPageId 	=
+			sPageId				= sFirstCustomTabId;
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+			this.oVSD.destroyAggregation('customTabs');
+
+
+
+			// 6
+			oVsdConfig.addSortItems(this.oVSD);
+			sExpectedPageId 	=
+			sPageId 			= 'sort';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+			this.oVSD.destroyAggregation('sortItems');
+
+			//7
+			sExpectedPageId 	= 'sort';
+			sPageId 			= 'filter';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+
+
+			//8
+			oVsdConfig.addFilterItems(this.oVSD);
+			sExpectedPageId 	=
+			sPageId 			= 'filter';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+
+			// 9
+			sExpectedPageId 	= 'filter';
+			sPageId 			= 'sort';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+			this.oVSD.destroyAggregation('filterItems');
+
+
+			// 10
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+			sExpectedPageId 	=
+			sPageId 			= sFirstCustomTabId;
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+			this.oVSD.destroyAggregation('customTabs');
+
+
+			// 11 first custom tab has empty content
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId, bEmptyContent));
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
+			sExpectedPageId 	= sSecondCustomTabId;
+			sPageId 			= sSecondCustomTabId;
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+			this.oVSD.destroyAggregation('customTabs');
+
+
+			// 12
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
+			sExpectedPageId 	= sSecondCustomTabId;
+			sPageId 			= sSecondCustomTabId;
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+			this.oVSD.destroyAggregation('customTabs');
+
+
+
+			// 13
+			oVsdConfig.addSortItems(this.oVSD);
+			oVsdConfig.addFilterItems(this.oVSD);
+			oVsdConfig.addGroupItems(this.oVSD);
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
+			sExpectedPageId 	= sSecondCustomTabId;
+			sPageId 			= sSecondCustomTabId;
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+
+
+			// 14
+			sExpectedPageId 	=
+			sPageId 			= 'taxi-settings6';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+
+
+			// 15
+			this.oVSD.destroyAggregation('sortItems');
+			sExpectedPageId 	= 'filter';
+			sPageId 			= 'sort';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+
+
+			// 16
+			this.oVSD.destroy();
+			this.oVSD 			= new sap.m.ViewSettingsDialog("vsdCustomTabs");
+			oVsdConfig.addGroupItems(this.oVSD);
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sFirstCustomTabId));
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sSecondCustomTabId));
+			sExpectedPageId 	= 'group';
+			sPageId 			= 'sort';
+			sSuccessMsgPrefix 	= '"' + sExpectedPageId + '"';
+			sSuccessMsg			= '" is correctly resolved as the valid page id when "' + sPageId + '" given.';
+			equal(this.oVSD._determineValidPageId(sPageId), sExpectedPageId, sSuccessMsgPrefix + sSuccessMsg);
+		});
+
+		test("Check if reserved tab ids are properly handled.", function () {
+			var oTab = new sap.m.ViewSettingsCustomTab('sort');
+			var hasError = false;
+			try {
+				this.oVSD.addCustomTab(oTab);
+			} catch (e) {
+				hasError = true;
+			}
+
+			equal(hasError, true, 'Error is properly thrown when reserved tab id is used.');
+		});
+
+		test("Back button on filter detail should work after reopen.", function (assert) {
+			var delay = 1000,
+				done = assert.async(),
+				sId = this.oVSD.getId(),
+				that = this;
+
+			oVsdConfig.addSortItems(this.oVSD);
+			oVsdConfig.addFilterItems(this.oVSD);
+			oVsdConfig.addPresetFilterItems(this.oVSD);
+			oVsdConfig.addGroupItems(this.oVSD);
+
+			setTimeout(function () {
+				that.oVSD.open();
+				that.oVSD._switchToPage(3, that.oVSD.getFilterItems()[0]); // name details page
+				jQuery.sap.delayedCall(0, that.oVSD._navContainer, "to", [sId + '-page2', "show"]);
+				that.oVSD._onConfirm();
+			}, 0);
+
+			setTimeout(function () {
+				that.oVSD.open();
+				ok(jQuery.sap.domById(sId + "-page2-cont"), "Page 2 (filter detail content) should be rendered");
+
+				setTimeout(function () {
+					that.oVSD._pressBackButton();
+
+					setTimeout(function () {
+						ok(jQuery.sap.byId(sId + "-filterbutton").hasClass("sapMSegBBtnSel"), "Segmented 'filter' button should be selected after 'back' is pressed.");
+						done();
+					}, delay);
+				}, delay);
+			}, delay);
+		});
+
+		// this test is important because the 'content' aggregation of custom tabs is
+		// being set to the vsd page instance and then back to the custom tab
+		test("Make sure right content is loaded upon reopening a dialog with single custom tab.", function (assert) {
+			var delay = 1000,
+				done = assert.async(),
+				sTitle = 'taxi-settings',
+				that = this;
+
+			this.oVSD.insertAggregation('customTabs', oVsdConfig.customTabsFactory(sTitle));
+
+			setTimeout(function () {
+				that.oVSD.open();
+
+				setTimeout(function () {
+					that.oVSD._dialog.getEndButton().firePress();
+
+					setTimeout(function () {
+						that.oVSD.open();
+						strictEqual(jQuery('#' + that.oVSD.getId() + '-title').text(), sTitle, "The title should be " + sTitle);
+						done();
+					}, delay);
+				}, delay);
+			}, delay);
+		});
+
+		test("Test model data binding", function (assert) {
+			var delay = 1000,
+				done = assert.async(),
+				that = this;
+
+			var oCheckboxTemplate = new sap.m.CheckBox({
+				name : "test",
+				text : "{/customTabData/checkbox_label}"
+			});
+
+			var oCustomTab = new sap.m.ViewSettingsCustomTab({
+				id: "taxi-settings",
+				content: {
+					path: '/customTabData',
+					template: oCheckboxTemplate
+				}
+			});
+
+			var oCustomTab2 = new sap.m.ViewSettingsCustomTab({
+				id: "taxi-settings2",
+				content: {
+					path: '/customTabData',
+					template: oCheckboxTemplate
+				}
+			});
+
+			this.oVSD.addAggregation("customTabs", oCustomTab);
+			this.oVSD.addAggregation("customTabs", oCustomTab2);
+
+			setTimeout(function () {
+				that.oVSD.open();
+				that.oVSD._switchToPage('taxi-settings2');
+				// the text of the second control on the page is binded to a model
+				strictEqual(that.oVSD._getPage1().getContent()[0].getText(), 'lorem ipsum checkbox label');
+				setTimeout(function () {
+					that.oVSD._switchToPage('taxi-settings');
+					// the text of the second control on the page is binded to a model
+					strictEqual(that.oVSD._getPage1().getContent()[0].getText(), 'lorem ipsum checkbox label');
+					done();
+				}, delay);
+			}, delay);
+		});
+
+
+		// test is needed because the VSD does some internal managing of the aggregations
+		test("Remove tab aggregation after tab was opened", function () {
+			var ct = new sap.m.ViewSettingsCustomTab({content : [new sap.m.Input({value: 'test1'}),new sap.m.Input({value: 'test2'})]});
+				this.oVSD.addCustomTab(ct);
+			// open first dialog - that will trigger switching the content parent from vsd custom tab aggregation to vsd page contet aggregation
+			this.oVSD.open();
+			// assert the content of the custom tab aggregation has been transferred to the page
+			strictEqual(this.oVSD.getAggregation('customTabs')[0].getContent().length, 0, 'First VSD instance custom tab aggregation has no content');
+			strictEqual(this.oVSD._getPage1().getAggregation('content').length, 2, 'First VSD instance page has two contents');
+			this.oVSD.removeAggregation('customTabs', ct);
+			// assert that the aggregation is removed and the page has no contents
+			strictEqual(this.oVSD.getAggregation('customTabs').length, 0, 'First VSD instance has no custom tabs');
+			strictEqual(this.oVSD._getPage1().getAggregation('content').length, 0, 'First VSD instance page has no contents');
+		});
+
+		// test is needed because the VSD does some internal managing of the aggregations
+		test("Remove all aggregations after tab was opened", function () {
+			var ct = new sap.m.ViewSettingsCustomTab({content : [new sap.m.Input({value: 'test1'}),new sap.m.Input({value: 'test2'})]});
+			this.oVSD.addCustomTab(ct);
+			// open first dialog - that will trigger switching the content parent from vsd custom tab aggregation to vsd page contet aggregation
+			this.oVSD.open();
+			// assert the content of the custom tab aggregation has been transferred to the page
+			strictEqual(this.oVSD.getAggregation('customTabs')[0].getContent().length, 0, 'First VSD instance custom tab aggregation has no content');
+			strictEqual(this.oVSD._getPage1().getAggregation('content').length, 2, 'First VSD instance page has two contents');
+			this.oVSD.removeAllAggregation('customTabs');
+			// assert that the aggregation is removed and the pag has no contents
+			strictEqual(this.oVSD.getAggregation('customTabs'), null, 'First VSD instance has no custom tabs aggregation');
+			strictEqual(this.oVSD._getPage1().getAggregation('content').length, 0, 'First VSD instance page has no contents');
+		});
+
+		// test is needed because the VSD does some internal managing of the aggregations
+		test("Destroy tab aggregation after tab was opened", function () {
+			var ct = new sap.m.ViewSettingsCustomTab({content : [new sap.m.Input({value: 'test1'}),new sap.m.Input({value: 'test2'})]});
+			this.oVSD.addCustomTab(ct);
+			// open first dialog - that will trigger switching the content parent from vsd custom tab aggregation to vsd page contet aggregation
+			this.oVSD.open();
+			// assert the content of the custom tab aggregation has been transferred to the page
+			strictEqual(this.oVSD.getAggregation('customTabs')[0].getContent().length, 0, 'First VSD instance custom tab aggregation has no content');
+			strictEqual(this.oVSD._getPage1().getAggregation('content').length, 2, 'First VSD instance page has two contents');
+			this.oVSD.destroyAggregation('customTabs', ct);
+			// assert that the aggregation is removed and the page has no contents
+			strictEqual(this.oVSD.getAggregation('customTabs'), null, 'First VSD instance has no custom tabs aggregation');
+			strictEqual(this.oVSD._getPage1().getAggregation('content').length, 0, 'First VSD instance page has no contents');
+		});
+
+
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+		<h1 id="qunit-header">qUnit Page for sap.m.ViewSettingsDialog</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>
