@@ -204,14 +204,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			$this.toggleClass("sapMLnkSubtle", bSubtle);
 
 			if (bSubtle) {
-				this._addToDescribedBy($this, this._sAriaLinkSubtleId);
+				Link._addToDescribedBy($this, this._sAriaLinkSubtleId);
 			} else {
-				this._removeFromDescribedBy($this, this._sAriaLinkSubtleId);
+				Link._removeFromDescribedBy($this, this._sAriaLinkSubtleId);
 			}
 		}
 
 		if (bSubtle && !Link.prototype._sAriaLinkSubtleId) {
-			Link.prototype._sAriaLinkSubtleId = this._getARIAInvisibleTextId("LINK_SUBTLE");
+			Link.prototype._sAriaLinkSubtleId = Link._getARIAInvisibleTextId("LINK_SUBTLE");
 		}
 
 		return this;
@@ -225,14 +225,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			$this.toggleClass("sapMLnkEmphasized", bEmphasized);
 
 			if (bEmphasized) {
-				this._addToDescribedBy($this, this._sAriaLinkEmphasizedId);
+				Link._addToDescribedBy($this, this._sAriaLinkEmphasizedId);
 			} else {
-				this._removeFromDescribedBy($this, this._sAriaLinkEmphasizedId);
+				Link._removeFromDescribedBy($this, this._sAriaLinkEmphasizedId);
 			}
 		}
 
 		if (bEmphasized && !Link.prototype._sAriaLinkEmphasizedId) {
-			Link.prototype._sAriaLinkEmphasizedId = this._getARIAInvisibleTextId("LINK_EMPHASIZED");
+			Link.prototype._sAriaLinkEmphasizedId = Link._getARIAInvisibleTextId("LINK_EMPHASIZED");
 		}
 
 		return this;
@@ -285,14 +285,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this;
 	};
 
+	/*************************************** Static members ******************************************/
+
+	/**
+	 * Retrieves the resource bundle for the sap.m library
+	 *
+	 * @returns {Object} the resource bundle object
+	 */
+	Link._getResourceBundle = function () {
+		return sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	};
+
 	/**
 	 * Creates ARIA sap.ui.core.InvisibleText for the given translation text
 	 *
 	 * @param {String} sResourceBundleKey the resource key in the translation bundle
 	 * @returns {String} the InvisibleText control ID
 	 */
-	Link.prototype._getARIAInvisibleTextId = function (sResourceBundleKey) {
-		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	Link._getARIAInvisibleTextId = function (sResourceBundleKey) {
+		var oRb = Link._getResourceBundle();
 
 		return new InvisibleText({
 			text: oRb.getText(sResourceBundleKey)
@@ -305,12 +316,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {Object} $oLink control DOM reference
 	 * @param {String} sInvisibleTextId  static Invisible Text ID to be added
 	 */
-	Link.prototype._addToDescribedBy = function ($oLink, sInvisibleTextId) {
+	Link._addToDescribedBy = function ($oLink, sInvisibleTextId) {
 		var sAriaDescribedBy = $oLink.attr("aria-describedby");
 
 		if (sAriaDescribedBy) {
 			$oLink.attr("aria-describedby",  sAriaDescribedBy + " " +  sInvisibleTextId); // Add the ID at the end, separated with space
-		} else { 
+		} else {
 			$oLink.attr("aria-describedby",  sInvisibleTextId);
 		}
 	};
@@ -321,10 +332,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @param {Object} $oLink control DOM reference
 	 * @param {String} sInvisibleTextId  static Invisible Text ID to be removed
 	 */
-	Link.prototype._removeFromDescribedBy = function ($oLink, sInvisibleTextId) {
+	Link._removeFromDescribedBy = function ($oLink, sInvisibleTextId) {
 		var sAriaDescribedBy = $oLink.attr("aria-describedby");
 
-		if (sAriaDescribedBy.indexOf(sInvisibleTextId) !== -1) { // Remove only the static InvisibleText ID for Emphasized link
+		if (sAriaDescribedBy && sAriaDescribedBy.indexOf(sInvisibleTextId) !== -1) { // Remove only the static InvisibleText ID for Emphasized link
 			sAriaDescribedBy = sAriaDescribedBy.replace(sInvisibleTextId, '');
 
 			if (sAriaDescribedBy.length > 1) {
