@@ -269,7 +269,7 @@
 
 			var appFeedList = new sap.m.App("myApp", {initialPage:"feedListPage"});
 
-			var feedListPage = new sap.m.Page("feedListPage", 
+			var feedListPage = new sap.m.Page("feedListPage",
 				{title: "Feed List Item Test Page"}
 			);
 
@@ -410,6 +410,32 @@
 				oFeedList.getItems()[10].invalidate();
 				equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), sap.m.FeedListItem._sTextShowMore);
 			});
+
+			module("Check property combination", {
+				setup : function() {
+					this.oFeedListItem = new sap.m.FeedListItem({
+						sender : null,
+						text : "Some text which is displayed.",
+						timestamp : "March 03 2013",
+						iconActive : true,
+						iconDensityAware: true,
+						showIcon : true,
+						senderActive : false
+					}).placeAt("content");
+					sap.ui.getCore().applyChanges();
+				},
+				teardown : function () {
+					this.oFeedListItem.destroy();
+				}
+			});
+
+			test("'sender' is set to null and 'senderActive' is set to false", function() {
+				this.oFeedListItem.ontap({
+					srcControl : this.oFeedListItem
+				});
+				ok(this.oFeedListItem, "FeedListItem is clickable");
+			});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
