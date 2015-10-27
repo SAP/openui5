@@ -160,10 +160,9 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 	 * As <code>sap.ui.core.Element</code> "bubbles up" the invalidate, changes to children
 	 * potentially result in rerendering of the whole sub tree.
 	 *
-	 * @param {object} oOrigin
 	 * @protected
 	 */
-	Control.prototype.invalidate = function(oOrigin) {
+	Control.prototype.invalidate = function() {
 		var oUIArea;
 		if ( this.bOutput && (oUIArea = this.getUIArea()) ) {
 			// if this control has been rendered before (bOutput)
