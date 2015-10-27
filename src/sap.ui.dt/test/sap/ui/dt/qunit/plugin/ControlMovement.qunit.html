@@ -158,6 +158,13 @@
 
 	});
 
+	QUnit.test("when the cut is triggered on a button overlay,", function(assert) {
+		sap.ui.test.qunit.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
+
+		assert.ok(this.oCutPaste.isElementPasteable(this.oLayoutOverlay), "the target overlay of a valid element is pasteable");
+		assert.ok(!this.oCutPaste.isElementPasteable(this.oObjectAttributeOverlay), "the target overlay of an invalid element is not pasteable");
+	});
+
 	QUnit.test("and cut was triggered, when ESCAPE is triggered", function(assert) {
 		sap.ui.test.qunit.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.X, false, false, true);
 

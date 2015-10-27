@@ -93,6 +93,15 @@ sap.ui.define([
 		return this.getElementMover().getMovedOverlay();
 	};
 
+	CutPaste.prototype.isElementPasteable = function(oTargetOverlay) {
+		var oTargetZoneAggregation = this._getTargetZoneAggregation(oTargetOverlay);
+		if ((oTargetZoneAggregation) || (OverlayUtil.isInTargetZoneAggregation(oTargetOverlay))) {
+			return true;
+		} else {
+			return false;
+		}
+	};
+
 	CutPaste.prototype._onKeyDown = function(oEvent) {
 		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 
