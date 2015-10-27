@@ -57,6 +57,10 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			oRm.addClass("sapMDialog-CTX");
 			oRm.addClass("sapMPopup-CTX");
 
+			if (oControl.isOpen()) {
+				oRm.addClass("sapMDialogOpen");
+			}
+
 			if (bStretch || (bStretchOnPhone)) {
 				oRm.addClass("sapMDialogStretched");
 			}
