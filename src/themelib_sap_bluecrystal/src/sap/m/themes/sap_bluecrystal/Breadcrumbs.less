@@ -1,0 +1,18 @@
+.sapMBreadcrumbs {
+	.sapMBreadcrumbsCurrentLocation:focus, .sapMSlt:focus {
+		outline: 0.0625rem dotted @sapUiFocus;
+		outline-offset: -0.0625rem;
+	}
+
+	.sapMSltIcon:before {
+		font-size: @sapMFontMediumSize;
+	}
+
+	.sapMSlt {
+		background-color: transparent;
+	}
+
+	.sapMSltPressed > .sapMSltIcon:before {
+		color: @sapUiSelectArrowColor;
+	}
+}

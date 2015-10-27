@@ -7,7 +7,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			metadata: {
 				config: {
 					sample: {
-						iframe: "webapp/test/integration/opaTests.qunit.html",
+						iframe: "webapp/test/testService.html",
 						stretch: true,
 						files: [
 							"webapp/controller/App.controller.js",

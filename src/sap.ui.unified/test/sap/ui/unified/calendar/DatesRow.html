@@ -258,7 +258,18 @@
 				width: "8em"
 			}).placeAt("event3");
 
-		</script>
+			// without day names line
+			oDatesRow = new sap.ui.unified.calendar.DatesRow("DR4",{
+				days: 14,
+				showDayNamesLine: false
+			}).placeAt("sample4");
+
+			oDatesRow = new sap.ui.unified.calendar.DatesRow("DR5",{
+				days: 14,
+				showDayNamesLine: false
+			}).placeAt("sample5");
+
+			</script>
 
 	</head>
 	<body class="sapUiBody" role="application">
@@ -283,6 +294,16 @@
 		<div>
 		<div id="sample3" style="display:inline-block;"></div>
 		<div id="event3" style="display:inline-block; vertical-align: top;"></div>
+		</div>
+		<br>
+		<div>
+		<div id="sample4" style="display:inline-block; width: 1000px;"></div>
+		<div id="event4" style="display:inline-block; vertical-align: top;"></div>
+		</div>
+		<br>
+		<div>
+		<div id="sample5" style="display:inline-block; width: 800px;" class="sapUiSizeCompact"></div>
+		<div id="event5" style="display:inline-block; vertical-align: top;"></div>
 		</div>
 
 	</body>

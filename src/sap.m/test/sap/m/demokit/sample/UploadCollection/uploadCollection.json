@@ -2,8 +2,8 @@
 	"items" : [
 		{
 			"documentId" : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
-			"enableEdit" : true,
-			"visibleDelete" : false,
+			"visibleEdit" : true,
+			"visibleDelete" : true,
 			"fileName" : "Screenshot.jpg",
 			"mimeType" : "image/jpg",
 			"thumbnailUrl" : "",
@@ -30,8 +30,8 @@
 			]
 		}, {
 			"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcde",
-			"enableEdit" : true,
-			"enableDelete" : false,
+			"visibleEdit" : true,
+			"visibleDelete" : true,
 			"fileName" : "Notes.txt",
 			"mimeType" : "text/plain",
 			"thumbnailUrl" : "",
@@ -63,8 +63,8 @@
 			]
 		}, {
 			"documentId" : "5082cc4d-da9f-2835-2c0a-8100ed47bcdf",
-			"enableEdit" : true,
-			"enableDelete" : true,
+			"visibleEdit" : true,
+			"visibleDelete" : true,
 			"fileName" : "Document.txt",
 			"mimeType" : "text/plain",
 			"thumbnailUrl" : "",
@@ -91,8 +91,8 @@
 			]
 		}, {
 			"documentId" : "1700ead2-3dfb-5a94-6f5c-cf1da409e028",
-			"enableEdit" : false,
-			"enableDelete" : true,
+			"visibleEdit" : true,
+			"visibleDelete" : true,
 			"fileName" : "Third Quarter Results.ppt",
 			"mimeType" : "application/vnd.ms-powerpoint",
 			"thumbnailUrl" : "",
@@ -120,8 +120,8 @@
 			]
 		}, {
 			"documentId" : "34e484e4-a523-6c50-685b-e5ae66069250",
-			"enableEdit" : false,
-			"enableDelete" : true,
+			"visibleEdit" : true,
+			"visibleDelete" : true,
 			"fileName" : "Business Plan Agenda.doc",
 			"mimeType" : "application/msword",
 			"thumbnailUrl" : "",
@@ -149,8 +149,8 @@
 			]
 		}, {
 			"documentId" : "bcc27c4d-a8ce-3ab6-e807-ec05119685a5",
-			"enableEdit" : true,
-			"enableDelete" : true,
+			"visibleEdit" : true,
+			"visibleDelete" : true,
 			"fileName" : "Business Plan Topics.xls",
 			"mimeType" : "application/msexcel",
 			"thumbnailUrl" : "",
@@ -171,8 +171,8 @@
 			]
 		}, {
 			"documentId" : "6b6ccd2f-e5c2-15b7-3b67-191564850063",
-			"enableEdit" : true,
-			"enableDelete" : true,
+			"visibleEdit" : true,
+			"visibleDelete" : true,
 			"fileName" : "Instructions.pdf",
 			"mimeType" : "application/pdf",
 			"thumbnailUrl" : "",
@@ -193,8 +193,8 @@
 			]
 		}, {
 			"documentId" : "b68a7065-cc2a-2140-922d-e7528cd32172",
-			"enableEdit" : true,
-			"enableDelete" : true,
+			"visibleEdit" : true,
+			"visibleDelete" : true,
 			"fileName" : "Picture of a woman.png",
 			"mimeType" : "image/png",
 			"thumbnailUrl" : "test-resources/sap/m/images/Woman_04.png",

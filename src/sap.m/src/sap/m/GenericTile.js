@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				/**
 				 * The size of the tile. If not set, then the default size is applied based on the device tile.
 				 */
-				"size" : {type : "sap.m.InfoTileSize", group : "Misc", defaultValue : sap.m.InfoTileSize.Auto},
+				"size" : {type : "sap.m.Size", group : "Misc", defaultValue : sap.m.Size.Auto},
 				/**
 				 * The frame type: 1x1 or 2x1.
 				 */

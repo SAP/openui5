@@ -1219,7 +1219,7 @@
 		oBinding.attachChange(handler);
 		oBinding.attachRefresh(handler);
 	});
-	
+
 	asyncTest("async test createEntity", function(){
 		var oSpy;
 		var oModel = initModel(sURI, {
@@ -1267,6 +1267,7 @@
 			jQuery.sap.delayedCall(0,this, function() {
 				ok(oSpy.callCount == 0, "No request sent");
 				oSpy.restore();
+				oModel.destroy();
 				start()
 			});
 		};
@@ -1374,6 +1375,7 @@
 					ok("Three requests have been completed successfully")
 					delete window.fakeRequested;
 					delete window.fakeResponsed;
+					oModel.destroy();
 					start();
 				}, 0);
 			}
@@ -1384,6 +1386,7 @@
 		var oModel = initModel(sURI, {
 			json: true,
 			useBatch: true,
+			tokenHandling: false,
 			sequentializeRequests: true
 		});
 		var iCount = 0,
@@ -1415,6 +1418,7 @@
 					ok("Four requests have been completed successfully")
 					delete window.fakeRequested;
 					delete window.fakeResponsed;
+					oModel.destroy();
 					start();
 				}, 0);
 			}
@@ -2865,6 +2869,41 @@
 				ok(oSupplier, "Supplier still exists");
 				ok(!oSupplier.__metadata.created, "Supplier not flagged as created");
 				start();
+			};
+			this.oModel.attachRequestCompleted(fnCompl);
+			this.oModel.submitChanges();
+		}.bind(this))
+	});
+	asyncTest("submit:check success - no pending changes", function() {
+		assert.expect( 9 );
+		var that = this;
+		this.oModel.setUseBatch(true);
+		this.oModel.metadataLoaded().then(function() {
+			var fnSuccess = function(oData) {
+				ok(true, "success handler called");
+				var oSupplier = oContext.getObject(); 
+				ok(oSupplier, "Supplier still exists");
+				ok(!oSupplier.__metadata.created, "Supplier not flagged as created");
+				start();
+			}
+			var fnError = function() {
+				ok(true, "error handler called");
+				//hack the model so next request would be ok
+				delete that.oModel.oData[oContext.getPath().substr(1)].__metadata.created.urlParameters;
+				delete that.oModel.mChangedEntities[oContext.getPath().substr(1)].__metadata.created.urlParameters;
+				that.oModel.setProperty('Name', "test2", oContext); 
+				that.oModel.submitChanges();
+			}
+			var oContext = this.oModel.createEntry("/Products", {urlParameters: {'Fail500': true}, properties: {Name: 'test'}, success: fnSuccess, error:fnError});
+			var oProduct = this.oModel.getProperty('', oContext); 
+			ok(oProduct, "Product created");
+			ok(oProduct.__metadata.created, "Product flagged as created");
+			var fnCompl = function(oInfo) {
+				that.oModel.detachRequestCompleted(fnCompl);
+				ok(!oInfo.getParameter('success'), "request error");
+				var oProduct =  oContext.getObject(); 
+				ok(oProduct, "Product still exists");
+				ok(oProduct.__metadata.created, "Product still flagged as created");
 			};
 			this.oModel.attachRequestCompleted(fnCompl);
 			this.oModel.submitChanges();

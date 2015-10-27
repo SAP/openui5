@@ -10,8 +10,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	/**
 	 * Creates a new metadata object for a Component subclass.
 	 *
-	 * @param {string} sClassName fully qualified name of the class that is described by this metadata object
-	 * @param {object} oStaticInfo static info to construct the metadata from
+	 * @param {string} sClassName Fully qualified name of the class that is described by this metadata object
+	 * @param {object} oStaticInfo Static info to construct the metadata from
 	 *
 	 * @public
 	 * @class
@@ -146,8 +146,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 
 	/**
 	 * Static initialization of components. This function will be called by the
-	 * component and the metadata decides whether to execute the static init code
-	 * or not. It will be called the first time a component is initialized.
+	 * Component and the metadata decides whether to execute the static init code
+	 * or not. It will be called the first time a Component is initialized.
 	 * @private
 	 */
 	ComponentMetadata.prototype.init = function() {
@@ -251,7 +251,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	};
 
 	/**
-	 * Returns the manifest defined in the metadata of the component.
+	 * Returns the manifest defined in the metadata of the Component.
 	 * If not specified, the return value is null.
 	 * @return {Object} manifest.
 	 * @public
@@ -281,7 +281,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	};
 
 	/**
-	 * Returns the raw manifest defined in the metadata of the component.
+	 * Returns the raw manifest defined in the metadata of the Component.
 	 * If not specified, the return value is null.
 	 * @return {Object} manifest
 	 * @public
@@ -307,7 +307,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 
 
 	/**
-	 * Returns the manifest configuration entry with the specified key (Must be a JSON object).
+	 * Returns the manifest configuration entry with the specified key (this must be a JSON object).
 	 * If no key is specified, the return value is null.
 	 *
 	 * Example:
@@ -326,8 +326,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 *
 	 * The configuration above can be accessed via <code>sample.Component.getMetadata().getManifestEntry("my.custom.config")</code>.
 	 *
-	 * @param {string} sKey key of the custom configuration (must be prefixed with a namespace / separated with dots)
-	 * @param {boolean} [bMerged] whether the custom configuration should be merged with components parent custom configuration.
+	 * @param {string} sKey Key of the custom configuration (must be prefixed with a namespace separated with dots)
+	 * @param {boolean} [bMerged] Indicates whether the custom configuration is merged with the parent custom configuration of the Component.
 	 * @return {Object} custom Component configuration with the specified key.
 	 * @public
 	 * @since 1.27.1
@@ -354,7 +354,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	};
 
 	/**
-	 * Returns the custom Component configuration entry with the specified key (Must be a JSON object).
+	 * Returns the custom Component configuration entry with the specified key (this must be a JSON object).
 	 * If no key is specified, the return value is null.
 	 *
 	 * Example:
@@ -371,8 +371,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	 *
 	 * The configuration above can be accessed via <code>sample.Component.getMetadata().getCustomEntry("my.custom.config")</code>.
 	 *
-	 * @param {string} sKey key of the custom configuration (must be prefixed with a namespace)
-	 * @param {boolean} bMerged whether the custom configuration should be merged with components parent custom configuration.
+	 * @param {string} sKey Key of the custom configuration (must be prefixed with a namespace)
+	 * @param {boolean} bMerged Indicates whether the custom configuration is merged with the parent custom configuration of the Component.
 	 * @return {Object} custom Component configuration with the specified key.
 	 * @public
 	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifestEntry
@@ -408,7 +408,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	};
 
 	/**
-	 * Returns the dependencies defined in the metadata of the component. If not specified, the return value is null.
+	 * Returns the dependencies defined in the metadata of the Component. If not specified, the return value is null.
 	 * @return {Object} Component dependencies.
 	 * @public
 	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
@@ -438,7 +438,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	};
 
 	/**
-	 * Returns the array of the included files that the Component requires such as css and js. If not specified or the array is empty, the return value is null.
+	 * Returns the array of the included files that the Component requires such as CSS and JavaScript. If not specified or the array is empty, the return value is null.
 	 * @return {string[]} Included files.
 	 * @public
 	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
@@ -467,7 +467,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	};
 
 	/**
-	 * Returns the required version of SAP UI5 defined in the metadata of the Component. If returned value is null, then no special UI5 version is required.
+	 * Returns the required version of SAPUI5 defined in the metadata of the Component. If returned value is null, then no special UI5 version is required.
 	 * @return {string} Required version of UI5 or if not specified then null.
 	 * @public
 	 * @deprecated Since 1.27.1. Please use the sap.ui.core.ComponentMetadata#getManifest
@@ -514,8 +514,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 	/**
 	 * Returns a copy of the configuration property to disallow modifications. If no
 	 * key is specified it returns the complete configuration property.
-	 * @param {string} [sKey] the key of the configuration property
-	 * @param {boolean} [bDoNotMerge] true, to return only the local configuration
+	 * @param {string} [sKey] Key of the configuration property
+	 * @param {boolean} [bDoNotMerge] If set to <code>true</code>, only the local configuration is returned
 	 * @return {object} the value of the configuration property
 	 * @public
 	 * @since 1.15.1
@@ -532,9 +532,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 
 
 	/**
-	 * Returns a copy of the customizing property
-	 * @param {boolean} [bDoNotMerge] true, to return only the local customizing config
-	 * @return {object} the value of the customizing property
+	 * Returns a copy of the Customizing property
+	 * @param {boolean} [bDoNotMerge] If set to <code>true</code>, only the local configuration is returned
+	 * @return {object} the value of the Customizing property
 	 * @private
 	 * @since 1.15.1
 	 * @experimental Since 1.15.1. Implementation might change.
@@ -552,8 +552,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 
 	/**
 	 * Returns the models configuration which defines the available models of the
-	 * component.
-	 * @param {boolean} [bDoNotMerge] true, to return only the local model config
+	 * Component.
+	 * @param {boolean} [bDoNotMerge] If set to <code>true</code>, only the local configuration is returned
 	 * @return {object} models configuration
 	 * @private
 	 * @since 1.15.1

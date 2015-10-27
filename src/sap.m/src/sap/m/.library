@@ -34,7 +34,7 @@
     <ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
         <component>CA-UI5-CTR</component><!-- default component for library, embedded text as a shortcut for <name>text</name> -->
         <component>
-            <name>CA-UI5-BS-FCP</name>
+            <name>CA-UI5-CTR-SOF-BAL</name>
             <modules>
                 <module>sap/m/FacetFilter</module>
             </modules>

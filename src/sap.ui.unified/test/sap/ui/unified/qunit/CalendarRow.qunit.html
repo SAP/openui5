@@ -26,6 +26,9 @@
 		<!-- Test functions -->
 		<script language="javascript">
 
+			jQuery.sap.require("sap.ui.model.type.Date");
+			var oFormatYyyyMMddHHmm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMddHHmm", calendarType: sap.ui.core.CalendarType.Gregorian});
+
 			var sSelectedAppointmentId = "";
 			var iSelectedGroupAppointments = 0;
 			var bMultiSelect = false;
@@ -42,9 +45,30 @@
 				bMultiSelect = oEvent.getParameter("multiSelect");
 			};
 
+			var bStartDateChange = false;
+			var oStartDate;
+			var handleStartDateChange = function(oEvent){
+
+				var oRow = oEvent.oSource;
+				oStartDate = oRow.getStartDate();
+				bStartDateChange = true;
+
+			};
+
+			var bLeaveRow = false;
+			var sType;
+			var handleLeaveRow = function(oEvent){
+
+				bLeaveRow = true;
+				sType = oEvent.getParameter("type");
+
+			};
+
 			var oRow1 = new sap.ui.unified.CalendarRow("Row1",  {
 				startDate: new Date("2015", "01", "01", "10", "15"),
 				select: handleSelect,
+				startDateChange: handleStartDateChange,
+				leaveRow: handleLeaveRow,
 				appointments: [new sap.ui.unified.CalendarAppointment("App0", {
 													startDate: new Date("2015", "01", "01", "08", "15"),
 													endDate: new Date("2015", "01", "01", "09", "15"),
@@ -155,6 +179,11 @@
 				oRow1.setIntervals(12);
 				oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Hour);
 				oRow1.setStartDate(new Date("2015", "01", "01", "10", "15"));
+				var aAppointments = oRow1.getAppointments();
+				for (var i = 1; i < aAppointments.length; i++){
+					aAppointments[i].setSelected(false);
+				}
+
 				sap.ui.getCore().applyChanges();
 			};
 
@@ -187,10 +216,12 @@
 			test("Row", function() {
 				ok(!jQuery("#Row1").attr("style"), "Row1: no width and heigh set");
 				ok(!jQuery("#Row1").attr("title"), "Row1: no tooltip set");
+				equal(jQuery("#Row1").attr("tabindex"), "-1", "Row1: tabindex set");
 
 				equal(jQuery("#Row2").css("width"), "500px", "Row2: width set");
 				equal(jQuery("#Row2").css("height"), "100px", "Row2: height set");
 				equal(jQuery("#Row2").attr("title"), "Row tooltip", "Row2: tooltip set");
+				equal(jQuery("#Row2").attr("tabindex"), "0", "Row2: tabindex set");
 			});
 
 			test("Appointments row", function() {
@@ -292,21 +323,26 @@
 				equal($Appointment1.attr("title"), "Tooltip 1", "Appointment1: tooltip rendered");
 				equal(jQuery("#App1-Title").text(), "Appointment 1", "Appointment1: title rendered");
 				equal(jQuery("#App1-Text").text(), "Appointment of 2 hours, 1 hour in future", "Appointment1: text rendered");
+				equal($Appointment1.attr("tabindex"), "-1", "Appointment1: tabindex -1 rendered");
 				ok(jQuery("#App1-Icon").get(0), "Appointment1: icon rendered");
 				ok($Appointment1.attr("class").search("sapUiCalendarAppType") < 0, "Appointment1: no type rendered");
 				ok(!$Appointment1.hasClass("sapUiCalendarAppTent"), "Appointment1: not rendered as tentative");
 
 				ok($Appointment2.get(0), "Appointment2 rendered");
 				ok(!jQuery("#App2-Icon").get(0), "Appointment2: no icon rendered");
+				equal($Appointment2.attr("tabindex"), "0", "Appointment2: tabindex 0 rendered");
 				ok($Appointment2.hasClass("sapUiCalendarAppType01"), "Appointment2: type rendered");
 				ok($Appointment2.hasClass("sapUiCalendarAppTent"), "Appointment2: rendered as tentative");
 				ok($Appointment1.attr("data-sap-level") != $Appointment2.attr("data-sap-level"), "Appointment 2 has different level than Appointment 1 (as overlapping)")
 				ok($Appointment1.offset().top != $Appointment2.offset().top, "Appointment 2 has different level rendered than Appointment 1 (as overlapping)")
 
 				ok($Appointment3.get(0), "Appointment3 rendered");
+				equal($Appointment3.attr("tabindex"), "-1", "Appointment3: tabindex -1 rendered");
 				ok($Appointment3.hasClass("sapUiCalendarAppType02"), "Appointment3: type rendered");
 				ok(Math.abs(Math.floor($Appointment3.offset().left - jQuery("#Row1-AppsInt5").offset().left)) <= 1, "Appointment 3 has same start rendered as Interval 5"); // maybe it varias 1px because of rounding
+
 				ok($Appointment4.get(0), "Appointment4 rendered");
+				equal($Appointment4.attr("tabindex"), "-1", "Appointment4: tabindex -1 rendered");
 				ok(Math.abs(Math.floor(($Appointment4.offset().left + $Appointment4.outerWidth()) - (jQuery("#Row1-AppsInt5").offset().left + jQuery("#Row1-AppsInt5").outerWidth()))) <= 1, "Appointment 4 has same end rendered as Interval 5"); // maybe it varias 1px because of rounding
 				ok($Appointment4.hasClass("sapUiCalendarAppType03"), "Appointment4: type rendered");
 				equal($Appointment3.attr("data-sap-level"), $Appointment4.attr("data-sap-level"), "Appointment 3 has same level as Appointment 4 (as directly text to each other)")
@@ -560,6 +596,7 @@
 				ok(!bMultiSelect, "Appointment 1: no multiple selection");
 				ok(sap.ui.getCore().byId("App1").getSelected(), "Appointment1: selected property set");
 				ok(jQuery("#App1").hasClass("sapUiCalendarAppSel"), "Appointment1: selected rendered");
+
 				qutils.triggerEvent("click", "App2-Title");
 				ok(!sap.ui.getCore().byId("App1").getSelected(), "Appointment1: selected property not longer set");
 				ok(!jQuery("#App1").hasClass("sapUiCalendarAppSel"), "Appointment1: selected not longer rendered");
@@ -567,6 +604,7 @@
 				ok(!bMultiSelect, "Appointment 2: no multiple selection");
 				ok(sap.ui.getCore().byId("App2").getSelected(), "Appointment2: selected property set");
 				ok(jQuery("#App2").hasClass("sapUiCalendarAppSel"), "Appointment2: selected rendered");
+
 				qutils.triggerEvent("click", "App3-Text", {ctrlKey: true});
 				ok(sap.ui.getCore().byId("App2").getSelected(), "Appointment2: selected still property set");
 				ok(jQuery("#App2").hasClass("sapUiCalendarAppSel"), "Appointment2: selected still rendered");
@@ -576,7 +614,117 @@
 				ok(jQuery("#App3").hasClass("sapUiCalendarAppSel"), "Appointment3: selected rendered");
 			});
 
-		</script>
+			test("keyboard arrow navigation", function() {
+				initializeRow1();
+				jQuery("#App1").focus();
+				equal(document.activeElement.id, "App1", "Appointment1 focused");
+				equal(jQuery("#App1").attr("tabindex"), "0", "Appointment1: tabindex 0 rendered");
+				equal(jQuery("#App2").attr("tabindex"), "-1", "Appointment2: tabindex -1 rendered");
+				equal(oRow1.getFocusedAppointment().getId(), "App1", "Appointment1 returned by getFocusedAppointment");
+
+				bStartDateChange = false;
+				qutils.triggerKeyboardEvent("App1", "ARROW_RIGHT");
+				sap.ui.getCore().applyChanges();
+				equal(document.activeElement.id, "App3", "Appointment3 focused");
+				equal(jQuery("#App3").attr("tabindex"), "0", "Appointment3: tabindex 0 rendered");
+				equal(jQuery("#App1").attr("tabindex"), "-1", "Appointment1: tabindex -1 rendered");
+				equal(oRow1.getFocusedAppointment().getId(), "App3", "Appointment3 returned by getFocusedAppointment");
+				ok(!bStartDateChange, "StartDateChange event not fired");
+
+				jQuery("#App2").focus();
+				equal(document.activeElement.id, "App2", "Appointment2 focused");
+				equal(jQuery("#App1").attr("tabindex"), "-1", "Appointment1: tabindex 0 rendered");
+				equal(jQuery("#App2").attr("tabindex"), "0", "Appointment2: tabindex -1 rendered");
+				equal(oRow1.getFocusedAppointment().getId(), "App2", "Appointment2 returned by getFocusedAppointment");
+
+				qutils.triggerKeyboardEvent("App2", "ARROW_LEFT");
+				sap.ui.getCore().applyChanges();
+				equal(document.activeElement.id, "App0", "Appointment0 focused");
+				equal(jQuery("#App0").attr("tabindex"), "0", "Appointment0: tabindex 0 rendered");
+				equal(jQuery("#App2").attr("tabindex"), "-1", "Appointment2: tabindex -1 rendered");
+				equal(oRow1.getFocusedAppointment().getId(), "App0", "Appointment0 returned by getFocusedAppointment");
+				ok(bStartDateChange, "StartDateChange event fired");
+				equal(oFormatYyyyMMddHHmm.format(oStartDate), "201502010800", "new Start date");
+			});
+
+			test("keyboard HOME/END navigation", function() {
+				initializeRow1();
+				jQuery("#App1").focus();
+				bStartDateChange = false;
+				qutils.triggerKeyboardEvent("App1", "HOME");
+				sap.ui.getCore().applyChanges();
+				equal(document.activeElement.id, "App0", "Appointment0 focused");
+				equal(jQuery("#App0").attr("tabindex"), "0", "Appointment0: tabindex 0 rendered");
+				equal(jQuery("#App1").attr("tabindex"), "-1", "Appointment1: tabindex -1 rendered");
+				equal(oRow1.getFocusedAppointment().getId(), "App0", "Appointment0 returned by getFocusedAppointment");
+				ok(bStartDateChange, "StartDateChange event fired");
+				equal(oFormatYyyyMMddHHmm.format(oStartDate), "201502010800", "new Start date");
+
+				bStartDateChange = false;
+				qutils.triggerKeyboardEvent("App0", "END");
+				sap.ui.getCore().applyChanges();
+				equal(document.activeElement.id, "App4", "Appointment4 focused");
+				equal(jQuery("#App0").attr("tabindex"), "-1", "Appointment0: tabindex -1 rendered");
+				equal(jQuery("#App4").attr("tabindex"), "0", "Appointment4: tabindex 0 rendered");
+				equal(oRow1.getFocusedAppointment().getId(), "App4", "Appointment4 returned by getFocusedAppointment");
+				ok(!bStartDateChange, "StartDateChange event not fired");
+			});
+
+			test("keyboard selection", function() {
+				jQuery("#App0").focus();
+				qutils.triggerKeyboardEvent("App0", "ENTER");
+				equal(sSelectedAppointmentId, "App0", "Appointment 0: ENTER fires select event");
+				ok(!bMultiSelect, "Appointment 0: no multiple selection");
+				ok(sap.ui.getCore().byId("App0").getSelected(), "Appointment0: selected property set");
+				ok(jQuery("#App0").hasClass("sapUiCalendarAppSel"), "Appointment0: selected rendered");
+			});
+
+			test("keyboard leaveRow", function() {
+				bLeaveRow = false;
+				sType = undefined;
+				jQuery("#App0").focus();
+				qutils.triggerKeyboardEvent("App0", "ARROW_UP");
+				ok(bLeaveRow, "LeaveRow event fired");
+				equal(sType, "sapup", "LeaveRow event 'type' parameter set");
+
+				bLeaveRow = false;
+				sType = undefined;
+				qutils.triggerKeyboardEvent("App0", "ARROW_DOWN");
+				ok(bLeaveRow, "LeaveRow event fired");
+				equal(sType, "sapdown", "LeaveRow event 'type' parameter set");
+
+				bLeaveRow = false;
+				qutils.triggerKeyboardEvent("App0", "HOME");
+				ok(bLeaveRow, "LeaveRow event fired");
+				equal(sType, "saphome", "LeaveRow event 'type' parameter set");
+
+				bLeaveRow = false;
+				jQuery("#App1").focus();
+				qutils.triggerKeyboardEvent("App1", "HOME");
+				ok(!bLeaveRow, "No LeaveRow event fired");
+
+				bLeaveRow = false;
+				qutils.triggerKeyboardEvent("App0", "END");
+				ok(!bLeaveRow, "NoLeaveRow event fired");
+
+				bLeaveRow = false;
+				qutils.triggerKeyboardEvent("App4", "END");
+				ok(bLeaveRow, "LeaveRow event fired");
+				equal(sType, "sapend", "LeaveRow event 'type' parameter set");
+			});
+
+			module("functions");
+
+			test("focusAppointment", function() {
+				oRow1.focusAppointment(sap.ui.getCore().byId("App2"));
+				equal(document.activeElement.id, "App2", "Appointment2 focused");
+			});
+
+			test("focusNearestAppointment", function() {
+				oRow1.focusNearestAppointment(new Date("2015", "01", "01", "11", "00"));
+				equal(document.activeElement.id, "App1", "Appointment1 focused");
+			});
+	</script>
 
 	</head>
 	<body class="sapUiBody" role="application">

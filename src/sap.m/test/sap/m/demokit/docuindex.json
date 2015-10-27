@@ -128,6 +128,13 @@
 		  "samples": ["sap.m.sample.Button"]
 		},
 		{
+		  "id": "sap.m.Breadcrumbs",
+		  "name": "Breadcrumbs",
+		  "category": "Action",
+		  "since": "1.34",
+		  "samples": ["sap.m.sample.Breadcrumbs"]
+		},
+		{
 		  "id": "sap.m.Carousel",
 		  "name": "Carousel",
 		  "category": "Container",
@@ -423,6 +430,15 @@
 			"sap.m.sample.ListSwipe",
 			"sap.m.sample.ListToolbar",
 			"sap.m.sample.ListUnread"
+		  ]
+		},
+		{
+		  "id": "sap.m.MaskInput",
+		  "name": "Mask Input",
+		  "category": "User Input",
+		  "since": "1.34",
+		  "samples": [
+			"sap.m.sample.MaskInput"
 		  ]
 		},
 		{
@@ -993,7 +1009,7 @@
 		  "category" : "Container",
 		  "since" : "1.11",
 		  "samples" : [
-			"sap.m.sample.SplitApp"
+			"sap.m.sample.SplitContainer"
 		  ]
 		},
 		{
@@ -1873,6 +1889,11 @@
 		  "description": "By default the title size adapts to the available space and gets bigger if the description is empty. List items with and without descriptions results in titles with different sizes. In this cases it is better to switch the size adaption off."
 		},
 		{
+		  "id": "sap.m.sample.MaskInput",
+		  "name": "MaskInput",
+		  "description": "The sap.m.MaskInput control allows users to easily enter data in a certain format and in a fixed-width input (for example: date, time, credit card number, and others)."
+		},
+		{
 		  "id": "sap.m.sample.MessageBox",
 		  "name": "Message Box",
 		  "description": "MessageBox is an easy way of displaying a message-type dialog to the user. You can display different types of dialogs:\n- Types of message (Alert, Confirmation, etc.)\n- Initial focus can be set to the buttons or the controls used in the message"
@@ -2070,7 +2091,12 @@
 		{
 		  "id": "sap.m.sample.SplitApp",
 		  "name": "SplitApp standard use case",
-		  "description": "The SplitApp is the base for each master detail application. It extends the sap.m.SplitContainer control. The display of master NavContainer depends on the portrait/landscape orientation of the device and the mode of SplitApp."
+		  "description": "The SplitApp is the base for each master detail application. It extends the sap.m.SplitContainer control."
+		},
+		{
+		  "id": "sap.m.sample.SplitContainer",
+		  "name": "SplitContainer standard use case",
+		  "description": "SplitContainer maintains two NavContainers if running on tablet or desktop and one NavContainer - on phone. The display of master NavContainer depends on the portrait/landscape orientation of the device and the mode of SplitContainer."
 		},
 		{
 		  "id": "sap.m.sample.DraftIndicator",
@@ -2106,6 +2132,11 @@
 		  "id": "sap.m.sample.TileContent",
 		  "name": "Tile Content",
 		  "description": "This control serves as a universal container for different types of content and footer."
+        },
+        {
+		  "id": "sap.m.sample.Breadcrumbs",
+		  "name": "Breadcrumbs sample",
+		  "description": "Breadcrumbs is useful for displaying link hierarchy"
 		}
 	  ]
 	}

@@ -11,26 +11,6 @@
 /* for .sapMUCItemIcon, .sapMUCItemImage change margin-right from 0.65rem to 0.75rem, delete margin-top: 0.1rem; margin-bottom:	0.1rem; margin-left: 0.1rem; */
 /* for .sapMUCAttrContainer, .sapMUCStatusContainer delete margin-left: 0.1rem*/
 
-
-/* Align Upload Button in Toolbar */
-.sapMUC .sapMIBar > .sapMBarChild:last-child {
-	margin-right: 		0rem;
-}
-
-/* List Header */
-.sapMTB.sapMUCListHeader {
-	width:				100%;
-	height:				3rem;
-	padding-left:		1rem;
-	padding-right:		1rem;
-	border-bottom-width: 0.0625rem;
-	border-bottom-style: solid;
-	white-space:		nowrap;
-	overflow:			hidden;
-	text-overflow:		ellipsis;
-	vertical-align:		middle;
-}
-
 /* List with borders*/
 .sapMLIB.sapMUCItem.sapMUCListSingleItem,
 .sapMLIB.sapMUCItem.sapMUCListFirstItem,
@@ -153,9 +133,6 @@
 /* ************************************************************************************* */
 /* local fixes: should be done by used simple controls                                   */
 /* ************************************************************************************* */
-.sapMTB.sapMUCListHeader .sapMBtnPaddingLeft {
-	padding-left:		0rem;
-}
 
 .sapMUC .sapUiIcon:focus {
 	outline-style: dotted;
@@ -171,7 +148,7 @@
 	display:		-webkit-box; 		/* OLD - iOS 6-, Safari 3.1-6 */
 	display:		-ms-flexbox; 		/* IE10 */
 	display:		-webkit-flex; 		/* NEW - Chrome */
-	dispaly:		-moz-box;
+	display:		-moz-box;
 	display: 		-moz-flex;			/*NEW		*/
 	display: 		-ms-flex;			/*NEW 		*/
 	display:		flex; 				/*FF 20+ 	*/

@@ -1,0 +1,18 @@
+.sapMBreadcrumbs {
+
+	.sapMSltIconOnly.sapMSltHoverable:hover, .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled),
+	.sapMSltPressed:not(.sapMSltDisabled), .sapMSltIconOnly.sapMSltPressed.sapMSltHoverable:hover,
+	.sapMSlt, .sapMSlt.sapMSltIconOnly.sapMSltHoverable:hover {
+		background: transparent;
+		border: none;
+	}
+
+	.sapMSltIcon:before {
+		font-size: @sapMFontMediumSize;
+	}
+
+	.sapMBreadcrumbsCurrentLocation:focus {
+		outline: 0.125rem dotted @sapHCStandardFG;
+		outline-offset: -0.125rem;
+	}
+}

@@ -29,7 +29,7 @@
 
 				<!-- expression binding just to test dynamic name -->
 				<core:ExtensionPoint name="{:= 'HeaderInfo' }">
-					<form:SimpleForm>
+					<form:SimpleForm layout="ResponsiveGridLayout">
 						<form:title>
 							<core:Title text="HeaderInfo"/>
 						</form:title>
@@ -48,7 +48,7 @@
 				<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Identification" type="XML"/>
 
 				<template:repeat list="{path:'entityType>', filters: {path: '@sapui.name', operator: 'StartsWith', value1: 'com.sap.vocabularies.UI.v1.FieldGroup'}}" var="fieldGroup">
-					<form:SimpleForm>
+					<form:SimpleForm layout="ResponsiveGridLayout">
 						<form:title>
 							<core:Title text="{path: 'fieldGroup>Label', formatter: '.AH.format'}"/>
 						</form:title>
@@ -58,7 +58,7 @@
 					</form:SimpleForm>
 				</template:repeat>
 
-				<form:SimpleForm>
+				<form:SimpleForm layout="ResponsiveGridLayout">
 					<form:title>
 						<core:Title text="Facets"/>
 					</form:title>
@@ -70,7 +70,7 @@
 
 			<template:with path="meta>com.sap.vocabularies.UI.v1.DataPoint" var="dataPoint">
 				<template:if test="{dataPoint>}">
-					<form:SimpleForm>
+					<form:SimpleForm layout="ResponsiveGridLayout">
 						<form:title>
 							<core:Title text="DataPoint@EntitySet - {path: 'dataPoint>Title', formatter: '.AH.format'}"/>
 						</form:title>

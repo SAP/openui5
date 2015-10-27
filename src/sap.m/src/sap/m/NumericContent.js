@@ -64,7 +64,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 			/**
 			 * Updates the size of the chart. If not set then the default size is applied based on the device tile.
 			 */
-			"size" : {type : "sap.m.InfoTileSize", group : "Misc", defaultValue : sap.m.InfoTileSize.Auto},
+			"size" : {type : "sap.m.Size", group : "Misc", defaultValue : sap.m.Size.Auto},
 
 			/**
 			 * The number of characters to display for the value property.
@@ -79,7 +79,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control','sap/m/Te
 			/**
 			 * The semantic color of the value.
 			 */
-			"valueColor" : {type : "sap.m.InfoTileValueColor", group : "Misc", defaultValue : sap.m.InfoTileValueColor.Neutral},
+			"valueColor" : {type : "sap.m.ValueColor", group : "Misc", defaultValue : sap.m.ValueColor.Neutral},
 
 			/**
 			 * The width of the chart. If it is not set, the size of the control is defined by the size property.

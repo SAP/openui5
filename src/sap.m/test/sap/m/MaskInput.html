@@ -8,365 +8,114 @@
 	<script src="../../../resources/sap-ui-core.js"
 			type="text/javascript"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
 			data-sap-ui-theme="sap_bluecrystal">
 	</script>
-
-</head>
-<body id="body" class="sapUiBody" role="application">
-<script type="text/javascript">
-	var oModel = new sap.ui.model.json.JSONModel();
-	oModel.setData({
-		sValue1: "12 / 324/ 5678",
-		sValue2: "12/324/5678",
-		sValue3: "123455678",
-		sValue4: "a2345678",
-		sValue5: "1a345678",
-		sValue21: "ZXYI-1234-5678-0123",
-		sValue22: "ZXYI123456780123",
-		sValue23: "123456780123",
-		sValue31: "(02)-953-753",
-		sValue32: "(02)953753",
-		sValue33: "02953753"
-	});
-
-	sap.ui.getCore().setModel(oModel);
-	var oApp = new sap.m.App();
-	function addMask(masks) {
-		var aResult = [];
-		if (!Array.isArray(masks)) {
-			masks = [masks];
-		}
-		masks.forEach(function (oMask, iIndex) {
-			var oLabel = new sap.m.Input({value: "", editable: false});
-			oMask.onfocusin = function() {
-				sap.m.MaskInput.prototype.onfocusin.call(this, arguments);
-				oLabel.setValue("");
-			};
-			oMask.attachEvent("change", function () {
-				oLabel.setValue("Value:" + oMask.getValue());
+	<script type="text/javascript">
+		var ruleCollection = [
+			{name: "allCharactersRule", rule: new sap.m.MaskInputRule("allCharactersRule", { maskFormatSymbol: "~", regex: "[^_]"})},
+			{name: "defaultRule", rule: new sap.m.MaskInputRule("defaultRule")},
+			{name: "lowercaseLettersOnlyRule", rule: new sap.m.MaskInputRule("lowercaseLettersOnlyRule", { maskFormatSymbol: "a", regex: "[a-z]"})},
+			{name: "uppercaseLettersOnlyRule", rule: new sap.m.MaskInputRule("uppercaseLettersOnlyRule", { maskFormatSymbol: "A", regex: "[A-Z]"})},
+			{name: "uppercaseAndNumericOnlyRule", rule: new sap.m.MaskInputRule("uppercaseAndNumericOnlyRule", { maskFormatSymbol: "C", regex: "[A-Z0-9]"})}
+		];
+		sap.ui.getCore().setModel(new sap.ui.model.json.JSONModel({"ruleCollection": ruleCollection}));
+		function addMask(sMaskLabelText, sMask, sMaskPlaceholder, cPlaceholderSymbol, aRules) {
+			var oMaskInput = new sap.m.MaskInput({
+				mask: sMask ? sMask : "",
+				placeholderSymbol: cPlaceholderSymbol ? cPlaceholderSymbol : "",
+				rules: aRules ? Array.isArray(aRules) ? aRules : [aRules] : undefined,
+				placeholder: sMaskPlaceholder ? sMaskPlaceholder : ""
 			});
-			aResult.push(oMask);
-			aResult.push(oLabel);
+			return [
+				new sap.m.Label({
+					text: sMaskLabelText ? sMaskLabelText : "",
+					labelFor: oMaskInput
+				}),
+				oMaskInput
+			];
+		}
+		var oData = {labelText: "Any character", mask: "9999999", placeholder: "Enter seven digit number", placeholderSymbol: "_"};
+		var oMaskInputDataBound = new sap.m.MaskInput("dataBindingMI", {
+			mask: "{/mask}",
+			placeholder: "{/placeholder}",
+			placeholderSymbol: "{/placeholderSymbol}"
 		});
-
-		return aResult;
-	}
-	var oExtendedListVisible = false;
-	var mi = new sap.m.MaskInput({
-		mask: "99 / 99 / 999a",
-		placeholderSymbol: "#",
-		placeholder: "Some pl"
-	});
-	var oPage = new sap.m.Page({
-		title: "Mask Input - Testsuite example",
-		content: [
-			new sap.m.Input({value: "My Value"}),
-			new sap.m.VBox({
-				items: [
-					new sap.m.HBox({
-						width: "100%",
-						items: [
-							new sap.m.HBox({
-								items: addMask(new sap.m.MaskInput({
-									mask: "99 / 99 / 9999",
-									placeholderSymbol: "_",
-									placeholder: "Enter birthdate in format 99 / 99 / 9999"
-								}))
-							}),
-							new sap.m.HBox({
-								items: addMask(new sap.m.MaskInput({
-									mask: "aaaaa",
-									placeholderSymbol: "_",
-									placeholder: "Alphabets"
-								}))
-							}),
-							new sap.m.VBox({
-								visible: oExtendedListVisible,
-								items: addMask([
-									mi,
-									new sap.m.Button({
-										text: "Change focus",
-										press: function () {
-											setTimeout(function () {
-												jQuery(mi).focus();
-												console.log("mi.getValue(): " + mi.getValue());
-											}, 1000);
-										}
-									}),
-									new sap.m.Input().bindProperty("value",
-											{
-												path: "/sValue1",
-												formatter: function (data) {
-													console.log("Formatter received for model property [sValue1] = " + data);
-													return data;
-												}
-											})
-								])
-							}),
-							new sap.m.VBox({
-								visible: oExtendedListVisible,
-								items: addMask([
-									new sap.m.MaskInput({
-										mask: "99 / 99 / 9999",
-										placeholderSymbol: "_",
-										value: "{/sValue2}"
-									}),
-									new sap.m.Input().bindProperty("value",
-											{
-												path: "/sValue2",
-												formatter: function (data) {
-													console.log("Formatter received for model property [sValue2] = " + data);
-													return data;
-												}
-											})])
-							}),
-							new sap.m.VBox({
-								visible: oExtendedListVisible,
-								items: addMask([
-									new sap.m.MaskInput({
-										mask: "99 / 99 / 9999",
-										placeholderSymbol: "_",
-										value: "{/sValue3}"
-									}),
-									new sap.m.Input({value: "{/sValue3}"})])
-							}),
-							new sap.m.VBox({
-								visible: oExtendedListVisible,
-								items: addMask([
-									new sap.m.MaskInput({
-										mask: "99 / 99 / 9999",
-										placeholderSymbol: "_",
-										value: "{/sValue4}"
-									}),
-									new sap.m.Input({value: "{/sValue4}"})])
-							}),
-							new sap.m.VBox({
-								visible: oExtendedListVisible,
-								items: addMask([
-									new sap.m.MaskInput({
-										mask: "99 / 99 / 9999",
-										placeholderSymbol: "_",
-										value: "{/sValue5}"
-									}),
-									new sap.m.Input({value: "{/sValue5}"})])
-							})
-						]
-					}),
-					new sap.m.VBox({
-						width: "100%",
-						items: [
-							new sap.m.HBox({
-								items: addMask([
-									new sap.m.MaskInput({
-										mask: "(02)-***-***",
-										placeholderSymbol: "#",
-										placeholder: "Enter telephone number in format (02)-***-*** ",
-										rules: [
-											new sap.m.MaskInputRule({
-												maskFormatSymbol: "*",
-												regex: "[0-9]"
-											})
-										]
-									}),
-								])
-							}),
-							new sap.m.HBox({
-								items: addMask(
-										new sap.m.MaskInput({
-											mask: "(+999)",
-											placeholderSymbol: "_",
-											placeholder: "Prefix with + sign",
-											rules: [
-												new sap.m.MaskInputRule({
-													maskFormatSymbol: "+",
-													regex: "[+]"
-												})
+		var oModel = new sap.ui.model.json.JSONModel(oData);
+		oMaskInputDataBound.setModel(oModel);
+		var oApp = new sap.m.App({
+			pages: [
+				new sap.m.Page({
+					title: "Mask Input - Testsuite example",
+					content: [
+						new sap.ui.layout.Grid({
+							vSpacing: 2,
+							defaultSpan: "XL12 L12 M12 S12",
+							content: [
+								new sap.m.VBox({
+									items: [
+										new sap.ui.layout.form.SimpleForm({
+											editable: true,
+											content: [
+												new sap.m.Title({
+													text: "Generic Mask Input",
+													textAlign: sap.ui.core.TextAlign.Center,
+													level: sap.ui.core.TitleLevel.H2,
+													titleStyle: sap.ui.core.TitleLevel.H2
+												}),
+												addMask("Any character", "~~~~~~~~~~", "Enter text", "_", [ruleCollection[0].rule]),
+												addMask("Latin characters (case insensitive) and numbers", "aaaaaaaa", "Enter text", "_"),
+												addMask("Latin characters (case sensitive) and numbers", "CCCCCCCC", "Enter text", "_", [ruleCollection[4].rule]),
+												addMask("Numeric only", "999999", "Enter a six digit number", "_", [ruleCollection[2].rule])
 											]
 										})
-								)
-							}),
-							new sap.m.VBox({
-								visible: oExtendedListVisible,
-								visible: oExtendedListVisible,
-								items: addMask([
-									new sap.m.MaskInput({
-										mask: "(02)-***-***",
-										placeholderSymbol: "#",
-										placeholder: "Enter telephone number",
-										rules: [
-											new sap.m.MaskInputRule({
-												maskFormatSymbol: "*",
-												regex: "[0-9]"
-											})
-										],
-										value: "{/sValue31}"
-									}),
-									new sap.m.Input().bindProperty("value",
-											{
-												path: "/sValue31",
-												formatter: function (data) {
-													console.log("Formatter received for model property [sValue31] = " + data);
-													return data;
-												}
-											})
-								])
-							}),
-							new sap.m.VBox({
-								visible: oExtendedListVisible,
-								visible: oExtendedListVisible,
-								items: addMask([
-									new sap.m.MaskInput({
-										mask: "(02)-***-***",
-										placeholderSymbol: "#",
-										placeholder: "Enter telephone number",
-										rules: [
-											new sap.m.MaskInputRule({
-												maskFormatSymbol: "*",
-												regex: "[0-9]"
-											})
-										],
-										value: "{/sValue32}"
-									}),
-									new sap.m.Input().bindProperty("value",
-											{
-												path: "/sValue32",
-												formatter: function (data) {
-													console.log("Formatter received for model property [sValue32] = " + data);
-													return data;
-												}
-											})
-								])
-							}),
-							new sap.m.VBox({
-								visible: oExtendedListVisible,
-								items: addMask([
-									new sap.m.MaskInput({
-										mask: "(02)-***-***",
-										placeholderSymbol: "#",
-										placeholder: "Enter telephone number",
-										rules: [
-											new sap.m.MaskInputRule({
-												maskFormatSymbol: "*",
-												regex: "[0-9]"
-											})
-										],
-										value: "{/sValue33}"
-									}),
-									new sap.m.Input().bindProperty("value",
-											{
-												path: "/sValue33",
-												formatter: function (data) {
-													console.log("Formatter received for model property [sValue33] = " + data);
-													return data;
-												}
-											})
-								])
-							})
-						]
-					}),
-					new sap.m.HBox({
-						width: "100%",
-						items: [
-							new sap.m.VBox({
-								items: addMask([
-									new sap.m.MaskInput({
-										mask: "ZXYI-9999-9999-9999",
-										placeholderSymbol: "_",
-										placeholder: "Enter serial number in format ZXYI-9999-9999-9999"
-									})])
-							}),
-							new sap.m.VBox({
-								visible: oExtendedListVisible,
-								items: addMask([
-									new sap.m.MaskInput({
-										mask: "ZXYI-9999-9999-9999",
-										placeholderSymbol: "_",
-										placeholder: "Enter serial number",
-										value: "{/sValue21}"
-									}),
-									new sap.m.Input().bindProperty("value",
-											{
-												path: "/sValue21",
-												formatter: function (data) {
-													console.log("Formatter received for model property [sValue21] = " + data);
-													return data;
-												}
-											})
-								])
-							}),
-							new sap.m.VBox({
-								visible: oExtendedListVisible,
-								items: addMask([
-									new sap.m.MaskInput({
-										mask: "ZXYI-9999-9999-9999",
-										placeholderSymbol: "_",
-										placeholder: "Enter serial number",
-										value: "{/sValue22}"
-									}),
-									new sap.m.Input().bindProperty("value",
-											{
-												path: "/sValue22",
-												formatter: function (data) {
-													console.log("Formatter received for model property [sValue22] = " + data);
-													return data;
-												}
-											})
-								])
-							}),
-							new sap.m.VBox({
-								visible: oExtendedListVisible,
-								items: addMask([
-									new sap.m.MaskInput({
-										mask: "ZXYI-9999-9999-9999",
-										placeholderSymbol: "_",
-										placeholder: "Enter serial number",
-										value: "{/sValue23}"
-									}),
-									new sap.m.Input().bindProperty("value",
-											{
-												path: "/sValue23",
-												formatter: function (data) {
-													console.log("Formatter received for model property [sValue23] = " + data);
-													return data;
-												}
-											})
-								])
-							})
-						]
-					}),
-					new sap.m.HBox({
-						items: addMask(new sap.m.MaskInput({
-							mask: "h9:59:59 AB",
-							placeholderSymbol: "-",
-							placeholder: "TimePicker",
-							rules: [
-								new sap.m.MaskInputRule({
-									maskFormatSymbol: "h",
-									regex: "[\\s1]"
+									]
 								}),
-								new sap.m.MaskInputRule({
-									maskFormatSymbol: "5",
-									regex: "[0-5]"
+								new sap.m.VBox({
+									items: [
+										new sap.ui.layout.form.SimpleForm({
+											editable: true,
+											content: [
+												new sap.m.Title({
+													text: "Possible usages (may require additional coding)",
+													textAlign: sap.ui.core.TextAlign.Center,
+													level: sap.ui.core.TitleLevel.H2,
+													titleStyle: sap.ui.core.TitleLevel.H2
+												}),
+												addMask("Serial number (case sensitive, only capital letters allowed)", "CCCC-CCCC-CCCC-CCCC-CCCC", "Enter serial number", "_", [ruleCollection[4].rule]),
+												addMask("Product activation key (case sensitive, only capital letters allowed)", "SAP-CCCCC-CCCCC", "Enter activation key", "_", [ruleCollection[4].rule]),
+												addMask("ISBN", "999-99-999-9999-9", "Enter ISBN", "_")
+											]
+										})
+									]
 								}),
-								new sap.m.MaskInputRule({
-									maskFormatSymbol: "A",
-									regex: "[AP]"
-								}),
-								new sap.m.MaskInputRule({
-									maskFormatSymbol: "B",
-									regex: "[M]"
+								new sap.m.VBox({
+									items: [
+										new sap.ui.layout.form.SimpleForm({
+											editable: true,
+											content: [
+												new sap.m.Title({
+													text: "Data binding",
+													textAlign: sap.ui.core.TextAlign.Center,
+													level: sap.ui.core.TitleLevel.H2,
+													titleStyle: sap.ui.core.TitleLevel.H2
+												}),
+												new sap.m.Label({
+													text: "Data bound mask input (numeric)"
+												}),
+												oMaskInputDataBound
+											]
+										})
+									]
 								})
 							]
-						}))
-					}),
-				]
-			})
-		]
-	});
-	oApp.addPage(oPage);
-
-	oApp.placeAt("body");
-</script>
-</body>
+						})
+					]
+				})
+			]
+		});
+		oApp.placeAt("body");
+	</script>
+</head>
+<body id="body" class="sapUiBody" role="application"></body>
 </html>

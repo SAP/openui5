@@ -4,7 +4,7 @@
 	xmlns:form="sap.ui.layout.form"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 
-	<form:SimpleForm>
+	<form:SimpleForm layout="ResponsiveGridLayout">
 		<form:title>
 			<core:Title text="Identification"/>
 		</form:title>

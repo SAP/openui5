@@ -2582,11 +2582,12 @@ sap.ui.define([
 				mEntityTypes[oEntityMetadata.entityType] = true;
 			}
 			// for createEntry entities change context path to new one
-			if (oRequest.context) {
+			if (oRequest.key) {
 				var sKey = this._getKey(oResultData);
-				delete this.mChangedEntities[oRequest.context.sPath.substr(1)];
-				delete this.oData[oRequest.context.sPath.substr(1)];
-				oRequest.context.sPath = '/' + sKey;
+				delete this.mChangedEntities[oRequest.key];
+				delete this.oData[oRequest.key];
+				var oContext = this.getContext("/" + oRequest.key);
+				oContext.sPath = '/' + sKey;
 				//delete created flag after successfull creation
 				if (this.oData[sKey]) {
 					delete this.oData[sKey].__metadata.created;
@@ -2689,6 +2690,9 @@ sap.ui.define([
 			sUpdateMethod = "MERGE";
 		}
 
+		// do a copy of the payload or the changes will be deleted in the model as well (reference)
+		oPayload = jQuery.sap.extend(true, {}, this._getObject('/' + sKey, true), oData);
+		
 		if (oData.__metadata && oData.__metadata.created){
 			sMethod = "POST";
 			sKey = oData.__metadata.created.key;
@@ -2701,8 +2705,6 @@ sap.ui.define([
 			sMethod = "PUT";
 		}
 
-		// do a copy of the payload or the changes will be deleted in the model as well (reference)
-		oPayload = jQuery.sap.extend(true, {}, oData);
 		// remove metadata, navigation properties to reduce payload
 		if (oPayload.__metadata) {
 			for (var n in oPayload.__metadata) {
@@ -3623,7 +3625,7 @@ sap.ui.define([
 	ODataModel.prototype.submitChanges = function(mParameters) {
 		var oRequest, sGroupId, oGroupInfo, fnSuccess, fnError,
 			oRequestHandle, vRequestHandleInternal,
-			bAborted = false, sMethod, 
+			bAborted = false, sMethod, mChangedEntities,
 			mParams,
 			that = this;
 
@@ -3640,12 +3642,13 @@ sap.ui.define([
 		if (sGroupId && !this.mDeferredGroups[sGroupId]) {
 			jQuery.sap.log.fatal(this + " submitChanges: \"" + sGroupId + "\" is not a deferred group!");
 		}
-
+		
+		mChangedEntities = jQuery.sap.extend(true, {}, that.mChangedEntities);
+			
 		this.oMetadata.loaded().then(function() {
-			jQuery.each(that.mChangedEntities, function(sKey) {
+			jQuery.each(mChangedEntities, function(sKey, oData) {
 				oGroupInfo = that._resolveGroup(sKey);
 				if (oGroupInfo.groupId === sGroupId || !sGroupId) {
-					var oData = that._getObject('/' + sKey);
 					oRequest = that._processChange(sKey, oData, sMethod || that.sDefaultUpdateMethod);
 					oRequest.key = sKey;
 					//get params for created entries: could contain success/error handler
@@ -4172,7 +4175,6 @@ sap.ui.define([
 			oRequest = that._createRequest(sUrl, sMethod, mHeaders, oEntity, sETag);
 
 			oCreatedContext = that.getContext("/" + sKey); // context wants a path
-			oRequest.context = oCreatedContext;
 			oRequest.key = sKey;
 			
 			mRequests = that.mRequests;

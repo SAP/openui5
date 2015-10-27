@@ -829,6 +829,29 @@
 				oTC1 = initTeamCalendar("TC1", "SF1", "B1");
 			});
 
+			module("Interaction");
+
+			asyncTest("keyboard navigation", function() {
+				// test here only interaction between rows, other things arre tested on CalendarRow
+				jQuery("#TC1-R1A1").focus();
+				equal(document.activeElement.id, "TC1-R1A1", "Appointment1 focused");
+				qutils.triggerKeyboardEvent("TC1-R1A1", "END");
+				equal(document.activeElement.id, "TC1-R2A1", "Appointment1 focused");
+
+				qutils.triggerKeyboardEvent("TC1-R2A1", "HOME");
+				sap.ui.getCore().applyChanges();
+
+				setTimeout(function(){
+					equal(document.activeElement.id, "TC1-R1A2", "Appointment2 focused");
+					qutils.triggerKeyboardEvent("TC1-R1A1", "ARROW_DOWN");
+					equal(document.activeElement.id, "TC1-R2A1", "Appointment1 focused");
+					qutils.triggerKeyboardEvent("TC1-R1A1", "ARROW_UP");
+					sap.ui.getCore().applyChanges();
+					equal(document.activeElement.id, "TC1-R1A2", "Appointment2 focused");
+					start();
+				}, 0);
+
+			});
 		</script>
 
 	</head>

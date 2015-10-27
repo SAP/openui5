@@ -319,6 +319,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		};
 
+		TeamCalendarRow.prototype.applyFocusInfo = function (oFocusInfo) {
+
+			// forward to CalendarRow
+			this.getCalendarRow().applyFocusInfo(oFocusInfo);
+
+			return this;
+
+		};
+
 	}());
 
 	return TeamCalendarRow;

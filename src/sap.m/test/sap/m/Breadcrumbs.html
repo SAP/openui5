@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<title>sap.m.Breadcrumbs</title>
+	<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap" data-sap-ui-libs="sap.m,sap.ui.layout" data-sap-ui-theme="sap_bluecrystal">
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<script>
+	(function (jQuery, App, Page, Link, Breadcrumbs, MessageToast, Input, Label, Button, VerticalLayout, Slider, Panel) {
+		var fnLinkPressHandler = function (oEvent) {
+				MessageToast.show(oEvent.getSource().getText() + " has been activated");
+			},
+			fnGetLink = function (sLinkText) {
+				return new Link({
+					text: sLinkText,
+					press: fnLinkPressHandler
+				});
+			},
+			fnLinkGenerator = function (iNumberOfLinks, sLinkText) {
+				var aListOfLinks = [];
+				sLinkText = sLinkText || "Link";
+
+				for (var i = 1; i <= iNumberOfLinks; i++) {
+					aListOfLinks.push(fnGetLink(sLinkText + i));
+				}
+
+				return aListOfLinks;
+			},
+			fnUpdateBreadcrumbsWidth = function () {
+				oBreadcrumbs.$().css("width", sBreadcrumbWidth);
+			},
+			oTestDataModel = new sap.ui.model.json.JSONModel({
+				currentLocationText: "Current location",
+				indexOfLinkToRemove: 0
+			}),
+			sBreadcrumbWidth = "auto",
+			oBreadcrumbs = new Breadcrumbs({
+				currentLocationText: "{testData>/currentLocationText}",
+				links: fnLinkGenerator(10, "NormalLink")
+			}).addEventDelegate({onAfterRendering: fnUpdateBreadcrumbsWidth}),
+			oBreadcrumbsWithSelect = new Breadcrumbs("breadCrumbWithSelect", {
+				currentLocationText: "currentLocationText",
+				links: fnLinkGenerator(10, "NormalLink")
+			}).addEventDelegate({
+				onAfterRendering: function () {
+					oBreadcrumbsWithSelect.$().css("width", "100px");
+				}
+			}),
+			oApp = new App(),
+			oAddLinkLabel = new Label({text: "Link text:"}),
+			oRemoveLinkAtIndexLabel = new Label({text: "Remove link at index:"}),
+			oAddLinkInput = new Input(),
+			oChangeCurrentLocationTextLabel = new Label({text: "Current location text:"}),
+			oChangeCurrentLocationTextInput = new Input({value: "{testData>/currentLocationText}"}),
+			oIndexOfLinkToRemoveInput = new Input({value: "{testData>/indexOfLinkToRemove}"}),
+			oAddLinkButton = new Button({
+				text: "Add a link", press: function () {
+					oBreadcrumbs.addLink(fnGetLink(oAddLinkInput.getValue()));
+				}
+			}),
+			oRemoveAllLinksButton = new Button({
+				text: "Remove all links", press: function () {
+					oBreadcrumbs.removeAllLinks()
+				}
+			}),
+			oRemoveLinkAtIndexButton = new Button({
+				text: "Remove link at index", press: function () {
+					var oLinkToRemove = oBreadcrumbs.getLinks()[oIndexOfLinkToRemoveInput.getValue()];
+					oBreadcrumbs.removeLink(oLinkToRemove);
+				}
+			}),
+			fnSliderChangeHandler = function (oControlEvent) {
+				sBreadcrumbWidth = oControlEvent.getParameter("value");
+				if (sBreadcrumbWidth === 100) {
+					sBreadcrumbWidth = "auto";
+				} else {
+					sBreadcrumbWidth += "%";
+				}
+
+				fnUpdateBreadcrumbsWidth();
+			},
+			oSlider = new Slider({
+				value: 100,
+				liveChange: fnSliderChangeHandler,
+				change: fnSliderChangeHandler
+			}),
+			oVerticalLayoutAddLink = new VerticalLayout({
+				content: [oAddLinkLabel, oAddLinkInput, oAddLinkButton, oRemoveAllLinksButton]
+			}),
+			oVerticalLayoutEditCurrentLocation = new VerticalLayout({
+				content: [oChangeCurrentLocationTextLabel, oChangeCurrentLocationTextInput]
+			});
+
+		sap.ui.getCore().setModel(oTestDataModel, "testData");
+
+		oApp.addPage(new Page({
+			title: "Breadcrumbs",
+			content: [new Panel({
+				content: [oBreadcrumbs, oSlider, oVerticalLayoutAddLink, oVerticalLayoutEditCurrentLocation,
+					oRemoveLinkAtIndexLabel, oIndexOfLinkToRemoveInput, oRemoveLinkAtIndexButton, oBreadcrumbsWithSelect]
+			})]
+		})).placeAt("content");
+
+	}(jQuery, sap.m.App, sap.m.Page, sap.m.Link, sap.m.Breadcrumbs, sap.m.MessageToast,
+			sap.m.Input, sap.m.Label, sap.m.Button, sap.ui.layout.VerticalLayout, sap.m.Slider, sap.m.Panel))
+</script>
+<div id="content"></div>
+</body>
+</html>

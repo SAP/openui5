@@ -7,9 +7,6 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 	function(jQuery, InputBase, MaskInput, MaskInputRule, ResponsivePopover, EnabledPropagator, IconPool, TimeModel, TimePickerSliders) {
 		"use strict";
 
-		jQuery.sap.require("sap.m.MaskInputRule");
-		jQuery.sap.require("sap.m.MaskInput");
-
 		/**
 		 * Constructor for a new TimePicker.
 		 *

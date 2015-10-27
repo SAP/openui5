@@ -5,6 +5,10 @@
 .sapUiCalendarRow{
 	background-color: @sapUiFieldBackground;
 	box-sizing: border-box;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 .sapUiCalendarRowApps{
@@ -115,7 +119,9 @@
 	display: none; /* if too small don't show content at all, would look ugly if only some px of text are shown */
 }
 
-.sap-desktop .sapUiCalendarApp:hover:not(:active){
+.sap-desktop .sapUiCalendarApp:hover:not(:active),
+.sap-desktop .sapUiCalendarApp:focus > .sapUiCalendarAppCont,
+.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSmall:focus{
 	background-color: @sapUiListHoverBackground;
 }
 
@@ -125,7 +131,9 @@
 }
 
 .sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active),
-.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel.sapUiCalendarAppSmall:hover:not(:active){
+.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel.sapUiCalendarAppSmall:hover:not(:active),
+.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus > .sapUiCalendarAppCont,
+.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel.sapUiCalendarAppSmall:focus > .sapUiCalendarAppCont{
 	background-color: darken(@sapUiSelected, 10);
 }
 

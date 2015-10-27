@@ -22,8 +22,8 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @private
-	 * @since 1.32.0
+	 * @public
+	 * @since 1.34.0
 	 * @alias sap.m.MaskInput
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -396,14 +396,12 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 */
 	TestRules.prototype.nextTo = function (iCurrentPos) {
 		var iPosition = iCurrentPos;
-
 		if (typeof iPosition === "undefined") {
 			iPosition = -1; //this will make sure the 0 rule is also included in the search
 		}
 		do {
 			iPosition++;
 		} while (iPosition < this._aRules.length && !this._aRules[iPosition]);
-
 		return iPosition;
 	};
 
@@ -413,13 +411,11 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 * @returns {int} The found position
 	 * @private
 	 */
-	TestRules.prototype.previous = function (iCurrentPos) {
+	TestRules.prototype.previousTo = function (iCurrentPos) {
 		var iPosition = iCurrentPos;
-
 		do {
 			iPosition--;
 		} while (!this._aRules[iPosition] && iPosition > 0);
-
 		return iPosition;
 	};
 
@@ -778,14 +774,14 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 		);
 	};
 
-
 	/**
 	 * Handles <code>onKeyDown</code> event.
 	 * @param {jQuery.event} oEvent The jQuery event object
 	 * @private
 	 */
 	function keyDownHandler(oEvent, oKey) {
-		var oSelection,
+		var sDirection,
+		    oSelection,
 			iBegin,
 			iEnd,
 			iCursorPos,
@@ -798,7 +794,24 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 		if (!oKey.bShift && (oKey.bArrowRight || oKey.bArrowLeft)) {
 			iCursorPos = getCursorPosition.call(this);
-			iNextCursorPos = (oKey.bArrowRight ? this._oRules.nextTo(iCursorPos) : this._oRules.previous(iCursorPos));
+			oSelection = getTextSelection.call(this);
+
+
+			// Determine the correct direction based on RTL mode, input characters and selection state
+			sDirection = determineArrowKeyDirection.call(this, oKey, oSelection);
+
+			if (isRtlMode.call(this) && oSelection.bHasSelection) {
+				iNextCursorPos = determineRtlCaretPositionFromSelection.call(this, sDirection);
+			} else {
+				// Determine the next position based on mask validation rules only
+				iNextCursorPos = this._oRules[sDirection](iCursorPos);
+			}
+
+			// chrome needs special treatment, because of a browser bug with switched first and last position
+			if (isWebkitProblematicCase.call(this)) {
+				iNextCursorPos = fixWebkitBorderPositions.call(this, iNextCursorPos, sDirection);
+			}
+
 			setCursorPosition.call(this, iNextCursorPos);
 			oEvent.preventDefault();
 
@@ -820,7 +833,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 
 			if (!oSelection.bHasSelection) {
 				if (oKey.bBackspace) {
-					iBegin = this._oRules.previous(iBegin);
+					iBegin = this._oRules.previousTo(iBegin);
 				}
 			}
 
@@ -1005,6 +1018,166 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 		return true;
 	}
 
+
+	/**
+	 * Checks if a given character belongs to an RTL language
+	 * @param sString
+	 * @returns {boolean}
+	 */
+	function isRtlChar(sString) {
+		var ltrChars    = 'A-Za-z\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02B8\u0300-\u0590\u0800-\u1FFF' + '\u2C00-\uFB1C\uFDFE-\uFE6F\uFEFD-\uFFFF',
+		    rtlChars    = '\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC',
+		    rtlDirCheck = new RegExp('^[^' + ltrChars + ']*[' + rtlChars + ']');
+
+		return rtlDirCheck.test(sString);
+	}
+
+
+	/**
+	 * Fix an issue with Chrome where first and last positions are switched
+	 * @param iCurrentPosition
+	 * @param sDirection
+	 * @returns {*}
+	 */
+	function fixWebkitBorderPositions(iCurrentPosition, sDirection) {
+		if (!isWebkitProblematicCase.call(this)) {
+			return iCurrentPosition;
+		}
+
+		var iNewCaretPos = iCurrentPosition;
+
+		if (sDirection === 'nextTo') {
+			if (iCurrentPosition === 0) {
+				iNewCaretPos = 0;
+			}
+			if (iCurrentPosition === this._oTempValue.toString().length) {
+				iNewCaretPos = 0;
+			}
+			if (iCurrentPosition === 1) {
+				iNewCaretPos = 0;
+			}
+
+			if (iCurrentPosition === this._oTempValue.toString().length + 1) {
+				iNewCaretPos = 1;
+			}
+		} else {
+			if (iCurrentPosition === this._oTempValue.toString().length) {
+				iNewCaretPos = this._oTempValue.toString().length - 1;
+			}
+			if (iCurrentPosition === 0) {
+				iNewCaretPos = this._oTempValue.toString().length;
+			}
+			if (iCurrentPosition === this._oTempValue.toString().length - 1) {
+				iNewCaretPos = this._oTempValue.toString().length;
+			}
+
+			if (iCurrentPosition === -1) {
+				iNewCaretPos = this._oTempValue.toString().length - 1;
+			}
+		}
+
+		return iNewCaretPos;
+	}
+
+
+	/**
+	 * Check if the current value contains any RTL characters
+	 * @returns {boolean}
+	 */
+	function containsRtlChars() {
+		var sTempValue = this._oTempValue.toString(),
+		    bContainsRtl = false;
+		for (var i = 0; i < sTempValue.length; i++) {
+			bContainsRtl = isRtlChar(sTempValue[i]);
+		}
+		return bContainsRtl;
+	}
+
+
+	/**
+	 * Check if the current control is in RTL mode.
+	 * @returns {boolean}
+	 */
+	function isRtlMode() {
+		return sap.ui.getCore().getConfiguration().getRTL() || (this.getTextDirection() === sap.ui.core.TextDirection.RTL);
+	}
+
+	/**
+	 * Check if the current environment and interaction lead to a bug in Webkit
+	 * @returns {boolean|*}
+	 */
+	function isWebkitProblematicCase() {
+		return (sap.ui.Device.browser.webkit && isRtlMode.call(this) && !containsRtlChars.call(this));
+	}
+
+	/**
+	 * Determine the correct direction based on RTL mode, current input characters and selection state
+	 * @param oKey
+	 * @param {object} oSelection
+	 * @returns {string} sDirection
+	 */
+	function determineArrowKeyDirection(oKey, oSelection) {
+		var sDirection;
+		if (!isRtlMode.call(this) || !containsRtlChars.call(this) || oSelection.bHasSelection) {
+			// when there is selection we want the arrows to always behave as on a ltr input
+			if (oKey.bArrowRight) {
+				sDirection = 'nextTo';
+			} else {
+				sDirection = 'previousTo';
+			}
+		} else {
+			// rtl mode
+			if (oKey.bArrowRight) {
+				sDirection = 'previousTo';
+			} else {
+				sDirection = 'nextTo';
+			}
+		}
+		return sDirection;
+	}
+
+	/**
+	 * Determine the right caret position based on the current selection state
+	 * @param sDirection
+	 * @returns {integer} iNewCaretPos
+	 */
+	function determineRtlCaretPositionFromSelection(sDirection, bWithChromeFix) {
+		var iNewCaretPos,
+			oSelection = getTextSelection.call(this);
+
+		if (bWithChromeFix) {
+			if (sDirection === 'nextTo') {
+				if (!containsRtlChars.call(this)) {
+					iNewCaretPos = oSelection.iFrom;
+				} else {
+					iNewCaretPos = oSelection.iTo;
+				}
+			} else {
+				if (!containsRtlChars.call(this)) {
+					iNewCaretPos = oSelection.iTo;
+				} else {
+					iNewCaretPos = oSelection.iFrom;
+				}
+			}
+		} else {
+			if (sDirection === 'nextTo') {
+				if (!containsRtlChars.call(this)) {
+					iNewCaretPos = oSelection.iTo;
+				} else {
+					iNewCaretPos = oSelection.iFrom;
+				}
+			} else {
+				if (!containsRtlChars.call(this)) {
+					iNewCaretPos = oSelection.iFrom;
+				} else {
+					iNewCaretPos = oSelection.iTo;
+				}
+			}
+		}
+
+		return iNewCaretPos;
+	}
+
 	return MaskInput;
 
-}, /* bExport= */ false);
+}, /* bExport= */ true);

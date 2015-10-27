@@ -242,6 +242,23 @@
 	display: none;
 }
 
+/* Day names inside day */
+.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem {
+	position: relative;
+}
+
+.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem > .sapUiCalDayName{
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 33%;
+	width: 100%;
+	color: @sapUiLightText;
+	overflow: hidden;
+	white-space: nowrap;
+	line-height: 100%;
+}
+
 .sapUiCalCancel{
 	display: none; /* cancel button only visible on phones */
 	position: absolute;

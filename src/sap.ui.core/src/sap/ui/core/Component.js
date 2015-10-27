@@ -10,7 +10,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	/*global Promise */
 
 	/**
-	 * Util function which adds SAP-specific search parameters to an URI instance
+	 * Utility function which adds SAP-specific search parameters to an URI instance
 	 *
 	 * @param {object} oUriParams See <code>jQuery.sap.getUriParameters()</code>
 	 * @param {URI} oUri URI.js instance
@@ -26,10 +26,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	}
 
 	/**
-	 * Util function which merges/creates a map of property definitions to track
+	 * Utility function which merges a map of property definitions to track
 	 * from which "source" a property was defined.
 	 *
-	 * This function gets used to find out which Component has defined
+	 * This function is used to find out which Component has defined
 	 * which "dataSource/model".
 	 *
 	 * @param {object} mDefinitions Map with definitions to check
@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	}
 
 	/**
-	 * Creates and initializes a new component with the given <code>sId</code> and
+	 * Creates and initializes a new Component with the given <code>sId</code> and
 	 * settings.
 	 *
 	 * The set of allowed entries in the <code>mSettings</code> object depends on
@@ -57,12 +57,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * for a general description of this argument.
 	 *
 	 * @param {string}
-	 *            [sId] optional id for the new control; generated automatically if
-	 *            no non-empty id is given Note: this can be omitted, no matter
-	 *            whether <code>mSettings</code> will be given or not!
+	 *            [sId] Optional ID for the new control; generated automatically if
+	 *            no non-empty ID is given. Note: this can be omitted, no matter
+	 *            whether <code>mSettings</code> are given or not!
 	 * @param {object}
-	 *            [mSettings] optional map/JSON-object with initial settings for the
-	 *            new component instance
+	 *            [mSettings] Optional map or JSON-object with initial settings for the
+	 *            new Component instance
 	 * @public
 	 *
 	 * @class Base Class for Component.
@@ -78,6 +78,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	{
 		constructor : function(sId, mSettings) {
 
+			// create a copy of arguments for later handover to ManagedObject
+			var args = Array.prototype.slice.call(arguments);
+
 			// identify how the constructor has been used to extract the settings
 			if (typeof sId !== "string") {
 				mSettings = sId;
@@ -87,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			/**
 			 * Checks whether a settings object was provided plus an URL that points
 			 * to a manifest.json file. If <strong>true</strong> the manifest will
-			 * be stored at the instance of the component.
+			 * be stored at the instance of the Component.
 			 *
 			 * @param  {string} [mSettings._manifest]
 			 *         The parsed manifest object
@@ -137,10 +140,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				this.getMetadata = function() {
 					return this._oMetadataProxy;
 				};
-				
+
 			}
 
-			ManagedObject.apply(this, arguments);
+			ManagedObject.apply(this, args);
 
 		},
 
@@ -254,7 +257,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 *       "dependencies": {
 	 *         "libs": {
 	 *           "sap.m": {}
-	 *         }, 
+	 *         },
 	 *         "components": {
 	 *           "my.component.a": {}
 	 *         }
@@ -264,7 +267,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 *
 	 * The configuration above can be accessed via <code>oComponent.getManifestEntry("sap.ui5")</code>.
 	 *
-	 * @param {string} sKey key of the manifest section (must be prefixed with a namespace / separated with dots)
+	 * @param {string} sKey Key of the manifest section (must be prefixed with a namespace / separated with dots)
 	 * @return {any|null} the configuration of a manifest section
 	 * @public
 	 * @since 1.33.0
@@ -304,7 +307,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	};
 
 	/**
-	 * Activates the customizing configuration for the given component.
+	 * Activates the Customizing configuration for the given Component.
 	 * @param {string} sComponentName the name of the component to activate
 	 * @private
 	 * @deprecated Since 1.21.0 as it is handled by component instantiation
@@ -314,8 +317,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	};
 
 	/**
-	 * Deactivates the customizing configuration for the given component.
-	 * @param {string} sComponentName the name of the component to activate
+	 * Deactivates the Customizing configuration for the given Component.
+	 * @param {string} sComponentName Name of the Component to activate
 	 * @private
 	 * @deprecated Since 1.21.0 as it is handled by component termination
 	 */
@@ -334,10 +337,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	// constructor, but that doesn't require much knowledge about components
 
 	/**
-	 * Returns the Id of the object in whose "context" the given ManagedObject has been created.
+	 * Returns the ID of the object in whose "context" the given ManagedObject has been created.
 	 *
 	 * For objects that are not ManagedObjects or for which the owner is unknown,
-	 * <code>undefined</code> will be returned as owner Id.
+	 * <code>undefined</code> will be returned as owner ID.
 	 *
 	 * <strong>Note</strong>: Ownership for objects is only checked by the framework at the time
 	 * when they are created. It is not checked or updated afterwards. And it can only be detected
@@ -346,21 +349,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * {@link sap.ui.core.UIComponent.createContent constructed} or when a
 	 * {@link sap.ui.core.routing.Router Router} creates a new View and its content.
 	 *
-	 * <strong>Note</string>: This method does not guarantee that the returned owner Id belongs
+	 * <strong>Note</string>: This method does not guarantee that the returned owner ID belongs
 	 * to a Component. Currently, it always does. But future versions of UI5 might introduce a
 	 * more fine grained ownership concept, e.g. taking Views into account. Callers that
 	 * want to deal only with components as owners, should use the following method:
 	 * {@link sap.ui.core.Component.getOwnerComponentFor Component.getOwnerComponentFor}.
 	 * It guarantees that the returned object (if any) will be a Component.
 	 *
-	 * <strong>Further note</strong> that only the Id of the owner is recorded. In rare cases,
+	 * <strong>Further note</strong> that only the ID of the owner is recorded. In rare cases,
 	 * when the lifecycle of a ManagedObject is not bound to the lifecycle of its owner,
 	 * (e.g. by the means of aggregations), then the owner might have been destroyed already
-	 * whereas the ManagedObject is still alive. So even the existence of an owner Id is
+	 * whereas the ManagedObject is still alive. So even the existence of an owner ID is
 	 * not a guarantee for the existence of the corresponding owner.
 	 *
-	 * @param {sap.ui.base.ManagedObject} oObject Object to retrieve the owner Id for
-	 * @return {string} the Id of the owner or <code>undefined</code>
+	 * @param {sap.ui.base.ManagedObject} oObject Object to retrieve the owner ID for
+	 * @return {string} ID of the owner or <code>undefined</code>
 	 * @static
 	 * @public
 	 * @since 1.15.1
@@ -376,8 +379,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * or <code>undefined</code>.
 	 *
 	 * This is a convenience wrapper around {@link sap.ui.core.Component.getOwnerIdFor Component.getOwnerIdFor}.
-	 * If the owner Id cannot be determined for the reasons document with <code>getOwnerForId</code>
-	 * or when the Component for the determined Id no longer exists, <code>undefined</code>
+	 * If the owner ID cannot be determined for reasons documented on <code>getOwnerForId</code>
+	 * or when the Component for the determined ID no longer exists, <code>undefined</code>
 	 * will be returned.
 	 *
 	 * @param {sap.ui.base.ManagedObject} oObject Object to retrieve the owner Component for
@@ -399,7 +402,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * nested component). The currently active owner Component will be remembered
 	 * before executing <code>fn</code> and restored afterwards.
 	 *
-	 * @param {function} fn the function to execute
+	 * @param {function} fn Function to execute
 	 * @return {any} result of function <code>fn</code>
 	 * @since 1.25.1
 	 * @public
@@ -901,7 +904,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	//sap.ui.core.Component.prototype.init = function() {};
 
 	/**
-	 * Cleans up the component instance before destruction.
+	 * Cleans up the Component instance before destruction.
 	 *
 	 * Applications must not call this hook method directly, it is called by the
 	 * framework when the element is {@link #destroy destroyed}.
@@ -921,8 +924,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * implementation, to handle cleanup before the real unload or to prompt a question
 	 * to the user, if the component should be exited.
 	 *
-	 * @return {string} return a string if a prompt should be displayed to the user
-	 *                  confirming closing the component (e.g. when the component is not yet saved).
+	 * @return {string} a string if a prompt should be displayed to the user
+	 *                  confirming closing the Component (e.g. when the Component is not yet saved).
 	 * @public
 	 * @since 1.15.1
 	 * @name sap.ui.core.Component.prototype.onWindowBeforeUnload
@@ -949,8 +952,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * to listen to unhandled errors.
 	 *
 	 * @param {string} sMessage The error message.
-	 * @param {string} sFile The file where the error occurred
-	 * @param {number} iLine The line number of the error
+	 * @param {string} sFile File where the error occurred
+	 * @param {number} iLine Line number of the error
 	 * @public
 	 * @since 1.15.1
 	 * @name sap.ui.core.Component.prototype.onWindowError
@@ -963,7 +966,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * The hook which gets called when the static configuration of the component
 	 * has been changed by some configuration extension.
 	 *
-	 * @param {string} sConfigKey The error message.
+	 * @param {string} sConfigKey Error message.
 	 * @public
 	 * @since 1.15.1
 	 * @name sap.ui.core.Component.prototype.onConfigChange
@@ -976,8 +979,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * Creates a new instance of a <code>Component</code> or returns the instance
 	 * of an existing <code>Component</code>.
 	 *
-	 * If you want to lookup all an existing <code>Component</code> you can call
-	 * this function with a component Id as parameter:
+	 * If you want to look up an existing <code>Component</code> you can call
+	 * this function with a Component ID as parameter:
 	 * <pre>
 	 *   var oComponent = sap.ui.component(sComponentId);
 	 * </pre>
@@ -992,18 +995,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 *   });
 	 * </pre>
 	 *
-	 * @param {string|object} vConfig the id of an existing Component or the configuration object to create the Component
-	 * @param {string} vConfig.name the name of the Component to load
-	 * @param {string} [vConfig.url] an alternate location from where to load the Component
-	 * @param {object} [vConfig.componentData] initial data of the Component (@see sap.ui.core.Component#getComponentData)
-	 * @param {string} [vConfig.id] the sId of the new Component
-	 * @param {object} [vConfig.settings] the mSettings of the new Component
-	 * @param {boolean} [vConfig.async=false] whether the component creation should be done asynchronously (experimental setting)
-	 * @param {object} [vConfig.asyncHints] hints for the asynchronous loading (experimental setting)
-	 * @param {string[]} [vConfig.asyncHints.libs] libraries that should be (pre-)loaded before the component (experimental setting)
-	 * @param {string[]} [vConfig.asyncHints.components] components that should be (pre-)loaded before the component (experimental setting)
-	 * @param {string} [vConfig.manifestUrl] @since 1.33.0 determines whether the component should be loaded and defined
+	 * @param {string|object} vConfig ID of an existing Component or the configuration object to create the Component
+	 * @param {string} vConfig.name Name of the Component to load
+	 * @param {string} [vConfig.url] Alternate location from where to load the Component
+	 * @param {object} [vConfig.componentData] Initial data of the Component (@see sap.ui.core.Component#getComponentData)
+	 * @param {string} [vConfig.id] sId of the new Component
+	 * @param {object} [vConfig.settings] mSettings of the new Component
+	 * @param {boolean} [vConfig.async=false] Indicates whether the Component creation should be done asynchronously (experimental setting)
+	 * @param {object} [vConfig.asyncHints] Hints for the asynchronous loading (experimental setting)
+	 * @param {string[]} [vConfig.asyncHints.libs] Libraries that should be (pre-)loaded before the Component (experimental setting)
+	 * @param {string[]} [vConfig.asyncHints.components] Components that should be (pre-)loaded before the Component (experimental setting)
+	 * @param {string} [vConfig.manifestUrl] @since 1.33.0 Determines whether the component should be loaded and defined
 	 *                                       via the <code>manifest.json</code>
+	 * @param {string} [vConfig.manifestFirst] @since 1.33.0 defines whether the manifest is loaded before or after the
+	 *                                         Component controller. Defaults to <code>sap.ui.getCore().getConfiguration().getManifestFirst()</code>
 	 * @return {sap.ui.core.Component|Promise} the Component instance or a Promise in case of asynchronous loading
 	 *
 	 * @public
@@ -1048,7 +1053,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			jQuery.sap.assert(oInstance instanceof Component, "The specified component \"" + sController + "\" must be an instance of sap.ui.core.Component!");
 			jQuery.sap.log.info("Component instance Id = " + oInstance.getId());
 
-			/* 
+			/*
 			 * register for messaging: register if either handleValidation is set in metadata 
 			 * or if not set in metadata and set on instance
 			 */
@@ -1078,9 +1083,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	};
 
 	/**
-	 * Load a component without instantiating it.
+	 * Load a Component without instantiating it.
 	 *
-	 * Provides experimental support for loading components asynchronously by setting
+	 * Provides experimental support for loading Components asynchronously by setting
 	 * <code>oConfig.async</code> to true. In that case, the method returns a Javascript 6
 	 * Promise that will be fulfilled with the component class after loading.
 	 *
@@ -1089,33 +1094,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * synchronous requests. The contract for <code>async = true</code> just allows to use
 	 * async calls.
 	 *
-	 * When a manifest.json is referenced in oConfig this manifest is not used for the derived instances of the component class. 
+	 * When a manifest.json is referenced in oConfig this manifest is not used for the derived instances of the Component class. 
 	 * The manifest/manifest url must be provided for every instance explicitly.
 	 *
 	 * When asynchronous loading is used, additional <code>hints</code> can be provided :
 	 * <ul>
 	 * <li><code>oConfig.asyncHints.components : string[]</code>a list of components needed by the current component and its subcomponents
 	 *     The framework will try to preload these components (their Component-preload.js) asynchronously, errors will be ignored.
-	 *     Please note that the framework has no knowledge about whether a component provides a preload file or whether it is bundled
-	 *     in some library preload. If components are listed in the hints section, they will be preloaded.</li>
-	 * <li><code>oConfig.asyncHints.libs : string[]</code>libraries needed by the component and its subcomponents.
+	 *     Please note that the framework has no knowledge about whether a Component provides a preload file or whether it is bundled
+	 *     in some library preload. If Components are listed in the hints section, they will be preloaded.</li>
+	 * <li><code>oConfig.asyncHints.libs : string[]</code>libraries needed by the Component and its subcomponents.
 	 *     The framework will asynchronously load those libraries, if they're not loaded yet.</li>
 	 * <li><code>oConfig.asyncHints.preloadBundles : string[]</code>a list of additional preload bundles
-	 *     The framework will try to load these bundles asynchronously before requiring the component, errors will be ignored.
+	 *     The framework will try to load these bundles asynchronously before requiring the Component, errors will be ignored.
 	 *     The named modules must only represent preload bundles. If they are normal modules, their dependencies
 	 *     will be loaded with the normal synchronous request mechanism and performance might degrade.</li>
 	 * <li><code>oConfig.asyncHints.preloadOnly : boolean (default: false)</code> whether only the preloads should be done,
 	 *     but not the loading of the Component controller class itself.
 	 * </ul>
 	 *
-	 * If components and/or libraries are listed in the hints section, all the corresponding preload files will
+	 * If Components and/or libraries are listed in the hints section, all the corresponding preload files will
 	 * be requested in parallel. The constructor class will only be required after all of them are rejected or resolved.
 	 *
 	 * Note: so far, only the requests for the preload files (library and/or component) are executed asynchronously.
 	 * If a preload is deactivated by configuration (e.g. debug mode), then requests won't be asynchronous.
 	 *
-	 * @param {object} oConfig a configuration object describing the component to be loaded. See {@link sap.ui.component} for more Information.
-	 * @return {function|Promise} the constructor of the component class or a Promise that will be fulfilled with the same
+	 * @param {object} oConfig Configuration object describing the Component to be loaded. See {@link sap.ui.component} for more information.
+	 * @return {function|Promise} the constructor of the Component class or a Promise that will be fulfilled with the same
 	 *
 	 * @since 1.16.3
 	 * @static
@@ -1129,9 +1134,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 		var sName = oConfig.name,
 			sUrl = oConfig.url,
-			bComponentPreload = /^(sync|async)$/.test(sap.ui.getCore().getConfiguration().getComponentPreload()),
+			oConfiguration = sap.ui.getCore().getConfiguration(),
+			bComponentPreload = /^(sync|async)$/.test(oConfiguration.getComponentPreload()),
+			bManifestFirst = typeof oConfig.manifestFirst !== "undefined" ? oConfig.manifestFirst : oConfiguration.getManifestFirst(),
 			oManifest;
-		
+
 		// TODO: always use manifest first?!
 		//  - what about legacy components? 
 		//      ==> how to identify in preload that manifest.json is loaded?
@@ -1182,6 +1189,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				jQuery.sap.registerModulePath(sName, sUrl);
 			}
 
+		}
+
+		// in case of loading the manifest first by configuration we need to 
+		// wait until the registration of the module path is done if needed and
+		// then we can use the standard capabilities of the framework to resolve
+		// the Components' modules namespace
+		if (bManifestFirst && !oManifest) {
+			oManifest = Manifest.load(jQuery.sap.getModulePath(sName) + "/manifest.json", oConfig.async, false);
+			// the manifest is stored in the configuration to pass it
+			// into the concrete component instance
+			oConfig._manifest = oManifest;
 		}
 
 		function getControllerClass() {
@@ -1249,10 +1267,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			    fnCollect = bAsync ? function(oPromise) {
 				aPromises.push(oPromise);
 			} : jQuery.noop;
-			
+
 			// lookup the resource roots and call the register API
 			oManifest.defineResourceRoots();
-			
+
 			// lookup the required libraries
 			var mLibs = oManifest.getEntry("/sap.ui5/dependencies/libs");
 			if (mLibs) {
@@ -1260,13 +1278,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				jQuery.sap.log.info("Component \"" + sComponentName + "\" is loading library: \"" + aLibs.join(", ") + "\"");
 				fnCollect(sap.ui.getCore().loadLibraries(aLibs));
 			}
-			
+
 			// lookup the extended component and preload it
 			var sExtendedComponent = oManifest.getEntry("/sap.ui5/extends/component");
 			if (sExtendedComponent) {
 				fnCollect(preload(sExtendedComponent, !!fnCollect));
 			}
-			
+
 			// lookup the components and preload them
 			var mComponents = oManifest.getEntry("/sap.ui5/dependencies/components");
 			if (mComponents) {

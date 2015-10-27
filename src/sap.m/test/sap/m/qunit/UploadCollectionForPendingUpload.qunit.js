@@ -274,9 +274,9 @@ QUnit.test("Setting of 'hidden' property on FileUploader instances", function(as
 	assert.ok(jQuery(jQuery.sap.domById(oFileUploader2.getId())).is(':hidden'), "The second  FileUploader instance should be hidden now");
 	var oFileUploader3 = this.oUploadCollection._oFileUploader;
 	assert.ok(!jQuery(jQuery.sap.domById(oFileUploader3.getId())).is(':hidden'), "The current  FileUploader instance should not be hidden");
-	assert.deepEqual(this.oUploadCollection.oHeaderToolbar.getContent()[2], oFileUploader1, "oFileUploader1 should be on the third position in the toolbar");
-	assert.deepEqual(this.oUploadCollection.oHeaderToolbar.getContent()[3], oFileUploader2, "oFileUploader2 should be on the fourth position in the toolbar");
-	assert.deepEqual(this.oUploadCollection.oHeaderToolbar.getContent()[4], oFileUploader3, "oFileUploader3 should be on the fifth position in the toolbar");
+	assert.deepEqual(this.oUploadCollection._oHeaderToolbar.getContent()[4], oFileUploader1, "oFileUploader1 should be on the third position in the toolbar");
+	assert.deepEqual(this.oUploadCollection._oHeaderToolbar.getContent()[3], oFileUploader2, "oFileUploader2 should be on the fourth position in the toolbar");
+	assert.deepEqual(this.oUploadCollection._oHeaderToolbar.getContent()[2], oFileUploader3, "oFileUploader3 should be on the fifth position in the toolbar");
 });
 
 
@@ -294,9 +294,9 @@ QUnit.test("Positions of the FileUploader instances in the toolbar", function(as
 	});
 	sap.ui.getCore().applyChanges();// it leads to rerendering and thus a new FU instance is created in UploadCollection.prototype._getListHeader
 	var oFileUploader3 = this.oUploadCollection._oFileUploader;
-	assert.deepEqual(this.oUploadCollection.oHeaderToolbar.getContent()[2], oFileUploader1, "oFileUploader1 should be on the third position in the toolbar");
-	assert.deepEqual(this.oUploadCollection.oHeaderToolbar.getContent()[3], oFileUploader2, "oFileUploader2 should be on the fourth position in the toolbar");
-	assert.deepEqual(this.oUploadCollection.oHeaderToolbar.getContent()[4], oFileUploader3, "oFileUploader3 should be on the fifth position in the toolbar");
+	assert.deepEqual(this.oUploadCollection._oHeaderToolbar.getContent()[4], oFileUploader1, "oFileUploader1 should be on the third position in the toolbar");
+	assert.deepEqual(this.oUploadCollection._oHeaderToolbar.getContent()[3], oFileUploader2, "oFileUploader2 should be on the fourth position in the toolbar");
+	assert.deepEqual(this.oUploadCollection._oHeaderToolbar.getContent()[2], oFileUploader3, "oFileUploader3 should be on the fifth position in the toolbar");
 });
 
 QUnit.module("PendingUpload",  {

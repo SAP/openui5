@@ -568,34 +568,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 			}
 
 		} else { // only partial update (invalidated controls)
-			
-			var isPopup = function(oControl) {
-				return !!(oControl.getMetadata && oControl.getMetadata().isInstanceOf("sap.ui.core.PopupInterface"));
-			};
 
-			var isAncestorInvalidated = function(oAncestor) {
-				while ( oAncestor && oAncestor !== that ) {
-					if ( mInvalidatedControls.hasOwnProperty(oAncestor.getId()) ) {
-						return true;
-					}
-
+			var isRenderedTogetherWithAncestor = function(oCandidate) {
+				do { 
 					// Controls that implement marker interface sap.ui.core.PopupInterface are by contract not rendered by their parent.
-					// Therefore the search for invalid ancestors must be stopped when such a control is reached.
-					if ( isPopup(oAncestor) ) {
+					// Therefore the search for to-be-rendered ancestors must be stopped when such a control is reached.
+					if ( oCandidate.getMetadata && oCandidate.getMetadata().isInstanceOf("sap.ui.core.PopupInterface") ) {
 						break;
 					}
 
-					oAncestor = oAncestor.getParent();
-				}
+					oCandidate = oCandidate.getParent();
+
+					if ( oCandidate && mInvalidatedControls.hasOwnProperty(oCandidate.getId()) ) {
+						return true;
+					}
+
+				} while ( oCandidate && oCandidate !== that )
+
 				return false;
 			};
 
-			for (var n in mInvalidatedControls) { // TODO for in skips some names in IE8!
+			for (var n in mInvalidatedControls) {
 				var oControl = this.oCore.byId(n);
 				// CSN 0000834961 2011: control may have been destroyed since invalidation happened -> check whether it still exists
-				// Controls that implement marker interface sap.ui.core.PopupInterface are by contract not rendered by their parent.
-				//  -> Therefore these controls must be rerendered 
-				if ( oControl && (isPopup(oControl) || !isAncestorInvalidated(oControl.getParent())) ) {
+				if ( oControl && !isRenderedTogetherWithAncestor(oControl) ) {
 					oControl.rerender();
 					bUpdated = true;
 				}
@@ -625,7 +621,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	 * that point in time, the previous rendering cannot reflect the changes that led to the
 	 * invalidation and therefore a new rendering is required.
 	 *
-	 * Therefore, pending invalidatoins can only be cleared at this point in time.
+	 * Therefore, pending invalidations can only be cleared at this point in time.
 	 * @private
 	 */
 	UIArea.prototype._onControlRendered = function(oControl) {
@@ -774,11 +770,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 			oDomRef = oDomRef.parentNode;
 			oElement = null;
 
-		// Only process the touchend event which is emulated from mouseout event when the current domRef
-		// doesn't equal or contain the relatedTarget
-		if (oEvent.isMarked("fromMouseout") && jQuery.sap.containsOrEquals(oDomRef, oEvent.relatedTarget)) {
-			break;
-		}
+			// Only process the touchend event which is emulated from mouseout event when the current domRef
+			// doesn't equal or contain the relatedTarget
+			if (oEvent.isMarked("fromMouseout") && jQuery.sap.containsOrEquals(oDomRef, oEvent.relatedTarget)) {
+				break;
+			}
 
 			// ensure we do not bubble the control tree higher than our rootNode
 			while (oDomRef && oDomRef !== this.getRootNode()) {

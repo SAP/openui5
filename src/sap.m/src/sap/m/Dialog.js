@@ -9,6 +9,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 
 		var ValueState = sap.ui.core.ValueState;
+		var isTheCurrentBrowserIENine = sap.ui.Device.browser.internet_explorer && (sap.ui.Device.browser.version < 10);
 
 		/**
 		 * Constructor for a new Dialog.
@@ -572,28 +573,24 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._openAnimation = function ($Ref, iRealDuration, fnOpened) {
-			if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10)) {
-				$Ref.css("display", "block");
-			}
-
 			var that = this,
 				bOpenedCalled = false,
 				fnEnd;
 
-			if ((sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10)) {
+			$Ref.addClass("sapMDialogOpen");
+
+			if (isTheCurrentBrowserIENine) {
 				$Ref.fadeIn(200, fnOpened);
 			} else {
+				$Ref.css("display", "block");
+
 				fnEnd = function () {
 					if (bOpenedCalled || !that.oPopup || that.oPopup.getOpenState() !== sap.ui.core.OpenState.OPENING) {
 						return;
 					}
-					$Ref.unbind("webkitAnimationEnd animationend");
 					fnOpened();
-					$Ref.removeClass("sapMDialogOpening");
 					bOpenedCalled = true;
 				};
-				$Ref.bind("webkitAnimationEnd animationend", fnEnd);
-				$Ref.addClass("sapMDialogOpening");
 				//check if the transitionend event isn't fired, if it's not fired due to unexpected rerendering,
 				//fnOpened should be called again.
 				setTimeout(function () {
@@ -613,20 +610,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			var bClosedCalled = false,
 				fnEnd;
 
-			if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10) {
+			$Ref.removeClass("sapMDialogOpen");
+
+			if (isTheCurrentBrowserIENine) {
 				$Ref.fadeOut(200, fnClose);
 			} else {
 				fnEnd = function () {
 					if (bClosedCalled) {
 						return;
 					}
-					$Ref.unbind("webkitAnimationEnd animationend");
 					fnClose();
-					$Ref.removeClass("sapMDialogClosing");
 					bClosedCalled = true;
 				};
-				$Ref.bind("webkitAnimationEnd animationend", fnEnd);
-				$Ref.addClass("sapMDialogClosing");
 				setTimeout(function () {
 					fnEnd();
 				}, 150);
@@ -1421,12 +1416,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 */
 		function isHeaderClicked(eventTarget) {
 			var $target = jQuery(eventTarget);
-			var isHeader = $target.hasClass('sapMDialogTitle');
-			var isChildOfDialogHeader = $target.parents('header').hasClass('sapMDialogTitle');
-			var isHeaderTag = $target.parents('h1').length;
-			var isIcon = $target.hasClass('.sapUiIcon');
-			var isChildOfSubHeader = $target.parents('.sapMDialogSubHeader').length;
-			return ((isHeader || isChildOfDialogHeader) && !isHeaderTag && !isIcon && !isChildOfSubHeader);
+			var oControl = $target.control(0);
+			if (!oControl || oControl.getMetadata().getInterfaces().indexOf("sap.m.IBar") > -1) {
+				return true;
+			}
+
+			return $target.hasClass('sapMDialogTitle');
 		}
 
 		if (sap.ui.Device.system.desktop) {
@@ -1446,6 +1441,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			 * @param {Object} e
 			 */
 			Dialog.prototype.onmousedown = function (e) {
+				if (e.which === 3) {
+					return; // on right click don't reposition the dialog
+				}
 				if (this.getStretch() || (!this.getDraggable() && !this.getResizable())) {
 					return;
 				}

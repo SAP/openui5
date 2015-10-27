@@ -415,7 +415,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					if (!this._oDateInterval) {
 						this._oDateInterval = new sap.ui.unified.CalendarDateInterval(this.getId() + "-DateInt", {
 							startDate: new Date(oStartDate.getTime()), // use new date object
-							days: iIntervals
+							days: iIntervals,
+							showDayNamesLine: false
 						});
 						this._oDateInterval.attachEvent("startDateChange", _handleStartDateChange, this);
 						this._oDateInterval.attachEvent("select", _handleIntervalSelect, this);
@@ -479,6 +480,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oCalendarRow = oRow.getCalendarRow();
 			oCalendarRow.setStartDate(this.getStartDate());
 			oCalendarRow.attachEvent("select", _handleAppointmentSelect, this);
+			oCalendarRow.attachEvent("startDateChange", _handleStartDateChange, this);
+			oCalendarRow.attachEvent("leaveRow", _handleLeaveRow, this);
 
 			if (this.getDomRef()) {
 				var sKey = this.getViewKey();
@@ -503,6 +506,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oCalendarRow = oRow.getCalendarRow();
 			oCalendarRow.setStartDate(this.getStartDate());
 			oCalendarRow.attachEvent("select", _handleAppointmentSelect, this);
+			oCalendarRow.attachEvent("startDateChange", _handleStartDateChange, this);
+			oCalendarRow.attachEvent("leaveRow", _handleLeaveRow, this);
 
 			if (this.getDomRef()) {
 				var sKey = this.getViewKey();
@@ -526,6 +531,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var oCalendarRow = oRemoved.getCalendarRow();
 			oCalendarRow.detachEvent("select", _handleAppointmentSelect, this);
+			oCalendarRow.detachEvent("startDateChange", _handleStartDateChange, this);
+			oCalendarRow.detachEvent("leaveRow", _handleLeaveRow, this);
 
 			return oRemoved;
 
@@ -542,6 +549,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				var oRow = aRemoved[i];
 				var oCalendarRow = oRow.getCalendarRow();
 				oCalendarRow.detachEvent("select", _handleAppointmentSelect, this);
+				oCalendarRow.detachEvent("startDateChange", _handleStartDateChange, this);
+				oCalendarRow.detachEvent("leaveRow", _handleLeaveRow, this);
 			}
 
 			return aRemoved;
@@ -748,6 +757,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			return this;
+
+		};
+
+		TeamCalendar.prototype.onsaphomemodifiers = function(oEvent) {
+
+			if ((oEvent.metaKey || oEvent.ctrlKey) && !oEvent.altKey && !oEvent.shiftKey) {
+				var aRows = this.getRows();
+				var oRow = aRows[0];
+
+				var oNewEvent = new jQuery.Event("saphome");
+				oNewEvent.originalEvent = oNewEvent.originalEvent || {};
+				oNewEvent._bTeamCalendar = true;
+
+				oRow.getCalendarRow().onsaphome(oNewEvent);
+
+				oEvent.preventDefault();
+				oEvent.stopPropagation();
+			}
+
+		};
+
+		TeamCalendar.prototype.onsapendmodifiers = function(oEvent) {
+
+			if ((oEvent.metaKey || oEvent.ctrlKey) && !oEvent.altKey && !oEvent.shiftKey) {
+				var aRows = this.getRows();
+				var oRow = aRows[aRows.length - 1];
+
+				var oNewEvent = new jQuery.Event("sapend");
+				oNewEvent.originalEvent = oNewEvent.originalEvent || {};
+				oNewEvent._bTeamCalendar = true;
+
+				oRow.getCalendarRow().onsapend(oNewEvent);
+
+				oEvent.preventDefault();
+				oEvent.stopPropagation();
+			}
 
 		};
 
@@ -1113,6 +1158,88 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this.selectAllRows(bAll);
 
 			this.fireRowSelectionChange({rows: aRows});
+
+		}
+
+		function _handleLeaveRow(oEvent){
+
+			var oCalendarRow = oEvent.oSource;
+			var sType = oEvent.getParameter("type");
+			var aRows = this.getRows();
+			var oRow;
+			var oNewRow;
+			var oAppointment;
+			var oDate;
+			var i = 0;
+			var iIndex = 0;
+			var oNewEvent;
+
+			for (i = 0; i < aRows.length; i++) {
+				oRow = aRows[i];
+				if (oRow.getCalendarRow() == oCalendarRow) {
+					iIndex = i;
+					break;
+				}
+			}
+
+			switch (sType) {
+			case "sapup":
+				oAppointment = oCalendarRow.getFocusedAppointment();
+				oDate = oAppointment.getStartDate();
+
+				// get nearest appointment in row above
+				if (iIndex > 0) {
+					iIndex--;
+				}
+
+				oNewRow = aRows[iIndex];
+				oNewRow.getCalendarRow().focusNearestAppointment(oDate);
+
+				break;
+
+			case "sapdown":
+				oAppointment = oCalendarRow.getFocusedAppointment();
+				oDate = oAppointment.getStartDate();
+
+				// get nearest appointment in row above
+				if (iIndex < aRows.length - 1) {
+					iIndex++;
+				}
+
+				oNewRow = aRows[iIndex];
+				oNewRow.getCalendarRow().focusNearestAppointment(oDate);
+
+				break;
+
+			case "saphome":
+				if (iIndex > 0) {
+					oNewRow = aRows[0];
+
+					oNewEvent = new jQuery.Event(sType);
+					oNewEvent.originalEvent = oNewEvent.originalEvent || {};
+					oNewEvent._bTeamCalendar = true;
+
+					oNewRow.getCalendarRow().onsaphome(oNewEvent);
+				}
+
+				break;
+
+			case "sapend":
+				if (iIndex < aRows.length - 1) {
+					oNewRow = aRows[aRows.length - 1];
+
+					oNewEvent = new jQuery.Event(sType);
+					oNewEvent.originalEvent = oNewEvent.originalEvent || {};
+					oNewEvent._bTeamCalendar = true;
+
+					oNewRow.getCalendarRow().onsapend(oNewEvent);
+				}
+
+				break;
+
+			default:
+				break;
+			}
 
 		}
 

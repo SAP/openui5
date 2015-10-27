@@ -29,7 +29,7 @@
 	<script type="text/javascript">
 		QUnit.module("Public API", {
 			sCustomId: "custom-msg-popover-id",
-			oSpies : {},
+			oSpies: {},
 			setup: function () {
 				this.oSpies.beforeOpen = sinon.spy();
 				this.oSpies.afterOpen = sinon.spy();
@@ -69,7 +69,7 @@
 					type: "Information",
 					title: "Information message (Long)",
 					description: "<h1>HTML sanitization test</h1><h3>heading</h3><p>paragraph</p><embed src='helloworld.swf'> <object width=\"400\" height=\"400\"></object>",
-					longtextUrl: "protocol://domain.tld"
+					longtextUrl: "/something"
 				}]};
 
 				this.mockMarkupDescription = "<h2>Heading h2</h2><script>alert('this JS will be sanitized')<\/script>" +
@@ -81,7 +81,8 @@
 				"<ol>" +
 				"	<li>Ordered list item 1 <a href=\"/relative/url\">Relative URL</a></li>" +
 				"	<li>Ordered list item 2</li>" +
-				"</ol>";
+				"</ol>" +
+				"<embed src='helloworld.swf'> <object width=\"400\" height=\"400\"></object>";
 
 				this.oMessageTemplate = new sap.m.MessagePopoverItem({
 					type: "{type}",
@@ -96,7 +97,7 @@
 
 				sinon.stub(sap.ui.base.ObjectPool.prototype, "returnObject", function(){});
 			},
-			bindMessagePopover: function(oMessagePopover, oData) {
+			bindMessagePopover: function (oMessagePopover, oData) {
 				var oModel = new sap.ui.model.json.JSONModel();
 				oModel.setData(oData);
 				sap.ui.getCore().setModel(oModel);
@@ -106,13 +107,13 @@
 					template: this.oMessageTemplate
 				});
 			},
-			openDetailPageAfterOpen: function(oMessagePopover, iItem) {
-				oMessagePopover.attachAfterOpen(function() {
+			openDetailPageAfterOpen: function (oMessagePopover, iItem) {
+				oMessagePopover.attachAfterOpen(function () {
 					var oItem = oMessagePopover._oLists['all'].getItems()[iItem].getDomRef();
 					sap.ui.test.qunit.triggerEvent("tap", oItem);
 				});
 			},
-			teardown: function() {
+			teardown: function () {
 				this.oMessagePopover.destroy();
 				this.oButton.destroy();
 
@@ -124,32 +125,67 @@
 			}
 		});
 
-		QUnit.test("setDescription() propety", function(assert) {
-			var done = assert.async();
+		QUnit.test("setDescription() propety", function (assert) {
+			// A total of 7 assertions are expected
+			assert.expect(7);
+
+			var doneLongtextLoaded = assert.async(),
+				doneUrlValidated = [assert.async(), assert.async()],
+				bAsyncURLHandlerCalled = false;
+
+			this.server = sinon.fakeServer.create();
+			this.server.autoRespond = true;
+			this.server.xhr.useFilters = true;
+
+			this.server.xhr.addFilter(function (method, url) {
+				//whenever the this returns true the request will not faked
+				return !url.match(/something/);
+			});
+
+			this.server.respondWith("GET", "/something",
+					[200, {"Content-Type": "text/html"}, this.mockMarkupDescription]
+			);
 
 			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
 			this.openDetailPageAfterOpen(this.oMessagePopover, 4);
 
-			this.oMessagePopover._navContainer.attachAfterNavigate(function() {
-				assert.ok(jQuery(".markupDescription"), "markupDescription class should be applied");
-				assert.strictEqual(jQuery(".markupDescription").html().indexOf("h1") >= 1, true, "There should be h1 tag");
-				assert.strictEqual(jQuery(".markupDescription").html().indexOf("embed"), -1, "There should be no embed tag in the html");
-				assert.strictEqual(jQuery(".markupDescription").html().indexOf("object"), -1, "There should be no object tag in the html");
-				done();
+			this.oMessagePopover.attachLongtextLoaded(function () {
+				assert.strictEqual(this.oMessagePopover.getItems()[4].getDescription().indexOf("h2") >= 1, true, "There should be an h2 tag");
+				assert.strictEqual(this.oMessagePopover.getItems()[4].getDescription().indexOf("script"), -1, "There should be no script tag in the html");
+				assert.strictEqual(this.oMessagePopover.getItems()[4].getDescription().indexOf("embed"), -1, "There should be no embed tag in the html");
+				doneLongtextLoaded();
 			}, this);
+
+			this.oMessagePopover.setAsyncURLHandler(function (config) {
+				var allowed = config.url.lastIndexOf("http", 0) < 0;
+				bAsyncURLHandlerCalled = true;
+				config.promise.resolve({
+					allowed: allowed,
+					id: config.id
+				});
+			});
+
+			var callCount = 0;
+			this.oMessagePopover.attachUrlValidated(function () {
+				assert.ok(bAsyncURLHandlerCalled, "The URL handler should be called");
+				assert.ok(true, "A validation is performed");
+				doneUrlValidated[callCount]();
+				callCount += 1;
+			});
 
 			this.oButton.addDependent(this.oMessagePopover);
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
+			this.server.restore();
 		});
 
-		QUnit.test("Busy indicator should be shown", function(assert) {
+		QUnit.test("Busy indicator should be shown", function (assert) {
 			var done = assert.async(),
-				that = this;
+					that = this;
 
 			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
 
-			this.oMessagePopover.setAsyncDescriptionHandler(function(config) {
+			this.oMessagePopover.setAsyncDescriptionHandler(function (config) {
 				assert.ok(that.oMessagePopover._detailsPage.getBusy(), "when there is an async description loading");
 				config.item.setDescription(that.mockMarkupDescription);
 				config.promise.resolve();
@@ -159,36 +195,6 @@
 			this.openDetailPageAfterOpen(this.oMessagePopover, 4);
 
 			this.oButton.addDependent(this.oMessagePopover);
-			this.oMessagePopover.openBy(this.oButton);
-			this.clock.tick(500);
-		});
-
-		QUnit.test("AsyncURL handler", function(assert) {
-			var done = assert.async(),
-				that = this,
-				bAsyncURLHandlerCalled = false;
-
-			this.bindMessagePopover(this.oMessagePopover, this.oMockupData);
-
-			this.oMessagePopover.setAsyncURLHandler(function(config) {
-				var allowed = config.url.lastIndexOf("http", 0) < 0;
-				bAsyncURLHandlerCalled = true;
-				config.promise.resolve({
-					allowed: allowed,
-					id: config.id
-				});
-			});
-
-			this.oMessagePopover._navContainer.attachAfterNavigate(function() {
-				assert.ok(bAsyncURLHandlerCalled, "should be called on navigation");
-				assert.strictEqual(this.oMessagePopover.$().find('.sapMMsgPopoverItemDisabledLink').length, 1, "should disable one link");
-				done();
-			}, this);
-
-			this.openDetailPageAfterOpen(this.oMessagePopover, 4);
-
-			this.oButton.addDependent(this.oMessagePopover);
-			this.oMessagePopover.getItems()[4].setDescription(this.mockMarkupDescription);
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 		});

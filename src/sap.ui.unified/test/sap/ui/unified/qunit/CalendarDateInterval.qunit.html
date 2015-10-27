@@ -30,6 +30,15 @@
 
 			var bSelectFired = false;
 			var oSelectedDate = undefined;
+			var handleSelect = function(oEvent){
+				bSelectFired = true;
+				var oCalendar = oEvent.oSource;
+				var aSelectedDates = oCalendar.getSelectedDates();
+				if (aSelectedDates.length > 0 ) {
+					oSelectedDate = aSelectedDates[0].getStartDate();
+				}
+			};
+
 			var oLocaleUS = new sap.ui.core.Locale("en-US");
 			var oLocaleDataUS = sap.ui.core.LocaleData.getInstance(oLocaleUS);
 
@@ -39,15 +48,8 @@
 			};
 
 			var oCal1 = new sap.ui.unified.CalendarDateInterval("Cal1",{
-				select: function(oEvent){
-					bSelectFired = true;
-					var oCalendar = oEvent.oSource;
-					var aSelectedDates = oCalendar.getSelectedDates();
-					if (aSelectedDates.length > 0 ) {
-						oSelectedDate = aSelectedDates[0].getStartDate();
-					}
-				},
-			startDateChange: handleStartDateChange
+				select: handleSelect,
+				startDateChange: handleStartDateChange
 			}).placeAt("uiArea1");
 
 			var oCal2 = new sap.ui.unified.CalendarDateInterval("Cal2",{
@@ -58,8 +60,18 @@
 				intervalSelection: true,
 				selectedDates: [new sap.ui.unified.DateRange({startDate: new Date("2015", "1", "4"), endDate: new Date("2015", "1", "6")})],
 				specialDates: [new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "1", "8"), type: sap.ui.unified.CalendarDayType.Type01, tooltip: "Text"}),
-				               new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "1", "9"), endDate: new Date("2015", "1", "10"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"})]
+				               new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "1", "9"), endDate: new Date("2015", "1", "10"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"})],
+				select: handleSelect,
+				startDateChange: handleStartDateChange
 			}).placeAt("uiArea2");
+
+			var oCal3 = new sap.ui.unified.CalendarDateInterval("Cal3",{
+				startDate: new Date("2015", "1", "2"),
+				days: 14,
+				showDayNamesLine: false,
+				select: handleSelect,
+				startDateChange: handleStartDateChange
+			}).placeAt("uiArea3");
 
 			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
 			var oToday = new Date();
@@ -83,6 +95,15 @@
 				equal(aDays.length, 14, "Calendar2: 14 days rendered");
 				equal(jQuery(aDays[0]).attr("data-sap-day"), "20150202", "Calendar2: first day");
 				equal(jQuery(aWeekHeaders[0]).text(), "Mon", "Weekday of first day");
+
+				$DatesRow = sap.ui.getCore().byId("Cal3").getAggregation("month")[0].$();
+				aWeekHeaders = $DatesRow.find(".sapUiCalWH");
+				aDays = $DatesRow.find(".sapUiCalItem");
+				equal(aWeekHeaders.length, 0, "Calendar3: no weekheaders rendered");
+				equal(aDays.length, 14, "Calendar3: 14 days rendered");
+				equal(jQuery(aDays[0]).attr("data-sap-day"), "20150202", "Calendar3: first day");
+				equal(jQuery(aDays[0]).children(".sapUiCalDayName").length, 1, "Calendar3: day name rendered");
+				equal(jQuery(aDays[0]).children(".sapUiCalDayName").text(), "Mon", "Weekday of first day");
 			});
 
 			test("width", function() {
@@ -208,5 +229,7 @@
 		<div id="uiArea1"></div>
 		<br>
 		<div id="uiArea2"></div>
+		<br>
+		<div id="uiArea3"></div>
 	</body>
 </html>

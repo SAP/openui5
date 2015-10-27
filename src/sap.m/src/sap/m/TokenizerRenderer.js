@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 */
 	TokenizerRenderer.render = function(oRm, oControl){
 		//write the HTML into the render manager
-		oRm.write("<div tabindex=\"-1\"");
+		oRm.write("<div tabindex=\"0\"");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMTokenizer");
 		

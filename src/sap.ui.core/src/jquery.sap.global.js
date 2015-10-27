@@ -2897,16 +2897,10 @@
 			} else {
 				vUrlPrefix.url = String(vUrlPrefix.url);
 
-				// remove query parameters
-				var iQueryIndex = vUrlPrefix.url.indexOf("?");
-				if (iQueryIndex !== -1) {
-					vUrlPrefix.url = vUrlPrefix.url.substr(0, iQueryIndex);
-				}
-
-				// remove hash
-				var iHashIndex = vUrlPrefix.url.indexOf("#");
-				if (iHashIndex !== -1) {
-					vUrlPrefix.url = vUrlPrefix.url.substr(0, iHashIndex);
+				// remove query parameters and/or hash
+				var iQueryOrHashIndex = vUrlPrefix.url.search(/[?#]/);
+				if (iQueryOrHashIndex !== -1) {
+					vUrlPrefix.url = vUrlPrefix.url.slice(0, iQueryOrHashIndex);
 				}
 
 				// ensure that the prefix ends with a '/'

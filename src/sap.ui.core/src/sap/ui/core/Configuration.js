@@ -102,6 +102,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"appCacheBuster"        : { type : "string[]", defaultValue : [] },
 					"bindingSyntax"         : { type : "string",   defaultValue : "default", noUrl:true }, // default|simple|complex
 					"versionedLibCss"       : { type : "boolean",  defaultValue : false },
+					"manifestFirst"         : { type : "boolean",  defaultValue : false },
 
 					"whitelistService"      : { type : "string",   defaultValue : null,      noUrl: true }, // url/to/service
 					"frameOptions"          : { type : "string",   defaultValue : "allow",   noUrl: true }, // allow/deny/trusted
@@ -948,6 +949,17 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		getPreload : function() {
 			return this.preload;
+		},
+
+		/**
+		 * Flag whether a Component should load the manifest first
+		 *
+		 * @returns {boolean} true if a Component should load the manifest first
+		 * @public
+		 * @since 1.33.0
+		 */
+		getManifestFirst : function() {
+			return this.manifestFirst;
 		},
 
 		/**

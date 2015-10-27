@@ -49,9 +49,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.IBarHTMLTag",
 			"sap.m.IconTabFilterDesign",
 			"sap.m.ImageMode",
-			"sap.m.InfoTileSize",
-			"sap.m.InfoTileTextColor",
-			"sap.m.InfoTileValueColor",
+			"sap.m.Size",
+			"sap.m.ValueColor",
 			"sap.m.InputType",
 			"sap.m.LabelDesign",
 			"sap.m.ListHeaderDesign",
@@ -92,6 +91,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.BusyDialog",
 			"sap.m.BusyIndicator",
 			"sap.m.Button",
+			"sap.m.Breadcrumbs",
 			"sap.m.Carousel",
 			"sap.m.CheckBox",
 			"sap.m.ColumnListItem",
@@ -199,6 +199,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.ToolbarSpacer",
 			"sap.m.ToolbarSeparator",
 			"sap.m.UploadCollection",
+			"sap.m.UploadCollectionToolbarPlaceholder",
 			"sap.m.VBox",
 			"sap.m.ViewSettingsDialog",
 			"sap.m.semantic.DetailPage",
@@ -1005,7 +1006,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	* @since 1.34.0
 	* @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	*/
-	sap.m.InfoTileSize = {
+	sap.m.Size = {
 
 		/**
 		 * Extra small size.
@@ -1039,41 +1040,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * Enumeration of possible text color settings.
-	 *
-	 * @enum {string}
-	 * @public
-	 */
-	sap.m.InfoTileTextColor = {
-
-		/**
-		 * Positive text color.
-		 * @public
-		 */
-		Positive : "Positive",
-
-		/**
-		 * Critical text color.
-		 * @public
-		 */
-		Critical : "Critical",
-
-		/**
-		 * Negative text color.
-		 * @public
-		 */
-		Negative : "Negative"
-
-	};
-
-	/**
 	 * Enumeration of possible value color settings.
 	 *
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.m.InfoTileValueColor = {
+	sap.m.ValueColor = {
 
 		/**
 		 * Neutral value color.
@@ -1101,7 +1074,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	};
 
-	/**
+		/**
 	 * A subset of input types that fits to a simple API returning one string.
 	 * Not available on purpose: button, checkbox, hidden, image, password, radio, range, reset, search, submit.
 	 *

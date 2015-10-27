@@ -11,8 +11,8 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 	/**
 	 * Creates a new metadata object for a UIComponent subclass.
 	 *
-	 * @param {string} sClassName fully qualified name of the class that is described by this metadata object
-	 * @param {object} oStaticInfo static info to construct the metadata from
+	 * @param {string} sClassName Fully qualified name of the class that is described by this metadata object
+	 * @param {object} oStaticInfo Static info to construct the metadata from
 	 *
 	 * @experimental Since 1.15.1. The Component concept is still under construction, so some implementation details can be changed in future.
 	 * @class
@@ -45,7 +45,7 @@ sap.ui.define(['jquery.sap.global', './ComponentMetadata'],
 
 	/**
 	 * Returns the root view of the component.
-	 * @param {boolean} [bDoNotMerge] true, to return only the local root view config
+	 * @param {boolean} [bDoNotMerge] Returns the local root view configuration if set to <code>true</code>.
 	 * @return {object} root view as configuration object or null ({@link sap.ui.view})
 	 * @protected
 	 * @since 1.15.1

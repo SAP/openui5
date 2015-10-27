@@ -67,6 +67,19 @@ sap.ui.define(['jquery.sap.global', './DateTypeRange', './library'],
 		}
 	}});
 
+	CalendarAppointment.prototype.applyFocusInfo = function (oFocusInfo) {
+
+		// let the parent handle the focus assignment after rerendering
+		var oParent = this.getParent();
+
+		if (oParent) {
+			oParent.applyFocusInfo(oFocusInfo);
+		}
+
+		return this;
+
+	};
+
 	return CalendarAppointment;
 
 }, /* bExport= */ true);

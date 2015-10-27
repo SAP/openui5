@@ -6,7 +6,7 @@
 	<template:repeat list="{facets>}" var="facet">
 		<template:if test="{= ${facet>RecordType} === 'com.sap.vocabularies.UI.v1.CollectionFacet'}">
 			<template:then>
-				<form:SimpleForm>
+				<form:SimpleForm layout="ResponsiveGridLayout">
 					<form:title>
 						<core:Title text="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
 					</form:title>
@@ -21,7 +21,7 @@
 					: 'sap.ui.core.sample.ViewTemplate.scenario.FormFacet' }" type="XML"/>
 			</template:elseif>
 			<template:else>
-				<form:SimpleForm>
+				<form:SimpleForm layout="ResponsiveGridLayout">
 					<form:title>
 						<core:Title text="{path: 'facet>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
 					</form:title>
