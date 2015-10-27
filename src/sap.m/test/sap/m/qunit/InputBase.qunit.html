@@ -1076,12 +1076,11 @@
 				sap.ui.getCore().applyChanges();
 
 				oErrorInput.focus();
-				this.clock.tick(oErrorInput.iOpenMessagePopupDuration);
+				this.clock.tick(500);
 				ok(jQuery.sap.domById("errorinput-message"), "error message popup is open when focusin");
 				equal(oErrorInput.getValueStateText(), "Error Message", "error message is correct");
 
 				oErrorInput.getFocusDomRef().blur();
- 				this.clock.tick(500);
 				ok(!jQuery.sap.domById("errorinput-message"), "no error message popup is closed when focus is out");
 
  				oWarningInput.focus();
@@ -1090,7 +1089,6 @@
 				equal(oWarningInput.getValueStateText(), "Warning Message", "warning message is correct");
 
 				oWarningInput.getFocusDomRef().blur()
- 				this.clock.tick(500);
 				ok(!jQuery.sap.domById("warninginput-message"), "warning message popup is closed when focus is out");
  
  				oErrorInput.setShowValueStateMessage(false);
@@ -1158,7 +1156,6 @@
 				//none state
 				oValueStateInput.updateDomValue("1234");
 				sap.ui.test.qunit.triggerEvent("input", oValueStateInput.getFocusDomRef());
-				this.clock.tick(1000);
 				strictEqual(oValueStateInput.getValueState(), "None");
 				ok(!jQuery.sap.domById("vsinput-message"), "no message popup");
 				
