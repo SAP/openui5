@@ -361,6 +361,43 @@
 				oSplitContainer.destroy();
 			});
 
+			test("Navigate and afterNavigate events should work in phone also", function(){
+				var oSystem = {
+							desktop: false,
+							phone: true,
+							tablet: false
+						},
+						oOldSystem = sap.ui.Device.system,
+						oOldOrientation = sap.ui.Device.orientation;
+
+				// stub the system object on sap.ui.Device
+				sap.ui.Device.system = oSystem;
+
+
+				var oSplitContainer = new sap.m.SplitContainer({
+					initialDetail: "page1",
+					detailPages: [
+						new sap.m.Page("page1", {
+
+						}),
+						new sap.m.Page("page2", {
+							showNavButton: true
+						})
+					]
+
+				});
+
+				oSplitContainer._handleNavigationEvent = this.spy();
+				oSplitContainer.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				oSplitContainer.toDetail("page2");
+				notEqual(oSplitContainer._handleNavigationEvent.callCount, 0, "Events work on the phone also.");
+
+				oSplitContainer.destroy();
+				sap.ui.Device.system = oOldSystem;
+			});
+
 			test("Should show and hide a masterButton with a toolbar", function() {
 				// Arrange
 				var oPortrait = {
