@@ -56,7 +56,18 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device'],
 		}
 	
 	}
-	
+
+	// Enables CORS support for XHR in case of IE9 to avoid XDomainRequest usage
+	// TODO: remove this workaround for IE9
+	if (Device.browser.internet_explorer && Device.browser.version == 9) {
+		QUnit.begin(function() {
+			if (window.sinon && window.sinon.xhr) {
+				// https://github.com/sinonjs/sinon/issues/732
+				window.sinon.xhr.supportsCORS = true;
+			}
+		});
+	}
+
 	// PhantomJS patch for Focus detection via jQuery:
 	// ==> https://code.google.com/p/phantomjs/issues/detail?id=427
 	//     ==> https://github.com/ariya/phantomjs/issues/10427
