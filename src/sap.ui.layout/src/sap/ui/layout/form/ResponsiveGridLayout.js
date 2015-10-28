@@ -526,7 +526,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				var oLabel = oElement.getLabelControl();
 				if (oLD) {
 					if (oLabel == oControl) {
-						oLD._setStylesInternal("sapUiFormResGridLbl");
+						oLD._setStylesInternal("sapUiFormElementLbl");
 					}
 					return oLD;
 				} else {
@@ -558,7 +558,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 					if (oLabel == oControl) {
 						oLayout.oDummyLayoutData.setSpan("L" + iLabelLSpan + " M" + iLabelMSpan + " S" + iLabelSSpan);
 						oLayout.oDummyLayoutData.setLinebreak(true);
-						oLayout.oDummyLayoutData._setStylesInternal("sapUiFormResGridLbl");
+						oLayout.oDummyLayoutData._setStylesInternal("sapUiFormElementLbl");
 						return oLayout.oDummyLayoutData;
 					} else {
 						var iLSpan = 12 - oLayout.getEmptySpanL();
