@@ -372,6 +372,33 @@
 			}
 		});
 
+		QUnit.test("Test DOM ref", function(assert) {
+			this.oQuickView.openBy(document.body);
+			var oDomRef = this.oQuickView.getDomRef();
+
+			assert.ok(oDomRef instanceof HTMLElement, "return value should be an instance of HTMLElement");
+		});
+
+		QUnit.test("Setting tooltip", function(assert) {
+			var sTooltip = "Some tooltip";
+			this.oQuickView.openBy(document.body);
+			this.oQuickView.setTooltip(sTooltip);
+
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(this.oQuickView.getDomRef().getAttribute("title"), sTooltip, "Tooltip should be " + sTooltip);
+		});
+
+		QUnit.test("Setting busy state", function(assert) {
+			this.oQuickView.openBy(document.body);
+			this.oQuickView.setBusyIndicatorDelay(0);
+			this.oQuickView.setBusy(true);
+
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(this.oQuickView.getDomRef("busyIndicator"), "QuickView should have a busy indicator")
+		});
+
 		QUnit.module("Keyboard handling", {
 			setup: function () {
 				this.oQuickView = getQuickView();
@@ -481,7 +508,7 @@
 			assert.strictEqual(oTitle.text(), 'New Header', 'New text is correct');
 		});
 
-		QUnit.test("Change Page Gourp Element", function (assert) {
+		QUnit.test("Change Page Group Element", function (assert) {
 			this.oButton.firePress();
 
 			this.clock.tick(500);
