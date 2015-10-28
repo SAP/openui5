@@ -136,7 +136,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 	 */
 	JSONListBinding.prototype.checkUpdate = function(bForceupdate){
 		
-		if (this.bSuspended && !this.bIgnoreSuspend) {
+		if (this.bSuspended && !this.bIgnoreSuspend && !bForceupdate) {
 			return;
 		}
 		

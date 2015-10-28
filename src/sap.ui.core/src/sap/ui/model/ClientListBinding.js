@@ -118,6 +118,9 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Filter', './FilterType'
 	 * @see sap.ui.model.ListBinding.prototype.sort
 	 */
 	ClientListBinding.prototype.sort = function(aSorters){
+		if (this.bSuspended) {
+			this.checkUpdate(true);
+		}
 		if (!aSorters) {
 			this.aSorters = null;
 			this.updateIndices();
@@ -172,6 +175,9 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Filter', './FilterType'
 	 * @public
 	 */
 	ClientListBinding.prototype.filter = function(aFilters, sFilterType){
+		if (this.bSuspended) {
+			this.checkUpdate(true);
+		}
 		this.updateIndices();
 		if (aFilters instanceof Filter) {
 			aFilters = [aFilters];
@@ -224,6 +230,7 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Filter', './FilterType'
 		if (!this.aFilters) {
 			return;
 		}
+
 		var aFilters = this.aFilters.concat(this.aApplicationFilters),
 			that = this;
 		

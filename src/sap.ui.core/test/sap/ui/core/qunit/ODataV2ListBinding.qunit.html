@@ -935,6 +935,159 @@
 		sUrl = oBinding.getDownloadUrl("xlsx");
 		equal(sUrl, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/Categories?$format=xlsx", "Download URL for excel correctly constructed.")
 	});
+	asyncTest("Suspend/Resume", function() {
+		var oModel = initModel(false);
+		var oBinding = oModel.bindList("/Categories");
+		var oSpy = sinon.spy(oBinding, "loadData");
+		var handler1 = function() {
+			oBinding.detachChange(handler1);
+			oBinding.attachChange(handler2);
+			equal(oSpy.callCount, 1, "1 Request has been triggered to load data")
+			oSpy.reset();
+			equal(oBinding.getContexts().length, 8, "Current context length is 8");
+			oBinding.suspend();
+			oBinding.refresh(true);
+		};
+		var handler2 = function() {
+			oBinding.detachChange(handler2);
+			oBinding.attachChange(handler3);
+			equal(oSpy.callCount, 1, "1 Request has been triggered for refresh(true)")
+			oSpy.reset();
+			equal(oBinding.getContexts().length, 8, "Current context length is 8");
+			oBinding.refresh();
+			setTimeout(handler4, 50);
+		};
+		var handler3 = function() {
+			ok(false, "Must not be called")
+		};
+		var handler4 = function() {
+			oBinding.detachChange(handler3);
+			oBinding.attachChange(handler5);
+			equal(oSpy.callCount, 0, "refresh() didn't trigger a request")
+			oSpy.reset();
+			equal(oBinding.getContexts().length, 8, "Current context length is 8");
+			oBinding.resume();
+		};
+		var handler5 = function() {
+			oBinding.detachChange(handler5);
+			equal(oSpy.callCount, 1, "1 Request has been triggered after resume")
+			oSpy.reset();
+			equal(oBinding.getContexts().length, 8, "Current context length is 8");
+			start();
+		};
+		oBinding.attachChange(handler1);
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts();
+		});
+		oBinding.initialize();
+	});
+	
+	asyncTest("Suspend/Resume with sort", function() {
+		var oModel = initModel(false);
+		var oBinding = oModel.bindList("/Categories");
+		var oSpy = sinon.spy(oBinding, "loadData");
+		var handler1 = function() {
+			oBinding.detachChange(handler1);
+			oBinding.attachChange(handler2);
+			equal(oSpy.callCount, 1, "1 Request has been triggered to load data")
+			oSpy.reset();
+			equal(oBinding.getContexts().length, 8, "Current context length is 8");
+			oBinding.suspend();
+			oBinding.sort(new sap.ui.model.Sorter("CategoryName"));
+		};
+		var handler2 = function() {
+			oBinding.detachChange(handler2);
+			equal(oSpy.callCount, 1, "1 Request has been triggered for sorting")
+			oSpy.reset();
+			equal(oBinding.getContexts().length, 8, "Current context length is 8");
+			equal(oBinding.getContexts()[0].getProperty("CategoryName"), "Beverages", "Categories are sorted");
+			oBinding.resume();
+			setTimeout(handler3, 50);
+		};
+		var handler3 = function() {
+			equal(oSpy.callCount, 0, "No request was sent after resume")
+			oSpy.reset();
+			start();
+		};
+		oBinding.attachChange(handler1);
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts();
+		});
+		oBinding.initialize();
+	});
+
+	asyncTest("Suspend/Resume with filter", function() {
+		var oModel = initModel(false);
+		var oBinding = oModel.bindList("/Categories");
+		var oSpy = sinon.spy(oBinding, "loadData");
+		var handler1 = function() {
+			oBinding.detachChange(handler1);
+			oBinding.attachChange(handler2);
+			equal(oSpy.callCount, 1, "1 Request has been triggered to load data")
+			oSpy.reset();
+			equal(oBinding.getContexts().length, 8, "Current context length is 8");
+			oBinding.suspend();
+			oBinding.filter(new sap.ui.model.Filter("CategoryName", "EQ", "Beverages"));
+		};
+		var handler2 = function() {
+			oBinding.detachChange(handler2);
+			equal(oSpy.callCount, 1, "1 Request has been triggered for filtering")
+			oSpy.reset();
+			equal(oBinding.getContexts().length, 1, "Current context length is 1");
+			oBinding.resume();
+			setTimeout(handler3, 50);
+		};
+		var handler3 = function() {
+			equal(oSpy.callCount, 0, "No request was sent after resume")
+			oSpy.reset();
+			start();
+		};
+		oBinding.attachChange(handler1);
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts();
+		});
+		oBinding.initialize();
+	});
+
+	asyncTest("Suspend/Resume with autorefresh", function() {
+		var oModel = initModel(false);
+		var oBinding = oModel.bindList("/Categories");
+		var oSpy = sinon.spy(oBinding, "loadData");
+		var handler1 = function() {
+			oBinding.detachChange(handler1);
+			oBinding.attachChange(handler2);
+			equal(oSpy.callCount, 1, "1 Request has been triggered to load data")
+			oSpy.reset();
+			equal(oBinding.getContexts().length, 8, "Current context length is 8");
+			oBinding.suspend();
+			oModel.remove("/Categories(1)", {groupId: "changes"});
+			oModel.submitChanges({groupId: "changes", success: handler3});
+		};
+		var handler2 = function() {
+			ok(false, "Change handler must not be triggered by autorefresh");
+		};		
+		var handler3 = function() {
+			oBinding.detachChange(handler2);
+			oBinding.attachChange(handler4);
+			equal(oSpy.callCount, 0, "No request was triggered for autorefresh")
+			oSpy.reset();
+			equal(oBinding.getContexts().length, 8, "Current context length is 8");
+			oBinding.resume();
+		};
+		var handler4 = function() {
+			oBinding.detachChange(handler4);
+			equal(oSpy.callCount, 1, "Resume did refresh the binding")
+			oSpy.reset();
+			start();
+		};
+		oBinding.attachChange(handler1);
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts();
+		});
+		oBinding.initialize();
+	});
+	
+	
 	</script>
 
 </head>
