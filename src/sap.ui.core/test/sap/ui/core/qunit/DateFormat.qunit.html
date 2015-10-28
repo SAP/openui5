@@ -284,6 +284,13 @@
 			oFormat = sap.ui.core.format.DateFormat.getDateInstance(),
 			sDateIn = "040714", oDateOut = oFormat.parse(sDateIn);
 		ok((oDateOut.toString() === oDate.toString()), "6 digit fallback: "+sDateIn + " to " + oDateOut);
+
+		oDateOut = oFormat.parse("000100");
+		strictEqual(oDateOut, null, "000100 shouldn't be parsed as a valid date");
+
+		oDateOut = oFormat.parse("010000");
+		strictEqual(oDateOut, null, "010000 shouldn't be parsed as a valid date");
+
 		sDateIn = "04072014";
 		oDateOut = oFormat.parse(sDateIn);
 		ok((oDateOut.toString() === oDate.toString()), "8 digit fallback: "+sDateIn + " to " + oDateOut);
