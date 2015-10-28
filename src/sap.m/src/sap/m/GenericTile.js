@@ -262,17 +262,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		var sAltText = "";
 		var bIsFirst = true;
 		if (this.getHeader()) {
-			sAltText += jQuery.sap.encodeHTML(this.getHeader());
+			sAltText += this.getHeader();
 			bIsFirst = false;
 		}
 
 		if (this.getSubheader()) {
-			sAltText += (bIsFirst ? "" : "\n") + jQuery.sap.encodeHTML(this.getSubheader());
+			sAltText += (bIsFirst ? "" : "\n") + this.getSubheader();
 			bIsFirst = false;
 		}
 
 		if (this.getImageDescription()) {
-			sAltText += (bIsFirst ? "" : "\n") + jQuery.sap.encodeHTML(this.getImageDescription());
+			sAltText += (bIsFirst ? "" : "\n") + this.getImageDescription();
 		}
 		return sAltText;
 	};
