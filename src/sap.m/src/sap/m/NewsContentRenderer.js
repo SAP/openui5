@@ -2,7 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([], function() {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 	/**
@@ -30,8 +31,11 @@ sap.ui.define([], function() {
 		oRm.writeAttributeEscaped("title", sTooltip);
 		oRm.writeAttribute("id", oControl.getId() + "-news-content");
 		oRm.writeAttribute("role", "presentation");
-		oRm.writeAttributeEscaped("aria-label", oControl.getAltText().replace(/\s/g, " ")
-				+ (sap.ui.Device.browser.firefox ? "" : " " + sTooltip));
+		if (sap.ui.Device.browser.firefox) {
+			oRm.writeAttributeEscaped("aria-label", oControl.getAltText().replace(/\s/g, " ") + "" + sTooltip);
+		} else {
+			oRm.writeAttributeEscaped("aria-label", oControl.getAltText().replace(/\s/g, " ") + " " + sTooltip);
+		}
 
 		oRm.addClass(sSize);
 		oRm.addClass("sapMNwC");
@@ -47,7 +51,7 @@ sap.ui.define([], function() {
 		oRm.addClass(sSize);
 		oRm.writeClasses();
 		oRm.write(">");
-		oRm.renderControl(oControl._oCText);
+		oRm.renderControl(oControl._oContentText);
 		oRm.write("</div>");
 
 		oRm.write("<div");
@@ -62,5 +66,4 @@ sap.ui.define([], function() {
 	};
 
 	return NewsContentRenderer;
-
 }, /* bExport= */true);

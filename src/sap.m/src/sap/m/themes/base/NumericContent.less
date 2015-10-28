@@ -34,32 +34,32 @@
 
 .sapMNCInner {
 	position: absolute;
-	left: 0;
-	right: 0;
+	left: 0rem;
+	right: 0rem;
 }
 
 .sapUiMedia-Std-Phone .sapMNCInner.Auto,
 .sapMNCInner.S,
 .sapMNCInner.XS {
 	top: 1.0625rem;
-	bottom: -.0625rem;
+	bottom: -1px; /* Usage of px as aligned with designers. */
 }
 
 .sapUiMedia-Std-Desktop .sapMNCInner.Auto,
 .sapUiMedia-Std-Tablet .sapMNCInner.Auto,
 .sapMNCInner.M {
 	top: 1.25rem;
-	bottom: -.125rem;
+	bottom: -0.125rem;
 }
 
 .sapMNCInner.L {
 	top: 1.9rem;
-	bottom: 0;
+	bottom: 0rem;
 }
 
 .sapMNCInner.WithoutMargin,
 .sapMNCInner.WithoutMargin.Auto {
-	top: 0;
+	top: 0rem;
 	width: auto;
 	height: auto;
 	position: relative;
@@ -76,26 +76,26 @@
 .sapUiMedia-Std-Phone .sapMNCIconImage.Auto,
 .sapMNCIconImage.S,
 .sapMNCIconImage.XS {
-	font-size: 24px;
-	height: 24px;
-	width: 24px;
-	margin-top: .375rem;
+	font-size: 1.5rem;
+	height: 1.5rem;
+	width: 1.5rem;
+	margin-top: 0.375rem;
 }
 
 .sapUiMedia-Std-Desktop .sapMNCIconImage.Auto,
 .sapUiMedia-Std-Tablet .sapMNCIconImage.Auto,
 .sapMNCIconImage.M {
-	font-size: 34px;
-	height: 34px;
-	width: 34px;
-	margin-top: .625rem;
+	font-size: 2.125rem;
+	height: 2.125rem;
+	width: 2.125rem;
+	margin-top: 0.625rem;
 }
 
 .sapMNCIconImage.L {
-	font-size: 42px;
-	height: 44px;
-	width: 44px;
-	margin-top: .5rem;
+	font-size: 2.625rem;
+	height: 2.75rem;
+	width: 2.75rem;
+	margin-top: 0.5rem;
 }
 
 .sapMNCIconImage.WithoutMargin,
@@ -105,24 +105,24 @@
 
 .sapMNCValueScr {
 	overflow: hidden;
-	left: 0;
+	left: 0rem;
 	width: 100%;
 }
 
 .sapUiMedia-Std-Phone .sapMNCValueScr.Auto,
-.sapMNCValueScr.S, 
+.sapMNCValueScr.S,
 .sapMNCValueScr.XS {
-	margin-top: -.075rem;
+	margin-top: -0.075rem;
 }
 
 .sapUiMedia-Std-Desktop .sapMNCValueScr.Auto,
 .sapUiMedia-Std-Tablet .sapMNCValueScr.Auto,
 .sapMNCValueScr.M {
-	margin-top: -.045rem;
+	margin-top: -0.045rem;
 }
 
 .sapMNCValueScr.L {
-	margin-top: -.2rem;
+	margin-top: -0.2rem;
 }
 
 .sapMNCValue {
@@ -141,23 +141,23 @@ html[dir=rtl] .sapMNCValue {
 .sapUiMedia-Std-Phone .sapMNCValue.Auto,
 .sapMNCValue.S,
 .sapMNCValue.XS {
-	font-size: 34px;
+	font-size: 2.125rem;
 	height: 2.5rem;
-	padding-right: .375rem;
+	padding-right: 0.375rem;
 }
 
 .sapUiMedia-Std-Desktop .sapMNCValue.Auto,
 .sapUiMedia-Std-Tablet .sapMNCValue.Auto,
 .sapMNCValue.M {
-	font-size: 48px;
-	padding-right: .5rem;
-	line-height: 54px;
+	font-size: 3rem;
+	padding-right: 0.5rem;
+	line-height: 3.375rem;
 }
 
 .sapMNCValue.L {
-	font-size: 56px;
+	font-size: 3.5rem;
 	height: 3.9rem;
-	padding-right: .5rem;
+	padding-right: 0.5rem;
 }
 
 .sapMNCValue.WithoutMargin,
@@ -171,7 +171,7 @@ html[dir=rtl] .sapMNCValue {
 	float: right;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	min-width: 14px;
+	min-width: 0.875rem;
 	text-align: center;
 }
 
@@ -180,7 +180,7 @@ html[dir=rtl] .sapMNCValue {
 .sapMNCIndScale.XS {
 	height: 2rem;
 	max-width: 8.25rem;
-	margin-top: .375rem;
+	margin-top: 0.375rem;
 }
 
 .sapUiMedia-Std-Desktop .sapMNCIndScale.Auto,
@@ -188,34 +188,34 @@ html[dir=rtl] .sapMNCValue {
 .sapMNCIndScale.M {
 	height: 2.875rem;
 	max-width: 10.5rem;
-	margin-top: .5rem;
+	margin-top: 0.5rem;
 }
 
 .sapMNCIndScale.L {
 	height: 2.75rem;
 	max-width: 12.75rem;
-	margin-top: .7rem;
+	margin-top: 0.7rem;
 }
 
 .sapMNCIndicator {
 	position: absolute;
-	left: 0;
-	right: 0;
-	width: 0;
-	margin: 0 auto;
+	left: 0rem;
+	right: 0rem;
+	width: 0rem;
+	margin: 0rem auto;
 	display: block;
 }
 
 .sapMNCIndicator.Up {
-	border-bottom: 7px solid;
-	border-left: 6px solid transparent;
-	border-right: 6px solid transparent;
+	border-bottom: 7px solid; /* Usage of px as aligned with designers. */
+	border-left: 0.375rem solid transparent;
+	border-right: 0.375rem solid transparent;
 }
 
 .sapMNCIndicator.Down {
-	border-top: 7px solid;
-	border-left: 6px solid transparent;
-	border-right: 6px solid transparent;
+	border-top: 7px solid; /* Usage of px as aligned with designers. */
+	border-left: 0.375rem solid transparent;
+	border-right: 0.375rem solid transparent;
 }
 
 .sapMNCScale {
@@ -231,19 +231,19 @@ html[dir=rtl] .sapMNCValue {
 .sapUiMedia-Std-Phone .sapMNCScale.Auto,
 .sapMNCScale.S,
 .sapMNCScale.XS {
-	height: 17px;
+	height: 17px; /* Usage of px as aligned with designers. */
 	margin-top: 0.8rem;
 }
 
 .sapUiMedia-Std-Desktop .sapMNCScale.Auto,
 .sapUiMedia-Std-Tablet .sapMNCScale.Auto,
 .sapMNCScale.M {
-	height: 18px;
+	height: 18px; /* Usage of px as aligned with designers. */
 	margin-top: 1.3rem;
 }
 
 .sapMNCScale.L {
-	height: 19px;
+	height: 19px; /* Usage of px as aligned with designers. */
 	margin-top: 1.45rem;
 }
 

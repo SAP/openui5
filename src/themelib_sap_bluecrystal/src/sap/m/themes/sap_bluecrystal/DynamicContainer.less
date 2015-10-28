@@ -2,19 +2,19 @@
 /* CSS for control sap.m/DynamicContainer.control */
 /* ============================================== */
 .sapMDC {
-	box-shadow: 0px 0px 0.25rem fade(@sapUiDarkShadowTint, 10);
+	box-shadow: 0rem 0rem 0.25rem fade(@sapUiDarkShadowTint, 10);
 }
 
 .sap-desktop .sapMDC:hover,
 .sap-tablet .sapMDCHvr:hover,
 .sap-phone .sapMDCHvr:hover {
-	box-shadow: 0px 0px 0px 2px @sapUiLightShadowTint;
+	box-shadow: 0rem 0rem 0rem 0.125rem @sapUiLightShadowTint;
 }
 
 .sap-desktop .sapMDC:focus {
 	outline-color: @sapUiFocus;
 	outline-style: dotted;
-	outline-width: 1px;
+	outline-width: 1px; /* Usage of px as aligned with designers. */
 }
 .sapMDCIcon {
 	color: @sapUiLightBG;

@@ -56,15 +56,82 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 	});
 
+	/* --- Lifecycle methods --- */
+
+	/**
+	* Init function for the control
+	*/
 	NewsContent.prototype.init = function() {
-		this._oCText = new sap.m.Text(this.getId() + "-content-text", {
+		this._oContentText = new sap.m.Text(this.getId() + "-content-text", {
 			maxLines : 2
 		});
-		this._oCText.cacheLineHeight = false;
-		this.setAggregation("contentTextAgr", this._oCText, true);
-		this.setTooltip("{AltText}");
+		this._oContentText.cacheLineHeight = false;
+		this.setAggregation("contentTextAgr", this._oContentText, true);
+		this.setTooltip("{AltText}"); // TODO Nov. 2015: needs to be checked with ACC. Issue will be addresses via BLI.
 	};
 
+	/* --- Getters and Setters --- */
+
+	/**
+	 * Returns the Alttext
+	 *
+	 * @returns {String} The AltText text
+	 */
+	NewsContent.prototype.getAltText = function() {
+		var sAltText = "";
+		var bIsFirst = true;
+		if (this.getAggregation("contentTextAgr").getText()) {
+			sAltText += this.getAggregation("contentTextAgr").getText();
+			bIsFirst = false;
+		}
+		if (this.getSubheader()) {
+			if (bIsFirst) {
+				sAltText += "" + this.getSubheader();
+			} else {
+				sAltText += "\n" + this.getSubheader();
+			}
+		}
+		return sAltText;
+	};
+
+	/**
+	 * Returns the Tooltip as String
+	 *
+	 * @returns {sap.ui.core.TooltipBase} The Tooltip object
+	 */
+	NewsContent.prototype.getTooltip_AsString = function() {
+		var oTooltip = this.getTooltip();
+		var sTooltip = this.getAltText();
+		if (typeof oTooltip === "string" || oTooltip instanceof String) {
+			// TODO Nov. 2015: needs to be checked with ACC. Issue will be addresses via BLI.
+			sTooltip = oTooltip.split("{AltText}").join(sTooltip).split("((AltText))").join(sTooltip);
+			return sTooltip;
+		}
+		if (oTooltip) {
+			return oTooltip;
+		} else {
+			return "";
+		}
+	};
+
+	/**
+	 * Sets the ContentText
+	 *
+	 * @param {String} text The ContentType text
+	 * @returns {sap.m.NewsContent} Reference to this in order to allow method chaining
+	 */
+	NewsContent.prototype.setContentText = function(text) {
+		this._oContentText.setText(text);
+		return this;
+	};
+
+	/* --- Event Handling --- */
+
+	/**
+	 * Handler for tap event
+	 *
+	 * @param {sap.ui.base.Event} oEvent which was fired
+	 */
 	NewsContent.prototype.ontap = function(oEvent) {
 		if (sap.ui.Device.browser.internet_explorer) {
 			this.$().focus();
@@ -72,6 +139,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		this.firePress();
 	};
 
+	/**
+	 * Handler for keydown event
+	 *
+	 * @param {sap.ui.base.Event} oEvent which was fired
+	 */
 	NewsContent.prototype.onkeydown = function(oEvent) {
 		if (oEvent.which === jQuery.sap.KeyCodes.ENTER || oEvent.which === jQuery.sap.KeyCodes.SPACE) {
 			this.firePress();
@@ -79,52 +151,42 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 	};
 
-	NewsContent.prototype.getContentText = function() {
-		return this._oCText.getText();
-	};
-
-	NewsContent.prototype.setContentText = function(sText) {
-		this._oCText.setText(sText);
-		return this;
-	};
-
-	NewsContent.prototype.attachEvent = function(sEventId, oData, fnFunction, oListener) {
-		sap.ui.core.Control.prototype.attachEvent.call(this, sEventId, oData, fnFunction, oListener);
+	/**
+	 * Attaches an event handler to the event with the given identifier for the current control
+	 *
+	 * @param {string} eventId The identifier of the event to listen for
+	 * @param {object} [data] An object that will be passed to the handler along with the event object when the event is fired
+	 * @param {function} functionToCall The handler function to call when the event occurs.
+	 * This function will be called in the context of the oListener instance (if present) or on the event provider instance.
+	 * The event object (sap.ui.base.Event) is provided as first argument of the handler.
+	 * Handlers must not change the content of the event. The second argument is the specified oData instance (if present).
+	 * @param {object} [listener] The object that wants to be notified when the event occurs (this context within the handler function).
+	 * If it is not specified, the handler function is called in the context of the event provider.
+	 * @returns {sap.m.NewsContent} Reference to this in order to allow method chaining
+	 */
+	NewsContent.prototype.attachEvent = function(eventId, data, functionToCall, listener) {
+		sap.ui.core.Control.prototype.attachEvent.call(this, eventId, data, functionToCall, listener);
 		if (this.hasListeners("press")) {
 			this.$().attr("tabindex", 0).addClass("sapMPointer");
 		}
 		return this;
 	};
 
-	NewsContent.prototype.detachEvent = function(sEventId, fnFunction, oListener) {
-		sap.ui.core.Control.prototype.detachEvent.call(this, sEventId, fnFunction, oListener);
+	/**
+	 * Removes a previously attached event handler from the event with the given identifier for the current control.
+	 * The passed parameters must match those used for registration with #attachEvent beforehand.
+	 *
+	 * @param {string} eventId The identifier of the event to detach from
+	 * @param {function} functionToCall The handler function to detach from the event
+	 * @param {object} [listener] The object that wanted to be notified when the event occurred
+	 * @returns {sap.m.NewsContent} Reference to this in order to allow method chaining
+	 */
+	NewsContent.prototype.detachEvent = function(eventId, functionToCall, listener) {
+		sap.ui.core.Control.prototype.detachEvent.call(this, eventId, functionToCall, listener);
 		if (!this.hasListeners("press")) {
 			this.$().removeAttr("tabindex").removeClass("sapMPointer");
 		}
 		return this;
-	};
-
-	NewsContent.prototype.getAltText = function() {
-		var sAltText = "";
-		var bIsFirst = true;
-		if (this.getContentText()) {
-			sAltText += this.getContentText();
-			bIsFirst = false;
-		}
-		if (this.getSubheader()) {
-			sAltText += (bIsFirst ? "" : "\n") + this.getSubheader();
-		}
-		return sAltText;
-	};
-
-	NewsContent.prototype.getTooltip_AsString = function() {
-		var oTooltip = this.getTooltip();
-		var sTooltip = this.getAltText();
-		if (typeof oTooltip === "string" || oTooltip instanceof String) {
-			sTooltip = oTooltip.split("{AltText}").join(sTooltip).split("((AltText))").join(sTooltip);
-			return sTooltip;
-		}
-		return oTooltip ? oTooltip : "";
 	};
 
 	return NewsContent;

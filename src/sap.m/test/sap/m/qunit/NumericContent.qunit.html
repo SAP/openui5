@@ -11,17 +11,11 @@
 	data-sap-ui-theme="sap_bluecrystal"
 	data-sap-ui-libs="sap.ui.core,sap.m" data-sap-ui-language="en">
 </script>
-
 <!-- QUnit libraries -->
-<link rel="stylesheet"
-	href="../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <script type="text/javascript">
 	if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
@@ -30,8 +24,8 @@
 	jQuery.sap.initMobile();
 
 	QUnit.module("Rendering test - sap.m.NumericContent", {
-		setup : function() {
-			this.oNC = new sap.m.NumericContent("numeric-cnt", {
+		beforeEach : function() {
+			this.oNumericContent = new sap.m.NumericContent("numeric-cnt", {
 				size : sap.m.Size.L,
 				state : sap.m.LoadState.Loaded,
 				scale : "M",
@@ -42,16 +36,16 @@
 				valueColor : sap.m.ValueColor.Good,
 				icon : "sap-icon://customer-financial-fact-sheet"
 			});
-			this.oNC.placeAt("qunit-fixture");
+			this.oNumericContent.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
-			this.oNC.destroy();
-			this.oNC = null;
+		afterEach : function() {
+			this.oNumericContent.destroy();
+			this.oNumericContent = null;
 		}
 	});
 	QUnit.test("Numeric Content rendered.", function(assert) {
-		this.oNC.setValue("12");
+		this.oNumericContent.setValue("12");
 		sap.ui.getCore().applyChanges();
 		assert.ok(jQuery.sap.domById("numeric-cnt"), "NumericContent was rendered successfully");
 		assert.ok(jQuery.sap.domById("numeric-cnt-indicator"), "Indicator was rendered successfully");
@@ -61,8 +55,8 @@
 	});
 
 	QUnit.module("Functional tests - sap.m.NumericContent", {
-		setup : function() {
-			this.oNC = new sap.m.NumericContent("numeric-cnt", {
+		beforeEach : function() {
+			this.oNumericContent = new sap.m.NumericContent("numeric-cnt", {
 				size : sap.m.Size.L,
 				state : sap.m.LoadState.Loaded,
 				scale : "M",
@@ -73,29 +67,29 @@
 				valueColor : sap.m.ValueColor.Good,
 				icon : "sap-icon://customer-financial-fact-sheet"
 			});
-			this.oNC.placeAt("qunit-fixture");
+			this.oNumericContent.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
-			this.oNC.destroy();
-			this.oNC = null;
+		afterEach : function() {
+			this.oNumericContent.destroy();
+			this.oNumericContent = null;
 		}
 	});
 
 	QUnit.test( "Test formatter value processing", function(assert) {
-		this.oNC.setFormatterValue(false);
-		this.oNC.setValue("68Mio.");
+		this.oNumericContent.setFormatterValue(false);
+		this.oNumericContent.setValue("68Mio.");
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "68Mi", "Value was rendered successfully with formatter switched off");
 		assert.equal(jQuery.sap.byId("numeric-cnt-scale").text(), "M", "Scale was rendered successfully with formatter switched off");
-		this.oNC.setFormatterValue(true);
-		this.oNC.setValue("68Mio");
+		this.oNumericContent.setFormatterValue(true);
+		this.oNumericContent.setValue("68Mio");
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "68", "Value was rendered successfully with formatter switched on");
 		assert.equal(jQuery.sap.byId("numeric-cnt-scale").text(), "Mio", "Scale was rendered successfully with formatter switched on");
-		this.oNC.setValue(undefined);
+		this.oNumericContent.setValue(undefined);
 		sap.ui.getCore().applyChanges();
 		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "0", "Value cleaned successfully with formatter switched on");
 		assert.equal(jQuery.sap.byId("numeric-cnt-scale").text(), "", "Scale cleaned successfully with formatter switched on");
@@ -103,13 +97,65 @@
 
 	QUnit.test("Test nullify parameter", function(assert) {
 		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "0", "Value was nullified successfully");
-		this.oNC.setNullifyValue(false);
+		this.oNumericContent.setNullifyValue(false);
 		sap.ui.getCore().applyChanges();
 		assert.equal(jQuery.sap.byId("numeric-cnt-value").text(), "", "Value was not nullified");
 	});
 
+	QUnit.test("Test tooltip text", function(assert) {
+		//Arrange
+		this.oNumericContent.setTooltip("Test, test");
+		//Act
+		var sTooltip = this.oNumericContent.getTooltip();
+		//Assert
+		assert.deepEqual(sTooltip, "Test, test", "Tooltip is a string and it's correct");
+
+		//Act
+		sTooltip = this.oNumericContent.getTooltip_AsString();
+		//Assert
+		assert.deepEqual(sTooltip, "Test, test", "Tooltip is correct");
+
+		//Arrange
+		var oTooltip = new sap.ui.core.TooltipBase({text: "Test, test"});
+		this.oNumericContent.setTooltip(oTooltip);
+		//Act
+		sTooltip = this.oNumericContent.getTooltip();
+		//Assert
+		assert.notDeepEqual(sTooltip, "Test, test", "Tooltip is not a string");
+	});
+
+	QUnit.test("Test alternative text", function(assert) {
+		//Act
+		var sAltText = this.oNumericContent.getAltText();
+		//Assert
+		assert.equal(sAltText, "0\nAscending\nGood", "Alternative text is correct");
+
+		//Arrange
+		this.oNumericContent.setIconDescription("Icon description");
+		//Act
+		sAltText = this.oNumericContent.getAltText();
+		//Assert
+		assert.equal(sAltText, "Icon description\n0\nAscending\nGood", "Alternative text is correct with icon description");
+
+		//Arrange
+		this.oNumericContent.setNullifyValue(false);
+		//Act
+		sAltText = this.oNumericContent.getAltText();
+		//Assert
+		assert.equal(sAltText, "Icon description\n\nAscending\nGood", "Alternative text is correct with nullify value set to false");
+
+		//Arrange
+		this.oNumericContent.setNullifyValue(true);
+		//Act
+		this.oNumericContent.setValue("10");
+		this.oNumericContent.setScale("$");
+		sAltText = this.oNumericContent.getAltText();
+		//Assert
+		assert.equal(this.oNumericContent.getAltText(), "Icon description\n10$\nAscending\nGood", "Alternative text is correct with a value and scale set up");
+	});
+
 	QUnit.module("Property withoutMargin", {
-		setup : function() {
+		beforeEach : function() {
 			this.oNumericContent = new sap.m.NumericContent({
 				scale : "Mrd",
 				indicator : sap.m.DeviationIndicator.Up,
@@ -117,7 +163,7 @@
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		teardown : function() {
+		afterEach : function() {
 			this.oNumericContent.destroy();
 			this.oNumericContent = null;
 		}
@@ -137,6 +183,92 @@
 		assert.ok(this.oNumericContent.$("value-scr").hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the value container.");
 		assert.ok(this.oNumericContent.$().find(".sapMNCIndScale").hasClass("WithoutMargin"), "'withoutMargin' CSS class expected within the indicator and scale container.");
 	});
+
+	/* Module wrapper to define a scope for helper functions. This can be replaced with nested approach of QUnit in the future
+	 * This approach is not working in the current TestSuite configuration.
+	 * See 'Hooks stack on nested modules' sample at https://api.qunitjs.com/QUnit.module/ */
+	(function() {
+		QUnit.module("Events test", {
+			beforeEach : function() {
+				this.oNumericContent = new sap.m.NumericContent({
+					size : sap.m.Size.L,
+					state : sap.m.LoadState.Loaded,
+					scale : "M",
+					indicator : sap.m.DeviationIndicator.Up,
+					truncateValueTo : 4,
+					nullifyValue : true,
+					formatterValue : false,
+					valueColor : sap.m.ValueColor.Good,
+					icon : "sap-icon://customer-financial-fact-sheet"
+				}).placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function() {
+				this.oNumericContent.destroy();
+				this.oNumericContent = null;
+			}
+		});
+
+		QUnit.test("Attach events", function(assert) {
+			//Arrange
+			//Act
+			var oNumericContent = this.oNumericContent.attachEvent("hover", fnHoverHandler, this.oNumericContent);
+			//Assert
+			assert.deepEqual(oNumericContent, this.oNumericContent, "NumericContent returned is equal to initial one");
+			assert.equal(hasAttribute("tabindex", this.oNumericContent), false, "Attribute has not been added successfully since press handler was not available");
+			assert.equal(this.oNumericContent.$().hasClass("sapMPointer"), false, "Class has not been added successfully since press handler was not available");
+
+			//Arrange
+			//Act
+			oNumericContent = this.oNumericContent.attachEvent("press", fnPressHandler, this.oNumericContent);
+			//Assert
+			assert.ok(hasAttribute("tabindex", this.oNumericContent), "Attribute has been added successfully since press handler was available");
+			assert.ok(this.oNumericContent.$().hasClass("sapMPointer"), "Class has been added successfully since press handler was available");
+		});
+
+		QUnit.test("Detach events.", function(assert) {
+			//Arrange
+			//Act
+			var oNumericContent = this.oNumericContent.detachEvent("press", fnPressHandler, this.oNumericContent);
+			//Assert
+			assert.deepEqual(oNumericContent, this.oNumericContent, "NumericContentreturned is equal to initial one");
+			assert.equal(hasAttribute("tabindex", this.oNumericContent), false, "Attribute not available since press was not defined");
+			assert.equal(this.oNumericContent.$().hasClass("sapMPointer"), false, "Class not available since press was not defined");
+
+			//Arrange
+			oNumericContent= this.oNumericContent.attachEvent("press", fnPressHandler, this.oNumericContent);
+			oNumericContent = this.oNumericContent.attachEvent("hover", fnHoverHandler, this.oNumericContent);
+			//Act
+			oNumericContent= this.oNumericContent.detachEvent("hover", fnHoverHandler, this.oNumericContent);
+			//Assert
+			assert.ok(hasAttribute("tabindex", this.oNumericContent), "Attribute still available since hover was unregistered (not press)");
+			assert.ok(this.oNumericContent.$().hasClass("sapMPointer"), "Class still available since hover was unregistered (not press)");
+
+			//Arrange
+			//Act
+			oNumericContent = this.oNumericContent.detachEvent("press", fnPressHandler, this.oNumericContent);
+			//Assert
+			assert.equal(hasAttribute("tabindex", this.oNumericContent), false, "Attribute has been removed successfully");
+			assert.equal(this.oNumericContent.$().hasClass("sapMPointer"), false, "Class has been removed successfully");
+		});
+
+		/* --- Helpers --- */
+
+		fnHoverHandler = function() {
+		}
+
+		fnPressHandler = function() {
+		}
+
+		hasAttribute = function(sAttribute, oCurrentObject) {
+			var sAttributeValue = oCurrentObject.$().attr(sAttribute);
+			if (typeof sAttributeValue !== typeof undefined && sAttributeValue !== false) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}());
 </script>
 </head>
 

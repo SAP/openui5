@@ -5,9 +5,9 @@
 	display: inline-block;
 	overflow: hidden;
 	background: @sapUiWhite;
-	border-radius: 4px;
+	border-radius: 0.25rem;
 	position: relative;
-	border: 0.0625rem transparent dotted;
+	border: 1px transparent dotted; /* Usage of px as aligned with designers. */
 	outline : none;
 }
 
@@ -46,7 +46,7 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space:nowrap;
-	margin-top: -.1875rem;
+	margin-top: 3px; /* Usage of px as aligned with designers. */
 }
 
 .sapUiMedia-Std-Phone .sapMGT.Auto.OneByOne,
@@ -109,10 +109,10 @@
 	position: absolute !important;
 	opacity: 0.8;
 	z-index: 1;
-	top: 0px;
-	right: 0px;
-	left: 0px;
-	bottom: 0px;
+	top: 0rem;
+	right: 0rem;
+	left: 0rem;
+	bottom: 0rem;
 }
 
 .sapMGenericTileLoading {

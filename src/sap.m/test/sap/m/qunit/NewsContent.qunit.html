@@ -6,20 +6,14 @@
 
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../resources/sap-ui-core.js"
-	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"
-	data-sap-ui-language="en">
+	data-sap-ui-theme="sap_bluecrystal"
+	data-sap-ui-libs="sap.m" data-sap-ui-language="en">
 </script>
-
 <!-- QUnit libraries -->
-<link rel="stylesheet"
-	href="../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <script type="text/javascript">
 	if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
@@ -28,7 +22,7 @@
 
 	QUnit.module("Rendering test - sap.m.NewsContent", {
 		beforeEach : function() {
-			this.oNwC = new sap.m.NewsContent("news-cnt", {
+			this.oNewsContent = new sap.m.NewsContent("news-cnt", {
 				size : sap.m.Size.M,
 				contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
 				subheader : "August 21, 2013",
@@ -37,11 +31,11 @@
 					sap.m.MessageToast.show("The news content is pressed.");
 				}
 			});
-			this.oNwC.placeAt("qunit-fixture");
+			this.oNewsContent.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach : function() {
-			this.oNwC.destroy();
+			this.oNewsContent.destroy();
 		}
 	});
 
@@ -50,6 +44,145 @@
 		assert.ok(jQuery.sap.domById("news-cnt-content-text"), "Content text was rendered successfully");
 		assert.ok(jQuery.sap.domById("news-cnt-subheader"), "Subheader was rendered successfully");
 	});
+
+	QUnit.module("Functional tests - sap.m.NewsContent", {
+		setup : function() {
+			this.oNewsContent = new sap.m.NewsContent({
+				size : sap.m.Size.M,
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		teardown : function () {
+			this.oNewsContent.destroy();
+			this.oNewsContent = null;
+		}
+	});
+
+	QUnit.test("Alternative text tests", function(assert) {
+		//Act
+		var sAltText = this.oNewsContent.getAltText();
+		//Assert
+		assert.equal(sAltText, "", "Alternative text is correct");
+
+		//Arrange
+		this.oNewsContent.setSubheader("August 21, 2013");
+		//Act
+		sAltText = this.oNewsContent.getAltText();
+		//Assert
+		assert.equal(sAltText, "August 21, 2013", "Alternative text is correct with subheader");
+
+		//Arrange
+		this.oNewsContent.setContentText("SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com");
+		//Act
+		sAltText = this.oNewsContent.getAltText();
+		//Assert
+		assert.equal(sAltText, "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com\nAugust 21, 2013", "Alternative text is correct with content text");
+	});
+
+	QUnit.test("Tooltip tests", function(assert) {
+		//Arrange
+		this.oNewsContent.setTooltip(null);
+		//Act
+		var sTooltip = this.oNewsContent.getTooltip_AsString();
+		//Assert
+		assert.deepEqual(sTooltip, "", "No tooltip is correct");
+
+		//Arrange
+		this.oNewsContent.setTooltip("Tooltip");
+		//Act
+		var sTooltip = this.oNewsContent.getTooltip_AsString();
+		//Assert
+		assert.deepEqual(sTooltip, "Tooltip", "Tooltip is correct");
+
+		//Arrange
+		var oTooltip = new sap.ui.core.TooltipBase({text: "Tooltip"});
+		this.oNewsContent.setTooltip(oTooltip);
+		//Act
+		var sTooltip = this.oNewsContent.getTooltip_AsString();
+		//Assert
+		assert.deepEqual(sTooltip.getText(), "Tooltip", "Tooltip is an object with a text property containing the correct string"); //TODO
+	});
+
+	/* Module wrapper to define a scope for helper functions. This can be replaced with nested approach of QUnit in the future
+	 * This approach is not working in the current TestSuite configuration.
+	 * See 'Hooks stack on nested modules' sample at https://api.qunitjs.com/QUnit.module/ */
+	(function() {
+		QUnit.module("Events test", {
+			setup : function() {
+				this.oNewsContent = new sap.m.NewsContent({
+					size : sap.m.Size.M,
+					contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
+					subheader : "August 21, 2013",
+					tooltip : "Test tooltip",
+				}).placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			teardown : function() {
+				this.oNewsContent.destroy();
+				this.oNewsContent = null;
+			}
+		});
+
+		QUnit.test("Attach events", function(assert) {
+			//Arrange
+			//Act
+			var oNewsContent = this.oNewsContent.attachEvent("hover", fnHoverHandler, this.oNewsContent);
+			//Assert
+			assert.deepEqual(oNewsContent, this.oNewsContent, "NumericContent returned is equal to initial one");
+			assert.equal(hasAttribute("tabindex", this.oNewsContent), false, "Attribute has not been added successfully since press handler was not available");
+			assert.equal(this.oNewsContent.$().hasClass("sapMPointer"), false, "Class has not been added successfully since press handler was not available");
+
+			//Arrange
+			//Act
+			oNewsContent = this.oNewsContent.attachEvent("press", fnPressHandler, this.oNewsContent);
+			//Assert
+			assert.ok(hasAttribute("tabindex", this.oNewsContent), "Attribute has been added successfully since press handler was available");
+			assert.ok(this.oNewsContent.$().hasClass("sapMPointer"), "Class has been added successfully since press handler was available");
+		});
+
+		QUnit.test("Detach events.", function(assert) {
+			//Arrange
+			//Act
+			var oNewsContent = this.oNewsContent.detachEvent("press", fnPressHandler, this.oNewsContent);
+			//Assert
+			assert.deepEqual(oNewsContent, this.oNewsContent, "NumericContentreturned is equal to initial one");
+			assert.equal(hasAttribute("tabindex", this.oNewsContent), false, "Attribute not available since press was not defined");
+			assert.equal(this.oNewsContent.$().hasClass("sapMPointer"), false, "Class not available since press was not defined");
+
+			//Arrange
+			oNewsContent= this.oNewsContent.attachEvent("press", fnPressHandler, this.oNewsContent);
+			oNewsContent = this.oNewsContent.attachEvent("hover", fnHoverHandler, this.oNewsContent);
+			//Act
+			oNewsContent= this.oNewsContent.detachEvent("hover", fnHoverHandler, this.oNewsContent);
+			//Assert
+			assert.ok(hasAttribute("tabindex", this.oNewsContent), "Attribute still available since hover was unregistered (not press)");
+			assert.ok(this.oNewsContent.$().hasClass("sapMPointer"), "Class still available since hover was unregistered (not press)");
+
+			//Arrange
+			//Act
+			oNewsContent = this.oNewsContent.detachEvent("press", fnPressHandler, this.oNewsContent);
+			//Assert
+			assert.equal(hasAttribute("tabindex", this.oNewsContent), false, "Attribute has been removed successfully");
+			assert.equal(this.oNewsContent.$().hasClass("sapMPointer"), false, "Class has been removed successfully");
+		});
+
+		/* --- Helpers --- */
+
+		fnHoverHandler = function() {
+		}
+
+		fnPressHandler = function() {
+		}
+
+		hasAttribute = function(sAttribute, oCurrentObject) {
+			var sAttributeValue = oCurrentObject.$().attr(sAttribute);
+			if (typeof sAttributeValue !== typeof undefined && sAttributeValue !== false) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}());
 </script>
 </head>
 

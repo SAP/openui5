@@ -12,82 +12,81 @@
 </script>
 
 <!-- QUnit libraries -->
-<link rel="stylesheet"
-	href="../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script type="text/javascript"
-	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script type="text/javascript">
 	if (!(sap.ui.Device.browser.msie && sap.ui.Device.browser.version <= 8)) {
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 	}
 
-	var oDynamicContainerData = {
-		tiles : [{
-			header : "Tile 1",
-			frameType : "TwoByOne",
-			size : "M",
-			tileContent : [{
-				footer : "Footer 1",
-				value : 10
-			}, {
-				footer : "Footer 2",
-				value : 20
-			}]
-		}, {
-			header : "Tile 2",
-			frameType : "OneByOne",
-			size : "M",
-			tileContent : [{
-				footer : "Footer 3",
-				value : 30
-			}, {
-				footer : "Footer 4",
-				value : 40
-			}]
-		}]
-	};
+	QUnit.module("Rendering - sap.m.DynamicContainer", {
+		beforeEach : function() {
+			//Model
+			var oDynamicContainerData = {
+				tiles : [{
+					header : "Tile 1",
+					frameType : "TwoByOne",
+					size : "M",
+					tileContent : [{
+						footer : "Footer 1",
+						value : 10
+					}, {
+						footer : "Footer 2",
+						value : 20
+					}]
+				}, {
+					header : "Tile 2",
+					frameType : "OneByOne",
+					size : "M",
+					tileContent : [{
+						footer : "Footer 3",
+						value : 30
+					}, {
+						footer : "Footer 4",
+						value : 40
+					}]
+				}]
+			};
 
-	var oTileContent = new sap.m.TileContent({
-		footer : "{footer}",
-		content : new sap.m.NumericContent({
-			value : "{value}"
-		})
-	});
+			//Template
+			var oTileContent = new sap.m.TileContent({
+				footer : "{footer}",
+				content : new sap.m.NumericContent({
+					value : "{value}"
+				})
+			});
+			var oGenericTile = new sap.m.GenericTile({
+				frameType : "{frameType}",
+				header : "{header}",
+				size : "{size}",
+				tileContent : {
+					template : oTileContent,
+					path : "tileContent",
+					templateShareable: true
+				}
+			});
+			this.oDynamicContainer = new sap.m.DynamicContainer("dc", {
+				displayTime : 500,
+				transitionTime : 0,
+				tiles : {
+					template : oGenericTile,
+					path : "/tiles",
+					templateShareable: true
+				}
+			});
 
-	var oGenericTile = new sap.m.GenericTile({
-		frameType : "{frameType}",
-		header : "{header}",
-		size : "{size}",
-		tileContent : {
-			template : oTileContent,
-			path : "tileContent",
-			templateShareable: true
+			var oDynamicContainerModel = new sap.ui.model.json.JSONModel(oDynamicContainerData);
+			this.oDynamicContainer.setModel(oDynamicContainerModel);
+			this.oDynamicContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function () {
+			this.oDynamicContainer.destroy();
+			this.oDynamicContainer = null;
 		}
 	});
-
-	var oDynamicContainer = new sap.m.DynamicContainer("dc", {
-		displayTime : 500,
-		transitionTime : 0,
-		tiles : {
-			template : oGenericTile,
-			path : "/tiles",
-			templateShareable: true
-		}
-	});
-
-	var oDynamicContainerModel = new sap.ui.model.json.JSONModel(oDynamicContainerData);
-	oDynamicContainer.setModel(oDynamicContainerModel);
-
-	oDynamicContainer.placeAt("qunit-fixture");
-	sap.ui.getCore().applyChanges();
-
-	QUnit.module("Rendering - sap.m.DynamicContainer");
 
 	QUnit.test("Test tiles displaying", function(assert) {
 		var done = assert.async();
@@ -97,6 +96,22 @@
 			assert.equal(jQuery.sap.byId("dc-wrapper-1").css("left"), "0px", "The second tile is shown");
 			done();
 		}, 500);
+	});
+
+	QUnit.test("Test mouse handlers", function(assert) {
+		//Arrange
+		var oEvent = {preventDefault: function(){}};
+		assert.equal(this.oDynamicContainer.$().hasClass("sapMDCHvr"), false, "Class not available");
+		//Act
+		this.oDynamicContainer.onmousedown({preventDefault: function(){}});
+		//Assert
+		assert.equal(this.oDynamicContainer.$().hasClass("sapMDCHvr"), true, "Class available");
+
+		//Arrange
+		//Act
+		this.oDynamicContainer.onmouseup(oEvent);
+		//Assert
+		assert.equal(this.oDynamicContainer.$().hasClass("sapMDCHvr"), false, "Class not available");
 	});
 </script>
 </head>
