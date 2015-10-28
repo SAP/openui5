@@ -5805,7 +5805,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			return iMinRowCount;
 		}
 
-		var iUsedHeight = this.calculateUsedHeight($this.find('.sapUiTableCCnt'), $this);
+		var iUsedHeight = this._calculateUsedHeight($this.find('.sapUiTableCCnt'), $this);
 
 		var aRows = this.getRows();
 		if (!aRows.length) {
@@ -5840,33 +5840,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 	/**
 	 * Calculates the already used vertical space of the table which is blocked by other elements than the row content area.
-	 * Starts from $element and traverses the parent chain until $targetElement is reached. Subtracts all used space of siblings.
+	 * @private
 	 * @param $element start element from which traversing begins
 	 * @param $targetElement end element where traversing stops
 	 * @returns {Number} the used height as a number
 	 */
-	Table.prototype.calculateUsedHeight = function($element, $targetElement) {
-		var iUsedLevelHeight = 0;
+	Table.prototype._calculateUsedHeight = function($element, $targetElement) {
 		if (!$element || $element.length == 0 || !$targetElement || $element.is($targetElement)) {
-			return iUsedLevelHeight;
+			return 0;
 		}
-
-		var elementTop = $element[0].offsetTop;
-		var elementHeight = $element[0].clientHeight;
-
-		// top used space
-		iUsedLevelHeight += elementTop;
-
-		var iUsedHeight = 0;
-		$element.siblings().each( function() {
-			if (this.offsetTop > elementTop) {
-				iUsedHeight = Math.max(this.offsetTop - elementHeight, iUsedHeight);
-			}
-		});
-
-		// bottom used space
-		iUsedLevelHeight += iUsedHeight;
-		return iUsedLevelHeight + this.calculateUsedHeight($element.parent(), $targetElement);
+		
+		return Math.max(0, $targetElement.height() - $element.height());
 	};
 
 	/*
