@@ -295,7 +295,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		//Check if carousel has been initialized
 		if (this._oMobifyCarousel) {
 			//Clean up existing mobify carousel
-			this._oMobifyCarousel.destroy();
+			this._oMobifyCarousel.unbind();
 		}
 		//Create and initialize new carousel
 		this.$().carousel();
