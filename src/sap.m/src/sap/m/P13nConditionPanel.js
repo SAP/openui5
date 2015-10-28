@@ -1335,7 +1335,7 @@ sap.ui.define([
 			sType = "";
 		}
 
-		oCtrl.removeAllItems();
+		oCtrl.destroyItems();
 		for ( var iOperation in aOperations) {
 			var sText = this._oRb.getText("CONDITIONPANEL_OPTION" + sType + aOperations[iOperation]);
 			if (jQuery.sap.startsWith(sText, "CONDITIONPANEL_OPTION")) {
@@ -1358,7 +1358,7 @@ sap.ui.define([
 	 * @param {array} aItems array of keyfields
 	 */
 	P13nConditionPanel.prototype._fillKeyFieldListItems = function(oCtrl, aItems) {
-		oCtrl.removeAllItems();
+		oCtrl.destroyItems();
 		for ( var iItem in aItems) {
 			var oItem = aItems[iItem];
 			oCtrl.addItem(new sap.ui.core.ListItem({
@@ -1415,7 +1415,7 @@ sap.ui.define([
 	P13nConditionPanel.prototype._handleChangeOnKeyField = function(oTargetGrid, oConditionGrid) {
 
 		if (this.getAutoReduceKeyFieldItems()) {
-			this._updateKeyFieldItems(oTargetGrid, false);
+			this._updateKeyFieldItems(oTargetGrid, false, false, oConditionGrid.keyField);
 		}
 	};
 
@@ -1439,13 +1439,8 @@ sap.ui.define([
 		// update the value fields for the KeyField
 		var oCurrentKeyField = this._getCurrentKeyFieldItem(oConditionGrid.keyField);
 
-		var fnCreateAndUpdateField = function(oCtrl, index) {
-			var oConditionGrid = oCtrl.getParent();
+		var fnCreateAndUpdateField = function(oConditionGrid, oCtrl, index) {
 			var sOldValue = oCtrl.getValue ? oCtrl.getValue() : "";
-
-			if (!oConditionGrid) {
-				return;
-			}
 
 			var ctrlIndex = oConditionGrid.indexOfContent(oCtrl);
 			oConditionGrid.removeContent(oCtrl);
@@ -1469,12 +1464,12 @@ sap.ui.define([
 		};
 
 		// update Value1 field control
-		jQuery.proxy(fnCreateAndUpdateField, this)(oConditionGrid.value1, 5);
+		jQuery.proxy(fnCreateAndUpdateField, this)(oConditionGrid, oConditionGrid.value1, 5);
 
 		// update Value2 field control
-		jQuery.proxy(fnCreateAndUpdateField, this)(oConditionGrid.value2, 6);
+		jQuery.proxy(fnCreateAndUpdateField, this)(oConditionGrid, oConditionGrid.value2, 6);
 	};
-
+	
 	P13nConditionPanel.prototype._updateAllOperations = function() {
 		var aConditionGrids = this._oConditionsGrid.getContent();
 		aConditionGrids.forEach(function(oConditionGrid) {
@@ -1533,8 +1528,9 @@ sap.ui.define([
 	 * @param {grid} oTargetGrid the main grid
 	 * @param {boolean} bFillAll fills all KeyFields or only the none used
 	 * @param {boolean} bAppendLast adds only the last Keyfield to the Items of the selected controls
+	 * @param {ComboBox} oIgnoreKeyField instance of Keyfield control for which the items should not be updated	 
 	 */
-	P13nConditionPanel.prototype._updateKeyFieldItems = function(oTargetGrid, bFillAll, bAppendLast) {
+	P13nConditionPanel.prototype._updateKeyFieldItems = function(oTargetGrid, bFillAll, bAppendLast, oIgnoreKeyField) {
 		var n = oTargetGrid.getContent().length;
 		var i;
 
@@ -1564,25 +1560,27 @@ sap.ui.define([
 			var j = 0;
 			var aItems = this._aKeyFields;
 
-			if (bAppendLast) {
-				j = aItems.length - 1;
-			} else {
-				// clean the items
-				oKeyField.removeAllItems();
-			}
-
-			// fill all or only the not used items
-			for (j; j < aItems.length; j++) {
-				var oItem = aItems[j];
-				if (oItem.key == null || oItem.key === "" || !oUsedItems[oItem.key] || oItem.key === sOldKey) {
-					oKeyField.addItem(new sap.ui.core.ListItem({
-						key: oItem.key,
-						text: oItem.text,
-						tooltip: oItem.tooltip ? oItem.tooltip : oItem.text
-					}));
+			if (oKeyField !== oIgnoreKeyField) {
+				if (bAppendLast) {
+					j = aItems.length - 1;
+				} else {
+					// clean the items
+					oKeyField.destroyItems();
+				}
+	
+				// fill all or only the not used items
+				for (j; j < aItems.length; j++) {
+					var oItem = aItems[j];
+					if (oItem.key == null || oItem.key === "" || !oUsedItems[oItem.key] || oItem.key === sOldKey) {
+						oKeyField.addItem(new sap.ui.core.ListItem({
+							key: oItem.key,
+							text: oItem.text,
+							tooltip: oItem.tooltip ? oItem.tooltip : oItem.text
+						}));
+					}
 				}
 			}
-
+			
 			if (sOldKey) {
 				oKeyField.setSelectedKey(sOldKey);
 			} else if (oKeyField.getItems().length > 0) {
