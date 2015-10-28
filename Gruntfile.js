@@ -84,6 +84,10 @@ module.exports = function(grunt) {
 					path: 'src/sap.m'
 			},
 			{
+					name: 'sap.tnt',
+					path: 'src/sap.tnt'
+			},
+			{
 					name: 'sap.ui.commons',
 					path: 'src/sap.ui.commons'
 			},
