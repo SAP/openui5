@@ -12,6 +12,7 @@ sap.ui.define([], function () {
 	var NotificationListItemRenderer = {};
 
 	var classNameItem = 'sapMNLI';
+	var classNameListBaseItem = 'sapMLIB';
 	var classNameIcons = 'sapMNLI-Icons';
 	var classNameUnread = 'sapMNLI-UnreadStatus';
 	var classNameRead = 'sapMNLI-ReadStatus';
@@ -31,6 +32,7 @@ sap.ui.define([], function () {
 
 		oRm.write('<li');
 		oRm.addClass(classNameItem);
+		oRm.addClass(classNameListBaseItem);
 		oRm.writeControlData(oControl);
 		oRm.writeAttribute('tabindex', '0');
 
