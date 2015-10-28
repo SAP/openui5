@@ -217,6 +217,13 @@
 		}
 	});
 
+	QUnit.test('Control has basic class for the keyboard navigation', function(assert) {
+		// act
+
+		// assert
+		assert.strictEqual(this.NotificationListItem.$().hasClass('sapMLIB'), true, 'The notification list has has the base class of ListItemBase');
+	});
+
 	QUnit.test('Render unread status', function(assert) {
 		// act
 		this.NotificationListItem.setUnread(true);

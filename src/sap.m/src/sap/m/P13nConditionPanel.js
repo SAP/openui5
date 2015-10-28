@@ -946,13 +946,16 @@ sap.ui.define([
 							} else {
 								if (this.getUsePrevConditionSetting() && !this.getAutoReduceKeyFieldItems()) {
 									// select the key from the condition above
-									if (iPos > 0 && sKey === null) {
+									if (iPos > 0 && !sKey) {
 										oGrid = oTargetGrid.getContent()[iPos - 1];
 										oControl.setSelectedKey(oGrid.keyField.getSelectedKey());
 									} else {
-										oControl.setSelectedItem(oControl.getItems()[0]);
-										this._aKeyFields.forEach(function(oKeyField, index) {
+										this._aKeyFields.some(function(oKeyField, index) {
 											if (oKeyField.isDefault) {
+												oControl.setSelectedItem(oControl.getItems()[index]);
+												return true;
+											}
+											if (!oControl.getSelectedItem() && oKeyField.type !== "boolean") {
 												oControl.setSelectedItem(oControl.getItems()[index]);
 											}
 										}, this);
@@ -1030,19 +1033,25 @@ sap.ui.define([
 						var sValue = oConditionGridData[field["ID"]];
 						var oValue;
 
-						if (typeof sValue === "string" && oConditionGrid.oFormatter) {
-							oValue = oConditionGrid.oFormatter.parse(sValue);
-						} else {
-							oValue = sValue;
-						}
-
 						if (oControl instanceof sap.m.Select) {
+							if (oCurrentKeyField.type === "boolean") {
+								sValue = sValue === "true"; 
+							}
+							
+							//oControl.removeItem(oControl.getItems()[0]);
 							if (typeof sValue === "boolean") {
-								oControl.setSelectedIndex(sValue ? 1 : 0);
+								oControl.setSelectedIndex(sValue ? 2 : 1);
 							} else {
 								oControl.setSelectedItem(oControl.getItemByKey(sValue.toString()));
 							}
 						} else {
+							if (typeof sValue === "string" && oConditionGrid.oFormatter) {
+								oValue = oConditionGrid.oFormatter.parse(sValue);
+							} else {
+								oValue = sValue;
+							}
+
+							
 							if (!isNaN(oValue) && oValue !== null && oConditionGrid.oFormatter) {
 								sValue = oConditionGrid.oFormatter.format(oValue);
 								oControl.setValue(sValue);
@@ -1258,12 +1267,17 @@ sap.ui.define([
 			case "boolean":
 			case "enum":
 				var aItems = [];
-				var aValues = oCurrentKeyField.values || this._oTypeValues[sCtrlType] || [
-					false, true
-				];
+
+//				if (sCtrlType === "boolean") {
+//					aItems.push(new sap.ui.core.Item({
+//						key: "", 
+//						text: ""
+//					}));
+//				}
+				var aValues = oCurrentKeyField.values || this._oTypeValues[sCtrlType] || ["", false, true];
 				aValues.forEach(function(oValue, index) {
 					aItems.push(new sap.ui.core.Item({
-						key: oValue.toString(), // index.toString(),
+						key: sCtrlType === "boolean" ? (index === aValues.length - 1).toString() : oValue.toString(), 
 						text: oValue.toString()
 					}));
 				});
@@ -1367,9 +1381,6 @@ sap.ui.define([
 				tooltip: oItem.tooltip ? oItem.tooltip : oItem.text
 			}));
 		}
-
-		// if we only have a single Keyfield we set the ComboBox control to editable = false
-		// TODO only for testing oCtrl.setEditable(aItems.length !== 1);
 	};
 
 	/**
@@ -1546,12 +1557,6 @@ sap.ui.define([
 			}
 		}
 
-		var fHandledIsDefault = function(oKeyFieldItem, index) {
-			if (oKeyFieldItem.isDefault) {
-				oKeyField.setSelectedItem(oKeyField.getItems()[index]);
-			}
-		};
-
 		for (i = 0; i < n; i++) {
 			var oKeyField = oTargetGrid.getContent()[i].keyField;
 			var oSelectCheckbox = oTargetGrid.getContent()[i].select;
@@ -1589,7 +1594,18 @@ sap.ui.define([
 
 			if (!oSelectCheckbox.getSelected()) {
 				// set/update the isDefault keyfield as selected item for an empty condition row
-				this._aKeyFields.forEach(fHandledIsDefault, this);
+				/* eslint-disable no-loop-func */
+				this._aKeyFields.some(function(oKeyFieldItem, index) {
+					if (oKeyFieldItem.isDefault) {
+						oKeyField.setSelectedItem(oKeyField.getItems()[index]);
+						return true;
+					}
+					if (!oKeyField.getSelectedItem()) {
+						if (oKeyFieldItem.type !== "boolean") {
+							oKeyField.setSelectedItem(oKeyField.getItems()[index]);
+						}
+					}
+				}, this);
 			}
 
 			// update the tooltip
@@ -1756,9 +1772,7 @@ sap.ui.define([
 		var sCtrlType;
 		if (oCurrentKeyField) {
 			sCtrlType = oCurrentKeyField.type;
-			var aValues = oCurrentKeyField.values || this._oTypeValues[sCtrlType] || [
-				false, true
-			];
+			var aValues = oCurrentKeyField.values || this._oTypeValues[sCtrlType] || ["", false, true ];
 		}
 
 		// update Value1 field control
@@ -1772,7 +1786,7 @@ sap.ui.define([
 			}
 		}
 		if (sCtrlType === "boolean") {
-			oValue1 = sValue1 === aValues[1].toString();
+			oValue1 = sValue1 === aValues[aValues.length - 1].toString();
 		}
 
 		// update Value2 field control
@@ -1786,7 +1800,7 @@ sap.ui.define([
 			}
 		}
 		if (sCtrlType === "boolean") {
-			oValue2 = sValue2 === aValues[1].toString();
+			oValue2 = sValue2 === aValues[aValues.length - 1].toString();
 		}
 
 		var bShowIfGrouped = oConditionGrid.showIfGrouped.getSelected();
@@ -2117,7 +2131,8 @@ sap.ui.define([
 			jQuery.proxy(fnFormatFieldValue, this)(value1);
 			jQuery.proxy(fnFormatFieldValue, this)(value2);
 
-			if ((value1.getVisible() && value1.getValueState() !== sap.ui.core.ValueState.None) || (value2.getVisible() && value2.getValueState() !== sap.ui.core.ValueState.None)) {
+			if ((value1.getVisible() && value1.getValueState && value1.getValueState() !== sap.ui.core.ValueState.None) || 
+				(value2.getVisible() && value2.getValueState && value2.getValueState() !== sap.ui.core.ValueState.None)) {
 				bValid = false;
 			}
 		}

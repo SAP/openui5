@@ -869,7 +869,13 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				sMetaPath = "/Value",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
 				oRawValue = oMetaModel.getProperty(sMetaPath),
-				oSingleBindingInfo = formatAndParse(oRawValue, oCurrentContext);
+				oSingleBindingInfo;
+
+			oGlobalSandbox.mock(jQuery.sap.log).expects("warning").withExactArgs(
+				"Could not find property '" + sPath + "' starting from '/Value/Path'", null,
+				"sap.ui.model.odata.AnnotationHelper");
+
+			oSingleBindingInfo = formatAndParse(oRawValue, oCurrentContext);
 
 			assert.strictEqual(typeof oSingleBindingInfo, "object", "got a binding info");
 			assert.strictEqual(oSingleBindingInfo.path, sPath);
@@ -1410,7 +1416,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 	//*********************************************************************************************
 	["", "/", ".", "foo", "{\\}", "path : 'foo'", 'path : "{\\f,o,o}"'].forEach(function (sPath) {
 		QUnit.test("14.5.12 Expression edm:Path: " + JSON.stringify(sPath), function (assert) {
-			var oMetaModel = new JSONModel({
+			var bIsSimple = sPath.indexOf(":") < 0 && fnEscape(sPath) === sPath,
+				oMetaModel = new JSONModel({
 					"Value" : {
 						"Path" : sPath
 					}
@@ -1418,15 +1425,20 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				sMetaPath = "/Value",
 				oCurrentContext = oMetaModel.getContext(sMetaPath),
 				oRawValue = oMetaModel.getProperty(sMetaPath),
-				oSingleBindingInfo
-					= formatAndParse(oRawValue, oCurrentContext, fnSimplePath);
+				oSingleBindingInfo;
+
+			oGlobalSandbox.mock(jQuery.sap.log).expects("warning").exactly(bIsSimple ? 2 : 1)
+				.withExactArgs(
+					"Could not find property '" + sPath + "' starting from '/Value/Path'", null,
+					"sap.ui.model.odata.AnnotationHelper");
+
+			oSingleBindingInfo = formatAndParse(oRawValue, oCurrentContext, fnSimplePath);
 
 			assert.strictEqual(typeof oSingleBindingInfo, "object", "got a binding info");
 			assert.strictEqual(oSingleBindingInfo.path, sPath);
 			assert.strictEqual(oSingleBindingInfo.type, undefined);
 			assert.strictEqual(oSingleBindingInfo.constraints, undefined);
-
-			if (sPath.indexOf(":") < 0 && fnEscape(sPath) === sPath) {
+			if (bIsSimple) {
 				// @see sap.ui.base.BindingParser: rObject, rBindingChars
 				assert.strictEqual(fnSimplePath(oCurrentContext, oRawValue), "{" + sPath + "}",
 					"make sure that simple cases look simple");

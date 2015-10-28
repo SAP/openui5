@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * The NotificationListItem control suitable for showing notifications to the user.
+		 * The NotificationListItem control is suitable for showing notifications to the user.
 		 * @extends sap.m.ListItemBase
 		 *
 		 * @author SAP SE
@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 					// unread is inherit from the ListItemBase.
 
 					/**
-					 * Determines the it the Notification is with priority.
+					 * Determines the priority of the Notification.
 					 */
 					priority: {
 						type: 'sap.ui.core.Priority',
@@ -42,45 +42,57 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 					},
 
 					/**
-					 * Determines the title of the Notification List Item.
+					 * Determines the title of the NotificationListItem.
 					 */
 					title: {type: 'string', group: 'Appearance', defaultValue: ''},
 
 					/**
-					 * Determines the title of the Notification List Item.
+					 * Determines the description of the NotificationListItem.
 					 */
 					description: {type: 'string', group: 'Appearance', defaultValue: ''},
 
 					/**
-					 * Determines the due date of the Notification List Item.
+					 * Determines the due date of the NotificationListItem.
 					 */
 					datetime: {type: 'string', group: 'Appearance'},
 
 					/**
-					 * Determines the actions buttons visibility
+					 * Determines the action buttons visibility.
 					 */
 					showButtons: {type: 'boolean', group: 'Behavior', defaultValue: true},
 
 					/**
-					 * Determines the close button visibility
+					 * Determines the close button visibility.
 					 */
 					showCloseButton: {type: 'boolean', group: 'Behavior', defaultValue: true}
 				},
 				aggregations: {
 					/**
-					 * Action buttons
+					 * Action buttons.
 					 */
 					buttons: {type: 'sap.m.Button', multiple: true},
 
+					/**
+					 * The title control that holds the datetime text of the NotificationListItem.
+					 * @private
+					 */
 					_headerTitle: {type: 'sap.m.Title', multiple: false, visibility: "hidden"},
 
+					/**
+					 * The text control that holds the description text of the NotificationListItem.
+					 * @private
+					 */
 					_bodyText: {type: 'sap.m.Text', multiple: false, visibility: "hidden"},
 
+					/**
+					 * The text control that holds the datetime text of the NotificationListItem.
+					 * @private
+					 */
 					_dateTime: {type: 'sap.m.Text', multiple: false, visibility: "hidden"}
 				},
 				events: {
 					/**
-					 * Fired when the list item is closed
+					 * Fired when the list item is closed.
 					 */
 					close: {}
 
@@ -153,7 +165,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		};
 
 		/**
-		 * Called when the control is destroyed
+		 * Called when the control is destroyed.
 		 *
 		 * @private
 		 */
@@ -169,7 +181,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		};
 
 		/**
-		 * Returns the sap.m.Title control used in the Notification List Item's header title
+		 * Returns the sap.m.Title control used in the NotificationListItem's header title.
 		 * @returns {sap.m.Title}
 		 * @private
 		 */
@@ -189,7 +201,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		};
 
 		/**
-		 * Returns the sap.m.Text control used in the Notification List Item's description
+		 * Returns the sap.m.Text control used in the NotificationListItem's description.
 		 * @returns {sap.m.Text}
 		 * @private
 		 */
@@ -209,7 +221,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		};
 
 		/**
-		 * Returns the sap.m.Text control used in the Notification List Item's datetime
+		 * Returns the sap.m.Text control used in the NotificationListItem's datetime.
 		 * @returns {sap.m.Text}
 		 * @private
 		 */
@@ -229,7 +241,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		};
 
 		/**
-		 * Override the ListItemBase class toggling
+		 * Overrides the ListItemBase class toggling.
 		 * @private
 		 */
 		NotificationListItem.prototype._activeHandling = function () {
@@ -237,7 +249,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		};
 
 		/**
-		 * Updates the hidden text, used for ARIA support
+		 * Updates the hidden text, used for the ARIA support.
 		 * @private
 		 */
 		NotificationListItem.prototype._updateAriaAdditionalInfo = function () {
