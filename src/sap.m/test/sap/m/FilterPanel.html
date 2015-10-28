@@ -78,7 +78,8 @@
 					"key" : "c3",
 					"text" : "Boolean",
 					"tooltip" : "Boolean",
-					"type" : "boolean"
+					"type" : "boolean",
+					"values": ["", "off", "ON"]
 				}				],
 				"filterItems" : [{
 					"key" : "f0",
@@ -147,10 +148,11 @@
 					sap.m.MessageToast.show("addFilterItem ---> " + params.key + " #" + oModel.getData().filterItems.length);
 				}				
 			});
-			oFilterPanel.setIncludeOperations([
+/* 			oFilterPanel.setIncludeOperations([
 			                           sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.Empty, sap.m.P13nConditionOperation.NotEmpty
 			                           ], "boolean");			
-			oFilterPanel.setModel(oModel);
+ */
+ 			oFilterPanel.setModel(oModel);
 			oFilterPanel.bindItems("/items", new sap.m.P13nItem({
 				columnKey : "{key}",
 				text : "{text}",
@@ -159,7 +161,8 @@
 				maxLength : "{maxLength}",
 				precision: "{precision}", 
 				scale: "{scale}",				
-				isDefault : "{isDefault}"
+				isDefault : "{isDefault}",
+				values : "{values}"
 			}));
 			oFilterPanel.bindFilterItems("/filterItems", new sap.m.P13nFilterItem({
 				key : "{key}",
@@ -240,6 +243,21 @@
 		}
 	});
 
+	var btnAddItem = new sap.m.Button({
+		text: "add Item",
+		press: function() {
+			var oData= oModel.getData();
+ 			oData.items.push(			{
+				"key" : "c100",
+				"text" : "NameFoo",
+				"type" : "string"
+			});
+ 			oModel.setData(oData, true);
+			
+			sap.m.MessageToast.show("add Item into Model" + " #" + oModel.getData().items.length);
+		}
+	});
+
 	var btnInsertCondition = new sap.m.Button({
 		text: "insert",
 		press: function() {
@@ -312,6 +330,7 @@
 	oField1.placeAt("content2");
 	oField2.placeAt("content2");
 	btnAddCondition.placeAt("content2");
+	btnAddItem.placeAt("content2");
 	btnInsertCondition.placeAt("content2");
 	btnRemoveCondition.placeAt("content2");
 	theCompactMode.placeAt("content");
