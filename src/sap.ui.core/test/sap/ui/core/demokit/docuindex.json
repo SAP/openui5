@@ -268,7 +268,7 @@
 			},
 		    {
 				"id": "sap.ui.core.tutorial.mockserver",
-				"name": "MockServer",
+				"name": "Mock Server",
 				"category": "Tutorial",
 				"since": "1.34",
 				"formFactors": "-",
