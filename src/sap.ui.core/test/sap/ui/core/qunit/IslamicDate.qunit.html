@@ -830,6 +830,23 @@
 			testIslamic2GregorianWithTestDataSet(oCivilTestData);
 		});
 
+		test("IslamicDate.UTC will handle correctly the browser issue with Oct 25, 2015, 02:00 being interpreted differently(CET-FF, Safari or CEST-Chrome, IE)", function() {
+			/* The date Oct 25, 2015 02:00:00 is ambiguous without giving a timezone, it does exist twice CET and CEST. When creating a date object using the date constructor
+			new Date(2015, 10, 25, 2, 0, 0).
+			Chrome:
+			new Date(2015,9,25,2,0,0).toString()
+			"Sun Oct 25 2015 02:00:00 GMT+0200 (CEST)"
+
+			Safari:
+			> new Date(2015,9,25,2,0,0).toString()
+			< Sun Oct 25 2015 02:00:00 GMT+0100 (CET)
+
+			Firefox: (Funnily gets it completely wrong, showing GMT+0100 (CEST) )
+			new Date(2015,9,25,2,0,0).toString()
+			"Sun Oct 25 2015 02:00:00 GMT+0100 (CEST)" */
+			equal(sap.ui.core.date.IslamicDate.UTC(1437,0,11), 1445731200000, "The value should correspond to Sun, 25 Oct 2015 00:00:00 GMT expressed as timestamp");
+		});
+
 		module("Customization", {
 			beforeEach: function () {
 				prepare.call(this)
