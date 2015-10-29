@@ -39,10 +39,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			}
 			if (mSettings && mSettings.mode === sap.m.ListMode.MultiSelect && bInstantUpload === false){
 				mSettings.mode = sap.m.ListMode.None;
-				jQuery.sap.log.info("sap.m.ListMode.MultiSelect is not supported by UploadCollection for Pending Upload. Value has been resetted to 'None'");
+				jQuery.sap.log.info("sap.m.ListMode.MultiSelect is not supported by UploadCollection for Upload Pending scenario. Value has been resetted to 'None'");
 			}else if (sId && sId.mode === sap.m.ListMode.MultiSelect && bInstantUpload === false){
 				sId.mode = sap.m.ListMode.None;
-				jQuery.sap.log.info("sap.m.ListMode.MultiSelect is not supported by UploadCollection for Pending Upload. Value has been resetted to 'None'");
+				jQuery.sap.log.info("sap.m.ListMode.MultiSelect is not supported by UploadCollection for Upload Pending scenario. Value has been resetted to 'None'");
 			}
 			try {
 				Control.apply(this, arguments);
@@ -137,9 +137,9 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 			/**
 			 * Defines the selection mode of the control (e.g. None, SingleSelect, MultiSelect, SingleSelectLeft, SingleSelectMaster).
-			 * Since the UploadCollection reacts like a List for Attachments the API is close to the ListBase Interface.
-			 * Mode sap.m.ListMode.Delete is not supported and will be automatically set to sap.m.ListMode.None.
-			 * In addition to that, if instant upload is set to false, the mode sap.m.ListMode.MultiSelect is not supported and will be automatically set to sap.m.ListMode.None.
+			 * Since the UploadCollection reacts like a list for attachments, the API is close to the ListBase Interface.
+			 * sap.m.ListMode.Delete mode is not supported and will be automatically set to sap.m.ListMode.None.
+			 * In addition, if instant upload is set to false the mode sap.m.ListMode.MultiSelect is not supported and will be automatically set to sap.m.ListMode.None.
 			 * 
 			 * @since 1.34
 			 */
@@ -627,7 +627,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	};
 
 	/**
-	 * @description Sets a UploadCollectionItem to be selected by id. In single mode the method removes the previous selection.
+	 * @description Sets a UploadCollectionItem to be selected by id. In single mode, the method removes the previous selection.
 	 * @param {string} id The id of the item whose selection to be changed.
 	 * @param {boolean} select Sets selected status of the item. Default value is true.
 	 * @returns {sap.m.UploadCollection} The current UploadCollection
@@ -2712,7 +2712,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * Handles the selected event of UploadCollectionItem.
 	 * Used to synchronize the internal list with the given item. The ListItem has to be set to selected value too. 
 	 * Otherwise the internal sap.m.List and the UploadCollectionItem aggregation are not in sync.
-	 * @param {sap.m.UploadCollectionItem} uploadCollectionItem for which the related ListItem needs to be updated internally
+	 * @param {object} oEvent Event for a selected item
 	 * @private
 	 */
 	UploadCollection.prototype._handleItemSetSelected = function(oEvent) {

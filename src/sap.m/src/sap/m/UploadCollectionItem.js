@@ -164,7 +164,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/m/O
 
 				/**
 				 * Defines the selected state of the UploadCollectionItem.
-				 * Note: Binding the selected property in single selection modes may cause unwanted results if you have more than one selected item in your binding.
 				 * @since 1.34
 				 */
 				selected : {
