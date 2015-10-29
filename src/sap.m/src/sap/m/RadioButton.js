@@ -348,25 +348,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @protected
 	 */
 	RadioButton.prototype.setTabIndex = function(iTabIndex) {
-		var oInternalButton = this.getFocusDomRef("Button");
+		var oFocusDomRef = this.getFocusDomRef();
 		this._iTabIndex = iTabIndex;
 
-		if (oInternalButton) {
-			oInternalButton.setAttribute("tabindex", iTabIndex);
+		if (oFocusDomRef) {
+			oFocusDomRef.setAttribute("tabindex", iTabIndex);
 		}
 
 		return this;
-	};
-
-	RadioButton.prototype.getFocusDomRef = function() {
-
-		//set the focus on the radio button wrapper
-		return this.getDomRef("Button");
-	};
-
-	RadioButton.prototype.applyFocusInfo = function() {
-
-		this.$().focus();
 	};
 
 	/*

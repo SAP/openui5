@@ -324,7 +324,7 @@
 			oRadioButton1.setTabIndex(iTabIndex);
 			
 			// assertions
-			equal(parseInt(oRadioButton1.$("Button").attr("tabindex"), 10), iTabIndex, "RadioButton's tabindex should be set to 1");
+			equal(parseInt(oRadioButton1.getFocusDomRef().getAttribute("tabindex"), 10), iTabIndex, "RadioButton's tabindex should be set to 1");
 			
 			// cleanup
 			oRadioButton1.destroy();
@@ -449,7 +449,7 @@
 			var oFocusDomRef = oRadioButton.getFocusDomRef();
 
 			// assertions
-			strictEqual(oFocusDomRef, oRadioButton.getDomRef("Button"), "The focus domref was the button wrapper");
+			strictEqual(oFocusDomRef, oRadioButton.getDomRef(), "The focus domref was the control wrapper");
 
 			// cleanup
 			oRadioButton.destroy();
