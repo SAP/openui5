@@ -66,7 +66,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 			 *
 			 * <b>Note:</b> not only the screen size is used to determine the available space. The size of the <code>TeamCalendar</code> is used.
 			 */
-			intervalsL : {type : "int", group : "Appearance", defaultValue : 12}
+			intervalsL : {type : "int", group : "Appearance", defaultValue : 12},
+
+			/**
+			 * If set subintervals are shown.
+			 *
+			 * If the interval type is <code>Hour</code> quarter hours are shown.
+			 *
+			 * If the interval type is <code>Day</code> hours are shown.
+			 *
+			 * If the interval type is <code>Month</code> days are shown.
+			 */
+			showSubIntervals : {type : "boolean", group : "Appearance", defaultValue : false}
 
 		}
 	}});

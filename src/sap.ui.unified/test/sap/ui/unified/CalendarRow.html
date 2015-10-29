@@ -349,6 +349,15 @@
 				}
 			}).placeAt("event1");
 
+			oButton = new sap.ui.commons.ToggleButton({
+				text: "Subintervals",
+				pressed: false,
+				press: function(oEvent){
+					var bPressed = oEvent.getParameter("pressed");
+					oRow1.setShowSubIntervals(bPressed);
+				}
+			}).placeAt("event1");
+
 			// sample with fix start date and fixed sizes
 			var oRow2 = new sap.ui.unified.CalendarRow("Row2",  {
 					select: handleSelect,

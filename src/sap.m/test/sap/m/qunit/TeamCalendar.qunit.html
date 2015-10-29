@@ -59,6 +59,12 @@
 
 			};
 
+			var bViewChange = false;
+			var handleViewChange = function(oEvent){
+				bViewChange = true;
+
+			};
+
 			var createTeamCalendar = function(sID, oSearchField, oButton) {
 				var oTC = new sap.m.TeamCalendar(sID, {
 					startDate: new Date("2015", "0", "1", "08", "00"),
@@ -155,7 +161,8 @@
 					toolbarContent: [oSearchField, oButton],
 					appointmentSelect: handleAppointmentSelect,
 					startDateChange: handleStartDateChange,
-					rowSelectionChange: handleRowSelectionChange
+					rowSelectionChange: handleRowSelectionChange,
+					viewChange: handleViewChange
 				});
 
 				return oTC;
@@ -470,7 +477,8 @@
 
 				var aRemoved = oTC1.removeAllToolbarContent();
 				sap.ui.getCore().applyChanges();
-				equal(oTable.getHeaderToolbar().getContent().length, 0, "HeaderToolbar items");
+				ok(!oTable.getHeaderToolbar(), "No HeaderToolbar exist on table");
+				equal(oTC1._oToolbar.getContent().length, 0, "HeaderToolbar items");
 				ok(!jQuery("#BX").get(0), "new button not rendered");
 				equal(aRemoved.length, 3, "3 controls removed");
 
@@ -483,7 +491,8 @@
 
 				oTC1.destroyToolbarContent();
 				sap.ui.getCore().applyChanges();
-				equal(oTable.getHeaderToolbar().getContent().length, 0, "HeaderToolbar items");
+				ok(!oTable.getHeaderToolbar(), "No HeaderToolbar exist on table");
+				equal(oTC1._oToolbar.getContent().length, 0, "HeaderToolbar items");
 				ok(!sap.ui.getCore().byId("SF1"), "SearchField destroyed");
 
 				oTC1 = initTeamCalendar("TC1", "SF1", "B1");
@@ -507,11 +516,13 @@
 					description: "View2",
 					intervalsS: 2,
 					intervalsM: 4,
-					intervalsL: 6
+					intervalsL: 6,
+					showSubIntervals: true
 				}));
 				sap.ui.getCore().applyChanges();
 				equal(oTC1.getViews().length, 2, "2 views set");
 				equal(sap.ui.getCore().byId("TC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Day, "CalendarRow1 intervalType");
+				equal(sap.ui.getCore().byId("TC1-Row1-CalRow").getShowSubIntervals(), true, "CalendarRow1 subIntervals");
 				if(jQuery("#TC1").outerWidth() > 1100) {
 					equal(sap.ui.getCore().byId("TC1-Row1-CalRow").getIntervals(), 6, "CalendarRow1 intervals");
 				}
@@ -523,6 +534,7 @@
 				sap.ui.getCore().applyChanges();
 				equal(oTC1.getViews().length, 0, "no views set in aggregation");
 				equal(sap.ui.getCore().byId("TC1-Row1-CalRow").getIntervalType(), sap.ui.unified.CalendarIntervalType.Hour, "CalendarRow1 intervalType");
+				equal(sap.ui.getCore().byId("TC1-Row1-CalRow").getShowSubIntervals(), false, "CalendarRow1 subIntervals");
 			});
 
 			test("specialDates", function() {
@@ -827,6 +839,18 @@
 				bStartDateChange = false;
 
 				oTC1 = initTeamCalendar("TC1", "SF1", "B1");
+			});
+
+			test("viewChange", function() {
+				bViewChange = false;
+				jQuery("#TC1-IntType").focus();
+				qutils.triggerKeyboardEvent("TC1-IntType", "ARROW_DOWN");
+				qutils.triggerKeyboardEvent("TC1-IntType", "ENTER");
+				sap.ui.getCore().applyChanges();
+				ok(bViewChange, "viewChange fired");
+
+				oTC1.setViewKey(sap.ui.unified.CalendarIntervalType.Hour);
+				sap.ui.getCore().applyChanges();
 			});
 
 			module("Interaction");

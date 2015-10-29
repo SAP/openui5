@@ -303,6 +303,7 @@
 				}
 				ok(!bNonWorkingIntervals, "Row1: no non working interval displayed");
 
+				oRow1.setNonWorkingDays();
 				oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Hour);
 				sap.ui.getCore().applyChanges();
 			});
@@ -373,6 +374,25 @@
 				ok(oHead, "Interval3: Head area rendered");
 				ok(!jQuery(oHead).attr("title"), "Interval3: Head has no tooltip rendered");
 				equal(jQuery(oHead).children().length, 0, "Interval3: Head has no content");
+			});
+
+			test("Subintervals - Hours view", function() {
+				var aSubintervals = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsSubInt");
+				equal(aSubintervals.length, 0, "No subintervals rendered");
+
+				oRow1.setShowSubIntervals(true);
+				sap.ui.getCore().applyChanges();
+				aSubintervals = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsSubInt");
+				equal(aSubintervals.length, 4, "4 subintervals rendered");
+				var sStyle = jQuery(aSubintervals[0]).attr("style");
+				var aTest = sStyle.match(/width:(\s?)(\d+(.?)(\d+))/);
+				var iWidth = aTest[2];
+				equal(iWidth, "25", "subinterval width");
+
+				oRow1.setShowSubIntervals(false);
+				sap.ui.getCore().applyChanges();
+				aSubintervals = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsSubInt");
+				equal(aSubintervals.length, 0, "No subintervals rendered");
 			});
 
 			test("Appointments - new start date", function() {
@@ -499,6 +519,25 @@
 				ok(!jQuery(oHead).hasClass("sapUiCalendarRowAppsIntHeadType01"), "Interval5: Head has no type rendered");
 			});
 
+			test("Subintervals - days view", function() {
+				var aSubintervals = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsSubInt");
+				equal(aSubintervals.length, 0, "No subintervals rendered");
+
+				oRow1.setShowSubIntervals(true);
+				sap.ui.getCore().applyChanges();
+				aSubintervals = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsSubInt");
+				equal(aSubintervals.length, 24, "24 subintervals rendered");
+				var sStyle = jQuery(aSubintervals[0]).attr("style");
+				var aTest = sStyle.match(/width:(\s?)(\d+(.?)(\d+))/);
+				var iWidth = Math.floor(aTest[2] * 100) / 100;
+				equal(iWidth, Math.floor(10000 / 24) / 100 + "", "subinterval width");
+
+				oRow1.setShowSubIntervals(false);
+				sap.ui.getCore().applyChanges();
+				aSubintervals = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsSubInt");
+				equal(aSubintervals.length, 0, "No subintervals rendered");
+			});
+
 			test("Appointments - month view", function() {
 				oRow1.setIntervalType(sap.ui.unified.CalendarIntervalType.Month);
 				sap.ui.getCore().applyChanges();
@@ -551,6 +590,39 @@
 				equal(jQuery(oHead).children().length, 0, "Interval3: Head has no content");
 				ok(!jQuery(oHead).attr("title"), "Interval3: Head has no tooltip rendered");
 				ok(!jQuery(oHead).hasClass("sapUiCalendarRowAppsIntHeadType02"), "Interval3: Head has no type rendered");
+			});
+
+			test("Subintervals - months view", function() {
+				var aSubintervals = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsSubInt");
+				equal(aSubintervals.length, 0, "No subintervals rendered");
+
+				oRow1.setShowSubIntervals(true);
+				sap.ui.getCore().applyChanges();
+				aSubintervals = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsSubInt");
+				equal(aSubintervals.length, 31, "31 subintervals rendered (first month)");
+				ok(!jQuery(aSubintervals[0]).hasClass("sapUiCalendarRowAppsNoWork"), "Subinterval0 working interval");
+				ok(!jQuery(aSubintervals[1]).hasClass("sapUiCalendarRowAppsNoWork"), "Subinterval1 working interval");
+				ok(jQuery(aSubintervals[2]).hasClass("sapUiCalendarRowAppsNoWork"), "Subinterval2 non-working interval");
+				ok(jQuery(aSubintervals[3]).hasClass("sapUiCalendarRowAppsNoWork"), "Subinterval3 non-working interval");
+				ok(!jQuery(aSubintervals[4]).hasClass("sapUiCalendarRowAppsNoWork"), "Subinterval4 working interval");
+				ok(!jQuery(aSubintervals[5]).hasClass("sapUiCalendarRowAppsNoWork"), "Subinterval5 working interval");
+				ok(!jQuery(aSubintervals[6]).hasClass("sapUiCalendarRowAppsNoWork"), "Subinterval6 working interval");
+				ok(!jQuery(aSubintervals[7]).hasClass("sapUiCalendarRowAppsNoWork"), "Subinterval7 working interval");
+				ok(!jQuery(aSubintervals[8]).hasClass("sapUiCalendarRowAppsNoWork"), "Subinterval8 working interval");
+				ok(jQuery(aSubintervals[9]).hasClass("sapUiCalendarRowAppsNoWork"), "Subinterval9 non-working interval");
+				ok(jQuery(aSubintervals[10]).hasClass("sapUiCalendarRowAppsNoWork"), "Subinterval10 non-working interval");
+
+				aSubintervals = jQuery("#Row1-AppsInt1").children(".sapUiCalendarRowAppsSubInt");
+				equal(aSubintervals.length, 28, "28 subintervals rendered (second month)");
+				var sStyle = jQuery(aSubintervals[0]).attr("style");
+				var aTest = sStyle.match(/width:(\s?)(\d+(.?)(\d+))/);
+				var iWidth = Math.floor(aTest[2] * 100) / 100;
+				equal(iWidth, Math.floor(10000 / 28) / 100 + "", "subinterval width");
+
+				oRow1.setShowSubIntervals(false);
+				sap.ui.getCore().applyChanges();
+				aSubintervals = jQuery("#Row1-AppsInt0").children(".sapUiCalendarRowAppsSubInt");
+				equal(aSubintervals.length, 0, "No subintervals rendered");
 			});
 
 			test("Appointments - change intervals", function() {

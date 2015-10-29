@@ -132,7 +132,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * <code>startDate</code> was changed while navigation in <code>TeamCalendar</code>
 			 */
-			startDateChange : {}
+			startDateChange : {},
+
+			/**
+			 * <code>viewKey</code> was changed by user interaction
+			 */
+			viewChange : {}
 		}
 	}});
 
@@ -197,14 +202,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			});
 			this._oTodayButton.attachEvent("press", _handleTodayPress, this);
 
-			this._oToolbar = new sap.m.Toolbar(this.getId() + "-Toolbar", {
-				design: sap.m.ToolbarDesign.Transpaent
-			});
-			this._oToolbar._oTeamCalendar = this;
-			this._oToolbar.getContent = function() {
-				return this._oTeamCalendar._getToolbarContent();
-			};
-
 			this._oHeaderToolbar = new sap.m.Toolbar(this.getId() + "-HeaderToolbar", {
 				design: sap.m.ToolbarDesign.Transpaent,
 				content: [this._oIntervalTypeSelect, this._oTodayButton]
@@ -221,7 +218,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			});
 
 			var oTable = new sap.m.Table(this.getId() + "-Table", {
-				headerToolbar: this._oToolbar,
 				infoToolbar: this._oInfoToolbar,
 				mode: sap.m.ListMode.SingleSelectMaster,
 				columns: [ new sap.m.Column({
@@ -288,6 +284,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			if (this._oSelectAllCheckBox) {
 				this._oSelectAllCheckBox.destroy();
+			}
+
+			if (this.getToolbarContent().length == 0 && this._oToolbar) {
+				this._oToolbar.destroy();
+				this._oToolbar = undefined;
 			}
 
 		};
@@ -458,6 +459,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					var oCalendarRow = oRow.getCalendarRow();
 					oCalendarRow.setIntervalType(sIntervalType);
 					oCalendarRow.setIntervals(iIntervals);
+					oCalendarRow.setShowSubIntervals(oView.getShowSubIntervals());
 				}
 
 				if (this.getDomRef()) {
@@ -474,6 +476,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this.addAggregation("rows", oRow, true);
 
+			oRow.attachEvent("_change", _handleRowChanged, this);
+
 			var oTable = this.getAggregation("table");
 			oTable.addItem(oRow.getColumnListItem());
 
@@ -483,6 +487,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oCalendarRow.attachEvent("startDateChange", _handleStartDateChange, this);
 			oCalendarRow.attachEvent("leaveRow", _handleLeaveRow, this);
 
+			_updateSelectAllCheckBox.call(this);
+
 			if (this.getDomRef()) {
 				var sKey = this.getViewKey();
 				var oView = _getView.call(this, sKey);
@@ -490,6 +496,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				var iIntervals = _getIntervals.call(this, oView);
 				oCalendarRow.setIntervalType(sIntervalType);
 				oCalendarRow.setIntervals(iIntervals);
+				oCalendarRow.setShowSubIntervals(oView.getShowSubIntervals());
 			}
 
 			return this;
@@ -500,6 +507,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this.insertAggregation("rows", oRow, iIndex);
 
+			oRow.attachEvent("_change", _handleRowChanged, this);
+
 			var oTable = this.getAggregation("table");
 			oTable.insertItem(oRow.getColumnListItem(), iIndex, true);
 
@@ -509,6 +518,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oCalendarRow.attachEvent("startDateChange", _handleStartDateChange, this);
 			oCalendarRow.attachEvent("leaveRow", _handleLeaveRow, this);
 
+			_updateSelectAllCheckBox.call(this);
+
 			if (this.getDomRef()) {
 				var sKey = this.getViewKey();
 				var oView = _getView.call(this, sKey);
@@ -516,6 +527,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				var iIntervals = _getIntervals.call(this, oView);
 				oCalendarRow.setIntervalType(sIntervalType);
 				oCalendarRow.setIntervals(iIntervals);
+				oCalendarRow.setShowSubIntervals(oView.getShowSubIntervals());
 			}
 
 			return this;
@@ -526,6 +538,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var oRemoved = this.removeAggregation("rows", vObject, true);
 
+			oRemoved.detachEvent("_change", _handleRowChanged, this);
+
 			var oTable = this.getAggregation("table");
 			oTable.removeItem(oRemoved.getColumnListItem(), true);
 
@@ -533,6 +547,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oCalendarRow.detachEvent("select", _handleAppointmentSelect, this);
 			oCalendarRow.detachEvent("startDateChange", _handleStartDateChange, this);
 			oCalendarRow.detachEvent("leaveRow", _handleLeaveRow, this);
+
+			_updateSelectAllCheckBox.call(this);
 
 			return oRemoved;
 
@@ -547,11 +563,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			for (var i = 0; i < aRemoved.length; i++) {
 				var oRow = aRemoved[i];
+				oRow.detachEvent("_change", _handleRowChanged, this);
+
 				var oCalendarRow = oRow.getCalendarRow();
 				oCalendarRow.detachEvent("select", _handleAppointmentSelect, this);
 				oCalendarRow.detachEvent("startDateChange", _handleStartDateChange, this);
 				oCalendarRow.detachEvent("leaveRow", _handleLeaveRow, this);
 			}
+
+			_updateSelectAllCheckBox.call(this);
 
 			return aRemoved;
 
@@ -564,6 +584,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oTable = this.getAggregation("table");
 			oTable.destroyItems(true);
 
+			_updateSelectAllCheckBox.call(this);
+
 			return destroyed;
 
 		};
@@ -572,7 +594,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this.addAggregation("toolbarContent", oContent, true);
 
-			this._oToolbar.invalidate();
+			_changeToolbar.call(this);
 
 			return this;
 
@@ -582,7 +604,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this.insertAggregation("toolbarContent", oContent, iIndex);
 
-			this._oToolbar.invalidate();
+			_changeToolbar.call(this);
 
 			return this;
 
@@ -592,7 +614,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var oRemoved = this.removeAggregation("toolbarContent", vObject, true);
 
-			this._oToolbar.invalidate();
+			_changeToolbar.call(this);
 
 			return oRemoved;
 
@@ -602,7 +624,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var aRemoved = this.removeAllAggregation("toolbarContent", true);
 
-			this._oToolbar.invalidate();
+			_changeToolbar.call(this);
 
 			return aRemoved;
 
@@ -612,7 +634,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var destroyed = this.destroyAggregation("toolbarContent", true);
 
-			this._oToolbar.invalidate();
+			_changeToolbar.call(this);
 
 			return destroyed;
 
@@ -638,51 +660,46 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					this._oSelectAllCheckBox.attachEvent("select", _handleSelectAll, this);
 				}
 				this._oCalendarHeader.setAllCheckBox(this._oSelectAllCheckBox);
-				var aRows = this.getRows();
-				var aSelectedRows = this.getSelectedRows();
-				if (aRows.length == aSelectedRows.length) {
-					this._oSelectAllCheckBox.setSelected(true);
-				} else {
-					this._oSelectAllCheckBox.setSelected(false);
-				}
+				_updateSelectAllCheckBox.call(this);
 			}
 
 		};
 
 		TeamCalendar.prototype.invalidate = function(oOrigin) {
 
-			if (!this._bDateRangeChanged && (!oOrigin || !(oOrigin instanceof sap.ui.unified.DateRange))) {
-				Control.prototype.invalidate.apply(this, arguments);
-			} else if (this.getDomRef()) {
+			if (this._bDateRangeChanged || (oOrigin && oOrigin instanceof sap.ui.unified.DateRange)) {
 				// DateRange changed -> only invalidate calendar control
-				var sKey = this.getViewKey();
-				var oView = _getView.call(this, sKey);
-				var sIntervalType = oView.getIntervalType();
+				if (this.getDomRef()) {
+					var sKey = this.getViewKey();
+					var oView = _getView.call(this, sKey);
+					var sIntervalType = oView.getIntervalType();
 
-				switch (sIntervalType) {
-				case sap.ui.unified.CalendarIntervalType.Hour:
-					if (this._oTimeInterval) {
-						this._oTimeInterval.invalidate(arguments);
+					switch (sIntervalType) {
+					case sap.ui.unified.CalendarIntervalType.Hour:
+						if (this._oTimeInterval) {
+							this._oTimeInterval.invalidate(arguments);
+						}
+						break;
+
+					case sap.ui.unified.CalendarIntervalType.Day:
+						if (this._oDateInterval) {
+							this._oDateInterval.invalidate(arguments);
+						}
+						break;
+
+					case sap.ui.unified.CalendarIntervalType.Month:
+						if (this._oMonthInterval) {
+							this._oMonthInterval.invalidate(arguments);
+						}
+						break;
+
+					default:
+						throw new Error("Unknown IntervalType: " + sIntervalType + "; " + this);
 					}
-					break;
-
-				case sap.ui.unified.CalendarIntervalType.Day:
-					if (this._oDateInterval) {
-						this._oDateInterval.invalidate(arguments);
-					}
-					break;
-
-				case sap.ui.unified.CalendarIntervalType.Month:
-					if (this._oMonthInterval) {
-						this._oMonthInterval.invalidate(arguments);
-					}
-					break;
-
-				default:
-					throw new Error("Unknown IntervalType: " + sIntervalType + "; " + this);
 				}
-
 				this._bDateRangeChanged = undefined;
+			} else {
+				Control.prototype.invalidate.apply(this, arguments);
 			}
 
 		};
@@ -799,6 +816,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		function _changeIntervalType(oEvent) {
 
 			this.setViewKey(oEvent.getParameter("selectedItem").getKey());
+
+			this.fireViewChange();
 
 		}
 
@@ -992,17 +1011,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			if (!this.getSingleSelection()) {
-				var aSelectedRows = this.getSelectedRows();
-				if (aRows.length == aSelectedRows.length) {
-					this._oSelectAllCheckBox.setSelected(true);
-				} else {
-					this._oSelectAllCheckBox.setSelected(false);
-				}
+				_updateSelectAllCheckBox.call(this);
 			}
 
 			if (aChangedRows.length > 0) {
 				this.fireRowSelectionChange({rows: aChangedRows});
 			}
+
+		}
+
+		function _changeToolbar() {
+
+			var oTable = this.getAggregation("table");
+
+			if (this.getToolbarContent().length > 0) {
+				if (!this._oToolbar) {
+					this._oToolbar = new sap.m.Toolbar(this.getId() + "-Toolbar", {
+						design: sap.m.ToolbarDesign.Transpaent
+					});
+					this._oToolbar._oTeamCalendar = this;
+					this._oToolbar.getContent = function() {
+						return this._oTeamCalendar._getToolbarContent();
+					};
+				}
+				if (!oTable.getHeaderToolbar()) {
+					oTable.setHeaderToolbar(this._oToolbar);
+				}
+			} else if (oTable.getHeaderToolbar()) {
+				oTable.setHeaderToolbar();
+			}
+
+			this._oToolbar.invalidate();
 
 		}
 
@@ -1239,6 +1278,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			default:
 				break;
+			}
+
+		}
+
+		function _updateSelectAllCheckBox() {
+
+			if (this._oSelectAllCheckBox) {
+				var aRows = this.getRows();
+				var aSelectedRows = this.getSelectedRows();
+				if (aRows.length == aSelectedRows.length && aSelectedRows.length > 0) {
+					this._oSelectAllCheckBox.setSelected(true);
+				} else {
+					this._oSelectAllCheckBox.setSelected(false);
+				}
+			}
+
+		}
+
+		function _handleRowChanged(oEvent) {
+
+			if (oEvent.getParameter("name") == "selected") {
+				_updateSelectAllCheckBox.call(this);
 			}
 
 		}

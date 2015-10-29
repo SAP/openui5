@@ -33,12 +33,26 @@
 /* intervals */
 .sapUiCalendarRowAppsInt{
 	min-height: 100%;
+	height: 100%; /* to inherit to subintervals - to be overwritten for fix heights*/
 	border-width: 0 0.0625rem 0 0.0625rem;
 	border-style: solid;
 	border-color: @sapUiExtraLightBorder;
 	box-sizing: border-box;
 	float: left;
 	cursor: default;
+}
+
+.sapUiCalendarRowAppsSubInt{
+	height: ~'calc(100% - 1.75rem)';
+	border-width: 0 0.0625rem 0 0;
+	border-style: solid;
+	border-color: @sapUiExtraLightBorder;
+	box-sizing: border-box;
+	float: left;
+}
+
+.sapUiCalendarRowAppsInt > .sapUiCalendarRowAppsSubInt:last-child{
+	border-right: none;
 }
 
 .sapUiCalendarRowAppsNoWork{
