@@ -2971,7 +2971,7 @@ sap.ui.define(['jquery.sap.global', './BindingParser', './DataType', './EventPro
 			};
 			var oModel = this.getModel(oBindingInfo.model);
 			if (this.isTreeBinding(sName)) {
-				oBinding = oModel.bindTree(oBindingInfo.path, this.getBindingContext(oBindingInfo.model), oBindingInfo.filters, oBindingInfo.parameters);
+				oBinding = oModel.bindTree(oBindingInfo.path, this.getBindingContext(oBindingInfo.model), oBindingInfo.filters, oBindingInfo.parameters, oBindingInfo.sorter);
 			} else {
 				oBinding = oModel.bindList(oBindingInfo.path, this.getBindingContext(oBindingInfo.model), oBindingInfo.sorter, oBindingInfo.filters, oBindingInfo.parameters);
 			}

@@ -475,6 +475,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor', './B
 	 *         [aFilters=null] predefined filter/s contained in an array (optional)
 	 * @param {object}
 	 *         [mParameters=null] additional model specific parameters (optional)
+	 * @param {array}
+	 *         [aSorters=null] predefined sap.ui.model.sorter/s contained in an array (optional)
 	 * @return {sap.ui.model.TreeBinding}
 
 	 * @public
