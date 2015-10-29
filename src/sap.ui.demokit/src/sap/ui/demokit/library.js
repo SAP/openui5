@@ -39,10 +39,12 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 			"sap.ui.demokit.HexagonButton",
 			"sap.ui.demokit.HexagonButtonGroup",
 			"sap.ui.demokit.IndexLayout",
+			"sap.ui.demokit.SimpleTree",
 			"sap.ui.demokit.TagCloud",
 			"sap.ui.demokit.UI5EntityCueCard"
 		],
 		elements: [
+			"sap.ui.demokit.SimpleTreeNode",
 			"sap.ui.demokit.Tag",
 			"sap.ui.demokit.UIAreaSubstitute"
 		]
