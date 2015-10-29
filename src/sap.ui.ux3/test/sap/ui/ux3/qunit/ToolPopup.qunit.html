@@ -575,6 +575,23 @@
 		oBtn1.press();
 		sap.ui.getCore().applyChanges();
 	});
+	asyncTest("Determines the focus DOM reference", function() {
+		expect(1);
+
+		oTPFocus.setDefaultButton("defaultBtn1");
+
+		var fnOpened = function() {
+			oTPFocus.detachOpened(fnOpened);
+
+			start();
+
+			bTest = typeof oTPFocus.getFocusDomRef() === 'object' ;
+			ok(bTest, "getFocusDomRef returns object");
+		};
+		oTPFocus.attachOpened(fnOpened);
+		oBtn1.press();
+		sap.ui.getCore().applyChanges();
+	});
 	asyncTest("default button is focused by pressEnter", function() {
 		expect(1);
 
