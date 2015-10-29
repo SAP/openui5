@@ -428,6 +428,91 @@ function runODataMessagesTests() {
 	asyncTest("LongText URL (JSON)", fnTestLongtextUrl.bind(this, true));
 	asyncTest("LongText URL (XML)", fnTestLongtextUrl.bind(this, false));
 	
+	asyncTest("ODataMessageParser reads headers case-insensitive", function() {
+		var sServiceURI = "fakeservice://testdata/odata/northwind";
+
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+
+		var oMetadata = new sap.ui.model.odata.ODataMetadata(sServiceURI + "/$metadata", {});
+		oMetadata.loaded().then(function() {
+
+			// Get Messages sent to console
+			var fnError = jQuery.sap.log.error;
+			var fnWarn = jQuery.sap.log.warning;
+			var fnDebug = jQuery.sap.log.debug;
+			var fnInfo = jQuery.sap.log.info;
+
+			var iCounter = 0;
+			var fnCount = function(sMessage) {
+				if (sMessage.indexOf("[OData Message] ") > -1) {
+					iCounter++;
+				}
+			}
+
+			jQuery.sap.log.error = jQuery.sap.log.warning = jQuery.sap.log.debug = jQuery.sap.log.info = fnCount;
+
+			var oParser = new sap.ui.model.odata.ODataMessageParser(sServiceURI, oMetadata);
+
+			var oRequest = {
+				requestUri: "fakeservice://testdata/odata/northwind/Test"
+			};
+
+			var oResponse = {
+				statusCode: "200", // Parse Header...
+				body: "Ignored",
+				headers: {
+					"Content-Type": "text/plain;charset=utf-8",
+					"DataServiceVersion": "2.0;",
+					"Sap-Message": JSON.stringify({
+						"code":		"999",
+						"message":	"This is test message",
+						"severity":	"error",
+						"details": []
+					})
+				}
+			};
+			oParser.parse(oResponse, oRequest);
+			equal(iCounter, 1, "Message from 'Sap-Message' header was added")
+
+			var oResponse = {
+				statusCode: "200", // Parse Header...
+				body: "Ignored",
+				headers: {
+					"Content-Type": "text/plain;charset=utf-8",
+					"DataServiceVersion": "2.0;",
+					"sap-message": JSON.stringify({
+						"code":		"999",
+						"message":	"This is test message",
+						"severity":	"error",
+						"details": []
+					})
+				}
+			};
+			oParser.parse(oResponse, oRequest);
+			equal(iCounter, 2, "Message from 'sap-message' header was added")
+
+
+			var oResponse = {
+				statusCode: "200", // Parse Header...
+				body: "Ignored",
+				headers: {
+					"Content-Type": "text/plain;charset=utf-8",
+					"DataServiceVersion": "2.0;",
+					"SAP-Message": JSON.stringify({
+						"code":		"999",
+						"message":	"This is test message",
+						"severity":	"error",
+						"details": []
+					})
+				}
+			};
+			oParser.parse(oResponse, oRequest);
+			equal(iCounter, 1, "Message from 'SAP-Message' header was added")
+			start();
+		});
+	})
+	
 	asyncTest("ODataMessageParser without ODataModel", function() {
 		var sServiceURI = "fakeservice://testdata/odata/northwind";
 		
