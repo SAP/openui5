@@ -466,7 +466,7 @@ ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResp
 	}
 
 	for (var sKey in oResponse.headers) {
-		if(sKey.toLowerCase() === sField.toLowerCase()) {
+		if (sKey.toLowerCase() === sField.toLowerCase()) {
 			sField = sKey;
 		}
 	}
