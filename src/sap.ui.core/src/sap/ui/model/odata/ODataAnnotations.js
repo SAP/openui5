@@ -57,6 +57,7 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 			this.oRequestHandles = [];
 			this.oLoadEvent = null;
 			this.oFailedEvent = null;
+			this.mCustomHeaders = mOptions.headers ? jQuery.extend({}, mOptions.headers) : {};
 
 			if (mOptions.urls) {
 				this.addUrl(mOptions.urls);
@@ -218,6 +219,21 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 	ODataAnnotations.prototype.detachFailed = function(fnFunction, oListener) {
 		this.detachEvent("failed", fnFunction, oListener);
 		return this;
+	};
+
+	/**
+	 * Set custom headers which are provided in a key/value map. These headers are used for all requests.
+	 * The Accept-Language header cannot be modified and is set using the Core's language setting.
+	 *
+	 * To remove these headers simply set the mHeaders parameter to {}. Please also note that when calling this method 
+	 * again all previous custom headers are removed unless they are specified again in the mCustomHeaders parameter.
+	 *
+	 * @param {map} mHeaders the header name/value map.
+	 * @public
+	 */
+	ODataAnnotations.prototype.setHeaders = function(mHeaders) {
+		// Copy headers (dont use reference to mHeaders map)
+		this.mCustomHeaders = jQuery.extend({}, mHeaders);
 	};
 
 	/**
@@ -522,8 +538,11 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 		var that = this;
 		return new Promise(function(fnResolve, fnReject) {
 			var mAjaxOptions = {
-				url : sUrl,
-				async : that.bAsync
+				url: sUrl,
+				async: that.bAsync,
+				headers: jQuery.extend({}, that.mCustomHeaders, {
+					"Accept-Language": sap.ui.getCore().getConfiguration().getLanguage() // Always overwrite
+				})
 			};
 
 			var oRequestHandle;
