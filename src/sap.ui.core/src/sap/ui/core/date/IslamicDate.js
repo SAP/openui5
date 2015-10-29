@@ -564,10 +564,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 				arguments[4],
 				arguments[5],
 				arguments[6]
-			);
-			var oGregorianDate = oIslamicDate._toGregorian(true);
-			var oIslamicDateUTC = new IslamicDate()._fromGregorian(oGregorianDate);
-			return oIslamicDateUTC.getTime();
+				),
+				oGregorianDate = oIslamicDate._toGregorian(true);
+
+			return oGregorianDate.getTime();
 		};
 
 		IslamicDate.prototype.toString = function (bUTC) {
