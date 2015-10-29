@@ -2929,10 +2929,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 				}
 			});
 			this.mCustomHeaders = mCheckedHeaders;
+
 		} else {
 			this.mCustomHeaders = {};
 		}
 
+		// Custom set headers should also be used when requesting annotations, but do not instantiate annotations just for this
+		if (this.oAnnotations) {
+			this.oAnnotations.setHeaders(this.mCustomHeaders);
+		}
 	};
 
 	/**
@@ -3303,7 +3308,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 				annotationData: mAnnotationData,
 				url: null,
 				metadata: this.oMetadata,
-				async: this.bLoadMetadataAsync
+				async: this.bLoadMetadataAsync,
+				headers: this.mCustomHeaders
 			});
 			this.oAnnotations.attachFailed(this.onAnnotationsFailed, this);
 			this.oAnnotations.attachLoaded(this.onAnnotationsLoaded, this);
@@ -3424,4 +3430,3 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	return ODataModel;
 
 });
-
