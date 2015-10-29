@@ -447,7 +447,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 	 */
 	DesignTime.prototype._onElementModified = function(oEvent) {
 		var oParams = oEvent.getParameters();
-		if (oParams.type === "addAggregation" || oParams.type === "insertAggregation") {
+		if (oParams.type === "addOrSetAggregation" || oParams.type === "insertAggregation") {
 			this._onElementOverlayAddAggregation(oParams.value);
 		} else if (oParams.type === "setParent") {
 			this._onElementOverlaySetParent(oParams.target, oParams.value);
