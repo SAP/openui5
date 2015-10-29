@@ -66,6 +66,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			showSubIntervals : {type : "boolean", group : "Appearance", defaultValue : false},
 
 			/**
+			 * If set interval headers are shown even if no <code>intervalHeaders</code> are assigned to the visible time frame.
+			 *
+			 * If not set no interval headers are shown even if <code>intervalHeaders</code> are assigned.
+			 */
+			showIntervalHeaders : {type : "boolean", group : "Appearance", defaultValue : true},
+
+			/**
 			 * If set, the provided weekdays are displayed as non-working days.
 			 * Valid values inside the array are 0 to 6. (Other values will just be ignored.)
 			 *
@@ -1000,74 +1007,77 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		 */
 		function _determineVisibleIntervalHeaders() {
 
-			// only use appointments in visible time frame for rendering
-			var aAppointments = this.getIntervalHeaders();
-			var oAppointment;
-			var iIntervals = this.getIntervals();
-			var sIntervalType = this.getIntervalType();
-			var oStartDate = this._getStartDate();
-			var iStartTime = oStartDate.getTime();
-			var oEndDate = this._oUTCEndDate;
-			var iEndTime = oEndDate.getTime();
 			var aVisibleIntervalHeaders = [];
-			var i = 0;
-			var j = 0;
 
-			for (i = 0; i < aAppointments.length; i++) {
-				oAppointment = aAppointments[i];
-				var oAppointmentStartDate = CalendarUtils._createUniversalUTCDate(oAppointment.getStartDate(), true);
-				oAppointmentStartDate.setUTCSeconds(0); // ignore seconds
-				oAppointmentStartDate.setUTCMilliseconds(0); // ignore milliseconds
-				var oAppointmentEndDate = CalendarUtils._createUniversalUTCDate(oAppointment.getEndDate(), true);
-				oAppointmentEndDate.setUTCSeconds(0); // ignore seconds
-				oAppointmentEndDate.setUTCMilliseconds(0); // ignore milliseconds
+			if (this.getShowIntervalHeaders()) {
+				// only use appointments in visible time frame for rendering
+				var aAppointments = this.getIntervalHeaders();
+				var oAppointment;
+				var iIntervals = this.getIntervals();
+				var sIntervalType = this.getIntervalType();
+				var oStartDate = this._getStartDate();
+				var iStartTime = oStartDate.getTime();
+				var oEndDate = this._oUTCEndDate;
+				var iEndTime = oEndDate.getTime();
+				var i = 0;
+				var j = 0;
 
-				if (oAppointmentStartDate && oAppointmentStartDate.getTime() <= iEndTime &&
-						oAppointmentEndDate && oAppointmentEndDate.getTime() >= iStartTime) {
-					// appointment is visible in row - check intervals
-					var oIntervalStartDate = new UniversalDate(oStartDate.getTime());
-					var oIntervalEndDate = new UniversalDate(oStartDate.getTime());
-					oIntervalEndDate.setUTCMinutes(oIntervalEndDate.getUTCMinutes() - 1);
-					var iFirstInterval = -1;
+				for (i = 0; i < aAppointments.length; i++) {
+					oAppointment = aAppointments[i];
+					var oAppointmentStartDate = CalendarUtils._createUniversalUTCDate(oAppointment.getStartDate(), true);
+					oAppointmentStartDate.setUTCSeconds(0); // ignore seconds
+					oAppointmentStartDate.setUTCMilliseconds(0); // ignore milliseconds
+					var oAppointmentEndDate = CalendarUtils._createUniversalUTCDate(oAppointment.getEndDate(), true);
+					oAppointmentEndDate.setUTCSeconds(0); // ignore seconds
+					oAppointmentEndDate.setUTCMilliseconds(0); // ignore milliseconds
 
-					for (j = 0; j < iIntervals; j++) {
+					if (oAppointmentStartDate && oAppointmentStartDate.getTime() <= iEndTime &&
+							oAppointmentEndDate && oAppointmentEndDate.getTime() >= iStartTime) {
+						// appointment is visible in row - check intervals
+						var oIntervalStartDate = new UniversalDate(oStartDate.getTime());
+						var oIntervalEndDate = new UniversalDate(oStartDate.getTime());
+						oIntervalEndDate.setUTCMinutes(oIntervalEndDate.getUTCMinutes() - 1);
+						var iFirstInterval = -1;
 
-						switch (sIntervalType) {
-						case sap.ui.unified.CalendarIntervalType.Hour:
-							oIntervalEndDate.setUTCHours(oIntervalEndDate.getUTCHours() + 1);
-							if (j > 0) {
-								oIntervalStartDate.setUTCHours(oIntervalStartDate.getUTCHours() + 1);
+						for (j = 0; j < iIntervals; j++) {
+
+							switch (sIntervalType) {
+							case sap.ui.unified.CalendarIntervalType.Hour:
+								oIntervalEndDate.setUTCHours(oIntervalEndDate.getUTCHours() + 1);
+								if (j > 0) {
+									oIntervalStartDate.setUTCHours(oIntervalStartDate.getUTCHours() + 1);
+								}
+								break;
+
+							case sap.ui.unified.CalendarIntervalType.Day:
+								oIntervalEndDate.setUTCDate(oIntervalEndDate.getUTCDate() + 1);
+								if (j > 0) {
+									oIntervalStartDate.setUTCDate(oIntervalStartDate.getUTCDate() + 1);
+								}
+								break;
+
+							case sap.ui.unified.CalendarIntervalType.Month:
+								// as months have different length, go to 1st of next month to determine last of month
+								oIntervalEndDate.setUTCDate(1);
+								oIntervalEndDate.setUTCMonth(oIntervalEndDate.getUTCMonth() + 2);
+								oIntervalEndDate.setUTCDate(0);
+								if (j > 0) {
+									oIntervalStartDate.setUTCMonth(oIntervalStartDate.getUTCMonth() + 1);
+								}
+								break;
+
+							default:
+								throw new Error("Unknown IntervalType: " + sIntervalType + "; " + this);
 							}
-							break;
 
-						case sap.ui.unified.CalendarIntervalType.Day:
-							oIntervalEndDate.setUTCDate(oIntervalEndDate.getUTCDate() + 1);
-							if (j > 0) {
-								oIntervalStartDate.setUTCDate(oIntervalStartDate.getUTCDate() + 1);
+							if (oAppointmentStartDate && oAppointmentStartDate.getTime() <= oIntervalStartDate.getTime() &&
+									oAppointmentEndDate && oAppointmentEndDate.getTime() >= oIntervalEndDate.getTime()) {
+								// interval is completely in appointment
+								if (iFirstInterval < 0) {
+									iFirstInterval = j;
+								}
+								aVisibleIntervalHeaders.push({interval: j, appointment: oAppointment, first: iFirstInterval == j});
 							}
-							break;
-
-						case sap.ui.unified.CalendarIntervalType.Month:
-							// as months have different length, go to 1st of next month to determine last of month
-							oIntervalEndDate.setUTCDate(1);
-							oIntervalEndDate.setUTCMonth(oIntervalEndDate.getUTCMonth() + 2);
-							oIntervalEndDate.setUTCDate(0);
-							if (j > 0) {
-								oIntervalStartDate.setUTCMonth(oIntervalStartDate.getUTCMonth() + 1);
-							}
-							break;
-
-						default:
-							throw new Error("Unknown IntervalType: " + sIntervalType + "; " + this);
-						}
-
-						if (oAppointmentStartDate && oAppointmentStartDate.getTime() <= oIntervalStartDate.getTime() &&
-								oAppointmentEndDate && oAppointmentEndDate.getTime() >= oIntervalEndDate.getTime()) {
-							// interval is completely in appointment
-							if (iFirstInterval < 0) {
-								iFirstInterval = j;
-							}
-							aVisibleIntervalHeaders.push({interval: j, appointment: oAppointment, first: iFirstInterval == j});
 						}
 					}
 				}
@@ -1083,11 +1093,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var aAppointments = this.$("Apps").children(".sapUiCalendarApp");
 			var $DummyApp = this.$("DummyApp");
-			var iStaticHeight = jQuery(this.$("AppsInt0").children(".sapUiCalendarRowAppsIntHead")[0]).outerHeight(true);
+			var iStaticHeight = 0;
 			var iHeight = $DummyApp.outerHeight(true);
 			var iSmallWidth = $DummyApp.outerWidth();
 			var iLevels = 0;
 			var i = 0;
+
+			if (this.getShowIntervalHeaders()) {
+				iStaticHeight = jQuery(this.$("AppsInt0").children(".sapUiCalendarRowAppsIntHead")[0]).outerHeight(true);
+			}
 
 			for (i = 0; i < aAppointments.length; i++) {
 				var $Appointment = jQuery(aAppointments[i]);

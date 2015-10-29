@@ -25,6 +25,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		oRm.writeControlData(oTC);
 		oRm.addClass("sapMTeamCal");
 
+		if (!oTC.getSingleSelection()) {
+			oRm.addClass("sapMTeamCalMultiSel");
+		}
+
+		if (!oTC.getShowRowHeaders()) {
+			oRm.addClass("sapMTeamCalNoHead");
+		}
+
 //		// This makes the row focusable
 //		oRm.writeAttribute("tabindex", "-1");
 

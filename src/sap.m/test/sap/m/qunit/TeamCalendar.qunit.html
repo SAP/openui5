@@ -25,6 +25,9 @@
 		<!-- Test functions -->
 		<script language="javascript">
 
+			jQuery.sap.require("sap.ui.model.type.Date");
+			var oFormatYyyyMMddHHmm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMddHHmm"});
+
 			var createToolbarContent = function(sSearchFieldId, sButtonId) {
 				oSearchField1 = new sap.m.SearchField(sSearchFieldId, {
 					search: function(oEvent) {
@@ -63,6 +66,13 @@
 			var handleViewChange = function(oEvent){
 				bViewChange = true;
 
+			};
+
+			var bIntervalSelect = false;
+			var oIntervalStartDate;
+			var handleIntervalSelect = function(oEvent){
+				bIntervalSelect = true;
+				oIntervalStartDate = oEvent.getParameter("startDate");
 			};
 
 			var createTeamCalendar = function(sID, oSearchField, oButton) {
@@ -162,7 +172,8 @@
 					appointmentSelect: handleAppointmentSelect,
 					startDateChange: handleStartDateChange,
 					rowSelectionChange: handleRowSelectionChange,
-					viewChange: handleViewChange
+					viewChange: handleViewChange,
+					intervalSelect: handleIntervalSelect
 				});
 
 				return oTC;
@@ -385,6 +396,35 @@
 				var aTest = sStyle.match(/height:(\s?)(\d+(.?)(\d+))/);
 				var iheight = aTest? aTest[2] : 0;
 				equal(iheight, 90 + "", "height set on DOM");
+			});
+
+			test("showIntervalHeaders", function() {
+				ok(oTC1.getShowIntervalHeaders(), "ShowIntervalHeaders is enabled by default");
+				var aRows = oTC1.getRows();
+				for(var i = 0; i < aRows.length; i++) {
+					ok(aRows[i].getCalendarRow().getShowIntervalHeaders(), "Row " + i + ": ShowIntervalHeaders set");
+				}
+
+				oTC1.setShowIntervalHeaders(false);
+				sap.ui.getCore().applyChanges();
+				for(var i = 0; i < aRows.length; i++) {
+					ok(!aRows[i].getCalendarRow().getShowIntervalHeaders(), "Row " + i + ": ShowIntervalHeaders not set");
+				}
+
+				oTC1.setShowIntervalHeaders(true);
+				sap.ui.getCore().applyChanges();
+			});
+
+			test("showRowHeaders", function() {
+				ok(oTC1.getShowRowHeaders(), "ShowRowHeaders is enabled by default");
+
+				oTC1.setShowRowHeaders(false);
+				sap.ui.getCore().applyChanges();
+				ok(!jQuery("#TC1-Row1-Head").is(":visible"), "Row1 Header not visible");
+
+				oTC1.setShowRowHeaders(true);
+				sap.ui.getCore().applyChanges();
+				ok(jQuery("#TC1-Row1-Head").is(":visible"), "Row1 Header visible");
 			});
 
 			test("rows", function() {
@@ -851,6 +891,17 @@
 
 				oTC1.setViewKey(sap.ui.unified.CalendarIntervalType.Hour);
 				sap.ui.getCore().applyChanges();
+			});
+
+			test("intervalselect", function() {
+				bIntervalSelect = false;
+				oIntervalStartDate = undefined;
+				jQuery("#TC1-TimeInt--TimesRow-201501011200").focus();
+				qutils.triggerKeyboardEvent("TC1-TimeInt--TimesRow-201501011200", "ENTER");
+				sap.ui.getCore().applyChanges();
+				ok(bIntervalSelect, "intervalSelect fired");
+				equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201501011200", "interval start date returned");
+				ok(!jQuery("#TC1-TimeInt--TimesRow-201501011200").hasClass("sapUiCalItemSel"), "interval not longer selected");
 			});
 
 			module("Interaction");

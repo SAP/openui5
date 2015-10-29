@@ -56,7 +56,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * Height of the <code>TeamCalendar</code>
 			 */
-			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
+			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+
+			/**
+			 * If set interval headers are shown even if no <code>intervalHeaders</code> are assigned to the row in the visible time frame.
+			 *
+			 * If not set no interval headers are shown even if <code>intervalHeaders</code> are assigned to the row.
+			 */
+			showIntervalHeaders : {type : "boolean", group : "Appearance", defaultValue : true},
+
+			/**
+			 * If set, headers of the <code>TeamCalendarRows</code> are shown. This means the column with the headers is shown.
+			 *
+			 * If not set, the header column is not shown at all, even if header information are provided.
+			 */
+			showRowHeaders : {type : "boolean", group : "Appearance", defaultValue : true}
 
 		},
 		aggregations : {
@@ -113,6 +127,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					 * So more than the current appointment could be selected.
 					 */
 					multiSelect : {type : "boolean"}
+				}
+			},
+
+			/**
+			 * Fired if an interval was selected in the header calendar
+			 */
+			intervalSelect : {
+				parameters : {
+					/**
+					 * Start date, as JavaScript Date object, of the selected interval
+					 */
+					startDate : {type : "object"}
 				}
 			},
 
@@ -475,6 +501,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
+		TeamCalendar.prototype.setShowIntervalHeaders = function(bShowIntervalHeaders){
+
+			this.setProperty("showIntervalHeaders", bShowIntervalHeaders, true);
+
+			var aRows = this.getRows();
+			for (var i = 0; i < aRows.length; i++) {
+				var oRow = aRows[i];
+				oRow.getCalendarRow().setShowIntervalHeaders(bShowIntervalHeaders);
+			}
+
+			return this;
+
+		};
+
+		TeamCalendar.prototype.setShowRowHeaders = function(bShowRowHeaders){
+
+			// set header column to invisible as each row is a ColumnListItem with two columns
+			// removing the column would need to change every row
+
+			this.setProperty("showRowHeaders", bShowRowHeaders, true);
+
+			var oTable = this.getAggregation("table");
+			oTable.getColumns()[0].setVisible(bShowRowHeaders);
+
+			this.$().toggleClass("sapMTeamCalNoHead", !bShowRowHeaders);
+			_positionSelectAllCheckBox.call(this);
+
+			return this;
+
+		};
+
 		TeamCalendar.prototype.addRow = function(oRow) {
 
 			this.addAggregation("rows", oRow, true);
@@ -486,6 +543,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var oCalendarRow = oRow.getCalendarRow();
 			oCalendarRow.setStartDate(this.getStartDate());
+			oCalendarRow.setShowIntervalHeaders(this.getShowIntervalHeaders());
 			oCalendarRow.attachEvent("select", _handleAppointmentSelect, this);
 			oCalendarRow.attachEvent("startDateChange", _handleStartDateChange, this);
 			oCalendarRow.attachEvent("leaveRow", _handleLeaveRow, this);
@@ -517,6 +575,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var oCalendarRow = oRow.getCalendarRow();
 			oCalendarRow.setStartDate(this.getStartDate());
+			oCalendarRow.setShowIntervalHeaders(this.getShowIntervalHeaders());
 			oCalendarRow.attachEvent("select", _handleAppointmentSelect, this);
 			oCalendarRow.attachEvent("startDateChange", _handleStartDateChange, this);
 			oCalendarRow.attachEvent("leaveRow", _handleLeaveRow, this);
@@ -650,21 +709,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oTable = this.getAggregation("table");
 			if (bSingleSelection) {
 				oTable.setMode(sap.m.ListMode.SingleSelectMaster);
-				if (this._oCalendarHeader.getAllCheckBox()) {
-					this._oCalendarHeader.setAllCheckBox();
-				}
 				this.selectAllRows(false);
 			} else {
 				oTable.setMode(sap.m.ListMode.MultiSelect);
-				if (!this._oSelectAllCheckBox) {
-					this._oSelectAllCheckBox = new sap.m.CheckBox(this.getId() + "-All", {
-						text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("COLUMNSPANEL_SELECT_ALL")
-					});
-					this._oSelectAllCheckBox.attachEvent("select", _handleSelectAll, this);
-				}
-				this._oCalendarHeader.setAllCheckBox(this._oSelectAllCheckBox);
 				_updateSelectAllCheckBox.call(this);
 			}
+
+			_positionSelectAllCheckBox.call(this);
+
+			this.$().toggleClass("sapMTeamCalMultiSel", !bSingleSelection);
+
+			return this;
 
 		};
 
@@ -845,26 +900,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		function _handleIntervalSelect(oEvent){
 
 			var aSelectedDates = oEvent.oSource.getSelectedDates();
-			var oSelectedDate = aSelectedDates[0].getStartDate();
-			var sKey = this.getViewKey();
-			var aViews = _getViews.call(this);
-			var oView;
-			var i = 0;
-
-			for (i = 0; i < aViews.length; i++) {
-				oView = aViews[i];
-				if (oView.getKey() == sKey) {
-					break;
-				}
-			}
-
-			if (i > 0) {
-				this.setStartDate(oSelectedDate);
-				this.setViewKey(aViews[i - 1].getKey());
-			}
+			var oStartDate = new Date(aSelectedDates[0].getStartDate());
 
 			// remove old selection
 			aSelectedDates[0].setStartDate();
+
+			this.fireIntervalSelect({startDate: oStartDate});
 
 		}
 
@@ -913,6 +954,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				default:
 					throw new Error("Unknown IntervalType: " + sIntervalType + "; " + this);
 				}
+
+				_positionSelectAllCheckBox.call(this);
 			}else if (!bNoRowResize) {
 				for (i = 0; i < aRows.length; i++) {
 					oRow = aRows[i];
@@ -1294,6 +1337,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					this._oSelectAllCheckBox.setSelected(true);
 				} else {
 					this._oSelectAllCheckBox.setSelected(false);
+				}
+			}
+
+		}
+
+		function _positionSelectAllCheckBox() {
+
+			var bOneColumn = this._iSize == 0 || !this.getShowRowHeaders();
+
+			if (this.getSingleSelection()) {
+				if (this._oCalendarHeader.getAllCheckBox()) {
+					this._oCalendarHeader.setAllCheckBox();
+				}else if (this._oInfoToolbar.getContent().length > 2) {
+					this._oInfoToolbar.removeContent(this._oSelectAllCheckBox);
+				}
+			} else {
+				if (!this._oSelectAllCheckBox) {
+					this._oSelectAllCheckBox = new sap.m.CheckBox(this.getId() + "-All", {
+						text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("COLUMNSPANEL_SELECT_ALL")
+					});
+					this._oSelectAllCheckBox.attachEvent("select", _handleSelectAll, this);
+				}
+				if (bOneColumn) {
+					if (this._iSize == 0) {
+						// on phone: checkbox below calendar
+						this._oInfoToolbar.addContent(this._oSelectAllCheckBox);
+					} else {
+						// one column on desktop: checkbox left of calendar
+						this._oInfoToolbar.insertContent(this._oSelectAllCheckBox, 1);
+					}
+				} else {
+					this._oCalendarHeader.setAllCheckBox(this._oSelectAllCheckBox);
 				}
 			}
 

@@ -16,7 +16,11 @@
 
 .sapMTeamCalHead{
 	width: 20%;
-	height: 7.25rem;
+	height: 6.25rem;
+}
+
+.sapUiSizeCompact .sapMTeamCalHead{
+	height: auto;
 }
 
 .sapMTeamCal > .sapMList .sapMTeamCalRowHead .sapMLIB,
@@ -30,8 +34,7 @@
 
 .sapMTeamCal > .sapMList > .sapMListInfoTBar > .sapMBarChild.sapUiCalInt {
 	width: 80%;
-	padding-left: 0;
-	padding-right: 0;
+	padding: 0;
 	margin-left: 0;
 	margin-right: 0;
 }
@@ -78,11 +81,39 @@
 	margin: 0;
 }
 
+.sapMTeamCal.sapMTeamCalNoHead > .sapMList > .sapMListInfoTBar,
 .sapUiMedia-Std-Phone .sapMTeamCal > .sapMList > .sapMListInfoTBar{
 	display: block;
 }
 
+.sapMTeamCal.sapMTeamCalNoHead > .sapMList > .sapMListInfoTBar > .sapMTeamCalHead,
+.sapMTeamCal.sapMTeamCalNoHead > .sapMList > .sapMListInfoTBar > .sapUiCalInt,
 .sapUiMedia-Std-Phone .sapMTeamCal > .sapMList > .sapMListInfoTBar > .sapMTeamCalHead,
 .sapUiMedia-Std-Phone .sapMTeamCal > .sapMList > .sapMListInfoTBar > .sapUiCalInt{
 	width: 100%;
+}
+
+.sapMTeamCal.sapMTeamCalNoHead > .sapMList > .sapMListInfoTBar > .sapMTeamCalHead,
+.sapUiMedia-Std-Phone .sapMTeamCal > .sapMList > .sapMListInfoTBar > .sapMTeamCalHead{
+	height: auto;
+}
+
+.sapMTeamCal.sapMTeamCalNoHead.sapMTeamCalMultiSel > .sapMList > .sapMListInfoTBar > .sapUiCalInt{
+	width: ~'calc(100% - 3rem)';
+}
+
+.sapMTeamCal.sapMTeamCalNoHead.sapMTeamCalMultiSel > .sapMList > .sapMListInfoTBar > .sapMCb{
+	width: 3rem;
+	margin: 0;
+	vertical-align: bottom;
+}
+
+.sapUiMedia-Std-Phone .sapMTeamCal.sapMTeamCalMultiSel > .sapMList > .sapMListInfoTBar > .sapMCb{
+	width: auto;
+	margin-left: 0;
+}
+
+.sapUiMedia-Std-Phone .sapMTeamCal.sapMTeamCalMultiSel > .sapMList > .sapMListInfoTBar > .sapUiCalInt{
+	width: 100%;
+	display: block;
 }
