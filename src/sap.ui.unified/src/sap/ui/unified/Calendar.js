@@ -865,16 +865,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var oDate = oThis._getFocusedDate();
 			var oMonthPicker = oThis.getAggregation("monthPicker");
-			if (oMonthPicker.getDomRef()) {
-				// already rendered
-				oMonthPicker.$().css("display", "");
-			} else {
-				var oRm = sap.ui.getCore().createRenderManager();
-				var $Container = oThis.$("content");
-				oRm.renderControl(oMonthPicker);
-				oRm.flush($Container[0], false, true); // insert it
-				oRm.destroy();
+
+			if (!oThis.getPickerPopup || !oThis.getPickerPopup()) {
+				if (oMonthPicker.getDomRef()) {
+					// already rendered
+					oMonthPicker.$().css("display", "");
+				} else {
+					var oRm = sap.ui.getCore().createRenderManager();
+					var $Container = oThis.$("content");
+					oRm.renderControl(oMonthPicker);
+					oRm.flush($Container[0], false, true); // insert it
+					oRm.destroy();
+				}
+			}else {
+				oThis._openPickerPopup(oMonthPicker);
 			}
+
 			oThis.$("contentOver").css("display", "");
 
 			if (!bNoFocus) {
@@ -901,8 +907,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			oThis._iMode = 0;
 
-			var oMonthPicker = oThis.getAggregation("monthPicker");
-			oMonthPicker.$().css("display", "none");
+			if (!oThis.getPickerPopup || !oThis.getPickerPopup()) {
+				var oMonthPicker = oThis.getAggregation("monthPicker");
+				oMonthPicker.$().css("display", "none");
+			}else {
+				oThis._oPopup.close();
+			}
 			oThis.$("contentOver").css("display", "none");
 
 			if (!bNoFocus) {
@@ -951,24 +961,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			var oYearPicker = oThis.getAggregation("yearPicker");
-			if (oYearPicker.getDomRef()) {
-				// already rendered
-				oYearPicker.$().css("display", "");
-			} else {
-				var oRm = sap.ui.getCore().createRenderManager();
-				var $Container = oThis.$("content");
-				oRm.renderControl(oYearPicker);
-				oRm.flush($Container[0], false, true); // insert it
-				oRm.destroy();
+			if (!oThis.getPickerPopup || !oThis.getPickerPopup()) {
+				if (oYearPicker.getDomRef()) {
+					// already rendered
+					oYearPicker.$().css("display", "");
+				} else {
+					var oRm = sap.ui.getCore().createRenderManager();
+					var $Container = oThis.$("content");
+					oRm.renderControl(oYearPicker);
+					oRm.flush($Container[0], false, true); // insert it
+					oRm.destroy();
+				}
+			}else {
+				oThis._openPickerPopup(oYearPicker);
 			}
+
 			oThis.$("contentOver").css("display", "");
 
 			oYearPicker.setDate(oDate.getJSDate());
 
 			// check special case if only 4 weeks are displayed (e.g. February 2021) -> top padding must be removed
 			// can only happen if only one month is displayed -> otherwise at least one month has more than 28 days.
+			var oMonth;
 			if (_getMonths(oThis) == 1) {
-				var oMonth = oThis.getAggregation("month")[0];
+				oMonth = oThis.getAggregation("month")[0];
 				var aDomRefs = oMonth.$("days").find(".sapUiCalItem");
 				if (aDomRefs.length == 28) {
 					oYearPicker.$().addClass("sapUiCalYearNoTop");
@@ -982,7 +998,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				var aMonths = oThis.getAggregation("month");
 
 				for (var i = 0; i < aMonths.length; i++) {
-					var oMonth = aMonths[i];
+					oMonth = aMonths[i];
 					jQuery(oMonth._oItemNavigation.getItemDomRefs()[oMonth._oItemNavigation.getFocusedIndex()]).attr("tabindex", "-1");
 				}
 			}
@@ -995,8 +1011,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			oThis._iMode = 0;
 
-			var oYearPicker = oThis.getAggregation("yearPicker");
-			oYearPicker.$().css("display", "none");
+			if (!oThis.getPickerPopup || !oThis.getPickerPopup()) {
+				var oYearPicker = oThis.getAggregation("yearPicker");
+				oYearPicker.$().css("display", "none");
+			}else {
+				oThis._oPopup.close();
+			}
 			oThis.$("contentOver").css("display", "none");
 
 			if (!bNoFocus) {
