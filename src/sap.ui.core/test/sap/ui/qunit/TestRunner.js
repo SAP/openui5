@@ -165,6 +165,7 @@
 					if (parseInt(jQuery("div#reportingHeader span.failed").text()) > 0) {
 						jQuery("div#innerBar")[0].style.backgroundColor = '#ed866f';
 					}
+					jQuery("div#time").text(Math.round((new Date() - window.oStartTime)/1000) + " Seconds");
 					jQuery("#selectedTests").find("option").each(function() {
 						if (jQuery(this).text() === sTestPage) {
 							jQuery(this).remove();
@@ -476,7 +477,6 @@
 					sLiClass: sLineItemClass,
 					testmessages: aTestMessages }
 				});
-
 				this.updateResultHeader(sNumAll, sNumPassed, sNumFailed);
 			}
 

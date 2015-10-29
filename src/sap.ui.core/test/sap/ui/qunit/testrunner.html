@@ -136,6 +136,7 @@
 		jQuery("#removeall").click(removeAll);
 
 		function run() {
+			window.oStartTime = new Date();
 			var $this = jQuery("#run");
 			if ($this.val() === "Run") {
 				//$this.val("Stop");
@@ -246,11 +247,13 @@
 		<div id="test-selection" style="border: 1px solid; border-color: #aaa; height: 300px;">
 			<div id="selectionHeader" style="height: 30px;margin-top: 0px; padding-left: 2px;padding-top: 10px;background-color: #ccc;margin-bottom: 10px;">
 				<div style="float: left; width: 10%; font-family: Arial;position: absolute">Select Tests</div>
-				<div id="progress" style="float: left;width: 400px;font-family: Arial;position: relative;left: 400px">Progress</div>
-				<div id="bar" style="float: left;position: relative;left: 70px;border: 1px solid;width: 150px;height: 19px">
+				<div id="progress" style="float: left;width: 400px;font-family: Arial;position: relative;left: 200px">Progress</div>
+				<div id="bar" style="float: left;position: relative;left: -130px;border: 1px solid;width: 150px;height: 19px">
 					<div id="innerBar" style="background-color: #a4ec81;width:0%;height: 19px;text-align: right"></div>
 				</div>
-				<input id="stop" type="button" value="Stop" style="float: left;position: relative;left: 75px;bottom: 3px; display: none;">
+				<input id="stop" type="button" value="Stop" style="float: left;position: relative;left: -125px; display: none;">
+				<div id="duration" style="float: left;width: 75px;font-family: Arial;position: relative;left: 50px">Duration</div>
+				<div id="time" style="float: left;position: relative;left: 50px;width: 200px;height: 19px" >0 Seconds</div>
 				<div id="open" style="width:0px;height:0px;margin:5px;border-style:solid;border-width:0 12px 12px 12px;border-color:transparent transparent #007dc0 transparent;float: right;position: relative;left: -10px;cursor: pointer;"></div>
 			</div>
 			<div id="elements">
@@ -283,7 +286,7 @@
 	</div>
 	<div id="reportingHeader" class="test-reporting" style="display: none; padding: 0px; border: 1px solid;border-color: #aaa;margin: 10px;">
 		<div style="height: 30px;margin-top: 0px; padding-left: 2px;padding-top: 10px;background-color: #ccc;">
-			<div style="float: left; width: 10%; font-family: Arial;position: absolute;">Test Reporting</div>
+			<div style="float: left; width: 15%; font-family: Arial;position: absolute;">Test Reporting</div>
 			<div style="float: left; white-space: nowrap; width: 50%; font-family: Arial;position: relative; left: 200px">Number of executed test: <span class="total">0</span> Number of passed tests: <span class="passed">0</span> Number of failed tests: <span class="failed">0</span></div>
 			<input id="showResults" type="button" value="Show all results" style="display: none; float: left; position: relative; left: 200px; bottom: 3px">
 			<div id="openReporting" style="width:0px;height:0px;margin:5px;border-style:solid;border-width: 12px 12px 0 12px;border-color:#007dc0 transparent transparent transparent;float: right;position: relative;left: -10px;cursor: pointer;"></div>
