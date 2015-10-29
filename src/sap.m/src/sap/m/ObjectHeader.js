@@ -119,10 +119,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			condensed : {type : "boolean", group : "Appearance", defaultValue : false},
 
 			/**
-			 * NOTE: Only applied if you set "condensed=true" or "responsive=true".
 			 * This property is used to set the background color of the ObjectHeader. Possible values are "Solid", "Translucent" and "Transparent".
+			 * NOTE: The different types of ObjectHeader come with different default background. 
+			 * - non responsive ObjectHeader: Transparent
+			 * - responsive ObjectHeader: Translucent
+			 * - condensed ObjectHeder: Solid
 			 */
-			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance", defaultValue : sap.m.BackgroundDesign.Transparent},
+			backgroundDesign : {type : "sap.m.BackgroundDesign", group : "Appearance"},
 
 			/**
 			 * If this property is set to true the ObjectHeader is rendered with a different design and reacts responsively to the screen sizes.
@@ -888,6 +891,39 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return bHasStatus;
 	};
 
+	/**
+	 * Returns the default background design for the different types of the ObjectHeader
+	 * @private
+	 * @returns {sap.m.BackgroundDesign}
+	 */
+	ObjectHeader.prototype._getDefaultBackgroundDesign = function() {
+		if (this.getCondensed()) {
+			return sap.m.BackgroundDesign.Solid;
+		} else {
+			if (this.getResponsive()) {
+				return sap.m.BackgroundDesign.Translucent;
+			} else { // old none responsive OH
+				return sap.m.BackgroundDesign.Transparent;
+			}
+		}
+		
+	};
+	
+
+	/**
+	 * Returns either the default background or the one that is set by the user
+	 *
+	 * @private
+	 */
+	ObjectHeader.prototype._getBackground = function() {
+		
+		if (this.getBackgroundDesign() === undefined) {
+			return this._getDefaultBackgroundDesign();
+		} else {
+			return this.getBackgroundDesign();
+		}
+		
+	};
 
 	return ObjectHeader;
 
