@@ -40,21 +40,9 @@ sap.ui.define([
 				shareSendEmailSubject: this.getResourceBundle().getText("shareSendEmailWorklistSubject"),
 				shareSendEmailMessage: this.getResourceBundle().getText("shareSendEmailWorklistMessage", [location.href]),
 				tableNoDataText: this.getResourceBundle().getText("tableNoDataText"),
-				tableBusyDelay: 0,
-				inStock: 0,
-				shortage: 0,
-				outOfStock: 0,
-				countAll: 0
+				tableBusyDelay: 0
 			});
 			this.setModel(oViewModel, "worklistView");
-			
-			// Create an object of filters
-			this._mFilters = {
-				"inStock": [new sap.ui.model.Filter("UnitsInStock", "GT", 10)],
-				"outOfStock": [new sap.ui.model.Filter("UnitsInStock", "LE", 0)],
-				"shortage": [new sap.ui.model.Filter("UnitsInStock", "BT", 1, 10)],
-				"all": []
-			};
 
 			// Make sure, busy indication is showing immediately so there is no
 			// break after the busy indication for loading the view's meta data is
@@ -82,44 +70,11 @@ sap.ui.define([
 			// update the worklist's object counter after the table update
 			var sTitle,
 				oTable = oEvent.getSource(),
-				oViewModel = this.getModel("worklistView"),
 				iTotalItems = oEvent.getParameter("total");
 			// only update the counter if the length is final and
 			// the table is not empty
 			if (iTotalItems && oTable.getBinding("items").isLengthFinal()) {
 				sTitle = this.getResourceBundle().getText("worklistTableTitleCount", [iTotalItems]);
-				
-				// Get the count for all the products and set the value to 'countAll' property
-				this.getModel().read("/Products/$count", {
-					success: function (oData) {
-						oViewModel.setProperty("/countAll", oData);
-					}
-				});
-
-				// read the count for the unitsInStock filter
-				this.getModel().read("/Products/$count", {
-					success: function (oData) {
-						oViewModel.setProperty("/inStock", oData);
-					},
-					filters: this._mFilters.inStock
-				});
-
-				// read the count for the outOfStock filter
-				this.getModel().read("/Products/$count", {
-					success: function(oData){
-						oViewModel.setProperty("/outOfStock", oData);
-					},
-					filters: this._mFilters.outOfStock
-				});
-			
-				// read the count for the shortage filter
-				this.getModel().read("/Products/$count", { 
-					success: function(oData){
-						oViewModel.setProperty("/shortage", oData);
-					},
-					filters: this._mFilters.shortage
-				});
-				
 			} else {
 				sTitle = this.getResourceBundle().getText("worklistTableTitle");
 			}
@@ -206,19 +161,7 @@ sap.ui.define([
 			if (oTableSearchState.length !== 0) {
 				oViewModel.setProperty("/tableNoDataText", this.getResourceBundle().getText("worklistNoDataWithSearchText"));
 			}
-		},
-		
-		/**
-		 * Event handler when a filter tab gets pressed
-		 * @param {sap.ui.base.Event} oEvent the filter tab event
-		 * @public
-		 */
-		onQuickFilter: function(oEvent) {
-			var oBinding = this._oTable.getBinding("items"),
-				sKey = oEvent.getParameter("selectedKey");
-
-			oBinding.filter(this._mFilters[sKey]);
 		}
-		
+
 	});
 });
