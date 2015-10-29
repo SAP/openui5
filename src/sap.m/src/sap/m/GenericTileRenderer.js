@@ -35,7 +35,7 @@ sap.ui.define([], function() {
 		oRm.addClass(oControl.getFrameType());
 
 		oRm.writeAttribute("role", "presentation");
-		oRm.writeAttribute("aria-label", oControl.getAltText());
+		oRm.writeAttributeEscaped("aria-label", oControl.getAltText());
 
 		if (oControl.hasListeners("press") && oControl.getState() !== "Disabled") {
 			oRm.addClass("sapMPointer");
