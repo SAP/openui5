@@ -43,6 +43,7 @@
 		<module>src/sap.ui.ux3</module>
 		<module>src/sap.ui.suite</module>
 		<module>src/sap.ui.dt</module>
+		<module>src/sap.tnt</module>
 		<module>src/sap.ui.demokit</module>
 
 		<!-- theme libraries -->
