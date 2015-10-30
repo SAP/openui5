@@ -163,6 +163,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
+		MonthsRow.prototype.onsapfocusleave = function(oEvent){
+
+			if (!oEvent.relatedControlId || !jQuery.sap.containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+				if (this._bMouseMove) {
+					_unbindMousemove.call(this, true);
+
+					_selectMonth.call(this, this._getDate());
+					this._bMoveChange = false;
+					this._bMousedownChange = false;
+					_fireSelect.call(this);
+				}
+
+				if (this._bMousedownChange) {
+					// mouseup somewhere outside of control -> if focus left finish selection
+					this._bMousedownChange = false;
+					_fireSelect.call(this);
+				}
+			}
+
+		};
+
 		// overwrite invalidate to recognize changes on selectedDates
 		MonthsRow.prototype.invalidate = function(oOrigin) {
 
@@ -575,7 +596,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 				if (oFocusedDate.getTime() != oOldFocusedDate.getTime()) {
 					this._setDate(oFocusedDate);
-					_selectMonth.call(this, oFocusedDate, false, true);
+					_selectMonth.call(this, oFocusedDate, true);
 					this._bMoveChange = true;
 				}
 			}
@@ -613,8 +634,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 					_selectMonth.call(this, oFocusedDate);
 					this._bMoveChange = false;
+					this._bMousedownChange = false;
 					_fireSelect.call(this);
 				}
+			}
+
+			if (this._bMousedownChange) {
+				this._bMousedownChange = false;
+				_fireSelect.call(this);
 			}
 
 		};
@@ -877,9 +904,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				return;
 			}
 
-			_selectMonth.call(this, oFocusedDate, oEvent.shiftKey);
-			_fireSelect.call(this);
-			if (this.getIntervalSelection() && this.$().is(":visible")) {
+			_selectMonth.call(this, oFocusedDate);
+			this._bMousedownChange = true;
+
+			if (this._bMouseMove) {
+				// a mouseup must be happened outside of control -> just end move
+				_unbindMousemove.call(this, true);
+				this._bMoveChange = false;
+			}else if (this.getIntervalSelection() && this.$().is(":visible")) {
 				// if closed in select event, do not add mousemove handler
 				_bindMousemove.call(this, true);
 			}
@@ -982,7 +1014,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		}
 
-		function _selectMonth(oDate, bIntervalEnd, bMove){
+		function _selectMonth(oDate, bMove){
 
 			var aSelectedDates = this.getSelectedDates();
 			var oDateRange;
