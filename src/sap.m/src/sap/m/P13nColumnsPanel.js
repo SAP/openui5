@@ -108,6 +108,22 @@ sap.ui.define([
 				 */
 				setData: {}
 			}
+		},
+		renderer: function(oRm, oControl) {
+			oRm.write("<div");
+			oRm.writeControlData(oControl);
+			oRm.addClass("sapMP13nColumnsPanel");
+			oRm.writeClasses();
+			oRm.write(">"); // div element
+		
+			var aContent = oControl.getAggregation("content");
+			if (aContent) {
+				aContent.forEach(function(oContent){
+					oRm.renderControl(oContent);
+				});
+			}
+
+			oRm.write("</div>");
 		}
 	});
 
