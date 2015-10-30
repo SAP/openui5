@@ -80,7 +80,7 @@
 			<EntityContainer Name="Container">
 				<EntitySet Name="Departments" EntityType="com.sap.gateway.iwbep.tea_busi.v0001.Department" IncludeInServiceDocument="true"/>
 				<EntitySet Name="EMPLOYEES" EntityType="com.sap.gateway.iwbep.tea_busi.v0001.Worker" IncludeInServiceDocument="true">
-					<NavigationPropertyBinding Path="EMPLOYEE_2_TEAM" Target="com.sap.gateway.iwbep.tea_busi.v0001.Container/TEAMS"/>
+					<NavigationPropertyBinding Path="EMPLOYEE_2_TEAM" Target="TEAMS"/>
 					<NavigationPropertyBinding Path="EMPLOYEE_2_EQUIPMENTS" Target="com.sap.gateway.iwbep.tea_busi.v0001.Container/Equipments"/>
 				</EntitySet>
 				<EntitySet Name="Equipments" EntityType="com.sap.gateway.iwbep.tea_busi.v0001.EQUIPMENT" IncludeInServiceDocument="true">

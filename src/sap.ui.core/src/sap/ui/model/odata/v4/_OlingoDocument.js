@@ -196,7 +196,8 @@ sap.ui.define([
 						"Fullname" : oResult.QualifiedName + "/" + oEntitySet.name,
 						"NavigationPropertyBindings" :
 							OlingoDocument.transformNavigationPropertyBindings(
-								oEntitySet.navigationPropertyBinding, oResult.QualifiedName),
+								oEntitySet.navigationPropertyBinding, oEntitySet.name,
+								oResult.QualifiedName),
 						"EntityType" : {
 							"QualifiedName" : oEntitySet.entityType
 						}
@@ -210,7 +211,8 @@ sap.ui.define([
 						"Fullname" : oResult.QualifiedName + "/" + oSingleton.name,
 						"NavigationPropertyBindings" :
 							OlingoDocument.transformNavigationPropertyBindings(
-								oSingleton.navigationPropertyBinding, oResult.QualifiedName),
+								oSingleton.navigationPropertyBinding, oSingleton.name,
+								oResult.QualifiedName),
 						"Type" : {
 							"QualifiedName" : oSingleton.type
 						}
@@ -225,13 +227,15 @@ sap.ui.define([
 		 *
 		 * @param {object[]} aNavigationPropertyBindings
 		 *   the array of NavigationPropertyBindings
-		  * @param {string} sContainerName
-		 *   the full qualified name of the entity container
+		  * @param {string} sSetName
+		 *   the short name of the entity set owning the bindings
+		 * @param {string} sContainerName
+		 *   the qualified name of the entity container
 		 * @return {object[]}
 		 *   the transformed array of NavigationPropertyBindings
 		 * @private
 		 */
-		transformNavigationPropertyBindings : function (aNavigationPropertyBindings,
+		transformNavigationPropertyBindings : function (aNavigationPropertyBindings, sSetName,
 			sContainerName) {
 			var aResult = [];
 
@@ -239,10 +243,12 @@ sap.ui.define([
 				aNavigationPropertyBindings.forEach(function(oNavigationPropertyBinding) {
 					var sTargetName = oNavigationPropertyBinding.target;
 
-					if (sTargetName.indexOf("/") < 0) { //TODO 100% code coverage!
+					if (sTargetName.indexOf("/") < 0) {
 						sTargetName = sContainerName + "/" + sTargetName;
 					}
 					aResult.push({
+						"Fullname" : sContainerName + "/" + sSetName + "/"
+							+ oNavigationPropertyBinding.path,
 						"Path" : oNavigationPropertyBinding.path,
 						"Target" : {
 							"Fullname" : sTargetName
@@ -360,14 +366,19 @@ sap.ui.define([
 		 * @private
 		 */
 		transformType: function (oDocument, sQualifiedName) {
+			var oType;
+
 			if (OlingoDocument.getSchemaName(sQualifiedName) === "Edm") {
 				return {
+					"@odata.type" : "#Edm.Metadata.PrimitiveType",
 					"Name" : OlingoDocument.getUnqualifiedName(sQualifiedName),
 					"QualifiedName" : sQualifiedName
 				};
 			}
-			return OlingoDocument.transformStructuredType(oDocument, sQualifiedName,
+			oType = OlingoDocument.transformStructuredType(oDocument, sQualifiedName,
 				OlingoDocument.findComplexType(oDocument, sQualifiedName));
+			oType["@odata.type"] = "#Edm.Metadata.ComplexType";
+			return oType;
 		}
 	};
 
