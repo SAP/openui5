@@ -113,11 +113,10 @@ sap.ui.define([
 
 		_onBindingChange: function(oEvent) {
 			var oView = this.getView(),
-				oViewModel = this.getModel("objectView"),
-				oElementBinding = oView.getElementBinding();
+				oViewModel = this.getModel("objectView");
 
 			// No data for the binding
-			if (!oElementBinding.getBoundContext()) {
+			if (!oView.getBindingContext()) {
 				this.getRouter().getTargets().display("objectNotFound");
 				return;
 			}
