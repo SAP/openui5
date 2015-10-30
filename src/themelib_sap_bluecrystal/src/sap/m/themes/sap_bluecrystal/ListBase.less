@@ -104,8 +104,7 @@
 }
 
 /* Growing feature */
-.sapMGrowingListTrigger,
-.sapMGrowingListLoading {
+.sapMGrowingListTrigger {
 	border-top: 1px solid @sapUiListHeaderBorderColor;
 	height: 5.0rem;
 }
@@ -113,22 +112,15 @@
 	margin: 1.5rem 1.0rem ;
 	position: absolute;
 }
-.sapMGrowingListLoading > .sapMGrowingListBusyIndicator {
-	margin: 0.5rem auto;
-	position: static;
-}
-.sapMGrowingListTitel {
+.sapMGrowingListTriggerText {
 	padding: 0 4rem;
 }
-.sapMGrowingListTitel > h1 {
+.sapMGrowingListTriggerText > .sapMSLITitle {
 	margin: 0.813rem 0; /* overwrites any user-agent default margin values */
 }
 .sapMGrowingListDescription {
 	padding: 0 4rem;
 	text-align: center;
-}
-.sapMLIBActive .sapMGrowingListBusyIndicatorVisible .sapMBusySvg {
-	stroke: @sapUiInvertedElement;
 }
 
 /* Compact size */
@@ -145,8 +137,7 @@
 	height: 3rem;
 }
 
-.sapUiSizeCompact .sapMGrowingListTrigger,
-.sapUiSizeCompact .sapMGrowingListLoading {
+.sapUiSizeCompact .sapMGrowingListTrigger{
 	height: 4rem;
 }
 
@@ -154,6 +145,6 @@
 	margin: 1rem;
 }
 
-.sapUiSizeCompact .sapMGrowingListTitel > h1 {
+.sapUiSizeCompact .sapMGrowingListTriggerText > .sapMSLITitle {
 	margin-bottom: 0;
 }

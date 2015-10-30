@@ -29,60 +29,93 @@
 			jQuery.sap.require("sap.m.List");
 			jQuery.sap.require("sap.m.GrowingEnablement");
 
-			module("trigger or button?");
+			module("trigger");
+			test("Should update the trigger state correctly", function() {
+				//Arrange
+				var data = { items: [ {},{}] };
 
-			function switchTriggerTestcase (bHasScrollbars, bShouldShowTrigger) {
-				// System under Test
-				var $Dummy = jQuery("<div>").insertAfter("#qunit-fixture");
-				var oGrowingEnablement = new sap.m.GrowingEnablement(new sap.m.List()),
-					ojQueryStub = this.stub(oGrowingEnablement._oControl, "$", function () {
-						//we need a valid jQuery node
-						return $Dummy;
-					});
+				var oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData(data);
+				
+				//System under Test
+				var oList = new sap.m.List({
+					growing : true,
+					growingThreshold: 1,
+					items : {
+						path : "/items",
+						template : new sap.m.CustomListItem({
+							content : new sap.ui.core.HTML({content:'<div style="height: 10000px"></div>'}),
+						})
+					}
+				}).setModel(oModel);
 
-				// Act
-				oGrowingEnablement._checkTriggerType(true, bHasScrollbars);
-				oGrowingEnablement._checkTriggerType(true, bHasScrollbars);
+				var oPage = new sap.m.Page({
+					title: "List Page",
+					content : oList
+				});
 
-				// Assert
-				strictEqual(oGrowingEnablement._showsTrigger, bShouldShowTrigger, "did show the trigger correctly");
-				strictEqual(oGrowingEnablement._showsLoading, !bShouldShowTrigger, "did show the loading correctly");
-				strictEqual(ojQueryStub.callCount, 1, "did modify the dom only once");
-
-				oGrowingEnablement.destroy();
-			}
-
-			test("Should show the trigger", function() {
-				switchTriggerTestcase.call(this, false, true);
-			});
-
-			test("Should show the loading indicator", function() {
-				switchTriggerTestcase.call(this, true, false);
-			});
-
-			test("Should not change trigger if growing is not enabled", function() {
-				// System under Test
-				var $Dummy = jQuery("<div>").insertAfter("#qunit-fixture");
-				var oGrowingEnablement = new sap.m.GrowingEnablement(new sap.m.List()),
-					ojQueryStub = this.stub(oGrowingEnablement._oControl, "$", function () {
-						//we need a valid jQuery node
-						return $Dummy;
-					});
+				oPage.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				
+				// sytem under test
+				var oGrowingDelegate = oList._oGrowingDelegate;
+				var oTrigger = oGrowingDelegate._oTrigger;
 
 				// Act
-				oGrowingEnablement._checkTriggerType(false, true);
-				oGrowingEnablement._checkTriggerType(false, false);
+				ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible after initial rendering");
+				
+				// act + assert loading is started case
+				oGrowingDelegate._updateTrigger(true);
+				
+				ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
+				ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
+				ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
+				strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
+				strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
+				ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
+				
+				// act + assert loading is finished case for growingScrollToLoad=false
+				oGrowingDelegate._updateTrigger(false);
+				ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
+				ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
+				strictEqual(oList.$("triggerText").css("visibility"), "visible", "Growing trigger text is visible");
+				strictEqual(oList.$("triggerInfo").css("visibility"), "visible", "Growing info text is visible");
+				ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
 
-				// Assert
-				ok(!oGrowingEnablement._showsTrigger, "did not show the trigger");
-				ok(!oGrowingEnablement._showsLoading, "did not show the loading");
-				strictEqual(ojQueryStub.callCount, 0, "did not modify the dom");
+				// act + assert growingScrollToLoad=true
+				oList.setGrowingScrollToLoad(true);
+				sap.ui.getCore().applyChanges();
+				ok(oList.$("triggerList").is(":hidden"), "Load more trigger is not visible");
+				
+				// act + assert loading is started case for growingScrollToLoad=true
+				oGrowingDelegate._updateTrigger(true);
+				ok(oTrigger.getBusy(), "Trigger shows the busy indicator");
+				ok(!oTrigger.$().hasClass("sapMLIBActive"), "Trigger is not active since it is busy");
+				ok(oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is added");
+				strictEqual(oList.$("triggerText").css("visibility"), "hidden", "Growing trigger text is hidden");
+				strictEqual(oList.$("triggerInfo").css("visibility"), "hidden", "Growing infor text is hidden");
+				ok(oList.$("triggerList").is(":visible"), "Load more trigger is visible");
+				
+				// act + assert loading is finished case for growingScrollToLoad=true
+				oGrowingDelegate._updateTrigger(false);
+				ok(!oTrigger.getBusy(), "Trigger does not show the busy indicator");
+				ok(!oTrigger.$().hasClass("sapMGrowingListBusyIndicatorVisible"), "Busy indicator visible class is removed");
+				ok(!oList.$("triggerText").is(":visible"), "visible", "Growing trigger text is not visible");
+				ok(!oList.$("triggerInfo").css(":visible"), "visible", "Growing info text is not visible");
+				ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible");
+				
+				// act + assert growingScrollToLoad=true
+				oList.setGrowingScrollToLoad(false);
+				sap.ui.getCore().applyChanges();
+				ok(oList.$("triggerList").is(":visible"), "Load more trigger is  visible");
+				oGrowingDelegate.requestNewPage();
+				ok(!oList.$("triggerList").is(":visible"), "Load more trigger is not visible everything is loaded");
 
-				oGrowingEnablement.destroy();
+				oPage.destroy();
+				oModel.destroy();
 			});
 
 			module("Integration tests");
-
 			test("Should determine if the list is scrollable", function() {
 				//Arrange
 				var data = { items: [ {},{}] };
