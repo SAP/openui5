@@ -9,81 +9,93 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator', 's
 
 
 	/**
-	 * Constructor for Filter
-	 * You can either pass an object with the filter parameters or use the function arguments
+	 * Constructor for Filter.
 	 *
-	 * Using object:
-	 * new sap.ui.model.Filter({
-	 *   path: "...",
-	 *   operator: "...",
-	 *   value1: "...",
-	 *   value2: "..."
-	 * })
+	 * One can either pass a single object literal with the filter parameters or use the individual constructor arguments.
+	 * No matter which variant is used, only certain combinations of parameters are supported
+	 * (the following list uses the names from the object literal):
+	 * <ul>
+	 * <li>A <code>path</code>, <code>operator</code> and one or two values (<code>value1</code>, <code>value2</code>), depending on the operator</li>
+	 * <li>A <code>path</code> and a custom filter function <code>test</code></li>
+	 * <li>An array of other filters named <code>filters</code> and a Boolean flag <code>and</code> that specifies whether to combine
+	 *     the filters with an AND (<code>true</code>) or an OR (<code>false</code>) operator.</li>
+	 * </ul>
+	 * An error will be logged to the console if an invalid combination of parameters is provided.
 	 *
-	 * OR:
-	 * new sap.ui.model.Filter({
-	 *   path: "...",
-	 *   test: function(oValue) {
-	 *   }
-	 * })
+	 * @example <caption>Using an object with a path, an operator and one or two values</caption>
 	 *
-	 * OR:
-	 * new sap.ui.model.Filter({
-	 *   filters: [...],
-	 *   and: true|false
-	 * })
+	 *   new sap.ui.model.Filter({
+	 *     path: "...",
+	 *     operator: "...",
+	 *     value1: "...",
+	 *     value2: "..."
+	 *   })
 	 *
-	 * You can only pass sPath, sOperator and their values OR sPath, fnTest OR aFilters and bAnd. You will get an error if you define an invalid combination of filters parameters.
+	 * @example <caption>Using a path and a custom filter function:</caption>
 	 *
-	 * Using arguments:
-	 * new sap.ui.model.Filter(sPath, sOperator, oValue1, oValue2);
-	 * OR
-	 * new sap.ui.model.Filter(sPath, fnTest);
-	 * OR
-	 * new sap.ui.model.Filter(aFilters, bAnd);
+	 *   new sap.ui.model.Filter({
+	 *     path: "...",
+	 *     test: function(oValue) {
+	 *     }
+	 *   })
 	 *
-	 * aFilters is an array of other instances of sap.ui.model.Filter. If bAnd is set all filters within the filter will be ANDed else they will be ORed.
+	 * @example <caption>Combining a list of filters either with AND or OR</caption>
+	 *
+	 *   new sap.ui.model.Filter({
+	 *     filters: [...],
+	 *     and: true|false
+	 *   })
+	 *
+	 * @example <caption>Same as above, but using individual constructor arguments</caption>
+	 *
+	 *     new sap.ui.model.Filter(sPath, sOperator, oValue1, oValue2);
+	 *   OR
+	 *     new sap.ui.model.Filter(sPath, fnTest);
+	 *   OR
+	 *     new sap.ui.model.Filter(aFilters, bAnd);
 	 *
 	 * @class
-	 * Filter for the list binding
+	 * Filter for the list binding.
 	 *
-	 * @param {object} oFilterInfo the filter info object
-	 * @param {string} oFilterInfo.path the binding path for this filter
-	 * @param {function} oFilterInfo.test function which is used to filter the items which should return a boolean value to indicate whether the current item is preserved
-	 * @param {sap.ui.model.FilterOperator} oFilterInfo.operator operator used for the filter
-	 * @param {object} oFilterInfo.value1 first value to use for filter
-	 * @param {object} [oFilterInfo.value2=null] second value to use for filter
-	 * @param {array} oFilterInfo.filters array of filters on which logical conjunction is applied
-	 * @param {boolean} oFilterInfo.and indicates whether an "and" logical conjunction is applied on the filters. If it's set to false, an "or" conjunction is applied
+	 * @param {object|string|sap.ui.model.Filter[]} vFilterInfo Filter info object or a path or an array of filters
+	 * @param {string} vFilterInfo.path Binding path for this filter
+	 * @param {function} vFilterInfo.test Function which is used to filter the items and which should return a Boolean value to indicate whether the current item passes the filter
+	 * @param {sap.ui.model.FilterOperator} vFilterInfo.operator Operator used for the filter
+	 * @param {object} vFilterInfo.value1 First value to use with the given filter operator
+	 * @param {object} [vFilterInfo.value2=null] Second value to use with the filter operator (only for some operators)
+	 * @param {sap.ui.model.Filter[]} vFilterInfo.filters Array of filters on which logical conjunction is applied
+	 * @param {boolean} vFilterInfo.and Indicates whether an "AND" logical conjunction is applied on the filters. If it's set to <code>false</code>, an "OR" conjunction is applied
+	 * @param {sap.ui.model.FilterOperator|function|boolean} [vOperator] Either a filter operator or a custom filter function or a Boolean flag that defines how to combine multiple filters
+	 * @param {any} [oValue1] First value to use with the given filter operator
+	 * @param {any} [oValue2] Second value to use with the given filter operator (only for some operators)
 	 * @public
 	 * @alias sap.ui.model.Filter
 	 */
 	var Filter = BaseObject.extend("sap.ui.model.Filter", /** @lends sap.ui.model.Filter.prototype */ {
-		constructor : function(sPath, sOperator, oValue1, oValue2){
+		constructor : function(vFilterInfo, vOperator, oValue1, oValue2){
 			//There are two different ways of specifying a filter
-			//If can be passed in only one object or defined with parameters
-			if (typeof sPath === "object" && !jQuery.isArray(sPath)) {
-				var oFilterData = sPath;
-				this.sPath = oFilterData.path;
-				this.sOperator = oFilterData.operator;
-				this.oValue1 = oFilterData.value1;
-				this.oValue2 = oFilterData.value2;
-				this.aFilters = oFilterData.filters || oFilterData.aFilters;
-				this.bAnd = oFilterData.and || oFilterData.bAnd;
-				this.fnTest = oFilterData.test;
+			//It can be passed in only one object or defined with parameters
+			if (typeof vFilterInfo === "object" && !jQuery.isArray(vFilterInfo)) {
+				this.sPath = vFilterInfo.path;
+				this.sOperator = vFilterInfo.operator;
+				this.oValue1 = vFilterInfo.value1;
+				this.oValue2 = vFilterInfo.value2;
+				this.aFilters = vFilterInfo.filters || vFilterInfo.aFilters; // support legacy name 'aFilters' (intentionally not documented)
+				this.bAnd = vFilterInfo.and || vFilterInfo.bAnd; // support legacy name 'bAnd' (intentionally not documented)
+				this.fnTest = vFilterInfo.test;
 			} else {
 				//If parameters are used we have to check whether a regular or a multi filter is specified
-				if (jQuery.isArray(sPath)) {
-					this.aFilters = sPath;
+				if (jQuery.isArray(vFilterInfo)) {
+					this.aFilters = vFilterInfo;
 				} else {
-					this.sPath = sPath;
+					this.sPath = vFilterInfo;
 				}
-				if (jQuery.type(sOperator) === "boolean") {
-					this.bAnd = sOperator;
-				} else if (jQuery.type(sOperator) === "function" ) {
-					this.fnTest = sOperator;
+				if (jQuery.type(vOperator) === "boolean") {
+					this.bAnd = vOperator;
+				} else if (jQuery.type(vOperator) === "function" ) {
+					this.fnTest = vOperator;
 				} else {
-					this.sOperator = sOperator;
+					this.sOperator = vOperator;
 				}
 				this.oValue1 = oValue1;
 				this.oValue2 = oValue2;
