@@ -654,14 +654,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					oWithControl.$mFragmentContexts[sFragmentName] = true;
 					sCurrentName = sFragmentName;
 
-					// take fragment from cache and clone it
+					// take fragment from cache and import it
 					oFragmentElement = mFragmentCache[sFragmentName];
 					if (!oFragmentElement) {
 						oFragmentElement
 							= XMLTemplateProcessor.loadTemplate(sFragmentName, "fragment");
 						mFragmentCache[sFragmentName] = oFragmentElement;
 					}
-					oFragmentElement = oFragmentElement.cloneNode(true);
+					oFragmentElement = oElement.ownerDocument.importNode(oFragmentElement, true);
 
 					requireFor(oFragmentElement);
 					if (oFragmentElement.namespaceURI === "sap.ui.core"
@@ -1072,11 +1072,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					var i,
 						oAttributesList = oNode.attributes;
 
-					if (oAttributesList) { // only if oNode is an Element
-						// Note: iterate backwards to account for removal of attributes!
-						for (i = oAttributesList.length - 1; i >= 0; i -= 1) {
-							resolveAttributeBinding(oNode, oAttributesList.item(i), oWithControl);
-						}
+					// Note: iterate backwards to account for removal of attributes!
+					for (i = oAttributesList.length - 1; i >= 0; i -= 1) {
+						resolveAttributeBinding(oNode, oAttributesList.item(i), oWithControl);
 					}
 				}
 
@@ -1096,6 +1094,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 					for (i = 0; i < n; i += 1) {
 						aChildren[i] = oNodeList.item(i);
 					}
+					oNodeList = null; // do not keep node list (a)live during further processing
 					for (i = 0; i < n; i += 1) {
 						visitNode(aChildren[i], oWithControl);
 					}
@@ -1199,10 +1198,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/BindingParser', 'sap/ui/base/Ma
 				}));
 				debug(undefined, "Finished processing", sCaller);
 
-				return Device.browser.edge || Device.browser.msie && Device.os.version >= 10
-					//TODO remove this workaround for Edge/IE on Win10 as soon as possible
-					? oRootElement.cloneNode(true)
-					: oRootElement;
+				return oRootElement;
 			}
 		};
 	}, /* bExport= */ true);
