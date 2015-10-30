@@ -4,8 +4,9 @@ sap.ui.define([
 	"myCompany/myApp/model/formatter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/m/MessageToast"
-], function(BaseController, JSONModel, formatter, Filter, FilterOperator, MessageToast) {
+	"sap/m/MessageToast",
+	"sap/m/MessageBox"
+], function(BaseController, JSONModel, formatter, Filter, FilterOperator, MessageToast, MessageBox) {
 	"use strict";
 
 	return BaseController.extend("myCompany.myApp.controller.Worklist", {
@@ -48,7 +49,7 @@ sap.ui.define([
 				countAll: 0
 			});
 			this.setModel(oViewModel, "worklistView");
-			
+
 			// Create an object of filters
 			this._mFilters = {
 				"inStock": [new sap.ui.model.Filter("UnitsInStock", "GT", 10)],
@@ -89,7 +90,7 @@ sap.ui.define([
 			// the table is not empty
 			if (iTotalItems && oTable.getBinding("items").isLengthFinal()) {
 				sTitle = this.getResourceBundle().getText("worklistTableTitleCount", [iTotalItems]);
-				
+
 				// Get the count for all the products and set the value to 'countAll' property
 				this.getModel().read("/Products/$count", {
 					success: function (oData) {
@@ -112,15 +113,15 @@ sap.ui.define([
 					},
 					filters: this._mFilters.outOfStock
 				});
-			
+
 				// read the count for the shortage filter
-				this.getModel().read("/Products/$count", { 
+				this.getModel().read("/Products/$count", {
 					success: function(oData){
 						oViewModel.setProperty("/shortage", oData);
 					},
 					filters: this._mFilters.shortage
 				});
-				
+
 			} else {
 				sTitle = this.getResourceBundle().getText("worklistTableTitle");
 			}
@@ -208,7 +209,18 @@ sap.ui.define([
 				oViewModel.setProperty("/tableNoDataText", this.getResourceBundle().getText("worklistNoDataWithSearchText"));
 			}
 		},
-		
+
+		/**
+		 * Displays an error message dialog. The displayed dialog is content density aware.
+		 * @param {String} sMsg The error message to be displayed
+		 * @private
+		 */
+		_showErrorMessage: function(sMsg) {
+			MessageBox.error(sMsg, {
+				styleClass: this.getOwnerComponent().getContentDensityClass()
+			});
+		},
+
 		/**
 		 * Event handler when a filter tab gets pressed
 		 * @param {sap.ui.base.Event} oEvent the filter tab event
@@ -220,21 +232,25 @@ sap.ui.define([
 
 			oBinding.filter(this._mFilters[sKey]);
 		},
-		
+
 		/**
 		 * Event handler for the unlist button. Will delete the
 		 * product from the (local) model.
 		 * @public
 		 */
 		onUnlistObjects: function() {
-			var aSelectedProducts = this.byId("table").getSelectedItems();
-			
-			for (var i = 0; i < aSelectedProducts.length; i++) {
-				var sPath = aSelectedProducts[i].getBindingContextPath();
-				this.getModel().remove(sPath);
-			}
-			MessageToast.show(this.getModel("i18n").getResourceBundle().getText("StockRemovedSuccessMsg", [aSelectedProducts.length]));
+			var aSelectedProducts, i, sPath;
 
+			aSelectedProducts = this.byId("table").getSelectedItems();
+			if (aSelectedProducts.length) {
+				for (i = 0; i < aSelectedProducts.length; i++) {
+					sPath = aSelectedProducts[i].getBindingContextPath();
+					this.getModel().remove(sPath);
+				}
+				MessageToast.show(this.getModel("i18n").getResourceBundle().getText("StockRemovedSuccessMsg", [aSelectedProducts.length]));
+			} else {
+				this._showErrorMessage(this.getModel("i18n").getResourceBundle().getText("TableSelectProduct"));
+			}
 		},
 
 
@@ -242,20 +258,23 @@ sap.ui.define([
 		 * Event handler for the reorder button. Will reorder the
 		 * product by updating the (local) model
 		 * @public
-		*/
+		 */
 		onUpdateStockObjects: function() {
-	
-			var aSelectedProducts = this.byId("table").getSelectedItems();
+			var aSelectedProducts, i, sPath, oProductObject;
 
-			for (var i = 0; i < aSelectedProducts.length; i++) {
-				var sPath = aSelectedProducts[i].getBindingContextPath(),
-				oProductObject = aSelectedProducts[i].getBindingContext().getObject();
-				oProductObject.UnitsInStock += 10;
-				this.getModel().update(sPath, oProductObject);
+			aSelectedProducts = this.byId("table").getSelectedItems();
+			if (aSelectedProducts.length) {
+				for (i = 0; i < aSelectedProducts.length; i++) {
+					sPath = aSelectedProducts[i].getBindingContextPath();
+					oProductObject = aSelectedProducts[i].getBindingContext().getObject();
+					oProductObject.UnitsInStock += 10;
+					this.getModel().update(sPath, oProductObject);
+				}
+				MessageToast.show(this.getModel("i18n").getResourceBundle().getText("StockUpdatedSuccessMsg", [aSelectedProducts.length]));
+			} else {
+				this._showErrorMessage(this.getModel("i18n").getResourceBundle().getText("TableSelectProduct"));
 			}
-			MessageToast.show(this.getModel("i18n").getResourceBundle().getText("StockUpdatedSuccessMsg", [aSelectedProducts.length]));
-
 		}
-		
+
 	});
 });
