@@ -92,12 +92,12 @@
 					oSelectDialog.bindAggregation("items", oConfiguration);
 				}
 
-				function notSupportedIE(bAsync){
+				function notSupportedIE(bAsync, fDone){
 					// this test is not supported by IE9
 					if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
 						QUnit.expect(0);
 						if (bAsync) {
-							QUnit.start();
+							fDone();
 						}
 						return;
 					}
@@ -174,7 +174,6 @@
 				});
 
 				QUnit.test("Open SelectDialog that is defined within an XML view without parent (has no UI area, temporary fix: will be added to static area)", function (assert) {
-
 					var xml = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 					'      <SelectDialog id="xmlSelectDialog"></SelectDialog>' +
 					'    </mvc:View>',
@@ -196,7 +195,6 @@
 				});
 
 				QUnit.test("Open SelectDialog that is defined within a fragment", function (assert) {
-
 					var sFragmentText = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">' +
 					 '      <SelectDialog id="fragmentSelectDialog"></SelectDialog>' +
 					 '    </core:FragmentDefinition>',
@@ -234,8 +232,9 @@
 				});
 
 				QUnit.test("Remember Selections after Cancel", function (assert) {
-					notSupportedIE(true);
 					var done = assert.async();
+
+					notSupportedIE(true, done);
 
 					// arrange
 					this.oSelectDialog.setRememberSelections(true);
@@ -256,7 +255,6 @@
 				});
 
 				QUnit.test("Remember Selections false mode", function (assert) {
-
 					// arrange
 					this.oSelectDialog.setRememberSelections(false);
 
@@ -283,7 +281,6 @@
 
 
 				QUnit.test("Remember Selections true mode", function (assert) {
-
 					// arrange
 					this.oSelectDialog.setRememberSelections(true);
 
@@ -336,9 +333,8 @@
 				});
 
 				QUnit.test("Open with string and filter", function (assert) {
-
 					var that = this,
-					oFilter = new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title1");
+						oFilter = new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title1");
 
 					this.oSelectDialog.bindAggregation("items", {
 						path: "/items",
@@ -373,8 +369,8 @@
 
 				QUnit.test("Search event", function (assert) {
 					// Arrange
-					var fnFireSelectSpy = sinon.spy();
-					var that = this;
+					var fnFireSelectSpy = sinon.spy(),
+						that = this;
 					this.oSelectDialog.attachSearch(fnFireSelectSpy);
 
 					jQuery.when(this.oSelectDialog.open()).then(function (oEvent) {
@@ -404,10 +400,11 @@
 				});
 
 				QUnit.test("Confirm Event", function (assert) {
-					notSupportedIE(true);
+					var done = assert.async(),
+						that = this;
 
-					var done = assert.async();
-					var that = this;
+					notSupportedIE(true, done);
+
 					this.oSelectDialog.setMultiSelect(true);
 					bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
 					sap.ui.getCore().applyChanges();
@@ -439,10 +436,11 @@
 				});
 
 				QUnit.test("Cancel Event with unfiltered selection", function (assert) {
-					notSupportedIE(true);
+					var done = assert.async(),
+						that = this;
 
-					var done = assert.async();
-					var that = this;
+					notSupportedIE(true, done);
+
 					this.oSelectDialog.setMultiSelect(true);
 					bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
 
@@ -468,11 +466,11 @@
 				});
 
 				QUnit.test("Cancel Event with pre-filtered selection", function (assert) {
-					notSupportedIE(true);
-
 					var done = assert.async(),
 						that = this,
 						oFilter = new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title4");
+
+					notSupportedIE(true, done);
 
 					this.oSelectDialog.setMultiSelect(true);
 
@@ -504,11 +502,11 @@
 				});
 
 				QUnit.test("Cancel Event with user-filtered selection", function (assert) {
-					notSupportedIE(true);
-
 					var done = assert.async(),
 						that = this,
 						oFilter = new sap.ui.model.Filter("Title", sap.ui.model.FilterOperator.Contains , "Title4");
+
+					notSupportedIE(true, done);
 
 					this.oSelectDialog.setMultiSelect(true);
 					bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
@@ -536,8 +534,6 @@
 				});
 
 				QUnit.test("Cancel on key ESCAPE event", function (assert) {
-					notSupportedIE(true);
-
 					this.oSelectDialog.setMultiSelect(true);
 
 					var done = assert.async(),
@@ -547,6 +543,8 @@
 							assert.strictEqual(that.oSelectDialog._oList.getSelectedContextPaths().length, 4, 'After cancelling there should be 4 items selected again');
 							done();
 						};
+
+					notSupportedIE(true, done);
 
 					// bind items
 					bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
@@ -584,10 +582,10 @@
 				});
 
 				QUnit.test("Destroy SelectDialog", function (assert) {
-					notSupportedIE(true);
-
 					var done = assert.async(),
 						that = this;
+
+					notSupportedIE(true, done);
 
 					this.oSelectDialog.setMultiSelect(true);
 
@@ -674,7 +672,6 @@
 				});
 
 				QUnit.test("Check getDomRef method", function (assert) {
-
 					this.oSelectDialog.open();
 
 					// getDomRef
@@ -684,20 +681,17 @@
 				});
 
 				QUnit.test("Check height of content", function(assert) {
-					notSupportedIE(true);
-
 					var done = assert.async(),
 						that = this;
+
+					notSupportedIE(true, done);
 
 					this.oSelectDialog.setContentHeight("150px");
 					sap.ui.getCore().applyChanges();
 
 					this.oSelectDialog._oDialog.attachAfterOpen(function (oEvent) {
-
 						assert.strictEqual(jQuery("#selectDialog-dialog-cont").height(), 150, "content in Dialog should have height of 150px.");
-
 						assert.strictEqual(jQuery("#selectDialog-dialog-cont").height(), 150, "content in Dialog should have height of 150px.");
-
 						that.oSelectDialog.setContentHeight("286px");
 						sap.ui.getCore().applyChanges();
 						assert.strictEqual(jQuery("#selectDialog-dialog-cont").height(), 286, "content in Dialog should have height of 286px.");
@@ -761,9 +755,9 @@
 				});
 
 				QUnit.test("focus on SearchField after liveChange", function (assert) {
-					notSupportedIE(true);
-
 					var done = assert.async();
+
+					notSupportedIE(true, done);
 
 					// Arrange
 					var fnFireLiveChangeSpy = sinon.spy(function(oEvent) {
