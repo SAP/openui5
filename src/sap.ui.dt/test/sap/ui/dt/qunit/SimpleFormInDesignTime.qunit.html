@@ -36,6 +36,8 @@
 
 			QUnit.module("Given that overlays are created for a SimpleForm", {
 				beforeEach : function() {
+					this.oLabel = new sap.ui.commons.Label({text : "New label"});
+
 					this.oForm = new sap.ui.layout.form.SimpleForm("Form1", {
 						maxContainerCols: 2,
 						editable: true,
@@ -48,10 +50,13 @@
 							new sap.ui.commons.DatePicker({yyyymmdd:"19990909"}),
 							new sap.ui.commons.Label({text:"Gender"})
 						]
-					}).placeAt("content");
+					});
+					this.oVerticalLayout = new sap.ui.layout.VerticalLayout({content: [this.oForm, this.oLabel]});
+
+					this.oVerticalLayout.placeAt("content");
 
 					this.oFormDesignTime = new sap.ui.dt.DesignTime({
-						rootElements : [this.oForm]
+						rootElements : [this.oVerticalLayout]
 					});
 				},
 				afterEach : function() {
@@ -65,6 +70,12 @@
 				this.oForm.addContent(this.oButton);
 				var oOverlayForButton = OverlayRegistry.getOverlay(this.oButton);
 				ok(oOverlayForButton, "overlay for button exists");
+			});
+
+			QUnit.test("when the label is inserted to a SimpleForm ...", function(assert) {
+				var oLabelOverlay = OverlayRegistry.getOverlay(this.oLabel);
+				this.oForm.insertContent(this.oLabel, 3);
+				assert.ok(!oLabelOverlay.bIsDestroyed, "overlay for label wasn't destroyed");
 			});
 
 		</script>
