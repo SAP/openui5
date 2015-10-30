@@ -1431,7 +1431,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 
 	/**
-	 * Type of Panels used on the Personalization Dialog
+	 * Type of panels used in the personalization dialog.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1440,31 +1440,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	sap.m.P13nPanelType = {
 
 		/**
-		 * Panel type for sorting
+		 * Panel type for sorting.
 		 * @public
 		 */
 		sort : "sort",
 
 		/**
-		 * Panel type for filtering
+		 * Panel type for filtering.
 		 * @public
 		 */
 		filter : "filter",
 
 		/**
-		 * Panel type for grouping
+		 * Panel type for grouping.
 		 * @public
 		 */
 		group : "group",
 
 		/**
-		 * Panel type for columns setting
+		 * Panel type for column settings.
 		 * @public
 		 */
 		columns : "columns",
 		
 		/**
-		 * Panel type for dimensions and measures setting
+		 * Panel type for dimension and measure settings.
 		 * @public
 		 */
 		dimeasure: "dimeasure"
