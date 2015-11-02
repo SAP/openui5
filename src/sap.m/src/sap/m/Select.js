@@ -1671,32 +1671,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		};
 
 		/**
-		 * Sets property <code>textAlign</code>.
-		 *
-		 * Default value is a sap.ui.core.TextAlign.Initial <code>"Initial"</code>.
-		 *
-		 * @param {sap.ui.core.TextAlign} sValue New value for property <code>textAlign</code>.
-		 * If the provided <code>sValue</code> has a default value, the browser default is used.
-		 *
-		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
-		 * @public
-		 * @since 1.28
-		 */
-
-		/**
-		 * Sets property <code>textDirection</code>.
-		 *
-		 * Default value is a sap.ui.core.TextDirection.Inherit <code>"Inherit"</code>.
-		 *
-		 * @param {sap.ui.core.TextDirection} sValue New value for property <code>textDirection</code>.
-		 * If the provided <code>sValue</code> has a default value, the inherited direction from the DOM is used.
-		 *
-		 * @returns {sap.m.Select} <code>this</code> to allow method chaining.
-		 * @public
-		 * @since 1.28
-		 */
-
-		/**
 		 * Gets the item from the aggregation named <code>items</code> at the given 0-based index.
 		 *
 		 * @param {int} iIndex Index of the item to return.
