@@ -2348,7 +2348,6 @@
 
 			// arrange
 			var fnSetPropertySpy = this.spy(oSelect, "setProperty"),
-				fnWarningSpy = this.spy(jQuery.sap.log, "warning"),
 				fnFireChangeSpy = this.spy(oSelect, "fireChange"),
 				fnSetSelectedItemSpy = this.spy(oSelect, "setSelectedItem");
 
@@ -2357,7 +2356,6 @@
 
 			// assert
 			strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.Select.prototype.setProperty() method was not called");
-			strictEqual(fnWarningSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
 			strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
 			ok(fnSetSelectedItemSpy.returned(oSelect), 'sap.m.Select.prototype.setSelectedItem() returns this to allow method chaining');
 			ok(oSelect.getSelectedItem() === null);
