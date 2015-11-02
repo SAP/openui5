@@ -113,8 +113,8 @@
 		},
 		{
 			"control": "sap.m.MessageBox",
-			"url": "../MessageBox.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"url": "MessageBox.html",
+			"appComponent": "CA-UI5-CTR-SOF-RIL"
 		},
 		{
 			"control": "sap.m.MessageToast",
