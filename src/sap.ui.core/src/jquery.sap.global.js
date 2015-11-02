@@ -268,19 +268,44 @@
 		}(window.navigator.userAgent));
 	}
 
-	// Fixes the CORS issue (introduced by jQuery 1.7) when loading resources
-	// (e.g. SAPUI5 script) from other domains for IE browsers.
-	// The CORS check in jQuery filters out such browsers who do not have the
-	// property "withCredentials" which is the IE and Opera and prevents those
-	// browsers to request data from other domains with jQuery.ajax. The CORS
-	// requests are simply forbidden nevertheless if it works. In our case we
-	// simply load our script resources from another domain when using the CDN
-	// variant of SAPUI5. The following fix is also recommended by jQuery:
+	// XHR overrides for IE
 	if (!!sap.ui.Device.browser.internet_explorer) {
+
+		// Fixes the CORS issue (introduced by jQuery 1.7) when loading resources
+		// (e.g. SAPUI5 script) from other domains for IE browsers.
+		// The CORS check in jQuery filters out such browsers who do not have the
+		// property "withCredentials" which is the IE and Opera and prevents those
+		// browsers to request data from other domains with jQuery.ajax. The CORS
+		// requests are simply forbidden nevertheless if it works. In our case we
+		// simply load our script resources from another domain when using the CDN
+		// variant of SAPUI5. The following fix is also recommended by jQuery:
 		jQuery.support = jQuery.support || {};
 		jQuery.support.cors = true;
-	}
 
+		// Fixes XHR factory issue (introduced by jQuery 1.11). In case of IE
+		// it uses by mistake the ActiveXObject XHR. In the list of XHR supported
+		// HTTP methods PATCH and MERGE are missing which are required for OData.
+		// The related ticket is: #2068 (no downported to jQuery 1.x planned)
+		var oJQV = Version(jQuery.fn.jquery);
+		// the fix will only be applied to jQuery >= 1.11.0 (only for jQuery 1.x)
+		if (window.ActiveXObject !== undefined && oJQV.getMajor() == 1 && oJQV.getMinor() >= 11) {
+			var fnCreateStandardXHR = function() { 
+				try {
+					return new window.XMLHttpRequest();
+				} catch (e) { /* ignore */ }
+			};
+			var fnCreateActiveXHR = function() { 
+				try {
+					return new window.ActiveXObject("Microsoft.XMLHTTP");
+				} catch (e) { /* ignore */ }
+			};
+			jQuery.ajaxSettings = jQuery.ajaxSettings || {};
+			jQuery.ajaxSettings.xhr = function() {
+				return !this.isLocal ? fnCreateStandardXHR() : fnCreateActiveXHR();
+			};
+		}
+
+	}
 
 	/**
 	 * Find the script URL where the SAPUI5 is loaded from and return an object which
