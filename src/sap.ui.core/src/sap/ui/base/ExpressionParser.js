@@ -60,8 +60,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 			"undefined": undefined
 		},
 		rDigit = /\d/,
+		sExpressionParser = "sap.ui.base.ExpressionParser",
 		rIdentifier = /[a-z]\w*/i,
 		rLetter = /[a-z]/i,
+		aPerformanceCategories = [sExpressionParser],
+		sPerformanceParse = sExpressionParser + "#parse",
 		mSymbols = { //symbol table
 			"BINDING": {
 				led: unexpected,
@@ -76,7 +79,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 						jQuery.sap.log.warning("Unsupported global identifier '" + oToken.value
 								+ "' in expression parser input '" + oParser.input + "'",
 							undefined,
-							"sap.ui.base.ExpressionParser");
+							sExpressionParser);
 					}
 					return CONSTANT.bind(null, oParser.globals[oToken.value]);
 				}
@@ -433,7 +436,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 		if (iAt !== undefined) {
 			sMessage += " at position " + iAt;
 		}
-		jQuery.sap.log.error(sMessage, sInput, "sap.ui.base.ExpressionParser");
+		jQuery.sap.log.error(sMessage, sInput, sExpressionParser);
 		throw oError;
 	}
 
@@ -606,7 +609,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 			try {
 				return fnFormatter.apply(this, arguments);
 			} catch (ex) {
-				jQuery.sap.log.warning(String(ex), sInput, "sap.ui.base.ExpressionParser");
+				jQuery.sap.log.warning(String(ex), sInput, sExpressionParser);
 			}
 		};
 	}
@@ -762,9 +765,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 		parse: function (fnResolveBinding, sInput, iStart, mGlobals) {
 			var oResult, oTokens;
 
+			jQuery.sap.measure.average(sPerformanceParse, "", aPerformanceCategories);
 			oTokens = tokenize(fnResolveBinding, sInput, iStart);
 			oResult = parse(oTokens.tokens, sInput, mGlobals || mDefaultGlobals);
-
+			jQuery.sap.measure.end(sPerformanceParse);
 //			if (iStart === undefined && oTokens.at < sInput.length) {
 //				error("Invalid token in expression", sInput, oTokens.at);
 //			}

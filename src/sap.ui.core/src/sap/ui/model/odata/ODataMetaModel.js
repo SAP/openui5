@@ -14,8 +14,11 @@ sap.ui.define([
 		MetaModel, Utils) {
 	"use strict";
 
-	// path to a type's property e.g. ("/dataServices/schema/<i>/entityType/<j>/property/<k>")
-	var rPropertyPath = /^((\/dataServices\/schema\/\d+)\/(?:complexType|entityType)\/\d+)\/property\/\d+$/;
+	var sODataMetaModel = "sap.ui.model.odata.ODataMetaModel",
+		aPerformanceCategories = [sODataMetaModel],
+		sPerformanceLoad = sODataMetaModel + "/load",
+		// path to a type's property e.g. ("/dataServices/schema/<i>/entityType/<j>/property/<k>")
+		rPropertyPath = /^((\/dataServices\/schema\/\d+)\/(?:complexType|entityType)\/\d+)\/property\/\d+$/;
 
 	/**
 	 * @class List binding implementation for the OData meta model which supports filtering on
@@ -175,10 +178,14 @@ sap.ui.define([
 				var that = this;
 
 				function load() {
-					var oData = JSON.parse(JSON.stringify(oMetadata.getServiceMetadata()));
+					var oData;
+
+					jQuery.sap.measure.average(sPerformanceLoad, "", aPerformanceCategories);
+					oData = JSON.parse(JSON.stringify(oMetadata.getServiceMetadata()));
 					Utils.merge(oAnnotations ? oAnnotations.getAnnotationsData() : {}, oData);
 					that.oModel = new JSONModel(oData);
 					that.oModel.setDefaultBindingMode(that.sDefaultBindingMode);
+					jQuery.sap.measure.end(sPerformanceLoad);
 				}
 
 				oODataModelInterface = oODataModelInterface || {};
@@ -235,7 +242,7 @@ sap.ui.define([
 			sResolvedPath = this.resolve(sPath || "", oContext);
 			if (!sResolvedPath) {
 				jQuery.sap.log.error("Invalid relative path w/o context", sPath,
-					"sap.ui.model.odata.ODataMetaModel");
+					sODataMetaModel);
 				return null;
 			}
 		}
@@ -283,7 +290,7 @@ sap.ui.define([
 					jQuery.sap.log.warning("Invalid part: " + vPart,
 						"path: " + sPath + ", context: "
 							+ (oContext instanceof Context ? oContext.getPath() : oContext),
-						"sap.ui.model.odata.ODataMetaModel");
+						sODataMetaModel);
 				}
 				break;
 			}
@@ -291,13 +298,13 @@ sap.ui.define([
 				if (oBaseNode === oContext) {
 					jQuery.sap.log.error(
 						"A query is not allowed when an object context has been given", sPath,
-						"sap.ui.model.odata.ODataMetaModel");
+						sODataMetaModel);
 					return null;
 				}
 				if (!Array.isArray(oNode)) {
 					jQuery.sap.log.error(
 						"Invalid query: '" + sProcessedPath + "' does not point to an array",
-						sPath, "sap.ui.model.odata.ODataMetaModel");
+						sPath, sODataMetaModel);
 					return null;
 				}
 				sCacheKey = sProcessedPath + vPart;

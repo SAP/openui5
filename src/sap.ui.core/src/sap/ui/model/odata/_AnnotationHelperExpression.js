@@ -11,10 +11,13 @@ sap.ui.define([
 	'use strict';
 
 	// see http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
-	var sDateValue = "\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])",
+	var sAnnotationHelper = "sap.ui.model.odata.AnnotationHelper",
+		sDateValue = "\\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])",
 		sDecimalValue = "[-+]?\\d+(?:\\.\\d+)?",
 		sMaxSafeInteger = "9007199254740991",
 		sMinSafeInteger = "-" + sMaxSafeInteger,
+		aPerformanceCategories = [sAnnotationHelper],
+		sPerformanceGetExpression = sAnnotationHelper + "/getExpression",
 		sTimeOfDayValue = "(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(\\.\\d{1,12})?)?",
 		mEdmType2RegExp = {
 			Bool : /^true$|^false$/i,
@@ -455,10 +458,12 @@ sap.ui.define([
 				return undefined;
 			}
 
+			jQuery.sap.measure.average(sPerformanceGetExpression, "", aPerformanceCategories);
+
 			if ( !Expression.simpleParserWarningLogged &&
 					ManagedObject.bindingParser === BindingParser.simpleParser) {
 				jQuery.sap.log.warning("Complex binding syntax not active", null,
-					"sap.ui.model.odata.AnnotationHelper");
+					sAnnotationHelper);
 				Expression.simpleParserWarningLogged = true;
 			}
 
@@ -467,8 +472,10 @@ sap.ui.define([
 					path: oInterface.getPath(),
 					value: oRawValue
 				}, /*bExpression*/false);
+				jQuery.sap.measure.end(sPerformanceGetExpression);
 				return Basics.resultToString(oResult, false, bWithType);
 			} catch (e) {
+				jQuery.sap.measure.end(sPerformanceGetExpression);
 				if (e instanceof SyntaxError) {
 					return "Unsupported: "
 						+ BindingParser.complexParser.escape(Basics.toErrorString(oRawValue));
@@ -720,8 +727,7 @@ sap.ui.define([
 				oResult.constraints = oConstraints;
 			} else {
 				jQuery.sap.log.warning("Could not find property '" + sBindingPath
-					+ "' starting from '" + oPathValue.path + "'", null,
-					"sap.ui.model.odata.AnnotationHelper");
+					+ "' starting from '" + oPathValue.path + "'", null, sAnnotationHelper);
 			}
 
 			return oResult;

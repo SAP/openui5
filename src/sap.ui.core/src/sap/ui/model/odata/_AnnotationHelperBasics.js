@@ -8,13 +8,16 @@ sap.ui.define([
 ], function(jQuery, BindingParser) {
 	'use strict';
 
-	var rBadChars = /[\\\{\}:]/, // @see sap.ui.base.BindingParser: rObject, rBindingChars
+	var sAnnotationHelper = "sap.ui.model.odata.AnnotationHelper",
+		rBadChars = /[\\\{\}:]/, // @see sap.ui.base.BindingParser: rObject, rBindingChars
 		Basics,
 		// path to entity set ("/dataServices/schema/<i>/entityContainer/<j>/entitySet/<k>")
 		rEntitySetPath
 			= /^(\/dataServices\/schema\/\d+\/entityContainer\/\d+\/entitySet\/\d+)(?:\/|$)/,
 		// path to entity type ("/dataServices/schema/<i>/entityType/<j>")
 		rEntityTypePath = /^(\/dataServices\/schema\/\d+\/entityType\/\d+)(?:\/|$)/,
+		aPerformanceCategories = [sAnnotationHelper],
+		sPerformanceFollowPath = sAnnotationHelper + "/followPath",
 		mUi5TypeForEdmType = {
 			"Edm.Boolean" : "sap.ui.model.odata.type.Boolean",
 			"Edm.Byte" : "sap.ui.model.odata.type.Byte",
@@ -76,7 +79,7 @@ sap.ui.define([
 		error: function (oPathValue, sMessage) {
 			sMessage = oPathValue.path + ": " + sMessage;
 			jQuery.sap.log.error(sMessage, Basics.toErrorString(oPathValue.value),
-					"sap.ui.model.odata.AnnotationHelper");
+				sAnnotationHelper);
 			throw new SyntaxError(sMessage);
 		},
 
@@ -143,8 +146,8 @@ sap.ui.define([
 		 */
 		followPath: function (oInterface, oRawValue) {
 			var oAssociationEnd,
-				sPath = Basics.getPath(oRawValue),
-				sContextPath = sPath !== undefined && Basics.getStartingPoint(oInterface, sPath),
+				sPath,
+				sContextPath,
 				oEntity,
 				iIndexOfAt,
 				oModel = oInterface.getModel(),
@@ -158,7 +161,11 @@ sap.ui.define([
 				},
 				sSegment;
 
+			jQuery.sap.measure.average(sPerformanceFollowPath, "", aPerformanceCategories);
+			sPath = Basics.getPath(oRawValue);
+			sContextPath = sPath !== undefined && Basics.getStartingPoint(oInterface, sPath);
 			if (!sContextPath) {
+				jQuery.sap.measure.end(sPerformanceFollowPath);
 				return undefined;
 			}
 			aParts = sPath.split("/");
@@ -196,6 +203,7 @@ sap.ui.define([
 			}
 
 			oResult.resolvedPath = sContextPath;
+			jQuery.sap.measure.end(sPerformanceFollowPath);
 			return oResult;
 		},
 
