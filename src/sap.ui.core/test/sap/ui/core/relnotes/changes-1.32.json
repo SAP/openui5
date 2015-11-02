@@ -1395,5 +1395,73 @@
         "references": []
       }
     ]
+  },
+  "1.32.5": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "da07798abfe15a55ed52223c0e71812fe21eded8",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "Popup: Autoclose on Touch Enabled Devices\"",
+        "references": []
+      },
+      {
+        "id": "1e38062fcb82e0dfd702eb809238b8afa7fc93f7",
+        "author": "Malte Wedel \u003cmalte.wedel@sap.com\u003e",
+        "type": "FIX",
+        "text": "DateFormat: Do relative computation on UTC date only",
+        "references": []
+      },
+      {
+        "id": "09eea72bda0b06eab15cd2e3583b70e049272cdb",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataMessageParser: Remove Double Errors",
+        "references": []
+      },
+      {
+        "id": "3c0aac3b10e29f476cd16c24e468dc4a658c810a",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: fix 0 as payload result",
+        "references": []
+      },
+      {
+        "id": "3455b7e706d4cded46db27f4265722a37f4a422c",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: Corrected CSS property mapping for IE 10 and tests",
+        "references": []
+      },
+      {
+        "id": "64252740b1b25b988d5e0841687b9363103676ff",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.UIArea: Restore focus after full UIArea rendering",
+        "references": []
+      },
+      {
+        "id": "ce1f3dd2291f2ae816fef35e9f8fbdc67c1ca436",
+        "author": "Dr. Thomas Chadzelek \u003cthomas.chadzelek@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.XMLPreprocessor: properly import foreign nodes into document",
+        "references": []
+      },
+      {
+        "id": "e58d905ffa151e3db8549f15a1195e20be0840ca",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: Sucessfully submitted Entry: still pending changes",
+        "references": []
+      },
+      {
+        "id": "29d845df594803d58bc45777908bb239a065842a",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: unnecessary MERGE request",
+        "references": []
+      }
+    ]
   }
 }

@@ -2044,5 +2044,80 @@
         "references": []
       }
     ]
+  },
+  "1.32.5": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "02a09783708afc56aebed11e469ceff09d9daa9e",
+        "author": "Marin Parushev \u003cmarin.parushev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: Event issue in header controls solved",
+        "references": []
+      },
+      {
+        "id": "3455b7e706d4cded46db27f4265722a37f4a422c",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FlexBox: Corrected CSS property mapping for IE 10 and tests",
+        "references": []
+      },
+      {
+        "id": "2db8ddfda9eec53b56b143803315116277dc80e9",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.GrowingEnablement: Growing loading animation is should respect the specification.",
+        "references": []
+      },
+      {
+        "id": "10c444f9de260eae9bf49e84223c569872f1c8bf",
+        "author": "D058983 \u003ccahit.guerguec@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.InputBase: Close valueState message synchronously.",
+        "references": []
+      },
+      {
+        "id": "db7f1119ac9145e26caca51fc47f62b2e51cf64f",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Page: Avoid rendering issue IE 11 when in RTL mode",
+        "references": []
+      },
+      {
+        "id": "ce8c1e6daecdfa494d08bb3caf34c8e5cb41b3e6",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Popover: close virtual keyboard when popover closes",
+        "references": []
+      },
+      {
+        "id": "226c833e999605c15f26c3149f9544eb05003e83",
+        "author": "I032160 \u003cevgeni.katsarski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.SplitContainer: Add own sample in Explored App",
+        "references": []
+      },
+      {
+        "id": "d601615999526e4892703043f191691536b115fa",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.Tokenizer: add tabindex to tokenizer",
+        "references": []
+      },
+      {
+        "id": "9358b8a7beb26f1edaf57dd2c78ed5042ea70966",
+        "author": "D064730 \u003cbohdan.pukalskyi@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Focus setting improved",
+        "references": []
+      },
+      {
+        "id": "b8359ceb36183c36e687c42f70a9a9027586d931",
+        "author": "Petr Stribrny \u003cpetr.stribrny@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: Update JSDoc for event fileDeleted",
+        "references": []
+      }
+    ]
   }
 }

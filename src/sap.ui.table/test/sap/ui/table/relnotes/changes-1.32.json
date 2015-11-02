@@ -492,5 +492,31 @@
         "references": []
       }
     ]
+  },
+  "1.32.5": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "a37e18ed0a58a91f5da1bd07a0ff616be5d58942",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.*: ACC, fixes duplicate DOM id for column labels",
+        "references": []
+      },
+      {
+        "id": "49b1c4eb46f305ba9b2637cd6b7505961c74c36b",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: only visible column is resizable",
+        "references": []
+      },
+      {
+        "id": "a20eebc315be592aa3c1f5e82db65d41d2771cfb",
+        "author": "Sebastian Ried \u003csebastian.ried@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.TreeTable: fixes exception when Row DomRef is undefined",
+        "references": []
+      }
+    ]
   }
 }
