@@ -121,6 +121,33 @@ sap.ui.define([
 				 */
 				updateFilterItem: {}
 			}
+		},
+		renderer: function(oRm, oControl) {
+			// start ConditionPanel
+			oRm.write("<section");
+			oRm.writeControlData(oControl);
+			oRm.addClass("sapMFilterPanel");
+			// oRm.addStyle("width", oControl.getWidth());
+			// oRm.addStyle("height", oControl.getHeight());
+			oRm.writeClasses();
+			oRm.writeStyles();
+			oRm.write(">");
+
+			// render content
+			oRm.write("<div");
+			oRm.addClass("sapMFilterPanelContent");
+			oRm.addClass("sapMFilterPanelBG");
+
+			oRm.writeClasses();
+			oRm.write(">");
+			var aChildren = oControl.getAggregation("content");
+			var iLength = aChildren.length;
+			for (var i = 0; i < iLength; i++) {
+				oRm.renderControl(aChildren[i]);
+			}
+			oRm.write("</div>");
+
+			oRm.write("</section>");
 		}
 	});
 

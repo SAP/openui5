@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nDialog.
 sap.ui.define([
-	'jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter', './P13nDialogRenderer', './library', 'sap/ui/core/EnabledPropagator', 'jquery.sap.xml', 'sap/m/ButtonType'
-], function(jQuery, Dialog, IconTabBar, IconTabFilter, P13nDialogRenderer, library, EnabledPropagator, ButtonType) {
+	'jquery.sap.global', './Dialog', './IconTabBar', './IconTabFilter', './library', 'sap/ui/core/EnabledPropagator', 'sap/m/ButtonType', 'sap/m/DialogRenderer'
+], function(jQuery, Dialog, IconTabBar, IconTabFilter, library, EnabledPropagator, ButtonType, DialogRenderer) {
 	"use strict";
 
 	/**
@@ -99,6 +99,19 @@ sap.ui.define([
 				 */
 				reset: {}
 			}
+		},
+		renderer: function(oRm, oControl) {
+			DialogRenderer.render.apply(this, arguments);
+
+			var sId = oControl._getVisiblePanelID();
+			var oPanel = oControl.getVisiblePanel();
+			if (sId && oPanel) {
+				oRm.write("<div");
+				oRm.writeAttribute("id", sId);
+				oRm.write(">");
+				oRm.renderControl(oPanel);
+				oRm.write("</div>");
+			}
 		}
 	});
 
@@ -125,7 +138,7 @@ sap.ui.define([
 		this.addAggregation("panels", oPanel);
 
 		var oNavigationItem = this._mapPanelToNavigationItem(oPanel);
-		oPanel.data(P13nDialogRenderer.CSS_CLASS + "NavigationItem", oNavigationItem);
+		oPanel.data("sapMP13nDialogNavigationItem", oNavigationItem);
 		var oNavigationControl = this._getNavigationControl();
 		if (oNavigationControl) {
 			sap.ui.Device.system.phone ? oNavigationControl.addItem(oNavigationItem) : oNavigationControl.addButton(oNavigationItem);
@@ -143,7 +156,7 @@ sap.ui.define([
 		this.insertAggregation("panels", oPanel, iIndex);
 
 		var oNavigationItem = this._mapPanelToNavigationItem(oPanel);
-		oPanel.data(P13nDialogRenderer.CSS_CLASS + "NavigationItem", oNavigationItem);
+		oPanel.data("sapMP13nDialogNavigationItem", oNavigationItem);
 		var oNavigationControl = this._getNavigationControl();
 		if (oNavigationControl) {
 			sap.ui.Device.system.phone ? oNavigationControl.insertItem(oNavigationItem) : oNavigationControl.insertButton(oNavigationItem);
@@ -212,14 +225,16 @@ sap.ui.define([
 					level: "H1"
 				})
 			}));
-			this.setBeginButton(this._createOKButton());
-			this.setEndButton(this._createCancelButton());
+			this.addButton(this._createOKButton());
+			this.addButton(this._createCancelButton());
+			this.addButton(this._createResetButton());
 		} else {
 			this.setHorizontalScrolling(false);
 			// according to consistency we adjust the content width of P13nDialog to the content width of value help dialog
 			this.setContentWidth("65rem");
 			this.setContentHeight("40rem");
 			this.setDraggable(true);
+			this.setResizable(true);
 			this.setTitle(this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS"));
 			this.addButton(this._createOKButton());
 			this.addButton(this._createCancelButton());
@@ -437,7 +452,7 @@ sap.ui.define([
 	 */
 	P13nDialog.prototype._getPanelByNavigationItem = function(oNavigationItem) {
 		for (var i = 0, aPanels = this.getPanels(), iPanelsLength = aPanels.length; i < iPanelsLength; i++) {
-			if (aPanels[i].data(P13nDialogRenderer.CSS_CLASS + "NavigationItem") === oNavigationItem) {
+			if (aPanels[i].data("sapMP13nDialogNavigationItem") === oNavigationItem) {
 				return aPanels[i];
 			}
 		}
@@ -453,7 +468,7 @@ sap.ui.define([
 		if (!oPanel) {
 			return null;
 		}
-		return oPanel.data(P13nDialogRenderer.CSS_CLASS + "NavigationItem");
+		return oPanel.data("sapMP13nDialogNavigationItem");
 	};
 
 	/**
@@ -630,6 +645,9 @@ sap.ui.define([
 		var that = this;
 		return new sap.m.Button({
 			text: this._oResourceBundle.getText("P13NDIALOG_OK"),
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				priority: sap.m.OverflowToolbarPriority.NeverOverflow
+			}),
 			press: function() {
 				var oPayload = that._getPayloadOfPanels();
 				var fFireOK = function() {
@@ -678,6 +696,9 @@ sap.ui.define([
 		var that = this;
 		return new sap.m.Button({
 			text: this._oResourceBundle.getText("P13NDIALOG_CANCEL"),
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				priority: sap.m.OverflowToolbarPriority.NeverOverflow
+			}),
 			press: function() {
 				that.fireCancel();
 			}
@@ -694,6 +715,9 @@ sap.ui.define([
 		var that = this;
 		return new sap.m.Button({
 			text: this._oResourceBundle.getText("P13NDIALOG_RESET"),
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				priority: sap.m.OverflowToolbarPriority.NeverOverflow
+			}),
 			visible: this.getShowReset(),
 			press: function() {
 				var oPayload = {};

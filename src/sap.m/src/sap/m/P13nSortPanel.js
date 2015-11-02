@@ -99,6 +99,36 @@ sap.ui.define([
 				 */
 				updateSortItem: {}
 			}
+		},
+		renderer: function(oRm, oControl) {
+			// Return immediately if control is invisible
+			if (!oControl.getVisible()) {
+				return;
+			}
+
+			// start SortPanel
+			oRm.write("<section");
+			oRm.writeControlData(oControl);
+			oRm.addClass("sapMSortPanel");
+			oRm.writeClasses();
+			oRm.writeStyles();
+			oRm.write(">");
+
+			// render content
+			oRm.write("<div");
+			oRm.addClass("sapMSortPanelContent");
+			oRm.addClass("sapMSortPanelBG");
+
+			oRm.writeClasses();
+			oRm.write(">");
+			var aChildren = oControl.getAggregation("content");
+			var iLength = aChildren.length;
+			for (var i = 0; i < iLength; i++) {
+				oRm.renderControl(aChildren[i]);
+			}
+			oRm.write("</div>");
+
+			oRm.write("</section>");
 		}
 	});
 

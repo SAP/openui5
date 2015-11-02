@@ -161,6 +161,31 @@ sap.ui.define([
 				 */
 				dataChange: {}
 			}
+		},
+		renderer: function(oRm, oControl) {
+			// start ConditionPanel
+			oRm.write("<section");
+			oRm.writeControlData(oControl);
+			oRm.addClass("sapMConditionPanel");
+			oRm.writeClasses();
+			oRm.writeStyles();
+			oRm.write(">");
+
+			// render content
+			oRm.write("<div");
+			oRm.addClass("sapMConditionPanelContent");
+			oRm.addClass("sapMConditionPanelBG");
+
+			oRm.writeClasses();
+			oRm.write(">");
+			var aChildren = oControl.getAggregation("content");
+			var iLength = aChildren.length;
+			for (var i = 0; i < iLength; i++) {
+				oRm.renderControl(aChildren[i]);
+			}
+			oRm.write("</div>");
+
+			oRm.write("</section>");
 		}
 	});
 
