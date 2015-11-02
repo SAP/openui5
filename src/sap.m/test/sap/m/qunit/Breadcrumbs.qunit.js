@@ -90,7 +90,7 @@
 			iLinksCount = oStandardBreadCrumbsControl.getLinks().length;
 
 		assert.ok(oStandardBreadCrumbsControl, "is instantiated correctly");
-		assert.strictEqual(oStandardBreadCrumbsControl.getLinks().length, 4, "has " + 4 + " links");
+		assert.strictEqual(iLinksCount, 4, "has " + 4 + " links");
 	});
 
 	QUnit.test("Changing the control dynamically", function (assert) {
@@ -170,13 +170,25 @@
 		}
 	});
 
-	QUnit.test("Select on mobile contains all links", function (assert) {
+	QUnit.test("Select on mobile contains all links with no current location text", function (assert) {
+		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl;
+		oStandardBreadCrumbsControl.setCurrentLocationText("");
+		helpers.renderObject(oStandardBreadCrumbsControl);
+
+		var aSelectItems = oStandardBreadCrumbsControl._getSelect().getItems();
+
+		assert.ok(!oStandardBreadCrumbsControl.getCurrentLocationText(), "There's no current location text set");
+		assert.ok(aSelectItems.length === 4, "All links are in select, but no current location item");
+	});
+
+	QUnit.test("Select on mobile contains all links with current location text", function (assert) {
 		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl;
 		helpers.renderObject(oStandardBreadCrumbsControl);
 
 		var aSelectItems = oStandardBreadCrumbsControl._getSelect().getItems();
 
-		assert.ok(aSelectItems.length === 4, "All links are in select");
+		assert.ok(oStandardBreadCrumbsControl.getCurrentLocationText(), "There's current location text set");
+		assert.ok(aSelectItems.length === 5, "All links are in select along with the currrent location item");
 	});
 
 	QUnit.test("Select has cancel button on mobile", function (assert) {
@@ -218,8 +230,8 @@
 
 		helpers.renderObject(this.oStandardBreadCrumbsControl);
 
-		this.oStandardBreadCrumbsControl._getSelect().open()
-		this.oStandardBreadCrumbsControl._getSelect().close()
+		this.oStandardBreadCrumbsControl._getSelect().open();
+		this.oStandardBreadCrumbsControl._getSelect().close();
 
 		assert.ok(pickerAfterOpenSpy.calledOnce, "Popover after open event is handled");
 		assert.ok(pickerBeforeCloseSpy.calledOnce, "Popover after before close event is handled");
@@ -252,7 +264,7 @@
 					control: {},
 					width: 100
 				}]
-			}
+			};
 		};
 		var aControlDistrib = this.oStandardBreadCrumbsControl._determineControlDistribution(300);
 		assert.ok(aControlDistrib.aControlsForBreadcrumbTrail.length === 3, "Trail has 3 items");
@@ -279,7 +291,7 @@
 					control: {},
 					width: 100
 				}]
-			}
+			};
 		};
 		var aControlDistrib = this.oStandardBreadCrumbsControl._determineControlDistribution(60);
 		assert.ok(aControlDistrib.aControlsForBreadcrumbTrail.length === 1, "There must be always one item in the trail");
@@ -310,7 +322,7 @@
 					control: {},
 					width: 100
 				}]
-			}
+			};
 		};
 		var aControlDistrib = this.oStandardBreadCrumbsControl._determineControlDistribution(250);
 		assert.ok(aControlDistrib.aControlsForBreadcrumbTrail.length === 2, "There are 2 items in the trail");
