@@ -3089,6 +3089,33 @@
 			oSelect.destroy();
 		});
 
+		test("it should set the selection correctly when forceSelection=false and the item's keys are not provided", function() {
+
+			// system under test
+			var oSelect = new sap.m.Select({
+				forceSelection: false,
+				items: [
+					new sap.ui.core.Item()
+				]
+			});
+
+			// act
+			oSelect.setSelectedKey("");
+
+			// assert
+			ok(oSelect.getSelectedItem() === null);
+			strictEqual(oSelect.getSelectedItemId(), "");
+			strictEqual(oSelect.getSelectedKey(), "");
+			strictEqual(oSelect.getSelectedIndex(), -1);
+			strictEqual(oSelect.$("label").text(), "");
+			ok(oSelect.getList().getSelectedItem() === null);
+			strictEqual(oSelect.getList().getSelectedItemId(), "");
+			strictEqual(oSelect.getList().getSelectedKey(), "");
+
+			// cleanup
+			oSelect.destroy();
+		});
+
 		module("removeItem()");
 
 		test("it should return null when called with an invalid input argument value", function() {
