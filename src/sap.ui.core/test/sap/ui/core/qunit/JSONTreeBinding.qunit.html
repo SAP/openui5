@@ -87,7 +87,51 @@
 					gender: "female"
 				},
 				null
-			]
+			],
+			orgStructureAppControlFilter:{
+				 0: {
+					name: "Peter Cliff",
+					gender: "male",
+					tree: "#1",
+					0: {
+						name: "Inga Horst",
+						gender: "female",
+						tree: "#1",
+						0: {
+							name: "John Doe",
+							gender: "male",
+							tree: "#1"
+						},
+						1: {
+							name: "Jennifer Wallace",
+							gender: "female",
+							tree: "#1"
+						},
+						noTreeNode: null //Test cases should not break because of null nodes
+					},
+					1: {
+						name: "Tom Bay",
+						gender: "male",
+						0: {
+							name: "Jane Fields",
+							gender: "female",
+							0: {
+								name: "Catherine Brook",
+								gender: "female"
+							},
+							1: {
+								name: "Rick Lee",
+								gender: "male"
+							}
+						},
+					},
+					2: {
+						name: "Catherine Platte",
+						gender: "female"
+					},
+					noTreeNode: null
+				}
+			},
 		};
 		oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(testData);
@@ -95,10 +139,10 @@
 
 	};
 
-	function createTreeBinding(sPath, oContext, mParameters){
+	function createTreeBinding(sPath, oContext, aFilters, mParameters){
 		// create binding
 		bindings = new Array();
-		bindings[0] = oModel.bindTree(sPath, oContext, [], mParameters);
+		bindings[0] = oModel.bindTree(sPath, oContext, aFilters || [], mParameters);
 	};
 
 	test("TreeBinding getRootContexts getNodeContexts", function(){
@@ -222,10 +266,121 @@
 		equal(oModel.getProperty(nodeContexts2[0].getPath()).name, "Gina Rush", "TreeBinding filter value");
 		equal(oModel.getProperty(nodeContexts1[1].getPath()).name, "Catherine Platte", "TreeBinding filter value");
 	});
+	
+	test("TreeBinding - Application & Control filters - initial filters", function(){
+		setup();
+		createTreeBinding("/orgStructureAppControlFilter", null, 
+			[new sap.ui.model.Filter("tree", sap.ui.model.FilterOperator.Contains, "#1")]
+		);
+
+		var treeBinding = bindings[0];
+
+		//control filters after initial application filters
+		treeBinding.filter(new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "John"), "Control");
+		
+		//Peter
+		var filteredContext = treeBinding.getRootContexts();
+		equal(filteredContext.length, 1, "TreeBinding rootContexts length");
+		equal(oModel.getProperty(filteredContext[0].getPath()).name, "Peter Cliff", "TreeBinding filter value");
+		
+		//Inga
+		var nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
+		equal(nodeContexts1.length, 1, "TreeBinding nodeContexts length");
+		equal(oModel.getProperty(nodeContexts1[0].getPath()).name, "Inga Horst", "TreeBinding filter value");
+		
+		//only John Doe filtered
+		var nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
+		equal(nodeContexts2.length, 1, "TreeBinding nodeContexts length");
+		equal(oModel.getProperty(nodeContexts2[0].getPath()).name, "John Doe", "TreeBinding filter value");
+	});
+	
+	test("TreeBinding - Application & Control filters - clear filters", function(){
+		setup();
+		createTreeBinding("/orgStructureAppControlFilter", null, 
+			[new sap.ui.model.Filter("tree", sap.ui.model.FilterOperator.Contains, "#1")]
+		);
+
+		var treeBinding = bindings[0];
+
+		//control filters after initial application filters
+		treeBinding.filter(new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "John"), "Control");
+		
+		//Peter
+		var filteredContext = treeBinding.getRootContexts();
+		equal(filteredContext.length, 1, "TreeBinding rootContexts length");
+		equal(oModel.getProperty(filteredContext[0].getPath()).name, "Peter Cliff", "TreeBinding filter value");
+		
+		//Inga
+		var nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
+		equal(nodeContexts1.length, 1, "TreeBinding nodeContexts length");
+		equal(oModel.getProperty(nodeContexts1[0].getPath()).name, "Inga Horst", "TreeBinding filter value");
+		
+		//only John Doe filtered
+		var nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
+		equal(nodeContexts2.length, 1, "TreeBinding nodeContexts length");
+		equal(oModel.getProperty(nodeContexts2[0].getPath()).name, "John Doe", "TreeBinding filter value");
+		
+		//remove filters by calling filter with no arguments
+		treeBinding.filter();
+		
+		// root level is still 1
+		filteredContext = treeBinding.getRootContexts();
+		equal(filteredContext.length, 1, "root level length is 1");
+		
+		//2nd lvl
+		nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
+		equal(nodeContexts1.length, 3, "2nd level length is 3");
+		
+		//3rd lvl
+		nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
+		equal(nodeContexts2.length, 2, "2rd level length is 2");
+	});
+	
+	test("TreeBinding - Application & Control filters - changing filters", function(){
+		setup();
+		createTreeBinding("/orgStructureAppControlFilter");
+
+		var treeBinding = bindings[0];
+
+		// apply application/control filters
+		treeBinding.filter(new sap.ui.model.Filter("tree", sap.ui.model.FilterOperator.Contains, "#1"), "Application");
+		treeBinding.filter(new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "Jennifer"), "Control");
+		
+		//Peter
+		var filteredContext = treeBinding.getRootContexts();
+		equal(filteredContext.length, 1, "TreeBinding rootContexts length");
+		
+		//Inga
+		var nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
+		equal(nodeContexts1.length, 1, "TreeBinding nodeContexts length");
+		
+		//only Jennifer Wallace filtered
+		var nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
+		equal(nodeContexts2.length, 1, "TreeBinding nodeContexts length");
+		equal(oModel.getProperty(nodeContexts2[0].getPath()).name, "Jennifer Wallace", "TreeBinding filter value");
+		
+		//change control filter
+		treeBinding.filter(new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "John"), "Control");
+		
+		//Peter
+		filteredContext = treeBinding.getRootContexts();
+		equal(filteredContext.length, 1, "TreeBinding rootContexts length");
+		equal(oModel.getProperty(filteredContext[0].getPath()).name, "Peter Cliff", "TreeBinding filter value");
+		
+		//Inga
+		nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
+		equal(nodeContexts1.length, 1, "TreeBinding nodeContexts length");
+		equal(oModel.getProperty(nodeContexts1[0].getPath()).name, "Inga Horst", "TreeBinding filter value");
+		
+		//only John Doe filtered
+		nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
+		equal(nodeContexts2.length, 1, "TreeBinding nodeContexts length");
+		equal(oModel.getProperty(nodeContexts2[0].getPath()).name, "John Doe", "TreeBinding filter value");
+	});
 
 	test("Display root node", function() {
 		setup();
-		createTreeBinding("/orgStructure/0", null, {
+		createTreeBinding("/orgStructure/0", null, [], {
 			displayRootNode: true
 		});
 
@@ -260,7 +415,7 @@
 
 	test("Bind aggregation", function() {
 		setup();
-		createTreeBinding("/orgStructure2", null, {
+		createTreeBinding("/orgStructure2", null, [], {
 			displayRootNode: true
 		});
 
@@ -298,7 +453,7 @@
 	
 	test("Paging", function() {
 		setup();
-		createTreeBinding("/orgStructure2", {
+		createTreeBinding("/orgStructure2", null, [], {
 			displayRootNode: true
 		});
 
@@ -333,7 +488,7 @@
 	
 	test("Sorting", function () {
 		setup();
-		createTreeBinding("/orgStructure2", {
+		createTreeBinding("/orgStructure2", null, [], {
 			displayRootNode: true
 		});
 		

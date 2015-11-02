@@ -12,8 +12,9 @@ sap.ui.define(['jquery.sap.global',
                'sap/ui/model/TreeBindingUtils',
                'sap/ui/model/odata/OperationMode',
                'sap/ui/model/SorterProcessor',
-               'sap/ui/model/FilterProcessor'],
-	function(jQuery, TreeBinding, CountMode, ChangeReason, Sorter, ODataUtils, TreeBindingUtils, OperationMode, SorterProcessor, FilterProcessor) {
+               'sap/ui/model/FilterProcessor',
+               'sap/ui/model/FilterType'],
+	function(jQuery, TreeBinding, CountMode, ChangeReason, Sorter, ODataUtils, TreeBindingUtils, OperationMode, SorterProcessor, FilterProcessor, FilterType) {
 	"use strict";
 
 
@@ -46,7 +47,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @param {sap.ui.model.Model} oModel
 	 * @param {string} sPath
 	 * @param {sap.ui.model.Context} oContext
-	 * @param {sap.ui.model.Filter[]} [aFilters] predefined filter/s (can be either a filter or an array of filters). All initial filters,
+	 * @param {sap.ui.model.Filter[]} [aApplicationFilters] predefined filter/s (can be either a filter or an array of filters). All initial filters,
 	 *                                           will be sent with every request. Filtering on the ODataTreeBinding is only supported with initial filters.
 	 * @param {object} [mParameters] Parameter Object
 	 * 
@@ -69,6 +70,11 @@ sap.ui.define(['jquery.sap.global',
 	 * @param {int} [mParameters.threshold] a threshold, which will be used if the OperationMode is set to "Auto".
 	 * 										In case of OperationMode.Auto, the binding tries to fetch (at least) as many entries as the threshold.
 	 * 										Also see API documentation for {@link sap.ui.model.OperationMode.Auto}.
+	 * @param {boolean} [mParameters.useServersideApplicationFilters] set this flag if $filter statements should be used for the $count/$inlinecount and data-retrieval in the OperationMode.Auto.
+	 * 													 Only use this if your backend supports prefiltering the tree and is capable of responding a complete tree hierarchy,
+	 * 													 including all inner nodes. To construct the hierarchy on the client, it is mandatory that all filter-matches include their complete
+	 * 													 parent chain up to the root level.
+	 * 													 OperationMode.Client will still request the complete collection without filters, since they will be applied clientside.
 	 * 
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataTreeBinding
@@ -76,7 +82,7 @@ sap.ui.define(['jquery.sap.global',
 	 */
 	var ODataTreeBinding = TreeBinding.extend("sap.ui.model.odata.v2.ODataTreeBinding", /** @lends sap.ui.model.odata.v2.ODataTreeBinding.prototype */ {
 	
-		constructor : function(oModel, sPath, oContext, aFilters, mParameters, aSorters){
+		constructor : function(oModel, sPath, oContext, aApplicationFilters, mParameters, aSorters){
 			TreeBinding.apply(this, arguments);
 			
 			//make sure we have at least an empty parameter object
@@ -92,6 +98,13 @@ sap.ui.define(['jquery.sap.global',
 			
 			this.aSorters = aSorters || [];
 			this.sFilterParams = "";
+			
+			// The ODataTreeBinding expects there to be only an array in this.aApplicationFilters later on.
+			// Wrap the given application filters inside an array if necessary
+			if (aApplicationFilters instanceof sap.ui.model.Filter) {
+				aApplicationFilters = [aApplicationFilters];
+			}
+			this.aApplicationFilters = aApplicationFilters;
 
 			// a queue containing all parallel running requests
 			// a request is identified by (node id, startindex, length)
@@ -136,6 +149,9 @@ sap.ui.define(['jquery.sap.global',
 			
 			// the total collection count is the number of entries available in the backend (starting at the given rootLevel)
 			this.iTotalCollectionCount = null;
+			
+			// a flag to decide if the OperationMode.Auto should "useServersideApplicationFilters", by default the filters are omitted.
+			this.bUseServersideApplicationFilters = (mParameters && mParameters.useServersideApplicationFilters) || false;
 			
 			this.oAllKeys = null;
 			this.oAllLengths = null;
@@ -560,10 +576,14 @@ sap.ui.define(['jquery.sap.global',
 			// If rows are missing send a request
 			if (aMissingSections.length > 0) {
 				var aParams = [];
-				var sFilterParams = this.getFilterParams();
+				var sFilterParams = ""; 
 				if (this.bHasTreeAnnotations) {
-					// application/control filter parameters, will be added to the node/level filter
-					sFilterParams = sFilterParams ? "%20and%20" + sFilterParams : "";
+					
+					if (this.sOperationMode == "Server" || this.bUseServersideApplicationFilters) {
+						sFilterParams = this.getFilterParams();
+						sFilterParams = sFilterParams ? "%20and%20" + sFilterParams : "";
+					}
+					
 					if (sNodeId) {
 						//retrieve the correct context for the sNodeId (it's an OData-Key) and resolve the correct hierarchy node property as a filter value
 						var oNodeContext = this.oModel.getContext("/" + sNodeId);
@@ -580,6 +600,7 @@ sap.ui.define(['jquery.sap.global',
 					}
 				} else {
 					// append application filters for navigation property case
+					sFilterParams = this.getFilterParams();
 					if (sFilterParams) {
 						aParams.push("$filter=" + sFilterParams);
 					}
@@ -633,7 +654,7 @@ sap.ui.define(['jquery.sap.global',
 			
 			// in the OpertionMode.Auto, we check if the count is LE than the given threshold and set the client operation flag accordingly
 			if (this.sOperationMode == OperationMode.Auto) {
-				if (this.iTotalCollectionCount <= this.mParameters.threshold) {
+				if (this.iTotalCollectionCount <= this.iThreshold) {
 					this.bClientOperation = true;
 					this.bThresholdRejected = false;
 				} else {
@@ -658,8 +679,18 @@ sap.ui.define(['jquery.sap.global',
 		
 		var sPath = this.oModel.resolve(this.getPath(), this.getContext());
 		
-		// the only applied filter is on the rootLevel, everything else will be applied afterwards on the client
+		// default filter is on the rootLevel
 		var sNodeFilter = "$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + " ge " + this.getRootLevel());
+		
+		// if necessary we add all other filters to the count request
+		if (this.bUseServersideApplicationFilters) {
+			var sFilterStatement = this.getFilterParams();
+			
+			if (sFilterStatement) {
+				sNodeFilter += ("%20and%20" + sFilterStatement);
+			}
+		}
+		
 		aParams.push(sNodeFilter);
 		
 		// figure out how to request the count
@@ -984,6 +1015,17 @@ sap.ui.define(['jquery.sap.global',
 			delete that.mRequestHandles[sRequestKey];
 			that.bNeedsUpdate = true;
 			
+			// apply clientside filters, if any
+			if ((that.aApplicationFilters && that.aApplicationFilters.length > 0) ||
+				(that.aFilters && that.aFilters.length > 0)) {
+				that._applyFilter();
+			}
+			
+			// apply clientside sorters
+			if (that.aSorters && that.aSorters.length > 0) {
+				that._applySort();
+			}
+			
 			that.fireDataReceived();
 		};
 		
@@ -1025,7 +1067,7 @@ sap.ui.define(['jquery.sap.global',
 	 * 
 	 * @private
 	 */
-	ODataTreeBinding.prototype.resetData = function(oContext, mParameters) {
+	ODataTreeBinding.prototype.resetData = function(oContext) {
 		if (oContext) {
 			//Only reset specific content
 			var sPath = oContext.getPath();
@@ -1049,8 +1091,10 @@ sap.ui.define(['jquery.sap.global',
 			}
 			// if no data is available after the reset we can't be sure the threshold is met or rejected
 			this.bThresholdRejected = false;
+			
 			// the count might be wrong after a resetData, so we clear it
 			this.iTotalCollectionCount = null;
+			this.bCollectionCountRequested = false;
 			
 			// objects used for client side filter/sort
 			this.oAllKeys = null;
@@ -1148,48 +1192,83 @@ sap.ui.define(['jquery.sap.global',
 	};
 	
 	/**
-	 * Applying ControlFilters is not suported for OperationMode.Server.
-	 * Since 1.34.0 the filtering is supported for OperationMode.Client and if the threshold for OperationMode.Auto could be satisfied.
-	 * See also: {@link sap.ui.model.odata.OperationMode.Auto}.
+	 * Applies the given filters to the ODataTreeBinding.
+	 * Please note that "Control" filters are not suported for OperationMode.Server, here only "Application" filters are allowed.
+	 * Filters given via the constructor are always Application filters and will be send with every backend-request.
+	 * Please see the constructor documentation for more information.
 	 * 
-	 * Only initial ApplicationFilters, given as constructor arguments, are supported with the other possible OperationModes.
+	 * Since 1.34.0 complete clientside filtering is supported for OperationMode.Client and in OperationMode.Auto, in case the backend-count is lower than the threshold.
+	 * In this case all control and application filters will be applied on the client.
+	 * See also: {@link sap.ui.model.odata.OperationMode.Auto}, {@link sap.ui.model.FilterType}.
+	 * 
+	 * For the OperationMode.Client and OperationMode.Auto, you may also specify the "useServersideApplicationFilters" constructor binding parameter.
+	 * If this is set, the Application filters will always be applied on the backend, and thus trigger an OData request.
 	 * Please see the constructor documentation for more information.
 	 * 
 	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} aFilters
+	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted, if it is not given, the standard behaviour FilterType.Client applies
 	 * @see sap.ui.model.TreeBinding.prototype.filter
 	 * @return {sap.ui.model.odata.v2.ODataTreeBinding} returns <code>this</code> to facilitate method chaining
 	 * @public
 	 */
-	ODataTreeBinding.prototype.filter = function(aFilters){
+	ODataTreeBinding.prototype.filter = function (aFilters, sFilterType, bReturnSuccess) {
+		var bSuccess = false;
+		sFilterType = sFilterType || FilterType.Control;
 		
-		if (this.bClientOperation) {
-			
-			if (!aFilters) {
-				aFilters = [];
-			}
-
-			if (aFilters instanceof sap.ui.model.Filter) {
-				aFilters = [aFilters];
-			}
-
-			this.aControlFilters = aFilters;
-			
-			this.oKeys = jQuery.extend(true, {}, this.oAllKeys);
-			this.oLengths = jQuery.extend(true, {}, this.oAllLengths);
-			this.oFinalLengths = jQuery.extend(true, {}, this.oAllFinalLengths);
-			
-			if (this.aControlFilters.length > 0) {
-				this._applySort();
-				this._applyFilter();
-			}
-			
-			this._fireChange({reason: ChangeReason.Filter});
-		} else {
-			jQuery.sap.log.warning("Filtering is ONLY possible if the ODataTreeBinding is running in OperationMode.Client or " +
-					"OperationMode.Auto, in case the given threshold is lower than the total number of tree nodes.");
+		// check if filtering is supported for the current binding configuration
+		if (sFilterType == FilterType.Control && (!this.bClientOperation || this.sOperationMode == OperationMode.Server)) {
+			jQuery.sap.log.warning("Filtering with ControlFilters is ONLY possible if the ODataTreeBinding is running in OperationMode.Client or " +
+			"OperationMode.Auto, in case the given threshold is lower than the total number of tree nodes.");
+			return;
 		}
 		
-		return this;
+		// empty filters
+		if (!aFilters) {
+			aFilters = [];
+		}
+		
+		// accept single filter and arrays
+		if (aFilters instanceof sap.ui.model.Filter) {
+			aFilters = [aFilters];
+		}
+		
+		if (sFilterType === FilterType.Control) {
+			this.aFilters = aFilters;
+		} else {
+			this.aApplicationFilters = aFilters;
+		}
+		
+		if (!this.bInitial) {
+			
+			// in client/auto mode: Always apply control filter.
+			// Clientside Application filters are only applied if "bUseServersideApplicationFilters" is set to false (default), otherwise
+			// the application filters will be applied on the backend.
+			if (this.bClientOperation && (sFilterType === FilterType.Control || (sFilterType === FilterType.Application && !this.bUseServersideApplicationFilters))) {
+				
+				if (this.oAllKeys) {
+					this.oKeys = jQuery.extend(true, {}, this.oAllKeys);
+					this.oLengths = jQuery.extend(true, {}, this.oAllLengths);
+					this.oFinalLengths = jQuery.extend(true, {}, this.oAllFinalLengths);
+					
+					this._applyFilter();
+					this._applySort();
+					this._fireChange({reason: ChangeReason.Filter});
+				} else {
+					this.sChangeReason = ChangeReason.Filter;
+				}
+			} else {
+				this.resetData();
+				this.sChangeReason = ChangeReason.Filter;
+				this._fireRefresh({reason: this.sChangeReason});
+			}
+			bSuccess = true;
+		}
+
+		if (bReturnSuccess) {
+			return bSuccess;
+		} else {
+			return this;
+		}
 	};
 	
 	/**
@@ -1199,10 +1278,19 @@ sap.ui.define(['jquery.sap.global',
 	ODataTreeBinding.prototype._applyFilter = function () {
 		var that = this;
 		
+		//collect application and control filters
+		var aApplicationFilters = this.aApplicationFilters || [];
+		var aAllFilters = this.aFilters || [];
+		
+		// if we do not use serverside application filters, we have to include them for the FilterProcessor
+		if (!this.bUseServersideApplicationFilters) {
+			aAllFilters = aAllFilters.concat(aApplicationFilters);
+		}
+		
 		// filter function for recursive filtering,
 		// checks if a single key matches the filters
 		var fnFilterKey = function (sKey) {
-			var aFiltered = FilterProcessor.apply([sKey], that.aControlFilters, function(vRef, sPath) {
+			var aFiltered = FilterProcessor.apply([sKey], aAllFilters, function(vRef, sPath) {
 				var oContext = that.oModel.getContext('/' + vRef);
 				return that.oModel.getProperty(sPath, oContext);
 			});
@@ -1216,8 +1304,12 @@ sap.ui.define(['jquery.sap.global',
 		this.oKeys = oFilteredKeys;
 		
 		// set the lengths for the root node
-		this.oLengths["null"] = this.oKeys["null"].length;
-		this.oFinalLengths["null"] = true;
+		if (!this.oKeys["null"]) {
+			jQuery.sap.log.warning("Clientside filter did not match on any node!");
+		} else {
+			this.oLengths["null"] = this.oKeys["null"].length;
+			this.oFinalLengths["null"] = true;
+		}
 	};
 	
 	ODataTreeBinding.prototype._filterRecursive = function (oNode, mKeys, fnFilterKey) {
@@ -1289,16 +1381,21 @@ sap.ui.define(['jquery.sap.global',
 				}
 			});
 			
-			if (!this.bClientOperation) {
+			if (this.bClientOperation) {
+				if (this.oAllKeys) {
+					//apply client side sorter
+					this._applySort();
+					this._fireChange({reason: ChangeReason.Sort});
+				} else {
+					this.sChangeReason = ChangeReason.Sort;
+				}
+			} else {
 				//server side sorting
 				this.resetData(undefined, {reason: ChangeReason.Sort});
-				this._fireRefresh({reason : ChangeReason.Sort});
-				bSuccess = true;
-			} else {
-				//apply client side sorter
-				this._applySort();
-				this._fireChange({reason: ChangeReason.Sort});
+				this.sChangeReason = ChangeReason.Sort;
+				this._fireRefresh({reason : this.sChangeReason});
 			}
+			bSuccess = true;
 		}
 		
 		if (bReturnSuccess) {
@@ -1338,6 +1435,8 @@ sap.ui.define(['jquery.sap.global',
 	 * @private
 	 */
 	ODataTreeBinding.prototype.checkUpdate = function(bForceUpdate, mChangedEntities){
+		var sChangeReason = this.sChangeReason ? this.sChangeReason : ChangeReason.Change;
+		
 		var bChangeDetected = false;
 		if (!bForceUpdate) {
 			if (this.bNeedsUpdate || !mChangedEntities) {
@@ -1358,8 +1457,10 @@ sap.ui.define(['jquery.sap.global',
 		}
 		if (bForceUpdate || bChangeDetected) {
 			this.bNeedsUpdate = false;
-			this._fireChange();
+			this._fireChange({reason: sChangeReason});
 		}
+		
+		this.sChangeReason = undefined;
 	};
 	
 	/**
@@ -1706,16 +1807,16 @@ sap.ui.define(['jquery.sap.global',
 	};
 
 	/**
-	 * Retrieves a string concatenation of the filter parameters given in "this.aFilters".
+	 * Creates valid odata filter strings for the application filters, given in "this.aApplicationFilters".
 	 * Also sets the created filter-string to "this.sFilterParams".
 	 * Filters will be ANDed and ORed by the ODataUtils. 
 	 * @returns {string} the concatenated OData filters
 	 */
 	ODataTreeBinding.prototype.getFilterParams = function() {
-		if (this.aFilters) {
-			this.aFilters = jQuery.isArray(this.aFilters) ? this.aFilters : [this.aFilters];
-			if (this.aFilters.length > 0 && !this.sFilterParams) {
-				this.sFilterParams = ODataUtils._createFilterParams(this.aFilters, this.oModel.oMetadata, this.oEntityType);
+		if (this.aApplicationFilters) {
+			this.aApplicationFilters = jQuery.isArray(this.aApplicationFilters) ? this.aApplicationFilters : [this.aApplicationFilters];
+			if (this.aApplicationFilters.length > 0 && !this.sFilterParams) {
+				this.sFilterParams = ODataUtils._createFilterParams(this.aApplicationFilters, this.oModel.oMetadata, this.oEntityType);
 				this.sFilterParams = this.sFilterParams ? this.sFilterParams : "";
 			}
 		} else {

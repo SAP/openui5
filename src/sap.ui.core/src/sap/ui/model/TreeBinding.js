@@ -31,7 +31,8 @@ sap.ui.define(['./Binding'],
 		
 		constructor : function(oModel, sPath, oContext, aFilters, mParameters, aSorters){
 			Binding.call(this, oModel, sPath, oContext, mParameters);
-			this.aFilters = aFilters;
+			this.aApplicationFilters = aFilters || [];
+			this.aFilters = [];
 			this.aSorters = aSorters;
 			this.bDisplayRootNode = mParameters && mParameters.displayRootNode === true;
 		},
