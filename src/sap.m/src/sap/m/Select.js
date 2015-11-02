@@ -1660,6 +1660,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 				// the first enabled item will be selected (if any)
 				if (!oItem && sKey === "") {
 					oItem = this.getDefaultSelectedItem();
+				} else if (!this.getForceSelection() && sKey === "") {
+					oItem = null;
 				}
 
 				this.setSelection(oItem);
