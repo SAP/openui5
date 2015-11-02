@@ -51,7 +51,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * Width of Calendar
 			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null}
+			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
+
+			/**
+			 * If set, the month- and yearPicker opens on a popup
+			 * @since 1.34.0
+			 */
+			pickerPopup : {type : "boolean", group : "Appearance", defaultValue : false}
 
 		},
 		events : {
@@ -131,19 +137,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oDatesRow = this.getAggregation("month")[0];
 			oDatesRow.setDays(iDays);
 
-			var oMonthPicker = this.getAggregation("monthPicker");
-			var iMonths = Math.ceil(iDays / 3);
-			if (iMonths > 12) {
-				iMonths = 12;
-			}
-			oMonthPicker.setMonths(iMonths);
+			if (!this.getPickerPopup()) {
+				var oMonthPicker = this.getAggregation("monthPicker");
+				var iMonths = Math.ceil(iDays / 3);
+				if (iMonths > 12) {
+					iMonths = 12;
+				}
+				oMonthPicker.setMonths(iMonths);
 
-			var oYearPicker = this.getAggregation("yearPicker");
-			var iYears = Math.floor(iDays / 2);
-			if (iYears > 20) {
-				iYears = 20;
+				var oYearPicker = this.getAggregation("yearPicker");
+				var iYears = Math.floor(iDays / 2);
+				if (iYears > 20) {
+					iYears = 20;
+				}
+				oYearPicker.setYears(iYears);
 			}
-			oYearPicker.setYears(iYears);
 
 			var that = this;
 			var oStartDate = _getStartDate(that);
@@ -293,6 +301,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
+		CalendarDateInterval.prototype.setPickerPopup = function(bPickerPopup){
+
+			this.setProperty("pickerPopup", bPickerPopup, true);
+
+			var oMonthPicker = this.getAggregation("monthPicker");
+			var oYearPicker = this.getAggregation("yearPicker");
+
+			if (bPickerPopup) {
+				oMonthPicker.setColumns(3);
+				oMonthPicker.setMonths(12);
+				oYearPicker.setColumns(4);
+				oYearPicker.setYears(20);
+			} else {
+				oMonthPicker.setColumns(0);
+				oMonthPicker.setMonths(6);
+				oYearPicker.setColumns(0);
+				oYearPicker.setYears(6);
+			}
+
+		};
+
 		CalendarDateInterval.prototype._handlePrevious = function(oEvent){
 
 			var that = this;
@@ -384,6 +413,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			return aMonths;
+
+		};
+
+		CalendarDateInterval.prototype._openPickerPopup = function(oPicker){
+
+			if (!this._oPopup) {
+				jQuery.sap.require("sap.ui.core.Popup");
+				this._oPopup = new sap.ui.core.Popup();
+				this._oPopup.setAutoClose(false);
+				this._oPopup.setDurations(0, 0); // no animations
+				this._oPopup._oCalendar = this;
+				this._oPopup.onsapescape = function(oEvent) {
+					this._oCalendar.onsapescape(oEvent);
+				};
+			}
+
+			this._oPopup.setContent(oPicker);
+
+			var oHeader = this.getAggregation("header");
+			var eDock = sap.ui.core.Popup.Dock;
+			this._oPopup.open(0, eDock.CenterTop, eDock.CenterBottom, oHeader, null, "flipfit", true);
 
 		};
 

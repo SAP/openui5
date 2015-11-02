@@ -66,7 +66,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 *
 			 * <b>Note:</b> On phones, the maximum number of months displayed in the row is always 6.
 			 */
-			months : {type : "int", group : "Misc", defaultValue : 12}
+			months : {type : "int", group : "Misc", defaultValue : 12},
+
+			/**
+			 * If set, the yearPicker opens on a popup
+			 * @since 1.34.0
+			 */
+			pickerPopup : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		aggregations : {
 
@@ -382,12 +388,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				oMonthsRow.setDate(CalendarUtils._createLocalDate(oStartDate));
 			}
 
-			var oYearPicker = this.getAggregation("yearPicker");
-			var iYears = Math.floor(iMonths / 2);
-			if (iYears > 20) {
-				iYears = 20;
+			if (!this.getPickerPopup()) {
+				var oYearPicker = this.getAggregation("yearPicker");
+				var iYears = Math.floor(iMonths / 2);
+				if (iYears > 20) {
+					iYears = 20;
+				}
+				oYearPicker.setYears(iYears);
 			}
-			oYearPicker.setYears(iYears);
 
 			_updateHeader.call(this);
 
@@ -427,6 +435,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			return this._oLocaleData;
+
+		};
+
+		CalendarMonthInterval.prototype.setPickerPopup = function(bPickerPopup){
+
+			this.setProperty("pickerPopup", bPickerPopup, true);
+
+			var oYearPicker = this.getAggregation("yearPicker");
+
+			if (bPickerPopup) {
+				oYearPicker.setColumns(4);
+				oYearPicker.setYears(20);
+			} else {
+				oYearPicker.setColumns(0);
+				oYearPicker.setYears(6);
+			}
 
 		};
 
@@ -735,15 +759,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			var oYearPicker = this.getAggregation("yearPicker");
-			if (oYearPicker.getDomRef()) {
-				// already rendered
-				oYearPicker.$().css("display", "");
-			} else {
-				var oRm = sap.ui.getCore().createRenderManager();
-				var $Container = this.$("content");
-				oRm.renderControl(oYearPicker);
-				oRm.flush($Container[0], false, true); // insert it
-				oRm.destroy();
+			if (!this.getPickerPopup()) {
+				if (oYearPicker.getDomRef()) {
+					// already rendered
+					oYearPicker.$().css("display", "");
+				} else {
+					var oRm = sap.ui.getCore().createRenderManager();
+					var $Container = this.$("content");
+					oRm.renderControl(oYearPicker);
+					oRm.flush($Container[0], false, true); // insert it
+					oRm.destroy();
+				}
+			}else {
+				_openPickerPopup.call(this, oYearPicker);
 			}
 			this.$("contentOver").css("display", "");
 
@@ -764,8 +792,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			this._iMode = 0;
 
-			var oYearPicker = this.getAggregation("yearPicker");
-			oYearPicker.$().css("display", "none");
+			if (!this.getPickerPopup()) {
+				var oYearPicker = this.getAggregation("yearPicker");
+				oYearPicker.$().css("display", "none");
+			}else {
+				this._oPopup.close();
+			}
 			this.$("contentOver").css("display", "none");
 
 			if (!bNoFocus) {
@@ -948,6 +980,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			oStartDate = new UniversalDate(oDate.getTime());
 			oStartDate.setUTCMonth( oStartDate.getUTCMonth() - iMonth);
 			_setStartDate.call(this, oStartDate, false);
+
+		}
+
+		function _openPickerPopup(oPicker){
+
+			if (!this._oPopup) {
+				jQuery.sap.require("sap.ui.core.Popup");
+				this._oPopup = new sap.ui.core.Popup();
+				this._oPopup.setAutoClose(false);
+				this._oPopup.setDurations(0, 0); // no animations
+				this._oPopup._oCalendar = this;
+				this._oPopup.onsapescape = function(oEvent) {
+					this._oCalendar.onsapescape(oEvent);
+				};
+			}
+
+			this._oPopup.setContent(oPicker);
+
+			var oHeader = this.getAggregation("header");
+			var eDock = sap.ui.core.Popup.Dock;
+			this._oPopup.open(0, eDock.CenterTop, eDock.CenterBottom, oHeader, null, "flipfit", true);
 
 		}
 

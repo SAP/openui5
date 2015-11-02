@@ -398,7 +398,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					if (!this._oTimeInterval) {
 						this._oTimeInterval = new sap.ui.unified.CalendarTimeInterval(this.getId() + "-TimeInt", {
 							startDate: new Date(oStartDate.getTime()), // use new date object
-							items: iIntervals
+							items: iIntervals,
+							pickerPopup: true
 						});
 						this._oTimeInterval.attachEvent("startDateChange", _handleStartDateChange, this);
 						this._oTimeInterval.attachEvent("select", _handleIntervalSelect, this);
@@ -417,7 +418,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						this._oDateInterval = new sap.ui.unified.CalendarDateInterval(this.getId() + "-DateInt", {
 							startDate: new Date(oStartDate.getTime()), // use new date object
 							days: iIntervals,
-							showDayNamesLine: false
+							showDayNamesLine: false,
+							pickerPopup: true
 						});
 						this._oDateInterval.attachEvent("startDateChange", _handleStartDateChange, this);
 						this._oDateInterval.attachEvent("select", _handleIntervalSelect, this);
@@ -435,7 +437,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					if (!this._oMonthInterval) {
 						this._oMonthInterval = new sap.ui.unified.CalendarMonthInterval(this.getId() + "-MonthInt", {
 							startDate: new Date(oStartDate.getTime()), // use new date object
-							months: iIntervals
+							months: iIntervals,
+							pickerPopup: true
 						});
 						this._oMonthInterval.attachEvent("startDateChange", _handleStartDateChange, this);
 						this._oMonthInterval.attachEvent("select", _handleIntervalSelect, this);
