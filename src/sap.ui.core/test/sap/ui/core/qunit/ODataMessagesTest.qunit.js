@@ -473,7 +473,7 @@ function runODataMessagesTests() {
 				}
 			};
 			oParser.parse(oResponse, oRequest);
-			equal(iCounter, 1, "Message from 'Sap-Message' header was added")
+			equal(iCounter, 1, "Message from 'Sap-Message' header was added");
 
 			var oResponse = {
 				statusCode: "200", // Parse Header...
@@ -490,7 +490,7 @@ function runODataMessagesTests() {
 				}
 			};
 			oParser.parse(oResponse, oRequest);
-			equal(iCounter, 2, "Message from 'sap-message' header was added")
+			equal(iCounter, 2, "Message from 'sap-message' header was added");
 
 
 			var oResponse = {
@@ -508,10 +508,10 @@ function runODataMessagesTests() {
 				}
 			};
 			oParser.parse(oResponse, oRequest);
-			equal(iCounter, 1, "Message from 'SAP-Message' header was added")
+			equal(iCounter, 1, "Message from 'SAP-Message' header was added");
 			start();
 		});
-	})
+	});
 	
 	asyncTest("ODataMessageParser without ODataModel", function() {
 		var sServiceURI = "fakeservice://testdata/odata/northwind";
