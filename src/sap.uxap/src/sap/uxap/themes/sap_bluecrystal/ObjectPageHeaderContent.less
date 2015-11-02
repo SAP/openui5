@@ -1,0 +1,33 @@
+
+.sapUxAPObjectPageHeaderContent .sapMObjStatus, .sapUxAPObjectPageContainer .sapMObjStatus {
+	font-size: @sapMFontMediumSize;
+}
+
+.sapUiMedia-Std-Desktop, .sapUiMedia-Std-Tablet {
+	.sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderObjectImage-Circle .sapUxAPObjectPageHeaderObjectImage {
+		border-color: fade(@sapUiAccent7, 20%);
+	}
+	.sapUxAPObjectPageHeaderDetailsDesign-Dark .sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderObjectImage-Circle .sapUxAPObjectPageHeaderObjectImage {
+		border-color: fade(@sapUiLightestBG, 20%);
+	}
+}
+
+.sapUxAPObjectPageHeaderIdentifierSubTitleInContent {
+	font-size: @sapMFontMediumSize;
+}
+
+.sapUxAPObjectPageHeaderContent {
+	> .sapUiSimpleForm {
+		.sapMText, .sapMLabel, .sapMLnk {
+			font-size: @sapMFontMediumSize;
+		}
+	}
+}
+
+.sapUxAPObjectPageHeaderContentDesign-Light {
+	background-color: mix(@sapUiAccent5, @sapUiWhite, 5);
+}
+
+html.sap-desktop .sapUxAPObjectPageHeaderDetailsDesign-Dark .sapMBtn:focus > .sapMFocusable {
+	outline: 1px dotted @sapUiInvertedFocus;
+}

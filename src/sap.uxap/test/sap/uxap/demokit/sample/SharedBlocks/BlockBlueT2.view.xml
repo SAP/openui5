@@ -1,0 +1,8 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:html="http://www.w3.org/1999/xhtml">
+	<html:div style="height:auto;min-height:4em; background-color: #A9EAFF ;line-height: 4em;">
+		If there are several Subsections in a section, the subsection names are displayed in a popup when clicking the
+		section name in the AnchorBar.
+	</html:div>
+</mvc:View>

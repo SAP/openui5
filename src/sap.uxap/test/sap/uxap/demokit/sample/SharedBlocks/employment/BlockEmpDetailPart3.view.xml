@@ -1,0 +1,23 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout"
+		  xmlns:forms="sap.ui.layout.form" xmlns="sap.m">
+
+
+	<forms:SimpleForm labelSpanL="4" labelSpanM="4"
+					  labelSpanS="4" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+					  maxContainerCols="2" layout="ResponsiveGridLayout" width="100%">
+
+		<Label text="Payroll End Date"/>
+		<Text text="Jan 01, 2014"/>
+
+		<Label text="Benefits End Date"/>
+		<Text text="Jun 30, 2014"/>
+
+		<Label text="Stock End Date"/>
+		<Text text="Jun 01, 2014"/>
+
+		<Label text="Eligible for Salary Contribution"/>
+		<Text text="No"/>
+	</forms:SimpleForm>
+
+
+</mvc:View>

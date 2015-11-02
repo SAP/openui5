@@ -1,0 +1,49 @@
+<core:View height="100%" xmlns:core="sap.ui.core" xmlns:m="sap.m"
+		   xmlns="sap.uxap" xmlns:sample="sap.uxap.sample.ObjectPageSubSection">
+
+	<ObjectPageLayout id="ObjectPageLayout">
+		<headerTitle>
+			<ObjectPageHeader objectTitle="Expand/Collapse sample"/>
+		</headerTitle>
+
+		<sections>
+			<ObjectPageSection title="All examples">
+				<subSections>
+
+					<ObjectPageSubSection title="No Expand/Collapse"
+										  mode="Expanded">
+						<blocks>
+							<sample:MultiViewBlock id="multiview21"/>
+							<sample:MultiViewBlock id="multiview22"/>
+						</blocks>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection title="Collapsed by default"
+										  mode="Collapsed">
+						<blocks>
+							<sample:MultiViewBlock id="multiview11"/>
+							<sample:MultiViewBlock id="multiview12"/>
+						</blocks>
+						<moreBlocks>
+							<sample:MultiViewBlock id="multiview13"/>
+							<sample:MultiViewBlock id="multiview14"/>
+						</moreBlocks>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection title="Expanded by default"
+										  mode="Expanded">
+						<blocks>
+							<sample:MultiViewBlock id="multiview31"/>
+							<sample:MultiViewBlock id="multiview32"/>
+						</blocks>
+						<moreBlocks>
+							<sample:MultiViewBlock id="multiview33"/>
+							<sample:MultiViewBlock id="multiview34"/>
+						</moreBlocks>
+					</ObjectPageSubSection>
+
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</core:View>

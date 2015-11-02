@@ -1,0 +1,102 @@
+.sapUxAPObjectPageLayout {
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+
+body > .sapUxAPObjectPageLayout,
+.sapUiVltCell .sapUxAPObjectPageLayout {
+	position: fixed;
+}
+
+.sapUxAPObjectPageHeaderTitle {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 2;
+}
+
+.sapUxAPObjectPageWrapper {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	min-height: 100%;
+	overflow: hidden;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	/* Performance tweak - force the objectPageWrapper content on to the GPU effectively separating it in a different
+	composite layer. This is better done with will-change: transform, but at the moment is not supported on
+	many platforms. When will-change becomes widely adopted than it's better to use it rather than translate3d */
+	-webkit-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
+}
+
+.sapUxAPObjectPageScroll {
+	position: relative;
+}
+
+.sapUxAPObjectPageContainerNoBar > .sapUxAPObjectPageSection:first-child {
+	margin-top: 0;
+}
+
+/****
+    sapUxAPObjectPageScroll copied from sapMScroll for now
+****/
+
+.sapUxAPObjectPageScrollV,
+.sapUxAPObjectPageScrollH,
+.sapUxAPObjectPageScrollV > div, .sapUxAPObjectPageScrollH > div {
+	position: absolute;
+}
+
+.sapUxAPObjectPageScrollV > div, .sapUxAPObjectPageScrollH > div {
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	-webkit-background-clip: padding-box;
+	background-clip: padding-box;
+	border-width: 0.0625rem;
+	border-style: solid;
+	border-color: rgba(255, 255, 255, 0.901961);
+	border-radius: 0.1875rem;
+	background-color: rgba(0, 0, 0, 0.498039)
+}
+
+.sapUxAPObjectPageScrollV {
+	width: 0.438rem;
+	right: 0.063rem;
+	top: 0;
+	bottom: 0
+}
+
+.sapUxAPObjectPageScrollV > div {
+	width: 100%
+}
+
+.sapUxAPObjectPageScrollH {
+	height: 0.4375rem;
+	bottom: 0.0625rem;
+	left: 0.125rem;
+	right: 0.125rem
+}
+
+.sapUxAPObjectPageScrollH > div {
+	height: 100%
+}
+
+.sapUxAPObjectChildPage {
+	width: 0.5rem;
+	height: 100%;
+	position: absolute;
+	left: 0;
+	right: auto;
+	z-index: 3000;
+}
+
+html[dir=rtl] .sapUxAPObjectChildPage {
+	right: 0;
+	left: auto;
+}

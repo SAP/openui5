@@ -1,0 +1,15 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:forms="sap.ui.layout.form"
+		xmlns:core="sap.ui.core"
+		controllerName="sap.uxap.testblocks.freeform.FreeFormBlockController">
+
+	<forms:SimpleForm
+			maxContainerCols="2"
+			editable="false"
+			layout="ResponsiveGridLayout">
+		<core:Title text="Freeform block"/>
+		<Button text="press me (Free form)" press="handlePress"/>
+	</forms:SimpleForm>
+</mvc:View>

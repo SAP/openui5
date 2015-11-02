@@ -1,0 +1,15 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:forms="sap.ui.layout.form"
+		xmlns:core="sap.ui.core"
+		xmlns="sap.m">
+
+	<forms:SimpleForm
+			maxContainerCols="2"
+			editable="false"
+			layout="ResponsiveGridLayout">
+		<core:Title text="My name"></core:Title>
+		<Text text="{Contact>firstName}"/>
+		<Text text="{Contact>lastName}"/>
+	</forms:SimpleForm>
+</mvc:View>

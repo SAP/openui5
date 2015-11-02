@@ -1,0 +1,90 @@
+<core:View xmlns:core="sap.ui.core"
+		   xmlns="sap.uxap"
+		   xmlns:layout="sap.ui.layout"
+		   xmlns:m="sap.m"
+		   xmlns:sample="sap.uxap.sample.ObjectPageFormLayout"
+		   xmlns:goals="sap.uxap.sample.ObjectPageFormLayout.block.goals"
+		   xmlns:test="sap.uxap.sample.ObjectPageFormLayout.block.test"
+		   xmlns:personal="sap.uxap.sample.ObjectPageFormLayout.block.personal"
+		   xmlns:employment="sap.uxap.sample.ObjectPageFormLayout.block.employment"
+		   xmlns:blockcolor="sap.uxap.sample.ObjectPageFormLayout.block.blockscolor"
+		   controllerName="sap.uxap.sample.ObjectPageFormLayout.ObjectPageFormLayout"
+		   height="100%">
+
+	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true" showTitleInHeaderContent="true">
+		<headerTitle>
+			<ObjectPageHeader objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png"
+							  objectTitle="Denise Smith"
+							  objectImageShape="Circle"
+							  objectImageAlt="Denise Smith"
+							  objectSubtitle="Senior UI Developer">
+				<actions>
+					<ObjectPageHeaderActionButton icon="sap-icon://pull-down" text="show section" type="Emphasized"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" type="Emphasized"/>
+				</actions>
+				<breadCrumbsLinks>
+					<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
+					<m:Link text="Page 2 long link" press="handleLink2Press"/>
+				</breadCrumbsLinks>
+			</ObjectPageHeader>
+		</headerTitle>
+
+		<headerContent>
+			<layout:VerticalLayout>
+				<m:Link text="+33 6 4512 5158"/>
+				<m:Link text="DeniseSmith@sap.com"/>
+			</layout:VerticalLayout>
+
+			<layout:HorizontalLayout>
+				<m:Image src="./test-resources/sap/uxap/images/linkedin.png"></m:Image>
+				<m:Image src="./test-resources/sap/uxap/images/Twitter.png"></m:Image>
+			</layout:HorizontalLayout>
+
+			<layout:VerticalLayout>
+				<m:Label text="Hello! I am Tim and I use UxAP"/>
+				<m:VBox height="63px">
+					<m:Label text="Achieved goals"/>
+					<m:ProgressIndicator
+							percentValue="30"
+							displayValue="30%"
+							showValue="true"
+							state="None"/>
+				</m:VBox>
+			</layout:VerticalLayout>
+
+			<layout:VerticalLayout>
+				<m:Label text="San Jose, USA"/>
+			</layout:VerticalLayout>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection title="Personal">
+				<subSections>
+					<ObjectPageSubSection title=" ">
+						<blocks>
+							<personal:PersonalFormBlock id="personalinfo" columnLayout="4"/>
+							<blockcolor:BlockBlue id="bbt1"/>
+							<blockcolor:BlockBlue id="bbt2"/>
+							<blockcolor:BlockBlue id="bbt3"/>
+							<blockcolor:BlockBlue id="bbt4"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Employment">
+				<subSections>
+					<ObjectPageSubSection title="Employment">
+						<blocks>
+							<employment:BlockJobInfo id="jobinfo" columnLayout="2"/>
+							<blockcolor:BlockBlue id="bbt5"/>
+							<blockcolor:BlockBlue id="bbt6"/>
+							<blockcolor:BlockBlue id="bbt7"/>
+							<blockcolor:BlockBlue id="bbt8"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</core:View>

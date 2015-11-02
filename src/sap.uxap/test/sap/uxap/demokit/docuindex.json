@@ -1,0 +1,253 @@
+{
+  "explored": {
+	"entitiesDefaults": {
+	  "formFactors": "L"
+	},
+	"samplesRef": {
+	  "namespace": "sap.uxap.sample",
+	  "ref": "test-resources/sap/uxap/demokit/sample"
+	},
+	"entities": [
+	  {
+		"id": "sap.uxap.ObjectPageHeader",
+		"name": "Object Page Header Title",
+		"category": "Display",
+		"since": "1.26",
+		"formFactors": "-",
+		"samples": [
+		  "sap.uxap.sample.ObjectPageHeaderWithAllControls",
+		  "sap.uxap.sample.ProfileObjectPageHeader",
+		  "sap.uxap.sample.AlternativeProfileObjectPageHeader",
+		  "sap.uxap.sample.KPIObjectPageHeader"
+		]
+	  },
+	  {
+		"id": "sap.uxap.ObjectPageHeaderContent",
+		"name": "Object Page Header Content",
+		"category": "Display",
+		"since": "1.30",
+		"formFactors": "-",
+		"samples": [
+		  "sap.uxap.sample.HeaderContent",
+		  "sap.uxap.sample.ObjectPageHeaderContentPriorities"
+		]
+	  },
+	  {
+		"id": "sap.uxap.ObjectPageLayout",
+		"name": "Object Page Layout",
+		"category": "Layout",
+		"formFactors": "-",
+		"since": "1.26",
+		"samples": [
+		  "sap.uxap.sample.ObjectPageOnJSON",
+		  "sap.uxap.sample.ObjectPageWithIconTabBar",
+		  "sap.uxap.sample.ObjectPageTitleOnLeft",
+		  "sap.uxap.sample.ObjectPageOnJSONWithLazyLoading",
+		  "sap.uxap.sample.ObjectPageState",
+		  "sap.uxap.sample.AnchorBar",
+		  "sap.uxap.sample.AnchorBarWithNumbers",
+		  "sap.uxap.sample.AnchorBarNoPopover",
+		  "sap.uxap.sample.ChildObjectPage",
+		  "sap.uxap.sample.ObjectPageHeaderExpanded",
+		  "sap.uxap.sample.ObjectPageHeaderContentPriorities",
+		  "sap.uxap.sample.ObjectPageFormLayout"
+		]
+	  },
+	  {
+		"id": "sap.uxap.ObjectPageSection",
+		"name": "Object Page Section",
+		"category": "Container",
+		"since": "1.26",
+		"samples": [
+		  "sap.uxap.sample.ObjectPageSection"
+		]
+	  },
+	  {
+		"id": "sap.uxap.ObjectPageSubSection",
+		"name": "Object Page SubSection",
+		"category": "Container",
+		"since": "1.26",
+		"samples": [
+		  "sap.uxap.sample.ObjectPageSubSection",
+		  "sap.uxap.sample.ObjectPageSubSectionMultiView",
+		  "sap.uxap.sample.ObjectPageSubSectionSized",
+		  "sap.uxap.sample.ObjectPageSubSectionWithActions"
+		]
+	  },
+	  {
+		"id": "sap.uxap.ModelMapping",
+		"name": "Object Page Model Mapping",
+		"category": "Data Binding",
+		"since": "1.26",
+		"samples": [
+		  "sap.uxap.sample.BoundModelMapping",
+		  "sap.uxap.sample.ModelMapping"
+		]
+	  },
+	  {
+		"id": "sap.uxap.BlockBase",
+		"name": "Object Page Block Base",
+		"category": "Container",
+		"since": "1.26",
+		"samples": [
+		  "sap.uxap.sample.SingleView",
+		  "sap.uxap.sample.ObjectPageBlockBase",
+		  "sap.uxap.sample.BlockInBlock",
+		  "sap.uxap.sample.Eventing"
+		]
+	  }
+	],
+	"samples": [
+	  {
+		"id": "sap.uxap.sample.ObjectPageSubSection",
+		"name": "Subsection with Expand/Collapse",
+		"description": "This example shows subsections in expanded and collapsed mode."
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageSubSectionSized",
+		"name": "Subsection with blocks using column layout",
+		"description": "This example shows how the size of the blocks and be either specified or automatic"
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageSubSectionMultiView",
+		"name": "Subsection with automatic layout of blocks",
+		"description": "This example shows how blocks can be laid out automatically by the Object Page when their size is not specified."
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageSubSectionWithActions",
+		"name": "Subsection with Action buttons sample",
+		"description": "Example of a subsection displaying action buttons."
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageSection",
+		"name": "Object Page Layout Section sample",
+		"description": "This example explains the rules for the rendering of sections"
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageOnJSON",
+		"name": "Object Page with Title on top",
+		"description": "Object Page sample showing a layout with subsection titles on top. This is the default layout. The sample also shows the 'Edit header' button in the Header Content area."
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageWithIconTabBar",
+		"name": "Object Page with sap.m.IconTabBar as a navigation bar",
+		"description": "Object Page sample showing a layout where the navigation is done with sap.m.IconTabBar instead of sap.uxap.AnchorBar"
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageState",
+		"name": "Object Page State",
+		"description": "This example shows how the page can be accessed directly to a specific vertical position, with \"See More\" enabled"
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageTitleOnLeft",
+		"name": "Object Page with Title on the left",
+		"description": "Object Page sample showing a layout with subsection titles on the left."
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageOnJSONWithLazyLoading",
+		"name": "Object Page with LazyLoading",
+		"description": "Object Page with LazyLoading"
+	  },
+	  {
+		"id": "sap.uxap.sample.SingleView",
+		"name": "Single View sample",
+		"description": "Use of implicit static view definition."
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageBlockBase",
+		"name": "ObjectPage Blockbase",
+		"description": "This example shows the different layout of the blocks based on their ColumnLayout."
+	  },
+	  {
+		"id": "sap.uxap.sample.ModelMapping",
+		"name": "Model Mapping",
+		"description": "Use of dynamic model mapping"
+	  },
+	  {
+		"id": "sap.uxap.sample.BoundModelMapping",
+		"name": "Bound Model Mapping",
+		"description": "Use of dynamic bound model mapping"
+	  },
+	  {
+		"id": "sap.uxap.sample.ModeAwareness",
+		"name": "Mode Awareness",
+		"description": "A block that use the same view for several modes and a controller that implements onParentBlockModeChange"
+	  },
+	  {
+		"id": "sap.uxap.sample.BlockInBlock",
+		"name": "Block in a block",
+		"description": "Uses a block in a view of another block"
+	  },
+	  {
+		"id": "sap.uxap.sample.MixedBlock",
+		"name": "Mixed block",
+		"description": "Uses a block in a view of another block"
+	  },
+	  {
+		"id": "sap.uxap.sample.Eventing",
+		"name": "Eventing blocks",
+		"description": "Uses of a block that is firing a dummy event"
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageHeaderWithAllControls",
+		"name": "ObjectPageHeader with all controls",
+		"description": "This is an example of an ObjectPageHeader containing all possible controls in it."
+	  },
+	  {
+		"id": "sap.uxap.sample.AnchorBar",
+		"name": "Object Page AnchorBar",
+		"description": "AnchorBar has a different behavior based on the device"
+	  },
+	  {
+		"id": "sap.uxap.sample.AnchorBarWithNumbers",
+		"name": "Object Page AnchorBar with numbers",
+		"description": "This example shows how to visualize numbers in parenthesis after the corresponding section titles in the AnchorBar"
+	  },
+	  {
+		"id": "sap.uxap.sample.AnchorBarNoPopover",
+		"name": "Navigation to Section sample",
+		"description": "This example shows how to change the default behavior in order to be able to navigate to sections instead of subsections, using the Anchor Bar"
+	  },
+	  {
+		"id": "sap.uxap.sample.ProfileObjectPageHeader",
+		"name": "ObjectPageHeader with placeholder",
+		"description": "This is an example of ObjectPageHeader using the showPlaceholder property."
+	  },
+	  {
+		"id": "sap.uxap.sample.AlternativeProfileObjectPageHeader",
+		"name": "ObjectPageHeader options",
+		"description": "This is a different example of ObjectPageHeader hiding the headerTitle area entirely until user scrolls down."
+	  },
+	  {
+		"id": "sap.uxap.sample.KPIObjectPageHeader",
+		"name": "Standard Fiori ObjectPageHeader",
+		"description": "This is an example of an ObjectPageHeader containing mainly KPIs."
+	  },
+	  {
+		"id": "sap.uxap.sample.HeaderContent",
+		"name": "ObjectPageHeaderContent",
+		"description": "This is an example of an ObjectPageHeaderContent."
+	  },
+	  {
+		"id": "sap.uxap.sample.ChildObjectPage",
+		"name": "ObjectPage as a child page",
+		"description": "This is an example of an ObjectPage Child page."
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageHeaderExpanded",
+		"name": "ObjectPage with HeaderContent always shown on desktop",
+		"description": "This is an example of an ObjectPage with property alwaysShowContentHeader set to true. In this case the HeaderContent won't snap on a desktop."
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageHeaderContentPriorities",
+		"name": "Object Page Header Content Priorities",
+		"description": "The sample shows how to set priorities of the ObjectPageHeader content items by using the ObjectPageHeaderContentLayoutData element"
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageFormLayout",
+		"name": "ObjectPage with forms",
+		"description": "Object Page automatically adjusts form layout to match block column layout"
+	  }
+	]
+  }
+}

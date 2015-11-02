@@ -1,0 +1,35 @@
+<html>
+<head>
+	<title>Global TestSuite for sap.uxap library</title>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+	<script id="sap-ui-bootstrap" src='../../../../resources/sap-ui-core.js'></script>
+</head>
+<body>
+<script language="javascript">
+   function suite() {
+        var suite = new top.jsUnitTestSuite();
+        var contextPath = "/" + window.location.pathname.split("/")[1];
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/AnchorBar.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/BlockShowMore.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/BreadCrumbs.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/ObjectPageHeader.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/ObjectPageHeaderContent.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/ObjectPageSection.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/ObjectPageSubSection.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/ObjectPageKeyboardHandling.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/ObjectPageScreenReaderSupport.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/ObjectPageAPICreation.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/ObjectPageInXMLCreation.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/ObjectPageRules.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/ObjectPageFormLayout.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/ObjectPageLazyLoading.qunit.html");
+        /*
+        if (!sap.ui.Device.browser.internet_explorer){
+             suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/ObjectPageConfig.qunit.html");
+        }
+        */
+        return suite;
+    }
+</script>
+</body>
+</html>

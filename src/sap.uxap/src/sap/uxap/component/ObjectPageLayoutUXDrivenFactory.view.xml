@@ -1,0 +1,46 @@
+<core:View xmlns:core="sap.ui.core"
+		   xmlns="sap.uxap"
+		   height="100%"
+		   controllerName="sap.uxap.component.ObjectPageLayoutUXDrivenFactory"
+		>
+	<ObjectPageLayout id="ObjectPageLayout"
+					  subSectionLayout="{objectPageLayoutMetadata>/subSectionLayout}"
+					  showAnchorBar="{objectPageLayoutMetadata>/showAnchorBar}"
+					  height="{objectPageLayoutMetadata>/height}"
+					  enableLazyLoading="{objectPageLayoutMetadata>/enableLazyLoading}"
+					  sections="{objectPageLayoutMetadata>/sections}"
+					  headerContent="{path:'objectPageLayoutMetadata>/headerContent', factory:'.controlFactory'}"
+			>
+
+		<!-- template for objectPageSection -->
+		<sections>
+			<ObjectPageSection id="ObjectPageSection"
+							   icon="{objectPageLayoutMetadata>icon}"
+							   title="{objectPageLayoutMetadata>title}"
+							   showTitle="{objectPageLayoutMetadata>showTitle}"
+							   subSections="{objectPageLayoutMetadata>subSections}"
+							   visible="{objectPageLayoutMetadata>visible}">
+
+				<!-- template for objectPageSubSection -->
+				<subSections>
+					<ObjectPageSubSection id="ObjectPageSubSection"
+										  icon="{objectPageLayoutMetadata>icon}"
+										  title="{objectPageLayoutMetadata>title}"
+										  visible="{objectPageLayoutMetadata>visible}"
+										  mode="{objectPageLayoutMetadata>mode}"
+										  actions="{path:'objectPageLayoutMetadata>actions', factory:'.controlFactory'}"
+										  blocks="{path:'objectPageLayoutMetadata>blocks', factory:'.controlFactory'}"
+										  moreBlocks="{path:'objectPageLayoutMetadata>moreBlocks', factory:'.controlFactory'}">
+
+						<!-- factory for actions, blocks and moreBlocks as the type is coming from the model -->
+
+					</ObjectPageSubSection>
+				</subSections>
+				<!-- end template for objectPageSubSection -->
+
+			</ObjectPageSection>
+		</sections>
+		<!-- template for objectPageSection -->
+	</ObjectPageLayout>
+
+</core:View>

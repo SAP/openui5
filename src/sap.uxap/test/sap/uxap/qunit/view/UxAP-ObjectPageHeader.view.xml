@@ -1,0 +1,40 @@
+<core:View
+		xmlns:core="sap.ui.core"
+		xmlns="sap.uxap"
+		xmlns:layout="sap.ui.layout"
+		xmlns:m="sap.m"
+		height="100%">
+	<ObjectPageLayout id="ObjectPageLayout">
+		<headerTitle>
+			<ObjectPageHeader id="header"
+							  headerDesign="Light"
+							  objectTitle="Denise Smith"
+							  showTitleSelector="true"
+							  showMarkers="true"
+							  markFavorite="true"
+							  markFlagged="true"
+							  markLocked="true"
+							  objectSubtitle="Senior Developer"
+							  objectImageURI="../img/HugeHeaderPicture.png"
+							  objectImageShape="Circle"
+							  isObjectIconAlwaysVisible="true"
+							  isObjectTitleAlwaysVisible="true"
+							  isObjectSubtitleAlwaysVisible="true"
+							  isActionAreaAlwaysVisible="true"
+							  showPlaceholder="true"
+					>
+				<actions>
+					<ObjectPageHeaderActionButton text="Public Profile" iconFirst="true" icon="sap-icon://show"/>
+					<ObjectPageHeaderActionButton text="Take Action" iconFirst="true" icon="sap-icon://action"/>
+				</actions>
+				<breadCrumbsLinks>
+					<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
+					<m:Link text="Page 2 long link" press="handleLink2Press"/>
+				</breadCrumbsLinks>
+			</ObjectPageHeader>
+		</headerTitle>
+		<headerContent>
+			<m:Text text="Personal description"/>
+		</headerContent>
+	</ObjectPageLayout>
+</core:View>

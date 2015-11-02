@@ -1,0 +1,18 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core"
+		  xmlns:layout="sap.ui.layout" xmlns:forms="sap.ui.layout.form" xmlns="sap.m">
+
+
+	<forms:SimpleForm labelSpanL="4" labelSpanM="4"
+					  labelSpanS="4" emptySpanL="0" emptySpanM="0" emptySpanS="0"
+					  maxContainerCols="2" layout="ResponsiveLayout">
+		<core:Title text="Main Payment Method"/>
+
+		<Label text="Bank Transfer"/>
+
+		<layout:VerticalLayout>
+			<Text text="Sparkasse Heimfeld, Germany"/>
+			<Text text="Account 458784545"/>
+		</layout:VerticalLayout>
+	</forms:SimpleForm>
+
+</mvc:View>

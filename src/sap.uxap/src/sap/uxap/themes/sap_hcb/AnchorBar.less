@@ -1,0 +1,82 @@
+.sapUxAPAnchorBar {
+	background-color: @sapHCStandardBG;
+	border: 0.0625rem solid @sapHCStandardFG;
+}
+
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton:first-child,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton:first-child .sapMBtnInner {
+	border-left-width: 1px;
+}
+
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner {
+	padding-top: 0;
+	padding-bottom: 0;
+	border-top: none;
+	border-bottom: none;
+	border-left-width: 0;
+}
+
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner {
+	border-radius: 0;
+}
+
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnIcon,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner .sapMBtnContent {
+	height: 3rem;
+	line-height: 3rem;
+}
+
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected .sapMBtnInner {
+	background-color: @sapHCHighlightAltBG;
+}
+
+/***********************/
+/* BEGIN Scroll Arrows */
+/***********************/
+
+// Gradient mask
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
+html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight {
+	background: -moz-linear-gradient(left, @sapHCStandardBG 0%, @sapHCStandardBG 75%, fade(@sapHCStandardBG, 0) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%, @sapHCStandardBG), color-stop(75%, @sapHCStandardBG), color-stop(100%, fade(@sapHCStandardBG, 0))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, @sapHCStandardBG 0%, @sapHCStandardBG 75%, fade(@sapHCStandardBG, 0) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(left, @sapHCStandardBG 0%, @sapHCStandardBG 75%, fade(@sapHCStandardBG, 0) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(left, @sapHCStandardBG 0%, @sapHCStandardBG 75%, fade(@sapHCStandardBG, 0) 100%); /* IE10+ */
+	background: linear-gradient(to right, @sapHCStandardBG 0%, @sapHCStandardBG 75%, fade(@sapHCStandardBG, 0) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#00000000', GradientType=1); /* IE6-9 */
+}
+
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight,
+html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
+	background: -moz-linear-gradient(left, fade(@sapHCStandardBG, 0) 0%, @sapHCStandardBG 25%, @sapHCStandardBG 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%, fade(@sapHCStandardBG, 0)), color-stop(25%, @sapHCStandardBG), color-stop(100%, @sapHCStandardBG)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, fade(@sapHCStandardBG, 0) 0%, @sapHCStandardBG 25%, @sapHCStandardBG 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(left, fade(@sapHCStandardBG, 0) 0%, @sapHCStandardBG 25%, @sapHCStandardBG 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(left, fade(@sapHCStandardBG, 0) 0%, @sapHCStandardBG 25%, @sapHCStandardBG 100%); /* IE10+ */
+	background: linear-gradient(to right, fade(@sapHCStandardBG, 0) 0%, @sapHCStandardBG 25%, @sapHCStandardBG 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#000000', GradientType=1); /* IE6-9 */
+}
+
+// Scroll buttons
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtn,
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtn {
+	top: 0.625rem;
+}
+
+/*********************/
+/* END Scroll Arrows */
+/*********************/
+
+/* OVERVIEW BUTTON */
+.sapUxAPAnchorBar.sapUxAPAnchorBarOverflow .sapUxAPHierarchicalSelect.sapMSltIconOnly {
+	top: 0;
+}
+
+/* OVERVIEW BUTTON IE focus fix */
+html[data-sap-ui-browser^="ie"] {
+	.sapUxAPAnchorBar.sapUxAPAnchorBarOverflow .sapUxAPHierarchicalSelect.sapMSltIconOnly:focus {
+		right: -16px;
+	}
+}

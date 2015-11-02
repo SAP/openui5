@@ -45,6 +45,7 @@
 		<module>src/sap.ui.dt</module>
 		<module>src/sap.tnt</module>
 		<module>src/sap.ui.demokit</module>
+		<module>src/sap.uxap</module>
 
 		<!-- theme libraries -->
 		<!-- TODO <module>src/themelib_sap_hcb</module> -->

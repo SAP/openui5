@@ -1,0 +1,312 @@
+h1.sapUxAPObjectPageHeaderIdentifierTitle,
+h1.sapUxAPObjectPageHeaderIdentifierTitleForce {
+	margin: 0;
+	font-weight: normal;
+}
+
+/*
+Expose class for rounded images
+*/
+.sapUxAPObjectPageHeaderObjectImage-Circle,
+.sapUxAPObjectPageHeaderObjectImage-Circle .sapUxAPObjectPageHeaderObjectImage {
+	border-radius: 100%;
+}
+
+.sapUxAPObjectPageHeaderPlaceholder {
+	display: inline-block;
+	width: 3rem;
+	height: 3rem;
+}
+
+.sapUxAPObjectPageHeaderObjectImage.sapUiIcon,
+.sapUxAPObjectPageHeaderPlaceholder .sapUiIcon {
+	align: center;
+	vertical-align: center;
+}
+
+/*
+objectPageHeader Title
+*/
+.sapUxAPObjectPageHeaderIdentifier {
+	position: relative;
+	display: none;
+	&.sapUxAPObjectPageHeaderIdentifierForce, .sapUxAPObjectPageHeaderStickied & {
+		display: block;
+	}
+
+	.sapUxAPObjectPageHeaderObjectImageForce .sapUxAPObjectPageHeaderObjectImage,
+	.sapUxAPObjectPageHeaderStickied & .sapUxAPObjectPageHeaderObjectImage {
+		-webkit-transition: opacity 0.5s;
+		transition: opacity 0.5s;
+		width: 3rem;
+		height: 3rem;
+		opacity: 1;
+		display: inline-block;
+		margin-right: 1rem;
+	}
+
+	.sapUxAPObjectPageHeaderObjectImage {
+		width: 0;
+		height: 0;
+		opacity: 0;
+		display: inline-block;
+
+		&.sapMNoImg {
+			display: none;
+			margin-right: 0;
+		}
+	}
+
+	.sapUxAPObjectPageHeaderActionButtonHideText .sapMBtnContent {
+		display: none;
+	}
+	.sapUxAPObjectPageHeaderActionButtonHideIcon {
+		.sapMBtnIcon {
+			display: none;
+		}
+
+		.sapUxAPObjectPageHeaderActionButtonHideText .sapMBtnInner.sapMBtnIconFirst,
+		.sapUxAPObjectPageHeaderActionButtonHideText .sapMBtnInner.sapMBtnBack {
+			padding-left: 0.75rem;
+		}
+
+		.sapUxAPObjectPageHeaderActionButtonHideIcon {
+			.sapMBtnIcon {
+				display: none;
+			}
+			.sapMBtnContent {
+				padding: 0;
+			}
+		}
+	}
+
+	.sapUxAPObjectPageHeaderIdentifierContainer {
+		display: inline-block;
+		line-height: normal;
+		vertical-align: middle;
+		width: 60%; /* Breaking point TBD */
+		box-sizing: border-box;
+		padding-top: 1.5rem;
+		padding-bottom: 1.5rem;
+	}
+
+	.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderIdentifierContainer {
+		padding-top: 1rem;
+		padding-bottom: 1rem;
+	}
+
+	.sapUxAPObjectPageHeaderIdentifierActions {
+		position: absolute;
+		padding-top: 0.75rem;
+		right: 0.25rem;
+		display: inline-block;
+		float: right;
+		vertical-align: top;
+		> * {
+			margin-left: 0.5rem;
+			padding: 0;
+		}
+		> *:first-child {
+			margin-left: 0;
+		}
+	}
+
+	.sapUxAPObjectPageHeaderIdentifierActions.sapUxAPObjectPageHeaderIdentifierActionsNoPadding {
+		padding-top: 0rem;
+	}
+
+	.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderIdentifierActions {
+		padding-top: 0.25rem;
+	}
+
+	.sapUxAPObjectPageHeaderObjectImageContainer {
+		.sapMImg {
+			vertical-align: middle;
+		}
+		.sapUiIcon {
+			vertical-align: middle;
+			font-size: 2rem;
+		}
+	}
+}
+
+.sapUiMedia-Std-Phone .sapUxAPObjectPageHeaderIdentifier {
+	padding-left: 1rem;
+}
+
+.sapUiMedia-Std-Tablet .sapUxAPObjectPageHeaderIdentifier,
+.sapUiMedia-Std-Desktop .sapUxAPObjectPageHeaderIdentifier {
+	padding-left: 2rem;
+}
+
+.sapUiMedia-Std-Desktop .sapMSplitContainerHideMode .sapUxAPObjectPageHeaderIdentifier {
+	padding-left: 3rem;
+}
+
+.sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderIdentifierDescription {
+	display: none;
+	word-break: break-word;
+	vertical-align: baseline;
+	padding-top: 0.5rem;
+
+	.sapUxAPObjectPageHeaderStickied & {
+		display: inline-block;
+	}
+	&.sapUxAPObjectPageHeaderIdentifierDescriptionForce:not(.sapOPHSubtitleBlock) {
+		display: inline-block;
+	}
+}
+
+.sapUxAPObjectPageHeaderIdentifier .sapUxAPObjectPageHeaderIdentifierDescription.sapUxAPObjectPageHeaderIdentifierDescriptionForce.sapOPHSubtitleBlock {
+	display: block;
+}
+
+.sapUxAPObjectPageHeaderIdentifierTitle {
+	font-size: 1.375rem;
+	padding-right: 1rem;
+	display: none;
+	vertical-align: baseline;
+	line-height: normal;
+	.sapUxAPObjectPageHeaderStickied & {
+		display: inline-block;
+	}
+	&.sapUxAPObjectPageHeaderIdentifierTitleForce {
+		display: inline-block;
+	}
+}
+
+.sapUxAPObjectPageHeaderObjectImageContainerSub > img {
+	padding-top: 0.5rem;
+	padding-bottom: 0.5rem;
+}
+
+html[data-sap-ui-browser^=ie] .sapUxAPObjectPageHeaderObjectImageContainerSub > img {
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.sapUxAPObjectPageHeaderTitleArrow {
+	vertical-align: top;
+	white-space: nowrap;
+	margin-left: 0.125rem;
+}
+
+.sapUxAPObjectPageHeaderTitleTextWrappable {
+	white-space: normal;
+}
+
+.sapUxAPObjectPageHeaderIdentifierTitle .sapMObjStatusMarker {
+	font-family: SAP-icons;
+	font-size: 1rem;
+	white-space: nowrap;
+}
+
+.sapUxAPObjectPageHeaderIdentifierTitleInContent .sapMObjStatusMarker .sapUiIcon,
+.sapUxAPObjectPageHeaderIdentifier .sapMObjStatusMarker .sapUiIcon {
+	display: inline;
+	margin-left: 0.5rem;
+}
+
+html[dir=rtl] .sapUxAPObjectPageHeaderIdentifierTitleInContent .sapMObjStatusMarker .sapUiIcon,
+html[dir=rtl] .sapUxAPObjectPageHeaderIdentifier .sapMObjStatusMarker .sapUiIcon {
+	margin-left: 0.5rem;
+}
+
+.sapUxAPObjectPageHeaderPlaceholder {
+	position: relative;
+	vertical-align: middle;
+}
+
+html[dir=rtl] .sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectImage .sapUiIcon.sapUiIconMirrorInRTL,
+.sapUxAPObjectPageHeaderPlaceholder.sapUxAPObjectPageHeaderObjectImage .sapUiIcon {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	-ms-transform: translate(-50%, -50%); /* IE 9 */
+	-webkit-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+.sapUxAPObjectPageHeaderLockBtn {
+	margin-left: 0.125rem;
+}
+
+html[dir=rtl] .sapUxAPObjectPageHeaderLockBtn {
+	margin-left: 0rem;
+	margin-right: 0.125rem;
+}
+
+.sapUxAPObjectPageHeaderLock .sapMObjStatusMarker .sapUiIcon:first-child {
+	margin-left: 0.125rem;
+}
+
+.sapUxAPObjectPageHeaderTitleArrow .sapMBtn {
+	margin-top: -0.525rem;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageHeaderTitleArrow .sapMBtn {
+	margin-top: -0.1rem;
+}
+
+.sapUxAPObjectPageHeaderTitleFollowArrow > .sapUxAPObjectPageHeaderIdentifierTitle {
+	padding-right: 0.5rem;
+}
+
+.sapUxAPObjectPageHeaderIdentifierDescription {
+	vertical-align: baseline;
+	padding-top: 0.5rem;
+}
+
+.sapUxAPObjectPageHeaderTitleFollowArrow ~ .sapUxAPObjectPageHeaderIdentifierDescription {
+	margin-top: -0.3125rem;
+	padding-top: 0;
+}
+
+.sapUiSizeCompact .sapUxAPObjectPageHeaderTitleFollowArrow ~ .sapUxAPObjectPageHeaderIdentifierDescription {
+	margin-top: 0.25rem;
+	padding-top: 0;
+}
+
+.sapUxAPObjectPageHeaderIdentifierTitleInContent {
+	display: block;
+	padding-top: 0;
+}
+
+.sapUxAPObjectPageHeaderIdentifierSubTitleInContent {
+	display: block;
+	margin-top: -0.3125rem;
+}
+
+.sapUxAPObjectPageHeaderTitleFollowArrow ~ .sapUxAPObjectPageHeaderIdentifierSubTitleInContent {
+	margin-top: -0.625rem;
+}
+
+.sapUxAPObjectPageHeaderNowrap {
+	white-space: nowrap;
+}
+
+.sapUiSizeCompact.sapUxAPObjectPageHeaderLockBtn .sapMBtn {
+	margin-top: -0.2rem;
+}
+
+.sapUxAPObjectPageHeaderLockBtn {
+	margin-left: 0.125rem;
+}
+
+.sapUxAPObjectPageHeaderLock .sapMObjStatusMarker .sapUiIcon:first-child {
+	margin-left: 0.125rem;
+}
+
+html[dir=rtl] .sapUxAPObjectPageHeaderLock .sapMObjStatusMarker .sapUiIcon:last-child {
+	margin-left: 0rem;
+	margin-right: 0.5rem;
+}
+
+html[dir=rtl] .sapUxAPObjectPageHeaderLock .sapMObjStatusMarker .sapUiIcon:first-child {
+	margin-left: 0.125rem;
+	margin-right: 0rem;
+}
+
+.sapUxAPObjectPageHeaderObjectImage.sapUxAPObjectPageHeaderPlaceholder.sapUxAPHidePlaceholder {
+	display: none;
+}

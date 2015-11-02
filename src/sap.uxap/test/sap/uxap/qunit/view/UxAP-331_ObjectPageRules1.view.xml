@@ -1,0 +1,37 @@
+<core:View xmlns:core="sap.ui.core"
+		   xmlns:m="sap.m"
+		   xmlns="sap.uxap"
+		   xmlns:layout="sap.ui.layout"
+		   xmlns:t="sap.uxap.testblocks.objectpageblock"
+		   height="100%"
+		>
+
+	<ObjectPageLayout id="objectPage1" title="">
+		<sections>
+			<ObjectPageSection id="ObjectPageSectionNoBlock331" title="NoBlock">
+				<ObjectPageSubSection id="ObjectPageSubSectionNoBlock331" title="No block"/>
+				<ObjectPageSubSection id="ObjectPageSubSectionNotEmpty331" title="Not Empty">
+					<t:SimpleEdit id="ObjectPageBlockBaseNotEmpty331"/>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+			<ObjectPageSection id="ObjectPageSectionNoSubSection331" title="NoSubSection"/>
+			<ObjectPageSection id="ObjectPageSectionPromoted331">
+				<ObjectPageSubSection id="ObjectPageSubSectionPromoted331" title="Promoted">
+					<t:SimpleEdit id="ObjectPageBlockBasePromoted331"/>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+			<ObjectPageSection id="ObjectPageSectionEmpty331" title="Empty">
+				<ObjectPageSubSection id="ObjectPageSubSectionEmpty331" title="Empty"/>
+			</ObjectPageSection>
+			<ObjectPageSection id="ObjectPageSectionNotVisible331" title="NotVisible">
+				<ObjectPageSubSection id="ObjectPageSubSectionNotVisible331" title="NotVisible" visible="false">
+					<t:SimpleEdit id="ObjectPageBlockBaseNotVisible331"/>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+			<ObjectPageSection id="ObjectPageSectionVisible331" title="Visible">
+				<ObjectPageSubSection id="ObjectPageSubSectionVisible331" title="Visible" visible="true"/>
+				<ObjectPageSubSection id="ObjectPageSubSectionVisible332" title="NotVisible" visible="false"/>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</core:View>

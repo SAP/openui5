@@ -1,0 +1,30 @@
+{
+  "ProductCollection": [
+	{
+	  "text": "Product",
+	  "path": "productId",
+	  "visible": true
+	},
+	{
+	  "text": "Name",
+	  "path": "name",
+	  "visible": true
+	},
+	{
+	  "text": "Category",
+	  "path": "category"
+	},
+	{
+	  "text": "Supplier",
+	  "path": "supplierName"
+	},
+	{
+	  "text": "Description",
+	  "path": "description"
+	},
+	{
+	  "text": "Price",
+	  "path": "price"
+	}
+  ]
+}

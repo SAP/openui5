@@ -1,0 +1,56 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:layout="sap.ui.layout"
+		xmlns:forms="sap.ui.layout.form"
+		xmlns:core="sap.ui.core"
+		xmlns="sap.m">
+
+	<forms:SimpleForm layout="ResponsiveGridLayout">
+
+		<core:Title text="Phone Numbers"/>
+		<Label text="Home"/>
+		<Text text="+ 1 415-321-1234"/>
+		<Label text="Office phone"/>
+		<Text text="+ 1 415-321-5555"/>
+
+		<core:Title text="Social Accounts"/>
+		<Label text="LinkedIn"/>
+		<layout:VerticalLayout width="100%">
+			<layout:HorizontalLayout>
+				<Image
+						src="./test-resources/sap/uxap/images/linkedin.png"
+						width="21px"/>
+				<Text text="/DeniseSmith"/>
+			</layout:HorizontalLayout>
+		</layout:VerticalLayout>
+		<Label text="Twitter"/>
+		<layout:VerticalLayout width="100%">
+			<layout:HorizontalLayout>
+				<Image src="./test-resources/sap/uxap/images/Twitter.png"
+					   width="21px"/>
+				<Text text="@DeniseSmith"/>
+			</layout:HorizontalLayout>
+		</layout:VerticalLayout>
+
+		<core:Title text="Adresses"/>
+		<Label text="Home Address"/>
+
+		<layout:VerticalLayout>
+			<Text text="2096 Misssion Street"/>
+			<Text text="San Franscisco, CA 94001"/>
+			<Text text="United States"/>
+		</layout:VerticalLayout>
+		<Label text="Mailing Address"/>
+		<layout:VerticalLayout>
+			<Text text="PO Box 32114"/>
+			<Text text="San Franscisco, CA 94001"/>
+			<Text text="United States"/>
+		</layout:VerticalLayout>
+
+		<core:Title text="Mailing Address"/>
+		<Label text="Work"/>
+		<Text text="DeniseSmith@sap.com"/>
+
+	</forms:SimpleForm>
+
+</mvc:View>

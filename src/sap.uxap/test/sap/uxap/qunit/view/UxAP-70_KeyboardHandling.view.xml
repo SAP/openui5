@@ -1,0 +1,159 @@
+<core:View
+		xmlns:core="sap.ui.core"
+		xmlns="sap.uxap"
+		xmlns:m="sap.m"
+		xmlns:html="http://www.w3.org/1999/xhtml"
+		height="100%">
+
+	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false" subSectionLayout="TitleOnLeft">
+		<headerTitle>
+			<ObjectPageHeader id="headerExpandedGrid" objectTitle="toto">
+			</ObjectPageHeader>
+		</headerTitle>
+
+		<sections>
+			<ObjectPageSection title="2014 Goals Plan">
+				<subSections>
+					<ObjectPageSubSection title="Goal summary">
+						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Anchor1">
+				<ObjectPageSubSection title="Anchor summary">
+					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Anchor2">
+				<ObjectPageSubSection title="Anchor summary">
+					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Anchor3">
+				<ObjectPageSubSection title="Anchor summary">
+					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+
+
+			<ObjectPageSection title="Anchor4">
+				<ObjectPageSubSection title="Anchor summary">
+					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Anchor5">
+				<ObjectPageSubSection title="Anchor summary">
+					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Anchor6">
+				<ObjectPageSubSection title="Anchor summary">
+					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Personal">
+				<subSections>
+					<ObjectPageSubSection title="Connect">
+						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection title="Payment information">
+						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Employment">
+				<subSections>
+					<ObjectPageSubSection title="Job information">
+						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection title="SubSection1">
+						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection title="SubSection2">
+						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection title="SubSection3">
+						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection title="SubSection4">
+						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection title="SubSection5">
+						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection title="SubSection6">
+						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection title="SubSection7">
+						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection title="Employee Details" mode="Collapsed">
+						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection title="Job Relationship" mode="Collapsed">
+						<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection id="section-with-single-sub-section" title="Section with Single SubSection">
+				<subSections>
+					<ObjectPageSubSection id="single-sub-section" title="Goal 1">
+						<actions>
+							<m:Button icon="sap-icon://pull-down" text="show section"/>
+							<m:Link text="denise-smith"/>
+						</actions>
+						<blocks>
+							<m:Label text="lbl with txt"/>
+							<m:Link text="denise-smith"/>
+							<m:Link text="lbl with other txt"/>
+							<m:Button id="interactive-el-single-sub-section" icon="sap-icon://pull-down"
+									  text="Interactive Element"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection id="section-with-multiple-sub-section" title="Section with Multiple SubSection">
+				<subSections>
+					<ObjectPageSubSection id="multiple-sub-section-1" title="Goal 1">
+						<actions>
+							<m:Button id="button-toolbar" icon="sap-icon://pull-down" text="show section"/>
+							<m:Link text="denise-smith"/>
+						</actions>
+						<blocks>
+							<m:Label text="lbl with txt"/>
+							<m:Link text="denise-smith"/>
+							<m:Link text="lbl with other txt"/>
+							<m:Button icon="sap-icon://pull-down" text="Interactive Element"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection id="multiple-sub-section-2" title="Goal 1">
+						<blocks>
+							<m:Label text="lbl with txt"/>
+							<m:Link id="first-focusable-subsection-2" text="denise-smith"/>
+							<m:Link text="lbl with other txt"/>
+							<m:Button id="interactive-el-multiple-sub-section" icon="sap-icon://pull-down"
+									  text="Interactive Element"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</core:View>

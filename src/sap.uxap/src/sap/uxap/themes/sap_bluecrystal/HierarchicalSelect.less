@@ -1,0 +1,110 @@
+.sapUxAPHierarchicalSelect {
+	border-color: transparent;
+	background: transparent;
+	z-index: 2;
+}
+
+.sapUxAPHierarchicalSelect .sapMSltLabel {
+	font-size: @sapMFontHeader6Size;
+}
+
+.sapUiSizeCompact .sapUxAPHierarchicalSelect,
+.sapUiSizeCompact .sapUxAPHierarchicalSelect .sapMSltLabel,
+.sapUiSizeCompact .sapUxAPHierarchicalSelect .sapMSltArrow,
+.sapUxAPHierarchicalSelect,
+.sapUxAPHierarchicalSelect .sapMSltLabel,
+.sapUxAPHierarchicalSelect .sapMSltArrow {
+	color: @sapUiDarkText;
+	background-color: mix(@sapUiAccent5, @sapUiWhite, 5); /* temporarily instead of fade(@sapUiLightestBG, 60%); */
+}
+
+.sapUxAPHierarchicalSelect .sapMSltPressed > .sapMSltArrow::before {
+	color: @sapUiSelectArrowColor;
+}
+
+.sapUxAPHierarchicalSelect .sapMSltHoverable:hover,
+.sapUxAPHierarchicalSelect.sapMSltPressed:not(.sapMSltDisabled) {
+	border-color: mix(@sapUiAccent5, @sapUiWhite, 5);; /* temporarily instead of fade(@sapUiLightestBG, 60%); */
+}
+
+.sapMSltHoverable:not(.sapMSltPressed):hover > .sapMSltArrow {
+	background: mix(@sapUiAccent5, @sapUiWhite, 5); /* temporarily instead of fade(@sapUiLightestBG, 60%); */
+}
+
+/* overflow icon in anchor bar */
+.sapUxAPAnchorBar .sapUxAPHierarchicalSelect .sapMSltIcon {
+	font-size: 1rem;
+	line-height: 2.65rem;
+}
+
+/* mobile-only: appears in a dialog */
+.sapMSltPicker .sapUxAPHierarchicalSelect.sapMIBar.sapMHeader-CTX,
+.sapMSltPicker .sapUxAPHierarchicalSelect.sapMSltBar::after {
+	background: mix(@sapUiAccent5, @sapUiWhite, 5); /* temporarily instead of fade(@sapUiLightestBG, 60%); */
+	border: none;
+}
+
+.sapMSltPicker .sapUxAPHierarchicalSelect.sapMSltBar::after {
+	color: @sapUiSelectArrowColor;
+}
+
+.sapUxAPHierarchicalSelect.sapMSltPressed > .sapMSltArrow::before {
+	color: @sapUiSelectArrowColor;
+}
+
+.sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem:not(:first-child) {
+	border-top: 0.0625rem solid @sapUiExtraLightBorder;
+}
+
+.sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem {
+	color: @sapUiDarkText;
+}
+
+.sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem {
+	color: @sapUiLightText;
+}
+
+.sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem,
+.sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem {
+	font-size: @sapMFontMediumSize;
+}
+
+.sapMSltPicker-CTX .sapMSelectList {
+	border: 1px solid @sapUiDarkBorder;
+}
+
+/* active */
+.sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem:active,
+.sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem:active {
+	color: @sapUiTextInverted;
+}
+
+/* hover */
+.sapMSelectListItemSelected:hover {
+	background: @sapUiActiveBGHover;
+}
+
+/* styling needed to achieve underline of the select label on phone */
+.sapUiMedia-Std-Phone, .sap-phone {
+	.sapUxAPHierarchicalSelect .sapMSltLabel {
+		border-bottom: 0.125rem solid @sapUiExtraDarkBorder;
+	}
+
+	.sapUxAPHierarchicalSelect .sapMSltArrow {
+		box-shadow: inset 0 -0.125rem @sapUiLightBorder;
+	}
+
+	.sapMSlt.sapUxAPHierarchicalSelect {
+		box-shadow: inset 0 -0.125rem @sapUiLightBorder;
+	}
+}
+
+/* styling needed to achieve underline of the select label on phone on Android 4.4.2
+(this is specific for webview (Fiori client) and Chrome browser) */
+html[data-sap-ui-browser^="cr4"].sapUiMedia-Std-Phone,
+html[data-sap-ui-browser^="cr4"].sap-phone {
+
+	.sapUxAPHierarchicalSelect .sapMSltLabel {
+		box-shadow: inset 0 -0.125rem @sapUiExtraDarkBorder;
+	}
+}

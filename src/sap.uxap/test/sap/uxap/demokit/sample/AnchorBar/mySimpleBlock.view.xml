@@ -1,0 +1,17 @@
+<mvc:View
+		xmlns:forms="sap.ui.layout.form"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:core="sap.ui.core"
+		xmlns:html="http://www.w3.org/1999/xhtml"
+		xmlns="sap.m"
+		width="100%">
+	<html:div style="font-size: 0.875rem;">
+		<forms:SimpleForm
+				maxContainerCols="2"
+				editable="false"
+				layout="ResponsiveGridLayout">
+			<Label text="Content"></Label>
+			<Text text="some content goes here..."></Text>
+		</forms:SimpleForm>
+	</html:div>
+</mvc:View>

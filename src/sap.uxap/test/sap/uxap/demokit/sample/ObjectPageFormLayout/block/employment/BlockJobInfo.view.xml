@@ -1,0 +1,33 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
+		  xmlns:forms="sap.ui.layout.form"
+		  xmlns="sap.m"
+		  xmlns:core="sap.ui.core">
+
+	<forms:SimpleForm>
+
+		<core:Title text="General"/>
+		<Label text="Job classification"/>
+		<Text text="Senior Ui Developer (UIDEV-SR)"/>
+
+		<Label text="Pay Grade"/>
+		<Text text="Salary Grade 18 (GR-14)"/>
+
+		<Label text="Job title"/>
+		<Text text="Developer"/>
+
+		<Label text="Local Job Title"/>
+		<Label text="Ui Developer"/>
+
+		<core:Title text="Rating"/>
+		<Label text="Employee Class"/>
+		<Text text="Employee"/>
+
+		<Label text="FTE"/>
+		<Text text="1"/>
+
+		<Label text="Standard Weekly Hours"/>
+		<Text text="40"/>
+
+	</forms:SimpleForm>
+
+</mvc:View>

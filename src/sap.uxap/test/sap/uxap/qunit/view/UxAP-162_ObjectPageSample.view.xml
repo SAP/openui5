@@ -1,0 +1,57 @@
+<core:View xmlns:core="sap.ui.core"
+		   xmlns:m="sap.m"
+		   xmlns="sap.uxap"
+		   xmlns:layout="sap.ui.layout"
+		   height="100%"
+		>
+
+	<ObjectPageLayout id="objectPage162" title="">
+
+		<headerTitle id="header162">
+			<ObjectPageHeader
+					objectTitle="Denise Smith"
+					objectImageURI="../img/imageID_275314.png"
+					isObjectIconAlwaysVisible="true"/>
+		</headerTitle>
+		<headerContent>
+			<layout:VerticalLayout>
+				<m:Text text="Denise Smith"/>
+				<layout:HorizontalLayout>
+					<m:Text text="carla grant"/>
+				</layout:HorizontalLayout>
+				<m:Text id="HeaderJobTitle" text="Senior UI Developer"/>
+				<m:Link text="+33 6 4512 5158"/>
+				<m:Link text="DeniseSmith@sap.com"/>
+				<layout:HorizontalLayout>
+					<m:Link text="twitter" target="_blank"/>
+					<m:Link text="LinkedIn" target="_blank"/>
+				</layout:HorizontalLayout>
+			</layout:VerticalLayout>
+			<layout:VerticalLayout>
+				<m:Label text="Personal description"/>
+				<layout:VerticalLayout id="headerDescription">
+					<m:Label text="Personal description (2)"/>
+					<m:Label text="Personal description (3)"/>
+					<m:Label text="Personal description (4)"/>
+				</layout:VerticalLayout>
+			</layout:VerticalLayout>
+			<layout:VerticalLayout>
+				<m:Label id="headerRole162" text="Role Specific info"/>
+			</layout:VerticalLayout>
+		</headerContent>
+		<sections>
+			<ObjectPageSection id="ObjectPageSection162" title="my section">
+				<subSections>
+					<ObjectPageSubSection id="ObjectPageSubSection162_1" title="general info">
+
+					</ObjectPageSubSection>
+				</subSections>
+				<subSections>
+					<ObjectPageSubSection id="ObjectPageSubSection162_2" title="my detail info">
+
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</core:View>

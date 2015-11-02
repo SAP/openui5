@@ -1,0 +1,48 @@
+<core:View
+		xmlns:core="sap.ui.core"
+		xmlns="sap.uxap"
+		xmlns:m="sap.m"
+		xmlns:html="http://www.w3.org/1999/xhtml"
+		height="100%">
+
+
+	<ObjectPageLayout id="ObjectPageLayout">
+		<headerTitle>
+			<ObjectPageHeader id="headerExpandedGrid" objectTitle="toto">
+			</ObjectPageHeader>
+		</headerTitle>
+
+		<sections>
+			<ObjectPageSection id="section1" title="{/sections/0/title}">
+				<customAnchorBarButton>
+					<m:Button text="my first section" press=".handleAnchorBarPress"/>
+				</customAnchorBarButton>
+				<ObjectPageSubSection title="first section">
+					<html:div style="height:300px; background-color: #DFF0F7;"></html:div>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+			<ObjectPageSection id="section2" title="{/sections/1/title}">
+				<ObjectPageSubSection title="second section first">
+					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+				</ObjectPageSubSection>
+				<ObjectPageSubSection title="second section second">
+					<html:div style="height:300px; background-color: #DFF0FA;"></html:div>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+			<ObjectPageSection id="section3" title="{/sections/2/title}">
+				<customAnchorBarButton>
+					<m:Button text="my third section" press=".handleAnchorBarPress"/>
+				</customAnchorBarButton>
+				<ObjectPageSubSection>
+					<html:div style="height:300px; background-color: #DFF0FC;"></html:div>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+			<ObjectPageSection id="section4" title="{/sections/3/title}">
+				<ObjectPageSubSection>
+					<html:div style="height:300px; background-color: #DFF0FF;"></html:div>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+
+</core:View>

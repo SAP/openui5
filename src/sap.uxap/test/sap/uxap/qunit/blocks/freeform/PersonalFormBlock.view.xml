@@ -1,0 +1,98 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:layout="sap.ui.layout"
+		xmlns:forms="sap.ui.layout.form"
+		xmlns:core="sap.ui.core"
+		xmlns="sap.m">
+
+	<forms:Form width="100%">
+		<forms:layout>
+			<forms:GridLayout/>
+		</forms:layout>
+		<forms:formContainers>
+			<forms:FormContainer title="Phone Numbers">
+				<forms:formElements>
+					<forms:FormElement label="Home">
+						<forms:fields>
+							<Text text="+ 1 415-321-1234"/>
+						</forms:fields>
+					</forms:FormElement>
+
+					<forms:FormElement label="Office phone">
+						<forms:fields>
+							<Text text="+ 1 415-321-5555"/>
+						</forms:fields>
+					</forms:FormElement>
+				</forms:formElements>
+			</forms:FormContainer>
+
+
+			<forms:FormContainer title="Social Accounts">
+				<forms:formElements>
+					<forms:FormElement label="LinkedIn">
+						<forms:fields>
+							<layout:HorizontalLayout>
+								<Image
+										src="./test-resources/sap/uxap/demokit/sample/Headers/Control/linkedin.png"
+										width="21px"/>
+								<Text text="/DeniseSmith"/>
+							</layout:HorizontalLayout>
+						</forms:fields>
+					</forms:FormElement>
+
+					<forms:FormElement label="Twitter">
+						<forms:fields>
+							<layout:HorizontalLayout>
+								<Image src="./test-resources/sap/uxap/demokit/sample/Headers/Control/Twitter.png"
+									   width="21px"/>
+								<Text text="@DeniseSmith"/>
+							</layout:HorizontalLayout>
+						</forms:fields>
+					</forms:FormElement>
+
+				</forms:formElements>
+			</forms:FormContainer>
+
+
+			<forms:FormContainer title="Adresses">
+				<forms:formElements>
+
+					<forms:FormElement label="Home Address">
+						<forms:fields>
+							<layout:VerticalLayout>
+								<Text text="2096 Misssion Street"/>
+								<Text text="San Franscisco, CA 94001"/>
+								<Text text="United States"/>
+							</layout:VerticalLayout>
+						</forms:fields>
+					</forms:FormElement>
+
+					<forms:FormElement label="Mailing Address">
+						<forms:fields>
+							<layout:VerticalLayout>
+								<Text text="PO Box 32114"/>
+								<Text text="San Franscisco, CA 94001"/>
+								<Text text="United States"/>
+							</layout:VerticalLayout>
+						</forms:fields>
+					</forms:FormElement>
+
+				</forms:formElements>
+			</forms:FormContainer>
+
+
+			<forms:FormContainer title="Mailing Address">
+				<forms:formElements>
+					<forms:FormElement label="Work">
+						<forms:fields>
+							<Text text="DeniseSmith@sap.com"/>
+						</forms:fields>
+					</forms:FormElement>
+				</forms:formElements>
+			</forms:FormContainer>
+
+		</forms:formContainers>
+
+	</forms:Form>
+
+</mvc:View>
