@@ -460,7 +460,18 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
  */
 ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResponse, mRequestInfo) {
 	var sField = this.getHeaderField();
-	if (!oResponse.headers || !oResponse.headers[sField]) {
+	if (!oResponse.headers) {
+		// No header set, nothing to process
+		return;
+	}
+
+	for (var sKey in oResponse.headers) {
+		if (sKey.toLowerCase() === sField.toLowerCase()) {
+			sField = sKey;
+		}
+	}
+
+	if (!oResponse.headers[sField]) {
 		// No header set, nothing to process
 		return;
 	}
