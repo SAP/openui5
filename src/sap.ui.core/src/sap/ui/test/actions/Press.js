@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/base/Object'], function (Ui5Object) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function (jQuery, Ui5Object) {
 	"use strict";
 
 	/**

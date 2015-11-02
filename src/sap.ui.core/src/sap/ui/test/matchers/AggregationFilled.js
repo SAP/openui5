@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['./Matcher'], function (fnMatcher) {
+sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, fnMatcher) {
 	"use strict";
 
 	/**
@@ -38,7 +38,7 @@ sap.ui.define(['./Matcher'], function (fnMatcher) {
 
 		/**
 		 * Getter for property <code>name</code>.
-		 * 
+		 *
 		 * The name of the aggregation that is used for matching
 		 *
 		 * @return {string} the name of the aggregation <code>name</code>
@@ -49,7 +49,7 @@ sap.ui.define(['./Matcher'], function (fnMatcher) {
 
 		/**
 		 * Setter for property <code>name</code>.
-		 * 
+		 *
 		 * @param {string} sName the name of the aggregation <code>name</code>
 		 * @return {sap.ui.test.matchers.AggregationFilled} <code>this</code> to allow method chaining
 		 * @public
@@ -59,7 +59,7 @@ sap.ui.define(['./Matcher'], function (fnMatcher) {
 
 		/**
 		 * Checks if the control has a filled aggregation
-		 * 
+		 *
 		 * @param {sap.ui.core.Control} oControl the control that is checked by the matcher
 		 * @return {boolean} true if the Aggregation set in the property aggregationName is filled, false if it is not.
 		 * @public

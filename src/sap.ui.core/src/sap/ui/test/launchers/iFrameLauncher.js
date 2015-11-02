@@ -5,9 +5,10 @@ sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/thirdparty/URI',
 		'sap/ui/Device'
-	], function ($, URI, Device) {
+	], function (jQuery, URI, Device) {
 	"use strict";
-	var oFrameWindow = null,
+	var $ = jQuery,
+		oFrameWindow = null,
 		$Frame = null,
 		oFramePlugin = null,
 		oFrameUtils = null,

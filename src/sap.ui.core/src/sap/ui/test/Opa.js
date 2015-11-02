@@ -1,13 +1,14 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function ($, Device) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function (jQuery, Device) {
 	"use strict";
 
 	///////////////////////////////
 	/// Privates
 	///////////////////////////////
-	var queue = [],
+	var $ = jQuery,
+		queue = [],
 		context = {};
 
 	function internalWait (fnCallback, oOptions, oDeferred) {

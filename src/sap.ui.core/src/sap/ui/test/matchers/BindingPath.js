@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['./Matcher'], function (Matcher) {
+sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
 	"use strict";
 
 	/**
