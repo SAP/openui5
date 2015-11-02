@@ -302,17 +302,30 @@ sap.ui.define([
 	/**
 	 * 
 	 */
-	OverlayUtil.iterateOverlayElementTree = function(oOverlay, fnCallback) {
+	OverlayUtil.iterateOverlayElementTree = function(oElementOverlay, fnCallback) {
 		var that = this;
 
-		fnCallback(oOverlay);
+		fnCallback(oElementOverlay);
 
-		oOverlay.getAggregationOverlays().forEach(function(oAggregationOverlay) {
+		oElementOverlay.getAggregationOverlays().forEach(function(oAggregationOverlay) {
 			oAggregationOverlay.getChildren().forEach(function(oChildOverlay) {
 				that.iterateOverlayElementTree(oChildOverlay, fnCallback);
 			});
 		});
 	};
+
+	/**
+	 * 
+	 */
+	OverlayUtil.iterateOverlayTree = function(oOverlay, fnCallback) {
+		var that = this;
+
+		fnCallback(oOverlay);
+
+		oOverlay.getChildren().forEach(function(oChildOverlay) {
+			that.iterateOverlayTree(oChildOverlay, fnCallback);
+		});
+	};	
 
 	return OverlayUtil;
 }, /* bExport= */true);
