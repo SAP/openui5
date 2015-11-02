@@ -12,7 +12,11 @@ sap.ui.require([
 	function assertFulfilled(assert, oSyncPromise, vExpectedResult) {
 		assert.strictEqual(oSyncPromise.isFulfilled(), true);
 		assert.strictEqual(oSyncPromise.isRejected(), false);
-		assert.strictEqual(oSyncPromise.getResult(), vExpectedResult);
+		if (Array.isArray(vExpectedResult)) {
+			assert.deepEqual(oSyncPromise.getResult(), vExpectedResult);
+		} else {
+			assert.strictEqual(oSyncPromise.getResult(), vExpectedResult);
+		}
 	}
 
 	function assertPending(assert, oSyncPromise) {
@@ -42,7 +46,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[42, undefined, {then : 42}, {then : function () {}}].forEach(function (vResult) {
+	[42, undefined, {then : 42}, {then : function () {}}, [SyncPromise.resolve()]
+	].forEach(function (vResult) {
 		QUnit.test("SyncPromise.resolve with non-Promise value: " + vResult, function (assert) {
 			assertFulfilled(assert, SyncPromise.resolve(vResult), vResult);
 		});
@@ -123,7 +128,7 @@ sap.ui.require([
 						}, 0);
 						setTimeout(function () {
 							resolve(oFulfillment);
-						}, 100);
+						}, 10);
 					});
 
 				function callback() {
@@ -271,8 +276,111 @@ sap.ui.require([
 			});
 		});
 	});
-});
 
-//TODO instance method catch
-//TODO SyncPromise.all
-//TODO Can Promise handle SyncPromise as thenable?
+	//*********************************************************************************************
+	QUnit.test("SyncPromise.all: simple values", function (assert) {
+		assertFulfilled(assert, SyncPromise.all([]), []);
+		assertFulfilled(assert, SyncPromise.all([42]), [42]);
+		assertFulfilled(assert, SyncPromise.all([SyncPromise.resolve(42)]), [42]);
+	});
+
+	//*********************************************************************************************
+	[true, false].forEach(function (bWrap) {
+		QUnit.test("SyncPromise.all: one Promise resolves, wrap = " + bWrap, function (assert) {
+			var oPromise = Promise.resolve(42),
+				oPromiseAll;
+
+			if (bWrap) {
+				oPromise = SyncPromise.resolve(oPromise);
+			}
+
+			oPromiseAll = SyncPromise.all([oPromise]);
+
+			assertPending(assert, oPromiseAll);
+			return oPromise.then(function () {
+				assertFulfilled(assert, oPromiseAll, [42]);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SyncPromise.all: two Promises resolve", function (assert) {
+		var oPromiseAll,
+			oPromise0 = Promise.resolve(42), // timeout 0
+			oPromise1 = new Promise(function (resolve, reject) {
+				setTimeout(function () {
+					assertPending(assert, oPromiseAll); // not yet
+				}, 5);
+				setTimeout(function () {
+					resolve("OK");
+				}, 10);
+			}),
+			aPromises = [oPromise0, oPromise1];
+
+		oPromiseAll = SyncPromise.all(aPromises);
+
+		assertPending(assert, oPromiseAll);
+		return Promise.all(aPromises).then(function () {
+			assertFulfilled(assert, oPromiseAll, [42, "OK"]);
+			assert.deepEqual(aPromises, [oPromise0, oPromise1], "caller's array unchanged");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SyncPromise.all: one Promise rejects", function (assert) {
+		var oReason = {},
+			oPromise = Promise.reject(oReason),
+			oPromiseAll;
+
+		oPromiseAll = SyncPromise.all([oPromise]);
+
+		assertPending(assert, oPromiseAll);
+		return oPromise["catch"](function () {
+			assertRejected(assert, oPromiseAll, oReason);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SyncPromise.all: two Promises reject", function (assert) {
+		var oReason = {},
+			oPromiseAll,
+			oPromise0 = Promise.reject(oReason), // timeout 0
+			oPromise1 = new Promise(function (resolve, reject) {
+				setTimeout(function () {
+					assertRejected(assert, oPromiseAll, oReason);
+				}, 5);
+				setTimeout(function () {
+					reject("Unexpected");
+				}, 10);
+			}),
+			aPromises = [oPromise0, oPromise1];
+
+		oPromiseAll = SyncPromise.all(aPromises);
+
+		assertPending(assert, oPromiseAll);
+		return oPromise1["catch"](function () { // wait for the "slower" promise
+			assertRejected(assert, oPromiseAll, oReason); // rejection reason does not change
+			assert.deepEqual(aPromises, [oPromise0, oPromise1], "caller's array unchanged");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("'catch' delegates to 'then'", function (assert) {
+		var oNewPromise = {},
+			fnOnRejected = function () {},
+			oSyncPromise = SyncPromise.resolve();
+
+		this.mock(oSyncPromise).expects("then")
+			.withExactArgs(undefined, fnOnRejected)
+			.returns(oNewPromise);
+
+		assert.strictEqual(oSyncPromise["catch"](fnOnRejected), oNewPromise);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Promise.resolve on SyncPromise", function (assert) {
+		return Promise.resolve(SyncPromise.resolve(42)).then(function (iResult) {
+			assert.strictEqual(iResult, 42);
+		});
+	});
+});

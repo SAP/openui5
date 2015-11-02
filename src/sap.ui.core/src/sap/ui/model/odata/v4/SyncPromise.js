@@ -31,16 +31,42 @@ sap.ui.define([
 	 *   the promise to wrap or the result to synchronously fulfill with
 	 * @param {function} [fnCallback]
 	 *   function to apply to the result of the SyncPromise to be wrapped
+	 * @param {any[]} [aValues]
+	 *   the values to be combined via the static method <code>SyncPromise.all</code>
 	 * @returns {SyncPromise}
 	 *   the SyncPromise created
 	 */
-	function SyncPromise(oPromise, fnCallback) {
+	function SyncPromise(oPromise, fnCallback, aValues) {
 		var bFulfilled = false,
+			iPending,
 			bRejected = false,
-			vResult,
-			that = this;
+			that = this,
+			vResult = that; // "pending"
 
-		if (typeof fnCallback === "function") {
+		// needed for SyncPromise.all()
+		function checkFulfilled() {
+			if (iPending === 0) {
+				vResult = aValues;
+				bFulfilled = true;
+			}
+		}
+
+		if (aValues) {
+			iPending = aValues.length; // number of pending promises
+			checkFulfilled();
+			aValues.forEach(function (oValue, i) {
+				resolve(oValue).then(function (vResult0) {
+					aValues[i] = vResult0;
+					iPending -= 1;
+					checkFulfilled();
+				}, function (vReason) {
+					if (!bRejected) {
+						vResult = vReason;
+						bRejected = true;
+					}
+				});
+			});
+		} else if (typeof fnCallback === "function") {
 			try {
 				vResult = fnCallback(oPromise.getResult());
 				bFulfilled = true;
@@ -52,7 +78,6 @@ sap.ui.define([
 				bRejected = true;
 			}
 		} else if (oPromise instanceof Promise || oPromise instanceof SyncPromise) {
-			vResult = that; // "pending"
 			oPromise.then(function (vResult0) {
 				vResult = vResult0;
 				bFulfilled = true;
@@ -64,6 +89,16 @@ sap.ui.define([
 			vResult = oPromise;
 			bFulfilled = true;
 		}
+
+		/**
+		 * @param {function} [fnOnRejected]
+		 *   callback function if this SyncPromise is rejected
+		 * @returns {SyncPromise}
+		 *   a new SyncPromise
+		 */
+		this["catch"] = function (fnOnRejected) {
+			return this.then(undefined, fnOnRejected);
+		};
 
 		/**
 		 * @returns {any}
@@ -106,7 +141,26 @@ sap.ui.define([
 		};
 	}
 
+	function resolve(oPromise) {
+		return oPromise instanceof SyncPromise ? oPromise : new SyncPromise(oPromise);
+	}
+
 	return {
+		/**
+		 * Returns a new SyncPromise for the given array of values just like
+		 * <code>Promise.all(aValues)</code>.
+		 *
+		 * @param {any[]} aValues
+		 *   the values
+		 * @returns {SyncPromise}
+		 *   the SyncPromise
+		 */
+		all : function (aValues) {
+			return new SyncPromise(null, null, aValues.slice());
+		},
+
+		// reject not implemented as there is no use case so far
+
 		/**
 		 * Returns a SyncPromise wrapping the given promise <code>oPromise</code> or
 		 * <code>oPromise</code> if it is already a SyncPromise.
@@ -116,8 +170,6 @@ sap.ui.define([
 		 * @returns {SyncPromise}
 		 *   the SyncPromise
 		 */
-		resolve : function (oPromise) {
-			return oPromise instanceof SyncPromise ? oPromise : new SyncPromise(oPromise);
-		}
+		resolve : resolve
 	};
 }/*, bExport = false*/);
