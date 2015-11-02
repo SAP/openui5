@@ -13,7 +13,8 @@ sap.ui.require([
 	"sap/ui/core/qunit/odata/v4/ODataListBinding.qunit",
 	"sap/ui/core/qunit/odata/v4/ODataMetaModel.qunit",
 	"sap/ui/core/qunit/odata/v4/ODataModel.qunit",
-	"sap/ui/core/qunit/odata/v4/ODataPropertyBinding.qunit"
+	"sap/ui/core/qunit/odata/v4/ODataPropertyBinding.qunit",
+	"sap/ui/core/qunit/odata/v4/SyncPromise.qunit"
 ], function () {
 	"use strict";
 	// nothing to do here, only the requires are important
