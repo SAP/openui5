@@ -1,3 +1,15 @@
+.sapMIBar {
+	&.sapMTB {
+		padding: 0 0.125rem;
+
+		.sapMBarChild,
+		.sapMBarChild:first-child,
+		.sapMBarChild:last-child {
+			margin: 0 0.125rem;
+		}
+	}
+}
+
 .sapMTB {
 	white-space: nowrap;
 	overflow: hidden;
@@ -13,6 +25,18 @@
 
 .sapMTB:focus {
 	outline: 0;
+}
+
+/* Transparent Toolbar Context */
+.sapMTB-Transparent-CTX.sapMTB {
+	padding-left: 0.875rem;
+}
+
+/* Info Toolbar Context */
+.sapMIBar.sapMTB.sapMTB-Info-CTX.sapMTB > *,
+.sapMIBar.sapMTB.sapMTB-Info-CTX.sapMTB > :first-child,
+.sapMIBar.sapMTB.sapMTB-Info-CTX.sapMTB > :last-child {
+	margin: 0 .5rem;
 }
 
 .sapMTBActive,
@@ -50,7 +74,7 @@
 
 .sapMTBOldFlex > .sapMTBShrinkItem:not(.sapMFlexBox) {
 	/* old flex spec does not honour percentual width for non-block level elements */
-	/* @TODO: can we set the display of unknown item */ 
+	/* @TODO: can we set the display of unknown item */
 	display: block;
 }
 
@@ -76,8 +100,8 @@
 	vertical-align: middle;
 }
 .sapMTB.sapMTBNoFlex > * {
-	vertical-align: middle; 
-	display: inline-block; /* @TODO: can we set the display of unknown item? */ 
+	vertical-align: middle;
+	display: inline-block; /* @TODO: can we set the display of unknown item? */
 	margin-bottom: 0;
 	margin-top: 0;
 	float: none; /* float has no effect on a flexible item */
