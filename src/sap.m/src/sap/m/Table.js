@@ -308,7 +308,10 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		if (aVisibleColumns.length == 1) {
 			$firstVisibleCol.width("");	// cover the space
 		} else {
-			$firstVisibleCol.width($firstVisibleCol.attr("data-sap-width"));
+			// set original width of columns
+			aVisibleColumns.each(function() {
+				this.style.width = this.getAttribute("data-sap-width") || "";
+			});
 		}
 	
 		// update GroupHeader colspan according to visible column count and additional selection column

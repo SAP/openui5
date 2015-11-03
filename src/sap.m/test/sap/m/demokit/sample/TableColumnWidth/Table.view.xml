@@ -4,8 +4,9 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<MessageStrip
-		text="Do not try to give percent width to all columns even it reaches 100% total column width. Leave the most important column's width empty that it takes much space as it can."
-		type="Information"
+		text="Do not try to give percent width to all columns even it reaches 100% total column width."
+		type="Error"
+		class="sapUiSmallMargin"
 		showIcon="true">
 	</MessageStrip>
 	<Table
@@ -18,7 +19,7 @@
 		}">
 		<headerToolbar>
 			<Toolbar>
-				<Title text="Products Original" level="H2"/>
+				<Title text="Products (Wrong Usage)" level="H2"/>
 			</Toolbar>
 		</headerToolbar>
 		<columns>
@@ -36,6 +37,12 @@
 			</ColumnListItem>
 		</items>
 	</Table>
+	<MessageStrip
+		text="Leave the most important column's width empty(or set it to auto) that it takes much space as it can."
+		type="Success"
+		class="sapUiLargeMarginTop sapUiSmallMargin"
+		showIcon="true">
+	</MessageStrip>
 	<Table
 		mode="MultiSelect"
 		items="{
@@ -46,7 +53,7 @@
 		}">
 		<headerToolbar>
 			<Toolbar>
-				<Title text="Products Clone" level="H2"/>
+				<Title text="Products (Correct Usage)" level="H2"/>
 			</Toolbar>
 		</headerToolbar>
 		<columns>
