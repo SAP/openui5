@@ -1,13 +1,14 @@
 sap.ui.define([
 		'jquery.sap.global',
 		'sap/m/TablePersoController',
+		'sap/m/MessageBox',
 		'./DemoPersoService',
 		'./Formatter',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/core/util/Export',
 		'sap/ui/core/util/ExportTypeCSV',
 		'sap/ui/model/json/JSONModel'
-	], function(jQuery, TablePersoController, DemoPersoService, Formatter, Controller, Export, ExportTypeCSV, JSONModel) {
+	], function(jQuery, TablePersoController, MessageBox, DemoPersoService, Formatter, Controller, Export, ExportTypeCSV, JSONModel) {
 	"use strict";
 
 	var TableController = Controller.extend("sap.m.sample.TableExport.Table", {
@@ -79,8 +80,10 @@ sap.ui.define([
 			});
 
 			// download exported file
-			oExport.saveFile().always(function() {
-				this.destroy();
+			oExport.saveFile().catch(function(oError) {
+				MessageBox.error("Error when downloading data. Browser might not be supported!\n\n" + oError);
+			}).then(function() {
+				oExport.destroy();
 			});
 		}
 
