@@ -67,6 +67,37 @@
 			assert.ok(oDomRef instanceof HTMLElement, "return value should be an instance of HTMLElement");
 		});
 
+		QUnit.test("setVisible should hide and show the MessagePopover", function (assert) {
+			this.oMessagePopover.openBy(this.oButton);
+			var oDomRef = this.oMessagePopover.getDomRef();
+
+			assert.ok(oDomRef instanceof HTMLElement, "return value should be an instance of HTMLElement");
+
+			this.oMessagePopover.setVisible(false);
+			this.clock.tick(500);
+			oDomRef = this.oMessagePopover.getDomRef();
+
+			assert.equal(oDomRef, null, "return value should be null");
+
+			this.oMessagePopover.setVisible(true);
+			this.clock.tick(500);
+			oDomRef = this.oMessagePopover.getDomRef();
+
+			assert.ok(oDomRef instanceof HTMLElement, "return value should be an instance of HTMLElement");
+		});
+
+		QUnit.test("setBusy should set the busy to the Popover as well", function (assert) {
+			this.oMessagePopover.setBusy(true);
+
+			assert.ok(this.oMessagePopover.getBusy(), "busy state should be set true");
+			assert.ok(this.oMessagePopover._oPopover.getAggregation("_popup").getBusy(), "busy state of the Popover should be set to true");
+
+			this.oMessagePopover.setBusy(false);
+
+			assert.ok(!this.oMessagePopover.getBusy(), "busy state should be set false");
+			assert.ok(!this.oMessagePopover._oPopover.getAggregation("_popup").getBusy(), "busy state of the Popover should be set to false");
+		});
+
 		QUnit.test("$() should return jQuery object", function (assert) {
 			this.oMessagePopover.openBy(this.oButton);
 			var $oDomRef = this.oMessagePopover.$();
