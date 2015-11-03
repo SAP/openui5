@@ -393,9 +393,9 @@ sap.ui.define([
 		if (iMeta >= 0) {
 			sModelPath = this.resolve(sPath.substring(0, iMeta), oContext);
 			sMetaModelPath = sPath.substring(iMeta + 2);
-			return this.getMetaModel().requestMetaContext(sModelPath)
+			return this.getMetaModel().getOrRequestMetaContext(sModelPath)
 				.then(function (oMetaContext) {
-					return that.getMetaModel().requestObject(sMetaModelPath, oMetaContext);
+					return that.getMetaModel().getOrRequestObject(sMetaModelPath, oMetaContext);
 				});
 		}
 		notImplemented("requestObject", arguments);

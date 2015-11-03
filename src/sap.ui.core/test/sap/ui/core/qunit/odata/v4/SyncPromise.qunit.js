@@ -383,4 +383,90 @@ sap.ui.require([
 			assert.strictEqual(iResult, 42);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("createGetMethod, not throwing", function (assert) {
+		var aArguments = ["foo", "bar"],
+			oResult = {},
+			oSyncPromise = SyncPromise.resolve(oResult),
+			oContext = {
+				getOrRequest : function () {
+					assert.strictEqual(this, oContext);
+					assert.deepEqual(Array.prototype.slice.call(arguments), aArguments);
+					return oSyncPromise;
+				}
+			},
+			fnGet;
+
+		// code under test
+		// Note: passing the function's name instead of reference allows for dynamic dispatch, thus
+		// making a mock for "getOrRequest*" possible in the first place
+		fnGet = SyncPromise.createGetMethod("getOrRequest");
+
+		assert.strictEqual(fnGet.apply(oContext, aArguments), oResult);
+		this.mock(oSyncPromise).expects("isFulfilled").returns(false);
+		assert.strictEqual(fnGet.apply(oContext, aArguments), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createGetMethod, throwing", function (assert) {
+		var aArguments = ["foo", "bar"],
+			oResult = {},
+			oSyncPromise = SyncPromise.resolve(oResult),
+			oContext = {
+				getOrRequest : function () {
+					assert.strictEqual(this, oContext);
+					assert.deepEqual(Array.prototype.slice.call(arguments), aArguments);
+					return oSyncPromise;
+				}
+			},
+			fnGet,
+			oSyncPromiseMock = this.mock(oSyncPromise);
+
+		// code under test
+		fnGet = SyncPromise.createGetMethod("getOrRequest", true);
+
+		// fulfilled
+		assert.strictEqual(fnGet.apply(oContext, aArguments), oResult);
+
+		// pending
+		oSyncPromiseMock.expects("isFulfilled").returns(false);
+		oSyncPromiseMock.expects("isRejected").returns(false);
+		assert.throws(function () {
+			fnGet.apply(oContext, aArguments);
+		}, new Error("Result pending"));
+
+		// verify and restore
+		oSyncPromiseMock.verify();
+		oSyncPromiseMock = this.mock(oSyncPromise);
+
+		// rejected
+		oSyncPromiseMock.expects("isFulfilled").returns(false);
+		oSyncPromiseMock.expects("isRejected").returns(true);
+		assert.throws(function () {
+			fnGet.apply(oContext, aArguments);
+		}, oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createRequestMethod", function (assert) {
+		var aArguments = ["foo", "bar"],
+			oResult = {},
+			oSyncPromise = SyncPromise.resolve(),
+			oContext = {
+				getOrRequest : function () {
+					assert.strictEqual(this, oContext);
+					assert.deepEqual(Array.prototype.slice.call(arguments), aArguments);
+					return oSyncPromise;
+				}
+			},
+			fnRequest;
+
+		this.mock(Promise).expects("resolve").withExactArgs(oSyncPromise).returns(oResult);
+
+		// code under test
+		fnRequest = SyncPromise.createRequestMethod("getOrRequest");
+
+		assert.strictEqual(fnRequest.apply(oContext, aArguments), oResult);
+	});
 });

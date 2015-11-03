@@ -6,12 +6,34 @@
 sap.ui.define([
 	'sap/ui/model/MetaModel',
 	"sap/ui/model/odata/ODataUtils",
-	'sap/ui/model/odata/v4/_ODataHelper'
-], function (MetaModel, ODataUtils, Helper) {
+	'sap/ui/model/odata/v4/_ODataHelper',
+	'sap/ui/model/odata/v4/SyncPromise'
+], function (MetaModel, ODataUtils, Helper, SyncPromise) {
 	"use strict";
 
 	var rEntitySetName = /^(\w+)(\[|\(|$)/, // identifier followed by [,( or at end of string
-		rNumber = /^\d+$/;
+		rNumber = /^\d+$/,
+		mUi5TypeForEdmType = {
+			"Edm.Boolean" : {type : "sap.ui.model.odata.type.Boolean"},
+			"Edm.Byte" : {type : "sap.ui.model.odata.type.Byte"},
+			"Edm.Date" : {type: "sap.ui.model.odata.type.Date"},
+//			"Edm.DateTimeOffset" : {type : "sap.ui.model.odata.type.DateTimeOffset"},
+			"Edm.Decimal" : {
+				type : "sap.ui.model.odata.type.Decimal",
+				facets : {"Precision": "precision", "Scale" : "scale"}
+			},
+			"Edm.Double" : {type: "sap.ui.model.odata.type.Double"},
+			"Edm.Guid" : {type: "sap.ui.model.odata.type.Guid"},
+			"Edm.Int16" : {type: "sap.ui.model.odata.type.Int16"},
+			"Edm.Int32" : {type: "sap.ui.model.odata.type.Int32"},
+			"Edm.Int64" : {type: "sap.ui.model.odata.type.Int64"},
+			"Edm.SByte" : {type: "sap.ui.model.odata.type.SByte"},
+			"Edm.Single" : {type: "sap.ui.model.odata.type.Single"},
+			"Edm.String" : {
+				type : "sap.ui.model.odata.type.String",
+				facets : {"MaxLength" : "maxLength"}
+			}
+		};
 
 	/**
 	 * Do <strong>NOT</strong> call this private constructor for a new <code>ODataMetaModel</code>,
@@ -39,7 +61,7 @@ sap.ui.define([
 					throw new Error("Missing metadata model");
 				}
 				this.oModel = oModel;
-				// @see sap.ui.model.odata.v4._ODataHelper.requestEntityContainer
+				// @see sap.ui.model.odata.v4._ODataHelper.getOrRequestEntityContainer
 				this._oEntityContainerPromise = null;
 			}
 		});
@@ -56,128 +78,8 @@ sap.ui.define([
 	}
 
 	/**
-	 * Returns a promise for the "4.3.1 Canonical URL" corresponding to the given service root URL
-	 * and absolute data binding path which must point to an entity.
-	 *
-	 * @param {string} sServiceUrl
-	 *   root URL of the service
-	 * @param {string} sPath
-	 *   an absolute data binding path pointing to an entity, e.g.
-	 *   "/TEAMS[0];list=0/TEAM_2_EMPLOYEES/0"
-	 * @param {function} fnRead
-	 *   function like {@link sap.ui.model.odata.v4.ODataModel#read} which provides access to data
-	 * @returns {Promise}
-	 *   a promise which is resolved with the canonical URL (e.g.
-	 *   "/<service root URL>/EMPLOYEES(ID='1')") in case of success, or rejected with an instance
-	 *   of <code>Error</code> in case of failure
-	 * @private
-	 */
-	ODataMetaModel.prototype.requestCanonicalUrl = function (sServiceUrl, sPath, fnRead) {
-		var that = this;
-
-		return Promise.all([
-			fnRead(sPath, true),
-			this.requestMetaContext(sPath)
-		]).then(function (aValues) {
-			var oEntityInstance = aValues[0],
-				oMetaContext = aValues[1];
-
-			return that.requestObject("", oMetaContext).then(function (oEntitySet) {
-				// check that this really is an EntitySet
-				if (!oEntitySet.EntityType) {
-					error("Not an entity", sPath);
-				}
-				return that.requestObject("EntityType", oMetaContext).then(function (oEntityType) {
-					return sServiceUrl + encodeURIComponent(oEntitySet.Name)
-						+ Helper.getKeyPredicate(oEntityType, oEntityInstance);
-				});
-			});
-		});
-	};
-
-	/**
-	 * Requests the meta data object for the given path relative to the given context.
-	 *
-	 * Returns a <code>Promise</code> which is resolved with the requested meta model object or
-	 * rejected with an error.
-	 *
-	 * @param {string} sPath
-	 *   A relative or absolute path within the meta model
-	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context to be used as a starting point in case of a relative path
-	 * @returns {Promise}
-	 *   A promise which is resolved with the requested meta model object as soon as it is
-	 *   available
-	 */
-	ODataMetaModel.prototype.requestObject = function (sPath, oContext) {
-		var oPart,
-			aSegments,
-			sResolvedPath = this.resolve(sPath, oContext),
-			that = this;
-
-		/**
-		 * Fetches and parses the next part of the path. Modifies aSegments
-		 * @returns {object}
-		 *   an object describing the part with property and name
-		 */
-		function nextPart() {
-			return Helper.parseSegment(aSegments.shift());
-		}
-
-		/**
-		 * Throws an error that the segment is unknown.
-		 * @param {string} sSegment
-		 *   the segment
-		 */
-		function unknown(sSegment) {
-			error("Unknown " + sSegment, sPath);
-		}
-
-		function followPath(oObject) {
-			var oNextObject;
-
-			while (aSegments.length) {
-				oPart = nextPart();
-				if (!(oPart.property in oObject)) { // property does not exist
-					unknown(oPart.segment);
-				}
-				oNextObject = oObject[oPart.property];
-				if (oPart.name) {
-					// a segment like "EntitySets('Employees')"
-					if (!Array.isArray(oNextObject)) {
-						error('"' + oPart.property + '" is not an array', sPath);
-					}
-					oObject = Helper.findInArray(oNextObject, "Name", oPart.name);
-					if (!oObject) {
-						unknown(oPart.segment);
-					}
-				} else {
-					// a segment like "Name", "Properties", "EntityType" or an index
-					if (typeof oNextObject === "object" && !Array.isArray(oNextObject)) {
-						// A navigation to an object; it must be a type. It might actually be a
-						// simple or complex type, but these are resolved already
-						return Helper.requestTypeForNavigationProperty(that, oObject,
-								oPart.property)
-							.then(followPath);
-					}
-					oObject = oNextObject;
-				}
-			}
-			return oObject;
-		}
-
-		if (!sResolvedPath) {
-			error("Not an absolute path", sPath);
-		}
-		aSegments = Helper.splitPath(sResolvedPath);
-		return Helper.requestEntityContainer(this).then(followPath);
-	};
-
-	/**
-	 * Requests the OData meta model context corresponding to the given OData model path.
-	 *
-	 * Returns a <code>Promise</code> which is resolved with the requested OData meta data context
-	 * or rejected with an error.
+	 * Returns the OData meta model context corresponding to the given OData model path. Returns
+	 * <code>undefined</code> in case the meta model context is not (yet) available.
 	 *
 	 * The resulting meta data context will either point to an EntitySet, to a Singleton or to a
 	 * Property. The meta data path will follow the NavigationPropertyBindings as long as they lead
@@ -186,14 +88,52 @@ sap.ui.define([
 	 * @param {string} sPath
 	 *   An absolute path within the OData data model for which the OData meta data context is
 	 *   requested
-	 * @returns {Promise}
+	 * @returns {sap.ui.model.Context}
+	 *   The corresponding meta data context within the meta model, if all required meta data to
+	 *   calculate this context is already available
+	 * @throws {Error}
+	 *   if the context cannot be determined synchronously (due to a pending meta data request) or
+	 *   cannot be determined at all (due to a wrong data path)
+	 * @public
+	 */
+	ODataMetaModel.prototype.getMetaContext
+		= SyncPromise.createGetMethod("getOrRequestMetaContext", true);
+
+	/**
+	 * Returns the meta data object for the given path relative to the given context. Returns
+	 * <code>undefined</code> in case the meta data is not (yet) available.
+	 *
+	 * @param {string} sPath
+	 *   A relative or absolute path within the meta model
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context to be used as a starting point in case of a relative path
+	 * @returns {any}
+	 *   the requested meta model object if it is already available, or <code>undefined</code>
+	 * @public
+	 */
+	ODataMetaModel.prototype.getObject = SyncPromise.createGetMethod("getOrRequestObject");
+
+	/**
+	 * Requests the OData meta model context corresponding to the given OData model path.
+	 *
+	 * Returns a <code>SyncPromise</code> which is resolved with the requested OData meta data
+	 * context or rejected with an error.
+	 *
+	 * The resulting meta data context will either point to an EntitySet, to a Singleton or to a
+	 * Property. The meta data path will follow the NavigationPropertyBindings as long as they lead
+	 * to an EntitySet from the same container with a simple path, then it will switch to the type.
+	 *
+	 * @param {string} sPath
+	 *   An absolute path within the OData data model for which the OData meta data context is
+	 *   requested
+	 * @returns {SyncPromise}
 	 *   A promise that gets resolved with the corresponding meta data context
 	 *   (<code>sap.ui.model.Context</code>) within the meta model, as soon as all required meta
 	 *   data to calculate this context is available; if no context can be determined, the promise
 	 *   is rejected with the corresponding error
-	 * @public
+	 * @private
 	 */
-	ODataMetaModel.prototype.requestMetaContext = function (sPath) {
+	ODataMetaModel.prototype.getOrRequestMetaContext = function (sPath) {
 		var i = 0,
 			sMetaPath = "",
 			aSegments = Helper.splitPath(sPath),
@@ -294,7 +234,7 @@ sap.ui.define([
 		if (!aMatches) {
 			error("Unsupported", sPath);
 		}
-		return Helper.requestEntityContainer(this).then(function (oEntityContainer) {
+		return Helper.getOrRequestEntityContainer(this).then(function (oEntityContainer) {
 			var sName = aMatches[1],
 				oNavigationResult,
 				sProperty,
@@ -329,34 +269,91 @@ sap.ui.define([
 				sMetaPath += "/Target";
 			}
 			sMetaPath += "/" + sProperty;
-			return Helper.requestTypeForNavigationProperty(that, oResult.object, sProperty)
+			return Helper.getOrRequestTypeForNavigationProperty(that, oResult.object, sProperty)
 				.then(followPath);
 		}).then(function (sMetaPath) {
 			return that.getContext(sMetaPath);
 		});
 	};
 
-	var mUi5TypeForEdmType = {
-			"Edm.Boolean" : {type : "sap.ui.model.odata.type.Boolean"},
-			"Edm.Byte" : {type : "sap.ui.model.odata.type.Byte"},
-			"Edm.Date" : {type: "sap.ui.model.odata.type.Date"},
-//			"Edm.DateTimeOffset" : {type : "sap.ui.model.odata.type.DateTimeOffset"},
-			"Edm.Decimal" : {
-				type : "sap.ui.model.odata.type.Decimal",
-				facets : {"Precision": "precision", "Scale" : "scale"}
-			},
-			"Edm.Double" : {type: "sap.ui.model.odata.type.Double"},
-			"Edm.Guid" : {type: "sap.ui.model.odata.type.Guid"},
-			"Edm.Int16" : {type: "sap.ui.model.odata.type.Int16"},
-			"Edm.Int32" : {type: "sap.ui.model.odata.type.Int32"},
-			"Edm.Int64" : {type: "sap.ui.model.odata.type.Int64"},
-			"Edm.SByte" : {type: "sap.ui.model.odata.type.SByte"},
-			"Edm.Single" : {type: "sap.ui.model.odata.type.Single"},
-			"Edm.String" : {
-				type : "sap.ui.model.odata.type.String",
-				facets : {"MaxLength" : "maxLength"}
+	/**
+	 * Requests the meta data object for the given path relative to the given context.
+	 *
+	 * Returns a <code>SyncPromise</code> which is resolved with the requested meta model object or
+	 * rejected with an error.
+	 *
+	 * @param {string} sPath
+	 *   A relative or absolute path within the meta model
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context to be used as a starting point in case of a relative path
+	 * @returns {SyncPromise}
+	 *   A promise which is resolved with the requested meta model object as soon as it is
+	 *   available
+	 * @private
+	 */
+	ODataMetaModel.prototype.getOrRequestObject = function (sPath, oContext) {
+		var oPart,
+			aSegments,
+			sResolvedPath = this.resolve(sPath, oContext),
+			that = this;
+
+		/**
+		 * Fetches and parses the next part of the path. Modifies aSegments
+		 * @returns {object}
+		 *   an object describing the part with property and name
+		 */
+		function nextPart() {
+			return Helper.parseSegment(aSegments.shift());
+		}
+
+		/**
+		 * Throws an error that the segment is unknown.
+		 * @param {string} sSegment
+		 *   the segment
+		 */
+		function unknown(sSegment) {
+			error("Unknown " + sSegment, sPath);
+		}
+
+		function followPath(oObject) {
+			var oNextObject;
+
+			while (aSegments.length) {
+				oPart = nextPart();
+				if (!(oPart.property in oObject)) { // property does not exist
+					unknown(oPart.segment);
+				}
+				oNextObject = oObject[oPart.property];
+				if (oPart.name) {
+					// a segment like "EntitySets('Employees')"
+					if (!Array.isArray(oNextObject)) {
+						error('"' + oPart.property + '" is not an array', sPath);
+					}
+					oObject = Helper.findInArray(oNextObject, "Name", oPart.name);
+					if (!oObject) {
+						unknown(oPart.segment);
+					}
+				} else {
+					// a segment like "Name", "Properties", "EntityType" or an index
+					if (typeof oNextObject === "object" && !Array.isArray(oNextObject)) {
+						// A navigation to an object; it must be a type. It might actually be a
+						// simple or complex type, but these are resolved already
+						return Helper.getOrRequestTypeForNavigationProperty(that, oObject,
+								oPart.property)
+							.then(followPath);
+					}
+					oObject = oNextObject;
+				}
 			}
-		};
+			return oObject;
+		}
+
+		if (!sResolvedPath) {
+			error("Not an absolute path", sPath);
+		}
+		aSegments = Helper.splitPath(sResolvedPath);
+		return Helper.getOrRequestEntityContainer(this).then(followPath);
+	};
 
 	/**
 	 * Requests the UI5 type for the given property path that formats and parses corresponding to
@@ -364,17 +361,17 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   An absolute path to an OData property within the OData data model
-	 * @returns {Promise}
+	 * @returns {SyncPromise}
 	 *   A promise that gets resolved with the corresponding UI5 type from
 	 *   <code>sap.ui.model.odata.type</code>; if no type can be determined, the promise is
 	 *   rejected with the corresponding error
-	 * @public
+	 * @private
 	 */
-	ODataMetaModel.prototype.requestUI5Type = function (sPath) {
+	ODataMetaModel.prototype.getOrRequestUI5Type = function (sPath) {
 		var that = this;
 
-		return this.requestMetaContext(sPath).then(function (oMetaContext) {
-			return that.requestObject("", oMetaContext);
+		return this.getOrRequestMetaContext(sPath).then(function (oMetaContext) {
+			return that.getOrRequestObject("", oMetaContext);
 		}).then(function (oProperty) {
 			var oConstraints,
 				oType = oProperty["@ui5.type"],
@@ -410,6 +407,118 @@ sap.ui.define([
 			return oType;
 		});
 	};
+
+	/**
+	 * Returns the UI5 type for the given property path that formats and parses corresponding to
+	 * the property's EDM type and facets. The property's type must be a primitive type.
+	 *
+	 * @param {string} sPath
+	 *   An absolute path to an OData property within the OData data model
+	 * @returns {sap.ui.model.odata.type.ODataType}
+	 *   The corresponding UI5 type from <code>sap.ui.model.odata.type</code>, if all required meta
+	 *   data to calculate this type is already available
+	 * @throws {Error}
+	 *   if the UI5 type cannot be determined synchronously (due to a pending meta data request) or
+	 *   cannot be determined at all (due to a wrong data path)
+	 * @public
+	 */
+	ODataMetaModel.prototype.getUI5Type = SyncPromise.createGetMethod("getOrRequestUI5Type", true);
+
+	/**
+	 * Returns a promise for the "4.3.1 Canonical URL" corresponding to the given service root URL
+	 * and absolute data binding path which must point to an entity.
+	 *
+	 * @param {string} sServiceUrl
+	 *   root URL of the service
+	 * @param {string} sPath
+	 *   an absolute data binding path pointing to an entity, e.g.
+	 *   "/TEAMS[0];list=0/TEAM_2_EMPLOYEES/0"
+	 * @param {function} fnRead
+	 *   function like {@link sap.ui.model.odata.v4.ODataModel#read} which provides access to data
+	 * @returns {Promise}
+	 *   a promise which is resolved with the canonical URL (e.g.
+	 *   "/<service root URL>/EMPLOYEES(ID='1')") in case of success, or rejected with an instance
+	 *   of <code>Error</code> in case of failure
+	 * @private
+	 */
+	ODataMetaModel.prototype.requestCanonicalUrl = function (sServiceUrl, sPath, fnRead) {
+		var that = this;
+
+		return Promise.all([
+			fnRead(sPath, true),
+			this.getOrRequestMetaContext(sPath)
+		]).then(function (aValues) {
+			var oEntityInstance = aValues[0],
+				oMetaContext = aValues[1];
+
+			return that.getOrRequestObject("", oMetaContext).then(function (oEntitySet) {
+				// check that this really is an EntitySet
+				if (!oEntitySet.EntityType) {
+					error("Not an entity", sPath);
+				}
+				return that.getOrRequestObject("EntityType", oMetaContext)
+					.then(function (oEntityType) {
+						return sServiceUrl + encodeURIComponent(oEntitySet.Name)
+							+ Helper.getKeyPredicate(oEntityType, oEntityInstance);
+					});
+			});
+		});
+	};
+
+	/**
+	 * Requests the OData meta model context corresponding to the given OData model path.
+	 *
+	 * Returns a <code>Promise</code> which is resolved with the requested OData meta data context
+	 * or rejected with an error.
+	 *
+	 * The resulting meta data context will either point to an EntitySet, to a Singleton or to a
+	 * Property. The meta data path will follow the NavigationPropertyBindings as long as they lead
+	 * to an EntitySet from the same container with a simple path, then it will switch to the type.
+	 *
+	 * @param {string} sPath
+	 *   An absolute path within the OData data model for which the OData meta data context is
+	 *   requested
+	 * @returns {Promise}
+	 *   A promise that gets resolved with the corresponding meta data context
+	 *   (<code>sap.ui.model.Context</code>) within the meta model, as soon as all required meta
+	 *   data to calculate this context is available; if no context can be determined, the promise
+	 *   is rejected with the corresponding error
+	 * @public
+	 */
+	ODataMetaModel.prototype.requestMetaContext
+		= SyncPromise.createRequestMethod("getOrRequestMetaContext");
+
+	/**
+	 * Requests the meta data object for the given path relative to the given context.
+	 *
+	 * Returns a <code>Promise</code> which is resolved with the requested meta model object or
+	 * rejected with an error.
+	 *
+	 * @param {string} sPath
+	 *   A relative or absolute path within the meta model
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context to be used as a starting point in case of a relative path
+	 * @returns {Promise}
+	 *   A promise which is resolved with the requested meta model object as soon as it is
+	 *   available
+	 * @public
+	 */
+	ODataMetaModel.prototype.requestObject = SyncPromise.createRequestMethod("getOrRequestObject");
+
+	/**
+	 * Requests the UI5 type for the given property path that formats and parses corresponding to
+	 * the property's EDM type and facets. The property's type must be a primitive type.
+	 *
+	 * @param {string} sPath
+	 *   An absolute path to an OData property within the OData data model
+	 * @returns {Promise}
+	 *   A promise that gets resolved with the corresponding UI5 type from
+	 *   <code>sap.ui.model.odata.type</code>; if no type can be determined, the promise is
+	 *   rejected with the corresponding error
+	 * @public
+	 */
+	ODataMetaModel.prototype.requestUI5Type
+		= SyncPromise.createRequestMethod("getOrRequestUI5Type");
 
 	return ODataMetaModel;
 }, /* bExport= */ true);

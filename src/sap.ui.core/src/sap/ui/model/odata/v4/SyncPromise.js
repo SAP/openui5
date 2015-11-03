@@ -70,20 +70,24 @@ sap.ui.define([
 			try {
 				vResult = fnCallback(oPromise.getResult());
 				bFulfilled = true;
+				oPromise = null; // be nice to the garbage collector
 				if (vResult instanceof Promise || vResult instanceof SyncPromise) {
 					return new SyncPromise(vResult);
 				}
 			} catch (e) {
 				vResult = e;
 				bRejected = true;
+				oPromise = null;
 			}
 		} else if (oPromise instanceof Promise || oPromise instanceof SyncPromise) {
 			oPromise.then(function (vResult0) {
 				vResult = vResult0;
 				bFulfilled = true;
+				oPromise = null;
 			}, function (vReason) {
 				vResult = vReason;
 				bRejected = true;
+				oPromise = null;
 			});
 		} else {
 			vResult = oPromise;
@@ -157,6 +161,46 @@ sap.ui.define([
 		 */
 		all : function (aValues) {
 			return new SyncPromise(null, null, aValues.slice());
+		},
+
+		/**
+		 * Returns a "get*" method corresponding to the given "getOrRequest*" method.
+		 *
+		 * @param {string} sGetOrRequest
+		 *   a "getOrRequest*" method's name
+		 * @param {boolean} [bThrow=false]
+		 *   whether the "get*" method throws if the promise is not fulfilled
+		 * @returns {function}
+		 *   a "get*" method returning the "getOrRequest*" method's result or
+		 *   <code>undefined</code> in case the promise is not (yet) fulfilled
+		 */
+		createGetMethod : function (sGetOrRequest, bThrow) {
+			return function () {
+				var oSyncPromise = this[sGetOrRequest].apply(this, arguments);
+
+				if (oSyncPromise.isFulfilled()) {
+					return oSyncPromise.getResult();
+				} else if (bThrow) {
+					throw oSyncPromise.isRejected()
+						? oSyncPromise.getResult()
+						: new Error("Result pending");
+				}
+			};
+		},
+
+		/**
+		 * Returns a "request*" method corresponding to the given "getOrRequest*" method.
+		 *
+		 * @param {string} sGetOrRequest
+		 *   a "getOrRequest*" method's name
+		 * @returns {function}
+		 *   a "request*" method returning the "getOrRequest*" method's result wrapped via
+		 *   <code>Promise.resolve()</code>
+		 */
+		createRequestMethod : function (sGetOrRequest) {
+			return function () {
+				return Promise.resolve(this[sGetOrRequest].apply(this, arguments));
+			};
 		},
 
 		// reject not implemented as there is no use case so far

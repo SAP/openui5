@@ -52,7 +52,7 @@ sap.ui.require([
 		withMetamodel : function (fnCallback) {
 			var that = this;
 
-			return OlingoDocument.requestDocument(createModel()).then(function (oDocument) {
+			return OlingoDocument.getOrRequestDocument(createModel()).then(function (oDocument) {
 				fnCallback.call(that, oDocument);
 			});
 		}
@@ -85,12 +85,12 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestDocument: success", function (assert) {
+	QUnit.test("getOrRequestDocument: success", function (assert) {
 		var oModel = createModel();
 
 		this.oSandbox.spy(odatajs.oData, "request");
 
-		OlingoDocument.requestDocument(oModel).then(function (oDocument) {
+		OlingoDocument.getOrRequestDocument(oModel).then(function (oDocument) {
 			TestUtils.deepContains(odatajs.oData.request.args[0][0], {
 				requestUri: oModel.sDocumentUrl,
 				method: "GET"
@@ -99,14 +99,16 @@ sap.ui.require([
 			assert.ok("dataServices" in oDocument);
 		});
 		// a second request must not trigger a read
-		return OlingoDocument.requestDocument(oModel).then(function (oDocument) {
+		return OlingoDocument.getOrRequestDocument(oModel).then(function (oDocument) {
 			assert.strictEqual(odatajs.oData.request.callCount, 1);
 			assert.ok("dataServices" in oDocument);
+			assert.strictEqual(OlingoDocument.getOrRequestDocument(oModel).getResult(), oDocument,
+				"sync promise fulfilled");
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestDocument: read error", function (assert) {
+	QUnit.test("getOrRequestDocument: read error", function (assert) {
 		var oError = new Error("foo"),
 			oModel = createModel("/foo/$metadata");
 
@@ -115,7 +117,7 @@ sap.ui.require([
 			"GET " + TestUtils.proxy("/foo/$metadata"),
 			"sap.ui.model.odata.v4.ODataDocumentModel");
 
-		return OlingoDocument.requestDocument(oModel).then(function () {
+		return OlingoDocument.getOrRequestDocument(oModel).then(function () {
 			assert.ok(false, "unexpected success");
 		})["catch"](function (oError0) {
 			assert.strictEqual(oError0, oError);

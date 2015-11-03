@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"./_ODataHelper",
+	"./SyncPromise",
 	"sap/ui/thirdparty/odatajs-4.0.0"
-], function (Helper, Olingo) {
+], function (Helper, SyncPromise, Olingo) {
 	"use strict";
 	/*global odatajs */
 
@@ -99,6 +100,37 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns a SyncPromise for the metadata document. Reads it from
+		 * <code>oModel.sDocumentUrl</code> via the Olingo metadata handler with the first request.
+		 * Caches it and responds subsequent queries from the cache.
+		 *
+		 * @param {sap.ui.model.odata.v4.oDataDocumentModel} oModel
+		 *   the model
+		 * @returns {SyncPromise}
+		 *   a promise to be resolved with the metadata document
+		 * @private
+		 */
+		getOrRequestDocument : function (oModel) {
+			if (!oModel._oDocumentPromise) {
+				oModel._oDocumentPromise = SyncPromise.resolve(
+					new Promise(function (fnResolve, fnReject) {
+						odatajs.oData.request({
+							requestUri: oModel.sDocumentUrl
+						}, function (oDocument) {
+							fnResolve(oDocument);
+						}, function (oOlingoError) {
+							var oError = Helper.createError(oOlingoError);
+
+							jQuery.sap.log.error(oError.message, "GET " + oModel.sDocumentUrl,
+								"sap.ui.model.odata.v4.ODataDocumentModel");
+							fnReject(oError);
+						},  odatajs.oData.metadataHandler);
+					}));
+			}
+			return oModel._oDocumentPromise;
+		},
+
+		/**
 		 * Determines the schema name from the qualified name.
 		 *
 		 * @param {string} sQualifiedName
@@ -138,35 +170,6 @@ sap.ui.define([
 				collection: !!aMatches,
 				qualifiedName: aMatches ? aMatches[1] : sTypeRef
 			};
-		},
-
-		/**
-		 * Returns a Promise for the metadata document. Reads it from
-		 * <code>oModel.sDocumentUrl</code> via the Olingo metadata handler with the first request.
-		 * Caches it and responds subsequent queries from the cache.
-		 *
-		 * @param {sap.ui.model.odata.v4.oDataDocumentModel} oModel
-		 *   the model
-		 * @returns {Promise}
-		 *   a promise to be resolved with the metadata document
-		 */
-		requestDocument : function (oModel) {
-			if (!oModel._oDocumentPromise) {
-				oModel._oDocumentPromise = new Promise(function (fnResolve, fnReject) {
-					odatajs.oData.request({
-						requestUri: oModel.sDocumentUrl
-					}, function (oDocument) {
-						fnResolve(oDocument);
-					}, function (oOlingoError) {
-						var oError = Helper.createError(oOlingoError);
-
-						jQuery.sap.log.error(oError.message, "GET " + oModel.sDocumentUrl,
-							"sap.ui.model.odata.v4.ODataDocumentModel");
-						fnReject(oError);
-					},  odatajs.oData.metadataHandler);
-				});
-			}
-			return oModel._oDocumentPromise;
 		},
 
 		/**

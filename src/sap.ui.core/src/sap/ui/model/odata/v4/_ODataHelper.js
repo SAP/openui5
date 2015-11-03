@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/odata/v4/SyncPromise",
 	"sap/ui/thirdparty/odatajs-4.0.0"
-], function (ODataUtils, Olingo) {
+], function (ODataUtils, SyncPromise, Olingo) {
 	"use strict";
 
 	/*global odatajs */
@@ -117,6 +118,81 @@ sap.ui.define([
 		},
 
 		/**
+		 * Requests the entity container from the meta data model including the entity sets and the
+		 * singletons. Keeps it in a cache and responds subsequent requests from the cache.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel
+		 *   the meta model
+		 * @returns {SyncPromise}
+		 *   A promise which is resolved with the entity container as soon as it is available
+		 * @private
+		 */
+		getOrRequestEntityContainer : function (oMetaModel) {
+			if (!oMetaModel._oEntityContainerPromise) {
+				oMetaModel._oEntityContainerPromise
+					= oMetaModel.oModel.getOrRequestEntityContainer()
+						.then(function (oEntityContainer) {
+							Helper.resolveNavigationPropertyBindings(oEntityContainer);
+							return oEntityContainer;
+						});
+			}
+			return oMetaModel._oEntityContainerPromise;
+		},
+
+		/**
+		 * Requests the type for the given navigation property at the given object if it is not
+		 * available yet. It is stored at the property, cached in the meta model and then given to
+		 * the promise.
+		 *
+		 * Example:
+		 * <code>
+		 * requestTypeForNavigationProperty(oMetaModel, oEntitySet, "EntityType")
+		 * </code>
+		 * This requests and sets the entity type at the given entity set. The entity set is
+		 * expected to already have a "placeholder" object with the QualifiedName, as it is
+		 * returned from the metadata model.
+		 *
+		 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel
+		 *   the meta model
+		 * @param {object} oObject
+		 *   the object having a navigation link to a type
+		 * @param {string} sProperty
+		 *   the name of the type property
+		 * @returns {SyncPromise}
+		 *   a promise that will be resolved with the requested type
+		 * @private
+		 */
+		getOrRequestTypeForNavigationProperty : function (oMetaModel, oObject, sProperty) {
+			var sQualifiedName = oObject[sProperty].QualifiedName;
+
+			if (Object.keys(oObject[sProperty]).length > 1) {
+				//navigation property already resolved
+				return SyncPromise.resolve(oObject[sProperty]);
+			}
+
+			return Helper.getOrRequestEntityContainer(oMetaModel).then(function (oEntityContainer) {
+				var oArray = oEntityContainer.Types,
+					oResult;
+
+				if (oArray) {
+					oResult = Helper.findInArray(oArray, "QualifiedName", sQualifiedName);
+					if (oResult) {
+						return SyncPromise.resolve(oResult);
+					}
+				} else {
+					oEntityContainer.Types = [];
+				}
+
+				return oMetaModel.oModel.getOrRequestEntityType(sQualifiedName)
+					.then(function (oResult) {
+						oEntityContainer.Types.push(oResult);
+						oObject[sProperty] = oResult;
+						return oResult;
+					});
+			});
+		},
+
+		/**
 		 * Iterates over the given headers map and returns the first value for the requested key
 		 * (case insensitive). If no such key is found, <code>undefined</code> is returned.
 		 *
@@ -210,80 +286,6 @@ sap.ui.define([
 						fnReject(Helper.createError(oError));
 					}
 				});
-			});
-		},
-
-		/**
-		 * Requests the entity container from the meta data model including the entity sets and the
-		 * singletons. Keeps it in a cache and responds subsequent requests from the cache.
-		 *
-		 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel
-		 *   the meta model
-		 * @returns {Promise}
-		 *   A promise which is resolved with the entity container as soon as it is available
-		 * @private
-		 */
-		requestEntityContainer : function (oMetaModel) {
-			if (!oMetaModel._oEntityContainerPromise) {
-				oMetaModel._oEntityContainerPromise = oMetaModel.oModel.requestEntityContainer()
-					.then(function (oEntityContainer) {
-						Helper.resolveNavigationPropertyBindings(oEntityContainer);
-						return oEntityContainer;
-					});
-			}
-			return oMetaModel._oEntityContainerPromise;
-		},
-
-		/**
-		 * Requests the type for the given navigation property at the given object if it is not
-		 * available yet. It is stored at the property, cached in the meta model and then given to
-		 * the promise.
-		 *
-		 * Example:
-		 * <code>
-		 * requestTypeForNavigationProperty(oMetaModel, oEntitySet, "EntityType")
-		 * </code>
-		 * This requests and sets the entity type at the given entity set. The entity set is
-		 * expected to already have a "placeholder" object with the QualifiedName, as it is
-		 * returned from the metadata model.
-		 *
-		 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel
-		 *   the meta model
-		 * @param {object} oObject
-		 *   the object having a navigation link to a type
-		 * @param {string} sProperty
-		 *   the name of the type property
-		 * @returns {Promise}
-		 *   a promise that will be resolved with the requested type
-		 * @private
-		 */
-		requestTypeForNavigationProperty : function (oMetaModel, oObject, sProperty) {
-			var sQualifiedName = oObject[sProperty].QualifiedName;
-
-			if (Object.keys(oObject[sProperty]).length > 1) {
-				//navigation property already resolved
-				return Promise.resolve(oObject[sProperty]);
-			}
-
-			return Helper.requestEntityContainer(oMetaModel).then(function (oEntityContainer) {
-				var oArray = oEntityContainer.Types,
-					oResult;
-
-				if (oArray) {
-					oResult = Helper.findInArray(oArray, "QualifiedName", sQualifiedName);
-					if (oResult) {
-						return Promise.resolve(oResult);
-					}
-				} else {
-					oEntityContainer.Types = [];
-				}
-
-				return oMetaModel.oModel.requestEntityType(sQualifiedName)
-					.then(function (oResult) {
-						oEntityContainer.Types.push(oResult);
-						oObject[sProperty] = oResult;
-						return oResult;
-					});
 			});
 		},
 

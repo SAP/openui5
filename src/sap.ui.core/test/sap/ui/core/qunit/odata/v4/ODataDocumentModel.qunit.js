@@ -4,8 +4,9 @@
 sap.ui.require([
 	"sap/ui/model/odata/v4/_OlingoDocument",
 	"sap/ui/model/odata/v4/ODataDocumentModel",
+	"sap/ui/model/odata/v4/SyncPromise",
 	"sap/ui/test/TestUtils"
-], function (OlingoDocument, ODataDocumentModel, TestUtils) {
+], function (OlingoDocument, ODataDocumentModel, SyncPromise, TestUtils) {
 	"use strict";
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
@@ -42,36 +43,34 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestEntityContainer", function (assert) {
+	QUnit.test("getOrRequestEntityContainer", function (assert) {
 		var oDocument = {},
 			oEntityContainer = {};
 
-		this.oSandbox.mock(OlingoDocument).expects("requestDocument")
+		this.oSandbox.mock(OlingoDocument).expects("getOrRequestDocument")
 			.withExactArgs(this.oDocumentModel)
-			.returns(Promise.resolve(oDocument));
+			.returns(SyncPromise.resolve(oDocument));
 		this.oSandbox.mock(OlingoDocument).expects("transformEntityContainer")
-			.withExactArgs(oDocument).returns(Promise.resolve(oEntityContainer));
+			.withExactArgs(oDocument).returns(oEntityContainer);
 
-		return this.oDocumentModel.requestEntityContainer().then(function (oResult) {
-			assert.strictEqual(oResult, oEntityContainer);
-		});
+		assert.strictEqual(this.oDocumentModel.getOrRequestEntityContainer().getResult(),
+			oEntityContainer, "sync promise fulfilled");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestEntityType", function (assert) {
+	QUnit.test("getOrRequestEntityType", function (assert) {
 		var oDocument = {},
 			sEntityTypeName = "com.sap.gateway.iwbep.tea_busi.v0001.Worker",
 			oEntityType = {};
 
-		this.oSandbox.mock(OlingoDocument).expects("requestDocument")
+		this.oSandbox.mock(OlingoDocument).expects("getOrRequestDocument")
 			.withExactArgs(this.oDocumentModel)
-			.returns(Promise.resolve(oDocument));
+			.returns(SyncPromise.resolve(oDocument));
 		this.oSandbox.mock(OlingoDocument).expects("transformEntityType")
 			.withExactArgs(oDocument, sEntityTypeName)
-			.returns(Promise.resolve(oEntityType));
+			.returns(oEntityType);
 
-		return this.oDocumentModel.requestEntityType(sEntityTypeName).then(function (oResult) {
-			assert.strictEqual(oResult, oEntityType);
-		});
+		assert.strictEqual(this.oDocumentModel.getOrRequestEntityType(sEntityTypeName).getResult(),
+			oEntityType, "sync promise fulfilled");
 	});
 });

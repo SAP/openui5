@@ -11,9 +11,10 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
+	"sap/ui/model/odata/v4/SyncPromise",
 	"sap/ui/test/TestUtils"
 ], function (Model, TypeString, ODataUtils, Helper, ODataContextBinding, ODataListBinding,
-		ODataMetaModel, ODataModel, ODataPropertyBinding, TestUtils) {
+		ODataMetaModel, ODataModel, ODataPropertyBinding, SyncPromise, TestUtils) {
 	/*global odatajs, QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -330,12 +331,12 @@ sap.ui.require([
 			oMetaModelMock = this.oSandbox.mock(oMetaModel),
 			oMetaContext = oMetaModel.getContext("/path/into/metamodel");
 
-		oMetaModelMock.expects("requestMetaContext")
+		oMetaModelMock.expects("getOrRequestMetaContext")
 			.withExactArgs("/EMPLOYEES(ID='1')/ENTRYDATE")
 			.returns(Promise.resolve(oMetaContext));
-		oMetaModelMock.expects("requestObject")
+		oMetaModelMock.expects("getOrRequestObject")
 			.withExactArgs("Type/QualifiedName", oMetaContext)
-			.returns(Promise.resolve("Edm.Date"));
+			.returns(SyncPromise.resolve("Edm.Date"));
 		return oModel.requestObject(
 			"ENTRYDATE/#Type/QualifiedName", oModel.getContext("/EMPLOYEES(ID='1')")
 		).then(function (sResult) {

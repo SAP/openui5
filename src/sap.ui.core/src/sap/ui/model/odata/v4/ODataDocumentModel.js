@@ -43,13 +43,13 @@ sap.ui.define([
 	 *                            NavigationPropertyBindings($expand=Target($select=Fullname))))
 	 * </pre>
 	 *
-	 * @returns {Promise}
+	 * @returns {SyncPromise}
 	 *   A promise that will be resolved with the requested data
 	 *
-	 * @protected
+	 * @private
 	 */
-	ODataDocumentModel.prototype.requestEntityContainer = function () {
-		return OlingoDocument.requestDocument(this).then(function (oDocument) {
+	ODataDocumentModel.prototype.getOrRequestEntityContainer = function () {
+		return OlingoDocument.getOrRequestDocument(this).then(function (oDocument) {
 			return OlingoDocument.transformEntityContainer(oDocument);
 		});
 	};
@@ -64,13 +64,13 @@ sap.ui.define([
 	 *
 	 * @param {string} sQualifiedName
 	 *   the qualified name of the type
-	 * @returns {Promise}
+	 * @returns {SyncPromise}
 	 *   A promise that will be resolved with the requested data
 	 *
-	 * @protected
+	 * @private
 	 */
-	ODataDocumentModel.prototype.requestEntityType = function (sQualifiedName) {
-		return OlingoDocument.requestDocument(this).then(function (oDocument) {
+	ODataDocumentModel.prototype.getOrRequestEntityType = function (sQualifiedName) {
+		return OlingoDocument.getOrRequestDocument(this).then(function (oDocument) {
 			return OlingoDocument.transformEntityType(oDocument, sQualifiedName);
 		});
 	};
