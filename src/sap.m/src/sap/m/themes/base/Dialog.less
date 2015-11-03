@@ -266,10 +266,6 @@
 
 		.sapMBarLeft,
 		.sapMBarRight,
-		.sapMBarPH {
-			height: @SapBarCompactHeight;
-			line-height: @SapBarCompactHeight;
-		}
 
 		&.sapMDialogWithSubHeader {
 			padding-top: @SapBarCompactHeight + @SapBarCompactHeight;
@@ -285,6 +281,10 @@
 
 		& > .sapMDialogTitle {
 			height: @SapBarCompactHeight;
+
+			.sapMBarPH {
+				line-height: @SapBarCompactHeight;
+			}
 		}
 
 		& > .sapMDialogSection {
