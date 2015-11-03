@@ -236,7 +236,7 @@ sap.ui.require([
 		}],
 		expected: sMetaEmployees + "/EntityType/Properties('ENTRYDATE')"
 	}, {
-		path: "/Employees(ID='1')/LOCATION/City/CITYNAME",
+		path: "/Employees(ID='1')/LOCATION/City/0/CITYNAME",
 		nav: [{
 			object: oEntityContainer.EntitySets[0],
 			property: "EntityType"
@@ -395,56 +395,56 @@ sap.ui.require([
 		result: oEntityContainer.EntitySets[0].Name
 	}, {
 		path: sMetaMe + "/Type",
-		nav: [{
-			object: oEntityContainer.Singletons[0],
-			property: "Type"
-		}],
+		type: oEntityTypeWorker,
 		result: oEntityTypeWorker
 	}, {
 		path: sMetaMe + "/Type('foo')",
 		reject: '"Type" is not an array'
 	}, {
 		path: sMetaMe + "/Type/Name",
-		nav: [{
-			object: oEntityContainer.Singletons[0],
-			property: "Type"
-		}],
+		type: oEntityTypeWorker,
 		result: oEntityTypeWorker.Name
 	}, {
 		context: sMetaMe,
 		path: "Type/Abstract",
-		nav: [{
-			object: oEntityContainer.Singletons[0],
-			property: "Type"
-		}],
+		type: oEntityTypeWorker,
 		result: oEntityTypeWorker.Abstract
 	}, {
 		path: sMetaMe + "/Type/Properties('ENTRYDATE')",
-		nav: [{
-			object: oEntityContainer.Singletons[0],
-			property: "Type"
-		}],
+		type: oEntityTypeWorker,
 		result: oEntityTypeWorker.Properties[1]
 	}, {
 		path: sMetaCityname,
-		nav: [{
-			object: oEntityContainer.EntitySets[0],
-			property: "EntityType"
-		}],
+		type: oEntityTypeWorker,
 		result: oEntityTypeWorker.Properties[2].Type.Properties[0].Type.Properties[0]
 	}, {
 		path: sMetaTeam + "/NavigationPropertyBindings('TEAM_2_EMPLOYEES')/Target/EntityType",
-		nav: [{
-			object: oEntityContainer.EntitySets[0],
-			property: "EntityType"
-		}],
+		type: oEntityTypeWorker,
 		result: oEntityTypeWorker
 	}].forEach(function (oFixture) {
 		var sPath = oFixture.context ? oFixture.context + '/' + oFixture.path : oFixture.path;
 		QUnit.test("requestObject: " + sPath, function (assert) {
-			var oContext = oFixture.context && this.oMetaModel.getContext(oFixture.context),
+			var iCallCount,
+				oContext = oFixture.context && this.oMetaModel.getContext(oFixture.context),
 				oMetaModel = this.oMetaModel,
-				oHelperMock = this.oSandbox.mock(Helper);
+				oDocumentModelMock = this.oSandbox.mock(oMetaModel.oModel);
+
+			function testIt() {
+				return oMetaModel.requestObject(oFixture.path, oContext).then(function (oResult) {
+					if ("result" in oFixture) {
+						TestUtils.deepContains(oResult, oFixture.result);
+					} else {
+						assert.ok(false, "unexpected success");
+					}
+				})["catch"](function (oError) {
+					if (oFixture.reject) {
+						assert.strictEqual(oError.message,
+								oFixture.reject + ": " + oFixture.path);
+					} else {
+						assert.ok(false, "unexpected error:" + oError);
+					}
+				});
+			}
 
 			if (oFixture.error) {
 				assert.throws(function () {
@@ -452,30 +452,23 @@ sap.ui.require([
 				}, new Error(oFixture.error + ": " + oFixture.path));
 				return undefined;
 			}
-			oHelperMock.expects("requestEntityContainer")
+			this.oSandbox.mock(Helper).expects("requestEntityContainer").atLeast(1)
 				.withExactArgs(this.oMetaModel)
 				.returns(promiseForEntityContainer());
-			if (oFixture.nav) {
-				oFixture.nav.forEach(function (oNav) {
-					oHelperMock.expects("requestTypeForNavigationProperty")
-						.withExactArgs(oMetaModel, nameMatcher(oNav.object.Name), oNav.property)
-						.returns(promiseFor(oNav.result || oEntityTypeWorker));
-				});
+			this.oSandbox.spy(Helper, "requestTypeForNavigationProperty");
+			if (oFixture.type) {
+				oDocumentModelMock.expects("requestEntityType")
+					.withExactArgs(oFixture.type.QualifiedName)
+					.returns(promiseFor(oFixture.type));
 			}
 
-			return this.oMetaModel.requestObject(oFixture.path, oContext).then(function (oResult) {
-				if ("result" in oFixture) {
-					TestUtils.deepContains(oResult, oFixture.result);
-				} else {
-					assert.ok(false, "unexpected success");
-				}
-			})["catch"](function (oError) {
-				if (oFixture.reject) {
-					assert.strictEqual(oError.message,
-						oFixture.reject + ": " + oFixture.path);
-				} else {
-					assert.ok(false, "unexpected error:" + oError);
-				}
+			// test requestObject twice and check that the number of calls on
+			// requestTypeForNavigationProperty is identical
+			return testIt().then(function () {
+				iCallCount = Helper.requestTypeForNavigationProperty.callCount;
+			}).then(testIt).then(function () {
+				assert.strictEqual(Helper.requestTypeForNavigationProperty.callCount,
+					2 * iCallCount);
 			});
 		});
 	});
