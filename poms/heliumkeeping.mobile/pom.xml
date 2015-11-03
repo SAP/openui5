@@ -163,6 +163,18 @@
 						</configuration>
 					</execution>
 			
+					<!-- activate the version of the application -->
+					<execution>
+						<id>sapui5-helium-multiversion</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>helium-multiversion</goal>
+						</goals>
+						<configuration>
+							<skip>${skipMultiVersion}</skip>
+						</configuration>
+					</execution>
+			
 					<!-- uploading the new sources into the Git repository -->
 					<execution>
 						<id>sapui5-helium-upload</id>
