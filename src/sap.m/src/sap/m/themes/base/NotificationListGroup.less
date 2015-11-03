@@ -1,0 +1,160 @@
+@leftIconsSpace: 2rem;
+@datetimeWidth: 20%;
+@containerPadding: 1rem;
+@closeButtonSize: 1.625rem;
+@readIconSize: 0.5rem;
+
+.sapMNLG {
+  border-radius: 3px;
+  margin-bottom: @bottomMargin;
+  padding-right: 0.5rem;
+}
+
+.sapMNLG.sapMLIB {
+  display: block;
+  padding: 0;
+  border-bottom: 0;
+}
+
+// Header styles =======================================================================================================
+
+.sapMNLG-Header {
+  padding-left: @leftIconsSpace;
+  padding-top: @containerPadding;
+  position: relative;
+}
+
+.sapMNLG-Header > .sapMTitle {
+  display: block;
+  font-weight: normal;
+  line-height: 1.25;
+  margin-bottom: 0.5rem;
+  margin-right: 2rem;
+}
+
+.sapMNLG-CloseButton {
+  background: none;
+  border: none;
+  box-sizing: border-box;
+  cursor: pointer;
+  height: @closeButtonSize;
+  opacity: 0.75;
+  padding: 0;
+  position: absolute;
+  right: @containerPadding/2;
+  top: @containerPadding/2;
+  transition: opacity;
+  width: @closeButtonSize;
+
+  &:hover {
+	opacity: 1;
+  }
+}
+
+.sapMNLG-CloseButton .sapMBtnIcon {
+  cursor: pointer;
+  font-size: 0.75rem;
+  height: @closeButtonSize;
+  line-height: @closeButtonSize;
+  width: @closeButtonSize;
+}
+
+.sapUiSizeCompact .sapMNLG-CloseButton .sapMBtnIcon {
+  font-size: 0.75rem;
+  line-height: @closeButtonSize;
+  width: @closeButtonSize;
+}
+
+// Icons styles =========================================================================================================
+
+.sapMNLG-Icons {
+  padding-top: @containerPadding;
+  position: absolute;
+  text-align: center;
+  width: @leftIconsSpace;
+}
+
+.sapMNLG-Icons .sapUiIcon {
+  color: @sapUiElement;
+  font-size: 0.75rem;
+}
+
+.sapMNLG-ReadStatus {
+  display: none;
+}
+
+.sapMNLG-UnreadStatus {
+  border-radius: @readIconSize/2;
+  display: block;
+  height: @readIconSize;
+  margin: 0.313rem auto 0.375rem;
+  width: @readIconSize;
+}
+
+// Body styles =========================================================================================================
+
+.sapMNLG-Body {
+  position: relative;
+  padding-top: 2rem;
+  padding-right: 0.5rem;
+}
+
+.sapMText.sapMNLG-Datetime {
+  color: @sapUiLightText;
+  overflow: hidden;
+  position: absolute;
+  right: @containerPadding;
+  text-overflow: ellipsis;
+  top: -1rem;
+  padding-top: 1rem;
+  white-space: nowrap;
+  width: @datetimeWidth
+}
+
+.sapMNLG-Body  .sapMLIB.sapMNLG-Collapsed {
+  display: none;
+}
+
+// Footer styles =======================================================================================================
+
+.sapMNLG-Footer {
+  border-top: 1px solid @sapUiExtraLightBorder;
+  height: 3rem;
+  line-height: 3rem;
+  padding: 0 @containerPadding 0 @leftIconsSpace;
+  text-align: right;
+}
+
+.sapMNLG-Footer > .sapMBtn {
+  margin-left: 0.25rem;
+  padding: 0;
+}
+
+/* Buttons in footer don't render correctly due to fix for IE, overwriting the fix in sap.m.Button */
+html[data-sap-ui-browser*='ie'] .sapMNLG-Footer .sapMBtnInner {
+  display: block;
+  width: auto;
+}
+
+.sapMNLG-Footer .sapMBtnInner,
+.sapMNLG-Footer .sapMBtnContent {
+  box-sizing: content-box;
+  height: 1.875rem;
+  line-height: 1.875rem;
+}
+
+.sapUiSizeCompact .sapMNLG-Footer {
+  height: 2rem;
+  line-height: 2rem;
+}
+
+.sapUiSizeCompact .sapMNLG-Footer > .sapMBtn {
+  margin-left: 0.25rem;
+  padding: 0;
+}
+
+.sapMNLG-Footer .sapMLnk {
+  padding-left: 2rem;
+  padding-right: 2rem;
+  float: left;
+}
