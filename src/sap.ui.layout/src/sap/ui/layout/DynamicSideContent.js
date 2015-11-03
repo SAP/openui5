@@ -118,8 +118,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 			L_XL_BREAKPOINT = 1440;
 
 		DynamicSideContent.prototype.init = function () {
-			this._SCVisible = this.getProperty("showSideContent");
-			this._MCVisible = this.getProperty("showMainContent");
 			this._bSuppressInitialFireBreakPointChange = true;
 		};
 
@@ -134,7 +132,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		DynamicSideContent.prototype.setShowSideContent = function (bVisible, bSuppressVisualUpdate) {
 			this.setProperty("showSideContent", bVisible, true);
 			this._SCVisible = bVisible;
-			if (!bSuppressVisualUpdate) {
+			if (!bSuppressVisualUpdate && this.$().length) {
 				this._setResizeData(this.getCurrentBreakpoint(), this.getEqualSplit());
 				if (this._currentBreakpoint === S) {
 					this._MCVisible = true;
@@ -155,7 +153,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		DynamicSideContent.prototype.setShowMainContent = function (bVisible, bSuppressVisualUpdate) {
 			this.setProperty("showMainContent", bVisible, true);
 			this._MCVisible = bVisible;
-			if (!bSuppressVisualUpdate) {
+			if (!bSuppressVisualUpdate && this.$().length) {
 				this._setResizeData(this.getCurrentBreakpoint(), this.getEqualSplit());
 				if (this._currentBreakpoint === S) {
 					this._SCVisible = true;
@@ -291,6 +289,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 */
 		DynamicSideContent.prototype.onBeforeRendering = function () {
 			this._detachContainerResizeListener();
+
+			this._SCVisible = this.getProperty("showSideContent");
+			this._MCVisible = this.getProperty("showMainContent");
 
 			if (!this.getContainerQuery()) {
 				this._iWindowWidth = jQuery(window).width();
@@ -547,12 +548,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 		 * @return {boolean} If the control sets height
 		 */
 		DynamicSideContent.prototype._shouldSetHeight = function () {
-			if (((this._iScSpan + this._iMcSpan) === SPAN_SIZE_12 &&
-				this._MCVisible && this._SCVisible)
-				|| this._fixedSideContent) {
-				return true;
-			}
-			return false;
+			var bSameLine,
+				bBothVisible,
+				bOnlyScVisible,
+				bOnlyMcVisible,
+				bOneVisible,
+				bFixedSC,
+				bSCNeverShow;
+
+			bSameLine = (this._iScSpan + this._iMcSpan) === SPAN_SIZE_12;
+			bBothVisible = this._MCVisible && this._SCVisible;
+
+			bOnlyScVisible = !this._MCVisible && this._SCVisible;
+			bOnlyMcVisible = this._MCVisible && !this._SCVisible;
+			bOneVisible = bOnlyScVisible || bOnlyMcVisible;
+
+			bFixedSC = this._fixedSideContent;
+			bSCNeverShow = this.getSideContentVisibility() === sap.ui.layout.SideContentVisibility.NeverShow;
+
+			return ((bSameLine && bBothVisible) || bOneVisible || bFixedSC || bSCNeverShow);
 		};
 
 		/**
