@@ -310,7 +310,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		this._deregisterEvents();
 
 		// clear delayed calls
-		cancelPendingSuggest(this);
+		this.cancelPendingSuggest();
 
 		if (this._iRefreshListTimeout) {
 			jQuery.sap.clearDelayedCall(this._iRefreshListTimeout);
@@ -761,7 +761,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 
 		// when enter is pressed before the timeout of suggestion delay, suggest event is cancelled
-		cancelPendingSuggest(this);
+		this.cancelPendingSuggest();
 
 		if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
 			if (this._iPopupListSelectedIndex >= 0) {
@@ -830,16 +830,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		return this;
 	};
 
-	function cancelPendingSuggest(oInput) {
-		if (oInput._iSuggestDelay) {
-			jQuery.sap.clearDelayedCall(oInput._iSuggestDelay);
-			oInput._iSuggestDelay = null;
+	Input.prototype.cancelPendingSuggest = function() {
+		if (this._iSuggestDelay) {
+			jQuery.sap.clearDelayedCall(this._iSuggestDelay);
+			this._iSuggestDelay = null;
 		}
-	}
+	};
 
 	Input.prototype._triggerSuggest = function(sValue) {
 
-		cancelPendingSuggest(this);
+		this.cancelPendingSuggest();
 
 		if (!sValue) {
 			sValue = "";
@@ -1097,7 +1097,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		Input.prototype._closeSuggestionPopup = function() {
 
 			if (this._oSuggestionPopup) {
-				cancelPendingSuggest(this);
+				this.cancelPendingSuggest();
 				this._oSuggestionPopup.close();
 				this.$("SuggDescr").text(""); // initialize suggestion ARIA text
 				this.$("inner").removeAttr("aria-haspopup");
@@ -1405,7 +1405,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				// when the input has no value, close the Popup when not runs on the phone because the opened dialog on phone shouldn't be closed.
 				if (!oInput._bUseDialog) {
 					oInput._iPopupListSelectedIndex = -1;
-					cancelPendingSuggest(oInput);
+					this.cancelPendingSuggest();
 					oPopup.close();
 				} else {
 					// hide table on phone when value is empty
@@ -1497,7 +1497,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					if (oPopup.isOpen()) {
 						oInput._sCloseTimer = setTimeout(function() {
 							oInput._iPopupListSelectedIndex = -1;
-							cancelPendingSuggest(oInput);
+							this.cancelPendingSuggest();
 							oPopup.close();
 						}, 0);
 					}
