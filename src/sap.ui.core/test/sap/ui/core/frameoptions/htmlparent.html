@@ -11,8 +11,9 @@
 			}
 			function selectChildPage(url) {
 				document.getElementById("currentChild").innerHTML = url;
-				if (url == "sameorigin_denied.html" || url == "whitelistservice_allowed.html" || 
-					url == "whitelistservice_denied.html" || url == "whitelistservice_inactive.html") {
+				if (url == "sameorigin_denied.html" || url == "whitelistservice_allowed.html" ||
+					url == "whitelistservice_denied.html" || url == "whitelistservice_inactive.html" ||
+					url == "whitelistservice_metatag_allowed.html" || url == "whitelistservice_metatag_denied.html") {
 					url = location.protocol + "//" + location.hostname.substr(0,location.hostname.indexOf(".")) + ":" +
 						location.port + location.pathname.substr(0,location.pathname.lastIndexOf("/") + 1) + url;
 				}
@@ -35,9 +36,12 @@
 		<option value="deny.html">Deny</option>
 		<option value="sameorigin_allowed.html">Trusted (same origin, allowed)</option>
 		<option value="sameorigin_denied.html">Trusted (same origin, denied)</option>
+		<option value="sameorigin_metatag_allowed.html">Trusted (same origin, allowed, &lt;meta&gt; tag)</option>
 		<option value="whitelistservice_allowed.html">Trusted (whitelist service, allowed)</option>
 		<option value="whitelistservice_denied.html">Trusted (whitelist service, denied)</option>
 		<option value="whitelistservice_inactive.html">Trusted (whitelist service, inactive)</option>
+		<option value="whitelistservice_metatag_allowed.html">Trusted (whitelist service, allowed, &lt;meta&gt; tag)</option>
+		<option value="whitelistservice_metatag_denied.html">Trusted (whitelist service, denied, &lt;meta&gt; tag)</option>
 	</select>
 	<h2>IFrame with <span id="currentChild">allow.html</span></h2>
 		<iframe id="iframe" src="allow.html" style="width:100%;height:500px"></iframe>
