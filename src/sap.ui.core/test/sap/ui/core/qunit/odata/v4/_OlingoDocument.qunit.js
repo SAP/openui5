@@ -266,25 +266,31 @@ sap.ui.require([
 
 			oMock.expects("transformNavigationPropertyBindings")
 				.withExactArgs(oContainer.entitySet[0].navigationPropertyBinding,
+					oContainer.entitySet[0].name,
 					oEntityContainer.QualifiedName).returns(1);
 			oMock.expects("transformNavigationPropertyBindings")
 				.withExactArgs(oContainer.entitySet[1].navigationPropertyBinding,
+					oContainer.entitySet[1].name,
 					oEntityContainer.QualifiedName).returns(2);
 			oMock.expects("transformNavigationPropertyBindings")
 				.withExactArgs(oContainer.entitySet[2].navigationPropertyBinding,
+					oContainer.entitySet[2].name,
 					oEntityContainer.QualifiedName).returns(3);
 			oMock.expects("transformNavigationPropertyBindings")
 				.withExactArgs(oContainer.entitySet[3].navigationPropertyBinding,
+					oContainer.entitySet[3].name,
 					oEntityContainer.QualifiedName).returns(4);
 			oMock.expects("transformNavigationPropertyBindings")
 				.withExactArgs(oContainer.entitySet[4].navigationPropertyBinding,
+					oContainer.entitySet[4].name,
 					oEntityContainer.QualifiedName).returns(5);
 			if (TestUtils.isRealOData()) { //TODO enhance backend service
 				oEntityContainer.Singletons = [];
 			} else {
 				oMock.expects("transformNavigationPropertyBindings")
 					.withExactArgs(oContainer.singleton[0].navigationPropertyBinding,
-					oEntityContainer.QualifiedName).returns(6);
+						oContainer.singleton[0].name,
+						oEntityContainer.QualifiedName).returns(6);
 			}
 
 			assert.deepEqual(OlingoDocument.transformEntityContainer(oDocument), oEntityContainer);
@@ -317,29 +323,31 @@ sap.ui.require([
 		assert.deepEqual(OlingoDocument.transformNavigationPropertyBindings(undefined), []);
 
 		return this.withMetamodel(function (oDocument) {
-			var aBindings = oDocument.dataServices.schema[0].entityContainer.entitySet[1]
-					.navigationPropertyBinding,
+			var oSet = oDocument.dataServices.schema[0].entityContainer.entitySet[1],
+				aBindings = oSet.navigationPropertyBinding,
 				sContainerName = "com.sap.gateway.iwbep.tea_busi.v0001.Container",
 				aResult = [{
+					"Fullname" : sContainerName + "/EMPLOYEES/EMPLOYEE_2_TEAM",
 					"Path" : "EMPLOYEE_2_TEAM",
 					"Target" : {
 						"Fullname" : sContainerName + "/TEAMS"
 					}
 				}, {
+					"Fullname" : sContainerName + "/EMPLOYEES/EMPLOYEE_2_EQUIPMENTS",
 					"Path" : "EMPLOYEE_2_EQUIPMENTS",
 					"Target" : {
 						"Fullname" : sContainerName + "/Equipments"
 					}
 				}];
 			assert.deepEqual(OlingoDocument.transformNavigationPropertyBindings(aBindings,
-				sContainerName), aResult);
+				oSet.name, sContainerName), aResult);
 		});
 	});
-	// TODO set Fullname. But what is the Fullname of NavigationPropertyBindings?
 
 	//*********************************************************************************************
 	QUnit.test("transformType: primitive type", function (assert) {
 		var oEDMType = {
+				"@odata.type" : "#Edm.Metadata.PrimitiveType",
 				"Name" : "String",
 				"QualifiedName" : "Edm.String"
 			};
@@ -364,6 +372,7 @@ sap.ui.require([
 						"Value" : "255"
 					}],
 					"Type" : {
+						"@odata.type" : "#Edm.Metadata.PrimitiveType",
 						"Name" : "String",
 						"QualifiedName" : "Edm.String"
 					}
@@ -373,6 +382,7 @@ sap.ui.require([
 					"Nullable" : false,
 					"Facets" : [],
 					"Type" : {
+						"@odata.type" : "#Edm.Metadata.ComplexType",
 						"Name" : "ComplexType_City",
 						"QualifiedName" :
 							"com.sap.gateway.iwbep.tea_busi.v0001.ComplexType_City",
@@ -388,6 +398,7 @@ sap.ui.require([
 								"Value" : "16"
 							}],
 							"Type" : {
+								"@odata.type" : "#Edm.Metadata.PrimitiveType",
 								"Name" : "String",
 								"QualifiedName" : "Edm.String"
 							}
@@ -401,6 +412,7 @@ sap.ui.require([
 								"Value" : "255"
 							}],
 							"Type" : {
+								"@odata.type" : "#Edm.Metadata.PrimitiveType",
 								"Name" : "String",
 								"QualifiedName" : "Edm.String"
 							}
@@ -431,6 +443,7 @@ sap.ui.require([
 				.returns({QualifiedName: sQualifiedName});
 
 			assert.deepEqual(OlingoDocument.transformType(oDocument, sQualifiedName), {
+				"@odata.type" : "#Edm.Metadata.ComplexType",
 				"QualifiedName" : sQualifiedName
 			});
 		});
@@ -502,6 +515,25 @@ sap.ui.require([
 					OlingoDocument.transformEntityType(oDocument, oEntityType.QualifiedName),
 					oEntityType);
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.skip("transform all data from the test service", function (assert) {
+		// This is not a real test. It is used to create a reference JSON that shows how the meta
+		// data is converted via _OlingoDocument. It bypasses any "lazy loading" and transforms
+		// everything that is in the document.
+		return this.withMetamodel(function (oDocument) {
+			var oResult = OlingoDocument.transformEntityContainer(oDocument);
+
+			oResult.Types = [];
+			oDocument.dataServices.schema.forEach(function (oSchema) {
+				oSchema.entityType.forEach(function (oEntityType) {
+					oResult.Types.push(OlingoDocument.transformEntityType(oDocument,
+						oSchema.namespace + "." + oEntityType.name));
+				});
+			});
+			// use oResult to update ODataV4Metadata.json
 		});
 	});
 
