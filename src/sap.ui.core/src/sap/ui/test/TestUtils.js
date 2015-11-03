@@ -87,7 +87,6 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 	 * A collection of functions that support QUnit testing.
 	 *
 	 * @namespace sap.ui.test.TestUtils
-	 * @public
 	 * @since 1.27.1
 	 */
 	TestUtils = /** @lends sap.ui.test.TestUtils */ {
@@ -265,7 +264,6 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		 * </pre>
 		 * @param {function} fnCodeUnderTest
 		 *   the code under test
-		 * @public
 		 * @since 1.27.1
 		 */
 		withNormalizedMessages: function (fnCodeUnderTest) {
@@ -323,7 +321,7 @@ sap.ui.define('sap/ui/test/TestUtils', ['jquery.sap.global', 'sap/ui/core/Core']
 		 * <ul>
 		 * <li>"realOData=proxy" (or "realOData=true"): The test must be part of the UI5 Java
 		 *   Servlet. Set the system property "com.sap.ui5.proxy.REMOTE_LOCATION" to a server
-		 *   containing the Gateway test service "/sap/opu/local_v4/IWBEP/TEA_BUSI".
+		 *   containing the Gateway test service.
 		 * <li>"realOData=direct": The test and the Gateway service must be reachable via the same
 		 *   host. This can be reached either by deploying the test code to the Gateway host or by
 		 *   using a reverse proxy like the SAP Web Dispatcher.
