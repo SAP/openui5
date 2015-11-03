@@ -487,7 +487,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 //check if it is internal or external version of Demokit and set the dialog content according to it
                 var oVersionInfo = sap.ui.getVersionInfo();
                 if (oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav) ) {
-                    oSAPUI5Logo.setSrc("resources/sap/ui/demokit/themes/base/images/OpenUI5_new_small_side.png");
+                    oSAPUI5Logo.setSrc("resources/sap/ui/demokit/themes/base/images/OpenUI5_new_small_size.png");
                     oSAPUI5Logo.setTooltip("OpenUI5 logo blue");
                     oSAPUI5Logo.setWidth("446px");
                     oSAPUI5Logo.addStyleClass("extraLeftPadding");
@@ -913,7 +913,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
               //check if it is internal or external version of Demokit and set the dialog content according to it
                 var oVersionInfo = sap.ui.getVersionInfo();
                 if (oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav) ) {
-                    jQuery("#logoico").attr("src", "resources/sap/ui/core/mimes/logo/OpenUI5_new_small_side.png").addClass("sapUiImg");
+                    jQuery("#logoico").attr("src", "resources/sap/ui/demokit/themes/base/images/OpenUI5_new_small_size.png").addClass("sapUiImg");
                 } else {
                     jQuery("#logoico").attr("src", "resources/sap/ui/core/mimes/logo/icotxt_white_220x72_blue.png").addClass("sapUiImg");
                 }
