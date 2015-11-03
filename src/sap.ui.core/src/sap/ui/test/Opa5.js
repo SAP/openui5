@@ -17,10 +17,11 @@ sap.ui.define([
 		'./matchers/AggregationFilled',
 		'./matchers/PropertyStrictEquals'
 	],
-	function($, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Device, iFrameLauncher, componentLauncher, HashChanger, Matcher, AggregationFilled, PropertyStrictEquals) {
+	function(jQuery, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Device, iFrameLauncher, componentLauncher, HashChanger, Matcher, AggregationFilled, PropertyStrictEquals) {
 		"use strict";
-		
-		var oPlugin = new OpaPlugin(),
+
+		var $ = jQuery,
+			oPlugin = new OpaPlugin(),
 			sFrameId = "OpaFrame",
 			bComponentLoaded = false;
 

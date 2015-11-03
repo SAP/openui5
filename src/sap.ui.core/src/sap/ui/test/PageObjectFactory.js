@@ -2,11 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(['./Opa',
+sap.ui.define(['jquery.sap.global',
+               './Opa',
                'sap/ui/base/Object'],
-	function(Opa, Ui5Object) {
+	function(jQuery, Opa, Ui5Object) {
 		"use strict";
-		
+
 		/**
 		 * @class Page Object Factory
 		 * @extends sap.ui.base.Object
@@ -16,7 +17,7 @@ sap.ui.define(['./Opa',
 		 * @since 1.26
 		 */
 		var fnPageObjectFactory = Ui5Object.extend("sap.ui.test.PageObjectFactory");
-		
+
 		/**
 		 * Create a page object configured as arrangement, action and assertion to the Opa.config.
 		 * Use it to structure your arrangement, action and assertion based on parts of the screen to avoid name clashes and help structuring your tests.
@@ -43,11 +44,11 @@ sap.ui.define(['./Opa',
 			}
 			return oPageObject;
 		};
-		
+
 		/*
 		 * Privates
 		 */
-		
+
 		function _registerOperationObject (mPageObjectOperation, sOperationType, sPageObjectName, fnBaseClass, oPageObject, sNamespace) {
 			if (mPageObjectOperation){
 
@@ -69,18 +70,18 @@ sap.ui.define(['./Opa',
 		}
 
 		function _createPageObject (mPageObjectOperation, sClassName, fnBaseClass){
-			
+
 			var fnOperationsPageObject = fnBaseClass.extend(sClassName);
-			
+
 			for (var sOperation in mPageObjectOperation) {
 				if (mPageObjectOperation.hasOwnProperty(sOperation)) {
 					fnOperationsPageObject.prototype[sOperation] = mPageObjectOperation[sOperation];
 				}
 			}
-			
+
 			return new fnOperationsPageObject();
 		}
-		
+
 		function _registerPageObject (oOperationsPageObject, sOperationType, sPageObjectName, oPageObject){
 			if (sOperationType === "actions"){
 				Opa.config.arrangements[sPageObjectName] = oOperationsPageObject;
@@ -89,12 +90,12 @@ sap.ui.define(['./Opa',
 			}else if (sOperationType === "assertions"){
 				Opa.config.assertions[sPageObjectName] = oOperationsPageObject;
 			}
-			
+
 			oPageObject[sPageObjectName] = oPageObject[sPageObjectName] || {};
 			oPageObject[sPageObjectName][sOperationType] = oOperationsPageObject;
 		}
-		
-		
-		
+
+
+
 		return fnPageObjectFactory;
 });

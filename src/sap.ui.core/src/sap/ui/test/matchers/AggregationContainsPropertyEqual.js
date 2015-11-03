@@ -3,8 +3,9 @@
  */
 
 sap.ui.define([
+		'jquery.sap.global',
 		'./Matcher'
-	], function (fnMatcher) {
+	], function (jQuery, fnMatcher) {
 	"use strict";
 
 	/**
