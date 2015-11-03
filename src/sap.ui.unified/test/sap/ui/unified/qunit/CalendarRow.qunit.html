@@ -194,6 +194,7 @@
 				intervals: 5,
 				intervalType: sap.ui.unified.CalendarIntervalType.Day,
 				tooltip: "Row tooltip",
+				showIntervalHeaders: false,
 				select: handleSelect
 			}).placeAt("uiArea2");
 
@@ -374,6 +375,9 @@
 				ok(oHead, "Interval3: Head area rendered");
 				ok(!jQuery(oHead).attr("title"), "Interval3: Head has no tooltip rendered");
 				equal(jQuery(oHead).children().length, 0, "Interval3: Head has no content");
+
+				var oHead = jQuery("#Row2-AppsInt0").children(".sapUiCalendarRowAppsIntHead")[0];
+				ok(!oHead, "Row2: Interval0: no head area rendered");
 			});
 
 			test("Subintervals - Hours view", function() {

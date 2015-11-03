@@ -16,6 +16,31 @@
 
 		<script type="text/javascript">
 
+		var oLegend = new sap.ui.unified.CalendarLegend("Legend1", {
+			items: [
+			        new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "Typ 1"}),
+			        new sap.ui.unified.CalendarLegendItem("T2", {type: sap.ui.unified.CalendarDayType.Type02, text: "Typ 2"}),
+			        new sap.ui.unified.CalendarLegendItem("T3", {type: sap.ui.unified.CalendarDayType.Type03, text: "Typ 3"}),
+			        new sap.ui.unified.CalendarLegendItem("T4", {type: sap.ui.unified.CalendarDayType.Type04, text: "Typ 4"}),
+			        new sap.ui.unified.CalendarLegendItem("T5", {type: sap.ui.unified.CalendarDayType.Type05, text: "Typ 5"}),
+			        new sap.ui.unified.CalendarLegendItem("T6", {type: sap.ui.unified.CalendarDayType.Type06, text: "Typ 6"}),
+			        new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "Typ 7"}),
+			        new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "Typ 8"}),
+			        new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "Typ 9"}),
+			        new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Typ 10"}),
+			        ]
+		});
+
+		var oDialog = new sap.m.Dialog("D1", {
+			title: "Legend",
+			content: [oLegend],
+			endButton: new sap.m.Button({
+				text: "Close", press: function (oEvent) {
+					oDialog.close();
+				}
+			})
+		});
+
 		var app = new sap.m.App("myApp");
 
 		function createFooter(){
@@ -91,6 +116,10 @@
 
 		};
 
+		var handleLegend = function(oEvent){
+			oDialog.open();
+		};
+
 		var oSearchField = new sap.m.SearchField("SF1", {
 			width: "10rem",
 			search: function(oEvent) {
@@ -129,6 +158,34 @@
 			icon: "sap-icon://add-contact",
 			type: sap.m.ButtonType.Transparent,
 			press: handleAddRow
+		});
+
+		var oButtonShowIntervalHeaders = new sap.m.ToggleButton("B_ShowIntHead", {
+			icon: "sap-icon://header",
+			type: sap.m.ButtonType.Transparent,
+			pressed: true,
+			press: function(oEvent) {
+				var oTC = sap.ui.getCore().byId("TC1");
+				var bPressed = oEvent.getParameter("pressed");
+				oTC.setShowIntervalHeaders(bPressed);
+			}
+		});
+
+		var oButtonShowRowHeaders = new sap.m.ToggleButton("B_ShowRowHead", {
+			icon: "sap-icon://person-placeholder",
+			type: sap.m.ButtonType.Transparent,
+			pressed: true,
+			press: function(oEvent) {
+				var oTC = sap.ui.getCore().byId("TC1");
+				var bPressed = oEvent.getParameter("pressed");
+				oTC.setShowRowHeaders(bPressed);
+			}
+		});
+
+		var oButtonLegend = new sap.m.Button("B_Legend", {
+			icon: "sap-icon://legend",
+			type: sap.m.ButtonType.Transparent,
+			press: handleLegend
 		});
 
 		var oTitle = new sap.m.Title("Title1", {
@@ -257,7 +314,16 @@
 			                	tooltip: "Test"
 			                })
 			              ],
-			toolbarContent: [oTitle, new sap.m.ToolbarSpacer(), oSearchField, oButton1, oButton2, oButtonAddAppointment, oButtonAddRow],
+			toolbarContent: [oTitle,
+			                 new sap.m.ToolbarSpacer(),
+			                 oSearchField,
+			                 oButton1,
+			                 oButton2,
+			                 oButtonAddAppointment,
+			                 oButtonAddRow,
+			                 oButtonShowIntervalHeaders,
+			                 oButtonShowRowHeaders,
+			                 oButtonLegend],
 			appointmentSelect: handleAppointmentSelect
 		});
 

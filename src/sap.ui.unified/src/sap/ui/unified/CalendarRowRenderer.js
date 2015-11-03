@@ -131,12 +131,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 		var sId = oRow.getId() + "-AppsInt" + iInterval;
 		var i = 0;
 		var oMyIntervalHeader;
+		var bShowIntervalHeaders = oRow.getShowIntervalHeaders();
 
-		for (i = 0; i < aIntervalHeaders.length; i++) {
-			var oIntervalHeader = aIntervalHeaders[i];
-			if (oIntervalHeader.interval == iInterval) {
-				oMyIntervalHeader = oIntervalHeader;
-				break;
+		if (bShowIntervalHeaders) {
+			for (i = 0; i < aIntervalHeaders.length; i++) {
+				var oIntervalHeader = aIntervalHeaders[i];
+				if (oIntervalHeader.interval == iInterval) {
+					oMyIntervalHeader = oIntervalHeader;
+					break;
+				}
 			}
 		}
 
@@ -151,80 +154,86 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 			}
 		}
 
+		if (!bShowIntervalHeaders) {
+			oRm.addClass("sapUiCalendarRowAppsIntNoHead");
+		}
+
 		oRm.writeClasses();
 		oRm.writeStyles();
 		oRm.write(">"); // div element
 
-		oRm.write("<div");
-		oRm.addClass("sapUiCalendarRowAppsIntHead");
+		if (bShowIntervalHeaders) {
+			oRm.write("<div");
+			oRm.addClass("sapUiCalendarRowAppsIntHead");
 
-		if (oMyIntervalHeader) {
-			if (oMyIntervalHeader.first) {
-				oRm.writeElementData(oMyIntervalHeader.appointment);
-				sId = oMyIntervalHeader.appointment.getId();
-				oRm.addClass("sapUiCalendarRowAppsIntHeadFirst");
-			}else {
-				sId = oMyIntervalHeader.appointment.getId() + "-" + iInterval;
-				oRm.writeAttribute('id', sId);
+			if (oMyIntervalHeader) {
+				if (oMyIntervalHeader.first) {
+					oRm.writeElementData(oMyIntervalHeader.appointment);
+					sId = oMyIntervalHeader.appointment.getId();
+					oRm.addClass("sapUiCalendarRowAppsIntHeadFirst");
+				}else {
+					sId = oMyIntervalHeader.appointment.getId() + "-" + iInterval;
+					oRm.writeAttribute('id', sId);
+				}
+
+				if (oMyIntervalHeader.appointment.getSelected()) {
+					oRm.addClass("sapUiCalendarRowAppsIntHeadSel");
+				}
+
+				if (oMyIntervalHeader.appointment.getTentative()) {
+					oRm.addClass("sapUiCalendarRowAppsIntHeadTent");
+				}
+
+				var sTooltip = oMyIntervalHeader.appointment.getTooltip_AsString();
+				if (sTooltip) {
+					oRm.writeAttributeEscaped('title', sTooltip);
+				}
+
+				var sType = oMyIntervalHeader.appointment.getType();
+				if (sType && sType != sap.ui.unified.CalendarDayType.None) {
+					oRm.addClass("sapUiCalendarRowAppsIntHead" + sType);
+				}
 			}
 
-			if (oMyIntervalHeader.appointment.getSelected()) {
-				oRm.addClass("sapUiCalendarRowAppsIntHeadSel");
+			oRm.writeClasses();
+			oRm.write(">"); // div element
+
+			if (oMyIntervalHeader && oMyIntervalHeader.first) {
+				var sIcon = oMyIntervalHeader.appointment.getIcon();
+				if (sIcon) {
+					var aClasses = ["sapUiCalendarRowAppsIntHeadIcon"];
+					var mAttributes = {};
+
+					mAttributes["id"] = sId + "-Icon";
+					mAttributes["title"] = null;
+					oRm.writeIcon(sIcon, aClasses, mAttributes);
+				}
+
+				var sTitle = oMyIntervalHeader.appointment.getTitle();
+				if (sTitle) {
+					oRm.write("<span");
+					oRm.writeAttribute("id", sId + "-Title");
+					oRm.addClass("sapUiCalendarRowAppsIntHeadTitle");
+					oRm.writeClasses();
+					oRm.write(">"); // span element
+					oRm.writeEscaped(sTitle, true);
+					oRm.write("</span>");
+				}
+
+				var sText = oMyIntervalHeader.appointment.getText();
+				if (sText) {
+					oRm.write("<span");
+					oRm.writeAttribute("id", sId + "-Text");
+					oRm.addClass("sapUiCalendarRowAppsIntHeadText");
+					oRm.writeClasses();
+					oRm.write(">"); // span element
+					oRm.writeEscaped(sText, true);
+					oRm.write("</span>");
+				}
 			}
 
-			if (oMyIntervalHeader.appointment.getTentative()) {
-				oRm.addClass("sapUiCalendarRowAppsIntHeadTent");
-			}
-
-			var sTooltip = oMyIntervalHeader.appointment.getTooltip_AsString();
-			if (sTooltip) {
-				oRm.writeAttributeEscaped('title', sTooltip);
-			}
-
-			var sType = oMyIntervalHeader.appointment.getType();
-			if (sType && sType != sap.ui.unified.CalendarDayType.None) {
-				oRm.addClass("sapUiCalendarRowAppsIntHead" + sType);
-			}
+			oRm.write("</div>");
 		}
-
-		oRm.writeClasses();
-		oRm.write(">"); // div element
-
-		if (oMyIntervalHeader && oMyIntervalHeader.first) {
-			var sIcon = oMyIntervalHeader.appointment.getIcon();
-			if (sIcon) {
-				var aClasses = ["sapUiCalendarRowAppsIntHeadIcon"];
-				var mAttributes = {};
-
-				mAttributes["id"] = sId + "-Icon";
-				mAttributes["title"] = null;
-				oRm.writeIcon(sIcon, aClasses, mAttributes);
-			}
-
-			var sTitle = oMyIntervalHeader.appointment.getTitle();
-			if (sTitle) {
-				oRm.write("<span");
-				oRm.writeAttribute("id", sId + "-Title");
-				oRm.addClass("sapUiCalendarRowAppsIntHeadTitle");
-				oRm.writeClasses();
-				oRm.write(">"); // span element
-				oRm.writeEscaped(sTitle, true);
-				oRm.write("</span>");
-			}
-
-			var sText = oMyIntervalHeader.appointment.getText();
-			if (sText) {
-				oRm.write("<span");
-				oRm.writeAttribute("id", sId + "-Text");
-				oRm.addClass("sapUiCalendarRowAppsIntHeadText");
-				oRm.writeClasses();
-				oRm.write(">"); // span element
-				oRm.writeEscaped(sText, true);
-				oRm.write("</span>");
-			}
-		}
-
-		oRm.write("</div>");
 
 		if (oRow.getShowSubIntervals()) {
 			var sIntervalType = oRow.getIntervalType();
