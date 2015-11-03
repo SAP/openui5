@@ -761,4 +761,56 @@ function runODataMessagesTests() {
 	asyncTest("Message with groups (write) - Batch: on,  JSON: true",  fnTestWriteBatchGroups.bind(this, true,  true));
 	asyncTest("Message with groups (write) - Batch: on,  JSON: false", fnTestWriteBatchGroups.bind(this, true,  false));
 	
+	
+	
+	var fnTestFunctionImport = function() {
+		expect(10);
+		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		
+		equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+		
+		oModel.attachMetadataLoaded(function() {
+			var aMessages = oMessageModel.getProperty("/");
+			
+			equal(aMessages.length, 0, "No messages are set at the after metadata was loaded")
+			
+			oModel.read("/Products(1)", {
+				success: function() {
+					var aMessages = oMessageModel.getProperty("/");
+					var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
+			
+					equal(aMessages.length, 2, "Two messages are set at the beginning of the test")
+					ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' has been received.");
+					ok(aMessageTagets.indexOf("/Products(1)/ProductName") > -1, "Message targetting '/Products(1)/ProductName' has been received.");
+
+					oModel.read("/Products(1)/Supplier", {
+						success: function() {
+							var aMessages = oMessageModel.getProperty("/");
+							var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
+
+							equal(aMessages.length, 4, "Four messages are set at the beginning of the test")
+							
+							ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' has been received.");
+							ok(aMessageTagets.indexOf("/Products(1)/ProductName") > -1, "Message targetting '/Products(1)/ProductName' has been received.");
+							ok(aMessageTagets.indexOf("/Suppliers") > -1, "Message targetting '/Products' has been received.");
+							var sSupplierNameTarget = aMessageTagets.reduce(function(sPrevious, sValue) {  
+								return sValue.indexOf(")/SupplierName") > -1 ? sValue : sPrevious; 
+							});
+							ok(/\/Suppliers\(.{1,2}\)\/SupplierName/.test(sSupplierNameTarget), "Message targetting '/Suppliers(XXX)/SupplierName' has been received.");
+
+							start();
+						}
+					});
+				}
+			});
+	
+			
+			
+		});
+	};
+	
+	asyncTest("Messages for NavigationProperties",  fnTestFunctionImport);
+	
+	
 }
