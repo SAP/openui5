@@ -148,6 +148,7 @@ function(jQuery) {
 	 *
 	 */
 	ElementUtil.isElementFiltered = function(oControl, aType) {
+		// TODO: Is this method still needed?
 		var that = this;
 
 		aType = aType || this.getControlFilter();
@@ -167,6 +168,7 @@ function(jQuery) {
 	 *
 	 */
 	ElementUtil.findClosestControlInDom = function(oNode) {
+		// TODO: Is this method still needed?
 		if (oNode && oNode.getAttribute("data-sap-ui")) {
 			return sap.ui.getCore().byId(oNode.getAttribute("data-sap-ui"));
 		} else {
@@ -224,6 +226,9 @@ function(jQuery) {
 	 *
 	 */
 	ElementUtil.addAggregation = function(oParent, sAggregationName, oElement) {
+		if (this.hasAncestor(oParent, oElement)) {
+			throw new Error("Trying to add an element to itself or its successors");
+		}
 		var sAggregationAddMutator = this.getAggregationAccessors(oParent, sAggregationName).add;
 		if (sAggregationAddMutator) {
 			oParent[sAggregationAddMutator](oElement);
@@ -249,6 +254,9 @@ function(jQuery) {
 	 *
 	 */
 	ElementUtil.insertAggregation = function(oParent, sAggregationName, oElement, iIndex) {
+		if (this.hasAncestor(oParent, oElement)) {
+			throw new Error("Trying to add an element to itself or its successors");
+		}
 		if (this.getAggregation(oParent, sAggregationName).indexOf(oElement) !== -1) {
 			// ManagedObject.insertAggregation won't reposition element, if it's already inside of same aggregation
 			// therefore we need to remove the element and then insert it again. To prevent ManagedObjectObserver from firing
@@ -275,6 +283,13 @@ function(jQuery) {
 	 */
 	ElementUtil.isValidForAggregation = function(oParent, sAggregationName, oElement) {
 		var oAggregationMetadata = oParent.getMetadata().getAggregation(sAggregationName);
+
+		// Make sure that the parent is not inside of the element, or is not the element itself,
+		// e.g. insert a layout inside it's content aggregation.
+		// This check needed as UI5 will have a maximum call stack error otherwise.
+		if (this.hasAncestor(oParent, oElement)) {
+			return false;
+		}
 
 		// only for public aggregations
 		if (oAggregationMetadata) {
