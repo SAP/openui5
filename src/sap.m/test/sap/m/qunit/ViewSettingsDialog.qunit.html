@@ -1519,6 +1519,68 @@
 						delete oVsdInst;
 					}, delay);
 				}, delay);
+
+
+
+				// test is needed because the VSD does some internal managing of the aggregations
+				test("Remove tab aggregation after tab was opened", function () {
+					this.oVSD = new sap.m.ViewSettingsDialog();
+					this.oVSD.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+					var ct = new sap.m.ViewSettingsCustomTab({content : [new sap.m.Input({value: 'test1'}),new sap.m.Input({value: 'test2'})]});
+					this.oVSD.addCustomTab(ct);
+					// open first dialog - that will trigger switching the content parent from vsd custom tab aggregation to vsd page contet aggregation
+					this.oVSD.open();
+					// assert the content of the custom tab aggregation has been transferred to the page
+					strictEqual(this.oVSD.getAggregation('customTabs')[0].getContent().length, 0, 'First VSD instance custom tab aggregation has no content');
+					strictEqual(this.oVSD._getPage1().getAggregation('content').length, 2, 'First VSD instance page has two contents');
+					this.oVSD.removeAggregation('customTabs', ct);
+					// assert that the aggregation is removed and the page has no contents
+					strictEqual(this.oVSD.getAggregation('customTabs').length, 0, 'First VSD instance has no custom tabs');
+					strictEqual(this.oVSD._getPage1().getAggregation('content').length, 0, 'First VSD instance page has no contents');
+					this.oVSD.destroy();
+					this.oVSD = null;
+				});
+
+				// test is needed because the VSD does some internal managing of the aggregations
+				test("Remove all aggregations after tab was opened", function () {
+					this.oVSD = new sap.m.ViewSettingsDialog();
+					this.oVSD.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+					var ct = new sap.m.ViewSettingsCustomTab({content : [new sap.m.Input({value: 'test1'}),new sap.m.Input({value: 'test2'})]});
+					this.oVSD.addCustomTab(ct);
+					// open first dialog - that will trigger switching the content parent from vsd custom tab aggregation to vsd page contet aggregation
+					this.oVSD.open();
+					// assert the content of the custom tab aggregation has been transferred to the page
+					strictEqual(this.oVSD.getAggregation('customTabs')[0].getContent().length, 0, 'First VSD instance custom tab aggregation has no content');
+					strictEqual(this.oVSD._getPage1().getAggregation('content').length, 2, 'First VSD instance page has two contents');
+					this.oVSD.removeAllAggregation('customTabs');
+					// assert that the aggregation is removed and the pag has no contents
+					strictEqual(this.oVSD.getAggregation('customTabs'), null, 'First VSD instance has no custom tabs aggregation');
+					strictEqual(this.oVSD._getPage1().getAggregation('content').length, 0, 'First VSD instance page has no contents');
+					this.oVSD.destroy();
+					this.oVSD = null;
+				});
+
+				// test is needed because the VSD does some internal managing of the aggregations
+				test("Destroy tab aggregation after tab was opened", function () {
+					this.oVSD = new sap.m.ViewSettingsDialog();
+					this.oVSD.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+					var ct = new sap.m.ViewSettingsCustomTab({content : [new sap.m.Input({value: 'test1'}),new sap.m.Input({value: 'test2'})]});
+					this.oVSD.addCustomTab(ct);
+					// open first dialog - that will trigger switching the content parent from vsd custom tab aggregation to vsd page contet aggregation
+					this.oVSD.open();
+					// assert the content of the custom tab aggregation has been transferred to the page
+					strictEqual(this.oVSD.getAggregation('customTabs')[0].getContent().length, 0, 'First VSD instance custom tab aggregation has no content');
+					strictEqual(this.oVSD._getPage1().getAggregation('content').length, 2, 'First VSD instance page has two contents');
+					this.oVSD.destroyAggregation('customTabs', ct);
+					// assert that the aggregation is removed and the page has no contents
+					strictEqual(this.oVSD.getAggregation('customTabs'), null, 'First VSD instance has no custom tabs aggregation');
+					strictEqual(this.oVSD._getPage1().getAggregation('content').length, 0, 'First VSD instance page has no contents');
+					this.oVSD.destroy();
+					this.oVSD = null;
+				});
 			});
 
 
