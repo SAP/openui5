@@ -155,7 +155,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.destroyItems();
 			this.updateAggregation("items");
 			this._bDataAvailable = true;
-			this.synchronizeSelection();
+
+			// note: synchronize the selection after the properties (models and bindingContext) are propagated
+			setTimeout(this.synchronizeSelection.bind(this), 0);
 		};
 
 		/**
@@ -502,17 +504,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// it does not have the default value
 			if (vItem && (sKey !== "")) {
 
-				// update and synchronize "selectedItem" association and
-				// "selectedKey" property
+				// update and synchronize "selectedItem" association and "selectedKey" property
 				this.setAssociation("selectedItem", vItem, true);
 				this.setProperty("selectedItemId", vItem.getId(), true);
 
 			// the aggregation items is not bound or
 			// it is bound and the data is already available
 			} else if (this.getDefaultSelectedItem() && (!this.isBound("items") || this._bDataAvailable)) {
-
-				// update and synchronize "selectedItem" association,
-				// "selectedKey" and "selectedItemId" properties
 				this.setSelection(this.getDefaultSelectedItem());
 			}
 		};
