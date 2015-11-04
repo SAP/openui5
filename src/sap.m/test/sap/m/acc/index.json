@@ -12,8 +12,8 @@
 		},
 		{
 			"control": "sap.m.BusyIndicator",
-			"url": "../BusyIndicator.html",
-			"appComponent": "CA-UI5-CTR-WDF"
+			"url": "BusyIndicator.html",
+			"appComponent": "CA-UI5-CTR-SOF-RIL"
 		},
 		{
 			"control": "sap.m.Button",
@@ -122,6 +122,11 @@
 			"appComponent": "CA-UI5-CTR-SOF"
 		},
 		{
+			"control": "sap.m.MessageStrip",
+			"url": "../MessageStrip.html",
+			"appComponent": "CA-UI5-CTR-SOF-RIL"
+		},
+		{
 			"control": "sap.m.MultiInput",
 			"url": "../MultiInput.html",
 			"appComponent": "CA-UI5-CTR-WDF"
@@ -163,8 +168,8 @@
 		},
 		{
 			"control": "sap.m.Panel",
-			"url": "../Panel.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"url": "Panel.html",
+			"appComponent": "CA-UI5-CTR-SOF-RIL"
 		},
 		{
 			"control": "sap.m.Popover",
