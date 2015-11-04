@@ -10,8 +10,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	/**
 	 * Constructor for a new sap.ui.layout.form.ResponsiveGridLayout.
 	 *
-	 * @param {string} [sId] Id for the new control, generated automatically if no id is given 
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * Renders a <code>Form</code> using a responsive grid. Internally the <code>Grid</code> control is used for rendering.
@@ -20,13 +20,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	 * This behavior can be influenced by the properties of this layout control.
 	 *
 	 * On the <code>FormContainers</code>, labels and content fields, <code>GridData</code> can be used to change the default rendering.
-	 * <code>GridData</code> are not supported for <code>FormElements</code>.
+	 * <code>GridData</code> is not supported for <code>FormElements</code>.
 	 *
-	 * <b>Note:</b> If <code>GridData</code> are used, this may result in a much more complex layout than the default one.
+	 * <b>Note:</b> If <code>GridData</code> is used, this may result in a much more complex layout than the default one.
 	 * This means that in some cases, the calculation for the other content may not bring the expected result.
 	 * In such cases, <code>GridData</code> should be used for all content controls to disable the default behavior.
 	 *
-	 * This control cannot be used stand alone, it only renders a <code>Form</code>, so it must be assigned to a <code>Form</code>.
+	 * This control cannot be used standalone, it only renders a <code>Form</code>, so it must be assigned to a <code>Form</code>.
 	 * @extends sap.ui.layout.form.FormLayout
 	 * @version ${version}
 	 *
@@ -108,8 +108,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 	/*
 	 * The ResponsiveGridLayout uses Grid controls to render the Form
-	 * If more than one FormContainer is used there is an outer Grid (mainGrid) that holds the FormContainers
-	 * Each FormContainer holds it's own Grid where the FormElements content is placed.
+	 * If more than one FormContainer is used, there is an outer Grid (mainGrid) that holds the FormContainers.
+	 * Each FormContainer holds its own Grid where the FormElements content is placed.
 	 * If a FormContainer has a Title or is expandable it is rendered as a ResponsiveGridLayoutPanel.
 	 * The panels and Grid layouts are stored in this.mContainers. This has the following structure:
 	 * - For each FormContainer there is an entry inside the object. (this.mContainers[FormContainerId])
@@ -119,7 +119,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	 *          - the getLayoutData function of this Grid is overwritten to get the LayoutData of the FormContainer
 	 *            (If no panel is used)
 	 *
-	 * It must be made sure to hold this object up to date. So it is filled onBeforeRendering. Entries no longer used are deleted
+	 * It must make sure that this object is kept up to date, so for this reason it is filled onBeforeRendering. Entries that are no longer used are deleted.
 	 *
 	*/
 
@@ -281,7 +281,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		};
 
 		/*
-		 * If onAfterRendering of a field is processed the width must be set to 100% (if no other width set)
+		 * If onAfterRendering of a field is processed, the width must be set to 100% (if no other width set)
 		 */
 		ResponsiveGridLayout.prototype.contentOnAfterRendering = function(oFormElement, oControl){
 
@@ -337,7 +337,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		};
 
 		/**
-		 * As Elements must not have a DOM reference it is not sure if one exists.
+		 * As Elements must not have a DOM reference it is not clear if one exists.
 		 * If the <code>FormContainer</code> has a title or is expandable an internal panel is rendered.
 		 * In this case, the panel's DOM reference is returned, otherwise the DOM reference
 		 * of the <code>Grid</code> rendering the container's content.
@@ -366,7 +366,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		};
 
 		/**
-		 * As Elements must not have a DOM reference it is not sure if one exists.
+		 * As Elements must not have a DOM reference it is not clear if one exists.
 		 * In this Layout a <code>FormElement</code> has no DOM representation,
 		 * so null will always be returned
 		 * @param {sap.ui.layout.form.FormElement} oElement <code>FormElement</code>
@@ -472,7 +472,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		}
 
 		/*
-		 * clear variables before delete it
+		 * clear content before delete panel
 		 */
 		function _deletePanel( oPanel ) {
 
@@ -721,7 +721,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		}
 
 		/*
-		 * clear variables before delete it
+		 * clear internal variables before delete grid
 		 */
 		function _deleteGrid( oGrid ) {
 
