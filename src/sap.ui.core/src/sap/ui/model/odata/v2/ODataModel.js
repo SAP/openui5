@@ -1349,6 +1349,7 @@ sap.ui.define([
 	 * @param {object} [oContext] bindingContext
 	 * @param {array} aFilters array of sap.ui.model.Filter
 	 * @param {map} [mParameters] map of parameters
+	 * @param {array} aSorters array of sap.ui.model.Sorter
 	 * @returns {object} oBinding new bindingObject
 	 * @private
 	 */

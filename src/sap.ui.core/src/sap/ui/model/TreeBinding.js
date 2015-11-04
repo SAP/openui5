@@ -24,6 +24,8 @@ sap.ui.define(['./Binding'],
 	 *         [aFilters=null] predefined filter/s contained in an array (optional)
 	 * @param {object}
 	 *         [mParameters=null] additional model specific parameters (optional) 
+	 * @param {array}
+	 *         [aSorters=null] predefined sap.ui.model.sorter/s contained in an array (optional)
 	 * @public
 	 * @alias sap.ui.model.TreeBinding
 	 */
