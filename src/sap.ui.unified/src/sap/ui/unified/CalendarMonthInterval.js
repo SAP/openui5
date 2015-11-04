@@ -795,7 +795,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			if (!this.getPickerPopup()) {
 				var oYearPicker = this.getAggregation("yearPicker");
 				oYearPicker.$().css("display", "none");
-			}else {
+			}else if (this._oPopup.isOpen()) {
 				this._oPopup.close();
 			}
 			this.$("contentOver").css("display", "none");
@@ -988,9 +988,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			if (!this._oPopup) {
 				jQuery.sap.require("sap.ui.core.Popup");
 				this._oPopup = new sap.ui.core.Popup();
-				this._oPopup.setAutoClose(false);
+				this._oPopup.setAutoClose(true);
+				this._oPopup.setAutoCloseAreas([this.getDomRef()]);
 				this._oPopup.setDurations(0, 0); // no animations
 				this._oPopup._oCalendar = this;
+				this._oPopup.attachClosed(_handlePopupClosed, this);
 				this._oPopup.onsapescape = function(oEvent) {
 					this._oCalendar.onsapescape(oEvent);
 				};
@@ -1001,6 +1003,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oHeader = this.getAggregation("header");
 			var eDock = sap.ui.core.Popup.Dock;
 			this._oPopup.open(0, eDock.CenterTop, eDock.CenterBottom, oHeader, null, "flipfit", true);
+
+		}
+
+		function _handlePopupClosed(oEvent) {
+
+			switch (this._iMode) {
+			case 0: // month picker
+				break;
+
+			case 1: // year picker
+				_hideYearPicker.call(this);
+				break;
+				// no default
+			}
 
 		}
 

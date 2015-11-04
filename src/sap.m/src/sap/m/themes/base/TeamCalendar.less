@@ -6,11 +6,11 @@
 
 }
 
-.sapMTeamCal > .sapMList > .sapMTB-Transparent-CTX.sapMTB{
+.sapMTeamCal > .sapMList > .sapMListInfoTBar.sapMTB-Transparent-CTX.sapMTB{
 	padding: 0;
 }
 
-.sapMTeamCal > .sapMList > .sapMTB-Transparent-CTX.sapMTB >:first-child{
+.sapMTeamCal > .sapMList > .sapMListInfoTBar.sapMTB-Transparent-CTX.sapMTB >:first-child{
 	margin-left: 0;
 }
 
@@ -19,8 +19,12 @@
 	height: 6.25rem;
 }
 
+.sapMTeamCalHead > .sapMTB.sapMIBar{
+	padding-left: 0.875rem;
+}
+
 .sapUiSizeCompact .sapMTeamCalHead{
-	height: auto;
+	height: 4.25rem;
 }
 
 .sapMTeamCal > .sapMList .sapMTeamCalRowHead .sapMLIB,
@@ -108,9 +112,22 @@
 	vertical-align: bottom;
 }
 
+.sapMTeamCal.sapMTeamCalNoHead.sapMTeamCalMultiSel > .sapMList > .sapMListInfoTBar > .sapMCb > .sapMCbLabel{
+	visibility: hidden;
+}
+
+.sapUiSizeCompact .sapMTeamCal.sapMTeamCalNoHead.sapMTeamCalMultiSel > .sapMList > .sapMListInfoTBar > .sapMCb{
+	width: 2.25rem;
+	margin-left: 0.25rem;
+}
+
 .sapUiMedia-Std-Phone .sapMTeamCal.sapMTeamCalMultiSel > .sapMList > .sapMListInfoTBar > .sapMCb{
 	width: auto;
 	margin-left: 0;
+}
+
+.sapUiMedia-Std-Phone .sapMTeamCal.sapMTeamCalMultiSel > .sapMList > .sapMListInfoTBar > .sapMCb > .sapMCbLabel{
+	visibility: visible;
 }
 
 .sapUiMedia-Std-Phone .sapMTeamCal.sapMTeamCalMultiSel > .sapMList > .sapMListInfoTBar > .sapUiCalInt{

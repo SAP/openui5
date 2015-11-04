@@ -71,11 +71,11 @@
 				leaveRow: handleLeaveRow,
 				appointments: [new sap.ui.unified.CalendarAppointment("App0", {
 													startDate: new Date("2015", "01", "01", "08", "15"),
-													endDate: new Date("2015", "01", "01", "09", "15"),
+													endDate: new Date("2015", "01", "01", "08", "20"),
 													type: sap.ui.unified.CalendarDayType.None,
 													title: "Appointment 0",
 													tooltip: "Tooltip 0",
-													text: "Appointment of 1 hours, 2 hour in past",
+													text: "Appointment of 5 minutes, 2 hour in past",
 													key: "A0"
 												}),
 											 new sap.ui.unified.CalendarAppointment("App1", {
@@ -206,7 +206,7 @@
 				var oAppointment = sap.ui.getCore().byId("App0");
 				equal(oAppointment.getKey(), "A0", "Appointment: key set");
 				equal(oAppointment.getTitle(), "Appointment 0", "Appointment: Title set");
-				equal(oAppointment.getText(), "Appointment of 1 hours, 2 hour in past", "Appointment: text set");
+				equal(oAppointment.getText(), "Appointment of 5 minutes, 2 hour in past", "Appointment: text set");
 				equal(oAppointment.getIcon(), "", "Appointment: no icon set");
 				equal(oAppointment.getTentative(), false, "Appointment: tentative not set");
 				equal(oAppointment.getSelected(), false, "Appointment: selected not set");
@@ -318,6 +318,7 @@
 				var $Appointment5 = jQuery("#App5");
 				var $Appointment6 = jQuery("#App6");
 				var $Appointment7 = jQuery("#App7");
+				var $AppointmentDummy = jQuery("#Row1-DummyApp");
 
 				ok(!$Appointment0.get(0), "Appointment0 not rendered");
 
@@ -329,6 +330,7 @@
 				ok(jQuery("#App1-Icon").get(0), "Appointment1: icon rendered");
 				ok($Appointment1.attr("class").search("sapUiCalendarAppType") < 0, "Appointment1: no type rendered");
 				ok(!$Appointment1.hasClass("sapUiCalendarAppTent"), "Appointment1: not rendered as tentative");
+				ok(!$Appointment1.hasClass("sapUiCalendarAppSmall"), "Appointment1: not rendered as small appointment");
 
 				ok($Appointment2.get(0), "Appointment2 rendered");
 				ok(!jQuery("#App2-Icon").get(0), "Appointment2: no icon rendered");
@@ -353,6 +355,10 @@
 				ok(!$Appointment5.get(0), "Appointment5 not rendered");
 				ok(!$Appointment6.get(0), "Appointment6 not rendered");
 				ok(!$Appointment7.get(0), "Appointment7 not rendered");
+
+				ok($AppointmentDummy.get(0), "Dummy Appointment rendered");
+				ok(!$AppointmentDummy.is(":visible"), "Dummy Appointment not visible");
+
 			});
 
 			test("Interval headers - Hours view", function() {
@@ -420,13 +426,16 @@
 				var $Appointment5 = jQuery("#App5");
 				var $Appointment6 = jQuery("#App6");
 				var $Appointment7 = jQuery("#App7");
+				var $AppointmentDummy = jQuery("#Row1-DummyApp");
 
 				ok($Appointment0.get(0), "Appointment0 rendered");
 				ok(!$Appointment0.hasClass("sapUiCalendarAppTent"), "Appointment0: not rendered as tentative");
 				ok(!$Appointment0.hasClass("sapUiCalendarAppSel"), "Appointment0: not rendered as selected");
+				ok($Appointment0.hasClass("sapUiCalendarAppSmall"), "Appointment0: rendered as small appointment");
+				equal($Appointment0.outerWidth(), $AppointmentDummy.outerWidth(), "Appointment0 hat min. width");
 				ok(!$Appointment1.get(0), "Appointment1 not rendered");
 				ok($Appointment2.get(0), "Appointment2 rendered");
-				equal($Appointment2.attr("data-sap-level"), sLevel, "Appointment2 has same level like before")
+				equal($Appointment2.attr("data-sap-level"), sLevel, "Appointment2 has same level like before");
 
 				ok(!$Appointment3.get(0), "Appointment3 not rendered");
 				ok(!$Appointment4.get(0), "Appointment4 not rendered");
