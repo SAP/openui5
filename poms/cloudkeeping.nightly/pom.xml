@@ -84,9 +84,6 @@
 						<landscape>https://neo.ondemand.com/</landscape>
 						<user>${user}</user>
 						<password>${password}</password>
-						<deployables>
-							<deployable>${project.build.directory}/deployables/sapui5-sdk-dist.war</deployable>
-						</deployables>
 					</properties>
 					<deployables>
 						<deployable>
