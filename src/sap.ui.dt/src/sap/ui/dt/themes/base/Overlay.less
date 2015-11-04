@@ -4,19 +4,29 @@
 @sapUiDtCuttedColor : white;
 
 .sapUiDtOverlay {
-	position : absolute;
+	position: absolute;
 	outline: none;
+
+	// please, don't use border property, it cause the size change of an overtla and box-sizing: border box doesn't work with position: absolute and absolute sizing
+	// please, don't use outline property, outline can be invisible due to overflow:hidden of parent
+	// instead you should use pseudo elements to special border-like styling:
+	// :before pseudoelement should be used for focus visualisation
+	// :after pseudoelement should be used for other border-like visualisations
+
+	&:before, &:after {
+		position: absolute;
+		pointer-events: none;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		box-sizing: border-box;
+	}
 
 	&:focus {
 		&:before {
 			content: " ";
-			pointer-events: none;
-			position: absolute;
-			top: 1px;
-			bottom: 1px;
-			left: 1px;
-			right: 1px;
-			outline: 2px solid @sapUiDtFocusColor;
+			border: 2px solid @sapUiDtFocusColor;
 		}
 	}
 }
@@ -28,20 +38,22 @@
 }
 
 .sapUiDtOverlayTargetZone {
+	.sapUiDtOverlaySelected {
+		&:after {
+			content: none;
+		}
+	}
 	&:after {
 		content: " ";
-		pointer-events: none;
-		position: absolute;
-		top: 1px;
-		bottom: 1px;
-		left: 1px;
-		right: 1px;
-		outline: 1px dashed @sapUiDtTargetZoneColor;
+		border: 1px dashed @sapUiDtTargetZoneColor;
 	}
 }
 
 .sapUiDtOverlaySelected {
-	outline: 1px solid @sapUiDtSelectionColor;
+	&:after {
+		content: " ";
+		border: 1px solid @sapUiDtSelectionColor;
+	}
 }
 
 .sapUiDtOverlayMovable {
