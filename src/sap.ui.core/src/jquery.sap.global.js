@@ -2892,8 +2892,8 @@
 
 				var oScript = window.document.createElement('SCRIPT');
 				oScript.src = sUrl;
-				oScript.dataset.sapUiModule = sResource;
-				oScript.dataset.sapUiModuleError = '';
+				oScript.setAttribute("data-sap-ui-module", sResource); // IE9/10 don't support dataset :-(
+				// oScript.setAttribute("data-sap-ui-module-error", '');
 				oScript.addEventListener('load', function(e) {
 					jQuery.sap.log.info("Javascript resource loaded: " + sResource);
 // TODO either find a cross-browser solution to detect and assign execution errros or document behavior
