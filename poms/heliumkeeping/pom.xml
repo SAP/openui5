@@ -73,6 +73,7 @@
 		<deployable.version>${version}</deployable.version>
 		<deployable.classifier>sapui5</deployable.classifier>
 		<deployable.type>zip</deployable.type>
+		<deployable.ignoreSnapshots>true</deployable.ignoreSnapshots>
 
 	</properties>
 
@@ -112,6 +113,7 @@
 							<version>${deployable.version}</version>
 							<classifier>${deployable.classifier}</classifier>
 							<type>${deployable.type}</type>
+							<ignoreSnapshots>${deployable.ignoreSnapshots}</ignoreSnapshots>
 						</deployable>
 					</configuration>
 				</plugin>
