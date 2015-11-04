@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global'],
 
 			this.getRequestHeader = function() {
 			  var reqHeader = this.getRequestLine() + "\r\n";
-			  for ( var i = 0, len = this.reqHeader.length; i < len; i += 1) {
+			  for ( var i = 0, len = this.reqHeader ? this.reqHeader.length : 0; i < len; i += 1) {
 				reqHeader += this.reqHeader[i][0] + ": " + this.reqHeader[i][1] + "\r\n";
 			  }
 			  reqHeader += "\r\n";
@@ -317,8 +317,11 @@ sap.ui.define(['jquery.sap.global'],
 			window.XMLHttpRequest.prototype.setRequestHeader = function() {
 			  fsetRequestHeader.apply(this, arguments);
 			  if (busTrxRecording) {
-						  this.xRequestHeaders.push(arguments);
-			  }
+					if (!this.xRequestHeaders) {
+						this.xRequestHeaders = [];
+					}
+					this.xRequestHeaders.push(arguments);
+				}
 			};
 
 			//inject call-back function for window.XMLHttpRequest.open
@@ -335,8 +338,7 @@ sap.ui.define(['jquery.sap.global'],
 				  //    console.log(this.xstartTimestamp + ", " + idx + " " + arguments[0] + " " + arguments[1]);
 				  this.xmethod = arguments[0];
 				  this.xurl = arguments[1];
-				  this.xRequestHeaders = [];
-				  this.xDsrGuid = jQuery.sap.trace.getCurrentTransactionId(); //see jquery.sap.trace, former EbbLib.js
+				  this.xDsrGuid = jQuery.sap.fesr.getCurrentTransactionId(); //see jquery.sap.trace, former EbbLib.js
 
 				  //do not set passport as this is done already in jquery.sap.trace
 				  //this.setRequestHeader("SAP-PASSPORT", EppLib.passportHeader(busTrx.getCurrentTransactionStep().trcLvl, busTrx.id, this.xDsrGuid));
@@ -364,7 +366,7 @@ sap.ui.define(['jquery.sap.global'],
 					  sTraceLevel = defaultTraceLevel;
 					}
 
-					busTrx = new BusinessTransaction(jQuery.sap.fesr.getRootId(), new Date(), jQuery.sap.passport.traceFlags(sTraceLevel), fnCallback); // TODO Root context ID from PP
+					busTrx = new BusinessTransaction(jQuery.sap.fesr.getRootId(), new Date(), jQuery.sap.passport.traceFlags(sTraceLevel), fnCallback);
 				busTrx.createTransactionStep();
 						busTrxRecording = true;
 				  }

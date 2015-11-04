@@ -2,25 +2,23 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
+	function(jQuery, URI) {
 		"use strict";
 
 		(function() {
 
-			// *********** Include E2E-Trace Scripts *************
-			if (/sap-ui-xx-e2e-trace=(true|x|X)/.test(location.search)) {
-				jQuery.sap.require("sap.ui.core.support.trace.E2eTraceLib");
-			}
-
-			var ROOT_ID = createGUID(), // static per session
-				CLIENT_ID = createGUID().substr(-8, 8) + ROOT_ID,
+			var bFesrActive = /sap-ui-xx-fesr=(true|x|X)/.test(location.search),
+				bTraceActive = /sap-ui-xx-e2e-trace=(true|x|X)/.test(location.search),
+				ROOT_ID = createGUID(), // static per session
+				CLIENT_ID = createGUID().substr(-8, 8) + ROOT_ID, // static per session
+				HOST = new URI(window.location).host(), // static per session
 				iE2eTraceLevel = 0,
 				sTransactionId,
 				sFESRTransactionId,
 				oPendingInteraction = {
-					component: "initial",
-					trigger: "initial"
+					component: undefined,
+					trigger: undefined
 				},
 				iStepCounter,
 				iInteractionStepTimer,
@@ -30,42 +28,64 @@ sap.ui.define(['jquery.sap.global'],
 				fnXHRopen = window.XMLHttpRequest.prototype.open,
 				fnXHRsend = window.XMLHttpRequest.prototype.send;
 
-			// inject function in window.XMLHttpRequest.open
-			window.XMLHttpRequest.prototype.open = function() {
-				fnXHRopen.apply(this, arguments);
-				this.onreadystatechange = handleResponse;
-				this.pendingInteraction = oPendingInteraction;
+			if (bFesrActive) {
+				// inject function in window.XMLHttpRequest.open for FESR and E2eTraceLib
+				window.XMLHttpRequest.prototype.open = function() {
+					fnXHRopen.apply(this, arguments);
+					var sHost = new URI(arguments[1]).host();
 
-				sTransactionId = createGUID();
-				iStepCounter++;
+					// only use passport & FESR for non CORS requests (relative or with same host)
+					if (!sHost || sHost === HOST) {
+						this.onreadystatechange = handleResponse;
+						this.pendingInteraction = oPendingInteraction;
 
-				// set passport with Root Context ID, Transaction ID, Component Name, Action
-				this.setRequestHeader("SAP-PASSPORT", passportHeader(iE2eTraceLevel, ROOT_ID, sTransactionId, oPendingInteraction.component, oPendingInteraction.trigger + "_" + iStepCounter));
+						sTransactionId = createGUID();
+						iStepCounter++;
 
-				// set FESR
-				if (sFESR) {
-					this.setRequestHeader("SAP-Perf-FESRec", sFESR);
-					this.setRequestHeader("SAP-Perf-FESRec-opt", sFESRopt);
-					sFESR = null;
-					sFESRopt = null;
-					iStepCounter = 0;
-					sFESRTransactionId = sTransactionId;
-				}
-			};
+						// set passport with Root Context ID, Transaction ID, Component Name, Action
+						this.setRequestHeader("SAP-PASSPORT", passportHeader(iE2eTraceLevel, ROOT_ID, sTransactionId, oPendingInteraction.component, oPendingInteraction.trigger + "_" + iStepCounter));
 
-			// inject function in window.XMLHttpRequest.send
-			window.XMLHttpRequest.prototype.send = function() {
-				fnXHRsend.apply(this, arguments);
-				if (this.pendingInteraction) {
-					this.pendingInteraction.bytesSent += arguments[0] ? arguments[0].length : 0;
-				}
-			};
+						// set FESR
+						if (sFESR) {
+							this.setRequestHeader("SAP-Perf-FESRec", sFESR);
+							this.setRequestHeader("SAP-Perf-FESRec-opt", sFESRopt);
+							sFESR = null;
+							sFESRopt = null;
+							iStepCounter = 0;
+							sFESRTransactionId = sTransactionId;
+						}
+					} else {
+						sTransactionId = createGUID();
+						// set passport with Root Context ID, Transaction ID, Component Name, Action
+						this.setRequestHeader("SAP-PASSPORT", passportHeader(iE2eTraceLevel, ROOT_ID, sTransactionId));
+					}
+				};
+
+				// inject function in window.XMLHttpRequest.send
+				window.XMLHttpRequest.prototype.send = function() {
+					fnXHRsend.apply(this, arguments);
+					if (this.pendingInteraction) {
+						this.pendingInteraction.bytesSent += arguments[0] ? arguments[0].length : 0;
+					}
+				};
+
+			} else if (bTraceActive) {
+				// inject function in window.XMLHttpRequest.open for E2eTraceLib
+				window.XMLHttpRequest.prototype.open = function() {
+					fnXHRopen.apply(this, arguments);
+					sTransactionId = createGUID();
+					// set passport with Root Context ID, Transaction ID, Component Name, Action
+					this.setRequestHeader("SAP-PASSPORT", passportHeader(iE2eTraceLevel, ROOT_ID, sTransactionId));
+				};
+			}
 
 			function handleResponse() {
 				if (this.readyState === 4 && this.pendingInteraction) {
 					// enrich interaction with information
-					this.pendingInteraction.bytesReceived += parseInt(this.getResponseHeader("content-length"), 10);
-					this.pendingInteraction.networkTime += Math.round(parseFloat(this.getResponseHeader("sap-perf-fesrec"), 10) / 1000);
+					var sContentLength = this.getResponseHeader("content-length"),
+						sFesrec = this.getResponseHeader("sap-perf-fesrec");
+					this.pendingInteraction.bytesReceived += sContentLength ? parseInt(sContentLength, 10) : 0;
+					this.pendingInteraction.networkTime += sFesrec ? Math.round(parseFloat(sFesrec, 10) / 1000) : 0;
 					var sSapStatistics = this.getResponseHeader("sap-statistics");
 					if (sSapStatistics) {
 						this.pendingInteraction.sapStatistics.push({
@@ -125,19 +145,9 @@ sap.ui.define(['jquery.sap.global'],
 			/**
 			 * @private
 			 */
-			jQuery.sap.interaction.notifyStepEnd = function() {
-				if (iInteractionStepTimer) {
-					jQuery.sap.clearDelayedCall(iInteractionStepTimer);
-				}
-				iInteractionStepTimer = jQuery.sap.delayedCall(1, jQuery.sap.measure, "endInteraction");
-			};
-
-			/**
-			 * @private
-			 */
-			jQuery.sap.interaction.notifyStepStart = function(oControl) {
-				if (oCurrentBrowserEvent) {
-					jQuery.sap.measure.startInteraction(oCurrentBrowserEvent.type, oControl);
+			jQuery.sap.interaction.notifyStepStart = function(oControl, bInitial) {
+				if (oCurrentBrowserEvent || bInitial) {
+					jQuery.sap.measure.startInteraction(bInitial ? "startup" : oCurrentBrowserEvent.type, oControl);
 
 					var aInteraction = jQuery.sap.measure.getAllInteractionMeasurements();
 					var oFinshedInteraction = aInteraction[aInteraction.length - 1];
@@ -152,6 +162,16 @@ sap.ui.define(['jquery.sap.global'],
 					}
 					oCurrentBrowserEvent = null;
 				}
+			};
+
+			/**
+			 * @private
+			 */
+			jQuery.sap.interaction.notifyStepEnd = function() {
+				if (iInteractionStepTimer) {
+					jQuery.sap.clearDelayedCall(iInteractionStepTimer);
+				}
+				iInteractionStepTimer = jQuery.sap.delayedCall(1, jQuery.sap.measure, "endInteraction");
 			};
 
 			/**
@@ -328,6 +348,14 @@ sap.ui.define(['jquery.sap.global'],
 
 				return retVal.toUpperCase();
 			}
+
+			// *********** Include E2E-Trace Scripts *************
+			if (bTraceActive) {
+				jQuery.sap.require("sap.ui.core.support.trace.E2eTraceLib");
+			}
+
+			// start initial interaction
+			jQuery.sap.interaction.notifyStepStart(jQuery, true);
 
 		}());
 
