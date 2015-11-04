@@ -508,7 +508,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 	};
 
 
-	Column.prototype._openMenu = function(oDomRef) {
+	Column.prototype._openMenu = function(oDomRef, bWithKeyboard) {
 		if (this._bSkipOpen){
 			this._bSkipOpen = false;
 			return;
@@ -520,7 +520,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/RenderMa
 			oDomRef = this.getDomRef();
 			oFocusDomRef = this.getFocusDomRef();
 		}
-		oMenu.open(false, oFocusDomRef, eDock.BeginTop, eDock.BeginBottom, oDomRef, "none none");
+		oMenu.open(!!bWithKeyboard, oFocusDomRef, eDock.BeginTop, eDock.BeginBottom, oDomRef, "none none");
 	};
 
 
