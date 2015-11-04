@@ -33,9 +33,6 @@ function setupFakeServer(mOptions) {
 }
 
 function setupQUnitTests(mOptions) {
-	// check for already loaded libraries which should be "sap.ui.core" as the
-	// core synchronously loads the libraries (sap-ui-preload="async" is NOT set)
-	window.mInitialLoadedLibraries = sap.ui.getCore().getLoadedLibraries();
 
 	sap.ui.require([
 		"jquery.sap.global",
@@ -53,21 +50,6 @@ function setupQUnitTests(mOptions) {
 					this.oServer = this.sandbox.useFakeXMLHttpRequest();
 					this.oServer.autoRespond = true;
 					return this.oServer;
-				}
-			});
-			QUnit.test("Initial loaded libraries", function(assert) {
-				// This test makes sure that loading the sap-ui-version.json doesn't make
-				// the core bootstrap asynchronous if it wasn't configured.
-				// Indicator to load async is the sap-ui-preload="async" configuration.
-
-				if (mOptions.async) {
-					// in async mode library loading should still be ongoing
-					assert.strictEqual(mInitialLoadedLibraries["sap.ui.core"], undefined,
-						"'sap.ui.core' should not have been loaded, yet.");
-				} else {
-					// in sync mode the defined libraries should already be loaded
-					assert.notStrictEqual(mInitialLoadedLibraries["sap.ui.core"], undefined,
-						"'sap.ui.core' should have been loaded.");
 				}
 			});
 			QUnit.test("sap.ui.versioninfo", function(assert) {
