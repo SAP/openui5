@@ -3,14 +3,14 @@
  */
 
 // Provides the real core class sap.ui.core.Core of SAPUI5
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 
-		'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Object', 
-		'./Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler', 
-		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager', 
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
+		'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Object',
+		'./Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler',
+		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager',
 		'jquery.sap.act', 'jquery.sap.dom', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.properties', 'jquery.sap.resources', 'jquery.sap.script'],
-	function(jQuery, Device, Global, 
-		DataType, EventProvider, BaseObject, 
-		Component, Configuration, Control, Element, ElementMetadata, FocusHandler, 
+	function(jQuery, Device, Global,
+		DataType, EventProvider, BaseObject,
+		Component, Configuration, Control, Element, ElementMetadata, FocusHandler,
 		RenderManager, ResizeHandler, ThemeCheck, UIArea, MessageManager
 		/* , jQuerySap6, jQuerySap, jQuerySap1, jQuerySap2, jQuerySap3, jQuerySap4, jQuerySap5 */) {
 
@@ -2236,7 +2236,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @param {string} sId
 	 * @return {sap.ui.core.Component} the template for the given id
 	 * @public
-	 * @deprecated Since 1.29.1 Require 'sap/ui/core/tmpl/Template' and use {@link sap.ui.core.tmpl.Template.byId Template.byId} instead. 
+	 * @deprecated Since 1.29.1 Require 'sap/ui/core/tmpl/Template' and use {@link sap.ui.core.tmpl.Template.byId Template.byId} instead.
 	 */
 	Core.prototype.getTemplate = function(sId) {
 		jQuery.sap.require("sap.ui.core.tmpl.Template");
@@ -2569,7 +2569,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * Returns a list of all controls with a field group ID.
 	 * See {@link sap.ui.core.Control#checkFieldGroupIds Control.prototype.checkFieldGroupIds} for a description of the
 	 * <code>vFieldGroupIds</code> parameter.
-	 * 
+	 *
 	 * @param {string|string[]} [vFieldGroupIds] ID of the field group or an array of field group IDs to match
 	 * @return {sap.ui.core.Control[]} The list of controls with matching field group IDs
 	 * @public
@@ -2970,6 +2970,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	};
 
 	Core.prototype.destroy = function() {
+		this._oFocusHandler.destroy();
 		_oEventProvider.destroy();
 		BaseObject.prototype.destroy.call(this);
 	};
