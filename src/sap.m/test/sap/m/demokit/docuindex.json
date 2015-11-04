@@ -44,7 +44,7 @@
 			},
 			{
 				"text": "Manage Products",
-				"ref": "test-resources/sap/m/demokit/tutorial/worklist/06/webapp/test/testService.html",
+				"ref": "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/testService.html",
 				"icon": "task",
 				"desc": "This app is the final result of the 'Worklist App Tutorial'"
 			},
