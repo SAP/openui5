@@ -61,9 +61,9 @@
 	
 	var oModel, oBinding;
 
-	function createTreeBinding(sPath, oContext, aFilters, mParameters){
+	function createTreeBinding(sPath, oContext, aFilters, mParameters, aSorters){
 		// create binding
-		oBinding = oModel.bindTree(sPath, oContext, aFilters, mParameters).initialize();
+		oBinding = oModel.bindTree(sPath, oContext, aFilters, mParameters, aSorters).initialize();
 	};
 
 	module("ODataTreeBinding with navigation properties", {
@@ -840,7 +840,66 @@
 			oBinding.getRootContexts(0, 10);
 		});
 	});
-		
+	
+	asyncTest("Sorting - Initial constructor sorter - afterwards sort() call", function() {
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+					null,
+					[],
+					{
+						rootLevel: 2
+					},
+					[new sap.ui.model.Sorter("FinancialStatementItemText")]);
+
+			var oContext;
+
+			//Sorted ascending
+			var handler1 = function (oEvent) {
+				oBinding.detachChange(handler1);
+				var aContexts = oBinding.getRootContexts(0, 10);
+
+				equal(aContexts.length, 9, "TreeBinding returned correct rootContexts length");
+				equal(oBinding.getChildCount(null), 9, "TreeBinding root child count is correct");
+
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FinancialStatementItemText", oContext), "A K T I V A", "Item Text filter was correct");
+
+				oContext = aContexts[4];
+				equal(oModel.getProperty("FinancialStatementItemText", oContext), "Finanz-Ergebnis", "Item Text filter was correct");
+
+				oContext = aContexts[8];
+				equal(oModel.getProperty("FinancialStatementItemText", oContext), "Steuern", "Item Text filter was correct");
+
+				oBinding.attachChange(handler2);
+				oBinding.sort([new sap.ui.model.Sorter("FinancialStatementItemText", true)])
+				var aContexts = oBinding.getRootContexts(0, 10);
+			};
+			
+			//Sorted descending
+			var handler2 = function (oEvent) {
+				oBinding.detachChange(handler2);
+				var aContexts = oBinding.getRootContexts(0, 10);
+
+				equal(aContexts.length, 9, "TreeBinding returned correct rootContexts length");
+				equal(oBinding.getChildCount(null), 9, "TreeBinding root child count is correct");
+
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinancialStatementItemText", oContext), "Steuern", "Item Text filter was correct");
+
+				oContext = aContexts[4];
+				equal(oModel.getProperty("FinancialStatementItemText", oContext), "Finanz-Ergebnis", "Item Text filter was correct");
+
+				oContext = aContexts[7];
+				equal(oModel.getProperty("FinancialStatementItemText", oContext), "A K T I V A", "Item Text filter was correct");
+
+				start();
+			};
+
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts(0, 10);
+		});
+	});
+	
 	asyncTest("Tried filtering", function() {
 		oModel.attachMetadataLoaded(function() {
 			//stub error

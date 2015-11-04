@@ -53,6 +53,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 			this.bNeedsUpdate = false;
 			this._bRootMissing = false;
 			
+			// make sure the sorters are inside an array
+			if (aSorters instanceof sap.ui.model.Sorter) {
+				aSorters = [aSorters];
+			}
+			this.aSorters = aSorters || [];
+			
 			this.sFilterParams = "";
 
 				// a queue containing all parallel running requests

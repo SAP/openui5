@@ -1286,11 +1286,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', 'sap/ui/model/odata/OD
 	 * @param {object} [oContext] bindingContext
 	 * @param {array} aFilters array of sap.ui.model.Filter
 	 * @param {map} [mParameters] map of parameters
+	 * @param {array} aSorters array of sap.ui.model.Sorter
 	 * @returns {object} oBinding new bindingObject
 	 * @private
 	 */
-	ODataModel.prototype.bindTree = function(sPath, oContext, aFilters, mParameters) {
-		var oBinding = new ODataTreeBinding(this, sPath, oContext, aFilters, mParameters);
+	ODataModel.prototype.bindTree = function(sPath, oContext, aFilters, mParameters, aSorters) {
+		var oBinding = new ODataTreeBinding(this, sPath, oContext, aFilters, mParameters, aSorters);
 		return oBinding;
 	};
 
