@@ -1794,7 +1794,6 @@
 				// setup new pending interaction
 				oPendingInteraction = {
 					isFinal: false, // indicates if interaction is still pending or final
-					control: oSrcControl,
 					event: sType, // event which triggered interaction
 					trigger: oSrcControl ? oSrcControl.getId() : "no_ui5_control", // control which triggered interaction
 					component: oSrcControl && oSrcControl.sOwnerId ? oSrcControl.sOwnerId : identifyOwnerComponent(oSrcControl), // coomponent or app identifier
