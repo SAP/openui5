@@ -204,6 +204,9 @@ function(jQuery) {
 	 *
 	 */
 	ElementUtil.addAggregation = function(oParent, sAggregationName, oElement) {
+		if (this.hasAncestor(oParent, oElement)) {
+			throw new Error("Trying to add an element to itself or its successors");
+		}
 		var sAggregationAddMutator = this.getAggregationMutators(oParent, sAggregationName).add;
 		oParent[sAggregationAddMutator](oElement);
 	};
@@ -220,6 +223,9 @@ function(jQuery) {
 	 *
 	 */
 	ElementUtil.insertAggregation = function(oParent, sAggregationName, oElement, iIndex) {
+		if (this.hasAncestor(oParent, oElement)) {
+			throw new Error("Trying to add an element to itself or its successors");
+		}
 		if (this.getAggregation(oParent, sAggregationName).indexOf(oElement) !== -1) {
 			// ManagedObject.insertAggregation won't reposition element, if it's already inside of same aggregation
 			// therefore we need to remove the element and then insert it again. To prevent ManagedObjectObserver from firing
@@ -241,6 +247,13 @@ function(jQuery) {
 	 *
 	 */
 	ElementUtil.isValidForAggregation = function(oParent, sAggregationName, oElement) {
+		// Make sure that the parent is not inside of the element, or is not the element itself,
+		// e.g. insert a layout inside it's content aggregation.
+		// This check needed as UI5 will have a maximum call stack error otherwise.
+		if (this.hasAncestor(oParent, oElement)) {
+			return false;
+		}
+
 		var oAggregationMetadata = oParent.getMetadata().getAggregation(sAggregationName);
 
 		// TODO : test altTypes
