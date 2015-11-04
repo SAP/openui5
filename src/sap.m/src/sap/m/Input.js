@@ -33,9 +33,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		properties : {
 
 			/**
-			 * Type of input (e.g. Text, Number, Email, Phone). This is the HTML type for the "input" tag. It is supported
-			 * by browsers natively. Touch devices open various soft keyboard layouts depending on the given input type.
-			 * However, only the default value <code>sap.m.InputType.Text</code> may be used in combination with data model formats.
+			 * HTML type of the internal <code>input</code> tag (e.g. Text, Number, Email, Phone).
+			 * The particular effect of this property differs depending on the browser and the current language settings,
+			 * especially for the type Number.<br>
+			 * This parameter is intended to be used with touch devices that use different soft keyboard layouts depending on the given input type.<br>
+			 * Only the default value <code>sap.m.InputType.Text</code> may be used in combination with data model formats.
 			 * <code>sap.ui.model</code> defines extended formats that are mostly incompatible with normal HTML
 			 * representations for numbers and dates.
 			 */
@@ -1253,7 +1255,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					showNoData : false,
 					mode : sap.m.ListMode.SingleSelectMaster,
 					rememberSelections : false,
-					selectionChange : function(oEvent) {
+					itemPress : function(oEvent) {
 						var oListItem = oEvent.getParameter("listItem"),
 							iCount = oInput._iSetCount,
 							sNewValue;

@@ -1660,7 +1660,7 @@
 		{
 		  "id": "sap.m.sample.InputTypes",
 		  "name": "Input - Types",
-		  "description": "On touch devices the 'type' of the input controls the keyboard layout. On keyboard devices this setting has no effect."
+		  "description": "Input type corresponds to the type attribute of the HTML input tag. On touch devices, it controls the keyboard layout. On desktop, the effect of this setting is browser dependent."
 		},
 		{
 		  "id": "sap.m.sample.InputPassword",
