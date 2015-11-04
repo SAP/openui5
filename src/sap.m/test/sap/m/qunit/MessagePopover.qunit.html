@@ -219,7 +219,7 @@
 			assert.ok(oDomRef instanceof HTMLElement, "return value should be an instance of HTMLElement");
 
 			this.oMessagePopover.setVisible(false);
-			this.clock.tick(500);
+			this.clock.tick(100);
 			oDomRef = this.oMessagePopover.getDomRef();
 
 			assert.equal(oDomRef, null, "return value should be null");
