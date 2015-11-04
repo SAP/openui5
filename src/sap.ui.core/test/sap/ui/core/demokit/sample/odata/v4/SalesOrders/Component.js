@@ -39,7 +39,7 @@ sap.ui.define([
 					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/BusinessPartnerList?$skip=0&$top=50"
 						: {source : "BusinessPartnerList.json"},
 					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/SalesOrderList?$expand=SO_2_SOITEM(%24expand%3DSOITEM_2_PRODUCT(%24expand%3DPRODUCT_2_BP(%24expand%3DBP_2_CONTACT)))&$skip=0&$top=50"
-						: {source : "SalesOrderList.json"},
+						: {source : "SalesOrderList.json"}
 				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrders/data");
 			}
 
