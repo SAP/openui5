@@ -50,8 +50,9 @@ sap.ui.define(['./Opa', './Opa5'], function (Opa, Opa5) {
 	"use strict";
 	var opaTest = function (testName, expected, callback, async) {
 		var config = Opa.config;
-		//Increase qunit's timeout to 90 seconds to match default OPA timeouts
-		if (!QUnit.config.testTimeout) {
+		//Increase QUnit's timeout to 90 seconds to match default OPA timeouts
+		// is only done if there is no timeout or the timeout is the default of QUnit
+		if (!QUnit.config.testTimeout || QUnit.config.testTimeout === 30000) {
 			QUnit.config.testTimeout  = 90000;
 		}
 
