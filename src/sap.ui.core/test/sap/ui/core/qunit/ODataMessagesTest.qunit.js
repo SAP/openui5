@@ -799,6 +799,7 @@ function runODataMessagesTests() {
 							});
 							ok(/\/Suppliers\(.{1,2}\)\/SupplierName/.test(sSupplierNameTarget), "Message targetting '/Suppliers(XXX)/SupplierName' has been received.");
 
+							oModel.destroy();
 							start();
 						}
 					});
@@ -812,5 +813,77 @@ function runODataMessagesTests() {
 	
 	asyncTest("Messages for NavigationProperties",  fnTestFunctionImport);
 	
+	
+	
+	var fnTestFunctionImportWithInvalidTarget = function() {
+		expect(15);
+		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
+		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		
+		equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
+		
+		oModel.attachMetadataLoaded(function() {
+			var aMessages = oMessageModel.getProperty("/");
+			
+			equal(aMessages.length, 0, "No messages are set at the after metadata was loaded")
+			
+			oModel.read("/Products(1)", {
+				success: function() {
+					var aMessages = oMessageModel.getProperty("/");
+					var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
+			
+					equal(aMessages.length, 2, "Two messages are set at the beginning of the test");
+					ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' has been received.");
+					ok(aMessageTagets.indexOf("/Products(1)/ProductName") > -1, "Message targetting '/Products(1)/ProductName' has been received.");
+
+					oModel.callFunction("/functionWithInvalidTarget", {
+						method: "POST",
+						success: function() {
+							var aMessages = oMessageModel.getProperty("/");
+							var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
+
+							equal(aMessages.length, 2, "Four messages are set at the beginning of the test");
+							
+							ok(aMessageTagets.indexOf("/Products(1)/SupplierID") > -1, "Message targetting '/Products(1)/SupplierID' has been received.");
+							ok(aMessageTagets.indexOf("/PersistedMessages/functionWithInvalidTarget") > -1, "Message targetting '/PersistedMessages/functionWithInvalidTarget' has been received.");
+
+							oModel.read("/Products(1)", {
+								success: function() {
+									var aMessages = oMessageModel.getProperty("/");
+									var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
+
+									equal(aMessages.length, 3, "Three messages are set after /Products(1) is requested again");
+									ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' has been received.");
+									ok(aMessageTagets.indexOf("/Products(1)/ProductName") > -1, "Message targetting '/Products(1)/ProductName' has been received.");
+									ok(aMessageTagets.indexOf("/PersistedMessages/functionWithInvalidTarget") > -1, "Message targetting '/PersistedMessages/functionWithInvalidTarget' has been kept.");
+
+									oModel.callFunction("/functionWithInvalidTarget", {
+										method: "POST",
+										success: function() {
+											var aMessages = oMessageModel.getProperty("/");
+											var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
+
+											equal(aMessages.length, 2, "Two messages are set after FunctionImport is called again");
+											
+											ok(aMessageTagets.indexOf("/Products(1)/SupplierID") > -1, "Message targetting '/Products(1)/SupplierID' has been received.");
+											ok(aMessageTagets.indexOf("/PersistedMessages/functionWithInvalidTarget") > -1, "Message targetting '/PersistedMessages/functionWithInvalidTarget' has been received.");
+											
+											oModel.destroy();
+											start();
+										}
+									});
+								}
+							});
+						}
+					});
+				}
+			});
+	
+			
+			
+		});
+	};
+
+	asyncTest("Messages with 'invalid' targets",  fnTestFunctionImportWithInvalidTarget);
 	
 }
