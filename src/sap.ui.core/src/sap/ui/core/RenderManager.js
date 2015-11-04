@@ -6,7 +6,7 @@
 sap.ui.define([
 		'jquery.sap.global',
 		'../base/Interface', '../base/Object', 'sap/ui/core/LabelEnablement',
-		'jquery.sap.act', 'jquery.sap.encoder', 'jquery.sap.dom'
+		'jquery.sap.act', 'jquery.sap.encoder', 'jquery.sap.dom', 'jquery.sap.trace'
 	], function(jQuery, Interface, BaseObject, LabelEnablement /* , jQuerySap1, jQuerySap */) {
 
 	"use strict";
@@ -462,6 +462,8 @@ sap.ui.define([
 			this.aStyleStack = [{}];
 
 			jQuery.sap.act.refresh();
+
+			jQuery.sap.interaction.notifyStepEnd();
 		};
 
 		/**
@@ -1024,7 +1026,7 @@ sap.ui.define([
 		this.write(sPlaceholderHtml);
 		return this;
 	};
-	
+
 	/**
 	 * Writes the elements data into the HTML.
 	 * Element Data consists at least of the id of a element
@@ -1314,7 +1316,7 @@ sap.ui.define([
 
 	/**
 	 * Determines whether Dom Patching is enabled or not
-	 * @returns {Boolean} 
+	 * @returns {Boolean}
 	 * @private
 	 */
 	RenderManager.prototype._isDomPathingEnabled = function() {
