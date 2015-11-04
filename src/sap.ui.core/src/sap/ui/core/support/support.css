@@ -779,7 +779,6 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 }
 
 #sapUiSupportPerfHeaderTimelineOverview .timeline ol {
-	border-left: solid 1px #ddd;
 	bottom: 0;
 	display: -webkit-box;
 	display: -webkit-flex;
@@ -788,12 +787,10 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 	left: 250px;
 	position: absolute;
 	right: 0;
-	top: 0;
+	top: 2px;
 }
 
 #sapUiSupportPerfHeaderTimelineOverview .timeline li {
-	border-right: solid 1px #eee;
-	box-sizing: content-box;
 	display: -webkit-box;
 	display: -webkit-flex;
 	display: -ms-flexbox;
@@ -802,9 +799,19 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 	flex: 1;
 }
 
+#sapUiSupportPerfHeaderTimelineOverview .timeline li .duration,
+#sapUiSupportPerfHeaderTimelineOverview .timeline li .time {
+	display: flex;
+	flex-direction: column;
+	-webkit-box-pack: end;
+	-webkit-justify-content: flex-end;
+	-ms-flex-pack: end;
+	justify-content: flex-end;
+}
+
 #sapUiSupportPerfHeaderTimelineOverview .timeline li .duration {
 	margin-right: 1px;
-	width: 5px;
+	width: 4px;
 }
 
 #sapUiSupportPerfHeaderTimelineOverview .timeline li .time {
@@ -870,7 +877,7 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 	display: -webkit-flex;
 	display: -ms-flexbox;
 	display: flex;
-	max-width: 350px;
+	max-width: 440px;
 	padding-right: 0;
 }
 
@@ -891,38 +898,51 @@ html[data-sap-ui-browser^="ff"] #sapUiSupportDebuggingAddBreakpoint {
 }
 
 #categories input::after {
-	content: '';
-	width: 10px;
-	height: 10px;
-	border: solid 1px #666;
-	display: inline-block;
 	background: #fff;
-	cursor: pointer;
+	border: solid 1px #666;
 	border-radius: 3px;
+	box-sizing: border-box;
+	color: #fff;
+	content: '✓';
+	cursor: pointer;
+	display: inline-block;
+	font-size: 10px;
+	font-weight: bolder;
+	height: 13px;
+	line-height: 10px;
+	padding-left: 1px;
+	padding-top: 1px;
+	position: absolute;
+	width: 13px;
 }
 
 #categories input:checked::after {
 	background: #666;
 }
 
+.timeline .requireModuleType,
 #categories input.requireModuleType:checked::after {
 	background: hotpink;
 }
 
+.timeline .requestType,
 #categories input.requestType:checked::after {
 	background: blue;
 }
 
+.timeline .afterRenderingType,
 #categories input.afterRenderingType:checked::after {
 	background: orange;
 }
 
+.timeline .renderingType,
 #categories input.renderingType:checked::after {
 	background: green;
 }
 
+.timeline .unknownType,
 #categories input.unknownType:checked::after {
-	background: #eee;
+	background: #666;
 }
 
 #sapUiSupportPerfHeaderFilterMinDuration {

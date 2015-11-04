@@ -103,9 +103,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 			//create all event listeners
 			_registerEventListeners();
-
-			//initialize the slider
-			_initSlider();
 		}
 
 
@@ -195,7 +192,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			var domSlider = document.querySelector('#slider');
 			var domTimelineOverview = document.querySelector('#sapUiSupportPerfHeaderTimelineOverview .timeline');
 
-			if (!_data || _data.length === 0) {
+			if (_data.length === 0) {
 				//show "nodata overlay" if there is data
 				sapUiSupportNoDataOverlay.style.display = 'block';
 				domSlider.classList.add('sapUiSupportHidden');
@@ -203,13 +200,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				return;
 			} else {
 				domSlider.classList.remove('sapUiSupportHidden');
+				//hide "nodata overlay" if there is data
+				sapUiSupportNoDataOverlay.style.display = '';
 			}
 
-			//hide "nodata overlay" if there is data
-			sapUiSupportNoDataOverlay.style.display = '';
-
+			//copy the data
 			_rawdata = (JSON.parse(JSON.stringify(_data)));
 
+			//sort chronologically
 			_rawdata = _rawdata.sort(function (a, b) {
 				return a.start - b.start;
 			});
@@ -217,17 +215,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			var initialTime = _data[0].start;
 
 			_rawdata = _rawdata.map(function (item) {
+				//remove the time offset, so the first time starts from 0
 				item.start = parseFloat((item.start - initialTime).toFixed(2));
 				item.end = parseFloat((item.end - initialTime).toFixed(2));
+
+				//add uid to each data entry
+				item.uid = _getUID();
 
 				return item;
 			});
 
+			//get the full length of time for the raw data, it's used for the 'timeoverview' visualisation
 			_allTime = _rawdata[_rawdata.length - 1].end - _rawdata[0].start;
 
 			_sliderVars.selectedInterval.start = _rawdata[0].start;
 			_sliderVars.selectedInterval.end = _rawdata[_rawdata.length - 1].end;
 
+			_initSlider();
 			_renderTimelineOverview(_rawdata);
 			_render(_rawdata);
 			_renderFilters();
@@ -315,8 +319,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 * General
 		 ============================================================================================================= */
 
+		function _getBarById(id) {
+			return _rawdata.reduce(function (result, item) {
+				if (item.uid === id) {
+					result = item;
+				}
+
+				return result;
+			}, null);
+		}
+
 		function _getUID() {
-			return 'uID-' + (_getUID.id !== undefined ? _getUID.id++ : _getUID.id = 0);
+			return 'uID-' + (_getUID.id !== undefined ? ++_getUID.id : _getUID.id = 0);
 		}
 
 		function _registerEventListeners() {
@@ -331,9 +345,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			//TODO: optimise this render
 			window.addEventListener('resize', function () {
 				_render();
-				_reSetSliderSize();
+				_calculateSliderSize();
 			}, false);
 
+			window.addEventListener('keydown', _onArrowMove);
+			jQuery("#slideHandle").on('dblclick', _initSlider);
 			jQuery("#sapUiSupportPerfToggleRecordingBtn").click(_handlerTogglePlayButton).attr('data-state', 'Start recording');
 		}
 
@@ -345,13 +361,69 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			return 'Duration: ' + duration.toFixed(2) + ' ms.\nTime: ' + time.toFixed(2) + ' ms.';
 		}
 
+		function _getTimelineOverviewData(copiedData) {
+			var stepCount = 50;
+			var stepTime = _allTime / stepCount;
+			var stepsData = [];
+
+			for (var i = 0; i < stepCount; i++) {
+				var stepStart = stepTime * i;
+				var stepEnd = stepStart + stepTime;
+				var selectedStepsByTime = _filterByTime({start: stepStart, end: stepEnd}, copiedData);
+
+				// get all 'duration' spend in the selected time period by category
+				/* eslint-disable no-loop-func */
+				var stepSumDuration = selectedStepsByTime.map(function (item) {
+					return {
+						category: item.categories[0],
+						duration: item.duration
+					};
+				});
+
+				var _resultsDuration = {_total: 0};
+				stepSumDuration.map(function (itemData) {
+					if (!_resultsDuration[itemData.category]) {
+						_resultsDuration[itemData.category] = 0;
+					}
+
+					_resultsDuration._total += itemData.duration;
+					_resultsDuration[itemData.category] = _resultsDuration[itemData.category] + itemData.duration;
+				});
+
+				// get all 'time' spend in the selected time period by category
+				var stepSumTime = selectedStepsByTime.map(function (item) {
+					return {
+						category: item.categories[0],
+						time: item.time
+					};
+				});
+
+				var _resultsTime = {_total: 0};
+				stepSumTime.map(function (itemData) {
+					if (!_resultsTime[itemData.category]) {
+						_resultsTime[itemData.category] = 0;
+					}
+
+					_resultsTime._total += itemData.time;
+					_resultsTime[itemData.category] = _resultsTime[itemData.category] + itemData.time;
+				});
+
+				/* eslint-enable no-loop-func */
+				// ====================================================================================================
+
+				stepsData.push({
+					duration: _resultsDuration,
+					time: _resultsTime
+				});
+			}
+
+			return stepsData;
+		}
+
 		function _renderTimelineOverview(data) {
 			var domParent = document.querySelector('#sapUiSupportPerfHeaderTimelineOverview .timeline');
 
 			var HTML = '<ol>';
-			var stepCount = 100;
-			var stepTime = _allTime / stepCount;
-
 			var copiedData = (JSON.parse(JSON.stringify(data)));
 
 			//TODO: optimise this logic to loop only once
@@ -367,27 +439,62 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				return sum + b;
 			});
 
-			for (var i = 0; i < stepCount; i++) {
-				var stepStart = stepTime * i;
-				var stepEnd = stepStart + stepTime;
+			//get the data to be rendered
+			var stepsData = _getTimelineOverviewData(copiedData);
 
-				var stepSumDuration = _filterByTime({start: stepStart, end: stepEnd}, copiedData).map(function (item) {
-					return item.duration;
-				}).reduce(function (a, b) {
-					return (a + b);
-				}, 0);
+			//render the data ==========================================================================================
+			var topSumTimeStep = {time: {_total: 0}};
+			var topSumDurationStep = {duration: {_total: 0}};
 
-				var stepSumTime = _filterByTime({start: stepStart, end: stepEnd}, copiedData).map(function (item) {
-					return item.time;
-				}).reduce(function (a, b) {
-					return (a + b);
-				}, 0);
+			stepsData.forEach(function (step) {
+				if (topSumTimeStep.time._total < step.time._total) {
+					topSumTimeStep = step;
+				}
+				if (topSumDurationStep.duration._total < step.duration._total) {
+					topSumDurationStep = step;
+				}
+			});
 
-				//use a magnifier to boost the visibility of the bars
-				var MAGNIFIER = 5;
+			allTimeSum = topSumTimeStep.time._total;
+			allDurationSum = topSumDurationStep.duration._total;
 
-				var stepDurationInPercent = Math.ceil((stepSumDuration / allDurationSum) * MAGNIFIER * 100);
-				var stepTimeInPercent = Math.ceil((stepSumTime / allTimeSum) * MAGNIFIER * 100);
+			/**
+			 *
+			 * @param {Object} step
+			 * @param {string} type - Type is 'duration' or 'time'
+			 * @param {string} html - html string to add to
+			 * @private
+			 */
+			function __getSubBarHTML(step, type) {
+				/*
+				 step = {
+				 time: {
+				 _total: 20ms,
+				 rendering: 10ms,
+				 require: 10ms
+				 },
+				 duration: {
+				 _total: 20ms,
+				 rendering: 10ms,
+				 require: 10ms
+				 }
+				 }
+				 */
+				var HTML = '';
+
+				Object.keys(step.duration).sort().forEach(function (categoryType) {
+					if (categoryType !== '_total') {
+						var heightInPercent = (step[type][categoryType] / step[type]._total) * 100;
+						HTML += '<div class="' + _getBarClassType(categoryType) + '" style="height: ' + heightInPercent.toFixed(2) + '%;"></div>';
+					}
+				});
+
+				return HTML;
+			}
+
+			stepsData.forEach(function (step) {
+				var stepDurationInPercent = Math.ceil((step.duration._total / allDurationSum) * 100);
+				var stepTimeInPercent = Math.ceil((step.time._total / allTimeSum) * 100);
 
 				var stepDurationInPercentInlineStyle = 'height: ' + stepDurationInPercent + '%;';
 				if (stepDurationInPercent > 0) {
@@ -400,11 +507,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				}
 
 				HTML += '<li>';
-				HTML += '<div class="bars-wrapper" title="' + _getTimelineOverViewBarTitle(stepSumDuration, stepSumTime) + '">';
-				HTML += '<div class="duration ' + _getOverviewBarColor(stepDurationInPercent) + '" style="' + stepDurationInPercentInlineStyle + '"></div>';
-				HTML += '<div class="time ' + _getOverviewBarColor(stepTimeInPercent) + '" style="' + stepTimeInPercentInlineStyle + '"></div>';
+				HTML += '<div class="bars-wrapper" title="' + _getTimelineOverViewBarTitle(step.duration._total, step.time._total) + '">';
+				HTML += '<div class="duration" style="' + stepDurationInPercentInlineStyle + '">';
+				HTML += __getSubBarHTML(step, 'duration');
+				HTML += '</div>';
+				HTML += '<div class="time" style="' + stepTimeInPercentInlineStyle + '">';
+				HTML += __getSubBarHTML(step, 'time');
+				HTML += '</div>';
 				HTML += '</div></li>';
-			}
+			});
 
 			HTML += '</ol>';
 
@@ -418,29 +529,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		function _render() {
 			var HTML = '<ol>';
 			var barInfoHTML = '<ol>';
-			var uid = _getUID();
 
+			//get all data from the filter ui elements
 			var filterOptions = _getFilterOptions();
+			//filtered and modified data
 			var data = _applyFilters(_rawdata, filterOptions);
 
 			//no data bar
 			if (data.length === 0) {
-				HTML += '<li class="line nodata" data-uid="' + uid + '"></li>';
-				barInfoHTML += '<li class="line nodata" data-uid="' + uid + '"><div class="info line">No data</div></li>';
+				HTML += '<li class="line nodata" data-uid="' + -1 + '"></li>';
+				barInfoHTML += '<li class="line nodata" data-uid="' + -1 + '"><div class="info line">No data</div></li>';
 			}
 
 			data.forEach(function (item) {
-				var uid = _getUID();
-
-				HTML += '<li data-uid="' + uid + '" class="line" title="' + _getBarTitle(item) + '"' + _getBarDataAttributes(item) + '  >';
-				HTML += '<div class="bar ' + _getBarColor(item.duration) + '" style="width: ' + _calculateBarWidth(item.duration) + ' margin-left: ' + _calculateBarOffset(item, filterOptions.filterByTime.start) + '">';
-				HTML += '<div class="sub-bar ' + _getBarColor(item.time) + '" style="width: ' + _calculateBarWidth(item.time) + '"></div>';
+				var rawItem = _getBarById(item.uid);
+				HTML += '<li data-uid="' + item.uid + '" class="line" title="' + _getBarTitle(rawItem) + '"' + _getBarDataAttributes(rawItem) + '  >';
+				HTML += '<div class="bar ' + _getBarColor(rawItem.duration) + '" style="width: ' + _calculateBarWidth(item.duration) + ' margin-left: ' + _calculateBarOffset(item, filterOptions.filterByTime.start) + '">';
+				HTML += '<div class="sub-bar ' + _getBarColor(rawItem.time) + '" style="width: ' + _calculateBarWidth(item.time) + '"></div>';
 				HTML += '</div>';
 				HTML += '</li>';
 
 				//render bar info ==================================================================================
-				barInfoHTML += '<li data-uid="' + uid + '" title="' + _getBarTitle(item) + '" class="line ' + _getBarClassType(item.categories[0]) + '" ' + _getBarDataAttributes(item) + '>';
-				barInfoHTML += '<div class="info line">' + _formatInfo(item) + ' (' + (item.time).toFixed(0) + ' ms)</div>';
+				barInfoHTML += '<li data-uid="' + item.uid + '" title="' + _getBarTitle(rawItem) + '" class="line ' + _getBarClassType(rawItem.categories[0]) + '" ' + _getBarDataAttributes(rawItem) + '>';
+				barInfoHTML += '<div class="info line">' + _formatInfo(rawItem) + ' (' + (rawItem.time).toFixed(0) + ' ms)</div>';
 				barInfoHTML += '</li>';
 			});
 
@@ -496,36 +607,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			return 'unknownType';
 		}
 
-		function _getOverviewBarColor(percent) {
-			var barColorClass = 'defaultTimeStyle';
-
-			if (percent > 10) {
-				barColorClass = 'oneTimeStyle';
-			}
-
-			if (percent > 20) {
-				barColorClass = 'twoTimeStyle';
-			}
-
-			if (percent > 30) {
-				barColorClass = 'threeTimeStyle';
-			}
-
-			if (percent > 40) {
-				barColorClass = 'fourTimeStyle';
-			}
-
-			if (percent > 50) {
-				barColorClass = 'fiveTimeStyle';
-			}
-
-			if (percent > 60) {
-				barColorClass = 'sixTimeStyle';
-			}
-
-			return barColorClass;
-		}
-
 		function _getBarColor(time) {
 			var barColorClass = '';
 
@@ -575,6 +656,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		function _lineHover(e) {
 			var dom = e.srcElement;
 
+			//if the 'info' 'div' element get the hover event redefine the 'dom' property to the prent 'li' element
+			if (dom.classList.contains('info') && dom.nodeName === 'DIV') {
+				dom = dom.parentNode;
+			}
+
 			if (dom.nodeName === 'LI') {
 				var uid = dom.getAttribute('data-uid');
 
@@ -605,14 +691,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			var dataToWorkOn = (JSON.parse(JSON.stringify(rawdata)));
 			var containerWidth = document.querySelector('#sapUiSupportPerfHeaderTimeline').offsetWidth - document.querySelector('#sapUiSupportPerfHeaderTimelineBarInfoWrapper').offsetWidth;
 			var scrollWidth = 20;
+			var filteredTime = 1;
 
 			dataToWorkOn = _filterByTime(filterOptions.filterByTime, dataToWorkOn);
 			dataToWorkOn = _sortBy(filterOptions.orderByValue, dataToWorkOn);
-
 			dataToWorkOn = _filterMinValue(filterOptions.minValue, dataToWorkOn);
 
 			if (dataToWorkOn.length) {
-				var filteredTime = filterOptions.filterByTime.end - filterOptions.filterByTime.start;
+				filteredTime = filterOptions.filterByTime.end - filterOptions.filterByTime.start;
 			}
 
 			_widthSingleUnit = ((containerWidth - scrollWidth) / filteredTime); //ms in px
@@ -622,16 +708,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 		function _getFilterOptions() {
 			var options = {};
-			var start = _sliderVars.selectedInterval.start;
-			var end = _sliderVars.selectedInterval.end;
 			var orderBySelect = document.querySelector('#sapUiSupportPerfHeaderFilterSort');
 			options.orderByValue = orderBySelect.options[orderBySelect.selectedIndex].value;
 
 			options.minValue = document.querySelector('#sapUiSupportPerfHeaderFilterMinDuration').valueAsNumber || 0;
 
 			options.filterByTime = {
-				start: start,
-				end: end
+				start: _sliderVars.selectedInterval.start,
+				end: _sliderVars.selectedInterval.end
 			};
 
 			return options;
@@ -640,16 +724,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		function _filterByCategory() {
 			var inputs = document.querySelectorAll('#categories input');
 
-			function _setVisibilityToInlineCSSToBars(categoryName, isVisible) {
+			function __setVisibilityToInlineCSSToBars(categoryName, isVisible) {
+				var categoryClassType = _getBarClassType(categoryName);
 				var selectedBars = document.querySelectorAll('li[data-item-category="' + categoryName + '"]');
+				var selectedOverviewBars = document.querySelectorAll('.timeline .bars-wrapper .' + categoryClassType);
 
 				for (var i = 0; i < selectedBars.length; i++) {
 					selectedBars[i].style.display = isVisible ? '' : 'none';
 				}
+
+				for (var o = 0; o < selectedOverviewBars.length; o++) {
+					selectedOverviewBars[o].style.display = isVisible ? '' : 'none';
+				}
 			}
 
 			for (var i = 0; i < inputs.length; i++) {
-				_setVisibilityToInlineCSSToBars(inputs[i].name, inputs[i].checked);
+				__setVisibilityToInlineCSSToBars(inputs[i].name, inputs[i].checked);
 			}
 		}
 
@@ -697,37 +787,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		}
 
 		function _filterByTime(options, filteredData) {
-			var data = filteredData.filter(function (item) {
+			return filteredData.filter(function (item) {
 				//filter bars in time start/end
 				return !(item.end <= options.start || item.start >= options.end);
 			}).map(function (item) {
+				var leftTimeOffset = Math.max(options.start - item.start, 0);
+				var rightTimeOffset = Math.max((item.start + item.time) - options.end, 0);
+				item.time = item.time - leftTimeOffset - rightTimeOffset;
+
+				var leftDurationOffset = Math.max(options.start - item.start, 0);
+				var rightDurationOffset = Math.max((item.start + item.duration) - options.end, 0);
+				item.duration = item.duration - leftDurationOffset - rightDurationOffset;
+
 				//cut the start and end of bars
 				item.start = Math.max(item.start, options.start);
 				item.end = Math.min(item.end, options.end);
 				return item;
 			});
-
-			data.map(function (item) {
-				//cut the time and duration of the bars so they will fit the time start/end in the given options
-				if (item.time + item.start > options.end) {
-					item.time = options.end - item.start;
-				}
-
-				if (item.duration + item.start > options.end) {
-					item.duration = options.end - item.start;
-				}
-
-				return item;
-			});
-
-			return data;
 		}
 
 		function _renderFilters() {
 			var categoriesHTML = '';
 			var allCategories = _getBarCategories(_rawdata);
 			allCategories.forEach(function (category) {
-				categoriesHTML += '<label><input class="' + _getBarClassType(category) + '" checked type="checkbox" name="' + category + '" />' + category + '</label>';
+				categoriesHTML += '<label title="' + category + '"><input class="' + _getBarClassType(category) + '" checked type="checkbox" name="' + category + '" />' + category + '</label>';
 			});
 
 			var categoriesDom = document.querySelector('#categories');
@@ -781,34 +864,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		 ============================================================================================================= */
 
 		function _initSlider() {
-			_sliderVars.nodes.slider = document.querySelector('#slider');
-			_sliderVars.nodes.handle = document.querySelector('#slideHandle');
-			_sliderVars.nodes.leftResizeHandle = document.querySelector('#leftHandle');
-			_sliderVars.nodes.rightResizeHandle = document.querySelector('#rightHandle');
+			_sliderVars.nodes.slider = _sliderVars.nodes.slider || document.querySelector('#slider');
+			_sliderVars.nodes.handle = _sliderVars.nodes.handle || document.querySelector('#slideHandle');
+			_sliderVars.nodes.leftResizeHandle = _sliderVars.nodes.leftResizeHandle || document.querySelector('#leftHandle');
+			_sliderVars.nodes.rightResizeHandle = _sliderVars.nodes.rightResizeHandle || document.querySelector('#rightHandle');
 
-			_sliderVars.sizes.handleWidth = _sliderVars.sizes.handleMinWidth;
-
-			_sliderVars.nodes.handle.style.left = 0 + 'px';
+			_sliderVars.nodes.handle.style.left = 0;
 			_sliderVars.nodes.handle.style.width = '100%';
 
 			//set the slider width
-			_reSetSliderSize();
+			_calculateSliderSize();
 
 			_sliderVars.nodes.slider.addEventListener('mousedown', _onMouseDown);
-			window.addEventListener('keydown', _onArrowMove);
 		}
 
-		function _reSetSliderSize() {
-			var handleComputedWidth = window.getComputedStyle(document.querySelector('#slideHandle')).width;
+		function _calculateSliderSize() {
+			var handleComputedWidth = window.getComputedStyle(_sliderVars.nodes.handle).width;
 			var oldSliderWidth = _sliderVars.sizes.width;
 
 			_sliderVars.sizes.handleWidth = parseInt(handleComputedWidth, 10);
-			_sliderVars.sizes.width = document.querySelector('#slider').offsetWidth;
+			_sliderVars.sizes.width = _sliderVars.nodes.slider.offsetWidth;
 
 			if (_sliderVars.sizes.width !== _sliderVars.sizes.handleWidth) {
 				_resizeSliderHandle(oldSliderWidth);
-				_updateSliderIntervals();
 			}
+			_updateUI();
 		}
 
 		function _onMouseDown(evt) {
@@ -854,47 +934,54 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			_sliderVars.nodes.handle.style.left = constraintDistance - _sliderVars.drag.handleClickOffsetX + 'px';
 		}
 
-        function _onArrowMove(evt){
+		function _onArrowMove(evt) {
 
-            var offsetLeft = 0;
-            var LEFT_ARROW_CODE = 37;
-            var RIGHT_ARROW_CODE = 39;
-            var STEP = 5;
+			var offsetLeft = 0;
+			var LEFT_ARROW_CODE = 37;
+			var RIGHT_ARROW_CODE = 39;
+			var STEP = 5;
 
-            if (evt.keyCode != LEFT_ARROW_CODE && evt.keyCode != RIGHT_ARROW_CODE){
-                return;
-            } else if (evt.keyCode == LEFT_ARROW_CODE){
-                offsetLeft = -STEP;
-            } else if (evt.keyCode == RIGHT_ARROW_CODE){
-                offsetLeft = STEP;
-            }
-            var maxLeftOffset = Math.min((_sliderVars.drag.handleOffsetLeft + offsetLeft),
-                _sliderVars.sizes.width - _sliderVars.sizes.handleWidth);
+			if (evt.keyCode != LEFT_ARROW_CODE && evt.keyCode != RIGHT_ARROW_CODE) {
+				return;
+			} else if (evt.keyCode == LEFT_ARROW_CODE) {
+				offsetLeft = -STEP;
+			} else if (evt.keyCode == RIGHT_ARROW_CODE) {
+				offsetLeft = STEP;
+			}
+			var maxLeftOffset = Math.min((_sliderVars.drag.handleOffsetLeft + offsetLeft),
+				_sliderVars.sizes.width - _sliderVars.sizes.handleWidth);
 
-            _sliderVars.drag.handleOffsetLeft = Math.max(maxLeftOffset, 0);
-            _sliderVars.nodes.handle.style.left = _sliderVars.drag.handleOffsetLeft + 'px';
+			_sliderVars.drag.handleOffsetLeft = Math.max(maxLeftOffset, 0);
+			_sliderVars.nodes.handle.style.left = _sliderVars.drag.handleOffsetLeft + 'px';
 
-            _updateSliderIntervals();
-            _render();
+			_updateSliderIntervals();
+			_render();
 
-        }
+		}
 
 		function _onMouseUp(evt) {
 			evt.stopImmediatePropagation();
 			window.removeEventListener('mousemove', _onMouseMove);
 			window.removeEventListener('mouseup', _onMouseUp);
+			_updateUI();
+		}
 
+		function _updateUI() {
 			var handleComputedWidth = window.getComputedStyle(_sliderVars.nodes.handle).width;
 
 			_sliderVars.sizes.handleWidth = parseInt(handleComputedWidth, 10);
 			_sliderVars.drag.handleOffsetLeft = _sliderVars.nodes.handle.offsetLeft;
 
+			var filteredOptions = _getFilterOptions();
+			var title = 'Selected interval from ' + (filteredOptions.filterByTime.start / 1000).toFixed(0)
+				+ ' s to ' + (filteredOptions.filterByTime.end / 1000).toFixed(0) + ' s.';
+			title += '\nDouble click to expand the selection';
+			_sliderVars.nodes.slider.setAttribute('title', title);
+
 			_updateSliderIntervals();
 			_render();
-
-			var filteredOptions = _getFilterOptions();
-			_sliderVars.nodes.slider.setAttribute('title', 'Selected interval from ' + (filteredOptions.filterByTime.start / 1000).toFixed(0) + ' s to ' + (filteredOptions.filterByTime.end / 1000).toFixed(0) + ' s.');
 		}
+
 
 		function _handleResize(evt) {
 			evt.stopImmediatePropagation();
@@ -923,15 +1010,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				maxWidth = _sliderVars.drag.handleOffsetLeft + _sliderVars.sizes.handleWidth;
 				rightConstraint = Math.min(clientX, _sliderVars.sizes.width);
 				leftRightConstraints = Math.max(Math.max(rightConstraint, -2 * _sliderVars.sizes.handleMinWidth),
-                    LEFT_DRAG_OFFSET_VALUE);
+					LEFT_DRAG_OFFSET_VALUE);
 				newWidth = maxWidth - leftRightConstraints + 9;
 
-				if (newWidth <= LEFT_DRAG_OFFSET_VALUE + _sliderVars.sizes.handleMinWidth){
+				if (newWidth <= LEFT_DRAG_OFFSET_VALUE + _sliderVars.sizes.handleMinWidth) {
 					newWidth -= LEFT_DRAG_OFFSET_VALUE;
 					leftRightConstraints += LEFT_DRAG_OFFSET_VALUE;
 				}
 
-				_sliderVars.nodes.handle.style.left = (leftRightConstraints - LEFT_DRAG_OFFSET_VALUE)  + 'px';
+				_sliderVars.nodes.handle.style.left = (leftRightConstraints - LEFT_DRAG_OFFSET_VALUE) + 'px';
 				_sliderVars.nodes.handle.style.width = newWidth + 'px';
 			}
 		}
