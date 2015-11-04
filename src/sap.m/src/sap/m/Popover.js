@@ -423,8 +423,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 				Popup.prototype.close.apply(this, bBooleanParam ? [] : arguments);
 				that.removeDelegate(that._oRestoreFocusDelegate);
 
-				if (!this.restoreFocus && !this._bModal) {
-					document.activeElement.blur();
+				if (document.activeElement && !this.restoreFocus && !this._bModal) {
+					 document.activeElement.blur();
 				}
 			};
 		};
