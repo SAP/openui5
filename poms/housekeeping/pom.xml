@@ -47,7 +47,7 @@
     <sap.ui5.patch.fallbackGroupId>com.sap.ui.phoenix</sap.ui5.patch.fallbackGroupId>
 
     <!-- The version of this project is also the version of the UI5 dependencies -->
-    <sap.ui5.version>1.29.1-SNAPSHOT</sap.ui5.version>
+    <sap.ui5.version>1.33.0-SNAPSHOT</sap.ui5.version>
 
     <!-- REST API base URL for remote management of Tomcat 6.x and 7.x -->
     <tomcat.manager.url.v6>/manager</tomcat.manager.url.v6>
@@ -262,7 +262,7 @@
                   <artifactId>jsunit-tests</artifactId>
                   <version>[1.0.0,2.0.0-SNAPSHOT)</version>
                 </deployable>
-                <!-- 
+                <!--
                 <deployable>
                   <groupId>com.sap.ui5</groupId>
                   <artifactId>cactus-unit-tests</artifactId>
@@ -510,8 +510,8 @@
       </build>
 
     </profile>
-    
-    
+
+
     <!-- ******************************************************************* -->
     <!-- HOUSEKEEPING: VEUI5TEST (Walldorf) - Test Server                -->
     <!-- ******************************************************************* -->
@@ -655,7 +655,7 @@
       </activation>
 
       <properties>
-      
+
         <!-- release versions are delivered to another server -->
         <tomcat.sandbox.url>http://vesapui5.dhcp.wdf.sap.corp:8080</tomcat.sandbox.url>
 
@@ -892,7 +892,7 @@
       </activation>
 
       <properties>
-      
+
         <!-- release versions are delivered to another server -->
         <tomcat.sandbox.url>http://vesapui5.dhcp.wdf.sap.corp:8080</tomcat.sandbox.url>
 
@@ -983,7 +983,7 @@
     <!-- HOUSEKEEPING: VEPHXINFRA, patch dev for old Release (Walldorf)      -->
     <!-- ******************************************************************* -->
 
-    <!-- 
+    <!--
     <profile>
 
       <id>housekeeping-patch-old</id>
@@ -1039,7 +1039,7 @@
     <!-- HOUSEKEEPING: VEPHXINFRA, old Release (Walldorf)                    -->
     <!-- ******************************************************************* -->
 
-    <!--  
+    <!--
     <profile>
 
       <id>housekeeping-release-old</id>

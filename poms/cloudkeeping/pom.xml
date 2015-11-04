@@ -16,7 +16,7 @@
 	<parent>
 		<groupId>com.sap.ui5</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.5</version>
 	</parent>
 
 
@@ -33,10 +33,10 @@
 	* POM SECTION: Project Settings
 	***************************************************************************-->
 
-	<name>SAPUI5 - Automated NetWeaver Cloud Deployment</name>
-	<description>SAPUI5 - Automated NetWeaver Cloud Deployment</description>
+	<name>SAPUI5 - Automated HANA Cloud Deployment</name>
+	<description>SAPUI5 - Automated HANA Cloud Deployment</description>
 
-	
+
 	<!--**************************************************************************
 	* POM SECTION: Properties Settings
 	***************************************************************************-->
@@ -47,26 +47,21 @@
 		<command>status</command>
 		<user></user> <!-- SDN User -->
 		<password></password> <!-- SDN Password -->
-		
-		<!-- SAPUI5 version for NW Cloud -->
-		<sapui5.version>1.29.1-SNAPSHOT</sapui5.version>
-	
+
+		<!-- SAPUI5 version for HANA Cloud -->
+		<sapui5.version>[1.0.0-SNAPSHOT,2.0.0-SNAPSHOT)</sapui5.version>
+
 	</properties>
-	
+
 
 	<!--**************************************************************************
 	* POM SECTION: Build Settings
 	***************************************************************************-->
 
 	<build>
-	
+
 		<pluginManagement>
 			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-dependency-plugin</artifactId>
-					<version>2.4</version>
-				</plugin>
 				<plugin>
 					<groupId>com.sap.ui5.tools.maven</groupId>
 					<artifactId>nwcloud-maven-plugin</artifactId>
@@ -74,68 +69,8 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-	
+
 		<plugins>
-		
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-				
-					<execution>
-						<id>deployables</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<inherited>false</inherited>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>com.sap.ui5.dist</groupId>
-									<artifactId>sapui5-dist</artifactId>
-									<version>${sapui5.version}</version>
-									<classifier>hanacloud</classifier>
-									<type>war</type>
-									<overWrite>false</overWrite>
-									<destFileName>sapui5.war</destFileName>
-								</artifactItem>
-								<artifactItem>
-									<groupId>com.sap.ui5.dist</groupId>
-									<artifactId>sapui5-sdk-dist</artifactId>
-									<version>${sapui5.version}</version>
-									<classifier>hanacloud</classifier>
-									<type>war</type>
-									<overWrite>false</overWrite>
-									<destFileName>sapui5-sdk.war</destFileName>
-								</artifactItem>
-								<artifactItem>
-									<groupId>com.sap.ui5</groupId>
-									<artifactId>uilib-sample</artifactId>
-									<version>${sapui5.version}</version>
-									<type>war</type>
-									<overWrite>false</overWrite>
-									<destFileName>uilib-sample.war</destFileName>
-								</artifactItem>
-								<artifactItem>
-									<groupId>com.sap.ui5.test</groupId>
-									<artifactId>databinding</artifactId>
-									<version>${sapui5.version}</version>
-									<type>war</type>
-									<overWrite>false</overWrite>
-									<destFileName>databinding.war</destFileName>
-								</artifactItem>
-							</artifactItems>
-							<outputDirectory>${project.build.directory}/deployables</outputDirectory>
-							<includes>**</includes>
-							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-						</configuration>
-					</execution>
-					
-				</executions>
-				
-			</plugin>
 
 			<plugin>
 				<groupId>com.sap.ui5.tools.maven</groupId>
@@ -150,13 +85,35 @@
 						<landscape>https://neo.ondemand.com/</landscape>
 						<user>${user}</user>
 						<password>${password}</password>
-						<deployables>
-							<deployable>${project.build.directory}/deployables/sapui5.war</deployable>
-							<deployable>${project.build.directory}/deployables/sapui5-sdk.war</deployable>
-							<deployable>${project.build.directory}/deployables/uilib-sample.war</deployable>
-							<deployable>${project.build.directory}/deployables/databinding.war</deployable>
-						</deployables>
 					</properties>
+					<deployables>
+						<deployable>
+							<groupId>com.sap.ui5.dist</groupId>
+							<artifactId>sapui5-dist</artifactId>
+							<version>${sapui5.version}</version>
+							<classifier>hanacloud</classifier>
+							<type>war</type>
+						</deployable>
+						<deployable>
+							<groupId>com.sap.ui5.dist</groupId>
+							<artifactId>sapui5-sdk-dist</artifactId>
+							<version>${sapui5.version}</version>
+							<classifier>hanacloud</classifier>
+							<type>war</type>
+						</deployable>
+						<deployable>
+							<groupId>com.sap.ui5</groupId>
+							<artifactId>uilib-sample</artifactId>
+							<version>${sapui5.version}</version>
+							<type>war</type>
+						</deployable>
+						<deployable>
+							<groupId>com.sap.ui5.test</groupId>
+							<artifactId>databinding</artifactId>
+							<version>${sapui5.version}</version>
+							<type>war</type>
+						</deployable>
+					</deployables>
 					<httpProxyHost>proxy</httpProxyHost>
 					<httpProxyPort>8080</httpProxyPort>
 					<httpNonProxyHosts>localhost|*sap.corp</httpNonProxyHosts>
@@ -165,9 +122,9 @@
 					<httpsNonProxyHosts>localhost|*sap.corp</httpsNonProxyHosts>
 				</configuration>
 			</plugin>
-      
+
 		</plugins>
-		
+
 	</build>
 
 </project>

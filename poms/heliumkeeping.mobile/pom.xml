@@ -8,14 +8,14 @@
 	<modelVersion>4.0.0</modelVersion>
 
 
-	<!--************************************************************************ 
-	* POM SECTION: Parent POM Settings 
+	<!--************************************************************************
+	* POM SECTION: Parent POM Settings
 	************************************************************************ -->
 
 	<parent>
 		<groupId>com.sap.ui5</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.4</version>
+		<version>1.0.5</version>
 	</parent>
 
 
@@ -27,7 +27,7 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	
+
 	<!--**************************************************************************
 	* POM SECTION: Project Settings
 	***************************************************************************-->
@@ -35,7 +35,7 @@
 	<name>Automated Helium Deployment for SAPUI5 mobile</name>
 	<description>Automated Helium Deployment for SAPUI5 mobile</description>
 
-	
+
 	<!--**************************************************************************
 	* POM SECTION: Properties Settings
 	***************************************************************************-->
@@ -51,7 +51,7 @@
 		<branch></branch>
 		<version></version>
 		<versionAlias></versionAlias>
-		
+
 		<!-- skip properties for commands -->
 		<skipCreate>true</skipCreate>
 		<skipPrepare>true</skipPrepare>
@@ -61,37 +61,37 @@
 		<skipUpload>true</skipUpload>
 		<skipCreateVersion>true</skipCreateVersion>
 		<skipActivateVersion>true</skipActivateVersion>
-	
+
 		<!-- application to deploy -->
 		<application>sapui5mobile</application>
 		<application.dir>${application}</application.dir>
 		<application.fileName>sapui5-mobile</application.fileName>
-		
-		<!-- deployable --> 
+
+		<!-- deployable -->
 		<deployable.groupId>com.sap.ui5.dist</deployable.groupId>
 		<deployable.artifactId>sapui5-mobile</deployable.artifactId>
 		<deployable.version>${version}</deployable.version>
 		<deployable.classifier>static</deployable.classifier>
 		<deployable.type>zip</deployable.type>
-		
+
 	</properties>
 
-	
+
 	<!--**************************************************************************
 	* POM SECTION: Build Settings
 	***************************************************************************-->
 
 	<build>
-	
+
 		<pluginManagement>
 			<plugins>
-				
+
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>build-helper-maven-plugin</artifactId>
 					<version>1.9.1</version>
 				</plugin>
-				
+
 				<plugin>
 					<groupId>com.sap.ui5.tools.maven</groupId>
 					<artifactId>nwcloud-maven-plugin</artifactId>
@@ -108,12 +108,12 @@
 						<applicationVersionAlias>${versionAlias}</applicationVersionAlias>
 					</configuration>
 				</plugin>
-				
+
 			</plugins>
 		</pluginManagement>
-		
+
 		<plugins>
-			
+
 			<!-- generate a timestamp (e.g. for multiversion deployment) -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -133,12 +133,12 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>com.sap.ui5.tools.maven</groupId>
 				<artifactId>nwcloud-maven-plugin</artifactId>
 				<executions>
-					
+
 					<!-- create application in HCP if needed -->
 					<execution>
 						<id>sapui5-helium-create</id>
@@ -150,7 +150,7 @@
 							<skip>${skipCreate}</skip>
 						</configuration>
 					</execution>
-			
+
 					<!-- prepare the Git workspace in the target folder -->
 					<execution>
 						<id>sapui5-helium-prepare</id>
@@ -162,7 +162,7 @@
 							<skip>${skipPrepare}</skip>
 						</configuration>
 					</execution>
-			
+
 					<!-- activate the version of the application -->
 					<execution>
 						<id>sapui5-helium-multiversion</id>
@@ -174,7 +174,7 @@
 							<skip>${skipMultiVersion}</skip>
 						</configuration>
 					</execution>
-			
+
 					<!-- uploading the new sources into the Git repository -->
 					<execution>
 						<id>sapui5-helium-upload</id>
@@ -186,7 +186,7 @@
 							<skip>${skipUpload}</skip>
 						</configuration>
 					</execution>
-			
+
 					<!-- create the version of the application -->
 					<execution>
 						<id>sapui5-helium-create-version</id>
@@ -198,7 +198,7 @@
 							<skip>${skipCreateVersion}</skip>
 						</configuration>
 					</execution>
-			
+
 					<!-- activate the version of the application -->
 					<execution>
 						<id>sapui5-helium-activate-version</id>
@@ -212,10 +212,10 @@
 							<skip>${skipActivateVersion}</skip>
 						</configuration>
 					</execution>
-			
+
 				</executions>
 			</plugin>
-			
+
 			<!-- copy the application content in the Git workspace (from source folder) -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -241,12 +241,12 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 		</plugins>
 
 	</build>
-	
-	
+
+
 	<!--**************************************************************************
 	* POM SECTION: Profiles Settings
 	***************************************************************************-->
@@ -284,7 +284,7 @@
 			</properties>
 			<build>
 				<plugins>
-					
+
 					<!-- unpack and copy the application in the Git workspace (from deployable) -->
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -337,11 +337,11 @@
 							</execution>
 						</executions>
 					</plugin>
-					
+
 				</plugins>
 			</build>
 		</profile>
-	
+
 		<!-- default profile used to just copy the neo-app.json for upload into Git repo -->
 		<profile>
 			<id>master-deployment</id>
@@ -360,7 +360,7 @@
 				<skipUnpack>false</skipUnpack>
 			</properties>
 		</profile>
-	
+
 		<!-- default profile used to just copy the neo-app.json for upload into Git repo -->
 		<profile>
 			<id>multiversion-deployment</id>
@@ -378,7 +378,7 @@
 				<skipMultiVersion>false</skipMultiVersion>
 			</properties>
 		</profile>
-	
+
 	</profiles>
 
 

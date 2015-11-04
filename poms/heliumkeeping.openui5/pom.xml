@@ -8,14 +8,14 @@
 	<modelVersion>4.0.0</modelVersion>
 
 
-	<!--************************************************************************ 
-	* POM SECTION: Parent POM Settings 
+	<!--************************************************************************
+	* POM SECTION: Parent POM Settings
 	************************************************************************ -->
 
 	<parent>
 		<groupId>com.sap.ui5</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.4</version>
+		<version>1.0.5</version>
 	</parent>
 
 
@@ -27,15 +27,15 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	
+
 	<!--**************************************************************************
 	* POM SECTION: Project Settings
 	***************************************************************************-->
 
-	<name>Automated Helium Deployment for OpenUI5 SDK</name>
-	<description>Automated Helium Deployment for OpenUI5 SDK</description>
+	<name>Automated HTML5 Deployment for OpenUI5 SDK</name>
+	<description>Automated HTML5 Deployment for OpenUI5 SDK</description>
 
-	
+
 	<!--**************************************************************************
 	* POM SECTION: Properties Settings
 	***************************************************************************-->
@@ -51,7 +51,7 @@
 		<branch></branch>
 		<version></version>
 		<versionAlias></versionAlias>
-		
+
 		<!-- skip properties for commands -->
 		<skipCreate>true</skipCreate>
 		<skipPrepare>true</skipPrepare>
@@ -61,36 +61,36 @@
 		<skipUpload>true</skipUpload>
 		<skipCreateVersion>true</skipCreateVersion>
 		<skipActivateVersion>true</skipActivateVersion>
-	
+
 		<!-- application to deploy -->
-		<application>sapui5</application>
+		<application>openui5</application>
 		<application.dir>${application}</application.dir>
-		
-		<!-- deployable --> 
+
+		<!-- deployable -->
 		<deployable.groupId>com.sap.openui5.dist</deployable.groupId>
 		<deployable.artifactId>sdk</deployable.artifactId>
 		<deployable.version>${version}</deployable.version>
 		<deployable.classifier>opt-static</deployable.classifier>
 		<deployable.type>zip</deployable.type>
-		
+
 	</properties>
 
-	
+
 	<!--**************************************************************************
 	* POM SECTION: Build Settings
 	***************************************************************************-->
 
 	<build>
-	
+
 		<pluginManagement>
 			<plugins>
-				
+
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>build-helper-maven-plugin</artifactId>
 					<version>1.9.1</version>
 				</plugin>
-				
+
 				<plugin>
 					<groupId>com.sap.ui5.tools.maven</groupId>
 					<artifactId>nwcloud-maven-plugin</artifactId>
@@ -105,12 +105,19 @@
 						<application>${application}</application>
 						<applicationVersion>${deployable.version}</applicationVersion>
 						<applicationVersionAlias>${versionAlias}</applicationVersionAlias>
+						<deployable>
+							<groupId>${deployable.groupId}</groupId>
+							<artifactId>${deployable.artifactId}</artifactId>
+							<version>${deployable.version}</version>
+							<classifier>${deployable.classifier}</classifier>
+							<type>${deployable.type}</type>
+						</deployable>
 					</configuration>
 				</plugin>
-				
+
 			</plugins>
 		</pluginManagement>
-		
+
 		<plugins>
 
 			<!-- generate a timestamp (e.g. for multiversion deployment) -->
@@ -137,7 +144,7 @@
 				<groupId>com.sap.ui5.tools.maven</groupId>
 				<artifactId>nwcloud-maven-plugin</artifactId>
 				<executions>
-		
+
 					<!-- create application in HCP if needed -->
 					<execution>
 						<id>sapui5-helium-create</id>
@@ -149,7 +156,7 @@
 							<skip>${skipCreate}</skip>
 						</configuration>
 					</execution>
-			
+
 					<!-- prepare the Git workspace in the target folder -->
 					<execution>
 						<id>sapui5-helium-prepare</id>
@@ -161,7 +168,41 @@
 							<skip>${skipPrepare}</skip>
 						</configuration>
 					</execution>
-			
+
+					<!-- unzip the deployable in the Git workspace -->
+					<execution>
+						<id>sapui5-helium-unzip</id>
+						<phase>initialize</phase>
+						<goals>
+							<goal>helium-unzip</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								.index/**,
+								resources/testsuite/**,
+								resources/sap-ui5.js,
+								resources/sap-ui5-dbg.js,
+								resources/sap-ui-core-lean.js,
+								resources/sap-ui-core-lean-dbg.js,
+								resources/sap-ui-testenv.js,
+								resources/sap-ui-testenv-dbg.js,
+								resources/jquery-*.js,
+								resources/*-all.js,
+								resources/*-all-dbg.js,
+								resources/**/library.dependencies.json,
+								resources/**/library.dependencies.xml,
+								resources/**/library.properties,
+								resources/**/library-all.js,
+								resources/**/library-all-dbg.js,
+								resources/**/themes/base/img-RTL/**, <!-- base images are necessary for Fiori Launchpad icons -->
+								resources/**/themes/sap_platinum/**,
+								resources/**/themes/sap_ux/**,
+								resources/**/*.type.off
+							</excludes>
+							<skip>${skipUnpack}</skip>
+						</configuration>
+					</execution>
+
 					<!-- activate the version of the application -->
 					<execution>
 						<id>sapui5-helium-multiversion</id>
@@ -173,7 +214,7 @@
 							<skip>${skipMultiVersion}</skip>
 						</configuration>
 					</execution>
-			
+
 					<!-- uploading the new sources into the Git repository -->
 					<execution>
 						<id>sapui5-helium-upload</id>
@@ -185,7 +226,7 @@
 							<skip>${skipUpload}</skip>
 						</configuration>
 					</execution>
-			
+
 					<!-- create the version of the application -->
 					<execution>
 						<id>sapui5-helium-create-version</id>
@@ -197,7 +238,7 @@
 							<skip>${skipCreateVersion}</skip>
 						</configuration>
 					</execution>
-			
+
 					<!-- activate the version of the application -->
 					<execution>
 						<id>sapui5-helium-activate-version</id>
@@ -211,10 +252,10 @@
 							<skip>${skipActivateVersion}</skip>
 						</configuration>
 					</execution>
-			
+
 				</executions>
 			</plugin>
-	
+
 			<!-- copy the application content in the Git workspace (from source folder) -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -240,18 +281,18 @@
 					</execution>
 				</executions>
 			</plugin>
-	
+
 		</plugins>
 
 	</build>
-	
-	
+
+
 	<!--**************************************************************************
 	* POM SECTION: Profiles Settings
 	***************************************************************************-->
 
 	<profiles>
-	
+
 		<profile>
 			<id>deployment</id>
 			<activation>
@@ -265,85 +306,8 @@
 				<skipCopy>false</skipCopy>
 				<skipUnpack>false</skipUnpack>
 			</properties>
-			<build>
-				<plugins>
-					
-					<!-- unpack the application content in the Git workspace (from deployable) -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>unpack-deployable</id>
-								<phase>generate-sources</phase>
-								<goals>
-									<goal>unpack</goal>
-								</goals>
-								<configuration>
-									<artifactItems>
-										<artifactItem>
-											<groupId>${deployable.groupId}</groupId>
-											<artifactId>${deployable.artifactId}</artifactId>
-											<version>${deployable.version}</version>
-											<classifier>${deployable.classifier}</classifier>
-											<type>${deployable.type}</type>
-											<excludes>
-												.index/**,
-												resources/testsuite/**,
-												resources/sap-ui5.js,
-												resources/sap-ui5-dbg.js,
-												resources/sap-ui-core-lean.js,
-												resources/sap-ui-core-lean-dbg.js,
-												resources/sap-ui-testenv.js,
-												resources/sap-ui-testenv-dbg.js,
-												resources/jquery-*.js,
-												resources/*-all.js,
-												resources/*-all-dbg.js,
-												resources/**/library.dependencies.json,
-												resources/**/library.dependencies.xml,
-												resources/**/library.properties,
-												resources/**/library-all.js,
-												resources/**/library-all-dbg.js,
-												resources/**/themes/base/img-RTL/**, <!-- base images are necessary for Fiori Launchpad icons -->
-												resources/**/themes/sap_platinum/**,
-												resources/**/themes/sap_ux/**,
-												resources/**/*.type.off
-											</excludes>
-										</artifactItem>
-									</artifactItems>
-									<outputDirectory>${project.build.directory}/${application}</outputDirectory>
-									<overWriteReleases>false</overWriteReleases>
-									<overWriteSnapshots>true</overWriteSnapshots>
-									<skip>${skipUnpack}</skip>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					
-				</plugins>
-			</build>
 		</profile>
-	
-		<!-- default profile used to just copy the neo-app.json for upload into Git repo -->
-		<profile>
-			<id>master-deployment</id>
-			<activation>
-				<property>
-					<name>deploy</name>
-					<value>master</value>
-				</property>
-			</activation>
-			<properties>
-				<branch>master</branch>
-				<versionAlias>snapshot</versionAlias>
-				<application.dir>${application}-master</application.dir>
-				<skipPrepare>false</skipPrepare>
-				<skipCopy>false</skipCopy>
-				<skipUnpack>false</skipUnpack>
-			</properties>
-		</profile>
-	
-		<!-- default profile used to just copy the neo-app.json for upload into Git repo -->
+
 		<profile>
 			<id>multiversion-deployment</id>
 			<activation>
@@ -360,7 +324,7 @@
 				<skipMultiVersion>false</skipMultiVersion>
 			</properties>
 		</profile>
-	
+
 	</profiles>
 
 
