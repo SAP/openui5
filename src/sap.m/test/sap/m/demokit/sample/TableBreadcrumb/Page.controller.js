@@ -125,9 +125,13 @@ sap.ui.define([
 			var sPathEnd = sPath.split("/").reverse()[0];
 			if (sPathEnd === this.aCrumbs[this.aCrumbs.length - 1]) {
 				this._oTable.setMode("MultiSelect");
+				this.byId("weightColumn").setVisible(true);
+				this.byId("dimensionsColumn").setVisible(true);
 			}
 			else {
 				this._oTable.setMode("SingleSelectMaster");
+				this.byId("dimensionsColumn").setVisible(false)
+				this.byId("weightColumn").setVisible(false);
 			}
 
 			// Set the new aggregation
