@@ -127,6 +127,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'], functio
 					type : "string[]",
 					group : "Misc",
 					defaultValue : null					
+				},
+				
+				/**
+				 * Defines aggregation role
+				 * @since 1.34.0
+				 */
+				aggregationRole : {
+					type : "string",
+					group : "Misc",
+					defaultValue : null
 				}
 			}
 		}
