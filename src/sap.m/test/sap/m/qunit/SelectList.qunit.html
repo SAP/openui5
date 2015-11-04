@@ -1441,7 +1441,6 @@
 				// arrange
 				var fnSetPropertySpy = this.spy(oSelectList, "setProperty"),
 					fnSetAssociationSpy = this.spy(oSelectList, "setAssociation"),
-					fnWarningSpy = this.spy(jQuery.sap.log, "warning"),
 					fnFireSelectionChangeSpy = this.spy(oSelectList, "fireSelectionChange"),
 					fnSetSelectedItemSpy = this.spy(oSelectList, "setSelectedItem");
 
@@ -1451,7 +1450,6 @@
 				// assert
 				strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.SelectList.prototype.setProperty() method was not called");
 				strictEqual(fnSetAssociationSpy.callCount, 0, "sap.m.SelectList.prototype.setAssociation() method was not called");
-				strictEqual(fnWarningSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
 				strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selectionChange event was not fired");
 				ok(fnSetSelectedItemSpy.returned(oSelectList), 'sap.m.SelectList.prototype.setSelectedItem() method return the "this" reference');
 				ok(oSelectList.getSelectedItem() === null);
@@ -1498,7 +1496,6 @@
 
 				// assert
 				strictEqual(fnSetPropertySpy.callCount, 2, 'setProperty() method was called twice, once for the "id" and once for the "key"');
-				strictEqual(fnSetAssociationSpy.callCount, 1, "setAssociation() method was called");
 				ok(fnSetAssociationSpy.calledWith("selectedItem", oExpectedItem));
 				ok(fnSetPropertySpy.calledWith("selectedItemId", "item-id"));
 				ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
@@ -1548,7 +1545,6 @@
 
 				// assert
 				strictEqual(fnSetPropertySpy.callCount, 2, 'setProperty() method was called twice, once for the "id" and once for the "key"');
-				strictEqual(fnSetAssociationSpy.callCount, 1, "setAssociation() method was called");
 				ok(fnSetAssociationSpy.calledWith("selectedItem", oExpectedItem));
 				ok(fnSetPropertySpy.calledWith("selectedItemId", "item-id"));
 				ok(fnSetPropertySpy.calledWith("selectedKey", "1"));
