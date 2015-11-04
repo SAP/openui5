@@ -1020,9 +1020,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	InputBase.prototype.setTooltip = function(vTooltip) {
-		var oDomRef = this.getDomRef(),
-			oDescribedByDomRef = null,
-			sAnnouncement;
+		var oDomRef = this.getDomRef();
 
 		this._refreshTooltipBaseDelegate(vTooltip);
 		this.setAggregation("tooltip", vTooltip, true);
@@ -1031,15 +1029,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return this;
 		}
 
-		sAnnouncement = this.getRenderer().getDescribedByAnnouncement(this);
+		var sTooltip = this.getTooltip_AsString();
 
-		if (sAnnouncement) {
-			oDomRef.setAttribute("title", this.getTooltip_AsString());
+		if (sTooltip) {
+			oDomRef.setAttribute("title", sTooltip);
 		} else {
 			oDomRef.removeAttribute("title");
 		}
 
-		oDescribedByDomRef = this.getDomRef("describedby");
+		var oDescribedByDomRef = this.getDomRef("describedby"),
+			sAnnouncement = this.getRenderer().getDescribedByAnnouncement(this);
 
 		if (!oDescribedByDomRef && sAnnouncement) {
 			oDescribedByDomRef = document.createElement("span");
