@@ -152,10 +152,10 @@ sap.ui.define([
 						unknown(oPart.segment);
 					}
 				} else {
-					// a segment like "EntityType" or an index
-					if (typeof oNextObject === "object" && !Array.isArray(oNextObject)
-							&& Object.keys(oNextObject).length === 1) {
-						// type navigation property not resolved yet
+					// a segment like "Name", "Properties", "EntityType" or an index
+					if (typeof oNextObject === "object" && !Array.isArray(oNextObject)) {
+						// A navigation to an object; it must be a type. It might actually be a
+						// simple or complex type, but these are resolved already
 						return Helper.requestTypeForNavigationProperty(that, oObject,
 								oPart.property)
 							.then(followPath);
@@ -268,10 +268,6 @@ sap.ui.define([
 			var oProperty,
 				oResult;
 
-			if (!aSegments[i]) {
-				return sMetaPath;
-			}
-
 			for (;;) {
 				oResult = findChild(oType, ["Properties", "NavigationProperties"], aSegments[i]);
 				if (!oResult) {
@@ -287,11 +283,6 @@ sap.ui.define([
 					return sMetaPath;
 				}
 				sMetaPath = sMetaPath + "/Type";
-				if (Object.keys(oProperty.Type).length === 1) {
-					// type navigation property not resolved yet
-					return Helper.requestTypeForNavigationProperty(that, oProperty, "Type")
-						.then(followPath);
-				}
 				oType = oProperty.Type;
 			}
 		}
