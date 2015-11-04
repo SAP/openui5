@@ -3181,6 +3181,55 @@
 				oSelect.destroy();
 			});
 
+			// BCP 1580101530
+			test("it should correctly synchronize the selection after the properties (models and bindingContext) are propagated", function() {
+
+				// system under test
+				var oItemTemplate = new sap.ui.core.Item({
+					key: "{key}",
+					text: "{text}"
+				});
+
+				var oSelect = new sap.m.Select({
+					selectedKey: {
+						path: "/selected"
+					},
+					items: {
+						path: "/items",
+						template: oItemTemplate
+					}
+				});
+
+				// arrange
+				var oModel = new sap.ui.model.json.JSONModel();
+				var mData = {
+					"items": [
+						{
+							"key": "DZ",
+							"text": "Algeria"
+						},
+
+						{
+							"key": "AR",
+							"text": "Argentina"
+						}
+					],
+					"selected": "AR"
+				};
+
+				oModel.setData(mData);
+				sap.ui.getCore().setModel(oModel);
+				oSelect.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSelect.getSelectedKey(), "AR");
+
+				// cleanup
+				oSelect.destroy();
+				oModel.destroy();
+			});
+
 			/* ------------------------------ */
 			/* removeItem()                   */
 			/* ------------------------------ */
