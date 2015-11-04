@@ -1345,7 +1345,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 
 		$this.css({
 			top: iTop,
-			bottom: iBottom - iWindowTop,
+			bottom: Math.max(iBottom - iWindowTop, iBottom),
 			left: iLeft,
 			right: typeof iRight === "number" ? iRight - iWindowLeft : iRight
 		});
