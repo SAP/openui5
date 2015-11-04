@@ -260,53 +260,53 @@
 
 				// cleanup
 				oMultiComboBox.destroy();
-			});
+	});
 
 	test("constructor - selectedItems : [Item], items : [Item], removeSelectedKey via UI - check fired events",
-			function() {
+		function() {
 
-				// system under test
-				var oModel = new sap.ui.model.json.JSONModel({
-					"items" : [{
-						"key" : "AL",
-						"text" : "Algeria"
-					}, {
-						"key" : "AR",
-						"text" : "Argentina"
-					}, {
-						"key" : "BH",
-						"text" : "Bahrain"
-					}]
-				});
-				var oMultiComboBox = new sap.m.MultiComboBox({
-					items : {
-						path : "/items",
-						template : new sap.ui.core.Item({
-							key : "{key}",
-							text : "{text}"
-						})
-					}
-				});
-				oMultiComboBox.setModel(oModel);
-
-				// arrange
-				oMultiComboBox.placeAt("MultiComboBox-content");
-				sap.ui.getCore().applyChanges();
-
-				var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
-
-				// act
-				sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), "Algeria");
-				sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ENTER); //onsapenter
-
-				// assertions
-				strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
-				strictEqual(fnFireSelectionChangeSpy.args[0][0].changedItem, oMultiComboBox.getSelectedItems()[0],
-						"The selection change event parameter was passed");
-
-				// cleanup
-				oMultiComboBox.destroy();
+			// system under test
+			var oModel = new sap.ui.model.json.JSONModel({
+				"items" : [{
+					"key" : "AL",
+					"text" : "Algeria"
+				}, {
+					"key" : "AR",
+					"text" : "Argentina"
+				}, {
+					"key" : "BH",
+					"text" : "Bahrain"
+				}]
 			});
+			var oMultiComboBox = new sap.m.MultiComboBox({
+				items : {
+					path : "/items",
+					template : new sap.ui.core.Item({
+						key : "{key}",
+						text : "{text}"
+					})
+				}
+			});
+			oMultiComboBox.setModel(oModel);
+
+			// arrange
+			oMultiComboBox.placeAt("MultiComboBox-content");
+			sap.ui.getCore().applyChanges();
+
+			var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
+
+			// act
+			sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), "Algeria");
+			sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ENTER); //onsapenter
+
+			// assertions
+			strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
+			strictEqual(fnFireSelectionChangeSpy.args[0][0].changedItem, oMultiComboBox.getSelectedItems()[0],
+					"The selection change event parameter was passed");
+
+			// cleanup
+			oMultiComboBox.destroy();
+	});
 
 	test("constructor, check selectedKeys - items:[Items]", function() {
 
@@ -1953,55 +1953,55 @@
 	});
 
 	test("constructor - selectedItems : [Item], items : [Item], removeSelectedKey via UI - check fired events",
-			function() {
+		function() {
 
-				// system under test
-				var oModel = new sap.ui.model.json.JSONModel({
-					"items" : [{
-						"key" : "AL",
-						"text" : "Algeria"
-					}, {
-						"key" : "AR",
-						"text" : "Argentina"
-					}, {
-						"key" : "BH",
-						"text" : "Bahrain"
-					}]
-				});
-				var oMultiComboBox = new sap.m.MultiComboBox({
-					items : {
-						path : "/items",
-						template : new sap.ui.core.Item({
-							key : "{key}",
-							text : "{text}"
-						})
-					}
-				});
-				oMultiComboBox.setModel(oModel);
-
-				// arrange
-				oMultiComboBox.placeAt("MultiComboBox-content");
-				sap.ui.getCore().applyChanges();
-
-				var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
-				var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
-
-				// act
-				sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), "Algeria");
-				sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ENTER); //onsapenter
-
-				// assertions
-				strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
-				strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection change event was fired");
-				strictEqual(fnFireSelectionChangeSpy.args[0][0].changedItem, oMultiComboBox.getSelectedItems()[0],
-						"The selection change event parameter was passed");
-				strictEqual(fnFireSelectionChangeSpy.args[0][0].selected, true,
-						"The selection change event parameter was passed");
-				deepEqual(fnFireSelectionFinishSpy.args[0][0].selectedItems, oMultiComboBox.getSelectedItems());
-
-				// cleanup
-				oMultiComboBox.destroy();
+			// system under test
+			var oModel = new sap.ui.model.json.JSONModel({
+				"items" : [{
+					"key" : "AL",
+					"text" : "Algeria"
+				}, {
+					"key" : "AR",
+					"text" : "Argentina"
+				}, {
+					"key" : "BH",
+					"text" : "Bahrain"
+				}]
 			});
+			var oMultiComboBox = new sap.m.MultiComboBox({
+				items : {
+					path : "/items",
+					template : new sap.ui.core.Item({
+						key : "{key}",
+						text : "{text}"
+					})
+				}
+			});
+			oMultiComboBox.setModel(oModel);
+
+			// arrange
+			oMultiComboBox.placeAt("MultiComboBox-content");
+			sap.ui.getCore().applyChanges();
+
+			var fnFireSelectionChangeSpy = this.spy(oMultiComboBox, "fireSelectionChange");
+			var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
+
+			// act
+			sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), "Algeria");
+			sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.ENTER); //onsapenter
+
+			// assertions
+			strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was fired");
+			strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection change event was fired");
+			strictEqual(fnFireSelectionChangeSpy.args[0][0].changedItem, oMultiComboBox.getSelectedItems()[0],
+					"The selection change event parameter was passed");
+			strictEqual(fnFireSelectionChangeSpy.args[0][0].selected, true,
+					"The selection change event parameter was passed");
+			deepEqual(fnFireSelectionFinishSpy.args[0][0].selectedItems, oMultiComboBox.getSelectedItems());
+
+			// cleanup
+			oMultiComboBox.destroy();
+	});
 
 	//------------------------------ //
 	// _getXXXVisibleItemOf          //
@@ -2926,17 +2926,16 @@
 		var fnFireSelectionFinishSpy = this.spy(oMultiComboBox, "fireSelectionFinish");
 
 		// act
+		oMultiComboBox.getFocusDomRef().focus();
 		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), oItem.getText());
-		sap.ui.test.qunit.triggerEvent("focusout", oMultiComboBox.getDomRef());
+		oMultiComboBox.getFocusDomRef().blur();
 
 		// assertions     
 		var aSelectedItems = oMultiComboBox.getSelectedItems();
-		strictEqual(aSelectedItems.length, 1, "One token was selected on Focus Out");
-		strictEqual(aSelectedItems[0].getText(), "Algeria", "Algeria was selected");
-		
-		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
-		strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was not fired");
-		strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was not fired");
+		strictEqual(aSelectedItems.length, 0, "No token was selected on Focus Out");
+		strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
+		strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
+		strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -3648,8 +3647,7 @@
 				this.clock.reset();
 			});
 
-	test(
-			"Scenario OPEN_SUGGEST_ARROW: Pushing twice ALT+DOWN etc. in suggest list - suggest list is closing first and complete list is opening then",
+	test("Scenario OPEN_SUGGEST_ARROW: Pushing twice ALT+DOWN etc. in suggest list - suggest list is closing first and complete list is opening then",
 			function() {
 
 				var oSystem = {
@@ -4022,7 +4020,6 @@
 	});
 
 	test("FocusBorder - control + leave", function() {
-
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
 			items : [new sap.ui.core.Item({
@@ -4075,24 +4072,59 @@
 		oMultiComboBox.setValue("Foo")
 
 		// act
-		oMultiComboBox.focus();
-		oMultiComboBoxNext.focus();
-		
+		oMultiComboBox.getFocusDomRef().focus();
 		this.clock.tick(500);
-		var sInputValue = oMultiComboBox.getValue();
+		oMultiComboBox.getFocusDomRef().blur();
+		this.clock.tick(500);
 		
 		// assertions                                  
-		strictEqual(sInputValue, "",
+		strictEqual(oMultiComboBox.getValue(), "",
 				'The InputValue of the MultiComboBox must be resetted (empty) when it loses the focus.');
-		strictEqual(oMultiComboBox.getValueState(), "Error",
-		'ValueState must be "Error"');
 
 		// cleanup
 		oMultiComboBox.destroy();
 		oMultiComboBoxNext.destroy();
 		this.clock.reset();
 	});
-	
+
+	test("Input Value - select Item on Tab out", function() {
+		
+		// system under test
+		var oMultiComboBox = new sap.m.MultiComboBox({
+			items : [new sap.ui.core.Item({
+				key : "DZ",
+				text : "Algeria"
+			})]
+		});
+		
+		var oMultiComboBoxNext = new sap.m.MultiComboBox({
+			items : [new sap.ui.core.Item({
+				key : "DZ",
+				text : "Algeria"
+			})]
+		});
+
+		// arrange          
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		oMultiComboBoxNext.placeAt("MultiComboBox-content");
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oMultiComboBox.getFocusDomRef().focus();
+		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), "Algeria");
+		sap.ui.test.qunit.triggerKeydown(oMultiComboBox.getDomRef(), jQuery.sap.KeyCodes.TAB);
+		
+		// assertions                                  
+		strictEqual(oMultiComboBox.getValue(), "",
+				'The InputValue of the MultiComboBox must be resetted (empty) when user tabs to next control.');
+		strictEqual(oMultiComboBox.getSelectedItems()[0].getKey(), "DZ");
+
+		// cleanup
+		oMultiComboBox.destroy();
+		oMultiComboBoxNext.destroy();
+	});
+
 	test("Keep picker open after re-rendering", function() {
 		// system under test
 		var oMultiComboBox = new sap.m.MultiComboBox({
