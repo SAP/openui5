@@ -860,7 +860,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 			}
 		}
 
-		if (!oControl.getAggregation("_objectNumber")) {
+		if (!oControl.getNumber()) {
 			oRM.addClass("sapMOHRTitleDivFull");
 		}
 		oRM.writeClasses();
