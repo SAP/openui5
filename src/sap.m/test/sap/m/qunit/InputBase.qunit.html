@@ -1798,6 +1798,7 @@
 				// assert
 				strictEqual(oInput.$().attr("title"), "tooltip");
 				strictEqual(oInput.$("describedby").text(), "tooltip");
+				strictEqual(oInput.getFocusDomRef().getAttribute("aria-describedby"), oInput.getId() + "-describedby");
 
 				// cleanup
 				oInput.destroy();
@@ -1874,6 +1875,46 @@
 
 				// cleanup
 				oInput.destroy();
+				CustomInput = null;
+				delete CustomInput;
+			});
+
+			test("it should keep other describedby associations when the tooltip is set to empty string", function() {
+				sap.m.InputBase.extend("CustomInput", {
+					metadata: {
+						associations: {
+							ariaDescribedBy: {
+								type: "sap.ui.core.Control",
+								multiple: true,
+								singularName: "ariaDescribedBy"
+							}
+						}
+					},
+					renderer: {}
+				});
+
+				// system under test
+				var oText = new sap.m.Text("text");
+				var oInput = new CustomInput({
+					tooltip: "tooltip",
+					ariaDescribedBy: oText
+				});
+
+				// arrange
+				oInput.placeAt("content");
+				oText.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oInput.setTooltip("");
+
+				// assert
+				strictEqual(oInput.getFocusDomRef().getAttribute("aria-describedby"), "text");
+
+				// cleanup
+				oText.destroy();
+				oInput.destroy();
+				CustomInput = null;
 				delete CustomInput;
 			});
 
