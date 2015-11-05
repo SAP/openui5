@@ -20,7 +20,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 	/**
 	 * Constructor for an ElementOverlay.
 	 *
-	 * @param {string} [sId] id for the new object, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
 	 * @class
@@ -45,43 +45,43 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 			// ---- control specific ----
 			library : "sap.ui.dt",
 			properties : {
-				/** 
+				/**
 				 * Whether the overlay and it's descendants should be visible on a screen
 				 * We are overriding Control's property to prevent RenderManager from rendering of an invisible placeholder
-				 */	
+				 */
 				visible : {
 					type : "boolean",
 					defaultValue : true
-				},				
-				/** 
+				},
+				/**
 				 * Whether the ElementOverlay is selected
-				 */					
+				 */
 				selected : {
 					type : "boolean",
 					defaultValue : false
 				},
-				/** 
+				/**
 				 * Whether the ElementOverlay is selectable, per default this implicitly makes the overlay focusable (TODO discuss)
 				 */
 				selectable : {
 					type : "boolean",
 					defaultValue : false
 				},
-				/** 
+				/**
 				 * Whether the ElementOverlay can get the browser focus (tabindex)
 				 */
 				focusable : {
 					type : "boolean",
 					defaultValue : false
 				},
-				/** 
+				/**
 				 * Whether the ElementOverlay is movable
 				 */
 				movable : {
 					type : "boolean",
 					defaultValue : false
 				},
-				/** 
+				/**
 				 * Whether the ElementOverlay is editable
 				 */
 				editable : {
@@ -122,7 +122,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 						movable : { type : "boolean" }
 					}
 				},
-				/**				
+				/**
 				 * Event fired when the property "Selectable" is changed
 				 */
 				selectableChange : {
@@ -130,7 +130,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 						selectable : { type : "boolean" }
 					}
 				},
-				/**				
+				/**
 				 * Event fired when the property "Focusable" is changed
 				 */
 				focusableChange : {
@@ -163,20 +163,28 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 		}
 	});
 
-	/** 
-	 * Called when the ElementOverlay is initialized		
+	/**
+	 * Called when the ElementOverlay is initialized
 	 * @protected
 	 */
 	ElementOverlay.prototype.init = function() {
 		Overlay.prototype.init.apply(this, arguments);
-		
+
 		this._oDefaultDesignTimeMetadata = null;
 		this.placeAt(Overlay.getOverlayContainer());
+
+		// this is needed to prevent UI5 renderManager from removing overlay's node from DOM in a rendering phase
+		// see RenderManager.js "this._fPutIntoDom" function
+		var oUIArea = this.getUIArea();
+		oUIArea._onChildRerenderedEmpty = function() {
+			return true;
+		};
+
 		this._bVisible = null;
 	};
 
-	/** 
-	 * Called when the ElementOverlay is destroyed	
+	/**
+	 * Called when the ElementOverlay is destroyed
 	 * @protected
 	 */
 	ElementOverlay.prototype.exit = function() {
@@ -201,7 +209,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 		delete this._elementId;
 	};
 
-	/** 
+	/**
 	 * Sets an associated Element to create an overlay for
 	 * @param {string|sap.ui.core.Element} vElement element or element's id
 	 * @returns {sap.ui.dt.ElementOverlay} returns this
@@ -217,7 +225,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 		this.destroyAggregation("aggregationOverlays");
 		this._destroyDefaultDesignTimeMetadata();
 		delete this._elementId;
-		
+
 		this.setAssociation("element", vElement);
 		this._createAggregationOverlays();
 
@@ -233,9 +241,9 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 		}
 
 		return this;
-	};		
+	};
 
-	/** 
+	/**
 	 * Returns a DOM reference for the associated Element or null, if it can't be found
 	 * @return {Element} DOM element or null
 	 * @public
@@ -260,7 +268,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 	/**
 	 * Sets whether the ElementOverlay is visible
 	 * @param {boolean} bVisible if the ElementOverlay is visible
-	 * @returns {sap.ui.dt.ElementOverlay} returns this	 
+	 * @returns {sap.ui.dt.ElementOverlay} returns this
 	 * @public
 	 */
 	ElementOverlay.prototype.setVisible = function(bVisible) {
@@ -268,12 +276,12 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 		this._bVisible = bVisible;
 
 		return this;
-	};	
+	};
 
 	/**
 	 * Sets whether the ElementOverlay is selectable
 	 * @param {boolean} bSelectable if the ElementOverlay is selectable
-	 * @returns {sap.ui.dt.ElementOverlay} returns this	 
+	 * @returns {sap.ui.dt.ElementOverlay} returns this
 	 * @public
 	 */
 	ElementOverlay.prototype.setSelectable = function(bSelectable) {
@@ -283,19 +291,19 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 				this.setSelected(false);
 			}
 
-			this.toggleStyleClass("sapUiDtOverlaySelectable", bSelectable);		
+			this.toggleStyleClass("sapUiDtOverlaySelectable", bSelectable);
 			this.setProperty("selectable", bSelectable);
 			this.fireSelectableChange({selectable : bSelectable});
 		}
 		this.setFocusable(bSelectable);
 		return this;
 	};
-	
+
 	/**
 	 * Sets whether the ElementOverlay is selected and toggles corresponding css class
 	 * @param {boolean} bSelected if the ElementOverlay is selected
 	 * @param {boolean} bSuppressEvent (internal use only) supress firing "selectionChange" event
-	 * @returns {sap.ui.dt.ElementOverlay} returns this	 	 
+	 * @returns {sap.ui.dt.ElementOverlay} returns this
 	 * @public
 	 */
 	ElementOverlay.prototype.setSelected = function(bSelected, bSuppressEvent) {
@@ -306,13 +314,13 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 			if (!bSuppressEvent) {
 				this.fireSelectionChange({
 					selected : bSelected
-				});	
+				});
 			}
 		}
 
 		return this;
 	};
-	/** 
+	/**
 	 * Sets whether the ElementOverlay can get the browser focus (tabindex)
 	 * @param {boolean} bFocusable if the ElementOverlay is focusable
 	 * @returns {sap.ui.dt.ElementOverlay} returns this
@@ -326,40 +334,40 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 
 		return this;
 	};
-	
-	/** 
+
+	/**
 	 * Sets whether the ElementOverlay is movable and toggles corresponding css class
 	 * @param {boolean} bMovable if the ElementOverlay is movable
-	 * @returns {sap.ui.dt.ElementOverlay} returns this	 	 
+	 * @returns {sap.ui.dt.ElementOverlay} returns this
 	 * @public
 	 */
 	ElementOverlay.prototype.setMovable = function(bMovable) {
 		if (this.getMovable() !== bMovable) {
 			this.toggleStyleClass("sapUiDtOverlayMovable", bMovable);
-			
+
 			this.setProperty("movable", bMovable);
 			this.fireMovableChange({movable : bMovable});
 		}
 
 		return this;
-	};	
+	};
 
-	/** 
+	/**
 	 * Sets whether the ElementOverlay is editable and toggles corresponding css class
 	 * @param {boolean} bEditable if the ElementOverlay is editable
-	 * @returns {sap.ui.dt.ElementOverlay} returns this	 	 
+	 * @returns {sap.ui.dt.ElementOverlay} returns this
 	 * @public
 	 */
 	ElementOverlay.prototype.setEditable = function(bEditable) {
 		if (this.getEditable() !== bEditable) {
 			this.toggleStyleClass("sapUiDtOverlayEditable", bEditable);
-			
+
 			this.setProperty("editable", bEditable);
 			this.fireEditableChange({editable : bEditable});
 		}
 
 		return this;
-	};	
+	};
 
 	/**
 	 * Returns the DesignTime metadata of this ElementOverlay, if no DT metadata exists, creates and returns the default DT metadata object
@@ -390,7 +398,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 		});
 	};
 
-	/** 
+	/**
 	 * @private
 	 */
 	ElementOverlay.prototype._createAggregationOverlay = function(sAggregationName, bInHiddenTree) {
@@ -408,7 +416,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 		this.addAggregation("aggregationOverlays", oAggregationOverlay);
 	};
 
-	/** 
+	/**
 	 * @private
 	 */
 	ElementOverlay.prototype._createAggregationOverlays = function() {
@@ -491,7 +499,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 	};
 
 	/**
-	 * @param {sap.ui.baseEvent} oEvent event object	
+	 * @param {sap.ui.baseEvent} oEvent event object
 	 * @private
 	 */
 	ElementOverlay.prototype._onElementModified = function(oEvent) {
@@ -552,7 +560,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 	 */
 	ElementOverlay.prototype.getParentElementOverlay = function() {
 		var oParentAggregationOverlay = this.getParentAggregationOverlay();
-		if (oParentAggregationOverlay) { 
+		if (oParentAggregationOverlay) {
 			return oParentAggregationOverlay.getParent();
 		}
 	};
@@ -576,7 +584,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 			this.$().attr("tabindex", null);
 		}
 	};
-	/** 
+	/**
 	 * Returns if the ElementOverlay is selected
 	 * @public
 	 * @return {boolean} if the ElementOverlay is selected
@@ -585,7 +593,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 		return this.getSelected();
 	};
 
-	/** 
+	/**
 	 * Returns if the ElementOverlay is selectable
 	 * @public
 	 * @return {boolean} if the ElementOverlay is selectable
@@ -593,8 +601,8 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 	ElementOverlay.prototype.isSelectable = function() {
 		return this.getSelectable();
 	};
-	
-	/** 
+
+	/**
 	 * Returns if the ElementOverlay is can get the focus
 	 * @public
 	 * @return {boolean} if the ElementOverlay is focusable
@@ -603,7 +611,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 		return this.getFocusable();
 	};
 
-	/** 
+	/**
 	 * Returns if the ElementOverlay is movable
 	 * @public
 	 * @return {boolean} if the ElementOverlay is movable
@@ -612,7 +620,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 		return this.getMovable();
 	};
 
-	/** 
+	/**
 	 * Returns if the ElementOverlay is editable
 	 * @public
 	 * @return {boolean} if the ElementOverlay is editable
@@ -621,7 +629,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 		return this.getEditable();
 	};
 
-	/** 
+	/**
 	 * Returns if the ElementOverlay is visible
 	 * @public
 	 * @return {boolean} if the ElementOverlay is visible
