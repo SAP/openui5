@@ -192,14 +192,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	};
 
 	/**
-	 * Handle when enter is pressed.
+	 * Handles the item selection when user triggers an item selection via key press (TAB, ENTER etc.).
 	 *
-	 * @param {jQuery.Event} oEvent The event object.
+	 * @param {jQuery.Event} oEvent The key event object.
 	 * @private
 	 */
-	MultiComboBox.prototype.onsapenter = function(oEvent) {
-		ComboBoxBase.prototype.onsapenter.apply(this, arguments);
-
+	MultiComboBox.prototype._selectItemByKey = function(oEvent) {
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
@@ -249,6 +247,37 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		}
 	};
 
+	/**
+	 * Handle when enter is pressed.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @private
+	 */
+	MultiComboBox.prototype.onsapenter = function(oEvent) {
+		ComboBoxBase.prototype.onsapenter.apply(this, arguments);
+		this._selectItemByKey(oEvent);
+	};
+
+	/**
+	 * Handles tab key event. Selects an item according to given input if there is exactly one fitting item available.
+	 *
+	 * @param {jQuery.Event}
+	 *          oEvent The event object.
+	 * @private
+	 */
+	MultiComboBox.prototype.onsaptabnext = function(oEvent) {
+		var sInputValue = this.getValue();
+		if (sInputValue) {
+			var aSelectableItems = this._getUnselectedItemsStartingText(sInputValue);
+			if (aSelectableItems.length === 1) {
+				this._selectItemByKey(oEvent);
+			} else {
+				this._showWrongValueVisualEffect();
+				this.setValue(null);
+			}
+		}
+	};
+
 	/* =========================================================== */
 	/* Event handlers */
 	/* =========================================================== */
@@ -263,11 +292,14 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 		var oPicker = this.getAggregation("picker");
 		var oControl = sap.ui.getCore().byId(oEvent.relatedControlId);
 		var oFocusDomRef = oControl && oControl.getFocusDomRef();
+		
+		// If focus target is outside of picker
+		if (!oPicker || !oPicker.getFocusDomRef() || !oFocusDomRef || !jQuery.contains(oPicker.getFocusDomRef(), oFocusDomRef)) {
+			this.setValue(null);
+		}
 
 		if (oPicker && oFocusDomRef) {
-
 			if (jQuery.sap.equal(oPicker.getFocusDomRef(), oFocusDomRef)) {
-
 				// force the focus to stay in the MultiComboBox field when scrollbar
 				// is moving
 				this.focus();
@@ -1417,37 +1449,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	};
 
 	/**
+	 * Handles the focus out event.
 	 * @private
 	 */
 	MultiComboBox.prototype.onfocusout = function(oEvent) {
-		var sInputValue = this.getValue();
-
-		if (sInputValue) {
-			var aSelectableItems = this._getUnselectedItemsStartingText(sInputValue);
-
-			if (aSelectableItems.length === 1) {
-				this.onsapenter();
-			} else {
-
-				setTimeout(function() {
-					var $RelatedDomRefs = jQuery(this.getDomRef());
-					var oPicker = this.getPicker();
-
-					if (oPicker && oPicker.getDomRef()) {
-						var $picker = jQuery(oPicker.getDomRef());
-						$RelatedDomRefs = $RelatedDomRefs.add($picker);
-					}
-
-					var bFocusOutsideOfControl = $RelatedDomRefs.has(jQuery(document.activeElement)).length === 0;
-
-					if (bFocusOutsideOfControl) {
-						this._showWrongValueVisualEffect();
-						this.setValue(null);
-					}
-				}.bind(this), 0);
-			}
-		}
-
 		this.removeStyleClass(MultiComboBoxRenderer.CSS_CLASS + "Focused");
 		ComboBoxBase.prototype.onfocusout.apply(this, arguments);
 	};
