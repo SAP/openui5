@@ -1755,20 +1755,27 @@
 					if (oPendingInteraction.requests.length > 0) {
 						// determine Performance API timestamp for latestly completed request
 						var iEnd = oPendingInteraction.requests[0].startTime,
-							iLow = oPendingInteraction.requests[0].requestStart,
-							iHigh = oPendingInteraction.requests[0].responseEnd;
+							iNavLo = oPendingInteraction.requests[0].startTime,
+							iNavHi = oPendingInteraction.requests[0].requestStart,
+							iRtLo = oPendingInteraction.requests[0].requestStart,
+							iRtHi = oPendingInteraction.requests[0].responseEnd;
 						oPendingInteraction.requests.forEach(function(oRequest) {
 							iEnd = oRequest.responseEnd > iEnd ? oRequest.responseEnd : iEnd;
-							oPendingInteraction.requestTime += (oRequest.responseEnd - oRequest.requestStart);
-							// sometimes navigation start is set to 0 for no observable reason
-							oPendingInteraction.navigation += oRequest.connectEnd - oRequest.startTime;
-							if (iHigh < oRequest.requestStart) {
-								oPendingInteraction.roundtrip += iHigh - iLow;
-								iLow =  oRequest.requestStart;
+							oPendingInteraction.requestTime += (oRequest.responseEnd - oRequest.startTime);
+							// summarize navigation and roundtrip with respect to requests overlapping and times w/o requests
+							if (iRtHi < oRequest.startTime) {
+								oPendingInteraction.navigation += (iNavHi - iNavLo);
+								oPendingInteraction.roundtrip += (iRtHi - iRtLo);
+								iNavLo =  oRequest.startTime;
+								iRtLo =  oRequest.requestStart;
 							}
-							iHigh = oRequest.responseEnd;
+							if (oRequest.responseEnd > iRtHi) {
+								iNavHi = oRequest.requestStart;
+								iRtHi = oRequest.responseEnd;
+							}
 						});
-						oPendingInteraction.roundtrip += iHigh - iLow;
+						oPendingInteraction.navigation += iNavHi - iNavLo;
+						oPendingInteraction.roundtrip += iRtHi - iRtLo;
 						// calculate network time
 						oPendingInteraction.networkTime = oPendingInteraction.networkTime ? oPendingInteraction.requestTime - oPendingInteraction.networkTime : 0;
 						// in case processing is not determined, which means no re-rendering occured, take start to iEnd
@@ -1795,7 +1802,7 @@
 				oPendingInteraction = {
 					isFinal: false, // indicates if interaction is still pending or final
 					event: sType, // event which triggered interaction
-					trigger: oSrcControl ? oSrcControl.getId() : "no_ui5_control", // control which triggered interaction
+					trigger: oSrcControl && oSrcControl.getId ? oSrcControl.getId() : "no_ui5_control", // control which triggered interaction
 					component: oSrcControl && oSrcControl.sOwnerId ? oSrcControl.sOwnerId : identifyOwnerComponent(oSrcControl), // coomponent or app identifier
 					start : iTime, // interaction start
 					end: 0, // interaction end
