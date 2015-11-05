@@ -1123,8 +1123,7 @@
 
 		// when metadata loaded a refresh is called which will trigger the data loading
 		// if not yet happened
-
-		var oBinding = oModel.bindList("/Categories").initialize();	
+		var oBinding = oModel.bindList("/Categories");	
 		var handler = function() { // delay the following test
 			ok(oBinding.oEntityType, "entity type binding check");
 			equal(oBinding.oEntityType.name, "Category", "entity type name check");
@@ -1152,7 +1151,7 @@
 			refreshAfterChange: false
 		}, true);
 
-		var oBinding = oModel.bindList("/Categories").initialize();
+		var oBinding = oModel.bindList("/Categories");
 		oModel.setDeferredBatchGroups(["myId"]);
 		var handler = function() { // delay the following test
 			var oContext = oModel.createEntry("Categories",{properties:{CategoryID:99,CategoryName:"Food",Description:"Food Desc"},
