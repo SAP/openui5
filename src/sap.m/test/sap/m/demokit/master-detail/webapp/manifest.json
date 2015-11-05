@@ -94,7 +94,8 @@
 				"controlAggregation": "detailPages",
 				"bypassed": {
 					"target": ["master", "notFound"]
-				}
+				},
+				"async": "true"
 			},
 
 			"routes": [
