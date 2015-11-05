@@ -38,7 +38,7 @@ sap.ui.define([
 					group: "Behavior",
 					defaultValue: -1
 				},
-				
+
 				/**
 				 * Specifies a chart type if the column panel shows dimension and measure entities.
 				 * 
@@ -47,16 +47,6 @@ sap.ui.define([
 				chartType: {
 					type: "string",
 					defaultValue: ""
-				},
-				
-				/**
-				 * Specifies available chart types if the column panel shows dimension and measure entities.
-				 * 
-				 * @since 1.34
-				 */
-				availableChartTypes: {
-					type: "string[]",
-					defaultValue: null
 				}
 			},
 			aggregations: {
@@ -80,6 +70,17 @@ sap.ui.define([
 					multiple: true,
 					singularName: "content",
 					visibility: "hidden"
+				},
+
+				/**
+				 * Specifies available chart types if the column panel shows dimension and measure entities.
+				 * 
+				 * @since 1.34
+				 */
+				availableChartTypes: {
+					type: "sap.ui.core.Item",
+					multiple: true,
+					singularName: "availableChartType"
 				}
 			},
 			events: {
@@ -135,10 +136,10 @@ sap.ui.define([
 			oRm.addClass("sapMP13nColumnsPanel");
 			oRm.writeClasses();
 			oRm.write(">"); // div element
-		
+
 			var aContent = oControl.getAggregation("content");
 			if (aContent) {
-				aContent.forEach(function(oContent){
+				aContent.forEach(function(oContent) {
 					oRm.renderControl(oContent);
 				});
 			}
@@ -1503,11 +1504,33 @@ sap.ui.define([
 
 		this._oToolbarSpacer = new sap.m.ToolbarSpacer();
 
+		var oData = {
+			availableChartTypes: []
+		};
+		var oModel = new sap.ui.model.json.JSONModel(oData);
+		this._oSelect = new sap.m.Select({
+			items: {
+				path: '/availableChartTypes',
+				sorter: {
+					path: 'text'
+				},
+				template: new sap.ui.core.Item({
+					key: "{key}",
+					text: "{text}"
+				})
+			},
+			change: function(oEvent) {
+				var sKey = oEvent.getParameter("selectedItem").getKey();
+				that.setChartType(sKey);
+			}
+		});
+		this._oSelect.setModel(oModel);
+
 		this._oToolbar = new sap.m.OverflowToolbar({
 			active: true,
 			design: sap.m.ToolbarDesign.Solid, // Transparent,
 			content: [
-				this._oToolbarSpacer, this._oSearchField, this._oShowSelectedButton, this._oMoveToTopButton, this._oMoveUpButton, this._oMoveDownButton, this._oMoveToBottomButton
+				this._oSelect, this._oToolbarSpacer, this._oSearchField, this._oShowSelectedButton, this._oMoveToTopButton, this._oMoveUpButton, this._oMoveDownButton, this._oMoveToBottomButton
 			]
 		});
 
@@ -1923,6 +1946,44 @@ sap.ui.define([
 		}
 
 		return bResult;
+	};
+
+	P13nColumnsPanel.prototype.setAvailableChartTypes = function(aItems) {
+		var oData = this._oSelect.getModel().getData();
+		oData.availableChartTypes = [];
+		aItems.forEach(function(oItem) {
+			oData.availableChartTypes.push({
+				key: oItem.getKey(),
+				text: oItem.getText()
+			});
+		});
+		this._oSelect.getModel().setData(oData, true);
+		return this;
+	};
+	P13nColumnsPanel.prototype.addAvailableChartType = function(oItem) {
+		var oData = this._oSelect.getModel().getData();
+		oData.availableChartTypes.push({
+			key: oItem.getKey(),
+			text: oItem.getText()
+		});
+		this._oSelect.getModel().setData(oData, true);
+		return this;
+	};
+	P13nColumnsPanel.prototype.removeAvailableChartType = function(oItem) {
+		var oData = this._oSelect.getModel().getData();
+		var iIndex = oData.availableChartTypes.indexOf({
+			key: oItem.getKey(),
+			text: oItem.getText()
+		});
+		if (iIndex > -1) {
+			oData.availableChartTypes.splice(iIndex, 1);
+		}
+		this._oSelect.getModel().setData(oData, true);
+		return oItem;
+	};
+	P13nColumnsPanel.prototype.removeAllAvailableChartType = function() {
+		this._oSelect.getModel().getData().availableChartTypes = [];
+		return this; //TODO: to be returned are removed Id's
 	};
 
 	return P13nColumnsPanel;
