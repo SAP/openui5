@@ -342,6 +342,27 @@
 				ok(compareFilterKeys(this.oFilterState, this.oVSD.getSelectedFilterKeys()), "The computed filter keys should have the same structure as the passed one");
 			});
 
+			test("setSelectedSortItem via string key throws error if the key is wrong, but does not prevent dialog open", function () {
+				var oErrorLogSpy = sinon.spy(jQuery.sap.log, "error"),
+					sErrorMessage,
+					sNonExistentItemKey = "non_existent_key";
+
+				//act
+				this.oVSD.setSelectedSortItem(sNonExistentItemKey);
+				//assert
+				strictEqual(oErrorLogSpy.callCount, 1, "Item could not be set");
+				sErrorMessage = oErrorLogSpy.args[0][0];
+				ok(sErrorMessage.indexOf(sNonExistentItemKey) > -1, "Error message shows the item key which is problematic");
+
+				//act
+				this.oVSD.open();
+				//assert
+				ok(this.oVSD._getDialog().isOpen(), "Dialog is still functional");
+
+				//clean
+				jQuery.sap.log.error.restore();
+			});
+
 			module("Performance", {
 				setup : function () {
 					this.oVSD = new sap.m.ViewSettingsDialog();
