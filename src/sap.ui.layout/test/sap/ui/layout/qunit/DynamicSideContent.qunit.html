@@ -42,117 +42,117 @@
 
 				QUnit.module("Public API", {
 					setup : function () {
-						this.oDSC = new sap.ui.layout.DynamicSideContent();
-						this.oDSC.placeAt("qunit-fixture");
+						this._oDSC = new sap.ui.layout.DynamicSideContent();
+						this._oDSC.placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
 					},
 					teardown : function () {
-						this.oDSC.destroy();
-						this.oDSC = null;
+						this._oDSC.destroy();
+						this._oDSC = null;
 					}
 				});
 
 				QUnit.test("Default values",function(assert){
-					assert.strictEqual(this.oDSC.getShowSideContent(), true, "'showSideContent' property default value should be 'true'");
-					assert.strictEqual(this.oDSC.getShowMainContent(), true, "'showMainContent' property default value should be 'true'");
-					assert.strictEqual(this.oDSC.getSideContentVisibility(), sap.ui.layout.SideContentVisibility.ShowAboveS, "'showMainContent' property default value should be 'ShowAboveS'");
-					assert.strictEqual(this.oDSC.getSideContentFallDown(), sap.ui.layout.SideContentFallDown.OnMinimumWidth, "'showMainContent' property default value should be 'onMinimumWidth'");
-					assert.strictEqual(this.oDSC.getEqualSplit(), false, "'equalSplit' property default value should be false");
-					assert.strictEqual(this.oDSC.getContainerQuery(), false, "'containerQuery' property default value should be false");
+					assert.strictEqual(this._oDSC.getShowSideContent(), true, "'showSideContent' property default value should be 'true'");
+					assert.strictEqual(this._oDSC.getShowMainContent(), true, "'showMainContent' property default value should be 'true'");
+					assert.strictEqual(this._oDSC.getSideContentVisibility(), sap.ui.layout.SideContentVisibility.ShowAboveS, "'showMainContent' property default value should be 'ShowAboveS'");
+					assert.strictEqual(this._oDSC.getSideContentFallDown(), sap.ui.layout.SideContentFallDown.OnMinimumWidth, "'showMainContent' property default value should be 'onMinimumWidth'");
+					assert.strictEqual(this._oDSC.getEqualSplit(), false, "'equalSplit' property default value should be false");
+					assert.strictEqual(this._oDSC.getContainerQuery(), false, "'containerQuery' property default value should be false");
 				});
 
 				QUnit.test("'ShowSideContent' property is set correctly",function(assert){
 					var bSuppressVisualUpdate = false;
-					sinon.spy(this.oDSC, "_changeGridState");
+					sinon.spy(this._oDSC, "_changeGridState");
 
-					this.oDSC.setShowSideContent(false, bSuppressVisualUpdate);
-					assert.strictEqual(this.oDSC.getShowSideContent(), false, "'showSideContent' property is set to false");
-					assert.ok(this.oDSC._changeGridState.calledOnce, "_changeGridState is called when side content is not visible");
+					this._oDSC.setShowSideContent(false, bSuppressVisualUpdate);
+					assert.strictEqual(this._oDSC.getShowSideContent(), false, "'showSideContent' property is set to false");
+					assert.ok(this._oDSC._changeGridState.calledOnce, "_changeGridState is called when side content is not visible");
 
-					this.oDSC._changeGridState.restore();
+					this._oDSC._changeGridState.restore();
 
-					sinon.spy(this.oDSC, "_changeGridState");
+					sinon.spy(this._oDSC, "_changeGridState");
 
-					this.oDSC.setShowSideContent(true, bSuppressVisualUpdate);
-					assert.strictEqual(this.oDSC.getShowSideContent(), true, "'showSideContent' property is set to true");
-					assert.ok(this.oDSC._changeGridState.calledOnce, "_changeGridState is called when side content is visible and suppressVisualUpdate is false");
+					this._oDSC.setShowSideContent(true, bSuppressVisualUpdate);
+					assert.strictEqual(this._oDSC.getShowSideContent(), true, "'showSideContent' property is set to true");
+					assert.ok(this._oDSC._changeGridState.calledOnce, "_changeGridState is called when side content is visible and suppressVisualUpdate is false");
 
-					this.oDSC._changeGridState.restore();
+					this._oDSC._changeGridState.restore();
 
-					sinon.spy(this.oDSC, "_changeGridState");
+					sinon.spy(this._oDSC, "_changeGridState");
 					bSuppressVisualUpdate = true;
-					this.oDSC.setShowSideContent(false, bSuppressVisualUpdate);
-					assert.ok(!this.oDSC._changeGridState.calledOnce, "_changeGridState is not called when suppressVisualUpdate is true");
-					this.oDSC._changeGridState.restore();
+					this._oDSC.setShowSideContent(false, bSuppressVisualUpdate);
+					assert.ok(!this._oDSC._changeGridState.calledOnce, "_changeGridState is not called when suppressVisualUpdate is true");
+					this._oDSC._changeGridState.restore();
 				});
 
 				QUnit.test("'ShowMainContent' property is set correctly",function(assert){
 					var bSuppressInvalidate = false;
 
-					sinon.spy(this.oDSC, "_changeGridState");
+					sinon.spy(this._oDSC, "_changeGridState");
 
-					this.oDSC.setShowMainContent(false, bSuppressInvalidate);
-					assert.strictEqual(this.oDSC.getShowMainContent(), false, "'showMainContent' property is set to false");
-					assert.ok(this.oDSC._changeGridState.calledOnce, "_changeGridState is called when main content is not visible");
+					this._oDSC.setShowMainContent(false, bSuppressInvalidate);
+					assert.strictEqual(this._oDSC.getShowMainContent(), false, "'showMainContent' property is set to false");
+					assert.ok(this._oDSC._changeGridState.calledOnce, "_changeGridState is called when main content is not visible");
 
-					this.oDSC._changeGridState.restore();
+					this._oDSC._changeGridState.restore();
 
-					sinon.spy(this.oDSC, "_changeGridState");
+					sinon.spy(this._oDSC, "_changeGridState");
 
 					bSuppressInvalidate = true;
-					this.oDSC._MCVisible =true;
-					assert.ok(!this.oDSC._changeGridState.calledOnce, "_changeGridState is not called when suppressVisualUpdate is true");
+					this._oDSC._MCVisible =true;
+					assert.ok(!this._oDSC._changeGridState.calledOnce, "_changeGridState is not called when suppressVisualUpdate is true");
 
-					this.oDSC._changeGridState.restore();
+					this._oDSC._changeGridState.restore();
 
-					sinon.spy(this.oDSC, "_changeGridState");
+					sinon.spy(this._oDSC, "_changeGridState");
 
 					bSuppressInvalidate = false;
-					this.oDSC.setShowMainContent(true, bSuppressInvalidate);
-					assert.strictEqual(this.oDSC.getShowMainContent(), true, "'showMainContent' property is set to true");
-					assert.ok(this.oDSC._changeGridState.calledOnce, "_changeGridState is called when main content is visible and suppressVisualUpdate is false");
+					this._oDSC.setShowMainContent(true, bSuppressInvalidate);
+					assert.strictEqual(this._oDSC.getShowMainContent(), true, "'showMainContent' property is set to true");
+					assert.ok(this._oDSC._changeGridState.calledOnce, "_changeGridState is called when main content is visible and suppressVisualUpdate is false");
 
-					this.oDSC._changeGridState.restore();
+					this._oDSC._changeGridState.restore();
 				});
 
 				QUnit.test("'EqualSplit' property is set correctly",function(assert){
-					sinon.spy(this.oDSC, "_setResizeData");
-					sinon.spy(this.oDSC, "_changeGridState");
+					sinon.spy(this._oDSC, "_setResizeData");
+					sinon.spy(this._oDSC, "_changeGridState");
 
-					this.oDSC.setEqualSplit(true);
-					assert.strictEqual(this.oDSC.getEqualSplit(), true, "'equalSplit' property is set to true");
-					assert.strictEqual(this.oDSC.getShowSideContent(), true, "Side content should be visible");
-					assert.strictEqual(this.oDSC.getShowMainContent(), true, "Main content should be visible");
+					this._oDSC.setEqualSplit(true);
+					assert.strictEqual(this._oDSC.getEqualSplit(), true, "'equalSplit' property is set to true");
+					assert.strictEqual(this._oDSC.getShowSideContent(), true, "Side content should be visible");
+					assert.strictEqual(this._oDSC.getShowMainContent(), true, "Main content should be visible");
 
-					this.oDSC._currentBreakpoint = XL;
-					assert.ok(this.oDSC._setResizeData.calledOnce, "_setResizeData is called");
-					assert.ok(this.oDSC._changeGridState.calledOnce, "_changeGridState is called");
+					this._oDSC._currentBreakpoint = XL;
+					assert.ok(this._oDSC._setResizeData.calledOnce, "_setResizeData is called");
+					assert.ok(this._oDSC._changeGridState.calledOnce, "_changeGridState is called");
 
-					this.oDSC._setResizeData.restore();
-					this.oDSC._changeGridState.restore();
+					this._oDSC._setResizeData.restore();
+					this._oDSC._changeGridState.restore();
 
-					sinon.spy(this.oDSC, "_setResizeData");
-					sinon.spy(this.oDSC, "_changeGridState");
+					sinon.spy(this._oDSC, "_setResizeData");
+					sinon.spy(this._oDSC, "_changeGridState");
 
-					this.oDSC._currentBreakpoint = null;
-					this.oDSC.setEqualSplit(false);
-					assert.ok(!this.oDSC._setResizeData.calledOnce, "_setResizeData is not called when no breakpoint is set");
-					assert.ok(!this.oDSC._changeGridState.calledOnce, "_changeGridState is not called when no breakpoint is set");
+					this._oDSC._currentBreakpoint = null;
+					this._oDSC.setEqualSplit(false);
+					assert.ok(!this._oDSC._setResizeData.calledOnce, "_setResizeData is not called when no breakpoint is set");
+					assert.ok(!this._oDSC._changeGridState.calledOnce, "_changeGridState is not called when no breakpoint is set");
 
-					this.oDSC._setResizeData.restore();
-					this.oDSC._changeGridState.restore();
+					this._oDSC._setResizeData.restore();
+					this._oDSC._changeGridState.restore();
 				});
 
 				QUnit.test("'SideContent' aggregation is set correctly",function(assert){
 					var oButton = new sap.m.Button("button1");
 
-					sinon.spy(this.oDSC, "_rerenderControl");
+					sinon.spy(this._oDSC, "_rerenderControl");
 
-					this.oDSC.addSideContent(oButton);
-					assert.strictEqual(this.oDSC.getSideContent()[0], oButton, "'SideContent' aggregation is set with button1");
-					assert.ok(this.oDSC._rerenderControl.calledOnce, "_rerenderControl is called");
+					this._oDSC.addSideContent(oButton);
+					assert.strictEqual(this._oDSC.getSideContent()[0], oButton, "'SideContent' aggregation is set with button1");
+					assert.ok(this._oDSC._rerenderControl.calledOnce, "_rerenderControl is called");
 
-					this.oDSC._rerenderControl.restore();
+					this._oDSC._rerenderControl.restore();
 					oButton.destroy();
 					oButton = null;
 				});
@@ -160,113 +160,113 @@
 				QUnit.test("'MainContent' aggregation is set correctly",function(assert){
 					var oButton = new sap.m.Button("button1");
 
-					sinon.spy(this.oDSC, "_rerenderControl");
+					sinon.spy(this._oDSC, "_rerenderControl");
 
-					this.oDSC.addMainContent(oButton);
-					assert.strictEqual(this.oDSC.getMainContent()[0], oButton, "'MainContent' aggregation is set with button1");
-					assert.ok(this.oDSC._rerenderControl.calledOnce, "_rerenderControl is called");
+					this._oDSC.addMainContent(oButton);
+					assert.strictEqual(this._oDSC.getMainContent()[0], oButton, "'MainContent' aggregation is set with button1");
+					assert.ok(this._oDSC._rerenderControl.calledOnce, "_rerenderControl is called");
 
-					this.oDSC._rerenderControl.restore();
+					this._oDSC._rerenderControl.restore();
 					oButton.destroy();
 					oButton = null;
 				});
 
 				QUnit.test("'Toggle' button functionality",function(assert){
 					// 1
-					sinon.spy(this.oDSC, "_changeGridState");
-					this.oDSC.setEqualSplit(true);
-					this.oDSC._currentBreakpoint = S;
-					this.oDSC._MCVisible = true;
-					this.oDSC._SCVisible = false;
+					sinon.spy(this._oDSC, "_changeGridState");
+					this._oDSC.setEqualSplit(true);
+					this._oDSC._currentBreakpoint = S;
+					this._oDSC._MCVisible = true;
+					this._oDSC._SCVisible = false;
 
-					this.oDSC.toggle();
+					this._oDSC.toggle();
 
 					assert.ok(
-						this.oDSC._changeGridState.called,
+						this._oDSC._changeGridState.called,
 						"_changeGridState is called only when EqualSplit mode is true and current breakpoint is 'S'"
 					);
 
-					assert.strictEqual(this.oDSC._MCVisible, false, "'showMainContent' property is 'false'");
-					assert.strictEqual(this.oDSC._SCVisible, true, "'showSideContent' property is 'true'");
+					assert.strictEqual(this._oDSC._MCVisible, false, "'showMainContent' property is 'false'");
+					assert.strictEqual(this._oDSC._SCVisible, true, "'showSideContent' property is 'true'");
 
-					this.oDSC._MCVisible = false;
-					this.oDSC._SCVisible = true;
+					this._oDSC._MCVisible = false;
+					this._oDSC._SCVisible = true;
 
-					this.oDSC.toggle();
+					this._oDSC.toggle();
 
-					assert.strictEqual(this.oDSC._MCVisible, true, "'showMainContent' property is 'true'");
-					assert.strictEqual(this.oDSC._SCVisible, false, "'showSideContent' property is 'false'");
+					assert.strictEqual(this._oDSC._MCVisible, true, "'showMainContent' property is 'true'");
+					assert.strictEqual(this._oDSC._SCVisible, false, "'showSideContent' property is 'false'");
 
-					this.oDSC._changeGridState.restore();
+					this._oDSC._changeGridState.restore();
 
 					// 2
-					sinon.spy(this.oDSC, "_changeGridState");
+					sinon.spy(this._oDSC, "_changeGridState");
 
-					this.oDSC.setEqualSplit(false);
-					this.oDSC._currentBreakpoint = M;
+					this._oDSC.setEqualSplit(false);
+					this._oDSC._currentBreakpoint = M;
 
-					assert.ok(!this.oDSC._rerenderControl.calledOnce, "_changeGridState is not called when EqualSplit mode is false");
+					assert.ok(!this._oDSC._rerenderControl.calledOnce, "_changeGridState is not called when EqualSplit mode is false");
 
-					this.oDSC._changeGridState.restore();
+					this._oDSC._changeGridState.restore();
 
 					// 3
-					sinon.spy(this.oDSC, "_changeGridState");
+					sinon.spy(this._oDSC, "_changeGridState");
 
-					this.oDSC.setEqualSplit(true);
-					this.oDSC._currentBreakpoint = M;
+					this._oDSC.setEqualSplit(true);
+					this._oDSC._currentBreakpoint = M;
 
-					assert.ok(!this.oDSC._rerenderControl.calledOnce, "_changeGridState is not called when current breakpoint is different than 'S'");
+					assert.ok(!this._oDSC._rerenderControl.calledOnce, "_changeGridState is not called when current breakpoint is different than 'S'");
 
-					this.oDSC._changeGridState.restore();
+					this._oDSC._changeGridState.restore();
 
 					// 4
-					this.oDSC.setEqualSplit(false);
-					this.oDSC.setShowSideContent(false);
-					this.oDSC._currentBreakpoint = S;
-					this.oDSC.toggle();
-					assert.ok(this.oDSC.getShowSideContent(), "Side content should be visible when toggled");
-					assert.ok(this.oDSC._SCVisible, "Side content internal visible property should be true");
-					assert.ok(!this.oDSC.getShowMainContent(), "Main content should not be visible when toggled");
-					assert.ok(!this.oDSC._MCVisible, "Main content internal visible property should be false");
+					this._oDSC.setEqualSplit(false);
+					this._oDSC.setShowSideContent(false);
+					this._oDSC._currentBreakpoint = S;
+					this._oDSC.toggle();
+					assert.ok(this._oDSC.getShowSideContent(), "Side content should be visible when toggled");
+					assert.ok(this._oDSC._SCVisible, "Side content internal visible property should be true");
+					assert.ok(!this._oDSC.getShowMainContent(), "Main content should not be visible when toggled");
+					assert.ok(!this._oDSC._MCVisible, "Main content internal visible property should be false");
 
 				});
 
 				QUnit.module("Helper functionality", {
 					setup : function () {
-						this.oDSC = new sap.ui.layout.DynamicSideContent();
-						this.oDSC.placeAt("qunit-fixture");
+						this._oDSC = new sap.ui.layout.DynamicSideContent();
+						this._oDSC.placeAt("qunit-fixture");
 						$("#qunit-fixture").width(500);
 						sap.ui.getCore().applyChanges();
 					},
 					teardown : function () {
-						this.oDSC.destroy();
-						this.oDSC = null;
+						this._oDSC.destroy();
+						this._oDSC = null;
 					},
 					assertOnSideContentVisibility : function(sBreakpoint, sideContentVisibility, bExpectedResult, bIsInComparisonMode) {
-						this.oDSC.setSideContentVisibility(sideContentVisibility);
-						this.oDSC._setResizeData(sBreakpoint, bIsInComparisonMode);
+						this._oDSC.setSideContentVisibility(sideContentVisibility);
+						this._oDSC._setResizeData(sBreakpoint, bIsInComparisonMode);
 
 						strictEqual(
-								this.oDSC._SCVisible,
+								this._oDSC._SCVisible,
 								bExpectedResult,
 								"Side content is hidden on " + "'" + sBreakpoint + "'" + " breakpoint when 'SideContentVisibility' property it set to " + sideContentVisibility
 						);
 					},
 					assertOnMainContentVisibility : function(sBreakpoint, bExpectedResult, bIsInComparisonMode) {
-						this.oDSC._setResizeData(sBreakpoint, bIsInComparisonMode);
+						this._oDSC._setResizeData(sBreakpoint, bIsInComparisonMode);
 
 						strictEqual(
-								this.oDSC._MCVisible,
+								this._oDSC._MCVisible,
 								bExpectedResult,
 								"Main content is hidden on " + "'" + sBreakpoint + "'"
 						);
 					},
 					assertOnContentSpanSize : function(sContentName, sSpanPropertyName, sBreakpoint, sideContentFallDown, bExpectedResult, bIsInComparisonMode) {
-						this.oDSC.setSideContentFallDown(sideContentFallDown);
-						this.oDSC._setResizeData(sBreakpoint, bIsInComparisonMode);
+						this._oDSC.setSideContentFallDown(sideContentFallDown);
+						this._oDSC._setResizeData(sBreakpoint, bIsInComparisonMode);
 
 						strictEqual(
-								this.oDSC[sSpanPropertyName],
+								this._oDSC[sSpanPropertyName],
 								bExpectedResult,
 								sContentName + " content span size is set to " + bExpectedResult + " when breakpoint is " + "'" + sBreakpoint + "'" + " and 'SideContentFallDown' property is set to " + sideContentFallDown
 						);
@@ -277,32 +277,32 @@
 					var sBreakpoint;
 
 					// test S breakpoint
-					sBreakpoint = this.oDSC._getBreakPointFromWidth(200);
+					sBreakpoint = this._oDSC._getBreakPointFromWidth(200);
 					strictEqual(sBreakpoint, S, "If parent container's width is under 720px, the breakpoint should be 'S'");
 
-					sBreakpoint = this.oDSC._getBreakPointFromWidth(720);
+					sBreakpoint = this._oDSC._getBreakPointFromWidth(720);
 					strictEqual(sBreakpoint, S, "If parent container's width is equal to 720px, the breakpoint should be 'S'");
 
 					// test M breakpoint
-					sBreakpoint = this.oDSC._getBreakPointFromWidth(800);
+					sBreakpoint = this._oDSC._getBreakPointFromWidth(800);
 					strictEqual(sBreakpoint, M, "If parent container's width is in the range 720px-1024px includingly, the breakpoint should be 'M'");
 
-					sBreakpoint = this.oDSC._getBreakPointFromWidth(1024);
+					sBreakpoint = this._oDSC._getBreakPointFromWidth(1024);
 					strictEqual(sBreakpoint, M, "If parent container's width is in the range 720px-1024px includingly, the breakpoint should be 'M'");
 
 					// test L breakpoint
-					sBreakpoint = this.oDSC._getBreakPointFromWidth(1060);
+					sBreakpoint = this._oDSC._getBreakPointFromWidth(1060);
 					strictEqual(sBreakpoint, L, "If parent container's width is in the range 1024px-1440px includingly, the breakpoint should be 'L'");
 
-					sBreakpoint = this.oDSC._getBreakPointFromWidth(1440);
+					sBreakpoint = this._oDSC._getBreakPointFromWidth(1440);
 					strictEqual(sBreakpoint, L, "If parent container's width is in the range 1024px-1440px includingly, the breakpoint should be 'L'");
 
 					// test XL breakpoint
-					sBreakpoint = this.oDSC._getBreakPointFromWidth(1500);
+					sBreakpoint = this._oDSC._getBreakPointFromWidth(1500);
 					strictEqual(sBreakpoint, XL, "If parent container's width is above 1440px, the breakpoint should be 'XL'");
 
 					assert.throws(function () {
-						this.oDSC._setBreakPointFromWidth(-2);
+						this._oDSC._setBreakPointFromWidth(-2);
 					}, "parent container's width should be greater then 0");
 				});
 
@@ -310,11 +310,11 @@
 					var bIsInComparisonMode = false;
 
 					// S breakpoint
-					this.oDSC._setResizeData(S, bIsInComparisonMode);
+					this._oDSC._setResizeData(S, bIsInComparisonMode);
 
-					strictEqual(this.oDSC._iMcSpan, SPAN_SIZE_12, "Main content span size is set to 12 when breakpoint is 'S'");
-					strictEqual(this.oDSC._iScSpan, SPAN_SIZE_12, "Side content span size is set to 12 when breakpoint is 'S'.");
-					strictEqual(this.oDSC._SCVisible, false, "Side content is not visible.");
+					strictEqual(this._oDSC._iMcSpan, SPAN_SIZE_12, "Main content span size is set to 12 when breakpoint is 'S'");
+					strictEqual(this._oDSC._iScSpan, SPAN_SIZE_12, "Side content span size is set to 12 when breakpoint is 'S'.");
+					strictEqual(this._oDSC._SCVisible, false, "Side content is not visible.");
 
 					// M breakpoint
 					this.assertOnContentSpanSize("Main", "_iMcSpan", M, sap.ui.layout.SideContentFallDown.BelowL, SPAN_SIZE_12, false);
@@ -383,7 +383,7 @@
 					this.assertOnSideContentVisibility(S, sap.ui.layout.SideContentVisibility.ShowAboveS, false, true);
 
 					assert.throws(function () {
-						this.oDSC._setResizeData("invalid breakpoint", false);
+						this._oDSC._setResizeData("invalid breakpoint", false);
 					}, INVALID_BREAKPOINT_ERROR_MSG);
 
 					// EqualSplit mode other than S
@@ -442,17 +442,17 @@
 						MC_GRID_CELL_SELECTOR = "MCGridCell",
 						HIDDEN_CLASS = "sapUiHidden",
 						SPAN_SIZE_12_CLASS = "sapUiDSCSpan12",
-					    $sideContent = this.oDSC.$(SC_GRID_CELL_SELECTOR),
-						$mainContent = this.oDSC.$(MC_GRID_CELL_SELECTOR);
+					    $sideContent = this._oDSC.$(SC_GRID_CELL_SELECTOR),
+						$mainContent = this._oDSC.$(MC_GRID_CELL_SELECTOR);
 
 					// both main and side content are visible
-					this.oDSC._SCVisible = true;
-					this.oDSC._MCVisible = true;
+					this._oDSC._SCVisible = true;
+					this._oDSC._MCVisible = true;
 
 					$mainContent.addClass("test1 test2");
 					$sideContent.addClass("test1 test2");
 
-					this.oDSC._changeGridState();
+					this._oDSC._changeGridState();
 
 					ok(!$mainContent.hasClass("test1"), "Main content should not have 'test1' class");
 					ok(!$mainContent.hasClass("test2"), "Main content should not have 'test2' class");
@@ -460,25 +460,25 @@
 					ok(!$sideContent.hasClass("test1"), "Side content should not have 'test1' class");
 					ok(!$sideContent.hasClass("test2"), "Side content should not have 'test2' class");
 
-					ok($mainContent.hasClass("sapUiDSCSpan" + this.oDSC._iMcSpan), "Main content has class 'sapUiDSCSpan" + this.oDSC._iMcSpan + "' if both main and side content are visible");
-					ok($sideContent.hasClass("sapUiDSCSpan" + this.oDSC._iScSpan), "Side content has class 'sapUiDSCSpan" + this.oDSC._iScSpan + "' if both main and side content are visible");
+					ok($mainContent.hasClass("sapUiDSCSpan" + this._oDSC._iMcSpan), "Main content has class 'sapUiDSCSpan" + this._oDSC._iMcSpan + "' if both main and side content are visible");
+					ok($sideContent.hasClass("sapUiDSCSpan" + this._oDSC._iScSpan), "Side content has class 'sapUiDSCSpan" + this._oDSC._iScSpan + "' if both main and side content are visible");
 
 					// both main and side content are hidden
-					this.oDSC._SCVisible = false;
-					this.oDSC._MCVisible = false;
+					this._oDSC._SCVisible = false;
+					this._oDSC._MCVisible = false;
 
-					this.oDSC._changeGridState();
+					this._oDSC._changeGridState();
 
 					ok($mainContent.hasClass(HIDDEN_CLASS), "Main content has class '" + HIDDEN_CLASS + "' if both main and side content are hidden");
 					ok($sideContent.hasClass(HIDDEN_CLASS), "Side content has class '" + HIDDEN_CLASS + "' if both main and side content are hidden");
 
 					// only main content is visible
-					this.oDSC._SCVisible = false;
-					this.oDSC._MCVisible = true;
+					this._oDSC._SCVisible = false;
+					this._oDSC._MCVisible = true;
 
 					$mainContent.addClass("test1 test2");
 
-					this.oDSC._changeGridState();
+					this._oDSC._changeGridState();
 
 					ok(!$mainContent.hasClass("test1"), "Main content should not have 'test1' class");
 					ok(!$mainContent.hasClass("test2"), "Main content should not have 'test2' class");
@@ -487,12 +487,12 @@
 					ok($sideContent.hasClass(HIDDEN_CLASS), "Side content has class '" + HIDDEN_CLASS + "' if side content is hidden");
 
 					// only side content is visible
-					this.oDSC._SCVisible = true;
-					this.oDSC._MCVisible = false;
+					this._oDSC._SCVisible = true;
+					this._oDSC._MCVisible = false;
 
 					$sideContent.addClass("test1 test2");
 
-					this.oDSC._changeGridState();
+					this._oDSC._changeGridState();
 
 					ok(!$sideContent.hasClass("test1"), "Side content should not have 'test1' class");
 					ok(!$sideContent.hasClass("test2"), "Side content should not have 'test2' class");
@@ -500,12 +500,12 @@
 					ok($mainContent.hasClass(HIDDEN_CLASS), "Main content has class '" + HIDDEN_CLASS + "' if side content is hidden");
 					ok($sideContent.hasClass(SPAN_SIZE_12_CLASS), "Side content has class '" + SPAN_SIZE_12_CLASS + "' if only side content is visible");
 
-					this.oDSC._SCVisible = true;
-					this.oDSC._MCVisible = true;
-					this.oDSC.setSideContentFallDown(sap.ui.layout.SideContentFallDown.BelowM);
-					this.oDSC._bFixedSideContent = true;
+					this._oDSC._SCVisible = true;
+					this._oDSC._MCVisible = true;
+					this._oDSC.setSideContentFallDown(sap.ui.layout.SideContentFallDown.BelowM);
+					this._oDSC._bFixedSideContent = true;
 
-					this.oDSC._changeGridState();
+					this._oDSC._changeGridState();
 
 					ok($mainContent.hasClass(MC_FIXED_CLASS), "Main content has class '" + MC_FIXED_CLASS + "' if side content is fixed size");
 					ok($sideContent.hasClass(SC_FIXED_CLASS), "Side content has class '" + SC_FIXED_CLASS + "' if main content is fixed size");
@@ -513,167 +513,173 @@
 				});
 
 				QUnit.test("Check if height should be set",function(){
-					this.oDSC._iScSpan = SPAN_SIZE_6;
-					this.oDSC._iMcSpan = SPAN_SIZE_6;
-					this.oDSC._MCVisible = true;
-					this.oDSC._SCVisible = true;
-					ok(this.oDSC._shouldSetHeight(), "Height should be set if MCSpan and SCSPan equal 12 spans and both main and side content are visible.");
+					this._oDSC._iScSpan = SPAN_SIZE_6;
+					this._oDSC._iMcSpan = SPAN_SIZE_6;
+					this._oDSC._MCVisible = true;
+					this._oDSC._SCVisible = true;
+					ok(this._oDSC._shouldSetHeight(), "Height should be set if MCSpan and SCSPan equal 12 spans and both main and side content are visible.");
 
-					this.oDSC._iScSpan = SPAN_SIZE_3;
-					this.oDSC._iMcSpan = SPAN_SIZE_6;
-					this.oDSC._MCVisible = true;
-					this.oDSC._SCVisible = true;
-					ok(!this.oDSC._shouldSetHeight(), "Height should not be set if MCSpan and SCSPan do not equal 12 spans.");
+					this._oDSC._iScSpan = SPAN_SIZE_3;
+					this._oDSC._iMcSpan = SPAN_SIZE_6;
+					this._oDSC._MCVisible = true;
+					this._oDSC._SCVisible = true;
+					ok(!this._oDSC._shouldSetHeight(), "Height should not be set if MCSpan and SCSPan do not equal 12 spans.");
 
-					this.oDSC._iScSpan = SPAN_SIZE_6;
-					this.oDSC._iMcSpan = SPAN_SIZE_6;
-					this.oDSC._MCVisible = false;
-					this.oDSC._SCVisible = true;
-					ok(!this.oDSC._shouldSetHeight(), "Height should not be set if either main or side content is not visible.");
+					this._oDSC._iScSpan = SPAN_SIZE_6;
+					this._oDSC._iMcSpan = SPAN_SIZE_6;
+					this._oDSC._MCVisible = false;
+					this._oDSC._SCVisible = true;
+					ok(this._oDSC._shouldSetHeight(), "Height should be set if either main or side is visible.");
 
-					this.oDSC._iScSpan = SPAN_SIZE_6;
-					this.oDSC._iMcSpan = SPAN_SIZE_6;
-					this.oDSC._MCVisible = true;
-					this.oDSC._SCVisible = false;
-					ok(!this.oDSC._shouldSetHeight(), "Height should not be set if either main or side content is not visible.");
+					this._oDSC._iScSpan = SPAN_SIZE_6;
+					this._oDSC._iMcSpan = SPAN_SIZE_6;
+					this._oDSC._MCVisible = true;
+					this._oDSC._SCVisible = false;
+					ok(this._oDSC._shouldSetHeight(), "Height should be set if either main or side is visible.");
 
-					this.oDSC._bFixedSideContent = true;
-					this.oDSC._MCVisible = true;
-					this.oDSC._SCVisible = true;
-					ok(this.oDSC._shouldSetHeight(), "Height should be set if fixed side content is set.");
+					this._oDSC._bFixedSideContent = true;
+					this._oDSC._MCVisible = true;
+					this._oDSC._SCVisible = true;
+					ok(this._oDSC._shouldSetHeight(), "Height should be set if fixed side content is set.");
+
+					this._oDSC.setSideContentVisibility(sap.ui.layout.SideContentVisibility.NeverShow);
+					this._oDSC._MCVisible = true;
+					this._oDSC._SCVisible = true;
+					ok(this._oDSC._shouldSetHeight(), "Height should be set if side content and main content visible " +
+							"but side content visibility is set to NeverShow.");
 				});
 
 				QUnit.test("Set main and side content span sizes",function(){
-					this.oDSC._setSpanSize(SPAN_SIZE_3, SPAN_SIZE_9);
+					this._oDSC._setSpanSize(SPAN_SIZE_3, SPAN_SIZE_9);
 
-					strictEqual(this.oDSC._iMcSpan, SPAN_SIZE_9, "Main content span size should be equal to " + SPAN_SIZE_9);
-					strictEqual(this.oDSC._iScSpan, SPAN_SIZE_3, "Side content span size should be equal to " + SPAN_SIZE_3);
+					strictEqual(this._oDSC._iMcSpan, SPAN_SIZE_9, "Main content span size should be equal to " + SPAN_SIZE_9);
+					strictEqual(this._oDSC._iScSpan, SPAN_SIZE_3, "Side content span size should be equal to " + SPAN_SIZE_3);
 				});
 
 				QUnit.module("Construction / Destruction", {
 					setup : function () {
-						this.oDSC = new sap.ui.layout.DynamicSideContent();
-						this.oDSC.placeAt("qunit-fixture");
+						this._oDSC = new sap.ui.layout.DynamicSideContent();
+						this._oDSC.placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
 					},
 					teardown : function () {
-						this.oDSC = null;
+						this._oDSC = null;
 					}
 				});
 
 				QUnit.test("Dynamic side content is created",function(){
-					strictEqual(this.oDSC.$().length, 1, "Dynamic side content is created in the dom.");
+					strictEqual(this._oDSC.$().length, 1, "Dynamic side content is created in the dom.");
 				});
 
 				QUnit.test("Current breakpoint is set",function(){
-					ok(this.oDSC.getCurrentBreakpoint(), "The current breakpoint of the page is set");
+					ok(this._oDSC.getCurrentBreakpoint(), "The current breakpoint of the page is set");
 				});
 
 				QUnit.test("Calculate the size of the main and side content according to the current breakpoint",function(){
-					sinon.spy(this.oDSC, "_setResizeData");
+					sinon.spy(this._oDSC, "_setResizeData");
 
-					assert.ok(!this.oDSC._setResizeData.calledOnce, "The size of the main and side content are set");
+					assert.ok(!this._oDSC._setResizeData.calledOnce, "The size of the main and side content are set");
 
-					this.oDSC._setResizeData.restore();
+					this._oDSC._setResizeData.restore();
 				});
 
 				QUnit.test("Main content and Side content sliders are initialized",function(){
-					ok(this.oDSC._oMCScroller, "Main content slider is set");
-					ok(this.oDSC._oSCScroller, "Side content slider is set");
+					ok(this._oDSC._oMCScroller, "Main content slider is set");
+					ok(this._oDSC._oSCScroller, "Side content slider is set");
 				});
 
 				QUnit.test("dispose",function(){
-					this.oDSC.destroy();
-					this.oDSC.setContainerQuery(true);
+					this._oDSC.destroy();
+					this._oDSC.setContainerQuery(true);
 
-					strictEqual(this.oDSC._oSCScroller, null, "Side content scroller is null");
-					strictEqual(this.oDSC._oMCScroller, null, "Main content scroller is null");
+					strictEqual(this._oDSC._oSCScroller, null, "Side content scroller is null");
+					strictEqual(this._oDSC._oMCScroller, null, "Main content scroller is null");
 				});
 
 				QUnit.module("Interaction", {
 					setup : function () {
-						this.oDSC = new sap.ui.layout.DynamicSideContent();
-						this.oDSC.placeAt("qunit-fixture");
+						this._oDSC = new sap.ui.layout.DynamicSideContent();
+						this._oDSC.placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
 					},
 					teardown : function () {
-						this.oDSC.destroy();
-						this.oDSC = null;
+						this._oDSC.destroy();
+						this._oDSC = null;
 					}
 				});
 
 				QUnit.test("setShowSideContent consistent visibility on breakpoint change and toggling",function(){
-					this.oDSC._currentBreakpoint = XL;
-					this.oDSC.setShowSideContent(false);
+					this._oDSC._currentBreakpoint = XL;
+					this._oDSC.setShowSideContent(false);
 
-					ok(!this.oDSC.getShowSideContent(), "Side content should be hidden");
+					ok(!this._oDSC.getShowSideContent(), "Side content should be hidden");
 
-					this.oDSC._currentBreakpoint = L;
-					this.oDSC._changeGridState();
-					ok(!this.oDSC.getShowSideContent(), "Side content should be hidden when changing to L breakpoint");
+					this._oDSC._currentBreakpoint = L;
+					this._oDSC._changeGridState();
+					ok(!this._oDSC.getShowSideContent(), "Side content should be hidden when changing to L breakpoint");
 
-					this.oDSC._currentBreakpoint = M;
-					this.oDSC._changeGridState();
-					ok(!this.oDSC.getShowSideContent(), "Side content should be hidden when changing to M breakpoint");
+					this._oDSC._currentBreakpoint = M;
+					this._oDSC._changeGridState();
+					ok(!this._oDSC.getShowSideContent(), "Side content should be hidden when changing to M breakpoint");
 
-					this.oDSC._currentBreakpoint = S;
-					this.oDSC._changeGridState();
-					ok(!this.oDSC.getShowSideContent(), "Side content should be hidden when changing to S breakpoint");
+					this._oDSC._currentBreakpoint = S;
+					this._oDSC._changeGridState();
+					ok(!this._oDSC.getShowSideContent(), "Side content should be hidden when changing to S breakpoint");
 
-					this.oDSC._currentBreakpoint = M;
-					this.oDSC._changeGridState();
-					ok(!this.oDSC.getShowSideContent(), "Side content should be hidden after switching to M breakpoint");
+					this._oDSC._currentBreakpoint = M;
+					this._oDSC._changeGridState();
+					ok(!this._oDSC.getShowSideContent(), "Side content should be hidden after switching to M breakpoint");
 
-					this.oDSC._currentBreakpoint = S;
-					this.oDSC._changeGridState();
-					this.oDSC.toggle();
-					ok(this.oDSC.getShowSideContent(), "Side content should be now visible when changing to S breakpoint and toggling");
-					ok(!this.oDSC.getShowMainContent(), "Main content should be now hidden when changing to S breakpoint and toggling");
+					this._oDSC._currentBreakpoint = S;
+					this._oDSC._changeGridState();
+					this._oDSC.toggle();
+					ok(this._oDSC.getShowSideContent(), "Side content should be now visible when changing to S breakpoint and toggling");
+					ok(!this._oDSC.getShowMainContent(), "Main content should be now hidden when changing to S breakpoint and toggling");
 
-					this.oDSC._currentBreakpoint = M;
-					this.oDSC._changeGridState();
-					ok(this.oDSC.getShowSideContent(), "Side content should be now visible after switching to M breakpoint after toggling on S breakpoint");
+					this._oDSC._currentBreakpoint = M;
+					this._oDSC._changeGridState();
+					ok(this._oDSC.getShowSideContent(), "Side content should be now visible after switching to M breakpoint after toggling on S breakpoint");
 
-					this.oDSC._currentBreakpoint = S;
-					this.oDSC._changeGridState();
-					this.oDSC.toggle();
-					this.oDSC.setShowSideContent(false);
-					ok(!this.oDSC.getShowSideContent(), "Side content should be now hidden when changing to S breakpoint, toggling and closing the side content");
-					ok(this.oDSC.getShowMainContent(), "Main content should be now visible when changing to S breakpoint, toggling and closing the side content");
+					this._oDSC._currentBreakpoint = S;
+					this._oDSC._changeGridState();
+					this._oDSC.toggle();
+					this._oDSC.setShowSideContent(false);
+					ok(!this._oDSC.getShowSideContent(), "Side content should be now hidden when changing to S breakpoint, toggling and closing the side content");
+					ok(this._oDSC.getShowMainContent(), "Main content should be now visible when changing to S breakpoint, toggling and closing the side content");
 
 				});
 
 				QUnit.module("Listeners", {
 					setup : function () {
-						this.oDSC = new sap.ui.layout.DynamicSideContent({containerQuery: true});
-						this.oDSC.placeAt("qunit-fixture");
+						this._oDSC = new sap.ui.layout.DynamicSideContent({containerQuery: true});
+						this._oDSC.placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
 					},
 					teardown : function () {
-						this.oDSC = null;
+						this._oDSC = null;
 					}
 				});
 
 				QUnit.test("Listeners are created / removed",function(){
-					notStrictEqual(this.oDSC._sContainerResizeListener, undefined, "Container resize listener is registered if there is container query");
-					this.oDSC.destroy();
-					strictEqual(this.oDSC._sContainerResizeListener, null, "Container resize listener is null if there is container query");
+					notStrictEqual(this._oDSC._sContainerResizeListener, undefined, "Container resize listener is registered if there is container query");
+					this._oDSC.destroy();
+					strictEqual(this._oDSC._sContainerResizeListener, null, "Container resize listener is null if there is container query");
 				});
 
 				QUnit.module("Screen reader", {
 					setup : function () {
-						this.oDSC = new sap.ui.layout.DynamicSideContent({containerQuery: true});
-						this.oDSC.placeAt("qunit-fixture");
+						this._oDSC = new sap.ui.layout.DynamicSideContent({containerQuery: true});
+						this._oDSC.placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
 					},
 					teardown : function () {
-						this.oDSC = null;
+						this._oDSC = null;
 					}
 				});
 
 				QUnit.test("Side Content has correct aria attributes",function(){
 					var sSideContentTag = sap.ui.Device.browser.firefox ? "div" : "aside",
-						$sideContent = $("#" + this.oDSC.getId() + "-SCGridCell"),
+						$sideContent = $("#" + this._oDSC.getId() + "-SCGridCell"),
 						//$sideContent = this.oDSC.$().find("> aside"),
 						oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
 
