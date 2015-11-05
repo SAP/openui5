@@ -3444,9 +3444,16 @@ sap.ui.define(['jquery.sap.global', './AnalyticalVersionInfo'],
 
 				if (sFilterRestriction == odata4analytics.EntityType.propertyFilterRestriction.SINGLE_VALUE) {
 					if (oPropertiesInFilterExpression[sPropertyName2] != undefined) {
-						if (oPropertiesInFilterExpression[sPropertyName2].length > 1
-								|| oPropertiesInFilterExpression[sPropertyName2][0].sOperator != sap.ui.model.FilterOperator.EQ) {
-							throw "filter expression may use " + sPropertyName2 + " only with a single EQ condition"; // TODO
+						if (oPropertiesInFilterExpression[sPropertyName2].length > 1) {
+							// check if all filter instances of the current property have the same single value
+							var vTheOnlyValue = oPropertiesInFilterExpression[sPropertyName2][0].oValue1;
+							for (var j = 0; j < oPropertiesInFilterExpression[sPropertyName2].length; j++) {
+								// check if we have a value change, this means we got another value in one of the filters
+								if (oPropertiesInFilterExpression[sPropertyName2][j].oValue1 != vTheOnlyValue
+									|| oPropertiesInFilterExpression[sPropertyName2][j].sOperator != sap.ui.model.FilterOperator.EQ) {
+									throw "filter expression may use " + sPropertyName2 + " only with a single EQ condition";
+								}
+							}
 						}
 					}
 				}
