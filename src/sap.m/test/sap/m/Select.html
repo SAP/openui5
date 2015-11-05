@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html style="height: 100%">
+<html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="UTF-8">
@@ -657,12 +657,10 @@
 		var oSelect10 = new sap.m.Select({
 			items: [
 				new sap.ui.core.Item({
-					key: "0",
 					text: "item 0"
 				}),
 
 				new sap.ui.core.Item({
-					key: "1",
 					text: "item 1"
 				}),
 			],
@@ -1081,7 +1079,7 @@
 			design: sap.m.LabelDesign.Bold
 		}).addStyleClass("labelSelectTestPageHeader");
 
-		new sap.m.Page("page1", {
+		new sap.m.App().addPage(oPage = new sap.m.Page({
 			customHeader: oBar0 = new sap.m.Bar({
 
 				contentLeft: oSelect14,
@@ -1104,9 +1102,9 @@
 				contentLeft: oSelect8,
 				contentRight: [oSelect11, oSelect13]
 			})
-		}).placeAt("body");
+		})).placeAt("body");
 		</script>
 	</head>
-	<body id="body" class="sapUiBody" style="height: 100%">
+	<body id="body" class="sapUiBody">
 	</body>
 </html>

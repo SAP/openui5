@@ -2009,7 +2009,6 @@
 
 				// arrange
 				var fnSetPropertySpy = this.spy(oSelect, "setProperty"),
-					fnWarningSpy = this.spy(jQuery.sap.log, "warning"),
 					fnFireChangeSpy = this.spy(oSelect, "fireChange"),
 					fnSetSelectedItemSpy = this.spy(oSelect, "setSelectedItem");
 
@@ -2018,7 +2017,6 @@
 
 				// assert
 				strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.Select.prototype.setProperty() method was not called");
-				strictEqual(fnWarningSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
 				strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
 				ok(fnSetSelectedItemSpy.returned(oSelect), 'sap.m.Select.prototype.setSelectedItem() returns this to allow method chaining');
 				ok(oSelect.getSelectedItem() === null);
@@ -4955,6 +4953,40 @@
 			/* ------------------------------------ */
 			/* unbindObject()                       */
 			/* ------------------------------------ */
+
+			/* ------------------------------------ */
+			/* clone()                              */
+			/* ------------------------------------ */
+
+			// BCP 1580183712
+			test('it should modify the cloned "selectedItem" association to point to the new item', function() {
+
+				// system under test
+				var oExpectedItem = new sap.ui.core.Item({
+					text: "lorem ipsum 2"
+				});
+
+				var oSelect = new sap.m.Select({
+					items: [
+						new sap.ui.core.Item({
+							text: "lorem ipsum 1"
+						}),
+
+						oExpectedItem
+					],
+					selectedItem: oExpectedItem
+				});
+
+				// act
+				var oSelectClone = oSelect.clone();
+
+				// assert
+				ok(oSelectClone.getSelectedItem().getText() === oExpectedItem.getText());
+
+				// cleanup
+				oSelect.destroy();
+				oSelectClone.destroy();
+			});
 
 			/* ------------------------------------ */
 			/* _isRequiredSelectElement()           */
