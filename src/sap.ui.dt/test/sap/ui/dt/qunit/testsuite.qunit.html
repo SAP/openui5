@@ -16,20 +16,25 @@
     var isSupported = sap.ui.Device.browser.chrome || sap.ui.Device.browser.safari || sap.ui.Device.browser.firefox || (sap.ui.Device.browser.msie && sap.ui.Device.browser.version >= 11);
 
     if(isSupported){
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/DesignTimeMetadata.qunit.html");
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ElementDesignTimeMetadata.qunit.html");
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/AggregationDesignTimeMetadata.qunit.html");
+
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/DesignTime.qunit.html");
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/OverlayRegistry.qunit.html");
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/Preloader.qunit.html");
+      suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/AggregationOverlay.qunit.html");
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ElementOverlay.qunit.html");
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/AggregationScrolling.qunit.html");
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/plugin/ControlMovement.qunit.html");
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/plugin/ContextMenu.qunit.html");
-      
+
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ManagedObjectObserver.qunit.html");
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ControlObserver.qunit.html");
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/OverlayUtil.qunit.html");
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/DOMUtil.qunit.html");
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ElementUtil.qunit.html");
-     
+
 
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/Plugin.qunit.html");
       suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/Selection.qunit.html");

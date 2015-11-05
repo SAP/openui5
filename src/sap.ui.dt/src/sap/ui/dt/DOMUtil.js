@@ -197,7 +197,6 @@ function(jQuery, ElementUtil) {
 			fnCopyStylesTo(mStyles, oBeforeElement.get(0));
 			oBeforeElement.css("display", "inline");
 		}
-
 	};
 
 	/**
@@ -210,7 +209,9 @@ function(jQuery, ElementUtil) {
 		for (var i = 0; i < oSrc.children.length; i++) {
 			this.copyComputedStylesForDOM(oSrc.children[i], oDest.children[i]);
 		}
+		// we shouldn't copy classes because they can affect styling
 		jQuery(oDest).removeClass();
+		jQuery(oDest).attr("tabIndex", -1);
 		this.copyComputedStyle(oSrc, oDest);
 	};
 

@@ -38,7 +38,7 @@
 			jQuery.sap.require("sap.m.Button");
 			jQuery.sap.require("sap.m.Page");
 			jQuery.sap.require("sap.ui.layout.form.SimpleForm");
-			jQuery.sap.require("sap.ui.dt.DesignTimeMetadata");
+			jQuery.sap.require("sap.ui.dt.ElementDesignTimeMetadata");
 
 
 			QUnit.module("Given that an Overlay Container is created", {
@@ -59,26 +59,24 @@
 				beforeEach : function(assert) {
 					var that = this;
 					var done = assert.async();
-					this.oButton = new sap.m.Button({
-						text : "Button"
-					});
-					this.oButton.placeAt("content");
-					sap.ui.dt.Preloader.load(["sap.m.Button"]).then(function() {
+					this.oPage = new sap.m.Page();
+					this.oPage.placeAt("content");
+					sap.ui.dt.Preloader.load(["sap.m.Page"]).then(function() {
 						that.oOverlay = new sap.ui.dt.ElementOverlay({
-							element : that.oButton
+							element : that.oPage
 						});
 						done();
 						sap.ui.getCore().applyChanges();
 					});
 				},
 				afterEach : function() {
-					this.oButton.destroy();
+					this.oPage.destroy();
 					this.oOverlay.destroy();
 				}
 			});
 
 			QUnit.test("when OverlayRegistry initialized", function(assert) {
-				assert.strictEqual(this.oOverlay, sap.ui.dt.OverlayRegistry.getOverlay(this.oButton.getId()), "overlay is registered in OverlayRegistery");
+				assert.strictEqual(this.oOverlay, sap.ui.dt.OverlayRegistry.getOverlay(this.oPage.getId()), "overlay is registered in OverlayRegistery");
 			});
 
 			QUnit.test("when the control is rendered", function(assert) {
@@ -100,7 +98,7 @@
 				assert.equal(mOverlayOffset.left, mElementOffset.left, 'and the right postion "left" is applied to the overlay');
 
 				var oDesignTimeMetadata = this.oOverlay.getDesignTimeMetadata();
-				assert.equal(oDesignTimeMetadata.getName(), "{name}", "and the design time metadata for the control is set");
+				assert.ok(oDesignTimeMetadata instanceof sap.ui.dt.ElementDesignTimeMetadata, "and the design time metadata for the control is set");
 			});
 
 			QUnit.test("when the control's dom is changed", function(assert) {
@@ -244,7 +242,7 @@
 					});
 					this.oOverlay = new sap.ui.dt.ElementOverlay({
 						element : this.oButton,
-						designTimeMetadata : new sap.ui.dt.DesignTimeMetadata({
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
 							data : {
 								name : "My Custom Metadata"
 							}
@@ -262,7 +260,7 @@
 
 			QUnit.test("when the design time metadata is retrieved", function(assert) {
 				var oDesignTimeMetadata = this.oOverlay.getDesignTimeMetadata();
-				assert.equal(oDesignTimeMetadata.getName(), "My Custom Metadata", "then the right custom data is set");
+				assert.equal(oDesignTimeMetadata.getData().name, "My Custom Metadata", "then the right custom data is set");
 			});
 
 			QUnit.module("Given that an Overlay is created for a control marked as ignored in the designtime Metadata", {
@@ -272,7 +270,7 @@
 					});
 					this.oOverlay = new sap.ui.dt.ElementOverlay({
 						element : this.oButton,
-						designTimeMetadata : new sap.ui.dt.DesignTimeMetadata({
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
 							data : {
 								ignore : true
 							}
@@ -297,7 +295,7 @@
 				beforeEach : function() {
 					this.oPage = new sap.m.Page();
 					this.oOverlay = new sap.ui.dt.ElementOverlay({
-						designTimeMetadata : new sap.ui.dt.DesignTimeMetadata({
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
 							data : {
 								aggregations: {
 									content: {
@@ -329,7 +327,7 @@
 				beforeEach : function() {
 					this.oSimpleForm = new sap.ui.layout.form.SimpleForm();
 					this.oOverlay = new sap.ui.dt.ElementOverlay({
-						designTimeMetadata : new sap.ui.dt.DesignTimeMetadata({
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
 							data : {
 								aggregations: {
 									form: {
@@ -354,6 +352,62 @@
 				var oAggregationOverlay = this.oOverlay.getAggregationOverlay("form");
 				strictEqual(oAggregationOverlay.isVisible(), true, "the aggregation overlay is marked as invisible");
 				strictEqual(oAggregationOverlay.isInHiddenTree(), true, "the aggregation overlay is marked as inHiddenTree");
+			});
+
+
+			QUnit.module("Given that an Overlay is created for a control with copyDom:true in the designtime Metadata", {
+				beforeEach : function() {
+					this.oButton = new sap.m.Button({
+						text : "Button"
+					});
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						element : this.oButton,
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
+							data : {
+								cloneDomRef : true
+							}
+						})
+					});
+					this.oButton.placeAt("content");
+					// Render Controls
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oButton.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when the overlay is rendered", function(assert) {
+				strictEqual(this.oOverlay.$().find(".sapUiDtClonedDom").length, 1, "then a cloned DOM node is found in the overlay");
+			});
+
+
+			QUnit.module("Given that an Overlay is created for a control with copyDom:'css-selector' in the designtime Metadata", {
+				beforeEach : function() {
+					this.oButton = new sap.m.Button({
+						text : "Button"
+					});
+					this.oOverlay = new sap.ui.dt.ElementOverlay({
+						element : this.oButton,
+						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
+							data : {
+								cloneDomRef : ":sap-domref"
+							}
+						})
+					});
+					this.oButton.placeAt("content");
+					// Render Controls
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oButton.destroy();
+					this.oOverlay.destroy();
+				}
+			});
+
+			QUnit.test("when the overlay is rendered", function(assert) {
+				strictEqual(this.oOverlay.$().find(".sapUiDtClonedDom").length, 1, "then a cloned DOM node is found in the overlay");
 			});
 
 			QUnit.module("Given that an Overlay is created for a control", {

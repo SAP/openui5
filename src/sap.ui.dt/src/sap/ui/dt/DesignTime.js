@@ -8,12 +8,12 @@ sap.ui.define([
 	'sap/ui/dt/ElementOverlay',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/Selection',
-	'sap/ui/dt/DesignTimeMetadata',
+	'sap/ui/dt/ElementDesignTimeMetadata',
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/dt/OverlayUtil',
 	'./library'
 ],
-function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMetadata, ElementUtil, OverlayUtil) {
+function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesignTimeMetadata, ElementUtil, OverlayUtil) {
 	"use strict";
 
 	/**
@@ -257,7 +257,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 		var sClassName = vElement;
 		var mDTMetadata = this.getDesignTimeMetadata();
 		if (vElement.getMetadata) {
-			sClassName = vElement.getMetadata()._sClassName;
+			sClassName = vElement.getMetadata().getName();
 		}
 		return mDTMetadata[sClassName];
 	};
@@ -315,7 +315,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, DesignTimeMe
 	DesignTime.prototype.createElementOverlay = function(oElement, oDTMetadata, bInHiddenTree) {
 		return new ElementOverlay({
 			inHiddenTree : bInHiddenTree,
-			designTimeMetadata : oDTMetadata ? new DesignTimeMetadata({data : oDTMetadata}) : null,
+			designTimeMetadata : oDTMetadata ? new ElementDesignTimeMetadata({data : oDTMetadata}) : null,
 			element : oElement
 		});
 	};

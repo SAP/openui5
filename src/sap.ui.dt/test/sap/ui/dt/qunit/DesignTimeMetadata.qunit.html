@@ -21,23 +21,25 @@
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
 			jQuery.sap.require("sap.ui.dt.DesignTimeMetadata");
-			jQuery.sap.require("sap.ui.layout.VerticalLayout");
 
 			QUnit.module("Given that an DesignTimeMetadata is created for a control", {
 				beforeEach : function() {
 					this.oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
-						data : sap.ui.layout.VerticalLayout.getMetadata().getDesignTime()
+						data : {
+							testField : "testValue",
+							domRef : "domRef"
+						}
 					});
 				},
 				afterEach : function() {
 					this.oDesignTimeMetadata.destroy();
 				}
 			});
-			QUnit.test("when the DesignTimeMetadata is initialized", 2, function(assert) {
-				assert.equal(this.oDesignTimeMetadata.getName(), "{name}", "then the name is returned right");
-				assert.deepEqual(this.oDesignTimeMetadata.getAggregation("content"), {
-					cssSelector : ":sap-domref"
-				}, "and the aggregation is returned right");
+			QUnit.test("when the DesignTimeMetadata is initialized", function(assert) {
+				assert.strictEqual(this.oDesignTimeMetadata.getData().testField, "testValue", "then the field is returned right");
+				assert.strictEqual(this.oDesignTimeMetadata.getDomRef(), "domRef", "then the domRef is returned right");
+				assert.strictEqual(this.oDesignTimeMetadata.isIgnored(), false, "then ignore property is returned right");
+				assert.strictEqual(this.oDesignTimeMetadata.getCloneDomRef(), false, "then cloneDomRef property is returned right");
 			});
 
 		</script>
