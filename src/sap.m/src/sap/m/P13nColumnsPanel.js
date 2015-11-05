@@ -29,7 +29,7 @@ sap.ui.define([
 			library: "sap.m",
 			properties: {
 				/**
-				 * Used to specify a threshold of visible items.
+				 * Specifies a threshold of visible items.
 				 * 
 				 * @since 1.26.7
 				 */
@@ -37,6 +37,26 @@ sap.ui.define([
 					type: "int",
 					group: "Behavior",
 					defaultValue: -1
+				},
+				
+				/**
+				 * Specifies a chart type if the column panel shows dimension and measure entities.
+				 * 
+				 * @since 1.34
+				 */
+				chartType: {
+					type: "string",
+					defaultValue: ""
+				},
+				
+				/**
+				 * Specifies available chart types if the column panel shows dimension and measure entities.
+				 * 
+				 * @since 1.34
+				 */
+				availableChartTypes: {
+					type: "string[]",
+					defaultValue: null
 				}
 			},
 			aggregations: {
