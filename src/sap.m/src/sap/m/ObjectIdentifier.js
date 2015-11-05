@@ -259,9 +259,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var oTextControl = this.getAggregation("_textControl");
 
 		if (!oTextControl) {
-			oTextControl = new sap.m.Text();
-			oTextControl.setProperty("text", this.getProperty("text"));
-			this.setAggregation("_textControl", oTextControl);
+			oTextControl = new sap.m.Text({
+				text: this.getProperty("text")
+			});
+			this.setAggregation("_textControl", oTextControl, true);
 		}
 
 		oTextControl.setTextDirection(this.getTextDirection());
