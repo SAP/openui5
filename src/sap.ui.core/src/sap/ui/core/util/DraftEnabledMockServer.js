@@ -13,6 +13,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 			EMPTY_GUID: "00000000-0000-0000-0000-000000000000",
 			SIBLINGENTITY_NAVIGATION: "SiblingEntity",
 			DRAFT_ADMINISTRATIVE_DATA: "DraftAdministrativeData",
+			DRAFT_ADMINISTRATIVE_DATA_UUID: "DraftAdministrativeDataUUID",
 			ACTIVATION_ACTION: "ActivationAction",
 			EDIT_ACTION: "EditAction",
 			VALIDATE_ACTION: "ValidationFunction",
@@ -104,8 +105,10 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 						jQuery.extend(oMockServer, this);
 						// A new draft is created with a POST request on the entity set for the root entities.
 						oMockServer.attachAfter(MockServer.HTTPMETHOD.POST, fnNewDraftPost, this._oDraftMetadata.draftRootName);
-						// A n new draft can be deleted with a DELETE request to the root entity of the new draft; the root entity and all dependent entities will be deleted
+						// A new draft can be deleted with a DELETE request to the root entity of the new draft; the root entity and all dependent entities will be deleted
 						oMockServer.attachBefore(MockServer.HTTPMETHOD.DELETE, fnDraftDelete, this._oDraftMetadata.draftRootName);
+						// Active documents without a related draft should return null for DraftAdministrativeData
+						oMockServer.attachAfter(MockServer.HTTPMETHOD.GET, this._fnDraftAdministrativeData, this._oDraftMetadata.draftRootName);
 					}
 				}
 			}
@@ -157,6 +160,36 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 					this._oDraftMetadata.draftNodes.push(sEntityset);
 				}
 			}
+			for (var j = 0; j < this._oDraftMetadata.draftNodes.length; j++) {
+				this.attachAfter(MockServer.HTTPMETHOD.GET, this._fnDraftAdministrativeData, this._oDraftMetadata.draftNodes[j]);
+			}
+		},
+
+		_fnDraftAdministrativeData: function(oEvent) {
+			var oEntry = {};
+			var aData = oEvent.getParameter("oFilteredData");
+			if (!aData) {
+				oEntry = oEvent.getParameter("oEntry");
+				if (oEntry.IsActiveEntity && !oEntry.HasDraftEntity) {
+					oEntry[this._oConstants.DRAFT_ADMINISTRATIVE_DATA] = null;
+				}
+			} else {
+				if (aData.results) {
+					aData = aData.results;
+				} else {
+					if (jQuery.isEmptyObject(aData)) {
+						aData = null;
+						return;
+					}
+				}
+				for (var i = 0; i < aData.length; i++) {
+					oEntry = aData[i];
+					if (oEntry.IsActiveEntity && !oEntry.HasDraftEntity) {
+						oEntry[this._oConstants.DRAFT_ADMINISTRATIVE_DATA] = null;
+					}
+				}
+			}
+
 		},
 
 		/**
@@ -181,6 +214,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 						oEntity.HasActiveEntity = false; // false for new drafts and active documents
 						oEntity.HasDraftEntity = false; // false for active document without a draft
 						oEntity[this._oDraftMetadata.draftRootKey] = this._oConstants.EMPTY_GUID;
+						if (oEntity[this._oConstants.DRAFT_ADMINISTRATIVE_DATA_UUID]) {
+							oEntity[this._oConstants.DRAFT_ADMINISTRATIVE_DATA_UUID] = null;
+						}
 						var aDraftNodes = [];
 						var aSemanticDraftNodeKeys = [];
 						for (var j = 0; j < this._oDraftMetadata.draftNodes.length; j++) {
@@ -202,6 +238,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/util/MockServe
 							aDraftNodes[i].HasActiveEntity = false;
 							aDraftNodes[i].HasDraftEntity = false;
 							aDraftNodes[i][this._oDraftMetadata.draftRootKey] = this._oConstants.EMPTY_GUID;
+							if (aDraftNodes[i][this._oConstants.DRAFT_ADMINISTRATIVE_DATA_UUID]) {
+								aDraftNodes[i][this._oConstants.DRAFT_ADMINISTRATIVE_DATA_UUID] = null;
+							}
 							var sDraftKey = fnGrep(mEntitySets[this._oDraftMetadata.draftNodes[j]].keys, aSemanticDraftNodeKeys);
 							aDraftNodes[i][sDraftKey] = this._oConstants.EMPTY_GUID;
 						}
