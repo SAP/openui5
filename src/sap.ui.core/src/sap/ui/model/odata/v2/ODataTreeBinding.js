@@ -1203,7 +1203,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/od
 	 * @public
 	 */
 	ODataTreeBinding.prototype.initialize = function() {
-		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded()) {
+		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && this.bInitial) {
 			this.bInitial = false;
 			this.bHasTreeAnnotations = this._hasTreeAnnotations();
 			this._processSelectParameters();
