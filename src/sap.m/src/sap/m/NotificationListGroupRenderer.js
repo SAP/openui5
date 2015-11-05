@@ -116,12 +116,14 @@ sap.ui.define([], function () {
 		/** @type {boolean} */
 		var collapsed = oControl.getCollapsed();
 
-		notifications.forEach(function (notification) {
-			if (collapsed) {
-			    notification.addStyleClass('sapMNLG-Collapsed');
-			}
-			oRm.renderControl(notification);
-		});
+		if (notifications) {
+			notifications.forEach(function (notification) {
+				if (collapsed) {
+					notification.addStyleClass('sapMNLG-Collapsed');
+				}
+				oRm.renderControl(notification);
+			});
+		}
 	};
 
 	//================================================================================

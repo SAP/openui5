@@ -151,9 +151,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		/** @type {sap.ui.core.Priority|string} */
 		var priority = sap.ui.core.Priority.None;
 
-		notifications.forEach(function (item) {
-			priority = comparePriority(priority, item.getPriority());
-		});
+		if (notifications) {
+			notifications.forEach(function (item) {
+				priority = comparePriority(priority, item.getPriority());
+			});
+		} else {
+			priority = this.getProperty('priority');
+		}
 
 		return priority;
 	};
@@ -162,9 +166,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		/** @type {sap.m.NotificationListItem[]} */
 		var notifications = this.getAggregation('items');
 
-		return notifications.some(function (item) {
-			return item.getUnread();
-		});
+		if (notifications) {
+			return notifications.some(function (item) {
+				return item.getUnread();
+			});
+		}
+		return this.getProperty('unread');
 	};
 
 	NotificationListGroup.prototype.onBeforeRendering = function() {
