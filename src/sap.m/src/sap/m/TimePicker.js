@@ -142,6 +142,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			this._bPickerOpening = false;
 
 			this._rPlaceholderRegEx = new RegExp(PLACEHOLDER_SYMBOL, 'g');
+			this._sLastChangeValue = null;
 		};
 
 		/**
@@ -162,6 +163,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			this._oPopoverKeydownEventDelegate = null;
 			this._sUsedValuePattern = null;
 			this._sValueFormat = null;
+			this._sLastChangeValue = null;
 		};
 
 		/**
@@ -1091,6 +1093,29 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 */
 		TimePicker.prototype._initMask = function() {
 			this._oTimeSemanticMaskHelper = new TimeSemanticMaskHelper(this);
+		};
+
+		/**
+		 * Fires the change event for the listeners
+		 *
+		 * @protected
+		 * @param {String} sValue value of the input.
+		 * @param {Object} [oParams] extra event parameters.
+		 */
+		TimePicker.prototype.fireChangeEvent = function(sValue, oParams) {
+			if (sValue) {
+				sValue = sValue.trim();
+			}
+
+			if (sValue !== this._sLastChangeValue) {
+				//fire only when there is a change from a meaningful value or to a meaningful value
+				//not when the value changes from null to ""
+				if (sValue || this._sLastChangeValue) {
+					InputBase.prototype.fireChangeEvent.call(this, sValue, oParams);
+				}
+
+				this._sLastChangeValue = sValue;
+			}
 		};
 
 		var TimeSemanticMaskHelper = function(oTimePicker) {
