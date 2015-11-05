@@ -2931,12 +2931,11 @@
 
 		// assertions     
 		var aSelectedItems = oMultiComboBox.getSelectedItems();
-		strictEqual(aSelectedItems.length, 1, "One token was selected on Focus Out");
-		strictEqual(aSelectedItems[0].getText(), "Algeria", "Algeria was selected");
+		strictEqual(aSelectedItems.length, 0, "One token was selected on Focus Out");
 		
-		strictEqual(fnFireChangeSpy.callCount, 1, "The change event was fired");
-		strictEqual(fnFireSelectionChangeSpy.callCount, 1, "The selection change event was not fired");
-		strictEqual(fnFireSelectionFinishSpy.callCount, 1, "The selection finish event was not fired");
+		strictEqual(fnFireChangeSpy.callCount, 0, "The change event was fired");
+		strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
+		strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
 
 		// cleanup
 		oMultiComboBox.destroy();
@@ -4077,17 +4076,14 @@
 		oMultiComboBox.setValue("Foo")
 
 		// act
-		oMultiComboBox.focus();
-		oMultiComboBoxNext.focus();
-		
+		oMultiComboBox.getFocusDomRef().focus();
 		this.clock.tick(500);
-		var sInputValue = oMultiComboBox.getValue();
+		oMultiComboBox.getFocusDomRef().blur();
+		this.clock.tick(500);
 		
 		// assertions                                  
-		strictEqual(sInputValue, "",
+		strictEqual(oMultiComboBox.getValue(), "",
 				'The InputValue of the MultiComboBox must be resetted (empty) when it loses the focus.');
-		strictEqual(oMultiComboBox.getValueState(), "Error",
-		'ValueState must be "Error"');
 
 		// cleanup
 		oMultiComboBox.destroy();
