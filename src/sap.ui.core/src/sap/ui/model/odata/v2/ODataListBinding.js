@@ -775,7 +775,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	 * @public
 	 */
 	ODataListBinding.prototype.initialize = function() {
-		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded()) {
+		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && this.bInitial) {
 			this.bInitial = false;
 			this._initSortersFilters();
 			if (this.bDataAvailable) {
