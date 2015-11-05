@@ -1838,11 +1838,43 @@
 				oInput.setTooltip("");
 
 				// assert
-				strictEqual(oInput.$().attr("title"), undefined);
+				ok(oInput.$().attr("title") === undefined);
 				strictEqual(oInput.$("describedby").length, 0);
 
 				// cleanup
 				oInput.destroy();
+			});
+
+			// BCP 1580094855
+			test("it should not render the tooltip (test case 3)", function() {
+
+				// arrange
+				sap.m.InputBase.extend("CustomInput", {
+					renderer: {
+						getDescribedByAnnouncement: function() {
+							return "lorem ipsum";
+						}
+					}
+				});
+
+				// system under test
+				var oInput = new CustomInput({
+					tooltip: "tooltip"
+				});
+
+				// arrange
+				oInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oInput.setTooltip("");
+
+				// assert
+				ok(oInput.$().attr("title") === undefined);
+
+				// cleanup
+				oInput.destroy();
+				delete CustomInput;
 			});
 
 			test("Renderer Hooks", function() {
