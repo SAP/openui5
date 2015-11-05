@@ -819,31 +819,30 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 * @private
 	 */
 	MultiInput.prototype.onpaste = function (oEvent) {
-		
-		var bHasSuggestionPopup = this.getShowSuggestion() && (this.getSuggestionItems().length !== 0 || this.getSuggestionRows().length !== 0 || this.getSuggestionColumns().length !== 0);
-		if (!bHasSuggestionPopup) {
-			var sOriginalText;
-			// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
-			if (window.clipboardData) {
-				//IE
-				sOriginalText = window.clipboardData.getData("Text");
-			} else {
-				// Chrome, Firefox, Safari
-				sOriginalText =  oEvent.originalEvent.clipboardData.getData('text/plain');
-			}
 
-			var aSeparatedText = this._tokenizer._parseString(sOriginalText);
-			setTimeout(function() {
-				if (aSeparatedText) {
-					var i = 0;
-					for ( i = 0; i < aSeparatedText.length; i++) {
-						this.setValue(aSeparatedText[i]);
-						this._validateCurrentText();
-					}
-				}
-			}.bind(this), 0);
+		var sOriginalText;
+		// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
+		if (window.clipboardData) {
+			//IE
+			sOriginalText = window.clipboardData.getData("Text");
+		} else {
+			// Chrome, Firefox, Safari
+			sOriginalText =  oEvent.originalEvent.clipboardData.getData('text/plain');
 		}
-		
+
+		var aSeparatedText = this._tokenizer._parseString(sOriginalText);
+		setTimeout(function() {
+			if (aSeparatedText) {
+				var i = 0;
+				for ( i = 0; i < aSeparatedText.length; i++) {
+					this.setValue(aSeparatedText[i]);
+					this._validateCurrentText();
+				
+				}
+				this.cancelPendingSuggest();
+			}
+		}.bind(this), 0);
+
 	};
 	
 	/**
