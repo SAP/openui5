@@ -187,6 +187,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.Switch",
 			"sap.m.Table",
 			"sap.m.TableSelectDialog",
+			"sap.m.TabContainer",
+			"sap.m.TabStrip",
+			"sap.m.TabStripSelect",
+			"sap.m.TabStripSelectList",
+			"sap.m.TabStripItem",
 			"sap.m.Text",
 			"sap.m.TextArea",
 			"sap.m.Tile",
@@ -226,6 +231,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.P13nSortItem",
 			"sap.m.SegmentedButtonItem",
 			"sap.m.SuggestionItem",
+			"sap.m.TabContainerItem",
 			"sap.m.ToolbarLayoutData",
 			"sap.m.UploadCollectionItem",
 			"sap.m.UploadCollectionParameter",
@@ -1465,7 +1471,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		 * @public
 		 */
 		columns : "columns",
-		
+
 		/**
 		 * Panel type for dimension and measure settings.
 		 * @public

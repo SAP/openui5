@@ -1,0 +1,88 @@
+/* ======================================== */
+/* CSS for control sap.m/TabStrip.control   */
+/* High Contrast Black theme                */
+/* ======================================== */
+.sapMTabStrip {
+	background: @sapHCStandardBG;
+	border: 1px solid @sapHCStandardFG;
+	.sapMTSLeftOverflowButtons {
+		background: linear-gradient(90deg, @sapHCStandardBG 0%, @sapHCStandardBG 75%, transparent 100%);
+		.sapMBtn {
+			.sapMBtnInner  {
+				.sapUiIcon {
+				}
+			}
+		}
+	}
+	.sapMTSTabContainer {
+		.sapMTSTabs {
+			.sapMTabContainerItem {
+				background: @sapHCStandardBG;
+				border-right: 1px solid @sapHCStandardFG;
+				color: @sapHCStandardFG;
+				.sapMTabContainerItemLabel {
+				}
+				.sapMTabContainerItemModified {
+				}
+				.sapMTabContainerItemModifiedInvisible {
+				}
+				.sapMTabContainerItemButton {
+				}
+				&.selected {
+					background: @sapHCHighlightAltBG;
+					border-right: 1px solid @sapHCStandardFG;
+					color: @sapHCStandardFG;
+				}
+				&:hover {
+					background: @sapHCHighlightBG;
+					border-right: 1px solid @sapHCStandardFG;
+					color: @sapHCStandardFG;
+				}
+				&:active {
+					background: @sapHCHighlightBG;
+					border-right: 1px solid @sapHCStandardFG;
+					color: @sapHCStandardFG;
+				}
+				&:focus {
+				  	outline: none;
+				}
+				position: relative;
+				&:focus::before {
+				  	pointer-events: none;
+					content: "";
+					position: absolute;
+					top: 0px;
+					left: 0px;
+					right: 0px;
+					bottom: 0px;
+					border: 0.125rem dotted @sapHCStandardFG;
+				}
+			}
+		}
+	}
+	.sapMTSRightOverflowButtons {
+		background: linear-gradient(90deg,  transparent  0%,  @sapHCStandardBG  25%, @sapHCStandardBG 100%);
+		.sapMBtn {
+			.sapMBtnInner  {
+				.sapUiIcon {
+				}
+			}
+		}
+	}
+	.sapMTSTouchArea {
+		.sapMSelectList {
+			.sapMTabSelectList {
+				.sapMTabSelectListItemCloseBtn {
+				}
+				.sapMTabSelectListItemCloseBtnInvisible {
+				}
+			}
+		}
+		.sapMBtn {
+			.sapMBtnInner {
+				.sapMBtnIcon {
+				}
+			}
+		}
+	}
+}

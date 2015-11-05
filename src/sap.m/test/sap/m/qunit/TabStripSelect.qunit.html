@@ -1,0 +1,169 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>qUnit Page for sap.m.TabStripSelect</title>
+
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m">
+	</script>
+
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+	<script language="javascript">
+		jQuery.sap.require("sap.ui.core.IconPool");
+		sinon.config.useFakeTimers = true;
+
+		module("TabSelect", {
+			setup: function () {
+				this.oMITS = new sap.m.TabStripSelect({
+					type: sap.m.SelectType.IconOnly,
+					autoAdjustWidth: true,
+					icon: sap.ui.core.IconPool.getIconURI("slim-arrow-down"),
+					items: [
+						new sap.m.TabStripItem({
+							key: "0",
+							text: "01234567890123456789012345"
+						}),
+
+						new sap.m.TabStripItem({
+							key: "1",
+							text: "item 1"
+						}),
+
+						new sap.m.TabStripItem({
+							key: "2",
+							text: "item 2"
+						}),
+
+					]
+				});
+
+				this.oMITS.placeAt("qunit-fixture");
+//				this.oMITS.placeAt("visible-content");
+				sap.ui.getCore().applyChanges();
+			},
+			teardown: function () {
+				this.oMITS.destroy();
+				this.oMITS = null;
+			}
+		});
+
+		test("Misc", function () {
+			this.oMITS.open();
+			this.clock.tick(1000);
+			strictEqual(this.oMITS.$().hasClass('sapMTabSelect'), true, 'Control style class is present.');
+			strictEqual(this.oMITS.getList().$().hasClass('sapMTabSelectList'), true, 'Control style class is present.');
+		});
+
+		test("Modified state", function () {
+			strictEqual(this.oMITS.getItems()[0].getProperty('modified'), false, "The first item is not modified by default");
+			this.oMITS.open();
+			this.clock.tick(1000);
+
+			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemModifiedInvisible').length, 3, 'No items  marked as modified in the DOM');
+			this.oMITS.close();
+			this.oMITS.getItems()[0].setProperty('modified', true);
+			this.oMITS.open();
+			this.clock.tick(1000);
+			strictEqual(this.oMITS.getItems()[0].$().children('.sapMTabSelectListItemModifiedInvisible').length, 0, 'Item marked as modified in the DOM');
+			this.oMITS.close();
+
+			this.oMITS.getItems()[0].setProperty('modified', false);
+			this.oMITS.open();
+			this.clock.tick(1000);
+			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemModifiedInvisible').length, 3, 'No items  marked as modified in the DOM after some were marked as modified');
+		});
+
+
+		test("Close button", function () {
+			var iItemDomHeight = 32 // "base" height that is expected
+			this.oMITS.open();
+			this.clock.tick(1000);
+
+			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemCloseBtnInvisible').length, 2, 'Number of hidden close buttons in the DOM is the same as the number of items in the list instance without the selected one.');
+			strictEqual(this.oMITS.getItems()[0].$().children('.sapMTabSelectListItemCloseBtnInvisible').length, 0, 'Close button for default selected item is visible');
+
+			// for some reason the assert above is causing the select to close - reopen it
+			this.oMITS.open();
+			this.clock.tick(1000);
+
+			strictEqual(this.oMITS.getItems()[1].$().children('.sapMTabSelectListItemCloseBtnInvisible').length, 1, 'Close button for the item is invisible before mouse enter');
+			this.oMITS.getList().mouseenter({target: this.oMITS.getItems()[1].getDomRef()});
+
+			strictEqual(this.oMITS.getItems()[1].$().children('.sapMTabSelectListItemCloseBtnInvisible').length, 0, 'Close button for the item is visible after mouse enter');
+			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemCloseBtnInvisible').length, 1, 'Two items total have visible close buttons');
+
+			this.oMITS.getList().mouseleave({target: this.oMITS.getItems()[1].getDomRef()});
+			strictEqual(this.oMITS.getItems()[1].$().children('.sapMTabSelectListItemCloseBtnInvisible').length, 1, 'Close button for the item is not visible after mouse leave');
+
+			var iSelectedItemId = 1;
+			// SETTING FIRST ITEM AS ACTIVE
+			this.oMITS.getList()._activateItem(this.oMITS.getItems()[iSelectedItemId]);
+			this.oMITS.open();
+			this.clock.tick(1000);
+			strictEqual(this.oMITS.getItems()[0].$().children('.sapMTabSelectListItemCloseBtnInvisible').length, 1, 'The first item is not selected anymore and the close button is hidden');
+			this.clock.tick(1000);
+			strictEqual(this.oMITS.getItems()[1].$().children('.sapMTabSelectListItemCloseBtnInvisible').length, 0, 'The close button for the second item is visible');
+
+
+			var oItem = this.oMITS.getItems()[0];
+			var fnFireTabClosePressedSpy = sinon.spy(oItem, "fireTabClosePressed");
+			sap.ui.test.qunit.triggerTouchEvent("tap", oItem.$().children('.sapMTabSelectListItemCloseBtn')[0]);
+
+			this.clock.tick(1000);
+
+			strictEqual(this.oMITS.isOpen(), true, 'Select must remain open if close button was clicked.');
+			strictEqual(fnFireTabClosePressedSpy.callCount, 1, "The tab close event was fired");
+			// ToDo: assert for correct tab id on the event
+			this.clock.tick(1000);
+
+			this.oMITS.open();
+			this.clock.tick(1000);
+			this.oMITS.getItems()[iSelectedItemId].$().tap();
+			this.clock.tick(1000);
+			strictEqual(this.oMITS.isOpen(), false, 'Select must close after the currently selected item was clicked.');
+
+			this.oMITS.open();
+			this.oMITS.getItems()[0].$().tap();
+			this.clock.tick(1000);
+			strictEqual(this.oMITS.isOpen(), false, 'Select must close after an item was clicked.');
+			this.oMITS.close();
+
+
+			// TABLET
+			var oSystem = {
+				desktop : false,
+				phone : false,
+				tablet : true
+			};
+			this.stub(sap.ui.Device, "system", oSystem);
+			this.stub(jQuery.device, "is", oSystem);
+			this.oMITS.open();
+			this.clock.tick(1000);
+			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemCloseBtn').length, this.oMITS.getList().getItems().length, 'Tablet: The number of visible close buttons in the DOM is the same as the number of items in the list instance.');
+			strictEqual(this.oMITS.getList().$().find('.sapMTabSelectListItemCloseBtnInvisible').length, 0, 'Tablet: The number of invisible close buttons in the DOM is 0.');
+					});
+
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+	<h1 id="qunit-header">qUnit Page for sap.m.TabStripSelect</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="content"></div>
+	<div id="qunit-fixture"></div>
+	<div style="padding-left: 500px" id="visible-content"></div>
+</body>
+</html>

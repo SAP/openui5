@@ -1,0 +1,42 @@
+/* ======================================== */
+/* CSS for control sap.m/TabStrip.control   */
+/* High Contrast Black theme                */
+/* ======================================== */
+
+.sapMTabSelect { /* change this only in context of sap.m.TabStripSelect*/
+  &.sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
+    background-color: transparent;
+
+    &.sapMSltHoverable:hover {
+      background-color: transparent;
+    }
+
+    .sapMSltInner {
+      .sapMSltIcon {
+        background-color: @sapHCHighlightAltBG;
+      }
+    }
+  }
+
+  .sapMSltInner {
+    background-color: @sapHCStandardBG;
+    border: 1px solid @sapHCStandardFG;
+    border-radius: 0.375rem;
+  }
+
+  &:not(.sapMSltPressed) {
+    &.sapMSltHoverable:hover {
+      background-color: transparent;
+
+      .sapMSltInner {
+        .sapMSltIcon {
+          background-color: @sapHCHighlightBG;
+        }
+      }
+    }
+  }
+}
+
+.sap-desktop .sapMTabSelect.sapMSltIconOnly:not(.sapMSltDisabled):focus {
+  outline: none;
+}
