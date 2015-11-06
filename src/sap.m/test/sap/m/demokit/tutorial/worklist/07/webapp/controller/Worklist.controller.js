@@ -245,9 +245,14 @@ sap.ui.define([
 			if (aSelectedProducts.length) {
 				for (i = 0; i < aSelectedProducts.length; i++) {
 					sPath = aSelectedProducts[i].getBindingContextPath();
-					this.getModel().remove(sPath);
+					this.getModel().remove(sPath, {
+						success : function (oData, oResponse){
+							// check if the OData request was really successful or not by looking into oResponse
+							// ...
+							MessageToast.show(this.getModel("i18n").getResourceBundle().getText("StockRemovedSuccessMsg"));
+						}.bind(this)
+					});
 				}
-				MessageToast.show(this.getModel("i18n").getResourceBundle().getText("StockRemovedSuccessMsg", [aSelectedProducts.length]));
 			} else {
 				this._showErrorMessage(this.getModel("i18n").getResourceBundle().getText("TableSelectProduct"));
 			}
@@ -268,9 +273,14 @@ sap.ui.define([
 					sPath = aSelectedProducts[i].getBindingContextPath();
 					oProductObject = aSelectedProducts[i].getBindingContext().getObject();
 					oProductObject.UnitsInStock += 10;
-					this.getModel().update(sPath, oProductObject);
+					this.getModel().update(sPath, oProductObject, {
+						success : function (oData, oResponse) {
+							// check if the OData request was really successful or not by looking into oResponse
+							// ...
+							MessageToast.show(this.getModel("i18n").getResourceBundle().getText("StockUpdatedSuccessMsg"));
+						}.bind(this)
+					});
 				}
-				MessageToast.show(this.getModel("i18n").getResourceBundle().getText("StockUpdatedSuccessMsg", [aSelectedProducts.length]));
 			} else {
 				this._showErrorMessage(this.getModel("i18n").getResourceBundle().getText("TableSelectProduct"));
 			}
