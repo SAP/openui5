@@ -75,10 +75,15 @@
 }
 
 .sapMCb:not(.sapMCbBgDis):focus > .sapMCbBg,
-.sapMCb:not(.sapMCbBgDis)		> .sapMCbBg:focus, { /* in IE clicking on checkbox input does not cause focus on checkbox wrapper div */
-	outline-color: @sapUiCheckBoxFocusColor;
+.sapMCb:not(.sapMCbBgDis)		> .sapMCbBg:focus { /* in IE clicking on checkbox input does not cause focus on checkbox wrapper div */
+	outline-color: @sapUiFocus;
 	outline-width: 1px;
 	outline-style: dotted;
+}
+
+.sapMFooter-CTX .sapMCb:not(.sapMCbBgDis):focus > .sapMCbBg,
+.sapMFooter-CTX .sapMCb:not(.sapMCbBgDis)		> .sapMCbBg:focus {
+	outline-color: @sapUiInvertedFocus;
 }
 
 .sapMLIBActive .sapMCbBg,
