@@ -318,22 +318,12 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 							"-moz-transform": sStartTransform,
 							"transform": sStartTransform,
 							"display": "block"
-						});
+						}).addClass("sapMDialogOpen");
 
 						$this.bind("webkitTransitionEnd transitionend", function(){
 							jQuery(this).unbind("webkitTransitionEnd transitionend");
 							$this.removeClass("sapMDialogSliding");
 							fnOpened();
-							// replace the css transform with css top because div with css transform can scroll the whole page
-							// on Android stock browser and blackberry browser
-							setTimeout(function(){
-								$this.css({
-									"top": iTop + "px",
-									"-webkit-transform": "",
-									"-moz-transform": "",
-									"transform": ""
-								});
-							}, 0);
 						});
 
 						//need a timeout to trigger the animation
