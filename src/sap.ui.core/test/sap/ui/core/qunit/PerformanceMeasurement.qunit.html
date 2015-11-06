@@ -377,7 +377,7 @@
 			if(performance && oMeasurement.requests && oMeasurement.requests.length) {
 				equal(oMeasurement.requests.length, 1, "One requests");
 				equal(oMeasurement.measurements.length, 0, "No measurements");
-				ok(oMeasurement.navigation === oMeasurement.requests[0].connectEnd - oMeasurement.requests[0].startTime, "Navigation correct");
+				ok(oMeasurement.navigation === oMeasurement.requests[0].requestStart - oMeasurement.requests[0].startTime, "Navigation correct");
 				ok(oMeasurement.roundtrip === oMeasurement.requests[0].responseEnd - oMeasurement.requests[0].requestStart, "Roundtrip correct");
 				ok(oMeasurement.processing <= oMeasurement.end - oMeasurement.start, "Processing plausible");
 			} else {
@@ -422,7 +422,7 @@
 
 		</script>
 
-	<title>QUnit Test for Query.sap.measure</title>
+	<title>QUnit Test for jQuery.sap.measure</title>
 
 </head>
 <body class="sapUiBody">
