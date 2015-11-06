@@ -249,19 +249,27 @@ function(jQuery, library, Control, IconPool) {
 		if (this._sortList) {
 			this._sortList.destroy();
 			this._sortList = null;
+			this._ariaSortListInvisibleText.destroy();
+			this._ariaSortListInvisibleText = null;
 		}
 		if (this._sortOrderList) {
 			this._sortOrderList.destroy();
 			this._sortOrderList = null;
+			this._ariaSortOrderInvisibleText.destroy();
+			this._ariaSortOrderInvisibleText = null;
 		}
 
 		if (this._groupList) {
 			this._groupList.destroy();
 			this._groupList = null;
+			this._ariaGroupListInvisibleText.destroy();
+			this._ariaGroupListInvisibleText = null;
 		}
 		if (this._groupOrderList) {
 			this._groupOrderList.destroy();
 			this._groupOrderList = null;
+			this._ariaGroupOrderInvisibleText.destroy();
+			this._ariaGroupOrderInvisibleText = null;
 		}
 
 		if (this._presetFilterList) {
@@ -1123,12 +1131,18 @@ function(jQuery, library, Control, IconPool) {
 		}
 		this._vContentPage = -1;
 
+		// Aria - used to label the sort order list
+		this._ariaSortOrderInvisibleText = new sap.ui.core.InvisibleText(this.getId() + "-sortOrderLabel", {
+			text: this._rb.getText("VIEWSETTINGS_SORT_DIRECTION").concat(":")
+		});
+
 		this._sortOrderList = new sap.m.List(this.getId() + "-sortorderlist", {
 			mode : sap.m.ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
 			selectionChange : function(oEvent) {
 				that.setProperty('sortDescending', oEvent.getParameter("listItem").data("item"), true);
-			}
+			},
+			ariaLabelledBy: this._ariaSortOrderInvisibleText
 		}).addStyleClass("sapMVSDUpperList");
 		this._sortOrderList.addItem(new sap.m.StandardListItem({
 			title : this._rb.getText("VIEWSETTINGS_ASCENDING_ITEM")
@@ -1136,6 +1150,11 @@ function(jQuery, library, Control, IconPool) {
 		this._sortOrderList.addItem(new sap.m.StandardListItem({
 			title : this._rb.getText("VIEWSETTINGS_DESCENDING_ITEM")
 		}).data("item", true));
+
+		// Aria - used to label the sort list
+		this._ariaSortListInvisibleText = new sap.ui.core.InvisibleText(this.getId() + "-sortListLabel", {
+			text: this._rb.getText("VIEWSETTINGS_TITLE_SORT").concat(":")
+		});
 
 		this._sortList = new sap.m.List(this.getId() + "-sortlist", {
 			mode : sap.m.ListMode.SingleSelectLeft,
@@ -1146,10 +1165,11 @@ function(jQuery, library, Control, IconPool) {
 					item.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
 				}
 				that.setAssociation("selectedSortItem", item, true);
-			}
+			},
+			ariaLabelledBy: this._ariaSortListInvisibleText
 		});
 
-		this._sortContent = [ this._sortOrderList, this._sortList ];
+		this._sortContent = [ this._ariaSortOrderInvisibleText, this._sortOrderList, this._ariaSortListInvisibleText, this._sortList ];
 	};
 
 	/**
@@ -1164,12 +1184,18 @@ function(jQuery, library, Control, IconPool) {
 		}
 		this._vContentPage = -1;
 
+		// Aria - used to label the group order
+		this._ariaGroupOrderInvisibleText = new sap.ui.core.InvisibleText(this.getId() + "-groupOrderLabel", {
+			text: this._rb.getText("VIEWSETTINGS_GROUP_DIRECTION").concat(":")
+		});
+
 		this._groupOrderList = new sap.m.List(this.getId() + "-grouporderlist", {
 			mode : sap.m.ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
 			selectionChange : function(oEvent) {
 				that.setProperty('groupDescending', oEvent.getParameter("listItem").data("item"), true);
-			}
+			},
+			ariaLabelledBy: this._ariaGroupOrderInvisibleText
 		}).addStyleClass("sapMVSDUpperList");
 		this._groupOrderList.addItem(new sap.m.StandardListItem({
 			title : this._rb.getText("VIEWSETTINGS_ASCENDING_ITEM")
@@ -1177,6 +1203,11 @@ function(jQuery, library, Control, IconPool) {
 		this._groupOrderList.addItem(new sap.m.StandardListItem({
 			title : this._rb.getText("VIEWSETTINGS_DESCENDING_ITEM")
 		}).data("item", true));
+
+		// Aria - used to label the group list
+		this._ariaGroupListInvisibleText = new sap.ui.core.InvisibleText(this.getId() + "-groupListLabel", {
+			text: this._rb.getText("VIEWSETTINGS_TITLE_GROUP").concat(":")
+		});
 
 		this._groupList = new sap.m.List(this.getId() + "-grouplist",
 			{
@@ -1188,10 +1219,11 @@ function(jQuery, library, Control, IconPool) {
 						item.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
 					}
 					that.setAssociation("selectedGroupItem", item, true);
-				}
+				},
+				ariaLabelledBy: this._ariaGroupListInvisibleText
 			});
 
-		this._groupContent = [ this._groupOrderList, this._groupList ];
+		this._groupContent = [ this._ariaGroupOrderInvisibleText, this._groupOrderList, this._ariaGroupListInvisibleText, this._groupList ];
 	};
 
 	/**
