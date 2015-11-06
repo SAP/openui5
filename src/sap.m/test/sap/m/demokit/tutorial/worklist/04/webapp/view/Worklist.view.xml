@@ -82,7 +82,7 @@
 					<Column
 						id="supplierNameColumn"
 						demandPopin="false"
-						minScreenWidth="Small">
+						minScreenWidth="Tablet">
         				<Text text="{i18n>TableSupplierColumnTitle}"/>
     				</Column>
     				<Column
@@ -94,13 +94,11 @@
     				</Column>
     				<Column id="unitsOnOrderColumn"
             			demandPopin="true"
-            			minScreenWidth="Small"
+            			minScreenWidth="Tablet"
             			hAlign="Right">
         				<Text text="{i18n>TableUnitsOrderedColumnTitle}"/>
 					</Column>
 					<Column id="unitsInStockColumn"
-            			demandPopin="true"
-        				minScreenWidth="Small"
             			hAlign="Right">
         				<Text text="{i18n>TableUnitsInStockColumnTitle}"/>
     				</Column>
