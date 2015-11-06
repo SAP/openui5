@@ -36,7 +36,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 
 					// only use passport & FESR for non CORS requests (relative or with same host)
 					if (!sHost || sHost === HOST) {
-						this.onreadystatechange = handleResponse;
+						this.addEventListener("readystatechange", handleResponse);
 						this.pendingInteraction = oPendingInteraction;
 
 						sTransactionId = createGUID();
