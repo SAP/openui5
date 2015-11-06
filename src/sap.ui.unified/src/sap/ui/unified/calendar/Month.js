@@ -1054,14 +1054,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + oThis);
 			}
 
-			if (jQuery.sap.equal(oThis.getDate(), oDate)) {
-				return;
+			var bFocusable = true; // if date not changed it is still focusable
+			if (!jQuery.sap.equal(oThis.getDate(), oDate)) {
+				var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate);
+				bFocusable = oThis.checkDateFocusable(oDate);
+				oThis.setProperty("date", oDate, true);
+				oThis._oUTCDate = oUTCDate;
 			}
-
-			var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate);
-			var bFocusable = oThis.checkDateFocusable(oDate);
-			oThis.setProperty("date", oDate, true);
-			oThis._oUTCDate = oUTCDate;
 
 			if (oThis.getDomRef()) {
 				if (bFocusable) {
@@ -1087,8 +1086,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var $DomRefDay;
 			for ( var i = 0; i < aDomRefs.length; i++) {
 				$DomRefDay = jQuery(aDomRefs[i]);
-				if ($DomRefDay.attr("data-sap-day") == sYyyymmdd && document.activeElement != aDomRefs[i]) {
-					oThis._oItemNavigation.focusItem(i);
+				if ($DomRefDay.attr("data-sap-day") == sYyyymmdd) {
+					if (document.activeElement != aDomRefs[i]) {
+						oThis._oItemNavigation.focusItem(i);
+					}
 					break;
 				}
 			}
