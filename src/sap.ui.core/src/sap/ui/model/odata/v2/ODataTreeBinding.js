@@ -581,13 +581,14 @@ sap.ui.define(['jquery.sap.global',
 					
 					if (this.sOperationMode == "Server" || this.bUseServersideApplicationFilters) {
 						sFilterParams = this.getFilterParams();
-						sFilterParams = sFilterParams ? "%20and%20" + sFilterParams : "";
+						//sFilterParams = sFilterParams ? "%20and%20" + sFilterParams : "";
 					}
 					
 					if (sNodeId) {
 						//retrieve the correct context for the sNodeId (it's an OData-Key) and resolve the correct hierarchy node property as a filter value
 						var oNodeContext = this.oModel.getContext("/" + sNodeId);
 						var sNodeIdForFilter = oNodeContext.getProperty(this.oTreeProperties["hierarchy-node-for"]);
+						sFilterParams = sFilterParams ? "%20and%20" + sFilterParams : "";
 						aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-parent-node-for"] + " eq '" + sNodeIdForFilter + "'") + sFilterParams);
 					} else if (sNodeId == null) {
 						// no root node id is given: sNodeId === null
@@ -595,8 +596,23 @@ sap.ui.define(['jquery.sap.global',
 						
 						// in case the binding runs in OperationMode Server -> the level filter is EQ by default,
 						// for the Client OperationMode GT is used to fetch all nodes below the given level
-						var sLevelFilterOperator = !this.bClientOperation ? " eq " : " ge ";
-						aParams.push("$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + sLevelFilterOperator + this.iRootLevel) + sFilterParams);
+						// The only exception here is the rootLevel 0:
+						// if the root Level is 0, we do not send any level filters, since by specification the top level nodes are on level 0
+						// this is for compatibility reasons with different backend-systems, which do not support GE operators on the level
+						var sLevelFilter = "";
+						if (!this.bClientOperation || this.iRootLevel > 0) {
+							var sLevelFilterOperator = this.bClientOperation ? " ge " : " eq ";
+							sLevelFilter = jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + sLevelFilterOperator + this.iRootLevel);
+						}
+						
+						//only build filter statement if necessary
+						if (sLevelFilter || sFilterParams) {
+							//if we have a level filter AND an application filter, we need to add an escaped "AND" to between
+							if (sFilterParams && sLevelFilter) {
+								sFilterParams = "%20and%20" + sFilterParams;
+							}
+							aParams.push("$filter=" + sLevelFilter + sFilterParams);
+						}
 					}
 				} else {
 					// append application filters for navigation property case
@@ -680,18 +696,25 @@ sap.ui.define(['jquery.sap.global',
 		var sPath = this.oModel.resolve(this.getPath(), this.getContext());
 		
 		// default filter is on the rootLevel
-		var sNodeFilter = "$filter=" + jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + " ge " + this.getRootLevel());
-		
-		// if necessary we add all other filters to the count request
-		if (this.bUseServersideApplicationFilters) {
-			var sFilterStatement = this.getFilterParams();
-			
-			if (sFilterStatement) {
-				sNodeFilter += ("%20and%20" + sFilterStatement);
-			}
+		var sLevelFilter = "";
+		if (this.iRootLevel > 0) {
+			sLevelFilter = jQuery.sap.encodeURL(this.oTreeProperties["hierarchy-level-for"] + " ge " + this.getRootLevel());
 		}
 		
-		aParams.push(sNodeFilter);
+		// if necessary we add all other filters to the count request
+		var sFilterParams = "";
+		if (this.bUseServersideApplicationFilters) {
+			var sFilterParams = this.getFilterParams();
+		}
+		
+		//only build filter statement if necessary
+		if (sLevelFilter || sFilterParams) {
+			//if we have a level filter AND an application filter, we need to add an escaped "AND" to between
+			if (sFilterParams && sLevelFilter) {
+				sFilterParams = "%20and%20" + sFilterParams;
+			}
+			aParams.push("$filter=" + sLevelFilter + sFilterParams);
+		}
 		
 		// figure out how to request the count
 		var sCountType = "";
