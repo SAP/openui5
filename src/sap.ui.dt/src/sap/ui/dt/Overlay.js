@@ -245,7 +245,6 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 				DOMUtil.syncScroll(oGeometry.domRef, this.getDomRef());
 			}
 
-
 			this.getChildren().forEach(function(oChild) {
 				oChild.applyStyles();
 			});
@@ -303,14 +302,6 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 					this.$().appendTo(oOverlayContainer);
 				}
 				this.applyStyles();
-
-				// fix for webkit browsers unnecessary scrollbars
-				// see following link for a demo of a problem (in webkit browser)
-				// https://jsbin.com/ruxusanoxe/edit?html,css,js,output
-				if (sap.ui.Device.browser.webkit) {
-					// TODO : another fix needed, we can't hide/unhide because scroll isn't handled properly aftewards
-					//this._removeUnnecessaryScrollBar();
-				}
 			}
 		}
 		if (oGeometry && this.isVisible()) {
@@ -319,20 +310,6 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 			// we should always be in DOM to make sure, that drop events (dragend) will be fired even if the overlay isn't visible anymore
 			this.$().hide();
 		}
-	};
-
-	/**
-	 * @private
-	 */
-	Overlay.prototype._removeUnnecessaryScrollBar = function() {
-		var mOverlayDisplay = {};
-		OverlayUtil.iterateOverlayTree(this, function(oOverlay) {
-			mOverlayDisplay[oOverlay.getId()] = oOverlay.$().css("display");
-			oOverlay.$().hide();
-		});
-		OverlayUtil.iterateOverlayTree(this, function(oOverlay) {
-			oOverlay.$().css("display", mOverlayDisplay[oOverlay.getId()]);
-		});
 	};
 
 	/**
