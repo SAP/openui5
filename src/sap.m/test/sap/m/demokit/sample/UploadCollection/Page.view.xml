@@ -1,7 +1,6 @@
 <mvc:View
 	height="100%"
 	controllerName="sap.m.sample.UploadCollection.Page"
-	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
@@ -13,6 +12,10 @@
 				<Label
 					text="Layout:">
 				</Label>
+				<Label text="Enable FileUploader"></Label>
+				<Switch state="true" change="onSwitchUploaderChange" type="Transparent"></Switch>
+				<Label text="Multi-selection mode"></Label>
+				<Switch id="modeSwitch" state="false" change="onSwitchModeChange" type="Transparent"></Switch>
 				<Select
 					id="tbSelect"
 					items="{/items}"
@@ -36,7 +39,7 @@
 				uploadComplete="onUploadComplete"
 				beforeUploadStarts="onBeforeUploadStarts"
 				uploadTerminated="onUploadTerminated"
-				items="{/items}"
+				items="{path : '/items', templateShareable : 'true'}"
 				numberOfAttachmentsText="Uploaded (8)"
 				mode="SingleSelectMaster">
 				<toolbar>
@@ -44,14 +47,9 @@
 						<Title id="attachmentTitle"/>
 						<ToolbarSpacer/>
 						<SearchField width="10rem" search="onSearch"></SearchField>
-						<UploadCollectionToolbarPlaceholder></UploadCollectionToolbarPlaceholder>
-						<Button id="deleteSelectedButton" text="Delete selected items" press="onDeleteSelectedItems" enabled="false" type="Transparent"></Button >
-						<Button id="countButton" text="Count" press="onCountPress" enabled="false" type="Transparent"></Button>
+						<Button id="deleteSelectedButton" text="Delete" press="onDeleteSelectedItems" enabled="false" type="Transparent"></Button>
 						<ToggleButton id="selectAllButton" text="Select all" press="onSelectAllPress" enabled="false" type="Transparent"></ToggleButton>
-						<Label text="Enable FileUploader"></Label>
-						<Switch state="true" change="onSwitchUploaderChange" type="Transparent"></Switch>
-						<Label text="Multiselect mode"></Label>
-						<Switch id="modeSwitch" state="false" change="onSwitchModeChange" type="Transparent"></Switch>
+						<UploadCollectionToolbarPlaceholder></UploadCollectionToolbarPlaceholder>
 					</OverflowToolbar>
 				</toolbar>
 				<items>
@@ -65,8 +63,8 @@
 						enableDelete="{enableDelete}"
 						visibleDelete="{visibleDelete}"
 						visibleEdit="{visibleEdit}"
-						attributes="{attributes}"
-						statuses="{statuses}"
+						attributes="{path : 'attributes', templateShareable : 'true'}"
+						statuses="{path : 'statuses', templateShareable : 'true'}"
 						selected="{selected}">
 						<attributes>
 							<ObjectAttribute
