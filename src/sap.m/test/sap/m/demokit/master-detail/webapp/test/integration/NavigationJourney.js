@@ -54,7 +54,7 @@ sap.ui.define([
 		opaTest("Navigate to an object not on the client: no item should be selected and the object page should be displayed", function (Given, When, Then) {
 			//Actions
 			When.onTheMasterPage.iRememberAnIdOfAnObjectThatsNotInTheList();
-			When.onTheBrowserPage.iChangeTheHashToTheRememberedId();
+			When.onTheBrowserPage.iChangeTheHashToTheRememberedItem();
 
 			// Assertions
 			Then.onTheDetailPage.iShouldSeeTheRememberedObject().

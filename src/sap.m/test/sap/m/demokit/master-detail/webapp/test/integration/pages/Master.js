@@ -168,7 +168,7 @@ sap.ui.define([
 								return oList.getSelectedItem();
 							},
 							success : function (oListItem) {
-								this.getContext().currentListItem = oListItem;
+								this.iRememberTheListItem(oListItem);
 							},
 							errorMessage : "The list does not have a selected item so nothing can be remembered"
 						});
@@ -182,7 +182,7 @@ sap.ui.define([
 								return oList.getItems()[iPosition];
 							},
 							success : function (oListItem) {
-								this.getContext().currentListItem = oListItem;
+								this.iRememberTheListItem(oListItem);
 							},
 							errorMessage : "The list does not have an item at the index " + iPosition
 						});
@@ -211,7 +211,7 @@ sap.ui.define([
 											sCurrentId = aItemsNotInTheList[0].ObjectID;
 										}
 
-										this.getContext().currentId = sCurrentId;
+										this.getContext().currentItem.id = sCurrentId;
 									},
 									errorMessage : "the model does not have a item that is not in the list"
 								});
@@ -273,6 +273,15 @@ sap.ui.define([
 
 					iTriggerRefresh : function () {
 						return this.iSearchForValue({refreshButtonPressed : true});
+					},
+
+					iRememberTheListItem : function (oListItem) {
+						var oBindingContext = oListItem.getBindingContext();
+						this.getContext().currentItem = {
+							bindingPath: oBindingContext.getPath(),
+							id: oBindingContext.getProperty("ObjectID"),
+							title: oBindingContext.getProperty("Name")
+						};
 					}
 				},
 
@@ -570,7 +579,7 @@ sap.ui.define([
 								return oList.getSelectedItem();
 							},
 							success : function (oSelectedItem) {
-								Opa5.assert.strictEqual(oSelectedItem.getTitle(), this.getContext().currentListItem.getTitle(), "The list selection is incorrect");
+								Opa5.assert.strictEqual(oSelectedItem.getTitle(), this.getContext().currentItem.title, "The list selection is incorrect");
 							},
 							errorMessage : "The list has no selection"
 						});
