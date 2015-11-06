@@ -13,14 +13,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 				ROOT_ID = createGUID(), // static per session
 				CLIENT_ID = createGUID().substr(-8, 8) + ROOT_ID, // static per session
 				HOST = new URI(window.location).host(), // static per session
-				iE2eTraceLevel = 0,
+				iE2eTraceLevel,
 				sTransactionId,
 				sFESRTransactionId,
 				oPendingInteraction = {
-					component: undefined,
-					trigger: undefined
+					component: "initial",
+					trigger: "initial"
 				},
-				iStepCounter,
+				iStepCounter = 0,
 				iInteractionStepTimer,
 				oCurrentBrowserEvent,
 				sFESR,
@@ -69,14 +69,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 					}
 				};
 
-			} else if (bTraceActive) {
-				// inject function in window.XMLHttpRequest.open for E2eTraceLib
-				window.XMLHttpRequest.prototype.open = function() {
-					fnXHRopen.apply(this, arguments);
-					sTransactionId = createGUID();
-					// set passport with Root Context ID, Transaction ID, Component Name, Action
-					this.setRequestHeader("SAP-PASSPORT", passportHeader(iE2eTraceLevel, ROOT_ID, sTransactionId));
-				};
 			}
 
 			function handleResponse() {
@@ -108,8 +100,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 					format(CLIENT_ID, "SAP_CHAR", 40), // client_id
 					format(oInteraction.networkTime, "SAP_INT", 4), // network_time
 					format(oInteraction.requestTime, "SAP_INT", 4), // request_time
-					" ", // empty field
-					format("SAP UI5", "SAP_CHAR", 10) // client_type
+					"", // empty field
+					format("SAP_UI5", "SAP_CHAR", 10) // client_type
 				].join(",");
 			}
 
@@ -118,13 +110,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 				return [
 					format(oInteraction.component, "SAP_CHAR", 20), // application_name
 					format(oInteraction.trigger, "SAP_CHAR", 20), // step_name
-					" ", " ", // 2 empty fields
+					"", "", // 2 empty fields
 					format(oInteraction.bytesSent, "SAP_INT", 4), // client_data_sent
 					format(oInteraction.bytesReceived, "SAP_INT", 4), // client_data_received
-					" ", " ", // 2 empty fields
+					"", "", // 2 empty fields
 					format(oInteraction.processing, "SAP_INT", 4), // client_processing_time
-					" ", // compressed - blank if not compressed
-					" ", " ", " ", " ", " ", " ", " ", " ", " " // 9 empty fields
+					"", // compressed - blank if not compressed
+					"", "", "", "", "", "", "", "", "" // 9 empty fields
 				].join(",");
 			}
 
@@ -215,6 +207,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 			// ***** Passport implementation, former EppLib.js ***** //
 			jQuery.sap.passport = {};
 
+			/**
+			 * @private
+			 */
+			jQuery.sap.passport.startTracing = function() {
+				bTraceActive = true;
+
+				if (!bFesrActive) {
+					fnXHRopen = window.XMLHttpRequest.prototype.open;
+					// inject function in window.XMLHttpRequest.open for E2eTraceLib
+					window.XMLHttpRequest.prototype.open = function() {
+						fnXHRopen.apply(this, arguments);
+						sTransactionId = createGUID();
+						// set passport with Root Context ID, Transaction ID
+						this.setRequestHeader("SAP-PASSPORT", passportHeader(iE2eTraceLevel, ROOT_ID, sTransactionId));
+					};
+				}
+			};
+
+			// old methods
 			function getBytesFromString(s) {
 				var bytes = [];
 				for (var i = 0; i < s.length; ++i) {
@@ -279,20 +290,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 				var prefix = getBytesFromString("SAP_E2E_TA_UI5LIB");
 				prefix = prefix.concat(getBytesFromString(new Array(32 + 1 - prefix.length).join(' ')));
 
-				SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, PreCompNamePosLEn.concat(prefix));
-				SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, TransIDPosLen.concat(getBytesFromString(TransID)));
-				SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, traceFlgsOffset.concat(trcLvl));
-
 				if (component) {
-					component = getBytesFromString(component.substr(32,-32));
+					component = getBytesFromString(component.substr(-32,32));
 					component = component.concat(getBytesFromString(new Array(32 + 1 - component.length).join(' ')));
 					SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, CompNamePosLEn.concat(component));
 				} else {
 					SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, CompNamePosLEn.concat(prefix));
 				}
 
+				SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, PreCompNamePosLEn.concat(prefix));
+				SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, TransIDPosLen.concat(getBytesFromString(TransID)));
+				SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, traceFlgsOffset.concat(trcLvl));
+
 				if (action) {
-					action = getBytesFromString(action.substr(40,-40));
+					action = getBytesFromString(action.substr(-40,40));
 					action = action.concat(getBytesFromString(new Array(40 + 1 - action.length).join(' ')));
 					SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, actionOffset.concat(action));
 				}
@@ -349,13 +360,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 				return retVal.toUpperCase();
 			}
 
+			// set initial trace level (default)
+			iE2eTraceLevel = jQuery.sap.passport.traceFlags();
+
+			// start initial interaction
+			jQuery.sap.interaction.notifyStepStart(jQuery, true);
+
 			// *********** Include E2E-Trace Scripts *************
 			if (bTraceActive) {
 				jQuery.sap.require("sap.ui.core.support.trace.E2eTraceLib");
 			}
-
-			// start initial interaction
-			jQuery.sap.interaction.notifyStepStart(jQuery, true);
 
 		}());
 

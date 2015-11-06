@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
+sap.ui.define(['jquery.sap.global', 'jquery.sap.trace'],
 	function(jQuery) {
 	"use strict";
 
@@ -274,8 +274,6 @@ sap.ui.define(['jquery.sap.global'],
 
 			//variables
 			var fopen, fsetRequestHeader;
-			fopen = window.XMLHttpRequest.prototype.open;
-			fsetRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
 
 			//event listeners
 			function onLoadstart(event) {
@@ -312,6 +310,12 @@ sap.ui.define(['jquery.sap.global'],
 			//  function onLoadend(event) {
 			//    console.log(event.timeStamp + ", " + this.xidx + ": loadend");
 			//  }
+
+			// start jQuery.sap.trace and override xhr
+			jQuery.sap.passport.startTracing();
+
+			fopen = window.XMLHttpRequest.prototype.open;
+			fsetRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
 
 			//inject call-back function for window.XMLHttpRequest.setRequestHeader
 			window.XMLHttpRequest.prototype.setRequestHeader = function() {
