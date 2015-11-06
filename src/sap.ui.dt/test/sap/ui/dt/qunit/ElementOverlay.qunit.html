@@ -30,7 +30,7 @@
 			jQuery.sap.require("sap.ui.thirdparty.sinon");
 			jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-			
+
 			jQuery.sap.require("sap.ui.dt.Preloader");
 			jQuery.sap.require("sap.ui.dt.ElementOverlay");
 			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
@@ -81,7 +81,7 @@
 				assert.strictEqual(this.oOverlay, sap.ui.dt.OverlayRegistry.getOverlay(this.oButton.getId()), "overlay is registered in OverlayRegistery");
 			});
 
-			QUnit.test("when the control is rendered", function(assert) {				
+			QUnit.test("when the control is rendered", function(assert) {
 				var oDomRef = this.oOverlay.getDomRef();
 				var oElementDomRef = this.oOverlay.getElementInstance().getDomRef();
 				var oStaticAreaRef = sap.ui.getCore().getStaticAreaRef();
@@ -101,6 +101,22 @@
 
 				var oDesignTimeMetadata = this.oOverlay.getDesignTimeMetadata();
 				assert.equal(oDesignTimeMetadata.getName(), "{name}", "and the design time metadata for the control is set");
+			});
+
+			QUnit.test("when the control's dom is changed", function(assert) {
+				var done = assert.async();
+
+				var fnOriginalOnAfterRendering =  this.oOverlay.onAfterRendering;
+				this.oOverlay.onAfterRendering = function() {
+					// if this test fails, check if there're changes in RenderManager _fPutIntoDom funcion (see ElementOverlay init comment for details)
+					assert.notStrictEqual(this.getUIArea().getRootNode().childNodes.length, 0, "overlay is still in UIArea's DOM");
+
+					done();
+					return fnOriginalOnAfterRendering.apply(this, arguments);
+				}
+
+				var $element = this.oOverlay.getElementInstance().$();
+				$element.addClass("testClass");
 			});
 
 			QUnit.test("when the overlay is selectable and selected", function(assert) {
@@ -134,20 +150,20 @@
 				assert.ok(!this.oOverlay.isSelected(), 'and the state of the overlay is "not selected"');
 				assert.ok(!bFired, 'and no "selection change" event is fired');
 			});
-			
+
 			QUnit.test("when the overlay is selectable or not selectable", function(assert) {
 				this.oOverlay.setSelectable(true);
 				assert.ok(this.oOverlay.isFocusable(), "then the control is focusable");
-				
+
 				this.oOverlay.setSelectable(false);
-				assert.ok(!this.oOverlay.isFocusable(), "then the control is not focusable");		
+				assert.ok(!this.oOverlay.isFocusable(), "then the control is not focusable");
 			});
-			
+
 			QUnit.test("when the overlay is focusable and is focused", function(assert) {
 				this.oOverlay.setFocusable(true);
 				assert.ok(this.oOverlay.isFocusable(), "then the control knows it is focusable");
 				sap.ui.getCore().applyChanges();
-				
+
 				this.oOverlay.focus();
 				var that = this;
 				var done = assert.async();
@@ -156,16 +172,16 @@
 					done();
 				},0);
 			});
-			
+
 			QUnit.test("when the overlay is changed to focusable", function(assert) {
 
 				var fnHandler = this.spy();
 				this.oOverlay.attachFocusableChange(fnHandler);
-				
+
 				this.oOverlay.setFocusable(true);
 				assert.equal(fnHandler.callCount, 1, 'then the event handler is called');
 			});
-			
+
 			QUnit.module("Given that an Overlay is created for a layout with child controls", {
 				beforeEach : function() {
 					this.oButton1 = new sap.m.Button({
@@ -201,7 +217,7 @@
 					sap.ui.getCore().applyChanges();
 				},
 				afterEach : function() {
-					
+
 					this.oButton1.destroy();
 					this.oButton2.destroy();
 					this.oVerticalLayout1.destroy();
@@ -210,7 +226,7 @@
 					this.oOverlayLayout2.destroy();
 					this.oOverlayButton1.destroy();
 					this.oOverlayButton2.destroy();
-					
+
 				}
 			});
 
