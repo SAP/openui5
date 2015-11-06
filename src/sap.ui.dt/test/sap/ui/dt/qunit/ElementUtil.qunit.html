@@ -1,0 +1,229 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.ElementUtil</title>
+
+		<style>
+			#content {
+				position: absolute;
+				left: 400px;
+				top : 10px;
+				z-index: 1000;
+			}
+		</style>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+			jQuery.sap.require("sap.ui.dt.ElementUtil");
+			jQuery.sap.require("sap.ui.dt.Preloader");
+			jQuery.sap.require("sap.m.Button");
+
+			var ElementUtil = sap.ui.dt.ElementUtil;
+
+			QUnit.module("Given that a control is created", {
+
+				beforeEach : function() {
+
+					this.oButton = new sap.m.Button({text : "Button"});
+
+					this.oVerticalLayoutChild = new sap.ui.layout.VerticalLayout({
+						content : [
+							new sap.m.Button({text : "Button"}),
+							this.oButton
+						]
+					});
+
+					this.oVerticalLayout = new sap.ui.layout.VerticalLayout({
+						content : [
+							new sap.m.Button({text : "Button"}),
+							new sap.m.Button({text : "Button"}),
+							new sap.m.Button({text : "Button"}),
+							new sap.m.Button({text : "Button"}),
+							this.oVerticalLayoutChild
+						]
+					});
+
+					this.oVerticalLayout.placeAt("content");
+					// Render Controls
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oVerticalLayout.destroy();
+				}
+			});
+
+
+			QUnit.test("when the type of the instance is checked based on the control type", function(assert) {
+				assert.equal(ElementUtil.isInstanceOf(this.oVerticalLayout, "sap.ui.layout.VerticalLayout"), true, 'then the static method "isInstanceOf" returns true');
+			});
+
+
+			QUnit.test("when the type of the instance is checked based on the base type", function(assert) {
+				assert.equal(ElementUtil.isInstanceOf(this.oVerticalLayout, "sap.ui.core.Control"), true, 'then the static method "isInstanceOf" returns true');
+			});
+
+			QUnit.test("when the type of the instance is checked based on a wrong type", function(assert) {
+				assert.equal(ElementUtil.isInstanceOf(this.oVerticalLayout, "sap.m.Button"), false, 'then the static method "isInstanceOf" returns false');
+			});
+
+			QUnit.test("when the DesingTime Metadata is not yet loaded", function(assert) {
+				var mDesignTimeMetadata = ElementUtil.getDesignTimeMetadata(this.oVerticalLayout);
+				assert.deepEqual(mDesignTimeMetadata, {}, 'then the static method "getDesignTimeMetadata" returns an empty metadata object');
+			});
+
+			QUnit.test("when the DesingTime Metadata are loaded", function(assert) {
+				var done = assert.async();
+				var that = this;
+				sap.ui.dt.Preloader.load(["sap.ui.layout.VerticalLayout"]).then(function() {
+					var mDesignTimeMetadata = ElementUtil.getDesignTimeMetadata(that.oVerticalLayout);
+					assert.equal(!!mDesignTimeMetadata, true, 'then the static method "getDesignTimeMetadata" returns the metadata...');
+					assert.equal(!!mDesignTimeMetadata.aggregations.content, true, "... with the right values");
+					done();
+				});
+			});
+
+			QUnit.test("when it is rendered and the DOM reference is available", function(assert) {
+				var oDomRef = this.oVerticalLayout.getDomRef();
+				var oDomRefTest = ElementUtil.getDomRef(this.oVerticalLayout);
+				assert.deepEqual(oDomRefTest, oDomRef, 'then the static method "getDomRef" returns the right value');
+			});
+
+			QUnit.test("when the control has children", function(assert) {
+				var aChildren = ElementUtil.findAllPublicChildren(this.oVerticalLayout);
+				assert.equal(aChildren.length, 7, 'then the static method "findAllPublicChildren" returns all children');
+
+				var aChildren = ElementUtil.findAllPublicElements(this.oVerticalLayout);
+				assert.equal(aChildren.length, 8, 'then the static method "findAllPublicElements" returns all public elements');
+
+				var aChildren = ElementUtil.getAggregation(this.oVerticalLayout, "content");
+				assert.equal(aChildren.length, 5, 'then static method "getAggregation" returns the content of the aggregation');
+			});
+
+
+			QUnit.test("when a control is an successor of another control", function(assert) {
+				assert.equal(ElementUtil.hasAncestor(this.oButton, this.oVerticalLayout), true, 'then static method "hasAncestor" returns true');
+			});
+
+			QUnit.test("when a control is not an successor of another control", function(assert) {
+				var oButton = new sap.m.Button({text:"Button"});
+				assert.equal(ElementUtil.hasAncestor(oButton, this.oVerticalLayout), false, 'then static method "hasAncestor" returns false');
+			});
+
+			QUnit.test("when the control has aggregations", function(assert) {
+				var mAccessors = ElementUtil.getAggregationMutators(this.oVerticalLayout, "content");
+				assert.deepEqual(mAccessors, {
+					"get":"getContent",
+					"add":"addContent",
+					"remove":"removeContent",
+					"insert":"insertContent"
+				}, 'then the static method "getAggregationAccessors" returns all accessors of an aggregation');
+
+				var aFoundAggregations = [];
+				ElementUtil.iterateOverAllPublicAggregations(this.oVerticalLayout, function(oAggregation) {
+					aFoundAggregations.push(oAggregation.name);
+				});
+				assert.deepEqual(aFoundAggregations, ["tooltip","customData","layoutData","dependents", "content"], 'then the static method "iterateOverAllPublicAggregations" finds all public aggregations');
+			});
+
+			QUnit.test("when a child control is added to an aggregation", function(assert) {
+				var oButton = new sap.m.Button({text:"Button"});
+				var iLengthBefore = this.oVerticalLayout.getContent().length;
+				ElementUtil.addAggregation(this.oVerticalLayout, "content", oButton);
+				var iLengthAfter = this.oVerticalLayout.getContent().length;
+				assert.equal(iLengthAfter, iLengthBefore + 1, "then the number of controls in the aggregation is right");
+			});
+
+
+			QUnit.test("when the control is added into an aggregation of itself", function(assert) {
+				var that = this;
+				assert.throws(function() {
+					ElementUtil.addAggregation(that.oVerticalLayout, "content", this.oVerticalLayout);
+				}, /Trying to add an element to itself or its successors/, "then an Exception is thrown");
+			});
+
+			QUnit.test("when the control is added into a child of itself", function(assert) {
+				var that = this;
+				assert.throws(function() {
+					ElementUtil.addAggregation(that.oVerticalLayoutChild, "content", this.oVerticalLayout);
+				}, /Trying to add an element to itself or its successors/, "then an Exception is thrown");
+			});
+
+			QUnit.test("when a child control is added to an aggregation at a certain position", function(assert) {
+				var oButton = new sap.m.Button({text:"Button"});
+				var iLengthBefore = this.oVerticalLayout.getContent().length;
+				ElementUtil.insertAggregation(this.oVerticalLayout, "content", oButton, 3);
+				var iLengthAfter = this.oVerticalLayout.getContent().length;
+				assert.equal(iLengthAfter, iLengthBefore + 1, "then the number of controls in the aggregation is right");
+				assert.strictEqual(this.oVerticalLayout.getContent()[3], oButton, "and the control is at the right position");
+			});
+
+
+			QUnit.test("when a control is added to an aggregation at a certain position which is already added", function(assert) {
+				var iLengthBefore = this.oVerticalLayout.getContent().length;
+				ElementUtil.insertAggregation(this.oVerticalLayout, "content", this.oVerticalLayoutChild, 1);
+				var iLengthAfter = this.oVerticalLayout.getContent().length;
+				assert.equal(iLengthAfter, iLengthBefore, "then the number of controls in the aggregation is right");
+				assert.strictEqual(this.oVerticalLayout.getContent()[1], this.oVerticalLayoutChild, "and the control is at the right position");
+			});
+
+
+			QUnit.test("when the control is added into a child of itself at a certain position", function(assert) {
+				var that = this;
+				assert.throws(function() {
+					ElementUtil.insertAggregation(that.oVerticalLayoutChild, "content", this.oVerticalLayout,1);
+				}, /Trying to add an element to itself or its successors/, "then an Exception is thrown");
+			});
+
+			QUnit.test("when the control is added into an aggregation of itself at a certain position", function(assert) {
+				var that = this;
+				assert.throws(function() {
+					ElementUtil.insertAggregation(that.oVerticalLayout, "content", this.oVerticalLayout, 1);
+				}, /Trying to add an element to itself or its successors/, "then an Exception is thrown");
+			});
+
+			QUnit.test("when a child control is removed from an aggregation of the control", function(assert) {
+				var iLengthBefore = this.oVerticalLayout.getContent().length;
+				ElementUtil.removeAggregation(this.oVerticalLayout, "content", this.oVerticalLayoutChild);
+				var iLengthAfter = this.oVerticalLayout.getContent().length;
+				assert.equal(iLengthAfter, iLengthBefore - 1, 'then the number of controls is right');
+			});
+
+			QUnit.test("when an element is checked if it is valid for an aggregation of a parent", function(assert) {
+				assert.equal(ElementUtil.isValidForAggregation(this.oVerticalLayout, "content", new sap.m.Button({text:"Button"})), true, 'then the static method "isValidForAggregation" returns true');
+			});
+
+			QUnit.test("when an element is checked if it is valid for an aggregation of itself", function(assert) {
+				assert.equal(ElementUtil.isValidForAggregation(this.oVerticalLayout, "content", this.oVerticalLayout), false, 'then the static method "isValidForAggregation" returns false');
+			});
+
+			QUnit.test("when an element is checked if it is valid for an aggregation of one of its children", function(assert) {
+				assert.equal(ElementUtil.isValidForAggregation(this.oVerticalLayoutChild, "content", this.oVerticalLayout), false, 'then the static method "isValidForAggregation" returns false');
+			});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.ElementUtil</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content">
+		</div>
+	</body>
+</html>
