@@ -30,7 +30,7 @@
 			},
 			{
 				"text": "Worklist",
-				"ref": "test-resources/sap/m/demokit/worklist/webapp/test/testOpenUI5Service.html",
+				"ref": "test-resources/sap/m/demokit/worklist/webapp/test/testService.html",
 				"config": "test-resources/sap/m/demokit/worklist/demoapp.json",
 				"icon": "task",
 				"desc": "Best-practice starting point for a worklist-style app"
