@@ -180,6 +180,16 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 		return this._oDomRef || Control.prototype.getDomRef.apply(this, arguments);
 	};
 
+
+	/**
+	 * Returns a DOM reference for the associated Element or null, if it can't be found
+	 * @return {Element} DOM element or null
+	 * @public
+	 */
+	Overlay.prototype.getAssociatedDomRef = function() {
+		throw new Error("This method is abstract and needs to be implemented");
+	};
+
 	/**
 	 * Returns an instance of the Element, which is associated with this Overlay
 	 * @return {sap.ui.Element} associated Element
