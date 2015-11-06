@@ -27,7 +27,7 @@
 			}
 		</style>
 
-		<script type="text/javascript">	
+		<script type="text/javascript">
 
 				var oHelper = {
 		  		alert: function (sMsg) {
@@ -53,11 +53,11 @@
 				var oButton = new sap.ui.commons.Button("b2");
 				oButton.setText("Button with icons and width 400px");
      		oButton.setIcon("images/backtotop.gif");
-     		oButton.setWidth("400px"); 
+     		oButton.setWidth("400px");
      		var sText2 = oButton.getText();
 				oButton.attachPress(function() {oHelper.alert(sText2)});
 				oButton.placeAt("target2");
-				
+
 				var oButton = new sap.ui.commons.Button("b2a");
 				oButton.setText("Button with different icons");
      			oButton.setIcon("images/Button_regular.png");
@@ -74,7 +74,7 @@
 				var oMLR = new sap.ui.commons.layout.MatrixLayoutRow("m1_1");
 				oLayout.addRow(oMLR);
 
-				var oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_1"); 
+				var oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_1");
 				oButton = new sap.ui.commons.Button("b3");
 				oButton.setText("Toggle enable state");
 				oButton.setWidth("140px");
@@ -90,7 +90,7 @@
 				oMLC.addContent(oButton);
 				oMLR.addCell(oMLC);
 
-				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_2"); 
+				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_1_2");
 				var oToggleButton = new sap.ui.commons.Button("b3_a");
 				oToggleButton.setText("Disabled");
 				oToggleButton.setWidth("140px");
@@ -102,7 +102,7 @@
 				oMLR = new sap.ui.commons.layout.MatrixLayoutRow("m1_2");
 				oLayout.addRow(oMLR);
 
-				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_2_1"); 
+				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_2_1");
 				oButton = new sap.ui.commons.Button("b4");
 				oButton.setText("Toggle visibility");
 				oButton.setWidth("140px");
@@ -113,7 +113,7 @@
 				oMLC.addContent(oButton);
 				oMLR.addCell(oMLC);
 
-				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_2_2"); 
+				oMLC = new sap.ui.commons.layout.MatrixLayoutCell("m1_2_2");
 				oToggleButton = new sap.ui.commons.Button("b4_a");
 				oToggleButton.setText("Visible");
 				oToggleButton.setWidth("140px");
@@ -123,7 +123,7 @@
 
 				// button with icons
 				oButton = new sap.ui.commons.Button("b5");
-				oButton.setText("Button with icon first"); 
+				oButton.setText("Button with icon first");
 				oButton.setIcon("images/help.gif");
 				oButton.setIconFirst(true);
 				var sText3 = oButton.getText();
@@ -145,7 +145,7 @@
 				oButton.setEnabled(false);
 				oButton.placeAt("target6");
 
-				oButton = new sap.ui.commons.Button("b9", {text:"This is a button which uses the new constructor", 
+				oButton = new sap.ui.commons.Button("b9", {text:"This is a button which uses the new constructor",
 					tooltip:"This is a button which uses the new way of full property, aggregation, association, events provisioning via constructor parameter. Just listener function.",
 					press: [function(oControlEvent){oHelper.alert("Button '" + oControlEvent.getSource().getId() + "' was created with the new mProperties!");}]
 				});
@@ -154,7 +154,7 @@
 				var oListener = {doSomething: function(oControlEvent){
 					oHelper.alert("Listener Object: Button '" + oControlEvent.getSource().getId() + "' was created with the new mProperties!");}
 				};
-				oButton = new sap.ui.commons.Button("b10", {text:"This is a button which uses the new constructor, too", 
+				oButton = new sap.ui.commons.Button("b10", {text:"This is a button which uses the new constructor, too",
 					tooltip:"This is a button which uses the new way of full property, aggregation, association, events provisioning via constructor parameter. Listenner function and object.",
 					icon:"images/help.gif",
 					iconFirst:false,
@@ -174,6 +174,12 @@
 				oButton.setIcon("images/personalize.gif");
 				oButton.placeAt("target11");
 
+				oButton = new sap.ui.commons.Button("b11c");
+				oButton.setText("");
+				oButton.setTooltip("This is another button without text but with a sap icon and a tooltip");
+				oButton.setIcon("sap-icon://undo");
+				oButton.placeAt("target11");
+
 				// special characters / XSS
 				oButton = new sap.ui.commons.Button("b12");
 				oButton.setText("~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>");
@@ -188,13 +194,13 @@
 
 				oButton = new sap.ui.commons.Button("bw2");
 				oButton.setText("and 100px");
-				oButton.setWidth("100px"); 
+				oButton.setWidth("100px");
 				oButton.placeAt("target8");
 
 				oButton = new sap.ui.commons.Button("b13");
 				oButton.addStyleClass("tallButton");
 				oButton.setText("Higher via AddStyleClass");
-				oButton.setTooltip("This Button uses function AddStyleClass to add an CSS class with different height."); 
+				oButton.setTooltip("This Button uses function AddStyleClass to add an CSS class with different height.");
 				oButton.setIcon("images/help.gif");
 				oButton.setIconFirst(true);
 				oButton.setEnabled(true);
@@ -462,9 +468,9 @@
 		<br>
 		<div id="target10"></div>
 		<br>
-		<div id="target11"></div>   
+		<div id="target11"></div>
 		<br>
-		<div id="target12"></div>   
+		<div id="target12"></div>
 		<br>
 		Width test:<br>
 		<span id="target7"></span><span id="target8"></span>

@@ -1,56 +1,25 @@
 <html>
 <head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		
-		
-		
-		<!-- 
-		
-		
-		CAUTION:
-		This test is >>>>>  NOT  <<<<< a good example for qUnit tests!!!
-		It was just one of the first we tried!
-		
-		So if you write your own qUnit test, look at other tests like for
-		sap.ui.core.BusyIndicator, 
-		sap.ui.core.Popup and 
-		sap.ui.commons.ComboBox 
-		(just some examples I know, there might be other good ones as well)
-		
-		A template with all the required header stuff and so on is available in the "core"
-		project: src/test/uilib/sap/ui/core/qunit/template.qunit.html
-		This one should be used for creating your new test.
-		
-		This Button test is bad because:
-		- it almost only checks property setters which are anyway generated
-		- it uses exceptions to check event handlers
-		- ...
-		
-		Only "OffsetWidthOk" tests something non-generated/non-trivial.
-		
-		 -->
-		 
-		 
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
-		data-sap-ui-libs="sap.ui.commons"	
+		data-sap-ui-libs="sap.ui.commons"
 		>
 	</script>
 
   <link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
   <script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
   <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-  
+
   <script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
   <script language="javascript">
 	var b1, b2, b3, msg;
-	
+
 	var sText = "Hello",
  	sTooltip = "abc",
 	sWidth = "111px",
@@ -68,7 +37,7 @@
 	function pressEventHandler2() {
 		msg = sPressMessage
 	}
-	
+
 	var aEvents = [];
 	function pressEventHandler3(oEvent, oData) {
 		ok(oEvent != null, "event should not be null");
@@ -78,7 +47,7 @@
 	var listener = {
 			listen: pressEventHandler3
 		};
-	
+
 	var oButton1 = new sap.ui.commons.Button("b1");
 	oButton1.setText(sText);
 	oButton1.setWidth(sWidth);
@@ -90,7 +59,7 @@
 	oButton1.setHelpId(sHelpId);
 	oButton1.attachPress(pressEventHandler1);
 	sap.ui.setRoot("uiArea1", oButton1);
-	
+
 	var oButton2 = new sap.ui.commons.Button("b2", {
 		text : sText,
 		width : sWidth,
@@ -107,17 +76,17 @@
 	// Due to not having the 'init3rd' option for constructors anymore, this is not relevant!
 	var oButton3 = new sap.ui.commons.Button("b3", pressEventHandler2);
 	sap.ui.setRoot("uiArea3", oButton3);
-	
+
 	// button for advanced event handler tests
 	var oButton4 = new sap.ui.commons.Button("b4", {text : sText});
 	sap.ui.setRoot("uiArea4", oButton4);
-	
+
 	// button for advanced event handler tests, using initialization parameters
 	var oButton5 = new sap.ui.commons.Button("b5", {text : sText, press: [{my: "TestdataFromConstructor"}, listener.listen, listener]});
 	sap.ui.setRoot("uiArea5", oButton5);
 
 	qutils.delayTestStart();
-	
+
 	module("SAPUI5 Button - test property accessor methods", {
 		setup: function() {
 	 		b1 = sap.ui.getCore().getControl("b1");
@@ -135,35 +104,35 @@
 		jQuery("#b2").focus().click().mousedown().mouseup().mouseleave().blur();
 
 		equals(b1.getText(),sText,"Text for button1 is correct using 'equals()'!");
-		equals(b2.getText(),sText,"Text for button2 is correct using 'equals()'!");		
+		equals(b2.getText(),sText,"Text for button2 is correct using 'equals()'!");
 	 });
 	 test("WidthOk", function() {
 		equals(b1.getWidth(),sWidth,"Width for button1 is correct using 'equals()'!");
-		equals(b2.getWidth(),sWidth,"Width for button2 is correct using 'equals()'!");		
+		equals(b2.getWidth(),sWidth,"Width for button2 is correct using 'equals()'!");
 	 });
 	 test("EnabledOk", function() {
 			equals(b1.getEnabled(),true,"Enabled state for button1 is correct using 'equals()'!");
-			equals(b2.getEnabled(),false,"Enabled state for button2 is correct using 'equals()'!");		
+			equals(b2.getEnabled(),false,"Enabled state for button2 is correct using 'equals()'!");
 		 });
 	  test("VisibleOk", function() {
 		equals(b1.getVisible(),true,"Visible state for button1 is correct using 'equals()'!");
-		equals(b2.getVisible(),true,"Visible state for button2 is correct using 'equals()'!");		
+		equals(b2.getVisible(),true,"Visible state for button2 is correct using 'equals()'!");
 	 });
  	 test("TooltipOk", function() {
 		equals(b1.getTooltip(),sTooltip,"Tooltip state for button1 is correct using 'equals()'!");
-		equals(b2.getTooltip(),sTooltip,"Tooltip state for button2 is correct using 'equals()'!");		
+		equals(b2.getTooltip(),sTooltip,"Tooltip state for button2 is correct using 'equals()'!");
 	 });
  	 test("IconFirstOk", function() {
 		equals(b1.getIconFirst(),false,"IconFirst state for button1 is correct using 'equals()'!");
-		equals(b2.getIconFirst(),true,"IconFirst state for button2 is correct using 'equals()'!");		
+		equals(b2.getIconFirst(),true,"IconFirst state for button2 is correct using 'equals()'!");
 	 });
  	 test("IconOk", function() {
 		equals(b1.getIcon(),sIcon,"Icon for button1 is correct using 'equals()'!");
-		equals(b2.getIcon(),sIcon,"Icon for button2 is correct using 'equals()'!");		
+		equals(b2.getIcon(),sIcon,"Icon for button2 is correct using 'equals()'!");
 	 });
  	 test("HelpIdOk", function() {
 		equals(b1.getHelpId(),sHelpId,"HelpId for button1 is correct using 'equals()'!");
-		equals(b2.getHelpId(),sHelpId,"HelpId for button2 is correct using 'equals()'!");		
+		equals(b2.getHelpId(),sHelpId,"HelpId for button2 is correct using 'equals()'!");
 	 });
 
  	module("SAPUI5 Button - test event handlers", {
@@ -175,7 +144,7 @@
 	 		b1 = null;
 	 		b2 = null;
 	 	}
-	 }); 	 
+	 });
 	 test("PressOk", function() {
 		try {
 			b1.firePress();
@@ -212,13 +181,13 @@
 		 		b1 = null;
 		 		b2 = null;
 		 	}
-		 }); 
-	 
+		 });
+
 		function isEmpty(oObject) {
 			for(var i in oObject){ return false;}
 			return true;
 		}
-		
+
 		test("MetadataOk", function() {
 			var oMetadata = b1.getMetadata();
 			ok(oMetadata != null,"b1.getMetadata() should not be null");
@@ -244,9 +213,9 @@
 			sap.ui.getCore().applyChanges();
 			oDomRef = window.document.getElementById("b2");
 			ok(parseInt(oDomRef.offsetWidth) == 500,"b2.offsetWidth == 500)");
-			equals(parseInt(oDomRef.offsetWidth),500,"b2.offsetWidth == 500");	
+			equals(parseInt(oDomRef.offsetWidth),500,"b2.offsetWidth == 500");
 		});
-		
+
 		test("eventWithAdditionalDataOk", function(){
 			var oBtn = sap.ui.getCore().byId("b4");
 			aEvents = [];
@@ -262,7 +231,7 @@
 			equal(aEvents.length, 1, "there should be one event in the log");
 			oBtn.detachPress(listener.listen, listener);
 		});
-		
+
 		test("eventWithAdditionalDataInitViaConstructorOk", function(){
 			// and now ensure also the event handler attachment via constructor works
 			var oBtn = sap.ui.getCore().byId("b5");
@@ -271,8 +240,24 @@
 			qutils.triggerEvent("click", oBtn.getId());
 			equal(aEvents.length, 1, "there should be one event in the log");
 		});
+		test("Button's tooltip is preserved when there is icon only", function() {
+			var sTooltip = "My tooltip",
+				oButton = new sap.ui.commons.Button("btnTooltipWithIconOnly", {
+				icon : "sap-icon://undo",
+				tooltip: sTooltip
+			});
+			oButton.placeAt("uiArea5");
+			sap.ui.getCore().applyChanges();
+			equal(jQuery("#btnTooltipWithIconOnly").attr("title"), sTooltip, "Tooltip should be preserved");
+
+			var $IconSpan = jQuery("#btnTooltipWithIconOnly>span");
+			strictEqual($IconSpan.attr("aria-label"), undefined, "aria-label shouldn't exist");
+			strictEqual($IconSpan.attr("title"), undefined, "The sap icon should not have tooltip");
+			equal($IconSpan.attr("aria-hidden"), "true", "The icon should be hidden for the assistive technology");
+			oButton.destroy();
+		});
   </script>
-  
+
 </head>
 <body>
  <h1 id="qunit-header">QUnit example</h1>
