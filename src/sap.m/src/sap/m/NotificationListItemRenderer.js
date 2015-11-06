@@ -39,8 +39,8 @@ sap.ui.define([], function () {
 		// ARIA
 		oRm.writeAccessibilityState(oControl, {
 			role: "listitem",
-			labelledby: id + '--title',
-			describedby: (id + '--body') + ' ' + (id + '--info')
+			labelledby: id + '-title',
+			describedby: (id + '-body') + ' ' + (id + '-info')
 		});
 
 		oRm.writeClasses();

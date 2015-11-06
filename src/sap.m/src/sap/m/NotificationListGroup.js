@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 				/**
 				 * Determines the due date of the Notification List Group.
 				 */
-				datetime: {type: 'string', group: 'Appearance'},
+				datetime: {type: 'string', group: 'Appearance', defaultValue: ''},
 
 				/**
 				 * Determines the actions buttons visibility
@@ -101,14 +101,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		}
 	});
 
-	NotificationListGroup.prototype.setTitle = function (title) {
-		var result = this.setProperty('title', title, true);
-
-		this._getHeaderTitle().setText(title);
-
-		return result;
-	};
-
 	NotificationListGroup.prototype.init = function () {
 		/**
 		 * @type {sap.m.Button}
@@ -131,6 +123,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 				this.setCollapsed(!this.getCollapsed());
 			}.bind(this)
 		});
+	};
+
+	NotificationListGroup.prototype.setTitle = function (title) {
+		var result = this.setProperty('title', title, true);
+
+		this._getHeaderTitle().setText(title);
+
+		return result;
+	};
+
+	NotificationListGroup.prototype.setDatetime = function(dateTime) {
+		var result = this.setProperty('datetime', dateTime, true);
+
+		this._getDateTimeText().setText(dateTime);
+
+		return result;
 	};
 
 	NotificationListGroup.prototype.setCollapsed = function (collapsed) {
@@ -175,7 +183,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 	};
 
 	NotificationListGroup.prototype.onBeforeRendering = function() {
-		//Making sure the Expand/Collapse link texs is set correctly
+		//Making sure the Expand/Collapse link text is set correctly
 		this._collapseLink.setText(this.getCollapsed() ? 'Expand Group' : 'Collapse Group');
 	};
 
@@ -206,6 +214,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 
 		if (!title) {
 			title = new sap.m.Title({
+				id: this.getId() + '-title',
 				text: this.getTitle()
 			});
 

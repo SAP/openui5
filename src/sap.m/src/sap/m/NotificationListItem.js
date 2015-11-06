@@ -122,7 +122,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			 * @private
 			 */
 			this._ariaDetailsText = new InvisibleText({
-				id: this.getId() + '--info'
+				id: this.getId() + '-info'
 			}).toStatic();
 		};
 
@@ -190,7 +190,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 
 			if (!title) {
 				title = new Title({
-					id: this.getId() + '--title',
+					id: this.getId() + '-title',
 					text: this.getTitle()
 				});
 
@@ -210,7 +210,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 
 			if (!bodyText) {
 				bodyText = new sap.m.Text({
-					id: this.getId() + '--body',
+					id: this.getId() + '-body',
 					text: this.getDescription()
 				}).addStyleClass('sapMNLI-Text');
 
