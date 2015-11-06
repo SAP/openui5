@@ -429,6 +429,14 @@ sap.ui.define([
 					bItemVisibleBySearchText = true;
 				}
 
+				if (oItem.getCells()[1] && oItem.getCells()[1].getText) {
+					// search in type text
+					sItemText = oItem.getCells()[1].getText();
+					if (sItemText && regExp !== null && sItemText.match(regExp) !== null) {
+						bItemVisibleBySearchText = true;
+					}
+				}
+
 				// search in tooltip text of actual item
 				if (bItemVisibleBySearchText !== true && oItem.getTooltip_Text) {
 					sItemText = (oItem.getTooltip() instanceof sap.ui.core.TooltipBase ? oItem.getTooltip().getTooltip_Text() : oItem.getTooltip_Text());
@@ -1212,6 +1220,49 @@ sap.ui.define([
 				tooltip: oItem.getTooltip(),
 				type: sap.m.ListType.Active
 			});
+			
+			if (this.getType() === sap.m.P13nPanelType.dimeasure) {
+				var bDimension = (oItem.getAggregationRole && oItem.getAggregationRole() === "Dimension");
+				var aRolesItems;
+				if (bDimension) {
+					aRolesItems = [
+						new sap.ui.core.Item({
+							key: "category",
+							text: this._oRb.getText('COLUMNSPANEL_CHARTROLE_CATEGORY') 
+						}),
+						new sap.ui.core.Item({
+							key: "series",
+							text: this._oRb.getText('COLUMNSPANEL_CHARTROLE_SERIES')
+						})
+					];
+				} else {
+					aRolesItems = [
+						new sap.ui.core.Item({
+							key: "axis1",
+							text: this._oRb.getText('COLUMNSPANEL_CHARTROLE_AXIS1')
+						}),
+						new sap.ui.core.Item({
+							key: "axis2",
+							text: this._oRb.getText('COLUMNSPANEL_CHARTROLE_AXIS2')
+						})
+					];
+				}
+
+				oNewTableItem.addCell(
+					new sap.m.Text({
+						text: bDimension ? this._oRb.getText('COLUMNSPANEL_TYPE_DIMENSION') : this._oRb.getText('COLUMNSPANEL_TYPE_MEASURE')
+					})
+				);
+				oNewTableItem.addCell(
+					new sap.m.Select({
+						items: aRolesItems,
+						change: function(oControlEvent) {
+							jQuery.sap.log.info("Event fired: 'change' role property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
+						}
+					})
+				);
+			}
+
 			oNewTableItem.data('P13nColumnKey', sColumnKeys);
 
 			// As long as the ColumnListItem does not reflect the width property -> just store it as customer data
@@ -1504,33 +1555,12 @@ sap.ui.define([
 
 		this._oToolbarSpacer = new sap.m.ToolbarSpacer();
 
-		var oData = {
-			availableChartTypes: []
-		};
-		var oModel = new sap.ui.model.json.JSONModel(oData);
-		this._oSelect = new sap.m.Select({
-			items: {
-				path: '/availableChartTypes',
-				sorter: {
-					path: 'text'
-				},
-				template: new sap.ui.core.Item({
-					key: "{key}",
-					text: "{text}"
-				})
-			},
-			change: function(oEvent) {
-				var sKey = oEvent.getParameter("selectedItem").getKey();
-				that.setChartType(sKey);
-			}
-		});
-		this._oSelect.setModel(oModel);
 
 		this._oToolbar = new sap.m.OverflowToolbar({
 			active: true,
 			design: sap.m.ToolbarDesign.Solid, // Transparent,
 			content: [
-				this._oSelect, this._oToolbarSpacer, this._oSearchField, this._oShowSelectedButton, this._oMoveToTopButton, this._oMoveUpButton, this._oMoveDownButton, this._oMoveToBottomButton
+				this._oToolbarSpacer, this._oSearchField, this._oShowSelectedButton, this._oMoveToTopButton, this._oMoveUpButton, this._oMoveDownButton, this._oMoveToBottomButton
 			]
 		});
 
@@ -1623,6 +1653,25 @@ sap.ui.define([
 		if (!this._bOnBeforeRenderingFirstTimeExecuted) {
 			this._bOnBeforeRenderingFirstTimeExecuted = true;
 
+			if (this.getType() === sap.m.P13nPanelType.dimeasure) {
+				this._addChartTypeToToolbar();
+				this._updateAvailableChartType();
+				
+				this._oTable.addColumn(new sap.m.Column({
+					header: new sap.m.Text({
+						text: this._oRb.getText('COLUMNSPANEL_COLUMN_TYPE')
+					})
+				}));
+
+				this._oTable.addColumn(new sap.m.Column({
+					header: new sap.m.Text({
+						text: this._oRb.getText('COLUMNSPANEL_COLUMN_ROLE')
+					})
+				}));
+				
+			}
+
+			
 			// check, whether table items shall be order ONLY very first time
 			if (this._oTableItemsOrdering.fIsOrderingToBeDoneOnlyFirstTime()) {
 				this._oTableItemsOrdering.fOrderOnlyFirstTime();
@@ -1949,7 +1998,8 @@ sap.ui.define([
 	};
 
 	P13nColumnsPanel.prototype.setAvailableChartTypes = function(aItems) {
-		var oData = this._oSelect.getModel().getData();
+		this._addChartTypeToToolbar(); 		
+		var oData = this._oChartTypeComboBox.getModel().getData();
 		oData.availableChartTypes = [];
 		aItems.forEach(function(oItem) {
 			oData.availableChartTypes.push({
@@ -1957,20 +2007,32 @@ sap.ui.define([
 				text: oItem.getText()
 			});
 		});
-		this._oSelect.getModel().setData(oData, true);
+		this._oChartTypeComboBox.getModel().setData(oData, true);
+		
+		if (!this._oChartTypeComboBox.getSelectedKey() && aItems[0]) {
+			this._oChartTypeComboBox.setSelectedKey(aItems[0].getKey());
+		}
 		return this;
 	};
+	
 	P13nColumnsPanel.prototype.addAvailableChartType = function(oItem) {
-		var oData = this._oSelect.getModel().getData();
+		this._addChartTypeToToolbar(); 		
+		var oData = this._oChartTypeComboBox.getModel().getData();
 		oData.availableChartTypes.push({
 			key: oItem.getKey(),
 			text: oItem.getText()
 		});
-		this._oSelect.getModel().setData(oData, true);
+		this._oChartTypeComboBox.getModel().setData(oData, true);
+
+		if (!this._oChartTypeComboBox.getSelectedKey() && oItem) {
+			this._oChartTypeComboBox.setSelectedKey(oItem.getKey());
+		}
 		return this;
 	};
+	
 	P13nColumnsPanel.prototype.removeAvailableChartType = function(oItem) {
-		var oData = this._oSelect.getModel().getData();
+		this._addChartTypeToToolbar(); 		
+		var oData = this._oChartTypeComboBox.getModel().getData();
 		var iIndex = oData.availableChartTypes.indexOf({
 			key: oItem.getKey(),
 			text: oItem.getText()
@@ -1978,14 +2040,79 @@ sap.ui.define([
 		if (iIndex > -1) {
 			oData.availableChartTypes.splice(iIndex, 1);
 		}
-		this._oSelect.getModel().setData(oData, true);
+		this._oChartTypeComboBox.getModel().setData(oData, true);
 		return oItem;
 	};
+	
 	P13nColumnsPanel.prototype.removeAllAvailableChartType = function() {
-		this._oSelect.getModel().getData().availableChartTypes = [];
+		this._addChartTypeToToolbar(); 		
+		this._oChartTypeComboBox.getModel().getData().availableChartTypes = [];
 		return this; //TODO: to be returned are removed Id's
 	};
 
+
+//	P13nColumnsPanel.prototype.setAvailableChartTypes = function(aChartTypes) {
+//		this.setProperty("availableChartTypes", aChartTypes);
+//		this._updateAvailableChartType();
+//		return this;
+//	};
+	
+	P13nColumnsPanel.prototype.setChartType = function(sChartType) {
+		this.setProperty("chartType", sChartType);
+
+		this._oChartTypeComboBox.setSelectedKey(sChartType);
+
+		//this._updateAvailableChartType();
+		return this;
+	};
+	
+	P13nColumnsPanel.prototype._addChartTypeToToolbar = function() {
+		if (this._oChartTypeComboBox) {
+			return;
+		}
+		var that = this; 
+
+		var oData = {
+			availableChartTypes: []
+		};
+		var oModel = new sap.ui.model.json.JSONModel(oData);
+		this._oChartTypeComboBox = new sap.m.ComboBox({
+			//enabled: false,
+			//visible: false,
+			items: {
+				path: '/availableChartTypes',
+				template: new sap.ui.core.Item({
+					key: "{key}",
+					text: "{text}"
+				})
+			},
+			change: function(oEvent) {
+				that.setChartType(oEvent.oSource.getSelectedKey());
+			} 
+		});
+		this._oChartTypeComboBox.setModel(oModel);
+
+		this._oToolbar.insertContent(this._oChartTypeComboBox, 0);
+	};
+
+	P13nColumnsPanel.prototype._updateAvailableChartType = function() {
+//		var that = this;
+
+//		if (this._oChartTypeComboBox && this.getAvailableChartTypes()) {
+//			this._oChartTypeComboBox.setVisible(true);
+//			this._oChartTypeComboBox.setEnabled(true);
+//			this._oChartTypeComboBox.destroyItems();
+//			this.getAvailableChartTypes().forEach(function(chartType) {
+//				that._oChartTypeComboBox.addItem(new sap.ui.core.Item({
+//					text: chartType,
+//					key: chartType
+//				}));
+//			});
+//
+//			this._oChartTypeComboBox.setSelectedKey(this.getChartType());
+//		}
+	};
+	
 	return P13nColumnsPanel;
 
 }, /* bExport= */true);
