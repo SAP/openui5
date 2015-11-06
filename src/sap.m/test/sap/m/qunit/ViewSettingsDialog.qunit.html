@@ -690,9 +690,13 @@
 				setTimeout(function () {
 					// store poiners to internal controls
 					var sortList = that.oVSD._sortList,
+						ariaSortListInvisibleText = that.oVSD._ariaSortListInvisibleText,
 						sortOrderList = that.oVSD._sortOrderList,
+						ariaSortOrderInvisibleText = that.oVSD._ariaSortOrderInvisibleText,
 						groupList = that.oVSD._groupList,
+						ariaGroupListInvisibleText = that.oVSD._ariaGroupListInvisibleText,
 						groupOrderList = that.oVSD._groupOrderList,
+						ariaGroupOrderInvisibleText = that.oVSD._ariaGroupOrderInvisibleText, 
 						presetFilterList = that.oVSD._presetFilterList,
 						filterList = that.oVSD._filterList,
 						filterDetailList = that.oVSD._filterDetailList,
@@ -717,9 +721,13 @@
 
 					// check if all internal controls are destroyed successfully
 					strictEqual(sortList.bIsDestroyed, true, "sort list is destroyed successfully");
+					strictEqual(ariaSortListInvisibleText.bIsDestroyed, true, "sort list aria label is destroyed successfully");
 					strictEqual(sortOrderList.bIsDestroyed, true, "sort order list is destroyed successfully");
+					strictEqual(ariaSortOrderInvisibleText.bIsDestroyed, true, "sort order list aria label is destroyed successfully");
 					strictEqual(groupList.bIsDestroyed, true, "group list is destroyed successfully");
+					strictEqual(ariaGroupListInvisibleText.bIsDestroyed, true, "group list aria label is destroyed successfully");
 					strictEqual(groupOrderList.bIsDestroyed, true, "group order list is destroyed successfully");
+					strictEqual(ariaGroupOrderInvisibleText.bIsDestroyed, true, "group order list aria label is destroyed successfully");
 					strictEqual(presetFilterList.bIsDestroyed, true, "preset filter list is destroyed successfully");
 					strictEqual(filterList.bIsDestroyed, true, "filter list is destroyed successfully");
 					strictEqual(filterDetailList.bIsDestroyed, true, "filter detail list is destroyed successfully");
@@ -739,9 +747,13 @@
 
 					// check if all controls are set to null correctly
 					strictEqual(that.oVSD._sortList, null, "sort list is null");
+					strictEqual(that.oVSD._ariaSortListInvisibleText, null, "sort list aria text is null");
 					strictEqual(that.oVSD._sortOrderList, null, "sort order list is null");
+					strictEqual(that.oVSD._ariaSortOrderInvisibleText, null, "sort order list aria text is null");
 					strictEqual(that.oVSD._groupList, null, "group list is null");
+					strictEqual(that.oVSD._ariaGroupListInvisibleText, null, "group list aria text is null");
 					strictEqual(that.oVSD._groupOrderList, null, "group order list is null");
+					strictEqual(that.oVSD._ariaGroupOrderInvisibleText, null, "group order list aria text is null");
 					strictEqual(that.oVSD._presetFilterList, null, "preset filter list is null");
 					strictEqual(that.oVSD._filterList, null, "filter list is null");
 					strictEqual(that.oVSD._filterDetailList, null, "filter detail list is null");
@@ -765,9 +777,13 @@
 			test("Destroy ViewSettingsDialog that has never been opened/rendered", function () {
 				// store poiners to internal controls
 				var sortList = this.oVSD._sortList,
+					ariaSortListInvisibleText = this.oVSD._ariaSortListInvisibleText,
 					sortOrderList = this.oVSD._sortOrderList,
+					ariaSortOrderInvisibleText = this.oVSD._ariaSortOrderInvisibleText,
 					groupList = this.oVSD._groupList,
+					ariaGroupListInvisibleText = this.oVSD._ariaGroupListInvisibleText,
 					groupOrderList = this.oVSD._groupOrderList,
+					ariaGroupOrderInvisibleText = this.oVSD._ariaGroupOrderInvisibleText,
 					presetFilterList = this.oVSD._presetFilterList,
 					filterList = this.oVSD._filterList,
 					filterDetailList = this.oVSD._filterDetailList
@@ -787,9 +803,13 @@
 
 				// check if all internal controls are not initialized yet
 				strictEqual(sortList, undefined, "sort list is not initialized yet");
+				strictEqual(ariaSortListInvisibleText, undefined, "sort list aria label is not initialized yet");
 				strictEqual(sortOrderList, undefined, "sort order list is not initialized yet");
+				strictEqual(ariaSortOrderInvisibleText, undefined, "sort order list aria label is not initialized yet");
 				strictEqual(groupList, undefined, "group list is not initialized yet");
+				strictEqual(ariaGroupListInvisibleText, undefined, "group list aria label is not initialized yet");
 				strictEqual(groupOrderList, undefined, "group order list is not initialized yet");
+				strictEqual(ariaGroupOrderInvisibleText, undefined, "group order list aria label is not initialized yet");
 				strictEqual(presetFilterList, undefined, "preset filter list is not initialized yet");
 				strictEqual(filterList, undefined, "filter list is not initialized yet");
 				strictEqual(filterDetailList, undefined, "filter detail list is not initialized yet");
@@ -853,10 +873,17 @@
 				strictEqual(this.oVSD.getSelectedSortItem(), this.oVSD.getSortItems()[1].getId(), "Second selected sort item is set successfully by selected flag");
 				strictEqual(this.oVSD.getSelectedGroupItem(), null, "Selected group item is null");
 				strictEqual(this.oVSD.getSelectedPresetFilterItem(), null, "Selected preset filter item is null");
-				strictEqual(this.oVSD._sortContent.length, 2, "Sort content is initialized and has two items");
+				strictEqual(this.oVSD._sortContent.length, 4, "Sort content is initialized and has two items");
 				strictEqual(this.oVSD._groupContent, undefined, "Group content is not initialized");
 				strictEqual(this.oVSD._filterContent, undefined, "Filter content is not initialized");
 				strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
+			
+				// Aria sort list and sort order list labels and ariaLabelledBy 
+				ok(jQuery.sap.domById(this.oVSD.getId() + "-sortOrderLabel"), "Sort order list aria label should be rendered");
+				ok(jQuery.sap.domById(this.oVSD.getId() + "-sortListLabel"), "Sort list aria label should be rendered");
+				strictEqual(this.oVSD._sortOrderList.getAriaLabelledBy().length, 1, "Sort order list should have aria ariaLabelledBy set");
+				strictEqual(this.oVSD._sortList.getAriaLabelledBy().length, 1, "Sort list should have aria ariaLabelledBy set");
+				
 				ok(!jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should not be rendered");
 		});
 
@@ -901,9 +928,16 @@
 			strictEqual(this.oVSD.getSelectedGroupItem(), this.oVSD.getGroupItems()[1].getId(), "Second selected group item is set successfully by selected flag");
 			strictEqual(this.oVSD.getSelectedPresetFilterItem(), null, "Selected preset filter item is null");
 			strictEqual(this.oVSD._sortContent, undefined, "Group content is not initialized");
-			strictEqual(this.oVSD._groupContent.length, 2, "Group content is initialized and has two items");
+			strictEqual(this.oVSD._groupContent.length, 4, "Group content is initialized and has two items");
 			strictEqual(this.oVSD._filterContent, undefined, "Filter content is not initialized");
 			strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
+
+			// Aria sort list and sort order list labels and ariaLabelledBy 
+			ok(jQuery.sap.domById(this.oVSD.getId() + "-groupOrderLabel"), "Group order list aria label should be rendered");
+			ok(jQuery.sap.domById(this.oVSD.getId() + "-groupListLabel"), "Group list aria label should be rendered");
+			strictEqual(this.oVSD._groupOrderList.getAriaLabelledBy().length, 1, "Group order list should have aria ariaLabelledBy set");
+			strictEqual(this.oVSD._groupList.getAriaLabelledBy().length, 1, "Group list should have aria ariaLabelledBy set");
+			
 			ok(!jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should not be rendered");
 		});
 
@@ -1546,8 +1580,8 @@
 			setTimeout(function () {
 				var list 						= that.oVSD._getPage1().getContent()[1];
 				var listOfSortItems 			= list.getItems()[1];
-				var listOfSortDirectionItems	= that.oVSD._getPage1().getContent()[0];
-
+				var listOfSortDirectionItems	= that.oVSD._getPage1().getContent()[3];
+				
 				var vsdSortItem 				= that.oVSD.getSortItems()[1];
 				var vsdSortDirectionDesc 		= listOfSortDirectionItems.getItems()[1];
 				var spySortItem 				= sinon.spy(vsdSortItem, "setProperty");
@@ -1567,7 +1601,7 @@
 				setTimeout(function () {
 					var list 						= that.oVSD._getPage1().getContent()[1];
 					var listOfGroupItems 			= list.getItems()[1];
-					var listOfGroupDirectionItems	= that.oVSD._getPage1().getContent()[0];
+					var listOfGroupDirectionItems	= that.oVSD._getPage1().getContent()[3];
 					var vsdGroupDirectionDesc 		= listOfGroupDirectionItems.getItems()[1];
 					var vsdGroupItem 				= that.oVSD.getGroupItems()[1];
 					var spyGroupItem 				= sinon.spy(vsdGroupItem, "setProperty");
