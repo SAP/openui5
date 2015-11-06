@@ -1707,15 +1707,8 @@ function(jQuery, library, Control, IconPool) {
 
 		// needed because the content aggregation is changing it's owner control from custom tab to page and vice-versa
 		// if there is existing page content and the last opened page was a custom tab
-		if (
-			this._getPage1().getContent().length &&
-			this._vContentPage      !== -1 &&   // not set
-			this._vContentPage      !== 0 &&    //sort
-			this._vContentPage      !== 1 &&    // filter
-			this._vContentPage      !== 2 &&    // group
-			this._vContentPage      !== 3       //filter detail
-		) {
-			_restoreCustomTabContentAggregation.call(this);
+		if (isLastPageContentCustomTab.call(this)) {
+			restoreCustomTabContentAggregation.call(this);
 		}
 
 		// reset controls
@@ -2171,7 +2164,7 @@ function(jQuery, library, Control, IconPool) {
 	 */
 	ViewSettingsDialog.prototype.removeAggregation = function (sAggregationName, vObject, bSuppressInvalidate) {
 		// custom tabs aggregation needs special handling - make sure it happens
-		_restoreCustomTabContentAggregation.call(this, sAggregationName, vObject);
+		restoreCustomTabContentAggregation.call(this, sAggregationName, vObject);
 
 		return sap.ui.core.Control.prototype.removeAggregation.call(this, sAggregationName, vObject,
 			bSuppressInvalidate);
@@ -2186,7 +2179,7 @@ function(jQuery, library, Control, IconPool) {
 	 */
 	ViewSettingsDialog.prototype.removeAllAggregation = function (sAggregationName, bSuppressInvalidate) {
 		// custom tabs aggregation needs special handling - make sure it happens
-		_restoreCustomTabContentAggregation.call(this);
+		restoreCustomTabContentAggregation.call(this);
 
 		return sap.ui.core.Control.prototype.removeAllAggregation.call(this, sAggregationName, bSuppressInvalidate);
 	};
@@ -2200,7 +2193,7 @@ function(jQuery, library, Control, IconPool) {
 	 */
 	ViewSettingsDialog.prototype.destroyAggregation = function (sAggregationName, bSuppressInvalidate) {
 		// custom tabs aggregation needs special handling - make sure it happens
-		_restoreCustomTabContentAggregation.call(this);
+		restoreCustomTabContentAggregation.call(this);
 
 		return sap.ui.core.Control.prototype.destroyAggregation.call(this, sAggregationName, bSuppressInvalidate);
 	};
@@ -2212,36 +2205,56 @@ function(jQuery, library, Control, IconPool) {
 	 * @param {object} oCustomTab Custom tab instance
 	 * @private
 	 */
-	function _restoreCustomTabContentAggregation(sAggregationName, oCustomTab) {
+	function restoreCustomTabContentAggregation(sAggregationName, oCustomTab) {
 		// Make sure page1 exists, as this method may be called on destroy(), after the page was destroyed
-		// Suppress creation of new page as this is supposed to be needed only when a page exists
-		if (this._getPage1(true)) {
-			// only the 'customTabs' aggregation is manipulated with shenanigans
-			if (sAggregationName === 'customTabs' && oCustomTab) {
-				/* oCustomTab must be an instance of the "customTab" aggregation type and must be the last opened page */
-				if (oCustomTab.getMetadata().getName() === this.getMetadata().getManagedAggregation(sAggregationName).type &&
-					this._vContentPage === oCustomTab.getId()) {
-					/* the iContentPage property corresponds to the custom tab id - set the custom tab content aggregation
-					 back to the custom tab instance */
-					var oPage1Content = this._getPage1().getContent();
+		// Suppress creation of new page as the following logic is needed only when a page already exists
+		if (!this._getPage1(true)) {
+			return;
+		}
+
+		// only the 'customTabs' aggregation is manipulated with shenanigans
+		if (sAggregationName === 'customTabs' && oCustomTab) {
+			/* oCustomTab must be an instance of the "customTab" aggregation type and must be the last opened page */
+			if (oCustomTab.getMetadata().getName() === this.getMetadata().getManagedAggregation(sAggregationName).type &&
+				this._vContentPage === oCustomTab.getId()) {
+				/* the iContentPage property corresponds to the custom tab id - set the custom tab content aggregation
+				 back to the custom tab instance */
+				var oPage1Content = this._getPage1().getContent();
+				oPage1Content.forEach(function (oContent) {
+					oCustomTab.addAggregation('content', oContent, true);
+				});
+			}
+		} else if (!sAggregationName && !oCustomTab) {
+			/* when these parameters are missing, cycle through all custom tabs and detect if any needs manipulation */
+			var oPage1Content = this._getPage1().getContent();
+			/* the vContentPage property corresponds to a custom tab id - set the  custom tab content aggregation back
+			 to the corresponding custom tab instance, so it can be reused later */
+			this.getCustomTabs().forEach(function (oCustomTab) {
+				if (this._vContentPage === oCustomTab.getId()) {
 					oPage1Content.forEach(function (oContent) {
 						oCustomTab.addAggregation('content', oContent, true);
 					});
 				}
-			} else if (!sAggregationName && !oCustomTab) {
-				/* when these parameters are missing, cycle through all custom tabs and detect if any needs manipulation */
-				var oPage1Content = this._getPage1().getContent();
-				/* the vContentPage property corresponds to a custom tab id - set the  custom tab content aggregation back
-				 to the corresponding custom tab instance, so it can be reused later */
-				this.getCustomTabs().forEach(function (oCustomTab) {
-					if (this._vContentPage === oCustomTab.getId()) {
-						oPage1Content.forEach(function (oContent) {
-							oCustomTab.addAggregation('content', oContent, true);
-						});
-					}
-				}, this);
-			}
+			}, this);
 		}
+
+	}
+	
+	/**
+	 * Determine if the last opened page has custom tab contents
+	 * @private
+	 * @returns {boolean}
+	 */
+	function isLastPageContentCustomTab() {
+		// ToDo: make this into enumeration
+		var aPageIds = [
+			-1, // not set
+			0,  // sort
+			1,  // group
+			2,  // filter
+			3   // filter detail
+		];
+		return (this._getPage1().getContent().length && aPageIds.indexOf(this._vContentPage) === -1);
 	}
 
 
