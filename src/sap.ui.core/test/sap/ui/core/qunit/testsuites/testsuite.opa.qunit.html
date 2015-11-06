@@ -13,13 +13,9 @@
 		function suite() {
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
+			var bIsIE9 = sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9;
 
 			var sUrlParameters = "?noglobals=true";
-
-			if(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 8) {
-				// In ie8 sinon will introduce globals and less does not work so the execution is without check for globals but with noless
-				sUrlParameters = "?sap-ui-xx-noless=true"
-			}
 
 			function addTestPage(sUrl) {
 				suite.addTestPage(contextPath + sUrl + sUrlParameters);
@@ -49,13 +45,17 @@
 			addTestPage("/test-resources/sap/ui/core/qunit/opa/matchers/BindingPath.qunit.html");
 
 			// OPA Samples
-			addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaById/Opa.html");
-			addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaDynamicWait/Opa.html");
-			addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaPageObject/OpaPageObject.html");
+			// Bug in IE9 http://bugs.jquery.com/ticket/13378
+			if (!bIsIE9) {
+				addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaById/Opa.html");
+				addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaDynamicWait/Opa.html");
+				addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaPageObject/OpaPageObject.html");
 
-			// Matcher samples
-			addTestPage("/test-resources/sap/ui/core/demokit/sample/matcher/BindingPath/BindingPath.html");
-			addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaMatchers/OpaMatchers.html");
+
+				// Matcher samples
+				addTestPage("/test-resources/sap/ui/core/demokit/sample/matcher/BindingPath/BindingPath.html");
+				addTestPage("/test-resources/sap/ui/core/demokit/sample/OpaMatchers/OpaMatchers.html");
+			}
 
 			return suite;
 		}
