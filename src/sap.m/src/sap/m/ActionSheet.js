@@ -112,12 +112,14 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		}
 	}});
 
-
 	ActionSheet.prototype.init = function() {
 		// this method is kept here empty in case some control inherits from it but forgets to check the existence of this function when chaining the call
+		this._fnOrientationChange = this._orientationChange.bind(this);
 	};
 
-	ActionSheet.prototype.exit = function(){
+	ActionSheet.prototype.exit = function() {
+		sap.ui.Device.resize.detachHandler(this._fnOrientationChange);
+
 		if (this._parent) {
 			this._parent.destroy();
 			this._parent = null;
@@ -179,7 +181,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		this.close();
 	};
 
-
 	/**
 	 * Calling this method will make the ActionSheet visible on the screen.
 	 *
@@ -190,12 +191,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ActionSheet.prototype.openBy = function(oControl){
-		var that = this, iTop, sEndTransform;
-
-		//Generate a translate3d string with the given y offset
-		function genTransformCSS(y){
-			return "translate3d(0px, " + (y > 0 ? y : 0) + "px, 0px)";
-		}
+		var that = this;
 
 		if (!this._parent) {
 			var oOldParent = this.getParent();
@@ -213,17 +209,17 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 					placement: this.getPlacement(),
 					showHeader: false,
 					content: [this],
-					beforeOpen: function(){
+					beforeOpen: function() {
 						that.fireBeforeOpen();
 					},
-					afterOpen: function(){
+					afterOpen: function() {
 						that.focus();
 						that.fireAfterOpen();
 					},
-					beforeClose: function(){
+					beforeClose: function() {
 						that.fireBeforeClose();
 					},
-					afterClose: function(){
+					afterClose: function() {
 						if (that.getShowCancelButton()) {
 							that.fireCancelButtonTap(); // (This event is deprecated, use the "cancelButtonPress" event instead)
 							that.fireCancelButtonPress();
@@ -233,7 +229,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 				}).addStyleClass("sapMActionSheetPopover");
 
 				if (sap.ui.Device.browser.internet_explorer) {
-					this._parent._fnAdjustPositionAndArrow = jQuery.proxy(function(){
+					this._parent._fnAdjustPositionAndArrow = jQuery.proxy(function() {
 						Popover.prototype._adjustPositionAndArrow.apply(this);
 
 						var $this = this.$(),
@@ -255,10 +251,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 					title: this.getTitle(),
 					type: sap.m.DialogType.Standard,
 					content: [this],
-					beforeOpen: function(){
+					beforeOpen: function() {
 						that.fireBeforeOpen();
 					},
-					afterOpen: function(){
+					afterOpen: function() {
 						that.focus();
 						that.fireAfterOpen();
 					},
@@ -271,6 +267,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 						that.fireAfterClose({
 							origin: oEvent.getParameter("origin")
 						});
+
+						sap.ui.Device.resize.detachHandler(that._fnOrientationChange);
 					}
 				}).addStyleClass("sapMActionSheetDialog");
 
@@ -288,116 +286,23 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 				if (sap.ui.Device.system.phone) {
 					//remove the transparent property from blocklayer
 					this._parent.oPopup.setModal(true);
-					//doesn't need to react on content change because content is always 100%
-					this._parent._registerResizeHandler = this._parent._deregisterResizeHandler = function() {};
+
 					this._parent._setDimensions = function() {
 						sap.m.Dialog.prototype._setDimensions.apply(this);
-						var $this = this.$(),
-							$content = this.$("cont");
-						//CSS reset
-						$this.css({
-							"width": "100%",
-							"max-width": "",
-							"max-height": "100%",
-							"left": "0px",
-							"right": "",
-							"bottom": ""
-						});
-						$content.css("max-height", "");
+
+						this.$("cont").css("max-height", "");
 					};
-
-					this._parent._openAnimation = function($this, iRealDuration, fnOpened){
-						var $window = jQuery(window),
-							iWindowHeight = $window.height(),
-							sStartTransform = genTransformCSS(iWindowHeight);
-
-						//need to set the transform css before its visible, in order to trigger the animation properly.
-						$this.css({
-							"top": "0px",
-							"-webkit-transform": sStartTransform,
-							"-moz-transform": sStartTransform,
-							"transform": sStartTransform,
-							"display": "block"
-						}).addClass("sapMDialogOpen");
-
-						$this.bind("webkitTransitionEnd transitionend", function(){
-							jQuery(this).unbind("webkitTransitionEnd transitionend");
-							$this.removeClass("sapMDialogSliding");
-							fnOpened();
-						});
-
-						//need a timeout to trigger the animation
-						setTimeout(function(){
-							iTop = iWindowHeight - $this.outerHeight();
-							//calculation for the end point of the animation
-							sEndTransform = genTransformCSS(iTop);
-							$this.addClass("sapMDialogSliding") // Windows Phone: class should be added before CSS, otherwise no animation
-								 .removeClass("sapMDialogHidden")
-								 .css({
-									"-webkit-transform": sEndTransform,
-									"-moz-transform": sEndTransform,
-									"transform": sEndTransform
-								 });
-						}, 0);
-					};
-
-					this._parent._closeAnimation = function($this, iRealDuration, fnClosed){
-						var $window = jQuery(window),
-							sTransform = genTransformCSS($window.height());
-						$this.bind("webkitTransitionEnd transitionend", function(){
-							jQuery(this).unbind("webkitTransitionEnd transitionend");
-							$this.removeClass("sapMDialogSliding");
-							fnClosed();
-						});
-
-						// set the css transform back before the real close animation
-						$this.css({
-							"-webkit-transform": sEndTransform,
-							"-moz-transform": sEndTransform,
-							"transform": sEndTransform,
-							"top": 0
-						});
-						setTimeout(function() {
-							$this.addClass("sapMDialogSliding") // Windows Phone: class should be added before CSS, otherwise no animation
-								.css({
-									"-webkit-transform": sTransform,
-									"-moz-transform": sTransform,
-									"transform": sTransform
-								});
-						}, 0);
-					};
-
-					//set the animation to the interal oPopup instance on Dialog
-					this._parent.oPopup.setAnimations(jQuery.proxy(this._parent._openAnimation, this._parent), jQuery.proxy(this._parent._closeAnimation, this._parent));
-
 
 					//also need to change the logic for adjusting scrollable area.
-					this._parent._adjustScrollingPane = function(){
-						var $this = this.$(),
-							iHeight = $this.height(),
-							$content = this.$("cont");
+					this._parent._adjustScrollingPane = function() {
+						var iHeight = this.$().height();
 
-						$content.css("max-height", iHeight);
+						this.$("cont").css("max-height", iHeight);
+
 						if (this._oScroller) {
 							this._oScroller.refresh();
 						}
 					};
-
-					//only need to recalculate the transform offset when window resizes, doesn't need to reposition using Popup.js again for iPhone.
-					this._parent._fnOrientationChange = jQuery.proxy(function(){
-						this._setDimensions();
-
-						var $window = jQuery(window),
-							iWindowHeight = $window.height(),
-							$this = this.$(),
-							iTop = iWindowHeight - $this.outerHeight();
-
-						$this.css({
-							top: iTop + "px"
-						});
-
-						this._adjustScrollingPane();
-					}, this._parent);
 				}
 			}
 
@@ -413,10 +318,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			this._parent.openBy(oControl);
 		} else {
 			this._parent.open();
+
+			sap.ui.Device.resize.attachHandler(this._fnOrientationChange);
 		}
 	};
-
-
 
 	/**
 	 * Calling this method will make the ActionSheet disappear from the screen.
@@ -431,8 +336,6 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		}
 	};
 
-
-
 	/**
 	 * The method checks if the ActionSheet is open. It returns true when the ActionSheet is currently open (this includes opening and closing animations), otherwise it returns false.
 	 *
@@ -444,8 +347,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		return !!this._parent && this._parent.isOpen();
 	};
 
-
-	ActionSheet.prototype._createCancelButton = function(){
+	ActionSheet.prototype._createCancelButton = function() {
 		if (!this._oCancelButton) {
 			var sCancelButtonText = (this.getCancelButtonText()) ? this.getCancelButtonText() : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACTIONSHEET_CANCELBUTTON_TEXT"),
 				that = this;
@@ -470,7 +372,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		return this;
 	};
 
-	ActionSheet.prototype._getCancelButton = function(){
+	ActionSheet.prototype._getCancelButton = function() {
 		if (sap.ui.Device.system.phone && this.getShowCancelButton()) {
 			this._createCancelButton();
 			return this._oCancelButton;
@@ -536,11 +438,15 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		return this;
 	};
 
-	ActionSheet.prototype._buttonSelected = function(){
+	ActionSheet.prototype._buttonSelected = function() {
 		if (sap.ui.Device.system.phone && this._parent) {
 			this._parent._oCloseTrigger = this;
 		}
 		this.close();
+	};
+
+	ActionSheet.prototype._orientationChange = function () {
+		this._parent._adjustScrollingPane();
 	};
 
 	/* Override API methods */
@@ -550,12 +456,14 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		oButton.attachPress(this._buttonSelected, this);
 		return this;
 	};
+
 	ActionSheet.prototype.insertButton = function(oButton, iIndex) {
 		this.insertAggregation("buttons",oButton, iIndex, false);
 		this._preProcessActionButton(oButton);
 		oButton.attachPress(this._buttonSelected, this);
 		return this;
 	};
+
 	ActionSheet.prototype.removeButton = function(oButton) {
 		var result = this.removeAggregation("buttons",oButton, false);
 		if (result) {
@@ -563,6 +471,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		}
 		return result;
 	};
+
 	ActionSheet.prototype.removeAllButtons = function() {
 		var result = this.removeAllAggregation("buttons", false),
 			that = this;
@@ -571,19 +480,17 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 		});
 		return result;
 	};
-	ActionSheet.prototype.clone = function() {
 
+	ActionSheet.prototype.clone = function() {
 		var aButtons = this.getButtons();
 		for ( var i = 0; i < aButtons.length; i++) {
-			var oButton = aButtons[i];
-			oButton.detachPress(this._buttonSelected, this);
+			aButtons[i].detachPress(this._buttonSelected, this);
 		}
 
 		var oClone = Control.prototype.clone.apply(this, arguments);
 
-		for ( var i = 0; i < aButtons.length; i++) {
-			var oButton = aButtons[i];
-			oButton.attachPress(this._buttonSelected, this);
+		for ( var j = 0; j < aButtons.length; j++) {
+			aButtons[i].attachPress(this._buttonSelected, this);
 		}
 
 		return oClone;

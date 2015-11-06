@@ -270,6 +270,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			this._sResizeListenerId = null;
 			this._$Window = jQuery(window);
 			this._oManuallySetSize = null;
+			this._oManuallySetPosition = null;
 
 			// used to judge if enableScrolling needs to be disabled
 			this._scrollContentList = ["NavContainer", "Page", "ScrollContainer"];
@@ -297,13 +298,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				oEvent.stopPropagation();
 			}, this);
 
-			//the orientationchange event listener
-			this._fnOrientationChange = jQuery.proxy(this._reposition, this);
-
-			this._fnContentResize = jQuery.proxy(this._onResize, this);
-
-			this._fnRepositionAfterOpen = jQuery.proxy(this._repositionAfterOpen, this);
-
 			/**
 			 *
 			 * @param {Object} oPosition A new position to move the Dialog to.
@@ -311,16 +305,15 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			 * @private
 			 */
 			this.oPopup._applyPosition = function (oPosition, bFromResize) {
-				var $that = that.$(),
-					$Window = that._$Window;
+				var $that = that.$();
 
 				that._setDimensions();
 				that._adjustScrollingPane();
 
-				//TODO: if sap_mvi has to be restored, here has to be changed.
+				//set to hard 50% or the values set from a drag or resize
 				oPosition.at = {
-					left: parseInt(($Window.width() - $that.outerWidth()) / 2, 10),
-					top: parseInt(($Window.height() - $that.outerHeight()) / 2, 10)
+					left: that._oManuallySetPosition ? that._oManuallySetPosition.x : '50%',
+					top: that._oManuallySetPosition ? that._oManuallySetPosition.y : '50%'
 				};
 
 				Popup.prototype._applyPosition.call(this, oPosition);
@@ -331,8 +324,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				if (Dialog._bIOS7Tablet && sap.ui.Device.orientation.landscape) {
 					$that.css("top", iTop - 10); //the calculated window size is 20px more than the actual size in ios 7 tablet landscape mode.
 				}
-
-				that._registerResizeHandler();
 			};
 
 			if (Dialog._bPaddingByDefault) {
@@ -341,11 +332,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		};
 
 		Dialog.prototype.onBeforeRendering = function () {
-			// the resize handler have to be resize because in some edge cases the content ('scroll') dom element can be replaced
-			// Incident ID: 1570796905
-			// this will be unneeded when the positioning is refactored (to be done with css only)
-			this._deregisterResizeHandler();
-
 			//if content has scrolling, disable scrolling automatically
 			if (this._hasSingleScrollableContent()) {
 				this._forceDisableScrolling = true;
@@ -385,8 +371,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		};
 
 		Dialog.prototype.exit = function () {
-			this._deregisterResizeHandler();
-
 			sap.ui.Device.resize.detachHandler(this._fnOrientationChange);
 
 			InstanceManager.removeDialogInstance(this);
@@ -451,12 +435,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			// Open popup
 			oPopup.setContent(this);
 
-			oPopup.setPosition("center center", "center center", window, "0 0", "fit");
-
 			oPopup.open();
-
-			// bind to window resize
-			sap.ui.Device.resize.attachHandler(this._fnOrientationChange);
 
 			InstanceManager.addDialogInstance(this);
 			return this;
@@ -470,6 +449,8 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Dialog.prototype.close = function () {
+			this._$dialog.removeClass('sapDialogDisableTransition');
+
 			var oPopup = this.oPopup;
 
 			var eOpenState = this.oPopup.getOpenState();
@@ -477,8 +458,10 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				sap.m.closeKeyboard();
 				this.fireBeforeClose({origin: this._oCloseTrigger});
 				oPopup.attachClosed(this._handleClosed, this);
-				this._deregisterResizeHandler();
 				this._bDisableRepositioning = false;
+				//reset the drag and/or resize
+				this._oManuallySetPosition = null;
+				this._oManuallySetSize = null;
 				oPopup.close();
 			}
 			return this;
@@ -527,7 +510,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			// the Popup, since it supports displaying arbitrary HTML content.
 			this.$().remove();
 
-			sap.ui.Device.resize.detachHandler(this._fnOrientationChange);
 			InstanceManager.removeDialogInstance(this);
 			this.fireAfterClose({origin: this._oCloseTrigger});
 		};
@@ -595,7 +577,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				//fnOpened should be called again.
 				setTimeout(function () {
 					fnEnd();
-				}, 150);
+				}, 210); // the time should be longer the longest transition in the CSS, because of focusing and transition relate issues
 			}
 		};
 
@@ -702,6 +684,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 				if (!this._oManuallySetSize) {
 					oStyles.width = this.getContentWidth() || undefined;
 					oStyles.height = this.getContentHeight() || undefined;
+				} else {
+					oStyles.width = this._oManuallySetSize.width;
+					oStyles.height = this._oManuallySetSize.height;
 				}
 
 				//set max height and width smaller that the screen
@@ -740,24 +725,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._reposition = function () {
-			if (this._bDisableRepositioning) {
-				//on window resize recalculate the max dimensions, to the resizing is not limited by the old max-width and height
-				this._setDimensions();
-				return;
-			}
-
-			// this method is called within a 0 timeout, and in between the dialog can be already destroyed
-			if (this.bIsDestroyed) {
-				return;
-			}
-
-			var ePopupState = this.oPopup.getOpenState();
-
-			if (ePopupState !== sap.ui.core.OpenState.OPEN && ePopupState !== sap.ui.core.OpenState.OPENING) {
-				return;
-			}
-
-			this._fnRepositionAfterOpen();
 		};
 
 		/**
@@ -765,18 +732,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._repositionAfterOpen = function () {
-			//The dialog might have been destroyed while the timeout was set
-			if (!this.oPopup) {
-				return;
-			}
-
-			var eState = this.oPopup.getOpenState();
-			//if resize event occurs while the opening animation, the position change has to be done after the opening animation.
-			if (eState === sap.ui.core.OpenState.OPENING) {
-				window.setTimeout(this._fnRepositionAfterOpen, 50);
-			} else {
-				this._reapplyPosition();
-			}
 		};
 
 		/**\
@@ -784,7 +739,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._reapplyPosition = function () {
-			this.oPopup && this.oPopup._applyPosition(this.oPopup._oLastPosition, true);
+			this._adjustScrollingPane();
 		};
 
 		/**
@@ -792,29 +747,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._onResize = function () {
-			if (!this.getDomRef()) {
-				return;
-			}
-
-			if (this._sResizeTimer) {
-				window.clearTimeout(this._sResizeTimer);
-			}
-
-			var that = this,
-				oResizeDomRef = this.getDomRef("scroll");
-
-			this._sResizeTimer = window.setTimeout(function () {
-				var iNewWidth = oResizeDomRef.offsetWidth,
-					iNewHeight = oResizeDomRef.offsetHeight;
-				if (that._iResizeDomWidth !== iNewWidth || that._iResizeDomHeight !== iNewHeight) {
-					that._fnOrientationChange();
-				}
-				that._sResizeTimer = null;
-				//reposition only if the resize is not caused by manually resizing the dialog
-				if (!that._oManuallySetSize) {
-					that._reapplyPosition();
-				}
-			}, 0);
 		};
 
 		/**
@@ -1129,12 +1061,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._registerResizeHandler = function () {
-			if (!this._sResizeListenerId && this.getDomRef()) {
-				var oResizeDomRef = this.getDomRef("scroll");
-				this._iResizeDomWidth = oResizeDomRef.offsetWidth;
-				this._iResizeDomHeight = oResizeDomRef.offsetHeight;
-				this._sResizeListenerId = sap.ui.core.ResizeHandler.register(oResizeDomRef, this._fnContentResize);
-			}
 		};
 
 		Dialog.prototype._createToolbarButtons = function () {
@@ -1433,7 +1359,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			Dialog.prototype.ondblclick = function (e) {
 				if (isHeaderClicked(e.target)) {
 					this._bDisableRepositioning = false;
-					this._reposition();
+					this._oManuallySetPosition = null;
+					this._oManuallySetSize = null;
+
+					//call the reposition
+					this.oPopup && this.oPopup._applyPosition(this.oPopup._oLastPosition, true);
+					this._$dialog.removeClass('sapMDialogTouched');
 				}
 			};
 
@@ -1475,19 +1406,44 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					}
 				};
 
+				if ((isHeaderClicked(e.target) && this.getDraggable()) || bResize) {
+					that._$dialog.addClass('sapDialogDisableTransition');
+					//remove the transform translate
+					that._$dialog.addClass('sapMDialogTouched');
+
+					that._oManuallySetPosition = {
+						x: initial.position.x,
+						y: initial.position.y
+					};
+
+					//set the new position of the dialog on mouse down when the transform is disabled by the class
+					that._$dialog.css({
+						left: that._oManuallySetPosition.x,
+						top: that._oManuallySetPosition.y
+					});
+				}
+
 				if (isHeaderClicked(e.target) && this.getDraggable()) {
 					$w.on("mousemove.sapMDialog", function (e) {
 						fnMouseMoveHandler(function () {
 							that._bDisableRepositioning = true;
 
+							that._oManuallySetPosition = {
+								x: e.pageX - initial.offset.x,
+								y: e.pageY - initial.offset.y
+							};
+
+							//move the dialog
 							that._$dialog.css({
-								left: e.pageX - initial.offset.x,
-								top: e.pageY - initial.offset.y
+								left: that._oManuallySetPosition.x,
+								top: that._oManuallySetPosition.y
 							});
 						});
 					});
 				} else if (bResize) {
+
 					that._$dialog.addClass('sapMDialogResizing');
+
 					var isInRTLMode = sap.ui.getCore().getConfiguration().getRTL();
 					var styles = {};
 					var minWidth = parseInt(that._$dialog.css('min-width'), 10);
