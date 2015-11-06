@@ -62,10 +62,18 @@ sap.ui.define(['jquery.sap.global'],
 				var alignmentClass = "sapUiBlockCell" + blockLayoutCell.getTitleAlignment(),
 					titleClass = "sapUiBlockCellTitle " + alignmentClass;
 
-				rm.write("<div class='" + titleClass + "'>");
+				var level = blockLayoutCell.getTitleLevel(),
+					autoLevel = level == sap.ui.core.TitleLevel.Auto,
+					tag = autoLevel ? "h2" : level;
+
+				rm.write("<" + tag + " id='" + this.getTitleId(blockLayoutCell) + "' class='" + titleClass + "'>");
 				rm.writeEscaped(blockLayoutCell.getTitle());
-				rm.write("</div>");
+				rm.write("</" + tag + ">");
 			}
+		};
+
+		BlockLayoutCellRenderer.getTitleId = function (blockLayoutCell) {
+			return blockLayoutCell.getId() + "-Title";
 		};
 
 		BlockLayoutCellRenderer.addContent = function (rm, blockLayoutCell) {
@@ -76,7 +84,7 @@ sap.ui.define(['jquery.sap.global'],
 				contentClass += "sapUiBlockCellCenteredContent";
 			}
 
-			rm.write("<div class='" + contentClass + "'>");
+			rm.write("<div class='" + contentClass + "' aria-labelledby='" + this.getTitleId(blockLayoutCell) +  "' >");
 			this.addTitle(rm, blockLayoutCell);
 			content.forEach(rm.renderControl);
 			rm.write("</div>");
