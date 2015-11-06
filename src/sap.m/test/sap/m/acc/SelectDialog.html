@@ -1,0 +1,275 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>SelectDialog - sap.m</title>
+		<script src="../../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.ui.commons,sap.m"
+			data-sap-ui-xx-bindingSyntax="complex"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		<script type="text/javascript">
+			jQuery.sap.require("sap.ui.model.odata.ODataModel");
+			jQuery.sap.require("sap.ui.model.FilterOperator");
+
+			// filter function for the list search
+			var fnDoSearch = function (oEvent, bProductSearch) {
+				var aFilters = [],
+					sSearchValue = oEvent.getParameter("value"),
+					itemsBinding = oEvent.getParameter("itemsBinding");
+
+				// create the local filter to apply
+				if (sSearchValue !== undefined && sSearchValue.length > 0) {
+					aFilters.push(new sap.ui.model.Filter((bProductSearch ? "ProductId" : "title" ), sap.ui.model.FilterOperator.Contains , sSearchValue));
+				}
+				// apply the filter to the bound items, and the Select Dialog will update
+				itemsBinding.filter(aFilters, "Application");
+			};
+
+			// filter function for the product search
+			var fnDoProductSearch = function (oEvent) {
+				fnDoSearch(oEvent, true);
+			};
+
+			// filter function to align the binding with the search term
+			var fnCreatePrefilter = function (sSearchValue, bProductSearch) {
+				var aFilters = [];
+
+				// create the local filter to apply
+				if (sSearchValue !== undefined) {
+					aFilters.push(new sap.ui.model.Filter((bProductSearch ? "ProductId" : "title" ), sap.ui.model.FilterOperator.Contains , sSearchValue));
+				}
+				return aFilters;
+			};
+
+			/* dummy list data */
+			var oListData = {
+				superheros: [ {
+						title: "Chuck Norris",
+						description: "Undefeatable",
+						icon: "sap-icon://employee",
+						selected: true
+					}, {
+						title: "The incredible Hulk",
+						description: "Lots of Anger, Mutation",
+						icon: "sap-icon://e-care",
+						selected: true
+					}, {
+						title: "Superman",
+						description: "Flying, Laser Sight",
+						icon: "sap-icon://competitor",
+						selected: true
+					}, {
+						title: "Bud Spencer",
+						description: "Dampfhammer, Beating",
+						icon: "sap-icon://dimension",
+						selected: true
+					}, {
+						title: "Obelix",
+						description: "Hinkelstein, Eating",
+						icon: "sap-icon://badge",
+						selected: false
+					}, {
+						title: "Spiderman",
+						description: "Climb walls, Cobwebbs",
+						icon: "sap-icon://burglary",
+						selected: false
+					}, {
+						title: "Darth Vader",
+						description: "The force",
+						icon: "sap-icon://alert",
+						selected: false
+					}, {
+						title: "Agent Smith",
+						description: "Matrix virus",
+						icon: "sap-icon://attachment",
+						selected: false
+					}, {
+						title: "Lucky Luke",
+						description: "Incredible gun prowess",
+						icon: "sap-icon://accept",
+						selected: false
+					}, {
+						title: "Jack Sparrow",
+						description: "Pirate, Bad Luck",
+						icon: "sap-icon://arobase",
+						selected: false
+					}]
+			};
+
+			var oModelList = new sap.ui.model.json.JSONModel();
+			oModelList.setDefaultBindingMode("OneWay");
+			oModelList.setData(oListData);
+
+			var oItemTemplate = new sap.m.StandardListItem({
+				title: "{title}",
+				description: "{description}",
+				icon: "{icon}",
+				type: "Active"
+			});
+
+			var oItemTemplateSelection = new sap.m.StandardListItem({
+				title: "{title}",
+				description: "{description}",
+				icon: "{icon}",
+				selected: "{selected}"
+			});
+
+			/* dialog data */
+			var oDialogData = {
+				title: "Forward to...",
+				noDataMessage: "Sorry, we can't find what you are looking for.. No data available!",
+			};
+
+			var oModelDialog = new sap.ui.model.json.JSONModel();
+			oModelDialog.setData(oDialogData);
+
+			/* 1) select dialog with list binding and dialog binding */
+			var oSelectDialog1 = new sap.m.SelectDialog("SelectDialog1", {
+				title: "{dialog>/title}",
+				noDataText: "{dialog>/noDataMessage}",
+				contentWidth: "30rem",
+				search : fnDoSearch,
+				liveChange: fnDoSearch
+			});
+
+			var oButton1 = new sap.m.Button("Button1", {
+				text: "Open SelectDialog",
+				press: function (oEvent) {
+					// initiate model
+					oSelectDialog1.setModel(oModelList);
+					oSelectDialog1.setModel(oModelDialog, "dialog");
+
+					// bind aggregation with filters
+					oSelectDialog1.bindAggregation("items", {
+						path: "/superheros",
+						template: oItemTemplate
+					});
+
+					// open dialog
+					oSelectDialog1.open();
+				}
+			});
+
+			/* 2) Multi select dialog with list binding and dialog binding in footer */
+			var oSelectDialog2 = new sap.m.SelectDialog("SelectDialog2", {
+				title: "{dialog>/title}",
+				noDataText: "{dialog>/noDataMessage}",
+				contentWidth: "30rem",
+				multiSelect: true,
+				search: fnDoSearch,
+				liveChange: fnDoSearch
+			});
+
+			var oButton2 = new sap.m.Button("Button2", {
+				text: "Forward to...",
+				press: function () {
+					// open dialog
+					oSelectDialog2.open("");
+
+					// initiate model
+					oSelectDialog2.setModel(oModelList);
+					oSelectDialog2.setModel(oModelDialog, "dialog");
+
+					// bind aggregation with filters
+					oSelectDialog2.bindAggregation("items", {
+						path: "/superheros",
+						template: oItemTemplate
+					});
+				}
+			});
+
+			/* 3) SelectDialog with multiselect and fixed width */
+			var oSelectDialog3 = new sap.m.SelectDialog("SelectDialog3", {
+				title: "Choose several World Domination companions",
+				noDataText: "Sorry, no world domination companions available",
+				multiSelect: true,
+				contentWidth: "30rem",
+				search: fnDoSearch,
+				liveChange: fnDoSearch
+			});
+
+			// set model & bind Aggregation
+			oSelectDialog3.setModel(oModelList);
+			oSelectDialog3.bindAggregation("items", "/superheros", oItemTemplate);
+
+			var oButton3 = new sap.m.Button("Button3", {
+				text: "Open SelectDialog in MultiSelect mode",
+				press: function () {
+					// open dialog
+					oSelectDialog3.open();
+
+					// initiate model
+					oSelectDialog3.setModel(oModelList);
+					oSelectDialog3.setModel(oModelDialog, "dialog");
+
+					// bind aggregation with filters
+					oSelectDialog3.bindAggregation("items", {
+						path: "/superheros",
+						filters: fnCreatePrefilter(),
+						template: oItemTemplate
+					});
+				}
+			});
+
+			/* 4) selection model in JSON data (multiSelect mode) + rememberSelections = true */
+
+			var oSelectDialog4 = new sap.m.SelectDialog("SelectDialog4", {
+				title: "Choose several World Domination companions",
+				noDataText: "Sorry, no world domination companions available",
+				multiSelect: true,
+				rememberSelections: true,
+				contentWidth: "30rem",
+				search: fnDoSearch,
+				liveChange: fnDoSearch
+			});
+
+			// initiate model
+			oSelectDialog4.setModel(oModelList);
+
+			// bind aggregation with filters
+			oSelectDialog4.bindAggregation("items", {
+				path: "/superheros",
+				filters: fnCreatePrefilter(),
+				template: oItemTemplateSelection
+			});
+
+			var oButton4 = new sap.m.Button("Button4", {
+				text: "Open SelectDialog in MultiSelect mode and rememberSelections=true",
+				press: function () {
+					// prefilter dialog
+					var itemsBinding = oSelectDialog4.getBinding("items");
+					itemsBinding.filter(fnCreatePrefilter(), "Application");
+					// open dialog
+					oSelectDialog4.open();
+				}
+			});
+
+			var oPage = new sap.m.Page("page", {
+				title: "Mobile SelectDialog Control",
+				content: [
+					new sap.m.VBox({
+						items: [
+							oButton1,
+							oButton3,
+							oButton4,
+						]
+					})
+				],
+				footer: new sap.m.Bar({
+					contentRight: [oButton2]
+				})
+			});
+
+			var oApp = new sap.m.App("myApp", { initialPage: "page" });
+			oApp.addPage(oPage).placeAt("content");
+		</script>
+
+	</head>
+	<body id="body" class="sapUiBody" role="application">
+		<div id="content"></div>
+	</body>
+</html>
+
