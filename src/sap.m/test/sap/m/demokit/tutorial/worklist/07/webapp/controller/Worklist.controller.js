@@ -234,23 +234,62 @@ sap.ui.define([
 		},
 
 		/**
+		 * Error and success handler for the unlist action.
+		 * @param sProductId the product id for which this handler is called
+		 * @param bSuccess true in case of a success handler, else false (for error handler)
+		 * @param iRequestNumber the counter which specifies the position of this request
+		 * @param iTotalRequests the number of all requests sent
+		 * @param oData forwarded data object received from the remove/update OData API
+         * @param oResponse forwarded response object received from the remove/update OData API
+         * @private
+         */
+		_handleUnlistActionResult : function (sProductId, bSuccess, iRequestNumber, iTotalRequests, oData, oResponse){
+			// create a counter for successful and one for failed requests
+			// ...
+
+			// however, we just assume that every single request was successful and display a success message once
+			if (iRequestNumber === iTotalRequests) {
+				MessageToast.show(this.getModel("i18n").getResourceBundle().getText("StockRemovedSuccessMsg", [iTotalRequests]));
+			}
+		},
+
+		/**
+		 * Error and success handler for the reorder action.
+		 * @param sProductId the product id for which this handler is called
+		 * @param bSuccess true in case of a success handler, else false (for error handler)
+		 * @param iRequestNumber the counter which specifies the position of this request
+		 * @param iTotalRequests the number of all requests sent
+		 * @param oData forwarded data object received from the remove/update OData API
+		 * @param oResponse forwarded response object received from the remove/update OData API
+		 * @private
+		 */
+		_handleReorderActionResult : function (sProductId, bSuccess, iRequestNumber, iTotalRequests, oData, oResponse){
+			// create a counter for successful and one for failed requests
+			// ...
+
+			// however, we just assume that every single request was successful and display a success message once
+			if (iRequestNumber === iTotalRequests) {
+				MessageToast.show(this.getModel("i18n").getResourceBundle().getText("StockUpdatedSuccessMsg", [iTotalRequests]));
+			}
+		},
+
+		/**
 		 * Event handler for the unlist button. Will delete the
 		 * product from the (local) model.
 		 * @public
 		 */
 		onUnlistObjects: function() {
-			var aSelectedProducts, i, sPath;
+			var aSelectedProducts, i, sPath, oProduct, oProductId;
 
 			aSelectedProducts = this.byId("table").getSelectedItems();
 			if (aSelectedProducts.length) {
 				for (i = 0; i < aSelectedProducts.length; i++) {
-					sPath = aSelectedProducts[i].getBindingContextPath();
+					oProduct = aSelectedProducts[i];
+					oProductId = oProduct.getBindingContext().getProperty("ProductID");
+					sPath = oProduct.getBindingContextPath();
 					this.getModel().remove(sPath, {
-						success : function (oData, oResponse){
-							// check if the OData request was really successful or not by looking into oResponse
-							// ...
-							MessageToast.show(this.getModel("i18n").getResourceBundle().getText("StockRemovedSuccessMsg"));
-						}.bind(this)
+						success : this._handleUnlistActionResult.bind(this, oProductId, true, i+1, aSelectedProducts.length),
+						error : this._handleUnlistActionResult.bind(this, oProductId, false, i+1, aSelectedProducts.length)
 					});
 				}
 			} else {
@@ -274,11 +313,8 @@ sap.ui.define([
 					oProductObject = aSelectedProducts[i].getBindingContext().getObject();
 					oProductObject.UnitsInStock += 10;
 					this.getModel().update(sPath, oProductObject, {
-						success : function (oData, oResponse) {
-							// check if the OData request was really successful or not by looking into oResponse
-							// ...
-							MessageToast.show(this.getModel("i18n").getResourceBundle().getText("StockUpdatedSuccessMsg"));
-						}.bind(this)
+						success : this._handleReorderActionResult.bind(this, oProductObject.ProductID, true, i+1, aSelectedProducts.length),
+						error : this._handleReorderActionResult.bind(this, oProductObject.ProductID, false, i+1, aSelectedProducts.length)
 					});
 				}
 			} else {
