@@ -28,8 +28,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		if (sSize == "Big") {
 			sSizeClass = "sapUiLocalBusyIndicatorSizeBig";
 		}
-		var sTemplate = 
-		'<div class="sapUiLocalBusyIndicator ' + sSizeClass + '" aria-role="progressbar" aria-valuemin="0" aria-valuemax="100" role="progressbar" alt="" tabindex="0">' + 
+		var sTemplate =
+		'<div class="sapUiLocalBusyIndicator ' + sSizeClass + '" role="progressbar" aria-valuemin="0" aria-valuemax="100" alt="" tabindex="0">' + 
 			'<div class="sapUiLocalBusyIndicatorAnimation sapUiLocalBusyIndicatorAnimStandard">' +
 				'<div></div>' +
 				'<div></div>' +
@@ -49,26 +49,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	BusyIndicatorUtils.addHTML = function ($control, sBusyIndicatorId, sSize) {
 		var $html = jQuery(BusyIndicatorUtils.getHTML(sSize));
 		$html.attr("id", sBusyIndicatorId);
-		
+
 		$control.append($html);
 		$control.addClass('sapUiLocalBusy');
-		
+
 		var $animation = $html.children(".sapUiLocalBusyIndicatorAnimation");
 		var iWidth = $animation[0].offsetWidth;
-		
+
 		// We can only determine the actual animation after the browser has calculated the size of the indicator
 		// We need to know the pixel-size of 3rem, under which the indicator will animate differently
 		if ($control[0].offsetWidth < iWidth) {
 			$animation.removeClass("sapUiLocalBusyIndicatorAnimStandard");
 			$animation.addClass("sapUiLocalBusyIndicatorAnimSmall");
 		}
-		
+
 		//Set the actual DOM Element to 'aria-busy'
 		$control.attr('aria-busy', true);
-		
+
 		return $html;
 	};
-	
+
 	/**
 	 * Pragmatic IE9 support, looks a bit different than the keyframes anymation.
 	 * TODO: Is this needed? When will IE9 go out of support.
@@ -78,13 +78,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		 * Starts the Animation for the given busy indicator (jQuery instance)
 		 */
 		start: function ($BusyIndicator) {
-			
+
 			if ($BusyIndicator && Device.browser.msie &&  Device.browser.version <= 9) {
 
 				var fnAnimate = function ($div, iDelay) {
 					var fnScale = function (iTo) {
 						$div.animate({  textIndent: iTo }, {
-							step: function (now) { 
+							step: function (now) {
 								jQuery(this).css("-ms-transform","scale(" + now + "," + now + ")");
 								jQuery(this).css("opacity",now);
 							},
@@ -97,15 +97,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 					};
 					setTimeout(function(){fnScale(0.3);}, iDelay);
 				};
-				
+
 				var aDivsToAnimate = $BusyIndicator.find(".sapUiLocalBusyIndicatorAnimation > div");
-				
+
 				for (var i = 0; i < aDivsToAnimate.length; i++) {
 					fnAnimate(jQuery(aDivsToAnimate[i]), i * 300);
 				}
-				
+
 			}
-			
+
 		},
 		/**
 		 * Stops the Animation for the given busy indicator (jQuery instance)
@@ -119,7 +119,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			}
 		}
 	};
-	
+
 	return BusyIndicatorUtils;
 
 }, /* bExport= */ true);

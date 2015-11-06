@@ -59,7 +59,7 @@
 			setTimeout(function() {
 				equal($LB.children().length, 2, 'Busy Indicator added to DOM tree');
 				ok($LB[0].hasAttribute("aria-busy", true), 'ARIA busy is set to Control');
-				ok($LB.children('.sapUiLocalBusyIndicator')[0].hasAttribute("aria-role", "progressbar"),
+				ok($LB.children('.sapUiLocalBusyIndicator')[0].hasAttribute("role", "progressbar"),
 					'ARIA role "progressbar" is set to busy indicator');
 				start();
 			}, 1200);
@@ -121,16 +121,16 @@
 
 		/**
 		 * This test checks if the busy indicator does not crash after the outer control was already
-		 * removed from the DOM, when the 
+		 * removed from the DOM, when the
 		 */
 		asyncTest("BusyIndicator and Already Closed sap.m.BusyDialog does not crash", function() {
 			var that = this;
-			
+
 			var dialog = new sap.m.BusyDialog({
 				title: "Loading",
 				text: "something loading..."
 			});
-			
+
 			dialog.open();
 			setTimeout(function () {
 				jQuery("#__dialog0-busyInd").control(0).setBusy(true);
@@ -138,7 +138,7 @@
 				ok("everythings fine");
 				start();
 			}, 250);
-			
+
 		});
 
 		asyncTest("Open multiple busy indicators", function() {
