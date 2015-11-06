@@ -57,7 +57,7 @@ var mMultipleArgumentDynamicExpressions = {
 var AnnotationsParser =  { 
 
 	parse: function(oMetadataContainer, oXMLDoc) {
-		var oMetadata = oMetadataContainer.metadata;
+		this.oMetadata = oMetadataContainer.metadata;
 		var mappingList = {}, schemaNodes, oSchema = {}, schemaNode,
 		termNodes, oTerms, termNode, sTermType, oMetadataProperties, annotationNodes, annotationNode,
 		annotationTarget, annotationNamespace, annotation, propertyAnnotation, propertyAnnotationNodes,
@@ -65,7 +65,7 @@ var AnnotationsParser =  {
 		valueAnnotation, expandNodes, expandNode, path, pathValues, expandNodesApplFunc, i, nodeIndex;
 
 		var xPath = this.getXPath();
-		this.oServiceMetadata = oMetadata.getServiceMetadata();
+		this.oServiceMetadata = this.oMetadata.getServiceMetadata();
 
 		// Set XPath namespace
 		oXMLDoc = xPath.setNameSpace(oXMLDoc);
@@ -98,10 +98,10 @@ var AnnotationsParser =  {
 			mappingList.termDefinitions = oTerms;
 		}
 		// Metadata information of all properties
-		if (!oMetadata.references) {
-			oMetadata.references = this.getAllPropertiesMetadata(this.oServiceMetadata);
+		if (!this.oMetadata.references) {
+			this.oMetadata.references = this.getAllPropertiesMetadata(this.oServiceMetadata);
 		}
-		oMetadataProperties = oMetadata.references;
+		oMetadataProperties = this.oMetadata.references;
 		if (oMetadataProperties.extensions) {
 			mappingList.propertyExtensions = oMetadataProperties.extensions;
 		}
@@ -232,7 +232,7 @@ var AnnotationsParser =  {
 						}
 					}
 					pathValues = path.split('/');
-					if (this.isNavProperty(annotation, pathValues[0], this.oServiceMetadata)) {
+					if (!!this.findNavProperty(annotation, pathValues[0], this.oServiceMetadata)) {
 						if (!mappingList.expand) {
 							mappingList.expand = {};
 						}
@@ -261,7 +261,7 @@ var AnnotationsParser =  {
 						mappingList.expand[annotation] = {};
 					}
 					pathValues = path.split('/');
-					if (this.isNavProperty(annotation, pathValues[0], this.oServiceMetadata)) {
+					if (!!this.findNavProperty(annotation, pathValues[0], this.oServiceMetadata)) {
 						if (!mappingList.expand) {
 							mappingList.expand = {};
 						}
@@ -465,6 +465,21 @@ var AnnotationsParser =  {
 	},
 
 	getEdmType: function(sPath, oProperties, sTarget, oSchema) {
+		var iPos = sPath.indexOf("/");
+		if (iPos > -1) {
+			var sPropertyName = sPath.substr(0, iPos);
+			var mNavProperty = this.findNavProperty(sTarget, sPropertyName, this.oServiceMetadata);
+			
+			if (mNavProperty) {
+				var mToEntityType = this.oMetadata._getEntityTypeByNavPropertyObject(mNavProperty);
+
+				if (mToEntityType) {
+					sTarget = mToEntityType.entityType;
+					sPath = sPath.substr(iPos + 1);
+				}
+			}
+		}
+		
 		if ((sPath.charAt(0) === "@") && (sPath.indexOf(oSchema.Alias) === 1)) {
 			sPath = sPath.slice(oSchema.Alias.length + 2);
 		}
@@ -771,9 +786,9 @@ var AnnotationsParser =  {
 	 * @param {string} sEntityType - The entity type to look for
 	 * @param {string} sPathValue - The path to look for
 	 * @param {object} oMetadata - The service's metadata object to search in
-	 * @returns {boolean} True if the path/entityType combination is found
+	 * @returns {map|null} The NavigationProperty map as defined in the EntityType or null if nothing is found
 	 */
-	isNavProperty: function(sEntityType, sPathValue, oMetadata) {
+	findNavProperty: function(sEntityType, sPathValue, oMetadata) {
 		for (var i = oMetadata.dataServices.schema.length - 1; i >= 0; i -= 1) {
 			var oMetadataSchema = oMetadata.dataServices.schema[i];
 			if (oMetadataSchema.entityType) {
@@ -783,14 +798,14 @@ var AnnotationsParser =  {
 					if (sNamespace + aEntityTypes[k].name === sEntityType && aEntityTypes[k].navigationProperty) {
 						for (var j = 0; j < aEntityTypes[k].navigationProperty.length; j += 1) {
 							if (aEntityTypes[k].navigationProperty[j].name === sPathValue) {
-								return true;
+								return aEntityTypes[k].navigationProperty[j];
 							}
 						}
 					}
 				}
 			}
 		}
-		return false;
+		return null;
 	},
 
 	/**
