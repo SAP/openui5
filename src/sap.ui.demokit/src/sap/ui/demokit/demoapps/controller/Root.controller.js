@@ -7,21 +7,34 @@ sap.ui.define([
 		"sap/ui/core/mvc/Controller",
 		"jquery.sap.global",
 		"sap/ui/demokit/demoapps/model/sourceFileDownloader",
-		"sap/m/MessageBox"
-	], function (Controller, $, sourceFileDownloader, MessageBox) {
+		"sap/m/MessageBox",
+		"sap/ui/model/Filter",
+		"sap/ui/model/FilterOperator"
+	], function (Controller, $, sourceFileDownloader, MessageBox, Filter, FilterOperator) {
 		"use strict";
 
 		return Controller.extend("sap.ui.demokit.demoapps.controller.Root", {
 			onTilePress: function (oEvent) {
-				if (!this.getView().getModel().getProperty("/showDownloads")) {
-					var sRef = oEvent.getSource().data("ref");
+				var sRef = oEvent.getSource().data("ref");
+				if (sRef !== "DOWNLOAD") {
 					sap.m.URLHelper.redirect(sRef, true);
+				} else {
+					this._downloadTile = oEvent.getSource();
+					var oDownloadDialog = this.byId("downloadDialog");
+					oDownloadDialog.getBinding("items").filter([]);
+					oDownloadDialog.open();
 				}
 			},
+			onLiveChange: function (oEvent) {
+				oEvent.getParameters().itemsBinding.filter([
+					new Filter("name", FilterOperator.Contains, oEvent.getParameters().value)
+				]);
+			},
 			onDownloadPress: function (oEvent) {
-				var oListItem = oEvent.getSource();
+				var oListItem = oEvent.getParameters().selectedItem;
+				var oDownloadTile = this._downloadTile;
 
-				oListItem.setBusy(true);
+				oDownloadTile.setBusy(true);
 				sap.ui.require(["sap/ui/core/util/File", "sap/ui/thirdparty/jszip"], function (File) {
 					var oZipFile = new JSZip();
 
@@ -55,29 +68,12 @@ sap.ui.define([
 
 							// Still make the available files ready for download
 							var oContent = oZipFile.generate({type:"blob"});
-							oListItem.setBusy(false);
+							oDownloadTile.setBusy(false);
 							File.save(oContent, oListItem.getTitle(), "zip", "application/zip");
 						});
 					});
 
 				});
-			},
-
-			onDownloadTogglePress: function () {
-				var oModel = this.getView().getModel();
-				this.byId("dynamicSideContent").toggle();
-				oModel.setProperty("/showDownloads", !oModel.getProperty("/showDownloads"));
-			},
-			breakpointChanged: function (oEvent) {
-				var sCurrentBreakpoint = oEvent.getParameter("currentBreakpoint"),
-					bSmallScreen = false;
-
-				if (sCurrentBreakpoint === "S") {
-					bSmallScreen = true;
-				}
-
-				var oModel = this.getView().getModel();
-				oModel.setProperty("/smallScreen", bSmallScreen);
 			}
 	})	;
 	}

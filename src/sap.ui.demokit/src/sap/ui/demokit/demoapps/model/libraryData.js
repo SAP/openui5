@@ -72,6 +72,13 @@ sap.ui.define([],
 				}
 			}
 
+			oData.allApps.push({
+				lib : "",
+				name : "Downloads",
+				icon : "download",
+				desc : "Download our demoapps",
+				ref : "DOWNLOAD"
+			});
 			return oData;
 		}
 
