@@ -592,8 +592,8 @@ sap.ui.define([
 		}
 	};
 
-	P13nFilterPanel.prototype.insertFilterItem = function(oFilterItem) {
-		this.insertAggregation("filterItems", oFilterItem);
+	P13nFilterPanel.prototype.insertFilterItem = function(oFilterItem, iIndex) {
+		this.insertAggregation("filterItems", oFilterItem, iIndex);
 
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;

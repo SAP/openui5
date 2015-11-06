@@ -354,8 +354,8 @@ sap.ui.define([
 		}
 	};
 
-	P13nGroupPanel.prototype.insertGroupItem = function(oGroupItem) {
-		this.insertAggregation("groupItems", oGroupItem);
+	P13nGroupPanel.prototype.insertGroupItem = function(oGroupItem, iIndex) {
+		this.insertAggregation("groupItems", oGroupItem, iIndex);
 
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
