@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge' />
+	<meta http-equiv='Content-Type' content='text/html;charset=UTF-8' />
+
+	<title>FESR Test</title>
+
+	<script src="../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal"></script>
+
+	<script>
+		function createRequest() {
+			var oReq = new XMLHttpRequest();
+			oReq.addEventListener("load");
+			oReq.open("GET", "../../../../resources/sap-ui-core.js");
+			oReq.send();
+		}
+
+		var oApp = new sap.m.App("myApp", {
+			pages: new sap.m.Page("page", {
+				title: "FESR Testpage",
+				content: [
+					new sap.m.HBox({
+						items: [
+							new sap.m.Button({
+								text: "1. Interaction",
+								press: function() {
+									createRequest();
+								}
+							}),
+							new sap.m.Button({
+								text: "2. Interaction",
+								press: function() {
+									createRequest();
+								}
+							}),
+							new sap.m.Button({
+								text: "3. Interaction",
+								press: function() {
+									createRequest();
+								}
+							}),
+							new sap.m.Button({
+								text: "4. Interaction",
+								press: function() {
+									createRequest();
+								}
+							}),
+							new sap.m.Button({
+								text: "5. Interaction",
+								press: function() {
+									createRequest();
+								}
+							}),
+							new sap.m.Button({
+								text: "Stop Interaction",
+								press: function() {
+									createRequest();
+								}
+							})
+						]
+					})
+				]
+			})
+		});
+		oApp.placeAt("content");
+	</script>
+
+</head>
+
+<body>
+	<div id="content"></div>
+</body>
+
+</html>

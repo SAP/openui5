@@ -3,7 +3,7 @@
  */
 
 // Provides the base class for all controls and UI elements.
-sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', './ElementMetadata', 'jquery.sap.strings'],
+sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', './ElementMetadata', 'jquery.sap.strings', 'jquery.sap.trace'],
 	function(jQuery, BaseObject, ManagedObject, ElementMetadata/* , jQuerySap */) {
 	"use strict";
 
@@ -562,6 +562,9 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @protected
 	 */
 	Element.prototype.fireEvent = function(sEventId, mParameters) {
+		if (this.hasListeners(sEventId)) {
+			jQuery.sap.interaction.notifyStepStart(this);
+		}
 		// clone 'arguments' and modify clone to be strict mode compatible
 		var aArgs = Array.prototype.slice.apply(arguments);
 		// TODO 'id' is somewhat redundant to getSource(), but it is commonly used - fade out with next major release?

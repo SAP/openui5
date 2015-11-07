@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './EppLib'],
-	function(jQuery, EppLib1) {
+sap.ui.define(['jquery.sap.global', 'jquery.sap.trace'],
+	function(jQuery) {
 	"use strict";
 
 	/*global alert, confirm */
@@ -11,26 +11,24 @@ sap.ui.define(['jquery.sap.global', './EppLib'],
 	//initializing module (single global variable pattern)
 	var E2eTraceLib1 =
 		(function() {
-	
-		  var EppLib = EppLib1;
-	
+
 		  var traceLevelRegEx = /sap-ui-xx-e2e-trace-level=(low|medium|high)/.exec(location.search);
-	
+
 		  var defaultTraceLevel;
-	
+
 		  if (traceLevelRegEx && traceLevelRegEx.length >= 2) {
 				  defaultTraceLevel = traceLevelRegEx[1];
 		  } else {
 				  defaultTraceLevel = "medium";
 		  }
-	
+
 		  var sDefaultUploadUrl = "/sap/bc/sdf/E2E_Trace_upl";
 
 		  var busTrx;
 		  var busTrxRecording = false;
-		  
+
 		  var Message = function(xmlHttpReq) {
-	
+
 			//public members
 			this.idx = xmlHttpReq.xidx;
 			this.dsrGuid = xmlHttpReq.xDsrGuid;
@@ -47,53 +45,53 @@ sap.ui.define(['jquery.sap.global', './EppLib'],
 			this.lastByteReceived = xmlHttpReq.xlastByteReceived;
 			this.sentBytes = 0; //cannot be captured
 			this.receivedBytes = xmlHttpReq.responseText.length; //uncompressed
-	
+
 			//public methods
 			this.getDuration = function() {
 			  return this.lastByteReceived - this.startTimestamp;
 			};
-	
+
 			this.getRequestLine = function() {
 			  return this.method + " " + this.url + " HTTP/?.?";
 			};
-	
+
 			this.getRequestHeader = function() {
 			  var reqHeader = this.getRequestLine() + "\r\n";
-			  for ( var i = 0, len = this.reqHeader.length; i < len; i += 1) {
+			  for ( var i = 0, len = this.reqHeader ? this.reqHeader.length : 0; i < len; i += 1) {
 				reqHeader += this.reqHeader[i][0] + ": " + this.reqHeader[i][1] + "\r\n";
 			  }
 			  reqHeader += "\r\n";
 			  return reqHeader;
 			};
-	
+
 			this.getResponseHeader = function() {
 			  var respHeader = "HTTP?/? " + this.statusCode + " " + this.status + "\r\n";
 			  respHeader += this.respHeader;
 			  respHeader += "\r\n";
 			  return respHeader;
 			};
-	
+
 		  };
-	
+
 		  var TransactionStep = function(busTrx, trxStepIdx, date, trcLvl) {
-	
+
 			this.busTrx = busTrx;
 			this.trxStepIdx = trxStepIdx;
 			this.name = "Step-" + (trxStepIdx + 1);
 			this.date = date;
 			this.trcLvl = trcLvl;
-	
+
 			this.messages = [];
 			this.msgIdx = -1;
 			this.pendingMessages = 0;
 			this.transactionStepTimeoutId = null;
-	
+
 			this.messageStarted = function() {
 			  this.msgIdx += 1;
 			  this.pendingMessages += 1;
 			  return this.msgIdx;
 			};
-	
+
 			//E2ETrace events handler
 			this.onMessageFinished = function(xmlHttpReq, timestamp) {
 			  if (xmlHttpReq.xurl === sDefaultUploadUrl) {
@@ -109,35 +107,35 @@ sap.ui.define(['jquery.sap.global', './EppLib'],
 						this.transactionStepTimeoutId = setTimeout(onTransactionStepTimeout, 3000);
 			  }
 			};
-	
+
 			this.getId = function() {
 			  return this.busTrx.id + "-" + this.trxStepIdx;
 			};
-	
+
 			this.getTraceFlagsAsString = function() {
 			  return this.trcLvl[1].toString(16) + this.trcLvl[0].toString(16);
 			};
-	
+
 		  };
-	
+
 		  var BusinessTransaction =
 			  function(id, date, trcLvl, fnCallback) {
-	
+
 				this.id = id;
 				this.date = date;
 				this.trcLvl = trcLvl;
 				this.trxSteps = [];
 				this.fnCallback = fnCallback;
-	
+
 				this.createTransactionStep = function() {
 				  var trxStep = new TransactionStep(this, this.trxSteps.length, new Date(), this.trcLvl);
 				  this.trxSteps.push(trxStep);
 				};
-	
+
 				this.getCurrentTransactionStep = function() {
 				  return this.trxSteps[this.trxSteps.length - 1];
 				};
-				
+
 				this.getBusinessTransactionXml =
 					function() {
 					  var xml =
@@ -175,9 +173,9 @@ sap.ui.define(['jquery.sap.global', './EppLib'],
 					  xml += "</BusinessTransaction>";
 					  return xml;
 					};
-	
+
 			  };
-	
+
 		  var onTransactionStepTimeout =
 			  function() {
 				if (busTrx.getCurrentTransactionStep().pendingMessages === 0 && busTrx.getCurrentTransactionStep().messages.length > 0) {
@@ -190,9 +188,9 @@ sap.ui.define(['jquery.sap.global', './EppLib'],
 					busTrx.createTransactionStep();
 				  } else {
 					(function() {
-	
+
 					  var busTrxXml = busTrx.getBusinessTransactionXml();
-	
+
 								  if (busTrx.fnCallback && typeof (busTrx.fnCallback) === 'function') {
 									  busTrx.fnCallback(busTrxXml);
 					  }
@@ -219,7 +217,7 @@ sap.ui.define(['jquery.sap.global', './EppLib'],
 						try {
 							var bDone = true;
 							while (bDone){
-								
+
 								/*eslint-disable no-alert */
 								var sUrl = window.prompt('Please enter a valid URL for the store server', 'http://<host>:<port>');
 								/*eslint-enable no-alert */
@@ -227,10 +225,10 @@ sap.ui.define(['jquery.sap.global', './EppLib'],
 								if (sUrl === '' || sUrl === null) {
 									break;
 								}
-								
+
 								var sPatt = new RegExp("(https?:\/\/(?:www\.|(?!www))[^\s\.]+\.[^\s]{2,}|www\.[^\s]+\.[^\s]{2,})");
 								var bRes = sPatt.test(sUrl);
-								
+
 								if (bRes){
 									var xmlHttpPost = new window.XMLHttpRequest();
 									xmlHttpPost.open("POST", sUrl + '/E2EClientTraceUploadW/UploadForm.jsp', false);
@@ -254,7 +252,7 @@ sap.ui.define(['jquery.sap.global', './EppLib'],
 				  }
 				}
 			  };
-	
+
 		  var convertToUTCString =
 			  function(date) {
 				var utcString = "";
@@ -270,21 +268,19 @@ sap.ui.define(['jquery.sap.global', './EppLib'],
 				utcString += " UTC";
 				return utcString;
 			  };
-	
+
 		  //immediate function
 		  (function() {
-	
+
 			//variables
 			var fopen, fsetRequestHeader;
-			fopen = window.XMLHttpRequest.prototype.open;
-			fsetRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
-	
+
 			//event listeners
 			function onLoadstart(event) {
 			  //console.log(event.timeStamp + ", " + this.xidx + ": loadstart");
 			  this.xfirstByteSent = event.timeStamp;
 			}
-	
+
 			function onProgress(event) {
 			  //console.log(event.timeStamp + ", " + this.xidx + ": progress");
 			  if (event.loaded > 0) {
@@ -294,56 +290,64 @@ sap.ui.define(['jquery.sap.global', './EppLib'],
 				//always update lastByteReceived
 				this.xlastByteReceived = event.timeStamp;
 			  }
-	
+
 			}
-	
+
 			function onError(event) {
 			  busTrx.getCurrentTransactionStep().onMessageFinished(this, event.timeStamp);
 			}
-	
+
 			function onAbort(event) {
 			  busTrx.getCurrentTransactionStep().onMessageFinished(this, event.timeStamp);
 			}
-	
+
 			function onLoad(event) {
 			  //console.log(event.timeStamp + ", " + this.xidx + ": load");
 			  busTrx.getCurrentTransactionStep().onMessageFinished(this, event.timeStamp);
 			}
-	
+
 			//not working on IE 9
 			//  function onLoadend(event) {
 			//    console.log(event.timeStamp + ", " + this.xidx + ": loadend");
 			//  }
-	
+
+			// start jQuery.sap.trace and override xhr
+			jQuery.sap.passport.startTracing();
+
+			fopen = window.XMLHttpRequest.prototype.open;
+			fsetRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
+
 			//inject call-back function for window.XMLHttpRequest.setRequestHeader
 			window.XMLHttpRequest.prototype.setRequestHeader = function() {
 			  fsetRequestHeader.apply(this, arguments);
 			  if (busTrxRecording) {
-						  this.xRequestHeaders.push(arguments);
-			  }
+					if (!this.xRequestHeaders) {
+						this.xRequestHeaders = [];
+					}
+					this.xRequestHeaders.push(arguments);
+				}
 			};
-	
+
 			//inject call-back function for window.XMLHttpRequest.open
 			window.XMLHttpRequest.prototype.open = function() {
 			  fopen.apply(this, arguments);
-	
+
 			  if (busTrxRecording) {
-	
+
 				  var idx = busTrx.getCurrentTransactionStep().messageStarted();
-		
+
 				  //add tracing attributes
 				  this.xidx = idx;
 				  this.xstartTimestamp = Date.now();
 				  //    console.log(this.xstartTimestamp + ", " + idx + " " + arguments[0] + " " + arguments[1]);
 				  this.xmethod = arguments[0];
 				  this.xurl = arguments[1];
-				  this.xRequestHeaders = [];
-				  this.xDsrGuid = EppLib.createGUID(); //see EbbLib.js
-		
-				  //set passport
-				  this.setRequestHeader("SAP-PASSPORT", EppLib.passportHeader(busTrx.getCurrentTransactionStep().trcLvl, busTrx.id, this.xDsrGuid));
+				  this.xDsrGuid = jQuery.sap.fesr.getCurrentTransactionId(); //see jquery.sap.trace, former EbbLib.js
+
+				  //do not set passport as this is done already in jquery.sap.trace
+				  //this.setRequestHeader("SAP-PASSPORT", EppLib.passportHeader(busTrx.getCurrentTransactionStep().trcLvl, busTrx.id, this.xDsrGuid));
 				  this.setRequestHeader("X-CorrelationID", busTrx.getCurrentTransactionStep().getId() + "-" + idx);
-		
+
 				  //attach event listeners
 				  this.addEventListener("loadstart", onLoadstart, false);
 				  this.addEventListener("progress", onProgress, false);
@@ -354,19 +358,19 @@ sap.ui.define(['jquery.sap.global', './EppLib'],
 				  idx += 1;
 			  }
 			};
-	
+
 		  })(); //immediate function inside module
-	
+
 		  var E2eTraceLib = {
 			start: function(sTraceLevel, fnCallback) {
-				
+
 				  if (!busTrxRecording) {
-	 
+
 					if (!sTraceLevel) {
 					  sTraceLevel = defaultTraceLevel;
 					}
-	
-					busTrx = new BusinessTransaction(EppLib.createGUID(), new Date(), EppLib.traceFlags(sTraceLevel), fnCallback);
+
+					busTrx = new BusinessTransaction(jQuery.sap.fesr.getRootId(), new Date(), jQuery.sap.passport.traceFlags(sTraceLevel), fnCallback);
 				busTrx.createTransactionStep();
 						busTrxRecording = true;
 				  }
@@ -375,13 +379,13 @@ sap.ui.define(['jquery.sap.global', './EppLib'],
 					return busTrxRecording;
 				}
 		  };
-	
+
 		  if (/sap-ui-xx-e2e-trace=(true|x|X)/.test(location.search)) {
 			E2eTraceLib.start();
 			  }
-	
+
 		  return E2eTraceLib;
-		  
+
 		}()); //module
 
 	return E2eTraceLib1;
