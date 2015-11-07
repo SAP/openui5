@@ -168,7 +168,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			//initialize the list of sorted dimension names
 			this.aAllDimensionSortedByName = this.oAnalyticalQueryResult.getAllDimensionNames().concat([]).sort();
 			
-			this._fireRefresh({reason: sap.ui.model.ChangeReason.Refresh});
+			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
 		return this;
 	};
@@ -4046,7 +4046,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			this._abortAllPendingRequests();
 			this.resetData();
 			this.bNeedsUpdate = false;
-			this._fireRefresh({reason: sap.ui.model.ChangeReason.Refresh});
+			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
 	};
 
@@ -4079,7 +4079,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		}
 		if (bForceUpdate || bChangeDetected) {
 			this.bNeedsUpdate = false;
-			this._fireChange();
+			this._fireChange({reason: ChangeReason.Change});
 		}
 	};
 
