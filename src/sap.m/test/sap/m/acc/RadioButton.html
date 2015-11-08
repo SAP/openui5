@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<title>sap.m.RadioButton - Accessibility</title>
+
+	<script src="../../../../resources/sap-ui-core.js"
+	        type="text/javascript"
+	        id="sap-ui-bootstrap"
+	        data-sap-ui-libs="sap.m"
+	        data-sap-ui-theme="sap_bluecrystal">
+	</script>
+
+	<script>
+		var oApp = new sap.m.App("myApp", {
+			initialPage: "page"
+		});
+
+		var oLayout = new sap.m.VBox({
+			items: [
+					new sap.m.Title({ text: "Choose what is your favorite fruit" }),
+					new sap.m.RadioButton({ text: "Apple", groupName: "fruit" }),
+					new sap.m.RadioButton({ text: "Peach", groupName: "fruit" }),
+					new sap.m.RadioButton({ text: "Banana", groupName: "fruit" }),
+					new sap.m.RadioButton({ text: "Orange", groupName: "fruit" })
+			]
+		});
+
+		var oPage = new sap.m.Page("page", {
+			title: "RadioButton Control",
+			content: [
+				oLayout
+			]
+		});
+
+		oApp.addPage(oPage).placeAt("content");
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+	<div id="content"></div>
+</body>
+</html>
