@@ -88,6 +88,11 @@
 							<classifier>hcp</classifier>
 						</overlay>
 					</overlays>
+					<archive>
+						<manifestEntries>
+							<Web-ContextPath>/</Web-ContextPath>
+						</manifestEntries>
+					</archive>
 				</configuration>
 			</plugin>
 
