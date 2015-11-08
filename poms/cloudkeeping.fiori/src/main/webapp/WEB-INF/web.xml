@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+                             http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5"
+         xmlns="http://java.sun.com/xml/ns/javaee">
+
+  <display-name>sapui5-sdk</display-name>
+
+  <!-- ============================================================== -->
+  <!-- SAPUI5 resource servlet used to handle application resources  -->
+  <!-- ============================================================== -->
+
+  <servlet>
+    <display-name>ResourceServlet</display-name>
+    <servlet-name>ResourceServlet</servlet-name>
+    <servlet-class>com.sap.ui5.resource.ResourceServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ResourceServlet</servlet-name>
+    <url-pattern>/resources/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ResourceServlet</servlet-name>
+    <url-pattern>/test-resources/*</url-pattern>
+  </servlet-mapping>
+  <context-param>
+    <param-name>com.sap.ui5.resource.ACCEPTED_ORIGINS</param-name>
+    <param-value>*</param-value>
+  </context-param>
+
+
+  <!-- ============================================================== -->
+  <!-- MultiVersion Filter                                            -->
+  <!-- ============================================================== -->
+
+  <filter>
+    <display-name>MultiVersionFilter</display-name>
+    <filter-name>MultiVersionFilter</filter-name>
+    <filter-class>com.sap.ui5.resource.MultiVersionFilter</filter-class>
+    <init-param>
+      <param-name>com.sap.ui5.resource.REMOTE_LOCATION</param-name>
+      <param-value>https://sapui5-sapui5.dispatcher.${HC_HOST}</param-value>
+    </init-param>
+    <init-param>
+      <param-name>com.sap.ui5.resource.ACCEPTED_ORIGINS</param-name>
+      <param-value>*</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>MultiVersionFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+
+  <!-- ============================================================== -->
+  <!-- Redirect Filter                                                -->
+  <!-- ============================================================== -->
+
+  <filter>
+    <display-name>RedirectFilter</display-name>
+    <filter-name>RedirectFilter</filter-name>
+    <filter-class>com.sap.ui5.redirect.RedirectFilter</filter-class>
+    <init-param>
+      <param-name>com.sap.ui5.redirect.SOURCE_PATH</param-name>
+      <param-value>/sdk/</param-value>
+    </init-param>
+    <init-param>
+      <param-name>com.sap.ui5.redirect.TARGET_PATH</param-name>
+      <param-value>/</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>RedirectFilter</filter-name>
+    <url-pattern>/sdk</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>RedirectFilter</filter-name>
+    <url-pattern>/sdk/*</url-pattern>
+  </filter-mapping>
+
+
+  <!-- ============================================================== -->
+  <!-- Merged Module Filter to merge modules on the fly               -->
+  <!-- ============================================================== -->
+
+  <servlet>
+    <display-name>ModuleSetOptimizer</display-name>
+    <servlet-name>ModuleSetOptimizer</servlet-name>
+    <servlet-class>com.sap.ui5.demokit.util.ModuleSetOptimizer</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ModuleSetOptimizer</servlet-name>
+    <url-pattern>/optimize-module-set</url-pattern>
+  </servlet-mapping>
+
+
+  <!-- ============================================================== -->
+  <!-- Cache Control Filter to prevent caching of any resource        -->
+  <!-- ============================================================== -->
+
+  <filter>
+    <display-name>CacheControlFilter</display-name>
+    <filter-name>CacheControlFilter</filter-name>
+    <filter-class>com.sap.ui5.resource.CacheControlFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CacheControlFilter</filter-name>
+    <url-pattern>*.html</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>CacheControlFilter</filter-name>
+    <url-pattern>*.js</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>CacheControlFilter</filter-name>
+    <url-pattern>*.css</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>CacheControlFilter</filter-name>
+    <url-pattern>*.json</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>CacheControlFilter</filter-name>
+    <url-pattern>*.xml</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>CacheControlFilter</filter-name>
+    <url-pattern>*.gif</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>CacheControlFilter</filter-name>
+    <url-pattern>*.png</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>CacheControlFilter</filter-name>
+    <url-pattern>*.jpg</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>CacheControlFilter</filter-name>
+    <url-pattern>*.properties</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>CacheControlFilter</filter-name>
+    <url-pattern>*.tmpl</url-pattern>
+  </filter-mapping>
+
+
+  <!-- ============================================================== -->
+  <!-- SAPUI5 discovery servlet used to find available UI test cases -->
+  <!-- ============================================================== -->
+
+  <servlet>
+    <display-name>DiscoveryServlet</display-name>
+    <servlet-name>DiscoveryServlet</servlet-name>
+    <servlet-class>com.sap.ui5.discovery.DiscoveryServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>DiscoveryServlet</servlet-name>
+    <url-pattern>/discovery/*</url-pattern>
+  </servlet-mapping>
+
+
+  <!-- ============================================================== -->
+  <!-- SAPUI5 file upload servlet                                    -->
+  <!-- ============================================================== -->
+
+  <context-param>
+     <param-name>repositoryDirectory</param-name>
+     <param-value>{java.io.tmpdir}/demokit/upload</param-value>
+  </context-param>
+
+  <servlet>
+    <display-name>FileUploadServlet</display-name>
+    <servlet-name>FileUploadServlet</servlet-name>
+    <servlet-class>com.sap.ui5.fileupload.FileUploadServlet</servlet-class>
+  </servlet>
+
+  <servlet>
+    <display-name>FileUploadCheckServlet</display-name>
+    <servlet-name>FileUploadCheckServlet</servlet-name>
+    <servlet-class>com.sap.ui5.fileupload.FileUploadIntrospectorServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>FileUploadServlet</servlet-name>
+    <url-pattern>/upload/*</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>FileUploadCheckServlet</servlet-name>
+    <url-pattern>/upload-check/*</url-pattern>
+  </servlet-mapping>
+
+
+  <!-- ============================================================== -->
+  <!-- SDK search servlet                                             -->
+  <!-- ============================================================== -->
+
+  <servlet>
+    <description></description>
+    <display-name>SearchServlet</display-name>
+    <servlet-name>SearchServlet</servlet-name>
+    <servlet-class>com.sap.ui5.demokit.search.SearchServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SearchServlet</servlet-name>
+    <url-pattern>/search</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>SearchServlet</servlet-name>
+    <url-pattern>/keywords</url-pattern>
+  </servlet-mapping>
+    <servlet-mapping>
+    <servlet-name>SearchServlet</servlet-name>
+    <url-pattern>/suggest</url-pattern>
+  </servlet-mapping>
+  <context-param>
+     <param-name>searchIndexLocation</param-name>
+     <param-value>/.index</param-value>
+  </context-param>
+
+
+  <!-- ============================================================== -->
+  <!-- SAPUI5 discovery servlet used to find available UI test cases -->
+  <!-- ============================================================== -->
+
+  <servlet>
+    <servlet-name>PluginConfigServlet</servlet-name>
+    <servlet-class>com.sap.ui5.webide.PluginConfigServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>PluginConfigServlet</servlet-name>
+    <url-pattern>/config.json</url-pattern>
+  </servlet-mapping>
+
+
+  <!-- ============================================================== -->
+  <!-- Welcome file list                                              -->
+  <!-- ============================================================== -->
+
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+
+
+  <!-- ============================================================== -->
+  <!-- AUTHENTICATION                                                 -->
+  <!-- ============================================================== -->
+
+  <login-config>
+    <auth-method>SAML2</auth-method>
+  </login-config>
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Protected Area</web-resource-name>
+      <url-pattern>/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>Everyone</role-name>
+    </auth-constraint>
+  </security-constraint>
+
+  <security-role>
+    <description>Every Authenticated HCP User</description>
+    <role-name>Everyone</role-name>
+  </security-role>
+
+
+</web-app>

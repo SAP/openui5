@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Model Version Settings
+	***************************************************************************-->
+
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Parent POM Settings
+	***************************************************************************-->
+
+	<parent>
+		<groupId>com.sap.ui5</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.5</version>
+	</parent>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Settings
+	***************************************************************************-->
+
+	<groupId>com.sap.ui5.dist.custom</groupId>
+	<artifactId>sapui5-sdk-dist</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>war</packaging>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Project Settings
+	***************************************************************************-->
+
+	<name>SAPUI5 SDK - Automated HANA Cloud Deployment</name>
+	<description>SAPUI5 SDK - Automated HANA Cloud Deployment</description>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Properties Settings
+	***************************************************************************-->
+
+	<properties>
+
+		<!-- deploytool infos -->
+		<command>status</command>
+		<landscape>https://hana.ondemand.com/</landscape>
+		<account>fiori</account>
+		<application>sapui5preview</application>
+		<applicationURL>${application}</applicationURL>
+		<user></user> <!-- SDN User -->
+		<password></password> <!-- SDN Password -->
+
+	</properties>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Build Settings
+	***************************************************************************-->
+
+	<build>
+		
+		<finalName>${project.artifactId}</finalName>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>com.sap.ui5.tools.maven</groupId>
+					<artifactId>nwcloud-maven-plugin</artifactId>
+					<version>1.0.0-SNAPSHOT</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+
+			<!-- WAR overlay (extend "sapui5-sdk-dist") -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<overlays>
+						<overlay></overlay>
+						<overlay>
+							<groupId>com.sap.ui5.dist</groupId>
+							<artifactId>sapui5-sdk-dist</artifactId>
+							<classifier>hcp</classifier>
+						</overlay>
+					</overlays>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.sap.ui5.tools.maven</groupId>
+				<artifactId>nwcloud-maven-plugin</artifactId>
+				<configuration>
+					<commands>${command}</commands>
+					<properties>
+						<application>${application}</application>
+						<account>${account}</account>
+						<applicationURL>${applicationURL}</applicationURL>
+						<severity>info</severity>
+						<landscape>${landscape}</landscape>
+						<user>${user}</user>
+						<password>${password}</password>
+						<deployables>
+							<deployable>${project.build.directory}/${project.artifactId}.war</deployable>
+						</deployables>
+					</properties>
+					<httpProxyHost>proxy</httpProxyHost>
+					<httpProxyPort>8080</httpProxyPort>
+					<httpNonProxyHosts>localhost|*sap.corp</httpNonProxyHosts>
+					<httpsProxyHost>proxy</httpsProxyHost>
+					<httpsProxyPort>8080</httpsProxyPort>
+					<httpsNonProxyHosts>localhost|*sap.corp</httpsNonProxyHosts>
+				</configuration>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Depedencies Settings
+	***************************************************************************-->
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.sap.ui5.dist</groupId>
+			<artifactId>sapui5-sdk-dist</artifactId>
+			<version>${sapui5.version}</version>
+			<classifier>hcp</classifier>
+			<type>war</type>
+		</dependency>
+
+	</dependencies>
+
+
+</project>
