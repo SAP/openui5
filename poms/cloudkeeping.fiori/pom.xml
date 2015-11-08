@@ -49,7 +49,6 @@
 		<landscape>https://hana.ondemand.com/</landscape>
 		<account>fiori</account>
 		<application>sapui5preview</application>
-		<applicationURL>${application}</applicationURL>
 		<user></user> <!-- SDN User -->
 		<password></password> <!-- SDN Password -->
 
@@ -100,7 +99,6 @@
 					<properties>
 						<application>${application}</application>
 						<account>${account}</account>
-						<applicationURL>${applicationURL}</applicationURL>
 						<severity>info</severity>
 						<landscape>${landscape}</landscape>
 						<user>${user}</user>
