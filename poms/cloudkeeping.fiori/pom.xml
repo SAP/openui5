@@ -48,7 +48,7 @@
 		<command>status</command>
 		<landscape>https://hana.ondemand.com/</landscape>
 		<account>fiori</account>
-		<application>sapui5preview</application>
+		<application>sapui5nightly</application>
 		<user></user> <!-- SDN User -->
 		<password></password> <!-- SDN Password -->
 
