@@ -786,6 +786,25 @@
 				oSlider.destroy();
 			});
 
+			// BCP: 1580185288
+			test("it should not snap the value", function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					value: 10,
+					step: 3,
+				});
+
+				// act
+				oSlider.stepUp(1);
+
+				// assert
+				strictEqual(oSlider.getValue(), 13);
+
+				// cleanup
+				oSlider.destroy();
+			});
+
 			/* ------------------------------ */
 			/* stepDown()                     */
 			/* ------------------------------ */
@@ -825,6 +844,25 @@
 
 				// assert
 				strictEqual(oSlider.getValue(), 0);
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			// BCP: 1580185288
+			test("it should not snap the value", function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					value: 10,
+					step: 3,
+				});
+
+				// act
+				oSlider.stepDown(1);
+
+				// assert
+				strictEqual(oSlider.getValue(), 7);
 
 				// cleanup
 				oSlider.destroy();
