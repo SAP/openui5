@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+
+<!--
+	Tested classes: jQuery.sap.FrameOptions
+-->
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>qUnit Page for jQuery.sap.FrameOptions (configuration via "meta" tag)</title>
+
+<meta name="sap.whitelistService" content="/url/to/service/via/meta/tag" />
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal">
+</script>
+
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css"/>
+<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script>
+
+new Promise(function(resolve) {
+	sap.ui.getCore().registerPlugin({
+		startPlugin: function(oCore) {
+			resolve(oCore.oConfiguration);
+		}
+	});
+}).then(function(oConfiguration) {
+	QUnit.test("Configuration should respect <meta> tag to fill 'whitelistService' and 'frameOptions' configurations", function(assert) {
+		assert.equal(oConfiguration["whitelistService"], "/url/to/service/via/meta/tag", "Whitelist Service should be set from <meta> tag.");
+		assert.equal(oConfiguration["frameOptions"], "trusted", "Frame Options should be set to 'trusted'.");
+	});
+});
+
+</script>
+</head>
+<body>
+<div id="qunit"></div>
+</body>
+</html>

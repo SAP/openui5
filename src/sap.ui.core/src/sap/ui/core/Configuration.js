@@ -105,7 +105,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"manifestFirst"         : { type : "boolean",  defaultValue : false },
 
 					"whitelistService"      : { type : "string",   defaultValue : null,      noUrl: true }, // url/to/service
-					"frameOptions"          : { type : "string",   defaultValue : "allow",   noUrl: true }, // allow/deny/trusted
+					"frameOptions"          : { type : "string",   defaultValue : "default", noUrl: true }, // default/allow/deny/trusted (default => allow)
 					"frameOptionsConfig"    : { type : "object",   defaultValue : undefined, noUrl:true },  // advanced frame options configuration
 
 					"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
@@ -372,13 +372,26 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 				config["bindingSyntax"] = (config.getCompatibilityVersion("sapCoreBindingSyntax").compareTo("1.26") < 0) ? "simple" : "complex";
 			}
 
-			if (!config["frameOptions"] ||
-				(config["frameOptions"] !== 'allow'
-				&& config["frameOptions"] !== 'deny'
-				&& config["frameOptions"] !== 'trusted')) {
+			// Configure whitelistService / frameOptions via <meta> tag if not already defined via UI5 configuration
+			if (!config["whitelistService"]) {
+				var oMetaTag = document.querySelector("META[name='sap.whitelistService']");
+				if (oMetaTag) {
+					config["whitelistService"] = oMetaTag.getAttribute("content");
+					// Set default "frameOptions" to "trusted" instead of "allow"
+					if (config["frameOptions"] === "default") {
+						config["frameOptions"] = "trusted";
+					}
+				}
+			}
 
-				// default
-				config["frameOptions"] = 'allow';
+			// Verify and set default for "frameOptions" configuration
+			if (config["frameOptions"] === "default" ||
+				(config["frameOptions"] !== "allow"
+				&& config["frameOptions"] !== "deny"
+				&& config["frameOptions"] !== "trusted")) {
+
+				// default => allow
+				config["frameOptions"] = "allow";
 			}
 
 			var aCSSLibs = config['preloadLibCss'];
