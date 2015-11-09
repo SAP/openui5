@@ -640,7 +640,7 @@ sap.ui.define([
 				"ID": "operation",
 				"Label": "",
 				"SpanFilter": "L2 M5 S10",
-				"SpanSort": "L5 M5 S9",
+				"SpanSort": sap.ui.Device.system.phone ? "L5 M5 S8" : "L5 M5 S9" ,
 				"SpanGroup": "L2 M5 S10",
 				"Control": "ComboBox",
 				"SelectedKey": "0"
@@ -672,7 +672,7 @@ sap.ui.define([
 		];
 		this._oButtonGroupSpan = {
 			"SpanFilter": "L1 M2 S2",
-			"SpanSort": "L2 M2 S3",
+			"SpanSort": sap.ui.Device.system.phone ? "L2 M2 S4" : "L2 M2 S3",
 			"SpanGroup": "L2 M2 S3"
 		};
 		this._updateConditionFieldSpans(this.getLayoutMode());
@@ -2125,7 +2125,7 @@ sap.ui.define([
 			}
 		}
 
-		if (!isLast) {
+		//if (!isLast) {
 			var fnFormatFieldValue = function(oCtrl) {
 				var oConditionGrid = oCtrl.getParent();
 				var sValue = oCtrl.getValue && oCtrl.getValue();
@@ -2160,7 +2160,7 @@ sap.ui.define([
 				(value2.getVisible() && value2.getValueState && value2.getValueState() !== sap.ui.core.ValueState.None)) {
 				bValid = false;
 			}
-		}
+		//}
 
 		return bValid;
 	};
