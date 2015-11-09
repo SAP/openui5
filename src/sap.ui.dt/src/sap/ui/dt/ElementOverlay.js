@@ -248,7 +248,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 	 * @return {Element} DOM element or null
 	 * @public
 	 */
-	Overlay.prototype.getAssociatedDomRef = function() {
+	ElementOverlay.prototype.getAssociatedDomRef = function() {
 		return ElementUtil.getDomRef(this.getElementInstance());
 	};
 
