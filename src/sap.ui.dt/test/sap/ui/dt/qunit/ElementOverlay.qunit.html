@@ -74,7 +74,7 @@
 				assert.strictEqual(this.oOverlay, sap.ui.dt.OverlayRegistry.getOverlay(this.oButton.getId()), "overlay is registered in OverlayRegistery");
 			});
 
-			QUnit.test("when the control is rendered", function(assert) {				
+			QUnit.test("when the control is rendered", function(assert) {
 				var oDomRef = this.oOverlay.getDomRef();
 				var oElementDomRef = this.oOverlay.getElementInstance().getDomRef();
 				var oStaticAreaRef = sap.ui.getCore().getStaticAreaRef();
@@ -94,6 +94,23 @@
 
 				var oDesignTimeMetadata = this.oOverlay.getDesignTimeMetadata();
 				assert.equal(oDesignTimeMetadata.getName(), "{name}", "and the design time metadata for the control is set");
+			});
+
+
+			QUnit.test("when the control's dom is changed", function(assert) {
+				var done = assert.async();
+
+				var fnOriginalOnAfterRendering =  this.oOverlay.onAfterRendering;
+				this.oOverlay.onAfterRendering = function() {
+					// if this test fails, check if there're changes in RenderManager _fPutIntoDom funcion (see ElementOverlay init comment for details)
+					assert.notStrictEqual(this.getUIArea().getRootNode().childNodes.length, 0, "overlay is still in UIArea's DOM");
+
+					done();
+					return fnOriginalOnAfterRendering.apply(this, arguments);
+				}
+
+				var $element = this.oOverlay.getElementInstance().$();
+				$element.addClass("testClass");
 			});
 
 			QUnit.test("when the overlay is selectable and selected", function(assert) {
@@ -174,7 +191,7 @@
 					sap.ui.getCore().applyChanges();
 				},
 				afterEach : function() {
-					
+
 					this.oButton1.destroy();
 					this.oButton2.destroy();
 					this.oVerticalLayout1.destroy();
@@ -183,7 +200,7 @@
 					this.oOverlayLayout2.destroy();
 					this.oOverlayButton1.destroy();
 					this.oOverlayButton2.destroy();
-					
+
 				}
 			});
 
