@@ -293,8 +293,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		Slider.prototype.setDomValue = function(fNewValue) {
-			var sIdSelector,
-				sPerValue,
+			var sPerValue,
 				oHandleDomRef,
 				oDomRef = this.getDomRef();
 
@@ -302,18 +301,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				return;
 			}
 
-			sIdSelector = "#" + this.getId();
 			sPerValue = this._getPercentOfValue(fNewValue) + "%";
-			oHandleDomRef = oDomRef.querySelector(sIdSelector + "-handle");
+			oHandleDomRef = this.getDomRef("handle");
 
 			if (!!this.getName()) {
-				oDomRef.querySelector(sIdSelector + "-input").setAttribute("value", fNewValue);
+				this.getDomRef("input").setAttribute("value", fNewValue);
 			}
 
 			if (this.getProgress()) {
 
 				// update the progress indicator
-				oDomRef.querySelector(sIdSelector + "-progress").style.width = sPerValue;
+				this.getDomRef("progress").style.width = sPerValue;
 			}
 
 			// update the position of the handle
