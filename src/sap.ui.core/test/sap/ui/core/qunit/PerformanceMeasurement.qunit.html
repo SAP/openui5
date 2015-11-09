@@ -374,14 +374,14 @@
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 			// ignore browsers where no Performance API is present or insufficient
-			if(performance && oMeasurement.requests && oMeasurement.requests.length) {
+			if(window.performance && oMeasurement.requests && oMeasurement.requests.length) {
 				equal(oMeasurement.requests.length, 1, "One requests");
 				equal(oMeasurement.measurements.length, 0, "No measurements");
 				ok(oMeasurement.navigation === oMeasurement.requests[0].requestStart - oMeasurement.requests[0].startTime, "Navigation correct");
 				ok(oMeasurement.roundtrip === oMeasurement.requests[0].responseEnd - oMeasurement.requests[0].requestStart, "Roundtrip correct");
 				ok(oMeasurement.processing <= oMeasurement.end - oMeasurement.start, "Processing plausible");
 			} else {
-				ok(!performance.getEntries || sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.version === 9, "Performance API not fully available");
+				ok(!window.performance.getEntries || sap.ui.Device.browser.name == "ie" && sap.ui.Device.browser.version === 9, "Performance API not fully available");
 			}
 		});
 
@@ -394,14 +394,14 @@
 		// 	jQuery.sap.measure.startInteraction("click", this.oButton);
 		// 	var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 		// 	// ignore browsers where no Performance API is present or insufficient
-		// 	if(performance && oMeasurement.requests && oMeasurement.requests.length) {
+		// 	if(window.performance && oMeasurement.requests && oMeasurement.requests.length) {
 		// 		equal(oMeasurement.requests.length, 1, "One requests");
 		// 		equal(oMeasurement.measurements.length, 0, "No measurements");
 		// 		ok(oMeasurement.networkTime === 0, "No sap-perf-fsrec response header");
 		// 		ok(oMeasurement.bytesSent === 0, "Nothing posted/putted");
 		// 		ok(oMeasurement.bytesReceived === oReq.getResponseHeader("content-length"), "Bytes received correct");
 		// 	} else {
-		// 		ok(!performance.getEntries, "Performance API not fully available");
+		// 		ok(!window.performance.getEntries, "Performance API not fully available");
 		// 	}
 		// });
 
