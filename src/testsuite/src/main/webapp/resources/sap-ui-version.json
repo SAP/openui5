@@ -20,6 +20,13 @@
 			"gav": "com.sap.openui5:sap.m:${version}:jar"
 		},
 		{
+			"name": "sap.tnt",
+			"version": "${version}",
+			"buildTimestamp": "${buildtimestamp}",
+			"scmRevision": "${lastchange}",
+			"gav": "com.sap.openui5:sap.tnt:${version}:jar"
+		},
+		{
 			"name": "sap.ui.commons",
 			"version": "${version}",
 			"buildTimestamp": "${buildtimestamp}",

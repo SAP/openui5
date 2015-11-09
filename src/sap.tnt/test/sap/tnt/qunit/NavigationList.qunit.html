@@ -1,0 +1,359 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+	<title>QUnit page for sap.tnt.NavigationList</title>
+	<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+			type="text/javascript" data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m, sap.tnt" src="../../../../resources/sap-ui-core.js">
+	</script>
+
+	<link rel="stylesheet" type="text/css" media="screen"
+		  href="../../../../resources/sap/ui/thirdparty/qunit.css"/>
+
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript">
+		sinon.config.useFakeTimers = true;
+
+		//create JSON model instance
+		var oModel = new sap.ui.model.json.JSONModel();
+
+
+		// create and add app
+		var oApp = new sap.m.App("myApp", {initialPage: "navigationListPage"});
+		oApp.placeAt("qunit-fixture");
+
+		var oPage = new sap.m.Page("navigationListPage", {
+			title: "Navigation List"
+		});
+		oApp.addPage(oPage);
+
+		function getNavigationList() {
+			return new sap.tnt.NavigationList({
+				items: [
+					new sap.tnt.NavigationListItem({
+						text: 'Root 1',
+						icon: 'sap-icon://employee',
+						items: [
+							new sap.tnt.NavigationListItem({
+								text: 'Child 1'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Disabled Child',
+								enabled: false
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 3'
+							})
+						]
+					}),
+					new sap.tnt.NavigationListItem({
+						text: 'Disabled Root',
+						enabled: false,
+						icon: 'sap-icon://employee',
+						items: [
+							new sap.tnt.NavigationListItem({
+								text: 'Child 1',
+								enabled: false
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 2'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 3'
+							})
+						]
+					}),
+					new sap.tnt.NavigationListItem({
+						text: 'Root 2',
+						icon: 'sap-icon://employee',
+						items: [
+							new sap.tnt.NavigationListItem({
+								text: 'Child 1',
+								enabled: false
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 2'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 3'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 1'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 2'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 3'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 1'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 2'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 3'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 1'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 2'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 3'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 1'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 2'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 3'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 1'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 2'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 3'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 1'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 2'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 3'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 1'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 2'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 3'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 1'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 2'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 3'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 1'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 2'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 3'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 1'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 2'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 3'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 1'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 2'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 3'
+							})
+						]
+					}),
+					new sap.tnt.NavigationListItem({
+						text: 'Root 3',
+						icon: 'sap-icon://employee',
+						items: [
+							new sap.tnt.NavigationListItem({
+								text: 'Child 1'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 2'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child 3'
+							})
+						]
+					})
+				]
+			});
+		}
+
+		QUnit.module("API and Rendering", {
+			setup: function () {
+				this.navigationList = getNavigationList();
+				oPage.addContent(this.navigationList);
+
+				sap.ui.getCore().applyChanges();
+			},
+			teardown: function () {
+				this.navigationList.destroy();
+				this.navigationList = null;
+			}
+		});
+
+		QUnit.test("rendered", function (assert) {
+			assert.strictEqual(this.navigationList.$().length, 1, "should render");
+		});
+
+		QUnit.test("created", function (assert) {
+			assert.ok(sap.ui.getCore().byId(this.navigationList.getId()), "created");
+		});
+
+		QUnit.test("contains elements and classes", function (assert) {
+			assert.ok(this.navigationList.$().hasClass('sapMNavLI'), "sapMNavLI class is set");
+			assert.ok(this.navigationList.$().children().length == 4, "groups number is correct");
+			assert.ok(this.navigationList.$().children()[0].children[1].children.length == 3, "first group children are ok");
+		});
+
+		QUnit.test("list.setExpanded(false)", function (assert) {
+
+			assert.ok(this.navigationList.$().hasClass('sapMNavLICollapsed') == false, "expanded mode is ok");
+
+			this.navigationList.setExpanded(false);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(this.navigationList.$().hasClass('sapMNavLICollapsed'), "collapsed mode is ok");
+		});
+
+		QUnit.test("group.setExpanded(false)", function (assert) {
+
+			assert.ok(jQuery(this.navigationList.$().children()[2].children[1]).hasClass('sapMNavLIHiddenGroupItems') == false, "sapMNavLIHiddenGroupItems class is not set");
+
+			this.navigationList.getItems()[2].setExpanded(false);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(jQuery(this.navigationList.$().children()[2].children[1]).hasClass('sapMNavLIHiddenGroupItems'), "sapMNavLIHiddenGroupItems class is set");
+		});
+
+
+		QUnit.module("Interaction", {
+			setup: function () {
+				this.navigationList = getNavigationList();
+				oPage.addContent(this.navigationList);
+
+				sap.ui.getCore().applyChanges();
+			},
+			teardown: function () {
+				this.navigationList.destroy();
+				this.navigationList = null;
+			}
+		});
+
+		QUnit.test("click group expander", function (assert) {
+
+			assert.ok(jQuery(this.navigationList.$().children()[0].children[1]).hasClass('sapMNavLIHiddenGroupItems') == false, "sapMNavLIHiddenGroupItems class is not set");
+
+			var $groupIcon = jQuery('.sapMNavLI .sapMNavLIExpandIcon').first();
+
+			$groupIcon.trigger('tap');
+
+			sap.ui.getCore().applyChanges();
+
+			// wait 500ms
+			this.clock.tick(500);
+
+			assert.ok(jQuery(this.navigationList.$().children()[0].children[1]).hasClass('sapMNavLIHiddenGroupItems'), "sapMNavLIHiddenGroupItems class is set");
+		});
+
+		QUnit.test("select group", function (assert) {
+
+			var bPassedArg,
+				fnEventSpy = sinon.spy(function (oEvent) {
+					bPassedArg = oEvent.getParameter('item');
+				});
+
+			this.navigationList.attachItemSelect(fnEventSpy);
+
+			assert.ok(jQuery(this.navigationList.$().children()[0].children[1]).hasClass('sapMNavLIItemSelected') == false, "sapMNavLIItemSelected class is not set");
+
+			var $group = jQuery('.sapMNavLI li div').first();
+
+			$group.trigger('tap');
+
+			sap.ui.getCore().applyChanges();
+
+			// wait 500ms
+			this.clock.tick(500);
+
+			assert.ok(jQuery(this.navigationList.$().children()[0]).hasClass('sapMNavLIItemSelected'), "sapMNavLIItemSelected class is set");
+
+			assert.strictEqual(fnEventSpy.callCount, 1, "should fire select event once");
+			assert.strictEqual(bPassedArg.getText(), 'Root 1', "should pass the first item as argument");
+		});
+
+		QUnit.test("select group item", function (assert) {
+
+			var bPassedArg,
+					fnEventSpy = sinon.spy(function (oEvent) {
+						bPassedArg = oEvent.getParameter('item');
+					});
+
+			this.navigationList.attachItemSelect(fnEventSpy);
+
+			var $groupItem = jQuery('.sapMNavLI .sapMNavLIGroupItem').first();
+
+			assert.ok($groupItem.hasClass('sapMNavLIItemSelected') == false, "sapMNavLIItemSelected class is not set");
+
+			$groupItem.trigger('tap');
+
+			sap.ui.getCore().applyChanges();
+
+			// wait 500ms
+			this.clock.tick(500);
+
+			assert.ok($groupItem.hasClass('sapMNavLIItemSelected'), "sapMNavLIItemSelected class is set");
+
+			assert.strictEqual(fnEventSpy.callCount, 1, "should fire select event once");
+			assert.strictEqual(bPassedArg.getText(), 'Child 1', "should pass the first group item as argument");
+		});
+
+		QUnit.test("popup list", function (assert) {
+
+			assert.ok(jQuery('.sapMNavLIPopup').length == 0, "popup list is not shown");
+
+			this.navigationList.setExpanded(false);
+			sap.ui.getCore().applyChanges();
+
+			var $item = jQuery('.sapMNavLI .sapMNavLIGroup').first();
+			$item.trigger('tap');
+
+			sap.ui.getCore().applyChanges();
+
+			// wait 500ms
+			this.clock.tick(500);
+
+			assert.ok(jQuery('.sapMNavLIPopup').length == 1, "popup list is shown");
+		});
+
+	</script>
+</head>
+<body class="sapUiBody">
+<div id="qunit"></div>
+<div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+</html>
