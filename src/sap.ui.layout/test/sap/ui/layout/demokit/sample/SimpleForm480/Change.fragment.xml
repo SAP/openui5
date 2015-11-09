@@ -3,57 +3,53 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:f="sap.ui.layout.form"
 	xmlns:core="sap.ui.core">
-	<l:Grid
-		defaultSpan="L12 M12 S12"
-		width="auto">
-		<l:content>
-			<f:SimpleForm id="SimpleFormChange480"
-				minWidth="1024"
-				maxContainerCols="2"
-				editable="true"
-				layout="ResponsiveGridLayout"
-				title="Address"
-				labelSpanL="4"
-				labelSpanM="4"
-				emptySpanL="0"
-				emptySpanM="0"
-				columnsL="2"
-				columnsM="2"
-				class="editableForm">
-				<f:content>
-					<core:Title text="Office" />
-					<Label text="Name" />
-					<Input value="{SupplierName}" />
-					<Label text="Street/No." />
-					<Input value="{Street}">
-					</Input>
-					<Input value="{HouseNumber}">
-						<layoutData>
-							<l:GridData span="L3 M3 S4" />
-						</layoutData>
-					</Input>
-					<Label text="ZIP Code/City" />
-					<Input value="{ZIPCode}">
-						<layoutData>
-							<l:GridData span="L3 M3 S4" />
-						</layoutData>
-					</Input>
-					<Input value="{City}" />
-					<Label text="Country" />
-					<Select width="100%">
-						<items>
-							<core:Item text="Germany" />
-							<core:Item text="USA" />
-							<core:Item text="England" />
-						</items>
-					</Select>
-					<core:Title text="Online" />
-					<Label text="Web" />
-					<Input value="{Url}" />
-					<Label text="Twitter" />
-					<Input value="{Twitter}" />
-				</f:content>
-			</f:SimpleForm>
-		</l:content>
-	</l:Grid>
+	<VBox class="sapUiSmallMargin">
+		<f:SimpleForm id="SimpleFormChange480"
+			minWidth="1024"
+			maxContainerCols="2"
+			editable="true"
+			layout="ResponsiveGridLayout"
+			title="Address"
+			labelSpanL="4"
+			labelSpanM="4"
+			emptySpanL="0"
+			emptySpanM="0"
+			columnsL="2"
+			columnsM="2"
+			class="editableForm">
+			<f:content>
+				<core:Title text="Office" />
+				<Label text="Name" />
+				<Input value="{SupplierName}" />
+				<Label text="Street/No." />
+				<Input value="{Street}">
+				</Input>
+				<Input value="{HouseNumber}">
+					<layoutData>
+						<l:GridData span="L3 M3 S4" />
+					</layoutData>
+				</Input>
+				<Label text="ZIP Code/City" />
+				<Input value="{ZIPCode}">
+					<layoutData>
+						<l:GridData span="L3 M3 S4" />
+					</layoutData>
+				</Input>
+				<Input value="{City}" />
+				<Label text="Country" />
+				<Select width="100%">
+					<items>
+						<core:Item text="Germany" />
+						<core:Item text="USA" />
+						<core:Item text="England" />
+					</items>
+				</Select>
+				<core:Title text="Online" />
+				<Label text="Web" />
+				<Input value="{Url}" />
+				<Label text="Twitter" />
+				<Input value="{Twitter}" />
+			</f:content>
+		</f:SimpleForm>
+	</VBox>
 </core:FragmentDefinition>
