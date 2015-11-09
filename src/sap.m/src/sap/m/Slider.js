@@ -251,16 +251,23 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		 *
 		 * @see sap.m.Slider#setValue
 		 * @param {float} fValue new value for property <code>value</code>.
+		 * @param {object} [mOptions.snapValue=true]
 		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
 		 * @private
 		 * @function
 		 */
-		Slider.prototype._setValue = function(fNewValue) {
+		Slider.prototype._setValue = function(fNewValue, mOptions) {
 			var fMin = this.getMin(),
 				fMax = this.getMax(),
 				fStep = this.getStep(),
 				fValue = this.getValue(),
 				fModStepVal;
+
+			var bSnapValue = true;
+
+			if (mOptions) {
+				bSnapValue = !!mOptions.snapValue;
+			}
 
 			// validate the new value before arithmetic calculations
 			if (typeof fNewValue !== "number" || !isFinite(fNewValue)) {
@@ -270,8 +277,11 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 
 			fModStepVal = fNewValue % fStep;
 
-			// snap the new value to the nearest step
-			fNewValue = fModStepVal * 2 >= fStep ? fNewValue + fStep - fModStepVal : fNewValue - fModStepVal;
+			if (bSnapValue) {
+
+				// snap the new value to the nearest step
+				fNewValue = fModStepVal * 2 >= fStep ? fNewValue + fStep - fModStepVal : fNewValue - fModStepVal;
+			}
 
 			// constrain the new value between the minimum and maximum
 			if (fNewValue < fMin) {
@@ -864,7 +874,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Slider.prototype.stepUp = function(iStep) {
-			return this.setValue(this.getValue() + (this._validateStep(iStep) * this.getStep()));
+			return this.setValue(this.getValue() + (this._validateStep(iStep) * this.getStep()), { snapValue: false });
 		};
 
 		/**
@@ -877,7 +887,7 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Slider.prototype.stepDown = function(iStep) {
-			return this.setValue(this.getValue() - (this._validateStep(iStep) * this.getStep()));
+			return this.setValue(this.getValue() - (this._validateStep(iStep) * this.getStep()), { snapValue: false });
 		};
 
 		/**
