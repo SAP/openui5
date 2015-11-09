@@ -1852,13 +1852,13 @@
 			 * @since 1.34.0
 			 */
 			this.setRequestBufferSize = function(iSize) {
-				if (!performance) {
+				if (!window.performance) {
 					return;
 				}
-				if (performance.webkitSetResourceTimingBufferSize) {
-					performance.webkitSetResourceTimingBufferSize(iSize);
-				} else if (performance.setResourceTimingBufferSize){
-					performance.setResourceTimingBufferSize(iSize);
+				if (window.performance.webkitSetResourceTimingBufferSize) {
+					window.performance.webkitSetResourceTimingBufferSize(iSize);
+				} else if (window.performance.setResourceTimingBufferSize){
+					window.performance.setResourceTimingBufferSize(iSize);
 				}
 			};
 
@@ -1872,8 +1872,8 @@
 			 * @since 1.34.0
 			 */
 			this.getRequestTimings = function() {
-				if (performance && performance.getEntriesByType) {
-					return jQuery.extend(performance.getEntriesByType("resource"),{});
+				if (window.performance && window.performance.getEntriesByType) {
+					return jQuery.extend(window.performance.getEntriesByType("resource"),{});
 				}
 				return [];
 			};
@@ -1887,13 +1887,13 @@
  			 * @since 1.34.0
  			 */
 			this.clearRequestTimings = function() {
-				if (!performance) {
+				if (!window.performance) {
 					return;
 				}
-				if (performance.webkitClearResourceTimings) {
-					performance.webkitClearResourceTimings();
-				} else if (performance.clearResourceTimings){
-					performance.clearResourceTimings();
+				if (window.performance.webkitClearResourceTimings) {
+					window.performance.webkitClearResourceTimings();
+				} else if (window.performance.clearResourceTimings){
+					window.performance.clearResourceTimings();
 				}
 			};
 
