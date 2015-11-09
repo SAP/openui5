@@ -2650,5 +2650,38 @@
         "references": []
       }
     ]
+  },
+  "1.28.22": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "542497c3b22709b5fa1412ed4453a3a64f38c46a",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "ManagedObject - bindTree, missing Sorters",
+        "references": []
+      },
+      {
+        "id": "9412cb3cf80384cacdd03cd2e1f2d02fc719ad54",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataMessageParser: Remove Double Errors",
+        "references": []
+      },
+      {
+        "id": "a412fe88b669f26251b1b5cc6ea20159c4cd811e",
+        "author": "Jiawei Cao \u003cjiawei.cao@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.format.DateFormat: check negative date and month in strict mode",
+        "references": []
+      },
+      {
+        "id": "71d4d89e75fc271e3a7e16a3b2f0617f53ced93d",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.File: Throw error when window was blocked (Safari 9)",
+        "references": []
+      }
+    ]
   }
 }
