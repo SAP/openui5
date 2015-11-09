@@ -3,33 +3,29 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:f="sap.ui.layout.form"
 	xmlns:core="sap.ui.core">
-	<l:Grid
-		defaultSpan="L12 M12 S12"
-		width="auto">
-		<l:content>
-			<f:SimpleForm id="SimpleFormDisplay354"
-				minWidth="1024"
-				maxContainerCols="2"
-				editable="false"
-				layout="ResponsiveGridLayout"
-				title="Address"
-				labelSpanL="3"
-				labelSpanM="3"
-				emptySpanL="4"
-				emptySpanM="4"
-				columnsL="1"
-				columnsM="1">
-				<f:content>
-					<Label text="Name" />
-					<Text text="{SupplierName}" />
-					<Label text="Street/No." />
-					<Text text="{Street} {HouseNumber}" />
-					<Label text="ZIP Code/City" />
-					<Text text="{ZIPCode} {City}" />
-					<Label text="Country" />
-					<Text text="{Country}" />
-				</f:content>
-			</f:SimpleForm>
-		</l:content>
-	</l:Grid>
+	<VBox class="sapUiSmallMargin">
+		<f:SimpleForm id="SimpleFormDisplay354"
+			minWidth="1024"
+			maxContainerCols="2"
+			editable="false"
+			layout="ResponsiveGridLayout"
+			title="Address"
+			labelSpanL="3"
+			labelSpanM="3"
+			emptySpanL="4"
+			emptySpanM="4"
+			columnsL="1"
+			columnsM="1">
+			<f:content>
+				<Label text="Name" />
+				<Text text="{SupplierName}" />
+				<Label text="Street/No." />
+				<Text text="{Street} {HouseNumber}" />
+				<Label text="ZIP Code/City" />
+				<Text text="{ZIPCode} {City}" />
+				<Label text="Country" />
+				<Text text="{Country}" />
+			</f:content>
+		</f:SimpleForm>
+	</VBox>
 </core:FragmentDefinition>
