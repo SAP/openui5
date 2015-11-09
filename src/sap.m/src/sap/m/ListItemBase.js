@@ -407,7 +407,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		aControls.forEach(function(sControl) {
 			sControl = "_o" + sControl + "Control";
 			if (this[sControl]) {
-				this[sControl].destroy(true);
+				this[sControl].destroy("KeepDom");
 				this[sControl] = null;
 			}
 		}, this);

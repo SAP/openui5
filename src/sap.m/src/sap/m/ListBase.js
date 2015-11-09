@@ -477,8 +477,14 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	
 	ListBase.prototype.destroyItems = function() {
 		this._oSelectedItem = null;
-		return this.destroyAggregation("items");
+		
+		// suppress the synchronous DOM removal of the aggregation destroy
+		this.destroyAggregation("items", "KeepDom");
+		
+		// invalidate to update DOM on the next tick of the RenderManager
+		return this.invalidate();
 	};
+
 	
 	ListBase.prototype.removeAllItems = function(sAggregationName) {
 		this._oSelectedItem = null;
