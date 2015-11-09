@@ -7,8 +7,8 @@ sap.ui.define([
 		
 		onInit: function () {
 			var oFormData = {
-				serviceURL: "http://veui5infra.dhcp.wdf.sap.corp:8080/uilib-sample/proxy/http/dewdflhanaui5.emea.global.corp.sap:8000/tmp/d041558/cca/CCA.xsodata",
-				collection: "ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results",
+				serviceURL: "",
+				collection: "",
 				selectProperties: "CostCenter,CostCenterText,ActualCosts,Currency,PlannedCosts",
 				tableThreshold: 10,
 				bindingThreshold: 10000,
@@ -19,7 +19,8 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		},
 		
-		onCreateTableClick: function () {
+		onCreateTableClick: function (){
+			
 			var oView = this.getView();
 			
 			var sServiceUrl = oView.byId("serviceURL").getValue();
@@ -50,12 +51,57 @@ sap.ui.define([
 				oTable.destroy();
 			}
 			
+			jQuery.sap.measure.start("createTable");
 			oTable = new sap.ui.table.AnalyticalTable({});
 			oTableContainer.addContent(oTable);
 			
+			oTable.addDelegate({
+				onBeforeRendering: function () {
+					jQuery.sap.measure.start("onBeforeRendering","",["Render"]);
+					jQuery.sap.measure.start("rendering","",["Render"]);
+				},
+				onAfterRendering: function () {
+					jQuery.sap.measure.start("onAfterRendering","",["Render"]);
+				}
+			}, true);
+
+			oTable.addDelegate({
+				onBeforeRendering: function () {
+					jQuery.sap.measure.end("onBeforeRendering");
+				},
+				onAfterRendering: function () {
+					jQuery.sap.measure.end("onAfterRendering");
+					jQuery.sap.measure.end("rendering");
+				}
+			}, false);
+			
+			var fnRowsUpdated = function() {
+				oTable.detachEvent("_rowsUpdated", fnRowsUpdated);
+				console.timeStamp("RowsUpdated");
+
+				var iOverall = jQuery.sap.measure.end("createTable").duration;
+				var iRendering = jQuery.sap.measure.getMeasurement("rendering").duration;
+				var iBeforeRendering = jQuery.sap.measure.getMeasurement("onBeforeRendering").duration;
+				var iAfterRendering = jQuery.sap.measure.getMeasurement("onAfterRendering").duration;
+
+				var iTableCreate = (iOverall - iRendering);
+				var iFactor = Math.round(iAfterRendering / iRendering * 100);
+
+				oView.byId("overall").setText(iOverall);
+				oView.byId("onBeforeRendering").setText(iBeforeRendering);
+				oView.byId("rendering").setText(iRendering);
+				oView.byId("onAfterRendering").setText(iAfterRendering);
+				oView.byId("tableCreate").setText(iTableCreate);
+				oView.byId("factor").setText(iFactor);
+			};
+			
+			oTable.attachEvent("_rowsUpdated", fnRowsUpdated);
+
 			// recreate the columns
 			var aProperties = sSelectProperties.split(",");
+			
 			jQuery.each(aProperties, function(iIndex, sProperty) {
+				
 				var oColumn = new sap.ui.table.AnalyticalColumn({
 					label: sProperty,
 					template: sProperty, 
@@ -73,6 +119,7 @@ sap.ui.define([
 				} else if (jQuery.inArray(sProperty, aDimensions) !== -1 && jQuery.inArray(sProperty, aMeasures) !== -1) {
 					sap.m.MessageToast.show("Property can only be either dimesion or measure.");
 				}
+
 			});
 
 			var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, true);
@@ -89,8 +136,26 @@ sap.ui.define([
 				}
 			});
 			
-			//for easier table dbg
+			
 			window.oTable = oTable;
+
+			var aJSMeasure = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
+				return oMeasurement.categories.indexOf("JS") > -1? oMeasurement : null;
+			});
+			console.table(aJSMeasure);
+			
+			
+			var aRenderMeasure = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
+				return oMeasurement.categories.indexOf("Render") > -1? oMeasurement : null;
+			});
+			
+			console.table(aRenderMeasure);
+			
+			//set test result
+			this.getView().byId("_createRows").setText(aJSMeasure[0].duration);
+			this.getView().byId("_updateTableContent").setText(aJSMeasure[1].duration);
+			this.getView().byId("_updateRowHeader").setText(aJSMeasure[2].duration);
+			this.getView().byId("_syncColumnHeaders").setText(aJSMeasure[3].duration);
 		}
 	});
 });
