@@ -4,12 +4,12 @@
 sap.ui.require([
 	"sap/ui/model/MetaModel",
 	"sap/ui/model/odata/v4/_ODataHelper",
+	"sap/ui/model/odata/v4/_SyncPromise",
 	"sap/ui/model/odata/v4/ODataDocumentModel",
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/model/odata/v4/SyncPromise",
 	"sap/ui/test/TestUtils"
-], function (MetaModel, Helper, ODataDocumentModel, ODataMetaModel, ODataModel, SyncPromise,
+], function (MetaModel, Helper, SyncPromise, ODataDocumentModel, ODataMetaModel, ODataModel,
 		TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */

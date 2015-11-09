@@ -5,7 +5,7 @@ sap.ui.require([
 	"sap/ui/model/Context",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/_ODataHelper",
-	"sap/ui/model/odata/v4/SyncPromise"
+	"sap/ui/model/odata/v4/_SyncPromise"
 ], function (Context, ODataUtils, Helper, SyncPromise) {
 	/*global odatajs, QUnit, sinon */
 	/*eslint no-warning-comments: 0 */

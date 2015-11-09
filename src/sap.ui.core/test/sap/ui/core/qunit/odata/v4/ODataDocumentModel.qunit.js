@@ -3,10 +3,10 @@
  */
 sap.ui.require([
 	"sap/ui/model/odata/v4/_OlingoDocument",
+	"sap/ui/model/odata/v4/_SyncPromise",
 	"sap/ui/model/odata/v4/ODataDocumentModel",
-	"sap/ui/model/odata/v4/SyncPromise",
 	"sap/ui/test/TestUtils"
-], function (OlingoDocument, ODataDocumentModel, SyncPromise, TestUtils) {
+], function (OlingoDocument, SyncPromise, ODataDocumentModel, TestUtils) {
 	"use strict";
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
