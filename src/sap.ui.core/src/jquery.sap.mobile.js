@@ -429,10 +429,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.dom', 'jquery.s
 		 *
 		 * All icons are given in an an object holding icon URLs and other settings. The properties of this object are:
 		 * <ul>
-		 * <li>phone: a 57x57 pixel version for non-retina iPhones</li>
-		 * <li>tablet: a 72x72 pixel version for non-retina iPads</li>
-		 * <li>phone@2: a 114x114 pixel version for retina iPhones</li>
-		 * <li>tablet@2: a 144x144 pixel version for retina iPads</li>
+		 * <li>phone: a 60x60 pixel version for non-retina iPhones</li>
+		 * <li>tablet: a 76x76 pixel version for non-retina iPads</li>
+		 * <li>phone@2: a 120x120 pixel version for retina iPhones</li>
+		 * <li>tablet@2: a 152x152 pixel version for retina iPads</li>
 		 * <li>precomposed: whether the home icons already have some glare effect (otherwise iOS will add it) (default: false)</li>
 		 * <li>favicon: the ICO file to be used inside the browser and for desktop shortcuts</li>
 		 * </ul>
@@ -440,10 +440,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.dom', 'jquery.s
 		 * One example is:
 		 * <pre>
 		 * {
-		 *    'phone':'phone-icon_57x57.png',
-		 *    'phone@2':'phone-retina_117x117.png',
-		 *    'tablet':'tablet-icon_72x72.png',
-		 *    'tablet@2':'tablet-retina_144x144.png',
+		 *    'phone':'phone-icon_60x60.png',
+		 *    'phone@2':'phone-retina_120x120.png',
+		 *    'tablet':'tablet-icon_76x76.png',
+		 *    'tablet@2':'tablet-retina_152x152.png',
 		 *    'precomposed':true,
 		 *    'favicon':'desktop.ico'
 		 * }
@@ -470,9 +470,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.dom', 'jquery.s
 				},
 				mSizes = {
 					"phone": "",
-					"tablet": "72x72",
-					"phone@2": "114x114",
-					"tablet@2": "144x144"
+					"tablet": "76x76",
+					"phone@2": "120x120",
+					"tablet@2": "152x152"
 				};
 	
 			// desktop icon
