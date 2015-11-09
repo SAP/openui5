@@ -79,6 +79,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 		var aNonWorkingItems = [];
 		var iStartOffset = 0;
 		var iNonWorkingMax = 0;
+		var aNonWorkingSubItems = [];
+		var iSubStartOffset = 0;
+		var iNonWorkingSubMax = 0;
 		var iIntervals = oRow.getIntervals();
 		var sIntervalType = oRow.getIntervalType();
 		var iWidth = 100 / iIntervals;
@@ -95,12 +98,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 			aNonWorkingItems = oRow._getNonWorkingDays();
 			iStartOffset = oStartDate.getUTCDay();
 			iNonWorkingMax = 7;
+			aNonWorkingSubItems = oRow.getNonWorkingHours() || [];
+			iSubStartOffset = oStartDate.getUTCHours();
+			iNonWorkingSubMax = 24;
 			break;
 
 		case sap.ui.unified.CalendarIntervalType.Month:
-			aNonWorkingItems = oRow._getNonWorkingDays();
-			iStartOffset = oStartDate.getUTCDay();
-			iNonWorkingMax = 7;
+			aNonWorkingSubItems = oRow._getNonWorkingDays();
+			iSubStartOffset = oStartDate.getUTCDay();
+			iNonWorkingSubMax = 7;
 			break;
 
 		default:
@@ -108,7 +114,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 		}
 
 		for (i = 0; i < iIntervals; i++) {
-			this.renderInterval(oRm, oRow, i, iWidth, aIntervalHeaders, aNonWorkingItems, iStartOffset, iNonWorkingMax);
+			this.renderInterval(oRm, oRow, i, iWidth, aIntervalHeaders, aNonWorkingItems, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax);
 		}
 
 		oRm.write("<div id=\"" + oRow.getId() + "-Now\" class=\"sapUiCalendarRowNow\"></div>");
@@ -126,7 +132,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 
 	};
 
-	CalendarRowRenderer.renderInterval = function(oRm, oRow, iInterval, iWidth,  aIntervalHeaders, aNonWorkingItems, iStartOffset, iNonWorkingMax){
+	CalendarRowRenderer.renderInterval = function(oRm, oRow, iInterval, iWidth,  aIntervalHeaders, aNonWorkingItems, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax){
 
 		var sId = oRow.getId() + "-AppsInt" + iInterval;
 		var i = 0;
@@ -267,12 +273,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 				oRm.addClass("sapUiCalendarRowAppsSubInt");
 				oRm.addStyle("width", iSubWidth + "%");
 
-				if (sIntervalType == sap.ui.unified.CalendarIntervalType.Month) {
-					for (var j = 0; j < aNonWorkingItems.length; j++) {
-						if ((i + iStartOffset) % iNonWorkingMax == aNonWorkingItems[j]) {
-							oRm.addClass("sapUiCalendarRowAppsNoWork");
-							break;
-						}
+				for (var j = 0; j < aNonWorkingSubItems.length; j++) {
+					if ((i + iSubStartOffset) % iNonWorkingSubMax == aNonWorkingSubItems[j]) {
+						oRm.addClass("sapUiCalendarRowAppsNoWork");
+						break;
 					}
 				}
 

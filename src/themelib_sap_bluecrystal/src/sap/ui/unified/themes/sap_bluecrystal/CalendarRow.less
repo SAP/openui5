@@ -33,15 +33,13 @@
 	border-color: @sapUiListBorderColor;
 }
 
-.sap-desktop .sapUiCalendarApp:focus > .sapUiCalendarAppCont,
-.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSmall:focus{
-	border-top: 0.0625rem dotted @sapUiKeyboardFocus;
-	border-right: 0.0625rem dotted @sapUiKeyboardFocus;
-	border-bottom: 0.0625rem dotted @sapUiKeyboardFocus;
+.sap-desktop .sapUiCalendarApp:focus > .sapUiCalendarAppCont{
+	border-top: 0.0625rem dotted @sapUiFocus;
+	border-right: 0.0625rem dotted @sapUiFocus;
+	border-bottom: 0.0625rem dotted @sapUiFocus;
 }
 
 .sapUiCalendarApp.sapUiCalendarAppSel,
-.sapUiCalendarApp.sapUiCalendarAppSel.sapUiCalendarAppSmall,
 .sapUiCalendarApp:active,
 .sapUiCalendarApp.sapUiCalendarAppSel:active{
 	color: @sapUiListActiveTextColor;
@@ -117,11 +115,6 @@
 	.@{class}.sapUiCalendarApp:active{
 	border-left-color: @color;
 	}
-
-	.@{class}.sapUiCalendarAppSmall{
-		background-color: fade(@color, 15);
-	}
-
 }
 
 .calendarRowTypeColorIntervalMixIn(@class, @color){

@@ -60,7 +60,7 @@
 }
 
 .sapUiCalendarRowAppsNoWork{
-	background-color: lighten(@sapUiLightBG, 3);
+	background-color: darken(@sapUiListBackground, 3);
 }
 
 .sapUiCalendarRowAppsIntHead{
@@ -69,11 +69,9 @@
 	width: 100%;
 	box-sizing: border-box;
 	padding-left: 0.375rem;
-/*	display: inline-block;*/
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-/*	vertical-align: top;*/
 	margin-bottom: 0.25rem;
 }
 
@@ -115,11 +113,7 @@
 
 /* dummy app to calculate minimal size and other things */
 .sapUiCalendarAppDummy{
-	width: 1.5rem;
-}
-
-.sapUiCalendarApp.sapUiCalendarAppSmall{
-	background-color: @sapUiExtraLightBG;
+	width: 2rem;
 }
 
 .sapUiCalendarAppCont{
@@ -132,26 +126,26 @@
 	width: 100%;
 }
 
-
-.sapUiCalendarAppSmall > .sapUiCalendarAppCont{
-	display: none; /* if too small don't show content at all, would look ugly if only some px of text are shown */
+.sapUiCalendarAppSmall > .sapUiCalendarAppCont > .sapUiCalendarAppTitle,
+.sapUiCalendarAppSmall > .sapUiCalendarAppCont > .sapUiCalendarAppText{
+	padding-right: 0; /* if min-width no padding right to show ellipsis */
 }
 
 .sap-desktop .sapUiCalendarApp:hover:not(:active),
-.sap-desktop .sapUiCalendarApp:focus > .sapUiCalendarAppCont,
-.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSmall:focus{
+.sap-desktop .sapUiCalendarApp:focus > .sapUiCalendarAppCont{
 	background-color: @sapUiListHoverBackground;
 }
 
-.sapUiCalendarApp.sapUiCalendarAppSel,
-.sapUiCalendarApp.sapUiCalendarAppSel.sapUiCalendarAppSmall{
+.sap-desktop .sapUiCalendarApp:hover:not(:active) > .sapUiCalendarAppCont{
+	border-color: @sapUiHighlight;
+}
+
+.sapUiCalendarApp.sapUiCalendarAppSel{
 	background-color: @sapUiSelected;
 }
 
 .sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active),
-.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel.sapUiCalendarAppSmall:hover:not(:active),
-.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus > .sapUiCalendarAppCont,
-.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel.sapUiCalendarAppSmall:focus > .sapUiCalendarAppCont{
+.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus > .sapUiCalendarAppCont{
 	background-color: darken(@sapUiSelected, 10);
 }
 

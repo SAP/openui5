@@ -421,9 +421,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			if (!this._oPopup) {
 				jQuery.sap.require("sap.ui.core.Popup");
 				this._oPopup = new sap.ui.core.Popup();
-				this._oPopup.setAutoClose(false);
+				this._oPopup.setAutoClose(true);
+				this._oPopup.setAutoCloseAreas([this.getDomRef()]);
 				this._oPopup.setDurations(0, 0); // no animations
 				this._oPopup._oCalendar = this;
+				this._oPopup.attachClosed(_handlePopupClosed, this);
 				this._oPopup.onsapescape = function(oEvent) {
 					this._oCalendar.onsapescape(oEvent);
 				};
@@ -481,6 +483,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			return oThis._oUTCStartDate;
+
+		}
+
+		function _handlePopupClosed(oEvent) {
+
+			this._closedPickers();
 
 		}
 

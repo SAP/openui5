@@ -217,7 +217,7 @@
 
 .sapUiCalContentOver{
 	background-color: #CCCCCC;
-	opacity: 0.6;
+	opacity: 0.15;
 	filter: alpha(opacity=60);
 	top: 0;
 	left: 0;
@@ -262,4 +262,11 @@
 .sapUiCalCancel{
 	display: none; /* cancel button only visible on phones */
 	position: absolute;
+}
+
+/* Day, Month and YearPicker on popup */
+.sapUiCalMonthView[data-sap-ui-popup],
+.sapUiCalMonthPicker[data-sap-ui-popup],
+.sapUiCalYearPicker[data-sap-ui-popup]{
+	padding: 1rem;
 }

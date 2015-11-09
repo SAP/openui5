@@ -433,6 +433,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						this._oTimeInterval.getSpecialDates = function(){
 							return this._oTeamCalendar.getSpecialDates();
 						};
+//						this._oTimeInterval._iItemsHead = 1000; // to hide day names row
 					}else if (this._oTimeInterval.getItems() != iIntervals) {
 						this._oTimeInterval.setItems(iIntervals);
 					}
@@ -453,6 +454,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						this._oDateInterval.getSpecialDates = function(){
 							return this._oTeamCalendar.getSpecialDates();
 						};
+//						this._oDateInterval._iDaysMonthHead = 1000; // to hide month names row
 					}else if (this._oDateInterval.getDays() != iIntervals) {
 						this._oDateInterval.setDays(iIntervals);
 					}
@@ -472,6 +474,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						this._oMonthInterval.getSpecialDates = function(){
 							return this._oTeamCalendar.getSpecialDates();
 						};
+//						this._oMonthInterval._iDaysMonthsHead = 1000; // to hide year names row
 					}else if (this._oMonthInterval.setMonths() != iIntervals) {
 						this._oMonthInterval.setMonths(iIntervals);
 					}
@@ -1344,8 +1347,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		function _positionSelectAllCheckBox() {
 
-			var bOneColumn = this._iSize == 0 || !this.getShowRowHeaders();
-
 			if (this.getSingleSelection()) {
 				if (this._oCalendarHeader.getAllCheckBox()) {
 					this._oCalendarHeader.setAllCheckBox();
@@ -1359,12 +1360,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					});
 					this._oSelectAllCheckBox.attachEvent("select", _handleSelectAll, this);
 				}
-				if (bOneColumn) {
+				if (this._iSize == 0 || !this.getShowRowHeaders()) {
+					var iIndex = this._oInfoToolbar.indexOfContent(this._oSelectAllCheckBox);
 					if (this._iSize == 0) {
 						// on phone: checkbox below calendar
-						this._oInfoToolbar.addContent(this._oSelectAllCheckBox);
-					} else {
+						if (iIndex < this._oInfoToolbar.getContent().length - 1) {
+							this._oInfoToolbar.addContent(this._oSelectAllCheckBox);
+						}
+					} else if (iIndex < 0 || iIndex > 1) {
 						// one column on desktop: checkbox left of calendar
+						if (iIndex > 1) {
+							// as insertAggregation do not change position in aggregation
+							this._oInfoToolbar.removeContent(this._oSelectAllCheckBox);
+						}
 						this._oInfoToolbar.insertContent(this._oSelectAllCheckBox, 1);
 					}
 				} else {
