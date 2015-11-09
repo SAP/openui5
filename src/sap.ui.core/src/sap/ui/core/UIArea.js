@@ -3,7 +3,7 @@
  */
 
 // Provides class sap.ui.core.UIArea
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', './RenderManager', 'jquery.sap.act', 'jquery.sap.ui', 'jquery.sap.keycodes'],
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', './RenderManager', 'jquery.sap.act', 'jquery.sap.ui', 'jquery.sap.keycodes', 'jquery.sap.trace'],
 	function(jQuery, ManagedObject, Element, RenderManager /* , jQuerySap1, jQuerySap, jQuerySap2 */) {
 	"use strict";
 
@@ -532,7 +532,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 					}
 					return len;
 				};
-				
+
 				var oFocusRef_Initial = document.activeElement;
 				var oStoredFocusInfo = this.oCore.oFocusHandler.getControlFocusInfo();
 
@@ -541,7 +541,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 
 				var aContent = this.getContent();
 				var len = cleanUpDom(aContent, true);
-				
+
 				var oFocusRef_AfterCleanup = document.activeElement;
 
 				for (var i = 0; i < len; i++) {
@@ -550,7 +550,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 					}
 				}
 				bUpdated = true;
-				
+
 				/* Try restoring focus when focus ref is changed due to cleanup operations and not changed anymore by the rendering logic */
 				if (oFocusRef_Initial != oFocusRef_AfterCleanup && oFocusRef_AfterCleanup === document.activeElement) {
 					try {
@@ -568,7 +568,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 			}
 
 		} else { // only partial update (invalidated controls)
-			
+
 			var isPopup = function(oControl) {
 				return !!(oControl.getMetadata && oControl.getMetadata().isInstanceOf("sap.ui.core.PopupInterface"));
 			};
@@ -594,7 +594,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 				var oControl = this.oCore.byId(n);
 				// CSN 0000834961 2011: control may have been destroyed since invalidation happened -> check whether it still exists
 				// Controls that implement marker interface sap.ui.core.PopupInterface are by contract not rendered by their parent.
-				//  -> Therefore these controls must be rerendered 
+				//  -> Therefore these controls must be rerendered
 				if ( oControl && (isPopup(oControl) || !isAncestorInvalidated(oControl.getParent())) ) {
 					oControl.rerender();
 					bUpdated = true;
@@ -665,6 +665,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 		}
 	};
 
+	var rEvents = /^(mousedown|mouseup|click|keydown|keyup|keypress|touchstart|touchend|tap|mousewheel|scroll)$/;
+
 	/**
 	 * Handles all incoming DOM events centrally and dispatches the event to the
 	 * registered event handlers.
@@ -672,9 +674,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	 * @private
 	 */
 	UIArea.prototype._handleEvent = function(/**event*/oEvent) {
-
 		// execute the registered event handlers
-		var oElement = null;
+		var oElement = null,
+			bInteractionRelevant;
+
+		// notify interaction tracing for relevant event
+		bInteractionRelevant = oEvent.type.match(rEvents);
+		if (bInteractionRelevant) {
+			jQuery.sap.interaction.notifyEventStart(oEvent);
+		}
 
 		// TODO: this should be the 'lowest' SAPUI5 Control of this very
 		// UIArea instance's scope -> nesting scenario
@@ -790,7 +798,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 				}
 				oDomRef = oDomRef.parentNode;
 			}
+		}
 
+		if (bInteractionRelevant) {
+			jQuery.sap.interaction.notifyEventEnd(oEvent);
 		}
 
 		// reset previously changed currentTarget
