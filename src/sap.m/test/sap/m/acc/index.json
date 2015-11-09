@@ -222,6 +222,11 @@
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
+			"control": "sap.m.SelectDialog",
+			"url": "SelectDialog.html",
+			"appComponent": "CA-UI5-CTR-SOF-RIL"
+		},
+		{
 			"control": "sap.m.SelectList",
 			"url": "../SelectList.html",
 			"appComponent": "CA-UI5-CTR-WDF"
