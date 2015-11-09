@@ -1258,13 +1258,17 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxBaseRenderer','
 		 */
 		ComboBox.prototype.setSelectedKey = function(sKey) {
 			sKey = this.validateProperty("selectedKey", sKey);
+			var bDefaultKey = (sKey === "");
+
+			if (bDefaultKey) {
+				this.setSelection(null);
+				this.setValue("");
+				return this;
+			}
+
 			var oItem = this.getItemByKey(sKey);
 
-			if (oItem || (sKey === "")) {
-
-				if (!oItem && sKey === "") {
-					oItem = this.getDefaultSelectedItem();
-				}
+			if (oItem) {
 
 				this.setSelection(oItem);
 
