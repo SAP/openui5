@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<meta charset="UTF-8">
+		<title>sap.ui.table.AnalyticalTable - AnalyticalTable OData Tests</title>
+		<script
+			id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.table"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-preload="async"
+			data-sap-ui-resourceroots='{
+				"sap.ui.table.testApps": "./"
+			}' >
+		</script>
+		<script>
+			sap.ui.getCore().attachInit(function () {
+				sap.ui.xmlview({
+					viewName : "sap.ui.table.testApps.AnalyticalTableOData"
+				}).placeAt("content");
+			});
+		</script>
+	</head>
+	<body class="sapUiBody sapUiSizeCompact" id="content">
+	</body>
+</html>
