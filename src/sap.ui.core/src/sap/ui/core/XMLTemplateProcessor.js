@@ -122,6 +122,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './mvc/View', '
 			if (oView.isSubView()) {
 				parseNode(xmlNode, true);
 			} else {
+				if (xmlNode.localName === "View" && xmlNode.namespaceURI !== "sap.ui.core.mvc") {
+					// it's not <core:View>, it's <mvc:View> !!!
+					jQuery.sap.log.warning("XMLView root node must have the 'sap.ui.core.mvc' namespace, not '" + xmlNode.namespaceURI + "'" + (sCurrentName ? " (View name: " + sCurrentName + ")" : ""));
+				}
 				parseChildren(xmlNode);
 			}
 
