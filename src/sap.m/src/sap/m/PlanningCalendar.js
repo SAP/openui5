@@ -2,19 +2,19 @@
  * ${copyright}
  */
 
-// Provides control sap.m.TeamCalendar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', './TeamCalendarRow', './library', 'sap/ui/unified/library'],
-	function(jQuery, Control, LocaleData, TeamCalendarRow, library, unifiedLibrary) {
+// Provides control sap.m.PlanningCalendar.
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', './PlanningCalendarRow', './library', 'sap/ui/unified/library'],
+	function(jQuery, Control, LocaleData, PlanningCalendarRow, library, unifiedLibrary) {
 	"use strict";
 
 	/**
-	 * Constructor for a new <code>TeamCalendar</code>.
+	 * Constructor for a new <code>PlanningCalendar</code>.
 	 *
 	 * @param {string} [sID] Id for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The <code>TeamCalendar</code> can display rows with appointments for different persons.
+	 * The <code>PlanningCalendar</code> can display rows with appointments for different persons.
 	 * It is possible to define different views and switch between the views.
 	 * Own buttons or other controls could be added to the toolbar.
 	 *
@@ -24,10 +24,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * @constructor
 	 * @public
 	 * @since 1.34.0
-	 * @alias sap.m.TeamCalendar
+	 * @alias sap.m.PlanningCalendar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var TeamCalendar = Control.extend("sap.m.TeamCalendar", /** @lends sap.m.TeamCalendar.prototype */ { metadata : {
+	var PlanningCalendar = Control.extend("sap.m.PlanningCalendar", /** @lends sap.m.PlanningCalendar.prototype */ { metadata : {
 
 		library : "sap.m",
 		properties : {
@@ -38,7 +38,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			startDate : {type : "object", group : "Data"},
 
 			/**
-			 * Key of the <code>TeamCalendarView</code> used for the output. The default value uses a default view.
+			 * Key of the <code>PlanningCalendarView</code> used for the output. The default value uses a default view.
 			 * If own views are used the keys of this views must be used.
 			 */
 			viewKey : {type : "string", group : "Appearance", defaultValue : sap.ui.unified.CalendarIntervalType.Hour},
@@ -49,12 +49,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			singleSelection : {type : "boolean", group : "Misc", defaultValue : true},
 
 			/**
-			 * Width of the <code>TeamCalendar</code>
+			 * Width of the <code>PlanningCalendar</code>
 			 */
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * Height of the <code>TeamCalendar</code>
+			 * Height of the <code>PlanningCalendar</code>
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
@@ -66,7 +66,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			showIntervalHeaders : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * If set, headers of the <code>TeamCalendarRows</code> are shown. This means the column with the headers is shown.
+			 * If set, headers of the <code>PlanningCalendarRows</code> are shown. This means the column with the headers is shown.
 			 *
 			 * If not set, the header column is not shown at all, even if header information are provided.
 			 */
@@ -76,17 +76,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		aggregations : {
 
 			/**
-			 * rows of the <code>TeamCalendar</code>
+			 * rows of the <code>PlanningCalendar</code>
 			 */
-			rows : {type : "sap.m.TeamCalendarRow", multiple : true, singularName : "row"},
+			rows : {type : "sap.m.PlanningCalendarRow", multiple : true, singularName : "row"},
 
 			/**
-			 * views of the <code>TeamCalendar</code>.
+			 * views of the <code>PlanningCalendar</code>.
 			 *
 			 * If not set 3 default views are used to allow to switch between hour, day and month granularity.
 			 * The default views have the keys defined in </code>sap.ui.unified.CalendarIntervalType</code>
 			 */
-			views : {type : "sap.m.TeamCalendarView", multiple : true, singularName : "view"},
+			views : {type : "sap.m.PlanningCalendarView", multiple : true, singularName : "view"},
 
 			/**
 			 * Date Range with type to visualize special days in the header calendar.
@@ -151,12 +151,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					/**
 					 * Array of rows whose selection has changed.
 					 */
-					rows : {type : "sap.m.TeamCalendarRow[]"}
+					rows : {type : "sap.m.PlanningCalendarRow[]"}
 				}
 			},
 
 			/**
-			 * <code>startDate</code> was changed while navigation in <code>TeamCalendar</code>
+			 * <code>startDate</code> was changed while navigation in <code>PlanningCalendar</code>
 			 */
 			startDateChange : {},
 
@@ -182,7 +182,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 				oRm.write("<div");
 				oRm.writeControlData(oHeader);
-				oRm.addClass("sapMTeamCalHead");
+				oRm.addClass("sapMPlanCalHead");
 				oRm.writeClasses();
 				oRm.write(">");
 
@@ -201,7 +201,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		});
 
-		TeamCalendar.prototype.init = function(){
+		PlanningCalendar.prototype.init = function(){
 
 			this._iBreakPointTablet = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0];
 			this._iBreakPointDesktop = sap.ui.Device.media._predefinedRangeSets[sap.ui.Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1];
@@ -247,11 +247,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				infoToolbar: this._oInfoToolbar,
 				mode: sap.m.ListMode.SingleSelectMaster,
 				columns: [ new sap.m.Column({
-										styleClass: "sapMTeamCalRowHead"
+										styleClass: "sapMPlanCalRowHead"
 										}),
 									new sap.m.Column({
 										width: "80%",
-										styleClass: "sapMTeamCalAppRow",
+										styleClass: "sapMPlanCalAppRow",
 										minScreenWidth: sap.m.ScreenSize.Tablet,
 										demandPopin: true
 										})
@@ -267,7 +267,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.exit = function(){
+		PlanningCalendar.prototype.exit = function(){
 
 			if (this._sResizeListener) {
 				sap.ui.core.ResizeHandler.deregister(this._sResizeListener);
@@ -279,25 +279,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				this._sUpdateCurrentTime = undefined;
 			}
 
-			// remove ColumnListItems from table to not destroy them with table but from parent TeamCalendarRow
+			// remove ColumnListItems from table to not destroy them with table but from parent PlanningCalendarRow
 			var oTable = this.getAggregation("table");
 			oTable.removeAllItems();
 
 			// destroy also currently not used controls
 			if (this._oTimeInterval) {
-				this._oTimeInterval._oTeamCalendar = undefined;
+				this._oTimeInterval._oPlanningCalendar = undefined;
 				this._oTimeInterval.destroy();
 				this._oTimeInterval = undefined;
 			}
 
 			if (this._oDateInterval) {
-				this._oDateInterval._oTeamCalendar = undefined;
+				this._oDateInterval._oPlanningCalendar = undefined;
 				this._oDateInterval.destroy();
 				this._oDateInterval = undefined;
 			}
 
 			if (this._oMonthInterval) {
-				this._oMonthInterval._oTeamCalendar = undefined;
+				this._oMonthInterval._oPlanningCalendar = undefined;
 				this._oMonthInterval.destroy();
 				this._oMonthInterval = undefined;
 			}
@@ -319,7 +319,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.onBeforeRendering = function(){
+		PlanningCalendar.prototype.onBeforeRendering = function(){
 
 			this._bBeforeRendering = true;
 
@@ -340,7 +340,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.onAfterRendering = function(oEvent){
+		PlanningCalendar.prototype.onAfterRendering = function(oEvent){
 
 			// check if size is right and adopt it if necessary
 			oEvent.size = {width: this.getDomRef().offsetWidth};
@@ -354,7 +354,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.setStartDate = function(oStartDate){
+		PlanningCalendar.prototype.setStartDate = function(oStartDate){
 
 			if (!oStartDate) {
 				//set default value
@@ -399,7 +399,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.setViewKey = function(sKey){
+		PlanningCalendar.prototype.setViewKey = function(sKey){
 
 			this.setProperty("viewKey", sKey, true);
 
@@ -429,9 +429,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						});
 						this._oTimeInterval.attachEvent("startDateChange", _handleStartDateChange, this);
 						this._oTimeInterval.attachEvent("select", _handleIntervalSelect, this);
-						this._oTimeInterval._oTeamCalendar = this;
+						this._oTimeInterval._oPlanningCalendar = this;
 						this._oTimeInterval.getSpecialDates = function(){
-							return this._oTeamCalendar.getSpecialDates();
+							return this._oPlanningCalendar.getSpecialDates();
 						};
 //						this._oTimeInterval._iItemsHead = 1000; // to hide day names row
 					}else if (this._oTimeInterval.getItems() != iIntervals) {
@@ -450,9 +450,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						});
 						this._oDateInterval.attachEvent("startDateChange", _handleStartDateChange, this);
 						this._oDateInterval.attachEvent("select", _handleIntervalSelect, this);
-						this._oDateInterval._oTeamCalendar = this;
+						this._oDateInterval._oPlanningCalendar = this;
 						this._oDateInterval.getSpecialDates = function(){
-							return this._oTeamCalendar.getSpecialDates();
+							return this._oPlanningCalendar.getSpecialDates();
 						};
 //						this._oDateInterval._iDaysMonthHead = 1000; // to hide month names row
 					}else if (this._oDateInterval.getDays() != iIntervals) {
@@ -470,9 +470,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						});
 						this._oMonthInterval.attachEvent("startDateChange", _handleStartDateChange, this);
 						this._oMonthInterval.attachEvent("select", _handleIntervalSelect, this);
-						this._oMonthInterval._oTeamCalendar = this;
+						this._oMonthInterval._oPlanningCalendar = this;
 						this._oMonthInterval.getSpecialDates = function(){
-							return this._oTeamCalendar.getSpecialDates();
+							return this._oPlanningCalendar.getSpecialDates();
 						};
 //						this._oMonthInterval._iDaysMonthsHead = 1000; // to hide year names row
 					}else if (this._oMonthInterval.setMonths() != iIntervals) {
@@ -504,7 +504,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.setShowIntervalHeaders = function(bShowIntervalHeaders){
+		PlanningCalendar.prototype.setShowIntervalHeaders = function(bShowIntervalHeaders){
 
 			this.setProperty("showIntervalHeaders", bShowIntervalHeaders, true);
 
@@ -518,7 +518,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.setShowRowHeaders = function(bShowRowHeaders){
+		PlanningCalendar.prototype.setShowRowHeaders = function(bShowRowHeaders){
 
 			// set header column to invisible as each row is a ColumnListItem with two columns
 			// removing the column would need to change every row
@@ -528,14 +528,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oTable = this.getAggregation("table");
 			oTable.getColumns()[0].setVisible(bShowRowHeaders);
 
-			this.$().toggleClass("sapMTeamCalNoHead", !bShowRowHeaders);
+			this.$().toggleClass("sapMPlanCalNoHead", !bShowRowHeaders);
 			_positionSelectAllCheckBox.call(this);
 
 			return this;
 
 		};
 
-		TeamCalendar.prototype.addRow = function(oRow) {
+		PlanningCalendar.prototype.addRow = function(oRow) {
 
 			this.addAggregation("rows", oRow, true);
 
@@ -567,7 +567,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.insertRow = function(oRow, iIndex) {
+		PlanningCalendar.prototype.insertRow = function(oRow, iIndex) {
 
 			this.insertAggregation("rows", oRow, iIndex);
 
@@ -599,7 +599,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.removeRow = function(vObject) {
+		PlanningCalendar.prototype.removeRow = function(vObject) {
 
 			var oRemoved = this.removeAggregation("rows", vObject, true);
 
@@ -619,7 +619,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.removeAllRows = function() {
+		PlanningCalendar.prototype.removeAllRows = function() {
 
 			var aRemoved = this.removeAllAggregation("rows", true);
 
@@ -642,7 +642,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.destroyRows = function() {
+		PlanningCalendar.prototype.destroyRows = function() {
 
 			var destroyed = this.destroyAggregation("rows", true);
 
@@ -655,7 +655,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.addToolbarContent = function(oContent) {
+		PlanningCalendar.prototype.addToolbarContent = function(oContent) {
 
 			this.addAggregation("toolbarContent", oContent, true);
 
@@ -665,7 +665,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.insertToolbarContent = function(oContent, iIndex) {
+		PlanningCalendar.prototype.insertToolbarContent = function(oContent, iIndex) {
 
 			this.insertAggregation("toolbarContent", oContent, iIndex);
 
@@ -675,7 +675,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.removeToolbarContent = function(vObject) {
+		PlanningCalendar.prototype.removeToolbarContent = function(vObject) {
 
 			var oRemoved = this.removeAggregation("toolbarContent", vObject, true);
 
@@ -685,7 +685,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.removeAllToolbarContent = function() {
+		PlanningCalendar.prototype.removeAllToolbarContent = function() {
 
 			var aRemoved = this.removeAllAggregation("toolbarContent", true);
 
@@ -695,7 +695,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.destroyToolbarContent = function() {
+		PlanningCalendar.prototype.destroyToolbarContent = function() {
 
 			var destroyed = this.destroyAggregation("toolbarContent", true);
 
@@ -705,7 +705,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.setSingleSelection = function(bSingleSelection) {
+		PlanningCalendar.prototype.setSingleSelection = function(bSingleSelection) {
 
 			this.setProperty("singleSelection", bSingleSelection, true);
 
@@ -720,13 +720,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			_positionSelectAllCheckBox.call(this);
 
-			this.$().toggleClass("sapMTeamCalMultiSel", !bSingleSelection);
+			this.$().toggleClass("sapMPlanCalMultiSel", !bSingleSelection);
 
 			return this;
 
 		};
 
-		TeamCalendar.prototype.invalidate = function(oOrigin) {
+		PlanningCalendar.prototype.invalidate = function(oOrigin) {
 
 			if (this._bDateRangeChanged || (oOrigin && oOrigin instanceof sap.ui.unified.DateRange)) {
 				// DateRange changed -> only invalidate calendar control
@@ -765,7 +765,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.removeAllSpecialDates = function() {
+		PlanningCalendar.prototype.removeAllSpecialDates = function() {
 
 			this._bDateRangeChanged = true;
 			var aRemoved = this.removeAllAggregation("specialDates");
@@ -773,7 +773,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.destroySpecialDates = function() {
+		PlanningCalendar.prototype.destroySpecialDates = function() {
 
 			this._bDateRangeChanged = true;
 			var oDestroyed = this.destroyAggregation("specialDates");
@@ -782,12 +782,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		};
 
 		/*
-		 * overwrites the getContent function of the toolbar to allow to mix static content from the TeamCalendar
+		 * overwrites the getContent function of the toolbar to allow to mix static content from the PlanningCalendar
 		 * and application content.
 		 *
 		 * @private
 		 */
-		TeamCalendar.prototype._getToolbarContent = function(){
+		PlanningCalendar.prototype._getToolbarContent = function(){
 
 			return this.getToolbarContent();
 
@@ -796,11 +796,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		/**
 		 * Returns an array containing the selected rows. If no row is selected, an empty array is returned.
 		 *
-		 * @returns {sap.m.TeamCalendarRow[]} selected rows
+		 * @returns {sap.m.PlanningCalendarRow[]} selected rows
 		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		TeamCalendar.prototype.getSelectedRows = function() {
+		PlanningCalendar.prototype.getSelectedRows = function() {
 
 			return this.getRows().filter(function(oRow) {
 				return oRow.getSelected();
@@ -810,16 +810,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 
 		/**
-		 * Selects or deselects all <code>TeamCalendarRows</code>.
+		 * Selects or deselects all <code>PlanningCalendarRows</code>.
 		 *
 		 * <b>Note:</b> Selection only works if <code>singleSelection</code> is not set
 		 *
-		 * @param {boolean} bSelect Indicator if <code>TeamCalendarRows</code> should be selected or deselected
-		 * @returns {sap.m.TeamCalendar} <code>this</code> to allow method chaining
+		 * @param {boolean} bSelect Indicator if <code>PlanningCalendarRows</code> should be selected or deselected
+		 * @returns {sap.m.PlanningCalendar} <code>this</code> to allow method chaining
 		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		TeamCalendar.prototype.selectAllRows = function(bSelect) {
+		PlanningCalendar.prototype.selectAllRows = function(bSelect) {
 
 			var aRows = this.getRows();
 
@@ -838,7 +838,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.onsaphomemodifiers = function(oEvent) {
+		PlanningCalendar.prototype.onsaphomemodifiers = function(oEvent) {
 
 			if ((oEvent.metaKey || oEvent.ctrlKey) && !oEvent.altKey && !oEvent.shiftKey) {
 				var aRows = this.getRows();
@@ -846,7 +846,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 				var oNewEvent = new jQuery.Event("saphome");
 				oNewEvent.originalEvent = oNewEvent.originalEvent || {};
-				oNewEvent._bTeamCalendar = true;
+				oNewEvent._bPlanningCalendar = true;
 
 				oRow.getCalendarRow().onsaphome(oNewEvent);
 
@@ -856,7 +856,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
-		TeamCalendar.prototype.onsapendmodifiers = function(oEvent) {
+		PlanningCalendar.prototype.onsapendmodifiers = function(oEvent) {
 
 			if ((oEvent.metaKey || oEvent.ctrlKey) && !oEvent.altKey && !oEvent.shiftKey) {
 				var aRows = this.getRows();
@@ -864,7 +864,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 				var oNewEvent = new jQuery.Event("sapend");
 				oNewEvent.originalEvent = oNewEvent.originalEvent || {};
-				oNewEvent._bTeamCalendar = true;
+				oNewEvent._bPlanningCalendar = true;
 
 				oRow.getCalendarRow().onsapend(oNewEvent);
 
@@ -1078,9 +1078,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					this._oToolbar = new sap.m.Toolbar(this.getId() + "-Toolbar", {
 						design: sap.m.ToolbarDesign.Transpaent
 					});
-					this._oToolbar._oTeamCalendar = this;
+					this._oToolbar._oPlanningCalendar = this;
 					this._oToolbar.getContent = function() {
-						return this._oTeamCalendar._getToolbarContent();
+						return this._oPlanningCalendar._getToolbarContent();
 					};
 				}
 				if (!oTable.getHeaderToolbar()) {
@@ -1114,7 +1114,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				if (!this._aViews) {
 					this._aViews = [];
 
-					var oViewHour = new sap.m.TeamCalendarView(this.getId() + "-HourView", {
+					var oViewHour = new sap.m.PlanningCalendarView(this.getId() + "-HourView", {
 						key: sap.ui.unified.CalendarIntervalType.Hour,
 						intervalType: sap.ui.unified.CalendarIntervalType.Hour,
 						description: this._oLocaleData.getDisplayName("hour"),
@@ -1124,7 +1124,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					});
 					this._aViews.push(oViewHour);
 
-					var oViewDay = new sap.m.TeamCalendarView(this.getId() + "-DayView", {
+					var oViewDay = new sap.m.PlanningCalendarView(this.getId() + "-DayView", {
 						key: sap.ui.unified.CalendarIntervalType.Day,
 						intervalType: sap.ui.unified.CalendarIntervalType.Day,
 						description: this._oLocaleData.getDisplayName("day"),
@@ -1134,7 +1134,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					});
 					this._aViews.push(oViewDay);
 
-					var oViewMonth = new sap.m.TeamCalendarView(this.getId() + "-MonthView", {
+					var oViewMonth = new sap.m.PlanningCalendarView(this.getId() + "-MonthView", {
 						key: sap.ui.unified.CalendarIntervalType.Month,
 						intervalType: sap.ui.unified.CalendarIntervalType.Month,
 						description: this._oLocaleData.getDisplayName("month"),
@@ -1167,7 +1167,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			if (!oView && !bNoError) {
-				throw new Error("TeamCalendarView with key " + sKey + "not assigned " + this);
+				throw new Error("PlanningCalendarView with key " + sKey + "not assigned " + this);
 			}
 
 			return oView;
@@ -1305,7 +1305,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 					oNewEvent = new jQuery.Event(sType);
 					oNewEvent.originalEvent = oNewEvent.originalEvent || {};
-					oNewEvent._bTeamCalendar = true;
+					oNewEvent._bPlanningCalendar = true;
 
 					oNewRow.getCalendarRow().onsaphome(oNewEvent);
 				}
@@ -1318,7 +1318,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 					oNewEvent = new jQuery.Event(sType);
 					oNewEvent.originalEvent = oNewEvent.originalEvent || {};
-					oNewEvent._bTeamCalendar = true;
+					oNewEvent._bPlanningCalendar = true;
 
 					oNewRow.getCalendarRow().onsapend(oNewEvent);
 				}
@@ -1392,6 +1392,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	}());
 
-	return TeamCalendar;
+	return PlanningCalendar;
 
 }, /* bExport= */ true);

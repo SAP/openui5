@@ -2,21 +2,21 @@
  * ${copyright}
  */
 
-//Provides control sap.ui.unified.TeamCalendarRow.
+//Provides control sap.ui.unified.PlanningCalendarRow.
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem', './StandardListItemRenderer', 'sap/ui/core/Renderer', './library'],
 		function(jQuery, Element, StandardListItem, StandardListItemRenderer, Renderer, library) {
 	"use strict";
 
 	/**
-	 * Constructor for a new <code>TeamCalendarRow</code>.
+	 * Constructor for a new <code>PlanningCalendarRow</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Row in the <code>TeamCalendar</code>.
+	 * Row in the <code>PlanningCalendar</code>.
 	 *
-	 * This element holds the data of one row in the <code>TeamCalendar</code>. Once the header information (e.G. person information)
+	 * This element holds the data of one row in the <code>PlanningCalendar</code>. Once the header information (e.G. person information)
 	 * are assigned. Then the appointments are assigned.
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
@@ -24,10 +24,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 	 * @constructor
 	 * @public
 	 * @since 1.34.0
-	 * @alias sap.m.TeamCalendarRow
+	 * @alias sap.m.PlanningCalendarRow
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var TeamCalendarRow = Element.extend("sap.m.TeamCalendarRow", /** @lends sap.m.TeamCalendarRow.prototype */ { metadata : {
+	var PlanningCalendarRow = Element.extend("sap.m.PlanningCalendarRow", /** @lends sap.m.PlanningCalendarRow.prototype */ { metadata : {
 
 		library : "sap.m",
 		properties : {
@@ -68,7 +68,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 			nonWorkingHours : {type : "int[]", group : "Misc", defaultValue : null},
 
 			/**
-			 * Defines the selected state of the <code>TeamCalendarRow</code>.
+			 * Defines the selected state of the <code>PlanningCalendarRow</code>.
 			 * <b>Note:</b> Binding the <code>selected</code> property in single selection modes may cause unwanted results if you have more than one selected row in your binding.
 			 */
 			selected : {type : "boolean", group : "Data", defaultValue : false},
@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 			metadata : {
 
 				associations: {
-					parentRow: { type: "sapm.TeamCalendarRow", multiple: false}
+					parentRow: { type: "sap.m.PlanningCalendarRow", multiple: false}
 				}
 
 			},
@@ -147,19 +147,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 		CalenderRowHeaderRenderer.renderTabIndex = function(oRm, oLI) {
 		};
 
-		TeamCalendarRow.prototype.init = function(){
+		PlanningCalendarRow.prototype.init = function(){
 
 			var oCalendarRowHeader = new CalenderRowHeader(this.getId() + "-Head", {parentRow: this});
 			var oCalendarRow = new sap.ui.unified.CalendarRow(this.getId() + "-CalRow", {
 				checkResize: false,
 				updateCurrentTime: false
 				});
-			oCalendarRow._oTeamCalendarRow = this;
+			oCalendarRow._oPlanningCalendarRow = this;
 
 			oCalendarRow.getAppointments = function() {
 
-				if (this._oTeamCalendarRow) {
-					return this._oTeamCalendarRow.getAppointments();
+				if (this._oPlanningCalendarRow) {
+					return this._oPlanningCalendarRow.getAppointments();
 				}else {
 					return [];
 				}
@@ -168,8 +168,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 			oCalendarRow.getIntervalHeaders = function() {
 
-				if (this._oTeamCalendarRow) {
-					return this._oTeamCalendarRow.getIntervalHeaders();
+				if (this._oPlanningCalendarRow) {
+					return this._oPlanningCalendarRow.getIntervalHeaders();
 				}else {
 					return [];
 				}
@@ -183,14 +183,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		};
 
-		TeamCalendarRow.prototype.exit = function(){
+		PlanningCalendarRow.prototype.exit = function(){
 
 			this._oColumnListItem.destroy();
 			this._oColumnListItem = undefined;
 
 		};
 
-		TeamCalendarRow.prototype.setTooltip = function(vTooltip){
+		PlanningCalendarRow.prototype.setTooltip = function(vTooltip){
 
 			this.setAggregation("tooltip", vTooltip, true); // do not invalidate, only real rendered control must be invalidated
 			this._oColumnListItem.getCells()[0].setTooltip(vTooltip);
@@ -199,7 +199,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		};
 
-		TeamCalendarRow.prototype.setTitle = function(sTitle){
+		PlanningCalendarRow.prototype.setTitle = function(sTitle){
 
 			this.setProperty("title", sTitle, true); // do not invalidate, only real rendered control must be invalidated
 			this._oColumnListItem.getCells()[0].setTitle(sTitle);
@@ -208,7 +208,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		};
 
-		TeamCalendarRow.prototype.setText = function(sText){
+		PlanningCalendarRow.prototype.setText = function(sText){
 
 			this.setProperty("text", sText, true); // do not invalidate, only real rendered control must be invalidated
 			this._oColumnListItem.getCells()[0].setDescription(sText);
@@ -217,7 +217,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		};
 
-		TeamCalendarRow.prototype.setIcon = function(sIcon){
+		PlanningCalendarRow.prototype.setIcon = function(sIcon){
 
 			this.setProperty("icon", sIcon, true); // do not invalidate, only real rendered control must be invalidated
 			this._oColumnListItem.getCells()[0].setIcon(sIcon);
@@ -226,7 +226,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		};
 
-		TeamCalendarRow.prototype.setNonWorkingDays = function(aNonWorkingDays){
+		PlanningCalendarRow.prototype.setNonWorkingDays = function(aNonWorkingDays){
 
 			this.setProperty("nonWorkingDays", aNonWorkingDays, true); // do not invalidate, only real rendered control must be invalidated
 			this.getCalendarRow().setNonWorkingDays(aNonWorkingDays);
@@ -235,7 +235,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		};
 
-		TeamCalendarRow.prototype.setNonWorkingHours = function(aNonWorkingHours){
+		PlanningCalendarRow.prototype.setNonWorkingHours = function(aNonWorkingHours){
 
 			this.setProperty("nonWorkingHours", aNonWorkingHours, true); // do not invalidate, only real rendered control must be invalidated
 			this.getCalendarRow().setNonWorkingHours(aNonWorkingHours);
@@ -244,7 +244,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		};
 
-		TeamCalendarRow.prototype.invalidate = function(oOrigin) {
+		PlanningCalendarRow.prototype.invalidate = function(oOrigin) {
 
 			if (!oOrigin || !(oOrigin instanceof sap.ui.unified.CalendarAppointment)) {
 				Element.prototype.invalidate.apply(this, arguments);
@@ -256,7 +256,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 		};
 
 		// overwrite removing of appointments because invalidate don't get information about it
-		TeamCalendarRow.prototype.removeAppointment = function(vObject) {
+		PlanningCalendarRow.prototype.removeAppointment = function(vObject) {
 
 			var oRemoved = this.removeAggregation("appointments", vObject, true);
 			this.getCalendarRow().invalidate();
@@ -264,7 +264,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		};
 
-		TeamCalendarRow.prototype.removeAllAppointments = function() {
+		PlanningCalendarRow.prototype.removeAllAppointments = function() {
 
 			var aRemoved = this.removeAllAggregation("appointments", true);
 			this.getCalendarRow().invalidate();
@@ -272,7 +272,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		};
 
-		TeamCalendarRow.prototype.destroyAppointments = function() {
+		PlanningCalendarRow.prototype.destroyAppointments = function() {
 
 			var oDestroyed = this.destroyAggregation("appointments", true);
 			this.getCalendarRow().invalidate();
@@ -280,7 +280,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		};
 
-		TeamCalendarRow.prototype.removeIntervalHeader = function(vObject) {
+		PlanningCalendarRow.prototype.removeIntervalHeader = function(vObject) {
 
 			var oRemoved = this.removeAggregation("intervalHeaders", vObject, true);
 			this.getCalendarRow().invalidate();
@@ -288,7 +288,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		};
 
-		TeamCalendarRow.prototype.removeAllIntervalHeaders = function() {
+		PlanningCalendarRow.prototype.removeAllIntervalHeaders = function() {
 
 			var aRemoved = this.removeAllAggregation("intervalHeaders", true);
 			this.getCalendarRow().invalidate();
@@ -296,7 +296,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		};
 
-		TeamCalendarRow.prototype.destroyIntervalHeaders = function() {
+		PlanningCalendarRow.prototype.destroyIntervalHeaders = function() {
 
 			var oDestroyed = this.destroyAggregation("intervalHeaders", true);
 			this.getCalendarRow().invalidate();
@@ -304,7 +304,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 		};
 
-		TeamCalendarRow.prototype.setSelected = function(bSelected){
+		PlanningCalendarRow.prototype.setSelected = function(bSelected){
 
 			this.setProperty("selected", bSelected, true);
 			this._oColumnListItem.setSelected(bSelected);
@@ -314,30 +314,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 		};
 
 		/**
-		 * A <code>TeamCalendarRow</code> is rendered inside a <code>sap.m.Table</code> as <code>sap.m.ColumnListItem</code>.
+		 * A <code>PlanningCalendarRow</code> is rendered inside a <code>sap.m.Table</code> as <code>sap.m.ColumnListItem</code>.
 		 *
-		 * @returns {sap.m.ColumnListItem} <code>sap.m.ColumnListItem</code> that represents <code>TeamCalendarRow</code> in table.
+		 * @returns {sap.m.ColumnListItem} <code>sap.m.ColumnListItem</code> that represents <code>PlanningCalendarRow</code> in table.
 		 * @private
 		 */
-		TeamCalendarRow.prototype.getColumnListItem = function(){
+		PlanningCalendarRow.prototype.getColumnListItem = function(){
 
 			return this._oColumnListItem;
 
 		};
 
 		/**
-		 * The <code>TeamCalendarRow</code> appointments are rendered in a <ode>CalendarRow</code> control.
+		 * The <code>PlanningCalendarRow</code> appointments are rendered in a <ode>CalendarRow</code> control.
 		 *
-		 * @returns {sap.ui.uinified.CalendarRow} <code>sap.ui.uinified.CalendarRow</code> that renders <code>TeamCalendarRow</code> appointments.
+		 * @returns {sap.ui.uinified.CalendarRow} <code>sap.ui.uinified.CalendarRow</code> that renders <code>PlanningCalendarRow</code> appointments.
 		 * @private
 		 */
-		TeamCalendarRow.prototype.getCalendarRow = function(){
+		PlanningCalendarRow.prototype.getCalendarRow = function(){
 
 			return this._oColumnListItem.getCells()[1];
 
 		};
 
-		TeamCalendarRow.prototype.applyFocusInfo = function (oFocusInfo) {
+		PlanningCalendarRow.prototype.applyFocusInfo = function (oFocusInfo) {
 
 			// forward to CalendarRow
 			this.getCalendarRow().applyFocusInfo(oFocusInfo);
@@ -348,6 +348,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 	}());
 
-	return TeamCalendarRow;
+	return PlanningCalendarRow;
 
 }, /* bExport= */ true);

@@ -1,0 +1,25 @@
+/* ============================================== */
+/* CSS for control sap.m/PlanningCalendar.control */
+/* bluecrystal                                    */
+/* ============================================== */
+
+.sapMPlanCal{
+	background-color: @sapUiListBackground;
+}
+
+
+.sapMPlanCal > .sapMList > table > tbody > tr:nth-child(even):not(.sapMListTblSubRow){
+	background-color: darken(@sapUiListBackground, 2);
+}
+
+.sapMPlanCal > .sapMList > table > tbody > tr:nth-child(even):not(.sapMListTblSubRow).sapMLIBHoverable:hover{
+	background-color: @sapUiListHoverBackground;
+}
+
+.sapMPlanCal > .sapMList > table > tbody > tr:nth-child(even):not(.sapMListTblSubRow).sapMLIBSelected{
+	background-color: darken(@sapUiListSelectionBackgroundColor, 2);
+}
+
+.sapMPlanCal > .sapMList > table > tbody > tr:nth-child(even):not(.sapMListTblSubRow).sapMLIBSelected.sapMLIBHoverable:hover{
+	background-color: darken(@sapUiListSelectionBackgroundColor, 4);
+}

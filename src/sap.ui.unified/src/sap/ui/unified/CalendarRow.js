@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 *
 	 * ItemNavigation is not used as the keyboard navigation is somehow different.
 	 * Navigation goes to the next/previous appointment even if it's not visible in the current output.
-	 * Arrow up/down leaves the row (To navigate to the next row in TeamCalendar).
+	 * Arrow up/down leaves the row (To navigate to the next row in PlanningCalendar).
 	 */
 
 	/**
@@ -103,7 +103,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * If set the <code>CalendarRow</code> checks for resize by itself.
 			 *
-			 * If a lot of <code>CalendarRow</code> controls are used in one container control (like team calendar)
+			 * If a lot of <code>CalendarRow</code> controls are used in one container control (like <code>PlanningCalendar</code>)
 			 * the resize checks should be done only by this container control. Then the container control should
 			 * call <code>handleResize</code> of the <code>CalendarRow</code> if a resize happens.
 			 */
@@ -112,7 +112,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * If set the <code>CalendarRow</code> triggers a periodic update to visualize the current time.
 			 *
-			 * If a lot of <code>CalendarRow</code> controls are used in one container control (like team calendar)
+			 * If a lot of <code>CalendarRow</code> controls are used in one container control (like <code>PlanningCalendar</code>)
 			 * the periodic update should be triggered only by this container control. Then the container control should
 			 * call <code>updateCurrentTimeVisualization</code> of the <code>CalendarRow</code> to update the visualization.
 			 */
@@ -379,7 +379,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				}
 			}
 
-			//to prevent bubbling into TeamCalendar
+			//to prevent bubbling into PlanningCalendar
 			oEvent.stopPropagation();
 			oEvent.preventDefault();
 
@@ -402,7 +402,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		 * sizes are needed.
 		 *
 		 * For this each <code>CalendarRow</code> can trigger the resize check for it's own DOM.
-		 * But if multiple <code>CalendarRow</code>s are used in one container (e.G. team calendar)
+		 * But if multiple <code>CalendarRow</code>s are used in one container (e.G. <code>PlanningCalendar</code>)
 		 * it is better if the container triggers the resize check once an then calls this function
 		 * of each <code>CalendarRow</code>.
 		 *
@@ -427,7 +427,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		 * the indicator for the current time must be positioned.
 		 *
 		 * For this each <code>CalendarRow</code> can trigger a timer.
-		 * But if multiple <code>CalendarRow</code>s are used in one container (e.G. team calendar)
+		 * But if multiple <code>CalendarRow</code>s are used in one container (e.G. <code>PlanningCalendar</code>)
 		 * it is better if the container triggers the interval once an then calls this function
 		 * of each <code>CalendarRow</code>.
 		 *
@@ -1398,7 +1398,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			if (sId && sId != this._sFocusedAppointmentId) {
 				_focusAppointment.call(this, sId);
-			} else if (oEvent._bTeamCalendar && oAppointment) {
+			} else if (oEvent._bPlanningCalendar && oAppointment) {
 				oAppointment.focus();
 			} else {
 				this.fireLeaveRow({type: oEvent.type});

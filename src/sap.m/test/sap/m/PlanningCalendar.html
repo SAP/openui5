@@ -4,8 +4,8 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-		<title>TeamCalendar - sap.m</title>
-		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.m.TeamCalendar.gif">
+		<title>PlanningCalendar - sap.m</title>
+		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.m.PlanningCalendar.gif">
 
 		<script src="../../../resources/sap-ui-core.js"
 			type="text/javascript"
@@ -46,7 +46,7 @@
 		function createFooter(){
 			return new sap.m.Bar({
 				contentMiddle: [new sap.m.Button({
-					text: "TeamCalendar",
+					text: "PlanningCalendar",
 					press: function(){
 						app.to("page1");
 					}
@@ -70,8 +70,8 @@
 		};
 
 		var handleAddRow = function(oEvent){
-			var oTC = sap.ui.getCore().byId("TC1");
-			var oRow = new sap.m.TeamCalendarRow({
+			var oTC = sap.ui.getCore().byId("PC1");
+			var oRow = new sap.m.PlanningCalendarRow({
 				icon: "sap-icon://employee",
 				title: "new Row"
 			});
@@ -79,7 +79,7 @@
 		};
 
 		var handleAddAppointment = function(oEvent){
-			var oTC = sap.ui.getCore().byId("TC1");
+			var oTC = sap.ui.getCore().byId("PC1");
 			var oStartDate = oTC.getStartDate();
 			var sViewKey = oTC.getViewKey();
 			var oEventStartDate = oEvent.getParameter("startDate");
@@ -153,7 +153,7 @@
 			icon: "sap-icon://multi-select",
 			type: sap.m.ButtonType.Transparent,
 			press: function(oEvent) {
-								var oTC = sap.ui.getCore().byId("TC1");
+								var oTC = sap.ui.getCore().byId("PC1");
 								if(oEvent.getParameter("pressed")) {
 									oTC.setSingleSelection(false);
 								}else {
@@ -179,7 +179,7 @@
 			type: sap.m.ButtonType.Transparent,
 			pressed: true,
 			press: function(oEvent) {
-				var oTC = sap.ui.getCore().byId("TC1");
+				var oTC = sap.ui.getCore().byId("PC1");
 				var bPressed = oEvent.getParameter("pressed");
 				oTC.setShowIntervalHeaders(bPressed);
 			}
@@ -190,7 +190,7 @@
 			type: sap.m.ButtonType.Transparent,
 			pressed: true,
 			press: function(oEvent) {
-				var oTC = sap.ui.getCore().byId("TC1");
+				var oTC = sap.ui.getCore().byId("PC1");
 				var bPressed = oEvent.getParameter("pressed");
 				oTC.setShowRowHeaders(bPressed);
 			}
@@ -206,9 +206,9 @@
 			text: "Title"
 		});
 
-		var oTC1 = sap.m.TeamCalendar("TC1", {
+		var oPC1 = sap.m.PlanningCalendar("PC1", {
 			startDate: new Date("2015", "0", "1", "08", "00"),
-			rows: [ new sap.m.TeamCalendarRow("Row1", {
+			rows: [ new sap.m.PlanningCalendarRow("Row1", {
 			        	icon: "sap-icon://employee",
 			        	title: "Max Mustermann",
 			        	text: "Musterteam",
@@ -259,7 +259,7 @@
 			        	                })
 			        	              ]
 			        	}),
-			        new sap.m.TeamCalendarRow("Row2", {
+			        new sap.m.PlanningCalendarRow("Row2", {
 			        	icon: "../ui/unified/images/m_01.png",
 			        	title: "Edward",
 			        	text: "the great",
@@ -348,9 +348,9 @@
 		});
 
 		var page1 = new sap.m.Page("page1", {
-			title:"Mobile TeamCalendar",
+			title:"Mobile PlanningCalendar",
 			content : [
-				oTC1,
+				oPC1,
 				oInput
 			],
 			footer: createFooter()
