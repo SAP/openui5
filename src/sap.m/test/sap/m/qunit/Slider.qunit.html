@@ -23,13 +23,9 @@
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-		<!-- use the sinon faketimers for this test -->
-		<script type="text/javascript">
-			sinon.config.useFakeTimers = true;
-		</script>
-
 		<script>
+			sinon.config.useFakeTimers = true;
+
 			var oApp = new sap.m.App("myApp", {
 				initialPage: "page1"
 			});
@@ -651,6 +647,25 @@
 
 				// assert
 				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuenow"), "50");
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			test("it should not round the model value, but only the DOM value", function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					step:  0.0000000001,
+					value: 0.5555555555
+				});
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSlider.getValue(), 0.5555555555);
 
 				// cleanup
 				oSlider.destroy();
