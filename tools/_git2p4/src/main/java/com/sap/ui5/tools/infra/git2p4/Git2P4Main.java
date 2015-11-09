@@ -527,6 +527,17 @@ public class Git2P4Main {
         null
         ));
   }
+  
+  private static void createUI5GalileiMappings(File repositoryRoot, String p4depotPrefix, String branch) {
+    mappings.clear();
+    mappings.add(new Mapping(
+        "/galilei.git",
+        new File(repositoryRoot, "galilei"),
+        null,
+        null,
+        null
+        ));
+  }
 
     
 
@@ -794,6 +805,8 @@ public class Git2P4Main {
       }
     } else if ( "uxap".equals(mappingSet) ) {
     	createUI5UXAPMappings(gitDir, p4depotPath, branch);
+    } else if ( "galilei".equals(mappingSet) ) {
+    	createUI5GalileiMappings(gitDir, p4depotPath, branch);
     } else {
       throw new IllegalArgumentException("no repositories configured, either ui5 root dir or git root dir must be specified");
     }
