@@ -237,7 +237,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 				if (span) {
 					span = span.toUpperCase();
 					if (span.substr(0,2) === "XL") {
-						return parseInt(span.substr(1), 10);
+						return parseInt(span.substr(2), 10);
 					}
 				}
 			}
@@ -257,7 +257,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', './library'],
 				return iSpan;
 			}
 			
-			var SPANPATTERN = /L([1-9]|1[0-2])(?:\s|$)/i;
+			var SPANPATTERN = /\bL([1-9]|1[0-2])(?:\s|$)/i;
 	
 			var aSpan = SPANPATTERN.exec(this.getSpan());
 	

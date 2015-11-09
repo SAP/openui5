@@ -118,6 +118,7 @@ sap.ui.define(['jquery.sap.global'],
 		for ( var i = 0; i < aItems.length; i++) { // loop over all child controls
 			oRm.write("<div");
 			var oLay = oControl._getLayoutDataForControl(aItems[i]);
+			var bCellSpanXLChanged = false;
 			
 			if (oLay) {
 	                          
@@ -162,7 +163,7 @@ sap.ui.define(['jquery.sap.global'],
 				} else {
 					aSpan = SPANPATTERN.exec(sSpan);
 					if (/XL/gi.test(sSpan)) {
-						bDefaultSpanXLChanged = true;
+						bCellSpanXLChanged = true;
 					}
 				}	
 					
@@ -190,7 +191,7 @@ sap.ui.define(['jquery.sap.global'],
 						span = span.toUpperCase();
 						if ((span.substr(0, 2) === "XL") && (iSpanXLarge > 0)	&& (iSpanXLarge < 13)) {
 							oRm.addClass("sapUiRespGridSpanXL" + iSpanXLarge);
-							bDefaultSpanXLChanged = true;
+							bCellSpanXLChanged = true;
 						} else if ((span.substr(0, 1) === "L") && (iSpanLarge > 0)	&& (iSpanLarge < 13)) {
 							oRm.addClass("sapUiRespGridSpanL" + iSpanLarge);
 							sSpanL = iSpanLarge;
@@ -199,13 +200,13 @@ sap.ui.define(['jquery.sap.global'],
 						} else if ((span.substr(0, 1) === "S") && (iSpanSmall > 0) && (iSpanSmall < 13)) {
 							oRm.addClass("sapUiRespGridSpanS" + iSpanSmall);
 						} else {
-							if ((span.substr(0, 2) !== "XL") || bDefaultSpanXLChanged ){
+							if ((span.substr(0, 2) !== "XL") || bDefaultSpanXLChanged || bCellSpanXLChanged){
 								oRm.addClass("sapUiRespGridSpan" + span);
 							}
 						}
 					}
 					
-					if (!bDefaultSpanXLChanged) { 
+					if (!bDefaultSpanXLChanged && !bCellSpanXLChanged) { 
 						// Backwards compatibility - if the XL not defined - it should be as L.	
 						oRm.addClass("sapUiRespGridSpanXL" + sSpanL);
 					}	
