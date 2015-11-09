@@ -9,8 +9,22 @@
 	  "ref": "test-resources/sap/tnt/demokit/sample"
 	},
 	"entities": [
+	{
+		"id": "sap.tnt.NavigationList",
+		"name": "Navigation List",
+		"category": "Action",
+		"since": "1.36",
+		"samples": [
+			"sap.tnt.sample.NavigationList"
+	  ]
+	}
 	],
 	"samples": [
+		{
+			"id": "sap.tnt.sample.NavigationList",
+			"name": "NavigationList",
+			"description": "NavigationList in a Page."
+		}
 	]
   }
 }

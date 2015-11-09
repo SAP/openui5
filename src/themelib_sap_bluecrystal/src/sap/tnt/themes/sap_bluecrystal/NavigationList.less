@@ -1,0 +1,97 @@
+/* ============================================ */
+/* CSS for control sap.tnt/NavigationList.control			*/
+/* ============================================ */
+
+.sapMNavLIGroup {
+	background-color: @sapUiLightestBG;
+	border-bottom: 1px solid @sapUiExtraLightBorder;
+	color: @sapUiDarkText;
+
+	& > .sapUiIcon {
+		color: @sapUiElement;
+	}
+}
+
+.sapMNavLIGroup:not(.sapMNavLIItemDisabled):hover {
+	background-color: @sapUiLightestBGHover;
+	border-bottom: 1px solid @sapUiExtraLightBorder;
+	color: @sapUiDarkText;
+
+	& > .sapUiIcon {
+		color: @sapUiElement;
+	}
+}
+
+.sapMNavLIGroup:not(.sapMNavLIItemDisabled):active {
+	background-color: @sapUiHighlight;
+	border-bottom: 1px solid @sapUiExtraLightBorder;
+	color: @sapUiTextInverted;
+
+	& > .sapUiIcon {
+		color: @sapUiInvertedElement;
+	}
+}
+
+.sapMNavLIItemSelected .sapMNavLIGroup {
+	background-color: @sapUiActiveBG;
+	border-bottom: 1px solid @sapUiExtraLightBorder;
+	color: @sapUiDarkText;
+
+	& > .sapUiIcon {
+		color: @sapUiElement;
+	}
+}
+
+.sapMNavLIItemSelected .sapMNavLIGroup:hover {
+	background-color: @sapUiActiveBGHover;
+	border-bottom: 1px solid @sapUiExtraLightBorder;
+	color: @sapUiDarkText;
+
+	& > .sapUiIcon {
+		color: @sapUiElement;
+	}
+}
+
+.sapMNavLIGroupItem {
+	background-color: lighten(@sapUiExtraLightBG, 3);
+	border-bottom: 1px solid @sapUiExtraLightBorder;
+	color: @sapUiDarkText;
+}
+
+.sapMNavLIGroupItem:not(.sapMNavLIItemDisabled):hover {
+	background-color: @sapUiLightestBGHover;
+	border-bottom: 1px solid @sapUiExtraLightBorder;
+	color: @sapUiDarkText;
+}
+
+.sapMNavLIGroupItem:not(.sapMNavLIItemDisabled):active {
+	background-color: @sapUiHighlight;
+	border-bottom: 1px solid @sapUiExtraLightBorder;
+	color: @sapUiTextInverted;
+}
+
+.sapMNavLIItemSelected.sapMNavLIGroupItem {
+	background-color: @sapUiActiveBG;
+	border-bottom: 1px solid @sapUiExtraLightBorder;
+	color: @sapUiDarkText;
+
+	& > .sapUiIcon {
+		color: @sapUiElement;
+	}
+}
+
+.sapMNavLIItemSelected.sapMNavLIGroupItem:hover {
+	background-color: @sapUiActiveBGHover;
+	border-bottom: 1px solid @sapUiExtraLightBorder;
+	color: @sapUiDarkText;
+
+	& > .sapUiIcon {
+		color: @sapUiElement;
+	}
+}
+
+.sapMNavLI li:focus,
+.sapMNavLIItem:focus {
+	outline: 1px dotted @sapUiFocus;
+	outline-offset: -1px;
+}

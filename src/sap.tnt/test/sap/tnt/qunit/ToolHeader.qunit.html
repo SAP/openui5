@@ -1,0 +1,232 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+	<title>QUnit page for sap.tnt.ToolHeader</title>
+	<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+			type="text/javascript" data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m, sap.tnt" src="../../../../resources/sap-ui-core.js">
+	</script>
+
+	<link rel="stylesheet" type="text/css" media="screen"
+		  href="../../../../resources/sap/ui/thirdparty/qunit.css"/>
+
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript">
+		sinon.config.useFakeTimers = true;
+
+		//create JSON model instance
+		var oModel = new sap.ui.model.json.JSONModel();
+
+
+		// create and add app
+		var oApp = new sap.m.App("myApp", {initialPage: "toolHeaderPage"});
+		oApp.placeAt("qunit-fixture");
+
+		var oPage = new sap.m.Page("toolHeaderPage", {
+			title: "Tool Header"
+		});
+		oApp.addPage(oPage);
+
+		function getToolHeader() {
+			return new sap.tnt.ToolHeader({
+				content: [
+					new sap.m.Button({
+						icon: 'sap-icon://menu2',
+						type: sap.m.ButtonType.Transparent,
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						})
+					}),
+					new sap.m.ToolbarSpacer({
+						width: '20px'
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "File",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "Edit",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "Edit",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "Edit",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "Edit",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "Edit",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "Edit",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "View",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "Navigate",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "Code",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.tnt.ToolHeaderUtilitySeparator({
+					}),
+					new sap.m.ToolbarSpacer({
+						layoutData : new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow,
+							minWidth: "20px"
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "User Name",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						icon: "sap-icon://log",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						})
+					})
+				]
+			});
+		}
+
+		QUnit.module("API and Rendering", {
+			setup: function () {
+				this.toolHeader = getToolHeader();
+				oPage.addContent(this.toolHeader);
+
+				sap.ui.getCore().applyChanges();
+			},
+			teardown: function () {
+				this.toolHeader.destroy();
+				this.toolHeader = null;
+			}
+		});
+
+		QUnit.test("rendered", function (assert) {
+			assert.strictEqual(this.toolHeader.$().length, 1, "should render");
+		});
+
+		QUnit.test("created", function (assert) {
+			assert.ok(sap.ui.getCore().byId(this.toolHeader.getId()), "created");
+		});
+
+		QUnit.test("contains elements and classes", function (assert) {
+			assert.ok(this.toolHeader.$().hasClass('sapMToolHeader'), "sapMToolHeader class is set");
+		});
+
+		QUnit.test("overflow button", function (assert) {
+
+			var overflowButton = this.toolHeader.$('overflowButton');
+			assert.ok(overflowButton.length > 0, "Overflow button is rendered");
+		});
+
+		QUnit.test("overflow popover", function (assert) {
+			assert.ok(jQuery('.sapMOTAPopover').length == 0, "Popover is not rendered");
+
+
+			var overflowButton = this.toolHeader.$('overflowButton');
+			overflowButton.trigger('tap');
+
+			assert.ok(jQuery('.sapMOTAPopover').length > 0, "Popover is rendered");
+		});
+
+
+	</script>
+</head>
+<body class="sapUiBody">
+<div id="qunit"></div>
+<div id="qunit-fixture" style="width: 300px">test markup, will be hidden</div>
+</body>
+</html>
