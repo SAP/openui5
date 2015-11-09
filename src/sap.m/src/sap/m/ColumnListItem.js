@@ -85,7 +85,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './ListItemBase', './
 		if (this._oPopin) {
 			this._oPopin.destroy(true);
 			this._oPopin = null;
-			this.removePopin();
 		}
 	};
 	
@@ -219,7 +218,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './ListItemBase', './
 	// Destroys cloned headers that are generated for popin
 	sap.m.ColumnListItem.prototype._destroyClonedHeaders = function() {
 		this._aClonedHeaders.forEach(function(oClone) {
-			oClone.destroy(true);
+			oClone.destroy("KeepDom");
 		});
 
 		this._aClonedHeaders = [];
