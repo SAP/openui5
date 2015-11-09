@@ -2,16 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<title>Test Page for sap.ui.dt.Preloader</title>
-
-		<style>
-			#content {
-				position: absolute;
-				left: 400px;
-				top : 10px;
-				z-index: 1000;
-			}
-		</style>
+		<title>Test Page for sap.ui.dt.AggregationDesignTimeMetadata</title>
 
 		<script id="sap-ui-bootstrap"
 				data-sap-ui-theme="sap_bluecrystal"
@@ -29,37 +20,28 @@
 
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
-			jQuery.sap.require("sap.ui.dt.Preloader");
+			jQuery.sap.require("sap.ui.dt.AggregationDesignTimeMetadata");
 
-			QUnit.module("Given that an Preloader is created", {
+			QUnit.module("Given that an AggregationDesignTimeMetadata is created for a control", {
 				beforeEach : function() {
-					this.oPreloader = sap.ui.dt.Preloader;
+					this.oAggregationDesignTimeMetadata = new sap.ui.dt.AggregationDesignTimeMetadata({
+						data : {
+							testField : "testValue"
+						}
+					});
 				},
 				afterEach : function() {
+					this.oAggregationDesignTimeMetadata.destroy();
 				}
 			});
-
-			QUnit.test("when a class is preloaded...", function(assert) {
-				var done = assert.async();
-				this.oPreloader.load(["sap.ui.layout.VerticalLayout"]).then(function() {
-					ok(jQuery.sap.getObject("sap.ui.layout.VerticalLayout").getMetadata().getDesignTime(), "the preloaded DT is also available synchrone");
-					done();
-				});
+			QUnit.test("when the AggregationDesignTimeMetadata is initialized", function(assert) {
+				assert.strictEqual(this.oAggregationDesignTimeMetadata.getData().testField, "testValue", "then the field is returned right");
 			});
-
-			QUnit.test("when a lib is preloaded...", function(assert) {
-				var done = assert.async();
-				this.oPreloader.loadLibraries(["sap.m"]).then(function() {
-					ok(jQuery.sap.getObject("sap.m.Page").getMetadata().getDesignTime(), "the preloaded dt is available synchrone");
-					done();
-				});
-			});
-
 
 		</script>
 	</head>
 	<body>
-		<h1 id="qunit-header">QUnit page for sap.ui.dt.Preloader</h1>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.AggregationDesignTimeMetadata</h1>
 		<h2 id="qunit-banner"></h2>
 	 	<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>

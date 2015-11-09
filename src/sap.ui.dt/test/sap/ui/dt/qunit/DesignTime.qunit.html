@@ -29,9 +29,9 @@
 		<script type="text/javascript">
 
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-			
+
 			jQuery.sap.require("sap.ui.dt.Overlay");
-			jQuery.sap.require("sap.ui.dt.OverlayRegistry");			
+			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
 			jQuery.sap.require("sap.ui.dt.DesignTime");
 
 			QUnit.module("Given that an DesignTime is created for a root control", {
@@ -136,7 +136,7 @@
 
 				oOverlay.setSelectable(true);
 				oOverlay.setSelected(true);
-			});			
+			});
 
 			QUnit.module("Given that an DesignTime is created for two root controls", {
 				beforeEach : function() {
@@ -198,33 +198,33 @@
 					var that = this;
 					var done = assert.async();
 
-					that.oButton = new sap.m.Button();
-					this.oButton.getMetadata().loadDesignTime().then(function() {
+					that.oPage = new sap.m.Page();
+					this.oPage.getMetadata().loadDesignTime().then(function() {
 						that.oDesignTime = new sap.ui.dt.DesignTime({
 							designTimeMetadata : {
-								"sap.m.Button" : {
+								"sap.m.Page" : {
 									testField : "testValue"
 								}
 							},
-							rootElements : [that.oButton]
+							rootElements : [that.oPage]
 						});
-						
+
 						done();
 					});
 
 				},
 				afterEach : function() {
-					this.oButton.destroy();
+					this.oPage.destroy();
 					this.oDesignTime.destroy();
 				}
 			});
 
 			QUnit.test("when the DesignTime is initialized with a designTimeMetadata", function(assert) {
-				var oDTMetadata = this.oDesignTime.getDesignTimeMetadataFor("sap.m.Button");
+				var oDTMetadata = this.oDesignTime.getDesignTimeMetadataFor("sap.m.Page");
 				assert.strictEqual(oDTMetadata.testField, "testValue", "Test field is save in DTMetadata");
-				var oOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton);
+				var oOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oPage);
 				assert.strictEqual(oOverlay.getDesignTimeMetadata().getData().testField, "testValue", "DTMetadata from the DT is merged correctly");
-				assert.strictEqual(oOverlay.getDesignTimeMetadata().getName(), "{name}", "UI5 DTMetadata is merged correctly");
+				assert.strictEqual(oOverlay.getDesignTimeMetadata().getAggregation("content").domRef, ":sap-domref > section", "UI5 DTMetadata is merged correctly");
 			});
 
 			// TODO test all api methods!
@@ -247,7 +247,7 @@
 					rootElements : [this.oOuterLayout]
 				});
 				sap.ui.getCore().applyChanges();
-			};		
+			};
 
 			var isOverlayForElementInDesignTime = function(oElement, oDesignTime) {
 				var bResult = false;

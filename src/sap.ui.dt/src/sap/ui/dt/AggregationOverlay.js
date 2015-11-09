@@ -17,7 +17,7 @@ function(jQuery, Overlay, DOMUtil, ElementUtil, OverlayUtil) {
 	/**
 	 * Constructor for an AggregationOverlay.
 	 *
-	 * @param {string} [sId] id for the new object, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
 	 * @class
@@ -41,28 +41,20 @@ function(jQuery, Overlay, DOMUtil, ElementUtil, OverlayUtil) {
 			// ---- control specific ----
 			library : "sap.ui.dt",
 			properties : {
-				/** 
+				/**
 				 * Name of aggregation to create the AggregationOverlay for
-				 */				
+				 */
 				aggregationName : {
 					type : "string"
 				},
-				/** 
-				 * Whether the AggregationOverlay and it's descendants should be visible on a screen
-				 * We are overriding Control's property to prevent RenderManager from rendering the invisible placeholder
-				 */	
-				visible : {
-					type : "boolean",
-					defaultValue : true
-				},
-				/** 
+				/**
 				 * Whether the AggregationOverlay is e.g. a drop target
 				 */
 				targetZone : {
 					type : "boolean",
 					defaultValue : false
 				}
-			}, 
+			},
 			aggregations : {
 				/**
 				 * Overlays for the elements, which are public children of this aggregation
@@ -70,6 +62,14 @@ function(jQuery, Overlay, DOMUtil, ElementUtil, OverlayUtil) {
 				children : {
 					type : "sap.ui.dt.Overlay",
 					multiple : true
+				},
+				/**
+				 * [designTimeMetadata description]
+				 * @type {Object}
+				 */
+				designTimeMetadata : {
+					type : "sap.ui.dt.AggregationDesignTimeMetadata",
+					multiple : false
 				}
 			},
 			events : {
@@ -85,33 +85,32 @@ function(jQuery, Overlay, DOMUtil, ElementUtil, OverlayUtil) {
 		}
 	});
 
-	/** 
+	/**
 	 * Returns a DOM representation for an aggregation, associated with this AggregationOverlay, if it can be found or undefined
 	 * Representation is searched in DOM based on DesignTimeMetadata defined for the parent Overlay
 	 * @return {Element} Associated with this AggregationOverlay DOM Element or null, if it can't be found
 	 * @public
 	 */
 	AggregationOverlay.prototype.getAssociatedDomRef = function() {
-		var oOverlay = this.getParent();
 		var oElement = this.getElementInstance();
 		var sAggregationName = this.getAggregationName();
 
 		var oElementDomRef = ElementUtil.getDomRef(oElement);
 		if (oElementDomRef) {
-			var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
-			var vAggregationDomRef = oDesignTimeMetadata.getAggregationDomRef(sAggregationName);
+			var oDesignTimeMetadata = this.getDesignTimeMetadata();
+			var vAggregationDomRef = oDesignTimeMetadata.getDomRef();
 			if (typeof vAggregationDomRef === "function") {
 				return vAggregationDomRef.call(oElement, sAggregationName);
 			} else if (typeof vAggregationDomRef === "string") {
 				return DOMUtil.getDomRefForCSSSelector(oElementDomRef, vAggregationDomRef);
 			}
 		}
-	};	
+	};
 
-	/** 
+	/**
 	 * Sets a property "targetZone", toggles a CSS class for the DomRef based on a property's value and fires "targetZoneChange" event
 	 * @param {boolean} bTargetZone state to set
-	 * @returns {sap.ui.dt.AggregationOverlay} returns this	 	 
+	 * @returns {sap.ui.dt.AggregationOverlay} returns this
 	 * @public
 	 */
 	AggregationOverlay.prototype.setTargetZone = function(bTargetZone) {
@@ -123,34 +122,25 @@ function(jQuery, Overlay, DOMUtil, ElementUtil, OverlayUtil) {
 		}
 
 		return this;
-	};		
-	
-	/** 
+	};
+
+	/**
 	 * Returns if the AggregationOverlay is a target zone
 	 * @public
 	 * @return {boolean} if the AggregationOverlay is a target zone
 	 */
 	AggregationOverlay.prototype.isTargetZone = function() {
 		return this.getTargetZone();
-	};	
+	};
 
-	/** 
-	 * Returns if the AggregationOverlay is visible
-	 * @return {boolean} if the AggregationOverlay is visible
-	 * @public
-	 */
-	AggregationOverlay.prototype.isVisible = function() {
-		return this.getVisible();
-	};	
-
-	/** 
+	/**
 	 * Returns an array with Overlays for the public children of the aggregation, associated with this AggregationOverlay
 	 * @return {sap.ui.dt.Overlay[]} children Overlays
 	 * @public
 	 */
 	AggregationOverlay.prototype.getChildren = function() {
 		return this.getAggregation("children") || [];
-	};	
+	};
 
 	return AggregationOverlay;
 }, /* bExport= */ true);

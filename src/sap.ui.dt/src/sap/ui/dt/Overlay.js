@@ -45,6 +45,14 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 			library : "sap.ui.dt",
 			properties : {
 				/**
+				 * Whether the overlay and it's descendants should be visible on a screen
+				 * We are overriding Control's property to prevent RenderManager from rendering of an invisible placeholder
+				 */
+				visible : {
+					type : "boolean",
+					defaultValue : true
+				},
+				/**
 				 * Whether the overlay is created for an element or aggregation, which is not accessible via the public tree
 				 */
 				inHiddenTree : {
@@ -61,6 +69,13 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 				}
 			},
 			aggregations : {
+				/**
+				 * DesignTime metadata for the associated Element
+				 */
+				designTimeMetadata : {
+					type : "sap.ui.dt.DesignTimeMetadata",
+					multiple : false
+				}
 			},
 			events : {
 				/**
@@ -81,14 +96,7 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	//Overlay.prototype.getChildren = function() {};
 
 	/**
-	 * Returns if the overlay should be visible
-	 * @return {boolean} if should be visible
-	 * @public
-	 */
-	//Overlay.prototype.isVisible = function() {};
-
-	/**
-	 * Creates and/or returns an overlay container element, where all ElementOverlays should be rendered (initially)
+	 * Creates and/or returns an overlay container element, where all Overlays should be rendered (initially)
 	 * @return {Element} overlay container
 	 * @static
 	 */
@@ -120,7 +128,20 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @protected
 	 */
 	Overlay.prototype.init = function() {
+		this._bVisible = null;
+
 		this.attachBrowserEvent("scroll", this._onScroll, this);
+	};
+
+	/**
+	 * Called when the Overlay is destroyed
+	 * @protected
+	 */
+	Overlay.prototype.exit = function() {
+		delete this._oDomRef;
+		delete this._bVisible;
+
+		this.fireDestroyed();
 	};
 
 	/**
@@ -130,16 +151,6 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	 */
 	Overlay.prototype._onChildRerenderedEmpty = function() {
 		return true;
-	};
-
-	/**
-	 * Called when the Overlay is destroyed
-	 * @protected
-	 */
-	Overlay.prototype.exit = function() {
-		delete this._oDomRef;
-
-		this.fireDestroyed();
 	};
 
 	/*
@@ -295,36 +306,55 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	 */
 	Overlay.prototype._updateDom = function() {
 		var oGeometry = this.getGeometry();
+		var $this = this.$();
 
 		var oParent = this.getParent();
 		if (oParent) {
 			if (oParent.getDomRef) {
 				var oParentDomRef = oParent.getDomRef();
 				if (oParentDomRef !== this.$().parent().get(0)) {
-					this.$().appendTo(oParentDomRef);
+					$this.appendTo(oParentDomRef);
 				}
 			} else {
 				// instead of adding the created DOM into the UIArea's DOM, we are adding it to overlay-container to avoid clearing of the DOM
 				var oOverlayContainer = Overlay.getOverlayContainer();
-				var $parent = this.$().parent();
+				var $parent = $this.parent();
 				var oParentElement = $parent.length ? $parent.get(0) : null;
 				if (oOverlayContainer !== oParentElement) {
-					this.$().appendTo(oOverlayContainer);
+					$this.appendTo(oOverlayContainer);
 				}
 				this.applyStyles();
 			}
 		}
 		if (oGeometry && this.isVisible()) {
-			this.$().show();
+			$this.show();
 		} else {
 			// we should always be in DOM to make sure, that drop events (dragend) will be fired even if the overlay isn't visible anymore
-			this.$().hide();
+			$this.hide();
+		}
+
+		var $clonedDom = $this.find(">.sapUiDtClonedDom");
+		var vCloneDomRef = this.getDesignTimeMetadata().getCloneDomRef();
+		if (vCloneDomRef) {
+			var oDomRef = oGeometry ? oGeometry.domRef : null;
+			if (oDomRef) {
+				if (vCloneDomRef !== true) {
+					oDomRef = DOMUtil.getDomRefForCSSSelector(oDomRef, vCloneDomRef);
+				}
+
+				if (!$clonedDom.length) {
+					$clonedDom = jQuery("<div class='sapUiDtClonedDom'></div>").prependTo($this);
+				} else {
+					$clonedDom.empty();
+				}
+				DOMUtil.cloneDOMAndStyles(oDomRef, $clonedDom);
+			}
+		} else {
+			$clonedDom.remove();
 		}
 	};
 
-	/**
-	 * @private
-	 */
+
 	Overlay.prototype._onScroll = function() {
 		var oGeometry = this.getGeometry();
 		var oDomRef = oGeometry ? oGeometry.domRef : null;
@@ -357,6 +387,43 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	 */
 	Overlay.prototype.isInHiddenTree = function() {
 		return this.getInHiddenTree();
+	};
+
+
+	/**
+	 * Sets whether the Overlay is visible
+	 * @param {boolean} bVisible if the Overlay is visible
+	 * @returns {sap.ui.dt.Overlay} returns this
+	 * @public
+	 */
+	Overlay.prototype.setVisible = function(bVisible) {
+		this.setProperty("visible", bVisible);
+		this._bVisible = bVisible;
+
+		return this;
+	};
+
+	/**
+	 * Returns whether the Overlay is visible
+	 * @return {boolean} if the Overlay is visible
+	 * @public
+	 */
+	Overlay.prototype.getVisible = function() {
+		if (this._bVisible === null) {
+			return !this.getDesignTimeMetadata().isIgnored();
+		} else {
+			return this.getProperty("visible");
+		}
+	};
+
+
+	/**
+	 * Returns if the Overlay is visible
+	 * @public
+	 * @return {boolean} if the Overlay is visible
+	 */
+	Overlay.prototype.isVisible = function() {
+		return this.getVisible();
 	};
 
 	return Overlay;

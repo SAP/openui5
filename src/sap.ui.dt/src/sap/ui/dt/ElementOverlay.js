@@ -7,14 +7,15 @@ sap.ui.define([
 	'sap/ui/dt/Overlay',
 	'sap/ui/dt/ControlObserver',
 	'sap/ui/dt/ManagedObjectObserver',
-	'sap/ui/dt/DesignTimeMetadata',
+	'sap/ui/dt/ElementDesignTimeMetadata',
+	'sap/ui/dt/AggregationDesignTimeMetadata',
 	'sap/ui/dt/AggregationOverlay',
 	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/DOMUtil'
 ],
-function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, AggregationOverlay, OverlayRegistry, ElementUtil, OverlayUtil, DOMUtil) {
+function(Overlay, ControlObserver, ManagedObjectObserver, ElementDesignTimeMetadata, AggregationDesignTimeMetadata, AggregationOverlay, OverlayRegistry, ElementUtil, OverlayUtil, DOMUtil) {
 	"use strict";
 
 	/**
@@ -45,14 +46,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 			// ---- control specific ----
 			library : "sap.ui.dt",
 			properties : {
-				/**
-				 * Whether the overlay and it's descendants should be visible on a screen
-				 * We are overriding Control's property to prevent RenderManager from rendering of an invisible placeholder
-				 */
-				visible : {
-					type : "boolean",
-					defaultValue : true
-				},
 				/**
 				 * Whether the ElementOverlay is selected
 				 */
@@ -91,18 +84,19 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 			},
 			aggregations : {
 				/**
-				 * DesignTime metadata for the associated Element
-				 */
-				designTimeMetadata : {
-					type : "sap.ui.dt.DesignTimeMetadata",
-					multiple : false
-				},
-				/**
 				 * AggregationOverlays for the public aggregations of the associated Element
 				 */
 				aggregationOverlays : {
 					type : "sap.ui.dt.AggregationOverlay",
 					multiple : true
+				},
+				/**
+				 * [designTimeMetadata description]
+				 * @type {Object}
+				 */
+				designTimeMetadata : {
+					type : "sap.ui.dt.ElementDesignTimeMetadata",
+					multiple : false
 				}
 			},
 			events : {
@@ -179,8 +173,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 		oUIArea._onChildRerenderedEmpty = function() {
 			return true;
 		};
-
-		this._bVisible = null;
 	};
 
 	/**
@@ -198,15 +190,14 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 			this._unobserve(oElement);
 		} else {
 			// element can be destroyed before
-			OverlayRegistry.deregister(this._elementId);
+			OverlayRegistry.deregister(this._sElementId);
 		}
 
 		if (!OverlayRegistry.hasOverlays()) {
 			Overlay.removeOverlayContainer();
 		}
 
-		delete this._bVisible;
-		delete this._elementId;
+		delete this._sElementId;
 	};
 
 	/**
@@ -224,14 +215,12 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 
 		this.destroyAggregation("aggregationOverlays");
 		this._destroyDefaultDesignTimeMetadata();
-		delete this._elementId;
 
 		this.setAssociation("element", vElement);
 		this._createAggregationOverlays();
 
 		var oElement = this.getElementInstance();
-
-		this._elementId = oElement.getId();
+		this._sElementId = oElement.getId();
 		OverlayRegistry.register(oElement, this);
 		this._observe(oElement);
 
@@ -250,32 +239,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 	 */
 	ElementOverlay.prototype.getAssociatedDomRef = function() {
 		return ElementUtil.getDomRef(this.getElementInstance());
-	};
-
-	/**
-	 * Returns whether the ElementOverlay is visible
-	 * @return {boolean} if the ElementOverlay is visible
-	 * @public
-	 */
-	ElementOverlay.prototype.getVisible = function() {
-		if (this._bVisible === null) {
-			return this.getDesignTimeMetadata().isVisible();
-		} else {
-			return this.getProperty("visible");
-		}
-	};
-
-	/**
-	 * Sets whether the ElementOverlay is visible
-	 * @param {boolean} bVisible if the ElementOverlay is visible
-	 * @returns {sap.ui.dt.ElementOverlay} returns this
-	 * @public
-	 */
-	ElementOverlay.prototype.setVisible = function(bVisible) {
-		this.setProperty("visible", bVisible);
-		this._bVisible = bVisible;
-
-		return this;
 	};
 
 	/**
@@ -377,7 +340,7 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 	ElementOverlay.prototype.getDesignTimeMetadata = function() {
 		var oDesignTimeMetadata = this.getAggregation("designTimeMetadata");
 		if (!oDesignTimeMetadata && !this._oDefaultDesignTimeMetadata) {
-			this._oDefaultDesignTimeMetadata = new DesignTimeMetadata({
+			this._oDefaultDesignTimeMetadata = new ElementDesignTimeMetadata({
 				data : ElementUtil.getDesignTimeMetadata(this.getElementInstance())
 			});
 		}
@@ -402,12 +365,14 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 	 * @private
 	 */
 	ElementOverlay.prototype._createAggregationOverlay = function(sAggregationName, bInHiddenTree) {
-		var oDesignTimeMetadata = this.getDesignTimeMetadata();
+		var oData =  this.getDesignTimeMetadata().getAggregation(sAggregationName);
+
+		var oAggregationDesignTimeMetadata = new AggregationDesignTimeMetadata({data : oData});
 
 		var oAggregationOverlay = new AggregationOverlay({
 			aggregationName : sAggregationName,
 			element : this.getElementInstance(),
-			visible : oDesignTimeMetadata.isAggregationVisible(sAggregationName),
+			designTimeMetadata : oAggregationDesignTimeMetadata,
 			inHiddenTree : bInHiddenTree
 		});
 
@@ -627,15 +592,6 @@ function(Overlay, ControlObserver, ManagedObjectObserver, DesignTimeMetadata, Ag
 	 */
 	ElementOverlay.prototype.isEditable = function() {
 		return this.getEditable();
-	};
-
-	/**
-	 * Returns if the ElementOverlay is visible
-	 * @public
-	 * @return {boolean} if the ElementOverlay is visible
-	 */
-	ElementOverlay.prototype.isVisible = function() {
-		return this.getVisible();
 	};
 
 	return ElementOverlay;
