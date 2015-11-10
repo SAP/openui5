@@ -460,28 +460,52 @@
 					done();
 				}, 1000);
 			});
+			module("Last Opened Page", {
+        /* The use of sinon clock requires isolated environment, otherwise it will interfere the async tests */
+				beforeEach: function () {
+					this.clock = sinon.useFakeTimers();
+					this.oVSD = new sap.m.ViewSettingsDialog();
+					oVsdConfig.addFilterItems(this.oVSD);
+					this.oVSD.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
 
-			test("Last Opened Page is correct on Cancel on second opening of the filter detail view", function () {
-				this.oVSD.open();
-
-				this.oVSD._switchToPage(2);
-				jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
-				this.oVSD._switchToPage(3,this.oVSD.getFilterItems()[0]); // name details page
-
-				this.oVSD._dialog.getBeginButton().firePress();
-
-				this.oVSD.open();
-
-				jQuery.sap.delayedCall(0, this.oVSD._navContainer, "to", [this.oVSD.getId() + '-page2', "show"]);
-				this.oVSD._switchToPage(3,this.oVSD.getFilterItems()[0]); // name details page
-
-				this.oVSD._dialog.getEndButton().firePress();
-
-				equal(this.oVSD._navContainer.getCurrentPage(), this.oVSD._getPage1(), "NavContainer should be on the first page");
-
-				this.oVSD.destroy();
+				afterEach: function () {
+					this.clock.restore();
+					this.oVSD.destroy();
+					this.oVSD = null;
+				}
 			});
 
+			test("Last Opened Page is correct on Cancel on second opening of the filter detail view", function () {
+				function openAndNavigateToFilterDetailsPage(oVSD) {
+					oVSD.open("filter");
+					var oItem = oVSD._filterList.getItems()[0].data("item");
+					//this is a simulation of click on the single filter item, that provokes slide to the nav container's page2
+					oVSD._switchToPage(3, oItem);
+					oVSD._prevSelectedFilterItem = oItem;
+					oVSD._navContainer.to(oVSD.getId() + '-page2', "slide");
+				}
+
+				openAndNavigateToFilterDetailsPage(this.oVSD);
+				this.clock.tick(1000);
+
+				this.oVSD._filterDetailList.getItems()[0].data("item").setSelected(true);
+				this.oVSD._dialog.getBeginButton().firePress();
+				this.clock.tick(1000);
+
+				openAndNavigateToFilterDetailsPage(this.oVSD);
+				this.clock.tick(1000);
+
+				this.oVSD._filterDetailList.getItems()[1].data("item").setSelected(true);
+				this.oVSD._dialog.getEndButton().firePress();
+				this.clock.tick(1000);
+
+				this.oVSD.open("filter");
+				this.clock.tick(1000);
+
+				equal(this.oVSD._navContainer.getCurrentPage().getId(), this.oVSD._getPage1().getId(), "NavContainer should be on the first page");
+			});
 			module ("Events", {
 				setup : function () {
 					this.oVSD = new sap.m.ViewSettingsDialog();
@@ -717,7 +741,7 @@
 						groupList = that.oVSD._groupList,
 						ariaGroupListInvisibleText = that.oVSD._ariaGroupListInvisibleText,
 						groupOrderList = that.oVSD._groupOrderList,
-						ariaGroupOrderInvisibleText = that.oVSD._ariaGroupOrderInvisibleText, 
+						ariaGroupOrderInvisibleText = that.oVSD._ariaGroupOrderInvisibleText,
 						presetFilterList = that.oVSD._presetFilterList,
 						filterList = that.oVSD._filterList,
 						filterDetailList = that.oVSD._filterDetailList,
@@ -898,13 +922,13 @@
 				strictEqual(this.oVSD._groupContent, undefined, "Group content is not initialized");
 				strictEqual(this.oVSD._filterContent, undefined, "Filter content is not initialized");
 				strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
-			
-				// Aria sort list and sort order list labels and ariaLabelledBy 
+
+				// Aria sort list and sort order list labels and ariaLabelledBy
 				ok(jQuery.sap.domById(this.oVSD.getId() + "-sortOrderLabel"), "Sort order list aria label should be rendered");
 				ok(jQuery.sap.domById(this.oVSD.getId() + "-sortListLabel"), "Sort list aria label should be rendered");
 				strictEqual(this.oVSD._sortOrderList.getAriaLabelledBy().length, 1, "Sort order list should have aria ariaLabelledBy set");
 				strictEqual(this.oVSD._sortList.getAriaLabelledBy().length, 1, "Sort list should have aria ariaLabelledBy set");
-				
+
 				ok(!jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should not be rendered");
 		});
 
@@ -953,12 +977,12 @@
 			strictEqual(this.oVSD._filterContent, undefined, "Filter content is not initialized");
 			strictEqual(this.oVSD._page1.getSubHeader(), null, "Subheader with segmented button is not set on first page");
 
-			// Aria sort list and sort order list labels and ariaLabelledBy 
+			// Aria sort list and sort order list labels and ariaLabelledBy
 			ok(jQuery.sap.domById(this.oVSD.getId() + "-groupOrderLabel"), "Group order list aria label should be rendered");
 			ok(jQuery.sap.domById(this.oVSD.getId() + "-groupListLabel"), "Group list aria label should be rendered");
 			strictEqual(this.oVSD._groupOrderList.getAriaLabelledBy().length, 1, "Group order list should have aria ariaLabelledBy set");
 			strictEqual(this.oVSD._groupList.getAriaLabelledBy().length, 1, "Group list should have aria ariaLabelledBy set");
-			
+
 			ok(!jQuery.sap.domById(this.oVSD.getId() + "-resetbutton"), "Filter reset button should not be rendered");
 		});
 
@@ -1167,7 +1191,7 @@
 				var list 						= that.oVSD._getPage1().getContent()[1];
 				var listOfSortItems 			= list.getItems()[1];
 				var listOfSortDirectionItems	= that.oVSD._getPage1().getContent()[3];
-				
+
 				var vsdSortItem 				= that.oVSD.getSortItems()[1];
 				var vsdSortDirectionDesc 		= listOfSortDirectionItems.getItems()[1];
 				var spySortItem 				= sinon.spy(vsdSortItem, "setProperty");
