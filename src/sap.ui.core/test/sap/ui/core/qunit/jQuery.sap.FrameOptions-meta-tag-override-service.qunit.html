@@ -7,11 +7,12 @@
 
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>qUnit Page for jQuery.sap.FrameOptions (configuration via "meta" tag)</title>
+<title>qUnit Page for jQuery.sap.FrameOptions (configuration via "meta" tag, service-url overridden via UI5 configuration)</title>
 
 <meta name="sap.whitelistService" content="/url/to/service/via/meta/tag" />
 <script id="sap-ui-bootstrap" type="text/javascript"
 	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-whitelistService="/url/to/service/via/ui5/config"
 	data-sap-ui-theme="sap_bluecrystal">
 </script>
 
@@ -28,9 +29,9 @@ new Promise(function(resolve) {
 		}
 	});
 }).then(function(oConfiguration) {
-	QUnit.test("Configuration should respect <meta> tag to fill 'whitelistService' and 'frameOptions'", function(assert) {
-		assert.equal(oConfiguration["whitelistService"], "/url/to/service/via/meta/tag", "Whitelist Service should be set from <meta> tag.");
-		assert.equal(oConfiguration["frameOptions"], "trusted", "Frame Options should default to 'trusted'.");
+	QUnit.test("Configuration should not override 'whitelistService' and 'frameOptions' from <meta> tag", function(assert) {
+		assert.equal(oConfiguration["whitelistService"], "/url/to/service/via/ui5/config", "Whitelist Service should be set from UI5 config.");
+		assert.equal(oConfiguration["frameOptions"], "allow", "Frame Options should be set to 'allow' (default value from UI5 config).");
 	});
 });
 
