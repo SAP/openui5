@@ -1455,6 +1455,12 @@ function(jQuery, library, Control, IconPool) {
 
 			this._getSegmentedButton().setSelectedButton(sSelectedButtonId);
 			this._switchToPage(sPageId);
+
+			/* 1580045867 2015: make sure navContainer's current page is always page1,
+			because at this point we are always switching to sort,group,filter or custom tab.*/
+			if (this._getNavContainer().getCurrentPage() !== this._getPage1()) {
+				this._getNavContainer().to(this._getPage1().getId());
+			}
 		}
 	};
 
