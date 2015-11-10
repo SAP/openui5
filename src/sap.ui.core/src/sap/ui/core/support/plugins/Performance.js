@@ -580,7 +580,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		}
 
 		function _getBarTitle(bar) {
-			return (bar.info + '\nduration: ' + bar.duration.toFixed(2) + ' ms. \ntime: ' + bar.time.toFixed(2) + ' ms. \nstart: ' + bar.start.toFixed(2) + ' ms.\nend: ' + bar.end.toFixed(2) + ' ms.');
+			return jQuery.sap.escapeHTML(bar.info + '\nduration: ' + bar.duration.toFixed(2) + ' ms. \ntime: ' + bar.time.toFixed(2) + ' ms. \nstart: ' + bar.start.toFixed(2) + ' ms.\nend: ' + bar.end.toFixed(2) + ' ms.');
 		}
 
 		function _formatInfo(bar) {
@@ -590,21 +590,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			barInfo = barInfo.substring(barInfo.lastIndexOf('sap.m.'), barInfo.length);
 			barInfo = barInfo.replace('Rendering of ', '');
 
-			return barInfo;
+			return jQuery.sap.escapeHTML(barInfo);
 		}
 
 		function _getBarClassType(category) {
+			var className = 'unknownType';
+
 			if (category.indexOf("require") !== -1) {
-				return 'requireModuleType';
+				className = 'requireModuleType';
 			} else if (category.indexOf("xmlhttprequest") !== -1) {
-				return 'requestType';
+				className = 'requestType';
 			} else if (category.indexOf("javascript") !== -1) {
-				return 'afterRenderingType';
+				className = 'afterRenderingType';
 			} else if (category.indexOf("rendering") !== -1) {
-				return 'renderingType';
+				className = 'renderingType';
 			}
 
-			return 'unknownType';
+			//escaping is not needed
+			return jQuery.sap.escapeHTML(className);
 		}
 
 		function _getBarColor(time) {
@@ -809,12 +812,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		function _renderFilters() {
 			var categoriesHTML = '';
 			var allCategories = _getBarCategories(_rawdata);
+
 			allCategories.forEach(function (category) {
+				category = jQuery.sap.escapeHTML(category);
 				categoriesHTML += '<label title="' + category + '"><input class="' + _getBarClassType(category) + '" checked type="checkbox" name="' + category + '" />' + category + '</label>';
 			});
 
 			var categoriesDom = document.querySelector('#categories');
-
 			categoriesDom.innerHTML = categoriesHTML;
 		}
 
@@ -972,10 +976,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			_sliderVars.sizes.handleWidth = parseInt(handleComputedWidth, 10);
 			_sliderVars.drag.handleOffsetLeft = _sliderVars.nodes.handle.offsetLeft;
 
-			var filteredOptions = _getFilterOptions();
-			var title = 'Selected interval from ' + (filteredOptions.filterByTime.start / 1000).toFixed(0)
-				+ ' s to ' + (filteredOptions.filterByTime.end / 1000).toFixed(0) + ' s.';
-			title += '\nDouble click to expand the selection';
+			//var filteredOptions = _getFilterOptions();
+			//var title = 'Selected interval from ' + (filteredOptions.filterByTime.start / 1000).toFixed(0)
+			//	+ ' s to ' + (filteredOptions.filterByTime.end / 1000).toFixed(0) + ' s.';
+			var title = '(Double click to expand)';
 			_sliderVars.nodes.slider.setAttribute('title', title);
 
 			_updateSliderIntervals();
