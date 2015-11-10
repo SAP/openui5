@@ -3,6 +3,7 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>Test page for sap.m.Slider</title>
 		<style type="text/css">
 			div.sapMSliderWithoutPadding {
@@ -544,7 +545,7 @@
 				oSlider.destroy();
 			});
 
-			test("method: setValue() the value hast to be in a valid step", function() {
+			test("method: setValue() the value has to be in a valid step", function() {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -565,7 +566,7 @@
 				oSlider.destroy();
 			});
 
-			test("method: setValue() the value hast to be in a valid step", function() {
+			test("method: setValue() the value has to be in a valid step", function() {
 
 				// system under test
 				var oSlider = new sap.m.Slider({
@@ -666,6 +667,28 @@
 
 				// assert
 				strictEqual(oSlider.getValue(), 0.5555555555);
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			// BCP: 1580215885
+			test("it should not throw an exception when the id has a dot", function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					id: "my.Slider"
+				});
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oSlider.setValue(50);
+
+				// assert
+				strictEqual(oSlider.getValue(), 50);
 
 				// cleanup
 				oSlider.destroy();
@@ -906,6 +929,45 @@
 				// assert
 				strictEqual(oSlider.getStep(), 1);
 				strictEqual(oSlider.getValue(), 50);
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			/* ------------------------------ */
+			/* handle tooltip                 */
+			/* ------------------------------ */
+
+			test("it should render the handle tooltip (test case 1)", function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider();
+
+				// arrange
+				oPage.addContent(oSlider);
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				ok(oSlider.getDomRef("handle").hasAttribute("title"));
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			test("it should render the handle tooltip (test case 2)", function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider();
+
+				// arrange
+				oPage.addContent(oSlider);
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oSlider.setValue(5);
+
+				// assert
+				ok(oSlider.getDomRef("handle").hasAttribute("title"));
 
 				// cleanup
 				oSlider.destroy();
