@@ -178,23 +178,15 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 	};
 
 	/**
-	 * Friendly function to be used externally to get the calculated popover position
+	 * Friendly function to be used externally to get the calculated popover position, if the position is not
+	 * calculated yet, calling _calcPlacment() will force the popover to calculate it
 	 * @returns {Popover._oCalcedPos|*}
 	 */
 	OverflowToolbarAssociativePopover.prototype.getCurrentPosition = function() {
+		if (!this._oCalcedPos) {
+			this._calcPlacement();
+		}
 		return this._oCalcedPos;
-	};
-
-	/**
-	 * Force the firing of the "afterOpen" event prematurely, immediately after the popover position is recalculated
-	 * This is needed for the popover shadow classes to be set before rendering so there is no shadow blinking
-	 * @returns {*}
-	 * @private
-	 */
-	OverflowToolbarAssociativePopover.prototype._calcPlacement = function() {
-		var oRes = Popover.prototype._calcPlacement.call(this);
-		this.fireAfterOpen({});
-		return oRes;
 	};
 
 	function fnCapitalize(sName) {
