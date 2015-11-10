@@ -2,9 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global',
-               './Opa',
-               'sap/ui/base/Object'],
+sap.ui.define([
+		'jquery.sap.global',
+        './Opa',
+		'sap/ui/base/Object'
+	],
 	function(jQuery, Opa, Ui5Object) {
 		"use strict";
 

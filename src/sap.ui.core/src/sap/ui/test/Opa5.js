@@ -15,13 +15,14 @@ sap.ui.define([
 		'sap/ui/core/routing/HashChanger',
 		'./matchers/Matcher',
 		'./matchers/AggregationFilled',
-		'./matchers/PropertyStrictEquals'
+		'./matchers/PropertyStrictEquals',
+		'./MatcherPipeline'
 	],
-	function(jQuery, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Device, iFrameLauncher, componentLauncher, HashChanger, Matcher, AggregationFilled, PropertyStrictEquals) {
+	function($, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Device, iFrameLauncher, componentLauncher, HashChanger, Matcher, AggregationFilled, PropertyStrictEquals, MatcherPipeline) {
 		"use strict";
-
-		var $ = jQuery,
-			oPlugin = new OpaPlugin(),
+		
+		var oPlugin = new OpaPlugin(),
+			oMatcherPipeline = new MatcherPipeline(),
 			sFrameId = "OpaFrame",
 			bComponentLoaded = false;
 
@@ -266,9 +267,7 @@ sap.ui.define([
 
 			var fnOriginalCheck = oOptions.check,
 				vControl = null,
-				aMatchers,
 				fnOriginalSuccess = oOptions.success,
-				aControls,
 				vResult;
 
 			oOptions.check = function () {
@@ -318,44 +317,16 @@ sap.ui.define([
 					return false;
 				}
 
-				aMatchers = this._checkMatchers(oOptions.matchers);
+				if (vControl) {
+					vResult = oMatcherPipeline.process({
+						matchers: oOptions.matchers,
+						control: vControl
+					});
 
-				var iExpectedAmount;
-				if (aMatchers && aMatchers.length) {
-
-					if (!$.isArray(vControl)) {
-						iExpectedAmount = 1;
-						aControls = [vControl];
-					} else {
-						aControls = vControl;
+					// no control matched
+					if (!vResult) {
+						return false;
 					}
-
-					var aMatchedValues = [];
-					aControls.forEach(function (oControl) {
-						var vMatchResult =  this._doesValueMatch(aMatchers, oControl);
-						if (vMatchResult) {
-							if (vMatchResult === true) {
-								aMatchedValues.push(oControl);
-					} else {
-								// if matching result is a truthy value, then we pass this value as a result
-								aMatchedValues.push(vMatchResult);
-							}
-						}
-					}, this);
-
-					if (!aMatchedValues.length) {
-						jQuery.sap.log.debug("all results were filtered out by the matchers - skipping the check");
-							return false;
-						}
-
-					if (iExpectedAmount === 1) {
-						vResult = aMatchedValues[0];
-					} else {
-						vResult = aMatchedValues;
-					}
-
-				} else {
-					vResult = vControl;
 				}
 
 				if (fnOriginalCheck) {
@@ -515,60 +486,6 @@ sap.ui.define([
 		/*
 		 * Privates
 		 */
-
-		/**
-		 * Checks if a value matches all the matchers and returns result of matching
-		 * @private
-		 */
-		Opa5.prototype._doesValueMatch = function (aMatchers, vValue) {
-			var vOriginalValue = vValue;
-			var bIsMatching = true;
-			jQuery.each(aMatchers, function (i, oMatcher) {
-				var vMatch = oMatcher.isMatching(vValue);
-				if (vMatch) {
-					if (vMatch !== true) {
-						vValue = vMatch;
-					}
-				} else {
-					bIsMatching = false;
-					return false;
-				}
-			});
-			if (bIsMatching) {
-				return (vOriginalValue === vValue) ? true : vValue;
-			} else {
-				return false;
-			}
-		};
-
-		/**
-		 * Validates the matchers and makes sure to return them in an array
-		 * @private
-		 */
-		Opa5.prototype._checkMatchers = function (vMatchers) {
-			var aMatchers = [];
-
-			if ($.isArray(vMatchers)) {
-				aMatchers = vMatchers;
-			} else if (vMatchers) {
-				aMatchers = [vMatchers];
-			}
-
-			aMatchers = aMatchers.map(function(vMatcher) {
-				if (vMatcher instanceof Opa5.matchers.Matcher) {
-					return vMatcher;
-				} else if (typeof vMatcher == "function") {
-					return {isMatching : vMatcher};
-				}
-
-				jQuery.sap.log.error("Matchers where defined, but they where neither an array nor a single matcher: " + vMatchers);
-				return undefined;
-			}).filter(function(oMatcher) {
-				return !!oMatcher;
-			});
-
-			return aMatchers;
-		};
 
 		/**
 		 * logs and executes the check function
