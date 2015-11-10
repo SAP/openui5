@@ -1265,7 +1265,7 @@ sap.ui.define([
 	 * creates a new control for the condition value1 and value2 field. Control can be an Input or DatePicker
 	 * 
 	 * @private
-	 * @param {object} oCurrentKeyField object of the current selected KeyField which contains type of the column ("string", "date" or "numeric") and
+	 * @param {object} oCurrentKeyField object of the current selected KeyField which contains type of the column ("string", "date", "time", "numeric" or "boolean") and
 	 *        a maxLength information
 	 * @param {object} oFieldInfo
 	 * @param {grid} oConditionGrid which should contain the new created field
@@ -1339,6 +1339,10 @@ sap.ui.define([
 				oConditionGrid.oFormatter = DateFormat.getDateInstance();
 				oControl = new sap.m.DatePicker(params);
 				break;
+			case "time":
+				oConditionGrid.oFormatter = DateFormat.getTimeInstance();
+				oControl = new sap.m.TimePicker(params);
+				break;
 			default:
 				oConditionGrid.oFormatter = null;
 				oControl = new sap.m.Input(params);
@@ -1373,12 +1377,18 @@ sap.ui.define([
 			// ignore the "String" Type when accessing the resource text
 			sType = "";
 		}
+		if (sType === "_TIME_") {
+			sType = "_DATE_";
+		}
+		if (sType === "_BOOLEAN_") {
+			sType = "";
+		}
 
 		oCtrl.destroyItems();
 		for ( var iOperation in aOperations) {
 			var sText = this._oRb.getText("CONDITIONPANEL_OPTION" + sType + aOperations[iOperation]);
 			if (jQuery.sap.startsWith(sText, "CONDITIONPANEL_OPTION")) {
-				// when for the speified type the resource does not exist use the normal string resource text
+				// when for the specified type the resource does not exist use the normal string resource text
 				sText = this._oRb.getText("CONDITIONPANEL_OPTION" + aOperations[iOperation]);
 			}
 			oCtrl.addItem(new sap.ui.core.ListItem({

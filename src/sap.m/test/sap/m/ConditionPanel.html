@@ -82,7 +82,8 @@
 			var oCondition9= { key: "i9", text: "Enum: =enum2 Val2", exclude: false, operation: sap.m.P13nConditionOperation.EQ, keyField: "enum2", value1: "enum2 Val2", value2: ""};
 			var oCondition10= { key: "i10", text: "text: =foo", exclude: false, operation: sap.m.P13nConditionOperation.EQ, keyField: "text", value1: "foo", value2: ""};
 			var oCondition11= { key: "i11", text: "default: =foo", exclude: false, operation: sap.m.P13nConditionOperation.EQ, keyField: "default", value1: "foo", value2: ""};
-			aConditions= [oCondition1, oCondition2, oCondition3, oCondition4, oCondition5, oCondition6, oCondition7, oCondition8, oCondition9, oCondition10, oCondition11];    
+			var oCondition12= { key: "i12", text: "time: =", exclude: false, operation: sap.m.P13nConditionOperation.BT, keyField: "time", value1: new Date("October 13, 2014 1:13:00"), value2: new Date()};
+			aConditions= [oCondition1, oCondition2, oCondition3, oCondition4, oCondition5, oCondition6, oCondition7, oCondition8, oCondition9, oCondition10, oCondition11, oCondition12];    
 	
 			oConditionPanel = new sap.m.P13nConditionPanel({
 	 			maxConditions: -1,
@@ -100,7 +101,8 @@
             							  {key: "boolean1", text: "Boolean1", type: "boolean", operations: [sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.Empty], values: ["", "Off", "On"] },
             							  {key: "boolean2", text: "Boolean2", type: "boolean", operations: [sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.Empty], values: ["", ".", "x"] },
             							  {key: "enum", text: "Enum", type: "enum", operations: [sap.m.P13nConditionOperation.EQ]}, 
-            							  {key: "enum2", text: "Enum2", type: "enum", operations: [sap.m.P13nConditionOperation.EQ], values: ["enum2 Val1", "enum2 Val2","enum2 Val3", "enum2 Val4"]}
+            							  {key: "enum2", text: "Enum2", type: "enum", operations: [sap.m.P13nConditionOperation.EQ], values: ["enum2 Val1", "enum2 Val2","enum2 Val3", "enum2 Val4"]},
+            							  {key: "time", text: "Time", type: "time"}
 			                              ]);
 			
  			oConditionPanel.setOperations([ sap.m.P13nConditionOperation.EQ, 
@@ -117,6 +119,9 @@
  			oConditionPanel.setOperations([sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT,
  			    									sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE,
  			    									sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE], "date");
+ 			oConditionPanel.setOperations([sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT,
+	    									sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE,
+	    									sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE], "time");
  			oConditionPanel.setOperations([sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT,
  			    									sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE,
  			    									sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE], "numeric");
