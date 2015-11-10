@@ -19,8 +19,13 @@ sap.ui.define(['jquery.sap.global',
 				'sap/ui/core/routing/HashChanger',
 				'sap/ui/base/Object',
 				'sap/ui/core/mvc/View',
-				'./matchers/Ancestor'],
-	function ($, HashChanger, UI5Object, View, Ancestor) {
+				'./matchers/Ancestor',
+				'./matchers/Visible',
+				'./pipelines/MatcherPipeline'],
+	function ($, HashChanger, UI5Object, View, Ancestor, Visible, MatcherPipeline) {
+		var oMatcherPipeline = new MatcherPipeline();
+		var oVisibleMatcher = new Visible();
+
 		/**
 		 * @class A Plugin to search UI5 controls.
 		 *
@@ -193,13 +198,29 @@ sap.ui.define(['jquery.sap.global',
 					return vResult;
 				}
 
-				if (vResult.$) {
-					return vResult.$().is(":visible") ? vResult : null;
+				var vPipelineResult = oMatcherPipeline.process({
+					control: vResult,
+					matchers: [
+						oVisibleMatcher
+					]
+				});
+
+				// all controls are filtered out
+				if (!vPipelineResult) {
+					// backwards compatible - return empty array in this case
+					if ($.isArray(vResult)) {
+						return [];
+					}
+					// Single control - return null
+					if (vResult) {
+						return null;
+					}
+					// anything else
+					return vResult;
 				}
 
-				return vResult.filter(function (oControl) {
-					return oControl.$().is(":visible");
-				});
+				// Return the matched controls
+				return vPipelineResult;
 			},
 
 			/**

@@ -5,10 +5,9 @@
 sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/base/Object',
-		'sap/ui/test/matchers/Matcher',
 		'./PipelineFactory'
 	],
-	function($, UI5Object, Matcher, PipelineFactory) {
+	function($, UI5Object, PipelineFactory) {
 		"use strict";
 		var oPipelineFactory = new PipelineFactory({
 			name: "Matcher",
