@@ -1,0 +1,136 @@
+/* ================================================= */
+/* CSS for control sap.m/PlanningCalendar.control    */
+/* ================================================= */
+
+.sapMPlanCal{
+
+}
+
+.sapMPlanCal > .sapMList > .sapMListInfoTBar.sapMTB-Transparent-CTX.sapMTB{
+	padding: 0;
+}
+
+.sapMPlanCal > .sapMList > .sapMListInfoTBar.sapMTB-Transparent-CTX.sapMTB >:first-child{
+	margin-left: 0;
+}
+
+.sapMPlanCalHead{
+	width: 20%;
+	height: 6.25rem;
+}
+
+.sapMPlanCalHead > .sapMTB.sapMIBar{
+	padding-left: 0.875rem;
+}
+
+.sapUiSizeCompact .sapMPlanCalHead{
+	height: 4.25rem;
+}
+
+.sapMPlanCal > .sapMList .sapMPlanCalRowHead .sapMLIB,
+.sapMPlanCal > .sapMList .sapMPlanCalAppRow .sapUiCalendarRow{
+	background-color: transparent;
+}
+
+.sapMPlanCalHead > .sapMTB{
+	border-bottom: none;
+}
+
+.sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapMBarChild.sapUiCalInt {
+	width: 80%;
+	padding: 0;
+	margin-left: 0;
+	margin-right: 0;
+}
+
+.sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapMBarChild.sapMPlanCalHead {
+	margin-right: 0;
+}
+
+.sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapUiCalInt > .sapUiCalHead > .sapUiCalHeadPrev{
+	left: 0;
+}
+
+.sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapUiCalInt > .sapUiCalHead > .sapUiCalHeadNext{
+	right: 0;
+}
+
+.sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapUiCalInt > .sapUiCalContent > .sapUiCalRow{
+	margin-left: 0;
+	margin-right: 0;
+	margin-bottom: 0;
+}
+
+.sapMPlanCal > .sapMList .sapMListTblCell.sapMPlanCalRowHead,
+.sapMPlanCal > .sapMList .sapMListTblCell.sapMPlanCalAppRow{
+	padding: 0;
+}
+
+.sapMPlanCal > .sapMList .sapMListTblCell.sapMPlanCalRowHead > .sapMLIB{
+	display: block;
+	border: none;
+}
+
+.sapMPlanCal > .sapMList .sapUiCalendarRow{
+	border: none;
+}
+
+/* Responsiveness */
+.sapMPlanCal > .sapMList > table > tbody > tr > td > .sapMListTblSubCnt,
+.sapMPlanCal > .sapMList > table > tbody > .sapMListTblSubRow > td{
+	padding: 0;
+}
+
+.sapMPlanCal > .sapMList > table > tbody > tr > td > .sapMListTblSubCnt > .sapMListTblSubCntRow >.sapMListTblSubCntVal{
+	margin: 0;
+}
+
+.sapMPlanCal.sapMPlanCalNoHead > .sapMList > .sapMListInfoTBar,
+.sapUiMedia-Std-Phone .sapMPlanCal > .sapMList > .sapMListInfoTBar{
+	display: block;
+}
+
+.sapMPlanCal.sapMPlanCalNoHead > .sapMList > .sapMListInfoTBar > .sapMPlanCalHead,
+.sapMPlanCal.sapMPlanCalNoHead > .sapMList > .sapMListInfoTBar > .sapUiCalInt,
+.sapUiMedia-Std-Phone .sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapMPlanCalHead,
+.sapUiMedia-Std-Phone .sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapUiCalInt{
+	width: 100%;
+}
+
+.sapMPlanCal.sapMPlanCalNoHead > .sapMList > .sapMListInfoTBar > .sapMPlanCalHead,
+.sapUiMedia-Std-Phone .sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapMPlanCalHead{
+	height: auto;
+}
+
+.sapMPlanCal.sapMPlanCalNoHead.sapMPlanCalMultiSel > .sapMList > .sapMListInfoTBar > .sapUiCalInt{
+	width: ~'calc(100% - 3rem)';
+}
+
+.sapMPlanCal.sapMPlanCalNoHead.sapMPlanCalMultiSel > .sapMList > .sapMListInfoTBar > .sapMCb{
+	width: 3rem;
+	margin: 0;
+	vertical-align: bottom;
+}
+
+.sapMPlanCal.sapMPlanCalNoHead.sapMPlanCalMultiSel > .sapMList > .sapMListInfoTBar > .sapMCb > .sapMCbLabel{
+	visibility: hidden;
+}
+
+.sapUiSizeCompact .sapMPlanCal.sapMPlanCalNoHead.sapMPlanCalMultiSel > .sapMList > .sapMListInfoTBar > .sapMCb{
+	width: 2.25rem;
+	margin-left: 0.25rem;
+}
+
+.sapUiMedia-Std-Phone .sapMPlanCal.sapMPlanCalMultiSel > .sapMList > .sapMListInfoTBar > .sapMCb{
+	width: auto;
+	margin-left: 0;
+}
+
+.sapUiMedia-Std-Phone .sapMPlanCal.sapMPlanCalMultiSel > .sapMList > .sapMListInfoTBar > .sapMCb > .sapMCbLabel{
+	visibility: visible;
+}
+
+.sapUiMedia-Std-Phone .sapMPlanCal.sapMPlanCalMultiSel > .sapMList > .sapMListInfoTBar > .sapUiCalInt{
+	width: 100%;
+	display: block;
+}

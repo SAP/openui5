@@ -6,31 +6,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	"use strict";
 
 	/**
-	 * TeamCalendar renderer.
+	 * PlanningCalendar renderer.
 	 * @namespace
 	 */
-	var TeamCalendarRenderer = {};
+	var PlanningCalendarRenderer = {};
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.fw.RenderManager}.
 	 *
 	 * @param {sap.ui.fw.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-	 * @param {sap.ui.commons.Slider} oTC An object representation of the <code>TeamCalendar</code> control that should be rendered.
+	 * @param {sap.ui.commons.Slider} oTC An object representation of the <code>PlanningCalendar</code> control that should be rendered.
 	 */
-	TeamCalendarRenderer.render = function(oRm, oTC){
+	PlanningCalendarRenderer.render = function(oRm, oTC){
 
 		var sTooltip = oTC.getTooltip_AsString();
 
 		oRm.write("<div");
 		oRm.writeControlData(oTC);
-		oRm.addClass("sapMTeamCal");
+		oRm.addClass("sapMPlanCal");
 
 		if (!oTC.getSingleSelection()) {
-			oRm.addClass("sapMTeamCalMultiSel");
+			oRm.addClass("sapMPlanCalMultiSel");
 		}
 
 		if (!oTC.getShowRowHeaders()) {
-			oRm.addClass("sapMTeamCalNoHead");
+			oRm.addClass("sapMPlanCalNoHead");
 		}
 
 //		// This makes the row focusable
@@ -63,6 +63,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		oRm.write("</div>");
 	};
 
-	return TeamCalendarRenderer;
+	return PlanningCalendarRenderer;
 
 }, /* bExport= */ true);
