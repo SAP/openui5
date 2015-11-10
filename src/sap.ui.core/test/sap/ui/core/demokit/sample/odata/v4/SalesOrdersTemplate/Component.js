@@ -36,7 +36,7 @@ sap.ui.define([
 				TestUtils.setupODataV4Server(sinon.sandbox.create(), {
 					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/$metadata"
 						: {source : "metadata.xml"},
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/SalesOrderList?$skip=0&$top=50"
+					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/SalesOrderList"
 						: {source : "SalesOrderList.json"}
 				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrdersTemplate/data");
 			}

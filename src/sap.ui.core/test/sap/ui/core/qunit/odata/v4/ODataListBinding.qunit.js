@@ -7,9 +7,11 @@ sap.ui.require([
 	"sap/ui/model/Context",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/v4/lib/_Cache",
+	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel"
-], function (ManagedObject, ChangeReason, Context, Model, Cache, ODataListBinding, ODataModel) {
+], function (ManagedObject, ChangeReason, Context, Model, Cache, Requestor, ODataListBinding,
+		ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -23,31 +25,25 @@ sap.ui.require([
 	});
 
 	/**
-	 * Creates a promise as mock for Cache.read which is fulfilled
-	 * asynchronously with the given vResult. vResult either holds a number determining the length
-	 * of the array with which the promise is resolved or an Error object with which it is rejected.
+	 * Creates a promise as mock for Cache.read which is fulfilled asynchronously with a result of
+	 * the given length.
 	 * iStart determines the start index for the records contained in the result.
 	 *
-	 * @param {number|Error} vResult
-	 *   array length if the promise is to be resolved or Error object if it is to be rejected
+	 * @param {number} iLength
+	 *   array length
 	 * @param {number} [iStart=0]
 	 *   start index
 	 * @return {Promise}
 	 *   the promise which is fulfilled as specified
 	 */
-	function createResult(vResult, iStart) {
+	function createResult(iLength, iStart) {
 		return new Promise(function (resolve, reject) {
 			var oData,
 				i;
 
-			if (vResult instanceof Error) {
-				reject(vResult);
-				return;
-			}
-
 			iStart = iStart || 0;
 			oData = {value : []};
-			for (i = 0; i < vResult; i += 1) {
+			for (i = 0; i < iLength; i += 1) {
 				oData.value[i] = {
 					Name : "Name " + (iStart + i),
 					LOCATION : {
@@ -63,6 +59,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataListBinding", {
 		beforeEach : function () {
+			sap.ui.getCore().getConfiguration().setLanguage("ab-CD");
 			this.oSandbox = sinon.sandbox.create();
 
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
@@ -77,11 +74,17 @@ sap.ui.require([
 		afterEach : function () {
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
 			this.oSandbox.verifyAndRestore();
-		}
+			sap.ui.getCore().getConfiguration().setLanguage(this.sDefaultLanguage);
+		},
+
+		sDefaultLanguage : sap.ui.getCore().getConfiguration().getLanguage()
 	});
 
 	//*********************************************************************************************
 	QUnit.test("getContexts creates cache once", function (assert) {
+		this.mock(Requestor).expects("create").withExactArgs("/service/", {
+			"Accept-Language" : "ab-CD"
+		});
 		this.oCacheMock.expects("read").returns(createResult(0));
 
 		this.oModel.bindList("/EMPLOYEES").getContexts();
@@ -437,7 +440,7 @@ sap.ui.require([
 			.returns(createResult(10));
 		this.oCacheMock.expects("read")
 			.withExactArgs(0, 1)
-			.returns(createResult(oError));
+			.returns(Promise.reject(oError));
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to read value with index 0 for /service/EMPLOYEES and "
 				+ "path foo/bar",

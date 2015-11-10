@@ -24,34 +24,74 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("basics", function (assert) {
-		var sServiceUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/",
-			oRequestor;
-
-		// code under test
-		oRequestor = new Requestor(sServiceUrl);
-
-		assert.ok(oRequestor instanceof Requestor);
+	QUnit.test("Requestor is an object, not a constructor function", function (assert) {
+		assert.strictEqual(typeof Requestor, "object");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("request", function (assert) {
-		var oDeferred = new jQuery.Deferred(),
-			oPromise,
-			oRequestor = new Requestor("/sap/opu/local_v4/IWBEP/TEA_BUSI/"),
-			oResult = {};
+	[{ // predefined headers can be overridden, but are not modified for later
+		defaultHeaders : {"Accept" : "application/json;odata.metadata=full"},
+		requestHeaders : {"OData-MaxVersion" : "5.0", "OData-Version" : "4.1"},
+		result : {
+			"Accept" : "application/json;odata.metadata=full",
+			"OData-MaxVersion" : "5.0",
+			"OData-Version" : "4.1"
+		}
+	}, {
+		defaultHeaders : undefined,
+		requestHeaders : undefined,
+		result : {}
+	}, {
+		defaultHeaders : {"Accept-Language" : "ab-CD"},
+		requestHeaders : undefined,
+		result : {"Accept-Language" : "ab-CD"}
+	}, {
+		defaultHeaders : undefined,
+		requestHeaders : {"Accept-Language" : "ab-CD"},
+		result : {"Accept-Language" : "ab-CD"}
+	}, {
+		defaultHeaders : {"Accept-Language" : "ab-CD"},
+		requestHeaders : {"foo" : "bar"},
+		result : {"Accept-Language" : "ab-CD", "foo" : "bar"}
+	}].forEach(function (mHeaders) {
+		function clone(o) {
+			return o && JSON.parse(JSON.stringify(o));
+		}
 
-		oDeferred.resolve(oResult);
-		this.oSandbox.mock(jQuery).expects("ajax")
-			.withExactArgs("/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees", {method : "GET"})
-			.returns(oDeferred);
+		QUnit.test("request, headers: " + JSON.stringify(mHeaders), function (assert) {
+			var mDefaultHeaders = clone(mHeaders.defaultHeaders),
+				oDeferred = new jQuery.Deferred(),
+				oPromise,
+				mRequestHeaders = clone(mHeaders.requestHeaders),
+				oRequestor = Requestor.create("/sap/opu/local_v4/IWBEP/TEA_BUSI/",
+					mDefaultHeaders),
+				oResult = {},
+				// add predefined request headers for OData v4
+				mResultHeaders = jQuery.extend({}, {
+					"Accept" : "application/json;odata.metadata=minimal",
+					"OData-MaxVersion" : "4.0",
+					"OData-Version" : "4.0"
+				}, mHeaders.result);
 
-		// code under test
-		oPromise = oRequestor.request("GET", "Employees");
+			oDeferred.resolve(oResult);
+			this.oSandbox.mock(jQuery).expects("ajax")
+				.withExactArgs("/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees", {
+					headers : mResultHeaders,
+					method : "GET"
+				}).returns(oDeferred);
 
-		assert.ok(oPromise instanceof Promise);
-		return oPromise.then(function(result){
-				assert.strictEqual(result, oResult);
-			});
+			// code under test
+			oPromise = oRequestor.request("GET", "Employees", mRequestHeaders);
+
+			assert.deepEqual(mDefaultHeaders, mHeaders.defaultHeaders,
+				"caller's map is unchanged");
+			assert.deepEqual(mRequestHeaders, mHeaders.requestHeaders,
+				"caller's map is unchanged");
+			assert.ok(oPromise instanceof Promise);
+			return oPromise.then(function(result){
+					assert.strictEqual(result, oResult);
+				});
+		});
 	});
+	//TODO check that service URL ends with a slash!
 });

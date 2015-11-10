@@ -36,9 +36,9 @@ sap.ui.define([
 				TestUtils.setupODataV4Server(sinon.sandbox.create(), {
 					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/$metadata"
 						: {source : "metadata.xml"},
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/BusinessPartnerList?$skip=0&$top=50"
+					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/BusinessPartnerList"
 						: {source : "BusinessPartnerList.json"},
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/SalesOrderList?$expand=SO_2_SOITEM(%24expand%3DSOITEM_2_PRODUCT(%24expand%3DPRODUCT_2_BP(%24expand%3DBP_2_CONTACT)))&$skip=0&$top=50"
+					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/SalesOrderList?$expand=SO_2_SOITEM(%24expand%3DSOITEM_2_PRODUCT(%24expand%3DPRODUCT_2_BP(%24expand%3DBP_2_CONTACT)))"
 						: {source : "SalesOrderList.json"}
 				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrders/data");
 			}

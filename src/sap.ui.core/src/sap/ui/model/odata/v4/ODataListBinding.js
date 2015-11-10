@@ -79,6 +79,7 @@ sap.ui.define([
 		var oContext = this.getContext(),
 			oModel = this.getModel(),
 			sRelativePath,
+			oRequestor,
 			sResolvedPath = oModel.resolve(this.getPath(), oContext),
 			that = this;
 
@@ -166,7 +167,10 @@ sap.ui.define([
 					if (this.sExpand) {
 						sRelativePath += "?$expand=" + encodeURIComponent(this.sExpand);
 					}
-					this.oCache = new Cache(new Requestor(oModel.sServiceUrl), sRelativePath);
+					oRequestor = Requestor.create(oModel.sServiceUrl, {
+						"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguage()
+					});
+					this.oCache = new Cache(oRequestor, sRelativePath);
 				}
 				this.oCache.read(iStart, iLength)
 					.then(createContexts.bind(undefined, getBasePath), function (oError) {

@@ -36,7 +36,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("read(1, 1)", function (assert) {
-		var oRequestor = new Requestor("/sap/opu/local_v4/IWBEP/TEA_BUSI/"),
+		var oRequestor = Requestor.create("/sap/opu/local_v4/IWBEP/TEA_BUSI/"),
 			sRelativePath = "Employees",
 			oCache = new Cache(oRequestor, sRelativePath),
 			oPromise,
