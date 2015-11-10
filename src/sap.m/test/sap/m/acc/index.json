@@ -183,8 +183,8 @@
 		},
 		{
 			"control": "sap.m.Popover",
-			"url": "../Popover.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"url": "Popover.html",
+			"appComponent": "CA-UI5-CTR-SOF-RIL"
 		},
 		{
 			"control": "sap.m.ProgressIndicator",

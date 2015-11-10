@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<title>sap.m.Popover - Accessibility</title>
+
+	<script src="../../../../resources/sap-ui-core.js"
+	        type="text/javascript"
+	        id="sap-ui-bootstrap"
+	        data-sap-ui-libs="sap.m"
+	        data-sap-ui-theme="sap_bluecrystal">
+	</script>
+
+	<script>
+		var oApp = new sap.m.App("myApp", {
+			initialPage: "page"
+		});
+
+		var oPopover = new sap.m.Popover({
+			title: "Grocery List",
+			content: [
+					new sap.m.List({
+						items: [
+								new sap.m.StandardListItem({ title: "1 kg Tomatos" }),
+								new sap.m.StandardListItem({ title: "1 kg Potatos" }),
+								new sap.m.StandardListItem({ title: "Salt" })
+						]
+					})
+			]
+		});
+
+		var oButton = new sap.m.Button({
+			text: "Open Grocery List in Popover ",
+			press: function () {
+				oPopover.openBy(this);
+			}
+		});
+
+		var oPage = new sap.m.Page("page", {
+			title: "Popover Control",
+			content: [
+				oButton
+			]
+		});
+
+		oApp.addPage(oPage).placeAt("content");
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+	<div id="content"></div>
+</body>
+</html>
