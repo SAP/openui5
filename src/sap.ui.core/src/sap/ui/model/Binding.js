@@ -256,9 +256,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @private
 	 */
 	Binding.prototype.checkUpdate = function(bForceUpdate) {
-		if (!this.bSuspended) {
-			this._fireChange({reason: ChangeReason.Change});
+		if (this.bSuspended && !bForceUpdate ) {
+			return;
 		}
+		this._fireChange({reason: ChangeReason.Change});
 	};
 
 	/**
@@ -305,6 +306,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @public
 	 */
 	Binding.prototype.refresh = function(bForceUpdate) {
+		if (this.bSuspended && !bForceUpdate) {
+			return;
+		}
 		this.checkUpdate(bForceUpdate);
 	};
 
@@ -430,7 +434,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	};
 
 	/**
-	 * Suspends the binding update. No change Events will be fired
+	 * Suspends the binding update. No change events will be fired.
+	 * 
+	 * A refresh call with bForceUpdate set to true will also update the binding and fire a change in suspended mode.
+	 * Special operations on bindings, which require updates to work properly (as paging or filtering in list bindings) 
+	 * will also update and cause a change event although the binding is suspended.
 	 */
 	Binding.prototype.suspend = function() {
 		this.bSuspended = true;
@@ -438,6 +446,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 
 	/**
 	 * Resumes the binding update. Change events will be fired again.
+	 * 
+	 * When the binding is resumed, a change event will be fired immediately, if the data has changed while the binding
+	 * was suspended. For serverside models, a request to the server will be triggered, if a refresh was requested
+	 * while the binding was suspended.
 	 */
 	Binding.prototype.resume = function() {
 		this.bSuspended = false;

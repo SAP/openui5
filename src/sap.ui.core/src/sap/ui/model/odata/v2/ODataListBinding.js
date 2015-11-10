@@ -50,6 +50,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			this.bNeedsUpdate = false;
 			this.bDataAvailable = false;
 			this.bIgnoreSuspend = false;
+			this.bPendingRefresh = true;
 			this.sGroupId = undefined;
 			this.sRefreshGroupId = undefined;
 			this.bLengthRequested = false;
@@ -479,7 +480,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 						
 						// If request is originating from this binding, change must be fired afterwards
 						that.bNeedsUpdate = true;
-						that.bIgnoreSuspend = true;
 						
 						// return since we can't do anything here anymore,
 						// we have to trigger the loading again, this time with application filters
@@ -535,7 +535,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 
 			// If request is originating from this binding, change must be fired afterwards
 			that.bNeedsUpdate = true;
-
 			that.bIgnoreSuspend = true;
 
 			//register datareceived call as  callAfterUpdate
@@ -724,6 +723,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	ODataListBinding.prototype._refresh = function(bForceUpdate, mChangedEntities, mEntityTypes) {
 		var bChangeDetected = false;
 
+		this.bPendingRefresh = false;
+
 		if (!bForceUpdate) {
 			if (mEntityTypes){
 				var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
@@ -747,6 +748,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			}
 		}
 		if (bForceUpdate || bChangeDetected) {
+			if (this.bSuspended && !this.bIgnoreSuspend && !bForceUpdate) {
+				this.bPendingRefresh = true;
+				return;
+			}
 			this.abortPendingRequest();
 			this.resetData();
 			this._fireRefresh({reason: ChangeReason.Refresh});
@@ -804,9 +809,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 				oRef,
 				bRefChanged;
 
-		if (this.bSuspended && !this.bIgnoreSuspend) {
+		if (this.bSuspended && !this.bIgnoreSuspend && !bForceUpdate) {
 			return false;
 		}
+		this.bIgnoreSuspend = false;
 
 		if (!bForceUpdate && !this.bNeedsUpdate) {
 
@@ -863,7 +869,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 			this._fireChange({reason: bChangeReason});
 		}
 		this.sChangeReason = undefined;
-		this.bIgnoreSuspend = false;
 	};
 
 	/**
@@ -953,6 +958,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	ODataListBinding.prototype.sort = function(aSorters, bReturnSuccess) {
 
 		var bSuccess = false;
+		
+		this.bIgnoreSuspend = true;
 
 		if (aSorters instanceof Sorter) {
 			aSorters = [aSorters];
@@ -1026,6 +1033,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	ODataListBinding.prototype.filter = function(aFilters, sFilterType, bReturnSuccess) {
 
 		var bSuccess = false;
+
+		this.bIgnoreSuspend = true;
 
 		if (!aFilters) {
 			aFilters = [];
@@ -1139,6 +1148,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	ODataListBinding.prototype.resume = function() {
 		this.bIgnoreSuspend = false;
 		ListBinding.prototype.resume.apply(this, arguments);
+		if (this.bPendingRefresh) {
+			this._refresh();
+		}
 	};
 
 	return ODataListBinding;
