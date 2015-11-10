@@ -1460,9 +1460,6 @@ sap.ui.define([
 			return bChangeResult;
 		};
 
-		//TODO we have to listen on resize of the parent or the dialog  resize and not the device!
-		sap.ui.Device.resize.attachHandler(this._fnHandleResize, this);
-
 		// Resource bundle, for texts
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
@@ -1634,6 +1631,7 @@ sap.ui.define([
 			availableChartTypes: []
 		};
 
+		this._sContainerResizeListener = sap.ui.core.ResizeHandler.register(this._oScrollContainer, this._fnHandleResize);
 	};
 
 	/**
@@ -1784,6 +1782,9 @@ sap.ui.define([
 	 */
 	P13nColumnsPanel.prototype.exit = function() {
 
+		sap.ui.core.ResizeHandler.deregister(this._sContainerResizeListener);
+		this._sContainerResizeListener = null;
+		
 		sap.ui.Device.resize.detachHandler(this._fnHandleResize);
 
 		this._oMoveToTopButton.destroy();
