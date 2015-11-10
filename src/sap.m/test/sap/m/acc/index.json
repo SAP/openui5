@@ -122,6 +122,11 @@
 			"appComponent": "CA-UI5-CTR-SOF-RIL"
 		},
 		{
+			"control": "sap.m.MessagePopover",
+			"url": "MessagePopover.html",
+			"appComponent": "CA-UI5-CTR-SOF-RIL"
+		},
+		{
 			"control": "sap.m.MessageToast",
 			"url": "../MessageToast.html",
 			"appComponent": "CA-UI5-CTR-SOF"
