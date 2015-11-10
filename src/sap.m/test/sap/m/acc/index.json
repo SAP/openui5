@@ -198,8 +198,8 @@
 		},
 		{
 			"control": "sap.m.RadioButton",
-			"url": "../RadioButton.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"url": "RadioButton.html",
+			"appComponent": "CA-UI5-CTR-SOF-RIL"
 		},
 		{
 			"control": "sap.m.RadioButtonGroup",
