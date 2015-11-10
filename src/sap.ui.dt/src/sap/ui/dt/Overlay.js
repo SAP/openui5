@@ -140,7 +140,7 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	Overlay.prototype.exit = function() {
 		delete this._oDomRef;
 		delete this._bVisible;
-
+		window.clearTimeout(this._iCloneDomTimeout);
 		this.fireDestroyed();
 	};
 
@@ -304,6 +304,43 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	/**
 	 * @private
 	 */
+	Overlay.prototype._cloneDomRef = function(oDomRef) {
+		var $this = this.$();
+
+		var $clonedDom = $this.find(">.sapUiDtClonedDom");
+		var vCloneDomRef = this.getDesignTimeMetadata().getCloneDomRef();
+		if (vCloneDomRef) {
+			if (oDomRef) {
+				var fnCloneDom = function() {
+					if (vCloneDomRef !== true) {
+						oDomRef = DOMUtil.getDomRefForCSSSelector(oDomRef, vCloneDomRef);
+					}
+
+					if (!$clonedDom.length) {
+						$clonedDom = jQuery("<div class='sapUiDtClonedDom'></div>").prependTo($this);
+					} else {
+						$clonedDom.empty();
+					}
+					DOMUtil.cloneDOMAndStyles(oDomRef, $clonedDom);
+				};
+
+				if (!this._bClonedDom) {
+					this._bClonedDom = true;
+					fnCloneDom();
+				} else {
+					window.clearTimeout(this._iCloneDomTimeout);
+					// cloneDom is expensive, therefore the call is delayed
+					this._iCloneDomTimeout = window.setTimeout(fnCloneDom, 250);
+				}
+			}
+		} else {
+			$clonedDom.remove();
+		}
+	};
+
+	/**
+	 * @private
+	 */
 	Overlay.prototype._updateDom = function() {
 		var oGeometry = this.getGeometry();
 		var $this = this.$();
@@ -327,30 +364,11 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 			}
 		}
 		if (oGeometry && this.isVisible()) {
+			this._cloneDomRef(oGeometry.domRef);
 			$this.show();
 		} else {
 			// we should always be in DOM to make sure, that drop events (dragend) will be fired even if the overlay isn't visible anymore
 			$this.hide();
-		}
-
-		var $clonedDom = $this.find(">.sapUiDtClonedDom");
-		var vCloneDomRef = this.getDesignTimeMetadata().getCloneDomRef();
-		if (vCloneDomRef) {
-			var oDomRef = oGeometry ? oGeometry.domRef : null;
-			if (oDomRef) {
-				if (vCloneDomRef !== true) {
-					oDomRef = DOMUtil.getDomRefForCSSSelector(oDomRef, vCloneDomRef);
-				}
-
-				if (!$clonedDom.length) {
-					$clonedDom = jQuery("<div class='sapUiDtClonedDom'></div>").prependTo($this);
-				} else {
-					$clonedDom.empty();
-				}
-				DOMUtil.cloneDOMAndStyles(oDomRef, $clonedDom);
-			}
-		} else {
-			$clonedDom.remove();
 		}
 	};
 
