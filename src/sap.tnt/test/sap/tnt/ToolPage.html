@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<title></title>
+
+	<style>
+		html,
+		body {
+			height: 100%;
+		}
+	</style>
+	<script
+			src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.tnt, sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<script>
+		var model = new sap.ui.model.json.JSONModel();
+		var data = {
+			navigation: [{
+				title: 'Root Item',
+				icon: 'sap-icon://employee',
+				expanded: true,
+				items: [{
+					title: 'Child Item 1',
+					key: 'page1'
+				}, {
+					title: 'Child Item 2',
+					enabled: false
+				}, {
+					title: 'Child Item 3',
+					key: 'page2'
+				}]
+			}, {
+				title: 'Root Item',
+				icon: 'sap-icon://building',
+				enabled: false
+			}, {
+				title: 'Root Item',
+				icon: 'sap-icon://card',
+				expanded: false,
+				items: [{
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}, {
+					title: 'Child Item'
+				}]
+			}, {
+				title: 'Root Item',
+				icon: 'sap-icon://action',
+				expanded: false,
+				items: [{
+					title: 'Child Item 1'
+				}, {
+					title: 'Child Item 2'
+				}, {
+					title: 'Child Item 3'
+				}]
+			}, {
+				title: 'Root Item',
+				icon: 'sap-icon://action-settings',
+				expanded: false,
+				items: [{
+					title: 'Child Item 1'
+				}, {
+					title: 'Child Item 2'
+				}, {
+					title: 'Child Item 3'
+				}]
+			}, {
+				title: 'Root Item',
+				icon: 'sap-icon://activate',
+				expanded: false,
+				items: [{
+					title: 'Child Item 1'
+				}, {
+					title: 'Child Item 2'
+				}, {
+					title: 'Child Item 3'
+				}]
+			}, {
+				title: 'Root Item',
+				icon: 'sap-icon://activities',
+				expanded: false,
+				items: [{
+					title: 'Child Item 1'
+				}, {
+					title: 'Child Item 2'
+				}, {
+					title: 'Child Item 3'
+				}]
+			}, {
+				title: 'Root Item',
+				icon: 'sap-icon://add',
+				expanded: false,
+				items: [{
+					title: 'Child Item 1'
+				}, {
+					title: 'Child Item 2'
+				}, {
+					title: 'Child Item 3'
+				}]
+			}, {
+				title: 'Root Item',
+				icon: 'sap-icon://arobase',
+				expanded: false,
+				items: [{
+					title: 'Child Item 1'
+				}, {
+					title: 'Child Item 2'
+				}, {
+					title: 'Child Item 3'
+				}]
+			}, {
+				title: 'Root Item',
+				icon: 'sap-icon://attachment',
+				expanded: false,
+				items: [{
+					title: 'Child Item 1'
+				}, {
+					title: 'Child Item 2'
+				}, {
+					title: 'Child Item 3'
+				}]
+			}, {
+				title: 'Root Item',
+				icon: 'sap-icon://badge',
+				expanded: false,
+				items: [{
+					title: 'Child Item 1'
+				}, {
+					title: 'Child Item 2'
+				}, {
+					title: 'Child Item 3'
+				}]
+			}, {
+				title: 'Root Item',
+				icon: 'sap-icon://basket',
+				expanded: false,
+				items: [{
+					title: 'Child Item 1'
+				}, {
+					title: 'Child Item 2'
+				}, {
+					title: 'Child Item 3'
+				}]
+			}, {
+				title: 'Root Item',
+				icon: 'sap-icon://bed',
+				expanded: false,
+				items: [{
+					title: 'Child Item 1'
+				}, {
+					title: 'Child Item 2'
+				}, {
+					title: 'Child Item 3'
+				}]
+			}, {
+				title: 'Root Item',
+				icon: 'sap-icon://bookmark',
+				expanded: false,
+				items: [{
+					title: 'Child Item 1'
+				}, {
+					title: 'Child Item 2'
+				}, {
+					title: 'Child Item 3'
+				}]
+			}
+			],
+			fixedNavigation: [{
+				title: 'Fixed Item 1',
+				icon: 'sap-icon://employee'
+			}, {
+				title: 'Fixed Item 2',
+				icon: 'sap-icon://building'
+			}, {
+				title: 'Fixed Item 3',
+				icon: 'sap-icon://card'
+			}]
+		};
+		model.setData(data);
+
+		var sideNavigation = new sap.tnt.SideNavigation({
+			expanded: false,
+			itemSelect: function (event) {
+				navContainer.to(event.getParameter('item').getKey())
+			},
+			item: new sap.tnt.NavigationList({
+				items: {
+					template: new sap.tnt.NavigationListItem({
+						text: '{title}',
+						icon: '{icon}',
+						enabled: '{enabled}',
+						expanded: '{expanded}',
+						items: {
+							template: new sap.tnt.NavigationListItem({
+								text: '{title}',
+								key: '{key}',
+								enabled: '{enabled}'
+							}),
+							path: 'items'
+						}
+					}),
+
+					path: '/navigation'
+				}
+			}),
+			fixedItem: new sap.tnt.NavigationList({
+				items: {
+					template: new sap.tnt.NavigationListItem({
+						text: '{title}',
+						icon: '{icon}'
+					}),
+					path: '/fixedNavigation'
+				}
+			})//,
+			//footer: new sap.m.Text({
+			//	text: 'Side footer content is placed here'
+			//})
+		}).setModel(model);
+
+		var navContainer = new sap.m.NavContainer({
+			pages: [
+				new sap.m.Text('page1', {
+					text: 'This is the first page'
+				}),
+				new sap.m.Text('page2', {
+					text: 'This is the second page'
+				})]
+		});
+
+		var toolHeader = new sap.tnt.ToolHeader({
+			content: [
+				new sap.m.Button({
+					icon: 'sap-icon://menu2',
+					type: sap.m.ButtonType.Transparent,
+					press: function() {
+						toolPage.setSideExpanded(!toolPage.getSideExpanded());
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.NeverOverflow
+					})
+				}),
+				new sap.m.ToolbarSpacer({
+					width: '20px'
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "File",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Edit",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Edit",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Edit",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Edit",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Edit",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Edit",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "View",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Navigate",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Code",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.tnt.ToolHeaderUtilitySeparator({
+				}),
+				new sap.m.ToolbarSpacer({
+					layoutData : new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.NeverOverflow,
+						minWidth: "20px"
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "User Name",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.NeverOverflow
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					icon: "sap-icon://log",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.NeverOverflow
+					})
+				})
+			]
+		});
+
+		var toolPage = new sap.tnt.ToolPage({
+			header: toolHeader,
+
+			sideContent: sideNavigation,
+
+			mainContents: [navContainer]
+		}).placeAt('body');
+
+	</script>
+</head>
+<body id="body" class="sapUiBody" role="application">
+</body>
+</html>

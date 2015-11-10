@@ -32,7 +32,8 @@ sap.ui.define(['jquery.sap.global',
 			'sap.tnt.NavigationList',
 			'sap.tnt.ToolHeaderUtilitySeparator',
 			'sap.tnt.ToolHeader',
-			'sap.tnt.SideNavigation'
+			'sap.tnt.SideNavigation',
+			'sap.tnt.ToolPage'
 		],
 		elements: [
 			"sap.tnt.NavigationListItem"

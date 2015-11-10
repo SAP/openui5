@@ -1,0 +1,180 @@
+/* ==========================================================================
+   CSS for control sap.tnt.ToolPage
+   ========================================================================== */
+
+/* ==========================================================================
+   Variables and mixins
+   ========================================================================== */
+
+@sapMToolPageAsideWidth : 20rem;
+@sapMToolPageAsideWidthOnTablet : 3rem;
+@sapMToolPageHeaderHeight : 3rem;
+@sapMToolPageFooterHeight : 3rem;
+
+.display-flex() {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.flex-direction-column() {
+  -webkit-box-direction: normal;
+  -webkit-box-orient: vertical;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.flex-grow(@flex-grow) {
+  -webkit-box-flex: @flex-grow;
+  -webkit-flex-grow: @flex-grow;
+  -ms-flex: @flex-grow @flex-grow;
+  flex-grow: @flex-grow;
+}
+
+/* ==========================================================================
+   Root element
+   ========================================================================== */
+.sapMToolPage {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  .display-flex();
+  .flex-direction-column();
+
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+.sapMToolPageHeader {
+  height: @sapMToolPageHeaderHeight;
+}
+
+/* ==========================================================================
+   Content wrapper
+   ========================================================================== */
+.sapMToolPageContentWrapper {
+  .display-flex();
+  .flex-grow(1);
+
+  position: relative;
+}
+
+/* Aside container
+   ========================================================================== */
+
+.sapMToolPageAside {
+  .display-flex();
+  .flex-direction-column();
+
+  will-change: transform;
+}
+
+.sapMToolPageAsideContent {
+  .display-flex();
+  .flex-direction-column();
+  .flex-grow(1);
+  height: 100%;
+}
+
+.sapMToolPageAsideFooter {
+  height: @sapMToolPageFooterHeight;
+  overflow: hidden;
+}
+
+.sapUiMedia-Std-Desktop,
+.sapUiMedia-Std-Tablet {
+	.sapMToolPageAside {
+		width: @sapMToolPageAsideWidth;
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		top: 0;
+		z-index: 1;
+	}
+
+	.sapMToolPageMain {
+		transform: translateX(@sapMToolPageAsideWidth);
+	}
+}
+
+.sapUiMedia-Std-Desktop,
+.sapUiMedia-Std-Tablet {
+	.sapMToolPageAsideCollapsed {
+		.sapMToolPageAside {
+			width: @sapMToolPageAsideWidthOnTablet;
+		}
+
+		.sapMToolPageMain {
+			-webkit-transform: translateX(@sapMToolPageAsideWidthOnTablet);
+			-ms-transform: translateX(@sapMToolPageAsideWidthOnTablet);
+			transform: translateX(@sapMToolPageAsideWidthOnTablet);
+		}
+	}
+}
+
+.sapUiMedia-Std-Phone {
+  .sapMToolPageAside {
+	  width: @sapMToolPageAsideWidth;
+	  position: absolute;
+	  left: 0;
+	  bottom: 0;
+	  top: 0;
+	  z-index: 1;
+  }
+
+  .sapMToolPageMain {
+    -webkit-transform: translateX(@sapMToolPageAsideWidth);
+	-ms-transform: translateX(@sapMToolPageAsideWidth);
+	transform: translateX(@sapMToolPageAsideWidth);
+  }
+
+  .sapMToolPageAsideCollapsed {
+    .sapMToolPageAside {
+	  -webkit-transform: translateX(-@sapMToolPageAsideWidth);
+	  -ms-transform: translateX(-@sapMToolPageAsideWidth);
+	  transform: translateX(-@sapMToolPageAsideWidth);
+    }
+    .sapMToolPageMain {
+      -webkit-transform: translateX(0);
+      -ms-transform: translateX(0);
+      transform: translateX(0);
+    }
+  }
+}
+/* Main container
+   ========================================================================== */
+
+.sapMToolPageMain {
+  .display-flex();
+  .flex-direction-column();
+  .flex-grow(1);
+
+  will-change: transform;
+}
+
+.sapMToolPageMainContent {
+  .flex-grow(1);
+
+  position: relative;
+}
+
+.sapMToolPageMainContentWrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.sapMToolPageMainFooter {
+  height: @sapMToolPageFooterHeight;
+  overflow: hidden;
+}
