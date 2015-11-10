@@ -1783,13 +1783,10 @@
 							oPendingInteraction.duration = oPendingInteraction.navigation + oPendingInteraction.roundtrip;
 						}
 					}
-					// calculate real processing time if any processing took place
+					// calculate real processing time if any processing took place, cannot be negative as then requests took longer than processing
 					if (oPendingInteraction.processing !== 0) {
-						oPendingInteraction.processing = oPendingInteraction.processing - oPendingInteraction.navigation - oPendingInteraction.roundtrip;
-					}
-					// if duration could still not be determined take complete interaction as fallback
-					if (oPendingInteraction.duration === 0) {
-						oPendingInteraction.duration = oPendingInteraction.end - oPendingInteraction.start;
+						var iProcessing = oPendingInteraction.processing - oPendingInteraction.navigation - oPendingInteraction.roundtrip;
+						oPendingInteraction.processing = iProcessing > 0 ? iProcessing : 0;
 					}
 					oPendingInteraction.isFinal = true;
 					aInteractions.push(oPendingInteraction);
