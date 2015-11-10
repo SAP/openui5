@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target', './
 		 * The id of the rootView - This should be the id of the view that contains the control with the controlId
 		 * since the control will be retrieved by calling the {@link sap.ui.core.mvc.View#byId} function of the rootView.
 		 * If you are using a component and add the routing.targets <b>do not set this parameter</b>,
-		 * since the component will set the rootView to the view created by the {@link sap.ui.core.UIComponent.html#createContent} function.
+		 * since the component will set the rootView to the view created by the {@link sap.ui.core.UIComponent#createContent} function.
 		 * If you specify the "parent" property of a target, the control will not be searched in the root view but in the view Created by the parent (see parent documentation).
 		 *
 		 * @param {object} oOptions.targets One or multiple targets in a map.
@@ -335,6 +335,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target', './
 			 * Returns the views instance passed to the constructor
 			 *
 			 * @return {sap.ui.core.routing.Views} the views instance
+			 * @public
 			 */
 			getViews : function () {
 				return this._oViews;
@@ -345,6 +346,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target', './
 			 *
 			 * @param {string|string[]} vName the name of a single target or the name of multiple targets
 			 * @return {sap.ui.core.routing.Target|undefined|sap.ui.core.routing.Target[]} The target with the coresponding name or undefined. If an array way passed as name this will return an array with all found targets. Non existing targets will not be returned but will log an error.
+			 * @public
 			 */
 			getTarget : function (vName) {
 				var that = this,
@@ -364,6 +366,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target', './
 				}
 
 				return this._mTargets[vName];
+			},
+
+			/**
+			 * Creates a target by using the given name and options. If there's already a target with the same name exists, the existing target is kept from being overwritten and an error log will be written to the development console.
+			 *
+			 * @param {string} sName the name of a target
+			 * @param {object} oTarget the options of a target. The option names are the same as the ones in "oOptions.targets.anyName" of {@link constructor}.
+			 * @returns {sap.ui.core.routing.Targets} Targets itself for method chaining
+			 * @public
+			 *
+			 */
+			addTarget : function (sName, oTargetOptions) {
+				var oOldTarget = this.getTarget(sName),
+					oTarget;
+
+				if (oOldTarget) {
+					$.sap.log.error("Target with name " + sName + " already exists", this);
+				} else {
+					oTarget = this._createTarget(sName, oTargetOptions);
+					this._addParentTo(oTarget);
+				}
+
+				return this;
 			},
 
 			/**
@@ -404,6 +429,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target', './
 			 * @param {function} fnFunction The function to call, when the event occurs.
 			 * @param {object} oListener Object on which the given function had to be called.
 			 * @return {sap.ui.core.routing.Targets} <code>this</code> to allow method chaining
+			 * @public
 			 */
 			detachDisplay : function(fnFunction, oListener) {
 				return this.detachEvent(this.M_EVENTS.DISPLAY, fnFunction, oListener);
@@ -414,6 +440,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target', './
 			 *
 			 * @param {object} [mArguments] the arguments to pass along with the event.
 			 * @return {sap.ui.core.routing.Targets} <code>this</code> to allow method chaining
+			 * @public
 			 */
 			fireDisplay : function(mArguments) {
 				return this.fireEvent(this.M_EVENTS.DISPLAY, mArguments);
@@ -428,6 +455,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target', './
 			 *
 			 * @param {string} sName
 			 * @param {object} oTargetOptions
+			 * @return {sap.ui.core.routing.Target} The created target object
 			 * @private
 			 */
 			_createTarget : function (sName, oTargetOptions) {
@@ -448,6 +476,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target', './
 					});
 				}, this);
 				this._mTargets[sName] = oTarget;
+				return oTarget;
 			},
 
 			/**
