@@ -37,12 +37,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 					/**
 					 * Specifies if the control is in expanded or collapsed mode.
 					 */
-					expanded: {type: "boolean", group: "Misc", defaultValue: true},
-
-					/**
-					 * Specifies if the control has "listbox" accessibility role.
-					 */
-					hasListBoxRole: {type: "boolean", group: "Accessibility", defaultValue: false}
+					expanded: {type: "boolean", group: "Misc", defaultValue: true}
 				},
 				defaultAggregation: "items",
 				aggregations: {
@@ -87,6 +82,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 			this._itemNavigation.setPageSize(10);
 
 			this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
+		};
+
+		/**
+		 * Sets if the control has "listbox" accessibility role.
+		 */
+		NavigationList.prototype.setHasListBoxRole = function (hasListBoxRole) {
+			this._hasListBoxRole = hasListBoxRole;
+		};
+
+		/**
+		 * Gets if the control has "listbox" accessibility role.
+		 */
+		NavigationList.prototype.getHasListBoxRole = function () {
+			return this._hasListBoxRole;
 		};
 
 		NavigationList.prototype.onAfterRendering = function() {

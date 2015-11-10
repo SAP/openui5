@@ -172,11 +172,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 
 			var navList = new NavigationList({
 				itemSelect: this.onPopupItemSelect.bind(this),
-				hasListBoxRole: true,
 				items: [
 					newGroup
 				]
 			}).addStyleClass('sapMNavLIPopup');
+
+			navList.setHasListBoxRole(true);
 
 			navList.setSelectedItem(popupSelectedItem);
 
@@ -505,6 +506,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 
 			rm.addClass("sapMText");
 			rm.addClass("sapMNavLIText");
+			rm.addClass("sapMTextNoWrap");
 
 			rm.writeClasses();
 
