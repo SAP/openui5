@@ -290,12 +290,12 @@ sap.ui.define(['jquery.sap.global', './SliderRenderer', './library', 'sap/ui/cor
 				fNewValue = fMax;
 			}
 
+			// update the value and suppress re-rendering
+			this.setProperty("value", fNewValue, true);
+
 			// Floating-point in JavaScript are IEEE 64 bit values and has some problems with big decimals.
 			// Round the final value to 5 digits after the decimal point.
 			fNewValue = Number(fNewValue.toFixed(5));
-
-			// update the value and suppress re-rendering
-			this.setProperty("value", fNewValue, true);
 
 			// update the value in DOM only when it has changed
 			if (fValue !== this.getValue()) {
