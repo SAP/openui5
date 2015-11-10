@@ -64,6 +64,24 @@
 	<script>
 	
 		var d = sap.ui.Device;
+		
+		/****/
+		var customUA = "";
+		if (customUA) {
+			d._setOS(customUA);
+			var br = d.browser.BROWSER;
+			d.browser = null;
+			d.browser = d._testUserAgent(customUA);
+			d.browser.BROWSER = br;
+			if (d.browser.name) {
+				for (var b in d.browser.BROWSER) {
+					if (d.browser.BROWSER[b] === d.browser.name) {
+						d.browser[b.toLowerCase()] = true;
+					}
+				}
+			}
+		}
+		/****/
 	
 		function prop(html, sLabel, sVal, tooltip, sId){
 			if(!html){
@@ -85,7 +103,7 @@
 				window.sUnit = d.media._predefinedRangeSets[window.sSetId].unit; //TODO try to get rid of this internal access
 				window.bStandard = sName === "SAP_STANDARD";
 			}
-	
+			
 			if(sSetName && d.media.RANGESETS[sSetName]){
 				initPredefined(sSetName);
 			}else if(!sSetName && !sPoints){
