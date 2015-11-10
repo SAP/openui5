@@ -69,7 +69,6 @@ sap.ui.require([
 			// create ODataModel and mock Cache
 			this.oModel = new ODataModel("/service/");
 			this.oModel.setSizeLimit(3);
-			this.oCacheMock = this.oSandbox.mock(Cache.prototype);
 		},
 		afterEach : function () {
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
@@ -77,23 +76,41 @@ sap.ui.require([
 			sap.ui.getCore().getConfiguration().setLanguage(this.sDefaultLanguage);
 		},
 
+		/**
+		 * Creates a Sinon expectation for the read method of the Cache.
+		 * @returns {object}
+		 *   a Sinon mock for the created cache object
+		 */
+		getCacheMock : function () {
+			var oCache = {
+					read: function () {}
+				};
+
+			this.oSandbox.mock(Cache).expects("create").returns(oCache);
+			return this.oSandbox.mock(oCache);
+		},
+
 		sDefaultLanguage : sap.ui.getCore().getConfiguration().getLanguage()
 	});
 
 	//*********************************************************************************************
 	QUnit.test("getContexts creates cache once", function (assert) {
-		this.mock(Requestor).expects("create").withExactArgs("/service/", {
+		var oCache = {
+				read: function () {}
+			},
+			oRequestor = {};
+
+		this.oSandbox.mock(Requestor).expects("create").withExactArgs("/service/", {
 			"Accept-Language" : "ab-CD"
-		});
-		this.oCacheMock.expects("read").returns(createResult(0));
+		}).returns(oRequestor);
 
+		this.oSandbox.mock(Cache).expects("create").withExactArgs(oRequestor, "EMPLOYEES")
+			.returns(oCache);
+
+		this.oSandbox.mock(oCache).expects("read").returns(createResult(0));
+
+		// code under test
 		this.oModel.bindList("/EMPLOYEES").getContexts();
-
-//FIX4MASTER		assert.ok(odatajs.cache.createDataCache.calledWithExactly({
-//			mechanism : "memory",
-//			name : "/service/EMPLOYEES",
-//			source : "/service/EMPLOYEES"
-//		}), odatajs.cache.createDataCache.printf("cache creation settings %C"));
 	});
 
 	//*********************************************************************************************
@@ -107,7 +124,8 @@ sap.ui.require([
 		QUnit.test("getContexts satisfies contract of ManagedObject#bindAggregation "
 			+ JSON.stringify(oFixture),
 		function (assert) {
-			var oControl = new TestControl(),
+			var oCacheMock = this.getCacheMock(),
+				oControl = new TestControl(),
 				done = assert.async(),
 				oRange = oFixture.range || {},
 				iLength = oRange.length || this.oModel.iSizeLimit,
@@ -138,13 +156,13 @@ sap.ui.require([
 			}
 
 			if (iEntityCount < iLength) {
-				this.oCacheMock.expects("read")
+				oCacheMock.expects("read")
 					.withExactArgs(iStartIndex, iLength)
 					// read is called twice because contexts are created asynchronously
 					.twice()
 					.returns(createResult(iEntityCount));
 			} else {
-				this.oCacheMock.expects("read")
+				oCacheMock.expects("read")
 					.withExactArgs(iStartIndex, iLength)
 					.returns(createResult(iEntityCount));
 			}
@@ -191,7 +209,6 @@ sap.ui.require([
 				assert.strictEqual(aChildControls[i].getBindingContext().getPath(),
 					sExpectedPath, "child control binding path: " + sExpectedPath);
 			}
-//FIX4MASTER			assert.ok(!odatajs.cache.createDataCache.called, "no cache created");
 
 			// code under test
 			oControl.getBinding("items").setContext();
@@ -201,7 +218,8 @@ sap.ui.require([
 
 		oControl.setModel(this.oModel);
 
-		this.oCacheMock.expects("read").never();
+		// no cache will be created
+		this.oSandbox.mock(Cache).expects("create").never();
 
 		this.oSandbox.mock(this.oModel).expects("read")
 			.withExactArgs(oContext.getPath() + "/" + sPath, true)
@@ -231,7 +249,7 @@ sap.ui.require([
 
 		oControl.setModel(this.oModel);
 
-		this.oCacheMock.expects("read").never();
+		this.oSandbox.mock(Cache).expects("create").never();
 		this.oSandbox.mock(this.oModel).expects("read").never();
 
 		// code under test
@@ -248,22 +266,22 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("listbinding with immutable expand, encoded URLs", function (assert) {
-		var sExpand = "TEAM_2_EMPLOYEES($expand=EMPLOYEES_2_EQUIPMENTS)",
+		var oCache = {
+				read: function () {}
+			},
+			sExpand = "TEAM_2_EMPLOYEES($expand=EMPLOYEES_2_EQUIPMENTS)",
 			mParameters = { "$expand": sExpand },
-//			sEncodedUrl = "/service/TEAMS?$expand=" + encodeURIComponent(sExpand),
 			oListBinding = this.oModel.bindList("/TEAMS",  undefined, undefined, undefined,
 					mParameters);
 
-		this.oCacheMock.expects("read").returns(createResult(0));
+		this.oSandbox.mock(Cache).expects("create")
+			.withExactArgs(sinon.match.any, "TEAMS?$expand=" + encodeURIComponent(sExpand))
+			.returns(oCache);
+		this.oSandbox.mock(oCache).expects("read").returns(createResult(0));
 
 		mParameters["$expand"] = "bar";
 
 		oListBinding.getContexts();
-//FIX4MASTER		assert.ok(odatajs.cache.createDataCache.calledWithExactly({
-//			mechanism : "memory",
-//			name : sEncodedUrl,
-//			source : sEncodedUrl
-//		}), odatajs.cache.createDataCache.printf("cache creation settings %C"));
 	});
 
 	//*********************************************************************************************
@@ -282,6 +300,7 @@ sap.ui.require([
 	QUnit.test("getContexts called directly provides contexts as return value and in change event",
 		function (assert) {
 		var done = assert.async(),
+			oCacheMock = this.getCacheMock(),
 			oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			iSizeLimit = this.oModel.iSizeLimit,
 			iRangeIndex = 0;
@@ -296,8 +315,7 @@ sap.ui.require([
 			{start : iSizeLimit, length : 2, sync : [true]}, // partially new contexts
 			{start : iSizeLimit, length : 2, sync : [true, true]}
 				// completely existing contexts
-			],
-			that = this;
+			];
 
 		// call getContexts for current range; considers previously accessed indexes
 		// only if used to check synchronous return value of getContexts.
@@ -309,7 +327,7 @@ sap.ui.require([
 				sMessage;
 
 			if (bSync && iRangeIndex < oFixture.length - 1) {
-				that.oCacheMock.expects("read")
+				oCacheMock.expects("read")
 					.withExactArgs(iStart, iLength)
 					.returns(createResult(iLength));
 			}
@@ -349,12 +367,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("getContexts sends no change event on failure of Cache#read and logs error",
 			function (assert) {
-		var oError = new Error("Intentionally failed"),
+		var oCacheMock = this.getCacheMock(),
+			oError = new Error("Intentionally failed"),
 			oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			oPromise = Promise.reject(oError);
 
-		this.oCacheMock.expects("read").once().returns(createResult(2));
-		this.oCacheMock.expects("read").once().returns(oPromise);
+		oCacheMock.expects("read").once().returns(createResult(2));
+		oCacheMock.expects("read").once().returns(oPromise);
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to get contexts for /service/EMPLOYEES with start index 1 and "
 					+ "length 2",
@@ -380,7 +399,7 @@ sap.ui.require([
 			oError = new SyntaxError("Intentionally failed"),
 			oListBinding = this.oModel.bindList("/EMPLOYEES");
 
-		this.oCacheMock.expects("read").once().returns(createResult(1));
+		this.getCacheMock().expects("read").once().returns(createResult(1));
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to get contexts for /service/EMPLOYEES with start index 0 and "
 					+ "length 1",
@@ -396,13 +415,14 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("readValue accesses path with one segment on cached record", function (assert) {
-		var iIndex = Math.floor(Math.random() * 10), // some index
+		var oCacheMock = this.getCacheMock(),
+			iIndex = Math.floor(Math.random() * 10), // some index
 			oListBinding = this.oModel.bindList("/EMPLOYEES");
 
-		this.oCacheMock.expects("read")
+		oCacheMock.expects("read")
 			.withExactArgs(0, 10)
 			.returns(createResult(10));
-		this.oCacheMock.expects("read")
+		oCacheMock.expects("read")
 			.withExactArgs(iIndex, 1)
 			.exactly(4)
 			.returns(createResult(1, iIndex));
@@ -431,14 +451,15 @@ sap.ui.require([
 	QUnit.test("readValue rejects when accessing cached record", function (assert) {
 		//TODO the test's title is misleading, this is not "readValue() should reject when..."
 		// but it's about how readValue() behaves if read() fails
-		var oError = new Error(),
+		var oCacheMock = this.getCacheMock(),
+			oError = new Error(),
 			oListBinding = this.oModel.bindList("/EMPLOYEES");
 
 		//TODO it is hard to understand why we succeed for (0, 10) 1st and then fail for (0, 1)
-		this.oCacheMock.expects("read")
+		oCacheMock.expects("read")
 			.withExactArgs(0, 10)
 			.returns(createResult(10));
-		this.oCacheMock.expects("read")
+		oCacheMock.expects("read")
 			.withExactArgs(0, 1)
 			.returns(Promise.reject(oError));
 		this.oLogMock.expects("error")
@@ -455,14 +476,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("readValue rejects when accessing non-primitive value", function (assert) {
-		var sMessage = "Accessed value is not primitive",
+		var oCacheMock = this.getCacheMock(),
+			sMessage = "Accessed value is not primitive",
 			oError = new Error(sMessage),
 			oListBinding = this.oModel.bindList("/EMPLOYEES");
 
-		this.oCacheMock.expects("read")
+		oCacheMock.expects("read")
 			.withExactArgs(0, 10)
 			.returns(createResult(10));
-		this.oCacheMock.expects("read")
+		oCacheMock.expects("read")
 			.withExactArgs(0, 1)
 			.returns(createResult(1));
 		this.oLogMock.expects("error")
@@ -495,7 +517,7 @@ sap.ui.require([
 			assert.strictEqual(oListBinding.isLengthFinal(), false, "Length is not yet final");
 			assert.strictEqual(oListBinding.getLength(), 10, "Initial estimated length is 10");
 
-			this.oCacheMock.expects("read").withExactArgs(oFixture.start, 30)
+			this.getCacheMock().expects("read").withExactArgs(oFixture.start, 30)
 				.returns(createResult(oFixture.result));
 
 			oListBinding.getContexts(oFixture.start, 30); // creates cache
@@ -519,13 +541,14 @@ sap.ui.require([
 		{start : 40, result: 0, isFinal: true, length: 35, text: "empty read after"}
 	].forEach(function (oFixture) {
 		QUnit.test("paging: adjust final length: " + oFixture.text, function (assert) {
-			var oListBinding = this.oModel.bindList("/EMPLOYEES"),
+			var oCacheMock = this.getCacheMock(),
+				oListBinding = this.oModel.bindList("/EMPLOYEES"),
 				i, n,
 				done = assert.async();
 
-			this.oCacheMock.expects("read").withExactArgs(20, 30)
+			oCacheMock.expects("read").withExactArgs(20, 30)
 				.returns(createResult(15));
-			this.oCacheMock.expects("read").withExactArgs(oFixture.start, 30)
+			oCacheMock.expects("read").withExactArgs(oFixture.start, 30)
 				.returns(createResult(oFixture.result));
 
 			oListBinding.getContexts(20, 30); // creates cache
@@ -552,17 +575,18 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("paging: full read before length; length at boundary", function (assert) {
-		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
+		var oCacheMock = this.getCacheMock(),
+			oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			done = assert.async();
 
 		// 1. read and get [20..50) -> estimated length 60
-		this.oCacheMock.expects("read").withExactArgs(20, 30)
+		oCacheMock.expects("read").withExactArgs(20, 30)
 			.returns(createResult(30));
 		// 2. read and get [0..30) -> length still 60
-		this.oCacheMock.expects("read").withExactArgs(0, 30)
+		oCacheMock.expects("read").withExactArgs(0, 30)
 			.returns(createResult(30));
 		// 3. read [50..80) get no entries -> length is now final 50
-		this.oCacheMock.expects("read").withExactArgs(50, 30)
+		oCacheMock.expects("read").withExactArgs(50, 30)
 			.returns(createResult(0));
 
 		oListBinding.getContexts(20, 30);
@@ -590,17 +614,18 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("paging: lower boundary reset", function (assert) {
-		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
+		var oCacheMock = this.getCacheMock(),
+			oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			done = assert.async();
 
 		// 1. read [20..50) and get [20..35) -> final length 35
-		this.oCacheMock.expects("read").withExactArgs(20, 30)
+		oCacheMock.expects("read").withExactArgs(20, 30)
 			.returns(createResult(15));
 		// 2. read [30..60) and get no entries -> estimated length 10 (after lower boundary reset)
-		this.oCacheMock.expects("read").withExactArgs(30, 30)
+		oCacheMock.expects("read").withExactArgs(30, 30)
 			.returns(createResult(0));
 		// 3. read [35..65) and get no entries -> estimated length still 10
-		this.oCacheMock.expects("read").withExactArgs(35, 30)
+		oCacheMock.expects("read").withExactArgs(35, 30)
 			.returns(createResult(0));
 
 		oListBinding.getContexts(20, 30);
@@ -631,17 +656,18 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("paging: adjust max length got from server", function (assert) {
-		var oListBinding = this.oModel.bindList("/EMPLOYEES"),
+		var oCacheMock = this.getCacheMock(),
+			oListBinding = this.oModel.bindList("/EMPLOYEES"),
 			done = assert.async();
 
 		// 1. read [20..50) and get [20..35) -> final length 35
-		this.oCacheMock.expects("read").withExactArgs(20, 30)
+		oCacheMock.expects("read").withExactArgs(20, 30)
 			.returns(createResult(15));
 		// 2. read [20..50) and get [20..34) -> final length 34
-		this.oCacheMock.expects("read").withExactArgs(20, 30)
+		oCacheMock.expects("read").withExactArgs(20, 30)
 			.returns(createResult(14));
 		// 3. read [35..65) and get no entries -> final length still 34
-		this.oCacheMock.expects("read").withExactArgs(35, 30)
+		oCacheMock.expects("read").withExactArgs(35, 30)
 			.returns(createResult(0));
 
 		oListBinding.getContexts(20, 30);
@@ -669,13 +695,14 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("readValue: bAllowObjectAccess", function (assert) {
-		var iIndex = Math.floor(Math.random() * 10), // some index
+		var oCacheMock = this.getCacheMock(),
+			iIndex = Math.floor(Math.random() * 10), // some index
 			oListBinding = this.oModel.bindList("/EMPLOYEES");
 
-		this.oCacheMock.expects("read")
+		oCacheMock.expects("read")
 			.withExactArgs(0, 10)
 			.returns(createResult(10));
-		this.oCacheMock.expects("read")
+		oCacheMock.expects("read")
 			.withExactArgs(iIndex, 1)
 			.returns(createResult(1, iIndex));
 		oListBinding.getContexts(0, 10); // creates cache

@@ -170,7 +170,7 @@ sap.ui.define([
 					oRequestor = Requestor.create(oModel.sServiceUrl, {
 						"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguage()
 					});
-					this.oCache = new Cache(oRequestor, sRelativePath);
+					this.oCache = Cache.create(oRequestor, sRelativePath);
 				}
 				this.oCache.read(iStart, iLength)
 					.then(createContexts.bind(undefined, getBasePath), function (oError) {
