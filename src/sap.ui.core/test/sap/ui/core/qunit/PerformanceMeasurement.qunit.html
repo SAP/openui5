@@ -355,7 +355,7 @@
 			ok(oMeasurement.start !== 0, "Start is set");
 			ok(oMeasurement.end !== 0, "End is set");
 			ok(oMeasurement.start <= oMeasurement.end, "Start is before end");
-			ok(oMeasurement.duration === oMeasurement.end - oMeasurement.start, "Duration is set");
+			ok(oMeasurement.duration <= oMeasurement.end - oMeasurement.start, "Duration is set");
 			ok(oMeasurement.navigation === 0, "No navigation");
 			ok(oMeasurement.roundtrip === 0, "No round trip");
 			ok(oMeasurement.processing === 0, "No processing");
