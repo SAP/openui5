@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<edmx:Reference
+		Uri="">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1"
+			Alias="Common" />
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.iwbep.v4_gw_sample_basic.v0001"
+			Alias="SAP__self" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			<EntityType Name="BusinessPartner" HasStream="false">
+				<Key>
+					<PropertyRef Name="BusinessPartnerID" />
+				</Key>
+				<Property Name="BusinessPartnerID" Type="Edm.String"
+					Nullable="false" MaxLength="10" />
+				<Property Name="BusinessPartnerRole" Type="Edm.String"
+					Nullable="false" MaxLength="3" />
+				<Property Name="CompanyName" Type="Edm.String" Nullable="false"
+					MaxLength="80" />
+				<Property Name="WebAddress" Type="Edm.String" Nullable="false" />
+				<Property Name="EmailAddress" Type="Edm.String" Nullable="false"
+					MaxLength="255" />
+				<Property Name="PhoneNumber" Type="Edm.String" Nullable="false"
+					MaxLength="30" />
+				<Property Name="FaxNumber" Type="Edm.String" Nullable="false"
+					MaxLength="30" />
+				<Property Name="LegalForm" Type="Edm.String" Nullable="false"
+					MaxLength="10" />
+				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false"
+					MaxLength="5" />
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset"
+					Nullable="false" Precision="7" />
+				<Property Name="ChangedAt" Type="Edm.DateTimeOffset"
+					Nullable="false" Precision="7" />
+				<Property Name="Address"
+					Type="com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.Address"
+					Nullable="false" />
+				<NavigationProperty Name="BP_2_CONTACT"
+					Type="Collection(com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.Contact)"
+					Nullable="true" />
+				<NavigationProperty Name="BP_2_PRODUCT"
+					Type="Collection(com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.Product)"
+					Nullable="true" />
+				<NavigationProperty Name="BP_2_SO"
+					Type="Collection(com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.SalesOrder)"
+					Nullable="true" />
+			</EntityType>
+			<EntityType Name="Contact" HasStream="false">
+				<Key>
+					<PropertyRef Name="ContactGUID" />
+				</Key>
+				<Property Name="ContactGUID" Type="Edm.Guid" Nullable="false" />
+				<Property Name="BusinessPartnerID" Type="Edm.String"
+					Nullable="false" MaxLength="10" />
+				<Property Name="Title" Type="Edm.String" Nullable="false"
+					MaxLength="10" />
+				<Property Name="FirstName" Type="Edm.String" Nullable="false"
+					MaxLength="40" />
+				<Property Name="MiddleName" Type="Edm.String" Nullable="false"
+					MaxLength="40" />
+				<Property Name="LastName" Type="Edm.String" Nullable="false"
+					MaxLength="40" />
+				<Property Name="Nickname" Type="Edm.String" Nullable="false"
+					MaxLength="40" />
+				<Property Name="Initials" Type="Edm.String" Nullable="false"
+					MaxLength="10" />
+				<Property Name="Sex" Type="Edm.String" Nullable="false"
+					MaxLength="1" />
+				<Property Name="PhoneNumber" Type="Edm.String" Nullable="false"
+					MaxLength="30" />
+				<Property Name="FaxNumber" Type="Edm.String" Nullable="false"
+					MaxLength="30" />
+				<Property Name="EmailAddress" Type="Edm.String" Nullable="false"
+					MaxLength="255" />
+				<Property Name="Language" Type="Edm.String" Nullable="false"
+					MaxLength="2" />
+				<Property Name="DateOfBirth" Type="Edm.Date" Nullable="true" />
+				<Property Name="Address"
+					Type="com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.Address"
+					Nullable="false" />
+				<NavigationProperty Name="CONTACT_2_BP"
+					Type="com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.BusinessPartner"
+					Nullable="false" />
+			</EntityType>
+			<EntityType Name="Product" HasStream="false">
+				<Key>
+					<PropertyRef Name="ProductID" />
+				</Key>
+				<Property Name="ProductID" Type="Edm.String" Nullable="false"
+					MaxLength="10" />
+				<Property Name="TypeCode" Type="Edm.String" Nullable="false"
+					MaxLength="2" />
+				<Property Name="Category" Type="Edm.String" Nullable="false"
+					MaxLength="40" />
+				<Property Name="Name" Type="Edm.String" Nullable="false"
+					MaxLength="255" />
+				<Property Name="NameLanguage" Type="Edm.String" Nullable="false"
+					MaxLength="2" />
+				<Property Name="Description" Type="Edm.String" Nullable="false"
+					MaxLength="255" />
+				<Property Name="DescriptionLanguage" Type="Edm.String"
+					Nullable="false" MaxLength="2" />
+				<Property Name="SupplierID" Type="Edm.String" Nullable="false"
+					MaxLength="10" />
+				<Property Name="SupplierName" Type="Edm.String" Nullable="false"
+					MaxLength="80" />
+				<Property Name="TaxTarifCode" Type="Edm.Byte" Nullable="false" />
+				<Property Name="MeasureUnit" Type="Edm.String" Nullable="false"
+					MaxLength="3" />
+				<Property Name="WeightMeasure" Type="Edm.Decimal" Nullable="false"
+					Precision="13" Scale="3" />
+				<Property Name="WeightUnit" Type="Edm.String" Nullable="false"
+					MaxLength="3" />
+				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false"
+					MaxLength="5" />
+				<Property Name="Price" Type="Edm.Decimal" Nullable="false"
+					Precision="16" Scale="variable" />
+				<Property Name="Width" Type="Edm.Decimal" Nullable="false"
+					Precision="13" Scale="3" />
+				<Property Name="Depth" Type="Edm.Decimal" Nullable="false"
+					Precision="13" Scale="3" />
+				<Property Name="Height" Type="Edm.Decimal" Nullable="false"
+					Precision="13" Scale="3" />
+				<Property Name="DimUnit" Type="Edm.String" Nullable="false"
+					MaxLength="3" />
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset"
+					Nullable="false" Precision="7" />
+				<Property Name="ChangedAt" Type="Edm.DateTimeOffset"
+					Nullable="false" Precision="7" />
+				<NavigationProperty Name="PRODUCT_2_BP"
+					Type="com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.BusinessPartner"
+					Nullable="false" />
+				<NavigationProperty Name="PRODUCT_2_SOITEM"
+					Type="Collection(com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.SOLineItem)"
+					Nullable="true" />
+			</EntityType>
+			<EntityType Name="SOLineItem" HasStream="false">
+				<Key>
+					<PropertyRef Name="SalesOrderID" />
+					<PropertyRef Name="ItemPosition" />
+				</Key>
+				<Property Name="SalesOrderID" Type="Edm.String" Nullable="false"
+					MaxLength="10" />
+				<Property Name="ItemPosition" Type="Edm.String" Nullable="false"
+					MaxLength="10" />
+				<Property Name="Note" Type="Edm.String" Nullable="false"
+					MaxLength="255" />
+				<Property Name="NoteLanguage" Type="Edm.String" Nullable="false"
+					MaxLength="2" />
+				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false"
+					MaxLength="5" />
+				<Property Name="GrossAmount" Type="Edm.Decimal" Nullable="false"
+					Precision="16" Scale="variable" />
+				<Property Name="NetAmount" Type="Edm.Decimal" Nullable="false"
+					Precision="16" Scale="variable" />
+				<Property Name="TaxAmount" Type="Edm.Decimal" Nullable="false"
+					Precision="16" Scale="variable" />
+				<Property Name="DeliveryDate" Type="Edm.DateTimeOffset"
+					Nullable="true" Precision="7" />
+				<Property Name="Quantity" Type="Edm.Decimal" Nullable="false"
+					Precision="13" Scale="3" />
+				<Property Name="QuantityUnit" Type="Edm.String" Nullable="false"
+					MaxLength="3" />
+				<Property Name="Product"
+					Type="com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.ProductInfo"
+					Nullable="false" />
+				<NavigationProperty Name="SOITEM_2_PRODUCT"
+					Type="com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.Product"
+					Nullable="false" />
+				<NavigationProperty Name="SOITEM_2_SO"
+					Type="com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.SalesOrder"
+					Nullable="false">
+					<ReferentialConstraint Property="SalesOrderID"
+						ReferencedProperty="SalesOrderID" />
+				</NavigationProperty>
+			</EntityType>
+			<EntityType Name="SalesOrder" HasStream="false">
+				<Key>
+					<PropertyRef Name="SalesOrderID" />
+				</Key>
+				<Property Name="SalesOrderID" Type="Edm.String" Nullable="false"
+					MaxLength="10" />
+				<Property Name="Note" Type="Edm.String" Nullable="false"
+					MaxLength="255" />
+				<Property Name="NoteLanguage" Type="Edm.String" Nullable="false"
+					MaxLength="1" />
+				<Property Name="BuyerID" Type="Edm.String" Nullable="false"
+					MaxLength="10" />
+				<Property Name="BuyerName" Type="Edm.String" Nullable="false"
+					MaxLength="80" />
+				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false"
+					MaxLength="5" />
+				<Property Name="GrossAmount" Type="Edm.Decimal" Nullable="false"
+					Precision="15" Scale="2" />
+				<Property Name="NetAmount" Type="Edm.Decimal" Nullable="false"
+					Precision="15" Scale="2" />
+				<Property Name="TaxAmount" Type="Edm.Decimal" Nullable="false"
+					Precision="15" Scale="2" />
+				<Property Name="LifecycleStatus" Type="Edm.String"
+					Nullable="false" MaxLength="1" />
+				<Property Name="LifecycleStatusDesc" Type="Edm.String"
+					Nullable="false" MaxLength="60" />
+				<Property Name="BillingStatus" Type="Edm.String" Nullable="false"
+					MaxLength="1" />
+				<Property Name="BillingStatusDesc" Type="Edm.String"
+					Nullable="false" MaxLength="60" />
+				<Property Name="DeliveryStatus" Type="Edm.String" Nullable="false"
+					MaxLength="1" />
+				<Property Name="DeliveryStatusDesc" Type="Edm.String"
+					Nullable="false" MaxLength="60" />
+				<Property Name="CreatedAt" Type="Edm.String" Nullable="true" />
+				<Property Name="ChangedAt" Type="Edm.String" Nullable="true" />
+				<Property Name="SOItemCount" Type="Edm.Int16" Nullable="true" />
+				<NavigationProperty Name="SO_2_BP"
+					Type="com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.BusinessPartner"
+					Nullable="false" />
+				<NavigationProperty Name="SO_2_SOITEM"
+					Type="Collection(com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.SOLineItem)"
+					Nullable="true" Partner="SOITEM_2_SO" />
+			</EntityType>
+			<ComplexType Name="Address">
+				<Property Name="City" Type="Edm.String" Nullable="false"
+					MaxLength="40" />
+				<Property Name="PostalCode" Type="Edm.String" Nullable="false"
+					MaxLength="10" />
+				<Property Name="Street" Type="Edm.String" Nullable="false"
+					MaxLength="60" />
+				<Property Name="Building" Type="Edm.String" Nullable="false"
+					MaxLength="10" />
+				<Property Name="Country" Type="Edm.String" Nullable="false"
+					MaxLength="3" />
+				<Property Name="AddressType" Type="Edm.String" Nullable="false"
+					MaxLength="2" />
+			</ComplexType>
+			<ComplexType Name="ProductInfo">
+				<Property Name="ProductID" Type="Edm.String" Nullable="false"
+					MaxLength="10" />
+				<Property Name="ProductName" Type="Edm.String" Nullable="false"
+					MaxLength="255" />
+				<NavigationProperty Name="PI_2_PRODUCT"
+					Type="com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.Product"
+					Nullable="false" />
+				<NavigationProperty Name="PI_2_SOITEM"
+					Type="Collection(com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.SOLineItem)"
+					Nullable="true" />
+			</ComplexType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="BusinessPartnerList"
+					EntityType="com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.BusinessPartner"
+					IncludeInServiceDocument="true">
+					<NavigationPropertyBinding Path="BP_2_SO"
+						Target="SalesOrderList" />
+					<NavigationPropertyBinding Path="BP_2_CONTACT"
+						Target="ContactList" />
+					<NavigationPropertyBinding Path="BP_2_PRODUCT"
+						Target="ProductList" />
+				</EntitySet>
+				<EntitySet Name="ContactList"
+					EntityType="com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.Contact"
+					IncludeInServiceDocument="true">
+					<NavigationPropertyBinding Path="CONTACT_2_BP"
+						Target="BusinessPartnerList" />
+				</EntitySet>
+				<EntitySet Name="ProductList"
+					EntityType="com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.Product"
+					IncludeInServiceDocument="true" />
+				<EntitySet Name="SOLineItemList"
+					EntityType="com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.SOLineItem"
+					IncludeInServiceDocument="true">
+					<NavigationPropertyBinding Path="SOITEM_2_SO"
+						Target="SalesOrderList" />
+					<NavigationPropertyBinding Path="SOITEM_2_PRODUCT"
+						Target="ProductList" />
+				</EntitySet>
+				<EntitySet Name="SalesOrderList"
+					EntityType="com.sap.gateway.iwbep.v4_gw_sample_basic.v0001.SalesOrder"
+					IncludeInServiceDocument="true">
+					<NavigationPropertyBinding Path="SO_2_BP"
+						Target="BusinessPartnerList" />
+					<NavigationPropertyBinding Path="SO_2_SOITEM"
+						Target="SOLineItemList" />
+				</EntitySet>
+			</EntityContainer>
+			<Annotations Target="SAP__self.BusinessPartner/BusinessPartnerID">
+				<Annotation Term="Common.Label" String="Characterfeld der Länge 10" />
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/BusinessPartnerRole">
+				<Annotation Term="Common.Label" String="Feld der Laenge 3 Bytes" />
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/CompanyName">
+				<Annotation Term="Common.Label" String="Firmenname" />
+				<Annotation Term="Common.QuickInfo" String="EPM: Firmenname" />
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/EmailAddress">
+				<Annotation Term="Common.Label" String="E-Mail-Adresse" />
+				<Annotation Term="Common.Heading" String="E-Mail-Adr." />
+				<Annotation Term="Common.QuickInfo" String="EPM: E-Mail-Adresse" />
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/PhoneNumber">
+				<Annotation Term="Common.Label" String="Telefonnr." />
+				<Annotation Term="Common.Heading" String="Telefonnummer" />
+				<Annotation Term="Common.QuickInfo" String="EPM: Telefonnummer" />
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/LegalForm">
+				<Annotation Term="Common.Label" String="Rechtsform" />
+				<Annotation Term="Common.QuickInfo" String="EPM: Rechtsform des Geschäftspartners" />
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/CurrencyCode">
+				<Annotation Term="Common.Label" String="Währung" />
+				<Annotation Term="Common.Heading" String="Währungscode" />
+				<Annotation Term="Common.QuickInfo" String="EPM: Währungscode" />
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/CreatedAt">
+				<Annotation Term="Common.Label" String="Zeitstempel" />
+				<Annotation Term="Common.QuickInfo"
+					String="UTC-Zeitstempel in Langform (JJJJMMTThhmmssmmmuuun)" />
+			</Annotations>
+			<Annotations Target="SAP__self.BusinessPartner/ChangedAt">
+				<Annotation Term="Common.Label" String="Zeitstempel" />
+				<Annotation Term="Common.QuickInfo"
+					String="UTC-Zeitstempel in Langform (JJJJMMTThhmmssmmmuuun)" />
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

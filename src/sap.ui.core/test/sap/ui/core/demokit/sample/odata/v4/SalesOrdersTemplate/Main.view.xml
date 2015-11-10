@@ -1,0 +1,51 @@
+<mvc:View
+	controllerName="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Main"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc">
+	<VBox>
+		<Table id="SalesOrders" growing="true" growingThreshold="5" headerText="Sales Orders"
+			items="{path: '/SalesOrderList'}"
+			mode="SingleSelectMaster">
+			<headerToolbar>
+				<Toolbar>
+					<content>
+						<core:Icon src="{ui>/icon}" tooltip="{ui>/iconTooltip}"
+							class="sapMBtnIcon"/>
+					</content>
+				</Toolbar>
+			</headerToolbar>
+			<columns>
+				<Column>
+					<Text text="Sales Order ID"/>
+				</Column>
+				<Column>
+					<Text text="Buyer Name"/>
+				</Column>
+				<Column>
+					<Text text="Gross Amount"/>
+				</Column>
+				<Column>
+					<Text text="Currency"/>
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem>
+					<cells>
+						<Text text="{SalesOrderID}"/>
+					</cells>
+					<cells>
+						<Text text="{BuyerName}"/>
+					</cells>
+					<cells>
+						<Text text="{GrossAmount}"/>
+					</cells>
+					<cells>
+						<Text text="{CurrencyCode}"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+	</VBox>
+</mvc:View>
