@@ -55,7 +55,7 @@
       {
         "id": "sap.tnt.sample.SideNavigation",
         "name": "Side Navigation",
-        "description": "SideNavigation in container with fixed width"
+        "description": "SideNavigation in container with fixed width."
       },
       {
         "id": "sap.tnt.sample.ToolHeader",
