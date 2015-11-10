@@ -251,7 +251,7 @@
 					}, this);
 
 					this.oSelectDialog.open();
-					this.clock.tick(200);
+					this.clock.tick(270);
 				});
 
 				QUnit.test("Remember Selections false mode", function (assert) {
@@ -431,7 +431,7 @@
 
 					jQuery.when(this.oSelectDialog.open()).then(function () {
 						that.oSelectDialog._getOkButton().firePress();
-						that.clock.tick(200);
+						that.clock.tick(270);
 					});
 				});
 
@@ -458,11 +458,11 @@
 						that.oSelectDialog._oList.getItems()[3].setSelected(false);
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedContextPaths().length, 2, 'Before cancelling there should be 2 items selected');
 						that.oSelectDialog._getCancelButton().firePress();
-						that.clock.tick(200);
+						that.clock.tick(270);
 					});
 
 					this.oSelectDialog.open();
-					this.clock.tick(200);
+					this.clock.tick(270);
 				});
 
 				QUnit.test("Cancel Event with pre-filtered selection", function (assert) {
@@ -494,11 +494,11 @@
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedContextPaths().length, 0, 'Before cancelling there should be 0 visible items selected');
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedContexts(true).length, 0, 'Before cancelling there should be 0 invisible contexts selected (prefiltered items are not added to the contexts initially)');
 						that.oSelectDialog._getCancelButton().firePress();
-						that.clock.tick(200);
+						that.clock.tick(270);
 					});
 
 					this.oSelectDialog.open();
-					this.clock.tick(200);
+					this.clock.tick(270);
 				});
 
 				QUnit.test("Cancel Event with user-filtered selection", function (assert) {
@@ -520,7 +520,7 @@
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedItems().length, 0, 'Before cancelling there should be 0 visible items selected');
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedContexts(true).length, 2, 'Before cancelling there should be 2 invisible items selected');
 						that.oSelectDialog._getCancelButton().firePress();
-						that.clock.tick(200);
+						that.clock.tick(270);
 					});
 
 					this.oSelectDialog.attachCancel(function (oEvent) {
@@ -530,7 +530,7 @@
 					});
 
 					this.oSelectDialog.open();
-					this.clock.tick(200);
+					this.clock.tick(270);
 				});
 
 				QUnit.test("Cancel on key ESCAPE event", function (assert) {
@@ -560,11 +560,11 @@
 						assert.strictEqual(that.oSelectDialog._oList.getSelectedItems().length, 2, 'Before cancelling there should be 2 items selected');
 
 						qutils.triggerKeydown(that.oSelectDialog._oDialog.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
-						that.clock.tick(200);
+						that.clock.tick(270);
 					});
 
 					this.oSelectDialog.open();
-					this.clock.tick(200);
+					this.clock.tick(270);
 				});
 
 				QUnit.module("Destroy", {
@@ -642,11 +642,11 @@
 					// simulate open and close
 					this.oSelectDialog._oDialog.attachAfterOpen(function(oEvent) {
 						that.oSelectDialog._oDialog.close();
-						that.clock.tick(200);
+						that.clock.tick(270);
 					});
 
 					this.oSelectDialog.open();
-					this.clock.tick(200);
+					this.clock.tick(270);
 				});
 
 				QUnit.test("Check add/remove/toggle/hasStyleClass methods", function (assert) {
@@ -699,7 +699,7 @@
 					});
 
 					this.oSelectDialog.open();
-					this.clock.tick(200);
+					this.clock.tick(270);
 				});
 
 				QUnit.module("Keyboard and focus Handling", {
@@ -783,7 +783,7 @@
 					});
 
 					this.oSelectDialog.open();
-					this.clock.tick(200);
+					this.clock.tick(270);
 				});
 
 			})();

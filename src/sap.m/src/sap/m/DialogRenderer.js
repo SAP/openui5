@@ -61,6 +61,10 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 				oRm.addClass("sapMDialogOpen");
 			}
 
+			if (oControl._bDisableRepositioning) {
+				oRm.addClass("sapMDialogTouched");
+			}
+
 			if (bStretch || (bStretchOnPhone)) {
 				oRm.addClass("sapMDialogStretched");
 			}

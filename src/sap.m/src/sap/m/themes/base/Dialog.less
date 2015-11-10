@@ -20,11 +20,11 @@
 	overflow: hidden;
 	position: absolute;
 	opacity: 0;
-	transition: opacity .15s, transform 0.2s;
 	-webkit-transition: opacity .15s, transform 0.2s;
-	transform: scale(0.9);
-	-ms-transform: scale(0.9);
-	-webkit-transform: scale(0.9);
+	transition: opacity .15s, transform 0.2s;
+	-ms-transform: translate(-50%, -50%) scale(0.9);
+	-webkit-transform: translate(-50%, -50%) scale(0.9);
+	transform: translate(-50%, -50%) scale(0.9);
 }
 
 .sapMDialog .sapMDialogScrollCont > * {
@@ -36,10 +36,13 @@
 	border: none;
 	border-radius: 0;
 	box-shadow: 0;
-	right: 0;
-	bottom: 0;
-	top: 0;
-	left: 0;
+	transform: none;
+	-ms-transform: none;
+	-webkit-transform: none;
+	right: 0 !important;
+	bottom: 0 !important;
+	top: 0 !important;
+	left: 0 !important;
 	height: auto !important; //this is for preventing inline size/width sizes set the width
 	width: auto !important; //this is for preventing inline size/height sizes set the height
 	min-width: 0 !important; //this is for preventing the dialog to hold it's width in small screens
@@ -176,9 +179,12 @@
 
 .sapMDialogOpen {
 	opacity: 1;
-	transform: scale(1);
-	-ms-transform: scale(1);
-	-webkit-transform: scale(1);
+	transform: translate(-50%, -50%) scale(1);
+	-ms-transform: translate(-50%, -50%) scale(1);
+	-webkit-transform: translate(-50%, -50%) scale(1);
+	//to prevent antialiasing/blurring the dialog
+	filter: blur(0);
+	-webkit-filter: blur(0);
 }
 
 .sapMDialogBlockLayerAnimation {
@@ -335,6 +341,18 @@
 	-webkit-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+}
+
+//remove the transform translate
+.sapMDialogTouched {
+	transform: scale(1);
+	-ms-transform: scale(1);
+	-webkit-transform: scale(1);
+}
+
+.sapDialogDisableTransition {
+	transition: none;
+	-webkit-transition: none;
 }
 
 .sapMDialogResizeHandler {
