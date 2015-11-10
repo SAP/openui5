@@ -80,6 +80,8 @@ sap.ui.define([],
                 fixedItemAggregation.setExpanded(false);
             }
 
+            rm.write('<div class="sapMSideNavigationSeparator" role="separator" aria-orientation="horizontal"></div>');
+
             rm.write('<div class="sapMSideNavigationFixed">');
             rm.renderControl(fixedItemAggregation);
             rm.write('</div>');
