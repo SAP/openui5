@@ -13,31 +13,45 @@
         "id": "sap.tnt.NavigationList",
         "name": "Navigation List",
         "category": "Action",
-        "since": "1.36",
+        "since": "1.34",
         "samples": [
           "sap.tnt.sample.NavigationList"
         ]
       },
       {
         "id": "sap.tnt.SideNavigation",
-        "name": "SideNavigation",
+        "name": "Side Navigation",
         "category": "Action",
-        "since": "1.36",
+        "since": "1.34",
         "samples": [
           "sap.tnt.sample.SideNavigation"
+        ]
+      },
+      {
+        "id": "sap.tnt.ToolHeader",
+        "name": "Tool Header",
+        "category": "Action",
+        "since": "1.34",
+        "samples": [
+          "sap.tnt.sample.ToolHeader"
         ]
       }
     ],
     "samples": [
       {
         "id": "sap.tnt.sample.NavigationList",
-        "name": "NavigationList",
-        "description": "NavigationList in a Page."
+        "name": "Navigation List",
+        "description": "Navigation List in a Page"
       },
       {
         "id": "sap.tnt.sample.SideNavigation",
-        "name": "SideNavigation",
+        "name": "Side Navigation",
         "description": "SideNavigation in container with fixed width"
+      },
+      {
+        "id": "sap.tnt.sample.ToolHeader",
+        "name": "Tool Header",
+        "description": "Tool Header is useful for showing lists of action buttons"
       }
     ]
   }

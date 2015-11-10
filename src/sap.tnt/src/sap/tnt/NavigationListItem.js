@@ -14,7 +14,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 		 * @class
 		 * NavigationListItem represents an action which can be selected by the user.
 		 * It can provide sub items.
-		 * @extends sap.tnt.NavigationListItem
+		 * @extends sap.ui.core.Item
 		 *
 		 * @author SAP SE
 		 * @version ${version}

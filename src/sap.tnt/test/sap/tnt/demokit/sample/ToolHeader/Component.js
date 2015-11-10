@@ -2,9 +2,9 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function(UIComponent) {
 	'use strict';
 
-	var Component = UIComponent.extend('sap.tnt.sample.NavigationList.Component', {
+	var Component = UIComponent.extend('sap.tnt.sample.ToolHeader.Component', {
 		metadata : {
-			rootView : 'sap.tnt.sample.NavigationList.V',
+			rootView : 'sap.tnt.sample.ToolHeader.V',
 			dependencies : {
 				libs : [
 					'sap.tnt',
@@ -15,7 +15,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 				sample : {
 					stretch : true,
 					files : [
-						'V.view.xml'
+						'V.view.xml',
+						"V.controller.js"
 					]
 				}
 			}
