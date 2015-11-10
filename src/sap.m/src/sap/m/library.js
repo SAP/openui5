@@ -2190,9 +2190,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @name sap.m.touch
 	 * @public
 	 **/
-
 	if (sap.m && !sap.m.touch) {
-
 		sap.m.touch = {};
 	}
 
@@ -2203,8 +2201,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @param {Touch | number} oTouch A touch object to find or a Touch.identifier that uniquely identifies the current finger in the touch session.
 	 * @return {object | undefined} The touch matching if any.
 	 * @public
-	 * @name sap.m.touch.find
-	 * @function
 	*/
 	sap.m.touch.find = function(oTouchList, oTouch) {
 		var i,
@@ -2241,8 +2237,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @param {jQuery | Element | string} vElement A jQuery element or an element reference or an element id.
 	 * @return {number} The number of touches related with the given element.
 	 * @public
-	 * @name sap.m.touch.countContained
-	 * @function
 	*/
 	sap.m.touch.countContained = function(oTouchList, vElement) {
 		var i,
