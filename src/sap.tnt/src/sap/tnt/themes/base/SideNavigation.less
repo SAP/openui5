@@ -26,12 +26,8 @@
 .sapMSideNavigationNotExpanded {
   max-width: 3rem;
 
-  .sapMSideNavigationFixed {
-	&::after {
-	  width: ~"calc(100% - 1rem)";
-
-	  left: 0.5rem;
-	}
+  .sapMSideNavigationSeparator {
+    margin: 0.25rem 0.5rem;
   }
 }
 
@@ -42,22 +38,13 @@
   flex-grow: 1;
 }
 
+.sapMSideNavigationSeparator {
+  margin: 0.25rem 1rem;
+  height: 1px;
+}
+
 .sapMSideNavigationFixed {
-  padding-top: ~"calc(0.5rem + 1px)";
   position: relative;
-
-  &::after {
-	content: "";
-	display: block;
-	height: 1px;
-	width: ~"calc(100% - 2rem)";
-
-	position: absolute;
-	top: 0.25rem;
-	left: 1rem;
-
-	z-index: 1;
-  }
 }
 
 .sapMSideNavigationVerticalScrolling {
