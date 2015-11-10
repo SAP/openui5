@@ -15,8 +15,8 @@
 						<Button text="Create Sales Order" icon="sap-icon://add"
 							enabled="{ui>/bRealOData}"
 							press="onCreateSalesOrderDialog"/>
-						<core:Icon src="{ui>/icon}" tooltip="{ui>/iconTooltip}"
-							class="sapMBtnIcon"/>
+						<Button enabled="false" icon="{ui>/icon}" tooltip="{ui>/iconTooltip}"
+							type="Transparent"/>
 					</content>
 					<dependents>
 						<Dialog id="createSalesOrderDialog" title="Create New Sales Order">
