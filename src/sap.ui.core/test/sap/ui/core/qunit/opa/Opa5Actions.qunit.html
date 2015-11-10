@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="utf-8" />
+	<title>qUnit Page for sap.ui.test.Opa5 - actions</title>
+
+	<script
+			src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.ui.commons">
+	</script>
+
+	<script>
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		jQuery.sap.require("sap.ui.thirdparty.sinon");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+		sap.ui.require(["sap/ui/test/Opa5"], function (Opa5) {
+			QUnit.module("Tests with fake time", {
+				setup: function () {
+					sinon.config.useFakeTimers = true;
+				},
+				teardown: function () {
+					sinon.config.useFakeTimers = false;
+				}
+			});
+
+			QUnit.test("Should execute an action", function(assert) {
+				// Arrange
+				var oOpa5 = new Opa5(),
+					fnActionSpy = this.spy(),
+					start = assert.async();
+
+				// Act
+				oOpa5.waitFor({
+					actions: fnActionSpy
+				});
+
+				oOpa5.emptyQueue().done(function () {
+					// Assert
+					sinon.assert.calledOnce(fnActionSpy);
+					start();
+				});
+
+				// empty the queue
+				this.clock.tick(0);
+			});
+
+
+			QUnit.test("Should execute success after an action", function(assert) {
+				// Arrange
+				var oOpa5 = new Opa5(),
+					fnCheckStub = this.stub().returns(true),
+					fnActionSpy = this.spy(),
+					fnSuccessSpy = this.spy(),
+					start = assert.async();
+
+				// Act
+				oOpa5.waitFor({
+					check: fnCheckStub,
+					actions: fnActionSpy,
+					success: fnSuccessSpy
+				});
+
+				oOpa5.emptyQueue().done(function () {
+					// Assert
+					sinon.assert.callOrder(fnCheckStub, fnActionSpy, fnSuccessSpy);
+					start();
+				});
+
+				// empty the queue
+				this.clock.tick(0);
+			});
+
+			QUnit.test("Should not execute an action before the check returns true", function(assert) {
+				// Arrange
+				var oOpa5 = new Opa5(),
+					bCheckReturnValue = false,
+					fnActionSpy = this.spy(),
+					start = assert.async();
+
+				// Act
+				oOpa5.waitFor({
+					check: function () {
+						return bCheckReturnValue;
+					},
+					actions: fnActionSpy,
+					pollingInterval: 0
+				});
+
+
+				oOpa5.emptyQueue().done(function () {
+					// Assert
+					sinon.assert.calledOnce(fnActionSpy);
+					start();
+				});
+
+
+				setTimeout(function () {
+					bCheckReturnValue = true;
+				}, 0);
+
+				// set the check to true
+				// and empty the queue
+				this.clock.tick(0);
+			});
+
+			QUnit.test("Should catch exceptions in actions", function (assert) {
+				// Arrange
+				var oOpa5 = new Opa5(),
+					fnActionSpy = this.stub().throws(),
+					queueEmptied = assert.async(),
+					start = assert.async();
+
+				// Act
+				oOpa5.waitFor({
+					actions: fnActionSpy
+				});
+
+				oOpa5.emptyQueue().fail(function () {
+					// Assert
+					sinon.assert.calledOnce(fnActionSpy);
+					queueEmptied();
+				});
+
+				// empty the queue
+				assert.throws(function () {
+					// triggers the exception
+					this.clock.tick(0)
+				}.bind(this));
+				start();
+			});
+		});
+	</script>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+</body>
+</html>
