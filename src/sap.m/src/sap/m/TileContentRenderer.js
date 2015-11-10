@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		oRm.addClass(oControl._getContentType());
 		oRm.addClass(oControl.getSize());
 		oRm.addClass("ft-" + oControl.getFrameType());
-		if (sTooltip) {
+		if (sTooltip.trim()) { // trim check needed since IE11 renders white spaces
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 		oRm.writeAttribute("aria-describedby", oControl.getId() + "-info");
@@ -80,7 +80,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control whose footer should be rendered
 	 */
+
 	TileContentRenderer._renderFooter = function(oRm, oControl) {
+		var sTooltip = oControl.getTooltip_AsString();
 		var sFooterTxt = oControl._getFooterText(oRm, oControl);
 		// footer text div
 		oRm.write("<div");
@@ -88,7 +90,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		oRm.addClass(oControl.getSize());
 		oRm.writeClasses();
 		oRm.writeAttribute("id", oControl.getId() + "-footer-text");
-		oRm.writeAttributeEscaped("title", sFooterTxt);
+		if (sTooltip.trim()) { // check for white space(s) needed since the IE11 renders it
+			oRm.writeAttributeEscaped("title", sTooltip);
+		}
 		oRm.write(">");
 		oRm.writeEscaped(sFooterTxt);
 		oRm.write("</div>");

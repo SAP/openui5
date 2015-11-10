@@ -2,14 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/core/HTML', 'sap/ui/core/Icon', 'sap/ui/core/IconPool'],//, 'sap/m/TileContent'],
-	function(jQuery, library, Control, Text, HTML, Icon, TileContent) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/core/HTML', 'sap/ui/core/Icon', 'sap/ui/core/IconPool'],
+	function(jQuery, library, Control, Text, HTML, Icon) {
 	"use strict";
 
 	/**
 	 * Constructor for a new sap.m.GenericTile control.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class The tile control that displays the title, description, and customizable main area.
@@ -462,6 +462,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		var sFailedMsg = sCustomFailedMsg ? sCustomFailedMsg : this._sFailedToLoad;
 		this._oFailedText.setText(sFailedMsg);
 		this._oFailedText.setTooltip(sFailedMsg);
+	};
+
+	GenericTile.prototype.getTooltip_AsString = function() {
+		var sTooltip = this.getTooltip();
+		var sAltText = "";
+		if (typeof sTooltip === "string" || sTooltip instanceof String) {
+			return sTooltip;
+		}
+		sAltText = this.getAltText();
+		return sAltText ? sAltText : "";
 	};
 
 	return GenericTile;
