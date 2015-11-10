@@ -74,7 +74,7 @@ sap.ui.define([
 		}
 
 		/**
-		 * Starts an app in a component.
+		 * Starts a UIComponent.
 		 * @param {object} options An Object that contains the configuration for starting up a component
 		 * @param {object} options.componentConfig will be passed to {@link sap.ui.component component}, please read the respective documentation
 		 * @param {string} [options.hash] sets the hash {@link sap.ui.core.routing.HashChanger.setHash} to the given value.
@@ -84,7 +84,7 @@ sap.ui.define([
 		 * @public
 		 * @function
 		 */
-		Opa5.prototype.iStartMyAppInAComponent = function iStartMyAppInAComponent (options){
+		Opa5.prototype.iStartMyUIComponent = function iStartMyUIComponent (options){
 			options = options || {};
 
 			// wait for starting of component launcher
@@ -133,7 +133,7 @@ sap.ui.define([
 		 * @public
 		 * @function
 		 */
-		Opa5.prototype.iTeardownMyComponent = function iTeardownMyComponent () {
+		Opa5.prototype.iTeardownMyUIComponent = function iTeardownMyUIComponent () {
 
 			return this.waitFor({
 				success : function () {

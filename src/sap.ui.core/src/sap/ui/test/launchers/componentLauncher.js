@@ -8,7 +8,7 @@ sap.ui.define([
 	"use strict";
 	var $ = jQuery,
 		_loadingStarted = false,
-		_oComponent = null,
+		_oComponentContainer = null,
 		_$Component = null;
 
 	/**
@@ -40,9 +40,9 @@ sap.ui.define([
 				$("body").append(_$Component);
 
 				// create and place the component into html
-				_oComponent = new ComponentContainer({component: oComponent});
+				_oComponentContainer = new ComponentContainer({component: oComponent});
 
-				_oComponent.placeAt(sId);
+				_oComponentContainer.placeAt(sId);
 			});
 
 		},
@@ -52,7 +52,7 @@ sap.ui.define([
 			if (!_loadingStarted){
 				throw "sap.ui.test.launchers.componentLauncher: Teardown has been called but there was no start";
 			}
-			_oComponent.destroy();
+			_oComponentContainer.destroy();
 			_$Component.remove();
 			_loadingStarted = false;
 		}
