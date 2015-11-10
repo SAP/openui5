@@ -17,6 +17,7 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	 *
 	 * @public
 	 * @alias sap.ui.model.CompositeBinding
+	 * @extends sap.ui.model.PropertyBinding
 	 */
 	
 	var CompositeBinding = PropertyBinding.extend("sap.ui.model.CompositeBinding", /** @lends sap.ui.model.CompositeBinding.prototype */ {
