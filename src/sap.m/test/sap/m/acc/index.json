@@ -6,6 +6,11 @@
 			"appComponent": "CA-UI5-CTR-WDF"
 		},
 		{
+			"control": "sap.m.ActionSheet",
+			"url": "ActionSheet.html",
+			"appComponent": "CA-UI5-CTR-SOF-RIL"
+		},
+		{
 			"control": "sap.m.Bar",
 			"url": "../Bar.html",
 			"appComponent": "CA-UI5-CTR-SOF"
