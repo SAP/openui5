@@ -1168,7 +1168,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 * @param {array} [aItems]
 		 */
 		Select.prototype.synchronizeSelection = function() {
-			SelectList.prototype.synchronizeSelection.call(this);
+			SelectList.prototype.synchronizeSelection.apply(this, arguments);
 		};
 
 		/**
