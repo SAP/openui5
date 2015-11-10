@@ -1664,16 +1664,22 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './Popov
 		 */
 		Select.prototype.setSelectedKey = function(sKey) {
 			sKey = this.validateProperty("selectedKey", sKey);
+			var bDefaultKey = (sKey === "");
+
+			if (!this.getForceSelection() && bDefaultKey) {
+				this.setSelection(null);
+				this.setValue("");
+				return this;
+			}
+
 			var oItem = this.getItemByKey(sKey);
 
-			if (oItem || (sKey === "")) {
+			if (oItem || bDefaultKey) {
 
 				// if "sKey" is an empty string "" or undefined,
 				// the first enabled item will be selected (if any)
-				if (!oItem && sKey === "") {
+				if (!oItem && bDefaultKey) {
 					oItem = this.getDefaultSelectedItem();
-				} else if (!this.getForceSelection() && sKey === "") {
-					oItem = null;
 				}
 
 				this.setSelection(oItem);
