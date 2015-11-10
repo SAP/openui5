@@ -53,7 +53,6 @@
 	};
 
 	function prepareNewRun() {
-		jQuery("#open").click();
 		jQuery("div#innerBar").width("0%");
 		jQuery("#stop").toggle();
 		jQuery("div.testResult").remove();
@@ -169,12 +168,13 @@
 				alert("Please select at least on test to execute");
 			} else {
 				prepareNewRun();
+				jQuery("#open").click();
 				run();
 			}
 		});
 
 		function open() {
-			if(jQuery("div#test-selection").css("height")=== "300px") {
+			if(jQuery("div#test-selection").css("height") === "300px") {
 				jQuery("div#elements").toggle();
 				jQuery("div#test-selection").animate({height: "40px"}, 500);
 				jQuery("#open").attr("style", "width:0px;height:0px;margin:5px;border-style:solid;border-width: 12px 12px 0 12px;border-color:#007dc0 transparent transparent transparent;float: right;position: relative;left: -10px;cursor: pointer;");
