@@ -252,7 +252,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 									new sap.m.Column({
 										width: "80%",
 										styleClass: "sapMPlanCalAppRow",
-										minScreenWidth: sap.m.ScreenSize.Tablet,
+										minScreenWidth: sap.m.ScreenSize.Desktop,
 										demandPopin: true
 										})
 									]
@@ -705,6 +705,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
+		// as OverflowToolbar uses indexOfContent function of controls parent to get Index
+		PlanningCalendar.prototype.indexOfContent = function(vControl) {
+
+			return this.indexOfToolbarContent(vControl);
+
+		};
+
 		PlanningCalendar.prototype.setSingleSelection = function(bSingleSelection) {
 
 			this.setProperty("singleSelection", bSingleSelection, true);
@@ -778,18 +785,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this._bDateRangeChanged = true;
 			var oDestroyed = this.destroyAggregation("specialDates");
 			return oDestroyed;
-
-		};
-
-		/*
-		 * overwrites the getContent function of the toolbar to allow to mix static content from the PlanningCalendar
-		 * and application content.
-		 *
-		 * @private
-		 */
-		PlanningCalendar.prototype._getToolbarContent = function(){
-
-			return this.getToolbarContent();
 
 		};
 
@@ -1075,12 +1070,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			if (this.getToolbarContent().length > 0) {
 				if (!this._oToolbar) {
-					this._oToolbar = new sap.m.Toolbar(this.getId() + "-Toolbar", {
+					this._oToolbar = new sap.m.OverflowToolbar(this.getId() + "-Toolbar", {
 						design: sap.m.ToolbarDesign.Transpaent
 					});
 					this._oToolbar._oPlanningCalendar = this;
 					this._oToolbar.getContent = function() {
-						return this._oPlanningCalendar._getToolbarContent();
+						return this._oPlanningCalendar.getToolbarContent();
 					};
 				}
 				if (!oTable.getHeaderToolbar()) {
@@ -1360,9 +1355,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					});
 					this._oSelectAllCheckBox.attachEvent("select", _handleSelectAll, this);
 				}
-				if (this._iSize == 0 || !this.getShowRowHeaders()) {
+				if (this._iSize < 2 || !this.getShowRowHeaders()) {
 					var iIndex = this._oInfoToolbar.indexOfContent(this._oSelectAllCheckBox);
-					if (this._iSize == 0) {
+					if (this._iSize < 2) {
 						// on phone: checkbox below calendar
 						if (iIndex < this._oInfoToolbar.getContent().length - 1) {
 							this._oInfoToolbar.addContent(this._oSelectAllCheckBox);
