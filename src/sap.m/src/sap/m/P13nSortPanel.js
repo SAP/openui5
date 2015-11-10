@@ -335,8 +335,8 @@ sap.ui.define([
 		}
 	};
 
-	P13nSortPanel.prototype.insertSortItem = function(oSortItem) {
-		this.insertAggregation("sortItems", oSortItem);
+	P13nSortPanel.prototype.insertSortItem = function(oSortItem, iIndex) {
+		this.insertAggregation("sortItems", oSortItem, iIndex);
 
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
