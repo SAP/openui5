@@ -136,7 +136,8 @@
 				"since" : "1.32",
 				"samples" : [
 					"sap.ui.core.sample.odata.v4.ListBinding",
-					"sap.ui.core.sample.odata.v4.SalesOrders"
+					"sap.ui.core.sample.odata.v4.SalesOrders",
+					"sap.ui.core.sample.odata.v4.SalesOrdersTemplate"
 				]
 			},
 			{
@@ -392,6 +393,11 @@
 				"id": "sap.ui.core.sample.odata.v4.SalesOrders",
 				"name": "Sales Orders",
 				"description": "Example for OData v4 EPM Sales Orders"
+			},
+			{
+				"id": "sap.ui.core.sample.odata.v4.SalesOrdersTemplate",
+				"name": "Sales Orders Template",
+				"description": "Example for OData v4 EPM Sales Orders using XML Templating"
 			},
 			{
 				"id": "sap.ui.core.sample.ViewTemplate.scenario",
