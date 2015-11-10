@@ -1,0 +1,191 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="utf-8" />
+	<title>qUnit Page for sap.ui.test.actions.EnterText</title>
+
+	<script
+			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-libs="sap.m">
+	</script>
+
+
+	<script>
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		jQuery.sap.require("sap.ui.thirdparty.sinon");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+		sap.ui.require([
+			"sap/ui/test/actions/EnterText",
+			"sap/m/Input",
+			"sap/m/MultiInput",
+			"sap/m/SearchField",
+			"sap/m/TextArea",
+			'sap/m/Token'
+		], function(
+				EnterText,
+				Input,
+				MultiInput,
+				SearchField,
+				TextArea,
+				Token)
+		{
+			"use strict";
+
+			QUnit.module("Entering text",{
+				afterEach: function() {
+					this.oControl.destroy();
+				}
+			});
+
+			[{
+				Control: Input,
+				changeEvent: "change",
+				liveChangeEventParameter: "value"
+			},{
+				Control: TextArea,
+				changeEvent: "change",
+				liveChangeEventParameter: "value"
+			},{
+				Control: MultiInput,
+				changeEvent: "change",
+				liveChangeEventParameter: "value"
+			},{
+				Control: SearchField,
+				changeEvent: "search",
+				liveChangeEventParameter: "newValue"
+			}].forEach(function (testInfo) {
+
+				QUnit.test("Should enter a text in a " + testInfo.Control.getMetadata().getName(), function(assert) {
+					// Arrange
+					var oControl = new testInfo.Control({
+								value: "A"
+							}),
+							iLiveChangeCalls = 0,
+							fnChangeTriggered = assert.async(),
+							fnLiveChangeTriggered = assert.async();
+					this.oControl = oControl;
+					oControl.placeAt("qunit-fixture");
+
+					//Make sure that the control is rendered
+					sap.ui.getCore().applyChanges();
+
+					// System under Test
+					var oEnterTextAction = new EnterText({
+						text: "foO"
+					});
+
+					oControl.attachLiveChange(function (oEvent) {
+						iLiveChangeCalls++;
+						assert.strictEqual(document.activeElement, oControl.getFocusDomRef(), "Input has focus");
+
+						if (iLiveChangeCalls === 1) {
+							assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), "Af");
+						}
+
+						if (iLiveChangeCalls === 2) {
+							assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), "Afo");
+						}
+
+						if (iLiveChangeCalls === 3) {
+							assert.strictEqual(oEvent.getParameter(testInfo.liveChangeEventParameter), "AfoO");
+							fnLiveChangeTriggered();
+						}
+					}, this);
+
+					oControl.attachEvent(testInfo.changeEvent,function () {
+						fnChangeTriggered();
+					});
+
+					// Act
+					oEnterTextAction.executeOn(oControl);
+				});
+			});
+
+			QUnit.test("Should enter tokens to a multi input", function (assert) {
+				// Arrange
+				this.oControl = new MultiInput();
+				this.oControl.addValidator(function(args){
+					return new Token({key: args.text, text: args.text});
+				});
+				this.oControl.placeAt("qunit-fixture");
+
+				//Make sure that the control is rendered
+				sap.ui.getCore().applyChanges();
+
+
+				// System under test
+				var oEnterFirstToken = new EnterText({
+					text: "foo"
+				});
+				var oEnterSecondToken = new EnterText({
+					text: "bar"
+				});
+
+				// Act
+				oEnterFirstToken.executeOn(this.oControl);
+				var aFirstTokens = this.oControl.getTokens();
+
+				oEnterSecondToken.executeOn(this.oControl);
+				var aSecondTokens = this.oControl.getTokens();
+
+				assert.strictEqual(aFirstTokens.length, 1, "Created one token");
+				assert.strictEqual(aFirstTokens[0].getText(), "foo", "First token is foo");
+
+
+				assert.strictEqual(aSecondTokens.length, 2, "Created two tokens");
+				assert.strictEqual(aSecondTokens[0].getText(), "foo", "First token is foo");
+				assert.strictEqual(aSecondTokens[1].getText(), "bar", "Second token is bar");
+			});
+
+			test("Should log an error if a control is not rendered", function () {
+				// Arrange
+				var oSpy = this.spy(jQuery.sap.log, "error");
+				this.oControl = new MultiInput();
+
+
+				var oEnterText = new EnterText({
+					text: "foo"
+				});
+
+				// Act
+				oEnterText.executeOn(this.oControl);
+
+				sinon.assert.calledWith(oSpy,  sinon.match(/has no focusable/),  sinon.match(oEnterText));
+			});
+
+			test("Should log an error if a control has no focusable domref", function () {
+				// Arrange
+				var oSpy = sinon.spy(jQuery.sap.log, "error");
+				this.oControl = new MultiInput({
+					enabled : false
+				});
+				this.oControl.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+
+				var oEnterText = new EnterText({
+					text: "foo"
+				});
+
+				// Act
+				oEnterText.executeOn(this.oControl);
+
+				sinon.assert.calledWith(oSpy,  sinon.match(/could not be focused/),  sinon.match(oEnterText));
+			});
+		});
+	</script>
+</head>
+
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+</body>
+
+</html>
