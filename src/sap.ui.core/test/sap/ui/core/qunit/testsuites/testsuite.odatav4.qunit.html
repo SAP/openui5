@@ -12,13 +12,13 @@
 		function suite() {
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/odata/v4/_SyncPromise.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/odata/v4/ODataContextBinding.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/odata/v4/ODataDocumentModel.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/odata/v4/ODataListBinding.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/odata/v4/ODataMetaModel.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/odata/v4/ODataModel.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/odata/v4/ODataPropertyBinding.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/odata/v4/SyncPromise.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/demokit/sample/odata/v4/SalesOrders/Opa.qunit.html");
 			return suite;
 		}

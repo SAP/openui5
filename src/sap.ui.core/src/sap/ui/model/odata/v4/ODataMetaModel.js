@@ -7,7 +7,7 @@ sap.ui.define([
 	'sap/ui/model/MetaModel',
 	"sap/ui/model/odata/ODataUtils",
 	'sap/ui/model/odata/v4/_ODataHelper',
-	'sap/ui/model/odata/v4/SyncPromise'
+	'sap/ui/model/odata/v4/_SyncPromise'
 ], function (MetaModel, ODataUtils, Helper, SyncPromise) {
 	"use strict";
 

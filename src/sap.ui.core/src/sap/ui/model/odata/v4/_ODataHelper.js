@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/model/odata/ODataUtils",
-	"sap/ui/model/odata/v4/SyncPromise",
+	"sap/ui/model/odata/v4/_SyncPromise",
 	"sap/ui/thirdparty/odatajs-4.0.0"
 ], function (ODataUtils, SyncPromise, Olingo) {
 	"use strict";
