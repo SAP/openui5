@@ -5,11 +5,9 @@
 //Provides class sap.ui.model.odata.v4.ODataListBinding
 sap.ui.define([
 	"jquery.sap.global", "sap/ui/model/Binding", "sap/ui/model/ChangeReason",
-	"sap/ui/model/ListBinding", "./_ODataHelper"
-], function (jQuery, Binding, ChangeReason, ListBinding, Helper) {
+	"sap/ui/model/ListBinding", "./_ODataHelper", "./lib/_Cache", "./lib/_Requestor"
+], function (jQuery, Binding, ChangeReason, ListBinding, Helper, Cache, Requestor) {
 	"use strict";
-
-	/*global odatajs */
 
 	/**
 	 * DO NOT CALL this private constructor for a new <code>ODataListBinding</code>,
@@ -80,8 +78,8 @@ sap.ui.define([
 	ODataListBinding.prototype.getContexts = function (iStart, iLength) {
 		var oContext = this.getContext(),
 			oModel = this.getModel(),
+			sRelativePath,
 			sResolvedPath = oModel.resolve(this.getPath(), oContext),
-			sUrl,
 			that = this;
 
 		function getBasePath(iIndex) {
@@ -162,21 +160,18 @@ sap.ui.define([
 			if (oContext) { // nested list binding
 				oModel.read(sResolvedPath, true)
 					.then(createContexts.bind(undefined, getDependentPath));
-			}  else { // absolute path
-				sUrl = oModel.sServiceUrl + sResolvedPath.slice(1);
+			}  else {
+				sRelativePath = sResolvedPath.slice(1);
 				if (!this.oCache) {
 					if (this.sExpand) {
-						sUrl += "?$expand=" + encodeURIComponent(this.sExpand);
+						sRelativePath += "?$expand=" + encodeURIComponent(this.sExpand);
 					}
-					this.oCache = odatajs.cache.createDataCache({
-						mechanism : "memory",
-						name : sUrl,
-						source : sUrl
-					});
+					this.oCache = new Cache(new Requestor(oModel.sServiceUrl), sRelativePath);
 				}
-				this.oCache.readRange(iStart, iLength)
+				this.oCache.read(iStart, iLength)
 					.then(createContexts.bind(undefined, getBasePath), function (oError) {
-						jQuery.sap.log.error("Failed to get contexts for " + sUrl
+						jQuery.sap.log.error("Failed to get contexts for "
+							+ oModel.sServiceUrl + sRelativePath
 							+ " with start index " + iStart + " and length " + iLength, oError,
 							"sap.ui.model.odata.v4.ODataListBinding");
 					});
@@ -241,7 +236,7 @@ sap.ui.define([
 				fnReject(oError);
 			}
 
-			that.oCache.readRange(iIndex, 1).then(function (oData) {
+			that.oCache.read(iIndex, 1).then(function (oData) {
 				var oResult = oData.value[0];
 
 				if (sPath) {
