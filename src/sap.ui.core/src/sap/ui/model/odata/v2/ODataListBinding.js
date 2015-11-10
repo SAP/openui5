@@ -118,11 +118,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 	
 	/**
 	 * Return contexts for the list
+	 * 
+
 	 *
 	 * @param {int} [iStartIndex] the start index of the requested contexts
 	 * @param {int} [iLength] the requested amount of contexts
 	 * @param {int} [iThreshold] The threshold value
-	 * @return {Array} the contexts array
+	 * @return {sap.ui.model.Context[]} the array of contexts for each row of the bound list
 	 * @protected
 	 */
 	ODataListBinding.prototype.getContexts = function(iStartIndex, iLength, iThreshold) {
