@@ -19,12 +19,19 @@
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
-		sap.ui.require(["sap/ui/test/Opa5"], function (Opa5) {
+		sap.ui.require([
+			"sap/ui/test/Opa5",
+			"sap/m/Button"
+		], function (Opa5, Button) {
 			QUnit.module("Tests with fake time", {
 				setup: function () {
+					this.oButton = new Button("foo");
+					this.oButton.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
 					sinon.config.useFakeTimers = true;
 				},
 				teardown: function () {
+					this.oButton.destroy();
 					sinon.config.useFakeTimers = false;
 				}
 			});
@@ -37,6 +44,7 @@
 
 				// Act
 				oOpa5.waitFor({
+					id: "foo",
 					actions: fnActionSpy
 				});
 
@@ -61,6 +69,7 @@
 
 				// Act
 				oOpa5.waitFor({
+					id: "foo",
 					check: fnCheckStub,
 					actions: fnActionSpy,
 					success: fnSuccessSpy
@@ -85,6 +94,7 @@
 
 				// Act
 				oOpa5.waitFor({
+					id: "foo",
 					check: function () {
 						return bCheckReturnValue;
 					},
@@ -118,6 +128,7 @@
 
 				// Act
 				oOpa5.waitFor({
+					id: "foo",
 					actions: fnActionSpy
 				});
 

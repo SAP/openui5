@@ -286,6 +286,7 @@ sap.ui.define([
 		 * @public
 		 */
 		Opa5.prototype.waitFor = function (oOptions) {
+			var vActions = oOptions.actions;
 			oOptions = $.extend({},
 					Opa.config,
 					oOptions);
@@ -342,7 +343,7 @@ sap.ui.define([
 					return false;
 				}
 
-				if (vControl) {
+				if (vControl && oOptions.matchers) {
 					vResult = oMatcherPipeline.process({
 						matchers: oOptions.matchers,
 						control: vControl
@@ -352,6 +353,8 @@ sap.ui.define([
 					if (!vResult) {
 						return false;
 					}
+				} else {
+					vResult = vControl;
 				}
 
 				if (fnOriginalCheck) {
@@ -363,10 +366,10 @@ sap.ui.define([
 			};
 
 			oOptions.success = function () {
-				if (oOptions.actions) {
+				if (vActions && vResult) {
 					oActionPipeline.process({
-						actions: oOptions.actions,
-						control: vControl
+						actions: vActions,
+						control: vResult
 					});
 				}
 
