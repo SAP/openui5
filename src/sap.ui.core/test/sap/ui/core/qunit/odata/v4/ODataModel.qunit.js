@@ -331,10 +331,10 @@ sap.ui.require([
 			oMetaModelMock = this.oSandbox.mock(oMetaModel),
 			oMetaContext = oMetaModel.getContext("/path/into/metamodel");
 
-		oMetaModelMock.expects("getOrRequestMetaContext")
+		oMetaModelMock.expects("fetchMetaContext")
 			.withExactArgs("/EMPLOYEES(ID='1')/ENTRYDATE")
 			.returns(Promise.resolve(oMetaContext));
-		oMetaModelMock.expects("getOrRequestObject")
+		oMetaModelMock.expects("fetchObject")
 			.withExactArgs("Type/QualifiedName", oMetaContext)
 			.returns(SyncPromise.resolve("Edm.Date"));
 		return oModel.requestObject(

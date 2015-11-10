@@ -130,7 +130,7 @@ sap.ui.require([
 		sMetaTeam = sMetaEmployees + "/NavigationPropertyBindings('EMPLOYEE_2_TEAM')/Target";
 
 	/**
-	 * Checks the "get*" and "request*" methods corresponding to the named "getOrRequest*" method,
+	 * Checks the "get*" and "request*" methods corresponding to the named "fetch*" method,
 	 * using the given arguments.
 	 *
 	 * @param {object} oTestContext
@@ -138,7 +138,7 @@ sap.ui.require([
 	 * @param {object} assert
 	 *   the QUnit "assert" object
 	 * @param {string} sMethodName
-	 *   method name "getOrRequest*"
+	 *   method name "fetch*"
 	 * @param {object[]} aArguments
 	 *   method arguments
 	 * @param {boolean} [bThrow=false]
@@ -148,11 +148,11 @@ sap.ui.require([
 	 */
 	function checkGetAndRequest(oTestContext, assert, sMethodName, aArguments, bThrow) {
 		var oExpectation,
-			sGetMethodName = sMethodName.replace("getOrRequest", "get"),
+			sGetMethodName = sMethodName.replace("fetch", "get"),
 			oMetaModel = oTestContext.oMetaModel,
 			oReason = new Error("rejected"),
 			oRejectedPromise = Promise.reject(oReason),
-			sRequestMethodName = sMethodName.replace("getOrRequest", "request"),
+			sRequestMethodName = sMethodName.replace("fetch", "request"),
 			oResult = {},
 			oSyncPromise = SyncPromise.resolve(oRejectedPromise);
 
@@ -340,22 +340,22 @@ sap.ui.require([
 		expected: sMetaTeam + "/NavigationPropertyBindings('TEAM_2_EMPLOYEES')/Target/EntityType/"
 			+ "Properties('ID')"
 	}].forEach(function (oFixture) {
-		QUnit.test("getOrRequestMetaContext: " + oFixture.path, function (assert) {
+		QUnit.test("fetchMetaContext: " + oFixture.path, function (assert) {
 			var oMetaContext,
 				oMetaModel = this.oMetaModel,
 				oHelperMock = this.oSandbox.mock(Helper);
 
-			oHelperMock.expects("getOrRequestEntityContainer").withExactArgs(oMetaModel)
+			oHelperMock.expects("fetchEntityContainer").withExactArgs(oMetaModel)
 				.returns(syncPromiseForEntityContainer());
 			if (oFixture.nav) {
 				oFixture.nav.forEach(function (oNav) {
-					oHelperMock.expects("getOrRequestTypeForNavigationProperty")
+					oHelperMock.expects("fetchTypeForNavigationProperty")
 						.withExactArgs(oMetaModel, nameMatcher(oNav.object.Name), oNav.property)
 						.returns(syncPromiseFor(oNav.result || oEntityTypeWorker));
 				});
 			}
 
-			oMetaContext = oMetaModel.getOrRequestMetaContext(oFixture.path).getResult();
+			oMetaContext = oMetaModel.fetchMetaContext(oFixture.path).getResult();
 
 			assert.strictEqual(oMetaContext.getModel(), oMetaModel);
 			assert.strictEqual(oMetaContext.getPath(), oFixture.expected);
@@ -364,12 +364,12 @@ sap.ui.require([
 	// TODO what about type casts?
 
 	//*********************************************************************************************
-	QUnit.test("getOrRequestMetaContext: /Unknown", function (assert) {
-		this.oSandbox.mock(Helper).expects("getOrRequestEntityContainer")
+	QUnit.test("fetchMetaContext: /Unknown", function (assert) {
+		this.oSandbox.mock(Helper).expects("fetchEntityContainer")
 			.withExactArgs(this.oMetaModel)
 			.returns(syncPromiseFor({"EntitySets" : [], "Singletons" : []}));
 
-		return this.oMetaModel.getOrRequestMetaContext("/Unknown").then(function () {
+		return this.oMetaModel.fetchMetaContext("/Unknown").then(function () {
 			assert.ok(false, "Unexpected success");
 		})["catch"](function (oError) {
 			assert.strictEqual(oError.message,
@@ -395,24 +395,24 @@ sap.ui.require([
 		path: "/Employees(ID='1')/cross_service",
 		error: "Unsupported cross-service reference: /Employees(ID='1')/cross_service"
 	}].forEach(function (oFixture) {
-		QUnit.test("getOrRequestMetaContext: " + oFixture.type + " " + oFixture.path,
+		QUnit.test("fetchMetaContext: " + oFixture.type + " " + oFixture.path,
 	        function (assert) {
 				var oHelperMock = this.oSandbox.mock(Helper);
 
-				oHelperMock.expects("getOrRequestEntityContainer").withExactArgs(this.oMetaModel)
+				oHelperMock.expects("fetchEntityContainer").withExactArgs(this.oMetaModel)
 					.returns(syncPromiseForEntityContainer());
 				if (oFixture.type === "EntitySet") {
-					oHelperMock.expects("getOrRequestTypeForNavigationProperty")
+					oHelperMock.expects("fetchTypeForNavigationProperty")
 						.withExactArgs(this.oMetaModel, nameMatcher("Employees"),
 							"EntityType")
 						.returns(syncPromiseFor(oEntityTypeWorker));
 				} else if (oFixture.type === "Singleton") {
-					oHelperMock.expects("getOrRequestTypeForNavigationProperty")
+					oHelperMock.expects("fetchTypeForNavigationProperty")
 						.withExactArgs(this.oMetaModel, nameMatcher("Me"), "Type")
 						.returns(syncPromiseFor(oEntityTypeWorker));
 				}
 
-				return this.oMetaModel.getOrRequestMetaContext(oFixture.path).then(function () {
+				return this.oMetaModel.fetchMetaContext(oFixture.path).then(function () {
 					assert.ok(false, "Unexpected success");
 				})["catch"](function (oError) {
 					assert.strictEqual(oError.message, oFixture.error);
@@ -428,20 +428,20 @@ sap.ui.require([
 		path: "/",
 		error: "Unsupported: /"
 	}].forEach(function (oFixture) {
-		QUnit.test("getOrRequestMetaContext: " + oFixture.path, function (assert) {
+		QUnit.test("fetchMetaContext: " + oFixture.path, function (assert) {
 			assert.throws(function () {
-				this.oMetaModel.getOrRequestMetaContext(oFixture.path);
+				this.oMetaModel.fetchMetaContext(oFixture.path);
 			}, new Error(oFixture.error));
 		});
 	});
-	// TODO getOrRequestMetaContext: type casts
-	// TODO getOrRequestMetaContext: cross-service NavigationPropertyBinding
-	// TODO getOrRequestMetaContext: NavigationProperty in a complex-type structural property
-	// TODO getOrRequestMetaContext: use @odata.context to get the name of the initial set/singleton
+	// TODO fetchMetaContext: type casts
+	// TODO fetchMetaContext: cross-service NavigationPropertyBinding
+	// TODO fetchMetaContext: NavigationProperty in a complex-type structural property
+	// TODO fetchMetaContext: use @odata.context to get the name of the initial set/singleton
 
 	//*********************************************************************************************
 	QUnit.test("getMetaContext, requestMetaContext", function (assert) {
-		return checkGetAndRequest(this, assert, "getOrRequestMetaContext", ["sPath"], true);
+		return checkGetAndRequest(this, assert, "fetchMetaContext", ["sPath"], true);
 	});
 
 	//*********************************************************************************************
@@ -499,14 +499,14 @@ sap.ui.require([
 		result: oEntityTypeWorker
 	}].forEach(function (oFixture) {
 		var sPath = oFixture.context ? oFixture.context + '/' + oFixture.path : oFixture.path;
-		QUnit.test("getOrRequestObject: " + sPath, function (assert) {
+		QUnit.test("fetchObject: " + sPath, function (assert) {
 			var iCallCount,
 				oMetaModel = this.oMetaModel,
 				oContext = oFixture.context && oMetaModel.getContext(oFixture.context),
 				oDocumentModelMock = this.oSandbox.mock(oMetaModel.oModel);
 
 			function testIt() {
-				return oMetaModel.getOrRequestObject(oFixture.path, oContext)
+				return oMetaModel.fetchObject(oFixture.path, oContext)
 					.then(function (oResult) {
 						if ("result" in oFixture) {
 							TestUtils.deepContains(oResult, oFixture.result);
@@ -525,26 +525,26 @@ sap.ui.require([
 
 			if (oFixture.error) {
 				assert.throws(function () {
-					oMetaModel.getOrRequestObject(oFixture.path, oContext);
+					oMetaModel.fetchObject(oFixture.path, oContext);
 				}, new Error(oFixture.error + ": " + oFixture.path));
 				return undefined;
 			}
-			this.oSandbox.mock(Helper).expects("getOrRequestEntityContainer").atLeast(1)
+			this.oSandbox.mock(Helper).expects("fetchEntityContainer").atLeast(1)
 				.withExactArgs(oMetaModel)
 				.returns(syncPromiseForEntityContainer());
-			this.oSandbox.spy(Helper, "getOrRequestTypeForNavigationProperty");
+			this.oSandbox.spy(Helper, "fetchTypeForNavigationProperty");
 			if (oFixture.type) {
-				oDocumentModelMock.expects("getOrRequestEntityType")
+				oDocumentModelMock.expects("fetchEntityType")
 					.withExactArgs(oFixture.type.QualifiedName)
 					.returns(syncPromiseFor(oFixture.type));
 			}
 
-			// test getOrRequestObject twice and check that the number of calls on
+			// test fetchObject twice and check that the number of calls on
 			// requestTypeForNavigationProperty is identical
 			return testIt().then(function () {
-				iCallCount = Helper.getOrRequestTypeForNavigationProperty.callCount;
+				iCallCount = Helper.fetchTypeForNavigationProperty.callCount;
 			}).then(testIt).then(function () {
-				assert.strictEqual(Helper.getOrRequestTypeForNavigationProperty.callCount,
+				assert.strictEqual(Helper.fetchTypeForNavigationProperty.callCount,
 					2 * iCallCount);
 			});
 		});
@@ -552,7 +552,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getObject, requestObject", function (assert) {
-		return checkGetAndRequest(this, assert, "getOrRequestObject", ["sPath", {/*oContext*/}]);
+		return checkGetAndRequest(this, assert, "fetchObject", ["sPath", {/*oContext*/}]);
 	});
 
 	//*********************************************************************************************
@@ -600,7 +600,7 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 		[false, true].forEach(function (bNullable) {
 			var aFacets = oFixture.facets || [],
-				sTitle = "getOrRequestUI5Type: " + oFixture.type + ",nullable=" + bNullable
+				sTitle = "fetchUI5Type: " + oFixture.type + ",nullable=" + bNullable
 					+ ", facets=" + JSON.stringify(aFacets);
 
 			QUnit.test(sTitle, function (assert) {
@@ -621,12 +621,12 @@ sap.ui.require([
 					oConstraints = clone(oConstraints) || {};
 					oConstraints.nullable = false;
 				}
-				oMetaModelMock.expects("getOrRequestMetaContext").withExactArgs(sPath)
+				oMetaModelMock.expects("fetchMetaContext").withExactArgs(sPath)
 					.returns(syncPromiseFor(oMetaContext));
-				oMetaModelMock.expects("getOrRequestObject").withExactArgs("", oMetaContext)
+				oMetaModelMock.expects("fetchObject").withExactArgs("", oMetaContext)
 					.returns(syncPromiseFor(oProperty));
 
-				oType = this.oMetaModel.getOrRequestUI5Type(sPath).getResult();
+				oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
 				assert.strictEqual(oType.getName(), "sap.ui.model.odata.type." + oFixture.type);
 				assert.deepEqual(oType.oConstraints, oConstraints);
 			});
@@ -635,7 +635,7 @@ sap.ui.require([
 	//TODO facet DefaultValue
 
 	//*********************************************************************************************
-	QUnit.test("getOrRequestUI5Type: caching", function (assert) {
+	QUnit.test("fetchUI5Type: caching", function (assert) {
 		var oMetaContext = {},
 			oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
 			sPath = "/Employees[0];list=1/ENTRYDATE",
@@ -649,32 +649,32 @@ sap.ui.require([
 			that = this,
 			oType;
 
-		oMetaModelMock.expects("getOrRequestMetaContext").withExactArgs(sPath).twice()
+		oMetaModelMock.expects("fetchMetaContext").withExactArgs(sPath).twice()
 			.returns(SyncPromise.resolve(oMetaContext));
-		oMetaModelMock.expects("getOrRequestObject").withExactArgs("", oMetaContext).twice()
+		oMetaModelMock.expects("fetchObject").withExactArgs("", oMetaContext).twice()
 			.returns(SyncPromise.resolve(oProperty));
 
-		oType = this.oMetaModel.getOrRequestUI5Type(sPath).getResult();
+		oType = this.oMetaModel.fetchUI5Type(sPath).getResult();
 		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.String");
 		assert.strictEqual(oProperty["@ui5.type"], oType, "cache filled");
-		assert.strictEqual(that.oMetaModel.getOrRequestUI5Type(sPath).getResult(), oType,
+		assert.strictEqual(that.oMetaModel.fetchUI5Type(sPath).getResult(), oType,
 			"cache used");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getOrRequestUI5Type: not a property", function (assert) {
+	QUnit.test("fetchUI5Type: not a property", function (assert) {
 		var oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
 			sPath = "/Employees[0];list=1/foo",
 			oMetaContext = {metaContextFor: sPath},
 			oProperty = {},
 			oSyncPromise;
 
-		oMetaModelMock.expects("getOrRequestMetaContext").withExactArgs(sPath)
+		oMetaModelMock.expects("fetchMetaContext").withExactArgs(sPath)
 			.returns(syncPromiseFor(oMetaContext));
-		oMetaModelMock.expects("getOrRequestObject").withExactArgs("", oMetaContext)
+		oMetaModelMock.expects("fetchObject").withExactArgs("", oMetaContext)
 			.returns(syncPromiseFor(oProperty));
 
-		oSyncPromise = this.oMetaModel.getOrRequestUI5Type(sPath);
+		oSyncPromise = this.oMetaModel.fetchUI5Type(sPath);
 		assert.ok(oSyncPromise.isRejected());
 		assert.strictEqual(oSyncPromise.getResult().message, "No property: " + sPath);
 	});
@@ -682,7 +682,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	//TODO make these types work with odata v4
 	["Edm.DateTimeOffset", "Edm.Duration", "Edm.TimeOfDay"].forEach(function (sQualifiedName) {
-		QUnit.test("getOrRequestUI5Type: unsupported type " + sQualifiedName, function (assert) {
+		QUnit.test("fetchUI5Type: unsupported type " + sQualifiedName, function (assert) {
 			var oMetaModelMock = this.oSandbox.mock(this.oMetaModel),
 				sPath = "/Employees[0];list=1/foo",
 				oMetaContext = {metaContextFor: sPath},
@@ -695,12 +695,12 @@ sap.ui.require([
 				},
 				oSyncPromise;
 
-			oMetaModelMock.expects("getOrRequestMetaContext").withExactArgs(sPath)
+			oMetaModelMock.expects("fetchMetaContext").withExactArgs(sPath)
 				.returns(syncPromiseFor(oMetaContext));
-			oMetaModelMock.expects("getOrRequestObject").withExactArgs("", oMetaContext)
+			oMetaModelMock.expects("fetchObject").withExactArgs("", oMetaContext)
 				.returns(syncPromiseFor(oProperty));
 
-			oSyncPromise = this.oMetaModel.getOrRequestUI5Type(sPath);
+			oSyncPromise = this.oMetaModel.fetchUI5Type(sPath);
 			assert.ok(oSyncPromise.isRejected());
 			assert.strictEqual(oSyncPromise.getResult().message,
 				"Unsupported EDM type: " + sQualifiedName + ": " + sPath);
@@ -709,7 +709,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getUI5Type, requestUI5Type", function (assert) {
-		return checkGetAndRequest(this, assert, "getOrRequestUI5Type", ["sPath"], true);
+		return checkGetAndRequest(this, assert, "fetchUI5Type", ["sPath"], true);
 	});
 
 	//*********************************************************************************************
@@ -770,8 +770,8 @@ sap.ui.require([
 		});
 	});
 });
-//TODO Join the two followPath functions from getOrRequestMetaContext and getOrRequestObject?
+//TODO Join the two followPath functions from fetchMetaContext and fetchObject?
 //TODO "placeholder" is recognized using Object.keys(o) === 1. But the spec says $select SHOULD
 //     restrict to the named properties
 //TODO what is the idea behind oMetaContext = {metaContextFor: sPath}, why not use a real context?
-//     Note: getOrRequestMetaContext() does not return clones but singletons, normally!
+//     Note: fetchMetaContext() does not return clones but singletons, normally!

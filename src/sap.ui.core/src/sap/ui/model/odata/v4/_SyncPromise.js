@@ -164,19 +164,19 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns a "get*" method corresponding to the given "getOrRequest*" method.
+		 * Returns a "get*" method corresponding to the given "fetch*" method.
 		 *
-		 * @param {string} sGetOrRequest
-		 *   a "getOrRequest*" method's name
+		 * @param {string} sFetch
+		 *   a "fetch*" method's name
 		 * @param {boolean} [bThrow=false]
 		 *   whether the "get*" method throws if the promise is not fulfilled
 		 * @returns {function}
-		 *   a "get*" method returning the "getOrRequest*" method's result or
+		 *   a "get*" method returning the "fetch*" method's result or
 		 *   <code>undefined</code> in case the promise is not (yet) fulfilled
 		 */
-		createGetMethod : function (sGetOrRequest, bThrow) {
+		createGetMethod : function (sFetch, bThrow) {
 			return function () {
-				var oSyncPromise = this[sGetOrRequest].apply(this, arguments);
+				var oSyncPromise = this[sFetch].apply(this, arguments);
 
 				if (oSyncPromise.isFulfilled()) {
 					return oSyncPromise.getResult();
@@ -189,17 +189,17 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns a "request*" method corresponding to the given "getOrRequest*" method.
+		 * Returns a "request*" method corresponding to the given "fetch*" method.
 		 *
-		 * @param {string} sGetOrRequest
-		 *   a "getOrRequest*" method's name
+		 * @param {string} sFetch
+		 *   a "fetch*" method's name
 		 * @returns {function}
-		 *   a "request*" method returning the "getOrRequest*" method's result wrapped via
+		 *   a "request*" method returning the "fetch*" method's result wrapped via
 		 *   <code>Promise.resolve()</code>
 		 */
-		createRequestMethod : function (sGetOrRequest) {
+		createRequestMethod : function (sFetch) {
 			return function () {
-				return Promise.resolve(this[sGetOrRequest].apply(this, arguments));
+				return Promise.resolve(this[sFetch].apply(this, arguments));
 			};
 		},
 

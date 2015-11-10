@@ -390,7 +390,7 @@ sap.ui.require([
 			oResult = {},
 			oSyncPromise = SyncPromise.resolve(oResult),
 			oContext = {
-				getOrRequest : function () {
+				fetch : function () {
 					assert.strictEqual(this, oContext);
 					assert.deepEqual(Array.prototype.slice.call(arguments), aArguments);
 					return oSyncPromise;
@@ -400,8 +400,8 @@ sap.ui.require([
 
 		// code under test
 		// Note: passing the function's name instead of reference allows for dynamic dispatch, thus
-		// making a mock for "getOrRequest*" possible in the first place
-		fnGet = SyncPromise.createGetMethod("getOrRequest");
+		// making a mock for "fetch*" possible in the first place
+		fnGet = SyncPromise.createGetMethod("fetch");
 
 		assert.strictEqual(fnGet.apply(oContext, aArguments), oResult);
 		this.mock(oSyncPromise).expects("isFulfilled").returns(false);
@@ -414,7 +414,7 @@ sap.ui.require([
 			oResult = {},
 			oSyncPromise = SyncPromise.resolve(oResult),
 			oContext = {
-				getOrRequest : function () {
+				fetch : function () {
 					assert.strictEqual(this, oContext);
 					assert.deepEqual(Array.prototype.slice.call(arguments), aArguments);
 					return oSyncPromise;
@@ -424,7 +424,7 @@ sap.ui.require([
 			oSyncPromiseMock = this.mock(oSyncPromise);
 
 		// code under test
-		fnGet = SyncPromise.createGetMethod("getOrRequest", true);
+		fnGet = SyncPromise.createGetMethod("fetch", true);
 
 		// fulfilled
 		assert.strictEqual(fnGet.apply(oContext, aArguments), oResult);
@@ -454,7 +454,7 @@ sap.ui.require([
 			oResult = {},
 			oSyncPromise = SyncPromise.resolve(),
 			oContext = {
-				getOrRequest : function () {
+				fetch : function () {
 					assert.strictEqual(this, oContext);
 					assert.deepEqual(Array.prototype.slice.call(arguments), aArguments);
 					return oSyncPromise;
@@ -465,7 +465,7 @@ sap.ui.require([
 		this.mock(Promise).expects("resolve").withExactArgs(oSyncPromise).returns(oResult);
 
 		// code under test
-		fnRequest = SyncPromise.createRequestMethod("getOrRequest");
+		fnRequest = SyncPromise.createRequestMethod("fetch");
 
 		assert.strictEqual(fnRequest.apply(oContext, aArguments), oResult);
 	});
