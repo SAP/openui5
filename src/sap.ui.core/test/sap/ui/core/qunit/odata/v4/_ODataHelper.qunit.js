@@ -261,29 +261,29 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getOrRequestEntityContainer", function (assert) {
+	QUnit.test("fetchEntityContainer", function (assert) {
 		var oEntityContainer = {},
 			oMetaModel = {
 				oModel: {
-					getOrRequestEntityContainer: function () {}
+					fetchEntityContainer: function () {}
 				}
 			},
 			oPromise;
 
-		this.oSandbox.mock(oMetaModel.oModel).expects("getOrRequestEntityContainer")
+		this.oSandbox.mock(oMetaModel.oModel).expects("fetchEntityContainer")
 			.withExactArgs()
 			.returns(SyncPromise.resolve(oEntityContainer));
 		this.oSandbox.mock(Helper).expects("resolveNavigationPropertyBindings")
 			.withExactArgs(oEntityContainer);
 
-		oPromise = Helper.getOrRequestEntityContainer(oMetaModel);
-		assert.strictEqual(Helper.getOrRequestEntityContainer(oMetaModel), oPromise);
+		oPromise = Helper.fetchEntityContainer(oMetaModel);
+		assert.strictEqual(Helper.fetchEntityContainer(oMetaModel), oPromise);
 
 		assert.strictEqual(oPromise.getResult(), oEntityContainer, "sync promise fulfilled");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getOrRequestTypeForNavigationProperty: success incl. cache", function (assert) {
+	QUnit.test("fetchTypeForNavigationProperty: success incl. cache", function (assert) {
 		var oSource1 = {
 				"Type" : {
 					"QualifiedName" : "foo.Bar"
@@ -301,31 +301,31 @@ sap.ui.require([
 			oEntityContainer = {},
 			oMetaModel = {
 				oModel : {
-					getOrRequestEntityType : function () {}
+					fetchEntityType : function () {}
 				}
 			};
 
-		this.oSandbox.mock(Helper).expects("getOrRequestEntityContainer").twice()
+		this.oSandbox.mock(Helper).expects("fetchEntityContainer").twice()
 			.withExactArgs(oMetaModel)
 			.returns(SyncPromise.resolve(oEntityContainer));
-		this.oSandbox.mock(oMetaModel.oModel).expects("getOrRequestEntityType")
+		this.oSandbox.mock(oMetaModel.oModel).expects("fetchEntityType")
 			.withExactArgs("foo.Bar")
 			.returns(SyncPromise.resolve(oResolvedType));
 
 		assert.strictEqual(
-			Helper.getOrRequestTypeForNavigationProperty(oMetaModel, oSource1, "Type").getResult(),
+			Helper.fetchTypeForNavigationProperty(oMetaModel, oSource1, "Type").getResult(),
 			oResolvedType, "sync promise fulfilled");
 		assert.strictEqual(oSource1.Type, oResolvedType);
 		assert.strictEqual(oEntityContainer.Types[0], oResolvedType);
 
 		assert.strictEqual(
-			Helper.getOrRequestTypeForNavigationProperty(oMetaModel, oSource2, "EntityType")
+			Helper.fetchTypeForNavigationProperty(oMetaModel, oSource2, "EntityType")
 				.getResult(),
 			oResolvedType, "sync promise fulfilled");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getOrRequestTypeForNavigationProperty: already resolved", function (assert) {
+	QUnit.test("fetchTypeForNavigationProperty: already resolved", function (assert) {
 		var oSource = {
 				"Type" : {
 					"Name" : "Bar",
@@ -342,7 +342,7 @@ sap.ui.require([
 		this.oSandbox.mock(oMetaModel.oModel).expects("read").never();
 
 		assert.strictEqual(
-			Helper.getOrRequestTypeForNavigationProperty(oMetaModel, oSource, "Type").getResult(),
+			Helper.fetchTypeForNavigationProperty(oMetaModel, oSource, "Type").getResult(),
 			oSource.Type, "sync promise fulfilled");
 	});
 

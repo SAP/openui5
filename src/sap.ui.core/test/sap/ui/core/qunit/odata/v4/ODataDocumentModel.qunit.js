@@ -43,34 +43,34 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getOrRequestEntityContainer", function (assert) {
+	QUnit.test("fetchEntityContainer", function (assert) {
 		var oDocument = {},
 			oEntityContainer = {};
 
-		this.oSandbox.mock(OlingoDocument).expects("getOrRequestDocument")
+		this.oSandbox.mock(OlingoDocument).expects("fetchDocument")
 			.withExactArgs(this.oDocumentModel)
 			.returns(SyncPromise.resolve(oDocument));
 		this.oSandbox.mock(OlingoDocument).expects("transformEntityContainer")
 			.withExactArgs(oDocument).returns(oEntityContainer);
 
-		assert.strictEqual(this.oDocumentModel.getOrRequestEntityContainer().getResult(),
+		assert.strictEqual(this.oDocumentModel.fetchEntityContainer().getResult(),
 			oEntityContainer, "sync promise fulfilled");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getOrRequestEntityType", function (assert) {
+	QUnit.test("fetchEntityType", function (assert) {
 		var oDocument = {},
 			sEntityTypeName = "com.sap.gateway.iwbep.tea_busi.v0001.Worker",
 			oEntityType = {};
 
-		this.oSandbox.mock(OlingoDocument).expects("getOrRequestDocument")
+		this.oSandbox.mock(OlingoDocument).expects("fetchDocument")
 			.withExactArgs(this.oDocumentModel)
 			.returns(SyncPromise.resolve(oDocument));
 		this.oSandbox.mock(OlingoDocument).expects("transformEntityType")
 			.withExactArgs(oDocument, sEntityTypeName)
 			.returns(oEntityType);
 
-		assert.strictEqual(this.oDocumentModel.getOrRequestEntityType(sEntityTypeName).getResult(),
+		assert.strictEqual(this.oDocumentModel.fetchEntityType(sEntityTypeName).getResult(),
 			oEntityType, "sync promise fulfilled");
 	});
 });

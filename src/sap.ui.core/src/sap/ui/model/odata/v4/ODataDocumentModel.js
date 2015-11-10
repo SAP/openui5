@@ -48,8 +48,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataDocumentModel.prototype.getOrRequestEntityContainer = function () {
-		return OlingoDocument.getOrRequestDocument(this).then(function (oDocument) {
+	ODataDocumentModel.prototype.fetchEntityContainer = function () {
+		return OlingoDocument.fetchDocument(this).then(function (oDocument) {
 			return OlingoDocument.transformEntityContainer(oDocument);
 		});
 	};
@@ -69,8 +69,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataDocumentModel.prototype.getOrRequestEntityType = function (sQualifiedName) {
-		return OlingoDocument.getOrRequestDocument(this).then(function (oDocument) {
+	ODataDocumentModel.prototype.fetchEntityType = function (sQualifiedName) {
+		return OlingoDocument.fetchDocument(this).then(function (oDocument) {
 			return OlingoDocument.transformEntityType(oDocument, sQualifiedName);
 		});
 	};

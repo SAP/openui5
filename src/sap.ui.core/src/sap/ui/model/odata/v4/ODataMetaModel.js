@@ -61,7 +61,7 @@ sap.ui.define([
 					throw new Error("Missing metadata model");
 				}
 				this.oModel = oModel;
-				// @see sap.ui.model.odata.v4._ODataHelper.getOrRequestEntityContainer
+				// @see sap.ui.model.odata.v4._ODataHelper.fetchEntityContainer
 				this._oEntityContainerPromise = null;
 			}
 		});
@@ -76,42 +76,6 @@ sap.ui.define([
 	function error(sError, sPath) {
 		throw new Error(sError + ": " + sPath);
 	}
-
-	/**
-	 * Returns the OData meta model context corresponding to the given OData model path. Returns
-	 * <code>undefined</code> in case the meta model context is not (yet) available.
-	 *
-	 * The resulting meta data context will either point to an EntitySet, to a Singleton or to a
-	 * Property. The meta data path will follow the NavigationPropertyBindings as long as they lead
-	 * to an EntitySet from the same container with a simple path, then it will switch to the type.
-	 *
-	 * @param {string} sPath
-	 *   An absolute path within the OData data model for which the OData meta data context is
-	 *   requested
-	 * @returns {sap.ui.model.Context}
-	 *   The corresponding meta data context within the meta model, if all required meta data to
-	 *   calculate this context is already available
-	 * @throws {Error}
-	 *   if the context cannot be determined synchronously (due to a pending meta data request) or
-	 *   cannot be determined at all (due to a wrong data path)
-	 * @public
-	 */
-	ODataMetaModel.prototype.getMetaContext
-		= SyncPromise.createGetMethod("getOrRequestMetaContext", true);
-
-	/**
-	 * Returns the meta data object for the given path relative to the given context. Returns
-	 * <code>undefined</code> in case the meta data is not (yet) available.
-	 *
-	 * @param {string} sPath
-	 *   A relative or absolute path within the meta model
-	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context to be used as a starting point in case of a relative path
-	 * @returns {any}
-	 *   the requested meta model object if it is already available, or <code>undefined</code>
-	 * @public
-	 */
-	ODataMetaModel.prototype.getObject = SyncPromise.createGetMethod("getOrRequestObject");
 
 	/**
 	 * Requests the OData meta model context corresponding to the given OData model path.
@@ -133,7 +97,7 @@ sap.ui.define([
 	 *   is rejected with the corresponding error
 	 * @private
 	 */
-	ODataMetaModel.prototype.getOrRequestMetaContext = function (sPath) {
+	ODataMetaModel.prototype.fetchMetaContext = function (sPath) {
 		var i = 0,
 			sMetaPath = "",
 			aSegments = Helper.splitPath(sPath),
@@ -234,7 +198,7 @@ sap.ui.define([
 		if (!aMatches) {
 			error("Unsupported", sPath);
 		}
-		return Helper.getOrRequestEntityContainer(this).then(function (oEntityContainer) {
+		return Helper.fetchEntityContainer(this).then(function (oEntityContainer) {
 			var sName = aMatches[1],
 				oNavigationResult,
 				sProperty,
@@ -269,7 +233,7 @@ sap.ui.define([
 				sMetaPath += "/Target";
 			}
 			sMetaPath += "/" + sProperty;
-			return Helper.getOrRequestTypeForNavigationProperty(that, oResult.object, sProperty)
+			return Helper.fetchTypeForNavigationProperty(that, oResult.object, sProperty)
 				.then(followPath);
 		}).then(function (sMetaPath) {
 			return that.getContext(sMetaPath);
@@ -291,7 +255,7 @@ sap.ui.define([
 	 *   available
 	 * @private
 	 */
-	ODataMetaModel.prototype.getOrRequestObject = function (sPath, oContext) {
+	ODataMetaModel.prototype.fetchObject = function (sPath, oContext) {
 		var oPart,
 			aSegments,
 			sResolvedPath = this.resolve(sPath, oContext),
@@ -338,7 +302,7 @@ sap.ui.define([
 					if (typeof oNextObject === "object" && !Array.isArray(oNextObject)) {
 						// A navigation to an object; it must be a type. It might actually be a
 						// simple or complex type, but these are resolved already
-						return Helper.getOrRequestTypeForNavigationProperty(that, oObject,
+						return Helper.fetchTypeForNavigationProperty(that, oObject,
 								oPart.property)
 							.then(followPath);
 					}
@@ -352,7 +316,7 @@ sap.ui.define([
 			error("Not an absolute path", sPath);
 		}
 		aSegments = Helper.splitPath(sResolvedPath);
-		return Helper.getOrRequestEntityContainer(this).then(followPath);
+		return Helper.fetchEntityContainer(this).then(followPath);
 	};
 
 	/**
@@ -367,11 +331,11 @@ sap.ui.define([
 	 *   rejected with the corresponding error
 	 * @private
 	 */
-	ODataMetaModel.prototype.getOrRequestUI5Type = function (sPath) {
+	ODataMetaModel.prototype.fetchUI5Type = function (sPath) {
 		var that = this;
 
-		return this.getOrRequestMetaContext(sPath).then(function (oMetaContext) {
-			return that.getOrRequestObject("", oMetaContext);
+		return this.fetchMetaContext(sPath).then(function (oMetaContext) {
+			return that.fetchObject("", oMetaContext);
 		}).then(function (oProperty) {
 			var oConstraints,
 				oType = oProperty["@ui5.type"],
@@ -409,6 +373,42 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the OData meta model context corresponding to the given OData model path. Returns
+	 * <code>undefined</code> in case the meta model context is not (yet) available.
+	 *
+	 * The resulting meta data context will either point to an EntitySet, to a Singleton or to a
+	 * Property. The meta data path will follow the NavigationPropertyBindings as long as they lead
+	 * to an EntitySet from the same container with a simple path, then it will switch to the type.
+	 *
+	 * @param {string} sPath
+	 *   An absolute path within the OData data model for which the OData meta data context is
+	 *   requested
+	 * @returns {sap.ui.model.Context}
+	 *   The corresponding meta data context within the meta model, if all required meta data to
+	 *   calculate this context is already available
+	 * @throws {Error}
+	 *   if the context cannot be determined synchronously (due to a pending meta data request) or
+	 *   cannot be determined at all (due to a wrong data path)
+	 * @public
+	 */
+	ODataMetaModel.prototype.getMetaContext
+		= SyncPromise.createGetMethod("fetchMetaContext", true);
+
+	/**
+	 * Returns the meta data object for the given path relative to the given context. Returns
+	 * <code>undefined</code> in case the meta data is not (yet) available.
+	 *
+	 * @param {string} sPath
+	 *   A relative or absolute path within the meta model
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context to be used as a starting point in case of a relative path
+	 * @returns {any}
+	 *   the requested meta model object if it is already available, or <code>undefined</code>
+	 * @public
+	 */
+	ODataMetaModel.prototype.getObject = SyncPromise.createGetMethod("fetchObject");
+
+	/**
 	 * Returns the UI5 type for the given property path that formats and parses corresponding to
 	 * the property's EDM type and facets. The property's type must be a primitive type.
 	 *
@@ -422,7 +422,7 @@ sap.ui.define([
 	 *   cannot be determined at all (due to a wrong data path)
 	 * @public
 	 */
-	ODataMetaModel.prototype.getUI5Type = SyncPromise.createGetMethod("getOrRequestUI5Type", true);
+	ODataMetaModel.prototype.getUI5Type = SyncPromise.createGetMethod("fetchUI5Type", true);
 
 	/**
 	 * Returns a promise for the "4.3.1 Canonical URL" corresponding to the given service root URL
@@ -446,17 +446,17 @@ sap.ui.define([
 
 		return Promise.all([
 			fnRead(sPath, true),
-			this.getOrRequestMetaContext(sPath)
+			this.fetchMetaContext(sPath)
 		]).then(function (aValues) {
 			var oEntityInstance = aValues[0],
 				oMetaContext = aValues[1];
 
-			return that.getOrRequestObject("", oMetaContext).then(function (oEntitySet) {
+			return that.fetchObject("", oMetaContext).then(function (oEntitySet) {
 				// check that this really is an EntitySet
 				if (!oEntitySet.EntityType) {
 					error("Not an entity", sPath);
 				}
-				return that.getOrRequestObject("EntityType", oMetaContext)
+				return that.fetchObject("EntityType", oMetaContext)
 					.then(function (oEntityType) {
 						return sServiceUrl + encodeURIComponent(oEntitySet.Name)
 							+ Helper.getKeyPredicate(oEntityType, oEntityInstance);
@@ -486,7 +486,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataMetaModel.prototype.requestMetaContext
-		= SyncPromise.createRequestMethod("getOrRequestMetaContext");
+		= SyncPromise.createRequestMethod("fetchMetaContext");
 
 	/**
 	 * Requests the meta data object for the given path relative to the given context.
@@ -503,7 +503,7 @@ sap.ui.define([
 	 *   available
 	 * @public
 	 */
-	ODataMetaModel.prototype.requestObject = SyncPromise.createRequestMethod("getOrRequestObject");
+	ODataMetaModel.prototype.requestObject = SyncPromise.createRequestMethod("fetchObject");
 
 	/**
 	 * Requests the UI5 type for the given property path that formats and parses corresponding to
@@ -518,7 +518,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataMetaModel.prototype.requestUI5Type
-		= SyncPromise.createRequestMethod("getOrRequestUI5Type");
+		= SyncPromise.createRequestMethod("fetchUI5Type");
 
 	return ODataMetaModel;
 }, /* bExport= */ true);
