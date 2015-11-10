@@ -58,6 +58,31 @@
 				this.clock.tick(0);
 			});
 
+			QUnit.test("Should not execute an action on a busy button", function(assert) {
+				// Arrange
+				var oOpa5 = new Opa5(),
+						fnActionSpy = this.spy(),
+						start = assert.async();
+
+				this.oButton.setBusy(true);
+
+				// Act
+				oOpa5.waitFor({
+					id: "foo",
+					// immediately time out
+					timeout: -1,
+					actions: fnActionSpy
+				});
+
+				oOpa5.emptyQueue().fail(function () {
+					// Assert
+					sinon.assert.notCalled(fnActionSpy);
+					start();
+				});
+
+				// empty the queue
+				this.clock.tick(0);
+			});
 
 			QUnit.test("Should execute success after an action", function(assert) {
 				// Arrange

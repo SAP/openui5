@@ -20,11 +20,13 @@ sap.ui.define(['jquery.sap.global',
 				'sap/ui/base/Object',
 				'sap/ui/core/mvc/View',
 				'./matchers/Ancestor',
+				'./matchers/Interactable',
 				'./matchers/Visible',
 				'./pipelines/MatcherPipeline'],
-	function ($, HashChanger, UI5Object, View, Ancestor, Visible, MatcherPipeline) {
-		var oMatcherPipeline = new MatcherPipeline();
-		var oVisibleMatcher = new Visible();
+	function ($, HashChanger, UI5Object, View, Ancestor, Interactable, Visible, MatcherPipeline) {
+		var oMatcherPipeline = new MatcherPipeline(),
+			oInteractableMatcher = new Interactable(),
+			oVisibleMatcher = new Visible();
 
 		/**
 		 * @class A Plugin to search UI5 controls.
@@ -176,6 +178,7 @@ sap.ui.define(['jquery.sap.global',
 			 * you have to reach the view at some point.
 			 * @param {string|string[]} [oOptions.id] The ID if one or multiple controls. This can be a global ID or an ID used together with viewName. See the documentation of this parameter.
 			 * @param {boolean} [oOptions.visible=true] States if a control need to have a visible domref (jQUery's :visible will be used to determine this).
+			 * @param {boolean} [oOptions.interactable=false] @since 1.34 States if a control has to match the interactable matcher {@link sap.ui.test.matchers.Interactable}.
 			 * @param {boolean} [oOptions.searchOpenDialogs] Only controls in the static UI area of UI5 are searched.
 			 * @returns {sap.ui.core.Element|sap.ui.core.Element[]|undefined|null} the found control/element, an array of found Controls, an empty array and null or undefined are possible depending of the parameters you specify
 			 * @public
@@ -198,11 +201,18 @@ sap.ui.define(['jquery.sap.global',
 					return vResult;
 				}
 
+				// TODO: make all of the conditions above matchers and create this array in a factory
+				var aMatchers = [];
+
+				if (oOptions.interactable) {
+					aMatchers.push(oInteractableMatcher);
+				} else {
+					aMatchers.push(oVisibleMatcher);
+				}
+
 				var vPipelineResult = oMatcherPipeline.process({
 					control: vResult,
-					matchers: [
-						oVisibleMatcher
-					]
+					matchers: aMatchers
 				});
 
 				// all controls are filtered out
