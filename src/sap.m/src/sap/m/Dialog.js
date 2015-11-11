@@ -449,7 +449,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		Dialog.prototype.close = function () {
-			this._$dialog.removeClass('sapDialogDisableTransition');
+			this.$().removeClass('sapDialogDisableTransition');
 
 			var oPopup = this.oPopup;
 
