@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<meta charset="utf-8" />
+		<title>qUnit Page for sap.ui.test.matchers.Visible</title>
+
+		<script
+			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<script>
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+			QUnit.config.autostart = false;
+
+			sap.ui.require([
+					'sap/ui/test/matchers/Visible',
+					'jquery.sap.global',
+					'sap/m/Button'
+				], function (Visible, $, Button) {
+					"use strict";
+
+					QUnit.module("Matching", {
+						beforeEach: function () {
+							this.oButton = new Button();
+						},
+
+						afterEach: function () {
+							this.oButton.destroy();
+						}
+					});
+
+					QUnit.test("Should not match a Button without domref", function (assert) {
+						// Arrange
+						var oSpy = this.spy($.sap.log, "debug");
+
+						// System under Test
+						var oVisibleMatcher = new Visible();
+
+						// Act
+						var oResult = oVisibleMatcher.isMatching(this.oButton);
+
+						// Assert
+						assert.ok(!oResult, "Control isn't matching");
+						sinon.assert.calledWith(oSpy,  sinon.match(/is not rendered/),  sinon.match(oVisibleMatcher));
+					});
+
+					QUnit.test("Should not match an invisible Button", function (assert) {
+						// Arrange
+						var oSpy = this.spy($.sap.log, "debug");
+						this.oButton.placeAt("qunit-fixture");
+						sap.ui.getCore().applyChanges();
+						// make the button invisible after rendering it
+						this.oButton.$().hide();
+
+						// System under Test
+						var oVisibleMatcher = new Visible();
+
+						// Act
+						var oResult = oVisibleMatcher.isMatching(this.oButton);
+
+						// Assert
+						assert.ok(!oResult, "Control isn't matching");
+						sinon.assert.calledWith(oSpy,  sinon.match(/is not visible/),  sinon.match(oVisibleMatcher));
+					});
+
+
+
+					QUnit.test("Should match a visible Button", function (assert) {
+						// Arrange
+						var oSpy = this.spy($.sap.log, "debug");
+						this.oButton.placeAt("qunit-fixture");
+						sap.ui.getCore().applyChanges();
+
+						// System under Test
+						var oVisibleMatcher = new Visible();
+
+						// Act
+						var oResult = oVisibleMatcher.isMatching(this.oButton);
+
+						// Assert
+						assert.ok(oResult, "Control is matching");
+						sinon.assert.notCalled(oSpy);
+					});
+
+					QUnit.start();
+				});
+		</script>
+	</head>
+
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+
+</html>
