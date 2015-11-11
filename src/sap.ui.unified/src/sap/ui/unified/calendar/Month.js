@@ -1021,11 +1021,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			if (oEvent.type == "mousedown" && this.getIntervalSelection()) {
-				// as in focus event the month can be cahnged store the last target here
+				// as in focus event the month can be changed store the last target here
 				this._sLastTargetId = $DomRef.attr("id");
 			}
 
-			if (oEvent.type != "mousedown" && bOtherMonth) {
+			if (!(oEvent.type == "mousedown" && bOtherMonth)) {
 				// don't focus date in other month via mouse -> don't switch month in calendar while selecting day
 				this.fireFocus({date: CalendarUtils._createLocalDate(oFocusedDate), otherMonth: bOtherMonth});
 			}
