@@ -8,13 +8,14 @@
  * @version @version@
  */
 sap.ui.define([
+	"sap/m/HBox",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/sample/common/Component",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/sinon"
-], function (View, BaseComponent, JSONModel, ODataModel, TestUtils, sinon) {
+], function (HBox, View, BaseComponent, JSONModel, ODataModel, TestUtils, sinon) {
 	"use strict";
 
 	return BaseComponent.extend("sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Component", {
@@ -29,6 +30,8 @@ sap.ui.define([
 					? this.proxy
 					: TestUtils.proxy,
 				sServiceUrl = fnProxy(oModel.sServiceUrl),
+				oLayout = new HBox(),
+				oMetaModel,
 				bRealOData = TestUtils.isRealOData();
 
 			if (oModel.sServiceUrl !== sServiceUrl) {
@@ -36,6 +39,7 @@ sap.ui.define([
 				oModel = new ODataModel(sServiceUrl);
 				this.setModel(oModel);
 			}
+			oMetaModel = oModel.getMetaModel();
 
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(sinon.sandbox.create(), {
@@ -46,17 +50,24 @@ sap.ui.define([
 				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrdersTemplate/data");
 			}
 
-			return sap.ui.view({
-				type : sap.ui.core.mvc.ViewType.XML,
-				id : "MainView",
-				viewName : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Main",
-				models : {
-					ui : new JSONModel({
-						bRealOData : bRealOData,
-						icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
-						iconTooltip : bRealOData ? "real OData service" : "mock OData service"}
-				)}
+			oMetaModel.requestObject("/").then(function () {
+				oLayout.addItem(sap.ui.xmlview({
+					async : true,
+					id : "MainView",
+					models : {
+						undefined : oModel,
+						meta : oMetaModel,
+						ui : new JSONModel({
+							bRealOData : bRealOData,
+							icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
+							iconTooltip : bRealOData ? "real OData service" : "mock OData service"
+						})
+					},
+					viewName : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Main"
+				}));
 			});
+
+			return oLayout;
 		}
 	});
 });

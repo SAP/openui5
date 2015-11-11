@@ -8,9 +8,10 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataDocumentModel",
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/model/PropertyBinding",
 	"sap/ui/test/TestUtils"
 ], function (MetaModel, Helper, SyncPromise, ODataDocumentModel, ODataMetaModel, ODataModel,
-		TestUtils) {
+		PropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -769,7 +770,49 @@ sap.ui.require([
 				});
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getProperty", function (assert) {
+		var oContext = {},
+			sPath = "foo",
+			oValue = {};
+
+		this.mock(this.oMetaModel).expects("getObject").withExactArgs(sPath, oContext)
+			.returns(oValue);
+
+		assert.strictEqual(this.oMetaModel.getProperty(sPath, oContext), oValue);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("bindProperty", function (assert) {
+		var oBinding,
+			oContext = {},
+			mParameters = [],
+			sPath = "foo",
+			oValue = {};
+
+		this.mock(this.oMetaModel).expects("getProperty").withExactArgs(sPath, oContext)
+			.returns(oValue);
+
+		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
+
+		assert.ok(oBinding instanceof PropertyBinding);
+		assert.strictEqual(oBinding.getModel(), this.oMetaModel);
+		assert.strictEqual(oBinding.getPath(), sPath);
+		assert.strictEqual(oBinding.getContext(), oContext);
+		assert.strictEqual(oBinding.mParameters, mParameters);
+		assert.strictEqual(oBinding.getValue(), oValue);
+	});
 });
+//TODO test proper replacement of bindings in preprocessing
+//TODO test template:require
+//TODO test template:alias
+//TODO test core:fragment
+//TODO test template:if
+//TODO test template:with
+
+//TODO template:repeat -> listbinding
+
 //TODO Join the two followPath functions from fetchMetaContext and fetchObject?
 //TODO "placeholder" is recognized using Object.keys(o) === 1. But the spec says $select SHOULD
 //     restrict to the named properties

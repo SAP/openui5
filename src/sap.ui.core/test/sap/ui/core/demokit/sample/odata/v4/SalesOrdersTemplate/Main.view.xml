@@ -5,12 +5,13 @@
 	xmlns:form="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc">
 	<VBox>
-		<Table id="SalesOrders" growing="true" growingThreshold="5" headerText="Sales Orders"
-			items="{path: '/SalesOrderList'}"
+		<Table id="SalesOrders" growing="true" growingThreshold="5"
+			items="{/SalesOrderList}"
 			mode="SingleSelectMaster">
 			<headerToolbar>
 				<Toolbar>
 					<content>
+						<Text text="{meta>/EntitySets('SalesOrderList')/Name}"/>
 						<core:Icon src="{ui>/icon}" tooltip="{ui>/iconTooltip}"
 							class="sapMBtnIcon"/>
 					</content>

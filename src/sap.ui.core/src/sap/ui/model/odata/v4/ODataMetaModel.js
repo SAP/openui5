@@ -5,10 +5,11 @@
 //Provides class sap.ui.model.odata.v4.ODataMetaModel
 sap.ui.define([
 	'sap/ui/model/MetaModel',
+	'sap/ui/model/PropertyBinding',
 	"sap/ui/model/odata/ODataUtils",
 	'sap/ui/model/odata/v4/_ODataHelper',
 	'sap/ui/model/odata/v4/_SyncPromise'
-], function (MetaModel, ODataUtils, Helper, SyncPromise) {
+], function (MetaModel, PropertyBinding, ODataUtils, Helper, SyncPromise) {
 	"use strict";
 
 	var rEntitySetName = /^(\w+)(\[|\(|$)/, // identifier followed by [,( or at end of string
@@ -67,6 +68,22 @@ sap.ui.define([
 		});
 
 	/**
+	 * @class Property binding implementation for the OData meta model.
+	 *
+	 * @extends sap.ui.model.PropertyBinding
+	 * @private
+	 */
+	var ODataMetaPropertyBinding = PropertyBinding.extend(
+			"sap.ui.model.odata.v4.ODataMetaPropertyBinding", {
+				constructor : function () {
+					PropertyBinding.apply(this, arguments);
+				},
+				getValue : function () {
+					return this.getModel().getProperty(this.getPath(), this.getContext());
+				}
+		});
+
+	/**
 	 * Throws an error with the given text and the given path.
 	 * @param {string} sError
 	 *   the error text
@@ -76,6 +93,10 @@ sap.ui.define([
 	function error(sError, sPath) {
 		throw new Error(sError + ": " + sPath);
 	}
+
+	ODataMetaModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
+		return new ODataMetaPropertyBinding(this, sPath, oContext, mParameters);
+	};
 
 	/**
 	 * Requests the OData meta model context corresponding to the given OData model path.
@@ -407,6 +428,11 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataMetaModel.prototype.getObject = SyncPromise.createGetMethod("fetchObject");
+
+
+	ODataMetaModel.prototype.getProperty = function () {
+		return this.getObject.apply(this, arguments);
+	};
 
 	/**
 	 * Returns the UI5 type for the given property path that formats and parses corresponding to
