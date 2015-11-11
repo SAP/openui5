@@ -160,9 +160,9 @@
 				sinon.assert.calledWith(oSpy,  sinon.match(/has no focusable/),  sinon.match(oEnterText));
 			});
 
-			test("Should log an error if a control has no focusable domref", function () {
+			test("Should log a warning if a control cannot be focused", function () {
 				// Arrange
-				var oSpy = sinon.spy(jQuery.sap.log, "error");
+				var oSpy = sinon.spy(jQuery.sap.log, "warning");
 				this.oControl = new MultiInput({
 					enabled : false
 				});
