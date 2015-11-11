@@ -135,7 +135,14 @@ sap.ui.define([
 				/**
 				 * Enables support of a placeholder image in case no image is specified or the URL of the provided image is invalid.
 				 */
-				showPlaceholder: {type: "boolean", group: "Misc", defaultValue: false}
+				showPlaceholder: {type: "boolean", group: "Misc", defaultValue: false},
+				
+				/**
+				 * Marks that there are unsaved changes in the objectPageHeader.
+				 * The markChanges state cannot be used together with the markLocked state.
+				 * If both are set to true, only the locked state will be displayed.
+				 */
+				markChanges: {type: "boolean", group: "Misc", defaultValue: false}
 			},
 			defaultAggregation: "actions",
 			aggregations: {
@@ -176,6 +183,8 @@ sap.ui.define([
 				_favIcon: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"},
 				_flagIcon: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"},
 				_overflowActionSheet: {type: "sap.m.ActionSheet", multiple: false, visibility: "hidden"},
+				_changesIconCont: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
+				_changesIcon: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
 
 				/**
 				 *
@@ -200,7 +209,7 @@ sap.ui.define([
 					parameters: {
 
 						/**
-						 * Dom reference of the title item's icon to be used for positioning.
+						 * DOM reference of the title item's icon to be used for positioning.
 						 */
 						domRef: {type: "string"}
 					}
@@ -213,7 +222,20 @@ sap.ui.define([
 					parameters: {
 
 						/**
-						 * Dom reference of the lock item's icon to be used for positioning.
+						 * DOM reference of the lock item's icon to be used for positioning.
+						 */
+						domRef: {type: "string"}
+					}
+				},
+
+				/**
+				 * The event is fired when the unsaved changes button is pressed
+				 */
+				markChangesPress: {
+					parameters: {
+
+						/**
+						 * DOM reference of the changed item's icon to be used for positioning.
 						 */
 						domRef: {type: "string"}
 					}
@@ -244,6 +266,8 @@ sap.ui.define([
 		this._oTitleArrowIconCont = this._getInternalAggregation("_titleArrowIconCont").attachPress(this._handleArrowPress, this);
 		this._oLockIcon = this._getInternalAggregation("_lockIcon").attachPress(this._handleLockPress, this);
 		this._oLockIconCont = this._getInternalAggregation("_lockIconCont").attachPress(this._handleLockPress, this);
+		this._oChangesIcon = this._getInternalAggregation("_changesIcon").attachPress(this._handleChangesPress, this);
+		this._oChangesIconCont = this._getInternalAggregation("_changesIconCont").attachPress(this._handleChangesPress, this);
 	};
 
 	ObjectPageHeader.prototype._handleOverflowButtonPress = function (oEvent) {
@@ -258,6 +282,12 @@ sap.ui.define([
 
 	ObjectPageHeader.prototype._handleLockPress = function (oEvent) {
 		this.fireMarkLockedPress({
+			domRef: oEvent.getSource().getDomRef()
+		});
+	};
+
+	ObjectPageHeader.prototype._handleChangesPress = function (oEvent) {
+		this.fireMarkChangesPress({
 			domRef: oEvent.getSource().getDomRef()
 		});
 	};
@@ -316,6 +346,12 @@ sap.ui.define([
 		},
 		"_expandButton": function (oParent) {
 			return this._getButton(oParent, "sap-icon://slim-arrow-down", "expand");
+		},
+		"_changesIconCont": function (oParent) {
+			return this._getButton(oParent, "sap-icon://request", "changes-cont");
+		},
+		"_changesIcon": function (oParent) {
+			return this._getButton(oParent, "sap-icon://request", "changes");
 		},
 		_getIcon: function (oParent, sIcon) {
 			return IconPool.createControlByURI({
@@ -424,7 +460,7 @@ sap.ui.define([
 	};
 
 	var aPropertiesToOverride = ["objectSubtitle", "showTitleSelector", "markLocked", "markFavorite", "markFlagged",
-			"showMarkers", "showPlaceholder"],
+			"showMarkers", "showPlaceholder", "markChanges"],
 		aObjectImageProperties = ["objectImageURI", "objectImageAlt", "objectImageDensityAware", "objectImageShape"];
 
 	var fnGenerateSetter = function (sPropertyName) {

@@ -14,6 +14,7 @@
 							  markFavorite="true"
 							  markFlagged="true"
 							  markLocked="true"
+							  markChanges="true"
 							  objectSubtitle="Senior Developer"
 							  objectImageURI="../img/HugeHeaderPicture.png"
 							  objectImageShape="Circle"
@@ -33,8 +34,5 @@
 				</breadCrumbsLinks>
 			</ObjectPageHeader>
 		</headerTitle>
-		<headerContent>
-			<m:Text text="Personal description"/>
-		</headerContent>
 	</ObjectPageLayout>
 </core:View>

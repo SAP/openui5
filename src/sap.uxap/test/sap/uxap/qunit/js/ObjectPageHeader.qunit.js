@@ -24,7 +24,7 @@
 			}
 		};
 
-	oHeaderView.placeAt('qunit-fixture');
+	oHeaderView.placeAt("qunit-fixture");
 
 	QUnit.module("rendering API");
 
@@ -46,11 +46,23 @@
 	});
 
 	QUnit.test("Locked mark rendering", function (assert) {
-		assert.ok(oHeaderView.$("-lock"), "Locked mark is rendered");
+		assert.ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderLockBtn").length === 1, "Locked mark is rendered");
+	});
+	
+	QUnit.test("Unsaved changes mark is not rendered when Locked mark is set", function (assert) {
+		ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderChangesBtn").length === 0, "Unsaved changes mark is not rendered when Locked mark is set");
+	});
+	
+	QUnit.test("Unsaved changes mark rendering", function (assert) {
+		this._oHeader = core.byId("UxAP-ObjectPageHeader--header");
+		this._oHeader.setMarkLocked(false);
+		core.applyChanges();
+
+		assert.ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderChangesBtn").length === 1, "Unsaved chages mark is rendered");
 	});
 
 	QUnit.test("SubTitle rendering", function (assert) {
-		assert.ok(oHeaderView.$("-subtitle"), "SubTitle is rendered");
+		assert.ok(oHeaderView.$().find(".sapUxAPObjectPageHeaderIdentifierDescription").length === 1, "SubTitle is rendered");
 	});
 
 	QUnit.test("Image rendering", function (assert) {
