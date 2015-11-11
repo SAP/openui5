@@ -8,8 +8,6 @@
 	font-size: @sapMFontMediumSize;
 	padding: 0;
 	min-width: 5rem;
-	background-color: @sapUiLightestBG;
-	border: 1px solid @sapUiDarkBorder;
 	color: @sapUiStandardText;
 	-webkit-box-shadow: 0 0.0625rem 0.1875rem fade(@sapUiDarkShadowTint, 50);
 	box-shadow: 0 0.0625rem 0.1875rem fade(@sapUiDarkShadowTint, 50);
@@ -30,24 +28,24 @@
 }
 
 .sapUiMnuLst {
-	color: @sapUiStandardText;
+	color: @sapUiListTextColor;
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
 }
 
 .sapUiMnuItm.sapUiMnuItmSubMnuOpen,
 .sapUiMnuItm.sapUiMnuItmSubMnuOpen.sapUiMnuItmHov {
-	background-color: @sapUiActiveBG;
+	background-color: @sapUiListSelectionBackgroundColor;
 }
 
 .sapUiMnuItm.sapUiMnuItmHov {
-	color: @sapUiStandardText;
-	background-color: darken(@sapUiLightestBG, 6);
+	color: @sapUiListTextColor;
+	background-color: @sapUiListHoverBackground;
 }
 
 .sapUiMnuItm.sapUiMnuItmHov:active {
-	color: @sapUiTextInverted;
-	background-color: @sapUiHighlight;
+	color: @sapUiListActiveTextColor;
+	background-color: @sapUiListActiveBackground;
 }
 
 .sapUiMnuItm.sapUiMnuItmDsbl.sapUiMnuItmHov,
@@ -91,7 +89,7 @@
 .sapUiMnuDiv > hr {
 	left: @sapUiMnuItmPadding;
 	right: @sapUiMnuItmPadding;
-	border-color: @sapUiDarkBorder;
+	border-color: @sapUiContentForegroundBorderColor;
 }
 
 .sapUiMnuItmTxt {
@@ -136,12 +134,12 @@
 	line-height: @sapUiMnuItmHeight;
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
-	color: @sapUiStandardText;
+	color: @sapUiListTextColor;
 	margin-right: @sapUiMnuItmPadding;
 }
 
 .sapUiMnuItm.sapUiMnuTfItm.sapUiMnuItmHov .sapUiMnuTfItemLbl {
-	color: @sapUiStandardText;
+	color: @sapUiListTextColor;
 }
 
 .sapUiMnuItmSbMnu > div:after {
