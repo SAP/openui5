@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 
-<!-- 
+<!--
   Tested control/class: sap.ui.commons.RichTooltip, sap.ui.core.TooltipBase
 -->
 
@@ -8,12 +8,13 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<title>RichTooltip - sap.ui.commons</title>
-	<script id="sap-ui-bootstrap" 
+	<script id="sap-ui-bootstrap"
 		type="text/javascript"
 		src="../../../../../resources/sap-ui-core.js"
 		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.ux3,sap.ui.commons"
+		data-sap-ui-xx-bindingSyntax="complex"
 		data-sap-ui-language=en>
 	</script>
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
@@ -45,22 +46,22 @@
 		}
 
 
-		var sText = "This is the correct long text", 
+		var sText = "This is the correct long text",
 			sTitle = "This is the expected title",
 			sDefaultTitle = "this tooltip must be gone",
-			sImageSrc = "../images/SAPLogo.gif", 
+			sImageSrc = "../images/SAPLogo.gif",
 			oPopup = null;
 
 
-		//RichTooltip with default values 
+		//RichTooltip with default values
 		var oRtt0 = new sap.ui.commons.RichTooltip("rtt0");
 
-		//RichTooltip with standard positioning and animation 
+		//RichTooltip with standard positioning and animation
 		var oRtt1 = new sap.ui.commons.RichTooltip("rtt1", {
 			text : sText,
 			title : sTitle,
 			imageSrc : sImageSrc,
-			collision : "none" //just to avoid positioning issues during test 
+			collision : "none" //just to avoid positioning issues during test
 		});
 
 		var oButton1 = new sap.ui.commons.Button("c1", {
@@ -69,13 +70,13 @@
 		});
 		oButton1.placeAt("uiArea1");
 
-		//RichTooltip with custom positioning and animation 
-		
+		//RichTooltip with custom positioning and animation
+
 		var sRtt2Offset = "10 8";
-		
+
 		var sRtt2HtmlText = "Make it <strong>strong</strong>";
 		var sRtt2ValueStateText = "This is an individual message";
-		
+
 		var oRtt2 = new sap.ui.commons.RichTooltip("rtt2", {
 			text : sText,
 			title : sTitle,
@@ -198,15 +199,15 @@
 				var $textField = oTextField1.$();
 				var oTextFieldOffset = $textField.offset();
 				var iTFOuterH = $textField.outerHeight();
-				
+
 				var $rtt2 = oRtt2.$();
 				var oRttOffset = $rtt2.offset();
 				var iRttOuterH = $rtt2.outerHeight();
-				
+
 				var result = Math.abs((oTextFieldOffset.left + 10) - (oRttOffset.left));
 				ok(result <= 2, "Position from left");
 				// rounding needed since FireFox returns floating pixel values...
-				result = Math.round(Math.abs((oTextFieldOffset.top + iTFOuterH - 10) - (oRttOffset.top + iRttOuterH))); 
+				result = Math.round(Math.abs((oTextFieldOffset.top + iTFOuterH - 10) - (oRttOffset.top + iRttOuterH)));
 				ok(result <= 5, "Position from top");
 			});
 		});
@@ -260,43 +261,62 @@
 
 		asyncTest("RichTooltip Text for control with Value State", function() {
 			expect(4);
-			
+
 			checkOpenClose(2, true, 400, 400, function() {
 				var jObjValueStateText = jQuery.sap.byId("rtt2").find(".sapUiRttValueStateText");
 				var jObjText = jQuery.sap.byId("rtt2").find(".sapUiRttText");
-				
+
 				ok(jObjValueStateText.size() == 1, "ValueState text section is available");
 				ok(jObjText.size() == 1, "RichTooltip text section is available");
-				
+
 				// fetch the default text to prevent any wrongly set language
 				var valueStateText = sap.ui.core.ValueStateSupport.getAdditionalText(oRtt2.getParent());
-				
+
 				ok(jObjValueStateText.text() === valueStateText, "ValueState text contains default state information.");
 				ok(jObjText.text() === sText, "RichTooltip text section is the original text.");
 			});
 		});
-		
+
 		asyncTest("RichTooltip with individual ValueState text and html text", function() {
 			expect(2);
 			oRtt2.setText(sRtt2HtmlText);
 			oRtt2.setValueStateText(sRtt2ValueStateText);
 			oRtt2.invalidate();
 			sap.ui.getCore().applyChanges();
-			
+
 			setTimeout(function(){
 				checkOpenClose(2, true, 800, 400, function() {
 					var jObjText = jQuery.sap.byId("rtt2").find(".sapUiRttText");
-					
+
 					// since IE8 transforms all tags into upper case it has to be transfered back into lower case
 					var sText = jObjText.html().toLowerCase();
 					var sLowerOriginal = sRtt2HtmlText.toLowerCase();
-					
+
 					ok(sText === sLowerOriginal, "HTML text as content text");
-					
+
 					var jObjValueStateText = jQuery.sap.byId("rtt2").find(".sapUiRttValueStateText");
 					ok(jObjValueStateText.html() === sRtt2ValueStateText, "Custom 'ValueStateMessage':");
 				});
 			}, 400);
+		});
+
+		QUnit.module("Data binding");
+
+		QUnit.test("Should bind properly values with curly braces", function (assert) {
+			var sText = "Title 1{<br>Id 1";
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData({
+				text: sText
+			});
+
+			var oRTT = new sap.ui.commons.RichTooltip({
+				text: "{/text}"
+			}).setModel(oModel);
+
+			assert.strictEqual(oRTT.getText(), sText, "text should equal " + sText);
+
+			oRTT.destroy();
+			oModel.destroy();
 		});
 	</script>
 
