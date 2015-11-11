@@ -99,7 +99,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					horizontalScrolling: {type: "boolean", group: "Behavior", defaultValue: true},
 
 					/**
-					 * Indicates if user can scroll vertically inside dialog when the content is bigger than the content area. However, when scrollable control (sap.m.ScrollContainer, sap.m.Page) is in the dialog, this property needs to be set to false to disable the scrolling in dialog in order to make the scrolling in the child control work properly.
+					 * Indicates if user can scroll vertically inside dialog when the content is bignger than the content area. However, when scrollable control (sap.m.ScrollContainer, sap.m.Page) is in the dialog, this property needs to be set to false to disable the scrolling in dialog in order to make the scrolling in the child control work properly.
 					 * Dialog detects if there's sap.m.NavContainer, sap.m.Page, or sap.m.ScrollContainer as direct child added to dialog. If there is, dialog will turn off scrolling by setting this property to false automatically ignoring the existing value of this property.
 					 * @since 1.15.1
 					 */
@@ -268,7 +268,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 			var that = this;
 			this._externalIcon = undefined;
 			this._sResizeListenerId = null;
-			this._$Window = jQuery(window);
 			this._oManuallySetSize = null;
 			this._oManuallySetPosition = null;
 
@@ -584,69 +583,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 		/**
 		 *
-		 * @param {string} windowWidth
-		 * @returns {{top, left}}
-		 * @private
-		 */
-		Dialog.prototype._getDialogOffset = function (windowWidth) {
-			var iWindowWidth = windowWidth || this._$Window.width();
-			var screenSizes = {
-				small: 600,
-				large: 1024
-			};
-			var remToPixelMargin = function (rem) {
-				var iRemInPx = parseInt(window.getComputedStyle(document.body).fontSize, 10);
-				return (rem * iRemInPx) * 2;
-			};
-			var margins = {
-				top: remToPixelMargin(1), //default value for small size
-				left: remToPixelMargin(1) //default value for small size
-			};
-
-			if (iWindowWidth > screenSizes.small && iWindowWidth < screenSizes.large) {
-				//medium size
-				margins = {
-					top: remToPixelMargin(2),
-					left: remToPixelMargin(2)
-				};
-			} else if (iWindowWidth >= screenSizes.large) {
-				margins = {
-					top: remToPixelMargin(4),
-					left: remToPixelMargin(4)
-				};
-			}
-
-			return margins;
-		};
-
-		Dialog.prototype._getSizes = function() {
-			var $this = this.$();
-			var windowWidth = this._$Window.width();
-			var windowHeight = (Dialog._bIOS7Tablet && sap.ui.Device.orientation.landscape && window.innerHeight) ? window.innerHeight : this._$Window.height();
-			var iContentOffset = parseInt($this.css('padding-top'), 10) + parseInt($this.css('padding-bottom'), 10);
-			var iHPaddingToScreen = this._getDialogOffset(windowWidth).left;
-			var iVPaddingToScreen = this._getDialogOffset(windowHeight).top;
-			var maxWidth = windowWidth - iHPaddingToScreen;
-			var maxHeight = windowHeight - iVPaddingToScreen - iContentOffset;
-
-			return {
-				maxWidth: maxWidth,
-				maxHeight: maxHeight
-			};
-		};
-
-		/**
-		 *
 		 * @private
 		 */
 		Dialog.prototype._setDimensions = function () {
-			var oSizes = this._getSizes(),
-				$this = this.$(),
+			var $this = this.$(),
 				bStretch = this.getStretch(),
 				bStretchOnPhone = this.getStretchOnPhone() && sap.ui.Device.system.phone,
 				bMessageType = this._bMessageType,
-				iMaxWidth = oSizes.maxWidth,
-				iMaxHeight = oSizes.maxHeight,
 				oStyles = {};
 
 			//the initial size is set in the renderer when the dom is created
@@ -660,13 +603,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 					oStyles.width = this._oManuallySetSize.width;
 					oStyles.height = this._oManuallySetSize.height;
 				}
-
-				//set max height and width smaller that the screen
-				oStyles["max-width"] = bMessageType && !jQuery.device.is.iphone ? '480px' : iMaxWidth + 'px';
-				oStyles["max-height"] = iMaxHeight + 'px';
-
-				//set the max-height so contents with defined height and width can be displayed with scroller when the height/width is smaller than the content
-				this.$('cont').css({'max-height': iMaxHeight + "px"});
 			}
 
 			if ((bStretch && !bMessageType) || (bStretchOnPhone)) {

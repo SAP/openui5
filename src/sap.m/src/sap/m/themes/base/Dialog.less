@@ -2,6 +2,8 @@
 /* CSS for control sap.m/Dialog.control          */
 /* ============================================= */
 
+@SapDialogMarginWidth: 10%;
+@SapDialogMarginHeight: 7%;
 @SapBarHeight: 3rem;
 @SapBarCompactHeight: 2.5rem;
 
@@ -13,8 +15,6 @@
 
 .sapMDialog {
 	background-clip: padding-box;
-	max-height: 100%;
-	max-width: 100%;
 	min-height: 6rem;
 	outline: none;
 	overflow: hidden;
@@ -26,6 +26,64 @@
 	-webkit-transform: translate(-50%, -50%) scale(0.9);
 	transform: translate(-50%, -50%) scale(0.9);
 }
+
+// set max height and max width ========================================================================================
+
+.sapMDialog {
+	max-width: calc(~"100% - " @SapDialogMarginWidth);
+}
+
+.sapMDialog > .sapMDialogSection {
+	max-width: 100%;
+}
+
+// =====================================================================================================================
+// there are 6 cases (3 vars - header, subheader, and footer)
+// =====================================================================================================================
+
+.setDialogMaxHeight(@_barHeight, @_path) {
+
+	//with header, subheader and footer (3 bars)
+	@{_path}.sapMDialogWithSubHeader:not(.sapMDialog-NoHeader):not(.sapMDialog-NoFooter) {
+		max-height: calc(~"100% - " @_barHeight * 3 ~" - " @SapDialogMarginHeight);
+	}
+
+	//with header, no subheader and footer (2 bars)
+	@{_path}:not(.sapMDialog-NoHeader):not(.sapMDialog-NoFooter):not(.sapMDialogWithSubHeader) {
+		max-height: calc(~"100% - " @_barHeight * 2 ~" - " @SapDialogMarginHeight);
+	}
+
+	//with no headers and footer (1 bar)
+	@{_path}.sapMDialog-NoHeader:not(.sapMDialog-NoFooter):not(.sapMDialogWithSubHeader) {
+			max-height: calc(~"100% - " @_barHeight ~" - " @SapDialogMarginHeight);
+	}
+
+	//with 2 headers with no footer (2 bars)
+	@{_path}:not(.sapMDialog-NoHeader).sapMDialog-NoFooter.sapMDialogWithSubHeader {
+		max-height: calc(~"100% - " @_barHeight ~" - " @SapDialogMarginHeight);
+	}
+
+	//with 1 sub-header and no footer (1 bar)
+	@{_path}.sapMDialog-NoHeader.sapMDialog-NoFooter.sapMDialogWithSubHeader {
+		max-height: calc(~"100% - " @_barHeight ~" - " @SapDialogMarginHeight);
+	}
+
+	//with header, no sub-header and no footer (1 bar)
+	@{_path}:not(.sapMDialog-NoHeader).sapMDialog-NoFooter:not(.sapMDialogWithSubHeader) {
+		max-height: calc(~"100% - " @_barHeight ~" - " @SapDialogMarginHeight);
+	}
+
+	//with no headers and no footer (0 bars)
+	@{_path}.sapMDialog-NoHeader.sapMDialog-NoFooter:not(.sapMDialogWithSubHeader) {
+		max-height: calc(~"100% - " @_barHeight);
+	}
+}
+
+.setDialogMaxHeight(@SapBarHeight, ~".sapMDialog");
+.setDialogMaxHeight(@SapBarCompactHeight, ~".sapUiSizeCompact .sapMDialog");
+
+
+// end max height and max width ========================================================================================
 
 .sapMDialog .sapMDialogScrollCont > * {
 	vertical-align: middle;
@@ -43,6 +101,8 @@
 	bottom: 0 !important;
 	top: 0 !important;
 	left: 0 !important;
+	max-height: none !important;
+	max-width: none !important;
 	height: auto !important; //this is for preventing inline size/width sizes set the width
 	width: auto !important; //this is for preventing inline size/height sizes set the height
 	min-width: 0 !important; //this is for preventing the dialog to hold it's width in small screens
