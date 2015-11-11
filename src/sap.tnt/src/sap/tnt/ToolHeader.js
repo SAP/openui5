@@ -18,12 +18,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 		 * @class
 		 *
 		 * The ToolHeader control is a horizontal container that is most
-		 * commonly used to display buttons, labels, selects and various other input controls.
+		 * commonly used to display buttons, labels, selects and other various input controls.
 		 *
 		 * The ToolHeader control is based on sap.m.OverflowToolbar. In addition to the OverflowToolbar,
 		 * the user can specify where the overflow button is placed.
 		 *
-		 * @extends sap.ui.core.Control
+		 * @extends sap.m.OverflowToolbar
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -45,6 +45,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 			}
 		});
 
+		/**
+		 * Initializes the control.
+		 * @private
+		 * @override
+		 */
 		ToolHeader.prototype.init = function() {
 
 			OverflowToolbar.prototype.init.apply(this, arguments);
@@ -53,7 +58,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 		};
 
 		/**
-		 * Lazy loader for the popover
+		 * Lazy loader for the popover.
 		 * @returns {sap.m.Popover}
 		 * @private
 		 */
@@ -90,6 +95,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 			return this.getAggregation("_popover");
 		};
 
+		/**
+		 * Modifies sap.m.Button.
+		 * @private
+		 */
 		ToolHeader.prototype._preProcessPopoverControlsSapMButton = function(oControl) {
 			this._mControlsCache[oControl.getId()] = {
 				buttonType: oControl.getType()
@@ -105,6 +114,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 			oControl.attachEvent("_change", this._onSapMButtonUpdated, this);
 		};
 
+		/**
+		 * Returns "sap.m.PlacementType.Bottom".
+		 * @returns {sap.m.PlacementType}
+		 * @private
+		 * @override
+		 */
 		ToolHeader.prototype._getBestActionSheetPlacement = function() {
 			return sap.m.PlacementType.Bottom;
 		};
