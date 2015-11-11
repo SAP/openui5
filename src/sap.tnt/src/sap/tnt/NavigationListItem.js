@@ -8,11 +8,11 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 		/**
 		 * Constructor for a new NavigationListItem.
 		 *
-		 * @param {string} [sId] ID for the new control, generated automatically if no id is given
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * NavigationListItem represents an action which can be selected by the user.
+		 * The NavigationListItem control represents an action, which can be selected by the user.
 		 * It can provide sub items.
 		 * @extends sap.ui.core.Item
 		 *
@@ -55,12 +55,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 				},
 				events: {
 					/**
-					 * Fires when this item is selected.
+					 * Fired when this item is selected.
 					 */
 					select: {
 						parameters: {
 							/**
-							 * The selected item
+							 * The selected item.
 							 */
 							item: {type: "sap.ui.core.Item"}
 						}
@@ -73,7 +73,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 		NavigationListItem.collapseIcon = 'sap-icon://navigation-down-arrow';
 
 		/**
-		 * Returns the sap.ui.core.Icon control used to display the expand/collapse icon.
+		 * Returns the <code>sap.ui.core.Icon</code> control used to display the expand/collapse icon.
 		 * @returns {sap.ui.core.Icon}
 		 * @private
 		 */
@@ -96,6 +96,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			return expandIconControl;
 		};
 
+		/**
+		 * Gets the expand/collapse icon tooltip.
+		 * @private
+		 */
 		NavigationListItem.prototype._getExpandIconTooltip = function (expand) {
 
 			if (!this.getEnabled()) {
@@ -107,6 +111,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			return this.getNavigationList()._resourceBundle.getText(text);
 		};
 
+		/**
+		 * Gets the tree level of this item.
+		 * @private
+		 */
 		NavigationListItem.prototype.getLevel = function () {
 			var level = 0;
 
@@ -118,6 +126,9 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			return level;
 		};
 
+		/**
+		 * Gets the NavigationList control, which holds this item.
+		 */
 		NavigationListItem.prototype.getNavigationList = function () {
 			var parent = this.getParent();
 
@@ -128,6 +139,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			return parent;
 		};
 
+		/**
+		 * Creates a popup list.
+		 * @private
+		 */
 		NavigationListItem.prototype.createPopupList = function () {
 
 			var newSubItems = [],
@@ -184,6 +199,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			return navList;
 		};
 
+		/**
+		 * Handles popup item selection.
+		 * @private
+		 */
 		NavigationListItem.prototype.onPopupItemSelect = function (event) {
 
 			var item = event.getParameter('item');
@@ -194,6 +213,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			item._selectItem(event);
 		};
 
+		/**
+		 * Selects this item.
+		 * @private
+		 */
 		NavigationListItem.prototype._selectItem = function (event) {
 
 			var params = {
@@ -206,6 +229,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			navList._selectItem(params);
 		};
 
+		/**
+		 * Handles key down event.
+		 * @private
+		 */
 		NavigationListItem.prototype.onkeydown = function (event) {
 
 			if (event.isMarked('subItem')) {
@@ -240,6 +267,9 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			}
 		};
 
+		/**
+		 * Expands the child items (works only on first-level items).
+		 */
 		NavigationListItem.prototype.expand = function (duration) {
 			if (this.getExpanded() || !this.getHasExpander() || this.getLevel() > 0) {
 				return;
@@ -260,6 +290,9 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			return true;
 		};
 
+		/**
+		 * Collapses the child items (works only on first-level items).
+		 */
 		NavigationListItem.prototype.collapse = function (duration) {
 			if (!this.getExpanded() || !this.getHasExpander() || this.getLevel() > 0) {
 				return;
@@ -280,6 +313,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			return true;
 		};
 
+		/**
+		 * Handles tap event.
+		 * @private
+		 */
 		NavigationListItem.prototype.ontap = function (event) {
 
 			if (event.isMarked('subItem') || !this.getEnabled()) {
@@ -327,6 +364,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 		NavigationListItem.prototype.onsapenter = NavigationListItem.prototype.ontap;
 		NavigationListItem.prototype.onsapspace = NavigationListItem.prototype.ontap;
 
+		/**
+		 * Renders the item.
+		 * @private
+		 */
 		NavigationListItem.prototype.render = function (rm, control) {
 
 			if (this.getLevel() == 0) {
@@ -336,6 +377,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			}
 		};
 
+		/**
+		 * Renders the group item.
+		 * @private
+		 */
 		NavigationListItem.prototype.renderGroupItem = function (rm, control) {
 
 			rm.write('<div');
@@ -388,6 +433,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			rm.write("</div>");
 		};
 
+		/**
+		 * Renders the first-level navigation item.
+		 * @private
+		 */
 		NavigationListItem.prototype.renderFirstLevelNavItem = function (rm, control) {
 			var item,
 				items = this.getItems(),
@@ -435,6 +484,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			rm.write("</li>");
 		};
 
+		/**
+		 * Renders the second-level navigation item.
+		 * @private
+		 */
 		NavigationListItem.prototype.renderSecondLevelNavItem = function (rm, control) {
 
 			var group = this.getParent();
@@ -476,6 +529,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			rm.write("</li>");
 		};
 
+		/**
+		 * Renders an icon.
+		 * @private
+		 */
 		NavigationListItem.prototype._renderIcon =  function(rm) {
 			rm.write('<span');
 
@@ -501,6 +558,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 
 		};
 
+		/**
+		 * Renders a text.
+		 * @private
+		 */
 		NavigationListItem.prototype._renderText =  function(rm) {
 			rm.write('<span');
 
@@ -526,6 +587,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			rm.write("</span>");
 		};
 
+		/**
+		 * Deselects this item.
+		 * @private
+		 */
 		NavigationListItem.prototype._unselect = function() {
 
 			var $this = this.$();
@@ -544,6 +609,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			}
 		};
 
+		/**
+		 * Selects this item.
+		 * @private
+		 */
 		NavigationListItem.prototype._select = function() {
 
 			var $this = this.$();
@@ -562,6 +631,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			}
 		};
 
+		/**
+		 * Gets DOM references of the navigation items.
+		 * @private
+		 */
 		NavigationListItem.prototype._getDomRefs = function() {
 			var domRefs = [];
 
