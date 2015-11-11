@@ -35,6 +35,15 @@
         "samples": [
           "sap.tnt.sample.ToolHeader"
         ]
+      },
+      {
+        "id": "sap.tnt.ToolPage",
+        "name": "Tool Page Layout",
+        "category": "Action",
+        "since": "1.34",
+        "samples": [
+          "sap.tnt.sample.ToolPage"
+        ]
       }
     ],
     "samples": [
@@ -52,6 +61,11 @@
         "id": "sap.tnt.sample.ToolHeader",
         "name": "Tool Header",
         "description": "Tool Header is useful for showing lists of action buttons"
+      },
+      {
+        "id": "sap.tnt.sample.ToolPage",
+        "name": "ToolPage",
+        "description": "A tool page layout combining ToolHeader, SideNavigation and content part"
       }
     ]
   }

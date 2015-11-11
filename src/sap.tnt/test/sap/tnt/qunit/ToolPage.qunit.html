@@ -1,0 +1,468 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+	<title>QUnit page for sap.m.QuickView</title>
+	<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
+			type="text/javascript" data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m, sap.tnt" src="../../../../resources/sap-ui-core.js">
+	</script>
+
+	<link rel="stylesheet" type="text/css" media="screen"
+		  href="../../../../resources/sap/ui/thirdparty/qunit.css"/>
+
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script type="text/javascript">
+		sinon.config.useFakeTimers = true;
+
+		//create JSON model instance
+		var oModel = new sap.ui.model.json.JSONModel();
+
+		// create and add app
+		var oApp = new sap.m.App("myApp", {initialPage: "toolPage"});
+		oApp.placeAt("qunit-fixture");
+
+		var oPage = new sap.m.Page("toolPage", {
+			title: "Tool Page"
+		});
+		oApp.addPage(oPage);
+
+		function getToolHeader() {
+			return new sap.tnt.ToolHeader({
+				showSideNavButton: true,
+				itemSelect: function(event) {
+					var item = event.getParameter('item');
+				},
+				items: [
+					new sap.tnt.ToolHeaderItem({
+						text : "File",
+						select: function(event) {
+							var item = event.getParameter('item');
+						}
+					}),
+					new sap.tnt.ToolHeaderItem({
+						text : "File1"
+					}),
+					new sap.tnt.ToolHeaderItem({
+						text : "File2"
+					}),
+					new sap.tnt.ToolHeaderItem({
+						text : "File3"
+					}),
+					new sap.tnt.ToolHeaderItem({
+						text : "File4"
+					}),
+					new sap.tnt.ToolHeaderItem({
+						text : "File5"
+					}),
+					new sap.tnt.ToolHeaderItem({
+						text : "File6"
+					}),
+					new sap.tnt.ToolHeaderItem({
+						text : "View7"
+					})
+				],
+				utilityItems: [
+					new sap.tnt.ToolHeaderItem({
+						text : "User Name"
+					}),
+					new sap.tnt.ToolHeaderItem({
+						icon: 'sap-icon://log'
+					})
+				]
+			});
+		}
+
+		function getSideNavigation() {
+			var model = new sap.ui.model.json.JSONModel();
+			var data = {
+				navigation: [{
+					title: 'Root Item',
+					icon: 'sap-icon://employee',
+					expanded: true,
+					items: [{
+						title: 'Child Item 1',
+						key: 'page1'
+					}, {
+						title: 'Child Item 2',
+						enabled: false
+					}, {
+						title: 'Child Item 3',
+						key: 'page2'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://building',
+					enabled: false
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://card',
+					expanded: false,
+					items: [{
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://action',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://action-settings',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://activate',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://activities',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://add',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://arobase',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://attachment',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://badge',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://basket',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://bed',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://bookmark',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}
+				],
+				fixedNavigation: [{
+					title: 'Fixed Item 1',
+					icon: 'sap-icon://employee'
+				}, {
+					title: 'Fixed Item 2',
+					icon: 'sap-icon://building'
+				}, {
+					title: 'Fixed Item 3',
+					icon: 'sap-icon://card'
+				}]
+			};
+			model.setData(data);
+
+			var sideNavigation = new sap.tnt.SideNavigation({
+				expanded: false,
+				itemSelect: function (event) {
+					navContainer.to(event.getParameter('item').getKey())
+				},
+				item: new sap.tnt.NavigationList({
+					items: {
+						template: new sap.tnt.NavigationListItem({
+							text: '{title}',
+							icon: '{icon}',
+							enabled: '{enabled}',
+							expanded: '{expanded}',
+							items: {
+								template: new sap.tnt.NavigationListItem({
+									text: '{title}',
+									key: '{key}',
+									enabled: '{enabled}'
+								}),
+								path: 'items'
+							}
+						}),
+
+						path: '/navigation'
+					}
+				}),
+				fixedItem: new sap.tnt.NavigationList({
+					items: {
+						template: new sap.tnt.NavigationListItem({
+							text: '{title}',
+							icon: '{icon}'
+						}),
+						path: '/fixedNavigation'
+					}
+				})
+			}).setModel(model);
+
+			return sideNavigation;
+		}
+
+		function getContent() {
+			return new sap.m.NavContainer({
+				pages: [
+					new sap.m.Text('page1', {
+						text: 'This is the first page'
+					}),
+					new sap.m.Text('page2', {
+						text: 'This is the second page'
+					})]
+			});
+		}
+
+		function getToolPage() {
+			var toolHeader = getToolHeader();
+			var sideNavigation = getSideNavigation();
+			var content = getContent();
+
+			return new sap.tnt.ToolPage({
+				header: toolHeader,
+
+				sideContent: sideNavigation,
+
+				mainContents: [content]
+			});
+		}
+
+		QUnit.module("API and Rendering", {
+			setup: function () {
+				this.toolPage = getToolPage();
+				oPage.addContent(this.toolPage);
+
+				sap.ui.getCore().applyChanges();
+			},
+			teardown: function () {
+				this.toolPage.destroy();
+				this.toolPage = null;
+			}
+		});
+
+		QUnit.test("Rendering", function (assert) {
+			assert.strictEqual(this.toolPage.$().length, 1, "Tool Page is not rendered");
+		});
+
+		QUnit.test("Creation", function (assert) {
+			assert.ok(sap.ui.getCore().byId(this.toolPage.getId()), "ToolPage is not created");
+		});
+
+		QUnit.test("contains elements and classes", function (assert) {
+			assert.ok(this.toolPage.$().hasClass('sapMToolPage'), "sapMToolPage class is not set");
+		});
+
+		QUnit.test("toggleSideContentMode", function (assert) {
+			assert.strictEqual(this.toolPage.getSideExpanded(), true, "ToolPage should be expanded");
+
+			this.toolPage.toggleSideContentMode();
+
+			assert.strictEqual(this.toolPage.getSideExpanded(), false, "ToolPage should be collapsed")
+		});
+
+		QUnit.test("setSideExpanded", function (assert) {
+			this.toolPage.setSideExpanded(true);
+
+			assert.equal(this.toolPage.$('aside').parent().hasClass('sapMToolPageAsideCollapsed'), false, "ToolPage should not be collapsed");
+			assert.strictEqual(this.toolPage.getSideExpanded(), true, "ToolPage should be expanded")
+
+			this.toolPage.setSideExpanded(false);
+
+			assert.equal(this.toolPage.$('aside').parent().hasClass('sapMToolPageAsideCollapsed'), true, "ToolPage should be collapsed");
+			assert.strictEqual(this.toolPage.getSideExpanded(), false, "ToolPage should be collapsed")
+		});
+
+		QUnit.test("Media Query Handler", function(assert) {
+			// Arrange
+			var oSideExpandedSpy = this.spy(this.toolPage, "setSideExpanded");
+			var oUpdateLastQuerySpy = this.spy(this.toolPage, "_updateLastMediaQuery");
+			var oFireDeviceChangeSpy = this.spy(this.toolPage, "_fireDeviceChangeEvent");
+			this.toolPage._lastMediaQuery = "test";
+
+			// Act
+			this.toolPage._mediaQueryHandler();
+
+			// Assert
+			assert.strictEqual(oSideExpandedSpy.callCount, 1, "setSideExpanded called once");
+			assert.strictEqual(oUpdateLastQuerySpy.callCount, 1, "setSideExpanded called once");
+			assert.strictEqual(oFireDeviceChangeSpy.callCount, 1, "setSideExpanded called once");
+
+			// Reset sinon spy
+			this.toolPage.setSideExpanded.restore();
+			this.toolPage._updateLastMediaQuery.restore();
+			this.toolPage._fireDeviceChangeEvent.restore();
+		});
+
+		QUnit.module("Media handling", {
+			setup: function () {
+				this.toolPage = getToolPage();
+				oPage.addContent(this.toolPage);
+
+				sap.ui.getCore().applyChanges();
+			},
+			teardown: function () {
+				this.toolPage.destroy();
+				this.toolPage = null;
+			}
+		});
+	</script>
+</head>
+<body class="sapUiBody">
+<div id="qunit"></div>
+<div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+</html>
