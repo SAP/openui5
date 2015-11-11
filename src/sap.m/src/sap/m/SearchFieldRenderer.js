@@ -59,6 +59,7 @@ sap.ui.define(['jquery.sap.global'],
 			//    Enclose input into a <form> to show a correct keyboard
 			//    method="post" to prevent unneeded "?" at the end of URL
 			rm.write('<form method="post" action="javascript:void(0);"');
+			rm.writeAttribute("id", sId + "-F");
 			rm.addClass('sapMSFF');
 			if (!bShowSearchBtn) {
 				rm.addClass("sapMSFNS"); //no search button
@@ -91,7 +92,12 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		
 			rm.writeClasses();
-		
+
+			if (oSF.getEnableSuggestions() && sap.ui.Device.system.phone) {
+				// Always open a dialog on a phone if suggestions are on.
+				// To avoid soft keyboard flickering, set the readonly attribute.
+				rm.writeAttribute("readonly", "readonly");
+			}
 			if (!oSF.getEnabled()) { rm.writeAttribute("disabled","disabled"); }
 			if (sPlaceholder) { rm.writeAttributeEscaped("placeholder", sPlaceholder); }
 			if (oSF.getMaxLength()) { rm.writeAttribute("maxLength", oSF.getMaxLength()); }
