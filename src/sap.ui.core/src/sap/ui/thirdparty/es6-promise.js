@@ -948,9 +948,10 @@
       // ##### BEGIN: MODIFIED BY SAP
       // Original line: 
       //    if (P && Object.prototype.toString.call(P.resolve()) === '[object Promise]' && !P.cast) {
-      // This lead to the polyfill replacing the native promise object in Chrome, where "[object Object]" is returned
-      // instead of '[object Promise]'
-      if (P && Object.prototype.toString.call(P.resolve()).indexOf('[object ') === 0 && !P.cast) {
+      // This lead to the polyfill replacing the native promise object in 
+      // - Chrome, where "[object Object]" is returned instead of '[object Promise]'
+      // - Safari, where native promise contains a definition for Promise.cast
+      if (P && Object.prototype.toString.call(P.resolve()).indexOf('[object ') === 0) {
       // ##### END: MODIFIED BY SAP
         return;
       }
