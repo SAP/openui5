@@ -10,23 +10,31 @@ sap.ui.define(function () {
 
 	WizardStepRenderer.render = function (oRm, oStep) {
 		this.startWizardStep(oRm, oStep);
-		this.renderWizardStepTitle(oRm, oStep.getTitle());
+		this.renderWizardStepTitle(oRm, oStep);
 		this.renderContent(oRm, oStep.getContent());
 		this.endWizardStep(oRm);
 	};
 
 	WizardStepRenderer.startWizardStep = function (oRm, oStep) {
 		oRm.write("<article");
+		oRm.writeAccessibilityState(oStep, {
+			"labelledby": this.getTitleId(oStep),
+			"role": "region"
+		});
 		oRm.writeControlData(oStep);
 		oRm.addClass("sapMWizardStep");
 		oRm.writeClasses();
 		oRm.write(">");
 	};
 
-	WizardStepRenderer.renderWizardStepTitle = function (oRm, sTitle) {
-		oRm.write("<h3 class='sapMWizardStepTitle'>");
-		oRm.writeEscaped(sTitle);
+	WizardStepRenderer.renderWizardStepTitle = function (oRm, oStep) {
+		oRm.write("<h3 class='sapMWizardStepTitle' id='" + this.getTitleId(oStep) + "'>");
+		oRm.writeEscaped(oStep.getTitle());
 		oRm.write("</h3>");
+	};
+
+	WizardStepRenderer.getTitleId = function (oStep) {
+		return oStep.getId() + "-Title";
 	};
 
 	WizardStepRenderer.renderContent = function (oRm, aChildren) {
