@@ -40,6 +40,7 @@ sap.ui.define([
 				$("body").append(_$Component);
 				$("body").addClass("sapUiOpaBodyComponent");
 
+
 				// create and place the component into html
 				_oComponentContainer = new ComponentContainer({component: oComponent});
 
