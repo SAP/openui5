@@ -41,7 +41,17 @@ sap.ui.define(["sap/m/Button", "./library"], function (Button, library) {
 				 * Hide the button icon when rendered into the headerTitle part of the ObjectPageLayout.
 				 * This is useful if you want to display texts only in the headerTitle part but still want to display text + icon in the actionSheet that appears when not enough space is available on the screen for displaying all actions.
 				 */
-				hideIcon: {type: "boolean", defaultValue: false}
+				hideIcon: {type: "boolean", defaultValue: false},
+
+				/**
+				 * Determines the order in which the button overflows.
+				 * @since 1.34.0
+				 */
+				importance: {
+					type: "sap.uxap.Importance",
+					group: "Behavior",
+					defaultValue: library.Importance.High
+				}
 			}
 		}
 	});

@@ -496,7 +496,7 @@ sap.ui.define([
 		this._oTitleArrowIcon.setVisible(this.getShowTitleSelector());
 		this._oFavIcon.setVisible(this.getMarkFavorite());
 		this._oFlagIcon.setVisible(this.getMarkFlagged());
-
+		this._attachDetachActionButtonsHandler(false);
 	};
 
 	/**
@@ -578,6 +578,24 @@ sap.ui.define([
 			this._iResizeId = ResizeHandler.register(this, this._adaptLayout.bind(this));
 		}
 		this._shiftHeaderTitle();
+
+		this._attachDetachActionButtonsHandler(true);
+	};
+
+	ObjectPageHeader.prototype._attachDetachActionButtonsHandler = function (bAttach) {
+		var aActions = this.getActions() || [];
+		if (aActions.length < 1) {
+			return;
+		}
+		aActions.forEach(function (oAction) {
+			if (oAction instanceof ObjectPageHeaderActionButton) {
+				if (bAttach) {
+					oAction.attachEvent("_change", this._adaptLayout, this);
+				} else {
+					oAction.detachEvent("_change", this._adaptLayout, this);
+				}
+			}
+		}, this);
 	};
 
 	ObjectPageHeader.prototype._onSeeMoreContentSelect = function (oEvent) {
@@ -592,6 +610,23 @@ sap.ui.define([
 			});
 		}
 		this._oOverflowActionSheet.close();
+	};
+
+	ObjectPageHeader._actionImportanceMap = {
+			"Low": 3,
+			"Medium": 2,
+			"High": 1
+	};
+
+	/**
+	 * Actions custom sorter function
+	 * @private
+	 */
+	ObjectPageHeader._sortActionsByImportance = function (oActionA ,oActionB) {
+		var sImportanceA = (oActionA instanceof ObjectPageHeaderActionButton) ? oActionA.getImportance() : sap.uxap.Importance.High,
+			sImportanceB = (oActionB instanceof ObjectPageHeaderActionButton) ? oActionB.getImportance() : sap.uxap.Importance.High;
+
+		return ObjectPageHeader._actionImportanceMap[sImportanceA] - ObjectPageHeader._actionImportanceMap[sImportanceB];
 	};
 
 	ObjectPageHeader.prototype._hasOneButtonShowText = function (aActions) {
@@ -669,9 +704,12 @@ sap.ui.define([
 	ObjectPageHeader.prototype._adaptActions = function (iAvailableSpaceForActions) {
 		var bMobileScenario = jQuery("html").hasClass("sapUiMedia-Std-Phone") || Device.system.phone,
 			iVisibleActionsWidth = this._oOverflowButton.$().show().width(),
+			aActions = this.getActions(),
 			oActionSheetButton;
+		
+		aActions.sort(ObjectPageHeader._sortActionsByImportance);
 
-		this.getActions().forEach(function (oAction) {
+		aActions.forEach(function (oAction) {
 			oActionSheetButton = this._oActionSheetButtonMap[oAction.getId()];
 
 			//separators and non sap.m.Button or not visible buttons have no equivalent in the overflow
