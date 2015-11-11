@@ -10,6 +10,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 
 			var bFesrActive = /sap-ui-xx-fesr=(true|x|X)/.test(location.search),
 				bTraceActive = /sap-ui-xx-e2e-trace=(true|x|X)/.test(location.search),
+				bInteractionActive = bFesrActive,
 				ROOT_ID = createGUID(), // static per session
 				CLIENT_ID = createGUID().substr(-8, 8) + ROOT_ID, // static per session
 				HOST = new URI(window.location).host(), // static per session
@@ -18,7 +19,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 				sFESRTransactionId,
 				oPendingInteraction = {
 					component: "initial",
-					trigger: "initial"
+					trigger: "initial",
+					event: "initial"
 				},
 				iStepCounter = 0,
 				iInteractionStepTimer,
@@ -42,9 +44,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 						sTransactionId = createGUID();
 						iStepCounter++;
 
-						// set passport with Root Context ID, Transaction ID, Component Name, Action
-						this.setRequestHeader("SAP-PASSPORT", passportHeader(iE2eTraceLevel, ROOT_ID, sTransactionId, oPendingInteraction.component, oPendingInteraction.trigger + "_" + iStepCounter));
-
 						// set FESR
 						if (sFESR) {
 							this.setRequestHeader("SAP-Perf-FESRec", sFESR);
@@ -57,6 +56,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 							// initial request should set the FESR Transaction Id
 							sFESRTransactionId = sTransactionId;
 						}
+
+						// set passport with Root Context ID, Transaction ID, Component Name, Action
+						this.setRequestHeader("SAP-PASSPORT", passportHeader(
+							iE2eTraceLevel,
+							ROOT_ID,
+							sTransactionId,
+							oPendingInteraction.component,
+							oPendingInteraction.trigger + "_" + oPendingInteraction.event + "_" + iStepCounter)
+						);
 					} else {
 						sTransactionId = createGUID();
 						// set passport with Root Context ID, Transaction ID, Component Name, Action
@@ -112,7 +120,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 			function createFESRopt(oInteraction) {
 				return [
 					format(oInteraction.component, "SAP_CHAR", 20), // application_name
-					format(oInteraction.trigger, "SAP_CHAR", 20), // step_name
+					format(oInteraction.trigger + "_" + oPendingInteraction.event, "SAP_CHAR", 20), // step_name
 					"", "", // 2 empty fields
 					format(oInteraction.bytesSent, "SAP_INT", 4), // client_data_sent
 					format(oInteraction.bytesReceived, "SAP_INT", 4), // client_data_received
@@ -140,22 +148,47 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 			/**
 			 * @private
 			 */
+			jQuery.sap.interaction.setActive = function(bActive) {
+				// cannot deactivate if FESR is active
+				bInteractionActive = bFesrActive || bActive;
+			};
+
+			/**
+			 * @private
+			 */
+			jQuery.sap.interaction.getActive = function(bActive) {
+				return bInteractionActive;
+			};
+
+			/**
+			 * @private
+			 */
 			jQuery.sap.interaction.notifyStepStart = function(oControl, bInitial) {
-				if (oCurrentBrowserEvent || bInitial) {
-					jQuery.sap.measure.startInteraction(bInitial ? "startup" : oCurrentBrowserEvent.type, oControl);
+				if (bInteractionActive) {
+					if (oCurrentBrowserEvent || bInitial) {
+						var sType;
+						if (bInitial) {
+							sType = "startup";
+						} else if (oCurrentBrowserEvent.originalEvent) {
+							sType = oCurrentBrowserEvent.originalEvent.type;
+						} else {
+							sType = oCurrentBrowserEvent.type;
+						}
+						jQuery.sap.measure.startInteraction(sType, oControl);
 
-					var aInteraction = jQuery.sap.measure.getAllInteractionMeasurements();
-					var oFinshedInteraction = aInteraction[aInteraction.length - 1];
-					var oPI = jQuery.sap.measure.getPendingInteractionMeasurement();
+						var aInteraction = jQuery.sap.measure.getAllInteractionMeasurements();
+						var oFinshedInteraction = aInteraction[aInteraction.length - 1];
+						var oPI = jQuery.sap.measure.getPendingInteractionMeasurement();
 
-					// update pending interaction infos
-					oPendingInteraction = oPI ? oPI : oPendingInteraction;
-					if (oFinshedInteraction && oFinshedInteraction.requests.length > 0) {
-						// create FESR from completed interaction
-						sFESR = createFESR(oFinshedInteraction);
-						sFESRopt = createFESRopt(oFinshedInteraction);
+						// update pending interaction infos
+						oPendingInteraction = oPI ? oPI : oPendingInteraction;
+						if (oFinshedInteraction && oFinshedInteraction.requests.length > 0) {
+							// create FESR from completed interaction
+							sFESR = createFESR(oFinshedInteraction);
+							sFESRopt = createFESRopt(oFinshedInteraction);
+						}
+						oCurrentBrowserEvent = null;
 					}
-					oCurrentBrowserEvent = null;
 				}
 			};
 
@@ -163,23 +196,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 			 * @private
 			 */
 			jQuery.sap.interaction.notifyStepEnd = function() {
-				if (iInteractionStepTimer) {
-					jQuery.sap.clearDelayedCall(iInteractionStepTimer);
+				if (bInteractionActive) {
+					if (iInteractionStepTimer) {
+						jQuery.sap.clearDelayedCall(iInteractionStepTimer);
+					}
+					iInteractionStepTimer = jQuery.sap.delayedCall(1, jQuery.sap.measure, "endInteraction");
 				}
-				iInteractionStepTimer = jQuery.sap.delayedCall(1, jQuery.sap.measure, "endInteraction");
 			};
 
 			/**
 			 * @private
 			 */
-			jQuery.sap.interaction.notifyEventStart = function(oEvent, oElement) {
-				oCurrentBrowserEvent = oEvent;
+			jQuery.sap.interaction.notifyEventStart = function(oEvent) {
+				oCurrentBrowserEvent = bInteractionActive ? oEvent : null;
 			};
 
 			/**
 			 * @private
 			 */
-			jQuery.sap.interaction.notifyEventEnd = function(oEvent, oElement) {
+			jQuery.sap.interaction.notifyEventEnd = function() {
 				if (oCurrentBrowserEvent) {
 					// End interaction when a new potential interaction starts
 					if (oCurrentBrowserEvent.type.match(/^(mousedown|touchstart|keydown)$/)) {
@@ -297,11 +332,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 					component = getBytesFromString(component.substr(-32,32));
 					component = component.concat(getBytesFromString(new Array(32 + 1 - component.length).join(' ')));
 					SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, CompNamePosLEn.concat(component));
+					SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, PreCompNamePosLEn.concat(component));
 				} else {
 					SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, CompNamePosLEn.concat(prefix));
+					SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, PreCompNamePosLEn.concat(prefix));
 				}
 
-				SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, PreCompNamePosLEn.concat(prefix));
 				SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, TransIDPosLen.concat(getBytesFromString(TransID)));
 				SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, traceFlgsOffset.concat(trcLvl));
 
@@ -367,7 +403,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 			iE2eTraceLevel = jQuery.sap.passport.traceFlags();
 
 			// start initial interaction
-			jQuery.sap.interaction.notifyStepStart(jQuery, true);
+			jQuery.sap.interaction.notifyStepStart(null, true);
 
 			// *********** Include E2E-Trace Scripts *************
 			if (bTraceActive) {

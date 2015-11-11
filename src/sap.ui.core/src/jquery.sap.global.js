@@ -1721,35 +1721,12 @@
 				aInteractions = [];
 			};
 
-			/**
-			 * Start an interaction measurements
-			 *
-			 * @param {string} sType type of the event which triggered the interaction
-			 * @param {object} oSrcControl the control on which the interaction was triggered
-			 *
-			 * @name jQuery.sap.measure#startInteraction
-			 * @function
-			 * @public
-			 * @since 1.34.0
-			 */
-			this.startInteraction = function(sType, oSrcControl) {
-				// recursive component determination
-				function identifyOwnerComponent(oSrcControl) {
-					// TODO improve heuristic && return qualified name here for FESR
-					if (oSrcControl && oSrcControl.getMetadata && oSrcControl.getMetadata().getName() === "sap.ui.core.Component") {
-						return this.getId();
-					}
-					return oSrcControl && oSrcControl.getParent ? identifyOwnerComponent(oSrcControl.getParent()) : "no_ui5_component";
-				}
-
-				var iTime = jQuery.sap.now();
-
-				// pending interaction finishes with a new start of interaction
+			function finalizeInteraction(iTime) {
 				if (oPendingInteraction) {
 					oPendingInteraction.end = iTime;
 					oPendingInteraction.duration = oPendingInteraction.processing;
-					oPendingInteraction.requests = this.getRequestTimings();
-					oPendingInteraction.measurements = this.filterMeasurements(function(oMeasurement) {
+					oPendingInteraction.requests = jQuery.sap.measure.getRequestTimings();
+					oPendingInteraction.measurements = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
 						return (oMeasurement.start > oPendingInteraction.start && oMeasurement.end < oPendingInteraction.end) ? oMeasurement : null;
 					}, true);
 					if (oPendingInteraction.requests.length > 0) {
@@ -1788,19 +1765,57 @@
 						var iProcessing = oPendingInteraction.processing - oPendingInteraction.navigation - oPendingInteraction.roundtrip;
 						oPendingInteraction.processing = iProcessing > 0 ? iProcessing : 0;
 					}
-					oPendingInteraction.isFinal = true;
 					aInteractions.push(oPendingInteraction);
 					jQuery.sap.log.info("Interaction step finished: trigger: " + oPendingInteraction.trigger + "; duration: " + oPendingInteraction.duration + "; requests: " + oPendingInteraction.requests.length);
+					oPendingInteraction = null;
 				}
+			}
+
+			/**
+			 * Start an interaction measurements
+			 *
+			 * @param {string} sType type of the event which triggered the interaction
+			 * @param {object} oSrcControl the control on which the interaction was triggered
+			 *
+			 * @name jQuery.sap.measure#startInteraction
+			 * @function
+			 * @public
+			 * @since 1.34.0
+			 */
+			this.startInteraction = function(sType, oSrcControl) {
+				// component determination - heuristic
+				function identifyOwnerComponent(oSrcControl) {
+					if (oSrcControl) {
+						var Component, oComponent;
+						Component = sap.ui.require("sap/ui/core/Component");
+						while (Component && oSrcControl && oSrcControl.getParent) {
+							oComponent = Component.getOwnerComponentFor(oSrcControl);
+							if (oComponent || oSrcControl instanceof Component) {
+								oComponent = oComponent || oSrcControl;
+								var oApp = oComponent.getManifestEntry("sap.app");
+								// get app id or module name for FESR
+								return oApp && oApp.id || oComponent.getMetadata().getName();
+							}
+							oSrcControl = oSrcControl.getParent();
+						}
+					}
+					return "undetermined";
+				}
+
+				var iTime = jQuery.sap.now();
+
+				if (oPendingInteraction) {
+					finalizeInteraction(iTime);
+				}
+
 				// clear request timings for new interaction
 				this.clearRequestTimings();
 
 				// setup new pending interaction
 				oPendingInteraction = {
-					isFinal: false, // indicates if interaction is still pending or final
 					event: sType, // event which triggered interaction
-					trigger: oSrcControl && oSrcControl.getId ? oSrcControl.getId() : "no_ui5_control", // control which triggered interaction
-					component: oSrcControl && oSrcControl.sOwnerId ? oSrcControl.sOwnerId : identifyOwnerComponent(oSrcControl), // coomponent or app identifier
+					trigger: oSrcControl && oSrcControl.getId ? oSrcControl.getId() : "undetermined", // control which triggered interaction
+					component: identifyOwnerComponent(oSrcControl), // component or app identifier
 					start : iTime, // interaction start
 					end: 0, // interaction end
 					navigation: 0, // sum over all navigation times
@@ -1829,12 +1844,12 @@
 			 * @since 1.34.0
 			 */
 			this.endInteraction = function(bForce) {
-				if (oPendingInteraction && !oPendingInteraction.isFinal) {
-					oPendingInteraction.isFinal = bForce;
+				if (oPendingInteraction) {
 					// set provisionary processing time from start to end and calculate later if
 					if (!bForce) {
 						oPendingInteraction.processing = jQuery.sap.now() - oPendingInteraction.start;
 					}
+					finalizeInteraction(jQuery.sap.now());
 				}
 			};
 
