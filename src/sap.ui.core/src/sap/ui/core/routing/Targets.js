@@ -1,4 +1,6 @@
-// Copyright (c) 2013 SAP SE, All Rights Reserved
+/*!
+ * ${copyright}
+ */
 sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target'],
 	function($, EventProvider, Target) {
 		"use strict";
