@@ -282,6 +282,11 @@ sap.ui.define([
 		}
 
 		this._bStickyAnchorBar = false; //reset default state in case of re-rendering
+
+		var oHeaderTitle = this.getHeaderTitle();
+		if (oHeaderTitle && oHeaderTitle.getAggregation("_expandButton")) {
+			oHeaderTitle.getAggregation("_expandButton").attachPress(this._handleExpandButtonPress, this);
+		}
 	};
 
 
@@ -391,6 +396,43 @@ sap.ui.define([
 		this._$headerContent = jQuery.sap.byId(this.getId() + "-headerContent");
 		this._$stickyHeaderContent = jQuery.sap.byId(this.getId() + "-stickyHeaderContent");
 		this._$contentContainer = jQuery.sap.byId(this.getId() + "-scroll");
+	};
+
+	/**
+	 * Handles the press of the expand header button
+	 * @private
+	 */
+	ObjectPageLayout.prototype._handleExpandButtonPress = function (oEvent) {
+		this._expandCollapseHeader(true);
+	};
+
+	/**
+	 * Toggles visual rules on manually expand or collapses the sticky header
+	 * @private
+	 */
+	ObjectPageLayout.prototype._toggleStickyHeader = function (bExpand) {
+		this._bIsHeaderExpanded = bExpand;
+		this._$headerTitle.toggleClass("sapUxAPObjectPageHeaderStickied", !bExpand);
+		this._toggleHeaderStyleRules(!bExpand);
+	};
+
+	/**
+	 * Expands or collapses the sticky header
+	 * @private
+	 */
+	ObjectPageLayout.prototype._expandCollapseHeader = function (bExpand) {
+		if (this._bHContentAlwaysExpanded) {
+			return;
+		}
+
+		if (bExpand && this._bStickyAnchorBar) {
+			this._$headerContent.css("height", this.iHeaderContentHeight).children().appendTo(this._$stickyHeaderContent); // when removing the header content, preserve the height of its placeholder, to avoid automatic repositioning of scrolled content as it gets shortened (as its topmost part is cut off) 
+			this._toggleStickyHeader(bExpand);
+		} else if (!bExpand && this._bIsHeaderExpanded) {
+			this._$headerContent.css("height", "auto").append(this._$stickyHeaderContent.children());
+			this._$stickyHeaderContent.children().remove();
+			this._toggleStickyHeader(bExpand);
+		}
 	};
 
 	/**
@@ -706,6 +748,10 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype.scrollToSection = function (sId, iDuration, iOffset) {
 		var oSection = sap.ui.getCore().byId(sId);
+
+		if (this._bIsHeaderExpanded) {
+			this._expandCollapseHeader(false);
+		}
 
 		iOffset = iOffset || 0;
 
@@ -1037,6 +1083,10 @@ sap.ui.define([
 			}
 		}
 
+		if (this._bIsHeaderExpanded) {
+			this._expandCollapseHeader(false);
+		}
+
 		//don't apply parallax effects if there are not enough space for it
 		if (!this._bHContentAlwaysExpanded && ((oHeader && this.getShowHeaderContent()) || this.getShowAnchorBar())) {
 			this._toggleHeader(bShouldStick);
@@ -1144,7 +1194,7 @@ sap.ui.define([
 		var oHeaderTitle = this.getHeaderTitle();
 
 		//switch to stickied
-		if (!this._bHContentAlwaysExpanded) {
+		if (!this._bHContentAlwaysExpanded && !this._bIsHeaderExpanded) {
 			this._$headerTitle.toggleClass("sapUxAPObjectPageHeaderStickied", bStick);
 		}
 
@@ -1226,11 +1276,12 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._toggleHeaderStyleRules = function (bStuck) {
 		bStuck = !!bStuck;
-		var sValue = bStuck ? "hidden" : "inherit";
+		var sValue = bStuck ? "hidden" : "inherit",
+			sABarVisible = this._bIsHeaderExpanded ? "hidden" : "inherit";
 		this._bStickyAnchorBar = bStuck;
 		this._$headerContent.css("overflow", sValue);
 		this._$headerContent.css("visibility", sValue);
-		this._$anchorBar.css("visibility", sValue);
+		this._$anchorBar.css("visibility", sABarVisible);
 		this.fireToggleAnchorBar({fixed: bStuck});
 	};
 

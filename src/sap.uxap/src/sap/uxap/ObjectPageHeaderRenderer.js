@@ -15,7 +15,8 @@ sap.ui.define(["./ObjectPageLayout"], function (ObjectPageLayout) {
 
 		var oNavigationBar = oControl.getNavigationBar(),
 			bTitleVisible = (oControl.getIsObjectIconAlwaysVisible() || oControl.getIsObjectTitleAlwaysVisible() || oControl.getIsObjectSubtitleAlwaysVisible() || oControl.getIsActionAreaAlwaysVisible()),
-			oParent = oControl.getParent();
+			oParent = oControl.getParent(),
+			oExpandButton = oControl.getAggregation("_expandButton");
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
@@ -94,6 +95,13 @@ sap.ui.define(["./ObjectPageLayout"], function (ObjectPageLayout) {
 		}
 		oRm.writeClasses();
 		oRm.write(">");
+
+		// Render the expand button only if there is a content to expand
+		if (oParent && oParent instanceof sap.uxap.ObjectPageLayout && oParent.getHeaderContent()) {
+			oExpandButton.addStyleClass("sapUxAPObjectPageHeaderExpandButton");
+			oRm.renderControl(oExpandButton);
+		}
+
 		var aActions = oControl.getActions();
 		for (var i = 0; i < aActions.length; i++) {
 			var oAction = aActions[i];

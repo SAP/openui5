@@ -160,6 +160,12 @@ sap.ui.define([
 
 				/**
 				 *
+				 * Internal aggregation for the expand header button.
+				 */
+				_expandButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
+
+				/**
+				 *
 				 * Icon for the identifier line.
 				 */
 				_objectImage: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
@@ -226,6 +232,7 @@ sap.ui.define([
 		// Overflow button
 		this._oOverflowActionSheet = this._getInternalAggregation("_overflowActionSheet");
 		this._oOverflowButton = this._getInternalAggregation("_overflowButton").attachPress(this._handleOverflowButtonPress, this);
+		this._oExpandButton = this._getInternalAggregation("_expandButton");
 		this._oActionSheetButtonMap = {};
 		this._oFlagIcon = this._getInternalAggregation("_flagIcon");
 		this._oFavIcon = this._getInternalAggregation("_favIcon");
@@ -302,6 +309,9 @@ sap.ui.define([
 		},
 		"_overflowButton": function (oParent) {
 			return this._getButton(oParent, "sap-icon://overflow", "overflow");
+		},
+		"_expandButton": function (oParent) {
+			return this._getButton(oParent, "sap-icon://slim-arrow-down", "expand");
 		},
 		_getIcon: function (oParent, sIcon) {
 			return IconPool.createControlByURI({
@@ -630,7 +640,7 @@ sap.ui.define([
 			this._oOverflowButton.$().hide();
 		}
 
-		this.$("actions").find(".sapMBtn").css("visibility", "visible");
+		this.$("actions").find(".sapMBtn").not(".sapUxAPObjectPageHeaderExpandButton").css("visibility", "visible");
 		this._adaptObjectPageHeaderIndentifierLine();
 	};
 
