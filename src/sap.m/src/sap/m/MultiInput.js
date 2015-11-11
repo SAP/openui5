@@ -635,8 +635,12 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 		}
 		
 		//truncate token in multi-line mode
-		if (this._bUseDialog && this._isMultiLineMode
-				&& this._oSuggestionPopup.isOpen() && this._tokenizerInPopup && this._tokenizerInPopup.getTokens().length > 0) {
+		if (this._bUseDialog 
+				&& this._isMultiLineMode
+					&& this._oSuggestionPopup
+						&& this._oSuggestionPopup.isOpen() 
+							&& this._tokenizerInPopup 
+								&& this._tokenizerInPopup.getTokens().length > 0) {
 			
 			var iPopupTokens = this._tokenizerInPopup.getTokens().length,
 				oLastPopupToken = this._tokenizerInPopup.getTokens()[iPopupTokens - 1],
