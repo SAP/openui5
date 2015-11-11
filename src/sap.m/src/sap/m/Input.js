@@ -1466,7 +1466,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					if (oPopup.isOpen()) {
 						oInput._sCloseTimer = setTimeout(function() {
 							oInput._iPopupListSelectedIndex = -1;
-							this.cancelPendingSuggest();
+							oInput.cancelPendingSuggest();
 							oPopup.close();
 						}, 0);
 					}
