@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>qUnit Page for sap.ui.test.opaQunit</title>
+
+<script src="../../../../../../resources/sap-ui-core.js">
+</script>
+
+
+<script>
+jQuery.sap.require("sap.ui.qunit.qunit-css");
+jQuery.sap.require("sap.ui.thirdparty.qunit");
+jQuery.sap.require("sap.ui.qunit.qunit-junit");
+jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+sap.ui.require(['sap/ui/test/opaQunit', 'sap/ui/test/Opa'], function () {
+	opaTest("Should have a delay of 90 seconds", function () {
+		strictEqual(QUnit.config.testTimeout, 90000, "Increased the timeout to 90 sec");
+	});
+});
+</script>
+</head>
+<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>
