@@ -289,12 +289,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 		return that._sInitialFocusId;
 	};
 
-	ToolPopup.prototype.getFocusDomRef = function(){
-		// always determine the best initial focus stuff because content might
-		// have changed in the meantime
-		return fnGetInitialFocus(this);
-	};
-
 	ToolPopup.prototype.onfocusin = function(oEvent){
 		this._mParameters.event = oEvent;
 		this._mParameters.$FocusablesContent = jQuery(":sapTabbable", this.$("content"));
