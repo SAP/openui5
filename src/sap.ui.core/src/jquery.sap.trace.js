@@ -53,6 +53,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 							sFESRopt = null;
 							iStepCounter = 0;
 							sFESRTransactionId = sTransactionId;
+						} else if (!sFESRTransactionId) {
+							// initial request should set the FESR Transaction Id
+							sFESRTransactionId = sTransactionId;
 						}
 					} else {
 						sTransactionId = createGUID();
