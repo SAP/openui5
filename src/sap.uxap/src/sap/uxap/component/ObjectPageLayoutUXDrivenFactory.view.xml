@@ -2,7 +2,7 @@
 		   xmlns="sap.uxap"
 		   height="100%"
 		   controllerName="sap.uxap.component.ObjectPageLayoutUXDrivenFactory"
-		>
+>
 	<ObjectPageLayout id="ObjectPageLayout"
 					  subSectionLayout="{objectPageLayoutMetadata>/subSectionLayout}"
 					  showAnchorBar="{objectPageLayoutMetadata>/showAnchorBar}"
@@ -10,13 +10,24 @@
 					  enableLazyLoading="{objectPageLayoutMetadata>/enableLazyLoading}"
 					  sections="{objectPageLayoutMetadata>/sections}"
 					  headerContent="{path:'objectPageLayoutMetadata>/headerContent', factory:'.controlFactory'}"
-			>
+					  showAnchorBarPopover="{objectPageLayoutMetadata>/showAnchorBarPopover}"
+					  upperCaseAnchorBar="{objectPageLayoutMetadata>/upperCaseAnchorBar}"
+					  useIconTabBar="{objectPageLayoutMetadata>/useIconTabBar}"
+					  showHeaderContent="{objectPageLayoutMetadata>/showHeaderContent}"
+					  useTwoColumnsForLargeScreen="{objectPageLayoutMetadata>/useTwoColumnsForLargeScreen}"
+					  showTitleInHeaderContent="{objectPageLayoutMetadata>/showTitleInHeaderContent}"
+					  showOnlyHighImportance="{objectPageLayoutMetadata>/showOnlyHighImportance}"
+					  isChildPage="{objectPageLayoutMetadata>/isChildPage}"
+					  alwaysShowContentHeader="{objectPageLayoutMetadata>/alwaysShowContentHeader}"
+					  showEditHeaderButton="{objectPageLayoutMetadata>/showEditHeaderButton}"
+	>
 
 		<!-- template for objectPageSection -->
 		<sections>
 			<ObjectPageSection id="ObjectPageSection"
 							   icon="{objectPageLayoutMetadata>icon}"
 							   title="{objectPageLayoutMetadata>title}"
+							   importance="{objectPageLayoutMetadata>importance}"
 							   showTitle="{objectPageLayoutMetadata>showTitle}"
 							   subSections="{objectPageLayoutMetadata>subSections}"
 							   visible="{objectPageLayoutMetadata>visible}">
@@ -28,6 +39,7 @@
 										  title="{objectPageLayoutMetadata>title}"
 										  visible="{objectPageLayoutMetadata>visible}"
 										  mode="{objectPageLayoutMetadata>mode}"
+										  importance="{objectPageLayoutMetadata>importance}"
 										  actions="{path:'objectPageLayoutMetadata>actions', factory:'.controlFactory'}"
 										  blocks="{path:'objectPageLayoutMetadata>blocks', factory:'.controlFactory'}"
 										  moreBlocks="{path:'objectPageLayoutMetadata>moreBlocks', factory:'.controlFactory'}">
