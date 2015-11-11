@@ -48,8 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/qunit/Q
 			$FocusDomRef.focus();
 
 			if (!$FocusDomRef.is(":focus")) {
-				$.sap.log.error("Control " + oControl + " could not be focused", this);
-				return;
+				$.sap.log.warning("Control " + oControl + " could not be focused - maybe you are debugging?", this);
 			}
 
 			// Trigger events for every keystroke - livechange controls
