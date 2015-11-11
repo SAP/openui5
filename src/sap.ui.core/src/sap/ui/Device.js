@@ -353,6 +353,13 @@ if (typeof window.sap.ui !== "object") {
 				return ({"name": OS.BLACKBERRY, "versionStr": result[4]});
 			}
 		}
+		
+		//Firefox on Android
+		platform = /\((Android)[\s]?([\d][.\d]*)?;.*Firefox\/[\d][.\d]*/;
+		result = userAgent.match(platform);
+		if (result) {
+			return ({"name": OS.ANDROID, "versionStr": result.length == 3 ? result[2] : ""});
+		}
 
 		// Desktop
 		return getDesktopOS();
@@ -618,6 +625,16 @@ if (typeof window.sap.ui !== "object") {
 					versionStr: "" + version,
 					version: version,
 					mobile: oExpMobile.test(_ua),
+					webkit: true,
+					webkitVersion: webkitVersion
+				};
+			} else if ( _ua.match(/FxiOS\/(\d+\.\d+)/)) {
+				var version = parseFloat(RegExp.$1);
+				return {
+					name: BROWSER.FIREFOX,
+					versionStr: "" + version,
+					version: version,
+					mobile: true,
 					webkit: true,
 					webkitVersion: webkitVersion
 				};
