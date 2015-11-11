@@ -3,7 +3,7 @@
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
-	<title>QUnit page for sap.m.QuickView</title>
+	<title>QUnit page for sap.tnt.ToolPage</title>
 	<script id="sap-ui-bootstrap" data-sap-ui-theme="sap_bluecrystal"
 			type="text/javascript" data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m, sap.tnt" src="../../../../resources/sap-ui-core.js">
@@ -34,45 +34,147 @@
 
 		function getToolHeader() {
 			return new sap.tnt.ToolHeader({
-				showSideNavButton: true,
-				itemSelect: function(event) {
-					var item = event.getParameter('item');
-				},
-				items: [
-					new sap.tnt.ToolHeaderItem({
-						text : "File",
-						select: function(event) {
-							var item = event.getParameter('item');
-						}
+				content: [
+					new sap.m.Button({
+						icon: 'sap-icon://menu2',
+						type: sap.m.ButtonType.Transparent,
+						press: function() {
+							toolPage.setSideExpanded(!toolPage.getSideExpanded());
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						})
 					}),
-					new sap.tnt.ToolHeaderItem({
-						text : "File1"
+					new sap.m.ToolbarSpacer({
+						width: '20px'
 					}),
-					new sap.tnt.ToolHeaderItem({
-						text : "File2"
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "File",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
 					}),
-					new sap.tnt.ToolHeaderItem({
-						text : "File3"
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "Edit",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
 					}),
-					new sap.tnt.ToolHeaderItem({
-						text : "File4"
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "Edit",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
 					}),
-					new sap.tnt.ToolHeaderItem({
-						text : "File5"
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "Edit",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
 					}),
-					new sap.tnt.ToolHeaderItem({
-						text : "File6"
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "Edit",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
 					}),
-					new sap.tnt.ToolHeaderItem({
-						text : "View7"
-					})
-				],
-				utilityItems: [
-					new sap.tnt.ToolHeaderItem({
-						text : "User Name"
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "Edit",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
 					}),
-					new sap.tnt.ToolHeaderItem({
-						icon: 'sap-icon://log'
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "Edit",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "View",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "Navigate",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "Code",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.Low
+						})
+					}),
+					new sap.tnt.ToolHeaderUtilitySeparator({
+					}),
+					new sap.m.ToolbarSpacer({
+						layoutData : new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow,
+							minWidth: "20px"
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						text: "User Name",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						})
+					}),
+					new sap.m.Button({
+						type: sap.m.ButtonType.Transparent,
+						icon: "sap-icon://log",
+						press: function() {
+
+						},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						})
 					})
 				]
 			});
