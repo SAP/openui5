@@ -567,3 +567,21 @@ QUnit.asyncTest("Child registered at parent", function(assert) {
 	this.oChildPop.attachClosed(fnChildClosed);
 	this.oParentPop.open();
 });
+
+QUnit.module("Special cases and combinations");
+
+QUnit.test("Close a popup without opening animation in 'opened' event handler", function(assert) {
+	var oPopupDomRef = jQuery.sap.domById("popup"),
+		oPopup = new sap.ui.core.Popup(oPopupDomRef),
+		fnOpened = function() {
+			oPopup.detachOpened(fnOpened);
+			oPopup.close();
+		};
+
+	oPopup.setDurations(0, 0);
+	oPopup.attachOpened(fnOpened);
+	oPopup.open();
+
+	assert.equal(oPopup.getOpenState(), sap.ui.core.OpenState.CLOSED, "Popup state is CLOSED");
+	assert.ok(!oPopup.isOpen(), "isOpen method returns the correct state.");
+});
