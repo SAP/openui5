@@ -2,8 +2,10 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/core/Fragment',
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/json/JSONModel'
-], function (jQuery, Fragment, Controller, JSONModel) {
+	'sap/ui/model/json/JSONModel',
+	'sap/m/Popover',
+	'sap/m/Button'
+], function (jQuery, Fragment, Controller, JSONModel, Popover, Button) {
 	"use strict";
 
 	var CController = Controller.extend("sap.tnt.sample.ToolPage.ToolPage", {
@@ -18,9 +20,6 @@ sap.ui.define([
 					key: 'page1'
 				}, {
 					title: 'Child Item 2',
-					enabled: false
-				}, {
-					title: 'Child Item 3',
 					key: 'page2'
 				}]
 			}, {
@@ -243,7 +242,7 @@ sap.ui.define([
 			}],
 			headerItems: [
 			{
-					text: "File"
+				text: "File"
 			}, {
 				text: "Edit"
 			}, {
@@ -252,12 +251,13 @@ sap.ui.define([
 				text: "Settings"
 			}, {
 				text: "Help"
-			}
-			]
+			}]
 		},
 		onInit : function() {
 			this.model.setData(this.data);
-			this.getView().setModel(this.model)
+			this.getView().setModel(this.model);
+
+			this._setToggleButtonTooltip(!sap.ui.Device.system.desktop);
 		},
 
 		onItemSelect : function(oEvent) {
@@ -266,12 +266,56 @@ sap.ui.define([
 			sap.ui.getCore().byId(viewId + "--pageContainer").to(viewId + "--" + item.getKey());
 		},
 
-		//onSideNavButtonPress : function() {
-		//	var viewId = this.getView().getId();
-		//	var toolPage = sap.ui.getCore().byId(viewId + "--toolPage");
-        //
-		//	toolPage.setSideExpanded(!toolPage.getSideExpanded());
-		//}
+		handleUserNamePress: function (event) {
+			var popover = new Popover({
+				showHeader: false,
+				placement: sap.m.PlacementType.Bottom,
+				content:[
+					new Button({
+						text: 'Feedback',
+						type: sap.m.ButtonType.Transparent
+					}),
+					new Button({
+						text: 'Help',
+						type: sap.m.ButtonType.Transparent
+					}),
+					new Button({
+						text: 'Logout',
+						type: sap.m.ButtonType.Transparent
+					})
+				]
+			}).addStyleClass('sapMOTAPopover sapMToolHeaderPopover');
+
+			popover.openBy(event.getSource());
+		},
+
+		onSideNavButtonPress : function() {
+			var viewId = this.getView().getId();
+			var toolPage = sap.ui.getCore().byId(viewId + "--toolPage");
+			var sideExpanded = toolPage.getSideExpanded();
+
+			this._setToggleButtonTooltip(sideExpanded);
+
+			toolPage.setSideExpanded(!toolPage.getSideExpanded());
+		},
+
+		onDeviceChange : function(oEvent) {
+			var viewId = this.getView().getId();
+			var toolPage = sap.ui.getCore().byId(viewId + "--toolPage");
+			var device = oEvent.getParameter('device');
+			var isPhoneOrTablet = device === 'Phone' || device === 'Tablet'
+
+			this._setToggleButtonTooltip(isPhoneOrTablet);
+		},
+
+		_setToggleButtonTooltip : function(bLarge) {
+			var toggleButton = this.getView().byId('sideNavigationToggleButton');
+			if (bLarge) {
+				toggleButton.setTooltip('Large Size Navigation');
+			} else {
+				toggleButton.setTooltip('Small Size Navigation');
+			}
+		}
 
 	});
 
