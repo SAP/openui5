@@ -465,28 +465,26 @@ function(jQuery, library, Control, IconPool) {
 
 		// convenience, also allow strings
 		if (typeof oItem === "string") {
-			// find item with this id
-			for (; i < aItems.length; i++) {
-				if (aItems[i].getKey() === oItem) {
-					oItem = aItems[i];
-					break;
-				}
+			oItem = getViewSettingsItemByKey(aItems, oItem);
+		}
+
+		//change selected item only if it is found among the sort items
+		if (validateViewSettingsItem(oItem)) {
+			// set selected = true for this item & selected = false for all others items
+			for (i = 0; i < aItems.length; i++) {
+				aItems[i].setProperty('selected', false, true);
 			}
-		}
 
-		// set selected = true for this item & selected = false for all others items
-		for (i = 0; i < aItems.length; i++) {
-			aItems[i].setSelected(false);
-		}
-		if (oItem) {
-			oItem.setSelected(true);
-		}
+			oItem.setProperty('selected', true, true);
 
-		// update the list selection
-		if (this._getDialog().isOpen()) {
-			this._updateListSelection(this._sortList, oItem);
+			// update the list selection
+			if (this._getDialog().isOpen()) {
+				this._updateListSelection(this._sortList, oItem);
+			}
+			this.setAssociation("selectedSortItem", oItem, true);
+		} else {
+			jQuery.sap.log.error("Could not set selected sort item. Item is not found: '" + oItem + "'");
 		}
-		this.setAssociation("selectedSortItem", oItem, true);
 		return this;
 	};
 
@@ -503,28 +501,27 @@ function(jQuery, library, Control, IconPool) {
 
 		// convenience, also allow strings
 		if (typeof oItem === "string") {
-			// find item with this id
-			for (; i < aItems.length; i++) {
-				if (aItems[i].getKey() === oItem) {
-					oItem = aItems[i];
-					break;
-				}
+			oItem = getViewSettingsItemByKey(aItems, oItem);
+		}
+
+		//change selected item only if it is found among the group items
+		if (validateViewSettingsItem(oItem)) {
+			// set selected = true for this item & selected = false for all others items
+			for (i = 0; i < aItems.length; i++) {
+				aItems[i].setProperty('selected', false, true);
 			}
+
+			oItem.setProperty('selected', true, true);
+
+			// update the list selection
+			if (this._getDialog().isOpen()) {
+				this._updateListSelection(this._groupList, oItem);
+			}
+			this.setAssociation("selectedGroupItem", oItem, true);
+		} else {
+			jQuery.sap.log.error("Could not set selected group item. Item is not found: '" + oItem + "'");
 		}
 
-		// set selected = true for this item & selected = false for all others items
-		for (i = 0; i < aItems.length; i++) {
-			aItems[i].setSelected(false);
-		}
-		if (oItem) {
-			oItem.setSelected(true);
-		}
-
-		// update the list selection
-		if (this._getDialog().isOpen()) {
-			this._updateListSelection(this._groupList, oItem);
-		}
-		this.setAssociation("selectedGroupItem", oItem, true);
 		return this;
 	};
 
@@ -541,24 +538,28 @@ function(jQuery, library, Control, IconPool) {
 
 		// convenience, also allow strings
 		if (typeof oItem === "string") {
-			// find item with this id
-			for (; i < aItems.length; i++) {
-				if (aItems[i].getKey() === oItem) {
-					oItem = aItems[i];
-					break;
-				}
+			oItem = getViewSettingsItemByKey(aItems, oItem);
+		}
+
+		//change selected item only if it is found among the preset filter items
+		if (!oItem || validateViewSettingsItem(oItem)) {
+			// set selected = true for this item & selected = false for all others items
+			for (i = 0; i < aItems.length; i++) {
+				aItems[i].setProperty('selected', false, true);
 			}
-		}
-		// set selected = true for this item & selected = false for all others items
-		for (i = 0; i < aItems.length; i++) {
-			aItems[i].setSelected(false);
-		}
-		if (oItem) {
-			oItem.setSelected(true);
+
+			if (oItem) {
+				oItem.setProperty('selected', true, true);
+			}
+
 			// clear filters (only one mode is allowed, preset filters or filters)
 			this._clearSelectedFilters();
+
+			this.setAssociation("selectedPresetFilterItem", oItem, true);
+		} else {
+			jQuery.sap.log.error("Could not set selected preset filter item. Item is not found: '" + oItem + "'");
 		}
-		this.setAssociation("selectedPresetFilterItem", oItem, true);
+
 		return this;
 	};
 
@@ -1993,6 +1994,40 @@ function(jQuery, library, Control, IconPool) {
 		this._vContentPage = 2;
 		this._oContentItem = null;
 		this._navContainer.to(this._getPage1().getId(), "show");
+	}
+
+	/**
+	 * Gets a sap.m.ViewSettingsItem from a list of items by a given key.
+	 *
+	 * @param aViewSettingsItems The list of sap.m.ViewSettingsItem objects to be searched
+	 * @param sKey
+	 * @returns {*} The sap.m.ViewSettingsItem found in the list of items
+	 * @private
+	 */
+	function getViewSettingsItemByKey(aViewSettingsItems, sKey) {
+		var i, oItem = sKey;
+
+		// convenience, also allow strings
+		// find item with this key
+		for (i = 0; i < aViewSettingsItems.length; i++) {
+			if (aViewSettingsItems[i].getKey() === sKey) {
+				oItem = aViewSettingsItems[i];
+				break;
+			}
+		}
+
+		return oItem;
+	}
+
+	/**
+	 * Checks if the item is a sap.m.ViewSettingsItem.
+	 *
+	 * @param {*} oItem The item to be validated
+	 * @returns {*|boolean} Returns true if the item is a sap.m.ViewSettingsItem
+	 * @private
+	 */
+	function validateViewSettingsItem(oItem) {
+		return oItem && oItem instanceof sap.m.ViewSettingsItem;
 	}
 
 	/* =========================================================== */
