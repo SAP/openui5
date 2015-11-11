@@ -1,0 +1,10 @@
+<core:View
+		xmlns:core="sap.ui.core"
+		xmlns:uxap="sap.uxap"
+		xmlns:sample="sap.uxap.sample.BoundModelMapping"
+		controllerName="sap.uxap.sample.BoundModelMapping.BoundModelMapping">
+	<sample:ModelMappingBlock id="block">
+		<uxap:ModelMapping externalModelName="jsonModel" externalPath="{jsonModel>/externalPath}"
+						   internalModelName="Contact"/>
+	</sample:ModelMappingBlock>
+</core:View>

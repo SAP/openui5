@@ -1,0 +1,65 @@
+.sapUxAPBreadCrumbs {
+	margin: 0 0 0.5rem 0;
+
+	.sapMLnk, .sapMText, .sapUxAPTubeIcon, .sapMSlt {
+		vertical-align: middle;
+	}
+
+	& .sapMSlt {
+		border: 0;
+		margin: 0;
+		.sapMSltArrow {
+			margin-right: -0.5rem;
+			background-color: transparent;
+		}
+		.sapMSltLabel {
+			padding-left: 0;
+			padding-right: 1.5rem;
+		}
+	}
+
+	& .sapMSltHoverable:hover:not(.sapMSltPressed) > .sapMSltArrow {
+		background-color: transparent;
+	}
+
+	.sapUxAPBreadCrumbsDots {
+		color: @sapUiLink;
+		font-weight: normal;
+		font-size: 0.875rem;
+		text-decoration: none;
+	}
+
+	div:nth-child(1) {
+		white-space: nowrap;
+		padding-right: 2rem;
+	}
+
+	& > ul {
+		list-style-type: none;
+		display: inline;
+		padding: 0;
+		margin: 0;
+
+		li {
+			display: inherit;
+			padding: 0;
+			margin: 0;
+		}
+	}
+
+	.sapUxAPTubeIcon {
+		margin: 0 0.5rem 0 0.5rem;
+	}
+
+	&.sapUxAPFullWidth {
+		width: 100%;
+	}
+
+	.sapUxAPInvisible {
+		visibility: hidden;
+	}
+}
+
+.sapUiSizeCompact .sapUxAPBreadCrumbs & .sapMSlt {
+	height: 1.625rem;
+}

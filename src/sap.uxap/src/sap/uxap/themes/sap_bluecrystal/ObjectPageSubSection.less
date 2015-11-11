@@ -1,0 +1,41 @@
+.sapUxAPObjectPageSubSection {
+	border-bottom: 2px solid lighten(@sapUiExtraLightBorder, 5);
+}
+
+.sapUxAPObjectPageSection .sapUxAPObjectPageSubSection:last-child {
+	border-bottom: none;
+}
+
+.sapUxAPObjectPageSubSectionHeaderTitle {
+	color: lighten(@sapUiExtraLightText, 6);
+	font-size: @sapMFontHeader3Size;
+	font-weight: normal;
+}
+
+.sapUxAPObjectPageSubSectionHeaderTitleUppercase {
+	text-transform: uppercase;
+}
+
+.sapUxAPObjectPageSubSection:focus, .sapUxAPObjectPageSubSectionHeaderTitle:focus {
+	outline: 0.0625rem dotted @sapUiFocus;
+	outline-offset: -0.0625rem;
+}
+
+/* IE ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"] .sapUxAPObjectPageSubSection, .sapUxAPObjectPageSubSectionHeaderTitle {
+	&:focus {
+		outline: none;
+		position: relative;
+	}
+	&:focus:before {
+		content: " ";
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		border: 0.0625rem dotted @sapUiFocus;
+		pointer-events: none;
+	}
+}

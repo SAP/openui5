@@ -1,0 +1,77 @@
+.sapUxAPObjectPageAnchorBar .sapMBtnInner {
+	color: @sapUiTextInverted;
+}
+
+.sapUxAPObjectPageNavigation {
+	background: mix(@sapUiAccent5, @sapUiWhite, 5);
+}
+
+.sapUxAPObjectPageLayout {
+	background: @sapUiLightestBG;
+}
+
+.sapUxAPObjectPageHeaderDetails {
+	.sapMObjectNumberEmph.sapMObjectNumber {
+		color: @sapUiHeaderText;
+		> .sapMObjectNumberText {
+			font-family: @sapUiFontHeaderFamily;
+			font-size: 1.375rem;
+			font-weight: @sapUiFontHeaderWeight;
+		}
+		> .sapMObjectNumberUnit {
+			font-family: @sapUiFontFamily;
+			font-size: @sapMFontSmallSize;
+		}
+	}
+	.sapMOHTitle .sapMText {
+		color: @sapUiLightText;
+	}
+	.sapMLabel {
+		color: @sapUiLightText;
+	}
+	&.sapUxAPObjectPageHeaderDetailsDesign-Dark {
+		background-color: @sapUiGlobalBackgroundGradientEndColor;
+		background-image: url(darkBackground.png);
+		background-position: bottom left;
+		background-repeat: no-repeat;
+		background-size: 100% 100%;
+		color: @sapUiTextInverted;
+		.sapMLabel, .sapMPI, .sapMPIText, .sapMObjectNumber, .sapMObjStatus > .sapMObjStatusTitle, .sapMObjStatus > .sapMObjStatusText, .sapMBtnTransparent, .sapMOHTitle .sapMText {
+			color: @sapUiTextInverted;
+		}
+		.sapMLnk, .sapMLnk:visited {
+			color: lighten(@sapUiLink, 45);
+		}
+		.sapMOHTitleArrow {
+			color: @sapUiInvertedElement;
+		}
+		/* Semantic colors */
+		.sapMObjStatusError {
+			> .sapMObjStatusText, > .sapMObjStatusIcon, &.sapMObjectNumber {
+				color: lighten(saturate(@sapUiNegativeElement, 22), 40);
+			}
+		}
+		.sapMObjStatusWarning {
+			> .sapMObjStatusText, > .sapMObjStatusIcon, &.sapMObjectNumber {
+				color: lighten(saturate(@sapUiCriticalElement, 22), 40);
+			}
+		}
+		.sapMObjStatusSuccess {
+			> .sapMObjStatusText, > .sapMObjStatusIcon, &.sapMObjectNumber {
+				color: lighten(desaturate(@sapUiPositiveElement, 22), 55);
+			}
+		}
+	}
+}
+
+.sapUxAPObjectChildPage {
+	background: fade(@sapUiAccent5, 20);
+}
+
+.sapUxAPObjectPageNavigation .sapUxAPObjectChildPage {
+	height: 2.875rem;
+}
+
+.sapUxAPObjectPageNavigation .sapUxAPITBar.sapUxAPObjectChildPage {
+	height: 2.9375rem;
+}

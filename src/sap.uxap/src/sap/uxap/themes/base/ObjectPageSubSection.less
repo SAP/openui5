@@ -1,0 +1,122 @@
+.sapUxAPObjectPageSubSection {
+	padding-bottom: 0;
+}
+
+.sapUxAPObjectPageSubSectionHeaderActions > .sapMBtn {
+	margin-left: 0.5rem;
+}
+
+.sapUxAPObjectPageSubSectionHeader {
+	height: auto;
+	overflow: auto;
+	word-wrap: break-word;
+	word-break: break-all;
+	padding: 1rem 0 0 3rem
+}
+
+.sapUiMedia-Std-Desktop .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageSubSectionHeader,
+.sapUiMedia-Std-Tablet .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageSubSectionHeader {
+	padding-left: 2rem;
+}
+
+.sapUxAPObjectPageSubSectionHeaderTitle {
+	white-space: normal;
+	float: left;
+	line-height: 3rem;
+}
+
+.sapUxAPObjectPageSubSectionHeaderActions {
+	float: right;
+	height: 3rem;
+}
+
+.sapUxAPSubSectionSeeMoreContainer {
+	text-align: right;
+	width: auto;
+	float: right;
+	height: auto;
+	margin-right: 1rem;
+}
+
+.sapUxAPSubSectionSeeMoreButton {
+	display: none;
+}
+
+.sapUxAPSubSectionSeeMoreButtonVisible {
+	display: block;
+}
+
+/* phone display */
+.sapUiMedia-Std-Phone .sapUxAPObjectPageSubSectionHeader {
+	padding: 0 0 0 1rem;
+}
+
+.sapUiMedia-Std-Phone .sapUxAPObjectPageSubSectionHeaderTitle {
+	height: auto;
+	overflow: auto;
+	float: none;
+	white-space: normal;
+	word-wrap: break-word;
+	word-break: break-all;
+}
+
+/* tablet display */
+
+.sapUiMedia-Std-Tablet .sapUxAPObjectPageSubSectionHeader {
+	padding: 1rem 0 0 2rem;
+}
+
+.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout {
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	width: 25%;
+	margin-right: 0;
+	display: inline-block;
+	vertical-align: top;
+	overflow: visible;
+}
+
+.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout + .sapUxAPBlockContainer {
+	width: -webkit-calc(~"75% - 4rem");
+	width: -moz-calc(~"75% - 4rem");
+	width: calc(~"75% - 4rem");
+	box-sizing: border-box;
+	display: inline-block;
+	margin-left: 0;
+}
+
+.sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail
+.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout + .sapUxAPBlockContainer {
+	width: -webkit-calc(~"75% - 2rem");
+	width: -moz-calc(~"75% - 2rem");
+	width: calc(~"75% - 2rem");
+}
+
+.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderTitle {
+	height: auto;
+	white-space: normal;
+	word-wrap: break-word;
+	word-break: break-all;
+	line-height: normal;
+	padding-top: 1rem;
+}
+
+.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderActions {
+	float: none;
+	display: inline-block;
+	margin-left: 0;
+	width: 100%;
+}
+
+.sapUxAPObjectPageSubSectionHeader.titleOnLeftLayout .sapUxAPObjectPageSubSectionHeaderActions > .sapMBtn:first-child {
+	margin-left: 0;
+}
+
+/*
+    try to keep alignment with title inside of the block Container (first grid item and breaking grid items have neither padding-left nor margin-left)
+    this is only working since have absolute control on the grid items layout
+*/
+.sapUxAPBlockContainer > .sapUiRespGrid {
+	padding-left: 0;
+	margin-left: 0;
+}

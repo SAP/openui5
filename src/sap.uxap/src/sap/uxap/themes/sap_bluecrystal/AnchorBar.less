@@ -1,0 +1,149 @@
+/**********************************
+Common compact/cozy
+**********************************/
+
+.sapUxAPAnchorBar.sapMTB {
+	border: none;
+	box-shadow: inset 0 -0.125rem @sapUiLightBorder;
+	background: mix(@sapUiAccent5, @sapUiWhite, 5);
+}
+
+/* L fullscreen paddings */
+.sapUiMedia-Std-Desktop .sapUxAPAnchorBar.sapMTB,
+.sapUiMedia-Std-Desktop .sapMSplitContainer.sapMSplitContainerHideMode .sapMSplitContainerDetail .sapUxAPAnchorBar.sapMTB /* overriding selector for desktop in split-container */
+{
+	padding-left: 2rem;
+}
+
+/* visual in anchor bar */
+
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner.sapMBtnTransparent.sapMBtnHoverable:hover,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapMBtn:hover > .sapMBtnHoverable {
+	background: none;
+	border: none;
+}
+
+.sapUxAPAnchorBarButton .sapMBtnInner {
+	background: transparent;
+	border: none;
+	text-shadow: none;
+}
+
+.sapUxAPAnchorBarButton {
+	border: none;
+}
+
+.sapUxAPAnchorBar .sapMBtnInner {
+	background: transparent;
+	border: none;
+}
+
+.sapUxAPAnchorBarButton {
+	padding-bottom: 0;
+}
+
+.sapUxAPAnchorBarButton .sapMBtnContent {
+	position: relative;
+	bottom: -1px;
+}
+
+.sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected .sapMBtnContent {
+	border-bottom: 0.125rem solid @sapUiExtraDarkBorder;
+	position: relative;
+	bottom: -1px;
+}
+
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected .sapMBtnContent,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected .sapMBtnIcon {
+	color: @sapUiDarkestBG;
+}
+
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner.sapMBtnActive .sapMBtnIcon {
+	color: @sapUiElement;
+}
+
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnContent {
+	font-size: @sapMFontHeader6Size;
+	color: @sapUiLightText;
+}
+
+/***********************/
+/* BEGIN Scroll Arrows */
+/***********************/
+
+// By design the arrows are not focusable
+.sapUxAPAnchorBar .anchorBarArrow .sapMBtn:focus > .sapMFocusable {
+	outline: none;
+}
+
+// Gradient mask
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
+html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight {
+	background: -moz-linear-gradient(left, mix(@sapUiAccent5, @sapUiWhite, 5) 0%, mix(@sapUiAccent5, @sapUiWhite, 5) 75%, fade(mix(@sapUiAccent5, @sapUiWhite, 5), 0) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%, mix(@sapUiAccent5, @sapUiWhite, 5)), color-stop(75%, mix(@sapUiAccent5, @sapUiWhite, 5)), color-stop(100%, fade(mix(@sapUiAccent5, @sapUiWhite, 5), 0))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, mix(@sapUiAccent5, @sapUiWhite, 5) 0%, mix(@sapUiAccent5, @sapUiWhite, 5) 75%, fade(mix(@sapUiAccent5, @sapUiWhite, 5), 0) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(left, mix(@sapUiAccent5, @sapUiWhite, 5) 0%, mix(@sapUiAccent5, @sapUiWhite, 5) 75%, fade(mix(@sapUiAccent5, @sapUiWhite, 5), 0) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(left, mix(@sapUiAccent5, @sapUiWhite, 5) 0%, mix(@sapUiAccent5, @sapUiWhite, 5) 75%, fade(mix(@sapUiAccent5, @sapUiWhite, 5), 0) 100%); /* IE10+ */
+	background: linear-gradient(to right, mix(@sapUiAccent5, @sapUiWhite, 5) 0%, mix(@sapUiAccent5, @sapUiWhite, 5) 75%, fade(mix(@sapUiAccent5, @sapUiWhite, 5), 0) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f2f8fc', endColorstr='#00f2f8fc', GradientType=1); /* IE6-9 */
+	box-shadow: inset 0 -0.125rem @sapUiLightBorder;
+}
+
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight,
+html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
+	background: -moz-linear-gradient(left, fade(mix(@sapUiAccent5, @sapUiWhite, 5), 0) 0%, mix(@sapUiAccent5, @sapUiWhite, 5) 25%, mix(@sapUiAccent5, @sapUiWhite, 5) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%, fade(mix(@sapUiAccent5, @sapUiWhite, 5), 0)), color-stop(25%, mix(@sapUiAccent5, @sapUiWhite, 5)), color-stop(100%, mix(@sapUiAccent5, @sapUiWhite, 5))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, fade(mix(@sapUiAccent5, @sapUiWhite, 5), 0) 0%, mix(@sapUiAccent5, @sapUiWhite, 5) 25%, mix(@sapUiAccent5, @sapUiWhite, 5) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(left, fade(mix(@sapUiAccent5, @sapUiWhite, 5), 0) 0%, mix(@sapUiAccent5, @sapUiWhite, 5) 25%, mix(@sapUiAccent5, @sapUiWhite, 5) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(left, fade(mix(@sapUiAccent5, @sapUiWhite, 5), 0) 0%, mix(@sapUiAccent5, @sapUiWhite, 5) 25%, mix(@sapUiAccent5, @sapUiWhite, 5) 100%); /* IE10+ */
+	background: linear-gradient(to right, fade(mix(@sapUiAccent5, @sapUiWhite, 5), 0) 0%, mix(@sapUiAccent5, @sapUiWhite, 5) 25%, mix(@sapUiAccent5, @sapUiWhite, 5) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00f2f8fc', endColorstr='#f2f8fc', GradientType=1); /* IE6-9 */
+	box-shadow: inset 0 -0.125rem @sapUiLightBorder;
+}
+
+// Scroll buttons are invisible at first
+.sapUiMedia-Std-Desktop .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtn,
+.sapUiMedia-Std-Desktop .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtn {
+	opacity: 0;
+}
+
+// Fade-in animation on hover
+.sapUiMedia-Std-Desktop .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow:hover .sapMBtn,
+.sapUiMedia-Std-Desktop .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow:hover .sapMBtn {
+	opacity: 1;
+	-webkit-transition-property: opacity;
+	transition-property: opacity;
+	-webkit-transition-duration: 0.7s;
+	transition-duration: 0.7s;
+}
+
+/*********************/
+/* END Scroll Arrows */
+/*********************/
+
+/* hover + keyboard behavior */
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner.sapMBtnTransparent.sapMBtnHoverable:hover .sapMBtnContent,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapMBtn:hover > .sapMBtnHoverable .sapMBtnContent,
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapMBtn:hover > .sapMBtnHoverable .sapMBtnIcon {
+	color: @sapUiDarkestBG;
+}
+
+.sapMPopover.sapUxAPAnchorBarPopover .sapMBtn.sapUxAPAnchorBarButton:focus {
+	background-color: @sapUiSelectListActiveBG;
+}
+
+.sapMPopover.sapUxAPAnchorBarPopover .sapMBtn.sapUxAPAnchorBarButton:hover {
+	background-color: @sapUiSelectListLightestBGHover;
+}
+
+.sapMPopover.sapUxAPAnchorBarPopover {
+	background-color: @sapUiSelectBG;
+	color: @sapUiSelectLabelTextColor;
+	box-shadow: 0 12px 20px 0 rgba(100, 100, 100, 0.06);
+	border-color: @sapUiMediumBorder;
+}
+
+/* override active button */
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner.sapMBtnActive {
+	background-color: mix(@sapUiAccent5, @sapUiWhite, 5);
+}

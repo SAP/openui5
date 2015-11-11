@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+<!--**************************************************************************
+	* POM SECTION: Maven Model Version Settings
+	***************************************************************************-->
+
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Parent POM Settings
+	***************************************************************************-->
+
+	<parent>
+		<groupId>com.sap.openui5</groupId>
+		<artifactId>reactor</artifactId>
+		<version>1.33.0-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+	
+
+	<!--**************************************************************************
+	* POM SECTION: Maven Settings
+	***************************************************************************-->
+
+	<artifactId>sap.uxap</artifactId>
+	<packaging>jar</packaging>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Project Settings
+	***************************************************************************-->
+
+	<name>${project.artifactId}</name>
+	<description>OpenUI5 UI Library: ${project.artifactId}</description>
+
+
+	<!--**************************************************************************
+	* POM SECTION: Properties Settings
+	***************************************************************************-->
+
+	<properties>
+
+		<!-- source paths for Sonar reporting -->
+		<sonar.sources>src,pom.xml</sonar.sources>
+
+		<!-- enable eslint validation -->
+		<sap.ui5.eslint.skip.validation>false</sap.ui5.eslint.skip.validation>
+
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.sap.ui5</groupId>
+			<artifactId>core</artifactId>
+			<version>${parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ui5</groupId>
+			<artifactId>mobile</artifactId>
+			<version>${parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sap.ui5</groupId>
+			<artifactId>themelib_sap_bluecrystal</artifactId>
+			<version>${parent.version}</version>
+		</dependency>
+	</dependencies>
+	
+	<!--**************************************************************************
+	* POM SECTION: Build Settings
+	***************************************************************************-->
+	
+	<build>
+		<resources>
+			<resource>
+				<directory>src</directory>
+				<targetPath>META-INF/resources</targetPath>
+				<filtering>true</filtering>
+			</resource>
+			<resource>
+				<directory>test</directory>
+				<targetPath>META-INF/test-resources</targetPath>
+			</resource>
+		</resources>
+	</build>
+
+	<!--**************************************************************************
+	* POM SECTION: Profiles Settings
+	***************************************************************************-->
+
+	<profiles>
+
+		<!-- creation of a webjars compatible JAR file -->
+		<profile>
+			<id>webjars.build</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-resources-plugin</artifactId>
+						<version>2.5</version>
+						<executions>
+							<execution>
+								<id>webjars-copy-resources</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>copy-resources</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.directory}/webjars/META-INF/resources/openui5/${project.version}</outputDirectory>
+									<resources>
+										<resource>
+											<directory>${project.build.outputDirectory}/META-INF/resources</directory>
+										</resource>
+									</resources>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<version>2.3.2</version>
+						<executions>
+							<execution>
+								<id>webjars-jar</id>
+								<phase>package</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+								<configuration>
+									<classesDirectory>${project.build.directory}/webjars</classesDirectory>
+									<classifier>webjars</classifier>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+
+</project>

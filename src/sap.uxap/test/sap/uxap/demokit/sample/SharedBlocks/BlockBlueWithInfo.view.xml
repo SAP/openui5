@@ -1,0 +1,11 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m"
+		xmlns:html="http://www.w3.org/1999/xhtml"
+		controllerName="sap.uxap.sample.SharedBlocks.BlockBlueWithInfoController">
+	<html:div style="height:auto;min-height:4em; background-color: #A9EAFF ;line-height: 4em;">
+		<html:a>ShowSubsectionMore = true</html:a>
+		<html:br/>
+		<m:Text id="moreContentText"></m:Text>
+
+	</html:div>
+</mvc:View>

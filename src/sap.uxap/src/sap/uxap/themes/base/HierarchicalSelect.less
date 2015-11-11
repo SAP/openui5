@@ -1,0 +1,95 @@
+.sapUxAPHierarchicalSelect {
+	margin: 0;
+}
+
+.sapUiSizeCompact .sapUxAPHierarchicalSelect.sapMSlt {
+	height: 2.5rem;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+/* select label */
+
+.sapUiSizeCompact .sapUxAPHierarchicalSelect,
+.sapUiSizeCompact .sapUxAPHierarchicalSelect .sapMSltLabel,
+.sapUiSizeCompact .sapUxAPHierarchicalSelect .sapMSltArrow,
+.sapUxAPHierarchicalSelect,
+.sapUxAPHierarchicalSelect .sapMSltLabel,
+.sapUxAPHierarchicalSelect .sapMSltArrow {
+	line-height: 3rem;
+}
+
+.sapUxAPHierarchicalSelect .sapMSltLabel {
+	padding: 0 2.5rem 0 1rem;
+}
+
+.sapUxAPHierarchicalSelect .sapMSltArrow,
+.sapUiSizeCompact .sapUxAPHierarchicalSelect .sapMSltArrow {
+	width: 2.5rem;
+}
+
+.sapMSltPicker .sapUxAPHierarchicalSelect.sapMSltBar::after {
+	font-family: "SAP-icons";
+	speak: none;
+	content: "\e03e";
+}
+
+.sapUiSizeCompact .sapMSltPicker .sapUxAPHierarchicalSelect.sapMSltBar::after {
+	line-height: 2rem;
+}
+
+/* OVERVIEW BUTTON */
+.sapUiMedia-Std-Tablet .sapUxAPHierarchicalSelect.sapMSltIconOnly,
+.sapUiMedia-Std-Desktop .sapUxAPHierarchicalSelect.sapMSltIconOnly {
+	position: absolute;
+	right: 0;
+	top: 0.25rem;
+}
+
+/* inner list */
+
+.sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem,
+.sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem {
+	height: auto;
+	border-bottom: none;
+}
+
+.sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem,
+.sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem {
+	white-space: normal;
+	line-height: normal;
+	padding: 1rem 0.5rem 1rem 1rem;
+}
+
+.sapUiSizeCompact .sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem,
+.sapUiSizeCompact .sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem {
+	padding: 0.5rem;
+}
+
+.sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem {
+	text-indent: 1.5rem;
+}
+
+.sapUxAPHierarchicalSelectUpperCase .sapMSltLabel,
+.sapMSltPickerFirstLevelUpperCase .sapMInputBaseInner,
+.sapMSltPickerFirstLevelUpperCase .sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem {
+	text-transform: uppercase;
+}
+
+/* styling needed to achieve underline of the select label on phone */
+.sapUiMedia-Std-Phone, .sap-phone {
+	.sapUxAPHierarchicalSelect .sapMSltLabel {
+		position: relative;
+		top: 0.05rem;
+		display: inline;
+		padding-left: 0;
+		padding-right: 0;
+		padding-bottom: 0.8rem;
+	}
+
+	.sapMSlt.sapUxAPHierarchicalSelect {
+		height: 3rem;
+		border: none;
+		padding-left: 1rem;
+	}
+}
