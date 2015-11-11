@@ -555,29 +555,13 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._openAnimation = function ($Ref, iRealDuration, fnOpened) {
-			var that = this,
-				bOpenedCalled = false,
-				fnEnd;
-
 			$Ref.addClass("sapMDialogOpen");
 
 			if (isTheCurrentBrowserIENine) {
 				$Ref.fadeIn(200, fnOpened);
 			} else {
 				$Ref.css("display", "block");
-
-				fnEnd = function () {
-					if (bOpenedCalled || !that.oPopup || that.oPopup.getOpenState() !== sap.ui.core.OpenState.OPENING) {
-						return;
-					}
-					fnOpened();
-					bOpenedCalled = true;
-				};
-				//check if the transitionend event isn't fired, if it's not fired due to unexpected rerendering,
-				//fnOpened should be called again.
-				setTimeout(function () {
-					fnEnd();
-				}, 210); // the time should be longer the longest transition in the CSS, because of focusing and transition relate issues
+				setTimeout(fnOpened, 210); // the time should be longer the longest transition in the CSS, because of focusing and transition relate issues
 			}
 		};
 
@@ -589,24 +573,12 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._closeAnimation = function ($Ref, iRealDuration, fnClose) {
-			var bClosedCalled = false,
-				fnEnd;
-
 			$Ref.removeClass("sapMDialogOpen");
 
 			if (isTheCurrentBrowserIENine) {
 				$Ref.fadeOut(200, fnClose);
 			} else {
-				fnEnd = function () {
-					if (bClosedCalled) {
-						return;
-					}
-					fnClose();
-					bClosedCalled = true;
-				};
-				setTimeout(function () {
-					fnEnd();
-				}, 150);
+				setTimeout(fnClose, 210);
 			}
 		};
 
