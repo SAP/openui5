@@ -312,18 +312,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			};
 
 			/**
-			 * Determines the focus DOM reference.
-			 *
-			 * @returns {string}
-			 * @private
-			 */
-			ToolPopup.prototype.getFocusDomRef = function () {
-				// always determine the best initial focus stuff because content might
-				// have changed in the meantime
-				return fnGetInitialFocus(this);
-			};
-
-			/**
 			 * Handler for focus, adapted for this control,
 			 * @param {jQuery.EventObject} oEvent
 			 *
