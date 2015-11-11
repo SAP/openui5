@@ -76,6 +76,11 @@
 	function fnBeforeUploadStarts(oEvent) {
 		sFileName = oEvent.getParameter("fileName");
 		iRequestCounter ++;
+		var oHeaderParameter = new sap.m.UploadCollectionParameter({
+			name: "FileNameForTesting",
+			value: sFileName
+		});
+		oEvent.getParameters().addHeaderParameter(oHeaderParameter);
 		// Delays the beforeUploadStarts message in order to see the upload message
 		setTimeout(function() {
 			sap.m.MessageToast.show("Event beforeUploadStarts triggered, see log for more ...");
