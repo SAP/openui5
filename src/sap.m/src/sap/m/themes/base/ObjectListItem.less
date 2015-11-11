@@ -24,7 +24,7 @@
 
 .sapMObjLTopRow {
 	float: left;
-	width: 100%
+	width: 100%;
 }
 
 .sapMObjLIntro {
@@ -178,4 +178,21 @@ html[dir=rtl] .sapMObjStatusMarker > .sapUiIcon.sapUiIconMirrorInRTL {
 	-ms-transform: none; /* IE 9 */
 	-webkit-transform: none; /* Chrome, Safari, Opera */
 	transform: none;
+}
+
+html[data-sap-ui-browser="ie9"] li.sapMLIB.sapMLIBNoFlex.sapMObjLItem>.sapMLIBContent>.sapMLIBContentNF >div {
+	display: block;
+}
+
+html[data-sap-ui-browser="ie9"] li.sapMLIB.sapMLIBNoFlex.sapMObjLItem>.sapMLIBContent>.sapMLIBContentNF >.sapMObjLTopRow:first-child {
+	padding-top: 1rem;
+}
+
+html[data-sap-ui-browser="ie9"] li.sapMLIB.sapMLIBNoFlex.sapMObjLItem>.sapMLIBContent>.sapMLIBContentNF >.sapMObjLTopRow:last-child {
+	padding-bottom: 1rem;
+}
+
+html[data-sap-ui-browser="ie9"] li.sapMLIB.sapMLIBNoFlex.sapMObjLItem>.sapMLIBContent>.sapMLIBContentNF >.sapMObjLTopRow {
+	padding-top: 0px; 
+	padding-bottom: 0px;
 }
