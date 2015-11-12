@@ -2,7 +2,6 @@
  * ${copyright}
  */
 
-// Provides control sap.m.Slider.
 sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator'],
 	function(jQuery, library, Control, EnabledPropagator) {
 		"use strict";
@@ -262,7 +261,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				return this;
 			}
 
-			fModStepVal = Math.abs(fNewValue % fStep);
+			fModStepVal = Math.abs((fNewValue - fMin) % fStep);
 
 			if (bSnapValue && (fModStepVal !== 0) /* division with remainder */) {
 
