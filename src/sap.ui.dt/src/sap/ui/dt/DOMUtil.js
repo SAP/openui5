@@ -148,55 +148,84 @@ function(jQuery, ElementUtil) {
 	};
 
 	/**
+	 * Copy the given styles object to a destination DOM node.
+	 *
+	 * @param {Object} oStyles A styles object, which is retrieved from window.getComputedStyle
+	 * @param {Element} oDest The element to which the styles should be copied.
+	 * @private
+	 */
+	DOMUtil._copyStylesTo = function(oStyles, oDest) {
+		var sStyles = "";
+		var sStyle = "";
+		var iLength = oStyles.length;
+		// Styles is an array, but has some special access functions
+		for (var i = 0; i < iLength; i++) {
+			sStyle = oStyles[i];
+			sStyles = sStyles + sStyle + ":" + oStyles.getPropertyValue(sStyle) + ";";
+		}
+
+		oDest.style.cssText = sStyles;
+	};
+
+	DOMUtil._copyPseudoElement = function(sPseudoElement, oSrc, oDest) {
+		var mStyles = window.getComputedStyle(oSrc, sPseudoElement);
+		var sContent = mStyles.getPropertyValue("content");
+		if (sContent && sContent !== "none") {
+			sContent = jQuery.trim(sContent);
+			if (sContent.indexOf("attr(") === 0) {
+				sContent = sContent.replace("attr(", "");
+				if (sContent.length) {
+					sContent = sContent.substring(0, sContent.length - 1);
+				}
+				sContent = oSrc.getAttribute(sContent);
+			}
+
+			// pseudo elements can't be inserted via js, so we should create a real elements, which copy pseudo styling
+			var oAfterElement = jQuery("<span></span>");
+			if (sPseudoElement === ":after") {
+				oAfterElement.appendTo(oDest);
+			} else {
+				oAfterElement.prependTo(oDest);
+			}
+
+			oAfterElement.text(sContent.replace(/\"/g, ""));
+			DOMUtil._copyStylesTo(mStyles, oAfterElement.get(0));
+			oAfterElement.css("display", "inline");
+		}
+	};
+
+	/**
 	 *
 	 */
 	DOMUtil.copyComputedStyle = function(oSrc, oDest) {
-		var fnCopyStylesTo = function(mStyles, oDest) {
-			for ( var sStyle in mStyles ) {
-				try {
-					// Do not use `hasOwnProperty`, nothing will get copied
-					if ( typeof sStyle == "string" && sStyle != "cssText" && !/\d/.test(sStyle) && sStyle.indexOf("margin") === -1 ) {
-						oDest.style[sStyle] = mStyles[sStyle];
-						// `fontSize` comes before `font` If `font` is empty, `fontSize` gets
-						// overwritten.  So make sure to reset this property. (hackyhackhack)
-						// Other properties may need similar treatment
-						if ( sStyle == "font" ) {
-							oDest.style.fontSize = mStyles.fontSize;
-						}
-					}
-				/*eslint-disable no-empty */
-				} catch (exc) {
-					// readonly properties must not through an error
-				}
-				/*eslint-enable no-empty */
-			}
-		};
-
 		oSrc = jQuery(oSrc).get(0);
 		oDest = jQuery(oDest).get(0);
-
 		var mStyles = window.getComputedStyle(oSrc);
-		fnCopyStylesTo(mStyles, oDest);
 
-		// copy styles fro pseudo elements as well, if they exist (have content)
-		// pseudo elements can't be inserted via js, so we should create a real elements, which copy pseudo styling
+		if (mStyles.getPropertyValue("display") == "none") {
+			oDest.style.display = "none";
+			return;
+		}
+
+		DOMUtil._copyStylesTo(mStyles, oDest);
+
+
 		mStyles = window.getComputedStyle(oSrc, ":after");
 		var sContent = mStyles.getPropertyValue("content");
 		if (sContent && sContent !== "none") {
+			if (sContent.indexOf("attr(") === 0) {
+				sContent = sContent.replace("attr(", "");
+				sContent = sContent.replace(")", "");
+				sContent = oSrc.getAttribute(sContent);
+			}
 			var oAfterElement = jQuery("<span></span>").appendTo(oDest);
 			oAfterElement.text(sContent.replace(/\"/g, ""));
-			fnCopyStylesTo(mStyles, oAfterElement.get(0));
+			DOMUtil._copyStylesTo(mStyles, oAfterElement.get(0));
 			oAfterElement.css("display", "inline");
 		}
 
-		mStyles = window.getComputedStyle(oSrc, ":before");
-		sContent = mStyles.getPropertyValue("content");
-		if (sContent && sContent !== "none") {
-			var oBeforeElement = jQuery("<span></span>").prependTo(oDest);
-			oBeforeElement.text(sContent.replace(/\"/g, ""));
-			fnCopyStylesTo(mStyles, oBeforeElement.get(0));
-			oBeforeElement.css("display", "inline");
-		}
+		this._copyPseudoElement(":after", oSrc, oDest);
+		this._copyPseudoElement(":before", oSrc, oDest);
 	};
 
 	/**
