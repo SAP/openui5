@@ -1,0 +1,45 @@
+<mvc:View controllerName="appUnderTest.view.Main"
+	xmlns="sap.m"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc">
+	<App id="myApp">
+		<Page id="fistPage" enableScrolling="false">
+			<headerContent>
+				<Button id="navigationButton"
+						busy="true"
+						busyIndicatorDelay="0"
+						press="onNavButtonPress"
+						text="I navigate to a secondPage"/>
+			</headerContent>
+			<content>
+				<Text text="Opa5 is waiting until controls are interactable (not busy) before executing actions"/>
+			</content>
+		</Page>
+		<Page id="secondPage">
+			<form:SimpleForm
+					editable="true"
+					title="Address"
+					class="editableForm"
+					id="myForm">
+				<Label text="Name" />
+				<Input value="{SupplierName}" />
+				<Label text="Street/No." />
+				<Input value="{Street}">
+				</Input>
+				<Input value="{HouseNumber}">
+				</Input>
+				<Label text="ZIP Code/City" />
+				<Input value="{ZIPCode}">
+				</Input>
+				<Input value="{City}" />
+				<Label text="Country"/>
+				<Select id="mySelect">
+					<core:Item text="England" key="England"/>
+					<core:Item text="Germany" key="Germany"/>
+					<core:Item text="USA" key="USA"/>
+				</Select>
+			</form:SimpleForm>
+		</Page>
+	</App>
+</mvc:View>
