@@ -7,7 +7,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/_SyncPromise"
 ], function (Context, ODataUtils, Helper, SyncPromise) {
-	/*global odatajs, QUnit, sinon */
+	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 
@@ -36,18 +36,6 @@ sap.ui.require([
 		assert.strictEqual(Helper.findInArray(aArray, "name", "foo"), aArray[0]);
 		assert.strictEqual(Helper.findInArray(aArray, "name", "bar"), aArray[1]);
 		assert.strictEqual(Helper.findInArray(aArray, "name", "baz"), undefined);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("headerValue", function (assert) {
-		assert.strictEqual(Helper.headerValue("my-header"), undefined,
-			"headers need not be present");
-		assert.strictEqual(Helper.headerValue("toString", {}), undefined);
-		assert.strictEqual(Helper.headerValue("my-header", {}), undefined);
-		assert.strictEqual(Helper.headerValue("my-header", {foo: "bar"}), undefined);
-		assert.strictEqual(Helper.headerValue("my-header", {'My-Header': "bar"}), "bar");
-		assert.strictEqual(Helper.headerValue("my-header", {'MY-HEADER': "bar"}), "bar");
-		assert.strictEqual(Helper.headerValue("My-Header", {'my-header': "bar"}), "bar");
 	});
 
 	//*********************************************************************************************
@@ -344,110 +332,6 @@ sap.ui.require([
 		assert.strictEqual(
 			Helper.fetchTypeForNavigationProperty(oMetaModel, oSource, "Type").getResult(),
 			oSource.Type, "sync promise fulfilled");
-	});
-
-	//*********************************************************************************************
-	[{
-		bRequestSucceeds : true, sTitle : "success"
-	}, {
-		bRequestSucceeds : false, sTitle : "failure"
-	}, {
-		sRequired : "Required", sTitle : "CSRF token Required"
-	}, {
-		sRequired : "required", sTitle : "CSRF token required"
-	}, {
-		bReadFails : true, sTitle : "fetch CSRF token fails"
-	}, {
-		bDoNotDeliverToken : true, sTitle : "no CSRF token can be fetched"
-	}].forEach(function (o) {
-		QUnit.test("_request: " + o.sTitle, function (assert) {
-			var oData = {},
-				vExpectedResult,
-				oRequest = {
-					headers : {}
-				},
-				oModel = {
-					mHeaders : {
-						"X-CSRF-Token" : "Fetch"
-					},
-					refreshSecurityToken : function () {}
-				},
-				sReadError = "HTTP request failed - 400 Bad Request: ",
-				oRequestError = {
-					"message" : "HTTP request failed",
-					"response" : {
-						"body" : "CSRF token validation failed",
-						"headers" : {
-							"Content-Type" : "text/plain;charset=utf-8",
-							"x-csrf-token" : o.sRequired || "Required"
-						},
-						"statusCode" : 403,
-						"statusText" : "Forbidden"
-					}
-				},
-				bSuccess = o.bRequestSucceeds !== false && !o.bReadFails && !o.bDoNotDeliverToken;
-
-			if (o.bRequestSucceeds === false) {
-				// simulate a server which does not require a CSRF token, but fails otherwise
-				delete oRequestError.response.headers["x-csrf-token"];
-			}
-
-			// With <code>bRequestSucceeds === false</code>, "request" always fails,
-			// with <code>bRequestSucceeds === true</code>, "request" always succeeds,
-			// else "request" first fails due to missing CSRF token which can be fetched via
-			// "ODataModel#refreshSecurityToken".
-			this.oSandbox.stub(odatajs.oData, "request",
-				function (oRequest0, fnSuccess, fnFailure) {
-					assert.strictEqual(oRequest0, oRequest);
-
-					if (o.bRequestSucceeds === true
-						|| o.bRequestSucceeds === undefined
-						&& oRequest.headers["X-CSRF-Token"] === "abc123") {
-						setTimeout(fnSuccess.bind(null, oData), 0);
-					} else {
-						setTimeout(fnFailure.bind(null, oRequestError), 0);
-					}
-				});
-
-			if (o.bRequestSucceeds !== undefined) {
-				this.oSandbox.mock(oModel).expects("refreshSecurityToken").never();
-			} else {
-				this.oSandbox.stub(oModel, "refreshSecurityToken", function () {
-					return new Promise(function (fnResolve, fnReject) {
-						setTimeout(function () {
-							if (o.bReadFails) { // reading of CSRF token fails
-								fnReject(new Error(sReadError));
-							} else {
-								// HEAD might succeed, but not deliver a valid CSRF token
-								oModel.mHeaders["X-CSRF-Token"]
-									= o.bDoNotDeliverToken ? undefined : "abc123";
-								fnResolve();
-							}
-						}, 0);
-					});
-				});
-			}
-
-			if (o.bRequestSucceeds === false || o.bDoNotDeliverToken) {
-				// expect failure
-				vExpectedResult
-					= "HTTP request failed - 403 Forbidden: CSRF token validation failed";
-			} else if (o.bReadFails) {
-				// expect failure
-				vExpectedResult = sReadError;
-			} else {
-				vExpectedResult = oData; // expect success
-			}
-
-			return Helper.request(oModel, oRequest).then(function (oData) {
-				assert.ok(bSuccess, "success possible");
-				assert.strictEqual(oData, vExpectedResult);
-			}, function (oError) {
-				assert.ok(!bSuccess, "certain failure");
-				assert.ok(oError instanceof Error);
-				assert.strictEqual(oError.message, vExpectedResult);
-			});
-		});
 	});
 
 	//*********************************************************************************************

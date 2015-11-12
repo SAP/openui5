@@ -6,11 +6,14 @@
 sap.ui.define(["jquery.sap.global"], function(jQuery) {
 	"use strict";
 
-	// predefined request headers for OData v4
-	var mPredefinedHeaders = {
+	var mFinalHeaders = { // final (cannot be overridden) request headers for OData v4
+			"Content-Type" : "application/json;charset=UTF-8"
+		},
+		mPredefinedHeaders = { // predefined request headers for OData v4
 			"Accept" : "application/json;odata.metadata=minimal",
 			"OData-MaxVersion" : "4.0",
-			"OData-Version" : "4.0"
+			"OData-Version" : "4.0",
+			"X-CSRF-Token" : "Fetch"
 		};
 
 	/**
@@ -25,34 +28,100 @@ sap.ui.define(["jquery.sap.global"], function(jQuery) {
 	 * @private
 	 */
 	function Requestor(sServiceUrl, mHeaders) {
-//FIX4MASTER		this.sServiceUrl = sServiceUrl;
-		this.mHeaders = mHeaders;
+		this.sServiceUrl = sServiceUrl;
+		this.mHeaders = mHeaders || {};
+		this.oSecurityTokenPromise = null; // be nice to Chrome v8
 	}
 
 	/**
-	 * Sends an HTTP request using the given method to the given URL, using the given
-	 * request-specific headers in addition to the predefined OData v4 headers and the default
-	 * headers given to the factory.
+	 * Returns a promise that will be resolved once the CSRF token has been refreshed, or rejected
+	 * if that fails. Makes sure that only one HEAD request is underway at any given time and
+	 * shares the promise accordingly.
+	 *
+	 * @returns {Promise}
+	 *   A promise that will be resolved (with no result) once the CSRF token has been refreshed;
+	 *   it also has an <code>abort</code> property which provides access to the HEAD request's
+	 *   <code>abort</code> function.
+	 *
+	 * @private
+	 */
+	Requestor.prototype.refreshSecurityToken = function () {
+		var fnAbort,
+			that = this;
+
+		if (!this.oSecurityTokenPromise) {
+			this.oSecurityTokenPromise = new Promise(function (fnResolve, fnReject) {
+				var jqXHR = jQuery.ajax(that.sServiceUrl, {
+						method: "HEAD",
+						headers : {
+							"X-CSRF-Token" : "Fetch"
+						}
+					});
+				fnAbort = jqXHR.abort;
+				jqXHR.then(function (oData, sTextStatus, jqXHR) {
+					that.mHeaders["X-CSRF-Token"] = jqXHR.getResponseHeader("X-CSRF-Token");
+					that.oSecurityTokenPromise = null;
+					fnResolve();
+				}, function (jqXHR, sTextStatus, sErrorMessage) {
+					that.oSecurityTokenPromise = null;
+					fnReject(new Error(sErrorMessage)/*TODO Helper.createError(jqXHR)*/);
+				});
+			});
+			this.oSecurityTokenPromise.abort = fnAbort;
+		}
+
+		return this.oSecurityTokenPromise;
+	};
+
+	/**
+	 * Sends an HTTP request using the given method to the given relative URL, using the given
+	 * request-specific headers in addition to the mandatory OData v4 headers and the default
+	 * headers given to the factory. Takes care of CSRF token handling.
 	 *
 	 * @param {string} sMethod
 	 *   HTTP method, e.g. "GET"
 	 * @param {string} sUrl
 	 *   some absolute URL (which must belong to the service for which this requestor has been
 	 *   created)
-	 * @param {object} mHeaders
-	 *   map of request-specific headers, overriding both the predefined OData v4 headers and the
-	 *   default headers given to the factory
+	 * @param {object} [mHeaders]
+	 *   map of request-specific headers, overriding both the mandatory OData v4 headers and the
+	 *   default headers given to the factory. This map of headers must not contain
+	 *   "X-CSRF-Token" header.
+	 * @param {object} [oPayload]
+	 *   data to be sent to the server
+	 * @param {boolean} [bIsFreshToken=false]
+	 *   whether the CSRF token has already been refreshed and thus should not be refreshed
+	 *   again
 	 * @returns {Promise}
 	 *   a promise on the outcome of the HTTP request
 	 * @private
 	 */
-	Requestor.prototype.request = function(sMethod, sUrl, mHeaders) {
-		return Promise.resolve(
+	Requestor.prototype.request = function (sMethod, sUrl, mHeaders, oPayload, bIsFreshToken) {
+		var that = this;
+
+		return new Promise(function (fnResolve, fnReject) {
 			jQuery.ajax(sUrl, {
-				headers : jQuery.extend({}, mPredefinedHeaders, this.mHeaders, mHeaders),
+				data : JSON.stringify(oPayload),
+				headers : jQuery.extend({},
+					mPredefinedHeaders, that.mHeaders, mHeaders, mFinalHeaders),
 				method : sMethod
-			})
-		);
+			}).then(function (oPayload, sTextStatus, jqXHR) {
+				that.mHeaders["X-CSRF-Token"]
+					= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
+				fnResolve(oPayload);
+			}, function (jqXHR, sTextStatus, sErrorMessage) {
+				var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
+				if (!bIsFreshToken && jqXHR.status === 403
+						&& sCsrfToken && sCsrfToken.toLowerCase() === "required") {
+					// refresh CSRF token and repeat original request
+					that.refreshSecurityToken().then(function () {
+						fnResolve(that.request(sMethod, sUrl, mHeaders, oPayload, true));
+					}, fnReject);
+				} else {
+					fnReject(new Error(sErrorMessage)/*TODO Helper.createError(jqXHR)*/);
+				}
+			});
+		});
 	};
 
 	/**
@@ -76,6 +145,9 @@ sap.ui.define(["jquery.sap.global"], function(jQuery) {
 		 *     "OData-MaxVersion" : "4.0",
 		 *     "OData-Version" : "4.0"
 		 *   }</pre>
+		 *   The map of the default headers must not contain "X-CSRF-Token" header. The created
+		 *   <code>_Requestor<code> always sets the "Content-Type" header to
+		 *   "application/json;charset=UTF-8" value.
 		 * @returns {object}
 		 *   a new <code>_Requestor<code> instance
 		 */

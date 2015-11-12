@@ -4,12 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/model/odata/ODataUtils",
-	"sap/ui/model/odata/v4/_SyncPromise",
-	"sap/ui/thirdparty/odatajs-4.0.0"
-], function (ODataUtils, SyncPromise, Olingo) {
+	"sap/ui/model/odata/v4/_SyncPromise"
+], function (ODataUtils, SyncPromise) {
 	"use strict";
-
-	/*global odatajs */
 
 	var Helper,
 		rNamedSegment = /^(.+)\('(.*)'\)$/; // e.g. "EntitySets('Employees')"
@@ -193,29 +190,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Iterates over the given headers map and returns the first value for the requested key
-		 * (case insensitive). If no such key is found, <code>undefined</code> is returned.
-		 *
-		 * @param {string} sKey
-		 *   the requested key
-		 * @param {object} [mHeaders={}]
-		 *   an object treated as a <code>map&lt;string, any&gt;</code>
-		 * @returns {any}
-		 *   the header value or <code>undefined</code> if the header was not found
-		 */
-		headerValue : function (sKey, mHeaders) {
-			var sCurrentKey;
-
-			sKey = sKey.toLowerCase();
-			for (sCurrentKey in mHeaders) {
-				if (sCurrentKey.toLowerCase() === sKey) {
-					return mHeaders[sCurrentKey];
-				}
-			}
-//			return undefined;
-		},
-
-		/**
 		 * Parses a segment of a path in the OData v4 meta model in the simplified syntax where the
 		 * name of the single key property is not provided.
 		 *
@@ -248,45 +222,6 @@ sap.ui.define([
 				oPart.name = aMatches[2];
 			}
 			return oPart;
-		},
-
-		/**
-		 * Returns a promise for a call to <code>odatajs.oData.request</code> with the given request
-		 * object. Takes care of CSRF token handling.
-		 *
-		 * @param {sap.ui.model.odata.v4.ODataModel} oModel
-		 *   the model (used for headers and to refresh the security token)
-		 * @param {object} oRequest
-		 *   Olingo request object
-		 * @param {boolean} [bIsFreshToken=false]
-		 *   whether the CSRF token has already been refreshed and thus should not be refreshed
-		 *   again
-		 * @returns {Promise}
-		 *   a promise which is resolved with the server's response data in case of success, or
-		 *   rejected with an instance of <code>Error</code> in case of failure
-		 *
-		 * @private
-		 */
-		request : function (oModel, oRequest, bIsFreshToken) {
-			oRequest.headers["X-CSRF-Token"] = oModel.mHeaders["X-CSRF-Token"];
-
-			return new Promise(function (fnResolve, fnReject) {
-				odatajs.oData.request(oRequest, function (oData, oResponse) {
-					fnResolve(oData);
-				}, function (oError) {
-					var sCsrfToken = Helper.headerValue("X-CSRF-Token", oError.response.headers);
-
-					if (!bIsFreshToken && oError.response.statusCode === 403
-						&& sCsrfToken && sCsrfToken.toLowerCase() === "required") {
-						// refresh CSRF token and repeat original request
-						oModel.refreshSecurityToken().then(function() {
-							fnResolve(Helper.request(oModel, oRequest, true));
-						}, fnReject);
-					} else {
-						fnReject(Helper.createError(oError));
-					}
-				});
-			});
 		},
 
 		/**
