@@ -132,14 +132,17 @@ sap.ui.define([
 	 * @private
 	 */
 	ITBHelper.prototype._showSelectedSection = function (oSelectedSection) {
+		var oObjectPageLayout = this.getObjectPageLayout();
+
 		if (this._oSelectedSection && this._oSelectedSection !== oSelectedSection) {
 			this._renderSection(oSelectedSection);
 			this._oSelectedSection = oSelectedSection;
 
 			if (this.getObjectPageLayout()._bStickyAnchorBar) {
-				var iScrollDuration = 0;
-				this.getObjectPageLayout().scrollToSection(oSelectedSection.sId, iScrollDuration);
+				oObjectPageLayout.scrollToSection(oSelectedSection.sId, 0);
 			}
+
+			oObjectPageLayout.getHeaderTitle()._shiftHeaderTitle();
 		}
 	};
 

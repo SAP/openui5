@@ -223,6 +223,10 @@ sap.ui.define([
 			this.oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // get resource translation bundle
 		}
 
+		this._iREMSize = parseInt(jQuery("body").css("font-size"), 10);
+		this._iOffset = parseInt(0.25 * this._iREMSize, 10);
+		this._iScrollBarWidth = jQuery.position.scrollbarWidth();
+
 		// Overflow button
 		this._oOverflowActionSheet = this._getInternalAggregation("_overflowActionSheet");
 		this._oOverflowButton = this._getInternalAggregation("_overflowButton").attachPress(this._handleOverflowButtonPress, this);
@@ -369,20 +373,29 @@ sap.ui.define([
 	};
 
 	ObjectPageHeader.prototype._shiftHeaderTitle = function () {
+		var oParent = this.getParent(),
+			iHeaderOffset = 0,
+			sStyleAttribute = sap.ui.getCore().getConfiguration().getRTL() ? "left" : "right",
+			$actions = this.$().find(".sapUxAPObjectPageHeaderIdentifierActions"),
+			bHasVerticalScroll = true,
+			iActionsOffset = this._iOffset;
 
-		//set the correct width for the scrollBar to be visible
-		var fRight = 0.0;
-
-		if (Device.system.desktop) {
-			fRight = jQuery.position.scrollbarWidth();
+		if (typeof oParent._hasVerticalScrollBar === "function") {
+			bHasVerticalScroll = oParent._hasVerticalScrollBar();
 		}
 
-		if (fRight > 0) {
-			if (sap.ui.getCore().getConfiguration().getRTL()) {
-				this.$().parent().css("left", fRight + "px");
-			} else {
-				this.$().parent().css("right", fRight + "px");
+		if (sap.ui.Device.system.desktop) {
+			iHeaderOffset = this._iScrollBarWidth;
+			if (!bHasVerticalScroll) {
+				iHeaderOffset = 0;
+				iActionsOffset += this._iScrollBarWidth;
 			}
+		}
+
+		$actions.css(sStyleAttribute, iActionsOffset + "px");
+
+		if (typeof oParent._shiftHeader === "function"){
+			oParent._shiftHeader(sStyleAttribute, iHeaderOffset + "px");
 		}
 	};
 
