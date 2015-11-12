@@ -282,7 +282,7 @@
 		var oNewModel = new sap.ui.model.json.JSONModel({
 			"Employee": [
 				{
-					"name": "Michael Adams",
+					"name": "James Smith Changed",
 					"picture": "../qunit/img/person.png",
 					"job": "Scrum master"
 				},
