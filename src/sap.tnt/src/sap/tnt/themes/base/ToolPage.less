@@ -11,6 +11,11 @@
 @sapMToolPageHeaderHeight : 3rem;
 @sapMToolPageFooterHeight : 3rem;
 
+@sapMToolPageCompactAsideWidth : 16rem;
+@sapMToolPageCompactAsideWidthOnTablet : 2rem;
+@sapMToolPageCompactHeaderHeight : 2rem;
+@sapMToolPageCompactFooterHeight : 2rem;
+
 .display-flex() {
   display: -webkit-box;
   display: -webkit-flex;
@@ -177,4 +182,68 @@
 .sapMToolPageMainFooter {
   height: @sapMToolPageFooterHeight;
   overflow: hidden;
+}
+
+
+/* Compact size */
+.sapUiSizeCompact {
+
+  .sapMToolPageHeader {
+    height: @sapMToolPageCompactHeaderHeight;
+  }
+
+  .sapMToolPageAsideFooter {
+    height: @sapMToolPageCompactFooterHeight;
+  }
+
+  .sapMToolPageMainFooter {
+    height: @sapMToolPageCompactFooterHeight;
+  }
+}
+
+.sapUiMedia-Std-Desktop .sapUiSizeCompact,
+.sapUiMedia-Std-Tablet .sapUiSizeCompact {
+  .sapMToolPageAside {
+    width: @sapMToolPageCompactAsideWidth;
+  }
+
+  .sapMToolPageMain {
+    transform: translateX(@sapMToolPageCompactAsideWidth);
+  }
+}
+
+.sapUiMedia-Std-Desktop .sapUiSizeCompact,
+.sapUiMedia-Std-Tablet .sapUiSizeCompact {
+  .sapMToolPageAsideCollapsed {
+    .sapMToolPageAside {
+      width: @sapMToolPageCompactAsideWidthOnTablet;
+    }
+
+    .sapMToolPageMain {
+      -webkit-transform: translateX(@sapMToolPageCompactAsideWidthOnTablet);
+      -ms-transform: translateX(@sapMToolPageCompactAsideWidthOnTablet);
+      transform: translateX(@sapMToolPageCompactAsideWidthOnTablet);
+    }
+  }
+}
+
+.sapUiMedia-Std-Phone .sapUiSizeCompact {
+
+  .sapMToolPageAside {
+    width: @sapMToolPageCompactAsideWidth;
+  }
+
+  .sapMToolPageMain {
+    -webkit-transform: translateX(@sapMToolPageCompactAsideWidth);
+    -ms-transform: translateX(@sapMToolPageCompactAsideWidth);
+    transform: translateX(@sapMToolPageCompactAsideWidth);
+  }
+
+  .sapMToolPageAsideCollapsed {
+    .sapMToolPageAside {
+      -webkit-transform: translateX(-@sapMToolPageCompactAsideWidth);
+      -ms-transform: translateX(-@sapMToolPageCompactAsideWidth);
+      transform: translateX(-@sapMToolPageCompactAsideWidth);
+    }
+  }
 }
