@@ -10,7 +10,7 @@ sap.ui.define([
 
 	/**
 	 * Constructor for a new ElementMover.
-	 * 
+	 *
 	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 * @class The ElementMover enables movement of UI5 elements based on aggregation types, which can be used by drag and drop or cut and paste
@@ -70,7 +70,7 @@ sap.ui.define([
 
 	/**
 	 * returns the moved overlay (only during movements)
-	 * 
+	 *
 	 * @public
 	 * @return {sap.ui.dt.Overlay} overlay which is moved
 	 */
@@ -80,7 +80,7 @@ sap.ui.define([
 
 	/**
 	 * set the moved overlay (only during movements)
-	 * 
+	 *
 	 * @param {sap.ui.dt.Overlay} [oMovedOverlay] overlay which is moved
 	 * @public
 	 */
@@ -185,36 +185,32 @@ sap.ui.define([
 		});
 	};
 
+
 	/**
 	 * @private
 	 */
-	ElementMover.prototype.repositionOn = function(oMovedOverlay, oTargetOverlay) {
+	ElementMover.prototype.repositionOn = function(oMovedOverlay, oTargetElementOverlay) {
 		var oMovedElement = oMovedOverlay.getElementInstance();
 
-		var oTargetParent = OverlayUtil.getParentInformation(oTargetOverlay);
+		var oTargetParent = OverlayUtil.getParentInformation(oTargetElementOverlay);
 
 		if (oTargetParent.index !== -1) {
 			ElementUtil.insertAggregation(oTargetParent.parent, oTargetParent.aggregation, oMovedElement, oTargetParent.index);
 		}
 	};
 
+
 	/**
 	 * @private
 	 */
-	ElementMover.prototype.insertInto = function(oMovedOverlay, oTargetOverlay) {
+	ElementMover.prototype.insertInto = function(oMovedOverlay, oTargetAggregationOverlay) {
 		var oMovedElement = oMovedOverlay.getElementInstance();
+		var oTargetParentElement = oTargetAggregationOverlay.getElementInstance();
 
-		var oTargetParentElement = oTargetOverlay.getElementInstance();
-
-		var oSourceParentOverlay = oMovedOverlay.getParentElementOverlay();
-		var oSourceParentElement;
-		if (oSourceParentOverlay) {
-			oSourceParentElement = oSourceParentOverlay.getElementInstance();
-		}
-
-		if (oTargetParentElement !== oSourceParentElement) {
-			var sAggregationName = oTargetOverlay.getAggregationName();
-			ElementUtil.addAggregation(oTargetParentElement, sAggregationName, oMovedElement);
+		var oSourceAggregationOverlay = oMovedOverlay.getParent();
+		if (oTargetAggregationOverlay !== oSourceAggregationOverlay) {
+			var sTargetAggregationName = oTargetAggregationOverlay.getAggregationName();
+			ElementUtil.addAggregation(oTargetParentElement, sTargetAggregationName, oMovedElement);
 		}
 	};
 
