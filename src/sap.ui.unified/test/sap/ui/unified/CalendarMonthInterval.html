@@ -3,6 +3,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>CalendarMonthInterval - sap.ui.unified</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.unified.CalendarMonthInterval.gif" >
 
@@ -66,7 +67,7 @@
 			                    ["20161101",undefined,"Type10",10]];
 
 			var oCal = new sap.ui.unified.CalendarMonthInterval("Cal1",{
-				width: "464px",
+				width: sap.ui.Device.system.phone?"340px":"464px",
 				select: function(oEvent){
 					var oTF = sap.ui.getCore().byId("TF1");
 					var oCalendar = oEvent.oSource;
@@ -147,7 +148,7 @@
 			oStartDate.setDate(15);
 			oStartDate.setMonth(oStartDate.getMonth() - 1);
 			oCal = new sap.ui.unified.CalendarMonthInterval("Cal2",{
-				width: "496px",
+				width: sap.ui.Device.system.phone?"340px":"496px",
 				startDate: oStartDate,
 				months: 6,
 				intervalSelection: true,

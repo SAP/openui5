@@ -3,6 +3,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 		<title>CalendarTimeInterval - sap.ui.unified</title>
 		<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.unified.CalendarTimeInterval.gif" >
 
@@ -56,7 +57,7 @@
 			                    ["20150804","20140810","Urlaub",3]];
 
 			var oCal = new sap.ui.unified.CalendarTimeInterval("Cal1",{
-				width: "608px",
+				width: sap.ui.Device.system.phone?"340px":"608px",
 				select: function(oEvent){
 					var oTF = sap.ui.getCore().byId("TF1");
 					var oCalendar = oEvent.oSource;
