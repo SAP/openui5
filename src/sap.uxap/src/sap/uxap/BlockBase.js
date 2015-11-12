@@ -48,7 +48,7 @@ sap.ui.define([
 				properties: {
 					/**
 					 * Determines the mode of the block.
-					 * When block is used inside ObjectOage this mode is inherited my the SubSection.
+					 * When block is used inside ObjectPage this mode is inherited my the SubSection.
 					 * The mode of the block is changed when SubSection mode changes.
 					 */
 					"mode": {type: "string", group: "Appearance"},

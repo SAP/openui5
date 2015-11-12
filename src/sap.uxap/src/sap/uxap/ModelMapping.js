@@ -10,8 +10,8 @@ sap.ui.define(["sap/ui/core/Element", "./library"],
 	/**
 	 * Constructor for a new ModelMapping.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 *
@@ -33,14 +33,17 @@ sap.ui.define(["sap/ui/core/Element", "./library"],
 			properties: {
 
 				/**
+				 * Determines the the external model name.
 				 */
 				externalModelName: {type: "string", group: "Misc", defaultValue: null},
 
 				/**
+				 * Determines the the internal model name.
 				 */
-				internalModelName: {type: "string", group: "Misc", defaultValue: 'Model'},
+				internalModelName: {type: "string", group: "Misc", defaultValue: "Model"},
 
 				/**
+				 * Determines the the external path.
 				 */
 				externalPath: {type: "string", group: "Misc", defaultValue: null}
 			}
