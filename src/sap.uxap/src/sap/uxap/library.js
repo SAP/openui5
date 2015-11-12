@@ -5,7 +5,7 @@
 /**
  * Initialization Code and shared classes of library sap.uxap.
  */
-sap.ui.define(['jquery.sap.global', "sap/ui/core/Core", "sap/ui/core/library", "sap/m/library", "sap/ui/layout/library"], function (jQuery, Core, library) {
+sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "sap/m/library", "sap/ui/layout/library"], function (jQuery, Core, library) {
 	"use strict";
 
 	/**
@@ -74,6 +74,8 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Core", "sap/ui/core/library", "
 	/**
 	 * @class Used by the BlockBase control to define if it should do automatic adjustment of its nested forms.
 	 *
+	 * @author SAP SE
+	 * @enum {string}
 	 * @static
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
@@ -108,13 +110,13 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Core", "sap/ui/core/library", "
 	sap.uxap.ObjectPageConfigurationMode = {
 
 		/**
-		 *
+		 * Determines the JSON url
 		 * @public
 		 */
 		JsonURL: "JsonURL",
 
 		/**
-		 *
+		 * Determines the JSON model
 		 * @public
 		 */
 		JsonModel: "JsonModel"
@@ -223,8 +225,23 @@ sap.ui.define(['jquery.sap.global', "sap/ui/core/Core", "sap/ui/core/library", "
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.uxap.Importance = {
+
+		/**
+		 * Low importance of the content
+		 * @public
+		 */
 		Low: "Low",
+
+		/**
+		 * Medium importance of the content
+		 * @public
+		 */
 		Medium: "Medium",
+
+		/**
+		 * High importance of the content
+		 * @public
+		 */
 		High: "High"
 	};
 

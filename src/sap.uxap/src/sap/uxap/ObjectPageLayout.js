@@ -59,8 +59,9 @@ sap.ui.define([
 				upperCaseAnchorBar: {type: "boolean", defaultValue: true},
 
 				/**
+				 * Determines the height of the ObjectPage.
 				 */
-				height: {type: "sap.ui.core.CSSSize", defaultValue: '100%'},
+				height: {type: "sap.ui.core.CSSSize", defaultValue: "100%"},
 
 				/**
 				 * Enable lazy loading for the Object page Subsections.
