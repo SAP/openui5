@@ -548,7 +548,11 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 		ManagedObject.prototype.destroy.call(this, bSuppressInvalidate);
 
 		// remove this control from DOM, e.g. if there is no parent (e.g. Dialog or already removed control) or this.sParentAggregationName is not properly set
-		this.$().remove();
+		if (bSuppressInvalidate !== "KeepDom") {
+			this.$().remove();
+		} else {
+			jQuery.sap.log.debug("DOM is not removed on destroy of " + this);
+		}
 	};
 
 
