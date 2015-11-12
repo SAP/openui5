@@ -24,6 +24,7 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	 *
 	 * @public
 	 * @alias sap.ui.model.ListBinding
+	 * @extends sap.ui.model.Binding
 	 */
 	var ListBinding = Binding.extend("sap.ui.model.ListBinding", /** @lends sap.ui.model.ListBinding.prototype */ {
 
