@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.t.SideNavigation.
-sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', './NavigationList'],
-    function (library, Control, ResizeHandler) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Icon', './NavigationList'],
+    function (jQuery, library, Control, ResizeHandler, Icon) {
         'use strict';
 
         /**
@@ -52,7 +52,15 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 
                     /**
                      * Defines the content inside the footer.
                      */
-                    footer: {type: 'sap.tnt.NavigationList', multiple: false}
+                    footer: {type: 'sap.tnt.NavigationList', multiple: false},
+                    /**
+                     * The top arrow, used for scrolling throw items when SideNavigation is collapsed.
+                     */
+                    _topArrowControl: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"},
+                    /**
+                     * The bottom arrow, used for scrolling throw items when SideNavigation is collapsed.
+                     */
+                    _bottomArrowControl: {type: "sap.ui.core.Icon", multiple: false, visibility: "hidden"}
                 },
                 events: {
                     /**
@@ -84,9 +92,10 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 
         };
 
         SideNavigation.prototype.setExpanded = function (isExpanded) {
-            if (sap.ui.Device.media.getCurrentRange('StdExt').name === 'Phone') {
+            if (sap.ui.Device.system.phone) {
                 isExpanded = true;
             }
+
             if (this.getExpanded() === isExpanded) {
                 return this;
             }
@@ -105,6 +114,8 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 
 
             this.setProperty('expanded', isExpanded, true);
 
+            this._toggleArrows();
+
             return this;
         };
 
@@ -120,6 +131,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 
          */
         SideNavigation.prototype.onAfterRendering = function () {
             this._ResizeHandler = ResizeHandler.register(this.getDomRef(), this._changeScrolling.bind(this));
+            this._changeScrolling();
         };
 
         /**
@@ -133,6 +145,13 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 
          * @private
          */
         SideNavigation.prototype._changeScrolling = function () {
+
+            this._toggleArrows();
+
+            if (this.getExpanded() === false) {
+                return;
+            }
+
             var minSideNavigationHeight = 256;
             var sideNavigation = document.getElementById(this.getId());
             var sideNavigationFlexibleContainer = sideNavigation.querySelector('#' + this.getId() + '-Flexible');
@@ -189,6 +208,109 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 
         SideNavigation.prototype.ontouchmove = function (event) {
             // mark the event for components that needs to know if the event was handled
             event.setMarked();
+        };
+
+        /**
+         * Returns the sap.ui.core.Icon control used to display the group icon.
+         * @returns {sap.ui.core.Icon}
+         * @private
+         */
+        SideNavigation.prototype._getTopArrowControl = function () {
+            var iconControl = this.getAggregation('_topArrowControl');
+            var that = this;
+
+            if (!iconControl) {
+                iconControl = new Icon({
+                    src: 'sap-icon://navigation-up-arrow',
+                    useIconTooltip: false,
+                    tooltip: '',
+                    press: this._arrowPress.bind(that)
+                }).addStyleClass('sapMSideNavigationScrollIcon sapMSideNavigationScrollIconUp');
+                this.setAggregation("_topArrowControl", iconControl, true);
+            }
+
+            return iconControl;
+        };
+
+        /**
+         * Returns the sap.ui.core.Icon control used to display the group icon.
+         * @returns {sap.ui.core.Icon}
+         * @private
+         */
+        SideNavigation.prototype._getBottomArrowControl = function () {
+            var iconControl = this.getAggregation('_bottomArrowControl');
+            var that = this;
+
+            if (!iconControl) {
+                iconControl = new Icon({
+                    src: 'sap-icon://navigation-down-arrow',
+                    useIconTooltip: false,
+                    tooltip: '',
+                    press: this._arrowPress.bind(that)
+                }).addStyleClass('sapMSideNavigationScrollIcon sapMSideNavigationScrollIconDown');
+
+                this.setAggregation("_bottomArrowControl", iconControl, true);
+            }
+
+            return iconControl;
+        };
+
+        SideNavigation.prototype._toggleArrows = function () {
+            var domRef = this.getDomRef();
+
+            if (!domRef) {
+                return;
+            }
+
+            var scrollContainerWrapper = this.$('Flexible')[0];
+            var scrollContainerContent = this.$('Flexible-Content')[0];
+            var isAsideExpanded = this.getExpanded();
+
+            if ((scrollContainerContent.offsetHeight > scrollContainerWrapper.offsetHeight) && !isAsideExpanded) {
+                domRef.querySelector('.sapMSideNavigationScrollIconUp').style.display = 'block'; // TODO refactor
+                domRef.querySelector('.sapMSideNavigationScrollIconDown').style.display = 'block'; // TODO refactor
+
+                domRef.querySelector('.sapMSideNavigationScrollIconDown').classList.remove('sapMSideNavigationScrollIconDisabled');
+            } else {
+                domRef.querySelector('.sapMSideNavigationScrollIconUp').style.display = 'none'; // TODO refactor
+                domRef.querySelector('.sapMSideNavigationScrollIconDown').style.display = 'none'; // TODO refactor
+            }
+        };
+
+        SideNavigation.prototype._arrowPress = function (event, step) {
+
+            event.preventDefault();
+
+            var source = document.getElementById(event.oSource.sId);
+            var isDirectionForward = source.classList.contains('sapMSideNavigationScrollIconDown') ? true : false;
+
+            var $container = this.$('Flexible');
+
+            var step = isDirectionForward ? 40 : -40;
+            $container[0].scrollTop += step;
+
+            // this._handleArrowBehavior(isDirectionForward);
+        };
+
+        SideNavigation.prototype._handleArrowBehavior = function (isDirectionForward) {
+            var domRef = this.getDomRef();
+            var scrollContainerWrapper = this.$('Flexible')[0];
+            var scrollContainerContent = this.$('Flexible-Content')[0];
+
+            var topArrow = domRef.querySelector('.sapMSideNavigationScrollIconUp');
+            var bottomArrow = domRef.querySelector('.sapMSideNavigationScrollIconDown');
+
+            var scrollContainerContentTranslate = scrollContainerWrapper.scrollTop;
+            var margin = scrollContainerContent.offsetHeight - scrollContainerWrapper.offsetHeight;
+
+            if (!isDirectionForward && scrollContainerContentTranslate == 0) {
+                topArrow.classList.add('sapMSideNavigationScrollIconDisabled');
+            } else if (isDirectionForward && scrollContainerContentTranslate == margin) {
+                bottomArrow.classList.add('sapMSideNavigationScrollIconDisabled');
+            } else {
+                topArrow.classList.remove('sapMSideNavigationScrollIconDisabled');
+                bottomArrow.classList.remove('sapMSideNavigationScrollIconDisabled');
+            }
         };
 
         return SideNavigation;

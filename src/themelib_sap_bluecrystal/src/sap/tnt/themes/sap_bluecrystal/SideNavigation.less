@@ -9,3 +9,40 @@
 .sapMSideNavigationSeparator {
   background-color: @sapUiBrand;
 }
+
+/* Styles for layout with arrows
+   ========================================================================== */
+.sapMSideNavigationScrollIconUp {
+  border-bottom: 1px solid @sapUiExtraLightBorder;
+}
+
+.sapMSideNavigationScrollIconDown {
+  border-top: 1px solid @sapUiExtraLightBorder;
+}
+
+.sapMSideNavigationScrollIcon {
+  color: @sapUiElement;
+}
+
+.sapMSideNavigationScrollIcon:not(.sapMSideNavigationScrollIconDisabled):hover {
+  background-color: @sapUiLightestBGHover;
+  color: @sapUiDarkText;
+
+  & > .sapUiIcon {
+    color: @sapUiElement;
+  }
+}
+
+.sapMSideNavigationScrollIcon:not(.sapMSideNavigationScrollIconDisabled):active {
+  background-color: @sapUiHighlight;
+  color: @sapUiTextInverted;
+
+  & > .sapUiIcon {
+    color: @sapUiInvertedElement;
+  }
+}
+
+.sapUiIcon.sapMSideNavigationScrollIcon:focus {
+  outline: 1px dotted @sapUiFocus;
+  outline-offset: -1px;
+}
