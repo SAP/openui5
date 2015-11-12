@@ -141,4 +141,24 @@ sap.ui.require([
 
 		return Promise.all([oPromise1, oPromise2]);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("query params", function (assert) {
+		var oRequestor = Requestor.create("/~/"),
+			sUrl = "/~/Employees",
+			mQueryParams = {
+				"$select": "ID",
+				"$expand" : "Address"
+			},
+			oCache = Cache.create(oRequestor, sUrl, mQueryParams);
+
+		this.oSandbox.mock(oRequestor).expects("request")
+			.withExactArgs("GET", sUrl + "?%24select=ID&%24expand=Address")
+			.returns(Promise.resolve({value:[]}));
+
+		// code under test
+		mQueryParams.$select = "foo"; // modification must not affect Cache
+		return oCache.read(0, 5);
+	});
+	// TODO get rid of %-encoding of $, (, ) etc
 });

@@ -3,8 +3,25 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib.Cache
-sap.ui.define([], function() {
+sap.ui.define(["sap/ui/thirdparty/URI"], function(URI) {
 	"use strict";
+
+	/**
+	 * Builds query string from object
+	 *
+	 * @param {object} mQueryParameters
+	 *   a map of key/value-pairs representing the query string
+	 * @returns {string}
+	 *   returns an encoded query string starting with "?" if parameters are available else ""
+	 */
+	function buildQueryString(mQueryParameters){
+		var sQueryString = URI.buildQuery(mQueryParameters);
+
+		if (sQueryString) {
+			return "?" + sQueryString;
+		}
+		return "";
+	}
 
 	/**
 	 * Creates a cache that performs requests using the given requestor.
@@ -13,10 +30,12 @@ sap.ui.define([], function() {
 	 *   the requestor
 	 * @param {string} sUrl
 	 *   the URL to request from
+	 * @param {object} mQueryParameters
+	 *   a map of key/value-pairs representing the query string
 	 */
-	function Cache(oRequestor, sUrl) {
+	function Cache(oRequestor, sUrl, mQueryParameters) {
 		this.oRequestor = oRequestor;
-		this.sUrl = sUrl;
+		this.sUrl = sUrl + buildQueryString(mQueryParameters);
 		this.oRequestPromise = null;
 	}
 
@@ -50,8 +69,6 @@ sap.ui.define([], function() {
 		});
 	};
 
-
-
 	return {
 		/**
 		 * Creates a cache that performs requests using the given requestor.
@@ -60,11 +77,13 @@ sap.ui.define([], function() {
 		 *   the requestor
 		 * @param {string} sUrl
 		 *   the URL to request from
-		 * @return {sap.ui.model.odata.v4.lib._Cache}
+		 * @param {object} mQueryParameters
+		 *   a map of key/value-pairs representing the query string
+		 * @returns {sap.ui.model.odata.v4.lib._Cache}
 		 *   the cache
 		 */
-		create: function _create(oRequestor, sUrl) {
-			return new Cache(oRequestor, sUrl);
+		create: function _create(oRequestor, sUrl, mQueryParameters) {
+			return new Cache(oRequestor, sUrl, mQueryParameters);
 		}
 	};
 }, /* bExport= */false);
