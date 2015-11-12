@@ -55,17 +55,17 @@
 		<dependency>
 			<groupId>com.sap.ui5</groupId>
 			<artifactId>core</artifactId>
-			<version>${parent.version}</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sap.ui5</groupId>
 			<artifactId>mobile</artifactId>
-			<version>${parent.version}</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sap.ui5</groupId>
 			<artifactId>themelib_sap_bluecrystal</artifactId>
-			<version>${parent.version}</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>
 	

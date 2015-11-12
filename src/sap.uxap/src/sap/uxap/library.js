@@ -49,10 +49,6 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 		version: "${version}"
 	});
 
-	/*!
-	 * ${copyright}
-	 */
-
 	/**
 	 * @class Used by the BlockBase control to define how many columns should it be assigned by the objectPageSubSection.
 	 *     The allowed values can be auto (subsection assigned a number of columns based on the parent objectPageLayout subsectionLayout property), 1, 2 or 3
@@ -72,7 +68,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 	);
 
 	/**
-	 * @class Used by the BlockBase control to define if it should do automatic adjustment of its nested forms.
+	 * Used by the BlockBase control to define if it should do automatic adjustment of its nested forms.
 	 *
 	 * @author SAP SE
 	 * @enum {string}
