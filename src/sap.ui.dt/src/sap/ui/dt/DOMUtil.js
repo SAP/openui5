@@ -4,10 +4,9 @@
 
 // Provides object sap.ui.dt.DOMUtil.
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/dt/ElementUtil'
+	'jquery.sap.global'
 ],
-function(jQuery, ElementUtil) {
+function(jQuery) {
 	"use strict";
 
 	/**
@@ -64,6 +63,21 @@ function(jQuery, ElementUtil) {
 			zIndex = $ElementDomRef.zIndex() || $ElementDomRef.css("z-index");
 		}
 		return zIndex;
+	};
+
+	/**
+	 *
+	 */
+	DOMUtil.hasScrollBar = function(oDomRef) {
+		var $DomRef = jQuery(oDomRef);
+
+		var bOverflowYScroll = $DomRef.css("overflow-y") === "auto" || $DomRef.css("overflow-y") === "scroll";
+		var bOverflowXScroll = $DomRef.css("overflow-x") === "auto" || $DomRef.css("overflow-x") === "scroll";
+
+		var bHasYScroll = bOverflowYScroll && $DomRef.get(0).scrollHeight > $DomRef.height();
+		var bHasXScroll = bOverflowXScroll && $DomRef.get(0).scrollWidth > $DomRef.width();
+
+		return bHasYScroll || bHasXScroll;
 	};
 
 	/**
