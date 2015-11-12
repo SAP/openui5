@@ -951,6 +951,11 @@ sap.ui.define([
 				this._oSectionInfo[sPreviousSectionId].positionBottom = this._oSectionInfo[sPreviousSubSectionId].positionTop + iLastVisibleHeight;
 			}
 
+			// if using icon tab bar mode, there's no need for spacer
+			if (this.getUseIconTabBar()) {
+				return;
+			}
+
 			//calculate the required additional space for the last section only
 			if (iLastVisibleHeight < this.iScreenHeight) {
 
@@ -1566,6 +1571,18 @@ sap.ui.define([
 			iStickyHeaderContentHeight: this.iStickyHeaderContentHeight,
 			iScrollTop: this._$opWrapper.scrollTop()
 		};
+	};
+
+	ObjectPageLayout.prototype._hasVerticalScrollBar = function () {
+		if (this._$opWrapper.length) {
+			return this._$opWrapper[0].scrollHeight > this._$opWrapper.innerHeight();
+		} else {
+			return !this.getUseIconTabBar();
+		}
+	};
+
+	ObjectPageLayout.prototype._shiftHeader = function (sDirection, sPixels) {
+		this.$().find(".sapUxAPObjectPageHeaderTitle").css(sDirection, sPixels);
 	};
 
 	/**
