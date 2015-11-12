@@ -2053,7 +2053,8 @@ if ( eventCaptureSupported ) {
 		verticalDistanceThreshold: 75,  // Swipe vertical displacement must be less than this.
 
 		start: function( event ) {
-			var data = event.originalEvent.touches ?
+			// SAP MODIFICATION: if jQuery event is created programatically there's no originalEvent property. Therefore the existence of event.originalEvent needs to be checked.
+			var data = event.originalEvent && event.originalEvent.touches ?
 					event.originalEvent.touches[ 0 ] : event;
 			return {
 						time: ( new Date() ).getTime(),
@@ -2063,7 +2064,8 @@ if ( eventCaptureSupported ) {
 		},
 
 		stop: function( event ) {
-			var data = event.originalEvent.touches ?
+			// SAP MODIFICATION: if jQuery event is created programatically there's no originalEvent property. Therefore the existence of event.originalEvent needs to be checked.
+			var data = event.originalEvent && event.originalEvent.touches ?
 					event.originalEvent.touches[ 0 ] : event;
 			return {
 						time: ( new Date() ).getTime(),

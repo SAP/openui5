@@ -110,9 +110,9 @@
 	//see jQuery.sap.ControlEvents
 	var aBasicBrowserEvents = ["click", "dblclick", "contextmenu", "focusin", "focusout", "keydown", "keypress", "keyup", "mousedown", "mouseout", "mouseover",
 								"mouseup", "select", "selectstart", "dragstart", "dragenter", "dragover", "dragleave", "dragend", "drop", "paste", "cut", "input",
-								"saptouchstart", "saptouchmove", "saptouchend"];
+								"saptouchstart", "saptouchmove", "saptouchend", "tap", "swipe", "swipeleft", "swiperight", "scrollstart", "scrollstop",];
 	
-	var aMobileBrowserEvents = ["touchstart", "touchend", "touchmove", "touchcancel", "swipe", "tap", "swipeleft", "swiperight", "scrollstart", "scrollstop", "sapmousedown", "sapmousemove", "sapmouseup"];
+	var aMobileBrowserEvents = ["touchstart", "touchend", "touchmove", "touchcancel", "sapmousedown", "sapmousemove", "sapmouseup"];
 	
 	function keyEvent(sName, sAddText, iTrigger, sKeyCode, bShift, bAlt, bCtrl){
 		return {sName: sName, sAddTxt: sAddText, iTrigger: iTrigger, oParams: {keyCode : jQuery.sap.KeyCodes[sKeyCode], shiftKey : bShift || false, altKey : bAlt || false, metaKey : bCtrl || false, ctrlKey : bCtrl || false}};
