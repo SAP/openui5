@@ -255,9 +255,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				return this;
 			}
 
-			fModStepVal = fNewValue % fStep;
+			fModStepVal = Math.abs(fNewValue % fStep);
 
-			if (bSnapValue) {
+			if (bSnapValue && (fModStepVal !== 0) /* division with remainder */) {
 
 				// snap the new value to the nearest step
 				fNewValue = fModStepVal * 2 >= fStep ? fNewValue + fStep - fModStepVal : fNewValue - fModStepVal;
