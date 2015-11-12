@@ -56,7 +56,7 @@ var mPredefinedServiceResponses = {
 					"Discontinued": { type: "bool" }
 				},
 				navigationProperties: {
-					"Supplier": { entitySet: "Suppliers", key: "SupplierID" }
+					"Supplier": { entitySet: "Suppliers", key: "4", multiple: false }
 				},
 				itemMessages: [{ // Messages per Item
 					"target": "ProductName",
@@ -341,8 +341,7 @@ var mPredefinedServiceResponses = {
 
 	ODataRandomService.prototype.resolveNavigationProperty = function(mCollection, sItem, sNavigationProperty) {
 		var mNavigationProperty = mCollection.navigationProperties[sNavigationProperty];
-		var sData = this._createData(mCollection.properties[mNavigationProperty.key], sItem);
-		return mNavigationProperty.entitySet + "(" + sData + ")";
+		return mNavigationProperty.entitySet + "(" + mNavigationProperty.key + ")";
 	};
 
 	// TODO: !!! Batch support is very shaky and only works for the specific tests - this should be built more robust and standards compliant

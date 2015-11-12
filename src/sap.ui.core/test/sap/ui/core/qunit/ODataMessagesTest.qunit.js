@@ -901,7 +901,7 @@ function runODataMessagesTests() {
 	
 	
 	var fnTestFunctionImportWithInvalidTarget = function() {
-		expect(15);
+		expect(20);
 		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 		
@@ -917,7 +917,7 @@ function runODataMessagesTests() {
 					var aMessages = oMessageModel.getProperty("/");
 					var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
 			
-					equal(aMessages.length, 2, "Two messages are set at the beginning of the test");
+					equal(aMessages.length, 2, "Two messages are set after the entity was read");
 					ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' has been received.");
 					ok(aMessageTagets.indexOf("/Products(1)/ProductName") > -1, "Message targetting '/Products(1)/ProductName' has been received.");
 
@@ -927,31 +927,40 @@ function runODataMessagesTests() {
 							var aMessages = oMessageModel.getProperty("/");
 							var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
 
-							equal(aMessages.length, 2, "Four messages are set at the beginning of the test");
+							equal(aMessages.length, 3, "Three messages are set after the FunctionImport returned");
 							
+							ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' is still there.");
 							ok(aMessageTagets.indexOf("/Products(1)/SupplierID") > -1, "Message targetting '/Products(1)/SupplierID' has been received.");
 							ok(aMessageTagets.indexOf("/PersistedMessages/functionWithInvalidTarget") > -1, "Message targetting '/PersistedMessages/functionWithInvalidTarget' has been received.");
 
+							ok(aMessageTagets.indexOf("/Products(1)/ProductName") === -1, "Message targetting '/Products(1)/ProductName' has been removed.");
+							
 							oModel.read("/Products(1)", {
 								success: function() {
 									var aMessages = oMessageModel.getProperty("/");
 									var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
 
 									equal(aMessages.length, 3, "Three messages are set after /Products(1) is requested again");
+									
 									ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' has been received.");
 									ok(aMessageTagets.indexOf("/Products(1)/ProductName") > -1, "Message targetting '/Products(1)/ProductName' has been received.");
 									ok(aMessageTagets.indexOf("/PersistedMessages/functionWithInvalidTarget") > -1, "Message targetting '/PersistedMessages/functionWithInvalidTarget' has been kept.");
 
+									ok(aMessageTagets.indexOf("/Products(1)/SupplierID") === -1, "Message targetting '/Products(1)/SupplierID' has been removed.");
+									
 									oModel.callFunction("/functionWithInvalidTarget", {
 										method: "POST",
 										success: function() {
 											var aMessages = oMessageModel.getProperty("/");
 											var aMessageTagets = aMessages.map(function(oMessage) { return oMessage.getTarget(); });
 
-											equal(aMessages.length, 2, "Two messages are set after FunctionImport is called again");
+											equal(aMessages.length, 3, "Three messages are set after FunctionImport is called again");
 											
+											ok(aMessageTagets.indexOf("/Products") > -1, "Message targetting '/Products' is still there.");
 											ok(aMessageTagets.indexOf("/Products(1)/SupplierID") > -1, "Message targetting '/Products(1)/SupplierID' has been received.");
 											ok(aMessageTagets.indexOf("/PersistedMessages/functionWithInvalidTarget") > -1, "Message targetting '/PersistedMessages/functionWithInvalidTarget' has been received.");
+											
+											ok(aMessageTagets.indexOf("/Products(1)/ProductName") === -1, "Message targetting '/Products(1)/ProductName' has been removed.");
 											
 											oModel.destroy();
 											start();
