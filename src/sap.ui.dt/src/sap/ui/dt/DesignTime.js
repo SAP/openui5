@@ -342,7 +342,8 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	 * @private
 	 */
 	DesignTime.prototype._createElementOverlay = function(oElement, bInHiddenTree) {
-		if (ElementUtil.isInstanceOf(oElement, "sap.ui.core.Element")) {
+		oElement = ElementUtil.fixComponentContainerElement(oElement);
+		if (oElement) {
 			// check if ElementOverlay for the element already exists before creating the new one
 			// (can happen when two aggregations returning the same elements)
 			if (!OverlayRegistry.getOverlay(oElement)) {
@@ -380,16 +381,16 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 				var sAggregationName = oAggregationOverlay.getAggregationName();
 				var oElement = oElementOverlay.getElementInstance();
 				var aChildren = ElementUtil.getAggregation(oElement, sAggregationName);
-				aChildren.forEach(function(oChild) {
-						var oChildOverlay = that._createElementOverlay(oChild, oAggregationOverlay.isInHiddenTree());
-						if (oChildOverlay) {
-							createChildOverlays(oChildOverlay);
-						}
+				ElementUtil.iterateOverElements(aChildren, function(oChild) {
+					var oChildOverlay = that._createElementOverlay(oChild, oAggregationOverlay.isInHiddenTree());
+					if (oChildOverlay) {
+						createChildOverlays(oChildOverlay);
+					}
 				});
 			});
 		};
 
-		var oElementOverlay = this._createElementOverlay(ElementUtil.ensureRootElement(oElement));
+		var oElementOverlay = this._createElementOverlay(oElement);
 		if (oElementOverlay) {
 			createChildOverlays(oElementOverlay);
 		}
@@ -400,7 +401,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	 * @private
 	 */
 	DesignTime.prototype._destroyOverlaysForElement = function(oElement) {
-		var oOverlay = OverlayRegistry.getOverlay(ElementUtil.ensureRootElement(oElement));
+		var oOverlay = OverlayRegistry.getOverlay(oElement);
 		if (oOverlay) {
 			oOverlay.destroy();
 		}
@@ -459,10 +460,13 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	 * @private
 	 */
 	DesignTime.prototype._onElementOverlayAddAggregation = function(oElement) {
-		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
-		// TODO what if it was moved between hidden/public tree? can this happen?
-		if (!oElementOverlay) {
-			this.createElementOverlaysFor(oElement);
+		// oElement can be of an alternative type (setLabel(sText) for example)
+		if (oElement instanceof sap.ui.core.Element) {
+			var oElementOverlay = OverlayRegistry.getOverlay(oElement);
+			// TODO what if it was moved between hidden/public tree? can this happen?
+			if (!oElementOverlay) {
+				this.createElementOverlaysFor(oElement);
+			}
 		}
 	};
 
@@ -517,8 +521,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	DesignTime.prototype._getAllElementOverlaysIn = function(oElement) {
 		var aElementOverlays = [];
 
-		var oRootElement = ElementUtil.ensureRootElement(oElement);
-		var oElementOverlay = OverlayRegistry.getOverlay(oRootElement);
+		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 		if (oElementOverlay) {
 			OverlayUtil.iterateOverlayElementTree(oElementOverlay, function(oChildOverlay) {
 				aElementOverlays.push(oChildOverlay);

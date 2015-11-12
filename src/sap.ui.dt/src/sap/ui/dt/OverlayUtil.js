@@ -10,7 +10,7 @@ sap.ui.define([
 
 	/**
 	 * Class for Overlay Util.
-	 * 
+	 *
 	 * @class Utility functionality to work with overlays
 	 * @author SAP SE
 	 * @version ${version}
@@ -24,7 +24,7 @@ sap.ui.define([
 	var OverlayUtil = {};
 
 	/**
-	 * 
+	 *
 	 */
 	OverlayUtil.isInTargetZoneAggregation = function(oElementOverlay) {
 		var oAggregationOverlay = oElementOverlay.getParent();
@@ -41,20 +41,22 @@ sap.ui.define([
 		var aChildren = ElementUtil.getAggregation(oPublicParent, sPublicParentAggregationName);
 		var oElement = oElementOverlay.getElementInstance();
 		var iIndex = aChildren.indexOf(oElement);
-		
+
 		return {
 			parent: oPublicParent,
 			aggregation: sPublicParentAggregationName,
 			index: iIndex
 		};
 	};
+
 	/**
-	 * 
+	 *
 	 */
 	OverlayUtil.getClosestOverlayFor = function(oElement) {
 		if (!oElement || !oElement.getParent) {
 			return null;
 		}
+
 		var oParent = oElement.getParent();
 		var oParentOverlay = OverlayRegistry.getOverlay(oParent);
 		while (oParent && !oParentOverlay) {
@@ -66,7 +68,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	OverlayUtil.getGeometry = function(aGeometry) {
 		var minLeft, maxRight, minTop, maxBottom;
@@ -105,7 +107,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	OverlayUtil.getClosestOverlayForType = function(sType, oOverlay) {
 		while (oOverlay && !ElementUtil.isInstanceOf(oOverlay.getElementInstance(), sType)) {
@@ -116,7 +118,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	OverlayUtil.getClosestScrollable = function(oOverlay) {
 		if (!oOverlay) {
@@ -132,7 +134,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	OverlayUtil.getFirstChildOverlay = function(oOverlay) {
 		if (!oOverlay) {
@@ -152,7 +154,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	OverlayUtil.getLastChildOverlay = function(oOverlay) {
 		if (!oOverlay) {
@@ -172,7 +174,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	OverlayUtil.getNextSiblingOverlay = function(oOverlay) {
 		if (!oOverlay) {
@@ -203,7 +205,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	OverlayUtil.getPreviousSiblingOverlay = function(oOverlay) {
 		if (!oOverlay) {
@@ -234,7 +236,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	OverlayUtil.getNextOverlay = function(oOverlay) {
 		if (!oOverlay) {
@@ -260,7 +262,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	OverlayUtil.getPreviousOverlay = function(oOverlay) {
 		if (!oOverlay) {
@@ -287,7 +289,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	OverlayUtil.getRootOverlay = function(oOverlay) {
 		var oParentOverlay = oOverlay;
@@ -300,7 +302,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	OverlayUtil.iterateOverlayElementTree = function(oElementOverlay, fnCallback) {
 		var that = this;
@@ -315,7 +317,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * 
+	 *
 	 */
 	OverlayUtil.iterateOverlayTree = function(oOverlay, fnCallback) {
 		var that = this;
@@ -325,7 +327,7 @@ sap.ui.define([
 		oOverlay.getChildren().forEach(function(oChildOverlay) {
 			that.iterateOverlayTree(oChildOverlay, fnCallback);
 		});
-	};	
+	};
 
 	return OverlayUtil;
 }, /* bExport= */true);
