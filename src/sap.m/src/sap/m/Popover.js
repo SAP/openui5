@@ -1742,7 +1742,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		this._beginButton = oButton;
 
 		if (oButton) {
-			oButton.setType(sap.m.ButtonType.Transparent);
 			if (oOldBeginButton) {
 				this._internalHeader.removeAggregation("contentLeft", oOldBeginButton, true);
 			}
@@ -1767,7 +1766,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './InstanceManager', '.
 		this._endButton = oButton;
 
 		if (oButton) {
-			oButton.setType(sap.m.ButtonType.Transparent);
 			if (oOldEndButton) {
 				this._internalHeader.removeAggregation("contentRight", oOldEndButton, true);
 			}
