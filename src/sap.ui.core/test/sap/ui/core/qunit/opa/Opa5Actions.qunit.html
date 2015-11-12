@@ -17,6 +17,7 @@
 		jQuery.sap.require("sap.ui.qunit.qunit-junit");
 		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 		jQuery.sap.require("sap.ui.thirdparty.sinon");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
 		sap.ui.require([
@@ -55,7 +56,7 @@
 				});
 
 				// empty the queue
-				this.clock.tick(0);
+				this.clock.tick(100);
 			});
 
 
@@ -82,7 +83,7 @@
 				});
 
 				// empty the queue
-				this.clock.tick(0);
+				this.clock.tick(100);
 			});
 
 			QUnit.test("Should not execute an action before the check returns true", function(assert) {
@@ -116,7 +117,7 @@
 
 				// set the check to true
 				// and empty the queue
-				this.clock.tick(0);
+				this.clock.tick(100);
 			});
 
 			QUnit.test("Should catch exceptions in actions", function (assert) {
@@ -141,7 +142,7 @@
 				// empty the queue
 				assert.throws(function () {
 					// triggers the exception
-					this.clock.tick(0)
+					this.clock.tick(100)
 				}.bind(this));
 				start();
 			});
