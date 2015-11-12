@@ -273,13 +273,31 @@ sap.ui.define([
 		 * @param {string} [oOptions.errorMessage] Will be displayed as an errorMessage depending on your unit test framework.
 		 * Currently the only adapter for Opa5 is QUnit.
 		 * This message is displayed if Opa5 has reached its timeout before QUnit has reached it.
-		 * @param {function|function[]|sap.ui.test.actions.Action|sap.ui.test.actions.Action[]} oOptions.actions Available since 1.34.0. An array of functions or Actions or a mixture of both.
-		 * An action has an 'executeOn' function that will receive a single control as a parameter. If there are multiple actions defined all of them
+		 * @param {function|function[]|sap.ui.test.actions.Action|sap.ui.test.actions.Action[]} oOptions.actions
+		 * Available since 1.34.0. An array of functions or Actions or a mixture of both.
+		 * An action has an 'executeOn' function that will receive a single control as a parameter.
+		 * If there are multiple actions defined all of them
 		 * will be executed (first in first out) on each control of, similar to the matchers.
 		 * But actions will only be executed once and only after the check function returned true.
+		 * Before an action is executed the {@link sap.ui.test.matchers.Interactable} matcher will check if the action may be exected.
+		 * That means actions will only be executed if the control is not:
+		 * <ul>
+		 *     <li>
+		 *         Behind an open dialog
+		 *     </li>
+		 *     <li>
+		 *         Inside of a navigating NavContainer
+		 *     </li>
+		 *     <li>
+		 *         Busy
+		 *     </li>
+		 *     <li>
+		 *         Inside a Parent control that is Busy
+		 *     </li>
+		 * </ul>
 		 * If there are multiple controls in Opa5's result set the action will be executed on all of them.
 		 * The actions will be invoked directly before success is called.
-		 * In the documentation of the success parameter there is a list of conditions that have to be fullfilled.
+		 * In the documentation of the success parameter there is a list of conditions that have to be fulfilled.
 		 * They also apply for the actions.
 		 * There are some predefined actions in the @{link sap.ui.test.actions} namespace.
 		 * @returns {jQuery.promise} A promise that gets resolved on success
@@ -305,7 +323,14 @@ sap.ui.define([
 
 				}
 
-				vControl = Opa5.getPlugin().getMatchingControls(oOptions);
+
+				// Create a new options object for the plugin to keep the original one as is
+				var oPluginOptions = $.extend({}, oOptions, {
+					// only pass interactable if there are actions for backwards compatibility
+					interactable: !!vActions
+				});
+
+				vControl = Opa5.getPlugin().getMatchingControls(oPluginOptions);
 
 				//Search for a controlType in a view or open dialog
 				if ((oOptions.viewName || oOptions.searchOpenDialogs) && !oOptions.id && !vControl || (vControl && vControl.length === 0)) {
