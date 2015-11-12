@@ -24,13 +24,18 @@ sap.ui.define([
 
 		createContent : function () {
 			var bHasOwnProxy = this.proxy !== sap.ui.core.sample.common.Component.prototype.proxy,
+				oModel = this.getModel(),
 				fnProxy = bHasOwnProxy
 					? this.proxy
 					: TestUtils.proxy,
-				oModel = new ODataModel({
-					serviceUrl: fnProxy("/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/")
-				}),
+				sServiceUrl = fnProxy(oModel.sServiceUrl),
 				bRealOData = TestUtils.isRealOData();
+
+			if (oModel.sServiceUrl !== sServiceUrl) {
+				//replace model from manifest in case of proxy
+				oModel = new ODataModel(sServiceUrl);
+				this.setModel(oModel);
+			}
 
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(sinon.sandbox.create(), {
@@ -45,7 +50,7 @@ sap.ui.define([
 				type : sap.ui.core.mvc.ViewType.XML,
 				id : "MainView",
 				viewName : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Main",
-				models : { undefined: oModel,
+				models : {
 					ui : new JSONModel({
 						bRealOData : bRealOData,
 						icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
