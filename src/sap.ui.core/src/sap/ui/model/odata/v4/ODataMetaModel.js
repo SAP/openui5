@@ -4,12 +4,13 @@
 
 //Provides class sap.ui.model.odata.v4.ODataMetaModel
 sap.ui.define([
+	'sap/ui/model/ClientContextBinding',
 	'sap/ui/model/MetaModel',
 	'sap/ui/model/PropertyBinding',
 	"sap/ui/model/odata/ODataUtils",
 	'sap/ui/model/odata/v4/_ODataHelper',
 	'sap/ui/model/odata/v4/_SyncPromise'
-], function (MetaModel, PropertyBinding, ODataUtils, Helper, SyncPromise) {
+], function (ClientContextBinding, MetaModel, PropertyBinding, ODataUtils, Helper, SyncPromise) {
 	"use strict";
 
 	var rEntitySetName = /^(\w+)(\[|\(|$)/, // identifier followed by [,( or at end of string
@@ -93,6 +94,10 @@ sap.ui.define([
 	function error(sError, sPath) {
 		throw new Error(sError + ": " + sPath);
 	}
+
+	ODataMetaModel.prototype.bindContext = function (sPath, oContext, mParameters) {
+		return new ClientContextBinding(this, sPath, oContext, mParameters);
+	};
 
 	ODataMetaModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
 		return new ODataMetaPropertyBinding(this, sPath, oContext, mParameters);

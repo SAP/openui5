@@ -25,14 +25,14 @@ sap.ui.define([
 
 		createContent : function () {
 			var bHasOwnProxy = this.proxy !== sap.ui.core.sample.common.Component.prototype.proxy,
+				oLayout = new HBox(),
+				oMetaModel,
 				oModel = this.getModel(),
 				fnProxy = bHasOwnProxy
 					? this.proxy
 					: TestUtils.proxy,
-				sServiceUrl = fnProxy(oModel.sServiceUrl),
-				oLayout = new HBox(),
-				oMetaModel,
-				bRealOData = TestUtils.isRealOData();
+				bRealOData = TestUtils.isRealOData(),
+				sServiceUrl = fnProxy(oModel.sServiceUrl);
 
 			if (oModel.sServiceUrl !== sServiceUrl) {
 				//replace model from manifest in case of proxy
@@ -51,18 +51,19 @@ sap.ui.define([
 			}
 
 			oMetaModel.requestObject("/").then(function () {
-				oLayout.addItem(sap.ui.xmlview({
+				oLayout.addItem(sap.ui.view({
 					async : true,
 					id : "MainView",
 					models : {
 						undefined : oModel,
-						meta : oMetaModel,
 						ui : new JSONModel({
 							bRealOData : bRealOData,
 							icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
 							iconTooltip : bRealOData ? "real OData service" : "mock OData service"
 						})
 					},
+					preprocessors: {xml : { models : { meta : oMetaModel }}},
+					type : sap.ui.core.mvc.ViewType.XML,
 					viewName : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Main"
 				}));
 			});

@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.require([
+	"sap/ui/model/ClientContextBinding",
 	"sap/ui/model/MetaModel",
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/_SyncPromise",
@@ -10,8 +11,8 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (MetaModel, Helper, SyncPromise, ODataDocumentModel, ODataMetaModel, ODataModel,
-		PropertyBinding, TestUtils) {
+], function (ClientContextBinding, MetaModel, Helper, SyncPromise, ODataDocumentModel,
+		ODataMetaModel, ODataModel, PropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -803,13 +804,23 @@ sap.ui.require([
 		assert.strictEqual(oBinding.mParameters, mParameters);
 		assert.strictEqual(oBinding.getValue(), oValue);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("bindContext", function (assert) {
+		var oBinding,
+			oContext = this.oMetaModel.createBindingContext("/EntitySets('Foo')"),
+			mParameters = [],
+			sPath = "Name";
+
+		oBinding = this.oMetaModel.bindContext(sPath, oContext, mParameters);
+
+		assert.ok(oBinding instanceof ClientContextBinding);
+		assert.strictEqual(oBinding.getModel(), this.oMetaModel);
+		assert.strictEqual(oBinding.getPath(), sPath);
+		assert.strictEqual(oBinding.getContext(), oContext);
+		assert.strictEqual(oBinding.mParameters, mParameters);
+	});
 });
-//TODO test proper replacement of bindings in preprocessing
-//TODO test template:require
-//TODO test template:alias
-//TODO test core:fragment
-//TODO test template:if
-//TODO test template:with
 
 //TODO template:repeat -> listbinding
 
