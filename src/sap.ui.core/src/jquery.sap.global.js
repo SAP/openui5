@@ -3643,20 +3643,6 @@
 		jQuery.support.hasFlexBoxSupport = false;
 	}
 
-	// *********** fixes for (pending) jQuery bugs **********
-	if ( jQuery.support.opacity === false ) { // TODO check wether this can be removed for all jquery versions now (assumption: only needed in IE8)
-		(function() {
-			// jQuery cssHook for setOpacity[IE8] doesn't properly cleanup the CSS filter property
-			var oldSet = jQuery.cssHooks.opacity.set;
-			jQuery.cssHooks.opacity.set = function( elem, value ) {
-				oldSet.apply(this, arguments);
-				if ( !jQuery.trim(elem.style.filter) ) {
-					elem.style.removeAttribute("filter");
-				}
-			};
-		}());
-	}
-
 	// *** Performance measure ***
 	function PerfMeasurement(){
 
