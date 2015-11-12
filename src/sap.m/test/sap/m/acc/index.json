@@ -177,6 +177,11 @@
 			"appComponent": "CA-UI5-CTR-SOF"
 		},
 		{
+			"control": "sap.m.Page",
+			"url": "Page.html",
+			"appComponent": "CA-UI5-CTR-SOF-RIL"
+		},
+		{
 			"control": "sap.m.Panel",
 			"url": "Panel.html",
 			"appComponent": "CA-UI5-CTR-SOF-RIL"
