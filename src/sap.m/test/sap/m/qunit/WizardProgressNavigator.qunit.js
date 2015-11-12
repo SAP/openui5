@@ -24,6 +24,14 @@
 		assert.deepEqual(this.oProgressNavigator.getStepTitles(), [], "should be and empty array");
 	});
 
+	QUnit.test("stepTitles should default to an empty array when NOT ALL steps have titles", function (assert) {
+		this.oProgressNavigator.setStepCount(3);
+		this.oProgressNavigator.setStepIcons(["one", "two"]);
+		sap.ui.getCore().applyChanges();
+
+		assert.deepEqual(this.oProgressNavigator.getStepTitles(), [], "should be and empty array");
+	});
+
 	QUnit.test("Default value for stepIcons", function (assert) {
 		assert.deepEqual(this.oProgressNavigator.getStepIcons(), [], "should be and empty array");
 	});
@@ -149,10 +157,34 @@
 		assert.strictEqual($progNav.hasClass("sapMWizardProgressNav"), true);
 	});
 
-	QUnit.test("Class sapMWizardProgressNavList should be present only once", function (assert) {
+	QUnit.test("Class sapMWizardProgressNavList should be present once when steps ARE NOT varying", function (assert) {
 		var $progNav = this.oProgressNavigator.$();
 
 		assert.strictEqual($progNav.find(".sapMWizardProgressNavList").length, 1);
+	});
+
+	QUnit.test("Class sapMWizardProgressNavListVarying should be present once when steps ARE varying", function (assert) {
+		this.oProgressNavigator.setVaryingStepCount(true);
+		sap.ui.getCore().applyChanges();
+
+		var $progNav = this.oProgressNavigator.$();
+
+		assert.strictEqual($progNav.find(".sapMWizardProgressNavListVarying").length, 1);
+	});
+
+	QUnit.test("Class sapMWizardProgressNavListNoTitles should be present once when there are NO titles", function (assert) {
+		var $progNav = this.oProgressNavigator.$();
+
+		assert.strictEqual($progNav.find(".sapMWizardProgressNavListNoTitles").length, 1);
+	});
+
+	QUnit.test("Class sapMWizardProgressNavListNoTitles should NOT be present once when there ARE titles", function (assert) {
+		this.oProgressNavigator.setStepTitles(["1", "2", "3", "4", "5"]);
+		sap.ui.getCore().applyChanges();
+
+		var $progNav = this.oProgressNavigator.$();
+
+		assert.strictEqual($progNav.find(".sapMWizardProgressNavListNoTitles").length, 0);
 	});
 
 	QUnit.test("When stepCount = 5, list items should be 5", function (assert) {
@@ -169,21 +201,45 @@
 			"sapMWizardProgressNavAnchor class should be present 5 times");
 	});
 
-	QUnit.test("When stepCount = 5 and varyingStepCount = false, separators should be 4", function (assert) {
+	QUnit.test("When stepCount = 5, circles should be 5", function (assert) {
 		var $progNav = this.oProgressNavigator.$();
 
-		assert.strictEqual($progNav.find(".sapMWizardProgressNavSeparator").length, 4,
-			"sapMWizardProgressNavSeparator class should be present 4 times");
+		assert.strictEqual($progNav.find(".sapMWizardProgressNavAnchorCircle").length, 5,
+			"sapMWizardProgressNavAnchorCircle class should be present 5 times");
 	});
 
-	QUnit.test("When stepCount = 5 and varyingStepCount = true, separators should be 5", function (assert) {
-		this.oProgressNavigator.setVaryingStepCount(true);
+	QUnit.test("When stepCount = 5 and no titles are provided, titles should NOT be present", function (assert) {
+		var $progNav = this.oProgressNavigator.$();
+
+		assert.strictEqual($progNav.find(".sapMWizardProgressNavAnchorTitle").length, 0,
+			"sapMWizardProgressNavAnchorTitle class should be present 0 times");
+	});
+
+	QUnit.test("When stepCount = 5 and all have titles, titles should be 5", function (assert) {
+		this.oProgressNavigator.setStepTitles(["1", "2", "3", "4", "5"]);
 		sap.ui.getCore().applyChanges();
 
 		var $progNav = this.oProgressNavigator.$();
 
-		assert.strictEqual($progNav.find(".sapMWizardProgressNavSeparator").length, 5,
-			"sapMWizardProgressNavSeparator class should be present 5 times");
+		assert.strictEqual($progNav.find(".sapMWizardProgressNavAnchorTitle").length, 5,
+			"sapMWizardProgressNavAnchorTitle class should be present 5 times");
+	});
+
+	QUnit.test("When stepCount = 5 and no icons are provided, icons should be 0", function (assert) {
+		var $progNav = this.oProgressNavigator.$();
+
+		assert.strictEqual($progNav.find(".sapMWizardProgressNavAnchorIcon").length, 0,
+			"sapMWizardProgressNavAnchorIcon class should be present 0 times");
+	});
+
+	QUnit.test("When stepCount = 5 and all have icons, icons should be 5", function (assert) {
+		this.oProgressNavigator.setStepIcons(["sap-icon://permission", "sap-icon://permission", "sap-icon://permission", "sap-icon://permission", "sap-icon://permission"]);
+		sap.ui.getCore().applyChanges();
+
+		var $progNav = this.oProgressNavigator.$();
+
+		assert.strictEqual($progNav.find(".sapMWizardProgressNavAnchorIcon").length, 5,
+			"sapMWizardProgressNavAnchorIcon class should be present 5 times");
 	});
 
 	QUnit.module("sap.m.WizardProgressNavigator Events", {

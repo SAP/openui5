@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./library", "sap/ui/core/Control", "sap/ui/core/delegate/ItemNavigation", "jquery.sap.global"],
-function (library, Control, ItemNavigation, jQuery) {
+sap.ui.define(["./library", "sap/ui/core/Control", "sap/ui/core/ResizeHandler", "sap/ui/core/delegate/ItemNavigation", "jquery.sap.global"],
+function (library, Control, ResizeHandler, ItemNavigation, jQuery) {
 	"use strict";
 
 	/**
@@ -40,6 +40,8 @@ function (library, Control, ItemNavigation, jQuery) {
 			/**
 			 * Sets a title to be displayed for each step.
 			 * The title for each step is visible on hover.
+			 * <b>Note:</b> The number of titles should equal the number of steps,
+			 * otherwise no titles will be rendered.
 			 */
 			stepTitles: {type: "string[]", group: "Appearance", defaultValue: []},
 
@@ -94,16 +96,21 @@ function (library, Control, ItemNavigation, jQuery) {
 
 	WizardProgressNavigator.CONSTANTS = {
 		MINIMUM_STEPS: 3,
-		MAXIMUM_STEPS: 8
+		MAXIMUM_STEPS: 8,
+		MIN_STEP_WIDTH_NO_TITLE: 64,
+		MIN_STEP_WIDTH_WITH_TITLE: 200
 	};
 
 	WizardProgressNavigator.CLASSES = {
 		NAVIGATION: "sapMWizardProgressNav",
 		LIST: "sapMWizardProgressNavList",
+		LIST_VARYING: "sapMWizardProgressNavListVarying",
+		LIST_NO_TITLES: "sapMWizardProgressNavListNoTitles",
 		STEP: "sapMWizardProgressNavStep",
 		ANCHOR: "sapMWizardProgressNavAnchor",
-		SEPARATOR: "sapMWizardProgressNavSeparator",
-		ICON: "sapMWizardProgressNavIcon"
+		ANCHOR_CIRCLE: "sapMWizardProgressNavAnchorCircle",
+		ANCHOR_TITLE: "sapMWizardProgressNavAnchorTitle",
+		ANCHOR_ICON: "sapMWizardProgressNavAnchorIcon"
 	};
 
 	WizardProgressNavigator.ATTRIBUTES = {
@@ -111,7 +118,8 @@ function (library, Control, ItemNavigation, jQuery) {
 		STEP_COUNT: "data-sap-ui-wpn-step-count",
 		CURRENT_STEP: "data-sap-ui-wpn-step-current",
 		ACTIVE_STEP: "data-sap-ui-wpn-step-active",
-		OPEN_SEPARATOR: "data-sap-ui-wpn-separator-open",
+		OPEN_STEP: "data-sap-ui-wpn-step-open",
+		OPEN_STEP_PREV: "data-sap-ui-wpn-step-open-prev",
 		ARIA_LABEL: "aria-label",
 		ARIA_DISABLED: "aria-disabled"
 	};
@@ -126,7 +134,6 @@ function (library, Control, ItemNavigation, jQuery) {
 		this._currentStep = 1;
 		this._activeStep = 1;
 		this._cachedSteps = null;
-		this._cachedSeparators = null;
 		this._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		this._createAnchorNavigation();
 	};
@@ -136,7 +143,13 @@ function (library, Control, ItemNavigation, jQuery) {
 		if (this.getStepCount() !== this.getStepIcons().filter(String).length) {
 			this.setStepIcons([]);
 		}
+
+		// show no titles if a title is not defined for each step
+		if (this.getStepCount() !== this.getStepTitles().filter(String).length) {
+			this.setStepTitles([]);
+		}
 	};
+
 
 	WizardProgressNavigator.prototype.onAfterRendering = function () {
 		var zeroBasedActiveStep = this._activeStep - 1,
@@ -144,7 +157,6 @@ function (library, Control, ItemNavigation, jQuery) {
 
 		this._cacheDOMElements();
 		this._updateStepZIndex();
-		this._updateSeparatorsOpenAttribute();
 
 		this._updateAnchorNavigation(zeroBasedActiveStep);
 		this._updateStepActiveAttribute(zeroBasedActiveStep);
@@ -152,6 +164,9 @@ function (library, Control, ItemNavigation, jQuery) {
 
 		this._updateStepCurrentAttribute(zeroBasedCurrentStep);
 		this._updateAnchorAriaLabelAttribute(zeroBasedCurrentStep);
+
+		this._updateOpenSteps();
+		ResizeHandler.register(this.getDomRef(), this._updateOpenSteps.bind(this));
 	};
 
 	/**
@@ -249,13 +264,13 @@ function (library, Control, ItemNavigation, jQuery) {
 	WizardProgressNavigator.prototype.onsapenter = WizardProgressNavigator.prototype.onsapspace;
 
 	WizardProgressNavigator.prototype.exit = function () {
+		ResizeHandler.deregisterAllForControl(this.getId());
 		this.removeDelegate(this._anchorNavigation);
 		this._anchorNavigation.destroy();
 		this._anchorNavigation = null;
 		this._currentStep = null;
 		this._activeStep = null;
 		this._cachedSteps = null;
-		this._cachedSeparators = null;
 	};
 
 	/**
@@ -287,7 +302,6 @@ function (library, Control, ItemNavigation, jQuery) {
 		var domRef = this.getDomRef();
 
 		this._cachedSteps = domRef.querySelectorAll("." + WizardProgressNavigator.CLASSES.STEP);
-		this._cachedSeparators = domRef.querySelectorAll("." + WizardProgressNavigator.CLASSES.SEPARATOR);
 	};
 
 	/**
@@ -308,41 +322,6 @@ function (library, Control, ItemNavigation, jQuery) {
 			} else {
 				this._cachedSteps[i].style.zIndex = zIndex;
 				zIndex -= 1;
-			}
-		}
-	};
-
-	/**
-	 * Sets the data-sap-ui-wpn-separator-open attribute to true based on the current step.
-	 * For step 1 we need 3 open separators after it.
-	 * For steps 2 to the penultimate step we need 1 open separator before and 2 after the step.
-	 * For the penultimate and ultimate step we need the last 3 separators open.
-	 * @returns {void}
-	 * @private
-	 */
-	WizardProgressNavigator.prototype._updateSeparatorsOpenAttribute = function () {
-		var separatorsLength = this._cachedSeparators.length,
-			startIndex,
-			endIndex;
-
-		if (this._currentStep === 1) {
-			startIndex = 0;
-			endIndex = 2;
-		} else if (this._currentStep > 1 && this._currentStep < separatorsLength) {
-			startIndex = this._currentStep - 2;
-			endIndex = this._currentStep;
-		} else {
-			startIndex = separatorsLength - 3;
-			endIndex = separatorsLength - 1;
-		}
-
-		for (var i = 0; i < separatorsLength; i++) {
-			if (startIndex <= i && i <= endIndex) {
-				this._cachedSeparators[i]
-					.setAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_SEPARATOR, true);
-			} else {
-				this._cachedSeparators[i]
-					.removeAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_SEPARATOR);
 			}
 		}
 	};
@@ -503,7 +482,7 @@ function (library, Control, ItemNavigation, jQuery) {
 
 		this._currentStep = newStep;
 		this._updateStepZIndex();
-		this._updateSeparatorsOpenAttribute();
+		this._updateOpenSteps();
 		this._updateStepCurrentAttribute(zeroBasedNewStep, zeroBasedOldStep);
 		this._updateAnchorAriaLabelAttribute(zeroBasedNewStep, zeroBasedOldStep);
 
@@ -511,6 +490,61 @@ function (library, Control, ItemNavigation, jQuery) {
 			previous: oldStep,
 			current: newStep
 		});
+	};
+
+	/**
+	 * Updates the open step attribute for each step in as the DOM structure of the control.
+	 * @returns {void}
+	 * @private
+	 */
+	WizardProgressNavigator.prototype._updateOpenSteps = function () {
+		var width = this.$().width(),
+			currStep = this._currentStep - 1,
+			counter = 0,
+			isForward = true,
+			stepsToShow = this.getStepTitles().length ?
+				Math.floor(width / WizardProgressNavigator.CONSTANTS.MIN_STEP_WIDTH_WITH_TITLE) :
+				Math.floor(width / WizardProgressNavigator.CONSTANTS.MIN_STEP_WIDTH_NO_TITLE);
+
+
+		[].forEach.call(this._cachedSteps, function (step) {
+			step.setAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP, false);
+			step.setAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP_PREV, false);
+		});
+
+		this._cachedSteps[currStep].setAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP, true);
+
+		for (var i = 1; i < stepsToShow; i++) {
+			if (isForward) {
+				counter += 1;
+			}
+
+			if (isForward && this._cachedSteps[currStep + counter]) {
+				this._cachedSteps[currStep + counter].setAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP, true);
+				isForward = !isForward;
+			} else if (!isForward && this._cachedSteps[currStep - counter]) {
+				this._cachedSteps[currStep - counter].setAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP, true);
+				isForward = !isForward;
+			} else if (this._cachedSteps[currStep + counter + 1]) {
+				counter += 1;
+				this._cachedSteps[currStep + counter].setAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP, true);
+				isForward = true;
+			} else if (this._cachedSteps[currStep - counter]) {
+				this._cachedSteps[currStep - counter].setAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP, true);
+				counter += 1;
+				isForward = false;
+			}
+		}
+
+		for (i = 0; i < this._cachedSteps.length; i++) {
+			if (this._cachedSteps[i].getAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP) == "true" &&
+				this._cachedSteps[i - 1] &&
+				this._cachedSteps[i - 1].getAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP) == "false") {
+
+				this._cachedSteps[i - 1].setAttribute(WizardProgressNavigator.ATTRIBUTES.OPEN_STEP_PREV, true);
+				break;
+			}
+		}
 	};
 
 	/**

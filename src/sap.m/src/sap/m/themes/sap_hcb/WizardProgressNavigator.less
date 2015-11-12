@@ -1,14 +1,11 @@
 .sapMWizardProgressNav {
 	background: @sapHCStandardBG;
-	border-color: @sapHCStandardFG;
+	font-size: @sapMFontMediumSize;
+	border-bottom: 0.0625rem solid @sapHCStandardFG;
 }
 
 .sapMWizardProgressNavAnchor {
-	color: @sapHCStandardFG;
-	background: @sapHCStandardBG;
-	border-color: @sapHCStandardFG;
-
-	&:hover {
+	&:hover .sapMWizardProgressNavAnchorCircle {
 		background: @sapHCHighlightBG;
 	}
 
@@ -17,35 +14,51 @@
 	}
 }
 
-.sapMWizardProgressNavSeparator::after {
+.sapMWizardProgressNavAnchorCircle {
+	background: @sapHCStandardBG;
 	border-color: @sapHCStandardFG;
+	color: @sapHCStandardFG;
+}
+
+.sapMWizardProgressNavAnchorIcon {
+	font-size: @sapMFontLargeSize;
+}
+
+.sapMWizardProgressNavAnchorTitle {
+	color: @sapHCStandardFG;
+	background: @sapHCStandardBG;
+}
+
+.sapMWizardProgressNavStep::after {
+	border-bottom-color: @sapHCStandardFG;
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
-	&::after {
+	& .sapMWizardProgressNavAnchor::after {
 		background: @sapHCStandardFG;
 
 		/* in HCB the underline should equal a total ot 0.1875rem (0.125rem + 1px (= 0.0625rem)) */
 		bottom: ((@listHeight - @navHeight) / 2)  + 0.0625rem;
 	}
 
-	& > .sapMWizardProgressNavAnchor {
-		color: @sapHCStandardFG;
+	& .sapMWizardProgressNavAnchorCircle {
 		background: @sapHCHighlightAltBG;
+		color: @sapHCStandardFG;
 	}
 }
 
 .sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
 
 	/* anchors in all steps after the active one have inactive style */
-	& ~ .sapMWizardProgressNavStep > .sapMWizardProgressNavAnchor {
-		color: @sapHCReducedAltFG;
+	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavAnchorCircle {
 		background: @sapHCReducedBG;
 		border-color: @sapHCReducedAltFG;
+		color: @sapHCReducedAltFG;
 	}
 
-	/* all separators after the active step have inactive style */
-	& ~ .sapMWizardProgressNavSeparator::after {
-		border-color: @sapHCReducedAltFG;
+	/* all separators after (and including) the active step have inactive style */
+	&::after,
+	& ~ .sapMWizardProgressNavStep::after {
+		border-bottom-color: @sapHCReducedAltFG;
 	}
 }
