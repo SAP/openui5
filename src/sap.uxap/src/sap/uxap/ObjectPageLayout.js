@@ -173,7 +173,8 @@ sap.ui.define([
 				 * The event is fired when the Edit Header button is pressed
 				 */
 				editHeaderButtonPress: {}
-			}
+			},
+			designTime : true
 		}
 	});
 
