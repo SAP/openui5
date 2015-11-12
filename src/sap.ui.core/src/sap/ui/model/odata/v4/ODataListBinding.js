@@ -5,8 +5,8 @@
 //Provides class sap.ui.model.odata.v4.ODataListBinding
 sap.ui.define([
 	"jquery.sap.global", "sap/ui/model/Binding", "sap/ui/model/ChangeReason",
-	"sap/ui/model/ListBinding", "./_ODataHelper", "./lib/_Cache", "./lib/_Requestor"
-], function (jQuery, Binding, ChangeReason, ListBinding, Helper, Cache, Requestor) {
+	"sap/ui/model/ListBinding", "./_ODataHelper", "./lib/_Cache"
+], function (jQuery, Binding, ChangeReason, ListBinding, Helper, Cache) {
 	"use strict";
 
 	/**
@@ -78,8 +78,7 @@ sap.ui.define([
 	ODataListBinding.prototype.getContexts = function (iStart, iLength) {
 		var oContext = this.getContext(),
 			oModel = this.getModel(),
-			sRelativePath,
-			oRequestor,
+			sUrl,
 			sResolvedPath = oModel.resolve(this.getPath(), oContext),
 			that = this;
 
@@ -162,20 +161,16 @@ sap.ui.define([
 				oModel.read(sResolvedPath, true)
 					.then(createContexts.bind(undefined, getDependentPath));
 			}  else {
-				sRelativePath = sResolvedPath.slice(1);
+				sUrl = oModel.sServiceUrl + sResolvedPath.slice(1);
 				if (!this.oCache) {
 					if (this.sExpand) {
-						sRelativePath += "?$expand=" + encodeURIComponent(this.sExpand);
+						sUrl += "?$expand=" + encodeURIComponent(this.sExpand);
 					}
-					oRequestor = Requestor.create(oModel.sServiceUrl, {
-						"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguage()
-					});
-					this.oCache = Cache.create(oRequestor, sRelativePath);
+					this.oCache = Cache.create(oModel.oRequestor, sUrl);
 				}
 				this.oCache.read(iStart, iLength)
 					.then(createContexts.bind(undefined, getBasePath), function (oError) {
-						jQuery.sap.log.error("Failed to get contexts for "
-							+ oModel.sServiceUrl + sRelativePath
+						jQuery.sap.log.error("Failed to get contexts for " + sUrl
 							+ " with start index " + iStart + " and length " + iLength, oError,
 							"sap.ui.model.odata.v4.ODataListBinding");
 					});

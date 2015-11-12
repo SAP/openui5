@@ -18,28 +18,27 @@ sap.ui.define(["jquery.sap.global"], function(jQuery) {
 	 * headers.
 	 *
 	 * @param {string} sServiceUrl
-	 *   root URL of the service to request data from; must end with a forward slash according
-	 *   to OData V4 specification ABNF, rule "serviceRoot"
+	 *   URL of the service document to request the CSRF token from
 	 * @param {object} mHeaders
 	 *   map of default headers; may be overridden with request-specific headers; certain
 	 *   predefined OData v4 headers are added by default, but may be overridden
 	 * @private
 	 */
 	function Requestor(sServiceUrl, mHeaders) {
-		this.sServiceUrl = sServiceUrl;
+//FIX4MASTER		this.sServiceUrl = sServiceUrl;
 		this.mHeaders = mHeaders;
 	}
 
 	/**
-	 * Sends an HTTP request using the given method to the given relative URL, using the given
+	 * Sends an HTTP request using the given method to the given URL, using the given
 	 * request-specific headers in addition to the predefined OData v4 headers and the default
 	 * headers given to the factory.
 	 *
 	 * @param {string} sMethod
 	 *   HTTP method, e.g. "GET"
-	 * @param {string} sRelativeUrl
-	 *   some URL which is relative to the root URL of the service, must not start with a forward
-	 *   slash
+	 * @param {string} sUrl
+	 *   some absolute URL (which must belong to the service for which this requestor has been
+	 *   created)
 	 * @param {object} mHeaders
 	 *   map of request-specific headers, overriding both the predefined OData v4 headers and the
 	 *   default headers given to the factory
@@ -47,9 +46,9 @@ sap.ui.define(["jquery.sap.global"], function(jQuery) {
 	 *   a promise on the outcome of the HTTP request
 	 * @private
 	 */
-	Requestor.prototype.request = function(sMethod, sRelativeUrl, mHeaders) {
+	Requestor.prototype.request = function(sMethod, sUrl, mHeaders) {
 		return Promise.resolve(
-			jQuery.ajax(this.sServiceUrl + sRelativeUrl, {
+			jQuery.ajax(sUrl, {
 				headers : jQuery.extend({}, mPredefinedHeaders, this.mHeaders, mHeaders),
 				method : sMethod
 			})
@@ -67,8 +66,7 @@ sap.ui.define(["jquery.sap.global"], function(jQuery) {
 		 * headers.
 		 *
 		 * @param {string} sServiceUrl
-		 *   root URL of the service to request data from; must end with a forward slash according
-		 *   to OData V4 specification ABNF, rule "serviceRoot"
+		 *   URL of the service document to request the CSRF token from
 		 * @param {object} mHeaders
 		 *   map of default headers; may be overridden with request-specific headers; certain
 		 *   OData v4 headers are predefined, but may be overridden by the default or

@@ -7,13 +7,14 @@ sap.ui.require([
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/_SyncPromise",
+	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/ODataContextBinding",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataMetaModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataPropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (Model, TypeString, ODataUtils, Helper, SyncPromise, ODataContextBinding,
+], function (Model, TypeString, ODataUtils, Helper, SyncPromise, Requestor, ODataContextBinding,
 		ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding, TestUtils) {
 	/*global odatajs, QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
@@ -122,10 +123,24 @@ sap.ui.require([
 			return new ODataModel("/foo");
 		}, new Error("Service root URL must end with '/'"));
 
-		assert.ok(new ODataModel("/foo/") instanceof Model);
 		assert.strictEqual(new ODataModel("/foo/").sServiceUrl, "/foo/");
 		assert.strictEqual(new ODataModel({"serviceUrl" : "/foo/"}).sServiceUrl, "/foo/",
 			"serviceUrl in mParameters");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Model creates Requestor", function (assert) {
+		var oModel,
+			oRequestor = {};
+
+		this.mock(Requestor).expects("create").withExactArgs("/foo/", {
+			"Accept-Language" : "ab-CD"
+		}).returns(oRequestor);
+
+		oModel = new ODataModel("/foo/");
+
+		assert.ok(oModel instanceof Model);
+		assert.strictEqual(oModel.oRequestor, oRequestor);
 	});
 
 	//*********************************************************************************************

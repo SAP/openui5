@@ -38,13 +38,13 @@ sap.ui.require([
 	].forEach(function (oFixture) {
 		QUnit.test("read(" + oFixture.index + ", " + oFixture.length + ")", function (assert) {
 			var oRequestor = Requestor.create("/~/"),
-				sRelativePath = "Employees",
-				oCache = Cache.create(oRequestor, sRelativePath),
+				sUrl = "/~/Employees",
+				oCache = Cache.create(oRequestor, sUrl),
 				oPromise,
 				oMockResult = {"@odata.context": "$metadata#TEAMS", value : ["a", "b", "c"]};
 
 			this.oSandbox.mock(oRequestor).expects("request")
-				.withExactArgs("GET", sRelativePath)
+				.withExactArgs("GET", sUrl)
 				.returns(Promise.resolve(oMockResult));
 
 			// code under test
@@ -62,9 +62,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("read(-1, 1)", function (assert) {
-		var oRequestor = Requestor.create("/+/"),
-			sRelativePath = "Employees",
-			oCache = Cache.create(oRequestor, sRelativePath);
+		var oRequestor = Requestor.create("/~/"),
+			sUrl = "/~/Employees",
+			oCache = Cache.create(oRequestor, sUrl);
 
 		this.oSandbox.mock(oRequestor).expects("request").never();
 
@@ -77,8 +77,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("read(1, -1)", function (assert) {
 		var oRequestor = Requestor.create("/~/"),
-			sRelativePath = "Employees",
-			oCache = Cache.create(oRequestor, sRelativePath);
+			sUrl = "/~/Employees",
+			oCache = Cache.create(oRequestor, sUrl);
 
 		this.oSandbox.mock(oRequestor).expects("request").never();
 
@@ -91,8 +91,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("multiple read, same range", function (assert) {
 		var oRequestor = Requestor.create("/~/"),
-			sRelativePath = "Employees",
-			oCache = Cache.create(oRequestor, sRelativePath),
+			sUrl = "/~/Employees",
+			oCache = Cache.create(oRequestor, sUrl),
 			oPromise1,
 			oPromise2,
 			oMockResult = {"@odata.context": "$metadata#TEAMS", value : ["a", "b", "c"]},
@@ -102,7 +102,7 @@ sap.ui.require([
 			};
 
 		this.oSandbox.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sRelativePath)
+			.withExactArgs("GET", sUrl)
 			.returns(Promise.resolve(oMockResult));
 
 		// code under test
@@ -119,8 +119,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("multiple read, different ranges", function (assert) {
 		var oRequestor = Requestor.create("/~/"),
-			sRelativePath = "Employees",
-			oCache = Cache.create(oRequestor, sRelativePath),
+			sUrl = "/~/Employees",
+			oCache = Cache.create(oRequestor, sUrl),
 			oPromise1,
 			oPromise2,
 			oMockResult = {"@odata.context": "$metadata#TEAMS", value : ["a", "b", "c"]},
@@ -128,7 +128,7 @@ sap.ui.require([
 			oExpected2 = ["a", "b"];
 
 		this.oSandbox.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sRelativePath)
+			.withExactArgs("GET", sUrl)
 			.returns(Promise.resolve(oMockResult));
 
 		// code under test

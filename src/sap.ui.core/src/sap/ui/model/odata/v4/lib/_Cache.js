@@ -11,13 +11,12 @@ sap.ui.define([], function() {
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
 	 *   the requestor
-	 * @param {string} sRelativeUrl
-	 *   the URL to request from (relative to the requestor's base URL). This URL must not start
-	 *   with '/'.
+	 * @param {string} sUrl
+	 *   the URL to request from
 	 */
-	function Cache(oRequestor, sRelativeUrl) {
+	function Cache(oRequestor, sUrl) {
 		this.oRequestor = oRequestor;
-		this.sRelativeUrl = sRelativeUrl;
+		this.sUrl = sUrl;
 		this.oRequestPromise = null;
 	}
 
@@ -40,7 +39,7 @@ sap.ui.define([], function() {
 			throw new Error("Illegal length " + iLength + ", must be >= 0");
 		}
 		if (!this.oRequestPromise) {
-			this.oRequestPromise = this.oRequestor.request("GET", this.sRelativeUrl);
+			this.oRequestPromise = this.oRequestor.request("GET", this.sUrl);
 		}
 
 		return this.oRequestPromise.then(function (oResult) {
@@ -59,14 +58,13 @@ sap.ui.define([], function() {
 		 *
 		 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
 		 *   the requestor
-		 * @param {string} sRelativeUrl
-		 *   the URL to request from (relative to the requestor's base URL). This URL must not start
-		 *   with '/'.
+		 * @param {string} sUrl
+		 *   the URL to request from
 		 * @return {sap.ui.model.odata.v4.lib._Cache}
 		 *   the cache
 		 */
-		create: function _create(oRequestor, sRelativeUrl) {
-			return new Cache(oRequestor, sRelativeUrl);
+		create: function _create(oRequestor, sUrl) {
+			return new Cache(oRequestor, sUrl);
 		}
 	};
 }, /* bExport= */false);
