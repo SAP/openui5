@@ -46,7 +46,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 				oRm.renderControl(oHeader);
 			}
 
-			this._renderHeaderContentDOM(oRm, oControl, oControl._bHContentAlwaysExpanded, "-stickyHeaderContent", oControl._bHContentAlwaysExpanded);
+			this._renderHeaderContentDOM(oRm, oControl, oControl._bHContentAlwaysExpanded, "-stickyHeaderContent");
 
 			// Sticky anchorBar placeholder
 			oRm.write("<div ");
@@ -75,7 +75,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			oRm.write(">");
 
 			// Header Content
-			this._renderHeaderContentDOM(oRm, oControl, !oControl._bHContentAlwaysExpanded, "-headerContent", true);
+			this._renderHeaderContentDOM(oRm, oControl, !oControl._bHContentAlwaysExpanded, "-headerContent");
 
 			// Anchor Bar
 			oRm.write("<section ");
@@ -156,22 +156,20 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 		 * @param sId - the id of the div that should be rendered
 		 * @param bRenderAlways - shows if the DOM of the control should be rendered no matter if the control is rendered inside or not
 		 */
-		ObjectPageLayoutRenderer._renderHeaderContentDOM = function (oRm, oControl, bRender, sId, bRenderAlways) {
-			if (bRenderAlways) {
-				oRm.write("<header ");
-				oRm.writeAttributeEscaped("id", oControl.getId() + sId);
-				oRm.addClass("ui-helper-clearfix");
-				oRm.addClass("sapUxAPObjectPageHeaderDetails");
-				oRm.addClass("sapUxAPObjectPageHeaderDetailsDesign-" + oControl._getHeaderDesign());
-				oRm.writeClasses();
-				oRm.writeAttribute("data-sap-ui-customfastnavgroup", true);
-				oRm.write(">");
-				// render Header Content control
-				if (bRender) {
-					this.renderHeaderContent(oRm, oControl);
-				}
-				oRm.write("</header>");
+		ObjectPageLayoutRenderer._renderHeaderContentDOM = function (oRm, oControl, bRender, sId) {
+			oRm.write("<header ");
+			oRm.writeAttributeEscaped("id", oControl.getId() + sId);
+			oRm.addClass("ui-helper-clearfix");
+			oRm.addClass("sapUxAPObjectPageHeaderDetails");
+			oRm.addClass("sapUxAPObjectPageHeaderDetailsDesign-" + oControl._getHeaderDesign());
+			oRm.writeClasses();
+			oRm.writeAttribute("data-sap-ui-customfastnavgroup", true);
+			oRm.write(">");
+			// render Header Content control
+			if (bRender) {
+				this.renderHeaderContent(oRm, oControl);
 			}
+			oRm.write("</header>");
 		};
 
 		/**
