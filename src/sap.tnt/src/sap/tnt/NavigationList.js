@@ -14,7 +14,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * The NavigationList control is an interactive control which provides a choice of different items.
+		 * The NavigationList control is an interactive control, which provides a choice of
+		 * different items, ordered as a list.
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
@@ -31,7 +32,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 				library: "sap.tnt",
 				properties: {
 					/**
-					 * Specifies the width.
+					 * Specifies the width of the control.
 					 */
 					width: {type: "sap.ui.core.CSSSize", group: "Dimension"},
 					/**
@@ -49,23 +50,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 				},
 				associations : {
 					/**
-					 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+					 * Association to controls / IDs, which describe this control (see WAI-ARIA attribute aria-describedby).
 					 */
 					ariaDescribedBy : { type: "sap.ui.core.Control", multiple: true, singularName: "ariaDescribedBy" },
 
 					/**
-					 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+					 * Association to controls / IDs, which label this control (see WAI-ARIA attribute aria-labelledby).
 					 */
 					ariaLabelledBy : { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 				},
 				events: {
 					/**
-					 * Fires when an item is selected.
+					 * Fired when an item is selected.
 					 */
 					itemSelect: {
 						parameters: {
 							/**
-							 * The selected item
+							 * The selected item.
 							 */
 							item: {type: "sap.ui.core.Item"}
 						}
@@ -74,6 +75,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 			}
 		});
 
+		/**
+		 * Initializes the control.
+		 * @private
+		 * @override
+		 */
 		NavigationList.prototype.init = function () {
 			this._itemNavigation = new ItemNavigation();
 			this._itemNavigation.setCycling(false);
@@ -85,19 +91,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 		};
 
 		/**
-		 * Sets if the control has "listbox" accessibility role.
+		 * Sets a listbox accessibility role to the control.
+		 * @private
 		 */
 		NavigationList.prototype.setHasListBoxRole = function (hasListBoxRole) {
 			this._hasListBoxRole = hasListBoxRole;
 		};
 
 		/**
-		 * Gets if the control has "listbox" accessibility role.
+		 * Gets if the control has listbox accessibility role.
+		 * @private
 		 */
 		NavigationList.prototype.getHasListBoxRole = function () {
 			return this._hasListBoxRole;
 		};
 
+		/**
+		 * Called after the control is rendered.
+		 */
 		NavigationList.prototype.onAfterRendering = function() {
 			this._itemNavigation.setRootDomRef(this.getDomRef());
 			this._itemNavigation.setItemDomRefs(this._getDomRefs());
@@ -107,6 +118,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 			}
 		};
 
+		/**
+		 * Gets DOM references of the navigation items.
+		 * @private
+		 */
 		NavigationList.prototype._getDomRefs = function() {
 			var domRefs = [];
 
@@ -119,6 +134,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 			return domRefs;
 		};
 
+		/**
+		 * Adapts popover position.
+		 * @private
+		 */
 		NavigationList.prototype._adaptPopoverPositionParams = function () {
 			if (this.getShowArrow()) {
 				this._marginLeft = 10;
@@ -144,12 +163,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 			}
 		};
 
+		/**
+		 * Clears the control dependencies.
+		 * @private
+		 */
 		NavigationList.prototype.exit = function () {
 			if (this._itemNavigation) {
 				this._itemNavigation.destroy();
 			}
 		};
 
+		/**
+		 * Selects an item.
+		 * @private
+		 */
 		NavigationList.prototype._selectItem = function (params) {
 			this.fireItemSelect(params);
 
@@ -164,10 +191,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 			this._selectedItem = item;
 		};
 
+		/**
+		 * Gets the currently selected item.
+		 */
 		NavigationList.prototype.getSelectedItem = function() {
 			return this._selectedItem;
 		};
 
+		/**
+		 * Sets the currently selected item. Set <code>null</code> to deselect.
+		 */
 		NavigationList.prototype.setSelectedItem = function(item) {
 
 			if (this._selectedItem) {
@@ -181,6 +214,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 			this._selectedItem = item;
 		};
 
+		/**
+		 * Opens a popover.
+		 * @private
+		 */
 		NavigationList.prototype._openPopover = function (source, list) {
 
 			var selectedItem = list.getSelectedItem();
