@@ -418,7 +418,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					direction : {type : "string"}
 				}
 			}
-		}
+		},
+
+		designTime : true
 	}});
 
 
