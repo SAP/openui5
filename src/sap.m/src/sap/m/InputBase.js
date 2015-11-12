@@ -830,7 +830,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			});
 		}
 
-		var that = this;
 		var mDock = Popup.Dock;
 		var $Input = jQuery(this.getFocusDomRef());
 		var bIsRightAligned = $Input.css("text-align") === "right";
@@ -870,9 +869,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.getDomRefForValueStateMessage(),
 			null,
 			null,
-			function() {
-				that._popup.close();
-			}
+			sap.ui.Device.system.phone ? true : Popup.CLOSE_ON_SCROLL
 		);
 
 		// Check whether popup is below or above the input
