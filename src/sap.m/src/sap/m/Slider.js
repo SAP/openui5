@@ -302,6 +302,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			sPerValue = this._getPercentOfValue(fNewValue) + "%";
+
+			// round negative percentages to "0px"
+			if (parseFloat(sPerValue) <= 0) {
+				sPerValue = "0";
+			}
+
 			oHandleDomRef = this.getDomRef("handle");
 
 			if (!!this.getName()) {
@@ -416,6 +422,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 				// this is the current % value for the slider progress bar
 				this._sProgressValue = this._getPercentOfValue(this.getValue()) + "%";
+
+				// round negative percentages to "0px"
+				if (parseFloat(this._sProgressValue) <= 0) {
+					this._sProgressValue = "0";
+				}
 			}
 
 			if (!this._hasFocus()) {
