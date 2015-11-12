@@ -996,6 +996,26 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 			return this.oFormatSettings;
 		},
 
+		/**
+		 * frameOptions mode (allow/deny/trusted).
+		 *
+		 * @return {string} frameOptions mode
+		 * @public
+		 */
+		getFrameOptions : function() {
+			return this.frameOptions;
+		},
+
+		/**
+		 * URL of the whitelist service.
+		 *
+		 * @return {string} whitelist service URL
+		 * @public
+		 */
+		getWhitelistService : function() {
+			return this.whitelistService;
+		},
+
 		_collect : function() {
 			var mChanges = this.mChanges || (this.mChanges = { __count : 0});
 			mChanges.__count++;
