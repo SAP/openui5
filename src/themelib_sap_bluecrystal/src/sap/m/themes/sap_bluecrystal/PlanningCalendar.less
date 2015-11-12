@@ -7,19 +7,36 @@
 	background-color: @sapUiListBackground;
 }
 
-
-.sapMPlanCal > .sapMList > table > tbody > tr:nth-child(even):not(.sapMListTblSubRow){
+.sapMPlanCal > .sapMList > table > tbody > tr:nth-child(even):not(.sapMListTblSubRow),
+.sapUiMedia-Std-Phone .sapMPlanCal > .sapMList > table > tbody > tr:nth-child(4n+3),
+.sapUiMedia-Std-Tablet .sapMPlanCal > .sapMList > table > tbody > tr:nth-child(4n+3),
+.sapMPlanCal > .sapMList > table > tbody > tr.sapMListTblSubRow:nth-child(4n){
 	background-color: darken(@sapUiListBackground, 2);
 }
 
-.sapMPlanCal > .sapMList > table > tbody > tr:nth-child(even):not(.sapMListTblSubRow).sapMLIBHoverable:hover{
+.sapMPlanCal > .sapMList > table > tbody > tr:nth-child(even):not(.sapMListTblSubRow).sapMLIBHoverable:hover,
+.sapUiMedia-Std-Phone .sapMPlanCal > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBHoverable:hover,
+.sapUiMedia-Std-Phone .sapMPlanCal > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBHoverable:hover + .sapMListTblSubRow,
+.sapUiMedia-Std-Tablet .sapMPlanCal > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBHoverable:hover,
+.sapUiMedia-Std-Tablet .sapMPlanCal > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBHoverable:hover + .sapMListTblSubRow,
+.sapMPlanCal > .sapMList > table > tbody > tr.sapMListTblSubRow:nth-child(4n).sapMLIBHoverable:hover{
 	background-color: @sapUiListHoverBackground;
 }
 
-.sapMPlanCal > .sapMList > table > tbody > tr:nth-child(even):not(.sapMListTblSubRow).sapMLIBSelected{
+.sapMPlanCal > .sapMList > table > tbody > tr:nth-child(even):not(.sapMListTblSubRow).sapMLIBSelected,
+.sapUiMedia-Std-Phone .sapMPlanCal > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBSelected,
+.sapUiMedia-Std-Phone .sapMPlanCal > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBSelected + .sapMListTblSubRow,
+.sapUiMedia-Std-Tablet .sapMPlanCal > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBSelected,
+.sapUiMedia-Std-Tablet .sapMPlanCal > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBSelected + .sapMListTblSubRow,
+.sapMPlanCal > .sapMList > table > tbody > tr.sapMListTblSubRow:nth-child(4n).sapMLIBSelected{
 	background-color: darken(@sapUiListSelectionBackgroundColor, 2);
 }
 
-.sapMPlanCal > .sapMList > table > tbody > tr:nth-child(even):not(.sapMListTblSubRow).sapMLIBSelected.sapMLIBHoverable:hover{
+.sapMPlanCal > .sapMList > table > tbody > tr:nth-child(even):not(.sapMListTblSubRow).sapMLIBSelected.sapMLIBHoverable:hover,
+.sapUiMedia-Std-Phone .sapMPlanCal > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBSelected.sapMLIBHoverable:hover,
+.sapUiMedia-Std-Phone .sapMPlanCal > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBSelected.sapMLIBHoverable:hover + .sapMListTblSubRow,
+.sapUiMedia-Std-Tablet .sapMPlanCal > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBSelected.sapMLIBHoverable:hover,
+.sapUiMedia-Std-Tablet .sapMPlanCal > .sapMList > table > tbody > tr:nth-child(4n+3).sapMLIBSelected.sapMLIBHoverable:hover + .sapMListTblSubRow,
+.sapMPlanCal > .sapMList > table > tbody > tr.sapMListTblSubRow:nth-child(4n).sapMLIBSelected.sapMLIBHoverable:hover{
 	background-color: darken(@sapUiListSelectionBackgroundColor, 4);
 }

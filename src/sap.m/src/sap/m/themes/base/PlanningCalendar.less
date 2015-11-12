@@ -1,11 +1,11 @@
 /* ================================================= */
 /* CSS for control sap.m/PlanningCalendar.control    */
 /* ================================================= */
-
+/*
 .sapMPlanCal{
 
 }
-
+*/
 .sapMPlanCal > .sapMList > .sapMListInfoTBar.sapMTB-Transparent-CTX.sapMTB{
 	padding: 0;
 }
@@ -34,6 +34,13 @@
 
 .sapMPlanCalHead > .sapMTB{
 	border-bottom: none;
+}
+
+.sapMPlanCalHead > .sapMTB > .sapMSlt{
+	-webkit-flex-grow: 1;
+	-webkit-box-flex: 1;
+	-ms-flex: 1 1 auto;
+	flex: auto; /* to make the select as big as possible */
 }
 
 .sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapMBarChild.sapUiCalInt {
@@ -86,19 +93,23 @@
 }
 
 .sapMPlanCal.sapMPlanCalNoHead > .sapMList > .sapMListInfoTBar,
-.sapUiMedia-Std-Phone .sapMPlanCal > .sapMList > .sapMListInfoTBar{
+.sapUiMedia-Std-Phone .sapMPlanCal > .sapMList > .sapMListInfoTBar,
+.sapUiMedia-Std-Tablet .sapMPlanCal > .sapMList > .sapMListInfoTBar{
 	display: block;
 }
 
 .sapMPlanCal.sapMPlanCalNoHead > .sapMList > .sapMListInfoTBar > .sapMPlanCalHead,
 .sapMPlanCal.sapMPlanCalNoHead > .sapMList > .sapMListInfoTBar > .sapUiCalInt,
 .sapUiMedia-Std-Phone .sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapMPlanCalHead,
-.sapUiMedia-Std-Phone .sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapUiCalInt{
+.sapUiMedia-Std-Phone .sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapUiCalInt,
+.sapUiMedia-Std-Tablet .sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapMPlanCalHead,
+.sapUiMedia-Std-Tablet .sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapUiCalInt{
 	width: 100%;
 }
 
 .sapMPlanCal.sapMPlanCalNoHead > .sapMList > .sapMListInfoTBar > .sapMPlanCalHead,
-.sapUiMedia-Std-Phone .sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapMPlanCalHead{
+.sapUiMedia-Std-Phone .sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapMPlanCalHead,
+.sapUiMedia-Std-Tablet .sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapMPlanCalHead{
 	height: auto;
 }
 
@@ -121,16 +132,19 @@
 	margin-left: 0.25rem;
 }
 
-.sapUiMedia-Std-Phone .sapMPlanCal.sapMPlanCalMultiSel > .sapMList > .sapMListInfoTBar > .sapMCb{
+.sapUiMedia-Std-Phone .sapMPlanCal.sapMPlanCalMultiSel > .sapMList > .sapMListInfoTBar > .sapMCb,
+.sapUiMedia-Std-Tablet .sapMPlanCal.sapMPlanCalMultiSel > .sapMList > .sapMListInfoTBar > .sapMCb{
 	width: auto;
 	margin-left: 0;
 }
 
-.sapUiMedia-Std-Phone .sapMPlanCal.sapMPlanCalMultiSel > .sapMList > .sapMListInfoTBar > .sapMCb > .sapMCbLabel{
+.sapUiMedia-Std-Phone .sapMPlanCal.sapMPlanCalMultiSel > .sapMList > .sapMListInfoTBar > .sapMCb > .sapMCbLabel,
+.sapUiMedia-Std-Tablet .sapMPlanCal.sapMPlanCalMultiSel > .sapMList > .sapMListInfoTBar > .sapMCb > .sapMCbLabel{
 	visibility: visible;
 }
 
-.sapUiMedia-Std-Phone .sapMPlanCal.sapMPlanCalMultiSel > .sapMList > .sapMListInfoTBar > .sapUiCalInt{
+.sapUiMedia-Std-Phone .sapMPlanCal.sapMPlanCalMultiSel > .sapMList > .sapMListInfoTBar > .sapUiCalInt,
+.sapUiMedia-Std-Tablet .sapMPlanCal.sapMPlanCalMultiSel > .sapMList > .sapMListInfoTBar > .sapUiCalInt{
 	width: 100%;
 	display: block;
 }
