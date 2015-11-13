@@ -40,12 +40,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		properties : {
 
 			/**
-			 * Start date, as JavaScript Date object, of the row. As default the current date is used.
+			 * Start date, as JavaScript Date object, of the row. As default, the current date is used.
 			 */
 			startDate : {type : "object", group : "Data"},
 
 			/**
-			 * Number of displayed intervals. The size of the intervals defined with <code>intervalType</code>
+			 * Number of displayed intervals. The size of the intervals is defined with <code>intervalType</code>
 			 */
 			intervals : {type : "int", group : "Appearance", defaultValue : 12},
 
@@ -55,20 +55,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			intervalType : {type : "sap.ui.unified.CalendarIntervalType", group : "Appearance", defaultValue : sap.ui.unified.CalendarIntervalType.Hour},
 
 			/**
-			 * If set subintervals are shown.
+			 * If set, subintervals are shown.
 			 *
-			 * If the interval type is <code>Hour</code> quarter hours are shown.
+			 * If the interval type is <code>Hour</code>, quarter hours are shown.
 			 *
-			 * If the interval type is <code>Day</code> hours are shown.
+			 * If the interval type is <code>Day</code>, hours are shown.
 			 *
-			 * If the interval type is <code>Month</code> days are shown.
+			 * If the interval type is <code>Month</code>, days are shown.
 			 */
 			showSubIntervals : {type : "boolean", group : "Appearance", defaultValue : false},
 
 			/**
-			 * If set interval headers are shown even if no <code>intervalHeaders</code> are assigned to the visible time frame.
+			 * If set, interval headers are shown even if no <code>intervalHeaders</code> are assigned to the visible time frame.
 			 *
-			 * If not set no interval headers are shown even if <code>intervalHeaders</code> are assigned.
+			 * If not set, no interval headers are shown even if <code>intervalHeaders</code> are assigned.
 			 */
 			showIntervalHeaders : {type : "boolean", group : "Appearance", defaultValue : true},
 
@@ -101,9 +101,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * If set the <code>CalendarRow</code> checks for resize by itself.
+			 * If set, the <code>CalendarRow</code> checks for resize by itself.
 			 *
-			 * If a lot of <code>CalendarRow</code> controls are used in one container control (like <code>PlanningCalendar</code>)
+			 * If a lot of <code>CalendarRow</code> controls are used in one container control (like <code>PlanningCalendar</code>).
 			 * the resize checks should be done only by this container control. Then the container control should
 			 * call <code>handleResize</code> of the <code>CalendarRow</code> if a resize happens.
 			 */
@@ -123,7 +123,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * Appointments to be displayed in the row. Appointments outside the visible time frame are not rendered.
 			 *
-			 * <b>Note</b> For performance reasons only appointments in the visible time range or nearby should be assigned.
+			 * <b>Note:</b> For performance reasons, only appointments in the visible time range or nearby should be assigned.
 			 */
 			appointments : {type : "sap.ui.unified.CalendarAppointment", multiple : true, singularName : "appointment"},
 
@@ -133,9 +133,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 *
 			 * Appointments outside the visible time frame are not rendered.
 			 *
-			 * The <code>intervalHeaders</code> always fill whole intervals. If they are shorter that one interval they are not displayed.
+			 * The <code>intervalHeaders</code> always fill whole intervals. If they are shorter than one interval, they are not displayed.
 			 *
-			 * <b>Note</b> For performance reasons only appointments in the visible time range or nearby should be assigned.
+			 * <b>Note:</b> For performance reasons, only appointments in the visible time range or nearby should be assigned.
 			 */
 			intervalHeaders : {type : "sap.ui.unified.CalendarAppointment", multiple : true, singularName : "intervalHeader"},
 
@@ -167,7 +167,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					appointments : {type : "sap.ui.unified.CalendarAppointment[]"},
 
 					/**
-					 * If set the appointment was selected by multiple selection (e.g. shift + mouse click).
+					 * If set, the appointment was selected by multiple selection (e.g. shift + mouse click).
 					 * So more than the current appointment could be selected.
 					 */
 					multiSelect : {type : "boolean"}
@@ -175,18 +175,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			},
 
 			/**
-			 * <code>startDate</code> was changed while navigation in <code>CalendarRow</code>
+			 * <code>startDate</code> was changed while navigating in <code>CalendarRow</code>
 			 */
 			startDateChange : {},
 
 			/**
-			 * The <code>CalendarRow</code> should be left while navigation. (Arrow up or arrow down.)
-			 * The caller must determine what next control should be focused
+			 * The <code>CalendarRow</code> should be left while navigating. (Arrow up or arrow down.)
+			 * The caller should determine the next control to be focused
 			 */
 			leaveRow : {
 				parameters : {
 					/**
-					 * The type of the event that triggers this event
+					 * The type of the event that triggers this <code>leaveRow</code>
 					 */
 					type : {type : "string"}
 				}
@@ -398,11 +398,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		};
 
 		/**
-		 * After a resize of the <code>CalendarRow</code> some calculations for appointment
+		 * After a resize of the <code>CalendarRow</code>, some calculations for appointment
 		 * sizes are needed.
 		 *
-		 * For this each <code>CalendarRow</code> can trigger the resize check for it's own DOM.
-		 * But if multiple <code>CalendarRow</code>s are used in one container (e.G. <code>PlanningCalendar</code>)
+		 * For this, each <code>CalendarRow</code> can trigger the resize check for it's own DOM.
+		 * But if multiple <code>CalendarRow</code>s are used in one container (e.g. <code>PlanningCalendar</code>),
 		 * it is better if the container triggers the resize check once an then calls this function
 		 * of each <code>CalendarRow</code>.
 		 *
@@ -426,8 +426,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		 * If the current time is in the visible output of the <code>CalendarRow</code>,
 		 * the indicator for the current time must be positioned.
 		 *
-		 * For this each <code>CalendarRow</code> can trigger a timer.
-		 * But if multiple <code>CalendarRow</code>s are used in one container (e.G. <code>PlanningCalendar</code>)
+		 * For this, each <code>CalendarRow</code> can trigger a timer.
+		 * But if multiple <code>CalendarRow</code>s are used in one container (e.G. <code>PlanningCalendar</code>),
 		 * it is better if the container triggers the interval once an then calls this function
 		 * of each <code>CalendarRow</code>.
 		 *

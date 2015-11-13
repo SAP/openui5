@@ -33,9 +33,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			oRm.addClass("sapMPlanCalNoHead");
 		}
 
-//		// This makes the row focusable
-//		oRm.writeAttribute("tabindex", "-1");
-
 		if (sTooltip) {
 			oRm.writeAttributeEscaped('title', sTooltip);
 		}
@@ -50,8 +47,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			oRm.addStyle("height", sHeight);
 		}
 
-//		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
-		oRm.writeAccessibilityState(oTC/*, mAccProps*/);
+		oRm.writeAccessibilityState(oTC);
 
 		oRm.writeClasses();
 		oRm.writeStyles();

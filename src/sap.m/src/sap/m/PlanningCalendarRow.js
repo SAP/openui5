@@ -3,8 +3,8 @@
  */
 
 //Provides control sap.ui.unified.PlanningCalendarRow.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem', './StandardListItemRenderer', 'sap/ui/core/Renderer', './library'],
-		function(jQuery, Element, StandardListItem, StandardListItemRenderer, Renderer, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem', './StandardListItemRenderer', 'sap/ui/core/Renderer', './library', 'sap/ui/unified/library'],
+		function(jQuery, Element, StandardListItem, StandardListItemRenderer, Renderer, library, unifiedLibrary) {
 	"use strict";
 
 	/**
@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 	 * @class
 	 * Row in the <code>PlanningCalendar</code>.
 	 *
-	 * This element holds the data of one row in the <code>PlanningCalendar</code>. Once the header information (e.G. person information)
+	 * This element holds the data of one row in the <code>PlanningCalendar</code>. Once the header information (e.g. person information)
 	 * are assigned. Then the appointments are assigned.
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
@@ -84,7 +84,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 			/**
 			 * Appointments to be displayed in the row. Appointments outside the visible time frame are not rendered.
 			 *
-			 * <b>Note</b> For performance reasons only appointments in the visible time range or nearby should be assigned.
+			 * <b>Note:</b> For performance reasons only appointments in the visible time range or nearby should be assigned.
 			 */
 			appointments : {type : "sap.ui.unified.CalendarAppointment", multiple : true, singularName : "appointment"},
 
@@ -96,7 +96,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 			 *
 			 * The <code>intervalHeaders</code> always fill whole intervals. If they are shorter that one interval they are not displayed.
 			 *
-			 * <b>Note</b> For performance reasons only appointments in the visible time range or nearby should be assigned.
+			 * <b>Note:</b> For performance reasons only appointments in the visible time range or nearby should be assigned.
 			 */
 			intervalHeaders : {type : "sap.ui.unified.CalendarAppointment", multiple : true, singularName : "intervalHeader"}
 
@@ -316,7 +316,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 		/**
 		 * A <code>PlanningCalendarRow</code> is rendered inside a <code>sap.m.Table</code> as <code>sap.m.ColumnListItem</code>.
 		 *
-		 * @returns {sap.m.ColumnListItem} <code>sap.m.ColumnListItem</code> that represents <code>PlanningCalendarRow</code> in table.
+		 * @returns {sap.m.ColumnListItem} <code>sap.m.ColumnListItem</code> that represents <code>PlanningCalendarRow</code> in the table.
 		 * @private
 		 */
 		PlanningCalendarRow.prototype.getColumnListItem = function(){

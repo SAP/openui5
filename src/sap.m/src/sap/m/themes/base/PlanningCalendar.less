@@ -27,9 +27,12 @@
 	height: 4.25rem;
 }
 
-.sapMPlanCal > .sapMList .sapMPlanCalRowHead .sapMLIB,
-.sapMPlanCal > .sapMList .sapMPlanCalAppRow .sapUiCalendarRow{
+.sapMPlanCal > .sapMList .sapMPlanCalRowHead > .sapMLIB,
+.sapMPlanCal > .sapMList .sapMPlanCalAppRow > .sapUiCalendarRow,
+.sapMPlanCal > .sapMList .sapMPlanCalAppRow > div > .sapUiCalendarRow{
 	background-color: transparent;
+	display: block;
+	border: none;
 }
 
 .sapMPlanCalHead > .sapMTB{
@@ -71,15 +74,6 @@
 .sapMPlanCal > .sapMList .sapMListTblCell.sapMPlanCalRowHead,
 .sapMPlanCal > .sapMList .sapMListTblCell.sapMPlanCalAppRow{
 	padding: 0;
-}
-
-.sapMPlanCal > .sapMList .sapMListTblCell.sapMPlanCalRowHead > .sapMLIB{
-	display: block;
-	border: none;
-}
-
-.sapMPlanCal > .sapMList .sapUiCalendarRow{
-	border: none;
 }
 
 /* Responsiveness */

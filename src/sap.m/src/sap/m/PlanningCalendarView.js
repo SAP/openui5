@@ -2,9 +2,9 @@
  * ${copyright}
  */
 
-//Provides control sap.ui.unified.PlanningCalendarView.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem', './StandardListItemRenderer', 'sap/ui/core/Renderer', './library'],
-		function(jQuery, Element, StandardListItem, StandardListItemRenderer, Renderer, library) {
+//Provides control sap.m.PlanningCalendarView.
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem', './StandardListItemRenderer', 'sap/ui/core/Renderer', './library', 'sap/ui/unified/library'],
+		function(jQuery, Element, StandardListItem, StandardListItemRenderer, Renderer, library, unifiedLibrary) {
 	"use strict";
 
 	/**
@@ -83,16 +83,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 	}});
 
 	(function() {
-
-//		PlanningCalendarView.prototype.init = function(){
-//
-//
-//		};
-//
-//		PlanningCalendarView.prototype.exit = function(){
-//
-//
-//		};
 
 	}());
 
