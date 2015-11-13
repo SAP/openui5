@@ -16,7 +16,7 @@ sap.ui.require([
 ], function (Model, TypeString, ODataUtils, SyncPromise, Requestor, ODataContextBinding,
 		ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding, TestUtils) {
 	/*global odatajs, QUnit, sinon */
-	/*eslint no-warning-comments: 0 */
+	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
 	/*
@@ -40,11 +40,11 @@ sap.ui.require([
 	/**
 	 * Creates a v4 OData service for <code>TEA_BUSI</code>.
 	 *
-	 * @param {object} [mParameters] the model properties
+	 * @param {string} [sQuery] URI query parameters starting with '?'
 	 * @returns {sap.ui.model.odata.v4.oDataModel} the model
 	 */
-	function createModel(mParameters) {
-		return new ODataModel(getServiceUrl(), mParameters);
+	function createModel(sQuery) {
+		return new ODataModel(getServiceUrl() + (sQuery || ""));
 	}
 
 	/**
@@ -84,6 +84,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
+		var oDocumentModel,
+			oModel;
+
 		assert.throws(function () {
 			return new ODataModel();
 		}, new Error("Missing service root URL"));
@@ -94,6 +97,18 @@ sap.ui.require([
 		assert.strictEqual(new ODataModel("/foo/").sServiceUrl, "/foo/");
 		assert.strictEqual(new ODataModel({"serviceUrl" : "/foo/"}).sServiceUrl, "/foo/",
 			"serviceUrl in mParameters");
+		oModel = new ODataModel("/foo/?sap-client=111");
+		assert.strictEqual(oModel.sServiceUrl, "/foo/");
+		assert.deepEqual(oModel.mUriParameters, {"sap-client": "111"});
+		oDocumentModel = oModel.getMetaModel().oModel;
+		assert.ok(oDocumentModel instanceof sap.ui.model.odata.v4.ODataDocumentModel);
+		assert.strictEqual(oDocumentModel.sDocumentUrl, "/foo/$metadata?sap-client=111");
+
+		oModel = new ODataModel("/foo/");
+		assert.deepEqual(oModel.mUriParameters, {});
+		oDocumentModel = oModel.getMetaModel().oModel;
+		assert.ok(oDocumentModel instanceof sap.ui.model.odata.v4.ODataDocumentModel);
+		assert.strictEqual(oDocumentModel.sDocumentUrl, "/foo/$metadata");
 	});
 
 	//*********************************************************************************************
@@ -155,6 +170,23 @@ sap.ui.require([
 		assert.throws(function () {
 			oModel.read("TEAMS('TEAM_01')/Name");
 		}, new Error("Not an absolute data binding path: TEAMS('TEAM_01')/Name"));
+	});
+
+	//*********************************************************************************************
+	QUnit.skip("ODataModel.read: success with query parameters ", function (assert) {
+		var oModel = createModel('?foo=bar');
+
+		this.oSandbox.stub(odatajs.oData, "read", function (oRequest, fnSuccess) {
+			assert.strictEqual(oRequest.requestUri,
+				getServiceUrl("/TEAMS('TEAM_01')/Name") + "?foo=bar");
+			setTimeout(fnSuccess.bind(null, {/*oData*/}, {/*oResponse*/}), 0);
+		});
+
+		return oModel.read("/TEAMS('TEAM_01')/Name").then(function (oData) {
+			//nothing to test
+		}, function (oError) {
+			assert.ok(false, "Unexpected failure");
+		});
 	});
 
 	//*********************************************************************************************
@@ -299,57 +331,62 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("create", function (assert) {
-		var oEmployeeData = {},
-			oModel = createModel(),
-			oPromise = {};
+	[undefined, "?foo=bar"].forEach(function (sQuery) {
+		QUnit.test("create", function (assert) {
+			var oEmployeeData = {},
+				oModel = createModel(sQuery),
+				oPromise = {};
 
-		this.mock(oModel.oRequestor).expects("request")
-			.withExactArgs("POST", getServiceUrl("/EMPLOYEES"), null, oEmployeeData)
-			.returns(oPromise);
+			this.mock(oModel.oRequestor).expects("request")
+				.withExactArgs("POST", getServiceUrl("/EMPLOYEES") + oModel._sQuery, null,
+					oEmployeeData).returns(oPromise);
 
-		assert.strictEqual(oModel.create("/EMPLOYEES", oEmployeeData), oPromise);
+			assert.strictEqual(oModel.create("/EMPLOYEES", oEmployeeData), oPromise);
+		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("remove", function (assert) {
-		var sCanonicalUrl = getServiceUrl("/EMPLOYEES(ID='1')"),
+	[undefined, "?foo=bar"].forEach(function (sQuery) {
+		QUnit.test("remove", function (assert) {
+			var sCanonicalUrl = getServiceUrl("/EMPLOYEES(ID='1')"),
 			sEtag = 'W/"19770724000000.0000000"',
-			oModel = createModel(),
+			oModel = createModel(sQuery),
 			sPath = "/EMPLOYEES[0];list=0";
 
-		this.oSandbox.mock(oModel.oRequestor).expects("request")
-			.withExactArgs("DELETE", sCanonicalUrl, {"If-Match" : sEtag})
+			this.oSandbox.mock(oModel.oRequestor).expects("request")
+			.withExactArgs("DELETE", sCanonicalUrl + oModel._sQuery, {"If-Match" : sEtag})
 			.returns(Promise.resolve(undefined));
-		//TODO make such basic APIs like sap.ui.model.Context#getProperty work?!
-		//     they could be used instead of async read()...
-		//TODO use requestObject() instead of read()?
-		this.oSandbox.stub(oModel, "read", function (sPath0, bAllowObjectAccess) {
-			if (bAllowObjectAccess) {
-				// ignore "probe call" by requestCanonicalUrl's stub
-			} else {
-				assert.strictEqual(sPath0, sPath + "/@odata.etag");
-				assert.strictEqual(bAllowObjectAccess, undefined);
-			}
-			return Promise.resolve({value : sEtag});
-		});
-		this.oSandbox.stub(oModel.getMetaModel(), "requestCanonicalUrl",
-			function (sServiceUrl, sPath0, fnRead) {
-				assert.strictEqual(sServiceUrl, getServiceUrl());
-				assert.strictEqual(sPath0, sPath);
-				// make sure that fnRead === oModel.read.bind(oModel)
-				oModel.read.reset();
-				fnRead(sPath, true);
-				assert.ok(oModel.read.calledOnce);
-				assert.ok(oModel.read.calledWithExactly(sPath, true), "fnRead passes arguments");
-				assert.ok(oModel.read.calledOn(oModel), "fnRead bound to 'this'");
-				return Promise.resolve(sCanonicalUrl);
+			//TODO make such basic APIs like sap.ui.model.Context#getProperty work?!
+			//     they could be used instead of async read()...
+			//TODO use requestObject() instead of read()?
+			this.oSandbox.stub(oModel, "read", function (sPath0, bAllowObjectAccess) {
+				if (bAllowObjectAccess) {
+					// ignore "probe call" by requestCanonicalUrl's stub
+				} else {
+					assert.strictEqual(sPath0, sPath + "/@odata.etag");
+					assert.strictEqual(bAllowObjectAccess, undefined);
+				}
+				return Promise.resolve({value : sEtag});
 			});
+			this.oSandbox.stub(oModel.getMetaModel(), "requestCanonicalUrl",
+				function (sServiceUrl, sPath0, fnRead) {
+					assert.strictEqual(sServiceUrl, getServiceUrl());
+					assert.strictEqual(sPath0, sPath);
+					// make sure that fnRead === oModel.read.bind(oModel)
+					oModel.read.reset();
+					fnRead(sPath, true);
+					assert.ok(oModel.read.calledOnce);
+					assert.ok(oModel.read.calledWithExactly(sPath, true),
+						"fnRead passes arguments");
+					assert.ok(oModel.read.calledOn(oModel), "fnRead bound to 'this'");
+					return Promise.resolve(getServiceUrl("/EMPLOYEES(ID='1')"));
+				});
 
-		return oModel.remove(oModel.getContext(sPath)).then(function (oResult) {
-			assert.strictEqual(oResult, undefined);
-		}, function (oError) {
-			assert.ok(false);
+			return oModel.remove(oModel.getContext(sPath)).then(function (oResult) {
+				assert.strictEqual(oResult, undefined);
+			}, function (oError) {
+				assert.ok(false);
+			});
 		});
 	});
 	//TODO trigger update in case of isConcurrentModification?!

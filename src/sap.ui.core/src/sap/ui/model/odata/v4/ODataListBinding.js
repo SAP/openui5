@@ -78,8 +78,9 @@ sap.ui.define([
 	ODataListBinding.prototype.getContexts = function (iStart, iLength) {
 		var oContext = this.getContext(),
 			oModel = this.getModel(),
-			sUrl,
+			mParameters,
 			sResolvedPath = oModel.resolve(this.getPath(), oContext),
+			sUrl,
 			that = this;
 
 		function getBasePath(iIndex) {
@@ -160,13 +161,15 @@ sap.ui.define([
 			if (oContext) { // nested list binding
 				oModel.read(sResolvedPath, true)
 					.then(createContexts.bind(undefined, getDependentPath));
-			}  else {
+			}  else { // absolute path
 				sUrl = oModel.sServiceUrl + sResolvedPath.slice(1);
 				if (!this.oCache) {
+					mParameters = oModel.mUriParameters;
 					if (this.sExpand) {
-						sUrl += "?$expand=" + encodeURIComponent(this.sExpand);
+						mParameters = jQuery.extend({}, mParameters);
+						mParameters.$expand = this.sExpand;
 					}
-					this.oCache = Cache.create(oModel.oRequestor, sUrl);
+					this.oCache = Cache.create(oModel.oRequestor, sUrl, mParameters);
 				}
 				this.oCache.read(iStart, iLength)
 					.then(createContexts.bind(undefined, getBasePath), function (oError) {
@@ -227,7 +230,7 @@ sap.ui.define([
 		return new Promise(function (fnResolve, fnReject) {
 			function reject(oError) {
 				var oModel = that.getModel(),
-					sUrl = oModel.sServiceUrl
+					sUrl = oModel.sServiceUrl //TODO use oModel.mUriParameters
 						+ oModel.resolve(that.getPath(), that.getContext()).slice(1);
 				jQuery.sap.log.error("Failed to read value with index " + iIndex + " for "
 					+ sUrl + " and path " + sPath,

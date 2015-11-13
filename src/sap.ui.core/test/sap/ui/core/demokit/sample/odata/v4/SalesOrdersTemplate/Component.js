@@ -55,7 +55,6 @@ sap.ui.define([
 					async : true,
 					id : "MainView",
 					models : {
-						undefined : oModel,
 						ui : new JSONModel({
 							bRealOData : bRealOData,
 							icon : bRealOData ? "sap-icon://building" : "sap-icon://record",

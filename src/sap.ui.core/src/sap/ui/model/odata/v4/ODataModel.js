@@ -16,13 +16,14 @@ sap.ui.define([
 	//FIX4MASTER open source approval for Olingo missing
 	"jquery.sap.global",
 	"sap/ui/model/Model",
+	"sap/ui/thirdparty/URI",
 	"./lib/_Requestor",
 	"./ODataContextBinding",
 	"./ODataDocumentModel",
 	"./ODataListBinding",
 	"./ODataMetaModel",
 	"./ODataPropertyBinding"
-], function(jQuery, Model, Requestor, ODataContextBinding, ODataDocumentModel,
+], function(jQuery, Model, URI, Requestor, ODataContextBinding, ODataDocumentModel,
 	ODataListBinding, ODataMetaModel, ODataPropertyBinding) {
 	"use strict";
 
@@ -74,6 +75,8 @@ sap.ui.define([
 			/** @lends sap.ui.model.odata.v4.ODataModel.prototype */
 			{
 				constructor : function (sServiceUrl, mParameters) {
+					var oUri;
+
 					// do not pass any parameters to Model
 					Model.apply(this);
 
@@ -84,13 +87,18 @@ sap.ui.define([
 					if (!sServiceUrl) {
 						throw new Error("Missing service root URL");
 					}
-					if (sServiceUrl.charAt(sServiceUrl.length - 1) !== "/") {
+					oUri = new URI(sServiceUrl);
+					if (oUri.path().charAt(oUri.path().length - 1) !== "/") {
 						throw new Error("Service root URL must end with '/'");
 					}
-					this.sServiceUrl = sServiceUrl;
+					//TODO remove usage once cache is used for all crud operations
+					this._sQuery = oUri.search(); //return query part with leading "?"
+					//TODO use mUriParameters for creating cache
+					this.mUriParameters = oUri.query(true);
+					this.sServiceUrl = oUri.query("").toString();
 
 					this.oMetaModel = new ODataMetaModel(
-						new ODataDocumentModel(this.sServiceUrl + "$metadata"));
+						new ODataDocumentModel(this.sServiceUrl + "$metadata" + this._sQuery));
 					this.mParameters = mParameters;
 					this.oRequestor = Requestor.create(this.sServiceUrl, {
 						"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguage()
@@ -183,7 +191,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.create = function (sPath, oEntityData) {
-		var sUrl = this.sServiceUrl + sPath.slice(1);
+		var sUrl = this.sServiceUrl + sPath.slice(1) + this._sQuery;
 
 		return this.oRequestor.request("POST", sUrl, null, oEntityData);
 	};
@@ -251,7 +259,7 @@ sap.ui.define([
 			}
 
 //FIX4MASTER make ODataModel work with non-collection bindings, so to say
-//			var sRequestUri = that.sServiceUrl + sPath.slice(1);
+//			var sRequestUri = that.sServiceUrl + sPath.slice(1) + that._sQuery;
 //			odatajs.oData.read({
 //				requestUri: sRequestUri,
 //				headers: that.mHeaders
@@ -291,7 +299,7 @@ sap.ui.define([
 			this.getMetaModel().requestCanonicalUrl(this.sServiceUrl, sPath, this.read.bind(this))
 		]).then(function (aValues) {
 			var sEtag = aValues[0].value,
-				sCanonicalUrl = aValues[1];
+				sCanonicalUrl = aValues[1] + that._sQuery;
 
 			return that.oRequestor.request("DELETE", sCanonicalUrl, {"If-Match" : sEtag})
 				["catch"](function (oError) {

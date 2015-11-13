@@ -13,8 +13,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils",
-	"sap/ui/thirdparty/sinon"
-], function (View, BaseComponent, JSONModel, ODataModel, TestUtils, sinon) {
+	"sap/ui/thirdparty/sinon",
+	"sap/ui/thirdparty/URI"
+], function (View, BaseComponent, JSONModel, ODataModel, TestUtils, sinon, URI) {
 	"use strict";
 
 	return BaseComponent.extend("sap.ui.core.sample.odata.v4.SalesOrders.Component", {
@@ -24,21 +25,29 @@ sap.ui.define([
 
 		createContent : function () {
 			var bHasOwnProxy = this.proxy !== sap.ui.core.sample.common.Component.prototype.proxy,
+				oModel = this.getModel(),
 				fnProxy = bHasOwnProxy
 					? this.proxy
 					: TestUtils.proxy,
-				oModel = new ODataModel({
-					serviceUrl: fnProxy("/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/")
-				}),
-				bRealOData = TestUtils.isRealOData();
+				bRealOData = TestUtils.isRealOData(),
+				sServiceUrl = fnProxy(oModel.sServiceUrl),
+				sQuery;
+
+			if (oModel.sServiceUrl !== sServiceUrl) {
+				//replace model from manifest in case of proxy
+				sQuery = URI.buildQuery(oModel.mUriParameters);
+				sQuery = sQuery ? "?" + sQuery : "";
+				oModel = new ODataModel(sServiceUrl + sQuery);
+				this.setModel(oModel);
+			}
 
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(sinon.sandbox.create(), {
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/$metadata"
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/$metadata"
 						: {source : "metadata.xml"},
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/BusinessPartnerList"
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/BusinessPartnerList"
 						: {source : "BusinessPartnerList.json"},
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/SalesOrderList?$expand=SO_2_SOITEM(%24expand%3DSOITEM_2_PRODUCT(%24expand%3DPRODUCT_2_BP(%24expand%3DBP_2_CONTACT)))"
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList?%24expand=SO_2_SOITEM%28%24expand%3DSOITEM_2_PRODUCT%28%24expand%3DPRODUCT_2_BP%28%24expand%3DBP_2_CONTACT%29%29%29"
 						: {source : "SalesOrderList.json"}
 				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrders/data");
 			}

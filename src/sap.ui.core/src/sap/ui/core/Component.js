@@ -779,8 +779,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				oUri = Manifest._resolveUri(oUri, oUriSourceComponent.getComponentName());
 
 				// inherit sap-specific parameters from document (only if "sap.app/dataSources" reference is defined)
-				// TODO also attacht uri params to service url of v4 models
-				if (oModelConfig.dataSource && oModelConfig.type !== "sap.ui.model.odata.v4.ODataModel") {
+				if (oModelConfig.dataSource) {
 					addSapUriParams(oUriParams, oUri);
 				}
 

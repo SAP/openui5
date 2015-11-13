@@ -66,7 +66,7 @@ sap.ui.require([
 			this.oLogMock.expects("warning").never();
 
 			// create ODataModel and mock Cache
-			this.oModel = new ODataModel("/service/");
+			this.oModel = new ODataModel("/service/?sap-client=111");
 			this.oModel.setSizeLimit(3);
 		},
 		afterEach : function () {
@@ -96,7 +96,9 @@ sap.ui.require([
 			};
 
 		this.oSandbox.mock(Cache).expects("create")
-			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "/service/EMPLOYEES")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "/service/EMPLOYEES", {
+					"sap-client" : "111"
+				})
 			.returns(oCache);
 
 		this.oSandbox.mock(oCache).expects("read").returns(createResult(0));
@@ -267,13 +269,20 @@ sap.ui.require([
 					mParameters);
 
 		this.oSandbox.mock(Cache).expects("create")
-			.withExactArgs(sinon.match.any, "/service/TEAMS?$expand=" + encodeURIComponent(sExpand))
+			.withExactArgs(sinon.match.any, "/service/TEAMS", {
+					"sap-client" : "111",
+					"$expand" : sExpand
+				})
 			.returns(oCache);
 		this.oSandbox.mock(oCache).expects("read").returns(createResult(0));
 
+		// do not use the given parameters directly
 		mParameters["$expand"] = "bar";
 
 		oListBinding.getContexts();
+
+		// do not change the model
+		assert.strictEqual(this.oModel.mUriParameters.$expand, undefined);
 	});
 
 	//*********************************************************************************************
