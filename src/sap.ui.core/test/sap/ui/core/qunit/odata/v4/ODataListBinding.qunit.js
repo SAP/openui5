@@ -7,11 +7,9 @@ sap.ui.require([
 	"sap/ui/model/Context",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/v4/lib/_Cache",
-	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel"
-], function (ManagedObject, ChangeReason, Context, Model, Cache, Requestor, ODataListBinding,
-		ODataModel) {
+], function (ManagedObject, ChangeReason, Context, Model, Cache, ODataListBinding, ODataModel) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -59,7 +57,6 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataListBinding", {
 		beforeEach : function () {
-			sap.ui.getCore().getConfiguration().setLanguage("ab-CD");
 			this.oSandbox = sinon.sandbox.create();
 
 			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
@@ -73,7 +70,6 @@ sap.ui.require([
 		afterEach : function () {
 			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
 			this.oSandbox.verifyAndRestore();
-			sap.ui.getCore().getConfiguration().setLanguage(this.sDefaultLanguage);
 		},
 
 		/**
@@ -88,23 +84,17 @@ sap.ui.require([
 
 			this.oSandbox.mock(Cache).expects("create").returns(oCache);
 			return this.oSandbox.mock(oCache);
-		},
-
-		sDefaultLanguage : sap.ui.getCore().getConfiguration().getLanguage()
+		}
 	});
 
 	//*********************************************************************************************
 	QUnit.test("getContexts creates cache once", function (assert) {
 		var oCache = {
 				read: function () {}
-			},
-			oRequestor = {};
+			};
 
-		this.oSandbox.mock(Requestor).expects("create").withExactArgs("/service/", {
-			"Accept-Language" : "ab-CD"
-		}).returns(oRequestor);
-
-		this.oSandbox.mock(Cache).expects("create").withExactArgs(oRequestor, "EMPLOYEES")
+		this.oSandbox.mock(Cache).expects("create")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "/service/EMPLOYEES")
 			.returns(oCache);
 
 		this.oSandbox.mock(oCache).expects("read").returns(createResult(0));
@@ -275,7 +265,7 @@ sap.ui.require([
 					mParameters);
 
 		this.oSandbox.mock(Cache).expects("create")
-			.withExactArgs(sinon.match.any, "TEAMS?$expand=" + encodeURIComponent(sExpand))
+			.withExactArgs(sinon.match.any, "/service/TEAMS?$expand=" + encodeURIComponent(sExpand))
 			.returns(oCache);
 		this.oSandbox.mock(oCache).expects("read").returns(createResult(0));
 

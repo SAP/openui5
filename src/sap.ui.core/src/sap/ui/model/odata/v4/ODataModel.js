@@ -17,14 +17,15 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/model/Model",
 	"./_ODataHelper",
+	"./lib/_Requestor",
 	"./ODataContextBinding",
 	"./ODataDocumentModel",
 	"./ODataListBinding",
 	"./ODataMetaModel",
 	"./ODataPropertyBinding",
 	"sap/ui/thirdparty/odatajs-4.0.0"
-], function(jQuery, Model, Helper, ODataContextBinding, ODataDocumentModel, ODataListBinding,
-	ODataMetaModel, ODataPropertyBinding, Olingo) {
+], function(jQuery, Model, Helper, Requestor, ODataContextBinding, ODataDocumentModel,
+	ODataListBinding, ODataMetaModel, ODataPropertyBinding, Olingo) {
 	"use strict";
 
 	/*global odatajs */
@@ -92,8 +93,11 @@ sap.ui.define([
 					}
 					this.sServiceUrl = sServiceUrl;
 
+					this.oRequestor = Requestor.create(this.sServiceUrl, {
+						"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguage()
+					});
+
 					this.mHeaders = {
-//						"Accept" : "application/json", //TODO odata.metadata=none?
 						"Accept-Language" : sap.ui.getCore().getConfiguration().getLanguage(),
 						"X-CSRF-Token" : "Fetch"
 					};

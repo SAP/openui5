@@ -63,25 +63,25 @@ sap.ui.require([
 				oDeferred = new jQuery.Deferred(),
 				oPromise,
 				mRequestHeaders = clone(mHeaders.requestHeaders),
-				oRequestor = Requestor.create("/sap/opu/local_v4/IWBEP/TEA_BUSI/",
-					mDefaultHeaders),
+				oRequestor = Requestor.create("/~/", mDefaultHeaders),
 				oResult = {},
 				// add predefined request headers for OData v4
 				mResultHeaders = jQuery.extend({}, {
 					"Accept" : "application/json;odata.metadata=minimal",
 					"OData-MaxVersion" : "4.0",
 					"OData-Version" : "4.0"
-				}, mHeaders.result);
+				}, mHeaders.result),
+				sUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees";
 
 			oDeferred.resolve(oResult);
 			this.oSandbox.mock(jQuery).expects("ajax")
-				.withExactArgs("/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees", {
+				.withExactArgs(sUrl, {
 					headers : mResultHeaders,
 					method : "GET"
 				}).returns(oDeferred);
 
 			// code under test
-			oPromise = oRequestor.request("GET", "Employees", mRequestHeaders);
+			oPromise = oRequestor.request("GET", sUrl, mRequestHeaders);
 
 			assert.deepEqual(mDefaultHeaders, mHeaders.defaultHeaders,
 				"caller's map is unchanged");
@@ -93,5 +93,4 @@ sap.ui.require([
 				});
 		});
 	});
-	//TODO check that service URL ends with a slash!
 });
