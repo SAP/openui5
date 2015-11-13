@@ -287,10 +287,7 @@
 					}),
 					path: '/fixedNavigation'
 				}
-			})//,
-			//footer: new sap.m.Text({
-			//	text: 'Side footer content is placed here'
-			//})
+			})
 		}).setModel(model);
 
 		var navContainer = new sap.m.NavContainer({
@@ -305,15 +302,24 @@
 
 		var toolHeader = new sap.tnt.ToolHeader({
 			content: [
-				new sap.m.Button({
+				new sap.m.Button('menuToggleButton', {
 					icon: 'sap-icon://menu2',
 					type: sap.m.ButtonType.Transparent,
 					press: function() {
-						toolPage.setSideExpanded(!toolPage.getSideExpanded());
+						var sideExpanded = toolPage.getSideExpanded();
+
+						if (sideExpanded) {
+							this.setTooltip('Large Size Navigation');
+						} else {
+							this.setTooltip('Small Size Navigation');
+						}
+
+						toolPage.setSideExpanded(!sideExpanded);
 					},
 					layoutData: new sap.m.OverflowToolbarLayoutData({
 						priority: sap.m.OverflowToolbarPriority.NeverOverflow
-					})
+					}),
+					tooltip: 'Small Size Navigation'
 				}),
 				new sap.m.ToolbarSpacer({
 					width: '20px'
@@ -449,12 +455,25 @@
 			]
 		});
 
+		if (sap.ui.Device.media.getCurrentRange('StdExt').name === 'Phone' ||
+				sap.ui.Device.media.getCurrentRange('StdExt').name === 'Tablet') {
+			toolHeader.getAggregation('content')[0].setTooltip('Large Size Navigation');
+		}
+
 		var toolPage = new sap.tnt.ToolPage({
 			header: toolHeader,
 
 			sideContent: sideNavigation,
 
-			mainContents: [navContainer]
+			mainContents: [navContainer],
+
+			deviceChange: function(oEvent) {
+				if (oEvent.getParameter('device') === 'Phone' || oEvent.getParameter('device') === 'Tablet') {
+					toolHeader.getAggregation('content')[0].setTooltip('Large Size Navigation');
+				} else {
+					toolHeader.getAggregation('content')[0].setTooltip('Small Size Navigation');
+				}
+			}
 		}).placeAt('body');
 
 	</script>
