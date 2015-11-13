@@ -9,6 +9,11 @@
 	border-color: @sapUiFieldBackground;
 }
 
+/* calendar should have only a border if on popup */
+.sapUiCal.sapUiShd{
+	border: 0.0625rem solid @sapUiFieldBorderColor;
+}
+
 .sapUiCalMulti{
 	max-width: 776px; /* maximal 4 months in one row */
 }
@@ -115,6 +120,7 @@
 }
 
 .sapUiCalItem{
+	background-color: @sapUiExtraLightBG;
 	color:@sapUiDeepText;
 }
 
@@ -144,6 +150,10 @@
 .sap-desktop .sapUiCalItemNow:hover > .sapUiCalItemText,
 .sap-desktop .sapUiCalItemNow:focus > .sapUiCalItemText{
 	background-color: @sapUiHighlight;
+}
+
+.sapUiCalItemWeekEnd{
+	background-color: sapUiLightBG;
 }
 
 .sapUiCalItemSel{

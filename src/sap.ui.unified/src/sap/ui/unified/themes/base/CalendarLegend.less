@@ -2,7 +2,7 @@
 /* CSS for control sap.ui.unified/Legend.control */
 /* ============================================= */
 .sapUiUnifiedLegend {
-	color: #666666;
+	color: @sapUiContentLabelColor;
 	font-familiy: @sapUiFontFamily;
 	font-size: @sapUiFontSmallSize;
 	font-weight: normal;
@@ -30,7 +30,7 @@
 	height: 16px;
 	width: 16px;
 	margin-right: 8px;
-	background: lighten(@sapBaseColor, 100);
+	background: @sapUiListBackground;
 	float: left;
 }
 
@@ -38,7 +38,7 @@
 	height: 14px;
 	width: 14px;
 	margin: 1px;
-	background: @sapBaseColor;
+	background: transparent;
 }
 
 .sapUiUnifiedLegendSquareSelected {
