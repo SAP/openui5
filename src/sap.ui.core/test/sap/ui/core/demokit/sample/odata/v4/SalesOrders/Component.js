@@ -45,23 +45,23 @@ sap.ui.define([
 				TestUtils.setupODataV4Server(sinon.sandbox.create(), {
 					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/$metadata"
 						: {source : "metadata.xml"},
-					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/BusinessPartnerList"
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/BusinessPartnerList?$skip=0&$top=100"
 						: {source : "BusinessPartnerList.json"},
-					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList?%24expand=SO_2_SOITEM%28%24expand%3DSOITEM_2_PRODUCT%28%24expand%3DPRODUCT_2_BP%28%24expand%3DBP_2_CONTACT%29%29%29"
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/SalesOrderList?%24expand=SO_2_SOITEM%28%24expand%3DSOITEM_2_PRODUCT%28%24expand%3DPRODUCT_2_BP%28%24expand%3DBP_2_CONTACT%29%29%29&$skip=0&$top=5"
 						: {source : "SalesOrderList.json"}
 				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrders/data");
 			}
 
 			return sap.ui.view({
-				type : sap.ui.core.mvc.ViewType.XML,
 				id : "MainView",
-				viewName : "sap.ui.core.sample.odata.v4.SalesOrders.Main",
 				models : { undefined: oModel,
 					ui : new JSONModel({
 						bRealOData : bRealOData,
 						icon : bRealOData ? "sap-icon://building" : "sap-icon://record",
 						iconTooltip : bRealOData ? "real OData service" : "mock OData service"}
-				)}
+				)},
+				type : sap.ui.core.mvc.ViewType.XML,
+				viewName : "sap.ui.core.sample.odata.v4.SalesOrders.Main"
 			});
 			// TODO: enhance sample application after features are supported
 			// - Error Handling; not yet implemented in model

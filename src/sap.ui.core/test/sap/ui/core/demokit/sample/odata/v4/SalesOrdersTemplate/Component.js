@@ -43,17 +43,14 @@ sap.ui.define([
 
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(sinon.sandbox.create(), {
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/$metadata"
-						: {source : "metadata.xml"},
-					"/sap/opu/local_V4/IWBEP/V4_GW_SAMPLE_BASIC/SalesOrderList"
-						: {source : "SalesOrderList.json"}
+					"/sap/opu/local_V4/SAP/V4_GW_SAMPLE_BASIC/$metadata"
+						: {source : "metadata.xml"}
 				}, "sap/ui/core/demokit/sample/odata/v4/SalesOrdersTemplate/data");
 			}
 
-			oMetaModel.requestObject("/").then(function () {
+			oMetaModel.requestObject("/EntitySets('SalesOrderList')/EntityType").then(function () {
 				oLayout.addItem(sap.ui.view({
 					async : true,
-					id : "MainView",
 					models : {
 						ui : new JSONModel({
 							bRealOData : bRealOData,

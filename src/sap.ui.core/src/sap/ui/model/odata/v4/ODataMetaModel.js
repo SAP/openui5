@@ -4,13 +4,16 @@
 
 //Provides class sap.ui.model.odata.v4.ODataMetaModel
 sap.ui.define([
-	'sap/ui/model/ClientContextBinding',
-	'sap/ui/model/MetaModel',
-	'sap/ui/model/PropertyBinding',
+	"sap/ui/model/ClientContextBinding",
+	"sap/ui/model/FilterProcessor",
+	"sap/ui/model/json/JSONListBinding",
+	"sap/ui/model/MetaModel",
 	"sap/ui/model/odata/ODataUtils",
-	'sap/ui/model/odata/v4/_ODataHelper',
-	'sap/ui/model/odata/v4/_SyncPromise'
-], function (ClientContextBinding, MetaModel, PropertyBinding, ODataUtils, Helper, SyncPromise) {
+	"sap/ui/model/odata/v4/_ODataHelper",
+	"sap/ui/model/odata/v4/_SyncPromise",
+	"sap/ui/model/PropertyBinding"
+], function (ClientContextBinding, FilterProcessor, JSONListBinding, MetaModel, ODataUtils, Helper,
+		SyncPromise, PropertyBinding) {
 	"use strict";
 
 	var rEntitySetName = /^(\w+)(\[|\(|$)/, // identifier followed by [,( or at end of string
@@ -69,6 +72,37 @@ sap.ui.define([
 		});
 
 	/**
+	 * @class List binding implementation for the OData meta model which supports filtering on
+	 * the virtual property "@sapui.name" (which refers back to the name of the object in
+	 * question).
+	 *
+	 * Example:
+	 * <pre>
+	 * &lt;template:repeat list="{path:'entityType>', filters: {path: '@sapui.name', operator: 'StartsWith', value1: 'com.sap.vocabularies.UI.v1.FieldGroup'}}" var="fieldGroup">
+	 * </pre>
+	 *
+	 * @extends sap.ui.model.json.JSONListBinding
+	 * @private
+	 */
+	var ODataMetaListBinding = JSONListBinding.extend("sap.ui.model.odata.ODataMetaListBinding", {
+			constructor : function () {
+				JSONListBinding.apply(this, arguments);
+			}
+		});
+
+	ODataMetaListBinding.prototype.applyFilter = function () {
+		var that = this;
+
+		this.aIndices = FilterProcessor.apply(this.aIndices,
+			this.aFilters.concat(this.aApplicationFilters), function (vRef, sPath) {
+			return sPath === "@sapui.name"
+				? vRef
+				: that.oModel.getProperty(sPath, that.oList[vRef]);
+		});
+		this.iLength = this.aIndices.length;
+	};
+
+	/**
 	 * @class Property binding implementation for the OData meta model.
 	 *
 	 * @extends sap.ui.model.PropertyBinding
@@ -97,6 +131,11 @@ sap.ui.define([
 
 	ODataMetaModel.prototype.bindContext = function (sPath, oContext, mParameters) {
 		return new ClientContextBinding(this, sPath, oContext, mParameters);
+	};
+
+	ODataMetaModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters,
+		mParameters) {
+		return new ODataMetaListBinding(this, sPath, oContext, aSorters, aFilters, mParameters);
 	};
 
 	ODataMetaModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
@@ -434,6 +473,8 @@ sap.ui.define([
 	 */
 	ODataMetaModel.prototype.getObject = SyncPromise.createGetMethod("fetchObject");
 
+	// alias needed by list binding
+	ODataMetaModel.prototype._getObject = ODataMetaModel.prototype.getObject;
 
 	ODataMetaModel.prototype.getProperty = function () {
 		return this.getObject.apply(this, arguments);

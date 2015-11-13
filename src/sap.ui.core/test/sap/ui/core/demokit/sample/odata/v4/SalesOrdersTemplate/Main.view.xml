@@ -4,11 +4,23 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
 	<VBox>
-		<template:with path="meta>/EntitySets('SalesOrderList')">
-			<core:Fragment fragmentName="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.FormattedText" type="XML"/>
+		<template:repeat
+			list="{path: 'meta>/', filters: {path: '@sapui.name', operator: 'EndsWith', value1: 'Name'}}"
+			var="containerProperty">
+				<Text text="{containerProperty>}"/>
+		</template:repeat>
+		<template:with path="meta>/EntitySets('SalesOrderList')" var="objectWithName">
+			<core:Fragment
+				fragmentName="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.FormattedText"
+				type="XML"/>
 		</template:with>
-		<template:with path="meta>/EntitySets('BusinessPartnerList')">
-			<core:Fragment fragmentName="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.FormattedText" type="XML"/>
+		<template:repeat list="{meta>/EntitySets('SalesOrderList')/EntityType/Properties}" var="property">
+			<Text text="{property>Name}"/>
+		</template:repeat>
+		<template:with path="meta>/EntitySets('BusinessPartnerList')" var="objectWithName">
+			<core:Fragment
+				fragmentName="sap.ui.core.sample.odata.v4.SalesOrdersTemplate.FormattedText"
+				type="XML"/>
 		</template:with>
 	</VBox>
 </mvc:View>

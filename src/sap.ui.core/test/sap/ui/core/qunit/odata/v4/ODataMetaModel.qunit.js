@@ -3,6 +3,8 @@
  */
 sap.ui.require([
 	"sap/ui/model/ClientContextBinding",
+	"sap/ui/model/FilterProcessor",
+	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/MetaModel",
 	"sap/ui/model/odata/v4/_ODataHelper",
 	"sap/ui/model/odata/v4/_SyncPromise",
@@ -11,8 +13,8 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/test/TestUtils"
-], function (ClientContextBinding, MetaModel, Helper, SyncPromise, ODataDocumentModel,
-		ODataMetaModel, ODataModel, PropertyBinding, TestUtils) {
+], function (ClientContextBinding, FilterProcessor, JSONListBinding, MetaModel, Helper, SyncPromise,
+		ODataDocumentModel, ODataMetaModel, ODataModel, PropertyBinding, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -820,9 +822,66 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getContext(), oContext);
 		assert.strictEqual(oBinding.mParameters, mParameters);
 	});
-});
 
-//TODO template:repeat -> listbinding
+	//*********************************************************************************************
+	QUnit.test("bindList", function (assert) {
+		var oBinding,
+			oContext = this.oMetaModel.createBindingContext("/EntitySets"),
+			aFilters = [],
+			mParameters = [],
+			sPath = "Name",
+			aSorters = [];
+
+		oBinding = this.oMetaModel.bindList(sPath, oContext, aSorters, aFilters, mParameters);
+
+		assert.ok(oBinding instanceof JSONListBinding);
+		assert.strictEqual(ODataMetaModel.prototype._getObject, ODataMetaModel.prototype.getObject);
+		assert.strictEqual(oBinding.getModel(), this.oMetaModel);
+		assert.strictEqual(oBinding.getPath(), sPath);
+		assert.strictEqual(oBinding.getContext(), oContext);
+		assert.strictEqual(oBinding.aSorters, aSorters);
+		assert.strictEqual(oBinding.aApplicationFilters, aFilters);
+		assert.strictEqual(oBinding.mParameters, mParameters);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("bindList with filter", function (assert) {
+		var that = this;
+
+		return this.oMetaModel.requestObject("/").then(function () {
+			var fnApply = that.oSandbox.mock(FilterProcessor).expects("apply"),
+				oBinding,
+				oContext = that.oMetaModel.createBindingContext("/"),
+				aFilters = [],
+				fnGetValue,
+				aIndices = ["EntitySets"],
+				mParameters = {},
+				sPath = "",
+				aSorters = [];
+
+			fnApply.withArgs(["Name", "QualifiedName", "EntitySets", "Singletons"],
+				aFilters).returns(aIndices);
+
+			// code under test
+			oBinding = that.oMetaModel.bindList(sPath, oContext, aSorters, aFilters, mParameters);
+			// implicitly calls oBinding.applyFilter()
+
+			assert.strictEqual(oBinding.aIndices, aIndices);
+			assert.strictEqual(oBinding.iLength, oBinding.aIndices.length);
+
+			fnGetValue = fnApply.args[0][2];
+			that.oSandbox.mock(that.oMetaModel).expects("getProperty")
+				.withExactArgs("fooPath", oBinding.oList["EntitySets"])
+				.returns("foo");
+
+			// code under test
+			assert.strictEqual(fnGetValue("EntitySets", "fooPath"), "foo");
+
+			// code under test
+			assert.strictEqual(fnGetValue("EntitySets", "@sapui.name"), "EntitySets");
+		});
+	});
+});
 
 //TODO Join the two followPath functions from fetchMetaContext and fetchObject?
 //TODO "placeholder" is recognized using Object.keys(o) === 1. But the spec says $select SHOULD
