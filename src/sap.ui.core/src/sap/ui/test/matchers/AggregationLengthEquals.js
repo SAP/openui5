@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, fnMatcher) {
+sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
 	"use strict";
 
 	/**
@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, fnMatcher) {
 	 * @author SAP SE
 	 * @since 1.23
 	 */
-	return fnMatcher.extend("sap.ui.test.matchers.AggregationLengthEquals", /** @lends sap.ui.test.matchers.AggregationLengthEquals.prototype */ {
+	return Matcher.extend("sap.ui.test.matchers.AggregationLengthEquals", /** @lends sap.ui.test.matchers.AggregationLengthEquals.prototype */ {
 
 		metadata : {
 			publicMethods : [ "isMatching" ],
@@ -48,12 +48,13 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, fnMatcher) {
 				fnAggregation = oControl["get" + jQuery.sap.charToUpperCase(sAggregationName, 0)];
 
 			if (!fnAggregation) {
-				jQuery.sap.log.error("Control " + oControl.sId + " does not have an aggregation called: " + sAggregationName);
+				jQuery.sap.log.error("Control " + oControl + " does not have an aggregation called: " + sAggregationName, this._sLogPrefix);
 				return false;
 			}
 			var bIsMatch = fnAggregation.call(oControl).length === this.getLength();
-			jQuery.sap.log.info("Control " + oControl.sId + " has an aggregation '"
-					+ sAggregationName + "' and its length " + fnAggregation.call(oControl).length + (bIsMatch ? " matches." : " does not match."));
+			jQuery.sap.log.debug("Control " + oControl + " has an aggregation '"
+					+ sAggregationName + "' and its length " + fnAggregation.call(oControl).length + (bIsMatch ? " matches." : " does not match."),
+					this._sLogPrefix);
 			return bIsMatch;
 		}
 

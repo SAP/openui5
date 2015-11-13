@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, fnMatcher) {
+sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
 	"use strict";
 
 	/**
@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, fnMatcher) {
 	 * @author SAP SE
 	 * @since 1.23
 	 */
-	return fnMatcher.extend("sap.ui.test.matchers.AggregationFilled", /** @lends sap.ui.test.matchers.AggregationFilled.prototype */ {
+	return Matcher.extend("sap.ui.test.matchers.AggregationFilled", /** @lends sap.ui.test.matchers.AggregationFilled.prototype */ {
 
 		metadata : {
 			publicMethods : [ "isMatching" ],
@@ -42,7 +42,7 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, fnMatcher) {
 				fnAggregation = oControl["get" + jQuery.sap.charToUpperCase(sAggregationName, 0)];
 
 			if (!fnAggregation) {
-				jQuery.sap.log.error("Control " + oControl.sId + " does not have an aggregation called: " + sAggregationName);
+				jQuery.sap.log.error("Control " + oControl.sId + " does not have an aggregation called: " + sAggregationName, this._sLogPrefix);
 				return false;
 			}
 
