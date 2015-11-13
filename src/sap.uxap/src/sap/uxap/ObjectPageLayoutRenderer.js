@@ -15,12 +15,9 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 		ObjectPageLayoutRenderer.render = function (oRm, oControl) {
 			var aSections,
 				oHeader = oControl.getHeaderTitle(),
-				oAnchorBar = null,
-				oIconTabBar = null;
+				oAnchorBar = null;
 
-			if (oControl.getUseIconTabBar()) {
-				oIconTabBar = oControl.getAggregation("_iconTabBar");
-			} else if (oControl.getShowAnchorBar() && oControl._getInternalAnchorBarVisible()) {
+			if (oControl.getShowAnchorBar() && oControl._getInternalAnchorBarVisible()) {
 				oAnchorBar = oControl.getAggregation("_anchorBar");
 			}
 
@@ -57,7 +54,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			oRm.write(">");
 
 			// if the content is expanded render bars outside the scrolling div
-			this._renderAnchorBar(oRm, oControl, oIconTabBar, oAnchorBar, oControl._bHContentAlwaysExpanded);
+			this._renderAnchorBar(oRm, oControl, oAnchorBar, oControl._bHContentAlwaysExpanded);
 
 			oRm.write("</div>");
 			oRm.write("</header>");
@@ -90,7 +87,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 			oRm.writeClasses();
 			oRm.write(">");
 
-			this._renderAnchorBar(oRm, oControl, oIconTabBar, oAnchorBar, !oControl._bHContentAlwaysExpanded);
+			this._renderAnchorBar(oRm, oControl, oAnchorBar, !oControl._bHContentAlwaysExpanded);
 
 			oRm.write("</section>");
 
@@ -130,22 +127,17 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 		 */
-		ObjectPageLayoutRenderer._renderAnchorBar = function (oRm, oControl, oIconTabBar, oAnchorBar, bRender) {
+		ObjectPageLayoutRenderer._renderAnchorBar = function (oRm, oControl, oAnchorBar, bRender) {
 			if (bRender) {
 				if (oControl.getIsChildPage()) {
 					oRm.write("<div ");
 					oRm.writeAttributeEscaped("id", oControl.getId() + "-childPageBar");
 					oRm.addClass('sapUxAPObjectChildPage');
-					if (oIconTabBar) {
-						oRm.addClass('sapUxAPITBar');
-					}
 					oRm.writeClasses();
 					oRm.write("></div>");
 				}
 
-				if (oIconTabBar) {
-					oRm.renderControl(oIconTabBar);
-				} else if (oAnchorBar) {
+				if (oAnchorBar) {
 					oRm.renderControl(oAnchorBar);
 				}
 			}

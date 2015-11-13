@@ -6,11 +6,12 @@
 		   xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
 		   xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
 		   xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
+		   xmlns:connections="sap.uxap.sample.SharedBlocks.connections"
 		   controllerName="sap.uxap.sample.ObjectPageWithIconTabBar.ObjectPageWithIconTabBar"
 		   height="100%"
 		>
 
-	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false" useIconTabBar="true">
+	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="true" useIconTabBar="true">
 		<headerTitle>
 			<ObjectPageHeader objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png"
 							  objectTitle="Denise Smith"
@@ -53,19 +54,19 @@
 		</headerContent>
 
 		<sections>
-			<ObjectPageSection title="2014 Goals Plan">
-				<subSections>
-					<ObjectPageSubSection title=" ">
-						<blocks>
-							<goals:GoalsBlock id="goalsblock"/>
-						</blocks>
-					</ObjectPageSubSection>
-				</subSections>
+			<ObjectPageSection id="goals" title="2014 Goals Plan">
+			<subSections>
+				<ObjectPageSubSection id="goalsSS1" title="">
+					<blocks>
+						<goals:GoalsBlock id="goalsblock"/>
+					</blocks>
+				</ObjectPageSubSection>
+			</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="Personal">
+			<ObjectPageSection id="personal" title="Personal">
 				<subSections>
-					<ObjectPageSubSection title="Connect">
+					<ObjectPageSubSection id="personalSS1" title="Connect">
 						<blocks>
 							<personal:BlockPhoneNumber id="phone"/>
 							<personal:BlockSocial id="social"/>
@@ -74,7 +75,7 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Payment information">
+					<ObjectPageSubSection id="personalSS2" title="Payment information">
 						<blocks>
 							<personal:PersonalBlockPart1 id="part1" columnLayout="1"/>
 						</blocks>
@@ -85,9 +86,9 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="Employment">
+			<ObjectPageSection id="employment" title="Employment">
 				<subSections>
-					<ObjectPageSubSection title="Job information">
+					<ObjectPageSubSection id="employmentSS1" title="Job information">
 						<blocks>
 							<employment:BlockJobInfoPart1 id="jobinfopart1"/>
 							<employment:BlockJobInfoPart2 id="jobinfopart2"/>
@@ -95,7 +96,7 @@
 						</blocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Employee Details" mode="Collapsed">
+					<ObjectPageSubSection id="employmentSS2" title="Employee Details" mode="Collapsed">
 						<blocks>
 							<employment:BlockEmpDetailPart1 id="empdetailpart1" columnLayout="1"/>
 						</blocks>
@@ -105,7 +106,7 @@
 						</moreBlocks>
 					</ObjectPageSubSection>
 
-					<ObjectPageSubSection title="Job Relationship" mode="Collapsed">
+					<ObjectPageSubSection id="employmentSS3" title="Job Relationship" mode="Collapsed">
 						<blocks>
 							<employment:EmploymentBlockJob id="employmentblockjob" showSubSectionMore="true">
 								<employment:mappings>
@@ -123,6 +124,30 @@
 												  externalPath="/Employee/5"/>
 								</employment:mappings>
 							</employment:EmploymentBlockJob>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection id="connections" title="Connections">
+				<subSections>
+					<ObjectPageSubSection id="connectionsSS1" title="">
+						<blocks>
+							<connections:ConnectionsBlock id="connectionsblock">
+								<connections:mappings>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp1"
+												  externalPath="/Employee/0"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp2"
+												  externalPath="/Employee/1"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp3"
+												  externalPath="/Employee/2"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp4"
+												  externalPath="/Employee/3"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp5"
+												  externalPath="/Employee/4"/>
+									<ModelMapping externalModelName="ObjectPageModel" internalModelName="emp6"
+												  externalPath="/Employee/5"/>
+								</connections:mappings>
+							</connections:ConnectionsBlock>
 						</blocks>
 					</ObjectPageSubSection>
 				</subSections>

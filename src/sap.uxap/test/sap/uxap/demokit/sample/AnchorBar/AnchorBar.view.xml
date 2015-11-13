@@ -18,14 +18,14 @@
 		</headerContent>
 
 		<sections>
-			<ObjectPageSection title="Section 1">
+			<ObjectPageSection id="section1" title="Section 1">
 				<subSections>
-					<ObjectPageSubSection title="Subsection 1.1 ">
+					<ObjectPageSubSection id="section1_SS1" title="Subsection 1.1 ">
 						<blocks>
 							<sample:mySimpleBlock id="bbt1"/>
 						</blocks>
 					</ObjectPageSubSection>
-					<ObjectPageSubSection title="Subsection 1.2 ">
+					<ObjectPageSubSection id="section1_SS2" title="Subsection 1.2 ">
 						<blocks>
 							<sample:mySimpleBlock id="bbt2"/>
 						</blocks>
@@ -33,12 +33,12 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="Section 2">
+			<ObjectPageSection id="section2" title="Section 2">
 			</ObjectPageSection>
 
-			<ObjectPageSection title="Section 3">
+			<ObjectPageSection id="section3" title="Section 3">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection id="section3_SS1" title=" ">
 						<blocks>
 							<sample:mySimpleBlock id="bbt3"/>
 						</blocks>
@@ -46,9 +46,9 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="Section 4">
+			<ObjectPageSection id="section4" title="Section 4">
 				<subSections>
-					<ObjectPageSubSection title="Subsection 4.1 ">
+					<ObjectPageSubSection id="section4_SS1" title="Subsection 4.1 ">
 						<blocks>
 							<sample:mySimpleBlock id="bbt4"/>
 						</blocks>
@@ -56,9 +56,9 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="Section 5">
+			<ObjectPageSection id="section5" title="Section 5">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection id="section5_SS1" title=" ">
 						<blocks>
 							<sample:mySimpleBlock id="bbt5"/>
 						</blocks>
@@ -66,9 +66,9 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="Section 6">
+			<ObjectPageSection id="section6" title="Section 6">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection id="section6_SS1" title=" ">
 						<blocks>
 							<sample:mySimpleBlock id="b1"/>
 						</blocks>
@@ -76,9 +76,9 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="Section 7">
+			<ObjectPageSection id="section7" title="Section 7">
 				<subSections>
-					<ObjectPageSubSection title=" ">
+					<ObjectPageSubSection id="section7_SS1" title=" ">
 						<blocks>
 							<sample:mySimpleBlock id="b2"/>
 						</blocks>

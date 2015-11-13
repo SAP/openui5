@@ -31,6 +31,8 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 						"../SharedBlocks/employment/EmploymentBlockJobExpanded.view.xml",
 						"../SharedBlocks/goals/GoalsBlock.js",
 						"../SharedBlocks/goals/GoalsBlock.view.xml",
+						"../SharedBlocks/connections/ConnectionsBlock.js",
+						"../SharedBlocks/connections/ConnectionsBlock.view.xml",
 						"../SharedBlocks/personal/BlockAdresses.js",
 						"../SharedBlocks/personal/BlockAdresses.view.xml",
 						"../SharedBlocks/personal/BlockMailing.js",
