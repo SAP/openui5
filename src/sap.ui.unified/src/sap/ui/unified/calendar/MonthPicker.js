@@ -135,6 +135,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		};
 
+		MonthPicker.prototype.onmouseup = function(oEvent){
+
+			// fire select event on mouseup to prevent closing MonthPicker during click
+
+			if (this._bMousedownChange) {
+				this._bMousedownChange = false;
+				this.fireSelect();
+			}
+
+		};
+
 		MonthPicker.prototype.onThemeChanged = function(){
 
 			if (this._bNoThemeChange) {
@@ -228,7 +239,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			}
 
 			_selectMonth(oThis, iIndex);
-			oThis.fireSelect();
+			oThis._bMousedownChange = true;
 
 			oEvent.preventDefault(); // to prevent focus set outside of DatePicker
 			oEvent.setMark("cancelAutoClose");
