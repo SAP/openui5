@@ -6,7 +6,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 	function(jQuery, ListItemBaseRenderer, ListRenderer, Renderer) {
 	"use strict";
 
-
 	/**
 	 * ColumnListItem renderer.
 	 * @namespace
@@ -52,7 +51,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		
 		this.writeAriaSelected(rm, oLI);
 		
-		if (!oLI.needsTypeColumn()) {
+		if (!oLI._needsTypeColumn()) {
 			rm.writeAttribute("aria-hidden", "true");
 		}
 		
@@ -152,7 +151,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 			bSelected = oLI.getProperty("selected");
 	
 		// remove cloned headers
-		oLI.destroyClonedHeaders();
+		oLI._destroyClonedHeaders();
 	
 		aColumns.forEach(function(oColumn, i) {
 			var cls,
@@ -255,9 +254,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		var bSelected = oLI.getProperty("selected"),
 			bSelectable = oLI.isSelectable();
 			
-		oLI._popinId = oLI.getId() + "-sub";
-		rm.write("<tr class='sapMListTblSubRow'");
-		rm.writeAttribute("id", oLI._popinId);
+		rm.write("<tr");
+		rm.addClass("sapMListTblSubRow");
+		rm.writeElementData(oLI.getPopin());
 		rm.writeAttribute("role", "row");
 		rm.writeAttribute("tabindex", "-1");
 		
@@ -267,8 +266,12 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		
 		// logical parent of the popin is the base row
 		rm.writeAttribute("aria-owns", oLI.getId());
+		rm.writeClasses();
+		rm.write(">");
 		
-		rm.write("><td");
+		// cell
+		rm.write("<td");
+		rm.writeAttribute("id", oLI.getId() + "-subcell");
 		rm.writeAttribute("role", "gridcell");
 		rm.writeAttribute("colspan", oTable.getColCount());
 		if (bSelectable) {
@@ -311,7 +314,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 				rm.write(">");
 				oHeader = oHeader.clone();
 				oColumn.addDependent(oHeader);
-				oLI.addClonedHeader(oHeader);
+				oLI._addClonedHeader(oHeader);
 				oColumn.applyAlignTo(oHeader, "Begin");
 				rm.renderControl(oHeader);
 				rm.write("</div>");

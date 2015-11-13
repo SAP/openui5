@@ -43,16 +43,14 @@
 
 		table.placeAt("qunit-fixture");
 		core.applyChanges();
-		popinId = sut._popinId;
-		hasPopin = sut.hasOwnProperty("_popinId");
+		hasPopin = sut.hasPopin();
 
 		// Act
 		result = sut.removePopin();
 
 		// Assert
-		ok(hasPopin,"did have a popin before deleting it");
-		ok(sut._popinId === "", "popinId Property is cleared");
-		equal(jQuery("#" + popinId).length, 0,"popin got removed from dom");
+		ok(hasPopin, "did have a popin before deleting it");
+		equal(sut.$Popin().length, 0,"popin got removed from dom");
 
 		//Cleanup
 		table.destroy();
@@ -61,61 +59,35 @@
 	test("ShouldToggleActiveClass", function() {
 		var testCase = function(sFunctionName,hasClass){
 			//Arrange
-			var popinId = "someId",
-				className ="sapMLIBActive",
-				sut,
-				$element = $("<div>").attr("id",popinId);
+			var className ="sapMLIBActive",
+				sut = new sap.m.ColumnListItem({
+					cells: new sap.m.Text
+				}),
+				column = new sap.m.Column({
+					demandPopin : true,
+					// make the column bigger than the screen
+					minScreenWidth : "48000px"
+				}),
+				table = new sap.m.Table({
+					columns : column,
+					items : sut
+				}),
+				popin = sut.getPopin();
 
-			//fake the renderer
-			$("#qunit-fixture").append($element);
-
-			//SUT
-			sut = new sap.m.ColumnListItem();
-			//fake a popin
-			sut._popinId = popinId;
+			table.placeAt("qunit-fixture");
+			core.applyChanges();
 
 			//Act
 			sut[sFunctionName]();
 
 			//Assert
-			equal($element.hasClass(className),hasClass);
+			equal(sut.$Popin().hasClass(className), hasClass);
 
-			$element.remove();
-			sut.destroy();
+			table.destroy();
 		};
 
 		testCase("_activeHandlingInheritor",true);
 		testCase("_inactiveHandlingInheritor",false);
-	});
-
-
-	test("ShouldHandleEvents", function() {
-		//Arrange
-		var sut,oContainerDomRef,
-			$target = $("<div>").attr("id","anotherId"),
-			sEventName = "SomeEvent",
-			oEvent = jQuery.Event(sEventName),
-			$fakeColumnListItem = $("<div>").attr("id","someId"),
-			$fakePopin = $("<div>").addClass("sapMListTblSubRow").append($target);
-
-		//add fakes to dom
-		oContainerDomRef = $("#qunit-fixture").append($fakeColumnListItem).append($fakePopin);
-
-		oEvent.target = $target;
-
-		//SUT
-		sut = new sap.m.ColumnListItem("someId");
-
-		sut["on" + sEventName] = function(){
-			//Assert
-			ok(true, "Event sucessfully invoked");
-		}
-
-		//Act
-		sap.m.ColumnListItem.handleEvents(oEvent, oContainerDomRef);
-
-		//Cleanup
-		sut.destroy();
 	});
 	
 	test("Should not clone headers for popinDisplay:WithoutHeader", function() {

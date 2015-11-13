@@ -196,30 +196,6 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		});
 	};
 	
-	// Handle pop-in touch start events for active feedback
-	Table.prototype.ontouchstart = function(oEvent) {
-		ListBase.prototype.ontouchstart.call(this, oEvent);
-		this._handlePopinEvent(oEvent);
-	};
-	
-	// Handle pop-in touch end events for active feedback
-	Table.prototype.ontouchend = function(oEvent) {
-		this._handlePopinEvent(oEvent);
-	};
-	
-	// Android cancels touch events by native scrolling, deactivate popin
-	Table.prototype.ontouchcancel = Table.prototype.ontouchend;
-	
-	// Handle pop-in touch move events for active feedback
-	Table.prototype.ontouchmove = function(oEvent) {
-		this._handlePopinEvent(oEvent);
-	};
-	
-	// Handle pop-in tap events for active feedback
-	Table.prototype.ontap = function(oEvent) {
-		this._handlePopinEvent(oEvent);
-	};
-	
 	/*
 	 * Returns the <table> DOM reference
 	 * @protected
@@ -367,20 +343,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 			oColumn["on" + sAction](vParam1, vParam2);
 		});
 	};
-	
-	// pass pop-in events to ColumnListItem
-	Table.prototype._handlePopinEvent = function(oEvent, bRowOnly) {
-		if (!this.hasPopin()) {
-			return;
-		}
-		
-		if (bRowOnly && !sap.m.ColumnListItem.isPopinFocused()) {
-			return;
-		}
-	
-		return sap.m.ColumnListItem.handleEvents(oEvent, this.getItemsContainerDomRef());
-	};
-	
+
 	/**
 	 * This method takes care of the select all checkbox for table lists. It
 	 * will automatically be created on demand and returned when needed
@@ -488,24 +451,11 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 			oEvent.preventDefault();
 			oEvent.setMarked();
 		}
-	
-		// handle space event for pop-ins
-		this._handlePopinEvent(oEvent, true);
-	};
-	
-	// Handle enter event for pop-ins
-	Table.prototype.onsapenter = function(oEvent) {
-		this._handlePopinEvent(oEvent, true);
-	};
-	
-	// Handle delete event for pop-ins
-	Table.prototype.onsapdelete = function(oEvent) {
-		this._handlePopinEvent(oEvent, true);
 	};
 	
 	// Handle tab key 
 	Table.prototype.onsaptabnext = function(oEvent) {
-		if (this._handlePopinEvent(oEvent)) {
+		if (oEvent.isMarked()) {
 			return;
 		}
 		
@@ -526,6 +476,10 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	
 	// Handle shift-tab key 
 	Table.prototype.onsaptabprevious = function(oEvent) {
+		if (oEvent.isMarked()) {
+			return;
+		}
+		
 		var sTargetId = oEvent.target.id;
 		if (sTargetId == this.getId("nodata") ||
 			sTargetId == this.getId("tblHeader") || 
@@ -534,16 +488,7 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 		} else if (sTargetId == this.getId("trigger")) {
 			this.focusPrevious();
 			oEvent.preventDefault();
-		} else {
-			this._handlePopinEvent(oEvent);
 		}
-	};
-	
-	// Handles focus of the popins
-	Table.prototype.onfocusin = function(oEvent) {
-		var oCLI = this._handlePopinEvent(oEvent, true);
-		ListBase.prototype.onfocusin.call(this, oEvent);
-		oCLI && oCLI.focus();
 	};
 
 	return Table;
