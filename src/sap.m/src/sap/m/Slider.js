@@ -232,6 +232,33 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return 0;
 		};
 
+		Slider.prototype._getPrecisionOfNumber = function(fValue) {
+
+			// the value is an integer
+			if (Math.floor(fValue) === fValue) {
+				return 0;
+			}
+
+			var sValue = fValue.toString(),
+				iIndexOfDot = sValue.indexOf("."),
+				iIndexOfENotation = sValue.indexOf("e-");
+
+			// the "." is found in the value
+			if (iIndexOfDot !== -1) {
+				return sValue.length - iIndexOfDot - 1;
+			}
+
+			// note: numbers such as 0.00000000000000000005 are represented using the e-notation
+			// (for example, 0.00000000000000000005 becomes 5e-20)
+
+			// the "e-" is found in the value
+			if (iIndexOfENotation !== -1) {
+				return +sValue.slice(iIndexOfENotation + 2);
+			}
+
+			return 0;
+		};
+
 		/**
 		 * Sets the <code>value</code>.
 		 *
@@ -265,9 +292,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			if (bSnapValue && (fModStepVal !== 0) /* division with remainder */) {
 
-				// snap the new value to the nearest step
+				// adjust the new value to the nearest step
 				fNewValue = fModStepVal * 2 >= fStep ? fNewValue + fStep - fModStepVal : fNewValue - fModStepVal;
 			}
+
+			var iPrecisionOfStep = this._getPrecisionOfNumber(fStep);
+
+			// the number of digits to appear after the decimal point of the value
+			// must be between 0 and 20 to avoid a RangeError when calling the .toFixed() method
+			if (iPrecisionOfStep > 20) {
+				iPrecisionOfStep = 20;
+			} else if (iPrecisionOfStep < 0) {
+				iPrecisionOfStep = 0;
+			}
+
+			// note: round the value to the same precision of the step
+			// to avoid rounding errors as side effect of floating-point arithmetic
+			fNewValue = Number(fNewValue.toFixed(iPrecisionOfStep));
 
 			// constrain the new value between the minimum and maximum
 			if (fNewValue < fMin) {
@@ -278,10 +319,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			// update the value and suppress re-rendering
 			this.setProperty("value", fNewValue, true);
-
-			// Floating-point in JavaScript are IEEE 64 bit values and has some problems with big decimals.
-			// Round the final value to 5 digits after the decimal point.
-			fNewValue = Number(fNewValue.toFixed(5));
 
 			// update the value in DOM only when it has changed
 			if (fValue !== this.getValue()) {
@@ -300,12 +337,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				return;
 			}
 
-			sPerValue = this._getPercentOfValue(fNewValue) + "%";
-
-			// round negative percentages to "0px"
-			if (parseFloat(sPerValue) <= 0) {
-				sPerValue = "0";
-			}
+			// note: round negative percentages to 0
+			sPerValue = Math.max(this._getPercentOfValue(fNewValue), 0) + "%";
 
 			oHandleDomRef = this.getDomRef("handle");
 
@@ -419,13 +452,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (!bError) {
 				this.setValue(this.getValue());
 
-				// this is the current % value for the slider progress bar
-				this._sProgressValue = this._getPercentOfValue(this.getValue()) + "%";
-
-				// round negative percentages to "0px"
-				if (parseFloat(this._sProgressValue) <= 0) {
-					this._sProgressValue = "0";
-				}
+				// this is the current % value of the progress bar
+				// note: round negative percentages to 0
+				this._sProgressValue = Math.max(this._getPercentOfValue(this.getValue()), 0) + "%";
 			}
 
 			if (!this._hasFocus()) {
