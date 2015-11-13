@@ -4,7 +4,7 @@
 	<VBox>
 		<items>
 			<Label text="MultiInput using two validators:"/>
-			<Label text="first validator creates token where the text is the same as input value; second validator adds counter number to token."></Label>
+			<Label text="first validator creates token where the text is the same as input value; second validator adds symbol to token."></Label>
 			<HBox>
 				<items>
 					<MultiInput id="multiInput1" width="400px"/>
