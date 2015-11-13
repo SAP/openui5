@@ -18,7 +18,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * It is possible to define different views and switch between the views.
 	 * Own buttons or other controls could be added to the toolbar.
 	 *
-	 * @extends sap.m.InputBase
+	 * <b>Note:</b> The <code>PlanningCalendar</code> uses parts of the <code>sap.ui.unified</code> library.
+	 * If the <code>sap.ui.unified</code> library is not loaded before the <code>PlanningCalendar</code> is loaded,
+	 * it will be loaded after the <code>PlanningCalendar</code> is loaded.
+	 * This could lead to a waiting time before a <code>PlanningCalendar</code> is used the first time.
+	 * To prevent this, applications using the <code>PlanningCalendar</code> should also load the <code>sap.ui.unified</code> library.
+	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
 	 * @constructor
@@ -59,9 +64,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			height : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * If set interval headers are shown even if no <code>intervalHeaders</code> are assigned to the row in the visible time frame.
+			 * If set, interval headers are shown even if no <code>intervalHeaders</code> are assigned to the row in the visible time frame.
 			 *
-			 * If not set no interval headers are shown even if <code>intervalHeaders</code> are assigned to the row.
+			 * If not set, no interval headers are shown even if <code>intervalHeaders</code> are assigned to the row.
 			 */
 			showIntervalHeaders : {type : "boolean", group : "Appearance", defaultValue : true},
 
@@ -83,7 +88,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			/**
 			 * views of the <code>PlanningCalendar</code>.
 			 *
-			 * If not set 3 default views are used to allow to switch between hour, day and month granularity.
+			 * If not set, 3 default views are used to allow to switch between hour, day and month granularity.
 			 * The default views have the keys defined in </code>sap.ui.unified.CalendarIntervalType</code>
 			 */
 			views : {type : "sap.m.PlanningCalendarView", multiple : true, singularName : "view"},
@@ -229,7 +234,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			this._oTodayButton.attachEvent("press", _handleTodayPress, this);
 
 			this._oHeaderToolbar = new sap.m.Toolbar(this.getId() + "-HeaderToolbar", {
-				design: sap.m.ToolbarDesign.Transpaent,
+				design: sap.m.ToolbarDesign.Transparent,
 				content: [this._oIntervalTypeSelect, this._oTodayButton]
 			});
 
@@ -433,7 +438,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						this._oTimeInterval.getSpecialDates = function(){
 							return this._oPlanningCalendar.getSpecialDates();
 						};
-//						this._oTimeInterval._iItemsHead = 1000; // to hide day names row
 					}else if (this._oTimeInterval.getItems() != iIntervals) {
 						this._oTimeInterval.setItems(iIntervals);
 					}
@@ -454,7 +458,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						this._oDateInterval.getSpecialDates = function(){
 							return this._oPlanningCalendar.getSpecialDates();
 						};
-//						this._oDateInterval._iDaysMonthHead = 1000; // to hide month names row
 					}else if (this._oDateInterval.getDays() != iIntervals) {
 						this._oDateInterval.setDays(iIntervals);
 					}
@@ -474,7 +477,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						this._oMonthInterval.getSpecialDates = function(){
 							return this._oPlanningCalendar.getSpecialDates();
 						};
-//						this._oMonthInterval._iDaysMonthsHead = 1000; // to hide year names row
 					}else if (this._oMonthInterval.setMonths() != iIntervals) {
 						this._oMonthInterval.setMonths(iIntervals);
 					}
