@@ -228,11 +228,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 	SearchField.prototype.onBeforeRendering = function() {
 		if (this._inputElement) {
-			if (sap.ui.Device.browser.firefox) {
-				this.$().find(".sapMSFB").unbind();
-			}
-			this.$().unbind();
-			jQuery(this._inputElement).unbind();
+			this.$().find(".sapMSFB").off();
+			this.$().off();
+			jQuery(this._inputElement).off();
 			this._inputElement = null;
 		}
 	};
@@ -241,28 +239,34 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	
 		// DOM element for the embedded HTML input:
 		this._inputElement = this.getDomRef("I");
-	
+		// DOM element for the reset button:
+		this._resetElement = this.getDomRef("reset");
+
 		// Bind events
 		//  search: user has pressed "Enter" button -> fire search event, do search
 		//  change: user has focused another control on the page -> do not trigger a search action
 		//  input:  key press or paste/cut -> fire liveChange event
 		jQuery(this._inputElement)
-			.bind(this._inputEvent, jQuery.proxy(this.onInput,  this))
-			.bind("search", jQuery.proxy(this.onSearch, this))
-			.bind("change", jQuery.proxy(this.onChange, this))
-			.bind("focus",  jQuery.proxy(this.onFocus,  this))
-			.bind("blur",   jQuery.proxy(this.onBlur,  this));
-		
+			.on(this._inputEvent, this.onInput.bind(this))
+			.on("search", this.onSearch.bind(this))
+			.on("focus", this.onFocus.bind(this))
+			.on("blur", this.onBlur.bind(this));
+
 		if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
 			// Listen to native touchstart/mousedown.
-			this.$().bind("touchstart mousedown", jQuery.proxy(this.onButtonPress,  this));
+			this.$().on("touchstart mousedown", this.onButtonPress.bind(this));
 
 			// FF does not set :active by preventDefault, use class:
 			if (sap.ui.Device.browser.firefox) { 
-				this.$().find(".sapMSFB").bind("mouseup mouseout", function(oEvent){
+				this.$().find(".sapMSFB").on("mouseup mouseout", function(oEvent){
 					jQuery(oEvent.target).removeClass("sapMSFBA");
 				});
 			}
+		} else if (window.PointerEvent) {
+			// IE Mobile sets active element to the reset button, save the previous reference
+			jQuery(this._resetElement).on("touchstart", function(){
+				this._active = document.activeElement;
+			}.bind(this));
 		}
 	};
 	
@@ -322,7 +326,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// When there was no "x" visible (bEmpty):
 			// - always focus
 			var active = document.activeElement;
-			if ((sap.ui.Device.system.desktop || bEmpty || /(INPUT|TEXTAREA)/i.test(active.tagName) ) && (active !== this._inputElement)) {
+			if ((sap.ui.Device.system.desktop
+				|| bEmpty
+				|| /(INPUT|TEXTAREA)/i.test(active.tagName)
+				|| active ===  this._resetElement && this._active === this._inputElement // IE Mobile
+				) && (active !== this._inputElement)) {
 				this._inputElement.focus();
 			}
 		} else 	if (oSrc.id == this.getId() + "-search") {
