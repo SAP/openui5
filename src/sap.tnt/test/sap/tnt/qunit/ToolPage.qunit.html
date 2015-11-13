@@ -532,7 +532,6 @@
 			// Arrange
 			var oSideExpandedSpy = this.spy(this.toolPage, "setSideExpanded");
 			var oUpdateLastQuerySpy = this.spy(this.toolPage, "_updateLastMediaQuery");
-			var oFireDeviceChangeSpy = this.spy(this.toolPage, "_fireDeviceChangeEvent");
 			this.toolPage._lastMediaQuery = "test";
 
 			// Act
@@ -541,12 +540,10 @@
 			// Assert
 			assert.strictEqual(oSideExpandedSpy.callCount, 1, "setSideExpanded called once");
 			assert.strictEqual(oUpdateLastQuerySpy.callCount, 1, "setSideExpanded called once");
-			assert.strictEqual(oFireDeviceChangeSpy.callCount, 1, "setSideExpanded called once");
 
 			// Reset sinon spy
 			this.toolPage.setSideExpanded.restore();
 			this.toolPage._updateLastMediaQuery.restore();
-			this.toolPage._fireDeviceChangeEvent.restore();
 		});
 
 		QUnit.module("Media handling", {
