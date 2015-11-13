@@ -672,6 +672,27 @@
 				oSlider.destroy();
 			});
 
+			test("it should correctly round the value to the nearest step", function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					value: 12.3,
+					min: 10,
+					max: 20,
+					step: 3
+				});
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSlider.getValue(), 13);
+
+				// cleanup
+				oSlider.destroy();
+			});
+
 			// BCP: 1580215885
 			test("it should not throw an exception when the id has a dot", function() {
 
