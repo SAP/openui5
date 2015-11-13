@@ -455,10 +455,7 @@
 	
 		test("date formatValue", function(){
 			// as date object is locale dependend fill it manually
-			var dateValue = new Date();
-			dateValue.setDate(1);
-			dateValue.setMonth(1);
-			dateValue.setYear(2003);
+			var dateValue = new Date(2003, 1, 1);
 
 			var dateType  = new sap.ui.model.type.Date();
 //			equal(dateType.formatValue(dateValue, "string"), "02/01/2003", "format test");
@@ -480,14 +477,7 @@
 
 		test("date parseValue", function(){
 			// as date object is locale dependend fill it manually
-			var dateValue = new Date();
-			dateValue.setDate(1);
-			dateValue.setMonth(1);
-			dateValue.setYear(2003);
-			dateValue.setMinutes(0);
-			dateValue.setHours(0);
-			dateValue.setSeconds(0);
-			dateValue.setMilliseconds(0);
+			var dateValue = new Date(2003, 1, 1);
 
 			var dateType  = new sap.ui.model.type.Date();
 //			equal(dateType.parseValue("02/01/2003", "string").getTime(), dateValue.getTime(), "parse test");
@@ -510,36 +500,15 @@
 
 		test("date validateValue", function(){
 			// as date object is locale dependend fill it manually
-			var dateValueMin = new Date();
-			dateValueMin.setDate(1);
-			dateValueMin.setMonth(0);
-			dateValueMin.setYear(2000);
-			dateValueMin.setMinutes(0);
-			dateValueMin.setHours(0);
-			dateValueMin.setSeconds(0);
-			dateValueMin.setMilliseconds(0);
-			var dateValueMax = new Date();
-			dateValueMax.setDate(31);
-			dateValueMax.setMonth(11);
-			dateValueMax.setYear(2000);
-			dateValueMax.setMinutes(0);
-			dateValueMax.setHours(0);
-			dateValueMax.setSeconds(0);
-			dateValueMax.setMilliseconds(0);
+			var dateValueMin = new Date(2000, 0, 1);
+			var dateValueMax = new Date(2000, 11, 31);
 			
 			var dateType = new sap.ui.model.type.Date(null, {
 				minimum: dateValueMin, //01.01.2000
 				maximum: dateValueMax //31.12.2000
 			});
 
-			var dateValue = new Date();
-			dateValue.setDate(1);
-			dateValue.setMonth(1);
-			dateValue.setYear(2000);
-			dateValue.setMinutes(0);
-			dateValue.setHours(0);
-			dateValue.setSeconds(0);
-			dateValue.setMilliseconds(0);
+			var dateValue = new Date(2000, 1, 1);
 			
 			try{
 				equal(dateType.validateValue(dateValue), undefined, "validate test");
@@ -547,14 +516,10 @@
 				ok(false, "one of the validation tests failed please check");
 			}
 
-			dateValue.setDate(1);
-			dateValue.setMonth(1);
-			dateValue.setYear(1999);
+			dateValue = new Date(1999, 1, 1);
 			raises(function(){dateType.validateValue(dateValue)}, checkValidateException, "validate test");
 
-			dateValue.setDate(1);
-			dateValue.setMonth(1);
-			dateValue.setYear(2001);
+			dateValue = new Date(2001, 1, 1);
 			raises(function(){dateType.validateValue(dateValue)}, checkValidateException, "validate test");
 
 			dateType = new sap.ui.model.type.Date({
@@ -581,14 +546,7 @@
 		test("time formatValue", function(){
 			var timeType  = new sap.ui.model.type.Time();
 			// as date object is locale dependend fill it manually
-			var	timeValue = new Date();
-			timeValue.setDate(1);
-			timeValue.setMonth(1);
-			timeValue.setYear(2003);
-			timeValue.setMinutes(58);
-			timeValue.setHours(16);
-			timeValue.setSeconds(49);
-			timeValue.setMilliseconds(0);
+			var	timeValue = new Date(2003, 1, 1, 16, 58, 49);
 		
 			equal(timeType.formatValue(timeValue, "string"), "4:58:49 PM", "format test");
 	
@@ -610,14 +568,7 @@
 
 		test("time parseValue", function(){
 			// as date object is locale dependend fill it manually
-			var	timeValue = new Date();
-			timeValue.setDate(1);
-			timeValue.setMonth(0);
-			timeValue.setYear(1970);
-			timeValue.setMinutes(58);
-			timeValue.setHours(16);
-			timeValue.setSeconds(49);
-			timeValue.setMilliseconds(0);
+			var	timeValue = new Date(1970, 0, 1, 16, 58, 49);
 
 			var timeType  = new sap.ui.model.type.Time();
 			equal(timeType.parseValue("04:58:49 PM", "string").getTime(), timeValue.getTime(), "parse test");
@@ -658,14 +609,7 @@
 	
 		test("dateTime formatValue", function(){
 			// as date object is locale dependend fill it manually
-			var dateValue = new Date();
-			dateValue.setDate(1);
-			dateValue.setMonth(1);
-			dateValue.setYear(2003);
-			dateValue.setMinutes(5);
-			dateValue.setHours(4);
-			dateValue.setSeconds(6);
-			dateValue.setMilliseconds(7);
+			var dateValue = new Date(2003, 1, 1, 4, 5, 6, 7);
 
 			var dateType  = new sap.ui.model.type.DateTime();
 		
@@ -688,31 +632,18 @@
 		});
 
 		test("dateTime parseValue", function(){
-			var dateValue = new Date();
-			dateValue.setDate(1);
-			dateValue.setMonth(1);
-			dateValue.setYear(2003);
-			dateValue.setMinutes(5);
-			dateValue.setHours(4);
-			dateValue.setSeconds(6);
-			dateValue.setMilliseconds(7);
-
+			var dateValue = new Date(2003, 1, 1, 4, 5, 6);
 			var dateType  = new sap.ui.model.type.DateTime();
-			equal(dateType.parseValue("Feb 1, 2003, 4:05:06 AM", "string").getTime(), 1044068706000, "parse test");
+			equal(dateType.parseValue("Feb 1, 2003, 4:05:06 AM", "string").getTime(), dateValue.getTime(), "parse test");
 
+			dateValue = new Date(2003, 1, 1, 4, 5, 6, 7);
 			dateType =  new sap.ui.model.type.DateTime({pattern: "yy-MM-dd HH:mm:ss'+'SSS'"});
 			equal(dateType.parseValue("03-02-01 04:05:06+007", "string").getTime(), dateValue.getTime(), "parse test with pattern");
 			
 			dateType = new sap.ui.model.type.DateTime({source: {pattern: "yyyy/MM/dd HHmmssSSS"}, pattern: "dd.MM.yyyy HH-mm-ss.SSS"});
 			equal(dateType.parseValue("01.02.2003 04-05-06.007", "string"), "2003/02/01 040506007", "parse test with source pattern");
 
-			dateValue.setDate(24);
-			dateValue.setMonth(0);
-			dateValue.setYear(2012);
-			dateValue.setMinutes(33);
-			dateValue.setHours(14);
-			dateValue.setSeconds(0);
-			dateValue.setMilliseconds(0);
+			dateValue = new Date(2012, 0, 24, 14, 33, 0);
 			dateType = new sap.ui.model.type.DateTime({source: {pattern: "timestamp"}, pattern: "dd.MM.yyyy HH:mm"});
 			equal(dateType.parseValue("24.01.2012 14:33", "string"), dateValue.getTime(), "parse test with timestamp");
 			
