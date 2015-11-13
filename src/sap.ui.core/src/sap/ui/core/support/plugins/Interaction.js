@@ -86,9 +86,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 			rm.write("<thead style=\"text-align:left;\"><tr>");
 			rm.write("<th>Component</th>");
 			rm.write("<th>Trigger</th>");
+			rm.write("<th>Type</th>");
 			rm.write("<th>Start</th>");
 			rm.write("<th>End</th>");
-			rm.write("<th>Processing Time</th>");
+			rm.write("<th>Duration</th>");
 			rm.write("<th>Requests</th>");
 			rm.write("</tr></thead>");
 			rm.write("<tbody id=\"" + this.getId() + "-tabBody\"></tbody>");
@@ -124,7 +125,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 		}
 
 		function getPerformanceData(oSupportStub) {
-			var bActive = jQuery.sap.measure.getActive();
+			var bActive = jQuery.sap.interaction.getActive();
 			var aMeasurements = [];
 
 			if (bActive) {
@@ -151,6 +152,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 				rm.write("<tr>");
 				rm.write("<td>" + oMeasurement.component + "</td>");
 				rm.write("<td>" + oMeasurement.trigger + "</td>");
+				rm.write("<td>" + oMeasurement.event + "</td>");
 				rm.write("<td>" + this._fnFormatTime(oMeasurement.start) + "</td>");
 				rm.write("<td>" + this._fnFormatTime(oMeasurement.end) + "</td>");
 				rm.write("<td>" + oMeasurement.duration + "</td>");
@@ -240,8 +242,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin'],
 
 			var bActive = oEvent.getParameter("active");
 
-			if (jQuery.sap.measure.getActive() != bActive) {
-				jQuery.sap.measure.setActive(bActive);
+			if (jQuery.sap.interaction.getActive() != bActive) {
+				jQuery.sap.interaction.setActive(bActive);
 			}
 
 		};
