@@ -87,12 +87,12 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core
 
 			this.setProperty('sideExpanded', isSideExpanded, true);
 
-			if (!domRef) {
-				return this;
-			}
-
 			if (sideContentAggregation && !isMediaQueryForPhone) {
 				sideContentAggregation.setExpanded(isSideExpanded);
+			}
+
+			if (!domRef) {
+				return this;
 			}
 
 			if (isSideExpanded) {
