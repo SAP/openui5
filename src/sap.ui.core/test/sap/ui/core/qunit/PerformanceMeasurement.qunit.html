@@ -349,7 +349,7 @@
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 			equal(oMeasurement.event, "click", "Event type is set");
 			equal(oMeasurement.trigger, this.oButton.getId(), " Id of control which triggered interaction is set");
-			equal(oMeasurement.component, "no_ui5_component", "No component could be found");
+			equal(oMeasurement.component, "undetermined", "No component could be found");
 			equal(oMeasurement.requests.length, 0, "No requests");
 			equal(oMeasurement.measurements.length, 0, "No measurements");
 			ok(oMeasurement.start !== 0, "Start is set");
@@ -385,25 +385,25 @@
 			}
 		});
 
-		// test("Request depending measures", function() {
-		// 	jQuery.sap.measure.startInteraction("click", this.oButton);
-		// 	var oReq = new XMLHttpRequest();
-		// 	oReq.open("GET", "../../../../../resources/sap-ui-core.js", false);
-		// 	oReq.send();
-		// 	jQuery.sap.measure.endInteraction();
-		// 	jQuery.sap.measure.startInteraction("click", this.oButton);
-		// 	var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
-		// 	// ignore browsers where no Performance API is present or insufficient
-		// 	if(window.performance && oMeasurement.requests && oMeasurement.requests.length) {
-		// 		equal(oMeasurement.requests.length, 1, "One requests");
-		// 		equal(oMeasurement.measurements.length, 0, "No measurements");
-		// 		ok(oMeasurement.networkTime === 0, "No sap-perf-fsrec response header");
-		// 		ok(oMeasurement.bytesSent === 0, "Nothing posted/putted");
-		// 		ok(oMeasurement.bytesReceived === oReq.getResponseHeader("content-length"), "Bytes received correct");
-		// 	} else {
-		// 		ok(!window.performance.getEntries, "Performance API not fully available");
-		// 	}
-		// });
+		test("Request depending measures", function() {
+			jQuery.sap.measure.startInteraction("click", this.oButton);
+			var oReq = new XMLHttpRequest();
+			oReq.open("GET", "../../../../../resources/sap-ui-core.js", false);
+			oReq.send();
+			jQuery.sap.measure.endInteraction();
+			jQuery.sap.measure.startInteraction("click", this.oButton);
+			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
+			// ignore browsers where no Performance API is present or insufficient
+			if(window.performance && oMeasurement.requests && oMeasurement.requests.length) {
+				equal(oMeasurement.requests.length, 1, "One requests");
+				equal(oMeasurement.measurements.length, 0, "No measurements");
+				ok(oMeasurement.networkTime === 0, "No sap-perf-fsrec response header");
+				ok(oMeasurement.bytesSent === 0, "Nothing posted/putted");
+				ok(oMeasurement.bytesReceived === 0, "No bytes received when fesr is not active"); //parseInt(oReq.getResponseHeader("content-length"), 10)
+			} else {
+				ok(!window.performance.getEntries, "Performance API not fully available");
+			}
+		});
 
 		test("jQuery.sap.measure Measurements", function() {
 			jQuery.sap.measure.setActive(true);
@@ -418,7 +418,39 @@
 			});
 		});
 
+		test("Component determination", function() {
+			// setup
+			var oButton = this.oButton;
+			var sComponentName = "MyComponent";
+			var Comp = sap.ui.core.UIComponent.extend("my.Component", {
+				metadata : {
+					manifest: {
+						"sap.app" : {
+							id: sComponentName
+						}
+					}
+				},
+				createContent: function() {
+					// hack the _sOwnerId for test purpose
+					oButton._sOwnerId = this.getId();
+					return oButton;
+				}
+			});
+			var oComp = new Comp();
 
+			jQuery.sap.measure.setActive(true);
+			jQuery.sap.measure.startInteraction("click", this.oButton);
+			jQuery.sap.require("sap.m.Button");
+			jQuery.sap.measure.endInteraction();
+			jQuery.sap.measure.startInteraction("click", this.oButton);
+			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
+
+			// assert
+			ok(oMeasurement.component === sComponentName, "Component name could be determined");
+
+			// cleanup
+			oComp.destroy();
+		});
 
 		</script>
 
