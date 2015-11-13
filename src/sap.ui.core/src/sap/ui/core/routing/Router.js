@@ -449,6 +449,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 			 * Navigates to a specific route defining a set of parameters. The Parameters will be URI encoded - the characters ; , / ? : @ & = + $ are reserved and will not be encoded.
 			 * If you want to use special characters in your oParameters, you have to encode them (encodeURIComponent).
 			 *
+			 * IF the given route name can't be found, an error message is logged to the console and the hash will be changed to empty string.
+			 *
 			 * @param {string} sName Name of the route
 			 * @param {object} [oParameters] Parameters for the route
 			 * @param {boolean} [bReplace=false] Defines if the hash should be replaced (no browser history entry) or set (browser history entry)
@@ -456,10 +458,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './HashChanger'
 			 * @returns {sap.ui.core.routing.Router} this for chaining.
 			 */
 			navTo : function (sName, oParameters, bReplace) {
+				var sURL = this.getURL(sName, oParameters);
+
+				if (sURL === undefined) {
+					jQuery.sap.log.error("Can not navigate to route with name " + sName + " because the route does not exist");
+				}
+
 				if (bReplace) {
-					this.oHashChanger.replaceHash(this.getURL(sName, oParameters));
+					this.oHashChanger.replaceHash(sURL);
 				} else {
-					this.oHashChanger.setHash(this.getURL(sName, oParameters));
+					this.oHashChanger.setHash(sURL);
 				}
 
 				return this;

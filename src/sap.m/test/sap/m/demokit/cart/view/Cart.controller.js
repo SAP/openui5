@@ -182,7 +182,7 @@ sap.ui.define([
 			oCartProductsModelData.totalPrice = "0";
 			oCartProductsModelData.showEditAndProceedButton = false;
 			oCartProductsModel.setData(oCartProductsModelData);
-			this._router.navTo("Home");
+			this._router.navTo("home");
 			if (!Device.system.phone) {
 				this._router.getTargets().display("welcome");
 			}
