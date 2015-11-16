@@ -1844,11 +1844,12 @@
 			 */
 			this.endInteraction = function(bForce) {
 				if (oPendingInteraction) {
-					// set provisionary processing time from start to end and calculate later if
+					// set provisionary processing time from start to end and calculate later
 					if (!bForce) {
 						oPendingInteraction.processing = jQuery.sap.now() - oPendingInteraction.start;
+					} else {
+						finalizeInteraction(jQuery.sap.now());
 					}
-					finalizeInteraction(jQuery.sap.now());
 				}
 			};
 
