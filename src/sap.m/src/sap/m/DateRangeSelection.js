@@ -111,9 +111,8 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 				return;
 			}
 
-			var that = this;
-			var oFormatter = _getFormatter(that);
-			var sDelimiter = _getDelimiter(that);
+			var oFormatter = _getFormatter.call(this);
+			var sDelimiter = _getDelimiter.call(this);
 			var sAllowedCharacters = oFormatter.sAllowedCharacters + sDelimiter + " ";
 			var sChar = String.fromCharCode(oEvent.charCode);
 
@@ -138,8 +137,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 					sPlaceholder = oLocaleData.getDatePattern(sPlaceholder);
 				}
 
-				var that = this;
-				var sDelimiter = _getDelimiter(that);
+				var sDelimiter = _getDelimiter.call(this);
 				if (sDelimiter && sDelimiter !== "") {
 					sPlaceholder = sPlaceholder + " " + sDelimiter + " " + sPlaceholder;
 				}
@@ -195,7 +193,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 
 			if (sValue) {
 				aDates = this._parseValue(sValue);
-				aDates = _dateRangeValidityCheck(this, aDates[0], aDates[1]);
+				aDates = _dateRangeValidityCheck.call(this, aDates[0], aDates[1]);
 				if (!aDates[0]) {
 					this._bValid = false;
 					jQuery.sap.log.warning("Value can not be converted to a valid dates", this);
@@ -407,8 +405,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 
 			//If we have version of control with delimiter, then sValue should consist of two dates delimited with delimiter,
 			//hence we have to split the value to these dates
-			var that = this;
-			var sDelimiter = _getDelimiter(that);
+			var sDelimiter = _getDelimiter.call(this);
 			if ((sDelimiter && sDelimiter !== "") && sValue) {
 				aDates = sValue.split(sDelimiter);
 				if (aDates.length === 2) {
@@ -433,7 +430,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 
 			if (sValue && aDates.length <= 2) {
 
-				oFormat = _getFormatter(that);
+				oFormat = _getFormatter.call(this);
 
 				//Convert to date object(s)
 				if ((!sDelimiter || sDelimiter === "") || aDates.length === 1) {
@@ -457,13 +454,12 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 		DateRangeSelection.prototype._formatValue = function(oDateValue, oSecondDateValue) {
 
 			var sValue = "";
-			var that = this;
-			var sDelimiter = _getDelimiter(that);
+			var sDelimiter = _getDelimiter.call(this);
 
 			if (oDateValue) {
 				var oFormat;
 
-				oFormat = _getFormatter(that);
+				oFormat = _getFormatter.call(this);
 
 				if (sDelimiter && sDelimiter !== "" && oSecondDateValue) {
 					sValue = oFormat.format(oDateValue) + " " + sDelimiter + " " + oFormat.format(oSecondDateValue);
@@ -488,7 +484,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 			this._bValid = true;
 			if (sValue != "") {
 				aDates = this._parseValue(sValue);
-				aDates = _dateRangeValidityCheck(this, aDates[0], aDates[1]);
+				aDates = _dateRangeValidityCheck.call(this, aDates[0], aDates[1]);
 				if (aDates[0]) {
 					sValue = this._formatValue( aDates[0], aDates[1] ); // to have the right output format if entered different
 				} else {
@@ -536,8 +532,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 					}
 				}
 
-				var that = this;
-				_fireChange(that, this._bValid);
+				_fireChange.call(this, this._bValid);
 
 			}
 
@@ -637,7 +632,6 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 					this.focus();
 
 					var sValue;
-					var that = this;
 					if (!jQuery.sap.equal(oDate1, oDate1Old) || !jQuery.sap.equal(oDate2, oDate2Old)) {
 						// compare Dates because value can be the same if only 2 digits for year
 						if (jQuery.sap.equal(oDate2, oDate2Old)) {
@@ -648,7 +642,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 						}
 
 						sValue = this.getValue();
-						_fireChange(that, true);
+						_fireChange.call(this, true);
 						this._curpos = sValue.length;
 						this._$input.cursorPos(this._curpos);
 					}else if (!this._bValid){
@@ -659,7 +653,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 							if (this.getDomRef()) { // as control could be destroyed during update binding
 								this._$input.val(sValue);
 							}
-							_fireChange(that, true);
+							_fireChange.call(this, true);
 						}
 					}
 
@@ -671,17 +665,17 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 			}
 		};
 
-		function _fireChange(oThis, bValid) {
+		function _fireChange(bValid) {
 
-			oThis.fireChangeEvent(oThis.getValue(), {
-				from: oThis.getDateValue(),
-				to: oThis.getSecondDateValue(),
+			this.fireChangeEvent(this.getValue(), {
+				from: this.getDateValue(),
+				to: this.getSecondDateValue(),
 				valid: bValid
 			});
 
 		}
 
-		function _dateRangeValidityCheck(oThis, oDate, oSecondDate) {
+		function _dateRangeValidityCheck(oDate, oSecondDate) {
 
 			if (oDate && oSecondDate && oDate.getTime() > oSecondDate.getTime()) {
 				// dates are in wrong oder -> just switch
@@ -690,8 +684,8 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 				oSecondDate = oTmpDate;
 			}
 
-			if ((oDate && ( oDate.getTime() < oThis._oMinDate.getTime() || oDate.getTime() > oThis._oMaxDate.getTime())) ||
-					(oSecondDate && ( oSecondDate.getTime() < oThis._oMinDate.getTime() || oSecondDate.getTime() > oThis._oMaxDate.getTime()))) {
+			if ((oDate && ( oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > this._oMaxDate.getTime())) ||
+					(oSecondDate && ( oSecondDate.getTime() < this._oMinDate.getTime() || oSecondDate.getTime() > this._oMaxDate.getTime()))) {
 				return [undefined, undefined];
 			}else {
 				return [oDate, oSecondDate];
@@ -699,12 +693,12 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 
 		}
 
-		function _getDelimiter(oThis) {
+		function _getDelimiter() {
 
-			var sDelimiter = oThis.getDelimiter();
+			var sDelimiter = this.getDelimiter();
 
 			if (!sDelimiter) {
-				if (!oThis._sLocaleDelimiter) {
+				if (!this._sLocaleDelimiter) {
 					var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
 					var oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
 					var sPattern = oLocaleData.getIntervalPattern();
@@ -719,9 +713,9 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 							sDelimiter = sDelimiter.slice(0, sDelimiter.length - 1);
 						}
 					}
-					oThis._sLocaleDelimiter = sDelimiter;
+					this._sLocaleDelimiter = sDelimiter;
 				} else {
-					sDelimiter = oThis._sLocaleDelimiter;
+					sDelimiter = this._sLocaleDelimiter;
 				}
 			}
 
@@ -729,23 +723,23 @@ sap.ui.define(['jquery.sap.global', './DatePicker', './library'],
 
 		}
 
-		function _getFormatter(oThis) {
+		function _getFormatter() {
 
-			var sPattern = ( oThis.getDisplayFormat() || "medium" );
+			var sPattern = ( this.getDisplayFormat() || "medium" );
 			var oFormat;
-			var sCalendarType = oThis.getDisplayFormatType();
+			var sCalendarType = this.getDisplayFormatType();
 
-			if (sPattern == oThis._sUsedDisplayPattern && sCalendarType == oThis._sUsedDisplayCalendarType) {
-				oFormat = oThis._oDisplayFormat;
+			if (sPattern == this._sUsedDisplayPattern && sCalendarType == this._sUsedDisplayCalendarType) {
+				oFormat = this._oDisplayFormat;
 			} else {
 				if (sPattern === "short" || sPattern === "medium" || sPattern === "long") {
 					oFormat = sap.ui.core.format.DateFormat.getInstance({style: sPattern, strictParsing: true, calendarType: sCalendarType});
 				} else {
 					oFormat = sap.ui.core.format.DateFormat.getInstance({pattern: sPattern, strictParsing: true, calendarType: sCalendarType});
 				}
-				oThis._sUsedDisplayPattern = sPattern;
-				oThis._sUsedDisplayCalendarType = sCalendarType;
-				oThis._oDisplayFormat = oFormat;
+				this._sUsedDisplayPattern = sPattern;
+				this._sUsedDisplayCalendarType = sCalendarType;
+				this._oDisplayFormat = oFormat;
 			}
 
 			return oFormat;
