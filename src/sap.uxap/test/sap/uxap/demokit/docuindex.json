@@ -81,7 +81,7 @@
 		"since": "1.26",
 		"samples": [
 		  "sap.uxap.sample.BoundModelMapping",
-		  "sap.uxap.sample.ModelMapping"
+		  "sap.uxap.sample.MPModelMapping"
 		]
 	  },
 	  {
@@ -92,8 +92,8 @@
 		"samples": [
 		  "sap.uxap.sample.SingleView",
 		  "sap.uxap.sample.ObjectPageBlockBase",
-		  "sap.uxap.sample.BlockInBlock",
-		  "sap.uxap.sample.Eventing"
+		  "sap.uxap.sample.BlockBaseBlockInBlock",
+		  "sap.uxap.sample.BlockBaseEventing"
 		]
 	  }
 	],
@@ -159,7 +159,7 @@
 		"description": "This example shows the different layout of the blocks based on their ColumnLayout."
 	  },
 	  {
-		"id": "sap.uxap.sample.ModelMapping",
+		"id": "sap.uxap.sample.MPModelMapping",
 		"name": "Model Mapping",
 		"description": "Use of dynamic model mapping"
 	  },
@@ -174,7 +174,7 @@
 		"description": "A block that use the same view for several modes and a controller that implements onParentBlockModeChange"
 	  },
 	  {
-		"id": "sap.uxap.sample.BlockInBlock",
+		"id": "sap.uxap.sample.BlockBaseBlockInBlock",
 		"name": "Block in a block",
 		"description": "Uses a block in a view of another block"
 	  },
@@ -184,7 +184,7 @@
 		"description": "Uses a block in a view of another block"
 	  },
 	  {
-		"id": "sap.uxap.sample.Eventing",
+		"id": "sap.uxap.sample.BlockBaseEventing",
 		"name": "Eventing blocks",
 		"description": "Uses of a block that is firing a dummy event"
 	  },
