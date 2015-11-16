@@ -263,5 +263,52 @@
         "references": []
       }
     ]
+  },
+  "1.32.6": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "92bca52e2f0b1f3f414077b86af08c7df10aa1f9",
+        "author": "Vladislav Iliev \u003cvladislav.iliev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.Button: When icon only button, the button\u0027s tooltip is respected.",
+        "references": []
+      },
+      {
+        "id": "fb6c6a6fdef2e4265d030cd425363cf5a746aed0",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.DropdowmBox:Cursor moves 2 characters on backspace",
+        "references": []
+      },
+      {
+        "id": "84eca7f90557df8573a83a85899f3086b6ab0c8c",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.ListBox: Do nothing when the same height value is set",
+        "references": []
+      },
+      {
+        "id": "fbf411cd9fc61634998458199163ab8a8ed3a1cf",
+        "author": "Deyan Yanakiev \u003cdeyan.yanakiev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.RichTooltip: Enable binding text with curly brace",
+        "references": []
+      },
+      {
+        "id": "b96472782c1a95f0caf9a1b58b0f84c736f57ca8",
+        "author": "Lidiya Georgieva \u003clidiya.georgieva@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.commons.TextView: Default ARIA role \"Document\" is removed",
+        "references": []
+      },
+      {
+        "id": "e991937fb8b99c19496fe6915cb33f6b1d41aac1",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: Use Label style only for direct labels",
+        "references": []
+      }
+    ]
   }
 }

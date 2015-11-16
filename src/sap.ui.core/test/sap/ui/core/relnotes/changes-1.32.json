@@ -1463,5 +1463,108 @@
         "references": []
       }
     ]
+  },
+  "1.32.6": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "0f0940c40e6348686ee5789a8b5a9bdd0ebcafa9",
+        "author": "Benedikt Schoelch \u003cbenedikt.schoelch@sap.com\u003e",
+        "type": "FEATURE",
+        "text": "Performance tracing and measurement",
+        "references": []
+      },
+      {
+        "id": "f2f65259c0a8fc3c94a3f73da5aeb89eae5fbfe8",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "Binding documentation for dataReceived event",
+        "references": []
+      },
+      {
+        "id": "caeaa1425537ed6fa748a426784f275f63c18c78",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "Binding: extends documentation",
+        "references": []
+      },
+      {
+        "id": "bb6898a04741b320dad2e03932f7c4102602f7ba",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "Binding: fix extends documentation",
+        "references": []
+      },
+      {
+        "id": "1547f8f37c51cc0916ed78431d25e216ad66766f",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "CompositeBinding: Keep ControlMessages on DataState",
+        "references": []
+      },
+      {
+        "id": "b1cfcd2cd8ad52224413635790fa99dc5b6e72a2",
+        "author": "Jens Himmelrath \u003cjens.himmelrath@sap.com\u003e",
+        "type": "FIX",
+        "text": "ES6-Promise Polyfill replaced native implementation in Safari",
+        "references": []
+      },
+      {
+        "id": "7bd4c5880209df55424220b0f0dc9eb131c2cfa2",
+        "author": "Johannes Weber \u003cjohannes.weber@sap.com\u003e",
+        "type": "FIX",
+        "text": "ODataModel: doc fixes getProperty, getContexts",
+        "references": []
+      },
+      {
+        "id": "1b148810cf91c647749d8f54538e6ea1be1493b6",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "jQuery.sap.act: Register touch events only when supported",
+        "references": []
+      },
+      {
+        "id": "cd0c58f0ea601b45d7438dc097ef019ca68b75b2",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "odata4analytics.js - Refined Single-Value Filter Restriction",
+        "references": []
+      },
+      {
+        "id": "c68eeafd4aba2c1ab193daf9f4a73863f3d8baa9",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.Icon: Render correct \"tooltip\" when \"src\" changes",
+        "references": []
+      },
+      {
+        "id": "deaedc7257aa6b8e1e44c38f2cd9a9bdcfc0d83b",
+        "author": "Matthias Osswald \u003cmat.osswald@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.core.util.File: Throw error when window was blocked (Safari 9)",
+        "references": []
+      },
+      {
+        "id": "b931eee699ac9af11efe4d6deebdff1ef2cbb5e4",
+        "author": "Tobias Oetzel \u003ctobias.oetzel@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.opaQunit - timeout was not increased to 90 sec it was 30 sec",
+        "references": []
+      },
+      {
+        "id": "d219f1fd82dc47de12d1cfd8cf757187fe410d76",
+        "author": "Thorsten Hochreuter \u003cthorsten.hochreuter@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataListBinding - filter/sort were broken if no data was available",
+        "references": []
+      },
+      {
+        "id": "9dd92c65c7803b604377bac5490174d54ddba35f",
+        "author": "Jan Mummenthaler \u003cjan.mummenthaler@sap.com\u003e",
+        "type": "FIX",
+        "text": "v2.ODataModel: bindings trigger duplicate requests",
+        "references": []
+      }
+    ]
   }
 }

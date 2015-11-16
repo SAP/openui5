@@ -125,5 +125,31 @@
         "references": []
       }
     ]
+  },
+  "1.32.6": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "87e88aad20521407474670de6f37e32ff57d8f08",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.Layout.DynamicSideContent - Height is properly",
+        "references": []
+      },
+      {
+        "id": "e149d9d601d90e05a6dec740b634fb636b84a8b8",
+        "author": "Daniel Nanovski \u003cdaniel.nanovski@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.DynamicSideContent - Show and hide functionality now works correct when changing breakpoints",
+        "references": []
+      },
+      {
+        "id": "e991937fb8b99c19496fe6915cb33f6b1d41aac1",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: use Label style only for direct labels",
+        "references": []
+      }
+    ]
   }
 }

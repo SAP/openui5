@@ -518,5 +518,17 @@
         "references": []
       }
     ]
+  },
+  "1.32.6": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "769bd227a1ab4e5a472ee4ab9acee68272cf460e",
+        "author": "Jens Pflueger \u003cjens.pflueger@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.table.Table: Ensure visual focus on column menu when opened via keyboard",
+        "references": []
+      }
+    ]
   }
 }

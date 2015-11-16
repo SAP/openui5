@@ -296,5 +296,52 @@
         "references": []
       }
     ]
+  },
+  "1.32.6": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "4418c82ced017e2f50b5f4670fc33fb6839927c8",
+        "author": "Thomas Koetter \u003cthomas.koetter@sap.com\u003e",
+        "type": "FIX",
+        "text": "Condensed mode CSS should only apply inside sap.ui.table tables",
+        "references": []
+      },
+      {
+        "id": "a91701329885b3cd015723874afbe72eb398fb12",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.FacetFilterList: set min content width",
+        "references": []
+      },
+      {
+        "id": "4371f90c933f5180c5fe36ce874c282973125581",
+        "author": "Wenqian.Wang \u003cwenqian.wang@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: fix indicator position in touch device",
+        "references": []
+      },
+      {
+        "id": "45d73a542f430411a57880e9dbfc242c8dbba4b0",
+        "author": "Adrian Bobev \u003cadrian.bobev@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.RadioButton: Focus outline is not cut off when used in SimpleForm",
+        "references": []
+      },
+      {
+        "id": "e991937fb8b99c19496fe6915cb33f6b1d41aac1",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.layout.form.Form: use Label style only for direct labels",
+        "references": []
+      },
+      {
+        "id": "c9b1c5ac9606941ddf5457be60d908ea15b5f66b",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: remove focus outline on windows phone",
+        "references": []
+      }
+    ]
   }
 }

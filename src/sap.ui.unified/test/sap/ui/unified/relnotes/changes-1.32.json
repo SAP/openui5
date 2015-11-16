@@ -174,5 +174,45 @@
         "references": []
       }
     ]
+  },
+  "1.32.6": {
+    "date": "November 2015",
+    "notes": [
+      {
+        "id": "306e05402986863297f7fe5fdb6d36a5d9e71abc",
+        "author": "Oliver Rooke \u003coliver.rooke@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.m.UploadCollection: fixed termination in case of multiple file uploads",
+        "references": []
+      },
+      {
+        "id": "89c4bf8be6b130d2e4ba694e9683bc5668977868",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: focus lost after closing month picker or year picker",
+        "references": []
+      },
+      {
+        "id": "db0df4735044189c2aa9266b148da3d90e10ffe3",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: HCB - selected day in other month not shown",
+        "references": []
+      },
+      {
+        "id": "913f3b29405ec1e3892ed6a35a194772849d439e",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: date is selected before mouseup",
+        "references": []
+      },
+      {
+        "id": "a178275eee2047714d71fe9cc74018c27cc0cc44",
+        "author": "Sebastian Allmann \u003csebastian.allmann@sap.com\u003e",
+        "type": "FIX",
+        "text": "sap.ui.unified.Calendar: mousemove inside same day switch month",
+        "references": []
+      }
+    ]
   }
 }
