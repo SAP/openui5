@@ -148,12 +148,15 @@ sap.ui.require([
 			sUrl = "/~/Employees",
 			mQueryParams = {
 				"$select": "ID",
-				"$expand" : "Address"
+				"$expand" : "Address",
+				"$filter" : "€",
+				"foo" : ["bar", "baz€"]
 			},
 			oCache = Cache.create(oRequestor, sUrl, mQueryParams);
 
 		this.oSandbox.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sUrl + "?%24select=ID&%24expand=Address")
+			.withExactArgs("GET", sUrl + "?%24select=ID&%24expand=Address&%24filter=%E2%82%AC"
+				+ "&foo=bar&foo=baz%E2%82%AC")
 			.returns(Promise.resolve({value:[]}));
 
 		// code under test

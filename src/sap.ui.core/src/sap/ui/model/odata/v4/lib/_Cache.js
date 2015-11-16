@@ -3,24 +3,22 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib.Cache
-sap.ui.define(["sap/ui/thirdparty/URI"], function(URI) {
+sap.ui.define(["sap/ui/thirdparty/URI"], function (URI) {
 	"use strict";
 
 	/**
 	 * Builds query string from object
 	 *
 	 * @param {object} mQueryParameters
-	 *   a map of key/value-pairs representing the query string
+	 *   a map of key-value pairs representing the query string
 	 * @returns {string}
-	 *   returns an encoded query string starting with "?" if parameters are available else ""
+	 *   returns an encoded query string starting with "?" if parameters are available, an empty
+	 *   string otherwise
 	 */
 	function buildQueryString(mQueryParameters){
 		var sQueryString = URI.buildQuery(mQueryParameters);
 
-		if (sQueryString) {
-			return "?" + sQueryString;
-		}
-		return "";
+		return sQueryString ? "?" + sQueryString : "";
 	}
 
 	/**
@@ -31,7 +29,7 @@ sap.ui.define(["sap/ui/thirdparty/URI"], function(URI) {
 	 * @param {string} sUrl
 	 *   the URL to request from
 	 * @param {object} mQueryParameters
-	 *   a map of key/value-pairs representing the query string
+	 *   a map of key-value pairs representing the query string
 	 */
 	function Cache(oRequestor, sUrl, mQueryParameters) {
 		this.oRequestor = oRequestor;
@@ -76,9 +74,12 @@ sap.ui.define(["sap/ui/thirdparty/URI"], function(URI) {
 		 * @param {sap.ui.model.odata.v4.lib._Requestor} oRequestor
 		 *   the requestor
 		 * @param {string} sUrl
-		 *   the URL to request from
+		 *   the URL to request from; it must not contain a query string
 		 * @param {object} mQueryParameters
-		 *   a map of key/value-pairs representing the query string
+		 *   a map of key-value pairs representing the query string; if the value contained in a
+		 *   key-value pair is an array, the resulting query string repeats the key for each array
+		 *   value. (e.g. <code>{foo: ["bar", "baz"]}</code> results in the query string
+		 *   "foo=bar&foo=baz")
 		 * @returns {sap.ui.model.odata.v4.lib._Cache}
 		 *   the cache
 		 */
