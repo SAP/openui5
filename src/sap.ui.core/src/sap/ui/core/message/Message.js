@@ -54,6 +54,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
 			this.persistent = mParameters.persistent || false;
 			this.technical = mParameters.technical || false;
 			this.references = mParameters.references || {};
+			this.validation = !!mParameters.validation;
 			
 		}
 	});
