@@ -137,6 +137,27 @@
 			}, 1200);
 		});
 
+		// as XML-View maintains the dom itself busy indicator should treat this particularly, as otherwise duplicate
+		// busy indicators would be created when rerendering and never removed
+		asyncTest("Busy indicator on XML View", function() {
+			// setup the busy view
+			jQuery.sap.require("sap.ui.core.mvc.XMLView");
+			var myView = sap.ui.xmlview({viewContent:'<mvc:View xmlns:mvc="sap.ui.core.mvc" busyIndicatorDelay="0"></mvc:View>'}).placeAt('target1');
+			sap.ui.getCore().applyChanges();
+			myView.setBusy(true);
+			// this rerendering is crucial to test the behavior
+			myView.rerender();
+			setTimeout(function() {
+				// assert
+				ok(myView.$("busyIndicator").length, "BusyIndicator rendered");
+				myView.setBusy(false);
+				ok(!myView.$("busyIndicator").length, "All BusyIndicators removed");
+				//cleanup
+				myView.destroy();
+				start();
+			}, 50);
+		});
+
 		module("Delay", {
 			setup : function() {
 				this.iDelay = 500;
