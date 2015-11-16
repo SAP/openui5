@@ -46,7 +46,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 			"abstract" : true,
 			publicMethods : [
 				// methods
-				"getPath", "getContext", "getModel", "attachChange", "detachChange", "refresh", "isInitial","attachDataStateChange","detachDataStateChange","attachDataRequested","detachDataRequested","attachDataReceived","detachDataReceived","suspend","resume"]
+				"getPath", "getContext", "getModel", "attachChange", "detachChange", "refresh", "isInitial",
+				"attachDataStateChange","detachDataStateChange",
+				"attachAggregatedDataStateChange", "detachAggregatedDataStateChange",
+				"attachDataRequested","detachDataRequested","attachDataReceived","detachDataReceived","suspend","resume"
+			]
 		}
 
 	});
@@ -146,7 +150,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	};
 
 	/**
-	* Attach event-handler <code>fnFunction</code> to the 'dataStateChange' event of this <code>sap.ui.model.Binding</code>.<br/>
+	* Attach event-handler <code>fnFunction</code> to the 'DataStateChange' event of this <code>sap.ui.model.Binding</code>.<br/>
 	* @param {function} fnFunction The function to call, when the event occurs.
 	* @param {object} [oListener] object on which to call the given function.
 	* @protected
@@ -156,13 +160,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	};
 
 	/**
-	* Detach event-handler <code>fnFunction</code> from the 'dataStateChange' event of this <code>sap.ui.model.Binding</code>.<br/>
+	* Detach event-handler <code>fnFunction</code> from the 'DataStateChange' event of this <code>sap.ui.model.Binding</code>.<br/>
 	* @param {function} fnFunction The function to call, when the event occurs.
 	* @param {object} [oListener] object on which to call the given function.
 	* @protected
 	*/
 	Binding.prototype.detachDataStateChange = function(fnFunction, oListener) {
 		this.detachEvent("DataStateChange", fnFunction, oListener);
+	};
+
+	/**
+	* Attach event-handler <code>fnFunction</code> to the 'AggregatedDataStateChange' event of this <code>sap.ui.model.Binding</code>.<br/>
+	* @param {function} fnFunction The function to call, when the event occurs.
+	* @param {object} [oListener] object on which to call the given function.
+	* @protected
+	*/
+	Binding.prototype.attachAggregatedDataStateChange = function(fnFunction, oListener) {
+		this.attachEvent("AggregatedDataStateChange", fnFunction, oListener);
+	};
+
+	/**
+	* Detach event-handler <code>fnFunction</code> from the 'AggregatedDataStateChange' event of this <code>sap.ui.model.Binding</code>.<br/>
+	* @param {function} fnFunction The function to call, when the event occurs.
+	* @param {object} [oListener] object on which to call the given function.
+	* @protected
+	*/
+	Binding.prototype.detachAggregatedDataStateChange = function(fnFunction, oListener) {
+		this.detachEvent("AggregatedDataStateChange", fnFunction, oListener);
 	};
 
 	/**
@@ -248,6 +272,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	};
 
 	/**
+	 * Returns whether this binding validates the values that are set on it.
+	 *
+	 * @returns {boolean} Returns true if the binding throws a validation exception when an invalid value is set on it.
+	 * @private
+	 */
+	Binding.prototype.hasValidation = function() {
+		return !!this.getType();
+	};
+
+	/**
 	 * Checks whether an update of this bindings is required. If this is the case the change event of
 	 * the binding is fired.
 	 * The default implementation just fires the change event, if the method is called, the bForceUpdate
@@ -269,11 +303,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @private
 	 */
 	Binding.prototype.checkDataState = function() {
-		if (this.hasListeners("DataStateChange")) {
-			var oDataState = this._updateDataState();
-			if (oDataState && oDataState.changed()) {
-				this._fireDataStateChange({dataState: oDataState});
-				oDataState.changed(false);
+		var oDataState = this._updateDataState();
+
+		this.fireEvent("DataStateChange", { dataState: oDataState });
+
+		if (oDataState && oDataState.changed()) {
+			if (!this._sDataStateTimout) {
+				this._sDataStateTimout = setTimeout(function() {
+					//console.info("[DS]" + JSON.stringify(jQuery.extend({}, oDataState), null, 4));
+					oDataState.calculateChanges();
+					this.fireEvent("AggregatedDataStateChange", { dataState: oDataState });
+					oDataState.changed(false);
+					this._sDataStateTimout = null;
+				}.bind(this), 0);
 			}
 		}
 	};

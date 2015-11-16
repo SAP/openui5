@@ -76,7 +76,7 @@ sap.ui.define([
 			var sProcessorId = this.oControlMessageProcessor.getId();
 			var bTechnical = oEvent.sId === "formatError";
 			if (this.mMessages[sProcessorId] && this.mMessages[sProcessorId][sTarget]) {
-				this.removeMessages(this.mMessages[sProcessorId][sTarget]);
+				this._removeMessages(this.mMessages[sProcessorId][sTarget], true);
 			}
 			var oReference = {};
 			oReference[oElement.getId()] = {
@@ -90,7 +90,8 @@ sap.ui.define([
 					target: sTarget,
 					processor: this.oControlMessageProcessor,
 					technical: bTechnical,
-					references: oReference
+					references: oReference,
+					validation: true
 				});
 			this.addMessages(oMessage);
 		}
@@ -114,7 +115,7 @@ sap.ui.define([
 			var sProcessorId = this.oControlMessageProcessor.getId();
 			
 			if (this.mMessages[sProcessorId] && this.mMessages[sProcessorId][sTarget]) {
-				this.removeMessages(this.mMessages[sProcessorId][sTarget]);
+				this._removeMessages(this.mMessages[sProcessorId][sTarget], true);
 			}
 		}
 		oEvent.cancelBubble();
@@ -181,7 +182,7 @@ sap.ui.define([
 		var mSortOrder = {'Error': 0,'Warning':1,'Success':2,'Info':3};
 		jQuery.each(mMessages, function(sTarget, aMessages){
 			aMessages.sort(function(a, b){
-				return mSortOrder[b.severity] - mSortOrder[a.severity];
+				return mSortOrder[a.type] - mSortOrder[b.type];
 			});
 		});
 	};
@@ -217,13 +218,23 @@ sap.ui.define([
 	/**
 	 * Remove given Messages
 	 * 
-	 * @param {array} 
-	 * vMessages Either an Array of sap.ui.core.message.Message, 
-	 * a single sap.ui.core.message.Message
-	 * 
+	 * @param {sap.ui.core.message.Message|sap.ui.core.message.Message[]} vMessages - The message(s) to be removed.
 	 * @public
 	 */
 	MessageManager.prototype.removeMessages = function(vMessages) {
+		this._removeMessages(vMessages);
+	};
+	
+	/**
+	 * Like sap.ui.core.message.MessageManager#removeMessage but with an additional argument to only remove validation
+	 * messages.
+	 *
+	 * @param {sap.ui.core.message.Message|sap.ui.core.message.Message[]} vMessages - The message(s) to be removed.
+	 * @param {boolean} bOnlyValidationMessages - If set to true only messages that have been added due to validation 
+	 *        errors are removed.
+	 * @private
+	 */
+	MessageManager.prototype._removeMessages = function(vMessages, bOnlyValidationMessages) {
 		var that = this;
 		if (!vMessages || (jQuery.isArray(vMessages) && vMessages.length == 0)) {
 			return;
@@ -231,14 +242,16 @@ sap.ui.define([
 			// We need to work on a copy since the messages reference is changed by _removeMessage()
 			var vOriginalMessages = vMessages.slice(0);
 			for (var i = 0; i < vOriginalMessages.length; i++) {
-				that._removeMessage(vOriginalMessages[i]);
+				if (!bOnlyValidationMessages || vOriginalMessages[i].validation) {
+					that._removeMessage(vOriginalMessages[i]);
+				}
 			}
-		} else if (vMessages instanceof Message){
+		} else if (vMessages instanceof Message && (!bOnlyValidationMessages || vMessages.validation)){
 			that._removeMessage(vMessages);
 		} else {
 			//map with target as key
 			jQuery.each(vMessages, function (sTarget, aMessages) {
-				that.removeMessages(aMessages);
+				that._removeMessages(aMessages, bOnlyValidationMessages);
 			});
 		}
 		this._updateMessageModel();

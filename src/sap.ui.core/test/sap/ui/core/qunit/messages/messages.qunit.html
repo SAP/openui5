@@ -249,7 +249,6 @@
 		var oMessageModel = oMessageManager.getMessageModel();
 		
 		spyDataState(oStreet, function(sName, oDataState) {
-			ok(oDataState.getMessages().length == 1, 'Validation Message propagated to control');
 			ok(oStreet.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
 			ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters.', 'Input: ValueStateText set correctly')
 		});
@@ -257,21 +256,18 @@
 
 		jQuery.sap.delayedCall(0, this, function() {
 			spyDataState(oStreet, function(sName, oDataState) {
-				ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
 				ok(oStreet.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
 				ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly')
 			});
 			oStreet.setValue('Busch');
 			jQuery.sap.delayedCall(0, this, function() {
 				spyDataState(oStreet, function(sName, oDataState) {
-					ok(oDataState.getMessages().length == 1, 'Validation Message propagated to control');
 					ok(oStreet.getValueState() === sap.ui.core.ValueState.Error, 'Input: ValueState set correctly')
 					ok(oStreet.getValueStateText() === 'Enter a value with no more than 5 characters.', 'Input: ValueStateText set correctly');
 				});
 				oStreet.setValue('am Busche');
 				jQuery.sap.delayedCall(0, this, function() {
 					spyDataState(oStreet, function(sName, oDataState) {
-						ok(oDataState.getMessages().length == 0, 'Validation Message deleted');
 						ok(oStreet.getValueState() === sap.ui.core.ValueState.None, 'Input: ValueState set correctly')
 						ok(oStreet.getValueStateText() === '', 'Input: ValueStateText set correctly')
 						start();
