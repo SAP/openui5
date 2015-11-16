@@ -109,6 +109,10 @@
 	margin-bottom: 1rem;
 }
 
+.sapUiCalItem{
+	background-color: lighten(@sapUiContentForegroundColor,5);
+}
+
 .sapUiCalWH,
 .sapUiCalItem{
 	border: 0.0625rem solid lighten(@sapUiListBorderColor,10);
@@ -241,10 +245,6 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 
 .sapUiCalItemNow.sapUiCalItemSelBetween{
 	color: @sapUiStandardText;
-}
-
-.sapUiCalContentOver{
-	background-color: @sapUiBlockLayerBackground;
 }
 
 .sapUiCalContent > .sapUiCalMonthPicker,

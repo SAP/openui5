@@ -176,7 +176,7 @@
 
 .sapUiCalItem{
 	color: @sapUiBaseText;
-	background-color: @sapUiBaseBG;
+	background-color: @sapUiContentForegroundColor;
 }
 
 .sap-desktop .sapUiCalItem:focus{
@@ -216,7 +216,7 @@
 }
 
 .sapUiCalContentOver{
-	background-color: darken(@sapUiBaseBG, 15);
+	background-color: @sapUiBlockLayerBackground;
 	opacity: 0.15;
 	filter: alpha(opacity=60);
 	top: 0;

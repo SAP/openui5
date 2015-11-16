@@ -29,7 +29,7 @@
 	height: 10px;
 	width: 10px;
 	background-color: transparent;
-	border: 2px solid @sapUiPurple;
+	border: 2px solid @sapUiAccent4;
 }
 
 .sapUiUnifiedLegendSelected > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
@@ -37,11 +37,11 @@
 }
 
 .sapUiUnifiedLegendNormalDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @sapUiBaseBG;
+	background: lighten(@sapUiContentForegroundColor, 5);
 }
 
 .sapUiUnifiedLegendNonWorkingDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: sapUiContentForegroundColor;
+	background: @sapUiContentForegroundColor;
 }
 
 .sapUiCalLegDayType01 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor{
