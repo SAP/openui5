@@ -672,27 +672,6 @@
 				oSlider.destroy();
 			});
 
-			test("it should correctly round the value to the nearest step", function() {
-
-				// system under test
-				var oSlider = new sap.m.Slider({
-					value: 12.3,
-					min: 10,
-					max: 20,
-					step: 3
-				});
-
-				// arrange
-				oSlider.placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				// assert
-				strictEqual(oSlider.getValue(), 13);
-
-				// cleanup
-				oSlider.destroy();
-			});
-
 			test("it should corretly render the progress bar and handle elements", function() {
 
 				// system under test
@@ -710,6 +689,30 @@
 				// assert
 				strictEqual(oSlider.getDomRef("progress").style.width, "0%");
 				strictEqual(oSlider.getDomRef("handle").style.left, "0%");
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			test("it should corretly render the progress bar and handle elements", function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					step: 1,
+					min: 0,
+					max: 10
+				});
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oSlider.setValue(50);
+
+				// assert
+				strictEqual(oSlider.getDomRef("progress").style.width, "100%");
+				strictEqual(oSlider.getDomRef("handle").style.left, "100%");
 
 				// cleanup
 				oSlider.destroy();
@@ -753,6 +756,62 @@
 
 				// assert
 				strictEqual(oSlider.getValue(), 50);
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			test("it should display values using the fixed-point notation instead of the e-notation (initial rendering)", function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					name: "lorem ipsum",
+					step: 1e-7,
+					min: 1e-7,
+					max: 5e-7,
+					value: 5e-7
+				});
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var oHandleDomRef = oSlider.getDomRef("handle");
+
+				// assert
+				strictEqual(oHandleDomRef.title, "0.0000005");
+				strictEqual(oHandleDomRef.getAttribute("aria-valuenow"), "0.0000005");
+				strictEqual(oSlider.getDomRef("input").value, "0.0000005");
+				strictEqual(oHandleDomRef.getAttribute("aria-valuemin"), "0.0000001");
+				strictEqual(oHandleDomRef.getAttribute("aria-valuemax"), "0.0000005");
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			test("it should display values using the fixed-point notation instead of the e-notation", function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					name: "lorem ipsum",
+					step: 1e-7,
+					min: 1e-7,
+					max: 5e-7
+				});
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				var oHandleDomRef = oSlider.getDomRef("handle");
+
+				// act
+				oSlider.setValue(5e-7);
+
+				// assert
+				strictEqual(oHandleDomRef.title, "0.0000005");
+				strictEqual(oHandleDomRef.getAttribute("aria-valuenow"), "0.0000005");
+				strictEqual(oSlider.getDomRef("input").value, "0.0000005");
+				strictEqual(oHandleDomRef.getAttribute("aria-valuemin"), "0.0000001");
+				strictEqual(oHandleDomRef.getAttribute("aria-valuemax"), "0.0000005");
 
 				// cleanup
 				oSlider.destroy();
@@ -1018,17 +1077,17 @@
 			});
 
 			/* ------------------------------ */
-			/* getPrecisionOfNumber()         */
+			/* getDecimalPrecisionOfNumber()  */
 			/* ------------------------------ */
 
 			test("it should return the precision of the number", function() {
-				strictEqual(sap.m.Slider.prototype._getPrecisionOfNumber(1), 0);
-				strictEqual(sap.m.Slider.prototype._getPrecisionOfNumber(3.125e7), 0);
-				strictEqual(sap.m.Slider.prototype._getPrecisionOfNumber(1.2), 1);
-				strictEqual(sap.m.Slider.prototype._getPrecisionOfNumber(1.12345), 5);
-				strictEqual(sap.m.Slider.prototype._getPrecisionOfNumber(0.437456030974558), 15);
-				strictEqual(sap.m.Slider.prototype._getPrecisionOfNumber(0.000000000000001), 15);
-				strictEqual(sap.m.Slider.prototype._getPrecisionOfNumber(1e-19), 19);
+				strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(1), 0);
+				strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(3.125e7), 0);
+				strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(1.2), 1);
+				strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(1.12345), 5);
+				strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(0.437456030974558), 15);
+				strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(0.000000000000001), 15);
+				strictEqual(sap.m.Slider.prototype.getDecimalPrecisionOfNumber(1e-19), 19);
 			});
 
 			/* ------------------------------ */
