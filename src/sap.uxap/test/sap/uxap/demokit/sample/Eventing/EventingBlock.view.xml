@@ -1,0 +1,7 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		width="100%"
+		controllerName="sap.uxap.sample.Eventing.EventingBlockController">
+	<Button text="press me to fire an event" press="onInnerDummy"/>
+</mvc:View>
