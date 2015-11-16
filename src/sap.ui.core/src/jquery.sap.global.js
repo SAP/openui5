@@ -1752,8 +1752,8 @@
 						});
 						oPendingInteraction.navigation += iNavHi - iNavLo;
 						oPendingInteraction.roundtrip += iRtHi - iRtLo;
-						// calculate network time
-						oPendingInteraction.networkTime = oPendingInteraction.networkTime ? oPendingInteraction.requestTime - oPendingInteraction.networkTime : 0;
+						// calculate average network time per request
+						oPendingInteraction.networkTime = oPendingInteraction.networkTime ? ((oPendingInteraction.requestTime - oPendingInteraction.networkTime) / oPendingInteraction.requests.length) : 0;
 						// in case processing is not determined, which means no re-rendering occured, take start to iEnd
 						if (oPendingInteraction.duration === 0) {
 							oPendingInteraction.duration = oPendingInteraction.navigation + oPendingInteraction.roundtrip;

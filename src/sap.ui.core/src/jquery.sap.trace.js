@@ -28,7 +28,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 				sFESR,
 				sFESRopt,
 				fnXHRopen = window.XMLHttpRequest.prototype.open,
-				fnXHRsend = window.XMLHttpRequest.prototype.send;
+				fnXHRsend = window.XMLHttpRequest.prototype.send,
+				fnXHRsetRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
 
 			if (bFesrActive) {
 				// inject function in window.XMLHttpRequest.open for FESR and E2eTraceLib
@@ -76,8 +77,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 				window.XMLHttpRequest.prototype.send = function() {
 					fnXHRsend.apply(this, arguments);
 					if (this.pendingInteraction) {
-						this.pendingInteraction.bytesSent += arguments[0] ? arguments[0].length : 0;
+						// double string length for byte length as in js characters are stored as 16 bit ints
+						this.pendingInteraction.bytesSent += arguments[0] ? arguments[0].length * 2 : 0;
 					}
+				};
+
+				// count request header size
+				window.XMLHttpRequest.prototype.setRequestHeader = function(sHeader, sValue) {
+					fnXHRsetRequestHeader.apply(this, arguments);
+					// count request header length consistent to what getAllResponseHeaders().length would return
+					if (!this.requestHeaderLength) {
+						this.requestHeaderLength = 0;
+					}
+					// double string length for byte length as in js characters are stored as 16 bit ints
+					// sHeader + ": " + sValue + " "   --  means two blank and one colon === 3
+					this.requestHeaderLength += (sHeader.length + sValue.length + 3) * 2;
 				};
 
 			}
@@ -88,6 +102,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 					var sContentLength = this.getResponseHeader("content-length"),
 						sFesrec = this.getResponseHeader("sap-perf-fesrec");
 					this.pendingInteraction.bytesReceived += sContentLength ? parseInt(sContentLength, 10) : 0;
+					this.pendingInteraction.bytesReceived += this.getAllResponseHeaders().length;
+					this.pendingInteraction.bytesSent += this.requestHeaderLength;
 					this.pendingInteraction.networkTime += sFesrec ? Math.round(parseFloat(sFesrec, 10) / 1000) : 0;
 					var sSapStatistics = this.getResponseHeader("sap-statistics");
 					if (sSapStatistics) {
@@ -96,6 +112,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 							statistics: sSapStatistics
 						});
 					}
+					delete this.requestHeaderLength;
+					delete this.pendingInteraction;
 				}
 			}
 
