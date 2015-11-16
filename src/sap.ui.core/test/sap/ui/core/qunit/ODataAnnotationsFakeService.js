@@ -16,6 +16,10 @@ xhr.onCreate = function(request) {
 		var sAnswer = "This should never be received as an answer!";
 
 		switch (request.url) {
+			
+			case "fakeService://replay-headers":
+				sAnswer = createHeaderAnnotations(request);
+				break;
 
 			case "fakeService://testdata/odata/northwind/":
 			case "fakeService://testdata/odata/northwind-annotated/":
@@ -229,7 +233,27 @@ xhr.onCreate = function(request) {
 	};
 };
 
-
+function createHeaderAnnotations(request) {
+	var sAnnotations = '<?xml version="1.0" encoding="utf-8"?>\
+	<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
+		<edmx:DataServices>\
+			<Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="Test">\
+				<Annotations Target="Replay.Headers">';
+			
+	Object.keys(request.requestHeaders).forEach(function(sHeader) {
+		sAnnotations += '\
+					<Annotation Term="' + sHeader + '" String="' + request.requestHeaders[sHeader] +'" />';
+	});
+	
+	
+	sAnnotations += '\
+				</Annotations>\
+			</Schema>\
+		</edmx:DataServices>\
+	</edmx:Edmx>';
+	
+	return sAnnotations;
+}
 
 
 var mMetaDataHeaders = {
