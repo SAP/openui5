@@ -11,11 +11,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		/**
 		 * Constructor for a new ToolHeaderUtilitySeparator.
 		 *
-		 * @param {string} [sId] id for the new control, generated automatically if no id is given
-		 * @param {object} [mSettings] initial settings for the new control
+		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * The ToolHeaderUtilitySeparator is used in the sap.tnt.ToolHeader control
+		 * The ToolHeaderUtilitySeparator control is used in the sap.tnt.ToolHeader control
 		 * to specify where the overflow button is placed.
 		 * @extends sap.ui.core.Control
 		 *
