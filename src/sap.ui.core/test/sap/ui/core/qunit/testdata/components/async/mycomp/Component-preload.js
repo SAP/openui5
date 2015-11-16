@@ -12,4 +12,3 @@ sap.ui.core.Component.extend("sap.test.mycomp.Component", {
 });
 }
 }});
-
