@@ -2556,7 +2556,6 @@ sap.ui.define([
 		var oModel,
 			oContext,
 			oBinding,
-			oDataStateTimer,
 			sMode,
 			sCompositeMode = BindingMode.TwoWay,
 			oType,
@@ -2595,11 +2594,7 @@ sap.ui.define([
 				}
 				//inform generic refreshDataState method
 				if (that.refreshDataState) {
-					if (!oDataStateTimer) {
-						this.oDataStateTimer = jQuery.sap.delayedCall(0, this, function() {
-							that.refreshDataState(sName, oDataState);
-						});
-					}
+					that.refreshDataState(sName, oDataState);
 				}
 			};
 
@@ -2650,7 +2645,7 @@ sap.ui.define([
 
 		oBinding.attachChange(fModelChangeHandler);
 		if (this.refreshDataState) {
-			oBinding.attachDataStateChange(fDataStateChangeHandler);
+			oBinding.attachAggregatedDataStateChange(fDataStateChangeHandler);
 		}
 
 		// set only one formatter function if any
@@ -2683,7 +2678,7 @@ sap.ui.define([
 			if (oBindingInfo.binding) {
 				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
 				if (this.refreshDataState) {
-					oBindingInfo.binding.detachDataStateChange(oBindingInfo.dataStateChangeHandler);
+					oBindingInfo.binding.detachAggregatedDataStateChange(oBindingInfo.dataStateChangeHandler);
 				}
 				oBindingInfo.binding.detachEvents(oBindingInfo.events);
 				oBindingInfo.binding.destroy();
@@ -2772,7 +2767,7 @@ sap.ui.define([
 					}
 
 					// Only fire validation success, if a type is used
-					if (oBinding.getType()) {
+					if (oBinding.hasValidation()) {
 						this.fireValidationSuccess({
 							element: this,
 							property: sName,
