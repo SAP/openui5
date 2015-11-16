@@ -10,13 +10,15 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 
         /**
          * Constructor for a new SideNavigation.
          *
-         * @param {string} [sId] id for the new control, generated automatically if no id is given
-         * @param {object} [mSettings] initial settings for the new control
+         * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+         * @param {object} [mSettings] Initial settings for the new control
          *
          * @class
-         * The SideNavigation control builds the container for a layout with a fixed and a flexible part. The flexible container adapts its size to the fix container.
+         * The SideNavigation control is a container, which consists of flexible and fixed parts on top of each other. The flexible part adapts its size to the fixed one.
+         * The flexible part has a scrollbar when the content is larger than the available space.
+         * Whenever the height of the whole control is less than 256 pixels, the scrollbar becomes joint for the two parts.
          *
-         * In order for the SideNavigation to stretch properly, the parent element, in which the control is placed, needs to be "flex" based.
+         * <b>Note:</b> In order for the SideNavigation to stretch properly, its parent layout control should only be the sap.tnt.ToolLayout.
          * @extends sap.ui.core.Control
          *
          * @author SAP SE
@@ -24,7 +26,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 
          *
          * @constructor
          * @public
-         * @since 1.36
+         * @since 1.34
          * @alias sap.tnt.SideNavigation
          * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
          */
@@ -40,26 +42,26 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 
                 defaultAggregation: "item",
                 aggregations: {
                     /**
-                     * The content inside the flexible part.
+                     * Defines the content inside the flexible part.
                      */
                     item: {type: 'sap.tnt.NavigationList', multiple: false, bindable: "bindable"},
                     /**
-                     * The content inside the fixed part.
+                     * Defines the content inside the fixed part.
                      */
                     fixedItem: {type: 'sap.tnt.NavigationList', multiple: false},
                     /**
-                     * The content inside the footer.
+                     * Defines the content inside the footer.
                      */
                     footer: {type: 'sap.tnt.NavigationList', multiple: false}
                 },
                 events: {
                     /**
-                     * Fires when an item is selected.
+                     * Fired when an item is selected.
                      */
                     itemSelect: {
                         parameters: {
                             /**
-                             * The selected item
+                             * The selected item.
                              */
                             item: {type: 'sap.ui.core.Item'}
                         }

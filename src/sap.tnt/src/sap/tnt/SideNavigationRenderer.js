@@ -7,7 +7,7 @@ sap.ui.define([],
         'use strict';
 
         /**
-         * SideNavigation renderer
+         * SideNavigation renderer.
          * @namespace
          */
         var SideNavigationRenderer = {};
@@ -18,7 +18,7 @@ sap.ui.define([],
          * @param {sap.ui.core.RenderManager}
          *          rm the RenderManager that can be used for writing to the render output buffer
          * @param {sap.ui.core.Control}
-         *          control an object representation of the control that should be rendered
+         *          Control an object representation of the control that should be rendered
          */
         SideNavigationRenderer.render = function (rm, control) {
             this.startSideNavigation(rm, control);
