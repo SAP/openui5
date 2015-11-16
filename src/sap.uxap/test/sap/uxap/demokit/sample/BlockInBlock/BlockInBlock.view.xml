@@ -1,0 +1,30 @@
+<core:View height="100%" xmlns:core="sap.ui.core" xmlns:m="sap.m"
+		   xmlns:blockinblock="sap.uxap.sample.BlockInBlock"
+		   xmlns="sap.uxap"
+		>
+
+	<ObjectPageLayout id="ObjectPageLayout">
+		<headerTitle>
+			<ObjectPageHeader objectTitle="Block in Block"/>
+		</headerTitle>
+
+		<sections>
+			<ObjectPageSection title="example">
+				<subSections>
+
+					<ObjectPageSubSection title="Example">
+						<blocks>
+							<blockinblock:Block id="block" mode="Collapsed">
+								<ModelMapping externalModelName="jsonModel"
+											  externalPath="/Vendor" internalModelName="FirstBlock"/>
+							</blockinblock:Block>
+						</blocks>
+
+					</ObjectPageSubSection>
+
+
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</core:View>

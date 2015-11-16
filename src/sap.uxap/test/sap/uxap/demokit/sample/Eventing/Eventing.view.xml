@@ -1,0 +1,31 @@
+<core:View height="100%" xmlns:core="sap.ui.core" xmlns:m="sap.m"
+		   xmlns="sap.uxap" xmlns:sample="sap.uxap.sample.Eventing"
+		   xmlns:html="http://www.w3.org/1999/xhtml" controllerName="sap.uxap.sample.Eventing.Eventing">
+
+	<ObjectPageLayout id="ObjectPageLayout">
+		<headerTitle>
+			<ObjectPageHeader objectTitle="Eventing Blocks"/>
+		</headerTitle>
+
+		<sections>
+			<ObjectPageSection title="example">
+				<subSections>
+
+					<ObjectPageSubSection title="Example">
+						<blocks>
+
+							<html:div style="padding:1em;height:4em; background-color: #A9EAFF ;">
+								<html:div style=" display:inline-block;">
+									<sample:EventingBlock id="block" dummy="onDummy"/>
+								</html:div>
+							</html:div>
+						</blocks>
+
+					</ObjectPageSubSection>
+
+
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</core:View>
