@@ -186,7 +186,7 @@ sap.ui.define(["./ObjectPageLayout"], function (ObjectPageLayout) {
 
 		// if we have markers or arrow we have to cut the last word and bind it to the markers and arrow so that the icons never occur in one line but are accompanied by the last word of the title.
 
-		if (bMarkers || oControl.getShowTitleSelector() || oControl.getMarkLocked()) {
+		if (bMarkers || oControl.getShowTitleSelector() || oControl.getMarkLocked() || oControl.getMarkChanges()) {
 			var sOHTitleEnd = sOHTitle.substr(sOHTitle.lastIndexOf(" ") + 1);
 			var sOHTitleStart = sOHTitle.substr(0, sOHTitle.lastIndexOf(" ") + 1);
 
@@ -199,14 +199,20 @@ sap.ui.define(["./ObjectPageLayout"], function (ObjectPageLayout) {
 			oRm.write("</span>");
 			oRm.write("<span");
 			oRm.addClass('sapUxAPObjectPageHeaderNowrap');
-			if (oControl.getMarkLocked()) {
-				oRm.addClass('sapUxAPObjectPageHeaderLock');
+			if (oControl.getMarkLocked() || oControl.getMarkChanges()) {
+				oRm.addClass('sapUxAPObjectPageHeaderMarks');
 			}
 			oRm.writeClasses();
 			oRm.write(">");
 			oRm.writeEscaped(sOHTitleEnd);
 
-			this._renderLock(oRm, oControl, bTitleInContent);
+			// if someone has set both Locked and Unsaved Changes icons, then show only Locked icon
+			if (oControl.getMarkLocked()) {
+				this._renderLock(oRm, oControl, bTitleInContent);
+			} else if (oControl.getMarkChanges()) {
+				this._renderMarkChanges(oRm, oControl, bTitleInContent);
+			}
+			
 			this._renderMarkers(oRm, oControl);
 			this._renderSelectTitleArrow(oRm, oControl, bTitleInContent);
 			oRm.write("</span>");
@@ -256,6 +262,32 @@ sap.ui.define(["./ObjectPageLayout"], function (ObjectPageLayout) {
 			oRm.write("</span>"); // end title arrow container
 		}
 	};
+	
+	/**
+	 * Renders the Unsaved Changes icon.
+	 *
+	 * @param {sap.ui.core.RenderManager}
+	 *            oRm the RenderManager that can be used for writing to the render output buffer
+	 *
+	 * @param {sap.uxap.ObjectPageHeader}
+	 *            oControl the ObjectPageHeader
+	 * @param {boolean}
+	 *      bTitleInContent - if the Unsaved changes icon will be rendered in content or in title
+	 * @private
+	 */
+	ObjectPageHeaderRenderer._renderMarkChanges = function (oRm, oControl, bTitleInContent) {
+		oRm.write("<span");
+		oRm.addClass("sapUxAPObjectPageHeaderChangesBtn");
+		oRm.addClass("sapUiSizeCompact");
+		oRm.writeClasses();
+		oRm.write(">");
+		if (bTitleInContent) {
+			oRm.renderControl(oControl._oChangesIconCont);
+		} else {
+			oRm.renderControl(oControl._oChangesIcon);
+		}
+		oRm.write("</span>");
+	};
 
 	/**
 	 * Renders the Lock icon.
@@ -270,19 +302,17 @@ sap.ui.define(["./ObjectPageLayout"], function (ObjectPageLayout) {
 	 * @private
 	 */
 	ObjectPageHeaderRenderer._renderLock = function (oRm, oControl, bTitleInContent) {
-		if (oControl.getMarkLocked()) { // render lock button
-			oRm.write("<span");
-			oRm.addClass("sapUxAPObjectPageHeaderLockBtn");
-			oRm.addClass("sapUiSizeCompact");
-			oRm.writeClasses();
-			oRm.write(">");
-			if (bTitleInContent) {
-				oRm.renderControl(oControl._oLockIconCont);
-			} else {
-				oRm.renderControl(oControl._oLockIcon);
-			}
-			oRm.write("</span>");
+		oRm.write("<span");
+		oRm.addClass("sapUxAPObjectPageHeaderLockBtn");
+		oRm.addClass("sapUiSizeCompact");
+		oRm.writeClasses();
+		oRm.write(">");
+		if (bTitleInContent) {
+			oRm.renderControl(oControl._oLockIconCont);
+		} else {
+			oRm.renderControl(oControl._oLockIcon);
 		}
+		oRm.write("</span>");
 	};
 
 	/**
