@@ -404,7 +404,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 
 		oTypeConfigs["saveAsTileAction"] = {
 			position: SemanticConfiguration.prototype._PositionInPage.shareMenu,
-			order: 0
+			order: 0,
+			constraints: "IconOnly"
 		};
 
 		oTypeConfigs["pagingAction"] = {
@@ -421,7 +422,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					ariaLabelledBy: _ensureInvisibleText("DiscussInJamAction", oBundle.getText("SEMANTIC_CONTROL_DISCUSS_IN_JAM"))
 				};
 			},
-			order: 1
+			order: 1,
+			constraints: "IconOnly"
 		};
 
 		oTypeConfigs["sap.m.semantic.ShareInJamAction"] = {
@@ -434,7 +436,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					ariaLabelledBy: _ensureInvisibleText("ShareInJamAction", oBundle.getText("SEMANTIC_CONTROL_SHARE_IN_JAM"))
 				};
 			},
-			order: 2
+			order: 2,
+			constraints: "IconOnly"
 		};
 
 		oTypeConfigs["sap.m.semantic.SendMessageAction"] = {
@@ -447,7 +450,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					ariaLabelledBy: _ensureInvisibleText("SendMessageAction", oBundle.getText("SEMANTIC_CONTROL_SEND_MESSAGE"))
 				};
 			},
-			order: 3
+			order: 3,
+			constraints: "IconOnly"
 		};
 
 		oTypeConfigs["sap.m.semantic.SendEmailAction"] = {
@@ -460,7 +464,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					ariaLabelledBy: _ensureInvisibleText("SendEmailAction", oBundle.getText("SEMANTIC_CONTROL_SEND_EMAIL"))
 				};
 			},
-			order: 4
+			order: 4,
+			constraints: "IconOnly"
 		};
 
 		oTypeConfigs["sap.m.semantic.PrintAction"] = {
@@ -473,7 +478,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					ariaLabelledBy: _ensureInvisibleText("PrintAction", oBundle.getText("SEMANTIC_CONTROL_PRINT"))
 				};
 			},
-			order: 5
+			order: 5,
+			constraints: "IconOnly"
 		};
 
 		oTypeConfigs["sap.m.semantic.MessagesIndicator"] = {
