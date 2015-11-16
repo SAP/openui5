@@ -63,7 +63,7 @@ sap.ui.define(["sap/ui/core/Control", "./library", "sap/m/Button"],
 			var oParent = this.getParent();
 
 			if (oParent && (oParent instanceof library.ObjectPageLayout) && oParent.getShowEditHeaderButton()) {
-				this._getInternalBtnAggregation("_editHeaderButton", "EDIT_HEADER", "-editHeaderBtn").attachPress(this._handleEditHeaderButtonPress, this);
+				this._getInternalBtnAggregation("_editHeaderButton", "EDIT_HEADER", "-editHeaderBtn", "Transparent").attachPress(this._handleEditHeaderButtonPress, this);
 			}
 		};
 
@@ -71,10 +71,11 @@ sap.ui.define(["sap/ui/core/Control", "./library", "sap/m/Button"],
 			this.getParent().fireEditHeaderButtonPress();
 		};
 
-		ObjectPageHeaderContent.prototype._getInternalBtnAggregation = function (sAggregationName, sBtnText, sBtnIdText) {
+		ObjectPageHeaderContent.prototype._getInternalBtnAggregation = function (sAggregationName, sBtnText, sBtnIdText, sBtnType) {
 			if (!this.getAggregation(sAggregationName)) {
 				var oBtn = new Button({
 					text: library.i18nModel.getResourceBundle().getText(sBtnText),
+					type: sBtnType,
 					id: this.getId() + sBtnIdText
 				});
 				this.setAggregation(sAggregationName, oBtn);
