@@ -142,6 +142,46 @@
 				}
 			}).placeAt("event1");
 
+			oLabel = new sap.ui.commons.Label({text: "primary calendar type", labelFor: "CB1"}).placeAt("event1");
+			oCB1 = new sap.ui.commons.ComboBox("CB1",{
+				editable: true,
+				items: [
+								new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Gregorian, key: sap.ui.core.CalendarType.Gregorian}),
+								new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Islamic, key: sap.ui.core.CalendarType.Islamic}),
+								new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Japanese, key: sap.ui.core.CalendarType.Japanese}),
+								],
+				change: function(oEvent){
+					var oCB = oEvent.oSource;
+					var oItem = oEvent.getParameter('selectedItem');
+					var oCal = sap.ui.getCore().byId("Cal1");
+					var sKey = "";
+					if (oItem) {
+						sKey = oItem.getKey();
+					}
+					oCal.setPrimaryCalendarType(sKey);
+				}
+			}).placeAt("event1");
+
+			oLabel = new sap.ui.commons.Label({text: "secondary calendar type", labelFor: "CB2"}).placeAt("event1");
+			oCB2 = new sap.ui.commons.ComboBox("CB2",{
+				editable: true,
+				items: [
+								new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Gregorian, key: sap.ui.core.CalendarType.Gregorian}),
+								new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Islamic, key: sap.ui.core.CalendarType.Islamic}),
+								new sap.ui.core.ListItem({text: sap.ui.core.CalendarType.Japanese, key: sap.ui.core.CalendarType.Japanese}),
+								],
+				change: function(oEvent){
+					var oCB = oEvent.oSource;
+					var oItem = oEvent.getParameter('selectedItem');
+					var oCal = sap.ui.getCore().byId("Cal1");
+					var sKey = "";
+					if (oItem) {
+						sKey = oItem.getKey();
+					}
+					oCal.setSecondaryCalendarType(sKey);
+				}
+			}).placeAt("event1");
+
 			// single interval selection
 			oCal = new sap.ui.unified.Calendar("Cal2",{
 				intervalSelection: true,

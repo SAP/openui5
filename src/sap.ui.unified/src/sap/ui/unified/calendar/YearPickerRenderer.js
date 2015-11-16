@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate'],
 			iYear = iMinYear;
 		}
 
-		var oDate = new UniversalDate(oCurrentDate);
+		var oDate = oYP._newUniversalDate(oCurrentDate);
 		oDate.setUTCFullYear(iYear);
 
 		if (iColumns > 0) {

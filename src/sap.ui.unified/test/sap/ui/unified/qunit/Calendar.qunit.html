@@ -197,6 +197,51 @@
 				ok(jQuery("#Cal2--Month0-20110104").attr("title", "Text"), "20110104 has special days tooltip");
 			});
 
+			test("primaryCalendarType", function() {
+				equal(oCal2.getPrimaryCalendarType(), sap.ui.getCore().getConfiguration().getCalendarType(), "Calendar2: PrimaryCalendarType default")
+				oCal2.focusDate(new Date(2011, 0, 1)); // to be sure where focus is
+				oCal2.setPrimaryCalendarType(sap.ui.core.CalendarType.Islamic);
+				sap.ui.getCore().applyChanges();
+
+				var aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalItem");
+				equal(aDays.length, 35, "Calendar2: number of displayed days");
+				equal(jQuery(aDays[0]).attr("data-sap-day"), "20101206", "Calendar2: first displayed day");
+				equal(jQuery(aDays[aDays.length - 1]).attr("data-sap-day"), "20110109", "Calendar2: last displayed day");
+				equal(jQuery("#Cal2--Head-B1").text(), "Muharram", "Muharram shown");
+				equal(jQuery("#Cal2--Head-B2").text(), "1432 AH", "year 1432 shown");
+				qutils.triggerEvent("click", "Cal2--Head-B1");
+				var aMonths = jQuery("#Cal2--MP").find(".sapUiCalItem");
+				equal(jQuery(aMonths[0]).text(), "Muharram", "Calendar2: first displayed month");
+				qutils.triggerEvent("click", "Cal2--Head-B2");
+				var aYears = jQuery("#Cal2--YP").find(".sapUiCalItem");
+				equal(jQuery(aYears[0]).text(), "1422 AH", "Calendar2: first displayed year");
+				qutils.triggerEvent("click", "Cal2--Head-B2");
+
+				oCal2.setPrimaryCalendarType(sap.ui.getCore().getConfiguration().getCalendarType());
+				sap.ui.getCore().applyChanges();
+			});
+
+			test("secondaryCalendarType", function() {
+				oCal2.setSecondaryCalendarType(sap.ui.core.CalendarType.Islamic);
+				sap.ui.getCore().applyChanges();
+
+				var aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalItem");
+				equal(jQuery(aDays[0]).attr("data-sap-day"), "20101227", "Calendar2: first displayed day");
+				equal(jQuery(jQuery(aDays[0]).children(".sapUiCalItemText")[0]).text(), "27", "Calendar2: first displayed day - text");
+				equal(jQuery(jQuery(aDays[0]).children(".sapUiCalItemSecText")[0]).text(), "20", "Calendar2: first displayed day - secondary text");
+				equal(jQuery(jQuery("#Cal2--Head-B1").children(".sapUiCalHeadBText")[0]).text(), "Januar", "Januar shown");
+				equal(jQuery(jQuery("#Cal2--Head-B1").children(".sapUiCalHeadBAddText")[0]).text(), "Muh. – Saf.", "Muh. - Saf. shown");
+				equal(jQuery(jQuery("#Cal2--Head-B2").children(".sapUiCalHeadBText")[0]).text(), "2011", "year 2011 shown");
+				equal(jQuery(jQuery("#Cal2--Head-B2").children(".sapUiCalHeadBAddText")[0]).text(), "1432 AH", "year 1432 shown");
+
+				oCal2.setSecondaryCalendarType(sap.ui.getCore().getConfiguration().getCalendarType());
+				sap.ui.getCore().applyChanges();
+				aDays = jQuery("#Cal2--Month0-days").find(".sapUiCalItem");
+				ok(!jQuery(aDays[0]).children(".sapUiCalItemSecText")[0], "Calendar2: first displayed day - no secondary text");
+				equal(jQuery("#Cal2--Head-B1").text(), "Januar", "Januar shown");
+				equal(jQuery("#Cal2--Head-B2").text(), "2011", "year 2011 shown");
+			});
+
 			module("Interaction");
 
 			test("month switch", function() {

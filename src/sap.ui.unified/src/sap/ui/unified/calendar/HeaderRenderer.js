@@ -84,7 +84,27 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.writeAccessibilityState(null, mAccProps);
 				mAccProps = {};
 				oRm.write(">"); // button element
-				oRm.writeEscaped(oHead["getTextButton" + i]() || "");
+				var sText = oHead["getTextButton" + i]() || "";
+				var sAddText = oHead["getAdditionalTextButton" + i]() || "";
+				if (sAddText) {
+					oRm.write("<span");
+					oRm.writeAttributeEscaped('id', sId + '-B' + i + "-Text");
+					oRm.addClass("sapUiCalHeadBText");
+					oRm.writeClasses();
+					oRm.write(">"); // span element
+					oRm.writeEscaped(sText);
+					oRm.write("</span>");
+
+					oRm.write("<span");
+					oRm.writeAttributeEscaped('id', sId + '-B' + i + "-AddText");
+					oRm.addClass("sapUiCalHeadBAddText");
+					oRm.writeClasses();
+					oRm.write(">"); // span element
+					oRm.writeEscaped(sAddText);
+					oRm.write("</span>");
+				} else {
+					oRm.writeEscaped(sText);
+				}
 				oRm.write("</button>");
 			}
 		}

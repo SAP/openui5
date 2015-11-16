@@ -45,26 +45,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * The time interval corresponding to this Date and <code>items</code> and <code>intervalMinutes</code>
 			 * will be the first time in the displayed row.
 			 */
-			startDate : {type : "object", group : "Misc"},
+			startDate : {type : "object", group : "Data"},
 
 			/**
 			 * If set, interval selection is allowed
 			 */
-			intervalSelection : {type : "boolean", group : "Misc", defaultValue : false},
+			intervalSelection : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
 			 * If set, only a single date or interval, if <code>intervalSelection</code> is enabled, can be selected
 			 *
 			 * <b>Note:</b> Selection of multiple intervals is not supported in the current version.
 			 */
-			singleSelection : {type : "boolean", group : "Misc", defaultValue : true},
+			singleSelection : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
 			 * Number of time items displayed. Default is 12.
 			 *
 			 * <b>Note:</b> On phones, the maximum number of items displayed in the row is always 6.
 			 */
-			items : {type : "int", group : "Misc", defaultValue : 12},
+			items : {type : "int", group : "Appearance", defaultValue : 12},
 
 			/**
 			 * Size of on time interval in minutes, default is 60 minutes.
@@ -75,7 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 *
 			 * A day must be divisible by this interval size. One interval must not include more than one day.
 			 */
-			intervalMinutes : {type : "int", group : "Misc", defaultValue : 60},
+			intervalMinutes : {type : "int", group : "Appearance", defaultValue : 60},
 
 			/**
 			 * If set, the day-, month- and yearPicker opens on a popup
@@ -393,7 +393,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var oTimesRow = this.getAggregation("timesRow");
 			if (!oTimesRow.checkDateFocusable(oDate)) {
-				var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate, true);
+				var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate, undefined, true);
 				_setStartDateForFocus.call(this, oUTCDate);
 			}
 
@@ -926,11 +926,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var aSelectedDates = this.getSelectedDates();
 			if (aSelectedDates && aSelectedDates[0] && aSelectedDates[0].getStartDate()) {
 				// selected dates are provided -> use first one to focus
-				this._oFocusedDate = CalendarUtils._createUniversalUTCDate(aSelectedDates[0].getStartDate(), true);
+				this._oFocusedDate = CalendarUtils._createUniversalUTCDate(aSelectedDates[0].getStartDate(), undefined, true);
 			} else {
 				// use current date
 				var oNewDate = new Date();
-				this._oFocusedDate = CalendarUtils._createUniversalUTCDate(oNewDate, true);
+				this._oFocusedDate = CalendarUtils._createUniversalUTCDate(oNewDate, undefined, true);
 			}
 
 		}
@@ -1276,7 +1276,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					throw new Error("Date must be a JavaScript date object; " + this);
 				}
 
-				oDate = CalendarUtils._createUniversalUTCDate(oDate, true);
+				oDate = CalendarUtils._createUniversalUTCDate(oDate, undefined, true);
 
 				var iYear = oDate.getUTCFullYear();
 				if (iYear < 1 || iYear > 9999) {
@@ -1330,7 +1330,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		function _handleFocus(oEvent){
 
-			var oDate = CalendarUtils._createUniversalUTCDate(oEvent.getParameter("date"), true);
+			var oDate = CalendarUtils._createUniversalUTCDate(oEvent.getParameter("date"), undefined, true);
 			var bNotVisible = oEvent.getParameter("notVisible");
 
 			_focusDate.call(this, oDate, bNotVisible);
@@ -1360,7 +1360,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		function _handleDateFocus(oEvent){
 
 			var oFocusedDate = new UniversalDate(this._getFocusedDate().getTime());
-			var oDate = CalendarUtils._createUniversalUTCDate(oEvent.getParameter("date"), true);
+			var oDate = CalendarUtils._createUniversalUTCDate(oEvent.getParameter("date"), undefined, true);
 			var bNotVisible = oEvent.getParameter("otherMonth");
 
 			if (bNotVisible &&

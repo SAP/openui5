@@ -143,7 +143,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 		oHelper.sLocale = oTimesRow._getLocale();
 		oHelper.oLocaleData = oTimesRow._getLocaleData();
-		oHelper.oNow = CalendarUtils._createUniversalUTCDate(new Date(), true);
+		oHelper.oNow = CalendarUtils._createUniversalUTCDate(new Date(), undefined, true);
 		oHelper.sCurrentTime = oTimesRow._rb.getText("CALENDAR_CURRENT_TIME");
 		oHelper.sId = oTimesRow.getId();
 		oHelper.oFormatLong = oTimesRow._getFormatLong();
