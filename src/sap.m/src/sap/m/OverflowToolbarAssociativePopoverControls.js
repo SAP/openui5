@@ -26,12 +26,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata'],
 
 		// Button - modifications similar to action sheet
 		OverflowToolbarAssociativePopoverControls.prototype._preProcessSapMButton = function(oControl) {
+			var oButtonType = oControl.getType();
+
 			this._mControlsCache[oControl.getId()] = {
-				buttonType: oControl.getType()
+				buttonType: oButtonType
 			};
 
-			if (oControl.getType() === sap.m.ButtonType.Transparent) {
-				oControl.setProperty("type", sap.m.ButtonType.Default, true);
+			if (oButtonType === sap.m.ButtonType.Default) {
+				oControl.setProperty("type", sap.m.ButtonType.Transparent, true);
 			}
 
 			// Set some css classes to apply the proper paddings in cases of buttons with/without icons

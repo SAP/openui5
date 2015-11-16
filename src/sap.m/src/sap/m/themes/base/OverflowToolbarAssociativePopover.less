@@ -104,8 +104,14 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMOTAPopover.sapMPopover .sapMPopove
 }
 
 /* Phone mode overrides */
-.sap-phone, {
+.sap-phone {
 	.sapMOTAPopover {
 	  overflow: hidden !important;
+	}
+}
+
+.sapMOTAPopover {
+	.sapMBtnTransparent:not(.sapMBtnActive):not(.sapMToggleBtnPressed), .sapMBtnDisabled .sapMBtnTransparent  {
+		color: @sapUiButtonTextColor;
 	}
 }
