@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The NotificationListItemGroup control suitable for grouping Notification List Items of the same type.
+	 * The NotificationListItemGroup control is used for grouping NotificationListItems of the same type.
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			library: 'sap.m',
 			properties: {
 				/**
-				 * Determines the priority of the Notification.
+				 * Determines the priority of the NotificationListGroup.
 				 */
 				priority: {
 					type: 'sap.ui.core.Priority',
@@ -40,59 +40,59 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 				},
 
 				/**
-				 * Determines the title of the Notification List Group.
+				 * Determines the title of the NotificationListGroup.
 				 */
 				title: {type: 'string', group: 'Appearance', defaultValue: ''},
 
 				/**
-				 * Determines the due date of the Notification List Group.
+				 * Determines the due date of the NotificationListGroup.
 				 */
 				datetime: {type: 'string', group: 'Appearance', defaultValue: ''},
 
 				/**
-				 * Determines the actions buttons visibility
+				 * Determines the visibility of the action buttons.
 				 */
 				showButtons: {type: 'boolean', group: 'Behavior', defaultValue: true},
 
 				/**
-				 * Determines the close button visibility
+				 * Determines the visibility of the close button.
 				 */
 				showCloseButton: {type: 'boolean', group: 'Behavior', defaultValue: true},
 
 				/**
-				 * Determines if the group is collapsed or expanded
+				 * Determines if the group is collapsed or expanded.
 				 */
 				collapsed: {type: 'boolean', group: 'Behavior', defaultValue: false},
 
 				/**
-				 * Determines if the group will automatically set the priority based on the highest priority of its notifications or will get its priority from the developer
+				 * Determines if the group will automatically set the priority based on the highest priority of its notifications or get its priority from the developer.
 				 */
 				autoPriority: {type: 'boolean', group: 'Behavior', defaultValue: true}
 			},
 			aggregations: {
 				/**
-				 * Action buttons
+				 * Action buttons.
 				 */
 				buttons: {type: 'sap.m.Button', multiple: true},
 
 				/**
-				 * The notification list items inside the group
+				 * The NotificationListItems inside the group.
 				 */
 				items: {type: 'sap.m.NotificationListItem', multiple: true, singularName: 'item'},
 
 				/**
-				 * The header title of the NotificationListGroup
+				 * The header title of the NotificationListGroup.
 				 */
 				_headerTitle: {type: 'sap.m.Title', multiple: false, visibility: 'hidden'},
 
 				/**
-				 * The timestamp string that will be displayed in the NotificationListGroup
+				 * The timestamp string that will be displayed in the NotificationListGroup.
 				 */
 				_dateTime: {type: 'sap.m.Text', multiple: false, visibility: 'hidden'}
 			},
 			events: {
 				/**
-				 * Fired when the list item is closed
+				 * Fired when the list item is closed.
 				 */
 				close: {}
 
@@ -204,7 +204,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 	};
 
 	/**
-	 * Returns the sap.m.Title control used in the Notification List Group's title
+	 * Returns the sap.m.Title control used in the NotificationListGroup's title.
 	 * @returns {sap.m.Title} The hidden title control aggregation used in the group title
 	 * @private
 	 */
@@ -225,7 +225,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 	};
 
 	/**
-	 * Returns the sap.m.Text control used in the Notification List Group's datetime
+	 * Returns the sap.m.Text control used in the NotificationListGroup's datetime.
 	 * @returns {sap.m.Text} The hidden text control aggregation used in the group's timestamp
 	 * @private
 	 */
@@ -246,7 +246,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 	};
 
 	/**
-	 * Toggles the Notification List Group state between collapsed/expanded
+	 * Toggles the NotificationListGroup state between collapsed/expanded.
 	 * @private
 	 */
 	NotificationListGroup.prototype._toggleCollapsed = function () {
@@ -259,7 +259,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 	};
 
 	/**
-	 * Compares two priorities and returns the bigger one
+	 * Compares two priorities and returns the higher one.
 	 * @param {sap.ui.core.Priority} firstPriority First priority string to be compared
 	 * @param {sap.ui.core.Priority} secondPriority Second priority string to be compared
 	 * @returns {sap.ui.core.Priority} The highest priority
