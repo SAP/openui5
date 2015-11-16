@@ -124,6 +124,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 
 
 		OverflowToolbar.prototype._doLayout = function() {
+			var iWidth = this.$().width();
 
 			// Stop listening for control changes while calculating the layout to avoid an infinite loop scenario
 			this._bListenForControlPropertyChanges = false;
@@ -134,15 +135,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 			// Polyfill the flexbox support, if necessary
 			this._polyfillFlexboxSupport();
 
-			// Cache controls widths and other info, if not done already
-			if (!this._bControlsInfoCached) {
-				this._cacheControlsInfo();
-			}
+			if (iWidth > 0) {
 
-			// A resize occurred (or was simulated by setting previous width to null to trigger a recalculation)
-			if (this._iPreviousToolbarWidth !== this.$().width()) {
-				this._iPreviousToolbarWidth = this.$().width();
-				this._setControlsOverflowAndShrinking();
+				// Cache controls widths and other info, if not done already
+				if (!this._bControlsInfoCached) {
+					this._cacheControlsInfo();
+				}
+
+				// A resize occurred (or was simulated by setting previous width to null to trigger a recalculation)
+				if (this._iPreviousToolbarWidth !== iWidth) {
+					this._iPreviousToolbarWidth = iWidth;
+					this._setControlsOverflowAndShrinking(iWidth);
+				}
+
 			}
 
 			// Register the resize handler again after all calculations are done and it's safe to do so
@@ -224,9 +229,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/m/ToggleButton', 'sap/ui/c
 		 * Sets/removes flexbox css classes to/from controls
 		 * @private
 		 */
-		OverflowToolbar.prototype._setControlsOverflowAndShrinking = function() {
-			var iToolbarSize = this.$().width(), // toolbar width in pixels
-				iContentSize = this._iContentSize,// total optimal control width in pixels, cached in _cacheControlsInfo and used until invalidated
+		OverflowToolbar.prototype._setControlsOverflowAndShrinking = function(iToolbarSize) {
+			var iContentSize = this._iContentSize,// total optimal control width in pixels, cached in _cacheControlsInfo and used until invalidated
 				aButtonsToMoveToActionSheet = [], // buttons that must go to the action sheet
 				sIdsHash,
 				i,
