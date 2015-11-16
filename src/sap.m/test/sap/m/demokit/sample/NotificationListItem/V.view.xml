@@ -7,7 +7,6 @@
 			class="sapUiContentPadding"
 			width="100%">
 		<l:content>
-
 			<List>
 				<NotificationListItem
 						title="New order (#2525)"
@@ -18,7 +17,13 @@
 						priority="None"
 						close="onItemClose"
 						press="onListItemPress"
-						/>
+						authorName="Jean Doe"
+						authorPicture="test-resources/sap/m/images/Woman_04.png">
+					<buttons>
+						<Button text="Accept" type="Accept" press="onAcceptPress"></Button>
+						<Button text="Reject" type="Reject" press="onRejectPress"></Button>
+					</buttons>
+					</NotificationListItem>
 
 				<NotificationListItem
 						title="New order (#2524)"
@@ -29,18 +34,64 @@
 						priority="High"
 						close="onItemClose"
 						press="onListItemPress"
-						/>
+						authorName="Office Notification"
+						authorPicture="sap-icon://group">
+				</NotificationListItem>
 
 				<NotificationListItem
 						title="New order (#2523)"
 						description="Aliquam quis varius ligula.."
-						showCloseButton="falseue"
+						showCloseButton="false"
 						unread="false"
 						datetime="3 days"
 						priority="High"
 						close="onItemClose"
 						press="onListItemPress"
-						>
+						authorName="Patricia Clark"
+						authorPicture="test-resources/sap/m/images/female_BaySu.jpg">
+					<buttons>
+						<Button text="Accept" type="Accept" press="onAcceptPress"></Button>
+						<Button text="Reject" type="Reject" press="onRejectPress"></Button>
+					</buttons>
+				</NotificationListItem>
+
+				<NotificationListItem
+						title="New order (#2522)"
+						description="Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis."
+						showCloseButton="true"
+						datetime="3 days"
+						unread="true"
+						priority="Medium"
+						close="onItemClose"
+						press="onListItemPress"
+						authorName="John Smith"
+						authorPicture="test-resources/sap/m/images/headerImg2.jpg">
+				</NotificationListItem>
+
+				<NotificationListItem
+						title="New order (#2521)"
+						description="Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc."
+						showCloseButton="true"
+						datetime="3 days"
+						unread="true"
+						priority="Low"
+						close="onItemClose"
+						press="onListItemPress"
+						authorName="John Smith"
+						authorPicture="test-resources/sap/m/images/headerImg2.jpg">
+				</NotificationListItem>
+
+				<NotificationListItem
+						title="New order (#2520)"
+						description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc. "
+						showCloseButton="true"
+						datetime="2 day"
+						unread="false"
+						priority="Low"
+						close="onItemClose"
+						press="onListItemPress"
+						authorName="Jean Doe"
+						authorPicture="test-resources/sap/m/images/Woman_04.png">
 					<buttons>
 						<Button text="Accept" type="Accept" press="onAcceptPress"></Button>
 						<Button text="Reject" type="Reject" press="onRejectPress"></Button>
