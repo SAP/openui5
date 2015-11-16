@@ -320,6 +320,11 @@
 			"control": "sap.m.UploadCollectionForPendingUpload",
 			"url": "../UploadCollectionForPendingUpload.html",
 			"appComponent": "CA-UI5-BS-FCW"
+		},
+		{
+			"control": "sap.m.Wizard",
+			"url": "Wizard.html",
+			"appComponent": "CA-UI5-CTR-SOF-RIL"
 		}
 	]
 }
