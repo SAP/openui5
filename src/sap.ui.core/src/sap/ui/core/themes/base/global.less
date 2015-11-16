@@ -303,8 +303,9 @@
 @sapUiButtonDisabledBackground: @sapUiExtraLightBG; // needed, different in every theme
 // @sapUiButtonHoverBorderColor: @sapUiMediumBorder; // needed beacuse different in GR and UX
 @sapUiButtonHoverBackground: @sapUiMediumBG; // needed beacuse different in GR, Platinum and UX
-@sapUiButtonActiveBorderColor: @sapUiMediumBorder; // needed beacuse different in GR and UX
-@sapUiButtonActiveBackground: @sapUiDarkBG; // needed beacuse different in GR, Platinum and UX
+@sapUiButtonActiveBackground: @sapUiHighlight;
+@sapUiButtonActiveBorderColor: @sapUiButtonActiveBackground;
+@sapUiButtonActiveTextColor: contrast(@sapUiButtonActiveBackground, @sapUiButtonTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiButtonEmphasizedBorderColor: @sapUiButtonBorderColor;
 @sapUiButtonEmphasizedBackground: @sapUiButtonEmphasizedBG;
 @sapUiButtonEmphasizedDisabledBorderColor: @sapUiButtonEmphasizedBorderColor;
