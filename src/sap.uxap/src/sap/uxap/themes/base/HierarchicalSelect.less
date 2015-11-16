@@ -1,5 +1,29 @@
 .sapUxAPHierarchicalSelect {
+	width: 2rem;
 	margin: 0;
+
+	.sapMSltLabel {
+		padding: 0 2.5rem 0 1rem;
+	}
+
+	.sapMSltIcon {
+		width: 1.625rem;
+		height: 1.625rem;
+		line-height: 1.625rem;
+		font-size: 1rem;
+		padding: 0;
+		border-radius: 0.125rem;
+		position: absolute;
+		top: 0.6875rem;
+
+		&::before {
+			width: 1.625rem;
+			height: 1.625rem;
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+	}
 }
 
 .sapUiSizeCompact .sapUxAPHierarchicalSelect.sapMSlt {
@@ -17,10 +41,6 @@
 .sapUxAPHierarchicalSelect .sapMSltLabel,
 .sapUxAPHierarchicalSelect .sapMSltArrow {
 	line-height: 3rem;
-}
-
-.sapUxAPHierarchicalSelect .sapMSltLabel {
-	padding: 0 2.5rem 0 1rem;
 }
 
 .sapUxAPHierarchicalSelect .sapMSltArrow,
@@ -43,7 +63,7 @@
 .sapUiMedia-Std-Desktop .sapUxAPHierarchicalSelect.sapMSltIconOnly {
 	position: absolute;
 	right: 0;
-	top: 0.25rem;
+	height: 3rem;
 }
 
 /* inner list */
