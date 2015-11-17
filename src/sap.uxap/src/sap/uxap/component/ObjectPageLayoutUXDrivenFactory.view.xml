@@ -25,7 +25,6 @@
 		<!-- template for objectPageSection -->
 		<sections>
 			<ObjectPageSection id="ObjectPageSection"
-							   icon="{objectPageLayoutMetadata>icon}"
 							   title="{objectPageLayoutMetadata>title}"
 							   importance="{objectPageLayoutMetadata>importance}"
 							   showTitle="{objectPageLayoutMetadata>showTitle}"
@@ -35,7 +34,6 @@
 				<!-- template for objectPageSubSection -->
 				<subSections>
 					<ObjectPageSubSection id="ObjectPageSubSection"
-										  icon="{objectPageLayoutMetadata>icon}"
 										  title="{objectPageLayoutMetadata>title}"
 										  visible="{objectPageLayoutMetadata>visible}"
 										  mode="{objectPageLayoutMetadata>mode}"
