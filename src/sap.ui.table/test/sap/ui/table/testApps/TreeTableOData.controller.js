@@ -62,10 +62,53 @@ sap.ui.define([
 				oTable.destroy();
 			}
 			
+			jQuery.sap.measure.start("createTable");
+			
 			oTable = new sap.ui.table.TreeTable({
 				rootLevel: iRootLevel
 			});
 			oTableContainer.addContent(oTable);
+			
+			oTable.addDelegate({
+				onBeforeRendering: function () {
+					jQuery.sap.measure.start("onBeforeRendering","",["Render"]);
+					jQuery.sap.measure.start("rendering","",["Render"]);
+				},
+				onAfterRendering: function () {
+					jQuery.sap.measure.start("onAfterRendering","",["Render"]);
+				}
+			}, true);
+
+			oTable.addDelegate({
+				onBeforeRendering: function () {
+					jQuery.sap.measure.end("onBeforeRendering");
+				},
+				onAfterRendering: function () {
+					jQuery.sap.measure.end("onAfterRendering");
+					jQuery.sap.measure.end("rendering");
+				}
+			}, false);
+			
+			var fnRowsUpdated = function() {
+				oTable.detachEvent("_rowsUpdated", fnRowsUpdated);
+
+				var iOverall = jQuery.sap.measure.end("createTable").duration;
+				var iRendering = jQuery.sap.measure.getMeasurement("rendering").duration;
+				var iBeforeRendering = jQuery.sap.measure.getMeasurement("onBeforeRendering").duration;
+				var iAfterRendering = jQuery.sap.measure.getMeasurement("onAfterRendering").duration;
+
+				var iTableCreate = (iOverall - iRendering);
+				var iFactor = Math.round(iAfterRendering / iRendering * 100);
+
+				oView.byId("overall").setText(iOverall);
+				oView.byId("onBeforeRendering").setText(iBeforeRendering);
+				oView.byId("rendering").setText(iRendering);
+				oView.byId("onAfterRendering").setText(iAfterRendering);
+				oView.byId("tableCreate").setText(iTableCreate);
+				oView.byId("factor").setText(iFactor);
+			};
+			
+			oTable.attachEvent("_rowsUpdated", fnRowsUpdated);
 			
 			// recreate the columns
 			var aProperties = sSelectProperties.split(",");
@@ -104,6 +147,20 @@ sap.ui.define([
 			
 			//for easier table dbg
 			window.oTable = oTable;
+			
+			var aJSMeasure = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
+				return oMeasurement.categories.indexOf("JS") > -1? oMeasurement : null;
+			});
+			
+			var aRenderMeasure = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
+				return oMeasurement.categories.indexOf("Render") > -1? oMeasurement : null;
+			});
+			
+			//set test result
+			this.getView().byId("_createRows").setText(aJSMeasure[0].duration);
+			this.getView().byId("_updateRowHeader").setText(aJSMeasure[1].duration);
+			this.getView().byId("_syncColumnHeaders").setText(aJSMeasure[2].duration);
+			this.getView().byId("_updateTableContent").setText(aJSMeasure[3].duration);		
 		}
 	});
 });
