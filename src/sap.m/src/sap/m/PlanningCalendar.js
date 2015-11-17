@@ -224,7 +224,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oLocale = new sap.ui.core.Locale(sLocale);
 			this._oLocaleData = LocaleData.getInstance(oLocale);
 
-			this._oIntervalTypeSelect = new sap.m.Select(this.getId() + "-IntType");
+			this._oIntervalTypeSelect = new sap.m.Select(this.getId() + "-IntType", {maxWidth: "15rem"});
 			this._oIntervalTypeSelect.attachEvent("change", _changeIntervalType, this);
 
 			this._oTodayButton = new sap.m.Button(this.getId() + "-Today", {

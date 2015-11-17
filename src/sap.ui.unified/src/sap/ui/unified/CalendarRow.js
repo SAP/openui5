@@ -745,6 +745,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var aOldVisibleAppointments = this._aVisibleAppointments || [];
 			var aAppointments = _getAppointmentsSorted.call(this);
 			var oAppointment;
+			var oGroupAppointment;
 			var iIntervals = this.getIntervals();
 			var sIntervalType = this.getIntervalType();
 			var oStartDate = this._getStartDate();
@@ -791,21 +792,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				var iBegin = 0;
 				var iEnd = 0;
 				var iLevel = -1;
+				oGroupAppointment = undefined;
 
 				if (oAppointmentStartDate && oAppointmentStartDate.getTime() <= iEndTime &&
 						oAppointmentEndDate && oAppointmentEndDate.getTime() >= iStartTime) {
 					if (sIntervalType == sap.ui.unified.CalendarIntervalType.Month && oAppointmentEndDate.getTime() - oAppointmentStartDate.getTime() < 604800000) {
 						// in month mode, group appointment < one week
 
-						var oGroupAppointment = _getGroupAppointment.call(this, oAppointmentStartDate, oAppointment, sIntervalType, iIntervals, oStartDate, oEndDate, iStartTime, aVisibleAppointments);
+						oGroupAppointment = _getGroupAppointment.call(this, oAppointmentStartDate, oAppointment, sIntervalType, iIntervals, oStartDate, oEndDate, iStartTime, aVisibleAppointments);
 						var oGroupEndDate = CalendarUtils._createUniversalUTCDate(oGroupAppointment.getEndDate(), true);
 
 						if (oAppointmentEndDate.getTime() > oGroupEndDate.getTime()) {
 							// appointment ends in next group
 							_getGroupAppointment.call(this, oAppointmentEndDate, oAppointment, sIntervalType, iIntervals, oStartDate, oEndDate, iStartTime, aVisibleAppointments);
 						}
-
-						continue;
 					}
 
 					iBegin = _calculateBegin.call(this, sIntervalType, iIntervals, oStartDate, oEndDate, iStartTime, oAppointmentStartDate);
@@ -818,10 +818,47 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 							iLevel = oOldAppointment.level;
 						}
 					}
+
+					if (oGroupAppointment) {
+						oGroupAppointment._iBegin = iBegin;
+						oGroupAppointment._iEnd = iEnd;
+						oGroupAppointment._iLevel = iLevel;
+						continue;
+					}
+
 					aVisibleAppointments.push({appointment: oAppointment, begin: iBegin, end: iEnd, calculatedEnd: iEnd, level: iLevel});
 
 					if (this._sFocusedAppointmentId && this._sFocusedAppointmentId == oAppointment.getId()) {
 						bFocusIdFound = true;
+					}
+				}
+			}
+
+			// if group appointment only has one appointment -> show this appointment
+			if (this.getAggregation("groupAppointments", []).length > 0) {
+				for (i = 0; i < aVisibleAppointments.length; i++) {
+					oAppointment = aVisibleAppointments[i];
+					if (oAppointment.appointment._aAppointments && oAppointment.appointment._aAppointments.length == 1) {
+						oGroupAppointment = oAppointment.appointment;
+						// check if already shown
+						var bFound = false;
+						for (j = 0; j < aVisibleAppointments.length; j++) {
+							if (aVisibleAppointments[j].appointment == oGroupAppointment._aAppointments[0]) {
+								bFound = true;
+								break;
+							}
+						}
+						if (!bFound) {
+							oAppointment.begin = oGroupAppointment._iBegin;
+							oAppointment.end = oGroupAppointment._iEnd;
+							oAppointment.calculatedEnd = oGroupAppointment._iEnd;
+							oAppointment.level = oGroupAppointment._iLevel;
+							oAppointment.appointment = oGroupAppointment._aAppointments[0];
+						} else {
+							aVisibleAppointments.splice(i, 1);
+							i--;
+						}
+						oGroupAppointment.destroy();
 					}
 				}
 			}

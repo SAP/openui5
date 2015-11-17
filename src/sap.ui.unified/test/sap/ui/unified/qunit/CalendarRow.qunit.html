@@ -143,6 +143,15 @@
 													text: "Appointment of full next 2 months",
 													key: "A7"
 												}),
+											 new sap.ui.unified.CalendarAppointment("App8", {
+													startDate: new Date("2015", "05", "02", "0", "0"),
+													endDate: new Date("2015", "05", "02", "23", "59", "59"),
+													type: sap.ui.unified.CalendarDayType.Type07,
+													title: "Appointment 8",
+													tooltip: "Tooltip 8",
+													text: "Appointment of one day",
+													key: "A8"
+												})
 											],
 				intervalHeaders: [new sap.ui.unified.CalendarAppointment("IHead1", {
 														startDate: new Date("2015", "01", "01", "12", "00"),
@@ -318,6 +327,7 @@
 				var $Appointment5 = jQuery("#App5");
 				var $Appointment6 = jQuery("#App6");
 				var $Appointment7 = jQuery("#App7");
+				var $Appointment8 = jQuery("#App8");
 				var $AppointmentDummy = jQuery("#Row1-DummyApp");
 
 				ok(!$Appointment0.get(0), "Appointment0 not rendered");
@@ -355,6 +365,7 @@
 				ok(!$Appointment5.get(0), "Appointment5 not rendered");
 				ok(!$Appointment6.get(0), "Appointment6 not rendered");
 				ok(!$Appointment7.get(0), "Appointment7 not rendered");
+				ok(!$Appointment8.get(0), "Appointment8 not rendered");
 
 				ok($AppointmentDummy.get(0), "Dummy Appointment rendered");
 				ok(!$AppointmentDummy.is(":visible"), "Dummy Appointment not visible");
@@ -426,6 +437,7 @@
 				var $Appointment5 = jQuery("#App5");
 				var $Appointment6 = jQuery("#App6");
 				var $Appointment7 = jQuery("#App7");
+				var $Appointment8 = jQuery("#App8");
 				var $AppointmentDummy = jQuery("#Row1-DummyApp");
 
 				ok($Appointment0.get(0), "Appointment0 rendered");
@@ -442,6 +454,7 @@
 				ok(!$Appointment5.get(0), "Appointment5 not rendered");
 				ok(!$Appointment6.get(0), "Appointment6 not rendered");
 				ok(!$Appointment7.get(0), "Appointment7 not rendered");
+				ok(!$Appointment8.get(0), "Appointment8 not rendered");
 			});
 
 			test("Appointments - change properties", function() {
@@ -481,6 +494,7 @@
 				var $Appointment5 = jQuery("#App5");
 				var $Appointment6 = jQuery("#App6");
 				var $Appointment7 = jQuery("#App7");
+				var $Appointment8 = jQuery("#App8");
 
 				ok($Appointment0.get(0), "Appointment0 rendered");
 				ok($Appointment1.get(0), "Appointment1 rendered");
@@ -494,6 +508,7 @@
 				ok(Math.abs(Math.floor(($Appointment6.offset().left + $Appointment6.outerWidth()) - (jQuery("#Row1-AppsInt2").offset().left + jQuery("#Row1-AppsInt2").outerWidth()))) <= 1, "Appointment 6 has same end rendered as Interval 2"); // maybe it varias 1px because of rounding
 
 				ok(!$Appointment7.get(0), "Appointment7 not rendered");
+				ok(!$Appointment8.get(0), "Appointment8 not rendered");
 			});
 
 			test("Interval headers - days view", function() {
@@ -562,6 +577,7 @@
 				var $Appointment5 = jQuery("#App5");
 				var $Appointment6 = jQuery("#App6");
 				var $Appointment7 = jQuery("#App7");
+				var $Appointment8 = jQuery("#App8");
 
 				ok(!$Appointment0.get(0), "Appointment0 not rendered");
 				ok(!$Appointment1.get(0), "Appointment1 not rendered");
@@ -579,6 +595,7 @@
 				ok(Math.abs(Math.floor($Appointment7.offset().left - jQuery("#Row1-AppsInt2").offset().left)) <= 1, "Appointment 7 has same start rendered as Interval 2"); // maybe it varias 1px because of rounding
 				ok(Math.abs(Math.floor(($Appointment7.offset().left + $Appointment7.outerWidth()) - (jQuery("#Row1-AppsInt4").offset().left + jQuery("#Row1-AppsInt4").outerWidth()))) <= 1, "Appointment 7 has same end rendered as Interval 4"); // maybe it varias 1px because of rounding
 
+				ok($Appointment8.get(0), "Appointment8 rendered");
 			});
 
 			test("Interval headers - month view", function() {
@@ -656,6 +673,7 @@
 				ok(!jQuery("#App5").get(0), "Appointment5 not rendered");
 				ok(!jQuery("#App6").get(0), "Appointment6 not rendered");
 				ok(!jQuery("#App7").get(0), "Appointment7 not rendered");
+				ok(!jQuery("#App8").get(0), "Appointment8 not rendered");
 				ok(jQuery("#Row1-Group0").get(0), "Group appointment rendered");
 			});
 
