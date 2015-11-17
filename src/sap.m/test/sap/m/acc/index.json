@@ -13,7 +13,7 @@
 		{
 			"control": "sap.m.Bar",
 			"url": "../Bar.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.BusyIndicator",
@@ -28,12 +28,12 @@
 		{
 			"control": "sap.m.Carousel",
 			"url": "../Carousel.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
 			"control": "sap.m.CheckBox",
 			"url": "../CheckBox.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-PIR"
 		},
 		{
 			"control": "sap.m.ComboBox",
@@ -48,7 +48,7 @@
 		{
 			"control": "sap.m.Dialog",
 			"url": "../Dialog.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
 			"control": "sap.m.DynamicContainer",
@@ -73,12 +73,12 @@
 		{
 			"control": "sap.m.semantic.FullscreenPage",
 			"url": "./semantic/FullscreenPage.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-PIR"
 		},
 		{
 			"control": "sap.m.IconTabBar",
 			"url": "../IconTabBar.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
 			"control": "sap.m.InputBase",
@@ -98,12 +98,12 @@
 		{
 			"control": "sap.m.Label",
 			"url": "../Label.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
 			"control": "sap.m.Link",
 			"url": "../Link.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-PIR"
 		},
 		{
 			"control": "sap.m.List",
@@ -114,7 +114,7 @@
 		{
 			"control": "sap.m.semantic.MasterPage",
 			"url": "./semantic/MasterDetailPages.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-PIR"
 		},
 		{
 			"control": "sap.m.MessageBox",
@@ -129,7 +129,7 @@
 		{
 			"control": "sap.m.MessageToast",
 			"url": "../MessageToast.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-RIL"
 		},
 		{
 			"control": "sap.m.MessageStrip",
@@ -159,22 +159,22 @@
 		{
 			"control": "sap.m.ObjectAttribute",
 			"url": "../ObjectHeader.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.ObjectHeader",
 			"url": "../ObjectHeader.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.ObjectIdentifier",
 			"url": "../ObjectIdentifier.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.ObjectStatus",
 			"url": "../ObjectHeader.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.Page",
@@ -209,7 +209,7 @@
 		{
 			"control": "sap.m.RadioButtonGroup",
 			"url": "../RadioButtonGroup.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
 			"control": "sap.m.RatingIndicator",
@@ -219,7 +219,7 @@
 		{
 			"control": "sap.m.ResponsivePopover",
 			"url": "../ResponsivePopover.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-RIL"
 		},
 		{
 			"control": "sap.m.SearchField",
@@ -229,7 +229,7 @@
 		{
 			"control": "sap.m.SegmentedButton",
 			"url": "../SegmentedButton.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.Select",
@@ -264,7 +264,7 @@
 		{
 			"control": "sap.m.Text",
 			"url": "../Text.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-ROD"
 		},
 		{
 			"control": "sap.m.TextArea",
@@ -284,12 +284,12 @@
 		{
 			"control": "sap.m.Tile",
 			"url": "../TileContainer.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.TileContainer",
 			"url": "../TileContainer.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-BAL"
 		},
 		{
 			"control": "sap.m.TileContent",
@@ -309,7 +309,7 @@
 		{
 			"control": "sap.m.Toolbar",
 			"url": "../Toolbar.html",
-			"appComponent": "CA-UI5-CTR-SOF"
+			"appComponent": "CA-UI5-CTR-SOF-PIR"
 		},
 		{
 			"control": "sap.m.UploadCollection",
