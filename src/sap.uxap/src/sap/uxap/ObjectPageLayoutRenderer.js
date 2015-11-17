@@ -111,7 +111,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ObjectPageHeaderRenderer"],
 
 			oRm.write("<div");
 			oRm.writeAttributeEscaped("id", oControl.getId() + "-spacer");
-			oRm.write(">");
+			oRm.write("></div>");
 
 			oRm.write("</div>");  // END scroll
 

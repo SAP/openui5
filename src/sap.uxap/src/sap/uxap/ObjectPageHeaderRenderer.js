@@ -16,7 +16,9 @@ sap.ui.define(["./ObjectPageLayout"], function (ObjectPageLayout) {
 		var oNavigationBar = oControl.getNavigationBar(),
 			bTitleVisible = (oControl.getIsObjectIconAlwaysVisible() || oControl.getIsObjectTitleAlwaysVisible() || oControl.getIsObjectSubtitleAlwaysVisible() || oControl.getIsActionAreaAlwaysVisible()),
 			oParent = oControl.getParent(),
-			oExpandButton = oControl.getAggregation("_expandButton");
+			oExpandButton = oControl.getAggregation("_expandButton"),
+			bIsDesktop = sap.ui.Device.system.desktop,
+			bIsHeaderContentVisible = oParent && oParent instanceof ObjectPageLayout && oParent.getHeaderContent() && oParent.getHeaderContent().length > 0 && oParent.getShowHeaderContent();
 
 		oRm.write("<div");
 		oRm.writeControlData(oControl);
@@ -96,8 +98,8 @@ sap.ui.define(["./ObjectPageLayout"], function (ObjectPageLayout) {
 		oRm.writeClasses();
 		oRm.write(">");
 
-		// Render the expand button only if there is a content to expand
-		if (oParent && oParent instanceof sap.uxap.ObjectPageLayout && oParent.getHeaderContent()) {
+		// Render the expand button only if there is a content to expand and we are on desktop
+		if (bIsDesktop && bIsHeaderContentVisible) {
 			oExpandButton.addStyleClass("sapUxAPObjectPageHeaderExpandButton");
 			oRm.renderControl(oExpandButton);
 		}

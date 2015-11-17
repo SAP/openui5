@@ -423,11 +423,16 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageLayout.prototype._expandCollapseHeader = function (bExpand) {
+		var oHeaderTitle = this.getHeaderTitle();
 		if (this._bHContentAlwaysExpanded) {
 			return;
 		}
 
 		if (bExpand && this._bStickyAnchorBar) {
+			// if the title in the header is not always visible but the action buttons are there we have remove the padding of the action buttons
+			if (oHeaderTitle && oHeaderTitle.getIsActionAreaAlwaysVisible() && !oHeaderTitle.getIsObjectTitleAlwaysVisible()) {
+				oHeaderTitle._setActionsPaddingStatus(bExpand);
+			}
 			this._$headerContent.css("height", this.iHeaderContentHeight).children().appendTo(this._$stickyHeaderContent); // when removing the header content, preserve the height of its placeholder, to avoid automatic repositioning of scrolled content as it gets shortened (as its topmost part is cut off) 
 			this._toggleStickyHeader(bExpand);
 		} else if (!bExpand && this._bIsHeaderExpanded) {
@@ -1477,6 +1482,9 @@ sap.ui.define([
 		var bOldShow = this.getShowHeaderContent();
 
 		if (bOldShow !== bShow) {
+			if (bOldShow && this._bIsHeaderExpanded) {
+				this._expandCollapseHeader(false);
+			}
 			this.setProperty("showHeaderContent", bShow);
 			this._getHeaderContent().setProperty("visible", bShow);
 		}
