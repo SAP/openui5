@@ -2,7 +2,7 @@
 /* CSS for control sap.m/GenericTile.control */
 /* ========================================= */
 .sapMGT {
-	border-radius: 6px;
+	border-radius: 0.375rem;
 }
 
 .sapMGTHdrContent {
@@ -27,17 +27,17 @@
 }
 
 .sapMGTHdrIconImage {
-font-family: @sapUiFontFamily;
+	font-family: @sapUiFontFamily;
 	color: @sapHCStandardFG;
 }
 
 .sap-desktop .sapMGT:focus {
 	border-color: @sapHCStandardFG;
-	box-shadow: 0px 0px 0px 1px @sapHCStandardFG;
+	box-shadow: 0rem 0rem 0rem 1px @sapHCStandardFG; /* Usage of px as aligned with designers. */
 }
 
 .sap-desktop .sapMGT:hover:not(:focus) {
-	box-shadow: 0px 0px 0px 2px @sapHCStandardFG;
+	box-shadow: 0rem 0rem 0rem 0.125rem @sapHCStandardFG;
 }
 
 .sap-desktop .sapMGT:focus:not([tabindex]) {
@@ -45,7 +45,7 @@ font-family: @sapUiFontFamily;
 }
 
 .sapMGT {
-	box-shadow: 0px 0px 0px 1px @sapHCStandardFG;
+	box-shadow: 0rem 0rem 0rem 1px @sapHCStandardFG; /* Usage of px as aligned with designers. */
 }
 
 .sapMGenericTileFtrFldTxt {
@@ -71,5 +71,5 @@ font-family: @sapUiFontFamily;
 .sap-desktop .sapMGT:hover,
 .sap-phone .sapMGTHvrOutln:hover,
 .sap-tablet .sapMGTHvrOutln:hover {
-	box-shadow: 0px 0px 0px 2px @sapHCStandardFG;
+	box-shadow: 0rem 0rem 0rem 0.125rem @sapHCStandardFG;
 }
