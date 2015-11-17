@@ -821,7 +821,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// Check if the event target is the last focusable element in the Carousel
 		// If the current active page is different from the parent page of the last focusable element in the Carousel,
 		// the event is from the keyboard and should be overwritten
-		if (oEvent.target === this.$().lastFocusableDomRef() && oEvent.target.parentNode !== $activePage[0]){
+		if (oEvent.target === this.$().lastFocusableDomRef() && jQuery(oEvent.target).parents(".sapMCrslItem.sapMCrslActive").length === 0){
 			oEvent.preventDefault();
 
 			if (this._iLastActivePage === this._getPageNumber(this.getActivePage()) && this._oLastFocusedElement) {
