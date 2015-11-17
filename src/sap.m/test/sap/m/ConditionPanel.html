@@ -94,6 +94,7 @@
 			
 			oConditionPanel.setKeyFields([{key: "numeric", text: "Numeric", type: "numeric", precision: "5", scale: "2", tooltip : "", isDefault: true}, 
 			                              {key: "string", text: "String", type: "text", maxLength: "10"}, 
+			                              {key: "char", text: "Char", type: "text", maxLength: "1", operations: [sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE]}, 
 			                              {key: "text", text: "Text", type: "text"}, 
 			                              {key: "default", text: "default"}, 
 			                              {key: "date", text: "Date", type: "date"},
