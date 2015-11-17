@@ -904,17 +904,15 @@ sap.ui
 			 * @private
 			 */
 			MockServer.prototype._loadMetadata = function(sMetadataUrl) {
-
-				// load the metadata
-				var oMetadata = jQuery.sap.sjax({
+				// load the metadata as string to avoid usage of serializer 
+				var sMetadata = jQuery.sap.sjax({
 					url: sMetadataUrl,
-					dataType: "xml"
+					dataType: "text"
 				}).data;
-				jQuery.sap.assert(oMetadata !== undefined, "The metadata for url \"" + sMetadataUrl + "\" could not be found!");
-				this._oMetadata = oMetadata;
-
-				return oMetadata;
-
+				this._sMetadata = sMetadata;
+				this._oMetadata = jQuery.parseXML(sMetadata);
+				jQuery.sap.assert(this._oMetadata !== undefined, "The metadata for url \"" + sMetadataUrl + "\" could not be found!");
+				return this._oMetadata;
 			};
 
 			/**
@@ -1880,8 +1878,8 @@ sap.ui
 						};
 						fnHandleXsrfTokenHeader(oXhr, mHeaders);
 
-						oXhr.respond(200, mHeaders, jQuery.sap.serializeXML(that._oMetadata));
-						jQuery.sap.log.debug("MockServer: response sent with: 200, " + jQuery.sap.serializeXML(that._oMetadata));
+						oXhr.respond(200, mHeaders, that._sMetadata);
+						jQuery.sap.log.debug("MockServer: response sent with: 200, " + that._sMetadata);
 						return true;
 					}
 				});
