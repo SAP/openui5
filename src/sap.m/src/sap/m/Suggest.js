@@ -117,7 +117,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Button', './SuggestionsList', '.
 				},
 				afterClose: function(oEvent) {
 					if (!oEvent.getParameter("origin")) { // fire the search event if not cancelled
-						oInput.fireSearch({query: oInput.getValue(), refreshButtonPressed: false});
+						oInput.fireSearch({
+							query: oInput.getValue(),
+							refreshButtonPressed: false,
+							clearButtonPressed: false
+						});
 					}
 				}
 			});

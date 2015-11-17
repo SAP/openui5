@@ -12,12 +12,19 @@
 <script type="text/javascript">
 
 	jQuery.sap.require("sap.ui.model.json.JSONModel");
+	jQuery.sap.require("sap.ui.core.IconPool");
+	
+	
+	function getIcon(i) {
+		return sap.ui.core.IconPool.getIconURI(i);
+	}
+
 	var aSuggestionData = [
-		{text: "ABCDEFGHI", description: "cat 01",  key: "001", icon: ""},
+		{text: "ABCDEFGHI", description: "cat 01",  key: "001", icon: getIcon("search")},
 		{text: "ABCDEFGH" , description: "cat 02",  key: "002", icon: ""},
-		{text: "ABCDEFG"  , description: "cat 03",  key: "003", icon: ""},
-		{text: "ABCDEF"   , description: "cat 04",  key: "004", icon: ""},
-		{text: "ABCDE"    , description: "cat 05",  key: "005", icon: ""},
+		{text: "ABCDEFG"  , description: "cat 03",  key: "003", icon: getIcon("synchronize")},
+		{text: "ABCDEF"   , description: "cat 04",  key: "004", icon: getIcon("wrench")},
+		{text: "ABCDE"    , description: "cat 05",  key: "005", icon: getIcon("refresh")},
 		{text: "ABCD"     , description: "cat 06",  key: "006", icon: ""},
 		{text: "ABC"      , description: "cat 07",  key: "007", icon: ""},
 		{text: "AB"       , description: "cat 08",  key: "008", icon: ""},
