@@ -3,15 +3,6 @@
 /* Bluecrystal                                        */
 /* ================================================== */
 
-.sapUiCalendarRow{
-	background-color: @sapUiListBackground;
-	border: 0.0625rem solid @sapUiListBorderColor;
-}
-
-.sapUiCalendarRowApps{
-
-}
-
 /* intervals */
 .sapUiCalendarRowAppsInt,
 .sapUiCalendarRowAppsSubInt{
@@ -24,16 +15,7 @@
 }
 
 /* Appointments */
-.sapUiCalendarApp{
-	border-color: darken(@sapUiListBorderColor, 15);
-	background-color: @sapUiListBackground;
-}
-
-.sapUiCalendarAppCont{
-	border-color: darken(@sapUiListBorderColor, 15);
-}
-
-.sap-desktop .sapUiCalendarApp:focus > .sapUiCalendarAppCont{
+.sap-desktop .sapUiCalendarApp:focus:not(:active):not(:hover) > .sapUiCalendarAppCont{
 	border-top: 0.0625rem dotted @sapUiFocus;
 	border-right: 0.0625rem dotted @sapUiFocus;
 	border-bottom: 0.0625rem dotted @sapUiFocus;
@@ -47,7 +29,7 @@
 }
 
 .sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active),
-.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus{
+.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active){
 	background-color: darken(@sapUiListActiveBackground, 10);
 }
 
@@ -56,22 +38,17 @@
 .sapUiCalendarApp.sapUiCalendarAppSel:active > .sapUiCalendarAppCont{
 	border-color: @sapUiListActiveBackground;
 	border-left: 0.0625rem solid @sapUiListBackground;
-/* padding-left: 0.3125rem;*/
 }
 
 
-.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active)  > .sapUiCalendarAppCont,
-.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus > .sapUiCalendarAppCont{
+.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active)  > .sapUiCalendarAppCont{
 	border-color: darken(@sapUiListActiveBackground, 10);
 	border-left-color: @sapUiListBackground;
 }
-/*
-.sapUiCalendarApp.sapUiCalendarAppSel.sapUiCalendarAppWithIcon > .sapUiCalendarAppCont,
-.sapUiCalendarApp.sapUiCalendarAppWithIcon:active > .sapUiCalendarAppCont,
-.sapUiCalendarApp.sapUiCalendarAppWithIcon.sapUiCalendarAppSel:active > .sapUiCalendarAppCont{
-	padding-left: 1.6875rem;
+
+.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active):not(:hover) > .sapUiCalendarAppCont{
+	border-color: @sapUiListBackground;
 }
-*/
 
 .sapUiCalendarApp.sapUiCalendarAppSel.sapUiCalendarAppWithIcon > .sapUiCalendarAppCont > .sapUiCalendarAppIcon,
 .sapUiCalendarApp.sapUiCalendarAppWithIcon:active > .sapUiCalendarAppCont > .sapUiCalendarAppIcon,
