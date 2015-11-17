@@ -49,19 +49,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core
 					 */
 					mainContents: {type: 'sap.ui.core.Control', multiple: true, singularName: 'mainContent'}
 				},
-				events: {
-					/**
-					 * Fires when the layout is changed
-					 */
-					deviceChange: {
-						parameters : {
-							/**
-							 * The type of the new layout. Possible values are: Phone, Tablet, Desktop, LargeDesktop
-							 */
-							device : {type: "string"}
-						}
-					}
-				}
+				events: {}
 			}
 		});
 
@@ -82,7 +70,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core
 		 */
 		ToolPage.prototype.setSideExpanded = function(isSideExpanded) {
 			var sideContentAggregation = this.getAggregation('sideContent');
-			var isMediaQueryForPhone = Device.media.getCurrentRange('StdExt').name === 'Phone';
+			var isMediaQueryForPhone = Device.system.phone;
 			var domRef = this.getDomRef();
 
 			this.setProperty('sideExpanded', isSideExpanded, true);
@@ -139,7 +127,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core
 				return;
 			}
 
-			this._currentMediaQuery = Device.media.getCurrentRange('StdExt').name;
+			this._currentMediaQuery = this._getDeviceAsString();
 
 			if (this._getLastMediaQuery() === this._currentMediaQuery) {
 				return;
@@ -159,8 +147,6 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core
 			}
 
 			this._updateLastMediaQuery();
-
-			this._fireDeviceChangeEvent();
 		};
 
 		/**
@@ -178,19 +164,24 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core
 		 * @private
 		 */
 		ToolPage.prototype._updateLastMediaQuery = function () {
-			this._lastMediaQuery = Device.media.getCurrentRange('StdExt').name;
+			this._lastMediaQuery = this._getDeviceAsString();
 
 			return this;
 		};
 
 		/**
-		 * Fires event that the device media query has changed.
-		 * @private
+		 *
 		 */
-		ToolPage.prototype._fireDeviceChangeEvent = function () {
-			this.fireDeviceChange({
-				device : this._getLastMediaQuery()
-			});
+		ToolPage.prototype._getDeviceAsString = function () {
+			if (Device.system.phone) {
+				return 'Phone';
+			}
+
+			if (Device.system.tablet) {
+				return 'Tablet';
+			}
+
+			return 'Desktop';
 		};
 
 		return ToolPage;

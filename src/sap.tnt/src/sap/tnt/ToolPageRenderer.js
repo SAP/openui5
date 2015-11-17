@@ -42,8 +42,8 @@ sap.ui.define([],
 		};
 
 		ToolPageRenderer.renderContentWrapper = function (rm, control) {
-			var isScreenSizeForTablet = document.documentElement.classList.contains('sapUiMedia-Std-Tablet');
-			var isScreenSizeForPhone = document.documentElement.classList.contains('sapUiMedia-Std-Phone');
+			var isScreenSizeForTablet = sap.ui.Device.system.tablet;
+			var isScreenSizeForPhone = sap.ui.Device.system.phone;
 
 			rm.write('<div class="sapMToolPageContentWrapper');
 
@@ -58,8 +58,8 @@ sap.ui.define([],
 		};
 
 		ToolPageRenderer.renderAsideContent = function (rm, control) {
-			var isScreenSizeForTablet = document.documentElement.classList.contains('sapUiMedia-Std-Tablet');
-			var isScreenSizeForPhone = document.documentElement.classList.contains('sapUiMedia-Std-Phone');
+			var isScreenSizeForTablet = sap.ui.Device.system.tablet;
+			var isScreenSizeForPhone = sap.ui.Device.system.phone;
 			var sideContentAggregation = control.getAggregation('sideContent');
 			var isSideExpanded = control.getSideExpanded();
 

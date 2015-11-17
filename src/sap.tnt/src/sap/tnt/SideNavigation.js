@@ -84,7 +84,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 
         };
 
         SideNavigation.prototype.setExpanded = function (isExpanded) {
-            if (sap.ui.Device.media.getCurrentRange('StdExt').name === 'Phone') {
+            if (sap.ui.Device.system.phone) {
                 isExpanded = true;
             }
             if (this.getExpanded() === isExpanded) {
