@@ -1054,7 +1054,7 @@ sap.ui.define([
 					oControl = this._createValueField(oCurrentKeyField, field, oConditionGrid);
 					oControl.oTargetGrid = oTargetGrid;
 
-					if (oConditionGridData && oConditionGridData[field["ID"]]) {
+					if (oConditionGridData && oConditionGridData[field["ID"]] !== undefined) {
 						var sValue = oConditionGridData[field["ID"]];
 						var oValue;
 
@@ -1346,9 +1346,9 @@ sap.ui.define([
 				oConditionGrid.oFormatter = DateFormat.getTimeInstance();
 				oControl = new sap.m.TimePicker(params);
 
-				var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
-				var oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
-				oControl.setDisplayFormat( oLocaleData.getTimePattern("short"));
+//				var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+//				var oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
+//				oControl.setDisplayFormat( oLocaleData.getTimePattern("short"));
 				
 				break;
 			default:
