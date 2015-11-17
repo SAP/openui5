@@ -50,6 +50,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 		}
 
 	});
+	
+	/**
+	 * The 'dataRequested' event is fired, when data was requested from a backend.
+	 *
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+	 *
+	 * @name sap.ui.model.Binding#dataRequested
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+
+	 * @public
+	 */
+	
+	/**
+	 * The 'dataReceived' event is fired, when data was received from a backend. This event may also be fired when an error occured.
+	 *
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+	 *
+	 * @name sap.ui.model.Binding#dataReceived
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+
+	 * @param {string} [oEvent.getParameters.data] The data received. In error cases it will be undefined.
+	 * @public
+	 */
 
 	// Getter
 	/**
@@ -227,9 +256,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	};
 
 	/**
-	 * Fire event dataReceived to attached listeners.
+	 * Fire event dataReceived to attached listeners. This event may also be fired when an error occured.
 
 	 * @param {Map} mArguments the arguments to pass along with the event.
+	 * @param {object} [mArguments.data] the data received. In error cases it will be undefined.
 	 * @protected
 	 */
 	Binding.prototype.fireDataReceived = function(mArguments) {
