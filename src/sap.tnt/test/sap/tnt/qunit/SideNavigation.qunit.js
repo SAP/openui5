@@ -28,7 +28,7 @@
 	QUnit.test('SetExpanded ', function (assert) {
 		this.sideNavigation.setExpanded(true);
 
-		assert.strictEqual(this.sideNavigation.getDomRef().classList.contains('sapMSideNavigationNotExpanded'), false, 'should not has "sapMSideNavigationNotExpanded" class');
+		assert.strictEqual(this.sideNavigation.getDomRef().classList.contains('sapTntSideNavigationNotExpanded'), false, 'should not has "sapTntSideNavigationNotExpanded" class');
 		assert.strictEqual(this.sideNavigation.getAggregation('item').getExpanded(), true, 'should not collapse the NavigationList in item aggregation');
 		assert.strictEqual(this.sideNavigation.getAggregation('fixedItem').getExpanded(), true, 'should not collapse the NavigationList in fixedItem aggregation');
 	});
@@ -36,7 +36,7 @@
 	QUnit.test('SetExpanded ', function (assert) {
 		this.sideNavigation.setExpanded(false);
 
-		assert.strictEqual(this.sideNavigation.getDomRef().classList.contains('sapMSideNavigationNotExpanded'), true, 'should has "sapMSideNavigationNotExpanded" class');
+		assert.strictEqual(this.sideNavigation.getDomRef().classList.contains('sapTntSideNavigationNotExpanded'), true, 'should has "sapTntSideNavigationNotExpanded" class');
 		assert.strictEqual(this.sideNavigation.getAggregation('item').getExpanded(), false, 'should collapse the NavigationList in item aggregation');
 		assert.strictEqual(this.sideNavigation.getAggregation('fixedItem').getExpanded(), false, 'should collapse the NavigationList in fixedItem aggregation');
 	});

@@ -23,7 +23,7 @@ sap.ui.define([],
 		ToolPageRenderer.render = function (rm, control) {
 			rm.write('<div');
 			rm.writeControlData(control);
-			rm.addClass('sapMToolPage');
+			rm.addClass('sapTntToolPage');
 			rm.writeClasses();
 			rm.write('>');
 
@@ -35,7 +35,7 @@ sap.ui.define([],
 
 		ToolPageRenderer.renderHeader = function (rm, control) {
 			if (control.getAggregation('header')) {
-				rm.write('<div id="' + control.getId() + '-header" class="sapMToolPageHeader">');
+				rm.write('<div id="' + control.getId() + '-header" class="sapTntToolPageHeader">');
 				rm.renderControl(control.getAggregation('header'));
 				rm.write('</div>');
 			}
@@ -45,10 +45,10 @@ sap.ui.define([],
 			var isScreenSizeForTablet = sap.ui.Device.system.tablet;
 			var isScreenSizeForPhone = sap.ui.Device.system.phone;
 
-			rm.write('<div class="sapMToolPageContentWrapper');
+			rm.write('<div class="sapTntToolPageContentWrapper');
 
 			if (isScreenSizeForPhone || isScreenSizeForTablet) {
-				rm.write(' sapMToolPageAsideCollapsed');
+				rm.write(' sapTntToolPageAsideCollapsed');
 			}
 
 			rm.write('">');
@@ -63,9 +63,9 @@ sap.ui.define([],
 			var sideContentAggregation = control.getAggregation('sideContent');
 			var isSideExpanded = control.getSideExpanded();
 
-			rm.write('<aside id="' + control.getId() + '-aside" class="sapMToolPageAside">');
+			rm.write('<aside id="' + control.getId() + '-aside" class="sapTntToolPageAside">');
 
-			rm.write('<div class="sapMToolPageAsideContent">');
+			rm.write('<div class="sapTntToolPageAsideContent">');
 
 			if (sideContentAggregation && sideContentAggregation.getExpanded() !== isSideExpanded) {
 				sideContentAggregation.setExpanded(isSideExpanded);
@@ -87,10 +87,10 @@ sap.ui.define([],
 		ToolPageRenderer.renderMainContent = function (rm, control) {
 			var mainContentAggregations = control.getAggregation('mainContents');
 
-			rm.write('<div id="' + control.getId() + '-main" class="sapMToolPageMain">');
+			rm.write('<div id="' + control.getId() + '-main" class="sapTntToolPageMain">');
 
-			rm.write('<div class="sapMToolPageMainContent">');
-			rm.write('<div class="sapMToolPageMainContentWrapper">');
+			rm.write('<div class="sapTntToolPageMainContent">');
+			rm.write('<div class="sapTntToolPageMainContentWrapper">');
 			mainContentAggregations.forEach(rm.renderControl);
 			rm.renderControl();
 			rm.write('</div>');

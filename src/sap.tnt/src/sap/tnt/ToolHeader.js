@@ -54,7 +54,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 
 			OverflowToolbar.prototype.init.apply(this, arguments);
 
-			this.addStyleClass('sapMToolHeader');
+			this.addStyleClass('sapTntToolHeader');
 		};
 
 		/**
@@ -74,7 +74,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 					modal: false,
 					horizontalScrolling: sap.ui.Device.system.phone ? false : true,
 					contentWidth: sap.ui.Device.system.phone ? "100%" : "auto"
-				}).addStyleClass('sapMToolHeaderPopover');
+				}).addStyleClass('sapTntToolHeaderPopover');
 
 				popover.oControlsManager._preProcessSapMButton = this._preProcessPopoverControlsSapMButton.bind(popover.oControlsManager);
 

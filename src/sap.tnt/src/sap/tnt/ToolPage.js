@@ -84,9 +84,9 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core
 			}
 
 			if (isSideExpanded) {
-				domRef.querySelector('.sapMToolPageContentWrapper').classList.remove('sapMToolPageAsideCollapsed');
+				domRef.querySelector('.sapTntToolPageContentWrapper').classList.remove('sapTntToolPageAsideCollapsed');
 			} else {
-				domRef.querySelector('.sapMToolPageContentWrapper').classList.add('sapMToolPageAsideCollapsed');
+				domRef.querySelector('.sapTntToolPageContentWrapper').classList.add('sapTntToolPageAsideCollapsed');
 			}
 
 			return this;

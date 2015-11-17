@@ -225,29 +225,29 @@
 		});
 
 		QUnit.test("contains elements and classes", function (assert) {
-			assert.ok(this.navigationList.$().hasClass('sapMNavLI'), "sapMNavLI class is set");
+			assert.ok(this.navigationList.$().hasClass('sapTntNavLI'), "sapTntNavLI class is set");
 			assert.ok(this.navigationList.$().children().length == 4, "groups number is correct");
 			assert.ok(this.navigationList.$().children()[0].children[1].children.length == 3, "first group children are ok");
 		});
 
 		QUnit.test("list.setExpanded(false)", function (assert) {
 
-			assert.ok(this.navigationList.$().hasClass('sapMNavLICollapsed') == false, "expanded mode is ok");
+			assert.ok(this.navigationList.$().hasClass('sapTntNavLICollapsed') == false, "expanded mode is ok");
 
 			this.navigationList.setExpanded(false);
 			sap.ui.getCore().applyChanges();
 
-			assert.ok(this.navigationList.$().hasClass('sapMNavLICollapsed'), "collapsed mode is ok");
+			assert.ok(this.navigationList.$().hasClass('sapTntNavLICollapsed'), "collapsed mode is ok");
 		});
 
 		QUnit.test("group.setExpanded(false)", function (assert) {
 
-			assert.ok(jQuery(this.navigationList.$().children()[2].children[1]).hasClass('sapMNavLIHiddenGroupItems') == false, "sapMNavLIHiddenGroupItems class is not set");
+			assert.ok(jQuery(this.navigationList.$().children()[2].children[1]).hasClass('sapTntNavLIHiddenGroupItems') == false, "sapTntNavLIHiddenGroupItems class is not set");
 
 			this.navigationList.getItems()[2].setExpanded(false);
 			sap.ui.getCore().applyChanges();
 
-			assert.ok(jQuery(this.navigationList.$().children()[2].children[1]).hasClass('sapMNavLIHiddenGroupItems'), "sapMNavLIHiddenGroupItems class is set");
+			assert.ok(jQuery(this.navigationList.$().children()[2].children[1]).hasClass('sapTntNavLIHiddenGroupItems'), "sapTntNavLIHiddenGroupItems class is set");
 		});
 
 
@@ -266,9 +266,9 @@
 
 		QUnit.test("click group expander", function (assert) {
 
-			assert.ok(jQuery(this.navigationList.$().children()[0].children[1]).hasClass('sapMNavLIHiddenGroupItems') == false, "sapMNavLIHiddenGroupItems class is not set");
+			assert.ok(jQuery(this.navigationList.$().children()[0].children[1]).hasClass('sapTntNavLIHiddenGroupItems') == false, "sapTntNavLIHiddenGroupItems class is not set");
 
-			var $groupIcon = jQuery('.sapMNavLI .sapMNavLIExpandIcon').first();
+			var $groupIcon = jQuery('.sapTntNavLI .sapTntNavLIExpandIcon').first();
 
 			$groupIcon.trigger('tap');
 
@@ -277,7 +277,7 @@
 			// wait 500ms
 			this.clock.tick(500);
 
-			assert.ok(jQuery(this.navigationList.$().children()[0].children[1]).hasClass('sapMNavLIHiddenGroupItems'), "sapMNavLIHiddenGroupItems class is set");
+			assert.ok(jQuery(this.navigationList.$().children()[0].children[1]).hasClass('sapTntNavLIHiddenGroupItems'), "sapTntNavLIHiddenGroupItems class is set");
 		});
 
 		QUnit.test("select group", function (assert) {
@@ -289,9 +289,9 @@
 
 			this.navigationList.attachItemSelect(fnEventSpy);
 
-			assert.ok(jQuery(this.navigationList.$().children()[0].children[1]).hasClass('sapMNavLIItemSelected') == false, "sapMNavLIItemSelected class is not set");
+			assert.ok(jQuery(this.navigationList.$().children()[0].children[1]).hasClass('sapTntNavLIItemSelected') == false, "sapTntNavLIItemSelected class is not set");
 
-			var $group = jQuery('.sapMNavLI li div').first();
+			var $group = jQuery('.sapTntNavLI li div').first();
 
 			$group.trigger('tap');
 
@@ -300,7 +300,7 @@
 			// wait 500ms
 			this.clock.tick(500);
 
-			assert.ok(jQuery(this.navigationList.$().children()[0]).hasClass('sapMNavLIItemSelected'), "sapMNavLIItemSelected class is set");
+			assert.ok(jQuery(this.navigationList.$().children()[0]).hasClass('sapTntNavLIItemSelected'), "sapTntNavLIItemSelected class is set");
 
 			assert.strictEqual(fnEventSpy.callCount, 1, "should fire select event once");
 			assert.strictEqual(bPassedArg.getText(), 'Root 1', "should pass the first item as argument");
@@ -315,9 +315,9 @@
 
 			this.navigationList.attachItemSelect(fnEventSpy);
 
-			var $groupItem = jQuery('.sapMNavLI .sapMNavLIGroupItem').first();
+			var $groupItem = jQuery('.sapTntNavLI .sapTntNavLIGroupItem').first();
 
-			assert.ok($groupItem.hasClass('sapMNavLIItemSelected') == false, "sapMNavLIItemSelected class is not set");
+			assert.ok($groupItem.hasClass('sapTntNavLIItemSelected') == false, "sapTntNavLIItemSelected class is not set");
 
 			$groupItem.trigger('tap');
 
@@ -326,7 +326,7 @@
 			// wait 500ms
 			this.clock.tick(500);
 
-			assert.ok($groupItem.hasClass('sapMNavLIItemSelected'), "sapMNavLIItemSelected class is set");
+			assert.ok($groupItem.hasClass('sapTntNavLIItemSelected'), "sapTntNavLIItemSelected class is set");
 
 			assert.strictEqual(fnEventSpy.callCount, 1, "should fire select event once");
 			assert.strictEqual(bPassedArg.getText(), 'Child 1', "should pass the first group item as argument");
@@ -334,12 +334,12 @@
 
 		QUnit.test("popup list", function (assert) {
 
-			assert.ok(jQuery('.sapMNavLIPopup').length == 0, "popup list is not shown");
+			assert.ok(jQuery('.sapTntNavLIPopup').length == 0, "popup list is not shown");
 
 			this.navigationList.setExpanded(false);
 			sap.ui.getCore().applyChanges();
 
-			var $item = jQuery('.sapMNavLI .sapMNavLIGroup').first();
+			var $item = jQuery('.sapTntNavLI .sapTntNavLIGroup').first();
 			$item.trigger('tap');
 
 			sap.ui.getCore().applyChanges();
@@ -347,7 +347,7 @@
 			// wait 500ms
 			this.clock.tick(500);
 
-			assert.ok(jQuery('.sapMNavLIPopup').length == 1, "popup list is shown");
+			assert.ok(jQuery('.sapTntNavLIPopup').length == 1, "popup list is shown");
 		});
 
 	</script>
