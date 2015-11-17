@@ -1828,7 +1828,8 @@
 					requestTime: 0, // summ over all requests in the interaction (oPendingInteraction.requests[0].responseEnd-oPendingInteraction.requests[0].requestStart)
 					networkTime: 0, // request time minus server time from the header, added by jQuery.sap.trace
 					bytesSent: 0, // sum over all requests bytes, added by jQuery.sap.trace
-					bytesReceived: 0 // sum over all response bytes, added by jQuery.sap.trace
+					bytesReceived: 0, // sum over all response bytes, added by jQuery.sap.trace
+					requestCompression: undefined // true if all responses have been sent gzipped
 				};
 				jQuery.sap.log.info("Interaction step started: trigger: " + oPendingInteraction.trigger + "; type: " + oPendingInteraction.event);
 			};

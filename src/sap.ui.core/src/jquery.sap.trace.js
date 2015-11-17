@@ -14,6 +14,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 				ROOT_ID = createGUID(), // static per session
 				CLIENT_ID = createGUID().substr(-8, 8) + ROOT_ID, // static per session
 				HOST = new URI(window.location).host(), // static per session
+				CLIENT_OS = sap.ui.Device.os.name + "_" + sap.ui.Device.os.version,
+				CLIENT_MODEL = sap.ui.Device.browser.name + "_" + sap.ui.Device.browser.version,
 				iE2eTraceLevel,
 				sTransactionId,
 				sFESRTransactionId,
@@ -100,14 +102,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 				if (this.readyState === 4 && this.pendingInteraction) {
 					// enrich interaction with information
 					var sContentLength = this.getResponseHeader("content-length"),
+						bCompressed = this.getResponseHeader("content-encoding") === "gzip",
 						sFesrec = this.getResponseHeader("sap-perf-fesrec");
 					this.pendingInteraction.bytesReceived += sContentLength ? parseInt(sContentLength, 10) : 0;
-					this.pendingInteraction.bytesReceived += this.getAllResponseHeaders().length;
+					// double string length for byte length as in js characters are stored as 16 bit ints
+					this.pendingInteraction.bytesReceived += this.getAllResponseHeaders().length * 2;
 					this.pendingInteraction.bytesSent += this.requestHeaderLength;
+					// this should be true only if all responses are compressed
+					this.pendingInteraction.requestCompression = bCompressed && (this.pendingInteraction.requestCompression !== false);
+					// sap-perf-fesrec header contains milliseconds
 					this.pendingInteraction.networkTime += sFesrec ? Math.round(parseFloat(sFesrec, 10) / 1000) : 0;
 					var sSapStatistics = this.getResponseHeader("sap-statistics");
 					if (sSapStatistics) {
 						this.pendingInteraction.sapStatistics.push({
+							// add response url for mapping purposes
 							url: this.responseURL,
 							statistics: sSapStatistics
 						});
@@ -120,40 +128,41 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI'],
 			// creates mandatory FESR header string
 			function createFESR(oInteraction) {
 				return [
-					format(ROOT_ID, "SAP_CHAR", 32), // root_context_id
-					format(sFESRTransactionId, "SAP_CHAR", 32), // transaction_id
-					format(oInteraction.navigation, "SAP_INT", 4), // client_navigation_time
-					format(oInteraction.roundtrip, "SAP_INT", 4), // client_round_trip_time
-					format(oInteraction.navigation + oInteraction.roundtrip + oInteraction.processing, "SAP_INT", 4), // end_to_end_time
-					format(oInteraction.requests.length, "SAP_INT", 2), // network_round_trips
-					format(CLIENT_ID, "SAP_CHAR", 40), // client_id
-					format(oInteraction.networkTime, "SAP_INT", 4), // network_time
-					format(oInteraction.requestTime, "SAP_INT", 4), // request_time
-					"", // empty field
-					format("SAP_UI5", "SAP_CHAR", 10) // client_type
+					format(ROOT_ID, 32), // root_context_id
+					format(sFESRTransactionId, 32), // transaction_id
+					format(oInteraction.navigation, 4), // client_navigation_time
+					format(oInteraction.roundtrip, 4), // client_round_trip_time
+					format(oInteraction.duration, 4), // end_to_end_time
+					format(oInteraction.requests.length, 2), // network_round_trips
+					format(CLIENT_ID, 40), // client_id
+					format(oInteraction.networkTime, 4), // network_time
+					format(oInteraction.requestTime, 4), // request_time
+					format(CLIENT_OS, 20), // client_os
+					format("SAP_UI5", 10) // client_type
 				].join(",");
 			}
 
 			// creates optional FESR header string
 			function createFESRopt(oInteraction) {
 				return [
-					format(oInteraction.component, "SAP_CHAR", 20), // application_name
-					format(oInteraction.trigger + "_" + oPendingInteraction.event, "SAP_CHAR", 20), // step_name
+					format(oInteraction.component, 20), // application_name
+					format(oInteraction.trigger + "_" + oPendingInteraction.event, 20), // step_name
+					"", // 1 empty field
+					format(CLIENT_MODEL, 20), // client_model
+					format(oInteraction.bytesSent, 4), // client_data_sent
+					format(oInteraction.bytesReceived, 4), // client_data_received
 					"", "", // 2 empty fields
-					format(oInteraction.bytesSent, "SAP_INT", 4), // client_data_sent
-					format(oInteraction.bytesReceived, "SAP_INT", 4), // client_data_received
-					"", "", // 2 empty fields
-					format(oInteraction.processing, "SAP_INT", 4), // client_processing_time
-					"", // compressed - blank if not compressed
+					format(oInteraction.processing, 4), // client_processing_time
+					oInteraction.requestCompression ? "X" : "", // compressed - empty if not compressed
 					"", "", "", "", "", "", "", "", "" // 9 empty fields
 				].join(",");
 			}
 
-			// pad zeros / blanks and cut from front to designated length
-			function format(vField, sType, iLength) {
+			// cut from front to designated length
+			function format(vField, iLength) {
 				if (!vField) {
-					vField = "0000";
-				} else if (sType === "SAP_INT") {
+					vField = vField === 0 ? "0" : "";
+				} else if (typeof vField === "number") {
 					vField = Math.round(vField).toString();
 				}
 				return vField.substr(-iLength, iLength);
