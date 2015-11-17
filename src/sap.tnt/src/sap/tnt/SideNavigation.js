@@ -222,6 +222,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
             if (!iconControl) {
                 iconControl = new Icon({
                     src: 'sap-icon://navigation-up-arrow',
+                    noTabStop: true,
                     useIconTooltip: false,
                     tooltip: '',
                     press: this._arrowPress.bind(that)
@@ -244,6 +245,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
             if (!iconControl) {
                 iconControl = new Icon({
                     src: 'sap-icon://navigation-down-arrow',
+                    noTabStop: true,
                     useIconTooltip: false,
                     tooltip: '',
                     press: this._arrowPress.bind(that)
