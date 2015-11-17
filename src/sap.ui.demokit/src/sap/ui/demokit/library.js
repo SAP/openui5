@@ -74,6 +74,7 @@ sap.ui.define(['jquery.sap.global', './js/highlight-query-terms',
 	sap.ui.lazyRequire("sap.ui.demokit.UI5EntityCueCard", "attachToContextMenu detachFromContextMenu");
 	sap.ui.lazyRequire("sap.ui.demokit.DemokitApp", "new getInstance");
 	sap.ui.lazyRequire("sap.ui.demokit.IndexPage");
+	sap.ui.lazyRequire("sap.ui.demokit.FeedbackClient");
 	
 	sap.ui.getCore().attachInit( function () {
 	

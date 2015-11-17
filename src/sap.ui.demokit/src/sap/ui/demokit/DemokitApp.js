@@ -3,8 +3,8 @@
  */
 
 // Main class for Demokit-like applications
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/commons/TextView', 'sap/ui/commons/Link', 'sap/ui/commons/Splitter', 'sap/ui/commons/layout/AbsoluteLayout', 'sap/ui/core/ListItem', 'sap/ui/core/search/OpenSearchProvider', './Tag', './TagCloud', './library', 'sap/ui/ux3/NavigationItem', 'sap/ui/ux3/Shell', 'sap/ui/model/json/JSONModel'],
-    function (jQuery, DropdownBox, TextView, Link, Splitter, AbsoluteLayout, ListItem, OpenSearchProvider, Tag, TagCloud, library, NavigationItem, Shell, JSONModel) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/commons/TextView', 'sap/ui/commons/Link', 'sap/ui/commons/Splitter', 'sap/ui/commons/layout/AbsoluteLayout', 'sap/ui/core/ListItem', 'sap/ui/core/search/OpenSearchProvider', './Tag', './TagCloud', './library', 'sap/ui/ux3/NavigationItem', 'sap/ui/ux3/Shell', 'sap/ui/model/json/JSONModel', 'sap/ui/core/Icon'],
+    function (jQuery, DropdownBox, TextView, Link, Splitter, AbsoluteLayout, ListItem, OpenSearchProvider, Tag, TagCloud, library, NavigationItem, Shell, JSONModel, Icon) {
         "use strict";
 
 
@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
             this._sCurrentContent = null;
             this._mAliases = {};
             this._bIgnoreIFrameOnLoad = false;
-
+            
             // view state
             this._sTitleStr = sTitle;
             this._sVersionStr = sVersion;
@@ -394,13 +394,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 this._oShell.addWorksetItem(oNavItem);
             }
         };
-
+        
         DemokitApp.prototype.createUI = function (bSearchSupported, sInitialPage) {
             var bShowScrollBars;
             var that = this;
             var sIconPrefix = "theme/img/themeswitch_";
             var THEMES = DemokitApp.THEMES;
-
+                                 
             this._oThemeSwitch = new DropdownBox({
                 change: [this._handleThemeChanged, this],
                 items: jQuery.map(this._aThemes, function (sThemeId) {
@@ -816,7 +816,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                      fnCreateAboutDialogContent();
                 }
             });
-
+            
+            this._oFeedbackClient = sap.ui.demokit.FeedbackClient();
+            this._oFeedbackPopup = this._oFeedbackClient.createFeedbackPopup();
+            
             var oShell = this._oShell = new Shell({
                 appTitle: this._sTitleStr,
                 showLogoutButton: false,
@@ -824,7 +827,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 applyContentPadding: false,
                 showSearchTool: bSearchSupported,
                 fullHeightContent: true,
-                toolPopups: [this._oThemeSwitchPopup],
+                toolPopups: [this._oFeedbackPopup, this._oThemeSwitchPopup],
                 search: function (oEvent) {
                     that.navigateTo("search.html?q=" + encodeURIComponent(oEvent.getParameter("text")));
                     that._oShell._getSearchTool().close();
@@ -991,7 +994,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                 }, 200);
                 return;
             }
-
+            
             var oNewTLNItem = topNavIdx >= 0 ? this._aTopLevelNavItems[topNavIdx] : null;
             var oShell = this._oShell;
             var oSplitter = sap.ui.getCore().byId("demokitSplitter");
@@ -1013,7 +1016,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
             }
 
             this._sCurrentContent = sPageName;
-
+            
             function findAndSelectTreeNode(sPageName, oParent, bClearSelection) {
                 if (oParent) {
                     if (bClearSelection && oParent.getSelectedNode && oParent.getSelectedNode()) {
@@ -1145,16 +1148,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
                         top: TREE_ABSOLUTE_LOCATION_TOP
                     });
                 }
-                oSelectedNavEntry = findAndSelectTreeNode(sPageName, oNewTLNItem._oTree, true);
 
-                //Hide/Show Theme Switch
-                if (oNewTLNItem.themable) {
-                    if (oShell.getToolPopups().length == 0) {
-                        oShell.addToolPopup(this._oThemeSwitchPopup);
-                    }
-                } else {
-                    oShell.removeAllToolPopups();
+                oSelectedNavEntry = findAndSelectTreeNode(sPageName, oNewTLNItem._oTree, true);
+                               
+                if (oNewTLNItem.themable && oShell.indexOfToolPopup(this._oThemeSwitchPopup) == -1 ) {
+                    oShell.addToolPopup(this._oThemeSwitchPopup);
+                } else if ((!oNewTLNItem.themable) && oShell.indexOfToolPopup(this._oThemeSwitchPopup) != -1) {
+                    oShell.removeToolPopup(this._oThemeSwitchPopup);
                 }
+                
             } else {
                 var aSidePanelContent = this._oSidePanelLayout.getContent();
                 var oTree;
@@ -1190,7 +1192,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/common
 
                 oContentWindow.location.replace((sPageName.indexOf("/") == 0 ? "" : this.sBasePathname) + sPageName + sFakeOS);
             }
-
+            
+            this._oFeedbackClient.updateFeedbackContextText();
         };
 
         DemokitApp.THEMES = {
