@@ -3,8 +3,9 @@
  */
 sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Requestor",
+	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils"
-], function (Requestor, TestUtils) {
+], function (Requestor, Helper, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -195,10 +196,15 @@ sap.ui.require([
 	//*********************************************************************************************
 	[false, true].forEach(function (bSuccess) {
 		QUnit.test("refreshSecurityToken: success = " + bSuccess, function (assert) {
-			var fnAbort = function () {},
-				sErrorMessage = "HTTP request failed",
+			var oError = {},
 				oPromise,
-				oRequestor = Requestor.create("/~/");
+				oRequestor = Requestor.create("/~/"),
+				oTokenRequiredResponse = {};
+
+			this.oSandbox.mock(Helper).expects("createError")
+				.exactly(bSuccess ? 0 : 2)
+				.withExactArgs(oTokenRequiredResponse)
+				.returns(oError);
 
 			this.oSandbox.stub(jQuery, "ajax", function (sUrl, oSettings) {
 				var jqXHR;
@@ -212,10 +218,9 @@ sap.ui.require([
 				} else {
 					jqXHR = new jQuery.Deferred();
 					setTimeout(function () {
-						jqXHR.reject({/*jqXHR*/}, "error", sErrorMessage);
+						jqXHR.reject(oTokenRequiredResponse);
 					}, 0);
 				}
-				jqXHR.abort = fnAbort;
 
 				return jqXHR;
 			});
@@ -224,25 +229,23 @@ sap.ui.require([
 			// code under test
 			oPromise = oRequestor.refreshSecurityToken();
 
-			assert.strictEqual(oPromise.abort, fnAbort, "access to abort provided");
 			assert.strictEqual(oRequestor.refreshSecurityToken(), oPromise, "promise reused");
 			assert.ok(jQuery.ajax.calledOnce, "only one HEAD request underway at any time");
 
 			return oPromise.then(function () {
 				assert.ok(bSuccess, "success possible");
 				assert.strictEqual(oRequestor.mHeaders["X-CSRF-Token"], "abc123");
-			}, function (oError) {
+			}, function (oError0) {
 				assert.ok(!bSuccess, "certain failure");
-				assert.ok(oError instanceof Error);
-				assert.strictEqual(oError.message, sErrorMessage);
+				assert.strictEqual(oError0, oError);
 				assert.strictEqual("X-CSRF-Token" in oRequestor.mHeaders, false);
 			}).then(function () {
 				var oNewPromise = oRequestor.refreshSecurityToken();
 
 				assert.notStrictEqual(oNewPromise, oPromise, "new promise");
 				// avoid "Uncaught (in promise)"
-				oNewPromise["catch"](function (oError0) {
-					assert.strictEqual(oError0.message, sErrorMessage);
+				oNewPromise["catch"](function (oError1) {
+					assert.strictEqual(oError1, oError);
 				});
 			});
 		});
@@ -267,13 +270,26 @@ sap.ui.require([
 		sRequired : "Required", bDoNotDeliverToken : true, sTitle : "no CSRF token can be fetched"
 	}].forEach(function (o) {
 		QUnit.test("request: " + o.sTitle, function (assert) {
-			var sErrorMessage = "HTTP request failed",
-				vExpectedResult,
+			var oError = {},
+				oReadFailure = {},
 				oRequestor = Requestor.create("/~/"),
 				oRequestPayload = {},
 				oResponsePayload = {},
 				bSuccess = o.bRequestSucceeds !== false && !o.bReadFails && !o.bDoNotDeliverToken,
+				oTokenRequiredResponse = {
+					getResponseHeader : function (sName) {
+						// Note: getResponseHeader treats sName case insensitive!
+						assert.strictEqual(sName, "X-CSRF-Token");
+						return o.sRequired;
+					},
+					"status" : o.iStatus || 403
+				},
 				sUrl = "/~/foo";
+
+			this.oSandbox.mock(Helper).expects("createError")
+				.exactly(bSuccess || o.bReadFails ? 0 : 1)
+				.withExactArgs(oTokenRequiredResponse)
+				.returns(oError);
 
 			// With <code>bRequestSucceeds === false</code>, "request" always fails,
 			// with <code>bRequestSucceeds === true</code>, "request" always succeeds,
@@ -294,14 +310,7 @@ sap.ui.require([
 				} else {
 					jqXHR = new jQuery.Deferred();
 					setTimeout(function () {
-						jqXHR.reject({
-							getResponseHeader : function (sName) {
-								// Note: getResponseHeader treats sName case insensitive!
-								assert.strictEqual(sName, "X-CSRF-Token");
-								return o.sRequired;
-							},
-							"status" : o.iStatus || 403
-						}, "Forbidden", sErrorMessage);
+						jqXHR.reject(oTokenRequiredResponse);
 					}, 0);
 				}
 
@@ -315,7 +324,7 @@ sap.ui.require([
 					return new Promise(function (fnResolve, fnReject) {
 						setTimeout(function () {
 							if (o.bReadFails) { // reading of CSRF token fails
-								fnReject(new Error(sErrorMessage));
+								fnReject(oReadFailure);
 							} else {
 								// HEAD might succeed, but not deliver a valid CSRF token
 								oRequestor.mHeaders["X-CSRF-Token"]
@@ -327,27 +336,14 @@ sap.ui.require([
 				});
 			}
 
-			if (o.bRequestSucceeds === false || o.bDoNotDeliverToken) {
-				// expect failure
-				vExpectedResult = sErrorMessage;
-//TODO					= "HTTP request failed - 403 Forbidden: CSRF token validation failed";
-			} else if (o.bReadFails) {
-				// expect failure
-				vExpectedResult = sErrorMessage;
-			} else {
-				vExpectedResult = oResponsePayload; // expect success
-			}
-
 			return oRequestor.request("FOO", sUrl, {"foo" : "bar"}, oRequestPayload)
 				.then(function (oPayload) {
 					assert.ok(bSuccess, "success possible");
-					assert.strictEqual(oPayload, vExpectedResult);
-				}, function (oError) {
+					assert.strictEqual(oPayload, oResponsePayload);
+				}, function (oError0) {
 					assert.ok(!bSuccess, "certain failure");
-					assert.ok(oError instanceof Error);
-					assert.strictEqual(oError.message, vExpectedResult);
+					assert.strictEqual(oError0, o.bReadFails ? oReadFailure : oError);
 				});
 		});
 	});
 });
-//TODO re-use _ODataHelper.createError() by moving it to _Helper

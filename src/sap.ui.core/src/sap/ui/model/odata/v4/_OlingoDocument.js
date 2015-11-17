@@ -40,7 +40,7 @@ sap.ui.define([
 						}, function (oDocument) {
 							fnResolve(oDocument);
 						}, function (oOlingoError) {
-							var oError = Helper.createError(oOlingoError);
+							var oError = new Error("Failed to read metadata");
 
 							jQuery.sap.log.error(oError.message, "GET " + oModel.sDocumentUrl,
 								"sap.ui.model.odata.v4.ODataDocumentModel");

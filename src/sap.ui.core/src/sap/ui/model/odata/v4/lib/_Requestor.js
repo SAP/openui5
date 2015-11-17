@@ -3,7 +3,7 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib.Requestor
-sap.ui.define(["jquery.sap.global"], function(jQuery) {
+sap.ui.define(["jquery.sap.global", "./_Helper"], function (jQuery, Helper) {
 	"use strict";
 
 	var mFinalHeaders = { // final (cannot be overridden) request headers for OData v4
@@ -39,35 +39,29 @@ sap.ui.define(["jquery.sap.global"], function(jQuery) {
 	 * shares the promise accordingly.
 	 *
 	 * @returns {Promise}
-	 *   A promise that will be resolved (with no result) once the CSRF token has been refreshed;
-	 *   it also has an <code>abort</code> property which provides access to the HEAD request's
-	 *   <code>abort</code> function.
+	 *   A promise that will be resolved (with no result) once the CSRF token has been refreshed.
 	 *
 	 * @private
 	 */
 	Requestor.prototype.refreshSecurityToken = function () {
-		var fnAbort,
-			that = this;
+		var that = this;
 
 		if (!this.oSecurityTokenPromise) {
 			this.oSecurityTokenPromise = new Promise(function (fnResolve, fnReject) {
-				var jqXHR = jQuery.ajax(that.sServiceUrl, {
-						method: "HEAD",
-						headers : {
-							"X-CSRF-Token" : "Fetch"
-						}
-					});
-				fnAbort = jqXHR.abort;
-				jqXHR.then(function (oData, sTextStatus, jqXHR) {
+				jQuery.ajax(that.sServiceUrl, {
+					method: "HEAD",
+					headers : {
+						"X-CSRF-Token" : "Fetch"
+					}
+				}).then(function (oData, sTextStatus, jqXHR) {
 					that.mHeaders["X-CSRF-Token"] = jqXHR.getResponseHeader("X-CSRF-Token");
 					that.oSecurityTokenPromise = null;
 					fnResolve();
 				}, function (jqXHR, sTextStatus, sErrorMessage) {
 					that.oSecurityTokenPromise = null;
-					fnReject(new Error(sErrorMessage)/*TODO Helper.createError(jqXHR)*/);
+					fnReject(Helper.createError(jqXHR));
 				});
 			});
-			this.oSecurityTokenPromise.abort = fnAbort;
 		}
 
 		return this.oSecurityTokenPromise;
@@ -118,7 +112,7 @@ sap.ui.define(["jquery.sap.global"], function(jQuery) {
 						fnResolve(that.request(sMethod, sUrl, mHeaders, oPayload, true));
 					}, fnReject);
 				} else {
-					fnReject(new Error(sErrorMessage)/*TODO Helper.createError(jqXHR)*/);
+					fnReject(Helper.createError(jqXHR));
 				}
 			});
 		});

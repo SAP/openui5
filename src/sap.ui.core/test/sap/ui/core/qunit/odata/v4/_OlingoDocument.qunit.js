@@ -17,7 +17,7 @@ sap.ui.require([
 
 	var mFixture = {
 			"/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata": {source: "metadata.xml"},
-			"/foo/$metadata": {code: 404} //TODO does not simulate an Olingo error
+			"/foo/$metadata": {code: 404}
 		},
 		sDocumentUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata";
 
@@ -109,18 +109,17 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("fetchDocument: read error", function (assert) {
-		var oError = new Error("foo"),
-			oModel = createModel("/foo/$metadata");
+		var oModel = createModel("/foo/$metadata");
 
-		this.oSandbox.mock(Helper).expects("createError").returns(oError);
-		this.oLogMock.expects("error").withExactArgs("foo",
+		this.oLogMock.expects("error").withExactArgs("Failed to read metadata",
 			"GET " + TestUtils.proxy("/foo/$metadata"),
 			"sap.ui.model.odata.v4.ODataDocumentModel");
 
 		return OlingoDocument.fetchDocument(oModel).then(function () {
 			assert.ok(false, "unexpected success");
-		})["catch"](function (oError0) {
-			assert.strictEqual(oError0, oError);
+		})["catch"](function (oError) {
+			assert.ok(oError instanceof Error);
+			assert.strictEqual(oError.message, "Failed to read metadata");
 		});
 	});
 

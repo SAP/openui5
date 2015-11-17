@@ -13,57 +13,6 @@ sap.ui.define([
 
 	Helper = {
 		/**
-		 * Returns an <code>Error</code> instance from an Olingo error response.
-		 *
-		 * @param {object} oError
-		 *   an Olingo error object as received by a failure handler
-		 * @param {string} oError.message
-		 *   Olingo's error message
-		 * @param {object} oError.response
-		 *   Olingo's HTTP response object
-		 * @param {string} oError.response.body
-		 *   HTTP response body, sometimes in JSON format
-		 * @param {number} oError.response.statusCode
-		 *   HTTP status code
-		 * @param {string} oError.response.statusText
-		 *   HTTP status text
-		 * @returns {Error}
-		 *   an <code>Error</code> instance with a somehow readable message, containing the
-		 *   original Olingo error object as "cause" property and the "error" value from the OData
-		 *   v4 error response JSON object as "error" property (if available); it is flagged with
-		 *   <code>isConcurrentModification</code> in case of HTTP status code 412
-		 * @see <a href=
-		 * "http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html"
-		 * >"19 Error Response"</a>
-		 */
-		createError : function (oError) {
-			var sBody = oError.response.body,
-				sContentType =  oError.response.headers["Content-Type"].split(";")[0],
-				oResult = new Error(oError.message + " - " + oError.response.statusCode + " "
-					+ oError.response.statusText);
-
-			oResult.cause = oError;
-			if (oError.response.statusCode === 412) {
-				oResult.isConcurrentModification = true;
-			}
-			if (sContentType === "application/json") {
-				try {
-					// "The error response MUST be a single JSON object. This object MUST have a
-					// single name/value pair named error. The value must be a JSON object."
-					oResult.error = JSON.parse(sBody).error;
-					oResult.message = oResult.error.message + " (" + oResult.message + ")";
-				} catch (e) {
-					jQuery.sap.log.warning(e.toString(), sBody,
-						"sap.ui.model.odata.v4._ODataHelper");
-				}
-			} else if (sContentType === "text/plain") {
-				oResult.message = oResult.message + ": " + sBody;
-			}
-
-			return oResult;
-		},
-
-		/**
 		 * Requests the entity container from the meta data model including the entity sets and the
 		 * singletons. Keeps it in a cache and responds subsequent requests from the cache.
 		 *
