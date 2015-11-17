@@ -1267,7 +1267,10 @@
 
 				// There should be an overflow button and it should be visible
 				var oOverflowButton = oOverflowTB._getOverflowButton();
-				strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible");
+				if (sWidth > 0) {
+					strictEqual(oOverflowButton.$().is(":visible"), true, "The overflow button is visible when size > 0");
+				}
+				
 
 				oOverflowTB.destroy();
 			}, this);
