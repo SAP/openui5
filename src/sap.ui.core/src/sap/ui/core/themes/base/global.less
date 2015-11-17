@@ -200,6 +200,9 @@
 @sapUiLightShadowTint: #ffffff;
 @sapUiDarkShadowTint: #000000;
 
+@sapUiFocus: #000000;
+@sapUiInvertedFocus: #ffffff;
+
 @sapUiListTextColor: @sapUiDarkText;
 
 @sapUiPageHeaderTextColor: @sapUiLightText;
@@ -297,6 +300,7 @@
 @sapUiUx3TPPaddingBottom: 50px;
 
 
+@sapUiButtonIconColor: contrast(@sapUiButtonBackground, @sapUiElement, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 // @sapUiButtonBorderColor: @sapUiMediumBorder; // needed beacuse different in GR and UX
 // @sapUiButtonBackground: @sapUiButtonStandardBG; // to be renamed????
 // @sapUiButtonDisabledBorderColor: @sapUiMediumBorder; // needed because different in GR, HCB and UX
@@ -333,6 +337,7 @@
 @sapUiButtonLiteBackground: rgba(0,0,0,0); /* transparent; */
 @sapUiToggleButtonPressedDisabledBackground: #D8D8E8;
 @sapUiToggleButtonPressedBackground: @sapUiHighlight;
+@sapUiToggleButtonPressedHoverBackground: darken(@sapUiToggleButtonPressedBackground, 5);
 
 // semantic colors
 @sapUiPositiveBG: @sapUiPositiveText; // no positive background defined by UX, but using text color as background may be confusing
