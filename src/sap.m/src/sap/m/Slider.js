@@ -225,7 +225,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return 0;
 		};
 
-		Slider.prototype._getPrecisionOfNumber = function(fValue) {
+		Slider.prototype.getDecimalPrecisionOfNumber = function(fValue) {
 
 			// the value is an integer
 			if (Math.floor(fValue) === fValue) {
@@ -234,19 +234,25 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			var sValue = fValue.toString(),
 				iIndexOfDot = sValue.indexOf("."),
-				iIndexOfENotation = sValue.indexOf("e-");
+				iIndexOfENotation = sValue.indexOf("e-"),
+				bIndexOfENotationFound = iIndexOfENotation !== -1, // the "e-" is found in the value
+				bIndexOfDotFound = iIndexOfDot !== -1;	// the "." is found in the value
 
-			// the "." is found in the value
-			if (iIndexOfDot !== -1) {
-				return sValue.length - iIndexOfDot - 1;
+			// note: numbers such as 0.0000005 are represented using the e-notation
+			// (for example, 0.0000005 becomes 5e-7)
+			if (bIndexOfENotationFound) {
+
+				var iENotationExponent = +sValue.slice(iIndexOfENotation + 2);
+
+				if (bIndexOfDotFound) {
+					return iENotationExponent + sValue.slice(iIndexOfDot + 1, iIndexOfENotation).length;
+				}
+
+				return iENotationExponent;
 			}
 
-			// note: numbers such as 0.00000000000000000005 are represented using the e-notation
-			// (for example, 0.00000000000000000005 becomes 5e-20)
-
-			// the "e-" is found in the value
-			if (iIndexOfENotation !== -1) {
-				return +sValue.slice(iIndexOfENotation + 2);
+			if (bIndexOfDotFound) {
+				return sValue.length - iIndexOfDot - 1;
 			}
 
 			return 0;
@@ -260,16 +266,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @param {object} [mOptions.snapValue=true]
 		 * @returns {sap.m.Slider} <code>this</code> to allow method chaining.
 		 * @private
-		 * @function
 		 */
 		Slider.prototype._setValue = function(fNewValue, mOptions) {
 			var fMin = this.getMin(),
 				fMax = this.getMax(),
 				fStep = this.getStep(),
 				fValue = this.getValue(),
+				sNewValueFixedPoint,
+				bSnapValue = true,
 				fModStepVal;
-
-			var bSnapValue = true;
 
 			if (mOptions) {
 				bSnapValue = !!mOptions.snapValue;
@@ -289,20 +294,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				fNewValue = fModStepVal * 2 >= fStep ? fNewValue + fStep - fModStepVal : fNewValue - fModStepVal;
 			}
 
-			var iPrecisionOfStep = this._getPrecisionOfNumber(fStep);
-
-			// the number of digits to appear after the decimal point of the value
-			// must be between 0 and 20 to avoid a RangeError when calling the .toFixed() method
-			if (iPrecisionOfStep > 20) {
-				iPrecisionOfStep = 20;
-			} else if (iPrecisionOfStep < 0) {
-				iPrecisionOfStep = 0;
-			}
-
-			// note: round the value to the same precision of the step
-			// to avoid rounding errors as side effect of floating-point arithmetic
-			fNewValue = Number(fNewValue.toFixed(iPrecisionOfStep));
-
 			// constrain the new value between the minimum and maximum
 			if (fNewValue < fMin) {
 				fNewValue = fMin;
@@ -310,33 +301,65 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				fNewValue = fMax;
 			}
 
+			sNewValueFixedPoint = this.toFixed(fNewValue);
+			fNewValue = Number(sNewValueFixedPoint);
+
 			// update the value and suppress re-rendering
 			this.setProperty("value", fNewValue, true);
 
 			// update the value in DOM only when it has changed
 			if (fValue !== this.getValue()) {
-				this.setDomValue(fNewValue);
+				this.setDomValue(sNewValueFixedPoint);
 			}
 
 			return this;
 		};
 
-		Slider.prototype.setDomValue = function(fNewValue) {
-			var sPerValue,
-				oHandleDomRef,
-				oDomRef = this.getDomRef();
+		/**
+		 * Formats the <code>fNumber</code> using the fixed-point notation.
+		 * By default, the format of the <code>fNumber</code> uses the same precision as the <code>step</code>.
+		 *
+		 * <b>Note:</b> The number of digits to appear after the decimal point of the value
+		 * should be between 0 and 20 to avoid a RangeError when calling the <code>Number.toFixed()</code> method.
+		 *
+		 * @param {float} [fNumber=getValue()] The number to format.
+		 * @param {int} [iDigits] The number of digits to appear after the decimal point.
+		 * @returns {string} A string representation of <code>fNumber</code> that does not use exponential notation.
+		 * @private
+		 */
+		Slider.prototype.toFixed = function(fNumber, iDigits) {
+
+			if (fNumber === undefined) {
+				fNumber = this.getValue();
+			}
+
+			if (iDigits === undefined) {
+				iDigits = this.getDecimalPrecisionOfNumber(this.getStep());
+			}
+
+			if (iDigits > 20) {
+				iDigits = 20;
+			} else if (iDigits < 0) {
+				iDigits = 0;
+			}
+
+			// note: .toFixed() does not return a string when the number is negative
+			return fNumber.toFixed(iDigits) + "";
+		};
+
+		Slider.prototype.setDomValue = function(sNewValue) {
+			var oDomRef = this.getDomRef();
 
 			if (!oDomRef) {
 				return;
 			}
 
 			// note: round negative percentages to 0
-			sPerValue = Math.max(this._getPercentOfValue(fNewValue), 0) + "%";
-
-			oHandleDomRef = this.getDomRef("handle");
+			var sPerValue = Math.max(this._getPercentOfValue(+sNewValue), 0) + "%",
+				oHandleDomRef = this.getDomRef("handle");
 
 			if (!!this.getName()) {
-				this.getDomRef("input").setAttribute("value", fNewValue);
+				this.getDomRef("input").setAttribute("value", sNewValue);
 			}
 
 			if (this.getProgress()) {
@@ -349,10 +372,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oHandleDomRef.style[sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left"] = sPerValue;
 
 			// update the tooltip
-			oHandleDomRef.title = fNewValue;
+			oHandleDomRef.title = sNewValue;
 
 			// update the ARIA attribute value
-			oHandleDomRef.setAttribute("aria-valuenow", fNewValue);
+			oHandleDomRef.setAttribute("aria-valuenow", sNewValue);
 		};
 
 		/**
