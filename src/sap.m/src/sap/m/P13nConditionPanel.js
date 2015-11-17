@@ -1043,11 +1043,16 @@ sap.ui.define([
 								oControl.setSelectedItem(oControl.getItemByKey(sValue.toString()));
 							}
 						} else {
+							
 							if (!isNaN(oValue) && oValue !== null && oConditionGrid.oFormatter) {
 								sValue = oConditionGrid.oFormatter.format(oValue);
 								oControl.setValue(sValue);
 								// oCtrl.setValueState(sap.ui.core.ValueState.None);
 							} else {
+								if (typeof sValue === "string" && oConditionGrid.oFormatter instanceof sap.ui.core.format.NumberFormat) {
+									oValue = parseFloat(sValue);
+									sValue = oConditionGrid.oFormatter.format(oValue);
+								} 
 
 								if (!oValue && sValue && oConditionGrid.oFormatter instanceof sap.ui.core.format.DateFormat) {
 									oValue = new Date(sValue);
