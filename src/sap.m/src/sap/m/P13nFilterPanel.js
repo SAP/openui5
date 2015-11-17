@@ -427,7 +427,7 @@ sap.ui.define([
 		}
 		if (!this._aIncludeOperations["boolean"]) {
 			this.setIncludeOperations([
-			    sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.Empty, sap.m.P13nConditionOperation.NotEmpty
+			    sap.m.P13nConditionOperation.EQ
 			], "boolean");
 		}
 		
@@ -536,8 +536,15 @@ sap.ui.define([
 					precision: fGetValueOfProperty("precision", oContext, oItem_),
 					scale: fGetValueOfProperty("scale", oContext, oItem_),
 					isDefault: fGetValueOfProperty("isDefault", oContext, oItem_),
-					values: fGetValueOfProperty("values", oContext, oItem_) //oItem_.getValues()  
+					values: fGetValueOfProperty("values", oContext, oItem_)  
 				});
+				
+
+				// check if maxLength is 1 and remove contains, start and ends with operations
+				var n = aKeyFields.length;
+				if (aKeyFields[n - 1].maxLength === 1 || aKeyFields[n - 1].maxLength === "1") {
+					aKeyFields[n - 1].operations = [sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE];
+				}
 			});
 			this.setKeyFields(aKeyFields);
 
