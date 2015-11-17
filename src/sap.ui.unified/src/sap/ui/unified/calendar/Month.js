@@ -111,7 +111,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					/**
 					 * focused date is in an other month that the displayed one
 					 */
-					otherMonth : {type : "boolean"}
+					otherMonth : {type : "boolean"},
+					/**
+					 * focused date is set to the same as before (date in other month clicked)
+					 */
+					restoreOldDate : {type : "boolean"}
 				}
 			}
 		}
@@ -975,6 +979,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			var oOldDate = this._getDate();
 			var oFocusedDate = new UniversalDate(oOldDate.getTime());
 			var bOtherMonth = false;
+			var bFireFocus = true;
 
 			var aDomRefs = this._oItemNavigation.getItemDomRefs();
 			var i = 0;
@@ -1007,6 +1012,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					}
 					_focusDate(that, oOldDate);
 
+					if (oEvent.type == "mousedown" ||
+							(this._sTouchstartYyyyMMdd && oEvent.type == "focusin" && this._sTouchstartYyyyMMdd == $DomRef.attr("data-sap-day"))) {
+						// don't focus date in other month via mouse -> don't switch month in calendar while selecting day
+						bFireFocus = false;
+						this.fireFocus({date: CalendarUtils._createLocalDate(oOldDate), otherMonth: false, restoreOldDate: true});
+					}
+
+					// on touch devices a focusin is fired asyncrounously after the touch/mouse handling on DOM element if the focus was changed in the meantime
+					// focus old date again and do not fire focus event
+					if (oEvent.originalEvent && oEvent.originalEvent.type == "touchstart") {
+						this._sTouchstartYyyyMMdd = $DomRef.attr("data-sap-day");
+					} else {
+						this._sTouchstartYyyyMMdd = undefined;
+					}
 				}
 			} else {
 				// day in current month focused
@@ -1018,15 +1037,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					oFocusedDate = new UniversalDate(this._oFormatYyyymmdd.parse($DomRef.attr("data-sap-day"), true).getTime());
 					this._setDate(oFocusedDate);
 				}
+				this._sTouchstartYyyyMMdd = undefined;
 			}
 
 			if (oEvent.type == "mousedown" && this.getIntervalSelection()) {
-				// as in focus event the month can be changed store the last target here
+				// as in the focus event the month can be changed, store the last target here
 				this._sLastTargetId = $DomRef.attr("id");
 			}
 
-			if (!(oEvent.type == "mousedown" && bOtherMonth)) {
-				// don't focus date in other month via mouse -> don't switch month in calendar while selecting day
+			if (bFireFocus) {
 				this.fireFocus({date: CalendarUtils._createLocalDate(oFocusedDate), otherMonth: bOtherMonth});
 			}
 
@@ -1266,7 +1285,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					sYyyymmdd = oThis._oFormatYyyymmdd.format(oDate, true);
 					for ( i = 0; i < aDomRefs.length; i++) {
 						$DomRef = jQuery(aDomRefs[i]);
-						if (!$DomRef.hasClass("sapUiCalDayOtherMonth") && $DomRef.attr("data-sap-day") == sYyyymmdd) {
+						if ($DomRef.attr("data-sap-day") == sYyyymmdd) {
 							if (iSelected > 0) {
 								$DomRef.removeClass("sapUiCalDaySel");
 								$DomRef.attr("aria-selected", "false");
