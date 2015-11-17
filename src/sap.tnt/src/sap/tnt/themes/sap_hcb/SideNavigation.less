@@ -9,3 +9,28 @@
 .sapMSideNavigationSeparator {
   background-color: @sapHCStandardFG;
 }
+
+/* Styles for layout with arrows
+   ========================================================================== */
+.sapMSideNavigationScrollIconUp {
+    border-bottom: 1px solid @sapHCStandardFG;
+}
+
+.sapMSideNavigationScrollIconDown {
+    border-top: 1px solid @sapHCStandardFG;
+}
+
+.sapMSideNavigationScrollIcon:not(.sapMSideNavigationScrollIconDisabled):hover,
+.sapMSideNavigationScrollIcon:not(.sapMSideNavigationScrollIconDisabled):active {
+  background-color: @sapHCHighlightBG;
+  color: @sapHCStandardFG;
+
+  & > .sapUiIcon {
+    color: @sapHCStandardFG;
+  }
+}
+
+.sapUiIcon.sapMSideNavigationScrollIcon:focus {
+  outline: 0.125rem dotted @sapUiFocus;
+  outline-offset: -2px;
+}
