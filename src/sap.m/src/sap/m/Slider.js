@@ -308,7 +308,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				fNewValue = fMax;
 			}
 
-			sNewValueFixedPoint = this.toFixed(fNewValue);
+			sNewValueFixedPoint = this.toFixed(fNewValue, this.getDecimalPrecisionOfNumber(fStep));
 			fNewValue = Number(sNewValueFixedPoint);
 
 			// update the value and suppress re-rendering
@@ -324,24 +324,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Formats the <code>fNumber</code> using the fixed-point notation.
-		 * By default, the format of the <code>fNumber</code> uses the same precision as the <code>step</code>.
 		 *
 		 * <b>Note:</b> The number of digits to appear after the decimal point of the value
 		 * should be between 0 and 20 to avoid a RangeError when calling the <code>Number.toFixed()</code> method.
 		 *
-		 * @param {float} [fNumber=getValue()] The number to format.
+		 * @param {float} fNumber The number to format.
 		 * @param {int} [iDigits] The number of digits to appear after the decimal point.
 		 * @returns {string} A string representation of <code>fNumber</code> that does not use exponential notation.
 		 * @private
 		 */
 		Slider.prototype.toFixed = function(fNumber, iDigits) {
 
-			if (fNumber === undefined) {
-				fNumber = this.getValue();
-			}
-
 			if (iDigits === undefined) {
-				iDigits = this.getDecimalPrecisionOfNumber(this.getStep());
+				iDigits = this.getDecimalPrecisionOfNumber(fNumber);
 			}
 
 			if (iDigits > 20) {

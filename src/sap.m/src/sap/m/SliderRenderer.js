@@ -114,7 +114,7 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
 		 */
 		SliderRenderer.writeHandleTooltip = function(oRm, oSlider) {
-			oRm.writeAttribute("title", oSlider.toFixed());
+			oRm.writeAttribute("title", oSlider.toFixed(oSlider.getValue()));
 		};
 
 		SliderRenderer.renderInput = function(oRm, oSlider) {
@@ -128,7 +128,7 @@ sap.ui.define(['jquery.sap.global'],
 
 			oRm.writeClasses();
 			oRm.writeAttributeEscaped("name", oSlider.getName());
-			oRm.writeAttribute("value", oSlider.toFixed());
+			oRm.writeAttribute("value", oSlider.toFixed(oSlider.getValue()));
 			oRm.write("/>");
 		};
 
@@ -145,7 +145,7 @@ sap.ui.define(['jquery.sap.global'],
 				orientation: "horizontal",
 				valuemin: oSlider.toFixed(oSlider.getMin()),
 				valuemax: oSlider.toFixed(oSlider.getMax()),
-				valuenow: oSlider.toFixed()
+				valuenow: oSlider.toFixed(oSlider.getValue())
 			});
 		};
 
