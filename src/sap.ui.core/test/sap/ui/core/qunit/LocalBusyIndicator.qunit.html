@@ -121,16 +121,16 @@
 
 		/**
 		 * This test checks if the busy indicator does not crash after the outer control was already
-		 * removed from the DOM, when the 
+		 * removed from the DOM, when the
 		 */
 		asyncTest("BusyIndicator and Already Closed sap.m.BusyDialog does not crash", function() {
 			var that = this;
-			
+
 			var dialog = new sap.m.BusyDialog({
 				title: "Loading",
 				text: "something loading..."
 			});
-			
+
 			dialog.open();
 			setTimeout(function () {
 				jQuery("#__dialog0-busyInd").control(0).setBusy(true);
@@ -138,7 +138,7 @@
 				ok("everythings fine");
 				start();
 			}, 250);
-			
+
 		});
 
 		asyncTest("Open multiple busy indicators", function() {
@@ -157,6 +157,27 @@
 				equal(that.oSlider.$().children('.sapUiLocalBusyIndicator').length, 1, 'Slider Busy Indicator is part of the DOM');
 				start();
 			}, 1200);
+		});
+
+		// as XML-View maintains the dom itself busy indicator should treat this particularly, as otherwise duplicate
+		// busy indicators would be created when rerendering and never removed
+		asyncTest("Busy indicator on XML View", function() {
+			// setup the busy view
+			jQuery.sap.require("sap.ui.core.mvc.XMLView");
+			var myView = sap.ui.xmlview({viewContent:'<mvc:View xmlns:mvc="sap.ui.core.mvc" busyIndicatorDelay="0"></mvc:View>'}).placeAt('target1');
+			sap.ui.getCore().applyChanges();
+			myView.setBusy(true);
+			// this rerendering is crucial to test the behavior
+			myView.rerender();
+			setTimeout(function() {
+				// assert
+				ok(myView.$("busyIndicator").length, "BusyIndicator rendered");
+				myView.setBusy(false);
+				ok(!myView.$("busyIndicator").length, "All BusyIndicators removed");
+				//cleanup
+				myView.destroy();
+				start();
+			}, 50);
 		});
 
 		module("Delay", {
