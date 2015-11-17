@@ -1254,9 +1254,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var oDate = CalendarUtils._createUniversalUTCDate(oEvent.getParameter("date"));
 			var bOtherMonth = oEvent.getParameter("otherMonth");
+			var bRestoreOldDate = oEvent.getParameter("restoreOldDate");
 			var that = this;
 
-			_focusDate(that, oDate, bOtherMonth);
+			if (bRestoreOldDate) {
+				// in multimonth mode stay at the last focused date
+				if (!jQuery.sap.equal(this._getFocusedDate(), oDate)) {
+					_renderMonth(that, false);
+				}
+			} else {
+				_focusDate(that, oDate, bOtherMonth);
+			}
 
 		}
 
