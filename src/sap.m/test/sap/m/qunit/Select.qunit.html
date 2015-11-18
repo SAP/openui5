@@ -3057,6 +3057,30 @@
 			oSelect.destroy();
 		});
 
+		module("setTooltip()");
+
+		// BCP 1580232802
+		test("it should display the control tooltip instead of the default tooltip of the icon", function() {
+
+			// system under test
+			var oSelect = new sap.m.Select({
+				tooltip: "lorem ipsum",
+				type: sap.m.SelectType.IconOnly,
+				icon: sap.ui.core.IconPool.getIconURI("filter")
+			});
+
+			// arrange
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			strictEqual(oSelect.$().attr("title"), "lorem ipsum");
+			strictEqual(oSelect.$("icon").attr("title"), undefined);
+
+			// cleanup
+			oSelect.destroy();
+		});
+
 		module("removeItem()");
 
 		test("it should return null when called with an invalid input argument value", function() {
