@@ -881,6 +881,25 @@
 				oSlider.destroy();
 			});
 
+			test('it should display the "aria-valuemin" attribute using the fixed-point notation', function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					step: 1.5,
+					min: 1e+7
+				});
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemin"), "10000000");
+
+				// cleanup
+				oSlider.destroy();
+			});
+
 			/* ------------------------------ */
 			/* setMax()                       */
 			/* ------------------------------ */
@@ -898,6 +917,25 @@
 
 				// assert
 				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemax"), "200");
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			test('it should display the "aria-valuemax" attribute using the fixed-point notation', function() {
+
+				// system under test
+				var oSlider = new sap.m.Slider({
+					step: 1.5,
+					max: 1e+7
+				});
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				strictEqual(oSlider.getFocusDomRef().getAttribute("aria-valuemax"), "10000000");
 
 				// cleanup
 				oSlider.destroy();
