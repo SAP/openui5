@@ -370,7 +370,7 @@
 			var oReq = new XMLHttpRequest();
 			oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
 			oReq.send();
-			jQuery.sap.measure.endInteraction();
+			jQuery.sap.measure.endInteraction(true);
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 			// ignore browsers where no Performance API is present or insufficient
 			if(window.performance && window.performance.getEntries) {
@@ -389,7 +389,7 @@
 			var oReq = new XMLHttpRequest();
 			oReq.open("GET", "../../../../../resources/sap-ui-core.js?noCache=" + Date.now(), false);
 			oReq.send();
-			jQuery.sap.measure.endInteraction();
+			jQuery.sap.measure.endInteraction(true);
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 			// ignore browsers where no Performance API is present or insufficient
 			if(window.performance && window.performance.getEntries) {
