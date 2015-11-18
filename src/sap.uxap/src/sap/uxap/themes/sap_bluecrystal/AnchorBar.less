@@ -42,7 +42,7 @@ Common compact/cozy
 	padding-bottom: 0;
 }
 
-.sapUxAPAnchorBarButton .sapMBtnContent {
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnContent {
 	position: relative;
 	bottom: -1px;
 }
@@ -65,6 +65,11 @@ Common compact/cozy
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnContent {
 	font-size: @sapMFontHeader6Size;
 	color: @sapUiLightText;
+}
+
+// overriding to center the text of the popover buttons in compact mode
+.sapUiSizeCompact.sapUxAPAnchorBarPopover.sapMPopover .sapMBtn.sapUxAPAnchorBarButton .sapMBtnInner .sapMBtnContent {
+	line-height: 1.9rem;
 }
 
 /***********************/
