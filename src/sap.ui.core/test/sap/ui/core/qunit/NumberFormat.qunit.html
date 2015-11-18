@@ -344,10 +344,131 @@
 		var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			decimals: 2
 		}, oLocale);
+		equal(oFloatFormat.format(1), "1.00", "1");
+		equal(oFloatFormat.format(10), "10.00", "10");
 		equal(oFloatFormat.format(1000), "1,000.00", "1000");
 		equal(oFloatFormat.format(100000), "1,00,000.00", "100000");
 		equal(oFloatFormat.format(1000000), "10,00,000.00", "1000000");
 		equal(oFloatFormat.format(10000000), "1,00,00,000.00", "10000000");
+	});
+
+	test("float format with decimals and myriad grouping", function(){
+		var oLocale = new sap.ui.core.Locale("ja_JP");
+		var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			decimals: 2,
+			groupingSize: 4
+		}, oLocale);
+		equal(oFloatFormat.format(1), "1.00", "1");
+		equal(oFloatFormat.format(10), "10.00", "10");
+		equal(oFloatFormat.format(1000), "1000.00", "1000");
+		equal(oFloatFormat.format(10000), "1,0000.00", "100000");
+		equal(oFloatFormat.format(10000000), "1000,0000.00", "1000000");
+		equal(oFloatFormat.format(100000000), "1,0000,0000.00", "10000000");
+	});
+
+	test("float format with custom grouping", function(){
+		var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			decimals: 2,
+			groupingSize: 2
+		});
+		equal(oFloatFormat.format(1), "1.00", "1");
+		equal(oFloatFormat.format(10), "10.00", "10");
+		equal(oFloatFormat.format(1000), "10,00.00", "1000");
+		equal(oFloatFormat.format(10000), "1,00,00.00", "10000");
+		equal(oFloatFormat.format(10000000), "10,00,00,00.00", "10000000");
+		equal(oFloatFormat.format(100000000), "1,00,00,00,00.00", "100000000");
+		
+		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			decimals: 1,
+			groupingSize: 3,
+			groupingBaseSize: 2
+		});
+		equal(oFloatFormat.format(1), "1.0", "1");
+		equal(oFloatFormat.format(10), "10.0", "10");
+		equal(oFloatFormat.format(1000), "10,00.0", "1000");
+		equal(oFloatFormat.format(10000), "100,00.0", "10000");
+		equal(oFloatFormat.format(10000000), "100,000,00.0", "10000000");
+		equal(oFloatFormat.format(100000000), "1,000,000,00.0", "100000000");
+
+		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			decimals: 1,
+			groupingSize: 2,
+			groupingBaseSize: 4
+		});
+		equal(oFloatFormat.format(1), "1.0", "1");
+		equal(oFloatFormat.format(10), "10.0", "10");
+		equal(oFloatFormat.format(1000), "1000.0", "1000");
+		equal(oFloatFormat.format(10000), "1,0000.0", "10000");
+		equal(oFloatFormat.format(10000000), "10,00,0000.0", "10000000");
+		equal(oFloatFormat.format(100000000), "1,00,00,0000.0", "100000000");
+
+		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			decimals: 1,
+			groupingSize: 5,
+			groupingBaseSize: 3
+		});
+		equal(oFloatFormat.format(1), "1.0", "1");
+		equal(oFloatFormat.format(10), "10.0", "10");
+		equal(oFloatFormat.format(1000), "1,000.0", "1000");
+		equal(oFloatFormat.format(10000), "10,000.0", "10000");
+		equal(oFloatFormat.format(10000000), "10000,000.0", "10000000");
+		equal(oFloatFormat.format(100000000), "1,00000,000.0", "100000000");
+
+		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			decimals: 1,
+			groupingSize: 1,
+			groupingBaseSize: 3
+		});
+		equal(oFloatFormat.format(1), "1.0", "1");
+		equal(oFloatFormat.format(10), "10.0", "10");
+		equal(oFloatFormat.format(1000), "1,000.0", "1000");
+		equal(oFloatFormat.format(10000), "1,0,000.0", "10000");
+		equal(oFloatFormat.format(10000000), "1,0,0,0,0,000.0", "10000000");
+		equal(oFloatFormat.format(100000000), "1,0,0,0,0,0,000.0", "100000000");
+
+		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			decimals: 1,
+			groupingSize: 4,
+			groupingBaseSize: 1
+		});
+		equal(oFloatFormat.format(1), "1.0", "1");
+		equal(oFloatFormat.format(10), "1,0.0", "10");
+		equal(oFloatFormat.format(1000), "100,0.0", "1000");
+		equal(oFloatFormat.format(10000), "1000,0.0", "10000");
+		equal(oFloatFormat.format(10000000), "100,0000,0.0", "10000000");
+		equal(oFloatFormat.format(100000000), "1000,0000,0.0", "100000000");
+	});
+
+	test("float format with pattern defined grouping", function(){
+		var oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			pattern: "#,##0.00"
+		});
+		equal(oFloatFormat.format(1), "1.00", "1");
+		equal(oFloatFormat.format(10), "10.00", "10");
+		equal(oFloatFormat.format(1000), "1,000.00", "1000");
+		equal(oFloatFormat.format(10000), "10,000.00", "10000");
+		equal(oFloatFormat.format(10000000), "10,000,000.00", "10000000");
+		equal(oFloatFormat.format(100000000), "100,000,000.00", "100000000");
+		
+		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			pattern: "#,##,##0.00"
+		});
+		equal(oFloatFormat.format(1), "1.00", "1");
+		equal(oFloatFormat.format(10), "10.00", "10");
+		equal(oFloatFormat.format(1000), "1,000.00", "1000");
+		equal(oFloatFormat.format(10000), "10,000.00", "10000");
+		equal(oFloatFormat.format(10000000), "1,00,00,000.00", "10000000");
+		equal(oFloatFormat.format(100000000), "10,00,00,000.00", "100000000");
+		
+		oFloatFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			pattern: "#,###0.00"
+		});
+		equal(oFloatFormat.format(1), "1.00", "1");
+		equal(oFloatFormat.format(10), "10.00", "10");
+		equal(oFloatFormat.format(1000), "1000.00", "1000");
+		equal(oFloatFormat.format(10000), "1,0000.00", "10000");
+		equal(oFloatFormat.format(10000000), "1000,0000.00", "10000000");
+		equal(oFloatFormat.format(100000000), "1,0000,0000.00", "100000000");
 	});
 
 	test("float custom format", function(){
