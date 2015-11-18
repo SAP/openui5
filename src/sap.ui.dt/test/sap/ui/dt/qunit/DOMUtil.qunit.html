@@ -35,12 +35,14 @@
 		<script type="text/javascript">
 
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-		
+
 			jQuery.sap.require("sap.ui.dt.DOMUtil");
 			jQuery.sap.require("sap.m.Button");
 
+			/**
+			 * getZIndex
+			 */
 			QUnit.module("Given that a control is rendered", {
-
 				beforeEach : function() {
 					this.iWidth = 100;
 					this.iHeight = 48;
@@ -48,7 +50,7 @@
 						width: this.iWidth + "px",
 						text : "Button"
 					});
-					
+
 					this.oButton.placeAt("content");
 					// Render Controls
 					sap.ui.getCore().applyChanges();
@@ -67,18 +69,20 @@
 				assert.equal(zIndex, "1000", 'and the static method "getZIndex" returns the right value');
 			});
 
-			// TODO:
-			// * Add tests for CSSSelector
-			// * Add tests for escapedID (is this needed?)
-
-			//cloneDOMAndStyles
+			/**
+			 * cloneDOMAndStyles
+			 */
 			QUnit.module("Given that some DOM element with child nodes is rendered...", {
 				beforeEach : function() {
+					jQuery("<div style='float: left; width: 50%; height: 100%;' id='left-part'></div>").appendTo("#content");
+					jQuery("<div style='float: left; width: 50%; height: 100%;' id='right-part'></div>").appendTo("#content");
+
 					this.oDomElement = jQuery("<div data-find='div' class='withBeforeElement' style='width:200px; height: 200px;'><span data-find='span' class='withAfterElement' style='color: rgb(255, 0, 0);'>Text</span></div>");
 					this.oDomElement.appendTo("#left-part");
 				},
 				afterEach : function() {
-					// this.oDomElement.remove();
+					this.oDomElement.remove();
+					jQuery("#content").empty();
 				}
 			});
 
@@ -102,6 +106,54 @@
 				strictEqual(sAfterCopySpanContent, sAfterSpanContent, "and the pseudoElements are also copied");
 			});
 
+			/**
+			 * hasScrollBar
+			 */
+			QUnit.module("Given that a container and a content are rendered", {
+				beforeEach : function() {
+					this.oContent = jQuery("<div id='container-content' style='width: 200px; height: 200px;'></div>");
+					this.oContainer = jQuery("<div id='container' style='background: #000; width: 200px; height: 200px;'></div>");
+					this.oContainer.append(this.oContent).appendTo("#content");
+				},
+				afterEach : function() {
+					this.oContainer.remove();
+				}
+			});
+
+			QUnit.test("when the content is higher but container has no overflow property set", function(assert) {
+				this.oContent.css({
+					height: 400
+				});
+
+				assert.strictEqual(hasScrollBar(this.oContainer), false, "no scroll");
+			});
+
+			QUnit.test("when the content is higher and container has overflow auto", function(assert) {
+				this.oContent.css({
+					height: 400
+				});
+
+				this.oContainer.css({
+					overflow: "auto",
+				});
+
+				assert.strictEqual(hasScrollBar(this.oContainer), true, "scroll is shown");
+			});
+
+			QUnit.test("when the content is wider and container has overflow scroll", function(assert) {
+				this.oContent.css({
+					width: 400
+				});
+
+				this.oContainer.css({
+					"overflow-x": "scroll"
+				});
+
+				assert.strictEqual(hasScrollBar(this.oContainer), true, "scroll is shown");
+			});
+
+			var hasScrollBar = sap.ui.dt.DOMUtil.hasScrollBar;
+
 		</script>
 	</head>
 	<body>
@@ -111,8 +163,6 @@
 		<div id="qunit-testrunner-toolbar"></div>
 		<ol id="qunit-tests"></ol>
 		<div id="content">
-			<div style='float: left; width: 50%; height: 100%;' id="left-part"></div>
-			<div style='float: left; width: 50%; height: 100%;' id="right-part"></div>
 		</div>
 	</body>
 </html>
