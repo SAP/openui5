@@ -6,15 +6,15 @@
    Variables and mixins
    ========================================================================== */
 
-@sapMToolPageAsideWidth : 20rem;
-@sapMToolPageAsideWidthOnTablet : 3rem;
-@sapMToolPageHeaderHeight : 3rem;
-@sapMToolPageFooterHeight : 3rem;
+@sapTntToolPageAsideWidth : 20rem;
+@sapTntToolPageAsideWidthOnTablet : 3rem;
+@sapTntToolPageHeaderHeight : 3rem;
+@sapTntToolPageFooterHeight : 3rem;
 
-@sapMToolPageCompactAsideWidth : 16rem;
-@sapMToolPageCompactAsideWidthOnTablet : 2rem;
-@sapMToolPageCompactHeaderHeight : 2rem;
-@sapMToolPageCompactFooterHeight : 2rem;
+@sapTntToolPageCompactAsideWidth : 16rem;
+@sapTntToolPageCompactAsideWidthOnTablet : 2rem;
+@sapTntToolPageCompactHeaderHeight : 2rem;
+@sapTntToolPageCompactFooterHeight : 2rem;
 
 .display-flex() {
   display: -webkit-box;
@@ -41,7 +41,7 @@
 /* ==========================================================================
    Root element
    ========================================================================== */
-.sapMToolPage {
+.sapTntToolPage {
   position: absolute;
   top: 0;
   right: 0;
@@ -58,14 +58,14 @@
 /* ==========================================================================
    Header
    ========================================================================== */
-.sapMToolPageHeader {
-  height: @sapMToolPageHeaderHeight;
+.sapTntToolPageHeader {
+  height: @sapTntToolPageHeaderHeight;
 }
 
 /* ==========================================================================
    Content wrapper
    ========================================================================== */
-.sapMToolPageContentWrapper {
+.sapTntToolPageContentWrapper {
   .display-flex();
   .flex-grow(1);
 
@@ -75,29 +75,29 @@
 /* Aside container
    ========================================================================== */
 
-.sapMToolPageAside {
+.sapTntToolPageAside {
   .display-flex();
   .flex-direction-column();
 
   will-change: transform;
 }
 
-.sapMToolPageAsideContent {
+.sapTntToolPageAsideContent {
   .display-flex();
   .flex-direction-column();
   .flex-grow(1);
   height: 100%;
 }
 
-.sapMToolPageAsideFooter {
-  height: @sapMToolPageFooterHeight;
+.sapTntToolPageAsideFooter {
+  height: @sapTntToolPageFooterHeight;
   overflow: hidden;
 }
 
 .sapUiMedia-Std-Desktop,
 .sapUiMedia-Std-Tablet {
-	.sapMToolPageAside {
-		width: @sapMToolPageAsideWidth;
+	.sapTntToolPageAside {
+		width: @sapTntToolPageAsideWidth;
 		position: absolute;
 		left: 0;
 		bottom: 0;
@@ -105,29 +105,29 @@
 		z-index: 1;
 	}
 
-	.sapMToolPageMain {
-		transform: translateX(@sapMToolPageAsideWidth);
+	.sapTntToolPageMain {
+		transform: translateX(@sapTntToolPageAsideWidth);
 	}
 }
 
 .sapUiMedia-Std-Desktop,
 .sapUiMedia-Std-Tablet {
-	.sapMToolPageAsideCollapsed {
-		.sapMToolPageAside {
-			width: @sapMToolPageAsideWidthOnTablet;
+	.sapTntToolPageAsideCollapsed {
+		.sapTntToolPageAside {
+			width: @sapTntToolPageAsideWidthOnTablet;
 		}
 
-		.sapMToolPageMain {
-			-webkit-transform: translateX(@sapMToolPageAsideWidthOnTablet);
-			-ms-transform: translateX(@sapMToolPageAsideWidthOnTablet);
-			transform: translateX(@sapMToolPageAsideWidthOnTablet);
+		.sapTntToolPageMain {
+			-webkit-transform: translateX(@sapTntToolPageAsideWidthOnTablet);
+			-ms-transform: translateX(@sapTntToolPageAsideWidthOnTablet);
+			transform: translateX(@sapTntToolPageAsideWidthOnTablet);
 		}
 	}
 }
 
 .sapUiMedia-Std-Phone {
-  .sapMToolPageAside {
-	  width: @sapMToolPageAsideWidth;
+  .sapTntToolPageAside {
+	  width: @sapTntToolPageAsideWidth;
 	  position: absolute;
 	  left: 0;
 	  bottom: 0;
@@ -135,19 +135,19 @@
 	  z-index: 1;
   }
 
-  .sapMToolPageMain {
-    -webkit-transform: translateX(@sapMToolPageAsideWidth);
-	-ms-transform: translateX(@sapMToolPageAsideWidth);
-	transform: translateX(@sapMToolPageAsideWidth);
+  .sapTntToolPageMain {
+    -webkit-transform: translateX(@sapTntToolPageAsideWidth);
+	-ms-transform: translateX(@sapTntToolPageAsideWidth);
+	transform: translateX(@sapTntToolPageAsideWidth);
   }
 
-  .sapMToolPageAsideCollapsed {
-    .sapMToolPageAside {
-	  -webkit-transform: translateX(-@sapMToolPageAsideWidth);
-	  -ms-transform: translateX(-@sapMToolPageAsideWidth);
-	  transform: translateX(-@sapMToolPageAsideWidth);
+  .sapTntToolPageAsideCollapsed {
+    .sapTntToolPageAside {
+	  -webkit-transform: translateX(-@sapTntToolPageAsideWidth);
+	  -ms-transform: translateX(-@sapTntToolPageAsideWidth);
+	  transform: translateX(-@sapTntToolPageAsideWidth);
     }
-    .sapMToolPageMain {
+    .sapTntToolPageMain {
       -webkit-transform: translateX(0);
       -ms-transform: translateX(0);
       transform: translateX(0);
@@ -157,7 +157,7 @@
 /* Main container
    ========================================================================== */
 
-.sapMToolPageMain {
+.sapTntToolPageMain {
   .display-flex();
   .flex-direction-column();
   .flex-grow(1);
@@ -165,13 +165,13 @@
   will-change: transform;
 }
 
-.sapMToolPageMainContent {
+.sapTntToolPageMainContent {
   .flex-grow(1);
 
   position: relative;
 }
 
-.sapMToolPageMainContentWrapper {
+.sapTntToolPageMainContentWrapper {
   position: absolute;
   top: 0;
   right: 0;
@@ -179,8 +179,8 @@
   left: 0;
 }
 
-.sapMToolPageMainFooter {
-  height: @sapMToolPageFooterHeight;
+.sapTntToolPageMainFooter {
+  height: @sapTntToolPageFooterHeight;
   overflow: hidden;
 }
 
@@ -188,62 +188,62 @@
 /* Compact size */
 .sapUiSizeCompact {
 
-  .sapMToolPageHeader {
-    height: @sapMToolPageCompactHeaderHeight;
+  .sapTntToolPageHeader {
+    height: @sapTntToolPageCompactHeaderHeight;
   }
 
-  .sapMToolPageAsideFooter {
-    height: @sapMToolPageCompactFooterHeight;
+  .sapTntToolPageAsideFooter {
+    height: @sapTntToolPageCompactFooterHeight;
   }
 
-  .sapMToolPageMainFooter {
-    height: @sapMToolPageCompactFooterHeight;
-  }
-}
-
-.sapUiMedia-Std-Desktop .sapUiSizeCompact,
-.sapUiMedia-Std-Tablet .sapUiSizeCompact {
-  .sapMToolPageAside {
-    width: @sapMToolPageCompactAsideWidth;
-  }
-
-  .sapMToolPageMain {
-    transform: translateX(@sapMToolPageCompactAsideWidth);
+  .sapTntToolPageMainFooter {
+    height: @sapTntToolPageCompactFooterHeight;
   }
 }
 
 .sapUiMedia-Std-Desktop .sapUiSizeCompact,
 .sapUiMedia-Std-Tablet .sapUiSizeCompact {
-  .sapMToolPageAsideCollapsed {
-    .sapMToolPageAside {
-      width: @sapMToolPageCompactAsideWidthOnTablet;
+  .sapTntToolPageAside {
+    width: @sapTntToolPageCompactAsideWidth;
+  }
+
+  .sapTntToolPageMain {
+    transform: translateX(@sapTntToolPageCompactAsideWidth);
+  }
+}
+
+.sapUiMedia-Std-Desktop .sapUiSizeCompact,
+.sapUiMedia-Std-Tablet .sapUiSizeCompact {
+  .sapTntToolPageAsideCollapsed {
+    .sapTntToolPageAside {
+      width: @sapTntToolPageCompactAsideWidthOnTablet;
     }
 
-    .sapMToolPageMain {
-      -webkit-transform: translateX(@sapMToolPageCompactAsideWidthOnTablet);
-      -ms-transform: translateX(@sapMToolPageCompactAsideWidthOnTablet);
-      transform: translateX(@sapMToolPageCompactAsideWidthOnTablet);
+    .sapTntToolPageMain {
+      -webkit-transform: translateX(@sapTntToolPageCompactAsideWidthOnTablet);
+      -ms-transform: translateX(@sapTntToolPageCompactAsideWidthOnTablet);
+      transform: translateX(@sapTntToolPageCompactAsideWidthOnTablet);
     }
   }
 }
 
 .sapUiMedia-Std-Phone .sapUiSizeCompact {
 
-  .sapMToolPageAside {
-    width: @sapMToolPageCompactAsideWidth;
+  .sapTntToolPageAside {
+    width: @sapTntToolPageCompactAsideWidth;
   }
 
-  .sapMToolPageMain {
-    -webkit-transform: translateX(@sapMToolPageCompactAsideWidth);
-    -ms-transform: translateX(@sapMToolPageCompactAsideWidth);
-    transform: translateX(@sapMToolPageCompactAsideWidth);
+  .sapTntToolPageMain {
+    -webkit-transform: translateX(@sapTntToolPageCompactAsideWidth);
+    -ms-transform: translateX(@sapTntToolPageCompactAsideWidth);
+    transform: translateX(@sapTntToolPageCompactAsideWidth);
   }
 
-  .sapMToolPageAsideCollapsed {
-    .sapMToolPageAside {
-      -webkit-transform: translateX(-@sapMToolPageCompactAsideWidth);
-      -ms-transform: translateX(-@sapMToolPageCompactAsideWidth);
-      transform: translateX(-@sapMToolPageCompactAsideWidth);
+  .sapTntToolPageAsideCollapsed {
+    .sapTntToolPageAside {
+      -webkit-transform: translateX(-@sapTntToolPageCompactAsideWidth);
+      -ms-transform: translateX(-@sapTntToolPageCompactAsideWidth);
+      transform: translateX(-@sapTntToolPageCompactAsideWidth);
     }
   }
 }

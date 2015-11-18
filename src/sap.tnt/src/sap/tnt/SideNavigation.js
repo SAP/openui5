@@ -109,7 +109,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
             }
 
             if (this.getDomRef()) {
-                this.getDomRef().classList.toggle('sapMSideNavigationNotExpanded');
+                this.getDomRef().classList.toggle('sapTntSideNavigationNotExpanded');
             }
 
             this.setProperty('expanded', isExpanded, true);
@@ -156,16 +156,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
             var sideNavigation = document.getElementById(this.getId());
             var sideNavigationFlexibleContainer = sideNavigation.querySelector('#' + this.getId() + '-Flexible');
 
-            if (sideNavigation.offsetHeight <= minSideNavigationHeight && sideNavigation.classList.contains('sapMSideNavigationVerticalScrolling')) {
+            if (sideNavigation.offsetHeight <= minSideNavigationHeight && sideNavigation.classList.contains('sapTntSideNavigationVerticalScrolling')) {
                 return;
             }
 
-            if (sideNavigation.offsetHeight > minSideNavigationHeight && sideNavigationFlexibleContainer.classList.contains('sapMSideNavigationVerticalScrolling')) {
+            if (sideNavigation.offsetHeight > minSideNavigationHeight && sideNavigationFlexibleContainer.classList.contains('sapTntSideNavigationVerticalScrolling')) {
                 return;
             }
 
-            sideNavigation.classList.toggle('sapMSideNavigationVerticalScrolling');
-            sideNavigationFlexibleContainer.classList.toggle('sapMSideNavigationVerticalScrolling');
+            sideNavigation.classList.toggle('sapTntSideNavigationVerticalScrolling');
+            sideNavigationFlexibleContainer.classList.toggle('sapTntSideNavigationVerticalScrolling');
         };
 
         /**
@@ -226,7 +226,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
                     useIconTooltip: false,
                     tooltip: '',
                     press: this._arrowPress.bind(that)
-                }).addStyleClass('sapMSideNavigationScrollIcon sapMSideNavigationScrollIconUp');
+                }).addStyleClass('sapTntSideNavigationScrollIcon sapTntSideNavigationScrollIconUp');
                 this.setAggregation("_topArrowControl", iconControl, true);
             }
 
@@ -249,7 +249,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
                     useIconTooltip: false,
                     tooltip: '',
                     press: this._arrowPress.bind(that)
-                }).addStyleClass('sapMSideNavigationScrollIcon sapMSideNavigationScrollIconDown');
+                }).addStyleClass('sapTntSideNavigationScrollIcon sapTntSideNavigationScrollIconDown');
 
                 this.setAggregation("_bottomArrowControl", iconControl, true);
             }
@@ -269,13 +269,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
             var isAsideExpanded = this.getExpanded();
 
             if ((scrollContainerContent.offsetHeight > scrollContainerWrapper.offsetHeight) && !isAsideExpanded) {
-                domRef.querySelector('.sapMSideNavigationScrollIconUp').style.display = 'block'; // TODO refactor
-                domRef.querySelector('.sapMSideNavigationScrollIconDown').style.display = 'block'; // TODO refactor
+                domRef.querySelector('.sapTntSideNavigationScrollIconUp').style.display = 'block'; // TODO refactor
+                domRef.querySelector('.sapTntSideNavigationScrollIconDown').style.display = 'block'; // TODO refactor
 
-                domRef.querySelector('.sapMSideNavigationScrollIconDown').classList.remove('sapMSideNavigationScrollIconDisabled');
+                domRef.querySelector('.sapTntSideNavigationScrollIconDown').classList.remove('sapTntSideNavigationScrollIconDisabled');
             } else {
-                domRef.querySelector('.sapMSideNavigationScrollIconUp').style.display = 'none'; // TODO refactor
-                domRef.querySelector('.sapMSideNavigationScrollIconDown').style.display = 'none'; // TODO refactor
+                domRef.querySelector('.sapTntSideNavigationScrollIconUp').style.display = 'none'; // TODO refactor
+                domRef.querySelector('.sapTntSideNavigationScrollIconDown').style.display = 'none'; // TODO refactor
             }
         };
 
@@ -284,7 +284,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
             event.preventDefault();
 
             var source = document.getElementById(event.oSource.sId);
-            var isDirectionForward = source.classList.contains('sapMSideNavigationScrollIconDown') ? true : false;
+            var isDirectionForward = source.classList.contains('sapTntSideNavigationScrollIconDown') ? true : false;
 
             var $container = this.$('Flexible');
 
@@ -299,19 +299,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
             var scrollContainerWrapper = this.$('Flexible')[0];
             var scrollContainerContent = this.$('Flexible-Content')[0];
 
-            var topArrow = domRef.querySelector('.sapMSideNavigationScrollIconUp');
-            var bottomArrow = domRef.querySelector('.sapMSideNavigationScrollIconDown');
+            var topArrow = domRef.querySelector('.sapTntSideNavigationScrollIconUp');
+            var bottomArrow = domRef.querySelector('.sapTntSideNavigationScrollIconDown');
 
             var scrollContainerContentTranslate = scrollContainerWrapper.scrollTop;
             var margin = scrollContainerContent.offsetHeight - scrollContainerWrapper.offsetHeight;
 
             if (!isDirectionForward && scrollContainerContentTranslate == 0) {
-                topArrow.classList.add('sapMSideNavigationScrollIconDisabled');
+                topArrow.classList.add('sapTntSideNavigationScrollIconDisabled');
             } else if (isDirectionForward && scrollContainerContentTranslate == margin) {
-                bottomArrow.classList.add('sapMSideNavigationScrollIconDisabled');
+                bottomArrow.classList.add('sapTntSideNavigationScrollIconDisabled');
             } else {
-                topArrow.classList.remove('sapMSideNavigationScrollIconDisabled');
-                bottomArrow.classList.remove('sapMSideNavigationScrollIconDisabled');
+                topArrow.classList.remove('sapTntSideNavigationScrollIconDisabled');
+                bottomArrow.classList.remove('sapTntSideNavigationScrollIconDisabled');
             }
         };
 

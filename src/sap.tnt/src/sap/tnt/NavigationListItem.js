@@ -88,7 +88,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 					visible: this.getItems().length > 0 && this.getHasExpander(),
 					useIconTooltip: false,
 					tooltip: this._getExpandIconTooltip(!expanded)
-				}).addStyleClass('sapMNavLIExpandIcon');
+				}).addStyleClass('sapTntNavLIExpandIcon');
 
 				this.setAggregation("_expandIconControl", expandIconControl, true);
 			}
@@ -190,7 +190,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 				items: [
 					newGroup
 				]
-			}).addStyleClass('sapMNavLIPopup');
+			}).addStyleClass('sapTntNavLIPopup');
 
 			navList.setHasListBoxRole(true);
 
@@ -276,15 +276,15 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			}
 
 			this.setProperty('expanded', true, true);
-			this.$().find('.sapMNavLIGroup').attr('aria-expanded', true);
+			this.$().find('.sapTntNavLIGroup').attr('aria-expanded', true);
 
 			var expandIconControl = this._getExpandIconControl();
 			expandIconControl.setSrc(NavigationListItem.collapseIcon);
 			expandIconControl.setTooltip(this._getExpandIconTooltip(false));
 
-			var $container = this.$().find('.sapMNavLIGroupItems');
+			var $container = this.$().find('.sapTntNavLIGroupItems');
 			$container.stop(true, true).slideDown(duration || 'fast', function () {
-				$container.toggleClass('sapMNavLIHiddenGroupItems');
+				$container.toggleClass('sapTntNavLIHiddenGroupItems');
 			});
 
 			return true;
@@ -299,15 +299,15 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			}
 
 			this.setProperty('expanded', false, true);
-			this.$().find('.sapMNavLIGroup').attr('aria-expanded', false);
+			this.$().find('.sapTntNavLIGroup').attr('aria-expanded', false);
 
 			var expandIconControl = this._getExpandIconControl();
 			expandIconControl.setSrc(NavigationListItem.expandIcon);
 			expandIconControl.setTooltip(this._getExpandIconTooltip(true));
 
-			var $container = this.$().find('.sapMNavLIGroupItems');
+			var $container = this.$().find('.sapTntNavLIGroupItems');
 			$container.stop(true, true).slideUp(duration || 'fast', function () {
-				$container.toggleClass('sapMNavLIHiddenGroupItems');
+				$container.toggleClass('sapTntNavLIHiddenGroupItems');
 			});
 
 			return true;
@@ -345,7 +345,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			// first navigation level
 			if (navList.getExpanded()) {
 
-				if (!source || source.getMetadata().getName() != 'sap.ui.core.Icon' || !source.$().hasClass('sapMNavLIExpandIcon')) {
+				if (!source || source.getMetadata().getName() != 'sap.ui.core.Icon' || !source.$().hasClass('sapTntNavLIExpandIcon')) {
 					this._selectItem(event);
 					return;
 				}
@@ -385,11 +385,11 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 
 			rm.write('<div');
 
-			rm.addClass("sapMNavLIItem");
-			rm.addClass("sapMNavLIGroup");
+			rm.addClass("sapTntNavLIItem");
+			rm.addClass("sapTntNavLIGroup");
 
 			if (!this.getEnabled()) {
-				rm.addClass("sapMNavLIItemDisabled");
+				rm.addClass("saTntNavLIItemDisabled");
 			} else if (control.getExpanded()) {
 				rm.write(' tabindex="-1"');
 			}
@@ -464,10 +464,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 
 				rm.write("<ul");
 
-				rm.addClass("sapMNavLIGroupItems");
+				rm.addClass("sapTntNavLIGroupItems");
 
 				if (!expanded) {
-					rm.addClass("sapMNavLIHiddenGroupItems");
+					rm.addClass("sapTntNavLIHiddenGroupItems");
 				}
 
 				rm.writeClasses();
@@ -496,11 +496,11 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 
 			rm.writeElementData(this);
 
-			rm.addClass("sapMNavLIItem");
-			rm.addClass("sapMNavLIGroupItem");
+			rm.addClass("sapTntNavLIItem");
+			rm.addClass("sapTntNavLIGroupItem");
 
 			if (!this.getEnabled() || !group.getEnabled()) {
-				rm.addClass("sapMNavLIItemDisabled");
+				rm.addClass("sapTntNavLIItemDisabled");
 			} else {
 				rm.write(' tabindex="-1"');
 			}
@@ -537,7 +537,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			rm.write('<span');
 
 			rm.addClass("sapUiIcon");
-			rm.addClass("sapMNavLIGroupIcon");
+			rm.addClass("sapTntNavLIGroupIcon");
 
 			var icon = this.getIcon();
 			var iconInfo = IconPool.getIconInfo(icon);
@@ -566,7 +566,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			rm.write('<span');
 
 			rm.addClass("sapMText");
-			rm.addClass("sapMNavLIText");
+			rm.addClass("sapTntNavLIText");
 			rm.addClass("sapMTextNoWrap");
 
 			rm.writeClasses();
@@ -594,13 +594,13 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 		NavigationListItem.prototype._unselect = function() {
 
 			var $this = this.$();
-			$this.removeClass('sapMNavLIItemSelected');
+			$this.removeClass('sapTntNavLIItemSelected');
 
 			var isListExpanded = this.getNavigationList().getExpanded();
 			if (isListExpanded) {
 
 				if (this.getLevel() == 0) {
-					$this = $this.find('.sapMNavLIGroup');
+					$this = $this.find('.sapTntNavLIGroup');
 				}
 
 				$this.removeAttr('aria-selected');
@@ -616,13 +616,13 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 		NavigationListItem.prototype._select = function() {
 
 			var $this = this.$();
-			$this.addClass('sapMNavLIItemSelected');
+			$this.addClass('sapTntNavLIItemSelected');
 
 			var isListExpanded = this.getNavigationList().getExpanded();
 			if (isListExpanded) {
 
 				if (this.getLevel() == 0) {
-					$this = $this.find('.sapMNavLIGroup');
+					$this = $this.find('.sapTntNavLIGroup');
 				}
 
 				$this.attr('aria-selected', true);
@@ -645,12 +645,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			var $this = this.$();
 
 			if (this.getParent().getExpanded()) {
-				domRefs.push($this.find('.sapMNavLIGroup')[0]);
+				domRefs.push($this.find('.sapTntNavLIGroup')[0]);
 			} else {
 				domRefs.push($this[0]);
 			}
 
-			var subItems = $this.find('.sapMNavLIGroupItem');
+			var subItems = $this.find('.sapTntNavLIGroupItem');
 
 			for (var i = 0; i < subItems.length; i++) {
 				domRefs.push(subItems[i]);

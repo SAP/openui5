@@ -30,7 +30,7 @@ sap.ui.define([
 						type: sap.m.ButtonType.Transparent
 					})
 				]
-			}).addStyleClass('sapMOTAPopover sapMToolHeaderPopover');
+			}).addStyleClass('sapMOTAPopover sapTntToolHeaderPopover');
 
 			popover.openBy(event.getSource());
 		}

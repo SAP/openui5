@@ -36,10 +36,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			}
 			rm.writeStyles();
 
-			rm.addClass("sapMNavLI");
+			rm.addClass("sapTntNavLI");
 
 			if (!expanded) {
-				rm.addClass("sapMNavLICollapsed");
+				rm.addClass("sapTntNavLICollapsed");
 			}
 
 			rm.writeClasses();

@@ -505,7 +505,7 @@
 		});
 
 		QUnit.test("contains elements and classes", function (assert) {
-			assert.ok(this.toolPage.$().hasClass('sapMToolPage'), "sapMToolPage class is not set");
+			assert.ok(this.toolPage.$().hasClass('sapTntToolPage'), "sapTntToolPage class is not set");
 		});
 
 		QUnit.test("toggleSideContentMode", function (assert) {
@@ -519,12 +519,12 @@
 		QUnit.test("setSideExpanded", function (assert) {
 			this.toolPage.setSideExpanded(true);
 
-			assert.equal(this.toolPage.$('aside').parent().hasClass('sapMToolPageAsideCollapsed'), false, "ToolPage should not be collapsed");
+			assert.equal(this.toolPage.$('aside').parent().hasClass('sapTntToolPageAsideCollapsed'), false, "ToolPage should not be collapsed");
 			assert.strictEqual(this.toolPage.getSideExpanded(), true, "ToolPage should be expanded")
 
 			this.toolPage.setSideExpanded(false);
 
-			assert.equal(this.toolPage.$('aside').parent().hasClass('sapMToolPageAsideCollapsed'), true, "ToolPage should be collapsed");
+			assert.equal(this.toolPage.$('aside').parent().hasClass('sapTntToolPageAsideCollapsed'), true, "ToolPage should be collapsed");
 			assert.strictEqual(this.toolPage.getSideExpanded(), false, "ToolPage should be collapsed")
 		});
 

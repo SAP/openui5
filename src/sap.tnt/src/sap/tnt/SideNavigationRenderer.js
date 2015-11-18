@@ -43,10 +43,10 @@ sap.ui.define([],
 
             rm.write('<div');
             rm.writeControlData(control);
-            rm.addClass('sapMSideNavigation');
+            rm.addClass('sapTntSideNavigation');
 
             if (!isExpanded) {
-                rm.addClass('sapMSideNavigationNotExpanded');
+                rm.addClass('sapTntSideNavigationNotExpanded');
             }
 
             if (!isExpanded && itemAggregation) {
@@ -78,8 +78,8 @@ sap.ui.define([],
         SideNavigationRenderer.renderItem = function (rm, control) {
             var itemAggregation = control.getAggregation('item');
 
-            rm.write('<div id="' + control.getId() + '-Flexible" class="sapMSideNavigationFlexible sapMSideNavigationVerticalScrolling">');
-            rm.write('<div id="' + control.getId() + '-Flexible-Content" class="sapMSideNavigationFlexibleContent">');
+            rm.write('<div id="' + control.getId() + '-Flexible" class="sapTntSideNavigationFlexible sapTntSideNavigationVerticalScrolling">');
+            rm.write('<div id="' + control.getId() + '-Flexible-Content" class="sapTntSideNavigationFlexibleContent">');
             rm.renderControl(itemAggregation);
             rm.write('</div></div>');
         };
@@ -95,16 +95,16 @@ sap.ui.define([],
                 fixedItemAggregation.setExpanded(false);
             }
 
-            rm.write('<div class="sapMSideNavigationSeparator" role="separator" aria-orientation="horizontal"></div>');
+            rm.write('<div class="sapTntSideNavigationSeparator" role="separator" aria-orientation="horizontal"></div>');
 
-            rm.write('<div class="sapMSideNavigationFixed">');
+            rm.write('<div class="sapTntSideNavigationFixed">');
             rm.renderControl(fixedItemAggregation);
             rm.write('</div>');
         };
 
         SideNavigationRenderer.renderFooter = function (rm, control) {
             if (control.getAggregation('footer')) {
-                rm.write('<footer class="sapMSideNavigationFooter">');
+                rm.write('<footer class="sapTntSideNavigationFooter">');
                 rm.renderControl(control.getAggregation('footer'));
                 rm.write('</footer>');
             }
