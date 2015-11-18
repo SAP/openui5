@@ -583,7 +583,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			}
 
 			rm.write(">");
-			rm.write(this.getText());
+			rm.writeEscaped(this.getText());
 			rm.write("</span>");
 		};
 
