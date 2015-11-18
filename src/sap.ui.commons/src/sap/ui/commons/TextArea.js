@@ -159,25 +159,20 @@ sap.ui.define(['jquery.sap.global', './TextField', './library'],
 	};
 
 	/**
-	 * Returns an object representing the serialized focus information.
-	 * Overwrites the standard function.
-	 * @return {object} An object representing the serialized focus information.
-	 * @private
-	 */
-	TextArea.prototype.getFocusInfo = function () {
-		return {id:this.getId(), cursorPos:this.getCursorPos()};
-	};
-
-	/**
 	 * Applies the focus info.
 	 * Overwrites the standard function.
 	 * @param {object} oFocusInfo Focusinfo object
 	 * @private
 	 */
 	TextArea.prototype.applyFocusInfo = function (oFocusInfo) {
-		this.focus();
+
+		TextField.prototype.applyFocusInfo.apply(this, arguments);
+
 		var oFocusDomRef = this.getFocusDomRef();
 		jQuery(oFocusDomRef).cursorPos(this.getCursorPos());
+
+		return this;
+
 	};
 
 	/**
@@ -341,6 +336,10 @@ sap.ui.define(['jquery.sap.global', './TextField', './library'],
 		}
 
 		TextField.prototype.oninput.apply(this, arguments);
+
+		// save cursor position
+		var oDomRef = this.getDomRef();
+		this.setProperty('cursorPos', jQuery(oDomRef).cursorPos(), true); // no re-rendering!
 
 	};
 
