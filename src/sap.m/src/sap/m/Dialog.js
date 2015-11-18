@@ -267,7 +267,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		Dialog.prototype.init = function () {
 			var that = this;
 			this._externalIcon = undefined;
-			this._sResizeListenerId = null;
 			this._oManuallySetSize = null;
 			this._oManuallySetPosition = null;
 
@@ -370,8 +369,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		};
 
 		Dialog.prototype.exit = function () {
-			sap.ui.Device.resize.detachHandler(this._fnOrientationChange);
-
 			InstanceManager.removeDialogInstance(this);
 
 			if (this.oPopup) {
@@ -436,6 +433,19 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 
 			oPopup.open();
 
+			//resize handler ===========================================================================================
+			var __delayTimer;
+			jQuery(window).on('resize.sapMDialogWindowResize', function () {
+				if (__delayTimer) {
+					__delayTimer = clearTimeout(__delayTimer);
+				}
+
+				__delayTimer = setTimeout(this._onResize.bind(this), 50);
+			}.bind(this));
+
+			//set the content size so the scroller can work properly
+			this._onResize();
+
 			InstanceManager.addDialogInstance(this);
 			return this;
 		};
@@ -449,6 +459,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 */
 		Dialog.prototype.close = function () {
 			this.$().removeClass('sapDialogDisableTransition');
+
+			//clear the resize listener
+			jQuery(window).off('resize.sapMDialogWindowResize');
 
 			var oPopup = this.oPopup;
 
@@ -655,6 +668,18 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._onResize = function () {
+			if (this.getContentHeight()) {
+				return;
+			}
+
+			var $dialog = this.$();
+			var $dialogContent = this.$('cont');
+
+			//reset the height so the dialog can grow
+			$dialogContent.height('auto');
+			//set the newly calculated size by getting it from the browser rendered layout - by the max-height
+			var dialogContentHeight = parseInt($dialog.height(), 10) + parseInt($dialog.css("border-top-width"), 10) + parseInt($dialog.css("border-bottom-width"), 10);
+			$dialogContent.height(dialogContentHeight);
 		};
 
 		/**
@@ -958,10 +983,6 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		 * @private
 		 */
 		Dialog.prototype._deregisterResizeHandler = function () {
-			if (this._sResizeListenerId) {
-				sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
-				this._sResizeListenerId = null;
-			}
 		};
 
 		/**
@@ -1003,7 +1024,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		Dialog.prototype._getToolbar = function () {
 			if (!this._oToolbar) {
 				this._oToolbar = new AssociativeOverflowToolbar(this.getId() + "-footer").addStyleClass("sapMTBNoBorders").applyTagAndContextClassFor("footer");
-				this._oToolbar._isControlsInfoCached = function () { return false; };
+				this._oToolbar._isControlsInfoCached = function () {
+					return false;
+				};
 
 				this.setAggregation("_toolbar", this._oToolbar);
 			}
@@ -1022,11 +1045,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './InstanceManager', './Associative
 		//Manage "sapMDialogWithSubHeader" class depending on the visibility of the subHeader
 		//This is because the dialog has content height and width and the box-sizing have to be content-box in
 		//order to not recalculate the size with js
-		Dialog.prototype.setSubHeader = function(oControl) {
+		Dialog.prototype.setSubHeader = function (oControl) {
 			this.setAggregation("subHeader", oControl);
 
 			if (oControl) {
-				oControl.setVisible = function(isVisible) {
+				oControl.setVisible = function (isVisible) {
 					this.$().toggleClass('sapMDialogWithSubHeader', isVisible);
 					oControl.setProperty("visible", isVisible);
 				}.bind(this);
