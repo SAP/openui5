@@ -27,6 +27,12 @@
 	transform: translate(-50%, -50%) scale(0.9);
 }
 
+//the rtl will change the transform-translate from (-50% -50%) to (50% -50%)
+[dir="rtl"] .sapMDialog {
+	left: 50%; //this will be changed to auto from the rtl mode
+	right: -50%; //this will be reverted to 50% by the rtl mode
+}
+
 // set max height and max width ========================================================================================
 
 .sapMDialog {
