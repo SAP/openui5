@@ -372,7 +372,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	SearchField.prototype.onSearch = function(event) {
 		var value = this._inputElement.value;
 		this.setValue(value);
-		this.fireSearch({query: value});
+		this.fireSearch({
+			query: value,
+			refreshButtonPressed: false,
+			clearButtonPressed: false
+		});
 	
 		// If the user has pressed the search button on the soft keyboard - close it,
 		// but only in case of soft keyboard:
@@ -460,6 +464,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	SearchField.prototype.onkeyup = function(event) {
 		var selectedIndex;
+		var suggestionItem;
 
 		if (event.which === jQuery.sap.KeyCodes.F5 || event.which === jQuery.sap.KeyCodes.ENTER) {
 	
@@ -472,13 +477,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 				// take over the value from the selected suggestion list item, if any is selected:
 				if ((selectedIndex = this._oSuggest.getSelected()) >= 0) {
-					this.setValue(this.getSuggestionItems()[selectedIndex].getSuggestionText());
+					suggestionItem = this.getSuggestionItems()[selectedIndex];
+					this.setValue(suggestionItem.getSuggestionText());
 				}
 			}
 
 			this.fireSearch({
 				query: this.getValue(),
-				refreshButtonPressed : this.getShowRefreshButton() && event.which === jQuery.sap.KeyCodes.F5
+				suggestionItem: suggestionItem,
+				refreshButtonPressed: this.getShowRefreshButton() && event.which === jQuery.sap.KeyCodes.F5,
+				clearButtonPressed: false
 			});
 		}
 	};

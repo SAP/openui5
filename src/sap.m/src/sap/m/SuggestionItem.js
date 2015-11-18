@@ -3,8 +3,8 @@
  */
 
 // Provides element sap.m.SuggestionItem.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
-	function(jQuery, library, Item) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item', 'sap/ui/core/IconPool'],
+	function(jQuery, library, Item, IconPool) {
 	"use strict";
 
 	/**
@@ -45,6 +45,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 		}
 	}});
 
+	IconPool.insertFontFaceStyle();
+
 	// Render output text to make occurrences of the search text value bold:
 	function renderItemText(oRm, sText, sSearch){
 		var i;
@@ -75,6 +77,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 	SuggestionItem.prototype.render = function(oRenderManager, oItem, sSearch, bSelected){
 		var rm = oRenderManager;
 		var text = oItem.getText();
+		var icon = oItem.getIcon();
 		var separator = "";
 		var description = oItem.getDescription();
 		sSearch = sSearch || "";
@@ -91,6 +94,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 		}
 		rm.writeClasses();
 		rm.write(">");
+		if (icon) {
+			rm.writeIcon(icon, "sapMSuggestionItemIcon", {});
+		}
 		if (text) {
 			renderItemText(rm, text, sSearch);
 			separator = " ";
