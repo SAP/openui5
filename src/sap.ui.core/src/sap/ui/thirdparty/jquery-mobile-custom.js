@@ -1667,7 +1667,13 @@ function handleTouchEnd( event ) {
 			clickBlockList.push({
 				touchID: lastTouchID,
 				x: t.clientX,
-				y: t.clientY,
+				// SAP MODIFICATION
+				// On mobile device, the entire UI may be shifted up after the on screen keyboard
+				// is open. The Y-axis value may be different between the touch event and the delayed
+				// mouse event. Therefore it's needed to take the window.scrollY which represents how
+				// far the window is shifted up into the calculation of y-axis value to make sure that
+				// the delayed mouse event can be correctly marked.
+				y: t.clientY + window.scrollY,
 				// SAP MODIFICATION
 				// the touchend event target is needed by suppressing mousedown, mouseup, click event
 				target: event.target
@@ -1828,7 +1834,13 @@ if ( eventCaptureSupported ) {
 
 		if ( cnt ) {
 			x = e.clientX;
-			y = e.clientY;
+			// SAP MODIFICATION
+			// On mobile device, the entire UI may be shifted up after the on screen keyboard
+			// is open. The Y-axis value may be different between the touch event and the delayed
+			// mouse event. Therefore it's needed to take the window.scrollY which represents how
+			// far the window is shifted up into the calculation of y-axis value to make sure that
+			// the delayed mouse event can be correctly marked.
+			y = e.clientY + window.scrollY;
 			threshold = $.vmouse.clickDistanceThreshold;
 
 			// The idea here is to run through the clickBlockList to see if
