@@ -1588,6 +1588,50 @@
 		});
 	});
 	
+	asyncTest("test oDataModel setProperty : resetChanges twice - request should be aborted", function() {
+		var oSpy;
+		oModel.read("/ProductSet('AD-1000')", {
+			success: function() {
+				oModel.setDeferredBatchGroups(["myId"]);
+				oModel.setChangeBatchGroups({
+							"Product": {
+					 			batchGroupId: "myId",  
+					  			changeSetId: "Test",
+					  			single: true
+					 		}});
+				
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "NewName");
+				oModel.metadataLoaded().then(function(){
+					ok(oModel.hasPendingChanges(), "model has pending changes");
+					equal(oModel.mChangedEntities["ProductSet('AD-1000')"].Name, "NewName", "check internal map");
+					equal(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].method, "MERGE", "check internal map");
+					oModel.resetChanges();
+					oModel.metadataLoaded().then(function(){
+						ok(!oModel.hasPendingChanges(), "model has pending changes");
+						ok(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"]._aborted, "check request should be marked as aborted");
+						oModel.setProperty("/ProductSet('AD-1000')/Name", "NewName2");
+						oModel.metadataLoaded().then(function(){
+							ok(oModel.hasPendingChanges(), "model has pending changes");
+							equal(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"].data.Name, "NewName2", "check internal data map");
+							ok(!oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"]._aborted, "check request should not be marked as aborted");
+							oModel.resetChanges();
+							oModel.metadataLoaded().then(function(){
+								ok(!oModel.hasPendingChanges(), "model has pending changes");
+								ok(oModel.mDeferredRequests["myId"].map["ProductSet('AD-1000')"]._aborted, "check request should be marked as aborted");
+								start();
+							});
+						});
+					});
+				});
+				// check internas
+			},
+			error: function() {
+				ok(false, "request failed");
+				start();
+			}
+		});
+	});
+	
 	asyncTest("test oDataModel list binding", function() {
 		var iCount = 0;
 		var bMetadataLoaded = false;
