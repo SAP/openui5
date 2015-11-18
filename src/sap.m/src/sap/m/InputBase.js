@@ -1046,23 +1046,40 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			oDomRef.removeAttribute("title");
 		}
 
-		var oDescribedByDomRef = this.getDomRef("describedby"),
-			sAnnouncement = this.getRenderer().getDescribedByAnnouncement(this);
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
 
-		if (!oDescribedByDomRef && sAnnouncement) {
-			oDescribedByDomRef = document.createElement("span");
-			oDescribedByDomRef.setAttribute("id", this.getId() + "-describedby");
-			oDescribedByDomRef.setAttribute("aria-hidden", "true");
-			oDescribedByDomRef.setAttribute("class", "sapUiInvisibleText");
-			oDomRef.appendChild(oDescribedByDomRef);
-		}
+			var oDescribedByDomRef = this.getDomRef("describedby"),
+				sAnnouncement = this.getRenderer().getDescribedByAnnouncement(this),
+				sDescribedbyId = this.getId() + "-describedby",
+				sAriaDescribedByAttr = "aria-describedby",
+				oFocusDomRef = this.getFocusDomRef(),
+				sAriaDescribedby = oFocusDomRef.getAttribute(sAriaDescribedByAttr);
 
-		if (oDescribedByDomRef && !sAnnouncement) {
-			oDomRef.removeChild(oDescribedByDomRef);
-		}
+			if (!oDescribedByDomRef && sAnnouncement) {
+				oDescribedByDomRef = document.createElement("span");
+				oDescribedByDomRef.id = sDescribedbyId;
+				oDescribedByDomRef.setAttribute("aria-hidden", "true");
+				oDescribedByDomRef.className = "sapUiInvisibleText";
 
-		if (oDescribedByDomRef) {
-			oDescribedByDomRef.textContent = sAnnouncement;
+				if (this.getAriaDescribedBy) {
+					oFocusDomRef.setAttribute(sAriaDescribedByAttr, (this.getAriaDescribedBy().join(" ") + " " + sDescribedbyId).trim());
+				} else {
+					oFocusDomRef.setAttribute(sAriaDescribedByAttr, sDescribedbyId);
+				}
+
+				oDomRef.appendChild(oDescribedByDomRef);
+			} else if (oDescribedByDomRef && !sAnnouncement) {
+				oDomRef.removeChild(oDescribedByDomRef);
+				var sDescribedByDomRefId = oDescribedByDomRef.id;
+
+				if (sAriaDescribedby && sDescribedByDomRefId) {
+					oFocusDomRef.setAttribute(sAriaDescribedByAttr, sAriaDescribedby.replace(sDescribedByDomRefId, "").trim());
+				}
+			}
+
+			if (oDescribedByDomRef) {
+				oDescribedByDomRef.textContent = sAnnouncement;
+			}
 		}
 
 		return this;
