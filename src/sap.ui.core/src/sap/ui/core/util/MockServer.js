@@ -1328,13 +1328,31 @@ sap.ui
 							sKeyValue = aPair[1];
 						}
 					}
-					if (sKeyValue) {
-						if (sKeyValue.indexOf('\'') === 0) {
-							oResult[sKeyName] = sKeyValue.slice(1, sKeyValue.length - 1);
-						} else {
-							oResult[sKeyName] = sKeyValue;
-						}
+					oResult[sKeyName] = sKeyValue;
+					switch (oEntitySet.keysType[sKeyName]) {
+						case "Edm.String":
+							oResult[sKeyName] = oResult[sKeyName].replace(/^\'|\'$/g, "");
+							break;
+						case "Edm.Int16":
+						case "Edm.Int32":
+						case "Edm.Int64":
+						case "Edm.Decimal":
+						case "Edm.Byte":
+						case "Edm.Double":
+						case "Edm.Single":
+						case "Edm.SByte":
+							oResult[sKeyName] = parseFloat(oResult[sKeyName]);
+							break;
+						case "Edm.Guid":
+							oResult[sKeyName] = oResult[sKeyName].replace(/^guid\'|\'$/g, "");
+							break;
+						case "Edm.Boolean":
+						case "Edm.Binary":
+						case "Edm.DateTimeOffset":
+						default:
+							oResult[sKeyName] = oResult[sKeyName];
 					}
+
 				}
 				return oResult;
 			};
@@ -1387,7 +1405,7 @@ sap.ui
 						return Math.floor(Math.random() * 10);
 					case "Time":
 						// ODataModel expects ISO8601 duration format
-						return "PT" +  Math.floor(Math.random() * 23) + "H" + Math.floor(Math.random() * 59) + "M" + Math.floor(Math.random() * 59) + "S";
+						return "PT" + Math.floor(Math.random() * 23) + "H" + Math.floor(Math.random() * 59) + "M" + Math.floor(Math.random() * 59) + "S";
 					case "Guid":
 						return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 							var r = Math.random() * 16 | 0,
@@ -1461,7 +1479,7 @@ sap.ui
 					for (var i = 0; i < oEntitySet.keys.length; i++) {
 						var sKey = oEntitySet.keys[i];
 						// if the key has value, just use it
-						if (oKeys[sKey] || this._isFalseyValue(oKeys[sKey], sKey, oEntitySet.keysType[sKey])) {
+					if (oKeys[sKey] !== undefined && oKeys[sKey] !== null) {
 							if (!oEntity[sKey]) {
 								// take over the specified key value
 								switch (oEntitySet.keysType[sKey]) {
@@ -1469,7 +1487,7 @@ sap.ui
 										oEntity[sKey] = this._getJsonDate(oKeys[sKey]);
 										break;
 									case "Edm.Guid":
-										oEntity[sKey] = oKeys[sKey].substring(5, oKeys[sKey].length - 1);
+										oEntity[sKey] = oKeys[sKey].replace(/^guid\'|\'$/g, "");
 										break;
 									default:
 										oEntity[sKey] = oKeys[sKey];
