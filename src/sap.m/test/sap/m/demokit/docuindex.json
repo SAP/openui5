@@ -771,6 +771,7 @@
 		  "since": "1.26",
 		  "samples": [
 			"sap.m.sample.P13nDialog",
+			"sap.m.sample.P13nDialogWithDimMeasurePanel",
 			"sap.m.sample.P13nDialogWithCustomPanel"
 		  ]
 		},
@@ -1561,6 +1562,11 @@
 		  "id": "sap.m.sample.P13nDialog",
 		  "name": "P13nDialog stand-alone",
 		  "description": "Dialog for personalization of column order and their visibility, sorting and filtering conditions of columns."
+		},
+		{
+		  "id": "sap.m.sample.P13nDialogWithDimMeasurePanel",
+		  "name": "P13nDialog stand-alone",
+		  "description": "Dialog for personalization of dimension/measure order and their visibility, sorting and filtering conditions of dimensions/measures."
 		},
 		{
 		  "id": "sap.m.sample.P13nDialogWithCustomPanel",
