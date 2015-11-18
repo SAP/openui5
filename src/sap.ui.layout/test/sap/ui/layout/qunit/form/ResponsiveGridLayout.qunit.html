@@ -237,13 +237,13 @@
 			var oGrid = sap.ui.getCore().byId("F1C1--Grid");
 			oLayoutData = oGrid._getLayoutDataForControl(oLabel);
 			equal(oLayoutData.getId(), "Layout1--Dummy", "Form1: Label1 must use calculated LayoutData");
-			equal(oLayoutData.getSpan(), "L2 M2 S12", "Form1: Label1 calculated LayoutData span correct");
+			equal(oLayoutData.getSpan(), "XL4 L2 M2 S12", "Form1: Label1 calculated LayoutData span correct");
 			equal(oLayoutData.getLinebreak(), true, "Form1: Label1 calculated LayoutData linebreak correct");
 
 			var oField = sap.ui.getCore().byId("F1C1E1_T1");
 			oLayoutData = oGrid._getLayoutDataForControl(oField);
 			equal(oLayoutData.getId(), "Layout1--Dummy", "Form1: Field1 must use calculated LayoutData");
-			equal(oLayoutData.getSpan(), "L10 M10 S12", "Form1: Field1 calculated LayoutData span correct");
+			equal(oLayoutData.getSpan(), "XL8 L10 M10 S12", "Form1: Field1 calculated LayoutData span correct");
 			equal(oLayoutData.getLinebreak(), false, "Form1: Field1 calculated LayoutData linebreak correct");
 
 			var oPanel = sap.ui.getCore().byId("F3C1---Panel");
@@ -278,25 +278,25 @@
 			oField = sap.ui.getCore().byId("F3C1E2_T1");
 			oLayoutData = oGrid._getLayoutDataForControl(oField);
 			equal(oLayoutData.getId(), "Layout3--Dummy", "Form3: Field3 must use calculated LayoutData");
-			equal(oLayoutData.getSpan(), "L5 M5 S12", "Form3: Field3 calculated LayoutData span correct");
+			equal(oLayoutData.getSpan(), "XL4 L5 M5 S12", "Form3: Field3 calculated LayoutData span correct");
 			equal(oLayoutData.getLinebreak(), false, "Form3: Field3 calculated LayoutData linebreak correct");
 
 			oField = sap.ui.getCore().byId("F3C1E2_T2");
 			oLayoutData = oGrid._getLayoutDataForControl(oField);
 			equal(oLayoutData.getId(), "Layout3--Dummy", "Form3: Field4 must use calculated LayoutData");
-			equal(oLayoutData.getSpan(), "L4 M4 S12", "Form3: Field4 calculated LayoutData span correct");
+			equal(oLayoutData.getSpan(), "XL4 L4 M4 S12", "Form3: Field4 calculated LayoutData span correct");
 			equal(oLayoutData.getLinebreak(), false, "Form3: Field4 calculated LayoutData linebreak correct");
 
 			oField = sap.ui.getCore().byId("F3C2E1_T1");
 			oLayoutData = oGrid._getLayoutDataForControl(oField);
 			equal(oLayoutData.getId(), "Layout3--Dummy", "Form3: Container2 Field1 must use calculated LayoutData");
-			equal(oLayoutData.getSpan(), "L6 M6 S12", "Form3: Container2 Field1 calculated LayoutData span correct");
+			equal(oLayoutData.getSpan(), "XL6 L6 M6 S12", "Form3: Container2 Field1 calculated LayoutData span correct");
 			equal(oLayoutData.getLinebreak(), true, "Form3: Container2 Field1 calculated LayoutData linebreak correct");
 
 			oField = sap.ui.getCore().byId("F3C2E1_T2");
 			oLayoutData = oGrid._getLayoutDataForControl(oField);
 			equal(oLayoutData.getId(), "Layout3--Dummy", "Form3: Container2 Field2 must use calculated LayoutData");
-			equal(oLayoutData.getSpan(), "L6 M6 S12", "Form3: Container2 Field2 calculated LayoutData span correct");
+			equal(oLayoutData.getSpan(), "XL6 L6 M6 S12", "Form3: Container2 Field2 calculated LayoutData span correct");
 			equal(oLayoutData.getLinebreak(), false, "Form3: Container2 Field2 calculated LayoutData linebreak correct");
 
 			oField = sap.ui.getCore().byId("F3C2E2_T1");
@@ -314,7 +314,7 @@
 			oGrid = sap.ui.getCore().byId("F5C1--Grid");
 			oLayoutData = oGrid._getLayoutDataForControl(oLabel);
 			equal(oLayoutData.getId(), "Layout5--Dummy", "Form5: Label1 must use calculated LayoutData");
-			equal(oLayoutData.getSpan(), "L4 M12 S12", "Form5: Label1 calculated LayoutData span correct");
+			equal(oLayoutData.getSpan(), "XL4 L4 M12 S12", "Form5: Label1 calculated LayoutData span correct");
 			equal(oLayoutData.getLinebreak(), true, "Form5: Label1 calculated LayoutData linebreak correct");
 		});
 
