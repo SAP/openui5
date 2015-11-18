@@ -148,7 +148,7 @@ sap.ui.define([ 'jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/seman
 	MasterPage.prototype.init = function () {
 
 		SemanticPage.prototype.init.call(this);
-		this._getPage().getLandmarkInfo().setRootLabel("Master");
+		this._getPage().getLandmarkInfo().setRootLabel(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SEMANTIC_MASTER_PAGE_TITLE"));
 	};
 
 	return MasterPage;

@@ -198,7 +198,7 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 	DetailPage.prototype.init = function () {
 
 		ShareMenuPage.prototype.init.call(this);
-		this._getPage().getLandmarkInfo().setRootLabel("Details");
+		this._getPage().getLandmarkInfo().setRootLabel(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SEMANTIC_DETAIL_PAGE_TITLE"));
 	};
 
 	/*
