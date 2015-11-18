@@ -51,24 +51,7 @@
 
 	</properties>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.sap.ui5</groupId>
-			<artifactId>core</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.ui5</groupId>
-			<artifactId>mobile</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sap.ui5</groupId>
-			<artifactId>themelib_sap_bluecrystal</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-	</dependencies>
-	
+
 	<!--**************************************************************************
 	* POM SECTION: Build Settings
 	***************************************************************************-->
