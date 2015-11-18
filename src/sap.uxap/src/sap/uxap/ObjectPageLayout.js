@@ -1083,7 +1083,8 @@ sap.ui.define([
 			iPageHeight,
 			oHeader = this.getHeaderTitle(),
 			bShouldStick = iScrollTop >= (this.iHeaderContentHeight - (this.iHeaderTitleHeightStickied - this.iHeaderTitleHeight)), // iHeaderContentHeight minus the gap between the two headerTitle
-			sClosestId;
+			sClosestId,
+			bScrolled = false;
 
 		//calculate the limit of visible sections to be lazy loaded
 		iPageHeight = this.iScreenHeight;
@@ -1157,7 +1158,9 @@ sap.ui.define([
 				// if we have arrow from the title inside the ContentHeader and the ContentHeader isn't scrolled we have to put higher z-index to the ContentHeader
 				// otherwise part of the arrow is cut off
 				jQuery.sap.byId(this.getId() + "-scroll").css("z-index", "1000");
-			} else {
+				bScrolled = false;
+			} else if (!bScrolled) {
+				bScrolled = true;
 				// and we have to "reset" the z-index it when we start scrolling
 				jQuery.sap.byId(this.getId() + "-scroll").css("z-index", "0");
 			}
