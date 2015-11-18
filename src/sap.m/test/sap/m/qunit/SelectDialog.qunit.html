@@ -694,7 +694,9 @@
 						assert.strictEqual(jQuery("#selectDialog-dialog-cont").height(), 150, "content in Dialog should have height of 150px.");
 						that.oSelectDialog.setContentHeight("286px");
 						sap.ui.getCore().applyChanges();
-						assert.strictEqual(jQuery("#selectDialog-dialog-cont").height(), 286, "content in Dialog should have height of 286px.");
+
+						var browserCalculatedHeight = Math.round(parseFloat(window.getComputedStyle(jQuery("#selectDialog-dialog-cont")[0]).height));
+						assert.strictEqual(browserCalculatedHeight, 286, "content in Dialog should have height of 286px.");
 						done();
 					});
 
