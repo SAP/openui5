@@ -758,6 +758,10 @@ sap.ui.define([
 		
 		var bSuccess = false;
 		
+		if (!aSorters) {
+			aSorters = [];
+		}
+		
 		if (aSorters instanceof Sorter) {
 			aSorters = [aSorters];
 		}
