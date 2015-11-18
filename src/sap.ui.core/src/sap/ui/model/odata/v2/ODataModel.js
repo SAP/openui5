@@ -2328,6 +2328,12 @@ sap.ui.define([
 				// the aborted flag
 				if (oChangeRequest._aborted) {
 					delete oChangeRequest._aborted;
+					var oRequestHandle = {
+							abort: function() {
+								oChangeRequest._aborted = true;
+							}
+					};
+					this.mChangeHandles[oRequest.key] = oRequestHandle;
 				}
 				oChangeRequest.data = oRequest.data;
 
