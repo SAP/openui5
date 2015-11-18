@@ -271,7 +271,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 		 * Expands the child items (works only on first-level items).
 		 */
 		NavigationListItem.prototype.expand = function (duration) {
-			if (this.getExpanded() || !this.getHasExpander() || this.getLevel() > 0) {
+			if (this.getExpanded() || !this.getHasExpander() ||
+				this.getItems().length == 0 || this.getLevel() > 0) {
 				return;
 			}
 
@@ -287,6 +288,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 				$container.toggleClass('sapTntNavLIHiddenGroupItems');
 			});
 
+			this.getNavigationList()._updateNavItems();
+
 			return true;
 		};
 
@@ -294,7 +297,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 		 * Collapses the child items (works only on first-level items).
 		 */
 		NavigationListItem.prototype.collapse = function (duration) {
-			if (!this.getExpanded() || !this.getHasExpander() || this.getLevel() > 0) {
+			if (!this.getExpanded() || !this.getHasExpander() ||
+				this.getItems().length == 0 || this.getLevel() > 0) {
 				return;
 			}
 
@@ -309,6 +313,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			$container.stop(true, true).slideUp(duration || 'fast', function () {
 				$container.toggleClass('sapTntNavLIHiddenGroupItems');
 			});
+
+			this.getNavigationList()._updateNavItems();
 
 			return true;
 		};
@@ -403,13 +409,15 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 					rm.writeAttribute("aria-expanded", this.getExpanded());
 					rm.writeAttribute("aria-level", 1);
 				}
-			}
 
-			var text = this.getText();
+				var text = this.getText();
 
-			var sTooltip = this.getTooltip_AsString() || text;
-			if (sTooltip) {
-				rm.writeAttributeEscaped("title", sTooltip);
+				var sTooltip = this.getTooltip_AsString() || text;
+				if (sTooltip) {
+					rm.writeAttributeEscaped("title", sTooltip);
+				}
+
+				rm.writeAttributeEscaped("aria-label", text);
 			}
 
 			rm.writeClasses();
@@ -450,8 +458,19 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 				rm.write(' tabindex="-1"');
 			}
 
+			var text = this.getText();
+
 			// ARIA
 			if (!isListExpanded) {
+				var text = this.getText();
+
+				var sTooltip = this.getTooltip_AsString() || text;
+				if (sTooltip) {
+					rm.writeAttributeEscaped("title", sTooltip);
+				}
+
+				rm.writeAttributeEscaped("aria-label", text);
+
 				rm.writeAttribute("role", 'button');
 				rm.writeAttribute("aria-haspopup", true);
 			}
@@ -538,6 +557,8 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 
 			rm.addClass("sapUiIcon");
 			rm.addClass("sapTntNavLIGroupIcon");
+
+			rm.writeAttribute("aria-hidden", true);
 
 			var icon = this.getIcon();
 			var iconInfo = IconPool.getIconInfo(icon);
@@ -650,10 +671,12 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 				domRefs.push($this[0]);
 			}
 
-			var subItems = $this.find('.sapTntNavLIGroupItem');
+			if (this.getExpanded()) {
+				var subItems = $this.find('.sapTntNavLIGroupItem');
 
-			for (var i = 0; i < subItems.length; i++) {
-				domRefs.push(subItems[i]);
+				for (var i = 0; i < subItems.length; i++) {
+					domRefs.push(subItems[i]);
+				}
 			}
 
 			return domRefs;

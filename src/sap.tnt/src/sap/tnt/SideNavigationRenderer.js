@@ -43,6 +43,9 @@ sap.ui.define([],
 
             rm.write('<div');
             rm.writeControlData(control);
+
+            rm.writeAttribute("role", 'navigation');
+
             rm.addClass('sapTntSideNavigation');
 
             if (!isExpanded) {

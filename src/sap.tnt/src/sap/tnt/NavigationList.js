@@ -118,6 +118,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/P
 			}
 		};
 
+		NavigationList.prototype._updateNavItems = function() {
+			this._itemNavigation.setItemDomRefs(this._getDomRefs());
+		};
+
 		/**
 		 * Gets DOM references of the navigation items.
 		 * @private
