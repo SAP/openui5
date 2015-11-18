@@ -25,11 +25,9 @@ sap.ui.define([], function() {
 		oRm.write("<div");
 
 		oRm.writeControlData(oControl);
-
-		if (sTooltip) {
+		if (sTooltip.trim()) {
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
-
 		oRm.addClass("sapMGT");
 		oRm.addClass(oControl.getSize());
 		oRm.addClass(oControl.getFrameType());
@@ -56,7 +54,9 @@ sap.ui.define([], function() {
 			oRm.addClass("sapMGTOverlay");
 			oRm.writeClasses();
 			oRm.writeAttribute("id", oControl.getId() + "-overlay");
-			oRm.writeAttributeEscaped("title", oControl.getAltText());
+			if (sTooltip.trim()) {
+				oRm.writeAttributeEscaped("title", sTooltip);
+			}
 			oRm.write(">");
 			switch (sState) {
 				case sap.m.LoadState.Disabled :
@@ -98,7 +98,9 @@ sap.ui.define([], function() {
 		oRm.addClass("sapMGTHdrContent");
 		oRm.addClass(oControl.getSize());
 		oRm.addClass(oControl.getFrameType());
-		oRm.writeAttributeEscaped("title", oControl.getHeaderAltText());
+		if (sTooltip.trim()) {
+			oRm.writeAttributeEscaped("title", sTooltip);
+		}
 		oRm.writeClasses();
 		oRm.write(">");
 		if (sHeaderImage) {

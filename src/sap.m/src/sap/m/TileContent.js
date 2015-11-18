@@ -12,7 +12,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
-	 * @class This control serves as an universal container for different types of content and footer.
+	 * @class This control serves as a universal container for different types of content and footer.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -82,13 +82,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	TileContent.prototype.onAfterRendering = function() {
 		var oContent = this.getContent();
 		if (oContent) {
-			var oThisRef = jQuery(this.getDomRef());
-			if (!oThisRef.attr("title")) {
-				var sContentTooltip = oContent.getTooltip_AsString();
-				var aTooltipEments = oThisRef.find("*");
+			var thisRef = this.$();
+			if (!thisRef.attr("title")) {
+				var sCntTooltip = oContent.getTooltip_AsString();
+				var aTooltipEments = thisRef.find("*");
 				aTooltipEments.removeAttr("title");
-				var oContentTooltip = sContentTooltip ? sContentTooltip : "";
-				oThisRef.attr("title", oContentTooltip + "\n" + this._getFooterText());
+				if (sCntTooltip.trim().length !== 0) {
+					if (this._getFooterText().trim() !== 0) {
+						sCntTooltip = sCntTooltip + "\n" + this._getFooterText();
+					}
+					thisRef.attr("title", sCntTooltip);
+				}
 			}
 		}
 	};
@@ -153,22 +157,24 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			}
 		}
 		if (this.getUnit()) {
-			if (bIsFirst) {
-				sAltText += "" + jQuery.sap.encodeHTML(this.getUnit());
-			} else {
-				sAltText += "\n" + jQuery.sap.encodeHTML(this.getUnit());
-			}
+			sAltText += (bIsFirst ? "" : "\n") + this.getUnit();
 			bIsFirst = false;
 		}
 
 		if (this.getFooter()) {
-			if (bIsFirst) {
-				sAltText += "" + jQuery.sap.encodeHTML(this.getFooter());
-			} else {
-				sAltText += "\n" + jQuery.sap.encodeHTML(this.getFooter());
-			}
+			sAltText += (bIsFirst ? "" : "\n") + this.getFooter();
 		}
 		return sAltText;
+	};
+
+	TileContent.prototype.getTooltip_AsString = function() {
+		var sTooltip = this.getTooltip();
+		var sAltText = "";
+		if (typeof sTooltip === "string" || sTooltip instanceof String) {
+			return sTooltip;
+		}
+		sAltText = this.getAltText();
+		return sAltText ? sAltText : "";
 	};
 
 	return TileContent;
