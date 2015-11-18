@@ -731,13 +731,19 @@ jQuery.mobile.orientationChangeEnabled = true;
 
 	$.extend( $.find, oldFind );
 
-	$.find.matches = function( expr, set ) {
-		return $.find( expr, null, null, set );
-	};
-
-	$.find.matchesSelector = function( node, expr ) {
-		return $.find( expr, null, null, [ node ] ).length > 0;
-	};
+	// SAP MODIFICATION: the following two functions "$.find.matches" and "$.find.matchesSelector" are commented out
+	// because they are not compatible with the existing version before overwritten when a focused DIV element is
+	// checked by using jQuery(oneDIVElement).is(":focus"). it returns false instead of true. We use the check in
+	// sap.ui.core.FocusHandler to store the previous focused control before it gets rerendered. Therefore they are
+	// commented out in order to make the restoring of focus after rerendering still work.
+	//
+	// $.find.matches = function( expr, set ) {
+	// 	return $.find( expr, null, null, set );
+	// };
+	//
+	// $.find.matchesSelector = function( node, expr ) {
+	// 	return $.find( expr, null, null, [ node ] ).length > 0;
+	// };
 })( jQuery, this );
 
 
