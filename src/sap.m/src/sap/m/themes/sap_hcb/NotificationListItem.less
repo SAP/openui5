@@ -1,25 +1,62 @@
 .sapMNLI {
-	background-color: @sapUiLightestBG;
-	border: 1px solid @sapUiExtraLightBorder;
-  	box-shadow: 0 0.125rem 1rem 0 @sapHCShadowTint;
+  background-color: @sapUiLightestBG;
+  border: 1px solid @sapUiExtraLightBorder;
+  box-shadow: 0 0.125rem 1rem 0 @sapHCShadowTint;
+}
+
+.sap-desktop .sapMNLI:focus {
+  outline-offset: -0.1875rem;
+}
+
+.sapMNLI:focus .sapMNLI-Priority {
+  width: 0.1875rem;
+  left: 0.125rem;
 }
 
 .sapMNLI-UnreadStatus {
-	background: @sapHCStandardFG;
+  background: @sapHCStandardFG;
 }
 
 .sapMNLI-Icons .sapUiIcon {
-	color: @sapHCStandardFG;
+  color: @sapHCStandardFG;
 }
 
 .sapMNLI-Header > .sapMTitle {
-	font-size: @sapMFontLargeSize;
+  font-size: @sapMFontLargeSize;
 }
 
 .sapMText.sapMNLI-Datetime {
-	font-size: @sapMFontSmallSize;
+  font-size: @sapMFontSmallSize;
 }
 
 .sapMNLI-Body .sapMNLI-Details {
   font-size: @sapMFontMediumSize;
+}
+
+.sapMNLI-Priority {
+  border-radius: 0;
+}
+
+.sapMNLI-None {
+  background-color: @sapHCNeutral;
+}
+
+.sapMNLI-Low {
+  background-color: @sapHCPositive;
+}
+
+.sapMNLI-Medium {
+  background-color: @sapHCCritical;
+}
+
+.sapMNLI-High {
+  background-color: @sapHCNegative
+}
+
+.sapMNLI-CloseButton .sapMBtnIcon {
+  line-height: 2.375rem;
+}
+
+.sapUiSizeCompact .sapMNLI-CloseButton .sapMBtnInner .sapMBtnIcon {
+  line-height: 1.5rem;
 }

@@ -1,14 +1,20 @@
 .sapMNLI {
-	background-color: @sapUiLightestBG;
-  	box-shadow: 0 0.125rem 0.5rem fade(@sapUiDarkShadowTint, 50%);
+  background-color: @sapUiLightestBG;
+  box-shadow: 0 0.125rem 0.5rem fade(@sapUiDarkShadowTint, 50%);
+  border-bottom: 0;
+}
+
+.sapMNLI:focus .sapMNLI-Priority {
+  width: 0.25rem;
+  left: 0.0625rem;
 }
 
 .sapMNLI-UnreadStatus {
-	background: @sapUiAccent5;
+  background: @sapUiAccent5;
 }
 
 .sapMNLI-Header > .sapMTitle {
-	font-size: @sapMFontLargeSize;
+  font-size: @sapMFontLargeSize;
 }
 
 .sapMNLI-None {
@@ -29,4 +35,12 @@
 
 .sapMNLI-Body .sapMNLI-Details {
   font-size: @sapMFontMediumSize;
+}
+
+.sapMNLI-CloseButton {
+  border: none;
+}
+
+.sapUiSizeCompact .sapMNLG-CloseButton .sapMBtnInner {
+  border: none;
 }

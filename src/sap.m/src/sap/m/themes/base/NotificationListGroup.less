@@ -1,7 +1,8 @@
-@leftIconsSpace: 2rem;
+@leftPaddingSpace: 1.5rem;
 @datetimeWidth: 20%;
 @containerPadding: 1rem;
-@closeButtonSize: 1.625rem;
+@closeButtonSize: 2.5rem;
+@closeButtonCompactSize: 1.625rem;
 @readIconSize: 0.5rem;
 
 .sapMNLG {
@@ -13,23 +14,25 @@
 .sapMNLG.sapMLIB {
   display: block;
   padding: 0;
-  border-bottom: 0;
 }
 
 // Header styles =======================================================================================================
 
 .sapMNLG-Header {
-  padding-left: @leftIconsSpace;
-  padding-top: @containerPadding;
+  padding: @containerPadding @containerPadding 0.375rem @leftPaddingSpace;
   position: relative;
+}
+
+.sapMNLG-Collapsed .sapMNLG-Header {
+  padding-bottom: 0;
 }
 
 .sapMNLG-Header > .sapMTitle {
   display: block;
   font-weight: normal;
   line-height: 1.25;
-  margin-bottom: 0.5rem;
-  margin-right: 2rem;
+  margin-bottom: 0.25rem;
+  margin-right: 2.75rem;
 }
 
 .sapMNLG-CloseButton {
@@ -38,22 +41,26 @@
   box-sizing: border-box;
   cursor: pointer;
   height: @closeButtonSize;
-  opacity: 0.75;
   padding: 0;
   position: absolute;
-  right: @containerPadding/2;
-  top: @containerPadding/2;
+  right: @containerPadding/4;
+  top: @containerPadding/4;
   transition: opacity;
   width: @closeButtonSize;
 
-  &:hover {
-	opacity: 1;
+  .sapMBtnInner {
+    min-width: 2.5rem;
+    padding-left: 2.375rem;
+
+    .sapMBTNIcon {
+      max-height: 2.5rem;
+    }
   }
 }
 
 .sapMNLG-CloseButton .sapMBtnIcon {
   cursor: pointer;
-  font-size: 0.75rem;
+  font-size: 1rem;
   height: @closeButtonSize;
   line-height: @closeButtonSize;
   width: @closeButtonSize;
@@ -65,13 +72,63 @@
   width: @closeButtonSize;
 }
 
+.sapMNLG-Header > .sapMNLGTitleUnread {
+  font-weight: bold;
+}
+
+.sapMNLG-Header .sapMNLG-Details {
+  padding-top: 0.375rem;
+  font-family: @sapUiFontFamily;
+  font-weight: normal;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  position: relative
+}
+
+.sapMNLG-Details .sapMText.sapMNLI-Text {
+  display: inline;
+}
+
+.sapMNLG-Description {
+  width: 100%;
+  padding-top: 0.375rem;
+}
+
+.sapMNLG-Bullet {
+  color: @sapUiLightText;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+// Author picture styles =========================================================================================================
+
+.sapMNLG-AuthorPicture {
+  width: 2rem;
+  height: 2rem;
+  margin-right: 0.75rem;
+  display: block;
+}
+
+.sapMNLG-AuthorPicture .sapMImg {
+  max-width: 2rem;
+  max-height: 2rem;
+  border-radius: 50%;
+}
+
+.sapMNLG-AuthorPicture .sapUiIcon {
+  font-size: 2rem;
+  color: @sapUiLightText;
+}
+
 // Icons styles =========================================================================================================
 
 .sapMNLG-Icons {
   padding-top: @containerPadding;
   position: absolute;
   text-align: center;
-  width: @leftIconsSpace;
+  width: @leftPaddingSpace;
 }
 
 .sapMNLG-Icons .sapUiIcon {
@@ -83,36 +140,36 @@
   display: none;
 }
 
-.sapMNLG-UnreadStatus {
-  border-radius: @readIconSize/2;
-  display: block;
-  height: @readIconSize;
-  margin: 0.313rem auto 0.375rem;
-  width: @readIconSize;
-}
-
 // Body styles =========================================================================================================
 
 .sapMNLG-Body {
   position: relative;
-  padding-top: 2rem;
-  padding-right: 0.5rem;
+  padding-left: 0;
+}
+
+.sapMNLG-Body .sapMNLI {
+  margin-bottom: 0;
+  box-shadow: none;
+  border-bottom: none;
 }
 
 .sapMText.sapMNLG-Datetime {
   color: @sapUiLightText;
-  overflow: hidden;
-  position: absolute;
-  right: @containerPadding;
   text-overflow: ellipsis;
-  top: -1rem;
-  padding-top: 1rem;
   white-space: nowrap;
   width: @datetimeWidth
 }
 
-.sapMNLG-Body  .sapMLIB.sapMNLG-Collapsed {
+.sapMLIB.sapMNLG-Collapsed .sapMNLG-Body{
   display: none;
+}
+
+.sapMNLG-Body .sapMNLI {
+  border-radius: 0;
+}
+
+.sapMNLG-Body .sapMNLI .sapMNLI-Priority {
+  border-radius: 0;
 }
 
 // Footer styles =======================================================================================================
@@ -121,13 +178,18 @@
   border-top: 1px solid @sapUiExtraLightBorder;
   height: 3rem;
   line-height: 3rem;
-  padding: 0 @containerPadding 0 @leftIconsSpace;
+  padding: 0 @containerPadding 0 @leftPaddingSpace/2;
   text-align: right;
+  position: relative;
 }
 
 .sapMNLG-Footer > .sapMBtn {
   margin-left: 0.25rem;
   padding: 0;
+}
+
+.sapMNLG-Footer > .sapMBtn:first-of-type {
+  margin-left: 0;
 }
 
 /* Buttons in footer don't render correctly due to fix for IE, overwriting the fix in sap.m.Button */
@@ -136,25 +198,70 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-Footer .sapMBtnInner {
   width: auto;
 }
 
-.sapMNLG-Footer .sapMBtnInner,
-.sapMNLG-Footer .sapMBtnContent {
-  box-sizing: content-box;
-  height: 1.875rem;
-  line-height: 1.875rem;
+.sapMNLG-Footer .sapMBtn:first-of-type {
+  float: left;
+}
+
+.sapMNLG-Collapsed .sapMNLG-Footer {
+  border-top: 0;
+}
+
+// Priority styles =====================================================================================================
+
+.sapMNLG-Priority {
+  width: 0.3125rem;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+
+.sapMNLG-Header .sapMNLG-Priority {
+  border-radius: 0.1875rem 0 0 0;
+}
+
+.sapMNLG-Footer .sapMNLG-Priority {
+  border-radius: 0 0 0 0.1875rem;
+}
+
+// Compact mode ========================================================================================================
+
+.sapUiSizeCompact .sapMNLG-CloseButton {
+  width: @closeButtonCompactSize;
+  height: @closeButtonCompactSize;
+  right: @containerPadding/2;
+  top: @containerPadding/2;
+}
+
+.sapUiSizeCompact .sapMNLG-CloseButton .sapMBtnIcon {
+  font-size: 0.75rem;
+  width: @closeButtonCompactSize;
+  height: @closeButtonCompactSize;
+  line-height: @closeButtonCompactSize;
+  margin: 0;
 }
 
 .sapUiSizeCompact .sapMNLG-Footer {
-  height: 2rem;
-  line-height: 2rem;
+  padding-left: 0.75rem;
+  height: 2.5rem;
+  line-height: 2.5rem;
+}
+
+.sapUiSizeCompact .sapMNLG-CloseButton {
+  padding: 0;
+
+  .sapMBtnInner {
+    min-width: 1.625rem;
+    padding-left: 1.625rem;
+
+    .sapMBtnIcon {
+      max-height: 1.625rem;
+    }
+  }
 }
 
 .sapUiSizeCompact .sapMNLG-Footer > .sapMBtn {
   margin-left: 0.25rem;
   padding: 0;
-}
-
-.sapMNLG-Footer .sapMLnk {
-  padding-left: 2rem;
-  padding-right: 2rem;
-  float: left;
+  margin-top: 0.25rem;
 }

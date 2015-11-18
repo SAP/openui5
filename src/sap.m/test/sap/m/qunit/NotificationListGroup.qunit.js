@@ -8,9 +8,6 @@
     jQuery.sap.require('sap.ui.thirdparty.sinon-qunit');
     sinon.config.useFakeTimers = false;
 
-    var classNameIcons = '.sapMNLG-Icons';
-    var classNameUnread = '.sapMNLG-UnreadStatus';
-    var classNameRead = '.sapMNLG-ReadStatus';
     var classNameHeader = '.sapMNLG-Header';
     var classNameDatetime = '.sapMNLG-Datetime';
     var classNameFooter = '.sapMNLG-Footer';
@@ -54,9 +51,6 @@
         assert.strictEqual(jQuery(classNameCloseButton).length, 1, 'Group Close Button should be rendered');
         assert.strictEqual(jQuery(classNameHeader).length, 1, 'Title should be rendered');
         assert.strictEqual(jQuery(classNameDatetime).length, 1, 'DateTime should be rendered');
-        assert.strictEqual(jQuery(classNameIcons).children('').length, 2, 'Unread status and priority should be rendered');
-        assert.strictEqual(jQuery(classNameUnread).length, 1, 'Unread status should be rendered');
-        assert.strictEqual(jQuery(classNameIcons).children('').length, 2, 'Unread status and priority should be rendered');
 
         sap.ui.getCore().applyChanges();
 
@@ -152,38 +146,6 @@
         assert.strictEqual(this.NotificationListGroup.$().hasClass('sapMLIB'), true, 'The notification list has has the base class of ListItemBase');
     });
 
-    QUnit.test('Render unread status', function(assert) {
-        // act
-        this.NotificationListGroup.setUnread(true);
-        sap.ui.getCore().applyChanges();
-
-        // assert
-        assert.strictEqual(jQuery(classNameUnread).length, 1, 'Unread status should be rendered');
-
-        // act
-        this.NotificationListGroup.setUnread(false);
-        sap.ui.getCore().applyChanges();
-
-        // assert
-        assert.strictEqual(jQuery(classNameRead).length, 1, 'Read status should be rendered');
-    });
-
-    QUnit.test('Render priority', function(assert) {
-        // act
-        this.NotificationListGroup.setPriority(sap.ui.core.Priority.High);
-        sap.ui.getCore().applyChanges();
-
-        // assert
-        assert.strictEqual(jQuery(classNameIcons).children('.sapUiIcon').length, 1, 'High priority should be rendered');
-
-        // act
-        this.NotificationListGroup.setPriority(sap.ui.core.Priority.None);
-        sap.ui.getCore().applyChanges();
-
-        // assert
-        assert.strictEqual(jQuery(classNameIcons).children('.sapUiIcon').length, 0, 'In priority in set to "None" nothing should be rendered');
-    });
-
     QUnit.test('Render action buttons', function(assert) {
         // arrange
         var that = this;
@@ -206,7 +168,7 @@
         sap.ui.getCore().applyChanges();
 
         // assert
-        assert.strictEqual(jQuery(classNameFooter).children('button').length, 2, 'Buttons should be rendered');
+        assert.strictEqual(jQuery(classNameFooter).children('button').length, 3, 'Buttons should be rendered');
     });
 
     QUnit.test('Changing the title', function(assert) {

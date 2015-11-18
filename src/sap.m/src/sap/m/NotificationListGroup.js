@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListItemBase', './Title', './Text', './Button', 'sap/ui/core/InvisibleText', './Link'],
-	function (jQuery, library, Control, ListItemBase, Title, Text, Button, InvisibleText, Link) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListItemBase', './Title', './Text', './Button', 'sap/ui/core/InvisibleText', './Link', 'sap/ui/core/Icon', './Image'],
+	function (jQuery, library, Control, ListItemBase, Title, Text, Button, InvisibleText, Link, Icon, Image) {
 
 	'use strict';
 
@@ -67,7 +67,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 				/**
 				 * Determines if the group will automatically set the priority based on the highest priority of its notifications or get its priority from the developer.
 				 */
-				autoPriority: {type: 'boolean', group: 'Behavior', defaultValue: true}
+				autoPriority: {type: 'boolean', group: 'Behavior', defaultValue: true},
+
+				/**
+				 * Determines the notification group's author name.
+				 */
+				authorName: {type: 'string', group: 'Appearance', defaultValue: ''},
+
+				/**
+				 * Determines the URL of the notification group's author picture.
+				 */
+				authorPicture: {type: 'sap.ui.core.URI',  multiple: false}
 			},
 			aggregations: {
 				/**
@@ -88,7 +98,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 				/**
 				 * The timestamp string that will be displayed in the NotificationListGroup.
 				 */
-				_dateTime: {type: 'sap.m.Text', multiple: false, visibility: 'hidden'}
+				_dateTime: {type: 'sap.m.Text', multiple: false, visibility: 'hidden'},
+
+				/**
+				 * The sap.m.Image or sap.ui.core.Control control that holds the author image or icon.
+				 * @private
+				 */
+				_authorImage: {type: 'sap.ui.core.Control', multiple: false, visibility: "hidden"}
 			},
 			events: {
 				/**
@@ -107,7 +123,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		 * @private
 		 */
 		this._closeButton = new sap.m.Button(this.getId() + '-closeButton', {
-			type: 'Unstyled',
+			type: sap.m.ButtonType.Transparent,
 			icon: sap.ui.core.IconPool.getIconURI('decline'),
 			press: function () {
 				this.close();
@@ -118,7 +134,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		 * @type {sap.m.Link}
 		 * @private
 		 */
-		this._collapseLink = new sap.m.Link({
+		this._collapseButton = new sap.m.Button({
+			type: sap.m.ButtonType.Transparent,
 			press: function () {
 				this.setCollapsed(!this.getCollapsed());
 			}.bind(this)
@@ -184,7 +201,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 
 	NotificationListGroup.prototype.onBeforeRendering = function() {
 		//Making sure the Expand/Collapse link text is set correctly
-		this._collapseLink.setText(this.getCollapsed() ? 'Expand Group' : 'Collapse Group');
+		this._collapseButton.setText(this.getCollapsed() ? 'Expand Group' : 'Collapse Group');
 	};
 
 	NotificationListGroup.prototype.close = function () {
@@ -197,9 +214,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			this._closeButton.destroy();
 			this._closeButton = null;
 		}
-		if (this._collapseLink) {
-			this._collapseLink.destroy();
-			this._collapseLink = null;
+		if (this._collapseButton) {
+			this._collapseButton.destroy();
+			this._collapseButton = null;
 		}
 	};
 
@@ -219,6 +236,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			});
 
 			this.setAggregation('_headerTitle', title);
+		}
+
+		if (this.getUnread()) {
+			title.addStyleClass('sapMNLGTitleUnread');
 		}
 
 		return title;
@@ -246,16 +267,50 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 	};
 
 	/**
+	 * Returns the sap.m.Image or the sap.ui.core.Control used in the NotificationListItem's author picture.
+	 * @returns {sap.m.Image|sap.ui.core.Control} The notification author picture text
+	 * @private
+	 */
+	NotificationListGroup.prototype._getAuthorImage = function() {
+		/** @type {sap.m.Image|sap.ui.core.Control} */
+		var authorImage = this.getAggregation('_authorImage');
+
+		if (!authorImage) {
+			var authorPicture = this.getAuthorPicture();
+			var authorName = this.getAuthorName();
+
+			if (isIcon(authorPicture)) {
+				authorImage = new Icon({
+					src: authorPicture,
+					alt: authorName
+				});
+			} else {
+				authorImage = new Image({
+					src: authorPicture,
+					alt: authorName
+				});
+			}
+
+			this.setAggregation('_authorImage', authorImage, true);
+		}
+
+		return authorImage;
+	};
+
+	/**
 	 * Toggles the NotificationListGroup state between collapsed/expanded.
 	 * @private
 	 */
 	NotificationListGroup.prototype._toggleCollapsed = function () {
 		/** @type {boolean} */
 		var newCollapsedState = !this.getCollapsed();
+		var resourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+		var expandText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_EXPAND');
+		var collapseText = resourceBundle.getText('NOTIFICATION_LIST_GROUP_COLLAPSE');
 
-		this._collapseLink.setText(newCollapsedState ? 'Expand Group' : 'Collapse Group', true);
+		this._collapseButton.setText(newCollapsedState ? expandText : collapseText, true);
 
-		this.$().find('li').toggleClass('sapMNLG-Collapsed', newCollapsedState);
+		this.$().toggleClass('sapMNLG-Collapsed', newCollapsedState);
 	};
 
 	/**
@@ -283,6 +338,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		}
 
 		return firstPriority;
+	}
+
+	/**
+	 * Checks is a sap.ui.core.URI parameter is a icon src or not.
+	 * @param {string} source The source to be checked.
+	 * @returns {bool} The result of the check
+	 * @private
+	 */
+	function isIcon(source) {
+		if (!source) {
+			return false;
+		}
+
+		var result = window.URI.parse(source);
+		return (result.protocol && result.protocol == 'sap-icon');
 	}
 
 	return NotificationListGroup;
