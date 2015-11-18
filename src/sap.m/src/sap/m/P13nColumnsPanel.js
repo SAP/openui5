@@ -1623,7 +1623,6 @@ sap.ui.define([
 			height: '100%'
 		});
 
-// this._oScrollContainer.setParent(this);
 		this.addAggregation("content", this._oScrollContainer);
 		
 		// model Data for the chartType comboBox
@@ -1716,8 +1715,6 @@ sap.ui.define([
 			this._bOnAfterRenderingFirstTimeExecuted = true;
 			window.clearTimeout(iLiveChangeTimer);
 			iLiveChangeTimer = window.setTimeout(function() {
-				that._fnHandleResize();
-
 				// following line is needed to get layout of OverflowToolbar rearranged IF it is used in a dialog
 				that._oToolbar._resetAndInvalidateToolbar();
 			}, 0);
@@ -1785,8 +1782,6 @@ sap.ui.define([
 		sap.ui.core.ResizeHandler.deregister(this._sContainerResizeListener);
 		this._sContainerResizeListener = null;
 		
-		sap.ui.Device.resize.detachHandler(this._fnHandleResize);
-
 		this._oMoveToTopButton.destroy();
 		this._oMoveToTopButton = null;
 
