@@ -1,0 +1,13 @@
+{
+	"demo" : {
+		"text": "sap.ui.dt",
+		"links": [
+			{
+				"text": "DesignTime",
+				"ref": "test-resources/sap/ui/dt/DesignTime.html",
+				"icon": "world",
+				"desc": "This is a sample demo page for DesignTime"
+			}
+		]
+	}
+}
