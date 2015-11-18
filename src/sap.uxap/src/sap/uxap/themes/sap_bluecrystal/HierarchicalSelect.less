@@ -1,40 +1,42 @@
 .sapUxAPHierarchicalSelect {
-	border-color: transparent;
-	background: transparent;
-	z-index: 2;
-}
-
-.sapUxAPHierarchicalSelect .sapMSltLabel {
-	font-size: @sapMFontHeader6Size;
-}
-
-.sapUiSizeCompact .sapUxAPHierarchicalSelect,
-.sapUiSizeCompact .sapUxAPHierarchicalSelect .sapMSltLabel,
-.sapUiSizeCompact .sapUxAPHierarchicalSelect .sapMSltArrow,
-.sapUxAPHierarchicalSelect,
-.sapUxAPHierarchicalSelect .sapMSltLabel,
-.sapUxAPHierarchicalSelect .sapMSltArrow {
-	color: @sapUiDarkText;
+	border: none;
 	background-color: mix(@sapUiAccent5, @sapUiWhite, 5); /* temporarily instead of fade(@sapUiLightestBG, 60%); */
-}
 
-.sapUxAPHierarchicalSelect .sapMSltPressed > .sapMSltArrow::before {
-	color: @sapUiSelectArrowColor;
-}
+	&.sapMSltHoverable {
+		border: none;
 
-.sapUxAPHierarchicalSelect .sapMSltHoverable:hover,
-.sapUxAPHierarchicalSelect.sapMSltPressed:not(.sapMSltDisabled) {
-	border-color: mix(@sapUiAccent5, @sapUiWhite, 5);; /* temporarily instead of fade(@sapUiLightestBG, 60%); */
-}
+		&.sapMSltIconOnly:hover {
+			background: transparent;
+		}
 
-.sapMSltHoverable:not(.sapMSltPressed):hover > .sapMSltArrow {
-	background: mix(@sapUiAccent5, @sapUiWhite, 5); /* temporarily instead of fade(@sapUiLightestBG, 60%); */
-}
+		&:not(.sapMSltPressed) > .sapMSltIcon:hover {
+			background: @sapUiButtonHoverBackground;
+		}
+	}
 
-/* overflow icon in anchor bar */
-.sapUxAPAnchorBar .sapUxAPHierarchicalSelect .sapMSltIcon {
-	font-size: 1rem;
-	line-height: 2.65rem;
+	&.sapMSltPressed {
+
+		&.sapMSltIconOnly:not(.sapMSltDisabled) {
+			background: transparent;
+		}
+
+		> .sapMSltIcon {
+			background: @sapUiButtonLiteActiveBackground;
+			color: @sapUiButtonActiveTextColor;
+		}
+	}
+
+	.sapMSltLabel,
+	.sapMSltArrow {
+		font-size: @sapMFontHeader6Size;
+		color: @sapUiDarkText;
+		background-color: mix(@sapUiAccent5, @sapUiWhite, 5); /* temporarily instead of fade(@sapUiLightestBG, 60%); */
+	}
+
+	.sapMSltIcon {
+		background: @sapUiButtonLiteBackground;
+		color: @sapUiButtonIconColor;
+	}
 }
 
 /* mobile-only: appears in a dialog */
@@ -45,10 +47,6 @@
 }
 
 .sapMSltPicker .sapUxAPHierarchicalSelect.sapMSltBar::after {
-	color: @sapUiSelectArrowColor;
-}
-
-.sapUxAPHierarchicalSelect.sapMSltPressed > .sapMSltArrow::before {
 	color: @sapUiSelectArrowColor;
 }
 
@@ -69,7 +67,7 @@
 	font-size: @sapMFontMediumSize;
 }
 
-.sapMSltPicker-CTX .sapMSelectList {
+.sapUxAPHierarchicalSelect .sapMSltPicker-CTX .sapMSelectList {
 	border: 1px solid @sapUiDarkBorder;
 }
 
@@ -80,7 +78,7 @@
 }
 
 /* hover */
-.sapMSelectListItemSelected:hover {
+.sapUxAPHierarchicalSelect .sapMSelectListItemSelected:hover {
 	background: @sapUiActiveBGHover;
 }
 

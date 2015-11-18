@@ -48,9 +48,7 @@ Common compact/cozy
 }
 
 .sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected .sapMBtnContent {
-	border-bottom: 0.125rem solid @sapUiExtraDarkBorder;
-	position: relative;
-	bottom: -1px;
+	border-bottom: 0.125rem solid darken(@sapUiExtraLightBorder, 20);
 }
 
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected .sapMBtnContent,
@@ -113,8 +111,8 @@ html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
 }
 
 // Fade-in animation on hover
-.sapUiMedia-Std-Desktop .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow:hover .sapMBtn,
-.sapUiMedia-Std-Desktop .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow:hover .sapMBtn {
+.sapUiMedia-Std-Desktop .sapUxAPAnchorBar:hover.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtn,
+.sapUiMedia-Std-Desktop .sapUxAPAnchorBar:hover.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtn {
 	opacity: 1;
 	-webkit-transition-property: opacity;
 	transition-property: opacity;

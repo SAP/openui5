@@ -56,19 +56,26 @@ Common Compact/Cozy
 	margin-left: 0;
 }
 
-.sapUxAPAnchorBar .sapMBtnInner {
-	padding-left: 1rem;
-	padding-right: 1rem;
-	height: 2.500rem;
+.sapUxAPAnchorBar .sapUxAPAnchorBarButton {
+	height: 3rem;
+	padding: 0;
+
+	.sapMBtnInner {
+		padding-left: 1rem;
+		padding-right: 1rem;
+		height: 3rem;
+
+		.sapMBtnContent,
+		.sapMBtnIcon {
+			height: 3rem;
+			line-height: 3rem;
+		}
+	}
 }
 
 .sapUxAPAnchorBar .sapMBarChild {
 	margin-left: 0;
 	margin-right: 0;
-}
-
-.sapUxAPAnchorBar .sapUxAPAnchorBarButton {
-	height: 3.000rem;
 }
 
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnIcon {
@@ -150,9 +157,8 @@ html[dir=rtl] .sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScroll
 	width: 1.625rem;
 	height: 1.625rem;
 	position: absolute;
-	top: 0.875rem;
+	top: 0.6875rem;
 	padding: 0;
-	z-index: 2;
 }
 
 .sapUxAPAnchorBar .anchorBarArrowLeft .sapMBtn {
@@ -170,6 +176,7 @@ html[dir=rtl] .sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScroll
 	width: 1.625rem;
 	height: 1.625rem;
 	padding: 0;
+	border-radius: 0.125rem;
 }
 
 .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtnIcon,
@@ -181,8 +188,8 @@ html[dir=rtl] .sapMSplitContainerDetail .sapUxAPAnchorBar.sapUxAPAnchorBarScroll
 	line-height: 1.625rem;
 }
 
-.sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtnIcon:before,
-.sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtnIcon:before {
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrow .sapMBtnIcon::before,
+.sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrow .sapMBtnIcon::before {
 	position: absolute;
 	left: 0;
 	top: 0;

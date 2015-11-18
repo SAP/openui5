@@ -1,3 +1,48 @@
+.sapUxAPHierarchicalSelect {
+	border: none;
+
+	&.sapMSltHoverable {
+		border: none;
+
+		&.sapMSltIconOnly {
+
+			&:hover {
+				background: transparent;
+
+				&:focus {
+					background: transparent;
+				}
+			}
+
+			&:focus {
+				outline: none;
+
+				> .sapMSltIcon {
+					outline: 0.125rem dotted @sapHCStandardFG;
+					outline-offset: -0.125rem;
+					border-color: transparent;
+				}
+			}
+		}
+
+		> .sapMSltIcon:hover {
+			background: @sapHCHighlightBG;
+		}
+	}
+
+	&.sapMSltPressed {
+
+		&.sapMSltIconOnly:not(.sapMSltDisabled) {
+			background: none;
+			border: none;
+		}
+
+		> .sapMSltIcon {
+			background: @sapHCHighlightAltBG;
+		}
+	}
+}
+
 .sapUxAPHierarchicalSelect .sapMSltLabel,
 .sapUxAPHierarchicalSelect .sapMSltArrow,
 .sapUxAPHierarchicalSelectFirstLevel.sapMSelectListItem {
@@ -14,17 +59,14 @@
 }
 
 .sapUxAPAnchorBar .sapUxAPHierarchicalSelect.sapMSltIconOnly {
-	top: 0;
-	margin-right: 0;
-	height: 2.9rem;
 	border-radius: 0;
-	border-top: 0;
-	border-bottom: 0;
-	width: 3rem;
+	height: 3rem;
+	width: 2rem;
 }
 
 .sapUxAPAnchorBar .sapUxAPHierarchicalSelect.sapMSltIconOnly .sapMSltIcon {
-	line-height: 3rem;
+	box-sizing: border-box;
+	border: 1px solid @sapHCStandardFG;
 }
 
 .sapUxAPHierarchicalSelectSecondLevel.sapMSelectListItem,
