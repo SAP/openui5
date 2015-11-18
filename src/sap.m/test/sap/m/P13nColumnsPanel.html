@@ -29,14 +29,12 @@
 						columnKey: '4711',
 						visible: true,
 						text: "Column1 4711",
-						tooltip: "Column1_Tooltip",
-						aggregationRole: "Dimension"						
+						tooltip: "Column1_Tooltip"
 					}, {
 						columnKey: '4712',
 						visible: true,
 						text: "Column2 4712",
-						tooltip: "Column2_Tooltip",
-						aggregationRole: "Dimension"
+						tooltip: "Column2_Tooltip"
 					}, {
 						columnKey: '4713',
 						visible: false,
@@ -103,17 +101,14 @@
 
 	this._oColumnsPanel = new sap.m.P13nColumnsPanel({
 		title : "{/transientData/columns/title}",
-		type : "columns", // "dimeasure", // "columns"
-		chartType: "Bar",
-		//availableChartTypes: ["Pie", "Bar", "Line"],
+		type : "columns", 
 		items : {
 			path : '/transientData/columns/items',
 			template : new sap.m.P13nItem({
 				columnKey : "{columnKey}",
 				text : '{text}',
 				visible : '{visible}',
-				tooltip : '{tooltip}',
-				aggregationRole: '{aggregationRole}'
+				tooltip : '{tooltip}'
 			})
 		},
 		columnsItems : {
