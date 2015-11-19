@@ -1,5 +1,4 @@
 @leftPaddingSpace: 1.5rem;
-@datetimeWidth: 20%;
 @containerPadding: 1rem;
 @closeButtonSize: 2.5rem;
 @closeButtonCompactSize: 1.625rem;
@@ -109,6 +108,7 @@
   height: 2rem;
   margin-right: 0.75rem;
   display: block;
+  text-align: center;
 }
 
 .sapMNLG-AuthorPicture .sapMImg {
@@ -118,7 +118,7 @@
 }
 
 .sapMNLG-AuthorPicture .sapUiIcon {
-  font-size: 2rem;
+  font-size: 1.5rem;
   color: @sapUiLightText;
 }
 
@@ -157,7 +157,6 @@
   color: @sapUiLightText;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: @datetimeWidth
 }
 
 .sapMLIB.sapMNLG-Collapsed .sapMNLG-Body{
@@ -183,13 +182,25 @@
   position: relative;
 }
 
-.sapMNLG-Footer > .sapMBtn {
+.sapMNLG-Footer .sapMBtn {
   margin-left: 0.25rem;
   padding: 0;
 }
 
-.sapMNLG-Footer > .sapMBtn:first-of-type {
+.sapMNLG-Footer > .sapMBtn {
   margin-left: 0;
+}
+
+.sapMNLG-Footer .sapMTB {
+  border: none;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
 }
 
 /* Buttons in footer don't render correctly due to fix for IE, overwriting the fix in sap.m.Button */
@@ -242,9 +253,11 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-Footer .sapMBtnInner {
 }
 
 .sapUiSizeCompact .sapMNLG-Footer {
+  padding-top: 0.25rem;
   padding-left: 0.75rem;
-  height: 2.5rem;
+  height: 2.5625rem;
   line-height: 2.5rem;
+  box-sizing: border-box;
 }
 
 .sapUiSizeCompact .sapMNLG-CloseButton {
@@ -260,8 +273,7 @@ html[data-sap-ui-browser*='ie'] .sapMNLG-Footer .sapMBtnInner {
   }
 }
 
-.sapUiSizeCompact .sapMNLG-Footer > .sapMBtn {
+.sapUiSizeCompact .sapMNLG-Footer .sapMBtn {
   margin-left: 0.25rem;
   padding: 0;
-  margin-top: 0.25rem;
 }

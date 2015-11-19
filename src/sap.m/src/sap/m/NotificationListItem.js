@@ -272,7 +272,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 
 		NotificationListItem.prototype.addAggregation = function (aggregationName, object, suppressInvalidate) {
 			if (aggregationName == 'buttons') {
-				/** @type {sap.m.OverflowToolbar} */
 				var toolbar = this.getAggregation('_overflowToolbar');
 
 				return toolbar.addAggregation('content', object, suppressInvalidate);
