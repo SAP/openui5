@@ -235,6 +235,8 @@
 
 			oTV1.setTextDirection(sap.ui.core.TextDirection.Inherit);
 			oTV1.setTextAlign(sap.ui.core.TextAlign.Begin);
+
+			oTV1.setAccessibleRole(sap.ui.core.AccessibleRole.Document);
 		});
 
 		test("Null Text", function() {
@@ -257,8 +259,10 @@
 		});
 
 		test("ARIA", function() {
+			oTV1Dom = jQuery.sap.domById('TV1');
 			oTVDom = jQuery.sap.domById('TV2');
-			equals(jQuery(oTVDom).attr("role"),"document","ARIA role");
+			equals(jQuery(oTV1Dom).attr("role"),"document","ARIA role 'document'");
+			equals(jQuery(oTVDom).attr("role"),undefined,"ARIA role default");
 			equals(jQuery(oTVDom).attr("aria-disabled"),"false","ARIA-disabled: for enabled field");
 			equals(jQuery(oTVDom).attr("aria-invalid"),"false","ARIA-invalid: for normal field");
 

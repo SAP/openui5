@@ -1,0 +1,12 @@
+<core:View xmlns:core="sap.ui.core"
+		   xmlns="sap.uxap.component"
+		   controllerName="sap.uxap.sample.ObjectPageComponent.ObjectPageComponent"
+		   height="100%">
+
+	<ObjectPageComponentContainer
+			mode="JsonURL"
+			jsonConfigurationURL="./test-resources/sap/uxap/demokit/sample/ObjectPageComponent/ObjectPageConfig.json"
+			height="100%"
+			width="100%"/>
+
+</core:View>

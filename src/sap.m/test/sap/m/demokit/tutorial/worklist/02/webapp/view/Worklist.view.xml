@@ -1,76 +1,75 @@
-<mvc:View controllerName="myCompany.myApp.controller.Worklist" xmlns:footerbar="sap.ushell.ui.footerbar" xmlns:mvc="sap.ui.core.mvc"
-	xmlns:semantic="sap.m.semantic" xmlns="sap.m">
-	<semantic:FullscreenPage id="page" navButtonPress="onNavBack" showNavButton="true" title="{i18n>worklistViewTitle}">
+<mvc:View
+	controllerName="myCompany.myApp.controller.Worklist"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:semantic="sap.m.semantic"
+	xmlns="sap.m">
+	<semantic:FullscreenPage
+		id="page"
+		navButtonPress="onNavBack"
+		showNavButton="true"
+		title="{i18n>worklistViewTitle}">
 		<semantic:content>
-			<Table 
+			<Table
+				id="table"
 				busyIndicatorDelay="{worklistView>/tableBusyDelay}"
 				class="sapUiResponsiveMargin"
 				growing="true"
 				growingScrollToLoad="true"
-				id="table"
-				items="{ 
-						path: '/Products',
-						sorter: { 
-								path: 'ProductName',
-								descending: false
-						},
-						parameters: {
-								'expand': 'Supplier'
-						}
-					}"
 				noDataText="{worklistView>/tableNoDataText}"
 				updateFinished="onUpdateFinished"
-				width="auto">
+				width="auto"
+				items="{
+					path: '/Products',
+					sorter: {
+						path: 'ProductName',
+						descending: false
+					}
+				}">
 				<headerToolbar>
 					<Toolbar>
-						<Title id="tableHeader" text="{worklistView>/worklistTableTitle}"/>
+						<Title
+							id="tableHeader"
+							text="{worklistView>/worklistTableTitle}"/>
 						<ToolbarSpacer/>
-						<SearchField id="searchField" search="onSearch" tooltip="{i18n>worklistSearchTooltip}" width="auto"></SearchField>
+						<SearchField
+							id="searchField"
+							search="onSearch"
+							tooltip="{i18n>worklistSearchTooltip}"
+							width="auto"/>
 					</Toolbar>
 				</headerToolbar>
 				<columns>
 					<Column id="nameColumn">
-						<Text id="nameColumnTitle" text="{i18n>TableNameColumnTitle}"/>
+						<Text
+							id="nameColumnTitle"
+							text="{i18n>TableNameColumnTitle}"/>
 					</Column>
-					<Column id="supplierNameColumn">
-        				<Text text="{i18n>TableSupplierColumnTitle}"/>
-    				</Column>
-    				<Column id="unitPriceColumn"
-            			hAlign="Right">
-        				<Text text="{i18n>TablePriceColumnTitle}"/>
-    				</Column>
-    				<Column id="unitsOnOrderColumn"
-            			demandPopin="true"
-            			minScreenWidth="small"
-            			hAlign="Right">
-        				<Text text="{i18n>TableUnitsOrderedColumnTitle}"/>
+					<Column id="unitNumberColumn">
+						<Text
+							id="unitNumberColumnTitle"
+							text="{i18n>TableUnitNumberColumnTitle}"/>
 					</Column>
-					<Column id="unitsInStockColumn"
-            			demandPopin="true"
-        				minScreenWidth="small"
-            			hAlign="Right">
-        				<Text text="{i18n>TableUnitsInStockColumnTitle}"/>
-    				</Column>
 				</columns>
 				<items>
-					<ColumnListItem press="onPress" type="Navigation">
+					<ColumnListItem
+						press="onPress"
+						type="Navigation">
 						<cells>
-							<ObjectIdentifier title="{ProductName}"/>
-							<Text text = "{Supplier/CompanyName}"/>
-							<ObjectNumber number="{ path: 'UnitPrice', formatter: '.formatter.numberUnit' }"
-											unit="EUR"/>
-							<ObjectNumber number="{UnitsOnOrder}"
-											unit="PC"/>
-							<ObjectNumber number="{UnitsInStock}"
-											unit="PC"
-											state="{path: 'UnitsInStock', formatter: '.formatter.quantityState' }" />
+							<ObjectIdentifier
+								title="{ProductName}"/>
+							<ObjectNumber number="{
+								path: 'UnitsInStock',
+								formatter: '.formatter.numberUnit'
+							}"/>
 						</cells>
 					</ColumnListItem>
 				</items>
 			</Table>
 		</semantic:content>
 		<semantic:sendEmailAction>
-			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+			<semantic:SendEmailAction
+				id="shareEmail"
+				press="onShareEmailPress"/>
 		</semantic:sendEmailAction>
 	</semantic:FullscreenPage>
 </mvc:View>

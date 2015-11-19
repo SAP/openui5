@@ -1,0 +1,193 @@
+{
+  "showAnchorBar": true,
+  "height": "100%",
+  "enableLazyLoading": true,
+  "headerTitle": {
+	"Type": "sap.uxap.ObjectPageHeader",
+	"objectImageURI": "./test-resources/sap/uxap/images/imageID_275314.png",
+	"objectTitle": "Denise Smith",
+	"objectSubtitle": "Senior UI Developper & Visual Designer",
+	"actions": [
+	  {
+		"Type": "sap.m.Button",
+		"icon": "sap-icon://show"
+	  }
+	]
+  },
+  "headerContent": [
+	{
+	  "Type": "sap.m.Text",
+	  "text": "Hi, I'm Denise. I'm passionate about what I do !"
+	}
+  ],
+  "sections": [
+	{
+	  "title": "section 1",
+	  "showTitle": true,
+	  "subSections": [
+		{
+		  "title": "subSection 1.1",
+		  "blocks": [
+			{
+			  "Type": "sap.uxap.testblocks.imageblock.ImageBlock",
+			  "opacity": "0.2",
+			  "layoutData": {
+				"span": "L2 M2 S2"
+			  },
+			  "mappings": {
+				"externalModelName": "objectPageData",
+				"externalPath": "/Employee/0",
+				"internalModelName": "Contact"
+			  },
+			  "press": "sap.uxap.sample.ObjectPageComponent.ObjectPageEvents.onImageBlockPress"
+			}
+		  ],
+		  "actions": [
+			{
+			  "Type": "sap.m.Button",
+			  "type": "Accept",
+			  "icon": "sap-icon://edit",
+			  "press": "sap.uxap.sample.ObjectPageComponent.ObjectPageEvents.onSubSectionEditPress"
+			}
+		  ]
+		},
+		{
+		  "title": "subSection 1.2",
+		  "blocks": [
+			{
+			  "Type": "sap.uxap.testblocks.simpleform.SimpleForm",
+			  "mappings": {
+				"externalModelName": "objectPageData",
+				"externalPath": "/Employee/0",
+				"internalModelName": "Contact"
+			  }
+			}
+		  ],
+		  "actions": [
+			{
+			  "Type": "sap.m.Button",
+			  "type": "Accept",
+			  "icon": "sap-icon://edit",
+			  "press": "sap.uxap.sample.ObjectPageComponent.ObjectPageEvents.onSubSectionEditPress"
+			}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "title": "section 2",
+	  "showTitle": true,
+	  "subSections": [
+		{
+		  "title": "subSection 2.1",
+		  "blocks": [
+			{
+			  "Type": "sap.uxap.testblocks.imageblock.ImageBlock",
+			  "opacity": "0.2",
+			  "layoutData": {
+				"span": "L2 M2 S2"
+			  },
+			  "mappings": {
+				"externalModelName": "objectPageData",
+				"externalPath": "/Employee/0",
+				"internalModelName": "Contact"
+			  },
+			  "press": "sap.uxap.sample.ObjectPageComponent.ObjectPageEvents.onImageBlockPress"
+			}
+		  ],
+		  "moreBlocks": [
+			{
+			  "Type": "sap.uxap.testblocks.simpleform.SimpleForm",
+			  "mappings": {
+				"externalModelName": "objectPageData",
+				"externalPath": "/Employee/0",
+				"internalModelName": "Contact"
+			  }
+			}
+		  ],
+		  "actions": [
+			{
+			  "Type": "sap.m.Button",
+			  "type": "Reject",
+			  "icon": "sap-icon://edit",
+			  "press": "sap.uxap.sample.ObjectPageComponent.ObjectPageEvents.onSubSectionEditPress"
+			}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "title": "section 3",
+	  "showTitle": true,
+	  "subSections": [
+		{
+		  "title": "subSection 3.1",
+		  "blocks": [
+			{
+			  "Type": "sap.uxap.testblocks.imageblock.ImageBlock",
+			  "opacity": "0.2",
+			  "layoutData": {
+				"span": "L2 M2 S2"
+			  },
+			  "mappings": {
+				"externalModelName": "objectPageData",
+				"externalPath": "/Employee/0",
+				"internalModelName": "Contact"
+			  },
+			  "press": "sap.uxap.sample.ObjectPageComponent.ObjectPageEvents.onImageBlockPress"
+			}
+		  ],
+		  "actions": [
+			{
+			  "Type": "sap.m.Button",
+			  "type": "Accept",
+			  "icon": "sap-icon://edit",
+			  "press": "sap.uxap.sample.ObjectPageComponent.ObjectPageEvents.onSubSectionEditPress"
+			}
+		  ]
+		},
+		{
+		  "title": "subSection 3.2",
+		  "blocks": [
+			{
+			  "Type": "sap.uxap.testblocks.simpleform.SimpleForm",
+			  "mappings": {
+				"externalModelName": "objectPageData",
+				"externalPath": "/Employee/0",
+				"internalModelName": "Contact"
+			  }
+			}
+		  ],
+		  "actions": [
+			{
+			  "Type": "sap.m.Button",
+			  "type": "Accept",
+			  "icon": "sap-icon://edit",
+			  "press": "sap.uxap.sample.ObjectPageComponent.ObjectPageEvents.onSubSectionEditPress"
+			}
+		  ]
+		}
+	  ]
+	},
+	{
+	  "title": "section 4",
+	  "showTitle": true,
+	  "subSections": [
+	  ]
+	},
+	{
+	  "title": "section 5",
+	  "showTitle": true,
+	  "subSections": [
+		{
+		  "title": "subSection 5.1",
+		  "blocks": []
+		}
+	  ]
+	}
+  ],
+  "footer": {
+	"Type": "sap.m.Text",
+	"text": "Lorem ipsum dolor st amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat"
+  }
+}

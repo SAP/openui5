@@ -47,8 +47,8 @@
 						<UploadCollectionToolbarPlaceholder></UploadCollectionToolbarPlaceholder>
 						<Button id="deleteSelectedButton" text="Delete selected items" press="onDeleteSelectedItems" enabled="false" type="Transparent"></Button >
 						<Button id="countButton" text="Count" press="onCountPress" enabled="false" type="Transparent"></Button>
-						<ToggleButton id="selectAllButton" text="Select All" press="onSelectAllPress" enabled="false" type="Transparent"></ToggleButton>
-						<Label text="Enable File Uploader"></Label>
+						<ToggleButton id="selectAllButton" text="Select all" press="onSelectAllPress" enabled="false" type="Transparent"></ToggleButton>
+						<Label text="Enable FileUploader"></Label>
 						<Switch state="true" change="onSwitchUploaderChange" type="Transparent"></Switch>
 						<Label text="Multiselect mode"></Label>
 						<Switch id="modeSwitch" state="false" change="onSwitchModeChange" type="Transparent"></Switch>

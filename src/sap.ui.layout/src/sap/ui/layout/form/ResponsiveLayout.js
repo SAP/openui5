@@ -581,6 +581,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 							return false;
 						}
 					};
+
+					oRFLayout._addContentClass = function(oControl, iIndex) {
+
+						if (iIndex == 0) {
+							// check if it's the label of the FormElement
+							var oElement = sap.ui.getCore().byId(this.__myParentElementId);
+							if (oElement) {
+								var oLabel = oElement.getLabelControl();
+								if (oControl == oLabel) {
+									return "sapUiFormElementLbl";
+								}
+							}
+						}
+
+						return null;
+
+					};
 				} else {
 					oRFLayout.getContent = function(){
 						var oElement = sap.ui.getCore().byId(this.__myParentElementId);

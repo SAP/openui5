@@ -66,7 +66,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		rm.writeAttribute('tabindex', '-1'); //to make it focusable in ItemNavigation
 		// Set Accessible Role
 		rm.writeAccessibilityState(oTextView, {
-			role: oTextView.getAccessibleRole().toLowerCase(),
+			role: oTextView.getAccessibleRole() ? oTextView.getAccessibleRole().toLowerCase() : undefined,
 			invalid: oTextView.getSemanticColor() == sap.ui.commons.TextViewColor.Negative,
 			disabled: !oTextView.getEnabled()
 		});

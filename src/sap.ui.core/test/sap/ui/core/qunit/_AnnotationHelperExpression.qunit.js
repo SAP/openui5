@@ -1401,4 +1401,37 @@ sap.ui.require([
 			ManagedObject.bindingParser = oParser;
 		}
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getExpression: Performance measurement points", function (assert) {
+		var oAverageSpy = this.spy(jQuery.sap.measure, "average")
+				.withArgs("sap.ui.model.odata.AnnotationHelper/getExpression", "",
+					["sap.ui.model.odata.AnnotationHelper"]),
+			oEndSpy = this.spy(jQuery.sap.measure, "end")
+				.withArgs("sap.ui.model.odata.AnnotationHelper/getExpression"),
+			oInterface = {
+				getPath: function () { return "/my/path"; }
+			},
+			oMockExpression = this.mock(Expression),
+			oRawValue = {},
+			oPathValue = {
+				path: "/my/path",
+				value: oRawValue
+			},
+			bWithPath = {};
+
+		oMockExpression.expects("expression").returns({});
+		this.mock(Basics).expects("resultToString").returns("");
+
+		Expression.getExpression(oInterface, oRawValue, bWithPath);
+		assert.strictEqual(oAverageSpy.callCount, 1, "getExpression start measurement");
+		assert.strictEqual(oEndSpy.callCount, 1, "getExpression end measurement");
+
+		oMockExpression.restore();
+		this.mock(Expression).expects("expression").throws(new SyntaxError());
+
+		Expression.getExpression(oInterface, oRawValue, bWithPath);
+		assert.strictEqual(oAverageSpy.callCount, 2, "getExpression start measurement");
+		assert.strictEqual(oEndSpy.callCount, 2, "getExpression end measurement");
+	});
 });

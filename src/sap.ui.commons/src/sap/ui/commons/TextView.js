@@ -10,8 +10,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * Constructor for a new TextView.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * Is used to display some continous text. The control can inherit the text direction from its parent control.
@@ -40,12 +40,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			text : {type : "string", defaultValue : '', bindable : "bindable"},
 
 			/**
-			 * Available options are LTR and RTL. Alternatively, the control can inherit the text direction from its parent control.
+			 * Determines the text directionality. Available options are LTR and RTL. Alternatively, the control can inherit the text direction from its parent control.
 			 */
 			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
 
 			/**
-			 * When the control is disabled, it is greyed out and no longer focusable.
+			 * Switches the enabled state of the control. When the control is disabled, it is greyed out and no longer focusable.
 			 */
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 			/**
 			 * The ARIA role for the control.
 			 */
-			accessibleRole : {type : "sap.ui.core.AccessibleRole", group : "Accessibility", defaultValue : sap.ui.core.AccessibleRole.Document},
+			accessibleRole : {type : "sap.ui.core.AccessibleRole", group : "Accessibility"},
 
 			/**
 			 * Defines the visual appearance of the control.
@@ -87,12 +87,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		associations : {
 
 			/**
-			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
+			 * Association to controls / IDs which describe this control (see WAI-ARIA attribute aria-describedby).
 			 */
 			ariaDescribedBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaDescribedBy"},
 
 			/**
-			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 * Association to controls / IDs which label this control (see WAI-ARIA attribute aria-labelledby).
 			 */
 			ariaLabelledBy : {type : "sap.ui.core.Control", multiple : true, singularName : "ariaLabelledBy"}
 		}

@@ -30,6 +30,22 @@ function(jQuery) {
 	/**
 	 *
 	 */
+	ElementUtil.iterateOverElements = function(vElement, fnCallback) {
+		if (vElement && vElement.length) {
+			for (var i = 0; i < vElement.length; i++) {
+				var oElement = vElement[i];
+				if (oElement instanceof sap.ui.core.Element) {
+					fnCallback(oElement);
+				}
+			}
+		} else if (vElement instanceof sap.ui.core.Element) {
+			fnCallback(vElement);
+		}
+	};
+
+	/**
+	 *
+	 */
 	ElementUtil.iterateOverAllPublicAggregations = function(oElement, fnCallback) {
 		var that = this;
 
@@ -38,9 +54,9 @@ function(jQuery) {
 
 		aAggregationNames.forEach(function(sAggregationName) {
 			var oAggregation = mAggregations[sAggregationName];
-			var oValue = that.getAggregation(oElement, sAggregationName);
+			var vAggregationValue = that.getAggregation(oElement, sAggregationName);
 
-			fnCallback(oAggregation, oValue);
+			fnCallback(oAggregation, vAggregationValue);
 		});
 	};
 
@@ -70,12 +86,22 @@ function(jQuery) {
 	/**
 	 *
 	 */
-	ElementUtil.ensureRootElement = function(oElement) {
-		if (!(oElement instanceof sap.ui.core.Element)) {
-			return;
+	ElementUtil.fixComponentParent = function(oElement) {
+		if (this.isInstanceOf(oElement, "sap.ui.core.UIComponent")) {
+			var oComponentContainer = oElement.oContainer;
+			if (oComponentContainer) {
+				return oComponentContainer.getParent();
+			}
+		} else {
+			return oElement;
 		}
+	};
 
-		if (oElement.getMetadata().getClass() === sap.ui.core.ComponentContainer) {
+	/**
+	 *
+	 */
+	ElementUtil.fixComponentContainerElement = function(oElement) {
+		if (this.isInstanceOf(oElement, "sap.ui.core.ComponentContainer")) {
 			//This happens when the compontentContainer has not been rendered yet
 			if (!oElement.getComponentInstance()) {
 				return;
@@ -94,25 +120,17 @@ function(jQuery) {
 		var aFoundElements = [];
 
 		function internalFind(oElement) {
-			oElement = that.ensureRootElement(oElement);
+			oElement = that.fixComponentContainerElement(oElement);
 			if (oElement) {
 				aFoundElements.push(oElement);
 				that.iterateOverAllPublicAggregations(oElement, function(oAggregation, vElements) {
-					if (vElements && vElements.length) {
-						for (var i = 0; i < vElements.length; i++) {
-							var oObj = vElements[i];
-							internalFind(oObj);
-						}
-					} else if (vElements instanceof sap.ui.core.Element) {
-						internalFind(vElements);
-					}
+					that.iterateOverElements(vElements, internalFind);
 				});
 			}
 		}
 		internalFind(oElement);
 
 		return aFoundElements;
-
 	};
 
 	/**
@@ -148,6 +166,7 @@ function(jQuery) {
 	 *
 	 */
 	ElementUtil.isElementFiltered = function(oControl, aType) {
+		// TODO: Is this method still needed?
 		var that = this;
 
 		aType = aType || this.getControlFilter();
@@ -167,6 +186,7 @@ function(jQuery) {
 	 *
 	 */
 	ElementUtil.findClosestControlInDom = function(oNode) {
+		// TODO: Is this method still needed?
 		if (oNode && oNode.getAttribute("data-sap-ui")) {
 			return sap.ui.getCore().byId(oNode.getAttribute("data-sap-ui"));
 		} else {
@@ -186,8 +206,15 @@ function(jQuery) {
 		oMetadata.getJSONKeys();
 		var oAggregationMetadata = oMetadata.getAggregation(sAggregationName);
 		if (oAggregationMetadata) {
+			var sGetter = oAggregationMetadata._sGetter;
+
+			// altType getter returns not element (TODO: clarify if getAggregationNameControl getter is a convention)
+			if (oAggregationMetadata.altTypes && oAggregationMetadata.altTypes.length && oElement[oAggregationMetadata._sGetter + "Control"]) {
+				sGetter = oAggregationMetadata._sGetter + "Control";
+			}
+
 			return {
-				get : oAggregationMetadata._sGetter,
+				get : sGetter,
 				add : oAggregationMetadata._sMutator,
 				remove : oAggregationMetadata._sRemoveMutator,
 				insert : oAggregationMetadata._sInsertMutator
@@ -224,6 +251,9 @@ function(jQuery) {
 	 *
 	 */
 	ElementUtil.addAggregation = function(oParent, sAggregationName, oElement) {
+		if (this.hasAncestor(oParent, oElement)) {
+			throw new Error("Trying to add an element to itself or its successors");
+		}
 		var sAggregationAddMutator = this.getAggregationAccessors(oParent, sAggregationName).add;
 		if (sAggregationAddMutator) {
 			oParent[sAggregationAddMutator](oElement);
@@ -249,6 +279,9 @@ function(jQuery) {
 	 *
 	 */
 	ElementUtil.insertAggregation = function(oParent, sAggregationName, oElement, iIndex) {
+		if (this.hasAncestor(oParent, oElement)) {
+			throw new Error("Trying to add an element to itself or its successors");
+		}
 		if (this.getAggregation(oParent, sAggregationName).indexOf(oElement) !== -1) {
 			// ManagedObject.insertAggregation won't reposition element, if it's already inside of same aggregation
 			// therefore we need to remove the element and then insert it again. To prevent ManagedObjectObserver from firing
@@ -275,6 +308,13 @@ function(jQuery) {
 	 */
 	ElementUtil.isValidForAggregation = function(oParent, sAggregationName, oElement) {
 		var oAggregationMetadata = oParent.getMetadata().getAggregation(sAggregationName);
+
+		// Make sure that the parent is not inside of the element, or is not the element itself,
+		// e.g. insert a layout inside it's content aggregation.
+		// This check needed as UI5 will have a maximum call stack error otherwise.
+		if (this.hasAncestor(oParent, oElement)) {
+			return false;
+		}
 
 		// only for public aggregations
 		if (oAggregationMetadata) {

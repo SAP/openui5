@@ -34,7 +34,7 @@ sap.ui.define([
 		},
 
 		onBeforeRendering : function () {
-			// Sets the text to the Label
+			// Sets the text to the label
 			this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
 		},
 

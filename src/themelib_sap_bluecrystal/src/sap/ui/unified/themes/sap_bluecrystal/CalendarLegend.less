@@ -1,9 +1,9 @@
-/* =============================================== */
+/* ===================================================== */
 /* CSS for control sap.ui.unified/CalendarLegend.control */
-/* Bluecrystal                                     */
-/* =============================================== */
+/* Bluecrystal                                           */
+/* ===================================================== */
 .sapUiUnifiedLegend {
-	background-color: @sapUiLightestBG;
+	background-color: @sapUiListBackground;
 	font-size: @sapMFontSmallSize;
 }
 
@@ -29,19 +29,19 @@
 	height: 10px;
 	width: 10px;
 	background-color: transparent;
-	border: 2px solid @sapUiPurple;
+	border: 2px solid @sapUiAccent4;
 }
 
 .sapUiUnifiedLegendSelected > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @sapUiHighlight;
+	background: @sapUiSelected;
 }
 
 .sapUiUnifiedLegendNormalDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: @sapUiExtraLightBG;
+	background: lighten(@sapUiContentForegroundColor, 5);
 }
 
 .sapUiUnifiedLegendNonWorkingDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: lighten(@sapBaseColor, 39.7);
+	background: @sapUiContentForegroundColor;
 }
 
 .sapUiCalLegDayType01 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor{
@@ -57,11 +57,11 @@
 }
 
 .sapUiCalLegDayType04 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: darken(@sapUiAccent2, 20%);
+	background: darken(@sapUiAccent2, 20);
 }
 
 .sapUiCalLegDayType05 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: lighten(@sapUiAccent4, 20%);
+	background: lighten(@sapUiAccent4, 20);
 }
 
 .sapUiCalLegDayType06 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
@@ -77,9 +77,9 @@
 }
 
 .sapUiCalLegDayType09 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: lighten(@sapUiAccent6, 15%);
+	background: lighten(@sapUiAccent6, 15);
 }
 
 .sapUiCalLegDayType10 > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
-	background: darken(@sapUiAccent4, 10%);
+	background: darken(@sapUiAccent4, 10);
 }

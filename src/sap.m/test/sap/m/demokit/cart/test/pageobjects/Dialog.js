@@ -13,17 +13,11 @@ sap.ui.define([
 								controlType : "sap.m.Button",
 								matchers : new PropertyStrictEquals({name : "text", value : "Delete"}),
 								success : function (aBtn) {
-									//console.log(jQuery("[role*='dialog']"));
 									aBtn[0].$().focusin();
 									aBtn[0].$().trigger("tap");
-									console.log(aBtn);
-									console.log(jQuery("[role*='dialog']"));
-									console.log(jQuery("[id*='sap-ui-blocklayer-popup']"));
-									//this.waitFor({
-									//	check: function(){
-									//		return jQuery("[id*='sap-ui-blocklayer-popup']").is(":hidden");
-									//	}
-									//});
+									jQuery.sap.log.info(aBtn);
+									jQuery.sap.log.info(jQuery("[role*='dialog']"));
+									jQuery.sap.log.info(jQuery("[id*='sap-ui-blocklayer-popup']"));
 								},
 								errorMessage : "The delete button could not be pressed"
 							}
@@ -38,7 +32,7 @@ sap.ui.define([
 								aBtn[0].$().trigger("tap");
 								this.waitFor({
 									check: function(){
-										console.log("Check for dialog existence: ", jQuery("[role*='dialog']"));
+										jQuery.sap.log.info("Check for dialog existence: ", jQuery("[role*='dialog']"));
 										return !jQuery("[role*='dialog']").length;
 									}
 								});

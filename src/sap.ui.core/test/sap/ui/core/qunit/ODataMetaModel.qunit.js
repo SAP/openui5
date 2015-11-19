@@ -832,7 +832,7 @@ sap.ui.require([
 			assert.strictEqual(oBinding.getModel(), oMetaModel);
 			assert.strictEqual(oBinding.getPath(), sPath);
 			assert.strictEqual(oBinding.getContext(), oContext);
-			assert.strictEqual(oBinding.aFilters, aFilters);
+			assert.strictEqual(oBinding.aApplicationFilters, aFilters);
 			assert.strictEqual(oBinding.mParameters, mParameters);
 		});
 	});
@@ -2568,6 +2568,29 @@ sap.ui.require([
 			});
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("load: Performance measurement points", function (assert) {
+		var oAverageSpy = oGlobalSandbox.spy(jQuery.sap.measure, "average")
+				.withArgs("sap.ui.model.odata.ODataMetaModel/load", "",
+					["sap.ui.model.odata.ODataMetaModel"]),
+			oEndSpy = oGlobalSandbox.spy(jQuery.sap.measure, "end")
+				.withArgs("sap.ui.model.odata.ODataMetaModel/load"),
+			oModel = new ODataModel1("/GWSAMPLE_BASIC", {
+				annotationURI : "/GWSAMPLE_BASIC/annotations",
+				json : true,
+				loadMetadataAsync : true
+			}),
+			oMetaModel = oModel.getMetaModel();
+
+		assert.strictEqual(oAverageSpy.callCount, 0, "load start measurement before");
+		assert.strictEqual(oEndSpy.callCount, 0, "load end measurement before");
+		return oMetaModel.loaded().then(function () {
+			assert.strictEqual(oAverageSpy.callCount, 1, "load start measurement after");
+			assert.strictEqual(oEndSpy.callCount, 1, "load end measurement after");
+			});
+	});
+
 
 	//TODO support getODataValueLists with reference to complex type property via entity type
 	//TODO protect against addAnnotationUrl calls from outside ODataMetaModel?

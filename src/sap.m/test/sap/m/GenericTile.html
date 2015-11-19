@@ -41,6 +41,7 @@
 	var oGenericTileData = {
 		subheader : "Expenses By Region",
 		header : "Comparative Annual Totals",
+		tooltip : "",
 		footerNum : "Actual and Target",
 		footerComp : "Compare across regions",
 		scale : "MM",
@@ -125,6 +126,7 @@
 	var oGenericTileModel = new sap.ui.model.json.JSONModel(oGenericTileData);
 
 	var oNVConfContS = new sap.m.NumericContent("numeric-cont-l", {
+		tooltip : "{/tooltip}",
 		value : "{/value}",
 		scale : "{/scale}",
 		indicator : "{/indicator}",
@@ -135,6 +137,7 @@
 	});
 
 	var oNVConfS = new sap.m.TileContent("numeric-tile-cont-l", {
+		tooltip : "{/tooltip}",
 		unit : "{/unit}",
 		size : "{/size}",
 		footer : "{/footerNum}",
@@ -150,6 +153,7 @@
 		frameType : "{/frameType}",
 		size : "{/size}",
 		header : "{/header}",
+		tooltip : "{/tooltip}",
 		state : "{/state}",
 		headerImage : "{/headerImage}",
 		imageDescription : "{/imageDescription}",
@@ -159,6 +163,7 @@
 	});
 
 	var oNumCnt2x1 = new sap.m.NumericContent("numeric-cont-2x1", {
+		tooltip : "{/tooltip}",
 		value : "-431.241.621,5",
 		scale : "MM",
 		indicator : "Up",
@@ -169,6 +174,7 @@
 	});
 
 	var oTc2x1 = new sap.m.TileContent("comp-tile-cont-2x1", {
+		tooltip : "{/tooltip}",
 		unit : "{/unit}",
 		size : "{/size}",
 		footer : "{/footerComp}",
@@ -177,6 +183,7 @@
 	});
 
 	var oGenericTile3 = new sap.m.GenericTile({
+		tooltip : "{/tooltip}",
 		subheader : "{/subheader}",
 		frameType : "TwoByOne",
 		size : "{/size}",
@@ -216,6 +223,17 @@
 		text : "Subheader",
 		labelFor : "desc-value"
 	});
+
+	var oTooltipLbl = new sap.m.Label({
+		text : "Tooltip",
+		labelFor : "tooltip-value"
+	});
+
+	var oTooltipInput = new sap.m.Input("tooltip-value", {
+		type : sap.m.InputType.Text,
+		placeholder : 'Enter tooltip ...'
+	});
+	oTooltipInput.bindValue("/tooltip");
 
 	var oDescInput = new sap.m.Input("desc-value", {
 		type : sap.m.InputType.Text,
@@ -401,7 +419,7 @@
 		editable : true,
 		content : [new sap.ui.core.Title({ // this starts a new group
 			text : "Modify Tile"
-		}), oTitleLbl, oTitleInput, oTitleDscr, oDescInput, oTitleFoot, oFooterInputNum, oFooterInputComp, oTitleUnit,
+		}), oTitleLbl, oTitleInput, oTitleDscr, oDescInput, oTitleFoot, oFooterInputNum, oFooterInputComp, oTooltipLbl, oTooltipInput, oTitleUnit,
 				oUnitInput, oFailedLabel, oFailedInput, oSizeLbl, oSizeSlct, oFtLbl, oFtSlct, oPictureLbl, oPictureSlct,
 				oImageDescLbl, oImageDescInput, oTriggerLoadLbl, oTriggerLoadSlct, oPressLbl, oPressSwtch]
 	});

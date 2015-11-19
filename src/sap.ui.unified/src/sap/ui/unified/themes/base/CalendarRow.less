@@ -3,7 +3,8 @@
 /* ================================================== */
 
 .sapUiCalendarRow{
-	background-color: @sapUiFieldBackground;
+	background-color: @sapUiListBackground;
+	border: 0.0625rem solid @sapUiListBorderColor;
 	box-sizing: border-box;
 	-webkit-user-select: none;
 	-moz-user-select: none;
@@ -33,16 +34,34 @@
 /* intervals */
 .sapUiCalendarRowAppsInt{
 	min-height: 100%;
+	height: 100%; /* to inherit to subintervals - to be overwritten for fix heights*/
 	border-width: 0 0.0625rem 0 0.0625rem;
 	border-style: solid;
-	border-color: @sapUiExtraLightBorder;
+	border-color: @sapUiListBorderColor;
 	box-sizing: border-box;
 	float: left;
 	cursor: default;
 }
 
+.sapUiCalendarRowAppsSubInt{
+	height: ~'calc(100% - 1.75rem)';
+	border-width: 0 0.0625rem 0 0;
+	border-style: solid;
+	border-color: @sapUiListBorderColor;
+	box-sizing: border-box;
+	float: left;
+}
+
+.sapUiCalendarRowAppsIntNoHead > .sapUiCalendarRowAppsSubInt{
+	height: 100%;
+}
+
+.sapUiCalendarRowAppsInt > .sapUiCalendarRowAppsSubInt:last-child{
+	border-right: none;
+}
+
 .sapUiCalendarRowAppsNoWork{
-	background-color: lighten(@sapUiLightBG, 3);
+	background-color: darken(@sapUiListBackground, 3);
 }
 
 .sapUiCalendarRowAppsIntHead{
@@ -51,16 +70,14 @@
 	width: 100%;
 	box-sizing: border-box;
 	padding-left: 0.375rem;
-/*	display: inline-block;*/
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-/*	vertical-align: top;*/
 	margin-bottom: 0.25rem;
 }
 
 .sapUiCalendarRowAppsIntHeadFirst{
-	border-left: 0.25rem solid @sapUiExtraLightBorder;
+	border-left: 0.25rem solid @sapUiListBorderColor;
 }
 
 .sapUiCalendarRowAppsIntHeadIcon{
@@ -87,8 +104,8 @@
 	position: absolute;
 	height: 3rem;
 	color: @sapUiBaseText;
-	background-color: @sapUiFieldBackground;
-	border-left: 0.25rem solid @sapUiExtraLightBorder;
+	background-color: @sapUiListBackground;
+	border-left: 0.25rem solid darken(@sapUiListBorderColor, 15);
 	outline: none;
 	cursor: pointer;
 	overflow: hidden;
@@ -97,43 +114,40 @@
 
 /* dummy app to calculate minimal size and other things */
 .sapUiCalendarAppDummy{
-	width: 1.5rem;
-}
-
-.sapUiCalendarApp.sapUiCalendarAppSmall{
-	background-color: @sapUiExtraLightBG;
+	width: 2rem;
 }
 
 .sapUiCalendarAppCont{
 	box-sizing: border-box;
 	position: relative;
-	border: 0.0625rem solid @sapUiExtraLightBorder;
+	border: 0.0625rem solid darken(@sapUiListBorderColor, 15);
 	border-left: none;
-/*	padding: 0.375rem;*/ /* don't use padding here, because the DIV can't be smaller than the min size of it's paddings.... */
+	/* don't use padding here, because the DIV can't be smaller than the min size of it's paddings.... */
 	height: 100%;
 	width: 100%;
 }
 
-
-.sapUiCalendarAppSmall > .sapUiCalendarAppCont{
-	display: none; /* if too small don't show content at all, would look ugly if only some px of text are shown */
+.sapUiCalendarAppSmall > .sapUiCalendarAppCont > .sapUiCalendarAppTitle,
+.sapUiCalendarAppSmall > .sapUiCalendarAppCont > .sapUiCalendarAppText{
+	padding-right: 0; /* if min-width no padding right to show ellipsis */
 }
 
 .sap-desktop .sapUiCalendarApp:hover:not(:active),
-.sap-desktop .sapUiCalendarApp:focus > .sapUiCalendarAppCont,
-.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSmall:focus{
+.sap-desktop .sapUiCalendarApp:focus:not(:active) > .sapUiCalendarAppCont{
 	background-color: @sapUiListHoverBackground;
 }
 
-.sapUiCalendarApp.sapUiCalendarAppSel,
-.sapUiCalendarApp.sapUiCalendarAppSel.sapUiCalendarAppSmall{
+.sap-desktop .sapUiCalendarApp:hover:not(:active) > .sapUiCalendarAppCont{
+	border-color: @sapUiHighlight;
+}
+
+.sapUiCalendarApp.sapUiCalendarAppSel{
+	color: @sapUiContentContrastTextColor;
 	background-color: @sapUiSelected;
 }
 
 .sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:hover:not(:active),
-.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel.sapUiCalendarAppSmall:hover:not(:active),
-.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus > .sapUiCalendarAppCont,
-.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel.sapUiCalendarAppSmall:focus > .sapUiCalendarAppCont{
+.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active) > .sapUiCalendarAppCont{
 	background-color: darken(@sapUiSelected, 10);
 }
 
@@ -141,11 +155,6 @@
 	border-style: dashed;
 	border-color: @sapUiListHighlightColor;
 	border-left: none;
-}
-
-.sapUiCalendarApp.sapUiCalendarAppSel{
-	color: @sapUiTextSelection;
-	background-color: @sapUiSelected;
 }
 
 .sapUiCalendarAppIcon{
@@ -202,8 +211,8 @@
 }
 
 .sapUiCalendarRowNow{
-	border-left: 0.0625rem solid @sapUiEmphasizedLine;
-	border-right: 0.0625rem solid @sapUiEmphasizedLine;
+	border-left: 0.0625rem solid @sapUiHighlight;
+	border-right: 0.0625rem solid @sapUiHighlight;
 	width: 0;
 	height: 100%;
 	position: absolute;

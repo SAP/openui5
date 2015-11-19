@@ -2,16 +2,14 @@
 	"_version": "1.1.0",
 	"sap.app": {
 		"_version": "1.1.0",
-		"id": "${project.artifactId}",
+		"id": "myCompany.myApp",
 		"type": "application",
-		"resources": "resources.json",
 		"i18n": "i18n/i18n.properties",
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
 		"applicationVersion": {
-			"version": "${project.version}"
+			"version": "1.0.0"
 		},
-		"ach": "",
 		"dataSources": {
 			"mainService": {
 				"uri": "/destinations/northwind/V2/Northwind/Northwind.svc/",
@@ -24,13 +22,8 @@
 		},
 		"sourceTemplate": {
 			"id": "sap.ui.ui5-template-plugin.1worklist",
-			"version": "1.34.1"
+			"version": "1.30.4"
 		}
-	},
-	"sap.fiori": {
-		"_version": "1.1.0",
-		"registrationIds": [],
-		"archeType": "transactional"
 	},
 	"sap.ui": {
 		"_version": "1.1.0",
@@ -57,7 +50,7 @@
 		"_version": "1.1.0",
 		"rootView": "myCompany.myApp.view.App",
 		"dependencies": {
-			"minUI5Version": "${sap.ui5.dist.version}",
+			"minUI5Version": "1.30.0",
 			"libs": {
 				"sap.ui.core": {},
 				"sap.m": {},

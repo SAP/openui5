@@ -79,7 +79,10 @@
 					"sap.ui.core.sample.OpaMatchers",
 					"sap.ui.core.sample.OpaById",
 					"sap.ui.core.sample.OpaDynamicWait",
-					"sap.ui.core.sample.OpaPageObject"
+					"sap.ui.core.sample.OpaPageObject",
+					"sap.ui.core.sample.OpaStartup.iStartMyUIComponent",
+					"sap.ui.core.sample.OpaStartup.iStartMyAppInAFrame",
+					"sap.ui.core.sample.OpaAction"
 				]
 			},
 			{
@@ -279,7 +282,7 @@
 			},
 		    {
 				"id": "sap.ui.core.tutorial.mockserver",
-				"name": "MockServer",
+				"name": "Mock Server",
 				"category": "Tutorial",
 				"since": "1.34",
 				"formFactors": "-",
@@ -473,6 +476,21 @@
 				"id": "sap.ui.core.sample.matcher.BindingPath",
 				"name": "Binding Path",
 				"description": "Checks if a control has a binding context with the exact same binding path"
+			},
+			{
+				"id": "sap.ui.core.sample.OpaStartup.iStartMyUIComponent",
+				"name": "Starting a UIComponent",
+				"description": "Use this function if you would like to run OPA tests for a single UIComponent (a component which creates entries in the DOM tree)"
+			},
+			{
+				"id": "sap.ui.core.sample.OpaStartup.iStartMyAppInAFrame",
+				"name": "Starting an app in an iFrame",
+				"description": "Use this function if you would like to run your app isolated from the other tests and your app starts with a html file you should use this function for testing with OPA."
+			},
+			{
+				"id": "sap.ui.core.sample.OpaAction",
+				"name": "Simulating user interactions on UI5 controls with OPA5",
+				"description": "There are built-in actions for OPA and you are also able to write custom actions if they do not fit the control you are using."
 			}
 		]
 	}

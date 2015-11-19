@@ -2988,7 +2988,6 @@
 				ok(false, "request succeeded...error expected");
 			},
 			error : function(oError) {
-				equal(oError.statusCode, 404, "error code");
 				ok(true, "request failed");
 			},
 			batchGroupId: "myId1"
@@ -3005,8 +3004,6 @@
 				//check response
 				var oResponse = oEvent.getParameter('response');
 				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
-				equal(oResponse.statusCode, 404, "oResponse Param check: statusCode");
-				equal(oResponse.statusText, "Not Found", "oResponse Param check: statusText");
 				
 				// check internal response
 				var aRequests = oEvent.getParameter('requests');
@@ -3047,8 +3044,6 @@
 				//check response
 				var oResponse = oEvent.getParameter('response');
 				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
-				equal(oResponse.statusCode, 404, "oResponse Param check: statusCode");
-				equal(oResponse.statusText, "Not Found", "oResponse Param check: statusText");
 				
 				// check internal response
 				var aRequests = oEvent.getParameter('requests');
@@ -3311,7 +3306,9 @@
 		var sReqId3 = null;
 		var iCount1 = 0;
 		var iCount2 = 0;
+		var oSpy = sinon.spy(oModel, "_request");
 		oModel.setUseBatch(false);
+		oModel.setTokenHandlingEnabled(false);
 		oModel.read("/ProductSet('HT-1001')", {
 			success : function() {
 				bSuccess = true;
@@ -3344,10 +3341,13 @@
 			batchGroupId: "myId1"
 		});
 		oModel.attachRequestSent(this, function(oEvent) {
+			var oRequest = oSpy.args[iCount1][0];
 			iCount1++;
 			if (iCount1 == 1) {
 				ok(oEvent.getParameter('url').indexOf("HT-1000") !== -1, "Param check: url should be non batch");
 				equal(oEvent.getParameter('method'), "POST" , "Param check: method");
+				equal(oRequest.method, "POST" , "request check: method");
+				ok(oRequest.requestUri.indexOf("/ProductSet('HT-1000')") !== -1, "request URL - ok");
 				equal(oEvent.getParameter('headers')['x-http-method'], "MERGE" , "Param check: method");
 				equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId3 = oEvent.getParameter('ID');
@@ -3356,6 +3356,8 @@
 			if (iCount1 == 2) {
 				ok(oEvent.getParameter('url').indexOf("HT-1001") !== -1, "Param check: url should be non batch");
 				equal(oEvent.getParameter('method'), "GET" , "Param check: method");
+				equal(oRequest.method, "GET" , "request check: method");
+				ok(oRequest.requestUri.indexOf("/ProductSet('HT-1001')") !== -1, "request URL - ok");
 				equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId1 = oEvent.getParameter('ID');
 			}
@@ -3363,11 +3365,11 @@
 			if (iCount1 == 3) {
 				ok(oEvent.getParameter('url').indexOf("AD-1000") !== -1, "Param check: url should be non batch");
 				equal(oEvent.getParameter('method'), "GET" , "Param check: method");
+				equal(oRequest.method, "GET" , "request check: method");
+				ok(oRequest.requestUri.indexOf("/ProductSet('AD-1000')") !== -1, "request URL - ok");
 				equal(typeof(oEvent.getParameter('ID')), "string", "Param check: id");
 				sReqId2 = oEvent.getParameter('ID');
 			}
-			
-
 		});
 		
 		oModel.attachRequestCompleted(this, function(oEvent) {
@@ -3415,6 +3417,7 @@
 			
 			if (iCount2 == 3) {
 				start();
+				oSpy.restore();
 			}
 		});
 	});

@@ -186,8 +186,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	 *         If the tree data structure doesn't contain an array you don't have to specify this parameter.
 	 *
 	 */
-	JSONModel.prototype.bindTree = function(sPath, oContext, aFilters, mParameters) {
-		var oBinding = new JSONTreeBinding(this, sPath, oContext, aFilters, mParameters);
+	JSONModel.prototype.bindTree = function(sPath, oContext, aFilters, mParameters, aSorters) {
+		var oBinding = new JSONTreeBinding(this, sPath, oContext, aFilters, mParameters, aSorters);
 		return oBinding;
 	};
 

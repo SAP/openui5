@@ -158,7 +158,10 @@ sap.ui.define([
 			
 			// for sequentialized requests, keep a promise of the last request
 			this.pSequentialRequestCompleted = Promise.resolve();
-
+			
+			// Promise for request chaining
+			this.pReadyForRequest = Promise.resolve();
+			
 			// determine the service base url and the url parameters
 			this.sServiceUrl = sServiceUrl;
 			var aUrlParts = sServiceUrl.split("?");
@@ -1349,6 +1352,7 @@ sap.ui.define([
 	 * @param {object} [oContext] bindingContext
 	 * @param {array} aFilters array of sap.ui.model.Filter
 	 * @param {map} [mParameters] map of parameters
+	 * @param {array} aSorters array of sap.ui.model.Sorter
 	 * @returns {object} oBinding new bindingObject
 	 * @private
 	 */
@@ -1725,7 +1729,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the value for the property with the given <code>sPath</code>
+	 * Returns the value for the property with the given <code>sPath</code>.
+	 * If the path points to a navigation property which has been loaded via $expand then the <code>bIncludeExpandEntries</code>
+	 * parameter determines if the navigation property should be included in the returned value or not. 
+	 * Please note that this currently works for 1..1 navigation properties only.
 	 *
 	 * @param {string} sPath the path/name of the property
 	 * @param {object} [oContext] the context if available to access the property value
@@ -2024,27 +2031,58 @@ sap.ui.define([
 			}
 			fnResolveCompleted();
 		}
-
+		
+		function _readyForRequest(oRequest) {
+			if (that.bTokenHandling && oRequest.method !== "GET") {
+				that.pReadyForRequest = that.securityTokenAvailable();
+			}
+			return that.pReadyForRequest;
+		}
+		
 		function _submitWithToken() {
 			// request token only if we have change operations or batch requests
 			// token needs to be set directly on request headers, as request is already created
-			if (that.bTokenHandling && oRequest.method !== "GET") {
-				that.securityTokenAvailable().then(function(sToken) {
-					// Check bTokenHandling again, as updating the token might disable token handling
-					if (that.bTokenHandling) {
-						oRequest.headers["x-csrf-token"] = sToken;
-					}
-					_submit();
-				})["catch"](function() {
-					_submit();
-				});
-			} else {
+			_readyForRequest(oRequest).then(function(sToken) {	
+				// Check bTokenHandling again, as updating the token might disable token handling
+				if (that.bTokenHandling) {
+					oRequest.headers["x-csrf-token"] = sToken;
+				}
 				_submit();
-			}
+			}, function() {
+				_submit();
+			});
 		}
+		
+		var fireEvent = function(sType, oRequest, oError) {
+			var oEventInfo,
+				aRequests = oRequest.eventInfo.requests;
+			if (aRequests) {
+				jQuery.each(aRequests, function(i, oRequest) {
+					if (jQuery.isArray(oRequest)) {
+						jQuery.each(oRequest, function(i, oRequest) {
+							oEventInfo = that._createEventInfo(oRequest.request, oError);
+							that["fireRequest" + sType](oEventInfo);
+						});
+					} else {
+						oEventInfo = that._createEventInfo(oRequest.request, oError);
+						that["fireRequest" + sType](oEventInfo);
+					}
+				});
+				
+				oEventInfo = that._createEventInfo(oRequest, oError, aRequests);
+				that["fireBatchRequest" + sType](oEventInfo);
+			} else {
+				oEventInfo = that._createEventInfo(oRequest, oError, aRequests);
+				that["fireRequest" + sType](oEventInfo);
+			}
+		};
 		
 		function _submit() {
 			oRequestHandle = that._request(oRequest, _handleSuccess, _handleError, oHandler, undefined, that.getServiceMetadata());
+			if (oRequest.eventInfo) {
+				fireEvent("Sent", oRequest, null);
+				delete oRequest.eventInfo;
+			}
 			if (bAborted) {
 				oRequestHandle.abort();
 			}
@@ -2087,8 +2125,7 @@ sap.ui.define([
 			oRequestHandle,
 			mChangeEntities = {},
 			mGetEntities = {},
-			mEntityTypes = {},
-			oEventInfo;
+			mEntityTypes = {};
 
 		var handleSuccess = function(oData, oResponse) {
 			var fnSingleSuccess = function(oData, oResponse) {
@@ -2111,11 +2148,8 @@ sap.ui.define([
 				that._processError(oRequest, oError, fnError);
 			}
 		};
+		oRequest.eventInfo = {};
 		oRequestHandle =  this._submitRequest(oRequest, handleSuccess, handleError);
-
-		oEventInfo = this._createEventInfo(oRequest);
-
-		this.fireRequestSent(oEventInfo);
 
 		return oRequestHandle;
 	};
@@ -2229,27 +2263,11 @@ sap.ui.define([
 			}
 		};
 
-		var fireEvent = function(sType, oBatchRequest, oError, aRequests) {
-			var oEventInfo;
-			jQuery.each(aRequests, function(i, oRequest) {
-				if (jQuery.isArray(oRequest)) {
-					jQuery.each(oRequest, function(i, oRequest) {
-						oEventInfo = that._createEventInfo(oRequest.request, oError);
-						that["fireRequest" + sType](oEventInfo);
-					});
-				} else {
-					oEventInfo = that._createEventInfo(oRequest.request, oError);
-					that["fireRequest" + sType](oEventInfo);
-				}
-			});
-
-			oEventInfo = that._createEventInfo(oBatchRequest, oError, aRequests);
-			that["fireBatchRequest" + sType](oEventInfo);
+		oBatchRequest.eventInfo = {
+				requests: aRequests,
+				batch: true
 		};
-
 		var oRequestHandle = this._submitRequest(oBatchRequest, handleSuccess, handleError);
-
-		fireEvent("Sent", oBatchRequest, null, aRequests);
 
 		return oRequestHandle;
 	};
@@ -3514,7 +3532,8 @@ sap.ui.define([
 				annotationData: mAnnotationData,
 				url: null,
 				metadata: this.oMetadata,
-				async: this.bLoadMetadataAsync
+				async: this.bLoadMetadataAsync,
+				headers: this.mCustomHeaders
 			});
 			
 			this.oAnnotations.attachFailed(this.onAnnotationsFailed, this);
@@ -3934,6 +3953,11 @@ sap.ui.define([
 				}
 			});
 			this.mCustomHeaders = mCheckedHeaders;
+		}
+
+		// Custom set headers should also be used when requesting annotations, but do not instantiate annotations just for this
+		if (this.oAnnotations) {
+			this.oAnnotations.setHeaders(this.mCustomHeaders);
 		}
 	};
 
@@ -4590,7 +4614,7 @@ sap.ui.define([
 				that.bMetaModelLoaded = true;
 				// Update metamodel bindings only
 				that.checkUpdate(false, false, null, true);
-			})["catch"](function (oError) {
+			}, function (oError) {
 				var sMessage = oError.message,
 					sDetails;
 

@@ -1,53 +1,41 @@
 <mvc:View
 		xmlns="sap.m"
 		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:layout="sap.ui.layout"
 		xmlns:core="sap.ui.core"
 		controllerName="sap.ui.demokit.demoapps.controller.Root">
 	<App>
 		<Page showHeader="false" enableScrolling="false">
-			<layout:DynamicSideContent
-					id="dynamicSideContent"
-					breakpointChanged="breakpointChanged">
-				<layout:mainContent>
-					<TileContainer
-							id="tileContainer"
-							tiles="{/allApps}">
-						<StandardTile
-								icon="sap-icon://{icon}"
-								number="{lib}"
-								title="{name}"
-								info="{desc}"
-								press="onTilePress">
-							<customData>
-								<core:CustomData key="ref" value="{ref}"/>
-							</customData>
-						</StandardTile>
-					</TileContainer>
-				</layout:mainContent>
-
-				<layout:sideContent>
-					<List items="{/allApps}" headerText="Downloads">
-							<StandardListItem
-									visible="{= !!${config}}"
-									title="{name}"
-									type="Active"
-									icon="sap-icon://download"
-									press="onDownloadPress">
-									<customData>
-										<core:CustomData key="config" value="{config}"/>
-									</customData>
-							</StandardListItem>
-					</List>
-				</layout:sideContent>
-			</layout:DynamicSideContent>
-
-			<footer>
-				<Toolbar>
-					<ToolbarSpacer></ToolbarSpacer>
-					<Button text="{= ${/showDownloads} ? 'Show Apps': 'Show Downloads'}" visible="{/smallScreen}" press="onDownloadTogglePress"/>
-				</Toolbar>
-			</footer>
+				<TileContainer
+						id="tileContainer"
+						tiles="{/allApps}">
+					<StandardTile
+							icon="sap-icon://{icon}"
+							number="{lib}"
+							title="{name}"
+							info="{desc}"
+							press="onTilePress">
+						<customData>
+							<core:CustomData key="ref" value="{ref}"/>
+						</customData>
+					</StandardTile>
+				</TileContainer>
 		</Page>
+		<dependents>
+			<SelectDialog id="downloadDialog"
+						  items="{/allApps}"
+						  title="Downloads"
+						  liveChange="onLiveChange"
+						  confirm="onDownloadPress">
+				<StandardListItem
+						visible="{= !!${config}}"
+						title="{name}"
+						type="Active"
+						icon="sap-icon://{icon}">
+					<customData>
+						<core:CustomData key="config" value="{config}"/>
+					</customData>
+				</StandardListItem>
+			</SelectDialog>
+		</dependents>
 	</App>
 </mvc:View>

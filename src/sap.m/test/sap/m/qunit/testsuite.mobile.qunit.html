@@ -28,12 +28,6 @@
 
 				// ActionSheet
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ActionSheet.qunit.html");
-				// FIXME: test doesn't work in headless PhantomJS test cycle => commented out!
-				if (!sap.ui.Device.browser.phantomJS) {
-					// the device simulation overrides the PhantomJS browser detection
-					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ActionSheet.qunit.html?sap-ui-xx-fakeOS=ipad"); // actionsheet has different behavior between phone and tablet
-					suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ActionSheet.qunit.html?sap-ui-xx-fakeOS=iphone"); // actionsheet has different behavior between phone and tablet
-				}
 
 				// App
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/App.qunit.html");
@@ -89,6 +83,9 @@
 				// DateTimeInput
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/DateTimeInput.qunit.html");
 
+				// DraftIndicator
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/DraftIndicator.qunit.html");
+				
 				// Dialog
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Dialog.qunit.html");
 
@@ -220,6 +217,11 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nSortPanel.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nGroupPanel.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nDialog.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nDimMeasurePanel.qunit.html");
+				
+
+				// PlanningCalendar
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/PlanningCalendar.qunit.html");
 
 				// Popover
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Popover.qunit.html");
@@ -312,9 +314,6 @@
 				// TableSelectDialog
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TableSelectDialog.qunit.html");
 
-				// TeamCalendar
-				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TeamCalendar.qunit.html");
-
 				// Text
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/Text.qunit.html");
 
@@ -359,6 +358,7 @@
 
 				// ViewSettingsDialog
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ViewSettingsDialog.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/ViewSettingsDialogCustomTabs.qunit.html");
 
 				// QUnit Tests for responsive behaviour (for example Responsive Margins)
 				suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/QUnitCompositesUsingIFrames.qunit.html");

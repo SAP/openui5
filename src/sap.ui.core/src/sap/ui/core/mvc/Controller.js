@@ -12,16 +12,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		var mRegistry = {};
 
 		/**
-		 * Instantiates a (MVC-style) Controller. Consumers should call the constructor only in the
+		 * Instantiates a (MVC-style) controller. Consumers should call the constructor only in the
 		 * typed controller scenario. In the generic controller use case, they should use
 		 * {@link sap.ui.controller} instead.
 		 *
-		 * @class A generic controller implementation for the UI5 Model View controller concept.
+		 * @class A generic controller implementation for the UI5 Model-View-Controller concept.
 		 *
 		 * Can either be used as a generic controller which is enriched on the fly with methods
 		 * and properties (see {@link sap.ui.controller}) or  as a base class for typed controllers.
 		 *
-		 * @param {string|object[]} sName The name of the Controller to instantiate. If a Controller is defined as real sub-class,
+		 * @param {string|object[]} sName The name of the controller to instantiate. If a controller is defined as real sub-class,
 		 *                                   the "arguments" of the sub-class constructor should be given instead.
 		 * @public
 		 * @alias sap.ui.core.mvc.Controller
@@ -97,14 +97,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		
 		/**
 		 * This function can be used to extend a controller with controller 
-		 * extensions defined in the customizing configuration or with the 
+		 * extensions defined in the Customizing configuration or with the 
 		 * controller extensions returned by controller extension provider.
 		 * 
-		 * @param {object|sap.ui.core.mvc.Controller} the controller to extend
-		 * @param {string} the name of the controller
-		 * @param {boolean} flag whether to run in async mode or not
-		 * @return {sap.ui.core.mvc.Controller|Promise} will be a <code>Promise</code> in case of async extend 
-		 *           or the <code>Controller</code> in case of sync extend
+		 * @param {object|sap.ui.core.mvc.Controller} Controller to extend
+		 * @param {string} Name of the controller
+		 * @param {boolean} If set to true, extension will be run in async mode
+		 * @return {sap.ui.core.mvc.Controller|Promise} A <code>Promise</code> in case of asynchronous extend 
+		 *           or the <code>controller</code> in case of synchronous extend
 		 * 
 		 * @since 1.33.0
 		 * @private
@@ -205,10 +205,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * <b>Note</b>: as the members are shallow copied, controller instances will share all object values.
 		 * This might or might not be what applications expect.
 		 *
-		 * If only a name is given, a new instance of the named Controller class is returned.
+		 * If only a name is given, a new instance of the named controller class is returned.
 		 *
-		 * @param {string} sName The Controller name
-		 * @param {object} [oControllerImpl] An object literal defining the methods and properties of the Controller
+		 * @param {string} sName The controller name
+		 * @param {object} [oControllerImpl] An object literal defining the methods and properties of the controller
 		 * @return {void | sap.ui.core.mvc.Controller} void or the new controller instance, depending on the use case
 		 * @public
 		 */
@@ -255,17 +255,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		};
 
 		/**
-		 * Returns an Element of the connected view with the given local Id.
+		 * Returns an Element of the connected view with the given local ID.
 		 *
-		 * Views automatically prepend their own id as a prefix to created Elements
-		 * to make the ids unique even in the case of multiple view instances.
-		 * This method helps to find an element by its local id only.
+		 * Views automatically prepend their own ID as a prefix to created Elements
+		 * to make the IDs unique even in the case of multiple view instances.
+		 * This method helps to find an element by its local ID only.
 		 *
 		 * If no view is connected or if the view doesn't contain an element with
-		 * the given local id, undefined is returned.
+		 * the given local ID, undefined is returned.
 		 *
-		 * @param {string} sId The view-local id
-		 * @return {sap.ui.core.Element} Element by its (view local) id
+		 * @param {string} sId View-local ID
+		 * @return {sap.ui.core.Element} Element by its (view local) ID
 		 * @public
 		 */
 		Controller.prototype.byId = function(sId) {
@@ -274,13 +274,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 
 
 		/**
-		 * Converts a view local id to a globally unique one by prepending
-		 * the view id.
+		 * Converts a view local ID to a globally unique one by prepending
+		 * the view ID.
 		 *
 		 * If no view is connected, undefined is returned.
 		 *
-		 * @param {string} sId The view-local id
-		 * @return {string} The prefixed id
+		 * @param {string} sId View-local ID
+		 * @return {string} Prefixed ID
 		 * @public
 		 */
 		Controller.prototype.createId = function(sId) {
@@ -288,12 +288,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		};
 
 		/**
-		 * Gets the component of the Controllers view
+		 * Gets the component of the controller's view
 		 *
 		 * If there is no Component connected to the view or the view is not connected to the controller,
 		 * undefined is returned.
 		 *
-		 * @return {sap.ui.core.Component} The Component instance
+		 * @return {sap.ui.core.Component} Component instance
 		 * @since 1.23.0
 		 * @public
 		 */
@@ -419,6 +419,59 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		};
 
 
+		/**
+		 * This method is called upon initialization of the View. The controller can perform its internal setup in
+		 * this hook. It is only called once per View instance, unlike the onBeforeRendering and onAfterRendering
+		 * hooks.
+		 * (Even though this method is declared as "abstract", it does not need to be defined in controllers, if the
+		 * method does not exist, it will simply not be called.)
+		 * 
+		 * @function
+		 * @name sap.ui.core.mvc.Controller.prototype.onInit
+		 * @abstract
+		 * @protected 
+		 */
+		
+		/**
+		 * This method is called upon desctuction of the View. The controller should perform its internal destruction in
+		 * this hook. It is only called once per View instance, unlike the onBeforeRendering and onAfterRendering
+		 * hooks.
+		 * (Even though this method is declared as "abstract", it does not need to be defined in controllers, if the
+		 * method does not exist, it will simply not be called.)
+		 * 
+		 * @function
+		 * @name sap.ui.core.mvc.Controller.prototype.onExit
+		 * @abstract
+		 * @protected 
+		 */
+
+		/**
+		 * This method is called every time the View is rendered, before the Renderer is called and the HTML is placed in 
+		 * the DOM-Tree. It can be used to perform clean-up-tasks before re-rendering.
+		 * (Even though this method is declared as "abstract", it does not need to be defined in controllers, if the
+		 * method does not exist, it will simply not be called.)
+		 *
+		 * @see sap.ui.core.Control.prototype.onBeforeRendering
+		 * 
+		 * @function
+		 * @name sap.ui.core.mvc.Controller.prototype.onBeforeRendering
+		 * @abstract
+		 * @protected 
+		 */
+
+		/**
+		 * This method is called every time the View is rendered, after the HTML is placed in the DOM-Tree. It can be 
+		 * used to apply additional changes to the DOM after the Renderer has finished.
+		 * (Even though this method is declared as "abstract", it does not need to be defined in controllers, if the
+		 * method does not exist, it will simply not be called.)
+		 *
+		 * @see sap.ui.core.Control.prototype.onAfterRendering
+		 * 
+		 * @function
+		 * @name sap.ui.core.mvc.Controller.prototype.onAfterRendering
+		 * @abstract
+		 * @protected 
+		 */
 	return Controller;
 
 });

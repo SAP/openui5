@@ -760,34 +760,46 @@
 			]
 		});
 
+		function roundPixels(sSizeInPx) {
+			if (sSizeInPx.substr(-2) !== "px") {
+				return sSizeInPx;
+			}
+
+			return Math.round(sSizeInPx.substr(0, sSizeInPx.length - 2)) + "px";
+		}
+
 		// Act + assert
 		oTB.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		// Assert
 		function assertButton (oButton, oWidth) {
-			strictEqual(oButton.$().css("margin-left"), oWidth.left + "px", oButton + " did have the correct left border");
-			strictEqual(oButton.$().css("margin-right"),  oWidth.right + "px", oButton + " did have the correct right border");
+			strictEqual(roundPixels(oButton.$().css("margin-left")), oWidth.left + "px", oButton + " did have the correct left border");
+			strictEqual(roundPixels(oButton.$().css("margin-right")),  oWidth.right + "px", oButton + " did have the correct right border");
 		}
 
 		assertButton(oFirstButton, {
-			left: 4,
-			right : 0
+			left: 2,
+			right : 2
 		});
 
 		assertButton(oMiddleButton, {
-			left: 4,
-			right : 0
+			left: 2,
+			right : 2
 		});
 
 		assertButton(oLastButton, {
-			left: 4,
-			right : 4
+			left: 2,
+			right : 2
 		});
+
+		strictEqual(roundPixels(oTB.$().css("padding-left")), "2px", "The toolbar had the correct left padding");
+		strictEqual(roundPixels(oTB.$().css("padding-right")), "2px", "The toolbar had the correct right padding");
 
 		// Cleanup
 		oTB.destroy();
 	});
+
 
 </script>
 </head>

@@ -112,6 +112,31 @@ sap.ui.define([
 				 */
 				updateGroupItem: {}
 			}
+		},
+		renderer: function(oRm, oControl) {
+			// start GroupPanel
+			oRm.write("<section");
+			oRm.writeControlData(oControl);
+			oRm.addClass("sapMGroupPanel");
+			oRm.writeClasses();
+			oRm.writeStyles();
+			oRm.write(">");
+
+			// render content
+			oRm.write("<div");
+			oRm.addClass("sapMGroupPanelContent");
+			oRm.addClass("sapMGroupPanelBG");
+
+			oRm.writeClasses();
+			oRm.write(">");
+			var aChildren = oControl.getAggregation("content");
+			var iLength = aChildren.length;
+			for (var i = 0; i < iLength; i++) {
+				oRm.renderControl(aChildren[i]);
+			}
+			oRm.write("</div>");
+
+			oRm.write("</section>");
 		}
 	});
 
@@ -329,8 +354,8 @@ sap.ui.define([
 		}
 	};
 
-	P13nGroupPanel.prototype.insertGroupItem = function(oGroupItem) {
-		this.insertAggregation("groupItems", oGroupItem);
+	P13nGroupPanel.prototype.insertGroupItem = function(oGroupItem, iIndex) {
+		this.insertAggregation("groupItems", oGroupItem, iIndex);
 
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;

@@ -794,6 +794,12 @@ sap.ui.define([
 		$Ref.toggleClass("sapUiShd", this._bShadow).hide().css("visibility", "visible");
 		if (iRealDuration == 0) { // do not animate if there is a duration == 0
 			fnOpened.apply(); // otherwise call after-opening functions directly
+			// fnOpened is called synchronously above, and the Popup could have been already closed after fnOpened (from one of the "opened" event handlers).
+			// If the state isn't OPEN after fnOpened, it's needed to directly return from here. Otherwise the later registered listener and modified flag can't
+			// be cleared.
+			if (this.eOpenState !== sap.ui.core.OpenState.OPEN) {
+				return;
+			}
 		} else if (this._animations.open) { // if custom animation is defined, call it
 			this._animations.open.call(null, $Ref, iRealDuration, fnOpened);
 		} else { // otherwise play the default animation

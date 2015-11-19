@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<title>sap.m.ActionSheet - Accessibility</title>
+
+	<script src="../../../../resources/sap-ui-core.js"
+	        type="text/javascript"
+	        id="sap-ui-bootstrap"
+	        data-sap-ui-libs="sap.m"
+	        data-sap-ui-theme="sap_bluecrystal">
+	</script>
+
+	<script>
+		var oApp = new sap.m.App("myApp", {
+			initialPage: "page"
+		});
+
+		var oActionSheet = new sap.m.ActionSheet({
+			title: "Choose your action",
+			buttons: [
+				new sap.m.Button({ text: "Reject", icon: "sap-icon://decline" }),
+				new sap.m.Button({ text: "Accept", icon: "sap-icon://accept" }),
+				new sap.m.Button({ text: "Email", icon: "sap-icon://email" }),
+				new sap.m.Button({ text: "Forward", icon: "sap-icon://forward" }),
+				new sap.m.Button({ text: "Delete", icon: "sap-icon://delete" }),
+				new sap.m.Button({ text: "Other" })
+			]
+		});
+
+		var oButton = new sap.m.Button({
+			text: "Open ActionSheet",
+			press: function () {
+				oActionSheet.openBy(this);
+			}
+		});
+
+		var oPage = new sap.m.Page("page", {
+			title: "ActionSheet Control",
+			content: [
+				oButton
+			]
+		});
+
+		oApp.addPage(oPage).placeAt("content");
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+	<div id="content"></div>
+</body>
+</html>

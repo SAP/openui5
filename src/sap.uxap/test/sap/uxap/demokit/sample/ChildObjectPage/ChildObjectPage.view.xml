@@ -1,0 +1,84 @@
+<core:View
+		xmlns:core="sap.ui.core"
+		xmlns="sap.uxap"
+		xmlns:layout="sap.ui.layout"
+		xmlns:m="sap.m"
+		xmlns:f="sap.ui.layout.form"
+		xmlns:sample="sap.uxap.sample.ObjectPageOnJSON"
+		xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+		xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
+		xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
+		controllerName="sap.uxap.sample.ChildObjectPage.ChildObjectPage"
+		height="100%">
+
+	<ObjectPageLayout id="ObjectPageLayout" isChildPage="true">
+		<headerTitle>
+			<ObjectPageHeader id="headerForTest"
+							  headerDesign="Light"
+							  objectTitle="Denise Smith"
+							  objectSubtitle="Example of a child page in ObjectPage terms"
+							  objectImageShape="Circle"
+							  objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png">
+				<actions>
+					<ObjectPageHeaderActionButton icon="sap-icon://action" text="action"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://action-settings" text="settings"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://edit" text="edit"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://save" text="save" visible="false"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://refresh" text="{buttons>/text}"/>
+					<ObjectPageHeaderActionButton icon="{buttons>/icon}"
+												  text="{path:'/text', model:'buttons', formatter:'.onFormat'}"/>
+				</actions>
+				<breadCrumbsLinks>
+					<m:Link text="Page 2 long link" press="handleLink2Press"/>
+				</breadCrumbsLinks>
+			</ObjectPageHeader>
+		</headerTitle>
+		<headerContent>
+			<layout:VerticalLayout>
+				<m:ObjectStatus title="User ID" text="12345678"/>
+				<m:ObjectStatus title="Functional Area" text="Developement"/>
+				<m:ObjectStatus title="Cost Center" text="PI DFA GD Programs and Product"/>
+				<m:ObjectStatus title="Email" text="email@address.com"/>
+			</layout:VerticalLayout>
+			<m:Text width="200px"
+					text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
+
+			<m:ObjectStatus text="In Stock" state="Error"/>
+			<m:ObjectStatus title="Label" text="In Stock" state="Warning"/>
+
+		</headerContent>
+		<sections>
+			<ObjectPageSection title="2014 Goals Plan">
+				<subSections>
+					<ObjectPageSubSection title=" ">
+						<blocks>
+							<goals:GoalsBlock id="goalsblock"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Personal">
+				<subSections>
+					<ObjectPageSubSection title="Connect">
+						<blocks>
+							<personal:BlockPhoneNumber id="phone"/>
+							<personal:BlockSocial id="social"/>
+							<personal:BlockAdresses id="adresses"/>
+							<personal:BlockMailing id="mailing" columnLayout="1"/>
+						</blocks>
+					</ObjectPageSubSection>
+
+					<ObjectPageSubSection id="paymentSubSection" title="Payment information">
+						<blocks>
+							<personal:PersonalBlockPart1 id="part1" columnLayout="1"/>
+						</blocks>
+						<moreBlocks>
+							<personal:PersonalBlockPart2 id="part2" columnLayout="1"/>
+						</moreBlocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</core:View>

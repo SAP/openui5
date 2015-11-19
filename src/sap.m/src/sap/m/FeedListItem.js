@@ -165,12 +165,14 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @private
 	 */
 	FeedListItem.prototype.ontap = function(oEvent) {
-		if (((	 (!this.getIconActive() && oEvent.srcControl.getId() == this._oImageControl.getId())) // click on inactive image
-					|| (!this.getSenderActive() && oEvent.srcControl.getId() == this._oLinkControl.getId())) // click on inactive sender link
-					|| ((!this._oImageControl || (oEvent.srcControl.getId() !== this._oImageControl.getId())) // not image clicked
-								&& (!this._oLinkControl || (oEvent.srcControl.getId() !== this._oLinkControl.getId())) // not sender link clicked
-								&& (!this._oLinkExpandCollapse || (oEvent.srcControl.getId() !== this._oLinkExpandCollapse.getId())))) { // not expand/collapse link clicked
-			ListItemBase.prototype.ontap.apply(this, [oEvent]);
+		if (oEvent.srcControl) {
+			if ((!this.getIconActive() && this._oImageControl && oEvent.srcControl.getId() === this._oImageControl.getId()) || // click on inactive image
+					(!this.getSenderActive() && this._oLinkControl && oEvent.srcControl.getId() === this._oLinkControl.getId()) || // click on inactive sender link
+					(!this._oImageControl || (oEvent.srcControl.getId() !== this._oImageControl.getId()) &&                        // not image clicked
+					(!this._oLinkControl || (oEvent.srcControl.getId() !== this._oLinkControl.getId())) &&                         // not sender link clicked
+					(!this._oLinkExpandCollapse || (oEvent.srcControl.getId() !== this._oLinkExpandCollapse.getId())))) {          // not expand/collapse link clicked
+				ListItemBase.prototype.ontap.apply(this, [oEvent]);
+			}
 		}
 	};
 

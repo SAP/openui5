@@ -30,7 +30,7 @@
 			},
 			{
 				"text": "Worklist",
-				"ref": "test-resources/sap/m/demokit/worklist/webapp/test/testOpenUI5Service.html",
+				"ref": "test-resources/sap/m/demokit/worklist/webapp/test/testService.html",
 				"config": "test-resources/sap/m/demokit/worklist/demoapp.json",
 				"icon": "task",
 				"desc": "Best-practice starting point for a worklist-style app"
@@ -44,7 +44,7 @@
 			},
 			{
 				"text": "Manage Products",
-				"ref": "test-resources/sap/m/demokit/tutorial/worklist/06/webapp/test/testService.html",
+				"ref": "test-resources/sap/m/demokit/tutorial/worklist/07/webapp/test/testService.html",
 				"icon": "task",
 				"desc": "This app is the final result of the 'Worklist App Tutorial'"
 			},
@@ -240,6 +240,15 @@
 		  "since": "1.34",
 		  "samples": [
 			"sap.m.sample.NotificationListItem"
+		  ]
+		},
+		{
+		  "id": "sap.m.NotificationListGroup",
+		  "name": "Notification List Group",
+		  "category": "List",
+		  "since": "1.34",
+		  "samples": [
+			"sap.m.sample.NotificationListGroup"
 		  ]
 		},
 		{
@@ -762,6 +771,7 @@
 		  "since": "1.26",
 		  "samples": [
 			"sap.m.sample.P13nDialog",
+			"sap.m.sample.P13nDialogWithDimMeasurePanel",
 			"sap.m.sample.P13nDialogWithCustomPanel"
 		  ]
 		},
@@ -1554,6 +1564,11 @@
 		  "description": "Dialog for personalization of column order and their visibility, sorting and filtering conditions of columns."
 		},
 		{
+		  "id": "sap.m.sample.P13nDialogWithDimMeasurePanel",
+		  "name": "P13nDialog stand-alone",
+		  "description": "Dialog for personalization of dimension/measure order and their visibility, sorting and filtering conditions of dimensions/measures."
+		},
+		{
 		  "id": "sap.m.sample.P13nDialogWithCustomPanel",
 		  "name": "P13nDialog stand-alone with custom panel",
 		  "description": "Dialog for personalization of column order and their visibility and custom panel."
@@ -1651,7 +1666,7 @@
 		{
 		  "id": "sap.m.sample.InputTypes",
 		  "name": "Input - Types",
-		  "description": "On touch devices the 'type' of the input controls the keyboard layout. On keyboard devices this setting has no effect."
+		  "description": "Input type corresponds to the type attribute of the HTML input tag. On touch devices, it controls the keyboard layout. On desktop, the effect of this setting is browser dependent."
 		},
 		{
 		  "id": "sap.m.sample.InputPassword",
@@ -1796,7 +1811,7 @@
 		{
 		  "id": "sap.m.sample.TableMergeCells",
 		  "name": "Table - Merge Cells",
-		  "description": "With column duplicate merging, you can improve the display of repeated data. See the effect of mergeDuplicates on the Supplier column, space permitting."
+		  "description": "With column duplicate merging, you can improve the display of repeated data. See the effect of mergeDuplicates on the Supplier column, space permitting.\nNote: This feature is ignored if a column is shown in the pop-in."
 		},
 		{
 		  "id": "sap.m.sample.TableVerticalAlignment",
@@ -1952,6 +1967,11 @@
 		  "id": "sap.m.sample.NotificationListItem",
 		  "name": "Notification List Item",
 		  "description": "A list item suitable for showing notifications to the user."
+		},
+		{
+		  "id": "sap.m.sample.NotificationListGroup",
+		  "name": "Notification List Group",
+		  "description": "A control suitable for grouping notifications."
 		},
 		{
 		  "id": "sap.m.sample.Dialog",

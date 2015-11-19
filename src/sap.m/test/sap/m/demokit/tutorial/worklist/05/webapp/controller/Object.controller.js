@@ -47,11 +47,14 @@ sap.ui.define([
 		 * Event handler  for navigating back.
 		 * It checks if there is a history entry. If yes, history.go(-1) will happen.
 		 * If not, it will replace the current entry of the browser history with the worklist route.
+		 * Furthermore, it removes the defined binding context of the view by calling unbindElement().
 		 * @public
 		 */
 		onNavBack: function() {
 			var oHistory = History.getInstance();
 			var sPreviousHash = oHistory.getPreviousHash();
+
+			this.getView().unbindElement();
 
 			if (sPreviousHash !== undefined) {
 				// The history contains a previous entry
@@ -110,11 +113,10 @@ sap.ui.define([
 
 		_onBindingChange: function(oEvent) {
 			var oView = this.getView(),
-				oViewModel = this.getModel("objectView"),
-				oElementBinding = oView.getElementBinding();
+				oViewModel = this.getModel("objectView");
 
 			// No data for the binding
-			if (!oElementBinding.getBoundContext()) {
+			if (!oView.getBindingContext()) {
 				this.getRouter().getTargets().display("objectNotFound");
 				return;
 			}

@@ -93,6 +93,33 @@
 			sinon.assert.calledWith(oStub, sinon.match(/foo/), sinon.match(this.oTargets));
 		});
 
+		test("Should be able to add a new target", function () {
+			this.oTargets.addTarget("newTarget", {
+				viewName: "newView",
+				parent: "myParent"
+			});
+
+			var oTarget = this.oTargets.getTarget("newTarget");
+			ok(oTarget, "new target object is created");
+			strictEqual(oTarget._oOptions.name, "newTarget", "target name should be correct");
+			strictEqual(oTarget._oParent, this.oTargets.getTarget("myParent"), "correct parent should be set");
+		});
+
+		test("Should kept the existing target and log an error message if 'addTarget' is called with the same name", function () {
+			// Arrange
+			var oStub = this.stub(jQuery.sap.log, "error", jQuery.noop);
+
+			// Act
+			this.oTargets.addTarget("myParent", {
+				viewName: "myNewParentView"
+			});
+			var oParent = this.oTargets.getTarget("myParent");
+
+			// Assert
+			strictEqual(oParent._oOptions.viewName, "myParentView", "options stay the same");
+			// Check whether the error message is thrown
+			sinon.assert.calledWith(oStub, sinon.match(/myParent/), sinon.match(this.oTargets));
+		});
 
 		module("config - defaults and additional values", {
 			setup: function () {

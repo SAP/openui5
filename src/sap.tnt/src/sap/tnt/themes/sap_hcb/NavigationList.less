@@ -1,0 +1,61 @@
+/* ============================================== */
+/* CSS for control sap.tnt/NavigationList.control */
+/* ============================================== */
+
+.sapTntNavLIGroup {
+	background-color: @sapHCStandardBG;
+	border-bottom: 1px solid @sapHCStandardFG;
+	color: @sapHCStandardFG;
+
+	& > .sapUiIcon {
+		color: @sapHCStandardFG;
+	}
+}
+
+.sapTntNavLIGroup:not(.sapTntNavLIItemDisabled):hover {
+	background-color: @sapHCHighlightBG;
+	border-bottom: 1px solid @sapHCStandardFG;
+	color: @sapHCStandardFG;
+
+	& > .sapUiIcon {
+		color: @sapHCStandardFG;
+	}
+}
+
+.sapTntNavLIItemSelected .sapTntNavLIGroup {
+	background-color: @sapHCHighlightAltBG;
+	border-bottom: 1px solid @sapHCStandardFG;
+	color: @sapHCStandardFG;
+
+	& > .sapUiIcon {
+		color: @sapHCStandardFG;
+	}
+}
+
+.sapTntNavLIGroupItem {
+	background-color: @sapHCReducedBG;
+	border-bottom: 1px solid @sapHCStandardFG;
+	color: @sapHCStandardFG;
+}
+
+.sapTntNavLIGroupItem:not(.sapTntNavLIItemDisabled):hover {
+	background-color: @sapHCReducedAltBG;
+	border-bottom: 1px solid @sapHCStandardFG;
+	color: @sapHCStandardFG;
+}
+
+.sapTntNavLIItemSelected.sapTntNavLIGroupItem {
+	background-color: @sapHCHighlightAltBG;
+	border-bottom: 1px solid @sapHCStandardFG;
+	color: @sapHCStandardFG;
+
+	& > .sapUiIcon {
+		color: @sapHCStandardFG;
+	}
+}
+
+.sapTntNavLI li:focus,
+.sapTntNavLIItem:focus {
+	outline: 0.125rem dotted @sapUiFocus;
+	outline-offset: -1px;
+}

@@ -13,7 +13,7 @@
 @sapMShellMinWidthForLogoAside: 1480px;     // = @sapMShellAppWidthLimit + 200; but additions do not work in LESS for media query arguments
 @sapMShellMinWidthForBigLogoAside: 1680px;  // = @sapMShellAppWidthLimit + 400; but additions do not work in LESS for media query arguments
 
-@sapMShellContentBG: rgba(255,255,255,0.3);
+@sapMShellContentBG: fade(lighten(@sapBackgroundColor, 5), 30);
 
 .sapMShell {
 	width: 100%;
@@ -135,7 +135,7 @@
 		position: relative;
 		height: 4.25rem;
 		color: @sapUiDarkText;
-		border-bottom: 0.0625rem solid @sapUiLightBorder;
+		border-bottom: 0.0625rem solid @sapUiShellBorderColor;
 	}
 
 	.sap-desktop .sapMShellHeaderText {
@@ -164,7 +164,7 @@
 		outline: none;
 	}
 	.sap-desktop .sapMShellHeaderLogout:active {
-		background-color: @sapUiHighlight;
+		background-color: @sapUiButtonActiveBackground;
 		outline: none;
 	}
 

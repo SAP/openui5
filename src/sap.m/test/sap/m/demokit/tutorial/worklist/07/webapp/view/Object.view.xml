@@ -1,0 +1,99 @@
+<mvc:View
+	controllerName="myCompany.myApp.controller.Object"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:semantic="sap.m.semantic"
+	xmlns:form="sap.ui.layout.form"
+	xmlns="sap.m">
+	<semantic:FullscreenPage
+		id="page"
+		busy="{objectView>/busy}"
+		busyIndicatorDelay="{objectView>/delay}"
+		navButtonPress="onNavBack"
+		showNavButton="true"
+		title="{i18n>objectTitle}">
+		<semantic:content>
+			<ObjectHeader
+				id="objectHeader"
+				responsive="true"
+				intro="{ProductID}"
+				title="{ProductName}"
+				numberUnit="PC"
+				numberState="Success"
+				number="{
+					path: 'UnitsInStock',
+					formatter: '.formatter.numberUnit'
+				}">
+				<attributes>
+					<ObjectAttribute
+						title="{i18n>ObjectPriceTitle}"
+						text="{
+							path: 'UnitPrice',
+							formatter: '.formatter.numberUnit'
+						} EUR"/>
+				</attributes>
+				<statuses>
+					<ObjectStatus
+						text="{i18n>ObjectDiscontinuedStatusText}"
+						state="Error"
+						visible="{path:'Discontinued'}"/>
+				</statuses>
+			</ObjectHeader>
+			<Panel
+				class="sapUiContentPadding"
+				headerText="{i18n>ObjectSupplierTabTitle}">
+    			<content>
+    				<form:SimpleForm
+						minWidth="1024"
+						maxContainerCols="2"
+						editable="false"
+						layout="ResponsiveGridLayout"
+						labelSpanL="3"
+						labelSpanM="3"
+						emptySpanL="4"
+						emptySpanM="4"
+						columnsL="1"
+						columnsM="1">
+						<form:content>
+							<Label text="{i18n>ObjectSupplierName}"/>
+							<Text text="{Supplier/CompanyName}"/>
+							<Label text="{i18n>ObjectSupplierAddress}"/>
+							<Text text="{Supplier/Address}"/>
+							<Label text="{i18n>ObjectSupplierZipcode} / {i18n>ObjectSupplierCity}"/>
+							<Text text="{Supplier/PostalCode} / {Supplier/City}"/>
+							<Label text="{i18n>ObjectSupplierCountry}"/>
+							<Text text="{Supplier/Country}"/>
+						</form:content>
+					</form:SimpleForm>
+    			</content>
+			</Panel>
+			<Panel
+				class="sapUiContentPadding"
+				headerText="{i18n>ObjectCommentsTabTitle}">
+				<content>
+					<FeedInput post="onPost"/>
+					<List
+						id="idCommentsList"
+						noDataText="{i18n>ObjectCommentNoData}"
+						showSeparators="Inner"
+						items="{
+							path: 'productFeedback>/productComments',
+							sorter: {
+							    path: 'date',
+							    descending: true
+							}
+						}">
+						<FeedListItem
+							info="{productFeedback>type}"
+							text="{productFeedback>comment}"
+							timestamp="{productFeedback>date}"/>
+					</List>
+				</content>
+			</Panel>
+		</semantic:content>
+		<semantic:sendEmailAction>
+			<semantic:SendEmailAction
+				id="shareEmail"
+				press="onShareEmailPress"/>
+		</semantic:sendEmailAction>
+	</semantic:FullscreenPage>
+</mvc:View>

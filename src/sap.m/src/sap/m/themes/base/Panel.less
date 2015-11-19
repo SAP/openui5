@@ -108,9 +108,13 @@ html[dir=rtl] .sapUiIconMirrorInRTL:not(.sapUiIconSuppressMirrorInRTL).sapMPanel
 }
 
 .sapMPanel .sapMPanelWrappingDiv .sapMPanelHdr,
-.sapMPanel .sapMPanelWrappingDivTb .sapMTB {
+.sapMPanel .sapMPanelWrappingDivTb .sapMIBar.sapMTB {
 	padding-left: 0;
 	margin-left: 3rem;
+
+  	>:first-child {
+	  margin-left: 0;
+	}
 }
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */

@@ -249,19 +249,27 @@ function(jQuery, library, Control, IconPool) {
 		if (this._sortList) {
 			this._sortList.destroy();
 			this._sortList = null;
+			this._ariaSortListInvisibleText.destroy();
+			this._ariaSortListInvisibleText = null;
 		}
 		if (this._sortOrderList) {
 			this._sortOrderList.destroy();
 			this._sortOrderList = null;
+			this._ariaSortOrderInvisibleText.destroy();
+			this._ariaSortOrderInvisibleText = null;
 		}
 
 		if (this._groupList) {
 			this._groupList.destroy();
 			this._groupList = null;
+			this._ariaGroupListInvisibleText.destroy();
+			this._ariaGroupListInvisibleText = null;
 		}
 		if (this._groupOrderList) {
 			this._groupOrderList.destroy();
 			this._groupOrderList = null;
+			this._ariaGroupOrderInvisibleText.destroy();
+			this._ariaGroupOrderInvisibleText = null;
 		}
 
 		if (this._presetFilterList) {
@@ -465,28 +473,26 @@ function(jQuery, library, Control, IconPool) {
 
 		// convenience, also allow strings
 		if (typeof oItem === "string") {
-			// find item with this id
-			for (; i < aItems.length; i++) {
-				if (aItems[i].getKey() === oItem) {
-					oItem = aItems[i];
-					break;
-				}
+			oItem = getViewSettingsItemByKey(aItems, oItem);
+		}
+
+		//change selected item only if it is found among the sort items
+		if (validateViewSettingsItem(oItem)) {
+			// set selected = true for this item & selected = false for all others items
+			for (i = 0; i < aItems.length; i++) {
+				aItems[i].setProperty('selected', false, true);
 			}
-		}
 
-		// set selected = true for this item & selected = false for all others items
-		for (i = 0; i < aItems.length; i++) {
-			aItems[i].setProperty('selected', false, true);
-		}
-		if (oItem) {
 			oItem.setProperty('selected', true, true);
-		}
 
-		// update the list selection
-		if (this._getDialog().isOpen()) {
-			this._updateListSelection(this._sortList, oItem);
+			// update the list selection
+			if (this._getDialog().isOpen()) {
+				this._updateListSelection(this._sortList, oItem);
+			}
+			this.setAssociation("selectedSortItem", oItem, true);
+		} else {
+			jQuery.sap.log.error("Could not set selected sort item. Item is not found: '" + oItem + "'");
 		}
-		this.setAssociation("selectedSortItem", oItem, true);
 		return this;
 	};
 
@@ -503,28 +509,27 @@ function(jQuery, library, Control, IconPool) {
 
 		// convenience, also allow strings
 		if (typeof oItem === "string") {
-			// find item with this id
-			for (; i < aItems.length; i++) {
-				if (aItems[i].getKey() === oItem) {
-					oItem = aItems[i];
-					break;
-				}
+			oItem = getViewSettingsItemByKey(aItems, oItem);
+		}
+
+		//change selected item only if it is found among the group items
+		if (validateViewSettingsItem(oItem)) {
+			// set selected = true for this item & selected = false for all others items
+			for (i = 0; i < aItems.length; i++) {
+				aItems[i].setProperty('selected', false, true);
 			}
-		}
 
-		// set selected = true for this item & selected = false for all others items
-		for (i = 0; i < aItems.length; i++) {
-			aItems[i].setProperty('selected', false, true);
-		}
-		if (oItem) {
 			oItem.setProperty('selected', true, true);
+
+			// update the list selection
+			if (this._getDialog().isOpen()) {
+				this._updateListSelection(this._groupList, oItem);
+			}
+			this.setAssociation("selectedGroupItem", oItem, true);
+		} else {
+			jQuery.sap.log.error("Could not set selected group item. Item is not found: '" + oItem + "'");
 		}
 
-		// update the list selection
-		if (this._getDialog().isOpen()) {
-			this._updateListSelection(this._groupList, oItem);
-		}
-		this.setAssociation("selectedGroupItem", oItem, true);
 		return this;
 	};
 
@@ -541,24 +546,25 @@ function(jQuery, library, Control, IconPool) {
 
 		// convenience, also allow strings
 		if (typeof oItem === "string") {
-			// find item with this id
-			for (; i < aItems.length; i++) {
-				if (aItems[i].getKey() === oItem) {
-					oItem = aItems[i];
-					break;
-				}
+			oItem = getViewSettingsItemByKey(aItems, oItem);
+		}
+
+		//change selected item only if it is found among the preset filter items
+		if (validateViewSettingsItem(oItem)) {
+			// set selected = true for this item & selected = false for all others items
+			for (i = 0; i < aItems.length; i++) {
+				aItems[i].setProperty('selected', false, true);
 			}
-		}
-		// set selected = true for this item & selected = false for all others items
-		for (i = 0; i < aItems.length; i++) {
-			aItems[i].setProperty('selected', false, true);
-		}
-		if (oItem) {
+
 			oItem.setProperty('selected', true, true);
 			// clear filters (only one mode is allowed, preset filters or filters)
 			this._clearSelectedFilters();
+
+			this.setAssociation("selectedPresetFilterItem", oItem, true);
+		} else {
+			jQuery.sap.log.error("Could not set selected preset filter item. Item is not found: '" + oItem + "'");
 		}
-		this.setAssociation("selectedPresetFilterItem", oItem, true);
+
 		return this;
 	};
 
@@ -1062,10 +1068,11 @@ function(jQuery, library, Control, IconPool) {
 
 	/**
 	 * Lazy initialization of the internal page1 (sort/group/filter).
+	 * @param {boolean} bSuppressCreation If true, no page will be create in case it doesn't exist.
 	 * @private
 	 */
-	ViewSettingsDialog.prototype._getPage1 = function() {
-		if (this._page1 === undefined) {
+	ViewSettingsDialog.prototype._getPage1 = function(bSuppressCreation) {
+		if (this._page1 === undefined && !bSuppressCreation) {
 			this._page1 = new sap.m.Page(this.getId() + '-page1', {
 				title           : this._rb.getText("VIEWSETTINGS_TITLE"),
 				customHeader    : this._getHeader()
@@ -1122,12 +1129,18 @@ function(jQuery, library, Control, IconPool) {
 		}
 		this._vContentPage = -1;
 
+		// Aria - used to label the sort order list
+		this._ariaSortOrderInvisibleText = new sap.ui.core.InvisibleText(this.getId() + "-sortOrderLabel", {
+			text: this._rb.getText("VIEWSETTINGS_SORT_DIRECTION").concat(":")
+		});
+
 		this._sortOrderList = new sap.m.List(this.getId() + "-sortorderlist", {
 			mode : sap.m.ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
 			selectionChange : function(oEvent) {
 				that.setProperty('sortDescending', oEvent.getParameter("listItem").data("item"), true);
-			}
+			},
+			ariaLabelledBy: this._ariaSortOrderInvisibleText
 		}).addStyleClass("sapMVSDUpperList");
 		this._sortOrderList.addItem(new sap.m.StandardListItem({
 			title : this._rb.getText("VIEWSETTINGS_ASCENDING_ITEM")
@@ -1135,6 +1148,11 @@ function(jQuery, library, Control, IconPool) {
 		this._sortOrderList.addItem(new sap.m.StandardListItem({
 			title : this._rb.getText("VIEWSETTINGS_DESCENDING_ITEM")
 		}).data("item", true));
+
+		// Aria - used to label the sort list
+		this._ariaSortListInvisibleText = new sap.ui.core.InvisibleText(this.getId() + "-sortListLabel", {
+			text: this._rb.getText("VIEWSETTINGS_TITLE_SORT").concat(":")
+		});
 
 		this._sortList = new sap.m.List(this.getId() + "-sortlist", {
 			mode : sap.m.ListMode.SingleSelectLeft,
@@ -1145,10 +1163,11 @@ function(jQuery, library, Control, IconPool) {
 					item.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
 				}
 				that.setAssociation("selectedSortItem", item, true);
-			}
+			},
+			ariaLabelledBy: this._ariaSortListInvisibleText
 		});
 
-		this._sortContent = [ this._sortOrderList, this._sortList ];
+		this._sortContent = [ this._ariaSortOrderInvisibleText, this._sortOrderList, this._ariaSortListInvisibleText, this._sortList ];
 	};
 
 	/**
@@ -1163,12 +1182,18 @@ function(jQuery, library, Control, IconPool) {
 		}
 		this._vContentPage = -1;
 
+		// Aria - used to label the group order
+		this._ariaGroupOrderInvisibleText = new sap.ui.core.InvisibleText(this.getId() + "-groupOrderLabel", {
+			text: this._rb.getText("VIEWSETTINGS_GROUP_DIRECTION").concat(":")
+		});
+
 		this._groupOrderList = new sap.m.List(this.getId() + "-grouporderlist", {
 			mode : sap.m.ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
 			selectionChange : function(oEvent) {
 				that.setProperty('groupDescending', oEvent.getParameter("listItem").data("item"), true);
-			}
+			},
+			ariaLabelledBy: this._ariaGroupOrderInvisibleText
 		}).addStyleClass("sapMVSDUpperList");
 		this._groupOrderList.addItem(new sap.m.StandardListItem({
 			title : this._rb.getText("VIEWSETTINGS_ASCENDING_ITEM")
@@ -1176,6 +1201,11 @@ function(jQuery, library, Control, IconPool) {
 		this._groupOrderList.addItem(new sap.m.StandardListItem({
 			title : this._rb.getText("VIEWSETTINGS_DESCENDING_ITEM")
 		}).data("item", true));
+
+		// Aria - used to label the group list
+		this._ariaGroupListInvisibleText = new sap.ui.core.InvisibleText(this.getId() + "-groupListLabel", {
+			text: this._rb.getText("VIEWSETTINGS_TITLE_GROUP").concat(":")
+		});
 
 		this._groupList = new sap.m.List(this.getId() + "-grouplist",
 			{
@@ -1187,10 +1217,11 @@ function(jQuery, library, Control, IconPool) {
 						item.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
 					}
 					that.setAssociation("selectedGroupItem", item, true);
-				}
+				},
+				ariaLabelledBy: this._ariaGroupListInvisibleText
 			});
 
-		this._groupContent = [ this._groupOrderList, this._groupList ];
+		this._groupContent = [ this._ariaGroupOrderInvisibleText, this._groupOrderList, this._ariaGroupListInvisibleText, this._groupList ];
 	};
 
 	/**
@@ -1454,6 +1485,12 @@ function(jQuery, library, Control, IconPool) {
 
 			this._getSegmentedButton().setSelectedButton(sSelectedButtonId);
 			this._switchToPage(sPageId);
+
+			/* 1580045867 2015: make sure navContainer's current page is always page1,
+			because at this point we are always switching to sort,group,filter or custom tab.*/
+			if (this._getNavContainer().getCurrentPage() !== this._getPage1()) {
+				this._getNavContainer().to(this._getPage1().getId());
+			}
 		}
 	};
 
@@ -1592,34 +1629,6 @@ function(jQuery, library, Control, IconPool) {
 		}
 	};
 
-	/**
-	 * Checks if the main page instance has content from a custom tab and if so, sets the content back to the custom tab instance
-	 * in order to preserve it for further usage.
-	 * @private
-	 */
-	ViewSettingsDialog.prototype._preserveCustomTabContentAggregation = function () {
-		var oCurrentPage1Content = this._getPage1().getContent();
-		// if there is existing page content and the last opened page was a custom tab
-		if (
-			oCurrentPage1Content.length &&
-			this._vContentPage      !== -1 &&
-			this._vContentPage      !== 0 &&
-			this._vContentPage      !== 1 &&
-			this._vContentPage      !== 2 &&
-			this._vContentPage      !== 3
-		) {
-			/* the iContentPage property corresponds to a custom tab id - set the
-			 custom tab content aggregation back to the corresponding custom tab instance, so it can be reused later */
-			this.getCustomTabs().forEach(function (oCustomTab) {
-				if (oCustomTab.getId() === this._vContentPage) {
-					oCurrentPage1Content.forEach(function (oContent) {
-						oCustomTab.addContent(oContent);
-					});
-				}
-			}, this);
-		}
-	};
-
 
 	/**
 	 * Overwrites the model setter to reset the remembered page in case it was a filter detail page, to make sure
@@ -1701,7 +1710,10 @@ function(jQuery, library, Control, IconPool) {
 		}
 
 		// needed because the content aggregation is changing it's owner control from custom tab to page and vice-versa
-		this._preserveCustomTabContentAggregation();
+		// if there is existing page content and the last opened page was a custom tab
+		if (isLastPageContentCustomTab.call(this)) {
+			restoreCustomTabContentAggregation.call(this);
+		}
 
 		// reset controls
 		oHeader.removeAllContentRight();
@@ -2013,6 +2025,40 @@ function(jQuery, library, Control, IconPool) {
 		this._navContainer.to(this._getPage1().getId(), "show");
 	}
 
+	/**
+	 * Gets a sap.m.ViewSettingsItem from a list of items by a given key.
+	 *
+	 * @param aViewSettingsItems The list of sap.m.ViewSettingsItem objects to be searched
+	 * @param sKey
+	 * @returns {*} The sap.m.ViewSettingsItem found in the list of items
+	 * @private
+	 */
+	function getViewSettingsItemByKey(aViewSettingsItems, sKey) {
+		var i, oItem = sKey;
+
+		// convenience, also allow strings
+		// find item with this key
+		for (i = 0; i < aViewSettingsItems.length; i++) {
+			if (aViewSettingsItems[i].getKey() === sKey) {
+				oItem = aViewSettingsItems[i];
+				break;
+			}
+		}
+
+		return oItem;
+	}
+
+	/**
+	 * Checks if the item is a sap.m.ViewSettingsItem.
+	 *
+	 * @param {*} oItem The item to be validated
+	 * @returns {*|boolean} Returns true if the item is a sap.m.ViewSettingsItem
+	 * @private
+	 */
+	function validateViewSettingsItem(oItem) {
+		return oItem && oItem instanceof sap.m.ViewSettingsItem;
+	}
+
 	/* =========================================================== */
 	/* end: internal methods */
 	/* =========================================================== */
@@ -2145,6 +2191,109 @@ function(jQuery, library, Control, IconPool) {
 	/* =========================================================== */
 	/* end: event handlers */
 	/* =========================================================== */
+
+
+	/**
+	 * Overwrite the method to make sure the proper internal managing of the aggregations takes place.
+	 * @param {string} sAggregationName The string identifying the aggregation that the given object should be removed from
+	 * @param {int | string | sap.ui.base.ManagedObject} vObject The position or ID of the ManagedObject that should be removed or that ManagedObject itself
+	 * @param {boolean} bSuppressInvalidate If true, this ManagedObject is not marked as changed
+	 * @returns {sap.m.ViewSettingsDialog} This pointer for chaining
+	 */
+	ViewSettingsDialog.prototype.removeAggregation = function (sAggregationName, vObject, bSuppressInvalidate) {
+		// custom tabs aggregation needs special handling - make sure it happens
+		restoreCustomTabContentAggregation.call(this, sAggregationName, vObject);
+
+		return sap.ui.core.Control.prototype.removeAggregation.call(this, sAggregationName, vObject,
+			bSuppressInvalidate);
+	};
+
+	/**
+	 * Overwrite the method to make sure the proper internal managing of the aggregations takes place.
+	 * @param {string} sAggregationName The string identifying the aggregation that the given object should be removed from
+	 * @param {int | string | sap.ui.base.ManagedObject} vObject tThe position or ID of the ManagedObject that should be removed or that ManagedObject itself
+	 * @param {boolean} bSuppressInvalidate If true, this ManagedObject is not marked as changed
+	 * @returns {sap.m.ViewSettingsDialog} This pointer for chaining
+	 */
+	ViewSettingsDialog.prototype.removeAllAggregation = function (sAggregationName, bSuppressInvalidate) {
+		// custom tabs aggregation needs special handling - make sure it happens
+		restoreCustomTabContentAggregation.call(this);
+
+		return sap.ui.core.Control.prototype.removeAllAggregation.call(this, sAggregationName, bSuppressInvalidate);
+	};
+
+	/**
+	 * Overwrite the method to make sure the proper internal managing of the aggregations takes place.
+	 * @param {string} sAggregationName The string identifying the aggregation that the given object should be removed from
+	 * @param {int | string | sap.ui.base.ManagedObject} vObject tThe position or ID of the ManagedObject that should be removed or that ManagedObject itself
+	 * @param {boolean} bSuppressInvalidate If true, this ManagedObject is not marked as changed
+	 * @returns {sap.m.ViewSettingsDialog} This pointer for chaining
+	 */
+	ViewSettingsDialog.prototype.destroyAggregation = function (sAggregationName, bSuppressInvalidate) {
+		// custom tabs aggregation needs special handling - make sure it happens
+		restoreCustomTabContentAggregation.call(this);
+
+		return sap.ui.core.Control.prototype.destroyAggregation.call(this, sAggregationName, bSuppressInvalidate);
+	};
+
+	/**
+	 * Handle the "content" aggregation of a custom tab, as the items in it might be transferred to the dialog page
+	 * instance.
+	 * @param {string} sAggregationName The string identifying the aggregation that the given object should be removed from
+	 * @param {object} oCustomTab Custom tab instance
+	 * @private
+	 */
+	function restoreCustomTabContentAggregation(sAggregationName, oCustomTab) {
+		// Make sure page1 exists, as this method may be called on destroy(), after the page was destroyed
+		// Suppress creation of new page as the following logic is needed only when a page already exists
+		if (!this._getPage1(true)) {
+			return;
+		}
+
+		// only the 'customTabs' aggregation is manipulated with shenanigans
+		if (sAggregationName === 'customTabs' && oCustomTab) {
+			/* oCustomTab must be an instance of the "customTab" aggregation type and must be the last opened page */
+			if (oCustomTab.getMetadata().getName() === this.getMetadata().getManagedAggregation(sAggregationName).type &&
+				this._vContentPage === oCustomTab.getId()) {
+				/* the iContentPage property corresponds to the custom tab id - set the custom tab content aggregation
+				 back to the custom tab instance */
+				var oPage1Content = this._getPage1().getContent();
+				oPage1Content.forEach(function (oContent) {
+					oCustomTab.addAggregation('content', oContent, true);
+				});
+			}
+		} else if (!sAggregationName && !oCustomTab) {
+			/* when these parameters are missing, cycle through all custom tabs and detect if any needs manipulation */
+			var oPage1Content = this._getPage1().getContent();
+			/* the vContentPage property corresponds to a custom tab id - set the  custom tab content aggregation back
+			 to the corresponding custom tab instance, so it can be reused later */
+			this.getCustomTabs().forEach(function (oCustomTab) {
+				if (this._vContentPage === oCustomTab.getId()) {
+					oPage1Content.forEach(function (oContent) {
+						oCustomTab.addAggregation('content', oContent, true);
+					});
+				}
+			}, this);
+		}
+
+	}
+
+	/**
+	 * Determine if the last opened page has custom tab contents
+	 * @private
+	 * @returns {boolean}
+	 */
+	function isLastPageContentCustomTab() {
+		// ToDo: make this into enumeration
+		var aPageIds = [
+			-1, // not set
+			0,  // sort
+			1,  // group
+			2,  // filter
+			3   // filter detail
+		];
+		return (this._getPage1().getContent().length && aPageIds.indexOf(this._vContentPage) === -1);
+	}
 
 
 	return ViewSettingsDialog;

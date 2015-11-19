@@ -278,4 +278,35 @@ sap.ui.require([
 			/*no type*/
 		}, false, true), "{foo/bar}", "complex binding syntax not needed w/o type");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("followPath: Performance measurement points", function (assert) {
+		var oAverageSpy = this.spy(jQuery.sap.measure, "average")
+				.withArgs("sap.ui.model.odata.AnnotationHelper/followPath", "",
+					["sap.ui.model.odata.AnnotationHelper"]),
+			oEndSpy = this.spy(jQuery.sap.measure, "end")
+				.withArgs("sap.ui.model.odata.AnnotationHelper/followPath"),
+			oMockedInterface = {
+				getModel : function () {
+					return {
+						getObject: function () { return {}; },
+						getODataAssociationEnd: function () {},
+						getODataProperty: function () {}
+					};
+				},
+				getPath: function () {
+					return "/dataServices/schema/0/entityType/0/property/0";
+				}
+			};
+
+
+		Basics.followPath(oMockedInterface);
+		assert.strictEqual(oAverageSpy.callCount, 1, "followPath start measurement");
+		assert.strictEqual(oEndSpy.callCount, 1, "followPath end measuerment");
+		Basics.followPath(oMockedInterface, { AnnotationPath : "Foo/@Bar" });
+		assert.strictEqual(oAverageSpy.callCount, 2, "followPath start measurement");
+		assert.strictEqual(oEndSpy.callCount, 2, "followPath end measuerment");
+	});
+
+
 });

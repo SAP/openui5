@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global URI, Promise, ES6Promise, alert, confirm, console, XMLHttpRequest */
+/*global URI, Promise, ES6Promise, alert, confirm, console, XMLHttpRequest*/
 
 /**
  * @class Provides base functionality of the SAP jQuery plugin as extension of the jQuery framework.<br/>
@@ -290,12 +290,12 @@
 		var oJQV = Version(jQuery.fn.jquery);
 		// the fix will only be applied to jQuery >= 1.11.0 (only for jQuery 1.x)
 		if (window.ActiveXObject !== undefined && oJQV.getMajor() == 1 && oJQV.getMinor() >= 11) {
-			var fnCreateStandardXHR = function() { 
+			var fnCreateStandardXHR = function() {
 				try {
 					return new window.XMLHttpRequest();
 				} catch (e) { /* ignore */ }
 			};
-			var fnCreateActiveXHR = function() { 
+			var fnCreateActiveXHR = function() {
 				try {
 					return new window.ActiveXObject("Microsoft.XMLHTTP");
 				} catch (e) { /* ignore */ }
@@ -1681,6 +1681,237 @@
 					this.unregisterMethod(oOrig.id, oOrig.obj, oOrig.method);
 				}
 			};
+
+			// ** Interaction measure **
+			var aInteractions = [];
+			var oPendingInteraction;
+
+			/**
+			 * Gets all interaction measurements
+			 * @return {object[]} all interaction measurements
+			 * @name jQuery.sap.measure#getAllInteractionMeasurements
+			 * @function
+			 * @public
+			 * @since 1.34.0
+			 */
+			this.getAllInteractionMeasurements = function() {
+				return aInteractions;
+			};
+
+			/**
+			 * Gets the incomplete pending interaction
+			 * @return {object} interaction measurement
+			 * @name jQuery.sap.measure#getInteractionMeasurement
+			 * @function
+			 * @private
+			 * @since 1.34.0
+			 */
+			this.getPendingInteractionMeasurement = function() {
+				return oPendingInteraction;
+			};
+
+			/**
+			 * Clears all interaction measurements
+			 * @name jQuery.sap.measure#getLastInteractionMeasurement
+			 * @function
+			 * @public
+			 * @since 1.34.0
+			 */
+			this.clearInteractionMeasurements = function() {
+				aInteractions = [];
+			};
+
+			function finalizeInteraction(iTime) {
+				if (oPendingInteraction) {
+					oPendingInteraction.end = iTime;
+					oPendingInteraction.duration = oPendingInteraction.processing;
+					oPendingInteraction.requests = jQuery.sap.measure.getRequestTimings();
+					oPendingInteraction.measurements = jQuery.sap.measure.filterMeasurements(function(oMeasurement) {
+						return (oMeasurement.start > oPendingInteraction.start && oMeasurement.end < oPendingInteraction.end) ? oMeasurement : null;
+					}, true);
+					if (oPendingInteraction.requests.length > 0) {
+						// determine Performance API timestamp for latestly completed request
+						var iEnd = oPendingInteraction.requests[0].startTime,
+							iNavLo = oPendingInteraction.requests[0].startTime,
+							iNavHi = oPendingInteraction.requests[0].requestStart,
+							iRtLo = oPendingInteraction.requests[0].requestStart,
+							iRtHi = oPendingInteraction.requests[0].responseEnd;
+						oPendingInteraction.requests.forEach(function(oRequest) {
+							iEnd = oRequest.responseEnd > iEnd ? oRequest.responseEnd : iEnd;
+							oPendingInteraction.requestTime += (oRequest.responseEnd - oRequest.startTime);
+							// summarize navigation and roundtrip with respect to requests overlapping and times w/o requests
+							if (iRtHi < oRequest.startTime) {
+								oPendingInteraction.navigation += (iNavHi - iNavLo);
+								oPendingInteraction.roundtrip += (iRtHi - iRtLo);
+								iNavLo =  oRequest.startTime;
+								iRtLo =  oRequest.requestStart;
+							}
+							if (oRequest.responseEnd > iRtHi) {
+								iNavHi = oRequest.requestStart;
+								iRtHi = oRequest.responseEnd;
+							}
+						});
+						oPendingInteraction.navigation += iNavHi - iNavLo;
+						oPendingInteraction.roundtrip += iRtHi - iRtLo;
+						// calculate average network time per request
+						oPendingInteraction.networkTime = oPendingInteraction.networkTime ? ((oPendingInteraction.requestTime - oPendingInteraction.networkTime) / oPendingInteraction.requests.length) : 0;
+						// in case processing is not determined, which means no re-rendering occured, take start to iEnd
+						if (oPendingInteraction.duration === 0) {
+							oPendingInteraction.duration = oPendingInteraction.navigation + oPendingInteraction.roundtrip;
+						}
+					}
+					// calculate real processing time if any processing took place, cannot be negative as then requests took longer than processing
+					if (oPendingInteraction.processing !== 0) {
+						var iProcessing = oPendingInteraction.processing - oPendingInteraction.navigation - oPendingInteraction.roundtrip;
+						oPendingInteraction.processing = iProcessing > 0 ? iProcessing : 0;
+					}
+					aInteractions.push(oPendingInteraction);
+					jQuery.sap.log.info("Interaction step finished: trigger: " + oPendingInteraction.trigger + "; duration: " + oPendingInteraction.duration + "; requests: " + oPendingInteraction.requests.length);
+					oPendingInteraction = null;
+				}
+			}
+
+			/**
+			 * Start an interaction measurements
+			 *
+			 * @param {string} sType type of the event which triggered the interaction
+			 * @param {object} oSrcControl the control on which the interaction was triggered
+			 *
+			 * @name jQuery.sap.measure#startInteraction
+			 * @function
+			 * @public
+			 * @since 1.34.0
+			 */
+			this.startInteraction = function(sType, oSrcControl) {
+				// component determination - heuristic
+				function identifyOwnerComponent(oSrcControl) {
+					if (oSrcControl) {
+						var Component, oComponent;
+						Component = sap.ui.require("sap/ui/core/Component");
+						while (Component && oSrcControl && oSrcControl.getParent) {
+							oComponent = Component.getOwnerComponentFor(oSrcControl);
+							if (oComponent || oSrcControl instanceof Component) {
+								oComponent = oComponent || oSrcControl;
+								var oApp = oComponent.getManifestEntry("sap.app");
+								// get app id or module name for FESR
+								return oApp && oApp.id || oComponent.getMetadata().getName();
+							}
+							oSrcControl = oSrcControl.getParent();
+						}
+					}
+					return "undetermined";
+				}
+
+				var iTime = jQuery.sap.now();
+
+				if (oPendingInteraction) {
+					finalizeInteraction(iTime);
+				}
+
+				// clear request timings for new interaction
+				this.clearRequestTimings();
+
+				// setup new pending interaction
+				oPendingInteraction = {
+					event: sType, // event which triggered interaction
+					trigger: oSrcControl && oSrcControl.getId ? oSrcControl.getId() : "undetermined", // control which triggered interaction
+					component: identifyOwnerComponent(oSrcControl), // component or app identifier
+					start : iTime, // interaction start
+					end: 0, // interaction end
+					navigation: 0, // sum over all navigation times
+					roundtrip: 0, // time from first request sent to last received response end
+					processing: 0, // client processing time
+					duration: 0, // interaction duration
+					requests: [], // Performance API requests during interaction
+					measurements: [], // jQuery.sap.measure Measurements
+					sapStatistics: [], // SAP Statistics for OData, added by jQuery.sap.trace
+					requestTime: 0, // summ over all requests in the interaction (oPendingInteraction.requests[0].responseEnd-oPendingInteraction.requests[0].requestStart)
+					networkTime: 0, // request time minus server time from the header, added by jQuery.sap.trace
+					bytesSent: 0, // sum over all requests bytes, added by jQuery.sap.trace
+					bytesReceived: 0, // sum over all response bytes, added by jQuery.sap.trace
+					requestCompression: undefined // true if all responses have been sent gzipped
+				};
+				jQuery.sap.log.info("Interaction step started: trigger: " + oPendingInteraction.trigger + "; type: " + oPendingInteraction.event);
+			};
+
+			/**
+			 * End an interaction measurements
+			 *
+			 * @param {boolean} bForce forces end of interaction now and ignores further re-renderings
+			 *
+			 * @name jQuery.sap.measure#endInteraction
+			 * @function
+			 * @public
+			 * @since 1.34.0
+			 */
+			this.endInteraction = function(bForce) {
+				if (oPendingInteraction) {
+					// set provisionary processing time from start to end and calculate later
+					if (!bForce) {
+						oPendingInteraction.processing = jQuery.sap.now() - oPendingInteraction.start;
+					} else {
+						finalizeInteraction(jQuery.sap.now());
+					}
+				}
+			};
+
+			/**
+			 * Sets the request buffer size for the interaction measurement
+			 *
+			 * @param {integer} iSize size of the buffer
+			 *
+			 * @name jQuery.sap.measure#setRequestBufferSize
+			 * @function
+			 * @public
+			 * @since 1.34.0
+			 */
+			this.setRequestBufferSize = function(iSize) {
+				if (!window.performance) {
+					return;
+				}
+				if (window.performance.webkitSetResourceTimingBufferSize) {
+					window.performance.webkitSetResourceTimingBufferSize(iSize);
+				} else if (window.performance.setResourceTimingBufferSize){
+					window.performance.setResourceTimingBufferSize(iSize);
+				}
+			};
+
+			/**
+			 * Gets the request timings for the interaction measurement
+			 *
+			 * @return {object[]} iSize size of the buffer
+			 * @name jQuery.sap.measure#getRequestTimings
+			 * @function
+			 * @public
+			 * @since 1.34.0
+			 */
+			this.getRequestTimings = function() {
+				if (window.performance && window.performance.getEntriesByType) {
+					return jQuery.extend(window.performance.getEntriesByType("resource"),{});
+				}
+				return [];
+			};
+
+			 /**
+ 			 * Clears all request timings
+ 			 *
+ 			 * @name jQuery.sap.measure#clearRequestTimings
+ 			 * @function
+ 			 * @public
+ 			 * @since 1.34.0
+ 			 */
+			this.clearRequestTimings = function() {
+				if (!window.performance) {
+					return;
+				}
+				if (window.performance.webkitClearResourceTimings) {
+					window.performance.webkitClearResourceTimings();
+				} else if (window.performance.clearResourceTimings){
+					window.performance.clearResourceTimings();
+				}
+			};
+
+			this.setRequestBufferSize(1000);
 
 			var aMatch = location.search.match(/sap-ui-measure=([^\&]*)/);
 			if (aMatch && aMatch[1]) {
@@ -3900,7 +4131,7 @@
 	 *            documentation for the <code>fnLoadCallback</code> applies to the <code>resolve</code>
 	 *            handler of the <code>Promise</code> and the one for the <code>fnErrorCallback</code>
 	 *            applies to the <code>reject</code> handler of the <code>Promise</code>.
-	 * 
+	 *
 	 * @public
 	 * @static
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
@@ -4141,10 +4372,8 @@
 		});
 	}
 
-	// *********** Include E2E-Trace Scripts *************
-	if (/sap-ui-xx-e2e-trace=(true|x|X)/.test(location.search)) {
-		jQuery.sap.require("sap.ui.core.support.trace.E2eTraceLib" + "" /* Make dynamic dependency */);
-	}
+	// ************** Include Traces *****************
+	jQuery.sap.require("jquery.sap.trace" + "" /* Make dynamic dependency */);
 
 	// *********** feature detection, enriching jQuery.support *************
 	// this might go into its own file once there is more stuff added
@@ -4301,20 +4530,6 @@
 		jQuery.support.hasFlexBoxSupport = true;
 	} else {
 		jQuery.support.hasFlexBoxSupport = false;
-	}
-
-	// *********** fixes for (pending) jQuery bugs **********
-	if ( jQuery.support.opacity === false ) { // TODO check wether this can be removed for all jquery versions now (assumption: only needed in IE8)
-		(function() {
-			// jQuery cssHook for setOpacity[IE8] doesn't properly cleanup the CSS filter property
-			var oldSet = jQuery.cssHooks.opacity.set;
-			jQuery.cssHooks.opacity.set = function( elem, value ) {
-				oldSet.apply(this, arguments);
-				if ( !jQuery.trim(elem.style.filter) ) {
-					elem.style.removeAttribute("filter");
-				}
-			};
-		}());
 	}
 
 	/**

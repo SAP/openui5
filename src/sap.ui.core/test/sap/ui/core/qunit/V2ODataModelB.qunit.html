@@ -3002,7 +3002,6 @@
 					ok(false, "request succeeded...error expected");
 				},
 				error : function(oError) {
-					equal(oError.statusCode, 404, "error code");
 					ok(true, "request failed");
 				},
 				batchGroupId: "myId1"
@@ -3020,8 +3019,6 @@
 				//check response
 				var oResponse = oEvent.getParameter('response');
 				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
-				equal(oResponse.statusCode, 404, "oResponse Param check: statusCode");
-				equal(oResponse.statusText, "Not Found", "oResponse Param check: statusText");
 				
 				// check internal response
 				var aRequests = oEvent.getParameter('requests');
@@ -3062,8 +3059,6 @@
 				//check response
 				var oResponse = oEvent.getParameter('response');
 				ok(oResponse.headers !== undefined, "oResponse Param check: headers");
-				equal(oResponse.statusCode, 404, "oResponse Param check: statusCode");
-				equal(oResponse.statusText, "Not Found", "oResponse Param check: statusText");
 				
 				// check internal response
 				var aRequests = oEvent.getParameter('requests');

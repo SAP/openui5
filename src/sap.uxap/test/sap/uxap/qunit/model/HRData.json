@@ -1,0 +1,34 @@
+{
+	"Employee": [
+		{
+			"name": "Michael Adams",
+			"picture": "../qunit/img/person.png",
+			"job": "Scrum master"
+		},
+		{
+			"name": "John Miller",
+			"picture": "../qunit/img/person.png",
+			"job": "Product Owner"
+		},
+		{
+			"name": "Richard Wilson",
+			"picture": "../qunit/img/person.png",
+			"job": "Ux designer"
+		},
+		{
+			"name": "Julie Armstrong",
+			"picture": "../qunit/img/person.png",
+			"job": "Quality Engineer"
+		},
+		{
+			"name": "Denise Smith",
+			"picture": "../qunit/img/person.png",
+			"job": "Team member"
+		},
+		{
+			"name": "Richard Adams",
+			"picture": "../qunit/img/person.png",
+			"job": "Team member"
+		}
+	]
+}

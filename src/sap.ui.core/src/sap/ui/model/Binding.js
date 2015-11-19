@@ -24,6 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.Binding
+	 * @extends sap.ui.base.EventProvider
 	 */
 	var Binding = EventProvider.extend("sap.ui.model.Binding", /** @lends sap.ui.model.Binding.prototype */ {
 
@@ -49,6 +50,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 		}
 
 	});
+	
+	/**
+	 * The 'dataRequested' event is fired, when data was requested from a backend.
+	 *
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+	 *
+	 * @name sap.ui.model.Binding#dataRequested
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+
+	 * @public
+	 */
+	
+	/**
+	 * The 'dataReceived' event is fired, when data was received from a backend. This event may also be fired when an error occured.
+	 *
+	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+	 *
+	 * @name sap.ui.model.Binding#dataReceived
+	 * @event
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 * @param {object} oEvent.getParameters
+
+	 * @param {string} [oEvent.getParameters.data] The data received. In error cases it will be undefined.
+	 * @public
+	 */
 
 	// Getter
 	/**
@@ -226,9 +256,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	};
 
 	/**
-	 * Fire event dataReceived to attached listeners.
+	 * Fire event dataReceived to attached listeners. This event may also be fired when an error occured.
 
 	 * @param {Map} mArguments the arguments to pass along with the event.
+	 * @param {object} [mArguments.data] the data received. In error cases it will be undefined.
 	 * @protected
 	 */
 	Binding.prototype.fireDataReceived = function(mArguments) {
@@ -256,9 +287,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @private
 	 */
 	Binding.prototype.checkUpdate = function(bForceUpdate) {
-		if (!this.bSuspended) {
-			this._fireChange({reason: ChangeReason.Change});
+		if (this.bSuspended && !bForceUpdate ) {
+			return;
 		}
+		this._fireChange({reason: ChangeReason.Change});
 	};
 
 	/**
@@ -305,6 +337,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	 * @public
 	 */
 	Binding.prototype.refresh = function(bForceUpdate) {
+		if (this.bSuspended && !bForceUpdate) {
+			return;
+		}
 		this.checkUpdate(bForceUpdate);
 	};
 
@@ -430,7 +465,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 	};
 
 	/**
-	 * Suspends the binding update. No change Events will be fired
+	 * Suspends the binding update. No change events will be fired.
+	 * 
+	 * A refresh call with bForceUpdate set to true will also update the binding and fire a change in suspended mode.
+	 * Special operations on bindings, which require updates to work properly (as paging or filtering in list bindings) 
+	 * will also update and cause a change event although the binding is suspended.
 	 */
 	Binding.prototype.suspend = function() {
 		this.bSuspended = true;
@@ -438,6 +477,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './ChangeReason
 
 	/**
 	 * Resumes the binding update. Change events will be fired again.
+	 * 
+	 * When the binding is resumed, a change event will be fired immediately, if the data has changed while the binding
+	 * was suspended. For serverside models, a request to the server will be triggered, if a refresh was requested
+	 * while the binding was suspended.
 	 */
 	Binding.prototype.resume = function() {
 		this.bSuspended = false;

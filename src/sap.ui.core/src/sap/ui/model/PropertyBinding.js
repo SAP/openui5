@@ -21,6 +21,7 @@ sap.ui.define(['jquery.sap.global', './Binding', './SimpleType','./DataState'],
 	 * 
 	 * @public
 	 * @alias sap.ui.model.PropertyBinding
+	 * @extends sap.ui.model.Binding
 	 */
 	
 	var PropertyBinding = Binding.extend("sap.ui.model.PropertyBinding", /** @lends sap.ui.model.PropertyBinding.prototype */ {

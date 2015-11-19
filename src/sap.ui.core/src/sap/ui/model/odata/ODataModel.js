@@ -1377,7 +1377,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	};
 
 	/**
-	 * Returns the value for the property with the given <code>sPath</code>
+	 * Returns the value for the property with the given <code>sPath</code>.
+	 * If the path points to a navigation property which has been loaded via $expand then the <code>bIncludeExpandEntries</code>
+	 * parameter determines if the navigation property should be included in the returned value or not. 
+	 * Please note that this currently works for 1..1 navigation properties only.
+	 * 
 	 *
 	 * @param {string} sPath the path/name of the property
 	 * @param {object} [oContext] the context if available to access the property value
@@ -2929,10 +2933,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 				}
 			});
 			this.mCustomHeaders = mCheckedHeaders;
+
 		} else {
 			this.mCustomHeaders = {};
 		}
 
+		// Custom set headers should also be used when requesting annotations, but do not instantiate annotations just for this
+		if (this.oAnnotations) {
+			this.oAnnotations.setHeaders(this.mCustomHeaders);
+		}
 	};
 
 	/**
@@ -3303,7 +3312,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 				annotationData: mAnnotationData,
 				url: null,
 				metadata: this.oMetadata,
-				async: this.bLoadMetadataAsync
+				async: this.bLoadMetadataAsync,
+				headers: this.mCustomHeaders
 			});
 			this.oAnnotations.attachFailed(this.onAnnotationsFailed, this);
 			this.oAnnotations.attachLoaded(this.onAnnotationsLoaded, this);
@@ -3424,4 +3434,3 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Model', './ODataUtils', './Cou
 	return ODataModel;
 
 });
-

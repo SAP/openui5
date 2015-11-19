@@ -18,26 +18,24 @@ sap.ui.define([], function() {
 	 * @param {sap.m.GenericTile} oControl the control to be rendered
 	 */
 	GenericTileRenderer.render = function(oRm, oControl) {
-		// write the HTML into the render manager
+		// Write the HTML into the render manager.
 		var sTooltip = oControl.getTooltip_AsString();
 		var sHeaderImage = oControl.getHeaderImage();
 
 		oRm.write("<div");
 
 		oRm.writeControlData(oControl);
-
-		if (sTooltip) {
+		if (sTooltip.trim()) {
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
-
 		oRm.addClass("sapMGT");
 		oRm.addClass(oControl.getSize());
 		oRm.addClass(oControl.getFrameType());
 
 		oRm.writeAttribute("role", "presentation");
-		oRm.writeAttribute("aria-label", oControl.getAltText());
+		oRm.writeAttributeEscaped("aria-label", oControl.getAltText());
 
-		if (oControl.hasListeners("press") && oControl.getState() !== "Disabled") {
+		if (oControl.hasListeners("press") && oControl.getState() != sap.m.LoadState.Disabled) {
 			oRm.addClass("sapMPointer");
 			oRm.writeAttribute("tabindex", "0");
 		}
@@ -56,12 +54,14 @@ sap.ui.define([], function() {
 			oRm.addClass("sapMGTOverlay");
 			oRm.writeClasses();
 			oRm.writeAttribute("id", oControl.getId() + "-overlay");
-			oRm.writeAttributeEscaped("title", oControl.getAltText());
+			if (sTooltip.trim()) {
+				oRm.writeAttributeEscaped("title", sTooltip);
+			}
 			oRm.write(">");
 			switch (sState) {
 				case sap.m.LoadState.Disabled :
 				case sap.m.LoadState.Loading :
-					oControl._oBusy.setBusy(sState === "Loading");
+					oControl._oBusy.setBusy(sState == sap.m.LoadState.Loading);
 					oRm.renderControl(oControl._oBusy);
 					break;
 				case sap.m.LoadState.Failed :
@@ -83,7 +83,7 @@ sap.ui.define([], function() {
 					oRm.addClass("sapMGenericTileFtrFldTxt");
 					oRm.writeClasses();
 					oRm.write(">");
-					oRm.renderControl(oControl._oFailed);
+					oRm.renderControl(oControl.getAggregation("_failedMessageText"));
 					oRm.write("</div>");
 
 					oRm.write("</div>");
@@ -98,15 +98,17 @@ sap.ui.define([], function() {
 		oRm.addClass("sapMGTHdrContent");
 		oRm.addClass(oControl.getSize());
 		oRm.addClass(oControl.getFrameType());
-		oRm.writeAttributeEscaped("title", oControl.getHeaderAltText());
+		if (sTooltip.trim()) {
+			oRm.writeAttributeEscaped("title", sTooltip);
+		}
 		oRm.writeClasses();
 		oRm.write(">");
 		if (sHeaderImage) {
 			oRm.renderControl(oControl._oImage);
 		}
 
-		this.renderHeader(oRm, oControl);
-		this.renderSubheader(oRm, oControl);
+		this._renderHeader(oRm, oControl);
+		this._renderSubheader(oRm, oControl);
 
 		oRm.write("</div>");
 
@@ -127,10 +129,11 @@ sap.ui.define([], function() {
 	/**
 	 * Renders the HTML for the header of the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
+	 * @private
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control whose title should be rendered
 	 */
-	GenericTileRenderer.renderHeader = function(oRm, oControl) {
+	GenericTileRenderer._renderHeader = function(oRm, oControl) {
 		oRm.write("<div");
 		oRm.addClass("sapMGTHdrTxt");
 		oRm.addClass(oControl.getSize());
@@ -144,10 +147,11 @@ sap.ui.define([], function() {
 	/**
 	 * Renders the HTML for the subheader of the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
+	 * @private
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control whose description should be rendered
 	 */
-	GenericTileRenderer.renderSubheader = function(oRm, oControl) {
+	GenericTileRenderer._renderSubheader = function(oRm, oControl) {
 		oRm.write("<div");
 		oRm.addClass("sapMGTSubHdrTxt");
 		oRm.addClass(oControl.getSize());
@@ -155,23 +159,6 @@ sap.ui.define([], function() {
 		oRm.writeAttribute("id", oControl.getId() + "-subHdr-text");
 		oRm.write(">");
 		oRm.writeEscaped(oControl.getSubheader());
-		oRm.write("</div>");
-	};
-
-	/**
-	 * Renders the HTML for the content of the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 *
-	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.ui.core.Control} oControl an object representation of the control whose content should be rendered
-	 */
-	GenericTileRenderer.renderContent = function(oRm, oControl) {
-		oRm.write("<div");
-		oRm.addClass("sapMGTContent");
-		oRm.addClass(oControl.getSize());
-		oRm.writeClasses();
-		oRm.writeAttribute("id", oControl.getId() + "-content");
-		oRm.write(">");
-		this.renderInnerContent(oRm, oControl);
 		oRm.write("</div>");
 	};
 

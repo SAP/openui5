@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+		<title>sap.tnt.SideNavigation</title>
+		<style>
+			html, body {
+				height: 100%;
+				overflow: hidden;
+			}
+
+			body {
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: -ms-flexbox;
+				display: flex;
+			}
+
+			#content {
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: -ms-flexbox;
+				display: flex;
+
+				-webkit-box-flex: 1;
+				-webkit-flex-grow: 1;
+				-ms-flex: 1 1;
+				flex-grow: 1;
+
+				overflow: hidden;
+				position: relative;
+			}
+
+			.col-1,
+			.col-2 {
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: -ms-flexbox;
+				display: flex;
+
+				-webkit-box-direction: normal;
+				-webkit-box-orient: vertical;
+				-webkit-flex-direction: column;
+				-ms-flex-direction: column;
+				flex-direction: column;
+
+				-webkit-box-flex: 1;
+				-webkit-flex-grow: 1;
+				-ms-flex: 1 1;
+				flex-grow: 1;
+
+				padding: 0 2rem;
+			}
+
+			.col-1-content,
+			.col-2-content {
+				display: -webkit-box;
+				display: -webkit-flex;
+				display: -ms-flexbox;
+				display: flex;
+
+				-webkit-box-flex: 1;
+				-webkit-flex-grow: 1;
+				-ms-flex: 1 1;
+				flex-grow: 1;
+			}
+
+		</style>
+		<script
+				src="../../../resources/sap-ui-core.js"
+				id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.tnt, sap.m"
+				data-sap-ui-theme="sap_bluecrystal">
+		</script>
+		<script>
+			var model = new sap.ui.model.json.JSONModel();
+			var data = {
+				navigation: [{
+					title: 'Root Item',
+					icon: 'sap-icon://employee',
+					expanded: true,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2',
+						enabled: false
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://building',
+					enabled: false
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://card',
+					expanded: false,
+					items: [{
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}, {
+						title: 'Child Item'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://action',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://action-settings',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://activate',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://activities',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://add',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://arobase',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://attachment',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://badge',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://basket',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://bed',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}, {
+					title: 'Root Item',
+					icon: 'sap-icon://bookmark',
+					expanded: false,
+					items: [{
+						title: 'Child Item 1'
+					}, {
+						title: 'Child Item 2'
+					}, {
+						title: 'Child Item 3'
+					}]
+				}
+				],
+				fixedNavigation: [{
+					title: 'Fixed Item 1',
+					icon: 'sap-icon://employee'
+				}, {
+					title: 'Fixed Item 2',
+					icon: 'sap-icon://building'
+				}, {
+					title: 'Fixed Item 3',
+					icon: 'sap-icon://card'
+				}]
+			};
+			model.setData(data);
+
+			var sideNavigationWithBinding = new sap.tnt.SideNavigation({
+				item: new sap.tnt.NavigationList({
+					items: {
+						template: new sap.tnt.NavigationListItem({
+							text: '{title}',
+							icon: '{icon}',
+							enabled: '{enabled}',
+							expanded: '{expanded}',
+							items: {
+								template: new sap.tnt.NavigationListItem({
+									text: '{title}',
+									enabled: '{enabled}'
+								}),
+								path: 'items'
+							}
+						}),
+
+						path: '/navigation'
+					}
+				}),
+				fixedItem: new sap.tnt.NavigationList({
+					items: {
+						template: new sap.tnt.NavigationListItem({
+							text: '{title}',
+							icon: '{icon}'
+						}),
+						path: '/fixedNavigation'
+					}
+				})
+			}).setModel(model).placeAt('col-1-content');
+
+			var sideNavigation = new sap.tnt.SideNavigation({
+				expanded: false,
+				item: new sap.tnt.NavigationList({
+					items: new sap.tnt.NavigationListItem({
+						text: 'Root Item',
+						icon: 'sap-icon://employee',
+						items: [
+							new sap.tnt.NavigationListItem({
+								text: 'Child Item 1'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child Item 2'
+							}),
+							new sap.tnt.NavigationListItem({
+								text: 'Child Item 3'
+							})
+						]
+					})
+				}),
+				fixedItem: new sap.tnt.NavigationList({
+					items: [
+						new sap.tnt.NavigationListItem({
+							text: 'Root Item',
+							icon: 'sap-icon://employee'
+						})
+					]
+				})
+			}).setModel(model).placeAt('col-2-content');
+
+			new sap.m.Button({
+				text: 'toggle expanded property',
+				press: function () {
+					sideNavigationWithBinding.setExpanded(!sideNavigationWithBinding.getExpanded());
+				}
+			}).placeAt('col-1-header');
+
+			new sap.m.Button({
+				text: 'toggle expanded property',
+				press: function () {
+					sideNavigation.setExpanded(!sideNavigation.getExpanded());
+				}
+			}).placeAt('col-2-header');
+
+
+		</script>
+	</head>
+	<body id="body" class="sapUiBody" role="application">
+		<div class="col-1">
+			<div id="col-1-header"></div>
+			<div id="col-1-content" class="col-1-content"></div>
+		</div>
+		<div class="col-2">
+			<div id="col-2-header"></div>
+			<div id="col-2-content" class="col-2-content"></div>
+		</div>
+	</body>
+</html>

@@ -53,9 +53,9 @@
 			strictEqual(oP13nDialog.getVisiblePanel(), null, "no panel is shown");
 			if (sap.ui.Device.system.phone) {
 				strictEqual(oP13nDialog.getVerticalScrolling(), false, "getVerticalScrolling is false");
-				ok(oP13nDialog.getBeginButton(), "OK button");
-				ok(oP13nDialog.getEndButton(), "Cancel button");
-				ok(!oP13nDialog.getButtons()[2], "Reset button is not defined");
+				ok(oP13nDialog.getButtons()[0], "OK button");
+				ok(oP13nDialog.getButtons()[1], "Cancel button");
+				ok(oP13nDialog.getButtons()[2], "Reset button");
 				strictEqual(oP13nDialog.getCustomHeader().getContentMiddle()[0].getText(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"), "default title");
 			} else {
 				strictEqual(oP13nDialog.getVerticalScrolling(), true, "getVerticalScrolling is true");
@@ -122,11 +122,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// assertions
-			if (sap.ui.Device.system.phone) {
-				ok(!oP13nDialog.getButtons()[2], true, "Reset button is not created");
-			} else {
-				strictEqual(oP13nDialog.getButtons()[2].getVisible(), true, "Reset button is visible");
-			}
+			strictEqual(oP13nDialog.getButtons()[2].getVisible(), true, "Reset button is visible");
 
 			// cleanup
 			oP13nDialog.destroy();

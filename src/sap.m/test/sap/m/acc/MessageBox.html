@@ -1,0 +1,103 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<title>MessageBox - sap.m</title>
+	<script src="../../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<script type="text/javascript">
+		jQuery.sap.require("sap.m.MessageBox");
+
+		var oPage = new sap.m.Page("oPage", {
+			title: "sap.m.MessageBox",
+			content: [
+				new sap.m.Button({
+					text: "Confirm",
+					press: function () {
+						sap.m.MessageBox.confirm("Approve purchase order 12345?");
+					}
+				}),
+				new sap.m.Button({
+					text: "Alert",
+					press: function () {
+						sap.m.MessageBox.alert("The quantity you have reported exceeds the quantity planed.");
+					}
+				}),
+				new sap.m.Button({
+					text: "Error",
+					press: function () {
+						sap.m.MessageBox.error("Select a team in the \"Development\" area.\n\"Marketing\" isn't assigned to this area.");
+					}
+				}),
+				new sap.m.Button({
+					text: "Information",
+					press: function () {
+						sap.m.MessageBox.information("You booking will be reserved for 24 hours.");
+					}
+				}),
+				new sap.m.Button({
+					text: "Warning",
+					press: function () {
+						sap.m.MessageBox.warning("The project schedule was last updated over a year ago.");
+					}
+				}),
+				new sap.m.Button({
+					text: "Success",
+					press: function () {
+						sap.m.MessageBox.success("Project 1234567 was created and assigned to team \"ABC\".");
+					}
+				}),
+				new sap.m.Button({
+					text: "Show Details",
+					press: function () {
+						sap.m.MessageBox.show("Your file could not be uploaded because of a security problem.", {
+							icon: sap.m.MessageBox.Icon.INFORMATION,
+							title: "Information",
+							actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
+							defaultAction: sap.m.MessageBox.Action.NO,
+							details: "The security token required to upload the file to the backend system cannot be retrieved. Try refreshing your browser."
+						});
+					}
+				}),
+				new sap.m.Button({
+					text: "Initial Focus Action",
+					press: function () {
+						sap.m.MessageBox.confirm(
+								"Initial button focus is set by attribute \n initialFocus: sap.m.MessageBox.Action.CANCEL",
+								{
+									icon: sap.m.MessageBox.Icon.INFORMATION,
+									title: "Focus on a Button",
+									initialFocus: sap.m.MessageBox.Action.CANCEL
+								}
+						);
+					}
+				}),
+				new sap.m.Button({
+					text: "Initial Focus Custom Button",
+					press: function () {
+						sap.m.MessageBox.show(
+								'Initial button focus is set by attribute \n initialFocus: \"Custom button\" \n Note: The name is not case sensitive', {
+									icon: sap.m.MessageBox.Icon.INFORMATION,
+									title: "Focus on a Custom Button",
+									actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO, "Custom Button"],
+									initialFocus: "Custom Button"
+								}
+						);
+					}
+				})
+			]
+		});
+
+		var app = new sap.m.App("myApp", {initialPage: "oPage"});
+		app.addPage(oPage);
+		app.placeAt('content');
+	</script>
+</head>
+<body id="body" class="sapUiBody" role="application">
+<div id="content"></div>
+</body>
+</html>

@@ -121,6 +121,33 @@ sap.ui.define([
 				 */
 				updateFilterItem: {}
 			}
+		},
+		renderer: function(oRm, oControl) {
+			// start ConditionPanel
+			oRm.write("<section");
+			oRm.writeControlData(oControl);
+			oRm.addClass("sapMFilterPanel");
+			// oRm.addStyle("width", oControl.getWidth());
+			// oRm.addStyle("height", oControl.getHeight());
+			oRm.writeClasses();
+			oRm.writeStyles();
+			oRm.write(">");
+
+			// render content
+			oRm.write("<div");
+			oRm.addClass("sapMFilterPanelContent");
+			oRm.addClass("sapMFilterPanelBG");
+
+			oRm.writeClasses();
+			oRm.write(">");
+			var aChildren = oControl.getAggregation("content");
+			var iLength = aChildren.length;
+			for (var i = 0; i < iLength; i++) {
+				oRm.renderControl(aChildren[i]);
+			}
+			oRm.write("</div>");
+
+			oRm.write("</section>");
 		}
 	});
 
@@ -388,6 +415,11 @@ sap.ui.define([
 				sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
 			], "date");
 		}
+		if (!this._aIncludeOperations["time"]) {
+			this.setIncludeOperations([
+				sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
+			], "time");
+		}
 		if (!this._aIncludeOperations["numeric"]) {
 			this.setIncludeOperations([
 				sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE
@@ -395,7 +427,7 @@ sap.ui.define([
 		}
 		if (!this._aIncludeOperations["boolean"]) {
 			this.setIncludeOperations([
-			    sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.Empty, sap.m.P13nConditionOperation.NotEmpty
+			    sap.m.P13nConditionOperation.EQ
 			], "boolean");
 		}
 		
@@ -504,8 +536,15 @@ sap.ui.define([
 					precision: fGetValueOfProperty("precision", oContext, oItem_),
 					scale: fGetValueOfProperty("scale", oContext, oItem_),
 					isDefault: fGetValueOfProperty("isDefault", oContext, oItem_),
-					values: fGetValueOfProperty("values", oContext, oItem_) //oItem_.getValues()  
+					values: fGetValueOfProperty("values", oContext, oItem_)  
 				});
+				
+
+				// check if maxLength is 1 and remove contains, start and ends with operations
+				var n = aKeyFields.length;
+				if (aKeyFields[n - 1].maxLength === 1 || aKeyFields[n - 1].maxLength === "1") {
+					aKeyFields[n - 1].operations = [sap.m.P13nConditionOperation.EQ, sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.LT, sap.m.P13nConditionOperation.LE, sap.m.P13nConditionOperation.GT, sap.m.P13nConditionOperation.GE];
+				}
 			});
 			this.setKeyFields(aKeyFields);
 
@@ -565,8 +604,8 @@ sap.ui.define([
 		}
 	};
 
-	P13nFilterPanel.prototype.insertFilterItem = function(oFilterItem) {
-		this.insertAggregation("filterItems", oFilterItem);
+	P13nFilterPanel.prototype.insertFilterItem = function(oFilterItem, iIndex) {
+		this.insertAggregation("filterItems", oFilterItem, iIndex);
 
 		if (!this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;

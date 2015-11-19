@@ -1,0 +1,7 @@
+{
+	"sEntity": "Library",
+	"sId": "sap/uxap",
+	"sLabel": "sap uxap",
+	"sVendor": "SAP",
+	"oExtends": "UI5.sap/ui/core"
+}

@@ -1,0 +1,8 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:html="http://www.w3.org/1999/xhtml">
+	<html:div style="height:auto;min-height:4em; background-color: #A9EAFF ;line-height: 4em;">
+		The title of the first section is not shown in the page but it is shown in the AnchorBar. Subsection titles are
+		displayed.
+	</html:div>
+</mvc:View>

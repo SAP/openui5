@@ -138,8 +138,12 @@ sap.ui.define(['jquery.sap.global'],
 
 	if (_deactivateSupported) {
 		var aEvents = ["resize", "orientationchange", "mousemove", "mousedown", "mouseup", //"mouseout", "mouseover",
-					   "touchstart", "touchmove", "touchend", "touchcancel", "paste", "cut", "keydown", "keyup",
-					   "DOMMouseScroll", "mousewheel"];
+					   "paste", "cut", "keydown", "keyup", "DOMMouseScroll", "mousewheel"];
+		
+		if (!!('ontouchstart' in window)) { //touch events supported
+			aEvents.push("touchstart", "touchmove", "touchend", "touchcancel");
+		}
+		
 		for (var i = 0; i < aEvents.length; i++) {
 			window.addEventListener(aEvents[i], _act.refresh, true);
 		}

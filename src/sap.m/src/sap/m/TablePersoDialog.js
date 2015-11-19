@@ -327,8 +327,6 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './InputListItem', '
 			content: [this._oSelectAllCheckbox, this._resetAllButton]
 		}).addStyleClass("sapMPersoDialogFixedBar");
 
-		this._oSelectAllToolbar.addDelegate({onAfterRendering: this._fnAfterToolbarRendering});
-
 		this._oDialog = new Dialog({
 			title : this._oRb.getText("PERSODIALOG_COLUMNS_TITLE"),
 			stretch: sap.ui.Device.system.phone,

@@ -41,7 +41,7 @@
 				var done = assert.async();
 
 				// Act
-				oOpa5.iStartMyAppInAComponent({
+				oOpa5.iStartMyUIComponent({
 					componentConfig: {
 						name: "samples.components.button"
 					},
@@ -50,7 +50,7 @@
 					assert.ok(jQuery(".sapUiOpaComponent").length, "The component was started");
 				});
 
-				oOpa5.iTeardownMyComponent();
+				oOpa5.iTeardownMyUIComponent();
 
 				oOpa5.emptyQueue().done(function () {
 					assert.ok(!jQuery(".sapUiOpaComponent").length, "The component was removed");
@@ -65,7 +65,7 @@
 				var stub = this.stub(oOpa5, "waitFor", function(){});
 
 
-				oOpa5.iStartMyAppInAComponent({
+				oOpa5.iStartMyUIComponent({
 					componentConfig: {
 						name: "samples.components.button"
 					},
@@ -85,7 +85,7 @@
 				oHashChanger.setHash("#foo");
 
 				// Act
-				oOpa5.iStartMyAppInAComponent({
+				oOpa5.iStartMyUIComponent({
 					componentConfig: {
 						name: "samples.components.button"
 					},
@@ -103,7 +103,7 @@
 					}
 				});
 
-				oOpa5.iTeardownMyComponent();
+				oOpa5.iTeardownMyUIComponent();
 
 				oOpa5.emptyQueue().done(function () {
 					done();

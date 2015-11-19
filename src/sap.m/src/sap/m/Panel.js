@@ -299,7 +299,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			id;
 
 		if (headerToolbar) {
-			id = headerToolbar.getId();
+			id = headerToolbar.getTitleId();
 		} else {
 			id = this.getId() + "-header";
 		}

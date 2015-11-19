@@ -1,0 +1,32 @@
+<core:View
+		xmlns:core="sap.ui.core"
+		xmlns="sap.uxap"
+		xmlns:m="sap.m"
+		xmlns:html="http://www.w3.org/1999/xhtml"
+		xmlns:formblocks="sap.uxap.testblocks.simpleform"
+		xmlns:testblocks="sap.uxap.testblocks"
+		height="100%">
+
+	<ObjectPageLayout id="ObjectPageLayout">
+		<headerTitle>
+			<ObjectPageHeader id="headerExpandedGrid" objectTitle="FormLayout TestPage">
+			</ObjectPageHeader>
+		</headerTitle>
+
+		<sections>
+			<ObjectPageSection title="Personal">
+				<subSections>
+					<ObjectPageSubSection id="personalSimpleFormSubsection" title=" ">
+						<blocks>
+							<formblocks:PersonalSimpleFormBlock id="personalSimpleFormBlock" columnLayout="4"/>
+							<testblocks:BasicDivBlock/>
+							<testblocks:BasicDivBlock/>
+							<testblocks:BasicDivBlock/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+
+</core:View>

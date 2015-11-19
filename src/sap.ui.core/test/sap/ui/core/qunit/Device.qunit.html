@@ -194,6 +194,36 @@
 				}
 			},
 			{
+				name: "Chrome 32 on iOS 8 (iPhone)",
+				ua: "Mozilla/5.0 (iPhone; CPU iPhone OS 8_4 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) CriOS/32.0.1700.107 Mobile/10A5376e Safari/8536.25",
+				expected: {
+					msie: undefined,
+					webkit: true,
+					mozilla: undefined,
+					chrome: true,
+					safari: undefined,
+					firefox: undefined,
+					edge: undefined,
+					version: 32,
+					versionStr: "32"
+				}
+			},
+			{
+				name: "Firefox 41 on iOS 8 (iPhone)",
+				ua: "Mozilla/5.0 (iPhone; CPU iPhone OS 8_4 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) FxiOS/41.0 Mobile/10A5376e Safari/8536.25",
+				expected: {
+					msie: undefined,
+					webkit: true,
+					mozilla: undefined,
+					chrome: undefined,
+					safari: undefined,
+					firefox: true,
+					edge: undefined,
+					version: 41,
+					versionStr: "41"
+				}
+			},
+			{
 				name: "Android 4.0.x",
 				ua: "Mozilla/5.0 (Linux; U; Android 4.0.1; en-us; sdk Build/ICS_MR0) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30 ",
 				expected: {
@@ -376,6 +406,48 @@
 				touch: true,
 				windowsOnly: true
 			},
+			{
+				name: "Firefox 41 on Android",
+				ua: "Mozilla/5.0 (Android 4.4; Mobile; rv:41.0) Gecko/41.0 Firefox/41.0",
+				expected: {
+					msie: undefined,
+					webkit: undefined,
+					mozilla: true,
+					chrome: undefined,
+					safari: undefined,
+					firefox: true,
+					edge: undefined,
+					version: 41,
+					versionStr: "41"
+				},
+				os: {
+					name: "Android",
+					version: 4.4,
+					versionStr: "4.4",
+					android: true
+				}
+			},
+			{
+				name: "Firefox 40 on Android",
+				ua: "Mozilla/5.0 (Android; Mobile; rv:40.0) Gecko/40.0 Firefox/40.0",
+				expected: {
+					msie: undefined,
+					webkit: undefined,
+					mozilla: true,
+					chrome: undefined,
+					safari: undefined,
+					firefox: true,
+					edge: undefined,
+					version: 40,
+					versionStr: "40"
+				},
+				os: {
+					name: "Android",
+					version: -1,
+					versionStr: undefined,
+					android: true
+				}
+			}
 		];
 
 		var fnUATest =  function(i, oUserAgentAndResult) {
@@ -395,7 +467,7 @@
 				}
 
 				for (var prop in currentTest.expected) {
-					strictEqual(actualResult[prop] , currentTest.expected[prop], currentTest.name + ": browser detection property '" + prop + "' should match for " + currentTest.ua);
+					strictEqual(actualResult[prop] , currentTest.expected[prop], currentTest.name + ": browser detection property 'browser." + prop + "' should match for " + currentTest.ua);
 				}
 
 				if (currentTest.system || currentTest.os) {
@@ -415,13 +487,13 @@
 						var oSystem = sap.ui.Device._getSystem(false, currentTest.ua);
 
 						for (prop in currentTest.system) {
-							strictEqual(!!oSystem[prop], currentTest.system[prop], currentTest.name + ": browser detection property '" + prop + "' should match for " + currentTest.ua);
+							strictEqual(!!oSystem[prop], currentTest.system[prop], currentTest.name + ": browser detection property 'system." + prop + "' should match for " + currentTest.ua);
 						}
 					}
 
 					if (currentTest.os) {
 						for (prop in currentTest.os) {
-							strictEqual(sap.ui.Device.os[prop], currentTest.os[prop], currentTest.name + ": browser detection property '" + prop + "' should match for " + currentTest.ua);
+							strictEqual(sap.ui.Device.os[prop], currentTest.os[prop], currentTest.name + ": browser detection property 'os." + prop + "' should match for " + currentTest.ua);
 						}
 					}
 

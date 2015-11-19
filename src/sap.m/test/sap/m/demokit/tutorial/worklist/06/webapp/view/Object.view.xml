@@ -1,42 +1,46 @@
-<mvc:View 
+<mvc:View
 	controllerName="myCompany.myApp.controller.Object"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:semantic="sap.m.semantic"
 	xmlns:form="sap.ui.layout.form"
 	xmlns="sap.m">
-	
-	<semantic:FullscreenPage busy="{objectView>/busy}" busyIndicatorDelay="{objectView>/delay}" id="page" navButtonPress="onNavBack"
-		showNavButton="true" title="{i18n>objectTitle}">
+	<semantic:FullscreenPage
+		id="page"
+		busy="{objectView>/busy}"
+		busyIndicatorDelay="{objectView>/delay}"
+		navButtonPress="onNavBack"
+		showNavButton="true"
+		title="{i18n>objectTitle}">
 		<semantic:content>
-			<ObjectHeader 
+			<ObjectHeader
 				id="objectHeader"
-				number="{ 
-						path: 'UnitsInStock',
-						formatter: '.formatter.numberUnit'
-					}"
+				responsive="true"
+				intro="{ProductID}"
 				title="{ProductName}"
 				numberUnit="PC"
-				numberState="Success">
-				
+				numberState="Success"
+				number="{
+					path: 'UnitsInStock',
+					formatter: '.formatter.numberUnit'
+				}">
 				<attributes>
-				    <ObjectAttribute 
+					<ObjectAttribute
 						title="{i18n>ObjectPriceTitle}"
 						text="{
 							path: 'UnitPrice',
 							formatter: '.formatter.numberUnit'
 						} EUR"/>
 				</attributes>
-  
 				<statuses>
-					 <ObjectStatus
+					<ObjectStatus
 						text="{i18n>ObjectDiscontinuedStatusText}"
 						state="Error"
 						visible="{path:'Discontinued'}"/>
-				</statuses>	
-				
+				</statuses>
 			</ObjectHeader>
-			
-			<Panel class="sapUiContentPadding" headerText="{i18n>ObjectSupplierTabTitle}">
+			<Panel
+				class="sapUiContentPadding"
+				headerText="{i18n>ObjectSupplierTabTitle}">
     			<content>
     				<form:SimpleForm
 						minWidth="1024"
@@ -50,45 +54,23 @@
 						columnsL="1"
 						columnsM="1">
 						<form:content>
-							<Label text="{i18n>ObjectSupplierName}" />
-							<Text text="{Supplier/CompanyName}" />
-							<Label text="{i18n>ObjectSupplierAddress}" />
-							<Text text="{Supplier/Address}" />
-							<Label text="{i18n>ObjectSupplierZipcode} / {i18n>ObjectSupplierCity}" />
-							<Text text="{Supplier/PostalCode} / {Supplier/City}" />
-							<Label text="{i18n>ObjectSupplierCountry}" />
-							<Text text="{Supplier/Country}" />
+							<Label text="{i18n>ObjectSupplierName}"/>
+							<Text text="{Supplier/CompanyName}"/>
+							<Label text="{i18n>ObjectSupplierAddress}"/>
+							<Text text="{Supplier/Address}"/>
+							<Label text="{i18n>ObjectSupplierZipcode} / {i18n>ObjectSupplierCity}"/>
+							<Text text="{Supplier/PostalCode} / {Supplier/City}"/>
+							<Label text="{i18n>ObjectSupplierCountry}"/>
+							<Text text="{Supplier/Country}"/>
 						</form:content>
 					</form:SimpleForm>
-    			</content>          
+    			</content>
 			</Panel>
-			
-			<Panel class="sapUiContentPadding" headerText="{i18n>ObjectCommentsTabTitle}">
-				<content>
-					<FeedInput post="onPost"/>
-						<List
-							id="idCommentsList"
-							items="{
-								path: 'ProductFeedback>/ProductComments',
-								sorter: {
-								path: 'date',
-								descending: true
-								}
-							}"
-							noDataText="{i18n>ObjectCommentNoData}"
-							showSeparators="Inner">
-						
-							<FeedListItem
-								info="{ProductFeedback>type}"
-								text="{ProductFeedback>comment}"
-								timestamp="{ProductFeedback>date}"/>
-						</List>
-				</content>        
-			</Panel>
-
 		</semantic:content>
 		<semantic:sendEmailAction>
-			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
+			<semantic:SendEmailAction
+				id="shareEmail"
+				press="onShareEmailPress"/>
 		</semantic:sendEmailAction>
 	</semantic:FullscreenPage>
 </mvc:View>

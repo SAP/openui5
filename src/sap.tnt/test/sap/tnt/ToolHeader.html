@@ -1,0 +1,167 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>ToolHeader - sap.tnt</title>
+	<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout,sap.tnt"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<script type="text/javascript">
+
+		var toolHeader = new sap.tnt.ToolHeader({
+			content: [
+				new sap.m.Button({
+					icon: 'sap-icon://menu2',
+					type: sap.m.ButtonType.Transparent,
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.NeverOverflow
+					})
+				}),
+				new sap.m.ToolbarSpacer({
+					width: '20px'
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "File",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Edit",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Edit",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Edit",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Edit",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Edit",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Edit",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "View",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Navigate",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "Code",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.Low
+					})
+				}),
+				new sap.tnt.ToolHeaderUtilitySeparator({
+				}),
+				new sap.m.ToolbarSpacer({
+					layoutData : new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.NeverOverflow,
+						minWidth: "20px"
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					text: "User Name",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.NeverOverflow
+					})
+				}),
+				new sap.m.Button({
+					type: sap.m.ButtonType.Transparent,
+					icon: "sap-icon://log",
+					press: function() {
+
+					},
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						priority: sap.m.OverflowToolbarPriority.NeverOverflow
+					})
+				})
+			]
+		});
+		toolHeader.placeAt('content');
+
+	</script>
+
+</head>
+<body id="body" class="sapUiBody">
+	<div id="content"></div>
+</body>
+</html>

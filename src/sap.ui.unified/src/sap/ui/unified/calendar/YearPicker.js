@@ -189,6 +189,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 		};
 
+		YearPicker.prototype.onmouseup = function(oEvent){
+
+			// fire select event on mouseup to prevent closing MonthPicker during click
+
+			if (this._bMousedownChange) {
+				this._bMousedownChange = false;
+				this.fireSelect();
+			}
+
+		};
 
 		function _initItemNavigation(){
 
@@ -269,7 +279,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			}
 
 			_selectYear.call(this, iIndex);
-			this.fireSelect();
+			this._bMousedownChange = true;
 
 			oEvent.preventDefault(); // to prevent focus set outside of DatePicker
 			oEvent.setMark("cancelAutoClose");

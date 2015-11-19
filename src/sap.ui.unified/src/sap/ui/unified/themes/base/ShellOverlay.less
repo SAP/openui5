@@ -65,6 +65,7 @@
 }
 
 .sapUiUfdShellOvrlyBrand {
+	background-color: @sapUiBrand;
 	position: absolute;
 	top: 0;
 	height: @sapUiUfdShellOvrlyBrandHeight;
@@ -91,15 +92,18 @@
 }
 
 .sapUiUfdShellOvrlyHeadClose,
-.sapUiUfdShellOvrlyHeadClose:active,
 .sapUiUfdShellOvrlyHeadClose:hover,
 .sapUiUfdShellOvrlyHeadClose:focus,
 .sapUiUfdShellOvrlyHeadClose:visited {
-	color: @sapUiBaseText;
+	color: @sapUiButtonIconColor;
+}
+
+.sapUiUfdShellOvrlyHeadClose:active {
+	color: @sapUiButtonActiveTextColor;
 }
 
 .sapUiUfdShellOvrlyCntnt {
-	background-color: white;
+	background-color: @sapUiGroupContentBackground;
 	top: 0;
 	bottom: 0;
 	position: absolute;
@@ -107,8 +111,8 @@
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	border-top: @sapUiUfdShellOvrlyHeadHeight solid transparent;
-	box-shadow: 0 0 48px rgba(0, 0, 0, 0.3);
-	-webkit-box-shadow: 0 0 48px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 0 48px fade(@sapUiDarkShadowTint, 30);
+	-webkit-box-shadow: 0 0 48px fade(@sapUiDarkShadowTint, 30);
 }
 
 .sapUiUfdShellOvrlyCntnt > div {

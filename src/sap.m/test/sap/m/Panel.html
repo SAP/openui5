@@ -212,6 +212,29 @@
 			content : [new sap.m.Text({
 				text : "10th This is a second Panel with expand animation set to false."
 			})]
+		}), new sap.m.Panel({
+				headerText: "Panel Header Text",
+				content: [
+					new sap.m.Button({text: "Click me"})
+				]
+		}), new sap.m.Panel({
+				headerText: "Panel Header Text",
+				expandable: true,
+				expanded: true,
+				content: [
+					new sap.m.Button({text: "Click me"})
+				]
+		}), new sap.m.Panel({
+				headerText: "Panel Header Text",
+				expandable: true,
+				headerToolbar: new sap.m.Toolbar({
+					content: [new sap.m.Title({
+						text: "Panel Header Toolbar Title Text"
+					})]
+				}),
+				content: [
+					new sap.m.Button({text: "Click me"})
+				]
 		})]
 	});
 

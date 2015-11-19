@@ -22,6 +22,7 @@ sap.ui.define(['./Binding'],
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.ContextBinding
+	 * @extends sap.ui.model.Binding
 	 */
 	var ContextBinding = Binding.extend("sap.ui.model.ContextBinding", /** @lends sap.ui.model.ContextBinding.prototype */ {
 		

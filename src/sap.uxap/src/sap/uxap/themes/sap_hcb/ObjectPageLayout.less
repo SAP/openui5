@@ -1,0 +1,21 @@
+.sapUxAPObjectPageNavigation {
+	background-color: @sapHCStandardBG;
+}
+
+.sapUxAPObjectChildPage {
+	width: 0.25rem;
+	background: @sapHCStandardFG;
+}
+
+.sapUxAPObjectPageNavigation .sapUxAPObjectChildPage {
+	height: 3rem;
+}
+
+.sapUxAPObjectPageNavigation .sapUxAPITBar.sapUxAPObjectChildPage {
+	height: 3.125rem;
+}
+
+/* Overriding the width inherited from BrowserScrollbar.less */
+.sap-desktop .sapUxAPObjectPageWrapper ::-webkit-scrollbar {
+	width: auto;
+}

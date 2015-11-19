@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>sap.m.Panel - Accessibility</title>
+
+		<script src="../../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+		<script>
+			var app = new sap.m.App("myApp", {
+				initialPage: "page1"
+			});
+
+			var panel1 = new sap.m.Panel({
+				headerText : "This is an expandable Panel",
+				width: "auto",
+				expandable: true,
+				content : [
+					new sap.m.Text({ text : "This is a sap.m.Text control inside a sap.m.Panel. Can be read with virtual cursor (INS+Z)." })
+				]
+			}).addStyleClass("sapUiResponsiveMargin");
+
+			var label2 = new sap.m.Label({ text : "This is a non active infoToolbar" })
+			var panel2 = new sap.m.Panel({
+				headerText : "This is a non expandable Panel",
+				infoToolbar : new sap.m.Toolbar({
+					content : [
+						label2
+					]
+				}).addAriaLabelledBy(label2),
+				width: "auto",
+				content : [
+					new sap.m.Text({ text : "This is a sap.m.Text control inside a sap.m.Panel. Can be read with virtual cursor (INS+Z)." })
+				]
+			}).addStyleClass("sapUiResponsiveMargin");
+
+			var label3 = new sap.m.Label({ text : "This is an active infoToolbar" });
+			var panel3 = new sap.m.Panel({
+				headerToolbar : new sap.m.Toolbar({
+					content: [
+						new sap.m.Title({ text: "This is a Panel with a headerToolbar" }),
+						new sap.m.ToolbarSpacer(),
+						new sap.m.Button({ icon: "sap-icon://drop-down-list" }),
+						new sap.m.Button({ icon: "sap-icon://person-placeholder" })
+					]
+				}),
+				infoToolbar : new sap.m.Toolbar({
+					active: true,
+					content : [
+						label3
+					]
+				}).addAriaLabelledBy(label3),
+				width: "auto",
+				expandable: true,
+				expanded: true,
+				content : [
+					new sap.m.Text({ text : "This is a sap.m.Text control inside a sap.m.Panel. Can be read with virtual cursor (INS+Z)." })
+				]
+			}).addStyleClass("sapUiResponsiveMargin");
+
+			var page1 = new sap.m.Page("page1", {
+				title: "Panel Control",
+				content:[
+					panel1,
+					panel2,
+					panel3
+				]
+			});
+
+			app.addPage(page1).placeAt("content");
+		</script>
+	</head>
+	<body class="sapUiBody" style="overflow: hidden">
+		<div id="content"></div>
+	</body>
+</html>

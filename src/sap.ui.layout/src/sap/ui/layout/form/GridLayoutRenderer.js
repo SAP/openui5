@@ -338,7 +338,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 				iCells = iCells + 1;
 			}
 			if (oLabel && aReservedCells[0] != "full") {
-				rm.write("<td colspan=" + iCells + " class=\"sapUiGridLabelFull\">");
+				rm.write("<td colspan=" + iCells + " class=\"sapUiFormElementLbl sapUiGridLabelFull\">");
 				rm.renderControl(oLabel);
 				rm.write("</td>");
 				return ["full"];
@@ -386,7 +386,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 				}
 			}
 
-			rm.write("<td colspan=" + iLabelCells + " class=\"sapUiGridLabel\">");
+			rm.write("<td colspan=" + iLabelCells + " class=\"sapUiFormElementLbl\">");
 			if (oLabel) {
 				rm.renderControl(oLabel);
 			}

@@ -139,6 +139,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.NewsContent",
 			"sap.m.NumericContent",
 			"sap.m.NotificationListItem",
+			"sap.m.NotificationListGroup",
 			"sap.m.PagingButton",
 			"sap.m.ObjectAttribute",
 			"sap.m.ObjectHeader",
@@ -150,6 +151,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.OverflowToolbarButton",
 			"sap.m.P13nColumnsItem",
 			"sap.m.P13nColumnsPanel",
+			"sap.m.P13nDimMeasurePanel",
 			"sap.m.P13nConditionPanel",
 			"sap.m.P13nDialog",
 			"sap.m.P13nFilterPanel",
@@ -157,6 +159,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.P13nSortPanel",
 			"sap.m.Page",
 			"sap.m.Panel",
+			"sap.m.PlanningCalendar",
 			"sap.m.Popover",
 			"sap.m.ProgressIndicator",
 			"sap.m.PullToRefresh",
@@ -184,7 +187,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.Switch",
 			"sap.m.Table",
 			"sap.m.TableSelectDialog",
-			"sap.m.TeamCalendar",
 			"sap.m.Text",
 			"sap.m.TextArea",
 			"sap.m.Tile",
@@ -219,10 +221,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap.m.PageAccessibleLandmarkInfo",
 			"sap.m.P13nFilterItem",
 			"sap.m.P13nItem",
+			"sap.m.PlanningCalendarRow",
+			"sap.m.PlanningCalendarView",
 			"sap.m.P13nSortItem",
 			"sap.m.SegmentedButtonItem",
-			"sap.m.TeamCalendarRow",
-			"sap.m.TeamCalendarView",
+			"sap.m.SuggestionItem",
 			"sap.m.ToolbarLayoutData",
 			"sap.m.UploadCollectionItem",
 			"sap.m.UploadCollectionParameter",
@@ -811,7 +814,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	/**
 	 * Different levels for headers
-	 * 
+	 *
 	 * @enum {string}
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
@@ -1431,7 +1434,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 
 	/**
-	 * Type of Panels used on the Personalization Dialog
+	 * Type of panels used in the personalization dialog.
 	 *
 	 * @enum {string}
 	 * @public
@@ -1440,28 +1443,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	sap.m.P13nPanelType = {
 
 		/**
-		 * Panel type for sorting
+		 * Panel type for sorting.
 		 * @public
 		 */
 		sort : "sort",
 
 		/**
-		 * Panel type for filtering
+		 * Panel type for filtering.
 		 * @public
 		 */
 		filter : "filter",
 
 		/**
-		 * Panel type for grouping
+		 * Panel type for grouping.
 		 * @public
 		 */
 		group : "group",
 
 		/**
-		 * Panel type for columns setting
+		 * Panel type for column settings.
 		 * @public
 		 */
-		columns : "columns"
+		columns : "columns",
+		
+		/**
+		 * Panel type for dimension and measure settings.
+		 * @public
+		 */
+		dimeasure: "dimeasure"
 
 	};
 
@@ -2183,9 +2192,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @name sap.m.touch
 	 * @public
 	 **/
-
 	if (sap.m && !sap.m.touch) {
-
 		sap.m.touch = {};
 	}
 
@@ -2196,8 +2203,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @param {Touch | number} oTouch A touch object to find or a Touch.identifier that uniquely identifies the current finger in the touch session.
 	 * @return {object | undefined} The touch matching if any.
 	 * @public
-	 * @name sap.m.touch.find
-	 * @function
 	*/
 	sap.m.touch.find = function(oTouchList, oTouch) {
 		var i,
@@ -2234,8 +2239,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @param {jQuery | Element | string} vElement A jQuery element or an element reference or an element id.
 	 * @return {number} The number of touches related with the given element.
 	 * @public
-	 * @name sap.m.touch.countContained
-	 * @function
 	*/
 	sap.m.touch.countContained = function(oTouchList, vElement) {
 		var i,

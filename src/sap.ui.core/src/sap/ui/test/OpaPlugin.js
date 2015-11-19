@@ -19,8 +19,15 @@ sap.ui.define(['jquery.sap.global',
 				'sap/ui/core/routing/HashChanger',
 				'sap/ui/base/Object',
 				'sap/ui/core/mvc/View',
-				'./matchers/Ancestor'],
-	function ($, HashChanger, UI5Object, View, Ancestor) {
+				'./matchers/Ancestor',
+				'./matchers/Interactable',
+				'./matchers/Visible',
+				'./pipelines/MatcherPipeline'],
+	function ($, HashChanger, UI5Object, View, Ancestor, Interactable, Visible, MatcherPipeline) {
+		var oMatcherPipeline = new MatcherPipeline(),
+			oInteractableMatcher = new Interactable(),
+			oVisibleMatcher = new Visible();
+
 		/**
 		 * @class A Plugin to search UI5 controls.
 		 *
@@ -34,13 +41,14 @@ sap.ui.define(['jquery.sap.global',
 			constructor : function() {
 				var that = this;
 
-				sap.ui.getCore().registerPlugin({startPlugin: function(oCore) {
-					that.oCore = oCore;
-				},
-
-				stopPlugin: function() {
-					that.oCore = undefined;
-				}});
+				sap.ui.getCore().registerPlugin({
+					startPlugin: function(oCore) {
+						that.oCore = oCore;
+					},
+					stopPlugin: function() {
+						that.oCore = undefined;
+					}
+				});
 			},
 
 			/**
@@ -170,6 +178,7 @@ sap.ui.define(['jquery.sap.global',
 			 * you have to reach the view at some point.
 			 * @param {string|string[]} [oOptions.id] The ID if one or multiple controls. This can be a global ID or an ID used together with viewName. See the documentation of this parameter.
 			 * @param {boolean} [oOptions.visible=true] States if a control need to have a visible domref (jQUery's :visible will be used to determine this).
+			 * @param {boolean} [oOptions.interactable=false] @since 1.34 States if a control has to match the interactable matcher {@link sap.ui.test.matchers.Interactable}.
 			 * @param {boolean} [oOptions.searchOpenDialogs] Only controls in the static UI area of UI5 are searched.
 			 * @returns {sap.ui.core.Element|sap.ui.core.Element[]|undefined|null} the found control/element, an array of found Controls, an empty array and null or undefined are possible depending of the parameters you specify
 			 * @public
@@ -192,13 +201,36 @@ sap.ui.define(['jquery.sap.global',
 					return vResult;
 				}
 
-				if (vResult.$) {
-					return vResult.$().is(":visible") ? vResult : null;
+				// TODO: make all of the conditions above matchers and create this array in a factory
+				var aMatchers = [];
+
+				if (oOptions.interactable) {
+					aMatchers.push(oInteractableMatcher);
+				} else {
+					aMatchers.push(oVisibleMatcher);
 				}
 
-				return vResult.filter(function (oControl) {
-					return oControl.$().is(":visible");
+				var vPipelineResult = oMatcherPipeline.process({
+					control: vResult,
+					matchers: aMatchers
 				});
+
+				// all controls are filtered out
+				if (!vPipelineResult) {
+					// backwards compatible - return empty array in this case
+					if ($.isArray(vResult)) {
+						return [];
+					}
+					// Single control - return null
+					if (vResult) {
+						return null;
+					}
+					// anything else
+					return vResult;
+				}
+
+				// Return the matched controls
+				return vPipelineResult;
 			},
 
 			/**

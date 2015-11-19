@@ -298,7 +298,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @public
 	 * @since 1.33.0
 	 */
-	ComponentMetadata.prototype.getManifestObject = function() {
+	Component.prototype.getManifestObject = function() {
 		if (!this._oManifest) {
 			return this.getMetadata().getManifestObject();
 		} else {
@@ -1268,8 +1268,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 
 		function preloadDependencies(sComponentName, oManifest, bAsync) {
 
-			var aPromises = [],
-			    fnCollect = bAsync ? function(oPromise) {
+			var aPromises = [];
+			var fnCollect = bAsync ? function(oPromise) {
 				aPromises.push(oPromise);
 			} : jQuery.noop;
 
@@ -1279,22 +1279,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			// lookup the required libraries
 			var mLibs = oManifest.getEntry("/sap.ui5/dependencies/libs");
 			if (mLibs) {
-				var aLibs = Object.keys(mLibs);
-				jQuery.sap.log.info("Component \"" + sComponentName + "\" is loading library: \"" + aLibs.join(", ") + "\"");
-				fnCollect(sap.ui.getCore().loadLibraries(aLibs));
+				var aLibs = [];
+				// filter the lazy libs
+				for (var sLibName in mLibs) {
+					if (!mLibs[sLibName].lazy) {
+						aLibs.push(sLibName);
+					}
+				}
+				if (aLibs.length > 0) {
+					jQuery.sap.log.info("Component \"" + sComponentName + "\" is loading libraries: \"" + aLibs.join(", ") + "\"");
+					fnCollect(sap.ui.getCore().loadLibraries(aLibs, {
+						async: bAsync
+					}));
+				}
 			}
 
 			// lookup the extended component and preload it
 			var sExtendedComponent = oManifest.getEntry("/sap.ui5/extends/component");
 			if (sExtendedComponent) {
-				fnCollect(preload(sExtendedComponent, !!fnCollect));
+				fnCollect(preload(sExtendedComponent, bAsync));
 			}
 
 			// lookup the components and preload them
 			var mComponents = oManifest.getEntry("/sap.ui5/dependencies/components");
 			if (mComponents) {
 				for (var sComponentName in mComponents) {
-					fnCollect(preload(sComponentName, !!fnCollect));
+					// filter the lazy components
+					if (!mComponents[sComponentName].lazy) {
+						fnCollect(preload(sComponentName, bAsync));
+					}
 				}
 			}
 

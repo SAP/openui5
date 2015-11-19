@@ -12,8 +12,9 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/IconPool",
 	"sap/ui/Device"
-], function (Control, Text, Link, Select, Button, Item, ItemNavigation, ResizeHandler, Device) {
+], function (Control, Text, Link, Select, Button, Item, ItemNavigation, ResizeHandler, IconPool, Device) {
 	"use strict";
 
 	/**
@@ -126,7 +127,7 @@ sap.ui.define([
 				change: this._selectChangeHandler.bind(this),
 				forceSelection: false,
 				autoAdjustWidth: true,
-				icon: "sap-icon://slim-arrow-down",
+				icon: IconPool.getIconURI("slim-arrow-down"),
 				type: sap.m.SelectType.IconOnly,
 				buttons: [this._getSelectButton()]
 			})));
@@ -187,8 +188,8 @@ sap.ui.define([
 			.attachAfterOpen(this._removeItemNavigation, this)
 			.attachBeforeClose(this._restoreItemNavigation, this);
 
-		oSelect._onBeforeOpenDialog = this._onSelectBeforeOpen.bind(this);
-		oSelect._onBeforeOpenPopover = this._onSelectBeforeOpen.bind(this);
+		oSelect._onBeforeOpenDialog = this._onSelectBeforeOpenDialog.bind(this);
+		oSelect._onBeforeOpenPopover = this._onSelectBeforeOpenPopover.bind(this);
 		oSelect.onsapescape = this._onSelectEscPress.bind(this);
 
 		return oSelect;
@@ -198,7 +199,22 @@ sap.ui.define([
 		this.removeDelegate(this._getItemNavigation());
 	};
 
-	Breadcrumbs.prototype._onSelectBeforeOpen = function () {
+	Breadcrumbs.prototype._onSelectBeforeOpenDialog = function () {
+		var oSelect = this._getSelect();
+
+		if (this.getCurrentLocationText() && Device.system.phone) {
+			oSelect.setSelectedIndex(0);
+		} else {
+			oSelect.setSelectedItem(null);
+			/* this is a fix for a bug in the select, this line should be romeved after it has been fixed in the select */
+			oSelect.getPicker().getCustomHeader().getContentLeft()[0].setValue(null);
+		}
+
+		Select.prototype._onBeforeOpenDialog.call(oSelect);
+		this._removeItemNavigation();
+	};
+
+	Breadcrumbs.prototype._onSelectBeforeOpenPopover = function () {
 		this._getSelect().setSelectedItem(null);
 		this._removeItemNavigation();
 	};
@@ -237,6 +253,7 @@ sap.ui.define([
 			sLinkTarget,
 			oSelectedItem = oEvent.getParameter("selectedItem");
 
+		/* there's no selected item, nothing to do in this case (the selected item is often set to null) */
 		if (!oSelectedItem) {
 			return;
 		}
@@ -248,6 +265,12 @@ sap.ui.define([
 		}
 
 		oLink = sap.ui.getCore().byId(oSelectedItem.getKey());
+
+		/* if it's not a link, then it must be only the current location text, we shouldn't do anything */
+		if (!(oLink instanceof Link)) {
+			return;
+		}
+
 		sLinkHref = oLink.getHref();
 		sLinkTarget = oLink.getTarget();
 
@@ -266,6 +289,16 @@ sap.ui.define([
 		this._getSelect().close();
 	};
 
+	Breadcrumbs.prototype._getItemsForMobile = function () {
+		var oItems = this.getLinks();
+
+		if (this.getCurrentLocationText()) {
+			oItems.push(this._getCurrentLocation());
+		}
+
+		return oItems;
+	};
+
 	/**
 	 * Updates the select with the current "distribution" of controls.
 	 *
@@ -279,7 +312,7 @@ sap.ui.define([
 
 		if (!this._bControlDistributionCached || bInvalidateDistribution) {
 			oSelect.removeAllItems();
-			aControlsForSelect = Device.system.phone ? this.getLinks() : oControlsDistribution.aControlsForSelect;
+			aControlsForSelect = Device.system.phone ? this._getItemsForMobile() : oControlsDistribution.aControlsForSelect;
 			aControlsForSelect.map(this._createSelectItem).reverse().forEach(oSelect.insertItem, oSelect);
 			this._bControlDistributionCached = true;
 			this.invalidate(this);
@@ -456,7 +489,6 @@ sap.ui.define([
 		return this;
 	};
 
-
 	/**
 	 * Every time a control is inserted in the breadcrumb, it must be monitored for size/visibility changes
 	 * @param oControl
@@ -513,7 +545,6 @@ sap.ui.define([
 		this.invalidate(this);
 		return this;
 	};
-
 
 	return Breadcrumbs;
 

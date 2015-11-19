@@ -29,7 +29,7 @@
 				var theEx;
 
 				try {
-					new sap.ui.core.ws.WebSocket("ws://hostname:1234/foo/bar");
+					new sap.ui.core.ws.WebSocket("/foo/bar");
 				} catch (ex) {
 					theEx = ex;
 				}
@@ -46,7 +46,7 @@
 				var theEx;
 
 				try {
-					new sap.ui.core.ws.WebSocket("ws://hostname:1234/foo/bar", "my-protocol");
+					new sap.ui.core.ws.WebSocket("/foo/bar", "my-protocol");
 				} catch (ex) {
 					theEx = ex;
 				}
@@ -63,7 +63,7 @@
 				var theEx;
 
 				try {
-					new sap.ui.core.ws.WebSocket("ws://hostname:1234/foo/bar", [ "my-first-protocol", "my-second-protocol" ]);
+					new sap.ui.core.ws.WebSocket("/foo/bar", [ "my-first-protocol", "my-second-protocol" ]);
 				} catch (ex) {
 					theEx = ex;
 				}

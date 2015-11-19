@@ -31,7 +31,7 @@ sap.ui.require([
 
 				BuyProductJourney.start(
 					function (Given) {
-						Given.iStartMyAppInAComponent({
+						Given.iStartMyUIComponent({
 							componentConfig: {
 								name: "sap.ui.demo.cart"
 							},
@@ -39,12 +39,12 @@ sap.ui.require([
 						});
 					},
 					function (Then) {
-						Then.iTeardownMyComponent();
+						Then.iTeardownMyUIComponent();
 					});
 
 				DeleteProductJourney.start(
 					function (Given) {
-						Given.iStartMyAppInAComponent({
+						Given.iStartMyUIComponent({
 							componentConfig: {
 								name: "sap.ui.demo.cart"
 							},
@@ -52,7 +52,7 @@ sap.ui.require([
 						});
 					},
 					function (Then) {
-						Then.iTeardownMyComponent();
+						Then.iTeardownMyUIComponent();
 					});
 
 				QUnit.start();

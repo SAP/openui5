@@ -527,7 +527,7 @@
 		});
 	});
 
-	asyncTest("Control filtering prohibited", function() {
+	asyncTest("Control filtering prohibited in OperationMode.Server", function() {
 
 		oModel.attachMetadataLoaded(function() {
 			var iWarningCount = 0,
@@ -1322,25 +1322,181 @@
 		});
 	});
 
-
-	asyncTest("Application Filtering", function() {
+	/**
+	 * Test to see if application filters are added to the initial request
+	 */
+	asyncTest("filter() API - OperationMode.Server - Application Filter - initial", function() {
 		oModel.attachMetadataLoaded(function() {
 			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 					null,
-					[new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")],
-					{
-						rootLevel: 2
-					});
-
-			var oContext;
+					[],
+					{rootLevel: 2}
+			);
+			
+			var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
 
 			var handler1 = function (oEvent) {
-				// contexts should be now loaded
+				oBinding.detachChange(handler1);
+				var oContext;
+				
+				equal(oEvent.getParameter("reason"), "filter", "Change even should have the reason 'filter', since filter() was called before data was available.");
+				
+				// contexts should be now loaded and filtered
 				var aContexts = oBinding.getRootContexts(0, 10);
 
 				equal(aContexts.length, 2, "TreeBinding returned rootContexts length");
-				//Wait for fix of Mock Server
-				//equal(oBinding.getChildCount(null), 9, "TreeBinding actual rootContexts length");
+
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
+				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				equal(oModel.getProperty("HierarchyNode", oContext), "001131", "HierachyNode ID is correct");
+				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+
+				start();
+			};
+
+			// should not break, even though no data is there
+			oBinding.filter(aFilters, "Application");
+			
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts(0, 10);
+		});
+	});
+
+	/**
+	 * Test to see if application filters are added to the initial request
+	 */
+	asyncTest("filter() API - OperationMode.Server - Application Filter - afterwards", function() {
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+					null,
+					[],
+					{rootLevel: 2}
+			);
+			
+			var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
+
+			/**
+			 * Change handler after the initial data request
+			 */
+			var handler1 = function (oEvent) {
+				oBinding.detachChange(handler1);
+				var oContext;
+				
+				equal(oEvent.getParameter("reason"), "change", "Change even should have the reason 'filter', since filter() was called before data was available.");
+
+				// should not break, even though no data is there
+				oBinding.attachRefresh(handler2);
+				oBinding.filter(aFilters, "Application");
+			};
+			
+			/**
+			 * Refresh after filter() call in Server-Mode
+			 */
+			var handler2 = function (oEvent) {
+				oBinding.detachRefresh(handler2);
+
+				equal(oEvent.getParameter("reason"), "filter", "Refresh even should have the reason 'filter'.");
+				
+				oBinding.attachChange(handler3);
+				oBinding.getRootContexts(0, 10);
+			};
+			
+			/**
+			 * Change handler after the data request.
+			 */
+			var handler3 = function (oEvent) {
+				oBinding.detachChange(handler3);
+				
+				equal(oEvent.getParameter("reason"), "change", "Change even should have the reason 'change'.");
+				
+				// contexts should be now loaded and filtered
+				var aContexts = oBinding.getRootContexts(0, 10);
+
+				equal(aContexts.length, 2, "TreeBinding returned rootContexts length");
+
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
+				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				equal(oModel.getProperty("HierarchyNode", oContext), "001131", "HierachyNode ID is correct");
+				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+
+				start();
+			};
+			
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts(0, 10);
+		});
+	});
+	
+	/**
+	 * Test to see if the control filters are prohibited in OperationMode.Server
+	 */
+	asyncTest("filter() API - OperationMode.Server - Control Filter - afterwards", function() {
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+					null,
+					[],
+					{rootLevel: 2}
+			);
+
+			//warning stub
+			var iWarningCount = 0,
+				sMessage = "";
+			sinon.stub(jQuery.sap.log, "warning", function(sMsg) {
+				iWarningCount++;
+				sMessage = sMsg;
+			});
+
+			// should not break, even though no data is there
+			var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
+			oBinding.filter(aFilters, "Control");
+			
+			equal(iWarningCount, 1, "Exactly one warning logged.");
+			equal(sMessage, "Filtering with ControlFilters is ONLY possible if the ODataTreeBinding is running in OperationMode.Client or " +
+					"OperationMode.Auto, in case the given threshold is lower than the total number of tree nodes.")
+			
+			jQuery.sap.log.warning.restore();
+			start();
+		});
+	});
+	
+	/**
+	 * Test to check if the application filters are appended to the data request if the useServersideApplicationFilters flag is set to "true"
+	 */
+	asyncTest("filter() API - OperationMode.Client - Application Filter - useServersideApplicationFilters=true - initial", function() {
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+					null,
+					[],
+					{
+						rootLevel: 2,
+						operationMode: "Client",
+						useServersideApplicationFilters: true
+					}
+			);
+			
+			var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
+
+			var handler1 = function (oEvent) {
+				var oContext;
+				
+				equal(oEvent.getParameter("reason"), "filter", "Change even should have the reason 'filter', since filter() was called before data was available.");
+				
+				// contexts should be now loaded and filtered.
+				// No valid hierarchy is available, since the MockServer does not respond with inner child nodes, so we only have 2 top level nodes.
+				// Yet the request was correct.
+				var aContexts = oBinding.getRootContexts(0, 10);
+
+				equal(aContexts.length, 2, "TreeBinding returned rootContexts length");
 
 				oContext = aContexts[0];
 				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
@@ -1357,12 +1513,337 @@
 				start();
 			};
 
+			// should not break, even though no data is there
+			oBinding.filter(aFilters, "Application");
+			
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts(0, 10);
+		});
+	});
+	
+	/**
+	 * Test to check if the application filters are appended to the data request if the useServersideApplicationFilters flag is set to "true"
+	 */
+	asyncTest("filter() API - OperationMode.Client - Application & Control Filter - useServersideApplicationFilters=true - initial", function() {
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+					null,
+					[],
+					{
+						rootLevel: 2,
+						operationMode: "Client",
+						useServersideApplicationFilters: true
+					}
+			);
+			
+			var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
+
+			var handler1 = function (oEvent) {
+				var oContext;
+				
+				equal(oEvent.getParameter("reason"), "filter", "Change even should have the reason 'filter', since filter() was called before data was available.");
+				
+				// contexts should be now loaded and filtered.
+				// No valid hierarchy is available, since the MockServer does not respond with inner child nodes, so we only have 2 top level nodes.
+				// Yet the request was correct.
+				var aContexts = oBinding.getRootContexts(0, 10);
+
+				equal(aContexts.length, 1, "TreeBinding returned rootContexts length");
+
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				equal(oModel.getProperty("HierarchyNode", oContext), "001131", "HierachyNode ID is correct");
+				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+
+				oBinding.detachChange(handler1);
+
+				start();
+			};
+
+			// should not break, even though no data is there
+			oBinding.filter(aFilters, "Application");
+			//apply also control filters -> should be applied after the loading on the client
+			oBinding.filter([new sap.ui.model.Filter("HierarchyNode", "EQ", "001131")], "Control");
+			
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts(0, 10);
+		});
+	});
+	
+	/**
+	 * Test to see if the filters are not appended to the data request (default).
+	 * Filters should now be applied clientside.
+	 */
+	asyncTest("filter() API - OperationMode.Client - Application Filter - useServersideApplicationFilters=true - afterwards", function() {
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+					null,
+					[],
+					{
+						rootLevel: 2,
+						operationMode: "Client",
+						useServersideApplicationFilters: true
+					}
+			);
+			
+			/**
+			 * Handler 1 is called after the initial data request change event
+			 */
+			var handler1 = function (oEvent) {
+				oBinding.detachChange(handler1);
+				var oContext;
+				
+				equal(oEvent.getParameter("reason"), "change", "Change event should have the reason 'change'.");
+				
+				// Tree is NOT filtered
+				// Level: 0
+				var aContexts = oBinding.getRootContexts(0, 10);
+				equal(aContexts.length, 9, "TreeBinding returned rootContexts length 9 -> unfiltered tree");
+
+				// now filter on the complete tree, clientside
+				var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
+
+				// should not break, even though no data is there
+				oBinding.attachRefresh(handler2);
+				oBinding.filter(aFilters, "Application");
+
+			};
+			
+			/**
+			 * Handler 2 is the refresh-handler after the filter call with serverside-application filters
+			 */
+			var handler2 = function (oEvent) {
+				oBinding.detachRefresh(handler2);
+				equal(oEvent.getParameter("reason"), "filter", "Refresh event should have the reason 'filter'.");
+				
+				oBinding.attachChange(handler3);
+				oBinding.getRootContexts(0, 10);
+			};
+			
+			/**
+			 * Handler 3 is called after the filtering is done on the clientside
+			 */
+			var handler3 = function (oEvent) {
+				oBinding.detachChange(handler3);
+				
+				equal(oEvent.getParameter("reason"), "change", "Change event should have the reason 'change'.");
+				
+				// contexts should be now loaded and filtered.
+				// No valid hierarchy is available, since the MockServer does not respond with inner child nodes, so we only have 2 top level nodes.
+				// Yet the request was correct.
+				var aContexts = oBinding.getRootContexts(0, 10);
+
+				equal(aContexts.length, 2, "TreeBinding returned rootContexts length");
+
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
+				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+
+				oContext = aContexts[1];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				equal(oModel.getProperty("HierarchyNode", oContext), "001131", "HierachyNode ID is correct");
+				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+				
+				start();
+			};
+			
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts(0, 10);
+		});
+	});
+	
+	/**
+	 * Test to see if the initial filters are not appended to the data request (default).
+	 * Filters should now be applied clientside.
+	 */
+	asyncTest("filter() API - OperationMode.Client - Application Filter - useServersideApplicationFilters=false (default) - Initial", function() {
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+					null,
+					[],
+					{
+						rootLevel: 2,
+						operationMode: "Client",
+						useServersideApplicationFilters: false
+					}
+			);
+			
+			var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
+
+			var handler1 = function (oEvent) {
+				var oContext;
+				
+				equal(oEvent.getParameter("reason"), "filter", "Change event should have the reason 'filter', since filter() was called before data was available.");
+				
+				// Tree is correctly filtered, since it's done on the client, and the inner child nodes are collected for the filtered tree
+				// Level: 0
+				var aContexts = oBinding.getRootContexts(0, 10);
+				equal(aContexts.length, 7, "TreeBinding returned rootContexts length");
+
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
+				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+
+				//Level: 1
+				aContexts = oBinding.getNodeContexts(aContexts[0], 0, 20);
+
+				equal(aContexts.length, 5, "Correct child count on level 1");
+				notEqual(aContexts[3].getProperty("FinancialStatementItemText")[0], "A", "0.3 - doesn't match filter - it's an inner node");
+				equal(aContexts[4].getProperty("FinancialStatementItemText")[0], "A", "0.4 - FinancialStatementItemText starts with 'A'");
+				
+				//Level: 2
+				aContexts = oBinding.getNodeContexts(aContexts[3], 0, 20);
+				equal(aContexts.length, 1, "Inner node has exactly 1 child");
+				
+				oBinding.detachChange(handler1);
+
+				start();
+			};
+
+			// should not break, even though no data is there
+			oBinding.filter(aFilters, "Application");
+			
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts(0, 10);
+		});
+	});
+	
+	/**
+	 * Test to see if the initial filters are not appended to the data request (default).
+	 * Filters should now be applied clientside.
+	 */
+	asyncTest("filter() API - OperationMode.Client - Application & Control Filter - useServersideApplicationFilters=false (default) - Initial", function() {
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+					null,
+					[],
+					{
+						rootLevel: 2,
+						operationMode: "Client",
+						useServersideApplicationFilters: false
+					}
+			);
+			
+			var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
+
+			var handler1 = function (oEvent) {
+				var oContext;
+				
+				equal(oEvent.getParameter("reason"), "filter", "Change event should have the reason 'filter', since filter() was called before data was available.");
+				
+				// Tree is correctly filtered, since it's done on the client, and the inner child nodes are collected for the filtered tree
+				// Level: 0
+				var aContexts = oBinding.getRootContexts(0, 10);
+				equal(aContexts.length, 7, "TreeBinding returned rootContexts length");
+
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
+				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+
+				//Level: 1
+				aContexts = oBinding.getNodeContexts(aContexts[0], 0, 20);
+
+				equal(aContexts.length, 5, "Correct child count on level 1");
+				notEqual(aContexts[3].getProperty("FinancialStatementItemText")[0], "A", "0.3 - doesn't match filter - it's an inner node");
+				equal(aContexts[4].getProperty("FinancialStatementItemText")[0], "A", "0.4 - FinancialStatementItemText starts with 'A'");
+				
+				//Level: 2
+				aContexts = oBinding.getNodeContexts(aContexts[3], 0, 20);
+				equal(aContexts.length, 4, "Inner node has exactly 1 child");
+				
+				oBinding.detachChange(handler1);
+
+				start();
+			};
+
+			// should not break, even though no data is there
+			oBinding.filter(aFilters, "Application");
+			//apply also control filters -> should be applied after the loading on the client
+			oBinding.filter([new sap.ui.model.Filter("FinancialStatementItemText", "EndsWith", "e")], "Control");
+			
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts(0, 10);
+		});
+	});
+	
+	/**
+	 * Test to see if the filters are not appended to the data request (default).
+	 * Filters should now be applied clientside.
+	 */
+	asyncTest("filter() API - OperationMode.Client - Control Filter - useServersideApplicationFilters=false (default) - afterwards", function() {
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+					null,
+					[],
+					{
+						rootLevel: 2,
+						operationMode: "Client",
+						useServersideApplicationFilters: false
+					}
+			);
+			
+			/**
+			 * Handler 1 is called after the initial data request change event
+			 */
+			var handler1 = function (oEvent) {
+				oBinding.detachChange(handler1);
+				var oContext;
+				
+				equal(oEvent.getParameter("reason"), "change", "Change event should have the reason 'change'.");
+				
+				// Tree is NOT filtered
+				// Level: 0
+				var aContexts = oBinding.getRootContexts(0, 10);
+				equal(aContexts.length, 9, "TreeBinding returned rootContexts length 9 -> unfiltered tree");
+
+				// now filter on the complete tree, clientside
+				oBinding.attachChange(handler2);
+				var aFilters = [new sap.ui.model.Filter("FinancialStatementItemText", "StartsWith", "A")];
+
+				// should not break, even though no data is there
+				oBinding.filter(aFilters, "Control");
+
+			};
+			
+			/**
+			 * Handler 2 is called after the filtering is done on the clientside
+			 */
+			var handler2 = function (oEvent) {
+				oBinding.detachChange(handler2);
+				
+				// Tree is correctly filtered, since it's done on the client, and the inner child nodes are collected for the filtered tree
+				// Level: 0
+				var aContexts = oBinding.getRootContexts(0, 10);
+				equal(aContexts.length, 7, "TreeBinding returned rootContexts length");
+
+				oContext = aContexts[0];
+				equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
+				equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
+				equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
+
+				//Level: 1
+				aContexts = oBinding.getNodeContexts(aContexts[0], 0, 20);
+
+				equal(aContexts.length, 5, "Correct child count on level 1");
+				notEqual(aContexts[3].getProperty("FinancialStatementItemText")[0], "A", "0.3 - doesn't match filter - it's an inner node");
+				equal(aContexts[4].getProperty("FinancialStatementItemText")[0], "A", "0.4 - FinancialStatementItemText starts with 'A'");
+				
+				//Level: 2
+				aContexts = oBinding.getNodeContexts(aContexts[3], 0, 20);
+				equal(aContexts.length, 1, "Inner node has exactly 1 child");
+				
+				start();
+			};
+			
 			oBinding.attachChange(handler1);
 			oBinding.getRootContexts(0, 10);
 		});
 	});
 
-	asyncTest("Tried filtering", function() {
+	asyncTest("Tried filtering - incomplete Annotations/Navigation Property Definitions", function() {
 		oModel.attachMetadataLoaded(function() {
 			//stub error
 			var iErrorCount = 0;

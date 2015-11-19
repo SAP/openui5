@@ -105,8 +105,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Event is fired when the user clicks on the control.
 			 */
 			press : {}
-		},
-		designTime: true
+		}
 	}});
 
 	EnabledPropagator.call(Button.prototype);
@@ -476,7 +475,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	Button.prototype.getPopupAnchorDomRef = function() {
 		return this.getDomRef("inner");
 	};
-	
+
 	// A hook to be used by controls that extend sap.m.Button and want to display the text in a different way
 	Button.prototype._getText = function() {
 		return this.getText();

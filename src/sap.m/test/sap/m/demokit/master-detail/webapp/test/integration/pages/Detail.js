@@ -83,7 +83,7 @@ sap.ui.define([
 					iShouldSeeTheRememberedObject : function () {
 						return this.waitFor({
 							success : function () {
-								var sBindingPath = this.getContext().currentListItem.getBindingContext().getPath();
+								var sBindingPath = this.getContext().currentItem.bindingPath;
 								this._waitForPageBindingPath(sBindingPath);
 							}
 						});

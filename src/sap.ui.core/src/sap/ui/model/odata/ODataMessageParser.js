@@ -510,8 +510,7 @@ ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oRespon
 	if (aMessages.length > 1) {
 		if (
 			aMessages[0].getCode()    == aMessages[1].getCode()    &&
-			aMessages[0].getMessage() == aMessages[1].getMessage() &&
-			aMessages[0].getTarget()  == aMessages[1].getTarget()
+			aMessages[0].getMessage() == aMessages[1].getMessage()
 		) {
 			aMessages.shift();
 		}

@@ -3,69 +3,65 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:f="sap.ui.layout.form"
 	xmlns:core="sap.ui.core">
-	<l:Grid
-		defaultSpan="L12 M12 S12"
-		width="auto">
-		<l:content>
-			<f:Form id="FormChange354"
-				minWidth="1024"
-				maxContainerCols="2"
-				editable="true">
-				<f:title>
-					<core:Title text="Address" />
-				</f:title>
-				<f:layout>
-					<f:ResponsiveGridLayout
-						labelSpanL="3"
-						labelSpanM="3"
-						emptySpanL="4"
-						emptySpanM="4"
-						columnsL="1"
-						columnsM="1" />
-				</f:layout>
-				<f:formContainers>
-					<f:FormContainer>
-						<f:formElements>
-							<f:FormElement label="Name">
-								<f:fields>
-									<Input value="{SupplierName}" id="name"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="Street">
-								<f:fields>
-									<Input value="{Street}" />
-									<Input value="{HouseNumber}">
-										<layoutData>
-											<l:GridData span="L2 M2 S4" />
-										</layoutData>
-									</Input>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="ZIP Code/City">
-								<f:fields>
-									<Input value="{ZIPCode}">
-										<layoutData>
-											<l:GridData span="L2 M2 S4" />
-										</layoutData>
-									</Input>
-									<Input value="{City}" />
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="Country">
-								<f:fields>
-									<Select width="100%" id="country" selectedKey="{Country}">
-										<items>
-											<core:Item text="Germany" key="Germany"/>
-											<core:Item text="USA" key="USA"/>
-											<core:Item text="England" key="England"/>
-										</items>
-									</Select>
-								</f:fields>
-							</f:FormElement>
-						</f:formElements>
-					</f:FormContainer>
-				</f:formContainers>
-			</f:Form>
-		</l:content>
-	</l:Grid>
+	<VBox class="sapUiSmallMargin">
+		<f:Form id="FormChange354"
+			minWidth="1024"
+			maxContainerCols="2"
+			editable="true">
+			<f:title>
+				<core:Title text="Address" />
+			</f:title>
+			<f:layout>
+				<f:ResponsiveGridLayout
+					labelSpanL="3"
+					labelSpanM="3"
+					emptySpanL="4"
+					emptySpanM="4"
+					columnsL="1"
+					columnsM="1" />
+			</f:layout>
+			<f:formContainers>
+				<f:FormContainer>
+					<f:formElements>
+						<f:FormElement label="Name">
+							<f:fields>
+								<Input value="{SupplierName}" id="name"/>
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Street">
+							<f:fields>
+								<Input value="{Street}" />
+								<Input value="{HouseNumber}">
+									<layoutData>
+										<l:GridData span="L2 M2 S4" />
+									</layoutData>
+								</Input>
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="ZIP Code/City">
+							<f:fields>
+								<Input value="{ZIPCode}">
+									<layoutData>
+										<l:GridData span="L2 M2 S4" />
+									</layoutData>
+								</Input>
+								<Input value="{City}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Country">
+							<f:fields>
+								<Select width="100%" id="country" selectedKey="{Country}">
+									<items>
+										<core:Item text="Germany" key="Germany"/>
+										<core:Item text="USA" key="USA"/>
+										<core:Item text="England" key="England"/>
+									</items>
+								</Select>
+							</f:fields>
+						</f:FormElement>
+					</f:formElements>
+				</f:FormContainer>
+			</f:formContainers>
+		</f:Form>
+	</VBox>
 </core:FragmentDefinition>

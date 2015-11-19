@@ -29,7 +29,7 @@
 		"webapp/test/integration/pages/Object.js",
 		"webapp/test/integration/pages/Worklist.js",
 		"webapp/test/integration/pages/shareOptions.js",
-		"webapp/test/testOpenUI5Service.html",
+		"webapp/test/testService.html",
 		"webapp/test/testsuite.qunit.html",
 		"webapp/test/unit/allTests.js",
 		"webapp/test/unit/controller/App.controller.js",

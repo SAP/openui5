@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', './DateTypeRange', './library'],
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * An appointment for use in a team calendar or similar. The rendering must be done in the Row collecting the appointments.
+	 * An appointment for use in a <code>PlanningCalendar</code> or similar. The rendering must be done in the Row collecting the appointments.
 	 * (Because there are different visualizations possible.)
 	 *
 	 * Applications could inherit from this element to add own fields.

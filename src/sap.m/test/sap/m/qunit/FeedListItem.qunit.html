@@ -273,14 +273,14 @@
 
 			var appFeedList = new sap.m.App("myApp", {initialPage:"feedListPage"});
 
-			var feedListPage = new sap.m.Page("feedListPage", 
+			var feedListPage = new sap.m.Page("feedListPage",
 				{title: "Feed List Item Test Page"}
 			);
 
 
 			feedListPage.addContent(oFeedList);
 			appFeedList.addPage(feedListPage);
-			appFeedList.placeAt("content");
+			appFeedList.placeAt("qunit-fixture");
 
 
 			QUnit.module("Properties", {
@@ -414,10 +414,35 @@
 				oFeedList.getItems()[10].invalidate();
 				assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), sap.m.FeedListItem._sTextShowMore);
 			});
+
+			QUnit.module("Check property combination", {
+				beforeEach : function() {
+					this.oFeedListItem = new sap.m.FeedListItem({
+						sender : null,
+						text : "Some text which is displayed.",
+						timestamp : "March 03 2013",
+						iconActive : true,
+						iconDensityAware: true,
+						showIcon : true,
+						senderActive : false
+					}).placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function () {
+					this.oFeedListItem.destroy();
+				}
+			});
+
+			QUnit.test("'sender' is set to null and 'senderActive' is set to false", function(assert) {
+				this.oFeedListItem.ontap({
+					srcControl : this.oFeedListItem
+				});
+				assert.ok(this.oFeedListItem, "FeedListItem is clickable");
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
 		<div id="qunit"></div>
-		<div id="content"></div>
+		<div id="qunit-fixture"></div>
 	</body>
 </html>

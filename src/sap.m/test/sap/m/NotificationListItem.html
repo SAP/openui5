@@ -20,26 +20,95 @@
 		<script type="text/javascript">
 
 			var listItem = new sap.m.NotificationListItem({
-				title: "Notification List Title",
-				description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor. ",
-				showCloseButton: false,
-				datetime: '5 minutes',
-				priority: sap.ui.core.Priority.High
+				title : 'Notification List Title',
+				description : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent feugiat, turpis vel ' +
+						'scelerisque pharetra, tellus odio vehicula dolor, nec elementum lectus turpis at nunc. ' +
+						'Mauris non elementum orci, ut sollicitudin ligula. Vestibulum in ligula imperdiet, posuere tortor id, dictum nunc.',
+				showCloseButton : true,
+				datetime : '1 hour',
+				unread : true,
+				authorName : 'Jean Doe',
+				authorPicture : 'images/Woman_04.png',
+				priority: sap.ui.core.Priority.None
 			});
 
 			var listItem2 = new sap.m.NotificationListItem({
-				title: "Notification List Title",
-				description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque commodo consequat vulputate. Aliquam a mi imperdiet erat lobortis tempor.",
-				datetime: '2 hours',
+				title: 'Notification List Title',
+				description : 'Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis.',
+				showCloseButton : false,
+				datetime : '3 days',
+				priority : sap.ui.core.Priority.Low,
+				authorName : 'Office Notification',
+				authorPicture : 'sap-icon://group',
 				buttons: [
 					new sap.m.Button({
-						text: "Accept",
+						id: 'button1',
+						text: 'Accept',
+						type: sap.m.ButtonType.Accept,
 						tap: function () {
-							alert('Accept button pressed');
+							sap.m.MessageToast.show('Accept button pressed');
 						}
 					}),
 					new sap.m.Button({
-						text: "Cancel",
+						id: 'button2',
+						text: 'Cancel',
+						type: sap.m.ButtonType.Reject,
+						tap: function () {
+							listItem2.close();
+						}
+					})
+				]
+			});
+
+			var listItem3 = new sap.m.NotificationListItem({
+				title: 'Notification List Title',
+				description : 'Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis.',
+				showCloseButton : true,
+				datetime : '3 days',
+				unread : true,
+				priority : sap.ui.core.Priority.Medium,
+				buttons: [
+					new sap.m.Button({
+						id: 'button3',
+						text: 'Accept',
+						type: sap.m.ButtonType.Accept,
+						tap: function () {
+							sap.m.MessageToast.show('Accept button pressed');
+						}
+					}),
+					new sap.m.Button({
+						id: 'button4',
+						text: 'Cancel',
+						type: sap.m.ButtonType.Reject,
+						tap: function () {
+							listItem2.close();
+						}
+					})
+				]
+			});
+
+			var listItem4 = new sap.m.NotificationListItem({
+				title: 'Notification List Title',
+				description : 'Aliquam quis varius ligula. In justo lorem, lacinia ac ex at, vulputate dictum turpis.',
+				showCloseButton : true,
+				datetime : '3 days',
+				unread : true,
+				priority : sap.ui.core.Priority.High,
+				authorName : 'John Smith',
+				authorPicture : 'images/headerImg2.jpg',
+				buttons: [
+					new sap.m.Button({
+						id: 'button5',
+						text: 'Accept',
+						type: sap.m.ButtonType.Accept,
+						tap: function () {
+							sap.m.MessageToast.show('Accept button pressed');
+						}
+					}),
+					new sap.m.Button({
+						id: 'button6',
+						text: 'Cancel',
+						type: sap.m.ButtonType.Reject,
 						tap: function () {
 							listItem2.close();
 						}
@@ -50,7 +119,9 @@
 			var list = new sap.m.List({
 				items: [
 					listItem,
-					listItem2
+					listItem2,
+					listItem3,
+					listItem4
 				]
 			});
 

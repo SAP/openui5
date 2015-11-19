@@ -24,15 +24,19 @@
 						<Text text="Name" />
 					</Column>
 					<Column
+						id="dimensionsColumn"
 						minScreenWidth="Tablet"
 						demandPopin="true"
-						hAlign="Right">
+						hAlign="Right"
+						visible="false">
 						<Text text="Dimensions" />
 					</Column>
 					<Column
+						id="weightColumn"
 						minScreenWidth="Tablet"
 						demandPopin="true"
-						hAlign="Center">
+						hAlign="Center"
+						visible="false">
 						<Text text="Weight" />
 					</Column>
 					<Column

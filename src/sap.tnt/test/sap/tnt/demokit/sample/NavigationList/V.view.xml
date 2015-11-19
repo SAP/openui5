@@ -1,0 +1,31 @@
+<mvc:View
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns="sap.tnt"
+        height="100%">
+    <NavigationList id="navigationList" width="320px">
+        <NavigationListItem
+                text="Item 1"
+                icon="sap-icon://employee">
+            <NavigationListItem text="Sub Item 1">
+            </NavigationListItem>
+            <NavigationListItem text="Sub Item 2">
+            </NavigationListItem>
+            <NavigationListItem text="Sub Item 3">
+            </NavigationListItem>
+            <NavigationListItem text="Sub Item 4">
+            </NavigationListItem>
+        </NavigationListItem>
+        <NavigationListItem
+                text="Item 2"
+                icon="sap-icon://employee">
+            <NavigationListItem text="Sub Item 1">
+            </NavigationListItem>
+            <NavigationListItem text="Sub Item 2">
+            </NavigationListItem>
+            <NavigationListItem text="Sub Item 3">
+            </NavigationListItem>
+            <NavigationListItem text="Sub Item 4">
+            </NavigationListItem>
+        </NavigationListItem>
+    </NavigationList>
+</mvc:View>

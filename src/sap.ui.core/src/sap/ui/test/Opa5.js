@@ -15,12 +15,30 @@ sap.ui.define([
 		'sap/ui/core/routing/HashChanger',
 		'./matchers/Matcher',
 		'./matchers/AggregationFilled',
-		'./matchers/PropertyStrictEquals'
+		'./matchers/PropertyStrictEquals',
+		'./pipelines/MatcherPipeline',
+		'./pipelines/ActionPipeline'
 	],
-	function($, Opa, OpaPlugin, PageObjectFactory, Utils, Ui5Object, Device, iFrameLauncher, componentLauncher, HashChanger, Matcher, AggregationFilled, PropertyStrictEquals) {
+	function($,
+			 Opa,
+			 OpaPlugin,
+			 PageObjectFactory,
+			 Utils,
+			 Ui5Object,
+			 Device,
+			 iFrameLauncher,
+			 componentLauncher,
+			 HashChanger,
+			 Matcher,
+			 AggregationFilled,
+			 PropertyStrictEquals,
+			 MatcherPipeline,
+			 ActionPipeline) {
 		"use strict";
 		
 		var oPlugin = new OpaPlugin(),
+			oMatcherPipeline = new MatcherPipeline(),
+			oActionPipeline = new ActionPipeline(),
 			sFrameId = "OpaFrame",
 			bComponentLoaded = false;
 
@@ -72,7 +90,7 @@ sap.ui.define([
 		}
 
 		/**
-		 * Starts an app in a component.
+		 * Starts a UIComponent.
 		 * @param {object} options An Object that contains the configuration for starting up a component
 		 * @param {object} options.componentConfig will be passed to {@link sap.ui.component component}, please read the respective documentation
 		 * @param {string} [options.hash] sets the hash {@link sap.ui.core.routing.HashChanger.setHash} to the given value.
@@ -82,7 +100,7 @@ sap.ui.define([
 		 * @public
 		 * @function
 		 */
-		Opa5.prototype.iStartMyAppInAComponent = function iStartMyAppInAComponent (options){
+		Opa5.prototype.iStartMyUIComponent = function iStartMyUIComponent (options){
 			options = options || {};
 
 			// wait for starting of component launcher
@@ -131,7 +149,7 @@ sap.ui.define([
 		 * @public
 		 * @function
 		 */
-		Opa5.prototype.iTeardownMyComponent = function iTeardownMyComponent () {
+		Opa5.prototype.iTeardownMyUIComponent = function iTeardownMyUIComponent () {
 
 			return this.waitFor({
 				success : function () {
@@ -255,19 +273,45 @@ sap.ui.define([
 		 * @param {string} [oOptions.errorMessage] Will be displayed as an errorMessage depending on your unit test framework.
 		 * Currently the only adapter for Opa5 is QUnit.
 		 * This message is displayed if Opa5 has reached its timeout before QUnit has reached it.
+		 * @param {function|function[]|sap.ui.test.actions.Action|sap.ui.test.actions.Action[]} oOptions.actions
+		 * Available since 1.34.0. An array of functions or Actions or a mixture of both.
+		 * An action has an 'executeOn' function that will receive a single control as a parameter.
+		 * If there are multiple actions defined all of them
+		 * will be executed (first in first out) on each control of, similar to the matchers.
+		 * But actions will only be executed once and only after the check function returned true.
+		 * Before an action is executed the {@link sap.ui.test.matchers.Interactable} matcher will check if the action may be exected.
+		 * That means actions will only be executed if the control is not:
+		 * <ul>
+		 *     <li>
+		 *         Behind an open dialog
+		 *     </li>
+		 *     <li>
+		 *         Inside of a navigating NavContainer
+		 *     </li>
+		 *     <li>
+		 *         Busy
+		 *     </li>
+		 *     <li>
+		 *         Inside a Parent control that is Busy
+		 *     </li>
+		 * </ul>
+		 * If there are multiple controls in Opa5's result set the action will be executed on all of them.
+		 * The actions will be invoked directly before success is called.
+		 * In the documentation of the success parameter there is a list of conditions that have to be fulfilled.
+		 * They also apply for the actions.
+		 * There are some predefined actions in the @{link sap.ui.test.actions} namespace.
 		 * @returns {jQuery.promise} A promise that gets resolved on success
 		 * @public
 		 */
 		Opa5.prototype.waitFor = function (oOptions) {
+			var vActions = oOptions.actions;
 			oOptions = $.extend({},
 					Opa.config,
 					oOptions);
 
 			var fnOriginalCheck = oOptions.check,
 				vControl = null,
-				aMatchers,
 				fnOriginalSuccess = oOptions.success,
-				aControls,
 				vResult;
 
 			oOptions.check = function () {
@@ -279,7 +323,14 @@ sap.ui.define([
 
 				}
 
-				vControl = Opa5.getPlugin().getMatchingControls(oOptions);
+
+				// Create a new options object for the plugin to keep the original one as is
+				var oPluginOptions = $.extend({}, oOptions, {
+					// only pass interactable if there are actions for backwards compatibility
+					interactable: !!vActions
+				});
+
+				vControl = Opa5.getPlugin().getMatchingControls(oPluginOptions);
 
 				//Search for a controlType in a view or open dialog
 				if ((oOptions.viewName || oOptions.searchOpenDialogs) && !oOptions.id && !vControl || (vControl && vControl.length === 0)) {
@@ -317,42 +368,16 @@ sap.ui.define([
 					return false;
 				}
 
-				aMatchers = this._checkMatchers(oOptions.matchers);
+				if (vControl && oOptions.matchers) {
+					vResult = oMatcherPipeline.process({
+						matchers: oOptions.matchers,
+						control: vControl
+					});
 
-				var iExpectedAmount;
-				if (aMatchers && aMatchers.length) {
-
-					if (!$.isArray(vControl)) {
-						iExpectedAmount = 1;
-						aControls = [vControl];
-					} else {
-						aControls = vControl;
+					// no control matched
+					if (!vResult) {
+						return false;
 					}
-
-					var aMatchedValues = [];
-					aControls.forEach(function (oControl) {
-						var vMatchResult =  this._doesValueMatch(aMatchers, oControl);
-						if (vMatchResult) {
-							if (vMatchResult === true) {
-								aMatchedValues.push(oControl);
-					} else {
-								// if matching result is a truthy value, then we pass this value as a result
-								aMatchedValues.push(vMatchResult);
-							}
-						}
-					}, this);
-
-					if (!aMatchedValues.length) {
-						jQuery.sap.log.debug("all results were filtered out by the matchers - skipping the check");
-							return false;
-						}
-
-					if (iExpectedAmount === 1) {
-						vResult = aMatchedValues[0];
-					} else {
-						vResult = aMatchedValues;
-					}
-
 				} else {
 					vResult = vControl;
 				}
@@ -365,11 +390,18 @@ sap.ui.define([
 				return true;
 			};
 
-			if (fnOriginalSuccess) {
-				oOptions.success = function () {
+			oOptions.success = function () {
+				if (vActions && vResult) {
+					oActionPipeline.process({
+						actions: vActions,
+						control: vResult
+					});
+				}
+
+				if (fnOriginalSuccess) {
 					fnOriginalSuccess.call(this, vResult);
-				};
-			}
+				}
+			};
 
 			return Opa.prototype.waitFor.call(this, oOptions);
 		};
@@ -516,60 +548,6 @@ sap.ui.define([
 		 */
 
 		/**
-		 * Checks if a value matches all the matchers and returns result of matching
-		 * @private
-		 */
-		Opa5.prototype._doesValueMatch = function (aMatchers, vValue) {
-			var vOriginalValue = vValue;
-			var bIsMatching = true;
-			jQuery.each(aMatchers, function (i, oMatcher) {
-				var vMatch = oMatcher.isMatching(vValue);
-				if (vMatch) {
-					if (vMatch !== true) {
-						vValue = vMatch;
-					}
-				} else {
-					bIsMatching = false;
-					return false;
-				}
-			});
-			if (bIsMatching) {
-				return (vOriginalValue === vValue) ? true : vValue;
-			} else {
-				return false;
-			}
-		};
-
-		/**
-		 * Validates the matchers and makes sure to return them in an array
-		 * @private
-		 */
-		Opa5.prototype._checkMatchers = function (vMatchers) {
-			var aMatchers = [];
-
-			if ($.isArray(vMatchers)) {
-				aMatchers = vMatchers;
-			} else if (vMatchers) {
-				aMatchers = [vMatchers];
-			}
-
-			aMatchers = aMatchers.map(function(vMatcher) {
-				if (vMatcher instanceof Opa5.matchers.Matcher) {
-					return vMatcher;
-				} else if (typeof vMatcher == "function") {
-					return {isMatching : vMatcher};
-				}
-
-				jQuery.sap.log.error("Matchers where defined, but they where neither an array nor a single matcher: " + vMatchers);
-				return undefined;
-			}).filter(function(oMatcher) {
-				return !!oMatcher;
-			});
-
-			return aMatchers;
-		};
-
-		/**
 		 * logs and executes the check function
 		 * @private
 		 * @returns {boolean} true if check should continue false if it should not
@@ -641,7 +619,7 @@ sap.ui.define([
 				addFrame();
 			}
 
-			$("body").height("100%");
+			$("body").addClass("sapUiBody");
 			$("html").height("100%");
 		});
 

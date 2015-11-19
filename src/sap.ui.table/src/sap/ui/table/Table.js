@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.Table.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IntervalTrigger', 'sap/ui/core/ScrollBar', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters', 'sap/ui/model/SelectionModel', './Row', './library', 'sap/ui/core/IconPool', 'jquery.sap.dom'],
-	function(jQuery, Control, IntervalTrigger, ScrollBar, ItemNavigation, Parameters, SelectionModel, Row, library, IconPool) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IntervalTrigger', 'sap/ui/core/ScrollBar', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters', 'sap/ui/model/SelectionModel', 'sap/ui/model/ChangeReason', './Row', './library', 'sap/ui/core/IconPool', 'jquery.sap.dom'],
+	function(jQuery, Control, IntervalTrigger, ScrollBar, ItemNavigation, Parameters, SelectionModel, ChangeReason, Row, library, IconPool) {
 	"use strict";
 
 
@@ -1282,7 +1282,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		if (this.getDomRef()) {
 			// update the bindings by using a delayed mechanism to avoid to many update
 			// requests: by using the mechanism below it will trigger an update each 50ms
-			this._sBindingTimer = this._sBindingTimer || jQuery.sap.delayedCall(50, this, function() {
+			// except if the reason is coming from the binding with reason "change" then
+			// we do an immediate update instead of a delayed one
+			var iDelay = (sReason == ChangeReason.Change ? 0 : 50);
+			this._sBindingTimer = this._sBindingTimer || jQuery.sap.delayedCall(iDelay, this, function() {
 				// update only if control not marked as destroyed (could happen because updateRows is called during destroying the table)
 				if (!this.bIsDestroyed) {
 					this._determineVisibleCols();
@@ -2847,7 +2850,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		if ($Header.length > 0) {
 			var oColumn = sap.ui.getCore().byId($Header.attr("data-sap-ui-colid"));
 			if (oColumn) {
-				oColumn._openMenu($Header[0]);
+				oColumn._openMenu($Header[0], false);
 			}
 			oEvent.preventDefault();
 		} else {
@@ -3085,10 +3088,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 				});
 
 				if (bExecuteDefault) {
-					oColumn._openMenu($col[0]);
+					oColumn._openMenu($col[0], oEvent.type == "keyup");
 				}
 			} else {
-				this._onColumnSelect(oColumn, $col[0], this._isTouchMode(oEvent));
+				this._onColumnSelect(oColumn, $col[0], this._isTouchMode(oEvent), oEvent.type == "keyup");
 			}
 			
 			return;
@@ -3233,7 +3236,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 	 * column select event => opens the column menu
 	 * @private
 	 */
-	Table.prototype._onColumnSelect = function(oColumn, oDomRef, bIsTouchMode) {
+	Table.prototype._onColumnSelect = function(oColumn, oDomRef, bIsTouchMode, bWithKeyboard) {
 		// On tablet open special column header menu
 		if (bIsTouchMode) {
 			var $ColumnHeader = jQuery(oDomRef);
@@ -3281,7 +3284,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 		// if the default behavior should be prevented we suppress to open
 		// the column menu!
 		if (bExecuteDefault) {
-			oColumn._openMenu(oDomRef);
+			oColumn._openMenu(oDomRef, bWithKeyboard);
 		}
 
 	};
@@ -5805,7 +5808,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 			return iMinRowCount;
 		}
 
-		var iUsedHeight = this.calculateUsedHeight($this.find('.sapUiTableCCnt'), $this);
+		var iUsedHeight = this._calculateUsedHeight($this.find('.sapUiTableCCnt'), $this);
 
 		var aRows = this.getRows();
 		if (!aRows.length) {
@@ -5840,33 +5843,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 
 	/**
 	 * Calculates the already used vertical space of the table which is blocked by other elements than the row content area.
-	 * Starts from $element and traverses the parent chain until $targetElement is reached. Subtracts all used space of siblings.
+	 * @private
 	 * @param $element start element from which traversing begins
 	 * @param $targetElement end element where traversing stops
 	 * @returns {Number} the used height as a number
 	 */
-	Table.prototype.calculateUsedHeight = function($element, $targetElement) {
-		var iUsedLevelHeight = 0;
+	Table.prototype._calculateUsedHeight = function($element, $targetElement) {
 		if (!$element || $element.length == 0 || !$targetElement || $element.is($targetElement)) {
-			return iUsedLevelHeight;
+			return 0;
 		}
-
-		var elementTop = $element[0].offsetTop;
-		var elementHeight = $element[0].clientHeight;
-
-		// top used space
-		iUsedLevelHeight += elementTop;
-
-		var iUsedHeight = 0;
-		$element.siblings().each( function() {
-			if (this.offsetTop > elementTop) {
-				iUsedHeight = Math.max(this.offsetTop - elementHeight, iUsedHeight);
-			}
-		});
-
-		// bottom used space
-		iUsedLevelHeight += iUsedHeight;
-		return iUsedLevelHeight + this.calculateUsedHeight($element.parent(), $targetElement);
+		
+		return Math.max(0, $targetElement.height() - $element.height());
 	};
 
 	/*
@@ -6170,7 +6157,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Interval
 						break;
 					}
 				}
-			} else if (mParameters.changeReason === sap.ui.model.ChangeReason.Expand) {
+			} else if (mParameters.changeReason === ChangeReason.Expand) {
 				this.setBusy(true);
 			}
 

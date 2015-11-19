@@ -221,59 +221,6 @@
 
 			module("Additional Test");
 
-			asyncTest("ActionSheet overwrites the methods from Dialog", function(){
-				if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
-					// this test is not supported by IE9
-					expect(0);
-					start();
-					return;
-				}
-
-				var oSystem = {
-						desktop: false,
-						phone: true,
-						tablet: false
-				};
-
-				var oDevice = {
-					ipad: false,
-					iphone: false
-				};
-
-				this.stub(sap.ui.Device, "system", oSystem);
-				this.stub(jQuery.device, "is", oDevice);
-
-				var oAC = new sap.m.ActionSheet({
-					cancelButtonText: "Cancel",
-					title: "Title",
-					buttons: [
-						new sap.m.Button({
-							text: "Button1"
-						}),
-						new sap.m.Button({
-							text: "Button2"
-						})
-					]
-				});
-
-				oAC.attachAfterOpen(function(){
-					var spyOfReposition = sinon.spy(oAC._parent, "_reposition");
-					var spyOfRepositionProxy = sinon.spy(oAC._parent, "_fnOrientationChange");
-
-					//simulates an orientation change
-					oAC._parent._onResize();
-
-					setTimeout(function(){
-						equal(spyOfReposition.callCount, 0, "_reposition method shouldn't be called");
-						equal(spyOfRepositionProxy.callCount, 1, "_reposition method proxy should be called once");
-						oAC.destroy();
-						start();
-					}, 500);
-				});
-
-				oAC.openBy(oButton);
-			});
-
 			asyncTest("Open an ActionSheet which is already aggregated in dependents aggregation", function(){
 				var oAC = new sap.m.ActionSheet({
 					cancelButtonText: "Cancel",

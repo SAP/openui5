@@ -43,7 +43,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientTreeBinding'],
 		if (oNode && typeof oNode == "object") {
 			var oNodeContext = this.oModel.getContext(sContextPath + sName);
 			// check if there is a filter on this level applied
-			if (this.aFilters && !this.bIsFiltering) {
+			if (this.aAllFilters && !this.bIsFiltering) {
 				if (jQuery.inArray(oNodeContext, this.filterInfo.aFilteredContexts) != -1) {
 					aContexts.push(oNodeContext);
 				}

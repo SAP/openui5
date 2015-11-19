@@ -14,7 +14,7 @@ function(jQuery, ManagedObject) {
 	/**
 	 * Constructor for a new DesignTimeMetadata.
 	 *
-	 * @param {string} [sId] id for the new object, generated automatically if no id is given 
+	 * @param {string} [sId] id for the new object, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new object
 	 *
 	 * @class
@@ -54,94 +54,67 @@ function(jQuery, ManagedObject) {
 	 * @protected
 	 */
 	DesignTimeMetadata.prototype.setData = function(oData) {
-		this.setProperty("data", this._ensureProperties(oData));
+
+		var oMergedData = jQuery.extend(true, this.getDefaultData(), oData || {});
+
+		this.setProperty("data", oMergedData);
 		return this;
 	};
 
 	/**
-	 * @param {object} oData to set
-	 * @return {object} data to use as a DT metadata
-	 * @private
-	 */
-	DesignTimeMetadata.prototype._ensureProperties = function(oData) {
-		return jQuery.extend(true, {
-			aggregations : {
-				layout : {
-					ignore : true
-				},
-				dependents : {
-					ignore : true
-				}
-			}
-		}, oData);
-	};	
-
-	/**
-	 * Returns a name defined in the DT metadata
-	 * @return {string} returns DT metadata field "name"
+	 * Returns data, if no data is set, creates a default data
+	 * @return {object} returns data
 	 * @public
 	 */
-	DesignTimeMetadata.prototype.getName = function() {
-		return this.getData().name;
+	DesignTimeMetadata.prototype.getData = function() {
+		var oData = this.getProperty("data");
+		if (!oData) {
+			this.setData({});
+			oData = this.getProperty("data");
+		}
+
+		return oData;
 	};
 
 	/**
-	 * Returns if the DT metadata for an aggregation name exists
-	 * @param {string} sAggregationName an aggregation name
-	 * @return {boolean} returns if the field for an aggregation with a given name exists in DT metadata
-	 * @public
+	 * Returns the default DT metadata
+	 * @return {Object} default data
+	 * @protected
 	 */
-	DesignTimeMetadata.prototype.hasAggregation = function(sAggregationName) {
-		return !!this.getAggregations()[sAggregationName];
-	};
-
-	/**
-	 * Returns the DT metadata for an aggregation name
-	 * @param {string} sAggregationName an aggregation name
-	 * @return {object} returns the DT metadata for an aggregation with a given name
-	 * @public
-	 */
-	DesignTimeMetadata.prototype.getAggregation = function(sAggregationName) {
-		return this.getAggregations()[sAggregationName] || {};
-	};
-
-	/**
-	 * Returns the DT metadata for all aggregations
-	 * @return {map} returns the DT metadata for all aggregations
-	 * @public
-	 */
-	DesignTimeMetadata.prototype.getAggregations = function() {
-		return this.getData().aggregations;
+	DesignTimeMetadata.prototype.getDefaultData = function() {
+		return {
+			ignore : false,
+			domRef : undefined,
+			cloneDomRef : false
+		};
 	};
 
 	/**
 	 * Returns property "ignore" of the DT metadata
-	 * @return {boolean} if overlay should be visible
+	 * @return {boolean} if ignored
 	 * @public
 	 */
-	DesignTimeMetadata.prototype.isVisible = function() {
-		return this.getData().ignore !== true;
+	DesignTimeMetadata.prototype.isIgnored = function() {
+		return this.getData().ignore;
 	};
 
 	/**
-	 * Returns property "ignore" of the aggregation DT metadata for the given aggregation name
-	 * @param {string} sAggregationName an aggregation name
-	 * @return {boolean} if aggregation overlay should be visible
+	 * Returns property "copyDom" of the DT metadata
+	 * @return {boolean} if overlay should copy the DOM of its associated element
 	 * @public
 	 */
-	DesignTimeMetadata.prototype.isAggregationVisible = function(sAggregationName) {
-		return this.getAggregation(sAggregationName).ignore !== true;
+	DesignTimeMetadata.prototype.getCloneDomRef = function() {
+		return this.getData().cloneDomRef;
 	};
 
 	/**
-	 * Returns property "domRef" of the aggregation DT metadata for the given aggregation name
-	 * @param {string} sAggregationName an aggregation name
-	 * @return {object|string|function} domRef for the aggregation
+	 * Returns property "domRef" of the DT metadata
+	 * @return {string|Element} assosicated domRef
 	 * @public
 	 */
-	DesignTimeMetadata.prototype.getAggregationDomRef = function(sAggregationName) {
-		return this.getAggregation(sAggregationName).domRef;
-	};	
+	DesignTimeMetadata.prototype.getDomRef = function() {
+		return this.getData().domRef;
+	};
 
 	return DesignTimeMetadata;
 }, /* bExport= */ true);

@@ -74,6 +74,7 @@
 			var newCell = new sap.ui.layout.BlockLayoutCell();
 			assert.strictEqual(newCell.getTitleAlignment(), "Begin", "Title Alignment should be Begin by default");
 			assert.strictEqual(newCell.getWidth(), 0, "Should be equal to 0 by default");
+			assert.strictEqual(newCell.getTitleLevel(), "Auto", "Should be equal to Auto by default");
 		});
 
 		QUnit.test("Error logging", function (assert) {

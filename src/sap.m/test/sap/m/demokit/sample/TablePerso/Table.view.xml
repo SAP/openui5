@@ -7,14 +7,14 @@
 	<Table id="productsTable"
 		items="{/ProductCollection}">
 		<headerToolbar>
-			<Toolbar>
+			<OverflowToolbar>
 				<Title text="Products" level="H2"/>
 				<ToolbarSpacer></ToolbarSpacer>
 				<!--  Add the Personalization button -->
-				<CheckBox text="Grouping" select="onTableGrouping" />
+				<CheckBox text="Enable Personalization Grouping" select="onTableGrouping" />
 				<!--  Add the Personalization button -->
 				<Button icon="sap-icon://action-settings" press="onPersoButtonPressed" />
-			</Toolbar>
+			</OverflowToolbar>
 		</headerToolbar>
 		<columns>
 			<Column id="productCol" width="12em"><Text text="Product" /></Column>

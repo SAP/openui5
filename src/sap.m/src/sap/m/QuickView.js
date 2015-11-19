@@ -237,6 +237,7 @@ sap.ui.define([
 
 		if (this._oPopover) {
 			this._oPopover.destroy();
+			this._oPopover = null;
 		}
 	};
 
@@ -315,24 +316,6 @@ sap.ui.define([
 		this._oPopover.$().find(".sapMLnk").css("width", "auto");
 	};
 
-	QuickView.prototype.setProperty = function (sPropertyName, oValue, bSuppressInvalidate) {
-		switch (sPropertyName) {
-			case "busy":
-			case "busyIndicatorDelay":
-			case "visible":
-			case "fieldGroupIds":
-				if (this._oPopover) {
-					this._oPopover.setProperty(sPropertyName, oValue, bSuppressInvalidate);
-					return sap.ui.core.Control.prototype.setProperty.call(this, sPropertyName, oValue, true);
-				}
-				break;
-			default:
-				break;
-		}
-
-		return sap.ui.core.Control.prototype.setProperty.apply(this, arguments);
-	};
-
 	/**
 	 * Returns the button, which closes the QuickView.
 	 * On desktop or tablet, this method returns undefined.
@@ -392,12 +375,19 @@ sap.ui.define([
 		return this;
 	};
 
-	["addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass"].forEach(function(sName){
+	QuickView.prototype.getDomRef = function (sSuffix) {
+		return this._oPopover && this._oPopover.getAggregation("_popup").getDomRef(sSuffix);
+	};
+
+	["addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass", "getBusyIndicatorDelay",
+	"setBusyIndicatorDelay", "getVisible", "setVisible", "getFieldGroupIds", "setFieldGroupIds", "getBusy", "setBusy",
+	"setTooltip", "getTooltip"].forEach(function(sName){
 		QuickView.prototype[sName] = function() {
 			if (this._oPopover && this._oPopover[sName]) {
-				var res = this._oPopover[sName].apply(this._oPopover, arguments);
-				return res === this._oPopover ? this : res;
+				var res = this._oPopover.getAggregation("_popup")[sName].apply(this._oPopover.getAggregation("_popup"), arguments);
+				return res === this._oPopover.getAggregation("_popup") ? this : res;
 			}
+
 		};
 	});
 
@@ -410,6 +400,9 @@ sap.ui.define([
 				// Marks items aggregation as changed and invalidate popover to trigger rendering
 				this._bItemsChanged = true;
 
+				if (arguments[0] != "pages") {
+					this._oPopover[sFuncName].apply(this._oPopover, arguments);
+				}
 				if (this._bRendered && this._oPopover) {
 					this._oPopover.invalidate();
 				}

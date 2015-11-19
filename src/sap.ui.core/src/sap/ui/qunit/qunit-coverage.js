@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global QUnit, URI*/// declare unusual global vars for JSLint/SAPUI5 validation
+/*global jQuery, QUnit, URI*/// declare unusual global vars for JSLint/SAPUI5 validation
 (function() {
 	"use strict";
 

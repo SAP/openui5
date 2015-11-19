@@ -1,0 +1,18 @@
+{
+  "Employee": [
+	{
+	  "FirstName": "Denise",
+	  "LastName": "Smith",
+	  "Department": "App Development",
+	  "JobTitle": "Senior UI development",
+	  "CostCenter": "1086745",
+	  "Email": "DeniseSmith@sap.com",
+	  "Phone": "+1 234-5678",
+	  "Mobile": "+1 987-5432",
+	  "Country": "US",
+	  "Location": "PAL",
+	  "Building": "B2",
+	  "Room": "155"
+	}
+  ]
+}

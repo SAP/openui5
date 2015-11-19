@@ -3,9 +3,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"myCompany/myApp/model/formatter",
 	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
-	"sap/m/MessageToast"
-], function(BaseController, JSONModel, formatter, Filter, FilterOperator, MessageToast) {
+	"sap/ui/model/FilterOperator"
+], function(BaseController, JSONModel, formatter, Filter, FilterOperator) {
 	"use strict";
 
 	return BaseController.extend("myCompany.myApp.controller.Worklist", {
@@ -48,7 +47,7 @@ sap.ui.define([
 				countAll: 0
 			});
 			this.setModel(oViewModel, "worklistView");
-			
+
 			// Create an object of filters
 			this._mFilters = {
 				"inStock": [new sap.ui.model.Filter("UnitsInStock", "GT", 10)],
@@ -89,7 +88,7 @@ sap.ui.define([
 			// the table is not empty
 			if (iTotalItems && oTable.getBinding("items").isLengthFinal()) {
 				sTitle = this.getResourceBundle().getText("worklistTableTitleCount", [iTotalItems]);
-				
+
 				// Get the count for all the products and set the value to 'countAll' property
 				this.getModel().read("/Products/$count", {
 					success: function (oData) {
@@ -112,15 +111,15 @@ sap.ui.define([
 					},
 					filters: this._mFilters.outOfStock
 				});
-			
+
 				// read the count for the shortage filter
-				this.getModel().read("/Products/$count", { 
+				this.getModel().read("/Products/$count", {
 					success: function(oData){
 						oViewModel.setProperty("/shortage", oData);
 					},
 					filters: this._mFilters.shortage
 				});
-				
+
 			} else {
 				sTitle = this.getResourceBundle().getText("worklistTableTitle");
 			}
@@ -208,7 +207,7 @@ sap.ui.define([
 				oViewModel.setProperty("/tableNoDataText", this.getResourceBundle().getText("worklistNoDataWithSearchText"));
 			}
 		},
-		
+
 		/**
 		 * Event handler when a filter tab gets pressed
 		 * @param {sap.ui.base.Event} oEvent the filter tab event
@@ -219,43 +218,7 @@ sap.ui.define([
 				sKey = oEvent.getParameter("selectedKey");
 
 			oBinding.filter(this._mFilters[sKey]);
-		},
-		
-		/**
-		 * Event handler for the unlist button. Will delete the
-		 * product from the (local) model.
-		 * @public
-		 */
-		onUnlistObjects: function() {
-			var aSelectedProducts = this.byId("table").getSelectedItems();
-			
-			for (var i = 0; i < aSelectedProducts.length; i++) {
-				var sPath = aSelectedProducts[i].getBindingContextPath();
-				this.getModel().remove(sPath);
-			}
-			MessageToast.show(this.getModel("i18n").getResourceBundle().getText("StockRemovedSuccessMsg", [aSelectedProducts.length]));
-
-		},
-
-
-		/**
-		 * Event handler for the reorder button. Will reorder the
-		 * product by updating the (local) model
-		 * @public
-		*/
-		onUpdateStockObjects: function() {
-	
-			var aSelectedProducts = this.byId("table").getSelectedItems();
-
-			for (var i = 0; i < aSelectedProducts.length; i++) {
-				var sPath = aSelectedProducts[i].getBindingContextPath(),
-				oProductObject = aSelectedProducts[i].getBindingContext().getObject();
-				oProductObject.UnitsInStock += 10;
-				this.getModel().update(sPath, oProductObject);
-			}
-			MessageToast.show(this.getModel("i18n").getResourceBundle().getText("StockUpdatedSuccessMsg", [aSelectedProducts.length]));
-
 		}
-		
+
 	});
 });

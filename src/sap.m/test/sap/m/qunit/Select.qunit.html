@@ -2348,7 +2348,6 @@
 
 			// arrange
 			var fnSetPropertySpy = this.spy(oSelect, "setProperty"),
-				fnWarningSpy = this.spy(jQuery.sap.log, "warning"),
 				fnFireChangeSpy = this.spy(oSelect, "fireChange"),
 				fnSetSelectedItemSpy = this.spy(oSelect, "setSelectedItem");
 
@@ -2357,7 +2356,6 @@
 
 			// assert
 			strictEqual(fnSetPropertySpy.callCount, 0, "sap.m.Select.prototype.setProperty() method was not called");
-			strictEqual(fnWarningSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
 			strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
 			ok(fnSetSelectedItemSpy.returned(oSelect), 'sap.m.Select.prototype.setSelectedItem() returns this to allow method chaining');
 			ok(oSelect.getSelectedItem() === null);
@@ -3087,6 +3085,82 @@
 
 			// cleanup
 			oSelect.destroy();
+		});
+
+		test("it should set the selection correctly when forceSelection=false and the item's keys are not provided", function() {
+
+			// system under test
+			var oSelect = new sap.m.Select({
+				forceSelection: false,
+				items: [
+					new sap.ui.core.Item()
+				]
+			});
+
+			// act
+			oSelect.setSelectedKey("");
+
+			// assert
+			ok(oSelect.getSelectedItem() === null);
+			strictEqual(oSelect.getSelectedItemId(), "");
+			strictEqual(oSelect.getSelectedKey(), "");
+			strictEqual(oSelect.getSelectedIndex(), -1);
+			strictEqual(oSelect.$("label").text(), "");
+			ok(oSelect.getList().getSelectedItem() === null);
+			strictEqual(oSelect.getList().getSelectedItemId(), "");
+			strictEqual(oSelect.getList().getSelectedKey(), "");
+
+			// cleanup
+			oSelect.destroy();
+		});
+
+		// BCP 1580101530
+		test("it should correctly synchronize the selection after the properties (models and bindingContext) are propagated", function() {
+
+			// system under test
+			var oItemTemplate = new sap.ui.core.Item({
+				key: "{key}",
+				text: "{text}"
+			});
+
+			var oSelect = new sap.m.Select({
+				selectedKey: {
+					path: "/selected"
+				},
+				items: {
+					path: "/items",
+					template: oItemTemplate
+				}
+			});
+
+			// arrange
+			var oModel = new sap.ui.model.json.JSONModel();
+			var mData = {
+				"items": [
+					{
+						"key": "DZ",
+						"text": "Algeria"
+					},
+
+					{
+						"key": "AR",
+						"text": "Argentina"
+					}
+				],
+				"selected": "AR"
+			};
+
+			oModel.setData(mData);
+			sap.ui.getCore().setModel(oModel);
+			oSelect.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			strictEqual(oSelect.getSelectedKey(), "AR");
+
+			// cleanup
+			oSelect.destroy();
+			oModel.destroy();
 		});
 
 		module("removeItem()");
@@ -5203,6 +5277,66 @@
 		/* ------------------------------------ */
 		/* unbindObject()                       */
 		/* ------------------------------------ */
+
+		module("clone()");
+
+		// BCP 1580183712
+		test('it should modify the cloned "selectedItem" association to point to the new item', function() {
+
+			// system under test
+			var oExpectedItem = new sap.ui.core.Item({
+				text: "lorem ipsum 2"
+			});
+
+			var oSelect = new sap.m.Select({
+				items: [
+					new sap.ui.core.Item({
+						text: "lorem ipsum 1"
+					}),
+
+					oExpectedItem
+				],
+				selectedItem: oExpectedItem
+			});
+
+			// act
+			var oSelectClone = oSelect.clone();
+
+			// assert
+			ok(oSelectClone.getSelectedItem().getText() === oExpectedItem.getText());
+
+			// cleanup
+			oSelect.destroy();
+			oSelectClone.destroy();
+		});
+
+		// BCP 1580183712
+		test("it should set the selection correctly after the control is cloned", function() {
+
+			// system under test
+			var oSelect = new sap.m.Select({
+				forceSelection: false,
+				items: [
+					new sap.ui.core.Item({
+						text: "lorem ipsum 1"
+					}),
+
+					new sap.ui.core.Item({
+						text: "lorem ipsum 2"
+					})
+				]
+			});
+
+			// act
+			var oSelectClone = oSelect.clone();
+
+			// assert
+			ok(oSelectClone.getSelectedItem() === null);
+
+			// cleanup
+			oSelect.destroy();
+			oSelectClone.destroy();
+		});
 
 		module("_isRequiredSelectElement()");
 

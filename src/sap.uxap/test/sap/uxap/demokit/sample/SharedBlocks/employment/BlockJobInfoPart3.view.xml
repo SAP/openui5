@@ -1,0 +1,32 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:layout="sap.ui.layout"
+		xmlns:forms="sap.ui.layout.form"
+		xmlns="sap.m">
+
+
+	<layout:HorizontalLayout>
+		<layout:VerticalLayout>
+			<Label text=" "/>
+			<Label text="Manager"/>
+			<Label text=" "/>
+			<layout:HorizontalLayout>
+				<layout:Grid defaultSpan="L4 M4 S4" width="100%">
+					<layout:content>
+						<layout:VerticalLayout>
+							<Label text="James Smith"/>
+							<Label text="Development Manager"/>
+
+							<layout:layoutData>
+								<layout:GridData span="L12 M12 S12"/>
+							</layout:layoutData>
+						</layout:VerticalLayout>
+					</layout:content>
+				</layout:Grid>
+			</layout:HorizontalLayout>
+
+		</layout:VerticalLayout>
+	</layout:HorizontalLayout>
+
+
+</mvc:View>

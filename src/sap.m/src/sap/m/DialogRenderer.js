@@ -45,11 +45,9 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			// write the HTML into the render manager
 			// the initial size of the dialog have to be 0, because if there is a large dialog content the initial size can be larger then the html's height (scroller)
 			// The scroller will make the initial window width smaller and in the next recalculation the maxWidth will be larger.
-			var calculatedSized = oControl._getSizes();
-			var initialSmallSize = bStretch ? '' : calculatedSized.maxWidth + '; ' + calculatedSized.maxHeight + '; ';
 			var initialWidth = oControl.getContentWidth() ? ' width: ' + oControl.getContentWidth() + ';' : '';
 			var initialHeight = oControl.getContentHeight() ? ' height: ' + oControl.getContentHeight() + ';' : '';
-			var initialStyles = "style='" + initialSmallSize + initialWidth + initialHeight + "'";
+			var initialStyles = "style='" + initialWidth + initialHeight + "'";
 
 			oRm.write('<div ' + initialStyles);
 			oRm.writeControlData(oControl);
@@ -59,6 +57,10 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 
 			if (oControl.isOpen()) {
 				oRm.addClass("sapMDialogOpen");
+			}
+
+			if (oControl._bDisableRepositioning) {
+				oRm.addClass("sapMDialogTouched");
 			}
 
 			if (bStretch || (bStretchOnPhone)) {

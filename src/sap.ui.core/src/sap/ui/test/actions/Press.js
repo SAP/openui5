@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/base/Object'], function (Ui5Object) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'], function (jQuery, Ui5Object) {
 	"use strict";
 
 	/**
@@ -34,6 +34,7 @@ sap.ui.define(['sap/ui/base/Object'], function (Ui5Object) {
 				$Control.focus();
 				// trigger 'tap' which is translated
 				// internally into a 'press' event
+				jQuery.sap.log.debug("Pressed the control " + oControl, this);
 				$Control.trigger("tap");
 			} else {
 				jQuery.sap.log.error("Control has no dom representation", this);

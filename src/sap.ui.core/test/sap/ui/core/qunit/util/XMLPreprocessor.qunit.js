@@ -2420,6 +2420,62 @@ sap.ui.require([
 			'</mvc:View>'
 		]);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("Performance measurement points", function (assert) {
+		var aContent = [
+				mvcView(),
+				'<Fragment fragmentName="myFragment" type="XML"/>',
+				'<Text text="{CustomerName}"/>',
+				'</mvc:View>'
+			],
+			oAverageSpy = this.spy(jQuery.sap.measure, "average"),
+			oEndSpy = this.spy(jQuery.sap.measure, "end")
+				.withArgs("sap.ui.core.util.XMLPreprocessor.process"),
+			oCountSpy = oAverageSpy.withArgs("sap.ui.core.util.XMLPreprocessor.process", "",
+				["sap.ui.core.util.XMLPreprocessor"]),
+			oCountEndSpy = oEndSpy.withArgs("sap.ui.core.util.XMLPreprocessor.process"),
+			oInsertSpy = oAverageSpy.withArgs("sap.ui.core.util.XMLPreprocessor/insertFragment",
+				"", ["sap.ui.core.util.XMLPreprocessor"]),
+			oInsertEndSpy = oEndSpy.withArgs("sap.ui.core.util.XMLPreprocessor/insertFragment"),
+			oResolvedSpy = oAverageSpy.withArgs(
+				"sap.ui.core.util.XMLPreprocessor/getResolvedBinding",
+				"", ["sap.ui.core.util.XMLPreprocessor"]),
+			oResolvedEndSpy = oEndSpy.withArgs(
+				"sap.ui.core.util.XMLPreprocessor/getResolvedBinding");
+
+		this.mock(XMLTemplateProcessor).expects("loadTemplate")
+			.returns(xml(assert, ['<In xmlns="sap.ui.core"/>']));
+
+		process(xml(assert, aContent));
+		assert.strictEqual(oCountSpy.callCount, 1, "process");
+		assert.strictEqual(oInsertSpy.callCount, 1, "insertFragment");
+		assert.strictEqual(oResolvedSpy.callCount, 6, "getResolvedBinding");
+		assert.strictEqual(oCountEndSpy.callCount, 1, "process end");
+		assert.strictEqual(oInsertEndSpy.callCount, 1, "insertFragment end");
+		assert.strictEqual(oResolvedEndSpy.callCount, 6, "getResolvedBinding end");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Performance measurement end point for incomplete bindings", function (assert) {
+		var aContent = [
+				mvcView(),
+				'<Text text="{unrelated>/some/path}"/>',
+				'</mvc:View>'
+			],
+			oAverageSpy = this.spy(jQuery.sap.measure, "average"),
+			oEndSpy = this.spy(jQuery.sap.measure, "end")
+				.withArgs("sap.ui.core.util.XMLPreprocessor.process"),
+			oResolvedSpy = oAverageSpy.withArgs(
+				"sap.ui.core.util.XMLPreprocessor/getResolvedBinding",
+				"", ["sap.ui.core.util.XMLPreprocessor"]),
+			oResolvedEndSpy = oEndSpy.withArgs(
+				"sap.ui.core.util.XMLPreprocessor/getResolvedBinding");
+
+		process(xml(assert, aContent));
+		assert.strictEqual(oResolvedSpy.callCount, 4, "getResolvedBinding");
+		assert.strictEqual(oResolvedEndSpy.callCount, 4, "getResolvedBinding end");
+	});
 });
 //TODO we have completely missed support for unique IDs in fragments via the "id" property!
 //TODO somehow trace ex.stack, but do not duplicate ex.message and take care of PhantomJS

@@ -1,0 +1,215 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>NavigationList - sap.tnt</title>
+	<script src="../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout,sap.tnt"
+			data-sap-ui-theme="sap_bluecrystal">
+	</script>
+	<script type="text/javascript">
+
+		var menuButton = new sap.m.Button({
+			text: 'menu',
+			press: function () {
+				list.setExpanded(!list.getExpanded());
+			}
+		}).placeAt('content');
+
+		var list = new sap.tnt.NavigationList({
+			// width: '320px',
+			expanded: true,
+			items: [
+				new sap.tnt.NavigationListItem({
+					// textDirection: sap.ui.core.TextDirection.RTL,
+					text: 'Root 1',
+					expanded: true,
+					// icon: 'sap-icon://employee',
+					items: [
+						new sap.tnt.NavigationListItem({
+							text: 'Looooooooooooooooooooong Child'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Disabled Child',
+							enabled: false
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 3'
+						})
+					]
+				}),
+				new sap.tnt.NavigationListItem({
+					text: 'Only Root',
+					icon: 'sap-icon://employee'
+				}),
+				new sap.tnt.NavigationListItem({
+					text: 'Disabled Root',
+					enabled: false,
+					icon: 'sap-icon://employee',
+					items: [
+						new sap.tnt.NavigationListItem({
+							text: 'Child 1',
+							enabled: false
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 2'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 3'
+						})
+					]
+				}),
+				new sap.tnt.NavigationListItem({
+					text: 'Looooooooooooooooong Root 2',
+					icon: 'sap-icon://employee',
+					items: [
+						new sap.tnt.NavigationListItem({
+							text: 'Child 1',
+							enabled: false
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 2'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 3'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 1'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 2'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 3'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 1'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 2'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 3'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 1'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 2'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 3'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 1'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 2'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 3'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 1'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 2'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 3'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 1'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 2'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 3'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 1'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 2'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 3'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 1'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 2'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 3'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 1'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 2'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 3'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 1'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 2'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 3'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 1'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 2'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 3'
+						})
+					]
+				}),
+				new sap.tnt.NavigationListItem({
+					text: 'Root 3',
+					icon: 'sap-icon://employee',
+					items: [
+						new sap.tnt.NavigationListItem({
+							text: 'Child 1'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 2'
+						}),
+						new sap.tnt.NavigationListItem({
+							text: 'Child 3'
+						})
+					]
+				})
+			]
+		});
+
+		list.placeAt('content');
+
+		var change = new sap.m.Button({
+			text: 'Change',
+			press: function () {
+				list.getItems()[0].getItems()[0].setText('New text');
+				// list.getItems()[0].removeAllItems();
+
+				// list.getItems()[0].setExpanded(true);
+			}
+		}).placeAt('content');
+
+	</script>
+
+</head>
+<body id="body" class="sapUiBody">
+<div id="content"></div>
+</body>
+</html>

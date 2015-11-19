@@ -198,7 +198,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 			rm.write("</div>"); // End Top row container
 
-			rm.write('<div style="clear:both"/>');
+			if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10)) {
+				rm.write("<div style=\"clear: both;\"></div>");
+			}
 
 			// Bottom row container.
 			if (oLI._hasBottomContent()) {

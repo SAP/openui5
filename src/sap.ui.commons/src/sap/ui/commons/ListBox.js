@@ -528,10 +528,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	ListBox.prototype.setHeight = function(sHeight) {
+		this.validateProperty("height", sHeight);
+		if (this.getHeight() === sHeight) {
+			return this;
+		}
+
 		this._bHeightInItems = false;
 		this._iVisibleItems = -1;
-
 		var oDomRef = this.getDomRef();
+
 		if (oDomRef) {
 			oDomRef.style.height = sHeight;
 			this._updatePageSize();
@@ -540,8 +545,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		}
 
-		this.setProperty("height", sHeight, true); // no re-rendering
-		return this;
+		return this.setProperty("height", sHeight, true); // no re-rendering
 	};
 
 	/**

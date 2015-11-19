@@ -3,7 +3,7 @@
 /* =============================================== */
 
 .sapUiCal{
-	background: none repeat scroll 0 0 @sapUiFieldBackground;
+	background: none repeat scroll 0 0 @sapUiListBackground;
 	overflow: hidden;
 	position: relative;
 	outline: none;
@@ -17,7 +17,7 @@
 
 /* calendar should have only a border if on popup */
 .sapUiCal.sapUiShd{
-	border: 0.0625rem solid @sapUiFieldBorderColor;
+	border: 0.0625rem solid @sapUiContentForegroundBorderColor;
 }
 
 /*** HEADER ***/
@@ -75,8 +75,8 @@
 .sapUiCalCancel:active,
 .sap-desktop .sapUiCalHead > button:active,
 .sap-desktop .sapUiCalCancel:active{
-	background-color: @sapUiHighlight;
-	color: @sapUiTextSelection;
+	background-color: @sapUiButtonActiveBackground;
+	color: @sapUiButtonActiveTextColor;
 }
 
 .sapUiCalHead > button.sapUiCalDsbl{
@@ -163,24 +163,24 @@
 	position: absolute;
 	right: 100%;
 	width: 100%;
-	color: @sapUiLightText;
+	color: @sapUiContentLabelColor;
 	font-size: @sapUiFontSmallSize;
 	cursor: default;
 	pointer-events: none;
 }
 
 .sapUiCalWH{
-	color: @sapUiLightText;
+	color: @sapUiContentLabelColor;
 	white-space: nowrap;
 }
 
 .sapUiCalItem{
 	color: @sapUiBaseText;
-	background-color: @sapUiExtraLightBG;
+	background-color: lighten(@sapUiContentForegroundColor,5);
 }
 
 .sap-desktop .sapUiCalItem:focus{
-	background-color: @sapUiFieldFocusBackground;
+	background-color: @sapUiListBackground;
 }
 
 .sapUiCalMonthView .sapUiCalFirstWDay{
@@ -203,7 +203,7 @@
 }
 
 .sapUiCalItemWeekEnd{
-	background-color: @sapUiLightBG;
+	background-color: @sapUiContentForegroundColor;
 }
 
 .sapUiCalItemSel{
@@ -216,8 +216,8 @@
 }
 
 .sapUiCalContentOver{
-	background-color: #CCCCCC;
-	opacity: 0.6;
+	background-color: @sapUiBlockLayerBackground;
+	opacity: 0.15;
 	filter: alpha(opacity=60);
 	top: 0;
 	left: 0;
@@ -235,7 +235,7 @@
 	bottom: 0;
 	left: 0;
 	right: 0;
-	background-color: @sapUiFieldBackground;
+	background-color: @sapUiListBackground;
 }
 
 .sapUiCalTimeInt > .sapUiCalContent > .sapUiCalDatesRow .sapUiCalWH{
@@ -253,7 +253,7 @@
 	right: 0;
 	height: 33%;
 	width: 100%;
-	color: @sapUiLightText;
+	color: @sapUiContentLabelColor;
 	overflow: hidden;
 	white-space: nowrap;
 	line-height: 100%;
@@ -262,4 +262,11 @@
 .sapUiCalCancel{
 	display: none; /* cancel button only visible on phones */
 	position: absolute;
+}
+
+/* Day, Month and YearPicker on popup */
+.sapUiCalMonthView[data-sap-ui-popup],
+.sapUiCalMonthPicker[data-sap-ui-popup],
+.sapUiCalYearPicker[data-sap-ui-popup]{
+	padding: 1rem;
 }

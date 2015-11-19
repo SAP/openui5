@@ -17,6 +17,7 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 	 *
 	 * @public
 	 * @alias sap.ui.model.CompositeBinding
+	 * @extends sap.ui.model.PropertyBinding
 	 */
 	
 	var CompositeBinding = PropertyBinding.extend("sap.ui.model.CompositeBinding", /** @lends sap.ui.model.CompositeBinding.prototype */ {
@@ -376,7 +377,7 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 		var oDataState = PropertyBinding.prototype._updateDataState.call(this),
 			aOriginalValues = [],
 			aModelMessages = [],
-			aControlMessages = [],
+			aControlMessages = oDataState.getControlMessages(), // Keep Control messages not set via binding
 			that = this;
 		jQuery.each(this.aBindings, function(i, oBinding) {
 			var oInnerDataState = oBinding._updateDataState();
@@ -389,7 +390,7 @@ sap.ui.define(['jquery.sap.global', './BindingMode', './ChangeReason', './Proper
 				aModelMessages = aModelMessages.concat(oInnerDataState.getModelMessages());
 			} 
 			if (oInnerDataState.getControlMessages()) {
-				aControlMessages = aControlMessages.concat();
+				aControlMessages = aControlMessages.concat(oInnerDataState.getControlMessages());
 			}
 		});
 		oDataState.setModelMessages(aModelMessages);

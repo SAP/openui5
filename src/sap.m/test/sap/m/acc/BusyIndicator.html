@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>sap.m.BusyIndicator - Accessibility</title>
+
+		<script src="../../../../resources/sap-ui-core.js"
+			type="text/javascript"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-theme="sap_bluecrystal">
+		</script>
+
+		<style>
+			#content .sapMBusyIndicator {
+				display: block;
+				margin: 3rem;
+			}
+		</style>
+
+		<script>
+			var app = new sap.m.App("myApp", {
+				initialPage: "page1"
+			});
+
+			var busyImage = new sap.m.BusyIndicator({
+				text: 'this is an image busy indicator ...',
+				customIcon: '../images/synchronise_48.png',
+				customIconRotationSpeed: 5000
+			});
+
+			var busyCSSText = new sap.m.BusyIndicator({
+				text: 'default sized busy indicator ...',
+			});
+
+			var page1 = new sap.m.Page("page1", {
+				title: "Mobile Busy Indicator Controls",
+				content:[
+					busyImage,
+					busyCSSText
+				]
+			});
+
+			app.addPage(page1).placeAt("content");
+		</script>
+	</head>
+	<body class="sapUiBody" style="overflow: hidden">
+		<div id="content"></div>
+	</body>
+</html>

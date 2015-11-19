@@ -23,6 +23,8 @@ jQuery.sap.require("sap.ui.test.OpaPlugin");
 jQuery.sap.require("sap.ui.test.opaQunit");
 var OpaPlugin = sap.ui.test.OpaPlugin;
 
+QUnit.config.autostart = false;
+
 module("getControlByGlobalId");
 
 test("Should retrieve a control by a global id", function() {
@@ -422,15 +424,51 @@ QUnit.test("Should not throw an exception if the elements of core are not define
 	assert.ok(true, "did not throw an exception");
 });
 
+sap.ui.require([
+	"sap/ui/test/matchers/Interactable",
+	"sap/ui/test/matchers/Visible",
+	"sap/ui/commons/Button"
+], function (Interactable, Visible, Button) {
+	"use strict";
+
+	QUnit.module("Actions", {
+		beforeEach: function () {
+			this.oPlugin =  new OpaPlugin();
+			this.oButton = new Button("foo").placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oPlugin.destroy();
+			this.oButton.destroy();
+		}
+	});
+
+
+	QUnit.test("Should invoke the interactable matcher if interactable is true", function(asssert) {
+		// Arrange
+		var fnInteractableSpy = this.spy(Interactable.prototype, "isMatching"),
+			fnVisibleSpy = this.spy(Visible.prototype, "isMatching");
+
+		// Act
+		this.oPlugin.getMatchingControls({
+			id: "foo",
+			interactable: true
+		});
+
+		// Assert
+		sinon.assert.calledOnce(fnInteractableSpy);
+		sinon.assert.calledOnce(fnVisibleSpy);
+	});
+
+	QUnit.start();
+});
+
+
+
 </script>
 </head>
 <body>
-	<h1 id="qunit-header">qUnit Page for sap.ui.test.OpaPlugin</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
+	<div id="qunit"></div>
 	<div id="qunit-fixture"></div>
-
 </body>
 </html>

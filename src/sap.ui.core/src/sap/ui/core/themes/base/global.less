@@ -105,6 +105,8 @@
 
 
 @sapUiBaseColor: @sapBaseColor;
+@sapUiHighlightTextColor: @sapHighlightTextColor;
+@sapUiBaseBG: @sapBackgroundColor;
 
 // Brand Colors
 @sapUiBrand: #F0AB00;     // SAP Gold #f0ab00
@@ -197,6 +199,9 @@
 
 @sapUiLightShadowTint: #ffffff;
 @sapUiDarkShadowTint: #000000;
+
+@sapUiFocus: #000000;
+@sapUiInvertedFocus: #ffffff;
 
 @sapUiListTextColor: @sapUiDarkText;
 
@@ -295,14 +300,16 @@
 @sapUiUx3TPPaddingBottom: 50px;
 
 
+@sapUiButtonIconColor: contrast(@sapUiButtonBackground, @sapUiElement, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 // @sapUiButtonBorderColor: @sapUiMediumBorder; // needed beacuse different in GR and UX
 // @sapUiButtonBackground: @sapUiButtonStandardBG; // to be renamed????
 // @sapUiButtonDisabledBorderColor: @sapUiMediumBorder; // needed because different in GR, HCB and UX
 @sapUiButtonDisabledBackground: @sapUiExtraLightBG; // needed, different in every theme
 // @sapUiButtonHoverBorderColor: @sapUiMediumBorder; // needed beacuse different in GR and UX
 @sapUiButtonHoverBackground: @sapUiMediumBG; // needed beacuse different in GR, Platinum and UX
-@sapUiButtonActiveBorderColor: @sapUiMediumBorder; // needed beacuse different in GR and UX
-@sapUiButtonActiveBackground: @sapUiDarkBG; // needed beacuse different in GR, Platinum and UX
+@sapUiButtonActiveBackground: @sapUiHighlight;
+@sapUiButtonActiveBorderColor: @sapUiButtonActiveBackground;
+@sapUiButtonActiveTextColor: contrast(@sapUiButtonActiveBackground, @sapUiButtonTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 @sapUiButtonEmphasizedBorderColor: @sapUiButtonBorderColor;
 @sapUiButtonEmphasizedBackground: @sapUiButtonEmphasizedBG;
 @sapUiButtonEmphasizedDisabledBorderColor: @sapUiButtonEmphasizedBorderColor;
@@ -330,6 +337,7 @@
 @sapUiButtonLiteBackground: rgba(0,0,0,0); /* transparent; */
 @sapUiToggleButtonPressedDisabledBackground: #D8D8E8;
 @sapUiToggleButtonPressedBackground: @sapUiHighlight;
+@sapUiToggleButtonPressedHoverBackground: darken(@sapUiToggleButtonPressedBackground, 5);
 
 // semantic colors
 @sapUiPositiveBG: @sapUiPositiveText; // no positive background defined by UX, but using text color as background may be confusing

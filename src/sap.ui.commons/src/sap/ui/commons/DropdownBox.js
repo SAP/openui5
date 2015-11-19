@@ -506,9 +506,9 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			return;
 		}
 
-		if ((!!sap.ui.Device.browser.internet_explorer && (oEvent.which == jQuery.sap.KeyCodes.DELETE || oEvent.which == jQuery.sap.KeyCodes.BACKSPACE)) ||
-		   (!!sap.ui.Device.browser.webkit && (oEvent.which == jQuery.sap.KeyCodes.DELETE || oEvent.which == jQuery.sap.KeyCodes.BACKSPACE))) {
-			//as IE and Webkit do not fire keypress event for DELETE or BACKSPACE
+		if (!!sap.ui.Device.browser.webkit && (oEvent.which == jQuery.sap.KeyCodes.DELETE || oEvent.which == jQuery.sap.KeyCodes.BACKSPACE)) {
+			// Webkit do not fire keypress event for DELETE or BACKSPACE
+			// IE also fires no keypress but an input event, so it's handled there
 			this.onkeypress(oEvent);
 		}
 
@@ -610,7 +610,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			var iCursorPos = $Ref.cursorPos();
 			if (this._iCursorPosBeforeBackspace !== iCursorPos) {
 				iCursorPos++;
-			} // 'normalize' cursor position for upcoming handling... especially IE8
+			} // 'normalize' cursor position for upcoming handling...
 			this._iCursorPosBeforeBackspace = null; // forget being called by backspace handling
 			bValid = this._doTypeAhead($Ref.val().substr(0, iCursorPos - 1), "");
 		} else if (!(bValid = this._doTypeAhead("", $Ref.val()))) {
@@ -730,7 +730,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			this._open();
 			this.noTypeAheadByOpen = undefined;
 		}
-		if (iKC === oKC.BACKSPACE) {// only happens in FF or other non-IE-browsers. IE does not support BACKSPACE in keypress
+		if (iKC === oKC.BACKSPACE) {// only happens in FF or other non-IE-browsers. Webkit or IE does not support BACKSPACE in keypress, but in Webkit it's called from keydown
 			this._doTypeAhead(sVal.substr(0, iCursorPos - 1), "");
 		} else {
 			this._doTypeAhead(sVal.substr(0, iCursorPos), oNewChar);

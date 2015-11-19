@@ -257,9 +257,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './Control', './library'],
 			this._oTouchScroller.setDimensions(0, 0, oContent.width, oContent.height);
 		
 			var oElement = this._$ScrollDomRef.get(0);
-			var oRect = oElement.getBoundingClientRect();
-			this._oTouchScroller.setPosition(oRect.left + oElement.clientLeft, oRect.top + oElement.clientTop);
-			this._bSkipTouchHandling = false;
+			if (oElement) {
+				var oRect = oElement.getBoundingClientRect();
+				this._oTouchScroller.setPosition(oRect.left + oElement.clientLeft, oRect.top + oElement.clientTop);
+				this._bSkipTouchHandling = false;
+			}
 		}
 	};
 	

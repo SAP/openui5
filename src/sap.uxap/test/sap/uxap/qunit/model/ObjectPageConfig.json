@@ -1,0 +1,138 @@
+{
+  "showAnchorBar": true,
+  "height": "100%",
+  "enableLazyLoading": true,
+  "subSectionLayout": "TitleOnLeft",
+  "headerTitle": {
+	"headerDesign": "Dark",
+	"Type": "sap.uxap.ObjectPageHeader",
+	"objectImageURI": "../qunit/img/imageID_275314.png",
+	"objectTitle": "Denise Smith",
+	"objectImageDensityAware": false,
+	"isObjectTitleAlwaysVisible": true,
+	"isObjectIconAlwaysVisible": true,
+	"isObjectSubtitleAlwaysVisible": true,
+	"isActionAreaAlwaysVisible": true,
+	"objectSubtitle": "Senior UI Developper & Visual Designer",
+	"actions": [
+	  {
+		"Type": "sap.uxap.ObjectPageHeaderActionButton",
+		"icon": "sap-icon://show",
+		"hideIcon": true
+	  },
+	  {
+		"Type": "sap.uxap.ObjectPageHeaderActionButton",
+		"icon": "sap-icon://show",
+		"hideText": false
+	  }
+	],
+	"navigationBar": {
+	  "Type": "sap.m.Bar"
+	}
+  },
+  "headerContent": [
+	{
+	  "Type": "sap.m.Text",
+	  "text": "Hi, I'm Denise. I'm passionate about what I do!"
+	},
+	{
+	  "Type": "sap.m.Text",
+	  "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sagittis urna lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Vestibulum tortor nibh, dignissim vel lectus dignissim, pellentesque pellentesque massa. Aliquam nec mauris interdum neque faucibus feugiat. Maecenas tincidunt imperdiet velit id aliquam. Aliquam efficitur dignissim nunc quis efficitur. Donec nec dictum neque. Aenean non turpis urna."
+	}
+  ],
+  "sections": [
+	{
+	  "title": "section 1",
+	  "subSections": [
+		{
+		  "title": "subSection 1.1",
+		  "mode": "Expanded",
+		  "actions": [
+			{
+			  "Type": "sap.m.Button",
+			  "icon": "sap-icon://show"
+			}
+		  ]
+		},
+		{
+		  "title": "subSection 1.2",
+		  "mode": "Expanded"
+		}
+	  ]
+	},
+	{
+	  "title": "section 2",
+	  "showTitle": true,
+	  "subSections": [
+		{
+		  "title": "subSection 2.1",
+		  "mode": "Expanded"
+		}
+	  ]
+	},
+	{
+	  "title": "section 3",
+	  "showTitle": true,
+	  "subSections": [
+		{
+		  "title": "subSection 3.1",
+		  "mode": "Expanded",
+		  "actions": [
+			{
+			  "Type": "sap.m.Button",
+			  "icon": "sap-icon://show"
+			}
+		  ]
+		},
+		{
+		  "title": "subSection 3.2",
+		  "mode": "Expanded"
+		}
+	  ]
+	},
+	{
+	  "title": "section 4",
+	  "subSections": [
+		{
+		  "title": "subSection 4.1",
+		  "mode": "Expanded"
+		},
+		{
+		  "title": "subSection 4.2",
+		  "mode": "Expanded"
+		}
+	  ]
+	},
+	{
+	  "title": "section 5",
+	  "subSections": [
+		{
+		  "title": "subSection 5.1",
+		  "mode": "Expanded"
+		},
+		{
+		  "title": "subSection 5.2",
+		  "mode": "Expanded"
+		}
+	  ]
+	},
+	{
+	  "title": "section 6",
+	  "subSections": [
+		{
+		  "title": "subSection 6.1",
+		  "mode": "Collapsed"
+		}
+	  ]
+	},
+	{
+	  "title": "section 7",
+	  "subSections": [
+		{
+		  "title": "subSection 7.1",
+		  "mode": "Collapsed"
+		}
+	  ]
+	}
+  ]
+}

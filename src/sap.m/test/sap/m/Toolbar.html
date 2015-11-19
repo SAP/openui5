@@ -61,17 +61,17 @@
 						type: sap.m.ButtonType.Default,
 						icon: sAddIconURI,
 						enabled: true
-					}), 
+					}),
 					new sap.m.Button({
 						type: sap.m.ButtonType.Default,
 						icon: sAddIconURI,
 						enabled: true
-					}), 
+					}),
 					new sap.m.Button({
 						type: sap.m.ButtonType.Default,
 						icon: sAddIconURI,
 						enabled: true
-					}), 
+					}),
 					new sap.m.Button({
 						type: sap.m.ButtonType.Default,
 						icon: sAddIconURI,
@@ -80,7 +80,7 @@
 				]
 			}),
 			new sap.m.Button({text : "Button"}),
-			new sap.m.Select({ 
+			new sap.m.Select({
 				type: sap.m.SelectType.IconOnly,
 				icon: sap.ui.core.IconPool.getIconURI("filter"),
 				autoAdjustWidth: true,
@@ -98,7 +98,7 @@
 			new sap.m.ToolbarSpacer(),
 			new sap.m.Label({ text : sText }),
 			new sap.m.ToolbarSpacer(),
-			new sap.m.Select({ 
+			new sap.m.Select({
 				items : [
 					new sap.ui.core.Item({
 						key: "0",
@@ -166,11 +166,11 @@
 			oList = new sap.m.List({
 				headerToolbar : new sap.m.Toolbar({
 					content : [
-						new sap.m.Label({ 
+						new sap.m.Label({
 							text : "This is a header"
 						}),
 						new sap.m.ToolbarSpacer(),
-						new sap.m.Button({ 
+						new sap.m.Button({
 							text : "Remove",
 							type : "Reject",
 							press : function() {
@@ -212,7 +212,11 @@
 					new sap.m.Label({
 						text : "Plain old infobar"
 					}),
+					new sap.m.Label({text: "Text"}),
+					new sap.m.Label({text: "Text"}),
 					new sap.m.ToolbarSpacer(),
+					new sap.m.Label({text: "Text"}),
+					new sap.m.Label({text: "Text"}),
 					new sap.ui.core.Icon({
 						src : "sap-icon://undo",
 						width : "2rem",
@@ -274,13 +278,13 @@
 					new sap.m.ToolbarSpacer(),
 					new sap.m.SegmentedButton({
 						selectedButton : "sbi1",
-						buttons : [ 
+						buttons : [
 							new sap.m.Button("sbi1", {
 								text : "Seg-"
-							}), 
+							}),
 							new sap.m.Button({
 								text : "-men-"
-							}), 
+							}),
 							new sap.m.Button({
 								text : "-ted Button"
 							})

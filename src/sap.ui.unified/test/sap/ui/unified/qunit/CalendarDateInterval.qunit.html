@@ -70,7 +70,8 @@
 				days: 14,
 				showDayNamesLine: false,
 				select: handleSelect,
-				startDateChange: handleStartDateChange
+				startDateChange: handleStartDateChange,
+				pickerPopup: true
 			}).placeAt("uiArea3");
 
 			var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"});
@@ -155,6 +156,7 @@
 				qutils.triggerEvent("click", "Cal1--Head-B1");
 				var $MonthPicker = sap.ui.getCore().byId("Cal1").getAggregation("monthPicker").$();
 				var aMonths = $MonthPicker.find(".sapUiCalItem");
+				equal(jQuery("#Cal1--MP").parent().attr("id"), "Cal1-content", "Calendar1: month picker rendered in Calendar");
 				equal(aMonths.length, 3, "Calendar1: 3 Months rendered");
 				equal(jQuery(aMonths[0]).text(), "April", "Calendar1: first displayed month");
 				equal(jQuery(aMonths[0]).attr("tabindex"), "0", "Calendar1: first displayed month is focused");
@@ -165,6 +167,15 @@
 				equal(aMonths.length, 5, "Calendar2: 5 Months rendered");
 				equal(jQuery(aMonths[0]).text(), "January", "Calendar2: first displayed month");
 				equal(jQuery(aMonths[1]).attr("tabindex"), "0", "Calendar2: second displayed month is focused");
+
+				qutils.triggerEvent("click", "Cal3--Head-B1");
+				$MonthPicker = sap.ui.getCore().byId("Cal3").getAggregation("monthPicker").$();
+				aMonths = $MonthPicker.find(".sapUiCalItem");
+				equal(jQuery("#Cal3--MP").parent().attr("id"), "sap-ui-static", "Calendar3: month picker rendered in static area");
+				equal(aMonths.length, 12, "Calendar3: 12 Months rendered");
+				equal(jQuery(aMonths[0]).text(), "January", "Calendar3: first displayed month");
+				equal(jQuery(aMonths[1]).attr("tabindex"), "0", "Calendar3: second displayed month is focused");
+				qutils.triggerEvent("click", "Cal3--Head-B1");
 			});
 
 			test("change block", function() {
@@ -188,6 +199,7 @@
 				qutils.triggerEvent("click", "Cal1--Head-B2");
 				var $YearPicker = sap.ui.getCore().byId("Cal1").getAggregation("yearPicker").$();
 				var aYears = $YearPicker.find(".sapUiCalItem");
+				equal(jQuery("#Cal1--YP").parent().attr("id"), "Cal1-content", "Calendar1: year picker rendered in Calendar");
 				equal(aYears.length, 3, "Calendar1: 3 Years rendered");
 				equal(jQuery(aYears[0]).text(), "2014", "Calendar1: first displayed year");
 				equal(jQuery(aYears[1]).attr("tabindex"), "0", "Calendar1: second displayed year is focused");
@@ -198,6 +210,15 @@
 				equal(aYears.length, 7, "Calendar2: 7 years rendered");
 				equal(jQuery(aYears[0]).text(), "2012", "Calendar2: first displayed year");
 				equal(jQuery(aYears[3]).attr("tabindex"), "0", "Calendar2: 4. displayed year is focused");
+
+				qutils.triggerEvent("click", "Cal3--Head-B2");
+				$YearPicker = sap.ui.getCore().byId("Cal3").getAggregation("yearPicker").$();
+				aYears = $YearPicker.find(".sapUiCalItem");
+				equal(jQuery("#Cal3--YP").parent().attr("id"), "sap-ui-static", "Calendar3: year picker rendered in static area");
+				equal(aYears.length, 20, "Calendar3: 20 years rendered");
+				equal(jQuery(aYears[0]).text(), "2005", "Calendar3: first displayed year");
+				equal(jQuery(aYears[10]).attr("tabindex"), "0", "Calendar3: 11. displayed year is focused");
+				qutils.triggerEvent("click", "Cal3--Head-B2");
 			});
 
 			test("change block", function() {

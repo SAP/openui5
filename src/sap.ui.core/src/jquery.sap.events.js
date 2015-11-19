@@ -3,8 +3,8 @@
  */
 
 // Provides functionality related to eventing.
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes'],
-	function(jQuery, Device/* , jQuerySap1 */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes', "sap/ui/thirdparty/jquery-mobile-custom"],
+	function(jQuery, Device/* , jQuerySap1, jQuerySap2 */ ) {
 	"use strict";
 
 	var onTouchStart,
@@ -937,188 +937,152 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.keycodes'],
 			createSimulatedEvent("touchmove", ["mousemove"], fnMouseToTouchHandler);
 		}
 
-		/**
-		 * This methods decides when extra events are needed. Extra events are: tap, swipe and the new touch to mouse event simulation.
-		 * 
-		 * The old touch to mouse simulation is done in a way that a real mouse event is fired when there's a corresponding touch event. But this will mess up
-		 * the mouse to touch event simulation and is not consistent with the mouse to touch event simulation. That's why when certain condition is met, the old
-		 * touch to mouse event simluation will be replaced with the new touch to mouse event simulation.
-		 * 
-		 * The new one can't completely replace the old one because the desktop controls which bind to events using jQuery or browser API directly have to be change.
-		 * Then the new one can replace the old one completely not under certain condition anymore.
-		 * 
-		 * @private
-		 */
-		function needsExtraEventSupport(){
-			var oCfgData = window["sap-ui-config"] || {},
-				sLibs = oCfgData.libs || "";
+		// Simulate mouse events on touch devices
+		// Except for Windows Phone with touch events support.
+		if (Device.support.touch && !Device.support.pointer) {
+			var bFingerIsMoved = false,
+				iMoveThreshold = jQuery.vmouse.moveDistanceThreshold,
+				iStartX, iStartY,
+				iOffsetX, iOffsetY,
+				iLastTouchMoveTime;
+			
+			var fnCreateNewEvent = function(oEvent, oConfig, oMappedEvent) {
+				var oNewEvent = jQuery.event.fix(oEvent.originalEvent || oEvent);
+				oNewEvent.type = oConfig.sapEventName;
 
-			// TODO: should be replaced by some function in jQuery.sap.global (e.g. jQuery.sap.config(sKey))
-			function hasConfig(sKey) {
-				return document.location.search.indexOf("sap-ui-" + sKey) > -1 || // URL 
-					!!oCfgData[sKey.toLowerCase()]; // currently, properties of oCfgData are converted to lower case (DOM attributes)
-			}
-
-			return Device.support.touch || // tap, swipe, etc. events are needed when touch is supported
-				hasConfig("xx-test-mobile") || // see sap.ui.core.Configuration -> M_SETTINGS
-				// also simulate touch events when sap-ui-xx-fakeOS is set (independently of the value and the current browser)
-				hasConfig("xx-fakeOS") ||
-				// always simulate touch events when the mobile lib is involved (FIXME: hack for Kelley, this does currently not work with dynamic library loading)
-				sLibs.match(/sap.m\b/);
-		}
-
-		// If extra event support is needed, jQuery mobile event plugin is loaded to support tap, swipe and scrollstart/stop events.
-		// The old touch to mouse event simulation ((see line 25 in this file)) will be deregistered and the new one will be active.
-		if (needsExtraEventSupport()) {
-			jQuery.sap.require("sap.ui.thirdparty.jquery-mobile-custom");
-
-			// Simulate mouse events on touch devices
-			// Except for Windows Phone with touch events support.
-			if (Device.support.touch && !Device.support.pointer) {
-				var bFingerIsMoved = false,
-					iMoveThreshold = jQuery.vmouse.moveDistanceThreshold,
-					iStartX, iStartY,
-					iOffsetX, iOffsetY,
-					iLastTouchMoveTime;
+				delete oNewEvent.touches;
+				delete oNewEvent.changedTouches;
+				delete oNewEvent.targetTouches;
 				
-				var fnCreateNewEvent = function(oEvent, oConfig, oMappedEvent) {
-					var oNewEvent = jQuery.event.fix(oEvent.originalEvent || oEvent);
-					oNewEvent.type = oConfig.sapEventName;
-
-					delete oNewEvent.touches;
-					delete oNewEvent.changedTouches;
-					delete oNewEvent.targetTouches;
-					
-					//TODO: add other properties that should be copied to the new event
-					oNewEvent.screenX = oMappedEvent.screenX;
-					oNewEvent.screenY = oMappedEvent.screenY;
-					oNewEvent.clientX = oMappedEvent.clientX;
-					oNewEvent.clientY = oMappedEvent.clientY;
-					oNewEvent.ctrlKey = oMappedEvent.ctrlKey;
-					oNewEvent.altKey = oMappedEvent.altKey;
-					oNewEvent.shiftKey = oMappedEvent.shiftKey;
-					// The simulated mouse event should always be clicked by the left key of the mouse
-					oNewEvent.button = 0;
-					
-					return oNewEvent;
-				};
+				//TODO: add other properties that should be copied to the new event
+				oNewEvent.screenX = oMappedEvent.screenX;
+				oNewEvent.screenY = oMappedEvent.screenY;
+				oNewEvent.clientX = oMappedEvent.clientX;
+				oNewEvent.clientY = oMappedEvent.clientY;
+				oNewEvent.ctrlKey = oMappedEvent.ctrlKey;
+				oNewEvent.altKey = oMappedEvent.altKey;
+				oNewEvent.shiftKey = oMappedEvent.shiftKey;
+				// The simulated mouse event should always be clicked by the left key of the mouse
+				oNewEvent.button = 0;
 				
-				/**
-				 * This function simulates the corresponding mouse event by listening to touch event (touchmove).
-				 * 
-				 * The simulated event will be dispatch through UI5 event delegation which means that the on"EventName" function is called
-				 * on control's prototype.
-				 * 
-				 * @param {jQuery.Event} oEvent The original event object
-				 * @param {object} oConfig Additional configuration passed from createSimulatedEvent function
-				 */
-				var fnTouchMoveToMouseHandler = function(oEvent, oConfig) {
-					if (oEvent.isMarked("handledByTouchToMouse")) {
+				return oNewEvent;
+			};
+			
+			/**
+			 * This function simulates the corresponding mouse event by listening to touch event (touchmove).
+			 * 
+			 * The simulated event will be dispatch through UI5 event delegation which means that the on"EventName" function is called
+			 * on control's prototype.
+			 * 
+			 * @param {jQuery.Event} oEvent The original event object
+			 * @param {object} oConfig Additional configuration passed from createSimulatedEvent function
+			 */
+			var fnTouchMoveToMouseHandler = function(oEvent, oConfig) {
+				if (oEvent.isMarked("handledByTouchToMouse")) {
+					return;
+				}
+				oEvent.setMarked("handledByTouchToMouse");
+				
+				if (!bFingerIsMoved) {
+					var oTouch = oEvent.originalEvent.touches[0];
+					bFingerIsMoved = (Math.abs(oTouch.pageX - iStartX) > iMoveThreshold ||
+											Math.abs(oTouch.pageY - iStartY) > iMoveThreshold);
+				}
+
+				if (Device.os.blackberry) {
+					//Blackberry sends many touchmoves -> create a simulated mousemove every 50ms
+					if (iLastTouchMoveTime && oEvent.timeStamp - iLastTouchMoveTime < 50) {
 						return;
 					}
-					oEvent.setMarked("handledByTouchToMouse");
-					
-					if (!bFingerIsMoved) {
-						var oTouch = oEvent.originalEvent.touches[0];
-						bFingerIsMoved = (Math.abs(oTouch.pageX - iStartX) > iMoveThreshold ||
-												Math.abs(oTouch.pageY - iStartY) > iMoveThreshold);
-					}
+					iLastTouchMoveTime = oEvent.timeStamp;
+				}
 
-					if (Device.os.blackberry) {
-						//Blackberry sends many touchmoves -> create a simulated mousemove every 50ms
-						if (iLastTouchMoveTime && oEvent.timeStamp - iLastTouchMoveTime < 50) {
-							return;
-						}
-						iLastTouchMoveTime = oEvent.timeStamp;
-					}
+				var oNewEvent = fnCreateNewEvent(oEvent, oConfig, oEvent.touches[0]);
+				jQuery.sap.delayedCall(0, this, function(){
+					oNewEvent.setMark("handledByUIArea", false);
+					oConfig.eventHandle.handler.call(oConfig.domRef, oNewEvent);
+				});
+			};
 
-					var oNewEvent = fnCreateNewEvent(oEvent, oConfig, oEvent.touches[0]);
+			/**
+			 * This function simulates the corresponding mouse event by listening to touch event (touchstart, touchend, touchcancel).
+			 * 
+			 * The simulated event will be dispatch through UI5 event delegation which means that the on"EventName" function is called
+			 * on control's prototype.
+			 * 
+			 * @param {jQuery.Event} oEvent The original event object
+			 * @param {object} oConfig Additional configuration passed from createSimulatedEvent function
+			 */
+			var fnTouchToMouseHandler = function(oEvent, oConfig) {
+				if (oEvent.isMarked("handledByTouchToMouse")) {
+					return;
+				}
+				oEvent.setMarked("handledByTouchToMouse");
+
+				var oNewStartEvent, oNewEndEvent, bSimulateClick;
+
+				function createNewEvent() {
+					return fnCreateNewEvent(oEvent, oConfig, oConfig.eventName === "mouseup" ? oEvent.changedTouches[0] : oEvent.touches[0]);
+				}
+
+				if (oEvent.type === "touchstart") {
+
+					var oTouch = oEvent.originalEvent.touches[0];
+					bFingerIsMoved = false;
+					iLastTouchMoveTime = 0;
+					iStartX = oTouch.pageX;
+					iStartY = oTouch.pageY;
+					iOffsetX = Math.round(oTouch.pageX - jQuery(oEvent.target).offset().left);
+					iOffsetY = Math.round(oTouch.pageY - jQuery(oEvent.target).offset().top);
+
+					oNewStartEvent = createNewEvent();
 					jQuery.sap.delayedCall(0, this, function(){
-						oNewEvent.setMark("handledByUIArea", false);
-						oConfig.eventHandle.handler.call(oConfig.domRef, oNewEvent);
+						oNewStartEvent.setMark("handledByUIArea", false);
+						oConfig.eventHandle.handler.call(oConfig.domRef, oNewStartEvent);
 					});
-				};
+				} else if (oEvent.type === "touchend") {
 
-				/**
-				 * This function simulates the corresponding mouse event by listening to touch event (touchstart, touchend, touchcancel).
-				 * 
-				 * The simulated event will be dispatch through UI5 event delegation which means that the on"EventName" function is called
-				 * on control's prototype.
-				 * 
-				 * @param {jQuery.Event} oEvent The original event object
-				 * @param {object} oConfig Additional configuration passed from createSimulatedEvent function
-				 */
-				var fnTouchToMouseHandler = function(oEvent, oConfig) {
-					if (oEvent.isMarked("handledByTouchToMouse")) {
-						return;
-					}
-					oEvent.setMarked("handledByTouchToMouse");
+					oNewEndEvent = createNewEvent();
+					bSimulateClick = !bFingerIsMoved;
 
-					var oNewStartEvent, oNewEndEvent, bSimulateClick;
-
-					function createNewEvent() {
-						return fnCreateNewEvent(oEvent, oConfig, oConfig.eventName === "mouseup" ? oEvent.changedTouches[0] : oEvent.touches[0]);
-					}
-
-					if (oEvent.type === "touchstart") {
-
-						var oTouch = oEvent.originalEvent.touches[0];
-						bFingerIsMoved = false;
-						iLastTouchMoveTime = 0;
-						iStartX = oTouch.pageX;
-						iStartY = oTouch.pageY;
-						iOffsetX = Math.round(oTouch.pageX - jQuery(oEvent.target).offset().left);
-						iOffsetY = Math.round(oTouch.pageY - jQuery(oEvent.target).offset().top);
-
-						oNewStartEvent = createNewEvent();
-						jQuery.sap.delayedCall(0, this, function(){
-							oNewStartEvent.setMark("handledByUIArea", false);
-							oConfig.eventHandle.handler.call(oConfig.domRef, oNewStartEvent);
-						});
-					} else if (oEvent.type === "touchend") {
-
-						oNewEndEvent = createNewEvent();
-						bSimulateClick = !bFingerIsMoved;
-
-						jQuery.sap.delayedCall(0, this, function(){
+					jQuery.sap.delayedCall(0, this, function(){
+						oNewEndEvent.setMark("handledByUIArea", false);
+						oConfig.eventHandle.handler.call(oConfig.domRef, oNewEndEvent);
+						if (bSimulateClick) {
+							// also call the onclick event handler when touchend event is received and the movement is within threshold
+							oNewEndEvent.type = "click";
+							oNewEndEvent.getPseudoTypes = jQuery.Event.prototype.getPseudoTypes; //Reset the pseudo types due to type change
 							oNewEndEvent.setMark("handledByUIArea", false);
+							oNewEndEvent.offsetX = iOffsetX; // use offset from touchstart
+							oNewEndEvent.offsetY = iOffsetY; // use offset from touchstart
 							oConfig.eventHandle.handler.call(oConfig.domRef, oNewEndEvent);
-							if (bSimulateClick) {
-								// also call the onclick event handler when touchend event is received and the movement is within threshold
-								oNewEndEvent.type = "click";
-								oNewEndEvent.getPseudoTypes = jQuery.Event.prototype.getPseudoTypes; //Reset the pseudo types due to type change
-								oNewEndEvent.setMark("handledByUIArea", false);
-								oNewEndEvent.offsetX = iOffsetX; // use offset from touchstart
-								oNewEndEvent.offsetY = iOffsetY; // use offset from touchstart
-								oConfig.eventHandle.handler.call(oConfig.domRef, oNewEndEvent);
-							}
-						});
-					}
-				};
+						}
+					});
+				}
+			};
 
-				// Deregister the previous touch to mouse event simulation (see line 25 in this file)
-				jQuery.sap.disableTouchToMouseHandling();
+			// Deregister the previous touch to mouse event simulation (see line 25 in this file)
+			jQuery.sap.disableTouchToMouseHandling();
 
-				createSimulatedEvent("mousedown", ["touchstart"], fnTouchToMouseHandler);
-				createSimulatedEvent("mousemove", ["touchmove"], fnTouchMoveToMouseHandler);
-				createSimulatedEvent("mouseup", ["touchend", "touchcancel"], fnTouchToMouseHandler);
-			}
-
-			// Define additional jQuery Mobile events to be added to the event list
-			// TODO taphold cannot be used (does not bubble / has no target property) -> Maybe provide own solution
-			// IMPORTANT: update the public documentation when extending this list
-			aAdditionalControlEvents.push("swipe", "tap", "swipeleft", "swiperight", "scrollstart", "scrollstop");
-
-			//Define additional pseudo events to be added to the event list
-			aAdditionalPseudoEvents.push({sName: "swipebegin", aTypes: ["swipeleft", "swiperight"], fnCheck: function (oEvent) {
-				var bRtl = sap.ui.getCore().getConfiguration().getRTL();
-				return (bRtl && oEvent.type === "swiperight") || (!bRtl && oEvent.type === "swipeleft");
-			}});
-			aAdditionalPseudoEvents.push({sName: "swipeend", aTypes: ["swipeleft", "swiperight"], fnCheck: function (oEvent) {
-				var bRtl = sap.ui.getCore().getConfiguration().getRTL();
-				return (!bRtl && oEvent.type === "swiperight") || (bRtl && oEvent.type === "swipeleft");
-			}});
+			createSimulatedEvent("mousedown", ["touchstart"], fnTouchToMouseHandler);
+			createSimulatedEvent("mousemove", ["touchmove"], fnTouchMoveToMouseHandler);
+			createSimulatedEvent("mouseup", ["touchend", "touchcancel"], fnTouchToMouseHandler);
 		}
+
+		// Define additional jQuery Mobile events to be added to the event list
+		// TODO taphold cannot be used (does not bubble / has no target property) -> Maybe provide own solution
+		// IMPORTANT: update the public documentation when extending this list
+		aAdditionalControlEvents.push("swipe", "tap", "swipeleft", "swiperight", "scrollstart", "scrollstop");
+
+		//Define additional pseudo events to be added to the event list
+		aAdditionalPseudoEvents.push({sName: "swipebegin", aTypes: ["swipeleft", "swiperight"], fnCheck: function (oEvent) {
+			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+			return (bRtl && oEvent.type === "swiperight") || (!bRtl && oEvent.type === "swipeleft");
+		}});
+		aAdditionalPseudoEvents.push({sName: "swipeend", aTypes: ["swipeleft", "swiperight"], fnCheck: function (oEvent) {
+			var bRtl = sap.ui.getCore().getConfiguration().getRTL();
+			return (!bRtl && oEvent.type === "swiperight") || (bRtl && oEvent.type === "swipeleft");
+		}});
 
 		// Add all defined events to the event infrastructure
 		//

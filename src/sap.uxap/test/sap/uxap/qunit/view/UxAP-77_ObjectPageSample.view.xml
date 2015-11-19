@@ -1,0 +1,55 @@
+<core:View
+		xmlns:core="sap.ui.core"
+		xmlns="sap.uxap"
+		xmlns:layout="sap.ui.layout"
+		xmlns:m="sap.m"
+		xmlns:sample="sap.uxap.testblocks.multiview"
+		height="100%">
+	<ObjectPageLayout id="objectPage13">
+		<headerTitle>
+			<ObjectPageHeader id="header" objectTitle="Personal description">
+
+			</ObjectPageHeader>
+		</headerTitle>
+		<headerContent>
+			<m:Text text="Personal description"/>
+		</headerContent>
+		<sections>
+			<ObjectPageSection id="sectionPayroll" title="Payroll">
+				<subSections>
+					<ObjectPageSubSection id="subsection1" title="My first subSection Title" class="mysubsectiontotest">
+						<blocks>
+							<sample:MultiViewBlock/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection id="subsection2" title="My second subSection Title"
+										  class="mysubsectiontotest">
+						<blocks>
+							<sample:MultiViewBlock/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection id="sectionStatus" title="Status">
+				<subSections>
+					<ObjectPageSubSection id="subsection3" title="My first subSection Title" class="mysubsectiontotest">
+						<blocks>
+							<sample:MultiViewBlock/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection id="subsection4" title="My second subSection Title"
+										  class="mysubsectiontotest">
+						<blocks>
+							<sample:MultiViewBlock/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+			<ObjectPageSection id="sectionWageType" title="Wage Type">
+				<customAnchorBarButton>
+					<m:Button text="Wage Type"/>
+				</customAnchorBarButton>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</core:View>

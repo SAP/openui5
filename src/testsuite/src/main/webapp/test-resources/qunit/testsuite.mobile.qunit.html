@@ -25,6 +25,10 @@
 
     // execute the test for the demokit
     suite.addTestPage(contextPath + "/test-resources/sap/ui/demokit/qunit/testsuite.demokit.qunit.html");
+
+    // execute all "tnt" tests
+    suite.addTestPage(contextPath + "/test-resources/sap/tnt/qunit/testsuite.mobile.qunit.html");
+
     return suite;
   }
 

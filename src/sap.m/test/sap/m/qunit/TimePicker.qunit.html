@@ -1725,6 +1725,37 @@
 
 		//todo - test caret position
 
+		module("events and event handlers");
+
+		test("change event fires only when the value really changed", function() {
+			//system under test
+			var tp = new sap.m.TimePicker({
+				valueFormat: "hh mm",
+				value: "12 15"
+			}), spy = {
+					callCount: 0
+			};
+
+			tp.attachChange(function () {
+				spy.callCount++;
+			});
+
+			//arrange
+			tp.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			tp.fireChangeEvent("13 00");
+			tp.fireChangeEvent("13 00");
+			tp.fireChangeEvent("13 15");
+			tp.fireChangeEvent("13 15");
+			tp.fireChangeEvent("13 15");
+
+			equals(spy.callCount, 2, "changed event fired only twice");
+
+			spy = null;
+			tp.destroy();
+		});
+
 	</script>
 
 </head>

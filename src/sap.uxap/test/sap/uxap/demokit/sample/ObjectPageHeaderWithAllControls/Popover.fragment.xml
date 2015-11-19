@@ -1,0 +1,17 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core">
+	<ResponsivePopover
+			title="Select Product by"
+			placement="Bottom">
+		<content>
+			<List
+					mode="SingleSelectMaster"
+					includeItemInSelection="true"
+					select="handleItemSelect"
+					items="{/ProductCollection}">
+				<StandardListItem title="{text}"/>
+			</List>
+		</content>
+	</ResponsivePopover>
+</core:FragmentDefinition>

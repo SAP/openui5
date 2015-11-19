@@ -30,11 +30,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 		 * Some file extensions on some operating systems are not working due to a bug in IE.
 		 * Therefore 'txt' will be used as file extension if the problem is occurring.</p>
 		 *
-		 * <p><b>Safari 6 / 7 (OS X)</b><br>
-		 * A new window/tab will be opened. The user has to manually save the file (CMD + S), choose "page source" and specify a filename.</p>
-		 *
-		 * <p><b>Mobile Safari (iOS)</b><br>
-		 * Not supported</p>
+		 * <p><b>Safari (OS X / iOS)</b><br>
+		 * A new window/tab will be opened. In OS X the user has to manually save the file (CMD + S), choose "page source" and specify a filename.
+		 * In iOS the content can be opened in another app (Mail, Notes, ...) or copied to the clipboard.
+		 * In case the popup blocker prevents this action, an error will be thrown which can be used to notify the user to disable it.</p>
 		 *
 		 * <p><b>Android Browser</b><br>
 		 * Not supported</p>
@@ -88,7 +87,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 							sData = sData.substr(1);
 						}
 						// Safari (user has to save the file manually)
-						window.open(sType + ";base64," + window.btoa(sData));
+						var oWindow = window.open(sType + ";base64," + window.btoa(sData));
+						if (!oWindow) {
+							throw new Error("Could not download file. A popup blocker might be active.");
+						}
 					}
 				}
 			} else if (Device.browser.internet_explorer && Device.browser.version <= 9) {

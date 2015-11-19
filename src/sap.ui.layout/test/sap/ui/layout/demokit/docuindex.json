@@ -40,7 +40,8 @@
 					"sap.ui.layout.sample.SimpleForm354",
 					"sap.ui.layout.sample.SimpleForm471",
 					"sap.ui.layout.sample.SimpleForm480",
-					"sap.ui.layout.sample.SimpleForm480_12120"
+					"sap.ui.layout.sample.SimpleForm480_12120",
+					"sap.ui.layout.sample.SimpleForm480_Trial"
 				]
 			},
 			{
@@ -154,6 +155,11 @@
 				"id": "sap.ui.layout.sample.SimpleForm480",
 				"name": "Simple Form - Dual 4:8:0",
 				"description": "With a form you can easily layout (a) lists of properties (b) input fields. The form automatically adapts to the screen size. Even though the form is not part of sap.m it can and shall be used for building mobile user interfaces. This is an example of a dual-column 4:8:0 layout (label:input:emptyspace) using the SimpleForm control"
+			},
+			{
+				"id": "sap.ui.layout.sample.SimpleForm480_Trial",
+				"name": "Simple Form - Trial 4:8:0",
+				"description": "This is an example of a trial-column layout using the SimpleForm control. On extra large screens (screen size XL) a trial-column 4:8:0 layout (label:input:emptyspace) is used, on large and medium screens a dual-column 4:8:0 layout (label:input:emptyspace) is used and on small screens a one-column 12:12:0 layout (label:input:emptyspace) is used."
 			},
 			{
 				"id": "sap.ui.layout.sample.SimpleForm480_12120",

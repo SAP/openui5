@@ -57,6 +57,7 @@
 				startDate: new Date("2015", "7", "4"),
 				months: 18,
 				intervalSelection: true,
+				pickerPopup: true,
 				selectedDates: [new sap.ui.unified.DateRange({startDate: new Date("2015", "11", "4"), endDate: new Date("2016", "1", "6")})],
 				specialDates: [new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "8", "8"), type: sap.ui.unified.CalendarDayType.Type01, tooltip: "Text"}),
 				               new sap.ui.unified.DateTypeRange({startDate: new Date("2015", "9", "9"), endDate: new Date("2015", "10", "10"), type: sap.ui.unified.CalendarDayType.Type02, tooltip: "Text"})]
@@ -173,6 +174,7 @@
 				ok(!jQuery("#Cal1--YP").get(0), "Calendar1: Year picker not initial rendered");
 				qutils.triggerEvent("click", "Cal1--Head-B2");
 				ok(jQuery("#Cal1--YP").get(0), "Calendar1: Year picker rendered");
+				equal(jQuery("#Cal1--YP").parent().attr("id"), "Cal1-content", "Calendar1: year picker rendered in Calendar");
 				ok(jQuery(jQuery("#Cal1--YP").get(0)).is(":visible"), "Calendar1: Year picker visible");
 				var $YearPicker = sap.ui.getCore().byId("Cal1").getAggregation("yearPicker").$();
 				var aYears = $YearPicker.find(".sapUiCalItem");
@@ -183,12 +185,13 @@
 				ok(!jQuery("#Cal2--YP").get(0), "Calendar2: Year picker not initial rendered");
 				qutils.triggerEvent("click", "Cal2--Head-B2");
 				ok(jQuery("#Cal2--YP").get(0), "Calendar2: Year picker rendered");
+				equal(jQuery("#Cal2--YP").parent().attr("id"), "sap-ui-static", "Calendar2: year picker rendered in static area");
 				ok(jQuery(jQuery("#Cal2--YP").get(0)).is(":visible"), "Calendar2: Year picker visible");
 				$YearPicker = sap.ui.getCore().byId("Cal2").getAggregation("yearPicker").$();
 				aYears = $YearPicker.find(".sapUiCalItem");
-				equal(aYears.length, 9, "Calendar2: 9 years rendered");
-				equal(jQuery(aYears[0]).text(), "2010", "Calendar2: first displayed year");
-				equal(jQuery(aYears[4]).attr("tabindex"), "0", "Calendar2: 5. displayed year is focused");
+				equal(aYears.length, 20, "Calendar2: 20 years rendered");
+				equal(jQuery(aYears[0]).text(), "2004", "Calendar2: first displayed year");
+				equal(jQuery(aYears[10]).attr("tabindex"), "0", "Calendar2: 11. displayed year is focused");
 			});
 
 			test("change block", function() {
@@ -204,8 +207,8 @@
 				qutils.triggerEvent("click", "Cal2--Head-next");
 				$YearPicker = sap.ui.getCore().byId("Cal2").getAggregation("yearPicker").$();
 				aYears = $YearPicker.find(".sapUiCalItem");
-				equal(jQuery(aYears[0]).text(), "2019", "Calendar2: first displayed year");
-				equal(jQuery(aYears[4]).attr("tabindex"), "0", "Calendar2: 5. displayed year is focused");
+				equal(jQuery(aYears[0]).text(), "2024", "Calendar2: first displayed year");
+				equal(jQuery(aYears[10]).attr("tabindex"), "0", "Calendar2: 11. displayed year is focused");
 				qutils.triggerEvent("click", "Cal2--Head-B2");
 				ok(jQuery("#Cal2--YP").get(0), "Calendar2: Year picker still rendered after closing");
 				ok(!jQuery(jQuery("#Cal2--YP").get(0)).is(":visible"), "Calendar2: Year picker not visible after closing");

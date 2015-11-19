@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="utf-8" />
+	<title>qUnit Page for sap.ui.test.pipelines.MatcherPipeline</title>
+
+	<script
+			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-libs="sap.m">
+	</script>
+
+
+	<script>
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		jQuery.sap.require("sap.ui.thirdparty.sinon");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+		sap.ui.require([
+			"jquery.sap.global",
+			"sap/ui/test/pipelines/MatcherPipeline"
+		],
+		function($, MatcherPipeline){
+			"use strict";
+
+			QUnit.module("processing");
+
+			QUnit.test("Should process a single matcher", function(assert) {
+				// Arrange
+				var fnMatcher = this.stub().returns(true),
+						oControlStub = {};
+
+				// System under Test
+				var oPipeline = new MatcherPipeline();
+
+				// Act
+				var oResult = oPipeline.process({
+					control: oControlStub,
+					matchers: fnMatcher
+				});
+
+				// Assert
+				assert.strictEqual(oResult, oControlStub, "Returned the control passed into the pipeline");
+				sinon.assert.calledWith(fnMatcher, oControlStub);
+			});
+
+			QUnit.test("Should process multiple matchers", function(assert) {
+				// Arrange
+				var fnMatcher = this.stub().returns(true),
+					sTruthyString = "foo",
+					oMatcher = {
+						isMatching: function () {
+							return sTruthyString
+						}
+					},
+					fnThirdMatcher = this.stub().returns(true);
+
+				// System under Test
+				var oPipeline = new MatcherPipeline();
+
+				// Act
+				var sResult = oPipeline.process({
+					control: {},
+					matchers: [fnMatcher, oMatcher, fnThirdMatcher]
+				});
+
+				// Assert
+				assert.strictEqual(sResult, sTruthyString, "Returned the string of the second matcher");
+				sinon.assert.calledWith(fnThirdMatcher, sTruthyString);
+			});
+		});
+	</script>
+</head>
+
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+</body>
+
+</html>

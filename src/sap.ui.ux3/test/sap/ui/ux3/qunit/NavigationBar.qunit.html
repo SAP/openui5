@@ -124,7 +124,7 @@
 		});
 		
 		var expectedItemId;
-		test("Item selection (mouse)", function() {
+		asyncTest("Item selection (mouse)", function() {
 			expect(5); // including event handler
 			var oldSel = oCtrl.getSelectedItem();
 			equal(oldSel, item3.getId(), "item 3 should be selected"); // make sure previous selection is right
@@ -134,8 +134,12 @@
 			expectedItemId = item1.getId();
 			qutils.triggerMouseEvent(target, "click");
 			
-			var newSel = oCtrl.getSelectedItem();
-			equal(newSel, item1.getId(), "item 1 should be selected after clicking it"); // make sure selection is right after clicking
+			// wait selection animation to be finished
+			setTimeout(function(){
+				var newSel = oCtrl.getSelectedItem();
+				equal(newSel, item1.getId(), "item 1 should be selected after clicking it"); // make sure selection is right after clicking
+				start();
+			}, 600);
 		});
 
 		test("Render With Association", function() {
@@ -177,10 +181,8 @@
 			setTimeout(function(){
 				equal(isForwardVisible(), true, "forward arrow should be visible");
 				equal(isForwardEnabled(), true, "forward arrow should be enabled");
-				if (!sap.ui.Device.browser.internet_explorer) { // IE8 on the central server fails here for some reason, even though locally this works reliably
-					equal(isBackVisible(), true, "back arrow should be visible");
-					equal(isBackEnabled(), false, "back arrow should not be enabled");
-				}
+				equal(isBackVisible(), true, "back arrow should be visible");
+				equal(isBackEnabled(), false, "back arrow should not be enabled");
 				
 				jQuery.sap.byId("uiArea1").css("width", "800px");
 				setTimeout(function(){

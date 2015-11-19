@@ -116,13 +116,17 @@ sap.ui.define(['jquery.sap.global'],
 
 	FormLayoutRenderer.renderElement = function(rm, oLayout, oElement){
 
+		var oLabel = oElement.getLabelControl();
+
 		rm.write("<div");
 		rm.writeElementData(oElement);
 		rm.addClass("sapUiFormElement");
+		if (oLabel) {
+			rm.addClass("sapUiFormElementLbl");
+		}
 		rm.writeClasses();
 		rm.write(">");
 
-		var oLabel = oElement.getLabelControl();
 		if (oLabel) {
 			rm.renderControl(oLabel);
 		}

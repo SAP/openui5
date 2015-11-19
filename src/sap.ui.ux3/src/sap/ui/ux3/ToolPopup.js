@@ -267,43 +267,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			 * @returns {string} _sInitialFocusId that has been determined here
 			 * @private
 			 */
-			var fnGetInitialFocus = function (that) {
-				jQuery.sap.assert(!!that, "No ToolPopup instance given for fnGetInitialFocus");
-
-				var oElement;
-				var aTabbables = jQuery(":sapTabbable", that.$()).get();
+			var _fnGetInitialFocus = function (that) {
+				jQuery.sap.assert(!!that, "No ToolPopup instance given for _fnGetInitialFocus");
 
 				// if there is an initial focus it was already set to the Popup onBeforeRendering
 				if (!that._bFocusSet) {
-					// search the first tabbable element
-					if (aTabbables.length > 0) {
-						for (var i = 0; i < aTabbables.length; i++) {
-							if (aTabbables[i].id !== that._mParameters.firstFocusable &&
-								aTabbables[i].id !== that._mParameters.lastFocusable) {
-
-								oElement = aTabbables[i];
-								break;
-							}
-						}
-					}
-
-					// If a tabbable element is part of a control, focus the controls instead
-					var oFocusControl = jQuery(oElement).control();
-					if (oFocusControl[0]) {
-						var oFocusDomRef = oFocusControl[0].getFocusDomRef();
-						oElement = oFocusDomRef ? oFocusDomRef : oElement;
-					} else {
-						// if there is no tabbable element in the content use the first fake
-						// element to set the focus to the toolpopup
-						oElement = jQuery.sap.domById(that._mParameters.firstFocusable);
-					}
-
-					// oElement might not be available if this function is called during destroy
-					if (oElement) {
-						jQuery.sap.focus(oElement);
-						that._sInitialFocusId = oElement.id;
-					}
-
+					_fnGetNewFocusElement(that);
 				} else {
 					that._sInitialFocusId = that.oPopup._sInitialFocusId;
 				}
@@ -312,15 +281,75 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			};
 
 			/**
+			 * Determines the new element which will gain the focus.
+			 *
+			 * @param {sap.ui.ux3.ToolPopup} that to get/set instance values
+			 * @private
+             */
+			var _fnGetNewFocusElement = function(that) {
+				var oElement;
+                var oFocusControl;
+				var defaultFocusableElements = [that._mParameters.firstFocusable, that._mParameters.lastFocusable];
+                var aTabbables = jQuery(":sapTabbable", that.$()).get();
+
+				// search the first tabbable element
+				for (var i = 0; i < aTabbables.length; i++) {
+					if (defaultFocusableElements.indexOf(aTabbables[i].id) === -1) {
+						oElement = aTabbables[i];
+						break;
+					}
+				}
+
+				// If a tabbable element is part of a control, focus the control instead
+				oFocusControl = jQuery(oElement).control();
+				if (oFocusControl[0]) {
+					var oFocusDomRef = oFocusControl[0].getFocusDomRef();
+					oElement = oFocusDomRef || oElement;
+				} else {
+					// if there is no tabbable element in the content use the first fake
+					// element to set the focus to the toolpopup
+					oElement = jQuery.sap.domById(defaultFocusableElements[0]);
+				}
+
+				// oElement might not be available if this function is called during destroy
+				if (oElement) {
+					jQuery.sap.focus(oElement);
+					that._sInitialFocusId = oElement.id;
+				}
+			};
+
+			/**
+			 * Returns a DOM element by its Id.
+			 *
+			 * @param {Number} id
+			 * @returns {Element|sap.ui.core.Element|Object|sap.ui.core.tmpl.Template}
+             * @private
+             */
+			function _fnGetFocusElementById(id) {
+				var domElement = sap.ui.getCore().byId(id);
+				return domElement;
+			}
+
+			/**
 			 * Determines the focus DOM reference.
 			 *
 			 * @returns {string}
 			 * @private
 			 */
 			ToolPopup.prototype.getFocusDomRef = function () {
+				var domRefId;
+				var focusElement = _fnGetFocusElementById(this._sInitialFocusId);
+
 				// always determine the best initial focus stuff because content might
-				// have changed in the meantime
-				return fnGetInitialFocus(this);
+				// have changed in the mean time
+
+				if (!focusElement){
+					this._bFocusSet = false;
+					domRefId = _fnGetInitialFocus(this);
+					focusElement = _fnGetFocusElementById(domRefId);
+				}
+
+				return focusElement ? focusElement.getDomRef() : this.getDomRef();
 			};
 
 			/**
@@ -477,7 +506,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 				this._proxyFixSize();
 
 				if (!this._sInitialFocusId) {
-					var sInitFocusId = fnGetInitialFocus(this);
+					var sInitFocusId = _fnGetInitialFocus(this);
 
 					// Compare the initial focus id with the current focus that is
 					// stored in the FocusHandler in the core.
@@ -1008,7 +1037,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			};
 
 			ToolPopup.prototype.onBeforeRendering = function () {
-				var sInitialFocusId = this.getInitialFocus();
+				var sInitialFocusId = this.getInitialFocus() || this._sInitialFocusId;
 				var sDefaultButtontId = this.getDefaultButton();
 				this._bFocusSet = true;
 

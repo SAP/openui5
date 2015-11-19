@@ -140,6 +140,17 @@ sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./AnalyticalTreeBind
 		return this.oOData4SAPAnalyticsModel;
 	};
 	
+	/**
+	 * Set the model to be used by the ODataModelAdapter for providing access to analytical
+	 * extensions of the OData model. 
+	 *
+	 * @param {sap.ui.model.analytics.odata4analytics.Model} oOData4SAPAnalyticsModel The model to be used
+	 * @public
+	 */
+	ODataModelAdapter.prototype.setAnalyticalExtensions = function(oOData4SAPAnalyticsModel) {
+		this.oOData4SAPAnalyticsModel = oOData4SAPAnalyticsModel;
+	};
+	
 	return ODataModelAdapter;
 
 }, /* bExport= */ true);

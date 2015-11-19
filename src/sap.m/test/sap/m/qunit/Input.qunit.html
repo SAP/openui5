@@ -192,11 +192,11 @@
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API 
 		oInput._$input.focus().val("abc").trigger("input");
-		this.clock.tick(1000);
+		this.clock.tick(300);
 		oPopup = oInput._oSuggestionPopup;
 
 		sap.ui.test.qunit.triggerTouchEvent("tap", oPopup.getContent()[0].getItems()[1].getDomRef());
-		this.clock.tick(1000);
+		this.clock.tick(300);
 
 		oInput.destroy();
 	});
@@ -394,7 +394,7 @@
 			
 			oInput.onfocusin();
 			oInput._$input.focus().val("abc").trigger("input");
-			this.clock.tick(1000);
+			this.clock.tick(300);
 	
 			ok(oInput._oSuggestionPopup && oInput._oSuggestionPopup.isOpen && oInput._oSuggestionPopup.isOpen(), "Suggestion Popup is open now");
 			sap.ui.test.qunit.triggerKeydown(oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ARROW_DOWN);
@@ -614,7 +614,7 @@
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API 
 		oInput._$input.focus().val("De").trigger("input");
-		this.clock.tick(1000);
+		this.clock.tick(300);
 
 		oInput.destroy();
 
@@ -637,7 +637,7 @@
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API 
 		oInput._$input.focus().val("abc").trigger("input");
-		this.clock.tick(1000);
+		this.clock.tick(300);
 
 		// suggestions are not active, list and popup should not be initialized
 		strictEqual(oInput._oList, undefined, "The internal list is not initialzed when suggestions are set to false");
@@ -665,7 +665,7 @@
 		oInput6.onfocusin(); // for some reason this is not triggered when calling focus via API 
 		oInput6._$input.focus().val("abc").trigger("input");
 
-		this.clock.tick(1000);
+		this.clock.tick(300);
 
 		oPopup = oInput6._oSuggestionPopup;
 		ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
@@ -680,7 +680,7 @@
 
 		//close the popoup when nothing is typed in input
 		oInput6._$input.focus().val("").trigger("input");
-		this.clock.tick(1000);
+		this.clock.tick(300);
 		ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 		equal(oPopup.getContent()[0].getItems().length, 0, "Suggestions are destroyed");
 
@@ -709,7 +709,7 @@
 		// Enter key is pressed directly after typing "abc"
 		sap.ui.test.qunit.triggerKeyboardEvent(oInput._$input[0], jQuery.sap.KeyCodes.ENTER);
 
-		this.clock.tick(1000);
+		this.clock.tick(300);
 
 		equal(oSpy.callCount, 0, "Suggest event listener shouldn't be called")
 
@@ -748,7 +748,7 @@
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API 
 		oInput._$input.focus().val("abc").trigger("input");
 
-		this.clock.tick(1000);
+		this.clock.tick(300);
 
 		oPopup = oInput._oSuggestionPopup;
 		ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
@@ -789,7 +789,7 @@
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API 
 		oInput._$input.focus().val("abc").trigger("input");
 
-		this.clock.tick(1000);
+		this.clock.tick(300);
 
 		oPopup = oInput._oSuggestionPopup;
 		ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
@@ -800,6 +800,8 @@
 
 		oItem.focus();
 		oItem.$().trigger("tap");
+
+		this.clock.tick(50);
 
 		equal(fnCallback.callCount, 1, "change event handler only called once");
 		var spyCall = fnCallback.getCall(0);
@@ -839,7 +841,7 @@
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API 
 		oInput._$input.focus().val("abc").trigger("input");
 
-		this.clock.tick(1000);
+		this.clock.tick(300);
 
 		oPopup = oInput._oSuggestionPopup;
 		ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
@@ -874,7 +876,7 @@
 		oInput7.onfocusin(); // for some reason this is not triggered when calling focus via API 
 		oInput7._$input.focus().val("abc").trigger("input");
 
-		this.clock.tick(1000);
+		this.clock.tick(300);
 		oPopup1 = oInput7._oSuggestionPopup;
 
 		ok(oPopup1 instanceof sap.m.Popover, "Two Value Suggestion Popup is created and is a Popover instance");
@@ -890,7 +892,7 @@
 		//trigger selection
 		var oList = oPopup1.getContent()[0];
 		var oListItem = oList.getItems()[0];
-		oList.fireSelectionChange({
+		oList.fireItemPress({
 			listItem : oListItem
 		});
 		
@@ -899,7 +901,7 @@
 		
 		//close the popoup when nothing is typed in input
 		oInput7._$input.focus().val("").trigger("input");
-		this.clock.tick(1000);
+		this.clock.tick(300);
 		ok(!oPopup1.isOpen(), "Two Value Suggestion Popup is closed");
 		equal(oPopup1.getContent()[0].getItems().length, 0, "Suggestions are destroyed");
 
@@ -934,7 +936,7 @@
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API 
 		oInput._$input.focus().val("abc").trigger("input");
 
-		this.clock.tick(1000);
+		this.clock.tick(300);
 		oPopup = oInput._oSuggestionPopup;
 
 		ok(oPopup instanceof sap.m.Popover, "Two Value Suggestion Popup is created and is a Popover instance");
@@ -1073,7 +1075,7 @@
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.focus().val("Prod").trigger("input");
 
-		this.clock.tick(1000);
+		this.clock.tick(300);
 		oPopup = oInput._oSuggestionPopup;
 
 		ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
@@ -1096,13 +1098,19 @@
 
 		//close the popoup when nothing is typed in input
 		oInput._$input.focus().val("").trigger("input");
-		this.clock.tick(1000);
+		this.clock.tick(300);
 		ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 
 		oInput.destroy();
 	});
 
 	test("Suggestion on Phone", function(){
+
+		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
+			ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
+			return;
+		}
+
 		var oSystem = {
 				desktop: false,
 				phone: true,
@@ -1165,6 +1173,12 @@
 	});
 
 	test("Suggestion on Phone with changing the input value in SuggestionItemSelected event handler", function(){
+
+		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
+			ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
+			return;
+		}
+
 		var oSystem = {
 				desktop: false,
 				phone: true,
@@ -1212,6 +1226,12 @@
 	});
 
 	test("Two value Suggestion on Phone", function(){
+
+		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
+			ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
+			return;
+		}
+
 		var oSystem = {
 				desktop: false,
 				phone: true,
@@ -1274,6 +1294,12 @@
 	});
 
 	test("Suggestion with liveChange handler on phone", function(){
+
+		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
+			ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
+			return;
+		}
+
 		var fnLC1 = this.spy();
 
 		var oSystem = {
@@ -1304,6 +1330,12 @@
 	});
 
 	test("SuggestionPopup shouldn't invalidate when insert suggest item on phone", function(){
+
+		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
+			ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
+			return;
+		}
+
 		var oSystem = {
 				desktop: false,
 				phone: true,
@@ -1454,7 +1486,7 @@
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.focus().val("Prod").trigger("input");
 
-		this.clock.tick(1000);
+		this.clock.tick(300);
 		oPopup = oInput._oSuggestionPopup;
 
 		ok(oPopup instanceof sap.m.Popover, "Suggestion Popup is created and is a Popover instance");
@@ -1485,7 +1517,7 @@
 
 		//close the popoup when nothing is typed in input
 		oInput._$input.focus().val("").trigger("input");
-		this.clock.tick(1000);
+		this.clock.tick(300);
 		ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 
 		oInput.destroy();
@@ -1602,7 +1634,7 @@
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.focus().val("Prod").trigger("input");
 
-		this.clock.tick(1000);
+		this.clock.tick(300);
 		oPopup = oInput._oSuggestionPopup;
 
 		// set up a spy on the dialog's renderer (the dialog should not be rerendered)
@@ -1635,7 +1667,7 @@
 
 		//close the popoup when nothing is typed in input
 		oInput._$input.focus().val("").trigger("input");
-		this.clock.tick(1000);
+		this.clock.tick(300);
 		ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 
 		// check for re-rendering when changing "showSuggestion" property
@@ -1648,6 +1680,11 @@
 	});
 
 	test("Tabular Suggestion on Phone", function(){
+
+		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
+			ok(true, "Do not test phone functionality in unsupported versions of Internet Explorer");
+			return;
+		}
 		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		var bPhantomJS = sap.ui.Device.browser.phantomJS;
@@ -1773,7 +1810,7 @@
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.focus().trigger("click");
-		this.clock.tick(1000);
+		this.clock.tick(300);
 
 		oPopup = oInput._oSuggestionPopup;
 		ok(oPopup instanceof sap.m.Dialog, "Suggestion Popup is created and is a Dialog instance");
@@ -1835,7 +1872,7 @@
 
 		oPopup.getContent()[0].getItems()[1].$().trigger("tap");
 
-		this.clock.tick(1000);
+		this.clock.tick(300);
 		ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 		equal(oInput.getValue(), oSuggestionData.tabularSuggestionItems[1].name, "Value is set to originalInput");
 
@@ -1963,7 +2000,7 @@
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.focus().val("25").trigger("input");
 
-		this.clock.tick(1000);
+		this.clock.tick(300);
 		oPopup = oInput._oSuggestionPopup;
 
 		ok(oPopup.isOpen(), "Suggestion Popup is open now");
@@ -1976,13 +2013,13 @@
 		// TODO: trigger selection with pseudo-events here
 		//oPopup.getContent()[0].getItems()[1].$().trigger("click");
 		oPopup.getContent()[0]._fireSelectionChangeEvent([oPopup.getContent()[0].getItems()[1]]);
-		this.clock.tick(1000);
+		this.clock.tick(300);
 		ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 		equal(oInput.getValue(), "You chose: " + oSuggestionData.tabularSuggestionItems[1].limit, "The input value has been formatted with the custom row result function");
 
 		//close the popoup when nothing is typed in input
 		oInput._$input.focus().val("").trigger("input");
-		this.clock.tick(1000);
+		this.clock.tick(300);
 		ok(!oPopup.isOpen(), "Suggestion Popup is closed");
 
 		oInput.destroy();

@@ -6,7 +6,7 @@
 sap.ui.define([],
 	function() {
 	"use strict";
-	
+
 	return {
 		aggregations : {
 			formContainers : {
@@ -18,9 +18,7 @@ sap.ui.define([],
 					}
 				}
 			}
-		},
-		name: "{name}",
-		description: "{description}"
+		}
 	};
-	
-}, /* bExport= */ true);
+
+}, /* bExport= */ false);

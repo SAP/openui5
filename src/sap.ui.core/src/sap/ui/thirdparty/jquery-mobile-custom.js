@@ -731,13 +731,19 @@ jQuery.mobile.orientationChangeEnabled = true;
 
 	$.extend( $.find, oldFind );
 
-	$.find.matches = function( expr, set ) {
-		return $.find( expr, null, null, set );
-	};
-
-	$.find.matchesSelector = function( node, expr ) {
-		return $.find( expr, null, null, [ node ] ).length > 0;
-	};
+	// SAP MODIFICATION: the following two functions "$.find.matches" and "$.find.matchesSelector" are commented out
+	// because they are not compatible with the existing version before overwritten when a focused DIV element is
+	// checked by using jQuery(oneDIVElement).is(":focus"). it returns false instead of true. We use the check in
+	// sap.ui.core.FocusHandler to store the previous focused control before it gets rerendered. Therefore they are
+	// commented out in order to make the restoring of focus after rerendering still work.
+	//
+	// $.find.matches = function( expr, set ) {
+	// 	return $.find( expr, null, null, set );
+	// };
+	//
+	// $.find.matchesSelector = function( node, expr ) {
+	// 	return $.find( expr, null, null, [ node ] ).length > 0;
+	// };
 })( jQuery, this );
 
 
@@ -1667,7 +1673,13 @@ function handleTouchEnd( event ) {
 			clickBlockList.push({
 				touchID: lastTouchID,
 				x: t.clientX,
-				y: t.clientY,
+				// SAP MODIFICATION
+				// On mobile device, the entire UI may be shifted up after the on screen keyboard
+				// is open. The Y-axis value may be different between the touch event and the delayed
+				// mouse event. Therefore it's needed to take the window.scrollY which represents how
+				// far the window is shifted up into the calculation of y-axis value to make sure that
+				// the delayed mouse event can be correctly marked.
+				y: t.clientY + window.scrollY,
 				// SAP MODIFICATION
 				// the touchend event target is needed by suppressing mousedown, mouseup, click event
 				target: event.target
@@ -1828,7 +1840,13 @@ if ( eventCaptureSupported ) {
 
 		if ( cnt ) {
 			x = e.clientX;
-			y = e.clientY;
+			// SAP MODIFICATION
+			// On mobile device, the entire UI may be shifted up after the on screen keyboard
+			// is open. The Y-axis value may be different between the touch event and the delayed
+			// mouse event. Therefore it's needed to take the window.scrollY which represents how
+			// far the window is shifted up into the calculation of y-axis value to make sure that
+			// the delayed mouse event can be correctly marked.
+			y = e.clientY + window.scrollY;
 			threshold = $.vmouse.clickDistanceThreshold;
 
 			// The idea here is to run through the clickBlockList to see if
@@ -2053,7 +2071,8 @@ if ( eventCaptureSupported ) {
 		verticalDistanceThreshold: 75,  // Swipe vertical displacement must be less than this.
 
 		start: function( event ) {
-			var data = event.originalEvent.touches ?
+			// SAP MODIFICATION: if jQuery event is created programatically there's no originalEvent property. Therefore the existence of event.originalEvent needs to be checked.
+			var data = event.originalEvent && event.originalEvent.touches ?
 					event.originalEvent.touches[ 0 ] : event;
 			return {
 						time: ( new Date() ).getTime(),
@@ -2063,7 +2082,8 @@ if ( eventCaptureSupported ) {
 		},
 
 		stop: function( event ) {
-			var data = event.originalEvent.touches ?
+			// SAP MODIFICATION: if jQuery event is created programatically there's no originalEvent property. Therefore the existence of event.originalEvent needs to be checked.
+			var data = event.originalEvent && event.originalEvent.touches ?
 					event.originalEvent.touches[ 0 ] : event;
 			return {
 						time: ( new Date() ).getTime(),

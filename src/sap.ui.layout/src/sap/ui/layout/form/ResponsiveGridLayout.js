@@ -11,7 +11,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	 * Constructor for a new <code>sap.ui.layout.form.ResponsiveGridLayout</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * Renders a <code>Form</code> using a responsive grid. Internally the <code>Grid</code> control is used for rendering.
@@ -20,13 +20,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	 * This behavior can be influenced by the properties of this layout control.
 	 *
 	 * On the <code>FormContainers</code>, labels and content fields, <code>GridData</code> can be used to change the default rendering.
-	 * <code>GridData</code> are not supported for <code>FormElements</code>.
+	 * <code>GridData</code> is not supported for <code>FormElements</code>.
 	 *
-	 * <b>Note:</b> If <code>GridData</code> are used, this may result in a much more complex layout than the default one.
+	 * <b>Note:</b> If <code>GridData</code> is used, this may result in a much more complex layout than the default one.
 	 * This means that in some cases, the calculation for the other content may not bring the expected result.
 	 * In such cases, <code>GridData</code> should be used for all content controls to disable the default behavior.
 	 *
-	 * This control cannot be used stand alone, it only renders a <code>Form</code>, so it must be assigned to a <code>Form</code>.
+	 * This control cannot be used standalone, it only renders a <code>Form</code>, so it must be assigned to a <code>Form</code>.
 	 * @extends sap.ui.layout.form.FormLayout
 	 * @version ${version}
 	 *
@@ -40,11 +40,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 		library : "sap.ui.layout",
 		properties : {
+			
+			/**
+			 * Default span for labels in extra large size.
+			 *
+			 * <b>Note:</b> If the default value -1 is not overwritten with the meaningful one then the <code>labelSpanL</code> value is used.
+			 * @since 1.34.0
+			 */
+			labelSpanXL : {type : "int", group : "Misc", defaultValue : -1},
 
 			/**
 			 * Default span for labels in large size.
 			 *
-			 * <b>Note:</b> If <code>adjustLabelSpanThis</code> is set this property is only used if more than 1 <code>FormContainer</code> is in one line. If only 1 <code>FormContainer</code> is in the line, then the <code>labelSpanM</code> value is used.
+			 * <b>Note:</b> If <code>adjustLabelSpanThis</code> is set, this property is only used if more than 1 <code>FormContainer</code> is in one line. If only 1 <code>FormContainer</code> is in the line, then the <code>labelSpanM</code> value is used.
 			 * @since 1.16.3
 			 */
 			labelSpanL : {type : "int", group : "Misc", defaultValue : 4},
@@ -64,18 +72,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			labelSpanS : {type : "int", group : "Misc", defaultValue : 12},
 
 			/**
-			 * If set the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent of the number of <code>FormContainer</code> in one row.
-			 * If only one <code>FormContainer</code> is displayed in one row <code>labelSpanM</code> is used to define the size of the label.
+			 * If set, the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the number of <code>FormContainers</code> in one row.
+			 * If only one <code>FormContainer</code> is displayed in one row, <code>labelSpanM</code> is used to define the size of the label.
 			 * This is the same for medium and large <code>Forms</code>.
-			 * This is done to align the labels on forms where full-size <code>FormContainers</code> and more-column rows are used in the same <code>Form</code>.
-			 * (Because every <code>FormContainer</code> has it's own grid inside.)
+			 * This is done to align the labels on forms where full-size <code>FormContainers</code> and multiple-column rows are used in the same <code>Form</code>
+			 * (because every <code>FormContainer</code> has its own grid inside).
 			 *
-			 * If not set the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the <code>Form</code> size.
+			 * If not set, the usage of <code>labelSpanL</code> and <code>labelSpanM</code> are dependent on the <code>Form</code> size.
 			 * The number of <code>FormContainers</code> doesn't matter in this case.
 			 * @since 1.34.0
 			 */
 			adjustLabelSpan : {type : "boolean", group : "Misc", defaultValue : true},
 
+			/**
+			 * Number of grid cells that are empty at the end of each line on extra large size. 
+			 * 
+			 * <b>Note:</b> If the default value -1 is not overwritten with the meaningful one then the <code>emptySpanL</code> value is used.
+			 * @since 1.34.0
+			 */
+			emptySpanXL : {type : "int", group : "Misc", defaultValue : -1},
+			
 			/**
 			 * Number of grid cells that are empty at the end of each line on large size.
 			 * @since 1.16.3
@@ -95,9 +111,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			emptySpanS : {type : "int", group : "Misc", defaultValue : 0},
 
 			/**
+			 * Number of columns for extra large size.
+			 *
+			 * The number of columns for extra large size must not be smaller than the number of columns for large size.
+			 * <b>Note:</b> If the default value -1 is not overwritten with the meaningful one then the <code>columnsL</code> value is used (from the backward compatibility reasons).
+			 * @since 1.34.0
+			 */
+			columnsXL : {type : "int", group : "Misc", defaultValue : -1},
+			
+			/**
 			 * Number of columns for large size.
 			 *
-			 * The number of columns for large size must not be smaller than the number of columns for medium size
+			 * The number of columns for large size must not be smaller than the number of columns for medium size.
 			 * @since 1.16.3
 			 */
 			columnsL : {type : "int", group : "Misc", defaultValue : 2},
@@ -111,12 +136,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			/**
 			 * If the <code>Form</code> contains only one single <code>FormContainer</code> and this property is set,
 			 * the <code>FormContainer</code> is displayed using the full size of the <code>Form</code>.
-			 * In this case the properties <code>columnsL</code> and <code>columnsM</code> are ignored.
+			 * In this case the properties <code>columnsXL</code>, <code>columnsL</code> and <code>columnsM</code> are ignored.
 			 *
 			 * In all other cases the <code>FormContainer</code> is displayed in the size of one column.
 			 * @since 1.34.0
 			 */
 			singleContainerFullSize : {type : "boolean", group : "Misc", defaultValue : true},
+			
+			/**
+			 * Breakpoint (in pixel) between large size and extra large (XL) size.
+			 * @since 1.34.0
+			 */
+			breakpointXL : {type : "int", group : "Misc", defaultValue : 1440},
 
 			/**
 			 * Breakpoint (in pixel) between Medium size and Large size.
@@ -134,8 +165,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 	/*
 	 * The ResponsiveGridLayout uses Grid controls to render the Form
-	 * If more than one FormContainer is used there is an outer Grid (mainGrid) that holds the FormContainers
-	 * Each FormContainer holds it's own Grid where the FormElements content is placed.
+	 * If more than one FormContainer is used, there is an outer Grid (mainGrid) that holds the FormContainers.
+	 * Each FormContainer holds its own Grid where the FormElements content is placed.
 	 * If a FormContainer has a Title or is expandable it is rendered as a ResponsiveGridLayoutPanel.
 	 * The panels and Grid layouts are stored in this.mContainers. This has the following structure:
 	 * - For each FormContainer there is an entry inside the object. (this.mContainers[FormContainerId])
@@ -145,7 +176,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 	 *          - the getLayoutData function of this Grid is overwritten to get the LayoutData of the FormContainer
 	 *            (If no panel is used)
 	 *
-	 * It must be made sure to hold this object up to date. So it is filled onBeforeRendering. Entries no longer used are deleted
+	 * It must make sure that this object is kept up to date, so for this reason it is filled onBeforeRendering. Entries that are no longer used are deleted.
 	 *
 	*/
 
@@ -251,8 +282,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 			this.mContainers = {}; //association of container to panel and Grid
 			this.oDummyLayoutData = new GridData(this.getId() + "--Dummy");
-			this.SPANPATTERN = /^([X][L](?:[1-9]|1[0-2]))? ?([L](?:[1-9]|1[0-2]))? ?([M](?:[1-9]|1[0-2]))? ?([S](?:[1-9]|1[0-2]))?$/i;
-
 		};
 
 		ResponsiveGridLayout.prototype.exit = function(){
@@ -307,7 +336,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		};
 
 		/*
-		 * If onAfterRendering of a field is processed the width must be set to 100% (if no other width set)
+		 * If onAfterRendering of a field is processed, the width must be set to 100% (if no other width set)
 		 */
 		ResponsiveGridLayout.prototype.contentOnAfterRendering = function(oFormElement, oControl){
 
@@ -363,7 +392,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		};
 
 		/**
-		 * As Elements must not have a DOM reference it is not sure if one exists.
+		 * As Elements must not have a DOM reference it is not clear if one exists.
 		 * If the <code>FormContainer</code> has a title or is expandable an internal panel is rendered.
 		 * In this case, the panel's DOM reference is returned, otherwise the DOM reference
 		 * of the <code>Grid</code> rendering the container's content.
@@ -392,7 +421,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		};
 
 		/**
-		 * As Elements must not have a DOM reference it is not sure if one exists.
+		 * As Elements must not have a DOM reference it is not clear if one exists.
 		 * In this Layout a <code>FormElement</code> has no DOM representation,
 		 * so null will always be returned
 		 * @param {sap.ui.layout.form.FormElement} oElement <code>FormElement</code>
@@ -498,7 +527,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		}
 
 		/*
-		 * clear variables before delete it
+		 * clear content before delete panel
 		 */
 		function _deletePanel( oPanel ) {
 
@@ -552,7 +581,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				var oLabel = oElement.getLabelControl();
 				if (oLD) {
 					if (oLabel == oControl) {
-						oLD._setStylesInternal("sapUiFormResGridLbl");
+						oLD._setStylesInternal("sapUiFormElementLbl");
 					}
 					return oLD;
 				} else {
@@ -564,7 +593,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 					var iLabelLSpan = oLayout.getLabelSpanL();
 					var iLabelMSpan = oLayout.getLabelSpanM();
 					var iLabelSSpan = oLayout.getLabelSpanS();
-
+					
+					// If no explicit value of Label span for XL is set then the value of the Label span for L is used (from the backwardcompatibility reasons).
+					var iLabelXLSpan = oLayout.getLabelSpanXL();
+					if (iLabelXLSpan < 0) {
+						iLabelXLSpan = iLabelLSpan;
+					}
+					
 					if (oLayout.getAdjustLabelSpan()) {
 						if (oForm.getFormContainers().length >= 1 && oLayout.getColumnsM() > 1) {
 							// More than one Container in line
@@ -585,14 +620,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 					}
 
 					if (oLabel == oControl) {
-						oLayout.oDummyLayoutData.setSpan("L" + iLabelLSpan + " M" + iLabelMSpan + " S" + iLabelSSpan);
+						oLayout.oDummyLayoutData.setSpan("XL" + iLabelXLSpan + " L" + iLabelLSpan + " M" + iLabelMSpan + " S" + iLabelSSpan);
 						oLayout.oDummyLayoutData.setLinebreak(true);
-						oLayout.oDummyLayoutData._setStylesInternal("sapUiFormResGridLbl");
+						oLayout.oDummyLayoutData._setStylesInternal("sapUiFormElementLbl");
 						return oLayout.oDummyLayoutData;
 					} else {
 						var iLSpan = 12 - oLayout.getEmptySpanL();
 						var iMSpan = 12 - oLayout.getEmptySpanM();
 						var iSSpan = 12 - oLayout.getEmptySpanS();
+						
+						// If no explicit value for XL empty span is set then the value of the L empty span is used (from the backwardcompatibility reasons).
+						var iXLSpan = iLSpan;
+						var iEmptyXLSpan = oLayout.getEmptySpanXL();
+						if (iEmptyXLSpan > -1) {
+							iXLSpan = 12 - iEmptyXLSpan;
+						}
+						
 						var iEffectiveSpan;
 						if (oLabel) {
 							var oLabelLD = oLayout.getLayoutDataForElement(oLabel, "sap.ui.layout.GridData");
@@ -601,6 +644,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 								if (iEffectiveSpan) {
 									iLabelLSpan = iEffectiveSpan;
 								}
+								
+								iEffectiveSpan = oLabelLD._getEffectiveSpanXLarge();
+								if (iEffectiveSpan) {
+									iLabelXLSpan = iEffectiveSpan;
+								}
+								if (iLabelXLSpan < 0) {
+									iLabelXLSpan = iLabelLSpan;
+								}
+								
 								iEffectiveSpan = oLabelLD._getEffectiveSpanMedium();
 								if (iEffectiveSpan) {
 									iLabelMSpan = iEffectiveSpan;
@@ -609,6 +661,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 								if (iEffectiveSpan) {
 									iLabelSSpan = iEffectiveSpan;
 								}
+							}
+							
+							
+							if (iLabelXLSpan < 12) {
+								iXLSpan = iXLSpan - iLabelXLSpan;
 							}
 							if (iLabelLSpan < 12) {
 								iLSpan = iLSpan - iLabelLSpan;
@@ -636,6 +693,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 									if (iEffectiveSpan && iEffectiveSpan < iLSpan) {
 										iLSpan = iLSpan - iEffectiveSpan;
 									}
+									
+									var iEffectiveSpanXL = oFieldLD._getEffectiveSpanXLarge();
+									if (iEffectiveSpanXL) {
+										if (iEffectiveSpanXL < iXLSpan) {
+											iXLSpan = iXLSpan - iEffectiveSpanXL;
+										}
+									} else {
+										if (iEffectiveSpan && iEffectiveSpan < iXLSpan) {
+											iXLSpan = iXLSpan - iEffectiveSpan;
+										}
+									}
+									
 									iEffectiveSpan = oFieldLD._getEffectiveSpanMedium();
 									if (iEffectiveSpan && iEffectiveSpan < iMSpan) {
 										iMSpan = iMSpan - iEffectiveSpan;
@@ -653,9 +722,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 								}
 							}
 						}
-						var iMyLSpan, iMyMSpan, iMySSpan = 12;
+						var iMyXLSpan, iMyLSpan, iMyMSpan, iMySSpan = 12;
 						if (bFirstField) {
-							var iRest = iLSpan - Math.floor(iLSpan / iDefaultFields) * iDefaultFields;
+							var iRest = iXLSpan - Math.floor(iXLSpan / iDefaultFields) * iDefaultFields;
+							iMyXLSpan = Math.floor(iXLSpan / iDefaultFields) + iRest;
+							iRest = iLSpan - Math.floor(iLSpan / iDefaultFields) * iDefaultFields;
 							iMyLSpan = Math.floor(iLSpan / iDefaultFields) + iRest;
 							iRest = iMSpan - Math.floor(iMSpan / iDefaultFields) * iDefaultFields;
 							iMyMSpan = Math.floor(iMSpan / iDefaultFields) + iRest;
@@ -665,6 +736,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 								iMySSpan = Math.floor(iSSpan / iDefaultFields) + iRest;
 							}
 						} else {
+							iMyXLSpan = Math.floor(iXLSpan / iDefaultFields);
 							iMyLSpan = Math.floor(iLSpan / iDefaultFields);
 							iMyMSpan = Math.floor(iMSpan / iDefaultFields);
 							if (iLabelSSpan < 12) {
@@ -673,7 +745,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 							}
 						}
 
-						oLayout.oDummyLayoutData.setSpan("L" + iMyLSpan + " M" + iMyMSpan + " S" + iMySSpan);
+						oLayout.oDummyLayoutData.setSpan("XL" + iMyXLSpan + " L" + iMyLSpan + " M" + iMyMSpan + " S" + iMySSpan);
 						oLayout.oDummyLayoutData.setLinebreak(bFirstField && !oLabel);
 						oLayout.oDummyLayoutData._setStylesInternal(undefined);
 						return oLayout.oDummyLayoutData;
@@ -715,12 +787,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 							this._toggleClass("Phone");
 						} else if ((iCntWidth > oLayout.getBreakpointM()) && (iCntWidth <= oLayout.getBreakpointL())) {
 							this._toggleClass("Tablet");
-						} else {
+						} else if ((iCntWidth > oLayout.getBreakpointL()) && (iCntWidth <= oLayout.getBreakpointXL())) {
 							this._toggleClass("Desktop");
+						} else {
+							this._toggleClass("LargeDesktop");
 						}
 					} else {
 						this._setBreakPointTablet(oLayout.getBreakpointM());
 						this._setBreakPointDesktop(oLayout.getBreakpointL());
+						this._setBreakPointLargeDesktop(oLayout.getBreakpointXL());
 						this._onParentResizeOrig();
 					}
 				} else {
@@ -730,8 +805,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 						this._toggleClass("Phone");
 					} else if ($DomRefMain.hasClass("sapUiRespGridMedia-Std-Tablet")) {
 						this._toggleClass("Tablet");
-					} else {
+					} else if ($DomRefMain.hasClass("sapUiRespGridMedia-Std-Desktop")) {
 						this._toggleClass("Desktop");
+					} else {
+						this._toggleClass("LargeDesktop");
 					}
 				}
 			};
@@ -750,7 +827,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 		}
 
 		/*
-		 * clear variables before delete it
+		 * clear internal variables before delete grid
 		 */
 		function _deleteGrid( oGrid ) {
 
@@ -802,12 +879,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			} else {
 				oLayout = oControl.__myParentLayout;
 			}
-
-			var iColumnsL = oLayout.getColumnsL();
+	
 			var iColumnsM = oLayout.getColumnsM();
+			var iColumnsL = oLayout.getColumnsL();
+			// If the columsnXL is not set the value of columnsL is used
+			var iColumnsXL = oLayout.getColumnsXL();
+			if (iColumnsXL < 0) {
+				iColumnsXL = iColumnsL;
+			}
+			
+			
 			var oLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.GridData");
 			if (!oLD) {
 				// only needed if container has no own LayoutData
+				var bLinebreakXL = (iVisibleContainer % iColumnsXL) == 1;
+				var bLastXL = (iVisibleContainer % iColumnsXL) == 0;
+				var bLastRowXL = iVisibleContainer > (iVisibleContainers - iColumnsXL + (iVisibleContainers % iColumnsXL));
 				var bLinebreakL = (iVisibleContainer % iColumnsL) == 1;
 				var bLastL = (iVisibleContainer % iColumnsL) == 0;
 				var bLastRowL = iVisibleContainer > (iVisibleContainers - iColumnsL + (iVisibleContainers % iColumnsL));
@@ -817,6 +904,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 				if (oContainerNext) {
 					var oLDNext = oLayout.getLayoutDataForElement(oContainerNext, "sap.ui.layout.GridData");
+					if (oLDNext && ( oLDNext.getLinebreak() || oLDNext.getLinebreakXL() )) {
+						bLastXL = true;
+						bLastRowXL = false;
+					}
 					if (oLDNext && ( oLDNext.getLinebreak() || oLDNext.getLinebreakL() )) {
 						bLastL = true;
 						bLastRowL = false;
@@ -828,7 +919,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				}
 
 				var sStyle = "";
+				
+				if (bLastXL) {
+					sStyle = "sapUiFormResGridLastContXL";
+				}
 				if (bLastL) {
+					if (sStyle) {
+						sStyle = sStyle + " ";
+					}
 					sStyle = "sapUiFormResGridLastContL";
 				}
 				if (bLastM) {
@@ -836,6 +934,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 						sStyle = sStyle + " ";
 					}
 					sStyle = sStyle + "sapUiFormResGridLastContM";
+				}
+				
+				if (bLastRowXL) {
+					if (sStyle) {
+						sStyle = sStyle + " ";
+					}
+					sStyle = sStyle + "sapUiFormResGridLastRowXL";
 				}
 				if (bLastRowL) {
 					if (sStyle) {
@@ -852,9 +957,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 				oLD = oControl.getLayoutData();
 				if (!oLD) {
-					oLD = new GridData(oControl.getId() + "--LD", { linebreakL: bLinebreakL, linebreakM: bLinebreakM });
+					oLD = new GridData(oControl.getId() + "--LD", { linebreakXL: bLinebreakXL, linebreakL: bLinebreakL, linebreakM: bLinebreakM });
 					oControl.setLayoutData( oLD );
 				} else {
+					oLD.setLinebreakXL(bLinebreakXL);
 					oLD.setLinebreakL(bLinebreakL);
 					oLD.setLinebreakM(bLinebreakM);
 				}
@@ -904,11 +1010,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 			// special case: only one container -> do not render an outer ResponsiveFlowLayout
 			if (iLength > 1 || !oLayout.getSingleContainerFullSize()) {
-				var iSpanL = Math.floor(12 / oLayout.getColumnsL());
 				var iSpanM = Math.floor(12 / oLayout.getColumnsM());
+				var iSpanL = Math.floor(12 / oLayout.getColumnsL());
+				
+				// If the columsnXL is not set the value of columnsL is used
+				var iColumnsXL = oLayout.getColumnsXL();
+				if (iColumnsXL < 0) {
+					iColumnsXL = oLayout.getColumnsL();
+				}
+				
+				var iSpanXL = Math.floor(12 / iColumnsXL);
 				if (!oLayout._mainGrid) {
 					oLayout._mainGrid = new Grid(oForm.getId() + "--Grid",{
-						defaultSpan: "L" + iSpanL + " M" + iSpanM + " S12",
+						defaultSpan: "XL" + iSpanXL + " L" + iSpanL + " M" + iSpanM + " S12",
 						hSpacing: 0,
 						vSpacing: 0,
 						containerQuery: true
@@ -925,7 +1039,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 					};
 				} else {
-					oLayout._mainGrid.setDefaultSpan("L" + iSpanL + " M" + iSpanM + " S12");
+					oLayout._mainGrid.setDefaultSpan("XL" + iSpanXL + " L" + iSpanL + " M" + iSpanM + " S12");
 					// update containers
 					var aLayoutContent = oLayout._mainGrid.getContent();
 					iContentLenght = aLayoutContent.length;
@@ -974,6 +1088,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				}
 				oLayout._mainGrid._setBreakPointTablet(oLayout.getBreakpointM());
 				oLayout._mainGrid._setBreakPointDesktop(oLayout.getBreakpointL());
+				oLayout._mainGrid._setBreakPointLargeDesktop(oLayout.getBreakpointXL());
 				oLayout._mainGrid.__bIsUsed = true;
 
 				if (iContentLenght < iLength) {

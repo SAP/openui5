@@ -40,7 +40,7 @@
 		"test/arrangement/DeleteProductJourneyArrangement.js",
 		"test/assertion/BuyProductJourneyAssertion.js",
 		"test/opaTestsWithIFrame.qunit.html",
-		"test/opaTestWithComponent.qunit.html",
+		"test/opaTestsWithComponent.qunit.html",
 		"test/pageobjects/Cart.js",
 		"test/pageobjects/Category.js",
 		"test/pageobjects/Dialog.js",

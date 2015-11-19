@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.AggregationOverlay</title>
+
+		<style>
+			#content {
+				position: absolute;
+				left: 400px;
+				top : 10px;
+				width: 500px;
+				height: 500px;
+			}
+		</style>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+			jQuery.sap.require("sap.ui.dt.Overlay");
+			jQuery.sap.require("sap.ui.dt.ElementOverlay");
+			jQuery.sap.require("sap.ui.dt.AggregationOverlay");
+			jQuery.sap.require("sap.ui.dt.AggregationDesignTimeMetadata");
+			jQuery.sap.require("sap.m.Page");
+
+
+			QUnit.module("Given that an AggregationOverlay is created for an aggregation without domRef DT metadata and without children", {
+				beforeEach : function(assert) {
+					this.oPage = new sap.m.Page();
+					this.oPage.placeAt("content");
+
+					this.oAggregationOverlay = new sap.ui.dt.AggregationOverlay({
+						element : this.oPage,
+						designTimeMetadata : new sap.ui.dt.AggregationDesignTimeMetadata()
+					});
+					this.oAggregationOverlay.placeAt(sap.ui.dt.Overlay.getOverlayContainer());
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oPage.destroy();
+					this.oAggregationOverlay.destroy();
+					sap.ui.dt.Overlay.removeOverlayContainer();
+				}
+			});
+
+			QUnit.test("when AggregationOverlay is initialized", function(assert) {
+				assert.strictEqual(this.oAggregationOverlay.getGeometry(), undefined, "geometry for the overlay is undefined when no children are given");
+				assert.strictEqual(this.oAggregationOverlay.$().is(":visible"), false, "aggregation is hidden because no children are given");
+			});
+
+			QUnit.module("Given that an AggregationOverlay is created for an aggregation with domRef DT metadata", {
+				beforeEach : function(assert) {
+					var that = this;
+					this.oPage = new sap.m.Page();
+					this.oPage.placeAt("content");
+					that.oAggregationOverlay = new sap.ui.dt.AggregationOverlay({
+						element : that.oPage,
+						designTimeMetadata : new sap.ui.dt.AggregationDesignTimeMetadata({
+							data : {
+								domRef : ":sap-domref > section"
+							}
+						})
+					});
+					that.oAggregationOverlay.placeAt(sap.ui.dt.Overlay.getOverlayContainer());
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oPage.destroy();
+					this.oAggregationOverlay.destroy();
+					sap.ui.dt.Overlay.removeOverlayContainer();
+				}
+			});
+
+			QUnit.test("when AggregationOverlay is initialized", function(assert) {
+				assert.strictEqual(this.oAggregationOverlay.getGeometry().domRef, this.oPage.$().find(">section").get(0), "domRef for the overlay is correct");
+				assert.strictEqual(this.oAggregationOverlay.$().is(":visible"), true, "aggregation is rendered");
+			});
+
+			QUnit.module("Given that an AggregationOverlay is created for an aggregation without domRef DT metadata, but with children", {
+				beforeEach : function(assert) {
+					this.oButton1 = new sap.m.Button({text : "button1"});
+					this.oButton2 = new sap.m.Button({text : "button2"});
+					this.oPage = new sap.m.Page({
+						content : [
+							this.oButton1,
+							this.oButton2
+						]
+					});
+					this.oPage.placeAt("content");
+
+					this.oButton1Overlay = new sap.ui.dt.ElementOverlay({element : this.oButton1});
+					this.oButton2Overlay = new sap.ui.dt.ElementOverlay({element : this.oButton2});
+
+
+					this.oAggregationOverlay = new sap.ui.dt.AggregationOverlay({
+						element : this.oPage,
+						designTimeMetadata : new sap.ui.dt.AggregationDesignTimeMetadata(),
+						children : [
+							this.oButton1Overlay,
+							this.oButton2Overlay
+						]
+					});
+					this.oAggregationOverlay.placeAt(sap.ui.dt.Overlay.getOverlayContainer());
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach : function() {
+					this.oPage.destroy();
+					this.oAggregationOverlay.destroy();
+					sap.ui.dt.Overlay.removeOverlayContainer();
+				}
+			});
+
+			QUnit.test("when AggregationOverlay is initialized", function(assert) {
+				assert.strictEqual(this.oAggregationOverlay.getGeometry().domRef, undefined, "domRef for the overlay is undefined");
+				assert.strictEqual(this.oAggregationOverlay.$().is(":visible"), true, "aggregation is rendered");
+			});
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.dt.AggregationOverlay</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

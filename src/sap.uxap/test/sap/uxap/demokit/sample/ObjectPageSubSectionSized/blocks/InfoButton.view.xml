@@ -1,0 +1,12 @@
+<mvc:View
+
+		xmlns:forms="sap.ui.layout.form"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:core="sap.ui.core"
+		xmlns="sap.m"
+		width="100%"
+		controllerName="sap.uxap.sample.ObjectPageSubSectionSized.blocks.InfoButtonController">
+
+	<Button id="infoButton" width="100%" text="infoButton" type="Emphasized"></Button>
+
+</mvc:View>

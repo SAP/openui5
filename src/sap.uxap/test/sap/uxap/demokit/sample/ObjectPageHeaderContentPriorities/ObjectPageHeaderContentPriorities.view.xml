@@ -1,0 +1,70 @@
+<core:View xmlns:core="sap.ui.core"
+		   xmlns="sap.uxap"
+		   xmlns:layout="sap.ui.layout"
+		   xmlns:m="sap.m"
+		   xmlns:sample="sap.uxap.sample.ObjectPageOnJSON"
+		   xmlns:goals="sap.uxap.sample.SharedBlocks.goals"
+		   xmlns:personal="sap.uxap.sample.SharedBlocks.personal"
+		   xmlns:employment="sap.uxap.sample.SharedBlocks.employment"
+		   height="100%"
+		>
+
+	<ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false" showTitleInHeaderContent="true"
+					  showHeaderContent="true">
+		<headerTitle>
+			<ObjectPageHeader objectImageURI=""
+							  objectImageShape="Circle"
+							  objectTitle="Denise Smith"
+							  objectImageAlt="Senior UI Developer"
+							  id="ObjectPageLayoutHeaderTitle"
+							  isObjectIconAlwaysVisible="false"
+							  isObjectTitleAlwaysVisible="false"
+							  showPlaceholder="true">
+				<actions>
+					<ObjectPageHeaderActionButton icon="sap-icon://pull-down" text="show section" type="Emphasized"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" type="Emphasized"/>
+				</actions>
+			</ObjectPageHeader>
+		</headerTitle>
+
+		<headerContent>
+			<layout:VerticalLayout>
+				<m:ObjectStatus title="User ID" text="12345678"/>
+				<m:ObjectStatus title="Language" text="English"/>
+				<m:ObjectStatus title="Country" text="USA"/>
+				<m:ObjectStatus title="Phone Number" text="1-844-726-7733"/>
+			</layout:VerticalLayout>
+
+			<layout:VerticalLayout>
+				<layout:layoutData>
+					<ObjectPageHeaderLayoutData visibleS="false"/>
+				</layout:layoutData>
+				<m:ObjectStatus title="Functional Area" text="Developement"/>
+				<m:ObjectStatus title="Cost Center" text="PI DFA GD Programs and Product"/>
+				<m:ObjectStatus title="Email" text="email@address.com"/>
+				<m:Token text="Visible on M and L size"/>
+			</layout:VerticalLayout>
+
+			<layout:VerticalLayout>
+				<layout:layoutData>
+					<ObjectPageHeaderLayoutData visibleS="false" visibleM="false"/>
+				</layout:layoutData>
+				<m:ObjectStatus text="Senior UI Developer" state="Success"/>
+				<m:RatingIndicator maxValue="6" class="sapUiSmallMarginBottom" value="5" tooltip="Rating Tooltip"/>
+				<m:Token text="Visible on L size"/>
+			</layout:VerticalLayout>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection title="2014 Goals Plan">
+				<subSections>
+					<ObjectPageSubSection title="Goal summary">
+						<blocks>
+							<goals:GoalsBlock id="goalsblock"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+</core:View>

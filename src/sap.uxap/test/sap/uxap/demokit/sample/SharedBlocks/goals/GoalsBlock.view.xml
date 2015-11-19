@@ -1,0 +1,17 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout" xmlns:forms="sap.ui.layout.form" xmlns="sap.m">
+	<forms:SimpleForm
+			maxContainerCols="1"
+			layout="ResponsiveGridLayout"
+			width="100%">
+		<layout:VerticalLayout>
+			<Label text="Evangelize the UI framework accross the company" design="Bold"/>
+			<Text text="4 days overdue Cascaded"/>
+			<Text text=" "/>
+			<Label text="Get trained in development management direction" design="Bold"/>
+			<Text text="Due Nov 21"/>
+			<Text text=" "/>
+			<Label text="Mentor junior developers" design="Bold"/>
+			<Text text="Due Dec 31 Cascaded"/>
+		</layout:VerticalLayout>
+	</forms:SimpleForm>
+</mvc:View>

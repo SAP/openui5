@@ -842,7 +842,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			});
 		}
 
-		var that = this;
 		var mDock = Popup.Dock;
 		var $Input = jQuery(this.getFocusDomRef());
 		var bIsRightAligned = $Input.css("text-align") === "right";
@@ -882,9 +881,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.getDomRefForValueStateMessage(),
 			null,
 			null,
-			function() {
-				that._popup.close();
-			}
+			sap.ui.Device.system.phone ? true : Popup.CLOSE_ON_SCROLL
 		);
 
 		// Check whether popup is below or above the input
@@ -1032,9 +1029,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	InputBase.prototype.setTooltip = function(vTooltip) {
-		var oDomRef = this.getDomRef(),
-			oDescribedByDomRef = null,
-			sAnnouncement;
+		var oDomRef = this.getDomRef();
 
 		this._refreshTooltipBaseDelegate(vTooltip);
 		this.setAggregation("tooltip", vTooltip, true);
@@ -1043,30 +1038,48 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return this;
 		}
 
-		sAnnouncement = this.getRenderer().getDescribedByAnnouncement(this);
+		var sTooltip = this.getTooltip_AsString();
 
-		if (sAnnouncement) {
-			oDomRef.setAttribute("title", this.getTooltip_AsString());
+		if (sTooltip) {
+			oDomRef.setAttribute("title", sTooltip);
 		} else {
 			oDomRef.removeAttribute("title");
 		}
 
-		oDescribedByDomRef = this.getDomRef("describedby");
+		if (sap.ui.getCore().getConfiguration().getAccessibility()) {
 
-		if (!oDescribedByDomRef && sAnnouncement) {
-			oDescribedByDomRef = document.createElement("span");
-			oDescribedByDomRef.setAttribute("id", this.getId() + "-describedby");
-			oDescribedByDomRef.setAttribute("aria-hidden", "true");
-			oDescribedByDomRef.setAttribute("class", "sapUiInvisibleText");
-			oDomRef.appendChild(oDescribedByDomRef);
-		}
+			var oDescribedByDomRef = this.getDomRef("describedby"),
+				sAnnouncement = this.getRenderer().getDescribedByAnnouncement(this),
+				sDescribedbyId = this.getId() + "-describedby",
+				sAriaDescribedByAttr = "aria-describedby",
+				oFocusDomRef = this.getFocusDomRef(),
+				sAriaDescribedby = oFocusDomRef.getAttribute(sAriaDescribedByAttr);
 
-		if (oDescribedByDomRef && !sAnnouncement) {
-			oDomRef.removeChild(oDescribedByDomRef);
-		}
+			if (!oDescribedByDomRef && sAnnouncement) {
+				oDescribedByDomRef = document.createElement("span");
+				oDescribedByDomRef.id = sDescribedbyId;
+				oDescribedByDomRef.setAttribute("aria-hidden", "true");
+				oDescribedByDomRef.className = "sapUiInvisibleText";
 
-		if (oDescribedByDomRef) {
-			oDescribedByDomRef.textContent = sAnnouncement;
+				if (this.getAriaDescribedBy) {
+					oFocusDomRef.setAttribute(sAriaDescribedByAttr, (this.getAriaDescribedBy().join(" ") + " " + sDescribedbyId).trim());
+				} else {
+					oFocusDomRef.setAttribute(sAriaDescribedByAttr, sDescribedbyId);
+				}
+
+				oDomRef.appendChild(oDescribedByDomRef);
+			} else if (oDescribedByDomRef && !sAnnouncement) {
+				oDomRef.removeChild(oDescribedByDomRef);
+				var sDescribedByDomRefId = oDescribedByDomRef.id;
+
+				if (sAriaDescribedby && sDescribedByDomRefId) {
+					oFocusDomRef.setAttribute(sAriaDescribedByAttr, sAriaDescribedby.replace(sDescribedByDomRefId, "").trim());
+				}
+			}
+
+			if (oDescribedByDomRef) {
+				oDescribedByDomRef.textContent = sAnnouncement;
+			}
 		}
 
 		return this;

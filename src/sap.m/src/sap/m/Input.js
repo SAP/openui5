@@ -33,9 +33,11 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		properties : {
 
 			/**
-			 * Type of input (e.g. Text, Number, Email, Phone). This is the HTML type for the "input" tag. It is supported
-			 * by browsers natively. Touch devices open various soft keyboard layouts depending on the given input type.
-			 * However, only the default value <code>sap.m.InputType.Text</code> may be used in combination with data model formats.
+			 * HTML type of the internal <code>input</code> tag (e.g. Text, Number, Email, Phone).
+			 * The particular effect of this property differs depending on the browser and the current language settings,
+			 * especially for the type Number.<br>
+			 * This parameter is intended to be used with touch devices that use different soft keyboard layouts depending on the given input type.<br>
+			 * Only the default value <code>sap.m.InputType.Text</code> may be used in combination with data model formats.
 			 * <code>sap.ui.model</code> defines extended formats that are mostly incompatible with normal HTML
 			 * representations for numbers and dates.
 			 */
@@ -310,7 +312,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		this._deregisterEvents();
 
 		// clear delayed calls
-		cancelPendingSuggest(this);
+		this.cancelPendingSuggest();
 
 		if (this._iRefreshListTimeout) {
 			jQuery.sap.clearDelayedCall(this._iRefreshListTimeout);
@@ -761,7 +763,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		}
 
 		// when enter is pressed before the timeout of suggestion delay, suggest event is cancelled
-		cancelPendingSuggest(this);
+		this.cancelPendingSuggest();
 
 		if (this._oSuggestionPopup && this._oSuggestionPopup.isOpen()) {
 			if (this._iPopupListSelectedIndex >= 0) {
@@ -830,16 +832,16 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		return this;
 	};
 
-	function cancelPendingSuggest(oInput) {
-		if (oInput._iSuggestDelay) {
-			jQuery.sap.clearDelayedCall(oInput._iSuggestDelay);
-			oInput._iSuggestDelay = null;
+	Input.prototype.cancelPendingSuggest = function() {
+		if (this._iSuggestDelay) {
+			jQuery.sap.clearDelayedCall(this._iSuggestDelay);
+			this._iSuggestDelay = null;
 		}
-	}
+	};
 
 	Input.prototype._triggerSuggest = function(sValue) {
 
-		cancelPendingSuggest(this);
+		this.cancelPendingSuggest();
 
 		if (!sValue) {
 			sValue = "";
@@ -1097,7 +1099,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		Input.prototype._closeSuggestionPopup = function() {
 
 			if (this._oSuggestionPopup) {
-				cancelPendingSuggest(this);
+				this.cancelPendingSuggest();
 				this._oSuggestionPopup.close();
 				this.$("SuggDescr").text(""); // initialize suggestion ARIA text
 				this.$("inner").removeAttr("aria-haspopup");
@@ -1253,7 +1255,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					showNoData : false,
 					mode : sap.m.ListMode.SingleSelectMaster,
 					rememberSelections : false,
-					selectionChange : function(oEvent) {
+					itemPress : function(oEvent) {
 						var oListItem = oEvent.getParameter("listItem"),
 							iCount = oInput._iSetCount,
 							sNewValue;
@@ -1405,7 +1407,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 				// when the input has no value, close the Popup when not runs on the phone because the opened dialog on phone shouldn't be closed.
 				if (!oInput._bUseDialog) {
 					oInput._iPopupListSelectedIndex = -1;
-					cancelPendingSuggest(oInput);
+					this.cancelPendingSuggest();
 					oPopup.close();
 				} else {
 					// hide table on phone when value is empty
@@ -1497,7 +1499,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					if (oPopup.isOpen()) {
 						oInput._sCloseTimer = setTimeout(function() {
 							oInput._iPopupListSelectedIndex = -1;
-							cancelPendingSuggest(oInput);
+							oInput.cancelPendingSuggest();
 							oPopup.close();
 						}, 0);
 					}

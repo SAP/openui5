@@ -11,7 +11,7 @@
 
 .sapMSliderInner {
 	border: 1px solid @sapHCStandardFG;
-	background-color: @sapHCStandardBG;
+	background: @sapHCStandardBG;
 	border-radius: 0.125rem;
 }
 
@@ -21,7 +21,7 @@
 
 /* slider progress bar */
 .sapMSliderProgress {
-	background-color: @sapHCStandardFG;
+	background: @sapHCStandardFG;
 }
 
 /* slider handle */
@@ -30,19 +30,20 @@
 	top: -0.91rem;
 	height: 1.75rem;
 	width: 1.75rem;
-	//note: some browsers like Samsung Galaxy S4 with Android 4.2 does notsupport the "border-radius" shorthand property
-	//but does support the long-hand properties for each corner like "border-top-left-radius"
+
+	/* note: some browsers like Samsung Galaxy S4 with Android 4.2 does notsupport the "border-radius" shorthand property
+	but does support the long-hand properties for each corner like "border-top-left-radius" */
 	border-top-left-radius: 1rem;
 	border-top-right-radius: 1rem;
 	border-bottom-right-radius: 1rem;
 	border-bottom-left-radius: 1rem;
-	background-color: fade(@sapHCStandardFG, 0);
+	background: fade(@sapHCStandardFG, 0);
 	border: 0.125rem solid @sapHCStandardFG;
 }
 
 /* hover */
 .sap-desktop .sapMSliderHandle:hover {
-	background-color: @sapHCHighlightBG;
+	background: @sapHCHighlightBG;
 }
 
 /* focus */
@@ -52,7 +53,7 @@
 
 /* pressed */
 .sapMSliderPressed:not(.sapMSliderInnerDisabled ) > .sapMSliderHandle {
-	background-color: @sapHCHighlightBG;
+	background: @sapHCHighlightBG;
 	border: 0.125rem solid @sapHCStandardFG;
 }
 
@@ -66,11 +67,11 @@
 }
 
 .sapMSliderInnerDisabled .sapMSliderProgress {
-	background-color: @sapHCReducedBG;
+	background: @sapHCReducedBG;
 }
 
 .sapMSliderInnerDisabled > .sapMSliderHandle {
-	background-color: transparent;
+	background: transparent;
 	border:0.125rem solid @sapHCReducedFG
 }
 /* ==================================================== */

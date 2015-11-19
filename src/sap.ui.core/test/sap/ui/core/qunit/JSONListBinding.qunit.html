@@ -950,7 +950,78 @@
 		aContexts = this.oListBinding.getContexts(0, 10);
 		deepEqual(aContexts.diff, [], "Nothing changed");
 	});
+	
+	
+	module("Listbinding suspend/resume", {
+		beforeEach: function() {
+			setup();
+			this.oData = testData.teamMembers.slice(0);
+			this.oModel = new sap.ui.model.json.JSONModel(this.oData);
+			this.oListBinding = this.oModel.bindList("/");
+			this.oListBinding.attachChange(function() {});
+		},
+		afterEach: function() {
+			this.oModel.destroy();
+			this.oListBinding.destroy();
+		}
+	});
 
+	test("suspend/resume", function() {
+		var oLB = this.oListBinding;
+		equal(oLB.getContexts().length, 7, "Binding has length 7 initially");
+		this.oData.push({firstName:"Peter", lastName:"Franklin", gender:"male"});
+		this.oModel.refresh();
+		equal(oLB.getContexts().length, 8, "Binding has length 8 after adding an entry");
+		oLB.suspend();
+		this.oData.push({firstName:"Michael", lastName:"Peterson", gender:"male"});
+		this.oModel.refresh();
+		equal(oLB.getContexts().length, 8, "Binding still has length 8 as it is suspended");
+		oLB.resume();
+		equal(oLB.getContexts().length, 9, "Binding has length 9 after calling resume");
+	});
+
+	test("suspend/resume with filter/sort", function() {
+		var oLB = this.oListBinding;
+		equal(oLB.getContexts().length, 7, "Binding has length 7 initially");
+		this.oData.push({firstName:"Peter", lastName:"Franklin", gender:"male"});
+		this.oModel.refresh();
+		equal(oLB.getContexts().length, 8, "Binding has length 8 after adding an entry");
+		oLB.suspend();
+		this.oData.push({firstName:"Michael", lastName:"Peterson", gender:"male"});
+		this.oModel.refresh();
+		equal(oLB.getContexts().length, 8, "Binding still has length 8 as it is suspended");
+		oLB.sort(new sap.ui.model.Sorter("firstName"));
+		equal(oLB.getContexts().length, 9, "Binding has length 9 after sorting");
+		this.oData.push({firstName:"Michael", lastName:"Bubble", gender:"male"});
+		this.oModel.refresh();
+		equal(oLB.getContexts().length, 9, "Binding still has length 9 as it is suspended");
+		oLB.filter([new sap.ui.model.Filter("firstName", "EQ", "Michael")]);
+		equal(oLB.getContexts().length, 3, "Binding has length 3 after filtering");
+		oLB.resume();
+		equal(oLB.getContexts().length, 3, "Binding still has length 3 after calling resume");
+	});
+
+	test("suspend/resume with refresh", function() {
+		var oLB = this.oListBinding;
+		equal(oLB.getContexts().length, 7, "Binding has length 7 initially");
+		this.oData.push({firstName:"Peter", lastName:"Franklin", gender:"male"});
+		this.oModel.refresh();
+		equal(oLB.getContexts().length, 8, "Binding has length 8 after adding an entry");
+		oLB.suspend();
+		this.oData.push({firstName:"Michael", lastName:"Peterson", gender:"male"});
+		this.oModel.refresh();
+		equal(oLB.getContexts().length, 8, "Binding still has length 8 as it is suspended");
+		this.oModel.refresh(true);
+		equal(oLB.getContexts().length, 9, "Binding has length 9 after force refresh");
+		this.oData.push({firstName:"Michael", lastName:"Peterson", gender:"male"});
+		this.oModel.refresh();
+		equal(oLB.getContexts().length, 9, "Binding still has length 9 as it is suspended");
+		oLB.resume();
+		equal(oLB.getContexts().length, 10, "Binding still has length 10 after calling resume");
+	});
+	
+	
+	
 	</script>
 
 </head>
