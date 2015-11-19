@@ -151,6 +151,7 @@ sap.ui.define(['jquery.sap.global', './PropertyBinding', './CompositeType'],
 				}
 			}
 			aValues = this.oType.parseValue(oValue, this.sInternalType, aCurrentValues);
+			this.oType.validateValue(aValues);
 		} else {
 			// default: multiple values are split by space character together if no formatter or type specified
 			if (typeof oValue == "string") {
