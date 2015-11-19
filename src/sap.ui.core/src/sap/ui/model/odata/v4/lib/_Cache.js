@@ -7,18 +7,74 @@ sap.ui.define(["sap/ui/thirdparty/URI"], function (URI) {
 	"use strict";
 
 	/**
-	 * Builds query string from object
+	 * Builds a partial query string from the parameter map
 	 *
 	 * @param {object} mQueryParameters
 	 *   a map of key-value pairs representing the query string
 	 * @returns {string}
-	 *   returns an encoded query string starting with "?" if parameters are available, an empty
-	 *   string otherwise
+	 *   returns an encoded query string starting with "?" and ending with "&" if parameters are
+	 *   available so that we can simply append further parameters
 	 */
-	function buildQueryString(mQueryParameters){
+	function buildQueryString(mQueryParameters) {
 		var sQueryString = URI.buildQuery(mQueryParameters);
 
-		return sQueryString ? "?" + sQueryString : "";
+		return sQueryString ? "?" + sQueryString + "&" : "?";
+	}
+
+	/**
+	 * Fills the given array range with the given value.
+	 *
+	 * @param {any[]} aArray
+	 *   the array
+	 * @param {int} iStart
+	 *   the start index
+	 * @param {int} iEnd
+	 *   the end index (will not be filled)
+	 * @param {any} vValue
+	 *   the value
+	 */
+	function fill(aArray, iStart, iEnd, vValue) {
+		var i;
+
+		for (i = iStart; i < iEnd; i++) {
+			aArray[i] = vValue;
+		}
+	}
+
+	/**
+	 * Requests the elements in the given range and places them into the aElements list. While the
+	 * request is running, all indexes in this range contain the Promise.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._Cache} oCache
+	 *   the cache
+	 * @param {int} iStart
+	 *   the index of the first element to request ($skip)
+	 * @param {int} iEnd
+	 *   the position of the last element to request ($skip + $top)
+	 */
+	function requestElements(oCache, iStart, iEnd) {
+		var iExpectedLength = iEnd - iStart,
+			oPromise;
+
+		oPromise = oCache.oRequestor.request("GET", oCache.sUrl + "$skip=" + iStart + "&$top="
+				+ iExpectedLength)
+			.then(function (oResult) {
+				var i, iResultLength = oResult.value.length;
+
+				oCache.sContext = oResult["@odata.context"];
+				if (iResultLength < iExpectedLength) {
+					oCache.iMaxElements = iStart + iResultLength;
+					oCache.aElements.splice(oCache.iMaxElements, iExpectedLength - iResultLength);
+				}
+				for (i = 0; i < iResultLength; i++) {
+					oCache.aElements[iStart + i] = oResult.value[i];
+				}
+			})["catch"](function (oError) {
+				fill(oCache.aElements, iStart, iEnd, undefined);
+				throw oError;
+			});
+
+		fill(oCache.aElements, iStart, iEnd, oPromise);
 	}
 
 	/**
@@ -28,13 +84,15 @@ sap.ui.define(["sap/ui/thirdparty/URI"], function (URI) {
 	 *   the requestor
 	 * @param {string} sUrl
 	 *   the URL to request from
-	 * @param {object} mQueryParameters
+	 * @param {object} [mQueryParameters]
 	 *   a map of key-value pairs representing the query string
 	 */
 	function Cache(oRequestor, sUrl, mQueryParameters) {
 		this.oRequestor = oRequestor;
 		this.sUrl = sUrl + buildQueryString(mQueryParameters);
-		this.oRequestPromise = null;
+		this.sContext = undefined;  // the "@odata.context" from the responses
+		this.iMaxElements = -1;		// the max. number of elements if known, -1 otherwise
+		this.aElements = [];		// the available elements
 	}
 
 	/**
@@ -46,23 +104,46 @@ sap.ui.define(["sap/ui/thirdparty/URI"], function (URI) {
 	 *   the length of the range
 	 * @returns {Promise}
 	 *   a Promise to be resolved with the requested range given as an OData response object (with
-	 *   "@odata.context" and the rows as an array in the property <code>value</code>)
+	 *   "@odata.context" and the rows as an array in the property <code>value</code>). If an HTTP
+	 *   request fails, the error from the _Requestor is returned and the requested range is reset
+	 *   to undefined.
+	 * @see sap.ui.model.odata.v4.lib._Requestor#request
 	 */
 	Cache.prototype.read = function (iIndex, iLength) {
+		var i,
+			iEnd = iIndex + iLength,
+			iGapStart = -1,
+			that = this;
+
 		if (iIndex < 0) {
 			throw new Error("Illegal index " + iIndex + ", must be >= 0");
 		}
 		if (iLength < 0) {
 			throw new Error("Illegal length " + iLength + ", must be >= 0");
 		}
-		if (!this.oRequestPromise) {
-			this.oRequestPromise = this.oRequestor.request("GET", this.sUrl);
+
+		if (this.iMaxElements >= 0 && iEnd > this.iMaxElements) {
+			iEnd = this.iMaxElements;
 		}
 
-		return this.oRequestPromise.then(function (oResult) {
-			return  {
-				"@odata.context": oResult["@odata.context"],
-				value:  oResult.value.slice(iIndex, iIndex + iLength)
+		for (i = iIndex; i < iEnd; i++) {
+			if (this.aElements[i] !== undefined) {
+				if (iGapStart >= 0) {
+					requestElements(this, iGapStart, i);
+					iGapStart = -1;
+				}
+			} else if (iGapStart < 0) {
+				iGapStart = i;
+			}
+		}
+		if (iGapStart >= 0) {
+			requestElements(this, iGapStart, iEnd);
+		}
+
+		return Promise.all(this.aElements.slice(iIndex, iEnd)).then(function () {
+			return {
+				"@odata.context" : that.sContext,
+				value: that.aElements.slice(iIndex, iEnd)
 			};
 		});
 	};

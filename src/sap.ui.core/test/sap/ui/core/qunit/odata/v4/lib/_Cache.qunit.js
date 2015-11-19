@@ -7,8 +7,17 @@ sap.ui.require([
 	"sap/ui/test/TestUtils"
 ], function (Cache, Requestor, TestUtils) {
 	/*global QUnit, sinon */
-	/*eslint no-warning-comments: 0 */
+	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
+
+	var aTestData = "abcdefghijklmnopqrstuvwxyz".split("");
+
+	function createResult(iIndex, iLength) {
+		return {
+			"@odata.context": "$metadata#TEAMS",
+			value : aTestData.slice(iIndex, iIndex + iLength)
+		};
+	}
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Cache", {
@@ -41,10 +50,15 @@ sap.ui.require([
 				sUrl = "/~/Employees",
 				oCache = Cache.create(oRequestor, sUrl),
 				oPromise,
-				oMockResult = {"@odata.context": "$metadata#TEAMS", value : ["a", "b", "c"]};
+				aData = ["a", "b", "c"],
+				oMockResult = {
+					"@odata.context": "$metadata#TEAMS",
+					value : aData.slice(oFixture.index, oFixture.index + oFixture.length)
+				};
 
 			this.oSandbox.mock(oRequestor).expects("request")
-				.withExactArgs("GET", sUrl)
+				.withExactArgs("GET", sUrl + "?$skip=" + oFixture.index + "&$top="
+					+ oFixture.length)
 				.returns(Promise.resolve(oMockResult));
 
 			// code under test
@@ -89,57 +103,92 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("multiple read, same range", function (assert) {
-		var oRequestor = Requestor.create("/~/"),
-			sUrl = "/~/Employees",
-			oCache = Cache.create(oRequestor, sUrl),
-			oPromise1,
-			oPromise2,
-			oMockResult = {"@odata.context": "$metadata#TEAMS", value : ["a", "b", "c"]},
-			oExpected = {
-				"@odata.context": "$metadata#TEAMS",
-				value : ["c"]
-			};
+	[{
+		title: "second range completely before",
+		reads: [{index: 10, length: 2}, {index: 5, length: 2}],
+		expectedRequests: [{skip: 10, top: 2}, {skip: 5, top: 2}]
+	}, {
+		title: "second range overlaps before",
+		reads: [{index: 5, length: 4}, {index: 3, length: 4}],
+		expectedRequests: [{skip: 5, top: 4}, {skip: 3, top: 2}]
+	}, {
+		title: "same range",
+		reads: [{index: 1, length: 2}, {index: 1, length: 2}],
+		expectedRequests: [{skip: 1, top: 2}]
+	}, {
+		title: "second range overlaps after",
+		reads: [{index: 3, length: 4}, {index: 5, length: 4}],
+		expectedRequests: [{skip: 3, top: 4}, {skip: 7, top: 2}]
+	}, {
+		title: "second range completely behind",
+		reads: [{index: 5, length: 2}, {index: 10, length: 2}],
+		expectedRequests: [{skip: 5, top: 2}, {skip: 10, top: 2}]
+	}, {
+		title: "second range part of first range",
+		reads: [{index: 5, length: 8}, {index: 7, length: 2}],
+		expectedRequests: [{skip: 5, top: 8}]
+	}, {
+		title: "first range part of second range",
+		reads: [{index: 7, length: 2}, {index: 5, length: 6}],
+		expectedRequests: [{skip: 7, top: 2}, {skip: 5, top: 2}, {skip: 9, top: 2}]
+	}, {
+		title: "read more than available",
+		reads: [{index: 10, length: 90}, {index: 0, length: 100}],
+		expectedRequests: [{skip: 10, top: 90}, {skip: 0, top: 10}]
+	}, {
+		title: "read exactly max available",
+		reads: [{index: 0, length: 26}, {index: 26, length: 26}, {index: 26, length: 26}],
+		expectedRequests: [{skip: 0, top: 26}, {skip: 26, top: 26}]
+	}, {
+		title: "different ranges",
+		reads: [{index: 2, length: 5}, {index: 0, length: 2}, {index: 1, length: 2}],
+		expectedRequests: [{skip: 2, top: 5}, {skip: 0, top: 2}]
+	}].forEach(function (oFixture) {
+		QUnit.test("multiple read, " + oFixture.title + " (sequentially)", function (assert) {
+			var oRequestor = Requestor.create("/~/"),
+				sUrl = "/~/Employees",
+				oCache = Cache.create(oRequestor, sUrl),
+				oPromise = Promise.resolve(),
+				oRequestorMock = this.oSandbox.mock(oRequestor);
 
-		this.oSandbox.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sUrl)
-			.returns(Promise.resolve(oMockResult));
+			oFixture.expectedRequests.forEach(function (oRequest) {
+				oRequestorMock.expects("request")
+					.withExactArgs("GET", sUrl + "?$skip=" + oRequest.skip + "&$top="
+						+ oRequest.top)
+					.returns(Promise.resolve(createResult(oRequest.skip, oRequest.top)));
+			});
 
-		// code under test
-		oPromise1 = oCache.read(2, 1).then(function (oResult) {
-			assert.deepEqual(oResult, oExpected);
+			oFixture.reads.forEach(function (oRead) {
+				oPromise = oPromise.then(function () {
+					 return oCache.read(oRead.index, oRead.length).then(function (oResult) {
+						 assert.deepEqual(oResult, createResult(oRead.index, oRead.length));
+					 });
+				});
+			});
+			return oPromise;
 		});
-		oPromise2 = oCache.read(2, 1).then(function (oResult) {
-			assert.deepEqual(oResult, oExpected);
+
+		QUnit.test("multiple read, " + oFixture.title + " (parallel)", function (assert) {
+			var oRequestor = Requestor.create("/~/"),
+				sUrl = "/~/Employees",
+				oCache = Cache.create(oRequestor, sUrl),
+				aPromises = [],
+				oRequestorMock = this.oSandbox.mock(oRequestor);
+
+			oFixture.expectedRequests.forEach(function (oRequest) {
+				oRequestorMock.expects("request")
+					.withExactArgs("GET", sUrl + "?$skip=" + oRequest.skip + "&$top="
+						+ oRequest.top)
+					.returns(Promise.resolve(createResult(oRequest.skip, oRequest.top)));
+			});
+
+			oFixture.reads.forEach(function (oRead) {
+				aPromises.push(oCache.read(oRead.index, oRead.length).then(function (oResult) {
+					assert.deepEqual(oResult, createResult(oRead.index, oRead.length));
+				}));
+			});
+			return Promise.all(aPromises);
 		});
-
-		return Promise.all([oPromise1, oPromise2]);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("multiple read, different ranges", function (assert) {
-		var oRequestor = Requestor.create("/~/"),
-			sUrl = "/~/Employees",
-			oCache = Cache.create(oRequestor, sUrl),
-			oPromise1,
-			oPromise2,
-			oMockResult = {"@odata.context": "$metadata#TEAMS", value : ["a", "b", "c"]},
-			oExpected1 = ["c"],
-			oExpected2 = ["a", "b"];
-
-		this.oSandbox.mock(oRequestor).expects("request")
-			.withExactArgs("GET", sUrl)
-			.returns(Promise.resolve(oMockResult));
-
-		// code under test
-		oPromise1 = oCache.read(2, 5).then(function (oResult) {
-			assert.deepEqual(oResult.value, oExpected1);
-		});
-		oPromise2 = oCache.read(0, 2).then(function (oResult) {
-			assert.deepEqual(oResult.value, oExpected2);
-		});
-
-		return Promise.all([oPromise1, oPromise2]);
 	});
 
 	//*********************************************************************************************
@@ -156,7 +205,7 @@ sap.ui.require([
 
 		this.oSandbox.mock(oRequestor).expects("request")
 			.withExactArgs("GET", sUrl + "?%24select=ID&%24expand=Address&%24filter=%E2%82%AC"
-				+ "&foo=bar&foo=baz%E2%82%AC")
+				+ "&foo=bar&foo=baz%E2%82%AC&$skip=0&$top=5")
 			.returns(Promise.resolve({value:[]}));
 
 		// code under test
@@ -164,4 +213,29 @@ sap.ui.require([
 		return oCache.read(0, 5);
 	});
 	// TODO get rid of %-encoding of $, (, ) etc
+
+	//*********************************************************************************************
+	QUnit.test("error handling", function (assert) {
+		var oError = {},
+			oRequestor = Requestor.create("/~/"),
+			oSuccess = createResult(0, 5),
+			sUrl = "/~/Employees",
+			oCache = Cache.create(oRequestor, sUrl),
+			oRequestorMock = this.oSandbox.mock(oRequestor);
+
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", sUrl + "?$skip=0&$top=5")
+			.returns(Promise.reject(oError));
+		oRequestorMock.expects("request")
+			.withExactArgs("GET", sUrl + "?$skip=0&$top=5")
+			.returns(Promise.resolve(oSuccess));
+
+		// code under test
+		return oCache.read(0, 5)["catch"](function (oResult1) {
+			assert.strictEqual(oResult1, oError);
+			return oCache.read(0, 5).then(function (oResult2) {
+				assert.deepEqual(oResult2, oSuccess);
+			});
+		});
+	});
 });
