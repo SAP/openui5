@@ -40,7 +40,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 		library : "sap.ui.layout",
 		properties : {
-			
+
 			/**
 			 * Default span for labels in extra large size.
 			 *
@@ -91,7 +91,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			 * @since 1.34.0
 			 */
 			emptySpanXL : {type : "int", group : "Misc", defaultValue : -1},
-			
+
 			/**
 			 * Number of grid cells that are empty at the end of each line on large size.
 			 * @since 1.16.3
@@ -118,7 +118,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			 * @since 1.34.0
 			 */
 			columnsXL : {type : "int", group : "Misc", defaultValue : -1},
-			
+
 			/**
 			 * Number of columns for large size.
 			 *
@@ -142,7 +142,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			 * @since 1.34.0
 			 */
 			singleContainerFullSize : {type : "boolean", group : "Misc", defaultValue : true},
-			
+
 			/**
 			 * Breakpoint (in pixel) between large size and extra large (XL) size.
 			 * @since 1.34.0
@@ -593,13 +593,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 					var iLabelLSpan = oLayout.getLabelSpanL();
 					var iLabelMSpan = oLayout.getLabelSpanM();
 					var iLabelSSpan = oLayout.getLabelSpanS();
-					
-					// If no explicit value of Label span for XL is set then the value of the Label span for L is used (from the backwardcompatibility reasons).
-					var iLabelXLSpan = oLayout.getLabelSpanXL();
-					if (iLabelXLSpan < 0) {
-						iLabelXLSpan = iLabelLSpan;
-					}
-					
+
 					if (oLayout.getAdjustLabelSpan()) {
 						if (oForm.getFormContainers().length >= 1 && oLayout.getColumnsM() > 1) {
 							// More than one Container in line
@@ -619,6 +613,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 						}
 					}
 
+					// If no explicit value of Label span for XL is set then the value of the Label span for L is used (from the backwardcompatibility reasons).
+					var iLabelXLSpan = oLayout.getLabelSpanXL();
+					if (iLabelXLSpan < 0) {
+						iLabelXLSpan = iLabelLSpan;
+					}
+
 					if (oLabel == oControl) {
 						oLayout.oDummyLayoutData.setSpan("XL" + iLabelXLSpan + " L" + iLabelLSpan + " M" + iLabelMSpan + " S" + iLabelSSpan);
 						oLayout.oDummyLayoutData.setLinebreak(true);
@@ -628,14 +628,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 						var iLSpan = 12 - oLayout.getEmptySpanL();
 						var iMSpan = 12 - oLayout.getEmptySpanM();
 						var iSSpan = 12 - oLayout.getEmptySpanS();
-						
+
 						// If no explicit value for XL empty span is set then the value of the L empty span is used (from the backwardcompatibility reasons).
 						var iXLSpan = iLSpan;
 						var iEmptyXLSpan = oLayout.getEmptySpanXL();
 						if (iEmptyXLSpan > -1) {
 							iXLSpan = 12 - iEmptyXLSpan;
 						}
-						
+
 						var iEffectiveSpan;
 						if (oLabel) {
 							var oLabelLD = oLayout.getLayoutDataForElement(oLabel, "sap.ui.layout.GridData");
@@ -644,7 +644,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 								if (iEffectiveSpan) {
 									iLabelLSpan = iEffectiveSpan;
 								}
-								
+
 								iEffectiveSpan = oLabelLD._getEffectiveSpanXLarge();
 								if (iEffectiveSpan) {
 									iLabelXLSpan = iEffectiveSpan;
@@ -652,7 +652,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 								if (iLabelXLSpan < 0) {
 									iLabelXLSpan = iLabelLSpan;
 								}
-								
+
 								iEffectiveSpan = oLabelLD._getEffectiveSpanMedium();
 								if (iEffectiveSpan) {
 									iLabelMSpan = iEffectiveSpan;
@@ -662,8 +662,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 									iLabelSSpan = iEffectiveSpan;
 								}
 							}
-							
-							
+
 							if (iLabelXLSpan < 12) {
 								iXLSpan = iXLSpan - iLabelXLSpan;
 							}
@@ -693,7 +692,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 									if (iEffectiveSpan && iEffectiveSpan < iLSpan) {
 										iLSpan = iLSpan - iEffectiveSpan;
 									}
-									
+
 									var iEffectiveSpanXL = oFieldLD._getEffectiveSpanXLarge();
 									if (iEffectiveSpanXL) {
 										if (iEffectiveSpanXL < iXLSpan) {
@@ -704,7 +703,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 											iXLSpan = iXLSpan - iEffectiveSpan;
 										}
 									}
-									
+
 									iEffectiveSpan = oFieldLD._getEffectiveSpanMedium();
 									if (iEffectiveSpan && iEffectiveSpan < iMSpan) {
 										iMSpan = iMSpan - iEffectiveSpan;
@@ -879,7 +878,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			} else {
 				oLayout = oControl.__myParentLayout;
 			}
-	
+
 			var iColumnsM = oLayout.getColumnsM();
 			var iColumnsL = oLayout.getColumnsL();
 			// If the columsnXL is not set the value of columnsL is used
@@ -887,8 +886,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			if (iColumnsXL < 0) {
 				iColumnsXL = iColumnsL;
 			}
-			
-			
+
 			var oLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.GridData");
 			if (!oLD) {
 				// only needed if container has no own LayoutData
@@ -919,7 +917,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				}
 
 				var sStyle = "";
-				
+
 				if (bLastXL) {
 					sStyle = "sapUiFormResGridLastContXL";
 				}
@@ -935,7 +933,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 					}
 					sStyle = sStyle + "sapUiFormResGridLastContM";
 				}
-				
+
 				if (bLastRowXL) {
 					if (sStyle) {
 						sStyle = sStyle + " ";
@@ -1012,17 +1010,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			if (iLength > 1 || !oLayout.getSingleContainerFullSize()) {
 				var iSpanM = Math.floor(12 / oLayout.getColumnsM());
 				var iSpanL = Math.floor(12 / oLayout.getColumnsL());
-				
+				var iSpanXL;
+				var sDefaultSpan = "";
+
 				// If the columsnXL is not set the value of columnsL is used
 				var iColumnsXL = oLayout.getColumnsXL();
-				if (iColumnsXL < 0) {
-					iColumnsXL = oLayout.getColumnsL();
+				if (iColumnsXL >= 0) {
+					// if no columns for XL are defined ude no default span for XL. The grid then uses automatically the L one.
+					iSpanXL = Math.floor(12 / iColumnsXL);
+					sDefaultSpan = sDefaultSpan + "XL" + iSpanXL + " ";
 				}
-				
-				var iSpanXL = Math.floor(12 / iColumnsXL);
+				sDefaultSpan = sDefaultSpan + "L" + iSpanL + " M" + iSpanM + " S12";
+
 				if (!oLayout._mainGrid) {
 					oLayout._mainGrid = new Grid(oForm.getId() + "--Grid",{
-						defaultSpan: "XL" + iSpanXL + " L" + iSpanL + " M" + iSpanM + " S12",
+						defaultSpan: sDefaultSpan,
 						hSpacing: 0,
 						vSpacing: 0,
 						containerQuery: true
@@ -1039,7 +1041,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 					};
 				} else {
-					oLayout._mainGrid.setDefaultSpan("XL" + iSpanXL + " L" + iSpanL + " M" + iSpanM + " S12");
+					oLayout._mainGrid.setDefaultSpan(sDefaultSpan);
 					// update containers
 					var aLayoutContent = oLayout._mainGrid.getContent();
 					iContentLenght = aLayoutContent.length;
