@@ -1392,6 +1392,8 @@ sap.ui.define([
 		this._aExistingColumnsItems = null;
 		this._aExistingTableItems = null;
 
+		this.setType(sap.m.P13nPanelType.columns);
+		
 		// ---------------------------------------------------------------
 		// Following object _oTableItemsOrdering handles the table behavior for sorting of included items
 		// - _bShallBeOrderedOnlyFirstTime = true means that the table items will ONLY be sorted during the very

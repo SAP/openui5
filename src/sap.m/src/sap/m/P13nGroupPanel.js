@@ -229,6 +229,8 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nGroupPanel.prototype.init = function() {
+		this.setType(sap.m.P13nPanelType.group);
+		
 		sap.ui.getCore().loadLibrary("sap.ui.layout");
 		jQuery.sap.require("sap.ui.layout.Grid");
 
