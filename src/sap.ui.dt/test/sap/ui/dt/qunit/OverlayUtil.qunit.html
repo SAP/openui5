@@ -49,7 +49,7 @@
 					this.oLayout0 = new sap.ui.layout.VerticalLayout({content : [this.oButton01, this.oButton02]});
 
 					this.oLayout1 = new sap.ui.layout.VerticalLayout({content : [this.oLayout0]});
-					
+
 					this.oButton21 = new sap.m.Button({
 						text : "Button21"
 					});
@@ -89,10 +89,10 @@
 
 			QUnit.test("when Overlays are created and the getNextOverlay function is called", function(assert) {
 				var oNextOverlay = sap.ui.dt.OverlayUtil.getNextOverlay(this.oLayoutOverlay2);
-				assert.strictEqual(oNextOverlay, this.oLayoutOverlay1, "layoutOverlay2 -> layoutOVerlay1");
+				assert.strictEqual(oNextOverlay, this.oLayoutOverlay1, "layoutOverlay2 -> layoutOverlay1");
 
 				oNextOverlay = sap.ui.dt.OverlayUtil.getNextOverlay(this.oLayoutOverlay1);
-				assert.strictEqual(oNextOverlay, this.oLayoutOverlay0, "layoutOverlay1 -> layoutOVerlay0");
+				assert.strictEqual(oNextOverlay, this.oLayoutOverlay0, "layoutOverlay1 -> layoutOverlay0");
 
 				oNextOverlay = sap.ui.dt.OverlayUtil.getNextOverlay(this.oLayoutOverlay0);
 				assert.strictEqual(oNextOverlay, this.oButtonOverlay01, "layoutOverlay0 -> oButtonOverlay01");
@@ -119,7 +119,7 @@
 
 				oPreviousOverlay = sap.ui.dt.OverlayUtil.getPreviousOverlay(this.oLayoutOverlay0);
 				assert.strictEqual(oPreviousOverlay, this.oLayoutOverlay1, "oLayoutOverlay0 -> layoutOverlay1");
-				
+
 				oPreviousOverlay = sap.ui.dt.OverlayUtil.getPreviousOverlay(this.oLayoutOverlay1);
 				assert.strictEqual(oPreviousOverlay, this.oLayoutOverlay2, "oLayoutOverlay1 -> oLayoutOverlay2");
 

@@ -101,20 +101,19 @@
 				assert.ok(oDesignTimeMetadata instanceof sap.ui.dt.ElementDesignTimeMetadata, "and the design time metadata for the control is set");
 			});
 
-			QUnit.test("when the control's dom is changed", function(assert) {
+			QUnit.test("when the overlay is rerendered", function(assert) {
 				var done = assert.async();
 
 				var fnOriginalOnAfterRendering =  this.oOverlay.onAfterRendering;
 				this.oOverlay.onAfterRendering = function() {
-					// if this test fails, check if there're changes in RenderManager _fPutIntoDom funcion (see ElementOverlay init comment for details)
+					// if this test fails, check if there're changes in RenderManager _fPutIntoDom function (see ElementOverlay init comment for details)
 					assert.notStrictEqual(this.getUIArea().getRootNode().childNodes.length, 0, "overlay is still in UIArea's DOM");
 
 					done();
 					return fnOriginalOnAfterRendering.apply(this, arguments);
-				}
+				};
 
-				var $element = this.oOverlay.getElementInstance().$();
-				$element.addClass("testClass");
+				this.oOverlay.rerender();
 			});
 
 			QUnit.test("when the overlay is selectable and selected", function(assert) {
@@ -185,54 +184,49 @@
 					this.oButton1 = new sap.m.Button({
 						text : "Button 1"
 					});
-					this.oOverlayButton1 = new sap.ui.dt.ElementOverlay({
-						element : this.oButton1
-					});
-
-					this.oButton2 = new sap.m.Button({
-						text : "Button 2"
-					});
-					this.oOverlayButton2 = new sap.ui.dt.ElementOverlay({
-						element : this.oButton2
-					});
-
-
 					this.oVerticalLayout1 = new sap.ui.layout.VerticalLayout({
-							content : [this.oButton1, this.oButton2]
+							content : [this.oButton1]
 					});
+					this.oVerticalLayout2 = new sap.ui.layout.VerticalLayout();
+					this.oVerticalLayout1.placeAt("content");
+					this.oVerticalLayout2.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+
 					this.oOverlayLayout1 = new sap.ui.dt.ElementOverlay({
 						element : this.oVerticalLayout1
 					});
 
-					this.oVerticalLayout2 = new sap.ui.layout.VerticalLayout();
+					this.oOverlayButton1 = new sap.ui.dt.ElementOverlay({
+						element : this.oButton1
+					});
 
 					this.oOverlayLayout2 = new sap.ui.dt.ElementOverlay({
 						element : this.oVerticalLayout2
 					});
 
-					this.oVerticalLayout1.placeAt("content");
-					this.oVerticalLayout2.placeAt("content");
-					sap.ui.getCore().applyChanges();
 				},
 				afterEach : function() {
 
 					this.oButton1.destroy();
-					this.oButton2.destroy();
 					this.oVerticalLayout1.destroy();
 					this.oVerticalLayout2.destroy();
 					this.oOverlayLayout1.destroy();
 					this.oOverlayLayout2.destroy();
 					this.oOverlayButton1.destroy();
-					this.oOverlayButton2.destroy();
 
 				}
 			});
 
+			QUnit.test("when the layout is rendered", function(assert) {
+				assert.ok(this.oOverlayButton1.getParent().getParent() === this.oOverlayLayout1, "then a button's overlay should be inside of an layout's overlay");
+			});
+
 			QUnit.test("when a control is moved from one layout to another", function(assert) {
-				this.oVerticalLayout2.addContent(this.oButton2);
+				this.oVerticalLayout2.addContent(this.oButton1);
 				sap.ui.getCore().applyChanges();
 				// first parent is aggregation overlay, second parent is overlay control
-				assert.ok(this.oOverlayButton2.getParent().getParent() === this.oOverlayLayout2, "then a button's overlay should be inside of an another layout's overlay");
+				assert.ok(this.oOverlayButton1.getParent().getParent() === this.oOverlayLayout2, "then a button's overlay should be inside of an another layout's overlay");
 			});
 
 			QUnit.module("Given that an Overlay is created for a control with custom design time metadata", {
@@ -268,6 +262,7 @@
 					this.oButton = new sap.m.Button({
 						text : "Button"
 					});
+
 					this.oOverlay = new sap.ui.dt.ElementOverlay({
 						element : this.oButton,
 						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
@@ -325,7 +320,11 @@
 
 			QUnit.module("Given that an Overlay is created for a SimpleForm with a hidden aggregation marked as not ignored", {
 				beforeEach : function() {
-					this.oSimpleForm = new sap.ui.layout.form.SimpleForm();
+					this.oSimpleForm = new sap.ui.layout.form.SimpleForm({
+						content : [
+							new sap.m.Label({text : "Label"})
+						]
+					});
 					this.oOverlay = new sap.ui.dt.ElementOverlay({
 						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
 							data : {
@@ -360,6 +359,8 @@
 					this.oButton = new sap.m.Button({
 						text : "Button"
 					});
+					this.oButton.placeAt("content");
+
 					this.oOverlay = new sap.ui.dt.ElementOverlay({
 						element : this.oButton,
 						designTimeMetadata : new sap.ui.dt.ElementDesignTimeMetadata({
@@ -368,7 +369,6 @@
 							}
 						})
 					});
-					this.oButton.placeAt("content");
 					// Render Controls
 					sap.ui.getCore().applyChanges();
 				},

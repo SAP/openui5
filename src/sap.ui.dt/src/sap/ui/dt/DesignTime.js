@@ -271,7 +271,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	DesignTime.prototype.addRootElement = function(vRootElement) {
 		this.addAssociation("rootElements", vRootElement);
 
-		this.createElementOverlaysFor(ElementUtil.getElementInstance(vRootElement));
+		this._createElementOverlay(ElementUtil.getElementInstance(vRootElement));
 
 		return this;
 	};
@@ -355,44 +355,19 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 
 				var oElementOverlay = this.createElementOverlay(oElement, oDTMetadata, bInHiddenTree);
 				if (oElementOverlay) {
-					oElementOverlay.attachEvent("elementModified", this._onElementModified, this);
-					oElementOverlay.attachEvent("destroyed", this._onElementOverlayDestroyed, this);
-					oElementOverlay.attachEvent("selectionChange", this._onElementOverlaySelectionChange, this);
+					oElementOverlay.attachRequestElementOverlaysForAggregation(this._onRequestElementOverlaysForAggregation, this);
+					// sync should be called directly, because event could already be fired
+					oElementOverlay.sync();
+
+					oElementOverlay.attachElementModified(this._onElementModified, this);
+					oElementOverlay.attachDestroyed(this._onElementOverlayDestroyed, this);
+					oElementOverlay.attachSelectionChange(this._onElementOverlaySelectionChange, this);
 
 					this.fireElementOverlayCreated({elementOverlay : oElementOverlay});
 					return oElementOverlay;
 				}
 
 			}
-		}
-	};
-
-	/**
-	 * Creates ElementOverlay for an element and all public children of the element
-	 * @param {sap.ui.core.Element} oElement element
-	 * @return {sap.ui.dt.ElementOverlay} created ElementOverlay
-	 * @private
-	 */
-	DesignTime.prototype.createElementOverlaysFor = function(oElement) {
-		var that = this;
-
-		var createChildOverlays = function(oElementOverlay) {
-			oElementOverlay.getAggregationOverlays().forEach(function(oAggregationOverlay) {
-				var sAggregationName = oAggregationOverlay.getAggregationName();
-				var oElement = oElementOverlay.getElementInstance();
-				var aChildren = ElementUtil.getAggregation(oElement, sAggregationName);
-				ElementUtil.iterateOverElements(aChildren, function(oChild) {
-					var oChildOverlay = that._createElementOverlay(oChild, oAggregationOverlay.isInHiddenTree());
-					if (oChildOverlay) {
-						createChildOverlays(oChildOverlay);
-					}
-				});
-			});
-		};
-
-		var oElementOverlay = this._createElementOverlay(oElement);
-		if (oElementOverlay) {
-			createChildOverlays(oElementOverlay);
 		}
 	};
 
@@ -416,6 +391,30 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 		this._iterateRootElements(function(oRootElement) {
 			that._destroyOverlaysForElement(oRootElement);
 		});
+	};
+
+	/**
+	 * @private
+	*/
+	DesignTime.prototype._createChildOverlaysForAggregation = function(oElementOverlay, sAggregationName) {
+		var that = this;
+
+		var oAggregationOverlay = oElementOverlay.getAggregationOverlay(sAggregationName);
+		var oElement = oElementOverlay.getElementInstance();
+		var vChildren = ElementUtil.getAggregation(oElement, sAggregationName);
+		ElementUtil.iterateOverElements(vChildren, function(oChild) {
+			that._createElementOverlay(oChild, oAggregationOverlay.isInHiddenTree());
+		});
+	};
+
+	/**
+	 * @private
+	*/
+	DesignTime.prototype._onRequestElementOverlaysForAggregation = function(oEvent) {
+		var oElementOverlay = oEvent.getSource();
+
+		var sAggregationName = oEvent.getParameter("name");
+		this._createChildOverlaysForAggregation(oElementOverlay, sAggregationName);
 	};
 
 	/**
@@ -447,11 +446,19 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	 * @private
 	 */
 	DesignTime.prototype._onElementModified = function(oEvent) {
+		var that = this;
+
 		var oParams = oEvent.getParameters();
 		if (oParams.type === "addOrSetAggregation" || oParams.type === "insertAggregation") {
 			this._onElementOverlayAddAggregation(oParams.value);
 		} else if (oParams.type === "setParent") {
-			this._onElementOverlaySetParent(oParams.target, oParams.value);
+			// timeout is needed because UI5 controls & apps can temporary "dettach" controls from control tree
+			// and add them again later, so the check if the control is dettached from root element's tree is delayed
+			setTimeout(function() {
+				if (!that.bIsDestroyed) {
+					that._checkIfOverlayShouldBeDestroyed(oParams.target, oParams.value);
+				}
+			}, 0);
 		}
 	};
 
@@ -459,13 +466,13 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	 * @param {sap.ui.core.Element} oElement which was added
 	 * @private
 	 */
-	DesignTime.prototype._onElementOverlayAddAggregation = function(oElement) {
+	DesignTime.prototype._onElementOverlayAddAggregation = function(oChild) {
 		// oElement can be of an alternative type (setLabel(sText) for example)
-		if (oElement instanceof sap.ui.core.Element) {
-			var oElementOverlay = OverlayRegistry.getOverlay(oElement);
+		if (oChild instanceof sap.ui.core.Element) {
+			var oChildElementOverlay = OverlayRegistry.getOverlay(oChild);
 			// TODO what if it was moved between hidden/public tree? can this happen?
-			if (!oElementOverlay) {
-				this.createElementOverlaysFor(oElement);
+			if (!oChildElementOverlay) {
+				oChildElementOverlay = this._createElementOverlay(oChild);
 			}
 		}
 	};
@@ -475,10 +482,9 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	 * @param {sap.ui.core.Element} oParent new parent
 	 * @private
 	 */
-	DesignTime.prototype._onElementOverlaySetParent = function(oElement, oParent) {
+	DesignTime.prototype._checkIfOverlayShouldBeDestroyed = function(oElement, oParent) {
 		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
-		// if __bSapUiDtSupressOverlayDestroy is true, overlay shouldn't be destroyed, as long as it's in movement process
-		if (oElementOverlay && !this._isElementInRootElements(oElement) && !oElement.__bSapUiDtSupressOverlayDestroy) {
+		if (oElementOverlay && !this._isElementInRootElements(oElement)) {
 			oElementOverlay.destroy();
 		}
 	};

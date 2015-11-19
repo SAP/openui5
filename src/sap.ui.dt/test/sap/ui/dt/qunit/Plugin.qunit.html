@@ -40,7 +40,7 @@
 					content : [
 						this.oButton
 					]
-				});
+				}).placeAt("content");
 
 				this.oDesignTime = new sap.ui.dt.DesignTime({
 					rootElements : [this.oLayout]
@@ -62,6 +62,8 @@
 				this.oPlugin.deregisterAggregationOverlay = function() {
 					that.iRegisterAggregationOverlayCalls -= 1;
 				};
+
+				sap.ui.getCore().applyChanges();
 			},
 			afterEach : function() {
 				this.oButton.destroy();
@@ -78,16 +80,22 @@
 			assert.strictEqual(this.iRegisterAggregationOverlayCalls, iAggregationCount, "register was called for all aggregation overlays");
 		});
 
-		QUnit.test("when the plugin is added to designTime and new control is added to designTime", function(assert) {
-			var oLayout = new sap.ui.layout.VerticalLayout();
+		QUnit.test("when the plugin is added to designTime and new controls are added to designTime", function(assert) {
+			var oButton = new sap.m.Button();
+			var oLayout = new sap.ui.layout.VerticalLayout({
+				content : oButton
+			});
 
 			this.oDesignTime.addPlugin(this.oPlugin);
 			this.iregisterElementOverlayCalls = 0;
 			this.iRegisterAggregationOverlayCalls = 0;
 
+			oLayout.placeAt("content");
 			this.oDesignTime.addRootElement(oLayout);
-			assert.strictEqual(this.iregisterElementOverlayCalls, 1, "register was called for a new control");
-			assert.strictEqual(this.iRegisterAggregationOverlayCalls, Object.keys(oLayout.getMetadata().getAllAggregations()).length , "register was called for all new aggregations");
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(this.iregisterElementOverlayCalls, 2, "register was called for all new control");
+			assert.strictEqual(this.iRegisterAggregationOverlayCalls, Object.keys(oLayout.getMetadata().getAllAggregations()).length + Object.keys(oButton.getMetadata().getAllAggregations()).length , "register was called for all new aggregations");
 		});
 
 		QUnit.test("when the plugin is added to designTime and then removed from DT", function(assert) {

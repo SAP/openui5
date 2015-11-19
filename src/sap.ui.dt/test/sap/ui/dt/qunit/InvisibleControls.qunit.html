@@ -1,0 +1,187 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.dt.DesignTime and invisible controls</title>
+
+		<style>
+			#content {
+				position: absolute;
+				left: 400px;
+				top : 10px;
+			}
+			.sapUiDtElementOverlay {
+				box-sizing: border-box;
+				border: 1px dashed grey;
+			}
+		</style>
+
+		<script id="sap-ui-bootstrap"
+				data-sap-ui-theme="sap_bluecrystal"
+				type="text/javascript"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
+				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.commons,sap.ui.layout"
+				src="../../../../../resources/sap-ui-core.js">
+		</script>
+		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script type="text/javascript">
+
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+			jQuery.sap.require("sap.ui.dt.DesignTime");
+			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
+			jQuery.sap.require("sap.ui.dt.Preloader");
+
+			var OverlayRegistry = sap.ui.dt.OverlayRegistry;
+
+			QUnit.module("Given that a DesignTime is created for a SplitContainer with 2 pages, one is hidden and one is visible", {
+				beforeEach: function(assert) {
+					var done = assert.async();
+
+					this.oButton1 = new sap.m.Button("button1", {text : "button"});
+					this.oButton2 = new sap.m.Button("button2", {text : "button"});
+
+					this.oPage1 = new sap.m.Page("page1", {
+						content : [
+							this.oButton1
+						],
+						visible : false
+					});
+					this.oPage2 = new sap.m.Page("page2", {
+						content : [
+							this.oButton2
+						]
+					});
+					this.oSplitContainer = new sap.m.SplitContainer({
+						masterPages: [
+							this.oPage1
+						],
+						detailPages: [
+							this.oPage2
+						]
+					});
+
+					this.oSplitContainer.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					var that = this;
+					sap.ui.dt.Preloader.load([this.oSplitContainer, this.oPage]).then(function() {
+
+						that.oDesignTime = new sap.ui.dt.DesignTime({
+							rootElements: [
+								that.oSplitContainer
+							]
+						});
+
+						that.oSplitContainerOverlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oSplitContainer);
+						that.oSplitContainerMasterPagesAggregationOverlay = that.oSplitContainerOverlay.getAggregationOverlay("masterPages");
+						that.oSplitContainerDetailPagesAggregationOverlay = that.oSplitContainerOverlay.getAggregationOverlay("detailPages");
+
+
+						that.oPage1Overlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oPage1);
+						that.oPage2Overlay = sap.ui.dt.OverlayRegistry.getOverlay(that.oPage2);
+
+						sap.ui.getCore().applyChanges();
+						done();
+					});
+
+
+
+				},
+				afterEach: function() {
+					this.oDesignTime.destroy();
+					this.oSplitContainer.destroy();
+				}
+			});
+
+
+			QUnit.test("when the SplitContainer is rendered", function(assert) {
+				strictEqual(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1), undefined, "no overlays for controls in hidden page are created");
+				ok(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton2), "overlays for controls in visible page are created");
+			});
+
+			QUnit.test("when the visibility of hidden page is changed", function(assert) {
+				this.oPage1.setVisible(true);
+				sap.ui.getCore().applyChanges();
+
+				ok(sap.ui.dt.OverlayRegistry.getOverlay(this.oButton1), "overlays for controls in this page are created");
+
+				this.oPage1.setVisible(false);
+				sap.ui.getCore().applyChanges();
+			});
+
+			QUnit.module("Given that a DesignTime is created for an element in an ignored aggregation", {
+				beforeEach: function(assert) {
+					var done = assert.async();
+
+					this.oCustomData = new sap.ui.core.CustomData();
+					this.oButton = new sap.m.Button({
+						text : "button",
+						// customData aggregation is ignored in ElementDesignTimeMetadata.js
+						customData : [
+							this.oCustomData
+						]
+					});
+
+					this.oButton.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					var that = this;
+					sap.ui.dt.Preloader.load([this.oButton]).then(function() {
+
+						that.oDesignTime = new sap.ui.dt.DesignTime({
+							rootElements: [
+								that.oButton
+							]
+						});
+
+						sap.ui.getCore().applyChanges();
+						done();
+					});
+				},
+				afterEach: function() {
+					this.oDesignTime.destroy();
+					this.oButton.destroy();
+				}
+			});
+
+			QUnit.test("when DesignTime is rendered", function(assert) {
+				var oCustomDataOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oCustomData);
+				strictEqual(oCustomDataOverlay, undefined, "then no overlay for the control in the ignored aggregation is created");
+			});
+
+			QUnit.test("when the aggregation overlay for the ignored aggregation is manually switched to 'visible: true'", function(assert) {
+				var oButtonOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oButton);
+				var oAggregationOverlay = oButtonOverlay.getAggregationOverlay("customData");
+				oAggregationOverlay.setVisible(true);
+
+				var oCustomDataOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oCustomData);
+				ok(oCustomDataOverlay, "then overlay for the control in this aggregation is created");
+			});
+
+			QUnit.test("when the element is added to an invisible aggregation", function(assert) {
+				var oCustomData = new sap.ui.core.CustomData();
+
+				this.oButton.addCustomData(oCustomData);
+
+				sap.ui.getCore().applyChanges();
+
+				var oCustomDataOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oCustomData);
+				strictEqual(oCustomDataOverlay, undefined, "then no overlay is created for it");
+			});
+
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit Page for sap.ui.dt.DesignTime and invisible controls</h1>
+		<h2 id="qunit-banner"></h2>
+	 	<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

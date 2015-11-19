@@ -75,9 +75,12 @@ function(jQuery) {
 	 *
 	 */
 	ElementUtil.hasAncestor = function(oElement, oAncestor) {
-		var oParent = oElement;
+		oAncestor = this.fixComponentContainerElement(oAncestor);
+
+		var oParent = this.fixComponentParent(oElement);
 		while (oParent && oParent !== oAncestor) {
 			oParent = oParent.getParent();
+			oParent = this.fixComponentParent(oParent);
 		}
 
 		return !!oParent;
@@ -288,8 +291,6 @@ function(jQuery) {
 			// setParent event with parent null, private flag is set.
 			oElement.__bSapUiDtSupressParentChangeEvent = true;
 			try {
-				// invalidate should be supressed, because if the controls have some checks and sync on invalidate,
-				// internal structure can be also removed (SimpleForm invalidate destroyed all content temporary)
 				oParent.removeAggregation(sAggregationName, oElement, true);
 			} finally {
 				delete oElement.__bSapUiDtSupressParentChangeEvent;

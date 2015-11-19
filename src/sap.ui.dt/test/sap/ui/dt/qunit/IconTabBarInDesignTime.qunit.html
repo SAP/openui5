@@ -31,7 +31,7 @@
 		<script type="text/javascript">
 
 			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-		
+
 			jQuery.sap.require("sap.ui.dt.DesignTime");
 			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
 			var OverlayRegistry = sap.ui.dt.OverlayRegistry;
@@ -39,7 +39,7 @@
 			QUnit.module("Given the IconTabBar is created with 3 filters and different content..", {
 				beforeEach : function() {
 					this.oList = new sap.m.List({
-						items : [ 
+						items : [
 							new sap.m.StandardListItem({
 								title : "List Item 1"
 							}),
@@ -48,7 +48,7 @@
 							}),
 							new sap.m.StandardListItem({
 								title : "List Item 3"
-							}) 
+							})
 						]
 					});
 					this.oButton = new sap.m.Button({text : "Text"});
