@@ -134,7 +134,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			 * @private
 			 */
 			this._closeButton = new sap.m.Button(this.getId() + '-closeButton', {
-				type: 'Unstyled',
+				type: sap.m.ButtonType.Transparent,
 				icon: sap.ui.core.IconPool.getIconURI('decline'),
 				press: function () {
 					this.close();
@@ -153,7 +153,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			 * @type {sap.m.OverflowToolbar}
 			 * @private
 			 */
-			this.setAggregation('_overflowToolbar', new OverflowToolbar({content: [new ToolbarSpacer()]}));
+			this.setAggregation('_overflowToolbar', new OverflowToolbar());
 		};
 
 		NotificationListItem.prototype.setTitle = function (title) {
@@ -186,7 +186,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 			var result = this.setProperty('unread', unread, true);
 			/** @type {sap.m.Title} */
 			var title = this.getAggregation("_headerTitle");
-			title.toggleStyleClass('sapMNLI-Unread', this.getUnread());
+			if (title) {
+				title.toggleStyleClass('sapMNLI-Unread', this.getUnread());
+			}
 
 			return result;
 		};
@@ -273,10 +275,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 				/** @type {sap.m.OverflowToolbar} */
 				var toolbar = this.getAggregation('_overflowToolbar');
 
-				if (!toolbar.getContent()) {
-				    toolbar.addAggregation('content', new ToolbarSpacer());
-				}
-
 				return toolbar.addAggregation('content', object, suppressInvalidate);
 			} else {
 				return sap.ui.core.Control.prototype.addAggregation.call(this, aggregationName, object, suppressInvalidate);
@@ -309,9 +307,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 
 		NotificationListItem.prototype.getBinding = function (aggregationName) {
 			if (aggregationName == 'buttons') {
-				return this.getAggregation('_overflowToolbar').destroyAggregation('content');
+				return this.getAggregation('_overflowToolbar').getBinding('content');
 			} else {
-				return sap.ui.core.Control.prototype.destroyAggregation.call(this, aggregationName);
+				return sap.ui.core.Control.prototype.getBinding.call(this, aggregationName);
 			}
 		};
 
