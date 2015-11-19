@@ -24,7 +24,8 @@ sap.ui.require([
 			matchers : new Properties({text : "Delete"}),
 			success : function (oControl) {
 				var sTypeName,
-					oView = Opa5.getWindow().sap.ui.core.Core().byId("MainView");
+					oView = Opa5.getWindow().sap.ui.getCore().byId(
+						"sap.ui.core.sample.odata.v4.SalesOrders.Main");
 
 				// check for valid automatic type determination for each cell content in 1st row
 				oView.byId("SalesOrders").getItems()[0].getCells().forEach(function (oCell) {
