@@ -546,4 +546,149 @@ sap.ui.require([
 			assert.deepEqual(aResults[0], aResults[1]);
 		});
 	});
+
+
+	//*********************************************************************************************
+	[{
+		message: "query parts without headers",
+		requests: [
+			{
+				method: "GET",
+				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1')"
+			}, {
+				method: "GET",
+				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('2')"
+			}
+		],
+		body: "--batch_123456\r\n" +
+			"Content-Type:application/http\r\n" +
+			"Content-Transfer-Encoding:binary\r\n" +
+			"\r\n" +
+			"GET /sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1') HTTP/1.1\r\n" +
+			"\r\n" +
+			"\r\n" +
+			"--batch_123456\r\n" +
+			"Content-Type:application/http\r\n" +
+			"Content-Transfer-Encoding:binary\r\n" +
+			"\r\n" +
+			"GET /sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('2') HTTP/1.1\r\n" +
+			"\r\n" +
+			"\r\n" +
+			"--batch_123456--\r\n",
+		"Content-Type" : "multipart/mixed; boundary=batch_123456",
+		"MIME-Version" : "1.0"
+	}, {
+		message: "query parts with headers",
+		requests: [
+			{
+				method: "GET",
+				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1')",
+				headers: {
+					foo: "bar1",
+					abc: "123"
+				}
+			}, {
+				method: "GET",
+				url: "/sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('2')",
+				headers: {
+					foo: "bar2",
+					abc: "456"
+				}
+			}
+		],
+		body: "--batch_123456\r\n" +
+			"Content-Type:application/http\r\n" +
+			"Content-Transfer-Encoding:binary\r\n" +
+			"\r\n" +
+			"GET /sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('1') HTTP/1.1\r\n" +
+			"foo:bar1\r\n" +
+			"abc:123\r\n" +
+			"\r\n" +
+			"\r\n" +
+			"--batch_123456\r\n" +
+			"Content-Type:application/http\r\n" +
+			"Content-Transfer-Encoding:binary\r\n" +
+			"\r\n" +
+			"GET /sap/opu/local_v4/IWBEP/TEA_BUSI/Employees('2') HTTP/1.1\r\n" +
+			"foo:bar2\r\n" +
+			"abc:456\r\n" +
+			"\r\n" +
+			"\r\n" +
+			"--batch_123456--\r\n",
+		"Content-Type" : "multipart/mixed; boundary=batch_123456",
+		"MIME-Version" : "1.0"
+	}].forEach(function (oFixture) {
+		QUnit.test("serializeBatchRequest: " + oFixture.message, function (assert) {
+			var oBatchRequest;
+
+			this.oSandbox.mock(jQuery.sap).expects("uid").returns("batch_123456");
+
+			oBatchRequest = Helper.serializeBatchRequest(oFixture.requests);
+
+			assert.strictEqual(oBatchRequest.body, oFixture.body);
+			assert.strictEqual(oBatchRequest["Content-Type"], oFixture["Content-Type"]);
+			assert.strictEqual(oBatchRequest["MIME-Version"], oFixture["MIME-Version"]);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit[TestUtils.isRealOData() ? "test" : "skip"]("Multipart Integration Test: for query parts",
+		function (assert) {
+			var oBatchRequestBody,
+				done = assert.async(),
+				sServiceUrl = "/sap/opu/local_v4/IWBEP/TEA_BUSI/",
+				sResolvedServiceUrl = TestUtils.proxy(sServiceUrl);
+
+
+			oBatchRequestBody = Helper.serializeBatchRequest([
+				{
+					method : "GET",
+					url : sServiceUrl + "EMPLOYEES",
+					headers : {
+						Accept: "application/json"
+					}
+				},
+				{
+					method : "GET",
+					url : sServiceUrl + "Departments",
+					headers : {
+						Accept: "application/json"
+					}
+				}
+			]);
+
+			jQuery.ajax(sResolvedServiceUrl, {
+				method: "HEAD",
+				headers : {
+					"X-CSRF-Token" : "Fetch"
+				}
+			}).then(function (oData, sTextStatus, jqXHR) {
+				var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
+				jQuery.ajax(sResolvedServiceUrl + '$batch', {
+					method: "POST",
+					headers : {
+						"Content-Type" : oBatchRequestBody["Content-Type"],
+						"X-CSRF-Token" : sCsrfToken,
+						// FIX4MASTER: remove sap-rfcswitch
+						"sap-rfcswitch" : "X",
+						"MIME-Version" : oBatchRequestBody["MIME-Version"]
+					},
+					data : oBatchRequestBody.body
+				}).then(function (oData, sTextStatus, jqXHR) {
+					assert.strictEqual(jqXHR.status, 200);
+					done();
+				});
+			}, function (jqXHR, sTextStatus, sErrorMessage) {
+				assert.ok(false, sErrorMessage);
+				done();
+			});
+		}
+	);
 });
+
+// TODO: refactoring about private and real public methods
+// TODO: add tests for error handling?
+// TODO: Gibt es eigentlich irgendein Encoding/Escaping zu beachten?
+// TODO: TCH comment 1305194:PS10:"the header fields may encode non-US-ASCII header text as per RFC 2047" [Page 18]
+// TODO: TCH comment 1305194:PS10: Mir ist die Semantik davon nicht klar. Und hier steht nirgendwo was von "UTF-8", aber das verwenden wir wohl implizit mit unseren JS-Strings. Siehe auch meine Frage in serializeHeaders().
+// TODO: TCH comment 1305194:PS10: Brauchen wir hier einen "charset=UTF-8"-Zusatz? "The default character set, which must be assumed in the absence of a charset parameter, is US-ASCII."
