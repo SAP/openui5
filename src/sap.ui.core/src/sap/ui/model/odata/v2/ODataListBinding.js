@@ -963,6 +963,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/FilterType', 'sap/ui/model/Lis
 		
 		this.bIgnoreSuspend = true;
 
+		if (!aSorters) {
+			aSorters = [];
+		}
+		
 		if (aSorters instanceof Sorter) {
 			aSorters = [aSorters];
 		}
