@@ -29,5 +29,6 @@
 	],
 	"FilterItems":[
 		{"columnKey" : "name", "operation" : "Contains", "value1" : "a"}
-	]
+	],
+	"FilterTitle": "My favorite filters"
 }

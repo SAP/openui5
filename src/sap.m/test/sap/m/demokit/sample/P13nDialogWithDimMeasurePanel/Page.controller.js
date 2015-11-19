@@ -1,6 +1,6 @@
 sap.ui.define([
-	'jquery.sap.global', 'sap/m/MessageToast', 'sap/ui/core/Fragment', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'
-], function(jQuery, MessageToast, Fragment, Controller, JSONModel) {
+	'jquery.sap.global', 'sap/m/MessageToast', 'sap/ui/core/Fragment', 'sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/ui/model/resource/ResourceModel'
+], function(jQuery, MessageToast, Fragment, Controller, JSONModel, ResourceModel) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.m.sample.P13nDialogWithDimMeasurePanel.Page", {
@@ -10,6 +10,9 @@ sap.ui.define([
 		onInit: function() {
 			// set explored app's demo model on this sample
 			this.getView().setModel(new JSONModel("test-resources/sap/m/demokit/sample/P13nDialogWithDimMeasurePanel/products.json"));
+			this.getView().setModel(new ResourceModel({
+				bundleName: "sap.m.sample.P13nDialogWithDimMeasurePanel.i18n.i18n"
+			}), "i18n");
 		},
 
 		onClose: function(oEvent) {
