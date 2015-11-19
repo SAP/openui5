@@ -6,7 +6,57 @@
 sap.ui.define(["jquery.sap.global"], function(jQuery) {
 	"use strict";
 
-	var Helper = {
+	var rAmpersand = /&/g,
+		rEquals = /\=/g,
+		rHash = /#/g,
+		rPlus = /\+/g,
+		rSemicolon = /;/g,
+		Helper;
+
+	Helper = {
+		/**
+		 * Builds a query string from the given parameter map. Takes care of encoding, but ensures
+		 * that the characters "$", "(", ")" and "=" are not encoded, so that OData queries remain
+		 * readable.
+		 *
+		 * @param {map} [mParameters]
+		 *   a map of key-value pairs representing the query string, the value in this pair has to
+		 *   be a string or an array of strings; if it is an array, the resulting query string
+		 *   repeats the key for each array value.
+		 *   Examples:
+		 *   buildQuery({foo: "bar", "bar": "baz"}) results in the query string "foo=bar&bar=baz"
+		 *   buildQuery({foo: ["bar", "baz"]}) results in the query string "foo=bar&foo=baz"
+		 * @returns {string}
+		 *   the query string; it is empty if there are no parameters; it starts with "?" otherwise
+		 */
+		buildQuery : function (mParameters) {
+			var aKeys, aQuery;
+
+			if (!mParameters) {
+				return "";
+			}
+
+			aKeys = Object.keys(mParameters);
+			if (aKeys.length === 0) {
+				return "";
+			}
+
+			aQuery = [];
+			aKeys.forEach(function (sKey) {
+				var vValue = mParameters[sKey];
+
+				if (Array.isArray(vValue)) {
+					vValue.forEach(function (sItem) {
+						aQuery.push(Helper.encodePair(sKey, sItem));
+					});
+				} else {
+					aQuery.push(Helper.encodePair(sKey, vValue));
+				}
+			});
+
+			return "?" + aQuery.join("&");
+		},
+
 		/**
 		 * Returns an <code>Error</code> instance from a jQuery XHR wrapper.
 		 *
@@ -63,6 +113,42 @@ sap.ui.define(["jquery.sap.global"], function(jQuery) {
 			}
 
 			return oResult;
+		},
+
+		/**
+		 * Encodes a query part, either a key or a value.
+		 *
+		 * @param {string} sPart
+		 *   the query part
+		 * @param {boolean} bEncodeEquals
+		 *   if true, "=" is encoded, too
+		 * @returns {string}
+		 *   the encoded query part
+		 */
+		encode : function (sPart, bEncodeEquals) {
+			var sEncoded = encodeURI(sPart)
+					.replace(rAmpersand, "%26")
+					.replace(rHash, "%23")
+					.replace(rPlus, "%2B")
+					.replace(rSemicolon, "%3B");
+			if (bEncodeEquals) {
+				sEncoded = sEncoded.replace(rEquals, "%3D");
+			}
+			return sEncoded;
+		},
+
+		/**
+		 * Encodes a key-value pair.
+		 *
+		 * @param {string} sKey
+		 *   the key
+		 * @param {string} sValue
+		 *   the sValue
+		 * @returns {string}
+		 *   the encoded key-value pair in the form "key=value"
+		 */
+		encodePair : function (sKey, sValue) {
+			return Helper.encode(sKey, true) + "=" + Helper.encode(sValue, false);
 		}
 	};
 

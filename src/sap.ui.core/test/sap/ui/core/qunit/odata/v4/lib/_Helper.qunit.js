@@ -3,8 +3,9 @@
  */
 sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Helper",
-	"sap/ui/test/TestUtils"
-], function (Helper, TestUtils) {
+	"sap/ui/test/TestUtils",
+	"sap/ui/thirdparty/URI"
+], function (Helper, TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -22,6 +23,7 @@ sap.ui.require([
 			this.oSandbox.verifyAndRestore();
 		}
 	});
+
 
 	//*********************************************************************************************
 	[{
@@ -128,5 +130,70 @@ sap.ui.require([
 			assert.strictEqual(oError.status, oFixture.response.status);
 			assert.strictEqual(oError.statusText, oFixture.response.statusText);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("encode", function (assert) {
+		var sUnchanged = "foo$,/:?@()";
+
+		assert.strictEqual(Helper.encode(sUnchanged, false), sUnchanged);
+		assert.strictEqual(Helper.encode(sUnchanged, true), sUnchanged);
+
+		assert.strictEqual(Helper.encode("€_&_=_#_+_;", false), "%E2%82%AC_%26_=_%23_%2B_%3B");
+		assert.strictEqual(Helper.encode("€_&_=_#_+_;", true), "%E2%82%AC_%26_%3D_%23_%2B_%3B");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("encodePair", function (assert) {
+		var sEncoded,
+			oHelperMock = this.mock(Helper);
+
+		oHelperMock.expects("encode").withExactArgs("key", true).returns("~key~");
+		oHelperMock.expects("encode").withExactArgs("value", false).returns("~value~");
+
+		sEncoded = Helper.encodePair("key", "value");
+		assert.strictEqual(sEncoded, "~key~=~value~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildQuery: no query", function (assert) {
+		assert.strictEqual(Helper.buildQuery(), "");
+		assert.strictEqual(Helper.buildQuery({}), "");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildQuery: query", function (assert) {
+		var sEncoded,
+			oHelperMock = this.mock(Helper);
+
+		oHelperMock.expects("encodePair").withExactArgs("a", "b").returns("a=b");
+		oHelperMock.expects("encodePair").withExactArgs("c", "d").returns("c=d");
+		oHelperMock.expects("encodePair").withExactArgs("c", "e").returns("c=e");
+
+		sEncoded = Helper.buildQuery({a : "b", c: ["d", "e"]});
+		assert.strictEqual(sEncoded, "?a=b&c=d&c=e");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildQuery and decoding via URI.js", function (assert) {
+		var sComplexString = "",
+			i,
+			mParameters = {},
+			sUri;
+
+		for (i = 32; i < 127; i++) {
+			sComplexString = sComplexString + String.fromCharCode(i);
+		}
+
+		sUri = "/" + Helper.buildQuery({foo: sComplexString});
+
+		// decode via URI.js
+		assert.strictEqual(new URI(sUri).search(true).foo, sComplexString);
+
+		mParameters[sComplexString] = "foo";
+		sUri = "/" + Helper.buildQuery(mParameters);
+
+		// decode via URI.js
+		assert.strictEqual(new URI(sUri).search(true)[sComplexString], "foo");
 	});
 });

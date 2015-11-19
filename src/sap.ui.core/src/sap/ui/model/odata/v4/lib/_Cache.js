@@ -3,7 +3,7 @@
  */
 
 //Provides class sap.ui.model.odata.v4.lib.Cache
-sap.ui.define(["sap/ui/thirdparty/URI"], function (URI) {
+sap.ui.define(["./_Helper"], function (Helper) {
 	"use strict";
 
 	/**
@@ -16,9 +16,9 @@ sap.ui.define(["sap/ui/thirdparty/URI"], function (URI) {
 	 *   available so that we can simply append further parameters
 	 */
 	function buildQueryString(mQueryParameters) {
-		var sQueryString = URI.buildQuery(mQueryParameters);
+		var sQueryString = Helper.buildQuery(mQueryParameters);
 
-		return sQueryString ? "?" + sQueryString + "&" : "?";
+		return sQueryString ? sQueryString + "&" : "?";
 	}
 
 	/**

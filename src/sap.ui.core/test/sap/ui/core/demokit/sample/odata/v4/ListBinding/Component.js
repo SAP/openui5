@@ -31,7 +31,7 @@ sap.ui.define([
 
 			if (!bHasOwnProxy) {
 				TestUtils.setupODataV4Server(sinon.sandbox.create(), {
-					"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS?%24expand=TEAM_2_EMPLOYEES%28%24expand%3DEMPLOYEE_2_EQUIPMENTS%29%2CTEAM_2_MANAGER&$skip=0&$top=100"
+					"/sap/opu/local_v4/IWBEP/TEA_BUSI/TEAMS?$expand=TEAM_2_EMPLOYEES($expand=EMPLOYEE_2_EQUIPMENTS),TEAM_2_MANAGER&$skip=0&$top=100"
 						: {source : "TEAMS.json"},
 					"/sap/opu/local_v4/IWBEP/TEA_BUSI/$metadata" : {source : "metadata.xml"}
 				}, "sap/ui/core/demokit/sample/odata/v4/ListBinding/data");
