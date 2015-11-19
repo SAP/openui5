@@ -275,7 +275,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		CalendarRow.prototype._getStartDate = function(){
 
 			if (!this._oUTCStartDate) {
-				this._oUTCStartDate = CalendarUtils._createUniversalUTCDate(this.getStartDate(), true);
+				this._oUTCStartDate = CalendarUtils._createUniversalUTCDate(this.getStartDate(), undefined, true);
 			}
 
 			return this._oUTCStartDate;
@@ -437,7 +437,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		CalendarRow.prototype.updateCurrentTimeVisualization = function() {
 
 			var $Now = this.$("Now");
-			var oNowDate = CalendarUtils._createUniversalUTCDate(new Date(), true);
+			var oNowDate = CalendarUtils._createUniversalUTCDate(new Date(), undefined, true);
 			var iIntervals = this.getIntervals();
 			var sIntervalType = this.getIntervalType();
 			var oStartDate = this._getStartDate();
@@ -699,7 +699,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		function _calculateStartDate(oDate) {
 
 			var sIntervalType = this.getIntervalType();
-			var oUTCStartDate = CalendarUtils._createUniversalUTCDate(oDate, true);
+			var oUTCStartDate = CalendarUtils._createUniversalUTCDate(oDate, undefined, true);
 
 			switch (sIntervalType) {
 			case sap.ui.unified.CalendarIntervalType.Hour:
@@ -761,10 +761,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			for (i = 0; i < aAppointments.length; i++) {
 				oAppointment = aAppointments[i];
-				var oAppointmentStartDate = CalendarUtils._createUniversalUTCDate(oAppointment.getStartDate(), true);
+				var oAppointmentStartDate = CalendarUtils._createUniversalUTCDate(oAppointment.getStartDate(), undefined, true);
 				oAppointmentStartDate.setUTCSeconds(0); // ignore seconds
 				oAppointmentStartDate.setUTCMilliseconds(0); // ignore milliseconds
-				var oAppointmentEndDate = CalendarUtils._createUniversalUTCDate(oAppointment.getEndDate(), true);
+				var oAppointmentEndDate = CalendarUtils._createUniversalUTCDate(oAppointment.getEndDate(), undefined, true);
 				oAppointmentEndDate.setUTCSeconds(0); // ignore seconds
 				oAppointmentEndDate.setUTCMilliseconds(0); // ignore milliseconds
 
@@ -800,7 +800,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						// in month mode, group appointment < one week
 
 						oGroupAppointment = _getGroupAppointment.call(this, oAppointmentStartDate, oAppointment, sIntervalType, iIntervals, oStartDate, oEndDate, iStartTime, aVisibleAppointments);
-						var oGroupEndDate = CalendarUtils._createUniversalUTCDate(oGroupAppointment.getEndDate(), true);
+						var oGroupEndDate = CalendarUtils._createUniversalUTCDate(oGroupAppointment.getEndDate(), undefined, true);
 
 						if (oAppointmentEndDate.getTime() > oGroupEndDate.getTime()) {
 							// appointment ends in next group
@@ -900,7 +900,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			for (var j = 0; j < aGroupAppointments.length; j++) {
 				oGroupAppointment = aGroupAppointments[j];
-				var oGroupAppointmentStartDate = CalendarUtils._createUniversalUTCDate(oGroupAppointment.getStartDate(), true);
+				var oGroupAppointmentStartDate = CalendarUtils._createUniversalUTCDate(oGroupAppointment.getStartDate(), undefined, true);
 				if (oGroupAppointmentStartDate.getTime() == oGroupStartDate.getTime()) {
 					break;
 				}
@@ -1024,10 +1024,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 				for (i = 0; i < aAppointments.length; i++) {
 					oAppointment = aAppointments[i];
-					var oAppointmentStartDate = CalendarUtils._createUniversalUTCDate(oAppointment.getStartDate(), true);
+					var oAppointmentStartDate = CalendarUtils._createUniversalUTCDate(oAppointment.getStartDate(), undefined, true);
 					oAppointmentStartDate.setUTCSeconds(0); // ignore seconds
 					oAppointmentStartDate.setUTCMilliseconds(0); // ignore milliseconds
-					var oAppointmentEndDate = CalendarUtils._createUniversalUTCDate(oAppointment.getEndDate(), true);
+					var oAppointmentEndDate = CalendarUtils._createUniversalUTCDate(oAppointment.getEndDate(), undefined, true);
 					oAppointmentEndDate.setUTCSeconds(0); // ignore seconds
 					oAppointmentEndDate.setUTCMilliseconds(0); // ignore milliseconds
 

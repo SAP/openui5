@@ -33,11 +33,12 @@ sap.ui.define(['jquery.sap.global'],
 
 		var aMonthNames = [];
 		var aMonthNamesWide = [];
+		var sCalendarType = oMP.getPrimaryCalendarType();
 		if (oMP._bLongMonth || !oMP._bNamesLengthChecked) {
-			aMonthNames = oLocaleData.getMonthsStandAlone("wide");
+			aMonthNames = oLocaleData.getMonthsStandAlone("wide", sCalendarType);
 		} else {
-			aMonthNames = oLocaleData.getMonthsStandAlone("abbreviated");
-			aMonthNamesWide = oLocaleData.getMonthsStandAlone("wide");
+			aMonthNames = oLocaleData.getMonthsStandAlone("abbreviated", sCalendarType);
+			aMonthNamesWide = oLocaleData.getMonthsStandAlone("wide", sCalendarType);
 		}
 
 		oRm.write("<div");

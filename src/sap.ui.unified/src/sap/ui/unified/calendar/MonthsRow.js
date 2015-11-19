@@ -48,34 +48,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * it is set to the <code>startDate</code>.
 			 * So after setting the <code>startDate</code> the date should be set to be in the visible range.
 			 */
-			date : {type : "object", group : "Misc"},
+			date : {type : "object", group : "Data"},
 
 			/**
 			 * Start date, as JavaScript Date object, of the row. The month of this date is the first month of the displayed row.
 			 */
-			startDate : {type : "object", group : "Misc"},
+			startDate : {type : "object", group : "Data"},
 
 			/**
 			 * Number of months displayed
 			 */
-			months : {type : "int", group : "Misc", defaultValue : 12},
+			months : {type : "int", group : "Appearance", defaultValue : 12},
 
 			/**
 			 * If set, interval selection is allowed
 			 */
-			intervalSelection : {type : "boolean", group : "Misc", defaultValue : false},
+			intervalSelection : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
 			 * If set, only a single month or interval, if intervalSelection is enabled, can be selected
 			 *
 			 * <b>Note:</b> Selection of multiple intervals is not supported in the current version.
 			 */
-			singleSelection : {type : "boolean", group : "Misc", defaultValue : true},
+			singleSelection : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
 			 * If set, a header with the years is shown to visualize what month belongs to what year.
 			 */
-			showHeader : {type : "boolean", group : "Misc", defaultValue : false}
+			showHeader : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		aggregations : {
 

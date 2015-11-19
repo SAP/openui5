@@ -313,7 +313,30 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 	padding-top: 0.375rem;
 }
 
-.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem.sapUiCalItemSel > .sapUiCalDayName{
+.sapUiCalNoNameLine > .sapUiCalItems > .sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalDayName{
+	color: @sapUiContentContrastTextColor;
+}
+
+/* 2 calendar types */
+.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem  > .sapUiCalItemText{
+	line-height: 2.125rem;
+	vertical-align: top;
+}
+
+.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem.sapUiCalItemNow  > .sapUiCalItemText{
+	line-height: 1.875rem;
+}
+
+.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem > .sapUiCalItemSecText{
+	font-size: 0.625rem;
+	height: 1rem;
+	line-height: 1rem;
+	padding-right: 0.313rem;
+	padding-bottom: 0.313rem;
+	box-sizing: border-box;
+}
+
+.sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemSecText{
 	color: @sapUiContentContrastTextColor;
 }
 
@@ -458,6 +481,23 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalYearPicker .sapUiCalItemSel
 	padding-right: 0.5rem;
 	text-align: right;
 	box-sizing: border-box;
+}
+
+/* 2 calendar types */
+.sapUiSizeCompact .sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem  > .sapUiCalItemText{
+	line-height: 1.5rem;
+	padding-right: 0.375rem;
+}
+
+.sapUiSizeCompact .sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem.sapUiCalItemNow  > .sapUiCalItemText{
+	line-height: 1.25rem;
+}
+
+.sapUiSizeCompact .sapUiCalMonthSecType > .sapUiCalItems .sapUiCalItem > .sapUiCalItemSecText{
+	height: 0.75rem;
+	line-height: 0.75rem;
+	padding-right: 0.1875rem;
+	padding-bottom: 0.1875em;
 }
 
 /*** Phone ***/

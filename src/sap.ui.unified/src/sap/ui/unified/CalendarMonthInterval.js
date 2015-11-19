@@ -47,26 +47,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * Start date of the Interval as JavaScript Date object.
 			 * The month of this Date will be the first month in the displayed row.
 			 */
-			startDate : {type : "object", group : "Misc"},
+			startDate : {type : "object", group : "Data"},
 
 			/**
 			 * If set, interval selection is allowed
 			 */
-			intervalSelection : {type : "boolean", group : "Misc", defaultValue : false},
+			intervalSelection : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
 			 * If set, only a single date or interval, if <code>intervalSelection</code> is enabled, can be selected
 			 *
 			 * <b>Note:</b> Selection of multiple intervals is not supported in the current version.
 			 */
-			singleSelection : {type : "boolean", group : "Misc", defaultValue : true},
+			singleSelection : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
 			 * Number of months displayed
 			 *
 			 * <b>Note:</b> On phones, the maximum number of months displayed in the row is always 6.
 			 */
-			months : {type : "int", group : "Misc", defaultValue : 12},
+			months : {type : "int", group : "Appearance", defaultValue : 12},
 
 			/**
 			 * If set, the yearPicker opens on a popup

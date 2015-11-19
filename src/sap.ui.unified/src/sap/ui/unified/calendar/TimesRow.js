@@ -47,17 +47,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 * it is set to the <code>startDate</code>.
 			 * So after setting the <code>startDate</code> the date should be set to be in the visible range.
 			 */
-			date : {type : "object", group : "Misc"},
+			date : {type : "object", group : "Data"},
 
 			/**
 			 * Start date, as JavaScript Date object, of the row.
 			 */
-			startDate : {type : "object", group : "Misc"},
+			startDate : {type : "object", group : "Data"},
 
 			/**
 			 * Number of time items displayed
 			 */
-			items : {type : "int", group : "Misc", defaultValue : 12},
+			items : {type : "int", group : "Appearance", defaultValue : 12},
 
 			/**
 			 * Size of on time interval in minutes, default is 60 minutes.
@@ -68,24 +68,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			 *
 			 * A day must be divisible by this interval size. One interval must not include more than one day.
 			 */
-			intervalMinutes : {type : "int", group : "Misc", defaultValue : 60},
+			intervalMinutes : {type : "int", group : "Appearance", defaultValue : 60},
 
 			/**
 			 * If set, interval selection is allowed
 			 */
-			intervalSelection : {type : "boolean", group : "Misc", defaultValue : false},
+			intervalSelection : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
 			 * If set, only a single month or interval, if intervalSelection is enabled, can be selected
 			 *
 			 * <b>Note:</b> Selection of multiple intervals is not supported in the current version.
 			 */
-			singleSelection : {type : "boolean", group : "Misc", defaultValue : true},
+			singleSelection : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
 			 * If set, a header with the years is shown to visualize what month belongs to what year.
 			 */
-			showHeader : {type : "boolean", group : "Misc", defaultValue : false}
+			showHeader : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		aggregations : {
 
@@ -274,7 +274,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		TimesRow.prototype._getDate = function(){
 
 			if (!this._oUTCDate) {
-				this._oUTCDate = CalendarUtils._createUniversalUTCDate(new Date(), true);
+				this._oUTCDate = CalendarUtils._createUniversalUTCDate(new Date(), undefined, true);
 			}
 
 			return this._oUTCDate;
@@ -292,7 +292,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				throw new Error("Date must not be in valid range (between 0001-01-01 and 9999-12-31); " + this);
 			}
 
-			var oUTCDate = CalendarUtils._createUniversalUTCDate(oStartDate, true);
+			var oUTCDate = CalendarUtils._createUniversalUTCDate(oStartDate, undefined, true);
 			this.setProperty("startDate", oStartDate, true);
 			this._oUTCStartDate = this._getIntervalStart(oUTCDate);
 
@@ -312,7 +312,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		TimesRow.prototype._getStartDate = function(){
 
 			if (!this._oUTCStartDate) {
-				this._oUTCStartDate = CalendarUtils._createUniversalUTCDate(new Date(), true);
+				this._oUTCStartDate = CalendarUtils._createUniversalUTCDate(new Date(), undefined, true);
 				this._oUTCStartDate = this._getIntervalStart(this._oUTCStartDate);
 			}
 
@@ -557,14 +557,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				var oStartDate = oRange.getStartDate();
 				var oStartTimeStamp = 0;
 				if (oStartDate) {
-					oStartDate = CalendarUtils._createUniversalUTCDate(oStartDate, true);
+					oStartDate = CalendarUtils._createUniversalUTCDate(oStartDate, undefined, true);
 					oStartDate = this._getIntervalStart(oStartDate);
 					oStartTimeStamp = oStartDate.getTime();
 				}
 				var oEndDate = oRange.getEndDate();
 				var oEndTimeStamp = 0;
 				if (oEndDate) {
-					oEndDate = CalendarUtils._createUniversalUTCDate(oEndDate, true);
+					oEndDate = CalendarUtils._createUniversalUTCDate(oEndDate, undefined, true);
 					oEndDate = this._getIntervalStart(oEndDate);
 					oEndTimeStamp = oEndDate.getTime();
 				}
@@ -621,14 +621,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 				var oStartDate = oRange.getStartDate();
 				var oStartTimeStamp = 0;
 				if (oStartDate) {
-					oStartDate = CalendarUtils._createUniversalUTCDate(oStartDate, true);
+					oStartDate = CalendarUtils._createUniversalUTCDate(oStartDate, undefined, true);
 					oStartDate = this._getIntervalStart(oStartDate);
 					oStartTimeStamp = oStartDate.getTime();
 				}
 				var oEndDate = oRange.getEndDate();
 				var oEndTimeStamp = 0;
 				if (oEndDate) {
-					oEndDate = CalendarUtils._createUniversalUTCDate(oEndDate, true);
+					oEndDate = CalendarUtils._createUniversalUTCDate(oEndDate, undefined, true);
 					oEndDate = this._getIntervalStart(oEndDate);
 					oEndDate.setUTCMinutes(oEndDate.getUTCMinutes() + this.getIntervalMinutes() - 1);
 					oEndTimeStamp = oEndDate.getTime();
@@ -801,7 +801,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			// set end date to begin of first item outside row
 			var oEndDate = new UniversalDate(oStartDate.getTime());
 			oEndDate.setUTCMinutes(oEndDate.getUTCMinutes() + this.getItems() * this.getIntervalMinutes());
-			var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate, true);
+			var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate, undefined, true);
 
 			if (oUTCDate.getTime() >= oStartDate.getTime() && oUTCDate.getTime() < oEndDate.getTime()) {
 				return true;
@@ -1000,7 +1000,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 			var bFocusable = true; // if date not changed it is still focusable
 			if (!jQuery.sap.equal(this.getDate(), oDate)) {
-				var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate, true);
+				var oUTCDate = CalendarUtils._createUniversalUTCDate(oDate, undefined, true);
 				oUTCDate = this._getIntervalStart(oUTCDate);
 				bFocusable = this.checkDateFocusable(oDate);
 
@@ -1106,7 +1106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					oDateRange = aSelectedDates[0];
 					oStartDate = oDateRange.getStartDate();
 					if (oStartDate) {
-						oStartDate = CalendarUtils._createUniversalUTCDate(oStartDate, true);
+						oStartDate = CalendarUtils._createUniversalUTCDate(oStartDate, undefined, true);
 						oStartDate = this._getIntervalStart(oStartDate);
 					}
 				} else {
@@ -1152,7 +1152,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 						for ( i = 0; i < aSelectedDates.length; i++) {
 							oStartDate = aSelectedDates[i].getStartDate();
 							if (oStartDate) {
-								oStartDate = CalendarUtils._createUniversalUTCDate(oStartDate, true);
+								oStartDate = CalendarUtils._createUniversalUTCDate(oStartDate, undefined, true);
 								oStartDate = this._getIntervalStart(oStartDate);
 								if (oDate.getTime() == oStartDate.getTime()) {
 									oAggOwner.removeAggregation("selectedDates", i, true); // no re-rendering
