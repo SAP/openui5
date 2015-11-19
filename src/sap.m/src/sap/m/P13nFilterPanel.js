@@ -385,7 +385,9 @@ sap.ui.define([
 	 * 
 	 * @private
 	 */
-	P13nFilterPanel.prototype.init = function() {
+	P13nFilterPanel.prototype.init = function() {		
+		this.setType(sap.m.P13nPanelType.filter);
+		
 		sap.ui.getCore().loadLibrary("sap.ui.layout");
 		jQuery.sap.require("sap.ui.layout.Grid");
 
