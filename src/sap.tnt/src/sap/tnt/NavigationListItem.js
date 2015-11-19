@@ -395,7 +395,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Item",
 			rm.addClass("sapTntNavLIGroup");
 
 			if (!this.getEnabled()) {
-				rm.addClass("saTntNavLIItemDisabled");
+				rm.addClass("sapTntNavLIItemDisabled");
 			} else if (control.getExpanded()) {
 				rm.write(' tabindex="-1"');
 			}
