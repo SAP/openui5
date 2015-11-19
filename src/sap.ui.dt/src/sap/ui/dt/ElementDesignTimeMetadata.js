@@ -53,6 +53,9 @@ function(jQuery, DesignTimeMetadata) {
 			},
 			dependents : {
 				ignore : true
+			},
+			customData : {
+				ignore : true
 			}
 		};
 

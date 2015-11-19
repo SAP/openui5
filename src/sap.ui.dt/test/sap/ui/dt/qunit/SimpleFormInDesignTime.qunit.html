@@ -57,6 +57,7 @@
 					this.oVerticalLayout = new sap.ui.layout.VerticalLayout({content: [this.oSimpleForm, this.oLabel]});
 
 					this.oVerticalLayout.placeAt("content");
+					sap.ui.getCore().applyChanges();
 
 					this.oFormDesignTime = new sap.ui.dt.DesignTime({
 						designTimeMetadata : {
